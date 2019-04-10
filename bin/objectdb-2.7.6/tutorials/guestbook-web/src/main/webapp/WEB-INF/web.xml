@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+  <display-name>Guestbook</display-name>
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  <listener>
+    <listener-class>guest.GuestListener</listener-class>
+  </listener>
+  <listener>
+    <listener-class>guest.GuestListener</listener-class>
+  </listener>
+  <servlet>
+    <description></description>
+    <display-name>GuestServlet</display-name>
+    <servlet-name>GuestServlet</servlet-name>
+    <servlet-class>guest.GuestServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GuestServlet</servlet-name>
+    <url-pattern>/GuestServlet</url-pattern>
+  </servlet-mapping>
+</web-app>

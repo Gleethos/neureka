@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="bin2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/bin/objectdb-2.7.6/bin/converter.jar!/" />
+      <root url="jar://$PROJECT_DIR$/bin/objectdb-2.7.6/bin/explorer.jar!/" />
+      <root url="jar://$PROJECT_DIR$/bin/objectdb-2.7.6/bin/objectdb-jee.jar!/" />
+      <root url="jar://$PROJECT_DIR$/bin/objectdb-2.7.6/bin/objectdb.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

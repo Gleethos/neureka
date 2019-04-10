@@ -1,0 +1,78 @@
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-10-22 00:00:52 #1 store] 
+Database 'C:\Users\Gleethos\Dropbox\workspace\neureka.io\src\objectdb-2.7.6\db\Cores.odb' is opened by 12600@Aximon
+
+[2018-10-22 00:00:52 #2 store] 
+Configuration path: C:\Users\Gleethos\Dropbox\workspace\neureka.io\src\objectdb-2.7.6\objectdb.conf
+
+[2018-10-22 00:00:52 #3 type.registry] 
+New type NAPI.NUnit
+
+[2018-10-22 00:00:52 #4 type.registry] 
+New type NAPI.NUnitCore
+
+[2018-10-22 00:00:52 #5 type] 
+Type NAPI.NUnitCore is not enhanced.
+
+[2018-10-22 00:00:52 #6 type.registry] 
+New type double[]
+
+[2018-10-22 00:00:52 #7 type.registry] 
+New type double[][]
+
+[2018-10-22 00:00:52 #8 type.registry] 
+New type NAPI.NUnit[]
+
+[2018-10-22 00:00:52 #9 type.registry] 
+New type NAPI.NUnit[][]
+
+[2018-10-22 00:00:52 #10 type.registry] 
+New type NAPI.NUnitPropertyHub
+
+[2018-10-22 00:00:52 #11 type.registry] 
+New type NAPI.NUnitCalculationCore
+
+[2018-10-22 00:00:53 #12 store] 
+Database 'C:\Users\Gleethos\Dropbox\workspace\neureka.io\src\objectdb-2.7.6\db\Cores.odb' is closed by 12600@Aximon
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-10-22 23:36:07 #1 store] 
+Database 'C:\Users\Gleethos\Dropbox\workspace\neureka.io\src\objectdb-2.7.6\db\Cores.odb' is opened by 17620@Aximon
+
+[2018-10-22 23:36:07 #2 store] 
+Configuration path: C:\Users\Gleethos\Dropbox\workspace\neureka.io\src\objectdb-2.7.6\objectdb.conf
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-10-22 23:37:17 #1 store] 
+Database 'C:\Users\Gleethos\Dropbox\workspace\neureka.io\src\objectdb-2.7.6\db\Cores.odb' is opened by 1268@Aximon
+
+[2018-10-22 23:37:17 #2 store] 
+Configuration path: C:\Users\Gleethos\Dropbox\workspace\neureka.io\src\objectdb-2.7.6\objectdb.conf
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-10-22 23:39:00 #1 store] 
+Database 'C:\Users\Gleethos\Dropbox\workspace\neureka.io\src\objectdb-2.7.6\db\Cores.odb' is opened by 17964@Aximon
+
+[2018-10-22 23:39:00 #2 store] 
+Configuration path: C:\Users\Gleethos\Dropbox\workspace\neureka.io\src\objectdb-2.7.6\objectdb.conf
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-10-22 23:40:23 #1 store] 
+Database 'C:\Users\Gleethos\Dropbox\workspace\neureka.io\src\objectdb-2.7.6\db\Cores.odb' is opened by 10044@Aximon
+
+[2018-10-22 23:40:23 #2 store] 
+Configuration path: C:\Users\Gleethos\Dropbox\workspace\neureka.io\src\objectdb-2.7.6\objectdb.conf
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-10-22 23:47:26 #1 store] 
+Database 'C:\Users\Gleethos\Dropbox\workspace\neureka.io\src\objectdb-2.7.6\db\Cores.odb' is opened by 568@Aximon
+
+[2018-10-22 23:47:26 #2 store] 
+Configuration path: C:\Users\Gleethos\Dropbox\workspace\neureka.io\src\objectdb-2.7.6\objectdb.conf
+

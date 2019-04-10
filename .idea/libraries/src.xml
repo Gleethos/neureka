@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="src">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/objectdb-2.7.6/src/jdo_2.2.zip!/" />
+      <root url="jar://$PROJECT_DIR$/src/objectdb-2.7.6/src/jpa_2.0.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
