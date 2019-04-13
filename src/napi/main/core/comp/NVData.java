@@ -8,31 +8,70 @@ public class NVData {
 	
 	public NVData(NVElement[] newElement)
 	{
-		this.Element = newElement;
+		if(newElement==null){return;}
+		this.Element = new NVElement[newElement.length];
+		for(int Ei=0; Ei<newElement.length; Ei++){
+			Element[Ei] = new NVElement(newElement[Ei].inputSize());
+			Element[Ei].setActivation(newElement[Ei].getActivation());
+			Element[Ei].setError(newElement[Ei].getError());
+			Element[Ei].setOptimum(newElement[Ei].getOptimum());
+			Element[Ei].setInputDerivative(newElement[Ei].getInputDerivative());
+			Element[Ei].setRelationalDerivative(newElement[Ei].getRelationalDerivative());
+			Element[Ei].setInput(newElement[Ei].getInput());
+		}
+
 	}
 	
 	public NVElement[] getDataAsElementArray() {return Element;}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	public int size() {return Element.length;}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	public void consume(NVData data)
+	public void load(NVData data)
 	{
+		if(data==null){return;}
 		for(int Vi=0; Vi<data.size() && Vi<this.size(); Vi++)
-		{
-			Element[Vi].setActivation(Element[Vi].getActivation());
-			Element[Vi].setError(Element[Vi].getError());
-			Element[Vi].setOptimum(Element[Vi].getOptimum());
+		{//Todo: data ought to not have certain fields (Optimum, bias, weight, input!)
+			Element[Vi].setActivation(data.getActivation(Vi));
+			//Element[Vi].setError(data.getError(Vi));
+			//Element[Vi].setOptimum(data.getOptimum(Vi));
+			Element[Vi].setInputDerivative(data.getInputDerivative(Vi));
+			Element[Vi].setRelationalDerivative(data.getRelationalDerivative(Vi));
 			//Element[Vi].setOutput(data.Element[Vi].getOutput());
 		}
 	}
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	public boolean isDerivable() 
+	public boolean isDerivable()
 	{
-		if(Element[0].getOutput().length>=2) 
+		for(int Vi=0; Vi<Element.length; Vi++)
 		{
-			return true;
+			if(Element[Vi].hasError())
+			{
+				return  true;
+			}
 		}
 		return false;
+	}
+	public void setDerivable(boolean derivable)
+	{
+		if(this.isDerivable()==derivable){return;}
+		if(derivable)
+		{
+			for(int Di=0; Di<Element.length; Di++)
+			{
+				Element[Di].setHasError(true);
+				Element[Di].setHasActivation(true);
+				Element[Di].setHasInput(true);
+				Element[Di].setHasInputDerivative(true);
+			}
+
+		}
+		else
+		{
+			for(int Di=0; Di<Element.length; Di++)
+			{
+				Element[Di].setHasError(false);
+			}
+		}
 	}
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	public synchronized double getError(int Vi) 
@@ -49,7 +88,7 @@ public class NVData {
 	{
 		if(this.isDerivable()) 
 		{
-			Element[Vi].getOutput()[1]+=value;
+			Element[Vi].addToError(value);
 		}
 	}
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -59,28 +98,53 @@ public class NVData {
 		{
 			return false;
 		}
-		if(Element[0].getOutput().length >= 3) 
+		for(int Vi=0; Vi<Element.length; Vi++)
 		{
-			return true;
+			if(Element[Vi].hasOptimum()){return true;}
 		}
 		return false;
+	}
+	public synchronized void setConvergence(boolean converge)
+	{
+		// Adds entry in Optimum in Element[i].
+		// The node will converge towards this value (either by itself or indirectly (loss node)).
+		// Last layer nodes converge with the Help of a loss node. Non last layer nodes converge without help!
+		if(converge==this.isConvergent())
+		{
+			return;
+		}
+		if(converge)
+		{
+			if(this.isDerivable()==false)
+			{
+				setDerivable(true);
+			}
+			for(int Vi=0; Vi<Element.length; Vi++)
+			{
+				Element[Vi].setHasOptimum(true);
+			}
+		}
+		else
+		{
+			for(int Vi=0; Vi<Element.length; Vi++)
+			{
+				Element[Vi].setHasOptimum(false);
+			}
+		}
 	}
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	public synchronized double getOptimum(int Vi) 
 	{
-		if (this.isConvergent()) 
+		if (Element[Vi].hasOptimum())
 		{
-			if(Element[Vi].getOutput().length==3) 
-			{
-				return Element[Vi].getOutput()[2];
-			}
+			return Element[Vi].getOptimum();
 		}    
 		return 0;
 	}
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	public synchronized void setOptimum(int Vi, double value) 
 	{
-		if (this.isConvergent()) 
+		if (Element[Vi].hasOptimum())
 		{
 			Element[Vi].setOptimum(value);
 		}	    
@@ -118,11 +182,6 @@ public class NVData {
 		Element[Vi].setActivation(value);
 	}
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	public long getActivitySignal()
-	{
-		return 1;
-	}
-	//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	public synchronized double[][] getRelationalDerivative() {double[][] derivative = new double[Element.length][]; for(int i=0; i<Element.length; i++) {derivative[i] = Element[i].getRelationalDerivative();}return derivative;}

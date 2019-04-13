@@ -26,18 +26,17 @@ public class NVTester {
 	*/
 	public void Test()
 	{
-		InputFormattingTest();
-	    BaseFunctionsActivationTest();
+		//InputFormattingTest();
+	    //BaseFunctionsActivationTest();
 	    
-	    testCoreTypes();
-	    
-	    
+	    //testCoreTypes();
+		advancedActivationTest();
+		networkTest();
 
 	    componentTest();
-	    
-	    networkTest();
-	    advancedActivationTest();
-	    rootActivationTest();
+		rootActivationTest();
+
+
 	    
 	    
 	    //NVertex source = new NVertex_Root(6, true, false, -1, 3);
@@ -53,7 +52,7 @@ public class NVTester {
 	    
 	    
 	    
-	    //simpleRootTest();
+	    simpleRootTest();
 	    testRootDeriviation();
 
 		weightStateTest();
@@ -90,7 +89,7 @@ public class NVTester {
 		
 		NVertex src = new NVertex_Root(1, true, false, -1, 0);
 		src.setAllInput(0, -3);
-		src.asExecutable().cleanup();
+		src.asExecutable().loadState();
 		src.asExecutable().forward();
 		
 		basicSub.connect(src);
@@ -102,8 +101,8 @@ public class NVTester {
 		basicSub.addToAllInput(0, 4);
 		System.out.println("\nStart:");
 		
-		SuperRoot.asExecutable().cleanup();
-		basicSub.asExecutable().cleanup();
+		SuperRoot.asExecutable().loadState();
+		basicSub.asExecutable().loadState();
 		
 		SuperRoot.asExecutable().forward();
 		basicSub.asExecutable().forward();
@@ -273,9 +272,9 @@ public class NVTester {
 		child = new NVertex_Root(1,false, false, 1, 0);
 		
 		source.setAllInput(0, 4);
-		source.asExecutable().cleanup();
+		source.asExecutable().loadState();
 		source.asExecutable().forward();
-		source.asExecutable().cleanup();
+		source.asExecutable().loadState();
 		
 		NVertex.State.turnIntoChildOfParent(child, mother);	
 		mother.connect(child);
@@ -295,9 +294,9 @@ public class NVTester {
 		child = new NVertex_Root(1,false, false, 1, 0);
 		
 		source.setAllInput(0, 4);
-		source.asExecutable().cleanup();
+		source.asExecutable().loadState();
 		source.asExecutable().forward();
-		source.asExecutable().cleanup();
+		source.asExecutable().loadState();
 		
 		NVertex.State.turnIntoChildOfParent(child, mother);	
 		mother.connect(child);
@@ -318,9 +317,9 @@ public class NVTester {
 		child = new NVertex_Root(1,false, false, 0, 0);
 		
 		source.setAllInput(0, 3);
-		source.asExecutable().cleanup();
+		source.asExecutable().loadState();
 		source.asExecutable().forward();
-		source.asExecutable().cleanup();
+		source.asExecutable().loadState();
 		
 		NVertex.State.turnIntoChildOfParent(child, mother);	
 		mother.connect(child);
@@ -526,7 +525,7 @@ public class NVTester {
 		
 		I[0][0] = -19; I[1][0] = 6; I[2][0] = 2;
 		src.setInput(I);
-		src.asExecutable().cleanup();
+		src.asExecutable().loadState();
 		src.asExecutable().forward();
 		
 		head.connect(src);
@@ -547,7 +546,7 @@ public class NVTester {
 		
 		I[0][0] = -19; I[1][0] = 6; I[2][0] = 2;
 		src.setInput(I);
-		src.asExecutable().cleanup();
+		src.asExecutable().loadState();
 		src.asExecutable().forward();
 		
 		head.connect(src);

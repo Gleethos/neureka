@@ -1460,9 +1460,8 @@ public class NPanelNode implements NPanelObject
 		if(Memory!=null) 
 		{
 			listedProperties += "Memory";
-			if(Memory.hasActivationMemory()) {listedProperties += " (Activation";}
-			if(Memory.hasActivityMemory()) {listedProperties += ", Activity";}
-			if(Memory.hasDeriviationMemory()) {listedProperties += ", Derivatives)";}else {listedProperties += ");";}
+			if(Memory.hasDataMemory()) {listedProperties += " (Data";}
+			if(Memory.hasActivityMemory()) {listedProperties += ", Activity";}else {listedProperties += ");";}
 		}
 		brush.drawString(listedProperties, (int)(centerX - radius*0.013*listedProperties.length()), (int)(centerY +radius*0.6+YMod));
 		YMod+=radius*0.075;listedProperties="";

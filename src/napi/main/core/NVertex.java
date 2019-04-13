@@ -251,12 +251,11 @@ public class NVertex extends NVData implements NVNode
 		InputState = new byte[1];
 		setFirst(isFirst);
 		setLast(isLast);
-		
-		if (isFirst == false && isLast == false) 
+		if (isFirst == false && isLast == false)
 		{
 			setHidden(true);
-		} 
-		else 
+		}
+		else
 		{
 			setHidden(false);
 		}
@@ -272,9 +271,10 @@ public class NVertex extends NVData implements NVNode
 			case 6:  newFunction = newFunction.newBuild("prod(gaus(Ij))"); break;
 			default: newFunction = newFunction.newBuild("prod(tanh(Ij))");break;
 		}
-		addModule((NVFunction)newFunction);
+		addModule(newFunction);
 		if(delay>0) {addModule(new NVMemory(delay));}
 		setDerivable(derivable);
+		setConvergence(false);
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	public String toString()
@@ -876,9 +876,9 @@ public class NVertex extends NVData implements NVNode
 			if(hasModule(NVMemory.class)) 
 			{
 				NVMemory Memory = (NVMemory)findModule(NVMemory.class); 
-			    if(Memory.hasActivationMemory()) 
+			    if(Memory.hasDataMemory())
 			    {
-			    	return Memory.getActivationAt(Memory.activeTimeDeltaWithin(Hi))[0];
+			    	return Memory.getDataAt(Memory.activeTimeDeltaWithin(Hi)).getActivation();
 			    }
 			}
 		}
@@ -910,7 +910,7 @@ public class NVertex extends NVData implements NVNode
 			if(this.hasModule(NVMemory.class))       
 			{
 			    NVMemory Memory = (NVMemory)this.findModule(NVMemory.class);
-			    System.out.println("-displayCurrentState|: has memory: true => hasActivityMemory: "+Memory.hasActivityMemory()+"; hasDeriviationMemory: "+Memory.hasDeriviationMemory()+"; hasActivationMemory: "+Memory.hasActivationMemory()+";" );
+			    System.out.println("-displayCurrentState|: has memory: true => hasActivityMemory: "+Memory.hasActivityMemory()+"; hasDataMemory: "+Memory.hasDataMemory()+"; " );
 			}
 			else
 			{   
@@ -1023,183 +1023,7 @@ public class NVertex extends NVData implements NVNode
 			controlFrame.print(message);
 		}
 	}
-	//asCore
-	public void setDerivable(boolean derivable) 
-	{
-		NVCloak cloak = (NVCloak)findModule(NVCloak.class);
-		double[][][] oldData = new double[this.size()][][]; 
-		for(int Vi=0; Vi<Element.length; Vi++) 
-		{
-			oldData[Vi] = new double[3][];
-			oldData[Vi][0] = Element[Vi].getOutput();//Saving data.
-			oldData[Vi][1] = Element[Vi].getInput();//Saving data.
-			oldData[Vi][2] = Element[Vi].getInputDerivative();//Saving data.
-					
-		}
-		//------------------------------------------------------------------
-		if(derivable) 
-		{
-			if(this.isDerivable())//Already derivable! -> exposing result (cloak)!
-			{
-				if(cloak!=null) 
-		        {
-				    double[][] data = new double[Element.length][];
-					for(int Di=0; Di<data.length; Di++) 
-					{
-						data[Di] = Element[Di].getOutput();
-					}
-			        cloak.setPublicData(data);
-		        }
-		        return;
-			}
-			else
-			{
-			   	for(int Di=0; Di<Element.length; Di++) 
-			   	{
-			   		Element[Di].setOutput(oldData[Di][0]);
-			   		Element[Di].setInput(oldData[Di][1]);
-			   		Element[Di].setInputDerivative(oldData[Di][2]);
-			   	}			    	
-			}
-			if(oldData[0]==null) 
-			{
-				if(Connection==null) 
-				{
-					Connection = new NVNode[1][];
-				}
-				for(int Vi=0; Vi<Element.length; Vi++) 
-		    	{
-					Element[Vi].setInput(new double[this.inputSize()]);
-		    	}
-		    }
-			for(int Di=0; Di<Element.length; Di++) 
-	    	{
-				Element[Di].setInputDerivative(new double[this.inputSize()]);
-	    	}
-			if(oldData[0]!=null) 
-		    {
-				if(oldData[0][0]!=null) 
-				{
-					for(int Di=0; Di<Element.length; Di++) 
-				   	{
-						Element[Di].setOutput(oldData[Di][0]);
-			    	}
-				}
-				else 
-				{
-					for(int Di=0; Di<Element.length; Di++) 
-			    	{
-						Element[Di].setOutput(new double[2]);
-			    	}
-				}
-			}
-			else
-			{
-				for(int Di=0; Di<Element.length; Di++) 
-		    	{
-					Element[Di].setOutput(new double[2]);
-		    	}
-			}
-			for(int Di=0; Di<Element.length; Di++) 
-	    	{
-				shoutLine("-setDerivable(true)|: New Output has been set! Output size: "+Element[Di].getOutput().length);
-	    	}
-		}
-		else 
-		{
-			if(this.isDerivable() == false)// Element[0].Data.length==2 && Element[0].Data[0].length==1
-			{	
-				double[][] newPublic = new double[Element.length][]; 
-				for(int Di=0; Di<Element.length; Di++) 
-			    {	
-					newPublic[Di] = Element[Di].getOutput();
-			    }	
-				if(cloak!=null) {cloak.setPublicData(newPublic);}
-				return;
-			}
-			for(int Di=0; Di<Element.length; Di++) 
-	    	{	
-				Element[Di].setOutput(new double[2]);
-				Element[Di].setInput(new double[this.inputSize()]);
-				Element[Di].setInputDerivative(null);
-				shoutLine("-setDerivable(false)|: New LocalData has been set!");
-	    	}
-		}	
-		double[][] newPublic = new double[Element.length][];
-		
-		for(int Vi=0; Vi<Element.length; Vi++) 
-	   	{
-			if(oldData[Vi]==null) 
-			{
-				newPublic[Vi] = Element[Vi].getOutput();
-				if(cloak!=null) 
-				{
-					cloak.setPublicData(newPublic);
-				} 
-				return;
-		    }
-			else
-			{
-				Element[Vi].setOutput(oldData[Vi][0]);
-				Element[Vi].setInput(oldData[Vi][1]);
-				Element[Vi].setInputDerivative(oldData[Vi][2]);	
-			}
-    	}
-		if(cloak!=null) 
-		{
-			for(int Di=0; Di<Element.length; Di++) 
-	    	{	
-				newPublic[Di] = Element[Di].getOutput();
-	    	}
-			cloak.setPublicData(newPublic);			
-		}
-	}
 	// asCore
-	public synchronized void setConvergence(boolean converge) 
-	{
-		// Adds entry in the Element[i].Data[0] array for a value called 'optimum'. 
-	    // The node will converge towards this value (either by itself or indirectly (loss node)). 
-	    // Last layer nodes converge with the Help of a loss node. Non last layer nodes converge without help!
-		if(this.isDerivable()==false) 
-		{
-			setDerivable(true);
-		}
-		for(int Di=0; Di<Element.length; Di++) 
-    	{	
-			if(converge==false) {return;}
-			Element[Di].setInputDerivative(new double[this.inputSize()]);
-			
-			if(Element[Di].getOutput()==null) 
-			{
-				if(converge) 
-				{
-					Element[Di].setOutput(new double[3]);
-				}
-				else
-				{
-					Element[Di].setOutput(new double[2]);
-				}
-			}
-			if(Element[Di].getOutput().length != 3) 
-			{
-				double[] oldData = Element[Di].getOutput(); 
-				Element[Di].setOutput(new double[3]);
-				Element[Di].setActivation(oldData[0]);;
-				Element[Di].setError(oldData[1]); //.getOutput()[1]=;
-			}
-    	}
-		double[][] newPublic = new double[Element.length][];
-		
-		NVCloak Public = (NVCloak)findModule(NVCloak.class);
-		if(Public!=null) 
-		{
-			for(int Di=0; Di<Element.length; Di++) 
-	    	{	
-				newPublic[Di] = Element[Di].getOutput();
-	    	}
-			Public.setPublicData(newPublic);
-		}
-	}
 	// =============================================================================================================================================================================================
 	@Override // NVNode
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1282,6 +1106,11 @@ public class NVertex extends NVData implements NVNode
 	}
 
 	@Override
+	public long getActivitySignal() {
+		return 1;
+	}
+
+	@Override
 	public boolean isExecutable() {
 		return true;
 	}
@@ -1356,7 +1185,7 @@ public class NVertex extends NVData implements NVNode
 			{
 				if (isRoot(unit) == true) 
 				{
-					if (M.hasDeriviationMemory() == true && M.hasActivityMemory() == false) 
+					if (M.hasDataMemory() == true && M.hasActivityMemory() == false)
 					{
 						return true;
 					}
@@ -1365,13 +1194,13 @@ public class NVertex extends NVData implements NVNode
 			return false;
 		}
 		//-----------------------------------------------------------------------
-		public static void turnIntoMemoryRoot(NVNode node, NVNode superNode) 
+		public static void turnIntoMemoryChild(NVNode node, NVNode parent)
 		{
-			if(isRoot(node)==false && isRoot(superNode)==false) 
+			if(isRoot(node)==false && isRoot(parent)==false)
 			{
 				return;
 			}
-			turnIntoChildOfParent(node, superNode);
+			turnIntoChildOfParent(node, parent);
 			if(node.asCore().hasModule(NVMemory.class)==false)
 			{
 				node.asCore().addModule(new NVMemory(3));
@@ -1407,11 +1236,14 @@ public class NVertex extends NVData implements NVNode
 				}
 				return false;
 			}
-			if (Memory.hasDeriviationMemory() == false) 
+			if (Memory.hasDataMemory() == false)
 			{
-				if (unit.asCore().weightIsTrainable() == true || unit.asCore().biasIsTrainable() == true) 
+				if(Memory.getDataAt(0).hasInputDerivative(0))
 				{
-					return true;
+					if (unit.asCore().weightIsTrainable() == true || unit.asCore().biasIsTrainable() == true)
+					{
+						return true;
+					}
 				}
 				return false;
 			}

@@ -3,8 +3,6 @@ package ngui;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -14,7 +12,6 @@ import napi.main.core.NVertex;
 import napi.main.core.imp.NVertex_Root;
 import napi.main.core.mem.NVMemory;
 import napi.main.exec.cpu.NThreadPool;
-import ngui.NPanel.SurfaceAction;
 
 public class NGraphBuilder {
 
@@ -83,7 +80,7 @@ public class NGraphBuilder {
 	 	addPanelNeuron(Neuron4);
 	 
 	 	NVertex.State.turnIntoChildOfParent(Neuron4.getCore(), Neuron.getCore());//Neuron4.getUnit().turnIntoSubNodeOf(Neuron.getUnit().Core());
-	 	NVertex.State.turnIntoMemoryRoot(Neuron4.getCore(), Neuron.getCore()); // Neuron4.getUnit().turnIntoMemoryRootNode();
+	 	NVertex.State.turnIntoMemoryChild(Neuron4.getCore(), Neuron.getCore()); // Neuron4.getUnit().turnIntoMemoryRootNode();
 	 
 		BlueprintNode = new NVertex_Root(1, true, false, 0, 2, 1);
 		

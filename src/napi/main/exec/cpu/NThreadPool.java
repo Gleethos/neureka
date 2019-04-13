@@ -170,7 +170,7 @@ public class NThreadPool implements Runnable
 		{
 			NThreadable current = iterator.next();
 			current.setIsBackpropagating(false);
-			current.getExecutable().cleanup();
+			current.getExecutable().loadState();
 		}
 		
 		for(int TCounter=0; TCounter<T.length; TCounter++)

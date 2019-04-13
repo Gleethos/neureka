@@ -42,7 +42,7 @@ public class NVNetworkTester
 		{
 			NVertex u = NodeList.get(Ni);
 
-			u.asExecutable().cleanup();
+			u.asExecutable().loadState();
 		}
 		for(int Ni=0; Ni<NodeList.size(); Ni++) 
 		{
@@ -218,7 +218,10 @@ public class NVNetworkTester
 		connectNToNInput(N[1],N[3]);
 		System.out.println("Connecting N3 To N4:");
 		connectNToNInput(N[2],N[3]);
-	
+		/**			 /-->[1] --\
+		 * 	  [0]===|			|==>[3]
+		 * 			 \-->[2] --/
+		 * */
 		N[0].setBias(0, 0, -3);
 		
 		N[1].setBias(0, 0, 2);

@@ -29,10 +29,10 @@ public class NGroup_Routing extends NGroup
 	}
 	
 	@Override
-	public boolean cleanup()
+	public boolean loadState()
 	{
-		Router.forEach((core)->core.asExecutable().cleanup());
-		Core.forEach((core)->core.asExecutable().cleanup());
+		Router.forEach((core)->core.asExecutable().loadState());
+		Core.forEach((core)->core.asExecutable().loadState());
 		return false;
 	}
 

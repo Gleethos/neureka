@@ -3,7 +3,6 @@ package napi.main.core.imp;
 import java.math.BigInteger;
 
 import napi.main.core.NVChild;
-import napi.main.core.NVCloak;
 import napi.main.core.NVNeuron;
 import napi.main.core.NVNode;
 import napi.main.core.NVParent;
@@ -20,14 +19,13 @@ import ngui.NPanelNode;
 public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecutable, NVChild, NVParent
 {
 		private NVRoot Parent;
-		private NVData WorkData;
 		private long Signal;
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		public NVertex_Root(int size, boolean isFirst, boolean isLast, int neuronID, int functionID) 
 		{
 			super(size, isFirst, isLast, neuronID, functionID);
 			shoutLine("new NVertex_Root(int size="+size+", boolean isFirst="+isFirst+", boolean isLast="+isLast+", int v_id="+neuronID+", int f_id="+functionID+")|: ...created!");
-			addModule(new NVCloak(this));
+			//addModule(new NVCloak(this));
 			setParent((NVParent)this);
 		}
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -35,7 +33,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 		{
 			super(size, isFirst, isLast, neuronID, functionID, tunnel);
 			shoutLine("new NVertex_Root(int size="+size+", boolean isFirst="+isFirst+", boolean isLast="+isLast+", int v_id="+neuronID+", int f_id="+functionID+", int delay="+tunnel+")|: ...created!");
-			addModule(new NVCloak(this));
+			//addModule(new NVCloak(this));
 			setParent((NVParent)this);
 		}
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -45,7 +43,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 			shoutLine("new NVertex_Root(NVNode mother=#"+parent.asCore().getID()+", boolean isFirst="+isFirst+", boolean isLast="+isLast+", int v_id="+neuronID+", int f_id="+functionID+")|: ...created!");
 			if(parent==null) 
 			{
-				addModule(new NVCloak(this));
+				//addModule(new NVCloak(this));
 				setParent((NVParent)this);
 			}
 			else
@@ -60,7 +58,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 			shoutLine("new NVertex_Root(NVNode mother=#"+parent.asCore().getID()+", boolean isFirst="+isFirst+", boolean isLast="+isLast+", int v_id="+neuronID+", int f_id="+functionID+", int delay="+tunnel+")|: ...created!");
 			if(parent==null) 
 			{
-				addModule(new NVCloak(this));
+				//addModule(new NVCloak(this));
 				setParent((NVParent)this);
 			}
 			else
@@ -72,57 +70,41 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 		public NVertex_Root(NVertex toBeCopied)
 		{
 			super(toBeCopied);
-			addModule(new NVCloak(this));
+			//addModule(new NVCloak(this));
 			setParent(this);
 		}//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		@Override //NExecutable
-		public boolean cleanup()
+		public boolean loadState()
 		{
+			return this.loadState(BigInteger.ZERO);
+		}
+		@Override //NExecutable
+		public boolean loadState(BigInteger Hi){
 			//if this is super root -> traverse root preparation!
-			if(this.is(NVertex.Child)) 
+			if(this.is(NVertex.Child))
 			{
 				return false;
 			}
-			if(this.WorkData!=null){
-			//	this.consume(WorkData);
-			//	WorkData=null;
-			}
-			return cleanupChildren();
+			return cleanupChildren(Hi);
 		}
 		// Forward/Backward Propagation Functions:
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
-		private boolean cleanupChildren()
+		private boolean cleanupChildren(BigInteger Hi)
 		{
 			shoutLine("NVertex_Root->cleanupChildren()|: ...");
 			shoutLine("========================================================================");
 			NVMemory Memory = (NVMemory)findModule(NVMemory.class);
 			if(Memory==null) 
 			{
-				//replacement:
 				this.Signal = 1;
-				//old:
-				NVCloak cloak = (NVCloak)findModule(NVCloak.class);
-				if(cloak!=null) 
-				{
-					cloak.setSignal(1);
-					shoutLine("-cleanupChildren()|: (Memory==null): => Setting cloak signal to: 1");
-				}
-				shoutLine("-cleanupChildren()|: return true;");
-				shoutLine("-cleanupChildren()|: => END\n");
 				return true;
 			}
+			int activityDelta = Memory.activeTimeDeltaWithin(Hi);
+			this.load(Memory.getDataAt(activityDelta));
 			long phase = Memory.currentActivityPhase();
-			//replacement:
+			if(Hi.signum()==1){phase = Memory.activityPhaseAt(Hi);}
 			this.Signal = phase;
-			//old
-			shoutLine("-cleanupChildren()|: long phase = 'Memory.currentActivityPhase()':"+phase+";");
-			NVCloak cloak = (NVCloak)findModule(NVCloak.class);
-			if(cloak != null) 
-			{
-				shoutLine("-cleanupChildren()|: (cloak != null):");
-				shoutLine("-cleanupChildren()|: => cloak.setSignal(phase);");
-				cloak.setSignal(phase);
-			}
+
 			if(State.isRoot(this) == false)
 			{
 				 shoutLine("-cleanupChildren()|: (this == root): => return false; (Not within root anymore...) ");
@@ -157,7 +139,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 							{
 								shoutLine("-cleanupChildren()|:('Ii':"+Ii+")|:('Ni':"+Ni+")|: (Connection["+Ii+"]["+Ni+"].Core == child):");
 								shoutLine("-cleanupChildren()|:('Ii':"+Ii+")|:('Ni':"+Ni+")|: => Connection["+Ii+"]["+Ni+"].Core().Root().cleanupChildren();  ");
-								((NVertex_Root)Connection[Ii][Ni].asCore()).cleanupChildren();
+								((NVertex_Root)Connection[Ii][Ni].asCore()).cleanupChildren(Hi);
 							}
 						}
 					}
@@ -200,7 +182,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 			{
 				shoutLine("-forward()|: 'Vi':"+Vi+"");
 				shoutLine("-forward()|: ->activationOf(weightConvectionOf(publicized(inputSignalIf(forwardCondition())),"+Vi+")"+Vi+");");
-				result = 
+				result = //THIS IS WORK IN PROGRESS!!!
 				activationOf
 				(
 					weightedConvectionOf(signal, Vi), 
@@ -209,53 +191,6 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 			}
 			memorize(result);
 			shoutLine("-forward()|: END\n");
-		}
-		// SUPER FUNCTION
-		public void childForward()
-		{
-	    	shoutLine("");
-	    	shoutLine("NVertex_Root->rootForward()|: ...");
-	    	if(State.isRoot(this) == false) 
-	    	{
-	    		shoutLine("-rootForward()|: (this != root): => return!");
-	    		shoutLine("-rootForward()|: END\n");
-	    		return;
-	    	}// Outside of root!
-			if(Connection==null) 
-			{
-				shoutLine("-rootForward()|: (Connection == null): => return!");
-				shoutLine("-rootForward()|: END\n");
-				return;
-			}
-			//----------------------------	
-			shoutLine("-rootForward()|: for(int Ii=0; Ii<Connection.length; Ii++):");	
-			for(int Ii=0; Ii<Connection.length; Ii++) 
-			{
-				shoutLine("-rootForward()|:('Ii':"+Ii+")|: ");	
-				if(Connection[Ii]!=null) 
-				{
-					shoutLine("-rootForward()|:('Ii':"+Ii+")|: (Connection["+Ii+"] =! null):");
-					shoutLine("-rootForward()|:('Ii':"+Ii+")|: => for(int Ni=0; Ni<Connection[Ii].length; Ni++):");	
-					for(int Ni=0; Ni<Connection[Ii].length; Ni++) 
-					{
-						shoutLine("-rootForward()|:('Ii':"+Ii+")|:('Ni':"+Ni+")|: ...");	
-						if(State.isRoot(Connection[Ii][Ni].asCore())==true) 
-						{
-							shoutLine("-rootForward()|:('Ii':"+Ii+")|:('Ni':"+Ni+")|: (Connection["+Ii+"]["+Ni+"].Core() == root):");
-							shoutLine("-rootForward()|:('Ii':"+Ii+")|:('Ni':"+Ni+")|: => Connection["+Ii+"]["+Ni+"] = Connection["+Ii+"]["+Ni+"].Node() ");
-							Connection[Ii][Ni] = Connection[Ii][Ni].asNode();
-						   	//---------------------------------------------	
-						    if(State.isParentRoot(Connection[Ii][Ni].asCore()) == false)
-						    {
-						    	shoutLine("-rootForward()|:('Ii':"+Ii+")|:('Ni':"+Ni+")|: => (State.isParentRoot(Connection[Ii][Ni].Core()) == false):");
-						    	shoutLine("-rootForward()|:('Ii':"+Ii+")|:('Ni':"+Ni+")|: =>=> Connection[Ii][Ni].Core().Root().rootForward();");
-						    	((NVertex_Root)Connection[Ii][Ni].asCore()).childForward();
-						    }
-						}
-					}
-				}
-			}
-			shoutLine("-rootForward(...)|: END\n");
 		}
 	   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	    @Override //NExecutable
@@ -623,6 +558,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 				{//Note: -> if an input does not recieve a signal-> the last input will be retained! (resetting it would distort reality)
 					shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|: (Signal[Ii]==true && Connection[Ii]!=null):");
 					shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|:=> Element[Vi].Input()[Ii] = 0;");
+					//this.setInput(Vi, Ii, 0);
 					Element[Vi].setInput(Ii, 0.0);//New Value will be stored here -> therefore: reset to 0
 					shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|:=> double update[0] = 0;");
 					
@@ -733,7 +669,9 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 					{
 						if(Ii!=i) 
 						{
-							Data.setInputDerivative(Vi, Ii, Data.getInputDerivative(Vi, Ii)*Data.getInput(Vi, Ii));
+							Data.setInputDerivative(Vi, Ii,
+									Data.getInputDerivative(Vi, Ii)*Data.getInput(Vi, Ii)
+							);
 							//E.Data[2][Ii] *= E.Data[1][i];
 						}
 					}
@@ -752,198 +690,78 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 		{
 			shoutLine("NVertex_Root->memorize(double[][][] ResultData)|: ...");
 			shoutLine("========================================================================");
-			NVMemory Memory = null;
-			double[][][] Result = new double[Data.size()][][];
-			for(int Vi=0; Vi<Result.length; Vi++) {
-				Result[Vi] = Data.getDataAsElementArray()[Vi].getIO();
-			}
 			shoutLine("-memorize(...)|: (Property!=null):");
-			Memory = (NVMemory) findModule(NVMemory.class);
+			NVMemory Memory = (NVMemory) findModule(NVMemory.class);
 			if(Memory!=null) 
 			{
 				shoutLine("-memorize(...)|: =>(Memory!=null):");
-				if(Result[0]==null) 
+				//PrimIteration takeStored = (int Vi)->{};
+				if(this.weightIsTrainable() || this.biasIsTrainable()) //this can be lambdarized...
 				{
-					shoutLine("-memorize(...)|: =>=>(ResultData[0] == null):");
-					if(this.isFirst()) 
-					{
-						shoutLine("-memorize(...)|: =>=>=>(this.isFirst()):");
-						shoutLine("-memorize(...)|: =>=>=>=> Memory.storeCurrentActivity(true);");
-						Memory.storeCurrentActivity(true);
-						shoutLine("-memorize(...)|: =>=>=>=> return true;");
-						shoutLine("-memorize(...)|: =>=>=>=> END\n");
-						return true;
-					}
-					shoutLine("-memorize(...)|: =>=> Memory.storeCurrentActivity(false); ");
-					Memory.storeCurrentActivity(false); 
-					shoutLine("-memorize(...)|: =>=> return true;");
-					shoutLine("-memorize(...)|: =>=> END\n");
-					return true;
+					//takeStored = (int Vi)-> {};
 				}
-				else 
+				PrimIteration memorize = (int Vi)->{};
+				if(State.isParentRoot(this)) // TO DO: -> Checking if size of derivatives array matches memorized arrays (indicates structure change...)
 				{
-					shoutLine("-memorize(...)|: =>=> double[][] newActivationSet = new double[Result.length][Result[0][0].length];");
-					double[][] newActivationSet = new double[Result.length][Result[0][0].length];
-					if(Result[0].length==3) 
+					memorize = (int Vi)->
 					{
-						shoutLine("-memorize(...)|: =>=>=> (Result[0].length==3):");
-						shoutLine("-memorize(...)|: =>=>=>=> double[][] selfDerivatives = new double[this.size()][];");
-						double[][] derivatives = new double[this.size()][];
-						shoutLine("-memorize(...)|: =>=>=> for(int Vi=0; Vi<this.size(); Vi++)|: ...");
-						PrimIteration takeStored = (int Vi)->{};
-						if(this.weightIsTrainable() || this.biasIsTrainable()) //this can be lambdarized...
-						{
-							takeStored = (int Vi)->
-							{
-								shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:(this.isWeightTrainable() || this.isShiftTrainable()):");
-								shoutLine("-memorize(...)|: =>=>=>=>('Vi':"+Vi+")|: 'selfDerivatives[Vi]':"+derivatives[Vi]+" = 'ResultData[Vi][2]':"+Result[Vi][2]+";");
-								derivatives[Vi] = Result[Vi][2];
-							};
-						}
-						PrimIteration memorize = (int Vi)->{};
-						if(State.isParentRoot(this)) // TO DO: -> Checking if size of derivatives array matches memorized arrays (indicates structure change...)
-						{
-							memorize = (int Vi)->
-							{
-								double[] relationalDerivative = new double[0];
-								shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:(State.isParentRoot(this)):");
-								NVNode[] tipNodes = 
-								NVUtility.identityCorrected.order(
-									find((NVNode node)->
-										{
-											if(State.isRootTip(node.asCore())) 
-											{
-												return true;
-											}
-											return false;
-										})
-									);
-								shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:=> for(int Ti=0; Ti<tipNodes.length; Ti++)|: ... ");
-								for(int Ti=0; Ti<tipNodes.length; Ti++) 
+						double[] relationalDerivative = new double[0];
+						shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:(State.isParentRoot(this)):");
+						NVNode[] tipNodes =
+						NVUtility.identityCorrected.order(
+							find((NVNode node)->
 								{
-									shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:('Ti':"+Ti+")|:=> ...");
-									boolean inputRelationalDeriviation = true;
-									if(State.isMemoryChild(tipNodes[Ti].asCore()) || State.isParentRoot(tipNodes[Ti].asCore()))
+									if(State.isRootTip(node.asCore()))
 									{
-										inputRelationalDeriviation = false;
+										return true;
 									}
-									shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:('Ti':"+Ti+")|:=> double[] foundrelationalDerivative = findRootrelationalDerivativeOf(tipNodes[Ti], inputRelationalDeriviation, Vi);");
-									double[] foundrelationalDerivative = findRootDerivativesOf(tipNodes[Ti], inputRelationalDeriviation, Vi);
-									shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:('Ti':"+Ti+")|:=> double[] newrelationalDerivative = new double[selfrelationalDerivative[Vi].length + foundrelationalDerivative.length]; "); 
-									double[] newrelationalDerivative = new double[relationalDerivative.length + foundrelationalDerivative.length]; 
-									 
-									shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:('Ti':"+Ti+")|:=> for(int Di=0; Di<selfrelationalDerivative[Vi].length; Di++)");
-									for(int Di=0; Di<relationalDerivative.length; Di++) 
-									{
-										shoutLine("-memorize(...)|:('Vi':"+Vi+")|:('Ti':"+Ti+")|:('Di':"+Di+")|: =>=>=>=> 'newrelationalDerivative[Di]':"+newrelationalDerivative[Di]+" = 'selfrelationalDerivative[Vi][Di]':"+relationalDerivative[Di]+";");
-										newrelationalDerivative[Di]=relationalDerivative[Di];
-									}
-									shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:('Ti':"+Ti+")|:=> for(int Di=0; Di<selfrelationalDerivative[Vi].length; Di++)");
-									for(int Di=relationalDerivative.length; Di<relationalDerivative.length+foundrelationalDerivative.length; Di++) 
-									{
-										shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:('Ti':"+Ti+")|:('Di':"+Di+")|:=> 'newrelationalDerivative[Di]':"+newrelationalDerivative[Di]+" = 'foundrelationalDerivative[Di-selfrelationalDerivative[Vi].length]':"+foundrelationalDerivative[Di-relationalDerivative.length]+";");
-										newrelationalDerivative[Di]=foundrelationalDerivative[Di-relationalDerivative.length];
-									}
-									shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:('Ti':"+Ti+")|:=> selfrelationalDerivative[Vi] = newrelationalDerivative;");
-									relationalDerivative = newrelationalDerivative;		
-								}
-								//Data.set relational...
-								Element[Vi].setRelationalDerivative(relationalDerivative);
-							};
-						}//---------------------------
-						else 
+									return false;
+								})
+							);
+						shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:=> for(int Ti=0; Ti<tipNodes.length; Ti++)|: ... ");
+						for(int Ti=0; Ti<tipNodes.length; Ti++)
 						{
-							memorize = (int Vi)->
+							shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:('Ti':"+Ti+")|:=> ...");
+							boolean inputRelationalDeriviation = true;
+							if(State.isMemoryChild(tipNodes[Ti].asCore()) || State.isParentRoot(tipNodes[Ti].asCore()))
 							{
-								shoutLine("-memorize(...)| =>=>=>:('Vi':"+Vi+")|:(State.isParentRoot(this) == false):");
-								shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:=> selfDerivatives[Vi] = ResultData[Vi][2];");
-								derivatives[Vi] = Result[Vi][2];
-							};
-						}					
-						for(int Vi=0; Vi<this.size(); Vi++) 
-						{
-							shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|: ...");
-							shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|: newActivationSet[Vi] = Result[Vi][0];");
-							newActivationSet[Vi] = Result[Vi][0];
-							//===================================
-							takeStored.on(Vi);
-							//===================================
-							memorize.on(Vi);
-							//=================================== 
-							shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|: Memory.storeCurrentInputDerivative(selfDerivatives);");
-							
-							//Making room for new derivatives.
-							double[] newData = new double[Connection.length];
-							shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|: for(int Di=0; Di<ResultData[Vi][2].length; Di++)");
-							for(int Di=0; Di<Result[Vi][2].length; Di++) 
-							{
-								shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:('Di':"+Di+")|: newData[Di]=ResultData[Vi][2][Di];");
-								newData[Di]=Result[Vi][2][Di];
+								inputRelationalDeriviation = false;
 							}
-							shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|: ResultData[Vi][2]=newData;");
-							Result[Vi][2]=newData;
-							this.setInputDerivative(Vi, newData);//THIS IS USELESS!
-						} 
-						Memory.storeCurrentInputDerivative(derivatives);
-					}
-					else
-					{
-						shoutLine("-memorize(...)|: =>=>=>(Result[0].length!=3):");
-						shoutLine("-memorize(...)|: =>=>=>=> for(int Vi=0; Vi<this.size(); Vi++): ...");
-						for(int Vi=0; Vi<this.size(); Vi++) 
-						{
-							shoutLine("-memorize(...)|: =>=>=>=>('Vi':"+Vi+")|: newActivationSet[Vi] = Result[Vi][0];");
-							newActivationSet[Vi] = Result[Vi][0];
+							shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:('Ti':"+Ti+")|:=> double[] foundrelationalDerivative = findRootrelationalDerivativeOf(tipNodes[Ti], inputRelationalDeriviation, Vi);");
+							double[] foundrelationalDerivative = findRootDerivativesOf(tipNodes[Ti], inputRelationalDeriviation, Vi);
+							shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:('Ti':"+Ti+")|:=> double[] newrelationalDerivative = new double[selfrelationalDerivative[Vi].length + foundrelationalDerivative.length]; ");
+							double[] newrelationalDerivative = new double[relationalDerivative.length + foundrelationalDerivative.length];
+
+							shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:('Ti':"+Ti+")|:=> for(int Di=0; Di<selfrelationalDerivative[Vi].length; Di++)");
+							for(int Di=0; Di<relationalDerivative.length; Di++)
+							{
+								shoutLine("-memorize(...)|:('Vi':"+Vi+")|:('Ti':"+Ti+")|:('Di':"+Di+")|: =>=>=>=> 'newrelationalDerivative[Di]':"+newrelationalDerivative[Di]+" = 'selfrelationalDerivative[Vi][Di]':"+relationalDerivative[Di]+";");
+								newrelationalDerivative[Di]=relationalDerivative[Di];
+							}
+							shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:('Ti':"+Ti+")|:=> for(int Di=0; Di<selfrelationalDerivative[Vi].length; Di++)");
+							for(int Di=relationalDerivative.length; Di<relationalDerivative.length+foundrelationalDerivative.length; Di++)
+							{
+								shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:('Ti':"+Ti+")|:('Di':"+Di+")|:=> 'newrelationalDerivative[Di]':"+newrelationalDerivative[Di]+" = 'foundrelationalDerivative[Di-selfrelationalDerivative[Vi].length]':"+foundrelationalDerivative[Di-relationalDerivative.length]+";");
+								newrelationalDerivative[Di]=foundrelationalDerivative[Di-relationalDerivative.length];
+							}
+							shoutLine("-memorize(...)|: =>=>=>('Vi':"+Vi+")|:('Ti':"+Ti+")|:=> selfrelationalDerivative[Vi] = newrelationalDerivative;");
+							relationalDerivative = newrelationalDerivative;
 						}
-						shoutLine("-memorize(...)|: =>=>|>");
-					}
-					shoutLine("-memorize(...)|: =>=> Memory.storeCurrentActivity(true);");
-					shoutLine("-memorize(...)|: =>=> Memory.storeCurrentActivation(ResultData[0]);");
-					Memory.storeCurrentActivity(true);
-					Memory.storeCurrentActivation(newActivationSet);
-					Memory.storeCurrentData(Data);//activvity/derivative storing should be deletable
-					shoutLine("-memorize(...)|: =>|>");
-				}
-			}
-			//PUBLIC DATA!!! -> CLOAK !!! :
-			shoutLine("-memorize(...)|: => ...");//move this to cleanup! replace cloak with memory
-			if((this.isConvergent() && this.isFirst()==false)==false) 
-			{
-				double[][] newData = new double[this.size()][Result[0].length-1]; 
-				for(int Vi=0; Vi<this.size(); Vi++) 
+						if(relationalDerivative.length==0){relationalDerivative=null;}
+						Data.setRelationalDerivative(Vi, relationalDerivative);
+					};
+				}//---------------------------
+				for(int Vi=0; Vi<this.size(); Vi++)
 				{
-					newData[Vi]=Result[Vi][0];
+					//===================================
+					memorize.on(Vi);
+					//===================================
 				}
-				shoutLine("-memorize(...)|: => ((this.isConvergent() && this.isFirst() == false) == false)");
-				shoutLine("-memorize(...)|: =>=> ((NVCloak)findModule(NVCloak.class)).setPublicData(ResultData[0]);");
-				((NVCloak)findModule(NVCloak.class)).setPublicData(newData);
+				shoutLine("-memorize(...)|: =>=> Memory.storeCurrentActivity(true);");
+				Memory.storeCurrentActivity(true);
+				Memory.storeCurrentData(Data);//activity/derivative storing should be deletable
+				shoutLine("-memorize(...)|: =>|>");
 			}
-			else
-			{
-				double[][] newData = new double[Result.length][Result[0].length];
-				for(int Vi=0; Vi<this.size(); Vi++) 
-				{
-					newData[Vi]=Result[Vi][0];
-				}
-				((NVCloak)findModule(NVCloak.class)).setPublicData(newData);//?!?!?!
-			}		
-			//making room for new activations
-			shoutLine("-memorize(...)|: for(int Vi=0; Vi<this.size(); Vi++):");
-			for(int Vi=0; Vi<this.size(); Vi++) 
-			{
-				 shoutLine("-memorize(...)|:('Vi':"+Vi+")|: double[] newData = new double[ResultData[Vi][0].length];");
-				 double[] newData = new double[Result[Vi][0].length]; 
-				 shoutLine("-memorize(...)|:('Vi':"+Vi+")|: for(int Di=0; Di<newData.length; Di++):");
-				 for(int Di=0; Di<newData.length; Di++) 
-				 {
-					 shoutLine("-memorize(...)|:('Vi':"+Vi+")|:('Di':"+Di+")|: "
-					 		+ "'newData[Di]'"+newData[Di]+"='ResultData[Vi][0][Di]':"+Result[Vi][0][Di]+";");
-					 newData[Di]=Result[Vi][0][Di];
-				 }
-				 shoutLine("-memorize(...)|:('Vi':"+Vi+")|: Element[Vi].Data[0]=newData;");
-				 Element[Vi].setOutput(newData);
-			}
-			//this.WorkData = Data;
 			//->Local Data gets reinstantiated -> however the array lives on in memory and possibly as double compartment!
 			//This procedure is especially important for basic root nodes WITHOUT
 			shoutLine("-memorize(...)|: return false;");
@@ -955,48 +773,28 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 		@Override//NNeuron
 		public boolean preBackward(BigInteger Hi) 
 		{
-			return preRootBackward(Hi);
-		}
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//@Override //NRoot
-		public boolean preRootBackward(BigInteger Hi) 
-		{	
 			/*if this is super root node -> test if this is connected to a memory node
 			 * -> remove yourself from synchronization object.
 			 * -> if counter becomes negative-> adjust size!
 			 * */
 			shoutLine("NVertex_Root->preRootBackward(BigInteger 'Hi':"+Hi.longValue()+")|: ...");
 			shoutLine("========================================================================");
-			
 			if(this.isDerivable()==false) 
 			{
 				shoutLine("-preRootBackward(...)|: Neuron not derivable!");
 				return false;
 			}
 			shoutLine("-preRootBackward(...)|: PREPARING BACKPROPAGATION AT TIME STEP: -" + Hi);
-			
 			boolean Signal = ActivitySignalAt(Hi);
-			 
-			
-			shoutLine("-preRootBackward(...)|: (Property != null):");
-			shoutLine("-preRootBackward(...)|: => NVCloak cloak = findCloak();");
-			NVCloak cloak = (NVCloak)findModule(NVCloak.class);
-			if(cloak != null)
+			//NEW:
+			if(Signal == false)
 			{
-				shout("-preRootBackward(...)|: =>(cloak != null):");
-				 if(Signal==false) 
-				 {
-					 shout("-preRootBackward(...)|: =>=>(Signal==false):");
-					 shout("-preRootBackward(...)|: =>=>=> cloak.setSignal(-1);");
-					 cloak.setSignal(-1);
-				 }
-				 else
-				 {
-					 shout("-preRootBackward(...)|: =>=>(Signal==true):");
-					 shout("-preRootBackward(...)|: =>=>=>cloak.setSignal(1);");
-					 cloak.setSignal(1);
-				 }
-			}		
+				this.Signal = -1;
+			}
+			else
+			{
+				this.Signal = 1;
+			}
 			if(Signal == false) 
 			{
 			 	shoutLine("-preRootBackward(...)|: (Signal == false) => return false; ");
@@ -1004,116 +802,29 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 			 	return false;
 			}
 			shoutLine("-preRootBackward(...)|: Loading stored backpropdata: inputderivatives and newly recieved error.",true);
-			
-			if (this.is(BasicRoot)==false) 
+			NVMemory Memory = (NVMemory)findModule(NVMemory.class);
+			if (Memory!=null)//this.is(BasicRoot)==false
 			{
-				NVMemory Memory = (NVMemory)findModule(NVMemory.class);
 			 	int timeDelta = Memory.activeTimeDeltaWithin(Hi);
-			 	double[][] derivatives = Memory.getdInputAt(timeDelta);
-			 	if(derivatives==null)
-			 	{
-			 		shout("-preRootBackward(...)|: =>=>(derivatives==null):");
-			 		shout("-preRootBackward(...)|: =>=>=> derivatives = new double[this.size()][];");
-			 		derivatives = new double[this.size()][];
-			 	}
-			 	double[][] publicData = ((NVCloak)findModule(NVCloak.class)).getPublicData();
-			 	double[][] memorized = Memory.getActivationAt(timeDelta); 
-			    //before: double[]... !!!
-			 	//Self convergent node: Converges without loss node (probably is loss node)
-			 	double[][] newPD = new double[this.size()][Element[0].getOutput().length];
-			 	 //---
-			 	for(int Vi=0; Vi<this.size(); Vi++)
+				NVData Data = Memory.getDataAt(timeDelta);
+				this.load(Data);
+				if(Data==null)
 				{
-			 		shoutLine("-preRootBackward(...)|: =>=>('Vi':"+Vi+")|: newPD[Vi][0] = Element[Vi].Activation();");
-			 		shoutLine("-preRootBackward(...)|: =>=>('Vi':"+Vi+")|: newPD[Vi][1] = Element[Vi].Error();");
+					Data = this;
+				}
+			 	//Self convergent node: Converges without loss node (probably is loss node)
+				for(int Vi=0; Vi<this.size(); Vi++)
+				{
 			 		shoutLine("-preRootBackward(...)|: =>=>('Vi':"+Vi+")|: Element[Vi].Data[2] = derivatives[Vi];");
-			 		newPD[Vi][0] = Element[Vi].getActivation();
-			 		newPD[Vi][1] = Element[Vi].getError();
-			 		//Element[Vi].getInputDerivative() = derivatives[Vi]; 
-			 		Element[Vi].addToInputDerivative(derivatives[Vi]);
 			 		//-----------------------------------
 			 		if (this.isConvergent() && this.isLast()==false)
 				 	{//=========================================================
-			    		//Convergent nodes dont't express optima except if they are last!
-				 		if(memorized[Vi]==null) 
-					 	{
-					 		memorized[Vi]=Element[Vi].getOutput();
-					 		shoutLine("-preRootBackward(...)|: Memorized Activation Data is null! that is not so cool");
-					 	}
-				 		//Activation (and possably stored optimums) must be loaded here!
-						for(int i=0; i<memorized[Vi].length; i++) 
-						{
-						 	shoutLine("-preRootBackward(...)|: ('Vi':"+Vi+")|:('i':"+i+")|: Element[Vi].Output()[i]<=memorized[Vi][i] : "+Element[Vi].getOutput()[i]+"<="+memorized[Vi][i]);
-						 	//Element[Vi].getOutput()[i]=memorized[Vi][i];
-						}
-						if(memorized[Vi].length>=1) {
-							Element[Vi].setActivation(memorized[Vi][0]);
-							if(memorized[Vi].length>=2) {
-								Element[Vi].setError(memorized[Vi][1]);
-								if(memorized[Vi].length>=3) {
-									Element[Vi].setOptimum(memorized[Vi][2]);
-								}
-							}
-						}
-				 		//newPD[Vi][0]=Element[Vi].Output()[0];
-				 		//newPD[Vi][0]=Element[Vi].Output()[1];
-				 		newPD[Vi][1]=0;
-				 		//CorefindPublicCompartment().setPublicData(newPD);	
-				 		if(publicData[Vi]!=null) 
-				 		 {	 
-				 			 for(int i=0; i<publicData[Vi].length; i++) 
-					 		 {
-				 				shoutLine("-preRootBackward(...)|: ('Vi':"+Vi+")|:('i':"+i+")|: publicData[Vi]["+i+"]: "+publicData[Vi][i]);
-					 		 }
-				 			for(int i=0; i<Element[Vi].getOutput().length; i++) 
-					 		 {
-				 				shoutLine("-preRootBackward(...)|: ('Vi':"+Vi+")|:('i':"+i+")|: Element[Vi].Output()["+i+"]: "+Element[Vi].getOutput()[i]+"");
-					 		 }
-							 //LOADING PUBLICLY RECEIVED ERROR!
-				 			 Element[Vi].setError(publicData[Vi][1]);
-				 		 }
 				 		 shoutLine("-preRootBackward(...)|: ('Vi':"+Vi+")|: Element[Vi].calculateError();");
 				 		 //Doesn't consider received error...	
 				 		 Element[Vi].calculateError();
-				 	 }//=========================================================
-				 	 else if(this.isConvergent()==false || this.isLast()==true) 
-				 	 {//=========================================================
-				 		if(memorized[Vi]==null) 
-				 		{
-				 			memorized[Vi]=Element[Vi].getOutput();
-				 			shoutLine("-preRootBackward(...)|: Memorized Activation Data is null! that is not so cool");
-				 		}
-				 		shoutLine("-preRootBackward(...)|: current Activation: "+Element[Vi].getActivation()+"; Fetching stored Activation from Memory: "+memorized[Vi][0]+";");
-				 		//Activation (and possably stored optimums) must be loaded here!
-				 		for(int i=0; i<memorized[Vi].length; i++) 
-				 		{
-				 			shoutLine("-preRootBackward(...)|: ('Vi':"+Vi+")|:('i':"+i+")|: Element[Vi].Output()[i]<=memorized[Vi][i] : "+Element[Vi].getOutput()[i]+"<="+memorized[Vi][i]);
-				 			//Element[Vi].getOutput()[i]=memorized[Vi][i];
-				 		}
-				 		if(memorized[Vi].length>=1) {
-							Element[Vi].setActivation(memorized[Vi][0]);
-							if(memorized[Vi].length>=2) {
-								Element[Vi].setError(memorized[Vi][1]);
-								if(memorized[Vi].length>=3) {
-									Element[Vi].setOptimum(memorized[Vi][2]);
-								}
-							}
-						}
-				 		
-				 		//newPD[Vi] = new double[Element[Vi].Data[0].length];
-				 		for(int i=0;i<newPD[Vi].length; i++) 
-				 		{
-				 			shoutLine("-preRootBackward(...)|: ('Vi':"+Vi+")|:('i':"+i+")|: newPD[Vi][i]<=Element[Vi].Output()[i] : "+newPD[Vi][i]+"<="+Element[Vi].getOutput()[i]);
-				 			newPD[Vi][i]=Element[Vi].getOutput()[i];
-				 		}
-				 		newPD[Vi][1]=0;
-				 		//CorefindPublicCompartment().setPublicData(newPD);
-				 		//Saving received error value from public data to CoreData!
-				 		if(publicData[Vi]!=null) 
-				 		{
-				 		    shoutLine("-preRootBackward(...)|: current Error: "+Element[Vi].getError()+"; Fetching stored Error from PH: "+publicData[Vi][1]+";");
-				 		    Element[Vi].setError(publicData[Vi][1]);
-				 		}
+				 	}//=========================================================
+				 	else if(this.isConvergent()==false || this.isLast()==true)
+				 	{//=========================================================
 				 		int inactive = 1 + Memory.localInactiveTimeDeltaWithin(Hi);
 				 		shoutLine("-preRootBackward(...)|: Inactive time delta: "+inactive);
 				 		//==========================================================================================
@@ -1121,13 +832,13 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 				 		Element[Vi].setError(Element[Vi].getError()/inactive);//Error has accumulated -> calculating average accordingly!
 				 		shoutLine("Time corrected Error: "+Element[Vi].getError()+"; (divided by: "+inactive+") ");
 				 		//==========================================================================================
-				 	} 
-				 	shoutLine("-preRootBackward(...)|: Error:(" + Element[Vi].getError() + "), Element[Vi].Data.length:("+Element[Vi].getIO().length+");");
-				 	if(Element[Vi].hasError()) //Element[Vi].getIO().length<3
-				 	{
-				 		shoutLine("Warning! Data is not at least of size 3!!");
 				 	}
-				 	if(Element[Vi].getInputDerivative()==null) 
+					//Why is that? => Current Error has been calculated
+					Data.setError(Vi, this.getError(Vi));//=>Stored in history!
+					this.setError(Vi, 0);//Locally set to 0 (ready to accept error remotely)
+
+				 	shoutLine("-preRootBackward(...)|: Error:(" + Element[Vi].getError() + "), Element[Vi].Data.length:("+Element[Vi].getIO().length+");");
+				 	if(Element[Vi].getInputDerivative()==null)
 				 	{
 				 		shoutLine("-preRootBackward(...)|: (Element[Vi].Data[2]==null):");
 				 		shoutLine("-preRootBackward(...)|: => return false;");
@@ -1138,10 +849,6 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 				 	{
 				 		shoutLine("-preRootBackward(...)|:('Di':"+Di+")|: Element[Vi].Data[2][Di]:(" + Element[Vi].getInputDerivative()[Di] + ");");
 				 	}
-			 	}
-			 	if(cloak != null)
-			 	{
-			 		 cloak.setPublicData(newPD);
 			 	}
 			}
 			if(this.ActivitySignalAt(Hi)) 
@@ -1166,7 +873,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 		{	
 			shoutLine("NVertex_Root->rootBackward(BigInteger Hi)|: ...");
 			shoutLine("========================================================================");
-			if (Element[0].getIO().length<=2)
+			if (Element[0].getIO().length<=2)//if(!hasError())
 			{
 				shoutLine("-rootBackward(...)|: Backpropagation not possible! This neuron is unfit for gradient storing.");
 				return;
@@ -1192,7 +899,13 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 				    instantiateBiasGradient();
 				}
 			}
-			//calculateError();
+			NVData[] Data = {null};//this
+			NVMemory Memory = (NVMemory)findModule(NVMemory.class);
+			if (Memory!=null)//this.is(BasicRoot)==false
+			{
+				int timeDelta = Memory.activeTimeDeltaWithin(Hi);
+				Data[0] = Memory.getDataAt(timeDelta);
+			}
 			NVOptimizer GradientOptimizer = (NVOptimizer)findModule(NVOptimizer.class);
 			//=========================
 			//-> Checking if the from memory loaded gradients 
@@ -1212,7 +925,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 				CalculateInputError = (int Vi, int Ii)->
 				{
 					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:(isWeightTrainable() || isShiftTrainable()):");
-					currentError[0] = this.getError(Vi) * this.getInputDerivative(Vi, Ii);
+					currentError[0] = Data[0].getError(Vi) * this.getInputDerivative(Vi, Ii);
 					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=> 'currentError[0]':" + currentError[0] + " = 'Element[Vi].Data[2][Ii]':"+ Element[Vi].getInputDerivative()[deriviationOffset[0]] + " * 'Element[Vi].Output()[1]':" + Element[Vi].getError() + ";");
 					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=> 'deriviationOffset[0]':"+deriviationOffset[0]+"++;");
 					deriviationOffset[0]++;
@@ -1461,7 +1174,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 								{//==================================
 									shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:=>(State.isParentRoot(Tip[Ti].Core())):");
 									shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:=>=> Tip[Ti].addToError(Ei, Element[Vi].Output()[1] * Element[Vi].Data[2][deriviationOffset[0]]);");
-									Tip[Ti].addToError(Vi, Element[Vi].getError() * relationalDerivative[Ri]);//ERROR DISTRIBUTION!
+									Tip[Ti].addToError(Vi, Data[0].getError(Vi) * relationalDerivative[Ri]);//ERROR DISTRIBUTION!
 									shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:=>=> deriviationOffset[0]++;");
 									Ri++;//deriviationOffset[0]++;
 									shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:=>|>");
@@ -1527,13 +1240,13 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 			}
 			if(this.is(BasicRoot) == false)
 			{
-				double[][] CloakData = ((NVCloak) findModule(NVCloak.class)).getPublicData();
 				for(int Vi=0; Vi<this.size(); Vi++) 
 				{		
 					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|: CloakData[Vi][1]=0;");
 					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|: Element[Vi].setError(0);");
-					CloakData[Vi][1]=0;
-					Element[Vi].setError(0);
+					//CloakData[Vi][1]=0;
+					Data[0].setError(Vi, 0);
+					// this.setError(Vi, 0);
 				}
 			}
 			shoutLine("-rootBackward(...)|: END\n");
@@ -1992,6 +1705,10 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 				Parent = (NVRoot)mother;
 			}
 		}
+		public long getActivitySignal()
+	{
+		return Signal;
+	}
 		
 }//Class end.
 //=========================================================================================================

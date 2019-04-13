@@ -25,8 +25,8 @@ public class NVMemory {
 	public NVMemory(int tunneling)
 	{
 		TimeTunnel = tunneling;
-		dInputHistory     = new ArrayList<double[][]>();
-		activationHistory = new ArrayList<double[][]>();
+		//dInputHistory     = new ArrayList<double[][]>();
+		//activationHistory = new ArrayList<double[][]>();
 		activityHistory   = new ArrayList<byte[]>();
 
 		DataHistory = new ArrayList<NVData>();
@@ -35,24 +35,24 @@ public class NVMemory {
 	public void removeHistoryOlderThan(BigInteger Hi) 
 	{
 		int activeTime = activeTimeDeltaWithin(Hi);
-		removeDeriviationsOlderThan(activeTime);
-		removeActivationsOlderThan(activeTime);
+		//removeDeriviationsOlderThan(activeTime);
+		//removeActivationsOlderThan(activeTime);
 		removeActivityOlderThan(Hi);
 	}
 
-	public void removeDeriviationsOlderThan(int Hi) 
-	{
-		ArrayList<double[][]> newMemorized = new ArrayList<double[][]>();
-		for(int i=dInputHistory.size()-Hi; i<dInputHistory.size(); i++) {newMemorized.add(dInputHistory.get(i));}
-		dInputHistory = newMemorized;
-	}
-	
-	public void removeActivationsOlderThan(int Hi) 
-	{
-		ArrayList<double[][]> newMemorized = new ArrayList<double[][]>();
-		for(int i=activationHistory.size()-Hi; i<activationHistory.size(); i++) {newMemorized.add(activationHistory.get(i));}
-		activationHistory = newMemorized;
-	}
+	//public void removeDeriviationsOlderThan(int Hi)
+	//{
+	//	ArrayList<double[][]> newMemorized = new ArrayList<double[][]>();
+	//	for(int i=dInputHistory.size()-Hi; i<dInputHistory.size(); i++) {newMemorized.add(dInputHistory.get(i));}
+	//	dInputHistory = newMemorized;
+	//}
+	//
+	//public void removeActivationsOlderThan(int Hi)
+	//{
+	//	ArrayList<double[][]> newMemorized = new ArrayList<double[][]>();
+	//	for(int i=activationHistory.size()-Hi; i<activationHistory.size(); i++) {newMemorized.add(activationHistory.get(i));}
+	//	activationHistory = newMemorized;
+	//}
 	
 	public void removeActivityOlderThan(BigInteger Hi)
 	{
@@ -92,23 +92,27 @@ public class NVMemory {
 		DataHistory = newMemorized;
 	}
 	//========================================================================================
-	public boolean hasDeriviationMemory() {if(dInputHistory     != null) {return true;}return false;}
-	public boolean hasActivationMemory()  {if(activationHistory != null) {return true;}return false;}
+	//public boolean hasDeriviationMemory() {if(dInputHistory     != null) {return true;}return false;}
+	//public boolean hasActivationMemory()  {if(activationHistory != null) {return true;}return false;}
 	public boolean hasActivityMemory()    {if(activityHistory   != null) {return true;}return false;}
+	public boolean hasDataMemory(){if(DataHistory!=null){return true;}return false;}
 	//========================================================================================
-	public void memorizeDerivatives() {if(dInputHistory     == null) {dInputHistory = new ArrayList<double[][]>();}}
-	public void memorizeActivation()  {if(activationHistory == null) {activationHistory = new ArrayList<double[][]>();}}
+	//public void memorizeDerivatives() {if(dInputHistory     == null) {dInputHistory = new ArrayList<double[][]>();}}
+	//public void memorizeActivation()  {if(activationHistory == null) {activationHistory = new ArrayList<double[][]>();}}
 	public void memorizeActivity()    {if(activityHistory   == null) {activityHistory = new ArrayList<byte[]>();}}
+	public void memorizeData(){if(DataHistory==null){DataHistory = new ArrayList<NVData>();}}
 	//========================================================================================
-	public void forgetDerivatives() {dInputHistory     = null;}
-	public void forgetActivation()  {activationHistory = null;}
+	//public void forgetDerivatives() {dInputHistory     = null;}
+	//public void forgetActivation()  {activationHistory = null;}
 	public void forgetActivity()    {activityHistory   = null;}
+	public void forgetData(){DataHistory=null;}
 	//========================================================================================
 	public void resetMemory()
 	{
-		if(hasDeriviationMemory()) {forgetDerivatives(); memorizeDerivatives();}
-		if(hasActivationMemory())  {forgetActivation();  memorizeActivation();}
+		//if(hasDeriviationMemory()) {forgetDerivatives(); memorizeDerivatives();}
+		//if(hasActivationMemory())  {forgetActivation();  memorizeActivation();}
 		if(hasActivityMemory())    {forgetActivity();    memorizeActivity();}
+		if(hasDataMemory()){forgetData(); memorizeData();}
 	}
 	//========================================================================================
 	
@@ -325,5 +329,32 @@ public class NVMemory {
 		}
 	}
 	//---------------------------------------------------------------------------------------------------------------------------------------------
-	
+	public long activityPhaseAt(BigInteger Hi)
+	{
+		if(activityHistory==null) {return 0;}
+		if(activityHistory.size()==0) {return 0;}
+		Hi = Hi.abs();
+		for(int i=0; i<activityHistory.size(); i++){
+			BigInteger phase = new BigInteger(activityHistory.get(i));
+			BigInteger delta;
+			if(phase.signum()==-1){
+				delta = phase.abs().subtract(Hi);
+				if(delta.signum()>=0)
+				{
+					return delta.negate().longValue();
+				}
+			}
+			else
+			{
+				phase.add(BigInteger.ONE);
+				delta = phase.subtract(Hi);
+				if(delta.signum()>=0)
+				{
+					return delta.longValue();
+				}
+			}
+			Hi.subtract(delta);
+		}
+		return 0;
+	}
 }

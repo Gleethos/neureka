@@ -72,8 +72,13 @@ public class NGroup implements NVExecutable
 	public void setParalyzed(boolean isParalyzed) {Core.forEach((core)->core.setParalyzed(isParalyzed));}
 
 	@Override
-	public boolean cleanup() {
-		Core.forEach((core)->core.asExecutable().cleanup());
+	public boolean loadState() {
+		Core.forEach((core)->core.asExecutable().loadState());
+		return false;
+	}
+
+	@Override
+	public boolean loadState(BigInteger Hi) {
 		return false;
 	}
 

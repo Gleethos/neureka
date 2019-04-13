@@ -1,7 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8f069c6b-f9fb-4e13-ace8-74184cdf4938" name="Default Changelist" comment="" />
+    <list default="true" id="8f069c6b-f9fb-4e13-ace8-74184cdf4938" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/apache-tomee-webprofile-7.0.2/conf/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/bin/apache-tomee-webprofile-7.0.2/conf/web.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/napi/main/comp/NGroup.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/napi/main/comp/NGroup.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/napi/main/comp/NGroup_Routing.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/napi/main/comp/NGroup_Routing.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/napi/main/core/NVertex$State.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/napi/main/core/NVertex$State.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/napi/main/core/NVertex.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/napi/main/core/NVertex.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/napi/main/core/comp/NVData.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/napi/main/core/comp/NVData.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/napi/main/core/comp/NVElement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/napi/main/core/comp/NVElement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/napi/main/core/imp/NVertex_Root.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/napi/main/core/imp/NVertex_Root.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/napi/main/core/mem/NVMemory.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/napi/main/core/mem/NVMemory.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/napi/main/exec/NVExecutable.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/napi/main/exec/NVExecutable.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/napi/main/exec/cpu/NThreadPool.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/napi/main/exec/cpu/NThreadPool.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/napi/unit/NVNetworkTester.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/napi/unit/NVNetworkTester.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/napi/unit/NVTester.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/napi/unit/NVTester.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/napi/unit/io/NVTesting_Activation.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/napi/unit/io/NVTesting_Activation.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/ngui/NGraphBuilder$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/ngui/NGraphBuilder$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/ngui/NGraphBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/ngui/NGraphBuilder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/ngui/NPanelNode.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/ngui/NPanelNode.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/napi/main/comp/NGroup.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/napi/main/comp/NGroup.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/napi/main/comp/NGroup_Routing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/napi/main/comp/NGroup_Routing.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/napi/main/core/NVertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/napi/main/core/NVertex.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/napi/main/core/comp/NVData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/napi/main/core/comp/NVData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/napi/main/core/comp/NVElement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/napi/main/core/comp/NVElement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/napi/main/core/imp/NVertex_Root.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/napi/main/core/imp/NVertex_Root.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/napi/main/core/mem/NVMemory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/napi/main/core/mem/NVMemory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/napi/main/exec/NVExecutable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/napi/main/exec/NVExecutable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/napi/main/exec/cpu/NThreadPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/napi/main/exec/cpu/NThreadPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/napi/unit/NVNetworkTester.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/napi/unit/NVNetworkTester.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/napi/unit/NVTester.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/napi/unit/NVTester.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/napi/unit/io/NVTesting_Activation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/napi/unit/io/NVTesting_Activation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ngui/NGraphBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ngui/NGraphBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ngui/NPanelNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ngui/NPanelNode.java" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -9,55 +42,25 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/neureka$NSMain.ic" NAME="NSMain Coverage Results" MODIFIED="1554928830969" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="neureka" />
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/napi/unit/NVTester.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="190">
-              <caret line="472" column="26" lean-forward="true" selection-start-line="472" selection-start-column="26" selection-end-line="472" selection-end-column="26" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/napi/main/core/NVNode.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="841">
-              <caret line="127" column="44" selection-start-line="127" selection-start-column="44" selection-end-line="127" selection-end-column="44" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/napi/unit/state/NVTesting_Format.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-102">
-              <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/napi/main/core/comp/NVData.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="20" column="8" selection-start-line="20" selection-start-column="8" selection-end-line="20" selection-end-column="8" />
+            <state relative-caret-position="199">
+              <caret line="36" selection-start-line="36" selection-end-line="36" />
               <folding>
-                <element signature="e#2592#2593#0" expanded="true" />
-                <element signature="e#2631#2632#0" expanded="true" />
-                <element signature="e#21970#21971#0" expanded="true" />
-                <element signature="e#22010#22011#0" expanded="true" />
+                <element signature="e#2370#2371#0" expanded="true" />
+                <element signature="e#2541#2542#0" expanded="true" />
+                <element signature="e#5004#5005#0" expanded="true" />
+                <element signature="e#23469#23470#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/napi/unit/NVNetworkTester.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="76">
-              <caret line="174" column="10" lean-forward="true" selection-start-line="174" selection-start-column="10" selection-end-line="174" selection-end-column="10" />
             </state>
           </provider>
         </entry>
@@ -65,22 +68,49 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/napi/main/core/imp/NVertex_Root.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3355">
-              <caret line="849" column="56" selection-start-line="849" selection-start-column="56" selection-end-line="849" selection-end-column="56" />
+            <state relative-caret-position="114">
+              <caret line="184" column="54" selection-start-line="184" selection-start-column="54" selection-end-line="184" selection-end-column="54" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#3342#3343#0" expanded="true" />
+                <element signature="e#3389#3390#0" expanded="true" />
+                <element signature="e#85576#85577#0" expanded="true" />
+                <element signature="e#85786#85787#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/napi/main/core/mem/NVMemory.java">
+        <entry file="file://$PROJECT_DIR$/src/napi/unit/NVTester.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="963">
-              <caret line="86" lean-forward="true" selection-start-line="86" selection-end-line="86" />
+            <state relative-caret-position="107">
+              <caret line="508" selection-start-line="508" selection-end-line="508" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/napi/unit/io/NVTesting_Activation.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="141">
+              <caret line="111" selection-start-line="111" selection-end-line="111" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/napi/main/core/comp/NVElement.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="209">
+              <caret line="150" selection-start-line="150" selection-end-line="150" />
               <folding>
-                <element signature="e#2682#2690#0" expanded="true" />
+                <element signature="e#9341#9342#0" expanded="true" />
+                <element signature="e#9360#9361#0" expanded="true" />
+                <element signature="e#9459#9460#0" expanded="true" />
+                <element signature="e#9478#9479#0" expanded="true" />
+                <element signature="e#9608#9609#0" expanded="true" />
+                <element signature="e#9628#9629#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -89,54 +119,26 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/napi/main/exec/NVExecutable.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="6" column="26" selection-start-line="6" selection-start-column="26" selection-end-line="6" selection-end-column="26" />
+            <state relative-caret-position="170">
+              <caret line="10" column="19" selection-start-line="10" selection-start-column="19" selection-end-line="10" selection-end-column="19" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/napi/main/core/NVCloak.java">
+        <entry file="file://$PROJECT_DIR$/src/napi/unit/NVNetworkTester.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3774">
-              <caret line="231" column="28" lean-forward="true" selection-start-line="231" selection-start-column="28" selection-end-line="231" selection-end-column="28" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#1760#1761#0" expanded="true" />
-                <element signature="e#1779#1780#0" expanded="true" />
-                <element signature="e#1840#1841#0" expanded="true" />
-                <element signature="e#1855#1856#0" expanded="true" />
-                <element signature="e#2065#2066#0" expanded="true" />
-                <element signature="e#2084#2085#0" expanded="true" />
-                <element signature="e#2139#2140#0" expanded="true" />
-                <element signature="e#2166#2167#0" expanded="true" />
-                <element signature="e#2358#2359#0" expanded="true" />
-                <element signature="e#2377#2378#0" expanded="true" />
-                <element signature="e#2428#2429#0" expanded="true" />
-                <element signature="e#2457#2458#0" expanded="true" />
-                <element signature="e#4924#4925#0" expanded="true" />
-                <element signature="e#4951#4952#0" expanded="true" />
-                <element signature="e#5842#5843#0" expanded="true" />
-                <element signature="e#5861#5862#0" expanded="true" />
-                <element signature="e#6091#6092#0" expanded="true" />
-                <element signature="e#6110#6111#0" expanded="true" />
-                <element signature="e#7359#7360#0" expanded="true" />
-                <element signature="e#7378#7379#0" expanded="true" />
-                <element signature="e#7449#7450#0" expanded="true" />
-                <element signature="e#7464#7465#0" expanded="true" />
-                <element signature="e#7704#7705#0" expanded="true" />
-                <element signature="e#7723#7724#0" expanded="true" />
-                <element signature="e#7788#7789#0" expanded="true" />
-                <element signature="e#7815#7816#0" expanded="true" />
-                <element signature="e#8035#8036#0" expanded="true" />
-                <element signature="e#8054#8055#0" expanded="true" />
-                <element signature="e#8113#8114#0" expanded="true" />
-                <element signature="e#8142#8143#0" expanded="true" />
-                <element signature="e#8344#8345#0" expanded="true" />
-                <element signature="e#8363#8364#0" expanded="true" />
-                <element signature="e#8418#8419#0" expanded="true" />
-                <element signature="e#8449#8450#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="107">
+              <caret line="230" selection-start-line="230" selection-end-line="230" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/napi/main/core/mem/NVMemory.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="217">
+              <caret line="254" selection-start-line="254" selection-end-line="254" />
             </state>
           </provider>
         </entry>
@@ -144,21 +146,25 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/napi/main/core/NVertex.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-6222">
-              <caret line="659" column="38" selection-start-line="659" selection-start-column="38" selection-end-line="659" selection-end-column="38" />
+            <state relative-caret-position="141">
+              <caret line="151" selection-start-line="151" selection-end-line="151" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#2481#2482#0" expanded="true" />
-                <element signature="e#2503#2504#0" expanded="true" />
-                <element signature="e#2553#2554#0" expanded="true" />
-                <element signature="e#2581#2582#0" expanded="true" />
-                <element signature="e#48831#48832#0" expanded="true" />
-                <element signature="e#48849#48850#0" expanded="true" />
-                <element signature="e#48887#48888#0" expanded="true" />
-                <element signature="e#48906#48907#0" expanded="true" />
-                <element signature="e#48947#48948#0" expanded="true" />
-                <element signature="e#48966#48967#0" expanded="true" />
+                <element signature="e#40867#40868#0" expanded="true" />
+                <element signature="e#43691#43692#0" expanded="true" />
+                <element signature="e#43754#43755#0" expanded="true" />
+                <element signature="e#43811#43812#0" expanded="true" />
+                <element signature="e#43871#43872#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="jar://C:/Program Files/Java/jdk-11.0.2/lib/src.zip!/java.base/java/util/ArrayList.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="6987">
+              <caret line="457" selection-start-line="457" selection-end-line="457" />
             </state>
           </provider>
         </entry>
@@ -178,7 +184,18 @@
       <find>toString(</find>
       <find>toStr</find>
       <find>NVCloak</find>
+      <find>signal(</find>
+      <find>signal</find>
+      <find>getDataAt</find>
+      <find>consume</find>
+      <find>getActivityS</find>
+      <find>NVData</find>
+      <find>consum</find>
+      <find>calculateER</find>
     </findStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -194,31 +211,33 @@
         <option value="$PROJECT_DIR$/src/NConsole.java" />
         <option value="$PROJECT_DIR$/src/napi/main/exec/gpu/NVCKernel.java" />
         <option value="$PROJECT_DIR$/src/napi/backup/NCore_NR.java" />
-        <option value="$PROJECT_DIR$/src/napi/main/comp/NGroup.java" />
         <option value="$PROJECT_DIR$/src/napi/main/comp/NGroup_Routing.java" />
         <option value="$PROJECT_DIR$/src/ngui/NVControlFrame.java" />
         <option value="$PROJECT_DIR$/src/napi/main/exec/gpu/NVConvector.java" />
         <option value="$PROJECT_DIR$/src/napi/main/exec/cpu/NThreadPool.java" />
         <option value="$PROJECT_DIR$/src/napi/main/exec/cpu/NThreadable.java" />
         <option value="$PROJECT_DIR$/src/ngui/NGraphBuilder.java" />
-        <option value="$PROJECT_DIR$/src/ngui/NPanelNode.java" />
         <option value="$PROJECT_DIR$/src/ngui/NCircleMenu.java" />
         <option value="$PROJECT_DIR$/src/NNetworkWindow.java" />
         <option value="$PROJECT_DIR$/src/ngui/NPanelUniverse.java" />
-        <option value="$PROJECT_DIR$/src/napi/unit/NVNetworkTester.java" />
-        <option value="$PROJECT_DIR$/src/napi/main/exec/NVExecutable.java" />
-        <option value="$PROJECT_DIR$/src/napi/unit/NVTester.java" />
-        <option value="$PROJECT_DIR$/src/napi/main/core/NVertex.java" />
         <option value="$PROJECT_DIR$/src/napi/main/core/NVNode.java" />
-        <option value="$PROJECT_DIR$/src/napi/main/core/comp/NVData.java" />
+        <option value="$PROJECT_DIR$/src/ngui/NPanelNode.java" />
+        <option value="$PROJECT_DIR$/src/napi/main/comp/NGroup.java" />
         <option value="$PROJECT_DIR$/src/napi/main/core/mem/NVMemory.java" />
+        <option value="$PROJECT_DIR$/src/napi/main/exec/NVExecutable.java" />
+        <option value="$PROJECT_DIR$/src/napi/unit/NVNetworkTester.java" />
+        <option value="$PROJECT_DIR$/src/napi/main/core/NVertex.java" />
+        <option value="$PROJECT_DIR$/src/napi/main/core/comp/NVElement.java" />
+        <option value="$PROJECT_DIR$/src/napi/main/core/comp/NVData.java" />
+        <option value="$PROJECT_DIR$/src/napi/unit/NVTester.java" />
+        <option value="$PROJECT_DIR$/src/napi/unit/io/NVTesting_Activation.java" />
         <option value="$PROJECT_DIR$/src/napi/main/core/imp/NVertex_Root.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="110" />
-    <option name="y" value="-38" />
+    <option name="x" value="82" />
+    <option name="y" value="-40" />
     <option name="width" value="3500" />
     <option name="height" value="1960" />
   </component>
@@ -227,8 +246,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -350,12 +367,14 @@
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1554892525796" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1555194847710" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RunDashboard">
@@ -407,35 +426,39 @@
       <updated>1554395330134</updated>
       <workItem from="1554395335705" duration="7452000" />
       <workItem from="1554413719806" duration="28810000" />
+      <workItem from="1554893348424" duration="259000" />
+      <workItem from="1554902197355" duration="20058000" />
+      <workItem from="1555153972939" duration="25972000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="36262000" />
+    <option name="totallyTimeSpent" value="82551000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22766958" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4990476" visible="true" weight="0.23505709" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Persistence" order="2" side_tool="true" />
       <window_info id="Designer" order="3" />
       <window_info id="Image Layers" order="4" />
       <window_info id="Capture Tool" order="5" />
       <window_info id="UI Designer" order="6" />
-      <window_info id="Favorites" order="7" side_tool="true" />
+      <window_info id="Favorites" order="7" sideWeight="0.50095236" side_tool="true" weight="0.23505709" />
       <window_info id="Learn" order="8" />
       <window_info id="Web" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32907802" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.16879432" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.25531915" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.23829788" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.43546098" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info anchor="bottom" id="Docker" order="8" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Messages" order="9" weight="0.32874617" />
+      <window_info anchor="bottom" id="Messages" order="9" weight="0.32765958" />
       <window_info anchor="bottom" id="Java Enterprise" order="10" />
       <window_info anchor="bottom" id="Database Changes" order="11" />
       <window_info anchor="bottom" id="Version Control" order="12" />
@@ -452,7 +475,47 @@
       <window_info anchor="right" id="Theme Preview" order="10" />
       <window_info anchor="right" id="Bean Validation" order="11" />
       <window_info anchor="right" id="Event Log" order="12" side_tool="true" weight="0.32975152" />
+      <window_info anchor="right" id="Coverage" order="13" side_tool="true" weight="0.161182" />
     </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4990476" visible="true" weight="0.23505709" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Persistence" order="2" side_tool="true" />
+      <window_info id="Designer" order="3" />
+      <window_info id="Image Layers" order="4" />
+      <window_info id="Capture Tool" order="5" />
+      <window_info id="UI Designer" order="6" />
+      <window_info id="Favorites" order="7" sideWeight="0.50095236" side_tool="true" weight="0.23505709" />
+      <window_info id="Learn" order="8" />
+      <window_info id="Web" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32907802" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.16737589" />
+      <window_info anchor="bottom" id="Debug" order="3" visible="true" weight="0.4028369" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info anchor="bottom" id="Docker" order="8" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Messages" order="9" weight="0.32765958" />
+      <window_info anchor="bottom" id="Java Enterprise" order="10" />
+      <window_info anchor="bottom" id="Database Changes" order="11" />
+      <window_info anchor="bottom" id="Version Control" order="12" />
+      <window_info anchor="right" id="Coverage" order="0" side_tool="true" weight="0.161182" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="1" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="2" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="3" weight="0.25" />
+      <window_info anchor="right" id="Palette" order="4" />
+      <window_info anchor="right" id="JSF" order="5" />
+      <window_info anchor="right" id="Capture Analysis" order="6" />
+      <window_info anchor="right" id="CDI" order="7" />
+      <window_info anchor="right" id="Maven" order="8" />
+      <window_info anchor="right" id="Database" order="9" />
+      <window_info anchor="right" id="Palette&#9;" order="10" />
+      <window_info anchor="right" id="Theme Preview" order="11" />
+      <window_info anchor="right" id="Bean Validation" order="12" />
+      <window_info anchor="right" id="Event Log" order="13" side_tool="true" weight="0.32975152" />
+    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -462,19 +525,19 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/napi/unit/NVTester.java</url>
-          <line>56</line>
+          <line>55</line>
           <properties />
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/napi/unit/NVTester.java</url>
-          <line>71</line>
+          <line>70</line>
           <properties />
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/napi/unit/NVTester.java</url>
-          <line>72</line>
+          <line>71</line>
           <properties />
           <option name="timeStamp" value="4" />
         </line-breakpoint>
@@ -484,21 +547,161 @@
           <properties />
           <option name="timeStamp" value="6" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/main/core/imp/NVertex_Root.java</url>
+          <line>808</line>
+          <properties />
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/main/core/imp/NVertex_Root.java</url>
+          <line>779</line>
+          <properties />
+          <option name="timeStamp" value="33" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/main/core/imp/NVertex_Root.java</url>
+          <line>873</line>
+          <properties />
+          <option name="timeStamp" value="37" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/main/core/imp/NVertex_Root.java</url>
+          <line>819</line>
+          <properties />
+          <option name="timeStamp" value="38" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/main/core/imp/NVertex_Root.java</url>
+          <line>1102</line>
+          <properties />
+          <option name="timeStamp" value="42" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/main/core/comp/NVData.java</url>
+          <line>90</line>
+          <properties />
+          <option name="timeStamp" value="44" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/main/core/imp/NVertex_Root.java</url>
+          <line>1077</line>
+          <properties />
+          <option name="timeStamp" value="45" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/main/core/imp/NVertex_Root.java</url>
+          <line>821</line>
+          <properties />
+          <option name="timeStamp" value="46" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/main/core/comp/NVElement.java</url>
+          <line>430</line>
+          <properties />
+          <option name="timeStamp" value="47" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/main/core/comp/NVData.java</url>
+          <line>130</line>
+          <properties />
+          <option name="timeStamp" value="48" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/main/core/imp/NVertex_Root.java</url>
+          <line>807</line>
+          <properties />
+          <option name="timeStamp" value="51" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/unit/NVNetworkTester.java</url>
+          <line>230</line>
+          <properties />
+          <option name="timeStamp" value="52" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/main/core/imp/NVertex_Root.java</url>
+          <line>1136</line>
+          <properties />
+          <option name="timeStamp" value="53" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/main/core/comp/NVData.java</url>
+          <line>137</line>
+          <properties />
+          <option name="timeStamp" value="54" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/main/core/comp/NVData.java</url>
+          <line>139</line>
+          <properties />
+          <option name="timeStamp" value="58" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/unit/NVTester.java</url>
+          <line>36</line>
+          <properties />
+          <option name="timeStamp" value="59" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/unit/NVTester.java</url>
+          <line>172</line>
+          <properties />
+          <option name="timeStamp" value="60" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/unit/NVTester.java</url>
+          <line>32</line>
+          <properties />
+          <option name="timeStamp" value="61" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/unit/NVTester.java</url>
+          <line>508</line>
+          <properties />
+          <option name="timeStamp" value="62" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/unit/io/NVTesting_Activation.java</url>
+          <line>111</line>
+          <properties />
+          <option name="timeStamp" value="63" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/napi/main/core/imp/NVertex_Root.java</url>
+          <line>191</line>
+          <properties />
+          <option name="timeStamp" value="64" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="((NVertex_Root)this).ID" custom="napi.main.core.imp.NVertex_Root" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="customField">
+      <expression>
+        <expression-string>this.isLast()</expression-string>
+        <language-id>JAVA</language-id>
+        <custom-info>napi.main.core.imp.NVertex_Root</custom-info>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>((NVertex_Root) this).isLast()</expression-string>
+        <language-id>JAVA</language-id>
+        <custom-info>napi.main.core.imp.NVertex_Root</custom-info>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
   </component>
   <component name="editorHistoryManager">
     <entry file="jar://C:/Program Files/Java/jdk-11.0.2/lib/src.zip!/java.desktop/java/awt/event/ActionListener.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="142">
           <caret line="43" column="3" selection-start-line="43" selection-start-column="3" selection-end-line="43" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/napi/main/core/calc/NVFHead.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
-          <caret line="1374" column="20" selection-start-line="1374" selection-start-column="20" selection-end-line="1374" selection-end-column="20" />
         </state>
       </provider>
     </entry>
@@ -557,17 +760,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="51">
           <caret line="3" selection-start-line="3" selection-end-line="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/napi/main/comp/NGroup.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="34" column="48" selection-start-line="34" selection-start-column="48" selection-end-line="34" selection-end-column="48" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#298#307#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -689,13 +881,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ngui/NPanelNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="70">
-          <caret line="1497" column="26" lean-forward="true" selection-start-line="1497" selection-start-column="26" selection-end-line="1497" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/NNetworkWindow.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="121">
@@ -713,23 +898,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/napi/unit/io/NVTesting_Activation.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="123">
-          <caret line="300" selection-start-line="300" selection-end-line="300" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/napi/main/core/comp/NVElement.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="139">
-          <caret line="220" selection-start-line="220" selection-end-line="220" />
-          <folding>
-            <element signature="e#5993#5994#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/NSMain.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="224">
@@ -737,38 +905,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/napi/unit/NVNetworkTester.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="174" column="10" lean-forward="true" selection-start-line="174" selection-start-column="10" selection-end-line="174" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/napi/main/exec/NVExecutable.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="26" selection-start-line="6" selection-start-column="26" selection-end-line="6" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/napi/unit/state/NVTesting_Format.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-102">
-          <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/napi/unit/NVTester.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="472" column="26" lean-forward="true" selection-start-line="472" selection-start-column="26" selection-end-line="472" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/napi/main/core/NVCloak.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3774">
-          <caret line="231" column="28" lean-forward="true" selection-start-line="231" selection-start-column="28" selection-end-line="231" selection-end-column="28" />
+        <state relative-caret-position="623">
+          <caret line="231" column="28" selection-start-line="231" selection-start-column="28" selection-end-line="231" selection-end-column="28" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#1760#1761#0" expanded="true" />
@@ -809,62 +949,151 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/napi/main/core/NVertex.java">
+    <entry file="file://$PROJECT_DIR$/src/napi/unit/state/NVTesting_Format.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-6222">
-          <caret line="659" column="38" selection-start-line="659" selection-start-column="38" selection-end-line="659" selection-end-column="38" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2481#2482#0" expanded="true" />
-            <element signature="e#2503#2504#0" expanded="true" />
-            <element signature="e#2553#2554#0" expanded="true" />
-            <element signature="e#2581#2582#0" expanded="true" />
-            <element signature="e#48831#48832#0" expanded="true" />
-            <element signature="e#48849#48850#0" expanded="true" />
-            <element signature="e#48887#48888#0" expanded="true" />
-            <element signature="e#48906#48907#0" expanded="true" />
-            <element signature="e#48947#48948#0" expanded="true" />
-            <element signature="e#48966#48967#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="68">
+          <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ngui/NPanelNode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="1464" column="9" lean-forward="true" selection-start-line="1464" selection-start-column="9" selection-end-line="1464" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/napi/main/core/calc/NVFHead.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="1493" selection-start-line="1493" selection-end-line="1493" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/napi/main/core/NVNode.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="841">
+        <state relative-caret-position="2125">
           <caret line="127" column="44" selection-start-line="127" selection-start-column="44" selection-end-line="127" selection-end-column="44" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/napi/main/core/comp/NVData.java">
+    <entry file="file://$PROJECT_DIR$/src/napi/main/comp/NGroup.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="20" column="8" selection-start-line="20" selection-start-column="8" selection-end-line="20" selection-end-column="8" />
+        <state relative-caret-position="1258">
+          <caret line="81" column="8" selection-start-line="81" selection-start-column="8" selection-end-line="81" selection-end-column="21" />
           <folding>
-            <element signature="e#2592#2593#0" expanded="true" />
-            <element signature="e#2631#2632#0" expanded="true" />
-            <element signature="e#21970#21971#0" expanded="true" />
-            <element signature="e#22010#22011#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#3385#3386#0" expanded="true" />
+            <element signature="e#3404#3405#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk-11.0.2/lib/src.zip!/java.base/java/util/Objects.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5559">
+          <caret line="371" selection-start-line="371" selection-end-line="371" />
+          <folding>
+            <element signature="e#13945#13946#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk-11.0.2/lib/src.zip!/java.base/java/util/ArrayList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6987">
+          <caret line="457" selection-start-line="457" selection-end-line="457" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/napi/main/exec/NVExecutable.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="19" selection-start-line="10" selection-start-column="19" selection-end-line="10" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/napi/main/core/comp/NVElement.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="150" selection-start-line="150" selection-end-line="150" />
+          <folding>
+            <element signature="e#9341#9342#0" expanded="true" />
+            <element signature="e#9360#9361#0" expanded="true" />
+            <element signature="e#9459#9460#0" expanded="true" />
+            <element signature="e#9478#9479#0" expanded="true" />
+            <element signature="e#9608#9609#0" expanded="true" />
+            <element signature="e#9628#9629#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/napi/unit/NVNetworkTester.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="107">
+          <caret line="230" selection-start-line="230" selection-end-line="230" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/napi/main/core/mem/NVMemory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="963">
-          <caret line="86" lean-forward="true" selection-start-line="86" selection-end-line="86" />
+        <state relative-caret-position="217">
+          <caret line="254" selection-start-line="254" selection-end-line="254" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/napi/main/core/comp/NVData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="199">
+          <caret line="36" selection-start-line="36" selection-end-line="36" />
           <folding>
-            <element signature="e#2682#2690#0" expanded="true" />
+            <element signature="e#2370#2371#0" expanded="true" />
+            <element signature="e#2541#2542#0" expanded="true" />
+            <element signature="e#5004#5005#0" expanded="true" />
+            <element signature="e#23469#23470#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/napi/unit/NVTester.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="107">
+          <caret line="508" selection-start-line="508" selection-end-line="508" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/napi/main/core/NVertex.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="141">
+          <caret line="151" selection-start-line="151" selection-end-line="151" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#40867#40868#0" expanded="true" />
+            <element signature="e#43691#43692#0" expanded="true" />
+            <element signature="e#43754#43755#0" expanded="true" />
+            <element signature="e#43811#43812#0" expanded="true" />
+            <element signature="e#43871#43872#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/napi/unit/io/NVTesting_Activation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="141">
+          <caret line="111" selection-start-line="111" selection-end-line="111" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/napi/main/core/imp/NVertex_Root.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3355">
-          <caret line="849" column="56" selection-start-line="849" selection-start-column="56" selection-end-line="849" selection-end-column="56" />
+        <state relative-caret-position="114">
+          <caret line="184" column="54" selection-start-line="184" selection-start-column="54" selection-end-line="184" selection-end-column="54" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#3342#3343#0" expanded="true" />
+            <element signature="e#3389#3390#0" expanded="true" />
+            <element signature="e#85576#85577#0" expanded="true" />
+            <element signature="e#85786#85787#0" expanded="true" />
           </folding>
         </state>
       </provider>

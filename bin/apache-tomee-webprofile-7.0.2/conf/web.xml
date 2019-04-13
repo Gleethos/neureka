@@ -52,7 +52,7 @@
   <!--   listings            Should directory listings be produced if there -->
   <!--                       is no welcome file in this directory?  [false] -->
   <!--                       WARNING: Listings for directories with many    -->
-  <!--                       entries can be slow and may consume            -->
+  <!--                       entries can be slow and may load            -->
   <!--                       significant proportions of server resources.   -->
   <!--                                                                      -->
   <!--   output              Output buffer size (in bytes) when writing     -->

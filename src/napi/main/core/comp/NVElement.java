@@ -55,7 +55,7 @@ public class NVElement
 		return false;
 	}
 	public void setHasError(boolean hasError) {
-		if(hasError!=hasInput()) {
+		if(hasError!=hasError()) {
 			if(hasError) {flags+=hasError_MASK;}
 			else {flags-=hasError_MASK;}
 		}
@@ -66,7 +66,7 @@ public class NVElement
 		return false;
 	}
 	public void setHasOptimum(boolean hasOptimum) {
-		if(hasOptimum!=hasInput()) {
+		if(hasOptimum!=hasOptimum()) {
 			if(hasOptimum) {flags+=hasOptimum_MASK;}
 			else {flags-=hasOptimum_MASK;}
 		}
@@ -91,6 +91,7 @@ public class NVElement
 	public NVElementVariable[] Variable;//WEIGHTS, BIASES AND THEIR GRADIENTS!
 	//private double[][] Data;//STORAGE FOR ACTIVATIONS, DERIVATIVES AND CURRENT ERROR VALUE!
 	//=============================================================================================================
+	public int inputSize(){return Variable.length;}
 	public NVElement(int inputSize)
 	{
 		Variable = new NVElementVariable[Math.abs(inputSize)];
@@ -436,7 +437,6 @@ public class NVElement
 	}
 	public void nullGradients() 
 	{
-		
 		for(int Ii=0; Ii<Variable.length; Ii++)
 		{
 			Variable[Ii].WeightGradient=null;

@@ -58,8 +58,9 @@ public class NVTesting_Activation {
 	
 	public int testGraph_ScalarActivation(NVertex[] Structure, NVertex head, double expected, String description) 
 	{
-		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().cleanup();}
-		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().forward();   }
+		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().loadState();}
+		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().forward();  }
+		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().loadState();}
 		boolean success = true;
 		Console.println("  "+description);
 		Console.println("[O][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=]=>");
@@ -109,6 +110,7 @@ public class NVTesting_Activation {
 		boolean success = true;
 		core.setInput(input);
 		core.asExecutable().forward();
+		core.asExecutable().loadState();
 		Console.println("");
 		Console.println(" "+core.getFunction().expression());
 		Console.println(" "+description+"; Activation Test on Head: "+core.getFunction().expression());
@@ -165,8 +167,9 @@ public class NVTesting_Activation {
 	}
 	public int testGraph_VectorActivation(NVertex[] Structure, NVertex head, double[] expected, String description) 
 	{
-		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().cleanup();}
-		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().forward();   }
+		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().loadState();}
+		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().forward();  }
+		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().forward();  }
 		boolean success = true;
 		Console.println("  "+description);
 		Console.println("[O][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=]=>");
@@ -231,8 +234,9 @@ public class NVTesting_Activation {
 	
 	public int testGraph_InputDeriviation(NVertex[] Structure, NVertex head, double[] expected) 
 	{
-		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().cleanup();}
+		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().loadState();}
 		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().forward();}
+		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().forward();  }
 		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().preBackward(BigInteger.ZERO);}
 		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().Backward(BigInteger.ZERO);}
 		
@@ -297,8 +301,9 @@ public class NVTesting_Activation {
 	
 	public int testGraph_RelationalDeriviation(NVertex[] Structure, NVertex head, double[] expectedInput, double[] expectedRelational) 
 	{
-		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().cleanup();}
+		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().loadState();}
 		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().forward();}
+		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().forward();  }
 		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().preBackward(BigInteger.ZERO);}
 		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().Backward(BigInteger.ZERO);}
 		
