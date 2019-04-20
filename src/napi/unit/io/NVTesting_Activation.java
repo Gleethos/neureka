@@ -22,6 +22,7 @@ public class NVTesting_Activation {
 		boolean success = true;
 		core.setInput(0,input);
 		core.asExecutable().forward();
+		core.asExecutable().loadState();
 		Console.println("");
 		Console.println(bar+"  Activation Test: "+core.getFunction().expression());
 		Console.println("[O][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=]=>");
@@ -169,7 +170,7 @@ public class NVTesting_Activation {
 	{
 		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().loadState();}
 		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().forward();  }
-		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().forward();  }
+		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().loadState();  }
 		boolean success = true;
 		Console.println("  "+description);
 		Console.println("[O][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=]=>");
@@ -236,7 +237,7 @@ public class NVTesting_Activation {
 	{
 		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().loadState();}
 		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().forward();}
-		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().forward();  }
+		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().loadState();  }
 		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().preBackward(BigInteger.ZERO);}
 		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().Backward(BigInteger.ZERO);}
 		
@@ -303,7 +304,7 @@ public class NVTesting_Activation {
 	{
 		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().loadState();}
 		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().forward();}
-		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().forward();  }
+		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().loadState();  }
 		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().preBackward(BigInteger.ZERO);}
 		for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().Backward(BigInteger.ZERO);}
 		

@@ -10,7 +10,7 @@ public interface NVNeuron
 	
 	public NVData activationOf(NVData Data, int Vi);
 	
-	public NVData weightedConvectionOf(boolean[] inputSignal, int Vi);
+	public NVData weightedConvectionOf(NVData Data, boolean[] inputSignal, int Vi);
 
 	public boolean[] publicized(boolean[] signal);
 	

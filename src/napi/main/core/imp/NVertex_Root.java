@@ -25,7 +25,6 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 		{
 			super(size, isFirst, isLast, neuronID, functionID);
 			shoutLine("new NVertex_Root(int size="+size+", boolean isFirst="+isFirst+", boolean isLast="+isLast+", int v_id="+neuronID+", int f_id="+functionID+")|: ...created!");
-			//addModule(new NVCloak(this));
 			setParent((NVParent)this);
 		}
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -33,7 +32,6 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 		{
 			super(size, isFirst, isLast, neuronID, functionID, tunnel);
 			shoutLine("new NVertex_Root(int size="+size+", boolean isFirst="+isFirst+", boolean isLast="+isLast+", int v_id="+neuronID+", int f_id="+functionID+", int delay="+tunnel+")|: ...created!");
-			//addModule(new NVCloak(this));
 			setParent((NVParent)this);
 		}
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -41,13 +39,10 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 		{
 			super(parent, isFirst, isLast, neuronID, functionID, 1);
 			shoutLine("new NVertex_Root(NVNode mother=#"+parent.asCore().getID()+", boolean isFirst="+isFirst+", boolean isLast="+isLast+", int v_id="+neuronID+", int f_id="+functionID+")|: ...created!");
-			if(parent==null) 
-			{
-				//addModule(new NVCloak(this));
+			if(parent==null){
 				setParent((NVParent)this);
 			}
-			else
-		    {
+			else{
 				setParent(parent.asRoot().asParent());
 		    }
 		}
@@ -56,13 +51,10 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 		{
 			super(parent, isFirst, isLast, neuronID, functionID, tunnel);
 			shoutLine("new NVertex_Root(NVNode mother=#"+parent.asCore().getID()+", boolean isFirst="+isFirst+", boolean isLast="+isLast+", int v_id="+neuronID+", int f_id="+functionID+", int delay="+tunnel+")|: ...created!");
-			if(parent==null) 
-			{
-				//addModule(new NVCloak(this));
+			if(parent==null){
 				setParent((NVParent)this);
 			}
-			else
-		    {
+			else{
 				setParent(parent.asRoot().asParent());
 		    }
 		}
@@ -70,9 +62,9 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 		public NVertex_Root(NVertex toBeCopied)
 		{
 			super(toBeCopied);
-			//addModule(new NVCloak(this));
 			setParent(this);
-		}//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		}
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		@Override //NExecutable
 		public boolean loadState()
 		{
@@ -87,8 +79,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 			}
 			return cleanupChildren(Hi);
 		}
-		// Forward/Backward Propagation Functions:
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		private boolean cleanupChildren(BigInteger Hi)
 		{
 			shoutLine("NVertex_Root->cleanupChildren()|: ...");
@@ -132,9 +123,6 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 						if(State.isRoot(Connection[Ii][Ni].asCore())==true)
 						{
 							shoutLine("-cleanupChildren()|:('Ii':"+Ii+")|:('Ni':"+Ni+")|: (Connection["+Ii+"]["+Ni+"].Core == root):");
-							shoutLine("-cleanupChildren()|:('Ii':"+Ii+")|:('Ni':"+Ni+")|: =>Connection["+Ii+"]["+Ni+"] = Connection["+Ii+"]["+Ni+"].Node()  ");
-							Connection[Ii][Ni] = Connection[Ii][Ni].asNode();
-							//-----------------------------------------------
 							if(State.isChild(Connection[Ii][Ni].asCore()) == true)
 							{
 								shoutLine("-cleanupChildren()|:('Ii':"+Ii+")|:('Ni':"+Ni+")|: (Connection["+Ii+"]["+Ni+"].Core == child):");
@@ -172,9 +160,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 				shoutLine("-forward()|: END\n");
 				return;
 			}
-			//result should be NVElement[]!
 			NVData result = null;
-			
 			boolean[] signal = saved(publicized(inputSignalIf(forwardCondition())));
 			
 			shoutLine("-forward()|: for(int Vi=0; Vi<this.size(); Vi++):");
@@ -185,7 +171,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 				result = //THIS IS WORK IN PROGRESS!!!
 				activationOf
 				(
-					weightedConvectionOf(signal, Vi), 
+					weightedConvectionOf(result, signal, Vi),
 					Vi
 			    );
 			}
@@ -299,8 +285,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 	 						boolean childSignal = // Correct to distributeInputSignal
 	 								Connection[Ii][Ni].asRoot().distributeRootSignal(selfState);
 	 						
-	 						if(childSignal==true)
-	 						{
+	 						if(childSignal==true) {
 	 							check = true;
 	 						}
 		 				}
@@ -359,7 +344,6 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 					{
 						shoutLine("-distributeRootSignal(...)|: ('Ii':"+Ii+")|:=>('Ni':"+Ni+")|: Connection[Ii][Ni]=Connection[Ii][Ni].Node();");
 						Connection[Ii][Ni]=Connection[Ii][Ni].asNode();
-						
 						if(Connection[Ii][Ni].is(Child))
 						{
 							shoutLine("-distributeRootSignal(...)|: ('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:(Connection[Ii][Ni].is(Child)):");		
@@ -447,8 +431,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 			NPanelNode PanelNode = (NPanelNode) findModule(NPanelNode.class);
 			if (PanelNode != null) 
 			{
-				if (PanelNode != null) 
-				{
+				if (PanelNode != null){
 					PanelNode.requestDataDisplayUpdate();
 					PanelNode.setInputActivity(signal);//This signal is not complete!
 				} // IO DISPLAY!!!!
@@ -462,22 +445,39 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 		{
 			if(Connection!=null) 
 			{
-				if(Connection[0].is(NVertex.Child)) 
-				{
+				if(Connection[0].is(NVertex.Child)) {
 					return true;
 				}
 			}
 			return false;
 		}
 		@Override	
-		public NVData weightedConvectionOf(boolean[] Signal, int Vi) 
+		public NVData weightedConvectionOf(NVData Data, boolean[] Signal, int Vi)
 		{
 			shoutLine("NVertex_Root->startWeightConvection(boolean[] inputSignal, int Vi)|: ...");
 			shoutLine("========================================================================");
-			if(Element[Vi].hasInput()==false) {Element[Vi].setInput(new double[Connection.length]);}//maybe return instead?
-			/*Why would LD[1] (input values) ever be null?!?!
-			 *=> Some root units (basic root type) set their input arrays to null in order to safe memory.
+
+			//Dim = findModule(...);
+			int[] selfDim, otherDim, weightDim, form;
+			//int Vi, int Wi
+
+			/**
+			 * 		int[] selfDim = findModule(int[].class);
+			 *
+			 * 		//[Ii][Ni][0]=>weightDim [1]=>form
+			 *		int[][] FormData = findModule(int[][][][].class)[Ii][Ni]
+			 *	    int[] weightDim = FormData[0];
+			 *	    int[] connForm = FormData[1];
+			 *
 			 * */
+
+
+			if(Data==null) {
+				Data = new NVData(Element);
+			}
+			if(Data.hasInput(Vi)==false) {//maybe return instead?
+				Data.setInput(Vi, new double[Connection.length]);
+			}
 			if(Signal==null) 
 			{
 				Signal=new boolean[this.inputSize()];
@@ -500,129 +500,90 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 			}
 			double[] update = {0};
 			boolean[] isRootConnection = {false};
-			QuinIteration ConvectionStep = null;
- 			ConvectionStep = 
+			//===============================================================================
+			QuinIteration ConvectionStep =
  			(int vi, int ii, int ni, int ei, int wi)->
 			{
-				shoutLine("-weightConvectionOf(...,'vi':"+vi+")|: ('Ii':"+ii+")|:=>('Ni':"+ni+")|:('Wi':"+wi+", 'Ci':"+ei+")|:(State.isRoot(this) == true):");
-	     		if(Connection[ii][ni] != Connection[ii][ni].asNode()) 
+	     		if(Connection[ii][ni]!=asNode() && isRootConnection[0])
 	     		{
-	     			Connection[ii][ni] = Connection[ii][ni].asNode();
-	     		}
-	     		shoutLine("-weightConvectionOf(...,'vi':"+vi+")|: ('Ii':"+ii+")|:=>('Ni':"+ni+")|:('Wi':"+wi+", 'Ci':"+ei+")|:=>(Element[vi].Dendrite[Ii].Weight != null):");
-	     		if(Connection[ii][ni]!=asNode() && isRootConnection[0]) 
-	     		{
-	     			shoutLine("-weightConvectionOf(...,'vi':"+vi+")|: ('Ii':"+ii+")|:=>('Ni':"+ni+")|:('Wi':"+wi+", 'Ci':"+ei+")|:=>=>(Connection[Ii][Ni]!=Node() && isRootConnection[0]):");
-	     			if (Element[vi].Variable[ii].Weight == null) // WHY? => inner root nodes dont need weighted connections
-	     			{
-	     			  	shoutLine("-weightConvectionOf(...,'vi':"+vi+")|: ('Ii':"+ii+")|:=>('Ni':"+ni+")|:('Wi':"+wi+", 'Ci':"+ei+")|:=>=>=>(Element[vi].Dendrite[Ii].Weight == null):");
-	     			  	shoutLine("-weightConvectionOf(...,'vi':"+vi+")|: ('Ii':" + ii + ")|:=>('Ni':" + ni + ")|:('Wi':"+wi+", 'Ci':"+ei+")|:=>=>=>=> 'update[0]':"+update[0]+" = Connection[Ii][Ni].Root().findRootActivation(vi) * 1;");
+	     			if (Element[vi].Variable[ii].Weight == null) {// WHY? => inner root nodes dont need weighted connections
 	     			  	update[0] += Connection[ii][ni].asRoot().findRootActivation(vi) * 1;
-	     			  	shoutLine("-weightConvectionOf(...,'vi':"+vi+")|: ('Ii':" + ii + ")|:=>('Ni':" + ni + ")|:('Wi':"+wi+", 'Ci':"+ei+")|:=>=>=>=> 'update[0]':"+update[0]+"");
-	     			} 
-	     			else //If connection == this ==> bn
-	       		   	{
-	     			  	shoutLine("-weightConvectionOf(...,'vi':"+vi+")|: ('Ii':"+ii+")|:=>('Ni':"+ni+")|:('Wi':"+wi+", 'Ci':"+ei+")|:=>=>=>(Element[vi].Dendrite[Ii].Weight != null):");
-	     			  	update[0] += Connection[ii][ni].asRoot().findRootActivation(vi) * Element[vi].Variable[ii].Weight[wi];
-	     			  	shoutLine("-weightConvectionOf(...,'vi':"+vi+")|: ('Ii':" + ii + ")|:=>('Ni':" + ni + ")|:('Wi':"+wi+", 'Ci':"+ei+")|:=>=>=>=> update[0] = Connection[Ii][Ni].Root().findRootActivation(vi) * Element[vi].Dendrite[Ii].Weight[Wi];");
+	     			}
+	     			else {//If connection == this ==> bn
+	     			  	update[0] += Connection[ii][ni].asRoot().findRootActivation(vi) * this.getWeight(vi, ii, wi);//Element[vi].Variable[ii].Weight[wi];
 	     			}
 	     		}
 	     		else 
 	    		{
-	   				shoutLine("-weightConvectionOf(...,'vi':"+vi+")|: ('Ii':"+ii+")|:=>('Ni':"+ni+")|:('Wi':"+wi+", 'Ci':"+ei+")|:=>=>((Connection[Ii][Ni]!=Node() && isRootConnection[0])==false):");
-	    			if(Element[vi].Variable[ii].Weight == null) // WHY? :=> inner root nodes don't need weighted connections
-	     			{
-	     			  	shoutLine("-weightConvectionOf(...,'vi':"+vi+")|: ('Ii':"+ii+")|:=>('Ni':"+ni+")|:('Wi':"+wi+", 'Ci':"+ei+")|:=>=>=>(Element[vi].Dendrite[Ii].Weight == null):");
+	   				if(Element[vi].Variable[ii].Weight == null) {//this.hasWeight(vi, ii) WHY? :=> inner root nodes don't need weighted connections
 	     			  	update[0] += (Connection[ii][ni].getActivation(ei)-Connection[ii][ni].getOptimum(ei)) * 1;
-	     			  	shoutLine("-weightConvectionOf(...,'vi':"+vi+")|: ('Ii':" + ii + ")|:=>('Ni':" + ni + ")|:('Wi':"+wi+", 'Ci':"+ei+")|:=>=>=>=> update[0] = Connection[Ii][Ni].Activation(Ci)-Connection[Ii][Ni].Optimum(Ci) * 1;");
-	     			} 
-	     			else //If connection == this ==> no need for recursive call
-	     			{
-	     			  	shoutLine("-weightConvectionOf(...,'vi':"+vi+")|: ('Ii':"+ii+")|:=>('Ni':"+ni+")|:('Wi':"+wi+", 'Ci':"+ei+")|:=>=>=>(Element[vi].Dendrite[Ii].Weight != null):");
-	     			  	update[0] += (Connection[ii][ni].getActivation(ei)-Connection[ii][ni].getOptimum(ei)) * Element[vi].Variable[ii].Weight[wi];
-	     			  	shoutLine("-weightConvectionOf(...,'vi':"+vi+")|: ('Ii':" + ii + ")|:=>('Ni':" + ni + ")|:('Wi':"+wi+", 'Ci':"+ei+")|:=>=>=>=> update[0] = Connection[Ii][Ni].Activation(Ci)-Connection[Ii][Ni].Optimum(Ci) * 'Element[vi].Dendrite[Ii].Weight[Wi]':"+Element[vi].Variable[ii].Weight[wi]+";");
+	     			}
+	     			else {//If connection == this ==> no need for recursive call
+	     			  	update[0] += (Connection[ii][ni].getActivation(ei)-Connection[ii][ni].getOptimum(ei)) * this.getWeight(vi, ii, ni);//Element[vi].Variable[ii].Weight[wi];//
 	     			}
 	     		}	
 			};
  			//===============================================================================
 			for (int Ii = 0; Ii < Connection.length; Ii++) 
 			{
-				shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|: ...");
-				if(isRootConnection(Connection[Ii])==false) 
-				{
-					shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|: if(isRootConnection[0](Connection[Ii])==false):");
-					shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|:=> check =  'Signal[Ii]':"+Signal[Ii]+";");	
-				}
-				//Note: input signal function must be modified to match this here !!
-				if(Signal[Ii]==true && Connection[Ii]!=null) 
-				{//Note: -> if an input does not recieve a signal-> the last input will be retained! (resetting it would distort reality)
-					shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|: (Signal[Ii]==true && Connection[Ii]!=null):");
-					shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|:=> Element[Vi].Input()[Ii] = 0;");
-					//this.setInput(Vi, Ii, 0);
-					Element[Vi].setInput(Ii, 0.0);//New Value will be stored here -> therefore: reset to 0
-					shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|:=> double update[0] = 0;");
-					
-					shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|:=> boolean isRootConnection[0]=false;");
+				if(Signal[Ii]==true && Connection[Ii]!=null) {//Note: -> if an input does not recieve a signal-> the last input will be retained! (resetting it would distort reality)
+					Data.setInput(Vi, Ii, 0.0);
 					isRootConnection[0]=false;
-					if(State.isChild(Connection[Ii][0].asNode())) 
-					{
-						shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|:=>(State.isChild(Connection[Ii][0].Node())):");
-						shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|:=>=> isRootConnection[0]=true;");
+					if(State.isChild(Connection[Ii][0].asNode())) {
 						isRootConnection[0]=true;
 					}
-					shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':" + Ii + ")|:=> 'isRootConnection[0]':"+isRootConnection[0]);
-					shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':" + Ii + ")|:=> int Wi=0;");
-				    int Wi=0;
-				    shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':" + Ii + ")|:=> for (int Ni = 0; Ni < Connection[Ii].length; Ni++):");
-					if(isRootConnection[0])
-					{
+
+				    if(isRootConnection[0]) {
 						for (int Ni = 0; Ni < Connection[Ii].length; Ni++) 
 					    {   
-							update[0] = 0;
-							shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+")|: Connection[Ii][Ni]=Connection[Ii][Ni].Node();");
-						    Connection[Ii][Ni]=Connection[Ii][Ni].asNode();
-					     	shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+")|: int limit = 'Connection[Ii][Ni].size()':"+Connection[Ii][Ni].size()+" + 'Wi':"+Wi+"; ");
-					     	shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+")|: int Ci=0;");
-					     	
-					     	shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|:=>('Ni':"+Ni+")|: ConvectionStep.foreach(Vi, Ii, Ni, Ni, Ni); ..."); 
-					     	//==================================================
+							update[0] = 0;//Note: Vi == Wi (Wi not needed!)
+					        //==================================================
 					     	ConvectionStep.on(Vi, Ii, Ni, Ni, Ni);
 					     	//==================================================
-					     	shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+")|: 'Element[Vi].Input()[Ii]':"+Element[Vi].getInput()[Ii]+" += 'update[0]':"+update[0]+";");
-				     		Element[Vi].addToInput(Ii, update[0]);
-					    }//Ni loop closed
+					     	Data.addToInput(Vi, Ii, update[0]);
+					    }
 					}
 					else
 					{
+						int Wi=0;
 						for (int Ni = 0; Ni < Connection[Ii].length; Ni++) 
-					    {   
+					    {
+					    	//otherDim = Connection[Ii][Ni]
+							//wightDim = findModule()
+							//OtoWFrmt = Connection[Ii][Ni].frmt
+
 							update[0] = 0;
-							shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+")|: Connection[Ii][Ni]=Connection[Ii][Ni].Node();");
-						    Connection[Ii][Ni]=Connection[Ii][Ni].asNode();
-					     	shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+")|: int limit = 'Connection[Ii][Ni].size()':"+Connection[Ii][Ni].size()+" + 'Wi':"+Wi+"; ");
-					     	shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+")|: int Ci=0;");
 					     	int limit = Connection[Ii][Ni].size()+Wi; 
 					     	int Ci=0;
-					     	while(Wi<limit)
+					     	while(Wi<limit)//<= Cycling through weights of current node!
 				        	{
-					     		shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",  'Ci':"+Ci+")|: ..."); 
+				        		//TODO: self.Dim[ 3][2  ][ 5][4  ][2]=>Vi to coord!
+								//TODO: seWo.Dim[-1][  2][-4][  2]   =>Wi to coord!
+								//TODO: rslt.Dim[ 3][2|2][ 2][4|2][2]<=Has to lead to
+				        		//TODO: othr.Dim[7][4][3][6][9]=>Wi to coord!
+								/**-----------------------------------------
+								 * 		[2][1][4][6][8][6]
+								 * 		[3][-1][2][-4][-5][6]//[0][0][0]=>3 times othr
+								 * 		is really:
+								 * 		[4  ][-2][1  ][-6][-8][6  ]
+								 *		   	   |	    |   |
+								 * 		[  6][ 7][  2][ 1][ 4][  8] <= then multiplying with this
+								 * 		[4|6][ 6][1|2][ 6][ 5][6|8]
+								 *
+								 * */
 					     		//==================================================
-					     		ConvectionStep.on(Vi, Ii, Ni, Ci, Wi);
+					     		ConvectionStep.on(Vi, Ii, Ni, Ci, Wi);// TODO: Apply with dimensionality considered!
 					     		//==================================================
-					     		shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",  'Ci':"+Ci+")|: Wi++; Ci++;"); 
 				     			Wi++; 
 				     			Ci++;
-				        	}//Wi loop closed
-					     	shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+")|: 'Element[Vi].Input()[Ii]':"+Element[Vi].getInput()[Ii]+" += 'update[0]':"+update[0]+";");
-				     		Element[Vi].addToInput(Ii, update[0]);
-					    }//Ni loop closed	
+				        	}
+					     	Data.addToInput(Vi, Ii, update[0]);
+					    }
 					}
 				}
-				shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: ('Ii':" + Ii + ")|: 'Element['Vi':"+Vi+"].Input()['Ii':"+Ii+"]':" + Element[Vi].getInput()[Ii] + "; ");
 			}
 			shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: return Element[Vi].Data;");
 			shoutLine("-weightConvectionOf(...,'Vi':"+Vi+")|: END\n");
-			NVData Data = new NVData(Element);
 			return Data;
 		}
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -660,25 +621,21 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 				for(int Ii=0; Ii<size; Ii++) 
 				{
 					Data.setActivation(Vi, Data.getActivation(Vi)*Data.getInput(Vi, Ii));
-					//LocalE.Data[1]*=LocalE.Data[Ii+2];
 				}
 				for(int Ii=0; Ii<size; Ii++) 
 			    {
 					Data.setInput(Vi, Ii, 1);
 					for(int i=0; i<size; i++) 
 					{
-						if(Ii!=i) 
-						{
-							Data.setInputDerivative(Vi, Ii,
-									Data.getInputDerivative(Vi, Ii)*Data.getInput(Vi, Ii)
+						if(Ii!=i) {
+							Data.setInputDerivative(
+								Vi, Ii,
+						      Data.getInputDerivative(Vi, Ii) * Data.getInput(Vi, Ii)
 							);
-							//E.Data[2][Ii] *= E.Data[1][i];
 						}
 					}
 				}
 			}
-			shoutLine("-activationOf(...,'Vi':"+Vi+")|: 'E.Data[0][0]':"+Data.getActivation(Vi) + ";");
-			shoutLine("-activationOf(...,'Vi':"+Vi+")|: 'E.Data[0][1]':"+Data.getError(Vi)+" = 0;");
 			Data.setError(Vi, 0);
 			shoutLine("-activationOf(...,'Vi':"+Vi+")|: return E.Data;");
 			shoutLine("-activationOf(...,'Vi':"+Vi+")|: END\n");
@@ -695,7 +652,6 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 			if(Memory!=null) 
 			{
 				shoutLine("-memorize(...)|: =>(Memory!=null):");
-				//PrimIteration takeStored = (int Vi)->{};
 				if(this.weightIsTrainable() || this.biasIsTrainable()) //this can be lambdarized...
 				{
 					//takeStored = (int Vi)-> {};
@@ -786,13 +742,10 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 			}
 			shoutLine("-preRootBackward(...)|: PREPARING BACKPROPAGATION AT TIME STEP: -" + Hi);
 			boolean Signal = ActivitySignalAt(Hi);
-			//NEW:
-			if(Signal == false)
-			{
+			if(Signal == false) {
 				this.Signal = -1;
 			}
-			else
-			{
+			else {
 				this.Signal = 1;
 			}
 			if(Signal == false) 
@@ -808,37 +761,25 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 			 	int timeDelta = Memory.activeTimeDeltaWithin(Hi);
 				NVData Data = Memory.getDataAt(timeDelta);
 				this.load(Data);
-				if(Data==null)
-				{
+				if(Data==null) {
 					Data = this;
 				}
 			 	//Self convergent node: Converges without loss node (probably is loss node)
 				for(int Vi=0; Vi<this.size(); Vi++)
 				{
-			 		shoutLine("-preRootBackward(...)|: =>=>('Vi':"+Vi+")|: Element[Vi].Data[2] = derivatives[Vi];");
-			 		//-----------------------------------
 			 		if (this.isConvergent() && this.isLast()==false)
 				 	{//=========================================================
-				 		 shoutLine("-preRootBackward(...)|: ('Vi':"+Vi+")|: Element[Vi].calculateError();");
-				 		 //Doesn't consider received error...	
 				 		 Element[Vi].calculateError();
 				 	}//=========================================================
 				 	else if(this.isConvergent()==false || this.isLast()==true)
 				 	{//=========================================================
 				 		int inactive = 1 + Memory.localInactiveTimeDeltaWithin(Hi);
-				 		shoutLine("-preRootBackward(...)|: Inactive time delta: "+inactive);
-				 		//==========================================================================================
-				 		shoutLine("fetched Error: "+Element[Vi].getError()+"; Memory stored Error: "+Element[Vi].getError());
 				 		Element[Vi].setError(Element[Vi].getError()/inactive);//Error has accumulated -> calculating average accordingly!
-				 		shoutLine("Time corrected Error: "+Element[Vi].getError()+"; (divided by: "+inactive+") ");
-				 		//==========================================================================================
-				 	}
+					}//==========================================================================================
 					//Why is that? => Current Error has been calculated
 					Data.setError(Vi, this.getError(Vi));//=>Stored in history!
 					this.setError(Vi, 0);//Locally set to 0 (ready to accept error remotely)
-
-				 	shoutLine("-preRootBackward(...)|: Error:(" + Element[Vi].getError() + "), Element[Vi].Data.length:("+Element[Vi].getIO().length+");");
-				 	if(Element[Vi].getInputDerivative()==null)
+					if(Element[Vi].getInputDerivative()==null)
 				 	{
 				 		shoutLine("-preRootBackward(...)|: (Element[Vi].Data[2]==null):");
 				 		shoutLine("-preRootBackward(...)|: => return false;");
@@ -873,14 +814,9 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 		{	
 			shoutLine("NVertex_Root->rootBackward(BigInteger Hi)|: ...");
 			shoutLine("========================================================================");
-			if (Element[0].getIO().length<=2)//if(!hasError())
+			if (!this.isDerivable())//if(!hasError())
 			{
 				shoutLine("-rootBackward(...)|: Backpropagation not possible! This neuron is unfit for gradient storing.");
-				return;
-			}
-			if (this.hasInputDerivative(0)==false) 
-			{
-				shoutLine("-rootBackward(...)|: Backpropagation not possible! LocalData[2]==null");
 				return;
 			}
 			if (this.hasWeight(0, 0)) 
@@ -924,10 +860,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 			{
 				CalculateInputError = (int Vi, int Ii)->
 				{
-					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:(isWeightTrainable() || isShiftTrainable()):");
 					currentError[0] = Data[0].getError(Vi) * this.getInputDerivative(Vi, Ii);
-					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=> 'currentError[0]':" + currentError[0] + " = 'Element[Vi].Data[2][Ii]':"+ Element[Vi].getInputDerivative()[deriviationOffset[0]] + " * 'Element[Vi].Output()[1]':" + Element[Vi].getError() + ";");
-					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=> 'deriviationOffset[0]':"+deriviationOffset[0]+"++;");
 					deriviationOffset[0]++;
 				};
 			}
@@ -935,8 +868,6 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 			{
 				CalculateInputError = (int Vi, int Ii)->
 				{
-					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:((isWeightTrainable() || isShiftTrainable()) == false):");
-					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=> 'currentError[0]':"+currentError[0] +" = 0;");
 					currentError[0]=0.0;
 				};
 			}
@@ -946,11 +877,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
  				CalculateWeightGradient = (int Vi, int Ii, int Ni, int Ei, int Wi)->
  				{
  					if(this.hasWeight(Vi, Ii)==false) {return;}
- 					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:(weightsAreSet):");
- 					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:(isGradientSumming()):");
- 					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:=> 'Element[Vi].Dendrite[Ii].WeightGradient[Wi]':"+Element[Vi].Variable[Ii].WeightGradient[Wi]+" += 'Connection[Ii][Ni].Activation(Ei)':"+Connection[Ii][Ni].getActivation(Ei)+" * 'currentError[0]':"+currentError[0]+";");
  					this.addToWeightGradient(Vi, Ii, Wi, Connection[Ii][Ni].getActivation(Ei) * currentError[0]);
- 					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:|>");
  				};
  			} 
  			else
@@ -958,23 +885,14 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
  				CalculateWeightGradient = (int Vi, int Ii, int Ni, int Ei, int Wi)->
  				{
  					if(this.hasWeight(Vi, Ii)==false) {return;}
- 					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:(weightsAreSet):");
-	 				shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:(isGradientSumming()==false):");
-	 				shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:=> 'Element[Vi].Dendrite[Ii].WeightGradient[Wi]':"+Element[Vi].Variable[Ii].WeightGradient[Wi]+" = 'Connection[Ii][Ni].Activation(Ei)':"+Connection[Ii][Ni].getActivation(Ei)+" * 'currentError[0]':"+currentError[0]+";");
-	 				this.setWeightGradient(Vi, Ii, Wi, Connection[Ii][Ni].getActivation(Ei) * currentError[0]);
-	 				
-	 				shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:|>");
- 				};
+ 					this.setWeightGradient(Vi, Ii, Wi, Connection[Ii][Ni].getActivation(Ei) * currentError[0]);
+	 			};
  			}
  			SecoIteration ApplyBiasGradient = (int Vi, int Ii)->{};
 			if (isGradientSumming()) 
 			{ 
 				ApplyBiasGradient = (int Vi, int Ii)->
 				{
-					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:(Element[Vi].Dendrite[0].Bias != null && isShiftTrainable()):");
-					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:(Element[Vi].Dendrite[0].Bias != null && isShiftTrainable()):");
-					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>(isGradientSumming()):");
-					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>=> 'Element[Vi].Dendrite[Ii].Bias':"+this.getBias(Vi, Ii)+" += 'currentError[0]':"+currentError[0]+";");
 					this.addToBiasGradient(Vi, Ii, currentError[0]);
 				};
 			} 
@@ -986,32 +904,17 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 					{
 					    ApplyBiasGradient = (int Vi, int Ii)->
 						{
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:(Element[Vi].Dendrite[0].Bias != null && isShiftTrainable()):");
-					    	shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>(isGradientSumming() == false):");
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>=>(isInstantGradientApply()):");
-						    shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>=>=> 'Element[Vi].Dendrite[Ii].BiasGradient':"+this.getBiasGradient(Vi, Ii)+" = 'currentError[0]':"+currentError[0]+";");
-						    this.setBiasGradient(Vi, Ii, currentError[0]);
-					    	shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>=>=>(GradientOptimizer != null):");
-					    	shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>=>=>=> double optimized = GradientOptimizer.getOptimized(Element[Vi].Dendrite[Ii].BiasGradient, Vi, Ii); ");
+							this.setBiasGradient(Vi, Ii, currentError[0]);
 					    	double optimized = GradientOptimizer.getOptimized(this.getBiasGradient(Vi, Ii), Vi, Ii);
-					    	shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>=>=>=> 'Element[Vi].Dendrite[Ii].Bias':"+this.getBias(Vi, Ii)+" += 'optimized':"+optimized+";");
-							this.addToBias(Vi, Ii, optimized);
+					    	this.addToBias(Vi, Ii, optimized);
 						};
 					} 
 				    else 
 				    {
 				    	ApplyBiasGradient = (int Vi, int Ii)->
 						{
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:(Element[Vi].Dendrite[0].Bias != null && isShiftTrainable()):");
-					    	shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>(isGradientSumming() == false):");
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>=>(isInstantGradientApply()):");
-						    shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>=>=> 'Element[Vi].Dendrite[Ii].BiasGradient':"+this.getBiasGradient(Vi, Ii)+" = 'currentError[0]':"+currentError[0]+";");
-						    //this.getBiasGradient(Vi, Ii) = currentError[0];
-					    	this.setBiasGradient(Vi, Ii, currentError[0]);
-						    shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>=>=>(GradientOptimizer == null):");
-					    	shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>=>=>=> 'Element[Vi].Dendrite[Ii].Bias':"+this.getBias(Vi, Ii)+" += 'Element[Vi].Dendrite[Ii].BiasGradient':"+this.getBiasGradient(Vi, Ii)+";");
-					        this.addToBias(Vi, Ii, this.getBiasGradient(Vi, Ii));
-					        
+							this.setBiasGradient(Vi, Ii, currentError[0]);
+						    this.addToBias(Vi, Ii, this.getBiasGradient(Vi, Ii));
 						};
 				    }
 				}
@@ -1019,9 +922,6 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 				{   
 				    ApplyBiasGradient = (int Vi, int Ii)->	
 				    {
-						shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:(Element[Vi].Dendrite[0].Bias != null && isShiftTrainable()):");
-						shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>=>(isInstantGradientApply()==false):");
-						shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>=>=> 'Element[Vi].Dendrite[Ii].BiasGradient':"+this.getBiasGradient(Vi, Ii)+" = 'currentError[0]':"+currentError[0]+";");
 						this.setBiasGradient(Vi, Ii, currentError[0]);
 					};
 				}
@@ -1036,31 +936,16 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 						ApplyWeightGradient = (int Vi, int Ii, int Ni, int Ei, int Wi)->
 						{
 							if(this.hasWeight(Vi, Ii)==false) {return;}
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:(!isGradientSumming()):");
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:=>(isInstantGradientApply() && weightsAreSet && isWeightTrainable()):");
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:=>=>(GradientOptimizer != null):");
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:=>=>=> double optimized = GradientOptimizer.getOptimized(Element[Vi].Variable[Ii].WeightGradient[Wi],Ii,Wi); ");
 							double optimized = GradientOptimizer.getOptimized(this.getWeightGradient(Vi, Ii, Wi),Vi,Ii,Wi);
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:=>=>=> Element[Vi].Variable[Ii].Weight[Ni] += optimized;");
 							this.addToWeight(Vi, Ii, Wi, optimized);
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:=>=>|> ");
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:=>|>");
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:|>");
-						};					
+						};
 					} 
 					else 
 					{
 						ApplyWeightGradient = (int Vi, int Ii, int Ni, int Ei, int Wi)->
 						{
 							if(this.hasWeight(Vi, Ii)==false) {return;}
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:(!isGradientSumming()):");
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:=>(isInstantGradientApply() && weightsAreSet && isWeightTrainable()):");
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:=>=>(GradientOptimizer == null):");
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:=>=>=> Element[Vi].Variable[Ii].Weight[Wi] += Element[Vi].Variable[Ii].WeightGradient[Wi];");
 							this.addToWeight(Vi, Ii, Wi, this.getWeightGradient(Vi, Ii, Wi));
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:=>=>|> ");
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:=>|>");
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:|>");
 						};
 					}
 				}
@@ -1070,10 +955,8 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 			for(int Vi=0; Vi<this.size(); Vi++) 
 			{
 				deriviationOffset[0] = 0;
-				shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|: for(int Ii = 0; Ii < Connection.length; Ii++):");
-				for (int Ii = 0; Ii < Connection.length; Ii++) 
+				for (int Ii = 0; Ii < Connection.length; Ii++)
 				{
-					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|: ...");
 					currentError[0] = 0.0;
 					CalculateInputError.on(Vi, Ii);
 					// Shift/Input Gradient Calculation:
@@ -1099,108 +982,68 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 								// ================================================================================================================
 								if(Element[vi].Variable[ii].Weight!=null) 
 								{
-									shoutLine("-rootBackward(...)|: ('Vi':"+vi+")|:('Ii':"+ii+")|:=>('Ni':"+ni+")|:('Wi':"+wi+",'Ei':"+ei+")|:=>=>=>(weightsAreSet):");
-									shoutLine("-rootBackward(...)|: ('Vi':"+vi+")|:('Ii':"+ii+")|:=>('Ni':"+ni+")|:('Wi':"+wi+",'Ei':"+ei+")|:=>=>=> Connection[Ii][Ni].addToError(Ei, 'currentError[0]':"+currentError[0]+" * Element[Vi].Variable[Ii].Weight[Wi]);");
 									Connection[ii][ni].addToError(ei, currentError[0] * this.getWeight(vi, ii, wi));
-									shoutLine("-rootBackward(...)|: ('Vi':"+vi+")|:('Ii':"+ii+")|:=>('Ni':"+ni+")|:('Wi':"+wi+",'Ei':"+ei+")|:=>=>=>|>");
 								}
 								else 
 								{
-									shoutLine("-rootBackward(...)|: ('Vi':"+vi+")|:('Ii':"+ii+")|:=>('Ni':"+ni+")|:('Wi':"+wi+",'Ei':"+ei+")|:=>=>=>(weightsAreSet==false):");
-									shoutLine("-rootBackward(...)|: ('Vi':"+vi+")|:('Ii':"+ii+")|:=>('Ni':"+ni+")|:('Wi':"+wi+",'Ei':"+ei+")|:=>=>=> Connection[Ii][Ni].addToError(Ei, 'currentError[0]':"+currentError[0]+" * 1);");
 									Connection[ii][ni].addToError(ei, currentError[0] * 1);
-									shoutLine("-rootBackward(...)|: ('Vi':"+vi+")|:('Ii':"+ii+")|:=>('Ni':"+ni+")|:('Wi':"+wi+",'Ei':"+ei+")|:=>=>=>|>");
 								}
 								// Distributing error to previous layer!
 								// ================================================================================================================
-								shoutLine("-rootBackward(...)|: ('Vi':"+vi+")|:('Ii':"+ii+")|:=>('Ni':"+ni+")|:('Wi':"+wi+",'Ei':"+ei+")|:=>=>|>");
 							};
 						}	
-						shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:(Connection[Ii]!=null):");
-						shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=> int Wi=0;");
 						int Wi=0;
-						shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=> for(int Ni = 0; Ni < Connection[Ii].length; Ni++):");
-						for (int Ni = 0; Ni < Connection[Ii].length; Ni++) 
+						for (int Ni = 0; Ni < Connection[Ii].length; Ni++)
 						{
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|: Connection[Ii][Ni]=Connection[Ii][Ni].Node();");
 							Connection[Ii][Ni]=Connection[Ii][Ni].asNode();
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|: int limit = 'Connection[Ii][Ni].size()':"+Connection[Ii][Ni].size()+"+'Wi':"+Wi+";");
 							int limit = Connection[Ii][Ni].size()+Wi;
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|: int Ei = 0;");
 							int Ei = 0;
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|: while(Wi<limit):");	
-				     		while(Wi<limit)
+							while(Wi<limit)
 				            {     
 				     			CalculateWeightGradient.on(Vi, Ii, Ni, Ei, Wi);
-				     			shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:=>=> Distributing gradients now:");
 				     			//TODO: implememt with if(isRootConnection(Node[] con))
 				     			distributeError.on(Vi, Ii, Ni, Ei, Wi);
 				     			// APPLYING WEIGHT GRADIENTS:
-				     			shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:=>('Ni':"+Ni+")|:('Wi':"+Wi+",'Ei':"+Ei+")|:=>=> applying weight gradients now:");
-								ApplyWeightGradient.on(Vi, Ii, Ni, Ei, Wi);		
+				     			ApplyWeightGradient.on(Vi, Ii, Ni, Ei, Wi);
 				     			Wi++;
 								Ei++;
 				            }//-----------------
 						 } // Input neuron loop closed!
-						 shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:('Ii':"+Ii+")|:|>");
 					}//Ii connection != null
 					// ---------------------------------------------------------------------------------------------------
 				} // Input loop closed!
-			
 				//GRADIENT DISTRIBUTION:
 				// if this is coreheader -> nodes = getRimNodes
 				if(this.isFirst()==false)
 				{//First layer nodes DO NOT DISTRIBUTE GRADIENTS! (never)
-					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:(this.isFirst()==false):");
 					if(State.isParentRoot(this) || State.isMemoryChild(this))
 					{
-						shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>(State.isParentRoot(this) || State.isMemoryChild(this)):");
-						shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=> Tip = NVUtility.identityCorrected.order(Tip); ");
-						Tip = NVUtility.identityCorrected.order(Tip); 
-						shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=> int Ti = 0;");
+						Tip = NVUtility.identityCorrected.order(Tip);
 						int Ti = 0;
 						
 						int Ri = 0;
 						double[] relationalDerivative = Element[Vi].getRelationalDerivative();//WIP
-						
-						shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=> while (Ti < Tip.length):");
-						while (Ti < Tip.length) 
+						while (Ti < Tip.length)
 						{
-							shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|: ...");
 							if(Tip[Ti]!=null)
 							{
-								shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:(Tip[Ti]!=null):");
 								if (State.isParentRoot(Tip[Ti].asCore()))
 								{//==================================
-									shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:=>(State.isParentRoot(Tip[Ti].Core())):");
-									shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:=>=> Tip[Ti].addToError(Ei, Element[Vi].Output()[1] * Element[Vi].Data[2][deriviationOffset[0]]);");
 									Tip[Ti].addToError(Vi, Data[0].getError(Vi) * relationalDerivative[Ri]);//ERROR DISTRIBUTION!
-									shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:=>=> deriviationOffset[0]++;");
 									Ri++;//deriviationOffset[0]++;
-									shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:=>|>");
 								}//==================================
 								else if(State.isTrainableBasicChild(Tip[Ti].asCore()))
 								{//==================================//ERROR HERE....
-									shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:=>(State.isTrainableBasicChild(Tip[Ti].Core())):");
-									shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:=>=> Tip[Ti].setError(Ei, Element[Vi].Data[2][deriviationOffset[0]]);");
 									Tip[Ti].setError(Vi, relationalDerivative[Ri]);
-									shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:=>=> deriviationOffset[0]++;");		
 									Ri++;//deriviationOffset[0]++;
-									shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:=>=> double[] targetedNodeGradient = new double[Tip[Ti].Core().inputSize()];");				
 									double[] targetedNodeGradient = new double[Tip[Ti].asCore().inputSize()];
 									for (int Ci = 0; Ci < Tip[Ti].asCore().inputSize() && Ri<relationalDerivative.length; Ci++) 
 									{
-										shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:=>=>('Ci':"+Ci+")|: targetedNodeGradient[Ci]=Element[Vi].Data[2][deriviationOffset[0]]; ");				
-										targetedNodeGradient[Ci]=relationalDerivative[Ri]; 
-										
-										shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:=>=>('Ci':"+Ci+")|: deriviationOffset[0]++;");				
+										targetedNodeGradient[Ci]=relationalDerivative[Ri];
 										Ri++;//deriviationOffset[0]++;
 									}
-									shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:=>=> Tip[Ti].Core().setInputGradient(targetedNodeGradient, Vi);");				
 									Tip[Ti].asCore().setInputDerivative(Vi, targetedNodeGradient);
-									shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:=>=> Tip[Ti].Executable().Backward(Hi);");							
 									Tip[Ti].asExecutable().Backward(Hi);
-									shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:=>|>");
 								}//==================================
 								else if(State.isMemoryChild(Tip[Ti].asCore()))
 								{//==================================
@@ -1210,43 +1053,31 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 									//if i am the last one to synchronize -> finish backpropagation!
 									shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:=>|>");
 								}//==================================
-								shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>=>('Ti':"+Ti+")|:|>");
 							}
 							Ti++;
 						}
-						shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:=>|>");
 					}
-					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|:|>");
 				}
 			}//VI loop closed!
-			
 			if(this.isFirst()==false && (this.weightIsTrainable() || this.biasIsTrainable())) 
 			{
 				for(int Vi=0; Vi<this.size(); Vi++) 
 				{
-					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|: Element[Vi].Data[1]=null;");
-					//Element[Vi].Data[1]=null;
 					this.setInput(Vi, null);
 					//This is important: why? : => weights changed -> input NEEDS to be recalculated!
 				}
 			}
-			if (isInstantGradientApply() && isGradientSumming()) 
-			{
+			if (isInstantGradientApply() && isGradientSumming()) {
 				applyGradients();
 			}
-			if (isGradientSumming() == false) 
-			{
+			if (isGradientSumming() == false) {
 				nullGradients();
 			}
 			if(this.is(BasicRoot) == false)
 			{
 				for(int Vi=0; Vi<this.size(); Vi++) 
 				{		
-					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|: CloakData[Vi][1]=0;");
-					shoutLine("-rootBackward(...)|: ('Vi':"+Vi+")|: Element[Vi].setError(0);");
-					//CloakData[Vi][1]=0;
 					Data[0].setError(Vi, 0);
-					// this.setError(Vi, 0);
 				}
 			}
 			shoutLine("-rootBackward(...)|: END\n");
@@ -1256,7 +1087,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//===============================================================================================================================================
 		/*
-		 * tip units identifier: Are root units! What else makes them 'tip' nodes?:
+		 * tip node identifier: Are root units! What else makes them 'tip' nodes?:
 		 *
 		 * Either they are 'input units' (root input) Or they are memory dependent (don't have
 		 * memory compartment but have trainable weights and/or biases!)... Or they are so
@@ -1276,7 +1107,6 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 		 * => Memory node not needed! -> But! Performance gains possible.
 		 */
 		// called in prepareForBackpropagation() function by SUPER NODE:
-	
 		// Function: propagateError(double){ if(CoreisFirst()LAyer){->normal backpropagation
 		// needs to start->Backpropdata has been set}
 		// else{double[] ideriv = findCoreDerivateOf(RimNode[Ni], setting) //==> if
@@ -1308,7 +1138,9 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 						     if(State.isRoot(Core) && !State.isParentRoot(Core) && Core!=this)
 						     {
 						    	 current = Core.asRoot().rootStructureDepth(level+1);
-						    	 if(current>deepest ) {deepest = current;}
+						    	 if(current>deepest ) {
+						    	 	deepest = current;
+						    	 }
 						     }
 						}
 					}
@@ -1386,49 +1218,29 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		@Override //NRoot //TODO implement relational derivatives as its own data field!(within element)
 		public synchronized double[] findRootDerivativesOf(NVNode connectionNode, boolean inputDerivative, int Vi) 
-		{// Finding derivative with respect to a specific neuron	
+		{
+			// Finding derivative with respect to a specific neuron
 			shoutLine("NVertex_Root->findRootDerivativesOf(NVNode connectionNode, boolean inputDerivative, int Vi)|: ...");
 			shoutLine("========================================================================");
-			shoutLine("-findRootDerivativesOf(...)|: double[] resultDerivatives = null;");
-			shoutLine("-findRootDerivativesOf(...)|: boolean thisIsTargNode = false;");
 			double[] resultDerivatives = null;
 			boolean thisIsTargNode = false;
-			
-			shoutLine("-findRootDerivativesOf(...)|:(Property != null):");
-			if (connectionNode.asNode() == this.asNode()) 
-			{
-				shoutLine("-findRootDerivativesOf(...)|:=>(connectionNode.Node() == this.Node()):");
-				shoutLine("-findRootDerivativesOf(...)|:=>=> thisIsTargNode=true;");
+			if (connectionNode.asNode() == this.asNode()) {
 				thisIsTargNode=true;
-				shoutLine("-findRootDerivativesOf(...)|:=>|>");
 			}
 			shoutLine("-findRootDerivativesOf(...)|:|>");
-			
-				
 			if (thisIsTargNode)//Target node found: -> returning derivative!
 			{
 				shoutLine("-findRootDerivativesOf(...)|:(thisIsTargNode):");
-				if (inputDerivative==false)
-				{//Derivative with respect to activation. (memory nodes) 
-					shoutLine("-findRootDerivativesOf(...)|:=>(inputDerivative==false):");
-					shoutLine("-findRootDerivativesOf(...)|:=>=> resultDerivatives = new double[1];");
-					shoutLine("-findRootDerivativesOf(...)|:=>=> resultDerivatives[0] = 1;");
+				if (inputDerivative==false) {//Derivative with respect to activation. (memory nodes)
 					resultDerivatives    = new double[1];
 					resultDerivatives[0] = 1;
-					shoutLine("-findRootDerivativesOf(...)|:=>|>");
 				} 
-				else
-				{//Derivative with respect to inputs.
-					shoutLine("-findRootDerivativesOf(...)|:=>(inputDerivative!=false):");
-					shoutLine("-findRootDerivativesOf(...)|:=>=> resultDerivatives = new double[Element[Vi].Data[2].length];");
+				else {//Derivative with respect to inputs.
 					resultDerivatives = new double[Element[Vi].getInputDerivative().length];
-					shoutLine("-findRootDerivativesOf(...)|:=>=> for(int Di = 0; Di < resultDerivatives.length; Di++):");
-					for(int Di = 0; Di < resultDerivatives.length; Di++) 
+					for(int Di = 0; Di < resultDerivatives.length; Di++)
 					{
-						shoutLine("-findRootDerivativesOf(...)|:=>=>('Di':"+Di+"): resultDerivatives[Di] = 'Element[Vi].Data[2][Di]'"+Element[Vi].getInputDerivative(Di)+";");
 						resultDerivatives[Di] = Element[Vi].getInputDerivative(Di);
 					}
-					shoutLine("-findRootDerivativesOf(...)|:=>|>");
 				}
 				shoutLine("-findRootDerivativesOf(...)|:=> return resultDerivatives;");
 				shoutLine("-findRootDerivativesOf(...)|:=> END\n");
@@ -1437,100 +1249,52 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 			//if(this.isInputRootNode()) {return null;}
 			// why is the above not used? -> input root nodes are now not that obvious anymore -> input root define themselves
 			// by havin AT LEAST ONE reference to the outside!
-
-			if (inputDerivative==false) //Why is that? -> super root stores the relational gradient!
-			{
-				shoutLine("-findRootDerivativesOf(...)|:(inputDerivative==false):");
-				shoutLine("-findRootDerivativesOf(...)|:=> resultDerivatives = new double[1];");
+			if (inputDerivative==false) {//Why is that? -> super root stores the relational gradient!
 				resultDerivatives = new double[1];
-				shoutLine("-findRootDerivativesOf(...)|:|>");
-			} 
-			else 
-			{
-				shoutLine("-findRootDerivativesOf(...)|:(inputDerivative==true):");
-				shoutLine("-findRootDerivativesOf(...)|:=> resultDerivatives = new double[connectionNode.Core().inputSize()];");
-				resultDerivatives = new double[connectionNode.asCore().inputSize()];
-				shoutLine("-findRootDerivativesOf(...)|:|>");
 			}
-			shoutLine("-findRootDerivativesOf(...)|: for(int Ii = 0; Ii < Connection.length; Ii++): ...");
-			for(int Ii = 0; Ii < Connection.length; Ii++) 
+			else {
+				resultDerivatives = new double[connectionNode.asCore().inputSize()];
+			}
+			for(int Ii = 0; Ii < Connection.length; Ii++)
 			{
-				shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|: ...");
-				if (Connection[Ii] != null) 
+				if (Connection[Ii] != null)
 				{
-					shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:(Connection[Ii] != null):");
-					
 					if(State.isParentRoot(Connection[Ii][0].asCore())==false && State.isRoot(Connection[Ii][0].asCore()))
 					{
-						shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>(State.isParentRoot(Connection[Ii][0].Core())==false && State.isRoot(Connection[Ii][0].Core())):");
-						shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=> double[] inputSumDerivatives = new double[resultDerivatives.length];");
 						double[] inputSumDerivatives = new double[resultDerivatives.length];
-						shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=> for(int Ni = 0; Ni < Connection[Ii].length; Ni++): ...");
-						for(int Ni = 0; Ni < Connection[Ii].length; Ni++) 
+						for(int Ni = 0; Ni < Connection[Ii].length; Ni++)
 						{
-							shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Ni':"+Ni+")|: Connection[Ii][Ni]=Connection[Ii][Ni].Node();");
 							Connection[Ii][Ni]=Connection[Ii][Ni].asNode();
-
 							if (Connection[Ii][Ni] != null) 
 							{
-								shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Ni':"+Ni+")|:(Connection[Ii][Ni] != null):");
-								shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Ni':"+Ni+")|:=> double[] rootRelationalDerivatives = null;");
 								double[] rootRelationalDerivatives = null;
-								
-								if(Connection[Ii][Ni]!=this && Connection[Ii][Ni]!=this.asNode()) 
+								if(Connection[Ii][Ni]!=this && Connection[Ii][Ni]!=this.asNode())
 								{
-									shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Ni':"+Ni+")|:=>(Connection[Ii][Ni]!=this && Connection[Ii][Ni]!=this.Node()):");
-									shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Ni':"+Ni+")|:=>=> rootRelationalDerivatives = Connection[Ii][Ni].Core().Root().findRootDerivativesOf(connectionNode, inputDerivative, Vi);");
-									rootRelationalDerivatives = 
+									rootRelationalDerivatives =
 											Connection[Ii][Ni].asCore().asRoot().findRootDerivativesOf(connectionNode, inputDerivative, Vi);
-									shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Ni':"+Ni+")|:=>|>");
 								}
-								
 								if(rootRelationalDerivatives != null) 
 								{
-									shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Ni':"+Ni+")|:=>(rootRelationalDerivatives != null):");
-									shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Ni':"+Ni+")|:=>=> for(int Di = 0; Di < rootRelationalDerivatives.length; Di++):");
-									for(int Di = 0; Di < rootRelationalDerivatives.length; Di++) 
+									for(int Di = 0; Di < rootRelationalDerivatives.length; Di++)
 									{
-										shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Ni':"+Ni+")|:=>=>('Di':"+Di+")|: ...");
-										if(Element[Vi].Variable[Ii].Weight != null) 
-										{
-											shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Ni':"+Ni+")|:=>=>('Di':"+Di+")|:(Element[Vi].Variable[Ii].Weight != null):");
-											shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Ni':"+Ni+")|:=>=>('Di':"+Di+")|:=> rootRelationalDerivatives[Di] *= Element[Vi].Variable[Ii].Weight[Ni];");
+										if(Element[Vi].Variable[Ii].Weight != null) {
 											rootRelationalDerivatives[Di] *= Element[Vi].Variable[Ii].Weight[Ni];
 											//Why not Wi? -> 1:1 relations within root structure!
-											shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Ni':"+Ni+")|:=>=>('Di':"+Di+")|:|>");
 										}
-										shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Ni':"+Ni+")|:=>=>('Di':"+Di+")|: inputSumDerivatives[Di] += rootRelationalDerivatives[Di];");
 										inputSumDerivatives[Di] += rootRelationalDerivatives[Di];
 									}
-									shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Ni':"+Ni+")|:=>|>");
 								}
-								shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Ni':"+Ni+")|:|>");
 							}
 						}
-						shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=> for(int Di = 0; Di < resultDerivatives.length; Di++): ...");
-						for(int Di = 0; Di < resultDerivatives.length; Di++) 
+						for(int Di = 0; Di < resultDerivatives.length; Di++)
 						{
-							shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Di':"+Di+")|:");
-							if (Element[Vi].getInputDerivative() != null) 
-							{
-								shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Di':"+Di+")|:(Element[Vi].Data[2] != null):");
-								shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Di':"+Di+")|:=> inputSumDerivatives[Di] *= Element[Vi].Data[2][Ii];");
+							if (Element[Vi].getInputDerivative() != null) {
 								inputSumDerivatives[Di] *= Element[Vi].getInputDerivative(Ii);
-								shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Di':"+Di+")|:|>");
 							}
-							//if (Element[Vi].Data[1] != null) 
-							//{
-							//	inputSumDerivatives[Di] *= Element[Vi].Input()[Ii];// This might not be right!
-							//}
-							shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>=>('Di':"+Di+")|: resultDerivatives[Di] += inputSumDerivatives[Di];");
 							resultDerivatives[Di] += inputSumDerivatives[Di];
 						}
 						// =============
-						shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:=>|>");
 					}
-					shoutLine("-findRootDerivativesOf(...)|: ('Ii':"+Ii+")|:|>");
 				}
 			}// Ii loop closed
 			shoutLine("-findRootDerivativesOf(...)|: return resultDerivatives;");
@@ -1555,48 +1319,29 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 		{									// Core! -> otherwise no new activation will take place!
 			shoutLine("NVertex_Root->distributeRootRevival()|: ...");
 			shoutLine("========================================================================");
-			shoutLine("-distributeRootRevival()|: NVNode node;");
-			NVNode node;
-			shoutLine("-distributeRootRevival()|: for (int Ii = 0; Ii < Connection.length; Ii++): ...");
-			for (int Ii = 0; Ii < Connection.length; Ii++) 
+			for (int Ii = 0; Ii < Connection.length; Ii++)
 			{
-				shoutLine("-distributeRootRevival()|: ('Ii':"+Ii+")|: ...");
-				if (Connection[Ii] != null) 
+				if (Connection[Ii] != null)
 				{
-					shoutLine("-distributeRootRevival()|: ('Ii':"+Ii+")|:(Connection[Ii] != null):");
 					if(State.isParentRoot(Connection[Ii][0].asCore())==false && State.isRoot(Connection[Ii][0].asCore())==true)
 					{
-						shoutLine("-distributeRootRevival()|: ('Ii':"+Ii+")|:=>(State.isParentRoot(Connection[Ii][0].Core())==false && State.isRoot(Connection[Ii][0].Core())==true):");
-						shoutLine("-distributeRootRevival()|: ('Ii':"+Ii+")|:=>=> setParalyzed(false);");
 						setParalyzed(false);
 						if(Connection[Ii]!=null) 
 						{
-							shoutLine("-distributeRootRevival()|: ('Ii':"+Ii+")|:=>=>(Connection[Ii]!=null):");
-							shoutLine("-distributeRootRevival()|: ('Ii':"+Ii+")|:=>=>=> for(int Ni = 0; Ni < Connection[Ii].length; Ni++):");
-							for(int Ni = 0; Ni < Connection[Ii].length; Ni++) 
+							for(int Ni = 0; Ni < Connection[Ii].length; Ni++)
 							{
-								shoutLine("-distributeRootRevival()|: ('Ii':"+Ii+")|:=>=>=>('Ni':"+Ni+")|: Connection[Ii][Ni]=Connection[Ii][Ni].Node();");
-								shoutLine("-distributeRootRevival()|: ('Ii':"+Ii+")|:=>=>=>('Ni':"+Ni+")|: node = Connection[Ii][Ni].Node();");
-								shoutLine("-distributeRootRevival()|: ('Ii':"+Ii+")|:=>=>=>('Ni':"+Ni+")|: node.Root().distributeRootRevival();");
-								Connection[Ii][Ni]=Connection[Ii][Ni].asNode();
-								node = Connection[Ii][Ni].asNode();
-								node.asRoot().asParent().distributeRootRevival();
+								Connection[Ii][Ni].asRoot().asParent().distributeRootRevival();
 							}
-							shoutLine("-distributeRootRevival()|: ('Ii':"+Ii+")|:=>=>|>");
 						}
-						shoutLine("-distributeRootRevival()|: ('Ii':"+Ii+")|:=>|>");
 					}
-					shoutLine("-distributeRootRevival()|: ('Ii':"+Ii+")|:|>");
 				}
 			}
-			shoutLine("-distributeRootRevival()|: END\n");
 		}
 		// NOTE: This function will only produce new output if recalculation permission
 		// has been propagated or the connection nodes are have memory!
 		// ALSO: This function will not act recursively if the connection node is not of
 		// type core! -> these functions serve the purpose of being core node functions
 		// exclusively!
-
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		@Override //NRoot
 		public double findRootActivation(int Vi) 
@@ -1618,13 +1363,8 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 			}
 			if (Element[Vi].getInput()!=null && isParalyzed()==false) //This is not entered wehen vi==1
 			{
-				shoutLine("-findRootActivation(...)|: (Element[Vi].Input()!=null && isParalyzed()==false):");
-				shoutLine("-findRootActivation(...)|: => boolean[] Signal = {true};");
 				boolean[] Signal;
-				if(this.is(NVertex.RootInput)) 
-				{
-					shoutLine("-findRootActivation(...)|: =>(this.is(NVertex.RootInput)):");
-					shoutLine("-findRootActivation(...)|: =>=> Signal = this.inputSignalIf(true);");
+				if(this.is(NVertex.RootInput)) {
 					Signal = this.inputSignalIf(true);
 				}
 				else
@@ -1646,10 +1386,16 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 						}
 					}
 				}
-				shoutLine("-findRootActivation(...)|: => Element[Vi].Data = activationOf(weightedConvectionOf(publicized(Signal),Vi),Vi);");
-				Element = activationOf(weightedConvectionOf(publicized(Signal),Vi),Vi).getDataAsElementArray();//publicized is not needed! 
-				//shoutLine("-findRootActivation(...)|: => setParalyzed(true);");
-				//setParalyzed(true);
+				NVData Data = new NVData(Element);
+				Data =
+				activationOf(
+						weightedConvectionOf(
+								Data,
+								publicized(Signal),
+								Vi),
+						Vi
+				);//publicized is not needed!
+				this.Element = Data.getDataAsElementArray();
 			}
 			shoutLine("-findRootActivation(...)|: => return Element[Vi].Output()[0];");
 			return Element[Vi].getActivation();
@@ -1663,14 +1409,15 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 		@Override //NVRoot
 		public boolean isParent() 
 		{
-			if(Parent==null || Parent==this) {return true;}
+			if(Parent==null || Parent==this) {
+				return true;
+			}
 			return false;
 		}
 		@Override //NVRoot
 		public NVParent asParent() 
 		{
-			if(Parent==null || Parent==this) 
-			{
+			if(Parent==null || Parent==this) {
 				return this;
 			}
 			return null;
@@ -1678,8 +1425,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 		@Override //NVRoot
 		public boolean isChild() 
 		{
-			if(Parent==null || Parent==this)
-			{
+			if(Parent==null || Parent==this) {
 				return false;
 			}
 			return true;
@@ -1687,8 +1433,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 		@Override //NVRoot
 		public NVChild asChild() 
 		{
-			if(Parent==null || Parent==this)
-			{
+			if(Parent==null || Parent==this) {
 				return null;
 			}
 			return (NVChild)this;

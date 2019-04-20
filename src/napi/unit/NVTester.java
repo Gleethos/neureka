@@ -26,10 +26,10 @@ public class NVTester {
 	*/
 	public void Test()
 	{
-		//InputFormattingTest();
-	    //BaseFunctionsActivationTest();
+		InputFormattingTest();
+	    BaseFunctionsActivationTest();
 	    
-	    //testCoreTypes();
+	    testCoreTypes();
 		advancedActivationTest();
 		networkTest();
 
@@ -518,16 +518,15 @@ public class NVTester {
 		//-----------------------------------------------------------
 		head = new NVertex_Root(3, false, false, 0, 0, 1);
 		NVertex src = new NVertex_Root(3, true, false, -1, 0, 1);
-		
 		double[][][] W = {{{1,-8,3}},{{-2,6,-1}},{{-6,4,-1}}};
-		
 		NVertex[] structure = {head, src};
 		
 		I[0][0] = -19; I[1][0] = 6; I[2][0] = 2;
 		src.setInput(I);
 		src.asExecutable().loadState();
 		src.asExecutable().forward();
-		
+		src.asExecutable().loadState();
+
 		head.connect(src);
 		head.setWeight(W);
 		expected[0] = -0.4219; expected[1] = 34.38; expected[2] = 23.14; 
@@ -538,9 +537,7 @@ public class NVTester {
 		//-----------------------------------------------------------
 		head = new NVertex_Root(3, false, false, 0, 0, 1);
 		src = new NVertex_Root(3, true, false, -1, 0, 1);
-		
 		//double[][][] W = {{{1,-8,3}},{{-2,6,-1}},{{-6,4,-1}}};
-		
 		structure[0] = head; 
 		structure[1] = src;
 		
@@ -557,11 +554,8 @@ public class NVTester {
 		+= tester.testGraph_VectorActivation(structure, head, expected, "");
 		TestCounter++;
 		//-----------------------------------------------------------
-		
 		//String fail = null; fail.hashCode();
 		// To do:   vertex -convection-> vertex2
-		
-		
 		Console.println("###########################");
 		Console.println("|| ADVANCED ACTIVATION RESULT:");
 		Console.println("|| ============>> "+SuccessCounter+"/"+TestCounter);
@@ -686,12 +680,12 @@ public class NVTester {
 		Console.println("###########################");
 		Console.println("|| NVertex_Neuron RESULT:");
 		Console.println("|| ============>> "+SuccessCounter+"/"+TestCounter);
-		Console.println("###########################\n");
+		Console.println("###########################");
 		
 		ResultConsole.println("###########################");
 		ResultConsole.println("|| NVertex_Neuron RESULT:");
 		ResultConsole.println("|| ============>> "+SuccessCounter+"/"+TestCounter);
-		ResultConsole.println("###########################\n");
+		ResultConsole.println("###########################");
 		
 		Console.println("NVertex_Root Activation tests:");
 		

@@ -230,6 +230,9 @@ public class NVData {
 
 	public synchronized void addToInput(double[][] input) {for(int i=0; i<Element.length&&i<input.length; i++) {for(int Ii=0; Ii<Element[i].Variable.length; Ii++) {Element[i].addToInput(Ii, input[i][Ii]);}}}
 
+	public synchronized void addToInput(int Vi, int Ii, double value) {Element[Vi].addToInput(Ii, value);}
+
+
 	public double[] getInput(int Vi) {if(Vi<0) {return null;}return Element[Vi].getInput();}
 	//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	//@Override// NVNode
@@ -325,14 +328,14 @@ public class NVData {
 	//@Override// NVNode
 	public boolean hasWeight(int Vi, int Ii, int Wi) {if(hasWeight(Vi,Ii)) {if(Element[Vi].Variable[Ii].Weight.length>Wi&&Wi>=0) {return true;}}return false;}
 	//@Override// NVNode
-	public double  getWeight(int Vi, int Ii, int Wi) {if (hasWeight(Vi, Ii, Wi)) {return Element[Vi].Variable[Ii].Weight[Wi];}return 0;}
+	public double  getWeight(int Vi, int Ii, int Wi) {return Element[Vi].Variable[Ii].Weight[Wi];}
 	//@Override// NVNode
 	public void    setWeight(int Vi, int Ii, int Wi, double value) {if (hasWeight(Vi, Ii, Wi)) {Element[Vi].Variable[Ii].Weight[Wi]=value;}}
 	//@Override// NVNode
 	public void    addToWeight(int Vi, int Ii, int Wi, double value) {if (hasWeight(Vi, Ii, Wi)) {Element[Vi].Variable[Ii].Weight[Wi]+=value;}}
 	//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	//@Override // NVNode
-	public boolean  hasWeight(int Vi, int Ii) {if(Vi<Element.length&&Vi>=0) {if(Element[Vi].Variable.length>Ii&&Ii>=0) {if(Element[Vi].Variable[Ii].Weight!=null) {return true;}}}return false;}
+	public boolean  hasWeight(int Vi, int Ii) {if(Vi<Element.length&&Vi>=0) {if(Ii<Element[Vi].Variable.length&&Ii>=0) {if(Element[Vi].Variable[Ii].Weight!=null) {return true;}}}return false;}
 	//@Override// NVNode
 	public double[] getWeight(int Vi, int Ii) {if(hasWeight(Vi,Ii)) {return Element[Vi].Variable[Ii].Weight;}return null;}
 	//@Override// NVNode
