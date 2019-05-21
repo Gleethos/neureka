@@ -1,6 +1,6 @@
 import java.util.Random;
 
-import napi.utility.NMessageFrame;
+import neureka.utility.NMessageFrame;
 
 public class GridGame 
 {

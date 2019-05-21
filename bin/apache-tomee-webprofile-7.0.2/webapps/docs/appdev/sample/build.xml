@@ -27,7 +27,7 @@
         docs                 Static documentation files to be copied to
                              the "docs" subdirectory of your distribution.
 
-        src                  Java source code (and associated resource files)
+        of                  Java source code (and associated resource files)
                              to be compiled to the "WEB-INF/classes"
                              subdirectory of your web application.
 
@@ -37,12 +37,12 @@
 -->
 
 
-<!-- A "project" describes a set of targets that may be requested
+<!-- A "project" describes a e_set of targets that may be requested
      when Ant is executed.  The "default" attribute defines the
      target which is executed if no specific target is requested,
      and the "basedir" attribute defines the current working directory
      from which Ant executes the requested task.  This is normally
-     set to the current working directory.
+     e_set to the current working directory.
 -->
 
 <project name="My Project" default="compile" basedir=".">
@@ -55,7 +55,7 @@
 <!--
 
   Each of the following properties are used in the build script.
-  Values for these properties are set by the first place they are
+  Values for these properties are e_set by the first place they are
   defined, from the following list:
 
   * Definitions on the "ant" command line (ant -Dfoo=bar compile).
@@ -275,7 +275,7 @@
 
 <!--
 
-  The "compile" target transforms source files (from your "src" directory)
+  The "compile" target transforms source files (from your "of" directory)
   into object files in the appropriate location in the build directory.
   This example assumes that you will be including your classes in an
   unpacked directory hierarchy under "/WEB-INF/classes".

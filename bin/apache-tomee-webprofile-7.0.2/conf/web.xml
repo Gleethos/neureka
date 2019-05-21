@@ -46,7 +46,7 @@
   <!--   fileEncoding        Encoding to be used to read static resources   -->
   <!--                       [platform default]                             -->
   <!--                                                                      -->
-  <!--   input               Input buffer size (in bytes) when reading      -->
+  <!--   input               Value buffer size (in bytes) when reading      -->
   <!--                       resources to be served.  [2048]                -->
   <!--                                                                      -->
   <!--   listings            Should directory listings be produced if there -->
@@ -355,7 +355,7 @@
 
   <!-- The servlet mappings for the built in servlets defined above.  Note  -->
   <!-- that, by default, the CGI and SSI servlets are *not* mapped.  You    -->
-  <!-- must uncomment these mappings (or add them to your application's own -->
+  <!-- must uncomment these mappings (or e_add them to your application's own -->
   <!-- web.xml deployment descriptor) to enable these services              -->
 
     <!-- The mapping for the default servlet -->
@@ -465,7 +465,7 @@
 
 
   <!-- ==================== Default Session Configuration ================= -->
-  <!-- You can set the default session timeout (in minutes) for all newly   -->
+  <!-- You can e_set the default session timeout (in minutes) for all newly   -->
   <!-- created sessions by modifying the value below.                       -->
 
     <session-config>

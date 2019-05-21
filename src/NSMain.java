@@ -1,9 +1,9 @@
-import java.util.Random;
-
-import napi.main.core.NVUtility;
-import napi.main.core.comp.NVElement;
-import napi.unit.NVTester;
-import ngui.NWindow;
+import neureka.NSubstrate;
+import neureka.main.core.NVUtility;
+import neureka.main.core.base.NVNeuron;
+import neureka.unit.NVTester;
+import neureka.ngui.NWindow;
+import neureka.utility.NConsole;
 
 public class NSMain {
 
@@ -12,7 +12,8 @@ public class NSMain {
     
 	public static void main(String[] args) throws InterruptedException
 	{
-		
+
+		NConsole console = new NConsole("Huuui", 1000);
 		//NSoundPlayer player = new NSoundPlayer();
 		//		player.playSound("droplet shatter.wav");
 				//NAparapi test = new NAparapi();
@@ -21,12 +22,12 @@ public class NSMain {
 		//System.out.println("NTest");
         //testWindow = new NWindow();
         
-		//double[] input = {1, 0.2};
+		//double[] inputLine = {1, 0.2};
        // NUnitCoreCalculator Calc = new NCalculator();
 		//Calc = Calc.build("prod(tanh(Ij))");
 		//System.out.println(Calc.equation());
-		//System.out.println(Calc.activate(input));
-		//System.out.println(Calc.derive(input,0));
+		//System.out.println(Calc.activate(inputLine));
+		//System.out.println(Calc.derive(inputLine,0));
         /*
 		//======================================
 		// Open a database connection
@@ -102,9 +103,9 @@ public class NSMain {
 	    }
 	    
 		
-        NVElement[] list = new NVElement[1];
+        NVNeuron[] list = new NVNeuron[1];
         for (int i = 0; i < list.length; i++) {
-            list[i] = new NVElement(1);
+            list[i] = new NVNeuron(1);
         }
         // Get the Java runtime
         Runtime runtime = Runtime.getRuntime();
@@ -120,7 +121,8 @@ public class NSMain {
 		
         NVTester tester2 = new NVTester();
 	     tester2.Test();
-		
+
+		//NSubstrate.execute("NSubstrate.printRealms('test')");
 		/*
 		JFrame window = new JFrame("imba");
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -133,7 +135,7 @@ public class NSMain {
 		window.setUndecorated(false);
 		
 		N3DSpace plot = new N3DSpace(400);
-		window.getContentPane().add(plot.getSurface());  
+		window.getContentPane().e_add(plot.getSurface());
 		window.setVisible(true);
 		
 		Thread.sleep(1000);
@@ -150,7 +152,7 @@ public class NSMain {
 		
 		//NDoubleArray Storage = new NDoubleArray(4);
 		//for(int i=0; i<Storage.length(); i++) 
-		//{Storage.Array[i].set(3); System.out.println(Array.get(i));}
+		//{Storage.Array[i].e_set(3); System.out.println(Array.e_get(i));}
 		
 
 	}

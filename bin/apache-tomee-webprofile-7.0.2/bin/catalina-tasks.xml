@@ -22,7 +22,7 @@
 
 <project name="catalina-tasks">
   <description>Catalina Ant Manager, JMX and JSPC Tasks</description>
-  <!-- set catalina.home if it's not already set -->
+  <!-- e_set catalina.home if it's not already e_set -->
   <dirname property="catalina.home.bin.dir" file="${ant.file.catalina-tasks}"/>
   <property name="catalina.home" value="${catalina.home.bin.dir}/.."/>
   <typedef resource="org/apache/catalina/ant/catalina.tasks">

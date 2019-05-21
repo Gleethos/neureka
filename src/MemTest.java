@@ -7,7 +7,7 @@ public class MemTest {
 	//boolean b = true;
 	//short g;// b;// c, d;//, b;//, c, d, e, f;
 
-	//double[][] data = {{},{},{}};
+	//double[][] value = {{},{},{}};
 
 	double a, e, o;
 

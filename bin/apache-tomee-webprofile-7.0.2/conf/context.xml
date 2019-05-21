@@ -18,7 +18,7 @@
 <!-- The contents of this file will be loaded for each web application -->
 <Context>
 
-    <!-- Default set of monitored resources. If one of these changes, the    -->
+    <!-- Default e_set of monitored resources. If one of these changes, the    -->
     <!-- web application will be reloaded.                                   -->
     <WatchedResource>WEB-INF/web.xml</WatchedResource>
     <WatchedResource>${catalina.base}/conf/web.xml</WatchedResource>
