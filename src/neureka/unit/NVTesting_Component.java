@@ -44,10 +44,19 @@ public class NVTesting_Component extends NVTesting{
 		TestCounter++;
 		SuccessCounter += tester.testExpression("sin(23*i1)-cos(i0^0.3)+tanh(23)", "((sin(23.0*I[1])-cos(I[0]^0.3))+tanh(23.0))", "");
 		Console.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-		
+
+		TestCounter++;
+		SuccessCounter += tester.testExpression("2*3/2-1", "((2.0*(3.0/2.0))-1.0)", "");
+		Console.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
+
 		//ACTIVATION TESTING:
 		TestCounter++;
-		double[] input1 = {2,3.2,6};
+		double[] input1 = {};
+		SuccessCounter += tester.testActivation("6/2*(1+2)", input1, 9, "");
+		Console.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
+
+		TestCounter++;
+		input1 = new double[]{2,3.2,6};
 		SuccessCounter += tester.testActivation("sum(Ij)", input1, 11.2, "");
 		Console.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
 		
