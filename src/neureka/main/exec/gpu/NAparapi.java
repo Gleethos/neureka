@@ -169,7 +169,7 @@ public class NAparapi{
 	//KERNEL:
    //=======================================================================================================================
    public static class MandelKernel extends Kernel{
-      /** RGB buffer used to copy the Mandelbrot image. This buffer holds (width * height) RGB values. */
+      /** RGB buffer used to internalize the Mandelbrot image. This buffer holds (width * height) RGB values. */
       final private int rgb[];
       /** Mandelbrot image width. */
       final private int width;

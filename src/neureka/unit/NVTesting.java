@@ -25,17 +25,14 @@ public class NVTesting {
     }
 
     protected void printNetStructView(NVNode[] Structure, NVNode head){
-        for(int i=0; i<Structure.length; i++)
-        {
+        for(int i=0; i<Structure.length; i++) {
             String expression = "null";
-            if(Structure[i].asCore().getFunction()!=null)
-            {
+            if(Structure[i].asCore().getFunction()!=null) {
                 expression = Structure[i].asCore().getFunction().expression();
             }
             Console.print(bar+"  Root ["+i+"]: ");
             if(Structure[i]==head) {Console.println(expression+"  => (head)");}
-            else
-            {
+            else {
                 Console.println(expression);
             }
         }
@@ -48,59 +45,49 @@ public class NVTesting {
     }
 
     protected boolean assertEqual(double result, double expected){
-        if(result==expected)
-        {
+        if(result==expected) {
             Console.println(bar+"  [result]:("+result+") == [expected]:("+expected+") -> test successful.");
             return true;
-        }
-        else
-        {
+        } else {
             Console.println(bar+"  [result]:("+result+") =|= -> test failed!");
             return false;
         }
     }
 
     protected boolean assertEqual(String result, String expected){
-        if(result.equals(expected))
-        {
-            Console.println(bar+"  [result]:("+result+") == [expected]:("+expected+") -> test successful.");
+        if(result.equals(expected)) {
+            Console.println(bar+"  [result]:("+result+") "+((result.length()>22)?"\n"+bar+"    ==  "+"\n"+bar+" ":"==")+" [expected]:("+expected+") -> test successful.");
             return true;
-        }
-        else
-        {
-            Console.println(bar+"  [result]:("+result+") =|= [expected]:("+expected+") -> test failed!");
+        } else {
+            Console.println(bar+"  [result]:("+result+") "+((result.length()>22)?"\n"+bar+"    =|=  "+"\n"+bar+" ":"=|=")+" [expected]:("+expected+") -> test failed!");
             return false;
         }
     }
 
     protected String stringified(int[] a){
         String result = "";
-        for(int ai : a)
-        {
+        for(int ai : a) {
             result += ai+", ";
         }
         return result;
     }
     protected String stringified(short[] a){
         String result = "";
-        for(short ai : a)
-        {
+        for(short ai : a) {
             result += ai+", ";
         }
         return result;
     }
     protected String stringified(double[] a){
         String result = "";
-        for(double ai : a)
-        {
+        for(double ai : a) {
             result += ai+", ";
         }
         return result;
     }
     protected String stringified(double[][] a){
         String result = "";
-        for(double[] ai : a)
-        {
+        for(double[] ai : a) {
             result+="(";
             for(double aii : ai){
                 result += aii+", ";
@@ -111,8 +98,7 @@ public class NVTesting {
     }
     protected String stringified(float[] a){
         String result = "";
-        for(float ai : a)
-        {
+        for(float ai : a) {
             result += ai+", ";
         }
         return result;

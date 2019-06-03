@@ -344,12 +344,14 @@ public class NVOptimizer {
 			if(WeightGradientHistory[Ui][0][Iid][Nid]>0 && currentWeightGradient<0) 
 			{//--------------------------------------------------------------------------------------------------------------
 				if(WeightGradientHistory[Ui][0][Iid][Nid]>(currentWeightGradient*-1)) {WeightGradientLearningRate[Ui][Iid][Nid]*=0.8;}
-				if(WeightGradientHistory[Ui][0][Iid][Nid]<(currentWeightGradient*-1)) {WeightGradientLearningRate[Ui][Iid][Nid]*=0.5;return WeightGradientOptimizationHistory[Ui][0][Iid][Nid]*=-1;}	 
+				if(WeightGradientHistory[Ui][0][Iid][Nid]<(currentWeightGradient*-1))
+				{WeightGradientLearningRate[Ui][Iid][Nid]*=0.5;return WeightGradientOptimizationHistory[Ui][0][Iid][Nid]*=-1;}
 			}//--------------------------------------------------------------------------------------------------------------	 
 			if(WeightGradientHistory[Ui][0][Iid][Nid]<0 && currentWeightGradient>0) 
 			{//--------------------------------------------------------------------------------------------------------------
 				if((WeightGradientHistory[Ui][0][Iid][Nid]*-1)>currentWeightGradient) {WeightGradientLearningRate[Ui][Iid][Nid]*=0.8;}
-				if((WeightGradientHistory[Ui][0][Iid][Nid]*-1)<currentWeightGradient) {WeightGradientLearningRate[Ui][Iid][Nid]*=0.5;return WeightGradientOptimizationHistory[Ui][0][Iid][Nid]*=-1;}	 		 
+				if((WeightGradientHistory[Ui][0][Iid][Nid]*-1)<currentWeightGradient)
+				{WeightGradientLearningRate[Ui][Iid][Nid]*=0.5;return WeightGradientOptimizationHistory[Ui][0][Iid][Nid]*=-1;}
 			}//--------------------------------------------------------------------------------------------------------------		
 			WeightGradientDeltaVelocity[Ui][Iid][Nid]+=currentWeightGradient-WeightGradientHistory[Ui][0][Iid][Nid];
 			//=============================================================================================

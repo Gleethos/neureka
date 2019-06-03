@@ -1034,7 +1034,7 @@ public class NVertex extends NVData implements NVNode
 	}
 	@Override// NVNode
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	public void copy(NVertex other) //TODO: write copy test cases!
+	public void copy(NVertex other) //TODO: write internalize test cases!
 	{
 		this.setInstantGradientApply(other.isInstantGradientApply());
 		this.addModule((NVFunction)other.findModule(NVFunction.class));//Warningg!!!!

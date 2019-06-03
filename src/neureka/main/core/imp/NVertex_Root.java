@@ -1020,9 +1020,9 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 	 * Either they are 'input units' (root input) Or they are memory dependent (don't have
 	 * memory compartment but have trainable weights and/or biases!)... Or they are so
 	 * called 'Core Header' -> meaning that they have memory -> so they
-	 * automatically copy derivatives with respect to connected nodes...
+	 * automatically internalize derivatives with respect to connected nodes...
 	 *
-	 * Do i want to have root nodes that copy activations? ->YES!
+	 * Do i want to have root nodes that internalize activations? ->YES!
 	 * why? ->although it takes up memory the advantage is that core calculations
 	 * will not take too long to finish due to the fact that every root node will
 	 * activate only once! ->therefore the following functions need to exist!

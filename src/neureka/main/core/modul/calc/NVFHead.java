@@ -1056,7 +1056,6 @@ public class NVFHead implements NVFunction {
                         }
                     }
                 }
-
             }
             System.out.println("Function: " + possibleFunction);
             //---

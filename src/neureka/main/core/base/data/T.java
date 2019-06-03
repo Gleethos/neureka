@@ -6,82 +6,94 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
-public class NTensor {
+public class T {
 
     private static HashMap<Long, int[]> shared;
-
     static {//The thing we do for memory:
         shared = new HashMap<Long, int[]>();
     }
+    protected int[] shape = null;
+    protected int[] translation = null;
+    protected double[] value = null;
+    protected double[] gradient = null;
 
-    private long id = new Random().nextLong();
-    private double[] value = null;
-    private int[] shape = null;
-    private int[] translation = null;
-
-    //-------------------------------------------------------------
-    private int Flags = 0 + 2;//Default
+    private int flags = 0 + 2 + 4;//Default
     private final static int rqsGradient_MASK = 1;
     private final static int carriesDerivatives_MASK = 2;
-    private final static int carriesBackwardRoutes_MASK = 4;
-    private final static int srcDrained_MASK = 0;
+    private final static int isLeave_MASK = 4;
+    private final static int rqsError_MASK = 8;
+    private final static int isBranch_MASK = 16;
+    private final static int reverseModeAutoDiff_MASK = 32;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    public boolean srcDrained() {
-        return ((Flags & srcDrained_MASK) == srcDrained_MASK) ? true : false;
-    }
-    public void setSrcDrained(boolean srcDrained) {
-        if (srcDrained() != srcDrained) {
-            if (srcDrained) {
-                Flags += srcDrained_MASK;
-            } else {
-                Flags -= srcDrained_MASK;
-            }
-        }
-    }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    public boolean carriesBackwardRoutes() {
-        return ((Flags & carriesBackwardRoutes_MASK) == carriesBackwardRoutes_MASK) ? true : false;
-    }
-    public void setCarriesBackwardRoutes(boolean caryBackwardRoutes) {
-        if (carriesBackwardRoutes() != caryBackwardRoutes) {
-            if (caryBackwardRoutes) {
-                Flags += carriesBackwardRoutes_MASK;
-            } else {
-                Flags -= carriesBackwardRoutes_MASK;
-            }
-        }
-    }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    public boolean carriesDerivatives() {
-        return ((Flags & carriesDerivatives_MASK) == carriesDerivatives_MASK) ? true : false;
-    }
-    public void setCarriesDerivatives(boolean caryDerivatives) {
-        if (carriesDerivatives() != caryDerivatives) {
-            if (caryDerivatives) {
-                Flags += carriesDerivatives_MASK;
-            } else {
-                Flags -= carriesDerivatives_MASK;
-            }
-        }
-    }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //public boolean isLeave() {
+    //    return ((flags & isLeave_MASK) == isLeave_MASK) ? true : false;
+    //}
+    //public void setIsLeave(boolean isLeave) {
+    //    if (isLeave() != isLeave) {
+    //        flags += isLeave_MASK*((isLeave)?1:-1);
+    //        //flags += (isBranch()!=isLeave)?0:(isBranch_MASK*((isLeave)?-1:1));
+    //    }
+    //}
+    ////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //public boolean isBranch() {
+    //    return ((flags & isBranch_MASK) == isBranch_MASK) ? true : false;
+    //}
+    //public void setIsBranch(boolean isBranch) {
+    //    if (isBranch() != isBranch) {
+    //        flags += isBranch_MASK *((isBranch)?1:-1);
+    //        //flags += (isLeave()!=isBranch)?0:(isLeave_MASK*((isBranch)?-1:1));
+    //    }
+    //}
+    ////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //public boolean rqsError() {
+    //    return ((flags & rqsError_MASK) == rqsError_MASK) ? true : false;
+    //}
+    //public void setRqsError(boolean rqsError) {
+    //    if (rqsError() != rqsError) {
+    //        if (rqsError) {
+    //            this.setRqsGradient(false);
+    //            flags += rqsError_MASK;
+    //        } else {
+    //            flags -= rqsError_MASK;
+    //        }
+    //    }
+    //}
+    ////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //public boolean carriesDerivatives() {
+    //    return ((flags & carriesDerivatives_MASK) == carriesDerivatives_MASK) ? true : false;
+    //}
+    //public void setCarriesDerivatives(boolean caryDerivatives) {
+    //    if (carriesDerivatives() != caryDerivatives) {
+    //        flags += carriesDerivatives_MASK*((caryDerivatives)?1:-1);
+    //    }
+    //}
+    ////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //public boolean usesReverseModeAutoDiff() {
+    //    return ((flags & reverseModeAutoDiff_MASK) == reverseModeAutoDiff_MASK) ? true : false;
+    //}
+    //public void setReverseModeAutoDiff(boolean reverseModeAutoDiff) {
+    //    if (usesReverseModeAutoDiff() != reverseModeAutoDiff) {
+    //        flags += reverseModeAutoDiff_MASK*((reverseModeAutoDiff)?1:-1);
+    //    }
+    //}
+    ////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public boolean rqsGradient() {
-        return ((Flags & rqsGradient_MASK) == rqsGradient_MASK) ? true : false;
+        return ((flags & rqsGradient_MASK) == rqsGradient_MASK) ? true : false;
     }
     public void setRqsGradient(boolean rqsGradient) {
         if (rqsGradient() != rqsGradient) {
             if (rqsGradient) {
-                Flags += rqsGradient_MASK;
+               // this.setRqsError(false);
+                flags += rqsGradient_MASK;
             } else {
-                Flags -= rqsGradient_MASK;
+                flags -= rqsGradient_MASK;
             }
         }
         if (rqsGradient) {
-            if (!this.hasModule(NDerivatives.class)) {
-                NDerivatives d = new NDerivatives();
-                d.put(this, new NTensor(this.shape, 1));
+            if (!this.hasModule(RelativeGradients.class)) {
+                RelativeGradients d = new RelativeGradients();
+                d.put(this, new T(this.shape, 1));
                 this.addModule(d);
             }
         }
@@ -95,7 +107,7 @@ public class NTensor {
         for(int i=0; i<this.shape.length; i++){
             strShape+=this.shape[i];
             if(i<this.shape.length-1){
-                strShape+="X";
+                strShape+="x";
             }
         }
         strShape = "["+strShape+"]";
@@ -107,8 +119,8 @@ public class NTensor {
             }
         }
         strValue = strShape+":("+strValue+")";
-        if(this.hasModule(NDerivatives.class)){
-            NDerivatives d = (NDerivatives) this.findModule(NDerivatives.class);
+        if(this.hasModule(RelativeGradients.class)){
+            RelativeGradients d = (RelativeGradients) this.findModule(RelativeGradients.class);
             String[] strDerivatives = {"; "};
             d.forEach((target, derivative)->{
                 strDerivatives[0]+="->d"+derivative.toString()+", ";
@@ -119,16 +131,15 @@ public class NTensor {
     }
     //MODUL I / O :
     //=========================
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     private ArrayList<Object> Modules = new ArrayList<Object>();
 
     public ArrayList<Object> getModules() {
         return Modules;
     }
-
     public void setModules(ArrayList<Object> properties) {
         Modules = properties;
     }
-
     public void addModule(Object newModule) {
         if (Modules != null) {
             Object oldCompartment = findModule(newModule.getClass());
@@ -142,7 +153,6 @@ public class NTensor {
             Modules.add(newModule);
         }
     }
-
     public Object findModule(Class moduleClass) {
         if (Modules != null) {
             for (int Pi = 0; Pi < Modules.size(); Pi++) {
@@ -153,7 +163,6 @@ public class NTensor {
         }
         return null;
     }
-
     public void removeModule(Class moduleClass) {
         Object oldCompartment = findModule(moduleClass);
         if (oldCompartment != null) {
@@ -164,300 +173,327 @@ public class NTensor {
             Modules = null;
         }
     }
-
     public boolean hasModule(Class moduleClass) {
         if (findModule(moduleClass) != null) {
             return true;
         }
         return false;
     }
-
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //================================================================================================
-    NTensor(int[] shape) {
-        value = new double[NTensor.utility.sizeOfShape_mxd(shape, 0, shape.length)];
+    public T() { }// creates empty tensor;
+
+    T(int[] shape) {
+        value = new double[T.utility.sizeOfShape_mxd(shape, 0, shape.length)];
         this.initialShape(shape);
     }
-
-    public NTensor(int[] shape, double value) {
-        this.value = new double[NTensor.utility.sizeOfShape_mxd(shape, 0, shape.length)];
+    public T(int[] shape, double value) {
+        this.value = new double[T.utility.sizeOfShape_mxd(shape, 0, shape.length)];
         this.initialShape(shape);
         for (int i = 0; i < this.value.length; i++) {
             this.value[i] = value;
         }
     }
-
-    public NTensor(NTensor tensor) {
+    public T(T tensor) {
         this.shape = tensor.shape;
         this.translation = tensor.translation;
         this.value = new double[tensor.size()];
         this.Modules = null;//tensor.Modules;
-        this.Flags = tensor.Flags;
+        this.flags = tensor.flags;
         for (int i = 0; i < this.value.length; i++) {
             this.value[i] = tensor.value[i];
         }
     }
 
-
-    public NTensor() {
-    }
-
     public void initialShape(int[] newShape) {
-        int size = NTensor.utility.sizeOfShape_mxd(newShape, 0, newShape.length);
+        int size = T.utility.sizeOfShape_mxd(newShape, 0, newShape.length);
         if (value == null) {
             value = new double[size];
         }
         if (size != value.length) {
             return;
         }
-        translation = NTensor.utility.idxTrltn(newShape);
-        long key = 0;
+        this.translation = T.utility.idxTrltn(newShape);
+        long t_key = 0;
+        long s_key = 0;
         for (int i = 0; i < newShape.length; i++) {
-            key *= 10;
-            key += Math.abs(newShape[i]);
+            s_key *= 10;
+            s_key += Math.abs(newShape[i]);
+            t_key *= 10;
+            t_key += Math.abs(this.translation[i]);
         }
-        int[] found = shared.get(key);
+        int[] found = shared.get(s_key);
         if (found != null) {
             this.shape = found;
         } else {
-            shared.put(key, newShape);
+            shared.put(s_key, newShape);
             this.shape = newShape;
         }
+        found = shared.get(t_key);
+        if (found != null) {
+            this.translation = found;
+        } else {
+            shared.put(t_key, this.translation);
+        }
+    }
+    public double[] gradient(){
+        return gradient;
     }
 
-    public long id() {
-        return id;
+    public void setGradient(T g){
+        this.gradient = g.value;
     }
 
     public double[] value() {
         return value;
     }
-
     public int[] shape() {
         return shape;
     }
-
     public int size() {
-        return value.length;//NTensor.utility.sizeOfShape_mxd(shape, 0, shape.length);
+        return value.length;
     }
-
     public int[] shpIdx(int idx) {
-        return NTensor.utility.IdxToShpIdx(idx, translation);
+        return T.utility.IdxToShpIdx(idx, translation);
     }
-
     public boolean isEmpty() {
         if (value == null) {
             return true;
         }
         return false;
     }
-
     public void reshape(int[] newForm) {
-        this.shape = NTensor.utility.reshaped(this.shape, newForm);
-        this.translation = NTensor.utility.reshaped(this.translation, newForm);
+        this.shape = T.utility.reshaped(this.shape, newForm);
+        this.translation = T.utility.reshaped(this.translation, newForm);
     }
-
-    public void copy(NTensor tensor) {
+    public void internalize(T tensor) {
         this.value = tensor.value;
         this.shape = tensor.shape;
         this.translation = tensor.translation;
         this.Modules = tensor.Modules;
-        this.Flags = tensor.Flags;
+        this.flags = tensor.flags;
     }
 
     //================================================================================================
-    public NTensor of(NTensor tensor, String operation) {
-        this.addModule(new NOperation(tensor, operation));
+    public T of(T tensor, String operation) {
+        if(tensor==null){return this;}
+        return this.of(new T[]{tensor}, operation);
+    }
+    public T of(T[] tensors, String operation) {
+        if(tensors==null||tensors.length==0||tensors[0]==null){return this;}
+        this.addModule(new TOperation(this, tensors, operation));
+        //this.setIsLeave(false);
         return this;
     }
-
-    public NTensor of(NTensor[] tensors, String operation) {
-        this.addModule(new NOperation(tensors, operation));
+    public T of(T[] tensors, int[][] translation, String operation) {
+        this.addModule(new TOperation(this, tensors, translation, operation));
+        //this.setIsLeave(false);
         return this;
     }
-
-    public NTensor of(NTensor[] tensors, int[][] translation, String operation) {
-        this.addModule(new NOperation(tensors, translation, operation));
-        return this;
-    }
-
-    public void forward() {
-        NOperation operation = (NOperation) this.findModule(NOperation.class);
+    //-----------------------------------------------------------------------------------------------
+    public void backward(T gradient) {
+        if(this.rqsGradient()){
+            this.setGradient(gradient);
+        }
+        TOperation operation = (TOperation) this.findModule(TOperation.class);
         if (operation == null) {
             return;
         }
-        operation.forEachSource((tensor) -> {
-            tensor.forward();
-        });
-        operation.forward(this);
+        operation.backward(gradient, this);
     }
-
     // Element wise operations:
     //--------------------------
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public double e_get(int idx) {
-        return NTensor.utility.idxOfShpIdxAndShp(shpIdx(idx), shape);
+        return T.utility.idxOfShpIdxAndShp(shpIdx(idx), shape);
     }
-
     public double e_get(int[] index) {
-        return value[NTensor.utility.idxOfShpIdxAndShp(index, shape)];
+        return value[T.utility.idxOfShpIdxAndShp(index, shape)];
     }
-
     public void e_set(int idx, double value) {
-        this.value[NTensor.utility.idxOfShpIdxAndShp(shpIdx(idx), shape)] = value;
+        this.value[T.utility.idxOfShpIdxAndShp(shpIdx(idx), shape)] = value;
     }
-
     public void e_set(int[] index, double value) {
-        this.value[NTensor.utility.idxOfShpIdxAndShp(index, shape)] = value;
+        this.value[T.utility.idxOfShpIdxAndShp(index, shape)] = value;
     }
-
     public void e_add(int idx, double value) {
-        this.value[NTensor.utility.idxOfShpIdxAndShp(shpIdx(idx), shape)] += value;
+        this.value[T.utility.idxOfShpIdxAndShp(shpIdx(idx), shape)] += value;
     }
-
     public void e_add(int[] index, double value) {
-        this.value[NTensor.utility.idxOfShpIdxAndShp(index, shape)] += value;
+        this.value[T.utility.idxOfShpIdxAndShp(index, shape)] += value;
     }
-
     public void e_sub(int idx, double value) {
-        this.value[NTensor.utility.idxOfShpIdxAndShp(shpIdx(idx), shape)] -= value;
+        this.value[T.utility.idxOfShpIdxAndShp(shpIdx(idx), shape)] -= value;
     }
-
     public void e_sub(int[] index, double value) {
-        this.value[NTensor.utility.idxOfShpIdxAndShp(index, shape)] -= value;
+        this.value[T.utility.idxOfShpIdxAndShp(index, shape)] -= value;
     }
-
     public void e_mul(int idx, double value) {
-        this.value[NTensor.utility.idxOfShpIdxAndShp(shpIdx(idx), shape)] *= value;
+        this.value[T.utility.idxOfShpIdxAndShp(shpIdx(idx), shape)] *= value;
     }
-
     public void e_mul(int[] index, double value) {
-        this.value[NTensor.utility.idxOfShpIdxAndShp(index, shape)] *= value;
+        this.value[T.utility.idxOfShpIdxAndShp(index, shape)] *= value;
     }
-
-    public void e_add(NTensor tensor) {
+    public void e_add(T tensor) {
         int[] index = new int[shape.length];
         int size = size();
         for (int i = 0; i < size; i++) {
             e_add(index, tensor.e_get(index));
-            NTensor.utility.increment(index, shape);
+            T.utility.increment(index, shape);
         }
     }
-
-    public void e_sub(NTensor tensor) {
+    public void e_sub(T tensor) {
         int[] index = new int[shape.length];
         int size = size();
         for (int i = 0; i < size; i++) {
             this.e_sub(index, tensor.e_get(index));
-            NTensor.utility.increment(index, shape);
+            T.utility.increment(index, shape);
         }
     }
-
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /**
+     *    ======================================================================================================
+     *    FACTORY FUNCTIONS:
+     * */
     public static class factory{
-        public static NTensor newTensor(double[] value, int[] shape){
-            NTensor tensor = new NTensor();
+
+        public static T tensDotMul(T tensor1, T tensor2){
+            T newTensor = new T(T.utility.shpOfTensMul(tensor1.shape(), tensor2.shape()));
+            T.utility.tensMul_mxd(
+                    newTensor.shape().length,
+                    new double[][]{tensor1.value(), tensor2.value(), newTensor.value()}, new int[]{0, 0, 0},
+                    T.utility.mxdFromShape(tensor1.shape()),
+                    T.utility.mxdFromShape(tensor2.shape()),
+                    T.utility.mxdFromShape(newTensor.shape())
+            );
+            return newTensor;
+        }
+
+        public static T tensMul(T tensor1, T tensor2){
+            T drn = new T(tensor1.shape());
+            int[] index = new int[drn.shape().length];
+            int size = drn.size();
+            for(int i=0; i<size; i++){
+                drn.e_add(index, tensor1.e_get(index)*tensor2.e_get(index));
+                T.utility.increment(index, drn.shape());
+            }
+            return drn;
+        }
+
+        public static T tensAdd(T tensor1, T tensor2){
+            T drn = new T(tensor1.shape());
+            int[] index = new int[drn.shape().length];
+            int size = drn.size();
+            for(int i=0; i<size; i++){
+                drn.e_add(index, tensor1.e_get(index)+tensor2.e_get(index));
+                T.utility.increment(index, drn.shape());
+            }
+            return drn;
+        }
+
+        public static T newTensor(double[] value, int[] shape){
+            T tensor = new T();
             tensor.value = value;
             tensor.initialShape(shape);
             return tensor;
         }
-        public static NTensor copyOf(NTensor tensor){
-            NTensor newTensor = new NTensor();
+        public static T copyOf(T tensor){
+            T newTensor = new T();
             newTensor.shape = tensor.shape;
             newTensor.translation = tensor.translation;
             newTensor.value = new double[tensor.size()];
             newTensor.Modules = null;//tensor.Modules;
-            newTensor.Flags = tensor.Flags;
+            newTensor.flags = tensor.flags;
             for (int i = 0; i < newTensor.value.length; i++) {
                 newTensor.value[i] = tensor.value[i];
             }
             return newTensor;
         }
-        public static NTensor copyOf(Object[] things){
+        public static T copyOf(Object[] things){
 
             for(int i=0; i<things.length; i++){
                 if(things[i] instanceof int[]){
 
-                }
-
+                }//TODO: complete
             }
-            return new NTensor();
+            return new T();
         }
-        public static  NTensor reshapedCopyOf(NTensor tensor, int[] newForm) {
-            NTensor newTensor = new NTensor();
+        public static T reshapedCopyOf(T tensor, int[] newForm) {
+            T newTensor = new T();
             newTensor.value = tensor.value;
-            newTensor.shape = NTensor.utility.reshaped(tensor.shape, newForm);
-            newTensor.translation = NTensor.utility.reshaped(tensor.translation, newForm);
-            newTensor.Modules = tensor.Modules;
+            newTensor.shape = T.utility.reshaped(tensor.shape, newForm);
+            newTensor.translation = T.utility.reshaped(tensor.translation, newForm);
+            newTensor.Modules = tensor.Modules;//Reshaped derivs usw
             return newTensor;
         }
     }
-
+    /**
+     *   ======================================================================================================
+     *   UTILITY:
+     *
+     * */
     public static class utility {
         @Contract(pure = true)
-        public static void increment_mxd(@NotNull int[] dimIndex, @NotNull int[] dim, int start, int rank) {
-            int Di = start;
+        public static void increment_mxd(@NotNull int[] shpIdx, @NotNull int[] shape, int start, int rank) {
+            int i = start;
             int end = start + rank;
-            while (Di >= start && Di < end) {
-                Di = incrementAt(Di, dimIndex, dim);
+            while (i >= start && i < end) {
+                i = incrementAt(i, shpIdx, shape);
             }
         }
-
         @Contract(pure = true)
-        public static void increment(@NotNull int[] dimIndex, @NotNull int[] dim) {
-            int Di = 0;
-            while (Di >= 0 && Di < dim.length) {//fixed
-                Di = incrementAt(Di, dimIndex, dim);
+        public static void increment(@NotNull int[] shpIdx, @NotNull int[] shape) {
+            int i = 0;
+            while (i >= 0 && i < shape.length) {//fixed
+                i = incrementAt(i, shpIdx, shape);
             }
         }
-
         @Contract(pure = true)
-        public static int incrementAt(int Di, @NotNull int[] dimIndex, @NotNull int[] dim) {
-            if (dimIndex[Di] < (dim[Di])) {//fixed
-                dimIndex[Di]++;
-                if (dimIndex[Di] == (dim[Di])) {
-                    dimIndex[Di] = 0;
-                    Di++;
+        public static int incrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
+            if (shpIdx[i] < (shape[i])) {//fixed
+                shpIdx[i]++;
+                if (shpIdx[i] == (shape[i])) {
+                    shpIdx[i] = 0;
+                    i++;
                 } else {
-                    Di = -1;
+                    i = -1;
                 }
             } else {
-                Di++;
+                i++;
             }
-            return Di;
+            return i;
         }
-
         //-----------------------------------------------------------------------
         @Contract(pure = true)
-        public static void decrement_onMixed(@NotNull int[] dimIndex, @NotNull int[] dim, int start, int rank) {
-            int Di = start;
+        public static void decrement_onMixed(@NotNull int[] shpIdx, @NotNull int[] shape, int start, int rank) {
+            int i = start;
             int end = start + rank;
-            while (Di >= start && Di < end) {
-                Di = decrementAt(Di, dimIndex, dim);
+            while (i >= start && i < end) {
+                i = decrementAt(i, shpIdx, shape);
             }
         }
-
         @Contract(pure = true)
-        public static void decrement(@NotNull int[] dimIndex, @NotNull int[] dim) {
-            int Di = 0;
-            while (Di >= 0 && Di < dim.length) {
-                Di = decrementAt(Di, dimIndex, dim);
+        public static void decrement(@NotNull int[] shpIdx, @NotNull int[] shape) {
+            int i = 0;
+            while (i >= 0 && i < shape.length) {
+                i = decrementAt(i, shpIdx, shape);
             }
         }
-
         @Contract(pure = true)
-        public static int decrementAt(int Di, @NotNull int[] dimIndex, @NotNull int[] dim) {
-            if (dimIndex[Di] == 0) {
-                Di++;
+        public static int decrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
+            if (shpIdx[i] == 0) {
+                i++;
             } else {
-                dimIndex[Di]--;
-                Di--;
-                while (dimIndex[Di] == 0) {
-                    dimIndex[Di] = dim[Di] - 1;
-                    Di--;
+                shpIdx[i]--;
+                i--;
+                while (shpIdx[i] == 0) {
+                    shpIdx[i] = shape[i] - 1;
+                    i--;
                 }
-                Di = -1;
+                i = -1;
             }
-            return Di;
+            return i;
         }
-
         //-----------------------------------------------------------------------
         @Contract(pure = true)
         public static void incrementFor(int count, int[] shpIdx, int[] shape) {
@@ -465,32 +501,29 @@ public class NTensor {
                 increment(shpIdx, shape);
             }
         }
-
         @Contract(pure = true)
         public static void decrementFor(int count, int[] shpIdx, int[] shape) {
             for (int Di = 0; Di < count; Di++) {
                 decrement(shpIdx, shape);
             }
         }
-
         //-----------------------------------------------------------------------
         @Contract(pure = true)
-        public static int idxOfShpIdxAndShp(int[] Index, int[] shape) {
+        public static int idxOfShpIdxAndShp(int[] shpIdx, int[] shape) {
             int[] trltn = idxTrltn(shape);
             int idx = 0;
             for (int i = 0; i < trltn.length; i++) {
-                idx += trltn[i] * Index[i];
+                idx += trltn[i] * shpIdx[i];
             }
             return idx;
         }
-
         @Contract(pure = true)
-        public static int[] idxTrltn(int[] dim) {
-            int[] idxAnchor = new int[dim.length];
+        public static int[] idxTrltn(int[] shape) {
+            int[] idxAnchor = new int[shape.length];
             int prod = 1;
-            for (int Di = 0; Di < dim.length; Di++) {
-                idxAnchor[Di] = prod;
-                prod *= dim[Di];
+            for (int i = 0; i < shape.length; i++) {
+                idxAnchor[i] = prod;
+                prod *= shape[i];
             }
             return idxAnchor;
         }
@@ -498,9 +531,9 @@ public class NTensor {
         @Contract(pure = true)
         public static int[] idxTrnln_Mxd(int[] mxdShp, int[] trnln, int start, int end) {
             int prod = 1;
-            for (int Di = start; Di < end; Di++) {
-                trnln[Di] = prod;
-                prod *= mxdShp[Di];
+            for (int i = start; i < end; i++) {
+                trnln[i] = prod;
+                prod *= mxdShp[i];
             }
             return trnln;
         }
@@ -530,28 +563,28 @@ public class NTensor {
         //-----------------------------------------------------------------------
         @Contract(pure = true)
         public static int[] reshaped(int[] shape, @NotNull int[] newForm) {
-            int[] newDim = new int[newForm.length];
-            for (int Di = 0; Di < newForm.length; Di++) {
-                if (newForm[Di] < 0) {
-                    newDim[Di] = Math.abs(newForm[Di]);//dim[Math.abs(newForm[Di])-1]*-1;
-                } else if (newForm[Di] >= 0) {
-                    newDim[Di] = shape[newForm[Di]];
+            int[] newShp = new int[newForm.length];
+            for (int i = 0; i < newForm.length; i++) {
+                if (newForm[i] < 0) {
+                    newShp[i] = Math.abs(newForm[i]);//dim[Math.abs(newForm[Di])-1]*-1;
+                } else if (newForm[i] >= 0) {
+                    newShp[i] = shape[newForm[i]];
                 }
             }
-            return newDim;
+            return newShp;
         }
 
         @Contract(pure = true)
-        public static int[] reshaped_mxd(int[] shape, int start, int rank, int[] newDim, @NotNull int[] newForm) {
+        public static int[] reshaped_mxd(int[] shape, int start, int rank, int[] newShp, @NotNull int[] newForm) {
             //int[] newDim = new int[newForm.length];
-            for (int Di = 0; Di < newForm.length; Di++) {//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                if (newForm[Di] < 0) {
-                    newDim[Di] = Math.abs(newForm[Di]);//dim[Math.abs(newForm[Di])-1]*-1;
-                } else if (newForm[Di] >= 0) {
-                    newDim[Di] = shape[newForm[Di]];
+            for (int i = start; i < newForm.length; i++) {//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                if (newForm[i] < 0) {
+                    newShp[i] = Math.abs(newForm[i]);//dim[Math.abs(newForm[Di])-1]*-1;
+                } else if (newForm[i] >= 0 && i<start+rank) {
+                    newShp[i] = shape[newForm[i]];
                 }
             }
-            return newDim;
+            return newShp;
         }
 
         //-----------------------------------------------------------------------
@@ -597,7 +630,7 @@ public class NTensor {
 
         @Contract(pure = true)
         public static int[] shpOfTensMul(int[] frstShp, int[] scndShp) {
-            int[] shape = new int[(frstShp.length + scndShp.length + 1) / 2];
+            int[] shape = new int[(frstShp.length + scndShp.length) / 2];
             for (int i = 0; i < frstShp.length && i < scndShp.length; i++) {
                 shape[i] = Math.abs(frstShp[i] - scndShp[i]) + 1;
             }
@@ -658,13 +691,13 @@ public class NTensor {
                         int idx1 = idxOfFrmt_mxd(hdr1, rank);
                         int idx2 = idxOfFrmt_mxd(hdr2, rank);
                         System.out.println(
-                                "hdr1:" + strInt(hdr1[2]) +
-                                        "; hdr2:" + strInt(hdr2[2]) +
-                                        "; drn:" + strInt(drn[2]) +
-                                        " idx1:(" + idx1 + ");" +
-                                        " idx2:(" + idx2 + ");" +
-                                        " drn:(" + idxOfFrmt_mxd(drn, rank) + ");" +
-                                        " val:(" + value + ") += val1:(" + data[0][dataPtr[0] + idx1] + ") x val2:(" + data[1][dataPtr[1] + idx2] + ");");
+                            "hdr1:" + strInt(hdr1[2]) + "; " +
+                            "hdr2:" + strInt(hdr2[2]) + "; " +
+                            "drn:" + strInt(drn[2]) +
+                            " idx1:(" + idx1 + ");" +
+                            " idx2:(" + idx2 + ");" +
+                            " drn:(" + idxOfFrmt_mxd(drn, rank) + ");" +
+                            " val:(" + value + ") += val1:(" + data[0][dataPtr[0] + idx1] + ") x val2:(" + data[1][dataPtr[1] + idx2] + ");");
                         value += data[0][dataPtr[0] + idx1] * data[1][dataPtr[1] + idx2];
                         incrementing = true;
                         i1 = hdr1[3][0];
@@ -712,7 +745,7 @@ public class NTensor {
                     increment_mxd(drn[2], drn[0], drn[3][0], rank);
                 }
             }
-            System.out.println("wow");
+            System.out.println("result:");
             System.out.println(strInt(hdr1[2]) + "-" + strInt(hdr1[0]) + "-" + strInt(hdr1[1]));
             System.out.println(strInt(hdr2[2]) + "-" + strInt(hdr2[0]) + "-" + strInt(hdr2[1]));
             System.out.println(strInt(drn[2]) + "-" + strInt(drn[0]) + "-" + strInt(drn[1]));
@@ -745,7 +778,7 @@ public class NTensor {
                 match[0][i] = Math.abs(shape1[0][i] - shape2[0][i]) + 1;
             }
             match[3] = new int[]{0};
-            match[1] = NTensor.utility.idxTrltn(match[0]);
+            match[1] = T.utility.idxTrltn(match[0]);
             match[2] = new int[match[0].length];
             return match;
         }

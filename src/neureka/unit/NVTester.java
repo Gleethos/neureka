@@ -2,8 +2,8 @@ package neureka.unit;
 
 
 import neureka.main.core.NVertex;
-import neureka.main.core.base.data.NDerivatives;
-import neureka.main.core.base.data.NTensor;
+import neureka.main.core.base.data.RelativeGradients;
+import neureka.main.core.base.data.T;
 import neureka.main.core.imp.NVertex_Root;
 import neureka.unit.io.NVTesting_Activation;
 import neureka.unit.state.NVTesting_Format;
@@ -13,12 +13,11 @@ import neureka.utility.NMessageFrame;
 public class NVTester {
 
 	NMessageFrame Console = new NMessageFrame("NV-Unit-Test:");
-	
 	NMessageFrame ResultConsole = new NMessageFrame("NV-Unit-Test-Result:");
 	
 	public NVTester(){}
 	/*
-		Function IDs:
+	     Function IDs:
 		 case 0:  ReLu
 		 case 1:  Sigmoid
 		 case 2:  Tanh
@@ -37,44 +36,78 @@ public class NVTester {
 		//head.randomizeBiasAndWeight();
 		//System.out.println(head.toString());
 
-
-		InputFormattingTest();
-	    BaseFunctionsActivationTest();
-	    testCoreTypes();
-		advancedActivationTest();
-		networkTest();
-	    componentTest();
-		rootActivationTest();
-		simpleRootTest();
-		testRootDeriviation();
-		weightStateTest();
+		//InputFormattingTest();
+	    //BaseFunctionsActivationTest();
+	    //testCoreTypes();
+		//advancedActivationTest();
+		//networkTest();
+	    //componentTest();
+		//rootActivationTest();
+		//simpleRootTest();
+		//testRootDeriviation();
+		//weightStateTest();
 		testTensorCore();
 
-
-
-
+		int tes = 3*((false)?-1:1);
+		System.out.println(tes);
 	}
 
 
 	public void testTensorCore(){
 
 		NVTesting_Tensor tester = new NVTesting_Tensor(Console, ResultConsole);
-
-		NTensor tensor1 = new NTensor(new int[]{1, 3}, 2);
-		NTensor tensor2 = new NTensor(new int[]{2, 1}, -1);
+		//---
+		// t1, t2 (*)> t3 ; 
+		T tensor1 = new T(new int[]{1}, 2.5);
+		T tensor2 = new T(new int[]{1}, -1);
 		tensor1.setRqsGradient(true);
 		tensor2.setRqsGradient(true);
-		NDerivatives derivatives = new NDerivatives();
-		derivatives.put(tensor1, NTensor.factory.newTensor(new double[]{-0.01,-0.01,-0.01,-0.01,-0.01,-0.01}, new int[]{2, 3}));
-		derivatives.put(tensor2, NTensor.factory.newTensor(new double[]{0.02,0.02,0.02,0.02,0.02,0.02}, new int[]{2, 3}));
-		NTensor expectedTensor = NTensor.factory.newTensor(new double[]{-0.02,-0.02,-0.02,-0.02,-0.02,-0.02}, new int[]{2, 3});
+		RelativeGradients derivatives = new RelativeGradients();
+		derivatives.put(tensor1, T.factory.newTensor(new double[]{-0.01,-0.01,-0.01,-0.01,-0.01,-0.01}, new int[]{2, 3}));
+		derivatives.put(tensor2, T.factory.newTensor(new double[]{0.02,0.02,0.02,0.02,0.02,0.02}, new int[]{2, 3}));
+		T expectedTensor = T.factory.newTensor(new double[]{-0.02,-0.02,-0.02,-0.02,-0.02,-0.02}, new int[]{2, 3});
 		expectedTensor.addModule(derivatives);
 		tester.testTensorAutoGrad(
-				new NTensor[]{tensor1, tensor2},
+				new T[]{tensor1, tensor2},
 				"relu(tensmul(Ij))",
 				expectedTensor
 		);
-
+		//---
+		tensor1 = new T(new int[]{1, 3}, 2);
+		tensor2 = new T(new int[]{2, 1}, -1);
+		tensor1.setRqsGradient(true);
+		tensor2.setRqsGradient(true);
+		RelativeGradients derivatives = new RelativeGradients();
+		derivatives.put(tensor1, T.factory.newTensor(new double[]{-0.01,-0.01,-0.01,-0.01,-0.01,-0.01}, new int[]{2, 3}));
+		derivatives.put(tensor2, T.factory.newTensor(new double[]{0.02,0.02,0.02,0.02,0.02,0.02}, new int[]{2, 3}));
+		T expectedTensor = T.factory.newTensor(new double[]{-0.02,-0.02,-0.02,-0.02,-0.02,-0.02}, new int[]{2, 3});
+		expectedTensor.addModule(derivatives);
+		tester.testTensorAutoGrad(
+				new T[]{tensor1, tensor2},
+				"relu(tensmul(Ij))",
+				expectedTensor
+		);
+		//---
+		tensor1 = new T(new int[]{3, 2, 1}, 4);
+		tensor2 = new T(new int[]{1, 1, 4}, -1);
+		T tensor3 = new T(new int[]{3, 2, 1}, 2);
+		tensor2.setRqsGradient(true);
+		derivatives = new RelativeGradients();
+		derivatives.put(tensor1, T.factory.newTensor(new double[]{48,48,48,48}, new int[]{1, 1, 4}));
+		expectedTensor = T.factory.newTensor(new double[]{-48,-48,-48,-48}, new int[]{1, 1, 4});
+		expectedTensor.addModule(derivatives);
+		tester.testTensorAutoGrad(new T[]{tensor1, tensor2, tensor3}, "tensmul", expectedTensor);
+		//--
+		tensor1 = new T(new int[]{5, 1, 1}, 4);//-2*4 = 8 | *3 = -24
+		tensor2 = new T(new int[]{1, 4, 1}, -2);
+		tensor3 = new T(new int[]{1, 1, 2}, 3);
+		tensor1.setRqsGradient(true);
+		derivatives = new RelativeGradients();
+		derivatives.put(tensor1, new T(new int[]{5, 4, 2}, -6));
+		expectedTensor = new T(new int[]{5, 4, 2}, -24);
+		expectedTensor.addModule(derivatives);
+		tester.testTensorAutoGrad(new T[]{tensor1, tensor2, tensor3}, "tensmul", expectedTensor);
+		//---
 		int[] shape = {4, 2, 9, 5, 6, 2};
 		int[] newForm = {1, 0, -1, -2, 2, 4, 3, -1, 5};
 		int[] expected ={2, 4,  1,  2, 9, 6, 5, 1, 2};
@@ -92,8 +125,6 @@ public class NVTester {
 		expected = new int[]{3, 2, 1, 2};
 		int idx = (1)*3 + (1*4)*2 + (1*4*3)*1 + (1*4*3*2)*2;
 		tester.testTensorBase_idxFromAnchor(shape, idx, expected);
-		//---
-		tester.testTensMulOnMxd();
 		//---
 		int[] frstShape = {4, 1};
 		double[] frstData = {
@@ -132,6 +163,25 @@ public class NVTester {
 				new double[]{
 						29, -28, -1,
 						-40, 48, -29,
+				}
+		);
+		//---
+		frstShape = new int[]{1, 1};
+		frstData = new double[]{2};
+
+		scndShape = new int[]{2, 3};
+		scndData = new double[]{
+				4, -2,
+				8, -1,
+				-5, 2,
+		};
+		tester.testTensMulOn(
+				frstShape, scndShape,
+				frstData, scndData,
+				new double[]{
+						8, -4,
+						16, -2,
+						-10, 4,
 				}
 		);
 		//---
