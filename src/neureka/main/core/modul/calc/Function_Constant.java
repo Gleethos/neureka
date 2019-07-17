@@ -1,11 +1,17 @@
 package neureka.main.core.modul.calc;
 
-public class NVFValueLeave implements NVFunction
+import neureka.main.core.base.data.T;
+
+public class Function_Constant implements Function
 {
-	double Value;
+	double value;
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
-	public NVFunction newBuild(String expression) 
+	public boolean isFlat(){
+		return  false;
+	}
+	@Override
+	public Function newBuild(String expression)
 	{	
 		String number = "";
 		for(int i=0; i<expression.length(); i++) 
@@ -19,30 +25,20 @@ public class NVFValueLeave implements NVFunction
 				number += expression.charAt(i);
 			}
 		}
-		Value = Double.parseDouble(number);
-		System.out.println("Value: "+Value);
+		value = Double.parseDouble(number);
+		System.out.println("value: "+ value);
 		return this;
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
-	public double activate(final double[] input, double[] bias) {
-	    	return Value;
-	    }
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	@Override
     public double activate(final double[] input, int j) {
-    	return Value;
+    	return value;
     }
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
 	public double activate(double[] input) {
-		return Value;
+		return value;
 	}
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    @Override
-    public double derive(final double[] input, final double[] bias, final int index) {
-        return 0;
-    }
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
 	public double derive(double[] input, int index) {
@@ -55,15 +51,28 @@ public class NVFValueLeave implements NVFunction
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
-	public boolean dependsOn(int index) {
-		// TODO Auto-generated method stub
-		return false;
+	public String toString() {
+		return value +"";
 	}
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	@Override
-	public String expression() {
-		// TODO Auto-generated method stub
-		return Value+"";
+	public T activate(T[] input, int j) {
+		return T.factory.newTensor(this.value, input[0].shape());
+	}
+
+	@Override
+	public T activate(T[] input) {
+		return T.factory.newTensor(this.value, input[0].shape());
+	}
+
+	@Override
+	public T derive(T[] input, int index, int j) {
+		return T.factory.newTensor(0, input[0].shape());
+	}
+
+	@Override
+	public T derive(T[] input, int index) {
+		return T.factory.newTensor(0, input[0].shape());
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }

@@ -1,90 +1,105 @@
 package neureka.main.core.base.data;
 
 import neureka.main.core.NVUtility;
+import neureka.main.core.modul.calc.TDevice;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.function.Consumer;
 
 public class T {
 
-    private static HashMap<Long, int[]> shared;
-    static {//The thing we do for memory:
+    static {//The things we do for memory:
         shared = new HashMap<Long, int[]>();
+        cpu = new TDevice(null);
     }
+
+    // DEFAULT DEVICE
+    //=========================
+    private static TDevice cpu;
+
+
+    //STATIC SHARED MEMORY:
+    //=========================
+    private static HashMap<Long, int[]> shared;
+
+
+    //DATA FIELDS:
+    //=========================
     protected int[] shape = null;
     protected int[] translation = null;
     protected double[] value = null;
     protected double[] gradient = null;
+    //-----------------------------------------------------------------------
 
-    private int flags = 0 + 2 + 4;//Default
+    public TDevice device(){
+        if(this.isOutsourced()){
+            return (TDevice) this.findModule(TDevice.class);
+        }
+        return cpu;
+    }
+
+    public double[] gradient(){
+        if(this.rqsGradient()&&this.isOutsourced()&&this.hasModule(TDevice.class)){
+            return ((TDevice)this.findModule(TDevice.class)).valueOf(this, true);
+        }
+        return gradient;
+    }
+    public void setGradient(T g){
+        this.gradient = g.value;
+    }
+
+    public double[] value() {
+        if(this.value==null && this.isOutsourced() && this.hasModule(TDevice.class)){
+            return ((TDevice)this.findModule(TDevice.class)).valueOf(this, false);
+        }
+        return value;
+    }
+    public void setValue(double[] newValue){
+        this.value = newValue;
+        if(this.isOutsourced() && newValue!=null){
+            ((TDevice)this.findModule(TDevice.class)).add(this);
+        }
+    }
+
+    public int[] shape() {
+        return shape;
+    }
+
+    public int[] translation(){
+        return translation;
+    }
+
+    public int size() {
+        return value.length;
+    }
+
+    public int[] shpIdx(int idx) {
+        return T.utility.IdxToShpIdx(idx, translation);
+    }
+
+    public boolean isEmpty() {
+        if (value == null) {
+            return true;
+        }
+        return false;
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //FLAG FIELDS:
+    //=========================
+    private int flags = 0 + 0 + 0;//Default
     private final static int rqsGradient_MASK = 1;
-    private final static int carriesDerivatives_MASK = 2;
-    private final static int isLeave_MASK = 4;
-    private final static int rqsError_MASK = 8;
-    private final static int isBranch_MASK = 16;
-    private final static int reverseModeAutoDiff_MASK = 32;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //public boolean isLeave() {
-    //    return ((flags & isLeave_MASK) == isLeave_MASK) ? true : false;
-    //}
-    //public void setIsLeave(boolean isLeave) {
-    //    if (isLeave() != isLeave) {
-    //        flags += isLeave_MASK*((isLeave)?1:-1);
-    //        //flags += (isBranch()!=isLeave)?0:(isBranch_MASK*((isLeave)?-1:1));
-    //    }
-    //}
-    ////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //public boolean isBranch() {
-    //    return ((flags & isBranch_MASK) == isBranch_MASK) ? true : false;
-    //}
-    //public void setIsBranch(boolean isBranch) {
-    //    if (isBranch() != isBranch) {
-    //        flags += isBranch_MASK *((isBranch)?1:-1);
-    //        //flags += (isLeave()!=isBranch)?0:(isLeave_MASK*((isBranch)?-1:1));
-    //    }
-    //}
-    ////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //public boolean rqsError() {
-    //    return ((flags & rqsError_MASK) == rqsError_MASK) ? true : false;
-    //}
-    //public void setRqsError(boolean rqsError) {
-    //    if (rqsError() != rqsError) {
-    //        if (rqsError) {
-    //            this.setRqsGradient(false);
-    //            flags += rqsError_MASK;
-    //        } else {
-    //            flags -= rqsError_MASK;
-    //        }
-    //    }
-    //}
-    ////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //public boolean carriesDerivatives() {
-    //    return ((flags & carriesDerivatives_MASK) == carriesDerivatives_MASK) ? true : false;
-    //}
-    //public void setCarriesDerivatives(boolean caryDerivatives) {
-    //    if (carriesDerivatives() != caryDerivatives) {
-    //        flags += carriesDerivatives_MASK*((caryDerivatives)?1:-1);
-    //    }
-    //}
-    ////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //public boolean usesReverseModeAutoDiff() {
-    //    return ((flags & reverseModeAutoDiff_MASK) == reverseModeAutoDiff_MASK) ? true : false;
-    //}
-    //public void setReverseModeAutoDiff(boolean reverseModeAutoDiff) {
-    //    if (usesReverseModeAutoDiff() != reverseModeAutoDiff) {
-    //        flags += reverseModeAutoDiff_MASK*((reverseModeAutoDiff)?1:-1);
-    //    }
-    //}
-    ////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    private final static int isOutsourced_MASK = 2;
+    //-----------------------------------------------------------------------
     public boolean rqsGradient() {
         return ((flags & rqsGradient_MASK) == rqsGradient_MASK) ? true : false;
     }
     public void setRqsGradient(boolean rqsGradient) {
         if (rqsGradient() != rqsGradient) {
             if (rqsGradient) {
-               // this.setRqsError(false);
                 flags += rqsGradient_MASK;
             } else {
                 flags -= rqsGradient_MASK;
@@ -98,42 +113,29 @@ public class T {
             }
         }
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    public String toString(){
-        if(this.isEmpty()){
-            return "empty";
-        }
-        String strShape = "";
-        for(int i=0; i<this.shape.length; i++){
-            strShape+=this.shape[i];
-            if(i<this.shape.length-1){
-                strShape+="x";
-            }
-        }
-        strShape = "["+strShape+"]";
-        String strValue = "";
-        for(int i=0; i<this.value.length; i++){
-            strValue+=this.value[i];
-            if(i<this.value.length-1){
-                strValue+=", ";
-            }
-        }
-        strValue = strShape+":("+strValue+")";
-        if(this.hasModule(RelativeGradients.class)){
-            RelativeGradients d = (RelativeGradients) this.findModule(RelativeGradients.class);
-            String[] strDerivatives = {"; "};
-            d.forEach((target, derivative)->{
-                strDerivatives[0]+="->d"+derivative.toString()+", ";
-            });
-            strValue += strDerivatives[0];
-        }
-        return strValue;
-    }
-    //MODUL I / O :
-    //=========================
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    private ArrayList<Object> Modules = new ArrayList<Object>();
 
+    public boolean isOutsourced() {
+        return ((flags & isOutsourced_MASK) == isOutsourced_MASK) ? true : false;
+    }
+    public void setIsOutsourced(boolean isOutsourced) {
+        if (isOutsourced() != isOutsourced) {
+            if (isOutsourced) {
+                flags += isOutsourced_MASK;
+            } else {
+                flags -= isOutsourced_MASK;
+            }
+        }
+        if(isOutsourced){
+            this.value = null;
+            this.gradient = null;
+        }
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //MODULE I / O :
+    //=========================
+    private ArrayList<Object> Modules = new ArrayList<Object>();
+    //-----------------------------------------------------------------------
     public ArrayList<Object> getModules() {
         return Modules;
     }
@@ -179,11 +181,47 @@ public class T {
         }
         return false;
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //================================================================================================
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //DISPLAY :
+    //=========================
+    public String toString(){
+        if(this.isEmpty()){
+            return "empty";
+        }
+        String strShape = "";
+        for(int i=0; i<this.shape.length; i++){
+            strShape+=this.shape[i];
+            if(i<this.shape.length-1){
+                strShape+="x";
+            }
+        }
+        strShape = "["+strShape+"]";
+        String strValue = "";
+        for(int i=0; i<this.value.length; i++){
+            strValue+=this.value[i];
+            if(i<this.value.length-1){
+                strValue+=", ";
+            }
+        }
+        strValue = strShape+":("+strValue+")";
+        if(this.hasModule(RelativeGradients.class)){
+            RelativeGradients d = (RelativeGradients) this.findModule(RelativeGradients.class);
+            String[] strDerivatives = {"; "};
+            d.forEach((target, derivative)->{
+                strDerivatives[0]+="->d"+derivative.toString()+", ";
+            });
+            strValue += strDerivatives[0];
+        }
+        return strValue;
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //CONSTRUCTION :
+    //=========================
     public T() { }// creates empty tensor;
 
-    T(int[] shape) {
+    public T(int[] shape) {
         value = new double[T.utility.sizeOfShape_mxd(shape, 0, shape.length)];
         this.initialShape(shape);
     }
@@ -236,36 +274,15 @@ public class T {
             shared.put(t_key, this.translation);
         }
     }
-    public double[] gradient(){
-        return gradient;
-    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    public void setGradient(T g){
-        this.gradient = g.value;
-    }
-
-    public double[] value() {
-        return value;
-    }
-    public int[] shape() {
-        return shape;
-    }
-    public int size() {
-        return value.length;
-    }
-    public int[] shpIdx(int idx) {
-        return T.utility.IdxToShpIdx(idx, translation);
-    }
-    public boolean isEmpty() {
-        if (value == null) {
-            return true;
-        }
-        return false;
-    }
+    //MODIFICATION :
+    //=========================
     public void reshape(int[] newForm) {
         this.shape = T.utility.reshaped(this.shape, newForm);
         this.translation = T.utility.reshaped(this.translation, newForm);
     }
+
     public void internalize(T tensor) {
         this.value = tensor.value;
         this.shape = tensor.shape;
@@ -273,15 +290,17 @@ public class T {
         this.Modules = tensor.Modules;
         this.flags = tensor.flags;
     }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    //================================================================================================
+    //TRACKED COMPUTATION :
+    //=========================
     public T of(T tensor, String operation) {
         if(tensor==null){return this;}
         return this.of(new T[]{tensor}, operation);
     }
     public T of(T[] tensors, String operation) {
         if(tensors==null||tensors.length==0||tensors[0]==null){return this;}
-        this.addModule(new TOperation(this, tensors, operation));
+        this.addModule(new TOperation(this, tensors, operation, true));
         //this.setIsLeave(false);
         return this;
     }
@@ -290,7 +309,7 @@ public class T {
         //this.setIsLeave(false);
         return this;
     }
-    //-----------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------
     public void backward(T gradient) {
         if(this.rqsGradient()){
             this.setGradient(gradient);
@@ -301,46 +320,57 @@ public class T {
         }
         operation.backward(gradient, this);
     }
-    // Element wise operations:
-    //--------------------------
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    public double e_get(int idx) {
-        return T.utility.idxOfShpIdxAndShp(shpIdx(idx), shape);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //ELEMENTARY OPERATIONS:
+    //=========================
+    public void foreach(Consumer<Integer> action){
+        int sze = this.size();
+        int[] idx = new int[this.shape().length];
+        for(int i=0; i<sze; i++){
+            T.utility.increment(idx, this.shape());
+            action.accept(T.utility.idxOfShpIdxAndShp(idx, this.shape()));
+        }
     }
-    public double e_get(int[] index) {
-        return value[T.utility.idxOfShpIdxAndShp(index, shape)];
+
+    public double e_get(int i) {
+        return T.utility.idxOfShpIdxAndShp(shpIdx(i), shape);
     }
-    public void e_set(int idx, double value) {
-        this.value[T.utility.idxOfShpIdxAndShp(shpIdx(idx), shape)] = value;
+    public double e_get(int[] idx) {
+        return value[T.utility.idxOfShpIdxAndShp(idx, shape)];
     }
-    public void e_set(int[] index, double value) {
-        this.value[T.utility.idxOfShpIdxAndShp(index, shape)] = value;
+    public void e_set(int i, double value) {
+        this.value[T.utility.idxOfShpIdxAndShp(shpIdx(i), shape)] = value;
     }
-    public void e_add(int idx, double value) {
-        this.value[T.utility.idxOfShpIdxAndShp(shpIdx(idx), shape)] += value;
+    public void e_set(int[] idx, double value) {
+        this.value[T.utility.idxOfShpIdxAndShp(idx, shape)] = value;
     }
-    public void e_add(int[] index, double value) {
-        this.value[T.utility.idxOfShpIdxAndShp(index, shape)] += value;
+    public void e_add(int i, double value) {
+        this.value[T.utility.idxOfShpIdxAndShp(shpIdx(i), shape)] += value;
     }
-    public void e_sub(int idx, double value) {
-        this.value[T.utility.idxOfShpIdxAndShp(shpIdx(idx), shape)] -= value;
+    public void e_add(int[] idx, double value) {
+        this.value[T.utility.idxOfShpIdxAndShp(idx, shape)] += value;
     }
-    public void e_sub(int[] index, double value) {
-        this.value[T.utility.idxOfShpIdxAndShp(index, shape)] -= value;
+    public void e_sub(int i, double value) {
+        this.value[T.utility.idxOfShpIdxAndShp(shpIdx(i), shape)] -= value;
     }
-    public void e_mul(int idx, double value) {
-        this.value[T.utility.idxOfShpIdxAndShp(shpIdx(idx), shape)] *= value;
+    public void e_sub(int[] idx, double value) {
+        this.value[T.utility.idxOfShpIdxAndShp(idx, shape)] -= value;
     }
-    public void e_mul(int[] index, double value) {
-        this.value[T.utility.idxOfShpIdxAndShp(index, shape)] *= value;
+    public void e_mul(int i, double value) {
+        this.value[T.utility.idxOfShpIdxAndShp(shpIdx(i), shape)] *= value;
     }
-    public void e_add(T tensor) {
+    public void e_mul(int[] idx, double value) {
+        this.value[T.utility.idxOfShpIdxAndShp(idx, shape)] *= value;
+    }
+    public T e_add(T tensor) {
         int[] index = new int[shape.length];
         int size = size();
         for (int i = 0; i < size; i++) {
             e_add(index, tensor.e_get(index));
             T.utility.increment(index, shape);
         }
+        return tensor;
     }
     public void e_sub(T tensor) {
         int[] index = new int[shape.length];
@@ -350,14 +380,23 @@ public class T {
             T.utility.increment(index, shape);
         }
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      *    ======================================================================================================
      *    FACTORY FUNCTIONS:
      * */
     public static class factory{
 
-        public static T tensDotMul(T tensor1, T tensor2){
+        public static void inject(double[] data, boolean grd, T tensor){
+            if(grd) {
+                tensor.gradient = data;
+            }else{
+                tensor.value = data;
+            }
+
+        }
+
+        public static T convolution(T tensor1, T tensor2){
             T newTensor = new T(T.utility.shpOfTensMul(tensor1.shape(), tensor2.shape()));
             T.utility.tensMul_mxd(
                     newTensor.shape().length,
@@ -369,7 +408,7 @@ public class T {
             return newTensor;
         }
 
-        public static T tensMul(T tensor1, T tensor2){
+        public static T multiplication(T tensor1, T tensor2){
             T drn = new T(tensor1.shape());
             int[] index = new int[drn.shape().length];
             int size = drn.size();
@@ -380,7 +419,7 @@ public class T {
             return drn;
         }
 
-        public static T tensAdd(T tensor1, T tensor2){
+        public static T addition(T tensor1, T tensor2){
             T drn = new T(tensor1.shape());
             int[] index = new int[drn.shape().length];
             int size = drn.size();
@@ -391,12 +430,38 @@ public class T {
             return drn;
         }
 
+        public static T newTensor(double value, int[] shape){
+            int sze = T.utility.sizeOfShape_mxd(shape, 0, shape.length);
+            T tensor = new T();
+            tensor.value = new double[sze];
+            tensor.initialShape(shape);
+            for(int i=0; i<sze; i++){
+                tensor.value[i] = value;
+            }
+            return tensor;
+        }
+
         public static T newTensor(double[] value, int[] shape){
             T tensor = new T();
             tensor.value = value;
             tensor.initialShape(shape);
             return tensor;
         }
+        public static T newTensor(double[] value, int[] shape, int[] translation){
+            T tensor = new T();
+            tensor.value = value;
+            tensor.initialShape(shape);
+            tensor.translation = translation;
+            return tensor;
+        }
+        public static T newTensor(int[] shape, int[] translation){
+            T tensor = new T();
+            tensor.value = new double[T.utility.sizeOfShape_mxd(shape, 0, shape.length)];
+            tensor.initialShape(shape);
+            tensor.translation = (translation!=null)?translation:tensor.translation;//shared.put()
+            return tensor;
+        }
+
         public static T copyOf(T tensor){
             T newTensor = new T();
             newTensor.shape = tensor.shape;
@@ -410,7 +475,6 @@ public class T {
             return newTensor;
         }
         public static T copyOf(Object[] things){
-
             for(int i=0; i<things.length; i++){
                 if(things[i] instanceof int[]){
 
@@ -429,10 +493,27 @@ public class T {
     }
     /**
      *   ======================================================================================================
-     *   UTILITY:
+     *   UTILITY FUNCTIONS:
      *
      * */
     public static class utility {
+
+        public static boolean shareGuestDevice(T[] tsrs){
+            boolean onSameGuestDevice = true;
+            TDevice device = null;
+            for (int ti = 0; ti < tsrs.length; ti++) {
+                device = (tsrs[ti].isOutsourced())?(TDevice)tsrs[ti].findModule(TDevice.class):device;
+            }
+            if(device!=null) {
+                for (int ti = 0; ti < tsrs.length; ti++) {
+                    onSameGuestDevice = (device == tsrs[ti].findModule(TDevice.class)) && onSameGuestDevice;
+                }
+            }else{
+                onSameGuestDevice = false;
+            }
+            return onSameGuestDevice;
+        }
+
         @Contract(pure = true)
         public static void increment_mxd(@NotNull int[] shpIdx, @NotNull int[] shape, int start, int rank) {
             int i = start;
@@ -643,33 +724,33 @@ public class T {
                         int rank,
                         double[][] data,//[0]=>src1, [1]=>src2, [2]=>drn
                         int[] dataPtr,
-                        int[][] hdr1, int[][] hdr2, int[][] drn
+                        int[][] src1, int[][] src2, int[][] drn
                 ) {
             //hdr[0] => dim[]
             //hdr[1] => anchor[]
             //hdr[2] => idx[]
             //hdr[3] => {start}
-            int hdr1End = hdr1[3][0] + rank;
-            int hdr2End = hdr2[3][0] + rank;
+            int src1End = src1[3][0] + rank;
+            int src2End = src2[3][0] + rank;
             int drnEnd = drn[3][0] + rank;
             int drnSze = sizeOfShape_mxd(drn[0], drn[3][0], rank);
             int i = 0;
             while (i < drnSze) {
                 //increment of and drain accordingly:
-                int i1 = hdr1[3][0];
-                int i2 = hdr2[3][0];
+                int i1 = src1[3][0];
+                int i2 = src2[3][0];
                 int id = drn[3][0];
                 int ri = 0;
                 while (ri < rank) {
-                    if (hdr1[0][i1] == hdr2[0][i2]) {//setting 0
-                        hdr1[2][i1] = drn[2][id];//mtch[mi];
-                        hdr2[2][i2] = drn[2][id];//mtch[mi];
-                    } else if (hdr1[0][i1] > hdr2[0][i2]) {//setting hdr1 idx to id idx
-                        hdr1[2][i1] = drn[2][id];//mtch[mi];
-                        hdr2[2][i2] = 0;
-                    } else if (hdr1[0][i1] < hdr2[0][i2]) {//setting hdr2 idx to id idx
-                        hdr1[2][i1] = 0;
-                        hdr2[2][i2] = drn[2][id];//mtch[mi];
+                    if (src1[0][i1] == src2[0][i2]) {//setting 0
+                        src1[2][i1] = drn[2][id];//mtch[mi];
+                        src2[2][i2] = drn[2][id];//mtch[mi];
+                    } else if (src1[0][i1] > src2[0][i2]) {//setting hdr1 idx to id idx
+                        src1[2][i1] = drn[2][id];//mtch[mi];
+                        src2[2][i2] = 0;
+                    } else if (src1[0][i1] < src2[0][i2]) {//setting hdr2 idx to id idx
+                        src1[2][i1] = 0;
+                        src2[2][i2] = drn[2][id];//mtch[mi];
                     }
                     i1++;
                     i2++;
@@ -677,22 +758,22 @@ public class T {
                     ri++;
                 }
                 //----------
-                // multiply:
+                // multiplication:
                 double value = 0;
                 boolean running = true;
                 boolean incrementing = false;
                 while (running) {
-                    if (i1 == hdr1End || i2 == hdr2End || id == drnEnd) {
-                        i1 = hdr1[3][0];
-                        i2 = hdr2[3][0];
+                    if (i1 == src1End || i2 == src2End || id == drnEnd) {
+                        i1 = src1[3][0];
+                        i2 = src2[3][0];
                         id = drn[3][0];
                     }
                     if (incrementing == false) {
-                        int idx1 = idxOfFrmt_mxd(hdr1, rank);
-                        int idx2 = idxOfFrmt_mxd(hdr2, rank);
+                        int idx1 = idxOfFrmt_mxd(src1, rank);
+                        int idx2 = idxOfFrmt_mxd(src2, rank);
                         System.out.println(
-                            "hdr1:" + strInt(hdr1[2]) + "; " +
-                            "hdr2:" + strInt(hdr2[2]) + "; " +
+                            "hdr1:" + strInt(src1[2]) + "; " +
+                            "hdr2:" + strInt(src2[2]) + "; " +
                             "drn:" + strInt(drn[2]) +
                             " idx1:(" + idx1 + ");" +
                             " idx2:(" + idx2 + ");" +
@@ -700,34 +781,34 @@ public class T {
                             " val:(" + value + ") += val1:(" + data[0][dataPtr[0] + idx1] + ") x val2:(" + data[1][dataPtr[1] + idx2] + ");");
                         value += data[0][dataPtr[0] + idx1] * data[1][dataPtr[1] + idx2];
                         incrementing = true;
-                        i1 = hdr1[3][0];
-                        i2 = hdr2[3][0];
+                        i1 = src1[3][0];
+                        i2 = src2[3][0];
                         id = drn[3][0];
                     } else {//incrementing:
-                        if (hdr1[2][i1] < hdr1[0][i1] && hdr2[2][i2] < hdr2[0][i2]) {
-                            hdr1[2][i1]++;
-                            hdr2[2][i2]++;
-                            if (hdr1[2][i1] == hdr1[0][i1] || hdr2[2][i2] == hdr2[0][i2]) {
-                                if ((i1 == (hdr1End - 1) || i2 == (hdr2End - 1))) {
+                        if (src1[2][i1] < src1[0][i1] && src2[2][i2] < src2[0][i2]) {
+                            src1[2][i1]++;
+                            src2[2][i2]++;
+                            if (src1[2][i1] == src1[0][i1] || src2[2][i2] == src2[0][i2]) {
+                                if ((i1 == (src1End - 1) || i2 == (src2End - 1))) {
                                     running = false;
                                 }
-                                if (hdr1[0][i1] == hdr2[0][i2]) {//setting 0
-                                    hdr1[2][i1] = drn[2][id];//mtch[mi];
-                                    hdr2[2][i2] = drn[2][id];//mtch[mi];
-                                } else if (hdr1[0][i1] > hdr2[0][i2]) {//setting hdr1 idx to id idx
-                                    hdr1[2][i1] = drn[2][id];//mtch[mi];
-                                    hdr2[2][i2] = 0;
-                                } else if (hdr1[0][i1] < hdr2[0][i2]) {//setting hdr2 idx to id idx
-                                    hdr1[2][i1] = 0;
-                                    hdr2[2][i2] = drn[2][id];//mtch[mi];
+                                if (src1[0][i1] == src2[0][i2]) {//setting 0
+                                    src1[2][i1] = drn[2][id];//mtch[mi];
+                                    src2[2][i2] = drn[2][id];//mtch[mi];
+                                } else if (src1[0][i1] > src2[0][i2]) {//setting hdr1 idx to id idx
+                                    src1[2][i1] = drn[2][id];//mtch[mi];
+                                    src2[2][i2] = 0;
+                                } else if (src1[0][i1] < src2[0][i2]) {//setting hdr2 idx to id idx
+                                    src1[2][i1] = 0;
+                                    src2[2][i2] = drn[2][id];//mtch[mi];
                                 }
                                 i1++;
                                 i2++;
                                 id++;
                             } else {
                                 incrementing = false;
-                                i1 = hdr1[3][0];
-                                i2 = hdr2[3][0];
+                                i1 = src1[3][0];
+                                i2 = src2[3][0];
                                 id = drn[3][0];
                             }
                         } else {
@@ -746,8 +827,8 @@ public class T {
                 }
             }
             System.out.println("result:");
-            System.out.println(strInt(hdr1[2]) + "-" + strInt(hdr1[0]) + "-" + strInt(hdr1[1]));
-            System.out.println(strInt(hdr2[2]) + "-" + strInt(hdr2[0]) + "-" + strInt(hdr2[1]));
+            System.out.println(strInt(src1[2]) + "-" + strInt(src1[0]) + "-" + strInt(src1[1]));
+            System.out.println(strInt(src2[2]) + "-" + strInt(src2[0]) + "-" + strInt(src2[1]));
             System.out.println(strInt(drn[2]) + "-" + strInt(drn[0]) + "-" + strInt(drn[1]));
         }
 

@@ -9,9 +9,9 @@ public class NFUtility {
     //    if (operation.length() > 8) {
     //        return false;
     //    }
-    //    for (int i = 0; i < NVFHead.OperationRegister.length; ++i) {
-    //        System.out.print(NVFHead.OperationRegister[i] + " =?= " + operation + " -:|:- ");
-    //        if (NVFHead.OperationRegister[i].equals(operation)) {
+    //    for (int i = 0; i < FunctionConstructor.OperationRegister.length; ++i) {
+    //        System.out.print(FunctionConstructor.OperationRegister[i] + " =?= " + operation + " -:|:- ");
+    //        if (FunctionConstructor.OperationRegister[i].equals(operation)) {
     //            System.out.println("");
     //            return true;
     //        }
@@ -60,10 +60,10 @@ public class NFUtility {
     //    return component;
     //}
 //
-    //public static int amountOfOperationsWithin(final List<String> operations) {
+    //public static int numberOfOperationsWithin(final List<String> operations) {
     //    int Count = 0;
-    //    for (int i = 0; i < NVFHead.OperationRegister.length; ++i) {
-    //        if (NFUtility.containsOperation(NVFHead.OperationRegister[i], operations)) {
+    //    for (int i = 0; i < FunctionConstructor.OperationRegister.length; ++i) {
+    //        if (NFUtility.containsOperation(FunctionConstructor.OperationRegister[i], operations)) {
     //            ++Count;
     //        }
     //    }
@@ -91,20 +91,20 @@ public class NFUtility {
     //    if (equation.equals("()")) {
     //        return "";
     //    }
-    //    equation = equation.replace("lig", NVFHead.OperationRegister[4]);
-    //    equation = equation.replace("ligmoid", NVFHead.OperationRegister[4]);
-    //    equation = equation.replace("softplus", NVFHead.OperationRegister[4]);
-    //    equation = equation.replace("spls", NVFHead.OperationRegister[4]);
-    //    equation = equation.replace("ligm", NVFHead.OperationRegister[4]);
-    //    equation = equation.replace("linear", NVFHead.OperationRegister[5]);
-    //    equation = equation.replace("sigmoid", NVFHead.OperationRegister[1]);
-    //    equation = equation.replace("quadratic", NVFHead.OperationRegister[3]);
-    //    equation = equation.replace("quadr", NVFHead.OperationRegister[3]);
-    //    equation = equation.replace("gaussian", NVFHead.OperationRegister[6]);
-    //    equation = equation.replace("gauss", NVFHead.OperationRegister[6]);
-    //    equation = equation.replace("summation", NVFHead.OperationRegister[7]);
-    //    equation = equation.replace("product", NVFHead.OperationRegister[8]);
-    //    equation = equation.replace("absolute", NVFHead.OperationRegister[9]);
+    //    equation = equation.replace("lig", FunctionConstructor.OperationRegister[4]);
+    //    equation = equation.replace("ligmoid", FunctionConstructor.OperationRegister[4]);
+    //    equation = equation.replace("softplus", FunctionConstructor.OperationRegister[4]);
+    //    equation = equation.replace("spls", FunctionConstructor.OperationRegister[4]);
+    //    equation = equation.replace("ligm", FunctionConstructor.OperationRegister[4]);
+    //    equation = equation.replace("linear", FunctionConstructor.OperationRegister[5]);
+    //    equation = equation.replace("sigmoid", FunctionConstructor.OperationRegister[1]);
+    //    equation = equation.replace("quadratic", FunctionConstructor.OperationRegister[3]);
+    //    equation = equation.replace("quadr", FunctionConstructor.OperationRegister[3]);
+    //    equation = equation.replace("gaussian", FunctionConstructor.OperationRegister[6]);
+    //    equation = equation.replace("gauss", FunctionConstructor.OperationRegister[6]);
+    //    equation = equation.replace("summation", FunctionConstructor.OperationRegister[7]);
+    //    equation = equation.replace("product", FunctionConstructor.OperationRegister[8]);
+    //    equation = equation.replace("absolute", FunctionConstructor.OperationRegister[9]);
     //    /*
     //     * OCode = new String[]
     //     * {"relu", "sig", "tanh", "quad", "lig", "lin", "gaus",

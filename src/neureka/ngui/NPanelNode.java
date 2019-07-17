@@ -1453,7 +1453,7 @@ public class NPanelNode implements NPanelObject
 		//NVCloak Public = (NVCloak) Core.findModule(NVCloak.class);
 		if(Core.getFunction()!=null) 
 		{
-			listedProperties += Core.getFunction().expression()+"";
+			listedProperties += Core.getFunction().toString()+"";
 		}
 		NVMemory Memory = (NVMemory) Core.findModule(NVMemory.class);
 		if(Memory!=null) 
@@ -1660,7 +1660,7 @@ public class NPanelNode implements NPanelObject
 			//System.out.println(transparencyMod);
 			int expTrans = (int)(Math.pow(expMod, 10)*255);
 			//System.out.println(transparency);
-			String exp = Core.getFunction().expression();
+			String exp = Core.getFunction().toString();
 			
 			RoundRectangle2D.Double rec = 
 			new RoundRectangle2D.Double();

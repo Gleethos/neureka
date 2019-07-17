@@ -33,7 +33,7 @@ public class NAparapiTester
         for (Device device: devices){
            System.out.println(device.getShortDescription());
         }
-        
+
         Device device = Device.best();
         System.out.println(device.toString());
         
@@ -53,7 +53,7 @@ public class NAparapiTester
         	
         	for(int i=0; i<25; i++) {
         		ConvectorKernel.execute(range);
-        	//ConvectorKernel.e_get(ConvectorKernel.getB()); //Fetching value from GPU to main memory!
+        	//ConvectorKernel.e_get(ConvectorKernel.getB()); //Fetching value from TDevice to main memory!
         	//ConvectorKernel.e_get(ConvectorKernel.getC());
         	}//ap.setA(new float [com *    r]);
         	
@@ -109,7 +109,7 @@ public class NAparapiTester
           	{
           		ConvectorKernel.execute(range);
           	}
-          	ConvectorKernel.get(ConvectorKernel.getB()); //Fetching value from GPU to main memory!
+          	ConvectorKernel.get(ConvectorKernel.getB()); //Fetching value from TDevice to main memory!
           	ConvectorKernel.get(ConvectorKernel.getC());
           	
           	System.out.println("Time taken for kenel execution in "+ ConvectorKernel.getExecutionMode()+" mode is :"+(System.currentTimeMillis() - time1));

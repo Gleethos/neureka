@@ -1,5 +1,6 @@
 package neureka.unit;
 
+import neureka.main.core.base.data.T;
 import neureka.utility.NMessageFrame;
 
 public class NVTesting_Component extends NVTesting{
@@ -49,6 +50,10 @@ public class NVTesting_Component extends NVTesting{
 		SuccessCounter += tester.testExpression("2*3/2-1", "((2.0*(3.0/2.0))-1.0)", "");
 		Console.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
 
+		TestCounter++;
+		SuccessCounter += tester.testExpression("3x5xI[4]xI[3]", "(((3.0x5.0)xI[4])xI[3])", "");
+		Console.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
+
 		//ACTIVATION TESTING:
 		TestCounter++;
 		double[] input1 = {};
@@ -79,20 +84,33 @@ public class NVTesting_Component extends NVTesting{
 		double[] input5 = {-4,-2,6,-3,-8};//-3*-2/(-8--4-2)
 		SuccessCounter += tester.testActivation("i3*i1/(i4-i0-2)-sig(0)+tanh(0)", input5, (-1.5), "");
 		Console.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-		
+
+
+		TestCounter++;
+		T[] tsrs = new T[]{
+				T.factory.newTensor(new double[]{1,2}, new int[]{2}),
+				T.factory.newTensor(new double[]{3,-4}, new int[]{2})
+		};
+		T expected = T.factory.newTensor(new double[]{0.9701425001453319, -0.8944271909999159}, new int[]{2});
+		SuccessCounter += tester.testActivation("tanh(sum(Ij))", tsrs, expected, "");
+		Console.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
+
+		TestCounter++;
+		expected = T.factory.newTensor(new double[]{0.3132616875182228, 0.6931471805599453}, new int[]{2});
+		SuccessCounter += tester.testActivation("lig(prod(Ij-2))", tsrs, expected, "");
+		Console.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
+
+
 		Console.println("###########################");
 		Console.println("|| FUNCTION END RESULT:");
 		Console.println("|| ============>> "+SuccessCounter+"/"+TestCounter);
 		Console.println("###########################");
-		
+
 		ResultConsole.println("###########################");
 		ResultConsole.println("|| FUNCTION END RESULT:");
 		ResultConsole.println("|| ============>> "+SuccessCounter+"/"+TestCounter);
 		ResultConsole.println("###########################");
-		
-		
-		
-		
+
 		return 0;
 	}
 	

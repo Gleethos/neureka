@@ -193,7 +193,7 @@ public class NAparapiMatMul extends Kernel
     }
   //==========================================================================
     
-    //Comparing CPU C-Matrix with with GPU C-Matrix!
+    //Comparing CPU C-Matrix with with TDevice C-Matrix!
     public void compareResults()
     {
     	if(inversed[0])

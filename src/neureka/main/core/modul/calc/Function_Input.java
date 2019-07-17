@@ -1,18 +1,24 @@
 package neureka.main.core.modul.calc;
 
 
-public class NFInputLeave implements NVFunction
+import neureka.main.core.base.data.T;
+
+public class Function_Input implements Function
 {
 	int InputIndex;
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
-    public NVFunction newBuild(final String equation) 
+    public boolean isFlat(){
+        return  false;
+    }
+    @Override
+    public Function newBuild(final String equation)
     {
         int number = 0;
         for (int i = 0; i < equation.length(); ++i) {
         	if(equation.charAt(i)=='j') 
         	{
-        		NVFunction newCore = new NVFVariableLeave();
+        		Function newCore = new Function_Variable();
         		newCore = newCore.newBuild(equation);
         		return newCore;
         	}
@@ -21,10 +27,9 @@ public class NFInputLeave implements NVFunction
                 number *= 10;
                 number += Integer.parseInt(equation.charAt(i)+"");
             }
-            
         }
         this.InputIndex = number;
-        return (NVFunction)this;
+        return this;
     }
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
@@ -34,36 +39,15 @@ public class NFInputLeave implements NVFunction
     }
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
-    public double activate(final double[] input, double[] bias) 
-    {
-    	double[] newInput = new double[input.length];
-    	if(bias!=null) {for(int Ii=0; Ii<input.length; Ii++) {newInput[Ii]=input[Ii]+bias[Ii];}}
-    	else {for(int Ii=0; Ii<input.length; Ii++) {newInput[Ii]=input[Ii];}}
-    	return activate(newInput);
-    }
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    @Override
     public double activate(final double[] input) 
     {
         return input[InputIndex];
     }
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    @Override
-  	public double derive(double[] input, double[] bias, int index) 
-    {
-    	if (index == this.InputIndex) {
-            return 1.0;
-        }
-  			return 0;
-  	}
    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public double derive(final double[] input, final int index) 
     {
-        if (index == this.InputIndex) {
-            return 1.0;
-        }
-        return 0.0;
+        return (index == this.InputIndex)?1:0;
     }
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
@@ -73,15 +57,31 @@ public class NFInputLeave implements NVFunction
 	}
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
-    public boolean dependsOn(final int index) 
-    {
-        return this.InputIndex == index;
-    }
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    @Override
-    public String expression() 
+    public String toString()
     {
         return "I[" + this.InputIndex + "]";
     }
-  
+
+    @Override
+    public T activate(T[] input, int j) {
+        return  input[InputIndex];
+    }
+
+    @Override
+    public T activate(T[] input) {
+        return input[InputIndex];
+    }
+
+    @Override
+    public T derive(T[] input, int index, int j) {
+        return derive(input, index);
+    }
+
+    @Override
+    public T derive(T[] input, int index) {
+        return (index==this.InputIndex)
+                ?T.factory.newTensor(1, input[0].shape())
+                :T.factory.newTensor(0, input[0].shape());
+    }
+
 }

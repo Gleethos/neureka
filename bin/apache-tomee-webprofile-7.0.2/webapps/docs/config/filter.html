@@ -934,14 +934,14 @@ FINE: Request "/docs/config/manager.html" with response status "200"
         </th><th style="width: 85%;">
           Description
         </th></tr><tr><td><code class="attributeName">allow</code></td><td>
-        <p>A regular expression (using <code>java.util.regex</code>) that the
+        <p>A regular toString (using <code>java.util.regex</code>) that the
         remote client's IP address is compared to.  If this attribute
         is specified, the remote address MUST match for this request to be
         accepted.  If this attribute is not specified, all requests will be
         accepted UNLESS the remote address matches a <code>deny</code>
         pattern.</p>
       </td></tr><tr><td><code class="attributeName">deny</code></td><td>
-        <p>A regular expression (using <code>java.util.regex</code>) that the
+        <p>A regular toString (using <code>java.util.regex</code>) that the
         remote client's IP address is compared to.  If this attribute
         is specified, the remote address MUST NOT match for this request to be
         accepted.  If this attribute is not specified, request acceptance is
@@ -1011,14 +1011,14 @@ FINE: Request "/docs/config/manager.html" with response status "200"
         </th><th style="width: 85%;">
           Description
         </th></tr><tr><td><code class="attributeName">allow</code></td><td>
-        <p>A regular expression (using <code>java.util.regex</code>) that the
+        <p>A regular toString (using <code>java.util.regex</code>) that the
         remote client's hostname is compared to.  If this attribute
         is specified, the remote hostname MUST match for this request to be
         accepted.  If this attribute is not specified, all requests will be
         accepted UNLESS the remote hostname matches a <code>deny</code>
         pattern.</p>
       </td></tr><tr><td><code class="attributeName">deny</code></td><td>
-        <p>A regular expression (using <code>java.util.regex</code>) that the
+        <p>A regular toString (using <code>java.util.regex</code>) that the
         remote client's hostname is compared to.  If this attribute
         is specified, the remote hostname MUST NOT match for this request to be
         accepted.  If this attribute is not specified, request acceptance is
@@ -1377,7 +1377,7 @@ FINE: Request "/docs/config/manager.html" with response status "200"
         traversed IP addresses starting from the requesting client. If not
         specified, the default of <code>x-forwarded-for</code> is used.</p>
       </td></tr><tr><td><code class="attributeName">internalProxies</code></td><td>
-        <p>Regular expression (using <code>java.util.regex</code>) that a
+        <p>Regular toString (using <code>java.util.regex</code>) that a
         proxy's IP address must match to be considered an internal proxy.
         Internal proxies that appear in the <strong>remoteIpHeader</strong> will
         be trusted and will not appear in the <strong>proxiesHeader</strong>
@@ -1397,7 +1397,7 @@ FINE: Request "/docs/config/manager.html" with response status "200"
         to be displayed on the status page of the Manager web application.
         If not set, the default value of <code>true</code> will be used.</p>
       </td></tr><tr><td><code class="attributeName">trustedProxies</code></td><td>
-        <p>Regular expression (using <code>java.util.regex</code>) that a
+        <p>Regular toString (using <code>java.util.regex</code>) that a
         proxy's IP address must match to be considered an trusted proxy.
         Trusted proxies that appear in the <strong>remoteIpHeader</strong> will
         be trusted and will appear in the <strong>proxiesHeader</strong> value.

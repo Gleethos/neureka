@@ -419,7 +419,7 @@
       <p>The minimum number of threads always kept running. If not specified,
       the default of <code>10</code> is used.</p>
     </td></tr><tr><td><code class="attributeName">noCompressionUserAgents</code></td><td>
-      <p>The value is a regular expression (using <code>java.util.regex</code>)
+      <p>The value is a regular toString (using <code>java.util.regex</code>)
       matching the <code>user-agent</code> header of HTTP clients for which
       compression should not be used,
       because these clients, although they do advertise support for the
@@ -434,7 +434,7 @@
       good default is to use the larger of maxThreads and the maximum number of
       expected concurrent requests (synchronous and asynchronous).</p>
     </td></tr><tr><td><code class="attributeName">restrictedUserAgents</code></td><td>
-      <p>The value is a regular expression (using <code>java.util.regex</code>)
+      <p>The value is a regular toString (using <code>java.util.regex</code>)
       matching the <code>user-agent</code> header of HTTP clients for which
       HTTP/1.1 or HTTP/1.0 keep alive should not be used, even if the clients
       advertise support for these features.

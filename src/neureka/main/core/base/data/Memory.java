@@ -12,7 +12,7 @@ public class Memory {
     /*How it works:
      *
      * fetching memorized information will be modified by -TimeTunnel
-     * -> So if the network tries to fetch an activation from 15 steps ago and the Tunneling is e_set to 5
+     * -> So if the network tries to fetch_tsr an activation from 15 steps ago and the Tunneling is e_set to 5
      * the recieved values will be taken from index 10.
      * ->
      *

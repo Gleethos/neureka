@@ -1,9 +1,12 @@
-import neureka.NSubstrate;
 import neureka.main.core.NVUtility;
 import neureka.main.core.base.NVNeuron;
+import neureka.main.core.base.data.T;
 import neureka.unit.NVTester;
 import neureka.ngui.NWindow;
 import neureka.utility.NConsole;
+
+
+import neureka.main.core.modul.calc.*;
 
 public class NSMain {
 
@@ -120,7 +123,8 @@ public class NSMain {
         System.out.println("Used memory minus 8: "+memory+" bytes; "  + bytesToMegabytes(memory)+" megabytes;");
 		
         NVTester tester2 = new NVTester();
-	     tester2.Test();
+        tester2.Test();
+
 
 		//NSubstrate.execute("NSubstrate.printRealms('test')");
 		/*

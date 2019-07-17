@@ -5,8 +5,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Random;
 
-import neureka.main.core.modul.calc.NVFHead;
-import neureka.main.core.modul.calc.NVFunction;
+import neureka.main.core.modul.calc.FunctionConstructor;
+import neureka.main.core.modul.calc.Function;
 import neureka.main.core.base.NVData;
 import neureka.main.core.base.NVNeuron;
 import neureka.main.core.base.NVInput;
@@ -259,17 +259,17 @@ public class NVertex extends NVData implements NVNode
 		{
 			setHidden(false);
 		}
-		NVFunction newFunction = new NVFHead();
+		Function newFunction;
 		switch(f_id) 
 		{   
-		    case 0:  newFunction = newFunction.newBuild("prod(relu(Ij))"); break;
-			case 1:  newFunction = newFunction.newBuild("prod(sig(Ij))"); break;
-			case 2:  newFunction = newFunction.newBuild("prod(tanh(Ij))"); break;
-			case 3:  newFunction = newFunction.newBuild("prod(quadr(Ij))"); break;
-			case 4:  newFunction = newFunction.newBuild("prod(lig(Ij))"); break;
-			case 5:  newFunction = newFunction.newBuild("prod(lin(Ij))"); break;
-			case 6:  newFunction = newFunction.newBuild("prod(gaus(Ij))"); break;
-			default: newFunction = newFunction.newBuild("prod(tanh(Ij))");break;
+		    case 0:  newFunction = new FunctionConstructor().newBuild("prod(relu(Ij))"); break;
+			case 1:  newFunction = new FunctionConstructor().newBuild("prod(sig(Ij))"); break;
+			case 2:  newFunction = new FunctionConstructor().newBuild("prod(tanh(Ij))"); break;
+			case 3:  newFunction = new FunctionConstructor().newBuild("prod(quadr(Ij))"); break;
+			case 4:  newFunction = new FunctionConstructor().newBuild("prod(lig(Ij))"); break;
+			case 5:  newFunction = new FunctionConstructor().newBuild("prod(lin(Ij))"); break;
+			case 6:  newFunction = new FunctionConstructor().newBuild("prod(gaus(Ij))"); break;
+			default: newFunction = new FunctionConstructor().newBuild("prod(tanh(Ij))");break;
 		}
 		addModule(newFunction);
 		if(delay>0) {addModule(new NVMemory(delay));}
@@ -289,8 +289,8 @@ public class NVertex extends NVData implements NVNode
 
 		for(int Mi=0; Mi<this.Modules.size(); Mi++){
 			String info = "";
-			if(Modules.get(Mi) instanceof NVFunction){
-				if(this.hasModule(NVFunction.class)) {info = ((NVFunction) findModule(NVFunction.class)).expression();}
+			if(Modules.get(Mi) instanceof Function){
+				if(this.hasModule(Function.class)) {info = ((Function) findModule(Function.class)).toString();}
 			}
 			S+= base+Modules.get(Mi).getClass()+" "+info+"\n";
 		}
@@ -836,8 +836,8 @@ public class NVertex extends NVData implements NVNode
 	// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	public synchronized long getID() {return ID;}
 	// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	public synchronized NVFunction getFunction() {return (NVFunction)findModule(NVFunction.class);}
-	public synchronized void 	    setFunction(NVFunction function) {addModule(function);}
+	public synchronized Function getFunction() {return (Function)findModule(Function.class);}
+	public synchronized void 	    setFunction(Function function) {addModule(function);}
 	public synchronized NVNode[][] getConnection() {return Connection;}
 	// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	public synchronized void       setShiftTrainability(boolean trainable) {setBiasTrainable(trainable);}
@@ -923,7 +923,7 @@ public class NVertex extends NVData implements NVNode
 		shoutLine("-displayCurrentState|: ~~~~~~~~~~~~~~~~~~~~~~~~\n");
 		shoutLine("-displayCurrentState|: Data[Di].Inputs, Inputs, Derivatives, Weights and Shifts:");
 		shoutLine("-displayCurrentState|: ------------------");
-		if(findModule(NVFunction.class)==null) 
+		if(findModule(Function.class)==null)
 		{
 			shoutLine("-displayCurrentState|: Calculation Core is null => Value stored in local value array.");
 		}
@@ -1037,7 +1037,7 @@ public class NVertex extends NVData implements NVNode
 	public void copy(NVertex other) //TODO: write internalize test cases!
 	{
 		this.setInstantGradientApply(other.isInstantGradientApply());
-		this.addModule((NVFunction)other.findModule(NVFunction.class));//Warningg!!!!
+		this.addModule((Function)other.findModule(Function.class));//Warningg!!!!
 		Neuron = new NVNeuron[other.asCore().Neuron.length];
 		//-----------------------------------------------------------------------------
 		for(int Di = 0; Di< Neuron.length; Di++)

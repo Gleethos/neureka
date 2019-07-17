@@ -19,7 +19,7 @@ public class NVTesting_Format {
 		Console.println("   Weight state test: "+description);
 		Console.println("[O][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=]=>");
 		Console.println(bar+"  ");
-		Console.println(bar+"  Vertex: "+head.getFunction().expression());
+		Console.println(bar+"  Vertex: "+head.getFunction().toString());
 		Console.println(bar+"====================================================");
 		
 		boolean success = true;
@@ -136,7 +136,7 @@ public class NVTesting_Format {
 		for(int Vi=0; Vi<core.size(); Vi++) 
 		{
 			Console.println(bar+"  ");
-			Console.println(bar+"  Value Size Test ('Vi':"+Vi+" of "+core.size()+"): "+core.getFunction().expression());
+			Console.println(bar+"  Value Size Test ('Vi':"+Vi+" of "+core.size()+"): "+core.getFunction().toString());
 			Console.println(bar+"====================================================");
 			Console.print(bar+"  Value size: "+core.inputSize()+"; Expected: "+expectedSize+"");
 			if(core.inputSize()==expectedSize) 

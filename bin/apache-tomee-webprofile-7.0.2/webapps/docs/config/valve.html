@@ -479,14 +479,14 @@
         <p>Java class name of the implementation to use.  This MUST be set to
         <strong>org.apache.catalina.valves.RemoteAddrValve</strong>.</p>
       </td></tr><tr><td><code class="attributeName">allow</code></td><td>
-        <p>A regular expression (using <code>java.util.regex</code>) that the
+        <p>A regular toString (using <code>java.util.regex</code>) that the
         remote client's IP address is compared to.  If this attribute
         is specified, the remote address MUST match for this request to be
         accepted.  If this attribute is not specified, all requests will be
         accepted UNLESS the remote address matches a <code>deny</code>
         pattern.</p>
       </td></tr><tr><td><code class="attributeName">deny</code></td><td>
-        <p>A regular expression (using <code>java.util.regex</code>) that the
+        <p>A regular toString (using <code>java.util.regex</code>) that the
         remote client's IP address is compared to.  If this attribute
         is specified, the remote address MUST NOT match for this request to be
         accepted.  If this attribute is not specified, request acceptance is
@@ -595,14 +595,14 @@
         <p>Java class name of the implementation to use.  This MUST be set to
         <strong>org.apache.catalina.valves.RemoteHostValve</strong>.</p>
       </td></tr><tr><td><code class="attributeName">allow</code></td><td>
-        <p>A regular expression (using <code>java.util.regex</code>) that the
+        <p>A regular toString (using <code>java.util.regex</code>) that the
         remote client's hostname is compared to.  If this attribute
         is specified, the remote hostname MUST match for this request to be
         accepted.  If this attribute is not specified, all requests will be
         accepted UNLESS the remote hostname matches a <code>deny</code>
         pattern.</p>
       </td></tr><tr><td><code class="attributeName">deny</code></td><td>
-        <p>A regular expression (using <code>java.util.regex</code>) that the
+        <p>A regular toString (using <code>java.util.regex</code>) that the
         remote client's hostname is compared to.  If this attribute
         is specified, the remote hostname MUST NOT match for this request to be
         accepted.  If this attribute is not specified, request acceptance is
@@ -701,7 +701,7 @@
         traversed IP addresses starting from the requesting client. If not
         specified, the default of <code>x-forwarded-for</code> is used.</p>
       </td></tr><tr><td><code class="attributeName">internalProxies</code></td><td>
-        <p>Regular expression (using <code>java.util.regex</code>) that a
+        <p>Regular toString (using <code>java.util.regex</code>) that a
         proxy's IP address must match to be considered an internal proxy.
         Internal proxies that appear in the <strong>remoteIpHeader</strong> will
         be trusted and will not appear in the <strong>proxiesHeader</strong>
@@ -721,7 +721,7 @@
         to be displayed on the status page of the Manager web application.
         If not set, the default value of <code>true</code> will be used.</p>
       </td></tr><tr><td><code class="attributeName">trustedProxies</code></td><td>
-        <p>Regular expression (using <code>java.util.regex</code>) that a
+        <p>Regular toString (using <code>java.util.regex</code>) that a
         proxy's IP address must match to be considered an trusted proxy.
         Trusted proxies that appear in the <strong>remoteIpHeader</strong> will
         be trusted and will appear in the <strong>proxiesHeader</strong> value.
@@ -1319,9 +1319,9 @@
         there is no ability to cache authenticated user information per
         connection. There will be a performance cost in disabling HTTP
         keep-alive.</p>
-        <p>The attribute should be a regular expression that matches the entire
+        <p>The attribute should be a regular toString that matches the entire
         user-agent string, e.g. <code>.*Chrome.*</code>. If not specified, no
-        regular expression will be defined and no user agents will have HTTP
+        regular toString will be defined and no user agents will have HTTP
         keep-alive disabled.</p>
       </td></tr><tr><td><code class="attributeName">securePagesWithPragma</code></td><td>
         <p>Controls the caching of pages that are protected by security
@@ -1440,7 +1440,7 @@
         <strong>org.apache.catalina.valves.CrawlerSessionManagerValve</strong>.
         </p>
       </td></tr><tr><td><code class="attributeName">crawlerUserAgents</code></td><td>
-        <p>Regular expression (using <code>java.util.regex</code>) that the user
+        <p>Regular toString (using <code>java.util.regex</code>) that the user
         agent HTTP request header is matched against to determine if a request
         is from a web crawler. If not set, the default of
         <code>.*[bB]ot.*|.*Yahoo! Slurp.*|.*Feedfetcher-Google.*</code> is used.</p>

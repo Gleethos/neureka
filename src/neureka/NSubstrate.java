@@ -38,7 +38,6 @@ public class NSubstrate {
                 Classes.put(expl[expl.length-1], cls);
             }
         } catch (Exception e) {
-
             e.printStackTrace();
         }
     }

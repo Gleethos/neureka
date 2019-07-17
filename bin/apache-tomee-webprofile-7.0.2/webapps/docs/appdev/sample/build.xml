@@ -98,7 +98,7 @@
 
   app.version          Version number of this iteration of the application.
 
-  build.home           The directory into which the "prepare" and
+  build.home           The directory into which the "newBuild" and
                        "compile" targets will generate their output.
                        Defaults to "build".
 
@@ -421,7 +421,7 @@
 
 <!--
 
-  The "prepare" target is used to create the "build" destination directory,
+  The "newBuild" target is used to create the "build" destination directory,
   and internalize the static contents of your web application to it.  If you need
   to internalize static files from external dependencies, you can customize the
   contents of this task.

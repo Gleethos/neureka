@@ -1,7 +1,8 @@
 package neureka.unit;
 
-import neureka.main.core.modul.calc.NVFHead;
-import neureka.main.core.modul.calc.NVFunction;
+import neureka.main.core.base.data.T;
+import neureka.main.core.modul.calc.Function;
+import neureka.main.core.modul.calc.FunctionConstructor;
 import neureka.utility.NMessageFrame;
 
 public class NVTesting_Function extends NVTesting{
@@ -13,39 +14,25 @@ public class NVTesting_Function extends NVTesting{
 	
 	public int testExpression(String expression, String expected, String description) 
 	{
-		NVFunction function = new NVFHead();
-		function = function.newBuild(expression);
-		Console.println("");
-		Console.println(bar+"  Function Build Test: "+description);
-		Console.println("[O][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=]=>");
-		Console.println(bar+" Value expression: "+expression);
-		Console.println(bar+" Expected expression: "+expected);
-		Console.println(bar+"");
-		Console.println(bar+" function = function.newBuilt("+expression+");");
-		String actual = function.expression();
-		Console.println(bar+" String actual = function.expression();");
-		Console.println(bar+" 'actual':"+actual);
-		Console.println(bar+"----------------------------------------------------");
-		Console.println(bar+" Result:");
-		int result = 0;
-		if(actual.equals(expected)) 
-		{
-			Console.println(bar+" "+actual+" == "+expected+" |:=> Test successful!");
-			result=1;
-		}
-		else
-		{
-			Console.println(bar+" "+actual+" =!= "+expected+" |:=> Test failed!");
-		}
-		Console.println(bar+"====================================================\n");
-		return result;
+		Function function;// = new FunctionConstructor();
+		function = new FunctionConstructor().newBuild(expression);
+		printSessionStart(description);
+		println(bar+" Value toString: "+expression);
+		println(bar+" Expected toString: "+expected);
+		println(bar+"");
+		println(bar+" function = function.newBuilt("+expression+");");
+		String actual = function.toString();
+		println(bar+" String actual = function.toString();");
+		println(bar+" [actual]:"+actual);
+		println(bar+"----------------------------------------------------");
+		println(bar+" Result:");
+		assertEqual(actual, expected);
+		return (printSessionEnd()>0)?1:0;
 	}
 	public int testActivation(String expression, double[] input, double expected, String description) {
-		NVFunction function = new NVFHead();
-		function = function.newBuild(expression);
-		Console.println("");
-		Console.println(bar+"  Function Activation Test: "+description);
-		Console.println("[O][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=]=>");
+		Function function;// = new FunctionConstructor();
+		function = new FunctionConstructor().newBuild(expression);
+		printSessionStart(description);
 		Console.println(bar+" Function: "+expression);
 		String inputStr = "";
 		for(int Ii=0; Ii<input.length; Ii++) {
@@ -54,25 +41,33 @@ public class NVTesting_Function extends NVTesting{
 		Console.println(bar+" Value: "+inputStr);
 		Console.println(bar+"");
 		Console.println(bar+" function = function.newBuilt("+expression+");");
-		Console.println(bar+" function:"+function.expression());
+		Console.println(bar+" function:"+function.toString());
 		Console.println(bar+"----------------------------------------------------");
 		Console.println(bar+" Result:");
-		int result = 0;
 		double activation = function.activate(input);
-		if(activation == expected) 
-		{
-			Console.println(bar+" "+activation+" == "+expected+" |:=> Test successful!");
-			result=1;
-		}
-		else
-		{
-			Console.println(bar+" "+activation+" =!= "+expected+" |:=> Test failed!");
-		}
-		Console.println(bar+"====================================================\n");
-		return result;
+		assertEqual(activation, expected);
+		return (printSessionEnd()>0)?1:0;
 	}
-	
-	
+
+	public int testActivation(String expression, T[] input, T expected, String description) {
+		Function function;// = new FunctionConstructor();
+		function = new FunctionConstructor().newBuild(expression);
+		printSessionStart(description);
+		Console.println(bar+" Function: "+expression);
+		String inputStr = "";
+		for(int Ii=0; Ii<input.length; Ii++) {
+			inputStr+=input[Ii]+", ";
+		}
+		Console.println(bar+" Value: "+inputStr);
+		Console.println(bar+"");
+		Console.println(bar+" function = function.newBuilt("+expression+");");
+		Console.println(bar+" function:"+function.toString());
+		Console.println(bar+"----------------------------------------------------");
+		Console.println(bar+" Result:");
+		T activation = function.activate(input);
+		assertEqual(activation.toString(), expected.toString());
+		return (printSessionEnd()>0)?1:0;
+	}
 	
 	
 	

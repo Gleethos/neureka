@@ -19,7 +19,7 @@ public class NVTesting_Activation extends NVTesting{
 		core.setInput(0,input);
 		core.asExecutable().forward();
 		core.asExecutable().loadLatest();
-		printStart("Activation Test: "+core.getFunction().expression());
+		printSessionStart("Activation Test: "+core.getFunction().toString());
 		Console.print(bar+"  Setting input to: ");
 		for(double v : input) {Console.print(v+"; ");}
 		Console.println("");
@@ -53,7 +53,7 @@ public class NVTesting_Activation extends NVTesting{
 			String expression = "null"; 
 			if(Structure[i].getFunction()!=null) 
 			{
-				expression = Structure[i].getFunction().expression();
+				expression = Structure[i].getFunction().toString();
 			}
 			Console.print(bar+"  Root ["+i+"]: ");
 			if(Structure[i]==head) {Console.println(bar+"  "+expression+"  => (head)");}
@@ -95,8 +95,8 @@ public class NVTesting_Activation extends NVTesting{
 		core.asExecutable().forward();
 		core.asExecutable().loadLatest();
 		Console.println("");
-		Console.println(" "+core.getFunction().expression());
-		Console.println(" "+description+"; Activation Test on Head: "+core.getFunction().expression());
+		Console.println(" "+core.getFunction().toString());
+		Console.println(" "+description+"; Activation Test on Head: "+core.getFunction().toString());
 		Console.println("[O][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=]=>");
 		Console.print(bar+"  expected: ");
 		String wanted = "";
@@ -162,7 +162,7 @@ public class NVTesting_Activation extends NVTesting{
 			String expression = "null"; 
 			if(Structure[i].getFunction()!=null) 
 			{
-				expression = Structure[i].getFunction().expression();
+				expression = Structure[i].getFunction().toString();
 			}
 			if(Structure[i]==head) {Console.println(bar+"  Root ["+i+"]: "+expression+"  => (head)");}
 			else {Console.println(bar+"  Root ["+i+"]: "+expression+"");}
@@ -227,7 +227,7 @@ public class NVTesting_Activation extends NVTesting{
 			String expression = "null"; 
 			if(Structure[i].getFunction()!=null) 
 			{
-				expression = Structure[i].getFunction().expression();
+				expression = Structure[i].getFunction().toString();
 			}
 			Console.print(bar+"  Root ["+i+"]: ");
 			if(Structure[i]==head) {Console.println(expression+"  => (head)");}
@@ -280,7 +280,7 @@ public class NVTesting_Activation extends NVTesting{
 	{
 		performForwardBackwardOn(Structure);
 		boolean success = true;
-		this.printStart("Root Relational Test: (Derivative/Activation)");
+		this.printSessionStart("Root Relational Test: (Derivative/Activation)");
 		this.printNetStructView(Structure, head);
 		Console.println(bar+"====================================================");
 		//-----------------------------------------------------------------------

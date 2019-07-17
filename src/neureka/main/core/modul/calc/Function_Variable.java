@@ -1,29 +1,24 @@
 package neureka.main.core.modul.calc;
 
-public class NVFVariableLeave implements NVFunction
+import neureka.main.core.base.data.T;
+
+public class Function_Variable implements Function
 {
+    @Override
+    public boolean isFlat(){
+        return  false;
+    }
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
-    public NVFunction newBuild(final String equation) 
+    public Function newBuild(final String equation)
     {
-        return (NVFunction)this;
+        return (Function)this;
     }
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public double activate(final double[] input, int j) 
     {
     	return input[j];
-    }
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    @Override
-    public double activate(final double[] input, double[] bias) 
-    {
-    	double[] newInput = new double[input.length];
-    	for(int Ii=0; Ii<input.length; Ii++) 
-    	{
-    		newInput[Ii] = input[Ii] + bias[Ii];
-    	}
-    	return activate(newInput);
     }
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
@@ -35,12 +30,6 @@ public class NVFVariableLeave implements NVFunction
     		sum += activate(input,Ii);	
         }
     	return sum;
-    }
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    @Override
-    public double derive(final double[] input, final double[] bias, final int index) 
-    {
-        return 1.0;
     }
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
@@ -60,15 +49,33 @@ public class NVFVariableLeave implements NVFunction
 	}
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
-    public boolean dependsOn(final int index) 
-    {
-        return true;
-    }
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    @Override
-    public String expression() 
+    public String toString()
     {
     	return "I[j]";
     }
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    @Override
+    public T activate(T[] input, int j) {
+        return input[j];
+    }
+
+    @Override
+    public T activate(T[] input) {
+        return new T().of(input, "sum(I[j])");
+    }
+
+    @Override
+    public T derive(T[] input, int index, int j) {
+        if(j!=index)
+        {
+            return T.factory.newTensor(0, input[0].shape());
+        }
+        return derive(input,index);
+    }
+
+    @Override
+    public T derive(T[] input, int index) {
+        return T.factory.newTensor(1, input[0].shape());
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }

@@ -9,7 +9,7 @@ import neureka.main.core.NVParent;
 import neureka.main.core.NVRoot;
 import neureka.main.core.NVUtility;
 import neureka.main.core.NVertex;
-import neureka.main.core.modul.calc.NVFunction;
+import neureka.main.core.modul.calc.Function;
 import neureka.main.core.base.NVData;
 import neureka.main.core.modul.mem.NVMemory;
 import neureka.main.core.modul.opti.NVOptimizer;
@@ -505,18 +505,22 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 			shoutLine("-activationOf(...,'Vi':"+Vi+")|: => END\n");
 			return Data;
 		}
-		NVFunction Function = (NVFunction) findModule(NVFunction.class);
+		Function Function = (neureka.main.core.modul.calc.Function) findModule(neureka.main.core.modul.calc.Function.class);
 		if(Function!=null)
 		{
 			shoutLine("-activationOf(...,'Vi':"+Vi+")|: (Function != null):");
 			double[] Bias = this.getBias(Vi);
-			Data.setActivation(Vi, Function.activate(Data.getInput(Vi), Bias));
+			double[] input = Data.getInput(Vi);
+			for(int Ii=0; Bias!=null && Ii<input.length; Ii++){
+				input[Ii] += Bias[Ii];
+			}
+			Data.setActivation(Vi, Function.activate(input));
 			Data.setInputDerivative(Vi, new double[Connection.length]);
 			shoutLine("-activationOf(...,'Vi':"+Vi+")|: => for(int Ii=0; Ii<E.Data[2].length; Ii++):");
 			for(int Ii=0; Ii<Data.getInputDerivative()[Vi].length; Ii++) // e_get(Vi)!!!!
 			{
 				shoutLine("-activationOf(...,'Vi':"+Vi+")|: =>('Ii':"+Ii+")|: E.Data[2][Ii]=Function.derive(E.Data[1], Bias, Ii);");
-				Data.setInputDerivative(Vi, Ii, Function.derive(Data.getInput(Vi), Bias, Ii));
+				Data.setInputDerivative(Vi, Ii, Function.derive(input, Ii));
 			}
 		}
 		else

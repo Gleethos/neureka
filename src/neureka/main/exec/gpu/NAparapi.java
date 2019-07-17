@@ -91,7 +91,7 @@ public class NAparapi{
 	      System.arraycopy(rgb, 0, imageRgb, 0, rgb.length);
 	      viewer.repaint();
 
-	      // Report target execution mode: GPU or JTP (Java Thread Pool).
+	      // Report target execution mode: TDevice or JTP (Java Thread Pool).
 	      System.out.println("Execution mode=" + kernel.getExecutionMode());
 
 	      // Window listener to dispose Kernel resources on user exit.

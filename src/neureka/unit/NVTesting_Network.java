@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 import neureka.main.core.NVNode;
 import neureka.main.core.NVertex;
-import neureka.main.core.modul.calc.NVFHead;
-import neureka.main.core.modul.calc.NVFunction;
+import neureka.main.core.modul.calc.FunctionConstructor;
+import neureka.main.core.modul.calc.Function;
 import neureka.main.core.imp.NVertex_Root;
 import neureka.main.core.modul.opti.NVOptimizer;
 import neureka.utility.NMessageFrame;
@@ -116,7 +116,7 @@ public class NVTesting_Network extends NVTesting
 		
 		N5.setConvergence(true);
 
-		System.out.println("N4 function: "+N4.getFunction().expression());
+		System.out.println("N4 function: "+N4.getFunction().toString());
 		
 		double optimum = 376;
 		N4.setOptimum(0,optimum);
@@ -126,8 +126,8 @@ public class NVTesting_Network extends NVTesting
 		N5.setWeight(null);
 		N5.setBias(null);
 		
-		NVFunction F = new NVFHead();
-		F = F.newBuild("abs(I0)");
+		Function F;
+		F = new FunctionConstructor().newBuild("abs(I0)");
 		N5.setFunction(F);
 		
 		NMessageFrame Frame = new NMessageFrame("Network test - backprop - Output");
@@ -143,8 +143,8 @@ public class NVTesting_Network extends NVTesting
 		Console.println("   Backprop test on tiny test net: ");
 		Console.println("[O][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=]=>");
 		Console.println(bar+"  ");
-		Console.println(bar+"  Head: "+N4.getFunction().expression());
-		Console.println(bar+"  Loss: "+N5.getFunction().expression());
+		Console.println(bar+"  Head: "+N4.getFunction().toString());
+		Console.println(bar+"  Loss: "+N5.getFunction().toString());
 		Console.println(bar+"====================================================");
 		
 		//for(int i=0; i<Net.length; i++) {Frame.print(Net[i].toString());}
@@ -205,7 +205,7 @@ public class NVTesting_Network extends NVTesting
 		N[3].setConvergence(true);
 		N[0].setAllInput(0,6);
 		N[3].setOptimum(0, 15);
-		System.out.println("N4 function: "+N[3].getFunction().expression());
+		System.out.println("N4 function: "+N[3].getFunction().toString());
 	 
 		System.out.println("Connecting N1 To N2:");
 		connectNToNInput(N[0],N[1]);

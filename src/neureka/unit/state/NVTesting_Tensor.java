@@ -1,6 +1,7 @@
 package neureka.unit.state;
 
 import neureka.main.core.base.data.T;
+import neureka.main.core.modul.calc.TKernel;
 import neureka.unit.NVTesting;
 import neureka.utility.NMessageFrame;
 
@@ -12,49 +13,42 @@ public class NVTesting_Tensor extends NVTesting {
     }
 
     public int testTensorAutoGrad(T[] source, String operation, T expected){
-
-        printStart("Testing T.utility: dimension reshaping!");
+        printSessionStart("Testing T: autograd!");
+        println(bar+"  Function: "+operation);
+        println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         T product = new T().of(source, operation);
         product.backward(new T(product.shape(), 1));
-
-        if(this.assertEqual(product.toString(), expected.toString())){
-            return 1;
-        }
-        return 0;
+        this.assertEqual(product.toString(), expected.toString());
+        return (printSessionEnd()>0)?1:0;
     }
 
     public int testTensorUtility_reshape(int[] dim, int[] newForm, int[] expected){
 
         int[] result = T.utility.reshaped(dim, newForm);
-        printStart("Testing T.utility: dimension reshaping!");
-        if(assertEqual(stringified(result), stringified(expected))){
-            return 1;
-        }
+        printSessionStart("Testing T.utility: dimension reshaping!");
+        assertEqual(stringified(result), stringified(expected));
+
         //int[] expectedAnchor = {1, 4, 4*2, 4*2*9, 4*2*9*5, 4*2*9*5*6, 4*2*9*5*6*2};
         //result =  T.utility.idxTrltn(dim);
-        return 0;
+        return (printSessionEnd()>0)?1:0;
     }
 
     public int testTensorUtility_translation(int[] dim, int[] expected){
         int [] result =  T.utility.idxTrltn(dim);
-        printStart("Testing T.utility: dimension anchoring!");
-        if(assertEqual(stringified(result), stringified(expected))){
-            return 1;
-        }
-        return 0;
+        printSessionStart("Testing T.utility: dimension translation!");
+        assertEqual(stringified(result), stringified(expected));
+        return (printSessionEnd()>0)?1:0;
     }
     public int testTensorBase_idxFromAnchor(int[] dim, int idx, int[] expected){
         int [] result =  T.utility.IdxToShpIdx(idx, T.utility.idxTrltn(dim));
-        printStart("Testing T.utility: dim to anchor to idxs!");
-        if(assertEqual(stringified(result), stringified(expected))){
-            return 1;
-        }
-        return 0;
+        printSessionStart("Testing T.utility: shape to translation to index!");
+        assertEqual(stringified(result), stringified(expected));
+        return (printSessionEnd()>0)?1:0;
     }
 
     public int testTensMulOn(int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd){
 
-        printStart("Test T.utility: tensMul_mxd");
+        printSessionStart("Test T.utility: tensMul_mxd");
         int rank = (frstShp.length+scndShp.length)/2;
         int[] frm = new int[rank];
         for(int i=0; i<rank; i++){frm[i]=i;}
@@ -69,7 +63,7 @@ public class NVTesting_Tensor extends NVTesting {
             frstMxd, scndMxd, drnMxd
         );
         assertEqual(stringified(rsltData), stringified(expctd));
-        return 0;
+        return (printSessionEnd()>0)?1:0;
     }
 
 

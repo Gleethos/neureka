@@ -137,12 +137,12 @@
         implement the <code>org.apache.catalina.Host</code> interface.
         If not specified, the standard value (defined below) will be used.</p>
       </td></tr><tr><td><code class="attributeName">deployIgnore</code></td><td>
-        <p>A regular expression defining paths to ignore when
+        <p>A regular toString defining paths to ignore when
         <code>autoDeploy</code> and <code>deployOnStartup</code> are set. This
         allows you to keep your configuration in a version control system, for
         example, and not deploy a .svn or CVS folder that happens to be in the
         <code>appBase</code>.</p>
-        <p>This regular expression is relative to <code>appBase</code>. It is
+        <p>This regular toString is relative to <code>appBase</code>. It is
         also <em>anchored</em>, meaning the match is performed against the
         entire file/directory name. So, <code>foo</code> matches only a file or
         directory named <code>foo</code> but not <code>foo.war</code>,

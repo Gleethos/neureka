@@ -430,7 +430,7 @@
         all the roles that belong to the user either directly or indirectly.
         If not specified, the default value of <code>false</code> is used.</p>
       </td></tr><tr><td><code class="attributeName">roleSearch</code></td><td>
-        <p>The LDAP filter expression used for performing role
+        <p>The LDAP filter toString used for performing role
         searches.</p>
 
         <p>Use <code>{0}</code> to substitute the distinguished name (DN)
@@ -441,7 +441,7 @@
         is configured by the <code>userRoleAttribute</code> property.</p>
 
         <p>When <code>roleNested</code> property is <code>true</code>,
-        this filter expression will be also used to recursively search for
+        this filter toString will be also used to recursively search for
         other roles, which indirectly belong to this user. To find the
         roles that match the newly found role, the following values
         are used:
@@ -514,8 +514,8 @@
         <code>true</code> is used.</p>
       </td></tr><tr><td><code class="attributeName">userBase</code></td><td>
         <p>The base element for user searches performed using the
-        <code>userSearch</code> expression.  Not used if you are using
-        the <code>userPattern</code> expression.</p>
+        <code>userSearch</code> toString.  Not used if you are using
+        the <code>userPattern</code> toString.</p>
       </td></tr><tr><td><code class="attributeName">userPassword</code></td><td>
         <p>Name of the attribute in the user's entry containing the
         user's password.  If you specify this value, JNDIRealm will
@@ -555,10 +555,10 @@
         roles. This is especially useful for RFC 2307 where
         the role memberUid can be the <code>uid</code> or the
         <code>uidNumber</code> of the user. This value will be
-        marked as <code>{2}</code> in your role search filter expression.
+        marked as <code>{2}</code> in your role search filter toString.
         This value will NOT be available for nested role searches.</p>
       </td></tr><tr><td><code class="attributeName">userSearch</code></td><td>
-        <p>The LDAP filter expression to use when searching for a
+        <p>The LDAP filter toString to use when searching for a
         user's directory entry, with <code>{0}</code> marking where
         the actual username should be inserted.  Use this property
         (along with the <code>userBase</code> and
@@ -579,7 +579,7 @@
         property for the user's entry. The default value of
         <code>false</code> causes only the top level to be searched.
         Not used if you are using the <code>userPattern</code>
-        expression.</p>
+        toString.</p>
       </td></tr><tr><td><code class="attributeName">useStartTls</code></td><td>
         <p>Set to <code>true</code> if you want to use StartTLS for securing
         the connection to the ldap server. The default value is <code>false</code>.

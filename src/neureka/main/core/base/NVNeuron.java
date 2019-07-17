@@ -1,7 +1,7 @@
 package neureka.main.core.base;
 
 import neureka.main.core.NVUtility;
-import neureka.main.core.modul.calc.NVFunction;
+import neureka.main.core.modul.calc.Function;
 
 public class NVNeuron
 {
@@ -459,7 +459,7 @@ public class NVNeuron
 	{
 		return Input[Ii].hasWeight();
 	}
-	public void activateOn(NVFunction Function)
+	public void activateOn(Function Function)
 	{
 		if(Function!=null) 
 		{
@@ -468,10 +468,17 @@ public class NVNeuron
 			{
 				Bias[Ii]= Input[Ii].Bias;
 			}
-			Activation = Function.activate(this.getInput(), Bias);
+			double[] input = this.getInput();
+			if(Bias!=null){
+				for(int Ii = 0; Ii< input.length; Ii++)
+				{
+					input[Ii] += Bias[Ii];
+				}
+			}
+			Activation = Function.activate(input);
 			for(int Ii = 0; Ii< Input.length; Ii++)
 			{
-				Input[Ii].Derivative = Function.derive(this.getInput(), Bias, Ii);
+				Input[Ii].Derivative = Function.derive(input, Ii);
 			}
 		}
 		else 
