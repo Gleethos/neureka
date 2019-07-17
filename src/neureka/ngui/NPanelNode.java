@@ -1450,7 +1450,7 @@ public class NPanelNode implements NPanelObject
 		boolean somethingToList = true;
 		double YMod = - radius*0.05;
 		
-		//NVCloak Public = (NVCloak) Core.findModule(NVCloak.class);
+		//NVCloak Public = (NVCloak) Core.find(NVCloak.class);
 		if(Core.getFunction()!=null) 
 		{
 			listedProperties += Core.getFunction().toString()+"";

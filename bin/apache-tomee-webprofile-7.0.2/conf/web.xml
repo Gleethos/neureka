@@ -130,7 +130,7 @@
   <!--                       pages.  See the jasper documentation for more  -->
   <!--                       information.                                   -->
   <!--                                                                      -->
-  <!--   compilerSourceVM    Compiler source VM. [1.6]                      -->
+  <!--   compilerSourceVM    Compiler src VM. [1.6]                      -->
   <!--                                                                      -->
   <!--   compilerTargetVM    Compiler target VM. [1.6]                      -->
   <!--                                                                      -->
@@ -140,7 +140,7 @@
   <!--                       modificationTestInterval parameter. [true]     -->
   <!--                                                                      -->
   <!--   displaySourceFragment                                              -->
-  <!--                       Should a source fragment be included in        -->
+  <!--                       Should a src fragment be included in        -->
   <!--                       exception messages? [true]                     -->
   <!--                                                                      -->
   <!--   dumpSmap            Should the SMAP info for JSR45 debugging be    -->
@@ -175,9 +175,9 @@
   <!--                       [clsid:8AD9C840-044E-11D1-B3E9-00805F499D93]   -->
   <!--                                                                      -->
   <!--   javaEncoding        Java file encoding to use for generating java  -->
-  <!--                       source files. [UTF8]                           -->
+  <!--                       src files. [UTF8]                           -->
   <!--                                                                      -->
-  <!--   keepgenerated       Should we keep the generated Java source code  -->
+  <!--   keepgenerated       Should we keep the generated Java src code  -->
   <!--                       for each page instead of deleting it? [true]   -->
   <!--                                                                      -->
   <!--   mappedfile          Should we generate static content with one     -->
@@ -770,7 +770,7 @@
     </mime-mapping>
     <mime-mapping>
         <extension>ms</extension>
-        <mime-type>application/x-wais-source</mime-type>
+        <mime-type>application/x-wais-src</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>nc</extension>
@@ -1019,7 +1019,7 @@
     </mime-mapping>
     <mime-mapping>
         <extension>src</extension>
-        <mime-type>application/x-wais-source</mime-type>
+        <mime-type>application/x-wais-src</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>sv4cpio</extension>

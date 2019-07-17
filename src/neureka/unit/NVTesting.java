@@ -2,6 +2,7 @@ package neureka.unit;
 
 import neureka.main.core.NVNode;
 
+import neureka.main.core.base.data.T;
 import neureka.utility.NMessageFrame;
 import java.math.BigInteger;
 

@@ -1,6 +1,6 @@
 package neureka.main.core;
 
-import neureka.main.exec.NVExecutable;
+import neureka.main.exec.cpu.NVExecutable;
 
 public abstract interface NVNode 
 {

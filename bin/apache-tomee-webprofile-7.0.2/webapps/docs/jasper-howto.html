@@ -56,8 +56,8 @@ of your JSP pages on a production server.</li>
 can now detect when a page included at compile time from a JSP has changed
 and then recompile the parent JSP.</li>
 <li><strong>JDT used to compile JSP pages</strong> - The
-Eclipse JDT Java compiler is now used to perform JSP java source code
-compilation. This compiler loads source dependencies from the container
+Eclipse JDT Java compiler is now used to perform JSP java src code
+compilation. This compiler loads src dependencies from the container
 classloader. Ant and javac can still be used.</li>
 </ul>
 
@@ -102,7 +102,7 @@ set then <code>setenv.[sh|bat]</code> should be used to add
 <code>ant.jar</code>, <code>ant-launcher.jar</code> and <code>tools.jar</code>
 to the <code>CLASSPATH</code> environment variable.</li>
 
-<li><strong>compilerSourceVM</strong> - What JDK version are the source files
+<li><strong>compilerSourceVM</strong> - What JDK version are the src files
 compatible with? (Default value: <code>1.7</code>)</li>
 
 <li><strong>compilerTargetVM</strong> - What JDK version are the generated files
@@ -113,7 +113,7 @@ the frequency at which JSPs are checked for modification may be specified via
 the modificationTestInterval parameter.<code>true</code> or <code>false</code>,
 default <code>true</code>.</li>
 
-<li><strong>displaySourceFragment</strong> - Should a source fragment be
+<li><strong>displaySourceFragment</strong> - Should a src fragment be
 included in exception messages? <code>true</code> or <code>false</code>,
 default <code>true</code>.</li>
 
@@ -149,9 +149,9 @@ Explorer when using &lt;jsp:plugin&gt; tags.   Default
 <code>clsid:8AD9C840-044E-11D1-B3E9-00805F499D93</code>.</li>
 
 <li><strong>javaEncoding</strong> - Java file encoding to use for generating
-java source files. Default <code>UTF8</code>.</li>
+java src files. Default <code>UTF8</code>.</li>
 
-<li><strong>keepgenerated</strong> - Should we keep the generated Java source
+<li><strong>keepgenerated</strong> - Should we keep the generated Java src
 code for each page instead of deleting it? <code>true</code> or
 <code>false</code>, default <code>true</code>.</li>
 
@@ -345,7 +345,7 @@ automatic merge the <code>${webapp.path}/WEB-INF/generated_web.xml</code>
 with the current web application deployment descriptor at
 <code>${webapp.path}/WEB-INF/web.xml</code>. When you want to use Java 6
 features inside your jsp's, add the following javac compiler task attributes:
-<code>source="1.6" target="1.6"</code>. For live
+<code>src="1.6" target="1.6"</code>. For live
 applications you can also compile with <code>optimize="on"</code> and
 without debug info <code>debug="off"</code>.
 </p>
@@ -355,7 +355,7 @@ When you don't want to stop the jsp generation at first jsp syntax error, use
 <code>failOnError="false"</code>and with
 <code>showSuccess="true"</code> all successful <i>jsp to java</i>
 generation are printed out. Sometimes it is very helpful, when you cleanup the
-generate java source files at <code>${webapp.path}/WEB-INF/src</code>
+generate java src files at <code>${webapp.path}/WEB-INF/src</code>
 and the compile jsp servlet classes at
 <code>${webapp.path}/WEB-INF/classes/org/apache/jsp</code>.
 </p>

@@ -31,8 +31,8 @@ Copyright 2005-2014 Sun Microsystems, Inc. All rights reserved.
 OpenJPA elects to include this software in this distribution under the
 CDDL license.  You can obtain a copy of the License at:
     https://glassfish.dev.java.net/public/CDDL+GPL.html
-The source code is available at:
-    https://glassfish.dev.java.net/source/browse/glassfish/
+The src code is available at:
+    https://glassfish.dev.java.net/src/browse/glassfish/
 
 OpenJPA includes software written by Miroslav Nachev
 
@@ -80,8 +80,8 @@ reference implementation (http://java.sun.com/xml/ns/j2ee/).
 Apache Myfaces elects to include this software in this distribution
 under the CDDL license.  You can obtain a copy of the License at:
     https://glassfish.dev.java.net/public/CDDL+GPL.html
-The source code is available at:
-    https://glassfish.dev.java.net/source/browse/glassfish/
+The src code is available at:
+    https://glassfish.dev.java.net/src/browse/glassfish/
 
 
 This software also includes code from the Dojo toolkit (http://www.dojotoolkit.org/)
@@ -114,7 +114,7 @@ el-api - Unified Expression Language is dual licensed under 2 OSI approved licen
 =========================================================================
 Apache CXF NOTICE
 
-Java classes (source and binary) under org.apache.cxf.jaxws.javaee
+Java classes (src and binary) under org.apache.cxf.jaxws.javaee
 are generated from schema available here:
 (http://java.sun.com/xml/ns/javaee/javaee_5.xsd)
 

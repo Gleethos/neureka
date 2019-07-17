@@ -13,7 +13,7 @@ import neureka.main.core.modul.calc.Function;
 import neureka.main.core.base.NVData;
 import neureka.main.core.modul.mem.NVMemory;
 import neureka.main.core.modul.opti.NVOptimizer;
-import neureka.main.exec.NVExecutable;
+import neureka.main.exec.cpu.NVExecutable;
 import neureka.ngui.NPanelNode;
 
 public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecutable, NVChild, NVParent
@@ -370,14 +370,14 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 	{
 		shoutLine("NVertex_Root->startWeightConvection(boolean[] inputSignal, int Vi)|: ...");
 		shoutLine("========================================================================");
-		//Dim = findModule(...);
+		//Dim = find(...);
 		int[] selfDim, otherDim, weightDim, form;
 		//int Vi, int Wi
 		/**
-		 * 		int[] selfDim = findModule(int[].class);
+		 * 		int[] selfDim = find(int[].class);
 		 *
 		 * 		//[Ii][Ni][0]=>weightDim [1]=>form
-		 *		int[][] FormData = findModule(int[][][][].class)[Ii][Ni]
+		 *		int[][] FormData = find(int[][][][].class)[Ii][Ni]
 		 *	    int[] weightDim = FormData[0];
 		 *	    int[] connForm = FormData[1];
 		 *
@@ -456,7 +456,7 @@ public class NVertex_Root extends NVertex implements NVNeuron, NVRoot, NVExecuta
 					for (int Ni = 0; Ni < Connection[Ii].length; Ni++)
 				    {
 				    	//otherDim = Connection[Ii][Ni]
-						//wightDim = findModule()
+						//wightDim = find()
 						//OtoWFrmt = Connection[Ii][Ni].frmt
 						update[0] = 0;
 				     	int limit = Connection[Ii][Ni].size()+Wi;

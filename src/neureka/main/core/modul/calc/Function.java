@@ -8,6 +8,7 @@ public interface Function
 	public Function newBuild(String expression);
 	public String toString();
 	public boolean isFlat();
+	public int id();
 	//-------------------------------------------
 	public double activate(double[] input, int j);// Iteration over input via j !
 	public double activate(double[] input);

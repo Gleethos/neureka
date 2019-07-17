@@ -13,7 +13,7 @@ import neureka.main.core.base.NVInput;
 import neureka.main.core.imp.NVertex_Root;
 import neureka.main.core.modul.mem.NVMemory;
 import neureka.main.core.modul.opti.NVOptimizer;
-import neureka.main.exec.NVExecutable;
+import neureka.main.exec.cpu.NVExecutable;
 import neureka.ngui.NVControlFrame;
 
 public class NVertex extends NVData implements NVNode
@@ -622,7 +622,7 @@ public class NVertex extends NVData implements NVNode
 				}
 			}
 			setError(Vi,0);
-			//NVCloak cloak = (NVCloak)findModule(NVCloak.class);
+			//NVCloak cloak = (NVCloak)find(NVCloak.class);
 			//if(cloak!=null)
 			//{
 			//	cloak.setError(Vi, 0.0);
@@ -1328,7 +1328,7 @@ public class NVertex extends NVData implements NVNode
 			{
 				node.asCore().removeModule(NVOptimizer.class);
 			}
-			//NVCloak Cloak = (NVCloak)node.asCore().findModule(NVCloak.class);
+			//NVCloak Cloak = (NVCloak)node.asCore().find(NVCloak.class);
 			//if(Cloak!= null)
 			//{
 			//	Cloak.abandonYourself();

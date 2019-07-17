@@ -93,7 +93,7 @@ and for other web applications that rely on this feature.
 mechanism and should register the drivers explicitly.</p>
 
 <p>The list of drivers in <code>java.sql.DriverManager</code> is also
-a known source of memory leaks. Any Drivers registered
+a known src of memory leaks. Any Drivers registered
 by a web application must be deregistered when the web application stops.
 Tomcat will attempt to automatically discover and deregister any
 JDBC drivers loaded by the web application class loader when the web
@@ -473,7 +473,7 @@ if ( cxt == null ) {
 DataSource ds = (DataSource) cxt.lookup( "java:/comp/env/jdbc/postgres" );
 
 if ( ds == null ) {
-   throw new Exception("Data source not found!");
+   throw new Exception("Data src not found!");
 }</code></pre></div>
 
 </div></div>

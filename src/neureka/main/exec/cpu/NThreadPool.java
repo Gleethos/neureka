@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
-import neureka.main.exec.NVExecutable;
-
 
 public class NThreadPool implements Runnable {
     //private NThreader[] Runnable;

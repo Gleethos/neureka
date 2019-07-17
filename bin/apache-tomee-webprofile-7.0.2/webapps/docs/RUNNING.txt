@@ -53,7 +53,7 @@ Running With JRE 7 Or Later
       directory.
 
 NOTE:  As an alternative to downloading a binary distribution, you can
-create your own from the Tomcat source code, as described in
+create your own from the Tomcat src code, as described in
 "BUILDING.txt".  You can either
 
   a)  Do the full "release" build and find the created distribution in the

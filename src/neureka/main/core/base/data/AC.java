@@ -4,10 +4,10 @@ import neureka.main.core.modul.calc.FunctionConstructor;
 
 import java.util.function.Consumer;
 
-public class TOperation {
+public class AC {
 
-    neureka.main.core.modul.calc.Function Function = null;
-    T[] Source = null;
+    neureka.main.core.modul.calc.Function Fcn = null;
+    T[] Src = null;
     int referenced = 0;
     int mode = 0;
     public boolean usesAD(){return (mode !=0);}
@@ -27,50 +27,50 @@ public class TOperation {
     /**
      *   CONSTRUCTOR:
      * */
-    public TOperation(T drain, T[] source, int[][] translation, String operation){
-        T[] translated = new T[source.length];
+    public AC(T drain, T[] src, int[][] translation, String operation){
+        T[] translated = new T[src.length];
         for(int i=0; i<translated.length&&i<translation.length; i++){
-            translated[i] = T.factory.reshapedCopyOf(source[i], translation[i]);//source[i].reshaped(translation[i]);
+            translated[i] = T.factory.reshapedCopyOf(src[i], translation[i]);//src[i].reshaped(translation[i]);
         }
     }
-    public TOperation(T drain, T[] source, String operation, boolean forward, boolean tipReached){//, boolean derive
-        this.Source = source;
-        construct(operation, source, tipReached);
-        prepare(drain, source, true);
+    public AC(T drain, T[] src, String operation, boolean forward, boolean tipReached){//, boolean derive
+        this.Src = src;
+        construct(operation, src, tipReached);
+        prepare(drain, src, true);
         if(forward){
             forward(drain);
         }
-        if(this.Function.isFlat()&&tipReached){//derive &&
+        if(this.Fcn.isFlat()&&tipReached){//derive &&
             performDifferentiation(drain);
         }
     }
-    public TOperation(T drain, T[] source, int f_id, boolean forward, boolean tipReached){//, boolean derive
-        construct(f_id, source, tipReached);
-        prepare(drain, source, forward);
+    public AC(T drain, T[] src, int f_id, boolean forward, boolean tipReached){//, boolean derive
+        construct(f_id, src, tipReached);
+        prepare(drain, src, forward);
         if(forward){
             forward(drain);
         }
-        if(this.Function.isFlat()&&tipReached){
+        if(this.Fcn.isFlat()&&tipReached){
             performDifferentiation(drain);
         }
     }
 
-    public TOperation(T drain, T[] source, String operation, boolean forward){//, boolean derive
-        construct(operation, source, false);
-        prepare(drain, source, true);
+    public AC(T drain, T[] src, String operation, boolean forward){//, boolean derive
+        construct(operation, src, false);
+        prepare(drain, src, true);
         if(forward){
             forward(drain);
         }
-        if(this.Function.isFlat()){//derive &&
+        if(this.Fcn.isFlat()){//derive &&
             performDifferentiation(drain);
         }
     }
     private void construct(int f_id, T[] source, boolean tipReached){
-        this.Source = source;
-        this.Function = new FunctionConstructor().newBuild(f_id, source.length, tipReached);
+        this.Src = source;
+        this.Fcn = new FunctionConstructor().newBuild(f_id, source.length, tipReached);
     }
     private void construct(String operation, T[] source, boolean tipReached) {
-        this.Source = source;
+        this.Src = source;
         String replacement = "I[0]";
         for(int i=0; i<(source.length-1); i++){
             replacement+="xI["+(i+1)+"]";
@@ -96,7 +96,7 @@ public class TOperation {
                 operation = operation.replace("tm", replacement);
             }
         }
-        Function = new FunctionConstructor().newBuild(operation, tipReached);
+        Fcn = new FunctionConstructor().newBuild(operation, tipReached);
         validate(operation);
     }
     private void validate(String operation){
@@ -104,22 +104,22 @@ public class TOperation {
          *   Evaluating validity:
          * */
         if(!operation.contains("x")){
-            if(!utility.isValid(this.Source, false)){
-                this.Function = null;
-                this.Source = null;
+            if(!utility.isValid(this.Src, false)){
+                this.Fcn = null;
+                this.Src = null;
                 return;
             }
-        }else if(operation.contains("x") && !utility.isValid(this.Source, true)){//Shape fitting:
+        }else if(operation.contains("x") && !utility.isValid(this.Src, true)){//Shape fitting:
             int largest = 0;
-            for(int i=0; i<this.Source.length; i++){
-                largest = (this.Source[i].shape().length>largest)?this.Source[i].shape().length:largest;
+            for(int i = 0; i<this.Src.length; i++){
+                largest = (this.Src[i].shape().length>largest)?this.Src[i].shape().length:largest;
             }
-            int[][] newShapes = new int[this.Source.length][largest];
-            for(int i=0; i<this.Source.length; i++){
+            int[][] newShapes = new int[this.Src.length][largest];
+            for(int i = 0; i<this.Src.length; i++){
                 for(int ii=0; ii<largest; ii++){
-                    newShapes[i][ii] = (ii<this.Source[i].shape().length)?ii:-1;
+                    newShapes[i][ii] = (ii<this.Src[i].shape().length)?ii:-1;
                 }
-                this.Source[i].reshape(newShapes[i]);
+                this.Src[i].reshape(newShapes[i]);
             }
         }
     }
@@ -131,33 +131,33 @@ public class TOperation {
          *  Evaluate auto-grad mode:
          * */
         this.mode = 0;
-        int[] srcModes = new int[this.Source.length];
+        int[] srcModes = new int[this.Src.length];
         int m = 0;
-        for(int Ii = 0; Ii< this.Source.length; Ii++){
-            if(Source[Ii].hasModule(TOperation.class)){
-                TOperation junctor = (TOperation)Source[Ii].findModule(TOperation.class);
-                junctor.referenced++;
-                srcModes[Ii] = junctor.mode;
-            }else if(Source[Ii].rqsGradient()){
+        for(int Ii = 0; Ii< this.Src.length; Ii++){
+            if(Src[Ii].has(AC.class)){
+                AC calc = (AC) Src[Ii].find(AC.class);
+                calc.referenced++;
+                srcModes[Ii] = calc.mode;
+            }else if(Src[Ii].rqsGradient()){
                 srcModes[Ii] = 1;
             }
             m += (srcModes[Ii]!=0)?1:0;
         }
         if(m==1){
-            for(int Ii = 0; Ii< this.Source.length; Ii++){
+            for(int Ii = 0; Ii< this.Src.length; Ii++){
                 mode += (srcModes[Ii]<0)?1:srcModes[Ii];
             }
-        }else if(m>1){
+        }else if(m>1 || (this.Fcn.isFlat() && this.Fcn.toString().contains("x"))){
             mode = -m;
         }
     }
 
     private void forward(T drain){
-        if(Source==null || (Function==null)){ return; }
+        if(Src ==null || (Fcn ==null)){ return; }
         //}else{
-            if(Function!=null){
-                drain.internalize(Function.activate(Source));
-                //this.activationOn(Source, drain);
+            if(Fcn !=null){
+                drain.internalize(Fcn.activate(Src));
+                //this.activationOn(Src, drain);
             }
         //}
 
@@ -165,67 +165,53 @@ public class TOperation {
 
     private void performDifferentiation(T drain){
         //--------------------------------------------------------------------------------------
-        if(this.usesAD() && Function.isFlat()){
-            if(!drain.hasModule(RelativeGradients.class)){//&& (drain.rqsGradients()||src.rqsGradients())
+        if(this.usesAD() && Fcn.isFlat()){
+            if(!drain.has(RelativeGradients.class)){
                 RelativeGradients rg = new RelativeGradients();
                 drain.addModule(rg);
             }
-            RelativeGradients selfGradients = (RelativeGradients) drain.findModule(RelativeGradients.class);
+            RelativeGradients drain_gradients = (RelativeGradients) drain.find(RelativeGradients.class);
             /**
              *  Preparing for backpropagation:
              * */
             if(this.usesForwardAD()){
-                if(drain.rqsGradient()){
-                    selfGradients.put(drain, new T(drain.shape(), 1));
-                }
+                //if(drain.rqsGradient()){
+                //    drain_gradients.put(drain, new T(drain.shape(), 1));
+                //}
                 int[] i = {0};
                 this.foreach((src)->{
-                    RelativeGradients src_gradients = (RelativeGradients) src.findModule(RelativeGradients.class);
-                    if(src_gradients!=null){
-                        T d = Function.derive(this.Source, i[0]);
-                        if(
-                            drain.rqsGradient()
-                            ||
-                            drain.hasModule(TOperation.class)
-                            && ((TOperation)drain.findModule(TOperation.class)).mode>0
-                        ){
+                    if(src.has(AC.class) && ((AC) src.find(AC.class)).Fcn.id()==18){
+                        T d = Fcn.derive(this.Src, i[0]);
+                        drain_gradients.put(src, d);// Sources created by x-mul are revers-mode cases!
+                    }else{
+                        RelativeGradients src_gradients = (RelativeGradients) src.find(RelativeGradients.class);
+                        if(src_gradients!=null){
+                            T d = Fcn.derive(this.Src, i[0]);
                             src_gradients.forEach(
-                            (t, g)->{
-                                /**
-                                 *  Chain rule for every gradient with respect to leaves:
-                                 * */
-                                if(selfGradients.has(t)){
-                                    T sg = selfGradients.get(t);
-                                    if(Function.toString().contains("x")){
-                                        selfGradients.put(t, T.factory.addition(sg,T.factory.convolution(d, g)));
+                                (t, g)->{
+                                    /**
+                                     *  Chain rule for every gradient with respect to leaves:
+                                     * */
+                                    if(drain_gradients.has(t)){
+                                        T sg = drain_gradients.get(t);
+                                        drain_gradients.put(t, T.factory.addition(sg,T.factory.multiplication(d, g)));
                                     }else{
-                                        selfGradients.put(t, T.factory.addition(sg,T.factory.multiplication(d, g)));
+                                        drain_gradients.put(t, T.factory.multiplication(d, g));
                                     }
-                                }else{
-                                    if(Function.toString().contains("x")){
-                                        selfGradients.put(t, T.factory.convolution(d, g));
-                                    }else{
-                                        selfGradients.put(t, T.factory.multiplication(d, g));
-                                    }
-                                }
-                                //TODO: flag within sr
-                                // c tsrs that grant that the tensor has been created by function constructor!
-                            });
-                        }else{
-                            selfGradients.put(src, d);
+                                    //TODO: flag within sr
+                                    // c tsrs that grant that the tensor has been created by function constructor!
+                                });
                         }
-
+                        i[0]++;
                     }
-                    i[0]++;
                 });
 
             }else if(this.usesReverseAD()){
                 int[] i = {0};
                 this.foreach((src)->{
-                    RelativeGradients gSrc = (RelativeGradients) src.findModule(RelativeGradients.class);
-                    if(gSrc!=null){
-                        T d = Function.derive(this.Source, i[0]);
-                        selfGradients.put(src, d);// Add gradients with respect to every source tensor!
+                    if(src.has(RelativeGradients.class) || src.rqsGradient()){
+                        T d = Fcn.derive(this.Src, i[0]);
+                        drain_gradients.put(src, d);// Add gradients with respect to every source tensor!
                     }
                     i[0]++;
                 });
@@ -235,8 +221,8 @@ public class TOperation {
     }
 
     private void foreach(Consumer<T> action){
-        for(int i=0; i<this.Source.length; i++){
-            action.accept(this.Source[i]);
+        for(int i = 0; i<this.Src.length; i++){
+            action.accept(this.Src[i]);
         }
     }
 
@@ -251,7 +237,7 @@ public class TOperation {
                             :T.factory.addition(error, T.factory.newTensor(drain.value(), drain.shape()))
             );
         }
-        RelativeGradients drnGradients = (RelativeGradients) drain.findModule(RelativeGradients.class);
+        RelativeGradients drnGradients = (RelativeGradients) drain.find(RelativeGradients.class);
         if(drnGradients!=null){
             drnGradients.forEach((target, g)->{
              //   target.backward(T.factory.multiplication(error, g));
@@ -260,8 +246,8 @@ public class TOperation {
     }
 
     /**
-     *   tensor3 = new T().of(new TOperation(new T[]{tensor1, tensor2}, "convolution"));
-     *   tensor4 = new TOperation(tensor3, "sum(tanh[Ij])").out();
+     *   tensor3 = new T().of(new AC(new T[]{tensor1, tensor2}, "convolution"));
+     *   tensor4 = new AC(tensor3, "sum(tanh[Ij])").out();
      *
      *
      * */

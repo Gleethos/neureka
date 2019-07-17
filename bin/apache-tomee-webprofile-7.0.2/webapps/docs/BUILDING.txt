@@ -19,7 +19,7 @@
             Building The Apache Tomcat 8.5 Servlet/JSP Container
             ====================================================
 
-This subproject contains the source code for Tomcat 8.5, a container that
+This subproject contains the src code for Tomcat 8.5, a container that
 implements the Servlet 3.1, JSP 2.3, EL 3.0, WebSocket 1.1 and JASPIC 1.1
 specifications from the Java Community Process <http://www.jcp.org/>.
 
@@ -28,7 +28,7 @@ it. You may simply download a binary distribution. It is cross-platform.
 Read RUNNING.txt for the instruction on how to run it.
 
 In order to build a binary distribution version of Apache Tomcat from a
-source distribution, do the following:
+src distribution, do the following:
 
 
 (1) Download and Install a Java Development Kit
@@ -91,10 +91,10 @@ source distribution, do the following:
 
 (3) Building Tomcat 8.5
 
-(3.1) Checkout or obtain the source code for Tomcat 8.5
+(3.1) Checkout or obtain the src code for Tomcat 8.5
 
-Checkout the source using SVN, selecting a tag for released version or
-trunk for the current development code, or download and unpack a source
+Checkout the src using SVN, selecting a tag for released version or
+trunk for the current development code, or download and unpack a src
 package.
 
  *  Tomcat SVN repository URL:
@@ -105,12 +105,12 @@ package.
 
         http://tomcat.apache.org/download-80.cgi
 
-The location where the source has been placed will be further referred as
-${tomcat.source}.
+The location where the src has been placed will be further referred as
+${tomcat.src}.
 
 (3.2) Building
 
- 1. The build is controlled by creating a ${tomcat.source}/build.properties
+ 1. The build is controlled by creating a ${tomcat.src}/build.properties
     file.
 
     It is recommended to always create the file, because of unfortunate
@@ -123,11 +123,11 @@ ${tomcat.source}.
         base.path=/home/me/some-place-to-download-to
 
  2. Configure base.path property by adding it to the
-    ${tomcat.source}/build.properties file.
+    ${tomcat.src}/build.properties file.
 
     The base.path property specifies the place where Tomcat dependencies
     required by the build are downloaded. It is recommended to place this
-    directory outside of the source tree, so that you do not waste your
+    directory outside of the src tree, so that you do not waste your
     time re-downloading the libraries.
 
 * NOTE: The default value of the base.path property configures the build script
@@ -137,7 +137,7 @@ ${tomcat.source}.
 * NOTE: Users accessing the Internet through a proxy must use the properties
   file to indicate to Ant the proxy configuration.
 
-  The following properties should be added to the ${tomcat.source}/build.properties
+  The following properties should be added to the ${tomcat.src}/build.properties
   file.
 
         proxy.use=true
@@ -150,13 +150,13 @@ ${tomcat.source}.
 
  3. Go to the sources directory and run Ant:
 
-        cd ${tomcat.source}
+        cd ${tomcat.src}
         ant
 
     This will execute the "deploy" target in build.xml.
 
     Once the build has completed successfully, a usable Tomcat installation
-    will have been produced in the ${tomcat.source}/output/build directory,
+    will have been produced in the ${tomcat.src}/output/build directory,
     and can be started and stopped with the usual scripts.
 
     Note that the build includes Tomcat documentation, which can be found
@@ -176,7 +176,7 @@ sources using your SVN client.
 
 For a quick rebuild of only modified code you can use:
 
-    cd ${tomcat.source}
+    cd ${tomcat.src}
     ant
 
 
@@ -194,7 +194,7 @@ build.
 
 It can be built quickly by using the following commands:
 
-    cd ${tomcat.source}
+    cd ${tomcat.src}
     ant build-docs
 
 The output of this command will be found in the following directory:
@@ -205,7 +205,7 @@ The output of this command will be found in the following directory:
 The API documentation (Javadoc) is built during a "release" build. It is
 easy to build it separately by using the following commands:
 
-    cd ${tomcat.source}
+    cd ${tomcat.src}
     ant javadoc
 
 The output of this command will be found in the following directories:
@@ -224,7 +224,7 @@ build.
 
 You can build them by using the following commands:
 
-    cd ${tomcat.source}
+    cd ${tomcat.src}
     ant extras
 
 (5.3) Building the embedded packages
@@ -233,7 +233,7 @@ These are built during a "release" build.
 
 You can build them by using the following commands:
 
-    cd ${tomcat.source}
+    cd ${tomcat.src}
     ant embed
 
 
@@ -294,7 +294,7 @@ You can build them by using the following commands:
 
  4. Build the release:
 
-    cd ${tomcat.source}
+    cd ${tomcat.src}
     ant release
 
 
@@ -307,7 +307,7 @@ release is built. There is separate command to run them.
 
 To run the testsuite use the following command:
 
-    cd ${tomcat.source}
+    cd ${tomcat.src}
     ant test
 
 It is advisable to redirect output of the above command to a file for later
@@ -339,12 +339,12 @@ By default the "test.apr.loc" property specifies the following location:
     output/build/bin/native/
 
 If you are on Windows and want to test the APR connector you can put the
-tcnative-1.dll file into ${tomcat.source}/bin/native/ and it will be copied
+tcnative-1.dll file into ${tomcat.src}/bin/native/ and it will be copied
 into the above directory when the build runs.
 
 The unit tests include tests of the clustering functionality which require
 multicast to be enabled. There is a simple application provided in the Tomcat
-test source (org.apache.catalina.tribes.TesterMulticast) that can be used to
+test src (org.apache.catalina.tribes.TesterMulticast) that can be used to
 check if a machine supports multicast. Notes on enabling multicast for different
 operating systems are provided in the Javadoc for that class.
 
@@ -406,7 +406,7 @@ For example:
         output/build/logs
 
  3. The testsuite respects logging configuration as configured by
- ${tomcat.source}/conf/logging.properties
+ ${tomcat.src}/conf/logging.properties
 
  The log files will be written to the temporary directory used by the
  tests,
@@ -479,7 +479,7 @@ NOTE: Checkstyle is licensed under LGPL. Using Checkstyle during Tomcat
 
       See http://checkstyle.sourceforge.net/ for more information.
 
-Tomcat comes with a Checkstyle configuration that tests its source code
+Tomcat comes with a Checkstyle configuration that tests its src code
 for certain conventions, like presence of the license header.
 
 To enable Checkstyle, add the following property to build.properties file:
@@ -487,7 +487,7 @@ To enable Checkstyle, add the following property to build.properties file:
     execute.validate=true
 
 Once Checkstyle is enabled, the check will be performed automatically
-during the build. The check is run before compilation of the source code.
+during the build. The check is run before compilation of the src code.
 
 To speed-up repeated runs of this check, a cache is configured. The cache
 is located in the following directory:
@@ -497,7 +497,7 @@ is located in the following directory:
 It is possible to run the check separately by calling the "validate"
 target. The command is:
 
-    cd ${tomcat.source}
+    cd ${tomcat.src}
     ant -Dexecute.validate=true validate
 
 
@@ -515,7 +515,7 @@ To enable FindBugs, add the following property to build.properties file:
 To compile Tomcat classes and generate a FindBugs report, call the
 "findbugs" target. For example:
 
-    cd ${tomcat.source}
+    cd ${tomcat.src}
     ant -Dexecute.findbugs=true findbugs
 
 The report file by default is written to
@@ -527,12 +527,12 @@ The report file by default is written to
 
 You usually would not need to run this check. You can skip this section.
 
-Apache Tomcat project has convention that all of its textual source files,
+Apache Tomcat project has convention that all of its textual src files,
 stored in Subversion repository, are marked with Subversion property
 "svn:eol-style" with value of "native". This convention makes the editing
-of source code on different platforms easier.
+of src code on different platforms easier.
 
-This test is used by developers to check that the source code adheres to
+This test is used by developers to check that the src code adheres to
 this convention. It verifies that the ends of lines in textual files are
 appropriate for the operating system where it is run. The idea is to run
 this check regularly on two different platforms and notify developers when
@@ -540,5 +540,5 @@ an inconsistency is detected.
 
 The command to run this test is:
 
-    cd ${tomcat.source}
+    cd ${tomcat.src}
     ant validate-eoln

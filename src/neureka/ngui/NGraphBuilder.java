@@ -450,9 +450,9 @@ public class NGraphBuilder {
 	 	(NPanelObject node)->
 	 	{
 	 		if(!(node instanceof neureka.ngui.NPanelNode)) {return false;}
-	 		//NVCloak Properties = (NVCloak) ((NPanelNode)node).getCore().findModule(NVCloak.class);
+	 		//NVCloak Properties = (NVCloak) ((NPanelNode)node).getCore().find(NVCloak.class);
 			//if(Properties!=null) {
-			//	NVMemory Memory = (NVMemory) ((NPanelNode)node).getCore().findModule(NVCloak.class);
+			//	NVMemory Memory = (NVMemory) ((NPanelNode)node).getCore().find(NVCloak.class);
 			//	if(Memory!=null) {Memory.setTimeTunnel(scope);}}
 		 return true;
 		 });

@@ -14,6 +14,12 @@ public class Function_Base implements Function{
     public boolean isFlat(){
         return  false;
     }
+
+    @Override
+    public int id() {
+        return type;
+    }
+
     @Override
     public Function newBuild(String expression){
         return new FunctionConstructor().newBuild(expression);

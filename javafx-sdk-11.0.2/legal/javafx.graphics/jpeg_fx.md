@@ -22,7 +22,7 @@ All Rights Reserved except as specified below.
 Permission is hereby granted to use, copy, modify, and distribute this
 software (or portions thereof) for any purpose, without fee, subject to these
 conditions:
-(1) If any part of the source code for this software is distributed, then this
+(1) If any part of the src code for this software is distributed, then this
 README file must be included, with this copyright and no-warranty notice
 unaltered; and any additions, deletions, or changes to the original files
 must be clearly indicated in accompanying documentation.

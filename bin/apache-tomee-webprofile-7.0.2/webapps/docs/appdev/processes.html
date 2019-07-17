@@ -31,7 +31,7 @@
     })();
   </script></head><body><div id="wrapper"><header><div id="header"><div><div><div class="logo noPrint"><a href="http://tomcat.apache.org/"><img alt="Tomcat Home" src="../images/tomcat.png"></a></div><div style="height: 1px;"></div><div class="asfLogo noPrint"><a href="http://www.apache.org/" target="_blank"><img src="../images/asf-feather.png" alt="The Apache Software Foundation" style="width: 266px; height: 83px;"></a></div><h1>Application Developer's Guide</h1><div class="versionInfo">
           Version 8.5.6,
-          <time datetime="2016-10-06">Oct 6 2016</time></div><div style="height: 1px;"></div><div style="clear: left;"></div></div></div></div></header><div id="middle"><div><div id="mainLeft" class="noprint"><div><nav><div><h2>Links</h2><ul><li><a href="../index.html">Docs Home</a></li><li><a href="index.html">App Dev Guide Home</a></li><li><a href="http://wiki.apache.org/tomcat/FAQ">FAQ</a></li><li><a href="#comments_section">User Comments</a></li></ul></div><div><h2>Contents</h2><ul><li><a href="index.html">Contents</a></li><li><a href="introduction.html">Introduction</a></li><li><a href="installation.html">Installation</a></li><li><a href="deployment.html">Deployment</a></li><li><a href="source.html">Source Code</a></li><li><a href="processes.html">Processes</a></li><li><a href="sample/">Example App</a></li></ul></div></nav></div></div><div id="mainRight"><div id="content"><h2>Development Processes</h2><h3 id="Table_of_Contents">Table of Contents</h3><div class="text">
+          <time datetime="2016-10-06">Oct 6 2016</time></div><div style="height: 1px;"></div><div style="clear: left;"></div></div></div></div></header><div id="middle"><div><div id="mainLeft" class="noprint"><div><nav><div><h2>Links</h2><ul><li><a href="../index.html">Docs Home</a></li><li><a href="index.html">App Dev Guide Home</a></li><li><a href="http://wiki.apache.org/tomcat/FAQ">FAQ</a></li><li><a href="#comments_section">User Comments</a></li></ul></div><div><h2>Contents</h2><ul><li><a href="index.html">Contents</a></li><li><a href="introduction.html">Introduction</a></li><li><a href="installation.html">Installation</a></li><li><a href="deployment.html">Deployment</a></li><li><a href="src.html">Source Code</a></li><li><a href="processes.html">Processes</a></li><li><a href="sample/">Example App</a></li></ul></div></nav></div></div><div id="mainRight"><div id="content"><h2>Development Processes</h2><h3 id="Table_of_Contents">Table of Contents</h3><div class="text">
 <ul><li><a href="#Development_Processes">Development Processes</a><ol><li><a href="#One-Time_Setup_of_Ant_and_Tomcat_for_Development">One-Time Setup of Ant and Tomcat for Development</a></li><li><a href="#Create_Project_Source_Code_Directory">Create Project Source Code Directory</a></li><li><a href="#Edit_Source_Code_and_Pages">Edit Source Code and Pages</a></li><li><a href="#Build_the_Web_Application">Build the Web Application</a></li><li><a href="#Test_Your_Web_Application">Test Your Web Application</a></li><li><a href="#Creating_a_Release">Creating a Release</a></li></ol></li></ul>
 </div><h3 id="Development_Processes">Development Processes</h3><div class="text">
 
@@ -39,14 +39,14 @@
 a fairly generic process for creating web applications using Tomcat.  The
 following sections highlight the commands and tasks that you, as the developer
 of the code, will perform.  The same basic approach works when you have
-multiple programmers involved, as long as you have an appropriate source code
+multiple programmers involved, as long as you have an appropriate src code
 control system and internal team rules about who is working on what parts
 of the application at any given time.</p>
 
-<p>The task descriptions below assume that you will be using CVS for source
+<p>The task descriptions below assume that you will be using CVS for src
 code control, and that you have already configured access to the appropriate
 CVS repository.  Instructions for doing this are beyond the scope of this
-manual.  If you are using a different source code control environment, you
+manual.  If you are using a different src code control environment, you
 will need to figure out the corresponding commands for your system.</p>
 
 
@@ -77,18 +77,18 @@ once (no matter how many web applications you plan to develop).</p>
 
 <div class="subsection"><h4 id="Create_Project_Source_Code_Directory">Create Project Source Code Directory</h4><div class="text">
 
-<p>The first step is to create a new project source directory, and customize
+<p>The first step is to create a new project src directory, and customize
 the <code>build.xml</code> and <code>build.properties</code> files you will
-be using.  The directory structure is described in <a href="source.html">the
+be using.  The directory structure is described in <a href="src.html">the
 previous section</a>, or you can use the
 <a href="sample/">sample application</a> as a starting point.</p>
 
-<p>Create your project source directory, and define it within your CVS
+<p>Create your project src directory, and define it within your CVS
 repository.  This might be done by a series of commands like this, where
 <code>{project}</code> is the name under which your project should be
 stored in the CVS repository, and {username} is your login username:</p>
 <div class="codeBox"><pre><code>cd {my home directory}
-mkdir myapp &lt;-- Assumed "project source directory"
+mkdir myapp &lt;-- Assumed "project src directory"
 cd myapp
 mkdir docs
 mkdir src
@@ -160,9 +160,9 @@ of the deployment descriptor file is in the
 
 <p>The edit/build/test tasks will generally be your most common activities
 during development and maintenance.  The following general principles apply.
-As described in <a href="source.html">Source Organization</a>, newly created
-source files should be located in the appropriate subdirectory, under your
-project source directory.</p>
+As described in <a href="src.html">Source Organization</a>, newly created
+src files should be located in the appropriate subdirectory, under your
+project src directory.</p>
 
 <p>Whenever you wish to refresh your development directory to reflect the
 work performed by other developers, you will ask CVS to do it for you:</p>
@@ -181,7 +181,7 @@ cvs add mypage.jsp
 ... build and test the application ...
 cvs commit</code></pre></div>
 
-<p>Java source code that is defined in packages must be organized in a
+<p>Java src code that is defined in packages must be organized in a
 directory hierarchy (under the <strong>src/</strong> subdirectory) that
 matches the package names.  For example, a Java class named
 <code>com.mycompany.mypackage.MyClass.java</code> should be stored in file
@@ -189,7 +189,7 @@ matches the package names.  For example, a Java class named
 Whenever you create a new subdirectory, don't forget to
 register it with CVS.</p>
 
-<p>To edit an existing source file, you will generally just start editing
+<p>To edit an existing src file, you will generally just start editing
 and testing, then commit the changed file when everything works.  Although
 CVS can be configured to required you to "check out" or "lock" a file you
 are going to be modifying, this is generally not used.</p>
@@ -201,7 +201,7 @@ are going to be modifying, this is generally not used.</p>
 
 <p>When you are ready to compile the application, issue the following
 commands (generally, you will want a shell window open that is set to
-the project source directory, so that only the last command is needed):</p>
+the project src directory, so that only the last command is needed):</p>
 <div class="codeBox"><pre><code>cd {my home directory}
 cd myapp        &lt;-- Normally leave a window open here
 ant</code></pre></div>
@@ -247,7 +247,7 @@ a pattern like this:</p>
     tools, test the functionality of your application.
     </p></li>
 <li><p><em>Modify and rebuild as needed</em>.  As you discover that changes
-    are required, make those changes in the original <strong>source</strong>
+    are required, make those changes in the original <strong>src</strong>
     files, not in the output build directory, and re-issue the
     <code>ant compile</code> command.  This ensures that your changes will
     be available to be saved (via <code>cvs commit</code>) later on --
@@ -264,7 +264,7 @@ a pattern like this:</p>
     </p></li>
 </ul>
 
-<p>Do not forget to commit your changes to the source code repository when
+<p>Do not forget to commit your changes to the src code repository when
 you have completed your testing!</p>
 
 </div></div>
@@ -277,17 +277,17 @@ you have completed your testing!</p>
 of your web application that can be deployed on the production server.  The
 following general steps are required:</p>
 <ul>
-<li><p>Issue the command <code>ant all</code> from the project source
+<li><p>Issue the command <code>ant all</code> from the project src
     directory, to rebuild everything from scratch one last time.
     </p></li>
 <li><p>Use the <code>cvs tag</code> command to create an identifier for
-    all of the source files utilized to create this release.  This allows
+    all of the src files utilized to create this release.  This allows
     you to reliably reconstruct a release (from sources) at a later
     time.
     </p></li>
 <li><p>Issue the command <code>ant dist</code> to create a distributable
     web application archive (WAR) file, as well as a JAR file containing
-    the corresponding source code.
+    the corresponding src code.
     </p></li>
 <li><p>Package the contents of the <code>dist</code> directory using the
     <strong>tar</strong> or <strong>zip</strong> utility, according to

@@ -4,7 +4,7 @@ rem Tomitribe Confidential
 rem
 rem Copyright Tomitribe Corporation. 2015
 rem
-rem The source code for this program is not published or otherwise divested
+rem The src code for this program is not published or otherwise divested
 rem of its trade secrets, irrespective of what has been deposited with the
 rem U.S. Copyright Office.
 rem

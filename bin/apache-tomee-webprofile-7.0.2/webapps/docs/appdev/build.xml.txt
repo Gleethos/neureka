@@ -20,14 +20,14 @@
      including enhanced support for deploying directly to a Tomcat
      based server.
 
-     This build script assumes that the source code of your web application
-     is organized into the following subdirectories underneath the source
+     This build script assumes that the src code of your web application
+     is organized into the following subdirectories underneath the src
      code directory from which you execute the build script:
 
         docs                 Static documentation files to be copied to
                              the "docs" subdirectory of your distribution.
 
-        src                  Java source code (and associated resource files)
+        src                  Java src code (and associated resource files)
                              to be compiled to the "WEB-INF/classes"
                              subdirectory of your web application.
 
@@ -61,7 +61,7 @@
   * Definitions on the "ant" command line (ant -Dfoo=bar compile).
 
   * Definitions from a "build.properties" file in the top level
-    source directory of this application.
+    src directory of this application.
 
   * Definitions from a "build.properties" file in the developer's
     home directory.
@@ -209,7 +209,7 @@
     installation into the "lib" directory of your Ant installation.
 
   - Create a "build.properties" file in your application's top-level
-    source directory (or your user login home directory) that defines
+    src directory (or your user login home directory) that defines
     appropriate values for the "manager.password", "manager.url", and
     "manager.username" properties described above.
 
@@ -275,7 +275,7 @@
 
 <!--
 
-  The "compile" target transforms source files (from your "src" directory)
+  The "compile" target transforms src files (from your "src" directory)
   into object files in the appropriate location in the build directory.
   This example assumes that you will be including your classes in an
   unpacked directory hierarchy under "/WEB-INF/classes".

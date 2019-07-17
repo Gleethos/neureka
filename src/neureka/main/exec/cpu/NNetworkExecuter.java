@@ -1,9 +1,7 @@
-package neureka.main.exec;
+package neureka.main.exec.cpu;
 
 import java.math.BigInteger;
 import java.util.LinkedHashMap;
-
-import neureka.main.exec.cpu.*;
 
 
 public class NNetworkExecuter {

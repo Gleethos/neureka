@@ -1,8 +1,7 @@
 package neureka.main.core.modul.calc;
 
+import neureka.main.core.base.data.AC;
 import neureka.main.core.base.data.T;
-import neureka.main.core.base.data.TOperation;
-import org.apache.openejb.classloader.FalseFilter;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -425,6 +424,12 @@ public class FunctionConstructor {
                     public boolean isFlat(){
                         return  isFlat[0];
                     }
+
+                    @Override
+                    public int id() {
+                        return f_id;
+                    }
+
                     @Override
                     public Function newBuild(String expression) {
                         return new FunctionConstructor().newBuild(expression);
@@ -485,6 +490,12 @@ public class FunctionConstructor {
                         public boolean isFlat(){
                             return  isFlat[0];
                         }
+
+                        @Override
+                        public int id() {
+                            return f_id;
+                        }
+
                         @Override
                         public Function newBuild(String expression){
                             return new FunctionConstructor().newBuild(expression);
@@ -534,6 +545,12 @@ public class FunctionConstructor {
                         public boolean isFlat(){
                             return  isFlat[0];
                         }
+
+                        @Override
+                        public int id() {
+                            return f_id;
+                        }
+
                         @Override
                         public Function newBuild(String expression){
                             return new FunctionConstructor().newBuild(expression);
@@ -602,11 +619,11 @@ public class FunctionConstructor {
         public static T tensorActivationOf(T input, int f_id, boolean derive, boolean tipReached, boolean isFlat) {
             T output = T.factory.newTensor(input.shape(), input.translation());
             if(!derive && !isFlat){//implies !tipReached ==true // only flat functions can be executed
-                output.addModule(new TOperation(output, new T[]{input}, f_id, true, false));
+                output.addModule(new AC(output, new T[]{input}, f_id, true, false));
                 return output;
             }
             if(input.isOutsourced()){
-                TDevice device = (TDevice) input.findModule(TDevice.class);
+                TDevice device = (TDevice) input.find(TDevice.class);
                 device.calculate(new T[]{output, input}, f_id, (derive)?0:-1);
             }else{
                 foreach(input, output, (i, inputValue, outputValue)->{
@@ -614,7 +631,7 @@ public class FunctionConstructor {
                 });
             }
             if(!derive){//&& tipReached
-                output.addModule(new TOperation(output, new T[]{input}, f_id, false, (isFlat)?(!tipReached)?true:false:false));
+                output.addModule(new AC(output, new T[]{input}, f_id, false, (isFlat)?(!tipReached)?true:false:false));
             }
             return output;
         }
@@ -626,7 +643,7 @@ public class FunctionConstructor {
             T output = T.factory.newTensor(input[0].shape(), input[0].translation());
             if(d<0 && !isFlat){//implies !tipReached ==true // only flat functions can be executed
                 if(f_id<9){
-                    output.addModule(new TOperation(output, input, register[f_id]+"(I["+((j<0)?0:j)+"])", true, false));
+                    output.addModule(new AC(output, input, register[f_id]+"(I["+((j<0)?0:j)+"])", true, false));
                     return output;
                 }else{
                     if(register[f_id].length()!=1){
@@ -636,7 +653,7 @@ public class FunctionConstructor {
                             for(int i=0; i<tsrs.length; i++){
                                 tsrs[i] =  Srcs.get(0).activate(input, i);
                             }
-                            output.addModule(new TOperation(output, tsrs, register[f_id]+"(I[j])", true, false));
+                            output.addModule(new AC(output, tsrs, register[f_id]+"(I[j])", true, false));
                             return output;
                     }else{
                         /**+, -, x, *, %, ....
@@ -664,19 +681,19 @@ public class FunctionConstructor {
                                         :T.factory.newTensor(Srcs.get(i).activate(new double[]{}, j), template.shape());
                             }
                         }
-                        output.addModule(new TOperation(output, tsrs, operation, true, false));
+                        output.addModule(new AC(output, tsrs, operation, true, false));
                         return output;
                     }
                 }
             }
-            TDevice device = (TDevice) input[0].findModule(TDevice.class);
+            TDevice device = (TDevice) input[0].find(TDevice.class);
             boolean onSameDevice = T.utility.shareGuestDevice(input);
             if(onSameDevice){
                 if(device!=null){
                     device.add(output);
                 }
                 for (int ti = 0; ti < input.length; ti++) {
-                    device = (TDevice) input[ti].findModule(TDevice.class);
+                    device = (TDevice) input[ti].find(TDevice.class);
                     T[] tsrs = new T[1+input.length];
                     tsrs[0]=output;
                     for(int tii=1; tii<tsrs.length; tii++){
@@ -716,8 +733,8 @@ public class FunctionConstructor {
                         tsrs[i] = Srcs.get(i).activate(input);
                     }
                 }
-                output.addModule(new TOperation(output, tsrs, f_id, false, (isFlat)?(!tipReached)?true:false:false));
-                //output.addModule(new TOperation(output, input, f_id, false, (isFlat)?(!tipReached)?true:false:false));
+                output.addModule(new AC(output, tsrs, f_id, false, (isFlat)?(!tipReached)?true:false:false));
+                //output.addModule(new AC(output, input, f_id, false, (isFlat)?(!tipReached)?true:false:false));
             }
             return output;
         }

@@ -3,8 +3,6 @@ package neureka.main.exec.cpu;
 
 import java.math.BigInteger;
 
-import neureka.main.exec.NVExecutable;
-
 
 public class NThreadable implements Runnable {
 

@@ -32,7 +32,7 @@
   </script></head><body><div id="wrapper"><header><div id="header"><div><div><div class="logo noPrint"><a href="http://tomcat.apache.org/"><img alt="Tomcat Home" src="./images/tomcat.png"></a></div><div style="height: 1px;"></div><div class="asfLogo noPrint"><a href="http://www.apache.org/" target="_blank"><img src="./images/asf-feather.png" alt="The Apache Software Foundation" style="width: 266px; height: 83px;"></a></div><h1>Apache Tomcat 8</h1><div class="versionInfo">
           Version 8.5.6,
           <time datetime="2016-10-06">Oct 6 2016</time></div><div style="height: 1px;"></div><div style="clear: left;"></div></div></div></div></header><div id="middle"><div><div id="mainLeft" class="noprint"><div><nav><div><h2>Links</h2><ul><li><a href="index.html">Docs Home</a></li><li><a href="http://wiki.apache.org/tomcat/FAQ">FAQ</a></li><li><a href="#comments_section">User Comments</a></li></ul></div><div><h2>User Guide</h2><ul><li><a href="introduction.html">1) Introduction</a></li><li><a href="setup.html">2) Setup</a></li><li><a href="appdev/index.html">3) First webapp</a></li><li><a href="deployer-howto.html">4) Deployer</a></li><li><a href="manager-howto.html">5) Manager</a></li><li><a href="realm-howto.html">6) Realms and AAA</a></li><li><a href="security-manager-howto.html">7) Security Manager</a></li><li><a href="jndi-resources-howto.html">8) JNDI Resources</a></li><li><a href="jndi-datasource-examples-howto.html">9) JDBC DataSources</a></li><li><a href="class-loader-howto.html">10) Classloading</a></li><li><a href="jasper-howto.html">11) JSPs</a></li><li><a href="ssl-howto.html">12) SSL/TLS</a></li><li><a href="ssi-howto.html">13) SSI</a></li><li><a href="cgi-howto.html">14) CGI</a></li><li><a href="proxy-howto.html">15) Proxy Support</a></li><li><a href="mbeans-descriptors-howto.html">16) MBeans Descriptors</a></li><li><a href="default-servlet.html">17) Default Servlet</a></li><li><a href="cluster-howto.html">18) Clustering</a></li><li><a href="balancer-howto.html">19) Load Balancer</a></li><li><a href="connectors.html">20) Connectors</a></li><li><a href="monitoring.html">21) Monitoring and Management</a></li><li><a href="logging.html">22) Logging</a></li><li><a href="apr.html">23) APR/Native</a></li><li><a href="virtual-hosting-howto.html">24) Virtual Hosting</a></li><li><a href="aio.html">25) Advanced IO</a></li><li><a href="extras.html">26) Additional Components</a></li><li><a href="maven-jars.html">27) Mavenized</a></li><li><a href="security-howto.html">28) Security Considerations</a></li><li><a href="windows-service-howto.html">29) Windows Service</a></li><li><a href="windows-auth-howto.html">30) Windows Authentication</a></li><li><a href="jdbc-pool.html">31) Tomcat's JDBC Pool</a></li><li><a href="web-socket-howto.html">32) WebSocket</a></li><li><a href="rewrite.html">33) Rewrite</a></li></ul></div><div><h2>Reference</h2><ul><li><a href="RELEASE-NOTES.txt">Release Notes</a></li><li><a href="config/index.html">Configuration</a></li><li><a href="api/index.html">Tomcat Javadocs</a></li><li><a href="servletapi/index.html">Servlet Javadocs</a></li><li><a href="jspapi/index.html">JSP 2.3 Javadocs</a></li><li><a href="elapi/index.html">EL 3.0 Javadocs</a></li><li><a href="websocketapi/index.html">WebSocket 1.1 Javadocs</a></li><li><a href="http://tomcat.apache.org/connectors-doc/">JK 1.2 Documentation</a></li></ul></div><div><h2>Apache Tomcat Development</h2><ul><li><a href="building.html">Building</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="http://wiki.apache.org/tomcat/TomcatVersions">Status</a></li><li><a href="developers.html">Developers</a></li><li><a href="architecture/index.html">Architecture</a></li><li><a href="funcspecs/index.html">Functional Specs.</a></li><li><a href="tribes/introduction.html">Tribes</a></li></ul></div></nav></div></div><div id="mainRight"><div id="content"><h2>The Tomcat JDBC Connection Pool</h2><h3 id="Table_of_Contents">Table of Contents</h3><div class="text">
-<ul><li><a href="#Introduction">Introduction</a></li><li><a href="#How_to_use">How to use</a><ol><li><a href="#Additional_features">Additional features</a></li><li><a href="#Inside_the_Apache_Tomcat_Container">Inside the Apache Tomcat Container</a></li><li><a href="#Standalone">Standalone</a></li><li><a href="#JMX">JMX</a></li></ol></li><li><a href="#Attributes">Attributes</a><ol><li><a href="#JNDI_Factory_and_Type">JNDI Factory and Type</a></li><li><a href="#System_Properties">System Properties</a></li><li><a href="#Common_Attributes">Common Attributes</a></li><li><a href="#Tomcat_JDBC_Enhanced_Attributes">Tomcat JDBC Enhanced Attributes</a></li></ol></li><li><a href="#Advanced_usage">Advanced usage</a><ol><li><a href="#JDBC_interceptors">JDBC interceptors</a></li><li><a href="#Configuring_JDBC_interceptors">Configuring JDBC interceptors</a></li><li><a href="#org.apache.tomcat.jdbc.pool.JdbcInterceptor">org.apache.tomcat.jdbc.pool.JdbcInterceptor</a></li><li><a href="#org.apache.tomcat.jdbc.pool.interceptor.ConnectionState">org.apache.tomcat.jdbc.pool.interceptor.ConnectionState</a></li><li><a href="#org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer">org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer</a></li><li><a href="#org.apache.tomcat.jdbc.pool.interceptor.StatementCache">org.apache.tomcat.jdbc.pool.interceptor.StatementCache</a></li><li><a href="#org.apache.tomcat.jdbc.pool.interceptor.StatementDecoratorInterceptor">org.apache.tomcat.jdbc.pool.interceptor.StatementDecoratorInterceptor</a></li><li><a href="#org.apache.tomcat.jdbc.pool.interceptor.QueryTimeoutInterceptor">org.apache.tomcat.jdbc.pool.interceptor.QueryTimeoutInterceptor</a></li><li><a href="#org.apache.tomcat.jdbc.pool.interceptor.SlowQueryReport">org.apache.tomcat.jdbc.pool.interceptor.SlowQueryReport</a></li><li><a href="#org.apache.tomcat.jdbc.pool.interceptor.SlowQueryReportJmx">org.apache.tomcat.jdbc.pool.interceptor.SlowQueryReportJmx</a></li><li><a href="#org.apache.tomcat.jdbc.pool.interceptor.ResetAbandonedTimer">org.apache.tomcat.jdbc.pool.interceptor.ResetAbandonedTimer</a></li></ol></li><li><a href="#Code_Example">Code Example</a><ol><li><a href="#Plain_Ol'_Java">Plain Ol' Java</a></li><li><a href="#As_a_Resource">As a Resource</a></li><li><a href="#Asynchronous_Connection_Retrieval">Asynchronous Connection Retrieval</a></li><li><a href="#Interceptors">Interceptors</a></li><li><a href="#Getting_the_actual_JDBC_connection">Getting the actual JDBC connection</a></li></ol></li><li><a href="#Building">Building</a><ol><li><a href="#Building_from_source">Building from source</a></li></ol></li></ul>
+<ul><li><a href="#Introduction">Introduction</a></li><li><a href="#How_to_use">How to use</a><ol><li><a href="#Additional_features">Additional features</a></li><li><a href="#Inside_the_Apache_Tomcat_Container">Inside the Apache Tomcat Container</a></li><li><a href="#Standalone">Standalone</a></li><li><a href="#JMX">JMX</a></li></ol></li><li><a href="#Attributes">Attributes</a><ol><li><a href="#JNDI_Factory_and_Type">JNDI Factory and Type</a></li><li><a href="#System_Properties">System Properties</a></li><li><a href="#Common_Attributes">Common Attributes</a></li><li><a href="#Tomcat_JDBC_Enhanced_Attributes">Tomcat JDBC Enhanced Attributes</a></li></ol></li><li><a href="#Advanced_usage">Advanced usage</a><ol><li><a href="#JDBC_interceptors">JDBC interceptors</a></li><li><a href="#Configuring_JDBC_interceptors">Configuring JDBC interceptors</a></li><li><a href="#org.apache.tomcat.jdbc.pool.JdbcInterceptor">org.apache.tomcat.jdbc.pool.JdbcInterceptor</a></li><li><a href="#org.apache.tomcat.jdbc.pool.interceptor.ConnectionState">org.apache.tomcat.jdbc.pool.interceptor.ConnectionState</a></li><li><a href="#org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer">org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer</a></li><li><a href="#org.apache.tomcat.jdbc.pool.interceptor.StatementCache">org.apache.tomcat.jdbc.pool.interceptor.StatementCache</a></li><li><a href="#org.apache.tomcat.jdbc.pool.interceptor.StatementDecoratorInterceptor">org.apache.tomcat.jdbc.pool.interceptor.StatementDecoratorInterceptor</a></li><li><a href="#org.apache.tomcat.jdbc.pool.interceptor.QueryTimeoutInterceptor">org.apache.tomcat.jdbc.pool.interceptor.QueryTimeoutInterceptor</a></li><li><a href="#org.apache.tomcat.jdbc.pool.interceptor.SlowQueryReport">org.apache.tomcat.jdbc.pool.interceptor.SlowQueryReport</a></li><li><a href="#org.apache.tomcat.jdbc.pool.interceptor.SlowQueryReportJmx">org.apache.tomcat.jdbc.pool.interceptor.SlowQueryReportJmx</a></li><li><a href="#org.apache.tomcat.jdbc.pool.interceptor.ResetAbandonedTimer">org.apache.tomcat.jdbc.pool.interceptor.ResetAbandonedTimer</a></li></ol></li><li><a href="#Code_Example">Code Example</a><ol><li><a href="#Plain_Ol'_Java">Plain Ol' Java</a></li><li><a href="#As_a_Resource">As a Resource</a></li><li><a href="#Asynchronous_Connection_Retrieval">Asynchronous Connection Retrieval</a></li><li><a href="#Interceptors">Interceptors</a></li><li><a href="#Getting_the_actual_JDBC_connection">Getting the actual JDBC connection</a></li></ol></li><li><a href="#Building">Building</a><ol><li><a href="#Building_from_source">Building from src</a></li></ol></li></ul>
 </div><h3 id="Introduction">Introduction</h3><div class="text">
 
   <p>The <strong>JDBC Connection Pool <code>org.apache.tomcat.jdbc.pool</code></strong>
@@ -88,8 +88,8 @@
           Your options are endless and the interceptors are dynamic, not tied to a JDK version of a
           <code>java.sql</code>/<code>javax.sql</code> interface.</li>
       <li>High performance - we will show some differences in performance later on</li>
-      <li>Extremely simple, due to the very simplified implementation, the line count and source file count are very low, compare with c3p0
-          that has over 200 source files(last time we checked), Tomcat jdbc has a core of 8 files, the connection pool itself is about half
+      <li>Extremely simple, due to the very simplified implementation, the line count and src file count are very low, compare with c3p0
+          that has over 200 src files(last time we checked), Tomcat jdbc has a core of 8 files, the connection pool itself is about half
           that. As bugs may occur, they will be faster to track down, and easier to fix. Complexity reduction has been a focus from inception.</li>
       <li>Asynchronous connection retrieval - you can queue your request for a connection and receive a <code>Future&lt;Connection&gt;</code> back.</li>
       <li>Better idle connection handling. Instead of closing connections directly, it can still pool connections and sizes the idle pool with a smarter algorithm.</li>
@@ -137,7 +137,7 @@
       The connection pool only has another dependency, and that is on tomcat-juli.jar.
       To configure the pool in a stand alone project using bean instantiation, the bean to instantiate is
       <code>org.apache.tomcat.jdbc.pool.DataSource</code>. The same attributes (documented below) as you use to configure a connection
-      pool as a JNDI resource, are used to configure a data source as a bean.
+      pool as a JNDI resource, are used to configure a data src as a bean.
     </p>
   </div></div>
   <div class="subsection"><h4 id="JMX">JMX</h4><div class="text">
@@ -458,11 +458,11 @@
          This property was added as an enhancement to <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=50025">bug 50025</a>.
       </p>
     </td></tr><tr><td><code class="attributeName">dataSource</code></td><td>
-      <p>(javax.sql.DataSource) Inject a data source to the connection pool, and the pool will use the data source to retrieve connections instead of establishing them using the <code>java.sql.Driver</code> interface.
-         This is useful when you wish to pool XA connections or connections established using a data source instead of a connection string. Default value is <code>null</code>
+      <p>(javax.sql.DataSource) Inject a data src to the connection pool, and the pool will use the data src to retrieve connections instead of establishing them using the <code>java.sql.Driver</code> interface.
+         This is useful when you wish to pool XA connections or connections established using a data src instead of a connection string. Default value is <code>null</code>
       </p>
     </td></tr><tr><td><code class="attributeName">dataSourceJNDI</code></td><td>
-      <p>(String) The JNDI name for a data source to be looked up in JNDI and then used to establish connections to the database. See the <code>dataSource</code> attribute. Default value is <code>null</code>
+      <p>(String) The JNDI name for a data src to be looked up in JNDI and then used to establish connections to the database. See the <code>dataSource</code> attribute. Default value is <code>null</code>
       </p>
     </td></tr><tr><td><code class="attributeName">useDisposableConnectionFacade</code></td><td>
       <p>(boolean) Set this to true if you wish to put a facade on your connection so that it cannot be reused after it has been closed. This prevents a thread holding on to a
@@ -687,7 +687,7 @@
 </div><h3 id="Code_Example">Code Example</h3><div class="text">
   <p>Other examples of Tomcat configuration for JDBC usage can be found <a href="http://tomcat.apache.org/tomcat-8.0-doc/jndi-datasource-examples-howto.html">in the Tomcat documentation</a>. </p>
   <div class="subsection"><h4 id="Plain_Ol'_Java">Plain Ol' Java</h4><div class="text">
-    <p>Here is a simple example of how to create and use a data source.</p>
+    <p>Here is a simple example of how to create and use a data src.</p>
 <div class="codeBox"><pre><code>  import java.sql.Connection;
   import java.sql.ResultSet;
   import java.sql.Statement;
@@ -774,12 +774,12 @@
   </div></div>
   <div class="subsection"><h4 id="Asynchronous_Connection_Retrieval">Asynchronous Connection Retrieval</h4><div class="text">
     <p> The Tomcat JDBC connection pool supports asynchronous connection retrieval without adding additional threads to the
-        pool library. It does this by adding a method to the data source called <code>Future&lt;Connection&gt; getConnectionAsync()</code>.
+        pool library. It does this by adding a method to the data src called <code>Future&lt;Connection&gt; getConnectionAsync()</code>.
         In order to use the async retrieval, two conditions must be met:
     </p>
         <ol>
           <li>You must configure the <code>fairQueue</code> property to be <code>true</code>.</li>
-          <li>You will have to cast the data source to <code>org.apache.tomcat.jdbc.pool.DataSource</code></li>
+          <li>You will have to cast the data src to <code>org.apache.tomcat.jdbc.pool.DataSource</code></li>
         </ol>
         An example of using the async feature is show below.
 <div class="codeBox"><pre><code>  Connection con = null;
@@ -891,7 +891,7 @@
 </div><h3 id="Building">Building</h3><div class="text">
   <p>We build the JDBC pool code with 1.6, but it is backwards compatible down to 1.5 for runtime environment. For unit test, we use 1.6 and higher</p>
   <p>Other examples of Tomcat configuration for JDBC usage can be found <a href="http://tomcat.apache.org/tomcat-8.0-doc/jndi-datasource-examples-howto.html">in the Tomcat documentation</a>. </p>
-  <div class="subsection"><h4 id="Building_from_source">Building from source</h4><div class="text">
+  <div class="subsection"><h4 id="Building_from_source">Building from src</h4><div class="text">
     <p>Building is pretty simple. The pool has a dependency on <code>tomcat-juli.jar</code> and in case you want the <code>SlowQueryReportJmx</code></p>
 <div class="codeBox"><pre><code>  javac -classpath tomcat-juli.jar \
         -d . \
@@ -899,7 +899,7 @@
         org/apache/tomcat/jdbc/pool/interceptor/*.java \
         org/apache/tomcat/jdbc/pool/jmx/*.java</code></pre></div>
     <p>
-       A build file can be found in the Tomcat <a href="http://svn.apache.org/viewvc/tomcat/trunk/modules/jdbc-pool/">source repository</a>.
+       A build file can be found in the Tomcat <a href="http://svn.apache.org/viewvc/tomcat/trunk/modules/jdbc-pool/">src repository</a>.
     </p>
     <p>
       As a convenience, a build file is also included where a simple build command will generate all files needed.

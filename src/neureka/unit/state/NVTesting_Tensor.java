@@ -18,7 +18,7 @@ public class NVTesting_Tensor extends NVTesting {
         println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         T product = new T().of(source, operation);
         product.backward(new T(product.shape(), 1));
-        this.assertEqual(product.toString(), expected.toString());
+        this.assertEqual(product.toString("r"), expected.toString());
         return (printSessionEnd()>0)?1:0;
     }
 

@@ -177,7 +177,7 @@ would look something like this:</p>
 Context initCtx = new InitialContext();
 Context envCtx = (Context) initCtx.lookup("java:comp/env");
 
-// Look up our data source
+// Look up our data src
 DataSource ds = (DataSource)
   envCtx.lookup("jdbc/EmployeeDB");
 
@@ -608,7 +608,7 @@ Transport.send(message);</code></pre></div>
 
     <p>The <code>/examples</code> application included with Tomcat contains
     an example of utilizing this resource factory.  It is accessed via the
-    "JSP Examples" link.  The source code for the servlet that actually
+    "JSP Examples" link.  The src code for the servlet that actually
     sends the mail message is in
     <code>/WEB-INF/classes/SendMailServlet.java</code>.</p>
 
@@ -651,7 +651,7 @@ Transport.send(message);</code></pre></div>
         all Java EE platforms must provide to applications).</li>
     </ul>
 
-    <p><strong>NOTE</strong> - The default data source support in Tomcat
+    <p><strong>NOTE</strong> - The default data src support in Tomcat
     is based on the <strong>DBCP</strong> connection pool from the
     <a href="http://commons.apache.org/">Commons</a>
     project.  However, it is possible to use any other connection pool
@@ -672,7 +672,7 @@ Transport.send(message);</code></pre></div>
 
     <p>Next, modify the web application deployment descriptor
     (<code>/WEB-INF/web.xml</code>) to declare the JNDI name under
-    which you will look up preconfigured data source.  By convention, all such
+    which you will look up preconfigured data src.  By convention, all such
     names should resolve to the <code>jdbc</code> subcontext (relative to the
     standard <code>java:comp/env</code> naming context that is the root of
     all provided resource factories.  A typical <code>web.xml</code> entry
@@ -747,7 +747,7 @@ conn.close();</code></pre></div>
     <code>driverName</code> parameters to match your actual database's
     JDBC driver and connection URL.</p>
 
-    <p>The configuration properties for Tomcat's standard data source
+    <p>The configuration properties for Tomcat's standard data src
     resource factory
     (<code>org.apache.tomcat.dbcp.dbcp2.BasicDataSourceFactory</code>) are
     as follows:</p>

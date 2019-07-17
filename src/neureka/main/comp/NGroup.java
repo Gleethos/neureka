@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import neureka.main.core.NVNode;
 import neureka.main.core.NVertex;
 import neureka.main.core.imp.NVertex_Root;
-import neureka.main.exec.NVExecutable;
+import neureka.main.exec.cpu.NVExecutable;
 
 public class NGroup implements NVExecutable
 {

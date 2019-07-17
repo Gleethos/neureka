@@ -1,4 +1,4 @@
-package neureka.main.exec;
+package neureka.main.exec.cpu;
 
 import java.math.BigInteger;
 

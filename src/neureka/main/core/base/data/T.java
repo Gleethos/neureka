@@ -11,20 +11,19 @@ import java.util.function.Consumer;
 
 public class T {
 
-    static {//The things we do for memory:
-        shared = new HashMap<Long, int[]>();
-        cpu = new TDevice(null);
-    }
-
     // DEFAULT DEVICE
     //=========================
     private static TDevice cpu;
-
 
     //STATIC SHARED MEMORY:
     //=========================
     private static HashMap<Long, int[]> shared;
 
+    static {//The things we do for memory:
+        shared = new HashMap<Long, int[]>();
+        cpu = new TDevice(null);
+    }
+    //-----------------------------------------------------------------------
 
     //DATA FIELDS:
     //=========================
@@ -36,14 +35,14 @@ public class T {
 
     public TDevice device(){
         if(this.isOutsourced()){
-            return (TDevice) this.findModule(TDevice.class);
+            return (TDevice) this.find(TDevice.class);
         }
         return cpu;
     }
 
     public double[] gradient(){
-        if(this.rqsGradient()&&this.isOutsourced()&&this.hasModule(TDevice.class)){
-            return ((TDevice)this.findModule(TDevice.class)).valueOf(this, true);
+        if(this.rqsGradient()&&this.isOutsourced()&&this.has(TDevice.class)){
+            return ((TDevice)this.find(TDevice.class)).valueOf(this, true);
         }
         return gradient;
     }
@@ -52,15 +51,15 @@ public class T {
     }
 
     public double[] value() {
-        if(this.value==null && this.isOutsourced() && this.hasModule(TDevice.class)){
-            return ((TDevice)this.findModule(TDevice.class)).valueOf(this, false);
+        if(this.value==null && this.isOutsourced() && this.has(TDevice.class)){
+            return ((TDevice)this.find(TDevice.class)).valueOf(this, false);
         }
         return value;
     }
     public void setValue(double[] newValue){
         this.value = newValue;
         if(this.isOutsourced() && newValue!=null){
-            ((TDevice)this.findModule(TDevice.class)).add(this);
+            ((TDevice)this.find(TDevice.class)).add(this);
         }
     }
 
@@ -105,13 +104,6 @@ public class T {
                 flags -= rqsGradient_MASK;
             }
         }
-        if (rqsGradient) {
-            if (!this.hasModule(RelativeGradients.class)) {
-                RelativeGradients d = new RelativeGradients();
-                d.put(this, new T(this.shape, 1));
-                this.addModule(d);
-            }
-        }
     }
 
     public boolean isOutsourced() {
@@ -144,7 +136,7 @@ public class T {
     }
     public void addModule(Object newModule) {
         if (Modules != null) {
-            Object oldCompartment = findModule(newModule.getClass());
+            Object oldCompartment = find(newModule.getClass());
             if (oldCompartment != null) {
                 Modules.remove(oldCompartment);
                 Modules.trimToSize();
@@ -155,7 +147,7 @@ public class T {
             Modules.add(newModule);
         }
     }
-    public Object findModule(Class moduleClass) {
+    public Object find(Class moduleClass) {
         if (Modules != null) {
             for (int Pi = 0; Pi < Modules.size(); Pi++) {
                 if (moduleClass.isInstance(Modules.get(Pi))) {
@@ -166,7 +158,7 @@ public class T {
         return null;
     }
     public void removeModule(Class moduleClass) {
-        Object oldCompartment = findModule(moduleClass);
+        Object oldCompartment = find(moduleClass);
         if (oldCompartment != null) {
             Modules.remove(oldCompartment);
             Modules.trimToSize();
@@ -175,8 +167,8 @@ public class T {
             Modules = null;
         }
     }
-    public boolean hasModule(Class moduleClass) {
-        if (findModule(moduleClass) != null) {
+    public boolean has(Class moduleClass) {
+        if (find(moduleClass) != null) {
             return true;
         }
         return false;
@@ -185,7 +177,7 @@ public class T {
 
     //DISPLAY :
     //=========================
-    public String toString(){
+    public String toString(String mode){
         if(this.isEmpty()){
             return "empty";
         }
@@ -205,15 +197,29 @@ public class T {
             }
         }
         strValue = strShape+":("+strValue+")";
-        if(this.hasModule(RelativeGradients.class)){
-            RelativeGradients d = (RelativeGradients) this.findModule(RelativeGradients.class);
-            String[] strDerivatives = {"; "};
-            d.forEach((target, derivative)->{
-                strDerivatives[0]+="->d"+derivative.toString()+", ";
-            });
-            strValue += strDerivatives[0];
+        if(mode=="r"){
+            if(this.has(RelativeGradients.class)){
+                RelativeGradients d = (RelativeGradients) this.find(RelativeGradients.class);
+                String[] strDerivatives = {"; "};
+                d.forEach((target, derivative)->{
+                    strDerivatives[0]+="=>d|[ "+derivative.toString("r")+" ]|:t{ "+target.toString("r")+" }, ";
+                });
+                strValue += strDerivatives[0];
+            }
+        }else if(mode == "d"){
+            if(this.has(RelativeGradients.class)){
+                RelativeGradients d = (RelativeGradients) this.find(RelativeGradients.class);
+                String[] strDerivatives = {"; "};
+                d.forEach((target, derivative)->{
+                    strDerivatives[0]+="->d"+derivative.toString()+", ";
+                });
+                strValue += strDerivatives[0];
+            }
         }
         return strValue;
+    }
+    public String toString(){
+        return toString("d");
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -300,12 +306,12 @@ public class T {
     }
     public T of(T[] tensors, String operation) {
         if(tensors==null||tensors.length==0||tensors[0]==null){return this;}
-        this.addModule(new TOperation(this, tensors, operation, true));
+        this.addModule(new AC(this, tensors, operation, true));
         //this.setIsLeave(false);
         return this;
     }
     public T of(T[] tensors, int[][] translation, String operation) {
-        this.addModule(new TOperation(this, tensors, translation, operation));
+        this.addModule(new AC(this, tensors, translation, operation));
         //this.setIsLeave(false);
         return this;
     }
@@ -314,7 +320,7 @@ public class T {
         if(this.rqsGradient()){
             this.setGradient(gradient);
         }
-        TOperation operation = (TOperation) this.findModule(TOperation.class);
+        AC operation = (AC) this.find(AC.class);
         if (operation == null) {
             return;
         }
@@ -502,11 +508,11 @@ public class T {
             boolean onSameGuestDevice = true;
             TDevice device = null;
             for (int ti = 0; ti < tsrs.length; ti++) {
-                device = (tsrs[ti].isOutsourced())?(TDevice)tsrs[ti].findModule(TDevice.class):device;
+                device = (tsrs[ti].isOutsourced())?(TDevice)tsrs[ti].find(TDevice.class):device;
             }
             if(device!=null) {
                 for (int ti = 0; ti < tsrs.length; ti++) {
-                    onSameGuestDevice = (device == tsrs[ti].findModule(TDevice.class)) && onSameGuestDevice;
+                    onSameGuestDevice = (device == tsrs[ti].find(TDevice.class)) && onSameGuestDevice;
                 }
             }else{
                 onSameGuestDevice = false;
@@ -877,9 +883,9 @@ public class T {
          *  a > b -> c = (a-b)+1
          *  a < b -> c = (b-a)+1
          *
-         * 	int[] selfDim = findModule(int[].class);
+         * 	int[] selfDim = find(int[].class);
          * 	//[Ii][Ni][0]=>weightDim [1]=>form
-         *	int[][] FormData = findModule(int[][][][].class)[Ii][Ni]
+         *	int[][] FormData = find(int[][][][].class)[Ii][Ni]
          *	int[] weightDim = FormData[0];
          *	int[] connForm = FormData[1];
          *
