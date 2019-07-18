@@ -70,7 +70,7 @@ public class NVTester {
 		tester.testTensorAutoGrad(
 				new T[]{tensor1, tensor2},
 				"relu(tensmul(Ij))",
-				expectedTensor
+				"[2x3]:(-0.02, -0.02, -0.02, -0.02, -0.02, -0.02); =>d|[ [2x3]:(0.01, 0.01, 0.01, 0.01, 0.01, 0.01) ]|:t{ [2x3]:(-2.0, -2.0, -2.0, -2.0, -2.0, -2.0); =>d|[ [2x1]:(-1.0, -1.0) ]|:t{ [1x3]:(2.0, 2.0, 2.0) }, =>d|[ [1x3]:(2.0, 2.0, 2.0) ]|:t{ [2x1]:(-1.0, -1.0) },  }, "
 		);
 		//---
 		tensor1 = new T(new int[]{1, 3}, 2);
@@ -85,7 +85,7 @@ public class NVTester {
 		tester.testTensorAutoGrad(
 				new T[]{tensor1, tensor2},
 				"lig((I[0]xI[1])*-100)",
-				expectedTensor
+				"[2x3]:(200.0, 200.0, 200.0, 200.0, 200.0, 200.0); =>d|[ [2x3]:(-100.0, -100.0, -100.0, -100.0, -100.0, -100.0) ]|:t{ [2x3]:(-2.0, -2.0, -2.0, -2.0, -2.0, -2.0); =>d|[ [1x3]:(2.0, 2.0, 2.0) ]|:t{ [2x1]:(-1.0, -1.0) }, =>d|[ [2x1]:(-1.0, -1.0) ]|:t{ [1x3]:(2.0, 2.0, 2.0) },  }, "
 		);
 		//---
 		tensor1 = new T(new int[]{3, 2, 1}, 4);
@@ -96,7 +96,11 @@ public class NVTester {
 		derivatives.put(tensor1, T.factory.newTensor(new double[]{48,48,48,48}, new int[]{1, 1, 4}));
 		expectedTensor = T.factory.newTensor(new double[]{-48,-48,-48,-48}, new int[]{1, 1, 4});
 		expectedTensor.addModule(derivatives);
-		tester.testTensorAutoGrad(new T[]{tensor1, tensor2, tensor3}, "tensmul", expectedTensor);
+		tester.testTensorAutoGrad(
+				new T[]{tensor1, tensor2, tensor3},
+				"tensmul",
+				"[1x1x4]:(-48.0, -48.0, -48.0, -48.0); =>d|[ [3x2x1]:(2.0, 2.0, 2.0, 2.0, 2.0, 2.0) ]|:t{ [3x2x4]:(-4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0); =>d|[ [3x2x1]:(4.0, 4.0, 4.0, 4.0, 4.0, 4.0) ]|:t{ [1x1x4]:(-1.0, -1.0, -1.0, -1.0) },  }, "
+		);
 		//--
 		tensor1 = new T(new int[]{5, 1, 1}, 4);//-2*4 = 8 | *3 = -24
 		tensor2 = new T(new int[]{1, 4, 1}, -2);
@@ -106,7 +110,11 @@ public class NVTester {
 		derivatives.put(tensor1, new T(new int[]{5, 4, 2}, -6));
 		expectedTensor = new T(new int[]{5, 4, 2}, -24);
 		expectedTensor.addModule(derivatives);
-		tester.testTensorAutoGrad(new T[]{tensor1, tensor2, tensor3}, "tensmul", expectedTensor);
+		tester.testTensorAutoGrad(
+				new T[]{tensor1, tensor2, tensor3},
+				"tensmul",
+				"[5x4x2]:(-24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0); =>d|[ [1x1x2]:(3.0, 3.0) ]|:t{ [5x4x1]:(-8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0); =>d|[ [1x4x1]:(-2.0, -2.0, -2.0, -2.0) ]|:t{ [5x1x1]:(4.0, 4.0, 4.0, 4.0, 4.0) },  }, "
+		);
 		//---
 		int[] shape = {4, 2, 9, 5, 6, 2};
 		int[] newForm = {1, 0, -1, -2, 2, 4, 3, -1, 5};

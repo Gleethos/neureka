@@ -12,13 +12,13 @@ public class NVTesting_Tensor extends NVTesting {
         super(console, resultConsole);
     }
 
-    public int testTensorAutoGrad(T[] source, String operation, T expected){
+    public int testTensorAutoGrad(T[] source, String operation, String expected){
         printSessionStart("Testing T: autograd!");
         println(bar+"  Function: "+operation);
         println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         T product = new T().of(source, operation);
         product.backward(new T(product.shape(), 1));
-        this.assertEqual(product.toString("r"), expected.toString());
+        this.assertEqual(product.toString("r"), expected);
         return (printSessionEnd()>0)?1:0;
     }
 

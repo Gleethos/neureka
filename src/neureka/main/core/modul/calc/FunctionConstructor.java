@@ -331,25 +331,7 @@ public class FunctionConstructor {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public String toString() {
-        String reconstructed = "";
-        if (sources.size() == 1 && function.toString().length() > 1) {
-            String expression = sources.get(0).toString();
-            if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
-                return function.toString() + expression;
-            }
-            return function.toString() + "(" + expression + ")";
-        }
-        for (int i = 0; i < sources.size(); ++i) {
-            if (sources.get(i) != null) {
-                reconstructed = reconstructed + sources.get(i).toString();
-            } else {
-                reconstructed = reconstructed + "(null)";
-            }
-            if (i != sources.size() - 1) {
-                reconstructed = reconstructed + function.toString();
-            }
-        }
-        return "(" + reconstructed + ")";
+        return "(" + function.toString() + ")";
     }
     ////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -391,10 +373,6 @@ public class FunctionConstructor {
                 || isFlat[0];
             });
             isFlat[0] = !isFlat[0];
-
-            //tipReached = (isFlat[0])
-            //        ?(tipReached)?false:true
-            //        :(tipReached);
 
             Supplier<String> string = () -> {
                 String reconstructed = "";
@@ -449,19 +427,11 @@ public class FunctionConstructor {
                     }
                     @Override
                     public T derive(T[] input, int d, int j) {
-                        T act = calculation.tensorActivationOf(Srcs.get(0).activate(input, j), f_id, true, tipReached, isFlat[0]);
-                        //T dve = Srcs.get(0).derive(input, d, j);
-                        //T out = T.factory.newTensor(input[0].shape(), input[0].translation());
-                        //calculation.applyChainruleOn(out, act, dve);
-                        return act;//out;
+                        return calculation.tensorActivationOf(Srcs.get(0).activate(input, j), f_id, true, tipReached, isFlat[0]);
                     }
                     @Override
                     public T derive(T[] input, int d) {
-                        T act = calculation.tensorActivationOf(Srcs.get(0).activate(input), f_id, true, tipReached, isFlat[0]);
-                        //T dve = Srcs.get(0).derive(input, d);
-                        //T out = T.factory.newTensor(input[0].shape(), input[0].translation());
-                        //calculation.applyChainruleOn(out, act, dve);
-                        return act;//out
+                        return calculation.tensorActivationOf(Srcs.get(0).activate(input), f_id, true, tipReached, isFlat[0]);
                     }
                     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     @Override
@@ -484,7 +454,6 @@ public class FunctionConstructor {
                     }
                 };
             }else{
-                if(register[f_id].length()!=1){// SUMMATION, PI:
                     return new Function(){
                         @Override
                         public boolean isFlat(){
@@ -539,62 +508,6 @@ public class FunctionConstructor {
                             return calculation.scalarActivationOf(input, f_id, -1, d, Srcs);
                         }
                     };
-                }else{// REGULAR OPERATIONS: +, -, *, /, %  ...
-                    return new Function(){
-                        @Override
-                        public boolean isFlat(){
-                            return  isFlat[0];
-                        }
-
-                        @Override
-                        public int id() {
-                            return f_id;
-                        }
-
-                        @Override
-                        public Function newBuild(String expression){
-                            return new FunctionConstructor().newBuild(expression);
-                        }
-                        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                        @Override
-                        public String toString() {
-                            return string.get();//register[f_id];
-                        }
-                        @Override
-                        public T activate(T[] input, int j) {
-                            return calculation.tensorActivationOf(input, f_id, j, -1, Srcs, tipReached, isFlat[0]);
-                        }
-                        @Override
-                        public T activate(T[] input) {
-                                return calculation.tensorActivationOf(input, f_id, -1, -1, Srcs, tipReached, isFlat[0]);
-                        }
-                        @Override
-                        public T derive(T[] input, int d, int j) {
-                            return calculation.tensorActivationOf(input, f_id, j, d, Srcs, tipReached, isFlat[0]);
-                        }
-                        @Override
-                        public T derive(T[] input, int d) {
-                            return calculation.tensorActivationOf(input, f_id, -1, d, Srcs, tipReached, isFlat[0]);
-                        }
-                        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                        @Override
-                        public double activate(final double[] input, int j) {
-                            return calculation.scalarActivationOf(input, f_id, j, -1, Srcs);
-                        }
-                        @Override
-                        public double activate(final double[] input) {
-                            return calculation.scalarActivationOf(input, f_id, -1, -1, Srcs);
-                        }
-                        @Override
-                        public double derive(final double[] input, final int d, final int j) {
-                            return calculation.scalarActivationOf(input, f_id, j, d, Srcs);
-                        }
-                        @Override
-                        public double derive(final double[] input, final int d) {
-                            return calculation.scalarActivationOf(input, f_id, -1, d, Srcs);
-                        }
-                    };
-                }
 
             }
         }
@@ -647,22 +560,22 @@ public class FunctionConstructor {
                     return output;
                 }else{
                     if(register[f_id].length()!=1){
-                        /**SUMMATION, PI,
+                        /**  SUMMATION, PI,
                          * */
                         T[] tsrs = new T[input.length];
                             for(int i=0; i<tsrs.length; i++){
                                 tsrs[i] =  Srcs.get(0).activate(input, i);
-                            }
+                            }// THIS NEEDS TO BE SOLVED!!
                             output.addModule(new AC(output, tsrs, register[f_id]+"(I[j])", true, false));
                             return output;
                     }else{
-                        /**+, -, x, *, %, ....
+                        /**      +, -, x, *, %, ....
                          * */
                         String operation = (register[f_id].length()>1)?register[f_id]:"";
                         T[] tsrs = new T[Srcs.size()];
                         boolean constantFound = false;
                         T template = null;
-                        for(int i=0; i<tsrs.length; i++){//constants need to be figgured out!
+                        for(int i=0; i<tsrs.length; i++){//constants need to be figured out!
                             if(Srcs.get(i) instanceof Function_Constant){
                                 tsrs[i] = null;
                                 constantFound = true;
@@ -686,6 +599,9 @@ public class FunctionConstructor {
                     }
                 }
             }
+            /**
+             *  The following code is reached in flat functions only:
+             * */
             TDevice device = (TDevice) input[0].find(TDevice.class);
             boolean onSameDevice = T.utility.shareGuestDevice(input);
             if(onSameDevice){
@@ -708,10 +624,8 @@ public class FunctionConstructor {
                     }else{
                         if(d==0){
                             output = input[1];
-                            //output = T.factory.convolution(T.factory.newTensor(1, input[0].shape()), input[1]);
                         }else{
                             output = input[0];
-                            //output = T.factory.convolution(input[0], T.factory.newTensor(1, input[1].shape()));
                         }
                     }
                 }else{
@@ -734,7 +648,6 @@ public class FunctionConstructor {
                     }
                 }
                 output.addModule(new AC(output, tsrs, f_id, false, (isFlat)?(!tipReached)?true:false:false));
-                //output.addModule(new AC(output, input, f_id, false, (isFlat)?(!tipReached)?true:false:false));
             }
             return output;
         }

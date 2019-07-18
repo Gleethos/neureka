@@ -143,28 +143,26 @@ public class AC {
             }
             m += (srcModes[Ii]!=0)?1:0;
         }
-        if(m==1){
+        if(m==1 && (this.Fcn.id()!=18)){
             for(int Ii = 0; Ii< this.Src.length; Ii++){
                 mode += (srcModes[Ii]<0)?1:srcModes[Ii];
             }
-        }else if(m>1 || (this.Fcn.isFlat() && this.Fcn.toString().contains("x"))){
+        }else{
             mode = -m;
         }
     }
 
     private void forward(T drain){
-        if(Src ==null || (Fcn ==null)){ return; }
-        //}else{
-            if(Fcn !=null){
-                drain.internalize(Fcn.activate(Src));
-                //this.activationOn(Src, drain);
-            }
-        //}
-
+        if(Src ==null || (Fcn ==null)){
+            return;
+        }
+        if(Fcn !=null){
+            drain.internalize(Fcn.activate(Src));
+        }
     }
 
-    private void performDifferentiation(T drain){
-        //--------------------------------------------------------------------------------------
+    private void performDifferentiation(T drain)
+    {//--------------------------------------------------------------------------------------
         if(this.usesAD() && Fcn.isFlat()){
             if(!drain.has(RelativeGradients.class)){
                 RelativeGradients rg = new RelativeGradients();
@@ -175,9 +173,6 @@ public class AC {
              *  Preparing for backpropagation:
              * */
             if(this.usesForwardAD()){
-                //if(drain.rqsGradient()){
-                //    drain_gradients.put(drain, new T(drain.shape(), 1));
-                //}
                 int[] i = {0};
                 this.foreach((src)->{
                     if(src.has(AC.class) && ((AC) src.find(AC.class)).Fcn.id()==18){
@@ -198,14 +193,12 @@ public class AC {
                                     }else{
                                         drain_gradients.put(t, T.factory.multiplication(d, g));
                                     }
-                                    //TODO: flag within sr
-                                    // c tsrs that grant that the tensor has been created by function constructor!
+                                    //TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
                                 });
                         }
                         i[0]++;
                     }
                 });
-
             }else if(this.usesReverseAD()){
                 int[] i = {0};
                 this.foreach((src)->{
@@ -217,8 +210,7 @@ public class AC {
                 });
             }
         }
-        //--------------------------------------------------------------------------------------
-    }
+    }//--------------------------------------------------------------------------------------
 
     private void foreach(Consumer<T> action){
         for(int i = 0; i<this.Src.length; i++){
