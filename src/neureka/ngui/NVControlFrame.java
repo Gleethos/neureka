@@ -1,6 +1,8 @@
 
 package neureka.ngui;
 
+import neureka.main.core.base.data.T;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
@@ -33,10 +35,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.text.BadLocationException;
-
-import neureka.main.core.NVertex;
-import neureka.main.core.modul.mem.NVMemory;
-
 
 public class NVControlFrame extends JFrame implements ActionListener, KeyListener, ItemListener, MouseListener, MouseWheelListener {
 
@@ -77,7 +75,7 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 	
 	JComboBox RootTypeSetter;
 	
-	NVertex UnitCore;
+	T UnitCore;
 	
 	boolean entered = false;
 	boolean check = false;
@@ -93,8 +91,8 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 	boolean weightFieldEntered = false;
 	boolean biasFieldEntered = false;
 	
-	public NVControlFrame(String title, NVertex neuron) {
-		
+	public NVControlFrame(String title, T neuron) {
+
 		UnitCore = neuron;
 		
 		this.setTitle(title);
@@ -416,23 +414,23 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
             	 				//In initialization code:
             	 				isFirstButton = new JCheckBox("is first layer");
             	 			    isFirstButton.setMnemonic(KeyEvent.VK_F); 
-            	 			    isFirstButton.setSelected(UnitCore.isFirst());
+            	 			    isFirstButton.setSelected(UnitCore.rqsGradient());
 
             	 			    isHiddenButton = new JCheckBox("is hidden layer");
             	 			    isHiddenButton.setMnemonic(KeyEvent.VK_H); 
-            	 			    isHiddenButton.setSelected(UnitCore.isHidden());
+            	 			    isHiddenButton.setSelected(UnitCore.rqsGradient());
 
             	 			    isLastButton = new JCheckBox("is last layer");
             	 			    isLastButton.setMnemonic(KeyEvent.VK_L); 
-            	 			    isLastButton.setSelected(UnitCore.isLast());
+            	 			    isLastButton.setSelected(UnitCore.rqsGradient());
 
             	 			    isFunctionalButton = new JCheckBox("is paralyzed");
             	 			    isFunctionalButton.setMnemonic(KeyEvent.VK_X); 
-            	 			    isFunctionalButton.setSelected(UnitCore.isParalyzed());
+            	 			    isFunctionalButton.setSelected(UnitCore.rqsGradient());
             	 			    
             	 			    isRootNodeButton = new JCheckBox("is root node");
             	 			    isRootNodeButton.setMnemonic(KeyEvent.VK_C); 
-            	 			    isRootNodeButton.setSelected(UnitCore.is(NVertex.Root));
+            	 			    isRootNodeButton.setSelected(UnitCore.rqsGradient());
             	 			    
             	 			     String[] choices = {
             	 			    "Basic root node","Memory root node",
@@ -519,7 +517,7 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 		{
 			if(isFirstButton.isSelected()) 
 			{if(isHiddenButton.isSelected()) {isHiddenButton.setSelected(false);}}
-			UnitCore.setFirst(isFirstButton.isSelected());
+			//UnitCore.setFirst(isFirstButton.isSelected());
 		} 
 		else if (source == isHiddenButton) 
 		{
@@ -529,16 +527,16 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
     			if(isFirstButton.isSelected()) {isFirstButton.setSelected(false);}
     			if(isLastButton.isSelected())  {isLastButton.setSelected(false);}
     		}
-    		UnitCore.setHidden(isHiddenButton.isSelected()); 
+    		//UnitCore.setHidden(isHiddenButton.isSelected());
 		} 
 		else if (source == isLastButton) 
 		{
 	    	if(isLastButton.isSelected()) {if(isHiddenButton.isSelected()) {isHiddenButton.setSelected(false);}}
-	    	UnitCore.setLast(isLastButton.isSelected());
+	    	//UnitCore.setLast(isLastButton.isSelected());
     	
 		}else if (source == isFunctionalButton) 
 		{
-	    	UnitCore.setParalyzed(isFunctionalButton.isSelected());
+	    	//UnitCore.setParalyzed(isFunctionalButton.isSelected());
 		} 
 		else if (source == isRootNodeButton) 
 		{
@@ -564,9 +562,9 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 		
 			if(isInteger(inputIndexingField.getText())) {
 				int newIndex = parseInteger(inputIndexingField.getText()); System.out.println("New history index: "+newIndex);
-				shiftModField.setText("Bias: "+(String.valueOf(UnitCore.getBias(newIndex))));
+				//shiftModField.setText("Bias: "+(String.valueOf(UnitCore.getBias(newIndex))));
 				int newWeightIndex = parseInteger(connectionIndexingField.getText());
-				weightModField.setText("Weight: "+(String.valueOf(UnitCore.getWeight(newIndex, newWeightIndex))));
+				//weightModField.setText("Weight: "+(String.valueOf(UnitCore.getWeight(newIndex, newWeightIndex))));
 		    	}
 		
 			else
@@ -586,7 +584,8 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 		if(e.getSource()==historyIndexingField) {if(e.getKeyChar()=='\n') {System.out.println("Value index sent!");
 		if(isInteger(historyIndexingField.getText())) {
 		int newIndex = parseInteger(historyIndexingField.getText()); System.out.println("New input index: "+newIndex);
-		inputModField.setText((String.valueOf(UnitCore.getInput(0,newIndex))));}
+		//inputModField.setText((String.valueOf(UnitCore.getInput(0,newIndex))));
+		}
 		else
 		{
 			System.out.println("Index not acceptable!");
@@ -618,10 +617,10 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
         	  double newValue = Double.parseDouble(inputModField.getText()); System.out.println("New input: "+newValue);
     		    
         	    
-        	    inputModField.setText(""+UnitCore.getInput(0,newIndex));
+        	    //inputModField.setText(""+UnitCore.getInput(0,newIndex));
         	    
         		
-        		outputOptimumModField.setText(""+UnitCore.getOptimum(0));
+        		//outputOptimumModField.setText(""+UnitCore.getOptimum(0));
         		
                 //newValue = Double.parseDouble(outputOptimumModField.getText()); System.out.println("New output optimum: "+newValue);
         		
@@ -648,7 +647,7 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
         		double newValue = Double.parseDouble(inputModField.getText()); 
         		System.out.println("New input: "+newValue);
     		    
-        		UnitCore.setInput(0, newIndex, newValue);
+        		//UnitCore.setInput(0, newIndex, newValue);
         		
         	}
         	catch(NumberFormatException ne)
@@ -671,7 +670,7 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
         		double newValue = Double.parseDouble(outputOptimumModField.getText()); System.out.println("New output optimum: "+newValue);
     		    
         		//Neuron.setInput(newIndex, newValue);
-        		UnitCore.setOptimum(0,newValue);
+        		//UnitCore.setOptimum(0,newValue);
         		
         	}
         	catch(NumberFormatException ne)
@@ -691,7 +690,9 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
         
         if(e.getSource() == displayVariables) {System.out.println("Display button pressed!");displayVariables();}
         
-        if(e.getSource() == randomizeVariables) {System.out.println("Randomize button pressed!"); UnitCore.randomizeBiasAndWeight();}
+        if(e.getSource() == randomizeVariables) {System.out.println("Randomize button pressed!");
+        //UnitCore.randomizeBiasAndWeight();
+        }
       
     }  
 	
@@ -703,14 +704,15 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 	
 	private void displayVariables()
 	{
-		double[][] weights = UnitCore.getWeight(0);
+		double[][] weights = {UnitCore.value()};
 		displayLine("Node state: ");
 		if(weights==null) {display("Node has no connections. \n"); return;}
 		display("\n"); 
 		 for(int Ii=0; Ii<weights.length;Ii++) 
-		     {displayLine("Bias["+Ii+"]:("+UnitCore.getBias(Ii)+");");
+		     {
+		     	//displayLine("Bias["+Ii+"]:("+UnitCore.getBias(Ii)+");");
 		      if(weights[Ii]!=null) {displayLine("-displayCurrentState|: AIC["+Ii+"].length:("+weights[Ii].length+")");}else {displayLine("-displayCurrentState|: AIC["+Ii+"] is null!");}
-		      if(!UnitCore.isFirst()&&weights[Ii]!=null) 
+		      if(!UnitCore.rqsGradient()&&weights[Ii]!=null)
 		         {display("Weight["+Ii+"][0-"+(weights[Ii].length-1)+"]:( ");
 		          for(int Ni=0; Ni<weights[Ii].length; Ni++) {display("["+Ni+"]:("+weights[Ii][Ni]+"), ");}
 		      display(");\n");}
@@ -971,10 +973,10 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 		         
 		        newIndex = Math.abs(newIndex);
 		        
-				shiftModField.setText("Bias: "+(String.valueOf(UnitCore.getBias(newIndex))));
+				//shiftModField.setText("Bias: "+(String.valueOf(UnitCore.getBias(newIndex))));
 				
 				int newWeightIndex = parseInteger(connectionIndexingField.getText());
-				weightModField.setText("Weight: "+(String.valueOf(UnitCore.getWeight(newIndex, newWeightIndex))));
+				//weightModField.setText("Weight: "+(String.valueOf(UnitCore.getWeight(newIndex, newWeightIndex))));
 		       }
 			    else
 			   {
@@ -995,14 +997,14 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 		         //getting gradients and input at index...
 
 		         if(UnitCore!=null) {
-		        	 NVMemory Memory = (NVMemory) UnitCore.asCore().findModule(NVMemory.class);
-		        	 if(Memory!=null) {
-		        		double[][] activation = Memory.getActivationAt(Memory.activeTimeDeltaWithin(new BigInteger(newIndex+"")));
-		        		if(activation!=null) {
-		        			activationModField.setText("Activation: "+activation[0]);
-		        			if(activation.length>=3) {outputOptimumModField.setText("Optimum: "+activation[0][2]);}
-		        		}
-		        	 }
+		        	 ////NVMemory Memory = (NVMemory) UnitCore.asCore().findModule(NVMemory.class);
+		        	 //if(Memory!=null) {
+		        	//	//double[][] activation = Memory.getActivationAt(Memory.activeTimeDeltaWithin(new BigInteger(newIndex+"")));
+		        	//	if(activation!=null) {
+		        	//		activationModField.setText("Activation: "+activation[0]);
+		        	//		if(activation.length>=3) {outputOptimumModField.setText("Optimum: "+activation[0][2]);}
+		        	//	}
+		        	 //}
 		         }
 		       }
 			    else

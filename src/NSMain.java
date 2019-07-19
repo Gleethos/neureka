@@ -1,12 +1,7 @@
 import neureka.main.core.NVUtility;
-import neureka.main.core.base.NVNeuron;
-import neureka.main.core.base.data.T;
 import neureka.unit.NVTester;
 import neureka.ngui.NWindow;
 import neureka.utility.NConsole;
-
-
-import neureka.main.core.modul.calc.*;
 
 public class NSMain {
 
@@ -98,7 +93,8 @@ public class NSMain {
 	    a^=b;b^=a;a^=b;
 	    System.out.println(a+"  -  "+b);
 	    
-	    NVUtility util = new NVUtility();	    
+	    NVUtility util = new NVUtility();
+	    
 	    System.out.println(Math.pow(Math.E, Math.PI)*Math.pow(Math.PI, Math.E)*Math.PI*Math.E);
 
 	    for(int i=-100000; i<100001; i++) {
@@ -106,9 +102,9 @@ public class NSMain {
 	    }
 	    
 		
-        NVNeuron[] list = new NVNeuron[1];
+        Object[] list = new Object[1];
         for (int i = 0; i < list.length; i++) {
-            list[i] = new NVNeuron(1);
+            list[i] = new Object();
         }
         // Get the Java runtime
         Runtime runtime = Runtime.getRuntime();

@@ -6,9 +6,7 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import neureka.main.core.NVNode;
-import neureka.main.core.NVertex;
-import neureka.main.core.imp.NVertex_Root;
+import neureka.main.core.base.data.T;
 import neureka.main.exec.cpu.NThreadPool;
 
 public class NGraphBuilder {
@@ -30,7 +28,7 @@ public class NGraphBuilder {
 	private NCircleMenu MouseAttachedCircleMenu;
 	
 	NCircleMenu newMenu;
-	private NVertex BlueprintNode;
+	private T BlueprintNode;
 	
 	//----------------------------------------------------------------
 	public void addMenu(NCircleMenu menu) 
@@ -38,7 +36,7 @@ public class NGraphBuilder {
 	 	if(Surface.getMap()==null) {Surface.setMap(new NMap(menu.getX(), menu.getY(), menu.getRadius()*10));}
 	 	Surface.setMap(Surface.getMap().addAndUpdate(menu));
  	}
-	public NVertex getBlueprintNeuron() 
+	public T getBlueprintNeuron() 
  	{
  		return BlueprintNode;
  	}
@@ -48,7 +46,7 @@ public class NGraphBuilder {
 	}
 	private void addPanelNeuron(int x, int y)       
  	{
- 		NPanelNode Unit = new NPanelNode(new NVertex_Root(BlueprintNode), Surface.realX((double)x),Surface.realY((double)y));
+ 		NPanelNode Unit = new NPanelNode(new T(BlueprintNode), Surface.realX((double)x),Surface.realY((double)y));
  		addPanelNeuron(Unit);
  		Unit.setHasMoved(true);
  	}
@@ -64,27 +62,17 @@ public class NGraphBuilder {
 	{	
 		Surface = new NPanel();
 		NPanelNode Neuron = new neureka.ngui.NPanelNode(-400, 2500, 0);
-	 	NVertex.State.turnIntoParentRoot(Neuron.getCore()); // turnIntoSuperRootNode();
-	 
+
 	 	addPanelNeuron(Neuron);
 	 	NPanelNode Neuron1 = new neureka.ngui.NPanelNode( 700, -2600, 1 );
-	 	NVertex.State.turnIntoChildOfParent(Neuron1.getCore(), Neuron.getCore().asCore());//Neuron1.getUnit().turnIntoSubNodeOf(Neuron.getUnit().Core());
-	 	NVertex.State.turnIntoBasicChild(Neuron1.getCore(), Neuron.getCore().asCore());//Neuron1.getUnit().turnIntoBasicRootNode();
-	 
+
 	 	addPanelNeuron(Neuron1);
-	 	Neuron.getCore().connect(Neuron1.getCore());
-	 
+
 	 	NPanelNode Neuron4 = new neureka.ngui.NPanelNode( 3090, 890, 2 );
 	 	addPanelNeuron(Neuron4);
-	 
-	 	NVertex.State.turnIntoChildOfParent(Neuron4.getCore(), Neuron.getCore());//Neuron4.getUnit().turnIntoSubNodeOf(Neuron.getUnit().Core());
-	 	NVertex.State.turnIntoMemoryChild(Neuron4.getCore(), Neuron.getCore()); // Neuron4.getUnit().turnIntoMemoryRootNode();
-	 
-		BlueprintNode = new NVertex_Root(1, true, false, 0, 2, 1);
-		
-		
-		
-		
+
+		BlueprintNode = new T();
+
 		Surface.setPreferredSize(new Dimension(200,30));
 		Surface.setBackground(Color.black);
 		
@@ -129,9 +117,9 @@ public class NGraphBuilder {
 				    			
 				    		if(this.ChosenInputNode!=null && node==null) 
 				    		{
-				    			NVertex C1 = ((NPanelNode)found).getCore().asCore();
-				    			NVertex C2 = this.ConnectionPanelNeuron.getCore().asCore();
-				    			C2.connect(C1, this.InputIndex);
+				    			//T C1 = ((NPanelNode)found).getCore().asCore();
+				    			//T C2 = this.ConnectionPanelNeuron.getCore().asCore();
+				    			//C2.connect(C1, this.InputIndex);
 				    		}
 				    		this.ChosenInputNode = node;
 				    			
@@ -236,7 +224,7 @@ public class NGraphBuilder {
 				if(found!=null) {found.doubleClickedAt(surface.realX(x), surface.realY(y), surface);}
 				else
 				{
-					NPanelNode Unit = new NPanelNode(new NVertex_Root(this.BlueprintNode), surface.realX((double)x),surface.realY((double)y));
+					NPanelNode Unit = null;//new NPanelNode(new T(this.BlueprintNode), surface.realX((double)x),surface.realY((double)y));
 				 	if(surface.getMap()==null) 
 				 	{
 				 		surface.setMap(new NMap(Unit.getX(),Unit.getY(),10000));
@@ -423,7 +411,7 @@ public class NGraphBuilder {
 			{
 				public boolean act(NPanelObject element) 
 				{
-					((NPanelNode)element).getCore().randomizeBiasAndWeight();;
+					//((NPanelNode)element).getCore().randomizeBiasAndWeight();;
 					return false;
 				}
 			} 
@@ -432,15 +420,15 @@ public class NGraphBuilder {
 	//-------------------------------------------------------------------------
 	 public void setUpNewWorkThreader(int HistoryScope) 
 	 {	
-	 	Object Data = new LinkedList<NVNode>();
-	 	LinkedList<NVNode> applyAndGet =
-			(LinkedList<NVNode>)Surface.getMap().applyAndGet(
-			Data, (Object thing, NPanelObject other)
-			 ->{
-				   if(other instanceof NPanelNode) {((LinkedList<NVertex>)thing).add(((NPanelNode)other).getCore());}
-				   return thing;
-			   }
-		  );
+	 	//Object Data = new LinkedList<NVNode>();
+	 	//LinkedList<NVNode> applyAndGet =
+		//	(LinkedList<NVNode>)Surface.getMap().applyAndGet(
+		//	Data, (Object thing, NPanelObject other)
+		//	 ->{
+		//		   if(other instanceof NPanelNode) {((LinkedList<T>)thing).add(((NPanelNode)other).getCore());}
+		//		   return thing;
+		//	   }
+		//  );
 	 }
 	//-------------------------------------------------------------------------
 	 public void setHistoryScopeTo(int scope) 

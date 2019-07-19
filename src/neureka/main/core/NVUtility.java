@@ -194,12 +194,12 @@ public class NVUtility<T> {
 	//===================================================================
 	public static interface Orderer
 	{
-		public NVNode[] order(NVNode[] node);
+		public Object[] order(Object[] node);
 	}
 	public static Orderer identityCorrected = 
-	(NVNode[] node)->
+	(Object[] node)->
 	{
-		ArrayList<NVNode> NodeList = new ArrayList<NVNode>();
+		ArrayList<Object> NodeList = new ArrayList<Object>();
 		for(int Ni=0; Ni<node.length; Ni++) 
 		{
 			for(int Nii=Ni+1; Nii<node.length; Nii++) 
@@ -217,7 +217,7 @@ public class NVUtility<T> {
 				NodeList.add(node[Ni]);
 			}
 		}
-		NVNode[] array = new NVNode[NodeList.size()];
+		Object[] array = new Object[NodeList.size()];
 		for(int i=0; i<NodeList.size(); i++) 
 		{
 			array[i]=NodeList.get(i);

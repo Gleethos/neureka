@@ -2,7 +2,7 @@ package neureka.unit;
 
 import neureka.main.core.base.data.T;
 import neureka.main.core.modul.calc.Function;
-import neureka.main.core.modul.calc.FunctionConstructor;
+import neureka.main.core.modul.calc.FunctionFactory;
 import neureka.utility.NMessageFrame;
 
 public class NVTesting_Function extends NVTesting{
@@ -14,8 +14,8 @@ public class NVTesting_Function extends NVTesting{
 	
 	public int testExpression(String expression, String expected, String description) 
 	{
-		Function function;// = new FunctionConstructor();
-		function = new FunctionConstructor().newBuild(expression);
+		Function function;// = new FunctionFactory();
+		function = new FunctionFactory().newBuild(expression);
 		printSessionStart(description);
 		println(bar+" Value toString: "+expression);
 		println(bar+" Expected toString: "+expected);
@@ -30,8 +30,8 @@ public class NVTesting_Function extends NVTesting{
 		return (printSessionEnd()>0)?1:0;
 	}
 	public int testActivation(String expression, double[] input, double expected, String description) {
-		Function function;// = new FunctionConstructor();
-		function = new FunctionConstructor().newBuild(expression);
+		Function function;// = new FunctionFactory();
+		function = new FunctionFactory().newBuild(expression);
 		printSessionStart(description);
 		Console.println(bar+" Function: "+expression);
 		String inputStr = "";
@@ -50,8 +50,8 @@ public class NVTesting_Function extends NVTesting{
 	}
 
 	public int testActivation(String expression, T[] input, T expected, String description) {
-		Function function;// = new FunctionConstructor();
-		function = new FunctionConstructor().newBuild(expression);
+		Function function;// = new FunctionFactory();
+		function = new FunctionFactory().newBuild(expression);
 		printSessionStart(description);
 		Console.println(bar+" Function: "+expression);
 		String inputStr = "";

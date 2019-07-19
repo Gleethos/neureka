@@ -1,8 +1,5 @@
 package neureka.unit;
 
-import neureka.main.core.NVNode;
-
-import neureka.main.core.base.data.T;
 import neureka.utility.NMessageFrame;
 import java.math.BigInteger;
 
@@ -20,28 +17,6 @@ public class NVTesting {
     protected NVTesting(NMessageFrame console, NMessageFrame resultConsole) {
         Console = console;
         ResultConsole = resultConsole;
-    }
-
-    protected void performForwardBackwardOn(NVNode[] Structure){
-        for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().loadLatest();}
-        for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().forward();}
-        for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().loadLatest();  }
-        for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().loadTrainableState(BigInteger.ZERO);}
-        for(int i=0; i<Structure.length; i++) {Structure[i].asExecutable().Backward(BigInteger.ZERO);}
-    }
-
-    protected void printNetStructView(NVNode[] Structure, NVNode head){
-        for(int i=0; i<Structure.length; i++) {
-            String expression = "null";
-            if(Structure[i].asCore().getFunction()!=null) {
-                expression = Structure[i].asCore().getFunction().toString();
-            }
-            Console.print(bar+"  Root ["+i+"]: ");
-            if(Structure[i]==head) {Console.println(expression+"  => (head)");}
-            else {
-                Console.println(expression);
-            }
-        }
     }
 
     protected void printSessionStart(String message){

@@ -1,6 +1,6 @@
 package neureka.main.core.base.data;
 
-import neureka.main.core.modul.calc.FunctionConstructor;
+import neureka.main.core.modul.calc.FunctionFactory;
 
 import java.util.function.Consumer;
 
@@ -67,7 +67,7 @@ public class AC {
     }
     private void construct(int f_id, T[] source, boolean tipReached){
         this.Src = source;
-        this.Fcn = new FunctionConstructor().newBuild(f_id, source.length, tipReached);
+        this.Fcn = new FunctionFactory().newBuild(f_id, source.length, tipReached);
     }
     private void construct(String operation, T[] source, boolean tipReached) {
         this.Src = source;
@@ -96,7 +96,7 @@ public class AC {
                 operation = operation.replace("tm", replacement);
             }
         }
-        Fcn = new FunctionConstructor().newBuild(operation, tipReached);
+        Fcn = new FunctionFactory().newBuild(operation, tipReached);
         validate(operation);
     }
     private void validate(String operation){

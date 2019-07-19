@@ -19,11 +19,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
 
-import neureka.main.core.NVNode;
-import neureka.main.core.NVUtility;
-import neureka.main.core.NVertex;
-import neureka.main.core.imp.NVertex_Root;
-import neureka.main.core.modul.mem.NVMemory;
+import neureka.main.core.base.data.T;
+import neureka.main.core.modul.calc.Function;
 import neureka.main.core.modul.opti.NVOptimizer;
 
 
@@ -36,8 +33,8 @@ public class NPanelNode implements NPanelObject
 	private static final int   buttonLimit = 250000000;
 	private static final int   deckAnimationLimit = 700000000;
 	private static final float subToSuperScale = 5;
-	
-	private NVertex Core;
+
+	private T Core;
 	private Color deckColor = 		new Color(0, 60, 110);//static!!!
 	private Color darkDeckColor = 	new Color(0, 5,  60);//static!!
 	private Color deckButtonColor = new Color(0, 0,  20, 255);//...
@@ -64,10 +61,10 @@ public class NPanelNode implements NPanelObject
 
 	private ArrayList<NPanelNodeInput> InputNode;
 	//===========================================================================
-	NPanelNode(NVertex neuron, double x, double y)
+	NPanelNode(T neuron, double x, double y)
 	{
 		Core = neuron;
-		neuron.asCore().addModule(this);
+		//neuron.asCore().addModule(this);
 		position[0] = x;
 		position[1] = y;
 		InputNode = new ArrayList<NPanelNodeInput>();
@@ -81,10 +78,10 @@ public class NPanelNode implements NPanelObject
 		position[1] = y;
 		InputNode = new ArrayList<NPanelNodeInput>();
 		InputNode.add(new NPanelNodeInput(getX(), getY(), diameter/2));
-		Core = new NVertex_Root(1, false, false, ID, 0, 15);
+		Core = new T();
 		Core.addModule(this);
-		Core.addModule(new NVOptimizer(Core.size(), Core.getConnection(), 3));
-		NVertex.State.turnIntoParentRoot(Core);
+		//Core.addModule(new NVOptimizer(Core.size(), Core.getConnection(), 3));
+		//T.State.turnIntoParentRoot(Core);
 		//Core.turnIntoSuperRootNode();
 	}
 	//===========================================================================
@@ -92,10 +89,10 @@ public class NPanelNode implements NPanelObject
 	{
 		InputNode.add(new NPanelNodeInput(getX(), getY(), diameter/2));
 		//InputField.e_get(InputField.size()-1).noticeChange();
-		System.out.println("old connection input size: "+Core.inputSize());
+		//System.out.println("old connection input size: "+Core.inputSize());
 		//Core.updateConnectionMatrix(Core.getInputSize(), false);
-		Core.addInput(Core.inputSize());
-		System.out.println("New connection input size: "+Core.inputSize());
+		//Core.addInput(Core.inputSize());
+		//System.out.println("New connection input size: "+Core.inputSize());
 		for(int Ii=0; Ii<InputNode.size(); Ii++) {InputNode.get(Ii).noticeChange();}
 	}
 	//===========================================================================
@@ -103,7 +100,7 @@ public class NPanelNode implements NPanelObject
 	public boolean recentlyMoved() {return hasRecentlyBeenMoved;}
 	public void setHasMoved(boolean moved) {hasJustBeenMoved = moved;}
     //------------------------------------------
-	public NVertex getCore() {return Core;}
+	public T getCore() {return Core;}
 	public ArrayList<NPanelNodeInput> getInputNode() {return InputNode;}
 	
 	@Override
@@ -135,7 +132,6 @@ public class NPanelNode implements NPanelObject
 		 double[] newData = {alpha, centerX, centerY}; 
 		
 		return moveCircularBy(newData, Surface);
-
 	}
 
 	
@@ -163,25 +159,25 @@ public class NPanelNode implements NPanelObject
 			position[1]=(centerY+(Math.cos(alpha)*(vectorY)+Math.sin(alpha)*(vectorX)));
 			queue.add(getRepaintSpace());
 			
-		if(Core.is(NVertex.MotherRoot)) 
+		if(Core.rqsGradient()) //Core.is(T.MotherRoot)
 		{//Moving circular around a given center!
 			//calculating rotation!!! -> - => counter clock | + => clock wise
-			NVNode[] nodes = Core.find((NVNode node)->{if(node.asCore().is(NVertex.Root) && node.asCore().is(NVertex.MotherRoot)==false) {return true;}return false;});
-			if(nodes != null) 
-			   {for(int Ni=0; Ni<nodes.length; Ni++) {for(int Nii=Ni+1; Nii<nodes.length; Nii++) {if(nodes[Ni]==nodes[Nii]) {nodes[Nii]=null;}}}
-				for(int Ni=0; Ni<nodes.length; Ni++) {
-					if(nodes[Ni]!=null) {
-						NPanelNode panelNode = (NPanelNode) nodes[Ni].asCore().findModule(NPanelNode.class);
-						if(panelNode!=null) {System.out.println("MoveCircular: ->e_sub root nodes move rotating: Ni "+Ni);
-							vectorX = panelNode.getX()-position[2];
-							vectorY = panelNode.getY()-position[3];
-							data[1]=position[2];
-							data[2]=position[3];
-						    queue.addAll(panelNode.moveCircularBy(data, Surface));//alpha, position[2], position[3]
-						   }
-				       }
-				   }
-			   }
+			//NVNode[] nodes = Core.find((NVNode node)->{if(node.asCore().is(T.Root) && node.asCore().is(T.MotherRoot)==false) {return true;}return false;});
+			//if(nodes != null)
+			//   {for(int Ni=0; Ni<nodes.length; Ni++) {for(int Nii=Ni+1; Nii<nodes.length; Nii++) {if(nodes[Ni]==nodes[Nii]) {nodes[Nii]=null;}}}
+			//	for(int Ni=0; Ni<nodes.length; Ni++) {
+			//		if(nodes[Ni]!=null) {
+			//			NPanelNode panelNode = (NPanelNode) nodes[Ni].asCore().findModule(NPanelNode.class);
+			//			if(panelNode!=null) {System.out.println("MoveCircular: ->e_sub root nodes move rotating: Ni "+Ni);
+			//				vectorX = panelNode.getX()-position[2];
+			//				vectorY = panelNode.getY()-position[3];
+			//				data[1]=position[2];
+			//				data[2]=position[3];
+			//			    queue.addAll(panelNode.moveCircularBy(data, Surface));//alpha, position[2], position[3]
+			//			   }
+			//	       }
+			//	   }
+			//   }
 		}//--------------
 		this.hasJustBeenMoved = true;
 
@@ -206,7 +202,7 @@ public class NPanelNode implements NPanelObject
 			double shiftX = startX-position[0];
 			double shiftY = startY-position[1];
 			
-			if(Core.is(NVertex.MotherRoot)) {
+			if(Core.rqsGradient()) {//Core.is(T.MotherRoot)
 				data[0]=position[2];
 				data[1]=position[3];
 				data[2]=targX;
@@ -222,7 +218,7 @@ public class NPanelNode implements NPanelObject
 		}//else...
 		else 
 		{//test for nodes (e_set position only within bounds)
-			if(Core.is(NVertex.MotherRoot)) {
+			if(Core.rqsGradient()) {
 				if(position.length==4) 
 				{
 					double distance =
@@ -232,22 +228,21 @@ public class NPanelNode implements NPanelObject
 						queue.add(getRepaintSpace());
 						double shiftX = targX-startX;
 						double shiftY = targY-startY;
-						NVNode[] RimNodes 
-						= Core.find((NVNode node)->{if(node.asCore().is(NVertex.Root)&&node.asCore().is(NVertex.MotherRoot)==false){return true;}return false;});
-						
-						if(RimNodes != null) 
-						   {for(int Ni=0; Ni<RimNodes.length; Ni++) {for(int Nii=Ni+1; Nii<RimNodes.length; Nii++) {if(RimNodes[Ni]==RimNodes[Nii]) {RimNodes[Nii]=null;}}}
-							for(int Ni=0; Ni<RimNodes.length; Ni++) {System.out.println("Ni: "+Ni);
-								if(RimNodes[Ni]!=null) {
-									NPanelNode panelCompartment = (NPanelNode) RimNodes[Ni].asCore().findModule(NPanelNode.class);
-									if(panelCompartment!=null) {
-
-										 double[] newData = {(panelCompartment.getX()+shiftX),(panelCompartment.getY()+shiftY)};
-									    queue.addAll(panelCompartment.moveTo(newData, Surface));
-									   }
-							       }
-							   }
-						   }
+						//NVNode[] RimNodes
+						//= Core.find((NVNode node)->{if(node.asCore().is(T.Root)&&node.asCore().is(T.MotherRoot)==false){return true;}return false;});
+						//
+						//if(RimNodes != null)
+						//   {for(int Ni=0; Ni<RimNodes.length; Ni++) {for(int Nii=Ni+1; Nii<RimNodes.length; Nii++) {if(RimNodes[Ni]==RimNodes[Nii]) {RimNodes[Nii]=null;}}}
+						//	for(int Ni=0; Ni<RimNodes.length; Ni++) {System.out.println("Ni: "+Ni);
+						//		if(RimNodes[Ni]!=null) {
+						//			NPanelNode panelCompartment = (NPanelNode) RimNodes[Ni].asCore().findModule(NPanelNode.class);
+						//			if(panelCompartment!=null) {
+						//				 double[] newData = {(panelCompartment.getX()+shiftX),(panelCompartment.getY()+shiftY)};
+						//			    queue.addAll(panelCompartment.moveTo(newData, Surface));
+						//			   }
+						//	       }
+						//	   }
+						//   }
 					queue.add(getRepaintSpace());
 					Surface.setMap(Surface.getMap().removeAndUpdate(this)); 
 					if(Surface.getMap()==null) {Surface.setMap(new NMap(getX(), getY(), 50000));}
@@ -281,26 +276,26 @@ public class NPanelNode implements NPanelObject
 		double y = data[1];
 		ArrayList<NPanelRepaintSpace> queue = new ArrayList<NPanelRepaintSpace>();
 		
-		if(Core.is(NVertex.MotherRoot)) {
+		if(Core.rqsGradient()) {
 			//SUB NEURON POSITION UPDATE!!!
 			//moveCircular(position[2], position[3], x, y);
 			queue.add(getRepaintSpace());
 			double movedX = x-position[0];
 		    double movedY = y-position[1];
-			NVNode[] RimNodes = Core.find((NVNode node)->{if(node.asCore().is(NVertex.Root) && node.asCore().is(NVertex.MotherRoot)==false) {return true;}return false;});
-			if(RimNodes != null) {
-				for(int Ni=0; Ni<RimNodes.length; Ni++) {for(int Nii=Ni+1; Nii<RimNodes.length; Nii++) {if(RimNodes[Ni]==RimNodes[Nii]) {RimNodes[Ni]=null;}}}
-				for(int Ni=0; Ni<RimNodes.length; Ni++) {
-					if(RimNodes[Ni]!=null) {
-						NPanelNode panelCompartment = (NPanelNode) RimNodes[Ni].asCore().findModule(NPanelNode.class);
-						if(panelCompartment!=null) {
-							data[0]=panelCompartment.getX()+movedX;
-							data[1]=panelCompartment.getY()+movedY;
-						    queue.addAll(panelCompartment.moveTo(data, Surface));
-						}
-				   }
-				}
-			}
+			//NVNode[] RimNodes = Core.find((NVNode node)->{if(node.asCore().is(T.Root) && node.asCore().is(T.MotherRoot)==false) {return true;}return false;});
+			//if(RimNodes != null) {
+			//	for(int Ni=0; Ni<RimNodes.length; Ni++) {for(int Nii=Ni+1; Nii<RimNodes.length; Nii++) {if(RimNodes[Ni]==RimNodes[Nii]) {RimNodes[Ni]=null;}}}
+			//	for(int Ni=0; Ni<RimNodes.length; Ni++) {
+			//		if(RimNodes[Ni]!=null) {
+			//			NPanelNode panelCompartment = (NPanelNode) RimNodes[Ni].asCore().findModule(NPanelNode.class);
+			//			if(panelCompartment!=null) {
+			//				data[0]=panelCompartment.getX()+movedX;
+			//				data[1]=panelCompartment.getY()+movedY;
+			//			    queue.addAll(panelCompartment.moveTo(data, Surface));
+			//			}
+			//	   }
+			//	}
+			//}
 		    if(position.length==4) 
 		       {
 			      position[0] = x;
@@ -344,7 +339,7 @@ public class NPanelNode implements NPanelObject
 	public NPanelRepaintSpace getRepaintSpace() 
 	{
 		NPanelRepaintSpace repaintSpace = null;
-		if(Core.is(NVertex.MotherRoot)) 
+		if(Core.rqsGradient())
 		   {repaintSpace = new NPanelRepaintSpace(position[2], position[3], (diameter/2)*subToSuperScale*1.2, (diameter/2)*subToSuperScale*1.2);}
 		else                         
 		   {double r = (diameter/2)*(1.1+(1-(diameter/defaultDiameter))/1.995);
@@ -379,7 +374,7 @@ public class NPanelNode implements NPanelObject
 		ArrayList<NPanelRepaintSpace> queue = new ArrayList<NPanelRepaintSpace>();
 		 for(int Ii=0; Ii<InputNode.size(); Ii++) {queue.addAll(InputNode.get(Ii).adjustOrbit(getX(), getY(), diameter/2));}
 		 
-		if(Core.is(NVertex.MotherRoot)) 
+		if(Core.rqsGradient())
 		{
 			if(position.length==2) {
 				double[] old = position;
@@ -389,87 +384,86 @@ public class NPanelNode implements NPanelObject
 				position[2]=old[0];
 				position[3]=old[1];
 			}
-			NVNode[] RimNodes = NVUtility.identityCorrected.order(Core.find(
-					(NVNode node)->{if(node.asCore().is(NVertex.Root)||node.asCore()==this.Core) {return true;}return false;}));
+			//NVNode[] RimNodes = NVUtility.identityCorrected.order(Core.find(
+			//		(NVNode node)->{if(node.asCore().is(T.Root)||node.asCore()==this.Core) {return true;}return false;}));
 			
-			if(RimNodes != null) 
-			   {//System.out.println("Rim nodes exist! -> "+RimNodes.length);
-				 boolean updateNeeded = false;
-				   for(int Ni=0; Ni<RimNodes.length; Ni++) 
-				       {
-					    	if(RimNodes[Ni]!=null) 
-					        {
-					           NPanelNode panelNode = (NPanelNode) RimNodes[Ni].asCore().findModule(NPanelNode.class);
-					           if(panelNode!=null) 
-					           {//optimization: Checking if nodes have been moved...
-					              if(panelNode.justMoved()) {updateNeeded=true;}//Needed?!?
-					       
-					              if(RimNodes[Ni].asCore().is(NVertex.RootInput) || RimNodes[Ni].asCore().is(NVertex.MotherRoot)) 
-					              {		
-					        	   		double directionX = panelNode.getX()-position[2]; 
-						        	   	double directionY = panelNode.getY()-position[3];
-					        	   		double distance = Math.pow(Math.pow(directionX,2)+Math.pow(directionY, 2), 0.5);
-				
-					        	   		if(distance > diameter*2.5 || distance < diameter*2.25 || updateNeeded) 
-					        	   		{
-					        	   			directionX/=distance;
-					        	   			directionY/=distance;
-					        	   			if(distance == 0) 
-					        	   			{
-					        	   				Random dice = new Random();
-					        	   				boolean sign = dice.nextBoolean();
-					        	   				directionX=dice.nextDouble()%diameter*0.1;if(sign) {directionX*=-1;}
-					        	   				sign = dice.nextBoolean();
-					        	   				directionY=dice.nextDouble()%diameter*0.1;if(sign) {directionY*=-1;}
-					        	   			}
-					        	   			double delta=0;
-					        	   			if(distance > diameter*2.5) {delta=-(distance-diameter*2.25)*0.5;}else {delta=(diameter*2.26-distance)*0.5;}
-					        	   			
-					        	   				for(int Ii=0; Ii<InputNode.size(); Ii++) 
-					        	   					{	
-					        	   						double a = Math.abs(InputNode.get(Ii).angleOf(getX(), getY())-InputNode.get(Ii).angleOf(getX(), getY()));
-					        	   						if(a > Math.PI/6) 
-					        	   						{
-					        	   							//queue.e_add(InputNode.e_get(Ii).getRepaintSpace(getX(), getY(), diameter/2));
-					      	   							//InputNode.e_get(Ii).rotateTowards(-directionX, -directionY);
-					        	   						//queue.addAll(InputNode.e_get(Ii).adjustWithRespectTo(-directionX, -directionY, getX(), getY(), InputNode));
-					        	   						double[] newData = {InputNode.get(Ii).getX(), InputNode.get(Ii).getY(), position[2], position[3]}; 
-					        	   						
-					        	   						queue.addAll(InputNode.get(Ii).moveCircular(newData, HostPanel));
-					        	   							
-					        	   						
-					        	   					   }
-					        	   						else {
-					        	   							queue.addAll(InputNode.get(Ii).adjustOrbit(getX(), getY(), diameter/2));
-					        	   						}
-					        	   					}
-					        	   				
-					        	   				if(panelNode == this) {
-					        	   						//System.out.println("Adjustment! for rim node...");
-					        	   						position[0]+=directionX*delta;
-					        	   						position[1]+=directionY*delta;
-					        	   						//queue.e_add(new NPanelRepaintSpace((position[0]), (position[1]), (1.3*diameter/2), (1.3*diameter/2)));
-					        	   				}
-					        	   				else
-					        	   				{
-					        	   				 queue.add(panelNode.getRepaintSpace());	
-					        	   				 double[] data = {panelNode.getX()+directionX*delta, panelNode.getY()+directionY*delta};
+		//if(RimNodes != null)
+		//   {//System.out.println("Rim nodes exist! -> "+RimNodes.length);
+		//	 boolean updateNeeded = false;
+		//	   for(int Ni=0; Ni<RimNodes.length; Ni++)
+		//	       {
+		//		    	if(RimNodes[Ni]!=null)
+		//		        {
+		//		           NPanelNode panelNode = (NPanelNode) RimNodes[Ni].asCore().findModule(NPanelNode.class);
+		//		           if(panelNode!=null)
+		//		           {//optimization: Checking if nodes have been moved...
+		//		              if(panelNode.justMoved()) {updateNeeded=true;}//Needed?!?
+		//
+		//		              if(RimNodes[Ni].asCore().is(T.RootInput) || RimNodes[Ni].asCore().is(T.MotherRoot))
+		//		              {
+		//		        	   		double directionX = panelNode.getX()-position[2];
+		//			        	   	double directionY = panelNode.getY()-position[3];
+		//		        	   		double distance = Math.pow(Math.pow(directionX,2)+Math.pow(directionY, 2), 0.5);
+		//
+		//		        	   		if(distance > diameter*2.5 || distance < diameter*2.25 || updateNeeded)
+		//		        	   		{
+		//		        	   			directionX/=distance;
+		//		        	   			directionY/=distance;
+		//		        	   			if(distance == 0)
+		//		        	   			{
+		//		        	   				Random dice = new Random();
+		//		        	   				boolean sign = dice.nextBoolean();
+		//		        	   				directionX=dice.nextDouble()%diameter*0.1;if(sign) {directionX*=-1;}
+		//		        	   				sign = dice.nextBoolean();
+		//		        	   				directionY=dice.nextDouble()%diameter*0.1;if(sign) {directionY*=-1;}
+		//		        	   			}
+		//		        	   			double delta=0;
+		//		        	   			if(distance > diameter*2.5) {delta=-(distance-diameter*2.25)*0.5;}else {delta=(diameter*2.26-distance)*0.5;}
+		//
+		//		        	   				for(int Ii=0; Ii<InputNode.size(); Ii++)
+		//		        	   					{
+		//		        	   						double a = Math.abs(InputNode.get(Ii).angleOf(getX(), getY())-InputNode.get(Ii).angleOf(getX(), getY()));
+		//		        	   						if(a > Math.PI/6)
+		//		        	   						{
+		//		        	   							//queue.e_add(InputNode.e_get(Ii).getRepaintSpace(getX(), getY(), diameter/2));
+		//		      	   							//InputNode.e_get(Ii).rotateTowards(-directionX, -directionY);
+		//		        	   						//queue.addAll(InputNode.e_get(Ii).adjustWithRespectTo(-directionX, -directionY, getX(), getY(), InputNode));
+		//		        	   						double[] newData = {InputNode.get(Ii).getX(), InputNode.get(Ii).getY(), position[2], position[3]};
+		//
+		//		        	   						queue.addAll(InputNode.get(Ii).moveCircular(newData, HostPanel));
+		//
+		//
+		//		        	   					   }
+		//		        	   						else {
+		//		        	   							queue.addAll(InputNode.get(Ii).adjustOrbit(getX(), getY(), diameter/2));
+		//		        	   						}
+		//		        	   					}
+		//
+		//		        	   				if(panelNode == this) {
+		//		        	   						//System.out.println("Adjustment! for rim node...");
+		//		        	   						position[0]+=directionX*delta;
+		//		        	   						position[1]+=directionY*delta;
+		//		        	   						//queue.e_add(new NPanelRepaintSpace((position[0]), (position[1]), (1.3*diameter/2), (1.3*diameter/2)));
+		//		        	   				}
+		//		        	   				else
+		//		        	   				{
+		//		        	   				 queue.add(panelNode.getRepaintSpace());
+		//		        	   				 double[] data = {panelNode.getX()+directionX*delta, panelNode.getY()+directionY*delta};
 	
-					        	   				 queue.addAll(panelNode.moveTo(data, HostPanel));//queue.addAll<- This might not be needed!
-					        	   				}
-					        	   				
-					        	   		   }//=>IMPORTANT: Repaint queue must be filled accordingly!
-					              	}
-					           	}
-					        }
-					    }
-			}
-		//Getting input node rotations!
-		//->adding them together!
-		//drawing a core body accordingly!
-		//->sizing input nodes according to core connections...
-		
-		//choosing coloring.... Suggestion: ?
+		//		        	   				 queue.addAll(panelNode.moveTo(data, HostPanel));//queue.addAll<- This might not be needed!
+		//		        	   				}
+		//
+		//		        	   		   }//=>IMPORTANT: Repaint queue must be filled accordingly!
+		//		              	}
+		//		           	}
+		//		        }
+		//		    }
+		//}
+		//Gtting input node rotations!
+		//-adding them together!
+		//dawing a core body accordingly!
+		//-sizing input nodes according to core connections...
+		//coosing coloring.... Suggestion: ?
 		}
 		else
 		{
@@ -756,7 +750,7 @@ public class NPanelNode implements NPanelObject
 		if(check==true) 
 		{
 			System.out.println("found!!!");
-			Core.addInput(Core.inputSize());
+			//Core.addInput(Core.inputSize());
 			this.InputNode.add(new NPanelNodeInput(getX(), getY(), diameter/2));
 		}
 		return false;
@@ -782,7 +776,7 @@ public class NPanelNode implements NPanelObject
 			}
 		}
 		//if super root -> check rim nodes!
-		if(Core.is(NVertex.MotherRoot)) 
+		if(Core.rqsGradient())
 		{
 			double d = Math.pow(Math.pow((trueX - position[2]), 2) + Math.pow((trueY - position[3]), 2), 0.5);
 			if(d <= diameter*2.5) 
@@ -810,7 +804,7 @@ public class NPanelNode implements NPanelObject
 	// --------------------------------------------------------------------------------------------
 	public boolean testForBody_Root(double x, double y) 
 	{
-		if(Core.is(NVertex.MotherRoot) && position.length==4) 
+		if(Core.rqsGradient() && position.length==4)
 		{
 			double d = Math.pow(Math.pow((x - position[2]), 2) + Math.pow((y - position[3]), 2), 0.5);
 			if(d <= diameter*2.5) 
@@ -879,113 +873,113 @@ public class NPanelNode implements NPanelObject
 		double vX = 0;
 		double vY = 0;
 		ArrayList<NPanelRepaintSpace> queue = new ArrayList<NPanelRepaintSpace>();;
-		NVNode[][] connection = Core.getConnection();
-		if (connection != null) 
-		{
-			//System.out.println("I size:"+connection.length);
-			for (int Ii = 0; Ii < connection.length; Ii++) 
-			{
-				//System.out.println("Ii:"+Ii);
-				boolean connectionMoved=this.justMoved();
-				if (connection[Ii] != null && connectionMoved==false) 
-				{
-					for (int Ni = 0; Ni < connection[Ii].length; Ni++) 
-					{
-						if(connection[Ii][Ni]!=null) {
-							//if(this.getNeuron().isBasicRootNode()) {System.out.println("Bananas baby");}
-						   if(((NPanelNode)connection[Ii][Ni].asCore().findModule(NPanelNode.class)).justMoved()) {
-							   connectionMoved=true;
-								Ni=connection[Ii].length;
-						   		}
-					        }
-					}
-				}
-					if(connectionMoved || InputNode.get(Ii).changeOccured() || convection) 
-					{//=================================================================
-						//System.out.println("convection: "+convection);
-					 if(connection[Ii]!=null) {	
-						for (int Ni = 0; Ni < connection[Ii].length; Ni++) 
-						{
-							if(connection[Ii][Ni]!=null) 
-						  	{
-							    vX += ((NPanelNode)connection[Ii][Ni].asCore().findModule(NPanelNode.class)).getX() - getX();
-						        vY += ((NPanelNode)connection[Ii][Ni].asCore().findModule(NPanelNode.class)).getY() - getY();
-						    }
-						  //...
-						}
-					if (vX == 0 && vY == 0) 
-					{
-						Random dice = new Random();
-						vX=dice.nextDouble()%1;vY=dice.nextDouble()%1;
-					} 
-					else 
-					{
-						double alpha = Math.PI+(InputNode.get(Ii).angleOf(getX(), getY())-Math.atan2(vY, -vX));//!!!!!!!!!!!!!!!!!!!!!!!
-						//alpha = -(Math.atan2(vY, vX)-Math.atan2(InputNode.e_get(Ii), vectorX));
-						double[] newData = {alpha, getX(), getY()};
-						//queue.addAll(InputNode.e_get(Ii).adjustOrbit(getX(), getY(), diameter/2));
-						queue.addAll(InputNode.get(Ii).moveCircular(newData, null));
-						
-						//for(int i=0; i<InputField.size(); i++) {InputField.e_get(i).adjustWithRespectTo(vX, vY, InputField);}
-						if (InputNode.get(Ii).changeOccured() || convection) {
-						    for (int Ni = 0; Ni < connection[Ii].length; Ni++) {
-								 
-								 if (connection[Ii][Ni]!=null)
-								    {
-									 double connectionX = ((NPanelNode)connection[Ii][Ni].asCore().findModule(NPanelNode.class)).getX();
-									 double connectionY = ((NPanelNode)connection[Ii][Ni].asCore().findModule(NPanelNode.class)).getY();
-									 if(dataDisplayUpdateRequest) {
-										 double midPX = InputNode.get(Ii).getX() + (connectionX - InputNode.get(Ii).getX())/3.25;
-										 double midPY = InputNode.get(Ii).getY() + (connectionY - InputNode.get(Ii).getY())/3.25;
-										 //if (connectionSpace == null) {connectionSpace = new ArrayList<NPanelRepaintSpace>();}	
-										 //WEIGHT REPAINT:
-										 queue.add(new NPanelRepaintSpace((midPX),(midPY), 50, 25));
-									 	}
-									 double vectorX = (connectionX - getX());
-									 double vectorY = (connectionY - getY());
-									 double repaintCenterX = getX() + (vectorX) / 2;
-									 double repaintCenterY = getY() + (vectorY) / 2;
-									 double distanceX = Math.abs((connectionX - getX()) / 2);
-									 double distanceY = Math.abs((connectionY - getY()) / 2);
-									 if(convection) {
-										 double d = Math.pow(Math.pow(vectorX, 2)+Math.pow(vectorY, 2), 0.5);
-										 double v0X = vectorX/d;
-										 double v0Y = vectorY/d;
-										 
-										 double normalX = (-v0Y)*diameter/2;
-										 double normalY = (v0X)*diameter/2;
-											double sideVecOneX = (connectionX+normalX)-repaintCenterX; 
-											double sideVecOneY = (connectionY+normalY)-repaintCenterY;
-											
-											double sideVecTwoX = (connectionX-normalX)-repaintCenterX; 
-											double sideVecTwoY = (connectionY-normalY)-repaintCenterY;
-											if(sideVecOneX>distanceX) {distanceX=sideVecOneX;}
-											if(sideVecTwoX>distanceX) {distanceX=sideVecTwoX;}
-											if(sideVecOneY>distanceY) {distanceY=sideVecOneY;}
-											if(sideVecTwoY>distanceY) {distanceY=sideVecTwoY;}
-									 }//System.out.println("added repaint ...");
-								     queue.add(new NPanelRepaintSpace(
-										repaintCenterX,
-										repaintCenterY,
-										distanceX,
-										distanceY));	
-									}
-								}	
-						      if(convection==false) 
-						      {
-						    		//System.out.println("Gottcha!");
-						    		queue.add(InputNode.get(Ii).getRepaintSpace(diameter/2));	
-						    		//InputNode.e_get(Ii).forgetChange();
-						       }
-						       InputNode.get(Ii).forgetChange();	
-						   }   
-					   }
-					   vX = 0;
-					   vY = 0;
-					}//else{System.out.println("Connection is null wtf!!!!");}
-				}//=================================================================
-			}
-		}
+		//NVNode[][] connection = Core.getConnection();
+		//if (connection != null)
+		//{
+		//	//System.out.println("I size:"+connection.length);
+		//	for (int Ii = 0; Ii < connection.length; Ii++)
+		//	{
+		//		//System.out.println("Ii:"+Ii);
+		//		boolean connectionMoved=this.justMoved();
+		//		if (connection[Ii] != null && connectionMoved==false)
+		//		{
+		//			for (int Ni = 0; Ni < connection[Ii].length; Ni++)
+		//			{
+		//				if(connection[Ii][Ni]!=null) {
+		//					//if(this.getNeuron().isBasicRootNode()) {System.out.println("Bananas baby");}
+		//				   if(((NPanelNode)connection[Ii][Ni].asCore().findModule(NPanelNode.class)).justMoved()) {
+		//					   connectionMoved=true;
+		//						Ni=connection[Ii].length;
+		//				   		}
+		//			        }
+		//			}
+		//		}
+		//			if(connectionMoved || InputNode.get(Ii).changeOccured() || convection)
+		//			{//=================================================================
+		//				//System.out.println("convection: "+convection);
+		//			 if(connection[Ii]!=null) {
+		//				for (int Ni = 0; Ni < connection[Ii].length; Ni++)
+		//				{
+		//					if(connection[Ii][Ni]!=null)
+		//				  	{
+		//					    vX += ((NPanelNode)connection[Ii][Ni].asCore().findModule(NPanelNode.class)).getX() - getX();
+		//				        vY += ((NPanelNode)connection[Ii][Ni].asCore().findModule(NPanelNode.class)).getY() - getY();
+		//				    }
+		//				  //...
+		//				}
+		//			if (vX == 0 && vY == 0)
+		//			{
+		//				Random dice = new Random();
+		//				vX=dice.nextDouble()%1;vY=dice.nextDouble()%1;
+		//			}
+		//			else
+		//			{
+		//				double alpha = Math.PI+(InputNode.get(Ii).angleOf(getX(), getY())-Math.atan2(vY, -vX));//!!!!!!!!!!!!!!!!!!!!!!!
+		//				//alpha = -(Math.atan2(vY, vX)-Math.atan2(InputNode.e_get(Ii), vectorX));
+		//				double[] newData = {alpha, getX(), getY()};
+		//				//queue.addAll(InputNode.e_get(Ii).adjustOrbit(getX(), getY(), diameter/2));
+		//				queue.addAll(InputNode.get(Ii).moveCircular(newData, null));
+		//
+		//				//for(int i=0; i<InputField.size(); i++) {InputField.e_get(i).adjustWithRespectTo(vX, vY, InputField);}
+		//				if (InputNode.get(Ii).changeOccured() || convection) {
+		//				    for (int Ni = 0; Ni < connection[Ii].length; Ni++) {
+		//
+		//						 if (connection[Ii][Ni]!=null)
+		//						    {
+		//							 double connectionX = ((NPanelNode)connection[Ii][Ni].asCore().findModule(NPanelNode.class)).getX();
+		//							 double connectionY = ((NPanelNode)connection[Ii][Ni].asCore().findModule(NPanelNode.class)).getY();
+		//							 if(dataDisplayUpdateRequest) {
+		//								 double midPX = InputNode.get(Ii).getX() + (connectionX - InputNode.get(Ii).getX())/3.25;
+		//								 double midPY = InputNode.get(Ii).getY() + (connectionY - InputNode.get(Ii).getY())/3.25;
+		//								 //if (connectionSpace == null) {connectionSpace = new ArrayList<NPanelRepaintSpace>();}
+		//								 //WEIGHT REPAINT:
+		//								 queue.add(new NPanelRepaintSpace((midPX),(midPY), 50, 25));
+		//							 	}
+		//							 double vectorX = (connectionX - getX());
+		//							 double vectorY = (connectionY - getY());
+		//							 double repaintCenterX = getX() + (vectorX) / 2;
+		//							 double repaintCenterY = getY() + (vectorY) / 2;
+		//							 double distanceX = Math.abs((connectionX - getX()) / 2);
+		//							 double distanceY = Math.abs((connectionY - getY()) / 2);
+		//							 if(convection) {
+		//								 double d = Math.pow(Math.pow(vectorX, 2)+Math.pow(vectorY, 2), 0.5);
+		//								 double v0X = vectorX/d;
+		//								 double v0Y = vectorY/d;
+		//
+		//								 double normalX = (-v0Y)*diameter/2;
+		//								 double normalY = (v0X)*diameter/2;
+		//									double sideVecOneX = (connectionX+normalX)-repaintCenterX;
+		//									double sideVecOneY = (connectionY+normalY)-repaintCenterY;
+		//
+		//									double sideVecTwoX = (connectionX-normalX)-repaintCenterX;
+		//									double sideVecTwoY = (connectionY-normalY)-repaintCenterY;
+		//									if(sideVecOneX>distanceX) {distanceX=sideVecOneX;}
+		//									if(sideVecTwoX>distanceX) {distanceX=sideVecTwoX;}
+		//									if(sideVecOneY>distanceY) {distanceY=sideVecOneY;}
+		//									if(sideVecTwoY>distanceY) {distanceY=sideVecTwoY;}
+		//							 }//System.out.println("added repaint ...");
+		//						     queue.add(new NPanelRepaintSpace(
+		//								repaintCenterX,
+		//								repaintCenterY,
+		//								distanceX,
+		//								distanceY));
+		//							}
+		//						}
+		//				      if(convection==false)
+		//				      {
+		//				    		//System.out.println("Gottcha!");
+		//				    		queue.add(InputNode.get(Ii).getRepaintSpace(diameter/2));
+		//				    		//InputNode.e_get(Ii).forgetChange();
+		//				       }
+		//				       InputNode.get(Ii).forgetChange();
+		//				   }
+		//			   }
+		//			   vX = 0;
+		//			   vY = 0;
+		//			}//else{System.out.println("Connection is null wtf!!!!");}
+		//		}//=================================================================
+		//	}
+		//}
 		return queue;
 	}
 	//PAINTING:
@@ -1012,134 +1006,134 @@ public class NPanelNode implements NPanelObject
 			convectionCounter = Animator.getCounterOf(this, animationID);
 		}
 		//=======================================================================================================================
-		NVNode[][] connection = Core.getConnection();
-		if (connection != null) 
-		{
-			for (int Ii = 0; Ii < connection.length; Ii++) 
-			{
-				if (connection[Ii] != null) 
-				{
-					double selfCenterX = InputNode.get(Ii).getX();
-					double selfCenterY = InputNode.get(Ii).getY();
-					double inputVecX = selfCenterX - getX();
-					double inputVecY = selfCenterY - getY();
-					
-					if(Core.is(NVertex.Root)) 
-					{
-						connectionColor=NColor.SystemOcean;
-					    if(Core.is(NVertex.RootInput)) 
-					       {if(!connection[Ii][0].asCore().is(NVertex.Root) || connection[Ii][0].asCore().is(NVertex.MotherRoot)) 
-					           {connectionColor = Color.CYAN;}
-					       }
-					}
-					for (int Ni = 0; Ni < connection[Ii].length; Ni++) 
-					{
-						if(connection[Ii][Ni]!=null) 
-						{
-							double connectionX = ((NPanelNode)connection[Ii][Ni].asCore().findModule(NPanelNode.class)).getX();
-							double connectionY = ((NPanelNode)connection[Ii][Ni].asCore().findModule(NPanelNode.class)).getY();
-							
-							GeneralPath bezier = new GeneralPath();
-							
-							double vectorX = (connectionX - selfCenterX);
-							double vectorY = (connectionY - selfCenterY);
-							
-							double otherX = selfCenterX+vectorX;
-							double otherY = selfCenterY+vectorY;
-							
-							NUtility math = new NUtility();
-							
-							double deg = math.unitaryVectorProduct(vectorX, vectorY, inputVecX, inputVecY); 
-							//System.out.println(deg);
-							
-							
-							double outerX = selfCenterX+inputVecX*(1+Math.abs(deg));
-							double outerY = selfCenterY+inputVecY*(1+Math.abs(deg));
-							deg = 1.5*(1-deg);
-							
-							double orthoX, orthoY;
-							if(math.unitaryVectorProduct(vectorX, vectorY, -inputVecY, inputVecX)<0) 
-							{
-								orthoX = outerX+deg * inputVecY;
-								orthoY = outerY-deg * inputVecX;
-							}
-							else 
-							{
-								orthoX = outerX-deg * inputVecY;
-								orthoY = outerY+deg * inputVecX;
-								
-							}
-							double[] points = {selfCenterX, selfCenterY, 
-						     		           outerX, outerY, 
-						     		           orthoX, orthoY,
-						                       otherX, otherY};
-							
-							bezier.moveTo( points[0], points[1]);
-							bezier.curveTo(points[2], points[3], 
-									       points[4], points[5],
-									       points[6], points[7]);
-							
-							
-							brush.setColor(connectionColor);
-							brush.setStroke(new BasicStroke(22));
-							brush.draw(bezier);
-							
-							
-					
-							double[] curvePoint = null;
-							double ratio = 1-((double)(convectionCounter))/convectionTime;
-							
-							if(activityCheck) 
-							{
-								NPanelNode Other = ((NPanelNode)connection[Ii][Ni].asCore().findModule(NPanelNode.class));
-								
-								double d = Math.pow(Math.pow(vectorX, 2)+Math.pow(vectorY, 2), 0.5);
-								//System.out.println(diameter);
-								double normalX = (-vectorY/d)*Other.diameter/2*ratio;
-								double normalY = (vectorX/d)*Other.diameter/2*ratio;
-								Polygon convector = new Polygon();//System.out.println("painting convection!"+ratio);
-								double invratio = 1-ratio;
-								curvePoint = math.getCurvePointOn(invratio*invratio*invratio, points);
-								convector.addPoint((int)(curvePoint[0]), 
-										           (int)(curvePoint[1]));
-								curvePoint = math.getCurvePointOn(invratio, points);//=>Convector center
-								convector.addPoint((int)(curvePoint[0]+normalX), (int)(curvePoint[1]+normalY));
-								convector.addPoint((int)(selfCenterX), (int)(selfCenterY));
-								convector.addPoint((int)(curvePoint[0]-normalX), (int)(curvePoint[1]-normalY));
-			
-								brush.fillPolygon(convector);
-							}
-							curvePoint = math.getCurvePointOn(1/3.25, points);
-							if(this.Core.hasWeight(Ii)) 
-							{
-								String value = ""+ getCore().getWeight(Ii, Ni);
-								brush.fillOval((int)(curvePoint[0])-70, (int)(curvePoint[1])-25, 140, 50);
-								brush.setColor(Color.BLACK);
-						
-								brush.drawString(value,(int) (curvePoint[0])-value.length()*diameter/250, (int) (curvePoint[1])+6);
-							}
-							else
-							{
-								final float dash1[] = {70.0f};
-							    final BasicStroke dashed =
-							        new BasicStroke(23.5f,
-							                        BasicStroke.CAP_BUTT,
-							                        BasicStroke.JOIN_MITER,
-							                        50.0f, dash1, 30.0f);
-								brush.setColor(Color.BLACK);
-								brush.setStroke(dashed);//new BasicStroke(10)
-								brush.draw(bezier);
-							}
-						}
-					}
-				}		
-			}
-		}
+		//NVNode[][] connection = Core.getConnection();
+		//if (connection != null)
+		//{
+		//	for (int Ii = 0; Ii < connection.length; Ii++)
+		//	{
+		//		if (connection[Ii] != null)
+		//		{
+		//			double selfCenterX = InputNode.get(Ii).getX();
+		//			double selfCenterY = InputNode.get(Ii).getY();
+		//			double inputVecX = selfCenterX - getX();
+		//			double inputVecY = selfCenterY - getY();
+		//
+		//			if(Core.is(T.Root))
+		//			{
+		//				connectionColor=NColor.SystemOcean;
+		//			    if(Core.is(T.RootInput))
+		//			       {if(!connection[Ii][0].asCore().is(T.Root) || connection[Ii][0].asCore().is(T.MotherRoot))
+		//			           {connectionColor = Color.CYAN;}
+		//			       }
+		//			}
+		//			for (int Ni = 0; Ni < connection[Ii].length; Ni++)
+		//			{
+		//				if(connection[Ii][Ni]!=null)
+		//				{
+		//					double connectionX = ((NPanelNode)connection[Ii][Ni].asCore().findModule(NPanelNode.class)).getX();
+		//					double connectionY = ((NPanelNode)connection[Ii][Ni].asCore().findModule(NPanelNode.class)).getY();
+		//
+		//					GeneralPath bezier = new GeneralPath();
+		//
+		//					double vectorX = (connectionX - selfCenterX);
+		//					double vectorY = (connectionY - selfCenterY);
+		//
+		//					double otherX = selfCenterX+vectorX;
+		//					double otherY = selfCenterY+vectorY;
+		//
+		//					NUtility math = new NUtility();
+		//
+		//					double deg = math.unitaryVectorProduct(vectorX, vectorY, inputVecX, inputVecY);
+		//					//System.out.println(deg);
+		//
+		//
+		//					double outerX = selfCenterX+inputVecX*(1+Math.abs(deg));
+		//					double outerY = selfCenterY+inputVecY*(1+Math.abs(deg));
+		//					deg = 1.5*(1-deg);
+		//
+		//					double orthoX, orthoY;
+		//					if(math.unitaryVectorProduct(vectorX, vectorY, -inputVecY, inputVecX)<0)
+		//					{
+		//						orthoX = outerX+deg * inputVecY;
+		//						orthoY = outerY-deg * inputVecX;
+		//					}
+		//					else
+		//					{
+		//						orthoX = outerX-deg * inputVecY;
+		//						orthoY = outerY+deg * inputVecX;
+		//
+		//					}
+		//					double[] points = {selfCenterX, selfCenterY,
+		//				     		           outerX, outerY,
+		//				     		           orthoX, orthoY,
+		//				                       otherX, otherY};
+		//
+		//					bezier.moveTo( points[0], points[1]);
+		//					bezier.curveTo(points[2], points[3],
+		//							       points[4], points[5],
+		//							       points[6], points[7]);
+		//
+		//
+		//					brush.setColor(connectionColor);
+		//					brush.setStroke(new BasicStroke(22));
+		//					brush.draw(bezier);
+		//
+		//
+		//
+		//					double[] curvePoint = null;
+		//					double ratio = 1-((double)(convectionCounter))/convectionTime;
+		//
+		//					if(activityCheck)
+		//					{
+		//						NPanelNode Other = ((NPanelNode)connection[Ii][Ni].asCore().findModule(NPanelNode.class));
+		//
+		//						double d = Math.pow(Math.pow(vectorX, 2)+Math.pow(vectorY, 2), 0.5);
+		//						//System.out.println(diameter);
+		//						double normalX = (-vectorY/d)*Other.diameter/2*ratio;
+		//						double normalY = (vectorX/d)*Other.diameter/2*ratio;
+		//						Polygon convector = new Polygon();//System.out.println("painting convection!"+ratio);
+		//						double invratio = 1-ratio;
+		//						curvePoint = math.getCurvePointOn(invratio*invratio*invratio, points);
+		//						convector.addPoint((int)(curvePoint[0]),
+		//								           (int)(curvePoint[1]));
+		//						curvePoint = math.getCurvePointOn(invratio, points);//=>Convector center
+		//						convector.addPoint((int)(curvePoint[0]+normalX), (int)(curvePoint[1]+normalY));
+		//						convector.addPoint((int)(selfCenterX), (int)(selfCenterY));
+		//						convector.addPoint((int)(curvePoint[0]-normalX), (int)(curvePoint[1]-normalY));
+		//
+		//						brush.fillPolygon(convector);
+		//					}
+		//					curvePoint = math.getCurvePointOn(1/3.25, points);
+		//					if(this.Core.hasWeight(Ii))
+		//					{
+		//						String value = ""+ getCore().getWeight(Ii, Ni);
+		//						brush.fillOval((int)(curvePoint[0])-70, (int)(curvePoint[1])-25, 140, 50);
+		//						brush.setColor(Color.BLACK);
+		//
+		//						brush.drawString(value,(int) (curvePoint[0])-value.length()*diameter/250, (int) (curvePoint[1])+6);
+		//					}
+		//					else
+		//					{
+		//						final float dash1[] = {70.0f};
+		//					    final BasicStroke dashed =
+		//					        new BasicStroke(23.5f,
+		//					                        BasicStroke.CAP_BUTT,
+		//					                        BasicStroke.JOIN_MITER,
+		//					                        50.0f, dash1, 30.0f);
+		//						brush.setColor(Color.BLACK);
+		//						brush.setStroke(dashed);//new BasicStroke(10)
+		//						brush.draw(bezier);
+		//					}
+		//				}
+		//			}
+		//		}
+		//	}
+		//}
 	}
 	// --------------------------------------------------------------------------------------------
 	public void paintRootUnitBody(Graphics2D brush, double panelScale, NAnimator Animator) 
 	{
-		if(Core.is(NVertex.MotherRoot)) 
+		if(Core.rqsGradient())
 		{
 		   diameter = defaultDiameter/2;
 		   if(position.length == 4) 
@@ -1175,33 +1169,33 @@ public class NPanelNode implements NPanelObject
 		double modifier = panelScaleModifier(panelScale);
 		//COLORING FOR NEURON TYPES (FIRST, HIDDEN, LAST)
 		//=================================
-		if (Core.isHidden()) 
+		if (!Core.rqsGradient())
 		{
 			deckColor = new Color(0, 60, 120);
 		}
-		if (Core.isFirst()) 
+		if (Core.rqsGradient())
 		{
 			deckColor = new Color(0, 140, 30);
 		}
-		if (Core.isLast()) 
+		if (Core.isOutsourced())
 		{
 			deckColor = new Color(140, 0, 30);
 		}
-		if (Core.isLast() && Core.isFirst()) 
+		if (Core.isOutsourced() && Core.rqsGradient()) //Core.isLast() && Core.isFirst()
 		{
 			deckColor = new Color(140, 140, 0);
 		}
-		if (Core.isParalyzed()) 
+		if (Core.rqsGradient()) //isParalyzed()
 		{
 			deckColor = new Color(0, 0, 0);
 		}
 		//=================================
 
-		if(Core.is(NVertex.MotherRoot)) 
+		if(Core.rqsGradient())
 		{
 			diameter = defaultDiameter/2;
 		}
-		else if(Core.is(NVertex.BasicRoot))
+		else if(Core.rqsGradient())
 		{
 			Color color = NColor.SystemOcean;
 			brush.setColor(color);
@@ -1220,7 +1214,7 @@ public class NPanelNode implements NPanelObject
 				  
 			}
 		}
-		else if(Core.is(NVertex.RootMemory))
+		else if(Core.rqsGradient())
 		{
 			Color color = NColor.SystemOcean;
 			brush.setColor(color);
@@ -1256,14 +1250,14 @@ public class NPanelNode implements NPanelObject
 		{	
 			//COLORING IF INPUT IS ROOT CONNECTION
 			brush.setColor(Color.CYAN);
-			if(getCore().asCore().getConnection()[i]!=null) 
-			    {//System.out.println("node existing");
-				 if(getCore().asCore().getConnection()[i][0].asCore().is(NVertex.Child)) 
-				    {Color color = NColor.SystemOcean; brush.setColor(color);}
-			    }
-			else {if(getCore().asCore().is(NVertex.Child)) 
-			         {Color color = NColor.SystemOcean; brush.setColor(color);}
-			}
+			//if(getCore().asCore().getConnection()[i]!=null)
+			//    {//System.out.println("node existing");
+			//	 if(getCore().asCore().getConnection()[i][0].asCore().is(T.Child))
+			//	    {Color color = NColor.SystemOcean; brush.setColor(color);}
+			//    }
+			//else {if(getCore().asCore().is(T.Child))
+			//         {Color color = NColor.SystemOcean; brush.setColor(color);}
+			//}
 			InputNode.get(i).paint(brush, getX(), getY(), ((diameter / 2)));
 		}
 		//--------------
@@ -1296,7 +1290,7 @@ public class NPanelNode implements NPanelObject
 					getX(), 
 					getY(),
 					diameter / 2, 
-					Formatter.format(Core.getInput(0, 0)), 
+					null,//Formatter.format(Core.getInput(0, 0)),
 					(Math.pow(mod, 6))
 					);
 			//InputField.e_get(i).
@@ -1377,61 +1371,61 @@ public class NPanelNode implements NPanelObject
 		
 		brush.drawString("Activation", (int) (centerX - radius*0.27), (int) (centerY - radius*0.1 - radius*0.27500*buttonAnimationModifier));
 		brush.setColor(Color.BLACK);
-		brush.drawString(Formatter.format(Core.getActivation(0)), (int) (centerX - radius*0.108), (int) (centerY +radius*0.0475- radius*0.260*buttonAnimationModifier));
+		brush.drawString(Formatter.format(Core.e_get(0)), (int) (centerX - radius*0.108), (int) (centerY +radius*0.0475- radius*0.260*buttonAnimationModifier));
 		
 		ValueFont = new Font("Tahoma", Font.PLAIN, (int)(diameter*(0.033333)));
 		brush.setFont(ValueFont);
 		
 		brush.setColor(Color.CYAN);
-		brush.drawString("Paralyzed: "+Core.isParalyzed()+";", 
+		brush.drawString("Paralyzed: "+Core.rqsGradient()+";",
 				       (int) (centerX - radius*0.2), (int) (centerY -radius*0.775));
 		brush.setColor(Color.DARK_GRAY);
 		brush.fillRect((int) (centerX - radius*0.4), (int) (centerY -radius*0.77), (int)(2*radius*0.4), (int)(radius*0.01));
 		
 		brush.setColor(Color.CYAN);
-		brush.drawString("First: "+Core.isFirst()+"; Hidden: "+Core.isHidden()+"; Last: "+Core.isLast()+";", 
+		brush.drawString("First: "+Core.rqsGradient()+"; Hidden: "+Core.rqsGradient()+"; Last: "+Core.rqsGradient()+";",
 					   (int) (centerX - radius*0.5),  (int) (centerY -radius*0.65));
 		brush.setColor(Color.DARK_GRAY);
 		brush.fillRect((int) (centerX - radius*0.625), (int) (centerY -radius*0.645), (int)(2*radius*0.625), (int)(radius*0.01));
 		
 		String rootType = "";
-		if(Core.is(NVertex.Root)) 
+		if(Core.rqsGradient())
 		{
-			if(Core.is(NVertex.TrainableBasicRoot)) {rootType += "trainable ";}
-			if(Core.is(NVertex.BasicRoot))  	    {rootType += "basic ";}
-			if(Core.is(NVertex.RootMemory)) 		{rootType += "memory ";}
-			if(Core.is(NVertex.RootInput))  		{rootType += "input ";}
-			if(Core.is(NVertex.MotherRoot))  		{rootType += "super ";}
+			//if(Core.is(T.TrainableBasicRoot)) {rootType += "trainable ";}
+			//if(Core.is(T.BasicRoot))  	    {rootType += "basic ";}
+			//if(Core.is(T.RootMemory)) 		{rootType += "memory ";}
+			//if(Core.is(T.RootInput))  		{rootType += "input ";}
+			//if(Core.is(T.MotherRoot))  		{rootType += "super ";}
 			
 			if(rootType.isEmpty()==false) {rootType = " ( "+rootType+")";}
 		}
 		brush.setColor(Color.CYAN);
-		brush.drawString("Is root component: "+Core.is(NVertex.Root)+rootType+";", 
-				       (int) (centerX - radius*0.65), (int) (centerY -radius*0.520));
+		//brush.drawString("Is root component: "+Core.is(T.Root)+rootType+";",
+		//		       (int) (centerX - radius*0.65), (int) (centerY -radius*0.520));
 		brush.setColor(Color.DARK_GRAY);
 		brush.fillRect((int) (centerX - radius*0.675), (int) (centerY -radius*0.515), (int)(2*radius*0.675), (int)(radius*0.01));
 		
 		brush.setColor(Color.CYAN);
 		brush.drawString("Gradient behavior",                            (int) (centerX - radius*0.85), (int) (centerY -radius*0.1));
-		brush.drawString("AutoApply: "+Core.isInstantGradientApply()+";", (int) (centerX - radius*0.825), (int) (centerY -radius*0.0));
-		brush.drawString("Summing: "+Core.isGradientSumming()+";",        (int) (centerX - radius*0.825), (int) (centerY +radius*0.1));
+		//brush.drawString("AutoApply: "+Core.isInstantGradientApply()+";", (int) (centerX - radius*0.825), (int) (centerY -radius*0.0));
+		//brush.drawString("Summing: "+Core.isGradientSumming()+";",        (int) (centerX - radius*0.825), (int) (centerY +radius*0.1));
 		brush.setColor(Color.DARK_GRAY);
 		brush.fillRect((int) (centerX - radius*0.9), (int) (centerY +radius*0.15), (int)(2*radius*0.9), (int)(radius*0.01));
 		
 		brush.setColor(Color.CYAN);
 		brush.drawString("Trainable",								 (int) (centerX + radius*0.425), (int) (centerY -radius*0.1));
-		brush.drawString("Bias: "+Core.biasIsTrainable()+"; ",    (int) (centerX + radius*0.425), (int) (centerY -radius*0.0));
-		brush.drawString("Weight: "+Core.asCore().weightIsTrainable()+";",  (int) (centerX + radius*0.4), (int) (centerY +radius*0.1));
+		//brush.drawString("Bias: "+Core.biasIsTrainable()+"; ",    (int) (centerX + radius*0.425), (int) (centerY -radius*0.0));
+		//brush.drawString("Weight: "+Core.asCore().weightIsTrainable()+";",  (int) (centerX + radius*0.4), (int) (centerY +radius*0.1));
 		
 		brush.setColor(Color.CYAN);
 		brush.drawString("Neuron ID",	(int) (centerX - radius*0.14), (int) (centerY +radius*0.225));
 		ValueFont = new Font("Tahoma", Font.PLAIN, (int)(diameter*(0.065)));
 		brush.setFont(ValueFont);
 		brush.setColor(Color.DARK_GRAY);
-		brush.fillRect((int) (centerX - radius*0.1*Long.toString(Core.getID()).length()), (int) (centerY +radius*0.385), (int)(2*radius*0.1*Long.toString(Core.getID()).length()), (int)(radius*0.02));
+		//brush.fillRect((int) (centerX - radius*0.1*Long.toString(Core.getID()).length()), (int) (centerY +radius*0.385), (int)(2*radius*0.1*Long.toString(Core.getID()).length()), (int)(radius*0.02));
 
 		brush.setColor(Color.CYAN);
-		brush.drawString(Long.toString(Core.getID()),(int) (centerX - radius*0.0297*Long.toString(Core.getID()).length()), (int) (centerY +radius*0.385));
+		//brush.drawString(Long.toString(Core.getID()),(int) (centerX - radius*0.0297*Long.toString(Core.getID()).length()), (int) (centerY +radius*0.385));
 		//brush.drawString(Long.toString(Core.getID()),(int) (centerX - radius*0.02927*Long.toString(Core.getID()).length()), (int) (centerY +radius*0.385));
 		
 		ValueFont = new Font("Tahoma", Font.PLAIN, (int)(diameter*(0.033333)));
@@ -1451,17 +1445,17 @@ public class NPanelNode implements NPanelObject
 		double YMod = - radius*0.05;
 		
 		//NVCloak Public = (NVCloak) Core.find(NVCloak.class);
-		if(Core.getFunction()!=null) 
-		{
-			listedProperties += Core.getFunction().toString()+"";
-		}
-		NVMemory Memory = (NVMemory) Core.findModule(NVMemory.class);
-		if(Memory!=null) 
-		{
-			listedProperties += "Memory";
-			if(Memory.hasDataMemory()) {listedProperties += " (Data";}
-			if(Memory.hasActivityMemory()) {listedProperties += ", Activity";}else {listedProperties += ");";}
-		}
+		//if(Core.getFunction()!=null)
+		//{
+		//	listedProperties += Core.getFunction().toString()+"";
+		//}
+		//NVMemory Memory = (NVMemory) Core.findModule(NVMemory.class);
+		//if(Memory!=null)
+		//{
+		//	listedProperties += "Memory";
+		//	if(Memory.hasDataMemory()) {listedProperties += " (Data";}
+		//	if(Memory.hasActivityMemory()) {listedProperties += ", Activity";}else {listedProperties += ");";}
+		//}
 		brush.drawString(listedProperties, (int)(centerX - radius*0.013*listedProperties.length()), (int)(centerY +radius*0.6+YMod));
 		YMod+=radius*0.075;listedProperties="";
 			
@@ -1486,14 +1480,14 @@ public class NPanelNode implements NPanelObject
 		//III
 		brush.setColor(Color.CYAN);
 		
-		if (Core.isLast()) 
+		if (Core.rqsGradient())
 		{
 			brush.drawString("Optimum:", (int) (centerX - 50), (int) (centerY - 240));
-			brush.drawString(""+Formatter.format(Core.getOptimum(0)), (int) (centerX - 50), (int) (centerY - 210));
+			brush.drawString(""+Formatter.format(Core), (int) (centerX - 50), (int) (centerY - 210));
 		}
 
 		ArrayList<Painter> PainterArray = new ArrayList<Painter>();
-		if(Core.asCore().hasModule(NVControlFrame.class))
+		if(Core.has(NVControlFrame.class))
 		{
 			PainterArray.add
 			((Graphics2D painterBrush, double x, double y)->
@@ -1575,7 +1569,7 @@ public class NPanelNode implements NPanelObject
 		//brush.setClip(ellipse);
 		//brush.setClip(null);
 
-		if(Core.is(NVertex.BasicRoot)) 
+		if(Core.rqsGradient())
 		{
 		    brush.setColor(Color.CYAN);
 			brush.fillRoundRect( centerX - (int)(radius * 0.75), centerY - (int) (radius / 14), (int) (radius*1.5), (int) (radius/7), (int) (radius*0.4), (int) (radius*0.4));
@@ -1616,7 +1610,7 @@ public class NPanelNode implements NPanelObject
 				(buttonAnimationModifier * radius / 2 * Math.pow(modifier, 200 / modifier)),
 				(buttonAnimationModifier * radius / 4 * Math.pow(modifier, 300 / modifier)));
 		
-		if(Core.is(NVertex.BasicRoot)) 
+		if(Core.rqsGradient())
 		{
 			brush.setColor(Color.CYAN);
 			brush.fillRoundRect((int)(centerX-radius*0.3), 
@@ -1639,9 +1633,9 @@ public class NPanelNode implements NPanelObject
         //System.out.println(transparency);
 		if(transparency>35) {
 		brush.setColor(new Color(0,0,0,transparency));
-		brush.fillRect((int) (centerX - radius*0.1*Long.toString(Core.getID()).length()), (int) (centerY -radius*0.25), (int)(2*radius*0.1*Long.toString(Core.getID()).length()), (int)(radius*0.02));
+		//brush.fillRect((int) (centerX - radius*0.1*Long.toString(Core.size()).length()), (int) (centerY -radius*0.25), (int)(2*radius*0.1*Long.toString(Core.getID()).length()), (int)(radius*0.02));
 		//brush.setColor(Color.BLACK);
-		brush.drawString(Long.toString(Core.getID()),(int) (centerX - radius*0.038*Long.toString(Core.getID()).length()), (int) (centerY -radius*0.25));//+radius*0.385
+		brush.drawString(Long.toString(Core.size()),(int) (centerX - radius*0.038*Long.toString(Core.size()).length()), (int) (centerY -radius*0.25));//+radius*0.385
 		//brush.drawString(Long.toString(Core.getID()),(int) (centerX - radius*0.0297*Long.toString(Core.getID()).length()), (int) (centerY +radius*0.385));
 		ValueFont = new Font("Tahoma", Font.PLAIN, (int)(diameter*(0.063333)));
 		brush.setFont(ValueFont);
@@ -1653,14 +1647,14 @@ public class NPanelNode implements NPanelObject
 		double expMod = 1;
 		expMod = ((double)diameter/defaultDiameter)*panelScale/0.15;
 			//System.out.println( (diameter/defaultDiameter));
-		if(expMod>0.7 && Core.getFunction()!=null) 
+		if(expMod>0.7 && Core.find(Function.class)!=null)
 		{
 			if(expMod>1) {expMod=1;}
 			//System.out.println(panelScale);
 			//System.out.println(transparencyMod);
 			int expTrans = (int)(Math.pow(expMod, 10)*255);
 			//System.out.println(transparency);
-			String exp = Core.getFunction().toString();
+			String exp = Core.find(Function.class).toString();
 			
 			RoundRectangle2D.Double rec = 
 			new RoundRectangle2D.Double();
@@ -1724,7 +1718,7 @@ public class NPanelNode implements NPanelObject
 		brush.setColor(Color.cyan);
 		ValueFont = new Font("Tahoma", Font.PLAIN, (int)(diameter*(0.08)));
 		brush.setFont(ValueFont);
-		String acti = Formatter.format(Core.getActivation(0));
+		String acti = Formatter.format(Core.e_get(0));
 		brush.drawString(acti, 
 				(int) (centerX - radius*0.043*acti.length()*Amod), 
 				(int) (centerY + radius*0.055- radius*0.275*buttonAnimationModifier*Amod));
@@ -1732,10 +1726,10 @@ public class NPanelNode implements NPanelObject
 		ValueFont = new Font("Tahoma", Font.PLAIN, (int)(diameter*(0.033333)));
 		brush.setFont(ValueFont);
 		
-		if (Core.isLast()) 
+		if (Core.isOutsourced())
 		{
 			brush.drawString("Optimum:", (int) (centerX - 50), (int) (centerY - 240));
-			brush.drawString(""+Formatter.format(Core.getOptimum(0)), (int) (centerX - 25), (int) (centerY - 210));
+			brush.drawString(""+Formatter.format(Core.e_get(0)), (int) (centerX - 25), (int) (centerY - 210));
 		}
 		brush.setClip(null);
 	}
@@ -1849,17 +1843,17 @@ public class NPanelNode implements NPanelObject
 	public int getLayerID() 
 	{
 		int layerID = 3;
-		if(Core.is(NVertex.MotherRoot)) 
+		if(Core.rqsGradient())
 		{
 			return layerID;
 		}
 		layerID++;
-		if(Core.is(NVertex.BasicRoot)||Core.is(NVertex.RootInput)) 
+		if(Core.rqsGradient()) //Core.is(T.BasicRoot)||Core.is(T.RootInput)
 		{
 			return layerID;
 		}
 		layerID++;
-		if(Core.is(NVertex.RootMemory))
+		if(Core.rqsGradient())
 		{
 			return layerID;
 		}
@@ -1870,7 +1864,7 @@ public class NPanelNode implements NPanelObject
 	{
 		if(layerID==0) 
 		{
-			if(Core.is(NVertex.Root)==false) 
+			if(Core.rqsGradient()==false)
 			{
 				return true;
 			}
@@ -1878,7 +1872,7 @@ public class NPanelNode implements NPanelObject
 		}
 		if(layerID==1) 
 		{
-			if(Core.is(NVertex.MotherRoot)) 
+			if(Core.rqsGradient())
 			{
 				return true;
 			}
@@ -1886,7 +1880,7 @@ public class NPanelNode implements NPanelObject
 		}
 		if(layerID==2) 
 		{
-			if(Core.is(NVertex.Root)==true) 
+			if(Core.rqsGradient()==true)
 			{
 				return true;
 			}

@@ -1,5 +1,7 @@
 package neureka.ngui;
 
+import neureka.main.core.base.data.T;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -13,8 +15,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-
-import neureka.main.core.NVertex;
 
 public class NCircleMenu implements NPanelObject{
 
@@ -333,7 +333,8 @@ public class NCircleMenu implements NPanelObject{
 				checked = newChecked;
 				needsRepaint=true;
 			}
-			else if(PropertyContainer instanceof NVertex)
+
+			else if(PropertyContainer instanceof T)
 			{
 				
 			}
@@ -429,16 +430,24 @@ public class NCircleMenu implements NPanelObject{
 						if(Container instanceof NPanelNode) 
 						{//1. turn into default node; 2. turn into super root; 3. turn into basic root;
 						    NPanelNode node = (NPanelNode)Container;
-						    NVertex neuron = node.getCore();
+						    T neuron = node.getCore();
 						    //Setting node accordingly
-						    if(choice==1) {NVertex.State.turnIntoTrainableNeuron(neuron);System.out.println("Turning into default node");}
-						    if(choice==2) {NVertex.State.turnIntoParentRoot(neuron);System.out.println("Turning into super root node");}
+						    if(choice==1) {
+						    	//T.State.turnIntoTrainableNeuron(neuron);System.out.println("Turning into default node");
+						    }
+						    if(choice==2) {
+						    	//T.State.turnIntoParentRoot(neuron);System.out.println("Turning into super root node");
+						    }
 						    //if(choice==3) {NCore.State.turnIntoBasicRoot(neuron);System.out.println("Turning into basic root node");}
 						}
 						else if(Container instanceof NPanel) {
-							 NVertex neuron = this.Builder.getBlueprintNeuron();
-							 if(choice==1) {NVertex.State.turnIntoTrainableNeuron(neuron);System.out.println("Turning into default node");}
-							 if(choice==2) {NVertex.State.turnIntoParentRoot(neuron);System.out.println("Turning into super root node");}
+							 T neuron = this.Builder.getBlueprintNeuron();
+							 if(choice==1) {
+							 	//T.State.turnIntoTrainableNeuron(neuron);System.out.println("Turning into default node");
+							 }
+							 if(choice==2) {
+							 	//T.State.turnIntoParentRoot(neuron);System.out.println("Turning into super root node");
+							 }
 							 //if(choice==3) {NCore.State.turnIntoBasicRoot(neuron);System.out.println("Turning into basic root node");}
 						}
 					};
@@ -914,13 +923,13 @@ public class NCircleMenu implements NPanelObject{
 				
 		private void click_BackEndNodeWindow() {
 			
-			if(PropertyContainer instanceof NPanelNode) {
-				
-				((NPanelNode)PropertyContainer).
-					getCore().
-						addModule(
-								new NVControlFrame("Neuron "+((NPanelNode)PropertyContainer).getCore().getID(),((NPanelNode)PropertyContainer).getCore()));
-			}
+			//if(PropertyContainer instanceof NPanelNode) {
+			//
+			//	((NPanelNode)PropertyContainer).
+			//		getCore().
+			//			addModule(
+			//					new NVControlFrame("Neuron "+((NPanelNode)PropertyContainer).getCore().getID(),((NPanelNode)PropertyContainer).getCore()));
+			//}
 			
 		}
 	//===============================================================================

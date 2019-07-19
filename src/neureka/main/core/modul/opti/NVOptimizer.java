@@ -1,6 +1,6 @@
 package neureka.main.core.modul.opti;
 
-import neureka.main.core.NVNode;
+import neureka.main.core.base.data.T;
 
 public class NVOptimizer {
 
@@ -26,15 +26,15 @@ public class NVOptimizer {
 	private double[][]	  ShiftGradientLearningRate;
 			
 	
-	public NVOptimizer(int size, NVNode[][] connection, int optimizationID)
+	public NVOptimizer(int size, T[][] connection, int optimizationID)
 	{setUpNewOptimization(size, connection, optimizationID);}	
 	
 	public int getOptimizationID() {return OptimizationID;}
 	//==============================================================================================================
 	//==============================================================================================================
 	public void update(int Ii, int Ni, boolean remove) {}
-		
-	public void setUpNewOptimization(int size, NVNode[][] connections, int optimizationID)
+
+	public void setUpNewOptimization(int size, T[][] connections, int optimizationID)
 	{
 		OptimizationID=(byte)optimizationID; if(connections==null) {System.out.println("Connection empty!!!");return;}
 	
@@ -79,7 +79,7 @@ public class NVOptimizer {
 	//Histories:
 	//----------------------------------------	
 	private void nullGradientHistory() {WeightGradientHistory=null; ShiftGradientHistory=null;}	
-	private void instantiateGradientHistory(int size, NVNode[][] connections, int historyLength)
+	private void instantiateGradientHistory(int size, T[][] connections, int historyLength)
 	{
 		WeightGradientHistory = new double[size][historyLength][connections.length][]; ShiftGradientHistory = new double[size][historyLength][connections.length];
 		for(int Ui=0; Ui<size; Ui++)
@@ -96,7 +96,7 @@ public class NVOptimizer {
 	}		
 	//----------------------------------------
 	private void nullSignHistory() {WeightGradientSignHistory=null; ShiftGradientSignHistory=null;}
-	private void instantiateSignHistory(int size, NVNode[][] connections, int historyLength)
+	private void instantiateSignHistory(int size, T[][] connections, int historyLength)
 	{
 		WeightGradientSignHistory = new boolean[size][historyLength][connections.length][]; 
 		ShiftGradientSignHistory  = new boolean[size][historyLength][connections.length];
@@ -114,7 +114,7 @@ public class NVOptimizer {
 	}
 	//----------------------------------------
 	private void nullGradientOptimizationHistory() {WeightGradientOptimizationHistory=null; ShiftGradientOptimizationHistory=null; }	
-	private void instantiateGradientOptimizationHistory(int size, NVNode[][] connections, int historyLength)
+	private void instantiateGradientOptimizationHistory(int size, T[][] connections, int historyLength)
 	{
 		WeightGradientOptimizationHistory = new double[size][historyLength][connections.length][]; 
 		ShiftGradientOptimizationHistory  = new double[size][historyLength][connections.length];
@@ -133,7 +133,7 @@ public class NVOptimizer {
 	//Velocities:
 	//----------------------------------------	
 	private void nullGradientDeltaVelocity() {WeightGradientDeltaVelocity=null; ShiftGradientDeltaVelocity=null;}	
-	private void instantiateGradientDeltaVelocity(int size, NVNode[][] connections)
+	private void instantiateGradientDeltaVelocity(int size, T[][] connections)
 	{
 		WeightGradientDeltaVelocity = new double[size][connections.length][]; 
 		ShiftGradientDeltaVelocity = new double[size][connections.length];
@@ -147,7 +147,7 @@ public class NVOptimizer {
 	 }
 	//----------------------------------------
 	private void nullGradientVelocity() {WeightGradientVelocity=null; ShiftGradientVelocity=null;}	
-	private void instantiateGradientVelocity(int size, NVNode[][] connections)
+	private void instantiateGradientVelocity(int size, T[][] connections)
 	{
 		WeightGradientVelocity = new double[size][connections.length][]; ShiftGradientVelocity = new double[size][connections.length];
 		for(int Ui=0; Ui<size; Ui++)
@@ -161,7 +161,7 @@ public class NVOptimizer {
 	//Learning Rate:
 	//----------------------------------------	
 	private void nullGradientLearningRate() {WeightGradientLearningRate=null; ShiftGradientLearningRate=null;}	
-	private void instantiateGradientLearningRate(int size, NVNode[][] connections)
+	private void instantiateGradientLearningRate(int size, T[][] connections)
 	{
 		WeightGradientLearningRate = new double[size][connections.length][]; ShiftGradientLearningRate = new double[size][connections.length];
 		for(int Ui=0; Ui<size; Ui++)

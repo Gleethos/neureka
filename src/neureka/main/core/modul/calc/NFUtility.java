@@ -9,9 +9,9 @@ public class NFUtility {
     //    if (operation.length() > 8) {
     //        return false;
     //    }
-    //    for (int i = 0; i < FunctionConstructor.OperationRegister.length; ++i) {
-    //        System.out.print(FunctionConstructor.OperationRegister[i] + " =?= " + operation + " -:|:- ");
-    //        if (FunctionConstructor.OperationRegister[i].equals(operation)) {
+    //    for (int i = 0; i < FunctionFactory.OperationRegister.length; ++i) {
+    //        System.out.print(FunctionFactory.OperationRegister[i] + " =?= " + operation + " -:|:- ");
+    //        if (FunctionFactory.OperationRegister[i].equals(operation)) {
     //            System.out.println("");
     //            return true;
     //        }
@@ -62,8 +62,8 @@ public class NFUtility {
 //
     //public static int numberOfOperationsWithin(final List<String> operations) {
     //    int Count = 0;
-    //    for (int i = 0; i < FunctionConstructor.OperationRegister.length; ++i) {
-    //        if (NFUtility.containsOperation(FunctionConstructor.OperationRegister[i], operations)) {
+    //    for (int i = 0; i < FunctionFactory.OperationRegister.length; ++i) {
+    //        if (NFUtility.containsOperation(FunctionFactory.OperationRegister[i], operations)) {
     //            ++Count;
     //        }
     //    }
@@ -91,20 +91,20 @@ public class NFUtility {
     //    if (equation.equals("()")) {
     //        return "";
     //    }
-    //    equation = equation.replace("lig", FunctionConstructor.OperationRegister[4]);
-    //    equation = equation.replace("ligmoid", FunctionConstructor.OperationRegister[4]);
-    //    equation = equation.replace("softplus", FunctionConstructor.OperationRegister[4]);
-    //    equation = equation.replace("spls", FunctionConstructor.OperationRegister[4]);
-    //    equation = equation.replace("ligm", FunctionConstructor.OperationRegister[4]);
-    //    equation = equation.replace("linear", FunctionConstructor.OperationRegister[5]);
-    //    equation = equation.replace("sigmoid", FunctionConstructor.OperationRegister[1]);
-    //    equation = equation.replace("quadratic", FunctionConstructor.OperationRegister[3]);
-    //    equation = equation.replace("quadr", FunctionConstructor.OperationRegister[3]);
-    //    equation = equation.replace("gaussian", FunctionConstructor.OperationRegister[6]);
-    //    equation = equation.replace("gauss", FunctionConstructor.OperationRegister[6]);
-    //    equation = equation.replace("summation", FunctionConstructor.OperationRegister[7]);
-    //    equation = equation.replace("product", FunctionConstructor.OperationRegister[8]);
-    //    equation = equation.replace("absolute", FunctionConstructor.OperationRegister[9]);
+    //    equation = equation.replace("lig", FunctionFactory.OperationRegister[4]);
+    //    equation = equation.replace("ligmoid", FunctionFactory.OperationRegister[4]);
+    //    equation = equation.replace("softplus", FunctionFactory.OperationRegister[4]);
+    //    equation = equation.replace("spls", FunctionFactory.OperationRegister[4]);
+    //    equation = equation.replace("ligm", FunctionFactory.OperationRegister[4]);
+    //    equation = equation.replace("linear", FunctionFactory.OperationRegister[5]);
+    //    equation = equation.replace("sigmoid", FunctionFactory.OperationRegister[1]);
+    //    equation = equation.replace("quadratic", FunctionFactory.OperationRegister[3]);
+    //    equation = equation.replace("quadr", FunctionFactory.OperationRegister[3]);
+    //    equation = equation.replace("gaussian", FunctionFactory.OperationRegister[6]);
+    //    equation = equation.replace("gauss", FunctionFactory.OperationRegister[6]);
+    //    equation = equation.replace("summation", FunctionFactory.OperationRegister[7]);
+    //    equation = equation.replace("product", FunctionFactory.OperationRegister[8]);
+    //    equation = equation.replace("absolute", FunctionFactory.OperationRegister[9]);
     //    /*
     //     * OCode = new String[]
     //     * {"relu", "sig", "tanh", "quad", "lig", "lin", "gaus",

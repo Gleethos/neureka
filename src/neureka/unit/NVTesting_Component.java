@@ -113,24 +113,7 @@ public class NVTesting_Component extends NVTesting{
 
 		return 0;
 	}
-	
-	public int testMemoryComponent() {
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		return 0;
-	}
+
 	
 	
 	
