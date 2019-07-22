@@ -1,28 +1,22 @@
 package neureka.ngui;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.MultipleGradientPaint.CycleMethod;
 import java.awt.Paint;
-import java.awt.Polygon;
 import java.awt.RadialGradientPaint;
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Random;
 
-import neureka.main.core.base.data.T;
-import neureka.main.core.modul.calc.Function;
-import neureka.main.core.modul.opti.NVOptimizer;
-
+import neureka.core.T;
+import neureka.core.modul.calc.fcomp.Function;
 
 
 public class NPanelNode implements NPanelObject
@@ -384,7 +378,7 @@ public class NPanelNode implements NPanelObject
 				position[2]=old[0];
 				position[3]=old[1];
 			}
-			//NVNode[] RimNodes = NVUtility.identityCorrected.order(Core.find(
+			//NVNode[] RimNodes = Utility.identityCorrected.order(Core.find(
 			//		(NVNode node)->{if(node.asCore().is(T.Root)||node.asCore()==this.Core) {return true;}return false;}));
 			
 		//if(RimNodes != null)

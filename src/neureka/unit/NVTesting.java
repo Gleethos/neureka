@@ -55,6 +55,22 @@ public class NVTesting {
         }
     }
 
+    protected boolean assertContains(String name, String result, String expected){
+        tests++;
+        if(result.contains(expected)) {
+            println(bar+"  ["+name+"]:("+result+") "+((result.length()>22)?"\n"+bar+"    contains   -> test successful!"+"\n"+bar+" ":"contains")+" [expected]:("+expected+")"+((result.length()>22)?"":" -> test successful!"));
+            success = (success<0)?success:success+1;
+            println(bar+line);
+            return true;
+        } else {
+            println(bar+"  ["+name+"]:("+result+") "
+                    +((result.length()>22)?"\n"+bar+"    not contains   -> test failed!"+"\n"+bar+" ":"not contains")+" [expected]:("+expected+")"+((result.length()>22)?"":" -> test failed!"));
+            success = (success<0)?success-1:-1;
+            println(bar+line);
+            return false;
+        }
+    }
+
     protected boolean assertEqual(String name, String result, String expected){
         tests++;
         if(result.equals(expected)) {

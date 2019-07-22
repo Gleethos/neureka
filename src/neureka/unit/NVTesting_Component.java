@@ -1,6 +1,6 @@
 package neureka.unit;
 
-import neureka.main.core.base.data.T;
+import neureka.core.T;
 import neureka.utility.NMessageFrame;
 
 public class NVTesting_Component extends NVTesting{

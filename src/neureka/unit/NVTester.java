@@ -1,9 +1,9 @@
 package neureka.unit;
 
 
-import neureka.main.core.base.data.RelativeGradients;
-import neureka.main.core.base.data.T;
-import neureka.main.core.modul.calc.TDevice;
+import neureka.core.modul.calc.Device;
+import neureka.core.modul.calc.gcomp.RelativeGradients;
+import neureka.core.T;
 import neureka.unit.state.NVTesting_Tensor;
 import neureka.unit.state.NVTesting_TensorDevice;
 import neureka.utility.NMessageFrame;
@@ -41,58 +41,72 @@ public class NVTester {
 		T tensor2 = new T(new int[]{2, 1}, -1);
 		tensor1.setRqsGradient(true);
 		tensor2.setRqsGradient(true);
-		RelativeGradients derivatives = new RelativeGradients();
-		derivatives.put(tensor1, T.factory.newTensor(new double[]{-0.01,-0.01,-0.01,-0.01,-0.01,-0.01}, new int[]{2, 3}));
-		derivatives.put(tensor2, T.factory.newTensor(new double[]{0.02,0.02,0.02,0.02,0.02,0.02}, new int[]{2, 3}));
-		T expectedTensor = T.factory.newTensor(new double[]{-0.02,-0.02,-0.02,-0.02,-0.02,-0.02}, new int[]{2, 3});
-		expectedTensor.addModule(derivatives);
 		tester.testTensorAutoGrad(
 				new T[]{tensor1, tensor2},
-				"relu(tensmul(Ij))",
-				"[2x3]:(-0.02, -0.02, -0.02, -0.02, -0.02, -0.02); =>d|[ [2x3]:(0.01, 0.01, 0.01, 0.01, 0.01, 0.01) ]|:t{ [2x3]:(-2.0, -2.0, -2.0, -2.0, -2.0, -2.0); =>d|[ [2x1]:(-1.0, -1.0) ]|:t{ [1x3]:(2.0, 2.0, 2.0) }, =>d|[ [1x3]:(2.0, 2.0, 2.0) ]|:t{ [2x1]:(-1.0, -1.0) },  }, "
-		);
+				"relu(I[0]xI[1])",
+				new String[]{
+						"[2x3]:(-0.02, -0.02, -0.02, -0.02, -0.02, -0.02); =>d|[ [2x3]:(0.01, 0.01, 0.01, 0.01, 0.01, 0.01) ]|:t{ [2x3]:(-2.0, -2.0, -2.0, -2.0, -2.0, -2.0);",
+						" =>d|[ [2x1]:(-1.0, -1.0) ]|:t{ [1x3]:(2.0, 2.0, 2.0) },",
+						" =>d|[ [1x3]:(2.0, 2.0, 2.0) ]|:t{ [2x1]:(-1.0, -1.0) },",
+						"  }, "
+				});
 		//---
 		tensor1 = new T(new int[]{1, 3}, 2);
 		tensor2 = new T(new int[]{2, 1}, -1);
 		tensor1.setRqsGradient(true);
 		tensor2.setRqsGradient(true);
-		derivatives = new RelativeGradients();//200.0, 200.0, 200.0, 200.0, 200.0, 200.0); ->d[2x3]:(-200.0, -200.0, -200.0, -200.0, -200.0, -200.0), ->d[2x3]:(100.0, 100.0, 100.0, 100.0, 100.0, 100.0),
-		derivatives.put(tensor1, T.factory.newTensor(new double[]{100.0, 100.0, 100.0, 100.0, 100.0, 100.0}, new int[]{2, 3}));
-		derivatives.put(tensor2, T.factory.newTensor(new double[]{-200.0, -200.0, -200.0, -200.0, -200.0, -200.0}, new int[]{2, 3}));
-		expectedTensor = T.factory.newTensor(new double[]{200, 200, 200, 200, 200, 200}, new int[]{2, 3});
-		expectedTensor.addModule(derivatives);
 		tester.testTensorAutoGrad(
 				new T[]{tensor1, tensor2},
 				"lig((I[0]xI[1])*-100)",
-				"[2x3]:(200.0, 200.0, 200.0, 200.0, 200.0, 200.0); =>d|[ [2x3]:(-100.0, -100.0, -100.0, -100.0, -100.0, -100.0) ]|:t{ [2x3]:(-2.0, -2.0, -2.0, -2.0, -2.0, -2.0); =>d|[ [1x3]:(2.0, 2.0, 2.0) ]|:t{ [2x1]:(-1.0, -1.0) }, =>d|[ [2x1]:(-1.0, -1.0) ]|:t{ [1x3]:(2.0, 2.0, 2.0) },  }, "
+				new String[]{
+				"[2x3]:(200.0, 200.0, 200.0, 200.0, 200.0, 200.0); =>d|[ [2x3]:(-100.0, -100.0, -100.0, -100.0, -100.0, -100.0) ]|:t{ [2x3]:(-2.0, -2.0, -2.0, -2.0, -2.0, -2.0);",
+				" =>d|[ [1x3]:(2.0, 2.0, 2.0) ]|:t{ [2x1]:(-1.0, -1.0) },",
+				" =>d|[ [2x1]:(-1.0, -1.0) ]|:t{ [1x3]:(2.0, 2.0, 2.0) },",
+				"  }, "}
+		);
+		//---
+		tensor1 = new T(new int[]{2}, 2);
+		tensor2 = new T(new int[]{2}, 4);
+		tensor1.setRqsGradient(true);
+		tensor2.setRqsGradient(true);
+		tester.testTensorAutoGrad(
+				new T[]{tensor1, tensor2},
+				"lig(tanh(I[0]*I[1]*2)*I[1])",
+				new String[]{
+						"[2]:(4.010500886001868, 4.010500886001868); " +
+								"=>d|[ [2]:(3.9275027410108176, 3.9275027410108176) ]|" +
+									":t{ [2]:(0.9980525784828885, 0.9980525784828885); " +
+										"=>d|[ [2]:(0.0077821011673153695, 0.0077821011673153695) ]|" +
+											":t{ [2]:(4.0, 4.0) }, " +
+										"=>d|[ [2]:(0.015564202334630739, 0.015564202334630739) ]|" +
+											":t{ [2]:(2.0, 2.0) },  " +
+									"}, " +
+								"=>d|[ [2]:(0.9799635594161147, 0.9799635594161147) ]|" +
+									":t{ [2]:(4.0, 4.0) }, "
+				}
 		);
 		//---
 		tensor1 = new T(new int[]{3, 2, 1}, 4);
 		tensor2 = new T(new int[]{1, 1, 4}, -1);
 		T tensor3 = new T(new int[]{3, 2, 1}, 2);
 		tensor2.setRqsGradient(true);
-		derivatives = new RelativeGradients();
-		derivatives.put(tensor1, T.factory.newTensor(new double[]{48,48,48,48}, new int[]{1, 1, 4}));
-		expectedTensor = T.factory.newTensor(new double[]{-48,-48,-48,-48}, new int[]{1, 1, 4});
-		expectedTensor.addModule(derivatives);
 		tester.testTensorAutoGrad(
 				new T[]{tensor1, tensor2, tensor3},
-				"tensmul",
-				"[1x1x4]:(-48.0, -48.0, -48.0, -48.0); =>d|[ [3x2x1]:(2.0, 2.0, 2.0, 2.0, 2.0, 2.0) ]|:t{ [3x2x4]:(-4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0); =>d|[ [3x2x1]:(4.0, 4.0, 4.0, 4.0, 4.0, 4.0) ]|:t{ [1x1x4]:(-1.0, -1.0, -1.0, -1.0) },  }, "
-		);
+				"I[0]xI[1]xI[2]",
+				new String[]{
+					"[1x1x4]:(-48.0, -48.0, -48.0, -48.0); =>d|[ [3x2x1]:(2.0, 2.0, 2.0, 2.0, 2.0, 2.0) ]|:t{ [3x2x4]:(-4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0); =>d|[ [3x2x1]:(4.0, 4.0, 4.0, 4.0, 4.0, 4.0) ]|:t{ [1x1x4]:(-1.0, -1.0, -1.0, -1.0) },  }, "
+				});
 		//--
 		tensor1 = new T(new int[]{5, 1, 1}, 4);//-2*4 = 8 | *3 = -24
 		tensor2 = new T(new int[]{1, 4, 1}, -2);
 		tensor3 = new T(new int[]{1, 1, 2}, 3);
 		tensor1.setRqsGradient(true);
-		derivatives = new RelativeGradients();
-		derivatives.put(tensor1, new T(new int[]{5, 4, 2}, -6));
-		expectedTensor = new T(new int[]{5, 4, 2}, -24);
-		expectedTensor.addModule(derivatives);
 		tester.testTensorAutoGrad(
 				new T[]{tensor1, tensor2, tensor3},
-				"tensmul",
-				"[5x4x2]:(-24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0); =>d|[ [1x1x2]:(3.0, 3.0) ]|:t{ [5x4x1]:(-8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0); =>d|[ [1x4x1]:(-2.0, -2.0, -2.0, -2.0) ]|:t{ [5x1x1]:(4.0, 4.0, 4.0, 4.0, 4.0) },  }, "
+				"I[0]xI[1]xI[2]",
+				new String[]{
+						"[5x4x2]:(-24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0); =>d|[ [1x1x2]:(3.0, 3.0) ]|:t{ [5x4x1]:(-8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0); =>d|[ [1x4x1]:(-2.0, -2.0, -2.0, -2.0) ]|:t{ [5x1x1]:(4.0, 4.0, 4.0, 4.0, 4.0) },  }, "
+				}
 		);
 		//---
 		int[] shape = {4, 2, 9, 5, 6, 2};
@@ -207,7 +221,7 @@ public class NVTester {
 	public void testTensorDevice(){
 
 		NVTesting_TensorDevice tester = new NVTesting_TensorDevice(Console, ResultConsole);
-		TDevice gpu = new TDevice("nvidia");
+		Device gpu = new Device("nvidia");
 		T tensor = T.factory.newTensor(new double[]{1, 3, 4, 2, -3, 2, -1, 6}, new int[]{2, 4});
 		T firstTensor = tensor;
 		tester.testAddTensor(gpu,tensor,

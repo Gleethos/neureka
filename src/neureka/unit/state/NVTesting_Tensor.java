@@ -1,7 +1,6 @@
 package neureka.unit.state;
 
-import neureka.main.core.base.data.T;
-import neureka.main.core.modul.calc.TKernel;
+import neureka.core.T;
 import neureka.unit.NVTesting;
 import neureka.utility.NMessageFrame;
 
@@ -12,13 +11,16 @@ public class NVTesting_Tensor extends NVTesting {
         super(console, resultConsole);
     }
 
-    public int testTensorAutoGrad(T[] source, String operation, String expected){
+    public int testTensorAutoGrad(T[] source, String operation, String[] expected){
         printSessionStart("Testing T: autograd!");
         println(bar+"  Function: "+operation);
         println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         T product = new T().of(source, operation);
         product.backward(new T(product.shape(), 1));
-        this.assertEqual(product.toString("r"), expected);
+        String result = product.toString("r");
+        for(String element : expected){
+            this.assertContains("result", result, element);
+        }
         return (printSessionEnd()>0)?1:0;
     }
 
@@ -29,18 +31,18 @@ public class NVTesting_Tensor extends NVTesting {
         assertEqual(stringified(result), stringified(expected));
 
         //int[] expectedAnchor = {1, 4, 4*2, 4*2*9, 4*2*9*5, 4*2*9*5*6, 4*2*9*5*6*2};
-        //result =  T.utility.idxTrltn(dim);
+        //result =  T.utility.idxTln(dim);
         return (printSessionEnd()>0)?1:0;
     }
 
     public int testTensorUtility_translation(int[] dim, int[] expected){
-        int [] result =  T.utility.idxTrltn(dim);
+        int [] result =  T.utility.idxTln(dim);
         printSessionStart("Testing T.utility: dimension translation!");
         assertEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }
     public int testTensorBase_idxFromAnchor(int[] dim, int idx, int[] expected){
-        int [] result =  T.utility.IdxToShpIdx(idx, T.utility.idxTrltn(dim));
+        int [] result =  T.utility.IdxToShpIdx(idx, T.utility.idxTln(dim));
         printSessionStart("Testing T.utility: shape to translation to index!");
         assertEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;

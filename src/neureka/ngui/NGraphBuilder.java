@@ -4,15 +4,13 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
-import neureka.main.core.base.data.T;
-import neureka.main.exec.cpu.NThreadPool;
+import neureka.core.T;
 
 public class NGraphBuilder {
 
 	private Thread Worker;
-	private NThreadPool ThreadCoordinator;
+	private T ThreadCoordinator;
 	NPanel Surface;
 	
 	private int pressRadius = 100;
@@ -33,7 +31,10 @@ public class NGraphBuilder {
 	//----------------------------------------------------------------
 	public void addMenu(NCircleMenu menu) 
  	{
-	 	if(Surface.getMap()==null) {Surface.setMap(new NMap(menu.getX(), menu.getY(), menu.getRadius()*10));}
+	 	if(Surface.getMap()==null)
+	 	{
+	 		Surface.setMap(new NMap(menu.getX(), menu.getY(), menu.getRadius()*10));
+	 	}
 	 	Surface.setMap(Surface.getMap().addAndUpdate(menu));
  	}
 	public T getBlueprintNeuron() 
@@ -398,7 +399,7 @@ public class NGraphBuilder {
 	 {
 	 	if(Worker!=null) {if(Worker.isAlive()) {return currentStep;}}
 		 setUpNewWorkThreader(5);
-		  Worker = new Thread(ThreadCoordinator);
+		  //Worker = new Thread(ThreadCoordinator);
 		  if(ThreadCoordinator==null) {return currentStep;}
 		 if(Worker.isAlive()==false) {Worker.start();currentStep++;}  
 		 return currentStep;

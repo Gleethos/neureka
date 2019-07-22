@@ -1,8 +1,8 @@
 package neureka.unit.state;
 
-import neureka.main.core.base.data.T;
-import neureka.main.core.modul.calc.TDevice;
-import neureka.main.core.modul.calc.TKernel;
+import neureka.core.T;
+import neureka.core.modul.calc.Device;
+import neureka.core.modul.calc.dcomp.TKernel;
 import neureka.unit.NVTesting;
 import neureka.utility.NMessageFrame;
 
@@ -13,7 +13,7 @@ public class NVTesting_TensorDevice extends NVTesting {
         super(console, resultConsole);
     }
 
-    public int testAddTensor(TDevice device, T tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
+    public int testAddTensor(Device device, T tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
 
         double[] value = tensor.value();
         int[] shape = tensor.shape();
@@ -38,7 +38,7 @@ public class NVTesting_TensorDevice extends NVTesting {
         return this.printSessionEnd();
     }
 
-    public int testGetTensor(TDevice device, T tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
+    public int testGetTensor(Device device, T tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
 
         double[] value = tensor.value();
         int[] shape = tensor.shape();
@@ -64,7 +64,7 @@ public class NVTesting_TensorDevice extends NVTesting {
         return this.printSessionEnd();
     }
 
-    public int testCalculation(TDevice device, T drn, T src1, T src2, int f_id, double[] values){
+    public int testCalculation(Device device, T drn, T src1, T src2, int f_id, double[] values){
 
         String message = "";
         message = (f_id==18)?"Tensor product":message;

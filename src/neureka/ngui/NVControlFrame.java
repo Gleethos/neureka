@@ -1,7 +1,7 @@
 
 package neureka.ngui;
 
-import neureka.main.core.base.data.T;
+import neureka.core.T;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -19,7 +19,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.math.BigInteger;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;

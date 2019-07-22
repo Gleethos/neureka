@@ -1,4 +1,4 @@
-import neureka.main.core.NVUtility;
+import neureka.core.Utility;
 import neureka.unit.NVTester;
 import neureka.ngui.NWindow;
 import neureka.utility.NConsole;
@@ -93,7 +93,7 @@ public class NSMain {
 	    a^=b;b^=a;a^=b;
 	    System.out.println(a+"  -  "+b);
 	    
-	    NVUtility util = new NVUtility();
+	    Utility util = new Utility();
 	    
 	    System.out.println(Math.pow(Math.E, Math.PI)*Math.pow(Math.PI, Math.E)*Math.PI*Math.E);
 

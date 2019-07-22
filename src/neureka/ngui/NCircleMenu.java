@@ -1,6 +1,6 @@
 package neureka.ngui;
 
-import neureka.main.core.base.data.T;
+import neureka.core.T;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
