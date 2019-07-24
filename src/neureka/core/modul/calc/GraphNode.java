@@ -35,31 +35,31 @@ public class GraphNode {
             translated[i] = T.factory.reshapedCopyOf(src[i], translation[i]);//src[i].reshaped(translation[i]);
         }
     }
-    public GraphNode(T drain, T[] src, String operation, boolean forward, boolean tipReached){//, boolean derive
-        construct(operation, src, tipReached);
+    public GraphNode(T drain, T[] src, String operation, boolean forward, boolean derive){//, boolean derive
+        construct(operation, src);
         if(this.Fcn.isFlat()){
             configure(drain, src, true);
         }
         if(forward){
             forward(drain);
         }
-        if(this.Fcn.isFlat()&&tipReached){//derive &&
+        if(this.Fcn.isFlat()&&derive){//derive &&
             performDifferentiation(drain);
         }
     }
-    public GraphNode(T drain, T[] src, int f_id, boolean forward, boolean tipReached){//, boolean derive
-        construct(f_id, src, tipReached);
+    public GraphNode(T drain, T[] src, int f_id, boolean forward, boolean derive){//, boolean derive
+        construct(f_id, src);
         configure(drain, src, forward);
         if(forward){
             forward(drain);
         }
-        if(this.Fcn.isFlat()&&tipReached){
+        if(this.Fcn.isFlat()&&derive){
             performDifferentiation(drain);
         }
     }
 
     public GraphNode(T drain, T[] src, String operation, boolean forward){//, boolean derive
-        construct(operation, src, false);
+        construct(operation, src);
         configure(drain, src, true);
         if(forward){
             forward(drain);
@@ -68,13 +68,13 @@ public class GraphNode {
             performDifferentiation(drain);
         }
     }
-    private void construct(int f_id, T[] source, boolean tipReached){
+    private void construct(int f_id, T[] source){
         this.Src = source;
-        this.Fcn = new FunctionFactory().newBuild(f_id, source.length, tipReached);
+        this.Fcn = new FunctionFactory().newBuild(f_id, source.length);//, tipReached);
     }
-    private void construct(String operation, T[] source, boolean tipReached) {
+    private void construct(String operation, T[] source) {
         this.Src = source;
-        Fcn = new FunctionFactory().newBuild(operation, tipReached);
+        Fcn = new FunctionFactory().newBuild(operation);
         validate(operation);
     }
 

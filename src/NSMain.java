@@ -1,4 +1,5 @@
 import neureka.core.Utility;
+import neureka.core.modul.calc.fcomp.util.Calculation;
 import neureka.unit.NVTester;
 import neureka.ngui.NWindow;
 import neureka.utility.NConsole;
@@ -120,6 +121,21 @@ public class NSMain {
 		
         NVTester tester2 = new NVTester();
         tester2.Test();
+
+
+
+		for(int i=-20; i<20; i++){
+			double in = ((double)i)/4;
+			System.out.println(in+" -> "+
+					Calculation.getTanhOf(
+							in/
+									(1+(2/Math.pow(in, 2)))
+							,
+							false
+					)
+			);
+		}
+
 
 
 		//NSubstrate.execute("NSubstrate.printRealms('test')");

@@ -93,9 +93,9 @@ public class Calculation {
                         }
                     }
                     if(j<0){
-                        output.internalize(new FunctionFactory().newBuild(operation, false).activate(tsrs));
+                        output.internalize(new FunctionFactory().newBuild(operation).activate(tsrs));
                     }else{
-                        output.internalize(new FunctionFactory().newBuild(operation, false).activate(tsrs, j));
+                        output.internalize(new FunctionFactory().newBuild(operation).activate(tsrs, j));
                     }
                     //output.addModule(new GraphNode(output, tsrs, operation, true, false));
                     return output;
@@ -154,8 +154,11 @@ public class Calculation {
                 //output.internalize(new FunctionFactory().newBuild(f_id, tsrs.length, false).activate(tsrs));
             }else{
                 //output.internalize(new FunctionFactory().newBuild(f_id, tsrs.length, false).activate(tsrs, j));
-            }
-            output.addModule(new GraphNode(output, tsrs, f_id, false, (isFlat)?(!tipReached)?true:false:false));
+            }//TODO: resolve: boolean isFlat is set true always here! tip reached is the only metric!
+            output.addModule(new GraphNode(output, tsrs, f_id, false, true));//(isFlat)?(!tipReached)?true:false:false));
+            /**
+             *   Its always flat! And tip is not reached!
+             * */
         }
         return output;
     }

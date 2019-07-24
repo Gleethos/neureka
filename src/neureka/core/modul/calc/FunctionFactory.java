@@ -1,21 +1,17 @@
 package neureka.core.modul.calc;
 
-import neureka.core.T;
 import neureka.core.modul.calc.fcomp.Function;
 import neureka.core.modul.calc.fcomp.Constant;
 import neureka.core.modul.calc.fcomp.Input;
-import neureka.core.modul.calc.fcomp.Variable;
 import neureka.core.modul.calc.fcomp.util.Construction;
 import neureka.core.modul.calc.fcomp.util.Context;
 
 import java.util.*;
-import java.util.function.Supplier;
 
 public class FunctionFactory {
 
     Function function = null;
     private ArrayList<Function> sources;
-
     /*
 	     0:  ReLu;
 		 1:  Sigmoid;
@@ -38,32 +34,28 @@ public class FunctionFactory {
 		 18: x; (conv)
 	 */
     public FunctionFactory() {
-        this.sources = new ArrayList<Function>();
+        this.sources = new ArrayList<>();
     }
     //=================================================================================================
 
-    public Function newBuild(int f_id, int size, boolean tipReached) {
-        if (f_id == 18 && tipReached) {//<= occurs when
+    public Function newBuild(int f_id, int size){//}, boolean tipReached) {//TODO: remove tip reached!
+        if (f_id == 18){// && tipReached) {//<= occurs when
             size = 2;
         }
         if (f_id < 10) {
-            return newBuild(Context.register[f_id] + "(I[0])", tipReached);
+            return newBuild(Context.register[f_id] + "(I[0])");//, tipReached);
         } else if (f_id < 12) {
-            return newBuild(Context.register[f_id] + "I[j]", tipReached);
+            return newBuild(Context.register[f_id] + "I[j]");//, tipReached);
         } else {
             String expression = "I[0]";
             for (int i = 0; i < size - 1; i++) {
                 expression += Context.register[f_id] + "I[" + (i + 1) + "]";
             }
-            return newBuild(expression, tipReached);
+            return newBuild(expression);//, tipReached);
         }
     }
 
     public Function newBuild(String expression) {
-        return newBuild(expression, false);
-    }
-
-    public Function newBuild(String expression, boolean tipReached) {
         HashMap<String, Function> map = Context.shared;
         expression = (expression.charAt(0) != '(')
                 ? ("(" + expression)
@@ -71,17 +63,18 @@ public class FunctionFactory {
                 ? expression + ")"
                 : expression;
 
-        if (Context.shared.containsKey(((tipReached) ? "d" : "") + expression)) {
-            return Context.shared.get(((tipReached) ? "d" : "") + expression);
+        if (Context.shared.containsKey(expression)) {
+            return Context.shared.get(expression);
         }
-        Function built = construct(expression, tipReached);
+        Function built = construct(expression);//, tipReached);
         if (built != null) {
-            Context.shared.put(((tipReached) ? "d" : "") + "(" + built.toString() + ")", built);
+            Context.shared.put("(" + built.toString() + ")", built);
         }
         return built;
     }
 
-    private Function construct(String expression, boolean tipReached) {
+    private Function construct(String expression){//}, boolean tipReached) {
+        boolean tipReached = false;
         if (expression == null) {
             expression = "";
         }
@@ -271,9 +264,7 @@ public class FunctionFactory {
                 return newFunction;
             }
             System.out.println("Component is not of type Leave! -> component = utility.cleanedHeadAndTail(component); ");
-            //If the component did not trigger variable creation: =>Cleaning!
-            component = utility.cleanedHeadAndTail(component);
-
+            component = utility.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =>Cleaning!
             Function newBuild;
             System.out.println("new build: Function newBuild = (Function)new FunctionFactory();");
             System.out.println("newBuild = newBuild.newBuild(component);");
@@ -349,14 +340,13 @@ public class FunctionFactory {
             return Count;
         }
 
-        public static String parsedOperation(final String equation, final int i) {
-            String operation = "";
-            if (equation.length() <= i) {
+        public static String parsedOperation(final String exp, final int i) {
+            if (exp.length() <= i) {
                 return null;
             }
-            operation = "";
-            for (int Si = i; Si < equation.length(); ++Si) {
-                operation = (operation) + equation.charAt(Si);
+            String operation = "";
+            for (int Si = i; Si < exp.length(); ++Si) {
+                operation = (operation) + exp.charAt(Si);
                 if (utility.isBasicOperation(operation)) {
                     return operation;
                 }
@@ -364,33 +354,33 @@ public class FunctionFactory {
             return null;
         }
 
-        public static String parsedComponent(final String equation, final int i) {
-            if (equation.length() <= i) {
+        public static String parsedComponent(final String exp, final int i) {
+            if (exp.length() <= i) {
                 return null;
             }
             String component = "";
             int bracketDepth = 0;
             component = "";
-            System.out.print("Start char: " + equation.charAt(i) + "\n");
-            for (int Ei = i; Ei < equation.length(); ++Ei) {
-                if (equation.charAt(Ei) == ')') {
+            System.out.print("Start char: " + exp.charAt(i) + "\n");
+            for (int Ei = i; Ei < exp.length(); ++Ei) {
+                if (exp.charAt(Ei) == ')') {
                     --bracketDepth;
-                } else if (equation.charAt(Ei) == '(') {
+                } else if (exp.charAt(Ei) == '(') {
                     ++bracketDepth;
                 }
-                System.out.print("d[" + bracketDepth + "]:[  " + equation.charAt(Ei) + "  ], ");
+                System.out.print("d[" + bracketDepth + "]:[  " + exp.charAt(Ei) + "  ], ");
                 if (bracketDepth == 0) {
                     String possibleOperation = "";
-                    for (int Sii = Ei + 1; Sii < equation.length(); ++Sii) {
-                        possibleOperation = possibleOperation + equation.charAt(Sii);
+                    for (int Sii = Ei + 1; Sii < exp.length(); ++Sii) {
+                        possibleOperation = possibleOperation + exp.charAt(Sii);
                         if (utility.isBasicOperation(possibleOperation)) {
-                            component = component + equation.charAt(Ei);
+                            component = component + exp.charAt(Ei);
                             System.out.print("\n");
                             return component;
                         }
                     }
                 }
-                component += equation.charAt(Ei);
+                component += exp.charAt(Ei);
             }
             System.out.print("\n");
             return component;
@@ -503,10 +493,10 @@ public class FunctionFactory {
             return false;
         }
 
-        public static String removeHeadAndTail(final String equation) {
+        public static String removeHeadAndTail(final String exp) {
             String corrected = "";
-            for (int i = 1; i < equation.length() - 1; ++i) {
-                corrected = String.valueOf(corrected) + equation.charAt(i);
+            for (int i = 1; i < exp.length() - 1; ++i) {
+                corrected = corrected + exp.charAt(i);
             }
             return corrected;
         }
@@ -565,80 +555,72 @@ public class FunctionFactory {
             return exp;
         }
 
-        public static String unpackAndCorrect(String equation) {
-            if (equation == null) {
+        public static String unpackAndCorrect(String exp) {
+            if (exp == null) {
                 return null;
             }
-            if (equation.length() == 0) {
+            if (exp.length() == 0) {
                 return "";
             }
-            if (equation.equals("()")) {
+            if (exp.equals("()")) {
                 return "";
             }
-
-            equation = equation.replace("lig", Context.register[4]);
-            equation = equation.replace("ligmoid", Context.register[4]);
-            equation = equation.replace("softplus", Context.register[4]);
-            equation = equation.replace("spls", Context.register[4]);
-            equation = equation.replace("ligm", Context.register[4]);
-            equation = equation.replace("linear", Context.register[5]);
-            equation = equation.replace("sigmoid", Context.register[1]);
-            equation = equation.replace("quadratic", Context.register[3]);
-            equation = equation.replace("quadr", Context.register[3]);
-            equation = equation.replace("gaussian", Context.register[6]);
-            equation = equation.replace("gauss", Context.register[6]);
-            equation = equation.replace("summation", Context.register[7]);
-            equation = equation.replace("product", Context.register[8]);
-            equation = equation.replace("absolute", Context.register[9]);
-            /*
-             * OCode = new String[]
-             * {"relu", "sig", "tanh", "quad", "lig", "lin", "gaus",
-             *  "sum",  "prod",
-             *  "^",     "/",  "*",     "%",   "+",   "-" };
-             * */
-
+            exp = exp.replace("lig", Context.register[4]);
+            exp = exp.replace("ligmoid", Context.register[4]);
+            exp = exp.replace("softplus", Context.register[4]);
+            exp = exp.replace("spls", Context.register[4]);
+            exp = exp.replace("ligm", Context.register[4]);
+            exp = exp.replace("linear", Context.register[5]);
+            exp = exp.replace("sigmoid", Context.register[1]);
+            exp = exp.replace("quadratic", Context.register[3]);
+            exp = exp.replace("quadr", Context.register[3]);
+            exp = exp.replace("gaussian", Context.register[6]);
+            exp = exp.replace("gauss", Context.register[6]);
+            exp = exp.replace("summation", Context.register[7]);
+            exp = exp.replace("product", Context.register[8]);
+            exp = exp.replace("absolute", Context.register[9]);
             int bracketDepth = 0;
-            for (int Ei = 0; Ei < equation.length(); ++Ei) {
-                if (equation.charAt(Ei) == ')') {
+            for (int Ei = 0; Ei < exp.length(); ++Ei) {
+                if (exp.charAt(Ei) == ')') {
                     --bracketDepth;
-                } else if (equation.charAt(Ei) == '(') {
+                } else if (exp.charAt(Ei) == '(') {
                     ++bracketDepth;
                 }
             }
             if (bracketDepth != 0) {
                 if (bracketDepth < 0) {
                     for (int Bi = 0; Bi < -bracketDepth; ++Bi) {
-                        equation = "(" + equation;
+                        exp = "(" + exp;
                     }
                 } else if (bracketDepth > 0) {
                     for (int Bi = 0; Bi < bracketDepth; ++Bi) {
-                        equation = String.valueOf(equation) + ")";
+                        exp = exp + ")";
                     }
                 }
             }
 
             boolean parsing = true;
             boolean needsStitching = false;
-            while (parsing && equation.charAt(0) == '(' && equation.charAt(equation.length() - 1) == ')') {
+            while (parsing && exp.charAt(0) == '(' && exp.charAt(exp.length() - 1) == ')') {
                 bracketDepth = 0;
                 needsStitching = true;
-                for (int i = 0; i < equation.length(); ++i) {
-                    if (equation.charAt(i) == ')') {
+                for (int i = 0; i < exp.length(); ++i) {
+                    if (exp.charAt(i) == ')') {
                         --bracketDepth;
-                    } else if (equation.charAt(i) == '(') {
+                    } else if (exp.charAt(i) == '(') {
                         ++bracketDepth;
                     }
-                    if (bracketDepth == 0 && i != equation.length() - 1) {
+                    if (bracketDepth == 0 && i != exp.length() - 1) {
                         needsStitching = false;
                     }
                 }
                 if (needsStitching) {
-                    equation = utility.removeHeadAndTail(equation);
+                    exp = utility.removeHeadAndTail(exp);
                 } else {
                     parsing = false;
                 }
             }
-            return equation;
+            return exp;
         }
 
 
