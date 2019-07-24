@@ -5,17 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8f069c6b-f9fb-4e13-ace8-74184cdf4938" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/modul/calc/FunctionFactory$utility.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/core/modul/calc/FunctionFactory$utility.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/modul/calc/FunctionFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/core/modul/calc/FunctionFactory.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/modul/calc/GraphNode.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/core/modul/calc/GraphNode.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/modul/calc/fcomp/util/Calculation.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/core/modul/calc/fcomp/util/Calculation.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/modul/calc/fcomp/util/Construction$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/core/modul/calc/fcomp/util/Construction$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/modul/calc/fcomp/util/Construction$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/core/modul/calc/fcomp/util/Construction$2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/modul/calc/fcomp/util/Construction.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/core/modul/calc/fcomp/util/Construction.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/NSMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/NSMain.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/neureka/core/modul/calc/FunctionFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/modul/calc/FunctionFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/modul/calc/GraphNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/modul/calc/GraphNode.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/neureka/core/modul/calc/fcomp/util/Calculation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/modul/calc/fcomp/util/Calculation.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/neureka/core/modul/calc/fcomp/util/Construction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/modul/calc/fcomp/util/Construction.java" afterDir="false" />
     </list>
@@ -37,8 +27,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/neureka/core/modul/calc/FunctionFactory.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="76" column="35" selection-start-line="76" selection-start-column="35" selection-end-line="76" selection-end-column="35" />
+            <state relative-caret-position="68">
+              <caret line="68" column="63" lean-forward="true" selection-start-line="68" selection-start-column="48" selection-end-line="68" selection-end-column="63" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#15759#15760#0" expanded="true" />
@@ -51,18 +41,22 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/neureka/core/modul/calc/fcomp/util/Construction.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="901">
-              <caret line="53" column="17" selection-start-line="53" selection-start-column="17" selection-end-line="53" selection-end-column="17" />
+            <state relative-caret-position="111">
+              <caret line="14" column="101" selection-start-line="14" selection-start-column="91" selection-end-line="14" selection-end-column="101" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1958#1959#0" expanded="true" />
                 <element signature="e#2015#2016#0" expanded="true" />
                 <element signature="e#2075#2076#0" expanded="true" />
                 <element signature="e#2126#2127#0" expanded="true" />
-                <element signature="e#4705#4706#0" expanded="true" />
-                <element signature="e#4762#4763#0" expanded="true" />
-                <element signature="e#4960#4961#0" expanded="true" />
-                <element signature="e#5049#5050#0" expanded="true" />
+                <element signature="e#4698#4699#0" expanded="true" />
+                <element signature="e#4755#4756#0" expanded="true" />
+                <element signature="e#4815#4816#0" expanded="true" />
+                <element signature="e#4866#4867#0" expanded="true" />
+                <element signature="e#4953#4954#0" expanded="true" />
+                <element signature="e#5042#5043#0" expanded="true" />
+                <element signature="e#5218#5219#0" expanded="true" />
+                <element signature="e#5277#5278#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -83,8 +77,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/neureka/core/modul/calc/fcomp/util/Calculation.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="598">
-              <caret line="97" column="83" selection-start-line="97" selection-start-column="83" selection-end-line="97" selection-end-column="83" />
+            <state relative-caret-position="121">
+              <caret line="28" column="16" selection-start-line="28" selection-start-column="16" selection-end-line="28" selection-end-column="16" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -172,9 +166,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>isBasicOperation</find>
-      <find>isLeave</find>
-      <find>drained</find>
       <find>propagateDerivatives</find>
       <find>bias</find>
       <find>NFOperation</find>
@@ -202,9 +193,11 @@
       <find>inclination</find>
       <find>register.</find>
       <find>register[</find>
+      <find>, tipReached,</find>
+      <find>ripReached</find>
+      <find>tipReached</find>
     </findStrings>
     <replaceStrings>
-      <replace>NTensor.utility</replace>
       <replace>NFUtility.</replace>
       <replace>NFUtility.parsedComponent</replace>
       <replace>NFUtility.removeHeadAndTail</replace>
@@ -234,6 +227,7 @@
       <replace>Context.inclination</replace>
       <replace>Context.register.</replace>
       <replace>Context.register[</replace>
+      <replace>,</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -288,11 +282,11 @@
         <option value="$PROJECT_DIR$/src/neureka/unit/state/NVTesting_Tensor.java" />
         <option value="$PROJECT_DIR$/src/neureka/core/modul/calc/fcomp/util/Context.java" />
         <option value="$PROJECT_DIR$/src/neureka/unit/NVTester.java" />
-        <option value="$PROJECT_DIR$/src/neureka/core/modul/calc/fcomp/util/Construction.java" />
         <option value="$PROJECT_DIR$/src/neureka/core/modul/calc/GraphNode.java" />
         <option value="$PROJECT_DIR$/src/NSMain.java" />
-        <option value="$PROJECT_DIR$/src/neureka/core/modul/calc/fcomp/util/Calculation.java" />
         <option value="$PROJECT_DIR$/src/neureka/core/modul/calc/FunctionFactory.java" />
+        <option value="$PROJECT_DIR$/src/neureka/core/modul/calc/fcomp/util/Calculation.java" />
+        <option value="$PROJECT_DIR$/src/neureka/core/modul/calc/fcomp/util/Construction.java" />
       </list>
     </option>
   </component>
@@ -524,12 +518,12 @@
       <workItem from="1563573313271" duration="8390000" />
       <workItem from="1563726873656" duration="37000" />
       <workItem from="1563741960677" duration="14832000" />
-      <workItem from="1563912294535" duration="3063000" />
+      <workItem from="1563912294535" duration="5371000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="885355000" />
+    <option name="totallyTimeSpent" value="887663000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
@@ -1348,24 +1342,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/neureka/core/modul/calc/fcomp/util/Construction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="901">
-          <caret line="53" column="17" selection-start-line="53" selection-start-column="17" selection-end-line="53" selection-end-column="17" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1958#1959#0" expanded="true" />
-            <element signature="e#2015#2016#0" expanded="true" />
-            <element signature="e#2075#2076#0" expanded="true" />
-            <element signature="e#2126#2127#0" expanded="true" />
-            <element signature="e#4705#4706#0" expanded="true" />
-            <element signature="e#4762#4763#0" expanded="true" />
-            <element signature="e#4960#4961#0" expanded="true" />
-            <element signature="e#5049#5050#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/neureka/core/modul/calc/fcomp/util/Context.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="357">
@@ -1435,18 +1411,40 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/neureka/core/modul/calc/fcomp/util/Calculation.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="598">
-          <caret line="97" column="83" selection-start-line="97" selection-start-column="83" selection-end-line="97" selection-end-column="83" />
+        <state relative-caret-position="121">
+          <caret line="28" column="16" selection-start-line="28" selection-start-column="16" selection-end-line="28" selection-end-column="16" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/neureka/core/modul/calc/fcomp/util/Construction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="111">
+          <caret line="14" column="101" selection-start-line="14" selection-start-column="91" selection-end-line="14" selection-end-column="101" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1958#1959#0" expanded="true" />
+            <element signature="e#2015#2016#0" expanded="true" />
+            <element signature="e#2075#2076#0" expanded="true" />
+            <element signature="e#2126#2127#0" expanded="true" />
+            <element signature="e#4698#4699#0" expanded="true" />
+            <element signature="e#4755#4756#0" expanded="true" />
+            <element signature="e#4815#4816#0" expanded="true" />
+            <element signature="e#4866#4867#0" expanded="true" />
+            <element signature="e#4953#4954#0" expanded="true" />
+            <element signature="e#5042#5043#0" expanded="true" />
+            <element signature="e#5218#5219#0" expanded="true" />
+            <element signature="e#5277#5278#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/neureka/core/modul/calc/FunctionFactory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="76" column="35" selection-start-line="76" selection-start-column="35" selection-end-line="76" selection-end-column="35" />
+        <state relative-caret-position="68">
+          <caret line="68" column="63" lean-forward="true" selection-start-line="68" selection-start-column="48" selection-end-line="68" selection-end-column="63" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#15759#15760#0" expanded="true" />

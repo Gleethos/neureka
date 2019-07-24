@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 public class Construction {
 
-    public static Function createFunction(int f_id, ArrayList<Function> Srcs, boolean tipReached){
+    public static Function createFunction(int f_id, ArrayList<Function> Srcs){//}, boolean tipReached){
         boolean[] isFlat = {false};//=> !isFlat
         Srcs.forEach((v)->{
             isFlat[0] = (
@@ -67,19 +67,19 @@ public class Construction {
                 }
                 @Override
                 public T activate(T[] input, int j) {
-                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input, j), f_id, false, tipReached, isFlat[0]);
+                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input, j), f_id, false, isFlat[0]);
                 }
                 @Override
                 public T activate(T[] input) {
-                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input), f_id, false, tipReached, isFlat[0]);
+                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input), f_id, false, isFlat[0]);
                 }
                 @Override
                 public T derive(T[] input, int d, int j) {
-                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input, j), f_id, true, tipReached, isFlat[0]);
+                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input, j), f_id, true, isFlat[0]);
                 }
                 @Override
                 public T derive(T[] input, int d) {
-                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input), f_id, true, tipReached, isFlat[0]);
+                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input), f_id, true, isFlat[0]);
                 }
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 @Override
@@ -122,19 +122,19 @@ public class Construction {
                 }
                 @Override
                 public T activate(T[] input, int j) {
-                    return Calculation.tensorActivationOf(input, f_id, j, -1, Srcs, tipReached, isFlat[0]);
+                    return Calculation.tensorActivationOf(input, f_id, j, -1, Srcs, isFlat[0]);
                 }
                 @Override
                 public T activate(T[] input) {
-                    return Calculation.tensorActivationOf(input, f_id, -1, -1, Srcs, tipReached, isFlat[0]);
+                    return Calculation.tensorActivationOf(input, f_id, -1, -1, Srcs, isFlat[0]);
                 }
                 @Override
                 public T derive(T[] input, int d, int j) {
-                    return Calculation.tensorActivationOf(input, f_id, j, d, Srcs, tipReached, isFlat[0]);
+                    return Calculation.tensorActivationOf(input, f_id, j, d, Srcs, isFlat[0]);
                 }
                 @Override
                 public T derive(T[] input, int d) {
-                    return Calculation.tensorActivationOf(input, f_id, -1, d, Srcs, tipReached, isFlat[0]);
+                    return Calculation.tensorActivationOf(input, f_id, -1, d, Srcs, isFlat[0]);
                 }
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 @Override

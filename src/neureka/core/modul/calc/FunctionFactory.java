@@ -74,7 +74,6 @@ public class FunctionFactory {
     }
 
     private Function construct(String expression){//}, boolean tipReached) {
-        boolean tipReached = false;
         if (expression == null) {
             expression = "";
         }
@@ -236,7 +235,7 @@ public class FunctionFactory {
                                             utility.parsedComponent(Components.get(0), possibleFunction.length())
                                     );
                             sources.add(newCore);
-                            function = Construction.createFunction(f_id, sources, tipReached);
+                            function = Construction.createFunction(f_id, sources);//, tipReached);
                             return this.function;
                             // Hallo mein Schatz! Ich bin`s, die Emi :) Ich liebe dich <3
                         }
@@ -287,7 +286,7 @@ public class FunctionFactory {
                 }
             }
             this.sources.trimToSize();
-            function = Construction.createFunction(f_id, sources, tipReached);
+            function = Construction.createFunction(f_id, sources);//, tipReached);
             if (this.sources.size() == 1) {
                 return this.sources.get(0);
             }

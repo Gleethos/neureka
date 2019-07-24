@@ -24,7 +24,7 @@ public class Calculation {
     /**
      *  Responsible for handling functions with id's 0-9  (single input functions!)
      * */
-    public static T tensorActivationOf(T input, int f_id, boolean derive, boolean tipReached, boolean isFlat) {
+    public static T tensorActivationOf(T input, int f_id, boolean derive, boolean isFlat) {
         T output = T.factory.newTensor(input.shape(), input.translation());
         if(!derive && !isFlat){//implies !tipReached ==true // only flat functions can be executed
             output.addModule(new GraphNode(output, new T[]{input}, f_id, true, false));
@@ -39,7 +39,7 @@ public class Calculation {
             });
         }
         if(!derive){//&& tipReached
-            output.addModule(new GraphNode(output, new T[]{input}, f_id, false, (isFlat)?(!tipReached)?true:false:false));
+            output.addModule(new GraphNode(output, new T[]{input}, f_id, false, true));//(isFlat)?(!tipReached)?true:false:false));
         }
         return output;
     }
@@ -47,7 +47,7 @@ public class Calculation {
     /**
      *   Responsible for handling functions with multiple inputs!
      * */
-    public static T tensorActivationOf(T[] input, int f_id, int j, int d, ArrayList<Function> Srcs, boolean tipReached, boolean isFlat) {
+    public static T tensorActivationOf(T[] input, int f_id, int j, int d, ArrayList<Function> Srcs, boolean isFlat) {
         T output = T.factory.newTensor(input[0].shape(), input[0].translation());
         /**
          *   Teh code below deals with deep functions (non flat):
