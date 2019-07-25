@@ -23,7 +23,7 @@ public class NSubstrate {
         initialize();
     }
     private static void initialize(){
-        Field f;
+        Field f;// Class context finding!
         try {
             f = ClassLoader.class.getDeclaredField("classes");
             f.setAccessible(true);
@@ -78,7 +78,7 @@ public class NSubstrate {
                 String regexDecimal = "^-?\\d*\\.\\d+$";
                 String regexInteger = "^-?\\d+$";
                 String regexDouble = regexDecimal + "|" + regexInteger;
-
+                //Parameter parsing:
                 for(int ii=1; ii<broken[i].length; ii++){
                     ParamClasses[i][ii-1] =
                             (broken[i][ii].contains("\"")||broken[i][ii].contains("'"))

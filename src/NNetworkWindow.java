@@ -8,13 +8,17 @@ import java.awt.event.ActionEvent;
 
 //import javafx.*;
 
-public class NNetworkWindow{ //extends Application{// implements EventHandler<ActionEvent>{
+public class NNetworkWindow extends Application{// implements EventHandler<ActionEvent>{
 
-	//private Stage arg0;
+	private Stage arg;
 
 	//@Override
 	public void start(Stage arg0) throws Exception {
-		//arg02 = arg0;
+		arg = arg0;
+		new Thread(()->{
+			arg.close();
+		});
+
 		// TODO Auto-generated method stub
 		
 	}

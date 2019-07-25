@@ -2,9 +2,7 @@ package neureka.core.modul.calc;
 
 import java.util.HashMap;
 import java.util.List;
-
 import com.aparapi.device.OpenCLDevice;
-
 import neureka.core.T;
 import neureka.core.modul.calc.dcomp.TKernel;
 
@@ -12,15 +10,15 @@ public class Device
 {
     /**
      *    map:
-     *    Holds register pointers of tensors stored on the device.
+     *    Holds REGISTER pointers of tensors stored on the device.
     * */
     private HashMap<T, Integer> map = new HashMap<T, Integer>();
     /**
-     *    register:
-     *    Maps register pointers to pointers WITHIN the compute device.
+     *    REGISTER:
+     *    Maps REGISTER pointers to pointers WITHIN the compute device.
      *    Pointers within the kernel change dynamically,
-     *    whereas a register entry will always represent a tensor from
-     *    the time of allocation to deletion on the device.
+     *    whereas a REGISTER entry will always represent a specific tensor from
+     *    the time of allocation to tensor deletion and de-allocation on the device.
      *
      * */
     private int[][] register = null;
@@ -42,8 +40,11 @@ public class Device
                     this.device = found;
                 }
             }
-            this.device.setSharedMemory(false);
+            if(!this.device.getType().toString().toLowerCase().contains("cpu")){
+                this.device.setSharedMemory(false);// GPU's (!cpu's) don't share host memory!
+            }
             System.out.println("\nChosen device:\n------------\n"+ device.toString()+"\n------------\n");
+            System.out.println("\ndevice f_id:\n------------\n"+ this.device.getType().toString()+"\n------------\n");
             kernel = new TKernel();
             System.out.println("Device of kernel:\n------------");
             System.out.println(kernel.getTargetDevice().toString());
@@ -129,7 +130,7 @@ public class Device
 
     public void calculate(T[] tsrs, int f_id, int d){
         if(kernel==null){
-
+            //What then?
         }else{
             int[] mode = new int[tsrs.length+2];
             mode[0] = f_id;
@@ -138,21 +139,15 @@ public class Device
                 mode[mi+1] = (tsrs[mi]!=null)?register[0][map.get(tsrs[mi])]:-1;
             }
             kernel.execute(
-                    device.createRange(
-                            kernel.calculate_tsr(
-                                    mode
-                            )
+                device.createRange(
+                    kernel.calculate_tsr(
+                        mode
                     )
+                )
             );
         }
 
     }
-
-
-
-
-
-
 
 
 

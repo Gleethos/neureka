@@ -27,7 +27,8 @@ public class Calculation {
     public static T tensorActivationOf(T input, int f_id, boolean derive, boolean isFlat) {
         T output = T.factory.newTensor(input.shape(), input.translation());
         if(!derive && !isFlat){//implies !tipReached ==true // only flat functions can be executed
-            output.addModule(new GraphNode(output, new T[]{input}, f_id, true, false));
+            //output.addModule(new GraphNode(output, new T[]{input}, f_id, true, false));
+            output.internalize(new FunctionFactory().newBuild(f_id, 1).activate(new T[]{input}));
             return output;
         }
         if(input.isOutsourced()){
@@ -38,7 +39,7 @@ public class Calculation {
                 outputValue[i] = Calculation.scalarActivationOf(inputValue[i], f_id, derive);
             });
         }
-        if(!derive){//&& tipReached
+        if(!derive){
             output.addModule(new GraphNode(output, new T[]{input}, f_id, false, true));//(isFlat)?(!tipReached)?true:false:false));
         }
         return output;
@@ -50,26 +51,28 @@ public class Calculation {
     public static T tensorActivationOf(T[] input, int f_id, int j, int d, ArrayList<Function> Srcs, boolean isFlat) {
         T output = T.factory.newTensor(input[0].shape(), input[0].translation());
         /**
-         *   Teh code below deals with deep functions (non flat):
+         *   The code below deals with deep functions (non flat):
          * */
         if(d<0 && !isFlat){//implies !tipReached ==true // only flat functions can be executed
-            if(f_id<9){
-                output.addModule(new GraphNode(output, input, Context.register[f_id]+"(I["+((j<0)?0:j)+"])", true, false));
+            if(f_id<=9){
+                //output.addModule(new GraphNode(output, input, Context.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])", true, false));
+                output.internalize(new FunctionFactory().newBuild(Context.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])").activate(input));
                 return output;
             }else{
-                if(Context.register[f_id].length()!=1){
+                if(Context.REGISTER[f_id].length()!=1){
                     /**  SUMMATION, PI,
                      * */
                     T[] tsrs = new T[input.length];
                     for(int i=0; i<tsrs.length; i++){
                         tsrs[i] =  Srcs.get(0).activate(input, i);
                     }// THIS NEEDS TO BE SOLVED!!
-                    output.addModule(new GraphNode(output, tsrs, Context.register[f_id]+"(I[j])", true, false));
+                    //output.addModule(new GraphNode(output, tsrs, Context.REGISTER[f_id]+"(I[j])", true, false));
+                    output.internalize(new FunctionFactory().newBuild(Context.REGISTER[f_id]+"(I[j])").activate(tsrs));
                     return output;
                 }else{
                     /**      +, -, x, *, %, ....
                      * */
-                    String operation = (Context.register[f_id].length()>1)?Context.register[f_id]:"";
+                    String operation = (Context.REGISTER[f_id].length()>1)?Context.REGISTER[f_id]:"";
                     T[] tsrs = new T[Srcs.size()];
                     boolean constantFound = false;
                     T template = null;
@@ -81,7 +84,7 @@ public class Calculation {
                             tsrs[i] = (j<0)?Srcs.get(i).activate(input):Srcs.get(i).activate(input, j);
                             template = tsrs[i];
                         }
-                        operation += "I["+i+"]"+((i+1<tsrs.length)?Context.register[f_id]:"");
+                        operation += "I["+i+"]"+((i+1<tsrs.length)?Context.REGISTER[f_id]:"");
                     }
                     if(constantFound){
                         for(int i=0; i<tsrs.length; i++){
@@ -121,7 +124,7 @@ public class Calculation {
                 device.calculate(tsrs, f_id, d);
             }
         }else{
-            if(Context.register[f_id]=="x"){
+            if(Context.REGISTER[f_id]=="x"){
                 if(d<0){
                     output = T.factory.convolution(input[0], input[1]);
                 }else{
@@ -150,11 +153,6 @@ public class Calculation {
                     tsrs[i] = Srcs.get(i).activate(input);
                 }
             }
-            if(j<0){
-                //output.internalize(new FunctionFactory().newBuild(f_id, tsrs.length, false).activate(tsrs));
-            }else{
-                //output.internalize(new FunctionFactory().newBuild(f_id, tsrs.length, false).activate(tsrs, j));
-            }//TODO: resolve: boolean isFlat is set true always here! tip reached is the only metric!
             output.addModule(new GraphNode(output, tsrs, f_id, false, true));//(isFlat)?(!tipReached)?true:false:false));
             /**
              *   Its always flat! And tip is not reached!
@@ -179,40 +177,40 @@ public class Calculation {
         }
     }
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    public static double scalarActivationOf(double[] input, int f_id, int j, int d, ArrayList<Function> Variable) {
+    public static double scalarActivationOf(double[] input, int f_id, int j, int d, ArrayList<Function> source) {
         switch (f_id) {
-            case 10: return (j<0)? getSummation(      input, d, Variable) : getSummation(      input, j, d, Variable);
-            case 11: return (j<0)? getPI(             input, d, Variable) : getPI(             input, j, d, Variable);
-            case 12: return (j<0)? getPowerOf(        input, d, Variable) : getPowerOf(        input, j, d, Variable);
-            case 13: return (j<0)? getDivision(       input, d, Variable) : getDivision(       input, j, d, Variable);
-            case 14: return (j<0)? getMultiplication( input, d, Variable) : getMultiplication( input, j, d, Variable);
-            case 15: return (j<0)? getModulo(         input, d, Variable) : getModulo(         input, j, d, Variable);
-            case 16: return (j<0)? getSubtraction(    input, d, Variable) : getSubtraction(    input, j, d, Variable);
-            case 17: return (j<0)? getAddition(       input, d, Variable) : getAddition(       input, j, d, Variable);
-            case 18: return (j<0)? getMultiplication( input, d, Variable) : getMultiplication( input, j, d, Variable);
+            case 10: return (j<0)? getSummation(      input, d, source) : getSummation(      input, j, d, source);
+            case 11: return (j<0)? getPI(             input, d, source) : getPI(             input, j, d, source);
+            case 12: return (j<0)? getPowerOf(        input, d, source) : getPowerOf(        input, j, d, source);
+            case 13: return (j<0)? getDivision(       input, d, source) : getDivision(       input, j, d, source);
+            case 14: return (j<0)? getMultiplication( input, d, source) : getMultiplication( input, j, d, source);
+            case 15: return (j<0)? getModulo(         input, d, source) : getModulo(         input, j, d, source);
+            case 16: return (j<0)? getSubtraction(    input, d, source) : getSubtraction(    input, j, d, source);
+            case 17: return (j<0)? getAddition(       input, d, source) : getAddition(       input, j, d, source);
+            case 18: return (j<0)? getMultiplication( input, d, source) : getMultiplication( input, j, d, source);
             default: return 0;
         }
     }
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    //Activation stage 1: Activation type determination
+    //Activation stage 1: Activation f_id determination
     //============================================================================================================================================================================================
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public static double getReLuOf(double input, boolean derive) {
         double output;
         if (!derive) {
             if (input >= 0) {
-                output = (input + Context.shift) *Context.inclination;
+                output = (input + Context.BIAS) *Context.INCLINATION;
             } else {
-                output = (input + Context.shift) * Context.secondaryInclination;
+                output = (input + Context.BIAS) * Context.RELU_INCLINATION;
             }
             return output;
         } else {
             if (input >= 0) {
-                output =Context.inclination;
+                output =Context.INCLINATION;
             } else {
-                output = Context.secondaryInclination;
+                output = Context.RELU_INCLINATION;
             }
             return output;
         }
@@ -220,31 +218,31 @@ public class Calculation {
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public static double getSigmoidOf(double input, boolean derive) {
         if (!derive) {
-            return 1 / (1 + Math.pow(Math.E, (-(input + Context.shift) *Context.inclination)));
+            return 1 / (1 + Math.pow(Math.E, (-(input + Context.BIAS) *Context.INCLINATION)));
         } else {
-            return Context.inclination * (Math.pow(Math.E, -(input + Context.shift) *Context.inclination)) / (Math.pow((1 + Math.pow(Math.E, -(input + Context.shift) *Context.inclination)), 2) + 2 * Math.pow(Math.E, -(input + Context.shift) *Context.inclination));
+            return Context.INCLINATION * (Math.pow(Math.E, -(input + Context.BIAS) *Context.INCLINATION)) / (Math.pow((1 + Math.pow(Math.E, -(input + Context.BIAS) *Context.INCLINATION)), 2) + 2 * Math.pow(Math.E, -(input + Context.BIAS) *Context.INCLINATION));
         }
     }
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public static double getTanhOf(double input, boolean derive) {
         if (!derive) {
-            return ((input + Context.shift) *Context.inclination) / Math.pow((1 + Math.pow(((input + Context.shift) *Context.inclination), 2)), 0.5);
+            return ((input + Context.BIAS) *Context.INCLINATION) / Math.pow((1 + Math.pow(((input + Context.BIAS) *Context.INCLINATION), 2)), 0.5);
         } else {
-            return (1 - Math.pow(((input + Context.shift) / Math.pow((1 + Math.pow((input + Context.shift), 2)), 0.5)), 2)) *Context.inclination;
+            return (1 - Math.pow(((input + Context.BIAS) / Math.pow((1 + Math.pow((input + Context.BIAS), 2)), 0.5)), 2)) *Context.INCLINATION;
         }
     }
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public static double getQuadraticOf(double input, boolean derive) {
         if (!derive) {
-            return ((input + Context.shift) * (input + Context.shift) *Context.inclination);
+            return ((input + Context.BIAS) * (input + Context.BIAS) *Context.INCLINATION);
         } else {
-            return 2 * input *Context.inclination + 2 * Context.shift *Context.inclination;
+            return 2 * input *Context.INCLINATION + 2 * Context.BIAS *Context.INCLINATION;
         }
     }
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public static double getLigmoidOf(double input, boolean derive) {
         if (!derive) {
-            return (Context.inclination * (input + Context.shift) + (Math.log(Math.pow(Math.E, -(input + Context.shift) *Context.inclination) + 1) / Math.log(Math.E)));
+            return (Context.INCLINATION * (input + Context.BIAS) + (Math.log(Math.pow(Math.E, -(input + Context.BIAS) *Context.INCLINATION) + 1) / Math.log(Math.E)));
         } else {
             return getSigmoidOf(input, false);
         }
@@ -252,17 +250,17 @@ public class Calculation {
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public static double getLinearOf(double input, boolean derive) {
         if (!derive) {
-            return Context.inclination * (input + Context.shift);
+            return Context.INCLINATION * (input + Context.BIAS);
         } else {
-            return Context.inclination;
+            return Context.INCLINATION;
         }
     }
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public static double getGaussianOf(double input, boolean derive) {
         if (!derive) {
-            return Math.pow(Math.E, -Math.pow(Context.inclination * (input + Context.shift), 2));
+            return Math.pow(Math.E, -Math.pow(Context.INCLINATION * (input + Context.BIAS), 2));
         } else {
-            return -2 * (Context.inclination * (input + Context.shift)) * Math.pow(Math.E, -Math.pow(Context.inclination * (input + Context.shift), 2));
+            return -2 * (Context.INCLINATION * (input + Context.BIAS)) * Math.pow(Math.E, -Math.pow(Context.INCLINATION * (input + Context.BIAS), 2));
         }
     }
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

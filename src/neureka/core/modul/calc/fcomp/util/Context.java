@@ -6,20 +6,20 @@ import neureka.core.modul.calc.fcomp.Function;
 import java.util.HashMap;
 
 public class Context {
-    public static final double shift = 0;
-    public static final double inclination = 1;
-    public static final double secondaryInclination = 0.01;
-    public static final String[] register;
-    public static final HashMap<Long, T> stack;
-    public static final HashMap<String, Function> shared;
+    public static final double BIAS = 0;
+    public static final double INCLINATION = 1;
+    public static final double RELU_INCLINATION = 0.01;
+    public static final String[] REGISTER;
+    public static final HashMap<Long, T> STACK;
+    public static final HashMap<String, Function> SHARED;
     static {
-        register = new String[]{
+        REGISTER = new String[]{
                 "relu", "sig", "tanh", "quad", "lig", "lin", "gaus", "abs", "sin", "cos",
                 "sum", "prod",
                 "^", "/", "*", "%", "-", "+", "x"
         };
-        shared = new HashMap<>();
-        stack = new HashMap<>();
+        SHARED = new HashMap<>();
+        STACK = new HashMap<>();
     }
     /*
     case 0:  return "relu";

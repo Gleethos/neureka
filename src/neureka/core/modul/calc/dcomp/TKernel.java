@@ -226,13 +226,13 @@ public class TKernel extends Kernel
         int[] mapper = new int[regis[0].length];//tsr_count()
         int rgr_ptr = 0;
         for(int i=0; i<mapper.length; i++){
-            if(regis[0][i]>=0){//=> register contains t_id's or null pointer (-1)
+            if(regis[0][i]>=0){//=> REGISTER contains t_id's or null pointer (-1)
                 mapper[regis[0][i]] = i;
-                //=> mapper points from pointer entries to register entries
+                //=> mapper points from pointer entries to REGISTER entries
             }
         }
         int[] newPointers;
-        if(rmv){//Removing pointer entry and setting register entry to null (-1)
+        if(rmv){//Removing pointer entry and setting REGISTER entry to null (-1)
             regis[0][mapper[t_id]]=-1;
             newPointers = new int[pointers.length-6];
             for(int i=0; i<t_id*6; i++){
@@ -247,7 +247,7 @@ public class TKernel extends Kernel
         }else{
             boolean registered = false;
             for(int i=0; i<regis[0].length; i++){
-                if(regis[0][i]<0){//Null pointer found in register!
+                if(regis[0][i]<0){//Null pointer found in REGISTER!
                     rgr_ptr = i;//
                     regis[0][i]=t_id+1;//mapper[t_id+1] = i;
                     registered = true;

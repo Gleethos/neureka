@@ -12,12 +12,8 @@ public class NGene {
 	private static String INVERT = "INV";
 	
 	private static String JUMP = "JMP";
-	
-	
+
 	//====================================================================================
-	
-	
-	
 	private static String GENEFORMAT = 
 			"G[id,mutatable,toBeMutable,size,gradientStatic]:[EXP,CON,SUP[...]]";
 	

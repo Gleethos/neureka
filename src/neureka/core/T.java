@@ -14,15 +14,15 @@ public class T {
 
     // DEFAULT DEVICE (HOST CPU)
     //=========================
-    private static Device cpu;
+    private static Device CPU;
 
     //STATIC SHARED MEMORY:
     //=========================
-    private static HashMap<Long, int[]> shared;
+    private static HashMap<Long, int[]> SHARED;
 
     static {//The things we do for memory:
-        shared = new HashMap<Long, int[]>();
-        cpu = new Device(null);
+        SHARED = new HashMap<>();
+        CPU = new Device(null);//<= creates CPU-Aparapi-Kernel
     }
     //-----------------------------------------------------------------------
 
@@ -38,7 +38,7 @@ public class T {
         if(this.isOutsourced()){
             return (Device) this.find(Device.class);
         }
-        return cpu;
+        return CPU;
     }
 
     public double[] gradient(){
@@ -121,6 +121,8 @@ public class T {
         if(isOutsourced){
             this.value = null;
             this.gradient = null;
+        }else if(this.has(Device.class)){
+            this.remove(Device.class);
         }
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -158,7 +160,7 @@ public class T {
         }
         return null;
     }
-    public void removeModule(Class moduleClass) {
+    public void remove(Class moduleClass) {
         Object oldCompartment = find(moduleClass);
         if (oldCompartment != null) {
             Modules.remove(oldCompartment);
@@ -267,18 +269,18 @@ public class T {
             t_key *= 10;
             t_key += Math.abs(this.translation[i]);
         }
-        int[] found = shared.get(s_key);
+        int[] found = SHARED.get(s_key);
         if (found != null) {
             this.shape = found;
         } else {
-            shared.put(s_key, newShape);
+            SHARED.put(s_key, newShape);
             this.shape = newShape;
         }
-        found = shared.get(t_key);
+        found = SHARED.get(t_key);
         if (found != null) {
             this.translation = found;
         } else {
-            shared.put(t_key, this.translation);
+            SHARED.put(t_key, this.translation);
         }
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -465,7 +467,7 @@ public class T {
             T tensor = new T();
             tensor.value = new double[T.utility.sizeOfShape_mxd(shape, 0, shape.length)];
             tensor.initialShape(shape);
-            tensor.translation = (translation!=null)?translation:tensor.translation;//shared.put()
+            tensor.translation = (translation!=null)?translation:tensor.translation;//SHARED.put()
             return tensor;
         }
 

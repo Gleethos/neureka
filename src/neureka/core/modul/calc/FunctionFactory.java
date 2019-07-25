@@ -9,9 +9,6 @@ import neureka.core.modul.calc.fcomp.util.Context;
 import java.util.*;
 
 public class FunctionFactory {
-
-    Function function = null;
-    private ArrayList<Function> sources;
     /*
 	     0:  ReLu;
 		 1:  Sigmoid;
@@ -33,47 +30,46 @@ public class FunctionFactory {
 		 17: +;
 		 18: x; (conv)
 	 */
-    public FunctionFactory() {
-        this.sources = new ArrayList<>();
-    }
     //=================================================================================================
 
-    public Function newBuild(int f_id, int size){//}, boolean tipReached) {//TODO: remove tip reached!
+    public static Function newBuild(int f_id, int size){//}, boolean tipReached) {//TODO: remove tip reached!
         if (f_id == 18){// && tipReached) {//<= occurs when
             size = 2;
         }
         if (f_id < 10) {
-            return newBuild(Context.register[f_id] + "(I[0])");//, tipReached);
+            return newBuild(Context.REGISTER[f_id] + "(I[0])");//, tipReached);
         } else if (f_id < 12) {
-            return newBuild(Context.register[f_id] + "I[j]");//, tipReached);
+            return newBuild(Context.REGISTER[f_id] + "I[j]");//, tipReached);
         } else {
             String expression = "I[0]";
             for (int i = 0; i < size - 1; i++) {
-                expression += Context.register[f_id] + "I[" + (i + 1) + "]";
+                expression += Context.REGISTER[f_id] + "I[" + (i + 1) + "]";
             }
             return newBuild(expression);//, tipReached);
         }
     }
 
-    public Function newBuild(String expression) {
-        HashMap<String, Function> map = Context.shared;
+    public static Function newBuild(String expression) {
+        HashMap<String, Function> map = Context.SHARED;
         expression = (expression.charAt(0) != '(')
                 ? ("(" + expression)
                 : (expression.charAt(expression.length() - 1) != ')')
                 ? expression + ")"
                 : expression;
 
-        if (Context.shared.containsKey(expression)) {
-            return Context.shared.get(expression);
+        if (Context.SHARED.containsKey(expression)) {
+            return Context.SHARED.get(expression);
         }
         Function built = construct(expression);//, tipReached);
         if (built != null) {
-            Context.shared.put("(" + built.toString() + ")", built);
+            Context.SHARED.put("(" + built.toString() + ")", built);
         }
         return built;
     }
 
-    private Function construct(String expression){//}, boolean tipReached) {
+    private static Function construct(String expression){//}, boolean tipReached) {
+        Function function = null;
+        ArrayList<Function> sources = new ArrayList<>();;
         if (expression == null) {
             expression = "";
         }
@@ -127,9 +123,9 @@ public class FunctionFactory {
         System.out.println("Components and OPerations parsed: " + Components);
         System.out.println("Operations and components parsed: " + Operations);
         //===
-        int Count = Context.register.length;
-        for (int j = Context.register.length; j > 0; --j) {
-            if (!utility.containsOperation(Context.register[j - 1], Operations)) {
+        int Count = Context.REGISTER.length;
+        for (int j = Context.REGISTER.length; j > 0; --j) {
+            if (!utility.containsOperation(Context.REGISTER[j - 1], Operations)) {
                 --Count;
             } else {
                 j = 0;
@@ -139,8 +135,8 @@ public class FunctionFactory {
         while (ID < Count) {
             final List<String> newOperations = new ArrayList<String>();
             final List<String> newComponents = new ArrayList<String>();
-            System.out.println("current (" + Context.register[ID] + ") and most low rank operation: " + Context.register[Count - 1]);
-            if (utility.containsOperation(Context.register[ID], Operations)) {
+            System.out.println("current (" + Context.REGISTER[ID] + ") and most low rank operation: " + Context.REGISTER[Count - 1]);
+            if (utility.containsOperation(Context.REGISTER[ID], Operations)) {
                 String currentChain = null;
                 boolean groupingOccured = false;
                 boolean enoughtPresent = utility.numberOfOperationsWithin(Operations) > 1;// Otherwise: I[j]^4 goes nuts!
@@ -161,9 +157,9 @@ public class FunctionFactory {
                         System.out.println("Operation: " + currentOperation);
                         System.out.println("Chain: " + currentChain);
                         if (currentOperation != null) {
-                            if (currentOperation.equals(Context.register[ID])) {
+                            if (currentOperation.equals(Context.REGISTER[ID])) {
                                 final String newChain =
-                                        utility.groupBy(Context.register[ID], currentChain, currentComponent, currentOperation);
+                                        utility.groupBy(Context.REGISTER[ID], currentChain, currentComponent, currentOperation);
                                 System.out.println("newChain: " + newChain);
                                 if (newChain != null) {
                                     currentChain = newChain;
@@ -202,7 +198,7 @@ public class FunctionFactory {
                     System.out.println("Grouping did not occure:");
                 }
             }
-            System.out.println("ID:" + ID + " => Context.register[ID]: " + Context.register[ID]);
+            System.out.println("ID:" + ID + " => Context.REGISTER[ID]: " + Context.REGISTER[ID]);
             System.out.println("Operations: " + Operations);
             System.out.println("Components: " + Components);
             ++ID;
@@ -213,8 +209,8 @@ public class FunctionFactory {
         int f_id = 0;
         if (Operations.size() >= 1) {
             System.out.println("Operation 0 : " + Operations.get(0));
-            for (int k = 0; k < Context.register.length; ++k) {
-                if (Context.register[k].equals(Operations.get(0))) {
+            for (int k = 0; k < Context.REGISTER.length; ++k) {
+                if (Context.REGISTER[k].equals(Operations.get(0))) {
                     f_id = k;
                 }
             }
@@ -227,8 +223,8 @@ public class FunctionFactory {
             System.out.println("Function ?: " + possibleFunction);
             if (possibleFunction != null) {
                 if (possibleFunction.length() > 1) {
-                    for (int Oi = 0; Oi < Context.register.length; Oi++) {
-                        if (Context.register[Oi].equals(possibleFunction)) {
+                    for (int Oi = 0; Oi < Context.REGISTER.length; Oi++) {
+                        if (Context.REGISTER[Oi].equals(possibleFunction)) {
                             f_id = Oi;
                             Function newCore = new FunctionFactory()
                                     .newBuild(
@@ -236,7 +232,7 @@ public class FunctionFactory {
                                     );
                             sources.add(newCore);
                             function = Construction.createFunction(f_id, sources);//, tipReached);
-                            return this.function;
+                            return function;
                             // Hallo mein Schatz! Ich bin`s, die Emi :) Ich liebe dich <3
                         }
                     }
@@ -262,7 +258,7 @@ public class FunctionFactory {
                 System.out.println("value leave! -> return newInputLeave.newBuilt(component)");
                 return newFunction;
             }
-            System.out.println("Component is not of type Leave! -> component = utility.cleanedHeadAndTail(component); ");
+            System.out.println("Component is not of f_id Leave! -> component = utility.cleanedHeadAndTail(component); ");
             component = utility.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =>Cleaning!
             Function newBuild;
             System.out.println("new build: Function newBuild = (Function)new FunctionFactory();");
@@ -271,26 +267,25 @@ public class FunctionFactory {
             System.out.println("-> return newBuild;");
             return newBuild;
         } else {// More than one component left:
-            if (Context.register[f_id] == "x") {
+            if (Context.REGISTER[f_id] == "x") {
                 Components = rebindPairwise(Components, f_id);
             }
             final ListIterator<String> ComponentIterator2 = Components.listIterator();
             while (ComponentIterator2.hasNext()) {
                 final String currentComponent2 = ComponentIterator2.next();
-                System.out.println("this.Input.add(newCore2.newBuild(" + currentComponent2 + ")); Input.size(): " + this.sources.size());
+                System.out.println("this.Input.add(newCore2.newBuild(" + currentComponent2 + ")); Input.size(): " + sources.size());
                 //Function newCore2 = new FunctionFactory();
                 Function newCore2 = new FunctionFactory().newBuild(currentComponent2);//Dangerous recursion lives here!
-                this.sources.add(newCore2);
+                sources.add(newCore2);
                 if (newCore2 != null) {
                     System.out.println("newCore2 != null");
                 }
             }
-            this.sources.trimToSize();
-            function = Construction.createFunction(f_id, sources);//, tipReached);
-            if (this.sources.size() == 1) {
-                return this.sources.get(0);
+            sources.trimToSize();
+            if (sources.size() == 1) {
+                return sources.get(0);
             }
-            if (this.sources.size() == 0) {
+            if (sources.size() == 0) {
                 return null;
             }
             ArrayList<Function> newVariable = new ArrayList<Function>();
@@ -300,13 +295,14 @@ public class FunctionFactory {
                 }
             }
             sources = newVariable;
-            return this.function;
+            function = Construction.createFunction(f_id, sources);
+            return function;
         }
     }
 
-    private List<String> rebindPairwise(List<String> components, int f_id) {
+    private static List<String> rebindPairwise(List<String> components, int f_id) {
         if (components.size() > 2) {
-            String newComponent = "(" + components.get(0) + Context.register[f_id] + components.get(1) + ")";
+            String newComponent = "(" + components.get(0) + Context.REGISTER[f_id] + components.get(1) + ")";
             components.remove(components.get(0));
             components.remove(components.get(0));
             components.add(0, newComponent);
@@ -314,13 +310,6 @@ public class FunctionFactory {
         }
         return components;
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    @Override
-    public String toString() {
-        return "(" + function.toString() + ")";
-    }
-    ////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //============================================================================================================================================================================================
 
     /**
@@ -331,8 +320,8 @@ public class FunctionFactory {
 
         public static int numberOfOperationsWithin(final List<String> operations) {
             int Count = 0;
-            for (int i = 0; i < Context.register.length; ++i) {
-                if (utility.containsOperation(Context.register[i], operations)) {
+            for (int i = 0; i < Context.REGISTER.length; ++i) {
+                if (utility.containsOperation(Context.REGISTER[i], operations)) {
                     ++Count;
                 }
             }
@@ -400,9 +389,9 @@ public class FunctionFactory {
             if (operation.length() > 8) {
                 return false;
             }
-            for (int i = 0; i < Context.register.length; ++i) {
-                System.out.print(Context.register[i] + " =?= " + operation + " -:|:- ");
-                if (Context.register[i].equals(operation)) {
+            for (int i = 0; i < Context.REGISTER.length; ++i) {
+                System.out.print(Context.REGISTER[i] + " =?= " + operation + " -:|:- ");
+                if (Context.REGISTER[i].equals(operation)) {
                     System.out.println("");
                     return true;
                 }
@@ -564,20 +553,21 @@ public class FunctionFactory {
             if (exp.equals("()")) {
                 return "";
             }
-            exp = exp.replace("lig", Context.register[4]);
-            exp = exp.replace("ligmoid", Context.register[4]);
-            exp = exp.replace("softplus", Context.register[4]);
-            exp = exp.replace("spls", Context.register[4]);
-            exp = exp.replace("ligm", Context.register[4]);
-            exp = exp.replace("linear", Context.register[5]);
-            exp = exp.replace("sigmoid", Context.register[1]);
-            exp = exp.replace("quadratic", Context.register[3]);
-            exp = exp.replace("quadr", Context.register[3]);
-            exp = exp.replace("gaussian", Context.register[6]);
-            exp = exp.replace("gauss", Context.register[6]);
-            exp = exp.replace("summation", Context.register[7]);
-            exp = exp.replace("product", Context.register[8]);
-            exp = exp.replace("absolute", Context.register[9]);
+            exp = exp.replace("sigmoid", Context.REGISTER[1]);
+            exp = exp.replace("quadratic", Context.REGISTER[3]);
+            exp = exp.replace("quadr", Context.REGISTER[3]);
+            exp = exp.replace("lig", Context.REGISTER[4]);
+            exp = exp.replace("ligmoid", Context.REGISTER[4]);
+            exp = exp.replace("softplus", Context.REGISTER[4]);
+            exp = exp.replace("spls", Context.REGISTER[4]);
+            exp = exp.replace("ligm", Context.REGISTER[4]);
+            exp = exp.replace("linear", Context.REGISTER[5]);
+            exp = exp.replace("gaussian", Context.REGISTER[6]);
+            exp = exp.replace("gauss", Context.REGISTER[6]);
+            exp = exp.replace("absolute", Context.REGISTER[7]);
+            exp = exp.replace("summation", Context.REGISTER[10]);
+            exp = exp.replace("product", Context.REGISTER[11]);
+
             int bracketDepth = 0;
             for (int Ei = 0; Ei < exp.length(); ++Ei) {
                 if (exp.charAt(Ei) == ')') {

@@ -2,84 +2,38 @@ package neureka.core.modul.calc.fcomp.util;
 
 import neureka.core.T;
 import neureka.core.modul.calc.FunctionFactory;
-import neureka.core.modul.calc.fcomp.Constant;
-import neureka.core.modul.calc.fcomp.Function;
-import neureka.core.modul.calc.fcomp.Input;
-import neureka.core.modul.calc.fcomp.Variable;
+import neureka.core.modul.calc.fcomp.*;
 
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class Construction {
 
-    public static Function createFunction(int f_id, ArrayList<Function> Srcs){//}, boolean tipReached){
+    public static Function createFunction(int f_id, ArrayList<Function> Srcs){
         boolean[] isFlat = {false};//=> !isFlat
         Srcs.forEach((v)->{
             isFlat[0] = (
-                    (!(v instanceof Input)) &&
-                            (!(v instanceof Variable)) &&
-                            (!(v instanceof Constant))
-            )
-                    || isFlat[0];
+                    (!(v instanceof Input)) && (!(v instanceof Variable)) && (!(v instanceof Constant))
+                    ) || isFlat[0];
         });
         isFlat[0] = !isFlat[0];
-
-        Supplier<String> string = () -> {
-            String reconstructed = "";
-            if (Srcs.size() == 1 && Context.register[f_id].length() > 1) {
-                String expression = Srcs.get(0).toString();
-                if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
-                    return Context.register[f_id] + expression;
-                }
-                return Context.register[f_id] + "(" + expression + ")";
-            }
-            for (int i = 0; i < Srcs.size(); ++i) {
-                if (Srcs.get(i) != null) {
-                    reconstructed = reconstructed + Srcs.get(i).toString();
-                } else {
-                    reconstructed = reconstructed + "(null)";
-                }
-                if (i != Srcs.size() - 1) {
-                    reconstructed = reconstructed + Context.register[f_id];
-                }
-            }
-            return "(" + reconstructed + ")";
-        };
-
         if(f_id<9) {// FUNCTIONS:
-            return new Function(){
-                @Override
-                public boolean isFlat(){
-                    return  isFlat[0];
-                }
-                @Override
-                public int id() {
-                    return f_id;
-                }
-                @Override
-                public Function newBuild(String expression) {
-                    return new FunctionFactory().newBuild(expression);
-                }
-                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                @Override
-                public String toString() {
-                    return string.get();//Context.register[f_id];
-                }
+            return new Template(f_id, isFlat[0], Srcs){//Function(){
                 @Override
                 public T activate(T[] input, int j) {
-                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input, j), f_id, false, isFlat[0]);
+                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input, j), f_id, false, isFlat);
                 }
                 @Override
                 public T activate(T[] input) {
-                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input), f_id, false, isFlat[0]);
+                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input), f_id, false, isFlat);
                 }
                 @Override
                 public T derive(T[] input, int d, int j) {
-                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input, j), f_id, true, isFlat[0]);
+                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input, j), f_id, true, isFlat);
                 }
                 @Override
                 public T derive(T[] input, int d) {
-                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input), f_id, true, isFlat[0]);
+                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input), f_id, true, isFlat);
                 }
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 @Override
@@ -102,39 +56,22 @@ public class Construction {
                 }
             };
         }else{
-            return new Function(){
-                @Override
-                public boolean isFlat(){
-                    return  isFlat[0];
-                }
-                @Override
-                public int id() {
-                    return f_id;
-                }
-                @Override
-                public Function newBuild(String expression){
-                    return new FunctionFactory().newBuild(expression);
-                }
-                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                @Override
-                public String toString() {
-                    return string.get();
-                }
+            return new Template(f_id, isFlat[0], Srcs){//Function(){
                 @Override
                 public T activate(T[] input, int j) {
-                    return Calculation.tensorActivationOf(input, f_id, j, -1, Srcs, isFlat[0]);
+                    return Calculation.tensorActivationOf(input, f_id, j, -1, Srcs, isFlat);
                 }
                 @Override
                 public T activate(T[] input) {
-                    return Calculation.tensorActivationOf(input, f_id, -1, -1, Srcs, isFlat[0]);
+                    return Calculation.tensorActivationOf(input, f_id, -1, -1, Srcs, isFlat);
                 }
                 @Override
                 public T derive(T[] input, int d, int j) {
-                    return Calculation.tensorActivationOf(input, f_id, j, d, Srcs, isFlat[0]);
+                    return Calculation.tensorActivationOf(input, f_id, j, d, Srcs, isFlat);
                 }
                 @Override
                 public T derive(T[] input, int d) {
-                    return Calculation.tensorActivationOf(input, f_id, -1, d, Srcs, isFlat[0]);
+                    return Calculation.tensorActivationOf(input, f_id, -1, d, Srcs, isFlat);
                 }
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 @Override

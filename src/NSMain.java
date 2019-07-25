@@ -1,3 +1,4 @@
+import javafx.stage.Stage;
 import neureka.core.Utility;
 import neureka.core.modul.calc.fcomp.util.Calculation;
 import neureka.unit.NVTester;
@@ -9,7 +10,7 @@ public class NSMain {
 	static NWindow testWindow;
 	static GridGame game;
     
-	public static void main(String[] args) throws InterruptedException
+	public static void main(String[] args) throws Exception
 	{
 
 		NConsole console = new NConsole("Huuui", 1000);
@@ -169,7 +170,8 @@ public class NSMain {
 		//NDoubleArray Storage = new NDoubleArray(4);
 		//for(int i=0; i<Storage.length(); i++) 
 		//{Storage.Array[i].e_set(3); System.out.println(Array.e_get(i));}
-		
+		//NNetworkWindow nw = new NNetworkWindow();
+		//nw.start(new Stage());
 
 	}
 

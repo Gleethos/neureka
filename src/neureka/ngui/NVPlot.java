@@ -275,7 +275,7 @@ public class NVPlot extends JPanel{
 			  moveVector[1]=old[3];
 		}
 		
-		//Vektor shift on panel
+		//Vektor BIAS on panel
 		public void applyMoveVector() {		
 			if(moveVector != null) {if(moveVector.length==2) {return;}} else {return;}
 
