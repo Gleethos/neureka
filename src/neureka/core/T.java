@@ -1,8 +1,9 @@
 package neureka.core;
 
-import neureka.core.modul.calc.GraphNode;
-import neureka.core.modul.calc.gcomp.RelativeGradients;
-import neureka.core.modul.calc.Device;
+import neureka.core.module.calc.FunctionFactory;
+import neureka.core.module.calc.GraphBuilder;
+import neureka.core.module.calc.gcomp.GradientNode;
+import neureka.core.module.calc.Device;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -144,9 +145,9 @@ public class T {
                 Modules.remove(oldCompartment);
                 Modules.trimToSize();
             }
-            Modules.add(newModule);
+            Modules.add((newModule instanceof  int[])?cached((int[])newModule):newModule);
         } else {
-            Modules = new ArrayList<Object>();
+            Modules = new ArrayList<>();
             Modules.add(newModule);
         }
     }
@@ -201,8 +202,8 @@ public class T {
         }
         strValue = strShape+":("+strValue+")";
         if(mode=="r"){
-            if(this.has(RelativeGradients.class)){
-                RelativeGradients d = (RelativeGradients) this.find(RelativeGradients.class);
+            if(this.has(GradientNode.class)){
+                GradientNode d = (GradientNode) this.find(GradientNode.class);
                 String[] strDerivatives = {"; "};
                 d.forEach((target, derivative)->{
                     strDerivatives[0]+="=>d|[ "+derivative.toString("r")+" ]|:t{ "+target.toString("r")+" }, ";
@@ -210,8 +211,8 @@ public class T {
                 strValue += strDerivatives[0];
             }
         }else if(mode == "d"){
-            if(this.has(RelativeGradients.class)){
-                RelativeGradients d = (RelativeGradients) this.find(RelativeGradients.class);
+            if(this.has(GradientNode.class)){
+                GradientNode d = (GradientNode) this.find(GradientNode.class);
                 String[] strDerivatives = {"; "};
                 d.forEach((target, derivative)->{
                     strDerivatives[0]+="->d"+derivative.toString()+", ";
@@ -260,29 +261,39 @@ public class T {
         if (size != value.length) {
             return;
         }
-        this.translation = T.utility.idxTln(newShape);
-        long t_key = 0;
-        long s_key = 0;
-        for (int i = 0; i < newShape.length; i++) {
-            s_key *= 10;
-            s_key += Math.abs(newShape[i]);
-            t_key *= 10;
-            t_key += Math.abs(this.translation[i]);
+        this.shape = cached(newShape);
+        this.translation = cached(T.utility.idxTln(newShape));
+    }
+
+    private int[] cached(int[] data){
+        long key = 0;
+        for (int i = 0; i < data.length; i++) {
+            if(data[i]<=10){
+                key *= 10;
+            }else if(data[i]<=100){
+                key *= 100;
+            }else if(data[i]<=1000){
+                key *= 1000;
+            }else if(data[i]<=10000){
+                key *= 10000;
+            }else if(data[i]<=100000){
+                key *= 100000;
+            }else if(data[i]<=1000000){
+                key *= 1000000;
+            }else if(data[i]<=10000000){
+                key *= 10000000;
+            }
+            key += Math.abs(data[i]);
         }
-        int[] found = SHARED.get(s_key);
+        int[] found = SHARED.get(key);
         if (found != null) {
-            this.shape = found;
+            return found;
         } else {
-            SHARED.put(s_key, newShape);
-            this.shape = newShape;
-        }
-        found = SHARED.get(t_key);
-        if (found != null) {
-            this.translation = found;
-        } else {
-            SHARED.put(t_key, this.translation);
+            SHARED.put(key, data);
+            return data;
         }
     }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     //MODIFICATION :
@@ -309,12 +320,14 @@ public class T {
     }
     public T of(T[] tensors, String operation) {
         if(tensors==null||tensors.length==0||tensors[0]==null){return this;}
-        this.addModule(new GraphNode(this, tensors, operation, true));
+        this.internalize(FunctionFactory.newBuild(operation).activate(tensors));
+        //this.addModule(new GraphBuilder(this, tensors, operation, true));
         //this.setIsLeave(false);
         return this;
     }
     public T of(T[] tensors, int[][] translation, String operation) {
-        this.addModule(new GraphNode(this, tensors, translation, operation));
+        this.internalize(FunctionFactory.newBuild(operation).activate(tensors));
+        //this.addModule(new GraphBuilder(this, tensors, translation, operation));
         //this.setIsLeave(false);
         return this;
     }
@@ -323,7 +336,7 @@ public class T {
         if(this.rqsGradient()){
             this.setGradient(gradient);
         }
-        GraphNode operation = (GraphNode) this.find(GraphNode.class);
+        GraphBuilder operation = (GraphBuilder) this.find(GraphBuilder.class);
         if (operation == null) {
             return;
         }

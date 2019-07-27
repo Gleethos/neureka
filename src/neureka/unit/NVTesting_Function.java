@@ -1,8 +1,8 @@
 package neureka.unit;
 
 import neureka.core.T;
-import neureka.core.modul.calc.fcomp.Function;
-import neureka.core.modul.calc.FunctionFactory;
+import neureka.core.module.calc.fcomp.Function;
+import neureka.core.module.calc.FunctionFactory;
 import neureka.utility.NMessageFrame;
 
 public class NVTesting_Function extends NVTesting{

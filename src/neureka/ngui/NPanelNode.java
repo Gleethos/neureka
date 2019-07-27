@@ -16,7 +16,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import neureka.core.T;
-import neureka.core.modul.calc.fcomp.Function;
+import neureka.core.module.calc.fcomp.Function;
 
 
 public class NPanelNode implements NPanelObject

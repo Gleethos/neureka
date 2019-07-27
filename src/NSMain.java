@@ -1,6 +1,5 @@
-import javafx.stage.Stage;
 import neureka.core.Utility;
-import neureka.core.modul.calc.fcomp.util.Calculation;
+import neureka.core.module.calc.fcomp.util.Calculation;
 import neureka.unit.NVTester;
 import neureka.ngui.NWindow;
 import neureka.utility.NConsole;

@@ -1,8 +1,7 @@
 package neureka.unit;
 
 
-import neureka.core.modul.calc.Device;
-import neureka.core.modul.calc.gcomp.RelativeGradients;
+import neureka.core.module.calc.Device;
 import neureka.core.T;
 import neureka.unit.state.NVTesting_Tensor;
 import neureka.unit.state.NVTesting_TensorDevice;
