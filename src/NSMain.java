@@ -124,17 +124,17 @@ public class NSMain {
 
 
 
-		for(int i=-20; i<20; i++){
-			double in = ((double)i)/4;
-			System.out.println(in+" -> "+
-					Calculation.getTanhOf(
-							in/
-									(1+(2/Math.pow(in, 2)))
-							,
-							false
-					)
-			);
-		}
+		//for(int i=-20; i<20; i++){
+		//	double in = ((double)i)/4;
+		//	System.out.println(in+" -> "+
+		//			Calculation.getTanhOf(
+		//					in/
+		//							(1+(2/Math.pow(in, 2)))
+		//					,
+		//					false
+		//			)
+		//	);
+		//}
 
 
 

@@ -1,7 +1,7 @@
 package neureka.core.module.calc.fcomp.util;
 
 import neureka.core.T;
-import neureka.core.module.calc.Device;
+import neureka.core.module.calc.TDevice;
 import neureka.core.module.calc.FunctionFactory;
 import neureka.core.module.calc.GraphBuilder;
 import neureka.core.module.calc.fcomp.Constant;
@@ -32,7 +32,7 @@ public class Calculation {
             return output;
         }
         if(input.isOutsourced()){
-            Device device = (Device) input.find(Device.class);
+            TDevice device = (TDevice) input.find(TDevice.class);
             device.calculate(new T[]{output, input}, f_id, (derive)?0:-1);
         }else{
             foreach(input, output, (i, inputValue, outputValue)->{
@@ -109,14 +109,14 @@ public class Calculation {
         /**
          *  The following code is reached in flat functions only:
          * */
-        Device device = (Device) input[0].find(Device.class);
+        TDevice device = (TDevice) input[0].find(TDevice.class);
         boolean onSameDevice = T.utility.shareGuestDevice(input);
         if(onSameDevice){
             if(device!=null){
                 device.add(output);
             }
             for (int ti = 0; ti < input.length; ti++) {
-                device = (Device) input[ti].find(Device.class);
+                device = (TDevice) input[ti].find(TDevice.class);
                 T[] tsrs = new T[1+input.length];
                 tsrs[0]=output;
                 for(int tii=1; tii<tsrs.length; tii++){

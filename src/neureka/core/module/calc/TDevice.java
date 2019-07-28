@@ -5,8 +5,9 @@ import java.util.List;
 import com.aparapi.device.OpenCLDevice;
 import neureka.core.T;
 import neureka.core.module.calc.dcomp.TKernel;
+import com.aparapi.device.Device;
 
-public class Device
+public class TDevice
 {
     /**
      *    map:
@@ -23,20 +24,31 @@ public class Device
      * */
     private int[][] register = null;
     private OpenCLDevice device = null;
+    //private Device device = null;
+
     private TKernel kernel = null;
 
-    public Device(String name){
+    public TDevice(String name){
         if(name==null){
             device = null;
             kernel = null;
         }else{
+            String[] parts = name.split(" ");
+            String type = "gpu";
+            if(parts!=null&&parts.length>1){
+                type = parts[1];
+                name = parts[0];
+            }
             register = new int[][]{new int[]{-1,-1,-1,-1,-1}};
             device = OpenCLDevice.listDevices(null).get(0);
             List<OpenCLDevice> OpenCLDevices = OpenCLDevice.listDevices(null);
             for (OpenCLDevice found: OpenCLDevices){
                 System.out.println("\n---\n"+found.toString());
                 System.out.println(found.getShortDescription()+"; ID: "+found.getDeviceId());
-                if((found.getShortDescription()+found.toString()).toLowerCase().contains(name.toLowerCase())){
+                if(
+                        (found.getShortDescription()+found.toString()).toLowerCase().contains(name.toLowerCase())
+                        &&found.getType().toString().toLowerCase().contains(type)
+                ){
                     this.device = found;
                 }
             }
@@ -46,13 +58,18 @@ public class Device
             System.out.println("\nChosen device:\n------------\n"+ device.toString()+"\n------------\n");
             System.out.println("\ndevice f_id:\n------------\n"+ this.device.getType().toString()+"\n------------\n");
             kernel = new TKernel();
-            System.out.println("Device of kernel:\n------------");
+            System.out.println("TDevice of kernel:\n------------");
             System.out.println(kernel.getTargetDevice().toString());
         }
+    }
+
+    public void dispose(){
+        this.kernel.dispose();
 
     }
 
     public TKernel getKernel(){
+        //System.out.println(this.kernel.cleanUpArrays());
         return kernel;
     }
     /**
@@ -77,7 +94,7 @@ public class Device
             rmv(tensor);
         }
     }
-    private void rmv(T tensor){
+    public void rmv(T tensor){
         if(kernel!=null) {
             if (map.containsKey(tensor)) {
                 kernel.freePtrOf(map.get(tensor), register);
@@ -96,6 +113,10 @@ public class Device
                     )
             );
         }
+        //for(int n : device.getMaxWorkItemSize()){
+        //    System.out.print(n+", ");
+        //}
+        //System.out.println(device.getMaxWorkGroupSize()+"   <====  MAX WORK GROUP SIZE");
         kernel.execute(
                 device.createRange(
                     kernel.store_tsr(

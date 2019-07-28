@@ -88,11 +88,11 @@ public class TKernel extends Kernel
      *    +5 -> tln_sze: (size)
      * */
     public TKernel(){
+        this.setExplicit(true);
         this.pointers = new int[]{};//0, -initialSize, 0, 0, 0, 0
         this.shapes  = new int[0];
         this.translations = new int[0];
         this.values  = new double[0];
-        this.setExplicit(true);
     }
     //-------------------------------------------------------------------
     public int tsr_count(){

@@ -8,10 +8,9 @@ import java.util.function.Consumer;
 
 public class GraphBuilder {
 
-    //Function Fcn = null;
-    //T[] Src = null;
-    //int referenced = 0;
-    //int mode = 0;
+    /**
+     *  These functions describe the meaning of 'mode'
+     * */
     private static boolean usesAD(int mode){return (mode !=0);}
     private static boolean usesForwardAD(int mode){ return (mode >0); }
     private static boolean usesReverseAD(int mode){ return (mode <0); }
@@ -35,31 +34,13 @@ public class GraphBuilder {
             translated[i] = T.factory.reshapedCopyOf(src[i], translation[i]);//src[i].reshaped(translation[i]);
         }
     }
-    public GraphBuilder(T drain, T[] src, String operation, boolean forward, boolean derive){//, boolean derive
-        Function function = construct(operation, src);
-        //if(function.isFlat()){
-            int mode = configure(src, function);
-        //}
-        if(function.isFlat()&&derive){//derive &&
-            performDifferentiation(drain, function, src, mode);
-        }
-    }
+
     public static void connect(T drain, T[] src, int f_id, boolean derive){//, boolean derive
-        Function function = construct(f_id, src);
+        Function function = new FunctionFactory().newBuild(f_id, src.length);
         int mode = configure(src, function);
         if(function.isFlat()&&derive){
             performDifferentiation(drain, function, src, mode);
         }
-    }
-
-    private static Function construct(int f_id, T[] source){
-        Function function = new FunctionFactory().newBuild(f_id, source.length);//, tipReached);
-        return function;
-    }
-    private static Function construct(String operation, T[] source) {
-        Function function = new FunctionFactory().newBuild(operation);
-        validate(operation, function, source);
-        return function;
     }
 
     private static void validate(String operation, Function function, T[] source){
@@ -89,21 +70,14 @@ public class GraphBuilder {
 
     private static int configure(T[] source, Function function){
         /**
-         *  Increment reference counter
-         *              &
          *  Evaluate auto-grad mode:
          * */
         int mode = 0;
         int[] srcModes = new int[source.length];
         int m = 0;
         for(int Ii = 0; Ii< source.length; Ii++){
-            if(source[Ii].has(GraphBuilder.class)){//TODO: Fuck graph nodes! Relative GRadients are the new nodes! They contain mode !!!!!!
-                GraphBuilder node = (GraphBuilder) source[Ii].find(GraphBuilder.class);//That's better! this should retun rg, with mode or not!(null)
-                //node.referenced++;
-                //srcModes[Ii] = node.mode;
-            }else if(source[Ii].has(GradientNode.class)){
-                GradientNode node = (GradientNode) source[Ii].find(GradientNode.class);//That's better! this should retun rg, with mode or not!(null)
-                //node.referenced++;
+            if(source[Ii].has(GradientNode.class)){
+                GradientNode node = (GradientNode) source[Ii].find(GradientNode.class);
                 srcModes[Ii] = node.mode();
             }else if(source[Ii].rqsGradient()){
                 srcModes[Ii] = 1;
@@ -123,11 +97,8 @@ public class GraphBuilder {
     private static void performDifferentiation(T drain, Function function, T[] source, int m)
     {//--------------------------------------------------------------------------------------
         if(usesAD(m) && function.isFlat()){
-            foreach(source, (src)->{
-                
-            });
             if(!drain.has(GradientNode.class)){
-                GradientNode rg = new GradientNode(m, function);
+                GradientNode rg = new GradientNode(m, function, source);
                 drain.addModule(rg);
             }
             GradientNode drain_gradients = (GradientNode) drain.find(GradientNode.class);
@@ -135,41 +106,41 @@ public class GraphBuilder {
              *  Preparing for back      propagation:
              * */
             if(usesForwardAD(m)){
-                int[] i = {0};
-                foreach(source, (src)->{
+                int i = 0;
+                for(T src : source){
                     if(src.has(GradientNode.class) && ((GradientNode) src.find(GradientNode.class)).function().id()==18){
-                        T d = function.derive(source, i[0]);
+                        T d = function.derive(source, i);
                         drain_gradients.put(src, d);// Sources created by x-mul are revers-mode cases!
                     }else{
                         GradientNode src_gradients = (GradientNode) src.find(GradientNode.class);
-                                if(src_gradients!=null){
-                            T d = function.derive(source, i[0]);
+                        if(src_gradients!=null){
+                            T d = function.derive(source, i);
                             src_gradients.forEach(
                                 (t, g)->{
                                     /**
                                      *  Chain rule for every gradient with respect to leaves:
                                      * */
                                     if(drain_gradients.has(t)){
-                                        T sg = drain_gradients.get(t);
-                                        drain_gradients.put(t, T.factory.addition(sg,T.factory.multiplication(d, g)));
+                                        T dg = drain_gradients.get(t);
+                                        drain_gradients.put(t, T.factory.addition(dg,T.factory.multiplication(d, g)));
                                     }else{
                                         drain_gradients.put(t, T.factory.multiplication(d, g));
                                     }
                                     //TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
-                                });
+                            });
                         }
-                        i[0]++;
+                        i++;
                     }
-                });
+                }
             }else if(usesReverseAD(m)){
-                int[] i = {0};
-                foreach(source, (src)->{
+                int i = 0;
+                for(T src : source){
                     if(src.has(GradientNode.class) || src.rqsGradient()){
-                        T d = function.derive(source, i[0]);
+                        T d = function.derive(source, i);
                         drain_gradients.put(src, d);// Add gradients with respect to every source tensor!
                     }
-                    i[0]++;
-                });
+                    i++;
+                }
             }
         }
     }//--------------------------------------------------------------------------------------

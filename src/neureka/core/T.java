@@ -2,8 +2,8 @@ package neureka.core;
 
 import neureka.core.module.calc.FunctionFactory;
 import neureka.core.module.calc.GraphBuilder;
+import neureka.core.module.calc.TDevice;
 import neureka.core.module.calc.gcomp.GradientNode;
-import neureka.core.module.calc.Device;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +15,7 @@ public class T {
 
     // DEFAULT DEVICE (HOST CPU)
     //=========================
-    private static Device CPU;
+    private static TDevice CPU;
 
     //STATIC SHARED MEMORY:
     //=========================
@@ -23,7 +23,7 @@ public class T {
 
     static {//The things we do for memory:
         SHARED = new HashMap<>();
-        CPU = new Device(null);//<= creates CPU-Aparapi-Kernel
+        CPU = new TDevice(null);//<= creates CPU-Aparapi-Kernel
     }
     //-----------------------------------------------------------------------
 
@@ -35,16 +35,16 @@ public class T {
     protected double[] gradient = null;
     //-----------------------------------------------------------------------
 
-    public Device device(){
+    public TDevice device(){
         if(this.isOutsourced()){
-            return (Device) this.find(Device.class);
+            return (TDevice) this.find(TDevice.class);
         }
         return CPU;
     }
 
     public double[] gradient(){
-        if(this.rqsGradient()&&this.isOutsourced()&&this.has(Device.class)){
-            return ((Device)this.find(Device.class)).valueOf(this, true);
+        if(this.rqsGradient()&&this.isOutsourced()&&this.has(TDevice.class)){
+            return ((TDevice)this.find(TDevice.class)).valueOf(this, true);
         }
         return gradient;
     }
@@ -53,15 +53,15 @@ public class T {
     }
 
     public double[] value() {
-        if(this.value==null && this.isOutsourced() && this.has(Device.class)){
-            return ((Device)this.find(Device.class)).valueOf(this, false);
+        if(this.value==null && this.isOutsourced() && this.has(TDevice.class)){
+            return ((TDevice)this.find(TDevice.class)).valueOf(this, false);
         }
         return value;
     }
     public void setValue(double[] newValue){
         this.value = newValue;
         if(this.isOutsourced() && newValue!=null){
-            ((Device)this.find(Device.class)).add(this);
+            ((TDevice)this.find(TDevice.class)).add(this);
         }
     }
 
@@ -122,8 +122,10 @@ public class T {
         if(isOutsourced){
             this.value = null;
             this.gradient = null;
-        }else if(this.has(Device.class)){
-            this.remove(Device.class);
+        }else if(this.has(TDevice.class)){
+            TDevice device = (TDevice) this.find(TDevice.class);
+            device.get(this);
+            this.remove(TDevice.class);
         }
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -344,6 +346,18 @@ public class T {
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    public void delete(){
+        if(this.isOutsourced()){
+            ((TDevice)this.find(TDevice.class)).rmv(this);
+        }
+        this.flags = -1;
+        this.value = null;
+        this.shape = null;
+        this.translation = null;
+        this.Modules = null;
+        this.gradient = null;
+    }
+
     //ELEMENTARY OPERATIONS:
     //=========================
     public void foreach(Consumer<Integer> action){
@@ -522,13 +536,13 @@ public class T {
 
         public static boolean shareGuestDevice(T[] tsrs){
             boolean onSameGuestDevice = true;
-            Device device = null;
+            TDevice device = null;
             for (int ti = 0; ti < tsrs.length; ti++) {
-                device = (tsrs[ti].isOutsourced())?(Device)tsrs[ti].find(Device.class):device;
+                device = (tsrs[ti].isOutsourced())?(TDevice)tsrs[ti].find(TDevice.class):device;
             }
             if(device!=null) {
                 for (int ti = 0; ti < tsrs.length; ti++) {
-                    onSameGuestDevice = (device == tsrs[ti].find(Device.class)) && onSameGuestDevice;
+                    onSameGuestDevice = (device == tsrs[ti].find(TDevice.class)) && onSameGuestDevice;
                 }
             }else{
                 onSameGuestDevice = false;

@@ -213,7 +213,7 @@ class AparapiMatMul extends Kernel {
     }
   //============================================
     
-    //Comparing CPU C-Matrix with with Device C-Matrix!
+    //Comparing CPU C-Matrix with with TDevice C-Matrix!
     public void compareResults()
     {
         boolean equal = true;
