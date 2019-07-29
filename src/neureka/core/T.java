@@ -1,9 +1,9 @@
 package neureka.core;
 
-import neureka.core.module.calc.FunctionFactory;
-import neureka.core.module.calc.GraphBuilder;
-import neureka.core.module.calc.TDevice;
-import neureka.core.module.calc.gcomp.GradientNode;
+import neureka.core.function.FunctionFactory;
+import neureka.core.device.TDevice;
+import neureka.core.autograd.GradientNode;
+import neureka.core.utility.DataHelper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -680,7 +680,7 @@ public class T {
         public static double[] randFromShape_mxd(int[] shape, int start, int rank, double[] data, int dataPtr) {
             int size = sizeOfShape_mxd(shape, start, rank);
             for (int i = 0; i < size; i++) {
-                data[dataPtr + i] = Utility.getDoubleOf(i);
+                data[dataPtr + i] = DataHelper.getDoubleOf(i);
             }
             return data;
         }

@@ -1,36 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/src/neureka/core/module/calc/dcomp/TKernel.java" line="502" mnemonic="8" />
+    <bookmark url="file://$PROJECT_DIR$/src/neureka/core/device/TKernel.java" line="502" mnemonic="8" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8f069c6b-f9fb-4e13-ace8-74184cdf4938" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/NSMain.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/NSMain.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/T$factory.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/core/T$factory.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/T$utility.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/core/T$utility.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/T.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/core/T.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/module/calc/FunctionFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/core/module/calc/FunctionFactory.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/module/calc/GraphBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/core/module/calc/GraphBuilder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/module/calc/fcomp/Template.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/core/module/calc/fcomp/Template.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/module/calc/fcomp/Variable.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/core/module/calc/fcomp/Variable.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/module/calc/fcomp/util/Calculation$Actor.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/module/calc/fcomp/util/Calculation.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/module/calc/fcomp/util/Construction$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/core/module/calc/fcomp/util/Construction$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/module/calc/fcomp/util/Construction$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/core/module/calc/fcomp/util/Construction$2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/module/calc/fcomp/util/Construction.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/core/module/calc/fcomp/util/Construction.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/NVTesting_Function.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/unit/NVTesting_Function.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/state/NVTesting_Tensor.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/unit/state/NVTesting_Tensor.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/NSMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/NSMain.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/neureka/core/T.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/T.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/FunctionFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/module/calc/FunctionFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Template.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Template.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Variable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Variable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/util/Calculation.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/util/Construction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/util/Construction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/core/Utility.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/utility/DataHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/FunctionFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/function/FunctionFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/autograd/GraphBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/TDevice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/device/TDevice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/dcomp/TKernel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/dcomp/TKernel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/device/TKernel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Constant.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Constant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/function/Constant.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Function.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Function.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/function/Function.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Input.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Input.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/function/Input.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Template.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/function/Template.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Variable.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Variable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/function/Variable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/util/Construction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/function/util/Construction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/util/Context.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/util/Context.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/function/util/Context.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/core/module/calc/gcomp/GradientNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/core/autograd/GradientNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NPanelNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/ngui/NPanelNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/unit/NVTester.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/unit/NVTester.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/neureka/unit/NVTesting_Function.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/unit/NVTesting_Function.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/unit/state/NVTesting_Tensor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/unit/state/NVTesting_Tensor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/unit/state/NVTesting_TensorDevice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/unit/state/NVTesting_TensorDevice.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -47,6 +46,15 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/neureka/unit/NVTester.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="234">
+              <caret line="82" column="67" selection-start-line="82" selection-start-column="67" selection-end-line="82" selection-end-column="67" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/neureka/core/T.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -72,10 +80,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java">
+        <entry file="file://$PROJECT_DIR$/src/neureka/core/autograd/GraphBuilder.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="163">
-              <caret line="38" column="81" selection-start-line="38" selection-start-column="81" selection-end-line="38" selection-end-column="81" />
+            <state relative-caret-position="136">
+              <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -93,10 +101,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/util/Construction.java">
+        <entry file="file://$PROJECT_DIR$/src/neureka/core/function/util/Construction.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1320">
-              <caret line="109" selection-start-line="109" selection-end-line="109" />
+            <state relative-caret-position="221">
+              <caret line="13" column="9" selection-start-line="13" selection-start-column="9" selection-end-line="13" selection-end-column="9" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#912#913#0" expanded="true" />
@@ -111,19 +119,12 @@
                 <element signature="e#3209#3210#0" expanded="true" />
                 <element signature="e#3287#3288#0" expanded="true" />
                 <element signature="e#3386#3387#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Variable.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="163">
-              <caret line="65" column="20" selection-start-line="65" selection-start-column="20" selection-end-line="65" selection-end-column="20" />
-              <folding>
-                <element signature="e#1737#1738#0" expanded="true" />
-                <element signature="e#1786#1787#0" expanded="true" />
+                <element signature="e#3369#3370#0" expanded="true" />
+                <element signature="e#3456#3457#0" expanded="true" />
+                <element signature="e#3537#3538#0" expanded="true" />
+                <element signature="e#3631#3632#0" expanded="true" />
+                <element signature="e#3908#3909#0" expanded="true" />
+                <element signature="e#3991#3992#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -142,48 +143,43 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/neureka/unit/state/NVTesting_Tensor.java">
+        <entry file="file://$PROJECT_DIR$/src/neureka/core/device/TDevice.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="163">
-              <caret line="17" column="26" selection-start-line="17" selection-start-column="26" selection-end-line="17" selection-end-column="26" />
+            <state relative-caret-position="119">
+              <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
               <folding>
                 <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/neureka/core/module/calc/FunctionFactory.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="64" column="32" selection-start-line="64" selection-start-column="32" selection-end-line="64" selection-end-column="32" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/neureka/core/module/calc/TDevice.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="166">
-              <caret line="76" column="14" selection-start-line="76" selection-start-column="14" selection-end-line="76" selection-end-column="14" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#2780#2781#0" expanded="true" />
-                <element signature="e#2831#2832#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Template.java">
+        <entry file="file://$PROJECT_DIR$/src/neureka/core/utility/DataHelper.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="271" lean-forward="true" selection-start-line="271" selection-end-line="271" />
+            <state relative-caret-position="-119">
+              <caret line="274" column="78" selection-start-line="274" selection-start-column="78" selection-end-line="274" selection-end-column="78" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/neureka/core/function/FunctionFactory.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="119">
+              <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/neureka/core/function/Template.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="232">
+              <caret line="108" column="67" selection-start-line="108" selection-start-column="67" selection-end-line="108" selection-end-column="67" />
             </state>
           </provider>
         </entry>
@@ -269,12 +265,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/neureka/main/core/modul/calc/FunctionFactory.java" />
-        <option value="$PROJECT_DIR$/src/neureka/main/core/T.java" />
-        <option value="$PROJECT_DIR$/src/neureka/main/core/NVUtility.java" />
-        <option value="$PROJECT_DIR$/src/neureka/main/core/base/data/AC.java" />
-        <option value="$PROJECT_DIR$/src/neureka/main/core/base/data/GraphNode.java" />
-        <option value="$PROJECT_DIR$/src/neureka/main/core/modul/calc/GraphNode.java" />
         <option value="$PROJECT_DIR$/src/neureka/main/core/modul/calc/fcomp/NFUtility.java" />
         <option value="$PROJECT_DIR$/src/neureka/main/core/modul/calc/gcomp/fcomp/NFUtility.java" />
         <option value="$PROJECT_DIR$/src/neureka/main/core/modul/calc/gcomp/FunctionFactory.java" />
@@ -307,7 +297,6 @@
         <option value="$PROJECT_DIR$/src/neureka/unit/state/NVTesting_TensorDevice.java" />
         <option value="$PROJECT_DIR$/src/neureka/core/module/calc/dcomp/TKernel.java" />
         <option value="$PROJECT_DIR$/src/neureka/core/module/calc/Device.java" />
-        <option value="$PROJECT_DIR$/src/neureka/unit/NVTester.java" />
         <option value="$PROJECT_DIR$/src/neureka/core/module/calc/gcomp/GradientNode.java" />
         <option value="$PROJECT_DIR$/src/neureka/core/module/calc/TDevice.java" />
         <option value="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Variable.java" />
@@ -320,6 +309,13 @@
         <option value="$PROJECT_DIR$/src/neureka/core/module/calc/FunctionFactory.java" />
         <option value="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Template.java" />
         <option value="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/util/Construction.java" />
+        <option value="$PROJECT_DIR$/src/neureka/unit/NVTester.java" />
+        <option value="$PROJECT_DIR$/src/neureka/core/module/calc/gcomp/GraphBuilder.java" />
+        <option value="$PROJECT_DIR$/src/neureka/core/dcomp/TDevice.java" />
+        <option value="$PROJECT_DIR$/src/neureka/core/device/TDevice.java" />
+        <option value="$PROJECT_DIR$/src/neureka/core/utility/Utility.java" />
+        <option value="$PROJECT_DIR$/src/neureka/core/utility/Array.java" />
+        <option value="$PROJECT_DIR$/src/neureka/core/utility/DataHelper.java" />
       </list>
     </option>
   </component>
@@ -364,57 +360,7 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="neureka" type="462c0819:PsiDirectoryNode" />
               <item name="core" type="462c0819:PsiDirectoryNode" />
-              <item name="module" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="neureka" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-              <item name="module" type="462c0819:PsiDirectoryNode" />
-              <item name="calc" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="neureka" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-              <item name="module" type="462c0819:PsiDirectoryNode" />
-              <item name="calc" type="462c0819:PsiDirectoryNode" />
-              <item name="dcomp" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="neureka" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-              <item name="module" type="462c0819:PsiDirectoryNode" />
-              <item name="calc" type="462c0819:PsiDirectoryNode" />
-              <item name="fcomp" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="neureka" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-              <item name="module" type="462c0819:PsiDirectoryNode" />
-              <item name="calc" type="462c0819:PsiDirectoryNode" />
-              <item name="fcomp" type="462c0819:PsiDirectoryNode" />
-              <item name="util" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="neureka" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-              <item name="module" type="462c0819:PsiDirectoryNode" />
-              <item name="calc" type="462c0819:PsiDirectoryNode" />
-              <item name="gcomp" type="462c0819:PsiDirectoryNode" />
+              <item name="utility" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
@@ -459,7 +405,7 @@
     <property name="Repository.Attach.Sources" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1564393249695" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1564405221431" />
     <property name="create.test.in.the.same.root" value="true" />
     <property name="last_opened_file_path" value="C:/Users/Public/Downloads" />
     <property name="nodejs_package_manager_path" value="npm" />
@@ -583,12 +529,12 @@
       <workItem from="1564213754929" duration="15711000" />
       <workItem from="1564302131268" duration="3982000" />
       <workItem from="1564334105814" duration="46000" />
-      <workItem from="1564353802453" duration="8745000" />
+      <workItem from="1564353802453" duration="12165000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="934600000" />
+    <option name="totallyTimeSpent" value="938020000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
@@ -604,8 +550,8 @@
       <window_info id="Learn" order="7" />
       <window_info id="Web" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32142857" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.041208792" />
+      <window_info active="true" anchor="bottom" id="Find" order="1" visible="true" weight="0.32142857" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.041208792" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.2815934" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -709,61 +655,61 @@
           <option name="timeStamp" value="157" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/dcomp/TKernel.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TKernel.java</url>
           <line>182</line>
           <properties />
           <option name="timeStamp" value="253" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/dcomp/TKernel.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TKernel.java</url>
           <line>232</line>
           <properties />
           <option name="timeStamp" value="278" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/dcomp/TKernel.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TKernel.java</url>
           <line>233</line>
           <properties />
           <option name="timeStamp" value="279" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/TDevice.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TDevice.java</url>
           <line>192</line>
           <properties />
           <option name="timeStamp" value="309" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/TDevice.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TDevice.java</url>
           <line>193</line>
           <properties />
           <option name="timeStamp" value="310" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/dcomp/TKernel.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TKernel.java</url>
           <line>836</line>
           <properties />
           <option name="timeStamp" value="316" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/dcomp/TKernel.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TKernel.java</url>
           <line>771</line>
           <properties />
           <option name="timeStamp" value="318" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/dcomp/TKernel.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TKernel.java</url>
           <line>742</line>
           <properties />
           <option name="timeStamp" value="320" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/TDevice.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TDevice.java</url>
           <line>245</line>
           <properties />
           <option name="timeStamp" value="321" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/dcomp/TKernel.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TKernel.java</url>
           <line>802</line>
           <properties />
           <option name="timeStamp" value="326" />
@@ -775,31 +721,31 @@
           <option name="timeStamp" value="328" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/dcomp/TKernel.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TKernel.java</url>
           <line>656</line>
           <properties />
           <option name="timeStamp" value="329" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/TDevice.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TDevice.java</url>
           <line>182</line>
           <properties />
           <option name="timeStamp" value="331" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/TDevice.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TDevice.java</url>
           <line>180</line>
           <properties />
           <option name="timeStamp" value="334" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/dcomp/TKernel.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TKernel.java</url>
           <line>658</line>
           <properties />
           <option name="timeStamp" value="336" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/TDevice.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TDevice.java</url>
           <line>186</line>
           <properties />
           <option name="timeStamp" value="344" />
@@ -812,13 +758,13 @@
           <option name="timeStamp" value="386" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/autograd/GraphBuilder.java</url>
           <line>181</line>
           <properties />
           <option name="timeStamp" value="457" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/autograd/GraphBuilder.java</url>
           <line>197</line>
           <properties />
           <option name="timeStamp" value="471" />
@@ -830,37 +776,37 @@
           <option name="timeStamp" value="475" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/autograd/GraphBuilder.java</url>
           <line>186</line>
           <properties />
           <option name="timeStamp" value="516" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/autograd/GraphBuilder.java</url>
           <line>55</line>
           <properties />
           <option name="timeStamp" value="523" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/autograd/GraphBuilder.java</url>
           <line>57</line>
           <properties />
           <option name="timeStamp" value="526" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/autograd/GraphBuilder.java</url>
           <line>49</line>
           <properties />
           <option name="timeStamp" value="542" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/autograd/GraphBuilder.java</url>
           <line>42</line>
           <properties />
           <option name="timeStamp" value="544" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/autograd/GraphBuilder.java</url>
           <line>59</line>
           <properties />
           <option name="timeStamp" value="546" />
@@ -914,19 +860,19 @@
           <option name="timeStamp" value="597" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/autograd/GraphBuilder.java</url>
           <line>158</line>
           <properties />
           <option name="timeStamp" value="606" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/autograd/GraphBuilder.java</url>
           <line>167</line>
           <properties />
           <option name="timeStamp" value="608" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/autograd/GraphBuilder.java</url>
           <line>154</line>
           <properties />
           <option name="timeStamp" value="617" />
@@ -938,31 +884,31 @@
           <option name="timeStamp" value="618" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/autograd/GraphBuilder.java</url>
           <line>177</line>
           <properties />
           <option name="timeStamp" value="619" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/autograd/GraphBuilder.java</url>
           <line>124</line>
           <properties />
           <option name="timeStamp" value="623" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/autograd/GraphBuilder.java</url>
           <line>145</line>
           <properties />
           <option name="timeStamp" value="625" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/autograd/GraphBuilder.java</url>
           <line>159</line>
           <properties />
           <option name="timeStamp" value="628" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/autograd/GraphBuilder.java</url>
           <line>156</line>
           <properties />
           <option name="timeStamp" value="629" />
@@ -1010,49 +956,49 @@
           <option name="timeStamp" value="637" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/TDevice.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TDevice.java</url>
           <line>83</line>
           <properties />
           <option name="timeStamp" value="638" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/TDevice.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TDevice.java</url>
           <line>84</line>
           <properties />
           <option name="timeStamp" value="639" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/TDevice.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TDevice.java</url>
           <line>85</line>
           <properties />
           <option name="timeStamp" value="640" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/TDevice.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TDevice.java</url>
           <line>86</line>
           <properties />
           <option name="timeStamp" value="641" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/TDevice.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TDevice.java</url>
           <line>87</line>
           <properties />
           <option name="timeStamp" value="642" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/TDevice.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TDevice.java</url>
           <line>105</line>
           <properties />
           <option name="timeStamp" value="643" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/TDevice.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TDevice.java</url>
           <line>106</line>
           <properties />
           <option name="timeStamp" value="644" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/neureka/core/module/calc/TDevice.java</url>
+          <url>file://$PROJECT_DIR$/src/neureka/core/device/TDevice.java</url>
           <line>107</line>
           <properties />
           <option name="timeStamp" value="645" />
@@ -1214,7 +1160,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Constant.java">
+    <entry file="file://$PROJECT_DIR$/src/neureka/core/function/Constant.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
           <caret line="4" column="13" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
@@ -1237,25 +1183,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/neureka/core/Utility.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2074">
-          <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
-          <folding>
-            <element signature="e#8502#8503#0" expanded="true" />
-            <element signature="e#8580#8581#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Input.java">
+    <entry file="file://$PROJECT_DIR$/src/neureka/core/function/Input.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
           <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Function.java">
+    <entry file="file://$PROJECT_DIR$/src/neureka/core/function/Function.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="258">
           <caret line="20" column="13" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
@@ -1352,7 +1287,7 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/out/production/neureka/neureka/core/module/calc/Device.class" />
-    <entry file="file://$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/util/Context.java">
+    <entry file="file://$PROJECT_DIR$/src/neureka/core/function/util/Context.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="340">
           <caret line="23" column="6" selection-start-line="23" selection-start-column="6" selection-end-line="23" selection-end-column="6" />
@@ -1404,7 +1339,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/neureka/core/module/calc/dcomp/TKernel.java">
+    <entry file="file://$PROJECT_DIR$/src/neureka/core/device/TKernel.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="8024">
           <caret line="501" column="33" selection-start-line="501" selection-start-column="33" selection-end-line="501" selection-end-column="33" />
@@ -1431,7 +1366,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/neureka/core/module/calc/gcomp/GradientNode.java">
+    <entry file="file://$PROJECT_DIR$/src/neureka/core/autograd/GradientNode.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="228">
           <caret line="78" column="37" selection-start-line="78" selection-start-column="37" selection-end-line="78" selection-end-column="37" />
@@ -1465,26 +1400,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/neureka/unit/NVTester.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="149">
-          <caret line="249" selection-start-line="249" selection-end-line="249" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/neureka/core/module/calc/TDevice.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="76" column="14" selection-start-line="76" selection-start-column="14" selection-end-line="76" selection-end-column="14" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2780#2781#0" expanded="true" />
-            <element signature="e#2831#2832#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Variable.java">
+    <entry file="file://$PROJECT_DIR$/src/neureka/core/function/Variable.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="163">
           <caret line="65" column="20" selection-start-line="65" selection-start-column="20" selection-end-line="65" selection-end-column="20" />
@@ -1547,16 +1463,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="163">
-          <caret line="38" column="81" selection-start-line="38" selection-start-column="81" selection-end-line="38" selection-end-column="81" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/neureka/unit/NVTesting_Function.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="177">
@@ -1564,27 +1470,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/neureka/core/module/calc/FunctionFactory.java">
+    <entry file="file://$PROJECT_DIR$/src/neureka/core/function/Template.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="64" column="32" selection-start-line="64" selection-start-column="32" selection-end-line="64" selection-end-column="32" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="232">
+          <caret line="108" column="67" selection-start-line="108" selection-start-column="67" selection-end-line="108" selection-end-column="67" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Template.java">
+    <entry file="file://$PROJECT_DIR$/src/neureka/core/function/util/Construction.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="271" lean-forward="true" selection-start-line="271" selection-end-line="271" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/util/Construction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1320">
-          <caret line="109" selection-start-line="109" selection-end-line="109" />
+        <state relative-caret-position="221">
+          <caret line="13" column="9" selection-start-line="13" selection-start-column="9" selection-end-line="13" selection-end-column="9" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#912#913#0" expanded="true" />
@@ -1599,7 +1495,57 @@
             <element signature="e#3209#3210#0" expanded="true" />
             <element signature="e#3287#3288#0" expanded="true" />
             <element signature="e#3386#3387#0" expanded="true" />
+            <element signature="e#3369#3370#0" expanded="true" />
+            <element signature="e#3456#3457#0" expanded="true" />
+            <element signature="e#3537#3538#0" expanded="true" />
+            <element signature="e#3631#3632#0" expanded="true" />
+            <element signature="e#3908#3909#0" expanded="true" />
+            <element signature="e#3991#3992#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/neureka/unit/NVTester.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="82" column="67" selection-start-line="82" selection-start-column="67" selection-end-line="82" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/neureka/core/autograd/GraphBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/neureka/core/function/FunctionFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/neureka/core/device/TDevice.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/neureka/core/utility/DataHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-119">
+          <caret line="274" column="78" selection-start-line="274" selection-start-column="78" selection-end-line="274" selection-end-column="78" />
         </state>
       </provider>
     </entry>

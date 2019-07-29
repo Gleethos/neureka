@@ -1,8 +1,8 @@
 package neureka.unit.state;
 
 import neureka.core.T;
-import neureka.core.module.calc.TDevice;
-import neureka.core.module.calc.dcomp.TKernel;
+import neureka.core.device.TDevice;
+import neureka.core.device.TKernel;
 import neureka.unit.NVTesting;
 import neureka.utility.NMessageFrame;
 

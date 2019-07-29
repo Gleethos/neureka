@@ -16,7 +16,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import neureka.core.T;
-import neureka.core.module.calc.fcomp.Function;
+import neureka.core.function.Function;
 
 
 public class NPanelNode implements NPanelObject
@@ -378,7 +378,7 @@ public class NPanelNode implements NPanelObject
 				position[2]=old[0];
 				position[3]=old[1];
 			}
-			//NVNode[] RimNodes = Utility.identityCorrected.order(Core.find(
+			//NVNode[] RimNodes = DataHelper.withoutDuplicates.order(Core.find(
 			//		(NVNode node)->{if(node.asCore().is(T.Root)||node.asCore()==this.Core) {return true;}return false;}));
 			
 		//if(RimNodes != null)

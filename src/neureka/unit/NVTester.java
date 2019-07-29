@@ -1,7 +1,7 @@
 package neureka.unit;
 
 
-import neureka.core.module.calc.TDevice;
+import neureka.core.device.TDevice;
 import neureka.core.T;
 import neureka.unit.state.NVTesting_Tensor;
 import neureka.unit.state.NVTesting_TensorDevice;
@@ -80,7 +80,7 @@ public class NVTester {
 										"=>d|[ [2]:(0.0077821011673153695, 0.0077821011673153695) ]|"+
 											":t{ [2]:(4.0, 4.0) }, ",
 										"=>d|[ [2]:(0.015564202334630739, 0.015564202334630739) ]|"+
-											":t{ [2]:(2.0, 2.0) },  ",
+											":t{ [2]:(2.0, 2.0) }, ",
 									"}, ",
 								"=>d|[ [2]:(0.9799635594161147, 0.9799635594161147) ]|"+
 									":t{ [2]:(4.0, 4.0) }, "

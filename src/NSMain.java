@@ -1,4 +1,4 @@
-import neureka.core.Utility;
+import neureka.core.utility.DataHelper;
 import neureka.unit.NVTester;
 import neureka.ngui.NWindow;
 import neureka.utility.NConsole;
@@ -93,7 +93,7 @@ public class NSMain {
 	    a^=b;b^=a;a^=b;
 	    System.out.println(a+"  -  "+b);
 	    
-	    Utility util = new Utility();
+	    DataHelper util = new DataHelper();
 	    
 	    System.out.println(Math.pow(Math.E, Math.PI)*Math.pow(Math.PI, Math.E)*Math.PI*Math.E);
 
@@ -163,11 +163,11 @@ public class NSMain {
 		//cluster.Test();
 		//testNetwork();
 		//
-		//Array test;
+		//DataHelper test;
 		
 		//NDoubleArray Storage = new NDoubleArray(4);
 		//for(int i=0; i<Storage.length(); i++) 
-		//{Storage.Array[i].e_set(3); System.out.println(Array.e_get(i));}
+		//{Storage.DataHelper[i].e_set(3); System.out.println(DataHelper.e_get(i));}
 		//NNetworkWindow nw = new NNetworkWindow();
 		//nw.start(new Stage());
 
