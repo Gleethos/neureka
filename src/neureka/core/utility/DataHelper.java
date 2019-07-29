@@ -206,11 +206,12 @@ public class DataHelper<T> {
     }
 
     //===================================================================
-    public interface Orderer { Object[] order(Object[] node); }
+    public interface Orderer {
+        Object[] order(Object[] node);
+    }
 
     public static Orderer withoutDuplicates =
-            (Object[] node) ->
-            {
+            (Object[] node) -> {
                 ArrayList<Object> NodeList = new ArrayList<Object>();
                 for (int Ni = 0; Ni < node.length; Ni++) {
                     for (int Nii = Ni + 1; Nii < node.length; Nii++) {
@@ -268,11 +269,10 @@ public class DataHelper<T> {
         if (seed == 0) {
             seed = 6731299924898493759L;
         }
-        ;
         if ((prims[rank] * seed + m) % 2 == 0) {
             seed *= -1;
         }
-        return (int) (4438.274645895732*seed*Math.pow(prims[rank], 0.5)+seed)%m;
+        return (int) (4438.274645895732 * seed * Math.pow(prims[rank], 0.5) + seed) % m;
     }
 
     public static double randomDouble() {
@@ -280,7 +280,6 @@ public class DataHelper<T> {
         double newNumber;
         double divisor = 0;
         divisor = (Math.pow(10, (dice.nextInt() % 2)) / Math.pow(10, (dice.nextInt() % 2)));
-        //divisor = 1/divisor;
         int min = 3;
         newNumber = 0;
         while (newNumber == 0 || min >= 0) {
