@@ -13,7 +13,7 @@ public class NVTesting_Tensor extends NVTesting {
 
     public int testTensorAutoGrad(T[] source, String operation, String[] expected){
         printSessionStart("Testing T: autograd!");
-        println(bar+"  Function: "+operation);
+        println(bar+"  TFunction: "+operation);
         println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         T product = new T(source, operation);
         product.backward(new T(product.shape(), 1));

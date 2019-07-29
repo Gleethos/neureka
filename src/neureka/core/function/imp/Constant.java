@@ -1,8 +1,9 @@
-package neureka.core.function;
+package neureka.core.function.imp;
 
 import neureka.core.T;
+import neureka.core.function.TFunction;
 
-public class Constant implements Function
+public class Constant implements TFunction
 {
 	double value;
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -17,7 +18,7 @@ public class Constant implements Function
 	}
 
 	@Override
-	public Function newBuild(String expression)
+	public TFunction newBuild(String expression)
 	{	
 		String number = "";
 		for(int i=0; i<expression.length(); i++) 

@@ -14,7 +14,7 @@ public class NVTester {
 	
 	public NVTester(){}
 	/*
-	     Function IDs:
+	     TFunction IDs:
 		 case 0:  ReLu
 		 case 1:  Sigmoid
 		 case 2:  Tanh

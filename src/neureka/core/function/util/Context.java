@@ -1,7 +1,7 @@
 package neureka.core.function.util;
 
 import neureka.core.T;
-import neureka.core.function.Function;
+import neureka.core.function.TFunction;
 
 import java.util.HashMap;
 
@@ -11,7 +11,7 @@ public class Context {
     public static final double RELU_INCLINATION = 0.01;
     public static final String[] REGISTER;
     public static final HashMap<Long, T> STACK;
-    public static final HashMap<String, Function> SHARED;
+    public static final HashMap<String, TFunction> SHARED;
     static {
         REGISTER = new String[]{
                 "relu", "sig", "tanh", "quad", "lig", "lin", "gaus", "abs", "sin", "cos",

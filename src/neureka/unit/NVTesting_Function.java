@@ -1,8 +1,8 @@
 package neureka.unit;
 
 import neureka.core.T;
-import neureka.core.function.Function;
-import neureka.core.function.FunctionFactory;
+import neureka.core.function.TFunction;
+import neureka.core.function.TFunctionFactory;
 import neureka.utility.NMessageFrame;
 
 public class NVTesting_Function extends NVTesting{
@@ -14,8 +14,8 @@ public class NVTesting_Function extends NVTesting{
 	
 	public int testExpression(String expression, String expected, String description) 
 	{
-		Function function;// = new FunctionFactory();
-		function = new FunctionFactory().newBuild(expression, true);
+		TFunction function;// = new TFunctionFactory();
+		function = new TFunctionFactory().newBuild(expression, true);
 		printSessionStart(description);
 		println(bar+" Value toString: "+expression);
 		println(bar+" Expected toString: "+expected);
@@ -30,10 +30,10 @@ public class NVTesting_Function extends NVTesting{
 		return (printSessionEnd()>0)?1:0;
 	}
 	public int testActivation(String expression, double[] input, double expected, String description) {
-		Function function;// = new FunctionFactory();
-		function = new FunctionFactory().newBuild(expression, true);
+		TFunction function;// = new TFunctionFactory();
+		function = new TFunctionFactory().newBuild(expression, true);
 		printSessionStart(description);
-		Console.println(bar+" Function: "+expression);
+		Console.println(bar+" TFunction: "+expression);
 		String inputStr = "";
 		for(int Ii=0; Ii<input.length; Ii++) {
 			inputStr+=input[Ii]+", ";
@@ -50,10 +50,10 @@ public class NVTesting_Function extends NVTesting{
 	}
 
 	public int testActivation(String expression, T[] input, T expected, String description) {
-		Function function;// = new FunctionFactory();
-		function = new FunctionFactory().newBuild(expression, true);
+		TFunction function;// = new TFunctionFactory();
+		function = new TFunctionFactory().newBuild(expression, true);
 		printSessionStart(description);
-		Console.println(bar+" Function: "+expression);
+		Console.println(bar+" TFunction: "+expression);
 		String inputStr = "";
 		for(int Ii=0; Ii<input.length; Ii++) {
 			inputStr+=input[Ii]+", ";

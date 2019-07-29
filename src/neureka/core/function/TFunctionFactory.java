@@ -1,11 +1,13 @@
 package neureka.core.function;
 
+import neureka.core.function.imp.Constant;
+import neureka.core.function.imp.Input;
 import neureka.core.function.util.Construction;
 import neureka.core.function.util.Context;
 
 import java.util.*;
 
-public class FunctionFactory {
+public class TFunctionFactory {
     /*
 	     0:  ReLu;
 		 1:  Sigmoid;
@@ -29,7 +31,7 @@ public class FunctionFactory {
 	 */
     //=================================================================================================
 
-    public static Function newBuild(int f_id, int size, boolean doAD){
+    public static TFunction newBuild(int f_id, int size, boolean doAD){
         if (f_id == 18){
             size = 2;
         }
@@ -46,8 +48,8 @@ public class FunctionFactory {
         }
     }
 
-    public static Function newBuild(String expression, boolean doAD) {
-        HashMap<String, Function> map = Context.SHARED;
+    public static TFunction newBuild(String expression, boolean doAD) {
+        HashMap<String, TFunction> map = Context.SHARED;
         expression = (expression.charAt(0) != '(')
                 ? ("(" + expression)
                 : (expression.charAt(expression.length() - 1) != ')')
@@ -57,21 +59,21 @@ public class FunctionFactory {
         if (Context.SHARED.containsKey(k)) {
             return Context.SHARED.get(k);
         }
-        Function built = construct(expression, doAD);//, tipReached);
+        TFunction built = construct(expression, doAD);//, tipReached);
         if (built != null) {
             Context.SHARED.put(((doAD)?"d":"")+"(" + built.toString() + ")", built);
         }
         return built;
     }
 
-    private static Function construct(String expression, boolean doAD){
-        Function function = null;
-        ArrayList<Function> sources = new ArrayList<>();;
+    private static TFunction construct(String expression, boolean doAD){
+        TFunction function = null;
+        ArrayList<TFunction> sources = new ArrayList<>();;
         if (expression == null) {
             expression = "";
         }
         if (expression == "") {
-            Function newCore = new Constant();
+            TFunction newCore = new Constant();
             newCore = newCore.newBuild("0");
             return newCore;
         }
@@ -217,13 +219,13 @@ public class FunctionFactory {
             System.out.println("Only one component left -> no operations! -> testing for function:");
             System.out.println("parsing at " + 0 + " ...(possibly a function!)");
             String possibleFunction = utility.parsedOperation(Components.get(0).toLowerCase(), 0);
-            System.out.println("Function ?: " + possibleFunction);
+            System.out.println("TFunction ?: " + possibleFunction);
             if (possibleFunction != null) {
                 if (possibleFunction.length() > 1) {
                     for (int Oi = 0; Oi < Context.REGISTER.length; Oi++) {
                         if (Context.REGISTER[Oi].equals(possibleFunction)) {
                             f_id = Oi;
-                            Function newCore = new FunctionFactory()
+                            TFunction newCore = new TFunctionFactory()
                                 .newBuild(
                                     utility.parsedComponent(Components.get(0), possibleFunction.length()), doAD
                                 );
@@ -236,31 +238,31 @@ public class FunctionFactory {
                 }
             }
             //function = Construction.createFunction(f_id, sources);
-            System.out.println("Function: " + possibleFunction);
+            System.out.println("TFunction: " + possibleFunction);
             //---
             System.out.println("1 comonent left: -> unpackAndCorrect(component)");
             String component = utility.unpackAndCorrect(Components.get(0));
             System.out.println("component: " + component);
             System.out.println("Checking if component is variable (value/input): ");
             if ((component.charAt(0) <= '9' && component.charAt(0) >= '0') || component.charAt(0) == '-' || component.charAt(0) == '+') {
-                Function newFunction = new Constant();
+                TFunction newFunction = new Constant();
                 newFunction = newFunction.newBuild(component);
                 System.out.println("is value leave! -> return newValueLeave.newBuilt(component)");
                 return newFunction;
             }
             if (component.charAt(0) == 'i' || component.charAt(0) == 'I' ||
                     (component.contains("[") && component.contains("]") && component.matches(".[0-9]+."))) {//TODO: Make this regex better!!
-                Function newFunction = new Input();
+                TFunction newFunction = new Input();
                 newFunction = newFunction.newBuild(component);
                 System.out.println("value leave! -> return newInputLeave.newBuilt(component)");
                 return newFunction;
             }
             System.out.println("Component is not f f_id Leave! -> component = utility.cleanedHeadAndTail(component); ");
             component = utility.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =>Cleaning!
-            Function newBuild;
-            System.out.println("new build: Function newBuild = (Function)new FunctionFactory();");
+            TFunction newBuild;
+            System.out.println("new build: TFunction newBuild = (TFunction)new TFunctionFactory();");
             System.out.println("newBuild = newBuild.newBuild(component);");
-            newBuild = new FunctionFactory().newBuild(component, doAD);
+            newBuild = new TFunctionFactory().newBuild(component, doAD);
             System.out.println("-> return newBuild;");
             return newBuild;
         } else {// More than one component left:
@@ -271,7 +273,7 @@ public class FunctionFactory {
             while (ComponentIterator2.hasNext()) {
                 final String currentComponent2 = ComponentIterator2.next();
                 System.out.println("this.Input.add(newCore2.newBuild(" + currentComponent2 + ")); Input.size(): " + sources.size());
-                Function newCore2 = new FunctionFactory().newBuild(currentComponent2, doAD);//Dangerous recursion lives here!
+                TFunction newCore2 = new TFunctionFactory().newBuild(currentComponent2, doAD);//Dangerous recursion lives here!
                 sources.add(newCore2);
                 if (newCore2 != null) {
                     System.out.println("newCore2 != null");
@@ -284,7 +286,7 @@ public class FunctionFactory {
             if (sources.size() == 0) {
                 return null;
             }
-            ArrayList<Function> newVariable = new ArrayList<Function>();
+            ArrayList<TFunction> newVariable = new ArrayList<TFunction>();
             for (int Vi = 0; Vi < sources.size(); Vi++) {
                 if (sources.get(Vi) != null) {
                     newVariable.add(sources.get(Vi));

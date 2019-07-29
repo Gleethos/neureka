@@ -1,20 +1,22 @@
-package neureka.core.function;
+package neureka.core.function.imp;
 
 import neureka.core.T;
-import neureka.core.autograd.GraphBuilder;
+import neureka.core.autograd.TGraphBuilder;
 import neureka.core.device.TDevice;
+import neureka.core.function.TFunction;
+import neureka.core.function.TFunctionFactory;
 import neureka.core.function.util.Context;
 
 import java.util.ArrayList;
 
-public abstract class Template implements Function {
+public abstract class Template implements TFunction {
 
     protected int f_id;
     protected boolean isFlat;
     protected boolean doAD;
-    ArrayList<Function> Srcs;
+    ArrayList<TFunction> Srcs;
 
-    protected Template(int f_id, boolean isFlat, ArrayList<Function> Srcs, boolean doAD){
+    protected Template(int f_id, boolean isFlat, ArrayList<TFunction> Srcs, boolean doAD){
         this.f_id = f_id;
         this.isFlat = isFlat;
         this.Srcs = Srcs;
@@ -32,8 +34,8 @@ public abstract class Template implements Function {
     }
 
     @Override
-    public Function newBuild(String expression){
-        return FunctionFactory.newBuild(expression, true);
+    public TFunction newBuild(String expression){
+        return TFunctionFactory.newBuild(expression, true);
     }
 
     @Override
@@ -89,7 +91,7 @@ public abstract class Template implements Function {
 
 
 
-    //Activation stage 1: Function determination!
+    //Activation stage 1: TFunction determination!
     //============================================================================================================================================================================================
     /**
      *  Responsible for handling functions with id's 0-9  (single input functions!)
@@ -97,8 +99,8 @@ public abstract class Template implements Function {
     protected T tensorActivationOf(T input, boolean derive) {
         T output = T.factory.newTensor(input.shape(), input.translation());
         if(!derive && !isFlat){//implies !tipReached ==true // only flat functions can be executed
-            //output.addModule(new GraphBuilder(output, new T[]{input}, f_id, true, false));
-            output.internalize(new FunctionFactory().newBuild(f_id, 1, true).activate(new T[]{input}));
+            //output.addModule(new TGraphBuilder(output, new T[]{input}, f_id, true, false));
+            output.internalize(new TFunctionFactory().newBuild(f_id, 1, true).activate(new T[]{input}));
             return output;
         }
         if(input.isOutsourced()){
@@ -110,7 +112,7 @@ public abstract class Template implements Function {
             });
         }
         if(!derive){
-            GraphBuilder.connect(output, new T[]{input}, f_id, true);
+            TGraphBuilder.connect(output, new T[]{input}, f_id, true);
         }
         return output;
     }
@@ -125,8 +127,8 @@ public abstract class Template implements Function {
          * */
         if(d<0 && !isFlat){//only flat functions can be executed
             if(f_id<=9){
-                //output.addModule(new GraphBuilder(output, input, Context.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])", true, false));
-                output.internalize(new FunctionFactory().newBuild(Context.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])", true).activate(input));
+                //output.addModule(new TGraphBuilder(output, input, Context.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])", true, false));
+                output.internalize(new TFunctionFactory().newBuild(Context.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])", true).activate(input));
                 return output;
             }else{
                 if(Context.REGISTER[f_id].length()!=1){
@@ -136,8 +138,8 @@ public abstract class Template implements Function {
                     for(int i=0; i<tsrs.length; i++){
                         tsrs[i] =  Srcs.get(0).activate(input, i);
                     }// THIS NEEDS TO BE SOLVED!!
-                    //output.addModule(new GraphBuilder(output, tsrs, Context.REGISTER[f_id]+"(I[j])", true, false));
-                    output.internalize(new FunctionFactory().newBuild(Context.REGISTER[f_id]+"(I[j])", true).activate(tsrs));
+                    //output.addModule(new TGraphBuilder(output, tsrs, Context.REGISTER[f_id]+"(I[j])", true, false));
+                    output.internalize(new TFunctionFactory().newBuild(Context.REGISTER[f_id]+"(I[j])", true).activate(tsrs));
                     return output;
                 }else{
                     /**      +, -, x, *, %, ....
@@ -166,9 +168,9 @@ public abstract class Template implements Function {
                         }
                     }
                     if(j<0){
-                        output.internalize(new FunctionFactory().newBuild(operation, true).activate(tsrs));
+                        output.internalize(new TFunctionFactory().newBuild(operation, true).activate(tsrs));
                     }else{
-                        output.internalize(new FunctionFactory().newBuild(operation, true).activate(tsrs, j));
+                        output.internalize(new TFunctionFactory().newBuild(operation, true).activate(tsrs, j));
                     }
                     return output;
                 }
@@ -222,7 +224,7 @@ public abstract class Template implements Function {
                     tsrs[i] = Srcs.get(i).activate(input);
                 }
             }
-            GraphBuilder.connect(output, tsrs, f_id, true);
+            TGraphBuilder.connect(output, tsrs, f_id, true);
         }
         return output;
     }
@@ -364,7 +366,7 @@ public abstract class Template implements Function {
             }
         }
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getSummation(double[] input, int j, int d, ArrayList<Function> Variable){
+        private static double getSummation(double[] input, int j, int d, ArrayList<TFunction> Variable){
             if(d<0) {
                 double sum = 0;
                 boolean nothingDone = true;
@@ -380,7 +382,7 @@ public abstract class Template implements Function {
                 return Variable.get(0).derive(input, d, j);
             }
         }
-        private static double getSummation(double[] input, int d, ArrayList<Function> Variable){
+        private static double getSummation(double[] input, int d, ArrayList<TFunction> Variable){
             if(d<0) {
                 double sum = 0;
                 boolean nothingDone = true;
@@ -398,7 +400,7 @@ public abstract class Template implements Function {
 
         }
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getPI(double[] input, int j, int d, ArrayList<Function> Variable){
+        private static double getPI(double[] input, int j, int d, ArrayList<TFunction> Variable){
             if(d<0) {
                 double prod = 1;
                 boolean nothingDone = true;
@@ -426,7 +428,7 @@ public abstract class Template implements Function {
                 return ud;
             }
         }
-        private static double getPI(double[] input, int d, ArrayList<Function> Variable){
+        private static double getPI(double[] input, int d, ArrayList<TFunction> Variable){
             if(d<0) {
                 double prod = 1;
                 boolean nothingDone = true;
@@ -455,7 +457,7 @@ public abstract class Template implements Function {
             }
         }
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getPowerOf(double[] input, int j, int d, ArrayList<Function> Variable){
+        private static double getPowerOf(double[] input, int j, int d, ArrayList<TFunction> Variable){
             if(d<0) {
                 double result = Variable.get(0).activate(input, j);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -482,7 +484,7 @@ public abstract class Template implements Function {
                 return df;
             }
         }
-        private static double getPowerOf(double[] input, int d, ArrayList<Function> Variable){
+        private static double getPowerOf(double[] input, int d, ArrayList<TFunction> Variable){
             if(d<0) {
                 double result = Variable.get(0).activate(input);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -510,7 +512,7 @@ public abstract class Template implements Function {
             }
         }
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getDivision(double[] input, int j, int d, ArrayList<Function> Variable){
+        private static double getDivision(double[] input, int j, int d, ArrayList<TFunction> Variable){
             if(d<0) {
                 double result = Variable.get(0).activate(input, j);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -531,7 +533,7 @@ public abstract class Template implements Function {
                 return ud;
             }
         }
-        private static double getDivision(double[] input, int d, ArrayList<Function> Variable){
+        private static double getDivision(double[] input, int d, ArrayList<TFunction> Variable){
             if(d<0) {
                 double result = Variable.get(0).activate(input);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -557,7 +559,7 @@ public abstract class Template implements Function {
             }
         }
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getMultiplication(double[] input, int j, int d, ArrayList<Function> Variable){
+        private static double getMultiplication(double[] input, int j, int d, ArrayList<TFunction> Variable){
             if(d<0) {
                 double result = Variable.get(0).activate(input, j);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -581,7 +583,7 @@ public abstract class Template implements Function {
                 return ud;
             }
         }
-        private static double getMultiplication(double[] input, int d, ArrayList<Function> Variable){
+        private static double getMultiplication(double[] input, int d, ArrayList<TFunction> Variable){
             if(d<0) {
                 double result = Variable.get(0).activate(input);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -605,7 +607,7 @@ public abstract class Template implements Function {
             }
         }
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getModulo(double[] input, int j, int d, ArrayList<Function> Variable){
+        private static double getModulo(double[] input, int j, int d, ArrayList<TFunction> Variable){
             if(d<0) {
                 double result = Variable.get(0).activate(input, j);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -617,7 +619,7 @@ public abstract class Template implements Function {
                 return Variable.get(0).derive(input, d, j);// j ?
             }
         }
-        private static double getModulo(double[] input, int d, ArrayList<Function> Variable){
+        private static double getModulo(double[] input, int d, ArrayList<TFunction> Variable){
             if(d<0) {
                 double result = Variable.get(0).activate(input);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -630,7 +632,7 @@ public abstract class Template implements Function {
             }
         }
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getSubtraction(double[] input, int j, int d, ArrayList<Function> Variable){
+        private static double getSubtraction(double[] input, int j, int d, ArrayList<TFunction> Variable){
             if(d<0) {
                 double result = Variable.get(0).activate(input, j);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -652,7 +654,7 @@ public abstract class Template implements Function {
                 return derivative;
             }
         }
-        private static double getSubtraction(double[] input, int d, ArrayList<Function> Variable){
+        private static double getSubtraction(double[] input, int d, ArrayList<TFunction> Variable){
             if(d<0) {
                 double result = Variable.get(0).activate(input);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -675,7 +677,7 @@ public abstract class Template implements Function {
             }
         }
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getAddition(double[] input, int j, int d, ArrayList<Function> Variable){
+        private static double getAddition(double[] input, int j, int d, ArrayList<TFunction> Variable){
             if(d<0) {
                 double result = Variable.get(0).activate(input, j);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -691,7 +693,7 @@ public abstract class Template implements Function {
                 return derivative;
             }
         }
-        private static double getAddition(double[] input, int d, ArrayList<Function> Variable){
+        private static double getAddition(double[] input, int d, ArrayList<TFunction> Variable){
             if(d<0) {
                 double result = Variable.get(0).activate(input);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {

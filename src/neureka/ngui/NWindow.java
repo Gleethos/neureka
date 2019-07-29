@@ -67,8 +67,8 @@ public class NWindow implements ActionListener, KeyListener, MouseListener, Mous
 		System.setProperty("sun.java2d.opengl", "true");
 
 
-		//GraphBuilder.getSurface().setPreferredSize(new Dimension(200,30));
-		//GraphBuilder.getSurface().setBackground(Color.black);
+		//TGraphBuilder.getSurface().setPreferredSize(new Dimension(200,30));
+		//TGraphBuilder.getSurface().setBackground(Color.black);
 
 		window = new JFrame("Network Display");
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

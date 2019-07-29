@@ -16,7 +16,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import neureka.core.T;
-import neureka.core.function.Function;
+import neureka.core.function.TFunction;
 
 
 public class NPanelNode implements NPanelObject
@@ -1641,14 +1641,14 @@ public class NPanelNode implements NPanelObject
 		double expMod = 1;
 		expMod = ((double)diameter/defaultDiameter)*panelScale/0.15;
 			//System.out.println( (diameter/defaultDiameter));
-		if(expMod>0.7 && Core.find(Function.class)!=null)
+		if(expMod>0.7 && Core.find(TFunction.class)!=null)
 		{
 			if(expMod>1) {expMod=1;}
 			//System.out.println(panelScale);
 			//System.out.println(transparencyMod);
 			int expTrans = (int)(Math.pow(expMod, 10)*255);
 			//System.out.println(transparency);
-			String exp = Core.find(Function.class).toString();
+			String exp = Core.find(TFunction.class).toString();
 			
 			RoundRectangle2D.Double rec = 
 			new RoundRectangle2D.Double();

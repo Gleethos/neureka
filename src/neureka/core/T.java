@@ -1,8 +1,8 @@
 package neureka.core;
 
-import neureka.core.function.FunctionFactory;
+import neureka.core.function.TFunctionFactory;
 import neureka.core.device.TDevice;
-import neureka.core.autograd.GradientNode;
+import neureka.core.autograd.TGradientNode;
 import neureka.core.utility.DataHelper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -205,8 +205,8 @@ public class T {
         }
         strValue = strShape+":("+strValue+")";
         if(mode=="r"){
-            if(this.has(GradientNode.class)){
-                GradientNode d = (GradientNode) this.find(GradientNode.class);
+            if(this.has(TGradientNode.class)){
+                TGradientNode d = (TGradientNode) this.find(TGradientNode.class);
                 String[] strDerivatives = {"; "};
                 d.forEach((target, derivative)->{
                     strDerivatives[0]+="=>d|[ "+derivative.toString("r")+" ]|:t{ "+target.toString("r")+" }, ";
@@ -214,8 +214,8 @@ public class T {
                 strValue += strDerivatives[0];
             }
         }else if(mode == "d"){
-            if(this.has(GradientNode.class)){
-                GradientNode d = (GradientNode) this.find(GradientNode.class);
+            if(this.has(TGradientNode.class)){
+                TGradientNode d = (TGradientNode) this.find(TGradientNode.class);
                 String[] strDerivatives = {"; "};
                 d.forEach((target, derivative)->{
                     strDerivatives[0]+="->d"+derivative.toString()+", ";
@@ -306,16 +306,16 @@ public class T {
         construct(tensors, operation);
     }
     public T(T[] tensors, int[][] translation, String operation) {
-        this.internalize(FunctionFactory.newBuild(operation, true).activate(tensors));
-        if(this.has(GradientNode.class)){
-            ((GradientNode)this.find(GradientNode.class)).trimTree(null);
+        this.internalize(TFunctionFactory.newBuild(operation, true).activate(tensors));
+        if(this.has(TGradientNode.class)){
+            ((TGradientNode)this.find(TGradientNode.class)).trimTree(null);
         }
     }
     private void construct(T[] tensors, String operation){
         if(tensors==null||tensors.length==0||tensors[0]==null){return;}
-        this.internalize(FunctionFactory.newBuild(operation, true).activate(tensors));
-        if(this.has(GradientNode.class)){
-            ((GradientNode)this.find(GradientNode.class)).trimTree(null);
+        this.internalize(TFunctionFactory.newBuild(operation, true).activate(tensors));
+        if(this.has(TGradientNode.class)){
+            ((TGradientNode)this.find(TGradientNode.class)).trimTree(null);
         }
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -339,8 +339,8 @@ public class T {
         if(this.rqsGradient()){
             this.setGradient(error);
         }
-        if(this.has(GradientNode.class)){
-            ((GradientNode)this.find(GradientNode.class)).backward(error);
+        if(this.has(TGradientNode.class)){
+            ((TGradientNode)this.find(TGradientNode.class)).backward(error);
         }
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

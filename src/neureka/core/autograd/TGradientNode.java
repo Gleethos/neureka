@@ -1,14 +1,14 @@
 package neureka.core.autograd;
 
 import neureka.core.T;
-import neureka.core.function.Function;
+import neureka.core.function.TFunction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-public class GradientNode {
+public class TGradientNode {
 
     /**
      *  These functions describe the meaning of 'mode'
@@ -29,10 +29,10 @@ public class GradientNode {
 
     private HashMap<T, T> map = new HashMap<T, T>();
     private int mode = 0;
-    private Function function = null;
+    private TFunction function = null;
     private T[] source = null;
 
-    public GradientNode(int m, Function f, T[] src){
+    public TGradientNode(int m, TFunction f, T[] src){
         this.mode = m;
         this.function = f;
         this.source = src;
@@ -56,15 +56,15 @@ public class GradientNode {
                 this.map.remove(b);
             });
             for(T src : this.source){
-                if(src.has(GradientNode.class)){
-                    GradientNode node = (GradientNode) src.find(GradientNode.class);
+                if(src.has(TGradientNode.class)){
+                    TGradientNode node = (TGradientNode) src.find(TGradientNode.class);
                     node.trimTree(target);
                 }
             }
         }else{
             for(T src : this.source){
-                if(src.has(GradientNode.class)){
-                    GradientNode node = (GradientNode) src.find(GradientNode.class);
+                if(src.has(TGradientNode.class)){
+                    TGradientNode node = (TGradientNode) src.find(TGradientNode.class);
                     this.forEach((g, t)->node.trimTree(t));
                 }
             }
@@ -92,7 +92,7 @@ public class GradientNode {
         return this.mode;
     }
 
-    public Function function(){
+    public TFunction function(){
         return this.function;
     }
 

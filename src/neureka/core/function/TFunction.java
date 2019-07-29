@@ -3,9 +3,9 @@ package neureka.core.function;
 
 import neureka.core.T;
 
-public interface Function
+public interface TFunction
 {
-	public Function newBuild(String expression);
+	public TFunction newBuild(String expression);
 	public String toString();
 	public boolean isFlat();
 	public int id();

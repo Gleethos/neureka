@@ -2,23 +2,27 @@ package neureka.core.function.util;
 
 import neureka.core.T;
 import neureka.core.function.*;
+import neureka.core.function.imp.Constant;
+import neureka.core.function.imp.Input;
+import neureka.core.function.imp.Template;
+import neureka.core.function.imp.Variable;
 
 import java.util.ArrayList;
 
 public class Construction {
 
-    public static Function createFunction(int f_id, ArrayList<Function> sources, boolean doAD){
+    public static TFunction createFunction(int f_id, ArrayList<TFunction> sources, boolean doAD){
         boolean isFlat = true;//false;//=> !isFlat
-        for(Function f : sources){
+        for(TFunction f : sources){
             isFlat = ((f instanceof Input) || (f instanceof Variable) || (f instanceof Constant)) && isFlat;
         }
         //boolean isFlat = false;//=> !isFlat
-        //for(Function f : sources){
+        //for(TFunction f : sources){
         //    isFlat = ((!(f instanceof Input)) && (!(f instanceof Variable)) && (!(f instanceof Constant))) || isFlat;
         //}
         //isFlat = !isFlat;
         if(f_id<9) {// FUNCTIONS:
-            return new Template(f_id, isFlat, sources, doAD){//Function(){
+            return new Template(f_id, isFlat, sources, doAD){//TFunction(){
                 @Override
                 public T activate(T[] input, int j) {
                     return tensorActivationOf(sources.get(0).activate(input, j), false);
@@ -56,7 +60,7 @@ public class Construction {
                 }
             };
         }else{
-            return new Template(f_id, isFlat, sources, doAD){//Function(){
+            return new Template(f_id, isFlat, sources, doAD){//TFunction(){
                 @Override
                 public T activate(T[] input, int j) {
                     return tensorActivationOf(input, j, -1);
