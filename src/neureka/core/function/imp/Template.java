@@ -90,7 +90,6 @@ public abstract class Template implements TFunction {
     public abstract double derive(final double[] input, final int index);
 
 
-
     //Activation stage 1: TFunction determination!
     //============================================================================================================================================================================================
     /**

@@ -16,8 +16,8 @@ public class TDevice
      *    REGISTER:
      *    Maps REGISTER pointers to pointers WITHIN the compute device.
      *    Pointers within the kernel change dynamically,
-     *    whereas a REGISTER entry will always represent a specific tensor from
-     *    the time f allocation to tensor deletion and de-allocation on the device.
+     *    whereas the REGISTER entry will always represent a specific tensor from
+     *    the time of allocation to tensor deletion and de-allocation on the device.
      *
      * */
     private int[][] register = null;

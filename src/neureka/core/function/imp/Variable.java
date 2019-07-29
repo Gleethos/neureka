@@ -8,25 +8,20 @@ public class Variable implements TFunction {
     public boolean isFlat() {
         return false;
     }
-
     @Override
     public int id() {
         return -1;
     }
-
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public TFunction newBuild(final String equation) {
         return (TFunction) this;
     }
-
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public double activate(final double[] input, int j) {
         return input[j];
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public double activate(final double[] input) {
         double sum = 0;
@@ -35,14 +30,10 @@ public class Variable implements TFunction {
         }
         return sum;
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public double derive(final double[] input, final int index) {
         return 1.0;
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public double derive(double[] input, int index, int j) {
         if (j != index) {
@@ -50,12 +41,7 @@ public class Variable implements TFunction {
         }
         return derive(input, index);
     }
-
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    @Override
-    public String toString() {
-        return "I[j]";
-    }
     @Override
     public T activate(T[] input, int j) {
         return input[j];
@@ -76,4 +62,8 @@ public class Variable implements TFunction {
         return T.factory.newTensor(1, input[0].shape());
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    @Override
+    public String toString() {
+        return "I[j]";
+    }
 }

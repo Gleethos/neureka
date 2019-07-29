@@ -4,20 +4,19 @@ package neureka.core.function.imp;
 import neureka.core.T;
 import neureka.core.function.TFunction;
 
-public class Input implements TFunction {
+public class Input implements TFunction
+{
     int InputIndex;
-
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public boolean isFlat() {
         return false;
     }
-
     @Override
     public int id() {
         return -1;
     }
-
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public TFunction newBuild(final String equation) {
         int number = 0;
@@ -35,57 +34,46 @@ public class Input implements TFunction {
         this.InputIndex = number;
         return this;
     }
-
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public double activate(final double[] input, int j) {
         return input[InputIndex];
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public double activate(final double[] input) {
         return input[InputIndex];
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public double derive(final double[] input, final int index) {
         return (index == this.InputIndex) ? 1 : 0;
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public double derive(double[] input, int index, int j) {
         return derive(input, index);
     }
-
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    @Override
-    public String toString() {
-        return "I[" + this.InputIndex + "]";
-    }
-
     @Override
     public T activate(T[] input, int j) {
         return input[InputIndex];
     }
-
     @Override
     public T activate(T[] input) {
         return input[InputIndex];
     }
-
     @Override
     public T derive(T[] input, int index, int j) {
         return derive(input, index);
     }
-
     @Override
     public T derive(T[] input, int index) {
         return (index == this.InputIndex)
                 ? T.factory.newTensor(1, input[0].shape())
                 : T.factory.newTensor(0, input[0].shape());
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    @Override
+    public String toString() {
+        return "I[" + this.InputIndex + "]";
     }
 
 }
