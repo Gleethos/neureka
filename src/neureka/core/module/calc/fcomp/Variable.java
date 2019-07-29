@@ -63,7 +63,7 @@ public class Variable implements Function {
 
     @Override
     public T activate(T[] input) {
-        return new T().f(input, "sum(I[j])");
+        return new T(input, "sum(I[j])");
     }
 
     @Override

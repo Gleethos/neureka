@@ -36,7 +36,7 @@ public class GraphBuilder {
     }
 
     public static void connect(T drain, T[] src, int f_id, boolean derive){//, boolean derive
-        Function function = new FunctionFactory().newBuild(f_id, src.length);
+        Function function = new FunctionFactory().newBuild(f_id, src.length, true);
         int mode = configure(src, function);
         if(function.isFlat()&&derive){
             performDifferentiation(drain, function, src, mode);

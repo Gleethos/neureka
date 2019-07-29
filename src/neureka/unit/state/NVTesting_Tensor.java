@@ -15,7 +15,7 @@ public class NVTesting_Tensor extends NVTesting {
         printSessionStart("Testing T: autograd!");
         println(bar+"  Function: "+operation);
         println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
-        T product = new T().f(source, operation);
+        T product = new T(source, operation);
         product.backward(new T(product.shape(), 1));
         String result = product.toString("r");
         for(String element : expected){

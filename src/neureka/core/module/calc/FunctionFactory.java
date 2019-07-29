@@ -32,42 +32,42 @@ public class FunctionFactory {
 	 */
     //=================================================================================================
 
-    public static Function newBuild(int f_id, int size){//TODO: remove tip reached!
+    public static Function newBuild(int f_id, int size, boolean doAD){
         if (f_id == 18){
             size = 2;
         }
         if (f_id < 10) {
-            return newBuild(Context.REGISTER[f_id] + "(I[0])");//, tipReached);
+            return newBuild(Context.REGISTER[f_id] + "(I[0])", doAD);//, tipReached);
         } else if (f_id < 12) {
-            return newBuild(Context.REGISTER[f_id] + "I[j]");//, tipReached);
+            return newBuild(Context.REGISTER[f_id] + "I[j]", doAD);//, tipReached);
         } else {
             String expression = "I[0]";
             for (int i = 0; i < size - 1; i++) {
                 expression += Context.REGISTER[f_id] + "I[" + (i + 1) + "]";
             }
-            return newBuild(expression);//, tipReached);
+            return newBuild(expression, doAD);
         }
     }
 
-    public static Function newBuild(String expression) {
+    public static Function newBuild(String expression, boolean doAD) {
         HashMap<String, Function> map = Context.SHARED;
         expression = (expression.charAt(0) != '(')
                 ? ("(" + expression)
                 : (expression.charAt(expression.length() - 1) != ')')
                 ? expression + ")"
                 : expression;
-
-        if (Context.SHARED.containsKey(expression)) {
-            return Context.SHARED.get(expression);
+        String k = (doAD)?"d"+expression:expression;
+        if (Context.SHARED.containsKey(k)) {
+            return Context.SHARED.get(k);
         }
-        Function built = construct(expression);//, tipReached);
+        Function built = construct(expression, doAD);//, tipReached);
         if (built != null) {
-            Context.SHARED.put("(" + built.toString() + ")", built);
+            Context.SHARED.put(((doAD)?"d":"")+"(" + built.toString() + ")", built);
         }
         return built;
     }
 
-    private static Function construct(String expression){//}, boolean tipReached) {
+    private static Function construct(String expression, boolean doAD){
         Function function = null;
         ArrayList<Function> sources = new ArrayList<>();;
         if (expression == null) {
@@ -228,10 +228,10 @@ public class FunctionFactory {
                             f_id = Oi;
                             Function newCore = new FunctionFactory()
                                 .newBuild(
-                                    utility.parsedComponent(Components.get(0), possibleFunction.length())
+                                    utility.parsedComponent(Components.get(0), possibleFunction.length()), doAD
                                 );
                             sources.add(newCore);
-                            function = Construction.createFunction(f_id, sources);
+                            function = Construction.createFunction(f_id, sources, doAD);
                             return function;
                             // Hallo mein Schatz! Ich bin`s, die Emi :) Ich liebe dich <3
                         }
@@ -263,7 +263,7 @@ public class FunctionFactory {
             Function newBuild;
             System.out.println("new build: Function newBuild = (Function)new FunctionFactory();");
             System.out.println("newBuild = newBuild.newBuild(component);");
-            newBuild = new FunctionFactory().newBuild(component);
+            newBuild = new FunctionFactory().newBuild(component, doAD);
             System.out.println("-> return newBuild;");
             return newBuild;
         } else {// More than one component left:
@@ -274,7 +274,7 @@ public class FunctionFactory {
             while (ComponentIterator2.hasNext()) {
                 final String currentComponent2 = ComponentIterator2.next();
                 System.out.println("this.Input.add(newCore2.newBuild(" + currentComponent2 + ")); Input.size(): " + sources.size());
-                Function newCore2 = new FunctionFactory().newBuild(currentComponent2);//Dangerous recursion lives here!
+                Function newCore2 = new FunctionFactory().newBuild(currentComponent2, doAD);//Dangerous recursion lives here!
                 sources.add(newCore2);
                 if (newCore2 != null) {
                     System.out.println("newCore2 != null");
@@ -294,7 +294,7 @@ public class FunctionFactory {
                 }
             }
             sources = newVariable;
-            function = Construction.createFunction(f_id, sources);
+            function = Construction.createFunction(f_id, sources, doAD);
             return function;
         }
     }

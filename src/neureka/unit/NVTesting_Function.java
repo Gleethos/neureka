@@ -15,7 +15,7 @@ public class NVTesting_Function extends NVTesting{
 	public int testExpression(String expression, String expected, String description) 
 	{
 		Function function;// = new FunctionFactory();
-		function = new FunctionFactory().newBuild(expression);
+		function = new FunctionFactory().newBuild(expression, true);
 		printSessionStart(description);
 		println(bar+" Value toString: "+expression);
 		println(bar+" Expected toString: "+expected);
@@ -31,7 +31,7 @@ public class NVTesting_Function extends NVTesting{
 	}
 	public int testActivation(String expression, double[] input, double expected, String description) {
 		Function function;// = new FunctionFactory();
-		function = new FunctionFactory().newBuild(expression);
+		function = new FunctionFactory().newBuild(expression, true);
 		printSessionStart(description);
 		Console.println(bar+" Function: "+expression);
 		String inputStr = "";
@@ -51,7 +51,7 @@ public class NVTesting_Function extends NVTesting{
 
 	public int testActivation(String expression, T[] input, T expected, String description) {
 		Function function;// = new FunctionFactory();
-		function = new FunctionFactory().newBuild(expression);
+		function = new FunctionFactory().newBuild(expression, true);
 		printSessionStart(description);
 		Console.println(bar+" Function: "+expression);
 		String inputStr = "";

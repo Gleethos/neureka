@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class Construction {
 
-    public static Function createFunction(int f_id, ArrayList<Function> Srcs){
+    public static Function createFunction(int f_id, ArrayList<Function> Srcs, boolean doAD){
         boolean[] isFlat = {false};//=> !isFlat
         Srcs.forEach((v)->{
             isFlat[0] = (
@@ -16,22 +16,22 @@ public class Construction {
         });
         isFlat[0] = !isFlat[0];
         if(f_id<9) {// FUNCTIONS:
-            return new Template(f_id, isFlat[0], Srcs){//Function(){
+            return new Template(f_id, isFlat[0], Srcs, doAD){//Function(){
                 @Override
                 public T activate(T[] input, int j) {
-                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input, j), f_id, false, isFlat);
+                    return tensorActivationOf(Srcs.get(0).activate(input, j), false);
                 }
                 @Override
                 public T activate(T[] input) {
-                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input), f_id, false, isFlat);
+                    return tensorActivationOf(Srcs.get(0).activate(input), false);
                 }
                 @Override
                 public T derive(T[] input, int d, int j) {
-                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input, j), f_id, true, isFlat);
+                    return tensorActivationOf(Srcs.get(0).activate(input, j), true);
                 }
                 @Override
                 public T derive(T[] input, int d) {
-                    return Calculation.tensorActivationOf(Srcs.get(0).activate(input), f_id, true, isFlat);
+                    return tensorActivationOf(Srcs.get(0).activate(input), true);
                 }
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 @Override
@@ -54,22 +54,22 @@ public class Construction {
                 }
             };
         }else{
-            return new Template(f_id, isFlat[0], Srcs){//Function(){
+            return new Template(f_id, isFlat[0], Srcs, doAD){//Function(){
                 @Override
                 public T activate(T[] input, int j) {
-                    return Calculation.tensorActivationOf(input, f_id, j, -1, Srcs, isFlat);
+                    return tensorActivationOf(input, j, -1);
                 }
                 @Override
                 public T activate(T[] input) {
-                    return Calculation.tensorActivationOf(input, f_id, -1, -1, Srcs, isFlat);
+                    return tensorActivationOf(input, -1, -1);
                 }
                 @Override
                 public T derive(T[] input, int d, int j) {
-                    return Calculation.tensorActivationOf(input, f_id, j, d, Srcs, isFlat);
+                    return tensorActivationOf(input, j, d);
                 }
                 @Override
                 public T derive(T[] input, int d) {
-                    return Calculation.tensorActivationOf(input, f_id, -1, d, Srcs, isFlat);
+                    return tensorActivationOf(input, -1, d);
                 }
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 @Override
@@ -94,26 +94,25 @@ public class Construction {
     }
 }
 /**
-    case 0:  return "relu";
-	case 1:  return "sig";
-	case 2:  return "tanh";
-	case 3:  return "quad";
-	case 4:  return "lig";
-	case 5:  return "lin";
-	case 6:  return "gaus";
-	case 7:  return "abs";
-	case 8:  return "sin";
-	case 9:  return "cos";
+    case 0:  "relu";
+	case 1:  "sig";
+	case 2:  "tanh";
+	case 3:  "quad";
+	case 4:  "lig";
+	case 5:  "lin";
+	case 6:  "gaus";
+	case 7:  "abs";
+	case 8:  "sin";
+	case 9:  "cos";
 
-	case 10: return "sum";
-	case 11: return "prod";
+	case 10: "sum";
+	case 11: "prod";
 
-	case 12: return "^";
-	case 13: return "/";
-	case 14: return "*";
-	case 15: return "%";
-	case 16: return "-";
-	case 17: return "+";
-
-    case 18: return "x"; (conv/tm)
+	case 12: "^";
+	case 13: "/";
+	case 14: "*";
+	case 15: "%";
+	case 16: "-";
+	case 17: "+";
+    case 18: "x"; (conv/tm)
  * */

@@ -20,9 +20,8 @@ public class T {
     //STATIC SHARED MEMORY:
     //=========================
     private static HashMap<Long, int[]> SHARED;
-
-    static {//The things we do for memory:
-        SHARED = new HashMap<>();
+    static {
+        SHARED = new HashMap<>();//The things we do for memory
         CPU = new TDevice(null);//<= creates CPU-Aparapi-Kernel
     }
     //-----------------------------------------------------------------------
@@ -297,7 +296,28 @@ public class T {
             return data;
         }
     }
-
+    //TRACKED COMPUTATION :
+    //=========================
+    public T(T tensor, String operation) {
+        if(tensor==null){return;}
+        construct(new T[]{tensor}, operation);
+    }
+    public T(T[] tensors, String operation) {
+        construct(tensors, operation);
+    }
+    public T(T[] tensors, int[][] translation, String operation) {
+        this.internalize(FunctionFactory.newBuild(operation, true).activate(tensors));
+        if(this.has(GradientNode.class)){
+            ((GradientNode)this.find(GradientNode.class)).trimTree(null);
+        }
+    }
+    private void construct(T[] tensors, String operation){
+        if(tensors==null||tensors.length==0||tensors[0]==null){return;}
+        this.internalize(FunctionFactory.newBuild(operation, true).activate(tensors));
+        if(this.has(GradientNode.class)){
+            ((GradientNode)this.find(GradientNode.class)).trimTree(null);
+        }
+    }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     //MODIFICATION :
@@ -315,29 +335,6 @@ public class T {
         this.flags = tensor.flags;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    //TRACKED COMPUTATION :
-    //=========================
-    public T f(T tensor, String operation) {
-        if(tensor==null){return this;}
-        return this.f(new T[]{tensor}, operation);
-    }
-    public T f(T[] tensors, String operation) {
-        if(tensors==null||tensors.length==0||tensors[0]==null){return this;}
-        this.internalize(FunctionFactory.newBuild(operation).activate(tensors));
-        if(this.has(GradientNode.class)){
-            ((GradientNode)this.find(GradientNode.class)).trimTree(null);
-        }
-        return this;
-    }
-    public T f(T[] tensors, int[][] translation, String operation) {
-        this.internalize(FunctionFactory.newBuild(operation).activate(tensors));
-        if(this.has(GradientNode.class)){
-            ((GradientNode)this.find(GradientNode.class)).trimTree(null);
-        }
-        return this;
-    }
-    //-----------------------------------------------------------------------
     public void backward(T error) {
         if(this.rqsGradient()){
             this.setGradient(error);
@@ -345,10 +342,8 @@ public class T {
         if(this.has(GradientNode.class)){
             ((GradientNode)this.find(GradientNode.class)).backward(error);
         }
-        //operation.backward(gradient, this);
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     public void delete(){
         if(this.isOutsourced()){
             ((TDevice)this.find(TDevice.class)).rmv(this);
@@ -360,6 +355,7 @@ public class T {
         this.Modules = null;
         this.gradient = null;
     }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     //ELEMENTARY OPERATIONS:
     //=========================
@@ -371,7 +367,7 @@ public class T {
             action.accept(T.utility.idxOfShpIdxAndShp(idx, this.shape()));
         }
     }
-
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public double e_get(int i) {
         return T.utility.idxOfShpIdxAndShp(shpIdx(i), shape);
     }
@@ -435,6 +431,8 @@ public class T {
 
         }
 
+        //OPERATIONS:
+        //=========================
         public static T convolution(T tensor1, T tensor2){
             T newTensor = new T(T.utility.shpOfTensMul(tensor1.shape(), tensor2.shape()));
             T.utility.tensMul_mxd(
