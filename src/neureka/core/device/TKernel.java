@@ -1,6 +1,7 @@
 package neureka.core.device;
 import com.aparapi.Kernel;
 import neureka.core.T;
+import neureka.core.function.util.Context;
 
 public class TKernel extends Kernel
 {
@@ -372,7 +373,7 @@ public class TKernel extends Kernel
     }
 
     /**
-     *    Pre-Execution functions (mde setter)
+     *    Pre-Execution functions (mode setter)
      *    return global size for range creation!
      *    ------------------------------------------------------
      *    ======================================================
@@ -446,7 +447,7 @@ public class TKernel extends Kernel
             run_tsr_store(gid, false);
         }
         if(mde[0]==0){//Relu
-
+            run_tsr_relu(gid,  mde[1], mde[2], mde[3]);
         }
         if(mde[0]==1){//Sigmoid
             run_tsr_sig(gid,  mde[1], mde[2], mde[3]);
@@ -526,7 +527,8 @@ public class TKernel extends Kernel
 		 18: tsr mul;
 	 */
     private void run_cleanup(int gid){
-
+        //TODO: implement
+        //TODO write test cases!
     }
 
     private void run_tsr_fetch(int gid, boolean grd){
@@ -557,6 +559,26 @@ public class TKernel extends Kernel
                     gid-=(tsr_sze(mde[1])+shp_sze(mde[1]));
                     this.translations[tln_ptr(mde[1])+gid]=this.tmp_tln[gid];
                 }
+            }
+        }
+    }
+
+    public void run_tsr_relu(int gid, int drn_id, int src_id, int d){
+        if (d<0) {
+            if (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)] >= 0) {
+                this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                        (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)] + Context.BIAS) *Context.INCLINATION;
+            } else {
+                this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                        (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)] + Context.BIAS) * Context.RELU_INCLINATION;
+            }
+        } else {
+            if (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)] >= 0) {
+                this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                        Context.INCLINATION;
+            } else {
+                this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                        Context.RELU_INCLINATION;
             }
         }
     }
@@ -715,19 +737,19 @@ public class TKernel extends Kernel
         this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
                 this.values[tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)]
                         /
-                        this.values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)];
+                this.values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)];
     }
     public void run_tsr_mul(int gid, int drn_id, int src1_id, int src2_id){
         this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
                 this.values[tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)]
                         *
-                        this.values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)];
+                this.values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)];
     }
     public void run_tsr_mod(int gid, int drn_id, int src1_id, int src2_id){
         this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
                 ((int)this.values[tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)])
                         %
-                        ((int)this.values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)]);
+                ((int)this.values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)]);
     }
     public void run_tsr_sub(int gid, int drn_id, int src1_id, int src2_id){
         this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
@@ -739,7 +761,6 @@ public class TKernel extends Kernel
         int i1 = tsr_ptr(drn_id)+__i_of(gid, drn_id, 0);
         int i2 = tsr_ptr(src1_id)+__i_of(gid, src1_id, 1);
         int i3 = tsr_ptr(src2_id)+__i_of(gid, src2_id, 2);
-
         this.values[i1] =
             this.values[i2]
                 +
@@ -747,7 +768,6 @@ public class TKernel extends Kernel
     }
 
     public void run_tsr_conv(int gid, int drn_id, int src1_id, int src2_id){
-
         int ptr_data_src1 = tsr_ptr(src1_id);
         int ptr_data_src2 = tsr_ptr(src2_id);
         int ptr_data_drn = tsr_ptr(drn_id);
@@ -794,7 +814,6 @@ public class TKernel extends Kernel
         boolean incrementing = false;
         while (running) {
             ri = (ri==rank)?0:ri;
-
             if (incrementing == false) {
                 int i1 = __i_of_idx_tln(ptr_tln_src1, ptr_idx_src1, rank); //(int ptr_tln, int[] tln, int[] idx, int rank)
                 int i2 = __i_of_idx_tln(ptr_tln_src2, ptr_idx_src2, rank);
@@ -833,13 +852,12 @@ public class TKernel extends Kernel
                     ri++;
                 }
             }
-        }//e_set value in drn:
+        }
+        //set value in drn:
         int i = __i_of_idx_tln(ptr_tln_drn, ptr_idx_drn, rank);
         this.values[(ptr_data_drn + i)] = value;
     }
-
-    //Helper methods for tsr prod;
-
+    //Helper methods for tsr conv:
     private int __increment_At(int ri, int idx_ptr, int shp_ptr) {
         if (this.tmp_idx[idx_ptr+ri] < (this.shapes[shp_ptr+ri])) {//fixed
             this.tmp_idx[idx_ptr+ri]++;
