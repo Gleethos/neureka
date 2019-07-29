@@ -31,7 +31,7 @@ public class NSound extends Thread
     	playSound(soundFileName, soundFileDirectory);
     }
     /**
-     * @param filename the name of the file that is going to be played
+     * @param filename the name f the file that is going to be played
      */
     public void playSound(String filename, String directory)
     {

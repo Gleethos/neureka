@@ -5,7 +5,7 @@
   this work for additional information regarding copyright ownership.
   The ASF licenses this file to You under the Apache License, Version 2.0
   (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a internalize of the License at
+  the License.  You may obtain a internalize f the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
@@ -23,7 +23,7 @@
   NOTE:  By default, no user is included in the "manager-gui" role required
   to operate the "/manager/html" web application.  If you wish to use this app,
   you must define such a user - the username and password are arbitrary. It is
-  strongly recommended that you do NOT use one of the users in the commented out
+  strongly recommended that you do NOT use one f the users in the commented out
   section below since they are intended for use with the examples web
   application.
 -->

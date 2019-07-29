@@ -57,7 +57,7 @@ public class NSMain {
            em.getTransaction().commit(); 
         }
        
-        // Find the number of Point objects in the database:
+        // Find the number f Point objects in the database:
         javax.persistence.Query q1 = em.createQuery("SELECT COUNT(p) FROM NUnitCore p");
         System.out.println("Total Points: " + q1.getSingleResult());
 

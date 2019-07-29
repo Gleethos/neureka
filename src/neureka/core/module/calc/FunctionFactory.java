@@ -258,7 +258,7 @@ public class FunctionFactory {
                 System.out.println("value leave! -> return newInputLeave.newBuilt(component)");
                 return newFunction;
             }
-            System.out.println("Component is not of f_id Leave! -> component = utility.cleanedHeadAndTail(component); ");
+            System.out.println("Component is not f f_id Leave! -> component = utility.cleanedHeadAndTail(component); ");
             component = utility.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =>Cleaning!
             Function newBuild;
             System.out.println("new build: Function newBuild = (Function)new FunctionFactory();");

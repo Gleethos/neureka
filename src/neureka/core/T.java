@@ -124,7 +124,9 @@ public class T {
             this.gradient = null;
         }else if(this.has(TDevice.class)){
             TDevice device = (TDevice) this.find(TDevice.class);
-            device.get(this);
+            if(device.has(this)){
+                device.get(this);
+            }
             this.remove(TDevice.class);
         }
     }
@@ -316,33 +318,34 @@ public class T {
 
     //TRACKED COMPUTATION :
     //=========================
-    public T of(T tensor, String operation) {
+    public T f(T tensor, String operation) {
         if(tensor==null){return this;}
-        return this.of(new T[]{tensor}, operation);
+        return this.f(new T[]{tensor}, operation);
     }
-    public T of(T[] tensors, String operation) {
+    public T f(T[] tensors, String operation) {
         if(tensors==null||tensors.length==0||tensors[0]==null){return this;}
         this.internalize(FunctionFactory.newBuild(operation).activate(tensors));
-        //this.addModule(new GraphBuilder(this, tensors, operation, true));
-        //this.setIsLeave(false);
+        if(this.has(GradientNode.class)){
+            ((GradientNode)this.find(GradientNode.class)).trimTree(null);
+        }
         return this;
     }
-    public T of(T[] tensors, int[][] translation, String operation) {
+    public T f(T[] tensors, int[][] translation, String operation) {
         this.internalize(FunctionFactory.newBuild(operation).activate(tensors));
-        //this.addModule(new GraphBuilder(this, tensors, translation, operation));
-        //this.setIsLeave(false);
+        if(this.has(GradientNode.class)){
+            ((GradientNode)this.find(GradientNode.class)).trimTree(null);
+        }
         return this;
     }
     //-----------------------------------------------------------------------
-    public void backward(T gradient) {
+    public void backward(T error) {
         if(this.rqsGradient()){
-            this.setGradient(gradient);
+            this.setGradient(error);
         }
-        GraphBuilder operation = (GraphBuilder) this.find(GraphBuilder.class);
-        if (operation == null) {
-            return;
+        if(this.has(GradientNode.class)){
+            ((GradientNode)this.find(GradientNode.class)).backward(error);
         }
-        operation.backward(gradient, this);
+        //operation.backward(gradient, this);
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -742,7 +745,7 @@ public class T {
             int drnSze = sizeOfShape_mxd(drn[0], drn[3][0], rank);
             int i = 0;
             while (i < drnSze) {
-                //increment of and drain accordingly:
+                //increment f and drain accordingly:
                 int i1 = src1[3][0];
                 int i2 = src2[3][0];
                 int id = drn[3][0];

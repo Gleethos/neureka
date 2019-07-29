@@ -118,7 +118,8 @@ public class GraphBuilder {
                             src_gradients.forEach(
                                 (t, g)->{
                                     /**
-                                     *  Chain rule for every gradient with respect to leaves:
+                                     *  Chain rule (forwards) for every
+                                     *  gradient w.r.t. leaves (reverseAD or user leaves):
                                      * */
                                     if(drain_gradients.has(t)){
                                         T dg = drain_gradients.get(t);

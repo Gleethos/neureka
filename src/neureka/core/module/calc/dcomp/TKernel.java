@@ -74,7 +74,7 @@ public class TKernel extends Kernel
     public int[] shapes;
     public int[] translations;
 
-    public int[] pointers;// Pointers of tensors (chronologically)
+    public int[] pointers;// Pointers f tensors (chronologically)
     /**
      *    tsr pointer++:
      *    +0 -> tsr_ptr: for values
@@ -219,7 +219,7 @@ public class TKernel extends Kernel
             }
         }
         this.put(this.pointers);
-        return 0;//return pointer of alloc_val_sizer
+        return 0;//return pointer f alloc_val_sizer
     }
 
     private int mod_ptrs(int t_id, boolean rmv, int[][] regis){
@@ -432,14 +432,14 @@ public class TKernel extends Kernel
         }
         if(mde[0]==-5){//cleanup //TODO implement!
         }
-        if(mde[0]==-4){//fetch_tsr grad of tensor
+        if(mde[0]==-4){//fetch_tsr grad f tensor
             run_tsr_fetch(gid, true);
         }
         if(mde[0]==-3){//fetch_tsr tensor
            run_tsr_fetch(gid, false);
            //this.tmp_val[gid] = gid;
         }
-        if(mde[0]==-2){//store_tsr grad of tensor
+        if(mde[0]==-2){//store_tsr grad f tensor
             run_tsr_store(gid, true);
         }
         if(mde[0]==-1){//store_tsr tensor

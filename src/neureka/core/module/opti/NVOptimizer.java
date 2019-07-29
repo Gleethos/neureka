@@ -207,7 +207,7 @@ public class NVOptimizer {
 	}
 	//==============================================================================================================
 	 
-	//Subfunctions of Public Interface:
+	//Subfunctions f Public Interface:
 	//=================================
 	// gradient + deltaV  
 	//==============================================================================================================
@@ -414,7 +414,7 @@ public class NVOptimizer {
 	 *GradientDeltaVelocity / ShiftGradientDeltaVelocity 
 	 */
 		
-	//Sub-Subfunctions of Public Interface:
+	//Sub-Subfunctions f Public Interface:
 	//=====================================
 	//History management:
 	//========================================================================================

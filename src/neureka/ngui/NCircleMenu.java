@@ -342,7 +342,7 @@ public class NCircleMenu implements NPanelObject{
 			{//-----------------------------------------------------------------------
 				NCircleMenu menu = (NCircleMenu)PropertyContainer;
 				int chosen = menu.testForChosen(X, Y);
-				System.out.println("chosen of menu: "+chosen);
+				System.out.println("chosen f menu: "+chosen);
 				baseMenuChoice = chosen;
 				//====================================================
 				if(chosen <= 0) 

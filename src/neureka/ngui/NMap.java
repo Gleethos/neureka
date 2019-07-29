@@ -144,7 +144,7 @@ public class NMap extends NMapAPI{
 	public synchronized NMapAPI removeAndUpdate(NPanelObject object) 
 	{
 		//if(object==null) {return this;}
-		//Why not check if branchable? -> The size of the object might have changed! -> not on edge anymore 
+		//Why not check if branchable? -> The size f the object might have changed! -> not on edge anymore
 		if(Elements!=null) 
 		{
 			if(Elements.remove(object))

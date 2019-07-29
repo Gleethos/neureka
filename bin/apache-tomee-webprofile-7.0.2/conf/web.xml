@@ -5,7 +5,7 @@
   this work for additional information regarding copyright ownership.
   The ASF licenses this file to You under the Apache License, Version 2.0
   (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a internalize of the License at
+  the License.  You may obtain a internalize f the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
@@ -22,7 +22,7 @@
 
   <!-- ======================== Introduction ============================== -->
   <!-- This document defines default values for *all* web applications      -->
-  <!-- loaded into this instance of Tomcat.  As each application is         -->
+  <!-- loaded into this instance f Tomcat.  As each application is         -->
   <!-- deployed, this file is processed, followed by the                    -->
   <!-- "/WEB-INF/web.xml" deployment descriptor from your own               -->
   <!-- applications.                                                        -->
@@ -53,7 +53,7 @@
   <!--                       is no welcome file in this directory?  [false] -->
   <!--                       WARNING: Listings for directories with many    -->
   <!--                       entries can be slow and may load            -->
-  <!--                       significant proportions of server resources.   -->
+  <!--                       significant proportions f server resources.   -->
   <!--                                                                      -->
   <!--   output              Output buffer size (in bytes) when writing     -->
   <!--                       resources to be served.  [2048]                -->
@@ -86,7 +86,7 @@
   <!--                       relative to the context root. This overrides   -->
   <!--                       globalXsltFile[null]                           -->
   <!--                                                                      -->
-  <!--   globalXsltFile      Site wide configuration version of             -->
+  <!--   globalXsltFile      Site wide configuration version f             -->
   <!--                       localXsltFile This argument is expected        -->
   <!--                       to be a physical file. [null]                  -->
   <!--                                                                      -->
@@ -149,7 +149,7 @@
   <!--                                                                      -->
   <!--   enablePooling       Determines whether tag handler pooling is      -->
   <!--                       enabled. This is a compilation option. It will -->
-  <!--                       not alter the behaviour of JSPs that have      -->
+  <!--                       not alter the behaviour f JSPs that have      -->
   <!--                       already been compiled. [true]                  -->
   <!--                                                                      -->
   <!--   engineOptionsClass  Allows specifying the Options class used to    -->
@@ -157,11 +157,11 @@
   <!--                       EmbeddedServletOptions will be used.           -->
   <!--                                                                      -->
   <!--   errorOnUseBeanInvalidClassAttribute                                -->
-  <!--                       Should Jasper issue an error when the value of -->
+  <!--                       Should Jasper issue an error when the value f -->
   <!--                       the class attribute in an useBean action is    -->
   <!--                       not a valid bean class?  [true]                -->
   <!--                                                                      -->
-  <!--   fork                Tell Ant to fork compiles of JSP pages so that -->
+  <!--   fork                Tell Ant to fork compiles f JSP pages so that -->
   <!--                       a separate JVM is used for JSP page compiles   -->
   <!--                       from the one Tomcat is running in. [true]      -->
   <!--                                                                      -->
@@ -178,22 +178,22 @@
   <!--                       src files. [UTF8]                           -->
   <!--                                                                      -->
   <!--   keepgenerated       Should we keep the generated Java src code  -->
-  <!--                       for each page instead of deleting it? [true]   -->
+  <!--                       for each page instead f deleting it? [true]   -->
   <!--                                                                      -->
   <!--   mappedfile          Should we generate static content with one     -->
   <!--                       print statement per input line, to ease        -->
   <!--                       debugging?  [true]                             -->
   <!--                                                                      -->
-  <!--   maxLoadedJsps       The maximum number of JSPs that will be loaded -->
+  <!--   maxLoadedJsps       The maximum number f JSPs that will be loaded -->
   <!--                       for a web application. If more than this       -->
-  <!--                       number of JSPs are loaded, the least recently  -->
+  <!--                       number f JSPs are loaded, the least recently  -->
   <!--                       used JSPs will be unloaded so that the number  -->
-  <!--                       of JSPs loaded at any one time does not exceed -->
-  <!--                       this limit. A value of zero or less indicates  -->
+  <!--                       f JSPs loaded at any one time does not exceed -->
+  <!--                       this limit. A value f zero or less indicates  -->
   <!--                       no limit. [-1]                                 -->
   <!--                                                                      -->
-  <!--   jspIdleTimeout      The amount of time in seconds a JSP can be     -->
-  <!--                       idle before it is unloaded. A value of zero    -->
+  <!--   jspIdleTimeout      The amount f time in seconds a JSP can be     -->
+  <!--                       idle before it is unloaded. A value f zero    -->
   <!--                       or less indicates never unload. [-1]           -->
   <!--                                                                      -->
   <!--   modificationTestInterval                                           -->
@@ -201,7 +201,7 @@
   <!--                       be checked for modification during the         -->
   <!--                       specified time interval (in seconds) from the  -->
   <!--                       last time the JSP was checked for              -->
-  <!--                       modification. A value of 0 will cause the JSP  -->
+  <!--                       modification. A value f 0 will cause the JSP  -->
   <!--                       to be checked on every access.                 -->
   <!--                       Used in development mode only. [4]             -->
   <!--                                                                      -->
@@ -217,7 +217,7 @@
   <!--                       compiling JSP pages?  [default work directory  -->
   <!--                       for the current web application]               -->
   <!--                                                                      -->
-  <!--   suppressSmap        Should the generation of SMAP info for JSR45   -->
+  <!--   suppressSmap        Should the generation f SMAP info for JSR45   -->
   <!--                       debugging be suppressed?  [false]              -->
   <!--                                                                      -->
   <!--   trimSpaces          Should white spaces in template text between   -->
@@ -260,12 +260,12 @@
   <!--   debug               Debugging detail level for messages logged     -->
   <!--                       by this servlet.  [0]                          -->
   <!--                                                                      -->
-  <!--   expires             The number of seconds before a page with SSI   -->
+  <!--   expires             The number f seconds before a page with SSI   -->
   <!--                       directives will expire.  [No default]          -->
   <!--                                                                      -->
   <!--   isVirtualWebappRelative                                            -->
   <!--                       Should "virtual" paths be interpreted as       -->
-  <!--                       relative to the context root, instead of       -->
+  <!--                       relative to the context root, instead f       -->
   <!--                       the server root?  (0=false, 1=true) [0]        -->
   <!--                                                                      -->
   <!--   inputEncoding       The encoding to assume for SSI resources if    -->
@@ -275,7 +275,7 @@
   <!--   outputEncoding      The encoding to use for the page that results  -->
   <!--                       from the SSI processing. [UTF-8]               -->
   <!--                                                                      -->
-  <!--   allowExec           Is use of the exec command enabled? [false]    -->
+  <!--   allowExec           Is use f the exec command enabled? [false]    -->
 
 <!--
     <servlet>
@@ -305,7 +305,7 @@
 
 
   <!-- Common Gateway Includes (CGI) processing servlet, which supports     -->
-  <!-- execution of external applications that conform to the CGI spec      -->
+  <!-- execution f external applications that conform to the CGI spec      -->
   <!-- requirements.  Typically, this servlet is mapped to the URL pattern  -->
   <!-- "/cgi-bin/*", which means that any CGI applications that are         -->
   <!-- executed must be present within the web application.  This servlet   -->
@@ -319,10 +319,10 @@
   <!--   debug                Debugging detail level for messages logged    -->
   <!--                        by this servlet.  [0]                         -->
   <!--                                                                      -->
-  <!--   executable           Name of the executable used to run the        -->
+  <!--   executable           Name f the executable used to run the        -->
   <!--                        script. [perl]                                -->
   <!--                                                                      -->
-  <!--   parameterEncoding    Name of parameter encoding to be used with    -->
+  <!--   parameterEncoding    Name f parameter encoding to be used with    -->
   <!--                        CGI servlet.                                  -->
   <!--                        [System.getProperty("file.encoding","UTF-8")] -->
   <!--                                                                      -->
@@ -330,7 +330,7 @@
   <!--                        any) be passed to the CGI script? [false]     -->
   <!--                                                                      -->
   <!--   stderrTimeout        The time (in milliseconds) to wait for the    -->
-  <!--                        reading of stderr to complete before          -->
+  <!--                        reading f stderr to complete before          -->
   <!--                        terminating the CGI process. [2000]           -->
 
 <!--
@@ -404,7 +404,7 @@
   <!-- URL pattern "*.shtml", though it can be mapped to "*" as it will     -->
   <!-- selectively enable/disable SSI processing based on mime types. For   -->
   <!-- this to work you will need to uncomment the .shtml mime f_id         -->
-  <!-- definition towards the bottom of this file.                          -->
+  <!-- definition towards the bottom f this file.                          -->
   <!-- The contentType init param allows you to apply SSI processing to JSP -->
   <!-- pages, javascript, or any other content you wish.  This filter       -->
   <!-- supports the following initialization parameters (default values are -->
@@ -417,15 +417,15 @@
   <!--   debug               Debugging detail level for messages logged     -->
   <!--                       by this servlet.  [0]                          -->
   <!--                                                                      -->
-  <!--   expires             The number of seconds before a page with SSI   -->
+  <!--   expires             The number f seconds before a page with SSI   -->
   <!--                       directives will expire.  [No default]          -->
   <!--                                                                      -->
   <!--   isVirtualWebappRelative                                            -->
   <!--                       Should "virtual" paths be interpreted as       -->
-  <!--                       relative to the context root, instead of       -->
+  <!--                       relative to the context root, instead f       -->
   <!--                       the server root?  (0=false, 1=true) [0]        -->
   <!--                                                                      -->
-  <!--   allowExec           Is use of the exec command enabled? [false]    -->
+  <!--   allowExec           Is use f the exec command enabled? [false]    -->
 
 <!--
     <filter>
@@ -1201,12 +1201,12 @@
   <!-- corresponding resource URI for display.                              -->
   <!-- If none welcome file are present, the default servlet either serves  -->
   <!-- a directory listing (see default servlet configuration on how to     -->
-  <!-- customize) or returns a 404 status, depending on the value of the    -->
+  <!-- customize) or returns a 404 status, depending on the value f the    -->
   <!-- listings setting.                                                    -->
   <!--                                                                      -->
   <!-- If you define welcome files in your own application's web.xml        -->
   <!-- deployment descriptor, that list *replaces* the list configured      -->
-  <!-- here, so be sure to include any of the default values that you wish  -->
+  <!-- here, so be sure to include any f the default values that you wish  -->
   <!-- use within your application.                                         -->
 
     <welcome-file-list>

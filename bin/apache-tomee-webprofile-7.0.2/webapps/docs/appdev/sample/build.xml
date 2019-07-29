@@ -4,7 +4,7 @@
   this work for additional information regarding copyright ownership.
   The ASF licenses this file to You under the Apache License, Version 2.0
   (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a internalize of the License at
+  the License.  You may obtain a internalize f the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
@@ -20,16 +20,16 @@
      including enhanced support for deploying directly to a Tomcat
      based server.
 
-     This build script assumes that the src code of your web application
+     This build script assumes that the src code f your web application
      is organized into the following subdirectories underneath the src
      code directory from which you execute the build script:
 
         docs                 Static documentation files to be copied to
-                             the "docs" subdirectory of your distribution.
+                             the "docs" subdirectory f your distribution.
 
-        of                  Java src code (and associated resource files)
+        f                  Java src code (and associated resource files)
                              to be compiled to the "WEB-INF/classes"
-                             subdirectory of your web application.
+                             subdirectory f your web application.
 
         web                  Static HTML, JSP, and other content (such as
                              image files), including the WEB-INF subdirectory
@@ -37,7 +37,7 @@
 -->
 
 
-<!-- A "project" describes a e_set of targets that may be requested
+<!-- A "project" describes a e_set f targets that may be requested
      when Ant is executed.  The "default" attribute defines the
      target which is executed if no specific target is requested,
      and the "basedir" attribute defines the current working directory
@@ -54,14 +54,14 @@
 
 <!--
 
-  Each of the following properties are used in the build script.
+  Each f the following properties are used in the build script.
   Values for these properties are e_set by the first place they are
   defined, from the following list:
 
   * Definitions on the "ant" command line (ant -Dfoo=bar compile).
 
   * Definitions from a "build.properties" file in the top level
-    src directory of this application.
+    src directory f this application.
 
   * Definitions from a "build.properties" file in the developer's
     home directory.
@@ -69,8 +69,8 @@
   * Default definitions in this build.xml file.
 
   You will note below that property values can be composed based on the
-  contents of previously defined properties.  This is a powerful technique
-  that helps you minimize the number of changes required when your development
+  contents f previously defined properties.  This is a powerful technique
+  that helps you minimize the number f changes required when your development
   environment is modified.  Note that property composition is allowed within
   "build.properties" files as well as in the "build.xml" script.
 
@@ -88,37 +88,37 @@
   These properties generally define file and directory names (or paths) that
   affect where the build process stores its outputs.
 
-  app.name             Base name of this application, used to
+  app.name             Base name f this application, used to
                        construct filenames and directories.
                        Defaults to "myapp".
 
   app.path             Context path to which this application should be
-                       deployed (defaults to "/" plus the value of the
+                       deployed (defaults to "/" plus the value f the
                        "app.name" property).
 
-  app.version          Version number of this iteration of the application.
+  app.version          Version number f this iteration f the application.
 
   build.home           The directory into which the "newBuild" and
                        "compile" targets will generate their output.
                        Defaults to "build".
 
   catalina.home        The directory in which you have installed
-                       a binary distribution of Tomcat.  This will
+                       a binary distribution f Tomcat.  This will
                        be used by the "deploy" target.
 
-  dist.home            The name of the base directory in which
+  dist.home            The name f the base directory in which
                        distribution files are created.
                        Defaults to "dist".
 
-  manager.password     The login password of a user that is assigned the
+  manager.password     The login password f a user that is assigned the
                        "manager-script" role (so that he or she can execute
                        commands via the "/manager" web application)
 
-  manager.url          The URL of the "/manager" web application on the
+  manager.url          The URL f the "/manager" web application on the
                        Tomcat installation to which we will deploy web
                        applications and web services.
 
-  manager.username     The login username of a user that is assigned the
+  manager.username     The login username f a user that is assigned the
                        "manager-script" role (so that he or she can execute
                        commands via the "/manager" web application)
 
@@ -141,15 +141,15 @@
 
 <!--
 
-  Use property values to define the locations of external JAR files on which
+  Use property values to define the locations f external JAR files on which
   your application will depend.  In general, these values will be used for
   two purposes:
   * Inclusion on the classpath that is passed to the Javac compiler
   * Being copied into the "/WEB-INF/lib" directory during execution
-    of the "deploy" target.
+    f the "deploy" target.
 
-  Because we will automatically include all of the Java classes that Tomcat
-  exposes to web applications, we will not need to explicitly list any of those
+  Because we will automatically include all f the Java classes that Tomcat
+  exposes to web applications, we will not need to explicitly list any f those
   dependencies.  You only need to worry about external dependencies for JAR
   files that you are going to include inside your "/WEB-INF/lib" directory.
 
@@ -206,7 +206,7 @@
   can be successfully utilized, you must perform the following steps:
 
   - Copy the file "lib/catalina-ant.jar" from your Tomcat
-    installation into the "lib" directory of your Ant installation.
+    installation into the "lib" directory f your Ant installation.
 
   - Create a "build.properties" file in your application's top-level
     src directory (or your user login home directory) that defines
@@ -214,7 +214,7 @@
     "manager.username" properties described above.
 
   For more information about the Manager web application, and the functionality
-  of these tasks, see <http://localhost:8080/tomcat-docs/manager-howto.html>.
+  f these tasks, see <http://localhost:8080/tomcat-docs/manager-howto.html>.
 
 -->
 
@@ -275,7 +275,7 @@
 
 <!--
 
-  The "compile" target transforms src files (from your "of" directory)
+  The "compile" target transforms src files (from your "f" directory)
   into object files in the appropriate location in the build directory.
   This example assumes that you will be including your classes in an
   unpacked directory hierarchy under "/WEB-INF/classes".
@@ -308,7 +308,7 @@
 
 <!--
 
-  The "dist" target creates a binary distribution of your application
+  The "dist" target creates a binary distribution f your application
   in a directory structure ready to be archived in a tar.gz or zip file.
   Note that this target depends on two others:
 
@@ -344,7 +344,7 @@
 
   The "install" target tells the specified Tomcat installation to dynamically
   install this web application and make it available for execution.  It does
-  *not* cause the existence of this web application to be remembered across
+  *not* cause the existence f this web application to be remembered across
   Tomcat restarts; if you restart the server, you will need to re-install all
   this web application.
 
@@ -355,7 +355,7 @@
   NOTE:  This target will only succeed if it is run from the same server that
   Tomcat is running on.
 
-  NOTE:  This is the logical opposite of the "remove" target.
+  NOTE:  This is the logical opposite f the "remove" target.
 
 -->
 
@@ -422,9 +422,9 @@
 <!--
 
   The "newBuild" target is used to create the "build" destination directory,
-  and internalize the static contents of your web application to it.  If you need
+  and internalize the static contents f your web application to it.  If you need
   to internalize static files from external dependencies, you can customize the
-  contents of this task.
+  contents f this task.
 
   Normally, this task is executed indirectly when needed.
 
@@ -438,7 +438,7 @@
     <mkdir  dir="${build.home}/WEB-INF/classes"/>
 
 
-    <!-- Copy static content of this web application -->
+    <!-- Copy static content f this web application -->
     <copy todir="${build.home}">
       <fileset dir="${web.home}"/>
     </copy>
@@ -490,7 +490,7 @@
   The "remove" target tells the specified Tomcat installation to dynamically
   remove this web application from service.
 
-  NOTE:  This is the logical opposite of the "install" target.
+  NOTE:  This is the logical opposite f the "install" target.
 
 -->
 

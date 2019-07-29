@@ -11,7 +11,7 @@ public class TDevice
 {
     /**
      *    map:
-     *    Holds REGISTER pointers of tensors stored on the device.
+     *    Holds REGISTER pointers f tensors stored on the device.
     * */
     private HashMap<T, Integer> map = new HashMap<T, Integer>();
     /**
@@ -19,7 +19,7 @@ public class TDevice
      *    Maps REGISTER pointers to pointers WITHIN the compute device.
      *    Pointers within the kernel change dynamically,
      *    whereas a REGISTER entry will always represent a specific tensor from
-     *    the time of allocation to tensor deletion and de-allocation on the device.
+     *    the time f allocation to tensor deletion and de-allocation on the device.
      *
      * */
     private int[][] register = null;
@@ -58,7 +58,7 @@ public class TDevice
             System.out.println("\nChosen device:\n------------\n"+ device.toString()+"\n------------\n");
             System.out.println("\ndevice f_id:\n------------\n"+ this.device.getType().toString()+"\n------------\n");
             kernel = new TKernel();
-            System.out.println("TDevice of kernel:\n------------");
+            System.out.println("TDevice f kernel:\n------------");
             System.out.println(kernel.getTargetDevice().toString());
         }
     }
@@ -72,6 +72,10 @@ public class TDevice
         //System.out.println(this.kernel.cleanUpArrays());
         return kernel;
     }
+
+    public boolean has(T tensor){
+        return this.map.containsKey(tensor);
+    }
     /**
      *  ======================================================================
      * */
@@ -79,7 +83,9 @@ public class TDevice
         if(kernel!=null){
             kernel.execute(
                     kernel.fetch_tsr(
-                            register[0][map.get(tensor)], false
+                            register[0][
+                                    map.get(
+                                            tensor)], false
                     )
             );
             T.factory.inject(kernel.value(), false, tensor);

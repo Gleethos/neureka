@@ -5,7 +5,7 @@
   this work for additional information regarding copyright ownership.
   The ASF licenses this file to You under the Apache License, Version 2.0
   (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a internalize of the License at
+  the License.  You may obtain a internalize f the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
@@ -15,10 +15,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<!-- The contents of this file will be loaded for each web application -->
+<!-- The contents f this file will be loaded for each web application -->
 <Context>
 
-    <!-- Default e_set of monitored resources. If one of these changes, the    -->
+    <!-- Default e_set f monitored resources. If one f these changes, the    -->
     <!-- web application will be reloaded.                                   -->
     <WatchedResource>WEB-INF/web.xml</WatchedResource>
     <WatchedResource>${catalina.base}/conf/web.xml</WatchedResource>

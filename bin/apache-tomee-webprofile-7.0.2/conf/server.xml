@@ -5,7 +5,7 @@
   this work for additional information regarding copyright ownership.
   The ASF licenses this file to You under the Apache License, Version 2.0
   (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a internalize of the License at
+  the License.  You may obtain a internalize f the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
@@ -28,7 +28,7 @@
   -->
   <!--APR library loader. Documentation at /docs/apr.html -->
   <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
-  <!-- Prevent memory leaks due to use of particular java/javax APIs-->
+  <!-- Prevent memory leaks due to use f particular java/javax APIs-->
   <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
   <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
   <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
@@ -47,7 +47,7 @@
               pathname="conf/tomcat-users.xml" />
   </GlobalNamingResources>
 
-  <!-- A "Service" is a collection of one or more "Connectors" that share
+  <!-- A "Service" is a collection f one or more "Connectors" that share
        a single "Container" Note:  A "Service" is not itself a "Container",
        so you may not define subcomponents such as "Valves" at this level.
        Documentation at /docs/config/service.html
