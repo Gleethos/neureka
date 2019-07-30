@@ -6,8 +6,10 @@ import neureka.core.device.TDevice;
 import neureka.core.function.TFunction;
 import neureka.core.function.TFunctionFactory;
 import neureka.core.function.util.Context;
+import neureka.core.utility.DataHelper;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public abstract class Template implements TFunction {
 
@@ -140,7 +142,7 @@ public abstract class Template implements TFunction {
                     //output.addModule(new TGraphBuilder(output, tsrs, Context.REGISTER[f_id]+"(I[j])", true, false));
                     output.internalize(new TFunctionFactory().newBuild(Context.REGISTER[f_id]+"(I[j])", true).activate(tsrs));
                     return output;
-                }else{
+                }else if(f_id<=18){
                     /**      +, -, x, *, %, ....
                      * */
                     String operation = (Context.REGISTER[f_id].length()>1)?Context.REGISTER[f_id]:"";
@@ -172,6 +174,41 @@ public abstract class Template implements TFunction {
                         output.internalize(new TFunctionFactory().newBuild(operation, true).activate(tsrs, j));
                     }
                     return output;
+                }else{
+                    /**
+                     *    Tensor shape translation
+                     * */
+                    //TODO implement reshape!
+                    //T[] tsrs = new T[Srcs.size()];
+                    int[] reshape = new int[Srcs.size()];
+                    for(int i=0; i<this.Srcs.size(); i++){
+                        TFunction fcn = this.Srcs.get(i);
+                        if(fcn instanceof Constant){
+                            //tsrs[0] = T.factory.newTensor(((Constant)fcn).value(), new int[]{1});
+                            reshape[i] = (int)((Constant)fcn).value();
+                        }else{
+                            T t = (j<0) ?fcn.activate(input) :fcn.activate(input, j);
+                            if(t.size()>1){
+                                int[] insert = new int[t.size()];
+                                t.foreach((ii, v)->{
+                                    insert[ii] = (int) v;
+                                });
+                                DataHelper<Object> helper = new DataHelper<>();
+                                for(int v : insert){
+                                    reshape = helper.updateArray(reshape, i, false);
+                                    reshape[i] = v;
+                                }
+                            }else{
+                                reshape[i] = (int)t.e_get(0);
+                            }
+                        }
+                    }
+                    //TODO: reshape
+                    if(d<0){
+                        //output
+                    }else{//reverse reshape!
+
+                    }
                 }
             }
         }

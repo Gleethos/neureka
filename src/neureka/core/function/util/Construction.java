@@ -16,11 +16,6 @@ public class Construction {
         for(TFunction f : sources){
             isFlat = ((f instanceof Input) || (f instanceof Variable) || (f instanceof Constant)) && isFlat;
         }
-        //boolean isFlat = false;//=> !isFlat
-        //for(TFunction f : sources){
-        //    isFlat = ((!(f instanceof Input)) && (!(f instanceof Variable)) && (!(f instanceof Constant))) || isFlat;
-        //}
-        //isFlat = !isFlat;
         if(f_id<9) {// FUNCTIONS:
             return new Template(f_id, isFlat, sources, doAD){//TFunction(){
                 @Override
@@ -59,7 +54,7 @@ public class Construction {
                             * sources.get(0).derive(input, index);
                 }
             };
-        }else{
+        }else if(f_id<=18){
             return new Template(f_id, isFlat, sources, doAD){//TFunction(){
                 @Override
                 public T activate(T[] input, int j) {
@@ -96,6 +91,42 @@ public class Construction {
                 }
             };
 
+        }else{
+            return new Template(f_id, isFlat, sources, doAD){
+                @Override
+                public T activate(T[] input, int j) {
+                    return tensorActivationOf(input, j, -1);
+                }
+                @Override
+                public T activate(T[] input) {
+                    return tensorActivationOf(input, -1, -1);
+                }
+                @Override
+                public T derive(T[] input, int d, int j) {
+                    return tensorActivationOf(input, j, d);
+                }
+                @Override
+                public T derive(T[] input, int d) {
+                    return tensorActivationOf(input, -1, d);
+                }
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                @Override
+                public double activate(final double[] input, int j) {
+                    return scalarActivationOf(input, j, -1);
+                }
+                @Override
+                public double activate(final double[] input) {
+                    return scalarActivationOf(input, -1, -1);
+                }
+                @Override
+                public double derive(final double[] input, final int d, final int j) {
+                    return scalarActivationOf(input, j, d);
+                }
+                @Override
+                public double derive(final double[] input, final int d) {
+                    return scalarActivationOf(input, -1, d);
+                }
+            };
         }
     }
 }

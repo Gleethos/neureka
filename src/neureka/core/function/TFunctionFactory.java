@@ -50,10 +50,8 @@ public class TFunctionFactory {
 
     public static TFunction newBuild(String expression, boolean doAD) {
         HashMap<String, TFunction> map = Context.SHARED;
-        expression = (expression.charAt(0) != '(')
-                ? ("(" + expression)
-                : (expression.charAt(expression.length() - 1) != ')')
-                ? expression + ")"
+        expression = (expression.charAt(0) != '('||expression.charAt(expression.length() - 1) != ')')
+                ? ("(" + expression + ")")
                 : expression;
         String k = (doAD)?"d"+expression:expression;
         if (Context.SHARED.containsKey(k)) {
@@ -268,6 +266,28 @@ public class TFunctionFactory {
         } else {// More than one component left:
             if (Context.REGISTER[f_id] == "x") {
                 Components = rebindPairwise(Components, f_id);
+            }else if(Context.REGISTER[f_id] == ","){
+                if(Components.get(0).startsWith("[")){
+                    Components.set(0,Components.get(0).substring(1));
+                    String[] splitted;
+                    if(Components.get(Components.size()-1).contains("]")){
+                        int offset = 1;
+                        if(Components.get(Components.size()-1).contains("]:")){
+                            offset = 2;
+                            splitted = Components.get(Components.size()-1).split("]:");
+                        }else{
+                            splitted = Components.get(Components.size()-1).split("]");
+                        }
+
+                        if(splitted.length>1){
+                            splitted = new String[]{splitted[0], Components.get(Components.size()-1).substring(splitted[0].length()+offset)};
+                            Components.remove(Components.size()-1);
+                            for(String part : splitted){
+                                Components.add(part);
+                            }
+                        }
+                    }
+                }
             }
             final ListIterator<String> ComponentIterator2 = Components.listIterator();
             while (ComponentIterator2.hasNext()) {
@@ -314,8 +334,8 @@ public class TFunctionFactory {
      * UTILITY
      * for parsing:
      */
-    private static class utility {
-
+    private static class utility
+    {
         public static int numberOfOperationsWithin(final List<String> operations) {
             int Count = 0;
             for (int i = 0; i < Context.REGISTER.length; ++i) {

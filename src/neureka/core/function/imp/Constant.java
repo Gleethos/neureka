@@ -5,7 +5,10 @@ import neureka.core.function.TFunction;
 
 public class Constant implements TFunction
 {
-	double value;
+	private double value;
+	public double value(){
+		return this.value;
+	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
 	public boolean isFlat(){

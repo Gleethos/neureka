@@ -3,6 +3,8 @@ package neureka.unit;
 
 import neureka.core.device.TDevice;
 import neureka.core.T;
+import neureka.core.function.TFunction;
+import neureka.core.function.TFunctionFactory;
 import neureka.unit.state.NVTesting_Tensor;
 import neureka.unit.state.NVTesting_TensorDevice;
 import neureka.utility.NMessageFrame;
@@ -25,6 +27,7 @@ public class NVTester {
 	*/
 	public void Test()
 	{
+		//TFunction f = TFunctionFactory.newBuild("[2,1,0,3,3](I[0])", false);
 	    componentTest();
 		testTensorCore();
 		testTensorDevice();

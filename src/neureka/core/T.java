@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class T {
@@ -365,6 +366,14 @@ public class T {
         for(int i=0; i<sze; i++){
             T.utility.increment(idx, this.shape());
             action.accept(T.utility.idxOfShpIdxAndShp(idx, this.shape()));
+        }
+    }
+    public void foreach(BiConsumer<Integer, Integer> action){
+        int sze = this.size();
+        int[] idx = new int[this.shape().length];
+        for(int i=0; i<sze; i++){
+            T.utility.increment(idx, this.shape());
+            action.accept(i, T.utility.idxOfShpIdxAndShp(idx, this.shape()));
         }
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -16,7 +16,7 @@ public class Context {
         REGISTER = new String[]{
                 "relu", "sig", "tanh", "quad", "lig", "lin", "gaus", "abs", "sin", "cos",
                 "sum", "prod",
-                "^", "/", "*", "%", "-", "+", "x"
+                "^", "/", "*", "%", "-", "+", "x", ","
         };
         SHARED = new HashMap<>();
         STACK = new HashMap<>();

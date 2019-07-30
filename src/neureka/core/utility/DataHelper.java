@@ -52,6 +52,57 @@ public class DataHelper<T> {
     }
 
     //===================================================================
+    public int[] updateArray(int[] Array, int index, boolean remove) {
+        if (Array == null) {
+            if (remove == true) {
+                return Array;
+            } else {
+                if (index == 0) {
+                    Array = new int[1];
+                }
+                return Array;
+            }
+        }
+        if (Array.length < index) {
+            return Array;
+        }
+        int[] oldArray = Array;
+        if (remove == false) {
+            Array = new int[oldArray.length + 1];
+        } else {
+            if (Array.length == 1) {
+                Array = null;
+                return Array;
+            }
+            Array = new int[oldArray.length - 1];
+        }
+        for (int Ii = 0; Ii < Array.length; Ii++) {
+            if (remove == false) {
+                if (index > Ii) {
+                    Array[Ii] = oldArray[Ii];
+                }
+                if (index == Ii) {
+                    Array[Ii] = 0;
+                }
+                if (index < Ii) {
+                    Array[Ii] = oldArray[Ii - 1];
+                }
+            } else {
+                if (index > Ii) {
+                    Array[Ii] = oldArray[Ii];
+                }
+                if (index == Ii) {
+                    Array[Ii] = oldArray[Ii + 1];
+                }
+                if (index < Ii) {
+                    Array[Ii] = oldArray[Ii + 1];
+                }
+            }
+        }
+        return Array;
+    }
+
+    //===================================================================
     public double[] updateArray(double[] Array, int index, boolean remove) {
         if (Array == null) {
             if (remove == true) {
