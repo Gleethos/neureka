@@ -3,15 +3,13 @@ package neureka.unit;
 
 import neureka.core.device.TDevice;
 import neureka.core.T;
-import neureka.core.function.TFunction;
-import neureka.core.function.TFunctionFactory;
-import neureka.unit.state.NVTesting_Tensor;
-import neureka.unit.state.NVTesting_TensorDevice;
-import neureka.utility.NMessageFrame;
+import neureka.unit.cases.NTester_Function;
+import neureka.unit.cases.NTester_Tensor;
+import neureka.unit.cases.NTester_TensorDevice;
 
-public class NVTester {
+public class NeurekaTest {
 
-	public NVTester(){}
+	public NeurekaTest(){}
 	/*
 	     TFunction IDs:
 		 case 0:  ReLu
@@ -32,7 +30,7 @@ public class NVTester {
 
 	public void testTensorCore(){
 
-		NVTesting_Tensor tester = new NVTesting_Tensor("Testing core tensor functionality");
+		NTester_Tensor tester = new NTester_Tensor("Testing core tensor functionality");
 		//---
 		T tensor1 = new T(new int[]{1, 3}, 2);
 		T tensor2 = new T(new int[]{2, 1}, -1);
@@ -224,7 +222,7 @@ public class NVTester {
 
 	public void testTensorDevice(){
 
-		NVTesting_TensorDevice tester = new NVTesting_TensorDevice("Testing tensor device");
+		NTester_TensorDevice tester = new NTester_TensorDevice("Testing tensor device");
 		TDevice gpu = new TDevice("nvidia");
 		T tensor = T.factory.newTensor(new double[]{1, 3, 4, 2, -3, 2, -1, 6}, new int[]{2, 4});
 		T firstTensor = tensor;
@@ -375,7 +373,7 @@ public class NVTester {
 
 	public int testTensorFunctions()
 	{
-		NVTesting_Function tester = new NVTesting_Function("Testing function factory and scalar calculations");
+		NTester_Function tester = new NTester_Function("Testing function factory and scalar calculations");
 		int TestCounter = 0;
 		int SuccessCounter = 0;
 

@@ -1,20 +1,18 @@
-package neureka.unit;
+package neureka.unit.cases;
 
 import neureka.utility.NMessageFrame;
-import java.math.BigInteger;
 
-public class NVTesting {
+public class NTester {
 
     protected NMessageFrame Console;
     protected NMessageFrame ResultConsole;
     protected String bar = "[|]";
     protected String line = "--------------------------------------------------------------------------------------------";
-
     private int success = 0;
     private int tests = 0;
     private String session = "";
 
-    protected NVTesting(String name) {
+    protected NTester(String name) {
         Console = new NMessageFrame(name+" - TEST PROCESS");
         ResultConsole = new NMessageFrame(name+" - TEST RESULT");
     }
@@ -146,7 +144,7 @@ public class NVTesting {
         session+=message;
         Console.print(message);
     }
-    protected void println(String message){
+    public void println(String message){
         session+=message+"\n";
         Console.println(message);
     }

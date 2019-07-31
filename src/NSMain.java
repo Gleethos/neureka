@@ -1,5 +1,5 @@
 import neureka.core.utility.DataHelper;
-import neureka.unit.NVTester;
+import neureka.unit.NeurekaTest;
 import neureka.ngui.NWindow;
 import neureka.utility.NConsole;
 
@@ -17,7 +17,7 @@ public class NSMain {
 				//NAparapi test = new NAparapi();
 				//test.start();
 		
-		//System.out.println("NTest");
+		//System.out.println("NTester");
         //testWindow = new NWindow();
         
 		//double[] inputLine = {1, 0.2};
@@ -118,7 +118,7 @@ public class NSMain {
         memory-=8;
         System.out.println("Used memory minus 8: "+memory+" bytes; "  + bytesToMegabytes(memory)+" megabytes;");
 		
-        NVTester tester2 = new NVTester();
+        NeurekaTest tester2 = new NeurekaTest();
         tester2.Test();
 
 

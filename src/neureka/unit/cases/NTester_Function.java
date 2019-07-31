@@ -1,13 +1,12 @@
-package neureka.unit;
+package neureka.unit.cases;
 
 import neureka.core.T;
 import neureka.core.function.TFunction;
 import neureka.core.function.TFunctionFactory;
-import neureka.utility.NMessageFrame;
 
-public class NVTesting_Function extends NVTesting{
+public class NTester_Function extends NTester {
 
-	NVTesting_Function(String name)
+	public NTester_Function(String name)
 	{
 		super(name);
 	}

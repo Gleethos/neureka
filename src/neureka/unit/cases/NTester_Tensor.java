@@ -1,12 +1,10 @@
-package neureka.unit.state;
+package neureka.unit.cases;
 
 import neureka.core.T;
-import neureka.unit.NVTesting;
-import neureka.utility.NMessageFrame;
 
-public class NVTesting_Tensor extends NVTesting {
+public class NTester_Tensor extends NTester {
 
-    public NVTesting_Tensor(String name)
+    public NTester_Tensor(String name)
     {
         super(name);
     }
