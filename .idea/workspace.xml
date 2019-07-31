@@ -6,21 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="8f069c6b-f9fb-4e13-ace8-74184cdf4938" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/NSMain.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/NSMain.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/NVTester.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/NVTesting.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/NVTesting_Component.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/NVTesting_Function.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/state/NVTesting_Tensor.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/unit/state/NVTesting_Tensor.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/state/NVTesting_TensorDevice.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/unit/state/NVTesting_TensorDevice.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/utility/NMessageFrame.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/utility/NMessageFrame.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/NSMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/NSMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/unit/NVTester.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/unit/NeurekaTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/unit/NVTesting.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/unit/cases/NTester.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/unit/NVTesting_Component.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/unit/NVTesting_Function.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/unit/cases/NTester_Function.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/unit/state/NVTesting_Tensor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/unit/cases/NTester_Tensor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/unit/state/NVTesting_TensorDevice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/unit/cases/NTester_TensorDevice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/NeurekaTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/unit/NeurekaTest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/state/NVTesting.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/state/NVTesting_Function.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/state/NVTesting_Tensor.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/state/NVTesting_TensorDevice.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neureka/unit/cases/NTester.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/unit/cases/NTester.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -90,8 +81,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/neureka/unit/cases/NTester.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-432">
-              <caret line="9" column="123" selection-start-line="9" selection-start-column="123" selection-end-line="9" selection-end-column="123" />
+            <state relative-caret-position="809">
+              <caret line="64" column="16" selection-start-line="64" selection-start-column="16" selection-end-line="64" selection-end-column="16" />
               <folding>
                 <element signature="method#println#0;class#NVTesting#0" />
               </folding>
@@ -397,7 +388,7 @@
     <property name="Repository.Attach.Sources" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1564513607572" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1564574625378" />
     <property name="create.test.in.the.same.root" value="true" />
     <property name="last_opened_file_path" value="C:/Users/Public/Downloads" />
     <property name="nodejs_package_manager_path" value="npm" />
@@ -522,12 +513,12 @@
       <workItem from="1564302131268" duration="3982000" />
       <workItem from="1564334105814" duration="46000" />
       <workItem from="1564353802453" duration="28868000" />
-      <workItem from="1564525798263" duration="7327000" />
+      <workItem from="1564525798263" duration="7751000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="962050000" />
+    <option name="totallyTimeSpent" value="962474000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
@@ -544,7 +535,7 @@
       <window_info id="Web" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32142857" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.28296703" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.28296703" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.2802198" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -569,7 +560,7 @@
       <window_info anchor="right" id="Bean Validation" order="11" />
       <window_info anchor="right" id="Event Log" order="12" sideWeight="0.28" side_tool="true" weight="0.2267101" />
       <window_info anchor="right" id="Coverage" order="13" side_tool="true" weight="0.161182" />
-      <window_info active="true" anchor="right" content_ui="combo" id="Project" order="14" sideWeight="0.72" visible="true" weight="0.18501629" />
+      <window_info anchor="right" content_ui="combo" id="Project" order="14" sideWeight="0.72" visible="true" weight="0.18501629" />
     </layout>
     <layout-to-restore>
       <window_info id="Structure" order="0" sideWeight="0.510989" side_tool="true" weight="0.20521173" />
@@ -1525,8 +1516,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/neureka/unit/cases/NTester.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-432">
-          <caret line="9" column="123" selection-start-line="9" selection-start-column="123" selection-end-line="9" selection-end-column="123" />
+        <state relative-caret-position="809">
+          <caret line="64" column="16" selection-start-line="64" selection-start-column="16" selection-end-line="64" selection-end-column="16" />
           <folding>
             <element signature="method#println#0;class#NVTesting#0" />
           </folding>

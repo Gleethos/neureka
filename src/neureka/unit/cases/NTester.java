@@ -62,7 +62,9 @@ public class NTester {
             return true;
         } else {
             println(bar+"  ["+name+"]:("+result+") "
-                    +((result.length()>22)?"\n"+bar+"    not contains   -> test failed!"+"\n"+bar+" ":"not contains")+" [expected]:("+expected+")"+((result.length()>22)?"":" -> test failed!"));
+                +((result.length()>22)
+                    ?"\n"+bar+"    not contains   -> test failed!"+"\n"+bar+" "
+                    :"not contains")+" [expected]:("+expected+")"+((result.length()>22)?"":" -> test failed!"));
             success = (success<0)?success-1:-1;
             println(bar+line);
             return false;
@@ -72,13 +74,17 @@ public class NTester {
     protected boolean assertEqual(String name, String result, String expected){
         tests++;
         if(result.equals(expected)) {
-            println(bar+"  ["+name+"]:("+result+") "+((result.length()>22)?"\n"+bar+"    ==   -> test successful!"+"\n"+bar+" ":"==")+" [expected]:("+expected+")"+((result.length()>22)?"":" -> test successful!"));
+            println(bar+"  ["+name+"]:("+result+") "+((result.length()>22)
+                    ?"\n"+bar+"    ==   -> test successful!"+"\n"+bar+" ":"==")+" [expected]:("+expected+")"+((result.length()>22)?""
+                    :" -> test successful!"));
             success = (success<0)?success:success+1;
             println(bar+line);
             return true;
         } else {
             println(bar+"  ["+name+"]:("+result+") "
-                    +((result.length()>22)?"\n"+bar+"    =|=   -> test failed!"+"\n"+bar+" ":"=|=")+" [expected]:("+expected+")"+((result.length()>22)?"":" -> test failed!"));
+                    +((result.length()>22)
+                    ?"\n"+bar+"    =|=   -> test failed!"+"\n"+bar+" "
+                    :"=|=")+" [expected]:("+expected+")"+((result.length()>22)?"":" -> test failed!"));
             success = (success<0)?success-1:-1;
             println(bar+line);
             return false;
@@ -88,12 +94,16 @@ public class NTester {
     protected boolean assertEqual(String result, String expected){
         tests++;
         if(result.equals(expected)) {
-            println(bar+"  [result]:("+result+") "+((result.length()>22)?"\n"+bar+"    ==  "+"\n"+bar+" ":"==")+" [expected]:("+expected+") -> test successful.");
+            println(bar+"  [result]:("+result+") "+((result.length()>22)
+                    ?"\n"+bar+"    ==  "+"\n"+bar+" "
+                    :"==")+" [expected]:("+expected+") -> test successful.");
             success = (success<0)?success:success+1;
             println(bar+line);
             return true;
         } else {
-            println(bar+"  [result]:("+result+") "+((result.length()>22)?"\n"+bar+"    =|=  "+"\n"+bar+" ":"=|=")+" [expected]:("+expected+") -> test failed!");
+            println(bar+"  [result]:("+result+") "+((result.length()>22)
+                    ?"\n"+bar+"    =|=  "+"\n"+bar+" "
+                    :"=|=")+" [expected]:("+expected+") -> test failed!");
             success = (success<0)?success-1:-1;
             println(bar+line);
             return false;
