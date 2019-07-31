@@ -2,6 +2,8 @@ package neureka.core.device;
 
 import java.util.HashMap;
 import java.util.List;
+
+import com.aparapi.Range;
 import com.aparapi.device.OpenCLDevice;
 import neureka.core.T;
 
@@ -63,7 +65,6 @@ public class TDevice
 
     public void dispose(){
         this.kernel.dispose();
-
     }
 
     public TKernel getKernel(){
@@ -80,18 +81,21 @@ public class TDevice
     public void get(T tensor){
         if(kernel!=null){
             kernel.execute(
-                    kernel.fetch_tsr(
-                            register[0][
-                                    map.get(
-                                            tensor)], false
+                    device.createRange(
+                        kernel.fetch_tsr(
+                                register[0][
+                                        map.get(
+                                                tensor)], false
+                        )
                     )
             );
             T.factory.inject(kernel.value(), false, tensor);
             if(tensor.rqsGradient()){
                 kernel.execute(
-                        kernel.fetch_tsr(
+                        device.createRange(
+                                kernel.fetch_tsr(
                                 register[0][map.get(tensor)], true
-                        )
+                        ))
                 );
                 T.factory.inject(kernel.value(), true, tensor);
             }

@@ -50,9 +50,11 @@ public class TFunctionFactory {
 
     public static TFunction newBuild(String expression, boolean doAD) {
         HashMap<String, TFunction> map = Context.SHARED;
-        expression = (expression.charAt(0) != '('||expression.charAt(expression.length() - 1) != ')')
-                ? ("(" + expression + ")")
-                : expression;
+        expression =
+            (expression.length()>0
+                    && (expression.charAt(0) != '('||expression.charAt(expression.length() - 1) != ')'))
+                        ? ("(" + expression + ")")
+                        : expression;
         String k = (doAD)?"d"+expression:expression;
         if (Context.SHARED.containsKey(k)) {
             return Context.SHARED.get(k);
@@ -360,7 +362,8 @@ public class TFunctionFactory {
             return null;
         }
 
-        public static String parsedComponent(final String exp, final int i) {
+        public static String parsedComponent(String exp, final int i) {
+            exp = exp.trim();
             if (exp.length() <= i) {
                 return null;
             }
@@ -508,6 +511,7 @@ public class TFunctionFactory {
         }
 
         public static String cleanedHeadAndTail(String exp) {
+            exp = exp.trim();
             System.out.println("Unclean component: " + exp);
             int Ci = 0;
             String Updated = "";
@@ -558,6 +562,7 @@ public class TFunctionFactory {
                 }
             }
             System.out.println("Cleaned component: " + exp);
+            exp = exp.trim();
             return exp;
         }
 

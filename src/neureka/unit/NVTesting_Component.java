@@ -54,6 +54,14 @@ public class NVTesting_Component extends NVTesting{
 		SuccessCounter += tester.testExpression("3x5xI[4]xI[3]", "(((3.0x5.0)xI[4])xI[3])", "");
 		Console.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
 
+		TestCounter++;
+		SuccessCounter += tester.testExpression("[1,0, 5,3, 4]:(tanh(i0xi1))", "([1,0,5,3,4]:(tanh(I[0]xI[1])))", "");
+		Console.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
+
+		TestCounter++;
+		SuccessCounter += tester.testExpression("[0,2, 1,3, -1](sig(I0))", "([0,2,1,3,-1]:(sig(I[0])))", "");
+		Console.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
+
 		//ACTIVATION TESTING:
 		TestCounter++;
 		double[] input1 = {};

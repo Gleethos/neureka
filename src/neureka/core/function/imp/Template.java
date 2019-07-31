@@ -9,7 +9,6 @@ import neureka.core.function.util.Context;
 import neureka.core.utility.DataHelper;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public abstract class Template implements TFunction {
 
@@ -50,13 +49,32 @@ public abstract class Template implements TFunction {
             }
             return Context.REGISTER[f_id] + "(" + expression + ")";
         }
+        reconstructed = ((Context.REGISTER[f_id]==",")?"[":"")+reconstructed;
         for (int i = 0; i < Srcs.size(); ++i) {
             if (Srcs.get(i) != null) {
-                reconstructed = reconstructed + Srcs.get(i).toString();
+                if((Context.REGISTER[f_id]==",")){
+                    if(i==Srcs.size()-1){
+                        reconstructed = reconstructed
+                                + "]:(" + (
+                                (Srcs.get(i) instanceof Constant)
+                                        ?Srcs.get(i).toString().split("\\.")[0]
+                                        :Srcs.get(i).toString()
+                        ) +")";
+                    }else{
+                        reconstructed = reconstructed
+                            + (
+                            (Srcs.get(i) instanceof Constant)
+                                   ?Srcs.get(i).toString().split("\\.")[0]
+                                   :Srcs.get(i).toString()
+                        );
+                    }
+                } else {
+                    reconstructed = reconstructed + Srcs.get(i).toString();
+                }
             } else {
                 reconstructed = reconstructed + "(null)";
             }
-            if (i != Srcs.size() - 1) {
+            if (i < Srcs.size() - ((Context.REGISTER[f_id]==",")?2:1)) {
                 reconstructed = reconstructed + Context.REGISTER[f_id];
             }
         }
@@ -180,12 +198,12 @@ public abstract class Template implements TFunction {
                      * */
                     //TODO implement reshape!
                     //T[] tsrs = new T[Srcs.size()];
-                    int[] reshape = new int[Srcs.size()];
-                    for(int i=0; i<this.Srcs.size(); i++){
+                    int[] newForm = new int[Srcs.size()];
+                    for(int i=0; i<this.Srcs.size()-1; i++){
                         TFunction fcn = this.Srcs.get(i);
                         if(fcn instanceof Constant){
                             //tsrs[0] = T.factory.newTensor(((Constant)fcn).value(), new int[]{1});
-                            reshape[i] = (int)((Constant)fcn).value();
+                            newForm[i] = (int)((Constant)fcn).value();
                         }else{
                             T t = (j<0) ?fcn.activate(input) :fcn.activate(input, j);
                             if(t.size()>1){
@@ -195,19 +213,27 @@ public abstract class Template implements TFunction {
                                 });
                                 DataHelper<Object> helper = new DataHelper<>();
                                 for(int v : insert){
-                                    reshape = helper.updateArray(reshape, i, false);
-                                    reshape[i] = v;
+                                    newForm = helper.updateArray(newForm, i, false);
+                                    newForm[i] = v;
                                 }
                             }else{
-                                reshape[i] = (int)t.e_get(0);
+                                newForm[i] = (int)t.e_get(0);
                             }
                         }
                     }
-                    //TODO: reshape
+                    T t = (j<0) ?this.Srcs.get(Srcs.size()-1).activate(input) :this.Srcs.get(Srcs.size()-1).activate(input, j);
+                    t.reshape(newForm);
                     if(d<0){
-                        //output
-                    }else{//reverse reshape!
-
+                        output.internalize(t);
+                    }else{//reverse reshape:
+                        /**
+                         *      [3, 2, 4, 0, 1]
+                         *      [0, 1, 2, 3, 4]
+                         * */
+                        int[] reversed = new int[newForm.length];
+                        for(int i=0; i<newForm.length; i++){
+                            reversed[newForm[i]] = i;
+                        }
                     }
                 }
             }
