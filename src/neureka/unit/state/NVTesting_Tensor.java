@@ -6,9 +6,9 @@ import neureka.utility.NMessageFrame;
 
 public class NVTesting_Tensor extends NVTesting {
 
-    public NVTesting_Tensor(NMessageFrame console, NMessageFrame resultConsole)
+    public NVTesting_Tensor(String name)
     {
-        super(console, resultConsole);
+        super(name);
     }
 
     public int testTensorAutoGrad(T[] source, String operation, String[] expected){

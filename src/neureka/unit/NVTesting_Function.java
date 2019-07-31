@@ -7,9 +7,9 @@ import neureka.utility.NMessageFrame;
 
 public class NVTesting_Function extends NVTesting{
 
-	NVTesting_Function(NMessageFrame console, NMessageFrame resultConsole)
+	NVTesting_Function(String name)
 	{
-		super(console, resultConsole);
+		super(name);
 	}
 	
 	public int testExpression(String expression, String expected, String description) 

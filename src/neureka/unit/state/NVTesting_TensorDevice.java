@@ -8,9 +8,9 @@ import neureka.utility.NMessageFrame;
 
 public class NVTesting_TensorDevice extends NVTesting {
 
-    public NVTesting_TensorDevice(NMessageFrame console, NMessageFrame resultConsole)
+    public NVTesting_TensorDevice(String name)
     {
-        super(console, resultConsole);
+        super(name);
     }
 
     public int testAddTensor(TDevice device, T tensor, double[] values, int[] shapes, int[] translations, int[] pointers){

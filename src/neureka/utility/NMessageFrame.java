@@ -1,9 +1,7 @@
 
 package neureka.utility;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -12,31 +10,45 @@ import javax.swing.JTextField;
 import javax.swing.text.BadLocationException;
 
 
-public class NMessageFrame extends JFrame{
-	
-	JTextArea outputField;
-	JTextField eingabefeld;
-	boolean entered;
-	String input;
-	int linecount;
+public class NMessageFrame extends JFrame
+{
+	private static int windowCount = 0;
+	private static int width = 500;
+	private static int height = 400;
+	private static int wpos = 0;
+	private static int hpos = 0;
+	private JTextArea outputField;
+	private boolean entered;
+	private String input;
+	private int linecount;
 	//=================================================
-	public NMessageFrame(String title, int maxLineCount) 
-	{
-		construct(title, maxLineCount);
-	}
 	public NMessageFrame(String title) 
 	{
 		construct(title, 1000);
 	}
+	public NMessageFrame(String title, int maxLineCount)
+	{
+		construct(title, maxLineCount);
+	}
 	private void construct(String title, int maxLineCount)
 	{
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		int wdiv = 3;
+		int hdiv = 2;
+		this.width = (int)screenSize.getWidth()/wdiv;
+		this.height = (int)(screenSize.getHeight()*0.925)/hdiv;
+		this.wpos = windowCount%(wdiv);
+		this.hpos = windowCount/(wdiv);
+		windowCount++;
 		linecount = maxLineCount;
 		input = "";
 		entered = false;
 		this.setTitle(title);
-		this.setSize(400, 400);
+		this.setSize(this.width, this.height);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setLocationRelativeTo(null);
+		//this.setLocationRelativeTo(null);
+
+		this.setLocation(wpos*width, hpos*height);
 
 		outputField = new JTextArea();
 		outputField.setText("Process messages:\n");

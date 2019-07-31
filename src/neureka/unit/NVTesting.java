@@ -14,9 +14,9 @@ public class NVTesting {
     private int tests = 0;
     private String session = "";
 
-    protected NVTesting(NMessageFrame console, NMessageFrame resultConsole) {
-        Console = console;
-        ResultConsole = resultConsole;
+    protected NVTesting(String name) {
+        Console = new NMessageFrame(name+" - TEST PROCESS");
+        ResultConsole = new NMessageFrame(name+" - TEST RESULT");
     }
 
     protected void printSessionStart(String message){
