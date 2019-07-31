@@ -1,6 +1,6 @@
 package neureka.unit.cases;
 
-import neureka.utility.NMessageFrame;
+import neureka.frame.NMessageFrame;
 
 public class NTester {
 
@@ -13,28 +13,28 @@ public class NTester {
     private String session = "";
 
     protected NTester(String name) {
-        Console = new NMessageFrame(name+" - TEST PROCESS");
-        ResultConsole = new NMessageFrame(name+" - TEST RESULT");
+        this.Console = new NMessageFrame(name+" - TEST PROCESS");
+        this.ResultConsole = new NMessageFrame(name+" - TEST RESULT");
     }
 
     protected void printSessionStart(String message){
-        session = "";
-        success = 0;
-        tests = 0;
-        Console.println("");
-        Console.println(bar+"  "+message);
-        Console.println("[O][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=]=>");
-        Console.println(bar+line);
+        this.session = "";
+        this.success = 0;
+        this.tests = 0;
+        this.Console.println("");
+        this.Console.println(bar+"  "+message);
+        this.Console.println("[O][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=]=>");
+        this.Console.println(bar+line);
         printlnResult("");
         printlnResult(bar+"  "+message);
         printlnResult("[O][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=]=>");
         printlnResult(bar);
     }
     protected int printSessionEnd(){
-        Console.println(bar+"  "+((success>0)?"test successful!"+" "+success:"test failed!"+" "+(tests+success))+"/"+tests);
-        Console.println("[O][=][=][=][=][=][=][=][=][=][=][=]|>");
-        ResultConsole.println(bar+"  "+((success>0)?"test successful!"+" "+success:"test failed!"+" "+(tests+success))+"/"+tests);
-        ResultConsole.println("[O][=][=][=][=][=][=][=][=][=][=][=]|>");
+        this.Console.println(bar+"  "+((success>0)?"test successful!"+" "+success:"test failed!"+" "+(tests+success))+"/"+tests);
+        this.Console.println("[O][=][=][=][=][=][=][=][=][=][=][=]|>");
+        this.ResultConsole.println(bar+"  "+((success>0)?"test successful!"+" "+success:"test failed!"+" "+(tests+success))+"/"+tests);
+        this.ResultConsole.println("[O][=][=][=][=][=][=][=][=][=][=][=]|>");
         return success;
     }
 

@@ -1,12 +1,11 @@
 
-package neureka.utility;
+package neureka.frame;
 
 import java.awt.*;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.text.BadLocationException;
 
 

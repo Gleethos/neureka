@@ -1,4 +1,4 @@
-package neureka.utility;
+package neureka.frame;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,7 +13,7 @@ import javax.swing.JTextField;
 import javax.swing.text.BadLocationException;
 
 
-public class NConsole extends JFrame{
+public class NConsoleFrame extends JFrame{
 
 	JTextArea outputField;
 	JTextField inputField;
@@ -22,7 +22,7 @@ public class NConsole extends JFrame{
 	String input = "";
 	int linecount;
 
-	public NConsole(String title, int maxLineCount) {
+	public NConsoleFrame(String title, int maxLineCount) {
 			linecount = maxLineCount;
 			input = "";
 			entered = false;

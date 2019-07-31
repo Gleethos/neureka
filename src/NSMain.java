@@ -1,7 +1,7 @@
 import neureka.core.utility.DataHelper;
 import neureka.unit.NeurekaTest;
 import neureka.ngui.NWindow;
-import neureka.utility.NConsole;
+import neureka.frame.NConsoleFrame;
 
 public class NSMain {
 
@@ -11,7 +11,7 @@ public class NSMain {
 	public static void main(String[] args) throws Exception
 	{
 
-		NConsole console = new NConsole("Huuui", 1000);
+		NConsoleFrame console = new NConsoleFrame("Huuui", 1000);
 		//NSoundPlayer player = new NSoundPlayer();
 		//		player.playSound("droplet shatter.wav");
 				//NAparapi test = new NAparapi();
