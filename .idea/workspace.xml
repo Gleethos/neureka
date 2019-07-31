@@ -6,11 +6,18 @@
   <component name="ChangeListManager">
     <list default="true" id="8f069c6b-f9fb-4e13-ace8-74184cdf4938" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GridGame.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/neureka.iml" beforeDir="false" afterPath="$PROJECT_DIR$/neureka.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/GridGame.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/NSMain.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/NSMain.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/cases/NTester.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/unit/cases/NTester.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/cases/NTester_Function.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/neureka/neureka/unit/cases/NTester_Function.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/utility/NConsole$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/utility/NConsole$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/utility/NConsole$3.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/utility/NConsole.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/utility/NMessageFrame.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/NNetworkWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/NNetworkWindow.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/NSMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/NSMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/unit/cases/NTester.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/unit/cases/NTester.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/utility/NConsole.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/frame/NConsoleFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/utility/NMessageFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/neureka/frame/NMessageFrame.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -44,20 +51,6 @@
               <folding>
                 <element signature="e#297#298#0" expanded="true" />
                 <element signature="e#333#334#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/neureka/unit/cases/NTester_TensorDevice.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="163">
-              <caret line="10" column="18" selection-start-line="10" selection-start-column="18" selection-end-line="10" selection-end-column="18" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#341#342#0" expanded="true" />
-                <element signature="e#386#387#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -125,8 +118,30 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/NNetworkWindow.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="18" column="24" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="24" />
+            <state relative-caret-position="272">
+              <caret line="31" column="8" selection-start-line="31" selection-start-column="8" selection-end-line="31" selection-end-column="8" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#758#759#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Main.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="34">
+              <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/NSMain.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="153">
+              <caret line="15" column="40" lean-forward="true" selection-start-line="15" selection-start-column="40" selection-end-line="15" selection-end-column="40" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -216,7 +231,6 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/src/NGene.java" />
-        <option value="$PROJECT_DIR$/src/NNetworkWindow.java" />
         <option value="$PROJECT_DIR$/src/neureka/core/modul/calc/fcomp/util/Calculation.java" />
         <option value="$PROJECT_DIR$/src/neureka/core/modul/calc/fcomp/Function_Base.java" />
         <option value="$PROJECT_DIR$/src/neureka/core/modul/calc/fcomp/Template.java" />
@@ -230,7 +244,6 @@
         <option value="$PROJECT_DIR$/src/neureka/core/module/calc/TDevice.java" />
         <option value="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Variable.java" />
         <option value="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/util/Calculation.java" />
-        <option value="$PROJECT_DIR$/src/NSMain.java" />
         <option value="$PROJECT_DIR$/src/neureka/core/module/calc/GraphBuilder.java" />
         <option value="$PROJECT_DIR$/src/neureka/core/module/calc/FunctionFactory.java" />
         <option value="$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/Template.java" />
@@ -266,12 +279,14 @@
         <option value="$PROJECT_DIR$/src/neureka/utility/NConsole.java" />
         <option value="$PROJECT_DIR$/src/neureka/utility/NConsoleFrame.java" />
         <option value="$PROJECT_DIR$/src/neureka/frame/NConsoleFrame.java" />
+        <option value="$PROJECT_DIR$/src/NSMain.java" />
+        <option value="$PROJECT_DIR$/src/NNetworkWindow.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="535" />
-    <option name="y" value="-33" />
+    <option name="x" value="1310" />
+    <option name="y" value="-25" />
     <option name="width" value="2340" />
     <option name="height" value="2075" />
   </component>
@@ -339,6 +354,12 @@
               <item name="function" type="462c0819:PsiDirectoryNode" />
               <item name="util" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
+              <item name="neureka" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="NMATMUL.java" type="529ef68f:ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -354,9 +375,9 @@
     <property name="Repository.Attach.Sources" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1564574867581" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1564576808297" />
     <property name="create.test.in.the.same.root" value="true" />
-    <property name="last_opened_file_path" value="C:/Users/Public/Downloads" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/javafx-sdk-11.0.2" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
@@ -479,12 +500,12 @@
       <workItem from="1564302131268" duration="3982000" />
       <workItem from="1564334105814" duration="46000" />
       <workItem from="1564353802453" duration="28868000" />
-      <workItem from="1564525798263" duration="8412000" />
+      <workItem from="1564525798263" duration="9576000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="963135000" />
+    <option name="totallyTimeSpent" value="964299000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
@@ -1148,13 +1169,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/NGene.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="178">
@@ -1241,16 +1255,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/neureka/core/module/calc/fcomp/util/Calculation.java" />
-    <entry file="file://$PROJECT_DIR$/src/NSMain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="128" column="20" selection-start-line="128" selection-start-column="20" selection-end-line="128" selection-end-column="20" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/neureka/core/module/opti/NVOptimizer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="595">
@@ -1490,12 +1494,30 @@
         <state relative-caret-position="-5627" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/NNetworkWindow.java">
+    <entry file="file://$PROJECT_DIR$/src/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="18" column="24" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="24" />
+        <state relative-caret-position="34">
+          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/NSMain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="15" column="40" lean-forward="true" selection-start-line="15" selection-start-column="40" selection-end-line="15" selection-end-column="40" />
           <folding>
             <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/NNetworkWindow.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="31" column="8" selection-start-line="31" selection-start-column="8" selection-end-line="31" selection-end-column="8" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#758#759#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1517,7 +1539,7 @@
       </state>
       <state key="FacetStructureConfigurable.UI">
         <settings>
-          <last-edited>JPA</last-edited>
+          <last-edited>No facets are configured</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -1529,6 +1551,7 @@
       </state>
       <state key="GlobalLibrariesConfigurable.UI">
         <settings>
+          <last-edited>javafx-sdk-11.0</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

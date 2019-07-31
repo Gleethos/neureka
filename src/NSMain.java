@@ -3,15 +3,22 @@ import neureka.unit.NeurekaTest;
 import neureka.ngui.NWindow;
 import neureka.frame.NConsoleFrame;
 
+import java.util.Random;
+import java.util.Scanner;
+
 public class NSMain {
 
 	static NWindow testWindow;
-	static GridGame game;
     
 	public static void main(String[] args) throws Exception
 	{
 
-		NConsoleFrame console = new NConsoleFrame("Huuui", 1000);
+		NNetworkWindow window  = new NNetworkWindow();
+        window.go();
+		while(false||new Random().nextInt()!=32487){
+
+        }
+		//NConsoleFrame console = new NConsoleFrame("Huuui", 1000);
 		//NSoundPlayer player = new NSoundPlayer();
 		//		player.playSound("droplet shatter.wav");
 				//NAparapi test = new NAparapi();
@@ -120,21 +127,6 @@ public class NSMain {
 		
         NeurekaTest tester2 = new NeurekaTest();
         tester2.Test();
-
-
-
-		//for(int i=-20; i<20; i++){
-		//	double in = ((double)i)/4;
-		//	System.out.println(in+" -> "+
-		//			Calculation.getTanhOf(
-		//					in/
-		//							(1+(2/Math.pow(in, 2)))
-		//					,
-		//					false
-		//			)
-		//	);
-		//}
-
 
 
 		//NSubstrate.execute("NSubstrate.printRealms('test')");
