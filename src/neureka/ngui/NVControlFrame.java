@@ -2,6 +2,7 @@
 package neureka.ngui;
 
 import neureka.core.T;
+import neureka.ngui.tile.N3DSpace;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

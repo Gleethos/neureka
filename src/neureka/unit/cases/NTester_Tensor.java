@@ -55,7 +55,7 @@ public class NTester_Tensor extends NTester {
         int[][] frstMxd = T.utility.reshapedAndToMxd(frstShp, frm);
         int[][] scndMxd = T.utility.reshapedAndToMxd(scndShp, frm);
         int[][] drnMxd  = T.utility.resultMxdOf(frstMxd, scndMxd);
-        double[] rsltData = new double[T.utility.sizeOfShape_mxd(drnMxd[0], drnMxd[3][0], rank)];
+        double[] rsltData = new double[T.utility.szeOfShp(drnMxd[0])];
         T.utility.tensMul_mxd(
             rank,
             new double[][]{frstData, scondData, rsltData},

@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 
-public class NPanel extends JPanel implements NPanelAPI, ActionListener{
+public class NPanel extends JPanel implements NPanel_I, ActionListener{
 
 	private static final long serialVersionUID = 1L;
 
@@ -27,7 +27,7 @@ public class NPanel extends JPanel implements NPanelAPI, ActionListener{
 	// Navigation:
 	private AffineTransform Scaler = new AffineTransform();
 	private AffineTransform Translator = new AffineTransform();	
-	NMapAPI PanelMap = null;
+	NMap_I PanelMap = null;
 	// Animations:
 	private NAnimator Animator;
 	
@@ -41,11 +41,14 @@ public class NPanel extends JPanel implements NPanelAPI, ActionListener{
 	
 	// Sense Focus:
 	private NPanelObject FocusObject;
-	
-	
+
     public NPanelObject getFocusObject() {return FocusObject;}
     public void setFocusObject(NPanelObject object) {FocusObject = object;}
 
+	@Override
+	protected boolean requestFocusInWindow(boolean temporary) {
+		return super.requestFocusInWindow(temporary);
+	}
 	private double CenterX = getWidth()/2;
 	private double CenterY = getHeight()/2;
 	
@@ -78,7 +81,7 @@ public class NPanel extends JPanel implements NPanelAPI, ActionListener{
 	
 	private boolean touchMode = true;
 	
-	private boolean drawRepaintSpaces = false;
+	private boolean drawRepaintSpaces = true;
 	private boolean advancedRendering = false;
 	private boolean mapRendering = false;
 
@@ -92,15 +95,15 @@ public class NPanel extends JPanel implements NPanelAPI, ActionListener{
 	private double fps;
 	private double smoothFPS;
 	private double rest=0;
-	
-	
-	public interface SurfaceAction{public void actOn(NPanel panel);}
+
+	public interface SurfaceAction{void actOn(NPanel panel);}
 	
 	public AffineTransform getScaler() {return Scaler;}
 	public AffineTransform getTranslator() {return Translator;}
 	
 	public double getCenterX() {return CenterX;}
 	public double getCenterY() {return CenterY;}
+
 	public void setCenterX(double value) {CenterX = value;}
 	public void setCenterY(double value) {CenterY = value;}
 	
@@ -184,15 +187,13 @@ public class NPanel extends JPanel implements NPanelAPI, ActionListener{
 //=======================================================================================
 	public NPanel()
  	{
-		
+ 		//this.setSize(200, 200);
 		Painter = NPanel.Utility.DefaultPainter;
 		
      	Listener = new NListener(this);
 	 	this.addMouseListener(Listener);
 	 	this.addMouseWheelListener(Listener);
 	 	this.addMouseMotionListener(Listener);
-	 
-	 	
 	 	Animator = new NAnimator();
 	 	setBackground(Color.black);
 	 	repaint(0, 0, getWidth(), getHeight());
@@ -209,6 +210,7 @@ public class NPanel extends JPanel implements NPanelAPI, ActionListener{
 	 	}
 	 	RepaintQueue.addAll(update());
 	 	repaint(0, 0, 250, 30);//framerate
+		//repaint(0, 0, getWidth(), getHeight());
 	 	startRepaintQueue();
 	 	
 	 	frameEnd=System.nanoTime();
@@ -218,15 +220,14 @@ public class NPanel extends JPanel implements NPanelAPI, ActionListener{
 	 	fps = 1e9/(((double)frameDelta));
 	 	smoothFPS = (fps+12*smoothFPS)/13;
 	 
-	 	if(scaleAnimationCounter>0)
-	   {
-		 	double scale = 		 
-		 	1/Math.pow(1+(1/((double)scaleAnimationCounter+15)), 2);
-		 	System.out.println(scale);
-		 	this.scaleAt(getWidth()/2, getHeight()/2, scale);
-		 	scaleAnimationCounter-=1;    
-		 	repaint(0, 0, getWidth(), getHeight());
-	    }
+	 	if(scaleAnimationCounter>0) {
+			double scale =
+			1/Math.pow(1+(1/((double)scaleAnimationCounter+15)), 2);
+			System.out.println(scale);
+			this.scaleAt(getWidth()/2, getHeight()/2, scale);
+			scaleAnimationCounter-=1;
+			repaint(0, 0, getWidth(), getHeight());
+		}
 	 
 	 	if(rest<0) {rest=0;}
 	 	double delay = fps-80-rest;//-rest;//ratio*1000;
@@ -243,7 +244,7 @@ public class NPanel extends JPanel implements NPanelAPI, ActionListener{
 	public int lastSenseY() 	   {return lastSenseY;}
 	public void setLastSenseX(int value) {lastSenseX = value;}
 	public void setLastSenseY(int value) {lastSenseY = value;}
-	public double realLastSenseX() {return lastSenseX;}
+	public double realLastSenseX() {return realX(lastSenseX);}
 	public double realLastSenseY() {return realY(lastSenseY);}
  	//--------------------------------------------------------------------------------------------------------------------------------
  	public void switchTouchMode()         {if(touchMode==false)         {touchMode=true;}        else {touchMode=false;}}
@@ -427,9 +428,8 @@ public class NPanel extends JPanel implements NPanelAPI, ActionListener{
 			});
 			paintQueue = enclosed[0];
 	
-			for(int[] Li= {0}; Li[0]<paintQueue.length; Li[0]++) 
-			{
-				paintQueue[Li[0]].forEach((current)->{current.repaintLayer(Li[0], brush, this);});
+			for(int[] Li= {0}; Li[0]<paintQueue.length; Li[0]++) {
+				paintQueue[Li[0]].forEach((current)->current.repaintLayer(Li[0], brush, this));
 					 /* Connections - 0
 					  * Root Bodies - 1
 					  * Root Connections - 2
@@ -447,13 +447,12 @@ public class NPanel extends JPanel implements NPanelAPI, ActionListener{
 		//RENDERING VISUALIZATION:
 		if(this.isClipRendering()) 
 		{//System.out.println("Drawing repaint spaces!!");
-			if(this.getRepaintQueue()!=null) 
-			{
+			if(this.getRepaintQueue()!=null) {
 				brush.setColor(Color.WHITE);
 				brush.setStroke(new BasicStroke(5f));
 				this.getRepaintQueue().forEach(
-				(space)->
-				{brush.drawRect((int)(space.getCenterX()-space.getDistanceX()), (int)(space.getCenterY()-space.getDistanceY()), (int)(space.getDistanceX())*2, (int)(space.getDistanceY())*2);});
+				(space)-> brush.drawRect((int)(space.getCenterX()-space.getDistanceX()), (int)(space.getCenterY()-space.getDistanceY()), (int)(space.getDistanceX())*2, (int)(space.getDistanceY())*2)
+				);
 			} 	 
 		}
 		//===
@@ -468,27 +467,22 @@ public class NPanel extends JPanel implements NPanelAPI, ActionListener{
 		Sense = newSense;
 	}
 	//--------------------------------------------------------------------------------------------------------------------------------
-	private NPanelObject find(double x, double y, boolean topMost, NPanelObject upToException, NMapAPI.MapAction action)
+	private NPanelObject find(double x, double y, boolean topMost, NPanelObject upToException, NMap_I.MapAction action)
 	{
 		LinkedList<NPanelObject> List = null;
-		if(PanelMap!=null) 
-		{
+		if(PanelMap!=null) {
 			List = PanelMap.findAllAt(x, y,action);
 		}
-		if(List==null) 
-		{
+		if(List==null) {
 			return null;
 		}
 		NPanelObject best = null;
 		ListIterator<NPanelObject> Iterator = List.listIterator();
-		while(Iterator.hasNext()) 
-		{
+		while(Iterator.hasNext()) {
 			NPanelObject current = Iterator.next();
-			if(best==null) 
-			{	
+			if(best==null) {
 				best = current;
-				if(upToException!=null) 
-				{
+				if(upToException!=null) {
 					if(topMost) {if(upToException.getLayerID()<current.getLayerID()) {best=null;}}
 					else        {if(upToException.getLayerID()>current.getLayerID()) {best=null;}}
 				}
@@ -525,20 +519,14 @@ public class NPanel extends JPanel implements NPanelAPI, ActionListener{
 				{//-----------------------
 					if(upToException!=null) 
 					{
-						if(best!=null)
-						{
-							if( current.getLayerID() < best.getLayerID() 
-							&&  upToException.getLayerID()<current.getLayerID() ) 
+						if(best!=null) {
+							if( current.getLayerID() < best.getLayerID() &&  upToException.getLayerID()<current.getLayerID() )
 							{if(current!=upToException) {best = current;}}
-						}
-						else
-						{
+						} else {
 							if(upToException.getLayerID()>current.getLayerID()) 
 							{if(current!=upToException) {best = current;}}
 						}
-					}
-					else
-					{
+					} else {
 						if((current).getLayerID()>=best.getLayerID()) 
 						{best = current;}
 					}
@@ -560,8 +548,7 @@ public class NPanel extends JPanel implements NPanelAPI, ActionListener{
  	public NPanelObject findObject(double x, double y, boolean topMost, NPanelObject upToException) 
  	{ 
  		return find(x,y,topMost,upToException,
- 		(NPanelObject element)->
-		{
+ 		(NPanelObject element)-> {
 			if(element instanceof NPanelObject) 
 			{
 				if((element).hasGripAt(x, y, this)) {return true;}//System.out.println("yeahh");
@@ -580,8 +567,8 @@ public class NPanel extends JPanel implements NPanelAPI, ActionListener{
 	
 	public void translatePanel(double translateX, double translateY) 
 	{
-		System.out.println("translatin panel");
-		Translator.translate(translateX*1/Scaler.getScaleX(), translateY*1/Scaler.getScaleY());	    
+		System.out.println("translating panel");
+		Translator.translate(translateX*1/Scaler.getScaleX(), translateY*1/Scaler.getScaleY());
 		if(RepaintQueue != null) 
 		{
 			RepaintQueue = null;
@@ -647,7 +634,7 @@ public class NPanel extends JPanel implements NPanelAPI, ActionListener{
 		Drag = newDrag;
 	}
 	@Override
-	public void longpressedAt(int x, int y) 
+	public void longPressedAt(int x, int y)
 	{
 		System.out.println("long pressed");
 		int[] newLongPress = new int[2];
@@ -694,10 +681,10 @@ public class NPanel extends JPanel implements NPanelAPI, ActionListener{
 	public int getFrameDelta() {return frameDelta;}
 
 	@Override
-	public NMapAPI getMap() {return PanelMap;}
+	public NMap_I getMap() {return PanelMap;}
 
 	@Override
-	public void setMap(NMapAPI newMap) {PanelMap = newMap;}
+	public void setMap(NMap_I newMap) {PanelMap = newMap;}
 
 
 	public static class Utility
@@ -758,7 +745,7 @@ public class NPanel extends JPanel implements NPanelAPI, ActionListener{
 		   int y = Click[1];
 
 		   System.out.println("X:"+surface.realX((double)x)+"; Y:"+surface.realY((double)y)+";");
-		   surface.getListener().setDraggStart(x, y);
+		   surface.getListener().setDragStart(x, y);
 		   NPanelObject found = surface.findObject(surface.realX(x), surface.realY(y), true, null);
 		   if(found!=null) 
 		   {

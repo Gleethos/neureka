@@ -10,7 +10,7 @@ public class Input implements TFunction
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public boolean isFlat() {
-        return false;
+        return true;
     }
     @Override
     public int id() {

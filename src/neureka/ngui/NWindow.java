@@ -47,7 +47,7 @@ public class NWindow implements ActionListener, KeyListener, MouseListener, Mous
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 700;
 	
-	//private NPanel NodeGraphPanel;
+	//private TSurface NodeGraphPanel;
 	NGraphBuilder GraphBuilder;
 
 	private JButton startButton;
@@ -58,18 +58,13 @@ public class NWindow implements ActionListener, KeyListener, MouseListener, Mous
 	{
 		//fullscreen
 		/*
-		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-		frame.setUndecorated(true);
-		frame.setVisible(true);
+			frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+			frame.setUndecorated(true);
+			frame.setVisible(true);
 		*/
 		GraphBuilder = new NGraphBuilder();
 		
 		System.setProperty("sun.java2d.opengl", "true");
-
-
-		//TGraphBuilder.getSurface().setPreferredSize(new Dimension(200,30));
-		//TGraphBuilder.getSurface().setBackground(Color.black);
-
 		window = new JFrame("Network Display");
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setSize(WIDTH, HEIGHT);
@@ -321,7 +316,7 @@ public class NWindow implements ActionListener, KeyListener, MouseListener, Mous
 	
 	if(e.getKeyCode()==115) {GraphBuilder.getSurface().switchAdvancedRendering();System.out.println("Rendering switched");}
 	
-	if(e.getKeyCode()==116) {GraphBuilder.getSurface().switchTouchMode();System.out.println("touch mode");}
+	if(e.getKeyCode()==116) {GraphBuilder.getSurface().switchTouchMode();System.out.println("neureka.ngui.touch mode");}
 	
 	if(e.getKeyCode()==117) {GraphBuilder.getSurface().switchMapRendering();System.out.println("map rendering mode");}
     }

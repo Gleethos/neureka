@@ -419,7 +419,7 @@ elif [ "$1" = "start" ] ; then
   fi
 
   shift
-  touch "$CATALINA_OUT"
+  neureka.ngui.touch "$CATALINA_OUT"
   if [ "$1" = "-security" ] ; then
     if [ $have_tty -eq 1 ]; then
       echo "Using Security Manager"

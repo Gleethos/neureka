@@ -1,10 +1,10 @@
+import neureka.ngui.touch.NSurface;
 import neureka.core.utility.DataHelper;
+import neureka.ngui.touch.canvas.TestWindow;
 import neureka.unit.NeurekaTest;
 import neureka.ngui.NWindow;
-import neureka.frame.NConsoleFrame;
 
 import java.util.Random;
-import java.util.Scanner;
 
 public class NSMain {
 
@@ -13,11 +13,27 @@ public class NSMain {
 	public static void main(String[] args) throws Exception
 	{
 
-		NNetworkWindow window  = new NNetworkWindow();
-        window.go();
-		while(false||new Random().nextInt()!=32487){
+	    /**
+         *  3, 5, 4, 2,
+         *
+         *  1, 3, 15, 60
+         *
+         *  1, 0, -2, -2,
+         *
+         *
+         * */
 
-        }
+        //NSurface app = new NSurface();
+        //app.go();
+
+        //TestWindow tw = new TestWindow();
+
+        //tw.go(null);
+
+         //NWindow window = new NWindow();
+
+        //while(false||new Random().nextInt()!=32487){
+        //}
 		//NConsoleFrame console = new NConsoleFrame("Huuui", 1000);
 		//NSoundPlayer player = new NSoundPlayer();
 		//		player.playSound("droplet shatter.wav");

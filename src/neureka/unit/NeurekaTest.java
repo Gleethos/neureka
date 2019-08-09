@@ -464,6 +464,15 @@ public class NeurekaTest {
 		SuccessCounter += tester.testActivation("lig(prod(Ij-2))", tsrs, expected, "");
 		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
 
+		TestCounter++;
+		tsrs = new T[]{
+				T.factory.newTensor(new double[]{10, 12, 16, 21, 33, 66, 222, 15}, new int[]{2, 4})
+		};
+		expected = T.factory.newTensor(new double[]{8.000335406372896, 10.000045398899218, 14.000000831528373, 19.000000005602796, 31.000000000000036, 64.0, 220.0, 13.000002260326852}, new int[]{1, 2, 2, 2});
+		SuccessCounter += tester.testActivation("lig([-1, 0, -2, -2](Ij-2))", tsrs, expected, "");
+		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
+
+
 
 		tester.println("###########################");
 		tester.println("|| FUNCTION END RESULT:");

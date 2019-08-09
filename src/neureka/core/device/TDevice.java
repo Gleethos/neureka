@@ -3,7 +3,6 @@ package neureka.core.device;
 import java.util.HashMap;
 import java.util.List;
 
-import com.aparapi.Range;
 import com.aparapi.device.OpenCLDevice;
 import neureka.core.T;
 
@@ -144,7 +143,7 @@ public class TDevice
                 )
             );
         }
-        tensor.addModule(this);
+        tensor.add(this);
         tensor.setIsOutsourced(true);
     }
 

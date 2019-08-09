@@ -74,15 +74,26 @@ public class T {
     }
 
     public int size() {
-        return value.length;
+        if(this.isEmpty()){
+            return 0;
+        }
+        //this.value is not optimal!
+        return (this.isOutsourced())?T.utility.szeOfShp(this.shape()):this.value.length;
     }
 
     public int[] shpIdx(int idx) {
-        return T.utility.IdxToShpIdx(idx, translation);
+        return T.utility.IdxToShpIdx(idx, this.translation);
     }
 
     public boolean isEmpty() {
-        if (value == null) {
+        if (value == null && !this.isOutsourced()) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isUndefined(){
+        if(this.shape == null){
             return true;
         }
         return false;
@@ -142,7 +153,7 @@ public class T {
     public void setModules(ArrayList<Object> properties) {
         Modules = properties;
     }
-    public void addModule(Object newModule) {
+    public void add(Object newModule) {
         if (Modules != null) {
             Object oldCompartment = find(newModule.getClass());
             if (oldCompartment != null) {
@@ -188,6 +199,8 @@ public class T {
     public String toString(String mode){
         if(this.isEmpty()){
             return "empty";
+        }else if(this.isUndefined()){
+            return "undefined";
         }
         String strShape = "";
         for(int i=0; i<this.shape.length; i++){
@@ -198,9 +211,10 @@ public class T {
         }
         strShape = "["+strShape+"]";
         String strValue = "";
-        for(int i=0; i<this.value.length; i++){
-            strValue+=this.value[i];
-            if(i<this.value.length-1){
+        double[] v = this.value();
+        for(int i=0; i<v.length; i++){
+            strValue+=v[i];
+            if(i<v.length-1){
                 strValue+=", ";
             }
         }
@@ -236,11 +250,11 @@ public class T {
     public T() { }// creates empty tensor;
 
     public T(int[] shape) {
-        value = new double[T.utility.sizeOfShape_mxd(shape, 0, shape.length)];
+        value = new double[T.utility.szeOfShp(shape)];
         this.initialShape(shape);
     }
     public T(int[] shape, double value) {
-        this.value = new double[T.utility.sizeOfShape_mxd(shape, 0, shape.length)];
+        this.value = new double[T.utility.szeOfShp(shape)];
         this.initialShape(shape);
         for (int i = 0; i < this.value.length; i++) {
             this.value[i] = value;
@@ -258,7 +272,7 @@ public class T {
     }
 
     public void initialShape(int[] newShape) {
-        int size = T.utility.sizeOfShape_mxd(newShape, 0, newShape.length);
+        int size = T.utility.szeOfShp(newShape);
         if (value == null) {
             value = new double[size];
         }
@@ -323,9 +337,38 @@ public class T {
 
     //MODIFICATION :
     //=========================
-    public void reshape(int[] newForm) {
-        this.shape = T.utility.reshaped(this.shape, newForm);
-        this.translation = T.utility.reshaped(this.translation, newForm);
+    public int[][] config(){
+        return (this.has(int[][].class)?(int[][])find(int[][].class):new int[][]{this.shape(), this.translation()});
+    }
+
+    public int[] shape(int i){
+        int[][] conf = this.config();
+        i = Math.abs(i)*2+0;
+        if(i<conf.length){
+            return conf[i];
+        }
+        return null;
+    }
+
+    public int[] translation(int i){
+        int[][] conf = this.config();
+        i = Math.abs(i)*2+1;
+        if(i<conf.length){
+            return conf[i];
+        }
+        return null;
+    }
+
+    private void record(int[] shp, int[] tln){
+        int[][] conf = this.config();
+        int sze = (conf==null)?0:conf.length;
+        int[][] newConf = new int[sze+2][];
+        newConf[0] = shp;
+        newConf[1] = tln;
+        for(int i=2; i<newConf.length; i++){
+            newConf[i] = conf[i-2];
+        }
+        this.add(newConf);
     }
 
     public void internalize(T tensor) {
@@ -378,6 +421,9 @@ public class T {
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public double e_get(int i) {
+        if(this.isEmpty()||this.isUndefined()){
+            return 0;
+        }
         return T.utility.idxOfShpIdxAndShp(shpIdx(i), shape);
     }
     public double e_get(int[] idx) {
@@ -440,6 +486,17 @@ public class T {
 
         }
 
+        public static T reshaped(T tensor, int[] newForm, boolean newTsr){
+            if(newTsr){
+                tensor = copyOf(tensor);
+            }
+            tensor.record(tensor.shape(), tensor.translation());
+            tensor.shape = T.utility.reshaped(tensor.shape, newForm);
+            tensor.translation = T.utility.retranslated(tensor.translation, tensor.shape, newForm);
+            return tensor;
+        }
+
+
         //OPERATIONS:
         //=========================
         public static T convolution(T tensor1, T tensor2){
@@ -477,7 +534,7 @@ public class T {
         }
 
         public static T newTensor(double value, int[] shape){
-            int sze = T.utility.sizeOfShape_mxd(shape, 0, shape.length);
+            int sze = T.utility.szeOfShp(shape);
             T tensor = new T();
             tensor.value = new double[sze];
             tensor.initialShape(shape);
@@ -502,7 +559,7 @@ public class T {
         }
         public static T newTensor(int[] shape, int[] translation){
             T tensor = new T();
-            tensor.value = new double[T.utility.sizeOfShape_mxd(shape, 0, shape.length)];
+            tensor.value = new double[T.utility.szeOfShp(shape)];
             tensor.initialShape(shape);
             tensor.translation = (translation!=null)?translation:tensor.translation;//SHARED.put()
             return tensor;
@@ -515,8 +572,12 @@ public class T {
             newTensor.value = new double[tensor.size()];
             newTensor.Modules = null;//tensor.Modules;
             newTensor.flags = tensor.flags;
-            for (int i = 0; i < newTensor.value.length; i++) {
-                newTensor.value[i] = tensor.value[i];
+            double[] value = tensor.value();
+            for (int i = 0; i < value.length; i++) {
+                newTensor.value[i] = value[i];
+            }
+            if(tensor.isOutsourced()){
+                newTensor.add(tensor.device());
             }
             return newTensor;
         }
@@ -672,22 +733,36 @@ public class T {
         }
         //-----------------------------------------------------------------------
         @Contract(pure = true)
-        public static int[] reshaped(int[] shape, @NotNull int[] newForm) {
+        public static int[] reshaped(int[] shp, @NotNull int[] newForm) {
             int[] newShp = new int[newForm.length];
             for (int i = 0; i < newForm.length; i++) {
                 if (newForm[i] < 0) {
-                    newShp[i] = Math.abs(newForm[i]);//dim[Math.abs(newForm[Di])-1]*-1;
+                    newShp[i] = Math.abs(newForm[i]);
                 } else if (newForm[i] >= 0) {
-                    newShp[i] = shape[newForm[i]];
+                    newShp[i] = shp[newForm[i]];
                 }
             }
             return newShp;
         }
 
+        @Contract(pure = true)
+        public static int[] retranslated(int[] tln, int[] shp, @NotNull int[] newForm){
+            int[] shpTln = idxTln(shp);
+            int[] newTln = new int[newForm.length];
+            for (int i = 0; i < newForm.length; i++) {
+                if (newForm[i] < 0) {
+                    newTln[i] = shpTln[i];
+                } else if (newForm[i] >= 0) {
+                    newTln[i] = tln[newForm[i]];
+                }
+            }
+            return newTln;
+        }
+
         //-----------------------------------------------------------------------
         @Contract(pure = true)
         public static double[] randFromShape_mxd(int[] shape, int start, int rank, double[] data, int dataPtr) {
-            int size = sizeOfShape_mxd(shape, start, rank);
+            int size = szeOfShp(shape);
             for (int i = 0; i < size; i++) {
                 data[dataPtr + i] = DataHelper.getDoubleOf(i);
             }
@@ -749,7 +824,7 @@ public class T {
             int src1End = src1[3][0] + rank;
             int src2End = src2[3][0] + rank;
             int drnEnd = drn[3][0] + rank;
-            int drnSze = sizeOfShape_mxd(drn[0], drn[3][0], rank);
+            int drnSze = szeOfShp(drn[0]);
             int i = 0;
             while (i < drnSze) {
                 //increment f and drain accordingly:
@@ -859,10 +934,9 @@ public class T {
         }
 
         @Contract(pure = true)
-        public static int sizeOfShape_mxd(int[] shape, int start, int rank) {
+        public static int szeOfShp(int[] shape) {
             int size = 1;
-            int end = start + rank;
-            for (int Di = 0; Di < end; Di++) {
+            for (int Di = 0; Di < shape.length; Di++) {
                 size *= shape[Di];
             }
             return size;

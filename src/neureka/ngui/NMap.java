@@ -8,9 +8,9 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 
-public class NMap extends NMapAPI{
+public class NMap extends NMap_I {
 
-	NMapAPI TLNode, TRNode, BLNode, BRNode;
+	NMap_I TLNode, TRNode, BLNode, BRNode;
 	double X, Y;
 	double size;
 	LinkedList<NPanelObject> Elements;
@@ -29,23 +29,23 @@ public class NMap extends NMapAPI{
 	}
 	//------------------------------------------------------------------
 	
-	public void setTLNode(NMapAPI node) {
+	public void setTLNode(NMap_I node) {
 		TLNode = node;
 	}
-	public void setTRNode(NMapAPI node) {
+	public void setTRNode(NMap_I node) {
 		TRNode = node;
 	}
-	public void setBLNode(NMapAPI node) {
+	public void setBLNode(NMap_I node) {
 		BLNode = node;
 	}
-	public void setBRNode(NMapAPI node) {
+	public void setBRNode(NMap_I node) {
 		BRNode = node;
 	}
 	//------------------------------------------------------------------
 	//==============================================================================
 	//------------------------------------------------------------------	
 	@Override
-	public synchronized NMapAPI addAndUpdate(NPanelObject object) 
+	public synchronized NMap_I addAndUpdate(NPanelObject object)
 	{
 		double LP = object.getLeftPeripheral();
 		double RP = object.getRightPeripheral();
@@ -104,7 +104,7 @@ public class NMap extends NMapAPI{
 		}
 		return this;
 	}
-	private NMapAPI add(NMapAPI MapNode, NPanelObject newObject, boolean quadrantX, boolean quadrantY) 
+	private NMap_I add(NMap_I MapNode, NPanelObject newObject, boolean quadrantX, boolean quadrantY)
 	{
 		if(MapNode!=null) 
 		{
@@ -141,7 +141,7 @@ public class NMap extends NMapAPI{
 	//==============================================================================
 	//------------------------------------------------------------------
 	@Override
-	public synchronized NMapAPI removeAndUpdate(NPanelObject object) 
+	public synchronized NMap_I removeAndUpdate(NPanelObject object)
 	{
 		//if(object==null) {return this;}
 		//Why not check if branchable? -> The size f the object might have changed! -> not on edge anymore
@@ -172,7 +172,7 @@ public class NMap extends NMapAPI{
 		return bestSelf();
 	}
 	
-	private synchronized NMapAPI bestSelf() 
+	private synchronized NMap_I bestSelf()
 	{
 		byte counter=0;
 		if(TLNode  ==null) {counter++;}
@@ -192,7 +192,7 @@ public class NMap extends NMapAPI{
 		return this;
 	}
 	
-	private synchronized NMapAPI remove(NMapAPI MapNode, NPanelObject oldNode) 
+	private synchronized NMap_I remove(NMap_I MapNode, NPanelObject oldNode)
 	{
 		if(MapNode!=null) {MapNode = MapNode.removeAndUpdate(oldNode);} 
 		return MapNode;
@@ -411,10 +411,10 @@ public class NMap extends NMapAPI{
 	}
 
 	@Override
-	public synchronized NMapAPI addAll(LinkedList<NPanelObject> elements) 
+	public synchronized NMap_I addAll(LinkedList<NPanelObject> elements)
 	{
 		if(elements==null) {return this;}
-		NMapAPI[] newNode = {this};
+		NMap_I[] newNode = {this};
 		elements.forEach((current)->{newNode[0] = newNode[0].addAndUpdate(current);});
 		return newNode[0];
 	}
@@ -573,7 +573,7 @@ public class NMap extends NMapAPI{
 	 * */
 	//===============================================================================================
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	public class Leave extends NMapAPI{ 
+	public class Leave extends NMap_I {
 		 
 		HashMap<NPanelObject, NPanelObject> Elements = null;
 		
@@ -589,7 +589,7 @@ public class NMap extends NMapAPI{
 		//==============================================================================
 		//------------------------------------------------------------------
 		@Override
-		public synchronized NMapAPI addAndUpdate(NPanelObject node) 
+		public synchronized NMap_I addAndUpdate(NPanelObject node)
 		{
 			if(node==null) {return this;}
 			if(Elements==null) 
@@ -600,7 +600,7 @@ public class NMap extends NMapAPI{
 			{
 				if(Elements.size()>=MAX) 
 				{
-					NMapAPI newNode;
+					NMap_I newNode;
 					double[] newCenterX= {node.getX()};
 					double[] newCenterY= {node.getY()};
 
@@ -632,7 +632,7 @@ public class NMap extends NMapAPI{
 		//==============================================================================
 		//------------------------------------------------------------------
 		@Override
-		public synchronized NMapAPI removeAndUpdate(NPanelObject node) {
+		public synchronized NMap_I removeAndUpdate(NPanelObject node) {
 			
 			if(Elements!=null) 
 			{
@@ -707,7 +707,7 @@ public class NMap extends NMapAPI{
 		}
 		//==============================================================================
 		@Override
-		public synchronized NMapAPI addAll(LinkedList<NPanelObject> elements) 
+		public synchronized NMap_I addAll(LinkedList<NPanelObject> elements)
 		{
 			if(elements==null) {return this;}	
 			if(Elements==null) 

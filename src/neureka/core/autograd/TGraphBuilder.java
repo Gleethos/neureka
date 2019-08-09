@@ -63,7 +63,7 @@ public class TGraphBuilder {
                 for(int ii=0; ii<largest; ii++){
                     newShapes[i][ii] = (ii<source[i].shape().length)?ii:-1;
                 }
-                source[i].reshape(newShapes[i]);
+                source[i] = T.factory.reshaped(source[i], newShapes[i], false);
             }
         }
     }
@@ -99,7 +99,7 @@ public class TGraphBuilder {
         if(usesAD(m) && function.isFlat()){
             if(!drain.has(TGradientNode.class)){
                 TGradientNode rg = new TGradientNode(m, function, source);
-                drain.addModule(rg);
+                drain.add(rg);
             }
             TGradientNode drain_gradients = (TGradientNode) drain.find(TGradientNode.class);
             /**

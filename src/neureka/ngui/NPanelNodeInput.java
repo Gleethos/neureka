@@ -86,7 +86,7 @@ public class NPanelNodeInput implements NPanelObject{
 	public boolean isActive() {return isActive;}
 	public void setIsActive(boolean active) {isActive = active;}
 	@Override
-	public ArrayList<NPanelRepaintSpace> moveCircular(double[] data, NPanelAPI Surface) {
+	public ArrayList<NPanelRepaintSpace> moveCircular(double[] data, NPanel_I Surface) {
 		//return moveCircularAndGetRepaintQueue(angleBetween(X-centerX, Y-centerY,x-centerX, y-centerY), centerX, centerY);
 		if(data.length==3) {return moveCircularBy(data, Surface);}
 		double centerX = data[0]; 
@@ -112,7 +112,7 @@ public class NPanelNodeInput implements NPanelObject{
 		return queue;
 	}
 	//@Override
-	private ArrayList<NPanelRepaintSpace> moveCircularBy(double[] data, NPanelAPI Surface) {
+	private ArrayList<NPanelRepaintSpace> moveCircularBy(double[] data, NPanel_I Surface) {
 		//alpha=2*Math.PI-alpha;
 		//alpha+=Math.PI/2;
 		double alpha = data[0]; 
@@ -190,7 +190,7 @@ public class NPanelNodeInput implements NPanelObject{
 	}
 	//==========================================================================================================
 	@Override
-	public ArrayList<NPanelRepaintSpace> moveDirectional(double[] data, NPanelAPI Surface) 
+	public ArrayList<NPanelRepaintSpace> moveDirectional(double[] data, NPanel_I Surface)
 	{
 		
 		double startX = data[0];
@@ -208,7 +208,7 @@ public class NPanelNodeInput implements NPanelObject{
 		return queue;
 	}
 	@Override
-	public ArrayList<NPanelRepaintSpace> moveTo(double[] data, NPanelAPI Surface) 
+	public ArrayList<NPanelRepaintSpace> moveTo(double[] data, NPanel_I Surface)
 	{
 		double x = data[0]; 
 		double y = data[1];
@@ -221,7 +221,7 @@ public class NPanelNodeInput implements NPanelObject{
 		return queue;
 	}
 	@Override
-	public ArrayList<NPanelRepaintSpace> updateOn(NPanelAPI HostPanel) {
+	public ArrayList<NPanelRepaintSpace> updateOn(NPanel_I HostPanel) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -261,7 +261,7 @@ public class NPanelNodeInput implements NPanelObject{
 		return false;
 	}
 	@Override
-	public void repaintLayer(int layerID, Graphics2D brush, NPanelAPI HostSurface) {
+	public void repaintLayer(int layerID, Graphics2D brush, NPanel_I HostSurface) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -276,12 +276,12 @@ public class NPanelNodeInput implements NPanelObject{
 		return false;
 	}
 	@Override
-	public boolean hasGripAt(double x, double y, NPanelAPI HostPanel) {
+	public boolean hasGripAt(double x, double y, NPanel_I HostPanel) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 	@Override
-	public void movementAt(double x, double y, NPanelAPI HostPanel) {
+	public void movementAt(double x, double y, NPanel_I HostPanel) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -291,12 +291,12 @@ public class NPanelNodeInput implements NPanelObject{
 		return 0;
 	}
 	@Override
-	public boolean clickedAt(double x, double y, NPanelAPI HostPanel) {
+	public boolean clickedAt(double x, double y, NPanel_I HostPanel) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 	@Override
-	public boolean doubleClickedAt(double x, double y, NPanelAPI HostPanel) {
+	public boolean doubleClickedAt(double x, double y, NPanel_I HostPanel) {
 		// TODO Auto-generated method stub
 		return false;
 	}

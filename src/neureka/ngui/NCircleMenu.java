@@ -39,7 +39,7 @@ public class NCircleMenu implements NPanelObject{
 	private double birthScale;
 	
 	private Object PropertyContainer;
-	//private NPanel HostPanel;
+	//private TSurface HostPanel;
 	
 	NGraphBuilder Builder;
 	
@@ -237,7 +237,7 @@ public class NCircleMenu implements NPanelObject{
 	public double getY() {return Y;}
 	//------------------------------------------------------------------------------------
 	@Override
-	public ArrayList<NPanelRepaintSpace> updateOn(NPanelAPI HostPanel)
+	public ArrayList<NPanelRepaintSpace> updateOn(NPanel_I HostPanel)
 	{
 		HostPanel.setMap(HostPanel.getMap().removeAndUpdate(this));
 		//HostSurface.setObjectMap(HostSurface.getObjectMap().addAndUpdate(this));
@@ -301,16 +301,16 @@ public class NCircleMenu implements NPanelObject{
 			}
 			 
 		}//-----------------------------------------------
-		else if(PropertyContainer instanceof NPanelNode) 
+		else if(PropertyContainer instanceof PanelNode)
 		{
 			System.out.println("is Unit");
 			if(animationCounter<CounterLimit) {
-				double shiftX = (((NPanelNode)PropertyContainer).getX()-X)*((double)frameDelta/100000000);
-				double shiftY = (((NPanelNode)PropertyContainer).getY()-Y)*((double)frameDelta/100000000);
+				double shiftX = (((PanelNode)PropertyContainer).getX()-X)*((double)frameDelta/100000000);
+				double shiftY = (((PanelNode)PropertyContainer).getY()-Y)*((double)frameDelta/100000000);
 				((NPanel)HostPanel).translatePanel(-(shiftX*HostPanel.getScale()),-(shiftY*HostPanel.getScale()));
 				X += shiftX;
 				Y += shiftY;
-				double nodeScale = 80/((NPanelNode)PropertyContainer).getUnitRadius();
+				double nodeScale = 80/((PanelNode)PropertyContainer).getUnitRadius();
 				if(nodeScale>birthScale*1.1) {birthScale*=1.1;}
 				else if(nodeScale<birthScale*0.9) {birthScale*=0.9;}
 				}
@@ -325,7 +325,7 @@ public class NCircleMenu implements NPanelObject{
 				checked = newChecked;
 				needsRepaint=true;
 			}
-			else if(PropertyContainer instanceof NPanelNode)
+			else if(PropertyContainer instanceof PanelNode)
 			{
 				byte[] newMapping = {-1,  4, 8};
 				boolean[] newChecked = {false, false, false};
@@ -378,7 +378,7 @@ public class NCircleMenu implements NPanelObject{
 				//====================================================
 				else if(chosen==4) //Settings Icon (panel settings)
 				{
-					if(menu.getMenuStackBaseContainer() instanceof NPanelNode) 
+					if(menu.getMenuStackBaseContainer() instanceof PanelNode)
 					{
 						animationCounter=-2*CounterLimit;
 						byte[]    newMapping = {-1,  5, 9};
@@ -427,10 +427,10 @@ public class NCircleMenu implements NPanelObject{
 					checked = newChecked;
 					needsRepaint=true;
 					Actor = (int choice, Object Container)->{
-						if(Container instanceof NPanelNode) 
+						if(Container instanceof PanelNode)
 						{//1. turn into default node; 2. turn into super root; 3. turn into basic root;
-						    NPanelNode node = (NPanelNode)Container;
-						    T neuron = node.getCore();
+						    PanelNode node = (PanelNode)Container;
+						    T neuron = node.getTensor();
 						    //Setting node accordingly
 						    if(choice==1) {
 						    	//T.State.turnIntoTrainableNeuron(neuron);System.out.println("Turning into default node");
@@ -441,7 +441,7 @@ public class NCircleMenu implements NPanelObject{
 						    //if(choice==3) {NCore.State.turnIntoBasicRoot(neuron);System.out.println("Turning into basic root node");}
 						}
 						else if(Container instanceof NPanel) {
-							 T neuron = this.Builder.getBlueprintNeuron();
+							 T neuron = this.Builder.getBlueprintTensor();
 							 if(choice==1) {
 							 	//T.State.turnIntoTrainableNeuron(neuron);System.out.println("Turning into default node");
 							 }
@@ -555,7 +555,7 @@ public class NCircleMenu implements NPanelObject{
 	}
 	//----------------------------------------------------------
 	@Override
-	public void movementAt(double x, double y, NPanelAPI HostSurface) {
+	public void movementAt(double x, double y, NPanel_I HostSurface) {
 		if(mapping==null) {return;}
 		int test = testForChoice(x,y);
 		if(test!=highlightID) {
@@ -604,13 +604,13 @@ public class NCircleMenu implements NPanelObject{
 	}
 	//-------------------------------------------------------------------------------
 	@Override
-	public boolean clickedAt(double x, double y, NPanelAPI HostPanel) 
+	public boolean clickedAt(double x, double y, NPanel_I HostPanel)
 	{int choice = testForChoice(x,y); 
 	 System.out.println("clickedAt: choice: "+choice);
 	 if(choice!=0) {clickedAtChoice(mapping[choice-1]); return true;}return false;}
 	
 	@Override
-	public boolean doubleClickedAt(double x, double y, NPanelAPI HostPanel) 
+	public boolean doubleClickedAt(double x, double y, NPanel_I HostPanel)
 	{
 		return false;
 	}
@@ -634,7 +634,7 @@ public class NCircleMenu implements NPanelObject{
 	interface MenuActor{public abstract void applyAction(int ActionID, Object Property);}
 	//-------------------------------------------------------------------------------
 	@Override
-	public ArrayList<NPanelRepaintSpace> moveDirectional(double[] data, NPanelAPI Surface)// double startX, double startY, double targX, double targY
+	public ArrayList<NPanelRepaintSpace> moveDirectional(double[] data, NPanel_I Surface)// double startX, double startY, double targX, double targY
 	{
 		double startX=data[0];
 		double startY=data[1]; 
@@ -660,13 +660,13 @@ public class NCircleMenu implements NPanelObject{
 	}
 	
 	@Override
-	public ArrayList<NPanelRepaintSpace> moveCircular(double[] data, NPanelAPI Surface) //double centerX, double centerY, double x, double y
+	public ArrayList<NPanelRepaintSpace> moveCircular(double[] data, NPanel_I Surface) //double centerX, double centerY, double x, double y
 	{
 		return null;
 	}
  
 	@Override
-	public ArrayList<NPanelRepaintSpace> moveTo(double[] data, NPanelAPI Surface) {//double x, double y
+	public ArrayList<NPanelRepaintSpace> moveTo(double[] data, NPanel_I Surface) {//double x, double y
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -691,7 +691,7 @@ public class NCircleMenu implements NPanelObject{
 	@Override
 	public boolean needsRepaintOnLayer(int layerID) {if(this.getLayerID()==layerID) {return true;}return false;}
 	@Override
-	public void repaintLayer(int layerID, Graphics2D brush, NPanelAPI HostSurface) 
+	public void repaintLayer(int layerID, Graphics2D brush, NPanel_I HostSurface)
 	{
 		//HostSurface.setObjectMap(HostSurface.getObjectMap().removeAndUpdate(this));
 		this.drawMenu(brush);
@@ -923,12 +923,12 @@ public class NCircleMenu implements NPanelObject{
 				
 		private void click_BackEndNodeWindow() {
 			
-			//if(PropertyContainer instanceof NPanelNode) {
+			//if(PropertyContainer instanceof PanelNode) {
 			//
-			//	((NPanelNode)PropertyContainer).
+			//	((PanelNode)PropertyContainer).
 			//		getCore().
-			//			addModule(
-			//					new NVControlFrame("Neuron "+((NPanelNode)PropertyContainer).getCore().getID(),((NPanelNode)PropertyContainer).getCore()));
+			//			add(
+			//					new NVControlFrame("Neuron "+((PanelNode)PropertyContainer).getCore().getID(),((PanelNode)PropertyContainer).getCore()));
 			//}
 			
 		}
@@ -1060,7 +1060,7 @@ public class NCircleMenu implements NPanelObject{
 				
 			}
 			@Override
-			public boolean hasGripAt(double x, double y, NPanelAPI HostPanel) 
+			public boolean hasGripAt(double x, double y, NPanel_I HostPanel)
 			{
 				return this.testForBody(x, y);
 			}

@@ -25,49 +25,49 @@ public class NMenu implements NPanelObject
 	}
 
 	@Override
-	public boolean hasGripAt(double x, double y, NPanelAPI HostPanel) {
+	public boolean hasGripAt(double x, double y, NPanel_I HostPanel) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public ArrayList<NPanelRepaintSpace> moveCircular(double[] data, NPanelAPI Surface) {
+	public ArrayList<NPanelRepaintSpace> moveCircular(double[] data, NPanel_I Surface) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ArrayList<NPanelRepaintSpace> moveDirectional(double[] data, NPanelAPI Surface) {
+	public ArrayList<NPanelRepaintSpace> moveDirectional(double[] data, NPanel_I Surface) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ArrayList<NPanelRepaintSpace> moveTo(double[] data, NPanelAPI Surface) {
+	public ArrayList<NPanelRepaintSpace> moveTo(double[] data, NPanel_I Surface) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ArrayList<NPanelRepaintSpace> updateOn(NPanelAPI HostPanel) {
+	public ArrayList<NPanelRepaintSpace> updateOn(NPanel_I HostPanel) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void movementAt(double x, double y, NPanelAPI HostPanel) {
+	public void movementAt(double x, double y, NPanel_I HostPanel) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public boolean clickedAt(double x, double y, NPanelAPI HostPanel) {
+	public boolean clickedAt(double x, double y, NPanel_I HostPanel) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean doubleClickedAt(double x, double y, NPanelAPI HostPanel) {
+	public boolean doubleClickedAt(double x, double y, NPanel_I HostPanel) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -127,7 +127,7 @@ public class NMenu implements NPanelObject
 	}
 
 	@Override
-	public void repaintLayer(int layerID, Graphics2D brush, NPanelAPI HostSurface) {
+	public void repaintLayer(int layerID, Graphics2D brush, NPanel_I HostSurface) {
 		// TODO Auto-generated method stub
 		
 	}

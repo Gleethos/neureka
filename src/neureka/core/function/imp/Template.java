@@ -118,7 +118,7 @@ public abstract class Template implements TFunction {
     protected T tensorActivationOf(T input, boolean derive) {
         T output = T.factory.newTensor(input.shape(), input.translation());
         if(!derive && !isFlat){//implies !tipReached ==true // only flat functions can be executed
-            //output.addModule(new TGraphBuilder(output, new T[]{input}, f_id, true, false));
+            //output.add(new TGraphBuilder(output, new T[]{input}, f_id, true, false));
             output.internalize(new TFunctionFactory().newBuild(f_id, 1, true).activate(new T[]{input}));
             return output;
         }
@@ -146,7 +146,7 @@ public abstract class Template implements TFunction {
          * */
         if(d<0 && !isFlat){//only flat functions can be executed
             if(f_id<=9){
-                //output.addModule(new TGraphBuilder(output, input, Context.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])", true, false));
+                //output.add(new TGraphBuilder(output, input, Context.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])", true, false));
                 output.internalize(new TFunctionFactory().newBuild(Context.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])", true).activate(input));
                 return output;
             }else{
@@ -157,7 +157,7 @@ public abstract class Template implements TFunction {
                     for(int i=0; i<tsrs.length; i++){
                         tsrs[i] =  Srcs.get(0).activate(input, i);
                     }// THIS NEEDS TO BE SOLVED!!
-                    //output.addModule(new TGraphBuilder(output, tsrs, Context.REGISTER[f_id]+"(I[j])", true, false));
+                    //output.add(new TGraphBuilder(output, tsrs, Context.REGISTER[f_id]+"(I[j])", true, false));
                     output.internalize(new TFunctionFactory().newBuild(Context.REGISTER[f_id]+"(I[j])", true).activate(tsrs));
                     return output;
                 }else if(f_id<=18){
@@ -180,8 +180,8 @@ public abstract class Template implements TFunction {
                     if(constantFound){
                         for(int i=0; i<tsrs.length; i++){
                             tsrs[i] = (tsrs[i] != null)
-                                    ? tsrs[i]
-                                    : (j<0)
+                                ? tsrs[i]
+                                : (j<0)
                                     ?T.factory.newTensor(Srcs.get(i).activate(new double[]{}), template.shape())
                                     :T.factory.newTensor(Srcs.get(i).activate(new double[]{}, j), template.shape());
                         }
@@ -198,31 +198,34 @@ public abstract class Template implements TFunction {
                      * */
                     //TODO implement reshape!
                     //T[] tsrs = new T[Srcs.size()];
-                    int[] newForm = new int[Srcs.size()];
-                    for(int i=0; i<this.Srcs.size()-1; i++){
-                        TFunction fcn = this.Srcs.get(i);
-                        if(fcn instanceof Constant){
-                            //tsrs[0] = T.factory.newTensor(((Constant)fcn).value(), new int[]{1});
-                            newForm[i] = (int)((Constant)fcn).value();
+                    //int sze = 0;
+                    //for(int i=0; i<this.Srcs.size(); i++){// "," operations implies that Constants are mappers
+                    //    sze += (this.Srcs.get(i) instanceof Constant && f_id==19)?0:1;
+                    //}
+                    int[] newForm = new int[this.Srcs.size()-1];
+                    for(int ii=0; ii<this.Srcs.size()-1; ii++ ){
+                        TFunction fcn = this.Srcs.get(ii);
+                        if(fcn instanceof Constant ){
+                            newForm[ii] = (int)((Constant)fcn).value();
                         }else{
                             T t = (j<0) ?fcn.activate(input) :fcn.activate(input, j);
-                            if(t.size()>1){
+                            if(t.size()>0){
                                 int[] insert = new int[t.size()];
-                                t.foreach((ii, v)->{
-                                    insert[ii] = (int) v;
+                                t.foreach((vi, v)->{
+                                    insert[vi] = (int) v;
                                 });
                                 DataHelper<Object> helper = new DataHelper<>();
                                 for(int v : insert){
-                                    newForm = helper.updateArray(newForm, i, false);
-                                    newForm[i] = v;
+                                    newForm = helper.updateArray(newForm, ii, false);
+                                    newForm[ii] = v;
                                 }
                             }else{
-                                newForm[i] = (int)t.e_get(0);
+                                newForm[ii] = (int)t.e_get(0);
                             }
                         }
                     }
                     T t = (j<0) ?this.Srcs.get(Srcs.size()-1).activate(input) :this.Srcs.get(Srcs.size()-1).activate(input, j);
-                    t.reshape(newForm);
+                    t = T.factory.reshaped(t, newForm, true);//t.reshape(newForm);
                     if(d<0){
                         output.internalize(t);
                     }else{//reverse reshape:
@@ -267,7 +270,7 @@ public abstract class Template implements TFunction {
                         output = input[0];
                     }
                 }
-            }else{
+            }else if(f_id!=19){
                 double[] inp = new double[input.length];
                 T finalOutput = output;
                 output.foreach((i)->{

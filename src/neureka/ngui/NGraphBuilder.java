@@ -15,8 +15,8 @@ public class NGraphBuilder {
 	
 	private int pressRadius = 100;
 	
-	public NPanelNode   MouseAttachedPanelNeuron;
-    public NPanelNode   ConnectionPanelNeuron;
+	public PanelNode MouseAttachedPanelNeuron;
+    public PanelNode ConnectionPanelNeuron;
    
     public int InputIndex = 0;
     
@@ -26,7 +26,7 @@ public class NGraphBuilder {
 	private NCircleMenu MouseAttachedCircleMenu;
 	
 	NCircleMenu newMenu;
-	private T BlueprintNode;
+	private T BlueprintTensor;
 	
 	//----------------------------------------------------------------
 	public void addMenu(NCircleMenu menu) 
@@ -37,21 +37,21 @@ public class NGraphBuilder {
 	 	}
 	 	Surface.setMap(Surface.getMap().addAndUpdate(menu));
  	}
-	public T getBlueprintNeuron() 
+	public T getBlueprintTensor()
  	{
- 		return BlueprintNode;
+ 		return BlueprintTensor;
  	}
 	public NPanel getSurface() 
 	{
 		return Surface;
 	}
-	private void addPanelNeuron(int x, int y)       
+	private void addPanelTensor(int x, int y)
  	{
- 		NPanelNode Unit = new NPanelNode(new T(BlueprintNode), Surface.realX((double)x),Surface.realY((double)y));
- 		addPanelNeuron(Unit);
+ 		PanelNode Unit = new PanelNode(new T(BlueprintTensor), Surface.realX((double)x),Surface.realY((double)y));
+ 		addPanelTensor(Unit);
  		Unit.setHasMoved(true);
  	}
- 	private void addPanelNeuron(neureka.ngui.NPanelNode PanelNeuron)
+ 	private void addPanelTensor(PanelNode PanelNeuron)
  	{
  		if(Surface.getMap()==null) 
  		{
@@ -62,21 +62,15 @@ public class NGraphBuilder {
 	public NGraphBuilder() 
 	{	
 		Surface = new NPanel();
-		NPanelNode Neuron = new neureka.ngui.NPanelNode(-400, 2500, 0);
-
-	 	addPanelNeuron(Neuron);
-	 	NPanelNode Neuron1 = new neureka.ngui.NPanelNode( 700, -2600, 1 );
-
-	 	addPanelNeuron(Neuron1);
-
-	 	NPanelNode Neuron4 = new neureka.ngui.NPanelNode( 3090, 890, 2 );
-	 	addPanelNeuron(Neuron4);
-
-		BlueprintNode = new T();
-
-		Surface.setPreferredSize(new Dimension(200,30));
+		PanelNode Neuron = new PanelNode(-400, 2500, 0);
+	 	addPanelTensor(Neuron);
+	 	PanelNode Neuron1 = new PanelNode( 700, -2600, 1 );
+	 	addPanelTensor(Neuron1);
+	 	PanelNode Neuron4 = new PanelNode( 3090, 890, 2 );
+	 	addPanelTensor(Neuron4);
+		BlueprintTensor = new T();
+		Surface.setPreferredSize(new Dimension(500,500));
 		Surface.setBackground(Color.black);
-		
 		Surface.setPaintAction(
 			(surface, brush)->
 			{
@@ -105,20 +99,20 @@ public class NGraphBuilder {
 				//checkPanelScaleCenter(getWidth()/2, getHeight()/2);
 				//Goal: find something on panel -> top most thing -> attach if is attachable...
 				System.out.println("X:"+surface.realX((double)x)+"; Y:"+surface.realY((double)y)+";");
-				surface.getListener().setDraggStart(x, y);
+				surface.getListener().setDragStart(x, y);
 				NPanelObject found = surface.findObject(surface.realX(x), surface.realY(y), true, null);
 				if(found!=null) 
 				{
 				    if(found.clickedAt(surface.realX(x), surface.realY(y), surface)) 
 				    {	
-				    	if(found instanceof NPanelNode) 
+				    	if(found instanceof PanelNode)
 				    	{
-				    		NPanelNode PU = (NPanelNode)found;		
+				    		PanelNode PU = (PanelNode)found;
 				    		NPanelNodeInput node = PU.testFor_AndGet_InputNode(surface.realX(x), surface.realY(y));
 				    			
 				    		if(this.ChosenInputNode!=null && node==null) 
 				    		{
-				    			//T C1 = ((NPanelNode)found).getCore().asCore();
+				    			((PanelNode)found).connect(this.ConnectionPanelNeuron);
 				    			//T C2 = this.ConnectionPanelNeuron.getCore().asCore();
 				    			//C2.connect(C1, this.InputIndex);
 				    		}
@@ -225,7 +219,7 @@ public class NGraphBuilder {
 				if(found!=null) {found.doubleClickedAt(surface.realX(x), surface.realY(y), surface);}
 				else
 				{
-					NPanelNode Unit = null;//new NPanelNode(new T(this.BlueprintNode), surface.realX((double)x),surface.realY((double)y));
+					PanelNode Unit = new PanelNode(new T(this.BlueprintTensor), surface.realX((double)x),surface.realY((double)y));
 				 	if(surface.getMap()==null) 
 				 	{
 				 		surface.setMap(new NMap(Unit.getX(),Unit.getY(),10000));
@@ -293,6 +287,18 @@ public class NGraphBuilder {
 				if(surface.getFocusObject() instanceof NCircleMenu) 
 				{
 
+				}
+				if(this.ChosenInputNode!=null)
+				{
+					double cx = this.ChosenInputNode.getX();
+					double cy = this.ChosenInputNode.getY();
+					double sx = surface.realLastSenseX();
+					double sy = surface.realLastSenseY();
+					NPanelRepaintSpace space = new NPanelRepaintSpace((cx+sx)/2, (cy+sy)/2, Math.abs(cx-sx)/2, Math.abs(cy-sy)/2);
+					ArrayList<NPanelRepaintSpace> queue = surface.getRepaintQueue();
+					queue = (queue==null)?new ArrayList<>():queue;
+					queue.add(space);
+					surface.setRepaintQueue(queue);
 				}
 				surface.setLastSenseX(x);
 				surface.setLastSenseY(y);
@@ -408,11 +414,11 @@ public class NGraphBuilder {
 	 public void randomizeEverything()
 	 {
 		 Surface.getMap().applyToAll(
-			new neureka.ngui.NMapAPI.MapAction()
+			new NMap_I.MapAction()
 			{
 				public boolean act(NPanelObject element) 
 				{
-					//((NPanelNode)element).getCore().randomizeBiasAndWeight();;
+					//((PanelNode)element).getCore().randomizeBiasAndWeight();;
 					return false;
 				}
 			} 
@@ -420,16 +426,7 @@ public class NGraphBuilder {
 	 }
 	//-------------------------------------------------------------------------
 	 public void setUpNewWorkThreader(int HistoryScope) 
-	 {	
-	 	//Object Data = new LinkedList<NVNode>();
-	 	//LinkedList<NVNode> applyAndGet =
-		//	(LinkedList<NVNode>)Surface.getMap().applyAndGet(
-		//	Data, (Object thing, NPanelObject other)
-		//	 ->{
-		//		   if(other instanceof NPanelNode) {((LinkedList<T>)thing).add(((NPanelNode)other).getCore());}
-		//		   return thing;
-		//	   }
-		//  );
+	 {
 	 }
 	//-------------------------------------------------------------------------
 	 public void setHistoryScopeTo(int scope) 
@@ -438,11 +435,7 @@ public class NGraphBuilder {
 	 	Surface.getMap().applyToAll(
 	 	(NPanelObject node)->
 	 	{
-	 		if(!(node instanceof neureka.ngui.NPanelNode)) {return false;}
-	 		//NVCloak Properties = (NVCloak) ((NPanelNode)node).getCore().find(NVCloak.class);
-			//if(Properties!=null) {
-			//	NVMemory Memory = (NVMemory) ((NPanelNode)node).getCore().find(NVCloak.class);
-			//	if(Memory!=null) {Memory.setTimeTunnel(scope);}}
+	 		if(!(node instanceof PanelNode)) {return false;}
 		 return true;
 		 });
 	 }

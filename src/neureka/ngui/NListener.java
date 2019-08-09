@@ -21,21 +21,18 @@ public class NListener implements MouseListener, MouseMotionListener, MouseWheel
 	private static final double pressRadius = 100;
 
 	
-	NPanelAPI Surface;
+	NPanel_I Surface;
 	
-	NListener(NPanelAPI surface)
+	NListener(NPanel_I surface)
 	{
 		Surface = surface;
 	}
 //--------------------------------------------------------------------------------------------------------------------------------	
 	public void updateOn(NPanel gui) 
 	{
-		if(PressPoint!=null) 
-		{
-			 if(PressPoint[0]>pressTimeLimit) 
-			 {
-				 Surface.longpressedAt(PressPoint[1], PressPoint[2]);
-				 
+		if(PressPoint!=null) {
+			 if(PressPoint[0]>pressTimeLimit) {
+				 Surface.longPressedAt(PressPoint[1], PressPoint[2]);
 			 }
 			 else 
 			 {PressPoint[0]+=gui.getFrameDelta();}
@@ -102,15 +99,11 @@ public class NListener implements MouseListener, MouseMotionListener, MouseWheel
 //--------------------------------------------------------------------------------------------------------------------------------
 	public void addDragPoint(int x, int y) 
 	{
-		if(SwipeVector != null) 
-		   {
-			if(SwipeVector.length == 4) 
-			   {
+		if(SwipeVector != null) {
+			if(SwipeVector.length == 4) {
 				SwipeVector[2]=x;
 				SwipeVector[3]=y;	
-			   }
-			else 
-			   {
+			} else {
 				   int startX = SwipeVector[0];
 				   int startY = SwipeVector[1];
 				   SwipeVector = new int[4];
@@ -119,16 +112,14 @@ public class NListener implements MouseListener, MouseMotionListener, MouseWheel
 				   SwipeVector[2]=x;
 				   SwipeVector[3]=y;
 			   }
-		   }
-		else 
-		   {
+		   } else {
 			SwipeVector = new int[2];
 			SwipeVector[0] = x;
 			SwipeVector[1] = y;
 		   }
 	}
 //--------------------------------------------------------------------------------------------------------------------------------
-	public void setDraggStart(int startX, int startY) 
+	public void setDragStart(int startX, int startY)
 	{
 		if(SwipeVector!=null) {
 			SwipeVector[0] = startX;
@@ -156,7 +147,8 @@ public class NListener implements MouseListener, MouseMotionListener, MouseWheel
 	public void mouseMoved(MouseEvent e)
 	{
 		Surface.movementAt(e.getX(),e.getY());
-		collapseDragVector(); addDragPoint(e.getX(), e.getY()); 
+		collapseDragVector();
+		addDragPoint(e.getX(), e.getY());
 		if(PressPoint!=null) 
 		{
 			double distance = 
