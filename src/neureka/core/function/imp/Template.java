@@ -161,7 +161,7 @@ public abstract class Template implements TFunction {
                     output.internalize(new TFunctionFactory().newBuild(Context.REGISTER[f_id]+"(I[j])", true).activate(tsrs));
                     return output;
                 }else if(f_id<=18){
-                    /**      +, -, x, *, %, ....
+                    /**      +, -, x, *, %, ....// TODO: move this to Function constructor!
                      * */
                     String operation = (Context.REGISTER[f_id].length()>1)?Context.REGISTER[f_id]:"";
                     T[] tsrs = new T[Srcs.size()];
@@ -196,48 +196,22 @@ public abstract class Template implements TFunction {
                     /**
                      *    Tensor shape translation
                      * */
-                    //TODO implement reshape!
-                    //T[] tsrs = new T[Srcs.size()];
-                    //int sze = 0;
-                    //for(int i=0; i<this.Srcs.size(); i++){// "," operations implies that Constants are mappers
-                    //    sze += (this.Srcs.get(i) instanceof Constant && f_id==19)?0:1;
-                    //}
-                    int[] newForm = new int[this.Srcs.size()-1];
-                    for(int ii=0; ii<this.Srcs.size()-1; ii++ ){
-                        TFunction fcn = this.Srcs.get(ii);
-                        if(fcn instanceof Constant ){
-                            newForm[ii] = (int)((Constant)fcn).value();
-                        }else{
-                            T t = (j<0) ?fcn.activate(input) :fcn.activate(input, j);
-                            if(t.size()>0){
-                                int[] insert = new int[t.size()];
-                                t.foreach((vi, v)->{
-                                    insert[vi] = (int) v;
-                                });
-                                DataHelper<Object> helper = new DataHelper<>();
-                                for(int v : insert){
-                                    newForm = helper.updateArray(newForm, ii, false);
-                                    newForm[ii] = v;
-                                }
-                            }else{
-                                newForm[ii] = (int)t.e_get(0);
-                            }
-                        }
+                    //TODO implement reshape! !! THIS IS CURRENTLY NOT CONVENTIONAL!!
+                    T[] tsrs = new T[Srcs.size()];
+                    for(int i=0; i<this.Srcs.size(); i++){// "," operations implies that Constants are mappers
+                        tsrs[i] =
+                            (this.Srcs.get(i) instanceof Constant)
+                                ?T.factory.newTensor(((Constant)this.Srcs.get(i)).value(), new int[]{1})
+                                :(j<0)
+                                    ?this.Srcs.get(Srcs.size()-1).activate(input)
+                                    :this.Srcs.get(Srcs.size()-1).activate(input, j);
                     }
-                    T t = (j<0) ?this.Srcs.get(Srcs.size()-1).activate(input) :this.Srcs.get(Srcs.size()-1).activate(input, j);
-                    t = T.factory.reshaped(t, newForm, true);//t.reshape(newForm);
-                    if(d<0){
-                        output.internalize(t);
-                    }else{//reverse reshape:
-                        /**
-                         *      [3, 2, 4, 0, 1]
-                         *      [0, 1, 2, 3, 4]
-                         * */
-                        int[] reversed = new int[newForm.length];
-                        for(int i=0; i<newForm.length; i++){
-                            reversed[newForm[i]] = i;
-                        }
+                    if(j<0){
+                        output.internalize(new TFunctionFactory().newBuild(f_id, tsrs.length, true).activate(tsrs));
+                    }else{
+                        output.internalize(new TFunctionFactory().newBuild(f_id, tsrs.length, true).activate(tsrs, j));
                     }
+                    return output;
                 }
             }
         }
@@ -246,16 +220,16 @@ public abstract class Template implements TFunction {
          * */
         TDevice device = (TDevice) input[0].find(TDevice.class);
         boolean onSameDevice = T.utility.shareGuestDevice(input);
-        if(onSameDevice){
+        if(onSameDevice && Context.REGISTER[f_id]!=","){
             if(device!=null){
                 device.add(output);
             }
-            for (int ti = 0; ti < input.length; ti++) {
-                device = (TDevice) input[ti].find(TDevice.class);
+            for (int i = 0; i < input.length; i++) {
+                device = (TDevice) input[i].find(TDevice.class);
                 T[] tsrs = new T[1+input.length];
                 tsrs[0]=output;
-                for(int tii=1; tii<tsrs.length; tii++){
-                    tsrs[tii]=input[tii-1];
+                for(int ii=1; ii<tsrs.length; ii++){
+                    tsrs[ii]=input[ii-1];
                 }
                 device.calculate(tsrs, f_id, d);
             }
@@ -270,12 +244,38 @@ public abstract class Template implements TFunction {
                         output = input[0];
                     }
                 }
-            }else if(f_id!=19){
+            }else if(Context.REGISTER[f_id]==","){
+                int[] newForm = new int[this.Srcs.size()-1];
+                for(int i=0; i<this.Srcs.size()-1; i++ ){
+                    TFunction fcn = this.Srcs.get(i);
+                    if(fcn instanceof Constant ){
+                        newForm[i] = (int)((Constant)fcn).value();
+                    }else{
+                        T t = (j<0) ?fcn.activate(input) :fcn.activate(input, j);
+                        newForm[i] = (int)t.e_get(0);
+                    }
+                }
+                T t = (j<0) ?this.Srcs.get(Srcs.size()-1).activate(input):this.Srcs.get(Srcs.size()-1).activate(input, j);
+                t = T.factory.reshaped(t, newForm, true);//t.reshape(newForm);
+
+                if(d<0){
+                    output.internalize(t);
+                }else{//reverse reshape:
+                    /**
+                     *      [3, 2, 4, 0, 1]
+                     *      [0, 1, 2, 3, 4]
+                     * */
+                    int[] reversed = new int[newForm.length];
+                    for(int i=0; i<newForm.length; i++){
+                        reversed[newForm[i]] = i;
+                    }
+                }
+            } else if(f_id!=19){
                 double[] inp = new double[input.length];
                 T finalOutput = output;
                 output.foreach((i)->{
-                    for (int ti = 0; ti < input.length; ti++) {
-                        inp[ti] = input[ti].value()[i];
+                    for (int ii = 0; ii < input.length; ii++) {
+                        inp[ii] = input[ii].value()[i];
                     }
                     finalOutput.value()[i] = scalarActivationOf(inp, j, d);
                 });

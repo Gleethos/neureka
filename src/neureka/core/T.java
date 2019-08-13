@@ -77,7 +77,7 @@ public class T {
         if(this.isEmpty()){
             return 0;
         }
-        //this.value is not optimal!
+        //this.value is not optimal! //TODO GET SIZE FROM KERNEL IF OUTSOURCED
         return (this.isOutsourced())?T.utility.szeOfShp(this.shape()):this.value.length;
     }
 
@@ -314,7 +314,9 @@ public class T {
     //TRACKED COMPUTATION :
     //=========================
     public T(T tensor, String operation) {
-        if(tensor==null){return;}
+        if(tensor==null){
+            return;
+        }
         construct(new T[]{tensor}, operation);
     }
     public T(T[] tensors, String operation) {
@@ -411,12 +413,13 @@ public class T {
             action.accept(T.utility.idxOfShpIdxAndShp(idx, this.shape()));
         }
     }
-    public void foreach(BiConsumer<Integer, Integer> action){
+    public void foreach(BiConsumer<Integer, Double> action){
         int sze = this.size();
         int[] idx = new int[this.shape().length];
+        double[] value = this.value();
         for(int i=0; i<sze; i++){
             T.utility.increment(idx, this.shape());
-            action.accept(i, T.utility.idxOfShpIdxAndShp(idx, this.shape()));
+            action.accept(i, value[T.utility.idxOfShpIdxAndShp(idx, this.shape())]);
         }
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -424,7 +427,7 @@ public class T {
         if(this.isEmpty()||this.isUndefined()){
             return 0;
         }
-        return T.utility.idxOfShpIdxAndShp(shpIdx(i), shape);
+        return this.value()[T.utility.idxOfShpIdxAndShp(shpIdx(i), shape)];
     }
     public double e_get(int[] idx) {
         return value[T.utility.idxOfShpIdxAndShp(idx, shape)];
@@ -491,11 +494,10 @@ public class T {
                 tensor = copyOf(tensor);
             }
             tensor.record(tensor.shape(), tensor.translation());
-            tensor.shape = T.utility.reshaped(tensor.shape, newForm);
+            tensor.shape = T.utility.shpCheck(T.utility.reshaped(tensor.shape, newForm), tensor);
             tensor.translation = T.utility.retranslated(tensor.translation, tensor.shape, newForm);
             return tensor;
         }
-
 
         //OPERATIONS:
         //=========================
@@ -743,6 +745,26 @@ public class T {
                 }
             }
             return newShp;
+        }
+
+        @Contract(pure = true)
+        public static int[] shpCheck(int[] newShp, T t){
+            if(szeOfShp(newShp)!=t.size()){
+                throw new IllegalArgumentException("New shape does not match tensor size!" +
+                        " ("+str(newShp)+((szeOfShp(newShp)<t.size()) ?"<":">")+str(t.shape())+")");
+            }
+            return newShp;
+        }
+
+        @Contract(pure = true)
+        public static String str(int[] shp){
+            String str = "";
+            int i=0;
+            for(int s : shp){
+                str+=s+((i!=shp.length-1)?", ":"");
+                i++;
+            }
+            return "["+str+"]";
         }
 
         @Contract(pure = true)

@@ -34,6 +34,12 @@ public class TFunctionFactory {
     public static TFunction newBuild(int f_id, int size, boolean doAD){
         if (f_id == 18){
             size = 2;
+        } else if(Context.REGISTER[f_id]==","){
+            ArrayList<TFunction> srcs = new ArrayList<>();
+            for(int i=0; i<size; i++){
+                srcs.add(new Input().newBuild(""+i));
+            }
+            return Construction.createFunction(f_id, srcs, doAD);
         }
         if (f_id < 10) {
             return newBuild(Context.REGISTER[f_id] + "(I[0])", doAD);//, tipReached);

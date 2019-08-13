@@ -63,6 +63,20 @@ public class NeurekaTest {
 				}
 		);
 		//---
+		tensor1 = new T(new int[]{2, 3, 4}, 2);
+		tensor1.setRqsGradient(true);
+		tester.testTensorAutoGrad(
+				new T[]{tensor1, tensor2},
+				"lig([-2, 1, 0, -2]:(I[0])*-100)",
+				new String[]{
+						"[2x3]:(200.0, 200.0, 200.0, 200.0, 200.0, 200.0);",
+						" =>d|[ [2x3]:(-100.0, -100.0, -100.0, -100.0, -100.0, -100.0) ]|:t{ [2x3]:(-2.0, -2.0, -2.0, -2.0, -2.0, -2.0);",
+						" =>d|[ [1x3]:(2.0, 2.0, 2.0) ]|:t{ [2x1]:(-1.0, -1.0) },",
+						" =>d|[ [2x1]:(-1.0, -1.0) ]|:t{ [1x3]:(2.0, 2.0, 2.0) },",
+						"  }, "
+				}
+		);
+		//---
 		tensor1 = new T(new int[]{2}, 2);
 		tensor2 = new T(new int[]{2}, 4);
 		tensor1.setRqsGradient(true);
