@@ -6,7 +6,6 @@ import neureka.core.device.TDevice;
 import neureka.core.function.TFunction;
 import neureka.core.function.TFunctionFactory;
 import neureka.core.function.util.Context;
-import neureka.core.utility.DataHelper;
 
 import java.util.ArrayList;
 
@@ -117,8 +116,7 @@ public abstract class Template implements TFunction {
      * */
     protected T tensorActivationOf(T input, boolean derive) {
         T output = T.factory.newTensor(input.shape(), input.translation());
-        if(!derive && !isFlat){//implies !tipReached ==true // only flat functions can be executed
-            //output.add(new TGraphBuilder(output, new T[]{input}, f_id, true, false));
+        if(!derive && !isFlat){
             output.internalize(new TFunctionFactory().newBuild(f_id, 1, true).activate(new T[]{input}));
             return output;
         }
@@ -135,7 +133,7 @@ public abstract class Template implements TFunction {
         }
         return output;
     }
-    //TODO: j is not handled properly!!!
+
     /**
      *   Responsible for handling functions with multiple inputs!
      * */
@@ -146,66 +144,34 @@ public abstract class Template implements TFunction {
          * */
         if(d<0 && !isFlat){//only flat functions can be executed
             if(f_id<=9){
-                //output.add(new TGraphBuilder(output, input, Context.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])", true, false));
                 output.internalize(new TFunctionFactory().newBuild(Context.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])", true).activate(input));
                 return output;
             }else{
                 if(Context.REGISTER[f_id].length()!=1){
                     /**  SUMMATION, PI,
                      * */
-                    T[] tsrs = new T[input.length];
-                    for(int i=0; i<tsrs.length; i++){
-                        tsrs[i] =  Srcs.get(0).activate(input, i);
-                    }// THIS NEEDS TO BE SOLVED!!
-                    //output.add(new TGraphBuilder(output, tsrs, Context.REGISTER[f_id]+"(I[j])", true, false));
-                    output.internalize(new TFunctionFactory().newBuild(Context.REGISTER[f_id]+"(I[j])", true).activate(tsrs));
+                    T[] tsrs = activateSource(input);
+                    output.internalize(TFunctionFactory.newBuild(Context.REGISTER[f_id]+"(I[j])", true).activate(tsrs));
                     return output;
                 }else if(f_id<=18){
                     /**      +, -, x, *, %, ....// TODO: move this to Function constructor!
                      * */
                     String operation = (Context.REGISTER[f_id].length()>1)?Context.REGISTER[f_id]:"";
-                    T[] tsrs = new T[Srcs.size()];
-                    boolean constantFound = false;
-                    T template = null;
-                    for(int i=0; i<tsrs.length; i++){//constants need to be figured out!
-                        if(Srcs.get(i) instanceof Constant){
-                            tsrs[i] = null;
-                            constantFound = true;
-                        }else{
-                            tsrs[i] = (j<0)?Srcs.get(i).activate(input):Srcs.get(i).activate(input, j);
-                            template = tsrs[i];
-                        }
+                    T[] tsrs = activateSource(input, j, null);
+                    for(int i=0; i<tsrs.length; i++){
                         operation += "I["+i+"]"+((i+1<tsrs.length)?Context.REGISTER[f_id]:"");
                     }
-                    if(constantFound){
-                        for(int i=0; i<tsrs.length; i++){
-                            tsrs[i] = (tsrs[i] != null)
-                                ? tsrs[i]
-                                : (j<0)
-                                    ?T.factory.newTensor(Srcs.get(i).activate(new double[]{}), template.shape())
-                                    :T.factory.newTensor(Srcs.get(i).activate(new double[]{}, j), template.shape());
-                        }
-                    }
                     if(j<0){
-                        output.internalize(new TFunctionFactory().newBuild(operation, true).activate(tsrs));
+                        output.internalize(TFunctionFactory.newBuild(operation, true).activate(tsrs));
                     }else{
-                        output.internalize(new TFunctionFactory().newBuild(operation, true).activate(tsrs, j));
+                        output.internalize(TFunctionFactory.newBuild(operation, true).activate(tsrs, j));
                     }
                     return output;
                 }else{
                     /**
                      *    Tensor shape translation
                      * */
-                    //TODO implement reshape! !! THIS IS CURRENTLY NOT CONVENTIONAL!!
-                    T[] tsrs = new T[Srcs.size()];
-                    for(int i=0; i<this.Srcs.size(); i++){// "," operations implies that Constants are mappers
-                        tsrs[i] =
-                            (this.Srcs.get(i) instanceof Constant)
-                                ?T.factory.newTensor(((Constant)this.Srcs.get(i)).value(), new int[]{1})
-                                :(j<0)
-                                    ?this.Srcs.get(Srcs.size()-1).activate(input)
-                                    :this.Srcs.get(Srcs.size()-1).activate(input, j);
-                    }
+                    T[] tsrs = activateSource(input, j, new int[]{1});
                     if(j<0){
                         output.internalize(new TFunctionFactory().newBuild(f_id, tsrs.length, true).activate(tsrs));
                     }else{
@@ -251,11 +217,15 @@ public abstract class Template implements TFunction {
                     if(fcn instanceof Constant ){
                         newForm[i] = (int)((Constant)fcn).value();
                     }else{
-                        T t = (j<0) ?fcn.activate(input) :fcn.activate(input, j);
+                        T t = (j<0)
+                            ?fcn.activate(input)
+                            :fcn.activate(input, j);
                         newForm[i] = (int)t.e_get(0);
                     }
                 }
-                T t = (j<0) ?this.Srcs.get(Srcs.size()-1).activate(input):this.Srcs.get(Srcs.size()-1).activate(input, j);
+                T t = (j<0)
+                    ?this.Srcs.get(Srcs.size()-1).activate(input)
+                    :this.Srcs.get(Srcs.size()-1).activate(input, j);
                 t = T.factory.reshaped(t, newForm, true);//t.reshape(newForm);
 
                 if(d<0){
@@ -267,32 +237,69 @@ public abstract class Template implements TFunction {
                      * */
                     int[] reversed = new int[newForm.length];
                     for(int i=0; i<newForm.length; i++){
-                        reversed[newForm[i]] = i;
+                       // reversed[newForm[i]] = i;
                     }
                 }
-            } else if(f_id!=19){
-                double[] inp = new double[input.length];
+            } else {
+                T[] tsrs = input;//
+                //WHY NOT? THis=> activateSource(input, j, null);//new T[this.Srcs.size()];
+                //BECAUSE: j is targeting a speccific input in scalar Activations!
+                //for(int i=0; i<this.Srcs.size(); i++){
+                    //    ()
+                //}
+                double[] inp = new double[tsrs.length];
                 T finalOutput = output;
                 output.foreach((i)->{
-                    for (int ii = 0; ii < input.length; ii++) {
-                        inp[ii] = input[ii].value()[i];
+                    for (int ii = 0; ii < tsrs.length; ii++) {
+                        inp[ii] = tsrs[ii].value()[i];
                     }
                     finalOutput.value()[i] = scalarActivationOf(inp, j, d);
                 });
+                //input = tsrs;
             }
         }
         if(d<0){
             T[] tsrs = input;
-            if(f_id==18){
-                tsrs = new T[Srcs.size()];
-                for(int i=0; i<tsrs.length; i++){
-                    tsrs[i] = Srcs.get(i).activate(input);
-                }
-            }
-            TGraphBuilder.connect(output, tsrs, f_id, true);
+            TGraphBuilder.connect(output, tsrs, f_id, true);//TODO: remove f_id here and just pass on 'this'
         }
         return output;
     }
+
+    private T[] activateSource(T[] input){
+        T[] tsrs = new T[input.length];
+        for(int i=0; i<tsrs.length; i++){
+            tsrs[i] =  Srcs.get(0).activate(input, i);
+        }
+        return tsrs;
+    }
+
+    private T[] activateSource(T[] input, int j, int[] templateShape){
+        T[] tsrs = new T[this.Srcs.size()];
+        for(int i=0; i<tsrs.length; i++){//constants need to be figured out!
+            if(Srcs.get(i) instanceof Constant){
+                tsrs[i] = null;
+            }else{
+                tsrs[i] =
+                    (j<0)
+                        ?Srcs.get(i).activate(input)
+                        :Srcs.get(i).activate(input, j);
+                templateShape =
+                    (templateShape==null)
+                        ?tsrs[i].shape()
+                        :templateShape;
+            }
+        }
+        for(int i=0; i<tsrs.length; i++){
+            tsrs[i] =
+                (tsrs[i] != null)
+                    ? tsrs[i]
+                    : (j<0)
+                        ?T.factory.newTensor(((Constant)this.Srcs.get(i)).value(), templateShape)
+                        :T.factory.newTensor(Srcs.get(i).activate(new double[]{}, j), templateShape);
+        }
+        return tsrs;
+    }
+
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public double scalarActivationOf(double input, boolean derive) {
         switch (f_id) {

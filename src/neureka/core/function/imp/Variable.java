@@ -48,6 +48,11 @@ public class Variable implements TFunction {
     }
     @Override
     public T activate(T[] input) {
+        //T result = input[0];
+        //for(int i=1; i<input.length; i++){
+        //    result.e_add(input[i]);
+        //}
+        //return result;
         return new T(input, "sum(I[j])");
     }
     @Override

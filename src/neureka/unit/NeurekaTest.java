@@ -66,7 +66,7 @@ public class NeurekaTest {
 		tensor1 = new T(new int[]{2, 3, 4}, 2);
 		tensor1.setRqsGradient(true);
 		tester.testTensorAutoGrad(
-				new T[]{tensor1, tensor2},
+				new T[]{tensor1},//, tensor2},
 				"lig([-2, 1, 0, -2]:(I[0])*-100)",
 				new String[]{
 						"[2x3]:(200.0, 200.0, 200.0, 200.0, 200.0, 200.0);",
