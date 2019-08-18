@@ -35,8 +35,8 @@ public class TGraphBuilder {
         }
     }
 
-    public static void connect(T drain, T[] src, int f_id, boolean derive){//, boolean derive
-        TFunction function = new TFunctionFactory().newBuild(f_id, src.length, true);
+    public static void connect(T drain, T[] src, TFunction f, boolean derive){//, boolean derive
+        TFunction function = f;//new TFunctionFactory().newBuild(f_id, src.length, true);
         int mode = configure(src, function);
         if(function.isFlat()&&derive){
             performDifferentiation(drain, function, src, mode);
@@ -84,7 +84,7 @@ public class TGraphBuilder {
             }
             m += (srcModes[Ii]!=0)?1:0;
         }
-        if(m==1 && (function.id()!=18)){
+        if(m==1 && (function.type()!="x" && function.type()!=",")){//Convolution and reshaping prohibit forward AD
             for(int Ii = 0; Ii< source.length; Ii++){
                 mode += (srcModes[Ii]<0)?1:srcModes[Ii];
             }
@@ -103,7 +103,7 @@ public class TGraphBuilder {
             }
             TGradientNode drain_gradients = (TGradientNode) drain.find(TGradientNode.class);
             /**
-             *  Preparing for back      propagation:
+             *  Preparing for back propagation:
              * */
             if(usesForwardAD(m)){
                 int i = 0;
@@ -118,7 +118,7 @@ public class TGraphBuilder {
                             src_gradients.forEach(
                                 (t, g)->{
                                     /**
-                                     *  Chain rule (forwards) for every
+                                     *  Chain rule (forward) for every
                                      *  gradient w.r.t. leaves (reverseAD or user leaves):
                                      * */
                                     if(drain_gradients.has(t)){

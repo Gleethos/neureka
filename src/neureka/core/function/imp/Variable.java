@@ -12,6 +12,12 @@ public class Variable implements TFunction {
     public int id() {
         return -1;
     }
+
+    @Override
+    public String type() {
+        return "variable";
+    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public TFunction newBuild(final String equation) {

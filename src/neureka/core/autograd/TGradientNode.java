@@ -27,10 +27,26 @@ public class TGradientNode {
      *  ----------+----------------------------------+-
      * */
 
-    private HashMap<T, T> map = new HashMap<T, T>();
-    private int mode = 0;
+    /**
+     * Recorded Function and Source tensors
+     * */
     private TFunction function = null;
     private T[] source = null;
+
+    /**
+     * Keys are targets and values are gradients with respect to that target
+     * (Note: values can be null if the recorded function is of type 'reshape')
+     * */
+
+    private HashMap<T, T> map = new HashMap<T, T>();
+
+
+    /**
+     * Forward or Backward AD ?
+     * */
+    private int mode = 0;
+
+
 
     public TGradientNode(int m, TFunction f, T[] src){
         this.mode = m;
@@ -38,7 +54,7 @@ public class TGradientNode {
         this.source = src;
     }
 
-    public void trimTree(T target){
+    public void trimTree(T target){// Find and remove redundant targets:
         if(source==null){
             return;
         }

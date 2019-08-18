@@ -27,6 +27,58 @@ public class T {
     }
     //-----------------------------------------------------------------------
 
+    //MODULE I / O :
+    //=========================
+    private ArrayList<Object> Modules = new ArrayList<Object>();
+    //-----------------------------------------------------------------------
+    public ArrayList<Object> getModules() {
+        return Modules;
+    }
+    public void setModules(ArrayList<Object> properties) {
+        Modules = properties;
+    }
+    public void add(Object newModule) {
+        if (Modules != null) {
+            Object oldCompartment = find(newModule.getClass());
+            if (oldCompartment != null) {
+                Modules.remove(oldCompartment);
+                Modules.trimToSize();
+            }
+            Modules.add((newModule instanceof  int[])?cached((int[])newModule):newModule);
+        } else {
+            Modules = new ArrayList<>();
+            Modules.add(newModule);
+        }
+    }
+    public Object find(Class moduleClass) {
+        if (Modules != null) {
+            for (int Pi = 0; Pi < Modules.size(); Pi++) {
+                if (moduleClass.isInstance(Modules.get(Pi))) {
+                    return Modules.get(Pi);
+                }
+            }
+        }
+        return null;
+    }
+    public void remove(Class moduleClass) {
+        Object oldCompartment = find(moduleClass);
+        if (oldCompartment != null) {
+            Modules.remove(oldCompartment);
+            Modules.trimToSize();
+        }
+        if (Modules.size() == 0) {
+            Modules = null;
+        }
+    }
+    public boolean has(Class moduleClass) {
+        if (find(moduleClass) != null) {
+            return true;
+        }
+        return false;
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
     //DATA FIELDS:
     //=========================
     protected int[] shape = null;
@@ -140,57 +192,6 @@ public class T {
             }
             this.remove(TDevice.class);
         }
-    }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    //MODULE I / O :
-    //=========================
-    private ArrayList<Object> Modules = new ArrayList<Object>();
-    //-----------------------------------------------------------------------
-    public ArrayList<Object> getModules() {
-        return Modules;
-    }
-    public void setModules(ArrayList<Object> properties) {
-        Modules = properties;
-    }
-    public void add(Object newModule) {
-        if (Modules != null) {
-            Object oldCompartment = find(newModule.getClass());
-            if (oldCompartment != null) {
-                Modules.remove(oldCompartment);
-                Modules.trimToSize();
-            }
-            Modules.add((newModule instanceof  int[])?cached((int[])newModule):newModule);
-        } else {
-            Modules = new ArrayList<>();
-            Modules.add(newModule);
-        }
-    }
-    public Object find(Class moduleClass) {
-        if (Modules != null) {
-            for (int Pi = 0; Pi < Modules.size(); Pi++) {
-                if (moduleClass.isInstance(Modules.get(Pi))) {
-                    return Modules.get(Pi);
-                }
-            }
-        }
-        return null;
-    }
-    public void remove(Class moduleClass) {
-        Object oldCompartment = find(moduleClass);
-        if (oldCompartment != null) {
-            Modules.remove(oldCompartment);
-            Modules.trimToSize();
-        }
-        if (Modules.size() == 0) {
-            Modules = null;
-        }
-    }
-    public boolean has(Class moduleClass) {
-        if (find(moduleClass) != null) {
-            return true;
-        }
-        return false;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

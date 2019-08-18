@@ -21,6 +21,12 @@ public class Constant implements TFunction
 	}
 
 	@Override
+	public String type() {
+		return "value";
+	}
+
+
+	@Override
 	public TFunction newBuild(String expression)
 	{	
 		String number = "";

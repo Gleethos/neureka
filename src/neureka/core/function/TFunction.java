@@ -9,6 +9,7 @@ public interface TFunction
 	public String toString();
 	public boolean isFlat();
 	public int id();
+	public String type();
 	//-------------------------------------------
 	public double activate(double[] input, int j);// Iteration over input via j !
 	public double activate(double[] input);

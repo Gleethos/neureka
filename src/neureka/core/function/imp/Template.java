@@ -34,6 +34,12 @@ public abstract class Template implements TFunction {
     }
 
     @Override
+    public String type() {
+        return Context.REGISTER[f_id];
+    }
+
+
+    @Override
     public TFunction newBuild(String expression){
         return TFunctionFactory.newBuild(expression, true);
     }
@@ -129,7 +135,7 @@ public abstract class Template implements TFunction {
             });
         }
         if(!derive){
-            TGraphBuilder.connect(output, new T[]{input}, f_id, true);
+            TGraphBuilder.connect(output, new T[]{input}, this, true);
         }
         return output;
     }
@@ -260,7 +266,7 @@ public abstract class Template implements TFunction {
         }
         if(d<0){
             T[] tsrs = input;
-            TGraphBuilder.connect(output, tsrs, f_id, true);//TODO: remove f_id here and just pass on 'this'
+            TGraphBuilder.connect(output, tsrs, this, true);//TODO: remove f_id here and just pass on 'this'
         }
         return output;
     }

@@ -16,6 +16,12 @@ public class Input implements TFunction
     public int id() {
         return -1;
     }
+
+    @Override
+    public String type() {
+        return "input";
+    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public TFunction newBuild(final String equation) {
