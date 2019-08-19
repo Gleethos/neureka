@@ -1,4 +1,4 @@
-package neureka.core.function.imp;
+package neureka.core.function.factory.material;
 
 import neureka.core.T;
 import neureka.core.function.TFunction;

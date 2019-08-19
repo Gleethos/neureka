@@ -2,10 +2,10 @@ package neureka.core.function.factory;
 
 import neureka.core.T;
 import neureka.core.function.*;
-import neureka.core.function.imp.Constant;
-import neureka.core.function.imp.Input;
-import neureka.core.function.imp.Template;
-import neureka.core.function.imp.Variable;
+import neureka.core.function.factory.material.Constant;
+import neureka.core.function.factory.material.Input;
+import neureka.core.function.factory.material.Template;
+import neureka.core.function.factory.material.Variable;
 
 import java.util.ArrayList;
 

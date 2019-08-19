@@ -1,10 +1,10 @@
-package neureka.core.function.imp;
+package neureka.core.function.factory.material;
 
 import neureka.core.T;
+import neureka.core.function.TLock;
 import neureka.core.function.factory.TFunctionBuilder;
 import neureka.core.function.autograd.TGraphBuilder;
 import neureka.core.device.TDevice;
-import neureka.core.function.FLock;
 import neureka.core.function.TFunction;
 
 import java.util.ArrayList;
@@ -119,7 +119,7 @@ public abstract class Template implements TFunction {
         T output = T.factory.newTensor(input.shape(), input.translation());
         if(!derive && !this.isFlat){
             output.internalize(new TFunctionBuilder().newBuild(f_id, 1, true).activate(new T[]{input}));
-            output.add((FLock)input.find(FLock.class));
+            output.add((TLock)input.find(TLock.class));
             return output;
         }
         if(input.isOutsourced()){
@@ -133,7 +133,7 @@ public abstract class Template implements TFunction {
         if(!derive){
             TGraphBuilder.connect(output, new T[]{input}, this, true);
         }
-        output.add((FLock)input.find(FLock.class));
+        output.add((TLock)input.find(TLock.class));
         return output;
     }
 
@@ -148,7 +148,7 @@ public abstract class Template implements TFunction {
         if(d<0 && !isFlat){//only flat functions can be executed
             if(f_id<=9){
                 output.internalize(new TFunctionBuilder().newBuild(TFunction.Variables.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])", true).activate(input));
-                output.add((FLock)input[0].find(FLock.class));
+                output.add((TLock)input[0].find(TLock.class));
                 return output;
             }else{
                 if(TFunction.Variables.REGISTER[f_id].length()!=1){
@@ -156,7 +156,7 @@ public abstract class Template implements TFunction {
                      * */
                     T[] tsrs = activateSource(input);
                     output.internalize(TFunctionBuilder.newBuild(TFunction.Variables.REGISTER[f_id]+"(I[j])", true).activate(tsrs));
-                    output.add((FLock)input[0].find(FLock.class));
+                    output.add((TLock)input[0].find(TLock.class));
                     return output;
                 }else if(f_id<=18){
                     /**      +, -, x, *, %, ....// TODO: move this to Function constructor!
@@ -171,7 +171,7 @@ public abstract class Template implements TFunction {
                     }else{
                         output.internalize(TFunctionBuilder.newBuild(operation, true).activate(tsrs, j));
                     }
-                    output.add((FLock)input[0].find(FLock.class));
+                    output.add((TLock)input[0].find(TLock.class));
                     return output;
                 }else{
                     /**
@@ -183,7 +183,7 @@ public abstract class Template implements TFunction {
                     }else{
                         output.internalize(new TFunctionBuilder().newBuild(f_id, tsrs.length, true).activate(tsrs, j));
                     }
-                    output.add((FLock)input[0].find(FLock.class));
+                    output.add((TLock)input[0].find(TLock.class));
                     return output;
                 }
             }

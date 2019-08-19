@@ -1,8 +1,8 @@
 package neureka.core.function.factory;
 
 import neureka.core.function.TFunction;
-import neureka.core.function.imp.Constant;
-import neureka.core.function.imp.Input;
+import neureka.core.function.factory.material.Constant;
+import neureka.core.function.factory.material.Input;
 
 import java.util.*;
 

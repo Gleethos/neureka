@@ -55,19 +55,19 @@ public interface TFunction
 
 	class Cache
 	{
-		private static final TreeMap<FLock, TreeMap<TFunction, T>> CACHE;
+		private static final TreeMap<TLock, TreeMap<TFunction, T>> CACHE;
 		static {
 			CACHE = new TreeMap<>((a, b)->(a.key()-b.key()));
 		}
 
 		public static void free(T[] input){
 			for(T t : input){
-				CACHE.remove(t.find(FLock.class));
-				t.remove(FLock.class);
+				CACHE.remove(t.find(TLock.class));
+				t.remove(TLock.class);
 			}
 		}
 		public static T handle(T[] input, TFunction function, Supplier<T> activation){
-			FLock lock = (FLock) input[0].find(FLock.class);
+			TLock lock = (TLock) input[0].find(TLock.class);
 			T result = (!function.isFlat())? get(lock, function):null;
 			if(result==null){
 				result = activation.get();
@@ -77,7 +77,7 @@ public interface TFunction
 			}
 			return result;
 		}
-		private static T get(FLock lock, TFunction function){//function and source
+		private static T get(TLock lock, TFunction function){//function and source
 			if(Cache.CACHE.containsKey(lock)){
 				if(CACHE.get(lock).containsKey(function)){
 					return CACHE.get(lock).get(function);
@@ -85,7 +85,7 @@ public interface TFunction
 			}
 			return null;
 		}
-		private static void put(T t, FLock lock, TFunction function){
+		private static void put(T t, TLock lock, TFunction function){
 			TreeMap<TFunction, T> variables = null;
 			if(!CACHE.containsKey(lock)){
 				variables = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
@@ -103,7 +103,7 @@ public interface TFunction
 	}
 
 	static void execute(T drain, T[] tensors, TFunction function){
-		FLock lock = new FLock(function);
+		TLock lock = new TLock(function);
 		for(T t : tensors){
 			t.add(lock);
 		}
