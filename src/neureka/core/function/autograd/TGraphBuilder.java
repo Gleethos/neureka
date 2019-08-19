@@ -1,7 +1,6 @@
-package neureka.core.autograd;
+package neureka.core.function.autograd;
 
 import neureka.core.T;
-import neureka.core.function.TFunctionFactory;
 import neureka.core.function.TFunction;
 
 import java.util.function.Consumer;
@@ -25,19 +24,8 @@ public class TGraphBuilder {
      *  ----------+----------------------------------+-
      * */
 
-    /**
-     *   CONSTRUCTOR:
-     * */
-    public TGraphBuilder(T drain, T[] src, int[][] translation, String operation){
-        T[] translated = new T[src.length];
-        for(int i=0; i<translated.length&&i<translation.length; i++){
-            translated[i] = T.factory.reshapedCopyOf(src[i], translation[i]);//src[i].reshaped(translation[i]);
-        }
-    }
-
-    public static void connect(T drain, T[] src, TFunction f, boolean derive){//, boolean derive
-        TFunction function = f;//new TFunctionFactory().newBuild(f_id, src.length, true);
-        int mode = configure(src, function);
+    public static void connect(T drain, T[] src, TFunction function, boolean derive){//, boolean derive
+        int mode = modeOf(src, function);
         if(function.isFlat()&&derive){
             performDifferentiation(drain, function, src, mode);
         }
@@ -45,7 +33,7 @@ public class TGraphBuilder {
 
     private static void validate(String operation, TFunction function, T[] source){
         /**
-         *   Evaluating validity:
+         *   Evaluating validity://TODO: function input missmatch detection!
          * */
         if(!operation.contains("x")){
             if(!utility.isValid(source, false)){
@@ -68,7 +56,7 @@ public class TGraphBuilder {
         }
     }
 
-    private static int configure(T[] source, TFunction function){
+    private static int modeOf(T[] source, TFunction function){
         /**
          *  Evaluate auto-grad mode:
          * */

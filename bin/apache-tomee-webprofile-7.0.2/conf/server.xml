@@ -33,7 +33,7 @@
   <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
   <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
 
-  <!-- Global JNDI resources
+  <!-- FGlobal JNDI resources
        Documentation at /docs/jndi-resources-howto.html
   -->
   <GlobalNamingResources>
@@ -54,7 +54,7 @@
    -->
   <Service name="Catalina">
 
-    <!--The connectors can use a SHARED executor, you can define one or more named thread pools-->
+    <!--The connectors can use a FUNCTIONS executor, you can define one or more named thread pools-->
     <!--
     <Executor name="tomcatThreadPool" namePrefix="catalina-exec-"
         maxThreads="150" minSpareThreads="4"/>
@@ -71,7 +71,7 @@
     <Connector port="8080" protocol="HTTP/1.1"
                connectionTimeout="20000"
                redirectPort="8443" xpoweredBy="false" server="Apache TomEE" />
-    <!-- A "Connector" using the SHARED thread pool-->
+    <!-- A "Connector" using the FUNCTIONS thread pool-->
     <!--
     <Connector executor="tomcatThreadPool"
                port="8080" protocol="HTTP/1.1"

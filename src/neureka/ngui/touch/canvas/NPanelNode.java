@@ -492,7 +492,7 @@ public class NPanelNode implements NPanelObject
 			
 			int animationID = 0;
 			// boolean deckCheck=false;
-			// Animation STACK! -> counter counts only animated cases.
+			// Animation CACHE! -> counter counts only animated cases.
 			//=================================================================================================================================================
 			//Animation 0 -> Deck Button
 			//=================================================================================================================================================

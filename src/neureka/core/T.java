@@ -1,8 +1,8 @@
 package neureka.core;
 
-import neureka.core.function.TFunctionFactory;
+import neureka.core.function.TFunction;
 import neureka.core.device.TDevice;
-import neureka.core.autograd.TGradientNode;
+import neureka.core.function.autograd.TGradientNode;
 import neureka.core.utility.DataHelper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +18,7 @@ public class T {
     //=========================
     private static TDevice CPU;
 
-    //STATIC SHARED MEMORY:
+    //STATIC FUNCTIONS MEMORY:
     //=========================
     private static HashMap<Long, int[]> SHARED;
     static {
@@ -29,45 +29,48 @@ public class T {
 
     //MODULE I / O :
     //=========================
-    private ArrayList<Object> Modules = new ArrayList<Object>();
+    private ArrayList<Object> Components = new ArrayList<Object>();
     //-----------------------------------------------------------------------
-    public ArrayList<Object> getModules() {
-        return Modules;
+    public ArrayList<Object> getComponents() {
+        return Components;
     }
-    public void setModules(ArrayList<Object> properties) {
-        Modules = properties;
+    public void setComponents(ArrayList<Object> properties) {
+        Components = properties;
     }
-    public void add(Object newModule) {
-        if (Modules != null) {
-            Object oldCompartment = find(newModule.getClass());
+    public void add(Object newComponent) {
+        if(newComponent==null){
+            return;
+        }
+        if (Components != null) {
+            Object oldCompartment = find(newComponent.getClass());
             if (oldCompartment != null) {
-                Modules.remove(oldCompartment);
-                Modules.trimToSize();
+                Components.remove(oldCompartment);
+                Components.trimToSize();
             }
-            Modules.add((newModule instanceof  int[])?cached((int[])newModule):newModule);
+            Components.add((newComponent instanceof  int[])?cached((int[])newComponent):newComponent);
         } else {
-            Modules = new ArrayList<>();
-            Modules.add(newModule);
+            Components = new ArrayList<>();
+            Components.add(newComponent);
         }
     }
-    public Object find(Class moduleClass) {
-        if (Modules != null) {
-            for (int Pi = 0; Pi < Modules.size(); Pi++) {
-                if (moduleClass.isInstance(Modules.get(Pi))) {
-                    return Modules.get(Pi);
+    public Object find(Class componentClass) {
+        if (Components != null) {
+            for (int Pi = 0; Pi < Components.size(); Pi++) {
+                if (componentClass.isInstance(Components.get(Pi))) {
+                    return Components.get(Pi);
                 }
             }
         }
         return null;
     }
-    public void remove(Class moduleClass) {
-        Object oldCompartment = find(moduleClass);
+    public void remove(Class componentClass) {
+        Object oldCompartment = find(componentClass);
         if (oldCompartment != null) {
-            Modules.remove(oldCompartment);
-            Modules.trimToSize();
+            Components.remove(oldCompartment);
+            Components.trimToSize();
         }
-        if (Modules.size() == 0) {
-            Modules = null;
+        if (Components.size() == 0) {
+            Components = null;
         }
     }
     public boolean has(Class moduleClass) {
@@ -265,7 +268,7 @@ public class T {
         this.shape = tensor.shape;
         this.translation = tensor.translation;
         this.value = new double[tensor.size()];
-        this.Modules = null;//tensor.Modules;
+        this.Components = null;//tensor.Components;
         this.flags = tensor.flags;
         for (int i = 0; i < this.value.length; i++) {
             this.value[i] = tensor.value[i];
@@ -323,18 +326,12 @@ public class T {
     public T(T[] tensors, String operation) {
         construct(tensors, operation);
     }
-    public T(T[] tensors, int[][] translation, String operation) {
-        this.internalize(TFunctionFactory.newBuild(operation, true).activate(tensors));
-        if(this.has(TGradientNode.class)){
-            ((TGradientNode)this.find(TGradientNode.class)).trimTree(null);
-        }
-    }
+
     private void construct(T[] tensors, String operation){
-        if(tensors==null||tensors.length==0||tensors[0]==null){return;}
-        this.internalize(TFunctionFactory.newBuild(operation, true).activate(tensors));
-        if(this.has(TGradientNode.class)){
-            ((TGradientNode)this.find(TGradientNode.class)).trimTree(null);
+        if(tensors==null||tensors.length==0||tensors[0]==null){
+            return;
         }
+        TFunction.execute(this, tensors, operation);
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -378,7 +375,7 @@ public class T {
         this.value = tensor.value;
         this.shape = tensor.shape;
         this.translation = tensor.translation;
-        this.Modules = tensor.Modules;
+        this.Components = tensor.Components;
         this.flags = tensor.flags;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -399,7 +396,7 @@ public class T {
         this.value = null;
         this.shape = null;
         this.translation = null;
-        this.Modules = null;
+        this.Components = null;
         this.gradient = null;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -564,7 +561,7 @@ public class T {
             T tensor = new T();
             tensor.value = new double[T.utility.szeOfShp(shape)];
             tensor.initialShape(shape);
-            tensor.translation = (translation!=null)?translation:tensor.translation;//SHARED.put()
+            tensor.translation = (translation!=null)?translation:tensor.translation;//FUNCTIONS.put()
             return tensor;
         }
 
@@ -573,7 +570,7 @@ public class T {
             newTensor.shape = tensor.shape;
             newTensor.translation = tensor.translation;
             newTensor.value = new double[tensor.size()];
-            newTensor.Modules = null;//tensor.Modules;
+            newTensor.Components = null;//tensor.Components;
             newTensor.flags = tensor.flags;
             double[] value = tensor.value();
             for (int i = 0; i < value.length; i++) {
@@ -597,7 +594,7 @@ public class T {
             newTensor.value = tensor.value;
             newTensor.shape = T.utility.reshaped(tensor.shape, newForm);
             newTensor.translation = T.utility.reshaped(tensor.translation, newForm);
-            newTensor.Modules = tensor.Modules;//Reshaped derivs usw
+            newTensor.Components = tensor.Components;//Reshaped derivs usw
             return newTensor;
         }
     }

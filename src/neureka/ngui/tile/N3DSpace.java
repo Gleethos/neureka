@@ -76,7 +76,7 @@ public class N3DSpace {
        System.out.println(device.toString());
    	  //-----------------------------------------------------------------------------------
        int gs = PointTracer.pcount(); 
-       System.out.println("Global thread size: "+gs);  
+       System.out.println("FGlobal thread size: "+gs);
        com.aparapi.Range range = device.createRange(gs);
        try 
        {//===================================================

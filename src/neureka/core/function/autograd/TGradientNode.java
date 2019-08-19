@@ -1,14 +1,12 @@
-package neureka.core.autograd;
+package neureka.core.function.autograd;
 
 import neureka.core.T;
 import neureka.core.function.TFunction;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 
-public class TGradientNode {
+public class TGradientNode{
 
     /**
      *  These functions describe the meaning of 'mode'
@@ -37,15 +35,12 @@ public class TGradientNode {
      * Keys are targets and values are gradients with respect to that target
      * (Note: values can be null if the recorded function is of type 'reshape')
      * */
-
-    private HashMap<T, T> map = new HashMap<T, T>();
-
+    private TreeMap<T, T> targets_gradients = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
 
     /**
      * Forward or Backward AD ?
      * */
     private int mode = 0;
-
 
 
     public TGradientNode(int m, TFunction f, T[] src){
@@ -69,7 +64,7 @@ public class TGradientNode {
                 if(true||this.function.id()!=18){
                     b.delete();
                 }
-                this.map.remove(b);
+                this.targets_gradients.remove(b);
             });
             for(T src : this.source){
                 if(src.has(TGradientNode.class)){
@@ -113,19 +108,19 @@ public class TGradientNode {
     }
 
     public void put(T key, T value){
-        map.put(key, value);
+        targets_gradients.put(key, value);
     }
     public T get(T key){
-        return map.get(key);
+        return targets_gradients.get(key);
     }
     public boolean has(T key){
-        return map.containsKey(key);
+        return targets_gradients.containsKey(key);
     }
     public Set<T> sources(){
-        return map.keySet();
+        return targets_gradients.keySet();
     }
     public void forEach(BiConsumer<T, T> action){
-        map.forEach(action);
+        targets_gradients.forEach(action);
     }
 
 }

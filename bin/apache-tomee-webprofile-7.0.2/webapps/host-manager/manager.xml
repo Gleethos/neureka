@@ -17,7 +17,7 @@
 -->
 <!--
 
-    Context configuration file for the Tomcat Manager Web App
+    FGlobal configuration file for the Tomcat Manager Web App
 
 -->
 <Context docBase="${catalina.home}/webapps/manager"

@@ -92,7 +92,7 @@
                        construct filenames and directories.
                        Defaults to "myapp".
 
-  app.path             Context path to which this application should be
+  app.path             FGlobal path to which this application should be
                        deployed (defaults to "/" plus the value f the
                        "app.name" property).
 

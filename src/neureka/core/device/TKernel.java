@@ -1,7 +1,7 @@
 package neureka.core.device;
 import com.aparapi.Kernel;
 import neureka.core.T;
-import neureka.core.function.util.Context;
+import neureka.core.function.TFunction;
 
 public class TKernel extends Kernel
 {
@@ -567,18 +567,18 @@ public class TKernel extends Kernel
         if (d<0) {
             if (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)] >= 0) {
                 this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                        (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)] + Context.BIAS) *Context.INCLINATION;
+                        (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)] + TFunction.Variables.BIAS) * TFunction.Variables.INCLINATION;
             } else {
                 this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                        (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)] + Context.BIAS) * Context.RELU_INCLINATION;
+                        (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)] + TFunction.Variables.BIAS) * TFunction.Variables.RELU_INCLINATION;
             }
         } else {
             if (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)] >= 0) {
                 this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                        Context.INCLINATION;
+                        TFunction.Variables.INCLINATION;
             } else {
                 this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                        Context.RELU_INCLINATION;
+                        TFunction.Variables.RELU_INCLINATION;
             }
         }
     }
