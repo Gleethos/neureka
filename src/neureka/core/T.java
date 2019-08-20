@@ -2,7 +2,7 @@ package neureka.core;
 
 import neureka.core.function.TFunction;
 import neureka.core.device.TDevice;
-import neureka.core.function.autograd.TGradientNode;
+import neureka.core.autograd.TGradientNode;
 import neureka.core.utility.DataHelper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -20,9 +20,9 @@ public class T {
 
     //STATIC FUNCTIONS MEMORY:
     //=========================
-    private static HashMap<Long, int[]> SHARED;
+    private static HashMap<Long, int[]> CONFIGS;
     static {
-        SHARED = new HashMap<>();//The things we do for memory
+        CONFIGS = new HashMap<>();//The things we do for memory
         CPU = new TDevice(null);//<= creates CPU-Aparapi-Kernel
     }
     //-----------------------------------------------------------------------
@@ -307,11 +307,11 @@ public class T {
             }
             key += Math.abs(data[i]);
         }
-        int[] found = SHARED.get(key);
+        int[] found = CONFIGS.get(key);
         if (found != null) {
             return found;
         } else {
-            SHARED.put(key, data);
+            CONFIGS.put(key, data);
             return data;
         }
     }
@@ -420,63 +420,68 @@ public class T {
             action.accept(i, value[T.utility.idxOfShpIdxAndShp(idx, this.shape())]);
         }
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    public double e_get(int i) {
-        if(this.isEmpty()||this.isUndefined()){
-            return 0;
-        }
-        return this.value()[T.utility.idxOfShpIdxAndShp(shpIdx(i), shape)];
-    }
-    public double e_get(int[] idx) {
-        return value[T.utility.idxOfShpIdxAndShp(idx, shape)];
-    }
-    public void e_set(int i, double value) {
-        this.value[T.utility.idxOfShpIdxAndShp(shpIdx(i), shape)] = value;
-    }
-    public void e_set(int[] idx, double value) {
-        this.value[T.utility.idxOfShpIdxAndShp(idx, shape)] = value;
-    }
-    public void e_add(int i, double value) {
-        this.value[T.utility.idxOfShpIdxAndShp(shpIdx(i), shape)] += value;
-    }
-    public void e_add(int[] idx, double value) {
-        this.value[T.utility.idxOfShpIdxAndShp(idx, shape)] += value;
-    }
-    public void e_sub(int i, double value) {
-        this.value[T.utility.idxOfShpIdxAndShp(shpIdx(i), shape)] -= value;
-    }
-    public void e_sub(int[] idx, double value) {
-        this.value[T.utility.idxOfShpIdxAndShp(idx, shape)] -= value;
-    }
-    public void e_mul(int i, double value) {
-        this.value[T.utility.idxOfShpIdxAndShp(shpIdx(i), shape)] *= value;
-    }
-    public void e_mul(int[] idx, double value) {
-        this.value[T.utility.idxOfShpIdxAndShp(idx, shape)] *= value;
-    }
-    public T e_add(T tensor) {
-        int[] index = new int[shape.length];
-        int size = size();
-        for (int i = 0; i < size; i++) {
-            e_add(index, tensor.e_get(index));
-            T.utility.increment(index, shape);
-        }
-        return tensor;
-    }
-    public void e_sub(T tensor) {
-        int[] index = new int[shape.length];
-        int size = size();
-        for (int i = 0; i < size; i++) {
-            this.e_sub(index, tensor.e_get(index));
-            T.utility.increment(index, shape);
-        }
-    }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     /**
      *    ======================================================================================================
      *    FACTORY FUNCTIONS:
      * */
     public static class factory{
+
+        public static class io {
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            public static double getFrom(T t, int i) {
+                if(t.isEmpty()||t.isUndefined()){
+                    return 0;
+                }
+                return t.value()[T.utility.idxOfShpIdxAndShp(t.shpIdx(i), t.shape())];
+            }
+            public static double getFrom(T t, int[] idx) {
+                return t.value()[T.utility.idxOfShpIdxAndShp(idx, t.shape())];
+            }
+            public static void setInto(T t, int i, double value) {
+                t.value()[T.utility.idxOfShpIdxAndShp(t.shpIdx(i), t.shape())] = value;
+            }
+            public static void setInto(T t, int[] idx, double value) {
+                t.value()[T.utility.idxOfShpIdxAndShp(idx, t.shape())] = value;
+            }
+            public static void addInto(T t, int i, double value) {
+                t.value()[T.utility.idxOfShpIdxAndShp(t.shpIdx(i), t.shape())] += value;
+            }
+            public static void addInto(T t, int[] idx, double value) {
+                t.value()[T.utility.idxOfShpIdxAndShp(idx, t.shape)] += value;
+            }
+            public static T addInto(T t, T tensor) {
+                int[] index = new int[t.shape().length];
+                int size = t.size();
+                for (int i = 0; i < size; i++) {
+                    io.addInto(t, index, io.getFrom(tensor, index));
+                    T.utility.increment(index, t.shape());
+                }
+                return tensor;
+            }
+            public static void subInto(T t, int i, double value) {
+                t.value()[T.utility.idxOfShpIdxAndShp(t.shpIdx(i), t.shape())] -= value;
+            }
+            public static void subInto(T t, int[] idx, double value) {
+                t.value()[T.utility.idxOfShpIdxAndShp(idx, t.shape())] -= value;
+            }
+            public static void subInto(T t, T tensor) {
+                int[] index = new int[t.shape().length];
+                int size = t.size();
+                for (int i = 0; i < size; i++) {
+                    io.subInto(t, index, io.getFrom(tensor, index));
+                    T.utility.increment(index, t.shape());
+                }
+            }
+            public static void mulInto(T t, int i, double value) {
+                t.value()[T.utility.idxOfShpIdxAndShp(t.shpIdx(i), t.shape())] *= value;
+            }
+            public static void mulInto(T t, int[] idx, double value) {
+                t.value()[T.utility.idxOfShpIdxAndShp(idx, t.shape)] *= value;
+            }
+
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        }
 
         public static void inject(double[] data, boolean grd, T tensor){
             if(grd) {
@@ -516,7 +521,7 @@ public class T {
             int[] index = new int[drn.shape().length];
             int size = drn.size();
             for(int i=0; i<size; i++){
-                drn.e_add(index, tensor1.e_get(index)*tensor2.e_get(index));
+                io.addInto(drn, index, io.getFrom(tensor1, index)* io.getFrom(tensor2, index));
                 T.utility.increment(index, drn.shape());
             }
             return drn;
@@ -527,7 +532,7 @@ public class T {
             int[] index = new int[drn.shape().length];
             int size = drn.size();
             for(int i=0; i<size; i++){
-                drn.e_add(index, tensor1.e_get(index)+tensor2.e_get(index));
+                io.addInto(drn, index, io.getFrom(tensor1, index)+ io.getFrom(tensor2, index));
                 T.utility.increment(index, drn.shape());
             }
             return drn;
@@ -928,7 +933,7 @@ public class T {
                             id++;
                         }
                     }
-                }//e_set value in drn:
+                }//setInto value in drn:
                 int idx = idxOfFrmt_mxd(drn, rank);
                 data[2][dataPtr[2] + idx] = value;
                 System.out.println(idx + " - " + i);

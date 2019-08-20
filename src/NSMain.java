@@ -158,7 +158,7 @@ public class NSMain {
 		window.setUndecorated(false);
 		
 		N3DSpace plot = new N3DSpace(400);
-		window.getContentPane().e_add(plot.getSurface());
+		window.getContentPane().addInto(plot.getSurface());
 		window.setVisible(true);
 		
 		Thread.sleep(1000);
@@ -175,7 +175,7 @@ public class NSMain {
 		
 		//NDoubleArray Storage = new NDoubleArray(4);
 		//for(int i=0; i<Storage.length(); i++) 
-		//{Storage.DataHelper[i].e_set(3); System.out.println(DataHelper.e_get(i));}
+		//{Storage.DataHelper[i].setInto(3); System.out.println(DataHelper.getFrom(i));}
 		//NNetworkWindow nw = new NNetworkWindow();
 		//nw.start(new Stage());
 

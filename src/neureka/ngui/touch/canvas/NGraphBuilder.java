@@ -373,7 +373,7 @@ public class NGraphBuilder {
 						{
 							if(newMenu!=null) {newMenu.modifyAnimationState((int)-mod);}
 						}
-						System.out.println("dragged at distance: "+distance+"; mod: "+mod);
+						System.out.println("dragged at distance: "+distance+"; io: "+mod);
 					}
 				}
 				else

@@ -326,7 +326,7 @@
   <!--                        CGI servlet.                                  -->
   <!--                        [System.getProperty("file.encoding","UTF-8")] -->
   <!--                                                                      -->
-  <!--   passShellEnvironment Should the shell environment variables (if    -->
+  <!--   passShellEnvironment Should the shell environment F_CACHE (if    -->
   <!--                        any) be passed to the CGI script? [false]     -->
   <!--                                                                      -->
   <!--   stderrTimeout        The time (in milliseconds) to wait for the    -->
@@ -355,7 +355,7 @@
 
   <!-- The servlet mappings for the built in servlets defined above.  Note  -->
   <!-- that, by default, the CGI and SSI servlets are *not* mapped.  You    -->
-  <!-- must uncomment these mappings (or e_add them to your application's own -->
+  <!-- must uncomment these mappings (or addInto them to your application's own -->
   <!-- web.xml deployment descriptor) to enable these services              -->
 
     <!-- The mapping for the default servlet -->
@@ -465,7 +465,7 @@
 
 
   <!-- ==================== Default Session Configuration ================= -->
-  <!-- You can e_set the default session timeout (in minutes) for all newly   -->
+  <!-- You can setInto the default session timeout (in minutes) for all newly   -->
   <!-- created sessions by modifying the value below.                       -->
 
     <session-config>

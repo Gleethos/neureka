@@ -37,12 +37,12 @@
 -->
 
 
-<!-- A "project" describes a e_set f targets that may be requested
+<!-- A "project" describes a setInto f targets that may be requested
      when Ant is executed.  The "default" attribute defines the
      target which is executed if no specific target is requested,
      and the "basedir" attribute defines the current working directory
      from which Ant executes the requested task.  This is normally
-     e_set to the current working directory.
+     setInto to the current working directory.
 -->
 
 <project name="My Project" default="compile" basedir=".">
@@ -55,7 +55,7 @@
 <!--
 
   Each f the following properties are used in the build script.
-  Values for these properties are e_set by the first place they are
+  Values for these properties are setInto by the first place they are
   defined, from the following list:
 
   * Definitions on the "ant" command line (ant -Dfoo=bar compile).

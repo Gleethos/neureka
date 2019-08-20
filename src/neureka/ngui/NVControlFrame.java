@@ -141,7 +141,7 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 		panel.add(commandField, BorderLayout.SOUTH);
 		panel.setBackground(Color.DARK_GRAY);
    	    panel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-		///this.getContentPane().e_add(inputField, BorderLayout.SOUTH);
+		///this.getContentPane().addInto(inputField, BorderLayout.SOUTH);
 		
 		//==============================================================================================================
 		JSplitPane horizontalSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -319,8 +319,8 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
             	 			   		indexingSubPanel.add(new JLabel("Indexing:",JLabel.CENTER), BorderLayout.NORTH);
             	 			   	    //indexingSubPanel.setBackground(Color.DARK_GRAY);
             	 	     	        indexingSubPanel.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 0));
-            	 			   		//indexingSubPanel.e_add(shiftIndexingField, BorderLayout.CENTER);
-            	 			   		//indexingSubPanel.e_add(weightIndexingField, BorderLayout.SOUTH);
+            	 			   		//indexingSubPanel.addInto(shiftIndexingField, BorderLayout.CENTER);
+            	 			   		//indexingSubPanel.addInto(weightIndexingField, BorderLayout.SOUTH);
             	 			   			JPanel indexingModPanel = new JPanel();
             	 			   				indexingModPanel.setLayout(new BoxLayout(indexingModPanel, BoxLayout.PAGE_AXIS));
             	 			   				indexingModPanel.add(inputIndexingField);
@@ -331,8 +331,8 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
             	 			   	JPanel valueSubPanel = new JPanel();
             	 			   		valueSubPanel.setLayout(new BorderLayout());
             	 			   		valueSubPanel.add(new JLabel("Values:",JLabel.CENTER), BorderLayout.NORTH);
-            	 			   		//valueSubPanel.e_add(shiftModField, BorderLayout.CENTER);
-            	 			   		//valueSubPanel.e_add(weightModField, BorderLayout.SOUTH);
+            	 			   		//valueSubPanel.addInto(shiftModField, BorderLayout.CENTER);
+            	 			   		//valueSubPanel.addInto(weightModField, BorderLayout.SOUTH);
             	 			   			JPanel valueModPanel = new JPanel();
             	 			   				valueModPanel.setLayout(new BoxLayout(valueModPanel, BoxLayout.PAGE_AXIS));
             	 			   				valueModPanel.add(shiftModField);
@@ -384,10 +384,10 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
             	 			   	            
             	 			   				VariableResetButton = new JButton("RESET");
             	 			   			    VariableResetButton.addActionListener(this);
-            	 			   			//	VariableActionButtonPanel.e_add(VariableUpdateButton, cons);
-            	 			   		    //	VariableActionButtonPanel.e_add(VariableResetButton, cons);
-            	 			   			  //  VariableActionButtonPanel.e_add(VariableUpdateButton, BorderLayout.NORTH);
-                	 			   			//VariableActionButtonPanel.e_add(VariableResetButton, BorderLayout.SOUTH);
+            	 			   			//	VariableActionButtonPanel.addInto(VariableUpdateButton, cons);
+            	 			   		    //	VariableActionButtonPanel.addInto(VariableResetButton, cons);
+            	 			   			  //  VariableActionButtonPanel.addInto(VariableUpdateButton, BorderLayout.NORTH);
+                	 			   			//VariableActionButtonPanel.addInto(VariableResetButton, BorderLayout.SOUTH);
                 	 			   				JPanel updateContainer = new JPanel();
                 	 			   				updateContainer.setLayout(new BorderLayout());
                 	 			   				updateContainer.add(VariableUpdateButton, BorderLayout.CENTER);
@@ -639,7 +639,7 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
         
         }
         
-        if(e.getSource() == VariableUpdateButton) {System.out.println("Value mod update button pressed!");
+        if(e.getSource() == VariableUpdateButton) {System.out.println("Value io update button pressed!");
         if(isInteger(historyIndexingField.getText())) {// double
         	try
         	{
@@ -662,7 +662,7 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
         
         }
         
-        if(e.getSource() == VariableUpdateButton) {System.out.println("Optimum mod update button pressed!");
+        if(e.getSource() == VariableUpdateButton) {System.out.println("Optimum io update button pressed!");
     
         	try
         	{
@@ -922,7 +922,7 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 		         weightModField.setText("Weight: "+newValue);
 		       }
 			    else
-			   {System.out.println("Weight mod not acceptable!");
+			   {System.out.println("Weight io not acceptable!");
 			   weightModField.setText("---");
 			   }		
 			
@@ -938,7 +938,7 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 		         shiftModField.setText("Bias: "+newValue);
 		       }
 			    else
-			   {System.out.println("Bias mod not acceptable!");
+			   {System.out.println("Bias io not acceptable!");
 			   shiftModField.setText("0");
 			   }
 			
@@ -980,7 +980,7 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 		       }
 			    else
 			   {
-			    	System.out.println("Value index mod not acceptable!");
+			    	System.out.println("Value index io not acceptable!");
 			    	inputIndexingField.setText("0");
 			   }
 		}
@@ -1031,7 +1031,7 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 		}
 		
 		if(outputFieldEntered) {
-			System.out.println("optaining output mod...");
+			System.out.println("optaining output io...");
 		    if(isInteger(activationModField.getText())) 
 		       { int newValue = parseInteger(activationModField.getText()); System.out.println("New output: "+newValue);
 			    //workload=newWorkload;
@@ -1039,7 +1039,7 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 		         activationModField.setText("Activation: "+newValue);
 		       }
 			    else
-			   {System.out.println("Output mod not acceptable!");
+			   {System.out.println("Output io not acceptable!");
 			   activationModField.setText("---");
 			   }
 		}
@@ -1052,7 +1052,7 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 		         inputModField.setText("Value: "+newValue);
 		       }
 			    else
-			   {System.out.println("Value mod not acceptable!");
+			   {System.out.println("Value io not acceptable!");
 			   inputModField.setText("---");
 			   }
 		}

@@ -225,7 +225,7 @@ public class NVPlot extends JPanel{
 				if(PressPoint[0]<0) {PressPoint[0]=0;}
 				if(distance>pressRadius) {PressPoint = null;}
 
-				System.out.println("dragged at distance: "+distance+"; mod: "+mod);
+				System.out.println("dragged at distance: "+distance+"; io: "+mod);
 			}
 
 			translatePanel((grabbedX-oldGrabbedX),(grabbedY-oldGrabbedY));

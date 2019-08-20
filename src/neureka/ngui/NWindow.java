@@ -95,7 +95,7 @@ public class NWindow implements ActionListener, KeyListener, MouseListener, Mous
 		
 		JPanel MainPanel = new JPanel();
 	   		MainPanel.setLayout(new BorderLayout());
-	   		//MainPanel.e_add(new JLabel("Node display:",JLabel.CENTER), BorderLayout.NORTH);
+	   		//MainPanel.addInto(new JLabel("Node display:",JLabel.CENTER), BorderLayout.NORTH);
 	   		MainPanel.setBackground(Color.CYAN);
 	   		MainPanel.add(GraphBuilder.getSurface(), BorderLayout.CENTER);
 

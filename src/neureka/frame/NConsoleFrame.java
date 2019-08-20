@@ -32,7 +32,7 @@ public class NConsoleFrame extends JFrame{
 			this.setLocationRelativeTo(null);
 
 		outputField = new JTextArea();
-		outputField.setText("This little area here is where you e_get your feedback:  :D " + "\n");
+		outputField.setText("This little area here is where you getFrom your feedback:  :D " + "\n");
 		// outputField.setBorder(BorderFactory.createLineBorder(Color.black));
 		outputField.setEditable(false);
 
@@ -67,7 +67,7 @@ public class NConsoleFrame extends JFrame{
 				});
 		this.add(scroll, BorderLayout.CENTER);
 
-		// this.e_add(outputField, BorderLayout.CENTER);
+		// this.addInto(outputField, BorderLayout.CENTER);
 
 		inputField = new JTextField();
 		inputField.setToolTipText("Insert input here!");

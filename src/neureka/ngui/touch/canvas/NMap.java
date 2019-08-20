@@ -182,7 +182,7 @@ public class NMap extends NMap_I {
 		if(BRNode  ==null) {counter++;}
 		if(Elements==null) {counter++;}
 		if(counter==5) {return null;}
-		//If the node is a branch: return ... else e_get leave elements and put them into an new branch!
+		//If the node is a branch: return ... else getFrom leave elements and put them into an new branch!
 		if(counter==4 && Elements==null)
 		{
 			if(TLNode!=null) {return TLNode;}
@@ -566,8 +566,8 @@ public class NMap extends NMap_I {
 
 	//=> EdgeLeave
 	/*
-	 * e_get(i)
-	 * e_add(NMap node)
+	 * getFrom(i)
+	 * addInto(NMap node)
 	 * remove(NMap node)
 	 * forEach(action){}
 	 *
@@ -627,7 +627,7 @@ public class NMap extends NMap_I {
 					return newNode;//new grid
 				}
 			}
-			Elements.put(node,node);//Elements.e_add(node);
+			Elements.put(node,node);//Elements.addInto(node);
 			return this;
 		}
 		//==============================================================================

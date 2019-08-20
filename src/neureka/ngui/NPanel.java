@@ -418,7 +418,7 @@ public class NPanel extends JPanel implements NPanel_I, ActionListener{
 							
 						layeredQueue = newQueue;
 					}
-					//layeredQueue[0].e_add(thing);// has connections? is within frame?
+					//layeredQueue[0].addInto(thing);// has connections? is within frame?
 					for(int Li=0; Li<layeredQueue.length; Li++) 
 					{
 						if((thing).needsRepaintOnLayer(Li)) {layeredQueue[Li].add(thing);}

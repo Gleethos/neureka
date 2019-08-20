@@ -73,7 +73,7 @@ public class PanelNode extends Node implements NPanelObject
 	public void addInputNode() 
 	{
 		InputNode.add(new NPanelNodeInput(getX(), getY(), diameter/2));
-		//InputField.e_get(InputField.size()-1).noticeChange();
+		//InputField.getFrom(InputField.size()-1).noticeChange();
 		//System.out.println("old connection input size: "+this.getTensor().inputSize());
 		//this.getTensor().updateConnectionMatrix(this.getTensor().getInputSize(), false);
 		//this.getTensor().addInput(this.getTensor().inputSize());
@@ -132,7 +132,7 @@ public class PanelNode extends Node implements NPanelObject
 			double vectorY = position[1]-centerY;
 			//double alpha = Math.atan2(newVecX, newVecY)-Math.atan2(vectorX, vectorY);
 			for(int Ii=0; Ii<InputNode.size(); Ii++) 
-		    {//InputNodevv.e_get(Ii).rotate(alpha);
+		    {//InputNodevv.getFrom(Ii).rotate(alpha);
 			 queue.addAll(InputNode.get(Ii).adjustOrbit(getX(), getY(), diameter/2));
 			 
 		     queue.addAll(InputNode.get(Ii).moveCircular(data, Surface));//alpha, centerX, centerY
@@ -151,7 +151,7 @@ public class PanelNode extends Node implements NPanelObject
 			//	for(int Ni=0; Ni<nodes.length; Ni++) {
 			//		if(nodes[Ni]!=null) {
 			//			PanelNode panelNode = (PanelNode) nodes[Ni].asCore().findModule(PanelNode.class);
-			//			if(panelNode!=null) {System.out.println("MoveCircular: ->e_sub root nodes move rotating: Ni "+Ni);
+			//			if(panelNode!=null) {System.out.println("MoveCircular: ->subInto root nodes move rotating: Ni "+Ni);
 			//				vectorX = panelNode.getX()-position[2];
 			//				vectorY = panelNode.getY()-position[3];
 			//				data[1]=position[2];
@@ -199,7 +199,7 @@ public class PanelNode extends Node implements NPanelObject
 			   }
 		}//else...
 		else 
-		{//test for nodes (e_set position only within bounds)
+		{//test for nodes (setInto position only within bounds)
 			if(this.getTensor().rqsGradient()) {
 				if(position.length==4) 
 				{
@@ -407,9 +407,9 @@ public class PanelNode extends Node implements NPanelObject
 		//		        	   						double a = Math.abs(InputNode.get(Ii).angleOf(getX(), getY())-InputNode.get(Ii).angleOf(getX(), getY()));
 		//		        	   						if(a > Math.PI/6)
 		//		        	   						{
-		//		        	   							//queue.e_add(InputNode.e_get(Ii).getRepaintSpace(getX(), getY(), diameter/2));
-		//		      	   							//InputNode.e_get(Ii).rotateTowards(-directionX, -directionY);
-		//		        	   						//queue.addAll(InputNode.e_get(Ii).adjustWithRespectTo(-directionX, -directionY, getX(), getY(), InputNode));
+		//		        	   							//queue.addInto(InputNode.getFrom(Ii).getRepaintSpace(getX(), getY(), diameter/2));
+		//		      	   							//InputNode.getFrom(Ii).rotateTowards(-directionX, -directionY);
+		//		        	   						//queue.addAll(InputNode.getFrom(Ii).adjustWithRespectTo(-directionX, -directionY, getX(), getY(), InputNode));
 		//		        	   						double[] newData = {InputNode.get(Ii).getX(), InputNode.get(Ii).getY(), position[2], position[3]};
 		//
 		//		        	   						queue.addAll(InputNode.get(Ii).moveCircular(newData, HostPanel));
@@ -425,7 +425,7 @@ public class PanelNode extends Node implements NPanelObject
 		//		        	   						//System.out.println("Adjustment! for rim node...");
 		//		        	   						position[0]+=directionX*delta;
 		//		        	   						position[1]+=directionY*delta;
-		//		        	   						//queue.e_add(new NPanelRepaintSpace((position[0]), (position[1]), (1.3*diameter/2), (1.3*diameter/2)));
+		//		        	   						//queue.addInto(new NPanelRepaintSpace((position[0]), (position[1]), (1.3*diameter/2), (1.3*diameter/2)));
 		//		        	   				}
 		//		        	   				else
 		//		        	   				{
@@ -529,7 +529,7 @@ public class PanelNode extends Node implements NPanelObject
 				else 
 				{
 					if (isOnDeck) {
-						Animator.setCounterFor(this, animationID, 1); // System.out.println("Deck counter e_set!");
+						Animator.setCounterFor(this, animationID, 1); // System.out.println("Deck counter setInto!");
 						wasOnDeck=true;
 					}
 
@@ -558,9 +558,9 @@ public class PanelNode extends Node implements NPanelObject
 								}
 						//System.out.println("Button sense counter: "+Animator.getCounterOf(this, animationIDCounter)+"..."+animationIDCounter);
 							double mod = ((double)Animator.getCounterOf(this, animationID)/(double)(2*buttonLimit));
-							if(mod>1) {mod=1;}//System.out.println("Mod"+mod);
+							if(mod>1) {mod=1;}//System.out.println("Mod"+io);
 							deckButtonColor = new Color(0, 255, 255, (int) (255*mod));
-							//if (Animator.getCounterOf(this, animationIDCounter) > 0) {queue.e_add(new NPanelRepaintSpace((position[0]), (position[1]), (110), (55)));}
+							//if (Animator.getCounterOf(this, animationIDCounter) > 0) {queue.addInto(new NPanelRepaintSpace((position[0]), (position[1]), (110), (55)));}
 					} 
 					else
 					{//System.out.println("is off deck button");
@@ -584,7 +584,7 @@ public class PanelNode extends Node implements NPanelObject
 				{
 					if (hoveringOverDeckButton) {
 						Animator.setCounterFor(this, animationID, 1);
-						// System.out.println("Deck button counter e_set!");
+						// System.out.println("Deck button counter setInto!");
 					}
 					
 				}
@@ -620,7 +620,7 @@ public class PanelNode extends Node implements NPanelObject
 					}
 				else 
 					{Animator.setCounterFor(this, animationID, 1);
-					 //Somehow the animation ID is 2 sometimes although so many animations are not even e_set!
+					 //Somehow the animation ID is 2 sometimes although so many animations are not even setInto!
 					}
 				//if(Animator.getCounterOf(this, animationID)>=0) {animationID++;}
 			}
@@ -895,12 +895,12 @@ public class PanelNode extends Node implements NPanelObject
 					else
 					{
 						double alpha = Math.PI+(InputNode.get(Ii).angleOf(getX(), getY())-Math.atan2(vY, -vX));//!!!!!!!!!!!!!!!!!!!!!!!
-						//alpha = -(Math.atan2(vY, vX)-Math.atan2(InputNode.e_get(Ii), vectorX));
+						//alpha = -(Math.atan2(vY, vX)-Math.atan2(InputNode.getFrom(Ii), vectorX));
 						double[] newData = {alpha, getX(), getY()};
-						//queue.addAll(InputNode.e_get(Ii).adjustOrbit(getX(), getY(), diameter/2));
+						//queue.addAll(InputNode.getFrom(Ii).adjustOrbit(getX(), getY(), diameter/2));
 						queue.addAll(InputNode.get(Ii).moveCircular(newData, null));
 
-						//for(int i=0; i<InputField.size(); i++) {InputField.e_get(i).adjustWithRespectTo(vX, vY, InputField);}
+						//for(int i=0; i<InputField.size(); i++) {InputField.getFrom(i).adjustWithRespectTo(vX, vY, InputField);}
 						if (InputNode.get(Ii).changeOccured() || convection) {
 						    //for (int Ni = 0; Ni < connection.get(Ii).length; Ni++) {
 
@@ -949,7 +949,7 @@ public class PanelNode extends Node implements NPanelObject
 						      {
 						    		//System.out.println("Gottcha!");
 						    		queue.add(InputNode.get(Ii).getRepaintSpace(diameter/2));
-						    		//InputNode.e_get(Ii).forgetChange();
+						    		//InputNode.getFrom(Ii).forgetChange();
 						       }
 						       InputNode.get(Ii).forgetChange();
 						   //}
@@ -1252,7 +1252,7 @@ public class PanelNode extends Node implements NPanelObject
 					"inputNodedispplay",//Formatter.format(this.getTensor().getInput(0, 0)),
 					(Math.pow(mod, 6))
 					);
-			//InputField.e_get(i).
+			//InputField.getFrom(i).
 			}
 		}
 	
@@ -1330,7 +1330,7 @@ public class PanelNode extends Node implements NPanelObject
 		
 		brush.drawString("Activation", (int) (centerX - radius*0.27), (int) (centerY - radius*0.1 - radius*0.27500*buttonAnimationModifier));
 		brush.setColor(Color.BLACK);
-		brush.drawString(Formatter.format(this.getTensor().e_get(0)), (int) (centerX - radius*0.108), (int) (centerY +radius*0.0475- radius*0.260*buttonAnimationModifier));
+		brush.drawString(Formatter.format(T.factory.io.getFrom(this.getTensor(), 0)), (int) (centerX - radius*0.108), (int) (centerY +radius*0.0475- radius*0.260*buttonAnimationModifier));
 		
 		ValueFont = new Font("Tahoma", Font.PLAIN, (int)(diameter*(0.033333)));
 		brush.setFont(ValueFont);
@@ -1669,7 +1669,7 @@ public class PanelNode extends Node implements NPanelObject
 		brush.setColor(Color.cyan);
 		ValueFont = new Font("Tahoma", Font.PLAIN, (int)(diameter*(0.08)));
 		brush.setFont(ValueFont);
-		String acti = Formatter.format(this.getTensor().e_get(0));
+		String acti = Formatter.format(T.factory.io.getFrom(this.getTensor(), 0));
 		brush.drawString(acti, 
 				(int) (centerX - radius*0.043*acti.length()*Amod), 
 				(int) (centerY + radius*0.055- radius*0.275*buttonAnimationModifier*Amod));
@@ -1680,7 +1680,7 @@ public class PanelNode extends Node implements NPanelObject
 		if (this.getTensor().isOutsourced())
 		{
 			brush.drawString("Optimum:", (int) (centerX - 50), (int) (centerY - 240));
-			brush.drawString(""+Formatter.format(this.getTensor().e_get(0)), (int) (centerX - 25), (int) (centerY - 210));
+			brush.drawString(""+Formatter.format(T.factory.io.getFrom(this.getTensor(), 0)), (int) (centerX - 25), (int) (centerY - 210));
 		}
 		brush.setClip(null);
 	}

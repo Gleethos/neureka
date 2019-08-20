@@ -2,8 +2,8 @@ package neureka.core.function.factory.material;
 
 import neureka.core.T;
 import neureka.core.function.TLock;
-import neureka.core.function.factory.TFunctionBuilder;
-import neureka.core.function.autograd.TGraphBuilder;
+import neureka.core.function.factory.worker.TFunctionBuilder;
+import neureka.core.autograd.TGraphBuilder;
 import neureka.core.device.TDevice;
 import neureka.core.function.TFunction;
 
@@ -35,7 +35,7 @@ public abstract class Template implements TFunction {
 
     @Override
     public String type() {
-        return TFunction.Variables.REGISTER[f_id];
+        return TFunction.F_CACHE.REGISTER[f_id];
     }
 
     @Override
@@ -46,17 +46,17 @@ public abstract class Template implements TFunction {
     @Override
     public String toString() {
         String reconstructed = "";
-        if (Srcs.size() == 1 && TFunction.Variables.REGISTER[f_id].length() > 1) {
+        if (Srcs.size() == 1 && TFunction.F_CACHE.REGISTER[f_id].length() > 1) {
             String expression = Srcs.get(0).toString();
             if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
-                return TFunction.Variables.REGISTER[f_id] + expression;
+                return TFunction.F_CACHE.REGISTER[f_id] + expression;
             }
-            return TFunction.Variables.REGISTER[f_id] + "(" + expression + ")";
+            return TFunction.F_CACHE.REGISTER[f_id] + "(" + expression + ")";
         }
-        reconstructed = ((TFunction.Variables.REGISTER[f_id]==",")?"[":"")+reconstructed;
+        reconstructed = ((TFunction.F_CACHE.REGISTER[f_id]==",")?"[":"")+reconstructed;
         for (int i = 0; i < Srcs.size(); ++i) {
             if (Srcs.get(i) != null) {
-                if((TFunction.Variables.REGISTER[f_id]==",")){
+                if((TFunction.F_CACHE.REGISTER[f_id]==",")){
                     if(i==Srcs.size()-1){
                         reconstructed = reconstructed
                                 + "]:(" + (
@@ -78,8 +78,8 @@ public abstract class Template implements TFunction {
             } else {
                 reconstructed = reconstructed + "(null)";
             }
-            if (i < Srcs.size() - ((TFunction.Variables.REGISTER[f_id]==",")?2:1)) {
-                reconstructed = reconstructed + TFunction.Variables.REGISTER[f_id];
+            if (i < Srcs.size() - ((TFunction.F_CACHE.REGISTER[f_id]==",")?2:1)) {
+                reconstructed = reconstructed + TFunction.F_CACHE.REGISTER[f_id];
             }
         }
         return "(" + reconstructed + ")";
@@ -147,24 +147,24 @@ public abstract class Template implements TFunction {
          * */
         if(d<0 && !isFlat){//only flat functions can be executed
             if(f_id<=9){
-                output.internalize(new TFunctionBuilder().newBuild(TFunction.Variables.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])", true).activate(input));
+                output.internalize(new TFunctionBuilder().newBuild(TFunction.F_CACHE.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])", true).activate(input));
                 output.add((TLock)input[0].find(TLock.class));
                 return output;
             }else{
-                if(TFunction.Variables.REGISTER[f_id].length()!=1){
+                if(TFunction.F_CACHE.REGISTER[f_id].length()!=1){
                     /**  SUMMATION, PI,
                      * */
                     T[] tsrs = activateSource(input);
-                    output.internalize(TFunctionBuilder.newBuild(TFunction.Variables.REGISTER[f_id]+"(I[j])", true).activate(tsrs));
+                    output.internalize(TFunctionBuilder.newBuild(TFunction.F_CACHE.REGISTER[f_id]+"(I[j])", true).activate(tsrs));
                     output.add((TLock)input[0].find(TLock.class));
                     return output;
                 }else if(f_id<=18){
                     /**      +, -, x, *, %, ....// TODO: move this to Function constructor!
                      * */
-                    String operation = (TFunction.Variables.REGISTER[f_id].length()>1)? TFunction.Variables.REGISTER[f_id]:"";
+                    String operation = (TFunction.F_CACHE.REGISTER[f_id].length()>1)? TFunction.F_CACHE.REGISTER[f_id]:"";
                     T[] tsrs = activateSource(input, j, null);
                     for(int i=0; i<tsrs.length; i++){
-                        operation += "I["+i+"]"+((i+1<tsrs.length)? TFunction.Variables.REGISTER[f_id]:"");
+                        operation += "I["+i+"]"+((i+1<tsrs.length)? TFunction.F_CACHE.REGISTER[f_id]:"");
                     }
                     if(j<0){
                         output.internalize(TFunctionBuilder.newBuild(operation, true).activate(tsrs));
@@ -193,7 +193,7 @@ public abstract class Template implements TFunction {
          * */
         TDevice device = (TDevice) input[0].find(TDevice.class);
         boolean onSameDevice = T.utility.shareGuestDevice(input);
-        if(onSameDevice && TFunction.Variables.REGISTER[f_id]!=","){
+        if(onSameDevice && TFunction.F_CACHE.REGISTER[f_id]!=","){
             if(device!=null){
                 device.add(output);
             }
@@ -207,7 +207,7 @@ public abstract class Template implements TFunction {
                 device.calculate(tsrs, f_id, d);
             }
         }else{
-            if(TFunction.Variables.REGISTER[f_id]=="x"){
+            if(TFunction.F_CACHE.REGISTER[f_id]=="x"){
                 if(d<0){
                     output = T.factory.convolution(input[0], input[1]);
                 }else{
@@ -217,7 +217,7 @@ public abstract class Template implements TFunction {
                         output = input[0];
                     }
                 }
-            }else if(TFunction.Variables.REGISTER[f_id]==","){
+            }else if(TFunction.F_CACHE.REGISTER[f_id]==","){
                 int[] newForm = new int[this.Srcs.size()-1];
                 for(int i=0; i<this.Srcs.size()-1; i++ ){
                     TFunction fcn = this.Srcs.get(i);
@@ -227,7 +227,7 @@ public abstract class Template implements TFunction {
                         T t = (j<0)
                             ?fcn.activate(input)
                             :fcn.activate(input, j);
-                        newForm[i] = (int)t.e_get(0);
+                        newForm[i] = (int) T.factory.io.getFrom(t, 0);
                     }
                 }
                 T t = (j<0)
@@ -353,16 +353,16 @@ public abstract class Template implements TFunction {
             double output;
             if (!derive) {
                 if (input >= 0) {
-                    output = (input + TFunction.Variables.BIAS) * TFunction.Variables.INCLINATION;
+                    output = (input + TFunction.F_CACHE.BIAS) * TFunction.F_CACHE.INCLINATION;
                 } else {
-                    output = (input + TFunction.Variables.BIAS) * TFunction.Variables.RELU_INCLINATION;
+                    output = (input + TFunction.F_CACHE.BIAS) * TFunction.F_CACHE.RELU_INCLINATION;
                 }
                 return output;
             } else {
                 if (input >= 0) {
-                    output = TFunction.Variables.INCLINATION;
+                    output = TFunction.F_CACHE.INCLINATION;
                 } else {
-                    output = TFunction.Variables.RELU_INCLINATION;
+                    output = TFunction.F_CACHE.RELU_INCLINATION;
                 }
                 return output;
             }
@@ -370,31 +370,31 @@ public abstract class Template implements TFunction {
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         public static double getSigmoidOf(double input, boolean derive) {
             if (!derive) {
-                return 1 / (1 + Math.pow(Math.E, (-(input + TFunction.Variables.BIAS) * TFunction.Variables.INCLINATION)));
+                return 1 / (1 + Math.pow(Math.E, (-(input + TFunction.F_CACHE.BIAS) * TFunction.F_CACHE.INCLINATION)));
             } else {
-                return TFunction.Variables.INCLINATION * (Math.pow(Math.E, -(input + TFunction.Variables.BIAS) * TFunction.Variables.INCLINATION)) / (Math.pow((1 + Math.pow(Math.E, -(input + TFunction.Variables.BIAS) * TFunction.Variables.INCLINATION)), 2) + 2 * Math.pow(Math.E, -(input + TFunction.Variables.BIAS) * TFunction.Variables.INCLINATION));
+                return TFunction.F_CACHE.INCLINATION * (Math.pow(Math.E, -(input + TFunction.F_CACHE.BIAS) * TFunction.F_CACHE.INCLINATION)) / (Math.pow((1 + Math.pow(Math.E, -(input + TFunction.F_CACHE.BIAS) * TFunction.F_CACHE.INCLINATION)), 2) + 2 * Math.pow(Math.E, -(input + TFunction.F_CACHE.BIAS) * TFunction.F_CACHE.INCLINATION));
             }
         }
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         public static double getTanhOf(double input, boolean derive) {
             if (!derive) {
-                return ((input + TFunction.Variables.BIAS) * TFunction.Variables.INCLINATION) / Math.pow((1 + Math.pow(((input + TFunction.Variables.BIAS) * TFunction.Variables.INCLINATION), 2)), 0.5);
+                return ((input + TFunction.F_CACHE.BIAS) * TFunction.F_CACHE.INCLINATION) / Math.pow((1 + Math.pow(((input + TFunction.F_CACHE.BIAS) * TFunction.F_CACHE.INCLINATION), 2)), 0.5);
             } else {
-                return (1 - Math.pow(((input + TFunction.Variables.BIAS) / Math.pow((1 + Math.pow((input + TFunction.Variables.BIAS), 2)), 0.5)), 2)) * TFunction.Variables.INCLINATION;
+                return (1 - Math.pow(((input + TFunction.F_CACHE.BIAS) / Math.pow((1 + Math.pow((input + TFunction.F_CACHE.BIAS), 2)), 0.5)), 2)) * TFunction.F_CACHE.INCLINATION;
             }
         }
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         public static double getQuadraticOf(double input, boolean derive) {
             if (!derive) {
-                return ((input + TFunction.Variables.BIAS) * (input + TFunction.Variables.BIAS) * TFunction.Variables.INCLINATION);
+                return ((input + TFunction.F_CACHE.BIAS) * (input + TFunction.F_CACHE.BIAS) * TFunction.F_CACHE.INCLINATION);
             } else {
-                return 2 * input * TFunction.Variables.INCLINATION + 2 * TFunction.Variables.BIAS * TFunction.Variables.INCLINATION;
+                return 2 * input * TFunction.F_CACHE.INCLINATION + 2 * TFunction.F_CACHE.BIAS * TFunction.F_CACHE.INCLINATION;
             }
         }
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         public static double getLigmoidOf(double input, boolean derive) {
             if (!derive) {
-                return (TFunction.Variables.INCLINATION * (input + TFunction.Variables.BIAS) + (Math.log(Math.pow(Math.E, -(input + TFunction.Variables.BIAS) * TFunction.Variables.INCLINATION) + 1) / Math.log(Math.E)));
+                return (TFunction.F_CACHE.INCLINATION * (input + TFunction.F_CACHE.BIAS) + (Math.log(Math.pow(Math.E, -(input + TFunction.F_CACHE.BIAS) * TFunction.F_CACHE.INCLINATION) + 1) / Math.log(Math.E)));
             } else {
                 return getSigmoidOf(input, false);
             }
@@ -402,17 +402,17 @@ public abstract class Template implements TFunction {
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         public static double getLinearOf(double input, boolean derive) {
             if (!derive) {
-                return TFunction.Variables.INCLINATION * (input + TFunction.Variables.BIAS);
+                return TFunction.F_CACHE.INCLINATION * (input + TFunction.F_CACHE.BIAS);
             } else {
-                return TFunction.Variables.INCLINATION;
+                return TFunction.F_CACHE.INCLINATION;
             }
         }
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         public static double getGaussianOf(double input, boolean derive) {
             if (!derive) {
-                return Math.pow(Math.E, -Math.pow(TFunction.Variables.INCLINATION * (input + TFunction.Variables.BIAS), 2));
+                return Math.pow(Math.E, -Math.pow(TFunction.F_CACHE.INCLINATION * (input + TFunction.F_CACHE.BIAS), 2));
             } else {
-                return -2 * (TFunction.Variables.INCLINATION * (input + TFunction.Variables.BIAS)) * Math.pow(Math.E, -Math.pow(TFunction.Variables.INCLINATION * (input + TFunction.Variables.BIAS), 2));
+                return -2 * (TFunction.F_CACHE.INCLINATION * (input + TFunction.F_CACHE.BIAS)) * Math.pow(Math.E, -Math.pow(TFunction.F_CACHE.INCLINATION * (input + TFunction.F_CACHE.BIAS), 2));
             }
         }
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

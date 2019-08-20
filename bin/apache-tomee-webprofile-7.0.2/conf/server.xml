@@ -119,7 +119,7 @@
          on to the appropriate Host (virtual host).
          Documentation at /docs/config/engine.html -->
 
-    <!-- You should e_set jvmRoute to support load-balancing via AJP ie :
+    <!-- You should setInto jvmRoute to support load-balancing via AJP ie :
     <Engine name="Catalina" defaultHost="localhost" jvmRoute="jvm1">
     -->
     <Engine name="Catalina" defaultHost="localhost">

@@ -50,7 +50,7 @@ public class NAnimator {
 	{
 	    if(AnimationMap.containsKey(owner)) 
 	    {
-	    	ArrayList<Animation> List = AnimationMap.get(owner);//.e_set(counterID, AnimationMap.e_get(owner).e_get(counterID)-1);
+	    	ArrayList<Animation> List = AnimationMap.get(owner);//.setInto(counterID, AnimationMap.getFrom(owner).getFrom(counterID)-1);
 	    	for(int Ai=0; Ai<List.size(); Ai++) 
 	    	{
 	    		if(List.get(Ai).ID==counterID) {List.get(Ai).Counter -=1;}
@@ -61,7 +61,7 @@ public class NAnimator {
 	{
 	     if(AnimationMap.containsKey(owner)) 
 	     {
-	    	 ArrayList<Animation> List = AnimationMap.get(owner);//.e_set(counterID, AnimationMap.e_get(owner).e_get(counterID)-1);
+	    	 ArrayList<Animation> List = AnimationMap.get(owner);//.setInto(counterID, AnimationMap.getFrom(owner).getFrom(counterID)-1);
 	     	 for(int Ai=0; Ai<List.size(); Ai++) 
 	     	 {
 	     		 if(List.get(Ai).ID==counterID) {List.get(Ai).Counter -=value;}
@@ -80,7 +80,7 @@ public class NAnimator {
 	{
 	     if(AnimationMap.containsKey(owner)) 
 	     {
-	    	 ArrayList<Animation> List = AnimationMap.get(owner);//.e_set(counterID, AnimationMap.e_get(owner).e_get(counterID)-1);
+	    	 ArrayList<Animation> List = AnimationMap.get(owner);//.setInto(counterID, AnimationMap.getFrom(owner).getFrom(counterID)-1);
 	      	 for(int Ai=0; Ai<List.size(); Ai++) 
 	      	 {
 	      		 if(List.get(Ai).ID==counterID) {List.get(Ai).Counter +=1;}
@@ -91,7 +91,7 @@ public class NAnimator {
 	{
 	     if(AnimationMap.containsKey(owner)) 
 	     {
-	    	 ArrayList<Animation> List = AnimationMap.get(owner);//.e_set(counterID, AnimationMap.e_get(owner).e_get(counterID)-1);
+	    	 ArrayList<Animation> List = AnimationMap.get(owner);//.setInto(counterID, AnimationMap.getFrom(owner).getFrom(counterID)-1);
 	      	 for(int Ai=0; Ai<List.size(); Ai++) 
 	      	 {
 	      		 if(List.get(Ai).ID==counterID) {List.get(Ai).Counter +=value;}
@@ -110,7 +110,7 @@ public class NAnimator {
 	{
 		 if(AnimationMap.containsKey(owner)) 
 		 {
-			 ArrayList<Animation> List = AnimationMap.get(owner);//.e_set(counterID, AnimationMap.e_get(owner).e_get(counterID)-1);
+			 ArrayList<Animation> List = AnimationMap.get(owner);//.setInto(counterID, AnimationMap.getFrom(owner).getFrom(counterID)-1);
 		     for(int Ai=0; Ai<List.size(); Ai++) 
 		     {
 		    	 if(List.get(Ai).ID==counterID) {return List.get(Ai).Counter;}
@@ -131,7 +131,7 @@ public class NAnimator {
 
 		if(AnimationMap.containsKey(owner)) 
 		{
-			ArrayList<Animation> List = AnimationMap.get(owner);//.e_set(counterID, AnimationMap.e_get(owner).e_get(counterID)-1);
+			ArrayList<Animation> List = AnimationMap.get(owner);//.setInto(counterID, AnimationMap.getFrom(owner).getFrom(counterID)-1);
 		    for(int Ai=0; Ai<List.size(); Ai++) 
 		    {
 		    	if(List.get(Ai).ID==counterID) {List.remove(Ai);}
@@ -144,7 +144,7 @@ public class NAnimator {
 	{
 		if(AnimationMap.containsKey(owner)) 
 		{
-			ArrayList<Animation> List = AnimationMap.get(owner);//.e_set(counterID, AnimationMap.e_get(owner).e_get(counterID)-1);
+			ArrayList<Animation> List = AnimationMap.get(owner);//.setInto(counterID, AnimationMap.getFrom(owner).getFrom(counterID)-1);
 		    for(int Ai=0; Ai<List.size(); Ai++) 
 		    {
 		    	if(List.get(Ai).ID==counterID) {return true;}

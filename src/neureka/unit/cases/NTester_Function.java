@@ -2,7 +2,7 @@ package neureka.unit.cases;
 
 import neureka.core.T;
 import neureka.core.function.TFunction;
-import neureka.core.function.factory.TFunctionBuilder;
+import neureka.core.function.factory.worker.TFunctionBuilder;
 
 public class NTester_Function extends NTester {
 

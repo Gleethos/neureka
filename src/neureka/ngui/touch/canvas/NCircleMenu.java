@@ -41,7 +41,7 @@ public class NCircleMenu implements NPanelObject{
 	private MenuActor Actor = 
 	(int id, Object thing)->
 	{
-		System.out.println("Actor has not been e_set to do anything :/ ");
+		System.out.println("Actor has not been setInto to do anything :/ ");
 	};
 	
 	Color SystemOcean  = new Color(0,160,210);
@@ -59,7 +59,7 @@ public class NCircleMenu implements NPanelObject{
 	//----------------------------------------------------------------------------------------------
 	public void setLayerID(int id) 
 	{
-		System.out.println("e_set layerID...");
+		System.out.println("setInto layerID...");
 		layerID=id;
 	}
 	public void drawMenu(GraphicsContext brush)
@@ -464,8 +464,8 @@ public class NCircleMenu implements NPanelObject{
 		{
 		       double scaledRadius = primMod*radius*1.075;
 		       if(scaledRadius<innerRadius) {scaledRadius = innerRadius;}
-		       queue.add(new NPanelRepaintSpace(X, Y, (int)scaledRadius, (int)scaledRadius));//  queue.e_add(new NPanelRepaintSpace(X, Y, (int)radius, (int)radius));
-		       //if(X!=oldX || Y!=oldY) {queue.e_add(new NPanelRepaintSpace(oldX, oldY, (int)scaledRadius, (int)scaledRadius)); oldX=X; oldY=Y;}
+		       queue.add(new NPanelRepaintSpace(X, Y, (int)scaledRadius, (int)scaledRadius));//  queue.addInto(new NPanelRepaintSpace(X, Y, (int)radius, (int)radius));
+		       //if(X!=oldX || Y!=oldY) {queue.addInto(new NPanelRepaintSpace(oldX, oldY, (int)scaledRadius, (int)scaledRadius)); oldX=X; oldY=Y;}
 		}
 		else 
 		{animationCounter=CounterLimit;}

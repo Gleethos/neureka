@@ -197,7 +197,7 @@ public class NPanelNodeInput implements NPanelObject {
 		double targY = data[3];
 		ArrayList<NPanelRepaintSpace> queue = new ArrayList<NPanelRepaintSpace>();
 		queue.add(getRepaintSpace(defaultUnitDiameter/2));
-		//queue.e_get(0).dY+=100;
+		//queue.getFrom(0).dY+=100;
 		double vecX = targX-startX;
 		double vecY = targY-startY;
 		X+=vecX;
@@ -212,7 +212,7 @@ public class NPanelNodeInput implements NPanelObject {
 		double y = data[1];
 		ArrayList<NPanelRepaintSpace> queue = new ArrayList<NPanelRepaintSpace>();
 		queue.add(this.getRepaintSpace(defaultUnitDiameter/2));
-		///queue.e_get(0).dX+=100;
+		///queue.getFrom(0).dX+=100;
 		X=x;
 		Y=y;
 		queue.add(this.getRepaintSpace(defaultUnitDiameter/2));

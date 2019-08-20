@@ -1,7 +1,6 @@
 package neureka.core.device;
 import com.aparapi.Kernel;
 import neureka.core.T;
-import neureka.core.function.TFunction;
 
 public class TKernel extends Kernel
 {
@@ -75,7 +74,7 @@ public class TKernel extends Kernel
     public int[] shapes;
     public int[] translations;
 
-    public int[] pointers;// Pointers f tensors (chronologically)
+    public int[] pointers;// Pointers of tensors (chronologically)
     /**
      *    tsr pointer++:
      *    +0 -> tsr_ptr: for values
@@ -500,7 +499,7 @@ public class TKernel extends Kernel
         if(mde[0]==17){//  +
             run_tsr_add(gid,  mde[1], mde[2], mde[3]);
         }
-        if(mde[0]==18){//  tsr_mul
+        if(mde[0]==18){// x  tsr_conv
             run_tsr_conv(gid, mde[1], mde[2], mde[3]);
         }
 
@@ -567,18 +566,16 @@ public class TKernel extends Kernel
         if (d<0) {
             if (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)] >= 0) {
                 this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                        (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)] + TFunction.Variables.BIAS) * TFunction.Variables.INCLINATION;
+                        (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]);
             } else {
                 this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                        (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)] + TFunction.Variables.BIAS) * TFunction.Variables.RELU_INCLINATION;
+                        (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]) * 0.01;
             }
         } else {
             if (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)] >= 0) {
-                this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                        TFunction.Variables.INCLINATION;
+                this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = 0.01;
             } else {
-                this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                        TFunction.Variables.RELU_INCLINATION;
+                this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = 0.01;
             }
         }
     }
@@ -768,6 +765,7 @@ public class TKernel extends Kernel
     }
 
     public void run_tsr_conv(int gid, int drn_id, int src1_id, int src2_id){
+        // SETUP:
         int ptr_data_src1 = tsr_ptr(src1_id);
         int ptr_data_src2 = tsr_ptr(src2_id);
         int ptr_data_drn = tsr_ptr(drn_id);
@@ -796,14 +794,14 @@ public class TKernel extends Kernel
         int ri = 0;
         while (ri < rank) {
             if (this.shapes[(ptr_shp_src1+ri)] == this.shapes[(ptr_shp_src2+ri)]) {//setting 0
-                this.tmp_idx[(ptr_idx_src1+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];//mtch[mi];
-                this.tmp_idx[(ptr_idx_src2+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];//mtch[mi];
+                this.tmp_idx[(ptr_idx_src1+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];
+                this.tmp_idx[(ptr_idx_src2+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];
             } else if (this.shapes[(ptr_shp_src1+ri)] > this.shapes[(ptr_shp_src2+ri)]) {//setting src1 idx to id idx
-                this.tmp_idx[(ptr_idx_src1+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];//mtch[mi];
+                this.tmp_idx[(ptr_idx_src1+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];
                 this.tmp_idx[(ptr_idx_src2+ri)] = 0;
             } else if (this.shapes[ptr_shp_src1+ri] < this.shapes[(ptr_shp_src2+ri)]) {//setting src2 idx to id idx
                 this.tmp_idx[(ptr_idx_src1+ri)] = 0;
-                this.tmp_idx[(ptr_idx_src2+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];//mtch[mi];
+                this.tmp_idx[(ptr_idx_src2+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];
             }
             ri++;
         }
@@ -817,8 +815,6 @@ public class TKernel extends Kernel
             if (incrementing == false) {
                 int i1 = __i_of_idx_tln(ptr_tln_src1, ptr_idx_src1, rank); //(int ptr_tln, int[] tln, int[] idx, int rank)
                 int i2 = __i_of_idx_tln(ptr_tln_src2, ptr_idx_src2, rank);
-                int gogo = (ptr_data_src1 + i1);
-                int gugu = (ptr_data_src2 + i2);
                 value +=
                      this.values[(ptr_data_src1 + i1)]
                          *
@@ -854,9 +850,10 @@ public class TKernel extends Kernel
             }
         }
         //set value in drn:
-        int i = __i_of_idx_tln(ptr_tln_drn, ptr_idx_drn, rank);
-        this.values[(ptr_data_drn + i)] = value;
+        int di = __i_of_idx_tln(ptr_tln_drn, ptr_idx_drn, rank);
+        this.values[(ptr_data_drn + di)] = value;
     }
+
     //Helper methods for tsr conv:
     private int __increment_At(int ri, int idx_ptr, int shp_ptr) {
         if (this.tmp_idx[idx_ptr+ri] < (this.shapes[shp_ptr+ri])) {//fixed
@@ -896,5 +893,102 @@ public class TKernel extends Kernel
         }
         return __i_of_idx_tln(ptr_tln, ptr_idx, rank);
     }
+
+    public void run_tsr_conv_inv(int gid, int drn_id, int src1_id, int src2_id, boolean first){
+        // SETUP:
+        int ptr_data_src1 = tsr_ptr(src1_id);
+        int ptr_data_src2 = tsr_ptr(src2_id);
+        int ptr_data_drn = tsr_ptr(drn_id);
+
+        int ptr_shp_src1 = shp_ptr(src1_id);
+        int ptr_shp_src2 = shp_ptr(src2_id);
+        int ptr_shp_drn  = shp_ptr(drn_id);
+
+        int ptr_tln_src1 = tln_ptr(src1_id);
+        int ptr_tln_src2 = tln_ptr(src2_id);
+        int ptr_tln_drn  = tln_ptr(drn_id);
+
+        int rank = shp_sze(drn_id);
+        int ptr_idx_src1 = 0*rank;
+        int ptr_idx_src2 = 1*rank;
+        int ptr_idx_drn  = 2*rank;
+
+        int src1End = ptr_shp_src1 + rank;
+        int src2End = ptr_shp_src2 + rank;
+
+        //increment on drain:
+        for(int i=0; i<gid; i++){//drnSze-1
+            __increment_idx(ptr_shp_drn, ptr_idx_drn, rank);
+        }
+        //increment src accordingly:
+        int ri = 0;
+        while (ri < rank) {
+            if (this.shapes[(ptr_shp_src1+ri)] == this.shapes[(ptr_shp_src2+ri)]) {//setting 0
+                this.tmp_idx[(ptr_idx_src1+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];
+                this.tmp_idx[(ptr_idx_src2+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];
+            } else if (this.shapes[(ptr_shp_src1+ri)] > this.shapes[(ptr_shp_src2+ri)]) {//setting src1 idx to id idx
+                this.tmp_idx[(ptr_idx_src1+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];
+                this.tmp_idx[(ptr_idx_src2+ri)] = 0;
+            } else if (this.shapes[ptr_shp_src1+ri] < this.shapes[(ptr_shp_src2+ri)]) {//setting src2 idx to id idx
+                this.tmp_idx[(ptr_idx_src1+ri)] = 0;
+                this.tmp_idx[(ptr_idx_src2+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];
+            }
+            ri++;
+        }
+        //----------
+        // multiplication:
+        boolean running = true;
+        boolean incrementing = false;
+        int di = __i_of_idx_tln(ptr_tln_drn, ptr_idx_drn, rank);
+        //this.values[(ptr_data_drn + i)] = value;
+        while (running) {
+            ri = (ri==rank)?0:ri;
+            if (incrementing == false) {
+                int i1 = __i_of_idx_tln(ptr_tln_src1, ptr_idx_src1, rank); //(int ptr_tln, int[] tln, int[] idx, int rank)
+                int i2 = __i_of_idx_tln(ptr_tln_src2, ptr_idx_src2, rank);
+                //value += this.values[(ptr_data_src1 + i1)] * this.values[(ptr_data_src2 + i2)];
+                if(first){
+                    this.values[(ptr_data_src1 + i1)] +=
+                            this.values[(ptr_data_src2 + i2)] * this.values[(ptr_data_drn + di)];
+                }else{
+                    this.values[(ptr_data_src2 + i2)] +=
+                            this.values[(ptr_data_src1 + i1)] * this.values[(ptr_data_drn + di)];
+                }
+                incrementing = true;
+                ri=0;
+            } else {//incrementing:
+                if (this.tmp_idx[(ptr_idx_src1+ri)] < this.shapes[(ptr_shp_src1+ri)] && this.tmp_idx[(ptr_idx_src2+ri)] < this.shapes[(ptr_shp_src2+ri)]) {
+                    this.tmp_idx[(ptr_idx_src1+ri)]++;
+                    this.tmp_idx[(ptr_idx_src2+ri)]++;
+                    if (this.tmp_idx[(ptr_idx_src1+ri)] == this.shapes[(ptr_shp_src1+ri)] || this.tmp_idx[(ptr_idx_src2+ri)] == this.shapes[(ptr_shp_src2+ri)]) {
+                        if (((ptr_shp_src1+ri) == (src1End - 1) || (ptr_shp_src2+ri) == (src2End - 1))) {
+                            running = false;
+                        }
+                        if (this.shapes[(ptr_shp_src1+ri)] == this.shapes[(ptr_shp_src2+ri)]) {//setting 0
+                            this.tmp_idx[(ptr_idx_src1+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];//mtch[mi];
+                            this.tmp_idx[(ptr_idx_src2+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];//mtch[mi];
+                        } else if (this.shapes[(ptr_shp_src1+ri)] > this.shapes[(ptr_shp_src2+ri)]) {//setting hdr1 idx to id idx
+                            this.tmp_idx[(ptr_idx_src1+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];//mtch[mi];
+                            this.tmp_idx[(ptr_idx_src2+ri)] = 0;
+                        } else if (this.shapes[(ptr_shp_src1+ri)] < this.shapes[(ptr_shp_src2+ri)]) {//setting hdr2 idx to id idx
+                            this.tmp_idx[(ptr_idx_src1+ri)] = 0;
+                            this.tmp_idx[(ptr_idx_src2+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];//mtch[mi];
+                        }
+                        ri++;
+                    } else {
+                        incrementing = false;
+                        ri=0;
+                    }
+                } else {
+                    ri++;
+                }
+            }
+        }
+        //set value in drn:
+        //int i = __i_of_idx_tln(ptr_tln_drn, ptr_idx_drn, rank);
+        //this.values[(ptr_data_drn + i)] = value;
+    }
+
+
 
 }

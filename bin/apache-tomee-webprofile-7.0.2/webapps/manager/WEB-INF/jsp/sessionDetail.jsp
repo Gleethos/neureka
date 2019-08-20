@@ -136,7 +136,7 @@
        <%--tfoot>
            <tr>
                <td colspan="3" style="text-align: center;">
-                   TODO: e_set Max Inactive Interval on sessions
+                   TODO: setInto Max Inactive Interval on sessions
                </td>
            </tr>
        </tfoot--%>
