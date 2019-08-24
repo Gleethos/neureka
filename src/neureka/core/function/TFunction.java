@@ -7,27 +7,31 @@ import neureka.core.function.factory.worker.TFunctionBuilder;
 import neureka.core.function.factory.environment.ResultCache;
 import neureka.core.function.factory.environment.FunctionCache;
 
+import java.util.Random;
+
 public interface TFunction
 {
 	FunctionCache F_CACHE = new FunctionCache();
 	ResultCache R_CACHE = new ResultCache();
 	//------------------------------------------------------------------------------------------------------------------
 
-    static void execute(T drain, T[] tensors, String operation){
+    static T execute(T drain, T[] tensors, String operation){
 		TFunction function = TFunctionBuilder.newBuild(operation, true);
-		execute(drain, tensors, function);
+		return execute(drain, tensors, function);
 	}
 
-	static void execute(T drain, T[] tensors, TFunction function){
-		TLock lock = new TLock(function, tensors);
+	static T execute(T drain, T[] tensors, TFunction function){
+		//TLock lock = new TLock(function, tensors);
+		TLock newGid = new TLock(function, tensors);//Random().nextLong();
 		for(T t : tensors){
-			t.add(lock);
+			t.add(new TGradientNode(t, null, null,  newGid));
 		}
-		drain.internalize(function.activate(tensors));
+		drain.inject(function.activate(tensors));
 		if(drain.has(TGradientNode.class)){
 			((TGradientNode)drain.find(TGradientNode.class)).trimTree(null);//TODO implement!! test
 		}
 		TFunction.R_CACHE.free(tensors);
+		return drain;
 	}
 	//------------------------------------------------------------------------------------------------------------------
 	TFunction newBuild(String expression);

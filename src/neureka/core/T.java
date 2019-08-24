@@ -224,7 +224,7 @@ public class T {
         }
         strValue = strShape+":("+strValue+")";
         if(mode=="r"){
-            if(this.has(TGradientNode.class)){
+            if(this.has(TGradientNode.class)&&((TGradientNode) this.find(TGradientNode.class)).size()>0){
                 TGradientNode d = (TGradientNode) this.find(TGradientNode.class);
                 String[] strDerivatives = {"; "};
                 d.forEach((target, derivative)->{
@@ -233,13 +233,15 @@ public class T {
                 strValue += strDerivatives[0];
             }
         }else if(mode == "d"){
-            if(this.has(TGradientNode.class)){
+            if(this.has(TGradientNode.class)&&((TGradientNode) this.find(TGradientNode.class)).size()>0){
                 TGradientNode d = (TGradientNode) this.find(TGradientNode.class);
-                String[] strDerivatives = {"; "};
-                d.forEach((target, derivative)->{
-                    strDerivatives[0]+="->d"+derivative.toString()+", ";
-                });
-                strValue += strDerivatives[0];
+                if(d.mode()!=0){
+                    String[] strDerivatives = {"; "};
+                    d.forEach((target, derivative)->{
+                        strDerivatives[0]+="->d"+derivative.toString()+", ";
+                    });
+                    strValue += strDerivatives[0];
+                }
             }
         }
         return strValue;
@@ -371,7 +373,7 @@ public class T {
         this.add(newConf);
     }
 
-    public void internalize(T tensor) {
+    public void inject(T tensor) {
         this.value = tensor.value;
         this.shape = tensor.shape;
         this.translation = tensor.translation;

@@ -2,6 +2,7 @@ package neureka.core.autograd;
 
 import neureka.core.T;
 import neureka.core.function.TFunction;
+import neureka.core.function.TLock;
 
 import java.util.function.Consumer;
 
@@ -25,9 +26,8 @@ public class TGraphBuilder {
      * */
 
     public static void connect(T drain, T[] src, TFunction function, boolean derive){//, boolean derive
-        int mode = modeOf(src, function);
         if(function.isFlat()&&derive){
-            performDifferentiation(drain, function, src, mode);
+            performDifferentiation(drain, function, src);
         }
     }
 
@@ -56,39 +56,15 @@ public class TGraphBuilder {
         }
     }
 
-    private static int modeOf(T[] source, TFunction function){
-        /**
-         *  Evaluate auto-grad mode:
-         * */
-        int mode = 0;
-        int[] srcModes = new int[source.length];
-        int m = 0;
-        for(int Ii = 0; Ii< source.length; Ii++){
-            if(source[Ii].has(TGradientNode.class)){
-                TGradientNode node = (TGradientNode) source[Ii].find(TGradientNode.class);
-                srcModes[Ii] = node.mode();
-            }else if(source[Ii].rqsGradient()){
-                srcModes[Ii] = 1;
-            }
-            m += (srcModes[Ii]!=0)?1:0;
-        }
-        if(m==1 && (function.type()!="x" && function.type()!=",")){//Convolution and reshaping prohibit forward AD
-            for(int Ii = 0; Ii< source.length; Ii++){
-                mode += (srcModes[Ii]<0)?1:srcModes[Ii];
-            }
-        }else{
-            mode = -m;
-        }
-        return mode;
-    }
 
-    private static void performDifferentiation(T drain, TFunction function, T[] source, int m)
+    private static void performDifferentiation(T drain, TFunction function, T[] source)
     {//--------------------------------------------------------------------------------------
+        TLock gid = ((TGradientNode)source[0].find(TGradientNode.class)).gid();
+        TGradientNode rg = new TGradientNode(drain,function, source, gid);
+        drain.add(rg);
+        //TGradientNode rg = ((TGradientNode)drain.find(TGradientNode.class));
+        int m = rg.mode();
         if(usesAD(m) && function.isFlat()){
-            if(!drain.has(TGradientNode.class)){
-                TGradientNode rg = new TGradientNode(m, function, source);
-                drain.add(rg);
-            }
             TGradientNode drain_gradients = (TGradientNode) drain.find(TGradientNode.class);
             /**
              *  Preparing for back propagation:
@@ -96,11 +72,12 @@ public class TGraphBuilder {
             if(usesForwardAD(m)){
                 int i = 0;
                 for(T src : source){
-                    if(src.has(TGradientNode.class) && ((TGradientNode) src.find(TGradientNode.class)).function().id()==18){
+                    TGradientNode src_gradients = ((TGradientNode) src.find(TGradientNode.class));
+                    if(src_gradients.function()!=null && src_gradients.function().id()==18){
                         T d = function.derive(source, i);
                         drain_gradients.put(src, d);// Sources created by x-mul are revers-mode cases!
                     }else{
-                        TGradientNode src_gradients = (TGradientNode) src.find(TGradientNode.class);
+                        //TGradientNode src_gradients = (TGradientNode) src.find(TGradientNode.class);
                         if(src_gradients!=null){
                             T d = function.derive(source, i);
                             src_gradients.forEach(
@@ -124,7 +101,8 @@ public class TGraphBuilder {
             }else if(usesReverseAD(m)){
                 int i = 0;
                 for(T src : source){
-                    if(src.has(TGradientNode.class) || src.rqsGradient()){
+                    TGradientNode src_node = ((TGradientNode) src.find(TGradientNode.class));
+                    if(src_node.mode()!=0 || src.rqsGradient()){
                         T d = function.derive(source, i);
                         drain_gradients.put(src, d);// Add gradients with respect to every source tensor!
                     }

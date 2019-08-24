@@ -1,6 +1,7 @@
 package neureka.core.function.factory.environment;
 
 import neureka.core.T;
+import neureka.core.autograd.TGradientNode;
 import neureka.core.function.TFunction;
 import neureka.core.function.TLock;
 
@@ -9,45 +10,57 @@ import java.util.function.Supplier;
 
 public class ResultCache
 {
-    private final TreeMap<TLock, TreeMap<TFunction, T>> TENSORS = new TreeMap<>((a, b)->((int)(a.key()-b.key())));
-
-    public synchronized TreeMap<TLock, TreeMap<TFunction, T>> TENSORS(){
-        return this.TENSORS;
-    }
+    private final TreeMap<TLock, TreeMap<TGradientNode, T>> TENSORS = new TreeMap<>((a, b)->((int)(a.hashCode()-b.hashCode())));
 
     public synchronized void free(T[] input){
         for(T t : input){
-            TENSORS.remove(t.find(TLock.class));
-            t.remove(TLock.class);
+            TENSORS.remove(((TGradientNode)t.find(TGradientNode.class)).gid());
+             t.remove(TGradientNode.class);
         }
     }
     public synchronized T handle(T[] input, TFunction function, Supplier<T> activation){
-        TLock lock = (TLock) input[0].find(TLock.class);
-        T result = (!function.isFlat())? get(lock, function):null;
+        T untracked = null;
+        for(T t : input){
+            if(t.has(TGradientNode.class)){
+                untracked = t;
+            }
+        }
+        if(untracked==null){
+            return TFunction.execute(new T(), input, function);
+        }
+        for(T t : input){
+            if(!t.has(TGradientNode.class)){
+                TLock gid = ((TGradientNode)untracked.find(TGradientNode.class)).gid();
+                TGradientNode rg = new TGradientNode(t, null, null, gid);
+                t.add(rg);
+            }
+        }
+        TGradientNode node = (TGradientNode) input[0].find(TGradientNode.class);
+        T result = get(node);
         if(result==null){
             result = activation.get();
-            if(!function.isFlat()&&lock!=null) {
-                put(result, lock, function);
-            }
+            put(result, node);
         }
         return result;
     }
-    private synchronized T get(TLock lock, TFunction function){//function and source
-        if(TENSORS.containsKey(lock)){
-            if(TENSORS.get(lock).containsKey(function)){
-                return TENSORS.get(lock).get(function);
+    private synchronized T get(TGradientNode node){//function and source
+        if(TENSORS.containsKey(node.gid())){
+            if(TENSORS.get(node.gid()).containsKey(node)){
+                return TENSORS.get(node.gid()).get(node);
             }
         }
         return null;
     }
-    private synchronized void put(T t, TLock lock, TFunction function){
-        TreeMap<TFunction, T> variables = null;
-        if(!TENSORS.containsKey(lock)){
-            variables = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
-            TENSORS.put(lock, variables);
-        }else{
-            variables = TENSORS.get(lock);
+    private synchronized void put(T t, TGradientNode node){
+        if(node.isCachable()) {
+            TreeMap<TGradientNode, T> variables = null;
+            if (!TENSORS.containsKey(node.gid())) {
+                variables = new TreeMap<>((a, b) -> (int) (a.nid() - b.nid()));
+                TENSORS.put(node.gid(), variables);
+            } else {
+                variables = TENSORS.get(node.gid());
+            }
+            variables.put(node, t);
         }
-        variables.put(function, t);
     }
 }

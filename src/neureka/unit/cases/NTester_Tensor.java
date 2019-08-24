@@ -14,7 +14,7 @@ public class NTester_Tensor extends NTester {
         println(bar+"  TFunction: "+operation);
         println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         T product = new T(source, operation);
-        product.backward(new T(product.shape(), 1));
+        //product.backward(new T(product.shape(), 1));
         String result = product.toString("r");
         for(String element : expected){
             this.assertContains("result", result, element);

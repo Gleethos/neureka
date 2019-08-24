@@ -2,6 +2,7 @@ package neureka.core.autograd;
 
 import neureka.core.T;
 import neureka.core.function.TFunction;
+import neureka.core.function.TLock;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -35,18 +36,68 @@ public class TGradientNode{
      * Keys are targets and values are gradients with respect to that target
      * (Note: values can be null if the recorded function is of type 'reshape')
      * */
-    private TreeMap<T, T> targets_gradients = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
+    private TreeMap<T, T> targets_gradients;
 
     /**
      * Forward or Backward AD ?
      * */
     private int mode = 0;
 
+    private TLock gid = null;
 
-    public TGradientNode(int m, TFunction f, T[] src){
-        this.mode = m;
+    public TLock gid(){
+        return gid;
+    }
+
+    public long nid(){
+        long nid = 1;
+        if(this.source!=null){
+            for(T t : this.source){
+                nid*=t.hashCode();
+            }
+        }
+        if(this.function!=null){
+            nid+=this.function.hashCode();
+        }
+        return nid;
+    }
+
+    public boolean isCachable(){
+        return (this.nid()!=1);
+    }
+
+    public TGradientNode(T value, TFunction f, T[] src, TLock gid){
+        this.mode = (src!=null)?modeOf(src, f):(value.rqsGradient())?1:0;
         this.function = f;
         this.source = src;
+        this.gid = gid;
+    }
+
+
+    private static int modeOf(T[] source, TFunction function){
+        /**
+         *  Evaluate auto-grad mode:
+         * */
+        int mode = 0;
+        int[] srcModes = new int[source.length];
+        int m = 0;
+        for(int Ii = 0; Ii< source.length; Ii++){
+            if(source[Ii].has(TGradientNode.class)){
+                TGradientNode node = (TGradientNode) source[Ii].find(TGradientNode.class);
+                srcModes[Ii] = node.mode();
+            }else if(source[Ii].rqsGradient()){
+                srcModes[Ii] = 1;
+            }
+            m += (srcModes[Ii]!=0)?1:0;
+        }
+        if(m==1 && (function.type()!="x" && function.type()!=",")){//Convolution and reshaping prohibit forward AD
+            for(int Ii = 0; Ii< source.length; Ii++){
+                mode += (srcModes[Ii]<0)?1:srcModes[Ii];
+            }
+        }else{
+            mode = -m;
+        }
+        return mode;
     }
 
     public void trimTree(T target){// Find and remove redundant targets:
@@ -56,12 +107,12 @@ public class TGradientNode{
         if(target!=null){
             ArrayList<T> blacklist = new ArrayList<>();
             this.forEach((g, t)->{
-                if(t.equals(target)){
+                if(t==target){
                     blacklist.add(g);
                 }
             });
             blacklist.forEach((b)->{
-                if(true||this.function.id()!=18){
+                if(this.function.id()!=18){
                     b.delete();
                 }
                 this.targets_gradients.remove(b);
@@ -80,6 +131,9 @@ public class TGradientNode{
                 }
             }
         }
+        /**
+         * sources can be deleted because unused graph nodes are already trimmed off the tree (targets remain!)
+         * */
         this.source = null;
     }
 
@@ -97,6 +151,8 @@ public class TGradientNode{
                 });
             }
         }
+        //TODO add delete!!(if targets (and derivatives) are used!)
+        //ONLY USER VARIABLES REMAIN!!!
     }
 
     public int mode(){
@@ -108,18 +164,39 @@ public class TGradientNode{
     }
 
     public void put(T key, T value){
+        if(targets_gradients==null){
+            targets_gradients = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
+        }
         targets_gradients.put(key, value);
     }
     public T get(T key){
+        if(targets_gradients==null){
+           return null;
+        }
         return targets_gradients.get(key);
     }
     public boolean has(T key){
+        if(targets_gradients==null){
+            return false;
+        }
         return targets_gradients.containsKey(key);
     }
     public Set<T> sources(){
         return targets_gradients.keySet();
     }
+
+    public TreeMap<T, T> getMap(){
+        return targets_gradients;
+    }
+
+    public int size(){
+        return (this.targets_gradients!=null)?this.targets_gradients.size():0;
+    }
+
     public void forEach(BiConsumer<T, T> action){
+        if(targets_gradients==null){
+            return;
+        }
         targets_gradients.forEach(action);
     }
 

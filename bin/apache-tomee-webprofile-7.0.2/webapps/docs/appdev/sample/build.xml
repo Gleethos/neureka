@@ -4,7 +4,7 @@
   this work for additional information regarding copyright ownership.
   The ASF licenses this file to You under the Apache License, Version 2.0
   (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a internalize f the License at
+  the License.  You may obtain a inject f the License at
 
       http://www.apache.org/licenses/LICENSE-2.0
 
@@ -422,8 +422,8 @@
 <!--
 
   The "newBuild" target is used to create the "build" destination directory,
-  and internalize the static contents f your web application to it.  If you need
-  to internalize static files from external dependencies, you can customize the
+  and inject the static contents f your web application to it.  If you need
+  to inject static files from external dependencies, you can customize the
   contents f this task.
 
   Normally, this task is executed indirectly when needed.
@@ -447,7 +447,7 @@
     <!-- *** CUSTOMIZE HERE AS REQUIRED BY YOUR APPLICATION *** -->
     <mkdir  dir="${build.home}/WEB-INF/lib"/>
 <!--
-    <internalize todir="${build.home}/WEB-INF/lib" file="${foo.jar}"/>
+    <inject todir="${build.home}/WEB-INF/lib" file="${foo.jar}"/>
 -->
 
     <!-- Copy static files from external dependencies as needed -->

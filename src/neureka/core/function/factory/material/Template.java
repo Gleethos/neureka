@@ -118,7 +118,7 @@ public abstract class Template implements TFunction {
     protected T tensorActivationOf(T input, boolean derive) {
         T output = T.factory.newTensor(input.shape(), input.translation());
         if(!derive && !this.isFlat){
-            output.internalize(new TFunctionBuilder().newBuild(f_id, 1, true).activate(new T[]{input}));
+            output.inject(new TFunctionBuilder().newBuild(f_id, 1, true).activate(new T[]{input}));
             output.add((TLock)input.find(TLock.class));
             return output;
         }
@@ -147,7 +147,7 @@ public abstract class Template implements TFunction {
          * */
         if(d<0 && !isFlat){//only flat functions can be executed
             if(f_id<=9){
-                output.internalize(new TFunctionBuilder().newBuild(TFunction.F_CACHE.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])", true).activate(input));
+                output.inject(new TFunctionBuilder().newBuild(TFunction.F_CACHE.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])", true).activate(input));
                 output.add((TLock)input[0].find(TLock.class));
                 return output;
             }else{
@@ -155,7 +155,7 @@ public abstract class Template implements TFunction {
                     /**  SUMMATION, PI,
                      * */
                     T[] tsrs = activateSource(input);
-                    output.internalize(TFunctionBuilder.newBuild(TFunction.F_CACHE.REGISTER[f_id]+"(I[j])", true).activate(tsrs));
+                    output.inject(TFunctionBuilder.newBuild(TFunction.F_CACHE.REGISTER[f_id]+"(I[j])", true).activate(tsrs));
                     output.add((TLock)input[0].find(TLock.class));
                     return output;
                 }else if(f_id<=18){
@@ -167,9 +167,9 @@ public abstract class Template implements TFunction {
                         operation += "I["+i+"]"+((i+1<tsrs.length)? TFunction.F_CACHE.REGISTER[f_id]:"");
                     }
                     if(j<0){
-                        output.internalize(TFunctionBuilder.newBuild(operation, true).activate(tsrs));
+                        output.inject(TFunctionBuilder.newBuild(operation, true).activate(tsrs));
                     }else{
-                        output.internalize(TFunctionBuilder.newBuild(operation, true).activate(tsrs, j));
+                        output.inject(TFunctionBuilder.newBuild(operation, true).activate(tsrs, j));
                     }
                     output.add((TLock)input[0].find(TLock.class));
                     return output;
@@ -179,9 +179,9 @@ public abstract class Template implements TFunction {
                      * */
                     T[] tsrs = activateSource(input, j, new int[]{1});
                     if(j<0){
-                        output.internalize(new TFunctionBuilder().newBuild(f_id, tsrs.length, true).activate(tsrs));
+                        output.inject(new TFunctionBuilder().newBuild(f_id, tsrs.length, true).activate(tsrs));
                     }else{
-                        output.internalize(new TFunctionBuilder().newBuild(f_id, tsrs.length, true).activate(tsrs, j));
+                        output.inject(new TFunctionBuilder().newBuild(f_id, tsrs.length, true).activate(tsrs, j));
                     }
                     output.add((TLock)input[0].find(TLock.class));
                     return output;
@@ -236,7 +236,7 @@ public abstract class Template implements TFunction {
                 t = T.factory.reshaped(t, newForm, true);//t.reshape(newForm);
 
                 if(d<0){
-                    output.internalize(t);
+                    output.inject(t);
                 }else{//reverse reshape:
                     /**
                      *      [3, 2, 4, 0, 1]
