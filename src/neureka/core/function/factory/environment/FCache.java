@@ -4,7 +4,7 @@ import neureka.core.function.TFunction;
 
 import java.util.HashMap;
 
-public class FunctionCache {
+public class FCache {
 
     public final double BIAS = 0;
     public final double INCLINATION = 1;

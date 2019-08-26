@@ -12,7 +12,7 @@ public class TKernel extends Kernel
     private int biggest_free = 0;
     private float free_ratio = -1;
     private static float unalloc_limit = 1; //  unalloc/alloc should mot be greater than 1
-    private static float alloc_val_sizer = 1.5f;
+    private static float _alloc_val_sizer = 1.5f;
     private static float alloc_shp_tln_sizer = 1.2f;
 
     private void calc_biggest_free(){
@@ -35,53 +35,53 @@ public class TKernel extends Kernel
     }
     //---------------------------------------------
     public double[] values(){
-        this.get(this.values);
-        return this.values;
+        this.get(_values);
+        return _values;
     }
     public int[] shapes(){
-        this.get(this.shapes);//probably obsolete
-        return this.shapes;
+        this.get(_shapes);//probably obsolete
+        return _shapes;
     }
     public int[] translations(){
-        this.get(this.translations);//probably obsolete ... why? -> they are already present!
-        return this.translations;
+        this.get(_translations);//probably obsolete ... why? -> they are already present!
+        return _translations;
     }
     public int[] pointers(){
-        this.get(this.pointers);//probably obsolete
-        return this.pointers;
+        this.get(_pointers);//probably obsolete
+        return _pointers;
     }
     public int[] idx(){
-        this.get(this.tmp_idx);//probably obsolete
-        return this.tmp_idx;
+        this.get(_idx);//probably obsolete
+        return _idx;
     }
 
     //------------------------------------------
-    public double[] value(){this.get(this.tmp_val); return tmp_val; }
-    public int[] shape(){this.get(this.tmp_shp); return tmp_shp;}
-    public int[] translation(){this.get(this.tmp_tln); return tmp_tln;}
+    public double[] value(){this.get(__val); return __val; }
+    public int[] shape(){this.get(__shp); return __shp;}
+    public int[] translation(){this.get(__tln); return __tln;}
     //------------------------------------------
-    private double[] tmp_val;
-    private int[] tmp_shp;
-    private int[] tmp_tln;
+    private double[] __val;
+    private int[] __shp;
+    private int[] __tln;
     //-----------------------------
-    public @PrivateMemorySpace(8*3) int[] tmp_idx = new int[8*3];
+    public @PrivateMemorySpace(8*3) int[] _idx = new int[8*3];
     //-----------------------------
-    private int[] mde = {0};
+    public int[] _mde = {0};
     /**
      *    TENSORS:
      * */
-    public double[] values;
-    public int[] shapes;
-    public int[] translations;
+    public double[] _values;
+    public int[] _shapes;
+    public int[] _translations;
 
-    public int[] pointers;// Pointers of tensors (chronologically)
+    public int[] _pointers;// Pointers of tensors (chronologically)
     /**
      *    tsr pointer++:
-     *    +0 -> tsr_ptr: for values
+     *    +0 -> tsr_ptr: for _values
      *    +1 -> tsr_sze: (size) -> negative means: hasGradient()==true
      *       -> full_size: (size) -> 2*tsr_sze if has Gradient()==true
      *
-     *    +2 -> shp_ptr: for shapes
+     *    +2 -> shp_ptr: for _shapes
      *    +3 -> shp_sze: (size)
      *
      *    +4 -> tln_ptr: for shape index to value translation
@@ -89,31 +89,32 @@ public class TKernel extends Kernel
      * */
     public TKernel(){
         this.setExplicit(true);
-        this.pointers = new int[]{};//0, -initialSize, 0, 0, 0, 0
-        this.shapes  = new int[0];
-        this.translations = new int[0];
-        this.values  = new double[0];
+        _pointers = new int[]{};//0, -initialSize, 0, 0, 0, 0
+        _shapes = new int[0];
+        _translations = new int[0];
+        _values = new double[0];
     }
     //-------------------------------------------------------------------
     public int tsr_count(){
-        return pointers.length/6;
+        return _pointers.length/6;
     }
     //-------------------------------------------------------------------
     // Tensors:
     private int tsr_ptr(int t_id){
-        return pointers[t_id*6+0 ];
+        return _pointers[t_id*6+0 ];
     }
     private int tsr_sze(int t_id){
-        return Math.abs(pointers[t_id*6+1]);
+        return Math.abs(_pointers[t_id*6+1]);
     }
     private int tsr_end(int t_id){
         return (t_id<0)?0:(tsr_ptr(t_id)+tsr_sze(t_id)+ tsr_grd_sze(t_id));
     }
 
     private void set_tsr_ptr(int t_id, int ptr){
-        pointers[t_id*6+0 ] = ptr;
+        _pointers[t_id*6+0 ] = ptr;
     }
-    private void set_tsr_sze(int t_id, int sze){pointers[t_id*6+1]=sze;}
+    private void set_tsr_sze(int t_id, int sze){
+        _pointers[t_id*6+1]=sze;}
 
     // Gradients:
     private int tsr_grd_ptr(int t_id){
@@ -124,42 +125,48 @@ public class TKernel extends Kernel
 
     // Shapes:
     private int shp_ptr(int t_id){
-        return pointers[t_id*6+2 ];
+        return _pointers[t_id*6+2 ];
     }
     private int shp_sze(int t_id){
-        return pointers[t_id*6+3];
+        return _pointers[t_id*6+3];
     }
     private int shp_end(int t_id){return shp_ptr(t_id)+shp_sze(t_id);}
 
     private void set_shp_ptr(int t_id, int ptr){
-        pointers[t_id*6+2 ] = ptr;
+        _pointers[t_id*6+2 ] = ptr;
     }
-    private void set_shp_sze(int t_id, int sze){pointers[t_id*6+3]=sze;}
+    private void set_shp_sze(int t_id, int sze){
+        _pointers[t_id*6+3]=sze;}
 
     // Translations:
     private int tln_ptr(int t_id){
-        return pointers[t_id*6+4 ];
+        return _pointers[t_id*6+4 ];
     }
     private int tln_sze(int t_id){
-        return pointers[t_id*6+5];
+        return _pointers[t_id*6+5];
     }
     private int tln_end(int t_id){return tln_ptr(t_id)+tln_sze(t_id);}
 
     private void set_tln_ptr(int t_id, int ptr){
-        pointers[t_id*6+4 ] = ptr;
+        _pointers[t_id*6+4 ] = ptr;
     }
-    private void set_tln_sze(int t_id, int sze){pointers[t_id*6+5]=sze;}
+    private void set_tln_sze(int t_id, int sze){
+        _pointers[t_id*6+5]=sze;}
     //-------------------------------------------------------------------
     private int free_spc(int t_id){
-        return  ((t_id+1)*6<this.pointers.length)
+        return  ((t_id+1)*6<_pointers.length)
                 ?(tsr_ptr(t_id+1)-tsr_end(t_id))//=> getting space between t_id and next element
-                :this.values.length-tsr_end(t_id);//=> t_id is last element
+                :_values.length-tsr_end(t_id);//=> t_id is last element
     }
     //-------------------------------------------------------------------
-    private void setNull(int t_id){pointers[t_id*6+1]=0;}
-    private boolean ptrIsNull(int t_id){return (t_id<0)?false:(pointers[t_id*6+1]==0);}
+    private void setNull(int t_id){
+        _pointers[t_id*6+1]=0;
+    }
+    private boolean ptrIsNull(int t_id){
+        return (t_id<0)?false:(_pointers[t_id*6+1]==0);
+    }
     private boolean hasGradient(int t_id){
-        return (pointers[t_id*6+1]<0);
+        return (_pointers[t_id*6+1]<0);
     }
     //-------------------------------------------------------------------
     /**
@@ -174,10 +181,10 @@ public class TKernel extends Kernel
         int size = tensor.value().length;
         int[] shape = tensor.shape();
         int[] translation = tensor.translation();
-        this.tmp_shp = shape;
-        this.tmp_tln = translation;
-        this.put(this.tmp_shp);
-        this.put(this.tmp_tln);
+        __shp = shape;
+        __tln = translation;
+        this.put(__shp);
+        this.put(__tln);
         int biggestChunck = 0;
         for(int t_i = -1; t_i<tsr_count(); t_i++){
             biggestChunck =
@@ -186,18 +193,18 @@ public class TKernel extends Kernel
                     :biggestChunck;
         }
         if(biggestChunck<size){
-            int newSpace = (int)(this.values.length* alloc_val_sizer);
+            int newSpace = (int)(_values.length* _alloc_val_sizer);
             newSpace = (newSpace>size)?newSpace:size;
-            this.get(this.values);//TODO: Make a flag so that this is avoided!
-            double[] newValues = new double[this.values.length+newSpace];
-            for(int i=0; i<values.length; i++){
-                newValues[i] = values[i];
+            this.get(_values);//TODO: Make a flag so that this is avoided!
+            double[] newValues = new double[_values.length+newSpace];
+            for(int i = 0; i< _values.length; i++){
+                newValues[i] = _values[i];
             }
-            this.values = newValues;
-            if(this.pointers.length==0){
-                this.pointers = new int[]{0, 0, 0, 0, 0, 0};
+            _values = newValues;
+            if(_pointers.length==0){
+                _pointers = new int[]{0, 0, 0, 0, 0, 0};
             }
-            this.put(this.values);
+            this.put(_values);
         }
         for(int t_i = -1; t_i<tsr_count(); t_i++){//  t_i=-1  :
             if(free_spc(t_i)>=size){
@@ -214,12 +221,12 @@ public class TKernel extends Kernel
                 set_shp_sze(t_i, shape.length);
                 set_tln_ptr(t_i, alloc_tln(translation));
                 set_tln_sze(t_i, translation.length);
-                this.put(this.pointers);
+                this.put(_pointers);
                 return ptr;
             }
         }
-        this.put(this.pointers);
-        return 0;//return pointer f alloc_val_sizer
+        this.put(_pointers);
+        return 0;//return pointer f _alloc_val_sizer
     }
 
     private int mod_ptrs(int t_id, boolean rmv, int[][] regis){
@@ -234,12 +241,12 @@ public class TKernel extends Kernel
         int[] newPointers;
         if(rmv){//Removing pointer entry and setting REGISTER entry to null (-1)
             regis[0][mapper[t_id]]=-1;
-            newPointers = new int[pointers.length-6];
+            newPointers = new int[_pointers.length-6];
             for(int i=0; i<t_id*6; i++){
-                newPointers[i] = this.pointers[i];
+                newPointers[i] = _pointers[i];
             }
-            for(int i=t_id*6+6; i<this.pointers.length; i++) {
-                newPointers[i-6] = this.pointers[i];
+            for(int i = t_id*6+6; i<_pointers.length; i++) {
+                newPointers[i-6] = _pointers[i];
                 if(i%6==0){
                     regis[0][mapper[(i/6)]]--;
                 }
@@ -264,57 +271,57 @@ public class TKernel extends Kernel
                 regis[0] = newRegister;
 
             }
-            newPointers = new int[pointers.length+6];
+            newPointers = new int[_pointers.length+6];
             for(int i=0; i<t_id*6+6; i++){
-                newPointers[i] = this.pointers[i];
+                newPointers[i] = _pointers[i];
             }
             for(int i=t_id*6+6; i<newPointers.length-6; i++){
-                newPointers[i+6] = this.pointers[i];
+                newPointers[i+6] = _pointers[i];
                 if(i%6==0){
                     regis[0][mapper[(i/6)]]++;
                 }
             }
         }
-        this.pointers = newPointers;
-        this.put(this.pointers);
+        _pointers = newPointers;
+        this.put(_pointers);
         return rgr_ptr;//mapper[t_id];
     }
     /**
-     *    returns pointer to shapes/translations elements.
-     *    moves this.shapes/this.translations to device if required data is not present.
+     *    returns pointer to _shapes/_translations elements.
+     *    moves _shapes/_translations to device if required data is not present.
      *
      * */
     private int alloc_tln(int[] translation){
         int zeros_ptr = 0;
-        for(int i=0; i<this.translations.length; i++){
-            if(this.translations[i]!=0){
+        for(int i = 0; i<_translations.length; i++){
+            if(_translations[i]!=0){
                 zeros_ptr = i+1;
             }
             boolean matches = true;
             for(int ii=0; ii<translation.length; ii++){
-                if((i+ii>=this.translations.length)||this.translations[i+ii]!=translation[ii]&&this.translations[i+ii]!=0){
+                if((i+ii>=_translations.length)||_translations[i+ii]!=translation[ii]&&_translations[i+ii]!=0){
                     matches=false;
                 }
             }
             if(matches){
                 for(int ii=0; ii<translation.length; ii++){
-                    this.translations[i+ii]=translation[ii];
+                    _translations[i+ii]=translation[ii];
                 }
-                this.put(this.translations);
+                this.put(_translations);
                 return i;
             }
         }
         int[] newTranslations
                 = new int[
-                this.translations.length+
+                _translations.length+
                         (
-                                translation.length>((int)(this.translations.length* alloc_shp_tln_sizer))
+                                translation.length>((int)(_translations.length* alloc_shp_tln_sizer))
                                         ?translation.length
-                                        :((int)(this.translations.length* alloc_shp_tln_sizer))
+                                        :((int)(_translations.length* alloc_shp_tln_sizer))
                         )
                 ];
         for(int i=0; i<zeros_ptr; i++){
-            newTranslations[i] = this.translations[i];
+            newTranslations[i] = _translations[i];
         }
         for(int i=zeros_ptr; i<zeros_ptr+translation.length; i++){
             newTranslations[i] =
@@ -323,41 +330,41 @@ public class TKernel extends Kernel
                     :0;
         }
         int ptr = zeros_ptr;
-        this.translations = newTranslations;
-        this.put(this.translations);
+        _translations = newTranslations;
+        this.put(_translations);
         return ptr;
     }
     private int alloc_shp(int[] shape){
         int zeros_ptr = 0;
-        for(int i=0; i<this.shapes.length; i++){
-            if(this.shapes[i]!=0){
+        for(int i = 0; i<_shapes.length; i++){
+            if(_shapes[i]!=0){
                 zeros_ptr = i+1;
             }
             boolean matches = true;
             for(int ii=0; ii<shape.length; ii++){
-                if((i+ii>=this.shapes.length)||this.shapes[i+ii]!=shape[ii]&&this.shapes[i+ii]!=0){
+                if((i+ii>=_shapes.length)||_shapes[i+ii]!=shape[ii]&&_shapes[i+ii]!=0){
                     matches=false;
                 }
             }
             if(matches){
                 for(int ii=0; ii<shape.length; ii++){
-                    this.shapes[i+ii]=shape[ii];
+                    _shapes[i+ii]=shape[ii];
                 }
-                this.put(this.shapes);
+                this.put(_shapes);
                 return i;
             }
         }
         int[] newShapes =
             new int[
-            this.shapes.length+
+            _shapes.length+
                 (
-                    shape.length>((int)(this.shapes.length* alloc_shp_tln_sizer))
+                    shape.length>((int)(_shapes.length* alloc_shp_tln_sizer))
                         ?shape.length
-                        :((int)(this.shapes.length* alloc_shp_tln_sizer))
+                        :((int)(_shapes.length* alloc_shp_tln_sizer))
                 )
             ];
         for(int i=0; i<zeros_ptr; i++){
-            newShapes[i] = this.shapes[i];
+            newShapes[i] = _shapes[i];
         }
         for(int i=zeros_ptr; i<zeros_ptr+shape.length; i++){
             newShapes[i] =
@@ -366,8 +373,8 @@ public class TKernel extends Kernel
                     :0;
         }
         int ptr = zeros_ptr;
-        this.shapes = newShapes;
-        this.put(this.shapes);
+        _shapes = newShapes;
+        this.put(_shapes);
         return ptr;
     }
 
@@ -377,130 +384,138 @@ public class TKernel extends Kernel
      *    ------------------------------------------------------
      *    ======================================================
     * */
-    public int fetch_tsr(int t_id, boolean grd){
-        this.tmp_val = new double[tsr_sze(t_id)];
-        this.tmp_shp = new int[shp_sze(t_id)];
-        this.tmp_tln = new int[tln_sze(t_id)];
-        mde = new int[]{(grd)?-4:-3, t_id};
-        this.put(this.tmp_val).put(this.tmp_shp).put(this.tmp_tln).put(this.mde);
+    public int executionSizeOf_fetchTsr(int t_id, boolean grd){
+        __val = new double[tsr_sze(t_id)];
+        __shp = new int[shp_sze(t_id)];
+        __tln = new int[tln_sze(t_id)];
+        _mde = new int[]{(grd)?-4:-3, t_id};
+        this.put(__val).put(__shp).put(__tln).put(_mde);
         int g_sze = tsr_sze(t_id)+shp_sze(t_id)+tln_sze(t_id);
         //System.out.println("fetch: "+g_sze);
         return g_sze;
     }
 
-    public int store_tsr(int t_id, double[] value, boolean grd){
-        mde = new int[]{(grd)?-2:-1, t_id};// 1. define if stored as grd or not; 2. specify tsr id;
-        this.tmp_val = value;
-        this.put(this.mde).put(this.tmp_val);
+    public int executionSizeOf_storeTsr(int t_id, double[] value, boolean grd){
+        _mde = new int[]{(grd)?-2:-1, t_id};// 1. define if stored as grd or not; 2. specify tsr id;
+        __val = value;
+        this.put(_mde).put(__val);
         int g_sze = tsr_sze(t_id)+shp_sze(t_id)+tln_sze(t_id);
         //System.out.println(g_sze);
         return g_sze;
     }
 
-    public int calculate_tsr(int drn_id, int src1_id, int src2_id, int f_id){
-
-        if(this.mde==null||this.mde.length<3||this.mde[0]!=f_id||this.mde[1]!=drn_id||this.mde[2]!=src1_id||this.mde[3]!=src2_id){
-            this.mde = new int[]{f_id, drn_id, src1_id, src2_id};
-            this.put(this.mde);
+    /**
+     * Mode format:
+     * 0: f_id
+     * 1-(n-1): t_id's
+     * n: d (-1 if not derivative)
+     * */
+    public int executionSizeOf_calc(int[] mode){// Mode contains f_id, drain id and source id's !
+        if(_mde ==null||_mde.length<3||_mde.length!=mode.length){
+            _mde = mode;
+            this.put(_mde);//up
         }
-        for(int i=0; i<tmp_idx.length; i++){
-            this.tmp_idx[i] = 0;
+        for(int i = 0; i< _idx.length; i++){
+            _idx[i] = 0;
         }
-        this.put(this.tmp_idx);
-        return tsr_sze(drn_id);
-    }
-    public int calculate_tsr(int[] mode){// Mode contains f_id, drain id and source id's !
-        if(this.mde==null||this.mde.length<3||this.mde.length!=mode.length){
-            this.mde = mode;
-            this.put(this.mde);//up
-        }
-        for(int i=0; i<tmp_idx.length; i++){
-            this.tmp_idx[i] = 0;
-        }
-        this.put(this.tmp_idx);
+        this.put(_idx);
         return tsr_sze(mode[1]);
     }
     /**
      *    KERNEL RUN:
      *    ==========
      * */
+
     @Override
     public void run() {
-        int gid = this.getGlobalId();
-        for(int i=0; i<tmp_idx.length; i++){
-            this.tmp_idx[i] = 0;
+        run(this.getGlobalId());
+    }
+
+    public void run(int gid, int[] m){
+        _mde = m;
+        run(gid);
+    }
+
+    private void run(int gid){
+        for(int i = 0; i< _idx.length; i++){
+            _idx[i] = 0;
         }
-        if(mde[0]==-5){//cleanup //TODO implement!
+        if(_mde[0]==-5){//cleanup //TODO implement!
         }
-        if(mde[0]==-4){//fetch_tsr grad f tensor
-            run_tsr_fetch(gid, true);
+        if(_mde[0]==-4){//executionSizeOf_fetchTsr grad f tensor
+            run_fetch(gid, true);
         }
-        if(mde[0]==-3){//fetch_tsr tensor
-           run_tsr_fetch(gid, false);
-           //this.tmp_val[gid] = gid;
+        if(_mde[0]==-3){//executionSizeOf_fetchTsr tensor
+           run_fetch(gid, false);
+           //__val[gid] = gid;
         }
-        if(mde[0]==-2){//store_tsr grad f tensor
-            run_tsr_store(gid, true);
+        if(_mde[0]==-2){//executionSizeOf_storeTsr grad f tensor
+            run_store(gid, true);
         }
-        if(mde[0]==-1){//store_tsr tensor
-            run_tsr_store(gid, false);
+        if(_mde[0]==-1){//executionSizeOf_storeTsr tensor
+            run_store(gid, false);
         }
-        if(mde[0]==0){//Relu
-            run_tsr_relu(gid,  mde[1], mde[2], mde[3]);
+        if(_mde[0]==0){//Relu
+            run_relu(gid,  _mde[1], _mde[2], _mde[3]);
         }
-        if(mde[0]==1){//Sigmoid
-            run_tsr_sig(gid,  mde[1], mde[2], mde[3]);
+        if(_mde[0]==1){//Sigmoid
+            run_sig(gid,  _mde[1], _mde[2], _mde[3]);
         }
-        if(mde[0]==2){//Tanh
-            run_tsr_tnh(gid,  mde[1], mde[2], mde[3]);
+        if(_mde[0]==2){//Tanh
+            run_tnh(gid,  _mde[1], _mde[2], _mde[3]);
         }
-        if(mde[0]==3){//Quadratic
-            run_tsr_qdr(gid,  mde[1], mde[2], mde[3]);
+        if(_mde[0]==3){//Quadratic
+            run_qdr(gid,  _mde[1], _mde[2], _mde[3]);
         }
-        if(mde[0]==4){//Ligmoid
-            run_tsr_lig(gid,  mde[1], mde[2], mde[3]);
+        if(_mde[0]==4){//Ligmoid
+            run_lig(gid,  _mde[1], _mde[2], _mde[3]);
         }
-        if(mde[0]==5){//Linear
-            run_tsr_lin(gid,  mde[1], mde[2], mde[3]);
+        if(_mde[0]==5){//Linear
+            run_lin(gid,  _mde[1], _mde[2], _mde[3]);
         }
-        if(mde[0]==6){//Gaussian
-            run_tsr_gus(gid,  mde[1], mde[2], mde[3]);
+        if(_mde[0]==6){//Gaussian
+            run_gus(gid,  _mde[1], _mde[2], _mde[3]);
         }
-        if(mde[0]==7){//Absolut
-            run_tsr_abs(gid,  mde[1], mde[2], mde[3]);
+        if(_mde[0]==7){//Absolut
+            run_abs(gid,  _mde[1], _mde[2], _mde[3]);
         }
-        if(mde[0]==8){//Sinus
-            run_tsr_sin(gid,  mde[1], mde[2], mde[3]);
+        if(_mde[0]==8){//Sinus
+            run_sin(gid,  _mde[1], _mde[2], _mde[3]);
         }
-        if(mde[0]==9){//Cosinus
-            run_tsr_cos(gid,  mde[1], mde[2], mde[3]);
+        if(_mde[0]==9){//Cosinus
+            run_cos(gid,  _mde[1], _mde[2], _mde[3]);
         }
-        if(mde[0]==10){//Sum
-            run_tsr_sum(gid,  mde[1], (mde.length<=3)?-1:mde[mde.length-1]);
+        if(_mde[0]==10){//Sum
+            run_sum(gid,  _mde[1], (_mde.length<=3)?-1: _mde[_mde.length-1]);
         }
-        if(mde[0]==11){//Product
-            run_tsr_pi(gid,  mde[1], (mde.length<=3)?-1:mde[mde.length-1]);
+        if(_mde[0]==11){//Product
+            run_pi(gid,  _mde[1], (_mde.length<=3)?-1: _mde[_mde.length-1]);
         }
-        if(mde[0]==12){//  ^
-            run_tsr_pow(gid,  mde[1], mde[2], mde[3]);
+        if(_mde[0]==12){//  ^
+            run_pow(gid,  _mde[1], _mde[2], _mde[3]);
         }
-        if(mde[0]==13){//  /
-            run_tsr_div(gid,  mde[1], mde[2], mde[3]);
+        if(_mde[0]==13){//  /
+            run_div(gid,  _mde[1], _mde[2], _mde[3]);
         }
-        if(mde[0]==14){//  *
-            run_tsr_mul(gid,  mde[1], mde[2], mde[3]);
+        if(_mde[0]==14){//  *
+            run_mul(gid,  _mde[1], _mde[2], _mde[3]);
         }
-        if(mde[0]==15){//  %
-            run_tsr_mod(gid,  mde[1], mde[2], mde[3]);
+        if(_mde[0]==15){//  %
+            run_mod(gid,  _mde[1], _mde[2], _mde[3]);
         }
-        if(mde[0]==16){//  -
-            run_tsr_sub(gid,  mde[1], mde[2], mde[3]);
+        if(_mde[0]==16){//  -
+            run_sub(gid,  _mde[1], _mde[2], _mde[3]);
         }
-        if(mde[0]==17){//  +
-            run_tsr_add(gid,  mde[1], mde[2], mde[3]);
+        if(_mde[0]==17){//  +
+            run_add(gid,  _mde[1], _mde[2], _mde[3]);
         }
-        if(mde[0]==18){// x  tsr_conv
-            run_tsr_conv(gid, mde[1], mde[2], mde[3]);
+        if(_mde[0]==18){// x  tsr_conv
+            if(_mde[_mde.length-1]<0){
+                run_conv(gid, _mde[1], _mde[2], _mde[3]);
+            } else {
+                run_conv_inv(gid, _mde[1], _mde[2], _mde[3], (_mde[_mde.length-1]==0));
+            }
+
         }
 
     }
@@ -530,97 +545,97 @@ public class TKernel extends Kernel
         //TODO write test cases!
     }
 
-    private void run_tsr_fetch(int gid, boolean grd){
-        if(gid<tsr_sze(mde[1])){
-            this.tmp_val[gid]=this.values[((!grd)?tsr_ptr(mde[1]):tsr_grd_ptr(mde[1]))+gid];
+    private void run_fetch(int gid, boolean grd){
+        if(gid<tsr_sze(_mde[1])){
+            __val[gid]=_values[((!grd)?tsr_ptr(_mde[1]):tsr_grd_ptr(_mde[1]))+gid];
         }else{
-            if(gid<(tsr_sze(mde[1])+shp_sze(mde[1]))){
-                gid-=tsr_sze(mde[1]);
-                this.tmp_shp[gid]=this.shapes[shp_ptr(mde[1])+gid];
+            if(gid<(tsr_sze(_mde[1])+shp_sze(_mde[1]))){
+                gid-=tsr_sze(_mde[1]);
+                __shp[gid]=_shapes[shp_ptr(_mde[1])+gid];
             }else{
-                if(gid<(tsr_sze(mde[1])+shp_sze(mde[1])+tln_sze(mde[1]))){
-                    gid-=(tsr_sze(mde[1])+shp_sze(mde[1]));
-                    this.tmp_tln[gid]=this.translations[tln_ptr(mde[1])+gid];
+                if(gid<(tsr_sze(_mde[1])+shp_sze(_mde[1])+tln_sze(_mde[1]))){
+                    gid-=(tsr_sze(_mde[1])+shp_sze(_mde[1]));
+                    __tln[gid]=_translations[tln_ptr(_mde[1])+gid];
                 }
             }
         }
     }
 
-    private void run_tsr_store(int gid, boolean grd){
-        if(gid<tsr_sze(mde[1])){
-            this.values[((!grd)?tsr_ptr(mde[1]):tsr_grd_ptr(mde[1]))+gid]=this.tmp_val[gid];
+    private void run_store(int gid, boolean grd){
+        if(gid<tsr_sze(_mde[1])){
+            _values[((!grd)?tsr_ptr(_mde[1]):tsr_grd_ptr(_mde[1]))+gid]=__val[gid];
         }else{
-            if(gid<(tsr_sze(mde[1])+shp_sze(mde[1]))){
-                gid-=tsr_sze(mde[1]);
-                this.shapes[shp_ptr(mde[1])+gid]=this.tmp_shp[gid];
+            if(gid<(tsr_sze(_mde[1])+shp_sze(_mde[1]))){
+                gid-=tsr_sze(_mde[1]);
+                _shapes[shp_ptr(_mde[1])+gid]=__shp[gid];
             }else{
-                if(gid<(tsr_sze(mde[1])+shp_sze(mde[1])+tln_sze(mde[1]))){
-                    gid-=(tsr_sze(mde[1])+shp_sze(mde[1]));
-                    this.translations[tln_ptr(mde[1])+gid]=this.tmp_tln[gid];
+                if(gid<(tsr_sze(_mde[1])+shp_sze(_mde[1])+tln_sze(_mde[1]))){
+                    gid-=(tsr_sze(_mde[1])+shp_sze(_mde[1]));
+                    _translations[tln_ptr(_mde[1])+gid]=__tln[gid];
                 }
             }
         }
     }
 
-    public void run_tsr_relu(int gid, int drn_id, int src_id, int d){
+    private void run_relu(int gid, int drn_id, int src_id, int d){
         if (d<0) {
-            if (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)] >= 0) {
-                this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                        (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]);
+            if (_values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)] >= 0) {
+                _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                        (_values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]);
             } else {
-                this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                        (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]) * 0.01;
+                _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                        (_values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]) * 0.01;
             }
         } else {
-            if (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)] >= 0) {
-                this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = 0.01;
+            if (_values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)] >= 0) {
+                _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = 0.01;
             } else {
-                this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = 0.01;
+                _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = 0.01;
             }
         }
     }
 
-    public void run_tsr_sig(int gid, int drn_id, int src_id, int d){
+    private void run_sig(int gid, int drn_id, int src_id, int d){
         if(d<0){
-            this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                    1 / (1 + Math.pow(Math.E, (-this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)])));
+            _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                    1 / (1 + Math.pow(Math.E, (-_values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)])));
 
         }else{
-            this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+            _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
                 (
                     Math.pow(
                         Math.E,
-                        -this.values[tsr_ptr(mde[2+d])+__i_of(gid, mde[2+d], 1)]
+                        -_values[tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)]
                     )
                 ) / (Math.pow(
                         (1 + Math.pow(
                                 Math.E,
-                                -this.values[tsr_ptr(mde[2+d])+__i_of(gid, mde[2+d], 1)]
+                                -_values[tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)]
                         )
                     ), 2)
                         + 2 * Math.pow(
-                                Math.E, -this.values[tsr_ptr(mde[2+d])+__i_of(gid, mde[2+d], 1)]));
+                                Math.E, -_values[tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)]));
         }
     }
 
-    public void run_tsr_tnh(int gid, int drn_id, int src_id, int d){
+    private void run_tnh(int gid, int drn_id, int src_id, int d){
         if(d<0){
-            this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                    this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]
+            _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                    _values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]
                             / Math.pow(
                                     (1 + Math.pow(
-                                            this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]
+                                            _values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]
                                             , 2)
                                     ), 0.5);
 
         }else{
-            this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+            _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
                 (1 - Math.pow(
-                    (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]
+                    (_values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]
                         /
                         Math.pow(
                             (1 + Math.pow(
-                                this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]
+                                _values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]
                                 , 2)
                             ), 0.5
                         )
@@ -629,179 +644,181 @@ public class TKernel extends Kernel
 
         }
     }
-    public void run_tsr_qdr(int gid, int drn_id, int src_id, int d){
+    private void run_qdr(int gid, int drn_id, int src_id, int d){
         if(d<0){
-            this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                Math.pow(this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)],2);
+            _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                Math.pow(_values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)],2);
         }else{
-            this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                    this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]*2;
+            _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                    _values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]*2;
         }
     }
-    public void run_tsr_lig(int gid, int drn_id, int src_id, int d){
+    private void run_lig(int gid, int drn_id, int src_id, int d){
         if(d<0){
-            this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = (
-                this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]
+            _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = (
+                _values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]
                 + (
                     Math.log(
                         Math.pow(
                             Math.E,
-                            -this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]
+                            -_values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]
                         ) + 1
                     ) / Math.log(Math.E)
                 )
             );
         }else{
-            this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+            _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
                 1 /
                     (1 + Math.pow(
                             Math.E,
-                            this.values[tsr_ptr(mde[2+d])+__i_of(gid, mde[2+d], 1)]
+                            _values[tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)]
                     )
                 );
         }
     }
 
-    public void run_tsr_lin(int gid, int drn_id, int src_id, int d){
+    private void run_lin(int gid, int drn_id, int src_id, int d){
         if(d<0){
-            this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                    this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)];
+            _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                    _values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)];
         }else{
-            this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                    this.values[tsr_ptr(mde[2+d])+__i_of(gid, mde[2+d], 1)];
+            _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                    _values[tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)];
         }
     }
 
-    public void run_tsr_gus(int gid, int drn_id, int src_id, int d){
+    private void run_gus(int gid, int drn_id, int src_id, int d){
         if(d<0){
-            this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                    Math.pow(Math.E, -Math.pow(this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)], 2));
+            _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                    Math.pow(Math.E, -Math.pow(_values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)], 2));
         }else{
-            this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                    -2 * (this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)])
-                            * Math.pow(Math.E, -Math.pow(this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)], 2));
+            _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                    -2 * (_values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)])
+                            * Math.pow(Math.E, -Math.pow(_values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)], 2));
         }
     }
 
-    public void run_tsr_abs(int gid, int drn_id, int src_id, int d){
-        this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                Math.abs(this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]);
+    private void run_abs(int gid, int drn_id, int src_id, int d){
+        _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                Math.abs(_values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]);
     }
-    public void run_tsr_sin(int gid, int drn_id, int src_id, int d){
-        this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                Math.sin(this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]);
+    private void run_sin(int gid, int drn_id, int src_id, int d){
+        _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                Math.sin(_values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]);
     }
-    public void run_tsr_cos(int gid, int drn_id, int src_id, int d){
-        this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                Math.cos(this.values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]);
+    private void run_cos(int gid, int drn_id, int src_id, int d){
+        _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                Math.cos(_values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]);
     }
 
-    public void run_tsr_sum(int gid, int drn_id, int d){
+    private void run_sum(int gid, int drn_id, int d){
         if(d<0){
-            this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = 0;
-            for(int i=2; i<(mde.length-1); i++){
-                this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] +=
-                        this.values[tsr_ptr(mde[i])+__i_of(gid, mde[i], 1)];
+            _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = 0;
+            for(int i = 2; i<(_mde.length-1); i++){
+                _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] +=
+                        _values[tsr_ptr(_mde[i])+__i_of(gid, _mde[i], 1)];
             }
         }else{
-            this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                    this.values[tsr_ptr(mde[2+d])+__i_of(gid, mde[2+d], 1)];
+            _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                    _values[tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)];
         }
     }
 
-    public void run_tsr_pi(int gid, int drn_id, int d){
+    private void run_pi(int gid, int drn_id, int d){
         if(d<0){
-            this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = 0;
-            for(int i=2; i<(mde.length-1); i++){
-                this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] *=
-                        this.values[tsr_ptr(mde[i])+__i_of(gid, mde[i], 1)];
+            _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = 0;
+            for(int i = 2; i<(_mde.length-1); i++){
+                _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] *=
+                        _values[tsr_ptr(_mde[i])+__i_of(gid, _mde[i], 1)];
             }
         }else{
             //TODO: implement
-            this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                    this.values[tsr_ptr(mde[2+d])+__i_of(gid, mde[2+d], 1)];//........
+            _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                    _values[tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)];//........
         }
     }
 
-    public void run_tsr_pow(int gid, int drn_id, int src1_id, int src2_id){
-        this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+    private void run_pow(int gid, int drn_id, int src1_id, int src2_id){
+        _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
                 Math.pow(
-                        this.values[tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)],
-                        this.values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)]
+                        _values[tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)],
+                        _values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)]
                         );
     }
-    public void run_tsr_div(int gid, int drn_id, int src1_id, int src2_id){
-        this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                this.values[tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)]
+    private void run_div(int gid, int drn_id, int src1_id, int src2_id){
+        _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                _values[tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)]
                         /
-                this.values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)];
+                _values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)];
     }
-    public void run_tsr_mul(int gid, int drn_id, int src1_id, int src2_id){
-        this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                this.values[tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)]
+    private void run_mul(int gid, int drn_id, int src1_id, int src2_id){
+        _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                _values[tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)]
                         *
-                this.values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)];
+                _values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)];
     }
-    public void run_tsr_mod(int gid, int drn_id, int src1_id, int src2_id){
-        this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                ((int)this.values[tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)])
+    private void run_mod(int gid, int drn_id, int src1_id, int src2_id){
+        _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                ((int)_values[tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)])
                         %
-                ((int)this.values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)]);
+                ((int)_values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)]);
     }
-    public void run_tsr_sub(int gid, int drn_id, int src1_id, int src2_id){
-        this.values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                this.values[tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)]
+    private void run_sub(int gid, int drn_id, int src1_id, int src2_id){
+        _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                _values[tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)]
                         -
-                this.values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)];
+                _values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)];
     }
-    public void run_tsr_add(int gid, int drn_id, int src1_id, int src2_id){
+    private void run_add(int gid, int drn_id, int src1_id, int src2_id){
         int i1 = tsr_ptr(drn_id)+__i_of(gid, drn_id, 0);
         int i2 = tsr_ptr(src1_id)+__i_of(gid, src1_id, 1);
         int i3 = tsr_ptr(src2_id)+__i_of(gid, src2_id, 2);
-        this.values[i1] =
-            this.values[i2]
-                +
-            this.values[i3];
+        _values[i1] = _values[i2] + _values[i3];
     }
+    //==================================================================================================================
+    private void run_conv_inv(int gid, int drn_id, int src1_id, int src2_id, boolean first){
 
-    public void run_tsr_conv(int gid, int drn_id, int src1_id, int src2_id){
+        drn_id = drn_id^src2_id; src2_id = drn_id^src2_id; drn_id = drn_id^src2_id;
+        if(first){
+            src1_id = src1_id^drn_id; drn_id = src1_id^drn_id; src1_id = src1_id^drn_id;
+        }
         // SETUP:
-        int ptr_data_src1 = tsr_ptr(src1_id);
-        int ptr_data_src2 = tsr_ptr(src2_id);
-        int ptr_data_drn = tsr_ptr(drn_id);
+        int p_data_src1 = tsr_ptr(src1_id);
+        int p_data_src2 = tsr_ptr(src2_id);
+        int p_data_drn = tsr_ptr(drn_id);
 
-        int ptr_shp_src1 = shp_ptr(src1_id);
-        int ptr_shp_src2 = shp_ptr(src2_id);
-        int ptr_shp_drn  = shp_ptr(drn_id);
+        int p_shp_src1 = shp_ptr(src1_id);
+        int p_shp_src2 = shp_ptr(src2_id);
+        int p_shp_drn  = shp_ptr(drn_id);
 
-        int ptr_tln_src1 = tln_ptr(src1_id);
-        int ptr_tln_src2 = tln_ptr(src2_id);
-        int ptr_tln_drn  = tln_ptr(drn_id);
+        int p_tln_src1 = tln_ptr(src1_id);
+        int p_tln_src2 = tln_ptr(src2_id);
+        int p_tln_drn  = tln_ptr(drn_id);
 
         int rank = shp_sze(drn_id);
-        int ptr_idx_src1 = 0*rank;
-        int ptr_idx_src2 = 1*rank;
-        int ptr_idx_drn  = 2*rank;
+        int p_idx_src1 = 0*rank;
+        int p_idx_src2 = 1*rank;
+        int p_idx_drn  = 2*rank;
 
-        int src1End = ptr_shp_src1 + rank;
-        int src2End = ptr_shp_src2 + rank;
+        int src1End = p_shp_src1 + rank;
+        int src2End = p_shp_src2 + rank;
 
         //increment on drain:
         for(int i=0; i<gid; i++){//drnSze-1
-            __increment_idx(ptr_shp_drn, ptr_idx_drn, rank);
+            __increment_idx(p_shp_drn, p_idx_drn, rank);
         }
         //increment src accordingly:
         int ri = 0;
         while (ri < rank) {
-            if (this.shapes[(ptr_shp_src1+ri)] == this.shapes[(ptr_shp_src2+ri)]) {//setting 0
-                this.tmp_idx[(ptr_idx_src1+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];
-                this.tmp_idx[(ptr_idx_src2+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];
-            } else if (this.shapes[(ptr_shp_src1+ri)] > this.shapes[(ptr_shp_src2+ri)]) {//setting src1 idx to id idx
-                this.tmp_idx[(ptr_idx_src1+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];
-                this.tmp_idx[(ptr_idx_src2+ri)] = 0;
-            } else if (this.shapes[ptr_shp_src1+ri] < this.shapes[(ptr_shp_src2+ri)]) {//setting src2 idx to id idx
-                this.tmp_idx[(ptr_idx_src1+ri)] = 0;
-                this.tmp_idx[(ptr_idx_src2+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];
+            if (_idx[(p_idx_src2+ri)] == _shapes[(p_shp_src2+ri)]) {//_idx[(p_idx_src1+ri)] == _shapes[(p_shp_src1+ri)] ||
+                _idx[(p_idx_src2 + ri)] = 0;
+                _idx[(p_idx_src1 + ri)] = _idx[(p_idx_drn + ri)];
+            } else {
+                if (_shapes[(p_shp_drn+ri)] > _shapes[(p_shp_src1+ri)]) {//TODO:THIS IS ADDED
+                    _idx[(p_idx_src1+ri)] = (_idx[(p_idx_drn+ri)] - _idx[(p_idx_src2+ri)]);
+                } else {
+                    _idx[(p_idx_src1+ri)] = (_idx[(p_idx_drn+ri)] + _idx[(p_idx_src2+ri)]);
+                }
             }
             ri++;
         }
@@ -813,31 +830,127 @@ public class TKernel extends Kernel
         while (running) {
             ri = (ri==rank)?0:ri;
             if (incrementing == false) {
-                int i1 = __i_of_idx_tln(ptr_tln_src1, ptr_idx_src1, rank); //(int ptr_tln, int[] tln, int[] idx, int rank)
-                int i2 = __i_of_idx_tln(ptr_tln_src2, ptr_idx_src2, rank);
-                value +=
-                     this.values[(ptr_data_src1 + i1)]
-                         *
-                     this.values[(ptr_data_src2 + i2)];
+                boolean isMatch = true;
+                for(int i=0; i<rank; i++){
+                    if(!(_idx[(p_idx_src1+i)] < _shapes[(p_shp_src1+i)] && _idx[(p_idx_src1+i)]>=0)){
+                        isMatch = false;
+                    }
+                }
+                if(isMatch){
+                    int i1 = __i_of_idx_on_tln(p_tln_src1, p_idx_src1, rank); //(int p_tln, int[] tln, int[] idx, int rank)
+                    int i2 = __i_of_idx_on_tln(p_tln_src2, p_idx_src2, rank);
+                    value += _values[(p_data_src1 + i1)] * _values[(p_data_src2 + i2)];
+                    //1*-2 +2*3 -3*6 +2*3, 1*3 +2*6 -3*3 +2*-1,
+                    //1*0  +2*2 -3*4 +2*2  +  4*-2 -2*3 -1*6 +5*3, 1*2 +2*4 -3*2 +2*1  +  4*3 -2*6 -1*3 +5*-1,
+                    //4*0  -2*2 -1*4 +5*2, 4*2 -2*4 -1*2 +5*1
+                }
                 incrementing = true;
                 ri=0;
             } else {//incrementing:
-                if (this.tmp_idx[(ptr_idx_src1+ri)] < this.shapes[(ptr_shp_src1+ri)] && this.tmp_idx[(ptr_idx_src2+ri)] < this.shapes[(ptr_shp_src2+ri)]) {
-                    this.tmp_idx[(ptr_idx_src1+ri)]++;
-                    this.tmp_idx[(ptr_idx_src2+ri)]++;
-                    if (this.tmp_idx[(ptr_idx_src1+ri)] == this.shapes[(ptr_shp_src1+ri)] || this.tmp_idx[(ptr_idx_src2+ri)] == this.shapes[(ptr_shp_src2+ri)]) {
-                        if (((ptr_shp_src1+ri) == (src1End - 1) || (ptr_shp_src2+ri) == (src2End - 1))) {
+                if (_idx[(p_idx_src2+ri)] < _shapes[(p_shp_src2+ri)]) {//_idx[(p_idx_src1+ri)] < _shapes[(p_shp_src1+ri)] &&
+                    //_idx[(p_idx_src1+ri)]++;
+                    _idx[(p_idx_src2+ri)]++;
+
+                    if (_idx[(p_idx_src2+ri)] == _shapes[(p_shp_src2+ri)]) {//_idx[(p_idx_src1+ri)] == _shapes[(p_shp_src1+ri)] ||
+                        if (((p_shp_src2+ri) == (src2End - 1))) {//(p_shp_src1+ri) == (src1End - 1) ||
                             running = false;
                         }
-                        if (this.shapes[(ptr_shp_src1+ri)] == this.shapes[(ptr_shp_src2+ri)]) {//setting 0
-                            this.tmp_idx[(ptr_idx_src1+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];//mtch[mi];
-                            this.tmp_idx[(ptr_idx_src2+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];//mtch[mi];
-                        } else if (this.shapes[(ptr_shp_src1+ri)] > this.shapes[(ptr_shp_src2+ri)]) {//setting hdr1 idx to id idx
-                            this.tmp_idx[(ptr_idx_src1+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];//mtch[mi];
-                            this.tmp_idx[(ptr_idx_src2+ri)] = 0;
-                        } else if (this.shapes[(ptr_shp_src1+ri)] < this.shapes[(ptr_shp_src2+ri)]) {//setting hdr2 idx to id idx
-                            this.tmp_idx[(ptr_idx_src1+ri)] = 0;
-                            this.tmp_idx[(ptr_idx_src2+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];//mtch[mi];
+                        _idx[(p_idx_src2+ri)] = 0;
+                        _idx[(p_idx_src1+ri)] = _idx[(p_idx_drn+ri)];
+                        ri++;
+                    } else {
+                        if (_shapes[(p_shp_drn+ri)] > _shapes[(p_shp_src1+ri)]) {//TODO:THIS IS ADDED
+                            _idx[(p_idx_src1+ri)] = (_idx[(p_idx_drn+ri)] - _idx[(p_idx_src2+ri)]);
+                        } else {
+                            _idx[(p_idx_src1+ri)] = (_idx[(p_idx_drn+ri)] + _idx[(p_idx_src2+ri)]);
+                        }
+                        incrementing = false;
+                        ri=0;
+                    }
+                } else {
+                    ri++;
+                }
+            }
+        }//-8, 4, -9, -2, 2, 3
+        //set value in drn:
+        int di = __i_of_idx_on_tln(p_tln_drn, p_idx_drn, rank);
+        _values[(p_data_drn + di)] = value;
+    }//=================================================================================================================
+
+    private void run_conv(int gid, int drn_id, int src1_id, int src2_id){
+        // SETUP:
+        int p_data_src1 = tsr_ptr(src1_id);
+        int p_data_src2 = tsr_ptr(src2_id);
+        int p_data_drn = tsr_ptr(drn_id);
+
+        int p_shp_src1 = shp_ptr(src1_id);
+        int p_shp_src2 = shp_ptr(src2_id);
+        int p_shp_drn  = shp_ptr(drn_id);
+
+        int p_tln_src1 = tln_ptr(src1_id);
+        int p_tln_src2 = tln_ptr(src2_id);
+        int p_tln_drn  = tln_ptr(drn_id);
+
+        int rank = shp_sze(drn_id);
+        int p_idx_src1 = 0*rank;
+        int p_idx_src2 = 1*rank;
+        int p_idx_drn  = 2*rank;
+
+        int src1End = p_shp_src1 + rank;
+        int src2End = p_shp_src2 + rank;
+
+        //increment on drain:
+        for(int i=0; i<gid; i++){//drnSze-1
+            __increment_idx(p_shp_drn, p_idx_drn, rank);
+        }
+        //increment src accordingly:
+        int ri = 0;
+        while (ri < rank) {
+            if (_shapes[(p_shp_src1+ri)] == _shapes[(p_shp_src2+ri)]) {//setting 0
+                _idx[(p_idx_src1+ri)] = _idx[(p_idx_drn+ri)];
+                _idx[(p_idx_src2+ri)] = _idx[(p_idx_drn+ri)];
+            } else if (_shapes[(p_shp_src1+ri)] > _shapes[(p_shp_src2+ri)]) {//setting src1 idx to id idx
+                _idx[(p_idx_src1+ri)] = _idx[(p_idx_drn+ri)];
+                _idx[(p_idx_src2+ri)] = 0;
+            } else if (_shapes[p_shp_src1+ri] < _shapes[(p_shp_src2+ri)]) {//setting src2 idx to id idx
+                _idx[(p_idx_src1+ri)] = 0;
+                _idx[(p_idx_src2+ri)] = _idx[(p_idx_drn+ri)];
+            }
+            ri++;
+        }
+        //----------
+        // multiplication:
+        double value = 0;
+        boolean running = true;
+        boolean incrementing = false;
+        while (running) {
+            ri = (ri==rank)?0:ri;
+            if (incrementing == false) {
+                int i1 = __i_of_idx_on_tln(p_tln_src1, p_idx_src1, rank); //(int p_tln, int[] tln, int[] idx, int rank)
+                int i2 = __i_of_idx_on_tln(p_tln_src2, p_idx_src2, rank);
+                value +=
+                     _values[(p_data_src1 + i1)]
+                         *
+                     _values[(p_data_src2 + i2)];
+                incrementing = true;
+                ri=0;
+            } else {//incrementing:
+                if (_idx[(p_idx_src1+ri)] < _shapes[(p_shp_src1+ri)] && _idx[(p_idx_src2+ri)] < _shapes[(p_shp_src2+ri)]) {
+                    _idx[(p_idx_src1+ri)]++;
+                    _idx[(p_idx_src2+ri)]++;
+                    if (_idx[(p_idx_src1+ri)] == _shapes[(p_shp_src1+ri)] || _idx[(p_idx_src2+ri)] == _shapes[(p_shp_src2+ri)]) {
+                        if (((p_shp_src1+ri) == (src1End - 1) || (p_shp_src2+ri) == (src2End - 1))) {
+                            running = false;
+                        }
+                        if (_shapes[(p_shp_src1+ri)] == _shapes[(p_shp_src2+ri)]) {//setting 0
+                            _idx[(p_idx_src1+ri)] = _idx[(p_idx_drn+ri)];//mtch[mi];
+                            _idx[(p_idx_src2+ri)] = _idx[(p_idx_drn+ri)];//mtch[mi];
+                        } else if (_shapes[(p_shp_src1+ri)] > _shapes[(p_shp_src2+ri)]) {//setting hdr1 idx to id idx
+                            _idx[(p_idx_src1+ri)] = _idx[(p_idx_drn+ri)];//mtch[mi];
+                            _idx[(p_idx_src2+ri)] = 0;
+                        } else if (_shapes[(p_shp_src1+ri)] < _shapes[(p_shp_src2+ri)]) {//setting hdr2 idx to id idx
+                            _idx[(p_idx_src1+ri)] = 0;
+                            _idx[(p_idx_src2+ri)] = _idx[(p_idx_drn+ri)];//mtch[mi];
                         }
                         ri++;
                     } else {
@@ -850,16 +963,16 @@ public class TKernel extends Kernel
             }
         }
         //set value in drn:
-        int di = __i_of_idx_tln(ptr_tln_drn, ptr_idx_drn, rank);
-        this.values[(ptr_data_drn + di)] = value;
+        int di = __i_of_idx_on_tln(p_tln_drn, p_idx_drn, rank);
+        _values[(p_data_drn + di)] = value;
     }
 
     //Helper methods for tsr conv:
     private int __increment_At(int ri, int idx_ptr, int shp_ptr) {
-        if (this.tmp_idx[idx_ptr+ri] < (this.shapes[shp_ptr+ri])) {//fixed
-            this.tmp_idx[idx_ptr+ri]++;
-            if (this.tmp_idx[idx_ptr+ri] == (this.shapes[shp_ptr+ri])) {
-                this.tmp_idx[idx_ptr+ri] = 0;
+        if (_idx[idx_ptr+ri] < (_shapes[shp_ptr+ri])) {//fixed
+            _idx[idx_ptr+ri]++;
+            if (_idx[idx_ptr+ri] == (_shapes[shp_ptr+ri])) {
+                _idx[idx_ptr+ri] = 0;
                 ri++;
             } else {
                 ri = -1;
@@ -875,120 +988,23 @@ public class TKernel extends Kernel
             ri = __increment_At(ri, idx_ptr, shp_ptr);
         }
     }
-    private int __i_of_idx_tln(int ptr_tln, int idx_ptr, int rank) {
+    private int __i_of_idx_on_tln(int p_tln, int idx_ptr, int rank) {
         int i = 0;
         for (int ii = 0; ii < rank; ii++) {
-            i += this.translations[ptr_tln+ii] * this.tmp_idx[idx_ptr+ii];
+            i += _translations[p_tln+ii] * _idx[idx_ptr+ii];
         }
         return i;
     }
 
     private int __i_of(int gid, int t_id, int num){
-        int ptr_shp  = shp_ptr(t_id);
-        int ptr_tln  = tln_ptr(t_id);
+        int p_shp  = shp_ptr(t_id);
+        int p_tln  = tln_ptr(t_id);
         int rank     = shp_sze(t_id);
-        int ptr_idx  = rank*num;
+        int p_idx  = rank*num;
         for(int i=0; i<gid; i++){
-            __increment_idx(ptr_shp, ptr_idx, rank);
+            __increment_idx(p_shp, p_idx, rank);
         }
-        return __i_of_idx_tln(ptr_tln, ptr_idx, rank);
+        return __i_of_idx_on_tln(p_tln, p_idx, rank);
     }
-
-    public void run_tsr_conv_inv(int gid, int drn_id, int src1_id, int src2_id, boolean first){
-        // SETUP:
-        int ptr_data_src1 = tsr_ptr(src1_id);
-        int ptr_data_src2 = tsr_ptr(src2_id);
-        int ptr_data_drn = tsr_ptr(drn_id);
-
-        int ptr_shp_src1 = shp_ptr(src1_id);
-        int ptr_shp_src2 = shp_ptr(src2_id);
-        int ptr_shp_drn  = shp_ptr(drn_id);
-
-        int ptr_tln_src1 = tln_ptr(src1_id);
-        int ptr_tln_src2 = tln_ptr(src2_id);
-        int ptr_tln_drn  = tln_ptr(drn_id);
-
-        int rank = shp_sze(drn_id);
-        int ptr_idx_src1 = 0*rank;
-        int ptr_idx_src2 = 1*rank;
-        int ptr_idx_drn  = 2*rank;
-
-        int src1End = ptr_shp_src1 + rank;
-        int src2End = ptr_shp_src2 + rank;
-
-        //increment on drain:
-        for(int i=0; i<gid; i++){//drnSze-1
-            __increment_idx(ptr_shp_drn, ptr_idx_drn, rank);
-        }
-        //increment src accordingly:
-        int ri = 0;
-        while (ri < rank) {
-            if (this.shapes[(ptr_shp_src1+ri)] == this.shapes[(ptr_shp_src2+ri)]) {//setting 0
-                this.tmp_idx[(ptr_idx_src1+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];
-                this.tmp_idx[(ptr_idx_src2+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];
-            } else if (this.shapes[(ptr_shp_src1+ri)] > this.shapes[(ptr_shp_src2+ri)]) {//setting src1 idx to id idx
-                this.tmp_idx[(ptr_idx_src1+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];
-                this.tmp_idx[(ptr_idx_src2+ri)] = 0;
-            } else if (this.shapes[ptr_shp_src1+ri] < this.shapes[(ptr_shp_src2+ri)]) {//setting src2 idx to id idx
-                this.tmp_idx[(ptr_idx_src1+ri)] = 0;
-                this.tmp_idx[(ptr_idx_src2+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];
-            }
-            ri++;
-        }
-        //----------
-        // multiplication:
-        boolean running = true;
-        boolean incrementing = false;
-        int di = __i_of_idx_tln(ptr_tln_drn, ptr_idx_drn, rank);
-        //this.values[(ptr_data_drn + i)] = value;
-        while (running) {
-            ri = (ri==rank)?0:ri;
-            if (incrementing == false) {
-                int i1 = __i_of_idx_tln(ptr_tln_src1, ptr_idx_src1, rank); //(int ptr_tln, int[] tln, int[] idx, int rank)
-                int i2 = __i_of_idx_tln(ptr_tln_src2, ptr_idx_src2, rank);
-                //value += this.values[(ptr_data_src1 + i1)] * this.values[(ptr_data_src2 + i2)];
-                if(first){
-                    this.values[(ptr_data_src1 + i1)] +=
-                            this.values[(ptr_data_src2 + i2)] * this.values[(ptr_data_drn + di)];
-                }else{
-                    this.values[(ptr_data_src2 + i2)] +=
-                            this.values[(ptr_data_src1 + i1)] * this.values[(ptr_data_drn + di)];
-                }
-                incrementing = true;
-                ri=0;
-            } else {//incrementing:
-                if (this.tmp_idx[(ptr_idx_src1+ri)] < this.shapes[(ptr_shp_src1+ri)] && this.tmp_idx[(ptr_idx_src2+ri)] < this.shapes[(ptr_shp_src2+ri)]) {
-                    this.tmp_idx[(ptr_idx_src1+ri)]++;
-                    this.tmp_idx[(ptr_idx_src2+ri)]++;
-                    if (this.tmp_idx[(ptr_idx_src1+ri)] == this.shapes[(ptr_shp_src1+ri)] || this.tmp_idx[(ptr_idx_src2+ri)] == this.shapes[(ptr_shp_src2+ri)]) {
-                        if (((ptr_shp_src1+ri) == (src1End - 1) || (ptr_shp_src2+ri) == (src2End - 1))) {
-                            running = false;
-                        }
-                        if (this.shapes[(ptr_shp_src1+ri)] == this.shapes[(ptr_shp_src2+ri)]) {//setting 0
-                            this.tmp_idx[(ptr_idx_src1+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];//mtch[mi];
-                            this.tmp_idx[(ptr_idx_src2+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];//mtch[mi];
-                        } else if (this.shapes[(ptr_shp_src1+ri)] > this.shapes[(ptr_shp_src2+ri)]) {//setting hdr1 idx to id idx
-                            this.tmp_idx[(ptr_idx_src1+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];//mtch[mi];
-                            this.tmp_idx[(ptr_idx_src2+ri)] = 0;
-                        } else if (this.shapes[(ptr_shp_src1+ri)] < this.shapes[(ptr_shp_src2+ri)]) {//setting hdr2 idx to id idx
-                            this.tmp_idx[(ptr_idx_src1+ri)] = 0;
-                            this.tmp_idx[(ptr_idx_src2+ri)] = this.tmp_idx[(ptr_idx_drn+ri)];//mtch[mi];
-                        }
-                        ri++;
-                    } else {
-                        incrementing = false;
-                        ri=0;
-                    }
-                } else {
-                    ri++;
-                }
-            }
-        }
-        //set value in drn:
-        //int i = __i_of_idx_tln(ptr_tln_drn, ptr_idx_drn, rank);
-        //this.values[(ptr_data_drn + i)] = value;
-    }
-
-
-
+    
 }

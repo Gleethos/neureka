@@ -22,16 +22,16 @@ public class NTester_TensorDevice extends NTester {
         device.add(tensor);
         this.assertEqual("tensor.isOutsourced()", ""+tensor.isOutsourced(), "true");
         TKernel kernel = device.getKernel();
-        this.assertEqual("kernel.values()", stringified(kernel.values()), stringified(values));
-        this.assertEqual("kernel.shapes()", stringified(kernel.shapes()), stringified(shapes));
-        this.assertEqual("kernel.translations()", stringified(kernel.translations()), stringified(translations));
+        this.assertContains("kernel._values()", stringified(kernel.values()), stringified(values));
+        this.assertContains("kernel._shapes()", stringified(kernel.shapes()), stringified(shapes));
+        this.assertContains("kernel._translations()", stringified(kernel.translations()), stringified(translations));
 
-        this.assertEqual("tensor.value()", stringified(tensor.value()),stringified(value));
-        this.assertEqual("kernel.value()", stringified(kernel.value()),stringified(value));
-        this.assertEqual("kernel.shape()", stringified(kernel.shape()),stringified(shape));
-        this.assertEqual("kernel.translation()", stringified(kernel.translation()),stringified(translation));
+        this.assertContains("tensor.value()", stringified(tensor.value()),stringified(value));
+        this.assertContains("kernel.value()", stringified(kernel.value()),stringified(value));
+        this.assertContains("kernel.shape()", stringified(kernel.shape()),stringified(shape));
+        this.assertContains("kernel.translation()", stringified(kernel.translation()),stringified(translation));
 
-        this.assertEqual("kernel.pointers()", stringified(kernel.pointers()), stringified(pointers));
+        this.assertContains("kernel._pointers()", stringified(kernel.pointers()), stringified(pointers));
 
         return this.printSessionEnd();
     }
@@ -48,21 +48,21 @@ public class NTester_TensorDevice extends NTester {
         this.assertEqual("tensor.isOutsourced()", ""+tensor.isOutsourced(), "true");
         device.get(tensor);
         this.assertEqual("tensor.isOutsourced()", ""+tensor.isOutsourced(), "false");
-        this.assertEqual("kernel.values()", stringified(kernel.values()), stringified(values));
-        this.assertEqual("kernel.shapes()", stringified(kernel.shapes()), stringified(shapes));
-        this.assertEqual("kernel.translations()", stringified(kernel.translations()), stringified(translations));
+        this.assertEqual("kernel._values()", stringified(kernel.values()), stringified(values));
+        this.assertEqual("kernel._shapes()", stringified(kernel.shapes()), stringified(shapes));
+        this.assertEqual("kernel._translations()", stringified(kernel.translations()), stringified(translations));
 
 
-        this.assertEqual("kernel.values()", stringified(kernel.values()), stringified(values));
-        this.assertEqual("kernel.shapes()", stringified(kernel.shapes()), stringified(shapes));
-        this.assertEqual("kernel.translations()", stringified(kernel.translations()), stringified(translations));
+        this.assertEqual("kernel._values()", stringified(kernel.values()), stringified(values));
+        this.assertEqual("kernel._shapes()", stringified(kernel.shapes()), stringified(shapes));
+        this.assertEqual("kernel._translations()", stringified(kernel.translations()), stringified(translations));
 
-        this.assertEqual("kernel.pointers()", stringified(kernel.pointers()), stringified(pointers));
+        this.assertEqual("kernel._pointers()", stringified(kernel.pointers()), stringified(pointers));
 
         return this.printSessionEnd();
     }
 
-    public int testCalculation(TDevice device, T drn, T src1, T src2, int f_id, double[] values){
+    public int testCalculation(TDevice device, T drn, T src1, T src2, int f_id, int d, double[] values){
 
         String message = "";
         message = (f_id==18)?"Tensor product":message;
@@ -90,17 +90,15 @@ public class NTester_TensorDevice extends NTester {
         //for(int i=0; i<50000; i++){
             //device.calculate(drn, src1, src2, f_id);
         if(src2==null){
-            device.calculate(new T[]{drn, src1}, f_id, -1);
+            device.calculate(new T[]{drn, src1}, f_id, d);
         }else{
-            device.calculate(new T[]{drn, src1, src2}, f_id, -1);
+            device.calculate(new T[]{drn, src1, src2}, f_id, d);
         }
         //}
 
+        //this.assertEqual("kernel._values()", stringified(device.getKernel()._values()), stringified(_values));
 
-
-        //this.assertEqual("kernel.values()", stringified(device.getKernel().values()), stringified(values));
-
-        this.assertContains("kernel.values()", stringified(device.getKernel().values()), stringified(values));
+        this.assertContains("kernel._values()", stringified(device.getKernel().values()), stringified(values));
 
         return this.printSessionEnd();
     }

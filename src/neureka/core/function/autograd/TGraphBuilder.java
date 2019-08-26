@@ -1,8 +1,7 @@
-package neureka.core.autograd;
+package neureka.core.function.autograd;
 
 import neureka.core.T;
 import neureka.core.function.TFunction;
-import neureka.core.function.TLock;
 
 import java.util.function.Consumer;
 
@@ -59,25 +58,25 @@ public class TGraphBuilder {
 
     private static void performDifferentiation(T drain, TFunction function, T[] source)
     {//--------------------------------------------------------------------------------------
-        TLock gid = ((TGradientNode)source[0].find(TGradientNode.class)).gid();
-        TGradientNode rg = new TGradientNode(drain,function, source, gid);
+        TGraphLock gid = ((TGraphNode)source[0].find(TGraphNode.class)).gid();
+        TGraphNode rg = new TGraphNode(drain,function, source, gid);
         drain.add(rg);
-        //TGradientNode rg = ((TGradientNode)drain.find(TGradientNode.class));
+        //TGraphNode rg = ((TGraphNode)drain.find(TGraphNode.class));
         int m = rg.mode();
         if(usesAD(m) && function.isFlat()){
-            TGradientNode drain_gradients = (TGradientNode) drain.find(TGradientNode.class);
+            TGraphNode drain_gradients = (TGraphNode) drain.find(TGraphNode.class);
             /**
              *  Preparing for back propagation:
              * */
             if(usesForwardAD(m)){
                 int i = 0;
                 for(T src : source){
-                    TGradientNode src_gradients = ((TGradientNode) src.find(TGradientNode.class));
+                    TGraphNode src_gradients = ((TGraphNode) src.find(TGraphNode.class));
                     if(src_gradients.function()!=null && src_gradients.function().id()==18){
                         T d = function.derive(source, i);
                         drain_gradients.put(src, d);// Sources created by x-mul are revers-mode cases!
                     }else{
-                        //TGradientNode src_gradients = (TGradientNode) src.find(TGradientNode.class);
+                        //TGraphNode src_gradients = (TGraphNode) src.find(TGraphNode.class);
                         if(src_gradients!=null){
                             T d = function.derive(source, i);
                             src_gradients.forEach(
@@ -101,7 +100,7 @@ public class TGraphBuilder {
             }else if(usesReverseAD(m)){
                 int i = 0;
                 for(T src : source){
-                    TGradientNode src_node = ((TGradientNode) src.find(TGradientNode.class));
+                    TGraphNode src_node = ((TGraphNode) src.find(TGraphNode.class));
                     if(src_node.mode()!=0 || src.rqsGradient()){
                         T d = function.derive(source, i);
                         drain_gradients.put(src, d);// Add gradients with respect to every source tensor!
@@ -129,7 +128,7 @@ public class TGraphBuilder {
                             :T.factory.addition(error, T.factory.newTensor(drain.value(), drain.shape()))
             );
         }
-        TGradientNode drnGradients = (TGradientNode) drain.find(TGradientNode.class);
+        TGraphNode drnGradients = (TGraphNode) drain.find(TGraphNode.class);
         if(drnGradients!=null){
             drnGradients.forEach((target, g)->{
              //   target.backward(T.factory.multiplication(error, g));

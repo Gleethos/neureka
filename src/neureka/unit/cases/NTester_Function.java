@@ -2,7 +2,7 @@ package neureka.unit.cases;
 
 import neureka.core.T;
 import neureka.core.function.TFunction;
-import neureka.core.function.factory.worker.TFunctionBuilder;
+import neureka.core.function.factory.worker.FBuilder;
 
 public class NTester_Function extends NTester {
 
@@ -13,8 +13,8 @@ public class NTester_Function extends NTester {
 	
 	public int testExpression(String expression, String expected, String description) 
 	{
-		TFunction function;// = new TFunctionBuilder();
-		function = new TFunctionBuilder().newBuild(expression, true);
+		TFunction function;// = new FBuilder();
+		function = new FBuilder().newBuild(expression, true);
 		printSessionStart(description);
 		println(bar+" Value toString: "+expression);
 		println(bar+" Expected toString: "+expected);
@@ -29,8 +29,8 @@ public class NTester_Function extends NTester {
 		return (printSessionEnd()>0)?1:0;
 	}
 	public int testActivation(String expression, double[] input, double expected, String description) {
-		TFunction function;// = new TFunctionBuilder();
-		function = new TFunctionBuilder().newBuild(expression, true);
+		TFunction function;// = new FBuilder();
+		function = new FBuilder().newBuild(expression, true);
 		printSessionStart(description);
 		Console.println(bar+" TFunction: "+expression);
 		String inputStr = "";
@@ -49,8 +49,8 @@ public class NTester_Function extends NTester {
 	}
 
 	public int testActivation(String expression, T[] input, T expected, String description) {
-		TFunction function;// = new TFunctionBuilder();
-		function = new TFunctionBuilder().newBuild(expression, true);
+		TFunction function;// = new FBuilder();
+		function = new FBuilder().newBuild(expression, true);
 		printSessionStart(description);
 		Console.println(bar+" TFunction: "+expression);
 		String inputStr = "";

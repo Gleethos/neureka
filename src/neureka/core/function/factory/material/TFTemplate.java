@@ -1,22 +1,22 @@
 package neureka.core.function.factory.material;
 
 import neureka.core.T;
-import neureka.core.function.TLock;
-import neureka.core.function.factory.worker.TFunctionBuilder;
-import neureka.core.autograd.TGraphBuilder;
+import neureka.core.function.autograd.TGraphLock;
+import neureka.core.function.factory.worker.FBuilder;
+import neureka.core.function.autograd.TGraphBuilder;
 import neureka.core.device.TDevice;
 import neureka.core.function.TFunction;
 
 import java.util.ArrayList;
 
-public abstract class Template implements TFunction {
+public abstract class TFTemplate implements TFunction {
 
     protected int f_id;
     protected boolean isFlat;
     protected boolean doAD;
     ArrayList<TFunction> Srcs;
 
-    protected Template(int f_id, boolean isFlat, ArrayList<TFunction> Srcs, boolean doAD){
+    protected TFTemplate(int f_id, boolean isFlat, ArrayList<TFunction> Srcs, boolean doAD){
         this.f_id = f_id;
         this.isFlat = isFlat;
         this.Srcs = Srcs;
@@ -40,7 +40,7 @@ public abstract class Template implements TFunction {
 
     @Override
     public TFunction newBuild(String expression){
-        return TFunctionBuilder.newBuild(expression, true);
+        return FBuilder.newBuild(expression, true);
     }
 
     @Override
@@ -60,14 +60,14 @@ public abstract class Template implements TFunction {
                     if(i==Srcs.size()-1){
                         reconstructed = reconstructed
                                 + "]:(" + (
-                                (Srcs.get(i) instanceof Constant)
+                                (Srcs.get(i) instanceof TFConstant)
                                         ?Srcs.get(i).toString().split("\\.")[0]
                                         :Srcs.get(i).toString()
                         ) +")";
                     }else{
                         reconstructed = reconstructed
                             + (
-                            (Srcs.get(i) instanceof Constant)
+                            (Srcs.get(i) instanceof TFConstant)
                                    ?Srcs.get(i).toString().split("\\.")[0]
                                    :Srcs.get(i).toString()
                         );
@@ -118,8 +118,8 @@ public abstract class Template implements TFunction {
     protected T tensorActivationOf(T input, boolean derive) {
         T output = T.factory.newTensor(input.shape(), input.translation());
         if(!derive && !this.isFlat){
-            output.inject(new TFunctionBuilder().newBuild(f_id, 1, true).activate(new T[]{input}));
-            output.add((TLock)input.find(TLock.class));
+            output.inject(new FBuilder().newBuild(f_id, 1, true).activate(new T[]{input}));
+            output.add((TGraphLock)input.find(TGraphLock.class));
             return output;
         }
         if(input.isOutsourced()){
@@ -133,7 +133,7 @@ public abstract class Template implements TFunction {
         if(!derive){
             TGraphBuilder.connect(output, new T[]{input}, this, true);
         }
-        output.add((TLock)input.find(TLock.class));
+        output.add((TGraphLock)input.find(TGraphLock.class));
         return output;
     }
 
@@ -147,16 +147,16 @@ public abstract class Template implements TFunction {
          * */
         if(d<0 && !isFlat){//only flat functions can be executed
             if(f_id<=9){
-                output.inject(new TFunctionBuilder().newBuild(TFunction.F_CACHE.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])", true).activate(input));
-                output.add((TLock)input[0].find(TLock.class));
+                output.inject(new FBuilder().newBuild(TFunction.F_CACHE.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])", true).activate(input));
+                //output.add((TGraphLock)input[0].find(TGraphLock.class));
                 return output;
             }else{
                 if(TFunction.F_CACHE.REGISTER[f_id].length()!=1){
                     /**  SUMMATION, PI,
                      * */
                     T[] tsrs = activateSource(input);
-                    output.inject(TFunctionBuilder.newBuild(TFunction.F_CACHE.REGISTER[f_id]+"(I[j])", true).activate(tsrs));
-                    output.add((TLock)input[0].find(TLock.class));
+                    output.inject(FBuilder.newBuild(TFunction.F_CACHE.REGISTER[f_id]+"(I[j])", true).activate(tsrs));
+                    //output.add((TGraphLock)input[0].find(TGraphLock.class));
                     return output;
                 }else if(f_id<=18){
                     /**      +, -, x, *, %, ....// TODO: move this to Function constructor!
@@ -167,11 +167,11 @@ public abstract class Template implements TFunction {
                         operation += "I["+i+"]"+((i+1<tsrs.length)? TFunction.F_CACHE.REGISTER[f_id]:"");
                     }
                     if(j<0){
-                        output.inject(TFunctionBuilder.newBuild(operation, true).activate(tsrs));
+                        output.inject(FBuilder.newBuild(operation, true).activate(tsrs));
                     }else{
-                        output.inject(TFunctionBuilder.newBuild(operation, true).activate(tsrs, j));
+                        output.inject(FBuilder.newBuild(operation, true).activate(tsrs, j));
                     }
-                    output.add((TLock)input[0].find(TLock.class));
+                    //output.add((TGraphLock)input[0].find(TGraphLock.class));
                     return output;
                 }else{
                     /**
@@ -179,11 +179,11 @@ public abstract class Template implements TFunction {
                      * */
                     T[] tsrs = activateSource(input, j, new int[]{1});
                     if(j<0){
-                        output.inject(new TFunctionBuilder().newBuild(f_id, tsrs.length, true).activate(tsrs));
+                        output.inject(new FBuilder().newBuild(f_id, tsrs.length, true).activate(tsrs));
                     }else{
-                        output.inject(new TFunctionBuilder().newBuild(f_id, tsrs.length, true).activate(tsrs, j));
+                        output.inject(new FBuilder().newBuild(f_id, tsrs.length, true).activate(tsrs, j));
                     }
-                    output.add((TLock)input[0].find(TLock.class));
+                    //output.add((TGraphLock)input[0].find(TGraphLock.class));
                     return output;
                 }
             }
@@ -221,8 +221,8 @@ public abstract class Template implements TFunction {
                 int[] newForm = new int[this.Srcs.size()-1];
                 for(int i=0; i<this.Srcs.size()-1; i++ ){
                     TFunction fcn = this.Srcs.get(i);
-                    if(fcn instanceof Constant ){
-                        newForm[i] = (int)((Constant)fcn).value();
+                    if(fcn instanceof TFConstant){
+                        newForm[i] = (int)((TFConstant)fcn).value();
                     }else{
                         T t = (j<0)
                             ?fcn.activate(input)
@@ -278,7 +278,7 @@ public abstract class Template implements TFunction {
     private T[] activateSource(T[] input, int j, int[] templateShape){
         T[] tsrs = new T[this.Srcs.size()];
         for(int i=0; i<tsrs.length; i++){//constants need to be figured out!
-            if(Srcs.get(i) instanceof Constant){
+            if(Srcs.get(i) instanceof TFConstant){
                 tsrs[i] = null;
             }else{
                 tsrs[i] =
@@ -296,7 +296,7 @@ public abstract class Template implements TFunction {
                 (tsrs[i] != null)
                     ? tsrs[i]
                     : (j<0)
-                        ?T.factory.newTensor(((Constant)this.Srcs.get(i)).value(), templateShape)
+                        ?T.factory.newTensor(((TFConstant)this.Srcs.get(i)).value(), templateShape)
                         :T.factory.newTensor(Srcs.get(i).activate(new double[]{}, j), templateShape);
         }
         return tsrs;

@@ -4,7 +4,7 @@ package neureka.core.function.factory.material;
 import neureka.core.T;
 import neureka.core.function.TFunction;
 
-public class Input implements TFunction
+public class TFInput implements TFunction
 {
     int InputIndex;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -28,7 +28,7 @@ public class Input implements TFunction
         int number = 0;
         for (int i = 0; i < equation.length(); ++i) {
             if (equation.charAt(i) == 'j') {
-                TFunction newCore = new Variable();
+                TFunction newCore = new TFVariable();
                 newCore = newCore.newBuild(equation);
                 return newCore;
             }

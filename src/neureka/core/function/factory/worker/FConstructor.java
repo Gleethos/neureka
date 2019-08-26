@@ -2,23 +2,23 @@ package neureka.core.function.factory.worker;
 
 import neureka.core.T;
 import neureka.core.function.*;
-import neureka.core.function.factory.material.Constant;
-import neureka.core.function.factory.material.Input;
-import neureka.core.function.factory.material.Template;
-import neureka.core.function.factory.material.Variable;
+import neureka.core.function.factory.material.TFConstant;
+import neureka.core.function.factory.material.TFInput;
+import neureka.core.function.factory.material.TFTemplate;
+import neureka.core.function.factory.material.TFVariable;
 
 import java.util.ArrayList;
 
-public class TFunctionConstructor {
+public class FConstructor {
     public static TFunction createFunction(int f_id, ArrayList<TFunction> sources, boolean doAD)
     {
         boolean isFlat = true;
         for(TFunction f : sources){
-            isFlat = ((f instanceof Input) || (f instanceof Variable) || (f instanceof Constant)) && isFlat;
+            isFlat = ((f instanceof TFInput) || (f instanceof TFVariable) || (f instanceof TFConstant)) && isFlat;
         }
 
         if(f_id<9) {// FUNCTIONS:
-            return new Template(f_id, isFlat, sources, doAD){//TFunction(){
+            return new TFTemplate(f_id, isFlat, sources, doAD){//TFunction(){
                 @Override
                 public T activate(T[] input, int j) {
                     return R_CACHE.handle(input, this,()->tensorActivationOf(sources.get(0).activate(input, j), false));
@@ -56,7 +56,7 @@ public class TFunctionConstructor {
                 }
             };
         }else{
-            return new Template(f_id, isFlat, sources, doAD){
+            return new TFTemplate(f_id, isFlat, sources, doAD){
                 @Override
                 public T activate(T[] input, int j) {
                     return R_CACHE.handle(input, this, ()->tensorActivationOf(input, j, -1));

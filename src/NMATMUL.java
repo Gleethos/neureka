@@ -39,7 +39,7 @@ public class NMATMUL {
  
 class AparapiMatMul extends Kernel {
  
-	//@Constant 
+	//@TFConstant
     float matA[];
     float matB[];
     float matC[];

@@ -68,4 +68,32 @@ public class NTester_Tensor extends NTester {
 
 
 
+
+    public int testInvTensMulOn(
+            int[] frstShp, int[] scndShp,
+            double[] frstData, double[] scondData, double[] drnData,
+            double[] expctd, boolean first
+    ){
+        printSessionStart("Test T.utility: tensMul_mxd");
+        int rank = (frstShp.length+scndShp.length)/2;
+        int[] frm = new int[rank];
+        for(int i=0; i<rank; i++){frm[i]=i;}
+        int[][] frstMxd = T.utility.reshapedAndToMxd(frstShp, frm);
+        int[][] scndMxd = T.utility.reshapedAndToMxd(scndShp, frm);
+        int[][] drnMxd  = T.utility.resultMxdOf(frstMxd, scndMxd);
+        double[] rsltData = drnData;//new double[T.utility.szeOfShp(drnMxd[0])];
+        T.utility.tensMul_inv_mxd(
+                rank,
+                new double[][]{frstData, scondData, rsltData},
+                new int[]{0, 0, 0},
+                frstMxd, scndMxd, drnMxd,
+                first
+        );
+        assertEqual(stringified((first)?frstData:scondData), stringified(expctd));
+        return (printSessionEnd()>0)?1:0;
+    }
+
+
+
+
 }

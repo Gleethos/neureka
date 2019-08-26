@@ -1,8 +1,8 @@
 package neureka.core;
 
+import neureka.core.function.autograd.TGraphNode;
 import neureka.core.function.TFunction;
 import neureka.core.device.TDevice;
-import neureka.core.autograd.TGradientNode;
 import neureka.core.utility.DataHelper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -34,12 +34,13 @@ public class T {
     public ArrayList<Object> getComponents() {
         return Components;
     }
-    public void setComponents(ArrayList<Object> properties) {
+    public T setComponents(ArrayList<Object> properties) {
         Components = properties;
+        return this;
     }
-    public void add(Object newComponent) {
+    public T add(Object newComponent) {
         if(newComponent==null){
-            return;
+            return this;
         }
         if (Components != null) {
             Object oldCompartment = find(newComponent.getClass());
@@ -52,6 +53,7 @@ public class T {
             Components = new ArrayList<>();
             Components.add(newComponent);
         }
+        return this;
     }
     public Object find(Class componentClass) {
         if (Components != null) {
@@ -63,7 +65,7 @@ public class T {
         }
         return null;
     }
-    public void remove(Class componentClass) {
+    public T remove(Class componentClass) {
         Object oldCompartment = find(componentClass);
         if (oldCompartment != null) {
             Components.remove(oldCompartment);
@@ -72,6 +74,7 @@ public class T {
         if (Components.size() == 0) {
             Components = null;
         }
+        return this;
     }
     public boolean has(Class moduleClass) {
         if (find(moduleClass) != null) {
@@ -224,8 +227,8 @@ public class T {
         }
         strValue = strShape+":("+strValue+")";
         if(mode=="r"){
-            if(this.has(TGradientNode.class)&&((TGradientNode) this.find(TGradientNode.class)).size()>0){
-                TGradientNode d = (TGradientNode) this.find(TGradientNode.class);
+            if(this.has(TGraphNode.class)&&((TGraphNode) this.find(TGraphNode.class)).size()>0){
+                TGraphNode d = (TGraphNode) this.find(TGraphNode.class);
                 String[] strDerivatives = {"; "};
                 d.forEach((target, derivative)->{
                     strDerivatives[0]+="=>d|[ "+derivative.toString("r")+" ]|:t{ "+target.toString("r")+" }, ";
@@ -233,8 +236,8 @@ public class T {
                 strValue += strDerivatives[0];
             }
         }else if(mode == "d"){
-            if(this.has(TGradientNode.class)&&((TGradientNode) this.find(TGradientNode.class)).size()>0){
-                TGradientNode d = (TGradientNode) this.find(TGradientNode.class);
+            if(this.has(TGraphNode.class)&&((TGraphNode) this.find(TGraphNode.class)).size()>0){
+                TGraphNode d = (TGraphNode) this.find(TGraphNode.class);
                 if(d.mode()!=0){
                     String[] strDerivatives = {"; "};
                     d.forEach((target, derivative)->{
@@ -266,6 +269,12 @@ public class T {
             this.value[i] = value;
         }
     }
+
+    public T(int[] shape, double[] value){
+        this.value = value;
+        initialShape(shape);
+    }
+
     public T(T tensor) {
         this.shape = tensor.shape;
         this.translation = tensor.translation;
@@ -385,8 +394,8 @@ public class T {
         if(this.rqsGradient()){
             this.setGradient(error);
         }
-        if(this.has(TGradientNode.class)){
-            ((TGradientNode)this.find(TGradientNode.class)).backward(error);
+        if(this.has(TGraphNode.class)){
+            ((TGraphNode)this.find(TGraphNode.class)).backward(error);
         }
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -949,6 +958,132 @@ public class T {
             System.out.println(strInt(src2[2]) + "-" + strInt(src2[0]) + "-" + strInt(src2[1]));
             System.out.println(strInt(drn[2]) + "-" + strInt(drn[0]) + "-" + strInt(drn[1]));
         }
+        //=========================
+
+        @Contract(pure = true)
+        public static void tensMul_inv_mxd
+                (
+                        int rank,
+                        double[][] data,//[0]=>src1, [1]=>src2, [2]=>drn
+                        int[] dataPtr,
+                        int[][] src1, int[][] src2, int[][] drn,
+                        boolean first
+                ) {
+            //hdr[0] => dim[]
+            //hdr[1] => anchor[]
+            //hdr[2] => idx[]
+            //hdr[3] => {start}
+            int src1End = src1[3][0] + rank;
+            int src2End = src2[3][0] + rank;
+            int drnEnd = drn[3][0] + rank;
+            int drnSze = szeOfShp(drn[0]);
+            int i = 0;
+            while (i < drnSze) {
+                //increment f and drain accordingly:
+                int i1 = src1[3][0];
+                int i2 = src2[3][0];
+                int id = drn[3][0];
+                int ri = 0;
+                while (ri < rank) {
+                    if (src1[0][i1] == src2[0][i2]) {//setting 0
+                        src1[2][i1] = drn[2][id];//mtch[mi];
+                        src2[2][i2] = drn[2][id];//mtch[mi];
+                    } else if (src1[0][i1] > src2[0][i2]) {//setting hdr1 idx to id idx
+                        src1[2][i1] = drn[2][id];//mtch[mi];
+                        src2[2][i2] = 0;
+                    } else if (src1[0][i1] < src2[0][i2]) {//setting hdr2 idx to id idx
+                        src1[2][i1] = 0;
+                        src2[2][i2] = drn[2][id];//mtch[mi];
+                    }
+                    i1++;
+                    i2++;
+                    id++;
+                    ri++;
+                }
+                //----------
+                // multiplication:
+                //double value = 0;
+                int idx = idxOfFrmt_mxd(drn, rank);//This has been added too
+                boolean running = true;
+                boolean incrementing = false;
+                while (running) {
+                    if (i1 == src1End || i2 == src2End || id == drnEnd) {
+                        i1 = src1[3][0];
+                        i2 = src2[3][0];
+                        id = drn[3][0];
+                    }
+                    if (incrementing == false) {
+                        int idx1 = idxOfFrmt_mxd(src1, rank);
+                        int idx2 = idxOfFrmt_mxd(src2, rank);
+                        System.out.println(
+                                "hdr1:" + strInt(src1[2]) + "; " +
+                                        "hdr2:" + strInt(src2[2]) + "; " +
+                                        "drn:" + strInt(drn[2]) +
+                                        " idx1:(" + idx1 + ");" +
+                                        " idx2:(" + idx2 + ");" +
+                                        " drn:(" + idxOfFrmt_mxd(drn, rank) + ");" +
+                                        //" val:(" + value + ") += val1:(" + data[0][dataPtr[0] + idx1] + ") x val2:(" + data[1][dataPtr[1] + idx2] +
+                                ");");
+                        //value += data[0][dataPtr[0] + idx1] * data[1][dataPtr[1] + idx2];
+                        if(first){
+                            data[0][dataPtr[0] + idx1] += data[2][dataPtr[2] + idx] * data[1][dataPtr[1] + idx2];
+                        } else {
+                            data[1][dataPtr[1] + idx2] += data[2][dataPtr[2] + idx] * data[0][dataPtr[0] + idx1];
+                        }
+                        incrementing = true;
+                        i1 = src1[3][0];
+                        i2 = src2[3][0];
+                        id = drn[3][0];
+                    } else {//incrementing:
+                        if (src1[2][i1] < src1[0][i1] && src2[2][i2] < src2[0][i2]) {
+                            src1[2][i1]++;
+                            src2[2][i2]++;
+                            if (src1[2][i1] == src1[0][i1] || src2[2][i2] == src2[0][i2]) {
+                                if ((i1 == (src1End - 1) || i2 == (src2End - 1))) {
+                                    running = false;
+                                }
+                                if (src1[0][i1] == src2[0][i2]) {//setting 0
+                                    src1[2][i1] = drn[2][id];//mtch[mi];
+                                    src2[2][i2] = drn[2][id];//mtch[mi];
+                                } else if (src1[0][i1] > src2[0][i2]) {//setting hdr1 idx to id idx
+                                    src1[2][i1] = drn[2][id];//mtch[mi];
+                                    src2[2][i2] = 0;
+                                } else if (src1[0][i1] < src2[0][i2]) {//setting hdr2 idx to id idx
+                                    src1[2][i1] = 0;
+                                    src2[2][i2] = drn[2][id];//mtch[mi];
+                                }
+                                i1++;
+                                i2++;
+                                id++;
+                            } else {
+                                incrementing = false;
+                                i1 = src1[3][0];
+                                i2 = src2[3][0];
+                                id = drn[3][0];
+                            }
+                        } else {
+                            i1++;
+                            i2++;
+                            id++;
+                        }
+                    }
+                }//setInto value in drn:
+                //int idx = idxOfFrmt_mxd(drn, rank);
+                //data[2][dataPtr[2] + idx] = value;
+                System.out.println(idx + " - " + i);
+                i++;//increment on drain:
+                if (i < drnSze) {
+                    increment_mxd(drn[2], drn[0], drn[3][0], rank);
+                }
+            }
+            System.out.println("result:");
+            System.out.println(strInt(src1[2]) + "-" + strInt(src1[0]) + "-" + strInt(src1[1]));
+            System.out.println(strInt(src2[2]) + "-" + strInt(src2[0]) + "-" + strInt(src2[1]));
+            System.out.println(strInt(drn[2]) + "-" + strInt(drn[0]) + "-" + strInt(drn[1]));
+        }
+
+
+        //=========================
 
         @Contract(pure = true)
         public static int idxOfFrmt_mxd(int[][] mxdFrmt, int rank) {

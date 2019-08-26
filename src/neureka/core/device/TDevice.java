@@ -10,12 +10,12 @@ public class TDevice
 {
     /**
      *    map:
-     *    Holds REGISTER pointers f tensors stored on the device.
+     *    Holds REGISTER _pointers f tensors stored on the device.
     * */
     private HashMap<T, Integer> map = new HashMap<T, Integer>();
     /**
      *    REGISTER:
-     *    Maps REGISTER pointers to pointers WITHIN the compute device.
+     *    Maps REGISTER _pointers to _pointers WITHIN the compute device.
      *    Pointers within the kernel change dynamically,
      *    whereas the REGISTER entry will always represent a specific tensor from
      *    the time of allocation to tensor deletion and de-allocation on the device.
@@ -81,7 +81,7 @@ public class TDevice
         if(kernel!=null){
             kernel.execute(
                     device.createRange(
-                        kernel.fetch_tsr(
+                        kernel.executionSizeOf_fetchTsr(
                                 register[0][
                                         map.get(
                                                 tensor)], false
@@ -92,7 +92,7 @@ public class TDevice
             if(tensor.rqsGradient()){
                 kernel.execute(
                         device.createRange(
-                                kernel.fetch_tsr(
+                                kernel.executionSizeOf_fetchTsr(
                                 register[0][map.get(tensor)], true
                         ))
                 );
@@ -111,13 +111,10 @@ public class TDevice
         }
     }
 
-    public void add(T tensor){
+    public TDevice add(T tensor){
         if(!map.containsKey(tensor)){
             map.put(tensor,
-                    kernel.allocPtrFor(
-                            tensor,//tensor.value().length, tensor.shape(), tensor.translation(),
-                            register
-                    )
+                    kernel.allocPtrFor(tensor, register)
             );
         }
         //for(int n : device.getMaxWorkItemSize()){
@@ -126,17 +123,14 @@ public class TDevice
         //System.out.println(device.getMaxWorkGroupSize()+"   <====  MAX WORK GROUP SIZE");
         kernel.execute(
                 device.createRange(
-                    kernel.store_tsr(
-                        register[0][map.get(tensor)],
-                        tensor.value(), false
-                )
+                    kernel.executionSizeOf_storeTsr(register[0][map.get(tensor)], tensor.value(), false)
             )
         );
         if(tensor.rqsGradient()){
             double[] grd = (tensor.gradient()==null)?new double[tensor.value().length]:tensor.gradient();
             kernel.execute(
                 device.createRange(
-                        kernel.store_tsr(
+                        kernel.executionSizeOf_storeTsr(
                         register[0][map.get(tensor)],
                         grd, true
                     )
@@ -145,12 +139,13 @@ public class TDevice
         }
         tensor.add(this);
         tensor.setIsOutsourced(true);
+        return this;
     }
 
     public double[] valueOf(T tensor, boolean grd){
         kernel.execute(
                 device.createRange(
-                        kernel.fetch_tsr(register[0][map.get(tensor)],grd)
+                        kernel.executionSizeOf_fetchTsr(register[0][map.get(tensor)],grd)
                 )
         );
         return kernel.value();
@@ -168,9 +163,7 @@ public class TDevice
             }
             kernel.execute(
                 device.createRange(
-                    kernel.calculate_tsr(
-                        mode
-                    )
+                    kernel.executionSizeOf_calc(mode)
                 )
             );
         }
@@ -179,79 +172,26 @@ public class TDevice
 
 
 
-    public void calculate_on_CPU(T drn, T t1, T t2, int f_id){
+    public void calculate_on_CPU(T drn, T t1, T t2, int f_id, int d){
         System.out.println("TEST STARTS:");
         System.out.println(stringified(kernel.values()));
         System.out.println(stringified(kernel.pointers()));
         System.out.println(stringified(kernel.shapes()));
         System.out.println(stringified(kernel.translations()));
-        int size =
-        kernel.calculate_tsr(
-                register[0][map.get(drn)],
-                register[0][map.get(t1)],
-                (t2!=null)?register[0][map.get(t2)]:-1,
-                f_id
-        );
+        int[] m = new int[]{1, 2, 3};
+        if(f_id<7){
+            m = new int[]{f_id, register[0][map.get(drn)], register[0][map.get(t1)], (t2!=null)?register[0][map.get(t2)]:d};
+        } else if(f_id<12){
+            m = new int[]{f_id, register[0][map.get(drn)], register[0][map.get(t1)], d};
+        } else {
+            m = new int[]{f_id, register[0][map.get(drn)], register[0][map.get(t1)], register[0][map.get(t2)], d};
+        }
+        int size = kernel.executionSizeOf_calc(m);
         System.out.println("size: "+size);
+        //kernel._mde = m;
         for(int i=0; i<size; i++){
-            if(f_id==0){//Relu
-            }
-            if(f_id==1){//Sigmoid
-                kernel.run_tsr_sig(i,  register[0][map.get(drn)], register[0][map.get(t1)], (t2!=null)?register[0][map.get(t2)]:-1);
-            }
-            if(f_id==2){//Tanh
-                kernel.run_tsr_tnh(i,  register[0][map.get(drn)], register[0][map.get(t1)], (t2!=null)?register[0][map.get(t2)]:-1);
-            }
-            if(f_id==3){//Quadratic
-                kernel.run_tsr_qdr(i,  register[0][map.get(drn)], register[0][map.get(t1)], (t2!=null)?register[0][map.get(t2)]:-1);
-            }
-            if(f_id==4){//Ligmoid
-                kernel.run_tsr_lig(i,  register[0][map.get(drn)], register[0][map.get(t1)], (t2!=null)?register[0][map.get(t2)]:-1);
-            }
-            if(f_id==5){//Linear
-                kernel.run_tsr_lin(i,  register[0][map.get(drn)], register[0][map.get(t1)], (t2!=null)?register[0][map.get(t2)]:-1);
-            }
-            if(f_id==6){//Gaussian
-                kernel.run_tsr_gus(i,  register[0][map.get(drn)], register[0][map.get(t1)], (t2!=null)?register[0][map.get(t2)]:-1);
-            }
-            if(f_id==9){//Absolut
-                kernel.run_tsr_abs(i,  register[0][map.get(drn)], register[0][map.get(t1)], (t2!=null)?register[0][map.get(t2)]:-1);
-            }
-            if(f_id==10){//Sinus
-                kernel.run_tsr_sin(i,  register[0][map.get(drn)], register[0][map.get(t1)], (t2!=null)?register[0][map.get(t2)]:-1);
-            }
-            if(f_id==11){//Cosinus
-                kernel.run_tsr_cos(i,  register[0][map.get(drn)], register[0][map.get(t1)], (t2!=null)?register[0][map.get(t2)]:-1);
-            }
-            if(f_id==7){//Sum
-                kernel.run_tsr_sum(i,  register[0][map.get(drn)], register[0][map.get(t1)]);
-            }
-            if(f_id==8){//Product
-                kernel.run_tsr_pi(i,  register[0][map.get(drn)], register[0][map.get(t1)]);
-            }
-            if(f_id==12){//  ^
-               kernel.run_tsr_pow(i,  register[0][map.get(drn)], register[0][map.get(t1)], register[0][map.get(t2)]);
-            }
-            if(f_id==13){//  /
-               kernel.run_tsr_div(i,  register[0][map.get(drn)], register[0][map.get(t1)], register[0][map.get(t2)]);
-            }
-            if(f_id==14){//  *
-               kernel.run_tsr_mul(i,  register[0][map.get(drn)], register[0][map.get(t1)], register[0][map.get(t2)]);
-            }
-            if(f_id==15){//  %
-               kernel.run_tsr_mod(i,  register[0][map.get(drn)], register[0][map.get(t1)], register[0][map.get(t2)]);
-            }
-            if(f_id==16){//  -
-               kernel.run_tsr_sub(i,  register[0][map.get(drn)], register[0][map.get(t1)], register[0][map.get(t2)]);
-            }
-            if(f_id==17){//  +
-               kernel.run_tsr_add(i,  register[0][map.get(drn)], register[0][map.get(t1)], register[0][map.get(t2)]);
-            }
-            if(f_id==18){//  tsr_mul
-               kernel.run_tsr_conv(i,  register[0][map.get(drn)], register[0][map.get(t1)], register[0][map.get(t2)]);
-            }
-
-            kernel.tmp_idx = new int[kernel.tmp_idx.length];
+            kernel.run(i, m);
+            kernel._idx = new int[kernel._idx.length];
         }
         printDeviceContent(false);
     }
@@ -264,11 +204,11 @@ public class TDevice
             System.out.println(stringified(kernel.translations()));
             System.out.println(stringified(kernel.idx()));
         }else{
-            System.out.println(stringified(kernel.values));
-            System.out.println(stringified(kernel.pointers));
-            System.out.println(stringified(kernel.shapes));
-            System.out.println(stringified(kernel.translations));
-            System.out.println(stringified(kernel.tmp_idx));
+            System.out.println(stringified(kernel._values));
+            System.out.println(stringified(kernel._pointers));
+            System.out.println(stringified(kernel._shapes));
+            System.out.println(stringified(kernel._translations));
+            System.out.println(stringified(kernel._idx));
 
         }
 

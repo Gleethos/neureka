@@ -344,7 +344,7 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
             	 			   				
             	 			   		valueSubPanel.add(valueModPanel, BorderLayout.CENTER);
             	 			   			
-            	 			   	JLabel variableAccessLabel = new JLabel("  Input access and modification:  ",JLabel.CENTER);
+            	 			   	JLabel variableAccessLabel = new JLabel("  TFInput access and modification:  ",JLabel.CENTER);
             	 			   		variableAccessLabel.setOpaque(true);
             	 			   		variableAccessLabel.setBackground(Color.CYAN);
             	 			   		variableAccessLabel.setForeground(Color.BLACK);

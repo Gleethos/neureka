@@ -21,7 +21,7 @@
                              http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
   <!-- ======================== Introduction ============================== -->
-  <!-- This document defines default values for *all* web applications      -->
+  <!-- This document defines default _values for *all* web applications      -->
   <!-- loaded into this instance f Tomcat.  As each application is         -->
   <!-- deployed, this file is processed, followed by the                    -->
   <!-- "/WEB-INF/web.xml" deployment descriptor from your own               -->
@@ -38,7 +38,7 @@
   <!-- resources.  It processes all requests that are not mapped to other   -->
   <!-- servlets with servlet mappings (defined either here or in your own   -->
   <!-- web.xml file).  This servlet supports the following initialization   -->
-  <!-- parameters (default values are in square brackets):                  -->
+  <!-- parameters (default _values are in square brackets):                  -->
   <!--                                                                      -->
   <!--   debug               Debugging detail level for messages logged     -->
   <!--                       by this servlet.  [0]                          -->
@@ -110,7 +110,7 @@
   <!-- The JSP page compiler and execution servlet, which is the mechanism  -->
   <!-- used by Tomcat to support JSP pages.  Traditionally, this servlet    -->
   <!-- is mapped to the URL pattern "*.jsp".  This servlet supports the     -->
-  <!-- following initialization parameters (default values are in square    -->
+  <!-- following initialization parameters (default _values are in square    -->
   <!-- brackets):                                                           -->
   <!--                                                                      -->
   <!--   checkInterval       If development is false and checkInterval is   -->
@@ -252,7 +252,7 @@
   <!-- directives in HTML pages consistent with similar support in web      -->
   <!-- servers like Apache.  Traditionally, this servlet is mapped to the   -->
   <!-- URL pattern "*.shtml".  This servlet supports the following          -->
-  <!-- initialization parameters (default values are in square brackets):   -->
+  <!-- initialization parameters (default _values are in square brackets):   -->
   <!--                                                                      -->
   <!--   buffered            Should output from this servlet be buffered?   -->
   <!--                       (0=false, 1=true)  [0]                         -->
@@ -309,7 +309,7 @@
   <!-- requirements.  Typically, this servlet is mapped to the URL pattern  -->
   <!-- "/cgi-bin/*", which means that any CGI applications that are         -->
   <!-- executed must be present within the web application.  This servlet   -->
-  <!-- supports the following initialization parameters (default values     -->
+  <!-- supports the following initialization parameters (default _values     -->
   <!-- are in square brackets):                                             -->
   <!--                                                                      -->
   <!--   cgiPathPrefix        The CGI search path will start at             -->
@@ -407,7 +407,7 @@
   <!-- definition towards the bottom f this file.                          -->
   <!-- The contentType init param allows you to apply SSI processing to JSP -->
   <!-- pages, javascript, or any other content you wish.  This filter       -->
-  <!-- supports the following initialization parameters (default values are -->
+  <!-- supports the following initialization parameters (default _values are -->
   <!-- in square brackets):                                                 -->
   <!--                                                                      -->
   <!--   contentType         A regex pattern that must be matched before    -->
@@ -826,27 +826,27 @@
         <mime-type>application/vnd.oasis.opendocument.text</mime-type>
     </mime-mapping>
     <mime-mapping>
-        <!-- OpenDocument Drawing Template -->
+        <!-- OpenDocument Drawing TFTemplate -->
         <extension>otg </extension>
         <mime-type>application/vnd.oasis.opendocument.graphics-template</mime-type>
     </mime-mapping>
     <mime-mapping>
-        <!-- HTML Document Template -->
+        <!-- HTML Document TFTemplate -->
         <extension>oth</extension>
         <mime-type>application/vnd.oasis.opendocument.text-web</mime-type>
     </mime-mapping>
     <mime-mapping>
-        <!-- OpenDocument Presentation Template -->
+        <!-- OpenDocument Presentation TFTemplate -->
         <extension>otp</extension>
         <mime-type>application/vnd.oasis.opendocument.presentation-template</mime-type>
     </mime-mapping>
     <mime-mapping>
-        <!-- OpenDocument Spreadsheet Template -->
+        <!-- OpenDocument Spreadsheet TFTemplate -->
         <extension>ots</extension>
         <mime-type>application/vnd.oasis.opendocument.spreadsheet-template </mime-type>
     </mime-mapping>
     <mime-mapping>
-        <!-- OpenDocument Text Template -->
+        <!-- OpenDocument Text TFTemplate -->
         <extension>ott</extension>
         <mime-type>application/vnd.oasis.opendocument.text-template</mime-type>
     </mime-mapping>
@@ -1206,7 +1206,7 @@
   <!--                                                                      -->
   <!-- If you define welcome files in your own application's web.xml        -->
   <!-- deployment descriptor, that list *replaces* the list configured      -->
-  <!-- here, so be sure to include any f the default values that you wish  -->
+  <!-- here, so be sure to include any f the default _values that you wish  -->
   <!-- use within your application.                                         -->
 
     <welcome-file-list>

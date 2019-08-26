@@ -3,7 +3,7 @@ package neureka.core.function.factory.material;
 import neureka.core.T;
 import neureka.core.function.TFunction;
 
-public class Constant implements TFunction
+public class TFConstant implements TFunction
 {
 	private double value;
 	public double value(){

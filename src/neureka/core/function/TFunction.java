@@ -2,33 +2,32 @@
 package neureka.core.function;
 
 import neureka.core.T;
-import neureka.core.autograd.TGradientNode;
-import neureka.core.function.factory.worker.TFunctionBuilder;
-import neureka.core.function.factory.environment.ResultCache;
-import neureka.core.function.factory.environment.FunctionCache;
-
-import java.util.Random;
+import neureka.core.function.autograd.TGraphLock;
+import neureka.core.function.autograd.TGraphNode;
+import neureka.core.function.factory.worker.FBuilder;
+import neureka.core.function.factory.environment.TCache;
+import neureka.core.function.factory.environment.FCache;
 
 public interface TFunction
 {
-	FunctionCache F_CACHE = new FunctionCache();
-	ResultCache R_CACHE = new ResultCache();
+	FCache F_CACHE = new FCache();
+	TCache R_CACHE = new TCache();
 	//------------------------------------------------------------------------------------------------------------------
 
     static T execute(T drain, T[] tensors, String operation){
-		TFunction function = TFunctionBuilder.newBuild(operation, true);
+		TFunction function = FBuilder.newBuild(operation, true);
 		return execute(drain, tensors, function);
 	}
 
 	static T execute(T drain, T[] tensors, TFunction function){
-		//TLock lock = new TLock(function, tensors);
-		TLock newGid = new TLock(function, tensors);//Random().nextLong();
+		//TGraphLock lock = new TGraphLock(function, tensors);
+		TGraphLock newGid = new TGraphLock(function, tensors);//Random().nextLong();
 		for(T t : tensors){
-			t.add(new TGradientNode(t, null, null,  newGid));
+			t.add(new TGraphNode(t, null, null,  newGid));
 		}
 		drain.inject(function.activate(tensors));
-		if(drain.has(TGradientNode.class)){
-			((TGradientNode)drain.find(TGradientNode.class)).trimTree(null);//TODO implement!! test
+		if(drain.has(TGraphNode.class)){
+			((TGraphNode)drain.find(TGraphNode.class)).trimTree(null);//TODO implement!! test
 		}
 		TFunction.R_CACHE.free(tensors);
 		return drain;

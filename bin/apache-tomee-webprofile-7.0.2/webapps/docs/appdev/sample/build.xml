@@ -68,7 +68,7 @@
 
   * Default definitions in this build.xml file.
 
-  You will note below that property values can be composed based on the
+  You will note below that property _values can be composed based on the
   contents f previously defined properties.  This is a powerful technique
   that helps you minimize the number f changes required when your development
   environment is modified.  Note that property composition is allowed within
@@ -141,8 +141,8 @@
 
 <!--
 
-  Use property values to define the locations f external JAR files on which
-  your application will depend.  In general, these values will be used for
+  Use property _values to define the locations f external JAR files on which
+  your application will depend.  In general, these _values will be used for
   two purposes:
   * Inclusion on the classpath that is passed to the Javac compiler
   * Being copied into the "/WEB-INF/lib" directory during execution
@@ -210,7 +210,7 @@
 
   - Create a "build.properties" file in your application's top-level
     src directory (or your user login home directory) that defines
-    appropriate values for the "manager.password", "manager.url", and
+    appropriate _values for the "manager.password", "manager.url", and
     "manager.username" properties described above.
 
   For more information about the Manager web application, and the functionality

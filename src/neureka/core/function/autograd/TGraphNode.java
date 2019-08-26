@@ -1,13 +1,12 @@
-package neureka.core.autograd;
+package neureka.core.function.autograd;
 
 import neureka.core.T;
 import neureka.core.function.TFunction;
-import neureka.core.function.TLock;
 
 import java.util.*;
 import java.util.function.BiConsumer;
 
-public class TGradientNode{
+public class TGraphNode {
 
     /**
      *  These functions describe the meaning of 'mode'
@@ -33,8 +32,8 @@ public class TGradientNode{
     private T[] source = null;
 
     /**
-     * Keys are targets and values are gradients with respect to that target
-     * (Note: values can be null if the recorded function is of type 'reshape')
+     * Keys are targets and _values are gradients with respect to that target
+     * (Note: _values can be null if the recorded function is of type 'reshape')
      * */
     private TreeMap<T, T> targets_gradients;
 
@@ -43,9 +42,9 @@ public class TGradientNode{
      * */
     private int mode = 0;
 
-    private TLock gid = null;
+    private TGraphLock gid = null;
 
-    public TLock gid(){
+    public TGraphLock gid(){
         return gid;
     }
 
@@ -66,7 +65,7 @@ public class TGradientNode{
         return (this.nid()!=1);
     }
 
-    public TGradientNode(T value, TFunction f, T[] src, TLock gid){
+    public TGraphNode(T value, TFunction f, T[] src, TGraphLock gid){
         this.mode = (src!=null)?modeOf(src, f):(value.rqsGradient())?1:0;
         this.function = f;
         this.source = src;
@@ -82,8 +81,8 @@ public class TGradientNode{
         int[] srcModes = new int[source.length];
         int m = 0;
         for(int Ii = 0; Ii< source.length; Ii++){
-            if(source[Ii].has(TGradientNode.class)){
-                TGradientNode node = (TGradientNode) source[Ii].find(TGradientNode.class);
+            if(source[Ii].has(TGraphNode.class)){
+                TGraphNode node = (TGraphNode) source[Ii].find(TGraphNode.class);
                 srcModes[Ii] = node.mode();
             }else if(source[Ii].rqsGradient()){
                 srcModes[Ii] = 1;
@@ -118,15 +117,15 @@ public class TGradientNode{
                 this.targets_gradients.remove(b);
             });
             for(T src : this.source){
-                if(src.has(TGradientNode.class)){
-                    TGradientNode node = (TGradientNode) src.find(TGradientNode.class);
+                if(src.has(TGraphNode.class)){
+                    TGraphNode node = (TGraphNode) src.find(TGraphNode.class);
                     node.trimTree(target);
                 }
             }
         }else{
             for(T src : this.source){
-                if(src.has(TGradientNode.class)){
-                    TGradientNode node = (TGradientNode) src.find(TGradientNode.class);
+                if(src.has(TGraphNode.class)){
+                    TGraphNode node = (TGraphNode) src.find(TGraphNode.class);
                     this.forEach((g, t)->node.trimTree(t));
                 }
             }

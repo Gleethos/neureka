@@ -3,7 +3,7 @@ package neureka.core.function.factory.material;
 import neureka.core.T;
 import neureka.core.function.TFunction;
 
-public class Variable implements TFunction {
+public class TFVariable implements TFunction {
     @Override
     public boolean isFlat() {
         return false;

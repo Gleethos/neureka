@@ -8,11 +8,11 @@ import java.util.ListIterator;
 /**
  * Utility for parsing
  * */
-public class TFunctionParser {
+public class FParser {
     public static int numberOfOperationsWithin(final List<String> operations) {
         int Count = 0;
         for (int i = 0; i < TFunction.F_CACHE.REGISTER.length; ++i) {
-            if (TFunctionParser.containsOperation(TFunction.F_CACHE.REGISTER[i], operations)) {
+            if (FParser.containsOperation(TFunction.F_CACHE.REGISTER[i], operations)) {
                 ++Count;
             }
         }
@@ -26,7 +26,7 @@ public class TFunctionParser {
         String operation = "";
         for (int Si = i; Si < exp.length(); ++Si) {
             operation = (operation) + exp.charAt(Si);
-            if (TFunctionParser.isBasicOperation(operation)) {
+            if (FParser.isBasicOperation(operation)) {
                 return operation;
             }
         }
@@ -53,7 +53,7 @@ public class TFunctionParser {
                 String possibleOperation = "";
                 for (int Sii = Ei + 1; Sii < exp.length(); ++Sii) {
                     possibleOperation = possibleOperation + exp.charAt(Sii);
-                    if (TFunctionParser.isBasicOperation(possibleOperation)) {
+                    if (FParser.isBasicOperation(possibleOperation)) {
                         component = component + exp.charAt(Ei);
                         System.out.print("\n");
                         return component;
@@ -188,7 +188,7 @@ public class TFunctionParser {
         String Updated = "";
         boolean condition = true;
         while (condition) {
-            if (TFunctionParser.isWeired(exp.charAt(Ci)) || (exp.charAt(Ci) >= 'A' && exp.charAt(Ci) <= 'Z') || (exp.charAt(Ci) >= 'a' && exp.charAt(Ci) <= 'z')) {
+            if (FParser.isWeired(exp.charAt(Ci)) || (exp.charAt(Ci) >= 'A' && exp.charAt(Ci) <= 'Z') || (exp.charAt(Ci) >= 'a' && exp.charAt(Ci) <= 'z')) {
                 System.out.print("C: " + exp.charAt(Ci) + "; ");
                 Ci++;
             } else {
@@ -209,7 +209,7 @@ public class TFunctionParser {
             condition = true;
             int l = exp.length() - 1;
             while (condition) {
-                if (TFunctionParser.isWeired(exp.charAt(Ci)) || (exp.charAt(l - Ci) >= 'A' && exp.charAt(l - Ci) <= 'Z') || (exp.charAt(l - Ci) >= 'a' && exp.charAt(l - Ci) <= 'z')) {
+                if (FParser.isWeired(exp.charAt(Ci)) || (exp.charAt(l - Ci) >= 'A' && exp.charAt(l - Ci) <= 'Z') || (exp.charAt(l - Ci) >= 'a' && exp.charAt(l - Ci) <= 'z')) {
                     System.out.print("C: " + exp.charAt(l - Ci) + "; ");
                     Ci++;
                 } else {
@@ -226,10 +226,10 @@ public class TFunctionParser {
         }
         if (exp.length() > 0) {
             if (exp.charAt(0) == '(' && exp.charAt(exp.length() - 1) != ')') {
-                exp = TFunctionParser.removeHeadAndTail(exp);
+                exp = FParser.removeHeadAndTail(exp);
             }
             if (exp.charAt(exp.length() - 1) == ')' && exp.charAt(0) != '(') {
-                exp = TFunctionParser.removeHeadAndTail(exp);
+                exp = FParser.removeHeadAndTail(exp);
             }
         }
         System.out.println("Cleaned component: " + exp);
@@ -298,7 +298,7 @@ public class TFunctionParser {
                 }
             }
             if (needsStitching) {
-                exp = TFunctionParser.removeHeadAndTail(exp);
+                exp = FParser.removeHeadAndTail(exp);
             } else {
                 parsing = false;
             }

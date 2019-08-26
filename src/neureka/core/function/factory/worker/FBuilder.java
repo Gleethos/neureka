@@ -1,12 +1,12 @@
 package neureka.core.function.factory.worker;
 
 import neureka.core.function.TFunction;
-import neureka.core.function.factory.material.Constant;
-import neureka.core.function.factory.material.Input;
+import neureka.core.function.factory.material.TFConstant;
+import neureka.core.function.factory.material.TFInput;
 
 import java.util.*;
 
-public class TFunctionBuilder {
+public class FBuilder {
     /*
 	     0:  ReLu;
 		 1:  Sigmoid;
@@ -36,9 +36,9 @@ public class TFunctionBuilder {
         } else if(TFunction.F_CACHE.REGISTER[f_id]==","){
             ArrayList<TFunction> srcs = new ArrayList<>();
             for(int i=0; i<size; i++){
-                srcs.add(new Input().newBuild(""+i));
+                srcs.add(new TFInput().newBuild(""+i));
             }
-            return TFunctionConstructor.createFunction(f_id, srcs, doAD);
+            return FConstructor.createFunction(f_id, srcs, doAD);
         }
         if (f_id < 10) {
             return newBuild(TFunction.F_CACHE.REGISTER[f_id] + "(I[0])", doAD);//, tipReached);
@@ -78,12 +78,12 @@ public class TFunctionBuilder {
             expression = "";
         }
         if (expression == "") {
-            TFunction newCore = new Constant();
+            TFunction newCore = new TFConstant();
             newCore = newCore.newBuild("0");
             return newCore;
         }
         System.out.println("Equation packed: " + expression);
-        expression = TFunctionParser.unpackAndCorrect(expression);
+        expression = FParser.unpackAndCorrect(expression);
         System.out.println("Equation unpacked: " + expression);
         List<String> Operations = new ArrayList<String>();
         List<String> Components = new ArrayList<String>();
@@ -92,7 +92,7 @@ public class TFunctionBuilder {
         while (i < expression.length()) {
             System.out.println("\nPARSING [" + expression + "] at i:" + i + "\n================");
             System.out.println("parsing at " + i + " => searching for component!");
-            final String newComponent = TFunctionParser.parsedComponent(expression, i);
+            final String newComponent = FParser.parsedComponent(expression, i);
             if (newComponent != null) {
                 System.out.println("Component found! : " + newComponent + " ");
                 System.out.println(Components.size() + " < " + Operations.size() + " ?: true -> Components.addInto(" + newComponent + ")");
@@ -101,7 +101,7 @@ public class TFunctionBuilder {
                 }
                 i += newComponent.length();
                 System.out.println("parsing at " + i + " => searching for operation!");
-                final String newOperation = TFunctionParser.parsedOperation(expression, i);
+                final String newOperation = FParser.parsedOperation(expression, i);
                 if (newOperation != null) {
                     System.out.println("Operation found! : " + newOperation + " ");
                     i += newOperation.length();
@@ -129,7 +129,7 @@ public class TFunctionBuilder {
         //===
         int Count = TFunction.F_CACHE.REGISTER.length;
         for (int j = TFunction.F_CACHE.REGISTER.length; j > 0; --j) {
-            if (!TFunctionParser.containsOperation(TFunction.F_CACHE.REGISTER[j - 1], Operations)) {
+            if (!FParser.containsOperation(TFunction.F_CACHE.REGISTER[j - 1], Operations)) {
                 --Count;
             } else {
                 j = 0;
@@ -140,10 +140,10 @@ public class TFunctionBuilder {
             final List<String> newOperations = new ArrayList<String>();
             final List<String> newComponents = new ArrayList<String>();
             System.out.println("current (" + TFunction.F_CACHE.REGISTER[ID] + ") and most low rank operation: " + TFunction.F_CACHE.REGISTER[Count - 1]);
-            if (TFunctionParser.containsOperation(TFunction.F_CACHE.REGISTER[ID], Operations)) {
+            if (FParser.containsOperation(TFunction.F_CACHE.REGISTER[ID], Operations)) {
                 String currentChain = null;
                 boolean groupingOccured = false;
-                boolean enoughtPresent = TFunctionParser.numberOfOperationsWithin(Operations) > 1;// Otherwise: I[j]^4 goes nuts!
+                boolean enoughtPresent = FParser.numberOfOperationsWithin(Operations) > 1;// Otherwise: I[j]^4 goes nuts!
                 if (enoughtPresent) {
                     String[] ComponentsArray = Components.toArray(new String[0]);
                     int length = ComponentsArray.length;
@@ -163,7 +163,7 @@ public class TFunctionBuilder {
                         if (currentOperation != null) {
                             if (currentOperation.equals(TFunction.F_CACHE.REGISTER[ID])) {
                                 final String newChain =
-                                        TFunctionParser.groupBy(TFunction.F_CACHE.REGISTER[ID], currentChain, currentComponent, currentOperation);
+                                        FParser.groupBy(TFunction.F_CACHE.REGISTER[ID], currentChain, currentComponent, currentOperation);
                                 System.out.println("newChain: " + newChain);
                                 if (newChain != null) {
                                     currentChain = newChain;
@@ -223,51 +223,51 @@ public class TFunctionBuilder {
         if (Components.size() == 1) {
             System.out.println("Only one component left -> no operations! -> testing for function:");
             System.out.println("parsing at " + 0 + " ...(possibly a function!)");
-            String possibleFunction = TFunctionParser.parsedOperation(Components.get(0).toLowerCase(), 0);
+            String possibleFunction = FParser.parsedOperation(Components.get(0).toLowerCase(), 0);
             System.out.println("TFunction ?: " + possibleFunction);
             if (possibleFunction != null) {
                 if (possibleFunction.length() > 1) {
                     for (int Oi = 0; Oi < TFunction.F_CACHE.REGISTER.length; Oi++) {
                         if (TFunction.F_CACHE.REGISTER[Oi].equals(possibleFunction)) {
                             f_id = Oi;
-                            TFunction newCore = new TFunctionBuilder()
+                            TFunction newCore = new FBuilder()
                                 .newBuild(
-                                    TFunctionParser.parsedComponent(Components.get(0), possibleFunction.length()), doAD
+                                    FParser.parsedComponent(Components.get(0), possibleFunction.length()), doAD
                                 );
                             sources.add(newCore);
-                            function = TFunctionConstructor.createFunction(f_id, sources, doAD);
+                            function = FConstructor.createFunction(f_id, sources, doAD);
                             return function;
                             // Hallo mein Schatz! Ich bin`s, die Emi :) Ich liebe dich <3
                         }
                     }
                 }
             }
-            //function = TFunctionConstructor.createFunction(f_id, sources);
+            //function = FConstructor.createFunction(f_id, sources);
             System.out.println("TFunction: " + possibleFunction);
             //---
             System.out.println("1 comonent left: -> unpackAndCorrect(component)");
-            String component = TFunctionParser.unpackAndCorrect(Components.get(0));
+            String component = FParser.unpackAndCorrect(Components.get(0));
             System.out.println("component: " + component);
             System.out.println("Checking if component is variable (value/input): ");
             if ((component.charAt(0) <= '9' && component.charAt(0) >= '0') || component.charAt(0) == '-' || component.charAt(0) == '+') {
-                TFunction newFunction = new Constant();
+                TFunction newFunction = new TFConstant();
                 newFunction = newFunction.newBuild(component);
                 System.out.println("is value leave! -> return newValueLeave.newBuilt(component)");
                 return newFunction;
             }
             if (component.charAt(0) == 'i' || component.charAt(0) == 'I' ||
                     (component.contains("[") && component.contains("]") && component.matches(".[0-9]+."))) {//TODO: Make this regex better!!
-                TFunction newFunction = new Input();
+                TFunction newFunction = new TFInput();
                 newFunction = newFunction.newBuild(component);
                 System.out.println("value leave! -> return newInputLeave.newBuilt(component)");
                 return newFunction;
             }
-            System.out.println("Component is not f f_id Leave! -> component = TFunctionParser.cleanedHeadAndTail(component); ");
-            component = TFunctionParser.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =>Cleaning!
+            System.out.println("Component is not f f_id Leave! -> component = FParser.cleanedHeadAndTail(component); ");
+            component = FParser.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =>Cleaning!
             TFunction newBuild;
-            System.out.println("new build: TFunction newBuild = (TFunction)new TFunctionBuilder();");
+            System.out.println("new build: TFunction newBuild = (TFunction)new FBuilder();");
             System.out.println("newBuild = newBuild.newBuild(component);");
-            newBuild = new TFunctionBuilder().newBuild(component, doAD);
+            newBuild = new FBuilder().newBuild(component, doAD);
             System.out.println("-> return newBuild;");
             return newBuild;
         } else {// More than one component left:
@@ -299,8 +299,8 @@ public class TFunctionBuilder {
             final ListIterator<String> ComponentIterator2 = Components.listIterator();
             while (ComponentIterator2.hasNext()) {
                 final String currentComponent2 = ComponentIterator2.next();
-                System.out.println("this.Input.add(newCore2.newBuild(" + currentComponent2 + ")); Input.size(): " + sources.size());
-                TFunction newCore2 = new TFunctionBuilder().newBuild(currentComponent2, doAD);//Dangerous recursion lives here!
+                System.out.println("this.TFInput.add(newCore2.newBuild(" + currentComponent2 + ")); TFInput.size(): " + sources.size());
+                TFunction newCore2 = new FBuilder().newBuild(currentComponent2, doAD);//Dangerous recursion lives here!
                 sources.add(newCore2);
                 if (newCore2 != null) {
                     System.out.println("newCore2 != null");
@@ -320,7 +320,7 @@ public class TFunctionBuilder {
                 }
             }
             sources = newVariable;
-            function = TFunctionConstructor.createFunction(f_id, sources, doAD);
+            function = FConstructor.createFunction(f_id, sources, doAD);
             return function;
         }
     }
