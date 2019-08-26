@@ -158,7 +158,7 @@ public class TDevice
             int[] mode = new int[tsrs.length+2];
             mode[0] = f_id;
             mode[mode.length-1] = d;
-            for(int mi=0; mi<tsrs.length; mi++){
+            for(int mi=0; mi<(tsrs.length); mi++){
                 mode[mi+1] = (tsrs[mi]!=null)?register[0][map.get(tsrs[mi])]:-1;
             }
             kernel.execute(
