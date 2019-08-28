@@ -48,6 +48,26 @@ public class NTester_Function extends NTester {
 		return (printSessionEnd()>0)?1:0;
 	}
 
+	public int testDeriviation(String expression, double[] input, int d,  double expected, String description) {
+		TFunction function;// = new FBuilder();
+		function = new FBuilder().newBuild(expression, true);
+		printSessionStart(description);
+		Console.println(bar+" Test Deriviation of TFunction: "+expression);
+		String inputStr = "";
+		for(int Ii=0; Ii<input.length; Ii++) {
+			inputStr+=input[Ii]+", ";
+		}
+		Console.println(bar+" Value: "+inputStr);
+		Console.println(bar+"");
+		Console.println(bar+" function = function.newBuilt("+expression+");");
+		Console.println(bar+" function:"+function.toString());
+		Console.println(bar+"----------------------------------------------------");
+		Console.println(bar+" Result:");
+		double derivative = function.derive(input, d);
+		assertEqual(derivative, expected);
+		return (printSessionEnd()>0)?1:0;
+	}
+
 	public int testActivation(String expression, T[] input, T expected, String description) {
 		TFunction function;// = new FBuilder();
 		function = new FBuilder().newBuild(expression, true);
@@ -67,8 +87,26 @@ public class NTester_Function extends NTester {
 		assertEqual(activation.toString(), expected.toString());
 		return (printSessionEnd()>0)?1:0;
 	}
-	
-	
-	
+
+
+	public int testDerivative(String expression, T[] input, int d, T expected, String description) {
+		TFunction function;// = new FBuilder();
+		function = new FBuilder().newBuild(expression, true);
+		printSessionStart(description);
+		Console.println(bar+" Deriviation of TFunction: "+expression);
+		String inputStr = "";
+		for(int Ii=0; Ii<input.length; Ii++) {
+			inputStr+=input[Ii]+", ";
+		}
+		Console.println(bar+" Value: "+inputStr);
+		Console.println(bar+"");
+		Console.println(bar+" function = function.newBuilt("+expression+");");
+		Console.println(bar+" function:"+function.toString());
+		Console.println(bar+"----------------------------------------------------");
+		Console.println(bar+" Result:");
+		T derivative = function.derive(input, d);
+		assertEqual(derivative.toString(), expected.toString());
+		return (printSessionEnd()>0)?1:0;
+	}
 	
 }

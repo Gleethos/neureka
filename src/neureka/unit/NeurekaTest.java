@@ -307,7 +307,6 @@ public class NeurekaTest {
 				new int[]{1, 2},
 				new int[]{0, -4, 3, 2, 0, 2,    8, 2, 0, 1, 0, 1,   10, 5, 2, 1, 0, 1}
 		);
-
 		//TESTING TENS MUL ON GPU NOW!!!!!
 		T src1 = T.factory.newTensor(
 				new double[]{
@@ -359,17 +358,16 @@ public class NeurekaTest {
 				new double[]{888.0, 777.0, -33.0, 999.0, 0.0, 0.0, 0.0, 0.0, -7.0, -9.0, 4.0, -4.0, 9.0, 4.0, 77.0, 1.0, 2.0, 3.0, 4.0, 0.0, 2.0, 3.0, 4.0, 2.0, -1.0, -2.0, -3.0, -1.0, 3.0, 0.0, 2.0, -3.0, 1.0, 2.0, -3.0, 0.0, 4.0, 5.0, -1.0, 15.0, 11.0, 20.0, -22.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
 		);
 		//INVERS OF CONV
-
-		T first = new T(new int[]{2, 3}, new double[]{
+		T d_src1 = new T(new int[]{2, 3}, new double[]{
 				0, 0, //3, 1,
 				0, 0, //-2, -1,
 				0, 0, ///-4, 2,
 		});
-		T second = new T(new int[]{5, 2}, new double[]{
+		T d_src2 = new T(new int[]{5, 2}, new double[]{
 				-2, 3, 6, 3, -1,
 				0, 2, 4, 2,  1
 		});
-		T drain = new T(new int[]{4, 2}, new double[]{
+		T d_drn = new T(new int[]{4, 2}, new double[]{
 				1, 2, -3, 2,
 				4, -2, -1, 5,
 		});
@@ -378,11 +376,11 @@ public class NeurekaTest {
 						1*0  +2*2 -3*4 +2*2  +  4*-2 -2*3 -1*6 +5*3, 1*2 +2*4 -3*2 +2*1  +  4*3 -2*6 -1*3 +5*-1,
 						4*0  -2*2 -1*4 +5*2, 4*2 -2*4 -1*2 +5*1
 			};
-		gpu.add(first).add(second).add(drain);
+		gpu.add(d_src1).add(d_src2).add(d_drn);
 		gpu.printDeviceContent(true);
 		tester.testCalculation(
 			gpu,
-			drain, first, second,  18, 0,//Tsr mul
+			d_drn, d_src1, d_src2,  18, 0,//Tsr mul
 			expectedInv//new double[]{888.0, 777.0, -33.0, 999.0, 0.0, 0.0, 0.0, 0.0, -7.0, -9.0, 4.0, -4.0, 9.0, 4.0, 77.0, 1.0, 2.0, 3.0, 4.0, 0.0, 2.0, 3.0, 4.0, 2.0, -1.0, -2.0, -3.0, -1.0, 3.0, 0.0, 2.0, -3.0, 1.0, 2.0, -3.0, 0.0, 4.0, 5.0, -1.0, 15.0, 11.0, 20.0, -22.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
 		);
 		//gpu.calculate_on_CPU(drain, first, second, 18, 0);
@@ -407,14 +405,11 @@ public class NeurekaTest {
 				new int[]{1, 2, 1, 2, 6, 1, 2, 4, 1, 1, 2, 1, 5, 1, 4, 1, 3, 6, },
 				new int[]{0, -4, 3, 2, 0, 2, 8, 2, 0, 1, 0, 1, 10, 5, 2, 1, 0, 1, 15, 12, 4, 3, 2, 3, 27, 12, 3, 3, 5, 3, 39, 4, 7, 3, 8, 3, 43, 6, 4, 2, 0, 2, 49, 10, 2, 2, 11, 2, 59, 8, 10, 2, 13, 2, 67, 12, 12, 3, 15, 3,}
 		);
-		//gpu.printDeviceContent(true);
 		tester.testCalculation(
 				gpu,
 				drn, src1, src2, 17, -1,//Tsr add
 				new double[]{888.0, 777.0, -33.0, 999.0, 0.0, 0.0, 0.0, 0.0, -7.0, -9.0, 4.0, -4.0, 9.0, 4.0, 77.0, 1.0, 2.0, 3.0, 4.0, 0.0, 2.0, 3.0, 4.0, 2.0, -1.0, -2.0, -3.0, -1.0, 3.0, 0.0, 2.0, -3.0, 1.0, 2.0, -3.0, 0.0, 4.0, 5.0, -1.0, 15.0, 11.0, 20.0, -22.0, -8.0, 4.0, -9.0, -2.0, 2.0, 3.0, -2.0, 3.0, 6.0, 3.0, -1.0, 0.0, 2.0, 4.0, 2.0, 1.0, 1.0, 2.0, -3.0, 2.0, 4.0, -2.0, -1.0, 5.0, 0.0, 5.0, 3.0, 6.0, -3.0, 3.0, 5.0, 1.0, 2.0, 3.0, 3.0, -4.0, }
 		);
-		//gpu.calculate_on_CPU(drn, src1, src2, 17);
-		//gpu.calculate_on_CPU(drn, drn, null, 6);
 		tester.testCalculation(
 				gpu,
 				drn, drn, null, 6,-1,//Tsr gaus
@@ -516,6 +511,21 @@ public class NeurekaTest {
 		SuccessCounter += tester.testActivation("i3*i1/(i4-i0-2)-sig(0)+tanh(0)", input5, (-1.5), "");
 		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
 
+		TestCounter++;
+		input1 = new double[]{2, 3, -2};//-3*-2/(-8--4-2)
+		SuccessCounter += tester.testDeriviation("(i0*i1)*i2", input1, 0, (-6),"");
+		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
+
+		TestCounter++;
+		input1 = new double[]{2, 3, -2};//-3*-2/(-8--4-2)
+		SuccessCounter += tester.testDeriviation("lig(i0*i1)*i2", input1, 0, (-5.985164261060192),"");
+		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
+
+		TestCounter++;
+		input1 = new double[]{2, 3, -2};//-3*-2/(-8--4-2)
+		SuccessCounter += tester.testDeriviation("prod(ij)", input1, 1, (-4),"");
+		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
+
 
 		TestCounter++;
 		T[] tsrs = new T[]{
@@ -537,6 +547,16 @@ public class NeurekaTest {
 		};
 		expected = T.factory.newTensor(new double[]{8.000335406372896, 10.000045398899218, 14.000000831528373, 19.000000005602796, 31.000000000000036, 64.0, 220.0, 13.000002260326852}, new int[]{1, 2, 2, 2});
 		SuccessCounter += tester.testActivation("lig([-1, 0, -2, -2](Ij-2))", tsrs, expected, "");
+		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
+
+		TestCounter++;
+		tsrs = new T[]{
+				T.factory.newTensor(new double[]{-1, 3}, new int[]{2}),
+				T.factory.newTensor(new double[]{7, -1}, new int[]{2}),
+				T.factory.newTensor(new double[]{2, 2}, new int[]{2}),
+		};
+		expected = T.factory.newTensor(new double[]{-0.0018221023888012912, 0.2845552390654007}, new int[]{2});
+		SuccessCounter += tester.testDerivative("lig(i0*i1)*i2", tsrs, 1, expected, "");
 		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
 
 

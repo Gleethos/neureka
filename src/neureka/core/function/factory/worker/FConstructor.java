@@ -17,7 +17,7 @@ public class FConstructor {
             isFlat = ((f instanceof TFInput) || (f instanceof TFVariable) || (f instanceof TFConstant)) && isFlat;
         }
 
-        if(f_id<9) {// FUNCTIONS:
+        if(f_id<=9) {// FUNCTIONS:
             return new TFTemplate(f_id, isFlat, sources, doAD){//TFunction(){
                 @Override
                 public T activate(T[] input, int j) {
@@ -46,13 +46,11 @@ public class FConstructor {
                 }
                 @Override
                 public double derive(final double[] input, final int index, final int j) {
-                    return scalarActivationOf(sources.get(0).activate(input, j), true)
-                            * sources.get(0).derive(input, index, j);
+                    return scalarActivationOf(sources.get(0).activate(input, j), true) * sources.get(0).derive(input, index, j);
                 }
                 @Override
                 public double derive(final double[] input, final int index) {
-                    return scalarActivationOf(sources.get(0).activate(input), true)
-                            * sources.get(0).derive(input, index);
+                    return scalarActivationOf(sources.get(0).activate(input), true) * sources.get(0).derive(input, index);
                 }
             };
         }else{

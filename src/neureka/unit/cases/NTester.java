@@ -46,7 +46,7 @@ public class NTester {
             println(bar+line);
             return true;
         } else {
-            println(bar+"  [result]:("+result+") =|= -> test failed!");
+            println(bar+"  [result]:("+result+") =|= [expected]:("+expected+") -> test failed!");
             success = (success<0)?success-1:-1;
             println(bar+line);
             return false;

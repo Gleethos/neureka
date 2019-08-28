@@ -119,7 +119,7 @@ public abstract class TFTemplate implements TFunction {
         T output = T.factory.newTensor(input.shape(), input.translation());
         if(!derive && !this.isFlat){
             output.inject(new FBuilder().newBuild(f_id, 1, true).activate(new T[]{input}));
-            output.add((TGraphLock)input.find(TGraphLock.class));
+            output.add(input.find(TGraphLock.class));
             return output;
         }
         if(input.isOutsourced()){
@@ -133,7 +133,7 @@ public abstract class TFTemplate implements TFunction {
         if(!derive){
             TGraphBuilder.connect(output, new T[]{input}, this, true);
         }
-        output.add((TGraphLock)input.find(TGraphLock.class));
+        output.add(input.find(TGraphLock.class));
         return output;
     }
 
@@ -148,7 +148,6 @@ public abstract class TFTemplate implements TFunction {
         if(d<0 && !isFlat){//only flat functions can be executed
             if(f_id<=9){
                 output.inject(new FBuilder().newBuild(TFunction.F_CACHE.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])", true).activate(input));
-                //output.add((TGraphLock)input[0].find(TGraphLock.class));
                 return output;
             }else{
                 if(TFunction.F_CACHE.REGISTER[f_id].length()!=1){
@@ -156,7 +155,6 @@ public abstract class TFTemplate implements TFunction {
                      * */
                     T[] tsrs = activateSource(input);
                     output.inject(FBuilder.newBuild(TFunction.F_CACHE.REGISTER[f_id]+"(I[j])", true).activate(tsrs));
-                    //output.add((TGraphLock)input[0].find(TGraphLock.class));
                     return output;
                 }else if(f_id<=18){
                     /**      +, -, x, *, %, ....// TODO: move this to Function constructor!
@@ -171,7 +169,6 @@ public abstract class TFTemplate implements TFunction {
                     }else{
                         output.inject(FBuilder.newBuild(operation, true).activate(tsrs, j));
                     }
-                    //output.add((TGraphLock)input[0].find(TGraphLock.class));
                     return output;
                 }else{
                     /**
@@ -183,7 +180,6 @@ public abstract class TFTemplate implements TFunction {
                     }else{
                         output.inject(new FBuilder().newBuild(f_id, tsrs.length, true).activate(tsrs, j));
                     }
-                    //output.add((TGraphLock)input[0].find(TGraphLock.class));
                     return output;
                 }
             }
@@ -193,7 +189,7 @@ public abstract class TFTemplate implements TFunction {
          * */
         TDevice device = (TDevice) input[0].find(TDevice.class);
         boolean onSameDevice = T.utility.shareGuestDevice(input);
-        if(onSameDevice && TFunction.F_CACHE.REGISTER[f_id]!=","){
+        if(onSameDevice && TFunction.F_CACHE.REGISTER[f_id]!="," && !(TFunction.F_CACHE.REGISTER[f_id]=="x"&&d>-1)){
             if(device!=null){
                 device.add(output);
             }
