@@ -569,7 +569,8 @@ public abstract class TFTemplate implements TFunction {
                 double fg, dg, lnf;
                 double f = Variable.get(0).activate(input);
                 double df = Variable.get(0).derive(input, d);
-                double g;
+                double g = Variable.get(1).activate(input);
+                df = f * g;
                 for (int i = 0; i < Variable.size() - 2; i++) {
                     g = Variable.get(i + 1).activate(input);
                     fg = f * g;

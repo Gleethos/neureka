@@ -48,16 +48,16 @@ public class NTester_TensorDevice extends NTester {
         this.assertEqual("tensor.isOutsourced()", ""+tensor.isOutsourced(), "true");
         device.get(tensor);
         this.assertEqual("tensor.isOutsourced()", ""+tensor.isOutsourced(), "false");
-        this.assertEqual("kernel._values()", stringified(kernel.values()), stringified(values));
-        this.assertEqual("kernel._shapes()", stringified(kernel.shapes()), stringified(shapes));
-        this.assertEqual("kernel._translations()", stringified(kernel.translations()), stringified(translations));
+        this.assertEqual("kernel.values()", stringified(kernel.values()), stringified(values));
+        this.assertEqual("kernel.shapes()", stringified(kernel.shapes()), stringified(shapes));
+        this.assertEqual("kernel.translations()", stringified(kernel.translations()), stringified(translations));
 
 
-        this.assertEqual("kernel._values()", stringified(kernel.values()), stringified(values));
-        this.assertEqual("kernel._shapes()", stringified(kernel.shapes()), stringified(shapes));
-        this.assertEqual("kernel._translations()", stringified(kernel.translations()), stringified(translations));
+        this.assertEqual("kernel.values()", stringified(kernel.values()), stringified(values));
+        this.assertEqual("kernel.shapes()", stringified(kernel.shapes()), stringified(shapes));
+        this.assertEqual("kernel.translations()", stringified(kernel.translations()), stringified(translations));
 
-        this.assertEqual("kernel._pointers()", stringified(kernel.pointers()), stringified(pointers));
+        this.assertEqual("kernel.pointers()", stringified(kernel.pointers()), stringified(pointers));
 
         return this.printSessionEnd();
     }
@@ -98,7 +98,7 @@ public class NTester_TensorDevice extends NTester {
 
         //this.assertEqual("kernel._values()", stringified(device.getKernel()._values()), stringified(_values));
 
-        this.assertContains("kernel._values()", stringified(device.getKernel().values()), stringified(values));
+        this.assertContains("kernel.values()", stringified(device.getKernel().values()), stringified(values));
 
         return this.printSessionEnd();
     }

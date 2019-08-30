@@ -77,22 +77,27 @@ public class TGraphBuilder {
                         drain_gradients.put(src, d);// Sources created by x-mul are revers-mode cases!
                     }else{
                         //TGraphNode src_gradients = (TGraphNode) src.find(TGraphNode.class);
-                        if(src_gradients!=null){
+                        if(src_gradients!=null && src.has(TGraphNode.class)){
                             T d = function.derive(source, i);
-                            src_gradients.forEach(
-                                (t, g)->{
-                                    /**
-                                     *  Chain rule (forward) for every
-                                     *  gradient w.r.t. leaves (reverseAD or user leaves):
-                                     * */
-                                    if(drain_gradients.has(t)){
-                                        T dg = drain_gradients.get(t);
-                                        drain_gradients.put(t, T.factory.addition(dg,T.factory.multiplication(d, g)));
-                                    }else{
-                                        drain_gradients.put(t, T.factory.multiplication(d, g));
-                                    }
-                                    //TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
-                            });
+                            if(src_gradients.size()==0 && drain_gradients.size()==0){
+                                drain_gradients.put(source[i], d);
+                            } else {
+                                src_gradients.forEach(
+                                        (t, g)->{
+                                            /**
+                                             *  Chain rule (forward) for every
+                                             *  gradient w.r.t. leaves (reverseAD or user leaves):
+                                             * */
+                                            if(drain_gradients.has(t)){
+                                                T dg = drain_gradients.get(t);
+                                                drain_gradients.put(t, T.factory.addition(dg,T.factory.multiplication(d, g)));
+                                            }else{
+                                                drain_gradients.put(t, T.factory.multiplication(d, g));
+                                            }
+                                            //TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
+                                        });
+                            }
+
                         }
                         i++;
                     }

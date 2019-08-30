@@ -118,7 +118,21 @@ public class NeurekaTest {
 						"[5x4x2]:(-24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0); =>d|[ [1x1x2]:(3.0, 3.0) ]|:t{ [5x4x1]:(-8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0); =>d|[ [1x4x1]:(-2.0, -2.0, -2.0, -2.0) ]|:t{ [5x1x1]:(4.0, 4.0, 4.0, 4.0, 4.0) },  }, "
 				}
 		);
+		//=====================
+		tensor1 = new T(new int[]{2, 2}, new double[]{1, 2, 3, 4});//-2*4 = 8 | *3 = -24
+		tensor1.setRqsGradient(true);
+		//tensor2 = new T(new int[]{2}, new double[]{3, 4});
+		//tensor3 = new T(new int[]{1, 1}, 3);
+		tensor1.setRqsGradient(true);
+		tester.testTensorAutoGrad(
+				new T[]{tensor1},
+				"((i0+2)^2)",
+				new String[]{
+						"d|[ [2x2]:(6.0, 8.0, 10.0, 12.0) ]|:t{ [2x2]:(1.0, 2.0, 3.0, 4.0) }"
+				}
+		);
 		//---
+		//======================
 		int[] shape = {4, 2, 9, 5, 6, 2};
 		int[] newForm = {1, 0, -1, -2, 2, 4, 3, -1, 5};
 		int[] expected ={2, 4,  1,  2, 9, 6, 5, 1, 2};
@@ -228,6 +242,7 @@ public class NeurekaTest {
 		);
 		//---
 		//TESTING INVERS:
+		///=================
 		//---
 		frstShape = new int[]{2, 3};
 		frstData = new double[]{
@@ -255,6 +270,8 @@ public class NeurekaTest {
 				},
 				true
 		);
+		//===========================================
+
 	}
 
 	public void testTensorDevice(){
@@ -436,136 +453,95 @@ public class NeurekaTest {
 	public int testTensorFunctions()
 	{
 		NTester_Function tester = new NTester_Function("Testing function factory and scalar calculations");
-		int TestCounter = 0;
-		int SuccessCounter = 0;
-
 		//EXPRESSION TESTING:
-		TestCounter++;
-		SuccessCounter += tester.testExpression("sum(ij)", "sum(I[j])", "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-
-		TestCounter++;
-		SuccessCounter += tester.testExpression("sum(1*(4-2/ij))", "sum(1.0*(4.0-(2.0/I[j])))", "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-
-		TestCounter++;
-		SuccessCounter += tester.testExpression("quadratic(ligmoid(Ij))", "quad(lig(I[j]))", "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-
-		TestCounter++;
-		SuccessCounter += tester.testExpression("softplus(I[3]^(3/i1)/sum(Ij^2)-23+I0/i1)", "lig((((I[3]^(3.0/I[1]))/sum(I[j]^2.0))-23.0)+(I[0]/I[1]))", "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-
-		TestCounter++;
-		SuccessCounter += tester.testExpression("1+3+5-23+I0*45/(345-651^I3-6)", "(1.0+3.0+(5.0-23.0)+(I[0]*(45.0/(345.0-(651.0^I[3])-6.0))))", "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-
-		TestCounter++;
-		SuccessCounter += tester.testExpression("sin(23*i1)-cos(i0^0.3)+tanh(23)", "((sin(23.0*I[1])-cos(I[0]^0.3))+tanh(23.0))", "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-
-		TestCounter++;
-		SuccessCounter += tester.testExpression("2*3/2-1", "((2.0*(3.0/2.0))-1.0)", "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-
-		TestCounter++;
-		SuccessCounter += tester.testExpression("3x5xI[4]xI[3]", "(((3.0x5.0)xI[4])xI[3])", "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-
-		TestCounter++;
-		SuccessCounter += tester.testExpression("[1,0, 5,3, 4]:(tanh(i0xi1))", "([1,0,5,3,4]:(tanh(I[0]xI[1])))", "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-
-		TestCounter++;
-		SuccessCounter += tester.testExpression("[0,2, 1,3, -1](sig(I0))", "([0,2,1,3,-1]:(sig(I[0])))", "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-
+		tester.testExpression("sum(ij)", "sum(I[j])", "");
+		
+		 
+		tester.testExpression("sum(1*(4-2/ij))", "sum(1.0*(4.0-(2.0/I[j])))", "");
+		
+		 
+		tester.testExpression("quadratic(ligmoid(Ij))", "quad(lig(I[j]))", "");
+		
+		 
+		tester.testExpression("softplus(I[3]^(3/i1)/sum(Ij^2)-23+I0/i1)", "lig((((I[3]^(3.0/I[1]))/sum(I[j]^2.0))-23.0)+(I[0]/I[1]))", "");
+		
+		 
+		tester.testExpression("1+3+5-23+I0*45/(345-651^I3-6)", "(1.0+3.0+(5.0-23.0)+(I[0]*(45.0/(345.0-(651.0^I[3])-6.0))))", "");
+		
+		 
+		tester.testExpression("sin(23*i1)-cos(i0^0.3)+tanh(23)", "((sin(23.0*I[1])-cos(I[0]^0.3))+tanh(23.0))", "");
+		
+		 
+		tester.testExpression("2*3/2-1", "((2.0*(3.0/2.0))-1.0)", "");
+		
+		 
+		tester.testExpression("3x5xI[4]xI[3]", "(((3.0x5.0)xI[4])xI[3])", "");
+		
+		 
+		tester.testExpression("[1,0, 5,3, 4]:(tanh(i0xi1))", "([1,0,5,3,4]:(tanh(I[0]xI[1])))", "");
+		
+		 
+		tester.testExpression("[0,2, 1,3, -1](sig(I0))", "([0,2,1,3,-1]:(sig(I[0])))", "");
+		
 		//ACTIVATION TESTING:
-		TestCounter++;
+		 
 		double[] input1 = {};
-		SuccessCounter += tester.testActivation("6/2*(1+2)", input1, 9, "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-
-		TestCounter++;
+		tester.testActivation("6/2*(1+2)", input1, 9, "");
+		
+		 
 		input1 = new double[]{2,3.2,6};
-		SuccessCounter += tester.testActivation("sum(Ij)", input1, 11.2, "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-
-		TestCounter++;
+		tester.testActivation("sum(Ij)", input1, 11.2, "");
+		
+		 
 		double[] input2 = {0.5,0.5,100};
-		SuccessCounter += tester.testActivation("prod(Ij)", input2, 25, "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-
-		TestCounter++;
+		tester.testActivation("prod(Ij)", input2, 25, "");
+		
+		 
 		double[] input3 = {0.5,0.5,10};
-		SuccessCounter += tester.testActivation("prod(prod(Ij))", input3, (2.5*2.5*2.5), "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-
-		TestCounter++;
+		tester.testActivation("prod(prod(Ij))", input3, (2.5*2.5*2.5), "");
+		
+		 
 		double[] input4 = {5,4,3,12};//12/4-5+2+3
-		SuccessCounter += tester.testActivation("I3/i[1]-I0+2+i2", input4, (3), "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-
-		TestCounter++;
+		tester.testActivation("I3/i[1]-I0+2+i2", input4, (3), "");
+		
+		 
 		double[] input5 = {-4,-2,6,-3,-8};//-3*-2/(-8--4-2)
-		SuccessCounter += tester.testActivation("i3*i1/(i4-i0-2)-sig(0)+tanh(0)", input5, (-1.5), "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-
-		TestCounter++;
+		tester.testActivation("i3*i1/(i4-i0-2)-sig(0)+tanh(0)", input5, (-1.5), "");
+		
+		 
 		input1 = new double[]{2, 3, -2};//-3*-2/(-8--4-2)
-		SuccessCounter += tester.testDeriviation("(i0*i1)*i2", input1, 0, (-6),"");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-
-		TestCounter++;
+		tester.testDeriviation("(i0*i1)*i2", input1, 0, (-6),"");
+		
+		 
 		input1 = new double[]{2, 3, -2};//-3*-2/(-8--4-2)
-		SuccessCounter += tester.testDeriviation("lig(i0*i1)*i2", input1, 0, (-5.985164261060192),"");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-
-		TestCounter++;
+		tester.testDeriviation("lig(i0*i1)*i2", input1, 0, (-5.985164261060192),"");
+		
+		 
 		input1 = new double[]{2, 3, -2};//-3*-2/(-8--4-2)
-		SuccessCounter += tester.testDeriviation("prod(ij)", input1, 1, (-4),"");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
+		tester.testDeriviation("prod(ij)", input1, 1, (-4),"");
 
-
-		TestCounter++;
 		T[] tsrs = new T[]{
 				T.factory.newTensor(new double[]{1,2}, new int[]{2}),
 				T.factory.newTensor(new double[]{3,-4}, new int[]{2})
 		};
 		T expected = T.factory.newTensor(new double[]{0.9701425001453319, -0.8944271909999159}, new int[]{2});
-		SuccessCounter += tester.testActivation("tanh(sum(Ij))", tsrs, expected, "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
+		tester.testActivation("tanh(sum(Ij))", tsrs, expected, "");
 
-		TestCounter++;
 		expected = T.factory.newTensor(new double[]{0.3132616875182228, 0.6931471805599453}, new int[]{2});
-		SuccessCounter += tester.testActivation("lig(prod(Ij-2))", tsrs, expected, "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
+		tester.testActivation("lig(prod(Ij-2))", tsrs, expected, "");
 
-		TestCounter++;
-		tsrs = new T[]{
-				T.factory.newTensor(new double[]{10, 12, 16, 21, 33, 66, 222, 15}, new int[]{2, 4})
-		};
+		tsrs = new T[]{T.factory.newTensor(new double[]{10, 12, 16, 21, 33, 66, 222, 15}, new int[]{2, 4})};
 		expected = T.factory.newTensor(new double[]{8.000335406372896, 10.000045398899218, 14.000000831528373, 19.000000005602796, 31.000000000000036, 64.0, 220.0, 13.000002260326852}, new int[]{1, 2, 2, 2});
-		SuccessCounter += tester.testActivation("lig([-1, 0, -2, -2](Ij-2))", tsrs, expected, "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
+		tester.testActivation("lig([-1, 0, -2, -2](Ij-2))", tsrs, expected, "");
 
-		TestCounter++;
 		tsrs = new T[]{
 				T.factory.newTensor(new double[]{-1, 3}, new int[]{2}),
 				T.factory.newTensor(new double[]{7, -1}, new int[]{2}),
 				T.factory.newTensor(new double[]{2, 2}, new int[]{2}),
 		};
 		expected = T.factory.newTensor(new double[]{-0.0018221023888012912, 0.2845552390654007}, new int[]{2});
-		SuccessCounter += tester.testDerivative("lig(i0*i1)*i2", tsrs, 1, expected, "");
-		tester.println("||==>> "+SuccessCounter+"/"+TestCounter+"\n");
-
-
-
-		tester.println("###########################");
-		tester.println("|| FUNCTION END RESULT:");
-		tester.println("|| ============>> "+SuccessCounter+"/"+TestCounter);
-		tester.println("###########################");
-
+		tester.testDerivative("lig(i0*i1)*i2", tsrs, 1, expected, "");
+		
 		return 0;
 	}
 

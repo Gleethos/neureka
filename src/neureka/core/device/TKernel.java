@@ -421,6 +421,27 @@ public class TKernel extends Kernel
         this.put(_idx);
         return tsr_sze(mode[1]);
     }
+
+    /**
+     * Mode format:
+     * 0: f_id
+     * 1-(n-1): t_id's
+     * n: d (-1 if not derivative)
+     * */
+    public int executionSizeOf_calc(int[] mode, double value){// Mode contains f_id, value is applied to all!
+        if(_mde ==null||_mde.length<3||_mde.length!=mode.length){
+            _mde = mode;
+            this.put(_mde);//up
+        }
+        for(int i = 0; i< _idx.length; i++){
+            _idx[i] = 0;
+        }
+        this.put(_idx);
+        __val = new double[]{value};
+        this.put(__val);
+        return tsr_sze(mode[1]);
+    }
+
     /**
      *    KERNEL RUN:
      *    ==========
@@ -446,8 +467,8 @@ public class TKernel extends Kernel
             run_fetch(gid, true);
         }
         if(_mde[0]==-3){//executionSizeOf_fetchTsr tensor
-           run_fetch(gid, false);
-           //__val[gid] = gid;
+            run_fetch(gid, false);
+            //__val[gid] = gid;
         }
         if(_mde[0]==-2){//executionSizeOf_storeTsr grad f tensor
             run_store(gid, true);
@@ -495,19 +516,39 @@ public class TKernel extends Kernel
             run_pow(gid,  _mde[1], _mde[2], _mde[3]);
         }
         if(_mde[0]==13){//  /
-            run_div(gid,  _mde[1], _mde[2], _mde[3]);
+            if(_mde.length>2){
+                run_div(gid,  _mde[1], _mde[2], _mde[3]);
+            } else {
+                run_broadcast_div(gid, _mde[1], __val[0]);
+            }
         }
         if(_mde[0]==14){//  *
-            run_mul(gid,  _mde[1], _mde[2], _mde[3]);
+            if(_mde.length>2) {
+                run_mul(gid, _mde[1], _mde[2], _mde[3]);
+            }else{
+                run_broadcast_mul(gid, _mde[1], __val[0]);
+            }
         }
         if(_mde[0]==15){//  %
-            run_mod(gid,  _mde[1], _mde[2], _mde[3]);
+            if(_mde.length>2) {
+                run_mod(gid, _mde[1], _mde[2], _mde[3]);
+            } else{
+                run_broadcast_mod(gid, _mde[1], __val[0]);
+            }
         }
         if(_mde[0]==16){//  -
-            run_sub(gid,  _mde[1], _mde[2], _mde[3]);
+            if(_mde.length>2) {
+                run_sub(gid, _mde[1], _mde[2], _mde[3]);
+            }else{
+                run_broadcast_sub(gid, _mde[1], __val[0]);
+            }
         }
         if(_mde[0]==17){//  +
-            run_add(gid,  _mde[1], _mde[2], _mde[3]);
+            if(_mde.length>2) {
+                run_add(gid, _mde[1], _mde[2], _mde[3]);
+            } else {
+                run_broadcast_add(gid, _mde[1], __val[0]);
+            }
         }
         if(_mde[0]==18){// x  tsr_conv
             if(_mde[_mde.length-1]<0){
@@ -515,7 +556,6 @@ public class TKernel extends Kernel
             } else {
                 run_conv_inv(gid, _mde[1], _mde[2], _mde[3], (_mde[_mde.length-1]==0));
             }
-
         }
 
     }
@@ -745,11 +785,18 @@ public class TKernel extends Kernel
                         _values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)]
                         );
     }
+    private void run_broadcast_pow(int gid, int drn_id, double value){
+        _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+                Math.pow(_values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)], value);
+    }
     private void run_div(int gid, int drn_id, int src1_id, int src2_id){
         _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
                 _values[tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)]
                         /
                 _values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)];
+    }
+    private void run_broadcast_div(int gid, int drn_id, double value){
+        _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)]/value;
     }
     private void run_mul(int gid, int drn_id, int src1_id, int src2_id){
         _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
@@ -757,11 +804,18 @@ public class TKernel extends Kernel
                         *
                 _values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)];
     }
+    private void run_broadcast_mul(int gid, int drn_id, double value){
+       // _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)]*value;
+    }
     private void run_mod(int gid, int drn_id, int src1_id, int src2_id){
         _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
                 ((int)_values[tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)])
                         %
                 ((int)_values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)]);
+    }
+    private void run_broadcast_mod(int gid, int drn_id, double value){
+       // _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+       //         (int)(_values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)])%(int)value;
     }
     private void run_sub(int gid, int drn_id, int src1_id, int src2_id){
         _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
@@ -769,11 +823,19 @@ public class TKernel extends Kernel
                         -
                 _values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)];
     }
+    private void run_broadcast_sub(int gid, int drn_id, double value){
+      //  _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)]
+       //         = _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)]-value;
+    }
     private void run_add(int gid, int drn_id, int src1_id, int src2_id){
         int i1 = tsr_ptr(drn_id)+__i_of(gid, drn_id, 0);
         int i2 = tsr_ptr(src1_id)+__i_of(gid, src1_id, 1);
         int i3 = tsr_ptr(src2_id)+__i_of(gid, src2_id, 2);
         _values[i1] = _values[i2] + _values[i3];
+    }
+    private void run_broadcast_add(int gid, int drn_id, double value){
+      //  int i1 = tsr_ptr(drn_id)+__i_of(gid, drn_id, 0);
+      //  _values[i1] = _values[i1]+value;
     }
     //==================================================================================================================
     private void run_conv_inv(int gid, int drn_id, int src1_id, int src2_id, boolean first){

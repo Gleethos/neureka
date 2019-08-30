@@ -26,6 +26,7 @@ public class NTester_Function extends NTester {
 		println(bar+"----------------------------------------------------");
 		println(bar+" Result:");
 		assertEqual(actual, expected);
+
 		return (printSessionEnd()>0)?1:0;
 	}
 	public int testActivation(String expression, double[] input, double expected, String description) {

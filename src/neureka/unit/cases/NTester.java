@@ -8,8 +8,12 @@ public class NTester {
     protected NMessageFrame ResultConsole;
     protected String bar = "[|]";
     protected String line = "--------------------------------------------------------------------------------------------";
+    private int positiveAssertions = 0;
+    private int assertionCount = 0;
+
     private int success = 0;
     private int tests = 0;
+
     private String session = "";
 
     protected NTester(String name) {
@@ -19,8 +23,9 @@ public class NTester {
 
     protected void printSessionStart(String message){
         this.session = "";
-        this.success = 0;
-        this.tests = 0;
+        tests++;
+        this.positiveAssertions = 0;
+        this.assertionCount = 0;
         this.Console.println("");
         this.Console.println(bar+"  "+message);
         this.Console.println("[O][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=]=>");
@@ -31,33 +36,34 @@ public class NTester {
         printlnResult(bar);
     }
     protected int printSessionEnd(){
-        this.Console.println(bar+"  "+((success>0)?"test successful!"+" "+success:"test failed!"+" "+(tests+success))+"/"+tests);
-        this.Console.println("[O][=][=][=][=][=][=][=][=][=][=][=]|>");
-        this.ResultConsole.println(bar+"  "+((success>0)?"test successful!"+" "+success:"test failed!"+" "+(tests+success))+"/"+tests);
-        this.ResultConsole.println("[O][=][=][=][=][=][=][=][=][=][=][=]|>");
-        return success;
+        success += (positiveAssertions== assertionCount)?1:0;
+        this.Console.println(bar+"  "+((positiveAssertions >0)?"test successful!"+" "+ positiveAssertions :"test failed!"+" "+(assertionCount + positiveAssertions))+"/"+ assertionCount);
+        this.Console.println("[O][=][=][=][=][=][=][=][=][=][=][=]|> "+success+"/"+tests);
+        this.ResultConsole.println(bar+"  "+((positiveAssertions >0)?"test successful!"+" "+ positiveAssertions :"test failed!"+" "+(assertionCount + positiveAssertions))+"/"+ assertionCount);
+        this.ResultConsole.println("[O][=][=][=][=][=][=][=][=][=][=][=]|> "+success+"/"+tests);
+        return positiveAssertions;
     }
 
     protected boolean assertEqual(double result, double expected){
-        tests++;
+        assertionCount++;
         if(result==expected) {
             println(bar+"  [result]:("+result+") == [expected]:("+expected+") -> test successful.");
-            success = (success<0)?success:success+1;
+            positiveAssertions = (positiveAssertions <0)? positiveAssertions : positiveAssertions +1;
             println(bar+line);
             return true;
         } else {
             println(bar+"  [result]:("+result+") =|= [expected]:("+expected+") -> test failed!");
-            success = (success<0)?success-1:-1;
+            positiveAssertions = (positiveAssertions <0)? positiveAssertions -1:-1;
             println(bar+line);
             return false;
         }
     }
 
     protected boolean assertContains(String name, String result, String expected){
-        tests++;
+        assertionCount++;
         if(result.contains(expected)) {
             println(bar+"  ["+name+"]:("+result+") "+((result.length()>22)?"\n"+bar+"    contains   -> test successful!"+"\n"+bar+" ":"contains")+" [expected]:("+expected+")"+((result.length()>22)?"":" -> test successful!"));
-            success = (success<0)?success:success+1;
+            positiveAssertions = (positiveAssertions <0)? positiveAssertions : positiveAssertions +1;
             println(bar+line);
             return true;
         } else {
@@ -65,19 +71,19 @@ public class NTester {
                 +((result.length()>22)
                     ?"\n"+bar+"    not contains   -> test failed!"+"\n"+bar+" "
                     :"not contains")+" [expected]:("+expected+")"+((result.length()>22)?"":" -> test failed!"));
-            success = (success<0)?success-1:-1;
+            positiveAssertions = (positiveAssertions <0)? positiveAssertions -1:-1;
             println(bar+line);
             return false;
         }
     }
 
     protected boolean assertEqual(String name, String result, String expected){
-        tests++;
+        assertionCount++;
         if(result.equals(expected)) {
             println(bar+"  ["+name+"]:("+result+") "+((result.length()>22)
                     ?"\n"+bar+"    ==   -> test successful!"+"\n"+bar+" ":"==")+" [expected]:("+expected+")"+((result.length()>22)?""
                     :" -> test successful!"));
-            success = (success<0)?success:success+1;
+            positiveAssertions = (positiveAssertions <0)? positiveAssertions : positiveAssertions +1;
             println(bar+line);
             return true;
         } else {
@@ -85,26 +91,26 @@ public class NTester {
                     +((result.length()>22)
                     ?"\n"+bar+"    =|=   -> test failed!"+"\n"+bar+" "
                     :"=|=")+" [expected]:("+expected+")"+((result.length()>22)?"":" -> test failed!"));
-            success = (success<0)?success-1:-1;
+            positiveAssertions = (positiveAssertions <0)? positiveAssertions -1:-1;
             println(bar+line);
             return false;
         }
     }
 
     protected boolean assertEqual(String result, String expected){
-        tests++;
+        assertionCount++;
         if(result.equals(expected)) {
             println(bar+"  [result]:("+result+") "+((result.length()>22)
                     ?"\n"+bar+"    ==  "+"\n"+bar+" "
                     :"==")+" [expected]:("+expected+") -> test successful.");
-            success = (success<0)?success:success+1;
+            positiveAssertions = (positiveAssertions <0)? positiveAssertions : positiveAssertions +1;
             println(bar+line);
             return true;
         } else {
             println(bar+"  [result]:("+result+") "+((result.length()>22)
                     ?"\n"+bar+"    =|=  "+"\n"+bar+" "
                     :"=|=")+" [expected]:("+expected+") -> test failed!");
-            success = (success<0)?success-1:-1;
+            positiveAssertions = (positiveAssertions <0)? positiveAssertions -1:-1;
             println(bar+line);
             return false;
         }
