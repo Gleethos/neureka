@@ -115,7 +115,7 @@ public class NSMain {
         javax.persistence.Query q1 = em.createQuery("SELECT COUNT(p) FROM NUnitCore p");
         System.out.println("Total Points: " + q1.getSingleResult());
 
-        // Find the average X value:
+        // Find the average X _value:
         javax.persistence.Query q2 = em.createQuery("SELECT AVG(p.ID) FROM NUnitCore p");
         System.out.println("Average X: " + q2.getSingleResult());
 

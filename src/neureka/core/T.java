@@ -29,68 +29,65 @@ public class T {
 
     //MODULE I / O :
     //=========================
-    private ArrayList<Object> Components = new ArrayList<Object>();
+    private ArrayList<Object> _components = new ArrayList<Object>();
     //-----------------------------------------------------------------------
     public ArrayList<Object> getComponents() {
-        return Components;
+        return _components;
     }
     public T setComponents(ArrayList<Object> properties) {
-        Components = properties;
+        _components = properties;
         return this;
     }
     public T add(Object newComponent) {
         if(newComponent==null){
             return this;
         }
-        if (Components != null) {
+        if (_components != null) {
             Object oldCompartment = find(newComponent.getClass());
             if (oldCompartment != null) {
-                Components.remove(oldCompartment);
-                Components.trimToSize();
+                _components.remove(oldCompartment);
+                _components.trimToSize();
             }
-            Components.add((newComponent instanceof  int[])?cached((int[])newComponent):newComponent);
+            _components.add((newComponent instanceof  int[])?cached((int[])newComponent):newComponent);
         } else {
-            Components = new ArrayList<>();
-            Components.add(newComponent);
+            _components = new ArrayList<>();
+            _components.add(newComponent);
         }
         return this;
     }
     public Object find(Class componentClass) {
-        if (Components != null) {
-            for (int Pi = 0; Pi < Components.size(); Pi++) {
-                if (componentClass.isInstance(Components.get(Pi))) {
-                    return Components.get(Pi);
+        if (_components != null) {
+            for (int Pi = 0; Pi < _components.size(); Pi++) {
+                if (componentClass.isInstance(_components.get(Pi))) {
+                    return _components.get(Pi);
                 }
             }
         }
         return null;
     }
     public T remove(Class componentClass) {
-        Object oldCompartment = find(componentClass);
-        if (oldCompartment != null) {
-            Components.remove(oldCompartment);
-            Components.trimToSize();
+        Object oldComponent = find(componentClass);
+        if (oldComponent != null) {
+            _components.remove(oldComponent);
+            _components.trimToSize();
         }
-        if (Components.size() == 0) {
-            Components = null;
+        if (_components.size() == 0) {
+            _components = null;
         }
         return this;
     }
-    public boolean has(Class moduleClass) {
-        if (find(moduleClass) != null) {
+    public boolean has(Class componentClass) {
+        if (find(componentClass) != null) {
             return true;
         }
         return false;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
     //DATA FIELDS:
     //=========================
-    protected int[] shape = null;
-    protected int[] translation = null;
-    protected double[] value = null;
-    protected double[] gradient = null;
+    private int[] _shape, _translation;
+    private double[] _value, _gradient;
     //-----------------------------------------------------------------------
 
     public TDevice device(){
@@ -104,54 +101,65 @@ public class T {
         if(this.rqsGradient()&&this.isOutsourced()&&this.has(TDevice.class)){
             return ((TDevice)this.find(TDevice.class)).valueOf(this, true);
         }
-        return gradient;
+        return _gradient;
     }
     public void setGradient(T g){
-        this.gradient = g.value;
+        _gradient = g._value;
     }
 
     public double[] value() {
-        if(this.value==null && this.isOutsourced() && this.has(TDevice.class)){
+        if(_value ==null && this.isOutsourced() && this.has(TDevice.class)){
             return ((TDevice)this.find(TDevice.class)).valueOf(this, false);
         }
-        return value;
+        double[] newValue = _value;
+        if(this.isVirtual()){
+            newValue = new double[this.size()];
+            for(int i=0; i<newValue.length; i++){
+                newValue[i] = _value[0];
+            }
+        }
+        return newValue;
     }
     public void setValue(double[] newValue){
-        this.value = newValue;
+        _value = newValue;
         if(this.isOutsourced() && newValue!=null){
             ((TDevice)this.find(TDevice.class)).add(this);
         }
     }
 
     public int[] shape() {
-        return shape;
+        return _shape;
     }
 
     public int[] translation(){
-        return translation;
+        return _translation;
     }
 
     public int size() {
         if(this.isEmpty()){
             return 0;
         }
-        //this.value is not optimal! //TODO GET SIZE FROM KERNEL IF OUTSOURCED
-        return (this.isOutsourced())?T.utility.szeOfShp(this.shape()):this.value.length;
+        //_value is not optimal! //TODO GET SIZE FROM KERNEL IF OUTSOURCED
+        return (this.isOutsourced())
+                ?T.utility.szeOfShp(this.shape())
+                :(this.isVirtual()
+                    ?T.utility.szeOfShp(this.shape())
+                    :_value.length);
     }
 
     public int[] shpIdx(int idx) {
-        return T.utility.IdxToShpIdx(idx, this.translation);
+        return T.utility.IdxToShpIdx(idx, _translation);
     }
 
     public boolean isEmpty() {
-        if (value == null && !this.isOutsourced()) {
+        if (_value == null && !this.isOutsourced()) {
             return true;
         }
         return false;
     }
 
     public boolean isUndefined(){
-        if(this.shape == null){
+        if(_shape == null){
             return true;
         }
         return false;
@@ -160,43 +168,64 @@ public class T {
 
     //FLAG FIELDS:
     //=========================
-    private int flags = 0 + 0 + 0;//Default
-    private final static int rqsGradient_MASK = 1;
-    private final static int isOutsourced_MASK = 2;
+    private int _flags = 0 + 0 + 0 + 0;//Default
+    private final static int RQS_GRADIENT_MASK = 1;
+    private final static int IS_OUTSOURCED_MASK = 2;
+    private final static int IS_VIRTUAL_MASK = 4;
     //-----------------------------------------------------------------------
     public boolean rqsGradient() {
-        return ((flags & rqsGradient_MASK) == rqsGradient_MASK) ? true : false;
+        return ((_flags & RQS_GRADIENT_MASK) == RQS_GRADIENT_MASK) ? true : false;
     }
     public void setRqsGradient(boolean rqsGradient) {
         if (rqsGradient() != rqsGradient) {
             if (rqsGradient) {
-                flags += rqsGradient_MASK;
+                _flags += RQS_GRADIENT_MASK;
             } else {
-                flags -= rqsGradient_MASK;
+                _flags -= RQS_GRADIENT_MASK;
             }
         }
     }
 
     public boolean isOutsourced() {
-        return ((flags & isOutsourced_MASK) == isOutsourced_MASK) ? true : false;
+        return ((_flags & IS_OUTSOURCED_MASK) == IS_OUTSOURCED_MASK) ? true : false;
     }
     public void setIsOutsourced(boolean isOutsourced) {
         if (isOutsourced() != isOutsourced) {
             if (isOutsourced) {
-                flags += isOutsourced_MASK;
+                _flags += IS_OUTSOURCED_MASK;
             } else {
-                flags -= isOutsourced_MASK;
+                _flags -= IS_OUTSOURCED_MASK;
             }
         }
         if(isOutsourced){
-            this.value = null;
-            this.gradient = null;
+            _value = null;
+            _gradient = null;
         }else if(this.has(TDevice.class)){
             TDevice device = (TDevice) this.find(TDevice.class);
             if(device.has(this)){
                 device.get(this);
             }
             this.remove(TDevice.class);
+        }
+    }
+
+    public boolean isVirtual() {
+        return ((_flags & IS_VIRTUAL_MASK) == IS_VIRTUAL_MASK) ? true : false;
+    }
+
+    public void setIsVirtual(boolean isVirtual) {
+        if (isVirtual() != isVirtual) {
+            double v = _value[0];
+            if (isVirtual) {
+                _value = new double[]{v};
+                _flags += IS_VIRTUAL_MASK;
+            } else {
+                _value = new double[this.size()];
+                for(int i = 0; i<_value.length; i++){
+                    _value[i] = v;
+                }
+                _flags -= IS_VIRTUAL_MASK;
+            }
         }
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -210,18 +239,19 @@ public class T {
             return "undefined";
         }
         String strShape = "";
-        for(int i=0; i<this.shape.length; i++){
-            strShape+=this.shape[i];
-            if(i<this.shape.length-1){
+        for(int i = 0; i<_shape.length; i++){
+            strShape+=_shape[i];
+            if(i<_shape.length-1){
                 strShape+="x";
             }
         }
         strShape = "["+strShape+"]";
         String strValue = "";
-        double[] v = this.value();
-        for(int i=0; i<v.length; i++){
-            strValue+=v[i];
-            if(i<v.length-1){
+        double[] v = _value;
+        int size = (this.isVirtual()?this.size():v.length);
+        for(int i=0; i<size; i++){
+            strValue+= v[(this.isVirtual())?0:i];
+            if(i<size-1){
                 strValue+=", ";
             }
         }
@@ -240,9 +270,7 @@ public class T {
                 TGraphNode d = (TGraphNode) this.find(TGraphNode.class);
                 if(d.mode()!=0){
                     String[] strDerivatives = {"; "};
-                    d.forEach((target, derivative)->{
-                        strDerivatives[0]+="->d"+derivative.toString()+", ";
-                    });
+                    d.forEach((target, derivative)->strDerivatives[0]+="->d"+derivative.toString()+", ");
                     strValue += strDerivatives[0];
                 }
             }
@@ -259,43 +287,43 @@ public class T {
     public T() { }// creates empty tensor;
 
     public T(int[] shape) {
-        value = new double[T.utility.szeOfShp(shape)];
+        _value = new double[T.utility.szeOfShp(shape)];
         this.initialShape(shape);
     }
     public T(int[] shape, double value) {
-        this.value = new double[T.utility.szeOfShp(shape)];
+        int size = T.utility.szeOfShp(shape);
+        _value = new double[1];
+        this.setIsVirtual((size>1));
         this.initialShape(shape);
-        for (int i = 0; i < this.value.length; i++) {
-            this.value[i] = value;
-        }
+        _value[0] = value;
     }
 
     public T(int[] shape, double[] value){
-        this.value = value;
+        _value = value;
         initialShape(shape);
     }
 
     public T(T tensor) {
-        this.shape = tensor.shape;
-        this.translation = tensor.translation;
-        this.value = new double[tensor.size()];
-        this.Components = null;//tensor.Components;
-        this.flags = tensor.flags;
-        for (int i = 0; i < this.value.length; i++) {
-            this.value[i] = tensor.value[i];
+        _shape = tensor._shape;
+        _translation = tensor._translation;
+        _value = new double[tensor.size()];
+        _components = null;//tensor._components;
+        this._flags = tensor._flags;
+        for (int i = 0; i < _value.length; i++) {
+            _value[i] = tensor._value[i];
         }
     }
 
     public void initialShape(int[] newShape) {
         int size = T.utility.szeOfShp(newShape);
-        if (value == null) {
-            value = new double[size];
+        if (_value == null) {
+            _value = new double[size];
         }
-        if (size != value.length) {
-            return;
+        if (size != _value.length && !this.isVirtual()) {
+            return;//TODO: Exception!
         }
-        this.shape = cached(newShape);
-        this.translation = cached(T.utility.idxTln(newShape));
+        _shape = cached(newShape);
+        _translation = cached(T.utility.idxTln(newShape));
     }
 
     private int[] cached(int[] data){
@@ -332,13 +360,13 @@ public class T {
         if(tensor==null){
             return;
         }
-        construct(new T[]{tensor}, operation);
+        _construct(new T[]{tensor}, operation);
     }
     public T(T[] tensors, String operation) {
-        construct(tensors, operation);
+        _construct(tensors, operation);
     }
 
-    private void construct(T[] tensors, String operation){
+    private void _construct(T[] tensors, String operation){
         if(tensors==null||tensors.length==0||tensors[0]==null){
             return;
         }
@@ -370,7 +398,7 @@ public class T {
         return null;
     }
 
-    private void record(int[] shp, int[] tln){
+    private void _record(int[] shp, int[] tln){
         int[][] conf = this.config();
         int sze = (conf==null)?0:conf.length;
         int[][] newConf = new int[sze+2][];
@@ -383,11 +411,11 @@ public class T {
     }
 
     public void inject(T tensor) {
-        this.value = tensor.value;
-        this.shape = tensor.shape;
-        this.translation = tensor.translation;
-        this.Components = tensor.Components;
-        this.flags = tensor.flags;
+        _value = tensor._value;
+        _shape = tensor._shape;
+        _translation = tensor._translation;
+        _components = tensor._components;
+        this._flags = tensor._flags;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public void backward(T error) {
@@ -403,18 +431,19 @@ public class T {
         if(this.isOutsourced()){
             ((TDevice)this.find(TDevice.class)).rmv(this);
         }
-        this.flags = -1;
-        this.value = null;
-        this.shape = null;
-        this.translation = null;
-        this.Components = null;
-        this.gradient = null;
+        this._flags = -1;
+        _value = null;
+        _shape = null;
+        _translation = null;
+        _components = null;
+        _gradient = null;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     //ELEMENTARY OPERATIONS:
     //=========================
     public void foreach(Consumer<Integer> action){
+        this.setIsVirtual(false);
         int sze = this.size();
         int[] idx = new int[this.shape().length];
         for(int i=0; i<sze; i++){
@@ -423,9 +452,10 @@ public class T {
         }
     }
     public void foreach(BiConsumer<Integer, Double> action){
+        this.setIsVirtual(false);
         int sze = this.size();
         int[] idx = new int[this.shape().length];
-        double[] value = this.value();
+        double[] value = _value;
         for(int i=0; i<sze; i++){
             T.utility.increment(idx, this.shape());
             action.accept(i, value[T.utility.idxOfShpIdxAndShp(idx, this.shape())]);
@@ -443,52 +473,76 @@ public class T {
             public static double getFrom(T t, int i) {
                 if(t.isEmpty()||t.isUndefined()){
                     return 0;
+                } else if(t.isVirtual()){
+                    return t._value[0];
                 }
-                return t.value()[T.utility.idxOfShpIdxAndShp(t.shpIdx(i), t.shape())];
+                return t._value[T.utility.idxOfShpIdxAndShp(t.shpIdx(i), t.shape())];
             }
             public static double getFrom(T t, int[] idx) {
-                return t.value()[T.utility.idxOfShpIdxAndShp(idx, t.shape())];
+                return t._value[t.isVirtual()?0:T.utility.idxOfShpIdxAndShp(idx, t.shape())];
             }
             public static void setInto(T t, int i, double value) {
-                t.value()[T.utility.idxOfShpIdxAndShp(t.shpIdx(i), t.shape())] = value;
+                t.setIsVirtual(false);
+                t._value[t.isVirtual()?0:T.utility.idxOfShpIdxAndShp(t.shpIdx(i), t.shape())] = value;
             }
             public static void setInto(T t, int[] idx, double value) {
-                t.value()[T.utility.idxOfShpIdxAndShp(idx, t.shape())] = value;
+                t.setIsVirtual(false);
+                t._value[t.isVirtual()?0:T.utility.idxOfShpIdxAndShp(idx, t.shape())] = value;
             }
             public static void addInto(T t, int i, double value) {
-                t.value()[T.utility.idxOfShpIdxAndShp(t.shpIdx(i), t.shape())] += value;
+                t.setIsVirtual(false);
+                t._value[T.utility.idxOfShpIdxAndShp(t.shpIdx(i), t.shape())] += value;
             }
             public static void addInto(T t, int[] idx, double value) {
-                t.value()[T.utility.idxOfShpIdxAndShp(idx, t.shape)] += value;
+                t.setIsVirtual(false);
+                t._value[T.utility.idxOfShpIdxAndShp(idx, t._shape)] += value;
             }
-            public static T addInto(T t, T tensor) {
-                int[] index = new int[t.shape().length];
-                int size = t.size();
-                for (int i = 0; i < size; i++) {
-                    io.addInto(t, index, io.getFrom(tensor, index));
-                    T.utility.increment(index, t.shape());
+            public static T addInto(T t, T source) {
+                if(t.isVirtual() && source.isVirtual()){
+                    t._value[0] += source._value[0];
+                } else {
+                    if(t.isVirtual()){
+                        t.setIsVirtual(false);
+                    }
+                    int[] index = new int[t.shape().length];
+                    int size = t.size();
+                    for (int i = 0; i < size; i++) {
+                        addInto(t, index, getFrom(source, index));
+                        T.utility.increment(index, t.shape());
+                    }
                 }
-                return tensor;
+                return source;
             }
             public static void subInto(T t, int i, double value) {
-                t.value()[T.utility.idxOfShpIdxAndShp(t.shpIdx(i), t.shape())] -= value;
+                t.setIsVirtual(false);
+                t._value[T.utility.idxOfShpIdxAndShp(t.shpIdx(i), t.shape())] -= value;
             }
             public static void subInto(T t, int[] idx, double value) {
-                t.value()[T.utility.idxOfShpIdxAndShp(idx, t.shape())] -= value;
+                t.setIsVirtual(false);
+                t._value[T.utility.idxOfShpIdxAndShp(idx, t.shape())] -= value;
             }
-            public static void subInto(T t, T tensor) {
-                int[] index = new int[t.shape().length];
-                int size = t.size();
-                for (int i = 0; i < size; i++) {
-                    io.subInto(t, index, io.getFrom(tensor, index));
-                    T.utility.increment(index, t.shape());
+            public static void subInto(T t, T source) {
+                if(t.isVirtual() && source.isVirtual()){
+                    t._value[0] -= source._value[0];
+                } else {
+                    if (t.isVirtual()) {
+                        t.setIsVirtual(false);
+                    }
+                    int[] index = new int[t.shape().length];
+                    int size = t.size();
+                    for (int i = 0; i < size; i++) {
+                        io.subInto(t, index, io.getFrom(source, index));
+                        T.utility.increment(index, t.shape());
+                    }
                 }
             }
             public static void mulInto(T t, int i, double value) {
-                t.value()[T.utility.idxOfShpIdxAndShp(t.shpIdx(i), t.shape())] *= value;
+                t.setIsVirtual(false);
+                t._value[T.utility.idxOfShpIdxAndShp(t.shpIdx(i), t.shape())] *= value;
             }
             public static void mulInto(T t, int[] idx, double value) {
-                t.value()[T.utility.idxOfShpIdxAndShp(idx, t.shape)] *= value;
+                t.setIsVirtual(false);
+                t._value[T.utility.idxOfShpIdxAndShp(idx, t._shape)] *= value;
             }
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -496,9 +550,9 @@ public class T {
 
         public static void inject(double[] data, boolean grd, T tensor){
             if(grd) {
-                tensor.gradient = data;
+                tensor._gradient = data;
             }else{
-                tensor.value = data;
+                tensor._value = data;
             }
 
         }
@@ -507,19 +561,21 @@ public class T {
             if(newTsr){
                 tensor = copyOf(tensor);
             }
-            tensor.record(tensor.shape(), tensor.translation());
-            tensor.shape = T.utility.shpCheck(T.utility.reshaped(tensor.shape, newForm), tensor);
-            tensor.translation = T.utility.retranslated(tensor.translation, tensor.shape, newForm);
+            tensor._record(tensor.shape(), tensor.translation());
+            tensor._shape = T.utility.shpCheck(T.utility.reshaped(tensor._shape, newForm), tensor);
+            tensor._translation = T.utility.retranslated(tensor._translation, tensor._shape, newForm);
             return tensor;
         }
 
         //OPERATIONS:
         //=========================
         public static T convolution(T tensor1, T tensor2){
+            tensor1.setIsVirtual(false);
+            tensor2.setIsVirtual(false);
             T newTensor = new T(T.utility.shpOfTensMul(tensor1.shape(), tensor2.shape()));
             T.utility.tensMul_mxd(
                     newTensor.shape().length,
-                    new double[][]{tensor1.value(), tensor2.value(), newTensor.value()}, new int[]{0, 0, 0},
+                    new double[][]{tensor1._value, tensor2._value, newTensor._value}, new int[]{0, 0, 0},
                     T.utility.mxdFromShape(tensor1.shape()),
                     T.utility.mxdFromShape(tensor2.shape()),
                     T.utility.mxdFromShape(newTensor.shape())
@@ -552,45 +608,45 @@ public class T {
         public static T newTensor(double value, int[] shape){
             int sze = T.utility.szeOfShp(shape);
             T tensor = new T();
-            tensor.value = new double[sze];
+            tensor._value = new double[sze];
             tensor.initialShape(shape);
             for(int i=0; i<sze; i++){
-                tensor.value[i] = value;
+                tensor._value[i] = value;
             }
             return tensor;
         }
 
         public static T newTensor(double[] value, int[] shape){
             T tensor = new T();
-            tensor.value = value;
+            tensor._value = value;
             tensor.initialShape(shape);
             return tensor;
         }
         public static T newTensor(double[] value, int[] shape, int[] translation){
             T tensor = new T();
-            tensor.value = value;
+            tensor._value = value;
             tensor.initialShape(shape);
-            tensor.translation = translation;
+            tensor._translation = translation;
             return tensor;
         }
         public static T newTensor(int[] shape, int[] translation){
             T tensor = new T();
-            tensor.value = new double[T.utility.szeOfShp(shape)];
+            tensor._value = new double[T.utility.szeOfShp(shape)];
             tensor.initialShape(shape);
-            tensor.translation = (translation!=null)?translation:tensor.translation;//FUNCTIONS.put()
+            tensor._translation = (translation!=null)?translation:tensor._translation;//FUNCTIONS.put()
             return tensor;
         }
 
         public static T copyOf(T tensor){
             T newTensor = new T();
-            newTensor.shape = tensor.shape;
-            newTensor.translation = tensor.translation;
-            newTensor.value = new double[tensor.size()];
-            newTensor.Components = null;//tensor.Components;
-            newTensor.flags = tensor.flags;
-            double[] value = tensor.value();
+            newTensor._shape = tensor._shape;
+            newTensor._translation = tensor._translation;
+            newTensor._value = new double[tensor.size()];
+            newTensor._components = null;//tensor._components;
+            newTensor._flags = tensor._flags;
+            double[] value = tensor._value;
             for (int i = 0; i < value.length; i++) {
-                newTensor.value[i] = value[i];
+                newTensor._value[i] = value[i];
             }
             if(tensor.isOutsourced()){
                 newTensor.add(tensor.device());
@@ -607,10 +663,10 @@ public class T {
         }
         public static T reshapedCopyOf(T tensor, int[] newForm) {
             T newTensor = new T();
-            newTensor.value = tensor.value;
-            newTensor.shape = T.utility.reshaped(tensor.shape, newForm);
-            newTensor.translation = T.utility.reshaped(tensor.translation, newForm);
-            newTensor.Components = tensor.Components;//Reshaped derivs usw
+            newTensor._value = tensor._value;
+            newTensor._shape = T.utility.reshaped(tensor._shape, newForm);
+            newTensor._translation = T.utility.reshaped(tensor._translation, newForm);
+            newTensor._components = tensor._components;//Reshaped derivs usw
             return newTensor;
         }
     }
@@ -764,7 +820,7 @@ public class T {
         @Contract(pure = true)
         public static int[] shpCheck(int[] newShp, T t){
             if(szeOfShp(newShp)!=t.size()){
-                throw new IllegalArgumentException("New shape does not match tensor size!" +
+                throw new IllegalArgumentException("New _shape does not match tensor size!" +
                         " ("+str(newShp)+((szeOfShp(newShp)<t.size()) ?"<":">")+str(t.shape())+")");
             }
             return newShp;
@@ -944,7 +1000,7 @@ public class T {
                             id++;
                         }
                     }
-                }//setInto value in drn:
+                }//setInto _value in drn:
                 int idx = idxOfFrmt_mxd(drn, rank);
                 data[2][dataPtr[2] + idx] = value;
                 System.out.println(idx + " - " + i);
@@ -1002,7 +1058,7 @@ public class T {
                 }
                 //----------
                 // multiplication:
-                //double value = 0;
+                //double _value = 0;
                 int idx = idxOfFrmt_mxd(drn, rank);//This has been added too
                 boolean running = true;
                 boolean incrementing = false;
@@ -1022,9 +1078,9 @@ public class T {
                                         " idx1:(" + idx1 + ");" +
                                         " idx2:(" + idx2 + ");" +
                                         " drn:(" + idxOfFrmt_mxd(drn, rank) + ");" +
-                                        //" val:(" + value + ") += val1:(" + data[0][dataPtr[0] + idx1] + ") x val2:(" + data[1][dataPtr[1] + idx2] +
+                                        //" val:(" + _value + ") += val1:(" + data[0][dataPtr[0] + idx1] + ") x val2:(" + data[1][dataPtr[1] + idx2] +
                                 ");");
-                        //value += data[0][dataPtr[0] + idx1] * data[1][dataPtr[1] + idx2];
+                        //_value += data[0][dataPtr[0] + idx1] * data[1][dataPtr[1] + idx2];
                         if(first){
                             data[0][dataPtr[0] + idx1] += data[2][dataPtr[2] + idx] * data[1][dataPtr[1] + idx2];
                         } else {
@@ -1067,9 +1123,9 @@ public class T {
                             id++;
                         }
                     }
-                }//setInto value in drn:
+                }//setInto _value in drn:
                 //int idx = idxOfFrmt_mxd(drn, rank);
-                //data[2][dataPtr[2] + idx] = value;
+                //data[2][dataPtr[2] + idx] = _value;
                 System.out.println(idx + " - " + i);
                 i++;//increment on drain:
                 if (i < drnSze) {

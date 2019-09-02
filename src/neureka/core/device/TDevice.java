@@ -9,28 +9,26 @@ import neureka.core.T;
 public class TDevice
 {
     /**
-     *    map:
-     *    Holds REGISTER _pointers f tensors stored on the device.
+     *    _tensorsMap:
+     *    Holds REGISTER _pointers f tensors stored on the _device.
     * */
-    private HashMap<T, Integer> map = new HashMap<T, Integer>();
+    private HashMap<T, Integer> _tensorsMap = new HashMap<T, Integer>();
     /**
      *    REGISTER:
-     *    Maps REGISTER _pointers to _pointers WITHIN the compute device.
-     *    Pointers within the kernel change dynamically,
+     *    Maps REGISTER _pointers to _pointers WITHIN the compute _device.
+     *    Pointers within the _kernel change dynamically,
      *    whereas the REGISTER entry will always represent a specific tensor from
-     *    the time of allocation to tensor deletion and de-allocation on the device.
+     *    the time of allocation to tensor deletion and de-allocation on the _device.
      *
      * */
-    private int[][] register = null;
-    private OpenCLDevice device = null;
-    //private Device device = null;
-
-    private TKernel kernel = null;
+    private int[][] _register = null;
+    private OpenCLDevice _device;
+    private TKernel _kernel;
 
     public TDevice(String name){
         if(name==null){
-            device = null;
-            kernel = null;
+            _device = null;
+            _kernel = null;
         }else{
             String[] parts = name.split(" ");
             String type = "gpu";
@@ -38,8 +36,8 @@ public class TDevice
                 type = parts[1];
                 name = parts[0];
             }
-            register = new int[][]{new int[]{-1,-1,-1,-1,-1}};
-            device = OpenCLDevice.listDevices(null).get(0);
+            _register = new int[][]{new int[]{-1,-1,-1,-1,-1}};
+            _device = OpenCLDevice.listDevices(null).get(0);
             List<OpenCLDevice> OpenCLDevices = OpenCLDevice.listDevices(null);
             for (OpenCLDevice found: OpenCLDevices){
                 System.out.println("\n---\n"+found.toString());
@@ -48,90 +46,87 @@ public class TDevice
                         (found.getShortDescription()+found.toString()).toLowerCase().contains(name.toLowerCase())
                         &&found.getType().toString().toLowerCase().contains(type)
                 ){
-                    this.device = found;
+                    _device = found;
                 }
             }
-            if(!this.device.getType().toString().toLowerCase().contains("cpu")){
-                this.device.setSharedMemory(false);// GPU's (!cpu's) don't share host memory!
+            if(!_device.getType().toString().toLowerCase().contains("cpu")){
+                _device.setSharedMemory(false);// GPU's (!cpu's) don't share host memory!
             }
-            System.out.println("\nChosen device:\n------------\n"+ device.toString()+"\n------------\n");
-            System.out.println("\ndevice f_id:\n------------\n"+ this.device.getType().toString()+"\n------------\n");
-            kernel = new TKernel();
-            System.out.println("TDevice f kernel:\n------------");
-            System.out.println(kernel.getTargetDevice().toString());
+            System.out.println("\nChosen _device:\n------------\n"+ _device.toString()+"\n------------\n");
+            System.out.println("\n_device _f_id:\n------------\n"+ _device.getType().toString()+"\n------------\n");
+            _kernel = new TKernel();
+            System.out.println("TDevice f _kernel:\n------------");
+            System.out.println(_kernel.getTargetDevice().toString());
         }
     }
 
     public void dispose(){
-        this.kernel.dispose();
+        _kernel.dispose();
     }
 
     public TKernel getKernel(){
-        //System.out.println(this.kernel.cleanUpArrays());
-        return kernel;
+        //System.out.println(_kernel.cleanUpArrays());
+        return _kernel;
     }
 
     public boolean has(T tensor){
-        return this.map.containsKey(tensor);
+        return _tensorsMap.containsKey(tensor);
     }
     /**
      *  ======================================================================
      * */
     public void get(T tensor){
-        if(kernel!=null){
-            kernel.execute(
-                    device.createRange(
-                        kernel.executionSizeOf_fetchTsr(
-                                register[0][
-                                        map.get(
+        if(_kernel !=null){
+            _kernel.execute(
+                    _device.createRange(
+                        _kernel.executionSizeOf_fetchTsr(
+                                _register[0][
+                                        _tensorsMap.get(
                                                 tensor)], false
                         )
                     )
             );
-            T.factory.inject(kernel.value(), false, tensor);
+            T.factory.inject(_kernel.value(), false, tensor);
             if(tensor.rqsGradient()){
-                kernel.execute(
-                        device.createRange(
-                                kernel.executionSizeOf_fetchTsr(
-                                register[0][map.get(tensor)], true
+                _kernel.execute(
+                        _device.createRange(
+                                _kernel.executionSizeOf_fetchTsr(
+                                _register[0][_tensorsMap.get(tensor)], true
                         ))
                 );
-                T.factory.inject(kernel.value(), true, tensor);
+                T.factory.inject(_kernel.value(), true, tensor);
             }
             rmv(tensor);
         }
     }
     public void rmv(T tensor){
-        if(kernel!=null) {
-            if (map.containsKey(tensor)) {
-                kernel.freePtrOf(map.get(tensor), register);
-                map.remove(tensor);
+        if(_kernel !=null) {
+            if (_tensorsMap.containsKey(tensor)) {
+                _kernel.freePtrOf(_tensorsMap.get(tensor), _register);
+                _tensorsMap.remove(tensor);
                 tensor.setIsOutsourced(false);
             }
         }
     }
 
     public TDevice add(T tensor){
-        if(!map.containsKey(tensor)){
-            map.put(tensor,
-                    kernel.allocPtrFor(tensor, register)
+        tensor.setIsVirtual(false);
+        if(!_tensorsMap.containsKey(tensor)){
+            _tensorsMap.put(tensor,
+                    _kernel.allocPtrFor(tensor, _register)
             );
         }
-        //for(int n : device.getMaxWorkItemSize()){
-        //    System.out.print(n+", ");
-        //}
-        //System.out.println(device.getMaxWorkGroupSize()+"   <====  MAX WORK GROUP SIZE");
-        kernel.execute(
-                device.createRange(
-                    kernel.executionSizeOf_storeTsr(register[0][map.get(tensor)], tensor.value(), false)
+        _kernel.execute(
+                _device.createRange(
+                    _kernel.executionSizeOf_storeTsr(_register[0][_tensorsMap.get(tensor)], tensor.value(), false)
             )
         );
         if(tensor.rqsGradient()){
             double[] grd = (tensor.gradient()==null)?new double[tensor.value().length]:tensor.gradient();
-            kernel.execute(
-                device.createRange(
-                        kernel.executionSizeOf_storeTsr(
-                        register[0][map.get(tensor)],
+            _kernel.execute(
+                _device.createRange(
+                        _kernel.executionSizeOf_storeTsr(
+                        _register[0][_tensorsMap.get(tensor)],
                         grd, true
                     )
                 )
@@ -143,27 +138,27 @@ public class TDevice
     }
 
     public double[] valueOf(T tensor, boolean grd){
-        kernel.execute(
-                device.createRange(
-                        kernel.executionSizeOf_fetchTsr(register[0][map.get(tensor)],grd)
+        _kernel.execute(
+                _device.createRange(
+                        _kernel.executionSizeOf_fetchTsr(_register[0][_tensorsMap.get(tensor)],grd)
                 )
         );
-        return kernel.value();
+        return _kernel.value();
     }
 
     public void calculate(T[] tsrs, int f_id, int d){
-        if(kernel==null){
+        if(_kernel ==null){
             //What then?
         }else{
             int[] mode = new int[tsrs.length+2];
             mode[0] = f_id;
             mode[mode.length-1] = d;
             for(int mi=0; mi<(tsrs.length); mi++){
-                mode[mi+1] = (tsrs[mi]!=null)?register[0][map.get(tsrs[mi])]:-1;
+                mode[mi+1] = (tsrs[mi]!=null)? _register[0][_tensorsMap.get(tsrs[mi])]:-1;
             }
-            kernel.execute(
-                device.createRange(
-                    kernel.executionSizeOf_calc(mode)
+            _kernel.execute(
+                _device.createRange(
+                    _kernel.executionSizeOf_calc(mode)
                 )
             );
         }
@@ -174,41 +169,41 @@ public class TDevice
 
     public void calculate_on_CPU(T drn, T t1, T t2, int f_id, int d){
         System.out.println("TEST STARTS:");
-        System.out.println(stringified(kernel.values()));
-        System.out.println(stringified(kernel.pointers()));
-        System.out.println(stringified(kernel.shapes()));
-        System.out.println(stringified(kernel.translations()));
+        System.out.println(stringified(_kernel.values()));
+        System.out.println(stringified(_kernel.pointers()));
+        System.out.println(stringified(_kernel.shapes()));
+        System.out.println(stringified(_kernel.translations()));
         int[] m = new int[]{1, 2, 3};
         if(f_id<7){
-            m = new int[]{f_id, register[0][map.get(drn)], register[0][map.get(t1)], (t2!=null)?register[0][map.get(t2)]:d};
+            m = new int[]{f_id, _register[0][_tensorsMap.get(drn)], _register[0][_tensorsMap.get(t1)], (t2!=null)? _register[0][_tensorsMap.get(t2)]:d};
         } else if(f_id<12){
-            m = new int[]{f_id, register[0][map.get(drn)], register[0][map.get(t1)], d};
+            m = new int[]{f_id, _register[0][_tensorsMap.get(drn)], _register[0][_tensorsMap.get(t1)], d};
         } else {
-            m = new int[]{f_id, register[0][map.get(drn)], register[0][map.get(t1)], register[0][map.get(t2)], d};
+            m = new int[]{f_id, _register[0][_tensorsMap.get(drn)], _register[0][_tensorsMap.get(t1)], _register[0][_tensorsMap.get(t2)], d};
         }
-        int size = kernel.executionSizeOf_calc(m);
+        int size = _kernel.executionSizeOf_calc(m);
         System.out.println("size: "+size);
-        //kernel._mde = m;
+        //_kernel._mde = m;
         for(int i=0; i<size; i++){
-            kernel.run(i, m);
-            kernel._idx = new int[kernel._idx.length];
+            _kernel.run(i, m);
+            _kernel._idx = new int[_kernel._idx.length];
         }
         printDeviceContent(false);
     }
 
     public void printDeviceContent(boolean fetch){
         if(fetch){
-            System.out.println(stringified(kernel.values()));
-            System.out.println(stringified(kernel.pointers()));
-            System.out.println(stringified(kernel.shapes()));
-            System.out.println(stringified(kernel.translations()));
-            System.out.println(stringified(kernel.idx()));
+            System.out.println(stringified(_kernel.values()));
+            System.out.println(stringified(_kernel.pointers()));
+            System.out.println(stringified(_kernel.shapes()));
+            System.out.println(stringified(_kernel.translations()));
+            System.out.println(stringified(_kernel.idx()));
         }else{
-            System.out.println(stringified(kernel._values));
-            System.out.println(stringified(kernel._pointers));
-            System.out.println(stringified(kernel._shapes));
-            System.out.println(stringified(kernel._translations));
-            System.out.println(stringified(kernel._idx));
+            System.out.println(stringified(_kernel._values));
+            System.out.println(stringified(_kernel._pointers));
+            System.out.println(stringified(_kernel._shapes));
+            System.out.println(stringified(_kernel._translations));
+            System.out.println(stringified(_kernel._idx));
 
         }
 

@@ -94,7 +94,7 @@ public class MovableElementController extends Pane implements IChildItem{
 			translationVector[0] = currPos.getX() - prevPos.getX();
 			translationVector[1] = currPos.getY() - prevPos.getY();
 
-			//i used this instead of setTranslate* because we don't care about the original position of the object and aggregating translation
+			//i used this instead of setTranslate* because we don't care about the original position of the object and aggregating _translation
 			//will require having another variable
 			setTranslateX(getTranslateX() + translationVector[0]);
 			setTranslateY(getTranslateY() + translationVector[1]);

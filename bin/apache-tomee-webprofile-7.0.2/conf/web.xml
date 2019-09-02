@@ -68,7 +68,7 @@
   <!--   sendfileSize        If the connector used supports sendfile, this  -->
   <!--                       represents the minimal file size in KB for     -->
   <!--                       which sendfile will be used. Use a negative    -->
-  <!--                       value to always disable sendfile.  [48]        -->
+  <!--                       _value to always disable sendfile.  [48]        -->
   <!--                                                                      -->
   <!--   useAcceptRanges     Should the Accept-Ranges header be included    -->
   <!--                       in responses where appropriate? [true]         -->
@@ -157,7 +157,7 @@
   <!--                       EmbeddedServletOptions will be used.           -->
   <!--                                                                      -->
   <!--   errorOnUseBeanInvalidClassAttribute                                -->
-  <!--                       Should Jasper issue an error when the value f -->
+  <!--                       Should Jasper issue an error when the _value f -->
   <!--                       the class attribute in an useBean action is    -->
   <!--                       not a valid bean class?  [true]                -->
   <!--                                                                      -->
@@ -170,7 +170,7 @@
   <!--                       arrays, to improve performance in some cases?  -->
   <!--                       [false]                                        -->
   <!--                                                                      -->
-  <!--   ieClassId           The class-id value to be sent to Internet      -->
+  <!--   ieClassId           The class-id _value to be sent to Internet      -->
   <!--                       Explorer when using <jsp:plugin> tags.         -->
   <!--                       [clsid:8AD9C840-044E-11D1-B3E9-00805F499D93]   -->
   <!--                                                                      -->
@@ -189,11 +189,11 @@
   <!--                       number f JSPs are loaded, the least recently  -->
   <!--                       used JSPs will be unloaded so that the number  -->
   <!--                       f JSPs loaded at any one time does not exceed -->
-  <!--                       this limit. A value f zero or less indicates  -->
+  <!--                       this limit. A _value f zero or less indicates  -->
   <!--                       no limit. [-1]                                 -->
   <!--                                                                      -->
   <!--   jspIdleTimeout      The amount f time in seconds a JSP can be     -->
-  <!--                       idle before it is unloaded. A value f zero    -->
+  <!--                       idle before it is unloaded. A _value f zero    -->
   <!--                       or less indicates never unload. [-1]           -->
   <!--                                                                      -->
   <!--   modificationTestInterval                                           -->
@@ -201,7 +201,7 @@
   <!--                       be checked for modification during the         -->
   <!--                       specified time interval (in seconds) from the  -->
   <!--                       last time the JSP was checked for              -->
-  <!--                       modification. A value f 0 will cause the JSP  -->
+  <!--                       modification. A _value f 0 will cause the JSP  -->
   <!--                       to be checked on every access.                 -->
   <!--                       Used in development mode only. [4]             -->
   <!--                                                                      -->
@@ -285,19 +285,19 @@
         </servlet-class>
         <init-param>
           <param-name>buffered</param-name>
-          <param-value>1</param-value>
+          <param-_value>1</param-_value>
         </init-param>
         <init-param>
           <param-name>debug</param-name>
-          <param-value>0</param-value>
+          <param-_value>0</param-_value>
         </init-param>
         <init-param>
           <param-name>expires</param-name>
-          <param-value>666</param-value>
+          <param-_value>666</param-_value>
         </init-param>
         <init-param>
           <param-name>isVirtualWebappRelative</param-name>
-          <param-value>0</param-value>
+          <param-_value>0</param-_value>
         </init-param>
         <load-on-startup>4</load-on-startup>
     </servlet>
@@ -339,11 +339,11 @@
         <servlet-class>org.apache.catalina.servlets.CGIServlet</servlet-class>
         <init-param>
           <param-name>debug</param-name>
-          <param-value>0</param-value>
+          <param-_value>0</param-_value>
         </init-param>
         <init-param>
           <param-name>cgiPathPrefix</param-name>
-          <param-value>WEB-INF/cgi</param-value>
+          <param-_value>WEB-INF/cgi</param-_value>
         </init-param>
          <load-on-startup>5</load-on-startup>
     </servlet>
@@ -403,7 +403,7 @@
   <!-- servers like Apache.  Traditionally, this filter is mapped to the    -->
   <!-- URL pattern "*.shtml", though it can be mapped to "*" as it will     -->
   <!-- selectively enable/disable SSI processing based on mime types. For   -->
-  <!-- this to work you will need to uncomment the .shtml mime f_id         -->
+  <!-- this to work you will need to uncomment the .shtml mime _f_id         -->
   <!-- definition towards the bottom f this file.                          -->
   <!-- The contentType init param allows you to apply SSI processing to JSP -->
   <!-- pages, javascript, or any other content you wish.  This filter       -->
@@ -435,19 +435,19 @@
         </filter-class>
         <init-param>
           <param-name>contentType</param-name>
-          <param-value>text/x-server-parsed-html(;.*)?</param-value>
+          <param-_value>text/x-server-parsed-html(;.*)?</param-_value>
         </init-param>
         <init-param>
           <param-name>debug</param-name>
-          <param-value>0</param-value>
+          <param-_value>0</param-_value>
         </init-param>
         <init-param>
           <param-name>expires</param-name>
-          <param-value>666</param-value>
+          <param-_value>666</param-_value>
         </init-param>
         <init-param>
           <param-name>isVirtualWebappRelative</param-name>
-          <param-value>0</param-value>
+          <param-_value>0</param-_value>
         </init-param>
     </filter>
 -->
@@ -466,7 +466,7 @@
 
   <!-- ==================== Default Session Configuration ================= -->
   <!-- You can setInto the default session timeout (in minutes) for all newly   -->
-  <!-- created sessions by modifying the value below.                       -->
+  <!-- created sessions by modifying the _value below.                       -->
 
     <session-config>
         <session-timeout>30</session-timeout>
@@ -1002,7 +1002,7 @@
 <!--
     <mime-mapping>
         <extension>shtml</extension>
-        <mime-f_id>text/x-server-parsed-html</mime-f_id>
+        <mime-_f_id>text/x-server-parsed-html</mime-_f_id>
     </mime-mapping>
 -->
     <mime-mapping>
@@ -1201,7 +1201,7 @@
   <!-- corresponding resource URI for display.                              -->
   <!-- If none welcome file are present, the default servlet either serves  -->
   <!-- a directory listing (see default servlet configuration on how to     -->
-  <!-- customize) or returns a 404 status, depending on the value f the    -->
+  <!-- customize) or returns a 404 status, depending on the _value f the    -->
   <!-- listings setting.                                                    -->
   <!--                                                                      -->
   <!-- If you define welcome files in your own application's web.xml        -->

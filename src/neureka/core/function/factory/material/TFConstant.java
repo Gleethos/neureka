@@ -5,9 +5,9 @@ import neureka.core.function.TFunction;
 
 public class TFConstant implements TFunction
 {
-	private double value;
+	private double _value;
 	public double value(){
-		return this.value;
+		return this._value;
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
@@ -22,7 +22,7 @@ public class TFConstant implements TFunction
 
 	@Override
 	public String type() {
-		return "value";
+		return "_value";
 	}
 
 
@@ -41,19 +41,19 @@ public class TFConstant implements TFunction
 				number += expression.charAt(i);
 			}
 		}
-		value = Double.parseDouble(number);
-		System.out.println("value: "+ value);
+		_value = Double.parseDouble(number);
+		System.out.println("_value: "+ _value);
 		return this;
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
     public double activate(final double[] input, int j) {
-    	return value;
+    	return _value;
     }
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
 	public double activate(double[] input) {
-		return value;
+		return _value;
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
@@ -68,17 +68,17 @@ public class TFConstant implements TFunction
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
 	public String toString() {
-		return value +"";
+		return _value +"";
 	}
 
 	@Override
 	public T activate(T[] input, int j) {
-		return T.factory.newTensor(this.value, input[0].shape());
+		return T.factory.newTensor(this._value, input[0].shape());
 	}
 
 	@Override
 	public T activate(T[] input) {
-		return T.factory.newTensor(this.value, input[0].shape());
+		return T.factory.newTensor(this._value, input[0].shape());
 	}
 
 	@Override

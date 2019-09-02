@@ -7,7 +7,7 @@ public class TKernel extends Kernel
     /**
      * TODO: implement tsr cleanup
      * TODO: implement tsr relu
-     * TODO: implement value trim (unalloc_limit)
+     * TODO: implement _value trim (unalloc_limit)
      * */
     private int biggest_free = 0;
     private float free_ratio = -1;
@@ -84,7 +84,7 @@ public class TKernel extends Kernel
      *    +2 -> shp_ptr: for _shapes
      *    +3 -> shp_sze: (size)
      *
-     *    +4 -> tln_ptr: for shape index to value translation
+     *    +4 -> tln_ptr: for _shape index to _value _translation
      *    +5 -> tln_sze: (size)
      * */
     public TKernel(){
@@ -178,7 +178,7 @@ public class TKernel extends Kernel
     }
 
     public int allocPtrFor(T tensor, int[][] regis){
-        int size = tensor.value().length;
+        int size = tensor.size();
         int[] shape = tensor.shape();
         int[] translation = tensor.translation();
         __shp = shape;
@@ -406,11 +406,11 @@ public class TKernel extends Kernel
 
     /**
      * Mode format:
-     * 0: f_id
+     * 0: _f_id
      * 1-(n-1): t_id's
      * n: d (-1 if not derivative)
      * */
-    public int executionSizeOf_calc(int[] mode){// Mode contains f_id, drain id and source id's !
+    public int executionSizeOf_calc(int[] mode){// Mode contains _f_id, drain id and source id's !
         if(_mde ==null||_mde.length<3||_mde.length!=mode.length){
             _mde = mode;
             this.put(_mde);//up
@@ -424,11 +424,11 @@ public class TKernel extends Kernel
 
     /**
      * Mode format:
-     * 0: f_id
+     * 0: _f_id
      * 1-(n-1): t_id's
      * n: d (-1 if not derivative)
      * */
-    public int executionSizeOf_calc(int[] mode, double value){// Mode contains f_id, value is applied to all!
+    public int executionSizeOf_calc(int[] mode, double value){// Mode contains _f_id, _value is applied to all!
         if(_mde ==null||_mde.length<3||_mde.length!=mode.length){
             _mde = mode;
             this.put(_mde);//up
@@ -805,7 +805,7 @@ public class TKernel extends Kernel
                 _values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)];
     }
     private void run_broadcast_mul(int gid, int drn_id, double value){
-       // _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)]*value;
+       // _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)]*_value;
     }
     private void run_mod(int gid, int drn_id, int src1_id, int src2_id){
         _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
@@ -815,7 +815,7 @@ public class TKernel extends Kernel
     }
     private void run_broadcast_mod(int gid, int drn_id, double value){
        // _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-       //         (int)(_values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)])%(int)value;
+       //         (int)(_values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)])%(int)_value;
     }
     private void run_sub(int gid, int drn_id, int src1_id, int src2_id){
         _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
@@ -825,7 +825,7 @@ public class TKernel extends Kernel
     }
     private void run_broadcast_sub(int gid, int drn_id, double value){
       //  _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)]
-       //         = _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)]-value;
+       //         = _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)]-_value;
     }
     private void run_add(int gid, int drn_id, int src1_id, int src2_id){
         int i1 = tsr_ptr(drn_id)+__i_of(gid, drn_id, 0);
@@ -835,7 +835,7 @@ public class TKernel extends Kernel
     }
     private void run_broadcast_add(int gid, int drn_id, double value){
       //  int i1 = tsr_ptr(drn_id)+__i_of(gid, drn_id, 0);
-      //  _values[i1] = _values[i1]+value;
+      //  _values[i1] = _values[i1]+_value;
     }
     //==================================================================================================================
     private void run_conv_inv(int gid, int drn_id, int src1_id, int src2_id, boolean first){
@@ -934,7 +934,7 @@ public class TKernel extends Kernel
                 }
             }
         }//-8, 4, -9, -2, 2, 3
-        //set value in drn:
+        //set _value in drn:
         int di = __i_of_idx_on_tln(p_tln_drn, p_idx_drn, rank);
         _values[(p_data_drn + di)] = value;
     }//=================================================================================================================
@@ -1024,7 +1024,7 @@ public class TKernel extends Kernel
                 }
             }
         }
-        //set value in drn:
+        //set _value in drn:
         int di = __i_of_idx_on_tln(p_tln_drn, p_idx_drn, rank);
         _values[(p_data_drn + di)] = value;
     }

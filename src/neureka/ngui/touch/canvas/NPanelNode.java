@@ -1093,11 +1093,11 @@ public class NPanelNode implements NPanelObject
 		//					curvePoint = math.getCurvePointOn(1/3.25, points);
 		//					if(this.Core.hasWeight(Ii))
 		//					{
-		//						String value = ""+ getCore().getWeight(Ii, Ni);
+		//						String _value = ""+ getCore().getWeight(Ii, Ni);
 		//						brush.fillOval((int)(curvePoint[0])-70, (int)(curvePoint[1])-25, 140, 50);
 		//						brush.setColor(Color.BLACK);
 		//
-		//						brush.drawString(value,(int) (curvePoint[0])-value.length()*diameter/250, (int) (curvePoint[1])+6);
+		//						brush.drawString(_value,(int) (curvePoint[0])-_value.length()*diameter/250, (int) (curvePoint[1])+6);
 		//					}
 		//					else
 		//					{

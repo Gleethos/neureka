@@ -414,7 +414,7 @@ public class NCircleMenu implements NPanelObject{
 						}
 					};
 				}
-				else if(chosen==9) //Node f_id menu
+				else if(chosen==9) //Node _f_id menu
 				{
 					animationCounter=-2*CounterLimit;
 					byte[]    newMapping = {-1,  1, 2, 3};//NodeTypes

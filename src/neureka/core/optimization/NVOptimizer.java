@@ -5,7 +5,7 @@ import neureka.core.T;
 public class NVOptimizer {
 
 	private byte OptimizationID;
-	//0 -> gradient + DeltaVelocity
+	//0 -> _gradient + DeltaVelocity
 	
 	private double[][][][]  WeightGradientHistory;
 	private double[][][]    ShiftGradientHistory;
@@ -42,12 +42,12 @@ public class NVOptimizer {
 	
 		switch(optimizationID)
 		{
-		 case 0: //gradient + DeltaVelocity
+		 case 0: //_gradient + DeltaVelocity
 			 instantiateGradientHistory(size, connections, 1);
 			 instantiateGradientDeltaVelocity(size, connections);
 			 nullSignHistory();nullGradientVelocity();nullGradientVelocity();nullGradientLearningRate(); nullGradientOptimizationHistory();
 			 break;
-		 case 1: //gradient * DeltaVelocity
+		 case 1: //_gradient * DeltaVelocity
 			 instantiateGradientHistory(size, connections, 1);
 			 instantiateGradientDeltaVelocity(size, connections);
 			 nullSignHistory();nullGradientVelocity();nullGradientVelocity();nullGradientLearningRate(); nullGradientOptimizationHistory();
@@ -58,7 +58,7 @@ public class NVOptimizer {
 			 instantiateGradientVelocity(size, connections);
 			 nullSignHistory();nullGradientVelocity();nullGradientLearningRate(); nullGradientOptimizationHistory();
 			 break;
-		 case 3: //learningRate * gradient * DeltaVelocity
+		 case 3: //learningRate * _gradient * DeltaVelocity
 			 instantiateGradientHistory(size, connections, 1);
 			 instantiateGradientOptimizationHistory(size, connections, 1);
 			 instantiateGradientDeltaVelocity(size, connections);
@@ -209,7 +209,7 @@ public class NVOptimizer {
 	 
 	//Subfunctions f Public Interface:
 	//=================================
-	// gradient + deltaV  
+	// _gradient + deltaV
 	//==============================================================================================================
 	private double gradientPlusDeltaVelocityOptimization(double currentWeightGradient, int Ui, int Iid, int Nid)
 	{
@@ -239,7 +239,7 @@ public class NVOptimizer {
 	 *GradientDeltaVelocity / ShiftGradientDeltaVelocity 
 	 * 	 
 	 */	
-	// gradient * deltaV  
+	// _gradient * deltaV
 	//==============================================================================================================
 	private double gradientTimesDeltaVelocityOptimization(double currentWeightGradient, int Ui,  int Iid, int Nid)
 	{
@@ -324,7 +324,7 @@ public class NVOptimizer {
 	 *GradientDeltaVelocity / ShiftGradientDeltaVelocity 
 	 */
 	
-	// learningR * gradient * deltaV  
+	// learningR * _gradient * deltaV
 	//==============================================================================================================	
 	private double learningRateTimesGradientTimesDeltaVelocityOptimization(double currentWeightGradient, int Ui, int Iid, int Nid)
 	{

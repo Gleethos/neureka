@@ -10,34 +10,11 @@ public class TGraphBuilder
 
     public static void connect(T drain, T[] src, TFunction function, boolean derive){//, boolean derive
         if(function.isFlat()&&derive){
-            performDifferentiation(drain, function, src);
+            _performDifferentiation(drain, function, src);
         }
     }
 
-    private static void validate(String operation, TFunction function, T[] source){
-        /**
-         *   Evaluating validity://TODO: function input mismatch detection!
-         * */
-        if(!operation.contains("x")){
-            if(!utility.isValid(source, false)){
-                return;
-            }
-        }else if(operation.contains("x") && !utility.isValid(source, true)){//Shape fitting:
-            int largest = 0;
-            for(int i = 0; i<source.length; i++){
-                largest = (source[i].shape().length>largest)?source[i].shape().length:largest;
-            }
-            int[][] newShapes = new int[source.length][largest];
-            for(int i = 0; i<source.length; i++){
-                for(int ii=0; ii<largest; ii++){
-                    newShapes[i][ii] = (ii<source[i].shape().length)?ii:-1;
-                }
-                source[i] = T.factory.reshaped(source[i], newShapes[i], false);
-            }
-        }
-    }
-
-    private static void performDifferentiation(T drain, TFunction function, T[] source)
+    private static void _performDifferentiation(T drain, TFunction function, T[] source)
     {//--------------------------------------------------------------------------------------
         TGraphLock gid = ((TGraphNode)source[0].find(TGraphNode.class)).gid();
         TGraphNode node = new TGraphNode(drain,function, source, gid);
@@ -63,7 +40,7 @@ public class TGraphBuilder
                                     (t, g)->{
                                     /**
                                      *  Chain rule (forward) for every
-                                     *  gradient w.r.t. leaves (reverseAD or user leaves):
+                                     *  _gradient w.r.t. leaves (reverseAD or user leaves):
                                      * */
                                     if(node.has(t)){
                                         T dg = node.get(t);
@@ -91,13 +68,8 @@ public class TGraphBuilder
                 }
             }
         }
-    }//--------------------------------------------------------------------------------------
-
-    private static void foreach(T[] source, Consumer<T> action){
-        for(int i = 0; i<source.length; i++){
-            action.accept(source[i]);
-        }
     }
+    //--------------------------------------------------------------------------------------
 
     public static void backward(T error, T drain){
         if(true){
@@ -116,35 +88,6 @@ public class TGraphBuilder
              //   target.backward(T.factory.multiplication(error, g));
             });
         }
-    }
-
-    private  static class utility{
-
-        private static boolean isValid(T[] source, boolean doingTensMul){
-            T current = null;
-            T last = null;
-            for(int i=0; i<source.length; i++){
-                current = source[i];
-                if(i>0){
-                    if(current.shape().length!=last.shape().length){
-                        return false;
-                    }
-                    if(!doingTensMul){
-                        for(int j=0; j<current.shape().length; j++){
-                            if(current.shape()[j]!=last.shape()[j]){
-                                return false;
-                            }
-                        }
-                    }
-                }
-                last = current;
-            }
-            return true;
-        }
-
-
-
-
     }
 
 }

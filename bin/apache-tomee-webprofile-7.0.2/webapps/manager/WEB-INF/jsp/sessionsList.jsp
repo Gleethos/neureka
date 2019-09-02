@@ -40,7 +40,7 @@
     <meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
     <meta http-equiv="pragma" content="no-cache"/><!-- HTTP 1.0 -->
     <meta http-equiv="cache-control" content="no-cache,must-revalidate"/><!-- HTTP 1.1 -->
-    <meta http-equiv="expires" content="0"/><!-- 0 is an invalid value and should be treated as 'now' -->
+    <meta http-equiv="expires" content="0"/><!-- 0 is an invalid _value and should be treated as 'now' -->
     <meta http-equiv="content-language" content="en"/>
     <meta name="author" content="Cedrik LIME"/>
     <meta name="copyright" content="copyright 2005-2016 the Apache Software Foundation"/>

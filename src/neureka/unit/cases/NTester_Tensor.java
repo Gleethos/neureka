@@ -14,7 +14,7 @@ public class NTester_Tensor extends NTester {
         println(bar+"  TFunction: "+operation);
         println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         T product = new T(source, operation);
-        //product.backward(new T(product.shape(), 1));
+        //product.backward(new T(product._shape(), 1));
         String result = product.toString("r");
         for(String element : expected){
             this.assertContains("result", result, element);
@@ -35,13 +35,13 @@ public class NTester_Tensor extends NTester {
 
     public int testTensorUtility_translation(int[] dim, int[] expected){
         int [] result =  T.utility.idxTln(dim);
-        printSessionStart("Testing T.utility: dimension translation!");
+        printSessionStart("Testing T.utility: dimension _translation!");
         assertEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }
     public int testTensorBase_idxFromAnchor(int[] dim, int idx, int[] expected){
         int [] result =  T.utility.IdxToShpIdx(idx, T.utility.idxTln(dim));
-        printSessionStart("Testing T.utility: shape to translation to index!");
+        printSessionStart("Testing T.utility: _shape to _translation to index!");
         assertEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }

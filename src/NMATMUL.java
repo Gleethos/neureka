@@ -58,12 +58,12 @@ class AparapiMatMul extends Kernel {
     	int Coli = getGlobalId() % collom;
         int Rowi = (getGlobalId()-Coli) /collom;
         
-        float value = 0;
+        float _value = 0;
         for(int Comi = 0; Comi < common; Comi++)
         {
-            value += matA[Rowi * common + Comi] * matB[Comi * collom + Coli];
+            _value += matA[Rowi * common + Comi] * matB[Comi * collom + Coli];
         }
-        matC[Rowi * collom + Coli] = value;
+        matC[Rowi * collom + Coli] = _value;
 		*/
     }
     
@@ -75,10 +75,10 @@ class AparapiMatMul extends Kernel {
         float value = 0;
         for(int Rowi = 0; Rowi < row; Rowi++)
         {
-            //value += matA[Ri * common + Comi] * matB[Comi * collom + Coli];
-        	value += matA[Comi + Rowi*common] * matC[Rowi * collom + Coli];//value += matA[Comi * row + Rowi] * matC[Rowi * collom + Coli];
+            //_value += matA[Ri * common + Comi] * matB[Comi * collom + Coli];
+        	value += matA[Comi + Rowi*common] * matC[Rowi * collom + Coli];//_value += matA[Comi * row + Rowi] * matC[Rowi * collom + Coli];
         }
-        //matC[Ri * collom + Coli] = value;
+        //matC[Ri * collom + Coli] = _value;
         matB[Comi * collom + Coli] = value; // Seems right!
     }
     

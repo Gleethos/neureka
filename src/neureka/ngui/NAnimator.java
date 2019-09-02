@@ -25,7 +25,7 @@ public class NAnimator {
 	//---------------------------------------------------------------------------------------
 	public void setCounterFor(Object owner, int counterID, int startValue)//...
 	{
-		System.out.println("setting counter: id-"+counterID+", value-"+startValue+"; ");
+		System.out.println("setting counter: id-"+counterID+", _value-"+startValue+"; ");
 		if(AnimationMap.containsKey(owner)==false) 
 		{
 			ArrayList<Animation> animations = new ArrayList<Animation>();

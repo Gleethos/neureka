@@ -93,7 +93,7 @@
                        Defaults to "myapp".
 
   app.path             FGlobal path to which this application should be
-                       deployed (defaults to "/" plus the value f the
+                       deployed (defaults to "/" plus the _value f the
                        "app.name" property).
 
   app.version          Version number f this iteration f the application.
@@ -158,7 +158,7 @@
 <!-- Dummy external dependency -->
 <!--
   <property name="foo.jar"
-           value="/path/to/foo.jar"/>
+           _value="/path/to/foo.jar"/>
 -->
 
 

@@ -26,10 +26,10 @@ public class NTester_TensorDevice extends NTester {
         this.assertContains("kernel._shapes()", stringified(kernel.shapes()), stringified(shapes));
         this.assertContains("kernel._translations()", stringified(kernel.translations()), stringified(translations));
 
-        this.assertContains("tensor.value()", stringified(tensor.value()),stringified(value));
-        this.assertContains("kernel.value()", stringified(kernel.value()),stringified(value));
-        this.assertContains("kernel.shape()", stringified(kernel.shape()),stringified(shape));
-        this.assertContains("kernel.translation()", stringified(kernel.translation()),stringified(translation));
+        this.assertContains("tensor._value()", stringified(tensor.value()),stringified(value));
+        this.assertContains("kernel._value()", stringified(kernel.value()),stringified(value));
+        this.assertContains("kernel._shape()", stringified(kernel.shape()),stringified(shape));
+        this.assertContains("kernel._translation()", stringified(kernel.translation()),stringified(translation));
 
         this.assertContains("kernel._pointers()", stringified(kernel.pointers()), stringified(pointers));
 
@@ -88,7 +88,7 @@ public class NTester_TensorDevice extends NTester {
         this.printSessionStart(message);
 
         //for(int i=0; i<50000; i++){
-            //device.calculate(drn, src1, src2, f_id);
+            //device.calculate(drn, src1, src2, _f_id);
         if(src2==null){
             device.calculate(new T[]{drn, src1}, f_id, d);
         }else{

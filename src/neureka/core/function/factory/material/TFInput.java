@@ -6,7 +6,7 @@ import neureka.core.function.TFunction;
 
 public class TFInput implements TFunction
 {
-    int InputIndex;
+    int _index;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public boolean isFlat() {
@@ -37,21 +37,21 @@ public class TFInput implements TFunction
                 number += Integer.parseInt(equation.charAt(i) + "");
             }
         }
-        this.InputIndex = number;
+        this._index = number;
         return this;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public double activate(final double[] input, int j) {
-        return input[InputIndex];
+        return input[_index];
     }
     @Override
     public double activate(final double[] input) {
-        return input[InputIndex];
+        return input[_index];
     }
     @Override
     public double derive(final double[] input, final int index) {
-        return (index == this.InputIndex) ? 1 : 0;
+        return (index == this._index) ? 1 : 0;
     }
     @Override
     public double derive(double[] input, int index, int j) {
@@ -60,11 +60,11 @@ public class TFInput implements TFunction
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public T activate(T[] input, int j) {
-        return input[InputIndex];
+        return input[_index];
     }
     @Override
     public T activate(T[] input) {
-        return input[InputIndex];
+        return input[_index];
     }
     @Override
     public T derive(T[] input, int index, int j) {
@@ -72,14 +72,14 @@ public class TFInput implements TFunction
     }
     @Override
     public T derive(T[] input, int index) {
-        return (index == this.InputIndex)
+        return (index == this._index)
                 ? T.factory.newTensor(1, input[0].shape())
                 : T.factory.newTensor(0, input[0].shape());
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public String toString() {
-        return "I[" + this.InputIndex + "]";
+        return "I[" + this._index + "]";
     }
 
 }

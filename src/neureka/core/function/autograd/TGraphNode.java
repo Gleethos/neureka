@@ -9,38 +9,38 @@ import java.util.function.BiConsumer;
 public class TGraphNode {
 
     /**
-     *  These functions describe the meaning of 'mode'
+     *  These functions describe the meaning of '_mode'
      * */
-    public boolean usesAD(){return (this.mode !=0);}
-    public boolean usesForwardAD(){ return (this.mode >0); }
-    public boolean usesReverseAD(){ return (this.mode <0); }
+    public boolean usesAD(){return (_mode !=0);}
+    public boolean usesForwardAD(){ return (_mode >0); }
+    public boolean usesReverseAD(){ return (_mode <0); }
     /**
      *  modes:    |
      *  ----------+----------------------------------+-
-     *  mode == 0 | no Auto-Differentiation          |
+     *  _mode == 0 | no Auto-Differentiation          |
      *  ----------+----------------------------------+-
-     *  mode > 0  | forward Auto-Differentiation     |
+     *  _mode > 0  | forward Auto-Differentiation     |
      *  ----------+----------------------------------+-
-     *  mode < 0  | backward Auto-Differentiation    |
+     *  _mode < 0  | backward Auto-Differentiation    |
      *  ----------+----------------------------------+-
      * */
 
     /**
      * Recorded Function and Source tensors
      * */
-    private TFunction function = null;
-    private T[] source = null;
+    private TFunction _function = null;
+    private T[] _source = null;
 
     /**
      * Keys are targets and _values are gradients with respect to that target
-     * (Note: _values can be null if the recorded function is of type 'reshape')
+     * (Note: _values can be null if the recorded _function is of type 'reshape')
      * */
     private TreeMap<T, T> targets_gradients;
 
     /**
      * Forward or Backward AD ?
      * */
-    private int mode = 0;
+    private int _mode = 0;
 
     private TGraphLock gid = null;
 
@@ -50,13 +50,13 @@ public class TGraphNode {
 
     public long nid(){
         long nid = 1;
-        if(this.source!=null){
-            for(T t : this.source){
+        if(_source !=null){
+            for(T t : _source){
                 nid*=t.hashCode();
             }
         }
-        if(this.function!=null){
-            nid+=this.function.hashCode();
+        if(_function !=null){
+            nid+=_function.hashCode();
         }
         return nid;
     }
@@ -66,20 +66,20 @@ public class TGraphNode {
     }
 
     public boolean isOrigin(){
-        return (this.source==null);
+        return (_source ==null);
     }
 
     public TGraphNode(T value, TFunction f, T[] src, TGraphLock gid){
-        this.mode = (src!=null)?modeOf(src, f):(value.rqsGradient())?1:0;
-        this.function = f;
-        this.source = src;
+        _mode = (src!=null)?modeOf(src, f):(value.rqsGradient())?1:0;
+        _function = f;
+        _source = src;
         this.gid = gid;
     }
 
 
     private static int modeOf(T[] source, TFunction function){
         /**
-         *  Evaluate auto-grad mode:
+         *  Evaluate auto-grad _mode:
          * */
         int mode = 0;
         int[] srcModes = new int[source.length];
@@ -104,7 +104,7 @@ public class TGraphNode {
     }
 
     public void trimTree(T target){// Find and remove redundant targets:
-        if(source==null || mode()==0){
+        if(_source ==null || mode()==0){
             return;
         }
         boolean dive = (target==null || mode()<0);
@@ -122,14 +122,14 @@ public class TGraphNode {
                     b.delete();
                 }
             });
-            for(T src : this.source){
+            for(T src : _source){
                 if(src.has(TGraphNode.class)){
                     TGraphNode node = (TGraphNode) src.find(TGraphNode.class);
                     node.trimTree(target);
                 }
             }
         }else{
-            for(T src : this.source){
+            for(T src : _source){
                 if(src.has(TGraphNode.class)){
                     TGraphNode node = (TGraphNode) src.find(TGraphNode.class);
                     this.forEach((t, g)->{
@@ -143,7 +143,7 @@ public class TGraphNode {
         /**
          * sources can be deleted because unused graph nodes are already trimmed off the tree (targets remain!)
          * */
-        this.source = null;
+        _source = null;
     }
 
     public void backward(T error){
@@ -152,7 +152,7 @@ public class TGraphNode {
                 this.forEach((g, t)->t.backward(T.factory.multiplication(error, g)));
             }else if(this.usesReverseAD()){
                 this.forEach((g, t)->{
-                    if(this.function.id()==18){// x operation required for chainrule!
+                    if(_function.id()==18){// x operation required for chainrule!
                         t.backward(T.factory.convolution(error, g));
                     }else{
                         t.backward(T.factory.multiplication(error, g));
@@ -165,11 +165,11 @@ public class TGraphNode {
     }
 
     public int mode(){
-        return this.mode;
+        return _mode;
     }
 
     public TFunction function(){
-        return this.function;
+        return _function;
     }
 
     public void put(T key, T value){

@@ -230,8 +230,7 @@ public class FBuilder {
                     for (int Oi = 0; Oi < TFunction.F_CACHE.REGISTER.length; Oi++) {
                         if (TFunction.F_CACHE.REGISTER[Oi].equals(possibleFunction)) {
                             f_id = Oi;
-                            TFunction newCore = new FBuilder()
-                                .newBuild(
+                            TFunction newCore = FBuilder.newBuild(
                                     FParser.parsedComponent(Components.get(0), possibleFunction.length()), doAD
                                 );
                             sources.add(newCore);
@@ -242,32 +241,32 @@ public class FBuilder {
                     }
                 }
             }
-            //function = FConstructor.createFunction(f_id, sources);
+            //function = FConstructor.createFunction(_f_id, sources);
             System.out.println("TFunction: " + possibleFunction);
             //---
             System.out.println("1 comonent left: -> unpackAndCorrect(component)");
             String component = FParser.unpackAndCorrect(Components.get(0));
             System.out.println("component: " + component);
-            System.out.println("Checking if component is variable (value/input): ");
+            System.out.println("Checking if component is variable (_value/input): ");
             if ((component.charAt(0) <= '9' && component.charAt(0) >= '0') || component.charAt(0) == '-' || component.charAt(0) == '+') {
                 TFunction newFunction = new TFConstant();
                 newFunction = newFunction.newBuild(component);
-                System.out.println("is value leave! -> return newValueLeave.newBuilt(component)");
+                System.out.println("is _value leave! -> return newValueLeave.newBuilt(component)");
                 return newFunction;
             }
             if (component.charAt(0) == 'i' || component.charAt(0) == 'I' ||
                     (component.contains("[") && component.contains("]") && component.matches(".[0-9]+."))) {//TODO: Make this regex better!!
                 TFunction newFunction = new TFInput();
                 newFunction = newFunction.newBuild(component);
-                System.out.println("value leave! -> return newInputLeave.newBuilt(component)");
+                System.out.println("_value leave! -> return newInputLeave.newBuilt(component)");
                 return newFunction;
             }
-            System.out.println("Component is not f f_id Leave! -> component = FParser.cleanedHeadAndTail(component); ");
+            System.out.println("Component is not f _f_id Leave! -> component = FParser.cleanedHeadAndTail(component); ");
             component = FParser.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =>Cleaning!
             TFunction newBuild;
             System.out.println("new build: TFunction newBuild = (TFunction)new FBuilder();");
             System.out.println("newBuild = newBuild.newBuild(component);");
-            newBuild = new FBuilder().newBuild(component, doAD);
+            newBuild = FBuilder.newBuild(component, doAD);
             System.out.println("-> return newBuild;");
             return newBuild;
         } else {// More than one component left:
@@ -300,7 +299,7 @@ public class FBuilder {
             while (ComponentIterator2.hasNext()) {
                 final String currentComponent2 = ComponentIterator2.next();
                 System.out.println("this.TFInput.add(newCore2.newBuild(" + currentComponent2 + ")); TFInput.size(): " + sources.size());
-                TFunction newCore2 = new FBuilder().newBuild(currentComponent2, doAD);//Dangerous recursion lives here!
+                TFunction newCore2 = FBuilder.newBuild(currentComponent2, doAD);//Dangerous recursion lives here!
                 sources.add(newCore2);
                 if (newCore2 != null) {
                     System.out.println("newCore2 != null");

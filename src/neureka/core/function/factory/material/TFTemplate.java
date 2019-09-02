@@ -11,31 +11,31 @@ import java.util.ArrayList;
 
 public abstract class TFTemplate implements TFunction {
 
-    protected int f_id;
-    protected boolean isFlat;
-    protected boolean doAD;
-    ArrayList<TFunction> Srcs;
+    protected int _f_id;
+    protected boolean _isFlat;
+    protected boolean _doAD;
+    protected ArrayList<TFunction> _source;
 
     protected TFTemplate(int f_id, boolean isFlat, ArrayList<TFunction> Srcs, boolean doAD){
-        this.f_id = f_id;
-        this.isFlat = isFlat;
-        this.Srcs = Srcs;
-        this.doAD = doAD;
+        _f_id = f_id;
+        _isFlat = isFlat;
+        _source = Srcs;
+        _doAD = doAD;
     }
 
     @Override
     public boolean isFlat(){
-        return  this.isFlat;
+        return  _isFlat;
     }
 
     @Override
     public int id() {
-        return this.f_id;
+        return _f_id;
     }
 
     @Override
     public String type() {
-        return TFunction.F_CACHE.REGISTER[f_id];
+        return TFunction.F_CACHE.REGISTER[_f_id];
     }
 
     @Override
@@ -46,40 +46,40 @@ public abstract class TFTemplate implements TFunction {
     @Override
     public String toString() {
         String reconstructed = "";
-        if (Srcs.size() == 1 && TFunction.F_CACHE.REGISTER[f_id].length() > 1) {
-            String expression = Srcs.get(0).toString();
+        if (_source.size() == 1 && TFunction.F_CACHE.REGISTER[_f_id].length() > 1) {
+            String expression = _source.get(0).toString();
             if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
-                return TFunction.F_CACHE.REGISTER[f_id] + expression;
+                return TFunction.F_CACHE.REGISTER[_f_id] + expression;
             }
-            return TFunction.F_CACHE.REGISTER[f_id] + "(" + expression + ")";
+            return TFunction.F_CACHE.REGISTER[_f_id] + "(" + expression + ")";
         }
-        reconstructed = ((TFunction.F_CACHE.REGISTER[f_id]==",")?"[":"")+reconstructed;
-        for (int i = 0; i < Srcs.size(); ++i) {
-            if (Srcs.get(i) != null) {
-                if((TFunction.F_CACHE.REGISTER[f_id]==",")){
-                    if(i==Srcs.size()-1){
+        reconstructed = ((TFunction.F_CACHE.REGISTER[_f_id]==",")?"[":"")+reconstructed;
+        for (int i = 0; i < _source.size(); ++i) {
+            if (_source.get(i) != null) {
+                if((TFunction.F_CACHE.REGISTER[_f_id]==",")){
+                    if(i== _source.size()-1){
                         reconstructed = reconstructed
                                 + "]:(" + (
-                                (Srcs.get(i) instanceof TFConstant)
-                                        ?Srcs.get(i).toString().split("\\.")[0]
-                                        :Srcs.get(i).toString()
+                                (_source.get(i) instanceof TFConstant)
+                                        ? _source.get(i).toString().split("\\.")[0]
+                                        : _source.get(i).toString()
                         ) +")";
                     }else{
                         reconstructed = reconstructed
                             + (
-                            (Srcs.get(i) instanceof TFConstant)
-                                   ?Srcs.get(i).toString().split("\\.")[0]
-                                   :Srcs.get(i).toString()
+                            (_source.get(i) instanceof TFConstant)
+                                   ? _source.get(i).toString().split("\\.")[0]
+                                   : _source.get(i).toString()
                         );
                     }
                 } else {
-                    reconstructed = reconstructed + Srcs.get(i).toString();
+                    reconstructed = reconstructed + _source.get(i).toString();
                 }
             } else {
                 reconstructed = reconstructed + "(null)";
             }
-            if (i < Srcs.size() - ((TFunction.F_CACHE.REGISTER[f_id]==",")?2:1)) {
-                reconstructed = reconstructed + TFunction.F_CACHE.REGISTER[f_id];
+            if (i < _source.size() - ((TFunction.F_CACHE.REGISTER[_f_id]==",")?2:1)) {
+                reconstructed = reconstructed + TFunction.F_CACHE.REGISTER[_f_id];
             }
         }
         return "(" + reconstructed + ")";
@@ -117,14 +117,14 @@ public abstract class TFTemplate implements TFunction {
      * */
     protected T tensorActivationOf(T input, boolean derive) {
         T output = T.factory.newTensor(input.shape(), input.translation());
-        if(!derive && !this.isFlat){
-            output.inject(new FBuilder().newBuild(f_id, 1, true).activate(new T[]{input}));
+        if(!derive && !_isFlat){
+            output.inject(new FBuilder().newBuild(_f_id, 1, true).activate(new T[]{input}));
             output.add(input.find(TGraphLock.class));
             return output;
         }
         if(input.isOutsourced()){
             TDevice device = (TDevice) input.find(TDevice.class);
-            device.calculate(new T[]{output, input}, f_id, (derive)?0:-1);
+            device.calculate(new T[]{output, input}, _f_id, (derive)?0:-1);
         }else{
             Calculation.foreach(input, output, (i, inputValue, outputValue)->{
                 outputValue[i] = scalarActivationOf(inputValue[i], derive);
@@ -145,24 +145,24 @@ public abstract class TFTemplate implements TFunction {
         /**
          *   The code below deals with deep functions (non flat):
          * */
-        if(d<0 && !isFlat){//only flat functions can be executed
-            if(f_id<=9){
-                output.inject(new FBuilder().newBuild(TFunction.F_CACHE.REGISTER[f_id]+"(I["+((j<0)?0:j)+"])", true).activate(input));
+        if(d<0 && !_isFlat){//only flat functions can be executed
+            if(_f_id <=9){
+                output.inject(new FBuilder().newBuild(TFunction.F_CACHE.REGISTER[_f_id]+"(I["+((j<0)?0:j)+"])", true).activate(input));
                 return output;
             }else{
-                if(TFunction.F_CACHE.REGISTER[f_id].length()!=1){
+                if(TFunction.F_CACHE.REGISTER[_f_id].length()!=1){
                     /**  SUMMATION, PI,
                      * */
                     T[] tsrs = activateSource(input);
-                    output.inject(FBuilder.newBuild(TFunction.F_CACHE.REGISTER[f_id]+"(I[j])", true).activate(tsrs));
+                    output.inject(FBuilder.newBuild(TFunction.F_CACHE.REGISTER[_f_id]+"(I[j])", true).activate(tsrs));
                     return output;
-                }else if(f_id<=18){
-                    /**      +, -, x, *, %, ....// TODO: move this to Function constructor!
+                }else if(_f_id <=18){
+                    /**      +, -, x, *, %, ...// TODO: move this to Function constructor!
                      * */
-                    String operation = (TFunction.F_CACHE.REGISTER[f_id].length()>1)? TFunction.F_CACHE.REGISTER[f_id]:"";
+                    String operation = (TFunction.F_CACHE.REGISTER[_f_id].length()>1)? TFunction.F_CACHE.REGISTER[_f_id]:"";
                     T[] tsrs = activateSource(input, j, null);
                     for(int i=0; i<tsrs.length; i++){
-                        operation += "I["+i+"]"+((i+1<tsrs.length)? TFunction.F_CACHE.REGISTER[f_id]:"");
+                        operation += "I["+i+"]"+((i+1<tsrs.length)? TFunction.F_CACHE.REGISTER[_f_id]:"");
                     }
                     if(j<0){
                         output.inject(FBuilder.newBuild(operation, true).activate(tsrs));
@@ -172,13 +172,13 @@ public abstract class TFTemplate implements TFunction {
                     return output;
                 }else{
                     /**
-                     *    Tensor shape translation
+                     *    Tensor _shape _translation
                      * */
                     T[] tsrs = activateSource(input, j, new int[]{1});
                     if(j<0){
-                        output.inject(new FBuilder().newBuild(f_id, tsrs.length, true).activate(tsrs));
+                        output.inject(FBuilder.newBuild(_f_id, tsrs.length, true).activate(tsrs));
                     }else{
-                        output.inject(new FBuilder().newBuild(f_id, tsrs.length, true).activate(tsrs, j));
+                        output.inject(FBuilder.newBuild(_f_id, tsrs.length, true).activate(tsrs, j));
                     }
                     return output;
                 }
@@ -189,7 +189,7 @@ public abstract class TFTemplate implements TFunction {
          * */
         TDevice device = (TDevice) input[0].find(TDevice.class);
         boolean onSameDevice = T.utility.shareGuestDevice(input);
-        if(onSameDevice && TFunction.F_CACHE.REGISTER[f_id]!="," && !(TFunction.F_CACHE.REGISTER[f_id]=="x"&&d>-1)){
+        if(onSameDevice && TFunction.F_CACHE.REGISTER[_f_id]!="," && !(TFunction.F_CACHE.REGISTER[_f_id]=="x"&&d>-1)){
             if(device!=null){
                 device.add(output);
             }
@@ -200,10 +200,10 @@ public abstract class TFTemplate implements TFunction {
                 for(int ii=1; ii<tsrs.length; ii++){
                     tsrs[ii]=input[ii-1];
                 }
-                device.calculate(tsrs, f_id, d);
+                device.calculate(tsrs, _f_id, d);
             }
         }else{
-            if(TFunction.F_CACHE.REGISTER[f_id]=="x"){
+            if(TFunction.F_CACHE.REGISTER[_f_id]=="x"){
                 if(d<0){
                     output = T.factory.convolution(input[0], input[1]);
                 }else{
@@ -213,10 +213,10 @@ public abstract class TFTemplate implements TFunction {
                         output = input[0];
                     }
                 }
-            }else if(TFunction.F_CACHE.REGISTER[f_id]==","){
-                int[] newForm = new int[this.Srcs.size()-1];
-                for(int i=0; i<this.Srcs.size()-1; i++ ){
-                    TFunction fcn = this.Srcs.get(i);
+            }else if(TFunction.F_CACHE.REGISTER[_f_id]==","){
+                int[] newForm = new int[_source.size()-1];
+                for(int i = 0; i<_source.size()-1; i++ ){
+                    TFunction fcn = _source.get(i);
                     if(fcn instanceof TFConstant){
                         newForm[i] = (int)((TFConstant)fcn).value();
                     }else{
@@ -227,8 +227,8 @@ public abstract class TFTemplate implements TFunction {
                     }
                 }
                 T t = (j<0)
-                    ?this.Srcs.get(Srcs.size()-1).activate(input)
-                    :this.Srcs.get(Srcs.size()-1).activate(input, j);
+                    ?_source.get(_source.size()-1).activate(input)
+                    :_source.get(_source.size()-1).activate(input, j);
                 t = T.factory.reshaped(t, newForm, true);//t.reshape(newForm);
 
                 if(d<0){
@@ -258,7 +258,7 @@ public abstract class TFTemplate implements TFunction {
         }
         if(d<0){
             T[] tsrs = input;
-            TGraphBuilder.connect(output, tsrs, this, true);//TODO: remove f_id here and just pass on 'this'
+            TGraphBuilder.connect(output, tsrs, this, true);//TODO: remove _f_id here and just pass on 'this'
         }
         return output;
     }
@@ -266,21 +266,21 @@ public abstract class TFTemplate implements TFunction {
     private T[] activateSource(T[] input){
         T[] tsrs = new T[input.length];
         for(int i=0; i<tsrs.length; i++){
-            tsrs[i] =  Srcs.get(0).activate(input, i);
+            tsrs[i] =  _source.get(0).activate(input, i);
         }
         return tsrs;
     }
 
     private T[] activateSource(T[] input, int j, int[] templateShape){
-        T[] tsrs = new T[this.Srcs.size()];
+        T[] tsrs = new T[_source.size()];
         for(int i=0; i<tsrs.length; i++){//constants need to be figured out!
-            if(Srcs.get(i) instanceof TFConstant){
+            if(_source.get(i) instanceof TFConstant){
                 tsrs[i] = null;
             }else{
                 tsrs[i] =
                     (j<0)
-                        ?Srcs.get(i).activate(input)
-                        :Srcs.get(i).activate(input, j);
+                        ? _source.get(i).activate(input)
+                        : _source.get(i).activate(input, j);
                 templateShape =
                     (templateShape==null)
                         ?tsrs[i].shape()
@@ -292,15 +292,15 @@ public abstract class TFTemplate implements TFunction {
                 (tsrs[i] != null)
                     ? tsrs[i]
                     : (j<0)
-                        ?T.factory.newTensor(((TFConstant)this.Srcs.get(i)).value(), templateShape)
-                        :T.factory.newTensor(Srcs.get(i).activate(new double[]{}, j), templateShape);
+                        ?T.factory.newTensor(((TFConstant)_source.get(i)).value(), templateShape)
+                        :T.factory.newTensor(_source.get(i).activate(new double[]{}, j), templateShape);
         }
         return tsrs;
     }
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     protected double scalarActivationOf(double input, boolean derive) {
-        switch (f_id) {
+        switch (_f_id) {
             case 0: return Calculation.getReLuOf(       input, derive);
             case 1: return Calculation.getSigmoidOf(    input, derive);
             case 2: return Calculation.getTanhOf(       input, derive);
@@ -316,16 +316,16 @@ public abstract class TFTemplate implements TFunction {
     }
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     protected double scalarActivationOf(double[] input, int j, int d) {
-        switch (f_id) {
-            case 10: return (j<0)? Calculation.getSummation(      input, d, Srcs) : Calculation.getSummation(      input, j, d, Srcs);
-            case 11: return (j<0)? Calculation.getPI(             input, d, Srcs) : Calculation.getPI(             input, j, d, Srcs);
-            case 12: return (j<0)? Calculation.getPowerOf(        input, d, Srcs) : Calculation.getPowerOf(        input, j, d, Srcs);
-            case 13: return (j<0)? Calculation.getDivision(       input, d, Srcs) : Calculation.getDivision(       input, j, d, Srcs);
-            case 14: return (j<0)? Calculation.getMultiplication( input, d, Srcs) : Calculation.getMultiplication( input, j, d, Srcs);
-            case 15: return (j<0)? Calculation.getModulo(         input, d, Srcs) : Calculation.getModulo(         input, j, d, Srcs);
-            case 16: return (j<0)? Calculation.getSubtraction(    input, d, Srcs) : Calculation.getSubtraction(    input, j, d, Srcs);
-            case 17: return (j<0)? Calculation.getAddition(       input, d, Srcs) : Calculation.getAddition(       input, j, d, Srcs);
-            case 18: return (j<0)? Calculation.getMultiplication( input, d, Srcs) : Calculation.getMultiplication( input, j, d, Srcs);
+        switch (_f_id) {
+            case 10: return (j<0)? Calculation.getSummation(      input, d, _source) : Calculation.getSummation(      input, j, d, _source);
+            case 11: return (j<0)? Calculation.getPI(             input, d, _source) : Calculation.getPI(             input, j, d, _source);
+            case 12: return (j<0)? Calculation.getPowerOf(        input, d, _source) : Calculation.getPowerOf(        input, j, d, _source);
+            case 13: return (j<0)? Calculation.getDivision(       input, d, _source) : Calculation.getDivision(       input, j, d, _source);
+            case 14: return (j<0)? Calculation.getMultiplication( input, d, _source) : Calculation.getMultiplication( input, j, d, _source);
+            case 15: return (j<0)? Calculation.getModulo(         input, d, _source) : Calculation.getModulo(         input, j, d, _source);
+            case 16: return (j<0)? Calculation.getSubtraction(    input, d, _source) : Calculation.getSubtraction(    input, j, d, _source);
+            case 17: return (j<0)? Calculation.getAddition(       input, d, _source) : Calculation.getAddition(       input, j, d, _source);
+            case 18: return (j<0)? Calculation.getMultiplication( input, d, _source) : Calculation.getMultiplication( input, j, d, _source);
             default: return 0;
         }
     }
@@ -342,7 +342,7 @@ public abstract class TFTemplate implements TFunction {
         }
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-        //Activation stage 1: Activation f_id determination
+        //Activation stage 1: Activation _f_id determination
         //============================================================================================================================================================================================
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         public static double getReLuOf(double input, boolean derive) {
