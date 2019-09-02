@@ -5,24 +5,8 @@ import neureka.core.function.TFunction;
 
 import java.util.function.Consumer;
 
-public class TGraphBuilder {
-
-    /**
-     *  These functions describe the meaning of 'mode'
-     * */
-    private static boolean usesAD(int mode){return (mode !=0);}
-    private static boolean usesForwardAD(int mode){ return (mode >0); }
-    private static boolean usesReverseAD(int mode){ return (mode <0); }
-    /**
-     *  modes:    |
-     *  ----------+----------------------------------+-
-     *  mode == 0 | no Auto-Differentiation          |
-     *  ----------+----------------------------------+-
-     *  mode > 0  | forward Auto-Differentiation     |
-     *  ----------+----------------------------------+-
-     *  mode < 0  | backward Auto-Differentiation    |
-     *  ----------+----------------------------------+-
-     * */
+public class TGraphBuilder
+{
 
     public static void connect(T drain, T[] src, TFunction function, boolean derive){//, boolean derive
         if(function.isFlat()&&derive){
@@ -32,12 +16,10 @@ public class TGraphBuilder {
 
     private static void validate(String operation, TFunction function, T[] source){
         /**
-         *   Evaluating validity://TODO: function input missmatch detection!
+         *   Evaluating validity://TODO: function input mismatch detection!
          * */
         if(!operation.contains("x")){
             if(!utility.isValid(source, false)){
-                //this.Fcn = null;
-                //this.Src = null;
                 return;
             }
         }else if(operation.contains("x") && !utility.isValid(source, true)){//Shape fitting:
@@ -55,60 +37,55 @@ public class TGraphBuilder {
         }
     }
 
-
     private static void performDifferentiation(T drain, TFunction function, T[] source)
     {//--------------------------------------------------------------------------------------
         TGraphLock gid = ((TGraphNode)source[0].find(TGraphNode.class)).gid();
-        TGraphNode rg = new TGraphNode(drain,function, source, gid);
-        drain.add(rg);
-        //TGraphNode rg = ((TGraphNode)drain.find(TGraphNode.class));
-        int m = rg.mode();
-        if(usesAD(m) && function.isFlat()){
-            TGraphNode drain_gradients = (TGraphNode) drain.find(TGraphNode.class);
+        TGraphNode node = new TGraphNode(drain,function, source, gid);
+        drain.add(node);
+        if(node.usesAD() && function.isFlat()){
             /**
              *  Preparing for back propagation:
              * */
-            if(usesForwardAD(m)){
+            if(node.usesForwardAD()){
                 int i = 0;
                 for(T src : source){
-                    TGraphNode src_gradients = ((TGraphNode) src.find(TGraphNode.class));
-                    if(src_gradients.function()!=null && src_gradients.function().id()==18){
+                    TGraphNode src_node = ((TGraphNode) src.find(TGraphNode.class));
+                    if(src_node.function()!=null && src_node.function().id()==18){
                         T d = function.derive(source, i);
-                        drain_gradients.put(src, d);// Sources created by x-mul are revers-mode cases!
+                        node.put(src, d);// Sources created by x-mul are revers-mode cases!
                     }else{
-                        //TGraphNode src_gradients = (TGraphNode) src.find(TGraphNode.class);
-                        if(src_gradients!=null && src.has(TGraphNode.class)){
+                        if(src_node.usesAD()){
                             T d = function.derive(source, i);
-                            if(src_gradients.size()==0 && drain_gradients.size()==0){
-                                drain_gradients.put(source[i], d);
+                            if(src_node.size()==0 && node.size()==0){
+                                node.put(source[i], d);
                             } else {
-                                src_gradients.forEach(
-                                        (t, g)->{
-                                            /**
-                                             *  Chain rule (forward) for every
-                                             *  gradient w.r.t. leaves (reverseAD or user leaves):
-                                             * */
-                                            if(drain_gradients.has(t)){
-                                                T dg = drain_gradients.get(t);
-                                                drain_gradients.put(t, T.factory.addition(dg,T.factory.multiplication(d, g)));
-                                            }else{
-                                                drain_gradients.put(t, T.factory.multiplication(d, g));
-                                            }
-                                            //TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
-                                        });
+                                src_node.forEach(
+                                    (t, g)->{
+                                    /**
+                                     *  Chain rule (forward) for every
+                                     *  gradient w.r.t. leaves (reverseAD or user leaves):
+                                     * */
+                                    if(node.has(t)){
+                                        T dg = node.get(t);
+                                        node.put(t, T.factory.addition(dg,T.factory.multiplication(d, g)));
+                                    }else{
+                                        node.put(t, T.factory.multiplication(d, g));
+                                    }
+                                    //TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
+                                });
                             }
 
                         }
                         i++;
                     }
                 }
-            }else if(usesReverseAD(m)){
+            }else if(node.usesReverseAD()) {
                 int i = 0;
                 for(T src : source){
                     TGraphNode src_node = ((TGraphNode) src.find(TGraphNode.class));
                     if(src_node.mode()!=0 || src.rqsGradient()){
                         T d = function.derive(source, i);
-                        drain_gradients.put(src, d);// Add gradients with respect to every source tensor!
+                        node.put(src, d);// Add gradients with respect to every source tensor!
                     }
                     i++;
                 }
@@ -123,7 +100,7 @@ public class TGraphBuilder {
     }
 
     public static void backward(T error, T drain){
-        if(!usesAD(0)){
+        if(true){
             return;
         }
         if(drain.rqsGradient()){

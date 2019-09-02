@@ -5,6 +5,7 @@ import neureka.unit.NeurekaTest;
 import neureka.ngui.NWindow;
 
 import java.util.Random;
+import java.util.Scanner;
 
 public class NSMain {
 
@@ -12,6 +13,37 @@ public class NSMain {
     
 	public static void main(String[] args) throws Exception
 	{
+
+	    //Scanner eingabeObjekt = new Scanner(System.in);
+//
+	    //System.out.println("Geben Sie eine Zahl ein: ");
+	    //int eingegeben = eingabeObjekt.nextInt();
+//
+	    //eingegeben = eingegeben - 8;
+//
+	    //System.out.println("Wenn ich 8 abziehe dann erhalte ich: "+eingegeben);
+//
+        //if(eingegeben == 0){
+        //    System.out.println("Banane!!");
+        //} else {
+        //    System.out.println("Apfel!!");
+        //}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	    /**
          *  3, 5, 4, 2,
@@ -111,36 +143,36 @@ public class NSMain {
 		
 	    
 		
-		int a = 673468345;
-		int b = 874749349;
-	    a^=b;b^=a;a^=b;
-	    System.out.println(a+"  -  "+b);
-	    
-	    DataHelper util = new DataHelper();
-	    
-	    System.out.println(Math.pow(Math.E, Math.PI)*Math.pow(Math.PI, Math.E)*Math.PI*Math.E);
-
-	    for(int i=-100000; i<100001; i++) {
-	    	System.out.println(i+" => "+util.getDoubleOf(i));
-	    }
-	    
-		
-        Object[] list = new Object[1];
-        for (int i = 0; i < list.length; i++) {
-            list[i] = new Object();
-        }
-        // Get the Java runtime
-        Runtime runtime = Runtime.getRuntime();
-        // Run the garbage collector
-        runtime.gc();
-        // Calculate the used memory
-        long memory = runtime.totalMemory() - runtime.freeMemory();
-        System.out.println("All used memory: " + memory+" bytes; "+bytesToMegabytes(memory)+" megabytes;");
-        memory -=556152;
-        System.out.println("Actual used memory: "+memory+" bytes; " +bytesToMegabytes(memory)+" megabytes;");
-        memory-=8;
-        System.out.println("Used memory minus 8: "+memory+" bytes; "  + bytesToMegabytes(memory)+" megabytes;");
-		
+		//int a = 673468345;
+		//int b = 874749349;
+	    //a^=b;b^=a;a^=b;
+	    //System.out.println(a+"  -  "+b);
+	    //
+	    //DataHelper util = new DataHelper();
+	    //
+	    //System.out.println(Math.pow(Math.E, Math.PI)*Math.pow(Math.PI, Math.E)*Math.PI*Math.E);
+//
+	    //for(int i=-100000; i<100001; i++) {
+	    //	System.out.println(i+" => "+util.getDoubleOf(i));
+	    //}
+	    //
+		//
+        //Object[] list = new Object[1];
+        //for (int i = 0; i < list.length; i++) {
+        //    list[i] = new Object();
+        //}
+        //// Get the Java runtime
+        //Runtime runtime = Runtime.getRuntime();
+        //// Run the garbage collector
+        //runtime.gc();
+        //// Calculate the used memory
+        //long memory = runtime.totalMemory() - runtime.freeMemory();
+        //System.out.println("All used memory: " + memory+" bytes; "+bytesToMegabytes(memory)+" megabytes;");
+        //memory -=556152;
+        //System.out.println("Actual used memory: "+memory+" bytes; " +bytesToMegabytes(memory)+" megabytes;");
+        //memory-=8;
+        //System.out.println("Used memory minus 8: "+memory+" bytes; "  + bytesToMegabytes(memory)+" megabytes;");
+		//
         NeurekaTest tester2 = new NeurekaTest();
         tester2.Test();
 

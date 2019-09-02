@@ -123,12 +123,47 @@ public class NeurekaTest {
 		tensor1.setRqsGradient(true);
 		//tensor2 = new T(new int[]{2}, new double[]{3, 4});
 		//tensor3 = new T(new int[]{1, 1}, 3);
-		tensor1.setRqsGradient(true);
 		tester.testTensorAutoGrad(
 				new T[]{tensor1},
 				"((i0+2)^2)",
 				new String[]{
 						"d|[ [2x2]:(6.0, 8.0, 10.0, 12.0) ]|:t{ [2x2]:(1.0, 2.0, 3.0, 4.0) }"
+				}
+		);
+		//---
+		//=====================
+		tensor1 = new T(new int[]{2}, new double[]{1, 2});//-2*4 = 8 | *3 = -24
+		tensor1.setRqsGradient(true);
+		//tensor2 = new T(new int[]{2}, new double[]{3, 4});
+		//tensor3 = new T(new int[]{1, 1}, 3);
+		tester.testTensorAutoGrad(
+				new T[]{tensor1},
+				"cos(tanh(lig(i0)))",
+				new String[]{
+						"[2]:(0.6998554841989726, 0.6177112361351595); =>d|[ [2]:(-0.1916512536291578, -0.12539562877521598) ]|:t{ [2]:(1.0, 2.0) }, "
+				}
+		);
+		//---
+		//=====================
+		tensor1 = new T(new int[]{1}, new double[]{2});//-2*4 = 8 | *3 = -24
+		tensor1.setRqsGradient(true);
+		//tensor2 = new T(new int[]{2}, new double[]{3, 4});
+		//tensor3 = new T(new int[]{1, 1}, 3);
+		tester.testTensorAutoGrad(
+				new T[]{tensor1},//2 =>-2 =>-4 =>12 //2 =>-2 //-2,12 =>-24
+				"(-3*(2*(i0*-1)))*(-1*i0)",
+				new String[]{
+						"[1]:(-24.0); ",
+								"=>d|[ [1]:(12.0) ]|:" +
+									"t{ [1]:(-2.0); " +
+										"=>d|[ [1]:(-1.0) ]|:" +
+											"t{ [1]:(2.0) },  " +
+									"},",
+								"=>d|[ [1]:(-2.0) ]|:" +
+									"t{ [1]:(12.0); " +
+										"=>d|[ [1]:(6.0) ]|:" +
+											"t{ [1]:(2.0) },  " +
+								    "},"
 				}
 		);
 		//---

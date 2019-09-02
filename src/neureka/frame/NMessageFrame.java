@@ -3,14 +3,13 @@ package neureka.frame;
 
 import java.awt.*;
 
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
 
 
 public class NMessageFrame extends JFrame
 {
+	JScrollPane scroll;
 	private static int windowCount = 0;
 	private static int width = 500;
 	private static int height = 400;
@@ -45,8 +44,6 @@ public class NMessageFrame extends JFrame
 		this.setTitle(title);
 		this.setSize(this.width, this.height);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//this.setLocationRelativeTo(null);
-
 		this.setLocation(wpos*width, hpos*height);
 
 		outputField = new JTextArea();
@@ -58,14 +55,13 @@ public class NMessageFrame extends JFrame
 		outputField.setForeground(Color.CYAN);
 		outputField.setFont(txt);
 
-		JScrollPane scroll = new JScrollPane(outputField);
+		scroll = new JScrollPane(outputField);
 		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scroll.setBackground(Color.DARK_GRAY);
 		scroll.setForeground(Color.BLUE);
 		scroll.getVerticalScrollBar().setBackground(Color.DARK_GRAY);
 		scroll.getHorizontalScrollBar().setBackground(Color.DARK_GRAY);
-		
 		this.getContentPane().add(scroll, BorderLayout.CENTER);
 		this.setVisible(true);
 	}
@@ -73,12 +69,12 @@ public class NMessageFrame extends JFrame
 	public void println(String text) 
 	{
 		outputField.setText(outputField.getText() + text + "\n");
-		if (outputField.getLineCount() > 1000) 
+		if (outputField.getLineCount() > 1000)
 		{
 			try 
 			{
 				outputField.replaceRange("", 0, outputField.getLineEndOffset(0));
-			} 
+			}
 			catch (BadLocationException e) 
 			{
 				e.printStackTrace();
@@ -93,6 +89,7 @@ public class NMessageFrame extends JFrame
 			try 
 			{
 				outputField.replaceRange("", 0, outputField.getLineEndOffset(0));
+				scroll.getViewport().setViewPosition(new java.awt.Point(0, scroll.getViewport().getHeight()));
 			} 
 			catch (BadLocationException e) 
 			{
@@ -100,6 +97,12 @@ public class NMessageFrame extends JFrame
 			}
 		}
 	}
+
+	public void bottom(){
+		JScrollBar vertical = scroll.getVerticalScrollBar();
+		vertical.setValue( vertical.getMaximum()+10 );
+	}
+
 	public String read() 
 	{
 		entered = false;

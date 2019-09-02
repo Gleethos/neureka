@@ -11,9 +11,9 @@ public class TGraphNode {
     /**
      *  These functions describe the meaning of 'mode'
      * */
-    private boolean usesAD(){return (this.mode !=0);}
-    private boolean usesForwardAD(){ return (this.mode >0); }
-    private boolean usesReverseAD(){ return (this.mode <0); }
+    public boolean usesAD(){return (this.mode !=0);}
+    public boolean usesForwardAD(){ return (this.mode >0); }
+    public boolean usesReverseAD(){ return (this.mode <0); }
     /**
      *  modes:    |
      *  ----------+----------------------------------+-
@@ -65,6 +65,10 @@ public class TGraphNode {
         return (this.nid()!=1);
     }
 
+    public boolean isOrigin(){
+        return (this.source==null);
+    }
+
     public TGraphNode(T value, TFunction f, T[] src, TGraphLock gid){
         this.mode = (src!=null)?modeOf(src, f):(value.rqsGradient())?1:0;
         this.function = f;
@@ -83,7 +87,7 @@ public class TGraphNode {
         for(int Ii = 0; Ii< source.length; Ii++){
             if(source[Ii].has(TGraphNode.class)){
                 TGraphNode node = (TGraphNode) source[Ii].find(TGraphNode.class);
-                srcModes[Ii] = node.mode();
+                srcModes[Ii] = (source[Ii].rqsGradient())?1:node.mode();
             }else if(source[Ii].rqsGradient()){
                 srcModes[Ii] = 1;
             }
@@ -100,21 +104,23 @@ public class TGraphNode {
     }
 
     public void trimTree(T target){// Find and remove redundant targets:
-        if(source==null){
+        if(source==null || mode()==0){
             return;
         }
-        if(target!=null){
-            ArrayList<T> blacklist = new ArrayList<>();
-            this.forEach((g, t)->{
+        boolean dive = (target==null || mode()<0);
+
+        if(!dive){
+            TreeMap<T, T> blacklist = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
+            this.forEach((t, g)->{
                 if(t==target){
-                    blacklist.add(g);
+                    blacklist.put(g, t);
                 }
             });
-            blacklist.forEach((b)->{
-                if(this.function.id()!=18){
+            blacklist.forEach((b, t)->{
+                if(!b.has(TGraphNode.class) || !((TGraphNode)b.find(TGraphNode.class)).isOrigin()){
+                    this.targets_gradients.remove(t);
                     b.delete();
                 }
-                this.targets_gradients.remove(b);
             });
             for(T src : this.source){
                 if(src.has(TGraphNode.class)){
@@ -126,7 +132,11 @@ public class TGraphNode {
             for(T src : this.source){
                 if(src.has(TGraphNode.class)){
                     TGraphNode node = (TGraphNode) src.find(TGraphNode.class);
-                    this.forEach((g, t)->node.trimTree(t));
+                    this.forEach((t, g)->{
+                        if(this.mode()>0 || g==src){
+                            node.trimTree(t);
+                        }
+                    });
                 }
             }
         }
