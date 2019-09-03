@@ -107,67 +107,8 @@ public class FParser {
     }
 
     private static boolean isWeired(char c) {
-        if (c == '"') {
-            return true;
-        }
-        //if (c == '§') {
-        //    return true;
-        //}
-        if (c == '$') {
-            return true;
-        }
-        if (c == '%') {
-            return true;
-        }
-        if (c == '&') {
-            return true;
-        }
-        if (c == '=') {
-            return true;
-        }
-        if (c == '#') {
-            return true;
-        }
-        if (c == '|') {
-            return true;
-        }
-        if (c == '~') {
-            return true;
-        }
-        if (c == ':') {
-            return true;
-        }
-        if (c == ';') {
-            return true;
-        }
-        if (c == '@') {
-            return true;
-        }
-        //if (c == 'Ü') {
-        //    return true;
-        //}
-        //if (c == 'Ä') {
-        //    return true;
-        //}
-        //if (c == 'Ö') {
-        //    return true;
-        //}
-        if (c == '?') {
-            return true;
-        }
-        //if (c == '´') {
-        //    return true;
-        //}
-        if (c == '\\') {
-            return true;
-        }
-        if (c == '>') {
-            return true;
-        }
-        if (c == '<') {
-            return true;
-        }
-        if (c == ' ') {
+        if (c == '"' || c == '$' || c == '%' || c == '&' || c == '=' || c == '#' || c == '|' || c == '~' || c == ':'
+                || c == ';' || c == '@' || c == '?' || c == '\\' || c == '>' || c == '<' || c == ' ') {
             return true;
         }
         return false;

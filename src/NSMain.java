@@ -147,14 +147,19 @@ public class NSMain {
 		//int b = 874749349;
 	    //a^=b;b^=a;a^=b;
 	    //System.out.println(a+"  -  "+b);
-	    //
+
 	    //DataHelper util = new DataHelper();
-	    //
 	    //System.out.println(Math.pow(Math.E, Math.PI)*Math.pow(Math.PI, Math.E)*Math.PI*Math.E);
-//
-	    //for(int i=-100000; i<100001; i++) {
-	    //	System.out.println(i+" => "+util.getDoubleOf(i));
+		//double sum = 0;
+	    //for(int i=-1000000; i<200000; i++) {
+	    //	double v = util.getDoubleOf(i);
+	    //	sum+=v;
+	    //	System.out.println(i+" => "+v);
+	    //	System.out.println("    --===> "+sum);
 	    //}
+	    //if(true){
+	    //	return;
+		//}
 	    //
 		//
         //Object[] list = new Object[1];
