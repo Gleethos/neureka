@@ -42,7 +42,7 @@ public class NTester {
         this.ResultConsole.println(bar+"  "+((positiveAssertions >0)?"test successful!"+" "+ positiveAssertions :"test failed!"+" "+(assertionCount + positiveAssertions))+"/"+ assertionCount);
         this.ResultConsole.println("[O][=][=][=][=][=][=][=][=][=][=][=]|> "+success+"/"+tests);
         this.Console.bottom();
-        ResultConsole.bottom();
+        this.ResultConsole.bottom();
         return positiveAssertions;
     }
 

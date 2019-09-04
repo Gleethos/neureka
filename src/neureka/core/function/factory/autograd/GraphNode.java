@@ -6,14 +6,30 @@ import neureka.core.function.IFunction;
 import java.util.*;
 import java.util.function.BiConsumer;
 
+/**
+ *
+ */
 public class GraphNode {
 
     /**
-     *  These functions describe the meaning of '_mode'
-     * */
+     *
+     *  This gradient node is involved in auto-differentiation.
+     * @return boolean
+     */
     public boolean usesAD(){return (_mode !=0);}
+
+    /**
+     *  This node propagates forward.
+     * @return boolean
+     */
     public boolean usesForwardAD(){ return (_mode >0); }
+
+    /**
+     * This node propagates backward.
+     * @return boolean
+     */
     public boolean usesReverseAD(){ return (_mode <0); }
+
     /**
      *  modes:    |
      *  ----------+----------------------------------+-
@@ -23,13 +39,19 @@ public class GraphNode {
      *  ----------+----------------------------------+-
      *  _mode < 0  | backward Auto-Differentiation    |
      *  ----------+----------------------------------+-
+     *
      * */
+    private int _mode;
 
     /**
-     * Recorded Function and Source tensors
+     * Recorded Function.
      * */
-    private IFunction _function = null;
-    private T[] _source = null;
+    private IFunction _function;
+
+    /**
+     * Source tensors. (Parents of the tensor of this node)
+     * */
+    private T[] _source;
 
     /**
      * Keys are targets and _values are gradients with respect to that target
@@ -38,16 +60,22 @@ public class GraphNode {
     private TreeMap<T, T> targets_gradients;
 
     /**
-     * Forward or Backward AD ?
-     * */
-    private int _mode = 0;
+     * "Lock object" for graph identity. (result caching)
+     */
+    private GraphLock _lock;
 
-    private GraphLock _lock = null;
-
+    //==================================================================================================================
+    /**
+     *
+     * @return
+     */
     public GraphLock lock(){
         return _lock;
     }
 
+    /**
+     * @return long
+     */
     public long nid(){
         long nid = 1;
         if(_source !=null){
@@ -61,14 +89,28 @@ public class GraphNode {
         return nid;
     }
 
+    /**
+     * @return boolean
+     */
     public boolean isCachable(){
         return (this.nid()!=1);
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isOrigin(){
         return (_source==null && _function==null);
     }
 
+    /**
+     *
+     * @param value
+     * @param f
+     * @param src
+     * @param lock
+     */
     public GraphNode(T value, IFunction f, T[] src, GraphLock lock){
         _mode = (src!=null)?modeOf(src, f):(value.rqsGradient())?1:0;
         _function = f;
@@ -76,7 +118,12 @@ public class GraphNode {
         this._lock = lock;
     }
 
-
+    /**
+     *
+     * @param source
+     * @param function
+     * @return
+     */
     private static int modeOf(T[] source, IFunction function){
         /**
          *  Evaluate auto-grad _mode:
@@ -103,6 +150,9 @@ public class GraphNode {
         return mode;
     }
 
+    /**
+     * @param target
+     */
     public void trimTree(T target){// Find and remove redundant targets:
         if(_source ==null || mode()==0){
             return;
@@ -146,6 +196,10 @@ public class GraphNode {
         _source = null;
     }
 
+    /**
+     * @param error
+     * @return void
+     */
     public void backward(T error){
         if(this.usesAD()){
             if(this.usesForwardAD()){
@@ -163,28 +217,50 @@ public class GraphNode {
         }
     }
 
-
-
+    /**
+     * @return int
+     */
     public int mode(){
         return _mode;
     }
 
+    /**
+     *
+     * @return IFunction
+     */
     public IFunction function(){
         return _function;
     }
 
+    /**
+     *
+     * @param key
+     * @param value
+     */
     public void put(T key, T value){
         if(targets_gradients==null){
             targets_gradients = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
         }
         targets_gradients.put(key, value);
     }
+
+    /**
+     *
+     * @param key
+     * @return
+     */
     public T get(T key){
         if(targets_gradients==null){
            return null;
         }
         return targets_gradients.get(key);
     }
+
+    /**
+     *
+     * @param key
+     * @return
+     */
     public boolean has(T key){
         if(targets_gradients==null){
             return false;
@@ -195,14 +271,26 @@ public class GraphNode {
         return targets_gradients.keySet();
     }
 
+    /**
+     *
+     * @return
+     */
     public TreeMap<T, T> getMap(){
         return targets_gradients;
     }
 
+    /**
+     *
+     * @return
+     */
     public int size(){
         return (this.targets_gradients!=null)?this.targets_gradients.size():0;
     }
 
+    /**
+     *
+     * @param action
+     */
     public void forEach(BiConsumer<T, T> action){
         if(targets_gradients==null){
             return;

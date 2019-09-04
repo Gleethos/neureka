@@ -77,10 +77,7 @@ public class T {
         return this;
     }
     public boolean has(Class componentClass) {
-        if (find(componentClass) != null) {
-            return true;
-        }
-        return false;
+        return find(componentClass) != null;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -154,17 +151,11 @@ public class T {
     }
 
     public boolean isEmpty() {
-        if (_value == null && !this.isOutsourced()) {
-            return true;
-        }
-        return false;
+        return _value == null && !this.isOutsourced();
     }
 
     public boolean isUndefined(){
-        if(_shape == null){
-            return true;
-        }
-        return false;
+        return _shape == null;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -176,7 +167,7 @@ public class T {
     private final static int IS_VIRTUAL_MASK = 4;
     //-----------------------------------------------------------------------
     public boolean rqsGradient() {
-        return ((_flags & RQS_GRADIENT_MASK) == RQS_GRADIENT_MASK) ? true : false;
+        return (_flags & RQS_GRADIENT_MASK) == RQS_GRADIENT_MASK;
     }
     public T setRqsGradient(boolean rqsGradient) {
         if (rqsGradient() != rqsGradient) {
@@ -190,7 +181,7 @@ public class T {
     }
 
     public boolean isOutsourced() {
-        return ((_flags & IS_OUTSOURCED_MASK) == IS_OUTSOURCED_MASK) ? true : false;
+        return (_flags & IS_OUTSOURCED_MASK) == IS_OUTSOURCED_MASK;
     }
     public T setIsOutsourced(boolean isOutsourced) {
         if (isOutsourced() != isOutsourced) {
@@ -214,7 +205,7 @@ public class T {
     }
 
     public boolean isVirtual() {
-        return ((_flags & IS_VIRTUAL_MASK) == IS_VIRTUAL_MASK) ? true : false;
+        return (_flags & IS_VIRTUAL_MASK) == IS_VIRTUAL_MASK;
     }
 
     public T setIsVirtual(boolean isVirtual) {
@@ -241,7 +232,7 @@ public class T {
     }
 
     public boolean isLeave(){
-        return (!this.has(GraphNode.class))?true:((GraphNode)this.find(GraphNode.class)).isOrigin();
+        return (!this.has(GraphNode.class)) || ((GraphNode) this.find(GraphNode.class)).isOrigin();
     }
 
     public boolean isBranch(){
@@ -1212,7 +1203,7 @@ public class T {
 
         @Contract(pure = true)
         public static int[][] setupMxdOfCon(int[][] shape1, int[][] shape2) {
-            int[][] match = new int[4][(int) ((shape1[0].length + shape2[0].length) / 2)];
+            int[][] match = new int[4][((shape1[0].length + shape2[0].length) / 2)];
             for (int i = 0; i < shape1[0].length && i < shape2[0].length; i++) {
                 match[0][i] = Math.abs(shape1[0][i] - shape2[0][i]) + 1;
             }
