@@ -14,7 +14,7 @@ public class GraphBuilder
 
     private static void _performDifferentiation(T drain, IFunction function, T[] source)
     {//--------------------------------------------------------------------------------------
-        GraphLock gid = ((GraphNode)source[0].find(GraphNode.class)).gid();
+        GraphLock gid = ((GraphNode)source[0].find(GraphNode.class)).lock();
         GraphNode node = new GraphNode(drain,function, source, gid);
         drain.add(node);
         if(node.usesAD() && function.isFlat()){

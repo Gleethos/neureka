@@ -468,7 +468,7 @@ public class TensorKernel extends com.aparapi.Kernel
         }
         if(_mde[0]==-3){//executionSizeOf_fetchTsr tensor
             run_fetch(gid, false);
-            //__val[gid] = gid;
+            //__val[lock] = lock;
         }
         if(_mde[0]==-2){//executionSizeOf_storeTsr grad f tensor
             run_store(gid, true);
@@ -805,7 +805,7 @@ public class TensorKernel extends com.aparapi.Kernel
                 _values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)];
     }
     private void run_broadcast_mul(int gid, int drn_id, double value){
-       // _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)]*_value;
+       // _values[tsr_ptr(drn_id)+__i_of(lock, drn_id, 0)] = _values[tsr_ptr(drn_id)+__i_of(lock, drn_id, 0)]*_value;
     }
     private void run_mod(int gid, int drn_id, int src1_id, int src2_id){
         _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
@@ -814,8 +814,8 @@ public class TensorKernel extends com.aparapi.Kernel
                 ((int)_values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)]);
     }
     private void run_broadcast_mod(int gid, int drn_id, double value){
-       // _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-       //         (int)(_values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)])%(int)_value;
+       // _values[tsr_ptr(drn_id)+__i_of(lock, drn_id, 0)] =
+       //         (int)(_values[tsr_ptr(drn_id)+__i_of(lock, drn_id, 0)])%(int)_value;
     }
     private void run_sub(int gid, int drn_id, int src1_id, int src2_id){
         _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
@@ -824,8 +824,8 @@ public class TensorKernel extends com.aparapi.Kernel
                 _values[tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)];
     }
     private void run_broadcast_sub(int gid, int drn_id, double value){
-      //  _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)]
-       //         = _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)]-_value;
+      //  _values[tsr_ptr(drn_id)+__i_of(lock, drn_id, 0)]
+       //         = _values[tsr_ptr(drn_id)+__i_of(lock, drn_id, 0)]-_value;
     }
     private void run_add(int gid, int drn_id, int src1_id, int src2_id){
         int i1 = tsr_ptr(drn_id)+__i_of(gid, drn_id, 0);
@@ -834,7 +834,7 @@ public class TensorKernel extends com.aparapi.Kernel
         _values[i1] = _values[i2] + _values[i3];
     }
     private void run_broadcast_add(int gid, int drn_id, double value){
-      //  int i1 = tsr_ptr(drn_id)+__i_of(gid, drn_id, 0);
+      //  int i1 = tsr_ptr(drn_id)+__i_of(lock, drn_id, 0);
       //  _values[i1] = _values[i1]+_value;
     }
     //==================================================================================================================

@@ -103,8 +103,9 @@ public class T {
         }
         return _gradient;
     }
-    public void setGradient(T g){
+    public T setGradient(T g){
         _gradient = g.value();
+        return this;
     }
 
     public double[] value() {
@@ -120,11 +121,12 @@ public class T {
         }
         return newValue;
     }
-    public void setValue(double[] newValue){
+    public T setValue(double[] newValue){
         _value = newValue;
         if(this.isOutsourced() && newValue!=null){
             ((Device)this.find(Device.class)).add(this);
         }
+        return this;
     }
 
     public int[] shape() {
@@ -176,7 +178,7 @@ public class T {
     public boolean rqsGradient() {
         return ((_flags & RQS_GRADIENT_MASK) == RQS_GRADIENT_MASK) ? true : false;
     }
-    public void setRqsGradient(boolean rqsGradient) {
+    public T setRqsGradient(boolean rqsGradient) {
         if (rqsGradient() != rqsGradient) {
             if (rqsGradient) {
                 _flags += RQS_GRADIENT_MASK;
@@ -184,12 +186,13 @@ public class T {
                 _flags -= RQS_GRADIENT_MASK;
             }
         }
+        return this;
     }
 
     public boolean isOutsourced() {
         return ((_flags & IS_OUTSOURCED_MASK) == IS_OUTSOURCED_MASK) ? true : false;
     }
-    public void setIsOutsourced(boolean isOutsourced) {
+    public T setIsOutsourced(boolean isOutsourced) {
         if (isOutsourced() != isOutsourced) {
             if (isOutsourced) {
                 _flags += IS_OUTSOURCED_MASK;
@@ -207,13 +210,14 @@ public class T {
             }
             this.remove(Device.class);
         }
+        return this;
     }
 
     public boolean isVirtual() {
         return ((_flags & IS_VIRTUAL_MASK) == IS_VIRTUAL_MASK) ? true : false;
     }
 
-    public void setIsVirtual(boolean isVirtual) {
+    public T setIsVirtual(boolean isVirtual) {
         if (isVirtual() != isVirtual) {
             double v = _value[0];
             if (isVirtual) {
@@ -227,9 +231,23 @@ public class T {
                 _flags -= IS_VIRTUAL_MASK;
             }
         }
+        return this;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //GENERIC PROPERTIES :
+    //=========================
+    public boolean belongsToGraph(){
+      return this.has(GraphNode.class);
+    }
 
+    public boolean isLeave(){
+        return (!this.has(GraphNode.class))?true:((GraphNode)this.find(GraphNode.class)).isOrigin();
+    }
+
+    public boolean isBranch(){
+        return !this.isLeave();
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //DISPLAY :
     //=========================
     public String toString(String mode){
@@ -314,16 +332,17 @@ public class T {
         }
     }
 
-    public void initialShape(int[] newShape) {
+    public T initialShape(int[] newShape) {
         int size = T.utility.szeOfShp(newShape);
         if (_value == null) {
             _value = new double[size];
         }
         if (size != _value.length && !this.isVirtual()) {
-            return;//TODO: Exception!
+            return this;//TODO: Exception!
         }
         _shape = cached(newShape);
         _translation = cached(T.utility.idxTln(newShape));
+        return this;
     }
 
     private int[] cached(int[] data){
@@ -410,24 +429,26 @@ public class T {
         this.add(newConf);
     }
 
-    public void inject(T tensor) {
+    public T inject(T tensor) {
         _value = tensor._value;
         _shape = tensor._shape;
         _translation = tensor._translation;
         _components = tensor._components;
         this._flags = tensor._flags;
+        return this;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    public void backward(T error) {
+    public T backward(T error) {
         if(this.rqsGradient()){
             this.setGradient(error);
         }
         if(this.has(GraphNode.class)){
             ((GraphNode)this.find(GraphNode.class)).backward(error);
         }
+        return this;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    public void delete(){
+    public T delete(){
         if(this.isOutsourced()){
             ((Device)this.find(Device.class)).rmv(this);
         }
@@ -437,12 +458,13 @@ public class T {
         _translation = null;
         _components = null;
         _gradient = null;
+        return this;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     //ELEMENTARY OPERATIONS:
     //=========================
-    public void foreach(Consumer<Integer> action){
+    public T foreach(Consumer<Integer> action){
         this.setIsVirtual(false);
         int sze = this.size();
         int[] idx = new int[this.shape().length];
@@ -450,8 +472,9 @@ public class T {
             T.utility.increment(idx, this.shape());
             action.accept(T.utility.idxOfShpIdxAndShp(idx, this.shape()));
         }
+        return this;
     }
-    public void foreach(BiConsumer<Integer, Double> action){
+    public T foreach(BiConsumer<Integer, Double> action){
         this.setIsVirtual(false);
         int sze = this.size();
         int[] idx = new int[this.shape().length];
@@ -460,6 +483,7 @@ public class T {
             T.utility.increment(idx, this.shape());
             action.accept(i, value[T.utility.idxOfShpIdxAndShp(idx, this.shape())]);
         }
+        return this;
     }
 
     /**

@@ -42,10 +42,10 @@ public class GraphNode {
      * */
     private int _mode = 0;
 
-    private GraphLock gid = null;
+    private GraphLock _lock = null;
 
-    public GraphLock gid(){
-        return gid;
+    public GraphLock lock(){
+        return _lock;
     }
 
     public long nid(){
@@ -66,14 +66,14 @@ public class GraphNode {
     }
 
     public boolean isOrigin(){
-        return (_source ==null);
+        return (_source==null && _function==null);
     }
 
-    public GraphNode(T value, IFunction f, T[] src, GraphLock gid){
+    public GraphNode(T value, IFunction f, T[] src, GraphLock lock){
         _mode = (src!=null)?modeOf(src, f):(value.rqsGradient())?1:0;
         _function = f;
         _source = src;
-        this.gid = gid;
+        this._lock = lock;
     }
 
 
@@ -163,7 +163,7 @@ public class GraphNode {
         }
     }
 
-    
+
 
     public int mode(){
         return _mode;

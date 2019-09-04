@@ -15,7 +15,7 @@ public class TensorCache
     public synchronized void free(T[] input)
     {
         for(T t : input){
-            TENSORS.remove(((GraphNode)t.find(GraphNode.class)).gid());
+            TENSORS.remove(((GraphNode)t.find(GraphNode.class)).lock());
              t.remove(GraphNode.class);
         }
     }
@@ -33,7 +33,7 @@ public class TensorCache
         }
         for(T t : input){
             if(!t.has(GraphNode.class)){
-                GraphLock gid = ((GraphNode)untracked.find(GraphNode.class)).gid();
+                GraphLock gid = ((GraphNode)untracked.find(GraphNode.class)).lock();
                 GraphNode rg = new GraphNode(t, null, null, gid);
                 t.add(rg);
             }
@@ -49,9 +49,9 @@ public class TensorCache
 
     private synchronized T get(GraphNode node)
     {
-        if(TENSORS.containsKey(node.gid())){
-            if(TENSORS.get(node.gid()).containsKey(node)){
-                return TENSORS.get(node.gid()).get(node);
+        if(TENSORS.containsKey(node.lock())){
+            if(TENSORS.get(node.lock()).containsKey(node)){
+                return TENSORS.get(node.lock()).get(node);
             }
         }
         return null;
@@ -61,11 +61,11 @@ public class TensorCache
     {
         if(node.isCachable()) {
             TreeMap<GraphNode, T> variables = null;
-            if (!TENSORS.containsKey(node.gid())) {
+            if (!TENSORS.containsKey(node.lock())) {
                 variables = new TreeMap<>((a, b) -> (int) (a.nid() - b.nid()));
-                TENSORS.put(node.gid(), variables);
+                TENSORS.put(node.lock(), variables);
             } else {
-                variables = TENSORS.get(node.gid());
+                variables = TENSORS.get(node.lock());
             }
             variables.put(node, t);
         }
