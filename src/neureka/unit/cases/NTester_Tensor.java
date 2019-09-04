@@ -11,7 +11,7 @@ public class NTester_Tensor extends NTester {
 
     public int testTensorAutoGrad(T[] source, String operation, String[] expected){
         printSessionStart("Testing T: autograd!");
-        println(bar+"  TFunction: "+operation);
+        println(bar+"  IFunction: "+operation);
         println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         T product = new T(source, operation);
         //product.backward(new T(product._shape(), 1));
@@ -21,6 +21,24 @@ public class NTester_Tensor extends NTester {
         }
         return (printSessionEnd()>0)?1:0;
     }
+
+    public int testTensorAutoGrad(T[] source, String operation, String[] expected, T error, double[][] expectedGradient){
+        printSessionStart("Testing T: autograd!");
+        println(bar+"  IFunction: "+operation);
+        println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
+        T product = new T(source, operation);
+        product.backward(error);
+        //product.backward(new T(product._shape(), 1));
+        String result = product.toString("r");
+        for(String element : expected){
+            this.assertContains("result", result, element);
+        }
+        for(int i=0; i<source.length; i++){
+            this.assertEqual(stringified(source[i].gradient()), stringified(expectedGradient[i]));
+        }
+        return (printSessionEnd()>0)?1:0;
+    }
+
 
     public int testTensorUtility_reshape(int[] dim, int[] newForm, int[] expected){
 
@@ -54,7 +72,7 @@ public class NTester_Tensor extends NTester {
         for(int i=0; i<rank; i++){frm[i]=i;}
         int[][] frstMxd = T.utility.reshapedAndToMxd(frstShp, frm);
         int[][] scndMxd = T.utility.reshapedAndToMxd(scndShp, frm);
-        int[][] drnMxd  = T.utility.resultMxdOf(frstMxd, scndMxd);
+        int[][] drnMxd  = T.utility.setupMxdOfCon(frstMxd, scndMxd);
         double[] rsltData = new double[T.utility.szeOfShp(drnMxd[0])];
         T.utility.tensMul_mxd(
             rank,
@@ -80,11 +98,11 @@ public class NTester_Tensor extends NTester {
         for(int i=0; i<rank; i++){frm[i]=i;}
         int[][] frstMxd = T.utility.reshapedAndToMxd(frstShp, frm);
         int[][] scndMxd = T.utility.reshapedAndToMxd(scndShp, frm);
-        int[][] drnMxd  = T.utility.resultMxdOf(frstMxd, scndMxd);
-        double[] rsltData = drnData;//new double[T.utility.szeOfShp(drnMxd[0])];
+        int[][] drnMxd  = T.utility.setupMxdOfCon(frstMxd, scndMxd);
+        //double[] rsltData = drnData;//new double[T.utility.szeOfShp(drnMxd[0])];
         T.utility.tensMul_inv_mxd(
                 rank,
-                new double[][]{frstData, scondData, rsltData},
+                new double[][]{frstData, scondData, drnData},
                 new int[]{0, 0, 0},
                 frstMxd, scndMxd, drnMxd,
                 first

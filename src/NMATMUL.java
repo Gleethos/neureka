@@ -39,7 +39,7 @@ public class NMATMUL {
  
 class AparapiMatMul extends Kernel {
  
-	//@TFConstant
+	//@FConstant
     float matA[];
     float matB[];
     float matC[];
@@ -213,7 +213,7 @@ class AparapiMatMul extends Kernel {
     }
   //============================================
     
-    //Comparing CPU C-Matrix with with TDevice C-Matrix!
+    //Comparing CPU C-Matrix with with Device C-Matrix!
     public void compareResults()
     {
         boolean equal = true;

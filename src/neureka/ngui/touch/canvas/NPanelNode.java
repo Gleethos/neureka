@@ -2,7 +2,7 @@ package neureka.ngui.touch.canvas;
 
 import javafx.scene.canvas.GraphicsContext;
 import neureka.core.T;
-import neureka.core.function.TFunction;
+import neureka.core.function.IFunction;
 import neureka.ngui.NVControlFrame;
 
 import java.awt.*;
@@ -1634,14 +1634,14 @@ public class NPanelNode implements NPanelObject
 		double expMod = 1;
 		expMod = ((double)diameter/defaultDiameter)*panelScale/0.15;
 			//System.out.println( (diameter/defaultDiameter));
-		if(expMod>0.7 && Core.find(TFunction.class)!=null)
+		if(expMod>0.7 && Core.find(IFunction.class)!=null)
 		{
 			if(expMod>1) {expMod=1;}
 			//System.out.println(panelScale);
 			//System.out.println(transparencyMod);
 			int expTrans = (int)(Math.pow(expMod, 10)*255);
 			//System.out.println(transparency);
-			String exp = Core.find(TFunction.class).toString();
+			String exp = Core.find(IFunction.class).toString();
 
 			RoundRectangle2D.Double rec =
 			new RoundRectangle2D.Double();

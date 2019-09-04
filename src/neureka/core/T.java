@@ -1,8 +1,8 @@
 package neureka.core;
 
-import neureka.core.function.autograd.TGraphNode;
-import neureka.core.function.TFunction;
-import neureka.core.device.TDevice;
+import neureka.core.device.Device;
+import neureka.core.function.IFunction;
+import neureka.core.function.factory.autograd.GraphNode;
 import neureka.core.utility.DataHelper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -16,14 +16,14 @@ public class T {
 
     // DEFAULT DEVICE (HOST CPU)
     //=========================
-    private static TDevice CPU;
+    private static Device CPU;
 
     //STATIC FUNCTIONS MEMORY:
     //=========================
     private static HashMap<Long, int[]> CONFIGS;
     static {
         CONFIGS = new HashMap<>();//The things we do for memory
-        CPU = new TDevice(null);//<= creates CPU-Aparapi-Kernel
+        CPU = new Device(null);//<= creates CPU-Aparapi-TensorKernel
     }
     //-----------------------------------------------------------------------
 
@@ -90,26 +90,26 @@ public class T {
     private double[] _value, _gradient;
     //-----------------------------------------------------------------------
 
-    public TDevice device(){
+    public Device device(){
         if(this.isOutsourced()){
-            return (TDevice) this.find(TDevice.class);
+            return (Device) this.find(Device.class);
         }
         return CPU;
     }
 
     public double[] gradient(){
-        if(this.rqsGradient()&&this.isOutsourced()&&this.has(TDevice.class)){
-            return ((TDevice)this.find(TDevice.class)).valueOf(this, true);
+        if(this.rqsGradient()&&this.isOutsourced()&&this.has(Device.class)){
+            return ((Device)this.find(Device.class)).valueOf(this, true);
         }
         return _gradient;
     }
     public void setGradient(T g){
-        _gradient = g._value;
+        _gradient = g.value();
     }
 
     public double[] value() {
-        if(_value ==null && this.isOutsourced() && this.has(TDevice.class)){
-            return ((TDevice)this.find(TDevice.class)).valueOf(this, false);
+        if(_value ==null && this.isOutsourced() && this.has(Device.class)){
+            return ((Device)this.find(Device.class)).valueOf(this, false);
         }
         double[] newValue = _value;
         if(this.isVirtual()){
@@ -123,7 +123,7 @@ public class T {
     public void setValue(double[] newValue){
         _value = newValue;
         if(this.isOutsourced() && newValue!=null){
-            ((TDevice)this.find(TDevice.class)).add(this);
+            ((Device)this.find(Device.class)).add(this);
         }
     }
 
@@ -200,12 +200,12 @@ public class T {
         if(isOutsourced){
             _value = null;
             _gradient = null;
-        }else if(this.has(TDevice.class)){
-            TDevice device = (TDevice) this.find(TDevice.class);
+        }else if(this.has(Device.class)){
+            Device device = (Device) this.find(Device.class);
             if(device.has(this)){
                 device.get(this);
             }
-            this.remove(TDevice.class);
+            this.remove(Device.class);
         }
     }
 
@@ -257,8 +257,8 @@ public class T {
         }
         strValue = strShape+":("+strValue+")";
         if(mode=="r"){
-            if(this.has(TGraphNode.class)&&((TGraphNode) this.find(TGraphNode.class)).size()>0){
-                TGraphNode d = (TGraphNode) this.find(TGraphNode.class);
+            if(this.has(GraphNode.class)&&((GraphNode) this.find(GraphNode.class)).size()>0){
+                GraphNode d = (GraphNode) this.find(GraphNode.class);
                 String[] strDerivatives = {"; "};
                 d.forEach((target, derivative)->{
                     strDerivatives[0]+="=>d|[ "+derivative.toString("r")+" ]|:t{ "+target.toString("r")+" }, ";
@@ -266,8 +266,8 @@ public class T {
                 strValue += strDerivatives[0];
             }
         }else if(mode == "d"){
-            if(this.has(TGraphNode.class)&&((TGraphNode) this.find(TGraphNode.class)).size()>0){
-                TGraphNode d = (TGraphNode) this.find(TGraphNode.class);
+            if(this.has(GraphNode.class)&&((GraphNode) this.find(GraphNode.class)).size()>0){
+                GraphNode d = (GraphNode) this.find(GraphNode.class);
                 if(d.mode()!=0){
                     String[] strDerivatives = {"; "};
                     d.forEach((target, derivative)->strDerivatives[0]+="->d"+derivative.toString()+", ");
@@ -370,7 +370,7 @@ public class T {
         if(tensors==null||tensors.length==0||tensors[0]==null){
             return;
         }
-        TFunction.execute(this, tensors, operation);
+        IFunction.execute(this, tensors, operation);
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -422,14 +422,14 @@ public class T {
         if(this.rqsGradient()){
             this.setGradient(error);
         }
-        if(this.has(TGraphNode.class)){
-            ((TGraphNode)this.find(TGraphNode.class)).backward(error);
+        if(this.has(GraphNode.class)){
+            ((GraphNode)this.find(GraphNode.class)).backward(error);
         }
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public void delete(){
         if(this.isOutsourced()){
-            ((TDevice)this.find(TDevice.class)).rmv(this);
+            ((Device)this.find(Device.class)).rmv(this);
         }
         this._flags = -1;
         _value = null;
@@ -479,15 +479,16 @@ public class T {
                 return t._value[T.utility.idxOfShpIdxAndShp(t.shpIdx(i), t.shape())];
             }
             public static double getFrom(T t, int[] idx) {
-                return t._value[t.isVirtual()?0:T.utility.idxOfShpIdxAndShp(idx, t.shape())];
+                t.setIsVirtual(false);
+                return t._value[T.utility.idxOfShpIdxAndShp(idx, t.shape())];
             }
             public static void setInto(T t, int i, double value) {
                 t.setIsVirtual(false);
-                t._value[t.isVirtual()?0:T.utility.idxOfShpIdxAndShp(t.shpIdx(i), t.shape())] = value;
+                t._value[T.utility.idxOfShpIdxAndShp(t.shpIdx(i), t.shape())] = value;
             }
             public static void setInto(T t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t._value[t.isVirtual()?0:T.utility.idxOfShpIdxAndShp(idx, t.shape())] = value;
+                t._value[T.utility.idxOfShpIdxAndShp(idx, t.shape())] = value;
             }
             public static void addInto(T t, int i, double value) {
                 t.setIsVirtual(false);
@@ -569,10 +570,11 @@ public class T {
 
         //OPERATIONS:
         //=========================
+
         public static T convolution(T tensor1, T tensor2){
             tensor1.setIsVirtual(false);
             tensor2.setIsVirtual(false);
-            T newTensor = new T(T.utility.shpOfTensMul(tensor1.shape(), tensor2.shape()));
+            T newTensor = new T(T.utility.shpOfCon(tensor1.shape(), tensor2.shape()));
             T.utility.tensMul_mxd(
                     newTensor.shape().length,
                     new double[][]{tensor1._value, tensor2._value, newTensor._value}, new int[]{0, 0, 0},
@@ -581,6 +583,21 @@ public class T {
                     T.utility.mxdFromShape(newTensor.shape())
             );
             return newTensor;
+        }
+
+        public static T convolution_inv(T drain, T source1, T source2, boolean first){
+            source1.setIsVirtual(false);
+            source2.setIsVirtual(false);
+            drain.setIsVirtual(false);
+            T.utility.tensMul_inv_mxd(
+                    drain.shape().length,
+                    new double[][]{source1._value, source2._value, drain._value}, new int[]{0, 0, 0},
+                    T.utility.mxdFromShape(source1.shape()),
+                    T.utility.mxdFromShape(source2.shape()),
+                    T.utility.mxdFromShape(drain.shape()),
+                    first
+            );
+            return (first)?source1:source2;
         }
 
         public static T multiplication(T tensor1, T tensor2){
@@ -679,13 +696,13 @@ public class T {
 
         public static boolean shareGuestDevice(T[] tsrs){
             boolean onSameGuestDevice = true;
-            TDevice device = null;
+            Device device = null;
             for (int ti = 0; ti < tsrs.length; ti++) {
-                device = (tsrs[ti].isOutsourced())?(TDevice)tsrs[ti].find(TDevice.class):device;
+                device = (tsrs[ti].isOutsourced())?(Device)tsrs[ti].find(Device.class):device;
             }
             if(device!=null) {
                 for (int ti = 0; ti < tsrs.length; ti++) {
-                    onSameGuestDevice = (device == tsrs[ti].find(TDevice.class)) && onSameGuestDevice;
+                    onSameGuestDevice = (!tsrs[ti].isVirtual() && device == tsrs[ti].find(Device.class)) && onSameGuestDevice;
                 }
             }else{
                 onSameGuestDevice = false;
@@ -893,7 +910,7 @@ public class T {
         }
 
         @Contract(pure = true)
-        public static int[] shpOfTensMul(int[] frstShp, int[] scndShp) {
+        public static int[] shpOfCon(int[] frstShp, int[] scndShp) {
             int[] shape = new int[(frstShp.length + scndShp.length) / 2];
             for (int i = 0; i < frstShp.length && i < scndShp.length; i++) {
                 shape[i] = Math.abs(frstShp[i] - scndShp[i]) + 1;
@@ -1019,12 +1036,21 @@ public class T {
         @Contract(pure = true)
         public static void tensMul_inv_mxd
                 (
-                        int rank,
-                        double[][] data,//[0]=>src1, [1]=>src2, [2]=>drn
-                        int[] dataPtr,
-                        int[][] src1, int[][] src2, int[][] drn,
-                        boolean first
+                     int rank,
+                     double[][] data,//[0]=>src1, [1]=>src2, [2]=>drn
+                     int[] dataPtr,
+                     int[][] src1, int[][] src2, int[][] drn,
+                     boolean first
                 ) {
+            if(first){//TODO: ALL OF THIS NEEDS TO BE IMPLEMENTED AS IN TensorKernel!
+                for(int i=0; i<data[0].length; i++){
+                    data[0][i] = 0;
+                }
+            }else{
+                for(int i=0; i<data[1].length; i++){
+                    data[1][i] = 0;
+                }
+            }
             //hdr[0] => dim[]
             //hdr[1] => anchor[]
             //hdr[2] => idx[]
@@ -1161,7 +1187,7 @@ public class T {
         }
 
         @Contract(pure = true)
-        public static int[][] resultMxdOf(int[][] shape1, int[][] shape2) {
+        public static int[][] setupMxdOfCon(int[][] shape1, int[][] shape2) {
             int[][] match = new int[4][(int) ((shape1[0].length + shape2[0].length) / 2)];
             for (int i = 0; i < shape1[0].length && i < shape2[0].length; i++) {
                 match[0][i] = Math.abs(shape1[0][i] - shape2[0][i]) + 1;

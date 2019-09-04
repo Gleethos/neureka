@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import neureka.core.T;
-import neureka.core.function.TFunction;
+import neureka.core.function.IFunction;
 
 
 public class PanelNode extends Node implements NPanelObject
@@ -1598,14 +1598,14 @@ public class PanelNode extends Node implements NPanelObject
 		double expMod = 1;
 		expMod = ((double)diameter/defaultDiameter)*panelScale/0.15;
 			//System.out.println( (diameter/defaultDiameter));
-		if(expMod>0.7 && this.getTensor().find(TFunction.class)!=null)
+		if(expMod>0.7 && this.getTensor().find(IFunction.class)!=null)
 		{
 			if(expMod>1) {expMod=1;}
 			//System.out.println(panelScale);
 			//System.out.println(transparencyMod);
 			int expTrans = (int)(Math.pow(expMod, 10)*255);
 			//System.out.println(transparency);
-			String exp = this.getTensor().find(TFunction.class).toString();
+			String exp = this.getTensor().find(IFunction.class).toString();
 			
 			RoundRectangle2D.Double rec = 
 			new RoundRectangle2D.Double();

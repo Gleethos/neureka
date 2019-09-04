@@ -1,8 +1,8 @@
 package neureka.unit.cases;
 
 import neureka.core.T;
-import neureka.core.device.TDevice;
-import neureka.core.device.TKernel;
+import neureka.core.device.Device;
+import neureka.core.device.TensorKernel;
 
 public class NTester_TensorDevice extends NTester {
 
@@ -11,7 +11,7 @@ public class NTester_TensorDevice extends NTester {
         super(name);
     }
 
-    public int testAddTensor(TDevice device, T tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
+    public int testAddTensor(Device device, T tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
 
         double[] value = tensor.value();
         int[] shape = tensor.shape();
@@ -21,7 +21,7 @@ public class NTester_TensorDevice extends NTester {
         this.assertEqual("tensor.isOutsourced()", ""+tensor.isOutsourced(), "false");
         device.add(tensor);
         this.assertEqual("tensor.isOutsourced()", ""+tensor.isOutsourced(), "true");
-        TKernel kernel = device.getKernel();
+        TensorKernel kernel = device.getKernel();
         this.assertContains("kernel._values()", stringified(kernel.values()), stringified(values));
         this.assertContains("kernel._shapes()", stringified(kernel.shapes()), stringified(shapes));
         this.assertContains("kernel._translations()", stringified(kernel.translations()), stringified(translations));
@@ -36,15 +36,15 @@ public class NTester_TensorDevice extends NTester {
         return this.printSessionEnd();
     }
 
-    public int testGetTensor(TDevice device, T tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
+    public int testGetTensor(Device device, T tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
 
         double[] value = tensor.value();
         int[] shape = tensor.shape();
         int[] translation = tensor.translation();
 
 
-        this.printSessionStart("Getting tensor from TDevice");
-        TKernel kernel = device.getKernel();
+        this.printSessionStart("Getting tensor from Device");
+        TensorKernel kernel = device.getKernel();
         this.assertEqual("tensor.isOutsourced()", ""+tensor.isOutsourced(), "true");
         device.get(tensor);
         this.assertEqual("tensor.isOutsourced()", ""+tensor.isOutsourced(), "false");
@@ -62,7 +62,7 @@ public class NTester_TensorDevice extends NTester {
         return this.printSessionEnd();
     }
 
-    public int testCalculation(TDevice device, T drn, T src1, T src2, int f_id, int d, double[] values){
+    public int testCalculation(Device device, T drn, T src1, T src2, int f_id, int d, double[] values){
 
         String message = "";
         message = (f_id==18)?"Tensor product":message;

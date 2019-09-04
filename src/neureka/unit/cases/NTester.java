@@ -133,6 +133,9 @@ public class NTester {
         return result;
     }
     public String stringified(double[] a){
+        if(a==null){
+            return "null";
+        }
         String result = "";
         for(double ai : a) {
             result += ai+", ";

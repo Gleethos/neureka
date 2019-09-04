@@ -1,7 +1,7 @@
 package neureka.unit;
 
 
-import neureka.core.device.TDevice;
+import neureka.core.device.Device;
 import neureka.core.T;
 import neureka.unit.cases.NTester_Function;
 import neureka.unit.cases.NTester_Tensor;
@@ -11,7 +11,7 @@ public class NeurekaTest {
 
 	public NeurekaTest(){}
 	/*
-	     TFunction IDs:
+	     IFunction IDs:
 		 case 0:  ReLu
 		 case 1:  Sigmoid
 		 case 2:  Tanh
@@ -168,6 +168,79 @@ public class NeurekaTest {
 		);
 		//---
 		//======================
+		//TESTING INVERS:
+		///=================
+		//---
+		tensor1 = new T(new int[]{2, 3}, new double[]{
+				0, 0, //3, 1,
+				0, 0, //-2, -1,
+				0, 0, ///-4, 2,
+		});
+		//---
+		tensor2 = new T(new int[]{5, 2}, new double[]{
+				-2, 3, 6, 3, -1,
+				0, 2, 4, 2,  1
+		});
+		tensor3 = new T(new int[]{4, 2},new double[]{
+				1, 2, -3, 2,//<= drain data!
+				4, -2, -1, 5,
+		});
+		tester.testTensorAutoGrad(new T[]{tensor1, tensor2, tensor3},
+				"i0<<i1<<i2",
+				new String[]{
+						"[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"
+				});
+		tester.testTensorAutoGrad(new T[]{tensor3, tensor2, tensor1},
+				"i2>>i1>>i0",
+				new String[]{
+						"[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"
+				});
+		//=====================
+		//---
+		tensor1 = new T(new int[]{2, 2, 1}, new double[]{
+				1, 2, //3, 1,
+				2, -3, //-2, -1,
+		});
+		tensor1.setRqsGradient(true);
+		//---
+		tensor2 = new T(new int[]{1, 2, 2}, new double[]{
+				-2, 3,
+				1, 2,
+		});
+		tester.testTensorAutoGrad(//4, 5, -13, -4 <= result values
+					new T[]{tensor1, tensor2},
+					"i0xi1",
+					new String[]{
+							"[2x1x2]:(4.0, -13.0, 5.0, -4.0); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"
+					},
+					new T(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
+					new double[][]{{-1.0, -1.0, 5.0, 5.0}, null}
+				);
+
+
+		//Device gpu = new Device("nvidia");
+		//tensor1 = new T(new int[]{1}, new double[]{2});//-2*4 = 8 | *3 = -24
+		//tensor1.setRqsGradient(true);
+		//gpu.add(tensor1);
+		//tester.testTensorAutoGrad(
+		//		new T[]{tensor1},//2 =>-2 =>-4 =>12 //2 =>-2 //-2,12 =>-24
+		//		"(-3*(2*(i0*-1)))*(-1*i0)",
+		//		new String[]{
+		//				"[1]:(-24.0); ",
+		//				"=>d|[ [1]:(12.0) ]|:" +
+		//						"t{ [1]:(-2.0); " +
+		//						"=>d|[ [1]:(-1.0) ]|:" +
+		//						"t{ [1]:(2.0) },  " +
+		//						"},",
+		//				"=>d|[ [1]:(-2.0) ]|:" +
+		//						"t{ [1]:(12.0); " +
+		//						"=>d|[ [1]:(6.0) ]|:" +
+		//						"t{ [1]:(2.0) },  " +
+		//						"},"
+		//		}
+		//);
+		//---
+		//======================
 		int[] shape = {4, 2, 9, 5, 6, 2};
 		int[] newForm = {1, 0, -1, -2, 2, 4, 3, -1, 5};
 		int[] expected ={2, 4,  1,  2, 9, 6, 5, 1, 2};
@@ -291,11 +364,11 @@ public class NeurekaTest {
 				-2, 3, 6, 3, -1,
 				 0, 2, 4, 2,  1
 		};
-		tester.testInvTensMulOn(
+		tester.testInvTensMulOn(//
 				frstShape, scndShape,
 				frstData, scndData,
 				new double[]{
-					1, 2, -3, 2,
+					1, 2, -3, 2,//<= drain data!
 					4, -2, -1, 5,
 				},
 				new double[]{
@@ -312,7 +385,7 @@ public class NeurekaTest {
 	public void testTensorDevice(){
 
 		NTester_TensorDevice tester = new NTester_TensorDevice("Testing tensor device");
-		TDevice gpu = new TDevice("nvidia");
+		Device gpu = new Device("nvidia");
 		T tensor = T.factory.newTensor(new double[]{1, 3, 4, 2, -3, 2, -1, 6}, new int[]{2, 4});
 		T firstTensor = tensor;
 		tester.testAddTensor(gpu,tensor,

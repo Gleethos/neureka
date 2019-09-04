@@ -1,7 +1,7 @@
 package neureka.ngui;
 
 import neureka.core.T;
-import neureka.core.function.TFunction;
+import neureka.core.function.IFunction;
 
 import java.util.ArrayList;
 
@@ -9,7 +9,7 @@ public class Node {
 
     private ArrayList<Node> input = new ArrayList<>();
 
-    private TFunction function;
+    private IFunction function;
 
     private T tensor;
 

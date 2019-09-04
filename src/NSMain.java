@@ -14,36 +14,14 @@ public class NSMain {
 	public static void main(String[] args) throws Exception
 	{
 
-	    //Scanner eingabeObjekt = new Scanner(System.in);
+		//for(int i=0; i<300; i++){
+		//	System.out.println(i+" -=> "+(char)i);
+		//}
 //
-	    //System.out.println("Geben Sie eine Zahl ein: ");
-	    //int eingegeben = eingabeObjekt.nextInt();
-//
-	    //eingegeben = eingegeben - 8;
-//
-	    //System.out.println("Wenn ich 8 abziehe dann erhalte ich: "+eingegeben);
-//
-        //if(eingegeben == 0){
-        //    System.out.println("Banane!!");
-        //} else {
-        //    System.out.println("Apfel!!");
-        //}
+		//System.out.println("");
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		// (char)187 //>>
+		// (char)171 //<<
 
 	    /**
          *  3, 5, 4, 2,
