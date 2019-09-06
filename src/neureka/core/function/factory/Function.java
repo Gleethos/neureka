@@ -139,8 +139,8 @@ public abstract class Function implements IFunction {
                 outputValue[i] = scalarActivationOf(inputValue[i], derive);
             });
         }
-        if (!derive) {
-            GraphBuilder.connect(output, new T[]{input}, this, true);
+        if (!derive && _doAD) {
+            GraphBuilder.connect(output, new T[]{input}, this);
         }
         output.add(input.find(GraphLock.class));
         return output;
@@ -156,23 +156,19 @@ public abstract class Function implements IFunction {
      */
     protected T tensorActivationOf(T[] input, int j, int d) {
         T output = T.factory.newTensor(input[0].shape(), input[0].translation());
-        /**
-         *   The code below deals with deep functions (non flat):
-         * */
+        /**  The code below deals with deep functions (non flat):  * */
         if (d < 0 && !_isFlat) {//only flat functions can be executed
             if (_id <= 9) {
                 output.inject(new FunctionGraphBuilder().newBuild(IFunction.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).activate(input));
                 return output;
             } else {
                 if (IFunction.REGISTER[_id].length() != 1) {
-                    /**  SUMMATION, PI,
-                     * */
+                    /**  SUMMATION, PI,  * */
                     T[] tsrs = activateSource(input);
                     output.inject(FunctionGraphBuilder.newBuild(IFunction.REGISTER[_id] + "(I[j])", true).activate(tsrs));
                     return output;
                 } else if (_id <= 20) {
-                    /**      '+', '-', 'x', '*', '%', '«', '»', ',', ...
-                     * */
+                    /**  '+', '-', 'x', '*', '%', '«', '»', ',', ...  * */
                     String operation = (IFunction.REGISTER[_id].length() > 1) ? IFunction.REGISTER[_id] : "";
                     T[] tsrs = activateSource(input, j, null);
                     for (int i = 0; i < tsrs.length; i++) {
@@ -185,8 +181,7 @@ public abstract class Function implements IFunction {
                     }
                     return output;
                 } else {
-                    /**   Tensor shape translation:
-                     * */
+                    /**  Tensor shape translation: * */
                     T[] tsrs = activateSource(input, j, new int[]{1});
                     if (j < 0) {
                         output.inject(FunctionGraphBuilder.newBuild(_id, tsrs.length, _doAD).activate(tsrs));
@@ -197,12 +192,10 @@ public abstract class Function implements IFunction {
                 }
             }
         }
-        /**
-         *  The following code is reached in flat functions only:
-         * */
+        /**  The following code is reached in flat functions only:  * */
         output = execute(output, input, j, d);
-        if (d < 0) {
-            GraphBuilder.connect(output, input, this, _doAD);
+        if (d < 0 && _doAD) {
+            GraphBuilder.connect(output, input, this);
         }
         return output;
     }

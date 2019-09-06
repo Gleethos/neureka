@@ -14,7 +14,6 @@ public class NTester_Tensor extends NTester {
         println(bar+"  IFunction: "+operation);
         println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         T product = new T(source, operation);
-        //product.backward(new T(product._shape(), 1));
         String result = product.toString("r");
         for(String element : expected){
             this.assertContains("result", result, element);
@@ -28,7 +27,6 @@ public class NTester_Tensor extends NTester {
         println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         T product = new T(source, operation);
         product.backward(error);
-        //product.backward(new T(product._shape(), 1));
         String result = product.toString("r");
         for(String element : expected){
             this.assertContains("result", result, element);
@@ -41,13 +39,9 @@ public class NTester_Tensor extends NTester {
 
 
     public int testTensorUtility_reshape(int[] dim, int[] newForm, int[] expected){
-
         int[] result = T.utility.reshaped(dim, newForm);
         printSessionStart("Testing T.utility: dimension reshaping!");
         assertEqual(stringified(result), stringified(expected));
-
-        //int[] expectedAnchor = {1, 4, 4*2, 4*2*9, 4*2*9*5, 4*2*9*5*6, 4*2*9*5*6*2};
-        //result =  T.utility.idxTln(dim);
         return (printSessionEnd()>0)?1:0;
     }
 
@@ -58,29 +52,18 @@ public class NTester_Tensor extends NTester {
         return (printSessionEnd()>0)?1:0;
     }
     public int testTensorBase_idxFromAnchor(int[] dim, int idx, int[] expected){
-        int [] result =  T.utility.IdxToShpIdx(idx, T.utility.idxTln(dim));
+        int [] result =  T.utility.idxOf(idx, T.utility.idxTln(dim));
         printSessionStart("Testing T.utility: _shape to _translation to index!");
         assertEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }
 
-    public int testTensMulOn(int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd){
-
+    public int testTensCon(int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd){
         printSessionStart("Test T.utility: tensMul_mxd");
-        int rank = (frstShp.length+scndShp.length)/2;
-        int[] frm = new int[rank];
-        for(int i=0; i<rank; i++){frm[i]=i;}
-        int[][] frstMxd = T.utility.reshapedAndToMxd(frstShp, frm);
-        int[][] scndMxd = T.utility.reshapedAndToMxd(scndShp, frm);
-        int[][] drnMxd  = T.utility.setupMxdOfCon(frstMxd, scndMxd);
-        double[] rsltData = new double[T.utility.szeOfShp(drnMxd[0])];
-        //T.utility.tensMul_mxd(
-        //    rank,
-        //    new double[][]{frstData, scondData, rsltData},
-        //    frstMxd, scndMxd, drnMxd
-        //);
+        int[] drnMxd  = T.utility.shpOfCon(frstShp, scndShp);
+        double[] rsltData = new double[T.utility.szeOfShp(drnMxd)];
         T.utility.tensMul(
-                new T(drnMxd[0], rsltData),
+                new T(drnMxd, rsltData),
                 new T(frstShp, frstData),
                 new T(scndShp, scondData)
         );
@@ -88,25 +71,17 @@ public class NTester_Tensor extends NTester {
         return (printSessionEnd()>0)?1:0;
     }
 
-
-
-
-    public int testInvTensMulOn(
+    public int testInvTensCon(
             int[] frstShp, int[] scndShp,
             double[] frstData, double[] scondData, double[] drnData,
             double[] expctd, boolean first
     ){
         printSessionStart("Test T.utility: tensMul_mxd");
-        int rank = (frstShp.length+scndShp.length)/2;
-        int[] frm = new int[rank];
-        for(int i=0; i<rank; i++){frm[i]=i;}
-        int[][] frstMxd = T.utility.reshapedAndToMxd(frstShp, frm);
-        int[][] scndMxd = T.utility.reshapedAndToMxd(scndShp, frm);
-        int[][] drnMxd  = T.utility.setupMxdOfCon(frstMxd, scndMxd);
+        int[] drnMxd  = T.utility.shpOfCon(frstShp, scndShp);
         T.utility.tensMul_inv(
                 new T(frstShp, frstData),
-                (first)?new T(scndShp, scondData):new T(drnMxd[0], drnData),
-                (first)?new T(drnMxd[0], drnData):new T(scndShp, scondData)
+                (first)?new T(scndShp, scondData):new T(drnMxd, drnData),
+                (first)?new T(drnMxd, drnData):new T(scndShp, scondData)
         );
         assertEqual(stringified((first)?frstData:scondData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;

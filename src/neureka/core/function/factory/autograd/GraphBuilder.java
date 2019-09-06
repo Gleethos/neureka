@@ -6,8 +6,8 @@ import neureka.core.function.IFunction;
 public class GraphBuilder
 {
 
-    public static void connect(T drain, T[] src, IFunction function, boolean derive){//, boolean derive
-        if(function.isFlat()&&derive){
+    public static void connect(T drain, T[] src, IFunction function){//, boolean derive
+        if(function.isFlat()){
             _performDifferentiation(drain, function, src);
         }
     }

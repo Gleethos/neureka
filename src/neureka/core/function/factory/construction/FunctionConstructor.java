@@ -19,7 +19,7 @@ public class FunctionConstructor
         }
 
         if(f_id<=9) {// FUNCTIONS:
-            return new Function(f_id, isFlat, sources, doAD){//IFunction(){
+            return new Function(f_id, isFlat, sources, doAD){
                 @Override
                 public T activate(T[] input, int j) {
                     return T_CACHE.handle(input, this,()->tensorActivationOf(sources.get(0).activate(input, j), false));

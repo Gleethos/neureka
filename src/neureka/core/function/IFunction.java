@@ -20,8 +20,8 @@ public interface IFunction {
     };
     //------------------------------------------------------------------------------------------------------------------
 
-    static T execute(T drain, T[] tensors, String operation) {
-        IFunction function = FunctionGraphBuilder.newBuild(operation, true);
+    static T execute(T drain, T[] tensors, String operation, boolean doAD) {
+        IFunction function = FunctionGraphBuilder.newBuild(operation, doAD);
         return execute(drain, tensors, function);
     }
 

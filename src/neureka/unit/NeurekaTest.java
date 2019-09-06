@@ -269,7 +269,7 @@ public class NeurekaTest {
 			-4,
 			3,
 		};
-		tester.testTensMulOn(
+		tester.testTensCon(
 			frstShape, scndShape,
 			frstData, scndData,
 			new double[]{
@@ -290,7 +290,7 @@ public class NeurekaTest {
 				8, -1,
 				-5, 2,
 		};
-		tester.testTensMulOn(
+		tester.testTensCon(
 				frstShape, scndShape,
 				frstData, scndData,
 				new double[]{
@@ -308,7 +308,7 @@ public class NeurekaTest {
 				8, -1,
 				-5, 2,
 		};
-		tester.testTensMulOn(
+		tester.testTensCon(
 				frstShape, scndShape,
 				frstData, scndData,
 				new double[]{
@@ -340,7 +340,7 @@ public class NeurekaTest {
 				0, 4,
 				5, -1
 		};
-		tester.testTensMulOn(
+		tester.testTensCon(
 				frstShape, scndShape,
 				frstData, scndData,
 				new double[]{
@@ -364,7 +364,7 @@ public class NeurekaTest {
 				-2, 3, 6, 3, -1,
 				 0, 2, 4, 2,  1
 		};
-		tester.testInvTensMulOn(//
+		tester.testInvTensCon(//
 				frstShape, scndShape,
 				frstData, scndData,
 				new double[]{

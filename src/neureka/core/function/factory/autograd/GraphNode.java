@@ -215,10 +215,11 @@ public class GraphNode {
             }else if(this.usesReverseAD()){
                 this.forEach((t, g)->{
                     if(_function.id()==18){// x operation required for chainrule!
-                        //t.backward(T.factory.convolution(error, g));
-                        t.backward(T.factory.convolution_inv(error, g, new T(t.shape(), 0), false));
+                        //t.backward(T.factory.convolution_inv(error, g, new T(t.shape(), 0), false));
+                        t.backward(new T(new T[]{error, g, new T(t.shape(), 0)}, "I[0]>>I[1]>>I[2]", false));
                     }else{
-                        t.backward(T.factory.multiplication(error, g));
+                        //t.backward(T.factory.multiplication(error, g));
+                        t.backward(new T(new T[]{error, g}, "I[0]*I[1]", false));
                     }
                 });
             }

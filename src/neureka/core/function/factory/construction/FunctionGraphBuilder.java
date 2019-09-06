@@ -67,7 +67,6 @@ public class FunctionGraphBuilder {
      * @return
      */
     public static IFunction newBuild(String expression, boolean doAD) {
-        HashMap<String, IFunction> map = IFunction.F_CACHE.FUNCTIONS();
         expression =
             (expression.length()>0
                     && (expression.charAt(0) != '('||expression.charAt(expression.length() - 1) != ')'))
