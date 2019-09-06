@@ -12,65 +12,71 @@ import java.util.ArrayList;
 
 public abstract class Function implements IFunction {
 
-    protected int _f_id;
+    protected int _id;
     protected boolean _isFlat;
     protected boolean _doAD;
     protected ArrayList<IFunction> _source;
 
-    protected Function(int f_id, boolean isFlat, ArrayList<IFunction> Srcs, boolean doAD){
-        _f_id = f_id;
+    /**
+     * @param f_id
+     * @param isFlat
+     * @param Srcs
+     * @param doAD
+     */
+    protected Function(int f_id, boolean isFlat, ArrayList<IFunction> Srcs, boolean doAD) {
+        _id = f_id;
         _isFlat = isFlat;
         _source = Srcs;
         _doAD = doAD;
     }
 
     @Override
-    public boolean isFlat(){
-        return  _isFlat;
+    public boolean isFlat() {
+        return _isFlat;
     }
 
     @Override
     public int id() {
-        return _f_id;
+        return _id;
     }
 
     @Override
     public String type() {
-        return IFunction.F_CACHE.REGISTER[_f_id];
+        return IFunction.REGISTER[_id];
     }
 
     @Override
-    public IFunction newBuild(String expression){
+    public IFunction newBuild(String expression) {
         return FunctionGraphBuilder.newBuild(expression, true);
     }
 
     @Override
     public String toString() {
         String reconstructed = "";
-        if (_source.size() == 1 && IFunction.F_CACHE.REGISTER[_f_id].length() > 1) {
+        if (_source.size() == 1 && IFunction.REGISTER[_id].length() > 1) {
             String expression = _source.get(0).toString();
             if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
-                return IFunction.F_CACHE.REGISTER[_f_id] + expression;
+                return IFunction.REGISTER[_id] + expression;
             }
-            return IFunction.F_CACHE.REGISTER[_f_id] + "(" + expression + ")";
+            return IFunction.REGISTER[_id] + "(" + expression + ")";
         }
-        reconstructed = ((IFunction.F_CACHE.REGISTER[_f_id]==",")?"[":"")+reconstructed;
+        reconstructed = ((IFunction.REGISTER[_id] == ",") ? "[" : "") + reconstructed;
         for (int i = 0; i < _source.size(); ++i) {
             if (_source.get(i) != null) {
-                if((IFunction.F_CACHE.REGISTER[_f_id]==",")){
-                    if(i== _source.size()-1){
+                if ((IFunction.REGISTER[_id] == ",")) {
+                    if (i == _source.size() - 1) {
                         reconstructed = reconstructed
                                 + "]:(" + (
                                 (_source.get(i) instanceof FConstant)
                                         ? _source.get(i).toString().split("\\.")[0]
                                         : _source.get(i).toString()
-                        ) +")";
-                    }else{
+                        ) + ")";
+                    } else {
                         reconstructed = reconstructed
-                            + (
-                            (_source.get(i) instanceof FConstant)
-                                   ? _source.get(i).toString().split("\\.")[0]
-                                   : _source.get(i).toString()
+                                + (
+                                (_source.get(i) instanceof FConstant)
+                                        ? _source.get(i).toString().split("\\.")[0]
+                                        : _source.get(i).toString()
                         );
                     }
                 } else {
@@ -79,12 +85,13 @@ public abstract class Function implements IFunction {
             } else {
                 reconstructed = reconstructed + "(null)";
             }
-            if (i < _source.size() - ((IFunction.F_CACHE.REGISTER[_f_id]==",")?2:1)) {
-                reconstructed = reconstructed + IFunction.F_CACHE.REGISTER[_f_id];
+            if (i < _source.size() - ((IFunction.REGISTER[_id] == ",") ? 2 : 1)) {
+                reconstructed = reconstructed + IFunction.REGISTER[_id];
             }
         }
         return "(" + reconstructed + ")";
     }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public abstract T activate(T[] input, int j);
@@ -113,25 +120,26 @@ public abstract class Function implements IFunction {
 
     //Activation stage 1: IFunction determination!
     //============================================================================================================================================================================================
+
     /**
-     *  Responsible for handling functions with id's 0-9  (single input functions!)
-     * */
+     * Responsible for handling functions with id's 0-9  (single input functions!)
+     */
     protected T tensorActivationOf(T input, boolean derive) {
         T output = T.factory.newTensor(input.shape(), input.translation());
-        if(!derive && !_isFlat){
-            output.inject(new FunctionGraphBuilder().newBuild(_f_id, 1, true).activate(new T[]{input}));
+        if (!derive && !_isFlat) {
+            output.inject(new FunctionGraphBuilder().newBuild(_id, 1, true).activate(new T[]{input}));
             output.add(input.find(GraphLock.class));
             return output;
         }
-        if(input.isOutsourced()){
+        if (input.isOutsourced()) {
             Device device = (Device) input.find(Device.class);
-            device.calculate(new T[]{output, input}, _f_id, (derive)?0:-1);
-        }else{
-            Calculation.foreach(input, output, (i, inputValue, outputValue)->{
+            device.calculate(new T[]{output, input}, _id, (derive) ? 0 : -1);
+        } else {
+            Calculation.foreach(input, output, (i, inputValue, outputValue) -> {
                 outputValue[i] = scalarActivationOf(inputValue[i], derive);
             });
         }
-        if(!derive){
+        if (!derive) {
             GraphBuilder.connect(output, new T[]{input}, this, true);
         }
         output.add(input.find(GraphLock.class));
@@ -139,46 +147,51 @@ public abstract class Function implements IFunction {
     }
 
     /**
-     *   Responsible for handling functions with multiple inputs!
-     * */
+     * Responsible for handling functions with multiple inputs!
+     *
+     * @param input
+     * @param j
+     * @param d
+     * @return
+     */
     protected T tensorActivationOf(T[] input, int j, int d) {
         T output = T.factory.newTensor(input[0].shape(), input[0].translation());
         /**
          *   The code below deals with deep functions (non flat):
          * */
-        if(d<0 && !_isFlat){//only flat functions can be executed
-            if(_f_id <=9){
-                output.inject(new FunctionGraphBuilder().newBuild(IFunction.F_CACHE.REGISTER[_f_id]+"(I["+((j<0)?0:j)+"])", true).activate(input));
+        if (d < 0 && !_isFlat) {//only flat functions can be executed
+            if (_id <= 9) {
+                output.inject(new FunctionGraphBuilder().newBuild(IFunction.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).activate(input));
                 return output;
-            }else{
-                if(IFunction.F_CACHE.REGISTER[_f_id].length()!=1){
+            } else {
+                if (IFunction.REGISTER[_id].length() != 1) {
                     /**  SUMMATION, PI,
                      * */
                     T[] tsrs = activateSource(input);
-                    output.inject(FunctionGraphBuilder.newBuild(IFunction.F_CACHE.REGISTER[_f_id]+"(I[j])", true).activate(tsrs));
+                    output.inject(FunctionGraphBuilder.newBuild(IFunction.REGISTER[_id] + "(I[j])", true).activate(tsrs));
                     return output;
-                }else if(_f_id <=20){
+                } else if (_id <= 20) {
                     /**      '+', '-', 'x', '*', '%', '«', '»', ',', ...
                      * */
-                    String operation = (IFunction.F_CACHE.REGISTER[_f_id].length()>1)? IFunction.F_CACHE.REGISTER[_f_id]:"";
+                    String operation = (IFunction.REGISTER[_id].length() > 1) ? IFunction.REGISTER[_id] : "";
                     T[] tsrs = activateSource(input, j, null);
-                    for(int i=0; i<tsrs.length; i++){
-                        operation += "I["+i+"]"+((i+1<tsrs.length)? IFunction.F_CACHE.REGISTER[_f_id]:"");
+                    for (int i = 0; i < tsrs.length; i++) {
+                        operation += "I[" + i + "]" + ((i + 1 < tsrs.length) ? IFunction.REGISTER[_id] : "");
                     }
-                    if(j<0){
+                    if (j < 0) {
                         output.inject(FunctionGraphBuilder.newBuild(operation, _doAD).activate(tsrs));
-                    }else{
+                    } else {
                         output.inject(FunctionGraphBuilder.newBuild(operation, _doAD).activate(tsrs, j));
                     }
                     return output;
-                }else{
+                } else {
                     /**   Tensor shape translation:
                      * */
                     T[] tsrs = activateSource(input, j, new int[]{1});
-                    if(j<0){
-                        output.inject(FunctionGraphBuilder.newBuild(_f_id, tsrs.length, _doAD).activate(tsrs));
-                    }else{
-                        output.inject(FunctionGraphBuilder.newBuild(_f_id, tsrs.length, _doAD).activate(tsrs, j));
+                    if (j < 0) {
+                        output.inject(FunctionGraphBuilder.newBuild(_id, tsrs.length, _doAD).activate(tsrs));
+                    } else {
+                        output.inject(FunctionGraphBuilder.newBuild(_id, tsrs.length, _doAD).activate(tsrs, j));
                     }
                     return output;
                 }
@@ -188,89 +201,82 @@ public abstract class Function implements IFunction {
          *  The following code is reached in flat functions only:
          * */
         output = execute(output, input, j, d);
-
-        if(d<0){
+        if (d < 0) {
             GraphBuilder.connect(output, input, this, _doAD);
         }
         return output;
     }
 
-    private T execute(T output, T[] input, int j, int d)
-    {
+    private T execute(T output, T[] input, int j, int d) {
         Device device = (Device) input[0].find(Device.class);
         boolean onSameDevice = T.utility.shareGuestDevice(input);
-        if(onSameDevice
-            && IFunction.F_CACHE.REGISTER[_f_id]!=","
-            && !((
-                    IFunction.F_CACHE.REGISTER[_f_id]=="x"
-                    || IFunction.F_CACHE.REGISTER[_f_id] == "«"
-                    || IFunction.F_CACHE.REGISTER[_f_id] == "»"
-                ) && d>-1
-            )
-        ){
-            if(device!=null){
+        if (onSameDevice &&
+                IFunction.REGISTER[_id] != "," &&
+                !((IFunction.REGISTER[_id] == "x" || IFunction.REGISTER[_id] == "«" || IFunction.REGISTER[_id] == "»") && d > -1)
+        ) {
+            if (device != null) {
                 device.add(output);
             }
             for (int i = 0; i < input.length; i++) {
                 device = (Device) input[i].find(Device.class);
-                T[] tsrs = new T[1+input.length];
-                tsrs[0]=output;
-                for(int ii=1; ii<tsrs.length; ii++){
-                    tsrs[ii]=input[ii-1];
+                T[] tsrs = new T[1 + input.length];
+                tsrs[0] = output;
+                for (int ii = 1; ii < tsrs.length; ii++) {
+                    tsrs[ii] = input[ii - 1];
                 }
-                if(tsrs.length==2 && (tsrs[0].isVirtual()||tsrs[1].isVirtual())){
-                    if(tsrs[0].isVirtual()){
+                if (tsrs.length == 2 && (tsrs[0].isVirtual() || tsrs[1].isVirtual())) {
+                    if (tsrs[0].isVirtual()) {
                         device.getKernel();
-                        device.calculate(tsrs[1], tsrs[0].value()[0], _f_id);
+                        device.calculate(tsrs[1], tsrs[0].value()[0], _id);
                     } else {
                         device.getKernel();
-                        device.calculate(tsrs[0], tsrs[1].value()[0], _f_id);
+                        device.calculate(tsrs[0], tsrs[1].value()[0], _id);
                     }
                 } else {
-                    device.calculate(tsrs, _f_id, d);
+                    device.calculate(tsrs, _id, d);
                 }
             }
-        }else{
-            if(IFunction.F_CACHE.REGISTER[_f_id]=="x"){
-                if(d<0){
+        } else {
+            if (IFunction.REGISTER[_id] == "x") {
+                if (d < 0) {
                     output = T.factory.convolution(input[0], input[1]);
-                }else{
-                    if(d==0){
+                } else {
+                    if (d == 0) {
                         output = input[1];
-                    }else{
+                    } else {
                         output = input[0];
                     }
                 }
-            } else if(IFunction.F_CACHE.REGISTER[_f_id] == ""+((char)171) || IFunction.F_CACHE.REGISTER[_f_id] == ""+((char)187)) {
-                if(d<0){//  ""+((char)171), ""+((char)187) //<< / >>
-                    if(IFunction.F_CACHE.REGISTER[_f_id] == ""+((char)187)){
+            } else if (IFunction.REGISTER[_id] == "" + ((char) 171) || IFunction.REGISTER[_id] == "" + ((char) 187)) {
+                if (d < 0) {//  ""+((char)171), ""+((char)187) //<< / >>
+                    if (IFunction.REGISTER[_id] == "" + ((char) 187)) {
                         output = T.factory.convolution_inv(input[0], input[1], input[2], false);
                     } else {
                         output = T.factory.convolution_inv(input[2], input[1], input[0], false);
-                    }//0:0, 1:-2, 2:1
-                }else{//Todo: What then? :
-                    if(d==0){
+                    }
+                } else {//Todo: What then? :
+                    if (d == 0) {
                         output = input[1];
-                    }else{
+                    } else {
                         output = input[0];
                     }
                 }
-            } else if (IFunction.F_CACHE.REGISTER[_f_id]==","){
-                int[] newForm = new int[input.length-1];
-                for(int i = 0; i<input.length-1; i++ ){
+            } else if (IFunction.REGISTER[_id] == ",") {
+                int[] newForm = new int[input.length - 1];
+                for (int i = 0; i < input.length - 1; i++) {
                     newForm[i] = (int) T.factory.io.getFrom(input[i], 0);
                 }
-                if(d<0){
-                    T t = input[input.length-1];
+                if (d < 0) {
+                    T t = input[input.length - 1];
                     t = T.factory.reshaped(t, newForm, true);//t.reshape(newForm);
                     output.inject(t);
-                }else{//reverse reshape:
+                } else {//reverse reshape:
                     /**
                      *      [3, 2, 4, 0, 1]
                      *      [0, 1, 2, 3, 4]
                      * */
                     int[] reversed = new int[newForm.length];
-                    for(int i=0; i<newForm.length; i++){
+                    for (int i = 0; i < newForm.length; i++) {
                         // reversed[newForm[i]] = i;
                     }
                 }
@@ -278,7 +284,7 @@ public abstract class Function implements IFunction {
                 T[] tsrs = input;
                 double[] inp = new double[tsrs.length];
                 T finalOutput = output;
-                output.foreach((i)->{
+                output.foreach((i) -> {
                     for (int ii = 0; ii < tsrs.length; ii++) {
                         inp[ii] = tsrs[ii].value()[i];
                     }
@@ -289,162 +295,196 @@ public abstract class Function implements IFunction {
         return output;
     }
 
-    private T[] activateSource(T[] input){
+    private T[] activateSource(T[] input) {
         T[] tsrs = new T[input.length];
-        for(int i=0; i<tsrs.length; i++){
-            tsrs[i] =  _source.get(0).activate(input, i);
+        for (int i = 0; i < tsrs.length; i++) {
+            tsrs[i] = _source.get(0).activate(input, i);
         }
         return tsrs;
     }
 
-    private T[] activateSource(T[] input, int j, int[] templateShape){
+    private T[] activateSource(T[] input, int j, int[] templateShape) {
         T[] tsrs = new T[_source.size()];
-        for(int i=0; i<tsrs.length; i++){//constants need to be figured out!
-            if(_source.get(i) instanceof FConstant){
+        for (int i = 0; i < tsrs.length; i++) {//constants need to be figured out!
+            if (_source.get(i) instanceof FConstant) {
                 tsrs[i] = null;
-            }else{
+            } else {
                 tsrs[i] =
-                    (j<0)
-                        ? _source.get(i).activate(input)
-                        : _source.get(i).activate(input, j);
+                        (j < 0)
+                                ? _source.get(i).activate(input)
+                                : _source.get(i).activate(input, j);
                 templateShape =
-                    (templateShape==null)
-                        ?tsrs[i].shape()
-                        :templateShape;
+                        (templateShape == null)
+                                ? tsrs[i].shape()
+                                : templateShape;
             }
         }
-        for(int i=0; i<tsrs.length; i++){
+        for (int i = 0; i < tsrs.length; i++) {
             tsrs[i] =
-                (tsrs[i] != null)
-                    ? tsrs[i]
-                    : (j<0)
-                        ?T.factory.newTensor(((FConstant)_source.get(i)).value(), templateShape)
-                        :T.factory.newTensor(_source.get(i).activate(new double[]{}, j), templateShape);
+                    (tsrs[i] != null)
+                            ? tsrs[i]
+                            : (j < 0)
+                            ? T.factory.newTensor(((FConstant) _source.get(i)).value(), templateShape)
+                            : T.factory.newTensor(_source.get(i).activate(new double[]{}, j), templateShape);
         }
         return tsrs;
     }
+
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     protected double scalarActivationOf(double input, boolean derive) {
-        switch (_f_id) {
-            case 0: return Calculation.getReLuOf(       input, derive);
-            case 1: return Calculation.getSigmoidOf(    input, derive);
-            case 2: return Calculation.getTanhOf(       input, derive);
-            case 3: return Calculation.getQuadraticOf(  input, derive);
-            case 4: return Calculation.getLigmoidOf(    input, derive);
-            case 5: return Calculation.getLinearOf(     input, derive);
-            case 6: return Calculation.getGaussianOf(   input, derive);
-            case 7: return Calculation.getAbsoluteOf(   input, derive);
-            case 8: return Calculation.getSinusOf(      input, derive);
-            case 9: return Calculation.getCosinusOf(    input, derive);
-            default: return input;
+        switch (_id) {
+            case 0:
+                return Calculation.getReLuOf(input, derive);
+            case 1:
+                return Calculation.getSigmoidOf(input, derive);
+            case 2:
+                return Calculation.getTanhOf(input, derive);
+            case 3:
+                return Calculation.getQuadraticOf(input, derive);
+            case 4:
+                return Calculation.getLigmoidOf(input, derive);
+            case 5:
+                return Calculation.getLinearOf(input, derive);
+            case 6:
+                return Calculation.getGaussianOf(input, derive);
+            case 7:
+                return Calculation.getAbsoluteOf(input, derive);
+            case 8:
+                return Calculation.getSinusOf(input, derive);
+            case 9:
+                return Calculation.getCosinusOf(input, derive);
+            default:
+                return input;
         }
     }
+
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     protected double scalarActivationOf(double[] input, int j, int d) {
-        switch (_f_id) {
-            case 10: return (j<0)? Calculation.getSummation(      input, d, _source) : Calculation.getSummation(      input, j, d, _source);
-            case 11: return (j<0)? Calculation.getPI(             input, d, _source) : Calculation.getPI(             input, j, d, _source);
-            case 12: return (j<0)? Calculation.getPowerOf(        input, d, _source) : Calculation.getPowerOf(        input, j, d, _source);
-            case 13: return (j<0)? Calculation.getDivision(       input, d, _source) : Calculation.getDivision(       input, j, d, _source);
-            case 14: return (j<0)? Calculation.getMultiplication( input, d, _source) : Calculation.getMultiplication( input, j, d, _source);
-            case 15: return (j<0)? Calculation.getModulo(         input, d, _source) : Calculation.getModulo(         input, j, d, _source);
-            case 16: return (j<0)? Calculation.getSubtraction(    input, d, _source) : Calculation.getSubtraction(    input, j, d, _source);
-            case 17: return (j<0)? Calculation.getAddition(       input, d, _source) : Calculation.getAddition(       input, j, d, _source);
-            case 18: return (j<0)? Calculation.getMultiplication( input, d, _source) : Calculation.getMultiplication( input, j, d, _source);
-            default: return 0;
+        switch (_id) {
+            case 10:
+                return (j < 0) ? Calculation.getSummation(input, d, _source) : Calculation.getSummation(input, j, d, _source);
+            case 11:
+                return (j < 0) ? Calculation.getPI(input, d, _source) : Calculation.getPI(input, j, d, _source);
+            case 12:
+                return (j < 0) ? Calculation.getPowerOf(input, d, _source) : Calculation.getPowerOf(input, j, d, _source);
+            case 13:
+                return (j < 0) ? Calculation.getDivision(input, d, _source) : Calculation.getDivision(input, j, d, _source);
+            case 14:
+                return (j < 0) ? Calculation.getMultiplication(input, d, _source) : Calculation.getMultiplication(input, j, d, _source);
+            case 15:
+                return (j < 0) ? Calculation.getModulo(input, d, _source) : Calculation.getModulo(input, j, d, _source);
+            case 16:
+                return (j < 0) ? Calculation.getSubtraction(input, d, _source) : Calculation.getSubtraction(input, j, d, _source);
+            case 17:
+                return (j < 0) ? Calculation.getAddition(input, d, _source) : Calculation.getAddition(input, j, d, _source);
+            case 18:
+                return (j < 0) ? Calculation.getMultiplication(input, d, _source) : Calculation.getMultiplication(input, j, d, _source);
+            default:
+                return 0;
         }
     }
 
-    private static class Calculation
-    {
-        private interface Actor{ void apply(Integer i, double[] v1, double[] v2);}
+    private static class Calculation {
+        private interface Actor {
+            void apply(Integer i, double[] v1, double[] v2);
+        }
 
-        private static void foreach(T t1, T t2, Actor action){
-            double[] inputValue = (t1.value()==null)?new double[t1.size()]:t1.value();
-            double[] outputValue = (t2.value()==null)?new double[t2.size()]:t2.value();
-            t1.foreach((i)->{ action.apply(i, inputValue, outputValue); });
+        private static void foreach(T t1, T t2, Actor action) {
+            double[] inputValue = (t1.value() == null) ? new double[t1.size()] : t1.value();
+            double[] outputValue = (t2.value() == null) ? new double[t2.size()] : t2.value();
+            t1.foreach((i) -> {
+                action.apply(i, inputValue, outputValue);
+            });
             t2.setValue(outputValue);
             t1.setValue(inputValue);
         }
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-        //Activation stage 1: Activation _f_id determination
+        //Activation stage 1: Activation _id determination
         //============================================================================================================================================================================================
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         public static double getReLuOf(double input, boolean derive) {
             double output;
             if (!derive) {
                 if (input >= 0) {
-                    output = (input + IFunction.F_CACHE.BIAS) * IFunction.F_CACHE.INCLINATION;
+                    output = (input);
                 } else {
-                    output = (input + IFunction.F_CACHE.BIAS) * IFunction.F_CACHE.RELU_INCLINATION;
+                    output = (input) * 0.01;
                 }
                 return output;
             } else {
                 if (input >= 0) {
-                    output = IFunction.F_CACHE.INCLINATION;
+                    output = 1;
                 } else {
-                    output = IFunction.F_CACHE.RELU_INCLINATION;
+                    output = 0.01;
                 }
                 return output;
             }
         }
+
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         public static double getSigmoidOf(double input, boolean derive) {
             if (!derive) {
-                return 1 / (1 + Math.pow(Math.E, (-(input + IFunction.F_CACHE.BIAS) * IFunction.F_CACHE.INCLINATION)));
+                return 1 / (1 + Math.pow(Math.E, (-input)));
             } else {
-                return IFunction.F_CACHE.INCLINATION * (Math.pow(Math.E, -(input + IFunction.F_CACHE.BIAS) * IFunction.F_CACHE.INCLINATION)) / (Math.pow((1 + Math.pow(Math.E, -(input + IFunction.F_CACHE.BIAS) * IFunction.F_CACHE.INCLINATION)), 2) + 2 * Math.pow(Math.E, -(input + IFunction.F_CACHE.BIAS) * IFunction.F_CACHE.INCLINATION));
+                return (Math.pow(Math.E, -(input))) / (Math.pow((1 + Math.pow(Math.E, -(input))), 2) + 2 * Math.pow(Math.E, -(input)));
             }
         }
+
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         public static double getTanhOf(double input, boolean derive) {
             if (!derive) {
-                return ((input + IFunction.F_CACHE.BIAS) * IFunction.F_CACHE.INCLINATION) / Math.pow((1 + Math.pow(((input + IFunction.F_CACHE.BIAS) * IFunction.F_CACHE.INCLINATION), 2)), 0.5);
+                return ((input)) / Math.pow((1 + Math.pow(((input)), 2)), 0.5);
             } else {
-                return (1 - Math.pow(((input + IFunction.F_CACHE.BIAS) / Math.pow((1 + Math.pow((input + IFunction.F_CACHE.BIAS), 2)), 0.5)), 2)) * IFunction.F_CACHE.INCLINATION;
+                return (1 - Math.pow(((input) / Math.pow((1 + Math.pow((input), 2)), 0.5)), 2));
             }
         }
+
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         public static double getQuadraticOf(double input, boolean derive) {
             if (!derive) {
-                return ((input + IFunction.F_CACHE.BIAS) * (input + IFunction.F_CACHE.BIAS) * IFunction.F_CACHE.INCLINATION);
+                return ((input) * (input));
             } else {
-                return 2 * input * IFunction.F_CACHE.INCLINATION + 2 * IFunction.F_CACHE.BIAS * IFunction.F_CACHE.INCLINATION;
+                return 2 * input;
             }
         }
+
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         public static double getLigmoidOf(double input, boolean derive) {
             if (!derive) {
-                return (IFunction.F_CACHE.INCLINATION * (input + IFunction.F_CACHE.BIAS) + (Math.log(Math.pow(Math.E, -(input + IFunction.F_CACHE.BIAS) * IFunction.F_CACHE.INCLINATION) + 1) / Math.log(Math.E)));
+                return ((input) + (Math.log(Math.pow(Math.E, -(input)) + 1) / Math.log(Math.E)));
             } else {
                 return getSigmoidOf(input, false);
             }
         }
+
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         public static double getLinearOf(double input, boolean derive) {
             if (!derive) {
-                return IFunction.F_CACHE.INCLINATION * (input + IFunction.F_CACHE.BIAS);
+                return (input);
             } else {
-                return IFunction.F_CACHE.INCLINATION;
+                return 1;
             }
         }
+
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         public static double getGaussianOf(double input, boolean derive) {
             if (!derive) {
-                return Math.pow(Math.E, -Math.pow(IFunction.F_CACHE.INCLINATION * (input + IFunction.F_CACHE.BIAS), 2));
+                return Math.pow(Math.E, -Math.pow((input), 2));
             } else {
-                return -2 * (IFunction.F_CACHE.INCLINATION * (input + IFunction.F_CACHE.BIAS)) * Math.pow(Math.E, -Math.pow(IFunction.F_CACHE.INCLINATION * (input + IFunction.F_CACHE.BIAS), 2));
+                return -2 * ((input)) * Math.pow(Math.E, -Math.pow((input), 2));
             }
         }
+
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         public static double getAbsoluteOf(double input, boolean derive) {
             if (!derive) {
                 return Math.abs(input);
             } else {
-                return (input<0)?-1:1;
+                return (input < 0) ? -1 : 1;
             }
         }
+
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         public static double getSinusOf(double input, boolean derive) {
             if (!derive) {
@@ -453,6 +493,7 @@ public abstract class Function implements IFunction {
                 return Math.cos(input);
             }
         }
+
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         public static double getCosinusOf(double input, boolean derive) {
             if (!derive) {
@@ -461,9 +502,10 @@ public abstract class Function implements IFunction {
                 return -Math.sin(input);
             }
         }
+
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getSummation(double[] input, int j, int d, ArrayList<IFunction> Variable){
-            if(d<0) {
+        private static double getSummation(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+            if (d < 0) {
                 double sum = 0;
                 boolean nothingDone = true;
                 for (int Ii = 0; Ii < input.length; Ii++) {
@@ -474,12 +516,13 @@ public abstract class Function implements IFunction {
                     return Variable.get(0).activate(input);
                 }
                 return sum;
-            }else{
+            } else {
                 return Variable.get(0).derive(input, d, j);
             }
         }
-        private static double getSummation(double[] input, int d, ArrayList<IFunction> Variable){
-            if(d<0) {
+
+        private static double getSummation(double[] input, int d, ArrayList<IFunction> Variable) {
+            if (d < 0) {
                 double sum = 0;
                 boolean nothingDone = true;
                 for (int Ii = 0; Ii < input.length; Ii++) {
@@ -490,14 +533,15 @@ public abstract class Function implements IFunction {
                     return Variable.get(0).activate(input);
                 }
                 return sum;
-            }else{
+            } else {
                 return Variable.get(0).derive(input, d);
             }
 
         }
+
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getPI(double[] input, int j, int d, ArrayList<IFunction> Variable){
-            if(d<0) {
+        private static double getPI(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+            if (d < 0) {
                 double prod = 1;
                 boolean nothingDone = true;
                 for (int Ii = 0; Ii < input.length; Ii++) {
@@ -510,7 +554,7 @@ public abstract class Function implements IFunction {
                     return Variable.get(0).activate(input, j);
                 }
                 return prod;
-            }else{
+            } else {
                 double u, ud, v, vd;
                 u = Variable.get(0).activate(input, 0);
                 ud = Variable.get(0).derive(input, d, 0);
@@ -524,8 +568,9 @@ public abstract class Function implements IFunction {
                 return ud;
             }
         }
-        private static double getPI(double[] input, int d, ArrayList<IFunction> Variable){
-            if(d<0) {
+
+        private static double getPI(double[] input, int d, ArrayList<IFunction> Variable) {
+            if (d < 0) {
                 double prod = 1;
                 boolean nothingDone = true;
                 for (int Ii = 0; Ii < input.length; Ii++) {
@@ -538,7 +583,7 @@ public abstract class Function implements IFunction {
                     return Variable.get(0).activate(input);
                 }
                 return prod;
-            }else{
+            } else {
                 double u, ud, v, vd;
                 u = Variable.get(0).activate(input, 0);
                 ud = Variable.get(0).derive(input, d, 0);
@@ -552,16 +597,17 @@ public abstract class Function implements IFunction {
                 return ud;
             }
         }
+
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getPowerOf(double[] input, int j, int d, ArrayList<IFunction> Variable){
-            if(d<0) {
+        private static double getPowerOf(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+            if (d < 0) {
                 double result = Variable.get(0).activate(input, j);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
                     final double current = Variable.get(Vi).activate(input, j);
                     result = Math.pow(result, current);
                 }
                 return result;
-            }else{
+            } else {
                 // d/dx(f(x)^g(x))=
                 //	f(x)^g(x) * d/dx(g(x)) * ln(f(x))
                 //	+ f(x)^(g(x)-1) * g(x) * d/dx(f(x))
@@ -580,15 +626,16 @@ public abstract class Function implements IFunction {
                 return df;
             }
         }
-        private static double getPowerOf(double[] input, int d, ArrayList<IFunction> Variable){
-            if(d<0) {
+
+        private static double getPowerOf(double[] input, int d, ArrayList<IFunction> Variable) {
+            if (d < 0) {
                 double result = Variable.get(0).activate(input);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
                     final double current = Variable.get(Vi).activate(input);
                     result = Math.pow(result, current);
                 }
                 return result;
-            }else{
+            } else {
                 // d/dx(f(x)^g(x))=
                 //f(x)^g(x) * d/dx( g(x) ) * ln( f(x) )
                 //+ f(x)^( g(x)-1 ) * g(x) * d/dx( f(x) )
@@ -608,16 +655,17 @@ public abstract class Function implements IFunction {
                 return df;
             }
         }
+
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getDivision(double[] input, int j, int d, ArrayList<IFunction> Variable){
-            if(d<0) {
+        private static double getDivision(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+            if (d < 0) {
                 double result = Variable.get(0).activate(input, j);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
                     final double current = Variable.get(Vi).activate(input, j);
                     result /= current;
                 }
                 return result;
-            }else{
+            } else {
                 double u, ud, v, vd;
                 u = Variable.get(0).activate(input, j);
                 ud = Variable.get(0).derive(input, d, j);
@@ -630,15 +678,16 @@ public abstract class Function implements IFunction {
                 return ud;
             }
         }
-        private static double getDivision(double[] input, int d, ArrayList<IFunction> Variable){
-            if(d<0) {
+
+        private static double getDivision(double[] input, int d, ArrayList<IFunction> Variable) {
+            if (d < 0) {
                 double result = Variable.get(0).activate(input);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
                     final double current = Variable.get(Vi).activate(input);
                     result /= current;
                 }
                 return result;
-            }else{
+            } else {
                 double derivative = 0;
                 double tempVar = Variable.get(0).activate(input);
                 derivative = Variable.get(0).derive(input, d);
@@ -655,16 +704,17 @@ public abstract class Function implements IFunction {
                 return derivative;
             }
         }
+
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getMultiplication(double[] input, int j, int d, ArrayList<IFunction> Variable){
-            if(d<0) {
+        private static double getMultiplication(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+            if (d < 0) {
                 double result = Variable.get(0).activate(input, j);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
                     final double current = Variable.get(Vi).activate(input, j);
                     result *= current;
                 }
                 return result;
-            }else{
+            } else {
                 double u, ud, v, vd;
                 u = Variable.get(0).activate(input, j);
                 ud = Variable.get(0).derive(input, d, j);
@@ -680,15 +730,16 @@ public abstract class Function implements IFunction {
                 return ud;
             }
         }
-        private static double getMultiplication(double[] input, int d, ArrayList<IFunction> Variable){
-            if(d<0) {
+
+        private static double getMultiplication(double[] input, int d, ArrayList<IFunction> Variable) {
+            if (d < 0) {
                 double result = Variable.get(0).activate(input);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
                     final double current = Variable.get(Vi).activate(input);
                     result *= current;
                 }
                 return result;
-            }else{
+            } else {
                 double u, ud, v, vd;
                 u = Variable.get(0).activate(input);
                 ud = Variable.get(0).derive(input, d);
@@ -703,41 +754,44 @@ public abstract class Function implements IFunction {
                 return ud;
             }
         }
+
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getModulo(double[] input, int j, int d, ArrayList<IFunction> Variable){
-            if(d<0) {
+        private static double getModulo(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+            if (d < 0) {
                 double result = Variable.get(0).activate(input, j);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
                     final double current = Variable.get(Vi).activate(input, j);
                     result %= current;
                 }
                 return result;
-            }else{
+            } else {
                 return Variable.get(0).derive(input, d, j);// j ?
             }
         }
-        private static double getModulo(double[] input, int d, ArrayList<IFunction> Variable){
-            if(d<0) {
+
+        private static double getModulo(double[] input, int d, ArrayList<IFunction> Variable) {
+            if (d < 0) {
                 double result = Variable.get(0).activate(input);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
                     final double current = Variable.get(Vi).activate(input);
                     result %= current;
                 }
                 return result;
-            }else{
+            } else {
                 return Variable.get(0).derive(input, d);
             }
         }
+
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getSubtraction(double[] input, int j, int d, ArrayList<IFunction> Variable){
-            if(d<0) {
+        private static double getSubtraction(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+            if (d < 0) {
                 double result = Variable.get(0).activate(input, j);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
                     final double current = Variable.get(Vi).activate(input, j);
                     result -= current;
                 }
                 return result;
-            }else{
+            } else {
                 double derivative = 0;
                 for (int i = 0; i < Variable.size(); ++i) {
                     //if (sources.get(i).dependsOn(index)) {
@@ -751,15 +805,16 @@ public abstract class Function implements IFunction {
                 return derivative;
             }
         }
-        private static double getSubtraction(double[] input, int d, ArrayList<IFunction> Variable){
-            if(d<0) {
+
+        private static double getSubtraction(double[] input, int d, ArrayList<IFunction> Variable) {
+            if (d < 0) {
                 double result = Variable.get(0).activate(input);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
                     final double current = Variable.get(Vi).activate(input);
                     result -= current;
                 }
                 return result;
-            }else{
+            } else {
                 double derivative = 0;
                 for (int i = 0; i < Variable.size(); ++i) {
                     //if (sources.get(i).dependsOn(index)) {
@@ -773,16 +828,17 @@ public abstract class Function implements IFunction {
                 return derivative;
             }
         }
+
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getAddition(double[] input, int j, int d, ArrayList<IFunction> Variable){
-            if(d<0) {
+        private static double getAddition(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+            if (d < 0) {
                 double result = Variable.get(0).activate(input, j);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
                     final double current = Variable.get(Vi).activate(input, j);
                     result += current;
                 }
                 return result;
-            }else{
+            } else {
                 double derivative = 0;
                 for (int i = 0; i < Variable.size(); ++i) {
                     derivative += Variable.get(i).derive(input, d, j);
@@ -790,15 +846,16 @@ public abstract class Function implements IFunction {
                 return derivative;
             }
         }
-        private static double getAddition(double[] input, int d, ArrayList<IFunction> Variable){
-            if(d<0) {
+
+        private static double getAddition(double[] input, int d, ArrayList<IFunction> Variable) {
+            if (d < 0) {
                 double result = Variable.get(0).activate(input);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
                     final double current = Variable.get(Vi).activate(input);
                     result += current;
                 }
                 return result;
-            }else{
+            } else {
                 double derivative = 0;
                 for (int i = 0; i < Variable.size(); ++i) {
                     //if (sources.get(i).dependsOn(index)) {

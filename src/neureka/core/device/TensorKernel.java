@@ -406,11 +406,11 @@ public class TensorKernel extends com.aparapi.Kernel
 
     /**
      * Mode format:
-     * 0: _f_id
+     * 0: _id
      * 1-(n-1): t_id's
      * n: d (-1 if not derivative)
      * */
-    public int executionSizeOf_calc(int[] mode){// Mode contains _f_id, drain id and source id's !
+    public int executionSizeOf_calc(int[] mode){// Mode contains _id, drain id and source id's !
         if(_mde ==null||_mde.length<3||_mde.length!=mode.length){
             _mde = mode;
             this.put(_mde);//up
@@ -424,11 +424,11 @@ public class TensorKernel extends com.aparapi.Kernel
 
     /**
      * Mode format:
-     * 0: _f_id
+     * 0: _id
      * 1-(n-1): t_id's
      * n: d (-1 if not derivative)
      * */
-    public int executionSizeOf_calc(int[] mode, double value){// Mode contains _f_id, _value is applied to all!
+    public int executionSizeOf_calc(int[] mode, double value){// Mode contains _id, _value is applied to all!
         if(_mde ==null||_mde.length<3||_mde.length!=mode.length){
             _mde = mode;
             this.put(_mde);//up
@@ -873,8 +873,8 @@ public class TensorKernel extends com.aparapi.Kernel
         int ri = 0;
         while (ri < rank) {
             if (_idx[(p_idx_src2+ri)] == _shapes[(p_shp_src2+ri)]) {//_idx[(p_idx_src1+ri)] == _shapes[(p_shp_src1+ri)] ||
-                _idx[(p_idx_src2 + ri)] = 0;
                 _idx[(p_idx_src1 + ri)] = _idx[(p_idx_drn + ri)];
+                _idx[(p_idx_src2 + ri)] = 0;
             } else {
                 if (_shapes[(p_shp_drn+ri)] > _shapes[(p_shp_src1+ri)]) {//TODO:THIS IS ADDED
                     _idx[(p_idx_src1+ri)] = (_idx[(p_idx_drn+ri)] - _idx[(p_idx_src2+ri)]);
@@ -917,8 +917,8 @@ public class TensorKernel extends com.aparapi.Kernel
                         if (((p_shp_src2+ri) == (src2End - 1))) {//(p_shp_src1+ri) == (src1End - 1) ||
                             running = false;
                         }
-                        _idx[(p_idx_src2+ri)] = 0;
                         _idx[(p_idx_src1+ri)] = _idx[(p_idx_drn+ri)];
+                        _idx[(p_idx_src2+ri)] = 0;
                         ri++;
                     } else {
                         if (_shapes[(p_shp_drn+ri)] > _shapes[(p_shp_src1+ri)]) {//TODO:THIS IS ADDED

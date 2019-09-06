@@ -54,7 +54,7 @@ public class Device {
                 _device.setSharedMemory(false);// GPU's (!cpu's) don't share host memory!
             }
             System.out.println("\nChosen _device:\n------------\n" + _device.toString() + "\n------------\n");
-            System.out.println("\n_device _f_id:\n------------\n" + _device.getType().toString() + "\n------------\n");
+            System.out.println("\n_device _id:\n------------\n" + _device.getType().toString() + "\n------------\n");
             _kernel = new TensorKernel();
             System.out.println("Device f _kernel:\n------------");
             System.out.println(_kernel.getTargetDevice().toString());

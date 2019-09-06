@@ -11,8 +11,8 @@ import java.util.ListIterator;
 public class FunctionParser {
     public static int numberOfOperationsWithin(final List<String> operations) {
         int Count = 0;
-        for (int i = 0; i < IFunction.F_CACHE.REGISTER.length; ++i) {
-            if (FunctionParser.containsOperation(IFunction.F_CACHE.REGISTER[i], operations)) {
+        for (int i = 0; i < IFunction.REGISTER.length; ++i) {
+            if (FunctionParser.containsOperation(IFunction.REGISTER[i], operations)) {
                 ++Count;
             }
         }
@@ -81,9 +81,9 @@ public class FunctionParser {
         if (operation.length() > 8) {
             return false;
         }
-        for (int i = 0; i < IFunction.F_CACHE.REGISTER.length; ++i) {
-            System.out.print(IFunction.F_CACHE.REGISTER[i] + " =?= " + operation + " -:|:- ");
-            if (IFunction.F_CACHE.REGISTER[i].equals(operation)) {
+        for (int i = 0; i < IFunction.REGISTER.length; ++i) {
+            System.out.print(IFunction.REGISTER[i] + " =?= " + operation + " -:|:- ");
+            if (IFunction.REGISTER[i].equals(operation)) {
                 System.out.println("");
                 return true;
             }
@@ -188,20 +188,20 @@ public class FunctionParser {
         if (exp.equals("()")) {
             return "";
         }
-        exp = exp.replace("sigmoid", IFunction.F_CACHE.REGISTER[1]);
-        exp = exp.replace("quadratic", IFunction.F_CACHE.REGISTER[3]);
-        exp = exp.replace("quadr", IFunction.F_CACHE.REGISTER[3]);
-        exp = exp.replace("lig", IFunction.F_CACHE.REGISTER[4]);
-        exp = exp.replace("ligmoid", IFunction.F_CACHE.REGISTER[4]);
-        exp = exp.replace("softplus", IFunction.F_CACHE.REGISTER[4]);
-        exp = exp.replace("spls", IFunction.F_CACHE.REGISTER[4]);
-        exp = exp.replace("ligm", IFunction.F_CACHE.REGISTER[4]);
-        exp = exp.replace("linear", IFunction.F_CACHE.REGISTER[5]);
-        exp = exp.replace("gaussian", IFunction.F_CACHE.REGISTER[6]);
-        exp = exp.replace("gauss", IFunction.F_CACHE.REGISTER[6]);
-        exp = exp.replace("absolute", IFunction.F_CACHE.REGISTER[7]);
-        exp = exp.replace("summation", IFunction.F_CACHE.REGISTER[10]);
-        exp = exp.replace("product", IFunction.F_CACHE.REGISTER[11]);
+        exp = exp.replace("sigmoid", IFunction.REGISTER[1]);
+        exp = exp.replace("quadratic", IFunction.REGISTER[3]);
+        exp = exp.replace("quadr", IFunction.REGISTER[3]);
+        exp = exp.replace("lig", IFunction.REGISTER[4]);
+        exp = exp.replace("ligmoid", IFunction.REGISTER[4]);
+        exp = exp.replace("softplus", IFunction.REGISTER[4]);
+        exp = exp.replace("spls", IFunction.REGISTER[4]);
+        exp = exp.replace("ligm", IFunction.REGISTER[4]);
+        exp = exp.replace("linear", IFunction.REGISTER[5]);
+        exp = exp.replace("gaussian", IFunction.REGISTER[6]);
+        exp = exp.replace("gauss", IFunction.REGISTER[6]);
+        exp = exp.replace("absolute", IFunction.REGISTER[7]);
+        exp = exp.replace("summation", IFunction.REGISTER[10]);
+        exp = exp.replace("product", IFunction.REGISTER[11]);
 
         int bracketDepth = 0;
         for (int Ei = 0; Ei < exp.length(); ++Ei) {

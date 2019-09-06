@@ -74,11 +74,15 @@ public class NTester_Tensor extends NTester {
         int[][] scndMxd = T.utility.reshapedAndToMxd(scndShp, frm);
         int[][] drnMxd  = T.utility.setupMxdOfCon(frstMxd, scndMxd);
         double[] rsltData = new double[T.utility.szeOfShp(drnMxd[0])];
-        T.utility.tensMul_mxd(
-            rank,
-            new double[][]{frstData, scondData, rsltData},
-            new int[]{0, 0, 0},
-            frstMxd, scndMxd, drnMxd
+        //T.utility.tensMul_mxd(
+        //    rank,
+        //    new double[][]{frstData, scondData, rsltData},
+        //    frstMxd, scndMxd, drnMxd
+        //);
+        T.utility.tensMul(
+                new T(drnMxd[0], rsltData),
+                new T(frstShp, frstData),
+                new T(scndShp, scondData)
         );
         assertEqual(stringified(rsltData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;
@@ -99,13 +103,10 @@ public class NTester_Tensor extends NTester {
         int[][] frstMxd = T.utility.reshapedAndToMxd(frstShp, frm);
         int[][] scndMxd = T.utility.reshapedAndToMxd(scndShp, frm);
         int[][] drnMxd  = T.utility.setupMxdOfCon(frstMxd, scndMxd);
-        //double[] rsltData = drnData;//new double[T.utility.szeOfShp(drnMxd[0])];
-        T.utility.tensMul_inv_mxd(
-                rank,
-                new double[][]{frstData, scondData, drnData},
-                new int[]{0, 0, 0},
-                frstMxd, scndMxd, drnMxd,
-                first
+        T.utility.tensMul_inv(
+                new T(frstShp, frstData),
+                (first)?new T(scndShp, scondData):new T(drnMxd[0], drnData),
+                (first)?new T(drnMxd[0], drnData):new T(scndShp, scondData)
         );
         assertEqual(stringified((first)?frstData:scondData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;

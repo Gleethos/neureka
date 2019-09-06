@@ -11,6 +11,13 @@ import neureka.core.function.environment.FunctionCache;
 public interface IFunction {
     FunctionCache F_CACHE = new FunctionCache();
     TensorCache T_CACHE = new TensorCache();
+    String[] REGISTER = new String[]{
+            "relu", "sig", "tanh", "quad", "lig", "lin", "gaus", "abs", "sin", "cos",
+            "sum", "prod",
+            "^", "/", "*", "%", "-", "+", "x", ""+((char)171), ""+((char)187), ","
+            // (char)187 //>>
+            // (char)171 //<<
+    };
     //------------------------------------------------------------------------------------------------------------------
 
     static T execute(T drain, T[] tensors, String operation) {

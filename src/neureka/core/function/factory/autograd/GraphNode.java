@@ -16,22 +16,28 @@ public class GraphNode {
      *  This gradient node is involved in auto-differentiation.
      * @return boolean
      */
-    public boolean usesAD(){return (_mode !=0);}
+    public boolean usesAD(){
+        return (_mode !=0);
+    }
 
     /**
      *  This node propagates forward.
      * @return boolean
      */
-    public boolean usesForwardAD(){ return (_mode >0); }
+    public boolean usesForwardAD(){
+        return (_mode >0);
+    }
 
     /**
      * This node propagates backward.
      * @return boolean
      */
-    public boolean usesReverseAD(){ return (_mode <0); }
+    public boolean usesReverseAD(){
+        return (_mode <0);
+    }
 
     /**
-     *  modes:    |
+     *   modes:   |
      *  ----------+----------------------------------+-
      *  _mode == 0 | no Auto-Differentiation          |
      *  ----------+----------------------------------+-
@@ -40,11 +46,14 @@ public class GraphNode {
      *  _mode < 0  | backward Auto-Differentiation    |
      *  ----------+----------------------------------+-
      *
+     * @var int _mode
      * */
     private int _mode;
 
     /**
      * Recorded Function.
+     *
+     * @var IFunction _function
      * */
     private IFunction _function;
 
@@ -67,7 +76,7 @@ public class GraphNode {
     //==================================================================================================================
     /**
      *
-     * @return
+     * @return GraphLock
      */
     public GraphLock lock(){
         return _lock;
@@ -97,8 +106,7 @@ public class GraphNode {
     }
 
     /**
-     *
-     * @return
+     * @return boolean
      */
     public boolean isOrigin(){
         return (_source==null && _function==null);
@@ -119,10 +127,9 @@ public class GraphNode {
     }
 
     /**
-     *
      * @param source
      * @param function
-     * @return
+     * @return int
      */
     private static int modeOf(T[] source, IFunction function){
         /**
@@ -152,6 +159,7 @@ public class GraphNode {
 
     /**
      * @param target
+     * @return void
      */
     public void trimTree(T target){// Find and remove redundant targets:
         if(_source ==null || mode()==0){
@@ -233,7 +241,6 @@ public class GraphNode {
     }
 
     /**
-     *
      * @param key
      * @param value
      */
@@ -245,9 +252,8 @@ public class GraphNode {
     }
 
     /**
-     *
      * @param key
-     * @return
+     * @return T
      */
     public T get(T key){
         if(targets_gradients==null){
@@ -259,7 +265,7 @@ public class GraphNode {
     /**
      *
      * @param key
-     * @return
+     * @return boolean
      */
     public boolean has(T key){
         if(targets_gradients==null){
@@ -272,24 +278,22 @@ public class GraphNode {
     }
 
     /**
-     *
-     * @return
+     * @return TreeMap<T, T>
      */
     public TreeMap<T, T> getMap(){
         return targets_gradients;
     }
 
     /**
-     *
-     * @return
+     * @return int
      */
     public int size(){
         return (this.targets_gradients!=null)?this.targets_gradients.size():0;
     }
 
     /**
-     *
      * @param action
+     * @return void
      */
     public void forEach(BiConsumer<T, T> action){
         if(targets_gradients==null){
