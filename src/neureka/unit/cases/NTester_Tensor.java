@@ -39,30 +39,30 @@ public class NTester_Tensor extends NTester {
 
 
     public int testTensorUtility_reshape(int[] dim, int[] newForm, int[] expected){
-        int[] result = T.utility.reshaped(dim, newForm);
-        printSessionStart("Testing T.utility: dimension reshaping!");
+        int[] result = T.factory.util.rearrange(dim, newForm);
+        printSessionStart("Testing T.util: dimension reshaping!");
         assertEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }
 
     public int testTensorUtility_translation(int[] dim, int[] expected){
-        int [] result =  T.utility.idxTln(dim);
-        printSessionStart("Testing T.utility: dimension _translation!");
+        int [] result =  T.factory.util.idxTln(dim);
+        printSessionStart("Testing T.util: dimension _translation!");
         assertEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }
     public int testTensorBase_idxFromAnchor(int[] dim, int idx, int[] expected){
-        int [] result =  T.utility.idxOf(idx, T.utility.idxTln(dim));
-        printSessionStart("Testing T.utility: _shape to _translation to index!");
+        int [] result =  T.factory.util.idxOf(idx, T.factory.util.idxTln(dim));
+        printSessionStart("Testing T.util: _shape to _translation to index!");
         assertEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }
 
     public int testTensCon(int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd){
-        printSessionStart("Test T.utility: tensMul_mxd");
-        int[] drnMxd  = T.utility.shpOfCon(frstShp, scndShp);
-        double[] rsltData = new double[T.utility.szeOfShp(drnMxd)];
-        T.utility.tensMul(
+        printSessionStart("Test T.util: tensMul_mxd");
+        int[] drnMxd  = T.factory.util.shpOfCon(frstShp, scndShp);
+        double[] rsltData = new double[T.factory.util.szeOfShp(drnMxd)];
+        T.factory.exec.tensMul(
                 new T(drnMxd, rsltData),
                 new T(frstShp, frstData),
                 new T(scndShp, scondData)
@@ -76,9 +76,9 @@ public class NTester_Tensor extends NTester {
             double[] frstData, double[] scondData, double[] drnData,
             double[] expctd, boolean first
     ){
-        printSessionStart("Test T.utility: tensMul_mxd");
-        int[] drnMxd  = T.utility.shpOfCon(frstShp, scndShp);
-        T.utility.tensMul_inv(
+        printSessionStart("Test T.util: tensMul_mxd");
+        int[] drnMxd  = T.factory.util.shpOfCon(frstShp, scndShp);
+        T.factory.exec.tensMul_inv(
                 new T(frstShp, frstData),
                 (first)?new T(scndShp, scondData):new T(drnMxd, drnData),
                 (first)?new T(drnMxd, drnData):new T(scndShp, scondData)

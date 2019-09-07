@@ -147,14 +147,14 @@ public class T {
             return 0;
         }
         return (this.isOutsourced())
-                ? T.utility.szeOfShp(this.shape())
+                ? factory.util.szeOfShp(this.shape())
                 : (this.isVirtual()
-                    ? T.utility.szeOfShp(this.shape())
-                    : _value.length);
+                ? factory.util.szeOfShp(this.shape())
+                : _value.length);
     }
 
     public int[] shpIdx(int idx) {
-        return T.utility.idxOf(idx, _translation);
+        return factory.util.idxOf(idx, _translation);
     }
 
     public boolean isEmpty() {
@@ -310,12 +310,12 @@ public class T {
     }// creates empty tensor;
 
     public T(int[] shape) {
-        _value = new double[T.utility.szeOfShp(shape)];
+        _value = new double[factory.util.szeOfShp(shape)];
         this.initialShape(shape);
     }
 
     public T(int[] shape, double value) {
-        int size = T.utility.szeOfShp(shape);
+        int size = factory.util.szeOfShp(shape);
         _value = new double[1];
         this.setIsVirtual((size > 1));
         this.initialShape(shape);
@@ -339,15 +339,13 @@ public class T {
     }
 
     public T initialShape(int[] newShape) {
-        int size = T.utility.szeOfShp(newShape);
-        if (_value == null) {
-            _value = new double[size];
-        }
+        int size = factory.util.szeOfShp(newShape);
+        _value = (_value==null)?new double[size]:_value;
         if (size != _value.length && !this.isVirtual()) {
             return this;//TODO: Exception!
         }
         _shape = cached(newShape);
-        _translation = cached(T.utility.idxTln(newShape));
+        _translation = cached(factory.util.idxTln(newShape));
         return this;
     }
 
@@ -423,10 +421,7 @@ public class T {
     public int[] translation(int i) {
         int[][] conf = this.config();
         i = Math.abs(i) * 2 + 1;
-        if (i < conf.length) {
-            return conf[i];
-        }
-        return null;
+        return (i < conf.length) ? conf[i] : null;
     }
 
     private void _record(int[] shp, int[] tln) {
@@ -480,8 +475,8 @@ public class T {
         int sze = this.size();
         int[] idx = new int[this.shape().length];
         for (int i = 0; i < sze; i++) {
-            T.utility.increment(idx, this.shape());
-            action.accept(T.utility.iOf(idx, this.translation()));
+            factory.util.increment(idx, this.shape());
+            action.accept(factory.util.iOf(idx, this.translation()));
         }
         return this;
     }
@@ -492,8 +487,8 @@ public class T {
         int[] idx = new int[this.shape().length];
         double[] value = _value;
         for (int i = 0; i < sze; i++) {
-            T.utility.increment(idx, this.shape());
-            action.accept(i, value[T.utility.iOf(idx, this.translation())]);
+            factory.util.increment(idx, this.shape());
+            action.accept(i, value[factory.util.iOf(idx, this.translation())]);
         }
         return this;
     }
@@ -504,40 +499,39 @@ public class T {
      */
     public static class factory {
 
-        public static class io
-        {
+        public static class io {
             public static double getFrom(T t, int i) {
                 if (t.isEmpty() || t.isUndefined()) {
                     return 0;
                 } else if (t.isVirtual()) {
                     return t._value[0];
                 }
-                return t._value[T.utility.iOf(t.shpIdx(i), t.translation())];
+                return t._value[util.iOf(t.shpIdx(i), t.translation())];
             }
 
             public static double getFrom(T t, int[] idx) {
                 t.setIsVirtual(false);
-                return t._value[T.utility.iOf(idx, t.translation())];
+                return t._value[util.iOf(idx, t.translation())];
             }
 
             public static void setInto(T t, int i, double value) {
                 t.setIsVirtual(false);
-                t._value[T.utility.iOf(t.shpIdx(i), t.translation())] = value;
+                t._value[util.iOf(t.shpIdx(i), t.translation())] = value;
             }
 
             public static void setInto(T t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t._value[T.utility.iOf(idx, t.translation())] = value;
+                t._value[util.iOf(idx, t.translation())] = value;
             }
 
             public static void addInto(T t, int i, double value) {
                 t.setIsVirtual(false);
-                t._value[T.utility.iOf(t.shpIdx(i), t.translation())] += value;
+                t._value[util.iOf(t.shpIdx(i), t.translation())] += value;
             }
 
             public static void addInto(T t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t._value[T.utility.iOf(idx, t.translation())] += value;
+                t._value[util.iOf(idx, t.translation())] += value;
             }
 
             public static T addInto(T t, T source) {
@@ -551,7 +545,7 @@ public class T {
                     int size = t.size();
                     for (int i = 0; i < size; i++) {
                         addInto(t, index, getFrom(source, index));
-                        T.utility.increment(index, t.shape());
+                        util.increment(index, t.shape());
                     }
                 }
                 return source;
@@ -559,12 +553,12 @@ public class T {
 
             public static void subInto(T t, int i, double value) {
                 t.setIsVirtual(false);
-                t._value[T.utility.iOf(t.shpIdx(i), t.translation())] -= value;
+                t._value[util.iOf(t.shpIdx(i), t.translation())] -= value;
             }
 
             public static void subInto(T t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t._value[T.utility.iOf(idx, t.translation())] -= value;
+                t._value[util.iOf(idx, t.translation())] -= value;
             }
 
             public static void subInto(T t, T source) {
@@ -578,21 +572,242 @@ public class T {
                     int size = t.size();
                     for (int i = 0; i < size; i++) {
                         io.subInto(t, index, io.getFrom(source, index));
-                        T.utility.increment(index, t.shape());
+                        util.increment(index, t.shape());
                     }
                 }
             }
 
             public static void mulInto(T t, int i, double value) {
                 t.setIsVirtual(false);
-                t._value[T.utility.iOf(t.shpIdx(i), t.translation())] *= value;
+                t._value[util.iOf(t.shpIdx(i), t.translation())] *= value;
             }
 
             public static void mulInto(T t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t._value[T.utility.iOf(idx, t.translation())] *= value;
+                t._value[util.iOf(idx, t.translation())] *= value;
             }
 
+        }
+
+        public static class exec {
+
+            //OPERATIONS:
+            //=========================
+
+            public static T convolution(T tensor1, T tensor2) {
+                tensor1.setIsVirtual(false);
+                tensor2.setIsVirtual(false);
+                T newTensor = new T(util.shpOfCon(tensor1.shape(), tensor2.shape()));
+                T.factory.exec.tensMul(newTensor, tensor1, tensor2);
+                return newTensor;
+            }
+
+            public static T convolution_inv(T drain, T source1, T source2, boolean first) {
+                source1.setIsVirtual(false);
+                source2.setIsVirtual(false);
+                drain.setIsVirtual(false);
+                T.factory.exec.tensMul_inv(source2, (!first) ? source1 : drain, (!first) ? drain : source1);
+                return (first) ? source1 : source2;
+            }
+
+            public static T multiplication(T tensor1, T tensor2) {
+                T drn = new T(tensor1.shape());
+                int[] index = new int[drn.shape().length];
+                int size = drn.size();
+                for (int i = 0; i < size; i++) {
+                    io.addInto(drn, index, io.getFrom(tensor1, index) * io.getFrom(tensor2, index));
+                    util.increment(index, drn.shape());
+                }
+                return drn;
+            }
+
+            public static T addition(T tensor1, T tensor2) {
+                T drn = new T(tensor1.shape());
+                int[] index = new int[drn.shape().length];
+                int size = drn.size();
+                for (int i = 0; i < size; i++) {
+                    io.addInto(drn, index, io.getFrom(tensor1, index) + io.getFrom(tensor2, index));
+                    util.increment(index, drn.shape());
+                }
+                return drn;
+            }
+
+            public static T reshaped(T tensor, int[] newForm, boolean newTsr) {
+                tensor = (newTsr)?copyOf(tensor):tensor;
+                tensor._record(tensor.shape(), tensor.translation());
+                tensor._shape = util.shpCheck(util.rearrange(tensor._shape, newForm), tensor);
+                tensor._translation = util.rearrange(tensor._translation, tensor._shape, newForm);
+                return tensor;
+            }
+
+            @Contract(pure = true)
+            public static void tensMul(T t0_drain, T t1_source, T t2_source) {
+                int[] t0Shp = t0_drain.shape();
+                int[] t1Shp = t1_source.shape();
+                int[] t2Shp = t2_source.shape();
+                int[] t0Tln = t0_drain.translation();
+                int[] t1Tln = t1_source.translation();
+                int[] t2Tln = t2_source.translation();
+                int rank = t0Shp.length;
+                int[] t0Idx = new int[rank];
+                int[] t1Idx = new int[rank];
+                int[] t2Idx = new int[rank];
+
+                int drnSze = t0_drain.size();
+                int i = 0;
+                while (i < drnSze) {//increment on drain accordingly:
+                    int ri = 0;
+                    while (ri < rank) {
+                        if (t1Shp[ri] == t2Shp[ri]) {//setting 0
+                            t1Idx[ri] = t0Idx[ri];//mtch[mi];
+                            t2Idx[ri] = t0Idx[ri];//mtch[mi];
+                        } else if (t1Shp[ri] > t2Shp[ri]) {//setting hdr1 idx to id idx
+                            t1Idx[ri] = t0Idx[ri];//mtch[mi];
+                            t2Idx[ri] = 0;
+                        } else if (t1Shp[ri] < t2Shp[ri]) {//setting hdr2 idx to id idx
+                            t1Idx[ri] = 0;
+                            t2Idx[ri] = t0Idx[ri];//mtch[mi];
+                        }
+                        ri++;
+                    }
+                    //----------
+                    // multiplication:
+                    double value = 0;
+                    boolean running = true;
+                    boolean incrementing = false;
+                    while (running) {
+                        ri = (ri == rank) ? 0 : ri;
+                        if (incrementing == false) {
+                            int i1 = util.iOf(t1Idx, t1Tln);
+                            int i2 = util.iOf(t2Idx, t2Tln);
+                            value += t1_source.value()[i1] * t2_source.value()[i2];
+                            incrementing = true;
+                            ri = 0;
+                        } else {//incrementing:
+                            if (t1Idx[ri] < t1Shp[ri] && t2Idx[ri] < t2Shp[ri]) {
+                                t1Idx[ri]++;
+                                t2Idx[ri]++;
+                                if (t1Idx[ri] == t1Shp[ri] || t2Idx[ri] == t2Shp[ri]) {
+                                    if (ri == (rank - 1)) {
+                                        running = false;
+                                    }
+                                    if (t1Shp[ri] == t2Shp[ri]) {
+                                        t1Idx[ri] = t0Idx[ri];
+                                        t2Idx[ri] = t0Idx[ri];
+                                    } else if (t1Shp[ri] > t2Shp[ri]) {
+                                        t1Idx[ri] = t0Idx[ri];
+                                        t2Idx[ri] = 0;
+                                    } else if (t1Shp[ri] < t2Shp[ri]) {
+                                        t1Idx[ri] = 0;
+                                        t2Idx[ri] = t0Idx[ri];
+                                    }
+                                    ri++;
+                                } else {
+                                    incrementing = false;
+                                    ri = 0;
+                                }
+                            } else {
+                                ri++;
+                            }
+                        }
+                    }//setInto _value in drn:
+                    int i0 = util.iOf(t0Idx, t0Tln);
+                    t0_drain.value()[i0] = value;
+                    System.out.println(i0 + " - " + i);
+                    i++;//increment on drain:
+                    if (i < drnSze) {
+                        util.increment(t0Idx, t0Shp);
+                    }
+                }
+            }
+
+            @Contract(pure = true)
+            public static void tensMul_inv(T t0_origin, T t1_handle, T t2_drain) {
+                int[] t0Shp = t0_origin.shape();
+                int[] t1Shp = t1_handle.shape();
+                int[] t2Shp = t2_drain.shape();
+                int[] t0Tln = t0_origin.translation();
+                int[] t1Tln = t1_handle.translation();
+                int[] t2Tln = t2_drain.translation();
+                int rank = t0Shp.length;
+                int[] t0Idx = new int[rank];
+                int[] t1Idx = new int[rank];
+                int[] t2Idx = new int[rank];
+                int drnSze = t0_origin.size();
+                int i = 0;
+                while (i < drnSze) {//increment on drain accordingly:
+                    int ri = 0;
+                    while (ri < rank) {
+                        if (t2Idx[ri] == t2Shp[ri]) {//setting 0
+                            t1Idx[ri] = t0Idx[ri];
+                            t2Idx[ri] = 0;//mtch[mi];
+                        } else {
+                            if (t0Shp[ri] > t1Shp[ri]) {
+                                t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);
+                            } else {
+                                t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);
+                            }
+                        }
+                        ri++;
+                    }
+                    //----------
+                    // multiplication:
+                    double value = 0;
+                    boolean running = true;
+                    boolean incrementing = false;
+                    while (running) {
+                        ri = (ri == rank) ? 0 : ri;
+                        if (incrementing == false) {
+
+                            boolean isMatch = true;
+                            for (int rii = 0; rii < rank; rii++) {
+                                if (!(t1Idx[rii] < t1Shp[rii] && t1Idx[rii] >= 0)) {
+                                    isMatch = false;
+                                }
+                            }
+                            if (isMatch) {
+                                int i1 = util.iOf(t1Idx, t1Tln);
+                                int i2 = util.iOf(t2Idx, t2Tln);
+                                value += t1_handle.value()[i1] * t2_drain.value()[i2];
+                                //1*-2 +2*3 -3*6 +2*3, 1*3 +2*6 -3*3 +2*-1,
+                                //1*0  +2*2 -3*4 +2*2  +  4*-2 -2*3 -1*6 +5*3, 1*2 +2*4 -3*2 +2*1  +  4*3 -2*6 -1*3 +5*-1,
+                                //4*0  -2*2 -1*4 +5*2, 4*2 -2*4 -1*2 +5*1
+                            }
+                            incrementing = true;
+                            ri = 0;
+                        } else {//incrementing:
+                            if (t2Idx[ri] < t2Shp[ri]) {
+                                t2Idx[ri]++;
+                                if (t2Idx[ri] == t2Shp[ri]) {
+                                    if (ri == (rank - 1)) {
+                                        running = false;
+                                    }
+                                    t1Idx[ri] = t0Idx[ri];
+                                    t2Idx[ri] = 0;
+                                    ri++;
+                                } else {
+                                    if (t0Shp[ri] > t1Shp[ri]) {
+                                        t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);
+                                    } else {
+                                        t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);
+                                    }
+                                    incrementing = false;
+                                    ri = 0;
+                                }
+                            } else {
+                                ri++;
+                            }
+                        }
+                    }
+                    //setInto _value in drn:
+                    int i0 = util.iOf(t0Idx, t0Tln);
+                    t0_origin.value()[i0] = value;
+                    i++;//increment on drain:
+                    if (i < drnSze) {
+                        util.increment(t0Idx, t0Shp);
+                    }
+                }
+            }
         }
 
         public static void inject(double[] data, boolean grd, T tensor) {
@@ -601,66 +816,10 @@ public class T {
             } else {
                 tensor._value = data;
             }
-
-        }
-
-        public static T reshaped(T tensor, int[] newForm, boolean newTsr) {
-            if (newTsr) {
-                tensor = copyOf(tensor);
-            }
-            tensor._record(tensor.shape(), tensor.translation());
-            tensor._shape = T.utility.shpCheck(T.utility.reshaped(tensor._shape, newForm), tensor);
-            tensor._translation = T.utility.retranslated(tensor._translation, tensor._shape, newForm);
-            return tensor;
-        }
-
-        //OPERATIONS:
-        //=========================
-
-        public static T convolution(T tensor1, T tensor2) {
-            tensor1.setIsVirtual(false);
-            tensor2.setIsVirtual(false);
-            T newTensor = new T(T.utility.shpOfCon(tensor1.shape(), tensor2.shape()));
-            T.utility.tensMul(newTensor, tensor1, tensor2);
-            return newTensor;
-        }
-
-        public static T convolution_inv(T drain, T source1, T source2, boolean first) {
-            source1.setIsVirtual(false);
-            source2.setIsVirtual(false);
-            drain.setIsVirtual(false);
-            T.utility.tensMul_inv(
-                    source2,
-                    (!first)?source1:drain,
-                    (!first)?drain:source1
-            );
-            return (first) ? source1 : source2;
-        }
-
-        public static T multiplication(T tensor1, T tensor2) {
-            T drn = new T(tensor1.shape());
-            int[] index = new int[drn.shape().length];
-            int size = drn.size();
-            for (int i = 0; i < size; i++) {
-                io.addInto(drn, index, io.getFrom(tensor1, index) * io.getFrom(tensor2, index));
-                T.utility.increment(index, drn.shape());
-            }
-            return drn;
-        }
-
-        public static T addition(T tensor1, T tensor2) {
-            T drn = new T(tensor1.shape());
-            int[] index = new int[drn.shape().length];
-            int size = drn.size();
-            for (int i = 0; i < size; i++) {
-                io.addInto(drn, index, io.getFrom(tensor1, index) + io.getFrom(tensor2, index));
-                T.utility.increment(index, drn.shape());
-            }
-            return drn;
         }
 
         public static T newTensor(double value, int[] shape) {
-            int sze = T.utility.szeOfShp(shape);
+            int sze = util.szeOfShp(shape);
             T tensor = new T();
             tensor._value = new double[sze];
             tensor.initialShape(shape);
@@ -687,7 +846,7 @@ public class T {
 
         public static T newTensor(int[] shape, int[] translation) {
             T tensor = new T();
-            tensor._value = new double[T.utility.szeOfShp(shape)];
+            tensor._value = new double[util.szeOfShp(shape)];
             tensor.initialShape(shape);
             tensor._translation = (translation != null) ? translation : tensor._translation;//FUNCTIONS.put()
             return tensor;
@@ -714,7 +873,7 @@ public class T {
             for (int i = 0; i < things.length; i++) {
                 if (things[i] instanceof int[]) {
 
-                }else if(things[i] instanceof double[]){
+                } else if (things[i] instanceof double[]) {
 
                 }
             }
@@ -724,397 +883,222 @@ public class T {
         public static T reshapedCopyOf(T tensor, int[] newForm) {
             T newTensor = new T();
             newTensor._value = tensor._value;
-            newTensor._shape = T.utility.reshaped(tensor._shape, newForm);
-            newTensor._translation = T.utility.reshaped(tensor._translation, newForm);
+            newTensor._shape = util.rearrange(tensor._shape, newForm);
+            newTensor._translation = util.rearrange(tensor._translation, newForm);
             newTensor._components = tensor._components;//Reshaped derivs usw
             return newTensor;
         }
-    }
 
-    /**
-     * ======================================================================================================
-     * UTILITY FUNCTIONS:
-     */
-    public static class utility {
+        /**
+         * ======================================================================================================
+         * UTILITY FUNCTIONS:
+         */
+        public static class util {
 
-        public static boolean shareGuestDevice(T[] tsrs) {
-            boolean onSameGuestDevice = true;
-            Device device = null;
-            for (int ti = 0; ti < tsrs.length; ti++) {
-                device = (tsrs[ti].isOutsourced()) ? (Device) tsrs[ti].find(Device.class) : device;
-            }
-            if (device != null) {
+            public static boolean shareGuestDevice(T[] tsrs) {
+                boolean onSameGuestDevice = true;
+                Device device = null;
                 for (int ti = 0; ti < tsrs.length; ti++) {
-                    onSameGuestDevice = (!tsrs[ti].isVirtual() && device == tsrs[ti].find(Device.class)) && onSameGuestDevice;
+                    device = (tsrs[ti].isOutsourced()) ? (Device) tsrs[ti].find(Device.class) : device;
                 }
-            } else {
-                onSameGuestDevice = false;
+                if (device != null) {
+                    for (int ti = 0; ti < tsrs.length; ti++) {
+                        onSameGuestDevice = (!tsrs[ti].isVirtual() && device == tsrs[ti].find(Device.class)) && onSameGuestDevice;
+                    }
+                } else {
+                    onSameGuestDevice = false;
+                }
+                return onSameGuestDevice;
             }
-            return onSameGuestDevice;
-        }
 
-        @Contract(pure = true)
-        public static void increment(@NotNull int[] shpIdx, @NotNull int[] shape) {
-            int i = 0;
-            while (i >= 0 && i < shape.length) {//fixed
-                i = incrementAt(i, shpIdx, shape);
+            @Contract(pure = true)
+            public static void increment(@NotNull int[] shpIdx, @NotNull int[] shape) {
+                int i = 0;
+                while (i >= 0 && i < shape.length) {//fixed
+                    i = incrementAt(i, shpIdx, shape);
+                }
             }
-        }
 
-        @Contract(pure = true)
-        public static int incrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
-            if (shpIdx[i] < (shape[i])) {//fixed
-                shpIdx[i]++;
-                if (shpIdx[i] == (shape[i])) {
-                    shpIdx[i] = 0;
+            @Contract(pure = true)
+            public static int incrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
+                if (shpIdx[i] < (shape[i])) {//fixed
+                    shpIdx[i]++;
+                    if (shpIdx[i] == (shape[i])) {
+                        shpIdx[i] = 0;
+                        i++;
+                    } else {
+                        i = -1;
+                    }
+                } else {
+                    i++;
+                }
+                return i;
+            }
+
+            @Contract(pure = true)
+            public static void decrement(@NotNull int[] shpIdx, @NotNull int[] shape) {
+                int i = 0;
+                while (i >= 0 && i < shape.length) {
+                    i = decrementAt(i, shpIdx, shape);
+                }
+            }
+
+            @Contract(pure = true)
+            public static int decrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
+                if (shpIdx[i] == 0) {
                     i++;
                 } else {
+                    shpIdx[i]--;
+                    i--;
+                    while (shpIdx[i] == 0) {
+                        shpIdx[i] = shape[i] - 1;
+                        i--;
+                    }
                     i = -1;
                 }
-            } else {
-                i++;
+                return i;
             }
-            return i;
-        }
 
-        @Contract(pure = true)
-        public static void decrement(@NotNull int[] shpIdx, @NotNull int[] shape) {
-            int i = 0;
-            while (i >= 0 && i < shape.length) {
-                i = decrementAt(i, shpIdx, shape);
-            }
-        }
-
-        @Contract(pure = true)
-        public static int decrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
-            if (shpIdx[i] == 0) {
-                i++;
-            } else {
-                shpIdx[i]--;
-                i--;
-                while (shpIdx[i] == 0) {
-                    shpIdx[i] = shape[i] - 1;
-                    i--;
-                }
-                i = -1;
-            }
-            return i;
-        }
-
-        @Contract(pure = true)
-        public static void incrementFor(int count, int[] shpIdx, int[] shape) {
-            for (int Di = 0; Di < count; Di++) {
-                increment(shpIdx, shape);
-            }
-        }
-
-        @Contract(pure = true)
-        public static void decrementFor(int count, int[] shpIdx, int[] shape) {
-            for (int Di = 0; Di < count; Di++) {
-                decrement(shpIdx, shape);
-            }
-        }
-
-        @Contract(pure = true)
-        public static int[] idxTln(int[] shape) {
-            return idxTln(shape, new int[shape.length]);
-        }
-
-        @Contract(pure = true)
-        public static int[] idxTln(int[] shp, int[] tln) {
-            int prod = 1;
-            for (int i = 0; i < tln.length; i++) {
-                tln[i] = prod;
-                prod *= shp[i];
-            }
-            return tln;
-        }
-
-        @Contract(pure = true)
-        public static int[] idxOf(int i, int[] tln) {
-            int[] idx = new int[tln.length];
-            for (int ti = tln.length - 1; ti >= 0; ti--) {
-                int r = i % tln[ti];
-                idx[ti] = (i - r) / tln[ti];
-                i = r;
-            }
-            return idx;
-        }
-
-        @Contract(pure = true)
-        public static int[] reshaped(int[] shp, @NotNull int[] newForm) {
-            int[] newShp = new int[newForm.length];
-            for (int i = 0; i < newForm.length; i++) {
-                if (newForm[i] < 0) {
-                    newShp[i] = Math.abs(newForm[i]);
-                } else if (newForm[i] >= 0) {
-                    newShp[i] = shp[newForm[i]];
+            @Contract(pure = true)
+            public static void incrementFor(int count, int[] shpIdx, int[] shape) {
+                for (int Di = 0; Di < count; Di++) {
+                    increment(shpIdx, shape);
                 }
             }
-            return newShp;
-        }
 
-        @Contract(pure = true)
-        public static int[] shpCheck(int[] newShp, T t) {
-            if (szeOfShp(newShp) != t.size()) {
-                throw new IllegalArgumentException("New _shape does not match tensor size!" +
-                        " (" + str(newShp) + ((szeOfShp(newShp) < t.size()) ? "<" : ">") + str(t.shape()) + ")");
-            }
-            return newShp;
-        }
-
-        @Contract(pure = true)
-        public static String str(int[] shp) {
-            String str = "";
-            int i = 0;
-            for (int s : shp) {
-                str += s + ((i != shp.length - 1) ? ", " : "");
-                i++;
-            }
-            return "[" + str + "]";
-        }
-
-        @Contract(pure = true)
-        public static int[] retranslated(int[] tln, int[] shp, @NotNull int[] newForm) {
-            int[] shpTln = idxTln(shp);
-            int[] newTln = new int[newForm.length];
-            for (int i = 0; i < newForm.length; i++) {
-                if (newForm[i] < 0) {
-                    newTln[i] = shpTln[i];
-                } else if (newForm[i] >= 0) {
-                    newTln[i] = tln[newForm[i]];
+            @Contract(pure = true)
+            public static void decrementFor(int count, int[] shpIdx, int[] shape) {
+                for (int Di = 0; Di < count; Di++) {
+                    decrement(shpIdx, shape);
                 }
             }
-            return newTln;
-        }
 
-        @Contract(pure = true)
-        private static String strInt(int[] array) {
-            String S = "";
-            for (int i = 0; i < array.length; i++) {
-                S += "[" + array[i] + "]";
+            @Contract(pure = true)
+            public static int[] idxTln(int[] shape) {
+                return idxTln(shape, new int[shape.length]);
             }
-            return S;
-        }
 
-        @Contract(pure = true)
-        public static int[] shpOfCon(int[] shp1, int[] shp2) {
-            int[] shape = new int[(shp1.length + shp2.length) / 2];
-            for (int i = 0; i < shp1.length && i < shp2.length; i++) {
-                shape[i] = Math.abs(shp1[i] - shp2[i]) + 1;
+            @Contract(pure = true)
+            public static int[] idxTln(int[] shp, int[] tln) {
+                int prod = 1;
+                for (int i = 0; i < tln.length; i++) {
+                    tln[i] = prod;
+                    prod *= shp[i];
+                }
+                return tln;
             }
-            return shape;
-        }
 
-        @Contract(pure = true)
-        public static void tensMul(T t0_drain, T t1_source, T t2_source)
-        {
-            int[] t0Shp = t0_drain.shape();
-            int[] t1Shp = t1_source.shape();
-            int[] t2Shp = t2_source.shape();
-            int[] t0Tln = t0_drain.translation();
-            int[] t1Tln = t1_source.translation();
-            int[] t2Tln = t2_source.translation();
-            int rank = t0Shp.length;
-            int[] t0Idx = new int[rank];
-            int[] t1Idx = new int[rank];
-            int[] t2Idx = new int[rank];
-
-            int drnSze = t0_drain.size();
-            int i = 0;
-            while (i < drnSze) {//increment on drain accordingly:
-                int ri=0;
-                while (ri < rank) {
-                    if (t1Shp[ri] == t2Shp[ri]) {//setting 0
-                        t1Idx[ri] = t0Idx[ri];//mtch[mi];
-                        t2Idx[ri] = t0Idx[ri];//mtch[mi];
-                    } else if (t1Shp[ri] > t2Shp[ri]) {//setting hdr1 idx to id idx
-                        t1Idx[ri] = t0Idx[ri];//mtch[mi];
-                        t2Idx[ri] = 0;
-                    } else if (t1Shp[ri] < t2Shp[ri]) {//setting hdr2 idx to id idx
-                        t1Idx[ri] = 0;
-                        t2Idx[ri] = t0Idx[ri];//mtch[mi];
-                    }
-                    ri++;
+            @Contract(pure = true)
+            public static int[] idxOf(int i, int[] tln) {
+                int[] idx = new int[tln.length];
+                for (int ti = tln.length - 1; ti >= 0; ti--) {
+                    int r = i % tln[ti];
+                    idx[ti] = (i - r) / tln[ti];
+                    i = r;
                 }
-                //----------
-                // multiplication:
-                double value = 0;
-                boolean running = true;
-                boolean incrementing = false;
-                while (running) {
-                    ri = (ri==rank)?0:ri;
-                    if (incrementing == false) {
-                        int i1 = iOf(t1Idx, t1Tln);
-                        int i2 = iOf(t2Idx, t2Tln);
-                        value += t1_source.value()[i1] * t2_source.value()[i2];
-                        incrementing = true;
-                        ri = 0;
-                    } else {//incrementing:
-                        if (t1Idx[ri] < t1Shp[ri] && t2Idx[ri] < t2Shp[ri]) {
-                            t1Idx[ri]++;
-                            t2Idx[ri]++;
-                            if (t1Idx[ri] == t1Shp[ri] || t2Idx[ri] == t2Shp[ri]) {
-                                if (ri == (rank - 1)) {
-                                    running = false;
-                                }
-                                if (t1Shp[ri] == t2Shp[ri]) {
-                                    t1Idx[ri] = t0Idx[ri];
-                                    t2Idx[ri] = t0Idx[ri];
-                                } else if (t1Shp[ri] > t2Shp[ri]) {
-                                    t1Idx[ri] = t0Idx[ri];
-                                    t2Idx[ri] = 0;
-                                } else if (t1Shp[ri] < t2Shp[ri]) {
-                                    t1Idx[ri] = 0;
-                                    t2Idx[ri] = t0Idx[ri];
-                                }
-                                ri++;
-                            } else {
-                                incrementing = false;
-                                ri=0;
-                            }
-                        } else {
-                            ri++;
-                        }
-                    }
-                }//setInto _value in drn:
-                int i0 = iOf(t0Idx, t0Tln);
-                t0_drain.value()[i0] = value;
-                System.out.println(i0 + " - " + i);
-                i++;//increment on drain:
-                if (i < drnSze) {
-                    increment(t0Idx, t0Shp);
-                }
+                return idx;
             }
-        }
 
-        //=========================
-
-        @Contract(pure = true)
-        public static void tensMul_inv(T t0_origin, T t1_handle, T t2_drain)
-        {
-            int[] t0Shp = t0_origin.shape();
-            int[] t1Shp = t1_handle.shape();
-            int[] t2Shp = t2_drain.shape();
-            int[] t0Tln = t0_origin.translation();
-            int[] t1Tln = t1_handle.translation();
-            int[] t2Tln = t2_drain.translation();
-            int rank = t0Shp.length;
-            int[] t0Idx = new int[rank];
-            int[] t1Idx = new int[rank];
-            int[] t2Idx = new int[rank];
-
-            int drnSze = t0_origin.size();
-            int i = 0;
-            while (i < drnSze) {//increment on drain accordingly:
-                int ri=0;
-                while (ri < rank) {
-                    if (t2Idx[ri] == t2Shp[ri]) {//setting 0
-                        t1Idx[ri] = t0Idx[ri];
-                        t2Idx[ri] = 0;//mtch[mi];
-                    } else {
-                       if(t0Shp[ri]>t1Shp[ri]){
-                           t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);
-                       } else {
-                           t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);
-                       }
-                    }
-                    ri++;
-                }
-                //----------
-                // multiplication:
-                double value = 0;
-                boolean running = true;
-                boolean incrementing = false;
-                while (running) {
-                    ri = (ri==rank)?0:ri;
-                    if (incrementing == false) {
-
-                        boolean isMatch = true;
-                        for(int rii=0; rii<rank; rii++){
-                            if(!(t1Idx[rii] < t1Shp[rii] && t1Idx[rii]>=0)){
-                                isMatch = false;
-                            }
-                        }
-                        if(isMatch){
-                            int i1 = iOf(t1Idx, t1Tln);
-                            int i2 = iOf(t2Idx, t2Tln);
-                            value += t1_handle.value()[i1] * t2_drain.value()[i2];
-                            //1*-2 +2*3 -3*6 +2*3, 1*3 +2*6 -3*3 +2*-1,
-                            //1*0  +2*2 -3*4 +2*2  +  4*-2 -2*3 -1*6 +5*3, 1*2 +2*4 -3*2 +2*1  +  4*3 -2*6 -1*3 +5*-1,
-                            //4*0  -2*2 -1*4 +5*2, 4*2 -2*4 -1*2 +5*1
-                        }
-
-                        incrementing = true;
-                        ri = 0;
-                    } else {//incrementing:
-                        if (t2Idx[ri] < t2Shp[ri]) {
-                            t2Idx[ri]++;
-                            if (t2Idx[ri] == t2Shp[ri]) {
-                                if (ri == (rank - 1)) {
-                                    running = false;
-                                }
-                                t1Idx[ri] = t0Idx[ri];
-                                t2Idx[ri] = 0;
-                                ri++;
-                            } else {
-                                if(t0Shp[ri]>t1Shp[ri]){
-                                    t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);
-                                } else {
-                                    t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);
-                                }
-                                incrementing = false;
-                                ri=0;
-                            }
-                        } else {
-                            ri++;
-                        }
+            @Contract(pure = true)
+            public static int[] rearrange(int[] array, @NotNull int[] ptr) {
+                int[] newShp = new int[ptr.length];
+                for (int i = 0; i < ptr.length; i++) {
+                    if (ptr[i] < 0) {
+                        newShp[i] = Math.abs(ptr[i]);
+                    } else if (ptr[i] >= 0) {
+                        newShp[i] = array[ptr[i]];
                     }
                 }
-                //setInto _value in drn:
-                int i0 = iOf(t0Idx, t0Tln);
-                t0_origin.value()[i0] = value;
-                i++;//increment on drain:
-                if (i < drnSze) {
-                    increment(t0Idx, t0Shp);
+                return newShp;
+            }
+
+            @Contract(pure = true)
+            public static int[] shpCheck(int[] newShp, T t) {
+                if (szeOfShp(newShp) != t.size()) {
+                    throw new IllegalArgumentException("New _shape does not match tensor size!" +
+                            " (" + str(newShp) + ((szeOfShp(newShp) < t.size()) ? "<" : ">") + str(t.shape()) + ")");
                 }
+                return newShp;
             }
-        }
-        //=========================
 
-        @Contract(pure = true)
-        public static int iOf(int[] idx, int[] tln) {
-            int i = 0;
-            for (int ii = 0; ii < tln.length; ii++) {
-                i += idx[ii] * tln[ii];
+            @Contract(pure = true)
+            public static String str(int[] shp) {
+                String str = "";
+                int i = 0;
+                for (int s : shp) {
+                    str += s + ((i != shp.length - 1) ? ", " : "");
+                    i++;
+                }
+                return "[" + str + "]";
             }
-            return i;
-        }
 
-        @Contract(pure = true)
-        public static int szeOfShp(int[] shape) {
-            int size = 1;
-            for (int Di = 0; Di < shape.length; Di++) {
-                size *= shape[Di];
+            @Contract(pure = true)
+            public static int[] rearrange(int[] tln, int[] shp, @NotNull int[] newForm) {
+                int[] shpTln = idxTln(shp);
+                int[] newTln = new int[newForm.length];
+                for (int i = 0; i < newForm.length; i++) {
+                    if (newForm[i] < 0) {
+                        newTln[i] = shpTln[i];
+                    } else if (newForm[i] >= 0) {
+                        newTln[i] = tln[newForm[i]];
+                    }
+                }
+                return newTln;
             }
-            return size;
+
+            @Contract(pure = true)
+            private static String strInt(int[] array) {
+                String S = "";
+                for (int i = 0; i < array.length; i++) {
+                    S += "[" + array[i] + "]";
+                }
+                return S;
+            }
+
+            @Contract(pure = true)
+            public static int[] shpOfCon(int[] shp1, int[] shp2) {
+                int[] shape = new int[(shp1.length + shp2.length) / 2];
+                for (int i = 0; i < shp1.length && i < shp2.length; i++) {
+                    shape[i] = Math.abs(shp1[i] - shp2[i]) + 1;
+                }
+                return shape;
+            }
+
+            @Contract(pure = true)
+            public static int iOf(int[] idx, int[] tln) {
+                int i = 0;
+                for (int ii = 0; ii < tln.length; ii++) {
+                    i += idx[ii] * tln[ii];
+                }
+                return i;
+            }
+
+            @Contract(pure = true)
+            public static int szeOfShp(int[] shape) {
+                int size = 1;
+                for (int Di = 0; Di < shape.length; Di++) {
+                    size *= shape[Di];
+                }
+                return size;
+            }
+
+            /**-----------------------------------------
+             *
+             * 	[2][1][4][6][8][6]
+             * 	[3][-1][2][-4][-5][6]//[0][0][0]=>3 times othr
+             * 	is really:
+             * 	[4  ][-2][1  ][-6][-8][6  ]
+             *	   	   |	    |   |
+             * 	[  6][ 7][  2][ 1][ 4][  8] <= then multiplying with this
+             * 	[4|6][ 6][1|2][ 6][ 5][6|8]
+             *
+             *  a > b -> c = (a-b)+1
+             *  a < b -> c = (b-a)+1
+             *
+             * */
+
+
         }
-
-        /**-----------------------------------------
-         *
-         * 	[2][1][4][6][8][6]
-         * 	[3][-1][2][-4][-5][6]//[0][0][0]=>3 times othr
-         * 	is really:
-         * 	[4  ][-2][1  ][-6][-8][6  ]
-         *	   	   |	    |   |
-         * 	[  6][ 7][  2][ 1][ 4][  8] <= then multiplying with this
-         * 	[4|6][ 6][1|2][ 6][ 5][6|8]
-         *
-         *  a > b -> c = (a-b)+1
-         *  a < b -> c = (b-a)+1
-         *
-         * */
-
 
     }
 

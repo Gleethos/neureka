@@ -155,18 +155,15 @@ public abstract class Function implements IFunction {
      * @return
      */
     protected T tensorActivationOf(T[] input, int j, int d) {
-        T output = T.factory.newTensor(input[0].shape(), input[0].translation());
         /**  The code below deals with deep functions (non flat):  * */
         if (d < 0 && !_isFlat) {//only flat functions can be executed
             if (_id <= 9) {
-                output.inject(new FunctionGraphBuilder().newBuild(IFunction.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).activate(input));
-                return output;
+                return (new FunctionGraphBuilder().newBuild(IFunction.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).activate(input));
             } else {
                 if (IFunction.REGISTER[_id].length() != 1) {
                     /**  SUMMATION, PI,  * */
                     T[] tsrs = activateSource(input);
-                    output.inject(FunctionGraphBuilder.newBuild(IFunction.REGISTER[_id] + "(I[j])", true).activate(tsrs));
-                    return output;
+                    return (FunctionGraphBuilder.newBuild(IFunction.REGISTER[_id] + "(I[j])", true).activate(tsrs));
                 } else if (_id <= 20) {
                     /**  '+', '-', 'x', '*', '%', '«', '»', ',', ...  * */
                     String operation = (IFunction.REGISTER[_id].length() > 1) ? IFunction.REGISTER[_id] : "";
@@ -175,25 +172,25 @@ public abstract class Function implements IFunction {
                         operation += "I[" + i + "]" + ((i + 1 < tsrs.length) ? IFunction.REGISTER[_id] : "");
                     }
                     if (j < 0) {
-                        output.inject(FunctionGraphBuilder.newBuild(operation, _doAD).activate(tsrs));
+                        return (FunctionGraphBuilder.newBuild(operation, _doAD).activate(tsrs));
                     } else {
-                        output.inject(FunctionGraphBuilder.newBuild(operation, _doAD).activate(tsrs, j));
+                        return (FunctionGraphBuilder.newBuild(operation, _doAD).activate(tsrs, j));
                     }
-                    return output;
                 } else {
                     /**  Tensor shape translation: * */
                     T[] tsrs = activateSource(input, j, new int[]{1});
                     if (j < 0) {
-                        output.inject(FunctionGraphBuilder.newBuild(_id, tsrs.length, _doAD).activate(tsrs));
+                        return (FunctionGraphBuilder.newBuild(_id, tsrs.length, _doAD).activate(tsrs));
                     } else {
-                        output.inject(FunctionGraphBuilder.newBuild(_id, tsrs.length, _doAD).activate(tsrs, j));
+                        return (FunctionGraphBuilder.newBuild(_id, tsrs.length, _doAD).activate(tsrs, j));
                     }
-                    return output;
                 }
             }
         }
         /**  The following code is reached in flat functions only:  * */
+        T output = T.factory.newTensor(input[0].shape(), input[0].translation());
         output = execute(output, input, j, d);
+        /**  Autograd-Graph will be generated below for the new GraphNode: **/
         if (d < 0 && _doAD) {
             GraphBuilder.connect(output, input, this);
         }
@@ -202,9 +199,8 @@ public abstract class Function implements IFunction {
 
     private T execute(T output, T[] input, int j, int d) {
         Device device = (Device) input[0].find(Device.class);
-        boolean onSameDevice = T.utility.shareGuestDevice(input);
-        if (onSameDevice &&
-                IFunction.REGISTER[_id] != "," &&
+        boolean onSameDevice = T.factory.util.shareGuestDevice(input);
+        if (onSameDevice && IFunction.REGISTER[_id] != "," &&
                 !((IFunction.REGISTER[_id] == "x" || IFunction.REGISTER[_id] == "«" || IFunction.REGISTER[_id] == "»") && d > -1)
         ) {
             if (device != null) {
@@ -219,10 +215,8 @@ public abstract class Function implements IFunction {
                 }
                 if (tsrs.length == 2 && (tsrs[0].isVirtual() || tsrs[1].isVirtual())) {
                     if (tsrs[0].isVirtual()) {
-                        device.getKernel();
                         device.calculate(tsrs[1], tsrs[0].value()[0], _id);
                     } else {
-                        device.getKernel();
                         device.calculate(tsrs[0], tsrs[1].value()[0], _id);
                     }
                 } else {
@@ -232,20 +226,20 @@ public abstract class Function implements IFunction {
         } else {
             if (IFunction.REGISTER[_id] == "x") {
                 if (d < 0) {
-                    output = T.factory.convolution(input[0], input[1]);
+                    output.inject(T.factory.exec.convolution(input[0], input[1]));
                 } else {
                     if (d == 0) {
-                        output = input[1];
+                        output.inject(input[1]);
                     } else {
-                        output = input[0];
+                        output.inject(input[0]);
                     }
                 }
             } else if (IFunction.REGISTER[_id] == "" + ((char) 171) || IFunction.REGISTER[_id] == "" + ((char) 187)) {
                 if (d < 0) {//  ""+((char)171), ""+((char)187) //<< / >>
                     if (IFunction.REGISTER[_id] == "" + ((char) 187)) {
-                        output = T.factory.convolution_inv(input[0], input[1], input[2], false);
+                        output = T.factory.exec.convolution_inv(input[0], input[1], input[2], false);
                     } else {
-                        output = T.factory.convolution_inv(input[2], input[1], input[0], false);
+                        output = T.factory.exec.convolution_inv(input[2], input[1], input[0], false);
                     }
                 } else {//Todo: What then? :
                     if (d == 0) {
@@ -261,7 +255,7 @@ public abstract class Function implements IFunction {
                 }
                 if (d < 0) {
                     T t = input[input.length - 1];
-                    t = T.factory.reshaped(t, newForm, true);//t.reshape(newForm);
+                    t = T.factory.exec.reshaped(t, newForm, true);//t.reshape(newForm);
                     output.inject(t);
                 } else {//reverse reshape:
                     /**
@@ -538,10 +532,8 @@ public abstract class Function implements IFunction {
                 double prod = 1;
                 boolean nothingDone = true;
                 for (int Ii = 0; Ii < input.length; Ii++) {
-                    //if (sources.get(0).dependsOn(Ii)) {
                     prod *= Variable.get(0).activate(input, Ii);
                     nothingDone = false;
-                    //}
                 }
                 if (nothingDone) {
                     return Variable.get(0).activate(input, j);
@@ -715,11 +707,11 @@ public abstract class Function implements IFunction {
                 for (int ji = 1; ji < Variable.size(); ji++) {
                     v = Variable.get(ji).activate(input, j);
                     vd = Variable.get(ji).derive(input, d, j);
-                    System.out.println("ud" + (u * vd + v * ud) + "=u" + u + "*vd" + vd + "+v" + v + "*ud" + ud);
+                    //System.out.println("ud" + (u * vd + v * ud) + "=u" + u + "*vd" + vd + "+v" + v + "*ud" + ud);
                     ud = u * vd + v * ud;
                     u *= v;
                 }
-                System.out.println("* d: " + ud + "; j: " + j);
+                //System.out.println("* d: " + ud + "; j: " + j);
                 return ud;
             }
         }
@@ -787,13 +779,11 @@ public abstract class Function implements IFunction {
             } else {
                 double derivative = 0;
                 for (int i = 0; i < Variable.size(); ++i) {
-                    //if (sources.get(i).dependsOn(index)) {
                     if (i == 0) {
                         derivative += Variable.get(i).derive(input, d, j);
                     } else {
                         derivative -= Variable.get(i).derive(input, d, j);
                     }
-                    //}
                 }
                 return derivative;
             }
@@ -810,13 +800,11 @@ public abstract class Function implements IFunction {
             } else {
                 double derivative = 0;
                 for (int i = 0; i < Variable.size(); ++i) {
-                    //if (sources.get(i).dependsOn(index)) {
                     if (i == 0) {
                         derivative += Variable.get(i).derive(input, d);
                     } else {
                         derivative -= Variable.get(i).derive(input, d);
                     }
-                    //}
                 }
                 return derivative;
             }
@@ -851,9 +839,7 @@ public abstract class Function implements IFunction {
             } else {
                 double derivative = 0;
                 for (int i = 0; i < Variable.size(); ++i) {
-                    //if (sources.get(i).dependsOn(index)) {
                     derivative += Variable.get(i).derive(input, d);
-                    //}
                 }
                 return derivative;
             }

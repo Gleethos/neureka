@@ -8,10 +8,12 @@ import neureka.core.function.factory.construction.FunctionGraphBuilder;
 import neureka.core.function.environment.TensorCache;
 import neureka.core.function.environment.FunctionCache;
 
-public interface IFunction {
+public interface IFunction
+{
     FunctionCache F_CACHE = new FunctionCache();
     TensorCache T_CACHE = new TensorCache();
-    String[] REGISTER = new String[]{
+    String[] REGISTER = new String[]
+    {
             "relu", "sig", "tanh", "quad", "lig", "lin", "gaus", "abs", "sin", "cos",
             "sum", "prod",
             "^", "/", "*", "%", "-", "+", "x", ""+((char)171), ""+((char)187), ","
@@ -21,8 +23,7 @@ public interface IFunction {
     //------------------------------------------------------------------------------------------------------------------
 
     static T execute(T drain, T[] tensors, String operation, boolean doAD) {
-        IFunction function = FunctionGraphBuilder.newBuild(operation, doAD);
-        return execute(drain, tensors, function);
+        return execute(drain, tensors, FunctionGraphBuilder.newBuild(operation, doAD));
     }
 
     static T execute(T drain, T[] tensors, IFunction function) {

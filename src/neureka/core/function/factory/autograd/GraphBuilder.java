@@ -42,9 +42,9 @@ public class GraphBuilder
                                      * */
                                     if(node.has(t)){
                                         T dg = node.get(t);
-                                        node.put(t, T.factory.addition(dg,T.factory.multiplication(d, g)));
+                                        node.put(t, T.factory.exec.addition(dg,T.factory.exec.multiplication(d, g)));
                                     }else{
-                                        node.put(t, T.factory.multiplication(d, g));
+                                        node.put(t, T.factory.exec.multiplication(d, g));
                                     }
                                     //TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
                                 });
@@ -77,7 +77,7 @@ public class GraphBuilder
             drain.setGradient(
                     (drain.gradient()==null)
                             ?error
-                            :T.factory.addition(error, T.factory.newTensor(drain.value(), drain.shape()))
+                            :T.factory.exec.addition(error, T.factory.newTensor(drain.value(), drain.shape()))
             );
         }
         GraphNode drnGradients = (GraphNode) drain.find(GraphNode.class);

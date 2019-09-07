@@ -1,3 +1,4 @@
+import neureka.core.T;
 import neureka.ngui.touch.NSurface;
 import neureka.core.utility.DataHelper;
 import neureka.ngui.touch.canvas.TestWindow;
@@ -155,10 +156,20 @@ public class NSMain {
         //System.out.println("Actual used memory: "+memory+" bytes; " +bytesToMegabytes(memory)+" megabytes;");
         //memory-=8;
         //System.out.println("Used memory minus 8: "+memory+" bytes; "  + bytesToMegabytes(memory)+" megabytes;");
-		//
+
+
         NeurekaTest tester2 = new NeurekaTest();
         tester2.Test();
 
+		T t = new T(new int[]{3, 5}, new double[]{
+				2, 3, 5,
+				-4, 6, 2,
+				-5, -2, -1,
+				2, 4, -1,
+				1, 2, 7
+		});
+
+		System.out.println(new T(t, "lig(I[0])"));
 
 		//NSubstrate.execute("NSubstrate.printRealms('test')");
 		/*
