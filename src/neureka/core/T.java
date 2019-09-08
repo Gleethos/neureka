@@ -268,12 +268,16 @@ public class T {
         }
         strShape = "[" + strShape + "]";
         String strValue = "";
-        double[] v = _value;
+        double[] v = (this.isOutsourced())?this.value():_value;
         int size = (this.isVirtual() ? this.size() : v.length);
+        int trim = (size-50);
+        size = (trim>0)?50:size;
         for (int i = 0; i < size; i++) {
             strValue += v[(this.isVirtual()) ? 0 : i];
             if (i < size - 1) {
                 strValue += ", ";
+            } else if(trim>0){
+                strValue += ", ... + "+trim+" more";
             }
         }
         strValue = strShape + ":(" + strValue + ")";
@@ -442,6 +446,10 @@ public class T {
         _translation = tensor._translation;
         _components = tensor._components;
         _flags = tensor._flags;
+        if(tensor.isOutsourced()){
+            Device device = (Device) tensor.find(Device.class);
+            device.swap(tensor, this);
+        }
         return this;
     }
 
@@ -713,7 +721,7 @@ public class T {
                     }//setInto _value in drn:
                     int i0 = util.iOf(t0Idx, t0Tln);
                     t0_drain.value()[i0] = value;
-                    System.out.println(i0 + " - " + i);
+                    //System.out.println(i0 + " - " + i);
                     i++;//increment on drain:
                     if (i < drnSze) {
                         util.increment(t0Idx, t0Shp);

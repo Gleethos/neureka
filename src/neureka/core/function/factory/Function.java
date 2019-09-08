@@ -133,6 +133,7 @@ public abstract class Function implements IFunction {
         }
         if (input.isOutsourced()) {
             Device device = (Device) input.find(Device.class);
+            device.add(output);
             device.calculate(new T[]{output, input}, _id, (derive) ? 0 : -1);
         } else {
             Calculation.foreach(input, output, (i, inputValue, outputValue) -> {
@@ -188,8 +189,7 @@ public abstract class Function implements IFunction {
             }
         }
         /**  The following code is reached in flat functions only:  * */
-        T output = T.factory.newTensor(input[0].shape(), input[0].translation());
-        output = execute(output, input, j, d);
+        T output = execute(input, j, d);
         /**  Autograd-Graph will be generated below for the new GraphNode: **/
         if (d < 0 && _doAD) {
             GraphBuilder.connect(output, input, this);
@@ -197,12 +197,15 @@ public abstract class Function implements IFunction {
         return output;
     }
 
-    private T execute(T output, T[] input, int j, int d) {
+    private T execute(T[] input, int j, int d) {
         Device device = (Device) input[0].find(Device.class);
         boolean onSameDevice = T.factory.util.shareGuestDevice(input);
         if (onSameDevice && IFunction.REGISTER[_id] != "," &&
                 !((IFunction.REGISTER[_id] == "x" || IFunction.REGISTER[_id] == "«" || IFunction.REGISTER[_id] == "»") && d > -1)
         ) {
+            int[] shp = (IFunction.REGISTER[_id] == "x")?T.factory.util.shpOfCon(input[0].shape(), input[1].shape()):input[0].shape();
+            T output = new T(shp, 0.0);
+
             if (device != null) {
                 device.add(output);
             }
@@ -223,29 +226,30 @@ public abstract class Function implements IFunction {
                     device.calculate(tsrs, _id, d);
                 }
             }
+            return output;
         } else {
             if (IFunction.REGISTER[_id] == "x") {
                 if (d < 0) {
-                    output.inject(T.factory.exec.convolution(input[0], input[1]));
+                    return T.factory.exec.convolution(input[0], input[1]);
                 } else {
                     if (d == 0) {
-                        output.inject(input[1]);
+                        return (input[1]);
                     } else {
-                        output.inject(input[0]);
+                        return (input[0]);
                     }
                 }
             } else if (IFunction.REGISTER[_id] == "" + ((char) 171) || IFunction.REGISTER[_id] == "" + ((char) 187)) {
                 if (d < 0) {//  ""+((char)171), ""+((char)187) //<< / >>
                     if (IFunction.REGISTER[_id] == "" + ((char) 187)) {
-                        output = T.factory.exec.convolution_inv(input[0], input[1], input[2], false);
+                        return T.factory.exec.convolution_inv(input[0], input[1], input[2], false);
                     } else {
-                        output = T.factory.exec.convolution_inv(input[2], input[1], input[0], false);
+                        return T.factory.exec.convolution_inv(input[2], input[1], input[0], false);
                     }
                 } else {//Todo: What then? :
                     if (d == 0) {
-                        output = input[1];
+                        return input[1];
                     } else {
-                        output = input[0];
+                        return input[0];
                     }
                 }
             } else if (IFunction.REGISTER[_id] == ",") {
@@ -255,8 +259,8 @@ public abstract class Function implements IFunction {
                 }
                 if (d < 0) {
                     T t = input[input.length - 1];
-                    t = T.factory.exec.reshaped(t, newForm, true);//t.reshape(newForm);
-                    output.inject(t);
+                    return T.factory.exec.reshaped(t, newForm, true);//t.reshape(newForm);
+
                 } else {//reverse reshape:
                     /**
                      *      [3, 2, 4, 0, 1]
@@ -270,6 +274,7 @@ public abstract class Function implements IFunction {
             } else {
                 T[] tsrs = input;
                 double[] inp = new double[tsrs.length];
+                T output = T.factory.newTensor(input[0].shape(), input[0].translation());
                 T finalOutput = output;
                 output.foreach((i) -> {
                     for (int ii = 0; ii < tsrs.length; ii++) {
@@ -277,9 +282,11 @@ public abstract class Function implements IFunction {
                     }
                     finalOutput.value()[i] = scalarActivationOf(inp, j, d);
                 });
+                return  output;
             }
         }
-        return output;
+        //Todo: warning/exception.....
+        return T.factory.newTensor(input[0].shape(), input[0].translation());
     }
 
     private T[] activateSource(T[] input) {
@@ -439,7 +446,7 @@ public abstract class Function implements IFunction {
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         public static double getLigmoidOf(double input, boolean derive) {
             if (!derive) {
-                return ((input) + (Math.log(Math.pow(Math.E, -(input)) + 1) / Math.log(Math.E)));
+                return (Math.log(1+Math.pow(Math.E, input)));
             } else {
                 return getSigmoidOf(input, false);
             }

@@ -64,7 +64,7 @@ public class TensorKernel extends com.aparapi.Kernel
     private int[] __shp;
     private int[] __tln;
     //-----------------------------
-    public @PrivateMemorySpace(8*3) int[] _idx = new int[8*3];
+    public @PrivateMemorySpace(8*2) int[] _idx = new int[8*2];
     //-----------------------------
     public int[] _mde = {0};
     /**
@@ -399,7 +399,7 @@ public class TensorKernel extends com.aparapi.Kernel
         _mde = new int[]{(grd)?-2:-1, t_id};// 1. define if stored as grd or not; 2. specify tsr id;
         __val = value;
         this.put(_mde).put(__val);
-        int g_sze = tsr_sze(t_id)+shp_sze(t_id)+tln_sze(t_id);
+        int g_sze = tsr_sze(t_id);//+shp_sze(t_id)+tln_sze(t_id);
         //System.out.println(g_sze);
         return g_sze;
     }
@@ -696,15 +696,7 @@ public class TensorKernel extends com.aparapi.Kernel
     private void run_lig(int gid, int drn_id, int src_id, int d){
         if(d<0){
             _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = (
-                _values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]
-                + (
-                    Math.log(
-                        Math.pow(
-                            Math.E,
-                            -_values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]
-                        ) + 1
-                    ) / Math.log(Math.E)
-                )
+                    Math.log(1+Math.pow(Math.E, _values[tsr_ptr(src_id)+__i_of(gid, src_id, 1)]))
             );
         }else{
             _values[tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =

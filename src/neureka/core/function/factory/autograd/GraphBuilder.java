@@ -18,9 +18,7 @@ public class GraphBuilder
         GraphNode node = new GraphNode(drain,function, source, gid);
         drain.add(node);
         if(node.usesAD() && function.isFlat()){
-            /**
-             *  Preparing for back propagation:
-             * */
+            /**  Preparing for back propagation:  * */
             if(node.usesForwardAD()){
                 int i = 0;
                 for(T src : source){

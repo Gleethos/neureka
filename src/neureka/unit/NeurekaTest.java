@@ -380,6 +380,79 @@ public class NeurekaTest {
 		);
 		//===========================================
 
+		tensor1 = new T(new int[]{3, 5}, new double[]{
+				2, 3, 5,
+				-4, 6, 2,
+				-5, -2, -1,
+				2, 4, -1,
+				1, 2, 7
+		});
+		Device gpu = new Device("nvidia");
+		gpu.add(tensor1);
+		//System.out.println(new T(t, "lig(I[0])"));
+		tester.testTensorAutoGrad(
+				new T[]{tensor1},
+				"lig(I[0])",
+				new String[]{
+						"[3x5]:(2.1269280110429722, 3.048587351573742, 5.006715348489118, 0.01814992791780978, 6.00247568513773, 2.1269280110429722, 0.006715348489117967, 0.1269280110429726, 0.31326168751822286, 2.1269280110429722, 4.0181499279178094, 0.31326168751822286, 1.3132616875182228, 2.1269280110429722, 7.000911466453774)"
+				});
+		//===================
+		tensor1 = new T(new int[]{2},3);
+		tensor2 = new T(new int[]{2},4);
+		T result = new T(new T[]{tensor1, tensor2}, "i0*i1");
+		//System.out.println(result);
+		tester.testTensorAutoGrad(
+				new T[]{tensor1, tensor2},
+				"i0*i1",
+				new String[]{
+						"[2]:(12.0, 12.0)"
+				});
+		//===========================================
+		//Device gpu = new Device("nvidia");
+		tensor1 = new T(
+				new int[]{2, 3, 1},
+				new double[]{
+					 3,  2,
+					-1, -2,
+					 2,  4
+				}
+		);
+		tensor2 = new T(
+				new int[]{1, 3, 2},
+				new double[]{
+						4,  -1,  3,
+						2,   3, -1
+				});
+		gpu.add(tensor1);
+		gpu.add(tensor2);
+		//result = new T(new T[]{tensor1, tensor2}, "I0xi1");
+		//System.out.println(result);
+		//System.out.println(result.isOutsourced());
+		tester.testTensorAutoGrad(
+				new T[]{tensor1, tensor2},
+				"I0xi1",
+				new String[]{
+						"[2x1x2]:(19.0, 22.0, 1.0, -6.0)"
+				});
+		//=======================
+		tensor1 = new T(
+				new int[]{200, 300, 1},
+				2
+		);
+		tensor2 = new T(
+				new int[]{1, 300, 200},
+				3);
+		gpu.add(tensor1);
+		gpu.add(tensor2);
+		//result = new T(new T[]{tensor1, tensor2}, "I0xi1");
+		//System.out.println(result);
+		//System.out.println(result.isOutsourced());
+		tester.testTensorAutoGrad(
+				new T[]{tensor1, tensor2},
+				"I0xi1",
+				new String[]{
+						"[200x1x200]:(1800.0, 1800.0, 1800.0, 1800.0, 1800.0, 1800.0,"//...
+				});
 	}
 
 	public void testTensorDevice(){
@@ -635,11 +708,11 @@ public class NeurekaTest {
 		T expected = T.factory.newTensor(new double[]{0.9701425001453319, -0.8944271909999159}, new int[]{2});
 		tester.testActivation("tanh(sum(Ij))", tsrs, expected, "");
 
-		expected = T.factory.newTensor(new double[]{0.3132616875182228, 0.6931471805599453}, new int[]{2});
+		expected = T.factory.newTensor(new double[]{0.31326168751822286, 0.6931471805599453}, new int[]{2});
 		tester.testActivation("lig(prod(Ij-2))", tsrs, expected, "");
 
 		tsrs = new T[]{T.factory.newTensor(new double[]{10, 12, 16, 21, 33, 66, 222, 15}, new int[]{2, 4})};
-		expected = T.factory.newTensor(new double[]{8.000335406372896, 10.000045398899218, 14.000000831528373, 19.000000005602796, 31.000000000000036, 64.0, 220.0, 13.000002260326852}, new int[]{1, 2, 2, 2});
+		expected = T.factory.newTensor(new double[]{8.000335406372896, 10.000045398899216, 14.000000831528373, 19.000000005602796, 31.000000000000032, 64.0, 220.0, 13.000002260326852}, new int[]{1, 2, 2, 2});
 		tester.testActivation("lig([-1, 0, -2, -2](Ij-2))", tsrs, expected, "");
 
 		tsrs = new T[]{

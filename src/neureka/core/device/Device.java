@@ -3,6 +3,7 @@ package neureka.core.device;
 import java.util.HashMap;
 import java.util.List;
 
+import com.aparapi.Range;
 import com.aparapi.device.OpenCLDevice;
 import neureka.core.T;
 
@@ -87,7 +88,7 @@ public class Device {
             T.factory.inject(_kernel.value(), false, tensor);
             if (tensor.rqsGradient()) {
                 _kernel.execute(
-                        _device.createRange(
+                        Range.create(
                                 _kernel.executionSizeOf_fetchTsr(_register[0][_tensorsMap.get(tensor)], true)
                         )
                 );
@@ -114,15 +115,16 @@ public class Device {
                     _kernel.allocPtrFor(tensor, _register)
             );
         }
+        int gsze = _kernel.executionSizeOf_storeTsr(_register[0][_tensorsMap.get(tensor)], tensor.value(), false);
         _kernel.execute(
-                _device.createRange(
-                        _kernel.executionSizeOf_storeTsr(_register[0][_tensorsMap.get(tensor)], tensor.value(), false)
+                Range.create(
+                        gsze
                 )
         );
         if (tensor.rqsGradient()) {
             double[] grd = (tensor.gradient() == null) ? new double[tensor.value().length] : tensor.gradient();
             _kernel.execute(
-                    _device.createRange(
+                    Range.create(
                             _kernel.executionSizeOf_storeTsr(
                                     _register[0][_tensorsMap.get(tensor)],
                                     grd, true
@@ -135,10 +137,24 @@ public class Device {
         return this;
     }
 
+    public void swap(T former, T replacement){
+        int ptr = _tensorsMap.get(former);
+        _tensorsMap.remove(former);
+        _tensorsMap.put(replacement, ptr);
+        replacement.add(this);
+        replacement.setIsOutsourced(true);
+    }
+
     public double[] valueOf(T tensor, boolean grd) {
         _kernel.execute(
-                _device.createRange(
-                        _kernel.executionSizeOf_fetchTsr(_register[0][_tensorsMap.get(tensor)], grd)
+                Range.create(
+                        _kernel.executionSizeOf_fetchTsr(
+                                _register[0][
+                                        _tensorsMap.get(
+                                                tensor
+                                        )]
+                                , grd
+                        )
                 )
         );
         return _kernel.value();
@@ -155,7 +171,7 @@ public class Device {
                 mode[mi + 1] = (tsrs[mi] != null) ? _register[0][_tensorsMap.get(tsrs[mi])] : -1;
             }
             _kernel.execute(
-                    _device.createRange(
+                    Range.create(
                             _kernel.executionSizeOf_calc(mode)
                     )
             );
