@@ -102,48 +102,29 @@ public class FunctionGraphBuilder {
             newCore = newCore.newBuild("0");
             return newCore;
         }
-        System.out.println("Equation packed: " + expression);
         expression = FunctionParser.unpackAndCorrect(expression);
-        System.out.println("Equation unpacked: " + expression);
         List<String> Operations = new ArrayList<String>();
         List<String> Components = new ArrayList<String>();
         int i = 0;
-        System.out.println("Expression length : " + expression.length());
         while (i < expression.length()) {
-            System.out.println("\nPARSING [" + expression + "] at i:" + i + "\n================");
-            System.out.println("parsing at " + i + " => searching for component!");
             final String newComponent = FunctionParser.parsedComponent(expression, i);
             if (newComponent != null) {
-                System.out.println("Component found! : " + newComponent + " ");
-                System.out.println(Components.size() + " < " + Operations.size() + " ?: true -> Components.addInto(" + newComponent + ")");
                 if (Components.size() <= Operations.size()) {
                     Components.add(newComponent);
                 }
                 i += newComponent.length();
-                System.out.println("parsing at " + i + " => searching for operation!");
                 final String newOperation = FunctionParser.parsedOperation(expression, i);
                 if (newOperation != null) {
-                    System.out.println("Operation found! : " + newOperation + " ");
                     i += newOperation.length();
                     if (newOperation.length() <= 0) {
                         continue;
                     }
                     Operations.add(newOperation);
                 }
-                System.out.println("parsed operation: " + newOperation);
             } else {
                 ++i;
             }
-            System.out.println("Ending iteration with i:" + i + "\nExpression: " + expression + "\n=============================\n----------------------------");
-            Components.forEach((c) -> System.out.print("[" + c + "]"));
-            System.out.print(";\n");
-            Operations.forEach((o) -> {
-                System.out.print("[" + o + "]");
-            });
-            System.out.print(";\n");
         }
-        System.out.println("Components and operations parsed: " + Components);
-        System.out.println("Operations and components parsed: " + Operations);
         //===
         int Count = IFunction.REGISTER.length;
         for (int j = IFunction.REGISTER.length; j > 0; --j) {
@@ -157,7 +138,6 @@ public class FunctionGraphBuilder {
         while (ID < Count) {
             final List<String> newOperations = new ArrayList<String>();
             final List<String> newComponents = new ArrayList<String>();
-            System.out.println("current (" + IFunction.REGISTER[ID] + ") and most low rank operation: " + IFunction.REGISTER[Count - 1]);
             if (FunctionParser.containsOperation(IFunction.REGISTER[ID], Operations)) {
                 String currentChain = null;
                 boolean groupingOccured = false;
@@ -165,28 +145,20 @@ public class FunctionGraphBuilder {
                 if (enoughtPresent) {
                     String[] ComponentsArray = Components.toArray(new String[0]);
                     int length = ComponentsArray.length;
-                    System.out.println("Iterating over " + length + " components: ");
                     for (int Ci = 0; Ci < length; Ci++) {
-                        System.out.println("\nIteration " + Ci + "/" + length);
-                        System.out.println("====================");
                         String currentComponent = null;
                         currentComponent = ComponentsArray[Ci];
                         String currentOperation = null;
                         if (Operations.size() > Ci) {
                             currentOperation = Operations.get(Ci);
                         }
-                        System.out.println("Component: " + currentComponent);
-                        System.out.println("Operation: " + currentOperation);
-                        System.out.println("Chain: " + currentChain);
                         if (currentOperation != null) {
                             if (currentOperation.equals(IFunction.REGISTER[ID])) {
                                 final String newChain =
                                         FunctionParser.groupBy(IFunction.REGISTER[ID], currentChain, currentComponent, currentOperation);
-                                System.out.println("newChain: " + newChain);
                                 if (newChain != null) {
                                     currentChain = newChain;
                                 }
-                                System.out.println("This needed to be grouped");
                                 groupingOccured = true;
                             } else {
                                 if (currentChain == null) {
@@ -207,30 +179,19 @@ public class FunctionGraphBuilder {
                             }
                             currentChain = null;
                         }
-                        System.out.println("----------------\nComponent: " + currentComponent);
-                        System.out.println("Operation: " + currentOperation);
-                        System.out.println("Chain: " + currentChain + "\n");
                     }
                 }
                 if (groupingOccured) {
                     Operations = newOperations;
                     Components = newComponents;
-                    System.out.println("Grouping occured:");
-                } else {
-                    System.out.println("Grouping did not occure:");
                 }
             }
-            System.out.println("ID:" + ID + " => IFunction.REGISTER[ID]: " + IFunction.REGISTER[ID]);
-            System.out.println("Operations: " + Operations);
-            System.out.println("Components: " + Components);
             ++ID;
         }//closed while(ID < Count)
-        System.out.println("==========================================================================================================");
         //---------------------------------------------------------
         // identifying function id:
         int f_id = 0;
         if (Operations.size() >= 1) {
-            System.out.println("Operation 0 : " + Operations.get(0));
             for (int k = 0; k < IFunction.REGISTER.length; ++k) {
                 if (IFunction.REGISTER[k].equals(Operations.get(0))) {
                     f_id = k;
@@ -239,10 +200,7 @@ public class FunctionGraphBuilder {
         }
         // building sources and function:
         if (Components.size() == 1) {
-            System.out.println("Only one component left -> no operations! -> testing for function:");
-            System.out.println("parsing at " + 0 + " ...(possibly a function!)");
             String possibleFunction = FunctionParser.parsedOperation(Components.get(0).toLowerCase(), 0);
-            System.out.println("IFunction ?: " + possibleFunction);
             if (possibleFunction != null) {
                 if (possibleFunction.length() > 1) {
                     for (int Oi = 0; Oi < IFunction.REGISTER.length; Oi++) {
@@ -254,38 +212,27 @@ public class FunctionGraphBuilder {
                             sources.add(newCore);
                             function = FunctionConstructor.createFunction(f_id, sources, doAD);
                             return function;
-                            // Hallo mein Schatz! Ich bin`s, die Emi :) Ich liebe dich <3
+                            // I <3 u 2
                         }
                     }
                 }
             }
-            //function = FunctionConstructor.createFunction(_id, sources);
-            System.out.println("IFunction: " + possibleFunction);
             //---
-            System.out.println("1 comonent left: -> unpackAndCorrect(component)");
             String component = FunctionParser.unpackAndCorrect(Components.get(0));
-            System.out.println("component: " + component);
-            System.out.println("Checking if component is variable (_value/input): ");
             if ((component.charAt(0) <= '9' && component.charAt(0) >= '0') || component.charAt(0) == '-' || component.charAt(0) == '+') {
                 IFunction newFunction = new FConstant();
                 newFunction = newFunction.newBuild(component);
-                System.out.println("is _value leave! -> return newValueLeave.newBuilt(component)");
                 return newFunction;
             }
             if (component.charAt(0) == 'i' || component.charAt(0) == 'I' ||
                     (component.contains("[") && component.contains("]") && component.matches(".[0-9]+."))) {//TODO: Make this regex better!!
                 IFunction newFunction = new FInput();
                 newFunction = newFunction.newBuild(component);
-                System.out.println("_value leave! -> return newInputLeave.newBuilt(component)");
                 return newFunction;
             }
-            System.out.println("Component is not f _id Leave! -> component = FunctionParser.cleanedHeadAndTail(component); ");
             component = FunctionParser.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =>Cleaning!
             IFunction newBuild;
-            System.out.println("new build: IFunction newBuild = (IFunction)new FunctionGraphBuilder();");
-            System.out.println("newBuild = newBuild.newBuild(component);");
             newBuild = FunctionGraphBuilder.newBuild(component, doAD);
-            System.out.println("-> return newBuild;");
             return newBuild;
         } else {// More than one component left:
             if (IFunction.REGISTER[f_id] == "x") {
@@ -316,12 +263,8 @@ public class FunctionGraphBuilder {
             final ListIterator<String> ComponentIterator2 = Components.listIterator();
             while (ComponentIterator2.hasNext()) {
                 final String currentComponent2 = ComponentIterator2.next();
-                System.out.println("this.FInput.add(newCore2.newBuild(" + currentComponent2 + ")); FInput.size(): " + sources.size());
                 IFunction newCore2 = FunctionGraphBuilder.newBuild(currentComponent2, doAD);//Dangerous recursion lives here!
                 sources.add(newCore2);
-                if (newCore2 != null) {
-                    System.out.println("newCore2 != null");
-                }
             }
             sources.trimToSize();
             if (sources.size() == 1) {

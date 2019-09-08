@@ -41,28 +41,24 @@ public class FunctionParser {
         String component = "";
         int bracketDepth = 0;
         component = "";
-        System.out.print("Start char: " + exp.charAt(i) + "\n");
         for (int Ei = i; Ei < exp.length(); ++Ei) {
             if (exp.charAt(Ei) == ')') {
                 --bracketDepth;
             } else if (exp.charAt(Ei) == '(') {
                 ++bracketDepth;
             }
-            System.out.print("d[" + bracketDepth + "]:[  " + exp.charAt(Ei) + "  ], ");
             if (bracketDepth == 0) {
                 String possibleOperation = "";
                 for (int Sii = Ei+1; Sii < exp.length(); ++Sii) {
                     possibleOperation = possibleOperation + exp.charAt(Sii);
                     if (FunctionParser.isBasicOperation(possibleOperation)) {
                         component = component + exp.charAt(Ei);
-                        System.out.print("\n");
                         return component;
                     }
                 }
             }
             component += exp.charAt(Ei);
         }
-        System.out.print("\n");
         return component;
     }
 
@@ -82,9 +78,7 @@ public class FunctionParser {
             return false;
         }
         for (int i = 0; i < IFunction.REGISTER.length; ++i) {
-            System.out.print(IFunction.REGISTER[i] + " =?= " + operation + " -:|:- ");
             if (IFunction.REGISTER[i].equals(operation)) {
-                System.out.println("");
                 return true;
             }
         }
@@ -124,13 +118,11 @@ public class FunctionParser {
 
     public static String cleanedHeadAndTail(String exp) {
         exp = exp.trim();
-        System.out.println("Unclean component: " + exp);
         int Ci = 0;
         String Updated = "";
         boolean condition = true;
         while (condition) {
             if (FunctionParser.isWeired(exp.charAt(Ci)) || (exp.charAt(Ci) >= 'A' && exp.charAt(Ci) <= 'Z') || (exp.charAt(Ci) >= 'a' && exp.charAt(Ci) <= 'z')) {
-                System.out.print("C: " + exp.charAt(Ci) + "; ");
                 Ci++;
             } else {
                 condition = false;
@@ -144,14 +136,12 @@ public class FunctionParser {
         }
         exp = Updated;
         Updated = "";
-        System.out.print("\nUpdated: " + exp + "  \n");
         if (exp.length() > 0) {
             Ci = 0;
             condition = true;
             int l = exp.length() - 1;
             while (condition) {
                 if (FunctionParser.isWeired(exp.charAt(Ci)) || (exp.charAt(l - Ci) >= 'A' && exp.charAt(l - Ci) <= 'Z') || (exp.charAt(l - Ci) >= 'a' && exp.charAt(l - Ci) <= 'z')) {
-                    System.out.print("C: " + exp.charAt(l - Ci) + "; ");
                     Ci++;
                 } else {
                     condition = false;
@@ -173,7 +163,6 @@ public class FunctionParser {
                 exp = FunctionParser.removeHeadAndTail(exp);
             }
         }
-        System.out.println("Cleaned component: " + exp);
         exp = exp.trim();
         return exp;
     }
