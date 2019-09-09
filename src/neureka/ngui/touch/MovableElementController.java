@@ -45,7 +45,7 @@ public class MovableElementController extends Pane implements IChildItem{
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
 		}
-		//this.getStyleClass().add("RealmStyle");
+		//this.getStyleClass().overwrite("RealmStyle");
 
 		NGraphBuilder GraphBuilder = new NGraphBuilder();
 		RealmNode.setContent(GraphBuilder.getSurface());

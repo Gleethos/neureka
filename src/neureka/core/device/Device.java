@@ -67,7 +67,6 @@ public class Device {
     }
 
     public TensorKernel getKernel() {
-        //System.out.println(_kernel.cleanUpArrays());
         return _kernel;
     }
 
@@ -108,32 +107,46 @@ public class Device {
         }
     }
 
+    public Device overwrite(T tensor, double[] value, boolean targetGradient){
+        if(tensor.rqsGradient()){
+            if(_tensorsMap.containsKey(tensor)){
+                _kernel.execute(
+                        Range.create(
+                                _kernel.executionSizeOf_storeTsr(
+                                        _register[0][_tensorsMap.get(tensor)],
+                                        value,
+                                        targetGradient
+                                )
+                        )
+                );
+            }
+        }
+        return this;
+    }
+
     public Device add(T tensor) {
         tensor.setIsVirtual(false);
         if (!_tensorsMap.containsKey(tensor)) {
-            _tensorsMap.put(tensor,
-                    _kernel.allocPtrFor(tensor, _register)
-            );
-        }
-        int gsze = _kernel.executionSizeOf_storeTsr(_register[0][_tensorsMap.get(tensor)], tensor.value(), false);
-        _kernel.execute(
-                Range.create(
-                        gsze
-                )
-        );
-        if (tensor.rqsGradient()) {
-            double[] grd = (tensor.gradient() == null) ? new double[tensor.value().length] : tensor.gradient();
+            _tensorsMap.put(tensor, _kernel.allocPtrFor(tensor, _register));
             _kernel.execute(
                     Range.create(
-                            _kernel.executionSizeOf_storeTsr(
-                                    _register[0][_tensorsMap.get(tensor)],
-                                    grd, true
-                            )
+                            _kernel.executionSizeOf_storeTsr(_register[0][_tensorsMap.get(tensor)], tensor.value(), false)
                     )
             );
+            if (tensor.rqsGradient()) {
+                double[] grd = (tensor.gradient() == null) ? new double[tensor.value().length] : tensor.gradient();
+                _kernel.execute(
+                        Range.create(
+                                _kernel.executionSizeOf_storeTsr(
+                                        _register[0][_tensorsMap.get(tensor)],
+                                        grd, true
+                                )
+                        )
+                );
+            }
+            tensor.add(this);
+            tensor.setIsOutsourced(true);
         }
-        tensor.add(this);
-        tensor.setIsOutsourced(true);
         return this;
     }
 
@@ -170,11 +183,22 @@ public class Device {
             for (int mi = 0; mi < (tsrs.length); mi++) {
                 mode[mi + 1] = (tsrs[mi] != null) ? _register[0][_tensorsMap.get(tsrs[mi])] : -1;
             }
+            byte gradPtrMod = 0;
+            for(int i=0; i<tsrs.length; i++){
+                boolean duplicate = false;
+                for(int ii=i-1; ii>=0; ii--){
+                    duplicate = (tsrs[ii]==tsrs[i])?true:duplicate;
+                }
+                if(tsrs[i].gradientIsTargeted() && !duplicate){
+                    gradPtrMod += (1<<i);
+                }
+            }
             _kernel.execute(
                     Range.create(
-                            _kernel.executionSizeOf_calc(mode)
+                            _kernel.executionSizeOf_calc(mode, gradPtrMod)
                     )
             );
+            _kernel.resetGradPtr(gradPtrMod);
         }
 
     }
@@ -188,9 +212,10 @@ public class Device {
             mode[1] = _register[0][_tensorsMap.get(t)];
             _kernel.execute(
                     _device.createRange(
-                            _kernel.executionSizeOf_calc(mode, value)
+                            _kernel.executionSizeOf_calc(mode, value, (byte) ((t.gradientIsTargeted())?1:0))
                     )
             );
+            _kernel.resetGradPtr((byte) ((t.gradientIsTargeted())?1:0));
         }
     }
 
@@ -208,7 +233,12 @@ public class Device {
         } else {
             m = new int[]{f_id, _register[0][_tensorsMap.get(drn)], _register[0][_tensorsMap.get(t1)], _register[0][_tensorsMap.get(t2)], d};
         }
-        int size = _kernel.executionSizeOf_calc(m);
+        byte gradPtrMod = 0;
+        gradPtrMod += (drn.gradientIsTargeted())?1:0;
+        gradPtrMod += (t1.gradientIsTargeted())?2:0;
+        gradPtrMod += (t2.gradientIsTargeted())?4:0;
+        int size = _kernel.executionSizeOf_calc(m, gradPtrMod);
+        _kernel.resetGradPtr(gradPtrMod);
         System.out.println("size: " + size);
         //_kernel._mde = m;
         for (int i = 0; i < size; i++) {

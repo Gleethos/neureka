@@ -36,6 +36,9 @@ public interface IFunction
             ((GraphNode) drain.find(GraphNode.class)).trimTree(null);
         }
         IFunction.T_CACHE.free(tensors);
+        for(T t : tensors){
+            t.setGradientIsTargeted(false);
+        }
         return drain;
     }
 

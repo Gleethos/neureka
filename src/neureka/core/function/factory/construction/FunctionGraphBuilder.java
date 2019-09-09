@@ -7,30 +7,6 @@ import neureka.core.function.factory.material.FInput;
 import java.util.*;
 
 public class FunctionGraphBuilder {
-    /*
-	     0:  ReLu;
-		 1:  Sigmoid;
-		 2:  Tanh;
-		 3:  Quadratic;
-		 4:  Ligmoid;
-		 5:  Linear;
-		 6:  Gaussian;
-		 7:  abs;
-		 8:  sin;
-		 9:  cos;
-		 10: sum;
-		 11: prod;
-		 12: ^;
-		 13: /;
-		 14: *;
-		 15: %;
-		 16: -;
-		 17: +;
-		 18: x; (conv)
-		 19:
-		 20:
-	 */
-    //=================================================================================================
 
     /**
      * @param f_id

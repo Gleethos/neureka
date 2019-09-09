@@ -72,7 +72,7 @@ public class GraphBuilder
             return;
         }
         if(drain.rqsGradient()){
-            drain.setGradient(
+            drain.addToGradient(
                     (drain.gradient()==null)
                             ?error
                             :T.factory.exec.addition(error, T.factory.newTensor(drain.value(), drain.shape()))

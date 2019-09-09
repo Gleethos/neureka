@@ -3,7 +3,14 @@ package neureka.core.function.factory.material;
 import neureka.core.T;
 import neureka.core.function.IFunction;
 
-public class FVariable implements IFunction {
+public class FVariable implements IFunction, IProvider {
+
+    private boolean _providesGradient = false;
+
+    public boolean providesGradient(){
+        return _providesGradient;
+    }
+
     @Override
     public boolean isFlat() {
         return false;
@@ -21,7 +28,10 @@ public class FVariable implements IFunction {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public IFunction newBuild(final String equation) {
-        return (IFunction) this;
+        if(equation.contains("g")){
+            _providesGradient = true;
+        }
+        return this;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
@@ -50,15 +60,13 @@ public class FVariable implements IFunction {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public T activate(T[] input, int j) {
+        if(this.providesGradient() && input[j].rqsGradient()){
+            input[j].setGradientIsTargeted(true);
+        }
         return input[j];
     }
     @Override
     public T activate(T[] input) {
-        //T result = input[0];
-        //for(int i=1; i<input.length; i++){
-        //    result.addInto(input[i]);
-        //}
-        //return result;
         return new T(input, "sum(I[j])");
     }
     @Override
@@ -75,6 +83,6 @@ public class FVariable implements IFunction {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public String toString() {
-        return "I[j]";
+        return "I"+((this.providesGradient())?"g":"")+"[j]";
     }
 }

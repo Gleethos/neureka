@@ -280,6 +280,7 @@ public abstract class Function implements IFunction {
                     for (int ii = 0; ii < tsrs.length; ii++) {
                         inp[ii] = tsrs[ii].value()[i];
                     }
+
                     finalOutput.value()[i] = scalarActivationOf(inp, j, d);
                 });
                 return  output;

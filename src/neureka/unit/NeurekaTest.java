@@ -217,28 +217,6 @@ public class NeurekaTest {
 					new double[][]{{-1.0, -1.0, 5.0, 5.0}, null}
 				);
 
-
-		//Device gpu = new Device("nvidia");
-		//tensor1 = new T(new int[]{1}, new double[]{2});//-2*4 = 8 | *3 = -24
-		//tensor1.setRqsGradient(true);
-		//gpu.add(tensor1);
-		//tester.testTensorAutoGrad(
-		//		new T[]{tensor1},//2 =>-2 =>-4 =>12 //2 =>-2 //-2,12 =>-24
-		//		"(-3*(2*(i0*-1)))*(-1*i0)",
-		//		new String[]{
-		//				"[1]:(-24.0); ",
-		//				"=>d|[ [1]:(12.0) ]|:" +
-		//						"t{ [1]:(-2.0); " +
-		//						"=>d|[ [1]:(-1.0) ]|:" +
-		//						"t{ [1]:(2.0) },  " +
-		//						"},",
-		//				"=>d|[ [1]:(-2.0) ]|:" +
-		//						"t{ [1]:(12.0); " +
-		//						"=>d|[ [1]:(6.0) ]|:" +
-		//						"t{ [1]:(2.0) },  " +
-		//						"},"
-		//		}
-		//);
 		//---
 		//======================
 		int[] shape = {4, 2, 9, 5, 6, 2};
@@ -453,6 +431,29 @@ public class NeurekaTest {
 				new String[]{
 						"[200x1x200]:(1800.0, 1800.0, 1800.0, 1800.0, 1800.0, 1800.0,"//...
 				});
+		//--
+		//---
+		tensor1 = new T(new int[]{2, 2, 1}, new double[]{
+				1, 2, //3, 1,
+				2, -3, //-2, -1,
+		});
+		tensor1.setRqsGradient(true);
+		//---
+		tensor2 = new T(new int[]{1, 2, 2}, new double[]{
+				-2, 3,
+				1, 2,
+		});
+		gpu.add(tensor1).add(tensor2);
+		tester.testTensorAutoGrad(//4, 5, -13, -4 <= result values
+				new T[]{tensor1, tensor2},
+				"i0xi1",
+				new String[]{
+						"[2x1x2]:(4.0, -13.0, 5.0, -4.0); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"
+				},
+				new T(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
+				new double[][]{{-1.0, -1.0, 5.0, 5.0}, null}
+		);
+
 	}
 
 	public void testTensorDevice(){
@@ -605,7 +606,7 @@ public class NeurekaTest {
 		);
 		tester.testCalculation(
 				gpu,
-				drn, src1, src2, 17, -1,//Tsr add
+				drn, src1, src2, 17, -1,//Tsr overwrite
 				new double[]{888.0, 777.0, -33.0, 999.0, 0.0, 0.0, 0.0, 0.0, -7.0, -9.0, 4.0, -4.0, 9.0, 4.0, 77.0, 1.0, 2.0, 3.0, 4.0, 0.0, 2.0, 3.0, 4.0, 2.0, -1.0, -2.0, -3.0, -1.0, 3.0, 0.0, 2.0, -3.0, 1.0, 2.0, -3.0, 0.0, 4.0, 5.0, -1.0, 15.0, 11.0, 20.0, -22.0, -8.0, 4.0, -9.0, -2.0, 2.0, 3.0, -2.0, 3.0, 6.0, 3.0, -1.0, 0.0, 2.0, 4.0, 2.0, 1.0, 1.0, 2.0, -3.0, 2.0, 4.0, -2.0, -1.0, 5.0, 0.0, 5.0, 3.0, 6.0, -3.0, 3.0, 5.0, 1.0, 2.0, 3.0, 3.0, -4.0, }
 		);
 		tester.testCalculation(
@@ -620,7 +621,7 @@ public class NeurekaTest {
 		//	} catch (InterruptedException e) {
 		//		e.printStackTrace();
 		//	}
-		//	gpu.add(T.factory.newTensor(1+i, new int[]{100000}));//...
+		//	gpu.overwrite(T.factory.newTensor(1+i, new int[]{100000}));//...
 		//}
 		//try {
 		//	Thread.sleep(3000);
@@ -634,7 +635,11 @@ public class NeurekaTest {
 	public int testTensorFunctions()
 	{
 		NTester_Function tester = new NTester_Function("Testing function factory and scalar calculations");
+
+
 		//EXPRESSION TESTING:
+		tester.testExpression("ig0*(igj)xI[g1]", "((Ig[0]*Ig[j])xIg[1])", "");
+
 		tester.testExpression("sum(ij)", "sum(I[j])", "");
 		
 		 

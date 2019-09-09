@@ -920,7 +920,7 @@ public class NCircleMenu implements NPanelObject{
 			//
 			//	((PanelNode)PropertyContainer).
 			//		getCore().
-			//			add(
+			//			overwrite(
 			//					new NVControlFrame("Neuron "+((PanelNode)PropertyContainer).getCore().getID(),((PanelNode)PropertyContainer).getCore()));
 			//}
 			

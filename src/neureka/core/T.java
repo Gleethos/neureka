@@ -107,8 +107,18 @@ public class T {
         return _gradient;
     }
 
-    public T setGradient(T g) {
-        _gradient = g.value();
+    public T addToGradient(T g) {
+        if(this.isOutsourced()){
+            Device device = (Device) this.find(Device.class);
+            this.setGradientIsTargeted(true);
+            device.add(g);
+            device.calculate(new T[]{this, this, g}, 17, -1);
+            device.get(g);
+            this.setGradientIsTargeted(false);
+            //device.overwrite(this, g, true);
+        } else {
+            _gradient = g.value();
+        }
         return this;
     }
 
@@ -172,6 +182,7 @@ public class T {
     private final static int RQS_GRADIENT_MASK = 1;
     private final static int IS_OUTSOURCED_MASK = 2;
     private final static int IS_VIRTUAL_MASK = 4;
+    private final static int GRADIENT_IS_TARGETED_MASK = 8;
 
     //-----------------------------------------------------------------------
     public boolean rqsGradient() {
@@ -183,6 +194,12 @@ public class T {
             if (rqsGradient) {
                 _flags += RQS_GRADIENT_MASK;
             } else {
+                this.setGradientIsTargeted(false);
+                if(this.isOutsourced()){
+                    ((Device)find(Device.class)).get(this);
+                    _gradient = null;
+                    ((Device)find(Device.class)).add(this);
+                }
                 _flags -= RQS_GRADIENT_MASK;
             }
         }
@@ -213,7 +230,7 @@ public class T {
         }
         return this;
     }
-
+    //---
     public boolean isVirtual() {
         return (_flags & IS_VIRTUAL_MASK) == IS_VIRTUAL_MASK;
     }
@@ -234,7 +251,21 @@ public class T {
         }
         return this;
     }
+    //---
+    public boolean gradientIsTargeted() {
+        return (_flags & GRADIENT_IS_TARGETED_MASK) == GRADIENT_IS_TARGETED_MASK;
+    }
 
+    public T setGradientIsTargeted(boolean gradientIsTargeted) {
+        if (this.gradientIsTargeted() != gradientIsTargeted) {
+            if (gradientIsTargeted) {
+                _flags += (this.rqsGradient())?GRADIENT_IS_TARGETED_MASK:0;
+            } else {
+                _flags -= GRADIENT_IS_TARGETED_MASK;
+            }
+        }
+        return this;
+    }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //GENERIC PROPERTIES :
     //=========================
@@ -455,7 +486,7 @@ public class T {
 
     public T backward(T error) {
         if (this.rqsGradient()) {
-            this.setGradient(error);
+            this.addToGradient(error);
         }
         if (this.has(GraphNode.class)) {
             ((GraphNode) this.find(GraphNode.class)).backward(error);
@@ -493,7 +524,7 @@ public class T {
         this.setIsVirtual(false);
         int sze = this.size();
         int[] idx = new int[this.shape().length];
-        double[] value = _value;
+        double[] value = ((this.gradientIsTargeted())?this._gradient:this._value);
         for (int i = 0; i < sze; i++) {
             factory.util.increment(idx, this.shape());
             action.accept(i, value[factory.util.iOf(idx, this.translation())]);
@@ -512,39 +543,39 @@ public class T {
                 if (t.isEmpty() || t.isUndefined()) {
                     return 0;
                 } else if (t.isVirtual()) {
-                    return t._value[0];
+                    return ((t.gradientIsTargeted())?t._gradient:t._value)[0];
                 }
-                return t._value[util.iOf(t.shpIdx(i), t.translation())];
+                return ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(t.shpIdx(i), t.translation())];
             }
 
             public static double getFrom(T t, int[] idx) {
                 t.setIsVirtual(false);
-                return t._value[util.iOf(idx, t.translation())];
+                return ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(idx, t.translation())];
             }
 
             public static void setInto(T t, int i, double value) {
                 t.setIsVirtual(false);
-                t._value[util.iOf(t.shpIdx(i), t.translation())] = value;
+                ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(t.shpIdx(i), t.translation())] = value;
             }
 
             public static void setInto(T t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t._value[util.iOf(idx, t.translation())] = value;
+                ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(idx, t.translation())] = value;
             }
 
             public static void addInto(T t, int i, double value) {
                 t.setIsVirtual(false);
-                t._value[util.iOf(t.shpIdx(i), t.translation())] += value;
+                ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(t.shpIdx(i), t.translation())] += value;
             }
 
             public static void addInto(T t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t._value[util.iOf(idx, t.translation())] += value;
+                ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(idx, t.translation())] += value;
             }
 
             public static T addInto(T t, T source) {
                 if (t.isVirtual() && source.isVirtual()) {
-                    t._value[0] += source._value[0];
+                    ((t.gradientIsTargeted())?t._gradient:t._value)[0] += ((source.gradientIsTargeted())?source._gradient:source._value)[0];
                 } else {
                     if (t.isVirtual()) {
                         t.setIsVirtual(false);
@@ -561,17 +592,17 @@ public class T {
 
             public static void subInto(T t, int i, double value) {
                 t.setIsVirtual(false);
-                t._value[util.iOf(t.shpIdx(i), t.translation())] -= value;
+                ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(t.shpIdx(i), t.translation())] -= value;
             }
 
             public static void subInto(T t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t._value[util.iOf(idx, t.translation())] -= value;
+                ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(idx, t.translation())] -= value;
             }
 
             public static void subInto(T t, T source) {
                 if (t.isVirtual() && source.isVirtual()) {
-                    t._value[0] -= source._value[0];
+                    ((t.gradientIsTargeted())?t._gradient:t._value)[0] -= ((source.gradientIsTargeted())?source._gradient:source._value)[0];
                 } else {
                     if (t.isVirtual()) {
                         t.setIsVirtual(false);
@@ -587,12 +618,12 @@ public class T {
 
             public static void mulInto(T t, int i, double value) {
                 t.setIsVirtual(false);
-                t._value[util.iOf(t.shpIdx(i), t.translation())] *= value;
+                ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(t.shpIdx(i), t.translation())] *= value;
             }
 
             public static void mulInto(T t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t._value[util.iOf(idx, t.translation())] *= value;
+                ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(idx, t.translation())] *= value;
             }
 
         }
@@ -660,6 +691,9 @@ public class T {
                 int[] t0Idx = new int[rank];
                 int[] t1Idx = new int[rank];
                 int[] t2Idx = new int[rank];
+                double[] t0_value = (t0_drain.gradientIsTargeted())?t0_drain.gradient():t0_drain.value();
+                double[] t1_value = (t1_source.gradientIsTargeted())?t1_source.gradient():t1_source.value();
+                double[] t2_value = (t2_source.gradientIsTargeted())?t2_source.gradient():t2_source.value();
 
                 int drnSze = t0_drain.size();
                 int i = 0;
@@ -688,7 +722,7 @@ public class T {
                         if (incrementing == false) {
                             int i1 = util.iOf(t1Idx, t1Tln);
                             int i2 = util.iOf(t2Idx, t2Tln);
-                            value += t1_source.value()[i1] * t2_source.value()[i2];
+                            value += t1_value[i1] * t2_value[i2];
                             incrementing = true;
                             ri = 0;
                         } else {//incrementing:
@@ -720,7 +754,7 @@ public class T {
                         }
                     }//setInto _value in drn:
                     int i0 = util.iOf(t0Idx, t0Tln);
-                    t0_drain.value()[i0] = value;
+                    t0_value[i0] = value;
                     //System.out.println(i0 + " - " + i);
                     i++;//increment on drain:
                     if (i < drnSze) {
@@ -741,6 +775,11 @@ public class T {
                 int[] t0Idx = new int[rank];
                 int[] t1Idx = new int[rank];
                 int[] t2Idx = new int[rank];
+                double[] t0_value = (t0_origin.gradientIsTargeted())?t0_origin.gradient():t0_origin.value();
+                double[] t1_value = (t1_handle.gradientIsTargeted())?t1_handle.gradient():t1_handle.value();
+                double[] t2_value = (t2_drain.gradientIsTargeted())?t2_drain.gradient():t2_drain.value();
+
+
                 int drnSze = t0_origin.size();
                 int i = 0;
                 while (i < drnSze) {//increment on drain accordingly:
@@ -776,7 +815,7 @@ public class T {
                             if (isMatch) {
                                 int i1 = util.iOf(t1Idx, t1Tln);
                                 int i2 = util.iOf(t2Idx, t2Tln);
-                                value += t1_handle.value()[i1] * t2_drain.value()[i2];
+                                value += t1_value[i1] * t2_value[i2];
                                 //1*-2 +2*3 -3*6 +2*3, 1*3 +2*6 -3*3 +2*-1,
                                 //1*0  +2*2 -3*4 +2*2  +  4*-2 -2*3 -1*6 +5*3, 1*2 +2*4 -3*2 +2*1  +  4*3 -2*6 -1*3 +5*-1,
                                 //4*0  -2*2 -1*4 +5*2, 4*2 -2*4 -1*2 +5*1
@@ -809,7 +848,7 @@ public class T {
                     }
                     //setInto _value in drn:
                     int i0 = util.iOf(t0Idx, t0Tln);
-                    t0_origin.value()[i0] = value;
+                    t0_value[i0] = value;
                     i++;//increment on drain:
                     if (i < drnSze) {
                         util.increment(t0Idx, t0Shp);

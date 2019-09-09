@@ -4,9 +4,13 @@ package neureka.core.function.factory.material;
 import neureka.core.T;
 import neureka.core.function.IFunction;
 
-public class FInput implements IFunction
+public class FInput implements IFunction, IProvider
 {
-    int _index;
+    private int _index;
+
+    public boolean providesGradient(){
+        return (_index<0);
+    }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public boolean isFlat() {
@@ -37,21 +41,25 @@ public class FInput implements IFunction
                 number += Integer.parseInt(equation.charAt(i) + "");
             }
         }
-        this._index = number;
+        _index = number;
+        if(equation.contains("g")){
+            _index = -(_index+1);
+        }
+
         return this;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public double activate(final double[] input, int j) {
-        return input[_index];
+        return input[_index()];
     }
     @Override
     public double activate(final double[] input) {
-        return input[_index];
+        return input[(_index>=0)?_index:(Math.abs(_index)-1)];
     }
     @Override
     public double derive(final double[] input, final int index) {
-        return (index == this._index) ? 1 : 0;
+        return (index == _index()) ? 1 : 0;
     }
     @Override
     public double derive(double[] input, int index, int j) {
@@ -60,11 +68,17 @@ public class FInput implements IFunction
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public T activate(T[] input, int j) {
-        return input[_index];
+        if(this.providesGradient() && input[_index()].rqsGradient()){
+            input[_index()].setGradientIsTargeted(true);
+        }
+        return input[_index()];
     }
     @Override
     public T activate(T[] input) {
-        return input[_index];
+        if(this.providesGradient() && input[_index()].rqsGradient()){
+            input[_index()].setGradientIsTargeted(true);
+        }
+        return input[_index()];
     }
     @Override
     public T derive(T[] input, int index, int j) {
@@ -72,14 +86,18 @@ public class FInput implements IFunction
     }
     @Override
     public T derive(T[] input, int index) {
-        return (index == this._index)
+        return (index == _index())
                 ? T.factory.newTensor(1, input[0].shape())
                 : T.factory.newTensor(0, input[0].shape());
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public String toString() {
-        return "I[" + this._index + "]";
+        return "I"+((this.providesGradient())?"g":"")+"[" + _index() + "]";
+    }
+
+    private int _index(){
+        return ((this.providesGradient())?(Math.abs(_index)-1):_index);
     }
 
 }
