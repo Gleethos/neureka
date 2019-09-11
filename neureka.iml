@@ -7,12 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="library" exported="" name="javafx-sdk-11.0" level="application" />
-    <orderEntry type="library" name="lib" level="project" />
-    <orderEntry type="library" name="lib2" level="project" />
-    <orderEntry type="library" name="bin1" level="project" />
     <orderEntry type="library" name="aparapi" level="project" />
-    <orderEntry type="library" name="bin2" level="project" />
-    <orderEntry type="library" name="lib1" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>

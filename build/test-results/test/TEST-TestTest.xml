@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="TestTest" tests="1" skipped="1" failures="0" errors="0" timestamp="2019-09-11T10:59:48" hostname="DESKTOP-6UFJ24U" time="33.707">
+  <properties/>
+  <testcase name="test1" classname="TestTest" time="33.707">
+    <skipped/>
+  </testcase>
+  <system-out><![CDATA[Test 1 works
+_value: 1.0
+_value: 4.0
+_value: 2.0
+_value: 3.0
+_value: 2.0
+_value: 23.0
+_value: 1.0
+_value: 3.0
+_value: 5.0
+_value: 23.0
+_value: 45.0
+_value: 345.0
+_value: 651.0
+_value: 6.0
+_value: 23.0
+_value: 0.3
+_value: 23.0
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

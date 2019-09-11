@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+}
+
+group 'com.gleethos'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile "com.aparapi:aparapi:1.10.0"
+    compile 'org.jetbrains:annotations:16.0.2'
+}
+
+javafx {
+    version = "13"
+    modules = [
+            'javafx.controls',
+            'javafx.fxml',
+            'javafx.web',
+            'javafx.swing'
+    ]
+}
+
+jar {
+    from configurations.compile.collect{ zipTree it }
+    manifest.attributes "Main-Class" : "Main"
+}
+
+
