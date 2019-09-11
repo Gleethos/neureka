@@ -1,0 +1,9 @@
+language: java
+install: true
+
+os: linux
+dist: trusty
+jdk: oraclejdk11
+
+script:
+  - ./gradlew build --scan -s
