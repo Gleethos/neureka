@@ -2,248 +2,40 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a07ad3e8-8754-4b05-b853-df2665879cc4" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.classpath" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/jarAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/jarAnalysis.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/taskHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.project" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/droplet shatter.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/hs_err_pid18124.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/neureka.iml" beforeDir="false" afterPath="$PROJECT_DIR$/neureka.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/AparapiMatMul.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/META-INF/neureka.kotlin_module" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/Main.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/MemTest.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/NGene.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/NMATMUL.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/NNetworkWindow.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/NSMain.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/aparapi/.project" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/aparapi/OpenCL.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/aparapi/aparapi-1.10.0.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/aparapi/aparapi-jni-1.4.1.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/aparapi/bcel-6.2.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/aparapi/scala-library-2.12.6.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/NRealm.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/NSubstrate.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/T$factory$exec.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/T$factory$io.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/T$factory$util.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/T$factory.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/T.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/device/Device.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/device/TensorKernel.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/function/IFunction.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/function/environment/FunctionCache.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/function/environment/TensorCache.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/function/factory/Function$Calculation$Actor.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/function/factory/Function$Calculation.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/function/factory/Function.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/function/factory/autograd/GraphBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/function/factory/autograd/GraphLock.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/function/factory/autograd/GraphNode.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/function/factory/construction/FunctionConstructor$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/function/factory/construction/FunctionConstructor$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/function/factory/construction/FunctionConstructor.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/function/factory/construction/FunctionGraphBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/function/factory/construction/FunctionParser.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/function/factory/material/FConstant.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/function/factory/material/FInput.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/function/factory/material/FVariable.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/function/factory/material/IProvider.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/optimization/NVOptimizer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/optimization/TOptimizer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/optimization/factory/material/ADAM.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/optimization/factory/material/Template.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/optimization/factory/worker/TOptimizerBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/utility/DataHelper$Orderer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/core/utility/DataHelper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/frame/NConsoleFrame$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/frame/NConsoleFrame$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/frame/NConsoleFrame$3.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/frame/NConsoleFrame.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/frame/NMessageFrame.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NAnimator$Animation.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NAnimator.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NAtmos.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NCircleMenu$MenuActor.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NCircleMenu.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NColor.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NGraphBuilder$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NGraphBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NListener.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NMap$Leave.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NMap.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NMap_I$AdvancedMapAction.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NMap_I$MapAction.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NMap_I.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NMenu.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NPanel$SurfaceAction.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NPanel$SurfacePainter.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NPanel$Utility.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NPanel.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NPanelNodeInput.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NPanelObject.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NPanelRepaintSpace.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NPanelUniverse.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NPanel_I.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NPointTracer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NSound.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NUtility.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NVControlFrame.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NVPlot$NListener.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NVPlot.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NWindow$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/NWindow.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/Node.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/PanelNode$Painter.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/PanelNode.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/tile/N3DSpace.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/IChildItem.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/IParentItem.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/MovableElement.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/MovableElementController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/NSurface.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/TouchPane.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/TouchPaneController$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/TouchPaneController$GestureSelection.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/TouchPaneController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/AnimatedZoomOperator.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/Glas.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/Layer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/NAnimator$Animation.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/NAnimator.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/NCircleMenu$MenuActor.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/NCircleMenu.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/NColor.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/NGraphBuilder$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/NGraphBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/NListener.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/NMap$Leave.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/NMap.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/NMap_I$AdvancedMapAction.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/NMap_I$MapAction.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/NMap_I.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/NMenu.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/NPanelNode$Painter.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/NPanelNode.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/NPanelNodeInput.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/NPanelObject.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/NPanelRepaintSpace.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/Plain$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/Plain$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/Plain$3.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/Plain$4.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/Plain$5.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/Plain.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/TSurface$SurfaceAction.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/TSurface$SurfacePainter.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/TSurface$Utility.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/TSurface.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/TSurface_I.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/TestWindow$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/canvas/TestWindow.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/ngui/touch/movableelement.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/NeurekaTest.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/cases/NTester.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/cases/NTester_Function.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/cases/NTester_Tensor.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/neureka/neureka/unit/cases/NTester_TensorDevice.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MemTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/NGene.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/NMATMUL.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/NNetworkWindow.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/NSMain.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aparapi/.project" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aparapi/OpenCL.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aparapi/aparapi-1.10.0.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aparapi/aparapi-jni-1.4.1.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aparapi/bcel-6.2.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aparapi/scala-library-2.12.6.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/NRealm.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/NSubstrate.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/T.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/device/Device.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/device/TensorKernel.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/function/IFunction.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/function/environment/FunctionCache.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/function/environment/TensorCache.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/function/factory/Function.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/function/factory/autograd/GraphBuilder.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/function/factory/autograd/GraphLock.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/function/factory/autograd/GraphNode.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/function/factory/construction/FunctionConstructor.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/function/factory/construction/FunctionGraphBuilder.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/function/factory/construction/FunctionParser.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/function/factory/material/FConstant.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/function/factory/material/FInput.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/function/factory/material/FVariable.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/function/factory/material/IProvider.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/optimization/NVOptimizer.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/optimization/TOptimizer.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/optimization/factory/material/ADAM.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/optimization/factory/material/Template.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/optimization/factory/worker/TOptimizerBuilder.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/core/utility/DataHelper.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/frame/NConsoleFrame.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/frame/NMessageFrame.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NAnimator.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NAtmos.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NCircleMenu.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NColor.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NGraphBuilder.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NListener.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NMap.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NMap_I.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NMenu.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NPanel.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NPanelNodeInput.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NPanelObject.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NPanelRepaintSpace.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NPanelUniverse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NPanel_I.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NPointTracer.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NSound.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NUtility.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NVControlFrame.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NVPlot.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/NWindow.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/Node.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/PanelNode.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/tile/N3DSpace.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/IChildItem.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/IParentItem.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/MovableElement.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/MovableElementController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/NSurface.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/TouchPane.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/TouchPaneController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/canvas/AnimatedZoomOperator.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/canvas/Glas.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/canvas/Layer.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/canvas/NAnimator.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/canvas/NCircleMenu.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/canvas/NColor.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/canvas/NGraphBuilder.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/canvas/NListener.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/canvas/NMap.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/canvas/NMap_I.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/canvas/NMenu.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/canvas/NPanelNode.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/canvas/NPanelNodeInput.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/canvas/NPanelObject.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/canvas/NPanelRepaintSpace.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/canvas/Plain.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/canvas/TSurface.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/canvas/TSurface_I.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/canvas/TestWindow.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/ngui/touch/movableelement.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/unit/NeurekaTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/unit/cases/NTester.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/unit/cases/NTester_Function.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/unit/cases/NTester_Tensor.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/neureka/unit/cases/NTester_TensorDevice.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/NSMain.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/NSMain.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/neureka/unit/NeurekaTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/neureka/unit/cases/NTester.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/neureka/unit/cases/NTester_Function.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/neureka/unit/cases/NTester_Tensor.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/neureka/unit/cases/NTester_TensorDevice.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/test/TestTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/test/TestTest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/classes/TestTest.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/classes/TestTest.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/packages/default-package.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/packages/default-package.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/test-results/test/TEST-TestTest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build/test-results/test/TEST-TestTest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/test-results/test/binary/output.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/test-results/test/binary/output.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/test-results/test/binary/output.bin.idx" beforeDir="false" afterPath="$PROJECT_DIR$/build/test-results/test/binary/output.bin.idx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/test-results/test/binary/results.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/test-results/test/binary/results.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/NSMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/NSMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/unit/NeurekaTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/unit/NeurekaTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/unit/cases/NTester.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/unit/cases/NTester.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/unit/cases/NTester_Function.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/unit/cases/NTester_Function.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/unit/cases/NTester_Tensor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/unit/cases/NTester_Tensor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/unit/cases/NTester_TensorDevice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/unit/cases/NTester_TensorDevice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/TestTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestTest.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -312,8 +104,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/java/TestTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="11" column="23" selection-start-line="11" selection-start-column="23" selection-end-line="11" selection-end-column="23" />
+            <state relative-caret-position="34">
+              <caret line="2" selection-start-line="2" selection-end-line="2" selection-end-column="22" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/unit/cases/NTester.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-340">
+              <caret line="69" column="25" selection-start-line="69" selection-start-column="25" selection-end-line="69" selection-end-column="25" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -321,11 +122,30 @@
           </provider>
         </entry>
       </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/unit/cases/NTester_Function.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="238">
+              <caret line="87" column="10" selection-start-line="87" selection-start-column="10" selection-end-line="87" selection-end-column="10" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/NSMain.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="68">
+              <caret line="152" column="10" selection-start-line="152" selection-start-column="10" selection-end-line="152" selection-end-column="10" />
+              <caret line="153" column="10" selection-start-line="153" selection-start-column="10" selection-end-line="153" selection-end-column="10" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="18" column="37" selection-start-line="18" selection-start-column="37" selection-end-line="18" selection-end-column="37" />
+            <state relative-caret-position="323">
+              <caret line="33" column="25" selection-start-line="33" selection-start-column="25" selection-end-line="33" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -340,10 +160,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/neureka/unit/NeurekaTest.java">
+        <entry file="file://$PROJECT_DIR$/src/test/java/unit/NeurekaTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="232">
-              <caret line="368" selection-start-line="368" selection-end-line="368" />
+            <state relative-caret-position="255">
+              <caret line="24" selection-start-line="24" selection-end-line="24" />
             </state>
           </provider>
         </entry>
@@ -362,20 +182,6 @@
       </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/gradlew">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/Main.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="5" column="42" selection-start-line="5" selection-start-column="42" selection-end-line="5" selection-end-column="42" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/settings.gradle">
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
@@ -399,15 +205,18 @@
         <option value="$PROJECT_DIR$/src/main/java/Main.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/ngui/NWindow.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/NSubstrate.java" />
+        <option value="$PROJECT_DIR$/src/main/java/neureka/unit/cases/NTester.java" />
         <option value="$PROJECT_DIR$/src/test/java/TestTest.java" />
+        <option value="$PROJECT_DIR$/src/main/java/NSMain.java" />
+        <option value="$PROJECT_DIR$/src/test/java/unit/cases/NTester_Function.java" />
+        <option value="$PROJECT_DIR$/src/test/java/unit/cases/NTester.java" />
         <option value="$PROJECT_DIR$/build.gradle" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1745" />
-    <option name="y" value="280" />
-    <option name="width" value="1950" />
+    <option name="x" value="-15" />
+    <option name="width" value="1948" />
     <option name="height" value="2075" />
   </component>
   <component name="ProjectView">
@@ -427,6 +236,17 @@
             <path>
               <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
               <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
+              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+              <item name="libs" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
+              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -454,15 +274,6 @@
               <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
               <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="neureka" type="462c0819:PsiDirectoryNode" />
-              <item name="ngui" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="test" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
             <path>
@@ -471,6 +282,23 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="test" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
+              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="unit" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
+              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="unit" type="462c0819:PsiDirectoryNode" />
+              <item name="cases" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -481,7 +309,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1568199560601" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1568203673590" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -490,6 +318,9 @@
     <property name="project.structure.side.proportion" value="0.2" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\development\java\remoteTest\neureka\src\test" />
     </key>
@@ -592,9 +423,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JAR Application.neureka-1.0-SNAPSHOT.jar" />
         <item itemvalue="Gradle.neureka [test]" />
         <item itemvalue="Gradle.neureka [run]" />
-        <item itemvalue="JAR Application.neureka-1.0-SNAPSHOT.jar" />
         <item itemvalue="Gradle.neureka [build]" />
         <item itemvalue="Gradle.neureka [clean]" />
       </list>
@@ -611,49 +442,49 @@
       <option name="presentableId" value="Default" />
       <updated>1568152493181</updated>
       <workItem from="1568152497951" duration="4124000" />
-      <workItem from="1568197012269" duration="2493000" />
+      <workItem from="1568197012269" duration="5964000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="neureka_[test] - 2019.09.11 at 12h 26m 42s.xml">
+    <history-entry file="neureka_[test] - 2019.09.11 at 13h 32m 00s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
-    <history-entry file="neureka_[test] - 2019.09.11 at 12h 29m 37s.xml">
+    <history-entry file="neureka_[test] - 2019.09.11 at 13h 32m 04s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
-    <history-entry file="neureka_[test] - 2019.09.11 at 12h 31m 57s.xml">
+    <history-entry file="neureka_[test] - 2019.09.11 at 13h 32m 29s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
-    <history-entry file="neureka_[test] - 2019.09.11 at 12h 42m 35s.xml">
+    <history-entry file="neureka_[test] - 2019.09.11 at 13h 34m 47s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
-    <history-entry file="neureka_[test] - 2019.09.11 at 12h 42m 45s.xml">
+    <history-entry file="neureka_[test] - 2019.09.11 at 13h 35m 40s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
-    <history-entry file="neureka_[test] - 2019.09.11 at 12h 44m 59s.xml">
+    <history-entry file="neureka_[test] - 2019.09.11 at 13h 55m 18s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
-    <history-entry file="neureka_[test] - 2019.09.11 at 12h 45m 40s.xml">
+    <history-entry file="neureka_[test] - 2019.09.11 at 13h 58m 16s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
-    <history-entry file="neureka_[test] - 2019.09.11 at 12h 47m 58s.xml">
+    <history-entry file="neureka_[test] - 2019.09.11 at 13h 59m 06s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
-    <history-entry file="neureka_[test] - 2019.09.11 at 12h 49m 12s.xml">
+    <history-entry file="neureka_[test] - 2019.09.11 at 13h 59m 53s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
-    <history-entry file="neureka_[test] - 2019.09.11 at 12h 57m 05s.xml">
+    <history-entry file="neureka_[test] - 2019.09.11 at 14h 00m 52s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6617000" />
+    <option name="totallyTimeSpent" value="10088000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.32508144" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22996743" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -662,9 +493,9 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info id="Learn" order="7" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32554945" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32871014" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32554945" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3997253" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -680,7 +511,7 @@
       <window_info anchor="right" id="Maven" order="3" />
       <window_info anchor="right" id="Palette" order="4" />
       <window_info anchor="right" id="Capture Analysis" order="5" />
-      <window_info anchor="right" id="Gradle" order="6" visible="true" weight="0.21237785" />
+      <window_info active="true" anchor="right" id="Gradle" order="6" visible="true" weight="0.15700325" />
       <window_info anchor="right" id="Database" order="7" />
       <window_info anchor="right" id="Palette&#9;" order="8" />
       <window_info anchor="right" id="Theme Preview" order="9" />
@@ -688,6 +519,18 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/TestTest.java</url>
+          <line>8</line>
+          <properties />
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/test/SimpleTest.java" />
@@ -745,13 +588,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/NSMain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="161" column="8" selection-start-line="161" selection-start-column="8" selection-end-line="162" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/Main.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
@@ -759,27 +595,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/TestTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="23" selection-start-line="11" selection-start-column="23" selection-end-line="11" selection-end-column="23" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="155">
           <caret line="130" selection-start-line="130" selection-end-line="130" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/unit/NeurekaTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
-          <caret line="368" selection-start-line="368" selection-end-line="368" />
         </state>
       </provider>
     </entry>
@@ -799,10 +618,60 @@
     <entry file="file://$PROJECT_DIR$/gradlew">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/unit/NeurekaTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="24" selection-start-line="24" selection-end-line="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/NSMain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="152" column="10" selection-start-line="152" selection-start-column="10" selection-end-line="152" selection-end-column="10" />
+          <caret line="153" column="10" selection-start-line="153" selection-start-column="10" selection-end-line="153" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/TestTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" selection-start-line="2" selection-end-line="2" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/a6c32b40bf3d76eca54e3c601e5d1470c86fcdfa/junit-4.12-sources.jar!/org/junit/Assert.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="145">
+          <caret line="108" column="23" selection-start-line="108" selection-start-column="23" selection-end-line="108" selection-end-column="23" />
+          <folding>
+            <element signature="e#4403#4404#0" expanded="true" />
+            <element signature="e#4455#4456#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/unit/cases/NTester_Function.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="87" column="10" selection-start-line="87" selection-start-column="10" selection-end-line="87" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/unit/cases/NTester.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-340">
+          <caret line="69" column="25" selection-start-line="69" selection-start-column="25" selection-end-line="69" selection-end-column="25" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="18" column="37" selection-start-line="18" selection-start-column="37" selection-end-line="18" selection-end-column="37" />
+        <state relative-caret-position="323">
+          <caret line="33" column="25" selection-start-line="33" selection-start-column="25" selection-end-line="33" selection-end-column="25" />
         </state>
       </provider>
     </entry>

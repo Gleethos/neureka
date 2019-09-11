@@ -31,6 +31,7 @@ javafx {
 }
 
 jar {
+    mainClassName = 'Main'
     from configurations.compile.collect{ zipTree it }
     manifest.attributes "Main-Class" : "Main"
 }

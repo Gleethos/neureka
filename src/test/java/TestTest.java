@@ -1,9 +1,8 @@
 
-import neureka.unit.NeurekaTest;
+import unit.*;
 import org.junit.Test;
-import com.aparapi.Kernel;
 
-public class TestTest {
+public class TestTest{
 
 	@Test
 	public void test1() throws InterruptedException {

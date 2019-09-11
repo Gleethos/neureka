@@ -1,13 +1,5 @@
-import neureka.core.T;
-import neureka.core.device.Device;
-import neureka.ngui.touch.NSurface;
-import neureka.core.utility.DataHelper;
-import neureka.ngui.touch.canvas.TestWindow;
-import neureka.unit.NeurekaTest;
-import neureka.ngui.NWindow;
 
-import java.util.Random;
-import java.util.Scanner;
+import neureka.ngui.NWindow;
 
 public class NSMain {
 
@@ -158,9 +150,8 @@ public class NSMain {
         //memory-=8;
         //System.out.println("Used memory minus 8: "+memory+" bytes; "  + bytesToMegabytes(memory)+" megabytes;");
 
-
-        NeurekaTest tester2 = new NeurekaTest();
-        tester2.Test();
+        //NeurekaTest tester2 = new NeurekaTest();
+        //tester2.Test();
 
 
 
