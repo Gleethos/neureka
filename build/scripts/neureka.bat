@@ -63,7 +63,7 @@ set CMD_LINE_ARGS=%*
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\lib\neureka-1.0-SNAPSHOT.jar;%APP_HOME%\lib\aparapi-1.10.0.jar;%APP_HOME%\lib\annotations-16.0.2.jar;%APP_HOME%\lib\javafx-fxml-13-win.jar;%APP_HOME%\lib\javafx-web-13-win.jar;%APP_HOME%\lib\javafx-media-13-win.jar;%APP_HOME%\lib\javafx-media-13.jar;%APP_HOME%\lib\javafx-swing-13-win.jar;%APP_HOME%\lib\javafx-controls-13-win.jar;%APP_HOME%\lib\javafx-controls-13.jar;%APP_HOME%\lib\javafx-graphics-13-win.jar;%APP_HOME%\lib\javafx-graphics-13.jar;%APP_HOME%\lib\javafx-base-13-win.jar;%APP_HOME%\lib\javafx-base-13.jar;%APP_HOME%\lib\aparapi-jni-1.4.1.jar;%APP_HOME%\lib\bcel-6.2.jar;%APP_HOME%\lib\scala-library-2.12.6.jar
+set CLASSPATH=%APP_HOME%\lib\neureka-1.0-SNAPSHOT.jar;%APP_HOME%\lib\aparapi-1.10.0.jar;%APP_HOME%\lib\annotations-16.0.2.jar;%APP_HOME%\lib\javafx-web-11.0.2-win.jar;%APP_HOME%\lib\javafx-swing-11.0.2-win.jar;%APP_HOME%\lib\javafx-fxml-11.0.2-win.jar;%APP_HOME%\lib\javafx-controls-11.0.2-win.jar;%APP_HOME%\lib\javafx-controls-11.0.2.jar;%APP_HOME%\lib\javafx-media-11.0.2-win.jar;%APP_HOME%\lib\javafx-media-11.0.2.jar;%APP_HOME%\lib\javafx-graphics-11.0.2-win.jar;%APP_HOME%\lib\javafx-graphics-11.0.2.jar;%APP_HOME%\lib\javafx-base-11.0.2-win.jar;%APP_HOME%\lib\javafx-base-11.0.2.jar;%APP_HOME%\lib\aparapi-jni-1.4.1.jar;%APP_HOME%\lib\bcel-6.2.jar;%APP_HOME%\lib\scala-library-2.12.6.jar
 
 @rem Execute neureka
 "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %NEUREKA_OPTS%  -classpath "%CLASSPATH%" Main %CMD_LINE_ARGS%

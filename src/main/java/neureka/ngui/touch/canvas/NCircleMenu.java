@@ -2,7 +2,7 @@ package neureka.ngui.touch.canvas;
 
 import javafx.scene.canvas.GraphicsContext;
 import neureka.core.T;
-import neureka.ngui.NSound;
+import neureka.ngui.swing.NSound;
 
 import java.awt.*;
 import java.awt.MultipleGradientPaint.CycleMethod;

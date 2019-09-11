@@ -17,6 +17,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.net.URL;
+import java.util.Enumeration;
+
 public class NSurface extends Application{
 	
 
@@ -25,7 +28,17 @@ public class NSurface extends Application{
 	}
 		@Override
 		public void start(Stage stage) throws Exception {
-			Parent root = FXMLLoader.load(getClass().getResource("TouchPane.fxml"));
+
+
+			final String dir = System.getProperty("user.dir");
+			System.out.println("current dir = " + dir);
+
+			URL myURL = ClassLoader.getSystemResource("TouchPane.fxml");
+			FXMLLoader loader = new FXMLLoader();
+			//URL url = new URL("resources/TouchPane.fxml");
+			//this.getClass().getResource("../resources/TouchPane.fxml");
+			System.out.println(myURL);
+			Parent root = loader.load(myURL);//FXMLLoader.load(url);
 			Scene scene = new Scene(root);
 			stage.setScene(scene);
 			stage.show();

@@ -1,0 +1,19 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.mainFxmlClassUnselected {
+	-fx-background-color: blue;
+	-fx-border-width: 0; 
+}
+
+.mainFxmlClassSelected {
+	-fx-background-color: blue;
+	-fx-border-color: black;
+	-fx-border-width: 3; 
+}
+
+.RealmNode{
+	-fx-min-width: 300px;
+	-fx-min-height: 300px;
+}

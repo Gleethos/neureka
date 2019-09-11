@@ -12,6 +12,7 @@ Unless otherwise agreed by Intel in writing, you may not remove or alter this no
 package neureka.ngui.touch;
 
 import java.io.IOException;
+import java.net.URL;
 
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
@@ -22,9 +23,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.SwipeEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.Pane;
-import neureka.ngui.NGraphBuilder;
-
-import javax.swing.*;
+import neureka.ngui.swing.NGraphBuilder;
 
 public class MovableElementController extends Pane implements IChildItem{
 
@@ -33,13 +32,16 @@ public class MovableElementController extends Pane implements IChildItem{
 
 	@FXML
 	private SwingNode RealmNode;
+	NGraphBuilder builder;
 
-	public MovableElementController(IParentItem parentContainer) {
+	public MovableElementController(IParentItem parentContainer){
 		super();
 		parent = parentContainer;
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("MovableElement.fxml"));
-		loader.setRoot(this);
+		URL myURL = ClassLoader.getSystemResource("MovableElement.fxml");
+		System.out.println(myURL);
+		FXMLLoader loader = new FXMLLoader(myURL);//getClass().getResource("MovableElement.fxml"));
 		loader.setController(this);
+		loader.setRoot(this);
 		try {
 			loader.load();
 		} catch (IOException exception) {
@@ -47,8 +49,9 @@ public class MovableElementController extends Pane implements IChildItem{
 		}
 		//this.getStyleClass().overwrite("RealmStyle");
 
-		NGraphBuilder GraphBuilder = new NGraphBuilder();
-		RealmNode.setContent(GraphBuilder.getSurface());
+		builder = new NGraphBuilder();
+		System.out.println(builder.getSurface());
+		RealmNode.setContent(builder.getSurface());
 
 	}
 
@@ -68,7 +71,9 @@ public class MovableElementController extends Pane implements IChildItem{
 	private Point2D prevPos;
 
 	public void onTouchPressed(TouchEvent t) {
-		if((t.getTarget() instanceof SwingNode)){
+		if(t.getTarget() instanceof SwingNode){
+			SwingNode node = (SwingNode) t.getTarget();
+			node.requestFocus();
 			System.out.println("SWING!!!");
 		}else {
 			if (moveInProgress == false) {
@@ -93,7 +98,6 @@ public class MovableElementController extends Pane implements IChildItem{
 			double[] translationVector = new double[2];
 			translationVector[0] = currPos.getX() - prevPos.getX();
 			translationVector[1] = currPos.getY() - prevPos.getY();
-
 			//i used this instead of setTranslate* because we don't care about the original position of the object and aggregating _translation
 			//will require having another variable
 			setTranslateX(getTranslateX() + translationVector[0]);
@@ -110,7 +114,14 @@ public class MovableElementController extends Pane implements IChildItem{
 			moveInProgress = false;
 			System.err.println("TOUCH RELEASED " + t.toString());
 		}
-
+		new Thread(() -> {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException ex) {}
+			RealmNode.setContent(builder.getSurface());
+			//builder.getSurface().repaintAll();
+			this.RealmNode.requestFocus();
+		}).start();
 		t.consume();
 	}
 
@@ -123,8 +134,6 @@ public class MovableElementController extends Pane implements IChildItem{
 	public void onSwipe(SwipeEvent t) {
 		t.consume();
 	}
-
-
 
 	@Override
 	public Node getNode() {

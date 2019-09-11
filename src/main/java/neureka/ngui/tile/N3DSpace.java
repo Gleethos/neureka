@@ -7,8 +7,8 @@ import java.util.Random;
 import com.aparapi.Kernel;
 import com.aparapi.device.Device;
 import com.aparapi.device.OpenCLDevice;
-import neureka.ngui.NPanel;
-import neureka.ngui.NPointTracer;
+import neureka.ngui.swing.NPanel;
+import neureka.ngui.swing.NPointTracer;
 
 public class N3DSpace {
 

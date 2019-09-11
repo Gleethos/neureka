@@ -3,7 +3,7 @@ package neureka.ngui.touch.canvas;
 import javafx.scene.canvas.GraphicsContext;
 import neureka.core.T;
 import neureka.core.function.IFunction;
-import neureka.ngui.NVControlFrame;
+import neureka.ngui.swing.NVControlFrame;
 
 import java.awt.*;
 import java.awt.MultipleGradientPaint.CycleMethod;

@@ -1,5 +1,5 @@
 
-import neureka.ngui.NWindow;
+import neureka.ngui.swing.NWindow;
 
 public class NSMain {
 
