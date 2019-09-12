@@ -2,7 +2,7 @@
 Test test works
 
 ---
-Device 2284034636832
+Device 1606622267984
   vendor = NVIDIA Corporation
   type:GPU
   maxComputeUnits=6
@@ -15,7 +15,7 @@
 
 
 ---
-Device 2283999270480
+Device 1606626122528
    vendor = Intel(R) Corporation
   type:GPU
   maxComputeUnits=24
@@ -28,7 +28,7 @@
 
 
 ---
-Device 2284031637760
+Device 1608443732960
    vendor = Intel(R) Corporation
   type:CPU
   maxComputeUnits=12
@@ -41,7 +41,7 @@
 
 Device of new kernel:
 ------------
-Device 2284034636832
+Device 1606622267984
   vendor = NVIDIA Corporation
   type:GPU
   maxComputeUnits=6
@@ -67,7 +67,7 @@ pre mul:
 Done!
 
 ---
-Device 2284034636832
+Device 1606622267984
   vendor = NVIDIA Corporation
   type:GPU
   maxComputeUnits=6
@@ -80,7 +80,7 @@ pre mul:
 
 
 ---
-Device 2283999270480
+Device 1606626122528
    vendor = Intel(R) Corporation
   type:GPU
   maxComputeUnits=24
@@ -93,7 +93,7 @@ pre mul:
 
 
 ---
-Device 2284031637760
+Device 1608443732960
    vendor = Intel(R) Corporation
   type:CPU
   maxComputeUnits=12
@@ -106,7 +106,7 @@ pre mul:
 
 Device of new kernel:
 ------------
-Device 2284034636832
+Device 1606622267984
   vendor = NVIDIA Corporation
   type:GPU
   maxComputeUnits=6

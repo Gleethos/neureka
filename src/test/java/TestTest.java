@@ -173,8 +173,6 @@ public class TestTest {
         //=====================
         tensor1 = new T(new int[]{2, 2}, new double[]{1, 2, 3, 4});//-2*4 = 8 | *3 = -24
         tensor1.setRqsGradient(true);
-        //tensor2 = new T(new int[]{2}, new double[]{3, 4});
-        //tensor3 = new T(new int[]{1, 1}, 3);
         tester.testTensorAutoGrad(
                 new T[]{tensor1},
                 "((i0+2)^2)",
@@ -186,8 +184,6 @@ public class TestTest {
         //=====================
         tensor1 = new T(new int[]{2}, new double[]{1, 2});//-2*4 = 8 | *3 = -24
         tensor1.setRqsGradient(true);
-        //tensor2 = new T(new int[]{2}, new double[]{3, 4});
-        //tensor3 = new T(new int[]{1, 1}, 3);
         tester.testTensorAutoGrad(
                 new T[]{tensor1},
                 "cos(tanh(lig(i0)))",
@@ -199,8 +195,6 @@ public class TestTest {
         //=====================
         tensor1 = new T(new int[]{1}, new double[]{2});//-2*4 = 8 | *3 = -24
         tensor1.setRqsGradient(true);
-        //tensor2 = new T(new int[]{2}, new double[]{3, 4});
-        //tensor3 = new T(new int[]{1, 1}, 3);
         tester.testTensorAutoGrad(
                 new T[]{tensor1},//2 =>-2 =>-4 =>12 //2 =>-2 //-2,12 =>-24
                 "(-3*(2*(i0*-1)))*(-1*i0)",
@@ -239,14 +233,10 @@ public class TestTest {
         });
         tester.testTensorAutoGrad(new T[]{tensor1, tensor2, tensor3},
                 "i0<<i1<<i2",
-                new String[]{
-                        "[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"
-                });
+                new String[]{"[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"});
         tester.testTensorAutoGrad(new T[]{tensor3, tensor2, tensor1},
                 "i2>>i1>>i0",
-                new String[]{
-                        "[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"
-                });
+                new String[]{"[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"});
         //=====================
         //---
         tensor1 = new T(new int[]{2, 2, 1}, new double[]{
@@ -430,15 +420,11 @@ public class TestTest {
         tensor1 = new T(new int[]{2}, 3);
         tensor2 = new T(new int[]{2}, 4);
         T result = new T(new T[]{tensor1, tensor2}, "i0*i1");
-        //System.out.println(result);
         tester.testTensorAutoGrad(
                 new T[]{tensor1, tensor2},
                 "i0*i1",
-                new String[]{
-                        "[2]:(12.0, 12.0)"
-                });
+                new String[]{"[2]:(12.0, 12.0)"});
         //===========================================
-        //Device gpu = new Device("nvidia");
         tensor1 = new T(
                 new int[]{2, 3, 1},
                 new double[]{
@@ -455,9 +441,6 @@ public class TestTest {
                 });
         gpu.add(tensor1);
         gpu.add(tensor2);
-        //result = new T(new T[]{tensor1, tensor2}, "I0xi1");
-        //System.out.println(result);
-        //System.out.println(result.isOutsourced());
         tester.testTensorAutoGrad(
                 new T[]{tensor1, tensor2},
                 "I0xi1",
@@ -474,16 +457,12 @@ public class TestTest {
                 3);
         gpu.add(tensor1);
         gpu.add(tensor2);
-        //result = new T(new T[]{tensor1, tensor2}, "I0xi1");
-        //System.out.println(result);
-        //System.out.println(result.isOutsourced());
         tester.testTensorAutoGrad(
                 new T[]{tensor1, tensor2},
                 "I0xi1",
                 new String[]{
                         "[200x1x200]:(1800.0, 1800.0, 1800.0, 1800.0, 1800.0, 1800.0,"//...
                 });
-        //--
         //---
         tensor1 = new T(new int[]{2, 2, 1}, new double[]{
                 1, 2, //3, 1,
@@ -530,7 +509,6 @@ public class TestTest {
                 new int[]{2, 4},
                 new int[]{1, 2},
                 new int[]{0, 8, 0, 2, 0, 2, 8, 2, 0, 1, 0, 1});
-
         tensor = T.factory.newTensor(new double[]{4, -4, 9, 4, 77}, new int[]{5});
         tester.testAddTensor(gpu, tensor,
                 new double[]{1, 3, 4, 2, -3, 2, -1, 6, -7, -9, 4, -4, 9, 4, 77, 0, 0, 0, 0, 0,},
@@ -564,7 +542,8 @@ public class TestTest {
                 new int[]{0, -4, 3, 2, 0, 2, 8, 2, 0, 1, 0, 1, 10, 5, 2, 1, 0, 1}
         );
         //TESTING TENS MUL ON GPU NOW!!!!!
-        T src1 = T.factory.newTensor(
+        T src1 = new T(
+                new int[]{2, 3, 2},
                 new double[]{
                         1, 2,
                         3, 4,
@@ -573,10 +552,10 @@ public class TestTest {
                         3, 4,
                         2, -1,
                         -2, -3
-                },
-                new int[]{2, 3, 2}
+                }
         );
-        T src2 = T.factory.newTensor(
+        T src2 = new T(
+                new int[]{2, 2, 3},
                 new double[]{
                         -1, 3,
                         0, 2,
@@ -586,13 +565,14 @@ public class TestTest {
 
                         0, 4,
                         5, -1
-                }, new int[]{2, 2, 3}
+                }
         );
-        T drn = T.factory.newTensor(//0, 5, 3, 6, -3, 3, 5, 1, 2, 3, 3 -4
+        T drn = new T(
+                new int[]{1, 2, 2},
                 new double[]{
                         0, 0,
                         0, 0,
-                }, new int[]{1, 2, 2}
+                }
         );
         System.out.println("pre mul:");
         System.out.println(gpu.stringified(gpu.getKernel().values()));
@@ -604,13 +584,11 @@ public class TestTest {
         //gpu.calculate_on_CPU(drn, src1, src2, 18);
         //gpu.printDeviceContent(true);
         tester.testCalculation(
-                gpu,
-                drn, src1, src2, 18, -1,//Tsr mul
+                gpu, drn, src1, src2, 18, -1,//Tsr mul
                 new double[]{888.0, 777.0, -33.0, 999.0, 0.0, 0.0, 0.0, 0.0, -7.0, -9.0, 4.0, -4.0, 9.0, 4.0, 77.0, 1.0, 2.0, 3.0, 4.0, 0.0, 2.0, 3.0, 4.0, 2.0, -1.0, -2.0, -3.0, -1.0, 3.0, 0.0, 2.0, -3.0, 1.0, 2.0, -3.0, 0.0, 4.0, 5.0, -1.0, 15.0, 11.0, 20.0, -22.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
         );
         tester.testCalculation(
-                gpu,
-                drn, src1, src2, 18, -1,//Tsr mul
+                gpu, drn, src1, src2, 18, -1,//Tsr mul
                 new double[]{888.0, 777.0, -33.0, 999.0, 0.0, 0.0, 0.0, 0.0, -7.0, -9.0, 4.0, -4.0, 9.0, 4.0, 77.0, 1.0, 2.0, 3.0, 4.0, 0.0, 2.0, 3.0, 4.0, 2.0, -1.0, -2.0, -3.0, -1.0, 3.0, 0.0, 2.0, -3.0, 1.0, 2.0, -3.0, 0.0, 4.0, 5.0, -1.0, 15.0, 11.0, 20.0, -22.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
         );
         //INVERS OF CONV
@@ -635,24 +613,23 @@ public class TestTest {
         gpu.add(d_src1).add(d_src2).add(d_drn);
         gpu.printDeviceContent(true);
         tester.testCalculation(
-                gpu,
-                d_drn, d_src1, d_src2, 18, 0,//Tsr mul
+                gpu, d_drn, d_src1, d_src2, 18, 0,//Tsr mul
                 expectedInv//new double[]{888.0, 777.0, -33.0, 999.0, 0.0, 0.0, 0.0, 0.0, -7.0, -9.0, 4.0, -4.0, 9.0, 4.0, 77.0, 1.0, 2.0, 3.0, 4.0, 0.0, 2.0, 3.0, 4.0, 2.0, -1.0, -2.0, -3.0, -1.0, 3.0, 0.0, 2.0, -3.0, 1.0, 2.0, -3.0, 0.0, 4.0, 5.0, -1.0, 15.0, 11.0, 20.0, -22.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
         );
-        //gpu.calculate_on_CPU(drain, first, second, 18, 0);
 
         //ADDITION
         System.out.println("WE ARE HERE:");
         gpu.printDeviceContent(true);
 
         //addition:
-        drn = T.factory.newTensor(
+        drn = new T(
+                new int[]{3, 2, 2},
                 new double[]{
                         111, 222, 333,
                         444, 555, 666,
                         777, 888, 999,
                         1098, 32, 150,
-                }, new int[]{3, 2, 2}
+                }
         );
         //Adding new drain:
         tester.testAddTensor(gpu, drn,
@@ -671,24 +648,10 @@ public class TestTest {
                 drn, drn, null, 6, -1,//Tsr gaus
                 new double[]{888.0, 777.0, -33.0, 999.0, 0.0, 0.0, 0.0, 0.0, -7.0, -9.0, 4.0, -4.0, 9.0, 4.0, 77.0, 1.0, 2.0, 3.0, 4.0, 0.0, 2.0, 3.0, 4.0, 2.0, -1.0, -2.0, -3.0, -1.0, 3.0, 0.0, 2.0, -3.0, 1.0, 2.0, -3.0, 0.0, 4.0, 5.0, -1.0, 15.0, 11.0, 20.0, -22.0, -8.0, 4.0, -9.0, -2.0, 2.0, 3.0, -2.0, 3.0, 6.0, 3.0, -1.0, 0.0, 2.0, 4.0, 2.0, 1.0, 1.0, 2.0, -3.0, 2.0, 4.0, -2.0, -1.0, 5.0, 1.0, 1.3887943864964039E-11, 1.2340980408667962E-4, 2.3195228302435736E-16, 1.2340980408667962E-4, 1.2340980408667962E-4, 1.3887943864964039E-11, 0.36787944117144233, 0.018315638888734182, 1.2340980408667962E-4, 1.2340980408667962E-4, 1.1253517471925921E-7,}
         );
-        //System.out.println("is shared: "+gpu.device.isSharedMemory());
-        //for(int i=0; i<2000; i++){
-        //	try {
-        //		Thread.sleep(20);
-        //	} catch (InterruptedException e) {
-        //		e.printStackTrace();
-        //	}
-        //	gpu.overwrite(T.factory.newTensor(1+i, new int[]{100000}));//...
-        //}
-        //try {
-        //	Thread.sleep(3000);
-        //} catch (InterruptedException e) {
-        //	e.printStackTrace();
-        //}
         gpu.getKernel().dispose();
         System.out.println("Done!");
         try {
-            Thread.sleep(10000);
+            Thread.sleep(6000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

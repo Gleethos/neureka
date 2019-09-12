@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="TestTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2019-09-12T20:41:13" hostname="DESKTOP-6UFJ24U" time="36.873">
+<testsuite name="TestTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2019-09-12T20:47:50" hostname="DESKTOP-6UFJ24U" time="32.35">
   <properties/>
-  <testcase name="testTensorFunctions" classname="TestTest" time="7.0"/>
-  <testcase name="testTest" classname="TestTest" time="6.013"/>
-  <testcase name="testTensorDevice" classname="TestTest" time="12.201"/>
-  <testcase name="testTensorCore" classname="TestTest" time="11.659"/>
+  <testcase name="testTensorFunctions" classname="TestTest" time="6.97"/>
+  <testcase name="testTest" classname="TestTest" time="6.015"/>
+  <testcase name="testTensorDevice" classname="TestTest" time="8.188"/>
+  <testcase name="testTensorCore" classname="TestTest" time="11.177"/>
   <system-out><![CDATA[0.0
 Test test works
 
 ---
-Device 2284034636832
+Device 1606622267984
   vendor = NVIDIA Corporation
   type:GPU
   maxComputeUnits=6
@@ -22,7 +22,7 @@ Device 2284034636832
 
 
 ---
-Device 2283999270480
+Device 1606626122528
   vendor = Intel(R) Corporation
   type:GPU
   maxComputeUnits=24
@@ -35,7 +35,7 @@ Device 2283999270480
 
 
 ---
-Device 2284031637760
+Device 1608443732960
   vendor = Intel(R) Corporation
   type:CPU
   maxComputeUnits=12
@@ -48,7 +48,7 @@ Device 2284031637760
 
 Device of new kernel:
 ------------
-Device 2284034636832
+Device 1606622267984
   vendor = NVIDIA Corporation
   type:GPU
   maxComputeUnits=6
@@ -73,7 +73,7 @@ WE ARE HERE:
 Done!
 
 ---
-Device 2284034636832
+Device 1606622267984
   vendor = NVIDIA Corporation
   type:GPU
   maxComputeUnits=6
@@ -86,7 +86,7 @@ Device 2284034636832
 
 
 ---
-Device 2283999270480
+Device 1606626122528
   vendor = Intel(R) Corporation
   type:GPU
   maxComputeUnits=24
@@ -99,7 +99,7 @@ Device 2283999270480
 
 
 ---
-Device 2284031637760
+Device 1608443732960
   vendor = Intel(R) Corporation
   type:CPU
   maxComputeUnits=12
@@ -112,7 +112,7 @@ Device 2284031637760
 
 Device of new kernel:
 ------------
-Device 2284034636832
+Device 1606622267984
   vendor = NVIDIA Corporation
   type:GPU
   maxComputeUnits=6
