@@ -3,8 +3,8 @@ package neureka.core.function.factory;
 import neureka.core.T;
 import neureka.core.function.IFunction;
 import neureka.core.function.factory.autograd.GraphLock;
-import neureka.core.function.factory.construction.FunctionGraphBuilder;
-import neureka.core.function.factory.material.FConstant;
+import neureka.core.function.factory.assembly.FunctionGraphBuilder;
+import neureka.core.function.factory.implementations.FConstant;
 import neureka.core.function.factory.autograd.GraphBuilder;
 import neureka.core.device.Device;
 

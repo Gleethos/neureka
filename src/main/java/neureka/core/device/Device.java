@@ -42,8 +42,7 @@ public class Device {
             _device = OpenCLDevice.listDevices(null).get(0);
             List<OpenCLDevice> OpenCLDevices = OpenCLDevice.listDevices(null);
             for (OpenCLDevice found : OpenCLDevices) {
-                System.out.println("\n---\n" + found.toString());
-                System.out.println(found.getShortDescription() + "; ID: " + found.getDeviceId());
+                System.out.println("\n---\n" + found.toString()+ "\n---\n");
                 if (
                         (found.getShortDescription() + found.toString()).toLowerCase().contains(name.toLowerCase())
                                 && found.getType().toString().toLowerCase().contains(type)
@@ -54,10 +53,8 @@ public class Device {
             if (!_device.getType().toString().toLowerCase().contains("cpu")) {
                 _device.setSharedMemory(false);// GPU's (!cpu's) don't share host memory!
             }
-            System.out.println("\nChosen _device:\n------------\n" + _device.toString() + "\n------------\n");
-            System.out.println("\n_device _id:\n------------\n" + _device.getType().toString() + "\n------------\n");
             _kernel = new TensorKernel();
-            System.out.println("Device f _kernel:\n------------");
+            System.out.println("Device of new kernel:\n------------");
             System.out.println(_kernel.getTargetDevice().toString());
         }
     }

@@ -2,7 +2,7 @@ package util;
 
 import neureka.core.T;
 import neureka.core.function.IFunction;
-import neureka.core.function.factory.construction.FunctionGraphBuilder;
+import neureka.core.function.factory.assembly.FunctionGraphBuilder;
 
 public class NTester_Function extends NTester {
 

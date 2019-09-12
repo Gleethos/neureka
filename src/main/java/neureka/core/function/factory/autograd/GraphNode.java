@@ -12,7 +12,6 @@ import java.util.function.BiConsumer;
 public class GraphNode {
 
     /**
-     *
      *  This gradient node is involved in auto-differentiation.
      * @return boolean
      */
@@ -63,8 +62,9 @@ public class GraphNode {
     private T[] _source;
 
     /**
-     * Keys are targets and _values are gradients with respect to that target
-     * (Note: _values can be null if the recorded _function is of type 'reshape')
+     * Keys are targets and values are gradients with respect to that target
+     * Note: values can be null if the recorded function is of type 'reshape'!
+     * Why? => because reshape operation does not need variables for backward pass!
      * */
     private TreeMap<T, T> targets_gradients;
 
@@ -75,7 +75,6 @@ public class GraphNode {
 
     //==================================================================================================================
     /**
-     *
      * @return GraphLock
      */
     public GraphLock lock(){
@@ -83,6 +82,7 @@ public class GraphNode {
     }
 
     /**
+     * Node-ID
      * @return long
      */
     public long nid(){
@@ -99,6 +99,8 @@ public class GraphNode {
     }
 
     /**
+     * Some nodes are not cachable! Namely: leave tensors! They are not results of
+     * any function operation.
      * @return boolean
      */
     public boolean isCachable(){
@@ -106,6 +108,7 @@ public class GraphNode {
     }
 
     /**
+     * This node (and the corresponding tensor) was not created by a function! (it's a leave tensor)
      * @return boolean
      */
     public boolean isOrigin(){
@@ -113,7 +116,6 @@ public class GraphNode {
     }
 
     /**
-     *
      * @param value
      * @param f
      * @param src
@@ -133,7 +135,7 @@ public class GraphNode {
      */
     private static int modeOf(T[] source, IFunction function){
         /**
-         *  Evaluate auto-grad _mode:
+         *  Evaluate auto-grad mode:
          * */
         int mode = 0;
         int[] srcModes = new int[source.length];
@@ -211,7 +213,7 @@ public class GraphNode {
     public void backward(T error){
         if(this.usesAD()){
             if(this.usesForwardAD()){
-                this.forEach((g, t)->t.backward(T.factory.exec.multiplication(error, g)));
+                this.forEach((g, t)->t.backward(new T(new T[]{error, g}, "I[0]*I[1]", false)));
             }else if(this.usesReverseAD()){
                 this.forEach((t, g)->{
                     if(_function.id()==18){// x operation required for chainrule!

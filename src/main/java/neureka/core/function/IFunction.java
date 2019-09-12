@@ -4,7 +4,7 @@ package neureka.core.function;
 import neureka.core.T;
 import neureka.core.function.factory.autograd.GraphLock;
 import neureka.core.function.factory.autograd.GraphNode;
-import neureka.core.function.factory.construction.FunctionGraphBuilder;
+import neureka.core.function.factory.assembly.FunctionGraphBuilder;
 import neureka.core.function.environment.TensorCache;
 import neureka.core.function.environment.FunctionCache;
 
