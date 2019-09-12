@@ -1,11 +1,11 @@
-package unit.cases;
+package util;
 import org.junit.Assert;
 import neureka.frame.NMessageFrame;
 
 public class NTester extends Assert{
 
-    protected NMessageFrame Console;
-    protected NMessageFrame ResultConsole;
+    private NMessageFrame Console;
+    private NMessageFrame ResultConsole;
     protected String bar = "[|]";
     protected String line = "--------------------------------------------------------------------------------------------";
     private int positiveAssertions = 0;
@@ -17,8 +17,11 @@ public class NTester extends Assert{
     private String session = "";
 
     protected NTester(String name) {
-        this.Console = new NMessageFrame(name+" - TEST PROCESS");
-        this.ResultConsole = new NMessageFrame(name+" - TEST RESULT");
+        if(System.getProperty("os.name").toLowerCase().contains("windows")){
+            this.Console = new NMessageFrame(name+" - TEST PROCESS");
+            this.ResultConsole = new NMessageFrame(name+" - TEST RESULT");
+        }
+
     }
 
     protected void printSessionStart(String message){
@@ -26,10 +29,10 @@ public class NTester extends Assert{
         tests++;
         this.positiveAssertions = 0;
         this.assertionCount = 0;
-        this.Console.println("");
-        this.Console.println(bar+"  "+message);
-        this.Console.println("[O][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=]=>");
-        this.Console.println(bar+line);
+        println("");
+        println(bar+"  "+message);
+        println("[O][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=]=>");
+        println(bar+line);
         printlnResult("");
         printlnResult(bar+"  "+message);
         printlnResult("[O][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=]=>");
@@ -37,12 +40,11 @@ public class NTester extends Assert{
     }
     protected int printSessionEnd(){
         success += (positiveAssertions== assertionCount)?1:0;
-        this.Console.println(bar+"  "+((positiveAssertions >0)?"test successful!"+" "+ positiveAssertions :"test failed!"+" "+(assertionCount + positiveAssertions))+"/"+ assertionCount);
-        this.Console.println("[O][=][=][=][=][=][=][=][=][=][=][=]|> "+success+"/"+tests);
-        this.ResultConsole.println(bar+"  "+((positiveAssertions >0)?"test successful!"+" "+ positiveAssertions :"test failed!"+" "+(assertionCount + positiveAssertions))+"/"+ assertionCount);
-        this.ResultConsole.println("[O][=][=][=][=][=][=][=][=][=][=][=]|> "+success+"/"+tests);
-        this.Console.bottom();
-        this.ResultConsole.bottom();
+        println(bar+"  "+((positiveAssertions >0)?"test successful!"+" "+ positiveAssertions :"test failed!"+" "+(assertionCount + positiveAssertions))+"/"+ assertionCount);
+        println("[O][=][=][=][=][=][=][=][=][=][=][=]|> "+success+"/"+tests);
+        printlnResult(bar+"  "+((positiveAssertions >0)?"test successful!"+" "+ positiveAssertions :"test failed!"+" "+(assertionCount + positiveAssertions))+"/"+ assertionCount);
+        printlnResult("[O][=][=][=][=][=][=][=][=][=][=][=]|> "+success+"/"+tests);
+        bottom();
         return positiveAssertions;
     }
 
@@ -169,17 +171,32 @@ public class NTester extends Assert{
 
     protected void print(String message){
         session+=message;
-        Console.print(message);
+        if(Console!=null){
+            Console.print(message);
+        }
     }
     public void println(String message){
         session+=message+"\n";
-        Console.println(message);
+        if(Console!=null){
+            Console.println(message);
+        }
     }
     protected void printResult(String message){
-        ResultConsole.print(message);
+        if(ResultConsole!=null){
+            ResultConsole.print(message);
+        }
     }
     protected void printlnResult(String message){
-        ResultConsole.println(message);
+        if(ResultConsole!=null){
+            ResultConsole.println(message);
+        }
+    }
+
+    protected void bottom(){
+        if(Console!=null && ResultConsole!=null){
+            Console.bottom();
+            ResultConsole.bottom();
+        }
     }
 
 }

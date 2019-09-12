@@ -1,4 +1,4 @@
-package unit.cases;
+package util;
 
 import neureka.core.T;
 import neureka.core.function.IFunction;
@@ -33,17 +33,17 @@ public class NTester_Function extends NTester {
 		IFunction function;// = new FunctionGraphBuilder();
 		function = new FunctionGraphBuilder().newBuild(expression, true);
 		printSessionStart(description);
-		Console.println(bar+" IFunction: "+expression);
+		println(bar+" IFunction: "+expression);
 		String inputStr = "";
 		for(int Ii=0; Ii<input.length; Ii++) {
 			inputStr+=input[Ii]+", ";
 		}
-		Console.println(bar+" Value: "+inputStr);
-		Console.println(bar+"");
-		Console.println(bar+" function = function.newBuilt("+expression+");");
-		Console.println(bar+" function:"+function.toString());
-		Console.println(bar+"----------------------------------------------------");
-		Console.println(bar+" Result:");
+		println(bar+" Value: "+inputStr);
+		println(bar+"");
+		println(bar+" function = function.newBuilt("+expression+");");
+		println(bar+" function:"+function.toString());
+		println(bar+"----------------------------------------------------");
+		println(bar+" Result:");
 		double activation = function.activate(input);
 		assertIsEqual(activation, expected);
 		return (printSessionEnd()>0)?1:0;
@@ -53,17 +53,17 @@ public class NTester_Function extends NTester {
 		IFunction function;// = new FunctionGraphBuilder();
 		function = new FunctionGraphBuilder().newBuild(expression, true);
 		printSessionStart(description);
-		Console.println(bar+" Test Deriviation of IFunction: "+expression);
+		println(bar+" Test Deriviation of IFunction: "+expression);
 		String inputStr = "";
 		for(int Ii=0; Ii<input.length; Ii++) {
 			inputStr+=input[Ii]+", ";
 		}
-		Console.println(bar+" Value: "+inputStr);
-		Console.println(bar+"");
-		Console.println(bar+" function = function.newBuilt("+expression+");");
-		Console.println(bar+" function:"+function.toString());
-		Console.println(bar+"----------------------------------------------------");
-		Console.println(bar+" Result:");
+		println(bar+" Value: "+inputStr);
+		println(bar+"");
+		println(bar+" function = function.newBuilt("+expression+");");
+		println(bar+" function:"+function.toString());
+		println(bar+"----------------------------------------------------");
+		println(bar+" Result:");
 		double derivative = function.derive(input, d);
 		assertIsEqual(derivative, expected);
 		return (printSessionEnd()>0)?1:0;
@@ -73,17 +73,17 @@ public class NTester_Function extends NTester {
 		IFunction function;// = new FunctionGraphBuilder();
 		function = new FunctionGraphBuilder().newBuild(expression, true);
 		printSessionStart(description);
-		Console.println(bar+" IFunction: "+expression);
+		println(bar+" IFunction: "+expression);
 		String inputStr = "";
 		for(int Ii=0; Ii<input.length; Ii++) {
 			inputStr+=input[Ii]+", ";
 		}
-		Console.println(bar+" Value: "+inputStr);
-		Console.println(bar+"");
-		Console.println(bar+" function = function.newBuilt("+expression+");");
-		Console.println(bar+" function:"+function.toString());
-		Console.println(bar+"----------------------------------------------------");
-		Console.println(bar+" Result:");
+		println(bar+" Value: "+inputStr);
+		println(bar+"");
+		println(bar+" function = function.newBuilt("+expression+");");
+		println(bar+" function:"+function.toString());
+		println(bar+"----------------------------------------------------");
+		println(bar+" Result:");
 		T activation = function.activate(input);
 		assertIsEqual(activation.toString(), expected.toString());
 		return (printSessionEnd()>0)?1:0;
@@ -94,17 +94,17 @@ public class NTester_Function extends NTester {
 		IFunction function;// = new FunctionGraphBuilder();
 		function = new FunctionGraphBuilder().newBuild(expression, true);
 		printSessionStart(description);
-		Console.println(bar+" Deriviation of IFunction: "+expression);
+		println(bar+" Deriviation of IFunction: "+expression);
 		String inputStr = "";
 		for(int Ii=0; Ii<input.length; Ii++) {
 			inputStr+=input[Ii]+", ";
 		}
-		Console.println(bar+" Value: "+inputStr);
-		Console.println(bar+"");
-		Console.println(bar+" function = function.newBuilt("+expression+");");
-		Console.println(bar+" function:"+function.toString());
-		Console.println(bar+"----------------------------------------------------");
-		Console.println(bar+" Result:");
+		println(bar+" Value: "+inputStr);
+		println(bar+"");
+		println(bar+" function = function.newBuilt("+expression+");");
+		println(bar+" function:"+function.toString());
+		println(bar+"----------------------------------------------------");
+		println(bar+" Result:");
 		T derivative = function.derive(input, d);
 		assertIsEqual(derivative.toString(), expected.toString());
 		return (printSessionEnd()>0)?1:0;

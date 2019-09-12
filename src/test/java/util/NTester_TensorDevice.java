@@ -1,4 +1,4 @@
-package unit.cases;
+package util;
 
 import neureka.core.T;
 import neureka.core.device.Device;
