@@ -1,9 +1,9 @@
 language: java
 install: true
 
-os: windows
+os: linux
 dist: trusty
 jdk: oraclejdk11
 
 script:
-  - ./gradlew.bat test
+  - ./gradlew test
