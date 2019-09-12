@@ -5,5 +5,8 @@ os: linux
 dist: trusty
 jdk: oraclejdk11
 
+before_install:
+  - chmod +x gradlew
+
 script:
-  - sudo gradlew test
+  - ./gradlew test
