@@ -1,13 +1,14 @@
-# NEUREKA
+# NEUREKA - [![Build Status](https://travis-ci.com/Gleethos/neureka.svg?branch=master)](https://travis-ci.org/gleethos/neureka)
 
-[![Build Status](https://travis-ci.com/Gleethos/neureka.svg?branch=master)](https://travis-ci.org/gleethos/neureka)
-
+---
 
 Neureka is a platform independent deep-learning library written in Java. 
 
   - Java
   - Aparapi (OpenCl)
   - JavaFX
+  
+---  
 
 # Features!
 

@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a07ad3e8-8754-4b05-b853-df2665879cc4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -133,8 +133,8 @@
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="-241">
-                <caret line="21" column="43" selection-start-line="21" selection-start-column="43" selection-end-line="21" selection-end-column="43" />
+              <first_editor relative-caret-position="-459">
+                <caret column="11" selection-start-column="11" selection-end-column="11" />
               </first_editor>
               <second_editor />
             </state>
@@ -265,7 +265,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1568323278515" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1568325159102" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -406,20 +406,11 @@
       <workItem from="1568152497951" duration="4124000" />
       <workItem from="1568197012269" duration="5964000" />
       <workItem from="1568239353946" duration="58000" />
-      <workItem from="1568239457892" duration="13426000" />
+      <workItem from="1568239457892" duration="14252000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="neureka_[test] - 2019.09.12 at 20h 46m 32s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
-    <history-entry file="neureka_[test] - 2019.09.12 at 20h 47m 37s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
-    <history-entry file="neureka_[test] - 2019.09.12 at 22h 24m 19s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
     <history-entry file="neureka_[test] - 2019.09.12 at 22h 26m 07s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
@@ -441,9 +432,18 @@
     <history-entry file="neureka_[test] - 2019.09.12 at 22h 48m 23s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
+    <history-entry file="neureka_[test] - 2019.09.12 at 23h 20m 13s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
+    <history-entry file="neureka_[test] - 2019.09.12 at 23h 20m 32s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
+    <history-entry file="neureka_[test] - 2019.09.12 at 23h 21m 15s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="36165000" />
+    <option name="totallyTimeSpent" value="36991000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
@@ -461,7 +461,7 @@
       <window_info anchor="bottom" id="Java Enterprise" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4990228" weight="0.32692307" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.5745928" visible="true" weight="0.375" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.5745928" visible="true" weight="0.375" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49967426" weight="0.3997253" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -482,7 +482,7 @@
       <window_info anchor="right" id="Database" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info anchor="right" id="Theme Preview" order="8" />
-      <window_info active="true" anchor="right" content_ui="combo" id="Project" order="9" visible="true" weight="0.20065147" />
+      <window_info anchor="right" content_ui="combo" id="Project" order="9" visible="true" weight="0.20065147" />
     </layout>
     <layout-to-restore>
       <window_info id="Structure" order="0" side_tool="true" weight="0.25" />
@@ -926,8 +926,8 @@
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="-241">
-            <caret line="21" column="43" selection-start-line="21" selection-start-column="43" selection-end-line="21" selection-end-column="43" />
+          <first_editor relative-caret-position="-459">
+            <caret column="11" selection-start-column="11" selection-end-column="11" />
           </first_editor>
           <second_editor />
         </state>
