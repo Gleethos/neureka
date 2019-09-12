@@ -66,8 +66,8 @@ public class FunctionGraphBuilder {
      */
     private static IFunction construct(String expression, boolean doAD){
         expression = expression
-                        .replace("<<", "«")
-                        .replace(">>", "»");
+                        .replace("<<", ""+((char)171))
+                        .replace(">>", ""+((char)187));
         IFunction function = null;
         ArrayList<IFunction> sources = new ArrayList<>();;
         if (expression == null) {

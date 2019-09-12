@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="TestTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2019-09-12T16:52:42" hostname="DESKTOP-6UFJ24U" time="14.549">
+<testsuite name="TestTest" tests="1" skipped="1" failures="0" errors="0" timestamp="2019-09-12T17:23:56" hostname="DESKTOP-6UFJ24U" time="10.661">
   <properties/>
-  <testcase name="test1" classname="TestTest" time="14.549"/>
+  <testcase name="test1" classname="TestTest" time="10.661">
+    <skipped/>
+  </testcase>
   <system-out><![CDATA[Test 1 works
 _value: 1.0
 _value: 4.0
@@ -66,7 +68,7 @@ _value: -1.0
 _value: -1.0
 
 ---
-Device 1415439341120
+Device 2836508854400
   vendor = NVIDIA Corporation
   type:GPU
   maxComputeUnits=6
@@ -75,10 +77,10 @@ Device 1415439341120
   maxWorkWorkGroupSize=1024
   globalMemSize=4294967296
   localMemSize=49152
-NVIDIA<GPU>; ID: 1415439341120
+NVIDIA<GPU>; ID: 2836508854400
 
 ---
-Device 1415415369056
+Device 2836524095376
   vendor = Intel(R) Corporation
   type:GPU
   maxComputeUnits=24
@@ -87,10 +89,10 @@ Device 1415415369056
   maxWorkWorkGroupSize=256
   globalMemSize=6764113920
   localMemSize=65536
-Intel<GPU>; ID: 1415415369056
+Intel<GPU>; ID: 2836524095376
 
 ---
-Device 1415375411504
+Device 2836486880576
   vendor = Intel(R) Corporation
   type:CPU
   maxComputeUnits=12
@@ -99,11 +101,11 @@ Device 1415375411504
   maxWorkWorkGroupSize=8192
   globalMemSize=16910290944
   localMemSize=32768
-Intel<CPU>; ID: 1415375411504
+Intel<CPU>; ID: 2836486880576
 
 Chosen _device:
 ------------
-Device 1415439341120
+Device 2836508854400
   vendor = NVIDIA Corporation
   type:GPU
   maxComputeUnits=6
@@ -122,7 +124,7 @@ GPU
 
 Device f _kernel:
 ------------
-Device 1415439341120
+Device 2836508854400
   vendor = NVIDIA Corporation
   type:GPU
   maxComputeUnits=6
@@ -133,7 +135,7 @@ Device 1415439341120
   localMemSize=49152
 
 ---
-Device 1415439341120
+Device 2836508854400
   vendor = NVIDIA Corporation
   type:GPU
   maxComputeUnits=6
@@ -142,10 +144,10 @@ Device 1415439341120
   maxWorkWorkGroupSize=1024
   globalMemSize=4294967296
   localMemSize=49152
-NVIDIA<GPU>; ID: 1415439341120
+NVIDIA<GPU>; ID: 2836508854400
 
 ---
-Device 1415415369056
+Device 2836524095376
   vendor = Intel(R) Corporation
   type:GPU
   maxComputeUnits=24
@@ -154,10 +156,10 @@ Device 1415415369056
   maxWorkWorkGroupSize=256
   globalMemSize=6764113920
   localMemSize=65536
-Intel<GPU>; ID: 1415415369056
+Intel<GPU>; ID: 2836524095376
 
 ---
-Device 1415375411504
+Device 2836486880576
   vendor = Intel(R) Corporation
   type:CPU
   maxComputeUnits=12
@@ -166,11 +168,11 @@ Device 1415375411504
   maxWorkWorkGroupSize=8192
   globalMemSize=16910290944
   localMemSize=32768
-Intel<CPU>; ID: 1415375411504
+Intel<CPU>; ID: 2836486880576
 
 Chosen _device:
 ------------
-Device 1415439341120
+Device 2836508854400
   vendor = NVIDIA Corporation
   type:GPU
   maxComputeUnits=6
@@ -189,7 +191,7 @@ GPU
 
 Device f _kernel:
 ------------
-Device 1415439341120
+Device 2836508854400
   vendor = NVIDIA Corporation
   type:GPU
   maxComputeUnits=6
