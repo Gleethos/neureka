@@ -8,7 +8,34 @@ jdk: oraclejdk11
 before_install:
   - chmod +x gradlew
   - sudo apt-get -qq update
-  - sudo apt-get install pocl
+
+env:
+  global:
+    # Ubuntu version
+    - LINUX_DIST=precise
+    - DEPS_DIR=${TRAVIS_BUILD_DIR}/deps
+    # OpenCL
+    - OPENCL_LIB=default
+    - OPENCL_VERSION="10"
+    # Khronos OpenCL ICD
+    - OPENCL_REGISTRY=https://www.khronos.org/registry/cl
+    - OPENCL_ROOT=${DEPS_DIR}/opencl
+    # POCL
+    - POCL_BRANCH=release_0_13 # branch/tag
+    #- POCL_COMMIT= # commit id
+    - POCL_LLVM_VERSION=3.8.0
+    - POCL_LLVM_CONFIG=${DEPS_DIR}/llvm-${POCL_LLVM_VERSION}/bin/llvm-config
+    - POCL_CXX_COMPILER=${DEPS_DIR}/llvm-${POCL_LLVM_VERSION}/bin/clang++
+    - POCL_C_COMPILER=${DEPS_DIR}/llvm-${POCL_LLVM_VERSION}/bin/clang
+    # Global build options and C++ flags
+    - CMAKE_OPTIONS="-DBOOST_COMPUTE_BUILD_TESTS=ON -DBOOST_COMPUTE_BUILD_EXAMPLES=ON -DBOOST_COMPUTE_BUILD_BENCHMARKS=ON -DBOOST_COMPUTE_USE_OFFLINE_CACHE=ON -DBOOST_COMPUTE_HAVE_OPENCV=ON -DBOOST_COMPUTE_THREAD_SAFE=ON"
+    - CXX_FLAGS="-Wall -pedantic -Werror -Wno-variadic-macros -Wno-long-long -Wno-shadow"
+    # Boost
+    - BOOST_VERSION=default
+    # Misc
+    - RUN_TESTS=true
+    - COVERAGE=true
+    - CODACY_PROJECT_TOKEN=e7f8ea58858a4c48b8df6b5443202255
 
 script:
   - ./gradlew test --info

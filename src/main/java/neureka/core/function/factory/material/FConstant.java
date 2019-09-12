@@ -42,7 +42,6 @@ public class FConstant implements IFunction
 			}
 		}
 		_value = Double.parseDouble(number);
-		System.out.println("_value: "+ _value);
 		return this;
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
