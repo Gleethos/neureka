@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a07ad3e8-8754-4b05-b853-df2665879cc4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.travis.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.travis.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.travis.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neureka.iml" beforeDir="false" afterPath="$PROJECT_DIR$/neureka.iml" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -67,10 +69,14 @@
     </system>
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+    <leaf>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.travis.yml">
-          <provider selected="true" editor-type-id="text-editor" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="51">
+              <caret line="3" column="11" selection-start-line="3" selection-start-column="11" selection-end-line="3" selection-end-column="11" />
+            </state>
+          </provider>
         </entry>
       </file>
     </leaf>
@@ -112,12 +118,13 @@
         <option value="$PROJECT_DIR$/src/main/resources/MovableElement.fxml" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/ngui/swing/NPanel.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/ngui/touch/MovableElementController.java" />
+        <option value="$PROJECT_DIR$/.travis.yml" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="1905" />
-    <option name="width" value="1948" />
+    <option name="width" value="1950" />
     <option name="height" value="2075" />
   </component>
   <component name="ProjectView">
@@ -126,7 +133,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -134,58 +140,11 @@
               <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
               <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="build" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="build" type="462c0819:PsiDirectoryNode" />
-              <item name="libs" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="neureka" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -331,13 +290,12 @@
       <updated>1568152493181</updated>
       <workItem from="1568152497951" duration="4124000" />
       <workItem from="1568197012269" duration="5964000" />
+      <workItem from="1568239353946" duration="58000" />
+      <workItem from="1568239457892" duration="616000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="neureka_[test] - 2019.09.11 at 13h 32m 29s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
     <history-entry file="neureka_[test] - 2019.09.11 at 13h 34m 47s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
@@ -365,14 +323,19 @@
     <history-entry file="neureka_[test] - 2019.09.11 at 23h 34m 45s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
+    <history-entry file="neureka_[test] - 2019.09.12 at 00h 04m 43s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="22681000" />
+    <option name="totallyTimeSpent" value="23355000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="762" y="0" width="779" height="830" extended-state="0" />
+    <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
     <editor active="true" />
     <layout>
+      <window_info id="Persistence" side_tool="true" />
+      <window_info id="Web" side_tool="true" />
       <window_info id="Structure" order="0" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="1" />
       <window_info id="Image Layers" order="2" />
@@ -380,9 +343,10 @@
       <window_info id="UI Designer" order="4" />
       <window_info id="Favorites" order="5" side_tool="true" />
       <window_info id="Learn" order="6" />
+      <window_info anchor="bottom" id="Java Enterprise" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32871014" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.5764706" visible="true" weight="0.37586686" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.5758958" visible="true" weight="0.375" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49967426" weight="0.3997253" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -393,7 +357,7 @@
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Database Changes" order="11" />
       <window_info anchor="bottom" id="Version Control" order="12" />
-      <window_info anchor="bottom" id="Gradle" order="13" sideWeight="0.42352942" side_tool="true" visible="true" weight="0.37586686" />
+      <window_info anchor="bottom" id="Gradle" order="13" sideWeight="0.42410424" side_tool="true" visible="true" weight="0.375" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -403,7 +367,7 @@
       <window_info anchor="right" id="Database" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info anchor="right" id="Theme Preview" order="8" />
-      <window_info active="true" anchor="right" content_ui="combo" id="Project" order="9" visible="true" weight="0.62091506" />
+      <window_info active="true" anchor="right" content_ui="combo" id="Project" order="9" visible="true" weight="0.3355049" />
     </layout>
     <layout-to-restore>
       <window_info id="Structure" order="0" side_tool="true" weight="0.25" />
@@ -622,10 +586,10 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/TouchPane.fxml">
+      <provider editor-type-id="JavaFX-Scene-Builder" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-4" />
       </provider>
-      <provider editor-type-id="JavaFX-Scene-Builder" />
     </entry>
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-fxml/11.0.2/2b7bb98d32266093bd49acd8778bedb55a326c20/javafx-fxml-11.0.2-sources.jar!/javafx/fxml/FXMLLoader.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -744,12 +708,12 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/MovableElement.fxml">
+      <provider editor-type-id="JavaFX-Scene-Builder" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="323">
           <caret line="35" column="39" lean-forward="true" selection-start-line="35" selection-start-column="39" selection-end-line="35" selection-end-column="39" />
         </state>
       </provider>
-      <provider editor-type-id="JavaFX-Scene-Builder" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/neureka/ngui/touch/NSurface.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -765,7 +729,11 @@
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/.travis.yml">
-      <provider selected="true" editor-type-id="text-editor" />
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="11" selection-start-line="3" selection-start-column="11" selection-end-line="3" selection-end-column="11" />
+        </state>
+      </provider>
     </entry>
   </component>
   <component name="masterDetails">
