@@ -6,4 +6,4 @@ dist: trusty
 jdk: oraclejdk11
 
 script:
-  - ./sudo gradlew test
+  - sudo gradlew test
