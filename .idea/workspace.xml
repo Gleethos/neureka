@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a07ad3e8-8754-4b05-b853-df2665879cc4" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.travis.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.travis.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/TestTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sound/droplet shatter.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sound/menu/droplet shatter.wav" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -69,16 +69,16 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.travis.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="254">
-              <caret line="20" column="2" lean-forward="true" selection-start-line="20" selection-start-column="2" selection-end-line="20" selection-end-column="2" />
+            <state relative-caret-position="237">
+              <caret line="19" column="3" selection-start-line="19" selection-start-column="3" selection-end-line="19" selection-end-column="3" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/java/TestTest.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="172">
@@ -228,8 +228,8 @@
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/main/java/NSMain.java" />
         <option value="$PROJECT_DIR$/.travis/codacy-install.sh" />
-        <option value="$PROJECT_DIR$/.travis.yml" />
         <option value="$PROJECT_DIR$/src/test/java/TestTest.java" />
+        <option value="$PROJECT_DIR$/.travis.yml" />
       </list>
     </option>
   </component>
@@ -252,6 +252,17 @@
             <path>
               <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
               <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+            <path>
+              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
+              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sound" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
+              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sound" type="462c0819:PsiDirectoryNode" />
+              <item name="menu" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
@@ -293,7 +304,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1568405361304" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1568405572022" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -435,7 +446,7 @@
       <workItem from="1568197012269" duration="5964000" />
       <workItem from="1568239353946" duration="58000" />
       <workItem from="1568239457892" duration="15144000" />
-      <workItem from="1568400964124" duration="3243000" />
+      <workItem from="1568400964124" duration="3867000" />
     </task>
     <servers />
   </component>
@@ -472,11 +483,10 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="41126000" />
+    <option name="totallyTimeSpent" value="41750000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Structure" order="0" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="1" />
@@ -489,7 +499,7 @@
       <window_info id="Web" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4990228" weight="0.32692307" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.57394135" visible="true" weight="0.375" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.57394135" visible="true" weight="0.375" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49967426" weight="0.3997253" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -511,7 +521,7 @@
       <window_info anchor="right" id="Database" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info anchor="right" id="Theme Preview" order="8" />
-      <window_info anchor="right" content_ui="combo" id="Project" order="9" visible="true" weight="0.20065147" />
+      <window_info active="true" anchor="right" content_ui="combo" id="Project" order="9" visible="true" weight="0.20065147" />
     </layout>
     <layout-to-restore>
       <window_info id="Structure" order="0" side_tool="true" weight="0.25" />
@@ -910,13 +920,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.travis.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="254">
-          <caret line="20" column="2" lean-forward="true" selection-start-line="20" selection-start-column="2" selection-end-line="20" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="296">
@@ -941,6 +944,13 @@
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.travis.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="237">
+          <caret line="19" column="3" selection-start-line="19" selection-start-column="3" selection-end-line="19" selection-end-column="3" />
         </state>
       </provider>
     </entry>
