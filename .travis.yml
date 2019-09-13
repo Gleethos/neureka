@@ -17,7 +17,7 @@ script:
   - chmod +x gradlew
   - ./gradlew test --info
   - ./gradlew check
-  - ./gradlew codeCoverageReport
+  #- ./gradlew codeCoverageReport
   
 after_success:
   - bash <(curl -s https://codecov.io/bash)
