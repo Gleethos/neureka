@@ -395,6 +395,10 @@ public class TestTest {
                 2, 4, -1,
                 1, 2, 7
         });
+        if(!System.getProperty("os.name").toLowerCase().contains("windows")){
+            return;
+        }
+        //=====================================================================
         Device gpu = new Device("nvidia");
         gpu.add(tensor1);
         //System.out.println(new T(t, "lig(I[0])"));
@@ -481,6 +485,9 @@ public class TestTest {
 
     @Test
     public void testTensorDevice() {
+        if(!System.getProperty("os.name").toLowerCase().contains("windows")){
+            return;
+        }
         NTester_TensorDevice tester = new NTester_TensorDevice("Testing tensor device");
         Device gpu = new Device("nvidia");
         T tensor = T.factory.newTensor(new double[]{1, 3, 4, 2, -3, 2, -1, 6}, new int[]{2, 4});
@@ -561,8 +568,6 @@ public class TestTest {
                         0, 0,
                 }
         );
-        System.out.println("pre mul:");
-        System.out.println(gpu.stringified(gpu.getKernel().values()));
         gpu.add(src1);
         gpu.add(src2);
         gpu.add(drn);
