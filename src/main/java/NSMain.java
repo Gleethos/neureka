@@ -3,15 +3,12 @@ import neureka.ngui.swing.NWindow;
 
 public class NSMain {
 
-	static NWindow testWindow;
-    
 	public static void main(String[] args) throws Exception
 	{
 
 		//for(int i=0; i<300; i++){
 		//	System.out.println(i+" -=> "+(char)i);
 		//}
-//
 		//System.out.println("");
 
 		// (char)187 //>>

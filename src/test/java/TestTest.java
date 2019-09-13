@@ -8,14 +8,11 @@ import util.NTester_TensorDevice;
 
 public class TestTest {
 
-
     @Test
     public void testTest() throws InterruptedException {
         System.out.println("Test test works");
-
         Thread.sleep(6000);
     }
-
 
     @Test
     public void testTensorFunctions() {
@@ -34,7 +31,6 @@ public class TestTest {
         tester.testExpression("[0,2, 1,3, -1](sig(I0))", "([0,2,1,3,-1]:(sig(I[0])))", "");
 
         //ACTIVATION TESTING:
-
         double[] input1 = {};
         tester.testActivation("6/2*(1+2)", input1, 9, "");
         input1 = new double[]{2, 3.2, 6};
@@ -120,9 +116,7 @@ public class TestTest {
         tester.testTensorAutoGrad(
                 new T[]{tensor1},//, tensor2},/<=TODO make this throw an exception (if input does not match function)
                 "lig([-2, 1, 0, -2]:(I[0])*-100)",
-                new String[]{
-                        "[2x3x2x2]:(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)"
-                }
+                new String[]{"[2x3x2x2]:(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)"}
         );
         //---
         tensor1 = new T(new int[]{2}, 2);
@@ -176,9 +170,7 @@ public class TestTest {
         tester.testTensorAutoGrad(
                 new T[]{tensor1},
                 "((i0+2)^2)",
-                new String[]{
-                        "d|[ [2x2]:(6.0, 8.0, 10.0, 12.0) ]|:t{ [2x2]:(1.0, 2.0, 3.0, 4.0) }"
-                }
+                new String[]{"d|[ [2x2]:(6.0, 8.0, 10.0, 12.0) ]|:t{ [2x2]:(1.0, 2.0, 3.0, 4.0) }"}
         );
         //---
         //=====================
@@ -187,9 +179,7 @@ public class TestTest {
         tester.testTensorAutoGrad(
                 new T[]{tensor1},
                 "cos(tanh(lig(i0)))",
-                new String[]{
-                        "[2]:(0.6998554841989726, 0.6177112361351595); =>d|[ [2]:(-0.1916512536291578, -0.12539562877521598) ]|:t{ [2]:(1.0, 2.0) }, "
-                }
+                new String[]{"[2]:(0.6998554841989726, 0.6177112361351595); =>d|[ [2]:(-0.1916512536291578, -0.12539562877521598) ]|:t{ [2]:(1.0, 2.0) }, "}
         );
         //---
         //=====================
@@ -252,9 +242,7 @@ public class TestTest {
         tester.testTensorAutoGrad(//4, 5, -13, -4 <= result values
                 new T[]{tensor1, tensor2},
                 "i0xi1",
-                new String[]{
-                        "[2x1x2]:(4.0, -13.0, 5.0, -4.0); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"
-                },
+                new String[]{"[2x1x2]:(4.0, -13.0, 5.0, -4.0); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"},
                 new T(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
                 new double[][]{{-1.0, -1.0, 5.0, 5.0}, null}
         );
@@ -493,7 +481,6 @@ public class TestTest {
 
     @Test
     public void testTensorDevice() {
-
         NTester_TensorDevice tester = new NTester_TensorDevice("Testing tensor device");
         Device gpu = new Device("nvidia");
         T tensor = T.factory.newTensor(new double[]{1, 3, 4, 2, -3, 2, -1, 6}, new int[]{2, 4});
@@ -576,13 +563,9 @@ public class TestTest {
         );
         System.out.println("pre mul:");
         System.out.println(gpu.stringified(gpu.getKernel().values()));
-        gpu.add(src1);//<= make these tests! ?
-        gpu.add(src2);//...
-        gpu.add(drn);//...
-        //System.out.println("THIS IS HAPPENING:");
-        //gpu.printDeviceContent(true);
-        //gpu.calculate_on_CPU(drn, src1, src2, 18);
-        //gpu.printDeviceContent(true);
+        gpu.add(src1);
+        gpu.add(src2);
+        gpu.add(drn);
         tester.testCalculation(
                 gpu, drn, src1, src2, 18, -1,//Tsr mul
                 new double[]{888.0, 777.0, -33.0, 999.0, 0.0, 0.0, 0.0, 0.0, -7.0, -9.0, 4.0, -4.0, 9.0, 4.0, 77.0, 1.0, 2.0, 3.0, 4.0, 0.0, 2.0, 3.0, 4.0, 2.0, -1.0, -2.0, -3.0, -1.0, 3.0, 0.0, 2.0, -3.0, 1.0, 2.0, -3.0, 0.0, 4.0, 5.0, -1.0, 15.0, 11.0, 20.0, -22.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
@@ -612,15 +595,10 @@ public class TestTest {
         };
         gpu.add(d_src1).add(d_src2).add(d_drn);
         gpu.printDeviceContent(true);
-        tester.testCalculation(
-                gpu, d_drn, d_src1, d_src2, 18, 0,//Tsr mul
-                expectedInv//new double[]{888.0, 777.0, -33.0, 999.0, 0.0, 0.0, 0.0, 0.0, -7.0, -9.0, 4.0, -4.0, 9.0, 4.0, 77.0, 1.0, 2.0, 3.0, 4.0, 0.0, 2.0, 3.0, 4.0, 2.0, -1.0, -2.0, -3.0, -1.0, 3.0, 0.0, 2.0, -3.0, 1.0, 2.0, -3.0, 0.0, 4.0, 5.0, -1.0, 15.0, 11.0, 20.0, -22.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
-        );
-
+        tester.testCalculation(gpu, d_drn, d_src1, d_src2, 18, 0, expectedInv);
         //ADDITION
         System.out.println("WE ARE HERE:");
         gpu.printDeviceContent(true);
-
         //addition:
         drn = new T(
                 new int[]{3, 2, 2},

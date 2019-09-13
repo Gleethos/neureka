@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - Class TestTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>Class TestTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/default-package.html">default-package</a> &gt; TestTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">4</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">32.418s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">testTensorCore</td>
+<td class="success">11.182s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testTensorDevice</td>
+<td class="success">8.233s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testTensorFunctions</td>
+<td class="success">7.002s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testTest</td>
+<td class="success">6.001s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>0.0
+Test test works
+
+---
+Device 1824419925200
+  vendor = NVIDIA Corporation
+  type:GPU
+  maxComputeUnits=6
+  maxWorkItemDimensions=3
+  maxWorkItemSizes={1024, 1024, 64}
+  maxWorkWorkGroupSize=1024
+  globalMemSize=4294967296
+  localMemSize=49152
+---
+
+
+---
+Device 1824431717616
+  vendor = Intel(R) Corporation
+  type:GPU
+  maxComputeUnits=24
+  maxWorkItemDimensions=3
+  maxWorkItemSizes={256, 256, 256}
+  maxWorkWorkGroupSize=256
+  globalMemSize=6764113920
+  localMemSize=65536
+---
+
+
+---
+Device 1824382940528
+  vendor = Intel(R) Corporation
+  type:CPU
+  maxComputeUnits=12
+  maxWorkItemDimensions=3
+  maxWorkItemSizes={8192, 8192, 8192}
+  maxWorkWorkGroupSize=8192
+  globalMemSize=16910290944
+  localMemSize=32768
+---
+
+Device of new kernel:
+------------
+Device 1824419925200
+  vendor = NVIDIA Corporation
+  type:GPU
+  maxComputeUnits=6
+  maxWorkItemDimensions=3
+  maxWorkItemSizes={1024, 1024, 64}
+  maxWorkWorkGroupSize=1024
+  globalMemSize=4294967296
+  localMemSize=49152
+pre mul:
+888.0, 777.0, -33.0, 999.0, 0.0, 0.0, 0.0, 0.0, -7.0, -9.0, 4.0, -4.0, 9.0, 4.0, 77.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+888.0, 777.0, -33.0, 999.0, 0.0, 0.0, 0.0, 0.0, -7.0, -9.0, 4.0, -4.0, 9.0, 4.0, 77.0, 1.0, 2.0, 3.0, 4.0, 0.0, 2.0, 3.0, 4.0, 2.0, -1.0, -2.0, -3.0, -1.0, 3.0, 0.0, 2.0, -3.0, 1.0, 2.0, -3.0, 0.0, 4.0, 5.0, -1.0, 15.0, 11.0, 20.0, -22.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -2.0, 3.0, 6.0, 3.0, -1.0, 0.0, 2.0, 4.0, 2.0, 1.0, 1.0, 2.0, -3.0, 2.0, 4.0, -2.0, -1.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+0, -4, 3, 2, 0, 2, 8, 2, 0, 1, 0, 1, 10, 5, 2, 1, 0, 1, 15, 12, 4, 3, 2, 3, 27, 12, 3, 3, 5, 3, 39, 4, 7, 3, 8, 3, 43, 6, 4, 2, 0, 2, 49, 10, 2, 2, 11, 2, 59, 8, 10, 2, 13, 2, 
+2, 4, 5, 2, 2, 3, 2, 1, 2, 2, 4, 2, 0, 0, 0, 0, 0, 
+1, 2, 1, 2, 6, 1, 2, 4, 1, 1, 2, 1, 5, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+WE ARE HERE:
+888.0, 777.0, -33.0, 999.0, 0.0, 0.0, 0.0, 0.0, -7.0, -9.0, 4.0, -4.0, 9.0, 4.0, 77.0, 1.0, 2.0, 3.0, 4.0, 0.0, 2.0, 3.0, 4.0, 2.0, -1.0, -2.0, -3.0, -1.0, 3.0, 0.0, 2.0, -3.0, 1.0, 2.0, -3.0, 0.0, 4.0, 5.0, -1.0, 15.0, 11.0, 20.0, -22.0, -8.0, 4.0, -9.0, -2.0, 2.0, 3.0, -2.0, 3.0, 6.0, 3.0, -1.0, 0.0, 2.0, 4.0, 2.0, 1.0, 1.0, 2.0, -3.0, 2.0, 4.0, -2.0, -1.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+0, -4, 3, 2, 0, 2, 8, 2, 0, 1, 0, 1, 10, 5, 2, 1, 0, 1, 15, 12, 4, 3, 2, 3, 27, 12, 3, 3, 5, 3, 39, 4, 7, 3, 8, 3, 43, 6, 4, 2, 0, 2, 49, 10, 2, 2, 11, 2, 59, 8, 10, 2, 13, 2, 
+2, 4, 5, 2, 2, 3, 2, 1, 2, 2, 4, 2, 0, 0, 0, 0, 0, 
+1, 2, 1, 2, 6, 1, 2, 4, 1, 1, 2, 1, 5, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+Done!
+
+---
+Device 1824419925200
+  vendor = NVIDIA Corporation
+  type:GPU
+  maxComputeUnits=6
+  maxWorkItemDimensions=3
+  maxWorkItemSizes={1024, 1024, 64}
+  maxWorkWorkGroupSize=1024
+  globalMemSize=4294967296
+  localMemSize=49152
+---
+
+
+---
+Device 1824431717616
+  vendor = Intel(R) Corporation
+  type:GPU
+  maxComputeUnits=24
+  maxWorkItemDimensions=3
+  maxWorkItemSizes={256, 256, 256}
+  maxWorkWorkGroupSize=256
+  globalMemSize=6764113920
+  localMemSize=65536
+---
+
+
+---
+Device 1824382940528
+  vendor = Intel(R) Corporation
+  type:CPU
+  maxComputeUnits=12
+  maxWorkItemDimensions=3
+  maxWorkItemSizes={8192, 8192, 8192}
+  maxWorkWorkGroupSize=8192
+  globalMemSize=16910290944
+  localMemSize=32768
+---
+
+Device of new kernel:
+------------
+Device 1824419925200
+  vendor = NVIDIA Corporation
+  type:GPU
+  maxComputeUnits=6
+  maxWorkItemDimensions=3
+  maxWorkItemSizes={1024, 1024, 64}
+  maxWorkWorkGroupSize=1024
+  globalMemSize=4294967296
+  localMemSize=49152
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 4.10</a> at 13.09.2019, 00:17:28</p>
+</div>
+</div>
+</body>
+</html>
