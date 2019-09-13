@@ -2,124 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a07ad3e8-8754-4b05-b853-df2665879cc4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.travis/codacy-install.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/resourceHashesCache.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/jarAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/jarAnalysis.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/taskHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/MemTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/NMATMUL.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/NSMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/NSMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/aparapi/.project" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/aparapi/OpenCL.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/aparapi/aparapi-1.10.0.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/aparapi/aparapi-jni-1.4.1.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/aparapi/bcel-6.2.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/aparapi/scala-library-2.12.6.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-console-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-datetime-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-debug-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-errorhandling-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-file-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-file-l1-2-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-file-l2-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-handle-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-heap-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-interlocked-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-libraryloader-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-localization-l1-2-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-memory-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-namedpipe-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-processenvironment-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-processthreads-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-processthreads-l1-1-1.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-profile-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-rtlsupport-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-string-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-synch-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-synch-l1-2-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-sysinfo-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-timezone-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-core-util-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-crt-conio-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-crt-convert-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-crt-environment-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-crt-filesystem-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-crt-heap-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-crt-locale-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-crt-math-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-crt-multibyte-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-crt-private-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-crt-process-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-crt-runtime-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-crt-stdio-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-crt-string-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-crt-time-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/api-ms-win-crt-utility-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/concrt140.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/decora_sse.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/fxplugins.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/glass.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/glib-lite.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/gstreamer-lite.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/javafx_font.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/javafx_iio.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/jfxmedia.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/jfxwebkit.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/msvcp140.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/prism_common.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/prism_d3d.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/prism_sw.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/ucrtbase.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/bin/vcruntime140.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.base/ADDITIONAL_LICENSE_INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.base/ASSEMBLY_EXCEPTION" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.base/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.controls/ADDITIONAL_LICENSE_INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.controls/ASSEMBLY_EXCEPTION" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.controls/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.fxml/ADDITIONAL_LICENSE_INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.fxml/ASSEMBLY_EXCEPTION" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.fxml/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.graphics/ADDITIONAL_LICENSE_INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.graphics/ASSEMBLY_EXCEPTION" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.graphics/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.graphics/jpeg_fx.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.media/ADDITIONAL_LICENSE_INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.media/ASSEMBLY_EXCEPTION" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.media/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.media/applecoreaudio.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.media/glib.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.media/gstreamer.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.media/libffi.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.swing/ADDITIONAL_LICENSE_INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.swing/ASSEMBLY_EXCEPTION" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.swing/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.web/ADDITIONAL_LICENSE_INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.web/ASSEMBLY_EXCEPTION" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.web/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.web/icu_web.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.web/libxml2.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.web/libxslt.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/legal/javafx.web/webkit.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/lib/javafx-swt.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/lib/javafx.base.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/lib/javafx.controls.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/lib/javafx.fxml.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/lib/javafx.graphics.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/lib/javafx.media.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/lib/javafx.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/lib/javafx.swing.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/lib/javafx.web.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/javafx-sdk-11.0.2/lib/src.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/TestTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.travis.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.travis.yml" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -185,11 +68,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.travis.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="7" selection-start-line="7" selection-end-line="7" />
+            <state relative-caret-position="238">
+              <caret line="313" column="4" lean-forward="true" selection-start-line="313" selection-start-column="4" selection-end-line="313" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -233,7 +116,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.travis/codacy-install.sh">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="289">
@@ -325,7 +208,6 @@
         <option value="$PROJECT_DIR$/src/test/java/util/NTester_Function.java" />
         <option value="$PROJECT_DIR$/src/test/java/util/NTester.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/material/FConstant.java" />
-        <option value="$PROJECT_DIR$/.travis.yml" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/assembly/FunctionConstructor.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphLock.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphNode.java" />
@@ -334,6 +216,7 @@
         <option value="$PROJECT_DIR$/src/test/java/TestTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/NSMain.java" />
         <option value="$PROJECT_DIR$/.travis/codacy-install.sh" />
+        <option value="$PROJECT_DIR$/.travis.yml" />
       </list>
     </option>
   </component>
@@ -384,7 +267,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1568401185903" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1568401190236" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -526,7 +409,7 @@
       <workItem from="1568197012269" duration="5964000" />
       <workItem from="1568239353946" duration="58000" />
       <workItem from="1568239457892" duration="15144000" />
-      <workItem from="1568400964124" duration="214000" />
+      <workItem from="1568400964124" duration="874000" />
     </task>
     <servers />
   </component>
@@ -563,7 +446,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="38097000" />
+    <option name="totallyTimeSpent" value="38757000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
@@ -961,13 +844,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.travis.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" selection-start-line="7" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/factory/assembly/FunctionConstructor.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
@@ -1032,6 +908,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
           <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.travis.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="313" column="4" lean-forward="true" selection-start-line="313" selection-start-column="4" selection-end-line="313" selection-end-column="4" />
         </state>
       </provider>
     </entry>
