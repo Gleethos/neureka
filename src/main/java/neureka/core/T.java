@@ -117,7 +117,11 @@ public class T {
             this.setGradientIsTargeted(false);
             //device.overwrite(this, g, true);
         } else {
-            _gradient = g.value();
+            double[] value = g.value();
+            _gradient = (_gradient==null)?new double[value.length]:_gradient;
+            for(int i=0; i<value.length; i++){
+                _gradient[i] = value[i];
+            }
         }
         return this;
     }

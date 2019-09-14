@@ -8,6 +8,10 @@ import neureka.core.function.factory.assembly.FunctionGraphBuilder;
 import neureka.core.function.environment.TensorCache;
 import neureka.core.function.environment.FunctionCache;
 
+import java.util.HashMap;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 public interface IFunction
 {
     FunctionCache F_CACHE = new FunctionCache();
@@ -17,9 +21,17 @@ public interface IFunction
             "relu", "sig", "tanh", "quad", "lig", "lin", "gaus", "abs", "sin", "cos",
             "sum", "prod",
             "^", "/", "*", "%", "-", "+", "x", ""+((char)171), ""+((char)187), ","
-
             // (char)171 -> <<    // (char)187 -> >>
     };
+    Supplier<HashMap<String, Integer>> setup = ()->{
+        HashMap<String, Integer> lookup = new HashMap<>();
+        for(int i=0; i<REGISTER.length; i++){
+            lookup.put(REGISTER[i], i);
+        }
+        return lookup;
+    };
+    HashMap<String, Integer> LOOKUP = setup.get();
+
     //------------------------------------------------------------------------------------------------------------------
 
     static T execute(T drain, T[] tensors, String operation, boolean doAD) {

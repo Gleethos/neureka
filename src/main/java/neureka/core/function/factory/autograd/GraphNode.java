@@ -168,7 +168,6 @@ public class GraphNode {
             return;
         }
         boolean dive = (target==null || mode()<0);
-
         if(!dive){
             TreeMap<T, T> blacklist = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
             this.forEach((t, g)->{
