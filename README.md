@@ -16,6 +16,24 @@ Neureka is a platform independent deep-learning library written in Java.
   - Auto differentiation (forwards/backwards).
   - Unlimited tensor convolution.
 
+Take a look:
+```
+    T x = new T(new int[]{1}, new double[]{3}).setRqsGradient(true);
+    T b = new T(new int[]{1}, new double[]{-4});
+    T w = new T(new int[]{1}, new double[]{2});
+        
+    T y = new T(new T[]{x, b, w}, "((i0+i1)*i2)^2");
+    
+    /**
+     *   f(x) = ((x-4)*2)^2; :=>  f(3) = 4
+     *   f(x)' = 8*x - 32 ;  :=>  f(3)' = -8
+     *   
+     *   y.toString(): "[1]:(4.0); ->d[1]:(-8.0), "    
+     * */
+```
+
+
+
 You can also:
   - Create a computation graph via a gui interface in JavaFX
 
