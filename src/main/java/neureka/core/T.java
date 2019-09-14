@@ -100,9 +100,13 @@ public class T {
         return CPU;
     }
 
+    public double[] targetValue(){
+        return (gradientIsTargeted())?gradient():value();
+    }
+
     public double[] gradient() {
         if (this.rqsGradient() && this.isOutsourced() && this.has(Device.class)) {
-            return ((Device) this.find(Device.class)).valueOf(this, true);
+            return ((Device) find(Device.class)).valueOf(this, true);
         }
         return _gradient;
     }
@@ -115,7 +119,7 @@ public class T {
             device.calculate(new T[]{this, this, g}, 17, -1);
             device.get(g);
             this.setGradientIsTargeted(false);
-            //device.overwrite(this, g, true);
+            //device.inject(this, g, true);
         } else {
             double[] value = g.value();
             _gradient = (_gradient==null)?new double[value.length]:_gradient;
@@ -528,7 +532,7 @@ public class T {
         this.setIsVirtual(false);
         int sze = this.size();
         int[] idx = new int[this.shape().length];
-        double[] value = ((this.gradientIsTargeted())?this._gradient:this._value);
+        double[] value = this.targetValue();
         for (int i = 0; i < sze; i++) {
             factory.util.increment(idx, this.shape());
             action.accept(i, value[factory.util.iOf(idx, this.translation())]);

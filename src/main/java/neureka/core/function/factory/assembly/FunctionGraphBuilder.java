@@ -68,6 +68,9 @@ public class FunctionGraphBuilder {
         expression = expression
                         .replace("<<", ""+((char)171))
                         .replace(">>", ""+((char)187));
+        expression = expression
+                .replace("<-", "<")
+                .replace("->", ">");
         IFunction function = null;
         ArrayList<IFunction> sources = new ArrayList<>();;
         if (expression == null) {
@@ -211,7 +214,7 @@ public class FunctionGraphBuilder {
             newBuild = FunctionGraphBuilder.newBuild(component, doAD);
             return newBuild;
         } else {// More than one component left:
-            if (IFunction.REGISTER[f_id] == "x") {
+            if (IFunction.REGISTER[f_id] == "x" || IFunction.REGISTER[f_id]=="<" || IFunction.REGISTER[f_id]==">") {
                 Components = rebindPairwise(Components, f_id);
             }else if(IFunction.REGISTER[f_id] == ","){
                 if(Components.get(0).startsWith("[")){

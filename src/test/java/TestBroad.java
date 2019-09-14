@@ -24,6 +24,8 @@ public class TestBroad {
         tester.testExpression("3x5xI[4]xI[3]", "(((3.0x5.0)xI[4])xI[3])", "");
         tester.testExpression("[1,0, 5,3, 4]:(tanh(i0xi1))", "([1,0,5,3,4]:(tanh(I[0]xI[1])))", "");
         tester.testExpression("[0,2, 1,3, -1](sig(I0))", "([0,2,1,3,-1]:(sig(I[0])))", "");
+        tester.testExpression("I[0]<-I[1]->I[2]", "((I[0]<-I[1])->I[2])", "");
+        tester.testExpression("quadratic(I[0]) -> I[1] -> I[2]", "((quad(I[0])->I[1])->I[2])", "");
 
         //ACTIVATION TESTING:
         double[] input1 = {};
@@ -618,7 +620,7 @@ public class TestBroad {
         );
         tester.testCalculation(
                 gpu,
-                drn, src1, src2, 17, -1,//Tsr overwrite
+                drn, src1, src2, 17, -1,//Tsr inject
                 new double[]{888.0, 777.0, -33.0, 999.0, 0.0, 0.0, 0.0, 0.0, -7.0, -9.0, 4.0, -4.0, 9.0, 4.0, 77.0, 1.0, 2.0, 3.0, 4.0, 0.0, 2.0, 3.0, 4.0, 2.0, -1.0, -2.0, -3.0, -1.0, 3.0, 0.0, 2.0, -3.0, 1.0, 2.0, -3.0, 0.0, 4.0, 5.0, -1.0, 15.0, 11.0, 20.0, -22.0, -8.0, 4.0, -9.0, -2.0, 2.0, 3.0, -2.0, 3.0, 6.0, 3.0, -1.0, 0.0, 2.0, 4.0, 2.0, 1.0, 1.0, 2.0, -3.0, 2.0, 4.0, -2.0, -1.0, 5.0, 0.0, 5.0, 3.0, 6.0, -3.0, 3.0, 5.0, 1.0, 2.0, 3.0, 3.0, -4.0,}
         );
         tester.testCalculation(

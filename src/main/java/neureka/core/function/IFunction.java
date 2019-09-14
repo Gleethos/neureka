@@ -20,8 +20,9 @@ public interface IFunction
     {
             "relu", "sig", "tanh", "quad", "lig", "lin", "gaus", "abs", "sin", "cos",
             "sum", "prod",
-            "^", "/", "*", "%", "-", "+", "x", ""+((char)171), ""+((char)187), ","
+            "^", "/", "*", "%", "-", "+", "x", ""+((char)171), ""+((char)187), ",",
             // (char)171 -> <<    // (char)187 -> >>
+            "<", ">",
     };
     Supplier<HashMap<String, Integer>> setup = ()->{
         HashMap<String, Integer> lookup = new HashMap<>();

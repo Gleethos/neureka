@@ -65,7 +65,7 @@ public class PanelNode extends Node implements NPanelObject
 		T Core = new T();
 		Core.add(this);
 		this.setTensor(Core);
-		//this.getTensor().overwrite(new NVOptimizer(this.getTensor().size(), this.getTensor().getConnection(), 3));
+		//this.getTensor().inject(new NVOptimizer(this.getTensor().size(), this.getTensor().getConnection(), 3));
 		//T.State.turnIntoParentRoot(Core);
 		//this.getTensor().turnIntoSuperRootNode();
 	}
@@ -429,7 +429,7 @@ public class PanelNode extends Node implements NPanelObject
 		//		        	   				}
 		//		        	   				else
 		//		        	   				{
-		//		        	   				 queue.overwrite(panelNode.getRepaintSpace());
+		//		        	   				 queue.inject(panelNode.getRepaintSpace());
 		//		        	   				 double[] data = {panelNode.getX()+directionX*delta, panelNode.getY()+directionY*delta};
 	
 		//		        	   				 queue.addAll(panelNode.moveTo(data, HostPanel));//queue.addAll<- This might not be needed!

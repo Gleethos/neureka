@@ -6,6 +6,7 @@ import java.util.List;
 import com.aparapi.Range;
 import com.aparapi.device.OpenCLDevice;
 import neureka.core.T;
+import neureka.core.function.IFunction;
 
 /**
  *
@@ -104,7 +105,14 @@ public class Device {
         }
     }
 
-    public Device overwrite(T tensor, double[] value, boolean targetGradient){
+    public Device inject(T drain, T source){
+        this.calculate(drain, 0, IFunction.LOOKUP.get("*"));
+        this.calculate(new T[]{drain, drain, source}, IFunction.LOOKUP.get("+"), -1);
+        return this;
+    }
+
+    public Device inject(T tensor, double[] value){
+        boolean targetGradient = tensor.gradientIsTargeted();
         if(tensor.rqsGradient()){
             if(_tensorsMap.containsKey(tensor)){
                 _kernel.execute(

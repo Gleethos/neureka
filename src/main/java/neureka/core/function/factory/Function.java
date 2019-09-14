@@ -59,36 +59,41 @@ public abstract class Function implements IFunction {
                 return IFunction.REGISTER[_id] + expression;
             }
             return IFunction.REGISTER[_id] + "(" + expression + ")";
-        }
-        reconstructed = ((IFunction.REGISTER[_id] == ",") ? "[" : "") + reconstructed;
-        for (int i = 0; i < _source.size(); ++i) {
-            if (_source.get(i) != null) {
-                if ((IFunction.REGISTER[_id] == ",")) {
-                    if (i == _source.size() - 1) {
-                        reconstructed = reconstructed
-                                + "]:(" + (
-                                (_source.get(i) instanceof FConstant)
-                                        ? _source.get(i).toString().split("\\.")[0]
-                                        : _source.get(i).toString()
-                        ) + ")";
+        } else {
+            reconstructed = ((IFunction.REGISTER[_id] == ",") ? "[" : "") + reconstructed;
+            for (int i = 0; i < _source.size(); ++i) {
+                if (_source.get(i) != null) {
+                    if ((IFunction.REGISTER[_id] == ",")) {
+                        if (i == _source.size() - 1) {
+                            reconstructed = reconstructed
+                                    + "]:(" + (
+                                    (_source.get(i) instanceof FConstant)
+                                            ? _source.get(i).toString().split("\\.")[0]
+                                            : _source.get(i).toString()
+                            ) + ")";
+                        } else {
+                            reconstructed = reconstructed
+                                    + (
+                                    (_source.get(i) instanceof FConstant)
+                                            ? _source.get(i).toString().split("\\.")[0]
+                                            : _source.get(i).toString()
+                            );
+                        }
                     } else {
-                        reconstructed = reconstructed
-                                + (
-                                (_source.get(i) instanceof FConstant)
-                                        ? _source.get(i).toString().split("\\.")[0]
-                                        : _source.get(i).toString()
-                        );
+                        reconstructed = reconstructed + _source.get(i).toString();
                     }
                 } else {
-                    reconstructed = reconstructed + _source.get(i).toString();
+                    reconstructed = reconstructed + "(null)";
                 }
-            } else {
-                reconstructed = reconstructed + "(null)";
-            }
-            if (i < _source.size() - ((IFunction.REGISTER[_id] == ",") ? 2 : 1)) {
-                reconstructed = reconstructed + IFunction.REGISTER[_id];
+                if (i < _source.size() - ((IFunction.REGISTER[_id] == ",") ? 2 : 1)) {
+                    reconstructed = reconstructed
+                            + ((IFunction.REGISTER[_id]==">")?"-":"")
+                            + IFunction.REGISTER[_id]
+                            + ((IFunction.REGISTER[_id]=="<")?"-":"");
+                }
             }
         }
+
         return "(" + reconstructed + ")";
     }
 
@@ -203,30 +208,36 @@ public abstract class Function implements IFunction {
         if (onSameDevice && IFunction.REGISTER[_id] != "," &&
                 !((IFunction.REGISTER[_id] == "x" || IFunction.REGISTER[_id] == "«" || IFunction.REGISTER[_id] == "»") && d > -1)
         ) {
-            int[] shp = (IFunction.REGISTER[_id] == "x")?T.factory.util.shpOfCon(input[0].shape(), input[1].shape()):input[0].shape();
-            T output = new T(shp, 0.0);
-
-            if (device != null) {
-                device.add(output);
-            }
-            for (int i = 0; i < input.length; i++) {
-                device = (Device) input[i].find(Device.class);
-                T[] tsrs = new T[1 + input.length];
-                tsrs[0] = output;
-                for (int ii = 1; ii < tsrs.length; ii++) {
-                    tsrs[ii] = input[ii - 1];
+            if(IFunction.REGISTER[_id]=="<") {
+                device.inject(input[0], input[1]);
+            } else if(IFunction.REGISTER[_id]==">") {
+                double[] value = (input[0].gradientIsTargeted()) ? input[1].gradient() : input[0].value();
+                device.inject(input[1], input[0]);
+            } else {
+                int[] shp = (IFunction.REGISTER[_id] == "x")?T.factory.util.shpOfCon(input[0].shape(), input[1].shape()):input[0].shape();
+                T output = new T(shp, 0.0);
+                if (device != null) {
+                    device.add(output);
                 }
-                if (tsrs.length == 2 && (tsrs[0].isVirtual() || tsrs[1].isVirtual())) {
-                    if (tsrs[0].isVirtual()) {
-                        device.calculate(tsrs[1], tsrs[0].value()[0], _id);
-                    } else {
-                        device.calculate(tsrs[0], tsrs[1].value()[0], _id);
+                for (int i = 0; i < input.length; i++) {
+                    device = (Device) input[i].find(Device.class);
+                    T[] tsrs = new T[1 + input.length];
+                    tsrs[0] = output;
+                    for (int ii = 1; ii < tsrs.length; ii++) {
+                        tsrs[ii] = input[ii - 1];
                     }
-                } else {
-                    device.calculate(tsrs, _id, d);
+                    if (tsrs.length == 2 && (tsrs[0].isVirtual() || tsrs[1].isVirtual())) {
+                        if (tsrs[0].isVirtual()) {
+                            device.calculate(tsrs[1], tsrs[0].value()[0], _id);
+                        } else {
+                            device.calculate(tsrs[0], tsrs[1].value()[0], _id);
+                        }
+                    } else {
+                        device.calculate(tsrs, _id, d);
+                    }
                 }
+                return output;
             }
-            return output;
         } else {
             if (IFunction.REGISTER[_id] == "x") {
                 if (d < 0) {
@@ -262,14 +273,33 @@ public abstract class Function implements IFunction {
                     return T.factory.exec.reshaped(t, newForm, true);//t.reshape(newForm);
 
                 } else {//reverse reshape:
-                    /**
-                     *      [3, 2, 4, 0, 1]
+                    /**      [3, 2, 4, 0, 1]
                      *      [0, 1, 2, 3, 4]
                      * */
                     int[] reversed = new int[newForm.length];
                     for (int i = 0; i < newForm.length; i++) {
                         // reversed[newForm[i]] = i;
                     }
+                }
+            } else if(IFunction.REGISTER[_id]=="<") {
+                if(input[0].isOutsourced()){
+                    ((Device) input[0].find(Device.class))
+                        .inject(
+                            input[0],
+                            input[1].targetValue()
+                        );
+                } else {
+                    ((Device) input[0].find(Device.class))
+                        .inject(
+                            input[1],
+                            input[0].targetValue()
+                        );
+                }
+            } else if(IFunction.REGISTER[_id]==">") {
+                if(input[1].isOutsourced()){
+
+                } else {
+
                 }
             } else {
                 T[] tsrs = input;
