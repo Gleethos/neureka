@@ -352,12 +352,20 @@ public class T {
     public T() {
     }// creates empty tensor;
 
+    public T(double value){
+        _construc(new int[]{1}, value);
+    }
+
     public T(int[] shape) {
         _value = new double[factory.util.szeOfShp(shape)];
         this.initialShape(shape);
     }
 
     public T(int[] shape, double value) {
+        _construc(shape, value);
+    }
+
+    private void _construc(int[] shape, double value){
         int size = factory.util.szeOfShp(shape);
         _value = new double[1];
         this.setIsVirtual((size > 1));

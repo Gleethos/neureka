@@ -16,13 +16,21 @@ public class NTester extends Assert{
 
     private String session = "";
 
-    protected NTester(String name) {
+    public NTester(String name) {
         if(System.getProperty("os.name").toLowerCase().contains("windows")){
             this.Console = new NMessageFrame(name+" - TEST PROCESS");
             this.ResultConsole = new NMessageFrame(name+" - TEST RESULT");
         }
 
     }
+
+    public NTester(String name, boolean liveLog){
+        if(liveLog && System.getProperty("os.name").toLowerCase().contains("windows")){
+            this.Console = new NMessageFrame(name+" - TEST PROCESS");
+            this.ResultConsole = new NMessageFrame(name+" - TEST RESULT");
+        }
+    }
+
 
     protected void printSessionStart(String message){
         this.session = "";

@@ -212,7 +212,7 @@ public class GraphNode {
     public void backward(T error){
         if(this.usesAD()){
             if(this.usesForwardAD()){
-                this.forEach((g, t)->t.backward(new T(new T[]{error, g}, "I[0]*I[1]", false)));
+                this.forEach((t, g)->t.backward(new T(new T[]{error, g}, "I[0]*I[1]", false)));
             }else if(this.usesReverseAD()){
                 this.forEach((t, g)->{
                     if(_function.id()==18){// x operation required for chainrule!
