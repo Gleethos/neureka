@@ -551,39 +551,39 @@ public class T {
                 if (t.isEmpty() || t.isUndefined()) {
                     return 0;
                 } else if (t.isVirtual()) {
-                    return ((t.gradientIsTargeted())?t._gradient:t._value)[0];
+                    return t.targetValue()[0];
                 }
-                return ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(t.shpIdx(i), t.translation())];
+                return t.targetValue()[util.iOf(t.shpIdx(i), t.translation())];
             }
 
             public static double getFrom(T t, int[] idx) {
                 t.setIsVirtual(false);
-                return ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(idx, t.translation())];
+                return t.targetValue()[util.iOf(idx, t.translation())];
             }
 
             public static void setInto(T t, int i, double value) {
                 t.setIsVirtual(false);
-                ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(t.shpIdx(i), t.translation())] = value;
+                t.targetValue()[util.iOf(t.shpIdx(i), t.translation())] = value;
             }
 
             public static void setInto(T t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(idx, t.translation())] = value;
+                t.targetValue()[util.iOf(idx, t.translation())] = value;
             }
 
             public static void addInto(T t, int i, double value) {
                 t.setIsVirtual(false);
-                ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(t.shpIdx(i), t.translation())] += value;
+                t.targetValue()[util.iOf(t.shpIdx(i), t.translation())] += value;
             }
 
             public static void addInto(T t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(idx, t.translation())] += value;
+                t.targetValue()[util.iOf(idx, t.translation())] += value;
             }
 
             public static T addInto(T t, T source) {
                 if (t.isVirtual() && source.isVirtual()) {
-                    ((t.gradientIsTargeted())?t._gradient:t._value)[0] += ((source.gradientIsTargeted())?source._gradient:source._value)[0];
+                    t.targetValue()[0] += ((source.gradientIsTargeted())?source._gradient:source._value)[0];
                 } else {
                     if (t.isVirtual()) {
                         t.setIsVirtual(false);
@@ -600,17 +600,17 @@ public class T {
 
             public static void subInto(T t, int i, double value) {
                 t.setIsVirtual(false);
-                ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(t.shpIdx(i), t.translation())] -= value;
+                t.targetValue()[util.iOf(t.shpIdx(i), t.translation())] -= value;
             }
 
             public static void subInto(T t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(idx, t.translation())] -= value;
+                t.targetValue()[util.iOf(idx, t.translation())] -= value;
             }
 
             public static void subInto(T t, T source) {
                 if (t.isVirtual() && source.isVirtual()) {
-                    ((t.gradientIsTargeted())?t._gradient:t._value)[0] -= ((source.gradientIsTargeted())?source._gradient:source._value)[0];
+                    t.targetValue()[0] -= ((source.gradientIsTargeted())?source._gradient:source._value)[0];
                 } else {
                     if (t.isVirtual()) {
                         t.setIsVirtual(false);
@@ -626,12 +626,12 @@ public class T {
 
             public static void mulInto(T t, int i, double value) {
                 t.setIsVirtual(false);
-                ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(t.shpIdx(i), t.translation())] *= value;
+                t.targetValue()[util.iOf(t.shpIdx(i), t.translation())] *= value;
             }
 
             public static void mulInto(T t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                ((t.gradientIsTargeted())?t._gradient:t._value)[util.iOf(idx, t.translation())] *= value;
+                t.targetValue()[util.iOf(idx, t.translation())] *= value;
             }
 
         }

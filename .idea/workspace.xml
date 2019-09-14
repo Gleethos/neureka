@@ -3,30 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="a07ad3e8-8754-4b05-b853-df2665879cc4" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileContent/fileContent.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileContent/fileContent.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/resourceHashesCache.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/jarAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/jarAnalysis.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/taskHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/T.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/T.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/IFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/IFunction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/assembly/FunctionGraphBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/assembly/FunctionGraphBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/ngui/swing/NCircleMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/ngui/swing/NCircleMenu.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/ngui/swing/PanelNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/ngui/swing/PanelNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/ngui/touch/MovableElementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/ngui/touch/MovableElementController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/ngui/touch/canvas/NCircleMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/ngui/touch/canvas/NCircleMenu.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/ngui/touch/canvas/NPanelNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/ngui/touch/canvas/NPanelNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/ngui/touch/canvas/TSurface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/ngui/touch/canvas/TSurface.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/ngui/touch/canvas/TestWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/ngui/touch/canvas/TestWindow.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/TestBroad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestBroad.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -140,20 +121,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="123">
-              <caret line="216" column="53" selection-start-line="216" selection-start-column="53" selection-end-line="216" selection-end-column="53" />
+            <state relative-caret-position="157">
+              <caret line="218" column="37" lean-forward="true" selection-start-line="218" selection-start-column="37" selection-end-line="218" selection-end-column="37" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/T.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="103" column="57" selection-start-line="103" selection-start-column="57" selection-end-line="103" selection-end-column="57" />
+            <state relative-caret-position="113">
+              <caret line="550" column="22" selection-start-line="550" selection-start-column="19" selection-end-line="550" selection-end-column="22" />
               <folding>
                 <element signature="e#3131#3132#0" expanded="true" />
                 <element signature="e#3195#3196#0" expanded="true" />
@@ -188,6 +169,9 @@
       <find>Device f _</find>
       <find>gradientIsTa</find>
       <find>rebind</find>
+      <find>(this.gra</find>
+      <find>(gradien</find>
+      <find>(this.gradien</find>
     </findStrings>
     <dirStrings>
       <dir>D:\development\java\remoteTest\neureka\src\main</dir>
@@ -256,6 +240,11 @@
             <path>
               <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
               <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+            <path>
+              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
+              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name=".travis" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
@@ -392,7 +381,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1568488567143" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1568489034970" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -429,7 +418,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.neureka [clean]">
+  <component name="RunManager" selected="Gradle.neureka [build]">
     <configuration name="neureka [assemble]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -512,9 +501,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JAR Application.neureka-1.0-SNAPSHOT.jar" />
         <item itemvalue="Gradle.neureka [test]" />
         <item itemvalue="Gradle.neureka [clean]" />
-        <item itemvalue="JAR Application.neureka-1.0-SNAPSHOT.jar" />
         <item itemvalue="Gradle.neureka [assemble]" />
         <item itemvalue="Gradle.neureka [build]" />
       </list>
@@ -571,7 +560,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="57920000" />
+    <option name="totallyTimeSpent" value="58254000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="0" width="779" height="830" extended-state="0" />
@@ -588,7 +577,7 @@
       <window_info id="Web" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49837133" weight="0.32692307" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.69411767" visible="true" weight="0.37864077" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.69411767" visible="true" weight="0.37864077" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4970684" weight="0.3997253" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -610,7 +599,7 @@
       <window_info anchor="right" id="Database" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info anchor="right" id="Theme Preview" order="8" />
-      <window_info anchor="right" content_ui="combo" id="Project" order="9" visible="true" weight="0.5908497" />
+      <window_info active="true" anchor="right" content_ui="combo" id="Project" order="9" visible="true" weight="0.2875817" />
     </layout>
     <layout-to-restore>
       <window_info id="Structure" order="0" side_tool="true" weight="0.25" />
@@ -1035,17 +1024,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/T.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="103" column="57" selection-start-line="103" selection-start-column="57" selection-end-line="103" selection-end-column="57" />
-          <folding>
-            <element signature="e#3131#3132#0" expanded="true" />
-            <element signature="e#3195#3196#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/neureka/ngui/tile/N3DSpace.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1275" />
@@ -1053,8 +1031,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="123">
-          <caret line="216" column="53" selection-start-line="216" selection-start-column="53" selection-end-line="216" selection-end-column="53" />
+        <state relative-caret-position="157">
+          <caret line="218" column="37" lean-forward="true" selection-start-line="218" selection-start-column="37" selection-end-line="218" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/T.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="113">
+          <caret line="550" column="22" selection-start-line="550" selection-start-column="19" selection-end-line="550" selection-end-column="22" />
+          <folding>
+            <element signature="e#3131#3132#0" expanded="true" />
+            <element signature="e#3195#3196#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
