@@ -18,9 +18,9 @@ Neureka is a platform independent deep-learning library written in Java.
 
 Take a look:
 ```
-    T x = new T(new int[]{1}, new double[]{3}).setRqsGradient(true);
-    T b = new T(new int[]{1}, new double[]{-4});
-    T w = new T(new int[]{1}, new double[]{2});
+    T x = new T(new int[]{1}, 3).setRqsGradient(true);
+    T b = new T(new int[]{1}, -4);
+    T w = new T(new int[]{1}, 2);
         
     T y = new T(new T[]{x, b, w}, "((i0+i1)*i2)^2");
     

@@ -7,9 +7,9 @@ public class TestOnlyCPU {
     @Test
     public void testTest() throws InterruptedException {
 
-        T x = new T(new int[]{1}, new double[]{3}).setRqsGradient(true);
-        T b = new T(new int[]{1}, new double[]{-4});
-        T w = new T(new int[]{1}, new double[]{2});
+        T x = new T(new int[]{1}, 3).setRqsGradient(true);
+        T b = new T(new int[]{1}, -4);
+        T w = new T(new int[]{1}, 2);
         /**
          *      ((3-4)*2)^2 = 4
          *  dx:   8*3 - 32  = -8
