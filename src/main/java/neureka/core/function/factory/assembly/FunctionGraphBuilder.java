@@ -17,7 +17,7 @@ public class FunctionGraphBuilder {
     public static IFunction newBuild(int f_id, int size, boolean doAD){
         if (f_id == 18){
             size = 2;
-        } else if(IFunction.REGISTER[f_id]==","){
+        } else if(IFunction.TYPES.REGISTER[f_id]==","){
             ArrayList<IFunction> srcs = new ArrayList<>();
             for(int i=0; i<size; i++){
                 srcs.add(new FInput().newBuild(""+i));
@@ -25,13 +25,13 @@ public class FunctionGraphBuilder {
             return FunctionConstructor.createFunction(f_id, srcs, doAD);
         }
         if (f_id < 10) {
-            return newBuild(IFunction.REGISTER[f_id] + "(I[0])", doAD);//, tipReached);
+            return newBuild(IFunction.TYPES.REGISTER[f_id] + "(I[0])", doAD);//, tipReached);
         } else if (f_id < 12) {
-            return newBuild(IFunction.REGISTER[f_id] + "I[j]", doAD);//, tipReached);
+            return newBuild(IFunction.TYPES.REGISTER[f_id] + "I[j]", doAD);//, tipReached);
         } else {
             String expression = "I[0]";
             for (int i = 0; i < size - 1; i++) {
-                expression += IFunction.REGISTER[f_id] + "I[" + (i + 1) + "]";
+                expression += IFunction.TYPES.REGISTER[f_id] + "I[" + (i + 1) + "]";
             }
             return newBuild(expression, doAD);
         }
@@ -49,12 +49,12 @@ public class FunctionGraphBuilder {
                         ? ("(" + expression + ")")
                         : expression;
         String k = (doAD)?"d"+expression:expression;
-        if (IFunction.F_CACHE.FUNCTIONS().containsKey(k)) {
-            return IFunction.F_CACHE.FUNCTIONS().get(k);
+        if (IFunction.FCACHE.FUNCTIONS().containsKey(k)) {
+            return IFunction.FCACHE.FUNCTIONS().get(k);
         }
         IFunction built = construct(expression, doAD);//, tipReached);
         if (built != null) {
-            IFunction.F_CACHE.FUNCTIONS().put(((doAD)?"d":"")+"(" + built.toString() + ")", built);
+            IFunction.FCACHE.FUNCTIONS().put(((doAD)?"d":"")+"(" + built.toString() + ")", built);
         }
         return built;
     }
@@ -105,9 +105,9 @@ public class FunctionGraphBuilder {
             }
         }
         //===
-        int Count = IFunction.REGISTER.length;
-        for (int j = IFunction.REGISTER.length; j > 0; --j) {
-            if (!FunctionParser.containsOperation(IFunction.REGISTER[j - 1], Operations)) {
+        int Count = IFunction.TYPES.REGISTER.length;
+        for (int j = IFunction.TYPES.REGISTER.length; j > 0; --j) {
+            if (!FunctionParser.containsOperation(IFunction.TYPES.REGISTER[j - 1], Operations)) {
                 --Count;
             } else {
                 j = 0;
@@ -117,7 +117,7 @@ public class FunctionGraphBuilder {
         while (ID < Count) {
             final List<String> newOperations = new ArrayList<String>();
             final List<String> newComponents = new ArrayList<String>();
-            if (FunctionParser.containsOperation(IFunction.REGISTER[ID], Operations)) {
+            if (FunctionParser.containsOperation(IFunction.TYPES.REGISTER[ID], Operations)) {
                 String currentChain = null;
                 boolean groupingOccured = false;
                 boolean enoughtPresent = FunctionParser.numberOfOperationsWithin(Operations) > 1;// Otherwise: I[j]^4 goes nuts!
@@ -132,9 +132,9 @@ public class FunctionGraphBuilder {
                             currentOperation = Operations.get(Ci);
                         }
                         if (currentOperation != null) {
-                            if (currentOperation.equals(IFunction.REGISTER[ID])) {
+                            if (currentOperation.equals(IFunction.TYPES.REGISTER[ID])) {
                                 final String newChain =
-                                        FunctionParser.groupBy(IFunction.REGISTER[ID], currentChain, currentComponent, currentOperation);
+                                        FunctionParser.groupBy(IFunction.TYPES.REGISTER[ID], currentChain, currentComponent, currentOperation);
                                 if (newChain != null) {
                                     currentChain = newChain;
                                 }
@@ -171,8 +171,8 @@ public class FunctionGraphBuilder {
         // identifying function id:
         int f_id = 0;
         if (Operations.size() >= 1) {
-            for (int k = 0; k < IFunction.REGISTER.length; ++k) {
-                if (IFunction.REGISTER[k].equals(Operations.get(0))) {
+            for (int k = 0; k < IFunction.TYPES.REGISTER.length; ++k) {
+                if (IFunction.TYPES.REGISTER[k].equals(Operations.get(0))) {
                     f_id = k;
                 }
             }
@@ -182,8 +182,8 @@ public class FunctionGraphBuilder {
             String possibleFunction = FunctionParser.parsedOperation(Components.get(0).toLowerCase(), 0);
             if (possibleFunction != null) {
                 if (possibleFunction.length() > 1) {
-                    for (int Oi = 0; Oi < IFunction.REGISTER.length; Oi++) {
-                        if (IFunction.REGISTER[Oi].equals(possibleFunction)) {
+                    for (int Oi = 0; Oi < IFunction.TYPES.REGISTER.length; Oi++) {
+                        if (IFunction.TYPES.REGISTER[Oi].equals(possibleFunction)) {
                             f_id = Oi;
                             IFunction newCore = FunctionGraphBuilder.newBuild(
                                     FunctionParser.parsedComponent(Components.get(0), possibleFunction.length()), doAD
@@ -214,9 +214,9 @@ public class FunctionGraphBuilder {
             newBuild = FunctionGraphBuilder.newBuild(component, doAD);
             return newBuild;
         } else {// More than one component left:
-            if (IFunction.REGISTER[f_id] == "x" || IFunction.REGISTER[f_id]=="<" || IFunction.REGISTER[f_id]==">") {
+            if (IFunction.TYPES.REGISTER[f_id] == "x" || IFunction.TYPES.REGISTER[f_id]=="<" || IFunction.TYPES.REGISTER[f_id]==">") {
                 Components = rebindPairwise(Components, f_id);
-            }else if(IFunction.REGISTER[f_id] == ","){
+            }else if(IFunction.TYPES.REGISTER[f_id] == ","){
                 if(Components.get(0).startsWith("[")){
                     Components.set(0,Components.get(0).substring(1));
                     String[] splitted;
@@ -271,7 +271,7 @@ public class FunctionGraphBuilder {
      */
     private static List<String> rebindPairwise(List<String> components, int f_id) {
         if (components.size() > 2) {
-            String newComponent = "(" + components.get(0) + IFunction.REGISTER[f_id] + components.get(1) + ")";
+            String newComponent = "(" + components.get(0) + IFunction.TYPES.REGISTER[f_id] + components.get(1) + ")";
             components.remove(components.get(0));
             components.remove(components.get(0));
             components.add(0, newComponent);

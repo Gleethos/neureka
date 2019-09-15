@@ -42,7 +42,7 @@ public abstract class Function implements IFunction {
 
     @Override
     public String type() {
-        return IFunction.REGISTER[_id];
+        return TYPES.REGISTER[_id];
     }
 
     @Override
@@ -53,17 +53,17 @@ public abstract class Function implements IFunction {
     @Override
     public String toString() {
         String reconstructed = "";
-        if (_source.size() == 1 && IFunction.REGISTER[_id].length() > 1) {
+        if (_source.size() == 1 && TYPES.REGISTER[_id].length() > 1) {
             String expression = _source.get(0).toString();
             if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
-                return IFunction.REGISTER[_id] + expression;
+                return TYPES.REGISTER[_id] + expression;
             }
-            return IFunction.REGISTER[_id] + "(" + expression + ")";
+            return TYPES.REGISTER[_id] + "(" + expression + ")";
         } else {
-            reconstructed = ((IFunction.REGISTER[_id] == ",") ? "[" : "") + reconstructed;
+            reconstructed = ((TYPES.REGISTER[_id] == ",") ? "[" : "") + reconstructed;
             for (int i = 0; i < _source.size(); ++i) {
                 if (_source.get(i) != null) {
-                    if ((IFunction.REGISTER[_id] == ",")) {
+                    if ((TYPES.REGISTER[_id] == ",")) {
                         if (i == _source.size() - 1) {
                             reconstructed = reconstructed
                                     + "]:(" + (
@@ -85,11 +85,11 @@ public abstract class Function implements IFunction {
                 } else {
                     reconstructed = reconstructed + "(null)";
                 }
-                if (i < _source.size() - ((IFunction.REGISTER[_id] == ",") ? 2 : 1)) {
+                if (i < _source.size() - ((TYPES.REGISTER[_id] == ",") ? 2 : 1)) {
                     reconstructed = reconstructed
-                            + ((IFunction.REGISTER[_id]==">")?"-":"")
-                            + IFunction.REGISTER[_id]
-                            + ((IFunction.REGISTER[_id]=="<")?"-":"");
+                            + ((TYPES.REGISTER[_id]==">")?"-":"")
+                            + TYPES.REGISTER[_id]
+                            + ((TYPES.REGISTER[_id]=="<")?"-":"");
                 }
             }
         }
@@ -164,18 +164,18 @@ public abstract class Function implements IFunction {
         /**  The code below deals with deep functions (non flat):  * */
         if (d < 0 && !_isFlat) {//only flat functions can be executed
             if (_id <= 9) {
-                return (new FunctionGraphBuilder().newBuild(IFunction.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).activate(input));
+                return (new FunctionGraphBuilder().newBuild(TYPES.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).activate(input));
             } else {
-                if (IFunction.REGISTER[_id].length() != 1) {
+                if (TYPES.isFunction(_id)||TYPES.isIndexer(_id)) {
                     /**  SUMMATION, PI,  * */
                     T[] tsrs = activateSource(input);
-                    return (FunctionGraphBuilder.newBuild(IFunction.REGISTER[_id] + "(I[j])", true).activate(tsrs));
-                } else if (_id <= 20) {
+                    return (FunctionGraphBuilder.newBuild(TYPES.REGISTER[_id] + "(I[j])", true).activate(tsrs));
+                } else if (TYPES.isOperation(_id)) {
                     /**  '+', '-', 'x', '*', '%', '«', '»', ',', ...  * */
-                    String operation = (IFunction.REGISTER[_id].length() > 1) ? IFunction.REGISTER[_id] : "";
+                    String operation = (TYPES.REGISTER[_id].length() > 1) ? TYPES.REGISTER[_id] : "";
                     T[] tsrs = activateSource(input, j, null);
                     for (int i = 0; i < tsrs.length; i++) {
-                        operation += "I[" + i + "]" + ((i + 1 < tsrs.length) ? IFunction.REGISTER[_id] : "");
+                        operation += "I[" + i + "]" + ((i + 1 < tsrs.length) ? TYPES.REGISTER[_id] : "");
                     }
                     if (j < 0) {
                         return (FunctionGraphBuilder.newBuild(operation, _doAD).activate(tsrs));
@@ -205,16 +205,13 @@ public abstract class Function implements IFunction {
     private T execute(T[] input, int j, int d) {
         Device device = (Device) input[0].find(Device.class);
         boolean onSameDevice = T.factory.util.shareGuestDevice(input);
-        if (onSameDevice && IFunction.REGISTER[_id] != "," &&
-                !((IFunction.REGISTER[_id] == "x" || IFunction.REGISTER[_id] == "«" || IFunction.REGISTER[_id] == "»") && d > -1)
-        ) {
-            if(IFunction.REGISTER[_id]=="<") {
+        if (onSameDevice && TYPES.REGISTER[_id] != "," && (!TYPES.isConvection(_id) && d > -1)) {
+            if(TYPES.REGISTER[_id]=="<") {
                 device.inject(input[0], input[1]);
-            } else if(IFunction.REGISTER[_id]==">") {
-                double[] value = (input[0].gradientIsTargeted()) ? input[1].gradient() : input[0].value();
+            } else if(TYPES.REGISTER[_id]==">") {
                 device.inject(input[1], input[0]);
             } else {
-                int[] shp = (IFunction.REGISTER[_id] == "x")?T.factory.util.shpOfCon(input[0].shape(), input[1].shape()):input[0].shape();
+                int[] shp = (TYPES.REGISTER[_id] == "x")?T.factory.util.shpOfCon(input[0].shape(), input[1].shape()):input[0].shape();
                 T output = new T(shp, 0.0);
                 if (device != null) {
                     device.add(output);
@@ -239,7 +236,7 @@ public abstract class Function implements IFunction {
                 return output;
             }
         } else {
-            if (IFunction.REGISTER[_id] == "x") {
+            if (TYPES.REGISTER[_id] == "x") {
                 if (d < 0) {
                     return T.factory.exec.convolution(input[0], input[1]);
                 } else {
@@ -249,9 +246,9 @@ public abstract class Function implements IFunction {
                         return (input[0]);
                     }
                 }
-            } else if (IFunction.REGISTER[_id] == "" + ((char) 171) || IFunction.REGISTER[_id] == "" + ((char) 187)) {
+            } else if (TYPES.REGISTER[_id] == "" + ((char) 171) || TYPES.REGISTER[_id] == "" + ((char) 187)) {
                 if (d < 0) {//  ""+((char)171), ""+((char)187) //<< / >>
-                    if (IFunction.REGISTER[_id] == "" + ((char) 187)) {
+                    if (TYPES.REGISTER[_id] == "" + ((char) 187)) {
                         return T.factory.exec.convolution_inv(input[0], input[1], input[2], false);
                     } else {
                         return T.factory.exec.convolution_inv(input[2], input[1], input[0], false);
@@ -263,7 +260,7 @@ public abstract class Function implements IFunction {
                         return input[0];
                     }
                 }
-            } else if (IFunction.REGISTER[_id] == ",") {
+            } else if (TYPES.REGISTER[_id] == ",") {
                 int[] newForm = new int[input.length - 1];
                 for (int i = 0; i < input.length - 1; i++) {
                     newForm[i] = (int) T.factory.io.getFrom(input[i], 0);
@@ -281,7 +278,7 @@ public abstract class Function implements IFunction {
                         // reversed[newForm[i]] = i;
                     }
                 }
-            } else if(IFunction.REGISTER[_id]=="<") {
+            } else if(TYPES.REGISTER[_id]=="<") {
                 if(input[0].isOutsourced()){
                     ((Device) input[0].find(Device.class))
                         .inject(
@@ -295,7 +292,7 @@ public abstract class Function implements IFunction {
                             input[0].targetValue()
                         );
                 }
-            } else if(IFunction.REGISTER[_id]==">") {
+            } else if(TYPES.REGISTER[_id]==">") {
                 if(input[1].isOutsourced()){
 
                 } else {

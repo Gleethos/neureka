@@ -21,11 +21,11 @@ public class FunctionConstructor
             return new Function(f_id, isFlat, sources, doAD){
                 @Override
                 public T activate(T[] input, int j) {
-                    return T_CACHE.handle(input, this,()->tensorActivationOf(sources.get(0).activate(input, j), false));
+                    return TCACHE.handle(input, this,()->tensorActivationOf(sources.get(0).activate(input, j), false));
                 }
                 @Override
                 public T activate(T[] input) {
-                    return T_CACHE.handle(input, this, ()->tensorActivationOf(sources.get(0).activate(input), false));
+                    return TCACHE.handle(input, this, ()->tensorActivationOf(sources.get(0).activate(input), false));
                 }
                 @Override
                 public T derive(T[] input, int d, int j) {
@@ -57,11 +57,11 @@ public class FunctionConstructor
             return new Function(f_id, isFlat, sources, doAD){
                 @Override
                 public T activate(T[] input, int j) {
-                    return T_CACHE.handle(input, this, ()->tensorActivationOf(input, j, -1));
+                    return TCACHE.handle(input, this, ()->tensorActivationOf(input, j, -1));
                 }
                 @Override
                 public T activate(T[] input) {
-                    return T_CACHE.handle(input, this, ()->tensorActivationOf(input, -1, -1));
+                    return TCACHE.handle(input, this, ()->tensorActivationOf(input, -1, -1));
                 }
                 @Override
                 public T derive(T[] input, int d, int j) {

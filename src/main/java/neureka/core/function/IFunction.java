@@ -2,37 +2,19 @@
 package neureka.core.function;
 
 import neureka.core.T;
+import neureka.core.function.environment.FunctionTypes;
 import neureka.core.function.factory.autograd.GraphLock;
 import neureka.core.function.factory.autograd.GraphNode;
 import neureka.core.function.factory.assembly.FunctionGraphBuilder;
 import neureka.core.function.environment.TensorCache;
 import neureka.core.function.environment.FunctionCache;
 
-import java.util.HashMap;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public interface IFunction
 {
-    FunctionCache F_CACHE = new FunctionCache();
-    TensorCache T_CACHE = new TensorCache();
-    String[] REGISTER = new String[]
-    {
-            "relu", "sig", "tanh", "quad", "lig", "lin", "gaus", "abs", "sin", "cos",
-            "sum", "prod",
-            "^", "/", "*", "%", "-", "+", "x", ""+((char)171), ""+((char)187), ",",
-            // (char)171 -> <<    // (char)187 -> >>
-            "<", ">",
-    };
-    Supplier<HashMap<String, Integer>> setup = ()->{
-        HashMap<String, Integer> lookup = new HashMap<>();
-        for(int i=0; i<REGISTER.length; i++){
-            lookup.put(REGISTER[i], i);
-        }
-        return lookup;
-    };
-    HashMap<String, Integer> LOOKUP = setup.get();
-
+    FunctionCache FCACHE = new FunctionCache();
+    TensorCache TCACHE = new TensorCache();
+    FunctionTypes TYPES = new FunctionTypes();
     //------------------------------------------------------------------------------------------------------------------
 
     static T execute(T drain, T[] tensors, String operation, boolean doAD) {
@@ -48,7 +30,7 @@ public interface IFunction
         if (drain.has(GraphNode.class)) {
             ((GraphNode) drain.find(GraphNode.class)).trimTree(null);
         }
-        IFunction.T_CACHE.free(tensors);
+        IFunction.TCACHE.free(tensors);
         for(T t : tensors){
             t.setGradientIsTargeted(false);
         }

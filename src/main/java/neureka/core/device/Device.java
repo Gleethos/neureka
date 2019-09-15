@@ -106,8 +106,8 @@ public class Device {
     }
 
     public Device inject(T drain, T source){
-        this.calculate(drain, 0, IFunction.LOOKUP.get("*"));
-        this.calculate(new T[]{drain, drain, source}, IFunction.LOOKUP.get("+"), -1);
+        this.calculate(drain, 0, IFunction.TYPES.LOOKUP.get("*"));
+        this.calculate(new T[]{drain, drain, source}, IFunction.TYPES.LOOKUP.get("+"), -1);
         return this;
     }
 

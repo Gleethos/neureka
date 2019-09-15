@@ -38,11 +38,11 @@ public class GraphNode {
     /**
      *   modes:   |
      *  ----------+----------------------------------+-
-     *  _mode == 0 | no Auto-Differentiation          |
+     *  _mode == 0 | no Auto-Differentiation         |
      *  ----------+----------------------------------+-
-     *  _mode > 0  | forward Auto-Differentiation     |
+     *  _mode > 0  | forward Auto-Differentiation    |
      *  ----------+----------------------------------+-
-     *  _mode < 0  | backward Auto-Differentiation    |
+     *  _mode < 0  | backward Auto-Differentiation   |
      *  ----------+----------------------------------+-
      *
      * @var int _mode
@@ -57,16 +57,16 @@ public class GraphNode {
     private IFunction _function;
 
     /**
-     * Source tensors. (Parents of the tensor of this node)
+     * Input tensors. ('Parents' of the tensor of this node)
      * */
-    private T[] _source;
+    private T[] _input;
 
     /**
      * Keys are targets and values are gradients with respect to that target
      * Note: values can be null if the recorded function is of type 'reshape'!
      * Why? => because reshape operation does not need variables for backward pass!
      * */
-    private TreeMap<T, T> targets_gradients;
+    private TreeMap<T, T> _targets_gradients;
 
     /**
      * "Lock object" for graph identity. (result caching)
@@ -87,8 +87,8 @@ public class GraphNode {
      */
     public long nid(){
         long nid = 1;
-        if(_source !=null){
-            for(T t : _source){
+        if(_input !=null){
+            for(T t : _input){
                 nid*=t.hashCode();
             }
         }
@@ -112,7 +112,7 @@ public class GraphNode {
      * @return boolean
      */
     public boolean isOrigin(){
-        return (_source==null && _function==null);
+        return (_input ==null && _function==null);
     }
 
     /**
@@ -124,8 +124,8 @@ public class GraphNode {
     public GraphNode(T value, IFunction f, T[] src, GraphLock lock){
         _mode = (src!=null)?modeOf(src, f):(value.rqsGradient())?1:0;
         _function = f;
-        _source = src;
-        this._lock = lock;
+        _input = src;
+        _lock = lock;
     }
 
     /**
@@ -164,7 +164,7 @@ public class GraphNode {
      * @return void
      */
     public void trimTree(T target){// Find and remove redundant targets:
-        if(_source ==null || mode()==0){
+        if(_input ==null || mode()==0){
             return;
         }
         boolean dive = (target==null || mode()<0);
@@ -177,18 +177,18 @@ public class GraphNode {
             });
             blacklist.forEach((b, t)->{
                 if(!b.has(GraphNode.class) || !((GraphNode)b.find(GraphNode.class)).isOrigin()){
-                    this.targets_gradients.remove(t);
+                    _targets_gradients.remove(t);
                     b.delete();
                 }
             });
-            for(T src : _source){
+            for(T src : _input){
                 if(src.has(GraphNode.class)){
                     GraphNode node = (GraphNode) src.find(GraphNode.class);
                     node.trimTree(target);
                 }
             }
         }else{
-            for(T src : _source){
+            for(T src : _input){
                 if(src.has(GraphNode.class)){
                     GraphNode node = (GraphNode) src.find(GraphNode.class);
                     this.forEach((t, g)->{
@@ -202,7 +202,7 @@ public class GraphNode {
         /**
          * sources can be deleted because unused graph nodes are already trimmed off the tree (targets remain!)
          * */
-        _source = null;
+        _input = null;
     }
 
     /**
@@ -245,10 +245,10 @@ public class GraphNode {
      * @param value
      */
     public void put(T key, T value){
-        if(targets_gradients==null){
-            targets_gradients = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
+        if(_targets_gradients ==null){
+            _targets_gradients = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
         }
-        targets_gradients.put(key, value);
+        _targets_gradients.put(key, value);
     }
 
     /**
@@ -256,10 +256,10 @@ public class GraphNode {
      * @return T
      */
     public T get(T key){
-        if(targets_gradients==null){
+        if(_targets_gradients ==null){
            return null;
         }
-        return targets_gradients.get(key);
+        return _targets_gradients.get(key);
     }
 
     /**
@@ -268,27 +268,27 @@ public class GraphNode {
      * @return boolean
      */
     public boolean has(T key){
-        if(targets_gradients==null){
+        if(_targets_gradients ==null){
             return false;
         }
-        return targets_gradients.containsKey(key);
+        return _targets_gradients.containsKey(key);
     }
     public Set<T> sources(){
-        return targets_gradients.keySet();
+        return _targets_gradients.keySet();
     }
 
     /**
      * @return TreeMap<T, T>
      */
     public TreeMap<T, T> getMap(){
-        return targets_gradients;
+        return _targets_gradients;
     }
 
     /**
      * @return int
      */
     public int size(){
-        return (this.targets_gradients!=null)?this.targets_gradients.size():0;
+        return (_targets_gradients !=null)?this._targets_gradients.size():0;
     }
 
     /**
@@ -296,10 +296,10 @@ public class GraphNode {
      * @return void
      */
     public void forEach(BiConsumer<T, T> action){
-        if(targets_gradients==null){
+        if(_targets_gradients ==null){
             return;
         }
-        targets_gradients.forEach(action);
+        _targets_gradients.forEach(action);
     }
 
 }
