@@ -16,7 +16,7 @@ public class TensorCache
     {
         for(T t : input){
             TENSORS.remove(((GraphNode)t.find(GraphNode.class)).lock());
-             t.remove(GraphNode.class);
+            t.remove(GraphNode.class);
         }
     }
 
@@ -60,7 +60,7 @@ public class TensorCache
     private synchronized void put(T t, GraphNode node)
     {
         if(node.isCachable()) {
-            TreeMap<GraphNode, T> variables = null;
+            TreeMap<GraphNode, T> variables;
             if (!TENSORS.containsKey(node.lock())) {
                 variables = new TreeMap<>((a, b) -> (int) (a.nid() - b.nid()));
                 TENSORS.put(node.lock(), variables);

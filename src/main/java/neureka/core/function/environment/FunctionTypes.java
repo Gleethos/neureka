@@ -42,6 +42,9 @@ public class FunctionTypes {
         return (id>=LOOKUP.get("sum"))&&(id<=LOOKUP.get("prod"));
     }
 
+    public boolean isConvection(String f){
+        return isConvection(LOOKUP.get(f));
+    }
     public boolean isConvection(int id){
         return (REGISTER[id] == "x" || REGISTER[id] == "«" || REGISTER[id] == "»");
     }

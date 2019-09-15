@@ -122,7 +122,7 @@ public class GraphNode {
      * @param lock
      */
     public GraphNode(T value, IFunction f, T[] src, GraphLock lock){
-        _mode = (src!=null)?modeOf(src, f):(value.rqsGradient())?1:0;
+        _mode = (src!=null)? _modeOf(src, f):(value.rqsGradient())?1:0;
         _function = f;
         _input = src;
         _lock = lock;
@@ -133,7 +133,7 @@ public class GraphNode {
      * @param function
      * @return int
      */
-    private static int modeOf(T[] source, IFunction function){
+    private static int _modeOf(T[] source, IFunction function){
         /**
          *  Evaluate auto-grad mode:
          * */
@@ -149,13 +149,14 @@ public class GraphNode {
             }
             m += (srcModes[Ii]!=0)?1:0;
         }
-        if(m==1 && (function.type()!="x" && function.type()!=",")){//Convolution and reshaping prohibit forward AD
+        if(m==1 && ("x,".replace(function.type(), "")=="x,")){//Convolution and reshaping prohibit forward AD
             for(int Ii = 0; Ii< source.length; Ii++){
                 mode += (srcModes[Ii]<0)?1:srcModes[Ii];
             }
         }else{
             mode = -m;
         }
+        mode = ("<>".replace(function.type(), "")=="<>")?mode:0;
         return mode;
     }
 
@@ -224,6 +225,8 @@ public class GraphNode {
             }
         }
     }
+
+
 
     /**
      * @return int

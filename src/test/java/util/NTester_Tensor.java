@@ -1,6 +1,8 @@
 package util;
 
 import neureka.core.T;
+import neureka.core.function.IFunction;
+import neureka.core.function.factory.assembly.FunctionGraphBuilder;
 
 public class NTester_Tensor extends NTester {
 
@@ -87,7 +89,30 @@ public class NTester_Tensor extends NTester {
         return (printSessionEnd()>0)?1:0;
     }
 
-
+    /**
+     * @param tensors
+     * @param f
+     * @return
+     */
+    public int testInjection(T[] tensors, String f, String[][] expected)
+    {
+        printSessionStart("Test injection: I[0] <- I[1], I[0] -> I[1] : "+f);
+        T[] result = new T[tensors.length+1];
+        result[0] = new T(tensors, f);
+        for(int i=1; i<result.length; i++){
+            result[i] = tensors[i-1];
+        }
+        for(int i=0; i<result.length; i++){
+            if(expected[i]!=null && expected[i].length!=0){
+                String[] parts = expected[i];
+                String str = result[i].toString("rdg");
+                for(String part : parts){
+                    this.assertStringContains("tensor["+i+"]", str, part);
+                }
+            }
+        }
+        return (printSessionEnd()>0)?1:0;
+    }
 
 
 }

@@ -163,7 +163,7 @@ public abstract class Function implements IFunction {
     protected T tensorActivationOf(T[] input, int j, int d) {
         /**  The code below deals with deep functions (non flat):  * */
         if (d < 0 && !_isFlat) {//only flat functions can be executed
-            if (_id <= 9) {
+            if (TYPES.isFunction(_id)) {
                 return (new FunctionGraphBuilder().newBuild(TYPES.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).activate(input));
             } else {
                 if (TYPES.isFunction(_id)||TYPES.isIndexer(_id)) {
@@ -207,9 +207,9 @@ public abstract class Function implements IFunction {
         boolean onSameDevice = T.factory.util.shareGuestDevice(input);
         if (onSameDevice && TYPES.REGISTER[_id] != "," && (!TYPES.isConvection(_id) && d > -1)) {
             if(TYPES.REGISTER[_id]=="<") {
-                device.inject(input[0], input[1]);
+                device.inject(_source.get(0).activate(input), _source.get(1).activate(input));
             } else if(TYPES.REGISTER[_id]==">") {
-                device.inject(input[1], input[0]);
+                device.inject(_source.get(1).activate(input), _source.get(0).activate(input));
             } else {
                 int[] shp = (TYPES.REGISTER[_id] == "x")?T.factory.util.shpOfCon(input[0].shape(), input[1].shape()):input[0].shape();
                 T output = new T(shp, 0.0);
@@ -279,25 +279,10 @@ public abstract class Function implements IFunction {
                     }
                 }
             } else if(TYPES.REGISTER[_id]=="<") {
-                if(input[0].isOutsourced()){
-                    ((Device) input[0].find(Device.class))
-                        .inject(
-                            input[0],
-                            input[1].targetValue()
-                        );
-                } else {
-                    ((Device) input[0].find(Device.class))
-                        .inject(
-                            input[1],
-                            input[0].targetValue()
-                        );
-                }
+                return _source.get(0).activate(input).setTargetValue(_source.get(1).activate(input).targetValue());
+
             } else if(TYPES.REGISTER[_id]==">") {
-                if(input[1].isOutsourced()){
-
-                } else {
-
-                }
+                return _source.get(1).activate(input).setTargetValue(_source.get(0).activate(input).targetValue());
             } else {
                 T[] tsrs = input;
                 double[] inp = new double[tsrs.length];

@@ -104,6 +104,19 @@ public class T {
         return (gradientIsTargeted())?gradient():value();
     }
 
+    public T setTargetValue(double[] value){
+        if(this.isOutsourced()){
+            ((Device) this.find(Device.class)).inject(this, value);
+        } else {
+            if(this.gradientIsTargeted()){
+                _gradient = value;
+            } else {
+                _value = value;
+            }
+        }
+        return this;
+    }
+
     public double[] gradient() {
         if (this.rqsGradient() && this.isOutsourced() && this.has(Device.class)) {
             return ((Device) find(Device.class)).valueOf(this, true);
@@ -306,40 +319,55 @@ public class T {
             }
         }
         strShape = "[" + strShape + "]";
-        String strValue = "";
-        double[] v = (this.isOutsourced())?this.value():_value;
+        String asString = "";
+        asString += _stringified((this.isOutsourced())?this.value():_value);
+        asString = strShape + ":(" + asString + ")";
+        if(mode.contains("g")){
+            if(this.rqsGradient()){
+                asString += ":g:";
+                double[] gradient = this.gradient();
+                if(gradient!=null){
+                    asString += "("+_stringified((this.isOutsourced())?this.gradient():_gradient)+")";
+                } else {
+                    asString += "(null)";
+                }
+            }
+        }
+        if (mode.contains("r")) {
+            if (this.has(GraphNode.class) && ((GraphNode) this.find(GraphNode.class)).size() > 0) {
+                GraphNode node = (GraphNode) this.find(GraphNode.class);
+                String[] relatives = {"; "};
+                node.forEach((t, g) -> relatives[0] += "=>d|[ " + g.toString(mode) + " ]|:t{ " + t.toString(mode) + " }, ");
+                asString += relatives[0];
+            }
+        }
+        if (mode.contains("d")) {
+            if (this.has(GraphNode.class) && ((GraphNode) this.find(GraphNode.class)).size() > 0) {
+                GraphNode node = (GraphNode) this.find(GraphNode.class);
+                if (node.mode() != 0) {
+                    String[] relatives = {"; "};
+                    node.forEach((target, derivative) -> relatives[0] += "->d" + derivative.toString(mode) + ", ");
+                    asString += relatives[0];
+                }
+            }
+        }
+        return asString;
+    }
+
+    private String _stringified(double[] v){
+        String asString = "";
         int size = (this.isVirtual() ? this.size() : v.length);
         int trim = (size-50);
         size = (trim>0)?50:size;
         for (int i = 0; i < size; i++) {
-            strValue += v[(this.isVirtual()) ? 0 : i];
+            asString += v[(this.isVirtual()) ? 0 : i];
             if (i < size - 1) {
-                strValue += ", ";
+                asString += ", ";
             } else if(trim>0){
-                strValue += ", ... + "+trim+" more";
+                asString += ", ... + "+trim+" more";
             }
         }
-        strValue = strShape + ":(" + strValue + ")";
-        if (mode == "r") {
-            if (this.has(GraphNode.class) && ((GraphNode) this.find(GraphNode.class)).size() > 0) {
-                GraphNode d = (GraphNode) this.find(GraphNode.class);
-                String[] strDerivatives = {"; "};
-                d.forEach((target, derivative) -> {
-                    strDerivatives[0] += "=>d|[ " + derivative.toString("r") + " ]|:t{ " + target.toString("r") + " }, ";
-                });
-                strValue += strDerivatives[0];
-            }
-        } else if (mode == "d") {
-            if (this.has(GraphNode.class) && ((GraphNode) this.find(GraphNode.class)).size() > 0) {
-                GraphNode d = (GraphNode) this.find(GraphNode.class);
-                if (d.mode() != 0) {
-                    String[] strDerivatives = {"; "};
-                    d.forEach((target, derivative) -> strDerivatives[0] += "->d" + derivative.toString() + ", ");
-                    strValue += strDerivatives[0];
-                }
-            }
-        }
-        return strValue;
+        return asString;
     }
 
     public String toString() {

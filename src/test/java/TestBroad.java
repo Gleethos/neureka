@@ -77,8 +77,21 @@ public class TestBroad {
 
         NTester_Tensor tester = new NTester_Tensor("Testing core tensor functionality");
         //---
-        T tensor1 = new T(new int[]{1, 3}, 2);
-        T tensor2 = new T(new int[]{2, 1}, -1);
+        T tensor1 = new T(new int[]{1}, 3).setRqsGradient(true);
+        T tensor2 = new T(new int[]{1}, -4);
+        T tensor3 = new T(new int[]{1}, 2);
+        tester.testInjection(
+                new T[]{tensor1, tensor2, tensor3},
+                "(Ig[0]<-I[1])->I[2]",
+                new String[][]{
+                        {"(-4.0)"},//result
+                        {"(3.0)", "g:(-4.0)"},//tensor1
+                        {"(-4.0)"},//tensor2
+                        {"(-4.0)"},//tensor3
+                });
+        //---
+        tensor1 = new T(new int[]{1, 3}, 2);
+        tensor2 = new T(new int[]{2, 1}, -1);
         tensor1.setRqsGradient(true);
         tensor2.setRqsGradient(true);
         tester.testTensorAutoGrad(
@@ -86,9 +99,9 @@ public class TestBroad {
                 "relu(I[0]xI[1])",
                 new String[]{
                         "[2x3]:(-0.02, -0.02, -0.02, -0.02, -0.02, -0.02);",
-                        " =>d|[ [2x3]:(0.01, 0.01, 0.01, 0.01, 0.01, 0.01) ]|:t{ [2x3]:(-2.0, -2.0, -2.0, -2.0, -2.0, -2.0);",
-                        " =>d|[ [2x1]:(-1.0, -1.0) ]|:t{ [1x3]:(2.0, 2.0, 2.0) },",
-                        " =>d|[ [1x3]:(2.0, 2.0, 2.0) ]|:t{ [2x1]:(-1.0, -1.0) },",
+                            " =>d|[ [2x3]:(0.01, 0.01, 0.01, 0.01, 0.01, 0.01) ]|:t{ [2x3]:(-2.0, -2.0, -2.0, -2.0, -2.0, -2.0);",
+                            " =>d|[ [2x1]:(-1.0, -1.0) ]|:t{ [1x3]:(2.0, 2.0, 2.0) },",
+                            " =>d|[ [1x3]:(2.0, 2.0, 2.0) ]|:t{ [2x1]:(-1.0, -1.0) },",
                         "  }, "
                 });
         //---
@@ -137,7 +150,7 @@ public class TestBroad {
         //---
         tensor1 = new T(new int[]{3, 2, 1}, 4);
         tensor2 = new T(new int[]{1, 1, 4}, -1);
-        T tensor3 = new T(new int[]{3, 2, 1}, 2);
+        tensor3 = new T(new int[]{3, 2, 1}, 2);
         tensor2.setRqsGradient(true);
         tester.testTensorAutoGrad(
                 new T[]{tensor1, tensor2, tensor3},
