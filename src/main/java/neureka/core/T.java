@@ -378,10 +378,34 @@ public class T {
     //CONSTRUCTION :
     //=========================
 
-
     public T(Object arg){
         _construct(new Object[]{arg});
     }
+    public T(Object arg1, Object arg2){
+        _construct(new Object[]{arg1, arg2});
+    }
+    public T(Object arg1, Object arg2, Object arg3){
+        _construct(new Object[]{arg1, arg2, arg3});
+    }
+    public T(Object arg1, Object arg2, Object arg3, Object arg4){
+        _construct(new Object[]{arg1, arg2, arg3, arg4});
+    }
+    public T(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5){
+        _construct(new Object[]{arg1, arg2, arg3, arg4, arg5});
+    }
+    public T(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6){
+        _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6});
+    }
+    public T(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7){
+        _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7});
+    }
+    public T(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8){
+        _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8});
+    }
+    public T(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8, Object arg9){
+        _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9});
+    }
+
 
     public T(Object[] args){
         _construct(args);

@@ -22,6 +22,10 @@ public class TestOnlyCPU {
         y.backward(new T(2));
         Assert.assertEquals(tester.stringified(new double[]{-16}), tester.stringified(x.gradient()));
 
+        y = new T("(","(",x,"+",b,")","*",w,")^2");
+        Assert.assertEquals("[1]:(4.0); ->d[1]:(-8.0), ", y.toString());
+        y = new T("((",x,"+",b,")*",w,")^2");
+        Assert.assertEquals("[1]:(4.0); ->d[1]:(-8.0), ", y.toString());
 
         //===========================================
         x = new T(
