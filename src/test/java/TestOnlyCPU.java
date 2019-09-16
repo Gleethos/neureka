@@ -24,8 +24,15 @@ public class TestOnlyCPU {
 
         y = new T("(","(",x,"+",b,")","*",w,")^2");
         Assert.assertEquals("[1]:(4.0); ->d[1]:(-8.0), ", y.toString());
+        y.backward(new T(1));
+        Assert.assertEquals(tester.stringified(new double[]{-8}), tester.stringified(x.gradient()));
+
+
         y = new T("((",x,"+",b,")*",w,")^2");
         Assert.assertEquals("[1]:(4.0); ->d[1]:(-8.0), ", y.toString());
+        y.backward(new T(-1));
+        Assert.assertEquals(tester.stringified(new double[]{8}), tester.stringified(x.gradient()));
+
 
         //===========================================
         x = new T(
@@ -44,11 +51,29 @@ public class TestOnlyCPU {
                 });
         T z = new T(new T[]{x, y}, "I0xi1");
         Assert.assertEquals(z.toString().contains("[2x1x2]:(19.0, 22.0, 1.0, -6.0)"), true);
-        //=======================
 
         z = new T(new Object[]{x, "x", y});
         Assert.assertEquals(z.toString().contains("[2x1x2]:(19.0, 22.0, 1.0, -6.0)"), true);
+        //=======================
+        x = new T(
+                new int[]{3, 3},
+                new double[]{
+                        1, 2, 5,
+                        -1, 4, -2,
+                        -2, 3, 4,
+                }
+        );
+        y = new T(
+                new int[]{2, 2},
+                new double[]{
+                        -1, 3,
+                        2, 3,
+                });
+        z = new T(new T[]{x, y}, "I0xi1");
+        Assert.assertEquals(z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)"), true);
 
+        z = new T(new Object[]{x, "x", y});
+        Assert.assertEquals(z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)"), true);
         Thread.sleep(6000);
     }
 

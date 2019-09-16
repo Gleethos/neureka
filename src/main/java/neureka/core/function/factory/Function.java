@@ -275,12 +275,13 @@ public abstract class Function implements IFunction {
                      * */
                     int[] reversed = new int[newForm.length];
                     for (int i = 0; i < newForm.length; i++) {
-                        // reversed[newForm[i]] = i;
+                        if(newForm[i]>=0){
+                            reversed[newForm[i]] = i;
+                        }
                     }
                 }
             } else if(TYPES.REGISTER[_id]=="<") {
                 return _source.get(0).activate(input).setTargetValue(_source.get(1).activate(input).targetValue());
-
             } else if(TYPES.REGISTER[_id]==">") {
                 return _source.get(1).activate(input).setTargetValue(_source.get(0).activate(input).targetValue());
             } else {

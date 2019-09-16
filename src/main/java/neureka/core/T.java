@@ -483,11 +483,15 @@ public class T {
         }
     }
 
+    /**
+     * @param newShape
+     * @return
+     */
     public T initialShape(int[] newShape) {
         int size = factory.util.szeOfShp(newShape);
         _value = (_value==null)?new double[size]:_value;
         if (size != _value.length && !this.isVirtual()) {
-            return this;//TODO: Exception!
+            throw new IllegalArgumentException("Size of shape does not match stored value!");
         }
         _shape = cached(newShape);
         _translation = cached(factory.util.idxTln(newShape));

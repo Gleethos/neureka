@@ -31,6 +31,7 @@ Take a look:
      *   y.toString(): "[1]:(4.0); ->d[1]:(-8.0), "    
      * */
 ```
+Matrix multiplication:
 ```
     x = new T(
                 new int[]{2, 3, 1},
@@ -48,6 +49,26 @@ Take a look:
             });
     T z = new T(new T[]{x, y}, "i[0] x i[1]");
 ```
+Convolution:
+```
+        x = new T(
+                new int[]{3, 3},
+                new double[]{
+                        1, 2, 5,
+                        -1, 4, -2,
+                        -2, 3, 4,
+                }
+        );
+        y = new T(
+                new int[]{2, 2},
+                new double[]{
+                        -1, 3,
+                        2, 3,
+                });
+        z = new T(new T[]{x, y}, "I0xi1");
+        Assert.assertEquals(z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)"), true);
+```
+
 
 You can also:
   - Create a computation graph via a gui interface in JavaFX

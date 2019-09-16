@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.embed.swing.* ?>
+<?import javafx.geometry.* ?>
+
+<fx:root type="javafx.scene.layout.Pane" onScroll="#onScroll" onSwipeDown="#onSwipe" onSwipeLeft="#onSwipe" onSwipeRight="#onSwipe" onSwipeUp="#onSwipe" onTouchMoved="#onTouchMoved" onTouchPressed="#onTouchPressed" onTouchReleased="#onTouchReleased" prefHeight="550.0" prefWidth="750.0" styleClass="mainFxmlClassUnselected" xmlns:fx="http://javafx.com/fxml">
+  <stylesheets>
+    <URL value="@movableelement.css" />
+  </stylesheets>
+  <children>
+    <BorderPane>
+      <top>
+        <HBox fx:id="buttons" fillHeight="true">
+          <children>
+            <Button id="addElementBtn" fx:id="resetSceneBtn" mnemonicParsing="false" text="Reset scene" />
+            <Button id="resetSceneBtn" fx:id="addElementBtn" mnemonicParsing="false" text="Add element" />
+            <ToggleButton id="scroll" fx:id="setScrollBtn" mnemonicParsing="false" selected="true" text="Scroll">
+              <toggleGroup>
+                <ToggleGroup fx:id="gestureSelectionGroup" />
+              </toggleGroup>
+            </ToggleButton>
+            <ToggleButton id="setScrollBtn" fx:id="setSwipeBtn" mnemonicParsing="false" text="Swipe" toggleGroup="$gestureSelectionGroup" />
+          </children>
+          <padding>
+            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+          </padding>
+        </HBox>
+      </top>
+      <center>
+        <SwingNode fx:id="RealmNode" />
+      </center>
+
+    </BorderPane>
+
+  </children>
+
+</fx:root>
