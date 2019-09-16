@@ -48,6 +48,10 @@ Matrix multiplication:
                     2,  3, -1
             });
     T z = new T(new T[]{x, y}, "i[0] x i[1]");
+    
+    /**
+     *   z.toString(): "[2x1x2]:(19.0, 22.0, 1.0, -6.0), "    
+     * */
 ```
 Convolution:
 ```
@@ -66,7 +70,7 @@ Convolution:
                         2, 3,
                 });
         z = new T(new T[]{x, y}, "I0xi1");
-        Assert.assertEquals(z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)"), true);
+        z.toString(): "[2x2]:(15.0, 15.0, 18.0, 8.0), "
 ```
 
 
@@ -83,17 +87,18 @@ This library is heavily inspired by PyTorch.
 A powerful deep learning framework that combines
 dynamic computation, performance and debugging freedom!
 
-However it lacks one thing! :
-Platform independence. 
+PyTorch however does not carry with it the benefit of write once run everywhere! 
 
-This is due to the fact that PyTorxh's backend is written
-in c++ and cuda.
-Which means that it is locked out of many systems by default.
+This is due to the fact that internally PyTorch is written
+in C++. Additionally, GPU acceleration is written in nvidia's cuda. 
+Which means that even developers willing to compile for all platforms
+would still be locked out of AMD Systems when it comes to performance.
 
-This is the reason why Neureka is written in Java and OpenCl (Aparapi).
-Although performance will probably be impacted by this choice,
+For that reason Neureka is written in Java and OpenCl (Aparapi).
+Although performance will certainly be impacted by this choice,
 uncomplicated deployment and ease of use are the benefit.
-
+Additionally, the use of OpenCl theoretically should allow for
+FPGA utilization. This however has not been tested.
 
 #### Building for source
 Execute the following:
@@ -112,7 +117,7 @@ Want to contribute? Great!
 
 There is currently a lack of sufficient documentation on this repository.
 If you have questions simply contact me or read through the test cases 
-of this project to understand what neureka is supposed to be!
+of this project to understand what Neureka is supposed to be!
 
 
 ### Todos
