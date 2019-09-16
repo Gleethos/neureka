@@ -76,6 +76,7 @@ public class TestOnlyCPU {
         z = new T(new Object[]{x, "x", y});
         Assert.assertEquals(z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)"), true);
         z.backward(new T(new int[]{2, 2}, 1));
+        Assert.assertEquals(y.toString().contains("[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)"), true);
         System.out.println(z);
 
         Thread.sleep(6000);

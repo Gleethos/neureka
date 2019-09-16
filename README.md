@@ -71,6 +71,8 @@ Convolution:
                 });
         z = new T(new T[]{x, y}, "I0xi1");
         z.toString(): "[2x2]:(15.0, 15.0, 18.0, 8.0), "
+        z.backward(new T(new int[]{2, 2}, 1));
+        y.toString(): "[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)"
 ```
 
 
