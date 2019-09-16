@@ -377,6 +377,48 @@ public class T {
 
     //CONSTRUCTION :
     //=========================
+
+
+    public T(Object arg){
+        _construct(new Object[]{arg});
+    }
+
+    public T(Object[] args){
+        _construct(args);
+    }
+
+    private void _construct(Object[] array){
+        boolean containsString = false;
+        int numberOfTensors = 0;
+        ArrayList<T> list = new ArrayList<>();
+        for(Object o : array){
+            containsString = (o instanceof  String)?true:containsString;
+            if(o instanceof  T){
+                if(!list.contains((T)o)){
+                    list.add((T)o);
+                    numberOfTensors ++;
+                }
+            }
+        }
+        boolean doAD = true;
+        T[] tsrs = new T[numberOfTensors];
+        String f = "";
+        int ti=0;
+        for(Object o : array){
+            if(list.contains(o)){
+                tsrs[ti] = ((T)o);
+                f+=("I["+ti+"]");
+                ti++;
+            } else if(o instanceof  String){
+                f+=(String)o;
+            } else if(o instanceof  Boolean){
+                doAD = (Boolean)o;
+            }
+        }
+        _construct(tsrs, f, doAD);
+
+    }
+
     public T() {
     }// creates empty tensor;
 

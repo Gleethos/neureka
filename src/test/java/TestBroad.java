@@ -77,9 +77,9 @@ public class TestBroad {
 
         NTester_Tensor tester = new NTester_Tensor("Testing core tensor functionality");
         //---
-        T tensor1 = new T(new int[]{1}, 3).setRqsGradient(true);
-        T tensor2 = new T(new int[]{1}, -4);
-        T tensor3 = new T(new int[]{1}, 2);
+        T tensor1 = new T(3).setRqsGradient(true);
+        T tensor2 = new T(-4);
+        T tensor3 = new T(2);
         tester.testInjection(
                 new T[]{tensor1, tensor2, tensor3},
                 "(Ig[0]<-I[1])->I[2]",
@@ -445,7 +445,7 @@ public class TestBroad {
         gpu.add(tensor2);
         tester.testTensorAutoGrad(
                 new T[]{tensor1, tensor2},
-                "I0xi1",
+                "I0 x i1",
                 new String[]{
                         "[2x1x2]:(19.0, 22.0, 1.0, -6.0)"
                 });
