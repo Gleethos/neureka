@@ -69,6 +69,7 @@ public class TestOnlyCPU {
                         -1, 3,
                         2, 3,
                 }).setRqsGradient(true);
+
         Assert.assertEquals(y.toString().contains(":g:(null)"), true);
         z = new T(new T[]{x, y}, "I0xi1");
         Assert.assertEquals(z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)"), true);

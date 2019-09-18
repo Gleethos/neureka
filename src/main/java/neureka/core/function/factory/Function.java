@@ -268,7 +268,6 @@ public abstract class Function implements IFunction {
                 if (d < 0) {
                     T t = input[input.length - 1];
                     return T.factory.exec.reshaped(t, newForm, true);//t.reshape(newForm);
-
                 } else {//reverse reshape:
                     /**      [3, 2, 4, 0, 1]
                      *      [0, 1, 2, 3, 4]
@@ -281,9 +280,9 @@ public abstract class Function implements IFunction {
                     }
                 }
             } else if(TYPES.REGISTER[_id]=="<") {
-                return _source.get(0).activate(input).setTargetValue(_source.get(1).activate(input).targetValue());
+                return _source.get(0).activate(input).setTargetValue(_source.get(1).activate(input).targetValue(true));
             } else if(TYPES.REGISTER[_id]==">") {
-                return _source.get(1).activate(input).setTargetValue(_source.get(0).activate(input).targetValue());
+                return _source.get(1).activate(input).setTargetValue(_source.get(0).activate(input).targetValue(true));
             } else {
                 T[] tsrs = input;
                 double[] inp = new double[tsrs.length];

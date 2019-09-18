@@ -100,6 +100,19 @@ public class T {
         return CPU;
     }
 
+    public double[] targetValue(boolean unique){
+        if(!this.isOutsourced() && unique){
+            double[] value = new double[this.size()];
+            double[] v = (gradientIsTargeted())?gradient():value();
+            for(int i=0; i<value.length; i++){
+                value[i] = v[i];
+            }
+            return value;
+        } else {
+            return (gradientIsTargeted())?gradient():value();
+        }
+    }
+
     public double[] targetValue(){
         return (gradientIsTargeted())?gradient():value();
     }
