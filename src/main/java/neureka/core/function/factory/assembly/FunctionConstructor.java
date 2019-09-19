@@ -21,72 +21,72 @@ public class FunctionConstructor
             return new Function(f_id, isFlat, sources, doAD){
                 @Override
                 public T activate(T[] input, int j) {
-                    return TCACHE.handle(input, this,()->tensorActivationOf(sources.get(0).activate(input, j), false));
+                    return CACHE.handle(input, this,()-> _tensor_activation(sources.get(0).activate(input, j), false));
                 }
                 @Override
                 public T activate(T[] input) {
-                    return TCACHE.handle(input, this, ()->tensorActivationOf(sources.get(0).activate(input), false));
+                    return CACHE.handle(input, this, ()-> _tensor_activation(sources.get(0).activate(input), false));
                 }
                 @Override
                 public T derive(T[] input, int d, int j) {
-                    return tensorActivationOf(sources.get(0).activate(input, j), true);
+                    return _tensor_activation(sources.get(0).activate(input, j), true);
                 }
                 @Override
                 public T derive(T[] input, int d) {
-                    return tensorActivationOf(sources.get(0).activate(input), true);
+                    return _tensor_activation(sources.get(0).activate(input), true);
                 }
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 @Override
                 public double activate(final double[] input, int j) {
-                    return scalarActivationOf(sources.get(0).activate(input, j), false);
+                    return _scalar_activation(sources.get(0).activate(input, j), false);
                 }
                 @Override
                 public double activate(final double[] input) {
-                    return scalarActivationOf(sources.get(0).activate(input), false);
+                    return _scalar_activation(sources.get(0).activate(input), false);
                 }
                 @Override
                 public double derive(final double[] input, final int index, final int j) {
-                    return scalarActivationOf(sources.get(0).activate(input, j), true) * sources.get(0).derive(input, index, j);
+                    return _scalar_activation(sources.get(0).activate(input, j), true) * sources.get(0).derive(input, index, j);
                 }
                 @Override
                 public double derive(final double[] input, final int index) {
-                    return scalarActivationOf(sources.get(0).activate(input), true) * sources.get(0).derive(input, index);
+                    return _scalar_activation(sources.get(0).activate(input), true) * sources.get(0).derive(input, index);
                 }
             };
         }else{
             return new Function(f_id, isFlat, sources, doAD){
                 @Override
                 public T activate(T[] input, int j) {
-                    return TCACHE.handle(input, this, ()->tensorActivationOf(input, j, -1));
+                    return CACHE.handle(input, this, ()-> _tensor_activation(input, j, -1));
                 }
                 @Override
                 public T activate(T[] input) {
-                    return TCACHE.handle(input, this, ()->tensorActivationOf(input, -1, -1));
+                    return CACHE.handle(input, this, ()-> _tensor_activation(input, -1, -1));
                 }
                 @Override
                 public T derive(T[] input, int d, int j) {
-                    return tensorActivationOf(input, j, d);
+                    return _tensor_activation(input, j, d);
                 }
                 @Override
                 public T derive(T[] input, int d) {
-                    return tensorActivationOf(input, -1, d);
+                    return _tensor_activation(input, -1, d);
                 }
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 @Override
                 public double activate(final double[] input, int j) {
-                    return scalarActivationOf(input, j, -1);
+                    return _scalar_activation(input, j, -1);
                 }
                 @Override
                 public double activate(final double[] input) {
-                    return scalarActivationOf(input, -1, -1);
+                    return _scalar_activation(input, -1, -1);
                 }
                 @Override
                 public double derive(final double[] input, final int d, final int j) {
-                    return scalarActivationOf(input, j, d);
+                    return _scalar_activation(input, j, d);
                 }
                 @Override
                 public double derive(final double[] input, final int d) {
-                    return scalarActivationOf(input, -1, d);
+                    return _scalar_activation(input, -1, d);
                 }
             };
         }

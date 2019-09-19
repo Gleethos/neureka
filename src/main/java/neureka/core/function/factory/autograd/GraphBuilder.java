@@ -2,10 +2,10 @@ package neureka.core.function.factory.autograd;
 
 import neureka.core.T;
 import neureka.core.function.IFunction;
+import neureka.core.function.factory.Function;
 
 public class GraphBuilder
 {
-
     public static void connect(T drain, T[] src, IFunction function){//, boolean derive
         if(function.isFlat()){
             _performDifferentiation(drain, function, src);
@@ -40,9 +40,9 @@ public class GraphBuilder
                                      * */
                                     if(node.has(t)){
                                         T dg = node.get(t);
-                                        node.put(t, T.factory.exec.addition(dg,T.factory.exec.multiplication(d, g)));
+                                        node.put(t, Function.exec.addition(dg, Function.exec.multiplication(d, g)));
                                     }else{
-                                        node.put(t, T.factory.exec.multiplication(d, g));
+                                        node.put(t, Function.exec.multiplication(d, g));
                                     }
                                     //TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
                                 });
@@ -66,25 +66,6 @@ public class GraphBuilder
         }
     }
     //--------------------------------------------------------------------------------------
-
-    public static void backward(T error, T drain){
-        if(true){
-            return;
-        }
-        if(drain.rqsGradient()){
-            drain.addToGradient(
-                    (drain.gradient()==null)
-                            ?error
-                            :T.factory.exec.addition(error, T.factory.newTensor(drain.value(), drain.shape()))
-            );
-        }
-        GraphNode drnGradients = (GraphNode) drain.find(GraphNode.class);
-        if(drnGradients!=null){
-            drnGradients.forEach((target, g)->{
-             //   target.backward(T.factory.multiplication(error, g));
-            });
-        }
-    }
 
 }
 

@@ -119,7 +119,7 @@ public class T {
 
     public T setTargetValue(double[] value){
         if(this.isOutsourced()){
-            ((Device) this.find(Device.class)).inject(this, value);
+            ((Device) this.find(Device.class)).overwrite(this, value);
         } else {
             if(this.gradientIsTargeted()){
                 _gradient = value;
@@ -145,7 +145,7 @@ public class T {
             device.calculate(new T[]{this, this, g}, 17, -1);
             device.get(g);
             this.setGradientIsTargeted(false);
-            //device.inject(this, g, true);
+            //device.overwrite(this, g, true);
         } else {
             double[] value = g.value();
             _gradient = (_gradient==null)?new double[value.length]:_gradient;
@@ -561,7 +561,7 @@ public class T {
         if (tensors == null || tensors.length == 0 || tensors[0] == null) {
             return;
         }
-        IFunction.execute(this, tensors, operation, doAD);
+        IFunction.setup.commit(this, tensors, operation, doAD);
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -757,47 +757,6 @@ public class T {
 
         public static class exec {
 
-            //OPERATIONS:
-            //=========================
-
-            public static T convolution(T tensor1, T tensor2) {
-                tensor1.setIsVirtual(false);
-                tensor2.setIsVirtual(false);
-                T newTensor = new T(util.shpOfCon(tensor1.shape(), tensor2.shape()));
-                T.factory.exec.tensMul(newTensor, tensor1, tensor2);
-                return newTensor;
-            }
-
-            public static T convolution_inv(T drain, T source1, T source2, boolean first) {
-                source1.setIsVirtual(false);
-                source2.setIsVirtual(false);
-                drain.setIsVirtual(false);
-                T.factory.exec.tensMul_inv(source2, (!first) ? source1 : drain, (!first) ? drain : source1);
-                return (first) ? source1 : source2;
-            }
-
-            public static T multiplication(T tensor1, T tensor2) {
-                T drn = new T(tensor1.shape());
-                int[] index = new int[drn.shape().length];
-                int size = drn.size();
-                for (int i = 0; i < size; i++) {
-                    io.addInto(drn, index, io.getFrom(tensor1, index) * io.getFrom(tensor2, index));
-                    util.increment(index, drn.shape());
-                }
-                return drn;
-            }
-
-            public static T addition(T tensor1, T tensor2) {
-                T drn = new T(tensor1.shape());
-                int[] index = new int[drn.shape().length];
-                int size = drn.size();
-                for (int i = 0; i < size; i++) {
-                    io.addInto(drn, index, io.getFrom(tensor1, index) + io.getFrom(tensor2, index));
-                    util.increment(index, drn.shape());
-                }
-                return drn;
-            }
-
             public static T reshaped(T tensor, int[] newForm, boolean newTsr) {
                 tensor = (newTsr)?copyOf(tensor):tensor;
                 tensor._record(tensor.shape(), tensor.translation());
@@ -805,183 +764,9 @@ public class T {
                 tensor._translation = util.rearrange(tensor._translation, tensor._shape, newForm);
                 return tensor;
             }
+            //OPERATIONS:
+            //=========================
 
-            @Contract(pure = true)
-            public static void tensMul(T t0_drain, T t1_source, T t2_source) {
-                int[] t0Shp = t0_drain.shape();
-                int[] t1Shp = t1_source.shape();
-                int[] t2Shp = t2_source.shape();
-                int[] t0Tln = t0_drain.translation();
-                int[] t1Tln = t1_source.translation();
-                int[] t2Tln = t2_source.translation();
-                int rank = t0Shp.length;
-                int[] t0Idx = new int[rank];
-                int[] t1Idx = new int[rank];
-                int[] t2Idx = new int[rank];
-                double[] t0_value = (t0_drain.gradientIsTargeted())?t0_drain.gradient():t0_drain.value();
-                double[] t1_value = (t1_source.gradientIsTargeted())?t1_source.gradient():t1_source.value();
-                double[] t2_value = (t2_source.gradientIsTargeted())?t2_source.gradient():t2_source.value();
-
-                int drnSze = t0_drain.size();
-                int i = 0;
-                while (i < drnSze) {//increment on drain accordingly:
-                    int ri = 0;
-                    while (ri < rank) {
-                        if (t1Shp[ri] == t2Shp[ri]) {//setting 0
-                            t1Idx[ri] = t0Idx[ri];//mtch[mi];
-                            t2Idx[ri] = t0Idx[ri];//mtch[mi];
-                        } else if (t1Shp[ri] > t2Shp[ri]) {//setting hdr1 idx to id idx
-                            t1Idx[ri] = t0Idx[ri];//mtch[mi];
-                            t2Idx[ri] = 0;
-                        } else if (t1Shp[ri] < t2Shp[ri]) {//setting hdr2 idx to id idx
-                            t1Idx[ri] = 0;
-                            t2Idx[ri] = t0Idx[ri];//mtch[mi];
-                        }
-                        ri++;
-                    }
-                    //----------
-                    // multiplication:
-                    double value = 0;
-                    boolean running = true;
-                    boolean incrementing = false;
-                    while (running) {
-                        ri = (ri == rank) ? 0 : ri;
-                        if (incrementing == false) {
-                            int i1 = util.iOf(t1Idx, t1Tln);
-                            int i2 = util.iOf(t2Idx, t2Tln);
-                            value += t1_value[i1] * t2_value[i2];
-                            incrementing = true;
-                            ri = 0;
-                        } else {//incrementing:
-                            if (t1Idx[ri] < t1Shp[ri] && t2Idx[ri] < t2Shp[ri]) {
-                                t1Idx[ri]++;
-                                t2Idx[ri]++;
-                                if (t1Idx[ri] == t1Shp[ri] || t2Idx[ri] == t2Shp[ri]) {
-                                    if (ri == (rank - 1)) {
-                                        running = false;
-                                    }
-                                    if (t1Shp[ri] == t2Shp[ri]) {
-                                        t1Idx[ri] = t0Idx[ri];
-                                        t2Idx[ri] = t0Idx[ri];
-                                    } else if (t1Shp[ri] > t2Shp[ri]) {
-                                        t1Idx[ri] = t0Idx[ri];
-                                        t2Idx[ri] = 0;
-                                    } else if (t1Shp[ri] < t2Shp[ri]) {
-                                        t1Idx[ri] = 0;
-                                        t2Idx[ri] = t0Idx[ri];
-                                    }
-                                    ri++;
-                                } else {
-                                    incrementing = false;
-                                    ri = 0;
-                                }
-                            } else {
-                                ri++;
-                            }
-                        }
-                    }//setInto _value in drn:
-                    int i0 = util.iOf(t0Idx, t0Tln);
-                    t0_value[i0] = value;
-                    //System.out.println(i0 + " - " + i);
-                    i++;//increment on drain:
-                    if (i < drnSze) {
-                        util.increment(t0Idx, t0Shp);
-                    }
-                }
-            }
-
-            @Contract(pure = true)
-            public static void tensMul_inv(T t0_origin, T t1_handle, T t2_drain) {
-                int[] t0Shp = t0_origin.shape();
-                int[] t1Shp = t1_handle.shape();
-                int[] t2Shp = t2_drain.shape();
-                int[] t0Tln = t0_origin.translation();
-                int[] t1Tln = t1_handle.translation();
-                int[] t2Tln = t2_drain.translation();
-                int rank = t0Shp.length;
-                int[] t0Idx = new int[rank];
-                int[] t1Idx = new int[rank];
-                int[] t2Idx = new int[rank];
-                double[] t0_value = (t0_origin.gradientIsTargeted())?t0_origin.gradient():t0_origin.value();
-                double[] t1_value = (t1_handle.gradientIsTargeted())?t1_handle.gradient():t1_handle.value();
-                double[] t2_value = (t2_drain.gradientIsTargeted())?t2_drain.gradient():t2_drain.value();
-
-
-                int drnSze = t0_origin.size();
-                int i = 0;
-                while (i < drnSze) {//increment on drain accordingly:
-                    int ri = 0;
-                    while (ri < rank) {
-                        if (t2Idx[ri] == t2Shp[ri]) {//setting 0
-                            t1Idx[ri] = t0Idx[ri];
-                            t2Idx[ri] = 0;//mtch[mi];
-                        } else {
-                            if (t0Shp[ri] > t1Shp[ri]) {
-                                t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);
-                            } else {
-                                t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);
-                            }
-                        }
-                        ri++;
-                    }
-                    //----------
-                    // multiplication:
-                    double value = 0;
-                    boolean running = true;
-                    boolean incrementing = false;
-                    while (running) {
-                        ri = (ri == rank) ? 0 : ri;
-                        if (incrementing == false) {
-
-                            boolean isMatch = true;
-                            for (int rii = 0; rii < rank; rii++) {
-                                if (!(t1Idx[rii] < t1Shp[rii] && t1Idx[rii] >= 0)) {
-                                    isMatch = false;
-                                }
-                            }
-                            if (isMatch) {
-                                int i1 = util.iOf(t1Idx, t1Tln);
-                                int i2 = util.iOf(t2Idx, t2Tln);
-                                value += t1_value[i1] * t2_value[i2];
-                                //1*-2 +2*3 -3*6 +2*3, 1*3 +2*6 -3*3 +2*-1,
-                                //1*0  +2*2 -3*4 +2*2  +  4*-2 -2*3 -1*6 +5*3, 1*2 +2*4 -3*2 +2*1  +  4*3 -2*6 -1*3 +5*-1,
-                                //4*0  -2*2 -1*4 +5*2, 4*2 -2*4 -1*2 +5*1
-                            }
-                            incrementing = true;
-                            ri = 0;
-                        } else {//incrementing:
-                            if (t2Idx[ri] < t2Shp[ri]) {
-                                t2Idx[ri]++;
-                                if (t2Idx[ri] == t2Shp[ri]) {
-                                    if (ri == (rank - 1)) {
-                                        running = false;
-                                    }
-                                    t1Idx[ri] = t0Idx[ri];
-                                    t2Idx[ri] = 0;
-                                    ri++;
-                                } else {
-                                    if (t0Shp[ri] > t1Shp[ri]) {
-                                        t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);
-                                    } else {
-                                        t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);
-                                    }
-                                    incrementing = false;
-                                    ri = 0;
-                                }
-                            } else {
-                                ri++;
-                            }
-                        }
-                    }
-                    //setInto _value in drn:
-                    int i0 = util.iOf(t0Idx, t0Tln);
-                    t0_value[i0] = value;
-                    i++;//increment on drain:
-                    if (i < drnSze) {
-                        util.increment(t0Idx, t0Shp);
-                    }
-                }
-            }
         }
 
         public static void inject(double[] data, boolean grd, T tensor) {

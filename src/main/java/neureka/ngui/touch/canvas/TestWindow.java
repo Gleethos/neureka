@@ -37,7 +37,7 @@ public class TestWindow extends Application {
 
         Button b = new Button("Hi");
 
-        //canvas.getChildren().inject(b);
+        //canvas.getChildren().overwrite(b);
         root.getChildren().add(canvas);
 
         Label label = new Label();

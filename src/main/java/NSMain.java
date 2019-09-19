@@ -152,7 +152,7 @@ public class NSMain {
 
 
 
-		//NSubstrate.execute("NSubstrate.printRealms('test')");
+		//NSubstrate.commit("NSubstrate.printRealms('test')");
 		/*
 		JFrame window = new JFrame("imba");
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

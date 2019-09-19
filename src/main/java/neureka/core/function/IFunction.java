@@ -2,39 +2,37 @@
 package neureka.core.function;
 
 import neureka.core.T;
-import neureka.core.function.environment.FunctionTypes;
+import neureka.core.function.environment.Types;
 import neureka.core.function.factory.autograd.GraphLock;
 import neureka.core.function.factory.autograd.GraphNode;
 import neureka.core.function.factory.assembly.FunctionGraphBuilder;
-import neureka.core.function.environment.TensorCache;
-import neureka.core.function.environment.FunctionCache;
+import neureka.core.function.environment.Cache;
 
+public interface IFunction {
+    Cache CACHE = new Cache();
+    Types TYPES = new Types();
 
-public interface IFunction
-{
-    FunctionCache FCACHE = new FunctionCache();
-    TensorCache TCACHE = new TensorCache();
-    FunctionTypes TYPES = new FunctionTypes();
     //------------------------------------------------------------------------------------------------------------------
+    class setup {
+        public static T commit(T drain, T[] tensors, String operation, boolean doAD) {
+            return commit(drain, tensors, FunctionGraphBuilder.newBuild(operation, doAD));
+        }
 
-    static T execute(T drain, T[] tensors, String operation, boolean doAD) {
-        return execute(drain, tensors, FunctionGraphBuilder.newBuild(operation, doAD));
-    }
-
-    static T execute(T drain, T[] tensors, IFunction function) {
-        GraphLock newGid = new GraphLock(function, tensors);
-        for (T t : tensors) {
-            t.add(new GraphNode(t, null, null, newGid));
+        public static T commit(T drain, T[] tensors, IFunction function) {
+            GraphLock newGid = new GraphLock(function, tensors);
+            for (T t : tensors) {
+                t.add(new GraphNode(t, null, null, newGid));
+            }
+            drain.inject(function.activate(tensors));
+            if (drain.has(GraphNode.class)) {
+                ((GraphNode) drain.find(GraphNode.class)).trimTree(null);
+            }
+            IFunction.CACHE.free(tensors);
+            for (T t : tensors) {
+                t.setGradientIsTargeted(false);
+            }
+            return drain;
         }
-        drain.inject(function.activate(tensors));
-        if (drain.has(GraphNode.class)) {
-            ((GraphNode) drain.find(GraphNode.class)).trimTree(null);
-        }
-        IFunction.TCACHE.free(tensors);
-        for(T t : tensors){
-            t.setGradientIsTargeted(false);
-        }
-        return drain;
     }
 
     //------------------------------------------------------------------------------------------------------------------

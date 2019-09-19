@@ -7,6 +7,7 @@ import neureka.core.function.factory.assembly.FunctionGraphBuilder;
 import neureka.core.function.factory.implementations.FConstant;
 import neureka.core.function.factory.autograd.GraphBuilder;
 import neureka.core.device.Device;
+import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
 
@@ -129,7 +130,7 @@ public abstract class Function implements IFunction {
     /**
      * Responsible for handling functions with id's 0-9  (single input functions!)
      */
-    protected T tensorActivationOf(T input, boolean derive) {
+    protected T _tensor_activation(T input, boolean derive) {
         T output = T.factory.newTensor(input.shape(), input.translation());
         if (!derive && !_isFlat) {
             output.inject(new FunctionGraphBuilder().newBuild(_id, 1, true).activate(new T[]{input}));
@@ -141,8 +142,8 @@ public abstract class Function implements IFunction {
             device.add(output);
             device.calculate(new T[]{output, input}, _id, (derive) ? 0 : -1);
         } else {
-            Calculation.foreach(input, output, (i, inputValue, outputValue) -> {
-                outputValue[i] = scalarActivationOf(inputValue[i], derive);
+            exec.foreach(input, output, (i, inputValue, outputValue) -> {
+                outputValue[i] = _scalar_activation(inputValue[i], derive);
             });
         }
         if (!derive && _doAD) {
@@ -160,7 +161,7 @@ public abstract class Function implements IFunction {
      * @param d
      * @return
      */
-    protected T tensorActivationOf(T[] input, int j, int d) {
+    protected T _tensor_activation(T[] input, int j, int d) {
         /**  The code below deals with deep functions (non flat):  * */
         if (d < 0 && !_isFlat) {//only flat functions can be executed
             if (TYPES.isFunction(_id)) {
@@ -168,12 +169,12 @@ public abstract class Function implements IFunction {
             } else {
                 if (TYPES.isFunction(_id)||TYPES.isIndexer(_id)) {
                     /**  SUMMATION, PI,  * */
-                    T[] tsrs = activateSource(input);
+                    T[] tsrs = _source_activation(input);
                     return (FunctionGraphBuilder.newBuild(TYPES.REGISTER[_id] + "(I[j])", true).activate(tsrs));
                 } else if (TYPES.isOperation(_id)) {
                     /**  '+', '-', 'x', '*', '%', '«', '»', ',', ...  * */
                     String operation = (TYPES.REGISTER[_id].length() > 1) ? TYPES.REGISTER[_id] : "";
-                    T[] tsrs = activateSource(input, j, null);
+                    T[] tsrs = _source_activation(input, j, null);
                     for (int i = 0; i < tsrs.length; i++) {
                         operation += "I[" + i + "]" + ((i + 1 < tsrs.length) ? TYPES.REGISTER[_id] : "");
                     }
@@ -184,7 +185,7 @@ public abstract class Function implements IFunction {
                     }
                 } else {
                     /**  Tensor shape translation: * */
-                    T[] tsrs = activateSource(input, j, new int[]{1});
+                    T[] tsrs = _source_activation(input, j, new int[]{1});
                     if (j < 0) {
                         return (FunctionGraphBuilder.newBuild(_id, tsrs.length, _doAD).activate(tsrs));
                     } else {
@@ -194,7 +195,7 @@ public abstract class Function implements IFunction {
             }
         }
         /**  The following code is reached in flat functions only:  * */
-        T output = execute(input, j, d);
+        T output = _execute(input, j, d);
         /**  Autograd-Graph will be generated below for the new GraphNode: **/
         if (d < 0 && _doAD) {
             GraphBuilder.connect(output, input, this);
@@ -202,14 +203,14 @@ public abstract class Function implements IFunction {
         return output;
     }
 
-    private T execute(T[] input, int j, int d) {
+    private T _execute(T[] input, int j, int d) {
         Device device = (Device) input[0].find(Device.class);
         boolean onSameDevice = T.factory.util.shareGuestDevice(input);
         if (onSameDevice && TYPES.REGISTER[_id] != "," && (!TYPES.isConvection(_id) && d > -1)) {
             if(TYPES.REGISTER[_id]=="<") {
-                device.inject(_source.get(0).activate(input), _source.get(1).activate(input));
+                device.overwrite(_source.get(0).activate(input), _source.get(1).activate(input));
             } else if(TYPES.REGISTER[_id]==">") {
-                device.inject(_source.get(1).activate(input), _source.get(0).activate(input));
+                device.overwrite(_source.get(1).activate(input), _source.get(0).activate(input));
             } else {
                 int[] shp = (TYPES.REGISTER[_id] == "x")?T.factory.util.shpOfCon(input[0].shape(), input[1].shape()):input[0].shape();
                 T output = new T(shp, 0.0);
@@ -238,7 +239,7 @@ public abstract class Function implements IFunction {
         } else {
             if (TYPES.REGISTER[_id] == "x") {
                 if (d < 0) {
-                    return T.factory.exec.convolution(input[0], input[1]);
+                    return exec.convolution(input[0], input[1]);
                 } else {
                     if (d == 0) {
                         return (input[1]);
@@ -249,9 +250,9 @@ public abstract class Function implements IFunction {
             } else if (TYPES.REGISTER[_id] == "" + ((char) 171) || TYPES.REGISTER[_id] == "" + ((char) 187)) {
                 if (d < 0) {//  ""+((char)171), ""+((char)187) //<< / >>
                     if (TYPES.REGISTER[_id] == "" + ((char) 187)) {
-                        return T.factory.exec.convolution_inv(input[0], input[1], input[2], false);
+                        return exec.convolution_inv(input[0], input[1], input[2], false);
                     } else {
-                        return T.factory.exec.convolution_inv(input[2], input[1], input[0], false);
+                        return exec.convolution_inv(input[2], input[1], input[0], false);
                     }
                 } else {//Todo: What then? :
                     if (d == 0) {
@@ -293,7 +294,7 @@ public abstract class Function implements IFunction {
                         inp[ii] = tsrs[ii].value()[i];
                     }
 
-                    finalOutput.value()[i] = scalarActivationOf(inp, j, d);
+                    finalOutput.value()[i] = _scalar_activation(inp, j, d);
                 });
                 return  output;
             }
@@ -302,7 +303,7 @@ public abstract class Function implements IFunction {
         return T.factory.newTensor(input[0].shape(), input[0].translation());
     }
 
-    private T[] activateSource(T[] input) {
+    private T[] _source_activation(T[] input) {
         T[] tsrs = new T[input.length];
         for (int i = 0; i < tsrs.length; i++) {
             tsrs[i] = _source.get(0).activate(input, i);
@@ -310,7 +311,7 @@ public abstract class Function implements IFunction {
         return tsrs;
     }
 
-    private T[] activateSource(T[] input, int j, int[] templateShape) {
+    private T[] _source_activation(T[] input, int j, int[] templateShape) {
         T[] tsrs = new T[_source.size()];
         for (int i = 0; i < tsrs.length; i++) {//constants need to be figured out!
             if (_source.get(i) instanceof FConstant) {
@@ -338,60 +339,60 @@ public abstract class Function implements IFunction {
     }
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    protected double scalarActivationOf(double input, boolean derive) {
+    protected double _scalar_activation(double input, boolean derive) {
         switch (_id) {
             case 0:
-                return Calculation.getReLuOf(input, derive);
+                return exec.reLu(input, derive);
             case 1:
-                return Calculation.getSigmoidOf(input, derive);
+                return exec.sigmoid(input, derive);
             case 2:
-                return Calculation.getTanhOf(input, derive);
+                return exec.tanh(input, derive);
             case 3:
-                return Calculation.getQuadraticOf(input, derive);
+                return exec.quadratic(input, derive);
             case 4:
-                return Calculation.getLigmoidOf(input, derive);
+                return exec.ligmoid(input, derive);
             case 5:
-                return Calculation.getLinearOf(input, derive);
+                return exec.linear(input, derive);
             case 6:
-                return Calculation.getGaussianOf(input, derive);
+                return exec.gaussian(input, derive);
             case 7:
-                return Calculation.getAbsoluteOf(input, derive);
+                return exec.absolute(input, derive);
             case 8:
-                return Calculation.getSinusOf(input, derive);
+                return exec.sinus(input, derive);
             case 9:
-                return Calculation.getCosinusOf(input, derive);
+                return exec.cosinus(input, derive);
             default:
                 return input;
         }
     }
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    protected double scalarActivationOf(double[] input, int j, int d) {
+    protected double _scalar_activation(double[] input, int j, int d) {
         switch (_id) {
             case 10:
-                return (j < 0) ? Calculation.getSummation(input, d, _source) : Calculation.getSummation(input, j, d, _source);
+                return (j < 0) ? exec.summation(input, d, _source) : exec.summation(input, j, d, _source);
             case 11:
-                return (j < 0) ? Calculation.getPI(input, d, _source) : Calculation.getPI(input, j, d, _source);
+                return (j < 0) ? exec.PI(input, d, _source) : exec.PI(input, j, d, _source);
             case 12:
-                return (j < 0) ? Calculation.getPowerOf(input, d, _source) : Calculation.getPowerOf(input, j, d, _source);
+                return (j < 0) ? exec.power(input, d, _source) : exec.power(input, j, d, _source);
             case 13:
-                return (j < 0) ? Calculation.getDivision(input, d, _source) : Calculation.getDivision(input, j, d, _source);
+                return (j < 0) ? exec.division(input, d, _source) : exec.division(input, j, d, _source);
             case 14:
-                return (j < 0) ? Calculation.getMultiplication(input, d, _source) : Calculation.getMultiplication(input, j, d, _source);
+                return (j < 0) ? exec.multiplication(input, d, _source) : exec.multiplication(input, j, d, _source);
             case 15:
-                return (j < 0) ? Calculation.getModulo(input, d, _source) : Calculation.getModulo(input, j, d, _source);
+                return (j < 0) ? exec.modulo(input, d, _source) : exec.modulo(input, j, d, _source);
             case 16:
-                return (j < 0) ? Calculation.getSubtraction(input, d, _source) : Calculation.getSubtraction(input, j, d, _source);
+                return (j < 0) ? exec.subtraction(input, d, _source) : exec.subtraction(input, j, d, _source);
             case 17:
-                return (j < 0) ? Calculation.getAddition(input, d, _source) : Calculation.getAddition(input, j, d, _source);
+                return (j < 0) ? exec.addition(input, d, _source) : exec.addition(input, j, d, _source);
             case 18:
-                return (j < 0) ? Calculation.getMultiplication(input, d, _source) : Calculation.getMultiplication(input, j, d, _source);
+                return (j < 0) ? exec.multiplication(input, d, _source) : exec.multiplication(input, j, d, _source);
             default:
                 return 0;
         }
     }
 
-    private static class Calculation {
+    public static class exec {
         private interface Actor {
             void apply(Integer i, double[] v1, double[] v2);
         }
@@ -410,7 +411,7 @@ public abstract class Function implements IFunction {
         //Activation stage 1: Activation _id determination
         //============================================================================================================================================================================================
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        public static double getReLuOf(double input, boolean derive) {
+        public static double reLu(double input, boolean derive) {
             double output;
             if (!derive) {
                 if (input >= 0) {
@@ -430,7 +431,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        public static double getSigmoidOf(double input, boolean derive) {
+        public static double sigmoid(double input, boolean derive) {
             if (!derive) {
                 return 1 / (1 + Math.pow(Math.E, (-input)));
             } else {
@@ -439,7 +440,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        public static double getTanhOf(double input, boolean derive) {
+        public static double tanh(double input, boolean derive) {
             if (!derive) {
                 return ((input)) / Math.pow((1 + Math.pow(((input)), 2)), 0.5);
             } else {
@@ -448,7 +449,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        public static double getQuadraticOf(double input, boolean derive) {
+        public static double quadratic(double input, boolean derive) {
             if (!derive) {
                 return ((input) * (input));
             } else {
@@ -457,16 +458,16 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        public static double getLigmoidOf(double input, boolean derive) {
+        public static double ligmoid(double input, boolean derive) {
             if (!derive) {
                 return (Math.log(1+Math.pow(Math.E, input)));
             } else {
-                return getSigmoidOf(input, false);
+                return sigmoid(input, false);
             }
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        public static double getLinearOf(double input, boolean derive) {
+        public static double linear(double input, boolean derive) {
             if (!derive) {
                 return (input);
             } else {
@@ -475,7 +476,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        public static double getGaussianOf(double input, boolean derive) {
+        public static double gaussian(double input, boolean derive) {
             if (!derive) {
                 return Math.pow(Math.E, -Math.pow((input), 2));
             } else {
@@ -484,7 +485,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        public static double getAbsoluteOf(double input, boolean derive) {
+        public static double absolute(double input, boolean derive) {
             if (!derive) {
                 return Math.abs(input);
             } else {
@@ -493,7 +494,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        public static double getSinusOf(double input, boolean derive) {
+        public static double sinus(double input, boolean derive) {
             if (!derive) {
                 return Math.sin(input);
             } else {
@@ -502,7 +503,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        public static double getCosinusOf(double input, boolean derive) {
+        public static double cosinus(double input, boolean derive) {
             if (!derive) {
                 return Math.cos(input);
             } else {
@@ -511,7 +512,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getSummation(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+        private static double summation(double[] input, int j, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double sum = 0;
                 boolean nothingDone = true;
@@ -528,7 +529,7 @@ public abstract class Function implements IFunction {
             }
         }
 
-        private static double getSummation(double[] input, int d, ArrayList<IFunction> Variable) {
+        private static double summation(double[] input, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double sum = 0;
                 boolean nothingDone = true;
@@ -547,7 +548,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getPI(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+        private static double PI(double[] input, int j, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double prod = 1;
                 boolean nothingDone = true;
@@ -574,7 +575,7 @@ public abstract class Function implements IFunction {
             }
         }
 
-        private static double getPI(double[] input, int d, ArrayList<IFunction> Variable) {
+        private static double PI(double[] input, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double prod = 1;
                 boolean nothingDone = true;
@@ -604,7 +605,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getPowerOf(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+        private static double power(double[] input, int j, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input, j);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -632,7 +633,7 @@ public abstract class Function implements IFunction {
             }
         }
 
-        private static double getPowerOf(double[] input, int d, ArrayList<IFunction> Variable) {
+        private static double power(double[] input, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -662,7 +663,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getDivision(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+        private static double division(double[] input, int j, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input, j);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -684,7 +685,7 @@ public abstract class Function implements IFunction {
             }
         }
 
-        private static double getDivision(double[] input, int d, ArrayList<IFunction> Variable) {
+        private static double division(double[] input, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -711,7 +712,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getMultiplication(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+        private static double multiplication(double[] input, int j, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input, j);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -736,7 +737,7 @@ public abstract class Function implements IFunction {
             }
         }
 
-        private static double getMultiplication(double[] input, int d, ArrayList<IFunction> Variable) {
+        private static double multiplication(double[] input, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -761,7 +762,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getModulo(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+        private static double modulo(double[] input, int j, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input, j);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -774,7 +775,7 @@ public abstract class Function implements IFunction {
             }
         }
 
-        private static double getModulo(double[] input, int d, ArrayList<IFunction> Variable) {
+        private static double modulo(double[] input, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -788,7 +789,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getSubtraction(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+        private static double subtraction(double[] input, int j, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input, j);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -809,7 +810,7 @@ public abstract class Function implements IFunction {
             }
         }
 
-        private static double getSubtraction(double[] input, int d, ArrayList<IFunction> Variable) {
+        private static double subtraction(double[] input, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -831,7 +832,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private static double getAddition(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+        private static double addition(double[] input, int j, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input, j);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -848,7 +849,7 @@ public abstract class Function implements IFunction {
             }
         }
 
-        private static double getAddition(double[] input, int d, ArrayList<IFunction> Variable) {
+        private static double addition(double[] input, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input);
                 for (int Vi = 1; Vi < Variable.size(); Vi++) {
@@ -864,6 +865,224 @@ public abstract class Function implements IFunction {
                 return derivative;
             }
         }
+
+
+
+        public static T convolution(T tensor1, T tensor2) {
+            tensor1.setIsVirtual(false);
+            tensor2.setIsVirtual(false);
+            T newTensor = new T(T.factory.util.shpOfCon(tensor1.shape(), tensor2.shape()));
+            exec.tensMul(newTensor, tensor1, tensor2);
+            return newTensor;
+        }
+
+        public static T convolution_inv(T drain, T source1, T source2, boolean first) {
+            source1.setIsVirtual(false);
+            source2.setIsVirtual(false);
+            drain.setIsVirtual(false);
+            exec.tensMul_inv(source2, (!first) ? source1 : drain, (!first) ? drain : source1);
+            return (first) ? source1 : source2;
+        }
+
+        public static T multiplication(T tensor1, T tensor2) {
+            T drn = new T(tensor1.shape());
+            int[] index = new int[drn.shape().length];
+            int size = drn.size();
+            for (int i = 0; i < size; i++) {
+                T.factory.io.addInto(drn, index, T.factory.io.getFrom(tensor1, index) * T.factory.io.getFrom(tensor2, index));
+                T.factory.util.increment(index, drn.shape());
+            }
+            return drn;
+        }
+
+        public static T addition(T tensor1, T tensor2) {
+            T drn = new T(tensor1.shape());
+            int[] index = new int[drn.shape().length];
+            int size = drn.size();
+            for (int i = 0; i < size; i++) {
+                T.factory.io.addInto(drn, index, T.factory.io.getFrom(tensor1, index) + T.factory.io.getFrom(tensor2, index));
+                T.factory.util.increment(index, drn.shape());
+            }
+            return drn;
+        }
+
+        @Contract(pure = true)
+        public static void tensMul(T t0_drain, T t1_source, T t2_source) {
+            int[] t0Shp = t0_drain.shape();
+            int[] t1Shp = t1_source.shape();
+            int[] t2Shp = t2_source.shape();
+            int[] t0Tln = t0_drain.translation();
+            int[] t1Tln = t1_source.translation();
+            int[] t2Tln = t2_source.translation();
+            int rank = t0Shp.length;
+            int[] t0Idx = new int[rank];
+            int[] t1Idx = new int[rank];
+            int[] t2Idx = new int[rank];
+            double[] t0_value = (t0_drain.gradientIsTargeted())?t0_drain.gradient():t0_drain.value();
+            double[] t1_value = (t1_source.gradientIsTargeted())?t1_source.gradient():t1_source.value();
+            double[] t2_value = (t2_source.gradientIsTargeted())?t2_source.gradient():t2_source.value();
+
+            int drnSze = t0_drain.size();
+            int i = 0;
+            while (i < drnSze) {//increment on drain accordingly:
+                int ri = 0;
+                while (ri < rank) {
+                    if (t1Shp[ri] == t2Shp[ri]) {//setting 0
+                        t1Idx[ri] = t0Idx[ri];//mtch[mi];
+                        t2Idx[ri] = t0Idx[ri];//mtch[mi];
+                    } else if (t1Shp[ri] > t2Shp[ri]) {//setting hdr1 idx to id idx
+                        t1Idx[ri] = t0Idx[ri];//mtch[mi];
+                        t2Idx[ri] = 0;
+                    } else if (t1Shp[ri] < t2Shp[ri]) {//setting hdr2 idx to id idx
+                        t1Idx[ri] = 0;
+                        t2Idx[ri] = t0Idx[ri];//mtch[mi];
+                    }
+                    ri++;
+                }
+                //----------
+                // multiplication:
+                double value = 0;
+                boolean running = true;
+                boolean incrementing = false;
+                while (running) {
+                    ri = (ri == rank) ? 0 : ri;
+                    if (incrementing == false) {
+                        int i1 = T.factory.util.iOf(t1Idx, t1Tln);
+                        int i2 = T.factory.util.iOf(t2Idx, t2Tln);
+                        value += t1_value[i1] * t2_value[i2];
+                        incrementing = true;
+                        ri = 0;
+                    } else {//incrementing:
+                        if (t1Idx[ri] < t1Shp[ri] && t2Idx[ri] < t2Shp[ri]) {
+                            t1Idx[ri]++;
+                            t2Idx[ri]++;
+                            if (t1Idx[ri] == t1Shp[ri] || t2Idx[ri] == t2Shp[ri]) {
+                                if (ri == (rank - 1)) {
+                                    running = false;
+                                }
+                                if (t1Shp[ri] == t2Shp[ri]) {
+                                    t1Idx[ri] = t0Idx[ri];
+                                    t2Idx[ri] = t0Idx[ri];
+                                } else if (t1Shp[ri] > t2Shp[ri]) {
+                                    t1Idx[ri] = t0Idx[ri];
+                                    t2Idx[ri] = 0;
+                                } else if (t1Shp[ri] < t2Shp[ri]) {
+                                    t1Idx[ri] = 0;
+                                    t2Idx[ri] = t0Idx[ri];
+                                }
+                                ri++;
+                            } else {
+                                incrementing = false;
+                                ri = 0;
+                            }
+                        } else {
+                            ri++;
+                        }
+                    }
+                }//setInto _value in drn:
+                int i0 = T.factory.util.iOf(t0Idx, t0Tln);
+                t0_value[i0] = value;
+                //System.out.println(i0 + " - " + i);
+                i++;//increment on drain:
+                if (i < drnSze) {
+                    T.factory.util.increment(t0Idx, t0Shp);
+                }
+            }
+        }
+
+        @Contract(pure = true)
+        public static void tensMul_inv(T t0_origin, T t1_handle, T t2_drain) {
+            int[] t0Shp = t0_origin.shape();
+            int[] t1Shp = t1_handle.shape();
+            int[] t2Shp = t2_drain.shape();
+            int[] t0Tln = t0_origin.translation();
+            int[] t1Tln = t1_handle.translation();
+            int[] t2Tln = t2_drain.translation();
+            int rank = t0Shp.length;
+            int[] t0Idx = new int[rank];
+            int[] t1Idx = new int[rank];
+            int[] t2Idx = new int[rank];
+            double[] t0_value = (t0_origin.gradientIsTargeted())?t0_origin.gradient():t0_origin.value();
+            double[] t1_value = (t1_handle.gradientIsTargeted())?t1_handle.gradient():t1_handle.value();
+            double[] t2_value = (t2_drain.gradientIsTargeted())?t2_drain.gradient():t2_drain.value();
+
+
+            int drnSze = t0_origin.size();
+            int i = 0;
+            while (i < drnSze) {//increment on drain accordingly:
+                int ri = 0;
+                while (ri < rank) {
+                    if (t2Idx[ri] == t2Shp[ri]) {//setting 0
+                        t1Idx[ri] = t0Idx[ri];
+                        t2Idx[ri] = 0;//mtch[mi];
+                    } else {
+                        if (t0Shp[ri] > t1Shp[ri]) {
+                            t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);
+                        } else {
+                            t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);
+                        }
+                    }
+                    ri++;
+                }
+                //----------
+                // multiplication:
+                double value = 0;
+                boolean running = true;
+                boolean incrementing = false;
+                while (running) {
+                    ri = (ri == rank) ? 0 : ri;
+                    if (incrementing == false) {
+
+                        boolean isMatch = true;
+                        for (int rii = 0; rii < rank; rii++) {
+                            if (!(t1Idx[rii] < t1Shp[rii] && t1Idx[rii] >= 0)) {
+                                isMatch = false;
+                            }
+                        }
+                        if (isMatch) {
+                            int i1 = T.factory.util.iOf(t1Idx, t1Tln);
+                            int i2 = T.factory.util.iOf(t2Idx, t2Tln);
+                            value += t1_value[i1] * t2_value[i2];
+                            //1*-2 +2*3 -3*6 +2*3, 1*3 +2*6 -3*3 +2*-1,
+                            //1*0  +2*2 -3*4 +2*2  +  4*-2 -2*3 -1*6 +5*3, 1*2 +2*4 -3*2 +2*1  +  4*3 -2*6 -1*3 +5*-1,
+                            //4*0  -2*2 -1*4 +5*2, 4*2 -2*4 -1*2 +5*1
+                        }
+                        incrementing = true;
+                        ri = 0;
+                    } else {//incrementing:
+                        if (t2Idx[ri] < t2Shp[ri]) {
+                            t2Idx[ri]++;
+                            if (t2Idx[ri] == t2Shp[ri]) {
+                                if (ri == (rank - 1)) {
+                                    running = false;
+                                }
+                                t1Idx[ri] = t0Idx[ri];
+                                t2Idx[ri] = 0;
+                                ri++;
+                            } else {
+                                if (t0Shp[ri] > t1Shp[ri]) {
+                                    t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);
+                                } else {
+                                    t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);
+                                }
+                                incrementing = false;
+                                ri = 0;
+                            }
+                        } else {
+                            ri++;
+                        }
+                    }
+                }
+                //setInto _value in drn:
+                int i0 = T.factory.util.iOf(t0Idx, t0Tln);
+                t0_value[i0] = value;
+                i++;//increment on drain:
+                if (i < drnSze) {
+                    T.factory.util.increment(t0Idx, t0Shp);
+                }
+            }
+        }
+
     }
 
 }

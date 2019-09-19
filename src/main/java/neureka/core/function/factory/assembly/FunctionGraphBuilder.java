@@ -49,12 +49,12 @@ public class FunctionGraphBuilder {
                         ? ("(" + expression + ")")
                         : expression;
         String k = (doAD)?"d"+expression:expression;
-        if (IFunction.FCACHE.FUNCTIONS().containsKey(k)) {
-            return IFunction.FCACHE.FUNCTIONS().get(k);
+        if (IFunction.CACHE.FUNCTIONS().containsKey(k)) {
+            return IFunction.CACHE.FUNCTIONS().get(k);
         }
         IFunction built = construct(expression, doAD);//, tipReached);
         if (built != null) {
-            IFunction.FCACHE.FUNCTIONS().put(((doAD)?"d":"")+"(" + built.toString() + ")", built);
+            IFunction.CACHE.FUNCTIONS().put(((doAD)?"d":"")+"(" + built.toString() + ")", built);
         }
         return built;
     }

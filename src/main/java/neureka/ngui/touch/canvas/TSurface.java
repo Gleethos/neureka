@@ -210,8 +210,8 @@ public class TSurface extends Group implements TSurface_I {
 		//GUITimer.start();
 		Layers.add(new Layer(0));
 		this.getChildren().add(Layers.get(0));
-		//Layers.inject(new Layer(1));
-		//Layers.inject(new Layer(2));
+		//Layers.overwrite(new Layer(1));
+		//Layers.overwrite(new Layer(2));
  	}
  	public void updateAndRedraw()
  	{

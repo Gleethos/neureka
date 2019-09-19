@@ -105,13 +105,13 @@ public class Device {
         }
     }
 
-    public Device inject(T drain, T source){
+    public Device overwrite(T drain, T source){
         this.calculate(drain, 0, IFunction.TYPES.LOOKUP.get("*"));
         this.calculate(new T[]{drain, drain, source}, IFunction.TYPES.LOOKUP.get("+"), -1);
         return this;
     }
 
-    public Device inject(T tensor, double[] value){
+    public Device overwrite(T tensor, double[] value){
         boolean targetGradient = tensor.gradientIsTargeted();
         if(tensor.rqsGradient()){
             if(_tensorsMap.containsKey(tensor)){
