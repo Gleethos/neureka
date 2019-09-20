@@ -399,6 +399,7 @@ public abstract class Function implements IFunction {
             void apply(Integer i, double[] v1, double[] v2);
         }
 
+        @Contract(pure = true)
         private static void foreach(T t1, T t2, Actor action) {
             double[] inputValue = (t1.value() == null) ? new double[t1.size()] : t1.value();
             double[] outputValue = (t2.value() == null) ? new double[t2.size()] : t2.value();
@@ -407,6 +408,7 @@ public abstract class Function implements IFunction {
             t1.setValue(inputValue);
         }
         //--------------------------------------------------------------------------------------------------------------
+        @Contract(pure = true)
         public static double reLu(double input, boolean derive) {
             double output;
             if (!derive) {
@@ -427,6 +429,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        @Contract(pure = true)
         public static double sigmoid(double input, boolean derive) {
             if (!derive) {
                 return 1 / (1 + Math.pow(Math.E, (-input)));
@@ -436,6 +439,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        @Contract(pure = true)
         public static double tanh(double input, boolean derive) {
             if (!derive) {
                 return ((input)) / Math.pow((1 + Math.pow(((input)), 2)), 0.5);
@@ -445,6 +449,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        @Contract(pure = true)
         public static double quadratic(double input, boolean derive) {
             if (!derive) {
                 return ((input) * (input));
@@ -454,6 +459,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        @Contract(pure = true)
         public static double ligmoid(double input, boolean derive) {
             if (!derive) {
                 return (Math.log(1+Math.pow(Math.E, input)));
@@ -463,6 +469,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        @Contract(pure = true)
         public static double linear(double input, boolean derive) {
             if (!derive) {
                 return (input);
@@ -472,6 +479,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        @Contract(pure = true)
         public static double gaussian(double input, boolean derive) {
             if (!derive) {
                 return Math.pow(Math.E, -Math.pow((input), 2));
@@ -481,6 +489,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        @Contract(pure = true)
         public static double absolute(double input, boolean derive) {
             if (!derive) {
                 return Math.abs(input);
@@ -490,6 +499,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        @Contract(pure = true)
         public static double sinus(double input, boolean derive) {
             if (!derive) {
                 return Math.sin(input);
@@ -499,6 +509,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        @Contract(pure = true)
         public static double cosinus(double input, boolean derive) {
             if (!derive) {
                 return Math.cos(input);
@@ -508,6 +519,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        @Contract(pure = true)
         private static double summation(double[] input, int j, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double sum = 0;
@@ -525,6 +537,7 @@ public abstract class Function implements IFunction {
             }
         }
 
+        @Contract(pure = true)
         private static double summation(double[] input, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double sum = 0;
@@ -544,6 +557,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        @Contract(pure = true)
         private static double PI(double[] input, int j, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double prod = 1;
@@ -571,6 +585,7 @@ public abstract class Function implements IFunction {
             }
         }
 
+        @Contract(pure = true)
         private static double PI(double[] input, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double prod = 1;
@@ -601,6 +616,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        @Contract(pure = true)
         private static double power(double[] input, int j, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input, j);
@@ -629,6 +645,7 @@ public abstract class Function implements IFunction {
             }
         }
 
+        @Contract(pure = true)
         private static double power(double[] input, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input);
@@ -659,6 +676,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        @Contract(pure = true)
         private static double division(double[] input, int j, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input, j);
@@ -681,6 +699,7 @@ public abstract class Function implements IFunction {
             }
         }
 
+        @Contract(pure = true)
         private static double division(double[] input, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input);
@@ -708,6 +727,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        @Contract(pure = true)
         private static double multiplication(double[] input, int j, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input, j);
@@ -733,6 +753,7 @@ public abstract class Function implements IFunction {
             }
         }
 
+        @Contract(pure = true)
         private static double multiplication(double[] input, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input);
@@ -758,6 +779,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        @Contract(pure = true)
         private static double modulo(double[] input, int j, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input, j);
@@ -771,6 +793,7 @@ public abstract class Function implements IFunction {
             }
         }
 
+        @Contract(pure = true)
         private static double modulo(double[] input, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input);
@@ -785,6 +808,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        @Contract(pure = true)
         private static double subtraction(double[] input, int j, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input, j);
@@ -806,6 +830,7 @@ public abstract class Function implements IFunction {
             }
         }
 
+        @Contract(pure = true)
         private static double subtraction(double[] input, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input);
@@ -828,6 +853,7 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        @Contract(pure = true)
         private static double addition(double[] input, int j, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input, j);
