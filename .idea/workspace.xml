@@ -436,7 +436,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.neureka [clean]">
+  <component name="RunManager" selected="Gradle.neureka [test]">
     <configuration name="neureka [assemble]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -554,9 +554,6 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="neureka_[test] - 2019.09.18 at 23h 32m 09s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
     <history-entry file="neureka_[test] - 2019.09.18 at 23h 46m 20s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
@@ -582,6 +579,9 @@
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
     <history-entry file="neureka_[test] - 2019.09.19 at 20h 22m 03s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
+    <history-entry file="neureka_[test] - 2019.09.20 at 12h 59m 27s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
   </component>

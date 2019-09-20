@@ -6,14 +6,11 @@ import neureka.core.function.factory.Function;
 
 public class GraphBuilder
 {
-    public static void connect(T drain, T[] src, IFunction function){//, boolean derive
-        if(function.isFlat()){
-            _performDifferentiation(drain, function, src);
+    public static void connect(T drain, T[] source, IFunction function){//, boolean derive
+        if(!function.isFlat()){
+           return;
         }
-    }
-
-    private static void _performDifferentiation(T drain, IFunction function, T[] source)
-    {//--------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------
         GraphLock gid = ((GraphNode)source[0].find(GraphNode.class)).lock();
         GraphNode node = new GraphNode(drain,function, source, gid);
         drain.add(node);
