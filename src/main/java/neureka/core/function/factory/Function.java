@@ -239,7 +239,7 @@ public abstract class Function implements IFunction {
         } else {
             if (TYPES.REGISTER[_id] == "x") {
                 if (d < 0) {
-                    return exec.convolution(input[0], input[1]);
+                    return exec.convection(input[0], input[1]);
                 } else {
                     if (d == 0) {
                         return (input[1]);
@@ -250,9 +250,9 @@ public abstract class Function implements IFunction {
             } else if (TYPES.REGISTER[_id] == "" + ((char) 171) || TYPES.REGISTER[_id] == "" + ((char) 187)) {
                 if (d < 0) {//  ""+((char)171), ""+((char)187) //<< / >>
                     if (TYPES.REGISTER[_id] == "" + ((char) 187)) {
-                        return exec.convolution_inv(input[0], input[1], input[2], false);
+                        return exec.convection_inv(input[0], input[1], input[2], false);
                     } else {
-                        return exec.convolution_inv(input[2], input[1], input[0], false);
+                        return exec.convection_inv(input[2], input[1], input[0], false);
                     }
                 } else {//Todo: What then? :
                     if (d == 0) {
@@ -392,25 +392,21 @@ public abstract class Function implements IFunction {
         }
     }
 
-    public static class exec {
-        private interface Actor {
+    public static class exec
+    {
+        private interface Actor
+        {
             void apply(Integer i, double[] v1, double[] v2);
         }
 
         private static void foreach(T t1, T t2, Actor action) {
             double[] inputValue = (t1.value() == null) ? new double[t1.size()] : t1.value();
             double[] outputValue = (t2.value() == null) ? new double[t2.size()] : t2.value();
-            t1.foreach((i) -> {
-                action.apply(i, inputValue, outputValue);
-            });
+            t1.foreach((i) -> action.apply(i, inputValue, outputValue));
             t2.setValue(outputValue);
             t1.setValue(inputValue);
         }
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-        //Activation stage 1: Activation _id determination
-        //============================================================================================================================================================================================
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         public static double reLu(double input, boolean derive) {
             double output;
             if (!derive) {
@@ -849,6 +845,7 @@ public abstract class Function implements IFunction {
             }
         }
 
+        @Contract(pure = true)
         private static double addition(double[] input, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
                 double result = Variable.get(0).activate(input);
@@ -866,24 +863,7 @@ public abstract class Function implements IFunction {
             }
         }
 
-
-
-        public static T convolution(T tensor1, T tensor2) {
-            tensor1.setIsVirtual(false);
-            tensor2.setIsVirtual(false);
-            T newTensor = new T(T.factory.util.shpOfCon(tensor1.shape(), tensor2.shape()));
-            exec.tensMul(newTensor, tensor1, tensor2);
-            return newTensor;
-        }
-
-        public static T convolution_inv(T drain, T source1, T source2, boolean first) {
-            source1.setIsVirtual(false);
-            source2.setIsVirtual(false);
-            drain.setIsVirtual(false);
-            exec.tensMul_inv(source2, (!first) ? source1 : drain, (!first) ? drain : source1);
-            return (first) ? source1 : source2;
-        }
-
+        @Contract(pure = true)
         public static T multiplication(T tensor1, T tensor2) {
             T drn = new T(tensor1.shape());
             int[] index = new int[drn.shape().length];
@@ -895,6 +875,7 @@ public abstract class Function implements IFunction {
             return drn;
         }
 
+        @Contract(pure = true)
         public static T addition(T tensor1, T tensor2) {
             T drn = new T(tensor1.shape());
             int[] index = new int[drn.shape().length];
@@ -907,7 +888,25 @@ public abstract class Function implements IFunction {
         }
 
         @Contract(pure = true)
-        public static void tensMul(T t0_drain, T t1_source, T t2_source) {
+        public static T convection(T tensor1, T tensor2) {
+            tensor1.setIsVirtual(false);
+            tensor2.setIsVirtual(false);
+            T newTensor = new T(T.factory.util.shpOfCon(tensor1.shape(), tensor2.shape()));
+            exec.convection(newTensor, tensor1, tensor2);
+            return newTensor;
+        }
+
+        @Contract(pure = true)
+        public static T convection_inv(T drain, T source1, T source2, boolean first) {
+            source1.setIsVirtual(false);
+            source2.setIsVirtual(false);
+            drain.setIsVirtual(false);
+            exec.convection_inv(source2, (!first) ? source1 : drain, (!first) ? drain : source1);
+            return (first) ? source1 : source2;
+        }
+
+        @Contract(pure = true)
+        public static void convection(T t0_drain, T t1_source, T t2_source) {
             int[] t0Shp = t0_drain.shape();
             int[] t1Shp = t1_source.shape();
             int[] t2Shp = t2_source.shape();
@@ -991,7 +990,7 @@ public abstract class Function implements IFunction {
         }
 
         @Contract(pure = true)
-        public static void tensMul_inv(T t0_origin, T t1_handle, T t2_drain) {
+        public static void convection_inv(T t0_origin, T t1_handle, T t2_drain) {
             int[] t0Shp = t0_origin.shape();
             int[] t1Shp = t1_handle.shape();
             int[] t2Shp = t2_drain.shape();

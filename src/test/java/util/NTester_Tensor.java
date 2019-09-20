@@ -1,9 +1,7 @@
 package util;
 
 import neureka.core.T;
-import neureka.core.function.IFunction;
 import neureka.core.function.factory.Function;
-import neureka.core.function.factory.assembly.FunctionGraphBuilder;
 
 public class NTester_Tensor extends NTester {
 
@@ -65,7 +63,7 @@ public class NTester_Tensor extends NTester {
         printSessionStart("Test T.util: tensMul_mxd");
         int[] drnMxd  = T.factory.util.shpOfCon(frstShp, scndShp);
         double[] rsltData = new double[T.factory.util.szeOfShp(drnMxd)];
-        Function.exec.tensMul(
+        Function.exec.convection(
                 new T(drnMxd, rsltData),
                 new T(frstShp, frstData),
                 new T(scndShp, scondData)
@@ -81,7 +79,7 @@ public class NTester_Tensor extends NTester {
     ){
         printSessionStart("Test T.util: tensMul_mxd");
         int[] drnMxd  = T.factory.util.shpOfCon(frstShp, scndShp);
-        Function.exec.tensMul_inv(
+        Function.exec.convection_inv(
                 new T(frstShp, frstData),
                 (first)?new T(scndShp, scondData):new T(drnMxd, drnData),
                 (first)?new T(drnMxd, drnData):new T(scndShp, scondData)
