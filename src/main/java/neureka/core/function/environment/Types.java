@@ -18,6 +18,11 @@ public class Types {
         LOOKUP = new HashMap<>();
         for(int i=0; i<REGISTER.length; i++){
             LOOKUP.put(REGISTER[i], i);
+            if(REGISTER[i] == (""+((char)171))){
+                LOOKUP.put("<<", i);
+            } else if(REGISTER[i] == (""+((char)187))){
+                LOOKUP.put(">>", i);
+            }
         }
     }
 

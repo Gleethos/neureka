@@ -250,9 +250,16 @@ public abstract class Function implements IFunction {
             } else if (TYPES.REGISTER[_id] == "" + ((char) 171) || TYPES.REGISTER[_id] == "" + ((char) 187)) {
                 if (d < 0) {//  ""+((char)171), ""+((char)187) //<< / >>
                     if (TYPES.REGISTER[_id] == "" + ((char) 187)) {
-                        return exec.convection_inv(input[0], input[1], input[2], false);
+                        return exec.convection_inv(
+                                _source.get(0).activate(input),
+                                _source.get(1).activate(input),
+                                _source.get(2).activate(input), false);
                     } else {
-                        return exec.convection_inv(input[2], input[1], input[0], false);
+                        return exec.convection_inv(
+                                _source.get(2).activate(input),
+                                _source.get(1).activate(input),
+                                _source.get(0).activate(input),
+                                false);
                     }
                 } else {//Todo: What then? :
                     if (d == 0) {
@@ -943,9 +950,9 @@ public abstract class Function implements IFunction {
             int[] t0Idx = new int[rank];
             int[] t1Idx = new int[rank];
             int[] t2Idx = new int[rank];
-            double[] t0_value = (t0_drain.gradientIsTargeted())?t0_drain.gradient():t0_drain.value();
-            double[] t1_value = (t1_source.gradientIsTargeted())?t1_source.gradient():t1_source.value();
-            double[] t2_value = (t2_source.gradientIsTargeted())?t2_source.gradient():t2_source.value();
+            double[] t0_value = t0_drain.targetValue();
+            double[] t1_value = t1_source.targetValue();
+            double[] t2_value = t2_source.targetValue();
 
             int drnSze = t0_drain.size();
             int i = 0;

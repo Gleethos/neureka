@@ -80,8 +80,27 @@ public class TestOnlyCPU {
         Assert.assertEquals(y.toString().contains("[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)"), true);
         System.out.println(z);
 
+
         Thread.sleep(6000);
     }
+
+
+    @Test
+    public void testAD(){
+        T x = new T(
+                new int[]{2, 2},
+                new double[]{
+                        -1, 2,
+                        -3, 3,
+                }
+        ).setRqsGradient(true);
+        T y = new T(new int[]{1, 1}, -3);
+        T z = new T(new T[]{x, y}, "I0xi1");
+        Assert.assertEquals(z.toString().contains("[2x2]:(3.0, -6.0, 9.0, -9.0)"), true);
+        z.backward(new T(new int[]{2, 2}, 1));
+        Assert.assertEquals(x.toString().contains("[2x2]:(-1.0, 2.0, -3.0, 3.0):g:(-3.0, -3.0, -3.0, -3.0)"), true);
+    }
+
 
 
 
