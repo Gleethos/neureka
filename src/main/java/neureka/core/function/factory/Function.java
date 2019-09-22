@@ -2,8 +2,8 @@ package neureka.core.function.factory;
 
 import neureka.core.T;
 import neureka.core.function.IFunction;
+import neureka.core.function.factory.assembly.FunctionBuilder;
 import neureka.core.function.factory.autograd.GraphLock;
-import neureka.core.function.factory.assembly.FunctionGraphBuilder;
 import neureka.core.function.factory.implementations.FConstant;
 import neureka.core.function.factory.autograd.GraphBuilder;
 import neureka.core.device.Device;
@@ -16,19 +16,24 @@ public abstract class Function implements IFunction {
     protected int _id;
     protected boolean _isFlat;
     protected boolean _doAD;
-    protected ArrayList<IFunction> _source;
+    protected ArrayList<IFunction> _src;
 
     /**
      * @param f_id
      * @param isFlat
-     * @param Srcs
+     * @param source
      * @param doAD
      */
-    protected Function(int f_id, boolean isFlat, ArrayList<IFunction> Srcs, boolean doAD) {
+    protected Function(int f_id, boolean isFlat, ArrayList<IFunction> source, boolean doAD) {
         _id = f_id;
         _isFlat = isFlat;
-        _source = Srcs;
+        _src = source;
         _doAD = doAD;
+    }
+
+    @Override
+    public IFunction newBuild(String expression) {
+        return FunctionBuilder.newBuild(expression, true);
     }
 
     @Override
@@ -46,47 +51,45 @@ public abstract class Function implements IFunction {
         return TYPES.REGISTER[_id];
     }
 
-    @Override
-    public IFunction newBuild(String expression) {
-        return FunctionGraphBuilder.newBuild(expression, true);
-    }
 
     @Override
     public String toString() {
         String reconstructed = "";
-        if (_source.size() == 1 && TYPES.REGISTER[_id].length() > 1) {
-            String expression = _source.get(0).toString();
+        if (_src.size() == 1 && TYPES.REGISTER[_id].length() > 1) {
+            String expression = _src.get(0).toString();
             if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
                 return TYPES.REGISTER[_id] + expression;
             }
             return TYPES.REGISTER[_id] + "(" + expression + ")";
         } else {
             reconstructed = ((TYPES.REGISTER[_id] == ",") ? "[" : "") + reconstructed;
-            for (int i = 0; i < _source.size(); ++i) {
-                if (_source.get(i) != null) {
+            for (int i = 0; i < _src.size(); ++i) {
+                if (_src.get(i) != null) {
                     if ((TYPES.REGISTER[_id] == ",")) {
-                        if (i == _source.size() - 1) {
+                        if (i == _src.size() - 1) {
                             reconstructed = reconstructed
-                                    + "]:(" + (
-                                    (_source.get(i) instanceof FConstant)
-                                            ? _source.get(i).toString().split("\\.")[0]
-                                            : _source.get(i).toString()
-                            ) + ")";
+                                + "]:(" +
+                                (
+                                    (_src.get(i) instanceof FConstant)
+                                        ? _src.get(i).toString().split("\\.")[0]
+                                        : _src.get(i).toString()
+                                )
+                                + ")";
                         } else {
-                            reconstructed = reconstructed
-                                    + (
-                                    (_source.get(i) instanceof FConstant)
-                                            ? _source.get(i).toString().split("\\.")[0]
-                                            : _source.get(i).toString()
-                            );
+                            reconstructed = reconstructed +
+                                (
+                                    (_src.get(i) instanceof FConstant)
+                                            ? _src.get(i).toString().split("\\.")[0]
+                                            : _src.get(i).toString()
+                                );
                         }
                     } else {
-                        reconstructed = reconstructed + _source.get(i).toString();
+                        reconstructed = reconstructed + _src.get(i).toString();
                     }
                 } else {
                     reconstructed = reconstructed + "(null)";
                 }
-                if (i < _source.size() - ((TYPES.REGISTER[_id] == ",") ? 2 : 1)) {
+                if (i < _src.size() - ((TYPES.REGISTER[_id] == ",") ? 2 : 1)) {
                     reconstructed = reconstructed
                             + ((TYPES.REGISTER[_id]==">")?"-":"")
                             + TYPES.REGISTER[_id]
@@ -94,7 +97,6 @@ public abstract class Function implements IFunction {
                 }
             }
         }
-
         return "(" + reconstructed + ")";
     }
 
@@ -124,16 +126,15 @@ public abstract class Function implements IFunction {
     @Override
     public abstract double derive(final double[] input, final int index);
 
-    //Activation stage 1: IFunction determination!
-    //============================================================================================================================================================================================
-
+    //==================================================================================================================
     /**
      * Responsible for handling functions with id's 0-9  (single input functions!)
      */
-    protected T _tensor_activation(T input, boolean derive) {
+    protected T _tensor_activation(T input, boolean derive)
+    {
         T output = T.factory.newTensor(input.shape(), input.translation());
         if (!derive && !_isFlat) {
-            output.inject(new FunctionGraphBuilder().newBuild(_id, 1, true).activate(new T[]{input}));
+            output.inject(FunctionBuilder.newBuild(_id, 1, true).activate(new T[]{input}));
             output.add(input.find(GraphLock.class));
             return output;
         }
@@ -165,12 +166,12 @@ public abstract class Function implements IFunction {
         /**  The code below deals with deep functions (non flat):  * */
         if (d < 0 && !_isFlat) {//only flat functions can be executed
             if (TYPES.isFunction(_id)) {
-                return (new FunctionGraphBuilder().newBuild(TYPES.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).activate(input));
+                return (FunctionBuilder.newBuild(TYPES.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).activate(input));
             } else {
                 if (TYPES.isFunction(_id)||TYPES.isIndexer(_id)) {
                     /**  SUMMATION, PI,  * */
                     T[] tsrs = _source_activation(input);
-                    return (FunctionGraphBuilder.newBuild(TYPES.REGISTER[_id] + "(I[j])", true).activate(tsrs));
+                    return (FunctionBuilder.newBuild(TYPES.REGISTER[_id] + "(I[j])", true).activate(tsrs));
                 } else if (TYPES.isOperation(_id)) {
                     /**  '+', '-', 'x', '*', '%', '«', '»', ',', ...  * */
                     String operation = (TYPES.REGISTER[_id].length() > 1) ? TYPES.REGISTER[_id] : "";
@@ -179,17 +180,17 @@ public abstract class Function implements IFunction {
                         operation += "I[" + i + "]" + ((i + 1 < tsrs.length) ? TYPES.REGISTER[_id] : "");
                     }
                     if (j < 0) {
-                        return (FunctionGraphBuilder.newBuild(operation, _doAD).activate(tsrs));
+                        return (FunctionBuilder.newBuild(operation, _doAD).activate(tsrs));
                     } else {
-                        return (FunctionGraphBuilder.newBuild(operation, _doAD).activate(tsrs, j));
+                        return (FunctionBuilder.newBuild(operation, _doAD).activate(tsrs, j));
                     }
                 } else {
                     /**  Tensor shape translation: * */
                     T[] tsrs = _source_activation(input, j, new int[]{1});
                     if (j < 0) {
-                        return (FunctionGraphBuilder.newBuild(_id, tsrs.length, _doAD).activate(tsrs));
+                        return (FunctionBuilder.newBuild(_id, tsrs.length, _doAD).activate(tsrs));
                     } else {
-                        return (FunctionGraphBuilder.newBuild(_id, tsrs.length, _doAD).activate(tsrs, j));
+                        return (FunctionBuilder.newBuild(_id, tsrs.length, _doAD).activate(tsrs, j));
                     }
                 }
             }
@@ -208,11 +209,13 @@ public abstract class Function implements IFunction {
         boolean onSameDevice = T.factory.util.shareGuestDevice(input);
         if (onSameDevice && TYPES.REGISTER[_id] != "," && (!TYPES.isConvection(_id) && d > -1)) {
             if(TYPES.REGISTER[_id]=="<") {
-                device.overwrite(_source.get(0).activate(input), _source.get(1).activate(input));
+                device.overwrite(_src.get(0).activate(input), _src.get(1).activate(input));
             } else if(TYPES.REGISTER[_id]==">") {
-                device.overwrite(_source.get(1).activate(input), _source.get(0).activate(input));
+                device.overwrite(_src.get(1).activate(input), _src.get(0).activate(input));
             } else {
-                int[] shp = (TYPES.REGISTER[_id] == "x")?T.factory.util.shpOfCon(input[0].shape(), input[1].shape()):input[0].shape();
+                int[] shp = (TYPES.REGISTER[_id] == "x")
+                                ?T.factory.util.shpOfCon(input[0].shape(), input[1].shape())
+                                :input[0].shape();
                 T output = new T(shp, 0.0);
                 if (device != null) {
                     device.add(output);
@@ -247,19 +250,22 @@ public abstract class Function implements IFunction {
                         return (input[0]);
                     }
                 }
-            } else if (TYPES.REGISTER[_id] == "" + ((char) 171) || TYPES.REGISTER[_id] == "" + ((char) 187)) {
-                if (d < 0) {//  ""+((char)171), ""+((char)187) //<< / >>
-                    if (TYPES.REGISTER[_id] == "" + ((char) 187)) {
+            } else if (_id == TYPES.LOOKUP.get("<<") || _id == TYPES.LOOKUP.get(">>")) {
+                if (d < 0) {
+                    if (_id == TYPES.LOOKUP.get(">>")) {
                         return exec.convection_inv(
-                                _source.get(0).activate(input),
-                                _source.get(1).activate(input),
-                                _source.get(2).activate(input), false);
+                                _src.get(0).activate(input),
+                                _src.get(1).activate(input),
+                                _src.get(2).activate(input),
+                                false
+                        );
                     } else {
                         return exec.convection_inv(
-                                _source.get(2).activate(input),
-                                _source.get(1).activate(input),
-                                _source.get(0).activate(input),
-                                false);
+                                _src.get(2).activate(input),
+                                _src.get(1).activate(input),
+                                _src.get(0).activate(input),
+                                false
+                        );
                     }
                 } else {//Todo: What then? :
                     if (d == 0) {
@@ -288,9 +294,9 @@ public abstract class Function implements IFunction {
                     }
                 }
             } else if(TYPES.REGISTER[_id]=="<") {
-                return _source.get(0).activate(input).setTargetValue(_source.get(1).activate(input).targetValue(true));
+                return _src.get(0).activate(input).setTargetValue(_src.get(1).activate(input).targetValue(true));
             } else if(TYPES.REGISTER[_id]==">") {
-                return _source.get(1).activate(input).setTargetValue(_source.get(0).activate(input).targetValue(true));
+                return _src.get(1).activate(input).setTargetValue(_src.get(0).activate(input).targetValue(true));
             } else {
                 T[] tsrs = input;
                 double[] inp = new double[tsrs.length];
@@ -313,21 +319,18 @@ public abstract class Function implements IFunction {
     private T[] _source_activation(T[] input) {
         T[] tsrs = new T[input.length];
         for (int i = 0; i < tsrs.length; i++) {
-            tsrs[i] = _source.get(0).activate(input, i);
+            tsrs[i] = _src.get(0).activate(input, i);
         }
         return tsrs;
     }
 
     private T[] _source_activation(T[] input, int j, int[] templateShape) {
-        T[] tsrs = new T[_source.size()];
+        T[] tsrs = new T[_src.size()];
         for (int i = 0; i < tsrs.length; i++) {//constants need to be figured out!
-            if (_source.get(i) instanceof FConstant) {
+            if (_src.get(i) instanceof FConstant) {
                 tsrs[i] = null;
             } else {
-                tsrs[i] =
-                        (j < 0)
-                                ? _source.get(i).activate(input)
-                                : _source.get(i).activate(input, j);
+                tsrs[i] = (j < 0) ? _src.get(i).activate(input) : _src.get(i).activate(input, j);
                 templateShape =
                         (templateShape == null)
                                 ? tsrs[i].shape()
@@ -339,8 +342,8 @@ public abstract class Function implements IFunction {
                     (tsrs[i] != null)
                             ? tsrs[i]
                             : (j < 0)
-                            ? T.factory.newTensor(((FConstant) _source.get(i)).value(), templateShape)
-                            : T.factory.newTensor(_source.get(i).activate(new double[]{}, j), templateShape);
+                            ? T.factory.newTensor(((FConstant) _src.get(i)).value(), templateShape)
+                            : T.factory.newTensor(_src.get(i).activate(new double[]{}, j), templateShape);
         }
         return tsrs;
     }
@@ -377,23 +380,23 @@ public abstract class Function implements IFunction {
     protected double _scalar_activation(double[] input, int j, int d) {
         switch (_id) {
             case 10:
-                return (j < 0) ? exec.summation(input, d, _source) : exec.summation(input, j, d, _source);
+                return (j < 0) ? exec.summation(input, d, _src) : exec.summation(input, j, d, _src);
             case 11:
-                return (j < 0) ? exec.PI(input, d, _source) : exec.PI(input, j, d, _source);
+                return (j < 0) ? exec.PI(input, d, _src) : exec.PI(input, j, d, _src);
             case 12:
-                return (j < 0) ? exec.power(input, d, _source) : exec.power(input, j, d, _source);
+                return (j < 0) ? exec.power(input, d, _src) : exec.power(input, j, d, _src);
             case 13:
-                return (j < 0) ? exec.division(input, d, _source) : exec.division(input, j, d, _source);
+                return (j < 0) ? exec.division(input, d, _src) : exec.division(input, j, d, _src);
             case 14:
-                return (j < 0) ? exec.multiplication(input, d, _source) : exec.multiplication(input, j, d, _source);
+                return (j < 0) ? exec.multiplication(input, d, _src) : exec.multiplication(input, j, d, _src);
             case 15:
-                return (j < 0) ? exec.modulo(input, d, _source) : exec.modulo(input, j, d, _source);
+                return (j < 0) ? exec.modulo(input, d, _src) : exec.modulo(input, j, d, _src);
             case 16:
-                return (j < 0) ? exec.subtraction(input, d, _source) : exec.subtraction(input, j, d, _source);
+                return (j < 0) ? exec.subtraction(input, d, _src) : exec.subtraction(input, j, d, _src);
             case 17:
-                return (j < 0) ? exec.addition(input, d, _source) : exec.addition(input, j, d, _source);
+                return (j < 0) ? exec.addition(input, d, _src) : exec.addition(input, j, d, _src);
             case 18:
-                return (j < 0) ? exec.multiplication(input, d, _source) : exec.multiplication(input, j, d, _source);
+                return (j < 0) ? exec.multiplication(input, d, _src) : exec.multiplication(input, j, d, _src);
             default:
                 return 0;
         }

@@ -1,5 +1,7 @@
 
 plugins {
+    //id 'jacoco'
+    id 'java'
     id 'idea'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.8'
@@ -8,8 +10,6 @@ plugins {
 group 'com.gleethos'
 version '1.0-SNAPSHOT'
 
-apply plugin: 'java'
-//apply plugin: 'jacoco'//this is not working! why?
 //-----------------------------
 
 sourceCompatibility = JavaVersion.VERSION_11

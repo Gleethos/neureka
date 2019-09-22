@@ -5,7 +5,7 @@ import neureka.core.T;
 import neureka.core.function.environment.Types;
 import neureka.core.function.factory.autograd.GraphLock;
 import neureka.core.function.factory.autograd.GraphNode;
-import neureka.core.function.factory.assembly.FunctionGraphBuilder;
+import neureka.core.function.factory.assembly.FunctionBuilder;
 import neureka.core.function.environment.Cache;
 
 public interface IFunction {
@@ -15,7 +15,7 @@ public interface IFunction {
     //------------------------------------------------------------------------------------------------------------------
     class setup {
         public static T commit(T drain, T[] tensors, String operation, boolean doAD) {
-            return commit(drain, tensors, FunctionGraphBuilder.newBuild(operation, doAD));
+            return commit(drain, tensors, FunctionBuilder.newBuild(operation, doAD));
         }
 
         public static T commit(T drain, T[] tensors, IFunction function) {

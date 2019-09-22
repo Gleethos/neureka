@@ -6,7 +6,7 @@ import neureka.core.function.factory.implementations.FInput;
 
 import java.util.*;
 
-public class FunctionGraphBuilder {
+public class FunctionBuilder {
 
     /**
      * @param f_id
@@ -185,7 +185,7 @@ public class FunctionGraphBuilder {
                     for (int Oi = 0; Oi < IFunction.TYPES.REGISTER.length; Oi++) {
                         if (IFunction.TYPES.REGISTER[Oi].equals(possibleFunction)) {
                             f_id = Oi;
-                            IFunction newCore = FunctionGraphBuilder.newBuild(
+                            IFunction newCore = FunctionBuilder.newBuild(
                                     FunctionParser.parsedComponent(Components.get(0), possibleFunction.length()), doAD
                                 );
                             sources.add(newCore);
@@ -211,7 +211,7 @@ public class FunctionGraphBuilder {
             }
             component = FunctionParser.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =>Cleaning!
             IFunction newBuild;
-            newBuild = FunctionGraphBuilder.newBuild(component, doAD);
+            newBuild = FunctionBuilder.newBuild(component, doAD);
             return newBuild;
         } else {// More than one component left:
             if (IFunction.TYPES.REGISTER[f_id] == "x" || IFunction.TYPES.REGISTER[f_id]=="<" || IFunction.TYPES.REGISTER[f_id]==">") {
@@ -242,7 +242,7 @@ public class FunctionGraphBuilder {
             final ListIterator<String> ComponentIterator2 = Components.listIterator();
             while (ComponentIterator2.hasNext()) {
                 final String currentComponent2 = ComponentIterator2.next();
-                IFunction newCore2 = FunctionGraphBuilder.newBuild(currentComponent2, doAD);//Dangerous recursion lives here!
+                IFunction newCore2 = FunctionBuilder.newBuild(currentComponent2, doAD);//Dangerous recursion lives here!
                 sources.add(newCore2);
             }
             sources.trimToSize();
