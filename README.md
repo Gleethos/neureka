@@ -1,4 +1,4 @@
-# NEUREKA - [![Build Status](https://travis-ci.com/Gleethos/neureka.svg?branch=master)](https://travis-ci.org/gleethos/neureka) - [![Code Coverage](https://img.shields.io/codecov/c/github/gleethos/neureka)](https://codecov.io/github/gleethos/neureka)
+# NEUREKA - [![Build Status](https://travis-ci.com/Gleethos/neureka.svg?branch=master)](https://travis-ci.org/gleethos/neureka) - [![Code Coverage](https://img.shields.io/codecov/c/github/gleethos/neureka)](https://codecov.io/github/gleethos/neureka) - [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
@@ -87,20 +87,20 @@ You can also:
 
 ### Tech
 
-This library is heavily inspired by PyTorch.
+This library is heavily inspired by [PyTorch](https://github.com/pytorch/pytorch).
 A powerful deep learning framework that combines
-dynamic computation, performance and debugging freedom!
+[dynamic computation](https://medium.com/@omaraymanomar/dynamic-vs-static-computation-graph-2579d1934ecf), performance and debugging freedom!
 
-PyTorch however does not carry with it the benefit of write once run everywhere! 
+PyTorch however does not carry with it the benefit of *'write once run everywhere'*! 
 
 This is due to the fact that internally PyTorch is written
-in C++. Additionally, GPU acceleration is written in nvidia's cuda. 
+in C++. Additionally, it's GPU acceleration is written in nvidia's cuda. 
 Which means that even developers willing to compile for all platforms
 would still be locked out of AMD Systems when it comes to performance.
 
 For that reason Neureka is written in Java and OpenCl (Aparapi).
 Although performance will certainly be impacted by this choice,
-uncomplicated deployment and ease of use are the benefit.
+uncomplicated deployment and ease of use are the benefits.
 Additionally, the use of OpenCl theoretically should allow for
 FPGA utilization. This however has not been tested.
 
@@ -133,4 +133,6 @@ of this project to understand what Neureka is supposed to be!
 License
 ----
 
-**It's Free to use!**
+**It's Free!**
+
+---
