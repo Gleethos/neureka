@@ -2,13 +2,14 @@ import neureka.core.T;
 import org.junit.Assert;
 import org.junit.Test;
 import util.NTester;
+import util.NTester_Tensor;
 
 public class TestOnlyCPU {
 
     @Test
     public void testTest() throws InterruptedException {
 
-        NTester tester = new NTester("helper", false);
+        NTester_Tensor tester = new NTester_Tensor("Tensor tester (only cpu)");
 
         T x = new T(new int[]{1}, 3).setRqsGradient(true);
         T b = new T(new int[]{1}, -4);
@@ -18,21 +19,19 @@ public class TestOnlyCPU {
          *  dx:   8*3 - 32  = -8
          * */
         T y = new T(new T[]{x, b, w}, "((i0+i1)*i2)^2");
-        Assert.assertEquals("[1]:(4.0); ->d[1]:(-8.0), ", y.toString());
+        tester.testTensor(y, new String[]{"[1]:(4.0); ->d[1]:(-8.0), "});
         y.backward(new T(2));
-        Assert.assertEquals(tester.stringified(new double[]{-16}), tester.stringified(x.gradient()));
+        tester.testTensor(x, new String[]{"-16.0"});
 
         y = new T("(","(",x,"+",b,")","*",w,")^2");
-        Assert.assertEquals("[1]:(4.0); ->d[1]:(-8.0), ", y.toString());
+        tester.testTensor(y, new String[]{"[1]:(4.0); ->d[1]:(-8.0), "});
         y.backward(new T(1));
-        Assert.assertEquals(tester.stringified(new double[]{-8}), tester.stringified(x.gradient()));
-
+        tester.testTensor(x, new String[]{"-8.0"});
 
         y = new T("((",x,"+",b,")*",w,")^2");
-        Assert.assertEquals("[1]:(4.0); ->d[1]:(-8.0), ", y.toString());
+        tester.testTensor(y, new String[]{"[1]:(4.0); ->d[1]:(-8.0), "});
         y.backward(new T(-1));
-        Assert.assertEquals(tester.stringified(new double[]{8}), tester.stringified(x.gradient()));
-
+        tester.testTensor(x, new String[]{"8.0"});
 
         //===========================================
         x = new T(
@@ -50,10 +49,10 @@ public class TestOnlyCPU {
                         2, 3, -1
                 });
         T z = new T(new T[]{x, y}, "I0xi1");
-        Assert.assertEquals(z.toString().contains("[2x1x2]:(19.0, 22.0, 1.0, -6.0)"), true);
+        tester.testTensor(z, new String[]{"[2x1x2]:(19.0, 22.0, 1.0, -6.0)"});
 
         z = new T(new Object[]{x, "x", y});
-        Assert.assertEquals(z.toString().contains("[2x1x2]:(19.0, 22.0, 1.0, -6.0)"), true);
+        tester.testTensor(z, new String[]{"[2x1x2]:(19.0, 22.0, 1.0, -6.0)"});
         //=======================
         x = new T(
                 new int[]{3, 3},
@@ -70,14 +69,15 @@ public class TestOnlyCPU {
                         2, 3,
                 }).setRqsGradient(true);
 
-        Assert.assertEquals(y.toString().contains(":g:(null)"), true);
+        tester.testTensor(y, new String[]{":g:(null)"});
         z = new T(new T[]{x, y}, "I0xi1");
-        Assert.assertEquals(z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)"), true);
+        tester.testTensor(z, new String[]{"[2x2]:(15.0, 15.0, 18.0, 8.0)"});
 
         z = new T(new Object[]{x, "x", y});
-        Assert.assertEquals(z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)"), true);
+        tester.testTensor(z, new String[]{"[2x2]:(15.0, 15.0, 18.0, 8.0)"});
+
         z.backward(new T(new int[]{2, 2}, 1));
-        Assert.assertEquals(y.toString().contains("[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)"), true);
+        tester.testTensor(y, new String[]{"[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)"});
         System.out.println(z);
 
 
@@ -87,6 +87,9 @@ public class TestOnlyCPU {
 
     @Test
     public void testAD(){
+
+        NTester_Tensor tester = new NTester_Tensor("Tensor tester (only cpu)");
+
         T x = new T(
                 new int[]{2, 2},
                 new double[]{
@@ -96,9 +99,11 @@ public class TestOnlyCPU {
         ).setRqsGradient(true);
         T y = new T(new int[]{1, 1}, -3);
         T z = new T(new T[]{x, y}, "I0xi1");
-        Assert.assertEquals(z.toString().contains("[2x2]:(3.0, -6.0, 9.0, -9.0)"), true);
+        tester.testTensor(z, new String[]{"[2x2]:(3.0, -6.0, 9.0, -9.0)"});
+
         z.backward(new T(new int[]{2, 2}, 1));
-        Assert.assertEquals(x.toString().contains("[2x2]:(-1.0, 2.0, -3.0, 3.0):g:(-3.0, -3.0, -3.0, -3.0)"), true);
+        tester.testTensor(x, new String[]{"[2x2]:(-1.0, 2.0, -3.0, 3.0):g:(-3.0, -3.0, -3.0, -3.0)"});
+
     }
 
 

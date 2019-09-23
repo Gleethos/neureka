@@ -10,6 +10,17 @@ public class NTester_Tensor extends NTester {
         super(name);
     }
 
+    public int testTensor(T tensor, String[] expected){
+        printSessionStart("Testing Tensor!");
+        println(bar+"  Tensor: "+tensor.toString());
+        println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
+        String result = tensor.toString();
+        for(String element : expected){
+            this.assertStringContains("result", result, element);
+        }
+        return (printSessionEnd()>0)?1:0;
+    }
+
     public int testTensorAutoGrad(T[] source, String operation, String[] expected){
         printSessionStart("Testing T: autograd!");
         println(bar+"  IFunction: "+operation);
