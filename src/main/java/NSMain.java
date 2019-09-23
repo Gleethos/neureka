@@ -53,7 +53,7 @@ public class NSMain {
         /*
 		//======================================
 		// Open a database connection
-        // (create a new database if it doesn't exist yet):
+        // (build a new database if it doesn't exist yet):
         EntityManagerFactory emf =
             Persistence.createEntityManagerFactory("$objectdb/db/Cores.odb");
         EntityManager em = emf.createEntityManager();

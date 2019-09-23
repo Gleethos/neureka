@@ -14,7 +14,7 @@ public class FunctionBuilder {
      * @param doAD
      * @return
      */
-    public static IFunction newBuild(int f_id, int size, boolean doAD){
+    public static IFunction build(int f_id, int size, boolean doAD){
         if (f_id == 18){
             size = 2;
         } else if(IFunction.TYPES.REGISTER[f_id]==","){
@@ -22,18 +22,18 @@ public class FunctionBuilder {
             for(int i=0; i<size; i++){
                 srcs.add(new FInput().newBuild(""+i));
             }
-            return FunctionConstructor.createFunction(f_id, srcs, doAD);
+            return FunctionConstructor.construct(f_id, srcs, doAD);
         }
         if (f_id < 10) {
-            return newBuild(IFunction.TYPES.REGISTER[f_id] + "(I[0])", doAD);//, tipReached);
+            return build(IFunction.TYPES.REGISTER[f_id] + "(I[0])", doAD);
         } else if (f_id < 12) {
-            return newBuild(IFunction.TYPES.REGISTER[f_id] + "I[j]", doAD);//, tipReached);
+            return build(IFunction.TYPES.REGISTER[f_id] + "I[j]", doAD);
         } else {
             String expression = "I[0]";
             for (int i = 0; i < size - 1; i++) {
                 expression += IFunction.TYPES.REGISTER[f_id] + "I[" + (i + 1) + "]";
             }
-            return newBuild(expression, doAD);
+            return build(expression, doAD);
         }
     }
 
@@ -42,7 +42,7 @@ public class FunctionBuilder {
      * @param doAD
      * @return
      */
-    public static IFunction newBuild(String expression, boolean doAD) {
+    public static IFunction build(String expression, boolean doAD) {
         expression =
             (expression.length()>0
                     && (expression.charAt(0) != '('||expression.charAt(expression.length() - 1) != ')'))
@@ -52,7 +52,7 @@ public class FunctionBuilder {
         if (IFunction.CACHE.FUNCTIONS().containsKey(k)) {
             return IFunction.CACHE.FUNCTIONS().get(k);
         }
-        IFunction built = construct(expression, doAD);//, tipReached);
+        IFunction built = _build(expression, doAD);//, tipReached);
         if (built != null) {
             IFunction.CACHE.FUNCTIONS().put(((doAD)?"d":"")+"(" + built.toString() + ")", built);
         }
@@ -64,7 +64,7 @@ public class FunctionBuilder {
      * @param doAD
      * @return
      */
-    private static IFunction construct(String expression, boolean doAD){
+    private static IFunction _build(String expression, boolean doAD){
         expression = expression
                         .replace("<<", ""+((char)171))
                         .replace(">>", ""+((char)187));
@@ -185,13 +185,12 @@ public class FunctionBuilder {
                     for (int Oi = 0; Oi < IFunction.TYPES.REGISTER.length; Oi++) {
                         if (IFunction.TYPES.REGISTER[Oi].equals(possibleFunction)) {
                             f_id = Oi;
-                            IFunction newCore = FunctionBuilder.newBuild(
+                            IFunction newCore = FunctionBuilder.build(
                                     FunctionParser.parsedComponent(Components.get(0), possibleFunction.length()), doAD
                                 );
                             sources.add(newCore);
-                            function = FunctionConstructor.createFunction(f_id, sources, doAD);
+                            function = FunctionConstructor.construct(f_id, sources, doAD);
                             return function;
-                            // I <3 u 2
                         }
                     }
                 }
@@ -211,11 +210,11 @@ public class FunctionBuilder {
             }
             component = FunctionParser.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =>Cleaning!
             IFunction newBuild;
-            newBuild = FunctionBuilder.newBuild(component, doAD);
+            newBuild = FunctionBuilder.build(component, doAD);
             return newBuild;
         } else {// More than one component left:
             if (IFunction.TYPES.REGISTER[f_id] == "x" || IFunction.TYPES.REGISTER[f_id]=="<" || IFunction.TYPES.REGISTER[f_id]==">") {
-                Components = rebindPairwise(Components, f_id);
+                Components = _rebindPairwise(Components, f_id);
             }else if(IFunction.TYPES.REGISTER[f_id] == ","){
                 if(Components.get(0).startsWith("[")){
                     Components.set(0,Components.get(0).substring(1));
@@ -228,7 +227,6 @@ public class FunctionBuilder {
                         }else{
                             splitted = Components.get(Components.size()-1).split("]");
                         }
-
                         if(splitted.length>1){
                             splitted = new String[]{splitted[0], Components.get(Components.size()-1).substring(splitted[0].length()+offset)};
                             Components.remove(Components.size()-1);
@@ -242,7 +240,7 @@ public class FunctionBuilder {
             final ListIterator<String> ComponentIterator2 = Components.listIterator();
             while (ComponentIterator2.hasNext()) {
                 final String currentComponent2 = ComponentIterator2.next();
-                IFunction newCore2 = FunctionBuilder.newBuild(currentComponent2, doAD);//Dangerous recursion lives here!
+                IFunction newCore2 = FunctionBuilder.build(currentComponent2, doAD);//Dangerous recursion lives here!
                 sources.add(newCore2);
             }
             sources.trimToSize();
@@ -259,7 +257,7 @@ public class FunctionBuilder {
                 }
             }
             sources = newVariable;
-            function = FunctionConstructor.createFunction(f_id, sources, doAD);
+            function = FunctionConstructor.construct(f_id, sources, doAD);
             return function;
         }
     }
@@ -269,13 +267,13 @@ public class FunctionBuilder {
      * @param f_id
      * @return
      */
-    private static List<String> rebindPairwise(List<String> components, int f_id) {
+    private static List<String> _rebindPairwise(List<String> components, int f_id) {
         if (components.size() > 2) {
             String newComponent = "(" + components.get(0) + IFunction.TYPES.REGISTER[f_id] + components.get(1) + ")";
             components.remove(components.get(0));
             components.remove(components.get(0));
             components.add(0, newComponent);
-            components = rebindPairwise(components, f_id);
+            components = _rebindPairwise(components, f_id);
         }
         return components;
     }

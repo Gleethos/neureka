@@ -15,7 +15,7 @@ public interface IFunction {
     //------------------------------------------------------------------------------------------------------------------
     class setup {
         public static T commit(T drain, T[] tensors, String operation, boolean doAD) {
-            return commit(drain, tensors, FunctionBuilder.newBuild(operation, doAD));
+            return commit(drain, tensors, FunctionBuilder.build(operation, doAD));
         }
 
         public static T commit(T drain, T[] tensors, IFunction function) {

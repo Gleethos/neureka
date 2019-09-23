@@ -33,7 +33,7 @@ public abstract class Function implements IFunction {
 
     @Override
     public IFunction newBuild(String expression) {
-        return FunctionBuilder.newBuild(expression, true);
+        return FunctionBuilder.build(expression, true);
     }
 
     @Override
@@ -134,7 +134,7 @@ public abstract class Function implements IFunction {
     {
         T output = T.factory.newTensor(input.shape(), input.translation());
         if (!derive && !_isFlat) {
-            output.inject(FunctionBuilder.newBuild(_id, 1, true).activate(new T[]{input}));
+            output.inject(FunctionBuilder.build(_id, 1, true).activate(new T[]{input}));
             output.add(input.find(GraphLock.class));
             return output;
         }
@@ -166,12 +166,12 @@ public abstract class Function implements IFunction {
         /**  The code below deals with deep functions (non flat):  * */
         if (d < 0 && !_isFlat) {//only flat functions can be executed
             if (TYPES.isFunction(_id)) {
-                return (FunctionBuilder.newBuild(TYPES.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).activate(input));
+                return (FunctionBuilder.build(TYPES.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).activate(input));
             } else {
                 if (TYPES.isFunction(_id)||TYPES.isIndexer(_id)) {
                     /**  SUMMATION, PI,  * */
                     T[] tsrs = _source_activation(input);
-                    return (FunctionBuilder.newBuild(TYPES.REGISTER[_id] + "(I[j])", true).activate(tsrs));
+                    return (FunctionBuilder.build(TYPES.REGISTER[_id] + "(I[j])", true).activate(tsrs));
                 } else if (TYPES.isOperation(_id)) {
                     /**  '+', '-', 'x', '*', '%', '«', '»', ',', ...  * */
                     String operation = (TYPES.REGISTER[_id].length() > 1) ? TYPES.REGISTER[_id] : "";
@@ -180,17 +180,17 @@ public abstract class Function implements IFunction {
                         operation += "I[" + i + "]" + ((i + 1 < tsrs.length) ? TYPES.REGISTER[_id] : "");
                     }
                     if (j < 0) {
-                        return (FunctionBuilder.newBuild(operation, _doAD).activate(tsrs));
+                        return (FunctionBuilder.build(operation, _doAD).activate(tsrs));
                     } else {
-                        return (FunctionBuilder.newBuild(operation, _doAD).activate(tsrs, j));
+                        return (FunctionBuilder.build(operation, _doAD).activate(tsrs, j));
                     }
                 } else {
                     /**  Tensor shape translation: * */
                     T[] tsrs = _source_activation(input, j, new int[]{1});
                     if (j < 0) {
-                        return (FunctionBuilder.newBuild(_id, tsrs.length, _doAD).activate(tsrs));
+                        return (FunctionBuilder.build(_id, tsrs.length, _doAD).activate(tsrs));
                     } else {
-                        return (FunctionBuilder.newBuild(_id, tsrs.length, _doAD).activate(tsrs, j));
+                        return (FunctionBuilder.build(_id, tsrs.length, _doAD).activate(tsrs, j));
                     }
                 }
             }
@@ -283,13 +283,12 @@ public abstract class Function implements IFunction {
                     T t = input[input.length - 1];
                     return T.factory.exec.reshaped(t, newForm, true);//t.reshape(newForm);
                 } else {//reverse reshape:
-                    /**      [3, 2, 4, 0, 1]
-                     *      [0, 1, 2, 3, 4]
-                     * */
                     int[] reversed = new int[newForm.length];
                     for (int i = 0; i < newForm.length; i++) {
                         if(newForm[i]>=0){
                             reversed[newForm[i]] = i;
+                        } else if(_doAD){
+                            //TODO: exception! (not auto-differentiable)
                         }
                     }
                 }
@@ -298,13 +297,12 @@ public abstract class Function implements IFunction {
             } else if(TYPES.REGISTER[_id]==">") {
                 return _src.get(1).activate(input).setTargetValue(_src.get(0).activate(input).targetValue(true));
             } else {
-                T[] tsrs = input;
-                double[] inp = new double[tsrs.length];
+                double[] inp = new double[input.length];
                 T output = T.factory.newTensor(input[0].shape(), input[0].translation());
                 T finalOutput = output;
                 output.foreach((i) -> {
-                    for (int ii = 0; ii < tsrs.length; ii++) {
-                        inp[ii] = tsrs[ii].value()[i];
+                    for (int ii = 0; ii < input.length; ii++) {
+                        inp[ii] = input[ii].value()[i];
                     }
 
                     finalOutput.value()[i] = _scalar_activation(inp, j, d);
@@ -410,7 +408,7 @@ public abstract class Function implements IFunction {
         }
 
         @Contract(pure = true)
-        private static void foreach(T t1, T t2, Actor action) {
+        public static void foreach(T t1, T t2, Actor action) {
             double[] inputValue = (t1.value() == null) ? new double[t1.size()] : t1.value();
             double[] outputValue = (t2.value() == null) ? new double[t2.size()] : t2.value();
             t1.foreach((i) -> action.apply(i, inputValue, outputValue));
@@ -1037,10 +1035,9 @@ public abstract class Function implements IFunction {
             int[] t0Idx = new int[rank];
             int[] t1Idx = new int[rank];
             int[] t2Idx = new int[rank];
-            double[] t0_value = (t0_origin.gradientIsTargeted())?t0_origin.gradient():t0_origin.value();
-            double[] t1_value = (t1_handle.gradientIsTargeted())?t1_handle.gradient():t1_handle.value();
-            double[] t2_value = (t2_drain.gradientIsTargeted())?t2_drain.gradient():t2_drain.value();
-
+            double[] t0_value = t0_origin.targetValue();
+            double[] t1_value = t1_handle.targetValue();
+            double[] t2_value = t2_drain.targetValue();
 
             int drnSze = t0_origin.size();
             int i = 0;
@@ -1078,9 +1075,6 @@ public abstract class Function implements IFunction {
                             int i1 = T.factory.util.iOf(t1Idx, t1Tln);
                             int i2 = T.factory.util.iOf(t2Idx, t2Tln);
                             value += t1_value[i1] * t2_value[i2];
-                            //1*-2 +2*3 -3*6 +2*3, 1*3 +2*6 -3*3 +2*-1,
-                            //1*0  +2*2 -3*4 +2*2  +  4*-2 -2*3 -1*6 +5*3, 1*2 +2*4 -3*2 +2*1  +  4*3 -2*6 -1*3 +5*-1,
-                            //4*0  -2*2 -1*4 +5*2, 4*2 -2*4 -1*2 +5*1
                         }
                         incrementing = true;
                         ri = 0;

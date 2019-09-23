@@ -14,7 +14,7 @@ public class NTester_Function extends NTester {
 	public int testExpression(String expression, String expected, String description) 
 	{
 		IFunction function;// = new FunctionBuilder();
-		function = new FunctionBuilder().newBuild(expression, true);
+		function = new FunctionBuilder().build(expression, true);
 		printSessionStart(description);
 		println(bar+" Value toString: "+expression);
 		println(bar+" Expected toString: "+expected);
@@ -31,7 +31,7 @@ public class NTester_Function extends NTester {
 	}
 	public int testActivation(String expression, double[] input, double expected, String description) {
 		IFunction function;// = new FunctionBuilder();
-		function = new FunctionBuilder().newBuild(expression, true);
+		function = new FunctionBuilder().build(expression, true);
 		printSessionStart(description);
 		println(bar+" IFunction: "+expression);
 		String inputStr = "";
@@ -51,7 +51,7 @@ public class NTester_Function extends NTester {
 
 	public int testDeriviation(String expression, double[] input, int d,  double expected, String description) {
 		IFunction function;// = new FunctionBuilder();
-		function = new FunctionBuilder().newBuild(expression, true);
+		function = new FunctionBuilder().build(expression, true);
 		printSessionStart(description);
 		println(bar+" Test Deriviation of IFunction: "+expression);
 		String inputStr = "";
@@ -71,7 +71,7 @@ public class NTester_Function extends NTester {
 
 	public int testActivation(String expression, T[] input, T expected, String description) {
 		IFunction function;// = new FunctionBuilder();
-		function = new FunctionBuilder().newBuild(expression, true);
+		function = new FunctionBuilder().build(expression, true);
 		printSessionStart(description);
 		println(bar+" IFunction: "+expression);
 		String inputStr = "";
@@ -92,7 +92,7 @@ public class NTester_Function extends NTester {
 
 	public int testDerivative(String expression, T[] input, int d, T expected, String description) {
 		IFunction function;// = new FunctionBuilder();
-		function = new FunctionBuilder().newBuild(expression, true);
+		function = new FunctionBuilder().build(expression, true);
 		printSessionStart(description);
 		println(bar+" Deriviation of IFunction: "+expression);
 		String inputStr = "";

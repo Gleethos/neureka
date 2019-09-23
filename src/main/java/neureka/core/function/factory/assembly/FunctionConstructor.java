@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class FunctionConstructor
 {
-    public static IFunction createFunction(int f_id, ArrayList<IFunction> sources, boolean doAD)
+    public static IFunction construct(int f_id, ArrayList<IFunction> sources, boolean doAD)
     {
         boolean isFlat = true;
         for(IFunction f : sources){
