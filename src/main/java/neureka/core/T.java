@@ -456,11 +456,10 @@ public class T {
 
     }
 
-    public T() {
-    }// creates empty tensor;
+    public T() {}// creates empty tensor;
 
     public T(double value){
-        _construc(new int[]{1}, value);
+        _construct(new int[]{1}, value);
     }
 
     public T(int[] shape) {
@@ -469,10 +468,10 @@ public class T {
     }
 
     public T(int[] shape, double value) {
-        _construc(shape, value);
+        _construct(shape, value);
     }
 
-    private void _construc(int[] shape, double value){
+    private void _construct(int[] shape, double value){
         int size = factory.util.szeOfShp(shape);
         _value = new double[1];
         this.setIsVirtual((size > 1));
@@ -485,6 +484,9 @@ public class T {
         initialShape(shape);
     }
 
+    /**
+     * @param tensor
+     */
     public T(T tensor) {
         _shape = tensor._shape;
         _translation = tensor._translation;

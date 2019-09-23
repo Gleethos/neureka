@@ -1,4 +1,6 @@
 import neureka.core.T;
+import neureka.core.function.IFunction;
+import neureka.core.function.factory.assembly.FunctionBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 import util.NTester;
@@ -100,10 +102,18 @@ public class TestOnlyCPU {
         T y = new T(new int[]{1, 1}, -3);
         T z = new T(new T[]{x, y}, "I0xi1");
         tester.testTensor(z, new String[]{"[2x2]:(3.0, -6.0, 9.0, -9.0)"});
-
         z.backward(new T(new int[]{2, 2}, 1));
         tester.testTensor(x, new String[]{"[2x2]:(-1.0, 2.0, -3.0, 3.0):g:(-3.0, -3.0, -3.0, -3.0)"});
-
+        //---
+        x = new T(new int[]{1}, 0.1).setRqsGradient(true);
+        IFunction tanh = FunctionBuilder.build("tanh(i0)", true);
+        IFunction tenxx = FunctionBuilder.build("i0*100", true);
+        z = tenxx.activate(new T[]{tanh.activate(new T[]{x})});
+        tester.testTensor(z, new String[]{"[1]:(9.950371902099892)"});
+        z.backward(new T(new int[]{1}, 1));
+        tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.00990099009901)"});
+        tester.testTensor(z, new String[]{"[1]:(9.950371902099892); ->d[1]:(99.00990099009901), "});
+        //---
     }
 
 
