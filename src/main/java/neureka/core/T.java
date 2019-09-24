@@ -6,6 +6,7 @@ import neureka.core.function.factory.autograd.GraphNode;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.BiConsumer;
@@ -239,7 +240,7 @@ public class T {
         }
         return this;
     }
-
+    //---
     public boolean isOutsourced() {
         return (_flags & IS_OUTSOURCED_MASK) == IS_OUTSOURCED_MASK;
     }
@@ -331,16 +332,17 @@ public class T {
                 strShape += "x";
             }
         }
+        boolean compact = mode.contains("c");
         strShape = "[" + strShape + "]";
         String asString = "";
-        asString += _stringified((this.isOutsourced())?this.value():_value);
+        asString += _stringified(((this.isOutsourced())?this.value():_value), compact);
         asString = strShape + ":(" + asString + ")";
         if(mode.contains("g")){
             if(this.rqsGradient()){
                 asString += ":g:";
                 double[] gradient = this.gradient();
                 if(gradient!=null){
-                    asString += "("+_stringified((this.isOutsourced())?this.gradient():_gradient)+")";
+                    asString += "("+_stringified(((this.isOutsourced())?this.gradient():_gradient), compact)+")";
                 } else {
                     asString += "(null)";
                 }
@@ -367,13 +369,17 @@ public class T {
         return asString;
     }
 
-    private String _stringified(double[] v){
+    private String _stringified(double[] v, boolean format){
+        DecimalFormat Formatter = new DecimalFormat("###.###E0");
         String asString = "";
         int size = (this.isVirtual() ? this.size() : v.length);
         int trim = (size-50);
         size = (trim>0)?50:size;
         for (int i = 0; i < size; i++) {
-            asString += v[(this.isVirtual()) ? 0 : i];
+            asString +=
+                ((format)
+                    ?Formatter.format(v[(this.isVirtual())? 0 : i])
+                    :v[(this.isVirtual()) ? 0 : i]);
             if (i < size - 1) {
                 asString += ", ";
             } else if(trim>0){
@@ -563,7 +569,8 @@ public class T {
         if (tensors == null || tensors.length == 0 || tensors[0] == null) {
             return;
         }
-        IFunction.setup.commit(this, tensors, operation, doAD);
+        //TODO: check if result is within input tensors: then do not inject! (for preservation of identity!)
+        this.inject(IFunction.setup.commit(tensors, operation, doAD));
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

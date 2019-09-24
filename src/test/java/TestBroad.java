@@ -469,8 +469,7 @@ public class TestBroad {
         tensor1 = new T(new int[]{2, 2, 1}, new double[]{
                 1, 2, //3, 1,
                 2, -3, //-2, -1,
-        });
-        tensor1.setRqsGradient(true);
+        }).setRqsGradient(true);
         //---
         tensor2 = new T(new int[]{1, 2, 2}, new double[]{
                 -2, 3,
@@ -486,11 +485,15 @@ public class TestBroad {
                 new T(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
                 new double[][]{{-1.0, -1.0, 5.0, 5.0}, null}
         );
+        //result = new T(new T[]{tensor1, tensor1}, "ig0<-i0");
+        //tester.testContains(tensor1.toString("g"), new String[]{"test"}, "");
+
         try {
             Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
     }
 
     @Test

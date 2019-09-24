@@ -14,24 +14,24 @@ public interface IFunction {
 
     //------------------------------------------------------------------------------------------------------------------
     class setup {
-        public static T commit(T drain, T[] tensors, String operation, boolean doAD) {
-            return commit(drain, tensors, FunctionBuilder.build(operation, doAD));
+        public static T commit(T[] tensors, String operation, boolean doAD) {
+            return commit(tensors, FunctionBuilder.build(operation, doAD));
         }
 
-        public static T commit(T drain, T[] tensors, IFunction function) {
+        public static T commit(T[] tensors, IFunction function) {
             GraphLock newGid = new GraphLock(function, tensors);
             for (T t : tensors) {
                 t.add(new GraphNode(t, null, null, newGid));
             }
-            drain.inject(function.activate(tensors));
-            if (drain.has(GraphNode.class)) {
-                ((GraphNode) drain.find(GraphNode.class)).trimTree(null);
+            T result = (function.activate(tensors));
+            if (result.has(GraphNode.class)) {
+                ((GraphNode) result.find(GraphNode.class)).trimTree(null);
             }
             IFunction.CACHE.free(tensors);
             for (T t : tensors) {
                 t.setGradientIsTargeted(false);
             }
-            return drain;
+            return result;
         }
     }
 

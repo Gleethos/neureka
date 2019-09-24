@@ -179,33 +179,45 @@ public class Device {
     }
 
     public void calculate(T[] tsrs, int f_id, int d) {
-        if (_kernel == null) {
-            //What then?
-        } else {
-            int[] mode = new int[tsrs.length + 2];
-            mode[0] = f_id;
-            mode[mode.length - 1] = d;
-            for (int mi = 0; mi < (tsrs.length); mi++) {
-                mode[mi + 1] = (tsrs[mi] != null) ? _register[0][_tensorsMap.get(tsrs[mi])] : -1;
-            }
-            byte gradPtrMod = 0;
-            for(int i=0; i<tsrs.length; i++){
-                boolean duplicate = false;
-                for(int ii=i-1; ii>=0; ii--){
-                    duplicate = (tsrs[ii]==tsrs[i])?true:duplicate;
+        try{
+            //_validate(tsrs);
+            if (_kernel == null) {
+                //What then?
+            } else {
+                int[] mode = new int[tsrs.length + 2];
+                mode[0] = f_id;
+                mode[mode.length - 1] = d;
+                for (int mi = 0; mi < (tsrs.length); mi++) {
+                    mode[mi + 1] = (tsrs[mi] != null) ? _register[0][_tensorsMap.get(tsrs[mi])] : -1;
                 }
-                if(tsrs[i].gradientIsTargeted() && !duplicate){
-                    gradPtrMod += (1<<i);
+                byte gradPtrMod = 0;
+                for(int i=0; i<tsrs.length; i++){
+                    boolean duplicate = false;
+                    for(int ii=i-1; ii>=0; ii--){
+                        duplicate = (i!=ii && tsrs[ii]==tsrs[i])?true:duplicate;
+                    }
+                    if(tsrs[i].gradientIsTargeted() && !duplicate){
+                        gradPtrMod += (1<<i);
+                    }
                 }
+                _kernel.execute(
+                        Range.create(
+                                _kernel.executionSizeOf_calc(mode, gradPtrMod)
+                        )
+                );
+                _kernel.resetGradPtr(gradPtrMod);
             }
-            _kernel.execute(
-                    Range.create(
-                            _kernel.executionSizeOf_calc(mode, gradPtrMod)
-                    )
-            );
-            _kernel.resetGradPtr(gradPtrMod);
+        } catch (Exception e){
+            System.out.println(e);
         }
+    }
 
+    private void _validate(T[] tsrs){
+        if(tsrs.length==2){
+            if(tsrs[0]==tsrs[1] && tsrs[0].gradientIsTargeted()||tsrs[1].gradientIsTargeted()){
+                throw new IllegalArgumentException("[Error]:( '->'/'<-' operator must not be applied to the same tensor! )");
+            }
+        }
     }
 
     public void calculate(T t, double value, int f_id) {

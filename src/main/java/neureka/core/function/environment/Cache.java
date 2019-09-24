@@ -22,8 +22,10 @@ public class Cache
     public synchronized void free(T[] input)
     {
         for(T t : input){
-            TENSORS.remove(((GraphNode)t.find(GraphNode.class)).lock());
-            t.remove(GraphNode.class);
+            if(t.has(GraphNode.class)){
+                TENSORS.remove(((GraphNode)t.find(GraphNode.class)).lock());
+                t.remove(GraphNode.class);
+            }
         }
     }
 
@@ -36,7 +38,7 @@ public class Cache
             }
         }
         if(untracked==null){//If graph tracking (nodes) has not yet been initialized!
-            return IFunction.setup.commit(new T(), input, function);
+            return IFunction.setup.commit(input, function);
         }
         for(T t : input){
             if(!t.has(GraphNode.class)){

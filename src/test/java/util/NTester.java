@@ -31,6 +31,15 @@ public class NTester extends Assert{
         }
     }
 
+    public int testContains(String result, String[] expected, String description){
+        printSessionStart(description);
+        println(bar+"  Tensor: "+result);
+        println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
+        for(String element : expected){
+            this.assertStringContains("result", result, element);
+        }
+        return (printSessionEnd()>0)?1:0;
+    }
 
     protected void printSessionStart(String message){
         this.session = "";

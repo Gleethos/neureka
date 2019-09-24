@@ -1,9 +1,7 @@
 import neureka.core.T;
 import neureka.core.function.IFunction;
 import neureka.core.function.factory.assembly.FunctionBuilder;
-import org.junit.Assert;
 import org.junit.Test;
-import util.NTester;
 import util.NTester_Tensor;
 
 public class TestOnlyCPU {
@@ -34,7 +32,6 @@ public class TestOnlyCPU {
         tester.testTensor(y, new String[]{"[1]:(4.0); ->d[1]:(-8.0), "});
         y.backward(new T(-1));
         tester.testTensor(x, new String[]{"8.0"});
-
         //===========================================
         x = new T(
                 new int[]{2, 3, 1},
@@ -88,8 +85,8 @@ public class TestOnlyCPU {
 
 
     @Test
-    public void testAD(){
-
+    public void testAD()
+    {
         NTester_Tensor tester = new NTester_Tensor("Tensor tester (only cpu)");
 
         T x = new T(
@@ -114,6 +111,12 @@ public class TestOnlyCPU {
         tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.00990099009901)"});
         tester.testTensor(z, new String[]{"[1]:(9.950371902099892); ->d[1]:(99.00990099009901), "});
         //---
+        tester.testContains(
+                z.toString("dgc"),
+                new String[]{"[1]:(9,95037E0); ->d[1]:(99,0099E0), "},
+                "test double formatting"
+        );
+
     }
 
 
