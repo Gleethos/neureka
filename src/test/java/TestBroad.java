@@ -1,6 +1,7 @@
 
 import neureka.core.T;
 import neureka.core.device.Device;
+import neureka.core.function.IFunction;
 import org.junit.Assert;
 import org.junit.Test;
 import util.NTester_Function;
@@ -84,11 +85,20 @@ public class TestBroad {
                 new T[]{tensor1, tensor2, tensor3},
                 "(Ig[0]<-I[1])->I[2]",
                 new String[][]{
-                        {"(-4.0)"},//result
+                        {"empty"},//result
                         {"(3.0)", "g:(-4.0)"},//tensor1
                         {"(-4.0)"},//tensor2
                         {"(-4.0)"},//tensor3
                 });
+        tensor1 = new T(3).setRqsGradient(true);
+        tensor2 = new T(-4);
+        tensor3 = new T(2);
+        T result = IFunction.setup.commit(new T[]{tensor1, tensor2, tensor3}, "(Ig[0]<-I[1])->I[2]", true);
+        tester.testContains(
+                result.toString(),
+                new String[]{"(-4.0)"},
+                "Testing if IFunction.setup.commit() returns non unique result!"
+        );
         //---
         tensor1 = new T(new int[]{1, 3}, 2);
         tensor2 = new T(new int[]{2, 1}, -1);
@@ -233,10 +243,22 @@ public class TestBroad {
         });
         tester.testTensorAutoGrad(new T[]{tensor1, tensor2, tensor3},
                 "i0<<i1<<i2",
-                new String[]{"[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"});
+                new String[]{"empty"});
+        result = IFunction.setup.commit(new T[]{tensor1, tensor2, tensor3}, "i0<<i1<<i2", true);
+        tester.testContains(
+                result.toString(),
+                new String[]{"[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"},
+                "Testing if IFunction.setup.commit() returns non unique result!"
+        );
         tester.testTensorAutoGrad(new T[]{tensor1, tensor2, tensor3},//TODO:REACTIVATE!
                 "i2>>i1>>i0",
-                new String[]{"[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"});
+                new String[]{"empty"});
+        result = IFunction.setup.commit(new T[]{tensor1, tensor2, tensor3}, "i2>>i1>>i0", true);
+        tester.testContains(
+                result.toString(),
+                new String[]{"[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"},
+                "Testing if IFunction.setup.commit() returns non unique result!"
+        );
         //=====================
         //---
         tensor1 = new T(new int[]{2, 2, 1}, new double[]{
@@ -421,7 +443,7 @@ public class TestBroad {
         //===================
         tensor1 = new T(new int[]{2}, 3);
         tensor2 = new T(new int[]{2}, 4);
-        T result = new T(new T[]{tensor1, tensor2}, "i0*i1");
+        result = new T(new T[]{tensor1, tensor2}, "i0*i1");
         tester.testTensorAutoGrad(
                 new T[]{tensor1, tensor2},
                 "i0*i1",

@@ -2,6 +2,7 @@ package neureka.core.function.factory.autograd;
 
 import neureka.core.T;
 import neureka.core.function.IFunction;
+import neureka.core.function.factory.Function;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -217,9 +218,11 @@ public class GraphNode {
             }else if(this.usesReverseAD()){
                 this.forEach((t, g)->{
                     if(_function.id()==18){// x operation required for chainrule!
-                        t.backward(new T(new T[]{error, g, new T(t.shape(), 0)}, "I[0]>>I[1]>>I[2]", false));
+                        //t.backward(new T(new T[]{error, g, new T(t.shape(), 0)}, "I[0]>>I[1]>>I[2]", false));
+                        t.backward(Function.setup.commit(new T[]{error, g, new T(t.shape(), 0)}, "I[0]>>I[1]>>I[2]", false));
                     }else{
-                        t.backward(new T(new T[]{error, g}, "I[0]*I[1]", false));
+                        //t.backward(new T(new T[]{error, g}, "I[0]*I[1]", false));
+                        t.backward(Function.setup.commit(new T[]{error, g}, "I[0]*I[1]", false));
                     }
                 });
             }

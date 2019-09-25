@@ -569,8 +569,17 @@ public class T {
         if (tensors == null || tensors.length == 0 || tensors[0] == null) {
             return;
         }
-        //TODO: check if result is within input tensors: then do not inject! (for preservation of identity!)
-        this.inject(IFunction.setup.commit(tensors, operation, doAD));
+        T result = IFunction.setup.commit(tensors, operation, doAD);
+        boolean resultIsUnique = true;
+        for(T t : tensors){
+            if(t == result){
+                resultIsUnique = false;
+                break;
+            }
+        }
+        if(resultIsUnique){
+            this.inject(result);
+        }
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
