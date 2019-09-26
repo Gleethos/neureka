@@ -7,8 +7,10 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -370,7 +372,8 @@ public class T {
     }
 
     private String _stringified(double[] v, boolean format){
-        DecimalFormat Formatter = new DecimalFormat("###.###E0");
+        DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.US);
+        DecimalFormat Formatter = new DecimalFormat("###.###E0", formatSymbols);
         String asString = "";
         int size = (this.isVirtual() ? this.size() : v.length);
         int trim = (size-50);
