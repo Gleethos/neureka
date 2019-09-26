@@ -6,28 +6,28 @@ import neureka.core.function.factory.Function;
 
 public class GraphBuilder
 {
-    public static void connect(T drain, T[] source, IFunction function){//, boolean derive
+    public static void connect(T output, T[] inputs, IFunction function){//, boolean derive
         if(!function.isFlat()){
            return;
         }
         //--------------------------------------------------------------------------------------
-        GraphLock gid = ((GraphNode)source[0].find(GraphNode.class)).lock();
-        GraphNode node = new GraphNode(drain,function, source, gid);
-        drain.add(node);
+        GraphLock gid = ((GraphNode)inputs[0].find(GraphNode.class)).lock();
+        GraphNode node = new GraphNode(output,function, inputs, gid);
+        output.add(node);
         if(node.usesAD() && function.isFlat()){
             /**  Preparing for back propagation:  * */
             if(node.usesForwardAD()){
                 int i = 0;
-                for(T src : source){
-                    GraphNode src_node = ((GraphNode) src.find(GraphNode.class));
+                for(T input : inputs){
+                    GraphNode src_node = ((GraphNode) input.find(GraphNode.class));
                     if(src_node.function()!=null && src_node.function().id()==18){
-                        T d = function.derive(source, i);
-                        node.put(src, d);// Sources created by x-mul are revers-mode cases!
+                        T d = function.derive(inputs, i);
+                        node.put(input, d);// Sources created by x-mul are revers-mode cases!
                     }else{
                         if(src_node.usesAD()){
-                            T d = function.derive(source, i);
+                            T d = function.derive(inputs, i);
                             if(src_node.size()==0 && node.size()==0){
-                                node.put(source[i], d);
+                                node.put(inputs[i], d);
                             } else {
                                 src_node.forEach(
                                     (t, g)->{
@@ -44,18 +44,17 @@ public class GraphBuilder
                                     //TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
                                 });
                             }
-
                         }
                         i++;
                     }
                 }
             }else if(node.usesReverseAD()) {
                 int i = 0;
-                for(T src : source){
-                    GraphNode src_node = ((GraphNode) src.find(GraphNode.class));
-                    if(src_node.mode()!=0 || src.rqsGradient()){
-                        T d = function.derive(source, i);
-                        node.put(src, d);// Add gradients with respect to every source tensor!
+                for(T input : inputs){
+                    GraphNode src_node = ((GraphNode) input.find(GraphNode.class));
+                    if(src_node.mode()!=0 || input.rqsGradient()){
+                        T d = function.derive(inputs, i);
+                        node.put(input, d);// Add gradients with respect to every source tensor!
                     }
                     i++;
                 }

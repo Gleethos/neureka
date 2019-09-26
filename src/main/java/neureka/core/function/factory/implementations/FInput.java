@@ -50,45 +50,45 @@ public class FInput implements IFunction, IProvider
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
-    public double activate(final double[] input, int j) {
-        return input[_index()];
+    public double activate(final double[] inputs, int j) {
+        return inputs[_index()];
     }
     @Override
-    public double activate(final double[] input) {
-        return input[(_index>=0)?_index:(Math.abs(_index)-1)];
+    public double activate(final double[] inputs) {
+        return inputs[(_index>=0)?_index:(Math.abs(_index)-1)];
     }
     @Override
-    public double derive(final double[] input, final int index) {
+    public double derive(final double[] inputs, final int index) {
         return (index == _index()) ? 1 : 0;
     }
     @Override
-    public double derive(double[] input, int index, int j) {
-        return derive(input, index);
+    public double derive(double[] inputs, int index, int j) {
+        return derive(inputs, index);
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
-    public T activate(T[] input, int j) {
-        if(this.providesGradient() && input[_index()].rqsGradient()){
-            input[_index()].setGradientIsTargeted(true);
+    public T activate(T[] inputs, int j) {
+        if(this.providesGradient() && inputs[_index()].rqsGradient()){
+            inputs[_index()].setGradientIsTargeted(true);
         }
-        return input[_index()];
+        return inputs[_index()];
     }
     @Override
-    public T activate(T[] input) {
-        if(this.providesGradient() && input[_index()].rqsGradient()){
-            input[_index()].setGradientIsTargeted(true);
+    public T activate(T[] inputs) {
+        if(this.providesGradient() && inputs[_index()].rqsGradient()){
+            inputs[_index()].setGradientIsTargeted(true);
         }
-        return input[_index()];
+        return inputs[_index()];
     }
     @Override
-    public T derive(T[] input, int index, int j) {
-        return derive(input, index);
+    public T derive(T[] inputs, int index, int j) {
+        return derive(inputs, index);
     }
     @Override
-    public T derive(T[] input, int index) {
+    public T derive(T[] inputs, int index) {
         return (index == _index())
-                ? T.factory.newTensor(1, input[0].shape())
-                : T.factory.newTensor(0, input[0].shape());
+                ? T.factory.newTensor(1, inputs[0].shape())
+                : T.factory.newTensor(0, inputs[0].shape());
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override

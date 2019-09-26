@@ -46,22 +46,22 @@ public class FConstant implements IFunction
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
-    public double activate(final double[] input, int j) {
+    public double activate(final double[] inputs, int j) {
     	return _value;
     }
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
-	public double activate(double[] input) {
+	public double activate(double[] inputs) {
 		return _value;
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
-	public double derive(double[] input, int index) {
+	public double derive(double[] inputs, int index) {
 		return 0;
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
-	public double derive(double[] input, int index, int j) {
+	public double derive(double[] inputs, int index, int j) {
 		return 0;
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -71,23 +71,23 @@ public class FConstant implements IFunction
 	}
 
 	@Override
-	public T activate(T[] input, int j) {
-		return T.factory.newTensor(this._value, input[0].shape());
+	public T activate(T[] inputs, int j) {
+		return T.factory.newTensor(this._value, inputs[0].shape());
 	}
 
 	@Override
-	public T activate(T[] input) {
-		return T.factory.newTensor(this._value, input[0].shape());
+	public T activate(T[] inputs) {
+		return T.factory.newTensor(this._value, inputs[0].shape());
 	}
 
 	@Override
-	public T derive(T[] input, int index, int j) {
-		return T.factory.newTensor(0, input[0].shape());
+	public T derive(T[] inputs, int index, int j) {
+		return T.factory.newTensor(0, inputs[0].shape());
 	}
 
 	@Override
-	public T derive(T[] input, int index) {
-		return T.factory.newTensor(0, input[0].shape());
+	public T derive(T[] inputs, int index) {
+		return T.factory.newTensor(0, inputs[0].shape());
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }

@@ -35,50 +35,50 @@ public class FVariable implements IFunction, IProvider {
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
-    public double activate(final double[] input, int j) {
-        return input[j];
+    public double activate(final double[] inputs, int j) {
+        return inputs[j];
     }
     @Override
-    public double activate(final double[] input) {
+    public double activate(final double[] inputs) {
         double sum = 0;
-        for (int Ii = 0; Ii < input.length; Ii++) {
-            sum += activate(input, Ii);
+        for (int Ii = 0; Ii < inputs.length; Ii++) {
+            sum += activate(inputs, Ii);
         }
         return sum;
     }
     @Override
-    public double derive(final double[] input, final int index) {
+    public double derive(final double[] inputs, final int index) {
         return 1.0;
     }
     @Override
-    public double derive(double[] input, int index, int j) {
+    public double derive(double[] inputs, int index, int j) {
         if (j != index) {
             return 0;
         }
-        return derive(input, index);
+        return derive(inputs, index);
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
-    public T activate(T[] input, int j) {
-        if(this.providesGradient() && input[j].rqsGradient()){
-            input[j].setGradientIsTargeted(true);
+    public T activate(T[] inputs, int j) {
+        if(this.providesGradient() && inputs[j].rqsGradient()){
+            inputs[j].setGradientIsTargeted(true);
         }
-        return input[j];
+        return inputs[j];
     }
     @Override
-    public T activate(T[] input) {
-        return new T(input, "sum(I[j])");
+    public T activate(T[] inputs) {
+        return new T(inputs, "sum(I[j])");
     }
     @Override
-    public T derive(T[] input, int index, int j) {
+    public T derive(T[] inputs, int index, int j) {
         if (j != index) {
-            return T.factory.newTensor(0, input[0].shape());
+            return T.factory.newTensor(0, inputs[0].shape());
         }
-        return derive(input, index);
+        return derive(inputs, index);
     }
     @Override
-    public T derive(T[] input, int index) {
-        return T.factory.newTensor(1, input[0].shape());
+    public T derive(T[] inputs, int index) {
+        return T.factory.newTensor(1, inputs[0].shape());
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override

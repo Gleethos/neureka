@@ -2,7 +2,6 @@
 import neureka.core.T;
 import neureka.core.device.Device;
 import neureka.core.function.IFunction;
-import org.junit.Assert;
 import org.junit.Test;
 import util.NTester_Function;
 import util.NTester_Tensor;
@@ -278,7 +277,6 @@ public class TestBroad {
                 new T(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
                 new double[][]{{-1.0, -1.0, 5.0, 5.0}, null}
         );
-
         //---
         //======================
         int[] shape = {4, 2, 9, 5, 6, 2};

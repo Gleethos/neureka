@@ -79,8 +79,8 @@ public abstract class Function implements IFunction {
                             reconstructed = reconstructed +
                                 (
                                     (_src.get(i) instanceof FConstant)
-                                            ? _src.get(i).toString().split("\\.")[0]
-                                            : _src.get(i).toString()
+                                        ? _src.get(i).toString().split("\\.")[0]
+                                        : _src.get(i).toString()
                                 );
                         }
                     } else {
@@ -102,29 +102,29 @@ public abstract class Function implements IFunction {
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
-    public abstract T activate(T[] input, int j);
+    public abstract T activate(T[] inputs, int j);
 
     @Override
-    public abstract T activate(T[] input);
+    public abstract T activate(T[] inputs);
 
     @Override
-    public abstract T derive(T[] input, int index, int j);
+    public abstract T derive(T[] inputs, int index, int j);
 
     @Override
-    public abstract T derive(T[] input, int index);
+    public abstract T derive(T[] inputs, int index);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
-    public abstract double activate(final double[] input, int j);
+    public abstract double activate(final double[] inputs, int j);
 
     @Override
-    public abstract double activate(final double[] input);
+    public abstract double activate(final double[] inputs);
 
     @Override
-    public abstract double derive(final double[] input, final int index, final int j);
+    public abstract double derive(final double[] inputs, final int index, final int j);
 
     @Override
-    public abstract double derive(final double[] input, final int index);
+    public abstract double derive(final double[] inputs, final int index);
 
     //==================================================================================================================
     /**
@@ -157,25 +157,25 @@ public abstract class Function implements IFunction {
     /**
      * Responsible for handling functions with multiple inputs!
      *
-     * @param input
+     * @param inputs
      * @param j
      * @param d
      * @return
      */
-    protected T _tensor_activation(T[] input, int j, int d) {
+    protected T _tensor_activation(T[] inputs, int j, int d) {
         /**  The code below deals with deep functions (non flat):  * */
         if (d < 0 && !_isFlat) {//only flat functions can be executed
             if (TYPES.isFunction(_id)) {
-                return (FunctionBuilder.build(TYPES.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).activate(input));
+                return (FunctionBuilder.build(TYPES.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).activate(inputs));
             } else {
                 if (TYPES.isFunction(_id)||TYPES.isIndexer(_id)) {
                     /**  SUMMATION, PI,  * */
-                    T[] tsrs = _source_activation(input);
+                    T[] tsrs = _source_activation(inputs);
                     return (FunctionBuilder.build(TYPES.REGISTER[_id] + "(I[j])", true).activate(tsrs));
                 } else if (TYPES.isOperation(_id)) {
                     /**  '+', '-', 'x', '*', '%', '«', '»', ',', ...  * */
                     String operation = (TYPES.REGISTER[_id].length() > 1) ? TYPES.REGISTER[_id] : "";
-                    T[] tsrs = _source_activation(input, j, null);
+                    T[] tsrs = _source_activation(inputs, j, null);
                     for (int i = 0; i < tsrs.length; i++) {
                         operation += "I[" + i + "]" + ((i + 1 < tsrs.length) ? TYPES.REGISTER[_id] : "");
                     }
@@ -186,7 +186,7 @@ public abstract class Function implements IFunction {
                     }
                 } else {
                     /**  Tensor shape translation: * */
-                    T[] tsrs = _source_activation(input, j, new int[]{1});
+                    T[] tsrs = _source_activation(inputs, j, new int[]{1});
                     if (j < 0) {
                         return (FunctionBuilder.build(_id, tsrs.length, _doAD).activate(tsrs));
                     } else {
@@ -196,15 +196,16 @@ public abstract class Function implements IFunction {
             }
         }
         /**  The following code is reached in flat functions only:  * */
-        T output = _execute(input, j, d);
+        T output = _execute(inputs, j, d);
         /**  Autograd-Graph will be generated below for the new GraphNode: **/
         if (d < 0 && _doAD) {
-            GraphBuilder.connect(output, input, this);
+            GraphBuilder.connect(output, inputs, this);
         }
         return output;
     }
 
-    private T _execute(T[] input, int j, int d) {
+    private T _execute(T[] input, int j, int d)
+    {
         Device device = (Device) input[0].find(Device.class);
         boolean onSameDevice = T.factory.util.shareGuestDevice(input);
         if (onSameDevice && TYPES.REGISTER[_id] != "," && (!TYPES.isConvection(_id) && d > -1)) {
@@ -214,8 +215,8 @@ public abstract class Function implements IFunction {
                 device.overwrite(_src.get(1).activate(input), _src.get(0).activate(input));
             } else {
                 int[] shp = (TYPES.REGISTER[_id] == "x")
-                                ?T.factory.util.shpOfCon(input[0].shape(), input[1].shape())
-                                :input[0].shape();
+                    ?T.factory.util.shpOfCon(input[0].shape(), input[1].shape())
+                    :input[0].shape();
                 T output = new T(shp, 0.0);
                 if (device != null) {
                     device.add(output);
