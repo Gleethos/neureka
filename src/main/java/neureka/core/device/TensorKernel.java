@@ -214,9 +214,13 @@ public class TensorKernel extends com.aparapi.Kernel
                 }
                 _set_tsr_ptr(t_i, _tsr_end(((t_i>0)?t_i-1:0)));
                 _set_tsr_sze(t_i, size*((tensor.rqsGradient())?-1:1));
-                _set_shp_ptr(t_i, _alloc_shp(shape));
+                //_set_shp_ptr(t_i, _alloc_shp(shape));
+                //_set_tln_ptr(t_i, _alloc_tln(translation));
+
+                _set_shp_ptr(t_i, _alloc_cfg(shape, _shapes, false));
+                _set_tln_ptr(t_i, _alloc_cfg(translation, _translations, true));
+
                 _set_shp_sze(t_i, shape.length);
-                _set_tln_ptr(t_i, _alloc_tln(translation));
                 _set_tln_sze(t_i, translation.length);
                 this.put(_pointers);
                 return ptr;
@@ -283,94 +287,57 @@ public class TensorKernel extends com.aparapi.Kernel
         this.put(_pointers);
         return rgr_ptr;
     }
+
     /**
      *    returns pointer to _shapes/_translations elements.
      *    moves _shapes/_translations to device if required data is not present.
      * */
-    private int _alloc_tln(int[] translation){
+    private int _alloc_cfg(int[] cfg, int[] cfgs, boolean is_tln){
         int zeros_ptr = 0;
-        for(int i = 0; i<_translations.length; i++){
-            if(_translations[i]!=0){
+        for(int i = 0; i<cfgs.length; i++){
+            if(cfgs[i]!=0){
                 zeros_ptr = i+1;
             }
             boolean matches = true;
-            for(int ii=0; ii<translation.length; ii++){
-                if((i+ii>=_translations.length)||_translations[i+ii]!=translation[ii]&&_translations[i+ii]!=0){
+            for(int ii=0; ii<cfg.length; ii++){
+                if((i+ii>=cfgs.length)||cfgs[i+ii]!=cfg[ii]&&cfgs[i+ii]!=0){
                     matches=false;
                 }
             }
             if(matches){
-                for(int ii=0; ii<translation.length; ii++){
-                    _translations[i+ii]=translation[ii];
+                for(int ii=0; ii<cfg.length; ii++){
+                    cfgs[i+ii]=cfg[ii];
                 }
-                this.put(_translations);
+                this.put(cfgs);
                 return i;
             }
         }
-        int[] newTranslations
+        int[] new_cfgs
                 = new int[
-                _translations.length+
-                        (
-                                translation.length>((int)(_translations.length* alloc_shp_tln_sizer))
-                                        ?translation.length
-                                        :((int)(_translations.length* alloc_shp_tln_sizer))
-                        )
+                cfgs.length+
+                     (
+                          cfg.length>((int)(cfgs.length* alloc_shp_tln_sizer))
+                                  ?cfg.length
+                                  :((int)(cfgs.length* alloc_shp_tln_sizer))
+                     )
                 ];
         for(int i=0; i<zeros_ptr; i++){
-            newTranslations[i] = _translations[i];
+            new_cfgs[i] = cfgs[i];
         }
-        for(int i=zeros_ptr; i<zeros_ptr+translation.length; i++){
-            newTranslations[i] =
-                    (i<zeros_ptr+translation.length)
-                    ?translation[i-zeros_ptr]
-                    :0;
-        }
-        int ptr = zeros_ptr;
-        _translations = newTranslations;
-        this.put(_translations);
-        return ptr;
-    }
-    private int _alloc_shp(int[] shape){
-        int zeros_ptr = 0;
-        for(int i = 0; i<_shapes.length; i++){
-            if(_shapes[i]!=0){
-                zeros_ptr = i+1;
-            }
-            boolean matches = true;
-            for(int ii=0; ii<shape.length; ii++){
-                if((i+ii>=_shapes.length)||_shapes[i+ii]!=shape[ii]&&_shapes[i+ii]!=0){
-                    matches=false;
-                }
-            }
-            if(matches){
-                for(int ii=0; ii<shape.length; ii++){
-                    _shapes[i+ii]=shape[ii];
-                }
-                this.put(_shapes);
-                return i;
-            }
-        }
-        int[] newShapes =
-            new int[
-            _shapes.length+
-                (
-                    shape.length>((int)(_shapes.length* alloc_shp_tln_sizer))
-                        ?shape.length
-                        :((int)(_shapes.length* alloc_shp_tln_sizer))
-                )
-            ];
-        for(int i=0; i<zeros_ptr; i++){
-            newShapes[i] = _shapes[i];
-        }
-        for(int i=zeros_ptr; i<zeros_ptr+shape.length; i++){
-            newShapes[i] =
-                (i<zeros_ptr+shape.length)
-                    ?shape[i-zeros_ptr]
-                    :0;
+        for(int i=zeros_ptr; i<zeros_ptr+cfg.length; i++){
+            new_cfgs[i] =
+                    (i<zeros_ptr+cfg.length)
+                            ?cfg[i-zeros_ptr]
+                            :0;
         }
         int ptr = zeros_ptr;
-        _shapes = newShapes;
-        this.put(_shapes);
+        if(is_tln){
+            _translations = new_cfgs;
+            this.put(_translations);
+        } else {
+            _shapes = new_cfgs;
+            this.put(_shapes);
+        }
         return ptr;
     }
 
@@ -425,18 +392,10 @@ public class TensorKernel extends com.aparapi.Kernel
      * */
     public int executionSizeOf_calc(int[] mode, double value, byte gradPtrMod)
     {// Mode contains _id, _value is applied to all!
-        if(_mde ==null ||_mde.length<3 ||_mde.length!=mode.length){
-            _mde = mode;
-            this._set_grad_ptr(gradPtrMod);
-            this.put(_mde);//up
-        }
-        for(int i = 0; i< _idx.length; i++){
-            _idx[i] = 0;
-        }
-        this.put(_idx);
+        int size = executionSizeOf_calc(mode, gradPtrMod);
         __val = new double[]{value};
         this.put(__val);
-        return _tsr_sze(mode[1]);
+        return size;//_tsr_sze(mode[1]);
     }
 
     private void _set_grad_ptr(byte flags){

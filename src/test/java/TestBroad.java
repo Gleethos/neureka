@@ -70,6 +70,7 @@ public class TestBroad {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        tester.closeWindows();
     }
 
     @Test
@@ -513,7 +514,7 @@ public class TestBroad {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
+        tester.closeWindows();
     }
 
     @Test
@@ -671,6 +672,7 @@ public class TestBroad {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        tester.closeWindows();
     }
 
 

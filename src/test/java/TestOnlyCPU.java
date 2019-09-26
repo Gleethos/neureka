@@ -79,8 +79,8 @@ public class TestOnlyCPU {
         tester.testTensor(y, new String[]{"[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)"});
         System.out.println(z);
 
-
         Thread.sleep(6000);
+        tester.closeWindows();
     }
 
 
@@ -116,7 +116,7 @@ public class TestOnlyCPU {
                 new String[]{"[1]:(9,95037E0); ->d[1]:(99,0099E0), "},
                 "test double formatting"
         );
-
+        tester.closeWindows();
     }
 
 

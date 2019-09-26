@@ -31,6 +31,15 @@ public class NTester extends Assert{
         }
     }
 
+    public void closeWindows(){
+        if(this.Console!=null){
+            this.Console.close();
+        }
+        if(this.ResultConsole!=null){
+            this.ResultConsole.close();
+        }
+    }
+
     public int testContains(String result, String[] expected, String description){
         printSessionStart(description);
         println(bar+"  Tensor: "+result);

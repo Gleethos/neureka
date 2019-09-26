@@ -2,6 +2,7 @@
 package neureka.frame;
 
 import java.awt.*;
+import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -9,16 +10,14 @@ import javax.swing.text.BadLocationException;
 
 public class NMessageFrame extends JFrame
 {
-	JScrollPane scroll;
-	private static int windowCount = 0;
-	private static int width = 500;
-	private static int height = 400;
-	private static int wpos = 0;
-	private static int hpos = 0;
-	private JTextArea outputField;
-	private boolean entered;
-	private String input;
-	private int linecount;
+	JScrollPane _scroll;
+	private static int _window_count = 0;
+	private static int _width = 500;
+	private static int _height = 400;
+	private static int _wpos = 0;
+	private static int _hpos = 0;
+	private JTextArea _output_field;
+	private int _linecount;
 	//=================================================
 	public NMessageFrame(String title) 
 	{
@@ -33,47 +32,45 @@ public class NMessageFrame extends JFrame
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int wdiv = 3;
 		int hdiv = 2;
-		this.width = (int)screenSize.getWidth()/wdiv;
-		this.height = (int)(screenSize.getHeight()*0.925)/hdiv;
-		this.wpos = windowCount%(wdiv);
-		this.hpos = windowCount/(wdiv);
-		windowCount++;
-		linecount = maxLineCount;
-		input = "";
-		entered = false;
+		this._width = (int)screenSize.getWidth()/wdiv;
+		this._height = (int)(screenSize.getHeight()*0.925)/hdiv;
+		this._wpos = _window_count %(wdiv);
+		this._hpos = _window_count /(wdiv);
+		_window_count++;
+		_linecount = maxLineCount;
 		this.setTitle(title);
-		this.setSize(this.width, this.height);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setLocation(wpos*width, hpos*height);
+		this.setSize(this._width, this._height);
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		this.setLocation(_wpos * _width, _hpos * _height);
 
-		outputField = new JTextArea();
-		outputField.setText("Process messages:\n");
-		outputField.setEditable(false);
+		_output_field = new JTextArea();
+		_output_field.setText("Process messages:\n");
+		_output_field.setEditable(false);
 		
 		Font txt = new Font("Verdana", Font.LAYOUT_LEFT_TO_RIGHT, 15);
-		outputField.setBackground(Color.BLACK);
-		outputField.setForeground(Color.CYAN);
-		outputField.setFont(txt);
+		_output_field.setBackground(Color.BLACK);
+		_output_field.setForeground(Color.CYAN);
+		_output_field.setFont(txt);
 
-		scroll = new JScrollPane(outputField);
-		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scroll.setBackground(Color.DARK_GRAY);
-		scroll.setForeground(Color.BLUE);
-		scroll.getVerticalScrollBar().setBackground(Color.DARK_GRAY);
-		scroll.getHorizontalScrollBar().setBackground(Color.DARK_GRAY);
-		this.getContentPane().add(scroll, BorderLayout.CENTER);
+		_scroll = new JScrollPane(_output_field);
+		_scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		_scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		_scroll.setBackground(Color.DARK_GRAY);
+		_scroll.setForeground(Color.BLUE);
+		_scroll.getVerticalScrollBar().setBackground(Color.DARK_GRAY);
+		_scroll.getHorizontalScrollBar().setBackground(Color.DARK_GRAY);
+		this.getContentPane().add(_scroll, BorderLayout.CENTER);
 		this.setVisible(true);
 	}
 	
 	public void println(String text) 
 	{
-		outputField.setText(outputField.getText() + text + "\n");
-		if (outputField.getLineCount() > 1000)
+		_output_field.setText(_output_field.getText() + text + "\n");
+		if (_output_field.getLineCount() > _linecount)
 		{
 			try 
 			{
-				outputField.replaceRange("", 0, outputField.getLineEndOffset(0));
+				_output_field.replaceRange("", 0, _output_field.getLineEndOffset(0));
 			}
 			catch (BadLocationException e) 
 			{
@@ -83,13 +80,13 @@ public class NMessageFrame extends JFrame
 	}
 	public void print(String text) 
 	{
-		outputField.setText(outputField.getText() + text);
-		if (outputField.getLineCount() > 1000) 
+		_output_field.setText(_output_field.getText() + text);
+		if (_output_field.getLineCount() > 1000)
 		{
 			try 
 			{
-				outputField.replaceRange("", 0, outputField.getLineEndOffset(0));
-				scroll.getViewport().setViewPosition(new java.awt.Point(0, scroll.getViewport().getHeight()));
+				_output_field.replaceRange("", 0, _output_field.getLineEndOffset(0));
+				_scroll.getViewport().setViewPosition(new java.awt.Point(0, _scroll.getViewport().getHeight()));
 			} 
 			catch (BadLocationException e) 
 			{
@@ -99,24 +96,12 @@ public class NMessageFrame extends JFrame
 	}
 
 	public void bottom(){
-		JScrollBar vertical = scroll.getVerticalScrollBar();
+		JScrollBar vertical = _scroll.getVerticalScrollBar();
 		vertical.setValue( vertical.getMaximum()+10 );
 	}
 
-	public String read() 
-	{
-		entered = false;
-		while (!entered) 
-		{
-			try 
-			{
-				Thread.sleep(10);
-			} 
-			catch (InterruptedException e) 
-			{
-				e.printStackTrace();
-			}
-		}
-		return input;
+	public void close(){
+		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 	}
+
 }
