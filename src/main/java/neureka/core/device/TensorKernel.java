@@ -5,20 +5,20 @@ public class TensorKernel extends com.aparapi.Kernel
 {
     /**
      * TODO: implement tsr cleanup
-     * TODO: implement _value trim (unalloc_limit)
+     * TODO: implement _value trim (_unalloc_limit)
      * */
-    private int biggest_free = 0;
-    private float free_ratio = -1;
-    private static float unalloc_limit = 1; //  unalloc/alloc should mot be greater than 1
+    private int _biggest_free = 0;
+    private float _free_ratio = -1;
+    private static float _unalloc_limit = 1; //  unalloc/alloc should mot be greater than 1
     private static float _alloc_val_sizer = 1.5f;
     private static float alloc_shp_tln_sizer = 1.2f;
 
     private void _calc_biggest_free(){
         int biggest = 0;
         for(int t_i = -1; t_i< _tsr_count(); t_i++){
-            biggest = (biggest< _free_spc(t_i)) ? _free_spc(t_i):biggest;
+            biggest = (biggest <_free_spc(t_i)) ? _free_spc(t_i):biggest;
         }
-        biggest_free = biggest;
+        _biggest_free = biggest;
     }
 
     private void _calc_free_ratio(){
@@ -28,8 +28,7 @@ public class TensorKernel extends com.aparapi.Kernel
             alloc += this._tsr_grd_end(i)-this._tsr_ptr(i);
             free += this._free_spc(i);
         }
-        this.free_ratio =  (free/alloc);
-
+        this._free_ratio =  (free/alloc);
     }
     //---------------------------------------------
     public double[] values(){
@@ -52,7 +51,6 @@ public class TensorKernel extends com.aparapi.Kernel
         this.get(_idx);//probably obsolete
         return _idx;
     }
-
     //------------------------------------------
     public double[] value(){this.get(__val); return __val; }
     public int[] shape(){this.get(__shp); return __shp;}
@@ -65,13 +63,13 @@ public class TensorKernel extends com.aparapi.Kernel
     public @PrivateMemorySpace(8*2) int[] _idx = new int[8*2];
     //-----------------------------
     public int[] _mde = {0};
-    /**
-     *    TENSORS:
-     * */
+
+    /**    TENSORS:   * */
     public double[] _values;
     public int[] _shapes;
     public int[] _translations;
 
+    /**   POINTERS:   **/
     public int[] _pointers;// Pointers of tensors (chronologically)
     /**
      *    tsr pointer++:
@@ -203,7 +201,7 @@ public class TensorKernel extends com.aparapi.Kernel
             }
             this.put(_values);
         }
-        for(int t_i = -1; t_i< _tsr_count(); t_i++){//  t_i=-1  :
+        for(int t_i = -1; t_i< _tsr_count(); t_i++){
             if(_free_spc(t_i)>=size){
                 int ptr = 0;
                 if(_ptr_is_null(t_i)==false){
@@ -214,12 +212,8 @@ public class TensorKernel extends com.aparapi.Kernel
                 }
                 _set_tsr_ptr(t_i, _tsr_end(((t_i>0)?t_i-1:0)));
                 _set_tsr_sze(t_i, size*((tensor.rqsGradient())?-1:1));
-                //_set_shp_ptr(t_i, _alloc_shp(shape));
-                //_set_tln_ptr(t_i, _alloc_tln(translation));
-
                 _set_shp_ptr(t_i, _alloc_cfg(shape, _shapes, false));
                 _set_tln_ptr(t_i, _alloc_cfg(translation, _translations, true));
-
                 _set_shp_sze(t_i, shape.length);
                 _set_tln_sze(t_i, translation.length);
                 this.put(_pointers);
@@ -235,8 +229,7 @@ public class TensorKernel extends com.aparapi.Kernel
         int rgr_ptr = 0;
         for(int i=0; i<mapper.length; i++){
             if(regis[0][i]>=0){//=> REGISTER contains t_id's or null pointer (-1)
-                mapper[regis[0][i]] = i;
-                //=> mapper points from pointer entries to REGISTER entries
+                mapper[regis[0][i]] = i;//=> mapper points from pointer entries to REGISTER entries
             }
         }
         int[] newPointers;
@@ -257,7 +250,7 @@ public class TensorKernel extends com.aparapi.Kernel
             for(int i=0; i<regis[0].length; i++){
                 if(regis[0][i]<0){//Null pointer found in REGISTER!
                     rgr_ptr = i;//
-                    regis[0][i]=t_id+1;//mapper[t_id+1] = i;
+                    regis[0][i]=t_id+1;
                     registered = true;
                     i = regis[0].length;
                 }
@@ -270,7 +263,6 @@ public class TensorKernel extends com.aparapi.Kernel
                 rgr_ptr = regis[0].length;
                 newRegister[regis[0].length]=t_id+1;
                 regis[0] = newRegister;
-
             }
             newPointers = new int[_pointers.length+6];
             for(int i=0; i<t_id*6+6; i++){
@@ -314,7 +306,7 @@ public class TensorKernel extends com.aparapi.Kernel
         }
         int[] new_cfgs
                 = new int[
-                cfgs.length+
+                     cfgs.length +
                      (
                           cfg.length>((int)(cfgs.length* alloc_shp_tln_sizer))
                                   ?cfg.length
@@ -325,10 +317,7 @@ public class TensorKernel extends com.aparapi.Kernel
             new_cfgs[i] = cfgs[i];
         }
         for(int i=zeros_ptr; i<zeros_ptr+cfg.length; i++){
-            new_cfgs[i] =
-                    (i<zeros_ptr+cfg.length)
-                            ?cfg[i-zeros_ptr]
-                            :0;
+            new_cfgs[i] = (i<zeros_ptr+cfg.length)?cfg[i-zeros_ptr]:0;
         }
         int ptr = zeros_ptr;
         if(is_tln){
@@ -353,7 +342,7 @@ public class TensorKernel extends com.aparapi.Kernel
         __tln = new int[_tln_sze(t_id)];
         _mde = new int[]{(grd)?-4:-3, t_id};
         this.put(__val).put(__shp).put(__tln).put(_mde);
-        int g_sze = _tsr_sze(t_id)+ _shp_sze(t_id)+ _tln_sze(t_id);
+        int g_sze = _tsr_sze(t_id) + _shp_sze(t_id) + _tln_sze(t_id);
         return g_sze;
     }
 
@@ -361,7 +350,7 @@ public class TensorKernel extends com.aparapi.Kernel
         _mde = new int[]{(grd)?-2:-1, t_id};// 1. define if stored as grd or not; 2. specify tsr id;
         __val = value;
         this.put(_mde).put(__val);
-        int g_sze = _tsr_sze(t_id);//+_shp_sze(t_id)+_tln_sze(t_id);
+        int g_sze = _tsr_sze(t_id);
         return g_sze;
     }
 
@@ -395,7 +384,7 @@ public class TensorKernel extends com.aparapi.Kernel
         int size = executionSizeOf_calc(mode, gradPtrMod);
         __val = new double[]{value};
         this.put(__val);
-        return size;//_tsr_sze(mode[1]);
+        return size;
     }
 
     private void _set_grad_ptr(byte flags){
@@ -454,40 +443,40 @@ public class TensorKernel extends com.aparapi.Kernel
             _run_store(gid, false);
         }
         if(_mde[0]==0){//Relu
-            _run_relu(gid,  _mde[1], _mde[2], _mde[3]);
+            _run_relu(gid, _mde[1], _mde[2], _mde[3]);
         }
         if(_mde[0]==1){//Sigmoid
-            _run_sig(gid,  _mde[1], _mde[2], _mde[3]);
+            _run_sig(gid, _mde[1], _mde[2], _mde[3]);
         }
         if(_mde[0]==2){//Tanh
-            _run_tnh(gid,  _mde[1], _mde[2], _mde[3]);
+            _run_tnh(gid, _mde[1], _mde[2], _mde[3]);
         }
         if(_mde[0]==3){//Quadratic
-            _run_qdr(gid,  _mde[1], _mde[2], _mde[3]);
+            _run_qdr(gid, _mde[1], _mde[2], _mde[3]);
         }
         if(_mde[0]==4){//Ligmoid
-            _run_lig(gid,  _mde[1], _mde[2], _mde[3]);
+            _run_lig(gid, _mde[1], _mde[2], _mde[3]);
         }
         if(_mde[0]==5){//Linear
-            _run_lin(gid,  _mde[1], _mde[2], _mde[3]);
+            _run_lin(gid, _mde[1], _mde[2], _mde[3]);
         }
         if(_mde[0]==6){//Gaussian
-            _run_gus(gid,  _mde[1], _mde[2], _mde[3]);
+            _run_gus(gid, _mde[1], _mde[2], _mde[3]);
         }
         if(_mde[0]==7){//Absolut
-            _run_abs(gid,  _mde[1], _mde[2], _mde[3]);
+            _run_abs(gid, _mde[1], _mde[2], _mde[3]);
         }
         if(_mde[0]==8){//Sinus
-            _run_sin(gid,  _mde[1], _mde[2], _mde[3]);
+            _run_sin(gid, _mde[1], _mde[2], _mde[3]);
         }
         if(_mde[0]==9){//Cosinus
-            _run_cos(gid,  _mde[1], _mde[2], _mde[3]);
+            _run_cos(gid, _mde[1], _mde[2], _mde[3]);
         }
         if(_mde[0]==10){//Sum
-            _run_sum(gid,  _mde[1], (_mde.length<=3)?-1: _mde[_mde.length-1]);
+            _run_sum(gid, _mde[1], (_mde.length<=3)?-1: _mde[_mde.length-1]);
         }
         if(_mde[0]==11){//Product
-            _run_pi(gid,  _mde[1], (_mde.length<=3)?-1: _mde[_mde.length-1]);
+            _run_pi(gid, _mde[1], (_mde.length<=3)?-1: _mde[_mde.length-1]);
         }
         if(_mde[0]==12){//  ^
             if(_mde.length>2) {
@@ -498,7 +487,7 @@ public class TensorKernel extends com.aparapi.Kernel
         }
         if(_mde[0]==13){//  /
             if(_mde.length>2){
-                _run_div(gid,  _mde[1], _mde[2], _mde[3]);
+                _run_div(gid, _mde[1], _mde[2], _mde[3]);
             } else {
                 _run_broadcast_div(gid, _mde[1], __val[0]);
             }
@@ -531,7 +520,7 @@ public class TensorKernel extends com.aparapi.Kernel
                 _run_broadcast_add(gid, _mde[1], __val[0]);
             }
         }
-        if(_mde[0]==18){// x  _tsr_conv
+        if(_mde[0]==18){// x
             if(_mde[_mde.length-1]<0){
                 _run_conv(gid, _mde[1], _mde[2], _mde[3]);
             } else {
@@ -568,15 +557,15 @@ public class TensorKernel extends com.aparapi.Kernel
 
     private void _run_fetch(int gid, boolean grd){
         if(gid<_tsr_sze(_mde[1])){
-            __val[gid]=_values[((!grd)?_tsr_ptr(_mde[1]):_tsr_grd_ptr(_mde[1]))+gid];
+            __val[gid] = _values[((!grd)?_tsr_ptr(_mde[1]):_tsr_grd_ptr(_mde[1]))+gid];
         }else{
-            if(gid<(_tsr_sze(_mde[1])+ _shp_sze(_mde[1]))){
-                gid-=_tsr_sze(_mde[1]);
-                __shp[gid]=_shapes[_shp_ptr(_mde[1])+gid];
+            if(gid<(_tsr_sze(_mde[1]) + _shp_sze(_mde[1]))){
+                gid -= _tsr_sze(_mde[1]);
+                __shp[gid] = _shapes[_shp_ptr(_mde[1])+gid];
             }else{
-                if(gid<(_tsr_sze(_mde[1])+ _shp_sze(_mde[1])+ _tln_sze(_mde[1]))){
-                    gid-=(_tsr_sze(_mde[1])+ _shp_sze(_mde[1]));
-                    __tln[gid]=_translations[_tln_ptr(_mde[1])+gid];
+                if(gid<(_tsr_sze(_mde[1]) + _shp_sze(_mde[1]) + _tln_sze(_mde[1]))){
+                    gid -= (_tsr_sze(_mde[1]) + _shp_sze(_mde[1]));
+                    __tln[gid] = _translations[_tln_ptr(_mde[1])+gid];
                 }
             }
         }
@@ -587,11 +576,11 @@ public class TensorKernel extends com.aparapi.Kernel
             _values[((!grd)?_tsr_ptr(_mde[1]):_tsr_grd_ptr(_mde[1]))+gid]=__val[gid];
         }else{
             if(gid<(_tsr_sze(_mde[1])+ _shp_sze(_mde[1]))){
-                gid-=_tsr_sze(_mde[1]);
+                gid -= _tsr_sze(_mde[1]);
                 _shapes[_shp_ptr(_mde[1])+gid]=__shp[gid];
             }else{
                 if(gid<(_tsr_sze(_mde[1])+ _shp_sze(_mde[1])+ _tln_sze(_mde[1]))){
-                    gid-=(_tsr_sze(_mde[1])+ _shp_sze(_mde[1]));
+                    gid -= (_tsr_sze(_mde[1])+ _shp_sze(_mde[1]));
                     _translations[_tln_ptr(_mde[1])+gid]=__tln[gid];
                 }
             }
@@ -630,12 +619,13 @@ public class TensorKernel extends com.aparapi.Kernel
                     )
                 ) / (Math.pow(
                         (1 + Math.pow(
-                                Math.E,
-                                -_values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)]
+                            Math.E,
+                            -_values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)]
                         )
                     ), 2)
-                        + 2 * Math.pow(
-                                Math.E, -_values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)]));
+                        +
+                        2 * Math.pow(Math.E, -_values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)])
+                );
         }
     }
 
@@ -677,14 +667,14 @@ public class TensorKernel extends com.aparapi.Kernel
     private void _run_lig(int gid, int drn_id, int src_id, int d){
         if(d<0){
             _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = (
-                    Math.log(1+Math.pow(Math.E, _values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)]))
+                Math.log(1+Math.pow(Math.E, _values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)]))
             );
         }else{
             _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
                 1 /
                     (1 + Math.pow(
-                            Math.E,
-                            _values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)]
+                        Math.E,
+                        _values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)]
                     )
                 );
         }
@@ -745,7 +735,7 @@ public class TensorKernel extends com.aparapi.Kernel
                         _values[_tsr_ptr(_mde[i])+__i_of(gid, _mde[i], 1)];
             }
         }else{
-            //TODO: implement
+            //TODO: implement ...............
             _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
                     _values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)];//........
         }
@@ -812,7 +802,6 @@ public class TensorKernel extends com.aparapi.Kernel
     }
     //==================================================================================================================
     private void _run_conv_inv(int gid, int drn_id, int src1_id, int src2_id, boolean first){
-
         drn_id = drn_id^src2_id; src2_id = drn_id^src2_id; drn_id = drn_id^src2_id;
         if(first){
             src1_id = src1_id^drn_id; drn_id = src1_id^drn_id; src1_id = src1_id^drn_id;
@@ -1018,6 +1007,7 @@ public class TensorKernel extends com.aparapi.Kernel
             ri = __increment_At(ri, idx_ptr, shp_ptr);
         }
     }
+
     private int __i_of_idx_on_tln(int p_tln, int idx_ptr, int rank) {
         int i = 0;
         for (int ii = 0; ii < rank; ii++) {
@@ -1029,8 +1019,8 @@ public class TensorKernel extends com.aparapi.Kernel
     private int __i_of(int gid, int t_id, int num){
         int p_shp  = _shp_ptr(t_id);
         int p_tln  = _tln_ptr(t_id);
-        int rank     = _shp_sze(t_id);
-        int p_idx  = rank*num;
+        int rank   = _shp_sze(t_id);
+        int p_idx  = rank * num;
         for(int i=0; i<gid; i++){
             __increment_idx(p_shp, p_idx, rank);
         }

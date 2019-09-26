@@ -81,7 +81,7 @@ public class NMessageFrame extends JFrame
 	public void print(String text) 
 	{
 		_output_field.setText(_output_field.getText() + text);
-		if (_output_field.getLineCount() > 1000)
+		if (_output_field.getLineCount() > _linecount)
 		{
 			try 
 			{

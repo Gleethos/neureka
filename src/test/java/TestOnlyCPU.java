@@ -113,7 +113,7 @@ public class TestOnlyCPU {
         //---
         tester.testContains(
                 z.toString("dgc"),
-                new String[]{"[1]:(9,95037E0); ->d[1]:(99,0099E0), "},
+                new String[]{"[1]:(9,95037E0); ->d[1]:(99,0099E0),"},
                 "test double formatting"
         );
         tester.closeWindows();
