@@ -20,13 +20,13 @@ public class DataHelper<T> {
         }
         T[] oldArray = Array;
         if (remove == false) {
-            Array = (T[]) java.lang.reflect.Array.newInstance(tClass, oldArray.length + 1);//(T[])new Object[oldBias.length + 1];
+            Array = (T[]) java.lang.reflect.Array.newInstance(tClass, oldArray.length + 1);//(Tsr[])new Object[oldBias.length + 1];
         } else {
             if (Array.length == 1) {
                 Array = null;
                 return Array;
             }
-            Array = (T[]) java.lang.reflect.Array.newInstance(tClass, oldArray.length - 1); //(T[])new Object[oldBias.length - 1];
+            Array = (T[]) java.lang.reflect.Array.newInstance(tClass, oldArray.length - 1); //(Tsr[])new Object[oldBias.length - 1];
         }
         for (int Ii = 0; Ii < Array.length; Ii++) {
             if (remove == false) {

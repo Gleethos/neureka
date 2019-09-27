@@ -1,14 +1,13 @@
 package neureka.ngui.touch.canvas;
 
-import neureka.core.T;
+import neureka.core.Tsr;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 public class NGraphBuilder {
 
 	private Thread Worker;
-	private T ThreadCoordinator;
+	private Tsr ThreadCoordinator;
 	TSurface Surface;
 	
 	private int pressRadius = 100;
@@ -24,7 +23,7 @@ public class NGraphBuilder {
 	private NCircleMenu MouseAttachedCircleMenu;
 
 	NCircleMenu newMenu;
-	private T BlueprintTensor;
+	private Tsr BlueprintTensor;
 
 	//----------------------------------------------------------------
 	public void addMenu(NCircleMenu menu)
@@ -35,7 +34,7 @@ public class NGraphBuilder {
 	 	}
 	 	Surface.setMap(Surface.getMap().addAndUpdate(menu));
  	}
-	public T getBlueprintTensor()
+	public Tsr getBlueprintTensor()
  	{
  		return BlueprintTensor;
  	}
@@ -45,7 +44,7 @@ public class NGraphBuilder {
 	}
 	private void addPanelTensor(int x, int y)
  	{
- 		NPanelNode Unit = new NPanelNode(new T(BlueprintTensor), Surface.realX((double)x),Surface.realY((double)y));
+ 		NPanelNode Unit = new NPanelNode(new Tsr(BlueprintTensor), Surface.realX((double)x),Surface.realY((double)y));
  		addPanelTensor(Unit);
  		Unit.setHasMoved(true);
  	}
@@ -66,7 +65,7 @@ public class NGraphBuilder {
 	 	addPanelTensor(Neuron1);
 	 	NPanelNode Neuron4 = new NPanelNode( 3090, 890, 2 );
 	 	addPanelTensor(Neuron4);
-		BlueprintTensor = new T();
+		BlueprintTensor = new Tsr();
 		//Surface.setPreferredSize(new Dimension(500,500));
 		//Surface.setBackground(Color.black);
 		Surface.setPaintAction(
@@ -110,8 +109,8 @@ public class NGraphBuilder {
 
 				    		if(this.ChosenInputNode!=null && node==null)
 				    		{
-				    			//T C1 = ((PanelNode)found).getCore().asCore();
-				    			//T C2 = this.ConnectionPanelNeuron.getCore().asCore();
+				    			//Tsr C1 = ((PanelNode)found).getCore().asCore();
+				    			//Tsr C2 = this.ConnectionPanelNeuron.getCore().asCore();
 				    			//C2.connect(C1, this.InputIndex);
 				    		}
 				    		this.ChosenInputNode = node;
@@ -217,7 +216,7 @@ public class NGraphBuilder {
 				if(found!=null) {found.doubleClickedAt(surface.realX(x), surface.realY(y), surface);}
 				else
 				{
-					NPanelNode Unit = new NPanelNode(new T(this.BlueprintTensor), surface.realX((double)x),surface.realY((double)y));
+					NPanelNode Unit = new NPanelNode(new Tsr(this.BlueprintTensor), surface.realX((double)x),surface.realY((double)y));
 				 	if(surface.getMap()==null)
 				 	{
 				 		surface.setMap(new NMap(Unit.getX(),Unit.getY(),10000));

@@ -1,10 +1,10 @@
 package neureka.core.optimization;
 
-import neureka.core.T;
+import neureka.core.Tsr;
 
 public interface TOptimizer {
 
-    void optimize(T t);
+    void optimize(Tsr t);
 
 
 }

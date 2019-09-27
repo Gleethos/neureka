@@ -1,6 +1,6 @@
 package neureka.core.function.factory.implementations;
 
-import neureka.core.T;
+import neureka.core.Tsr;
 import neureka.core.function.IFunction;
 
 public class FVariable implements IFunction, IProvider {
@@ -59,26 +59,26 @@ public class FVariable implements IFunction, IProvider {
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
-    public T activate(T[] inputs, int j) {
+    public Tsr activate(Tsr[] inputs, int j) {
         if(this.providesGradient() && inputs[j].rqsGradient()){
             inputs[j].setGradientIsTargeted(true);
         }
         return inputs[j];
     }
     @Override
-    public T activate(T[] inputs) {
-        return new T(inputs, "sum(I[j])");
+    public Tsr activate(Tsr[] inputs) {
+        return new Tsr(inputs, "sum(I[j])");
     }
     @Override
-    public T derive(T[] inputs, int index, int j) {
+    public Tsr derive(Tsr[] inputs, int index, int j) {
         if (j != index) {
-            return T.factory.newTensor(0, inputs[0].shape());
+            return Tsr.factory.newTensor(0, inputs[0].shape());
         }
         return derive(inputs, index);
     }
     @Override
-    public T derive(T[] inputs, int index) {
-        return T.factory.newTensor(1, inputs[0].shape());
+    public Tsr derive(Tsr[] inputs, int index) {
+        return Tsr.factory.newTensor(1, inputs[0].shape());
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override

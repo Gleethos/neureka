@@ -7,7 +7,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
 
-import neureka.core.T;
+import neureka.core.Tsr;
 import neureka.core.function.IFunction;
 
 
@@ -19,7 +19,7 @@ public class PanelNode extends Node implements NPanelObject
 	private static final int   deckAnimationLimit = 700000000;
 	private static final float subToSuperScale = 5;
 
-	//private T Core;
+	//private Tsr Core;
 	private Color deckColor = 		 new Color(0, 60, 110);//static!!!
 	private Color darkDeckColor = 	 new Color(0, 5,  60);//static!!
 	private Color deckButtonColor = new Color(0, 0,  20, 255);//...
@@ -45,7 +45,7 @@ public class PanelNode extends Node implements NPanelObject
 
 	private ArrayList<NPanelNodeInput> InputNode;
 	//===========================================================================
-	PanelNode(T neuron, double x, double y)
+	PanelNode(Tsr neuron, double x, double y)
 	{
 		this.setTensor(neuron);
 		neuron.add(this);
@@ -62,11 +62,11 @@ public class PanelNode extends Node implements NPanelObject
 		position[1] = y;
 		InputNode = new ArrayList<NPanelNodeInput>();
 		InputNode.add(new NPanelNodeInput(getX(), getY(), diameter/2));
-		T Core = new T();
+		Tsr Core = new Tsr();
 		Core.add(this);
 		this.setTensor(Core);
 		//this.getTensor().overwrite(new NVOptimizer(this.getTensor().size(), this.getTensor().getConnection(), 3));
-		//T.State.turnIntoParentRoot(Core);
+		//Tsr.State.turnIntoParentRoot(Core);
 		//this.getTensor().turnIntoSuperRootNode();
 	}
 	//===========================================================================
@@ -142,10 +142,10 @@ public class PanelNode extends Node implements NPanelObject
 			position[1]=(centerY+(Math.cos(alpha)*(vectorY)+Math.sin(alpha)*(vectorX)));
 			queue.add(getRepaintSpace());
 			
-		if(this.getTensor().rqsGradient()) //this.getTensor().is(T.MotherRoot)
+		if(this.getTensor().rqsGradient()) //this.getTensor().is(Tsr.MotherRoot)
 		{//Moving circular around a given center!
 			//calculating rotation!!! -> - => counter clock | + => clock wise
-			//NVNode[] nodes = this.getTensor().find((NVNode node)->{if(node.asCore().is(T.Root) && node.asCore().is(T.MotherRoot)==false) {return true;}return false;});
+			//NVNode[] nodes = this.getTensor().find((NVNode node)->{if(node.asCore().is(Tsr.Root) && node.asCore().is(Tsr.MotherRoot)==false) {return true;}return false;});
 			//if(nodes != null)
 			//   {for(int Ni=0; Ni<nodes.length; Ni++) {for(int Nii=Ni+1; Nii<nodes.length; Nii++) {if(nodes[Ni]==nodes[Nii]) {nodes[Nii]=null;}}}
 			//	for(int Ni=0; Ni<nodes.length; Ni++) {
@@ -184,7 +184,7 @@ public class PanelNode extends Node implements NPanelObject
 			double shiftX = startX-position[0];
 			double shiftY = startY-position[1];
 			
-			if(this.getTensor().rqsGradient()) {//this.getTensor().is(T.MotherRoot)
+			if(this.getTensor().rqsGradient()) {//this.getTensor().is(Tsr.MotherRoot)
 				data[0]=position[2];
 				data[1]=position[3];
 				data[2]=targX;
@@ -211,7 +211,7 @@ public class PanelNode extends Node implements NPanelObject
 						double shiftX = targX-startX;
 						double shiftY = targY-startY;
 						//NVNode[] RimNodes
-						//= this.getTensor().find((NVNode node)->{if(node.asCore().is(T.Root)&&node.asCore().is(T.MotherRoot)==false){return true;}return false;});
+						//= this.getTensor().find((NVNode node)->{if(node.asCore().is(Tsr.Root)&&node.asCore().is(Tsr.MotherRoot)==false){return true;}return false;});
 						//
 						//if(RimNodes != null)
 						//   {for(int Ni=0; Ni<RimNodes.length; Ni++) {for(int Nii=Ni+1; Nii<RimNodes.length; Nii++) {if(RimNodes[Ni]==RimNodes[Nii]) {RimNodes[Nii]=null;}}}
@@ -264,7 +264,7 @@ public class PanelNode extends Node implements NPanelObject
 			queue.add(getRepaintSpace());
 			double movedX = x-position[0];
 		    double movedY = y-position[1];
-			//NVNode[] RimNodes = this.getTensor().find((NVNode node)->{if(node.asCore().is(T.Root) && node.asCore().is(T.MotherRoot)==false) {return true;}return false;});
+			//NVNode[] RimNodes = this.getTensor().find((NVNode node)->{if(node.asCore().is(Tsr.Root) && node.asCore().is(Tsr.MotherRoot)==false) {return true;}return false;});
 			//if(RimNodes != null) {
 			//	for(int Ni=0; Ni<RimNodes.length; Ni++) {for(int Nii=Ni+1; Nii<RimNodes.length; Nii++) {if(RimNodes[Ni]==RimNodes[Nii]) {RimNodes[Ni]=null;}}}
 			//	for(int Ni=0; Ni<RimNodes.length; Ni++) {
@@ -367,7 +367,7 @@ public class PanelNode extends Node implements NPanelObject
 				position[3]=old[1];
 			}
 			//NVNode[] RimNodes = DataHelper.withoutDuplicates.order(this.getTensor().find(
-			//		(NVNode node)->{if(node.asCore().is(T.Root)||node.asCore()==this.Core) {return true;}return false;}));
+			//		(NVNode node)->{if(node.asCore().is(Tsr.Root)||node.asCore()==this.Core) {return true;}return false;}));
 			
 		//if(RimNodes != null)
 		//   {//System.out.println("Rim nodes exist! -> "+RimNodes.length);
@@ -381,7 +381,7 @@ public class PanelNode extends Node implements NPanelObject
 		//		           {//optimization: Checking if nodes have been moved...
 		//		              if(panelNode.justMoved()) {updateNeeded=true;}//Needed?!?
 		//
-		//		              if(RimNodes[Ni].asCore().is(T.RootInput) || RimNodes[Ni].asCore().is(T.MotherRoot))
+		//		              if(RimNodes[Ni].asCore().is(Tsr.RootInput) || RimNodes[Ni].asCore().is(Tsr.MotherRoot))
 		//		              {
 		//		        	   		double directionX = panelNode.getX()-position[2];
 		//			        	   	double directionY = panelNode.getY()-position[3];
@@ -1211,10 +1211,10 @@ public class PanelNode extends Node implements NPanelObject
 			brush.setColor(Color.CYAN);
 			//if(getCore().asCore().getConnection()[i]!=null)
 			//    {//System.out.println("node existing");
-			//	 if(getCore().asCore().getConnection()[i][0].asCore().is(T.Child))
+			//	 if(getCore().asCore().getConnection()[i][0].asCore().is(Tsr.Child))
 			//	    {Color color = NColor.SystemOcean; brush.setColor(color);}
 			//    }
-			//else {if(getCore().asCore().is(T.Child))
+			//else {if(getCore().asCore().is(Tsr.Child))
 			//         {Color color = NColor.SystemOcean; brush.setColor(color);}
 			//}
 			InputNode.get(i).paint(brush, getX(), getY(), ((diameter / 2)));
@@ -1330,7 +1330,7 @@ public class PanelNode extends Node implements NPanelObject
 		
 		brush.drawString("Activation", (int) (centerX - radius*0.27), (int) (centerY - radius*0.1 - radius*0.27500*buttonAnimationModifier));
 		brush.setColor(Color.BLACK);
-		brush.drawString(Formatter.format(T.factory.io.getFrom(this.getTensor(), 0)), (int) (centerX - radius*0.108), (int) (centerY +radius*0.0475- radius*0.260*buttonAnimationModifier));
+		brush.drawString(Formatter.format(Tsr.factory.io.getFrom(this.getTensor(), 0)), (int) (centerX - radius*0.108), (int) (centerY +radius*0.0475- radius*0.260*buttonAnimationModifier));
 		
 		ValueFont = new Font("Tahoma", Font.PLAIN, (int)(diameter*(0.033333)));
 		brush.setFont(ValueFont);
@@ -1350,16 +1350,16 @@ public class PanelNode extends Node implements NPanelObject
 		String rootType = "";
 		if(this.getTensor().rqsGradient())
 		{
-			//if(this.getTensor().is(T.TrainableBasicRoot)) {rootType += "trainable ";}
-			//if(this.getTensor().is(T.BasicRoot))  	    {rootType += "basic ";}
-			//if(this.getTensor().is(T.RootMemory)) 		{rootType += "memory ";}
-			//if(this.getTensor().is(T.RootInput))  		{rootType += "input ";}
-			//if(this.getTensor().is(T.MotherRoot))  		{rootType += "super ";}
+			//if(this.getTensor().is(Tsr.TrainableBasicRoot)) {rootType += "trainable ";}
+			//if(this.getTensor().is(Tsr.BasicRoot))  	    {rootType += "basic ";}
+			//if(this.getTensor().is(Tsr.RootMemory)) 		{rootType += "memory ";}
+			//if(this.getTensor().is(Tsr.RootInput))  		{rootType += "input ";}
+			//if(this.getTensor().is(Tsr.MotherRoot))  		{rootType += "super ";}
 			
 			if(rootType.isEmpty()==false) {rootType = " ( "+rootType+")";}
 		}
 		brush.setColor(Color.CYAN);
-		//brush.drawString("Is root component: "+this.getTensor().is(T.Root)+rootType+";",
+		//brush.drawString("Is root component: "+this.getTensor().is(Tsr.Root)+rootType+";",
 		//		       (int) (centerX - radius*0.65), (int) (centerY -radius*0.520));
 		brush.setColor(Color.DARK_GRAY);
 		brush.fillRect((int) (centerX - radius*0.675), (int) (centerY -radius*0.515), (int)(2*radius*0.675), (int)(radius*0.01));
@@ -1669,7 +1669,7 @@ public class PanelNode extends Node implements NPanelObject
 		brush.setColor(Color.cyan);
 		ValueFont = new Font("Tahoma", Font.PLAIN, (int)(diameter*(0.08)));
 		brush.setFont(ValueFont);
-		String acti = Formatter.format(T.factory.io.getFrom(this.getTensor(), 0));
+		String acti = Formatter.format(Tsr.factory.io.getFrom(this.getTensor(), 0));
 		brush.drawString(acti, 
 				(int) (centerX - radius*0.043*acti.length()*Amod), 
 				(int) (centerY + radius*0.055- radius*0.275*buttonAnimationModifier*Amod));
@@ -1680,7 +1680,7 @@ public class PanelNode extends Node implements NPanelObject
 		if (this.getTensor().isOutsourced())
 		{
 			brush.drawString("Optimum:", (int) (centerX - 50), (int) (centerY - 240));
-			brush.drawString(""+Formatter.format(T.factory.io.getFrom(this.getTensor(), 0)), (int) (centerX - 25), (int) (centerY - 210));
+			brush.drawString(""+Formatter.format(Tsr.factory.io.getFrom(this.getTensor(), 0)), (int) (centerX - 25), (int) (centerY - 210));
 		}
 		brush.setClip(null);
 	}
@@ -1799,7 +1799,7 @@ public class PanelNode extends Node implements NPanelObject
 			return layerID;
 		}
 		layerID++;
-		if(this.getTensor().rqsGradient()) //this.getTensor().is(T.BasicRoot)||this.getTensor().is(T.RootInput)
+		if(this.getTensor().rqsGradient()) //this.getTensor().is(Tsr.BasicRoot)||this.getTensor().is(Tsr.RootInput)
 		{
 			return layerID;
 		}

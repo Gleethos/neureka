@@ -1,6 +1,6 @@
 package neureka.core.function.factory.assembly;
 
-import neureka.core.T;
+import neureka.core.Tsr;
 import neureka.core.function.*;
 import neureka.core.function.factory.implementations.FConstant;
 import neureka.core.function.factory.implementations.FInput;
@@ -20,19 +20,19 @@ public class FunctionConstructor
         if(f_id<=9) {// FUNCTIONS:
             return new Function(f_id, isFlat, sources, doAD){
                 @Override
-                public T activate(T[] inputs, int j) {
+                public Tsr activate(Tsr[] inputs, int j) {
                     return CACHE.handle(inputs, this,()-> _tensor_activation(sources.get(0).activate(inputs, j), false));
                 }
                 @Override
-                public T activate(T[] inputs) {
+                public Tsr activate(Tsr[] inputs) {
                     return CACHE.handle(inputs, this, ()-> _tensor_activation(sources.get(0).activate(inputs), false));
                 }
                 @Override
-                public T derive(T[] inputs, int d, int j) {
+                public Tsr derive(Tsr[] inputs, int d, int j) {
                     return _tensor_activation(sources.get(0).activate(inputs, j), true);
                 }
                 @Override
-                public T derive(T[] inputs, int d) {
+                public Tsr derive(Tsr[] inputs, int d) {
                     return _tensor_activation(sources.get(0).activate(inputs), true);
                 }
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -56,19 +56,19 @@ public class FunctionConstructor
         }else{
             return new Function(f_id, isFlat, sources, doAD){
                 @Override
-                public T activate(T[] inputs, int j) {
+                public Tsr activate(Tsr[] inputs, int j) {
                     return CACHE.handle(inputs, this, ()-> _tensor_activation(inputs, j, -1));
                 }
                 @Override
-                public T activate(T[] inputs) {
+                public Tsr activate(Tsr[] inputs) {
                     return CACHE.handle(inputs, this, ()-> _tensor_activation(inputs, -1, -1));
                 }
                 @Override
-                public T derive(T[] inputs, int d, int j) {
+                public Tsr derive(Tsr[] inputs, int d, int j) {
                     return _tensor_activation(inputs, j, d);
                 }
                 @Override
-                public T derive(T[] inputs, int d) {
+                public Tsr derive(Tsr[] inputs, int d) {
                     return _tensor_activation(inputs, -1, d);
                 }
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

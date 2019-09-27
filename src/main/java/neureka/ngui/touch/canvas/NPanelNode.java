@@ -1,7 +1,7 @@
 package neureka.ngui.touch.canvas;
 
 import javafx.scene.canvas.GraphicsContext;
-import neureka.core.T;
+import neureka.core.Tsr;
 import neureka.core.function.IFunction;
 import neureka.ngui.swing.NVControlFrame;
 
@@ -21,7 +21,7 @@ public class NPanelNode implements NPanelObject
 	private static final int   deckAnimationLimit = 700000000;
 	private static final float subToSuperScale = 5;
 
-	private T Core;
+	private Tsr Core;
 	private Color deckColor = 		new Color(0, 60, 110);//static!!!
 	private Color darkDeckColor = 	new Color(0, 5,  60);//static!!
 	private Color deckButtonColor = new Color(0, 0,  20, 255);//...
@@ -48,7 +48,7 @@ public class NPanelNode implements NPanelObject
 
 	private ArrayList<NPanelNodeInput> InputNode;
 	//===========================================================================
-	NPanelNode(T neuron, double x, double y)
+	NPanelNode(Tsr neuron, double x, double y)
 	{
 		Core = neuron;
 		//neuron.asCore().overwrite(this);
@@ -65,10 +65,10 @@ public class NPanelNode implements NPanelObject
 		position[1] = y;
 		InputNode = new ArrayList<NPanelNodeInput>();
 		InputNode.add(new NPanelNodeInput(getX(), getY(), diameter/2));
-		Core = new T();
+		Core = new Tsr();
 		Core.add(this);
 		//Core.overwrite(new NVOptimizer(Core.size(), Core.getConnection(), 3));
-		//T.State.turnIntoParentRoot(Core);
+		//Tsr.State.turnIntoParentRoot(Core);
 		//Core.turnIntoSuperRootNode();
 	}
 	//===========================================================================
@@ -87,7 +87,7 @@ public class NPanelNode implements NPanelObject
 	public boolean recentlyMoved() {return hasRecentlyBeenMoved;}
 	public void setHasMoved(boolean moved) {hasJustBeenMoved = moved;}
     //------------------------------------------
-	public T getCore() {return Core;}
+	public Tsr getCore() {return Core;}
 	public ArrayList<NPanelNodeInput> getInputNode() {return InputNode;}
 	
 	@Override
@@ -146,10 +146,10 @@ public class NPanelNode implements NPanelObject
 			position[1]=(centerY+(Math.cos(alpha)*(vectorY)+Math.sin(alpha)*(vectorX)));
 			queue.add(getRepaintSpace());
 			
-		if(Core.rqsGradient()) //Core.is(T.MotherRoot)
+		if(Core.rqsGradient()) //Core.is(Tsr.MotherRoot)
 		{//Moving circular around a given center!
 			//calculating rotation!!! -> - => counter clock | + => clock wise
-			//NVNode[] nodes = Core.find((NVNode node)->{if(node.asCore().is(T.Root) && node.asCore().is(T.MotherRoot)==false) {return true;}return false;});
+			//NVNode[] nodes = Core.find((NVNode node)->{if(node.asCore().is(Tsr.Root) && node.asCore().is(Tsr.MotherRoot)==false) {return true;}return false;});
 			//if(nodes != null)
 			//   {for(int Ni=0; Ni<nodes.length; Ni++) {for(int Nii=Ni+1; Nii<nodes.length; Nii++) {if(nodes[Ni]==nodes[Nii]) {nodes[Nii]=null;}}}
 			//	for(int Ni=0; Ni<nodes.length; Ni++) {
@@ -189,7 +189,7 @@ public class NPanelNode implements NPanelObject
 			double shiftX = startX-position[0];
 			double shiftY = startY-position[1];
 			
-			if(Core.rqsGradient()) {//Core.is(T.MotherRoot)
+			if(Core.rqsGradient()) {//Core.is(Tsr.MotherRoot)
 				data[0]=position[2];
 				data[1]=position[3];
 				data[2]=targX;
@@ -216,7 +216,7 @@ public class NPanelNode implements NPanelObject
 						double shiftX = targX-startX;
 						double shiftY = targY-startY;
 						//NVNode[] RimNodes
-						//= Core.find((NVNode node)->{if(node.asCore().is(T.Root)&&node.asCore().is(T.MotherRoot)==false){return true;}return false;});
+						//= Core.find((NVNode node)->{if(node.asCore().is(Tsr.Root)&&node.asCore().is(Tsr.MotherRoot)==false){return true;}return false;});
 						//
 						//if(RimNodes != null)
 						//   {for(int Ni=0; Ni<RimNodes.length; Ni++) {for(int Nii=Ni+1; Nii<RimNodes.length; Nii++) {if(RimNodes[Ni]==RimNodes[Nii]) {RimNodes[Nii]=null;}}}
@@ -269,7 +269,7 @@ public class NPanelNode implements NPanelObject
 			queue.add(getRepaintSpace());
 			double movedX = x-position[0];
 		    double movedY = y-position[1];
-			//NVNode[] RimNodes = Core.find((NVNode node)->{if(node.asCore().is(T.Root) && node.asCore().is(T.MotherRoot)==false) {return true;}return false;});
+			//NVNode[] RimNodes = Core.find((NVNode node)->{if(node.asCore().is(Tsr.Root) && node.asCore().is(Tsr.MotherRoot)==false) {return true;}return false;});
 			//if(RimNodes != null) {
 			//	for(int Ni=0; Ni<RimNodes.length; Ni++) {for(int Nii=Ni+1; Nii<RimNodes.length; Nii++) {if(RimNodes[Ni]==RimNodes[Nii]) {RimNodes[Ni]=null;}}}
 			//	for(int Ni=0; Ni<RimNodes.length; Ni++) {
@@ -372,7 +372,7 @@ public class NPanelNode implements NPanelObject
 				position[3]=old[1];
 			}
 			//NVNode[] RimNodes = DataHelper.withoutDuplicates.order(Core.find(
-			//		(NVNode node)->{if(node.asCore().is(T.Root)||node.asCore()==this.Core) {return true;}return false;}));
+			//		(NVNode node)->{if(node.asCore().is(Tsr.Root)||node.asCore()==this.Core) {return true;}return false;}));
 			
 		//if(RimNodes != null)
 		//   {//System.out.println("Rim nodes exist! -> "+RimNodes.length);
@@ -386,7 +386,7 @@ public class NPanelNode implements NPanelObject
 		//		           {//optimization: Checking if nodes have been moved...
 		//		              if(panelNode.justMoved()) {updateNeeded=true;}//Needed?!?
 		//
-		//		              if(RimNodes[Ni].asCore().is(T.RootInput) || RimNodes[Ni].asCore().is(T.MotherRoot))
+		//		              if(RimNodes[Ni].asCore().is(Tsr.RootInput) || RimNodes[Ni].asCore().is(Tsr.MotherRoot))
 		//		              {
 		//		        	   		double directionX = panelNode.getX()-position[2];
 		//			        	   	double directionY = panelNode.getY()-position[3];
@@ -1005,11 +1005,11 @@ public class NPanelNode implements NPanelObject
 		//			double inputVecX = selfCenterX - getX();
 		//			double inputVecY = selfCenterY - getY();
 		//
-		//			if(Core.is(T.Root))
+		//			if(Core.is(Tsr.Root))
 		//			{
 		//				connectionColor=NColor.SystemOcean;
-		//			    if(Core.is(T.RootInput))
-		//			       {if(!connection[Ii][0].asCore().is(T.Root) || connection[Ii][0].asCore().is(T.MotherRoot))
+		//			    if(Core.is(Tsr.RootInput))
+		//			       {if(!connection[Ii][0].asCore().is(Tsr.Root) || connection[Ii][0].asCore().is(Tsr.MotherRoot))
 		//			           {connectionColor = Color.CYAN;}
 		//			       }
 		//			}
@@ -1239,10 +1239,10 @@ public class NPanelNode implements NPanelObject
 			brush.setColor(Color.CYAN);
 			//if(getCore().asCore().getConnection()[i]!=null)
 			//    {//System.out.println("node existing");
-			//	 if(getCore().asCore().getConnection()[i][0].asCore().is(T.Child))
+			//	 if(getCore().asCore().getConnection()[i][0].asCore().is(Tsr.Child))
 			//	    {Color color = NColor.SystemOcean; brush.setColor(color);}
 			//    }
-			//else {if(getCore().asCore().is(T.Child))
+			//else {if(getCore().asCore().is(Tsr.Child))
 			//         {Color color = NColor.SystemOcean; brush.setColor(color);}
 			//}
 			InputNode.get(i).paint(brush, getX(), getY(), ((diameter / 2)));
@@ -1358,7 +1358,7 @@ public class NPanelNode implements NPanelObject
 
 		brush.drawString("Activation", (int) (centerX - radius*0.27), (int) (centerY - radius*0.1 - radius*0.27500*buttonAnimationModifier));
 		brush.setColor(Color.BLACK);
-		brush.drawString(Formatter.format(T.factory.io.getFrom(Core, 0)), (int) (centerX - radius*0.108), (int) (centerY +radius*0.0475- radius*0.260*buttonAnimationModifier));
+		brush.drawString(Formatter.format(Tsr.factory.io.getFrom(Core, 0)), (int) (centerX - radius*0.108), (int) (centerY +radius*0.0475- radius*0.260*buttonAnimationModifier));
 
 		ValueFont = new Font("Tahoma", Font.PLAIN, (int)(diameter*(0.033333)));
 		brush.setFont(ValueFont);
@@ -1378,16 +1378,16 @@ public class NPanelNode implements NPanelObject
 		String rootType = "";
 		if(Core.rqsGradient())
 		{
-			//if(Core.is(T.TrainableBasicRoot)) {rootType += "trainable ";}
-			//if(Core.is(T.BasicRoot))  	    {rootType += "basic ";}
-			//if(Core.is(T.RootMemory)) 		{rootType += "memory ";}
-			//if(Core.is(T.RootInput))  		{rootType += "input ";}
-			//if(Core.is(T.MotherRoot))  		{rootType += "super ";}
+			//if(Core.is(Tsr.TrainableBasicRoot)) {rootType += "trainable ";}
+			//if(Core.is(Tsr.BasicRoot))  	    {rootType += "basic ";}
+			//if(Core.is(Tsr.RootMemory)) 		{rootType += "memory ";}
+			//if(Core.is(Tsr.RootInput))  		{rootType += "input ";}
+			//if(Core.is(Tsr.MotherRoot))  		{rootType += "super ";}
 
 			if(rootType.isEmpty()==false) {rootType = " ( "+rootType+")";}
 		}
 		brush.setColor(Color.CYAN);
-		//brush.drawString("Is root component: "+Core.is(T.Root)+rootType+";",
+		//brush.drawString("Is root component: "+Core.is(Tsr.Root)+rootType+";",
 		//		       (int) (centerX - radius*0.65), (int) (centerY -radius*0.520));
 		brush.setColor(Color.DARK_GRAY);
 		brush.fillRect((int) (centerX - radius*0.675), (int) (centerY -radius*0.515), (int)(2*radius*0.675), (int)(radius*0.01));
@@ -1705,7 +1705,7 @@ public class NPanelNode implements NPanelObject
 		brush.setColor(Color.cyan);
 		ValueFont = new Font("Tahoma", Font.PLAIN, (int)(diameter*(0.08)));
 		brush.setFont(ValueFont);
-		String acti = Formatter.format(T.factory.io.getFrom(Core,0));
+		String acti = Formatter.format(Tsr.factory.io.getFrom(Core,0));
 		brush.drawString(acti, 
 				(int) (centerX - radius*0.043*acti.length()*Amod), 
 				(int) (centerY + radius*0.055- radius*0.275*buttonAnimationModifier*Amod));
@@ -1716,7 +1716,7 @@ public class NPanelNode implements NPanelObject
 		if (Core.isOutsourced())
 		{
 			brush.drawString("Optimum:", (int) (centerX - 50), (int) (centerY - 240));
-			brush.drawString(""+Formatter.format(T.factory.io.getFrom(Core, 0)), (int) (centerX - 25), (int) (centerY - 210));
+			brush.drawString(""+Formatter.format(Tsr.factory.io.getFrom(Core, 0)), (int) (centerX - 25), (int) (centerY - 210));
 		}
 		brush.setClip(null);
 	}
@@ -1835,7 +1835,7 @@ public class NPanelNode implements NPanelObject
 			return layerID;
 		}
 		layerID++;
-		if(Core.rqsGradient()) //Core.is(T.BasicRoot)||Core.is(T.RootInput)
+		if(Core.rqsGradient()) //Core.is(Tsr.BasicRoot)||Core.is(Tsr.RootInput)
 		{
 			return layerID;
 		}

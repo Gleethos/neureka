@@ -1,4 +1,4 @@
-import neureka.core.T;
+import neureka.core.Tsr;
 import neureka.core.function.IFunction;
 import neureka.core.function.factory.assembly.FunctionBuilder;
 import org.junit.Test;
@@ -11,29 +11,29 @@ public class TestOnlyCPU {
 
         NTester_Tensor tester = new NTester_Tensor("Tensor tester (only cpu)");
 
-        T x = new T(new int[]{1}, 3).setRqsGradient(true);
-        T b = new T(new int[]{1}, -4);
-        T w = new T(new int[]{1}, 2);
+        Tsr x = new Tsr(new int[]{1}, 3).setRqsGradient(true);
+        Tsr b = new Tsr(new int[]{1}, -4);
+        Tsr w = new Tsr(new int[]{1}, 2);
         /**
          *      ((3-4)*2)^2 = 4
          *  dx:   8*3 - 32  = -8
          * */
-        T y = new T(new T[]{x, b, w}, "((i0+i1)*i2)^2");
+        Tsr y = new Tsr(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
         tester.testTensor(y, new String[]{"[1]:(4.0); ->d[1]:(-8.0), "});
-        y.backward(new T(2));
+        y.backward(new Tsr(2));
         tester.testTensor(x, new String[]{"-16.0"});
 
-        y = new T("(","(",x,"+",b,")","*",w,")^2");
+        y = new Tsr("(","(",x,"+",b,")","*",w,")^2");
         tester.testTensor(y, new String[]{"[1]:(4.0); ->d[1]:(-8.0), "});
-        y.backward(new T(1));
+        y.backward(new Tsr(1));
         tester.testTensor(x, new String[]{"-8.0"});
 
-        y = new T("((",x,"+",b,")*",w,")^2");
+        y = new Tsr("((",x,"+",b,")*",w,")^2");
         tester.testTensor(y, new String[]{"[1]:(4.0); ->d[1]:(-8.0), "});
-        y.backward(new T(-1));
+        y.backward(new Tsr(-1));
         tester.testTensor(x, new String[]{"8.0"});
         //===========================================
-        x = new T(
+        x = new Tsr(
                 new int[]{2, 3, 1},
                 new double[]{
                         3, 2,
@@ -41,19 +41,19 @@ public class TestOnlyCPU {
                         2, 4
                 }
         );
-        y = new T(
+        y = new Tsr(
                 new int[]{1, 3, 2},
                 new double[]{
                         4, -1, 3,
                         2, 3, -1
                 });
-        T z = new T(new T[]{x, y}, "I0xi1");
+        Tsr z = new Tsr(new Tsr[]{x, y}, "I0xi1");
         tester.testTensor(z, new String[]{"[2x1x2]:(19.0, 22.0, 1.0, -6.0)"});
 
-        z = new T(new Object[]{x, "x", y});
+        z = new Tsr(new Object[]{x, "x", y});
         tester.testTensor(z, new String[]{"[2x1x2]:(19.0, 22.0, 1.0, -6.0)"});
         //=======================
-        x = new T(
+        x = new Tsr(
                 new int[]{3, 3},
                 new double[]{
                         1, 2, 5,
@@ -61,7 +61,7 @@ public class TestOnlyCPU {
                         -2, 3, 4,
                 }
         );
-        y = new T(
+        y = new Tsr(
                 new int[]{2, 2},
                 new double[]{
                         -1, 3,
@@ -69,13 +69,13 @@ public class TestOnlyCPU {
                 }).setRqsGradient(true);
 
         tester.testTensor(y, new String[]{":g:(null)"});
-        z = new T(new T[]{x, y}, "I0xi1");
+        z = new Tsr(new Tsr[]{x, y}, "I0xi1");
         tester.testTensor(z, new String[]{"[2x2]:(15.0, 15.0, 18.0, 8.0)"});
 
-        z = new T(new Object[]{x, "x", y});
+        z = new Tsr(new Object[]{x, "x", y});
         tester.testTensor(z, new String[]{"[2x2]:(15.0, 15.0, 18.0, 8.0)"});
 
-        z.backward(new T(new int[]{2, 2}, 1));
+        z.backward(new Tsr(new int[]{2, 2}, 1));
         tester.testTensor(y, new String[]{"[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)"});
         System.out.println(z);
 
@@ -89,25 +89,25 @@ public class TestOnlyCPU {
     {
         NTester_Tensor tester = new NTester_Tensor("Tensor tester (only cpu)");
 
-        T x = new T(
+        Tsr x = new Tsr(
                 new int[]{2, 2},
                 new double[]{
                         -1, 2,
                         -3, 3,
                 }
         ).setRqsGradient(true);
-        T y = new T(new int[]{1, 1}, -3);
-        T z = new T(new T[]{x, y}, "I0xi1");
+        Tsr y = new Tsr(new int[]{1, 1}, -3);
+        Tsr z = new Tsr(new Tsr[]{x, y}, "I0xi1");
         tester.testTensor(z, new String[]{"[2x2]:(3.0, -6.0, 9.0, -9.0)"});
-        z.backward(new T(new int[]{2, 2}, 1));
+        z.backward(new Tsr(new int[]{2, 2}, 1));
         tester.testTensor(x, new String[]{"[2x2]:(-1.0, 2.0, -3.0, 3.0):g:(-3.0, -3.0, -3.0, -3.0)"});
         //---
-        x = new T(new int[]{1}, 0.1).setRqsGradient(true);
+        x = new Tsr(new int[]{1}, 0.1).setRqsGradient(true);
         IFunction tanh = FunctionBuilder.build("tanh(i0)", true);
         IFunction tenxx = FunctionBuilder.build("i0*100", true);
-        z = tenxx.activate(new T[]{tanh.activate(new T[]{x})});
+        z = tenxx.activate(new Tsr[]{tanh.activate(new Tsr[]{x})});
         tester.testTensor(z, new String[]{"[1]:(9.950371902099892)"});
-        z.backward(new T(new int[]{1}, 1));
+        z.backward(new Tsr(new int[]{1}, 1));
         tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.00990099009901)"});
         tester.testTensor(z, new String[]{"[1]:(9.950371902099892); ->d[1]:(99.00990099009901), "});
         //---

@@ -14,7 +14,7 @@ import java.util.Locale;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class T {
+public class Tsr {
 
     // DEFAULT DEVICE (HOST CPU)
     //=========================
@@ -39,12 +39,12 @@ public class T {
         return _components;
     }
 
-    public T setComponents(ArrayList<Object> properties) {
+    public Tsr setComponents(ArrayList<Object> properties) {
         _components = properties;
         return this;
     }
 
-    public T add(Object newComponent) {
+    public Tsr add(Object newComponent) {
         if (newComponent == null) {
             return this;
         }
@@ -73,7 +73,7 @@ public class T {
         return null;
     }
 
-    public T remove(Class componentClass) {
+    public Tsr remove(Class componentClass) {
         Object oldComponent = find(componentClass);
         if (oldComponent != null) {
             _components.remove(oldComponent);
@@ -120,7 +120,7 @@ public class T {
         return (gradientIsTargeted())?gradient():value();
     }
 
-    public T setTargetValue(double[] value){
+    public Tsr setTargetValue(double[] value){
         if(this.isOutsourced()){
             ((Device) this.find(Device.class)).overwrite(this, value);
         } else {
@@ -140,12 +140,12 @@ public class T {
         return _gradient;
     }
 
-    public T addToGradient(T g) {
+    public Tsr addToGradient(Tsr g) {
         if(this.isOutsourced()){
             Device device = (Device) this.find(Device.class);
             this.setGradientIsTargeted(true);
             device.add(g);
-            device.calculate(new T[]{this, this, g}, 17, -1);
+            device.calculate(new Tsr[]{this, this, g}, 17, -1);
             device.get(g);
             this.setGradientIsTargeted(false);
             //device.overwrite(this, g, true);
@@ -173,7 +173,7 @@ public class T {
         return newValue;
     }
 
-    public T setValue(double[] newValue) {
+    public Tsr setValue(double[] newValue) {
         _value = newValue;
         if (this.isOutsourced() && newValue != null) {
             ((Device) this.find(Device.class)).add(this);
@@ -226,7 +226,7 @@ public class T {
         return (_flags & RQS_GRADIENT_MASK) == RQS_GRADIENT_MASK;
     }
 
-    public T setRqsGradient(boolean rqsGradient) {
+    public Tsr setRqsGradient(boolean rqsGradient) {
         if (rqsGradient() != rqsGradient) {
             if (rqsGradient) {
                 _flags += RQS_GRADIENT_MASK;
@@ -247,7 +247,7 @@ public class T {
         return (_flags & IS_OUTSOURCED_MASK) == IS_OUTSOURCED_MASK;
     }
 
-    public T setIsOutsourced(boolean isOutsourced) {
+    public Tsr setIsOutsourced(boolean isOutsourced) {
         if (isOutsourced() != isOutsourced) {
             if (isOutsourced) {
                 _flags += IS_OUTSOURCED_MASK;
@@ -272,7 +272,7 @@ public class T {
         return (_flags & IS_VIRTUAL_MASK) == IS_VIRTUAL_MASK;
     }
 
-    public T setIsVirtual(boolean isVirtual) {
+    public Tsr setIsVirtual(boolean isVirtual) {
         if (isVirtual() != isVirtual) {
             double v = _value[0];
             if (isVirtual) {
@@ -293,7 +293,7 @@ public class T {
         return (_flags & GRADIENT_IS_TARGETED_MASK) == GRADIENT_IS_TARGETED_MASK;
     }
 
-    public T setGradientIsTargeted(boolean gradientIsTargeted) {
+    public Tsr setGradientIsTargeted(boolean gradientIsTargeted) {
         if (this.gradientIsTargeted() != gradientIsTargeted) {
             if (gradientIsTargeted) {
                 _flags += (this.rqsGradient())?GRADIENT_IS_TARGETED_MASK:0;
@@ -400,59 +400,59 @@ public class T {
     //CONSTRUCTION :
     //=========================
 
-    public T(Object arg){
+    public Tsr(Object arg){
         _construct(new Object[]{arg});
     }
-    public T(Object arg1, Object arg2){
+    public Tsr(Object arg1, Object arg2){
         _construct(new Object[]{arg1, arg2});
     }
-    public T(Object arg1, Object arg2, Object arg3){
+    public Tsr(Object arg1, Object arg2, Object arg3){
         _construct(new Object[]{arg1, arg2, arg3});
     }
-    public T(Object arg1, Object arg2, Object arg3, Object arg4){
+    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4){
         _construct(new Object[]{arg1, arg2, arg3, arg4});
     }
-    public T(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5){
+    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5){
         _construct(new Object[]{arg1, arg2, arg3, arg4, arg5});
     }
-    public T(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6){
+    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6){
         _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6});
     }
-    public T(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7){
+    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7){
         _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7});
     }
-    public T(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8){
+    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8){
         _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8});
     }
-    public T(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8, Object arg9){
+    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8, Object arg9){
         _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9});
     }
 
 
-    public T(Object[] args){
+    public Tsr(Object[] args){
         _construct(args);
     }
 
     private void _construct(Object[] array){
         boolean containsString = false;
         int numberOfTensors = 0;
-        ArrayList<T> list = new ArrayList<>();
+        ArrayList<Tsr> list = new ArrayList<>();
         for(Object o : array){
             containsString = (o instanceof  String)?true:containsString;
-            if(o instanceof  T){
-                if(!list.contains((T)o)){
-                    list.add((T)o);
+            if(o instanceof Tsr){
+                if(!list.contains((Tsr)o)){
+                    list.add((Tsr)o);
                     numberOfTensors ++;
                 }
             }
         }
         boolean doAD = true;
-        T[] tsrs = new T[numberOfTensors];
+        Tsr[] tsrs = new Tsr[numberOfTensors];
         String f = "";
         int ti=0;
         for(Object o : array){
             if(list.contains(o)){
-                tsrs[ti] = ((T)o);
+                tsrs[ti] = ((Tsr)o);
                 f+=("I["+ti+"]");
                 ti++;
             } else if(o instanceof  String){
@@ -465,18 +465,18 @@ public class T {
 
     }
 
-    public T() {}// creates empty tensor;
+    public Tsr() {}// creates empty tensor;
 
-    public T(double value){
+    public Tsr(double value){
         _construct(new int[]{1}, value);
     }
 
-    public T(int[] shape) {
+    public Tsr(int[] shape) {
         _value = new double[factory.util.szeOfShp(shape)];
         this.initialShape(shape);
     }
 
-    public T(int[] shape, double value) {
+    public Tsr(int[] shape, double value) {
         _construct(shape, value);
     }
 
@@ -488,7 +488,7 @@ public class T {
         _value[0] = value;
     }
 
-    public T(int[] shape, double[] value) {
+    public Tsr(int[] shape, double[] value) {
         _value = value;
         initialShape(shape);
     }
@@ -496,7 +496,7 @@ public class T {
     /**
      * @param tensor
      */
-    public T(T tensor) {
+    public Tsr(Tsr tensor) {
         _shape = tensor._shape;
         _translation = tensor._translation;
         _value = new double[tensor.size()];
@@ -511,7 +511,7 @@ public class T {
      * @param newShape
      * @return
      */
-    public T initialShape(int[] newShape) {
+    public Tsr initialShape(int[] newShape) {
         int size = factory.util.szeOfShp(newShape);
         _value = (_value==null)?new double[size]:_value;
         if (size != _value.length && !this.isVirtual()) {
@@ -553,28 +553,28 @@ public class T {
 
     //TRACKED COMPUTATION :
     //=========================
-    public T(T tensor, String operation) {
+    public Tsr(Tsr tensor, String operation) {
         if (tensor == null) {
             return;
         }
-        _construct(new T[]{tensor}, operation, true);
+        _construct(new Tsr[]{tensor}, operation, true);
     }
 
-    public T(T[] tensors, String operation) {
+    public Tsr(Tsr[] tensors, String operation) {
         _construct(tensors, operation, true);
     }
 
-    public T(T[] tensors, String operation, boolean doAD) {
+    public Tsr(Tsr[] tensors, String operation, boolean doAD) {
         _construct(tensors, operation, doAD);
     }
 
-    private void _construct(T[] tensors, String operation, boolean doAD) {
+    private void _construct(Tsr[] tensors, String operation, boolean doAD) {
         if (tensors == null || tensors.length == 0 || tensors[0] == null) {
             return;
         }
-        T result = IFunction.setup.commit(tensors, operation, doAD);
+        Tsr result = IFunction.setup.commit(tensors, operation, doAD);
         boolean resultIsUnique = true;
-        for(T t : tensors){
+        for(Tsr t : tensors){
             if(t == result){
                 resultIsUnique = false;
                 break;
@@ -619,7 +619,7 @@ public class T {
         this.add(newConf);
     }
 
-    public T inject(T tensor) {
+    public Tsr inject(Tsr tensor) {
         _value = tensor._value;
         _shape = tensor._shape;
         _translation = tensor._translation;
@@ -632,7 +632,7 @@ public class T {
         return this;
     }
 
-    public T backward(T error) {
+    public Tsr backward(Tsr error) {
         if (this.rqsGradient()) {
             this.addToGradient(error);
         }
@@ -642,7 +642,7 @@ public class T {
         return this;
     }
 
-    public T delete() {
+    public Tsr delete() {
         if (this.isOutsourced()) {
             ((Device) this.find(Device.class)).rmv(this);
         }
@@ -657,7 +657,7 @@ public class T {
 
     //ELEMENTARY OPERATIONS:
     //=========================
-    public T foreach(Consumer<Integer> action) {
+    public Tsr foreach(Consumer<Integer> action) {
         this.setIsVirtual(false);
         int sze = this.size();
         int[] idx = new int[this.shape().length];
@@ -668,7 +668,7 @@ public class T {
         return this;
     }
 
-    public T foreach(BiConsumer<Integer, Double> action) {
+    public Tsr foreach(BiConsumer<Integer, Double> action) {
         this.setIsVirtual(false);
         int sze = this.size();
         int[] idx = new int[this.shape().length];
@@ -687,7 +687,7 @@ public class T {
     public static class factory {
 
         public static class io {
-            public static double getFrom(T t, int i) {
+            public static double getFrom(Tsr t, int i) {
                 if (t.isEmpty() || t.isUndefined()) {
                     return 0;
                 } else if (t.isVirtual()) {
@@ -696,32 +696,32 @@ public class T {
                 return t.targetValue()[util.iOf(t.shpIdx(i), t.translation())];
             }
 
-            public static double getFrom(T t, int[] idx) {
+            public static double getFrom(Tsr t, int[] idx) {
                 t.setIsVirtual(false);
                 return t.targetValue()[util.iOf(idx, t.translation())];
             }
 
-            public static void setInto(T t, int i, double value) {
+            public static void setInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
                 t.targetValue()[util.iOf(t.shpIdx(i), t.translation())] = value;
             }
 
-            public static void setInto(T t, int[] idx, double value) {
+            public static void setInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
                 t.targetValue()[util.iOf(idx, t.translation())] = value;
             }
 
-            public static void addInto(T t, int i, double value) {
+            public static void addInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
                 t.targetValue()[util.iOf(t.shpIdx(i), t.translation())] += value;
             }
 
-            public static void addInto(T t, int[] idx, double value) {
+            public static void addInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
                 t.targetValue()[util.iOf(idx, t.translation())] += value;
             }
 
-            public static T addInto(T t, T source) {
+            public static Tsr addInto(Tsr t, Tsr source) {
                 if (t.isVirtual() && source.isVirtual()) {
                     t.targetValue()[0] += ((source.gradientIsTargeted())?source._gradient:source._value)[0];
                 } else {
@@ -738,17 +738,17 @@ public class T {
                 return source;
             }
 
-            public static void subInto(T t, int i, double value) {
+            public static void subInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
                 t.targetValue()[util.iOf(t.shpIdx(i), t.translation())] -= value;
             }
 
-            public static void subInto(T t, int[] idx, double value) {
+            public static void subInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
                 t.targetValue()[util.iOf(idx, t.translation())] -= value;
             }
 
-            public static void subInto(T t, T source) {
+            public static void subInto(Tsr t, Tsr source) {
                 if (t.isVirtual() && source.isVirtual()) {
                     t.targetValue()[0] -= ((source.gradientIsTargeted())?source._gradient:source._value)[0];
                 } else {
@@ -764,12 +764,12 @@ public class T {
                 }
             }
 
-            public static void mulInto(T t, int i, double value) {
+            public static void mulInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
                 t.targetValue()[util.iOf(t.shpIdx(i), t.translation())] *= value;
             }
 
-            public static void mulInto(T t, int[] idx, double value) {
+            public static void mulInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
                 t.targetValue()[util.iOf(idx, t.translation())] *= value;
             }
@@ -778,7 +778,7 @@ public class T {
 
         public static class exec {
 
-            public static T reshaped(T tensor, int[] newForm, boolean newTsr) {
+            public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr) {
                 tensor = (newTsr)?copyOf(tensor):tensor;
                 tensor._record(tensor.shape(), tensor.translation());
                 tensor._shape = util.shpCheck(util.rearrange(tensor._shape, newForm), tensor);
@@ -790,7 +790,7 @@ public class T {
 
         }
 
-        public static void inject(double[] data, boolean grd, T tensor) {
+        public static void inject(double[] data, boolean grd, Tsr tensor) {
             if (grd) {
                 tensor._gradient = data;
             } else {
@@ -798,9 +798,9 @@ public class T {
             }
         }
 
-        public static T newTensor(double value, int[] shape) {
+        public static Tsr newTensor(double value, int[] shape) {
             int sze = util.szeOfShp(shape);
-            T tensor = new T();
+            Tsr tensor = new Tsr();
             tensor._value = new double[sze];
             tensor.initialShape(shape);
             for (int i = 0; i < sze; i++) {
@@ -809,31 +809,31 @@ public class T {
             return tensor;
         }
 
-        public static T newTensor(double[] value, int[] shape) {
-            T tensor = new T();
+        public static Tsr newTensor(double[] value, int[] shape) {
+            Tsr tensor = new Tsr();
             tensor._value = value;
             tensor.initialShape(shape);
             return tensor;
         }
 
-        public static T newTensor(double[] value, int[] shape, int[] translation) {
-            T tensor = new T();
+        public static Tsr newTensor(double[] value, int[] shape, int[] translation) {
+            Tsr tensor = new Tsr();
             tensor._value = value;
             tensor.initialShape(shape);
             tensor._translation = translation;
             return tensor;
         }
 
-        public static T newTensor(int[] shape, int[] translation) {
-            T tensor = new T();
+        public static Tsr newTensor(int[] shape, int[] translation) {
+            Tsr tensor = new Tsr();
             tensor._value = new double[util.szeOfShp(shape)];
             tensor.initialShape(shape);
             tensor._translation = (translation != null) ? translation : tensor._translation;//FUNCTIONS.put()
             return tensor;
         }
 
-        public static T copyOf(T tensor) {
-            T newTensor = new T();
+        public static Tsr copyOf(Tsr tensor) {
+            Tsr newTensor = new Tsr();
             newTensor._shape = tensor._shape;
             newTensor._translation = tensor._translation;
             newTensor._value = new double[tensor.size()];
@@ -849,7 +849,7 @@ public class T {
             return newTensor;
         }
 
-        public static T copyOf(Object[] things) {
+        public static Tsr copyOf(Object[] things) {
             for (int i = 0; i < things.length; i++) {
                 if (things[i] instanceof int[]) {
 
@@ -857,11 +857,11 @@ public class T {
 
                 }
             }
-            return new T();
+            return new Tsr();
         }
 
-        public static T reshapedCopyOf(T tensor, int[] newForm) {
-            T newTensor = new T();
+        public static Tsr reshapedCopyOf(Tsr tensor, int[] newForm) {
+            Tsr newTensor = new Tsr();
             newTensor._value = tensor._value;
             newTensor._shape = util.rearrange(tensor._shape, newForm);
             newTensor._translation = util.rearrange(tensor._translation, newForm);
@@ -875,7 +875,7 @@ public class T {
          */
         public static class util {
 
-            public static boolean shareGuestDevice(T[] tsrs) {
+            public static boolean shareGuestDevice(Tsr[] tsrs) {
                 boolean onSameGuestDevice = true;
                 Device device = null;
                 for (int ti = 0; ti < tsrs.length; ti++) {
@@ -993,7 +993,7 @@ public class T {
             }
 
             @Contract(pure = true)
-            public static int[] shpCheck(int[] newShp, T t) {
+            public static int[] shpCheck(int[] newShp, Tsr t) {
                 if (szeOfShp(newShp) != t.size()) {
                     throw new IllegalArgumentException("New _shape does not match tensor size!" +
                             " (" + str(newShp) + ((szeOfShp(newShp) < t.size()) ? "<" : ">") + str(t.shape()) + ")");

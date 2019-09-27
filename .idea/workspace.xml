@@ -4,6 +4,7 @@
     <list default="true" id="a07ad3e8-8754-4b05-b853-df2665879cc4" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/jarAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/jarAnalysis.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" afterDir="false" />
@@ -12,8 +13,37 @@
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/T.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/T.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/T.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/Tsr.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/device/TensorKernel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/device/TensorKernel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/IFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/IFunction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/environment/Cache.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/environment/Cache.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/assembly/FunctionConstructor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/assembly/FunctionConstructor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphLock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphLock.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/implementations/FConstant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/implementations/FConstant.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/implementations/FInput.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/implementations/FInput.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/implementations/FVariable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/implementations/FVariable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/optimization/NVOptimizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/optimization/NVOptimizer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/optimization/TOptimizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/optimization/TOptimizer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/optimization/factory/material/Template.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/optimization/factory/material/Template.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/utility/DataHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/utility/DataHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/ngui/swing/NCircleMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/ngui/swing/NCircleMenu.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/ngui/swing/NGraphBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/ngui/swing/NGraphBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/ngui/swing/NVControlFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/ngui/swing/NVControlFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/ngui/swing/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/ngui/swing/Node.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/ngui/swing/PanelNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/ngui/swing/PanelNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/ngui/touch/canvas/NCircleMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/ngui/touch/canvas/NCircleMenu.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/ngui/touch/canvas/NGraphBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/ngui/touch/canvas/NGraphBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/ngui/touch/canvas/NPanelNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/ngui/touch/canvas/NPanelNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/TestBroad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestBroad.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/TestOnlyCPU.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestOnlyCPU.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/util/NTester_Function.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/util/NTester_Function.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/util/NTester_Tensor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/util/NTester_Tensor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/util/NTester_TensorDevice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/util/NTester_TensorDevice.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -95,8 +125,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/java/TestOnlyCPU.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="275">
-              <caret line="114" column="24" lean-forward="true" selection-start-line="114" selection-start-column="24" selection-end-line="114" selection-end-column="24" />
+            <state relative-caret-position="1938">
+              <caret line="114" column="24" selection-start-line="114" selection-start-column="24" selection-end-line="114" selection-end-column="24" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -104,24 +134,23 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/T.java">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/Tsr.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="168">
-              <caret line="374" column="76" selection-start-line="374" selection-start-column="76" selection-end-line="374" selection-end-column="76" />
-              <folding>
-                <element signature="e#971#979#0" expanded="true" />
-                <element signature="e#8873#8874#0" expanded="true" />
-                <element signature="e#8961#8962#0" expanded="true" />
-                <element signature="e#12751#12752#0" expanded="true" />
-                <element signature="e#12788#12789#0" expanded="true" />
-                <element signature="e#15610#15611#0" expanded="true" />
-                <element signature="e#15650#15651#0" expanded="true" />
-                <element signature="e#18000#18001#0" expanded="true" />
-                <element signature="e#18052#18053#0" expanded="true" />
-                <element signature="e#18113#18114#0" expanded="true" />
-                <element signature="e#18165#18166#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="153">
+              <caret line="21" selection-start-line="21" selection-end-line="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="137">
+                <caret line="73" column="26" selection-start-line="73" selection-start-column="26" selection-end-line="73" selection-end-column="26" />
+              </first_editor>
+              <second_editor />
             </state>
           </provider>
         </entry>
@@ -225,7 +254,6 @@
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/environment/Types.java" />
         <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/assembly/FunctionBuilder.java" />
-        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/test/java/util/NTester_Tensor.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/KernelFP64.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java" />
@@ -241,12 +269,14 @@
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/TensorKernel.java" />
         <option value="$PROJECT_DIR$/src/test/java/TestOnlyCPU.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/T.java" />
+        <option value="$PROJECT_DIR$/src/main/java/neureka/core/Tsr.java" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="-15" />
-    <option name="width" value="1948" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="1905" />
+    <option name="width" value="1950" />
     <option name="height" value="2075" />
   </component>
   <component name="ProjectView">
@@ -254,12 +284,19 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
               <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
               <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+            <path>
+              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
+              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name=".travis" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
@@ -377,8 +414,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -542,14 +577,14 @@
       <workItem from="1569352324058" duration="5595000" />
       <workItem from="1569438415236" duration="7202000" />
       <workItem from="1569517284177" duration="7287000" />
-      <workItem from="1569530959023" duration="678000" />
+      <workItem from="1569530959023" duration="1068000" />
+      <workItem from="1569585618864" duration="53000" />
+      <workItem from="1569585686149" duration="78000" />
+      <workItem from="1569617806003" duration="269000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="neureka_[test] - 2019.09.26 at 20h 30m 48s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
     <history-entry file="neureka_[test] - 2019.09.26 at 20h 31m 29s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
@@ -577,13 +612,15 @@
     <history-entry file="neureka_[test] - 2019.09.26 at 22h 56m 54s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
+    <history-entry file="neureka_[test] - 2019.09.26 at 23h 01m 48s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="166020000" />
+    <option name="totallyTimeSpent" value="166810000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-6" y="0" width="779" height="830" extended-state="0" />
-    <editor active="true" />
+    <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
     <layout>
       <window_info id="Structure" order="0" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="1" />
@@ -595,8 +632,8 @@
       <window_info id="Persistence" order="7" side_tool="true" />
       <window_info id="Web" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.48859936" weight="0.32554945" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.80915034" visible="true" weight="0.44382802" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.48794788" weight="0.32554945" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.80846906" visible="true" weight="0.44368133" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.6107527" weight="0.39507958" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -607,7 +644,7 @@
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Database Changes" order="11" />
       <window_info anchor="bottom" id="Version Control" order="12" />
-      <window_info anchor="bottom" id="Gradle" order="13" sideWeight="0.19084968" side_tool="true" visible="true" weight="0.44382802" />
+      <window_info anchor="bottom" id="Gradle" order="13" sideWeight="0.19153094" side_tool="true" visible="true" weight="0.44368133" />
       <window_info anchor="bottom" id="Java Enterprise" order="14" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -618,7 +655,7 @@
       <window_info anchor="right" id="Database" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info anchor="right" id="Theme Preview" order="8" />
-      <window_info anchor="right" content_ui="combo" id="Project" order="9" sideWeight="0.49885058" visible="true" weight="0.32026145" />
+      <window_info anchor="right" content_ui="combo" id="Project" order="9" sideWeight="0.49885058" visible="true" weight="0.15960912" />
       <window_info anchor="right" id="Coverage" order="10" sideWeight="0.5011494" side_tool="true" weight="0.23893805" />
     </layout>
   </component>
@@ -683,14 +720,14 @@
           <option name="timeStamp" value="75" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/neureka/core/T.java</url>
-          <line>580</line>
+          <url>file://$PROJECT_DIR$/src/main/java/neureka/core/Tsr.java</url>
+          <line>578</line>
           <properties />
           <option name="timeStamp" value="76" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/neureka/core/T.java</url>
-          <line>581</line>
+          <url>file://$PROJECT_DIR$/src/main/java/neureka/core/Tsr.java</url>
+          <line>579</line>
           <properties />
           <option name="timeStamp" value="77" />
         </line-breakpoint>
@@ -817,16 +854,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="51">
           <caret line="3" column="12" selection-start-line="3" selection-start-column="12" selection-end-line="3" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="1734">
-            <caret line="102" column="57" selection-start-line="102" selection-start-column="57" selection-end-line="102" selection-end-column="57" />
-          </first_editor>
-          <second_editor />
         </state>
       </provider>
     </entry>
@@ -1089,31 +1116,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/TestOnlyCPU.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="275">
-          <caret line="114" column="24" lean-forward="true" selection-start-line="114" selection-start-column="24" selection-end-line="114" selection-end-column="24" />
+        <state relative-caret-position="1938">
+          <caret line="114" column="24" selection-start-line="114" selection-start-column="24" selection-end-line="114" selection-end-column="24" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/T.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/Tsr.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="168">
-          <caret line="374" column="76" selection-start-line="374" selection-start-column="76" selection-end-line="374" selection-end-column="76" />
-          <folding>
-            <element signature="e#971#979#0" expanded="true" />
-            <element signature="e#8873#8874#0" expanded="true" />
-            <element signature="e#8961#8962#0" expanded="true" />
-            <element signature="e#12751#12752#0" expanded="true" />
-            <element signature="e#12788#12789#0" expanded="true" />
-            <element signature="e#15610#15611#0" expanded="true" />
-            <element signature="e#15650#15651#0" expanded="true" />
-            <element signature="e#18000#18001#0" expanded="true" />
-            <element signature="e#18052#18053#0" expanded="true" />
-            <element signature="e#18113#18114#0" expanded="true" />
-            <element signature="e#18165#18166#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="153">
+          <caret line="21" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="137">
+            <caret line="73" column="26" selection-start-line="73" selection-start-column="26" selection-end-line="73" selection-end-column="26" />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
     </entry>

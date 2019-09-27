@@ -1,5 +1,5 @@
 
-import neureka.core.T;
+import neureka.core.Tsr;
 import neureka.core.device.Device;
 import neureka.core.function.IFunction;
 import org.junit.Test;
@@ -47,23 +47,23 @@ public class TestBroad {
         input1 = new double[]{2, 3, -2};//-3*-2/(-8--4-2)
         tester.testDeriviation("prod(ij)", input1, 1, (-4), "");
 
-        T[] tsrs = new T[]{new T(new int[]{2}, new double[]{1, 2}), new T(new int[]{2},new double[]{3, -4})};
-        T expected = new T(new int[]{2}, new double[]{0.9701425001453319, -0.8944271909999159});
+        Tsr[] tsrs = new Tsr[]{new Tsr(new int[]{2}, new double[]{1, 2}), new Tsr(new int[]{2},new double[]{3, -4})};
+        Tsr expected = new Tsr(new int[]{2}, new double[]{0.9701425001453319, -0.8944271909999159});
         tester.testActivation("tanh(sum(Ij))", tsrs, expected, "");
 
-        expected = new T(new int[]{2}, new double[]{0.31326168751822286, 0.6931471805599453});
+        expected = new Tsr(new int[]{2}, new double[]{0.31326168751822286, 0.6931471805599453});
         tester.testActivation("lig(prod(Ij-2))", tsrs, expected, "");
 
-        tsrs = new T[]{new T(new int[]{2, 4}, new double[]{10, 12, 16, 21, 33, 66, 222, 15})};
-        expected = new T(new int[]{1, 2, 2, 2}, new double[]{8.000335406372896, 10.000045398899216, 14.000000831528373, 19.000000005602796, 31.000000000000032, 64.0, 220.0, 13.000002260326852});
+        tsrs = new Tsr[]{new Tsr(new int[]{2, 4}, new double[]{10, 12, 16, 21, 33, 66, 222, 15})};
+        expected = new Tsr(new int[]{1, 2, 2, 2}, new double[]{8.000335406372896, 10.000045398899216, 14.000000831528373, 19.000000005602796, 31.000000000000032, 64.0, 220.0, 13.000002260326852});
         tester.testActivation("lig([-1, 0, -2, -2](Ij-2))", tsrs, expected, "");
 
-        tsrs = new T[]{
-                new T(new int[]{2}, new double[]{-1, 3}),
-                new T(new int[]{2}, new double[]{7, -1}),
-                new T(new int[]{2}, new double[]{2, 2}),
+        tsrs = new Tsr[]{
+                new Tsr(new int[]{2}, new double[]{-1, 3}),
+                new Tsr(new int[]{2}, new double[]{7, -1}),
+                new Tsr(new int[]{2}, new double[]{2, 2}),
         };
-        expected = new T(new int[]{2}, new double[]{-0.0018221023888012912, 0.2845552390654007});
+        expected = new Tsr(new int[]{2}, new double[]{-0.0018221023888012912, 0.2845552390654007});
         tester.testDerivative("lig(i0*i1)*i2", tsrs, 1, expected, "");
         try {
             Thread.sleep(2000);
@@ -78,11 +78,11 @@ public class TestBroad {
 
         NTester_Tensor tester = new NTester_Tensor("Testing core tensor functionality");
         //---
-        T tensor1 = new T(3).setRqsGradient(true);
-        T tensor2 = new T(-4);
-        T tensor3 = new T(2);
+        Tsr tensor1 = new Tsr(3).setRqsGradient(true);
+        Tsr tensor2 = new Tsr(-4);
+        Tsr tensor3 = new Tsr(2);
         tester.testInjection(
-                new T[]{tensor1, tensor2, tensor3},
+                new Tsr[]{tensor1, tensor2, tensor3},
                 "(Ig[0]<-I[1])->I[2]",
                 new String[][]{
                         {"empty"},//result
@@ -90,22 +90,22 @@ public class TestBroad {
                         {"(-4.0)"},//tensor2
                         {"(-4.0)"},//tensor3
                 });
-        tensor1 = new T(3).setRqsGradient(true);
-        tensor2 = new T(-4);
-        tensor3 = new T(2);
-        T result = IFunction.setup.commit(new T[]{tensor1, tensor2, tensor3}, "(Ig[0]<-I[1])->I[2]", true);
+        tensor1 = new Tsr(3).setRqsGradient(true);
+        tensor2 = new Tsr(-4);
+        tensor3 = new Tsr(2);
+        Tsr result = IFunction.setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "(Ig[0]<-I[1])->I[2]", true);
         tester.testContains(
                 result.toString(),
                 new String[]{"(-4.0)"},
                 "Testing if IFunction.setup.commit() returns non unique result!"
         );
         //---
-        tensor1 = new T(new int[]{1, 3}, 2);
-        tensor2 = new T(new int[]{2, 1}, -1);
+        tensor1 = new Tsr(new int[]{1, 3}, 2);
+        tensor2 = new Tsr(new int[]{2, 1}, -1);
         tensor1.setRqsGradient(true);
         tensor2.setRqsGradient(true);
         tester.testTensorAutoGrad(
-                new T[]{tensor1, tensor2},
+                new Tsr[]{tensor1, tensor2},
                 "relu(I[0]xI[1])",
                 new String[]{
                         "[2x3]:(-0.02, -0.02, -0.02, -0.02, -0.02, -0.02);",
@@ -115,12 +115,12 @@ public class TestBroad {
                         "  }, "
                 });
         //---
-        tensor1 = new T(new int[]{1, 3}, 2);
-        tensor2 = new T(new int[]{2, 1}, -1);
+        tensor1 = new Tsr(new int[]{1, 3}, 2);
+        tensor2 = new Tsr(new int[]{2, 1}, -1);
         tensor1.setRqsGradient(true);
         tensor2.setRqsGradient(true);
         tester.testTensorAutoGrad(
-                new T[]{tensor1, tensor2},
+                new Tsr[]{tensor1, tensor2},
                 "lig((I[0]xI[1])*-100)",
                 new String[]{
                         "[2x3]:(200.0, 200.0, 200.0, 200.0, 200.0, 200.0);",
@@ -131,20 +131,20 @@ public class TestBroad {
                 }
         );
         //---
-        tensor1 = new T(new int[]{2, 3, 4}, 2);
+        tensor1 = new Tsr(new int[]{2, 3, 4}, 2);
         tensor1.setRqsGradient(false);
         tester.testTensorAutoGrad(
-                new T[]{tensor1},//, tensor2},/<=TODO make this throw an exception (if input does not match function)
+                new Tsr[]{tensor1},//, tensor2},/<=TODO make this throw an exception (if input does not match function)
                 "lig([-2, 1, 0, -2]:(I[0])*-100)",
                 new String[]{"[2x3x2x2]:(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)"}
         );
         //---
-        tensor1 = new T(new int[]{2}, 2);
-        tensor2 = new T(new int[]{2}, 4);
+        tensor1 = new Tsr(new int[]{2}, 2);
+        tensor2 = new Tsr(new int[]{2}, 4);
         tensor1.setRqsGradient(true);
         tensor2.setRqsGradient(true);
         tester.testTensorAutoGrad(
-                new T[]{tensor1, tensor2},
+                new Tsr[]{tensor1, tensor2},
                 "lig(tanh(I[0]*I[1]*2)*I[1])",
                 new String[]{
                         "[2]:(4.010500886001868, 4.010500886001868); ",
@@ -158,12 +158,12 @@ public class TestBroad {
                 }
         );
         //---
-        tensor1 = new T(new int[]{3, 2, 1}, 4);
-        tensor2 = new T(new int[]{1, 1, 4}, -1);
-        tensor3 = new T(new int[]{3, 2, 1}, 2);
+        tensor1 = new Tsr(new int[]{3, 2, 1}, 4);
+        tensor2 = new Tsr(new int[]{1, 1, 4}, -1);
+        tensor3 = new Tsr(new int[]{3, 2, 1}, 2);
         tensor2.setRqsGradient(true);
         tester.testTensorAutoGrad(
-                new T[]{tensor1, tensor2, tensor3},
+                new Tsr[]{tensor1, tensor2, tensor3},
                 "I[0]xI[1]xI[2]",
                 new String[]{
                         "[1x1x4]:(-48.0, -48.0, -48.0, -48.0);",
@@ -173,40 +173,40 @@ public class TestBroad {
                                 ":t{ [1x1x4]:(-1.0, -1.0, -1.0, -1.0) },  }, "
                 });
         //--
-        tensor1 = new T(new int[]{5, 1, 1}, 4);//-2*4 = 8 | *3 = -24
-        tensor2 = new T(new int[]{1, 4, 1}, -2);
-        tensor3 = new T(new int[]{1, 1, 2}, 3);
+        tensor1 = new Tsr(new int[]{5, 1, 1}, 4);//-2*4 = 8 | *3 = -24
+        tensor2 = new Tsr(new int[]{1, 4, 1}, -2);
+        tensor3 = new Tsr(new int[]{1, 1, 2}, 3);
         tensor1.setRqsGradient(true);
         tester.testTensorAutoGrad(
-                new T[]{tensor1, tensor2, tensor3},
+                new Tsr[]{tensor1, tensor2, tensor3},
                 "I[0]xI[1]xI[2]",
                 new String[]{
                         "[5x4x2]:(-24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0); =>d|[ [1x1x2]:(3.0, 3.0) ]|:t{ [5x4x1]:(-8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0); =>d|[ [1x4x1]:(-2.0, -2.0, -2.0, -2.0) ]|:t{ [5x1x1]:(4.0, 4.0, 4.0, 4.0, 4.0) },  }, "
                 }
         );
         //=====================
-        tensor1 = new T(new int[]{2, 2}, new double[]{1, 2, 3, 4});//-2*4 = 8 | *3 = -24
+        tensor1 = new Tsr(new int[]{2, 2}, new double[]{1, 2, 3, 4});//-2*4 = 8 | *3 = -24
         tensor1.setRqsGradient(true);
         tester.testTensorAutoGrad(
-                new T[]{tensor1},
+                new Tsr[]{tensor1},
                 "((i0+2)^2)",
                 new String[]{"d|[ [2x2]:(6.0, 8.0, 10.0, 12.0) ]|:t{ [2x2]:(1.0, 2.0, 3.0, 4.0) }"}
         );
         //---
         //=====================
-        tensor1 = new T(new int[]{2}, new double[]{1, 2});//-2*4 = 8 | *3 = -24
+        tensor1 = new Tsr(new int[]{2}, new double[]{1, 2});//-2*4 = 8 | *3 = -24
         tensor1.setRqsGradient(true);
         tester.testTensorAutoGrad(
-                new T[]{tensor1},
+                new Tsr[]{tensor1},
                 "cos(tanh(lig(i0)))",
                 new String[]{"[2]:(0.6998554841989726, 0.6177112361351595); =>d|[ [2]:(-0.1916512536291578, -0.12539562877521598) ]|:t{ [2]:(1.0, 2.0) }, "}
         );
         //---
         //=====================
-        tensor1 = new T(new int[]{1}, new double[]{2});//-2*4 = 8 | *3 = -24
+        tensor1 = new Tsr(new int[]{1}, new double[]{2});//-2*4 = 8 | *3 = -24
         tensor1.setRqsGradient(true);
         tester.testTensorAutoGrad(
-                new T[]{tensor1},//2 =>-2 =>-4 =>12 //2 =>-2 //-2,12 =>-24
+                new Tsr[]{tensor1},//2 =>-2 =>-4 =>12 //2 =>-2 //-2,12 =>-24
                 "(-3*(2*(i0*-1)))*(-1*i0)",
                 new String[]{
                         "[1]:(-24.0); ",
@@ -227,33 +227,33 @@ public class TestBroad {
         //TESTING INVERS:
         ///=================
         //---
-        tensor1 = new T(new int[]{2, 3}, new double[]{
+        tensor1 = new Tsr(new int[]{2, 3}, new double[]{
                 0, 0, //3, 1,
                 0, 0, //-2, -1,
                 0, 0, ///-4, 2,
         });
         //---
-        tensor2 = new T(new int[]{5, 2}, new double[]{
+        tensor2 = new Tsr(new int[]{5, 2}, new double[]{
                 -2, 3, 6, 3, -1,
                 0, 2, 4, 2, 1
         });
-        tensor3 = new T(new int[]{4, 2}, new double[]{
+        tensor3 = new Tsr(new int[]{4, 2}, new double[]{
                 1, 2, -3, 2,//<= drain data!
                 4, -2, -1, 5,
         });
-        tester.testTensorAutoGrad(new T[]{tensor1, tensor2, tensor3},
+        tester.testTensorAutoGrad(new Tsr[]{tensor1, tensor2, tensor3},
                 "i0<<i1<<i2",
                 new String[]{"empty"});
-        result = IFunction.setup.commit(new T[]{tensor1, tensor2, tensor3}, "i0<<i1<<i2", true);
+        result = IFunction.setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i0<<i1<<i2", true);
         tester.testContains(
                 result.toString(),
                 new String[]{"[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"},
                 "Testing if IFunction.setup.commit() returns non unique result!"
         );
-        tester.testTensorAutoGrad(new T[]{tensor1, tensor2, tensor3},//TODO:REACTIVATE!
+        tester.testTensorAutoGrad(new Tsr[]{tensor1, tensor2, tensor3},//TODO:REACTIVATE!
                 "i2>>i1>>i0",
                 new String[]{"empty"});
-        result = IFunction.setup.commit(new T[]{tensor1, tensor2, tensor3}, "i2>>i1>>i0", true);
+        result = IFunction.setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i2>>i1>>i0", true);
         tester.testContains(
                 result.toString(),
                 new String[]{"[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"},
@@ -261,21 +261,21 @@ public class TestBroad {
         );
         //=====================
         //---
-        tensor1 = new T(new int[]{2, 2, 1}, new double[]{
+        tensor1 = new Tsr(new int[]{2, 2, 1}, new double[]{
                 1, 2, //3, 1,
                 2, -3, //-2, -1,
         });
         tensor1.setRqsGradient(true);
         //---
-        tensor2 = new T(new int[]{1, 2, 2}, new double[]{
+        tensor2 = new Tsr(new int[]{1, 2, 2}, new double[]{
                 -2, 3,
                 1, 2,
         });
         tester.testTensorAutoGrad(//4, 5, -13, -4 <= result values
-                new T[]{tensor1, tensor2},
+                new Tsr[]{tensor1, tensor2},
                 "i0xi1",
                 new String[]{"[2x1x2]:(4.0, -13.0, 5.0, -4.0); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"},
-                new T(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
+                new Tsr(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
                 new double[][]{{-1.0, -1.0, 5.0, 5.0}, null}
         );
         //---
@@ -419,7 +419,7 @@ public class TestBroad {
         );
         //===========================================
 
-        tensor1 = new T(new int[]{3, 5}, new double[]{
+        tensor1 = new Tsr(new int[]{3, 5}, new double[]{
                 2, 3, 5,
                 -4, 6, 2,
                 -5, -2, -1,
@@ -432,23 +432,23 @@ public class TestBroad {
         //=====================================================================
         Device gpu = new Device("nvidia");
         gpu.add(tensor1);
-        //System.out.println(new T(t, "lig(I[0])"));
+        //System.out.println(new Tsr(t, "lig(I[0])"));
         tester.testTensorAutoGrad(
-                new T[]{tensor1},
+                new Tsr[]{tensor1},
                 "lig(I[0])",
                 new String[]{
                         "[3x5]:(2.1269280110429722, 3.048587351573742, 5.006715348489118, 0.01814992791780978, 6.00247568513773, 2.1269280110429722, 0.006715348489117967, 0.1269280110429726, 0.31326168751822286, 2.1269280110429722, 4.0181499279178094, 0.31326168751822286, 1.3132616875182228, 2.1269280110429722, 7.000911466453774)"
                 });
         //===================
-        tensor1 = new T(new int[]{2}, 3);
-        tensor2 = new T(new int[]{2}, 4);
-        result = new T(new T[]{tensor1, tensor2}, "i0*i1");
+        tensor1 = new Tsr(new int[]{2}, 3);
+        tensor2 = new Tsr(new int[]{2}, 4);
+        result = new Tsr(new Tsr[]{tensor1, tensor2}, "i0*i1");
         tester.testTensorAutoGrad(
-                new T[]{tensor1, tensor2},
+                new Tsr[]{tensor1, tensor2},
                 "i0*i1",
                 new String[]{"[2]:(12.0, 12.0)"});
         //===========================================
-        tensor1 = new T(
+        tensor1 = new Tsr(
                 new int[]{2, 3, 1},
                 new double[]{
                         3, 2,
@@ -456,7 +456,7 @@ public class TestBroad {
                         2, 4
                 }
         );
-        tensor2 = new T(
+        tensor2 = new Tsr(
                 new int[]{1, 3, 2},
                 new double[]{
                         4, -1, 3,
@@ -465,48 +465,48 @@ public class TestBroad {
         gpu.add(tensor1);
         gpu.add(tensor2);
         tester.testTensorAutoGrad(
-                new T[]{tensor1, tensor2},
+                new Tsr[]{tensor1, tensor2},
                 "I0 x i1",
                 new String[]{
                         "[2x1x2]:(19.0, 22.0, 1.0, -6.0)"
                 });
         //=======================
-        tensor1 = new T(
+        tensor1 = new Tsr(
                 new int[]{200, 300, 1},
                 2
         );
-        tensor2 = new T(
+        tensor2 = new Tsr(
                 new int[]{1, 300, 200},
                 3);
         gpu.add(tensor1);
         gpu.add(tensor2);
         tester.testTensorAutoGrad(
-                new T[]{tensor1, tensor2},
+                new Tsr[]{tensor1, tensor2},
                 "I0xi1",
                 new String[]{
                         "[200x1x200]:(1800.0, 1800.0, 1800.0, 1800.0, 1800.0, 1800.0,"//...
                 });
         //---
-        tensor1 = new T(new int[]{2, 2, 1}, new double[]{
+        tensor1 = new Tsr(new int[]{2, 2, 1}, new double[]{
                 1, 2, //3, 1,
                 2, -3, //-2, -1,
         }).setRqsGradient(true);
         //---
-        tensor2 = new T(new int[]{1, 2, 2}, new double[]{
+        tensor2 = new Tsr(new int[]{1, 2, 2}, new double[]{
                 -2, 3,
                 1, 2,
         });
         gpu.add(tensor1).add(tensor2);
         tester.testTensorAutoGrad(//4, 5, -13, -4 <= result values
-                new T[]{tensor1, tensor2},
+                new Tsr[]{tensor1, tensor2},
                 "i0xi1",
                 new String[]{
                         "[2x1x2]:(4.0, -13.0, 5.0, -4.0); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"
                 },
-                new T(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
+                new Tsr(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
                 new double[][]{{-1.0, -1.0, 5.0, 5.0}, null}
         );
-        //result = new T(new T[]{tensor1, tensor1}, "ig0<-i0");
+        //result = new Tsr(new Tsr[]{tensor1, tensor1}, "ig0<-i0");
         //tester.testContains(tensor1.toString("g"), new String[]{"test"}, "");
 
         try {
@@ -524,20 +524,20 @@ public class TestBroad {
         }
         NTester_TensorDevice tester = new NTester_TensorDevice("Testing tensor device");
         Device gpu = new Device("nvidia");
-        T tensor = T.factory.newTensor(new double[]{1, 3, 4, 2, -3, 2, -1, 6}, new int[]{2, 4});
-        T firstTensor = tensor;
+        Tsr tensor = Tsr.factory.newTensor(new double[]{1, 3, 4, 2, -3, 2, -1, 6}, new int[]{2, 4});
+        Tsr firstTensor = tensor;
         tester.testAddTensor(gpu, tensor,
                 new double[]{1, 3, 4, 2, -3, 2, -1, 6},
                 new int[]{2, 4},
                 new int[]{1, 2},
                 new int[]{0, 8, 0, 2, 0, 2});
-        tensor = T.factory.newTensor(new double[]{-7, -9}, new int[]{2});
+        tensor = Tsr.factory.newTensor(new double[]{-7, -9}, new int[]{2});
         tester.testAddTensor(gpu, tensor,
                 new double[]{1, 3, 4, 2, -3, 2, -1, 6, -7, -9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,},
                 new int[]{2, 4},
                 new int[]{1, 2},
                 new int[]{0, 8, 0, 2, 0, 2, 8, 2, 0, 1, 0, 1});
-        tensor = T.factory.newTensor(new double[]{4, -4, 9, 4, 77}, new int[]{5});
+        tensor = Tsr.factory.newTensor(new double[]{4, -4, 9, 4, 77}, new int[]{5});
         tester.testAddTensor(gpu, tensor,
                 new double[]{1, 3, 4, 2, -3, 2, -1, 6, -7, -9, 4, -4, 9, 4, 77, 0, 0, 0, 0, 0,},
                 new int[]{2, 4, 5, 0},
@@ -561,7 +561,7 @@ public class TestBroad {
                 new int[]{1, 2},
                 new int[]{8, 2, 0, 1, 0, 1, 10, 5, 2, 1, 0, 1}
         );
-        tensor = T.factory.newTensor(new double[]{888, 777, -33, 999}, new int[]{2, 2});
+        tensor = Tsr.factory.newTensor(new double[]{888, 777, -33, 999}, new int[]{2, 2});
         tensor.setRqsGradient(true);
         tester.testAddTensor(gpu, tensor,
                 new double[]{888, 777, -33, 999, 0, 0, 0, 0, -7, -9, 4, -4, 9, 4, 77, 0, 0, 0, 0, 0,},
@@ -570,7 +570,7 @@ public class TestBroad {
                 new int[]{0, -4, 3, 2, 0, 2, 8, 2, 0, 1, 0, 1, 10, 5, 2, 1, 0, 1}
         );
         //TESTING TENS MUL ON GPU NOW!!!!!
-        T src1 = new T(
+        Tsr src1 = new Tsr(
                 new int[]{2, 3, 2},
                 new double[]{
                         1, 2,
@@ -582,7 +582,7 @@ public class TestBroad {
                         -2, -3
                 }
         );
-        T src2 = new T(
+        Tsr src2 = new Tsr(
                 new int[]{2, 2, 3},
                 new double[]{
                         -1, 3,
@@ -595,7 +595,7 @@ public class TestBroad {
                         5, -1
                 }
         );
-        T drn = new T(
+        Tsr drn = new Tsr(
                 new int[]{1, 2, 2},
                 new double[]{
                         0, 0,
@@ -614,16 +614,16 @@ public class TestBroad {
                 new double[]{888.0, 777.0, -33.0, 999.0, 0.0, 0.0, 0.0, 0.0, -7.0, -9.0, 4.0, -4.0, 9.0, 4.0, 77.0, 1.0, 2.0, 3.0, 4.0, 0.0, 2.0, 3.0, 4.0, 2.0, -1.0, -2.0, -3.0, -1.0, 3.0, 0.0, 2.0, -3.0, 1.0, 2.0, -3.0, 0.0, 4.0, 5.0, -1.0, 15.0, 11.0, 20.0, -22.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
         );
         //INVERS OF CONV
-        T d_src1 = new T(new int[]{2, 3}, new double[]{
+        Tsr d_src1 = new Tsr(new int[]{2, 3}, new double[]{
                 0, 0, //3, 1,
                 0, 0, //-2, -1,
                 0, 0, ///-4, 2,
         });
-        T d_src2 = new T(new int[]{5, 2}, new double[]{
+        Tsr d_src2 = new Tsr(new int[]{5, 2}, new double[]{
                 -2, 3, 6, 3, -1,
                 0, 2, 4, 2, 1
         });
-        T d_drn = new T(new int[]{4, 2}, new double[]{
+        Tsr d_drn = new Tsr(new int[]{4, 2}, new double[]{
                 1, 2, -3, 2,
                 4, -2, -1, 5,
         });
@@ -639,7 +639,7 @@ public class TestBroad {
         System.out.println("WE ARE HERE:");
         gpu.printDeviceContent(true);
         //addition:
-        drn = new T(
+        drn = new Tsr(
                 new int[]{3, 2, 2},
                 new double[]{
                         111, 222, 333,

@@ -18,11 +18,11 @@ Neureka is a platform independent deep-learning library written in Java.
 
 Take a look:
 ```
-    T x = new T(3).setRqsGradient(true);
-    T b = new T(-4);
-    T w = new T(2);
+    Tsr x = new Tsr(3).setRqsGradient(true);
+    Tsr b = new Tsr(-4);
+    Tsr w = new Tsr(2);
         
-    T y = new T(new T[]{x, b, w}, "((i0+i1)*i2)^2");
+    Tsr y = new Tsr(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
     
     /**
      *   f(x) = ((x-4)*2)^2; :=>  f(3) = 4
@@ -33,7 +33,7 @@ Take a look:
 ```
 Matrix multiplication:
 ```
-    x = new T(
+    x = new Tsr(
                 new int[]{2, 3, 1},
                 new double[]{
                         3,   2,
@@ -41,13 +41,13 @@ Matrix multiplication:
                         2,   4
                 }
     );
-    y = new T(
+    y = new Tsr(
             new int[]{1, 3, 2},
             new double[]{
                     4, -1,  3,
                     2,  3, -1
             });
-    T z = new T(new T[]{x, y}, "i[0] x i[1]");
+    Tsr z = new Tsr(new Tsr[]{x, y}, "i[0] x i[1]");
     
     /**
      *   z.toString(): "[2x1x2]:(19.0, 22.0, 1.0, -6.0), "    
@@ -55,7 +55,7 @@ Matrix multiplication:
 ```
 Convolution:
 ```
-        x = new T(
+        x = new Tsr(
                 new int[]{3, 3},
                 new double[]{
                         1, 2, 5,
@@ -63,15 +63,15 @@ Convolution:
                         -2, 3, 4,
                 }
         );
-        y = new T(
+        y = new Tsr(
                 new int[]{2, 2},
                 new double[]{
                         -1, 3,
                         2, 3,
                 });
-        z = new T(new T[]{x, y}, "I0xi1");
+        z = new Tsr(new Tsr[]{x, y}, "I0xi1");
         z.toString(): "[2x2]:(15.0, 15.0, 18.0, 8.0), "
-        z.backward(new T(new int[]{2, 2}, 1));
+        z.backward(new Tsr(new int[]{2, 2}, 1));
         /**
          *   y.toString(): "[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)"    
          * */

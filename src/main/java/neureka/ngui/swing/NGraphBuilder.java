@@ -5,12 +5,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
 
-import neureka.core.T;
+import neureka.core.Tsr;
 
 public class NGraphBuilder {
 
 	private Thread Worker;
-	private T ThreadCoordinator;
+	private Tsr ThreadCoordinator;
 	NPanel Surface;
 	
 	private int pressRadius = 100;
@@ -26,7 +26,7 @@ public class NGraphBuilder {
 	private NCircleMenu MouseAttachedCircleMenu;
 	
 	NCircleMenu newMenu;
-	private T BlueprintTensor;
+	private Tsr BlueprintTensor;
 	
 	//----------------------------------------------------------------
 	public void addMenu(NCircleMenu menu) 
@@ -37,7 +37,7 @@ public class NGraphBuilder {
 	 	}
 	 	Surface.setMap(Surface.getMap().addAndUpdate(menu));
  	}
-	public T getBlueprintTensor()
+	public Tsr getBlueprintTensor()
  	{
  		return BlueprintTensor;
  	}
@@ -47,7 +47,7 @@ public class NGraphBuilder {
 	}
 	private void addPanelTensor(int x, int y)
  	{
- 		PanelNode Unit = new PanelNode(new T(BlueprintTensor), Surface.realX((double)x),Surface.realY((double)y));
+ 		PanelNode Unit = new PanelNode(new Tsr(BlueprintTensor), Surface.realX((double)x),Surface.realY((double)y));
  		addPanelTensor(Unit);
  		Unit.setHasMoved(true);
  	}
@@ -68,7 +68,7 @@ public class NGraphBuilder {
 	 	addPanelTensor(Neuron1);
 	 	PanelNode Neuron4 = new PanelNode( 3090, 890, 2 );
 	 	addPanelTensor(Neuron4);
-		BlueprintTensor = new T();
+		BlueprintTensor = new Tsr();
 		Surface.setPreferredSize(new Dimension(500,500));
 		Surface.setBackground(Color.black);
 		Surface.setPaintAction(
@@ -113,7 +113,7 @@ public class NGraphBuilder {
 				    		if(this.ChosenInputNode!=null && node==null) 
 				    		{
 				    			((PanelNode)found).connect(this.ConnectionPanelNeuron);
-				    			//T C2 = this.ConnectionPanelNeuron.getCore().asCore();
+				    			//Tsr C2 = this.ConnectionPanelNeuron.getCore().asCore();
 				    			//C2.connect(C1, this.InputIndex);
 				    		}
 				    		this.ChosenInputNode = node;
@@ -219,7 +219,7 @@ public class NGraphBuilder {
 				if(found!=null) {found.doubleClickedAt(surface.realX(x), surface.realY(y), surface);}
 				else
 				{
-					PanelNode Unit = new PanelNode(new T(this.BlueprintTensor), surface.realX((double)x),surface.realY((double)y));
+					PanelNode Unit = new PanelNode(new Tsr(this.BlueprintTensor), surface.realX((double)x),surface.realY((double)y));
 				 	if(surface.getMap()==null) 
 				 	{
 				 		surface.setMap(new NMap(Unit.getX(),Unit.getY(),10000));

@@ -1,6 +1,6 @@
 package util;
 
-import neureka.core.T;
+import neureka.core.Tsr;
 import neureka.core.device.Device;
 import neureka.core.device.TensorKernel;
 
@@ -11,7 +11,7 @@ public class NTester_TensorDevice extends NTester {
         super(name);
     }
 
-    public int testAddTensor(Device device, T tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
+    public int testAddTensor(Device device, Tsr tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
 
         double[] value = tensor.value();
         int[] shape = tensor.shape();
@@ -36,7 +36,7 @@ public class NTester_TensorDevice extends NTester {
         return this.printSessionEnd();
     }
 
-    public int testGetTensor(Device device, T tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
+    public int testGetTensor(Device device, Tsr tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
 
         double[] value = tensor.value();
         int[] shape = tensor.shape();
@@ -62,7 +62,7 @@ public class NTester_TensorDevice extends NTester {
         return this.printSessionEnd();
     }
 
-    public int testCalculation(Device device, T drn, T src1, T src2, int f_id, int d, double[] values){
+    public int testCalculation(Device device, Tsr drn, Tsr src1, Tsr src2, int f_id, int d, double[] values){
 
         String message = "";
         message = (f_id==18)?"Tensor product":message;
@@ -90,9 +90,9 @@ public class NTester_TensorDevice extends NTester {
         //for(int i=0; i<50000; i++){
             //device.calculate(drn, src1, src2, _id);
         if(src2==null){
-            device.calculate(new T[]{drn, src1}, f_id, d);
+            device.calculate(new Tsr[]{drn, src1}, f_id, d);
         }else{
-            device.calculate(new T[]{drn, src1, src2}, f_id, d);
+            device.calculate(new Tsr[]{drn, src1, src2}, f_id, d);
         }
         //}
 

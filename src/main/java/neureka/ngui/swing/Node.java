@@ -1,6 +1,6 @@
 package neureka.ngui.swing;
 
-import neureka.core.T;
+import neureka.core.Tsr;
 import neureka.core.function.IFunction;
 
 import java.util.ArrayList;
@@ -11,12 +11,12 @@ public class Node {
 
     private IFunction function;
 
-    private T tensor;
+    private Tsr tensor;
 
-    public T getTensor(){
+    public Tsr getTensor(){
         return tensor;
     }
-    public void setTensor(T t){
+    public void setTensor(Tsr t){
         this.tensor = t;
     }
 

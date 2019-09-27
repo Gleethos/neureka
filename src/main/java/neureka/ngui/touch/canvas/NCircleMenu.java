@@ -1,7 +1,7 @@
 package neureka.ngui.touch.canvas;
 
 import javafx.scene.canvas.GraphicsContext;
-import neureka.core.T;
+import neureka.core.Tsr;
 import neureka.ngui.swing.NSound;
 
 import java.awt.*;
@@ -330,7 +330,7 @@ public class NCircleMenu implements NPanelObject{
 				needsRepaint=true;
 			}
 
-			else if(PropertyContainer instanceof T)
+			else if(PropertyContainer instanceof Tsr)
 			{
 				
 			}
@@ -426,23 +426,23 @@ public class NCircleMenu implements NPanelObject{
 						if(Container instanceof NPanelNode) 
 						{//1. turn into default node; 2. turn into super root; 3. turn into basic root;
 						    NPanelNode node = (NPanelNode)Container;
-						    T neuron = node.getCore();
+						    Tsr neuron = node.getCore();
 						    //Setting node accordingly
 						    if(choice==1) {
-						    	//T.State.turnIntoTrainableNeuron(neuron);System.out.println("Turning into default node");
+						    	//Tsr.State.turnIntoTrainableNeuron(neuron);System.out.println("Turning into default node");
 						    }
 						    if(choice==2) {
-						    	//T.State.turnIntoParentRoot(neuron);System.out.println("Turning into super root node");
+						    	//Tsr.State.turnIntoParentRoot(neuron);System.out.println("Turning into super root node");
 						    }
 						    //if(choice==3) {NCore.State.turnIntoBasicRoot(neuron);System.out.println("Turning into basic root node");}
 						}
 						else if(Container instanceof TSurface) {
-							 T neuron = this.Builder.getBlueprintTensor();
+							 Tsr neuron = this.Builder.getBlueprintTensor();
 							 if(choice==1) {
-							 	//T.State.turnIntoTrainableNeuron(neuron);System.out.println("Turning into default node");
+							 	//Tsr.State.turnIntoTrainableNeuron(neuron);System.out.println("Turning into default node");
 							 }
 							 if(choice==2) {
-							 	//T.State.turnIntoParentRoot(neuron);System.out.println("Turning into super root node");
+							 	//Tsr.State.turnIntoParentRoot(neuron);System.out.println("Turning into super root node");
 							 }
 							 //if(choice==3) {NCore.State.turnIntoBasicRoot(neuron);System.out.println("Turning into basic root node");}
 						}

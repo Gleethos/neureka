@@ -1,12 +1,12 @@
 package neureka.core.optimization.factory.material;
 
-import neureka.core.T;
+import neureka.core.Tsr;
 import neureka.core.optimization.TOptimizer;
 
 public abstract class Template implements TOptimizer {
 
     @Override
-    public void optimize(T t){
+    public void optimize(Tsr t){
         double[] value = t.value();//TODO: Add multi-threading!
         t.foreach((i)->this.foreach(i, value));
     }

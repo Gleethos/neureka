@@ -1,5 +1,5 @@
 package neureka.core.function.factory.autograd;
-import neureka.core.T;
+import neureka.core.Tsr;
 import neureka.core.function.IFunction;
 
 public class GraphLock {
@@ -12,7 +12,7 @@ public class GraphLock {
      * */
     private IFunction _owner;
 
-    public GraphLock(IFunction owner, T[] source){
+    public GraphLock(IFunction owner, Tsr[] source){
         this._owner = owner;
     }
 

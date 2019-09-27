@@ -1,6 +1,6 @@
 package util;
 
-import neureka.core.T;
+import neureka.core.Tsr;
 import neureka.core.function.IFunction;
 import neureka.core.function.factory.assembly.FunctionBuilder;
 
@@ -69,7 +69,7 @@ public class NTester_Function extends NTester {
 		return (printSessionEnd()>0)?1:0;
 	}
 
-	public int testActivation(String expression, T[] input, T expected, String description) {
+	public int testActivation(String expression, Tsr[] input, Tsr expected, String description) {
 		IFunction function;// = new FunctionBuilder();
 		function = new FunctionBuilder().build(expression, true);
 		printSessionStart(description);
@@ -84,13 +84,13 @@ public class NTester_Function extends NTester {
 		println(bar+" function:"+function.toString());
 		println(bar+"----------------------------------------------------");
 		println(bar+" Result:");
-		T activation = function.activate(input);
+		Tsr activation = function.activate(input);
 		assertIsEqual(activation.toString(), expected.toString());
 		return (printSessionEnd()>0)?1:0;
 	}
 
 
-	public int testDerivative(String expression, T[] input, int d, T expected, String description) {
+	public int testDerivative(String expression, Tsr[] input, int d, Tsr expected, String description) {
 		IFunction function;// = new FunctionBuilder();
 		function = new FunctionBuilder().build(expression, true);
 		printSessionStart(description);
@@ -105,7 +105,7 @@ public class NTester_Function extends NTester {
 		println(bar+" function:"+function.toString());
 		println(bar+"----------------------------------------------------");
 		println(bar+" Result:");
-		T derivative = function.derive(input, d);
+		Tsr derivative = function.derive(input, d);
 		assertIsEqual(derivative.toString(), expected.toString());
 		return (printSessionEnd()>0)?1:0;
 	}

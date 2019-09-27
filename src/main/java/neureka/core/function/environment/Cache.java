@@ -1,6 +1,6 @@
 package neureka.core.function.environment;
 
-import neureka.core.T;
+import neureka.core.Tsr;
 import neureka.core.function.factory.autograd.GraphLock;
 import neureka.core.function.factory.autograd.GraphNode;
 import neureka.core.function.IFunction;
@@ -17,11 +17,11 @@ public class Cache
         return this.FUNCTIONS;
     }
 
-    private final TreeMap<GraphLock, TreeMap<GraphNode, T>> TENSORS = new TreeMap<>((a, b)->((int)(a.hashCode()-b.hashCode())));
+    private final TreeMap<GraphLock, TreeMap<GraphNode, Tsr>> TENSORS = new TreeMap<>((a, b)->((int)(a.hashCode()-b.hashCode())));
 
-    public synchronized void free(T[] input)
+    public synchronized void free(Tsr[] input)
     {
-        for(T t : input){
+        for(Tsr t : input){
             if(t.has(GraphNode.class)){
                 TENSORS.remove(((GraphNode)t.find(GraphNode.class)).lock());
                 t.remove(GraphNode.class);
@@ -29,10 +29,10 @@ public class Cache
         }
     }
 
-    public synchronized T handle(T[] input, IFunction function, Supplier<T> activation)
+    public synchronized Tsr handle(Tsr[] input, IFunction function, Supplier<Tsr> activation)
     {
-        T untracked = null;
-        for(T t : input){
+        Tsr untracked = null;
+        for(Tsr t : input){
             if(t.has(GraphNode.class)){
                 untracked = t;
             }
@@ -40,7 +40,7 @@ public class Cache
         if(untracked==null){//If graph tracking (nodes) has not yet been initialized!
             return IFunction.setup.commit(input, function);
         }
-        for(T t : input){
+        for(Tsr t : input){
             if(!t.has(GraphNode.class)){
                 GraphLock gid = ((GraphNode)untracked.find(GraphNode.class)).lock();
                 GraphNode rg = new GraphNode(t, null, null, gid);
@@ -48,7 +48,7 @@ public class Cache
             }
         }
         GraphNode node = (GraphNode) input[0].find(GraphNode.class);
-        T result = get(node);
+        Tsr result = get(node);
         if(result==null){
             result = activation.get();
             put(result, node);
@@ -56,7 +56,7 @@ public class Cache
         return result;
     }
 
-    private synchronized T get(GraphNode node)
+    private synchronized Tsr get(GraphNode node)
     {
         if(TENSORS.containsKey(node.lock())){
             if(TENSORS.get(node.lock()).containsKey(node)){
@@ -66,10 +66,10 @@ public class Cache
         return null;
     }
 
-    private synchronized void put(T t, GraphNode node)
+    private synchronized void put(Tsr t, GraphNode node)
     {
         if(node.isCachable()) {
-            TreeMap<GraphNode, T> variables;
+            TreeMap<GraphNode, Tsr> variables;
             if (!TENSORS.containsKey(node.lock())) {
                 variables = new TreeMap<>((a, b) -> (int) (a.nid() - b.nid()));
                 TENSORS.put(node.lock(), variables);

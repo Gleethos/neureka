@@ -1,5 +1,5 @@
 package neureka.core.device;
-import neureka.core.T;
+import neureka.core.Tsr;
 
 public class TensorKernel extends com.aparapi.Kernel
 {
@@ -175,7 +175,7 @@ public class TensorKernel extends com.aparapi.Kernel
         return _mod_ptrs(t_id, true, regis);
     }
 
-    public int allocPtrFor(T tensor, int[][] regis){
+    public int allocPtrFor(Tsr tensor, int[][] regis){
         int size = tensor.size();
         int[] shape = tensor.shape();
         int[] translation = tensor.translation();

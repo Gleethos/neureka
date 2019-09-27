@@ -1,6 +1,6 @@
 package neureka.core.function.factory.autograd;
 
-import neureka.core.T;
+import neureka.core.Tsr;
 import neureka.core.function.IFunction;
 import neureka.core.function.factory.Function;
 
@@ -60,14 +60,14 @@ public class GraphNode {
     /**
      * Input tensors. ('Parents' of the tensor of this node)
      * */
-    private T[] _input;
+    private Tsr[] _input;
 
     /**
      * Keys are targets and values are gradients with respect to that target
      * Note: values can be null if the recorded function is of type 'reshape'!
      * Why? => because reshape operation does not need variables for backward pass!
      * */
-    private TreeMap<T, T> _targets_gradients;
+    private TreeMap<Tsr, Tsr> _targets_gradients;
 
     /**
      * "Lock object" for graph identity. (result caching)
@@ -89,7 +89,7 @@ public class GraphNode {
     public long nid(){
         long nid = 1;
         if(_input !=null){
-            for(T t : _input){
+            for(Tsr t : _input){
                 nid*=t.hashCode();
             }
         }
@@ -122,7 +122,7 @@ public class GraphNode {
      * @param src
      * @param lock
      */
-    public GraphNode(T value, IFunction f, T[] src, GraphLock lock){
+    public GraphNode(Tsr value, IFunction f, Tsr[] src, GraphLock lock){
         _mode = (src!=null)? _modeOf(src, f):(value.rqsGradient())?1:0;
         _function = f;
         _input = src;
@@ -134,7 +134,7 @@ public class GraphNode {
      * @param function
      * @return int
      */
-    private static int _modeOf(T[] source, IFunction function){
+    private static int _modeOf(Tsr[] source, IFunction function){
         /**
          *  Evaluate auto-grad mode:
          * */
@@ -165,13 +165,13 @@ public class GraphNode {
      * @param target
      * @return void
      */
-    public void trimTree(T target){// Find and remove redundant targets:
+    public void trimTree(Tsr target){// Find and remove redundant targets:
         if(_input ==null || mode()==0){
             return;
         }
         boolean dive = (target==null || mode()<0);
         if(!dive){
-            TreeMap<T, T> blacklist = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
+            TreeMap<Tsr, Tsr> blacklist = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
             this.forEach((t, g)->{
                 if(t==target){
                     blacklist.put(g, t);
@@ -183,14 +183,14 @@ public class GraphNode {
                     b.delete();
                 }
             });
-            for(T src : _input){
+            for(Tsr src : _input){
                 if(src.has(GraphNode.class)){
                     GraphNode node = (GraphNode) src.find(GraphNode.class);
                     node.trimTree(target);
                 }
             }
         }else{
-            for(T src : _input){
+            for(Tsr src : _input){
                 if(src.has(GraphNode.class)){
                     GraphNode node = (GraphNode) src.find(GraphNode.class);
                     this.forEach((t, g)->{
@@ -211,16 +211,16 @@ public class GraphNode {
      * @param error
      * @return void
      */
-    public void backward(T error){
+    public void backward(Tsr error){
         if(this.usesAD()){
             if(this.usesForwardAD()){
-                this.forEach((t, g)->t.backward(new T(new T[]{error, g}, "I[0]*I[1]", false)));
+                this.forEach((t, g)->t.backward(new Tsr(new Tsr[]{error, g}, "I[0]*I[1]", false)));
             }else if(this.usesReverseAD()){
                 this.forEach((t, g)->{
                     if(_function.id()==18){// x operation required for chainrule!
-                        t.backward(Function.setup.commit(new T[]{error, g, new T(t.shape(), 0)}, "I[0]>>I[1]>>I[2]", false));
+                        t.backward(Function.setup.commit(new Tsr[]{error, g, new Tsr(t.shape(), 0)}, "I[0]>>I[1]>>I[2]", false));
                     }else{
-                        t.backward(Function.setup.commit(new T[]{error, g}, "I[0]*I[1]", false));
+                        t.backward(Function.setup.commit(new Tsr[]{error, g}, "I[0]*I[1]", false));
                     }
                 });
             }
@@ -248,7 +248,7 @@ public class GraphNode {
      * @param key
      * @param value
      */
-    public void put(T key, T value){
+    public void put(Tsr key, Tsr value){
         if(_targets_gradients ==null){
             _targets_gradients = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
         }
@@ -257,9 +257,9 @@ public class GraphNode {
 
     /**
      * @param key
-     * @return T
+     * @return Tsr
      */
-    public T get(T key){
+    public Tsr get(Tsr key){
         if(_targets_gradients ==null){
            return null;
         }
@@ -271,20 +271,20 @@ public class GraphNode {
      * @param key
      * @return boolean
      */
-    public boolean has(T key){
+    public boolean has(Tsr key){
         if(_targets_gradients ==null){
             return false;
         }
         return _targets_gradients.containsKey(key);
     }
-    public Set<T> sources(){
+    public Set<Tsr> sources(){
         return _targets_gradients.keySet();
     }
 
     /**
-     * @return TreeMap<T, T>
+     * @return TreeMap<Tsr, Tsr>
      */
-    public TreeMap<T, T> getMap(){
+    public TreeMap<Tsr, Tsr> getMap(){
         return _targets_gradients;
     }
 
@@ -299,7 +299,7 @@ public class GraphNode {
      * @param action
      * @return void
      */
-    public void forEach(BiConsumer<T, T> action){
+    public void forEach(BiConsumer<Tsr, Tsr> action){
         if(_targets_gradients ==null){
             return;
         }

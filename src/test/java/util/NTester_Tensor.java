@@ -1,6 +1,6 @@
 package util;
 
-import neureka.core.T;
+import neureka.core.Tsr;
 import neureka.core.function.factory.Function;
 
 public class NTester_Tensor extends NTester {
@@ -10,7 +10,7 @@ public class NTester_Tensor extends NTester {
         super(name);
     }
 
-    public int testTensor(T tensor, String[] expected){
+    public int testTensor(Tsr tensor, String[] expected){
         printSessionStart("Testing Tensor!");
         println(bar+"  Tensor: "+tensor.toString());
         println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
@@ -21,11 +21,11 @@ public class NTester_Tensor extends NTester {
         return (printSessionEnd()>0)?1:0;
     }
 
-    public int testTensorAutoGrad(T[] source, String operation, String[] expected){
-        printSessionStart("Testing T: autograd!");
+    public int testTensorAutoGrad(Tsr[] source, String operation, String[] expected){
+        printSessionStart("Testing Tsr: autograd!");
         println(bar+"  IFunction: "+operation);
         println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
-        T product = new T(source, operation);
+        Tsr product = new Tsr(source, operation);
         String result = product.toString("r");
         for(String element : expected){
             this.assertStringContains("result", result, element);
@@ -33,11 +33,11 @@ public class NTester_Tensor extends NTester {
         return (printSessionEnd()>0)?1:0;
     }
 
-    public int testTensorAutoGrad(T[] source, String operation, String[] expected, T error, double[][] expectedGradient){
-        printSessionStart("Testing T: autograd!");
+    public int testTensorAutoGrad(Tsr[] source, String operation, String[] expected, Tsr error, double[][] expectedGradient){
+        printSessionStart("Testing Tsr: autograd!");
         println(bar+"  IFunction: "+operation);
         println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
-        T product = new T(source, operation);
+        Tsr product = new Tsr(source, operation);
         product.backward(error);
         String result = product.toString("r");
         for(String element : expected){
@@ -51,33 +51,33 @@ public class NTester_Tensor extends NTester {
 
 
     public int testTensorUtility_reshape(int[] dim, int[] newForm, int[] expected){
-        int[] result = T.factory.util.rearrange(dim, newForm);
-        printSessionStart("Testing T.util: dimension reshaping!");
+        int[] result = Tsr.factory.util.rearrange(dim, newForm);
+        printSessionStart("Testing Tsr.util: dimension reshaping!");
         assertIsEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }
 
     public int testTensorUtility_translation(int[] dim, int[] expected){
-        int [] result =  T.factory.util.idxTln(dim);
-        printSessionStart("Testing T.util: dimension _translation!");
+        int [] result =  Tsr.factory.util.idxTln(dim);
+        printSessionStart("Testing Tsr.util: dimension _translation!");
         assertIsEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }
     public int testTensorBase_idxFromAnchor(int[] dim, int idx, int[] expected){
-        int [] result =  T.factory.util.idxOf(idx, T.factory.util.idxTln(dim));
-        printSessionStart("Testing T.util: _shape to _translation to index!");
+        int [] result =  Tsr.factory.util.idxOf(idx, Tsr.factory.util.idxTln(dim));
+        printSessionStart("Testing Tsr.util: _shape to _translation to index!");
         assertIsEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }
 
     public int testTensCon(int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd){
-        printSessionStart("Test T.util: tensMul_mxd");
-        int[] drnMxd  = T.factory.util.shpOfCon(frstShp, scndShp);
-        double[] rsltData = new double[T.factory.util.szeOfShp(drnMxd)];
+        printSessionStart("Test Tsr.util: tensMul_mxd");
+        int[] drnMxd  = Tsr.factory.util.shpOfCon(frstShp, scndShp);
+        double[] rsltData = new double[Tsr.factory.util.szeOfShp(drnMxd)];
         Function.exec.convection(
-                new T(drnMxd, rsltData),
-                new T(frstShp, frstData),
-                new T(scndShp, scondData)
+                new Tsr(drnMxd, rsltData),
+                new Tsr(frstShp, frstData),
+                new Tsr(scndShp, scondData)
         );
         assertIsEqual(stringified(rsltData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;
@@ -88,12 +88,12 @@ public class NTester_Tensor extends NTester {
             double[] frstData, double[] scondData, double[] drnData,
             double[] expctd, boolean first
     ){
-        printSessionStart("Test T.util: tensMul_mxd");
-        int[] drnMxd  = T.factory.util.shpOfCon(frstShp, scndShp);
+        printSessionStart("Test Tsr.util: tensMul_mxd");
+        int[] drnMxd  = Tsr.factory.util.shpOfCon(frstShp, scndShp);
         Function.exec.convection_inv(
-                new T(frstShp, frstData),
-                (first)?new T(scndShp, scondData):new T(drnMxd, drnData),
-                (first)?new T(drnMxd, drnData):new T(scndShp, scondData)
+                new Tsr(frstShp, frstData),
+                (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
+                (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;
@@ -104,11 +104,11 @@ public class NTester_Tensor extends NTester {
      * @param f
      * @return
      */
-    public int testInjection(T[] tensors, String f, String[][] expected)
+    public int testInjection(Tsr[] tensors, String f, String[][] expected)
     {
         printSessionStart("Test injection: I[0] <- I[1], I[0] -> I[1] : "+f);
-        T[] result = new T[tensors.length+1];
-        result[0] = new T(tensors, f);
+        Tsr[] result = new Tsr[tensors.length+1];
+        result[0] = new Tsr(tensors, f);
         for(int i=1; i<result.length; i++){
             result[i] = tensors[i-1];
         }

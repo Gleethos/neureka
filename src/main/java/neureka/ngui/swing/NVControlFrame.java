@@ -1,7 +1,7 @@
 
 package neureka.ngui.swing;
 
-import neureka.core.T;
+import neureka.core.Tsr;
 import neureka.ngui.tile.N3DSpace;
 
 import java.awt.BorderLayout;
@@ -75,7 +75,7 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 	
 	JComboBox RootTypeSetter;
 	
-	T UnitCore;
+	Tsr UnitCore;
 	
 	boolean entered = false;
 	boolean check = false;
@@ -91,7 +91,7 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 	boolean weightFieldEntered = false;
 	boolean biasFieldEntered = false;
 	
-	public NVControlFrame(String title, T neuron) {
+	public NVControlFrame(String title, Tsr neuron) {
 
 		UnitCore = neuron;
 		

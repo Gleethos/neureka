@@ -1,6 +1,6 @@
 package neureka.core.function.factory;
 
-import neureka.core.T;
+import neureka.core.Tsr;
 import neureka.core.function.IFunction;
 import neureka.core.function.factory.assembly.FunctionBuilder;
 import neureka.core.function.factory.autograd.GraphLock;
@@ -102,16 +102,16 @@ public abstract class Function implements IFunction {
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
-    public abstract T activate(T[] inputs, int j);
+    public abstract Tsr activate(Tsr[] inputs, int j);
 
     @Override
-    public abstract T activate(T[] inputs);
+    public abstract Tsr activate(Tsr[] inputs);
 
     @Override
-    public abstract T derive(T[] inputs, int index, int j);
+    public abstract Tsr derive(Tsr[] inputs, int index, int j);
 
     @Override
-    public abstract T derive(T[] inputs, int index);
+    public abstract Tsr derive(Tsr[] inputs, int index);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
@@ -130,25 +130,25 @@ public abstract class Function implements IFunction {
     /**
      * Responsible for handling functions with id's 0-9  (single input functions!)
      */
-    protected T _tensor_activation(T input, boolean derive)
+    protected Tsr _tensor_activation(Tsr input, boolean derive)
     {
-        T output = T.factory.newTensor(input.shape(), input.translation());
+        Tsr output = Tsr.factory.newTensor(input.shape(), input.translation());
         if (!derive && !_isFlat) {
-            output.inject(FunctionBuilder.build(_id, 1, true).activate(new T[]{input}));
+            output.inject(FunctionBuilder.build(_id, 1, true).activate(new Tsr[]{input}));
             output.add(input.find(GraphLock.class));
             return output;
         }
         if (input.isOutsourced()) {
             Device device = (Device) input.find(Device.class);
             device.add(output);
-            device.calculate(new T[]{output, input}, _id, (derive) ? 0 : -1);
+            device.calculate(new Tsr[]{output, input}, _id, (derive) ? 0 : -1);
         } else {
             exec.foreach(input, output, (i, inputValue, outputValue) -> {
                 outputValue[i] = _scalar_activation(inputValue[i], derive);
             });
         }
         if (!derive && _doAD) {
-            GraphBuilder.connect(output, new T[]{input}, this);
+            GraphBuilder.connect(output, new Tsr[]{input}, this);
         }
         output.add(input.find(GraphLock.class));
         return output;
@@ -162,7 +162,7 @@ public abstract class Function implements IFunction {
      * @param d
      * @return
      */
-    protected T _tensor_activation(T[] inputs, int j, int d) {
+    protected Tsr _tensor_activation(Tsr[] inputs, int j, int d) {
         /**  The code below deals with deep functions (non flat):  * */
         if (d < 0 && !_isFlat) {//only flat functions can be executed
             if (TYPES.isFunction(_id)) {
@@ -170,12 +170,12 @@ public abstract class Function implements IFunction {
             } else {
                 if (TYPES.isFunction(_id)||TYPES.isIndexer(_id)) {
                     /**  SUMMATION, PI,  * */
-                    T[] tsrs = _source_activation(inputs);
+                    Tsr[] tsrs = _source_activation(inputs);
                     return (FunctionBuilder.build(TYPES.REGISTER[_id] + "(I[j])", true).activate(tsrs));
                 } else if (TYPES.isOperation(_id)) {
                     /**  '+', '-', 'x', '*', '%', '«', '»', ',', ...  * */
                     String operation = (TYPES.REGISTER[_id].length() > 1) ? TYPES.REGISTER[_id] : "";
-                    T[] tsrs = _source_activation(inputs, j, null);
+                    Tsr[] tsrs = _source_activation(inputs, j, null);
                     for (int i = 0; i < tsrs.length; i++) {
                         operation += "I[" + i + "]" + ((i + 1 < tsrs.length) ? TYPES.REGISTER[_id] : "");
                     }
@@ -186,7 +186,7 @@ public abstract class Function implements IFunction {
                     }
                 } else {
                     /**  Tensor shape translation: * */
-                    T[] tsrs = _source_activation(inputs, j, new int[]{1});
+                    Tsr[] tsrs = _source_activation(inputs, j, new int[]{1});
                     if (j < 0) {
                         return (FunctionBuilder.build(_id, tsrs.length, _doAD).activate(tsrs));
                     } else {
@@ -196,7 +196,7 @@ public abstract class Function implements IFunction {
             }
         }
         /**  The following code is reached in flat functions only:  * */
-        T output = _execute(inputs, j, d);
+        Tsr output = _execute(inputs, j, d);
         /**  Autograd-Graph will be generated below for the new GraphNode: **/
         if (d < 0 && _doAD) {
             GraphBuilder.connect(output, inputs, this);
@@ -204,10 +204,10 @@ public abstract class Function implements IFunction {
         return output;
     }
 
-    private T _execute(T[] input, int j, int d)
+    private Tsr _execute(Tsr[] input, int j, int d)
     {
         Device device = (Device) input[0].find(Device.class);
-        boolean onSameDevice = T.factory.util.shareGuestDevice(input);
+        boolean onSameDevice = Tsr.factory.util.shareGuestDevice(input);
         if (onSameDevice && TYPES.REGISTER[_id] != "," && (!TYPES.isConvection(_id) && d > -1)) {
             if(TYPES.REGISTER[_id]=="<") {
                 device.overwrite(_src.get(0).activate(input), _src.get(1).activate(input));
@@ -215,15 +215,15 @@ public abstract class Function implements IFunction {
                 device.overwrite(_src.get(1).activate(input), _src.get(0).activate(input));
             } else {
                 int[] shp = (TYPES.REGISTER[_id] == "x")
-                    ?T.factory.util.shpOfCon(input[0].shape(), input[1].shape())
+                    ? Tsr.factory.util.shpOfCon(input[0].shape(), input[1].shape())
                     :input[0].shape();
-                T output = new T(shp, 0.0);
+                Tsr output = new Tsr(shp, 0.0);
                 if (device != null) {
                     device.add(output);
                 }
                 for (int i = 0; i < input.length; i++) {
                     device = (Device) input[i].find(Device.class);
-                    T[] tsrs = new T[1 + input.length];
+                    Tsr[] tsrs = new Tsr[1 + input.length];
                     tsrs[0] = output;
                     for (int ii = 1; ii < tsrs.length; ii++) {
                         tsrs[ii] = input[ii - 1];
@@ -278,11 +278,11 @@ public abstract class Function implements IFunction {
             } else if (TYPES.REGISTER[_id] == ",") {
                 int[] newForm = new int[input.length - 1];
                 for (int i = 0; i < input.length - 1; i++) {
-                    newForm[i] = (int) T.factory.io.getFrom(input[i], 0);
+                    newForm[i] = (int) Tsr.factory.io.getFrom(input[i], 0);
                 }
                 if (d < 0) {
-                    T t = input[input.length - 1];
-                    return T.factory.exec.reshaped(t, newForm, true);//t.reshape(newForm);
+                    Tsr t = input[input.length - 1];
+                    return Tsr.factory.exec.reshaped(t, newForm, true);//t.reshape(newForm);
                 } else {//reverse reshape:
                     int[] reversed = new int[newForm.length];
                     for (int i = 0; i < newForm.length; i++) {
@@ -299,8 +299,8 @@ public abstract class Function implements IFunction {
                 return _src.get(1).activate(input).setTargetValue(_src.get(0).activate(input).targetValue(true));
             } else {
                 double[] inp = new double[input.length];
-                T output = T.factory.newTensor(input[0].shape(), input[0].translation());
-                T finalOutput = output;
+                Tsr output = Tsr.factory.newTensor(input[0].shape(), input[0].translation());
+                Tsr finalOutput = output;
                 output.foreach((i) -> {
                     for (int ii = 0; ii < input.length; ii++) {
                         inp[ii] = input[ii].value()[i];
@@ -312,19 +312,19 @@ public abstract class Function implements IFunction {
             }
         }
         //Todo: warning/exception.....
-        return T.factory.newTensor(input[0].shape(), input[0].translation());
+        return Tsr.factory.newTensor(input[0].shape(), input[0].translation());
     }
 
-    private T[] _source_activation(T[] input) {
-        T[] tsrs = new T[input.length];
+    private Tsr[] _source_activation(Tsr[] input) {
+        Tsr[] tsrs = new Tsr[input.length];
         for (int i = 0; i < tsrs.length; i++) {
             tsrs[i] = _src.get(0).activate(input, i);
         }
         return tsrs;
     }
 
-    private T[] _source_activation(T[] input, int j, int[] templateShape) {
-        T[] tsrs = new T[_src.size()];
+    private Tsr[] _source_activation(Tsr[] input, int j, int[] templateShape) {
+        Tsr[] tsrs = new Tsr[_src.size()];
         for (int i = 0; i < tsrs.length; i++) {//constants need to be figured out!
             if (_src.get(i) instanceof FConstant) {
                 tsrs[i] = null;
@@ -341,8 +341,8 @@ public abstract class Function implements IFunction {
                     (tsrs[i] != null)
                             ? tsrs[i]
                             : (j < 0)
-                            ? T.factory.newTensor(((FConstant) _src.get(i)).value(), templateShape)
-                            : T.factory.newTensor(_src.get(i).activate(new double[]{}, j), templateShape);
+                            ? Tsr.factory.newTensor(((FConstant) _src.get(i)).value(), templateShape)
+                            : Tsr.factory.newTensor(_src.get(i).activate(new double[]{}, j), templateShape);
         }
         return tsrs;
     }
@@ -409,7 +409,7 @@ public abstract class Function implements IFunction {
         }
 
         @Contract(pure = true)
-        public static void foreach(T t1, T t2, Actor action) {
+        public static void foreach(Tsr t1, Tsr t2, Actor action) {
             double[] inputValue = (t1.value() == null) ? new double[t1.size()] : t1.value();
             double[] outputValue = (t2.value() == null) ? new double[t2.size()] : t2.value();
             t1.foreach((i) -> action.apply(i, inputValue, outputValue));
@@ -899,40 +899,40 @@ public abstract class Function implements IFunction {
         }
 
         @Contract(pure = true)
-        public static T multiplication(T tensor1, T tensor2) {
-            T drn = new T(tensor1.shape());
+        public static Tsr multiplication(Tsr tensor1, Tsr tensor2) {
+            Tsr drn = new Tsr(tensor1.shape());
             int[] index = new int[drn.shape().length];
             int size = drn.size();
             for (int i = 0; i < size; i++) {
-                T.factory.io.addInto(drn, index, T.factory.io.getFrom(tensor1, index) * T.factory.io.getFrom(tensor2, index));
-                T.factory.util.increment(index, drn.shape());
+                Tsr.factory.io.addInto(drn, index, Tsr.factory.io.getFrom(tensor1, index) * Tsr.factory.io.getFrom(tensor2, index));
+                Tsr.factory.util.increment(index, drn.shape());
             }
             return drn;
         }
 
         @Contract(pure = true)
-        public static T addition(T tensor1, T tensor2) {
-            T drn = new T(tensor1.shape());
+        public static Tsr addition(Tsr tensor1, Tsr tensor2) {
+            Tsr drn = new Tsr(tensor1.shape());
             int[] index = new int[drn.shape().length];
             int size = drn.size();
             for (int i = 0; i < size; i++) {
-                T.factory.io.addInto(drn, index, T.factory.io.getFrom(tensor1, index) + T.factory.io.getFrom(tensor2, index));
-                T.factory.util.increment(index, drn.shape());
+                Tsr.factory.io.addInto(drn, index, Tsr.factory.io.getFrom(tensor1, index) + Tsr.factory.io.getFrom(tensor2, index));
+                Tsr.factory.util.increment(index, drn.shape());
             }
             return drn;
         }
 
         @Contract(pure = true)
-        public static T convection(T tensor1, T tensor2) {
+        public static Tsr convection(Tsr tensor1, Tsr tensor2) {
             tensor1.setIsVirtual(false);
             tensor2.setIsVirtual(false);
-            T newTensor = new T(T.factory.util.shpOfCon(tensor1.shape(), tensor2.shape()));
+            Tsr newTensor = new Tsr(Tsr.factory.util.shpOfCon(tensor1.shape(), tensor2.shape()));
             exec.convection(newTensor, tensor1, tensor2);
             return newTensor;
         }
 
         @Contract(pure = true)
-        public static T convection_inv(T drain, T source1, T source2, boolean first) {
+        public static Tsr convection_inv(Tsr drain, Tsr source1, Tsr source2, boolean first) {
             source1.setIsVirtual(false);
             source2.setIsVirtual(false);
             drain.setIsVirtual(false);
@@ -941,7 +941,7 @@ public abstract class Function implements IFunction {
         }
 
         @Contract(pure = true)
-        public static void convection(T t0_drain, T t1_source, T t2_source) {
+        public static void convection(Tsr t0_drain, Tsr t1_source, Tsr t2_source) {
             int[] t0Shp = t0_drain.shape();
             int[] t1Shp = t1_source.shape();
             int[] t2Shp = t2_source.shape();
@@ -981,8 +981,8 @@ public abstract class Function implements IFunction {
                 while (running) {
                     ri = (ri == rank) ? 0 : ri;
                     if (incrementing == false) {
-                        int i1 = T.factory.util.iOf(t1Idx, t1Tln);
-                        int i2 = T.factory.util.iOf(t2Idx, t2Tln);
+                        int i1 = Tsr.factory.util.iOf(t1Idx, t1Tln);
+                        int i2 = Tsr.factory.util.iOf(t2Idx, t2Tln);
                         value += t1_value[i1] * t2_value[i2];
                         incrementing = true;
                         ri = 0;
@@ -1014,18 +1014,18 @@ public abstract class Function implements IFunction {
                         }
                     }
                 }//setInto _value in drn:
-                int i0 = T.factory.util.iOf(t0Idx, t0Tln);
+                int i0 = Tsr.factory.util.iOf(t0Idx, t0Tln);
                 t0_value[i0] = value;
                 //System.out.println(i0 + " - " + i);
                 i++;//increment on drain:
                 if (i < drnSze) {
-                    T.factory.util.increment(t0Idx, t0Shp);
+                    Tsr.factory.util.increment(t0Idx, t0Shp);
                 }
             }
         }
 
         @Contract(pure = true)
-        public static void convection_inv(T t0_origin, T t1_handle, T t2_drain) {
+        public static void convection_inv(Tsr t0_origin, Tsr t1_handle, Tsr t2_drain) {
             int[] t0Shp = t0_origin.shape();
             int[] t1Shp = t1_handle.shape();
             int[] t2Shp = t2_drain.shape();
@@ -1073,8 +1073,8 @@ public abstract class Function implements IFunction {
                             }
                         }
                         if (isMatch) {
-                            int i1 = T.factory.util.iOf(t1Idx, t1Tln);
-                            int i2 = T.factory.util.iOf(t2Idx, t2Tln);
+                            int i1 = Tsr.factory.util.iOf(t1Idx, t1Tln);
+                            int i2 = Tsr.factory.util.iOf(t2Idx, t2Tln);
                             value += t1_value[i1] * t2_value[i2];
                         }
                         incrementing = true;
@@ -1104,11 +1104,11 @@ public abstract class Function implements IFunction {
                     }
                 }
                 //setInto _value in drn:
-                int i0 = T.factory.util.iOf(t0Idx, t0Tln);
+                int i0 = Tsr.factory.util.iOf(t0Idx, t0Tln);
                 t0_value[i0] = value;
                 i++;//increment on drain:
                 if (i < drnSze) {
-                    T.factory.util.increment(t0Idx, t0Shp);
+                    Tsr.factory.util.increment(t0Idx, t0Shp);
                 }
             }
         }
