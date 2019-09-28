@@ -430,13 +430,13 @@ public class TensorKernel extends com.aparapi.Kernel
         }
         if(_mde[0]==-5){//cleanup //TODO implement!
         }
-        if(_mde[0]==-4){//executionSizeOf_fetchTsr grad f tensor
+        if(_mde[0]==-4){//executionSizeOf_fetchTsr grad of tensor
             _run_fetch(gid, true);
         }
         if(_mde[0]==-3){//executionSizeOf_fetchTsr tensor
             _run_fetch(gid, false);
         }
-        if(_mde[0]==-2){//executionSizeOf_storeTsr grad f tensor
+        if(_mde[0]==-2){//executionSizeOf_storeTsr grad of tensor
             _run_store(gid, true);
         }
         if(_mde[0]==-1){//executionSizeOf_storeTsr tensor
@@ -521,11 +521,7 @@ public class TensorKernel extends com.aparapi.Kernel
             }
         }
         if(_mde[0]==18){// x
-            if(_mde[_mde.length-1]<0){
-                _run_conv(gid, _mde[1], _mde[2], _mde[3]);
-            } else {
-                _run_conv_inv(gid, _mde[1], _mde[2], _mde[3], (_mde[_mde.length-1]==0));
-            }
+            _run_conv(gid);
         }
 
     }
@@ -585,14 +581,6 @@ public class TensorKernel extends com.aparapi.Kernel
                 }
             }
         }
-    }
-
-    private int __i(int gid, int m){
-        return _tsr_ptr(_mde[m])+__i_of(gid, _mde[m], m-1);
-    }
-    
-    private int __d(){
-        return _mde[_mde.length-1];
     }
 
     private void _run_relu(int gid){
@@ -693,7 +681,7 @@ public class TensorKernel extends com.aparapi.Kernel
             _values[__i(gid, 1)] =
                     _values[__i(gid, 2)];
         }else{
-            _values[__i(gid, 1)] = 1;//_values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)];
+            _values[__i(gid, 1)] = 1;//_values[_tsr_ptr(_mde[2+d])+__i_of_idx_on_shp(gid, _mde[2+d], 1)];
         }
     }
 
@@ -726,10 +714,10 @@ public class TensorKernel extends com.aparapi.Kernel
             _values[__i(gid, 1)] = 0;
             for(int i = 2; i<(_mde.length-1); i++){
                 _values[__i(gid, 1)] +=
-                        _values[_tsr_ptr(_mde[i])+__i_of(gid, _mde[i], 1)];
+                        _values[_tsr_ptr(_mde[i])+ __i_of_idx_on_shp(gid, _mde[i], 1)];
             }
         }else{
-            _values[__i(gid, 1)] = 1;//_values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)];
+            _values[__i(gid, 1)] = 1;//_values[_tsr_ptr(_mde[2+d])+__i_of_idx_on_shp(gid, _mde[2+d], 1)];
         }
     }
 
@@ -738,11 +726,11 @@ public class TensorKernel extends com.aparapi.Kernel
             _values[__i(gid, 1)] = 0;
             for(int i = 2; i<(_mde.length-1); i++){
                 _values[__i(gid, 1)] *=
-                        _values[_tsr_ptr(_mde[i])+__i_of(gid, _mde[i], 1)];
+                        _values[_tsr_ptr(_mde[i])+ __i_of_idx_on_shp(gid, _mde[i], 1)];
             }
         }else{
             //TODO: implement ...............
-            _values[__i(gid, 1)] = 666;//_values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)];//........
+            _values[__i(gid, 1)] = 666;//_values[_tsr_ptr(_mde[2+d])+__i_of_idx_on_shp(gid, _mde[2+d], 1)];//........
         }
     }
 
@@ -811,10 +799,19 @@ public class TensorKernel extends com.aparapi.Kernel
         _values[i1] = _values[i1]+__val[0];
     }
     //==================================================================================================================
-    private void _run_conv_inv(int gid, int drn_id, int src1_id, int src2_id, boolean first){
-        drn_id = drn_id^src2_id; src2_id = drn_id^src2_id; drn_id = drn_id^src2_id;
-        if(first){
-            src1_id = src1_id^drn_id; drn_id = src1_id^drn_id; src1_id = src1_id^drn_id;
+    private void _run_conv(int gid){///Lets get going!!
+        int drn_id = _mde[1];
+        int src1_id = _mde[2];
+        int src2_id = _mde[3];
+        if(__d()>=0) {
+            drn_id = drn_id ^ src2_id;
+            src2_id = drn_id ^ src2_id;
+            drn_id = drn_id ^ src2_id;
+            if (__d()==0) {
+                src1_id = src1_id ^ drn_id;
+                drn_id = src1_id ^ drn_id;
+                src1_id = src1_id ^ drn_id;
+            }
         }
         // SETUP:
         int p_data_src1 = _tsr_ptr(src1_id);
@@ -836,167 +833,149 @@ public class TensorKernel extends com.aparapi.Kernel
 
         int src1End = p_shp_src1 + rank;
         int src2End = p_shp_src2 + rank;
-
         //increment on drain:
         for(int i=0; i<gid; i++){
             __increment_idx(p_shp_drn, p_idx_drn, rank);
         }
         //increment src accordingly:
         int ri = 0;
-        while (ri < rank) {
-            if (_idx[(p_idx_src2+ri)] == _shapes[(p_shp_src2+ri)]) {
-                _idx[(p_idx_src1 + ri)] = _idx[(p_idx_drn + ri)];
-                _idx[(p_idx_src2 + ri)] = 0;
-            } else {
-                if (_shapes[(p_shp_drn+ri)] > _shapes[(p_shp_src1+ri)]) {//TODO:THIS IS ADDED
-                    _idx[(p_idx_src1+ri)] = (_idx[(p_idx_drn+ri)] - _idx[(p_idx_src2+ri)]);
+        if(__d()>=0){
+            while (ri < rank) {
+                if (_idx[(p_idx_src2+ri)] == _shapes[(p_shp_src2+ri)]) {
+                    _idx[(p_idx_src1 + ri)] = _idx[(p_idx_drn + ri)];
+                    _idx[(p_idx_src2 + ri)] = 0;
                 } else {
-                    _idx[(p_idx_src1+ri)] = (_idx[(p_idx_drn+ri)] + _idx[(p_idx_src2+ri)]);
-                }
-            }
-            ri++;
-        }
-        //----------
-        // multiplication:
-        double value = 0;
-        boolean running = true;
-        boolean incrementing = false;
-        while (running) {
-            ri = (ri==rank)?0:ri;
-            if (incrementing == false) {
-                boolean isMatch = true;
-                for(int i=0; i<rank; i++){
-                    if(!(_idx[(p_idx_src1+i)] < _shapes[(p_shp_src1+i)] && _idx[(p_idx_src1+i)]>=0)){
-                        isMatch = false;
+                    if (_shapes[(p_shp_drn+ri)] > _shapes[(p_shp_src1+ri)]) {
+                        _idx[(p_idx_src1+ri)] = (_idx[(p_idx_drn+ri)] - _idx[(p_idx_src2+ri)]);
+                    } else {
+                        _idx[(p_idx_src1+ri)] = (_idx[(p_idx_drn+ri)] + _idx[(p_idx_src2+ri)]);
                     }
                 }
-                if(isMatch){
+                ri++;
+            }
+            //----------
+            // multiplication:
+            double value = 0;
+            boolean running = true;
+            boolean incrementing = false;
+            while (running) {
+                ri = (ri==rank)?0:ri;
+                if (incrementing == false) {
+                    boolean isMatch = true;
+                    for(int i=0; i<rank; i++){
+                        if(!(_idx[(p_idx_src1+i)] < _shapes[(p_shp_src1+i)] && _idx[(p_idx_src1+i)]>=0)){
+                            isMatch = false;
+                        }
+                    }
+                    if(isMatch){
+                        int i1 = __i_of_idx_on_tln(p_tln_src1, p_idx_src1, rank);
+                        int i2 = __i_of_idx_on_tln(p_tln_src2, p_idx_src2, rank);
+                        value += _values[(p_data_src1 + i1)] * _values[(p_data_src2 + i2)];
+                    }
+                    incrementing = true;
+                    ri=0;
+                } else {//incrementing:
+                    if (_idx[(p_idx_src2+ri)] < _shapes[(p_shp_src2+ri)]) {
+                        _idx[(p_idx_src2+ri)]++;
+                        if (_idx[(p_idx_src2+ri)] == _shapes[(p_shp_src2+ri)]) {
+                            if (((p_shp_src2+ri) == (src2End - 1))) {
+                                running = false;
+                            }
+                            _idx[(p_idx_src1+ri)] = _idx[(p_idx_drn+ri)];
+                            _idx[(p_idx_src2+ri)] = 0;
+                            ri++;
+                        } else {
+                            if (_shapes[(p_shp_drn+ri)] > _shapes[(p_shp_src1+ri)]) {//TODO:THIS IS ADDED
+                                _idx[(p_idx_src1+ri)] = (_idx[(p_idx_drn+ri)] - _idx[(p_idx_src2+ri)]);
+                            } else {
+                                _idx[(p_idx_src1+ri)] = (_idx[(p_idx_drn+ri)] + _idx[(p_idx_src2+ri)]);
+                            }
+                            incrementing = false;
+                            ri=0;
+                        }
+                    } else {
+                        ri++;
+                    }
+                }
+            }
+            //set _value in drn:
+            int di = __i_of_idx_on_tln(p_tln_drn, p_idx_drn, rank);
+            _values[(p_data_drn + di)] = value;
+        } else {// conv
+            while (ri < rank) {
+                if (_shapes[(p_shp_src1+ri)] == _shapes[(p_shp_src2+ri)]) {//setting 0
+                    _idx[(p_idx_src1+ri)] = _idx[(p_idx_drn+ri)];
+                    _idx[(p_idx_src2+ri)] = _idx[(p_idx_drn+ri)];
+                } else if (_shapes[(p_shp_src1+ri)] > _shapes[(p_shp_src2+ri)]) {//setting src1 idx to id idx
+                    _idx[(p_idx_src1+ri)] = _idx[(p_idx_drn+ri)];
+                    _idx[(p_idx_src2+ri)] = 0;
+                } else if (_shapes[p_shp_src1+ri] < _shapes[(p_shp_src2+ri)]) {//setting src2 idx to id idx
+                    _idx[(p_idx_src1+ri)] = 0;
+                    _idx[(p_idx_src2+ri)] = _idx[(p_idx_drn+ri)];
+                }
+                ri++;
+            }
+            //----------
+            // multiplication:
+            double value = 0;
+            boolean running = true;
+            boolean incrementing = false;
+            while (running) {
+                ri = (ri==rank)?0:ri;
+                if (incrementing == false) {
                     int i1 = __i_of_idx_on_tln(p_tln_src1, p_idx_src1, rank);
                     int i2 = __i_of_idx_on_tln(p_tln_src2, p_idx_src2, rank);
-                    value += _values[(p_data_src1 + i1)] * _values[(p_data_src2 + i2)];
-                }
-                incrementing = true;
-                ri=0;
-            } else {//incrementing:
-                if (_idx[(p_idx_src2+ri)] < _shapes[(p_shp_src2+ri)]) {
-                    _idx[(p_idx_src2+ri)]++;
-                    if (_idx[(p_idx_src2+ri)] == _shapes[(p_shp_src2+ri)]) {
-                        if (((p_shp_src2+ri) == (src2End - 1))) {
-                            running = false;
-                        }
-                        _idx[(p_idx_src1+ri)] = _idx[(p_idx_drn+ri)];
-                        _idx[(p_idx_src2+ri)] = 0;
-                        ri++;
-                    } else {
-                        if (_shapes[(p_shp_drn+ri)] > _shapes[(p_shp_src1+ri)]) {//TODO:THIS IS ADDED
-                            _idx[(p_idx_src1+ri)] = (_idx[(p_idx_drn+ri)] - _idx[(p_idx_src2+ri)]);
+                    value +=
+                            _values[(p_data_src1 + i1)]
+                                    *
+                                    _values[(p_data_src2 + i2)];
+                    incrementing = true;
+                    ri=0;
+                } else {//incrementing:
+                    if (_idx[(p_idx_src1+ri)] < _shapes[(p_shp_src1+ri)] && _idx[(p_idx_src2+ri)] < _shapes[(p_shp_src2+ri)]) {
+                        _idx[(p_idx_src1+ri)]++;
+                        _idx[(p_idx_src2+ri)]++;
+                        if (_idx[(p_idx_src1+ri)] == _shapes[(p_shp_src1+ri)] || _idx[(p_idx_src2+ri)] == _shapes[(p_shp_src2+ri)]) {
+                            if (((p_shp_src1+ri) == (src1End - 1) || (p_shp_src2+ri) == (src2End - 1))) {
+                                running = false;
+                            }
+                            if (_shapes[(p_shp_src1+ri)] == _shapes[(p_shp_src2+ri)]) {//setting 0
+                                _idx[(p_idx_src1+ri)] = _idx[(p_idx_drn+ri)];//mtch[mi];
+                                _idx[(p_idx_src2+ri)] = _idx[(p_idx_drn+ri)];//mtch[mi];
+                            } else if (_shapes[(p_shp_src1+ri)] > _shapes[(p_shp_src2+ri)]) {//setting hdr1 idx to id idx
+                                _idx[(p_idx_src1+ri)] = _idx[(p_idx_drn+ri)];//mtch[mi];
+                                _idx[(p_idx_src2+ri)] = 0;
+                            } else if (_shapes[(p_shp_src1+ri)] < _shapes[(p_shp_src2+ri)]) {//setting hdr2 idx to id idx
+                                _idx[(p_idx_src1+ri)] = 0;
+                                _idx[(p_idx_src2+ri)] = _idx[(p_idx_drn+ri)];//mtch[mi];
+                            }
+                            ri++;
                         } else {
-                            _idx[(p_idx_src1+ri)] = (_idx[(p_idx_drn+ri)] + _idx[(p_idx_src2+ri)]);
+                            incrementing = false;
+                            ri=0;
                         }
-                        incrementing = false;
-                        ri=0;
-                    }
-                } else {
-                    ri++;
-                }
-            }
-        }
-        //set _value in drn:
-        int di = __i_of_idx_on_tln(p_tln_drn, p_idx_drn, rank);
-        _values[(p_data_drn + di)] = value;
-    }//=================================================================================================================
-
-    private void _run_conv(int gid, int drn_id, int src1_id, int src2_id){
-        // SETUP:
-        int p_data_src1 = _tsr_ptr(src1_id);
-        int p_data_src2 = _tsr_ptr(src2_id);
-        int p_data_drn = _tsr_ptr(drn_id);
-
-        int p_shp_src1 = _shp_ptr(src1_id);
-        int p_shp_src2 = _shp_ptr(src2_id);
-        int p_shp_drn  = _shp_ptr(drn_id);
-
-        int p_tln_src1 = _tln_ptr(src1_id);
-        int p_tln_src2 = _tln_ptr(src2_id);
-        int p_tln_drn  = _tln_ptr(drn_id);
-
-        int rank = _shp_sze(drn_id);
-        int p_idx_src1 = 0*rank;
-        int p_idx_src2 = 1*rank;
-        int p_idx_drn  = 2*rank;
-
-        int src1End = p_shp_src1 + rank;
-        int src2End = p_shp_src2 + rank;
-
-        //increment on drain:
-        for(int i=0; i<gid; i++){//drnSze-1
-            __increment_idx(p_shp_drn, p_idx_drn, rank);
-        }
-        //increment src accordingly:
-        int ri = 0;
-        while (ri < rank) {
-            if (_shapes[(p_shp_src1+ri)] == _shapes[(p_shp_src2+ri)]) {//setting 0
-                _idx[(p_idx_src1+ri)] = _idx[(p_idx_drn+ri)];
-                _idx[(p_idx_src2+ri)] = _idx[(p_idx_drn+ri)];
-            } else if (_shapes[(p_shp_src1+ri)] > _shapes[(p_shp_src2+ri)]) {//setting src1 idx to id idx
-                _idx[(p_idx_src1+ri)] = _idx[(p_idx_drn+ri)];
-                _idx[(p_idx_src2+ri)] = 0;
-            } else if (_shapes[p_shp_src1+ri] < _shapes[(p_shp_src2+ri)]) {//setting src2 idx to id idx
-                _idx[(p_idx_src1+ri)] = 0;
-                _idx[(p_idx_src2+ri)] = _idx[(p_idx_drn+ri)];
-            }
-            ri++;
-        }
-        //----------
-        // multiplication:
-        double value = 0;
-        boolean running = true;
-        boolean incrementing = false;
-        while (running) {
-            ri = (ri==rank)?0:ri;
-            if (incrementing == false) {
-                int i1 = __i_of_idx_on_tln(p_tln_src1, p_idx_src1, rank);
-                int i2 = __i_of_idx_on_tln(p_tln_src2, p_idx_src2, rank);
-                value +=
-                     _values[(p_data_src1 + i1)]
-                         *
-                     _values[(p_data_src2 + i2)];
-                incrementing = true;
-                ri=0;
-            } else {//incrementing:
-                if (_idx[(p_idx_src1+ri)] < _shapes[(p_shp_src1+ri)] && _idx[(p_idx_src2+ri)] < _shapes[(p_shp_src2+ri)]) {
-                    _idx[(p_idx_src1+ri)]++;
-                    _idx[(p_idx_src2+ri)]++;
-                    if (_idx[(p_idx_src1+ri)] == _shapes[(p_shp_src1+ri)] || _idx[(p_idx_src2+ri)] == _shapes[(p_shp_src2+ri)]) {
-                        if (((p_shp_src1+ri) == (src1End - 1) || (p_shp_src2+ri) == (src2End - 1))) {
-                            running = false;
-                        }
-                        if (_shapes[(p_shp_src1+ri)] == _shapes[(p_shp_src2+ri)]) {//setting 0
-                            _idx[(p_idx_src1+ri)] = _idx[(p_idx_drn+ri)];//mtch[mi];
-                            _idx[(p_idx_src2+ri)] = _idx[(p_idx_drn+ri)];//mtch[mi];
-                        } else if (_shapes[(p_shp_src1+ri)] > _shapes[(p_shp_src2+ri)]) {//setting hdr1 idx to id idx
-                            _idx[(p_idx_src1+ri)] = _idx[(p_idx_drn+ri)];//mtch[mi];
-                            _idx[(p_idx_src2+ri)] = 0;
-                        } else if (_shapes[(p_shp_src1+ri)] < _shapes[(p_shp_src2+ri)]) {//setting hdr2 idx to id idx
-                            _idx[(p_idx_src1+ri)] = 0;
-                            _idx[(p_idx_src2+ri)] = _idx[(p_idx_drn+ri)];//mtch[mi];
-                        }
-                        ri++;
                     } else {
-                        incrementing = false;
-                        ri=0;
+                        ri++;
                     }
-                } else {
-                    ri++;
                 }
             }
+            //set _value in drn:
+            int di = __i_of_idx_on_tln(p_tln_drn, p_idx_drn, rank);
+            _values[(p_data_drn + di)] = value;
         }
-        //set _value in drn:
-        int di = __i_of_idx_on_tln(p_tln_drn, p_idx_drn, rank);
-        _values[(p_data_drn + di)] = value;
+
+    }
+    //=================================================================================================================
+    //Helper methods for execution:
+    //----------------------------
+    private int __i(int gid, int m){
+        return _tsr_ptr(_mde[m])+ __i_of_idx_on_shp(gid, _mde[m], m-1);
     }
 
-    //Helper methods for tsr conv:
+    private int __d(){
+        return _mde[_mde.length-1];
+    }
+
     private int __increment_At(int ri, int idx_ptr, int shp_ptr) {
         if (_idx[idx_ptr+ri] < (_shapes[shp_ptr+ri])) {
             _idx[idx_ptr+ri]++;
@@ -1026,7 +1005,7 @@ public class TensorKernel extends com.aparapi.Kernel
         return i;
     }
 
-    private int __i_of(int gid, int t_id, int num){
+    private int __i_of_idx_on_shp(int gid, int t_id, int num){
         int p_shp  = _shp_ptr(t_id);
         int p_tln  = _tln_ptr(t_id);
         int rank   = _shp_sze(t_id);
