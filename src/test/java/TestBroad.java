@@ -508,7 +508,19 @@ public class TestBroad {
         );
         //result = new Tsr(new Tsr[]{tensor1, tensor1}, "ig0<-i0");
         //tester.testContains(tensor1.toString("g"), new String[]{"test"}, "");
-
+        Tsr x = new Tsr(new int[]{1}, 3).setRqsGradient(true);
+        Tsr b = new Tsr(new int[]{1}, -4);
+        Tsr w = new Tsr(new int[]{1}, 2);
+        gpu.add(x).add(b).add(w);
+        /**
+         *      ((3-4)*2)^2 = 4
+         *  dx:   8*3 - 32  = -8
+         * */
+        Tsr y = new Tsr(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
+        tester.testTensor(y, new String[]{"[1]:(4.0); ->d[1]:(-8.0), "});
+        y.backward(new Tsr(2));
+        tester.testTensor(x, new String[]{"-16.0"});
+        //---
         try {
             Thread.sleep(10000);
         } catch (InterruptedException e) {
@@ -665,6 +677,7 @@ public class TestBroad {
                 drn, drn, null, 6, -1,//Tsr gaus
                 new double[]{888.0, 777.0, -33.0, 999.0, 0.0, 0.0, 0.0, 0.0, -7.0, -9.0, 4.0, -4.0, 9.0, 4.0, 77.0, 1.0, 2.0, 3.0, 4.0, 0.0, 2.0, 3.0, 4.0, 2.0, -1.0, -2.0, -3.0, -1.0, 3.0, 0.0, 2.0, -3.0, 1.0, 2.0, -3.0, 0.0, 4.0, 5.0, -1.0, 15.0, 11.0, 20.0, -22.0, -8.0, 4.0, -9.0, -2.0, 2.0, 3.0, -2.0, 3.0, 6.0, 3.0, -1.0, 0.0, 2.0, 4.0, 2.0, 1.0, 1.0, 2.0, -3.0, 2.0, 4.0, -2.0, -1.0, 5.0, 1.0, 1.3887943864964039E-11, 1.2340980408667962E-4, 2.3195228302435736E-16, 1.2340980408667962E-4, 1.2340980408667962E-4, 1.3887943864964039E-11, 0.36787944117144233, 0.018315638888734182, 1.2340980408667962E-4, 1.2340980408667962E-4, 1.1253517471925921E-7,}
         );
+        //---
         gpu.getKernel().dispose();
         System.out.println("Done!");
         try {

@@ -215,28 +215,25 @@ public abstract class Function implements IFunction {
                 device.overwrite(_src.get(1).activate(input), _src.get(0).activate(input));
             } else {
                 int[] shp = (TYPES.REGISTER[_id] == "x")
-                    ? Tsr.factory.util.shpOfCon(input[0].shape(), input[1].shape())
-                    :input[0].shape();
+                    ? Tsr.factory.util.shpOfCon(_src.get(0).activate(input).shape(), _src.get(1).activate(input).shape())
+                    :_src.get(0).activate(input).shape();
                 Tsr output = new Tsr(shp, 0.0);
                 if (device != null) {
                     device.add(output);
                 }
-                for (int i = 0; i < input.length; i++) {
-                    device = (Device) input[i].find(Device.class);
-                    Tsr[] tsrs = new Tsr[1 + input.length];
-                    tsrs[0] = output;
-                    for (int ii = 1; ii < tsrs.length; ii++) {
-                        tsrs[ii] = input[ii - 1];
-                    }
-                    if (tsrs.length == 2 && (tsrs[0].isVirtual() || tsrs[1].isVirtual())) {
-                        if (tsrs[0].isVirtual()) {
-                            device.calculate(tsrs[1], tsrs[0].value()[0], _id);
-                        } else {
-                            device.calculate(tsrs[0], tsrs[1].value()[0], _id);
-                        }
+                Tsr[] tsrs = new Tsr[1 + _src.size()];//input.length];
+                tsrs[0] = output;
+                for (int ii = 1; ii < tsrs.length; ii++) {
+                    tsrs[ii] = _src.get(ii-1).activate(input);//input[ii - 1];
+                }
+                if (tsrs.length == 2 && (tsrs[0].isVirtual() || tsrs[1].isVirtual())) {
+                    if (tsrs[0].isVirtual()) {
+                        device.calculate(tsrs[1], tsrs[0].value()[0], _id);
                     } else {
-                        device.calculate(tsrs, _id, d);
+                        device.calculate(tsrs[0], tsrs[1].value()[0], _id);
                     }
+                } else {
+                    device.calculate(tsrs, _id, d);
                 }
                 return output;
             }

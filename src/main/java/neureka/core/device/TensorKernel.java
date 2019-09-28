@@ -508,14 +508,14 @@ public class TensorKernel extends com.aparapi.Kernel
         }
         if(_mde[0]==16){//  -
             if(_mde.length>2) {
-                _run_sub(gid, _mde[1], _mde[2], _mde[3]);
+                _run_sub(gid, _mde[1], _mde[2], _mde[3], _mde[4]);
             }else{
                 _run_broadcast_sub(gid, _mde[1], __val[0]);
             }
         }
         if(_mde[0]==17){//  +
             if(_mde.length>2) {
-                _run_add(gid, _mde[1], _mde[2], _mde[3]);
+                _run_add(gid, _mde[1], _mde[2], _mde[3], _mde[4]);
             } else {
                 _run_broadcast_add(gid, _mde[1], __val[0]);
             }
@@ -780,21 +780,29 @@ public class TensorKernel extends com.aparapi.Kernel
         _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
                 (int)(_values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)])%(int)value;
     }
-    private void _run_sub(int gid, int drn_id, int src1_id, int src2_id){
-        _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                _values[_tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)]
-                        -
-                _values[_tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)];
+    private void _run_sub(int gid, int drn_id, int src1_id, int src2_id, int d){
+        int i1 = _tsr_ptr(drn_id)+__i_of(gid, drn_id, 0);
+        if(d<0){
+            int i2 = _tsr_ptr(src1_id)+__i_of(gid, src1_id, 1);
+            int i3 = _tsr_ptr(src2_id)+__i_of(gid, src2_id, 2);
+            _values[i1] = _values[i2] - _values[i3];
+        } else {
+            _values[i1] = 1;
+        }
     }
     private void _run_broadcast_sub(int gid, int drn_id, double value){
         _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)]
                 = _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)]-value;
     }
-    private void _run_add(int gid, int drn_id, int src1_id, int src2_id){
+    private void _run_add(int gid, int drn_id, int src1_id, int src2_id, int d){
         int i1 = _tsr_ptr(drn_id)+__i_of(gid, drn_id, 0);
-        int i2 = _tsr_ptr(src1_id)+__i_of(gid, src1_id, 1);
-        int i3 = _tsr_ptr(src2_id)+__i_of(gid, src2_id, 2);
-        _values[i1] = _values[i2] + _values[i3];
+        if(d<0){
+            int i2 = _tsr_ptr(src1_id)+__i_of(gid, src1_id, 1);
+            int i3 = _tsr_ptr(src2_id)+__i_of(gid, src2_id, 2);
+            _values[i1] = _values[i2] + _values[i3];
+        } else {
+            _values[i1] = 1;
+        }
     }
     private void _run_broadcast_add(int gid, int drn_id, double value){
         int i1 = _tsr_ptr(drn_id)+__i_of(gid, drn_id, 0);
