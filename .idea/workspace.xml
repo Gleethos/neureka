@@ -4,14 +4,14 @@
     <list default="true" id="a07ad3e8-8754-4b05-b853-df2665879cc4" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileContent/fileContent.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileContent/fileContent.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/jarAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/jarAnalysis.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/device/TensorKernel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/device/TensorKernel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/TestBroad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestBroad.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -102,11 +102,30 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="103">
-              <caret line="132" column="65" selection-start-line="132" selection-start-column="65" selection-end-line="132" selection-end-column="65" />
+            <state relative-caret-position="86">
+              <caret line="131" column="35" selection-start-line="131" selection-start-column="35" selection-end-line="131" selection-end-column="35" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/TensorKernel.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1911">
+              <caret line="908" column="55" lean-forward="true" selection-start-line="908" selection-start-column="55" selection-end-line="908" selection-end-column="55" />
+              <folding>
+                <element signature="e#19490#19491#0" expanded="true" />
+                <element signature="e#19551#19552#0" expanded="true" />
+                <element signature="e#19583#19584#0" expanded="true" />
+                <element signature="e#19621#19622#0" expanded="true" />
+                <element signature="e#24332#24333#0" expanded="true" />
+                <element signature="e#24400#24401#0" expanded="true" />
+                <element signature="e#24574#24575#0" expanded="true" />
+                <element signature="e#24642#24643#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -226,12 +245,12 @@
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java" />
         <option value="$PROJECT_DIR$/src/test/java/TestBroad.java" />
-        <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/TensorKernel.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java" />
+        <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/TensorKernel.java" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-15" />
     <option name="width" value="2455" />
     <option name="height" value="2075" />
@@ -516,47 +535,47 @@
       <workItem from="1569530959023" duration="1068000" />
       <workItem from="1569585618864" duration="53000" />
       <workItem from="1569585686149" duration="78000" />
-      <workItem from="1569617806003" duration="7984000" />
+      <workItem from="1569617806003" duration="10520000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="neureka_[test] - 2019.09.28 at 20h 47m 29s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
-    <history-entry file="neureka_[test] - 2019.09.28 at 20h 47m 59s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
-    <history-entry file="neureka_[test] - 2019.09.28 at 20h 51m 34s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
-    <history-entry file="neureka_[test] - 2019.09.28 at 20h 55m 56s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
-    <history-entry file="neureka_[test] - 2019.09.28 at 20h 56m 34s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
-    <history-entry file="neureka_[test] - 2019.09.28 at 21h 02m 15s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
-    <history-entry file="neureka_[test] - 2019.09.28 at 21h 04m 29s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
-    <history-entry file="neureka_[test] - 2019.09.28 at 21h 20m 48s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
     <history-entry file="neureka_[test] - 2019.09.28 at 21h 21m 27s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
     <history-entry file="neureka_[test] - 2019.09.28 at 21h 38m 36s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
+    <history-entry file="neureka_[test] - 2019.09.28 at 21h 47m 45s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
+    <history-entry file="neureka_[test] - 2019.09.28 at 22h 36m 25s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
+    <history-entry file="neureka_[test] - 2019.09.28 at 22h 41m 05s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
+    <history-entry file="neureka_[test] - 2019.09.28 at 22h 44m 27s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
+    <history-entry file="neureka_[test] - 2019.09.28 at 22h 47m 01s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
+    <history-entry file="neureka_[test] - 2019.09.28 at 22h 48m 43s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
+    <history-entry file="neureka_[test] - 2019.09.28 at 22h 52m 13s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
+    <history-entry file="neureka_[test] - 2019.09.28 at 22h 57m 26s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="174525000" />
+    <option name="totallyTimeSpent" value="177061000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-6" y="0" width="982" height="830" extended-state="0" />
+    <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
     <layout>
       <window_info id="Structure" order="0" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="1" />
@@ -569,7 +588,7 @@
       <window_info id="Web" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.48794788" weight="0.32554945" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.803719" visible="true" weight="0.4479889" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.80390877" visible="true" weight="0.44368133" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.60640496" weight="0.39389735" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -580,7 +599,7 @@
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Database Changes" order="11" />
       <window_info anchor="bottom" id="Version Control" order="12" />
-      <window_info anchor="bottom" id="Gradle" order="13" sideWeight="0.19628099" side_tool="true" visible="true" weight="0.4479889" />
+      <window_info anchor="bottom" id="Gradle" order="13" sideWeight="0.1960912" side_tool="true" visible="true" weight="0.44368133" />
       <window_info anchor="bottom" id="Java Enterprise" order="14" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -591,7 +610,7 @@
       <window_info anchor="right" id="Database" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info anchor="right" id="Theme Preview" order="8" />
-      <window_info anchor="right" content_ui="combo" id="Project" order="9" sideWeight="0.49885058" visible="true" weight="0.3553719" />
+      <window_info anchor="right" content_ui="combo" id="Project" order="9" sideWeight="0.49885058" visible="true" weight="0.22410424" />
       <window_info anchor="right" id="Coverage" order="10" sideWeight="0.5011494" side_tool="true" weight="0.23893805" />
     </layout>
   </component>
@@ -603,7 +622,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java</url>
-          <line>182</line>
+          <line>181</line>
           <properties />
           <option name="timeStamp" value="64" />
         </line-breakpoint>
@@ -1043,17 +1062,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/TensorKernel.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2411">
-          <caret line="787" column="39" selection-start-line="787" selection-start-column="39" selection-end-line="787" selection-end-column="39" />
+        <state relative-caret-position="86">
+          <caret line="131" column="35" selection-start-line="131" selection-start-column="35" selection-end-line="131" selection-end-column="35" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/TensorKernel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="103">
-          <caret line="132" column="65" selection-start-line="132" selection-start-column="65" selection-end-line="132" selection-end-column="65" />
+        <state relative-caret-position="1911">
+          <caret line="908" column="55" lean-forward="true" selection-start-line="908" selection-start-column="55" selection-end-line="908" selection-end-column="55" />
+          <folding>
+            <element signature="e#19490#19491#0" expanded="true" />
+            <element signature="e#19551#19552#0" expanded="true" />
+            <element signature="e#19583#19584#0" expanded="true" />
+            <element signature="e#19621#19622#0" expanded="true" />
+            <element signature="e#24332#24333#0" expanded="true" />
+            <element signature="e#24400#24401#0" expanded="true" />
+            <element signature="e#24574#24575#0" expanded="true" />
+            <element signature="e#24642#24643#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

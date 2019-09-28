@@ -443,81 +443,81 @@ public class TensorKernel extends com.aparapi.Kernel
             _run_store(gid, false);
         }
         if(_mde[0]==0){//Relu
-            _run_relu(gid, _mde[1], _mde[2], _mde[3]);
+            _run_relu(gid);
         }
         if(_mde[0]==1){//Sigmoid
-            _run_sig(gid, _mde[1], _mde[2], _mde[3]);
+            _run_sig(gid);
         }
         if(_mde[0]==2){//Tanh
-            _run_tnh(gid, _mde[1], _mde[2], _mde[3]);
+            _run_tnh(gid);
         }
         if(_mde[0]==3){//Quadratic
-            _run_qdr(gid, _mde[1], _mde[2], _mde[3]);
+            _run_qdr(gid);
         }
         if(_mde[0]==4){//Ligmoid
-            _run_lig(gid, _mde[1], _mde[2], _mde[3]);
+            _run_lig(gid);
         }
         if(_mde[0]==5){//Linear
-            _run_lin(gid, _mde[1], _mde[2], _mde[3]);
+            _run_lin(gid);
         }
         if(_mde[0]==6){//Gaussian
-            _run_gus(gid, _mde[1], _mde[2], _mde[3]);
+            _run_gus(gid);
         }
         if(_mde[0]==7){//Absolut
-            _run_abs(gid, _mde[1], _mde[2], _mde[3]);
+            _run_abs(gid);
         }
         if(_mde[0]==8){//Sinus
-            _run_sin(gid, _mde[1], _mde[2], _mde[3]);
+            _run_sin(gid);
         }
         if(_mde[0]==9){//Cosinus
-            _run_cos(gid, _mde[1], _mde[2], _mde[3]);
+            _run_cos(gid);
         }
         if(_mde[0]==10){//Sum
-            _run_sum(gid, _mde[1], (_mde.length<=3)?-1: _mde[_mde.length-1]);
+            _run_sum(gid);
         }
         if(_mde[0]==11){//Product
-            _run_pi(gid, _mde[1], (_mde.length<=3)?-1: _mde[_mde.length-1]);
+            _run_pi(gid);
         }
         if(_mde[0]==12){//  ^
             if(_mde.length>2) {
-                _run_pow(gid, _mde[1], _mde[2], _mde[3]);
+                _run_pow(gid);
             } else {
-                _run_broadcast_pow(gid, _mde[1], __val[0]);
+                _run_broadcast_pow(gid);
             }
         }
         if(_mde[0]==13){//  /
             if(_mde.length>2){
-                _run_div(gid, _mde[1], _mde[2], _mde[3]);
+                _run_div(gid);
             } else {
-                _run_broadcast_div(gid, _mde[1], __val[0]);
+                _run_broadcast_div(gid);
             }
         }
         if(_mde[0]==14){//  *
             if(_mde.length>2) {
-                _run_mul(gid, _mde[1], _mde[2], _mde[3]);
+                _run_mul(gid);
             }else{
-                _run_broadcast_mul(gid, _mde[1], __val[0]);
+                _run_broadcast_mul(gid);
             }
         }
         if(_mde[0]==15){//  %
             if(_mde.length>2) {
-                _run_mod(gid, _mde[1], _mde[2], _mde[3]);
+                _run_mod(gid);
             } else{
-                _run_broadcast_mod(gid, _mde[1], __val[0]);
+                _run_broadcast_mod(gid);
             }
         }
         if(_mde[0]==16){//  -
             if(_mde.length>2) {
-                _run_sub(gid, _mde[1], _mde[2], _mde[3], _mde[4]);
+                _run_sub(gid);
             }else{
-                _run_broadcast_sub(gid, _mde[1], __val[0]);
+                _run_broadcast_sub(gid);
             }
         }
         if(_mde[0]==17){//  +
             if(_mde.length>2) {
-                _run_add(gid, _mde[1], _mde[2], _mde[3], _mde[4]);
+                _run_add(gid);
             } else {
-                _run_broadcast_add(gid, _mde[1], __val[0]);
+                _run_broadcast_add(gid);
             }
         }
         if(_mde[0]==18){// x
@@ -587,66 +587,74 @@ public class TensorKernel extends com.aparapi.Kernel
         }
     }
 
-    private void _run_relu(int gid, int drn_id, int src_id, int d){
-        if (d<0) {
-            if (_values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)] >= 0) {
-                _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                        (_values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)]);
+    private int __i(int gid, int m){
+        return _tsr_ptr(_mde[m])+__i_of(gid, _mde[m], m-1);
+    }
+    
+    private int __d(){
+        return _mde[_mde.length-1];
+    }
+
+    private void _run_relu(int gid){
+        if (__d()<0) {
+            if (_values[__i(gid, 2)] >= 0) {
+                _values[__i(gid, 1)] =
+                        (_values[__i(gid, 2)]);
             } else {
-                _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                        (_values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)]) * 0.01;
+                _values[__i(gid, 1)] =
+                        (_values[__i(gid, 2)]) * 0.01;
             }
         } else {
-            if (_values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)] >= 0) {
-                _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = 0.01;
+            if (_values[__i(gid, 2)] >= 0) {
+                _values[__i(gid, 1)] = 0.01;
             } else {
-                _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = 0.01;
+                _values[__i(gid, 1)] = 0.01;
             }
         }
     }
 
-    private void _run_sig(int gid, int drn_id, int src_id, int d){
-        if(d<0){
-            _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                    1 / (1 + Math.pow(Math.E, (-_values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)])));
+    private void _run_sig(int gid){
+        if(__d()<0){
+            _values[__i(gid, 1)] =
+                    1 / (1 + Math.pow(Math.E, (-_values[__i(gid, 2)])));
 
         }else{
-            _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+            _values[__i(gid, 1)] =
                 (
                     Math.pow(
                         Math.E,
-                        -_values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)]
+                        -_values[__i(gid, 2)]
                     )
                 ) / (Math.pow(
                         (1 + Math.pow(
                             Math.E,
-                            -_values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)]
+                            -_values[__i(gid, 2)]
                         )
                     ), 2)
                         +
-                        2 * Math.pow(Math.E, -_values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)])
+                        2 * Math.pow(Math.E, -_values[__i(gid, 2)])
                 );
         }
     }
 
-    private void _run_tnh(int gid, int drn_id, int src_id, int d){
-        if(d<0){
-            _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                    _values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)]
+    private void _run_tnh(int gid){
+        if(__d()<0){
+            _values[__i(gid, 1)] =
+                    _values[__i(gid, 2)]
                             / Math.pow(
                                     (1 + Math.pow(
-                                            _values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)]
+                                            _values[__i(gid, 2)]
                                             , 2)
                                     ), 0.5);
 
         }else{
-            _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+            _values[__i(gid, 1)] =
                 (1 - Math.pow(
-                    (_values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)]
+                    (_values[__i(gid, 2)]
                         /
                         Math.pow(
                             (1 + Math.pow(
-                                _values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)]
+                                _values[__i(gid, 2)]
                                 , 2)
                             ), 0.5
                         )
@@ -655,158 +663,152 @@ public class TensorKernel extends com.aparapi.Kernel
 
         }
     }
-    private void _run_qdr(int gid, int drn_id, int src_id, int d){
-        if(d<0){
-            _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                Math.pow(_values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)],2);
+    private void _run_qdr(int gid){
+        if(__d()<0){
+            _values[__i(gid, 1)] =
+                Math.pow(_values[__i(gid, 2)],2);
         }else{
-            _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                    _values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)]*2;
+            _values[__i(gid, 1)] =
+                    _values[__i(gid, 2)]*2;
         }
     }
-    private void _run_lig(int gid, int drn_id, int src_id, int d){
-        if(d<0){
-            _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = (
-                Math.log(1+Math.pow(Math.E, _values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)]))
+    private void _run_lig(int gid){
+        if(__d()<0){
+            _values[__i(gid, 1)] = (
+                Math.log(1+Math.pow(Math.E, _values[__i(gid, 2)]))
             );
         }else{
-            _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+            _values[__i(gid, 1)] =
                 1 /
                     (1 + Math.pow(
                         Math.E,
-                        _values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)]
+                        _values[__i(gid, 2)]
                     )
                 );
         }
     }
 
-    private void _run_lin(int gid, int drn_id, int src_id, int d){
-        if(d<0){
-            _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                    _values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)];
+    private void _run_lin(int gid){
+        if(__d()<0){
+            _values[__i(gid, 1)] =
+                    _values[__i(gid, 2)];
         }else{
-            _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                    _values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)];
+            _values[__i(gid, 1)] = 1;//_values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)];
         }
     }
 
-    private void _run_gus(int gid, int drn_id, int src_id, int d){
-        if(d<0){
-            _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                    Math.pow(Math.E, -Math.pow(_values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)], 2));
+    private void _run_gus(int gid){
+        if(__d()<0){
+            _values[__i(gid, 1)] =
+                    Math.pow(Math.E, -Math.pow(_values[__i(gid, 2)], 2));
         }else{
-            _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                    -2 * (_values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)])
-                            * Math.pow(Math.E, -Math.pow(_values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)], 2));
+            _values[__i(gid, 1)] =
+                    -2 * (_values[__i(gid, 2)])
+                            * Math.pow(Math.E, -Math.pow(_values[__i(gid, 2)], 2));
         }
     }
 
-    private void _run_abs(int gid, int drn_id, int src_id, int d){
-        _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                Math.abs(_values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)]);
+    private void _run_abs(int gid){
+        _values[__i(gid, 1)] =
+                Math.abs(_values[__i(gid, 2)]);
     }
-    private void _run_sin(int gid, int drn_id, int src_id, int d){
-        _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                Math.sin(_values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)]);
+    private void _run_sin(int gid){
+        _values[__i(gid, 1)] =
+                Math.sin(_values[__i(gid, 2)]);
     }
-    private void _run_cos(int gid, int drn_id, int src_id, int d){
-        _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                Math.cos(_values[_tsr_ptr(src_id)+__i_of(gid, src_id, 1)]);
+    private void _run_cos(int gid){
+        _values[__i(gid, 1)] =
+                Math.cos(_values[__i(gid, 2)]);
     }
 
-    private void _run_sum(int gid, int drn_id, int d){
-        if(d<0){
-            _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = 0;
+    private void _run_sum(int gid){
+        if(__d()<0){
+            _values[__i(gid, 1)] = 0;
             for(int i = 2; i<(_mde.length-1); i++){
-                _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] +=
+                _values[__i(gid, 1)] +=
                         _values[_tsr_ptr(_mde[i])+__i_of(gid, _mde[i], 1)];
             }
         }else{
-            _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                    _values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)];
+            _values[__i(gid, 1)] = 1;//_values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)];
         }
     }
 
-    private void _run_pi(int gid, int drn_id, int d){
-        if(d<0){
-            _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = 0;
+    private void _run_pi(int gid){
+        if(__d()<0){
+            _values[__i(gid, 1)] = 0;
             for(int i = 2; i<(_mde.length-1); i++){
-                _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] *=
+                _values[__i(gid, 1)] *=
                         _values[_tsr_ptr(_mde[i])+__i_of(gid, _mde[i], 1)];
             }
         }else{
             //TODO: implement ...............
-            _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                    _values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)];//........
+            _values[__i(gid, 1)] = 666;//_values[_tsr_ptr(_mde[2+d])+__i_of(gid, _mde[2+d], 1)];//........
         }
     }
 
-    private void _run_pow(int gid, int drn_id, int src1_id, int src2_id){
-        _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
+    private void _run_pow(int gid){
+        _values[__i(gid, 1)] =
                 Math.pow(
-                        _values[_tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)],
-                        _values[_tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)]
+                        _values[__i(gid, 2)],
+                        _values[__i(gid, 3)]
                         );
     }
-    private void _run_broadcast_pow(int gid, int drn_id, double value){
-        _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                Math.pow(_values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)], value);
+    private void _run_broadcast_pow(int gid){
+        _values[__i(gid, 1)] =
+                Math.pow(_values[__i(gid, 1)], __val[0]);
     }
-    private void _run_div(int gid, int drn_id, int src1_id, int src2_id){
-        _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                _values[_tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)]
+    private void _run_div(int gid){
+        _values[__i(gid, 1)] =
+                _values[__i(gid, 2)]
                         /
-                _values[_tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)];
+                _values[__i(gid, 3)];
     }
-    private void _run_broadcast_div(int gid, int drn_id, double value){
-        _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)]/value;
+    private void _run_broadcast_div(int gid){
+        _values[__i(gid, 1)] = _values[__i(gid, 1)]/__val[0];
     }
-    private void _run_mul(int gid, int drn_id, int src1_id, int src2_id){
-        _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                _values[_tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)]
+    private void _run_mul(int gid){
+        _values[__i(gid, 1)] =
+                _values[__i(gid, 2)]
                         *
-                _values[_tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)];
+                _values[__i(gid, 3)];
     }
-    private void _run_broadcast_mul(int gid, int drn_id, double value){
-        _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] = _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)]*value;
+    private void _run_broadcast_mul(int gid){
+        _values[__i(gid, 1)] = _values[__i(gid, 1)]*__val[0];
     }
-    private void _run_mod(int gid, int drn_id, int src1_id, int src2_id){
-        _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                ((int)_values[_tsr_ptr(src1_id)+__i_of(gid, src1_id, 1)])
+    private void _run_mod(int gid){
+        _values[__i(gid, 1)] =
+                ((int)_values[__i(gid, 2)])
                         %
-                ((int)_values[_tsr_ptr(src2_id)+__i_of(gid, src2_id, 2)]);
+                ((int)_values[__i(gid, 3)]);
     }
-    private void _run_broadcast_mod(int gid, int drn_id, double value){
-        _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)] =
-                (int)(_values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)])%(int)value;
+    private void _run_broadcast_mod(int gid){
+        _values[__i(gid, 1)] =
+                (int)(_values[__i(gid, 1)])%(int)__val[0];
     }
-    private void _run_sub(int gid, int drn_id, int src1_id, int src2_id, int d){
-        int i1 = _tsr_ptr(drn_id)+__i_of(gid, drn_id, 0);
-        if(d<0){
-            int i2 = _tsr_ptr(src1_id)+__i_of(gid, src1_id, 1);
-            int i3 = _tsr_ptr(src2_id)+__i_of(gid, src2_id, 2);
+    private void _run_sub(int gid){
+        int i1 = __i(gid, 1);
+        if(__d()<0){
+            int i2 = __i(gid, 2);
+            int i3 = __i(gid, 3);
             _values[i1] = _values[i2] - _values[i3];
         } else {
             _values[i1] = 1;
         }
     }
-    private void _run_broadcast_sub(int gid, int drn_id, double value){
-        _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)]
-                = _values[_tsr_ptr(drn_id)+__i_of(gid, drn_id, 0)]-value;
+    private void _run_broadcast_sub(int gid){
+        _values[__i(gid, 1)]
+                = _values[__i(gid, 1)]-__val[0];
     }
-    private void _run_add(int gid, int drn_id, int src1_id, int src2_id, int d){
-        int i1 = _tsr_ptr(drn_id)+__i_of(gid, drn_id, 0);
-        if(d<0){
-            int i2 = _tsr_ptr(src1_id)+__i_of(gid, src1_id, 1);
-            int i3 = _tsr_ptr(src2_id)+__i_of(gid, src2_id, 2);
-            _values[i1] = _values[i2] + _values[i3];
+    private void _run_add(int gid){
+        if(__d()<0){
+            _values[__i(gid, 1)] = _values[__i(gid, 2)] + _values[__i(gid, 3)];
         } else {
-            _values[i1] = 1;
+            _values[__i(gid, 1)] = 1;
         }
     }
-    private void _run_broadcast_add(int gid, int drn_id, double value){
-        int i1 = _tsr_ptr(drn_id)+__i_of(gid, drn_id, 0);
-        _values[i1] = _values[i1]+value;
+    private void _run_broadcast_add(int gid){
+        int i1 = __i(gid, 1);
+        _values[i1] = _values[i1]+__val[0];
     }
     //==================================================================================================================
     private void _run_conv_inv(int gid, int drn_id, int src1_id, int src2_id, boolean first){
