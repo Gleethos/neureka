@@ -755,10 +755,15 @@ public class TensorKernel extends com.aparapi.Kernel
         _values[__i(gid, 1)] = _values[__i(gid, 1)]/__val[0];
     }
     private void _run_mul(int gid){
-        _values[__i(gid, 1)] =
-                _values[__i(gid, 2)]
-                        *
-                _values[__i(gid, 3)];
+        if(__d()<0){
+            _values[__i(gid, 1)] =
+                    _values[__i(gid, 2)]
+                            *
+                            _values[__i(gid, 3)];
+        } else {
+            _values[__i(gid, 1)] = _values[__i(gid, 2+(1-__d()))];
+        }
+
     }
     private void _run_broadcast_mul(int gid){
         _values[__i(gid, 1)] = _values[__i(gid, 1)]*__val[0];

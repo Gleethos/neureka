@@ -208,7 +208,7 @@ public abstract class Function implements IFunction {
     {
         Device device = (Device) input[0].find(Device.class);
         boolean onSameDevice = Tsr.factory.util.shareGuestDevice(input);
-        if (onSameDevice && TYPES.REGISTER[_id] != "," && (!TYPES.isConvection(_id) && d > -1)) {
+        if (onSameDevice && TYPES.REGISTER[_id] != "," && !(TYPES.isConvection(_id) && d > -1)) {
             if(TYPES.REGISTER[_id]=="<") {
                 device.overwrite(_src.get(0).activate(input), _src.get(1).activate(input));
             } else if(TYPES.REGISTER[_id]==">") {
