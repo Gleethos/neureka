@@ -11,6 +11,7 @@ public class TestBroad {
 
     @Test
     public void testTensorFunctions() {
+
         NTester_Function tester = new NTester_Function("Testing function factory and scalar calculations");
         //EXPRESSION TESTING:
         tester.testExpression("ig0*(igj)xI[g1]", "((Ig[0]*Ig[j])xIg[1])", "");
@@ -520,6 +521,15 @@ public class TestBroad {
         tester.testTensor(y, new String[]{"[1]:(4.0); ->d[1]:(-8.0), "});
         y.backward(new Tsr(2));
         tester.testTensor(x, new String[]{"-16.0"});
+
+        //====
+        x = new Tsr(new int[]{1}, 3);
+        b = new Tsr(new int[]{1}, -5);
+        w = new Tsr(new int[]{1}, -2);
+        gpu.add(x).add(b).add(w);
+        Tsr z = new Tsr(new Tsr[]{x, b, w}, "I0*i1*i2");//TODO: activate again:
+        //tester.testTensor(z, new String[]{"[1]:(30.0)"});
+
         //---
         try {
             Thread.sleep(10000);

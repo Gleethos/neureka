@@ -78,7 +78,13 @@ public class TestOnlyCPU {
         z.backward(new Tsr(new int[]{2, 2}, 1));
         tester.testTensor(y, new String[]{"[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)"});
         System.out.println(z);
-
+        //====
+        x = new Tsr(new int[]{1}, 3);
+        b = new Tsr(new int[]{1}, -5);
+        w = new Tsr(new int[]{1}, -2);
+        z = new Tsr(new Tsr[]{x, b, w}, "I0*i1*i2");
+        tester.testTensor(z, new String[]{"[1]:(30.0)"});
+        //===
         Thread.sleep(6000);
         tester.closeWindows();
     }

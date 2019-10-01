@@ -723,7 +723,7 @@ public class TensorKernel extends com.aparapi.Kernel
 
     private void _run_pi(int gid){
         if(__d()<0){
-            _values[__i(gid, 1)] = 0;
+            _values[__i(gid, 1)] = 1;
             for(int i = 2; i<(_mde.length-1); i++){
                 _values[__i(gid, 1)] *=
                         _values[_tsr_ptr(_mde[i])+ __i_of_idx_on_shp(gid, _mde[i], 1)];
@@ -746,37 +746,63 @@ public class TensorKernel extends com.aparapi.Kernel
                 Math.pow(_values[__i(gid, 1)], __val[0]);
     }
     private void _run_div(int gid){
-        _values[__i(gid, 1)] =
-                _values[__i(gid, 2)]
-                        /
-                _values[__i(gid, 3)];
+        double result = 1;
+        if(__d()!=0){
+            result = _values[__i(gid, 2)];
+        }
+        if (__d() < 0) {
+            for (int i = 2; i < __n(); i++) {
+                result = result / _values[__i(gid, 1+i)];
+            }
+            _values[__i(gid, 1)] = result;
+        } else {
+            double temp = 0;
+            for (int i = 2; i < __n(); i++) {
+                if(__d() > i){
+                    result = result / _values[__i(gid, 1+i)];
+                } else if (__d() > i){
+                    result = result / _values[__i(gid, 1+i)];
+                } else {
+                    temp = _values[__i(gid, 1+i)];//result;
+                    //result = 1;//TODO: Swapping?
+                }
+            }
+            _values[__i(gid, 1)] = result * -Math.pow(temp, -2);
+        }
+
+
     }
     private void _run_broadcast_div(int gid){
         _values[__i(gid, 1)] = _values[__i(gid, 1)]/__val[0];
     }
     private void _run_mul(int gid){
-        if(__d()<0){
-            _values[__i(gid, 1)] =
-                    _values[__i(gid, 2)]
-                            *
-                            _values[__i(gid, 3)];
-        } else {
-            _values[__i(gid, 1)] = _values[__i(gid, 2+(1-__d()))];
+        double result = 1;
+        if(__d()!=0){
+            result = _values[__i(gid, 2)];
         }
-
+        if (__d() < 0) {
+            for (int i = 2; i < __n(); i++) {
+                result = result * _values[__i(gid, 1+i)];
+            }
+        } else {
+            for (int i = 2; i < __n(); i++) {
+                double current = 1;
+                if(__d() != i){
+                      current = _values[__i(gid, 1+i)];
+                }
+                result = result * current;
+            }
+        }
+        _values[__i(gid, 1)] = result;
     }
     private void _run_broadcast_mul(int gid){
         _values[__i(gid, 1)] = _values[__i(gid, 1)]*__val[0];
     }
     private void _run_mod(int gid){
-        _values[__i(gid, 1)] =
-                ((int)_values[__i(gid, 2)])
-                        %
-                ((int)_values[__i(gid, 3)]);
+        _values[__i(gid, 1)] = ((int)_values[__i(gid, 2)]) % ((int)_values[__i(gid, 3)]);
     }
     private void _run_broadcast_mod(int gid){
-        _values[__i(gid, 1)] =
-                (int)(_values[__i(gid, 1)])%(int)__val[0];
+        _values[__i(gid, 1)] = (int)(_values[__i(gid, 1)])%(int)__val[0];
     }
     private void _run_sub(int gid){
         int i1 = __i(gid, 1);
@@ -842,9 +868,11 @@ public class TensorKernel extends com.aparapi.Kernel
         for(int i=0; i<gid; i++){
             __increment_idx(p_shp_drn, p_idx_drn, rank);
         }
+        //__gid_to_idx(gid, p_idx_drn, p_tln_drn, rank);
+
         //increment src accordingly:
         int ri = 0;
-        if(__d()>=0){
+        if(__d() >= 0){
             while (ri < rank) {
                 if (_idx[(p_idx_src2+ri)] == _shapes[(p_shp_src2+ri)]) {
                     _idx[(p_idx_src1 + ri)] = _idx[(p_idx_drn + ri)];
@@ -979,6 +1007,19 @@ public class TensorKernel extends com.aparapi.Kernel
 
     private int __d(){
         return _mde[_mde.length-1];
+    }
+
+    private int __n(){
+        return _mde.length-2;
+    }
+
+    private void __gid_to_idx(int gid, int idx_ptr, int tln_ptr, int rank){
+        int ri = rank;
+         do {
+            ri--;
+            _idx[idx_ptr+ri] = gid/_translations[tln_ptr+ri];
+            gid = gid % _translations[tln_ptr+ri];
+        } while (ri > 0);
     }
 
     private int __increment_At(int ri, int idx_ptr, int shp_ptr) {
