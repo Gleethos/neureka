@@ -235,8 +235,8 @@ public abstract class Function implements IFunction {
                                 &&
                                 (
                                     (tsrs[1].isVirtual() || tsrs[2].isVirtual())
-                                    //    ||
-                                    //(!tsrs[1].isOutsourced()&&tsrs[1].size()==1 || !tsrs[2].isOutsourced()&&tsrs[2].size()==1)
+                                        ||
+                                    (!tsrs[1].isOutsourced()&&tsrs[1].size()==1 || !tsrs[2].isOutsourced()&&tsrs[2].size()==1)
                                 )
                 ) {
                     if (tsrs[2].isVirtual() || tsrs[2].size()==1) {
@@ -383,7 +383,7 @@ public abstract class Function implements IFunction {
             onSameGuestDevice = false;
         }
         if(device!=null && tsrs.length==2 && tsrs[1].size()==1){
-            //onSameGuestDevice = true;
+            onSameGuestDevice = true;
         }
         return onSameGuestDevice;
     }
