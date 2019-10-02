@@ -16,15 +16,15 @@ public class NTester_Function extends NTester {
 		IFunction function;// = new FunctionBuilder();
 		function = new FunctionBuilder().build(expression, true);
 		printSessionStart(description);
-		println(bar+" Value toString: "+expression);
-		println(bar+" Expected toString: "+expected);
-		println(bar+"");
-		println(bar+" function = function.newBuilt("+expression+");");
+		println(BAR +" Value toString: "+expression);
+		println(BAR +" Expected toString: "+expected);
+		println(BAR +"");
+		println(BAR +" function = function.newBuilt("+expression+");");
 		String actual = function.toString();
-		println(bar+" String actual = function.toString();");
-		println(bar+" [actual]:"+actual);
-		println(bar+"----------------------------------------------------");
-		println(bar+" Result:");
+		println(BAR +" String actual = function.toString();");
+		println(BAR +" [actual]:"+actual);
+		println(BAR +"----------------------------------------------------");
+		println(BAR +" Result:");
 		assertIsEqual(actual, expected);
 
 		return (printSessionEnd()>0)?1:0;
@@ -33,17 +33,17 @@ public class NTester_Function extends NTester {
 		IFunction function;// = new FunctionBuilder();
 		function = new FunctionBuilder().build(expression, true);
 		printSessionStart(description);
-		println(bar+" IFunction: "+expression);
+		println(BAR +" IFunction: "+expression);
 		String inputStr = "";
 		for(int Ii=0; Ii<input.length; Ii++) {
 			inputStr+=input[Ii]+", ";
 		}
-		println(bar+" Value: "+inputStr);
-		println(bar+"");
-		println(bar+" function = function.newBuilt("+expression+");");
-		println(bar+" function:"+function.toString());
-		println(bar+"----------------------------------------------------");
-		println(bar+" Result:");
+		println(BAR +" Value: "+inputStr);
+		println(BAR +"");
+		println(BAR +" function = function.newBuilt("+expression+");");
+		println(BAR +" function:"+function.toString());
+		println(BAR +"----------------------------------------------------");
+		println(BAR +" Result:");
 		double activation = function.activate(input);
 		assertIsEqual(activation, expected);
 		return (printSessionEnd()>0)?1:0;
@@ -53,17 +53,17 @@ public class NTester_Function extends NTester {
 		IFunction function;// = new FunctionBuilder();
 		function = new FunctionBuilder().build(expression, true);
 		printSessionStart(description);
-		println(bar+" Test Deriviation of IFunction: "+expression);
+		println(BAR +" Test Deriviation of IFunction: "+expression);
 		String inputStr = "";
 		for(int Ii=0; Ii<input.length; Ii++) {
 			inputStr+=input[Ii]+", ";
 		}
-		println(bar+" Value: "+inputStr);
-		println(bar+"");
-		println(bar+" function = function.newBuilt("+expression+");");
-		println(bar+" function:"+function.toString());
-		println(bar+"----------------------------------------------------");
-		println(bar+" Result:");
+		println(BAR +" Value: "+inputStr);
+		println(BAR +"");
+		println(BAR +" function = function.newBuilt("+expression+");");
+		println(BAR +" function:"+function.toString());
+		println(BAR +"----------------------------------------------------");
+		println(BAR +" Result:");
 		double derivative = function.derive(input, d);
 		assertIsEqual(derivative, expected);
 		return (printSessionEnd()>0)?1:0;
@@ -73,17 +73,17 @@ public class NTester_Function extends NTester {
 		IFunction function;// = new FunctionBuilder();
 		function = new FunctionBuilder().build(expression, true);
 		printSessionStart(description);
-		println(bar+" IFunction: "+expression);
+		println(BAR +" IFunction: "+expression);
 		String inputStr = "";
 		for(int Ii=0; Ii<input.length; Ii++) {
 			inputStr+=input[Ii]+", ";
 		}
-		println(bar+" Value: "+inputStr);
-		println(bar+"");
-		println(bar+" function = function.newBuilt("+expression+");");
-		println(bar+" function:"+function.toString());
-		println(bar+"----------------------------------------------------");
-		println(bar+" Result:");
+		println(BAR +" Value: "+inputStr);
+		println(BAR +"");
+		println(BAR +" function = function.newBuilt("+expression+");");
+		println(BAR +" function:"+function.toString());
+		println(BAR +"----------------------------------------------------");
+		println(BAR +" Result:");
 		Tsr activation = function.activate(input);
 		assertIsEqual(activation.toString(), expected.toString());
 		return (printSessionEnd()>0)?1:0;
@@ -94,17 +94,17 @@ public class NTester_Function extends NTester {
 		IFunction function;// = new FunctionBuilder();
 		function = new FunctionBuilder().build(expression, true);
 		printSessionStart(description);
-		println(bar+" Deriviation of IFunction: "+expression);
+		println(BAR +" Deriviation of IFunction: "+expression);
 		String inputStr = "";
 		for(int Ii=0; Ii<input.length; Ii++) {
 			inputStr+=input[Ii]+", ";
 		}
-		println(bar+" Value: "+inputStr);
-		println(bar+"");
-		println(bar+" function = function.newBuilt("+expression+");");
-		println(bar+" function:"+function.toString());
-		println(bar+"----------------------------------------------------");
-		println(bar+" Result:");
+		println(BAR +" Value: "+inputStr);
+		println(BAR +"");
+		println(BAR +" function = function.newBuilt("+expression+");");
+		println(BAR +" function:"+function.toString());
+		println(BAR +"----------------------------------------------------");
+		println(BAR +" Result:");
 		Tsr derivative = function.derive(input, d);
 		assertIsEqual(derivative.toString(), expected.toString());
 		return (printSessionEnd()>0)?1:0;

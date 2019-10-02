@@ -529,7 +529,7 @@ public class TestBroad {
         gpu.add(x).add(b).add(w);
         Tsr z = new Tsr(new Tsr[]{x, b, w}, "I0*i1*i2");
         tester.testTensor(z, new String[]{"[1]:(30.0)"});
-
+        tester.testShareDevice(gpu, new Tsr[]{z, x, b, w});
         //---
         try {
             Thread.sleep(10000);

@@ -13,8 +13,8 @@ public class NTester_Tensor extends NTester {
 
     public int testShareDevice(Device device, Tsr[] tsrs){
         printSessionStart("Testing if tensors share device!");
-        println(bar+"  Device: "+device.toString());
-        println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
+        println(BAR +"  Device: "+device.toString());
+        println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         for(Tsr t : tsrs){
             Device found = ((Device)t.find(Device.class));
             this.assertStringContains("result", (found==null)?"null":found.toString(), device.toString());
@@ -24,8 +24,8 @@ public class NTester_Tensor extends NTester {
 
     public int testTensor(Tsr tensor, String[] expected){
         printSessionStart("Testing Tensor!");
-        println(bar+"  Tensor: "+tensor.toString());
-        println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
+        println(BAR +"  Tensor: "+tensor.toString());
+        println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         String result = tensor.toString();
         for(String element : expected){
             this.assertStringContains("result", result, element);
@@ -35,8 +35,8 @@ public class NTester_Tensor extends NTester {
 
     public int testTensorAutoGrad(Tsr[] source, String operation, String[] expected){
         printSessionStart("Testing Tsr: autograd!");
-        println(bar+"  IFunction: "+operation);
-        println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
+        println(BAR +"  IFunction: "+operation);
+        println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         Tsr product = new Tsr(source, operation);
         String result = product.toString("r");
         for(String element : expected){
@@ -47,8 +47,8 @@ public class NTester_Tensor extends NTester {
 
     public int testTensorAutoGrad(Tsr[] source, String operation, String[] expected, Tsr error, double[][] expectedGradient){
         printSessionStart("Testing Tsr: autograd!");
-        println(bar+"  IFunction: "+operation);
-        println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
+        println(BAR +"  IFunction: "+operation);
+        println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         Tsr product = new Tsr(source, operation);
         product.backward(error);
         String result = product.toString("r");

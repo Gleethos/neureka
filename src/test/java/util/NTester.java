@@ -4,46 +4,46 @@ import neureka.frame.NMessageFrame;
 
 public class NTester extends Assert{
 
-    private NMessageFrame Console;
-    private NMessageFrame ResultConsole;
-    protected String bar = "[|]";
-    protected String line = "--------------------------------------------------------------------------------------------";
-    private int positiveAssertions = 0;
-    private int assertionCount = 0;
+    private NMessageFrame _verbose_frame;
+    private NMessageFrame _result_frame;
+    protected static String BAR = "[|]";
+    protected static String LINE = "--------------------------------------------------------------------------------------------";
+    private int _positive_assertions = 0;
+    private int _assertion_count = 0;
 
-    private int success = 0;
-    private int tests = 0;
+    private int _success = 0;
+    private int _tests = 0;
 
-    private String session = "";
+    private String _session = "";
 
     public NTester(String name) {
         if(System.getProperty("os.name").toLowerCase().contains("windows")){
-            this.Console = new NMessageFrame(name+" - TEST PROCESS");
-            this.ResultConsole = new NMessageFrame(name+" - TEST RESULT");
+            _verbose_frame = new NMessageFrame("[NEUREKA UNIT TEST]:("+name+"): verbose results");
+            _result_frame  = new NMessageFrame("[NEUREKA UNIT TEST]:("+name+"): results");
         }
 
     }
 
     public NTester(String name, boolean liveLog){
         if(liveLog && System.getProperty("os.name").toLowerCase().contains("windows")){
-            this.Console = new NMessageFrame(name+" - TEST PROCESS");
-            this.ResultConsole = new NMessageFrame(name+" - TEST RESULT");
+            _verbose_frame = new NMessageFrame(name+" - TEST PROCESS");
+            _result_frame = new NMessageFrame(name+" - TEST RESULT");
         }
     }
 
     public void closeWindows(){
-        if(this.Console!=null){
-            this.Console.close();
+        if(_verbose_frame !=null){
+            _verbose_frame.close();
         }
-        if(this.ResultConsole!=null){
-            this.ResultConsole.close();
+        if(_result_frame !=null){
+            _result_frame.close();
         }
     }
 
     public int testContains(String result, String[] expected, String description){
         printSessionStart(description);
-        println(bar+"  Tensor: "+result);
-        println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
+        println(BAR + "  Tensor: "+result);
+        println(BAR + "-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         for(String element : expected){
             this.assertStringContains("result", result, element);
         }
@@ -51,103 +51,103 @@ public class NTester extends Assert{
     }
 
     protected void printSessionStart(String message){
-        this.session = "";
-        tests++;
-        this.positiveAssertions = 0;
-        this.assertionCount = 0;
+        _session = "";
+        _tests++;
+        _positive_assertions = 0;
+        _assertion_count = 0;
         println("");
-        println(bar+"  "+message);
+        println(BAR +"  "+message);
         println("[O][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=]=>");
-        println(bar+line);
+        println(BAR + LINE);
         printlnResult("");
-        printlnResult(bar+"  "+message);
+        printlnResult(BAR +"  "+message);
         printlnResult("[O][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=][=]=>");
-        printlnResult(bar);
+        printlnResult(BAR);
     }
     protected int printSessionEnd(){
-        success += (positiveAssertions== assertionCount)?1:0;
-        println(bar+"  "+((positiveAssertions >0)?"test successful!"+" "+ positiveAssertions :"test failed!"+" "+(assertionCount + positiveAssertions))+"/"+ assertionCount);
-        println("[O][=][=][=][=][=][=][=][=][=][=][=]|> "+success+"/"+tests);
-        printlnResult(bar+"  "+((positiveAssertions >0)?"test successful!"+" "+ positiveAssertions :"test failed!"+" "+(assertionCount + positiveAssertions))+"/"+ assertionCount);
-        printlnResult("[O][=][=][=][=][=][=][=][=][=][=][=]|> "+success+"/"+tests);
+        _success += (_positive_assertions == _assertion_count)?1:0;
+        println(BAR +"  "+((_positive_assertions >0)?"test successful!"+" "+ _positive_assertions :"test failed!"+" "+(_assertion_count + _positive_assertions))+"/"+ _assertion_count);
+        println("[O][=][=][=][=][=][=][=][=][=][=][=]|> "+ _success +"/"+ _tests);
+        printlnResult(BAR +"  "+((_positive_assertions >0)?"test successful!"+" "+ _positive_assertions :"test failed!"+" "+(_assertion_count + _positive_assertions))+"/"+ _assertion_count);
+        printlnResult("[O][=][=][=][=][=][=][=][=][=][=][=]|> "+ _success +"/"+ _tests);
         bottom();
-        return positiveAssertions;
+        return _positive_assertions;
     }
 
     protected boolean assertIsEqual(double result, double expected){
-        assertionCount++;
+        _assertion_count++;
         if(result==expected) {
-            println(bar+"  [result]:("+result+") == [expected]:("+expected+") -> test successful.");
-            positiveAssertions = (positiveAssertions <0)? positiveAssertions : positiveAssertions +1;
-            println(bar+line);
+            println(BAR +"  [result]:("+result+") == [expected]:("+expected+") -> test successful.");
+            _positive_assertions = (_positive_assertions <0)? _positive_assertions : _positive_assertions +1;
+            println(BAR + LINE);
             return true;
         } else {
-            println(bar+"  [result]:("+result+") =|= [expected]:("+expected+") -> test failed!");
-            positiveAssertions = (positiveAssertions <0)? positiveAssertions -1:-1;
-            println(bar+line);
+            println(BAR +"  [result]:("+result+") =|= [expected]:("+expected+") -> test failed!");
+            _positive_assertions = (_positive_assertions <0)? _positive_assertions -1:-1;
+            println(BAR + LINE);
             return false;
         }
     }
 
     protected boolean assertStringContains(String name, String result, String expected){
-        assertionCount++;
+        _assertion_count++;
         if(result.contains(expected)) {
-            println(bar+"  ["+name+"]:("+result+") "+((result.length()>22)?"\n"+bar+"    contains   -> test successful!"+"\n"+bar+" ":"contains")+" [expected]:("+expected+")"+((result.length()>22)?"":" -> test successful!"));
-            positiveAssertions = (positiveAssertions <0)? positiveAssertions : positiveAssertions +1;
-            println(bar+line);
+            println(BAR +"  ["+name+"]:("+result+") "+((result.length()>22)?"\n"+ BAR +"    contains   -> test successful!"+"\n"+ BAR +" ":"contains")+" [expected]:("+expected+")"+((result.length()>22)?"":" -> test successful!"));
+            _positive_assertions = (_positive_assertions <0)? _positive_assertions : _positive_assertions +1;
+            println(BAR + LINE);
             assertEquals(true, true);
             return true;
         } else {
-            println(bar+"  ["+name+"]:("+result+") "
+            println(BAR +"  ["+name+"]:("+result+") "
                 +((result.length()>22)
-                    ?"\n"+bar+"    not contains   -> test failed!"+"\n"+bar+" "
+                    ?"\n"+ BAR +"    not contains   -> test failed!"+"\n"+ BAR +" "
                     :"not contains")+" [expected]:("+expected+")"+((result.length()>22)?"":" -> test failed!"));
-            positiveAssertions = (positiveAssertions <0)? positiveAssertions -1:-1;
-            println(bar+line);
-            assertEquals(session, false, true);
+            _positive_assertions = (_positive_assertions <0)? _positive_assertions -1:-1;
+            println(BAR + LINE);
+            assertEquals(_session, false, true);
             return false;
         }
     }
 
     protected boolean assertIsEqual(String name, String result, String expected){
-        assertionCount++;
+        _assertion_count++;
         if(result.equals(expected)) {
-            println(bar+"  ["+name+"]:("+result+") "+((result.length()>22)
-                    ?"\n"+bar+"    ==   -> test successful!"+"\n"+bar+" ":"==")+" [expected]:("+expected+")"+((result.length()>22)?""
+            println(BAR +"  ["+name+"]:("+result+") "+((result.length()>22)
+                    ?"\n"+ BAR +"    ==   -> test successful!"+"\n"+ BAR +" ":"==")+" [expected]:("+expected+")"+((result.length()>22)?""
                     :" -> test successful!"));
-            positiveAssertions = (positiveAssertions <0)? positiveAssertions : positiveAssertions +1;
-            println(bar+line);
+            _positive_assertions = (_positive_assertions <0)? _positive_assertions : _positive_assertions +1;
+            println(BAR + LINE);
             assertEquals(true, true);
             return true;
         } else {
-            println(bar+"  ["+name+"]:("+result+") "
+            println(BAR +"  ["+name+"]:("+result+") "
                     +((result.length()>22)
-                    ?"\n"+bar+"    =|=   -> test failed!"+"\n"+bar+" "
+                    ?"\n"+ BAR +"    =|=   -> test failed!"+"\n"+ BAR +" "
                     :"=|=")+" [expected]:("+expected+")"+((result.length()>22)?"":" -> test failed!"));
-            positiveAssertions = (positiveAssertions <0)? positiveAssertions -1:-1;
-            println(bar+line);
-            assertEquals(session, false, true);
+            _positive_assertions = (_positive_assertions <0)? _positive_assertions -1:-1;
+            println(BAR + LINE);
+            assertEquals(_session, false, true);
             return false;
         }
     }
 
     protected boolean assertIsEqual(String result, String expected){
-        assertionCount++;
+        _assertion_count++;
         if(result.equals(expected)) {
-            println(bar+"  [result]:("+result+") "+((result.length()>22)
-                    ?"\n"+bar+"    ==  "+"\n"+bar+" "
+            println(BAR +"  [result]:("+result+") "+((result.length()>22)
+                    ?"\n"+ BAR +"    ==  "+"\n"+ BAR +" "
                     :"==")+" [expected]:("+expected+") -> test successful.");
-            positiveAssertions = (positiveAssertions <0)? positiveAssertions : positiveAssertions +1;
-            println(bar+line);
+            _positive_assertions = (_positive_assertions <0)? _positive_assertions : _positive_assertions +1;
+            println(BAR + LINE);
             assertEquals(true, true);
             return true;
         } else {
-            println(bar+"  [result]:("+result+") "+((result.length()>22)
-                    ?"\n"+bar+"    =|=  "+"\n"+bar+" "
+            println(BAR +"  [result]:("+result+") "+((result.length()>22)
+                    ?"\n"+ BAR +"    =|=  "+"\n"+ BAR +" "
                     :"=|=")+" [expected]:("+expected+") -> test failed!");
-            positiveAssertions = (positiveAssertions <0)? positiveAssertions -1:-1;
-            println(bar+line);
-            assertEquals(session, false, true);
+            _positive_assertions = (_positive_assertions <0)? _positive_assertions -1:-1;
+            println(BAR + LINE);
+            assertEquals(_session, false, true);
             return false;
         }
     }
@@ -196,32 +196,32 @@ public class NTester extends Assert{
     }
 
     protected void print(String message){
-        session+=message;
-        if(Console!=null){
-            Console.print(message);
+        _session +=message;
+        if(_verbose_frame !=null){
+            _verbose_frame.print(message);
         }
     }
     public void println(String message){
-        session+=message+"\n";
-        if(Console!=null){
-            Console.println(message);
+        _session +=message+"\n";
+        if(_verbose_frame !=null){
+            _verbose_frame.println(message);
         }
     }
     protected void printResult(String message){
-        if(ResultConsole!=null){
-            ResultConsole.print(message);
+        if(_result_frame !=null){
+            _result_frame.print(message);
         }
     }
     protected void printlnResult(String message){
-        if(ResultConsole!=null){
-            ResultConsole.println(message);
+        if(_result_frame !=null){
+            _result_frame.println(message);
         }
     }
 
     protected void bottom(){
-        if(Console!=null && ResultConsole!=null){
-            Console.bottom();
-            ResultConsole.bottom();
+        if(_verbose_frame !=null && _result_frame !=null){
+            _verbose_frame.bottom();
+            _result_frame.bottom();
         }
     }
 
