@@ -106,7 +106,7 @@ public class Device {
     }
 
     public Device overwrite(Tsr drain, Tsr source){
-        this.calculate(drain, 0, IFunction.TYPES.LOOKUP.get("*"));
+        this.calculate(drain, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
         this.calculate(new Tsr[]{drain, drain, source}, IFunction.TYPES.LOOKUP.get("+"), -1);
         return this;
     }
@@ -220,19 +220,33 @@ public class Device {
         }
     }
 
-    public void calculate(Tsr t, double value, int f_id) {
+    public void calculate(Tsr t, double value, int f_id, int d) {
+        //int d = -1;
         if (_kernel == null) {
             //What then?
         } else {
-            int[] mode = new int[2];
-            mode[0] = f_id;
-            mode[1] = _register[0][_tensorsMap.get(t)];
-            _kernel.execute(
-                    _device.createRange(
-                            _kernel.executionSizeOf_calc(mode, value, (byte) ((t.gradientIsTargeted())?1:0))
-                    )
-            );
-            _kernel.resetGradPtr((byte) ((t.gradientIsTargeted())?1:0));
+            if(d<0){
+                int[] mode = new int[2];
+                mode[0] = f_id;
+                mode[1] = _register[0][_tensorsMap.get(t)];
+                _kernel.execute(
+                        _device.createRange(
+                                _kernel.executionSizeOf_calc(mode, value, (byte) ((t.gradientIsTargeted())?1:0))
+                        )
+                );
+                _kernel.resetGradPtr((byte) ((t.gradientIsTargeted())?1:0));
+            } else {//Derivative:
+                if(IFunction.TYPES.REGISTER[f_id]=="^"){
+                    if(d==0){
+                        this.calculate(t, value-1, IFunction.TYPES.LOOKUP.get("^"), -1);
+                        this.calculate(t, value, IFunction.TYPES.LOOKUP.get("*"), -1);
+                    } else {
+
+                    }
+                }
+
+            }
+
         }
 
     }

@@ -208,9 +208,11 @@ public abstract class Function implements IFunction {
 
     private Tsr _execute(Tsr[] input, int j, int d)
     {
+
         Device device = (Device) input[0].find(Device.class);
-        boolean onSameDevice = _shareGuestDevice(input);
-        if (onSameDevice && TYPES.REGISTER[_id] != "," && !(TYPES.isConvection(_id) && d > -1)) {
+        boolean onSameDevice = _shareGuestDevice(input) && TYPES.REGISTER[_id] != "," && !(TYPES.isConvection(_id) && d > -1);
+
+        if (onSameDevice) {
             if(TYPES.REGISTER[_id]=="<") {
                 device.overwrite(_src.get(0).activate(input), _src.get(1).activate(input));
             } else if(TYPES.REGISTER[_id]==">") {
@@ -239,10 +241,10 @@ public abstract class Function implements IFunction {
                 ) {
                     if (tsrs[2].isVirtual() || tsrs[2].size()==1) {
                         device.overwrite(tsrs[0], tsrs[1]);
-                        device.calculate(tsrs[0], tsrs[2].value()[0], _id);
+                        device.calculate(tsrs[0], tsrs[2].value()[0], _id, d);
                     } else {
                         device.overwrite(tsrs[0], tsrs[2]);
-                        device.calculate(tsrs[0], tsrs[1].value()[0], _id);
+                        device.calculate(tsrs[0], tsrs[1].value()[0], _id, d);
                     }
                 } else {
                     device.calculate(tsrs, _id, d);
@@ -252,12 +254,12 @@ public abstract class Function implements IFunction {
         } else {
             if (TYPES.REGISTER[_id] == "x") {
                 if (d < 0) {
-                    return exec.convection(input[0], input[1]);
+                    return exec.convection(_src.get(0).activate(input), _src.get(1).activate(input));
                 } else {
                     if (d == 0) {
-                        return (input[1]);
+                        return (_src.get(1).activate(input));
                     } else {
-                        return (input[0]);
+                        return (_src.get(0).activate(input));
                     }
                 }
             } else if (_id == TYPES.LOOKUP.get("<<") || _id == TYPES.LOOKUP.get(">>")) {
@@ -279,9 +281,9 @@ public abstract class Function implements IFunction {
                     }
                 } else {//Todo: What then? :
                     if (d == 0) {
-                        return input[1];
+                        return (_src.get(1).activate(input));
                     } else {
-                        return input[0];
+                        return (_src.get(0).activate(input));
                     }
                 }
             } else if (TYPES.REGISTER[_id] == ",") {
