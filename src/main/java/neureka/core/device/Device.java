@@ -234,6 +234,7 @@ public class Device {
             );
             _kernel.resetGradPtr((byte) ((t.gradientIsTargeted())?1:0));
         }
+
     }
 
     public void calculate_on_CPU(Tsr drn, Tsr t1, Tsr t2, int f_id, int d) {
@@ -298,6 +299,20 @@ public class Device {
             result += ai + ", ";
         }
         return result;
+    }
+
+    @Override
+    public String toString(){
+        return "["+_device.getDeviceId()+"]:("+_device.getShortDescription()+")";
+    }
+
+    public String toString(String m){
+        switch (m){
+            case "": return toString();
+            case "s": return _device.getShortDescription();
+            case "id": return "["+_device.getDeviceId()+"]:("+_device.getShortDescription()+")";
+        }
+        return _device.toString();
     }
 
 }

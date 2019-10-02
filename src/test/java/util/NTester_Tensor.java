@@ -1,6 +1,7 @@
 package util;
 
 import neureka.core.Tsr;
+import neureka.core.device.Device;
 import neureka.core.function.factory.Function;
 
 public class NTester_Tensor extends NTester {
@@ -8,6 +9,17 @@ public class NTester_Tensor extends NTester {
     public NTester_Tensor(String name)
     {
         super(name);
+    }
+
+    public int testShareDevice(Device device, Tsr[] tsrs){
+        printSessionStart("Testing if tensors share device!");
+        println(bar+"  Device: "+device.toString());
+        println(bar+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
+        for(Tsr t : tsrs){
+            Device found = ((Device)t.find(Device.class));
+            this.assertStringContains("result", (found==null)?"null":found.toString(), device.toString());
+        }
+        return (printSessionEnd()>0)?1:0;
     }
 
     public int testTensor(Tsr tensor, String[] expected){

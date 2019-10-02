@@ -143,9 +143,10 @@ public abstract class Function implements IFunction {
             device.add(output);
             device.calculate(new Tsr[]{output, input}, _id, (derive) ? 0 : -1);
         } else {
-            exec.foreach(input, output, (i, inputValue, outputValue) -> {
-                outputValue[i] = _scalar_activation(inputValue[i], derive);
-            });
+            exec.foreach(
+                    input, output,
+                    (i, inputValue, outputValue) -> outputValue[i] = _scalar_activation(inputValue[i], derive)
+                );
         }
         if (!derive && _doAD) {
             GraphBuilder.connect(output, new Tsr[]{input}, this);
@@ -227,10 +228,20 @@ public abstract class Function implements IFunction {
                 for (int ii = 1; ii < tsrs.length; ii++) {
                     tsrs[ii] = _src.get(ii-1).activate(input);//input[ii - 1];
                 }
-                if (tsrs.length == 2 && (tsrs[0].isVirtual() || tsrs[1].isVirtual())) {
-                    if (tsrs[0].isVirtual()) {
-                        device.calculate(tsrs[1], tsrs[0].value()[0], _id);
+                if (
+                        tsrs.length == 3
+                                &&
+                                (
+                                    (tsrs[1].isVirtual() || tsrs[2].isVirtual())
+                                    //    ||
+                                    //(!tsrs[1].isOutsourced()&&tsrs[1].size()==1 || !tsrs[2].isOutsourced()&&tsrs[2].size()==1)
+                                )
+                ) {
+                    if (tsrs[2].isVirtual() || tsrs[2].size()==1) {
+                        device.overwrite(tsrs[0], tsrs[1]);
+                        device.calculate(tsrs[0], tsrs[2].value()[0], _id);
                     } else {
+                        device.overwrite(tsrs[0], tsrs[2]);
                         device.calculate(tsrs[0], tsrs[1].value()[0], _id);
                     }
                 } else {
@@ -321,7 +332,8 @@ public abstract class Function implements IFunction {
         return tsrs;
     }
 
-    private Tsr[] _source_activation(Tsr[] input, int j, int[] templateShape) {
+    private Tsr[] _source_activation(Tsr[] input, int j, int[] templateShape) {//TODO: Check if on same device!
+        boolean shareDevice = _shareGuestDevice(input);
         Tsr[] tsrs = new Tsr[_src.size()];
         for (int i = 0; i < tsrs.length; i++) {//constants need to be figured out!
             if (_src.get(i) instanceof FConstant) {
@@ -342,6 +354,16 @@ public abstract class Function implements IFunction {
                             ? Tsr.factory.newTensor(((FConstant) _src.get(i)).value(), templateShape)
                             : Tsr.factory.newTensor(_src.get(i).activate(new double[]{}, j), templateShape);
         }
+        if(shareDevice){
+            Device shared = (Device) tsrs[0].find(Device.class);
+            if(tsrs.length>2){// Constant sources will be converted into full Tensors and stored on the gpu!
+                for(Tsr t : tsrs){
+                    if(!t.isOutsourced()){
+                        shared.add(t);
+                    }
+                }
+            }
+        }
         return tsrs;
     }
 
@@ -358,9 +380,9 @@ public abstract class Function implements IFunction {
         } else {
             onSameGuestDevice = false;
         }
-        //if(device!=null && tsrs.length==2 && tsrs[1].size()==1){
-        //    onSameGuestDevice = true;
-        //}
+        if(device!=null && tsrs.length==2 && tsrs[1].size()==1){
+            //onSameGuestDevice = true;
+        }
         return onSameGuestDevice;
     }
 
