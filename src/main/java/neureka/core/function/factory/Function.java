@@ -164,16 +164,17 @@ public abstract class Function implements IFunction {
      */
     protected Tsr _tensor_activation(Tsr[] inputs, int j, int d) {
         /**  The code below deals with deep functions (non flat):  * */
-        if (d < 0 && !_isFlat) {//only flat functions can be executed
+        if (d < 0 && !_isFlat)
+        {//only flat functions can be executed
             if (TYPES.isFunction(_id)) {
                 return (FunctionBuilder.build(TYPES.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).activate(inputs));
             } else {
                 if (TYPES.isFunction(_id)||TYPES.isIndexer(_id)) {
-                    /**  SUMMATION, PI,  * */
+                    /**  SUMMATION, PI,  **/
                     Tsr[] tsrs = _source_activation(inputs);
                     return (FunctionBuilder.build(TYPES.REGISTER[_id] + "(I[j])", true).activate(tsrs));
                 } else if (TYPES.isOperation(_id)) {
-                    /**  '+', '-', 'x', '*', '%', '«', '»', ',', ...  * */
+                    /**  '+', '-', 'x', '*', '%', '«', '»', ',', ...  **/
                     String operation = (TYPES.REGISTER[_id].length() > 1) ? TYPES.REGISTER[_id] : "";
                     Tsr[] tsrs = _source_activation(inputs, j, null);
                     for (int i = 0; i < tsrs.length; i++) {
@@ -185,12 +186,12 @@ public abstract class Function implements IFunction {
                         return (FunctionBuilder.build(operation, _doAD).activate(tsrs, j));
                     }
                 } else {
-                    /**  Tensor shape translation: * */
+                    /**  Tensor shape translation:  **/
                     Tsr[] tsrs = _source_activation(inputs, j, new int[]{1});
                     if (j < 0) {
-                        return (FunctionBuilder.build(_id, tsrs.length, _doAD).activate(tsrs));
+                        return FunctionBuilder.build(_id, tsrs.length, _doAD).activate(tsrs);
                     } else {
-                        return (FunctionBuilder.build(_id, tsrs.length, _doAD).activate(tsrs, j));
+                        return FunctionBuilder.build(_id, tsrs.length, _doAD).activate(tsrs, j);
                     }
                 }
             }
@@ -207,7 +208,7 @@ public abstract class Function implements IFunction {
     private Tsr _execute(Tsr[] input, int j, int d)
     {
         Device device = (Device) input[0].find(Device.class);
-        boolean onSameDevice = Tsr.factory.util.shareGuestDevice(input);
+        boolean onSameDevice = _shareGuestDevice(input);
         if (onSameDevice && TYPES.REGISTER[_id] != "," && !(TYPES.isConvection(_id) && d > -1)) {
             if(TYPES.REGISTER[_id]=="<") {
                 device.overwrite(_src.get(0).activate(input), _src.get(1).activate(input));
@@ -342,6 +343,25 @@ public abstract class Function implements IFunction {
                             : Tsr.factory.newTensor(_src.get(i).activate(new double[]{}, j), templateShape);
         }
         return tsrs;
+    }
+
+    private static boolean _shareGuestDevice(Tsr[] tsrs) {
+        boolean onSameGuestDevice = true;
+        Device device = null;
+        for (int ti = 0; ti < tsrs.length; ti++) {
+            device = (tsrs[ti].isOutsourced()) ? (Device) tsrs[ti].find(Device.class) : device;
+        }
+        if (device != null) {
+            for (int ti = 0; ti < tsrs.length; ti++) {
+                onSameGuestDevice = (!tsrs[ti].isVirtual() && device == tsrs[ti].find(Device.class)) && onSameGuestDevice;
+            }
+        } else {
+            onSameGuestDevice = false;
+        }
+        //if(device!=null && tsrs.length==2 && tsrs[1].size()==1){
+        //    onSameGuestDevice = true;
+        //}
+        return onSameGuestDevice;
     }
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

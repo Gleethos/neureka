@@ -875,22 +875,6 @@ public class Tsr {
          */
         public static class util {
 
-            public static boolean shareGuestDevice(Tsr[] tsrs) {
-                boolean onSameGuestDevice = true;
-                Device device = null;
-                for (int ti = 0; ti < tsrs.length; ti++) {
-                    device = (tsrs[ti].isOutsourced()) ? (Device) tsrs[ti].find(Device.class) : device;
-                }
-                if (device != null) {
-                    for (int ti = 0; ti < tsrs.length; ti++) {
-                        onSameGuestDevice = (!tsrs[ti].isVirtual() && device == tsrs[ti].find(Device.class)) && onSameGuestDevice;
-                    }
-                } else {
-                    onSameGuestDevice = false;
-                }
-                return onSameGuestDevice;
-            }
-
             @Contract(pure = true)
             public static void increment(@NotNull int[] shpIdx, @NotNull int[] shape) {
                 int i = 0;
