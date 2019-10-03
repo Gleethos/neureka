@@ -522,6 +522,11 @@ public class TestBroad {
         y.backward(new Tsr(2));
         tester.testTensor(x, new String[]{"-16.0"});
         tester.testShareDevice(gpu, new Tsr[]{y, x, b, w});
+        //---
+        //y = new Tsr(new Tsr[]{x, b, w}, "(2^i0^i1^i2^2");
+        //tester.testTensor(y, new String[]{"[1]:(4.0); ->d[1]:(-8.0), "});
+        //tester.testShareDevice(gpu, new Tsr[]{y, x, b, w});
+
         //====
         x = new Tsr(new int[]{1}, 3);
         b = new Tsr(new int[]{1}, -5);

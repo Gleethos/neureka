@@ -247,6 +247,11 @@ public abstract class Function implements IFunction {
                         device.calculate(tsrs[0], tsrs[1].value()[0], _id, d);
                     }
                 } else {
+                    for(Tsr t : tsrs){
+                        if(!t.isOutsourced()){
+                            device.add(t);
+                        }
+                    }
                     device.calculate(tsrs, _id, d);
                 }
                 return output;

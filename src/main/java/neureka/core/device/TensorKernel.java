@@ -544,7 +544,7 @@ public class TensorKernel extends com.aparapi.Kernel
 		 15: %;
 		 16: -;
 		 17: +;
-		 18: tsr mul;
+		 18: x;
 	 */
     private void _run_cleanup(int gid){
         //TODO: implement
@@ -586,11 +586,9 @@ public class TensorKernel extends com.aparapi.Kernel
     private void _run_relu(int gid){
         if (__d()<0) {
             if (_values[__i(gid, 2)] >= 0) {
-                _values[__i(gid, 1)] =
-                        (_values[__i(gid, 2)]);
+                _values[__i(gid, 1)] = (_values[__i(gid, 2)]);
             } else {
-                _values[__i(gid, 1)] =
-                        (_values[__i(gid, 2)]) * 0.01;
+                _values[__i(gid, 1)] = (_values[__i(gid, 2)]) * 0.01;
             }
         } else {
             if (_values[__i(gid, 2)] >= 0) {
@@ -681,7 +679,7 @@ public class TensorKernel extends com.aparapi.Kernel
             _values[__i(gid, 1)] =
                     _values[__i(gid, 2)];
         }else{
-            _values[__i(gid, 1)] = 1;//_values[_tsr_ptr(_mde[2+d])+__i_of_idx_on_shp(gid, _mde[2+d], 1)];
+            _values[__i(gid, 1)] = 1;
         }
     }
 
@@ -735,11 +733,13 @@ public class TensorKernel extends com.aparapi.Kernel
     }
 
     private void _run_pow(int gid){
-        _values[__i(gid, 1)] =
-                Math.pow(
-                        _values[__i(gid, 2)],
-                        _values[__i(gid, 3)]
-                        );
+        if (__d() < 0) {
+            for (int i = 2; i < __n(); i++) {
+                _values[__i(gid, 1)] = Math.pow(_values[__i(gid, 1)], _values[__i(gid, 1+i)]);
+            }
+        } else {
+
+        }
     }
     private void _run_broadcast_pow(int gid){
         _values[__i(gid, 1)] =

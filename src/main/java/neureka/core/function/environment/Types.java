@@ -9,7 +9,7 @@ public class Types {
 
     public Types(){
         REGISTER = new String[]{
-                "relu", "sig", "tanh", "quad", "lig", "lin", "gaus", "abs", "sin", "cos",
+                "relu", "sig", "tanh", "quad", "lig", "idy", "gaus", "abs", "sin", "cos",
                 "sum", "prod",
                 "^", "/", "*", "%", "-", "+", "x", ""+((char)171), ""+((char)187), ",",
                 // (char)171 -> <<    // (char)187 -> >>

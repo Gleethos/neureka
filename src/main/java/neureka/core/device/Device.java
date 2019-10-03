@@ -106,8 +106,7 @@ public class Device {
     }
 
     public Device overwrite(Tsr drain, Tsr source){
-        this.calculate(drain, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
-        this.calculate(new Tsr[]{drain, drain, source}, IFunction.TYPES.LOOKUP.get("+"), -1);
+        this.calculate(new Tsr[]{drain, source}, IFunction.TYPES.LOOKUP.get("idy"), -1);
         return this;
     }
 
