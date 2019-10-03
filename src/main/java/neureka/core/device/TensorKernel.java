@@ -734,11 +734,12 @@ public class TensorKernel extends com.aparapi.Kernel
 
     private void _run_pow(int gid){
         if (__d() < 0) {
+            _values[__i(gid, 1)] = _values[__i(gid, 2)];
             for (int i = 2; i < __n(); i++) {
                 _values[__i(gid, 1)] = Math.pow(_values[__i(gid, 1)], _values[__i(gid, 1+i)]);
             }
         } else {
-
+            //Todo implement
         }
     }
     private void _run_broadcast_pow(int gid){

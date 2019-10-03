@@ -141,7 +141,7 @@ public abstract class Function implements IFunction {
         if (input.isOutsourced()) {
             Device device = (Device) input.find(Device.class);
             device.add(output);
-            device.calculate(new Tsr[]{output, input}, _id, (derive) ? 0 : -1);
+            device.execute(new Tsr[]{output, input}, _id, (derive) ? 0 : -1);
         } else {
             exec.foreach(
                     input, output,
@@ -212,50 +212,15 @@ public abstract class Function implements IFunction {
         Device device = (Device) input[0].find(Device.class);
         boolean onSameDevice = _shareGuestDevice(input) && TYPES.REGISTER[_id] != "," && !(TYPES.isConvection(_id) && d > -1);
 
-        if (onSameDevice) {
-            if(TYPES.REGISTER[_id]=="<") {
-                device.overwrite(_src.get(0).activate(input), _src.get(1).activate(input));
-            } else if(TYPES.REGISTER[_id]==">") {
-                device.overwrite(_src.get(1).activate(input), _src.get(0).activate(input));
-            } else {
-                int[] shp = (TYPES.REGISTER[_id] == "x")
-                    ? Tsr.factory.util.shpOfCon(_src.get(0).activate(input).shape(), _src.get(1).activate(input).shape())
-                    :_src.get(0).activate(input).shape();
-                Tsr output = new Tsr(shp, 0.0);
-                if (device != null) {
-                    device.add(output);
-                }
-                Tsr[] tsrs = new Tsr[1 + _src.size()];//input.length];
-                tsrs[0] = output;
-                for (int ii = 1; ii < tsrs.length; ii++) {
-                    tsrs[ii] = _src.get(ii-1).activate(input);//input[ii - 1];
-                }
-                if (
-                        tsrs.length == 3
-                                &&
-                                (
-                                    (tsrs[1].isVirtual() || tsrs[2].isVirtual())
-                                        ||
-                                    (!tsrs[1].isOutsourced()&&tsrs[1].size()==1 || !tsrs[2].isOutsourced()&&tsrs[2].size()==1)
-                                )
-                ) {
-                    if (tsrs[2].isVirtual() || tsrs[2].size()==1) {
-                        device.overwrite(tsrs[0], tsrs[1]);
-                        device.calculate(tsrs[0], tsrs[2].value()[0], _id, d);
-                    } else {
-                        device.overwrite(tsrs[0], tsrs[2]);
-                        device.calculate(tsrs[0], tsrs[1].value()[0], _id, d);
-                    }
-                } else {
-                    for(Tsr t : tsrs){
-                        if(!t.isOutsourced()){
-                            device.add(t);
-                        }
-                    }
-                    device.calculate(tsrs, _id, d);
-                }
-                return output;
+        if (onSameDevice)
+        {
+            Tsr[] tsrs = new Tsr[1 + _src.size()];//input.length];
+            for (int ii = 1; ii < tsrs.length; ii++) {
+                tsrs[ii] = _src.get(ii-1).activate(input);//input[ii - 1];
             }
+            device.execute(tsrs, _id, d);
+            return tsrs[0];
+
         } else {
             if (TYPES.REGISTER[_id] == "x") {
                 if (d < 0) {

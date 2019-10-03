@@ -13,10 +13,10 @@ import neureka.core.function.IFunction;
  */
 public class Device {
     /**
-     * _tensorsMap:
+     * _tensors_map:
      * Holds REGISTER _pointers f tensors stored on the _device.
      */
-    private HashMap<Tsr, Integer> _tensorsMap = new HashMap<Tsr, Integer>();
+    private HashMap<Tsr, Integer> _tensors_map = new HashMap<Tsr, Integer>();
     /**
      * REGISTER:
      * Maps REGISTER _pointers to _pointers WITHIN the compute _device.
@@ -28,7 +28,8 @@ public class Device {
     private OpenCLDevice _device;
     private TensorKernel _kernel;
 
-    public Device(String name) {
+    public Device(String name)
+    {
         if (name == null) {
             _device = null;
             _kernel = null;
@@ -69,24 +70,25 @@ public class Device {
     }
 
     public boolean has(Tsr tensor) {
-        return _tensorsMap.containsKey(tensor);
+        return _tensors_map.containsKey(tensor);
     }
 
     /**
      * ======================================================================
      */
-    public void get(Tsr tensor) {
+    public void get(Tsr tensor)
+    {
         if (_kernel != null) {
             _kernel.execute(
                     _device.createRange(
-                            _kernel.executionSizeOf_fetchTsr(_register[0][_tensorsMap.get(tensor)], false)
+                            _kernel.executionSizeOf_fetchTsr(_register[0][_tensors_map.get(tensor)], false)
                     )
             );
             Tsr.factory.inject(_kernel.value(), false, tensor);
             if (tensor.rqsGradient()) {
                 _kernel.execute(
                         Range.create(
-                                _kernel.executionSizeOf_fetchTsr(_register[0][_tensorsMap.get(tensor)], true)
+                                _kernel.executionSizeOf_fetchTsr(_register[0][_tensors_map.get(tensor)], true)
                         )
                 );
                 Tsr.factory.inject(_kernel.value(), true, tensor);
@@ -95,29 +97,32 @@ public class Device {
         }
     }
 
-    public void rmv(Tsr tensor) {
+    public void rmv(Tsr tensor)
+    {
         if (_kernel != null) {
-            if (_tensorsMap.containsKey(tensor)) {
-                _kernel.freePtrOf(_tensorsMap.get(tensor), _register);
-                _tensorsMap.remove(tensor);
+            if (_tensors_map.containsKey(tensor)) {
+                _kernel.freePtrOf(_tensors_map.get(tensor), _register);
+                _tensors_map.remove(tensor);
                 tensor.setIsOutsourced(false);
             }
         }
     }
 
-    public Device overwrite(Tsr drain, Tsr source){
-        this.calculate(new Tsr[]{drain, source}, IFunction.TYPES.LOOKUP.get("idy"), -1);
+    public Device overwrite(Tsr drain, Tsr source)
+    {
+        _execute(new Tsr[]{drain, source}, IFunction.TYPES.LOOKUP.get("idy"), -1);
         return this;
     }
 
-    public Device overwrite(Tsr tensor, double[] value){
+    public Device overwrite(Tsr tensor, double[] value)
+    {
         boolean targetGradient = tensor.gradientIsTargeted();
         if(tensor.rqsGradient()){
-            if(_tensorsMap.containsKey(tensor)){
+            if(_tensors_map.containsKey(tensor)){
                 _kernel.execute(
                         Range.create(
                                 _kernel.executionSizeOf_storeTsr(
-                                        _register[0][_tensorsMap.get(tensor)],
+                                        _register[0][_tensors_map.get(tensor)],
                                         value,
                                         targetGradient
                                 )
@@ -130,11 +135,11 @@ public class Device {
 
     public Device add(Tsr tensor) {
         tensor.setIsVirtual(false);
-        if (!_tensorsMap.containsKey(tensor)) {
-            _tensorsMap.put(tensor, _kernel.allocPtrFor(tensor, _register));
+        if (!_tensors_map.containsKey(tensor)) {
+            _tensors_map.put(tensor, _kernel.allocPtrFor(tensor, _register));
             _kernel.execute(
                     Range.create(
-                            _kernel.executionSizeOf_storeTsr(_register[0][_tensorsMap.get(tensor)], tensor.value(), false)
+                            _kernel.executionSizeOf_storeTsr(_register[0][_tensors_map.get(tensor)], tensor.value(), false)
                     )
             );
             if (tensor.rqsGradient()) {
@@ -142,7 +147,7 @@ public class Device {
                 _kernel.execute(
                         Range.create(
                                 _kernel.executionSizeOf_storeTsr(
-                                        _register[0][_tensorsMap.get(tensor)],
+                                        _register[0][_tensors_map.get(tensor)],
                                         grd, true
                                 )
                         )
@@ -155,9 +160,9 @@ public class Device {
     }
 
     public void swap(Tsr former, Tsr replacement){
-        int ptr = _tensorsMap.get(former);
-        _tensorsMap.remove(former);
-        _tensorsMap.put(replacement, ptr);
+        int ptr = _tensors_map.get(former);
+        _tensors_map.remove(former);
+        _tensors_map.put(replacement, ptr);
         replacement.add(this);
         replacement.setIsOutsourced(true);
     }
@@ -167,7 +172,7 @@ public class Device {
                 Range.create(
                         _kernel.executionSizeOf_fetchTsr(
                                 _register[0][
-                                        _tensorsMap.get(
+                                        _tensors_map.get(
                                                 tensor
                                         )]
                                 , grd
@@ -177,7 +182,53 @@ public class Device {
         return _kernel.value();
     }
 
-    public void calculate(Tsr[] tsrs, int f_id, int d) {
+    public void execute(Tsr[] tsrs, int f_id, int d)
+    {
+        if(IFunction.TYPES.REGISTER[f_id]=="<") {
+            int offset = (tsrs[0]==null)?1:0;
+            this._execute(new Tsr[]{tsrs[0+offset], tsrs[1+offset]}, IFunction.TYPES.LOOKUP.get("idy"), -1);
+        } else if(IFunction.TYPES.REGISTER[f_id]==">") {
+            int offset = (tsrs[0]==null)?1:0;
+            _execute(new Tsr[]{tsrs[1+offset], tsrs[0+offset]}, IFunction.TYPES.LOOKUP.get("idy"), -1);
+        } else {
+            if(tsrs[0]==null){
+                int[] shp =
+                        (IFunction.TYPES.REGISTER[f_id] == "x")
+                                ? Tsr.factory.util.shpOfCon(tsrs[1].shape(), tsrs[2].shape()) : tsrs[1].shape();
+                Tsr output = new Tsr(shp, 0.0);
+                this.add(output);
+                tsrs[0] = output;
+            }
+            if (
+                    tsrs.length == 3
+                            &&
+                            (
+                                    (tsrs[1].isVirtual() || tsrs[2].isVirtual())
+                                            ||
+                                            (!tsrs[1].isOutsourced() && tsrs[1].size() == 1 || !tsrs[2].isOutsourced() && tsrs[2].size() == 1)
+                            )
+            ) {
+                if (tsrs[2].isVirtual() || tsrs[2].size() == 1) {
+                    _execute(new Tsr[]{tsrs[0], tsrs[1]}, IFunction.TYPES.LOOKUP.get("idy"), -1);
+                    _execute(tsrs[0], tsrs[2].value()[0], f_id, d);
+                } else {
+                    _execute(new Tsr[]{tsrs[0], tsrs[2]}, IFunction.TYPES.LOOKUP.get("idy"), -1);
+                    _execute(tsrs[0], tsrs[1].value()[0], f_id, d);
+                }
+            } else {
+                for (Tsr t : tsrs) {
+                    if (!t.isOutsourced()) {
+                        this.add(t);
+                    }
+                }
+                _execute(tsrs, f_id, d);
+            }
+        }
+    }
+
+    public void _execute(Tsr[] tsrs, int f_id, int d) {
+
+        //---
         try{
             //_validate(tsrs);
             if (_kernel == null) {
@@ -187,7 +238,7 @@ public class Device {
                 mode[0] = f_id;
                 mode[mode.length - 1] = d;
                 for (int mi = 0; mi < (tsrs.length); mi++) {
-                    mode[mi + 1] = (tsrs[mi] != null) ? _register[0][_tensorsMap.get(tsrs[mi])] : -1;
+                    mode[mi + 1] = (tsrs[mi] != null) ? _register[0][_tensors_map.get(tsrs[mi])] : -1;
                 }
                 byte gradPtrMod = 0;
                 for(int i=0; i<tsrs.length; i++){
@@ -219,7 +270,7 @@ public class Device {
         }
     }
 
-    public void calculate(Tsr t, double value, int f_id, int d) {
+    public void _execute(Tsr t, double value, int f_id, int d) {
         //int d = -1;
         if (_kernel == null) {
             //What then?
@@ -227,7 +278,7 @@ public class Device {
             if(d<0){
                 int[] mode = new int[2];
                 mode[0] = f_id;
-                mode[1] = _register[0][_tensorsMap.get(t)];
+                mode[1] = _register[0][_tensors_map.get(t)];
                 _kernel.execute(
                         _device.createRange(
                                 _kernel.executionSizeOf_calc(mode, value, (byte) ((t.gradientIsTargeted())?1:0))
@@ -241,17 +292,17 @@ public class Device {
                     IFunction.TYPES.REGISTER[f_id]=="-"||
                     IFunction.TYPES.REGISTER[f_id]=="%"
                 ){
-                    this.calculate(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
-                    this.calculate(t, 1, IFunction.TYPES.LOOKUP.get("+"), -1);
+                    this._execute(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
+                    this._execute(t, 1, IFunction.TYPES.LOOKUP.get("+"), -1);
                 } else if(IFunction.TYPES.REGISTER[f_id]=="^"){
-                    this.calculate(t, value-1, IFunction.TYPES.LOOKUP.get("^"), -1);
-                    this.calculate(t, value, IFunction.TYPES.LOOKUP.get("*"), -1);
+                    this._execute(t, value-1, IFunction.TYPES.LOOKUP.get("^"), -1);
+                    this._execute(t, value, IFunction.TYPES.LOOKUP.get("*"), -1);
                 } else if(IFunction.TYPES.REGISTER[f_id]=="*"){
-                     this.calculate(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
-                     this.calculate(t, value, IFunction.TYPES.LOOKUP.get("+"), -1);
+                     this._execute(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
+                     this._execute(t, value, IFunction.TYPES.LOOKUP.get("+"), -1);
                 } else if(IFunction.TYPES.REGISTER[f_id]=="/"){
-                    this.calculate(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
-                    this.calculate(t, 1/value, IFunction.TYPES.LOOKUP.get("+"), -1);
+                    this._execute(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
+                    this._execute(t, 1/value, IFunction.TYPES.LOOKUP.get("+"), -1);
                 }
 
             }
@@ -268,11 +319,11 @@ public class Device {
         System.out.println(stringified(_kernel.translations()));
         int[] m;
         if (f_id < 7) {
-            m = new int[]{f_id, _register[0][_tensorsMap.get(drn)], _register[0][_tensorsMap.get(t1)], (t2 != null) ? _register[0][_tensorsMap.get(t2)] : d};
+            m = new int[]{f_id, _register[0][_tensors_map.get(drn)], _register[0][_tensors_map.get(t1)], (t2 != null) ? _register[0][_tensors_map.get(t2)] : d};
         } else if (f_id < 12) {
-            m = new int[]{f_id, _register[0][_tensorsMap.get(drn)], _register[0][_tensorsMap.get(t1)], d};
+            m = new int[]{f_id, _register[0][_tensors_map.get(drn)], _register[0][_tensors_map.get(t1)], d};
         } else {
-            m = new int[]{f_id, _register[0][_tensorsMap.get(drn)], _register[0][_tensorsMap.get(t1)], _register[0][_tensorsMap.get(t2)], d};
+            m = new int[]{f_id, _register[0][_tensors_map.get(drn)], _register[0][_tensors_map.get(t1)], _register[0][_tensors_map.get(t2)], d};
         }
         byte gradPtrMod = 0;
         gradPtrMod += (drn.gradientIsTargeted())?1:0;

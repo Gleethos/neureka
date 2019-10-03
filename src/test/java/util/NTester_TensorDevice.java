@@ -88,11 +88,11 @@ public class NTester_TensorDevice extends NTester {
         this.printSessionStart(message);
 
         //for(int i=0; i<50000; i++){
-            //device.calculate(drn, src1, src2, _id);
+            //device._execute(drn, src1, src2, _id);
         if(src2==null){
-            device.calculate(new Tsr[]{drn, src1}, f_id, d);
+            device.execute(new Tsr[]{drn, src1}, f_id, d);
         }else{
-            device.calculate(new Tsr[]{drn, src1, src2}, f_id, d);
+            device.execute(new Tsr[]{drn, src1, src2}, f_id, d);
         }
         //}
 
