@@ -234,14 +234,24 @@ public class Device {
                         )
                 );
                 _kernel.resetGradPtr((byte) ((t.gradientIsTargeted())?1:0));
-            } else {//Derivative:
-                if(IFunction.TYPES.REGISTER[f_id]=="^"){
-                    if(d==0){
-                        this.calculate(t, value-1, IFunction.TYPES.LOOKUP.get("^"), -1);
-                        this.calculate(t, value, IFunction.TYPES.LOOKUP.get("*"), -1);
-                    } else {
-
-                    }
+            } else {
+                /**   Derivatives implementation: (values cannot be derived)    **/
+                if(
+                    IFunction.TYPES.REGISTER[f_id]=="+"||
+                    IFunction.TYPES.REGISTER[f_id]=="-"||
+                    IFunction.TYPES.REGISTER[f_id]=="%"
+                ){
+                    this.calculate(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
+                    this.calculate(t, 1, IFunction.TYPES.LOOKUP.get("+"), -1);
+                } else if(IFunction.TYPES.REGISTER[f_id]=="^"){
+                    this.calculate(t, value-1, IFunction.TYPES.LOOKUP.get("^"), -1);
+                    this.calculate(t, value, IFunction.TYPES.LOOKUP.get("*"), -1);
+                } else if(IFunction.TYPES.REGISTER[f_id]=="*"){
+                     this.calculate(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
+                     this.calculate(t, value, IFunction.TYPES.LOOKUP.get("+"), -1);
+                } else if(IFunction.TYPES.REGISTER[f_id]=="/"){
+                    this.calculate(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
+                    this.calculate(t, 1/value, IFunction.TYPES.LOOKUP.get("+"), -1);
                 }
 
             }
