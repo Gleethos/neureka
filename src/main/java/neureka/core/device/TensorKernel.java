@@ -827,7 +827,7 @@ public class TensorKernel extends com.aparapi.Kernel
     }
     private void _run_broadcast_add(int gid){
         int i1 = __i(gid, 1);
-        _values[i1] = _values[i1]+__val[0];
+        _values[i1] = _values[i1] + __val[0];
     }
     //==================================================================================================================
     private void _run_conv(int gid){///Lets get going!!

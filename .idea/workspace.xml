@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a07ad3e8-8754-4b05-b853-df2665879cc4" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/test/java/TestBroad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestBroad.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/device/TensorKernel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/device/TensorKernel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/util/NTester.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/util/NTester.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/util/NTester_Function.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/util/NTester_Function.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/util/NTester_Tensor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/util/NTester_Tensor.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -111,11 +109,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/TensorKernel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="829" column="42" lean-forward="true" selection-start-line="829" selection-start-column="42" selection-end-line="829" selection-end-column="42" />
+            <state relative-caret-position="292">
+              <caret line="829" column="36" selection-start-line="829" selection-start-column="36" selection-end-line="829" selection-end-column="36" />
               <folding>
                 <element signature="e#24568#24569#0" expanded="true" />
                 <element signature="e#24636#24637#0" expanded="true" />
@@ -131,18 +129,6 @@
                 <element signature="e#34472#34473#0" expanded="true" />
                 <element signature="e#34496#34497#0" expanded="true" />
                 <element signature="e#34532#34533#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/test/java/util/NTester.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-935">
-              <caret line="56" column="8" lean-forward="true" selection-start-line="56" selection-start-column="8" selection-end-line="56" selection-end-column="8" />
-              <folding>
-                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -304,11 +290,11 @@
         <option value="$PROJECT_DIR$/src/test/java/TestOnlyCPU.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/Tsr.java" />
         <option value="$PROJECT_DIR$/src/test/java/util/NTester_Tensor.java" />
-        <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/TensorKernel.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java" />
         <option value="$PROJECT_DIR$/src/test/java/TestBroad.java" />
         <option value="$PROJECT_DIR$/src/test/java/util/NTester.java" />
+        <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/TensorKernel.java" />
       </list>
     </option>
   </component>
@@ -441,7 +427,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1570046122538" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1570047538479" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -607,7 +593,7 @@
       <workItem from="1569865094445" duration="6528000" />
       <workItem from="1569930344807" duration="37000" />
       <workItem from="1569933745963" duration="6000" />
-      <workItem from="1569948641584" duration="17532000" />
+      <workItem from="1569948641584" duration="18275000" />
     </task>
     <servers />
   </component>
@@ -644,7 +630,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="207486000" />
+    <option name="totallyTimeSpent" value="208229000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
@@ -1117,29 +1103,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/TensorKernel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="829" column="42" lean-forward="true" selection-start-line="829" selection-start-column="42" selection-end-line="829" selection-end-column="42" />
-          <folding>
-            <element signature="e#24568#24569#0" expanded="true" />
-            <element signature="e#24636#24637#0" expanded="true" />
-            <element signature="e#25280#25281#0" expanded="true" />
-            <element signature="e#25348#25349#0" expanded="true" />
-            <element signature="e#25384#25385#0" expanded="true" />
-            <element signature="e#25480#25481#0" expanded="true" />
-            <element signature="e#25526#25527#0" expanded="true" />
-            <element signature="e#25606#25607#0" expanded="true" />
-            <element signature="e#34328#34329#0" expanded="true" />
-            <element signature="e#34406#34407#0" expanded="true" />
-            <element signature="e#34430#34431#0" expanded="true" />
-            <element signature="e#34472#34473#0" expanded="true" />
-            <element signature="e#34496#34497#0" expanded="true" />
-            <element signature="e#34532#34533#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="425">
@@ -1170,10 +1133,33 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/util/NTester.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-935">
-          <caret line="56" column="8" lean-forward="true" selection-start-line="56" selection-start-column="8" selection-end-line="56" selection-end-column="8" />
+        <state relative-caret-position="-3431">
+          <caret line="5" column="1" selection-start-line="5" selection-start-column="1" selection-end-line="5" selection-end-column="1" />
           <folding>
             <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/TensorKernel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="292">
+          <caret line="829" column="36" selection-start-line="829" selection-start-column="36" selection-end-line="829" selection-end-column="36" />
+          <folding>
+            <element signature="e#24568#24569#0" expanded="true" />
+            <element signature="e#24636#24637#0" expanded="true" />
+            <element signature="e#25280#25281#0" expanded="true" />
+            <element signature="e#25348#25349#0" expanded="true" />
+            <element signature="e#25384#25385#0" expanded="true" />
+            <element signature="e#25480#25481#0" expanded="true" />
+            <element signature="e#25526#25527#0" expanded="true" />
+            <element signature="e#25606#25607#0" expanded="true" />
+            <element signature="e#34328#34329#0" expanded="true" />
+            <element signature="e#34406#34407#0" expanded="true" />
+            <element signature="e#34430#34431#0" expanded="true" />
+            <element signature="e#34472#34473#0" expanded="true" />
+            <element signature="e#34496#34497#0" expanded="true" />
+            <element signature="e#34532#34533#0" expanded="true" />
           </folding>
         </state>
       </provider>

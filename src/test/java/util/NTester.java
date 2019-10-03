@@ -2,8 +2,8 @@ package util;
 import org.junit.Assert;
 import neureka.frame.NMessageFrame;
 
-public class NTester extends Assert{
-
+public class NTester extends Assert
+{
     private NMessageFrame _verbose_frame;
     private NMessageFrame _result_frame;
     protected static String BAR = "[|]";
@@ -201,7 +201,7 @@ public class NTester extends Assert{
             _verbose_frame.print(message);
         }
     }
-    public void println(String message){
+    protected void println(String message){
         _session +=message+"\n";
         if(_verbose_frame !=null){
             _verbose_frame.println(message);
