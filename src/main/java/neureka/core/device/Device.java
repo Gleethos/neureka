@@ -270,8 +270,8 @@ public class Device {
         }
     }
 
-    public void _execute(Tsr t, double value, int f_id, int d) {
-        //int d = -1;
+    public void _execute(Tsr t, double value, int f_id, int d)
+    {
         if (_kernel == null) {
             //What then?
         } else {
@@ -292,17 +292,17 @@ public class Device {
                     IFunction.TYPES.REGISTER[f_id]=="-"||
                     IFunction.TYPES.REGISTER[f_id]=="%"
                 ){
-                    this._execute(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
-                    this._execute(t, 1, IFunction.TYPES.LOOKUP.get("+"), -1);
+                    _execute(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
+                    _execute(t, 1, IFunction.TYPES.LOOKUP.get("+"), -1);
                 } else if(IFunction.TYPES.REGISTER[f_id]=="^"){
-                    this._execute(t, value-1, IFunction.TYPES.LOOKUP.get("^"), -1);
-                    this._execute(t, value, IFunction.TYPES.LOOKUP.get("*"), -1);
+                    _execute(t, value-1, IFunction.TYPES.LOOKUP.get("^"), -1);
+                    _execute(t, value, IFunction.TYPES.LOOKUP.get("*"), -1);
                 } else if(IFunction.TYPES.REGISTER[f_id]=="*"){
-                     this._execute(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
-                     this._execute(t, value, IFunction.TYPES.LOOKUP.get("+"), -1);
+                     _execute(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
+                     _execute(t, value, IFunction.TYPES.LOOKUP.get("+"), -1);
                 } else if(IFunction.TYPES.REGISTER[f_id]=="/"){
-                    this._execute(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
-                    this._execute(t, 1/value, IFunction.TYPES.LOOKUP.get("+"), -1);
+                    _execute(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
+                    _execute(t, 1/value, IFunction.TYPES.LOOKUP.get("+"), -1);
                 }
 
             }

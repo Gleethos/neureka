@@ -51,7 +51,6 @@ public abstract class Function implements IFunction {
         return TYPES.REGISTER[_id];
     }
 
-
     @Override
     public String toString() {
         String reconstructed = "";
@@ -144,9 +143,9 @@ public abstract class Function implements IFunction {
             device.execute(new Tsr[]{output, input}, _id, (derive) ? 0 : -1);
         } else {
             exec.foreach(
-                    input, output,
-                    (i, inputValue, outputValue) -> outputValue[i] = _scalar_activation(inputValue[i], derive)
-                );
+                input, output,
+                (i, inputValue, outputValue) -> outputValue[i] = _scalar_activation(inputValue[i], derive)
+            );
         }
         if (!derive && _doAD) {
             GraphBuilder.connect(output, new Tsr[]{input}, this);
@@ -163,7 +162,8 @@ public abstract class Function implements IFunction {
      * @param d
      * @return
      */
-    protected Tsr _tensor_activation(Tsr[] inputs, int j, int d) {
+    protected Tsr _tensor_activation(Tsr[] inputs, int j, int d)
+    {
         /**  The code below deals with deep functions (non flat):  * */
         if (d < 0 && !_isFlat)
         {//only flat functions can be executed
@@ -206,63 +206,62 @@ public abstract class Function implements IFunction {
         return output;
     }
 
-    private Tsr _execute(Tsr[] input, int j, int d)
+    private Tsr _execute(Tsr[] inputs, int j, int d)
     {
-
-        Device device = (Device) input[0].find(Device.class);
-        boolean onSameDevice = _shareGuestDevice(input) && TYPES.REGISTER[_id] != "," && !(TYPES.isConvection(_id) && d > -1);
-
+        Device device = (Device) inputs[0].find(Device.class);
+        boolean onSameDevice = _shareGuestDevice(inputs) && TYPES.REGISTER[_id] != "," && !(TYPES.isConvection(_id) && d > -1);
         if (onSameDevice)
         {
             Tsr[] tsrs = new Tsr[1 + _src.size()];//input.length];
             for (int ii = 1; ii < tsrs.length; ii++) {
-                tsrs[ii] = _src.get(ii-1).activate(input);//input[ii - 1];
+                tsrs[ii] = _src.get(ii-1).activate(inputs);//input[ii - 1];
             }
             device.execute(tsrs, _id, d);
             return tsrs[0];
 
         } else {
+
             if (TYPES.REGISTER[_id] == "x") {
                 if (d < 0) {
-                    return exec.convection(_src.get(0).activate(input), _src.get(1).activate(input));
+                    return exec.convection(_src.get(0).activate(inputs), _src.get(1).activate(inputs));
                 } else {
                     if (d == 0) {
-                        return (_src.get(1).activate(input));
+                        return (_src.get(1).activate(inputs));
                     } else {
-                        return (_src.get(0).activate(input));
+                        return (_src.get(0).activate(inputs));
                     }
                 }
             } else if (_id == TYPES.LOOKUP.get("<<") || _id == TYPES.LOOKUP.get(">>")) {
                 if (d < 0) {
                     if (_id == TYPES.LOOKUP.get(">>")) {
                         return exec.convection_inv(
-                                _src.get(0).activate(input),
-                                _src.get(1).activate(input),
-                                _src.get(2).activate(input),
+                                _src.get(0).activate(inputs),
+                                _src.get(1).activate(inputs),
+                                _src.get(2).activate(inputs),
                                 false
                         );
                     } else {
                         return exec.convection_inv(
-                                _src.get(2).activate(input),
-                                _src.get(1).activate(input),
-                                _src.get(0).activate(input),
+                                _src.get(2).activate(inputs),
+                                _src.get(1).activate(inputs),
+                                _src.get(0).activate(inputs),
                                 false
                         );
                     }
                 } else {//Todo: What then? :
                     if (d == 0) {
-                        return (_src.get(1).activate(input));
+                        return (_src.get(1).activate(inputs));
                     } else {
-                        return (_src.get(0).activate(input));
+                        return (_src.get(0).activate(inputs));
                     }
                 }
             } else if (TYPES.REGISTER[_id] == ",") {
-                int[] newForm = new int[input.length - 1];
-                for (int i = 0; i < input.length - 1; i++) {
-                    newForm[i] = (int) Tsr.factory.io.getFrom(input[i], 0);
+                int[] newForm = new int[inputs.length - 1];
+                for (int i = 0; i < inputs.length - 1; i++) {
+                    newForm[i] = (int) Tsr.factory.io.getFrom(inputs[i], 0);
                 }
                 if (d < 0) {
-                    Tsr t = input[input.length - 1];
+                    Tsr t = inputs[inputs.length - 1];
                     return Tsr.factory.exec.reshaped(t, newForm, true);//t.reshape(newForm);
                 } else {//reverse reshape:
                     int[] reversed = new int[newForm.length];
@@ -275,25 +274,24 @@ public abstract class Function implements IFunction {
                     }
                 }
             } else if(TYPES.REGISTER[_id]=="<") {
-                return _src.get(0).activate(input).setTargetValue(_src.get(1).activate(input).targetValue(true));
+                return _src.get(0).activate(inputs).setTargetValue(_src.get(1).activate(inputs).targetValue(true));
             } else if(TYPES.REGISTER[_id]==">") {
-                return _src.get(1).activate(input).setTargetValue(_src.get(0).activate(input).targetValue(true));
+                return _src.get(1).activate(inputs).setTargetValue(_src.get(0).activate(inputs).targetValue(true));
             } else {
-                double[] inp = new double[input.length];
-                Tsr output = Tsr.factory.newTensor(input[0].shape(), input[0].translation());
+                double[] inp = new double[inputs.length];
+                Tsr output = Tsr.factory.newTensor(inputs[0].shape(), inputs[0].translation());
                 Tsr finalOutput = output;
                 output.foreach((i) -> {
-                    for (int ii = 0; ii < input.length; ii++) {
-                        inp[ii] = input[ii].value()[i];
+                    for (int ii = 0; ii < inputs.length; ii++) {
+                        inp[ii] = inputs[ii].value()[i];
                     }
-
-                    finalOutput.value()[i] = _scalar_activation(inp, j, d);
+                    finalOutput.value()[i] = _scalar_activation(inp, j, d);//TODO: MAKE SCALAR ACTIVATION CONFORM!
                 });
                 return  output;
             }
         }
         //Todo: warning/exception.....
-        return Tsr.factory.newTensor(input[0].shape(), input[0].translation());
+        return Tsr.factory.newTensor(inputs[0].shape(), inputs[0].translation());
     }
 
     private Tsr[] _source_activation(Tsr[] input) {
@@ -539,19 +537,20 @@ public abstract class Function implements IFunction {
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private static double[] activated(double[] input, ArrayList<IFunction> Variable){
+            double[] activated = new double[input.length];
+            for (int Ii = 0; Ii < input.length; Ii++) {
+                activated[Ii] += Variable.get(0).activate(input, Ii);
+            }
+            return activated;
+        }
+
+        //---
         @Contract(pure = true)
         private static double summation(double[] input, int j, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
-                double sum = 0;
-                boolean nothingDone = true;
-                for (int Ii = 0; Ii < input.length; Ii++) {
-                    sum += Variable.get(0).activate(input, Ii);
-                    nothingDone = false;
-                }
-                if (nothingDone) {
-                    return Variable.get(0).activate(input);
-                }
-                return sum;
+                return summation(activated(input, Variable), d);
             } else {
                 return Variable.get(0).derive(input, d, j);
             }
@@ -560,22 +559,25 @@ public abstract class Function implements IFunction {
         @Contract(pure = true)
         private static double summation(double[] input, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
-                double sum = 0;
-                boolean nothingDone = true;
-                for (int Ii = 0; Ii < input.length; Ii++) {
-                    sum += Variable.get(0).activate(input, Ii);
-                    nothingDone = false;
-                }
-                if (nothingDone) {
-                    return Variable.get(0).activate(input);
-                }
-                return sum;
+                return summation(activated(input, Variable), d);
             } else {
                 return Variable.get(0).derive(input, d);
             }
 
         }
 
+        @Contract
+        private static double summation(double[] input, int d){
+            if (d < 0) {
+                double sum = 0;
+                for (int Ii = 0; Ii < input.length; Ii++) {
+                    sum += input[Ii];
+                }
+                return sum;
+            } else {
+                return 1;
+            }
+        }
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         private static double PI(double[] input, int j, int d, ArrayList<IFunction> Variable) {
@@ -634,6 +636,8 @@ public abstract class Function implements IFunction {
                 return ud;
             }
         }
+
+        //TODO: ...
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
