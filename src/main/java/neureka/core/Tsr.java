@@ -148,7 +148,6 @@ public class Tsr {
             device.execute(new Tsr[]{this, g}, IFunction.TYPES.LOOKUP.get("<"), -1);
             device.get(g);
             this.setGradientIsTargeted(false);
-            //device.overwrite(this, g, true);
         } else {
             double[] value = g.value();
             _gradient = (_gradient==null)?new double[value.length]:_gradient;

@@ -675,23 +675,20 @@ public abstract class Function implements IFunction {
                 }
                 return result;
             } else {
-                // d/dx(f(x)^g(x))=
-                //f(x)^g(x) * d/dx( g(x) ) * ln( f(x) )
-                //+ f(x)^( g(x)-1 ) * g(x) * d/dx( f(x) )
-                double fg, dg, lnf;
-                double f = src.get(0).activate(inputs);
-                double df = src.get(0).derive(inputs, d);
-                double g = src.get(1).activate(inputs);
-                df = f * g;
-                for (int i = 0; i < src.size() - 2; i++) {
-                    g = src.get(i + 1).activate(inputs);
-                    fg = f * g;
-                    dg = src.get(i + 1).derive(inputs, d);
-                    lnf = Math.log(f);
-                    df = fg * dg * lnf + f * (g - 1) * g * df;
-                    f = Math.pow(f, g);
+                double out = 0;
+                for(int si=0; si<src.size(); si++){
+                    double b = 1;
+                    for (int i = 1; i < src.size(); i++) {
+                        b *= (i==d)?1:src.get(i).activate(inputs);// _values[__i(gid, 2+i)];
+                    }
+                    if(si==0){
+                        out += src.get(0).derive(inputs, d)*b*Math.pow(src.get(0).activate(inputs), b-1);
+                    } else {
+                        double a = src.get(0).activate(inputs);
+                        out += (a>=0)?src.get(si).derive(inputs, d)*b*Math.log(a):0;
+                    }
                 }
-                return df;
+                return out;
             }
         }
 
@@ -910,30 +907,6 @@ public abstract class Function implements IFunction {
         }
 
         @Contract(pure = true)
-        public static Tsr multiplication(Tsr tensor1, Tsr tensor2) {
-            Tsr drn = new Tsr(tensor1.shape());
-            int[] index = new int[drn.shape().length];
-            int size = drn.size();
-            for (int i = 0; i < size; i++) {
-                Tsr.factory.io.addInto(drn, index, Tsr.factory.io.getFrom(tensor1, index) * Tsr.factory.io.getFrom(tensor2, index));
-                Tsr.factory.util.increment(index, drn.shape());
-            }
-            return drn;
-        }
-
-        @Contract(pure = true)
-        public static Tsr addition(Tsr tensor1, Tsr tensor2) {
-            Tsr drn = new Tsr(tensor1.shape());
-            int[] index = new int[drn.shape().length];
-            int size = drn.size();
-            for (int i = 0; i < size; i++) {
-                Tsr.factory.io.addInto(drn, index, Tsr.factory.io.getFrom(tensor1, index) + Tsr.factory.io.getFrom(tensor2, index));
-                Tsr.factory.util.increment(index, drn.shape());
-            }
-            return drn;
-        }
-
-        @Contract(pure = true)
         public static Tsr convection(Tsr tensor1, Tsr tensor2) {
             tensor1.setIsVirtual(false);
             tensor2.setIsVirtual(false);
@@ -966,9 +939,9 @@ public abstract class Function implements IFunction {
             double[] t0_value = t0_drain.targetValue();
             double[] t1_value = t1_source.targetValue();
             double[] t2_value = t2_source.targetValue();
-
             int drnSze = t0_drain.size();
             int i = 0;
+
             while (i < drnSze) {//increment on drain accordingly:
                 int ri = 0;
                 while (ri < rank) {
@@ -1050,9 +1023,9 @@ public abstract class Function implements IFunction {
             double[] t0_value = t0_origin.targetValue();
             double[] t1_value = t1_handle.targetValue();
             double[] t2_value = t2_drain.targetValue();
-
             int drnSze = t0_origin.size();
             int i = 0;
+
             while (i < drnSze) {//increment on drain accordingly:
                 int ri = 0;
                 while (ri < rank) {

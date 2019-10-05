@@ -10,7 +10,8 @@ public class GraphBuilder
     private static IFunction MUL = FunctionBuilder.build("(I[0]*I[1])", false);
     private static IFunction ADD = FunctionBuilder.build("(I[0]+I[1])", false);
 
-    public static void connect(Tsr output, Tsr[] inputs, IFunction function){//, boolean derive
+    public static void connect(Tsr output, Tsr[] inputs, IFunction function)
+    {
         if(!function.isFlat()){
            return;
         }

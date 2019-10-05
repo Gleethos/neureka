@@ -527,7 +527,7 @@ public class TestBroad {
         b = new Tsr(new int[]{1}, 0.5);
         w = new Tsr(new int[]{1}, 0.5);
         y = new Tsr(new Tsr[]{x, b, w}, "(2^i0^i1^i2^2");//TODO: fix!
-        //tester.testTensor(y, new String[]{"[1]:(4.0);", " ->d[1]:(-8.0), "});
+        tester.testTensor(y, new String[]{"[1]:(4.0);", " ->d[1]:(1.3862943611198906), "});
         //tester.testShareDevice(gpu, new Tsr[]{y, x, b, w});
 
         //====

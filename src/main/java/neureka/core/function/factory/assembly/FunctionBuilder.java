@@ -14,7 +14,8 @@ public class FunctionBuilder {
      * @param doAD
      * @return
      */
-    public static IFunction build(int f_id, int size, boolean doAD){
+    public static IFunction build(int f_id, int size, boolean doAD)
+    {
         if (f_id == 18){
             size = 2;
         } else if(IFunction.TYPES.REGISTER[f_id]==","){
