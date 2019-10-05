@@ -2,20 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a07ad3e8-8754-4b05-b853-df2665879cc4" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileContent/fileContent.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileContent/fileContent.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/resourceHashesCache.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/jarAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/jarAnalysis.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/assembly/FunctionConstructor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/assembly/FunctionConstructor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphBuilder.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -103,8 +90,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="590" column="31" selection-start-line="590" selection-start-column="31" selection-end-line="590" selection-end-column="31" />
+            <state relative-caret-position="-51">
+              <caret line="898" column="72" lean-forward="true" selection-start-line="898" selection-start-column="72" selection-end-line="898" selection-end-column="72" />
             </state>
           </provider>
         </entry>
@@ -629,14 +616,11 @@
       <workItem from="1569948641584" duration="25497000" />
       <workItem from="1570113388347" duration="7019000" />
       <workItem from="1570189948106" duration="12069000" />
-      <workItem from="1570261319280" duration="1868000" />
+      <workItem from="1570261319280" duration="2580000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="neureka_[test] - 2019.10.04 at 22h 06m 33s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
     <history-entry file="neureka_[test] - 2019.10.04 at 22h 07m 34s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
@@ -664,12 +648,16 @@
     <history-entry file="neureka_[test] - 2019.10.05 at 10h 21m 41s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
+    <history-entry file="neureka_[test] - 2019.10.05 at 10h 26m 15s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="236407000" />
+    <option name="totallyTimeSpent" value="237119000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Structure" order="0" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="1" />
@@ -1200,8 +1188,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="590" column="31" selection-start-line="590" selection-start-column="31" selection-end-line="590" selection-end-column="31" />
+        <state relative-caret-position="-51">
+          <caret line="898" column="72" lean-forward="true" selection-start-line="898" selection-start-column="72" selection-end-line="898" selection-end-column="72" />
         </state>
       </provider>
     </entry>

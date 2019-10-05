@@ -539,63 +539,63 @@ public abstract class Function implements IFunction {
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-        private static double summation(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+        private static double summation(double[] inputs, int j, int d, ArrayList<IFunction> src) {
             if (d < 0) {
                 double sum = 0;
                 boolean nothingDone = true;
-                for (int Ii = 0; Ii < input.length; Ii++) {
-                    sum += Variable.get(0).activate(input, Ii);
+                for (int i = 0; i < inputs.length; i++) {
+                    sum += src.get(0).activate(inputs, i);
                     nothingDone = false;
                 }
                 if (nothingDone) {
-                    return Variable.get(0).activate(input);
+                    return src.get(0).activate(inputs);
                 }
                 return sum;
             } else {
-                return Variable.get(0).derive(input, d, j);
+                return src.get(0).derive(inputs, d, j);
             }
         }
 
-        private static double summation(double[] input, int d, ArrayList<IFunction> Variable) {
+        private static double summation(double[] inputs, int d, ArrayList<IFunction> src) {
             if (d < 0) {
                 double sum = 0;
                 boolean nothingDone = true;
-                for (int Ii = 0; Ii < input.length; Ii++) {
-                    sum += Variable.get(0).activate(input, Ii);
+                for (int i = 0; i < inputs.length; i++) {
+                    sum += src.get(0).activate(inputs, i);
                     nothingDone = false;
                 }
                 if (nothingDone) {
-                    return Variable.get(0).activate(input);
+                    return src.get(0).activate(inputs);
                 }
                 return sum;
             } else {
-                return Variable.get(0).derive(input, d);
+                return src.get(0).derive(inputs, d);
             }
 
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
-        private static double PI(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+        private static double PI(double[] inputs, int j, int d, ArrayList<IFunction> src) {
             if (d < 0) {
                 double prod = 1;
                 boolean nothingDone = true;
-                for (int Ii = 0; Ii < input.length; Ii++) {
-                    prod *= Variable.get(0).activate(input, Ii);
+                for (int Ii = 0; Ii < inputs.length; Ii++) {
+                    prod *= src.get(0).activate(inputs, Ii);
                     nothingDone = false;
                 }
                 if (nothingDone) {
-                    return Variable.get(0).activate(input, j);
+                    return src.get(0).activate(inputs, j);
                 }
                 return prod;
             } else {
                 double u, ud, v, vd;
-                u = Variable.get(0).activate(input, 0);
-                ud = Variable.get(0).derive(input, d, 0);
+                u = src.get(0).activate(inputs, 0);
+                ud = src.get(0).derive(inputs, d, 0);
                 System.out.println(ud);
-                for (int ji = 1; ji < input.length; ji++) {
-                    v = Variable.get(0).activate(input, ji);
-                    vd = Variable.get(0).derive(input, d, ji);
+                for (int ji = 1; ji < inputs.length; ji++) {
+                    v = src.get(0).activate(inputs, ji);
+                    vd = src.get(0).derive(inputs, d, ji);
                     ud = u * vd + v * ud;
                     u *= v;
                 }
@@ -604,31 +604,28 @@ public abstract class Function implements IFunction {
         }
 
         @Contract(pure = true)
-        private static double PI(double[] input, int d, ArrayList<IFunction> Variable) {
-            if(true){
-               // return  PI(activated(input,))
-            }
+        private static double PI(double[] inputs, int d, ArrayList<IFunction> src) {
             if (d < 0) {
                 double prod = 1;
                 boolean nothingDone = true;
-                for (int Ii = 0; Ii < input.length; Ii++) {
+                for (int i = 0; i < inputs.length; i++) {
                     //if (sources.get(0).dependsOn(Ii)) {
-                    prod *= Variable.get(0).activate(input, Ii);
+                    prod *= src.get(0).activate(inputs, i);
                     nothingDone = false;
                     //}
                 }
                 if (nothingDone) {
-                    return Variable.get(0).activate(input);
+                    return src.get(0).activate(inputs);
                 }
                 return prod;
             } else {
                 double u, ud, v, vd;
-                u = Variable.get(0).activate(input, 0);
-                ud = Variable.get(0).derive(input, d, 0);
+                u = src.get(0).activate(inputs, 0);
+                ud = src.get(0).derive(inputs, d, 0);
                 System.out.println(ud);
-                for (int j = 1; j < input.length; j++) {
-                    v = Variable.get(0).activate(input, j);
-                    vd = Variable.get(0).derive(input, d, j);
+                for (int j = 1; j < inputs.length; j++) {
+                    v = src.get(0).activate(inputs, j);
+                    vd = src.get(0).derive(inputs, d, j);
                     ud = u * vd + v * ud;
                     u *= v;
                 }
@@ -640,11 +637,11 @@ public abstract class Function implements IFunction {
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
-        private static double power(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+        private static double power(double[] inputs, int j, int d, ArrayList<IFunction> src) {
             if (d < 0) {
-                double result = Variable.get(0).activate(input, j);
-                for (int Vi = 1; Vi < Variable.size(); Vi++) {
-                    final double current = Variable.get(Vi).activate(input, j);
+                double result = src.get(0).activate(inputs, j);
+                for (int i = 1; i < src.size(); i++) {
+                    final double current = src.get(i).activate(inputs, j);
                     result = Math.pow(result, current);
                 }
                 return result;
@@ -653,13 +650,13 @@ public abstract class Function implements IFunction {
                 //	f(x)^g(x) * d/dx(g(x)) * ln(f(x))
                 //	+ f(x)^(g(x)-1) * g(x) * d/dx(f(x))
                 double fg, dg, lnf;
-                double f = Variable.get(0).activate(input, j);
-                double df = Variable.get(0).derive(input, d, j);
+                double f = src.get(0).activate(inputs, j);
+                double df = src.get(0).derive(inputs, d, j);
                 double g;
-                for (int i = 0; i < Variable.size() - 2; i++) {
-                    g = Variable.get(i + 1).activate(input, j);
+                for (int i = 0; i < src.size() - 2; i++) {
+                    g = src.get(i + 1).activate(inputs, j);
                     fg = f * g;
-                    dg = Variable.get(i + 1).derive(input, d, j);
+                    dg = src.get(i + 1).derive(inputs, d, j);
                     lnf = Math.log(f);
                     df = fg * dg * lnf + f * (g - 1) * g * df;
                     f = Math.pow(f, g);
@@ -669,11 +666,11 @@ public abstract class Function implements IFunction {
         }
 
         @Contract(pure = true)
-        private static double power(double[] input, int d, ArrayList<IFunction> Variable) {
+        private static double power(double[] inputs, int d, ArrayList<IFunction> src) {
             if (d < 0) {
-                double result = Variable.get(0).activate(input);
-                for (int Vi = 1; Vi < Variable.size(); Vi++) {
-                    final double current = Variable.get(Vi).activate(input);
+                double result = src.get(0).activate(inputs);
+                for (int i = 1; i < src.size(); i++) {
+                    final double current = src.get(i).activate(inputs);
                     result = Math.pow(result, current);
                 }
                 return result;
@@ -682,14 +679,14 @@ public abstract class Function implements IFunction {
                 //f(x)^g(x) * d/dx( g(x) ) * ln( f(x) )
                 //+ f(x)^( g(x)-1 ) * g(x) * d/dx( f(x) )
                 double fg, dg, lnf;
-                double f = Variable.get(0).activate(input);
-                double df = Variable.get(0).derive(input, d);
-                double g = Variable.get(1).activate(input);
+                double f = src.get(0).activate(inputs);
+                double df = src.get(0).derive(inputs, d);
+                double g = src.get(1).activate(inputs);
                 df = f * g;
-                for (int i = 0; i < Variable.size() - 2; i++) {
-                    g = Variable.get(i + 1).activate(input);
+                for (int i = 0; i < src.size() - 2; i++) {
+                    g = src.get(i + 1).activate(inputs);
                     fg = f * g;
-                    dg = Variable.get(i + 1).derive(input, d);
+                    dg = src.get(i + 1).derive(inputs, d);
                     lnf = Math.log(f);
                     df = fg * dg * lnf + f * (g - 1) * g * df;
                     f = Math.pow(f, g);
@@ -700,21 +697,21 @@ public abstract class Function implements IFunction {
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
-        private static double division(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+        private static double division(double[] inputs, int j, int d, ArrayList<IFunction> src) {
             if (d < 0) {
-                double result = Variable.get(0).activate(input, j);
-                for (int Vi = 1; Vi < Variable.size(); Vi++) {
-                    final double current = Variable.get(Vi).activate(input, j);
+                double result = src.get(0).activate(inputs, j);
+                for (int Vi = 1; Vi < src.size(); Vi++) {
+                    final double current = src.get(Vi).activate(inputs, j);
                     result /= current;
                 }
                 return result;
             } else {
                 double u, ud, v, vd;
-                u = Variable.get(0).activate(input, j);
-                ud = Variable.get(0).derive(input, d, j);
-                for (int i = 0; i < Variable.size() - 1; i++) {
-                    v = Variable.get(i + 1).activate(input, j);
-                    vd = Variable.get(i + 1).derive(input, d, j);
+                u = src.get(0).activate(inputs, j);
+                ud = src.get(0).derive(inputs, d, j);
+                for (int i = 0; i < src.size() - 1; i++) {
+                    v = src.get(i + 1).activate(inputs, j);
+                    vd = src.get(i + 1).derive(inputs, d, j);
                     ud = (ud * v - u * vd) / Math.pow(v, 2);
                     u /= v;
                 }
@@ -723,23 +720,23 @@ public abstract class Function implements IFunction {
         }
 
         @Contract(pure = true)
-        private static double division(double[] input, int d, ArrayList<IFunction> Variable) {
+        private static double division(double[] inputs, int d, ArrayList<IFunction> src) {
             if (d < 0) {
-                double result = Variable.get(0).activate(input);
-                for (int Vi = 1; Vi < Variable.size(); Vi++) {
-                    final double current = Variable.get(Vi).activate(input);
+                double result = src.get(0).activate(inputs);
+                for (int i = 1; i < src.size(); i++) {
+                    final double current = src.get(i).activate(inputs);
                     result /= current;
                 }
                 return result;
             } else {
                 double derivative = 0;
-                double tempVar = Variable.get(0).activate(input);
-                derivative = Variable.get(0).derive(input, d);
+                double tempVar = src.get(0).activate(inputs);
+                derivative = src.get(0).derive(inputs, d);
 
-                for (int i = 0; i < Variable.size() - 1; i++) {
+                for (int i = 0; i < src.size() - 1; i++) {
                     double u, ud, v, vd;
-                    v = Variable.get(i + 1).activate(input);
-                    vd = Variable.get(i + 1).derive(input, d);
+                    v = src.get(i + 1).activate(inputs);
+                    vd = src.get(i + 1).derive(inputs, d);
                     u = tempVar;
                     ud = derivative;
                     derivative = (ud * v - u * vd) / Math.pow(v, 2);
@@ -751,22 +748,22 @@ public abstract class Function implements IFunction {
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
-        private static double multiplication(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+        private static double multiplication(double[] inputs, int j, int d, ArrayList<IFunction> src) {
             if (d < 0) {
-                double result = Variable.get(0).activate(input, j);
-                for (int Vi = 1; Vi < Variable.size(); Vi++) {
-                    final double current = Variable.get(Vi).activate(input, j);
+                double result = src.get(0).activate(inputs, j);
+                for (int i = 1; i < src.size(); i++) {
+                    final double current = src.get(i).activate(inputs, j);
                     result *= current;
                 }
                 return result;
             } else {
                 double u, ud, v, vd;
-                u = Variable.get(0).activate(input, j);
-                ud = Variable.get(0).derive(input, d, j);
+                u = src.get(0).activate(inputs, j);
+                ud = src.get(0).derive(inputs, d, j);
 
-                for (int ji = 1; ji < Variable.size(); ji++) {
-                    v = Variable.get(ji).activate(input, j);
-                    vd = Variable.get(ji).derive(input, d, j);
+                for (int ji = 1; ji < src.size(); ji++) {
+                    v = src.get(ji).activate(inputs, j);
+                    vd = src.get(ji).derive(inputs, d, j);
                     //System.out.println("ud" + (u * vd + v * ud) + "=u" + u + "*vd" + vd + "+v" + v + "*ud" + ud);
                     ud = u * vd + v * ud;
                     u *= v;
@@ -777,22 +774,22 @@ public abstract class Function implements IFunction {
         }
 
         @Contract(pure = true)
-        private static double multiplication(double[] input, int d, ArrayList<IFunction> Variable) {
+        private static double multiplication(double[] inputs, int d, ArrayList<IFunction> src) {
             if (d < 0) {
-                double result = Variable.get(0).activate(input);
-                for (int Vi = 1; Vi < Variable.size(); Vi++) {
-                    final double current = Variable.get(Vi).activate(input);
+                double result = src.get(0).activate(inputs);
+                for (int i = 1; i < src.size(); i++) {
+                    final double current = src.get(i).activate(inputs);
                     result *= current;
                 }
                 return result;
             } else {
                 double u, ud, v, vd;
-                u = Variable.get(0).activate(input);
-                ud = Variable.get(0).derive(input, d);
+                u = src.get(0).activate(inputs);
+                ud = src.get(0).derive(inputs, d);
 
-                for (int j = 1; j < Variable.size(); j++) {
-                    v = Variable.get(j).activate(input);
-                    vd = Variable.get(j).derive(input, d);
+                for (int j = 1; j < src.size(); j++) {
+                    v = src.get(j).activate(inputs);
+                    vd = src.get(j).derive(inputs, d);
 
                     ud = u * vd + v * ud;
                     u *= v;//this step can be avoided (TODO optimize)
@@ -803,50 +800,50 @@ public abstract class Function implements IFunction {
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
-        private static double modulo(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+        private static double modulo(double[] inputs, int j, int d, ArrayList<IFunction> src) {
             if (d < 0) {
-                double result = Variable.get(0).activate(input, j);
-                for (int Vi = 1; Vi < Variable.size(); Vi++) {
-                    final double current = Variable.get(Vi).activate(input, j);
+                double result = src.get(0).activate(inputs, j);
+                for (int i = 1; i < src.size(); i++) {
+                    final double current = src.get(i).activate(inputs, j);
                     result %= current;
                 }
                 return result;
             } else {
-                return Variable.get(0).derive(input, d, j);// j ?
+                return src.get(0).derive(inputs, d, j);// j ?
             }
         }
 
         @Contract(pure = true)
-        private static double modulo(double[] input, int d, ArrayList<IFunction> Variable) {
+        private static double modulo(double[] inputs, int d, ArrayList<IFunction> src) {
             if (d < 0) {
-                double result = Variable.get(0).activate(input);
-                for (int Vi = 1; Vi < Variable.size(); Vi++) {
-                    final double current = Variable.get(Vi).activate(input);
+                double result = src.get(0).activate(inputs);
+                for (int i = 1; i < src.size(); i++) {
+                    final double current = src.get(i).activate(inputs);
                     result %= current;
                 }
                 return result;
             } else {
-                return Variable.get(0).derive(input, d);
+                return src.get(0).derive(inputs, d);
             }
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
-        private static double subtraction(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+        private static double subtraction(double[] inputs, int j, int d, ArrayList<IFunction> src) {
             if (d < 0) {
-                double result = Variable.get(0).activate(input, j);
-                for (int Vi = 1; Vi < Variable.size(); Vi++) {
-                    final double current = Variable.get(Vi).activate(input, j);
+                double result = src.get(0).activate(inputs, j);
+                for (int Vi = 1; Vi < src.size(); Vi++) {
+                    final double current = src.get(Vi).activate(inputs, j);
                     result -= current;
                 }
                 return result;
             } else {
                 double derivative = 0;
-                for (int i = 0; i < Variable.size(); ++i) {
+                for (int i = 0; i < src.size(); ++i) {
                     if (i == 0) {
-                        derivative += Variable.get(i).derive(input, d, j);
+                        derivative += src.get(i).derive(inputs, d, j);
                     } else {
-                        derivative -= Variable.get(i).derive(input, d, j);
+                        derivative -= src.get(i).derive(inputs, d, j);
                     }
                 }
                 return derivative;
@@ -854,21 +851,21 @@ public abstract class Function implements IFunction {
         }
 
         @Contract(pure = true)
-        private static double subtraction(double[] input, int d, ArrayList<IFunction> Variable) {
+        private static double subtraction(double[] inputs, int d, ArrayList<IFunction> src) {
             if (d < 0) {
-                double result = Variable.get(0).activate(input);
-                for (int Vi = 1; Vi < Variable.size(); Vi++) {
-                    final double current = Variable.get(Vi).activate(input);
+                double result = src.get(0).activate(inputs);
+                for (int i = 1; i < src.size(); i++) {
+                    final double current = src.get(i).activate(inputs);
                     result -= current;
                 }
                 return result;
             } else {
                 double derivative = 0;
-                for (int i = 0; i < Variable.size(); ++i) {
+                for (int i = 0; i < src.size(); ++i) {
                     if (i == 0) {
-                        derivative += Variable.get(i).derive(input, d);
+                        derivative += src.get(i).derive(inputs, d);
                     } else {
-                        derivative -= Variable.get(i).derive(input, d);
+                        derivative -= src.get(i).derive(inputs, d);
                     }
                 }
                 return derivative;
@@ -877,36 +874,36 @@ public abstract class Function implements IFunction {
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
-        private static double addition(double[] input, int j, int d, ArrayList<IFunction> Variable) {
+        private static double addition(double[] inputs, int j, int d, ArrayList<IFunction> src) {
             if (d < 0) {
-                double result = Variable.get(0).activate(input, j);
-                for (int Vi = 1; Vi < Variable.size(); Vi++) {
-                    final double current = Variable.get(Vi).activate(input, j);
+                double result = src.get(0).activate(inputs, j);
+                for (int i = 1; i < src.size(); i++) {
+                    final double current = src.get(i).activate(inputs, j);
                     result += current;
                 }
                 return result;
             } else {
                 double derivative = 0;
-                for (int i = 0; i < Variable.size(); ++i) {
-                    derivative += Variable.get(i).derive(input, d, j);
+                for (int i = 0; i < src.size(); ++i) {
+                    derivative += src.get(i).derive(inputs, d, j);
                 }
                 return derivative;
             }
         }
 
         @Contract(pure = true)
-        private static double addition(double[] input, int d, ArrayList<IFunction> Variable) {
+        private static double addition(double[] inputs, int d, ArrayList<IFunction> src) {
             if (d < 0) {
-                double result = Variable.get(0).activate(input);
-                for (int Vi = 1; Vi < Variable.size(); Vi++) {
-                    final double current = Variable.get(Vi).activate(input);
+                double result = src.get(0).activate(inputs);
+                for (int Vi = 1; Vi < src.size(); Vi++) {
+                    final double current = src.get(Vi).activate(inputs);
                     result += current;
                 }
                 return result;
             } else {
                 double derivative = 0;
-                for (int i = 0; i < Variable.size(); ++i) {
-                    derivative += Variable.get(i).derive(input, d);
+                for (int i = 0; i < src.size(); ++i) {
+                    derivative += src.get(i).derive(inputs, d);
                 }
                 return derivative;
             }
