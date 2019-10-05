@@ -145,7 +145,7 @@ public class Tsr {
             Device device = (Device) this.find(Device.class);
             this.setGradientIsTargeted(true);
             device.add(g);
-            device.execute(new Tsr[]{this, this, g}, 17, -1);
+            device.execute(new Tsr[]{this, g}, IFunction.TYPES.LOOKUP.get("<"), -1);
             device.get(g);
             this.setGradientIsTargeted(false);
             //device.overwrite(this, g, true);
@@ -633,6 +633,9 @@ public class Tsr {
     }
 
     public Tsr backward(Tsr error) {
+        if(this.isOutsourced()){
+            this.device().add(error);
+        }
         if (this.rqsGradient()) {
             this.addToGradient(error);
         }

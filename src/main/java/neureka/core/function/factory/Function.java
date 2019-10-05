@@ -285,7 +285,7 @@ public abstract class Function implements IFunction {
                     for (int ii = 0; ii < inputs.length; ii++) {
                         inp[ii] = inputs[ii].value()[i];
                     }
-                    finalOutput.value()[i] = _scalar_activation(inp, j, d);//TODO: MAKE SCALAR ACTIVATION CONFORM!
+                    finalOutput.value()[i] = _scalar_activation(inp, j, d);
                 });
                 return  output;
             }

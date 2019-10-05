@@ -3,9 +3,13 @@ package neureka.core.function.factory.autograd;
 import neureka.core.Tsr;
 import neureka.core.function.IFunction;
 import neureka.core.function.factory.Function;
+import neureka.core.function.factory.assembly.FunctionBuilder;
 
 public class GraphBuilder
 {
+    private static IFunction MUL = FunctionBuilder.build("(I[0]*I[1])", false);
+    private static IFunction ADD = FunctionBuilder.build("(I[0]+I[1])", false);
+
     public static void connect(Tsr output, Tsr[] inputs, IFunction function){//, boolean derive
         if(!function.isFlat()){
            return;
@@ -21,7 +25,7 @@ public class GraphBuilder
                 for(Tsr input : inputs){
                     GraphNode src_node = ((GraphNode) input.find(GraphNode.class));
                     if(src_node.function()!=null && src_node.function().id()==IFunction.TYPES.LOOKUP.get("x")){
-                        Tsr d = function.derive(inputs, i);//TODO: is this ever used? / visited?
+                        Tsr d = function.derive(inputs, i);//TODO: is this ever used? / visited? - yes but why?
                         node.put(input, d);// Sources created by x-mul are revers-mode cases!
                     }else{
                         if(src_node.usesAD()){
@@ -37,11 +41,10 @@ public class GraphBuilder
                                      * */
                                     if(node.has(t)){
                                         Tsr dg = node.get(t);
-                                        node.put(t, Function.exec.addition(dg, Function.exec.multiplication(d, g)));
+                                        node.put(t, ADD.activate(new Tsr[]{dg, MUL.activate(new Tsr[]{d, g})}));
                                     }else{
-                                        node.put(t, Function.exec.multiplication(d, g));
-                                    }
-                                    //TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
+                                        node.put(t, MUL.activate(new Tsr[]{d, g}));
+                                    }//TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
                                 });
                             }
                         }
