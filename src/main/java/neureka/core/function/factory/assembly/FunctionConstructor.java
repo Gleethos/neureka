@@ -14,7 +14,7 @@ public class FunctionConstructor
     public static IFunction construct(int f_id, ArrayList<IFunction> sources, boolean doAD)
     {
         boolean isFlat = true;
-        for(IFunction f : sources){
+        for(IFunction f : sources){// Function does only reference tip nodes of the function graph:
             isFlat = ((f instanceof FInput) || (f instanceof FVariable) || (f instanceof FConstant)) && isFlat;
         }
         if(f_id<=9) {// FUNCTIONS:
@@ -46,11 +46,13 @@ public class FunctionConstructor
                 }
                 @Override
                 public double derive(final double[] inputs, final int index, final int j) {
-                    return _scalar_activation(sources.get(0).activate(inputs, j), true) * sources.get(0).derive(inputs, index, j);
+                    return _scalar_activation(sources.get(0).activate(inputs, j), true)
+                            * sources.get(0).derive(inputs, index, j);
                 }
                 @Override
                 public double derive(final double[] inputs, final int index) {
-                    return _scalar_activation(sources.get(0).activate(inputs), true) * sources.get(0).derive(inputs, index);
+                    return _scalar_activation(sources.get(0).activate(inputs), true)
+                            * sources.get(0).derive(inputs, index);
                 }
             };
         }else{

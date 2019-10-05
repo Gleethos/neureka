@@ -302,7 +302,8 @@ public abstract class Function implements IFunction {
         return tsrs;
     }
 
-    private Tsr[] _source_activation(Tsr[] input, int j, int[] templateShape) {//TODO: Check if on same device!
+    private Tsr[] _source_activation(Tsr[] input, int j, int[] templateShape)
+    {//TODO: Check if on same device!
         boolean shareDevice = _shareGuestDevice(input);
         Tsr[] tsrs = new Tsr[_src.size()];
         for (int i = 0; i < tsrs.length; i++) {//constants need to be figured out!
@@ -538,46 +539,41 @@ public abstract class Function implements IFunction {
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-        private static double[] activated(double[] input, ArrayList<IFunction> Variable){
-            double[] activated = new double[input.length];
-            for (int Ii = 0; Ii < input.length; Ii++) {
-                activated[Ii] += Variable.get(0).activate(input, Ii);
-            }
-            return activated;
-        }
-
-        //---
-        @Contract(pure = true)
         private static double summation(double[] input, int j, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
-                return summation(activated(input, Variable), d);
+                double sum = 0;
+                boolean nothingDone = true;
+                for (int Ii = 0; Ii < input.length; Ii++) {
+                    sum += Variable.get(0).activate(input, Ii);
+                    nothingDone = false;
+                }
+                if (nothingDone) {
+                    return Variable.get(0).activate(input);
+                }
+                return sum;
             } else {
                 return Variable.get(0).derive(input, d, j);
             }
         }
 
-        @Contract(pure = true)
         private static double summation(double[] input, int d, ArrayList<IFunction> Variable) {
             if (d < 0) {
-                return summation(activated(input, Variable), d);
+                double sum = 0;
+                boolean nothingDone = true;
+                for (int Ii = 0; Ii < input.length; Ii++) {
+                    sum += Variable.get(0).activate(input, Ii);
+                    nothingDone = false;
+                }
+                if (nothingDone) {
+                    return Variable.get(0).activate(input);
+                }
+                return sum;
             } else {
                 return Variable.get(0).derive(input, d);
             }
 
         }
 
-        @Contract
-        private static double summation(double[] input, int d){
-            if (d < 0) {
-                double sum = 0;
-                for (int Ii = 0; Ii < input.length; Ii++) {
-                    sum += input[Ii];
-                }
-                return sum;
-            } else {
-                return 1;
-            }
-        }
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         private static double PI(double[] input, int j, int d, ArrayList<IFunction> Variable) {
@@ -609,6 +605,9 @@ public abstract class Function implements IFunction {
 
         @Contract(pure = true)
         private static double PI(double[] input, int d, ArrayList<IFunction> Variable) {
+            if(true){
+               // return  PI(activated(input,))
+            }
             if (d < 0) {
                 double prod = 1;
                 boolean nothingDone = true;

@@ -20,8 +20,8 @@ public class GraphBuilder
                 int i = 0;
                 for(Tsr input : inputs){
                     GraphNode src_node = ((GraphNode) input.find(GraphNode.class));
-                    if(src_node.function()!=null && src_node.function().id()==18){
-                        Tsr d = function.derive(inputs, i);
+                    if(src_node.function()!=null && src_node.function().id()==IFunction.TYPES.LOOKUP.get("x")){
+                        Tsr d = function.derive(inputs, i);//TODO: is this ever used? / visited?
                         node.put(input, d);// Sources created by x-mul are revers-mode cases!
                     }else{
                         if(src_node.usesAD()){
@@ -45,8 +45,8 @@ public class GraphBuilder
                                 });
                             }
                         }
-                        i++;
                     }
+                    i++;
                 }
             }else if(node.usesReverseAD()) {
                 int i = 0;
