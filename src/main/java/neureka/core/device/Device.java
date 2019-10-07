@@ -205,7 +205,7 @@ public class Device {
                             (
                                     (tsrs[1].isVirtual() || tsrs[2].isVirtual())
                                             ||
-                                            (!tsrs[1].isOutsourced() && tsrs[1].size() == 1 || !tsrs[2].isOutsourced() && tsrs[2].size() == 1)
+                                    (!tsrs[1].isOutsourced() && tsrs[1].size() == 1 || !tsrs[2].isOutsourced() && tsrs[2].size() == 1)
                             )
             ) {
                 if (tsrs[2].isVirtual() || tsrs[2].size() == 1) {
@@ -311,24 +311,38 @@ public class Device {
 
     }
 
-    public void calculate_on_CPU(Tsr drn, Tsr t1, Tsr t2, int f_id, int d) {
+    public void calculate_on_CPU(Tsr[] tsrs, int f_id, int d)
+    {
         System.out.println("TEST STARTS:");
         System.out.println(stringified(_kernel.values()));
         System.out.println(stringified(_kernel.pointers()));
         System.out.println(stringified(_kernel.shapes()));
         System.out.println(stringified(_kernel.translations()));
         int[] m;
-        if (f_id < 7) {
-            m = new int[]{f_id, _register[0][_tensors_map.get(drn)], _register[0][_tensors_map.get(t1)], (t2 != null) ? _register[0][_tensors_map.get(t2)] : d};
-        } else if (f_id < 12) {
-            m = new int[]{f_id, _register[0][_tensors_map.get(drn)], _register[0][_tensors_map.get(t1)], d};
-        } else {
-            m = new int[]{f_id, _register[0][_tensors_map.get(drn)], _register[0][_tensors_map.get(t1)], _register[0][_tensors_map.get(t2)], d};
-        }
         byte gradPtrMod = 0;
-        gradPtrMod += (drn.gradientIsTargeted())?1:0;
-        gradPtrMod += (t1.gradientIsTargeted())?2:0;
-        gradPtrMod += (t2.gradientIsTargeted())?4:0;
+        if(tsrs.length==3){
+            Tsr drn = tsrs[0];
+            Tsr t1 = tsrs[1];
+            Tsr t2 = tsrs[2];
+
+            if (f_id < 7) {
+                m = new int[]{f_id, _register[0][_tensors_map.get(drn)], _register[0][_tensors_map.get(t1)], (t2 != null) ? _register[0][_tensors_map.get(t2)] : d};
+            } else if (f_id < 12) {
+                m = new int[]{f_id, _register[0][_tensors_map.get(drn)], _register[0][_tensors_map.get(t1)], d};
+            } else {
+                m = new int[]{f_id, _register[0][_tensors_map.get(drn)], _register[0][_tensors_map.get(t1)], _register[0][_tensors_map.get(t2)], d};
+            }
+            gradPtrMod += (drn.gradientIsTargeted())?1:0;
+            gradPtrMod += (t1.gradientIsTargeted())?2:0;
+            gradPtrMod += (t2.gradientIsTargeted())?4:0;
+        } else {
+            m = new int[tsrs.length+2];
+            m[0] = f_id;
+            m[m.length-1] = d;
+            for(int i=1; i<m.length-1; i++){
+                m[i] = _register[0][_tensors_map.get(tsrs[i-1])];
+            }
+        }
         int size = _kernel.executionSizeOf_calc(m, gradPtrMod);
         _kernel.resetGradPtr(gradPtrMod);
         System.out.println("size: " + size);

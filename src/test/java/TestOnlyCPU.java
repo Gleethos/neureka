@@ -84,6 +84,12 @@ public class TestOnlyCPU {
         w = new Tsr(new int[]{1}, -2);
         z = new Tsr(new Tsr[]{x, b, w}, "I0*i1*i2");
         tester.testTensor(z, new String[]{"[1]:(30.0)"});
+
+        x = new Tsr(new int[]{1}, 4).setRqsGradient(true);
+        b = new Tsr(new int[]{1}, 0.5);
+        w = new Tsr(new int[]{1}, 0.5);
+        y = new Tsr(new Tsr[]{x, b, w}, "(2^i0^i1^i2^2");
+        tester.testTensor(y, new String[]{"[1]:(4.0);", " ->d[1]:(1.3862943611198906), "});
         //===
         Thread.sleep(6000);
         tester.closeWindows();

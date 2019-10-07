@@ -526,9 +526,15 @@ public class TestBroad {
         x = new Tsr(new int[]{1}, 4).setRqsGradient(true);
         b = new Tsr(new int[]{1}, 0.5);
         w = new Tsr(new int[]{1}, 0.5);
-        y = new Tsr(new Tsr[]{x, b, w}, "(2^i0^i1^i2^2");//TODO: fix!
+        gpu.add(x).add(b).add(w);
+        y = new Tsr(new Tsr[]{x, b, w}, "(2^i0^i1^i2^2");
         tester.testTensor(y, new String[]{"[1]:(4.0);", " ->d[1]:(1.3862943611198906), "});
-        //tester.testShareDevice(gpu, new Tsr[]{y, x, b, w});
+        //Tsr test1 = new Tsr(2);
+        //Tsr test2 = new Tsr(2);
+        //Tsr out = new Tsr(0);
+        //gpu.add(test2).add(test1).add(out);
+        //gpu.calculate_on_CPU(new Tsr[]{out, test1, x, b, w, test2}, 12, 1);
+        tester.testShareDevice(gpu, new Tsr[]{y, x, b, w});
 
         //====
         x = new Tsr(new int[]{1}, 3);

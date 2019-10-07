@@ -738,25 +738,25 @@ public class TensorKernel extends com.aparapi.Kernel
             for (int i = 2; i < __n(); i++) {
                 _values[__i(gid, 1)] = Math.pow(_values[__i(gid, 1)], _values[__i(gid, 1+i)]);
             }
-        } else {
             /**Note:
              * the right side (of x) can be simplified by multiplying!
              * The formular always looks like this:  a^(x*b)
              * **/
-            double b = 1;
-            for (int i = __d()+1; i < __n(); i++) {
-                b *= _values[__i(gid, 2+i)];
-            }
-            double a = 1;
-            for(int i=0; i<__d(); i++){
-                a *= _values[__i(gid, 2+i)];
-            }
-            if(__d()==0){
-                _values[__i(gid, 1)] = b*Math.pow(_values[__i(gid, 2)], b-1);
-            } else {
-                _values[__i(gid, 1)] = b*Math.log(a);//TODO: check if this is right!
-            }
-
+        } else {
+                double out = 0;
+                double b = 1;
+                for (int i = 2; i < __n(); i++) {
+                    b *= (((i-1)==__d())?1:_values[__i(gid, i+1)]);
+                }
+                double a = _values[__i(gid, 2)];
+                for(int si=0; si<__n(); si++){
+                    if(si==0){
+                        out += (__d()==0)?a*b*Math.pow(a, b-1):0;
+                    } else {
+                        out += (a>=0 && __d()==si)?_values[__i(gid, 2+si)]*b*Math.log(a):0;
+                    }
+                }
+                _values[__i(gid, 1)] = out;
         }
     }
     private void _run_broadcast_pow(int gid){

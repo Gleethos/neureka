@@ -166,7 +166,8 @@ public abstract class Function implements IFunction {
     {
         /**  The code below deals with deep functions (non flat):  * */
         if (d < 0 && !_isFlat)
-        {//only flat functions can be executed
+        {
+            /** only flat functions can be executed **/
             if (TYPES.isFunction(_id)) {
                 return (FunctionBuilder.build(TYPES.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).activate(inputs));
             } else {
@@ -196,14 +197,15 @@ public abstract class Function implements IFunction {
                     }
                 }
             }
+        } else {
+            /**  The following code is reached in flat functions only:  * */
+            Tsr output = _execute(inputs, j, d);
+            /**  Autograd-Graph will be generated below for the new GraphNode: **/
+            if (d < 0 && _doAD) {
+                GraphBuilder.connect(output, inputs, this);
+            }
+            return output;
         }
-        /**  The following code is reached in flat functions only:  * */
-        Tsr output = _execute(inputs, j, d);
-        /**  Autograd-Graph will be generated below for the new GraphNode: **/
-        if (d < 0 && _doAD) {
-            GraphBuilder.connect(output, inputs, this);
-        }
-        return output;
     }
 
     private Tsr _execute(Tsr[] inputs, int j, int d)
@@ -213,8 +215,14 @@ public abstract class Function implements IFunction {
         if (onSameDevice)
         {
             Tsr[] tsrs = new Tsr[1 + _src.size()];//input.length];
-            for (int ii = 1; ii < tsrs.length; ii++) {
-                tsrs[ii] = _src.get(ii-1).activate(inputs);//input[ii - 1];
+            boolean adjusted = false;
+            for (int i = 1; i < tsrs.length; i++) {
+                tsrs[i] = _src.get(i-1).activate(inputs);//input[ii - 1];
+                System.out.println(d+" - "+i);
+                if(!adjusted && d>=0 && inputs[d]==tsrs[i]){
+                    d = i-1;
+                    adjusted = true;
+                }
             }
             device.execute(tsrs, _id, d);
             return tsrs[0];
@@ -281,11 +289,12 @@ public abstract class Function implements IFunction {
                 double[] inp = new double[inputs.length];
                 Tsr output = Tsr.factory.newTensor(inputs[0].shape(), inputs[0].translation());
                 Tsr finalOutput = output;
+                int _d = d;
                 output.foreach((i) -> {
                     for (int ii = 0; ii < inputs.length; ii++) {
                         inp[ii] = inputs[ii].value()[i];
                     }
-                    finalOutput.value()[i] = _scalar_activation(inp, j, d);
+                    finalOutput.value()[i] = _scalar_activation(inp, j, _d);
                 });
                 return  output;
             }
@@ -328,9 +337,9 @@ public abstract class Function implements IFunction {
         if(shareDevice){
             Device shared = (Device) tsrs[0].find(Device.class);
             if(tsrs.length>2){// Constant sources will be converted into full Tensors and stored on the gpu!
-                for(Tsr t : tsrs){
-                    if(!t.isOutsourced()){
-                        shared.add(t);
+                for(int i=0; i<tsrs.length; i++){
+                    if(!tsrs[i].isOutsourced()){
+                        shared.add(tsrs[i]);
                     }
                 }
             }
@@ -632,12 +641,13 @@ public abstract class Function implements IFunction {
                 return ud;
             }
         }
-
-        //TODO: ...
-
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        // d/dx(f(x)^g(x))=
+        // f(x)^g(x) * d/dx(g(x)) * ln(f(x))
+        // + f(x)^(g(x)-1) * g(x) * d/dx(f(x))
         @Contract(pure = true)
-        private static double power(double[] inputs, int j, int d, ArrayList<IFunction> src) {
+        private static double power(double[] inputs, int d, int j, ArrayList<IFunction> src) {
             if (d < 0) {
                 double result = src.get(0).activate(inputs, j);
                 for (int i = 1; i < src.size(); i++) {
@@ -646,22 +656,20 @@ public abstract class Function implements IFunction {
                 }
                 return result;
             } else {
-                // d/dx(f(x)^g(x))=
-                //	f(x)^g(x) * d/dx(g(x)) * ln(f(x))
-                //	+ f(x)^(g(x)-1) * g(x) * d/dx(f(x))
-                double fg, dg, lnf;
-                double f = src.get(0).activate(inputs, j);
-                double df = src.get(0).derive(inputs, d, j);
-                double g;
-                for (int i = 0; i < src.size() - 2; i++) {
-                    g = src.get(i + 1).activate(inputs, j);
-                    fg = f * g;
-                    dg = src.get(i + 1).derive(inputs, d, j);
-                    lnf = Math.log(f);
-                    df = fg * dg * lnf + f * (g - 1) * g * df;
-                    f = Math.pow(f, g);
+                double out = 0;
+                for(int si=0; si<src.size(); si++){
+                    double b = 1;
+                    for (int i = 1; i < src.size(); i++) {
+                        b *= (i==d)?1:src.get(i).activate(inputs, j);
+                    }
+                    if(si==0){
+                        out += src.get(0).derive(inputs, d, j)*b*Math.pow(src.get(0).activate(inputs, j), b-1);
+                    } else {
+                        double a = src.get(0).activate(inputs, j);
+                        out += (a>=0)?src.get(si).derive(inputs, d, j)*b*Math.log(a):0;
+                    }
                 }
-                return df;
+                return out;
             }
         }
 
@@ -676,11 +684,11 @@ public abstract class Function implements IFunction {
                 return result;
             } else {
                 double out = 0;
+                double b = 1;
+                for (int i = 1; i < src.size(); i++) {
+                    b *= (i==d)?1:src.get(i).activate(inputs);
+                }
                 for(int si=0; si<src.size(); si++){
-                    double b = 1;
-                    for (int i = 1; i < src.size(); i++) {
-                        b *= (i==d)?1:src.get(i).activate(inputs);// _values[__i(gid, 2+i)];
-                    }
                     if(si==0){
                         out += src.get(0).derive(inputs, d)*b*Math.pow(src.get(0).activate(inputs), b-1);
                     } else {
