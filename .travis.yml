@@ -12,8 +12,8 @@ env:
 
 before_install:
   - chmod +x gradlew
-  - sudo apt update
-  - sudo apt install ocl-icd-opencl-dev
+  - sudo apt-get update
+  #- sudo apt install ocl-icd-opencl-dev
   #- sudo apt-get -qq update
 
 script:

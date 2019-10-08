@@ -1,25 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a07ad3e8-8754-4b05-b853-df2665879cc4" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/resourceHashesCache.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/jarAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/jarAnalysis.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/taskHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/Tsr.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/Tsr.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/TestBroad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestBroad.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/TestOnlyCPU.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestOnlyCPU.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/util/NTester.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/util/NTester.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/util/NTester_Tensor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/util/NTester_Tensor.java" afterDir="false" />
-    </list>
+    <list default="true" id="a07ad3e8-8754-4b05-b853-df2665879cc4" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -82,8 +64,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/test/java/TestBroad.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="265">
-              <caret line="570" column="34" selection-start-line="570" selection-start-column="34" selection-end-line="570" selection-end-column="34" />
+            <state relative-caret-position="404">
+              <caret line="557" column="9" lean-forward="true" selection-start-line="557" selection-start-column="9" selection-end-line="557" selection-end-column="9" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -291,7 +273,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-15" />
     <option name="width" value="1948" />
     <option name="height" value="2075" />
@@ -406,7 +388,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1570569100893" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1570571763317" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -580,14 +562,11 @@
       <workItem from="1570398163151" duration="725000" />
       <workItem from="1570427036547" duration="21066000" />
       <workItem from="1570533313537" duration="168000" />
-      <workItem from="1570551879612" duration="11531000" />
+      <workItem from="1570551879612" duration="12238000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="neureka_[test] - 2019.10.08 at 22h 53m 41s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
     <history-entry file="neureka_[test] - 2019.10.08 at 22h 57m 09s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
@@ -615,12 +594,16 @@
     <history-entry file="neureka_[test] - 2019.10.08 at 23h 07m 02s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
+    <history-entry file="neureka_[test] - 2019.10.08 at 23h 11m 28s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="284256000" />
+    <option name="totallyTimeSpent" value="284963000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="0" width="779" height="830" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Structure" order="0" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="1" />
@@ -1169,8 +1152,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/TestBroad.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="265">
-          <caret line="570" column="34" selection-start-line="570" selection-start-column="34" selection-end-line="570" selection-end-column="34" />
+        <state relative-caret-position="404">
+          <caret line="557" column="9" lean-forward="true" selection-start-line="557" selection-start-column="9" selection-end-line="557" selection-end-column="9" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
