@@ -1,8 +1,11 @@
 
 import neureka.core.Tsr;
 import neureka.core.device.Device;
+import neureka.core.device.KernelFP32;
+import neureka.core.device.KernelFP64;
 import neureka.core.function.IFunction;
 import org.junit.Test;
+import util.NTester;
 import util.NTester_Function;
 import util.NTester_Tensor;
 import util.NTester_TensorDevice;
@@ -148,13 +151,13 @@ public class TestBroad {
                 new Tsr[]{tensor1, tensor2},
                 "lig(tanh(I[0]*I[1]*2)*I[1])",
                 new String[]{
-                        "[2]:(4.010500886001868, 4.010500886001868); ",
-                        "=>d|[ [2]:(3.9275027410108176, 3.9275027410108176) ]|" +
-                                ":t{ [2]:(0.9980525784828885, 0.9980525784828885); ",
-                        "=>d|[ [2]:(0.015564202334630739, 0.015564202334630739) ]|:t{ [2]:(4.0, 4.0) }, ",
-                        "=>d|[ [2]:(0.031128404669261478, 0.031128404669261478) ]|:t{ [2]:(2.0, 2.0) }, ",
+                        "[2]:(4.0105E0, 4.0105E0); ",
+                        "=>d|[ [2]:(3.9275E0, 3.9275E0) ]|" +
+                                ":t{ [2]:(0.99805E0, 0.99805E0); ",
+                        "=>d|[ [2]:(0.01556E0, 0.01556E0) ]|:t{ [2]:(4.0, 4.0) }, ",
+                        "=>d|[ [2]:(0.03112E0, 0.03112E0) ]|:t{ [2]:(2.0, 2.0) }, ",
                         "}, ",
-                        "=>d|[ [2]:(0.9799635594161147, 0.9799635594161147) ]|" +
+                        "=>d|[ [2]:(0.97996E0, 0.97996E0) ]|" +
                                 ":t{ [2]:(4.0, 4.0) }, "
                 }
         );
@@ -200,7 +203,7 @@ public class TestBroad {
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1},
                 "cos(tanh(lig(i0)))",
-                new String[]{"[2]:(0.6998554841989726, 0.6177112361351595); =>d|[ [2]:(-0.1916512536291578, -0.12539562877521598) ]|:t{ [2]:(1.0, 2.0) }, "}
+                new String[]{"[2]:(0.69985E0, 0.61771E0); =>d|[ [2]:(-0.19165E0, -0.12539E0) ]|:t{ [2]:(1.0, 2.0) }, "}
         );
         //---
         //=====================
@@ -438,7 +441,7 @@ public class TestBroad {
                 new Tsr[]{tensor1},
                 "lig(I[0])",
                 new String[]{
-                        "[3x5]:(2.1269280110429722, 3.048587351573742, 5.006715348489118, 0.01814992791780978, 6.00247568513773, 2.1269280110429722, 0.006715348489117967, 0.1269280110429726, 0.31326168751822286, 2.1269280110429722, 4.0181499279178094, 0.31326168751822286, 1.3132616875182228, 2.1269280110429722, 7.000911466453774)"
+                        "[3x5]:(2.12693E0, 3.04859E0, 5.00672E0, 0.01814E0, 6.00248E0, 2.12693E0, 0.00671E0, 0.12692E0, 0.31326E0, 2.12693E0, 4.01815E0, 0.31326E0, 1.31326E0, 2.12693E0, 7.00091E0)"
                 });
         //===================
         tensor1 = new Tsr(new int[]{2}, 3);
@@ -528,7 +531,7 @@ public class TestBroad {
         w = new Tsr(new int[]{1}, 0.5);
         gpu.add(x).add(b).add(w);
         y = new Tsr(new Tsr[]{x, b, w}, "(2^i0^i1^i2^2");
-        tester.testTensor(y, new String[]{"[1]:(4.0);", " ->d[1]:(1.3862943611198906), "});
+        tester.testTensor(y, new String[]{"[1]:(4.0);", " ->d[1]:(1.38629E0), "});
         tester.testShareDevice(gpu, new Tsr[]{y, x, b, w});
 
         //====
@@ -554,7 +557,31 @@ public class TestBroad {
             return;
         }
         NTester_TensorDevice tester = new NTester_TensorDevice("Testing tensor device");
-        Device gpu = new Device("nvidia");
+
+        Device gpu = new Device("nvidia FP32");
+        tester.testContains(
+                (gpu.getKernel() instanceof KernelFP32)?"FP32":"FP64",
+                new String[]{"FP32"},
+                "Test device kernel FP-Type");
+        _testFP(gpu, tester);
+
+        gpu = new Device("nvidia FP64");
+        tester.testContains(
+                (gpu.getKernel() instanceof KernelFP64)?"FP62":"FP34",
+                new String[]{"FP34"},
+                "Test device kernel FP-Type");
+        _testFP(gpu, tester);
+
+        System.out.println("Done!");
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        tester.closeWindows();
+    }
+
+    private void _testFP(Device gpu, NTester_TensorDevice tester){
         Tsr tensor = Tsr.factory.newTensor(new double[]{1, 3, 4, 2, -3, 2, -1, 6}, new int[]{2, 4});
         Tsr firstTensor = tensor;
         tester.testAddTensor(gpu, tensor,
@@ -698,13 +725,6 @@ public class TestBroad {
         );
         //---
         gpu.getKernel().dispose();
-        System.out.println("Done!");
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        tester.closeWindows();
     }
 
 

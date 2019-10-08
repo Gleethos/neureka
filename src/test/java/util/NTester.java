@@ -1,4 +1,5 @@
 package util;
+import neureka.core.Tsr;
 import org.junit.Assert;
 import neureka.frame.NMessageFrame;
 
@@ -172,7 +173,7 @@ public class NTester extends Assert
         }
         String result = "";
         for(double ai : a) {
-            result += ai+", ";
+            result += Tsr.factory.util.formatFP(ai)+", ";
         }
         return result;
     }

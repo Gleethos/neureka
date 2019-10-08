@@ -56,7 +56,7 @@ public class Device {
                 _device.setSharedMemory(false);// GPU's (!cpu's) don't share host memory!
             }
             name = name.toUpperCase();
-            boolean useFP64 = true;
+            boolean useFP64 = false;
             useFP64 = useFP64 || name.contains("FP64") || name.contains("DOUBLE");
             _kernel = (useFP64)?new KernelFP64():new KernelFP32();
             System.out.println("Device of new kernel:\n------------");

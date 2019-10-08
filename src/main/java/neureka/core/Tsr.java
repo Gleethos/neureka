@@ -371,17 +371,18 @@ public class Tsr {
     }
 
     private String _stringified(double[] v, boolean format){
-        DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.US);
-        DecimalFormat Formatter = new DecimalFormat("###.###E0", formatSymbols);
         String asString = "";
         int size = (this.isVirtual() ? this.size() : v.length);
         int trim = (size-50);
         size = (trim>0)?50:size;
         for (int i = 0; i < size; i++) {
-            asString +=
-                ((format)
-                    ?Formatter.format(v[(this.isVirtual())? 0 : i])
-                    :v[(this.isVirtual()) ? 0 : i]);
+            String vStr;
+            if(format){
+                vStr = factory.util.formatFP(v[(this.isVirtual()) ? 0 : i]);
+            } else {
+                vStr = String.valueOf(v[(this.isVirtual()) ? 0 : i]);
+            }
+            asString += vStr;
             if (i < size - 1) {
                 asString += ", ";
             } else if(trim>0){
@@ -392,7 +393,7 @@ public class Tsr {
     }
 
     public String toString() {
-        return toString("dg");
+        return toString("dgc");
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -876,6 +877,25 @@ public class Tsr {
          * UTILITY FUNCTIONS:
          */
         public static class util {
+
+            @Contract(pure = true)
+            public static String formatFP(double v){
+                DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.US);
+                DecimalFormat Formatter = new DecimalFormat("##0.0##E0", formatSymbols);
+                String vStr = String.valueOf(v);
+                if(vStr.length()>7){
+                    if(vStr.substring(0, 2).equals("0.")){
+                        vStr = vStr.substring(0, 7)+"E0";
+                    } else if(vStr.substring(0, 3).equals("-0.")){
+                        vStr = vStr.substring(0, 8)+"E0";
+                    } else {
+                        vStr = Formatter.format(v);
+                        vStr = (!vStr.contains(".0E0"))?vStr:vStr.replace(".0E0",".0");
+                        vStr = (vStr.contains("."))?vStr:vStr.replace("E0",".0");
+                    }
+                }
+                return vStr;
+            }
 
             @Contract(pure = true)
             public static void increment(@NotNull int[] shpIdx, @NotNull int[] shape) {

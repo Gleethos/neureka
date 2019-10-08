@@ -38,7 +38,7 @@ public class NTester_Tensor extends NTester {
         println(BAR +"  IFunction: "+operation);
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         Tsr product = new Tsr(source, operation);
-        String result = product.toString("r");
+        String result = product.toString("rc");
         for(String element : expected){
             this.assertStringContains("result", result, element);
         }
@@ -51,7 +51,7 @@ public class NTester_Tensor extends NTester {
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         Tsr product = new Tsr(source, operation);
         product.backward(error);
-        String result = product.toString("r");
+        String result = product.toString("rc");
         for(String element : expected){
             this.assertStringContains("result", result, element);
         }
@@ -127,7 +127,7 @@ public class NTester_Tensor extends NTester {
         for(int i=0; i<result.length; i++){
             if(expected[i]!=null && expected[i].length!=0){
                 String[] parts = expected[i];
-                String str = result[i].toString("rdg");
+                String str = result[i].toString("rdgc");
                 for(String part : parts){
                     this.assertStringContains("tensor["+i+"]", str, part);
                 }

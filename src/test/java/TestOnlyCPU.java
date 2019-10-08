@@ -89,7 +89,7 @@ public class TestOnlyCPU {
         b = new Tsr(new int[]{1}, 0.5);
         w = new Tsr(new int[]{1}, 0.5);
         y = new Tsr(new Tsr[]{x, b, w}, "(2^i0^i1^i2^2");
-        tester.testTensor(y, new String[]{"[1]:(4.0);", " ->d[1]:(1.3862943611198906), "});
+        tester.testTensor(y, new String[]{"[1]:(4.0);", " ->d[1]:(1.38629E0), "});
         //===
         Thread.sleep(6000);
         tester.closeWindows();
@@ -118,15 +118,20 @@ public class TestOnlyCPU {
         IFunction tanh = FunctionBuilder.build("tanh(i0)", true);
         IFunction tenxx = FunctionBuilder.build("i0*100", true);
         z = tenxx.activate(new Tsr[]{tanh.activate(new Tsr[]{x})});
-        tester.testTensor(z, new String[]{"[1]:(9.950371902099892)"});
+        tester.testTensor(z, new String[]{"[1]:(9.95037E0)"});
         z.backward(new Tsr(new int[]{1}, 1));
-        tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.00990099009901)"});
-        tester.testTensor(z, new String[]{"[1]:(9.950371902099892); ->d[1]:(99.00990099009901), "});
+        tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.0099E0)"});
+        tester.testTensor(z, new String[]{"[1]:(9.95037E0); ->d[1]:(99.0099E0), "});
         //---
         tester.testContains(
                 z.toString("dgc"),
                 new String[]{"[1]:(9.95037E0); ->d[1]:(99.0099E0),"},
                 "test double formatting"
+        );
+        tester.testContains(
+                new Tsr(3).toString("dgc"),
+                new String[]{"[1]:(3.0)"},
+                "test FP formatting"
         );
         tester.closeWindows();
     }
