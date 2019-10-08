@@ -77,6 +77,32 @@ Convolution:
          * */
 ```
 
+GPU execution:
+```
+        Device gpu = new Device("nvidia FP64");
+        x = new Tsr(
+                new int[]{3, 3},
+                new double[]{
+                        1, 2, 5,
+                        -1, 4, -2,
+                        -2, 3, 4,
+                }
+        );
+        y = new Tsr(
+                new int[]{2, 2},
+                new double[]{
+                        -1, 3,
+                        2, 3,
+                });
+        gpu.add(x).add(y);        
+        z = new Tsr(new Tsr[]{x, y}, "I0xi1");// <= executed on gpu!
+        z.toString(): "[2x2]:(15.0, 15.0, 18.0, 8.0), "
+        z.backward(new Tsr(new int[]{2, 2}, 1));
+        /**
+         *   y.toString(): "[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)"    
+         * */
+```
+
 
 You can also:
   - Create a computation graph via a gui interface in JavaFX
