@@ -214,17 +214,17 @@ public abstract class Function implements IFunction {
         boolean onSameDevice = _shareGuestDevice(inputs) && TYPES.REGISTER[_id] != "," && !(TYPES.isConvection(_id) && d > -1);
         if (onSameDevice)
         {
-            Tsr[] tsrs = new Tsr[1 + _src.size()];//input.length];
+            Tsr[] tsrs = new Tsr[1 + _src.size()];
+            int new_d = d;
             boolean adjusted = false;
             for (int i = 1; i < tsrs.length; i++) {
-                tsrs[i] = _src.get(i-1).activate(inputs);//input[ii - 1];
-                System.out.println(d+" - "+i);
+                tsrs[i] = _src.get(i-1).activate(inputs);
                 if(!adjusted && d>=0 && inputs[d]==tsrs[i]){
-                    d = i-1;
-                    adjusted = true;
+                    new_d = i-1;//The index of the derivative is adjusted here.
+                    adjusted = true;// ...this occurs when source nodes are constants!
                 }
             }
-            device.execute(tsrs, _id, d);
+            device.execute(tsrs, _id, new_d);
             return tsrs[0];
 
         } else {
@@ -294,7 +294,7 @@ public abstract class Function implements IFunction {
                     for (int ii = 0; ii < inputs.length; ii++) {
                         inp[ii] = inputs[ii].value()[i];
                     }
-                    finalOutput.value()[i] = _scalar_activation(inp, j, _d);
+                    finalOutput.value()[i] = _scalar_activation(inp, j, d);
                 });
                 return  output;
             }

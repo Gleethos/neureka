@@ -2,6 +2,7 @@ package util;
 
 import neureka.core.Tsr;
 import neureka.core.device.Device;
+import neureka.core.device.KernelFP64;
 import neureka.core.device.TensorKernel;
 
 public class NTester_TensorDevice extends NTester {

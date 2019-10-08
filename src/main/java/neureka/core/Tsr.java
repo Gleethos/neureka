@@ -26,7 +26,7 @@ public class Tsr {
 
     static {
         CONFIGS = new HashMap<>();//The things we do for memory
-        CPU = new Device(null);//<= creates CPU-Aparapi-TensorKernel
+        CPU = new Device(null);//<= creates CPU-Aparapi-KernelFP64
     }
     //-----------------------------------------------------------------------
 

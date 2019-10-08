@@ -55,7 +55,10 @@ public class Device {
             if (!_device.getType().toString().toLowerCase().contains("cpu")) {
                 _device.setSharedMemory(false);// GPU's (!cpu's) don't share host memory!
             }
-            _kernel = new TensorKernel();
+            name = name.toUpperCase();
+            boolean useFP64 = true;
+            useFP64 = useFP64 || name.contains("FP64") || name.contains("DOUBLE");
+            _kernel = (useFP64)?new KernelFP64():new KernelFP32();
             System.out.println("Device of new kernel:\n------------");
             System.out.println(_kernel.getTargetDevice().toString());
         }
@@ -255,7 +258,7 @@ public class Device {
                                 _kernel.executionSizeOf_calc(mode, gradPtrMod)
                         )
                 );
-                _kernel.resetGradPtr(gradPtrMod);
+                _kernel.closeExecution(gradPtrMod);
             }
         } catch (Exception e){
             System.out.println(e);
@@ -284,7 +287,7 @@ public class Device {
                                 _kernel.executionSizeOf_calc(mode, value, (byte) ((t.gradientIsTargeted())?1:0))
                         )
                 );
-                _kernel.resetGradPtr((byte) ((t.gradientIsTargeted())?1:0));
+                _kernel.closeExecution((byte) ((t.gradientIsTargeted())?1:0));
             } else {
                 /**   Derivatives implementation: (values cannot be derived)    **/
                 if(
@@ -344,12 +347,12 @@ public class Device {
             }
         }
         int size = _kernel.executionSizeOf_calc(m, gradPtrMod);
-        _kernel.resetGradPtr(gradPtrMod);
+        _kernel.closeExecution(gradPtrMod);
         System.out.println("size: " + size);
         //_kernel._mde = m;
         for (int i = 0; i < size; i++) {
             _kernel.run(i, m);
-            _kernel._idx = new int[_kernel._idx.length];
+            ((KernelFP64)_kernel)._idx = new int[((KernelFP64)_kernel)._idx.length];
         }
         printDeviceContent(false);
     }
@@ -362,11 +365,11 @@ public class Device {
             System.out.println(stringified(_kernel.translations()));
             System.out.println(stringified(_kernel.idx()));
         } else {
-            System.out.println(stringified(_kernel._values));
-            System.out.println(stringified(_kernel._pointers));
-            System.out.println(stringified(_kernel._shapes));
-            System.out.println(stringified(_kernel._translations));
-            System.out.println(stringified(_kernel._idx));
+            //System.out.println(stringified(_kernel._values));
+            //System.out.println(stringified(_kernel._pointers));
+            //System.out.println(stringified(_kernel._shapes));
+            //System.out.println(stringified(_kernel._translations));
+            //System.out.println(stringified(_kernel._idx));
 
         }
 
