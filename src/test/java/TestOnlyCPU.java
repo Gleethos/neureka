@@ -91,7 +91,7 @@ public class TestOnlyCPU {
         y = new Tsr(new Tsr[]{x, b, w}, "(2^i0^i1^i2^2");
         tester.testTensor(y, new String[]{"[1]:(4.0);", " ->d[1]:(1.38629E0), "});
         //===
-        Thread.sleep(6000);
+        Thread.sleep(1000);
         tester.closeWindows();
     }
 
@@ -133,6 +133,12 @@ public class TestOnlyCPU {
                 new String[]{"[1]:(3.0)"},
                 "test FP formatting"
         );
+
+        try {
+            Thread.sleep(6000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         tester.closeWindows();
     }
 
