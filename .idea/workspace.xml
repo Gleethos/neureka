@@ -2,18 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a07ad3e8-8754-4b05-b853-df2665879cc4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/test/java/TestOnGPU.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/TestBroad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestOnCPU.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/TestOnlyCPU.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/util/NTester.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/util/NTester.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -149,14 +147,32 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="335">
-              <caret line="28" column="33" selection-start-line="28" selection-start-column="33" selection-end-line="28" selection-end-column="33" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="97">
+              <caret line="6" column="27" selection-start-line="6" selection-start-column="27" selection-end-line="6" selection-end-column="27" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="68">
+              <caret line="4" column="9" lean-forward="true" selection-start-line="4" selection-start-column="9" selection-end-line="4" selection-end-column="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="34">
+                <caret line="2" column="245" selection-start-line="2" selection-start-column="245" selection-end-line="2" selection-end-column="245" />
+              </first_editor>
+              <second_editor />
             </state>
           </provider>
         </entry>
@@ -256,7 +272,6 @@
         <option value="$PROJECT_DIR$/.travis/codacy-install.sh" />
         <option value="$PROJECT_DIR$/src/test/java/TestTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/assembly/FunctionGraphBuilder.java" />
-        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/environment/TensorCache.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/environment/FunctionTypes.java" />
         <option value="$PROJECT_DIR$/build.gradle" />
@@ -276,7 +291,6 @@
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/KernelFP64.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/KernelFP32.java" />
         <option value="$PROJECT_DIR$/src/test/java/util/NTester_TensorDevice.java" />
-        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/test/java/util/NTester_Tensor.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/Tsr.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java" />
@@ -286,10 +300,12 @@
         <option value="$PROJECT_DIR$/src/test/java/TestOnCPU.java" />
         <option value="$PROJECT_DIR$/src/test/java/TestOnGPU.java" />
         <option value="$PROJECT_DIR$/src/test/java/util/NTester.java" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-15" />
     <option name="y" value="-15" />
     <option name="width" value="1953" />
@@ -308,93 +324,6 @@
               <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
               <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="neureka" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="neureka" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="neureka" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-              <item name="device" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="neureka" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-              <item name="function" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="neureka" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-              <item name="function" type="462c0819:PsiDirectoryNode" />
-              <item name="factory" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="util" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -405,7 +334,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1570647926998" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1570650093111" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -417,17 +346,17 @@
     <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\development\java\remoteTest\neureka\src\main\resources" />
-      <recent name="D:\development\java\remoteTest\neureka\src\main\java\neureka\ngui\touch" />
-      <recent name="D:\development\java\remoteTest\neureka\src\main\java" />
-      <recent name="D:\development\java\remoteTest\neureka\src\test\java" />
-    </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\development\java\remoteTest\neureka\src\test" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\development\java\remoteTest\neureka\src\main\resources" />
+      <recent name="D:\development\java\remoteTest\neureka\src\main\java\neureka\ngui\touch" />
+      <recent name="D:\development\java\remoteTest\neureka\src\main\java" />
+      <recent name="D:\development\java\remoteTest\neureka\src\test\java" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -579,23 +508,11 @@
       <workItem from="1570398163151" duration="725000" />
       <workItem from="1570427036547" duration="21066000" />
       <workItem from="1570533313537" duration="168000" />
-      <workItem from="1570551879612" duration="20329000" />
+      <workItem from="1570551879612" duration="21506000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="neureka_[test] - 2019.10.09 at 17h 12m 51s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
-    <history-entry file="neureka_[test] - 2019.10.09 at 17h 13m 09s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
-    <history-entry file="neureka_[test] - 2019.10.09 at 17h 13m 28s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
-    <history-entry file="neureka_[test] - 2019.10.09 at 17h 25m 14s.xml">
-      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
-    </history-entry>
     <history-entry file="neureka_[test] - 2019.10.09 at 17h 26m 00s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
@@ -614,12 +531,25 @@
     <history-entry file="neureka_[test] - 2019.10.09 at 17h 29m 32s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
+    <history-entry file="neureka_[test] - 2019.10.09 at 21h 04m 48s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
+    <history-entry file="neureka_[test] - 2019.10.09 at 21h 08m 10s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
+    <history-entry file="neureka_[test] - 2019.10.09 at 21h 08m 36s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
+    <history-entry file="neureka_[test] - 2019.10.09 at 21h 09m 50s.xml">
+      <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="293054000" />
+    <option name="totallyTimeSpent" value="294231000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-6" y="-6" width="781" height="837" extended-state="0" />
+    <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Structure" order="0" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="1" />
@@ -632,7 +562,7 @@
       <window_info id="Web" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.48599347" weight="0.32417583" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.7908795" visible="true" weight="0.45741758" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.7908795" visible="true" weight="0.45741758" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.8625407" weight="0.375" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -654,7 +584,7 @@
       <window_info anchor="right" id="Database" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info anchor="right" id="Theme Preview" order="8" />
-      <window_info anchor="right" content_ui="combo" id="Project" order="9" sideWeight="0.49885058" visible="true" weight="0.5619296" />
+      <window_info active="true" anchor="right" content_ui="combo" id="Project" order="9" sideWeight="0.49885058" visible="true" weight="0.28078175" />
       <window_info anchor="right" id="Coverage" order="10" sideWeight="0.5011494" side_tool="true" weight="0.23893805" />
     </layout>
     <layout-to-restore>
@@ -775,13 +705,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/environment/FunctionCache.java" />
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="5" selection-start-column="5" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/neureka/ngui/tile/N3DSpace.java">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -1058,16 +981,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="308">
-            <caret line="97" column="52" selection-start-line="97" selection-start-column="52" selection-end-line="97" selection-end-column="52" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/util/NTester_TensorDevice.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-274">
@@ -1156,11 +1069,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/Device.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="335">
-          <caret line="28" column="33" selection-start-line="28" selection-start-column="33" selection-end-line="28" selection-end-column="33" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="97">
+          <caret line="6" column="27" selection-start-line="6" selection-start-column="27" selection-end-line="6" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="9" lean-forward="true" selection-start-line="4" selection-start-column="9" selection-end-line="4" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="34">
+            <caret line="2" column="245" selection-start-line="2" selection-start-column="245" selection-end-line="2" selection-end-column="245" />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
     </entry>
