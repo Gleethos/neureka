@@ -6,10 +6,13 @@ import neureka.frame.NMessageFrame;
 public class NTester extends Assert
 {
     private NMessageFrame _verbose_frame;
-    private static NMessageFrame _result_frame;
+
+    private static NMessageFrame RESULT_FRAME;
+    private static volatile int _global_tests;
     static {
+        _global_tests = 0;
         if(System.getProperty("os.name").toLowerCase().contains("windows")){
-            _result_frame  = new NMessageFrame("[NEUREKA UNIT TEST]: results");
+            RESULT_FRAME = new NMessageFrame("[NEUREKA UNIT TEST]: results");
         }
     }
     protected static String BAR = "[|]";
@@ -27,7 +30,7 @@ public class NTester extends Assert
             _verbose_frame = new NMessageFrame("[NEUREKA UNIT TEST]:("+name+"): verbose results");
             printlnResult("\nT[ "+name+" ]:");
         }
-
+        _global_tests++;
     }
 
     public NTester(String name, boolean liveLog){
@@ -35,15 +38,25 @@ public class NTester extends Assert
             _verbose_frame = new NMessageFrame(name+" - TEST PROCESS");
             printResult("\nT["+name+"]: ");
         }
+        _global_tests++;
     }
 
-    public void closeWindows(){
-        if(_verbose_frame !=null){
-            _verbose_frame.close();
+    public void close(){
+        //if(_verbose_frame !=null){
+        //    _verbose_frame.close();
+        //    _verbose_frame=null;
+        //}
+        if(RESULT_FRAME !=null && _global_tests>3){
+            try {
+                Thread.sleep((int)Math.pow(_global_tests-3, 2)*1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            //RESULT_FRAME.close();
+            //RESULT_FRAME=null;
         }
-        if(_result_frame !=null){
-            _result_frame.close();
-        }
+
+
     }
 
     public int testContains(String result, String[] expected, String description){
@@ -209,20 +222,20 @@ public class NTester extends Assert
         }
     }
     protected void printResult(String message){
-        if(_result_frame !=null){
-            _result_frame.print(message);
+        if(RESULT_FRAME !=null){
+            RESULT_FRAME.print(message);
         }
     }
     protected void printlnResult(String message){
-        if(_result_frame !=null){
-            _result_frame.println(message);
+        if(RESULT_FRAME !=null){
+            RESULT_FRAME.println(message);
         }
     }
 
     protected void bottom(){
-        if(_verbose_frame !=null && _result_frame !=null){
+        if(_verbose_frame !=null && RESULT_FRAME !=null){
             _verbose_frame.bottom();
-            _result_frame.bottom();
+            RESULT_FRAME.bottom();
         }
     }
 
