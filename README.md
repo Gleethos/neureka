@@ -124,7 +124,9 @@ This library is heavily inspired by [PyTorch](https://github.com/pytorch/pytorch
 A powerful deep learning framework that combines
 [dynamic computation](https://medium.com/@omaraymanomar/dynamic-vs-static-computation-graph-2579d1934ecf), performance and debugging freedom!
 
-PyTorch however does not carry with it the benefit of *'write once run everywhere'*! 
+PyTorch however does not carry with it the benefit of *'write once run everywhere'* on every Hardware! 
+
+[On the state of Deep Learning outside of CUDA’s walled garden.](https://towardsdatascience.com/on-the-state-of-deep-learning-outside-of-cudas-walled-garden-d88c8bbb4342)
 
 This is due to the fact that internally PyTorch is written
 in C++. Additionally, it's GPU acceleration is written in nvidia's cuda. 
@@ -136,6 +138,11 @@ Although performance will certainly be impacted by this choice,
 uncomplicated deployment and ease of use are the benefits.
 Additionally, the use of OpenCl theoretically should allow for
 FPGA utilization. This however has not been tested.
+
+In general, Java currently plays an underwhelming role in the Deep-Learning community despite
+the fact that Java itself is among the most dominant platforms.
+
+[What Java needs for true Machine / Deep Learning support.](https://medium.com/@hsheil/what-java-needs-for-true-machine-deep-learning-support-1571ffdbb594)
 
 #### Building for source
 Execute the following:
@@ -162,8 +169,11 @@ of this project to understand what Neureka is supposed to be!
  - Write MORE Tests
  - Much MORE.
  - Allot!
+ 
+ ![Work In Progress](https://unpkg.com/vvwip/WIP.svg)
 
 License
+
 ----
 
 **It's Free!** ... 
