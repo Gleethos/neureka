@@ -1,10 +1,13 @@
 package neureka.core.device;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 
+import com.aparapi.Kernel;
 import com.aparapi.Range;
 import com.aparapi.device.OpenCLDevice;
+import com.aparapi.internal.kernel.KernelManager;
 import neureka.core.Tsr;
 import neureka.core.function.IFunction;
 
@@ -62,6 +65,13 @@ public class Device {
             System.out.println("Device of new kernel:\n------------");
             System.out.println(_kernel.getTargetDevice().toString());
         }
+        //_device.configure();
+        
+        //_kernel.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.GPU);
+        //LinkedHashSet<OpenCLDevice> dl = new LinkedHashSet<>();
+        //.asList(new Device[] {your_device_here)})
+        //dl.add(_device);
+        //KernelManager.instance().setDefaultPreferredDevices(new LinkedHashSet<>());
     }
 
     public void dispose() {
@@ -83,14 +93,14 @@ public class Device {
     {
         if (_kernel != null) {
             _kernel.execute(
-                    _device.createRange(
+                    Range.create(_device,
                             _kernel.executionSizeOf_fetchTsr(_register[0][_tensors_map.get(tensor)], false)
                     )
             );
             Tsr.factory.inject(_kernel.value(), false, tensor);
             if (tensor.rqsGradient()) {
                 _kernel.execute(
-                        Range.create(
+                        Range.create(_device,
                                 _kernel.executionSizeOf_fetchTsr(_register[0][_tensors_map.get(tensor)], true)
                         )
                 );
@@ -123,7 +133,7 @@ public class Device {
         if(tensor.rqsGradient()){
             if(_tensors_map.containsKey(tensor)){
                 _kernel.execute(
-                        Range.create(
+                        Range.create(_device,
                                 _kernel.executionSizeOf_storeTsr(
                                         _register[0][_tensors_map.get(tensor)],
                                         value,
@@ -141,14 +151,14 @@ public class Device {
         if (!_tensors_map.containsKey(tensor)) {
             _tensors_map.put(tensor, _kernel.allocPtrFor(tensor, _register));
             _kernel.execute(
-                    Range.create(
+                    Range.create(//_device, -> Causes Error! Why?
                             _kernel.executionSizeOf_storeTsr(_register[0][_tensors_map.get(tensor)], tensor.value(), false)
                     )
             );
             if (tensor.rqsGradient()) {
                 double[] grd = (tensor.gradient() == null) ? new double[tensor.value().length] : tensor.gradient();
                 _kernel.execute(
-                        Range.create(
+                        Range.create(//_device, -> Causes Error! Why?
                                 _kernel.executionSizeOf_storeTsr(
                                         _register[0][_tensors_map.get(tensor)],
                                         grd, true
@@ -172,7 +182,7 @@ public class Device {
 
     public double[] valueOf(Tsr tensor, boolean grd) {
         _kernel.execute(
-                Range.create(
+                Range.create(//_device, -> Causes Error! Why?
                         _kernel.executionSizeOf_fetchTsr(
                                 _register[0][
                                         _tensors_map.get(
@@ -230,8 +240,6 @@ public class Device {
     }
 
     public void _execute(Tsr[] tsrs, int f_id, int d) {
-
-        //---
         try{
             //_validate(tsrs);
             if (_kernel == null) {
@@ -254,7 +262,7 @@ public class Device {
                     }
                 }
                 _kernel.execute(
-                        Range.create(
+                        Range.create(//_device, -> Causes Error! Why?
                                 _kernel.executionSizeOf_calc(mode, gradPtrMod)
                         )
                 );
@@ -265,13 +273,13 @@ public class Device {
         }
     }
 
-    private void _validate(Tsr[] tsrs){
-        if(tsrs.length==2){
-            if(tsrs[0]==tsrs[1] && tsrs[0].gradientIsTargeted()||tsrs[1].gradientIsTargeted()){
-                throw new IllegalArgumentException("[Error]:( '->'/'<-' operator must not be applied to the same tensor! )");
-            }
-        }
-    }
+    //private void _validate(Tsr[] tsrs){
+    //    if(tsrs.length==2){
+    //        if(tsrs[0]==tsrs[1] && tsrs[0].gradientIsTargeted()||tsrs[1].gradientIsTargeted()){
+    //            throw new IllegalArgumentException("[Error]:( '->'/'<-' operator must not be applied to the same tensor! )");
+    //        }
+    //    }
+    //}
 
     public void _execute(Tsr t, double value, int f_id, int d)
     {
@@ -283,7 +291,7 @@ public class Device {
                 mode[0] = f_id;
                 mode[1] = _register[0][_tensors_map.get(t)];
                 _kernel.execute(
-                        _device.createRange(
+                        Range.create(_device,
                                 _kernel.executionSizeOf_calc(mode, value, (byte) ((t.gradientIsTargeted())?1:0))
                         )
                 );
@@ -394,7 +402,7 @@ public class Device {
 
     @Override
     public String toString(){
-        return "["+_device.getDeviceId()+"]:("+_device.getShortDescription()+")";
+        return "["+_device.getDeviceId()+"]:("+_device.getShortDescription()+"-FP"+((_kernel instanceof  KernelFP64)?"64":32)+")";
     }
 
     public String toString(String m){

@@ -9,6 +9,21 @@ import util.NTester_TensorDevice;
 
 public class TestOnGPU {
 
+    //@Test
+    //public void testTesting(){
+    //    Device gpu = new Device("nvidia FP64");
+    //    Tsr x = new Tsr(new int[]{600, 900, 1}, 2);
+    //    Tsr y = new Tsr(new int[]{1, 900, 600}, -1);
+    //    gpu.add(x).add(y);
+    //    System.out.println("hey!");
+    //    Tsr z = null;
+    //    for(int i=0; i<100; i++){
+    //        z = new Tsr(x, "x", y);
+    //        gpu.rmv(z);
+    //    }
+    //    System.out.println(z);
+    //}
+
     @Test
     public void testAutograd(){
         if(!System.getProperty("os.name").toLowerCase().contains("windows")){

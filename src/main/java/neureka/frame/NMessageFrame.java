@@ -31,11 +31,11 @@ public class NMessageFrame extends JFrame
 	{
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int wdiv = 3;
-		int hdiv = 2;
-		this._width = (int)screenSize.getWidth()/wdiv;
-		this._height = (int)(screenSize.getHeight()*0.925)/hdiv;
-		this._wpos = _window_count %(wdiv);
-		this._hpos = _window_count /(wdiv);
+		int hdiv = 3;
+		_width = (int)screenSize.getWidth()/wdiv;
+		_height = (int)(screenSize.getHeight()*0.925)/hdiv;
+		_wpos = _window_count %(wdiv);
+		_hpos = _window_count /(wdiv);
 		_window_count++;
 		_linecount = maxLineCount;
 		this.setTitle(title);
