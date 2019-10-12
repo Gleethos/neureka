@@ -1,6 +1,6 @@
 package neureka.core;
 
-import neureka.core.device.Device;
+import neureka.core.device.TensorDevice;
 import neureka.core.function.IFunction;
 import neureka.core.function.factory.autograd.GraphNode;
 import org.jetbrains.annotations.Contract;
@@ -18,7 +18,7 @@ public class Tsr {
 
     // DEFAULT DEVICE (HOST CPU)
     //=========================
-    private static Device CPU;
+    private static TensorDevice CPU;
 
     //STATIC FUNCTIONS MEMORY:
     //=========================
@@ -26,7 +26,7 @@ public class Tsr {
 
     static {
         CONFIGS = new HashMap<>();//The things we do for memory
-        CPU = new Device(null);//<= creates CPU-Aparapi-KernelFP64
+        CPU = new TensorDevice(null);//<= creates CPU-Aparapi-KernelFP64
     }
     //-----------------------------------------------------------------------
 
@@ -96,9 +96,9 @@ public class Tsr {
     private double[] _value, _gradient;
     //-----------------------------------------------------------------------
 
-    public Device device() {
+    public TensorDevice device() {
         if (this.isOutsourced()) {
-            return (Device) this.find(Device.class);
+            return (TensorDevice) this.find(TensorDevice.class);
         }
         return CPU;
     }
@@ -122,7 +122,7 @@ public class Tsr {
 
     public Tsr setTargetValue(double[] value){
         if(this.isOutsourced()){
-            ((Device) this.find(Device.class)).overwrite(this, value);
+            ((TensorDevice) this.find(TensorDevice.class)).overwrite(this, value);
         } else {
             if(this.gradientIsTargeted()){
                 _gradient = value;
@@ -134,15 +134,15 @@ public class Tsr {
     }
 
     public double[] gradient() {
-        if (this.rqsGradient() && this.isOutsourced() && this.has(Device.class)) {
-            return ((Device) find(Device.class)).valueOf(this, true);
+        if (this.rqsGradient() && this.isOutsourced() && this.has(TensorDevice.class)) {
+            return ((TensorDevice) find(TensorDevice.class)).valueOf(this, true);
         }
         return _gradient;
     }
 
     public Tsr addToGradient(Tsr g) {
         if(this.isOutsourced()){
-            Device device = (Device) this.find(Device.class);
+            TensorDevice device = (TensorDevice) this.find(TensorDevice.class);
             this.setGradientIsTargeted(true);
             device.add(g);
             device.execute(new Tsr[]{this, g}, IFunction.TYPES.LOOKUP.get("<"), -1);
@@ -159,8 +159,8 @@ public class Tsr {
     }
 
     public double[] value() {
-        if (_value == null && this.isOutsourced() && this.has(Device.class)) {
-            return ((Device) this.find(Device.class)).valueOf(this, false);
+        if (_value == null && this.isOutsourced() && this.has(TensorDevice.class)) {
+            return ((TensorDevice) this.find(TensorDevice.class)).valueOf(this, false);
         }
         double[] newValue = _value;
         if (this.isVirtual()) {
@@ -175,7 +175,7 @@ public class Tsr {
     public Tsr setValue(double[] newValue) {
         _value = newValue;
         if (this.isOutsourced() && newValue != null) {
-            ((Device) this.find(Device.class)).add(this);
+            ((TensorDevice) this.find(TensorDevice.class)).add(this);
         }
         return this;
     }
@@ -232,9 +232,9 @@ public class Tsr {
             } else {
                 this.setGradientIsTargeted(false);
                 if(this.isOutsourced()){
-                    ((Device)find(Device.class)).get(this);
+                    ((TensorDevice)find(TensorDevice.class)).get(this);
                     _gradient = null;
-                    ((Device)find(Device.class)).add(this);
+                    ((TensorDevice)find(TensorDevice.class)).add(this);
                 }
                 _flags -= RQS_GRADIENT_MASK;
             }
@@ -257,12 +257,12 @@ public class Tsr {
         if (isOutsourced) {
             _value = null;
             _gradient = null;
-        } else if (this.has(Device.class)) {
-            Device device = (Device) this.find(Device.class);
+        } else if (this.has(TensorDevice.class)) {
+            TensorDevice device = (TensorDevice) this.find(TensorDevice.class);
             if (device.has(this)) {
                 device.get(this);
             }
-            this.remove(Device.class);
+            this.remove(TensorDevice.class);
         }
         return this;
     }
@@ -628,7 +628,7 @@ public class Tsr {
         _components = tensor._components;
         _flags = tensor._flags;
         if(tensor.isOutsourced()){
-            Device device = (Device) tensor.find(Device.class);
+            TensorDevice device = (TensorDevice) tensor.find(TensorDevice.class);
             device.swap(tensor, this);
         }
         return this;
@@ -649,7 +649,7 @@ public class Tsr {
 
     public Tsr delete() {
         if (this.isOutsourced()) {
-            ((Device) this.find(Device.class)).rmv(this);
+            ((TensorDevice) this.find(TensorDevice.class)).rmv(this);
         }
         _flags = -1;
         _value = null;

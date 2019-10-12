@@ -1,12 +1,12 @@
 package neureka.core.function.factory;
 
 import neureka.core.Tsr;
+import neureka.core.device.TensorDevice;
 import neureka.core.function.IFunction;
 import neureka.core.function.factory.assembly.FunctionBuilder;
 import neureka.core.function.factory.autograd.GraphLock;
 import neureka.core.function.factory.implementations.FConstant;
 import neureka.core.function.factory.autograd.GraphBuilder;
-import neureka.core.device.Device;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -138,7 +138,7 @@ public abstract class Function implements IFunction {
             return output;
         }
         if (input.isOutsourced()) {
-            Device device = (Device) input.find(Device.class);
+            TensorDevice device = (TensorDevice) input.find(TensorDevice.class);
             device.add(output);
             device.execute(new Tsr[]{output, input}, _id, (derive) ? 0 : -1);
         } else {
@@ -210,7 +210,7 @@ public abstract class Function implements IFunction {
 
     private Tsr _execute(Tsr[] inputs, int j, int d)
     {
-        Device device = (Device) inputs[0].find(Device.class);
+        TensorDevice device = (TensorDevice) inputs[0].find(TensorDevice.class);
         boolean onSameDevice = _shareGuestDevice(inputs) && TYPES.REGISTER[_id] != "," && !(TYPES.isConvection(_id) && d > -1);
         if (onSameDevice)
         {
@@ -335,7 +335,7 @@ public abstract class Function implements IFunction {
                             : Tsr.factory.newTensor(_src.get(i).activate(new double[]{}, j), templateShape);
         }
         if(shareDevice){
-            Device shared = (Device) tsrs[0].find(Device.class);
+            TensorDevice shared = (TensorDevice) tsrs[0].find(TensorDevice.class);
             if(tsrs.length>2){// Constant sources will be converted into full Tensors and stored on the gpu!
                 for(int i=0; i<tsrs.length; i++){
                     if(!tsrs[i].isOutsourced()){
@@ -349,13 +349,13 @@ public abstract class Function implements IFunction {
 
     private static boolean _shareGuestDevice(Tsr[] tsrs) {
         boolean onSameGuestDevice = true;
-        Device device = null;
+        TensorDevice device = null;
         for (int ti = 0; ti < tsrs.length; ti++) {
-            device = (tsrs[ti].isOutsourced()) ? (Device) tsrs[ti].find(Device.class) : device;
+            device = (tsrs[ti].isOutsourced()) ? (TensorDevice) tsrs[ti].find(TensorDevice.class) : device;
         }
         if (device != null) {
             for (int ti = 0; ti < tsrs.length; ti++) {
-                onSameGuestDevice = (!tsrs[ti].isVirtual() && device == tsrs[ti].find(Device.class)) && onSameGuestDevice;
+                onSameGuestDevice = (!tsrs[ti].isVirtual() && device == tsrs[ti].find(TensorDevice.class)) && onSameGuestDevice;
             }
         } else {
             onSameGuestDevice = false;

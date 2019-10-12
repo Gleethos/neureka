@@ -1,8 +1,7 @@
 package util;
 
 import neureka.core.Tsr;
-import neureka.core.device.Device;
-import neureka.core.device.KernelFP64;
+import neureka.core.device.TensorDevice;
 import neureka.core.device.TensorKernel;
 
 public class NTester_TensorDevice extends NTester {
@@ -12,7 +11,7 @@ public class NTester_TensorDevice extends NTester {
         super(name);
     }
 
-    public int testAddTensor(Device device, Tsr tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
+    public int testAddTensor(TensorDevice device, Tsr tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
 
         double[] value = tensor.value();
         int[] shape = tensor.shape();
@@ -37,14 +36,14 @@ public class NTester_TensorDevice extends NTester {
         return this.printSessionEnd();
     }
 
-    public int testGetTensor(Device device, Tsr tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
+    public int testGetTensor(TensorDevice device, Tsr tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
 
         double[] value = tensor.value();
         int[] shape = tensor.shape();
         int[] translation = tensor.translation();
 
 
-        this.printSessionStart("Getting tensor from Device");
+        this.printSessionStart("Getting tensor from TensorDevice");
         TensorKernel kernel = device.getKernel();
         this.assertIsEqual("tensor.isOutsourced()", ""+tensor.isOutsourced(), "true");
         device.get(tensor);
@@ -63,7 +62,7 @@ public class NTester_TensorDevice extends NTester {
         return this.printSessionEnd();
     }
 
-    public int testCalculation(Device device, Tsr drn, Tsr src1, Tsr src2, int f_id, int d, double[] values){
+    public int testCalculation(TensorDevice device, Tsr drn, Tsr src1, Tsr src2, int f_id, int d, double[] values){
 
         String message = "";
         message = (f_id==18)?"Tensor product":message;

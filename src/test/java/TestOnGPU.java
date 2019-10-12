@@ -1,6 +1,6 @@
 
 import neureka.core.Tsr;
-import neureka.core.device.Device;
+import neureka.core.device.TensorDevice;
 import neureka.core.device.KernelFP32;
 import neureka.core.device.KernelFP64;
 import org.junit.Test;
@@ -11,7 +11,7 @@ public class TestOnGPU {
 
     //@Test
     //public void testTesting(){
-    //    Device gpu = new Device("nvidia FP64");
+    //    TensorDevice gpu = new TensorDevice("nvidia FP64");
     //    Tsr x = new Tsr(new int[]{600, 900, 1}, 2);
     //    Tsr y = new Tsr(new int[]{1, 900, 600}, -1);
     //    gpu.add(x).add(y);
@@ -32,14 +32,14 @@ public class TestOnGPU {
         NTester_Tensor tester = new NTester_Tensor("Testing autograd on GPU");
 
         //---
-        Device gpu = new Device("nvidia");//FP32 ought to be chosen by default here!
+        TensorDevice gpu = new TensorDevice("nvidia");//FP32 ought to be chosen by default here!
         tester.testContains(
                 (gpu.getKernel() instanceof KernelFP32)?"FP32":"FP64",
                 new String[]{"FP32"},
                 "Test device kernel FP-Type");
         _testAutograd(gpu, tester);
 
-        gpu = new Device("nvidia FP64");
+        gpu = new TensorDevice("nvidia FP64");
         tester.testContains(
                 (gpu.getKernel() instanceof KernelFP64)?"FP62":"FP34",
                 new String[]{"FP34"},
@@ -48,7 +48,7 @@ public class TestOnGPU {
         //---
         tester.close();
     }
-    private  void _testAutograd(Device gpu, NTester_Tensor tester){
+    private  void _testAutograd(TensorDevice gpu, NTester_Tensor tester){
         Tsr tensor1, tensor2;
         tensor1 = new Tsr(new int[]{3, 5}, new double[]{
                 2, 3, 5,
@@ -174,14 +174,14 @@ public class TestOnGPU {
         }
         NTester_TensorDevice tester = new NTester_TensorDevice("Testing tensor device");
 
-        Device gpu = new Device("nvidia FP32");
+        TensorDevice gpu = new TensorDevice("nvidia FP32");
         tester.testContains(
                 (gpu.getKernel() instanceof KernelFP32)?"FP32":"FP64",
                 new String[]{"FP32"},
                 "Test device kernel FP-Type");
         _testTensorDevice(gpu, tester);
 
-        gpu = new Device("nvidia FP64");
+        gpu = new TensorDevice("nvidia FP64");
         tester.testContains(
                 (gpu.getKernel() instanceof KernelFP64)?"FP62":"FP34",
                 new String[]{"FP34"},
@@ -191,7 +191,7 @@ public class TestOnGPU {
         tester.close();
     }
 
-    private void _testTensorDevice(Device gpu, NTester_TensorDevice tester){
+    private void _testTensorDevice(TensorDevice gpu, NTester_TensorDevice tester){
         Tsr tensor = Tsr.factory.newTensor(new double[]{1, 3, 4, 2, -3, 2, -1, 6}, new int[]{2, 4});
         Tsr firstTensor = tensor;
         tester.testAddTensor(gpu, tensor,
