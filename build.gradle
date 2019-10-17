@@ -33,6 +33,7 @@ if (currentOS.isWindows()) {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile "com.aparapi:aparapi:1.10.0"
+    compile "org.jocl:jocl:2.0.0"
     compile 'org.jetbrains:annotations:16.0.2'
     compile "org.openjfx:javafx-web:11:${platform}"
     compile "org.openjfx:javafx-swing:11:${platform}"
@@ -57,4 +58,10 @@ jar {
     mainClassName = 'Main'
     from configurations.compile.collect{ zipTree it }
     manifest.attributes "Main-Class" : "Main"
+}
+
+test {
+    filter {
+        includeTestsMatching "*"
+    }
 }

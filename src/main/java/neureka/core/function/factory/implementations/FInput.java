@@ -87,8 +87,8 @@ public class FInput implements IFunction, IProvider
     @Override
     public Tsr derive(Tsr[] inputs, int index) {
         return (index == _index())
-                ? Tsr.factory.newTensor(1, inputs[0].shape())
-                : Tsr.factory.newTensor(0, inputs[0].shape());
+                ? Tsr.factory.newTsr(1, inputs[0].shape())
+                : Tsr.factory.newTsr(0, inputs[0].shape());
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override

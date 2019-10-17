@@ -1,8 +1,8 @@
 package util;
 
 import neureka.core.Tsr;
-import neureka.core.device.TensorDevice;
-import neureka.core.device.TensorKernel;
+import neureka.core.device.aparapi.AparapiDevice;
+import neureka.core.device.aparapi.AbstractKernel;
 
 public class NTester_TensorDevice extends NTester {
 
@@ -11,7 +11,7 @@ public class NTester_TensorDevice extends NTester {
         super(name);
     }
 
-    public int testAddTensor(TensorDevice device, Tsr tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
+    public int testAddTensor(AparapiDevice device, Tsr tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
 
         double[] value = tensor.value();
         int[] shape = tensor.shape();
@@ -21,7 +21,7 @@ public class NTester_TensorDevice extends NTester {
         this.assertIsEqual("tensor.isOutsourced()", ""+tensor.isOutsourced(), "false");
         device.add(tensor);
         this.assertIsEqual("tensor.isOutsourced()", ""+tensor.isOutsourced(), "true");
-        TensorKernel kernel = device.getKernel();
+        AbstractKernel kernel = device.getKernel();
         this.assertStringContains("kernel._values()", stringified(kernel.values()), stringified(values));
         this.assertStringContains("kernel._shapes()", stringified(kernel.shapes()), stringified(shapes));
         this.assertStringContains("kernel._translations()", stringified(kernel.translations()), stringified(translations));
@@ -36,15 +36,15 @@ public class NTester_TensorDevice extends NTester {
         return this.printSessionEnd();
     }
 
-    public int testGetTensor(TensorDevice device, Tsr tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
+    public int testGetTensor(AparapiDevice device, Tsr tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
 
         double[] value = tensor.value();
         int[] shape = tensor.shape();
         int[] translation = tensor.translation();
 
 
-        this.printSessionStart("Getting tensor from TensorDevice");
-        TensorKernel kernel = device.getKernel();
+        this.printSessionStart("Getting tensor from AparapiDevice");
+        AbstractKernel kernel = device.getKernel();
         this.assertIsEqual("tensor.isOutsourced()", ""+tensor.isOutsourced(), "true");
         device.get(tensor);
         this.assertIsEqual("tensor.isOutsourced()", ""+tensor.isOutsourced(), "false");
@@ -62,7 +62,7 @@ public class NTester_TensorDevice extends NTester {
         return this.printSessionEnd();
     }
 
-    public int testCalculation(TensorDevice device, Tsr drn, Tsr src1, Tsr src2, int f_id, int d, double[] values){
+    public int testCalculation(AparapiDevice device, Tsr drn, Tsr src1, Tsr src2, int f_id, int d, double[] values){
 
         String message = "";
         message = (f_id==18)?"Tensor product":message;

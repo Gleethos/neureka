@@ -1,6 +1,6 @@
 package neureka.core;
 
-import neureka.core.device.TensorDevice;
+import neureka.core.device.aparapi.AparapiDevice;
 import neureka.core.function.IFunction;
 import neureka.core.function.factory.autograd.GraphNode;
 import org.jetbrains.annotations.Contract;
@@ -18,7 +18,8 @@ public class Tsr {
 
     // DEFAULT DEVICE (HOST CPU)
     //=========================
-    private static TensorDevice CPU;
+    private static AparapiDevice CPU;
+    //OPenClDevice!!!!!!!
 
     //STATIC FUNCTIONS MEMORY:
     //=========================
@@ -26,7 +27,7 @@ public class Tsr {
 
     static {
         CONFIGS = new HashMap<>();//The things we do for memory
-        CPU = new TensorDevice(null);//<= creates CPU-Aparapi-KernelFP64
+        CPU = new AparapiDevice(null);//<= creates CPU-Aparapi-Kernel
     }
     //-----------------------------------------------------------------------
 
@@ -92,13 +93,13 @@ public class Tsr {
 
     //DATA FIELDS:
     //=========================
-    private int[] _shape, _translation;
+    private int[] _shape, _translation, _indexes;
     private double[] _value, _gradient;
     //-----------------------------------------------------------------------
 
-    public TensorDevice device() {
+    public AparapiDevice device() {
         if (this.isOutsourced()) {
-            return (TensorDevice) this.find(TensorDevice.class);
+            return (AparapiDevice) this.find(AparapiDevice.class);
         }
         return CPU;
     }
@@ -122,7 +123,7 @@ public class Tsr {
 
     public Tsr setTargetValue(double[] value){
         if(this.isOutsourced()){
-            ((TensorDevice) this.find(TensorDevice.class)).overwrite(this, value);
+            ((AparapiDevice) this.find(AparapiDevice.class)).overwrite(this, value);
         } else {
             if(this.gradientIsTargeted()){
                 _gradient = value;
@@ -134,15 +135,15 @@ public class Tsr {
     }
 
     public double[] gradient() {
-        if (this.rqsGradient() && this.isOutsourced() && this.has(TensorDevice.class)) {
-            return ((TensorDevice) find(TensorDevice.class)).valueOf(this, true);
+        if (this.rqsGradient() && this.isOutsourced() && this.has(AparapiDevice.class)) {
+            return ((AparapiDevice) find(AparapiDevice.class)).valueOf(this, true);
         }
         return _gradient;
     }
 
     public Tsr addToGradient(Tsr g) {
         if(this.isOutsourced()){
-            TensorDevice device = (TensorDevice) this.find(TensorDevice.class);
+            AparapiDevice device = (AparapiDevice) this.find(AparapiDevice.class);
             this.setGradientIsTargeted(true);
             device.add(g);
             device.execute(new Tsr[]{this, g}, IFunction.TYPES.LOOKUP.get("<"), -1);
@@ -159,8 +160,8 @@ public class Tsr {
     }
 
     public double[] value() {
-        if (_value == null && this.isOutsourced() && this.has(TensorDevice.class)) {
-            return ((TensorDevice) this.find(TensorDevice.class)).valueOf(this, false);
+        if (_value == null && this.isOutsourced() && this.has(AparapiDevice.class)) {
+            return ((AparapiDevice) this.find(AparapiDevice.class)).valueOf(this, false);
         }
         double[] newValue = _value;
         if (this.isVirtual()) {
@@ -175,7 +176,7 @@ public class Tsr {
     public Tsr setValue(double[] newValue) {
         _value = newValue;
         if (this.isOutsourced() && newValue != null) {
-            ((TensorDevice) this.find(TensorDevice.class)).add(this);
+            ((AparapiDevice) this.find(AparapiDevice.class)).add(this);
         }
         return this;
     }
@@ -232,9 +233,9 @@ public class Tsr {
             } else {
                 this.setGradientIsTargeted(false);
                 if(this.isOutsourced()){
-                    ((TensorDevice)find(TensorDevice.class)).get(this);
+                    ((AparapiDevice)find(AparapiDevice.class)).get(this);
                     _gradient = null;
-                    ((TensorDevice)find(TensorDevice.class)).add(this);
+                    ((AparapiDevice)find(AparapiDevice.class)).add(this);
                 }
                 _flags -= RQS_GRADIENT_MASK;
             }
@@ -257,12 +258,12 @@ public class Tsr {
         if (isOutsourced) {
             _value = null;
             _gradient = null;
-        } else if (this.has(TensorDevice.class)) {
-            TensorDevice device = (TensorDevice) this.find(TensorDevice.class);
+        } else if (this.has(AparapiDevice.class)) {
+            AparapiDevice device = (AparapiDevice) this.find(AparapiDevice.class);
             if (device.has(this)) {
                 device.get(this);
             }
-            this.remove(TensorDevice.class);
+            this.remove(AparapiDevice.class);
         }
         return this;
     }
@@ -501,6 +502,7 @@ public class Tsr {
     public Tsr(Tsr tensor) {
         _shape = tensor._shape;
         _translation = tensor._translation;
+        _indexes = tensor._indexes;
         _value = new double[tensor.size()];
         _components = null;//tensor._components;
         _flags = tensor._flags;
@@ -521,10 +523,11 @@ public class Tsr {
         }
         _shape = cached(newShape);
         _translation = cached(factory.util.idxTln(newShape));
+        _indexes = _translation;
         return this;
     }
 
-    private int[] cached(int[] data) {
+    private static int[] cached(int[] data) {
         long key = 0;
         for (int i = 0; i < data.length; i++) {
             if (data[i] <= 10) {
@@ -628,7 +631,7 @@ public class Tsr {
         _components = tensor._components;
         _flags = tensor._flags;
         if(tensor.isOutsourced()){
-            TensorDevice device = (TensorDevice) tensor.find(TensorDevice.class);
+            AparapiDevice device = (AparapiDevice) tensor.find(AparapiDevice.class);
             device.swap(tensor, this);
         }
         return this;
@@ -649,12 +652,13 @@ public class Tsr {
 
     public Tsr delete() {
         if (this.isOutsourced()) {
-            ((TensorDevice) this.find(TensorDevice.class)).rmv(this);
+            ((AparapiDevice) this.find(AparapiDevice.class)).rmv(this);
         }
         _flags = -1;
         _value = null;
         _shape = null;
         _translation = null;
+        _indexes = null;
         _components = null;
         _gradient = null;
         return this;
@@ -784,10 +788,11 @@ public class Tsr {
         public static class exec {
 
             public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr) {
-                tensor = (newTsr)?copyOf(tensor):tensor;
+                tensor = (newTsr)? cpyOf(tensor):tensor;
                 tensor._record(tensor.shape(), tensor.translation());
-                tensor._shape = util.shpCheck(util.rearrange(tensor._shape, newForm), tensor);
-                tensor._translation = util.rearrange(tensor._translation, tensor._shape, newForm);
+                tensor._shape = cached(util.shpCheck(util.rearrange(tensor._shape, newForm), tensor));
+                tensor._translation = cached(util.rearrange(tensor._translation, tensor._shape, newForm));
+                tensor._indexes =  cached(Tsr.factory.util.idxTln(tensor._shape));
                 return tensor;
             }
             //OPERATIONS:
@@ -803,7 +808,7 @@ public class Tsr {
             }
         }
 
-        public static Tsr newTensor(double value, int[] shape) {
+        public static Tsr newTsr(double value, int[] shape) {
             int sze = util.szeOfShp(shape);
             Tsr tensor = new Tsr();
             tensor._value = new double[sze];
@@ -814,14 +819,14 @@ public class Tsr {
             return tensor;
         }
 
-        public static Tsr newTensor(double[] value, int[] shape) {
+        public static Tsr newTsr(double[] value, int[] shape) {
             Tsr tensor = new Tsr();
             tensor._value = value;
             tensor.initialShape(shape);
             return tensor;
         }
 
-        public static Tsr newTensor(double[] value, int[] shape, int[] translation) {
+        public static Tsr newTsr(double[] value, int[] shape, int[] translation) {
             Tsr tensor = new Tsr();
             tensor._value = value;
             tensor.initialShape(shape);
@@ -829,7 +834,7 @@ public class Tsr {
             return tensor;
         }
 
-        public static Tsr newTensor(int[] shape, int[] translation) {
+        public static Tsr newTsr(int[] shape, int[] translation) {
             Tsr tensor = new Tsr();
             tensor._value = new double[util.szeOfShp(shape)];
             tensor.initialShape(shape);
@@ -837,10 +842,11 @@ public class Tsr {
             return tensor;
         }
 
-        public static Tsr copyOf(Tsr tensor) {
+        public static Tsr cpyOf(Tsr tensor) {
             Tsr newTensor = new Tsr();
             newTensor._shape = tensor._shape;
             newTensor._translation = tensor._translation;
+            newTensor._indexes = tensor._indexes;
             newTensor._value = new double[tensor.size()];
             newTensor._components = null;//tensor._components;
             newTensor._flags = tensor._flags;
@@ -854,7 +860,7 @@ public class Tsr {
             return newTensor;
         }
 
-        public static Tsr copyOf(Object[] things) {
+        public static Tsr cpyOf(Object[] things) {
             for (int i = 0; i < things.length; i++) {
                 if (things[i] instanceof int[]) {
 
@@ -865,21 +871,12 @@ public class Tsr {
             return new Tsr();
         }
 
-        public static Tsr reshapedCopyOf(Tsr tensor, int[] newForm) {
-            Tsr newTensor = new Tsr();
-            newTensor._value = tensor._value;
-            newTensor._shape = util.rearrange(tensor._shape, newForm);
-            newTensor._translation = util.rearrange(tensor._translation, newForm);
-            newTensor._components = tensor._components;//Reshaped derivs usw
-            return newTensor;
-        }
-
         /**
          * ======================================================================================================
          * UTILITY FUNCTIONS:
          */
-        public static class util {
-
+        public static class util
+        {
             @Contract(pure = true)
             public static String formatFP(double v){
                 DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.US);
@@ -963,15 +960,11 @@ public class Tsr {
 
             @Contract(pure = true)
             public static int[] idxTln(int[] shape) {
-                return idxTln(shape, new int[shape.length]);
-            }
-
-            @Contract(pure = true)
-            public static int[] idxTln(int[] shp, int[] tln) {
+                int[] tln = new int[shape.length];
                 int prod = 1;
                 for (int i = 0; i < tln.length; i++) {
                     tln[i] = prod;
-                    prod *= shp[i];
+                    prod *= shape[i];
                 }
                 return tln;
             }

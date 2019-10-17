@@ -1,5 +1,11 @@
 /build/
+\build\
 
 /.idea/
+\.idea\
 
 /.gradle/
+\.gradle\
+
+/src/main/resources/kernels/*
+\src\main\resources\kernels\*

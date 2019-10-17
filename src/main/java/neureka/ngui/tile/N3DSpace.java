@@ -90,7 +90,7 @@ public class N3DSpace {
          	{
          		PointTracer.execute(range);
          	}
-         	PointTracer.get(PointTracer.getDistanceArray()); //Fetching _value from TensorDevice to main memory!
+         	PointTracer.get(PointTracer.getDistanceArray()); //Fetching _value from AparapiDevice to main memory!
          	PointTracer.get(PointTracer.getFramePointArray());
          	
          	System.out.println("Time taken for kenel execution in "+ PointTracer.getExecutionMode()+" mode is :"+(System.currentTimeMillis() - time1));

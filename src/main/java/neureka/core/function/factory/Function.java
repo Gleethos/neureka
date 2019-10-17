@@ -1,7 +1,7 @@
 package neureka.core.function.factory;
 
 import neureka.core.Tsr;
-import neureka.core.device.TensorDevice;
+import neureka.core.device.aparapi.AparapiDevice;
 import neureka.core.function.IFunction;
 import neureka.core.function.factory.assembly.FunctionBuilder;
 import neureka.core.function.factory.autograd.GraphLock;
@@ -131,14 +131,14 @@ public abstract class Function implements IFunction {
      */
     protected Tsr _tensor_activation(Tsr input, boolean derive)
     {
-        Tsr output = Tsr.factory.newTensor(input.shape(), input.translation());
+        Tsr output = Tsr.factory.newTsr(input.shape(), input.translation());
         if (!derive && !_isFlat) {
             output.inject(FunctionBuilder.build(_id, 1, true).activate(new Tsr[]{input}));
             output.add(input.find(GraphLock.class));
             return output;
         }
         if (input.isOutsourced()) {
-            TensorDevice device = (TensorDevice) input.find(TensorDevice.class);
+            AparapiDevice device = (AparapiDevice) input.find(AparapiDevice.class);
             device.add(output);
             device.execute(new Tsr[]{output, input}, _id, (derive) ? 0 : -1);
         } else {
@@ -210,7 +210,7 @@ public abstract class Function implements IFunction {
 
     private Tsr _execute(Tsr[] inputs, int j, int d)
     {
-        TensorDevice device = (TensorDevice) inputs[0].find(TensorDevice.class);
+        AparapiDevice device = (AparapiDevice) inputs[0].find(AparapiDevice.class);
         boolean onSameDevice = _shareGuestDevice(inputs) && TYPES.REGISTER[_id] != "," && !(TYPES.isConvection(_id) && d > -1);
         if (onSameDevice)
         {
@@ -287,12 +287,15 @@ public abstract class Function implements IFunction {
                 return _src.get(1).activate(inputs).setTargetValue(_src.get(0).activate(inputs).targetValue(true));
             } else {
                 double[] inp = new double[inputs.length];
-                Tsr output = Tsr.factory.newTensor(inputs[0].shape(), inputs[0].translation());
+                Tsr output = Tsr.factory.newTsr(inputs[0].shape(), inputs[0].translation());
                 Tsr finalOutput = output;
-                int _d = d;
                 output.foreach((i) -> {
+                    int[] ids = new int[inputs.length];
                     for (int ii = 0; ii < inputs.length; ii++) {
-                        inp[ii] = inputs[ii].value()[i];
+                        ids[ii] = i_of_i(i, inputs[ii].shape(), inputs[ii].translation(), Tsr.factory.util.idxTln(inputs[ii].shape()));
+                    }
+                    for (int ii = 0; ii < inputs.length; ii++) {
+                        inp[ii] = inputs[ii].value()[ids[ii]];//i
                     }
                     finalOutput.value()[i] = _scalar_activation(inp, j, d);
                 });
@@ -300,8 +303,30 @@ public abstract class Function implements IFunction {
             }
         }
         //Todo: warning/exception.....
-        return Tsr.factory.newTensor(inputs[0].shape(), inputs[0].translation());
+        return Tsr.factory.newTsr(inputs[0].shape(), inputs[0].translation());
     }
+    /**
+     *      [2, 2, 3,  4]
+     *      [1, 2, 4, 12]
+     *      [1, 2, 4,  12]
+     *      ...
+     *      [2,  4, 3,  2]
+     *      [1, 12, 4,  2]
+     *      [1, 2,  8, 24]//virtual translation
+     *
+     * **/
+    public int i_of_i(int i, int[] shape, int[] translation, int[] mapping){
+        int[] idx = new int[shape.length];
+        for(int ii=0; ii<shape.length; ii++){
+            idx[ii] = i/mapping[ii];
+            i %= mapping[ii];
+        }
+        for(int ii=0; ii<shape.length; ii++){
+            i += idx[ii]*translation[ii];
+        }
+        return i;
+    }
+
 
     private Tsr[] _source_activation(Tsr[] input) {
         Tsr[] tsrs = new Tsr[input.length];
@@ -331,11 +356,11 @@ public abstract class Function implements IFunction {
                     (tsrs[i] != null)
                             ? tsrs[i]
                             : (j < 0)
-                            ? Tsr.factory.newTensor(((FConstant) _src.get(i)).value(), templateShape)
-                            : Tsr.factory.newTensor(_src.get(i).activate(new double[]{}, j), templateShape);
+                            ? Tsr.factory.newTsr(((FConstant) _src.get(i)).value(), templateShape)
+                            : Tsr.factory.newTsr(_src.get(i).activate(new double[]{}, j), templateShape);
         }
         if(shareDevice){
-            TensorDevice shared = (TensorDevice) tsrs[0].find(TensorDevice.class);
+            AparapiDevice shared = (AparapiDevice) tsrs[0].find(AparapiDevice.class);
             if(tsrs.length>2){// Constant sources will be converted into full Tensors and stored on the gpu!
                 for(int i=0; i<tsrs.length; i++){
                     if(!tsrs[i].isOutsourced()){
@@ -349,13 +374,13 @@ public abstract class Function implements IFunction {
 
     private static boolean _shareGuestDevice(Tsr[] tsrs) {
         boolean onSameGuestDevice = true;
-        TensorDevice device = null;
+        AparapiDevice device = null;
         for (int ti = 0; ti < tsrs.length; ti++) {
-            device = (tsrs[ti].isOutsourced()) ? (TensorDevice) tsrs[ti].find(TensorDevice.class) : device;
+            device = (tsrs[ti].isOutsourced()) ? (AparapiDevice) tsrs[ti].find(AparapiDevice.class) : device;
         }
         if (device != null) {
             for (int ti = 0; ti < tsrs.length; ti++) {
-                onSameGuestDevice = (!tsrs[ti].isVirtual() && device == tsrs[ti].find(TensorDevice.class)) && onSameGuestDevice;
+                onSameGuestDevice = (!tsrs[ti].isVirtual() && device == tsrs[ti].find(AparapiDevice.class)) && onSameGuestDevice;
             }
         } else {
             onSameGuestDevice = false;

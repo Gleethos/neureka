@@ -1,28 +1,37 @@
 
 import neureka.core.Tsr;
-import neureka.core.device.TensorDevice;
-import neureka.core.device.KernelFP32;
-import neureka.core.device.KernelFP64;
+import neureka.core.device.aparapi.AparapiDevice;
+import neureka.core.device.aparapi.KernelFP32;
+import neureka.core.device.aparapi.KernelFP64;
 import org.junit.Test;
 import util.NTester_Tensor;
 import util.NTester_TensorDevice;
 
 public class TestOnGPU {
 
-    //@Test
-    //public void testTesting(){
-    //    TensorDevice gpu = new TensorDevice("nvidia FP64");
-    //    Tsr x = new Tsr(new int[]{600, 900, 1}, 2);
-    //    Tsr y = new Tsr(new int[]{1, 900, 600}, -1);
-    //    gpu.add(x).add(y);
-    //    System.out.println("hey!");
-    //    Tsr z = null;
-    //    for(int i=0; i<100; i++){
-    //        z = new Tsr(x, "x", y);
-    //        gpu.rmv(z);
-    //    }
+    @Test
+    public void testTesting(){
+        //AparapiDevice gpu = new AparapiDevice("intel gpu FP64");
+        //Tsr x = new Tsr(new int[]{300, 300, 1}, 2);
+        //Tsr y = new Tsr(new int[]{1, 300, 300}, -1);
+        //gpu.add(x).add(y);
+        //System.out.println("hey!");
+        //Tsr z = null;
+        //for(int i=0; i<100; i++){
+        //    z = new Tsr(x, "x", y);
+        //    gpu.rmv(z);
+        //}
     //    System.out.println(z);
-    //}
+    //   //JOCLSimpleMandelbrot.start(null);
+    //   org.jocl.samples.MyJOCLMandelbrot.start(null);
+         //new Setup().initCL();
+       // OpenCLDevice myDevice = OpenCLDevice.DEVICES().get(0);
+    //   try {
+    //       Thread.sleep(7000000);
+    //   } catch (InterruptedException e) {
+    //       e.printStackTrace();
+    //   }
+    }
 
     @Test
     public void testAutograd(){
@@ -32,14 +41,14 @@ public class TestOnGPU {
         NTester_Tensor tester = new NTester_Tensor("Testing autograd on GPU");
 
         //---
-        TensorDevice gpu = new TensorDevice("nvidia");//FP32 ought to be chosen by default here!
+        AparapiDevice gpu = new AparapiDevice("intel gpu");//FP32 ought to be chosen by default here!
         tester.testContains(
                 (gpu.getKernel() instanceof KernelFP32)?"FP32":"FP64",
                 new String[]{"FP32"},
                 "Test device kernel FP-Type");
         _testAutograd(gpu, tester);
 
-        gpu = new TensorDevice("nvidia FP64");
+        gpu = new AparapiDevice("intel gpu FP64");
         tester.testContains(
                 (gpu.getKernel() instanceof KernelFP64)?"FP62":"FP34",
                 new String[]{"FP34"},
@@ -48,7 +57,7 @@ public class TestOnGPU {
         //---
         tester.close();
     }
-    private  void _testAutograd(TensorDevice gpu, NTester_Tensor tester){
+    private  void _testAutograd(AparapiDevice gpu, NTester_Tensor tester){
         Tsr tensor1, tensor2;
         tensor1 = new Tsr(new int[]{3, 5}, new double[]{
                 2, 3, 5,
@@ -174,14 +183,14 @@ public class TestOnGPU {
         }
         NTester_TensorDevice tester = new NTester_TensorDevice("Testing tensor device");
 
-        TensorDevice gpu = new TensorDevice("nvidia FP32");
+        AparapiDevice gpu = new AparapiDevice("intel gpu FP32");
         tester.testContains(
                 (gpu.getKernel() instanceof KernelFP32)?"FP32":"FP64",
                 new String[]{"FP32"},
                 "Test device kernel FP-Type");
         _testTensorDevice(gpu, tester);
 
-        gpu = new TensorDevice("nvidia FP64");
+        gpu = new AparapiDevice("intel gpu FP64");
         tester.testContains(
                 (gpu.getKernel() instanceof KernelFP64)?"FP62":"FP34",
                 new String[]{"FP34"},
@@ -191,21 +200,21 @@ public class TestOnGPU {
         tester.close();
     }
 
-    private void _testTensorDevice(TensorDevice gpu, NTester_TensorDevice tester){
-        Tsr tensor = Tsr.factory.newTensor(new double[]{1, 3, 4, 2, -3, 2, -1, 6}, new int[]{2, 4});
+    private void _testTensorDevice(AparapiDevice gpu, NTester_TensorDevice tester){
+        Tsr tensor = Tsr.factory.newTsr(new double[]{1, 3, 4, 2, -3, 2, -1, 6}, new int[]{2, 4});
         Tsr firstTensor = tensor;
         tester.testAddTensor(gpu, tensor,
                 new double[]{1, 3, 4, 2, -3, 2, -1, 6},
                 new int[]{2, 4},
                 new int[]{1, 2},
                 new int[]{0, 8, 0, 2, 0, 2});
-        tensor = Tsr.factory.newTensor(new double[]{-7, -9}, new int[]{2});
+        tensor = Tsr.factory.newTsr(new double[]{-7, -9}, new int[]{2});
         tester.testAddTensor(gpu, tensor,
                 new double[]{1, 3, 4, 2, -3, 2, -1, 6, -7, -9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,},
                 new int[]{2, 4},
                 new int[]{1, 2},
                 new int[]{0, 8, 0, 2, 0, 2, 8, 2, 0, 1, 0, 1});
-        tensor = Tsr.factory.newTensor(new double[]{4, -4, 9, 4, 77}, new int[]{5});
+        tensor = Tsr.factory.newTsr(new double[]{4, -4, 9, 4, 77}, new int[]{5});
         tester.testAddTensor(gpu, tensor,
                 new double[]{1, 3, 4, 2, -3, 2, -1, 6, -7, -9, 4, -4, 9, 4, 77, 0, 0, 0, 0, 0,},
                 new int[]{2, 4, 5, 0},
@@ -229,7 +238,7 @@ public class TestOnGPU {
                 new int[]{1, 2},
                 new int[]{8, 2, 0, 1, 0, 1, 10, 5, 2, 1, 0, 1}
         );
-        tensor = Tsr.factory.newTensor(new double[]{888, 777, -33, 999}, new int[]{2, 2});
+        tensor = Tsr.factory.newTsr(new double[]{888, 777, -33, 999}, new int[]{2, 2});
         tensor.setRqsGradient(true);
         tester.testAddTensor(gpu, tensor,
                 new double[]{888, 777, -33, 999, 0, 0, 0, 0, -7, -9, 4, -4, 9, 4, 77, 0, 0, 0, 0, 0,},
