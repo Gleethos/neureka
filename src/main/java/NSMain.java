@@ -60,7 +60,7 @@ public class NSMain {
 
         javax.persistence.Query myQuery 
         = em.createQuery("SELECT p FROM NUnitCore p WHERE p.ID = 1", NUnitCore.class);
-        java.util.List<NUnitCore> list = myQuery.getResultList();
+        java.indexing.List<NUnitCore> list = myQuery.getResultList();
         
         System.out.println("List size: "+list.size()+"; List: "+list);
         // Store 1000 Point objects in the database:
@@ -91,7 +91,7 @@ public class NSMain {
         // Retrieve all the Point objects from the database:
         TypedQuery<NUnitCore> query =
             em.createQuery("SELECT p FROM NUnitCore p", NUnitCore.class);
-        java.util.List<NUnitCore> results = query.getResultList();
+        java.indexing.List<NUnitCore> results = query.getResultList();
         for (NUnitCore p : results) {
             System.out.println(p);
         }
@@ -117,11 +117,11 @@ public class NSMain {
 	    //a^=b;b^=a;a^=b;
 	    //System.out.println(a+"  -  "+b);
 
-	    //DataHelper util = new DataHelper();
+	    //DataHelper indexing = new DataHelper();
 	    //System.out.println(Math.pow(Math.E, Math.PI)*Math.pow(Math.PI, Math.E)*Math.PI*Math.E);
 		//double sum = 0;
 	    //for(int i=-1000000; i<200000; i++) {
-	    //	double v = util.getDoubleOf(i);
+	    //	double v = indexing.getDoubleOf(i);
 	    //	sum+=v;
 	    //	System.out.println(i+" => "+v);
 	    //	System.out.println("    --===> "+sum);

@@ -97,7 +97,7 @@ public class TestOnCPU {
     @Test
     public void testTensorFunctions() {
 
-        NTester_Function tester = new NTester_Function("Testing function factory and scalar calculations");
+        NTester_Function tester = new NTester_Function("Testing function fcn and scalar calculations");
         //EXPRESSION TESTING:
         tester.testExpression("ig0*(igj)xI[g1]", "((Ig[0]*Ig[j])xIg[1])", "");
         tester.testExpression("sum(ij)", "sum(I[j])", "");

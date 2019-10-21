@@ -72,22 +72,22 @@ public class FConstant implements IFunction
 
 	@Override
 	public Tsr activate(Tsr[] inputs, int j) {
-		return Tsr.factory.newTsr(this._value, inputs[0].shape());
+		return Tsr.fcn.newTsr(this._value, inputs[0].shape());
 	}
 
 	@Override
 	public Tsr activate(Tsr[] inputs) {
-		return Tsr.factory.newTsr(this._value, inputs[0].shape());
+		return Tsr.fcn.newTsr(this._value, inputs[0].shape());
 	}
 
 	@Override
 	public Tsr derive(Tsr[] inputs, int index, int j) {
-		return Tsr.factory.newTsr(0, inputs[0].shape());
+		return Tsr.fcn.newTsr(0, inputs[0].shape());
 	}
 
 	@Override
 	public Tsr derive(Tsr[] inputs, int index) {
-		return Tsr.factory.newTsr(0, inputs[0].shape());
+		return Tsr.fcn.newTsr(0, inputs[0].shape());
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }

@@ -2,7 +2,6 @@ package neureka.core.device.openCL;
 
 import static org.jocl.CL.*;
 
-import java.io.*;
 import java.nio.*;
 import java.util.*;
 
@@ -13,205 +12,96 @@ import org.jocl.*;
 
 public class OpenCLDevice implements IDevice
 {
-    private static List<OpenCLDevice> DEVICES;
-    static{
-        DEVICES = findAllDevices();
-    }
-    private static List<OpenCLDevice> findAllDevices(){
-        // Obtain the number of platforms
-        int numPlatforms[] = new int[1];
-        clGetPlatformIDs(0, null, numPlatforms);
-
-        System.out.println("Number of platforms: "+numPlatforms[0]);
-
-        // Obtain the platform IDs
-        cl_platform_id platforms[] = new cl_platform_id[numPlatforms[0]];
-        clGetPlatformIDs(platforms.length, platforms, null);
-
-        List<OpenCLDevice> myDevices = new ArrayList<>();
-
-        // Collect all devices of all platforms
-        List<cl_device_id> devices = new ArrayList<cl_device_id>();
-        for (int i=0; i<platforms.length; i++)
-        {
-            String platformName = DeviceQuery.getString(platforms[i], CL_PLATFORM_NAME);
-
-            // Obtain the number of devices for the current platform
-            int numDevices[] = new int[1];
-            clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, 0, null, numDevices);
-
-            System.out.println("Number of devices in platform "+platformName+": "+numDevices[0]);
-
-            cl_device_id devicesArray[] = new cl_device_id[numDevices[0]];
-            clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, numDevices[0], devicesArray, null);
-
-            devices.addAll(Arrays.asList(devicesArray));
-            for(cl_device_id did : devicesArray){
-                OpenCLDevice clDevice = new OpenCLDevice(platforms[i] , did);
-                myDevices.add(clDevice);
-            }
-        }
-        return myDevices;
-    }
-
     class cl_tsr{
         public int fp = 1;
-        public cl_mem shape;
-        public cl_mem translation;
+        public cl_mem config;
         public cl_mem value;
+        public cl_mem grad;
     }
 
     private Map<Tsr, cl_tsr> _mapping = new HashMap<>();
 
-    private cl_platform_id _pid;
     private cl_device_id _did;
 
     /**
-     * The OpenCL context
+     * The OpenCLPlaform
      */
-    private cl_context context;
+    private OpenCLPlatform _platform;
 
     /**
      * The OpenCL command queue
      */
     private cl_command_queue commandQueue;
 
-    /**
-     * The OpenCL kernel which will actually compute the Mandelbrot
-     * set and store the pixel data in a CL memory object
-     */
-    private Map<String, cl_kernel> _kernels;
 
     /**==============================================================================================================**/
 
-    public static List<OpenCLDevice> DEVICES(){
-        return DEVICES;
-    }
-
-    public OpenCLDevice(cl_platform_id pid, cl_device_id did) {
-        _pid = pid;
+    public OpenCLDevice(OpenCLPlatform platform, cl_device_id did)
+    {
         _did = did;
-        _kernels = new HashMap<>();
-
-        final int platformIndex = 0;
-        final long deviceType = CL_DEVICE_TYPE_ALL;
-        final int deviceIndex = 0;
-
-        // Enable exceptions and subsequently omit error checks in this sample
-        CL.setExceptionsEnabled(true);
-
-        // Obtain the number of platforms
-        int numPlatformsArray[] = new int[1];
-        clGetPlatformIDs(0, null, numPlatformsArray);
-        int numPlatforms = numPlatformsArray[0];
-
-        // Obtain a platform ID
-        cl_platform_id platforms[] = new cl_platform_id[numPlatforms];
-        clGetPlatformIDs(platforms.length, platforms, null);
-        cl_platform_id platform = platforms[platformIndex];
-
-        // Initialize the context properties
-        cl_context_properties contextProperties = new cl_context_properties();
-        contextProperties.addProperty(CL_CONTEXT_PLATFORM, platform);
-
-        // Obtain the number of devices for the platform
-        int numDevicesArray[] = new int[1];
-        clGetDeviceIDs(platform, deviceType, 0, null, numDevicesArray);
-        int numDevices = numDevicesArray[0];
-
-        // Obtain a device ID
-        cl_device_id devices[] = new cl_device_id[numDevices];
-        clGetDeviceIDs(platform, deviceType, numDevices, devices, null);
-        cl_device_id device = devices[deviceIndex];
-
-        // Create a context for the selected device
-        context = clCreateContext(
-                contextProperties, 1, new cl_device_id[]{device},
-                null, null, null);
+        _platform = platform;
+        System.out.println(this.name());
+        System.out.println(this.type());
 
         // Create a command-queue for the selected device
-        commandQueue = clCreateCommandQueue(context, device, 0, null);
+        commandQueue = clCreateCommandQueue(platform.getContext(), did, 0, null);
 
-        //####Reading all kernels!
-        File curDir = new File("build/resources/main/kernels/");
-        File[] filesList = curDir.listFiles();
-        for(File f : filesList){
-            if(f.isDirectory())
-                System.out.println(f.getName());
-            if(f.isFile()){
-                System.out.println(f.getName());
-            }
-        }
-        String[] sources = new String[filesList.length];
-        for(int i=0; i<sources.length; i++) {
-            sources[i] = readFile(filesList[i].toString());
-        }
-        //####
-        // Program Setup
-        //String source = readFile("build/resources/main/kernels/SimpleMandelbrot.cl");
+        //System.out.println("Testing mem:");
+        ////--- ########### ---\\
+        ////Testing:
+        //cl_mem[] memos = new cl_mem[300];
+        //for(int i=0; i<memos.length; i++){
+        //    int size = 1000 * 1000;//CL_MEM_WRITE_ONLY
+        //    memos[i] = clCreateBuffer(
+        //            _platform.getContext(),
+        //            CL_MEM_READ_WRITE,
+        //            size * Sizeof.cl_uint,
+        //            null,
+        //            null
+        //    );
+        //    int[] data = new int[size];
+        //    for(int ii=0; ii<size; ii++){
+        //        data[ii] = ii; // new Random().nextInt();
+        //    }
+        //    clEnqueueWriteBuffer(
+        //            commandQueue, memos[i], true, 0,
+        //            size * Sizeof.cl_uint, Pointer.to(data), 0, null, null);
+        //}
+        //int err = clEnqueueMigrateMemObjects(
+        //        commandQueue,
+        //        memos.length,
+        //        memos
+        //        ,
+        //        CL_MIGRATE_MEM_OBJECT_HOST,
+        //        0,
+        //        null,
+        //        null);
+        //try {
+        //    Thread.sleep(2000);
+        //} catch (InterruptedException e) {
+        //    e.printStackTrace();
+        //}
 
-        // Create the program
-        cl_program cpProgram = clCreateProgramWithSource(context, sources.length,
-                sources, null, null);//new String[]{ source }
-
-        // Build the program
-        int err = clBuildProgram(cpProgram, 0, null, "-cl-mad-enable", null, null);
-        //TODO: check compilation errors!
-
-        // Create the kernel
-        _kernels.put(
-                "computeMandelbrot",
-                clCreateKernel(cpProgram, "computeMandelbrot", null)
-        );//TODO: name kernels after file!
-
-        //--- ########### ---\\
-        //Testing:
-        cl_mem[] memos = new cl_mem[300];
-        for(int i=0; i<memos.length; i++){
-            int size = 1000 * 1000;//CL_MEM_WRITE_ONLY
-            memos[i] = clCreateBuffer(context, CL_MEM_READ_WRITE, size * Sizeof.cl_uint, null, null);
-            int[] data = new int[size];
-            for(int ii=0; ii<size; ii++){
-                data[ii] = ii;//new Random().nextInt();
-            }
-            clEnqueueWriteBuffer(
-                    commandQueue, memos[i], true, 0,
-                    size * Sizeof.cl_uint, Pointer.to(data), 0, null, null);
-        }
-        err = clEnqueueMigrateMemObjects(
-                commandQueue,
-                memos.length,
-                memos
-                ,
-                CL_MIGRATE_MEM_OBJECT_HOST,
-                0,
-                null,
-                null);
-        try {
-            Thread.sleep(6000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        // Create the memory object which will be filled with the
-        // pixel data
-        //pixelMem = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeX * sizeY * Sizeof.cl_uint, null, null);
-        //
-        //// Create and fill the memory object containing the color map
-        //initColorMap(32, Color.RED, Color.GREEN, Color.BLUE);
-        //colorMapMem = clCreateBuffer(context, CL_MEM_READ_WRITE,
-        //        colorMap.length * Sizeof.cl_uint, null, null);
-        //clEnqueueWriteBuffer(commandQueue, colorMapMem, true, 0,
-        //        colorMap.length * Sizeof.cl_uint, Pointer.to(colorMap), 0, null, null);
     }
-
-
 
     //---
 
     @Override
     public void dispose() {
+        _mapping.forEach((t, clt)->{
+            get(t);
+        });
+        clFinish(commandQueue);
+    }
 
+    @Override
+    public IDevice get(Tsr tensor) {
+        tensor.setValue(valueOf(tensor, false));
+        if(tensor.rqsGradient()){
+            tensor.setValue(valueOf(tensor, true));
+        }
+        rmv(tensor);
+        return this;
     }
 
     @Override
@@ -220,57 +110,81 @@ public class OpenCLDevice implements IDevice
         return this;
     }
 
-    public IDevice add(Tsr tensor, int fp) {
-        cl_tsr newClTsr = new cl_tsr();
-
-
-        double[] hostData = tensor.value();
+    private void _store(Tsr tensor, cl_tsr newClTsr, int fp, boolean grd){
+        //cl_tsr newClTsr = new cl_tsr();
+        double[] hostData = (grd)?tensor.gradient():tensor.value();
+        Pointer p;
+        if(fp==1){
+            float[] newData = new float[hostData.length];
+            for(int i=0; i<newData.length; i++){
+                newData[i] = (float)hostData[i];
+            }
+            p = Pointer.to(newData);
+        } else {
+            p = Pointer.to(hostData);
+        }
         //VALUE TRANSFER:
-        newClTsr.value = clCreateBuffer(
-                context,
+        cl_mem mem = clCreateBuffer(
+                _platform.getContext(),
                 CL_MEM_READ_WRITE,
                 hostData.length * Sizeof.cl_float*fp,
                 null,
                 null
         );
+        if(grd){
+            newClTsr.grad = mem;
+        } else {
+            newClTsr.value = mem;
+        }
         clEnqueueWriteBuffer(
                 commandQueue,
-                newClTsr.value,
+                mem,
                 true, 0,
-                hostData.length * Sizeof.cl_float2,
-                Pointer.to(hostData),
+                hostData.length * Sizeof.cl_float*fp,
+                p,
                 0, null, null
         );
+    }
+
+    public IDevice add(Tsr tensor, int fp) {
+        cl_tsr newClTsr = new cl_tsr();
+        double[] hostData = tensor.value();
+        //VALUE TRANSFER:
+        _store(tensor, newClTsr, fp, false);
+        if(tensor.rqsGradient()){
+            _store(tensor, newClTsr, fp, true);
+        }
+        int rank = tensor.shape().length;
+        int[] config = new int[rank*3];
+        int[] shape = tensor.shape();
+        for(int i=0; i<rank; i++){
+            config[i] = shape[i];
+        }
+        int[] translation = tensor.translation();
+        for(int i=rank; i<rank*2; i++){
+            config[i] = translation[i];
+        }
+        int[] baseline = tensor.idxmap();
+        for(int i=rank*2; i<rank*3; i++){
+            config[i] = baseline[i];
+        }
+
         //SHAPE TRANSFER:
-        newClTsr.shape = clCreateBuffer(
-                context,
+        newClTsr.config = clCreateBuffer(
+                _platform.getContext(),
                 CL_MEM_READ_WRITE,
-                hostData.length * Sizeof.cl_int,
+                config.length * Sizeof.cl_int,
                 null, null
         );
         clEnqueueWriteBuffer(
                 commandQueue,
-                newClTsr.shape,
+                newClTsr.config,
                 true, 0,
-                tensor.shape().length * Sizeof.cl_int,
+                config.length * Sizeof.cl_int,
                 Pointer.to(tensor.shape()),
                 0, null, null
         );
-        //TRANSLATION TRANSFER:
-        newClTsr.translation = clCreateBuffer(
-                context,
-                CL_MEM_READ_WRITE,
-                tensor.translation().length * Sizeof.cl_int,
-                null, null
-        );
-        clEnqueueWriteBuffer(
-                commandQueue,
-                newClTsr.translation,
-                true, 0,
-                tensor.translation().length * Sizeof.cl_int,
-                Pointer.to(tensor.shape()),
-                0, null, null
-        );
+
         _mapping.put(tensor, newClTsr);
         tensor.add(this);
         tensor.setIsOutsourced(true);
@@ -280,23 +194,121 @@ public class OpenCLDevice implements IDevice
     @Override
     public IDevice rmv(Tsr tensor) {
 
-        cl_tsr clTsr = _mapping.get(tensor);
-        clEnqueueWriteBuffer(commandQueue, clTsr.value, true, 0,
-                tensor.size() * Sizeof.cl_uint, Pointer.to(new double[666]), 0, null, null);
+        cl_tsr clt = _mapping.get(tensor);
+        //clEnqueueWriteBuffer(commandQueue, clTsr.value, true, 0,
+        //        tensor.size() * Sizeof.cl_uint, Pointer.to(new double[666]), 0, null, null);
         //remove translations/shapes from device!
+        clReleaseMemObject(clt.config);
+        clReleaseMemObject(clt.value);
         _mapping.remove(tensor);
         return this;
     }
 
     @Override
     public IDevice overwrite(Tsr tensor, double[] value) {
+        cl_tsr clt = _mapping.get(tensor);
+        if(clt.fp==1){
+            float[] fdata = new float[value.length];
+            for(int i=0; i<value.length; i++){
+                fdata[i] = (float)value[i];
+            }
+            clEnqueueWriteBuffer(
+                    commandQueue,
+                    clt.value,
+                    CL_TRUE,
+                    0,
+                    Sizeof.cl_float * fdata.length,
+                    Pointer.to(fdata),
+                    0,
+                    null,
+                    null
+            );
+        } else {
+            value = new double[tensor.size()];
+            clEnqueueWriteBuffer(
+                    commandQueue,
+                    clt.value,
+                    CL_TRUE,
+                    0,
+                    Sizeof.cl_double * value.length,
+                    Pointer.to(value),
+                    0,
+                    null,
+                    null
+            );
+        }
         return this;
     }
 
     @Override
     public IDevice swap(Tsr former, Tsr replacement) {
+        cl_tsr clTsr = _mapping.get(former);
+        _mapping.remove(former);
+        _mapping.put(replacement, clTsr);
+        replacement.add(this);
+        replacement.setIsOutsourced(true);
+        former.remove(IDevice.class);
         return this;
     }
+
+    public double[] valueOf(Tsr tensor, boolean grd){
+        double[] data;
+        cl_tsr clt = _mapping.get(tensor);
+        if(clt.fp==1){
+            float[] fdata = new float[tensor.size()];
+            clEnqueueReadBuffer(
+                    commandQueue,
+                    (grd)?clt.grad:clt.value,
+                    CL_TRUE,
+                    0,
+                    Sizeof.cl_float * fdata.length,
+                    Pointer.to(fdata),
+                    0,
+                    null,
+                    null
+            );
+            data = new double[fdata.length];
+            for(int i=0; i<data.length; i++){
+                data[i] = (double)fdata[i];
+            }
+        } else {
+            data = new double[tensor.size()];
+            clEnqueueReadBuffer(
+                    commandQueue,
+                    (grd)?clt.grad:clt.value,
+                    CL_TRUE,
+                    0,
+                    Sizeof.cl_double * data.length,
+                    Pointer.to(data),
+                    0,
+                    null,
+                    null
+            );
+        }
+        return data;
+    }
+
+    @Override
+    public IDevice execute(Tsr[] tsrs, int f_id, int d) {
+        int gwz = (tsrs[0]!=null)?tsrs[0].size():tsrs[1].size();
+        int offset = (tsrs[0]!=null)?0:1;
+        cl_kernel kernel = _platform.getKernels().get("");
+        clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).value));//=> drain
+        clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
+        clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+1]).value));//=>src1
+        clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
+        clSetKernelArg(kernel, 4, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).value));//=>src2
+        clSetKernelArg(kernel, 5, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
+        clSetKernelArg(kernel, 6, Sizeof.cl_int, Pointer.to(new int[]{ d }));
+        //clSetKernelArg(kernel, 8, Sizeof.cl_mem, Pointer.to(colorMapMem));
+        //clSetKernelArg(kernel, 9, Sizeof.cl_int, Pointer.to(new int[]{ colorMap.length }));
+
+        clEnqueueNDRangeKernel(commandQueue, kernel, 1, null,
+                new long[]{gwz}, null, 0, null, null);
+
+        return null;
+    }
+
 
     //---
 
@@ -447,44 +459,6 @@ public class OpenCLDevice implements IDevice
     public int prefVecWidthDouble(){
         return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE);
     }
-
-    /**
-     * Helper function which reads the file with the given name and returns
-     * the contents of this file as a String. Will exit the application
-     * if the file can not be read.
-     *
-     * @param fileName The name of the file to read.
-     * @return The contents of the file
-     */
-    private String readFile(String fileName)
-    {
-
-        try
-        {
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
-            StringBuffer sb = new StringBuffer();
-            String line = null;
-            while (true)
-            {
-                line = br.readLine();
-                if (line == null)
-                {
-                    break;
-                }
-                sb.append(line).append("\n");
-            }
-            return sb.toString();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            System.exit(1);
-            return null;
-        }
-    }
-
-
 
 
 

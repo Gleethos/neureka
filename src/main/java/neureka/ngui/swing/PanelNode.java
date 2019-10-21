@@ -1330,7 +1330,7 @@ public class PanelNode extends Node implements NPanelObject
 		
 		brush.drawString("Activation", (int) (centerX - radius*0.27), (int) (centerY - radius*0.1 - radius*0.27500*buttonAnimationModifier));
 		brush.setColor(Color.BLACK);
-		brush.drawString(Formatter.format(Tsr.factory.io.getFrom(this.getTensor(), 0)), (int) (centerX - radius*0.108), (int) (centerY +radius*0.0475- radius*0.260*buttonAnimationModifier));
+		brush.drawString(Formatter.format(Tsr.fcn.io.getFrom(this.getTensor(), 0)), (int) (centerX - radius*0.108), (int) (centerY +radius*0.0475- radius*0.260*buttonAnimationModifier));
 		
 		ValueFont = new Font("Tahoma", Font.PLAIN, (int)(diameter*(0.033333)));
 		brush.setFont(ValueFont);
@@ -1669,7 +1669,7 @@ public class PanelNode extends Node implements NPanelObject
 		brush.setColor(Color.cyan);
 		ValueFont = new Font("Tahoma", Font.PLAIN, (int)(diameter*(0.08)));
 		brush.setFont(ValueFont);
-		String acti = Formatter.format(Tsr.factory.io.getFrom(this.getTensor(), 0));
+		String acti = Formatter.format(Tsr.fcn.io.getFrom(this.getTensor(), 0));
 		brush.drawString(acti, 
 				(int) (centerX - radius*0.043*acti.length()*Amod), 
 				(int) (centerY + radius*0.055- radius*0.275*buttonAnimationModifier*Amod));
@@ -1680,7 +1680,7 @@ public class PanelNode extends Node implements NPanelObject
 		if (this.getTensor().isOutsourced())
 		{
 			brush.drawString("Optimum:", (int) (centerX - 50), (int) (centerY - 240));
-			brush.drawString(""+Formatter.format(Tsr.factory.io.getFrom(this.getTensor(), 0)), (int) (centerX - 25), (int) (centerY - 210));
+			brush.drawString(""+Formatter.format(Tsr.fcn.io.getFrom(this.getTensor(), 0)), (int) (centerX - 25), (int) (centerY - 210));
 		}
 		brush.setClip(null);
 	}

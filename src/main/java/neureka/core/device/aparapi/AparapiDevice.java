@@ -84,19 +84,9 @@ public class AparapiDevice implements IDevice {
     public IDevice get(Tsr tensor)
     {
         if (_kernel != null) {
-            _kernel.execute(
-                    Range.create(_device,
-                            _kernel.executionSizeOf_fetchTsr(_register[0][_tensors_map.get(tensor)], false)
-                    )
-            );
-            Tsr.factory.inject(_kernel.value(), false, tensor);
+            Tsr.fcn.inject(valueOf(tensor, false), false, tensor);//_kernel.value(), false, tensor
             if (tensor.rqsGradient()) {
-                _kernel.execute(
-                        Range.create(_device,
-                                _kernel.executionSizeOf_fetchTsr(_register[0][_tensors_map.get(tensor)], true)
-                        )
-                );
-                Tsr.factory.inject(_kernel.value(), true, tensor);
+                Tsr.fcn.inject(valueOf(tensor, true), true, tensor);//_kernel.value(), true, tensor
             }
             rmv(tensor);
         }
@@ -202,7 +192,7 @@ public class AparapiDevice implements IDevice {
             if(tsrs[0]==null){
                 int[] shp =
                         (IFunction.TYPES.REGISTER[f_id] == "x")
-                                ? Tsr.factory.util.shpOfCon(tsrs[1].shape(), tsrs[2].shape()) : tsrs[1].shape();
+                                ? Tsr.fcn.indexing.shpOfCon(tsrs[1].shape(), tsrs[2].shape()) : tsrs[1].shape();
                 Tsr output = new Tsr(shp, 0.0);
                 this.add(output);
                 tsrs[0] = output;

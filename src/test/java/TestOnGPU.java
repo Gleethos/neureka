@@ -3,6 +3,8 @@ import neureka.core.Tsr;
 import neureka.core.device.aparapi.AparapiDevice;
 import neureka.core.device.aparapi.KernelFP32;
 import neureka.core.device.aparapi.KernelFP64;
+import neureka.core.device.openCL.OpenCLDevice;
+import neureka.core.device.openCL.OpenCLPlatform;
 import org.junit.Test;
 import util.NTester_Tensor;
 import util.NTester_TensorDevice;
@@ -25,7 +27,11 @@ public class TestOnGPU {
     //   //JOCLSimpleMandelbrot.start(null);
     //   org.jocl.samples.MyJOCLMandelbrot.start(null);
          //new Setup().initCL();
-       // OpenCLDevice myDevice = OpenCLDevice.DEVICES().get(0);
+       OpenCLDevice myDevice = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
+       System.out.println("Local mem size: "+myDevice.localMemSize());
+        System.out.println("name: "+myDevice.name());
+        System.out.println("vendor: "+myDevice.vendor());
+
     //   try {
     //       Thread.sleep(7000000);
     //   } catch (InterruptedException e) {
@@ -201,20 +207,20 @@ public class TestOnGPU {
     }
 
     private void _testTensorDevice(AparapiDevice gpu, NTester_TensorDevice tester){
-        Tsr tensor = Tsr.factory.newTsr(new double[]{1, 3, 4, 2, -3, 2, -1, 6}, new int[]{2, 4});
+        Tsr tensor = Tsr.fcn.newTsr(new double[]{1, 3, 4, 2, -3, 2, -1, 6}, new int[]{2, 4});
         Tsr firstTensor = tensor;
         tester.testAddTensor(gpu, tensor,
                 new double[]{1, 3, 4, 2, -3, 2, -1, 6},
                 new int[]{2, 4},
                 new int[]{1, 2},
                 new int[]{0, 8, 0, 2, 0, 2});
-        tensor = Tsr.factory.newTsr(new double[]{-7, -9}, new int[]{2});
+        tensor = Tsr.fcn.newTsr(new double[]{-7, -9}, new int[]{2});
         tester.testAddTensor(gpu, tensor,
                 new double[]{1, 3, 4, 2, -3, 2, -1, 6, -7, -9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,},
                 new int[]{2, 4},
                 new int[]{1, 2},
                 new int[]{0, 8, 0, 2, 0, 2, 8, 2, 0, 1, 0, 1});
-        tensor = Tsr.factory.newTsr(new double[]{4, -4, 9, 4, 77}, new int[]{5});
+        tensor = Tsr.fcn.newTsr(new double[]{4, -4, 9, 4, 77}, new int[]{5});
         tester.testAddTensor(gpu, tensor,
                 new double[]{1, 3, 4, 2, -3, 2, -1, 6, -7, -9, 4, -4, 9, 4, 77, 0, 0, 0, 0, 0,},
                 new int[]{2, 4, 5, 0},
@@ -238,7 +244,7 @@ public class TestOnGPU {
                 new int[]{1, 2},
                 new int[]{8, 2, 0, 1, 0, 1, 10, 5, 2, 1, 0, 1}
         );
-        tensor = Tsr.factory.newTsr(new double[]{888, 777, -33, 999}, new int[]{2, 2});
+        tensor = Tsr.fcn.newTsr(new double[]{888, 777, -33, 999}, new int[]{2, 2});
         tensor.setRqsGradient(true);
         tester.testAddTensor(gpu, tensor,
                 new double[]{888, 777, -33, 999, 0, 0, 0, 0, -7, -9, 4, -4, 9, 4, 77, 0, 0, 0, 0, 0,},

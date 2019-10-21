@@ -131,7 +131,7 @@ public abstract class Function implements IFunction {
      */
     protected Tsr _tensor_activation(Tsr input, boolean derive)
     {
-        Tsr output = Tsr.factory.newTsr(input.shape(), input.translation());
+        Tsr output = Tsr.fcn.newTsr(input.shape(), input.translation());
         if (!derive && !_isFlat) {
             output.inject(FunctionBuilder.build(_id, 1, true).activate(new Tsr[]{input}));
             output.add(input.find(GraphLock.class));
@@ -266,11 +266,11 @@ public abstract class Function implements IFunction {
             } else if (TYPES.REGISTER[_id] == ",") {
                 int[] newForm = new int[inputs.length - 1];
                 for (int i = 0; i < inputs.length - 1; i++) {
-                    newForm[i] = (int) Tsr.factory.io.getFrom(inputs[i], 0);
+                    newForm[i] = (int) Tsr.fcn.io.getFrom(inputs[i], 0);
                 }
                 if (d < 0) {
                     Tsr t = inputs[inputs.length - 1];
-                    return Tsr.factory.exec.reshaped(t, newForm, true);//t.reshape(newForm);
+                    return Tsr.fcn.exec.reshaped(t, newForm, true);//t.reshape(newForm);
                 } else {//reverse reshape:
                     int[] reversed = new int[newForm.length];
                     for (int i = 0; i < newForm.length; i++) {
@@ -287,12 +287,12 @@ public abstract class Function implements IFunction {
                 return _src.get(1).activate(inputs).setTargetValue(_src.get(0).activate(inputs).targetValue(true));
             } else {
                 double[] inp = new double[inputs.length];
-                Tsr output = Tsr.factory.newTsr(inputs[0].shape(), inputs[0].translation());
+                Tsr output = Tsr.fcn.newTsr(inputs[0].shape(), inputs[0].translation());
                 Tsr finalOutput = output;
                 output.foreach((i) -> {
                     int[] ids = new int[inputs.length];
                     for (int ii = 0; ii < inputs.length; ii++) {
-                        ids[ii] = i_of_i(i, inputs[ii].shape(), inputs[ii].translation(), Tsr.factory.util.idxTln(inputs[ii].shape()));
+                        ids[ii] = Tsr.fcn.indexing.i_of_i(i, inputs[ii].shape(), inputs[ii].translation(), Tsr.fcn.indexing.idxTln(inputs[ii].shape()));
                     }
                     for (int ii = 0; ii < inputs.length; ii++) {
                         inp[ii] = inputs[ii].value()[ids[ii]];//i
@@ -303,7 +303,7 @@ public abstract class Function implements IFunction {
             }
         }
         //Todo: warning/exception.....
-        return Tsr.factory.newTsr(inputs[0].shape(), inputs[0].translation());
+        return Tsr.fcn.newTsr(inputs[0].shape(), inputs[0].translation());
     }
     /**
      *      [2, 2, 3,  4]
@@ -315,18 +315,6 @@ public abstract class Function implements IFunction {
      *      [1, 2,  8, 24]//virtual translation
      *
      * **/
-    public int i_of_i(int i, int[] shape, int[] translation, int[] mapping){
-        int[] idx = new int[shape.length];
-        for(int ii=0; ii<shape.length; ii++){
-            idx[ii] = i/mapping[ii];
-            i %= mapping[ii];
-        }
-        for(int ii=0; ii<shape.length; ii++){
-            i += idx[ii]*translation[ii];
-        }
-        return i;
-    }
-
 
     private Tsr[] _source_activation(Tsr[] input) {
         Tsr[] tsrs = new Tsr[input.length];
@@ -356,8 +344,8 @@ public abstract class Function implements IFunction {
                     (tsrs[i] != null)
                             ? tsrs[i]
                             : (j < 0)
-                            ? Tsr.factory.newTsr(((FConstant) _src.get(i)).value(), templateShape)
-                            : Tsr.factory.newTsr(_src.get(i).activate(new double[]{}, j), templateShape);
+                            ? Tsr.fcn.newTsr(((FConstant) _src.get(i)).value(), templateShape)
+                            : Tsr.fcn.newTsr(_src.get(i).activate(new double[]{}, j), templateShape);
         }
         if(shareDevice){
             AparapiDevice shared = (AparapiDevice) tsrs[0].find(AparapiDevice.class);
@@ -943,7 +931,7 @@ public abstract class Function implements IFunction {
         public static Tsr convection(Tsr tensor1, Tsr tensor2) {
             tensor1.setIsVirtual(false);
             tensor2.setIsVirtual(false);
-            Tsr newTensor = new Tsr(Tsr.factory.util.shpOfCon(tensor1.shape(), tensor2.shape()));
+            Tsr newTensor = new Tsr(Tsr.fcn.indexing.shpOfCon(tensor1.shape(), tensor2.shape()));
             exec.convection(newTensor, tensor1, tensor2);
             return newTensor;
         }
@@ -998,8 +986,8 @@ public abstract class Function implements IFunction {
                 while (running) {
                     ri = (ri == rank) ? 0 : ri;
                     if (incrementing == false) {
-                        int i1 = Tsr.factory.util.iOf(t1Idx, t1Tln);
-                        int i2 = Tsr.factory.util.iOf(t2Idx, t2Tln);
+                        int i1 = Tsr.fcn.indexing.iOf(t1Idx, t1Tln);
+                        int i2 = Tsr.fcn.indexing.iOf(t2Idx, t2Tln);
                         value += t1_value[i1] * t2_value[i2];
                         incrementing = true;
                         ri = 0;
@@ -1031,12 +1019,12 @@ public abstract class Function implements IFunction {
                         }
                     }
                 }//setInto _value in drn:
-                int i0 = Tsr.factory.util.iOf(t0Idx, t0Tln);
+                int i0 = Tsr.fcn.indexing.iOf(t0Idx, t0Tln);
                 t0_value[i0] = value;
                 //System.out.println(i0 + " - " + i);
                 i++;//increment on drain:
                 if (i < drnSze) {
-                    Tsr.factory.util.increment(t0Idx, t0Shp);
+                    Tsr.fcn.indexing.increment(t0Idx, t0Shp);
                 }
             }
         }
@@ -1090,8 +1078,8 @@ public abstract class Function implements IFunction {
                             }
                         }
                         if (isMatch) {
-                            int i1 = Tsr.factory.util.iOf(t1Idx, t1Tln);
-                            int i2 = Tsr.factory.util.iOf(t2Idx, t2Tln);
+                            int i1 = Tsr.fcn.indexing.iOf(t1Idx, t1Tln);
+                            int i2 = Tsr.fcn.indexing.iOf(t2Idx, t2Tln);
                             value += t1_value[i1] * t2_value[i2];
                         }
                         incrementing = true;
@@ -1121,11 +1109,11 @@ public abstract class Function implements IFunction {
                     }
                 }
                 //setInto _value in drn:
-                int i0 = Tsr.factory.util.iOf(t0Idx, t0Tln);
+                int i0 = Tsr.fcn.indexing.iOf(t0Idx, t0Tln);
                 t0_value[i0] = value;
                 i++;//increment on drain:
                 if (i < drnSze) {
-                    Tsr.factory.util.increment(t0Idx, t0Shp);
+                    Tsr.fcn.indexing.increment(t0Idx, t0Shp);
                 }
             }
         }

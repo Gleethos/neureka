@@ -49,7 +49,7 @@ public class DeviceQuery
 
             devices.addAll(Arrays.asList(devicesArray));
             for(cl_device_id did : devicesArray){
-                myDevices.add(new OpenCLDevice(platforms[i] , did));
+                //myDevices.add(new OpenCLDevice(platforms[i] , did));
             }
         }
 

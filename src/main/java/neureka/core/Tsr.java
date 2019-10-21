@@ -93,7 +93,7 @@ public class Tsr {
 
     //DATA FIELDS:
     //=========================
-    private int[] _shape, _translation, _indexes;
+    private int[] _shape, _translation, _idxmap;
     private double[] _value, _gradient;
     //-----------------------------------------------------------------------
 
@@ -185,6 +185,10 @@ public class Tsr {
         return _shape;
     }
 
+    public int[] idxmap(){
+        return _idxmap;
+    }
+
     public int[] translation() {
         return _translation;
     }
@@ -194,14 +198,14 @@ public class Tsr {
             return 0;
         }
         return (this.isOutsourced())
-                ? factory.util.szeOfShp(this.shape())
+                ? fcn.indexing.szeOfShp(this.shape())
                 : (this.isVirtual()
-                ? factory.util.szeOfShp(this.shape())
+                ? fcn.indexing.szeOfShp(this.shape())
                 : _value.length);
     }
 
     public int[] shpIdx(int idx) {
-        return factory.util.idxOf(idx, _translation);
+        return fcn.indexing.idxOf(idx, _translation);
     }
 
     public boolean isEmpty() {
@@ -379,7 +383,7 @@ public class Tsr {
         for (int i = 0; i < size; i++) {
             String vStr;
             if(format){
-                vStr = factory.util.formatFP(v[(this.isVirtual()) ? 0 : i]);
+                vStr = fcn.stringify.formatFP(v[(this.isVirtual()) ? 0 : i]);
             } else {
                 vStr = String.valueOf(v[(this.isVirtual()) ? 0 : i]);
             }
@@ -475,7 +479,7 @@ public class Tsr {
     }
 
     public Tsr(int[] shape) {
-        _value = new double[factory.util.szeOfShp(shape)];
+        _value = new double[fcn.indexing.szeOfShp(shape)];
         this.initialShape(shape);
     }
 
@@ -484,7 +488,7 @@ public class Tsr {
     }
 
     private void _construct(int[] shape, double value){
-        int size = factory.util.szeOfShp(shape);
+        int size = fcn.indexing.szeOfShp(shape);
         _value = new double[1];
         this.setIsVirtual((size > 1));
         this.initialShape(shape);
@@ -502,7 +506,7 @@ public class Tsr {
     public Tsr(Tsr tensor) {
         _shape = tensor._shape;
         _translation = tensor._translation;
-        _indexes = tensor._indexes;
+        _idxmap = tensor._idxmap;
         _value = new double[tensor.size()];
         _components = null;//tensor._components;
         _flags = tensor._flags;
@@ -516,14 +520,14 @@ public class Tsr {
      * @return
      */
     public Tsr initialShape(int[] newShape) {
-        int size = factory.util.szeOfShp(newShape);
+        int size = fcn.indexing.szeOfShp(newShape);
         _value = (_value==null)?new double[size]:_value;
         if (size != _value.length && !this.isVirtual()) {
             throw new IllegalArgumentException("Size of shape does not match stored value!");
         }
         _shape = cached(newShape);
-        _translation = cached(factory.util.idxTln(newShape));
-        _indexes = _translation;
+        _translation = cached(fcn.indexing.idxTln(newShape));
+        _idxmap = _translation;
         return this;
     }
 
@@ -658,7 +662,7 @@ public class Tsr {
         _value = null;
         _shape = null;
         _translation = null;
-        _indexes = null;
+        _idxmap = null;
         _components = null;
         _gradient = null;
         return this;
@@ -671,8 +675,8 @@ public class Tsr {
         int sze = this.size();
         int[] idx = new int[this.shape().length];
         for (int i = 0; i < sze; i++) {
-            factory.util.increment(idx, this.shape());
-            action.accept(factory.util.iOf(idx, this.translation()));
+            fcn.indexing.increment(idx, this.shape());
+            action.accept(fcn.indexing.i_of_i(i,_shape, _translation, _idxmap));//fcn.indexing.iOf(idx, this.translation())
         }
         return this;
     }
@@ -683,17 +687,18 @@ public class Tsr {
         int[] idx = new int[this.shape().length];
         double[] value = this.targetValue();
         for (int i = 0; i < sze; i++) {
-            factory.util.increment(idx, this.shape());
-            action.accept(i, value[factory.util.iOf(idx, this.translation())]);
+            fcn.indexing.increment(idx, this.shape());
+            int index = fcn.indexing.i_of_i(i,_shape, _translation, _idxmap);
+            action.accept(index, value[index]);
         }
         return this;
     }
 
     /**
      * ======================================================================================================
-     * FACTORY FUNCTIONS:
+     * STATIC FUNCTIONS:
      */
-    public static class factory {
+    public static class fcn {
 
         public static class io {
             public static double getFrom(Tsr t, int i) {
@@ -702,32 +707,32 @@ public class Tsr {
                 } else if (t.isVirtual()) {
                     return t.targetValue()[0];
                 }
-                return t.targetValue()[util.iOf(t.shpIdx(i), t.translation())];
+                return t.targetValue()[indexing.i_of_i(i,t._shape, t._translation, t._idxmap)];
             }
 
             public static double getFrom(Tsr t, int[] idx) {
                 t.setIsVirtual(false);
-                return t.targetValue()[util.iOf(idx, t.translation())];
+                return t.targetValue()[indexing.iOf(idx, t.translation())];
             }
 
             public static void setInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
-                t.targetValue()[util.iOf(t.shpIdx(i), t.translation())] = value;
+                t.targetValue()[indexing.i_of_i(i,t._shape, t._translation, t._idxmap)] = value;
             }
 
             public static void setInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t.targetValue()[util.iOf(idx, t.translation())] = value;
+                t.targetValue()[indexing.iOf(idx, t.translation())] = value;
             }
 
             public static void addInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
-                t.targetValue()[util.iOf(t.shpIdx(i), t.translation())] += value;
+                t.targetValue()[indexing.i_of_i(i,t._shape, t._translation, t._idxmap)] += value;
             }
 
             public static void addInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t.targetValue()[util.iOf(idx, t.translation())] += value;
+                t.targetValue()[indexing.iOf(idx, t.translation())] += value;
             }
 
             public static Tsr addInto(Tsr t, Tsr source) {
@@ -741,7 +746,7 @@ public class Tsr {
                     int size = t.size();
                     for (int i = 0; i < size; i++) {
                         addInto(t, index, getFrom(source, index));
-                        util.increment(index, t.shape());
+                        indexing.increment(index, t.shape());
                     }
                 }
                 return source;
@@ -749,12 +754,12 @@ public class Tsr {
 
             public static void subInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
-                t.targetValue()[util.iOf(t.shpIdx(i), t.translation())] -= value;
+                t.targetValue()[indexing.i_of_i(i,t._shape, t._translation, t._idxmap)] -= value;
             }
 
             public static void subInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t.targetValue()[util.iOf(idx, t.translation())] -= value;
+                t.targetValue()[indexing.iOf(idx, t.translation())] -= value;
             }
 
             public static void subInto(Tsr t, Tsr source) {
@@ -768,19 +773,19 @@ public class Tsr {
                     int size = t.size();
                     for (int i = 0; i < size; i++) {
                         io.subInto(t, index, io.getFrom(source, index));
-                        util.increment(index, t.shape());
+                        indexing.increment(index, t.shape());
                     }
                 }
             }
 
             public static void mulInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
-                t.targetValue()[util.iOf(t.shpIdx(i), t.translation())] *= value;
+                t.targetValue()[indexing.i_of_i(i,t._shape, t._translation, t._idxmap)] *= value;
             }
 
             public static void mulInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t.targetValue()[util.iOf(idx, t.translation())] *= value;
+                t.targetValue()[indexing.iOf(idx, t.translation())] *= value;
             }
 
         }
@@ -790,9 +795,9 @@ public class Tsr {
             public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr) {
                 tensor = (newTsr)? cpyOf(tensor):tensor;
                 tensor._record(tensor.shape(), tensor.translation());
-                tensor._shape = cached(util.shpCheck(util.rearrange(tensor._shape, newForm), tensor));
-                tensor._translation = cached(util.rearrange(tensor._translation, tensor._shape, newForm));
-                tensor._indexes =  cached(Tsr.factory.util.idxTln(tensor._shape));
+                tensor._shape = cached(indexing.shpCheck(indexing.rearrange(tensor._shape, newForm), tensor));
+                tensor._translation = cached(indexing.rearrange(tensor._translation, tensor._shape, newForm));
+                tensor._idxmap =  cached(indexing.idxTln(tensor._shape));
                 return tensor;
             }
             //OPERATIONS:
@@ -809,7 +814,7 @@ public class Tsr {
         }
 
         public static Tsr newTsr(double value, int[] shape) {
-            int sze = util.szeOfShp(shape);
+            int sze = indexing.szeOfShp(shape);
             Tsr tensor = new Tsr();
             tensor._value = new double[sze];
             tensor.initialShape(shape);
@@ -836,7 +841,7 @@ public class Tsr {
 
         public static Tsr newTsr(int[] shape, int[] translation) {
             Tsr tensor = new Tsr();
-            tensor._value = new double[util.szeOfShp(shape)];
+            tensor._value = new double[indexing.szeOfShp(shape)];
             tensor.initialShape(shape);
             tensor._translation = (translation != null) ? translation : tensor._translation;//FUNCTIONS.put()
             return tensor;
@@ -846,7 +851,7 @@ public class Tsr {
             Tsr newTensor = new Tsr();
             newTensor._shape = tensor._shape;
             newTensor._translation = tensor._translation;
-            newTensor._indexes = tensor._indexes;
+            newTensor._idxmap = tensor._idxmap;
             newTensor._value = new double[tensor.size()];
             newTensor._components = null;//tensor._components;
             newTensor._flags = tensor._flags;
@@ -871,12 +876,7 @@ public class Tsr {
             return new Tsr();
         }
 
-        /**
-         * ======================================================================================================
-         * UTILITY FUNCTIONS:
-         */
-        public static class util
-        {
+        public static class stringify{
             @Contract(pure = true)
             public static String formatFP(double v){
                 DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.US);
@@ -894,6 +894,38 @@ public class Tsr {
                     }
                 }
                 return vStr;
+            }
+
+            @Contract(pure = true)
+            public static String str(int[] shp) {
+                String str = "";
+                int i = 0;
+                for (int s : shp) {
+                    str += s + ((i != shp.length - 1) ? ", " : "");
+                    i++;
+                }
+                return "[" + str + "]";
+            }
+
+        }
+
+        /**
+         * ======================================================================================================
+         * INDEXING FUNCTIONS:
+         */
+        public static class indexing
+        {
+            @Contract(pure = true)
+            public static int i_of_i(int i, int[] shape, int[] translation, int[] idxmap){
+                int[] idx = new int[shape.length];
+                for(int ii=0; ii<shape.length; ii++){
+                    idx[ii] = i/idxmap[ii];
+                    i %= idxmap[ii];
+                }
+                for(int ii=0; ii<shape.length; ii++){
+                    i += idx[ii]*translation[ii];
+                }
+                return i;
             }
 
             @Contract(pure = true)
@@ -997,20 +1029,9 @@ public class Tsr {
             public static int[] shpCheck(int[] newShp, Tsr t) {
                 if (szeOfShp(newShp) != t.size()) {
                     throw new IllegalArgumentException("New _shape does not match tensor size!" +
-                            " (" + str(newShp) + ((szeOfShp(newShp) < t.size()) ? "<" : ">") + str(t.shape()) + ")");
+                            " (" + stringify.str(newShp) + ((szeOfShp(newShp) < t.size()) ? "<" : ">") + stringify.str(t.shape()) + ")");
                 }
                 return newShp;
-            }
-
-            @Contract(pure = true)
-            public static String str(int[] shp) {
-                String str = "";
-                int i = 0;
-                for (int s : shp) {
-                    str += s + ((i != shp.length - 1) ? ", " : "");
-                    i++;
-                }
-                return "[" + str + "]";
             }
 
             @Contract(pure = true)

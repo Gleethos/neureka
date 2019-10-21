@@ -63,29 +63,29 @@ public class NTester_Tensor extends NTester {
 
 
     public int testTensorUtility_reshape(int[] dim, int[] newForm, int[] expected){
-        int[] result = Tsr.factory.util.rearrange(dim, newForm);
-        printSessionStart("Testing Tsr.util: dimension reshaping!");
+        int[] result = Tsr.fcn.indexing.rearrange(dim, newForm);
+        printSessionStart("Testing Tsr.indexing: dimension reshaping!");
         assertIsEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }
 
     public int testTensorUtility_translation(int[] dim, int[] expected){
-        int [] result =  Tsr.factory.util.idxTln(dim);
-        printSessionStart("Testing Tsr.util: dimension _translation!");
+        int [] result =  Tsr.fcn.indexing.idxTln(dim);
+        printSessionStart("Testing Tsr.indexing: dimension _translation!");
         assertIsEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }
     public int testTensorBase_idxFromAnchor(int[] dim, int idx, int[] expected){
-        int [] result =  Tsr.factory.util.idxOf(idx, Tsr.factory.util.idxTln(dim));
-        printSessionStart("Testing Tsr.util: _shape to _translation to index!");
+        int [] result =  Tsr.fcn.indexing.idxOf(idx, Tsr.fcn.indexing.idxTln(dim));
+        printSessionStart("Testing Tsr.indexing: _shape to _translation to index!");
         assertIsEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }
 
     public int testTensCon(int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd){
-        printSessionStart("Test Tsr.util: tensMul_mxd");
-        int[] drnMxd  = Tsr.factory.util.shpOfCon(frstShp, scndShp);
-        double[] rsltData = new double[Tsr.factory.util.szeOfShp(drnMxd)];
+        printSessionStart("Test Tsr.indexing: tensMul_mxd");
+        int[] drnMxd  = Tsr.fcn.indexing.shpOfCon(frstShp, scndShp);
+        double[] rsltData = new double[Tsr.fcn.indexing.szeOfShp(drnMxd)];
         Function.exec.convection(
                 new Tsr(drnMxd, rsltData),
                 new Tsr(frstShp, frstData),
@@ -100,8 +100,8 @@ public class NTester_Tensor extends NTester {
             double[] frstData, double[] scondData, double[] drnData,
             double[] expctd, boolean first
     ){
-        printSessionStart("Test Tsr.util: tensMul_mxd");
-        int[] drnMxd  = Tsr.factory.util.shpOfCon(frstShp, scndShp);
+        printSessionStart("Test Tsr.indexing: tensMul_mxd");
+        int[] drnMxd  = Tsr.fcn.indexing.shpOfCon(frstShp, scndShp);
         Function.exec.convection_inv(
                 new Tsr(frstShp, frstData),
                 (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
