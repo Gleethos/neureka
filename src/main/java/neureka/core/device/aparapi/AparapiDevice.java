@@ -180,6 +180,10 @@ public class AparapiDevice implements IDevice {
         return _kernel.value();
     }
 
+    public float[] floatValueOf(Tsr tensor, boolean grd){
+        return Tsr.fcn.io.doubleToFloat(valueOf(tensor, grd));
+    }
+
     public IDevice execute(Tsr[] tsrs, int f_id, int d)
     {
         if(IFunction.TYPES.REGISTER[f_id]=="<") {

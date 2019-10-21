@@ -20,6 +20,6 @@ public interface IDevice {
 
     double[] valueOf(Tsr tensor, boolean grd);
 
-
+    float[] floatValueOf(Tsr tensor, boolean grd);
 
 }
