@@ -327,7 +327,7 @@ class NAdvancedMatMul extends Kernel
     				    									{
     				    										//Rowi * common + Comi
     				    										value += matA[Acomi + inrowsize*Rowi + anchbase*row] * matC[Rowi + row*collom*Insi + Coli*row];// Rowi*collom + row*collom*Insi + Coli
-    				    										//value += matA[Comi + Rowi*anchbase] * matC[Rowi * collom * Insi + Coli];
+    				    										//value64 += matA[Comi + Rowi*anchbase] * matC[Rowi * collom * Insi + Coli];
     				    									}
     				    								}
     				    								Bcomi++; Acomi++;
@@ -411,7 +411,7 @@ class NAdvancedMatMul extends Kernel
 			    							//Rowi * common + Comi
 			    							//System.out.print("Acomi: "+Acomi+"; Bcomi: "+Bcomi+"; anchbase: "+anchbase+"; Rowi: "+Rowi);
 			    							//System.out.println("; collom: "+collom+"; Insii: "+Insi+"; Coli: "+Coli+"; inrowsize: "+inrowsize);
-			    							//	System.out.println("value:("+value+")+=A:("+matA[Acomi + inrowsize*Rowi + anchbase*row]+")*B:("+matB[Bcomi + common*Coli]+")");
+			    							//	System.out.println("value64:("+value64+")+=A:("+matA[Acomi + inrowsize*Rowi + anchbase*row]+")*B:("+matB[Bcomi + common*Coli]+")");
 			    							value += matA[Acomi + inrowsize*Rowi + anchbase*row] * matB[Bcomi + common*Coli]; //Bcomi * collom + Coli
 			    							Bcomi++; 
 			    							Acomi++;
@@ -518,7 +518,7 @@ class NAdvancedMatMul extends Kernel
     					AoBcomp_anch_p++;	
     				}
     		}	
-    		//matC[Rowi * collom + Coli] = value;
+    		//matC[Rowi * collom + Coli] = value64;
     		matB[Comi + Coli*common] = value;//Comi * collom + Coli
     	    //################################
     	}//------------------------------------------------------

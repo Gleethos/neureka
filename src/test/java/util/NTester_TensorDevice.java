@@ -13,7 +13,7 @@ public class NTester_TensorDevice extends NTester {
 
     public int testAddTensor(AparapiDevice device, Tsr tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
 
-        double[] value = tensor.value();
+        double[] value = tensor.value64();
         int[] shape = tensor.shape();
         int[] translation = tensor.translation();
 
@@ -26,7 +26,7 @@ public class NTester_TensorDevice extends NTester {
         this.assertStringContains("kernel._shapes()", stringified(kernel.shapes()), stringified(shapes));
         this.assertStringContains("kernel._translations()", stringified(kernel.translations()), stringified(translations));
 
-        this.assertStringContains("tensor._value()", stringified(tensor.value()),stringified(value));
+        this.assertStringContains("tensor._value()", stringified(tensor.value64()),stringified(value));
         this.assertStringContains("kernel._value()", stringified(kernel.value()),stringified(value));
         this.assertStringContains("kernel._shape()", stringified(kernel.shape()),stringified(shape));
         this.assertStringContains("kernel._translation()", stringified(kernel.translation()),stringified(translation));
@@ -38,7 +38,7 @@ public class NTester_TensorDevice extends NTester {
 
     public int testGetTensor(AparapiDevice device, Tsr tensor, double[] values, int[] shapes, int[] translations, int[] pointers){
 
-        double[] value = tensor.value();
+        double[] value = tensor.value64();
         int[] shape = tensor.shape();
         int[] translation = tensor.translation();
 

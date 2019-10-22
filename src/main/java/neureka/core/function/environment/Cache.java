@@ -17,16 +17,17 @@ public class Cache
         return this.FUNCTIONS;
     }
 
-    private final TreeMap<GraphLock, TreeMap<GraphNode, Tsr>> TENSORS = new TreeMap<>((a, b)->((int)(a.hashCode()-b.hashCode())));
+    private final TreeMap<GraphLock, TreeMap<GraphNode, Tsr>> PROCESSING = new TreeMap<>((a, b)->((int)(a.hashCode()-b.hashCode())));
 
-    public synchronized void free(Tsr[] input)
+    public synchronized void free(GraphLock lock)//Tsr[] input
     {
-        for(Tsr t : input){
-            if(t.has(GraphNode.class)){
-                TENSORS.remove(((GraphNode)t.find(GraphNode.class)).lock());
-                t.remove(GraphNode.class);
-            }
-        }
+        PROCESSING.remove(lock);
+        //for(Tsr t : input){
+        //    if(t.has(GraphNode.class)){
+        //        PROCESSING.remove(((GraphNode)t.find(GraphNode.class)).lock());
+        //        t.remove(GraphNode.class);
+        //    }
+        //}
     }
 
     public synchronized Tsr handle(Tsr[] input, IFunction function, Supplier<Tsr> activation)
@@ -58,9 +59,9 @@ public class Cache
 
     private synchronized Tsr get(GraphNode node)
     {
-        if(TENSORS.containsKey(node.lock())){
-            if(TENSORS.get(node.lock()).containsKey(node)){
-                return TENSORS.get(node.lock()).get(node);
+        if(PROCESSING.containsKey(node.lock())){
+            if(PROCESSING.get(node.lock()).containsKey(node)){
+                return PROCESSING.get(node.lock()).get(node);
             }
         }
         return null;
@@ -70,11 +71,11 @@ public class Cache
     {
         if(node.isCachable()) {
             TreeMap<GraphNode, Tsr> variables;
-            if (!TENSORS.containsKey(node.lock())) {
+            if (!PROCESSING.containsKey(node.lock())) {
                 variables = new TreeMap<>((a, b) -> (int) (a.nid() - b.nid()));
-                TENSORS.put(node.lock(), variables);
+                PROCESSING.put(node.lock(), variables);
             } else {
-                variables = TENSORS.get(node.lock());
+                variables = PROCESSING.get(node.lock());
             }
             variables.put(node, t);
         }

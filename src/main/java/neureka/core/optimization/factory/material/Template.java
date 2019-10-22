@@ -7,7 +7,7 @@ public abstract class Template implements TOptimizer {
 
     @Override
     public void optimize(Tsr t){
-        double[] value = t.value();//TODO: Add multi-threading!
+        double[] value = t.value64();//TODO: Add multi-threading!
         t.foreach((i)->this.foreach(i, value));
     }
 

@@ -2,6 +2,7 @@ package neureka.core.function.factory.autograd;
 
 import neureka.core.Tsr;
 import neureka.core.function.IFunction;
+import neureka.core.function.environment.Types;
 import neureka.core.function.factory.Function;
 import neureka.core.function.factory.assembly.FunctionBuilder;
 
@@ -12,8 +13,16 @@ public class GraphBuilder
 
     public static void connect(Tsr output, Tsr[] inputs, IFunction function)
     {
+        /** Returning if the above cannot form an AD computation graph! :
+         * */
         if(!function.isFlat()){
            return;
+        }
+        if(IFunction.TYPES.LOOKUP.get("<")==function.id()){
+            return;
+        }
+        if(IFunction.TYPES.LOOKUP.get(">")==function.id()){
+            return;
         }
         //--------------------------------------------------------------------------------------
         GraphLock gid = ((GraphNode)inputs[0].find(GraphNode.class)).lock();

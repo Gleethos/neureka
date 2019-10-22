@@ -212,7 +212,7 @@ public class AdvancedNVConvector extends Kernel
 	    				    						{
 	    				    							//Rowi * common + Comi
 	    				    							value += E[ei].matA(Acomi + inrowsize*Rowi + anchbase*E[ei].row()) * E[ei].matC(Rowi + E[ei].row()*collom*Insi + Coli*E[ei].row());// Rowi*collom + row*collom*Insi + Coli
-	    				    							//value += matA[Comi + Rowi*anchbase] * matC[Rowi * collom * Insi + Coli];
+	    				    							//value64 += matA[Comi + Rowi*anchbase] * matC[Rowi * collom * Insi + Coli];
 	    				    						}
 	    				    					}
 	    				    					Bcomi++; Acomi++;
@@ -297,7 +297,7 @@ public class AdvancedNVConvector extends Kernel
 				    						//Rowi * common + Comi
 				    						//System.out.print("Acomi: "+Acomi+"; Bcomi: "+Bcomi+"; anchbase: "+anchbase+"; Rowi: "+Rowi);
 				    						//System.out.println("; collom: "+collom+"; Insii: "+Insi+"; Coli: "+Coli+"; inrowsize: "+inrowsize);
-				    						//	System.out.println("value:("+value+")+=A:("+matA[Acomi + inrowsize*Rowi + anchbase*row]+")*B:("+matB[Bcomi + common*Coli]+")");
+				    						//	System.out.println("value64:("+value64+")+=A:("+matA[Acomi + inrowsize*Rowi + anchbase*row]+")*B:("+matB[Bcomi + common*Coli]+")");
 				    						value += E[ei].matA(Acomi + inrowsize*Rowi + anchbase*E[ei].row()) * matB[Bcomi + common*Coli]; //Bcomi * collom + Coli
 				    						Bcomi++; 
 				    						Acomi++;
@@ -409,7 +409,7 @@ public class AdvancedNVConvector extends Kernel
 	    				AoBcomp_anch_p++;	
 	    			}
 	    		}	
-	    		//matC[Rowi * collom + Coli] = value;
+	    		//matC[Rowi * collom + Coli] = value64;
 	    		matB[Comi + Coli*common] = value;//Comi * collom + Coli
 	    	    //################################
 	        }

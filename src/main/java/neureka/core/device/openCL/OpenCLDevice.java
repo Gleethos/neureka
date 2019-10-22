@@ -112,7 +112,7 @@ public class OpenCLDevice implements IDevice
 
     private void _store(Tsr tensor, cl_tsr newClTsr, int fp, boolean grd){
         //cl_tsr newClTsr = new cl_tsr();
-        double[] hostData = (grd)?tensor.gradient():tensor.value();
+        double[] hostData = (grd)?tensor.gradient64():tensor.value64();
         Pointer p;
         if(fp==1){
             float[] newData = new float[hostData.length];
@@ -191,7 +191,7 @@ public class OpenCLDevice implements IDevice
     @Override
     public IDevice rmv(Tsr tensor) {
         cl_tsr clt = _mapping.get(tensor);
-        //clEnqueueWriteBuffer(commandQueue, clTsr.value, true, 0,
+        //clEnqueueWriteBuffer(commandQueue, clTsr.value64, true, 0,
         //        tensor.size() * Sizeof.cl_uint, Pointer.to(new double[666]), 0, null, null);
         //remove translations/shapes from device!
         clReleaseMemObject(clt.config);
@@ -468,11 +468,11 @@ public class OpenCLDevice implements IDevice
     public static class DeviceQuery
     {
         /**
-         * Returns the value of the device info parameter with the given name
+         * Returns the value64 of the device info parameter with the given name
          *
          * @param device The device
          * @param paramName The parameter name
-         * @return The value
+         * @return The value64
          */
         public static int getInt(cl_device_id device, int paramName)
         {
@@ -485,7 +485,7 @@ public class OpenCLDevice implements IDevice
          * @param device The device
          * @param paramName The parameter name
          * @param numValues The number of values
-         * @return The value
+         * @return The value64
          */
         public static int[] getInts(cl_device_id device, int paramName, int numValues)
         {
@@ -495,11 +495,11 @@ public class OpenCLDevice implements IDevice
         }
 
         /**
-         * Returns the value of the device info parameter with the given name
+         * Returns the value64 of the device info parameter with the given name
          *
          * @param device The device
          * @param paramName The parameter name
-         * @return The value
+         * @return The value64
          */
         public static long getLong(cl_device_id device, int paramName)
         {
@@ -512,7 +512,7 @@ public class OpenCLDevice implements IDevice
          * @param device The device
          * @param paramName The parameter name
          * @param numValues The number of values
-         * @return The value
+         * @return The value64
          */
         public static long[] getLongs(cl_device_id device, int paramName, int numValues)
         {
@@ -522,11 +522,11 @@ public class OpenCLDevice implements IDevice
         }
 
         /**
-         * Returns the value of the device info parameter with the given name
+         * Returns the value64 of the device info parameter with the given name
          *
          * @param device The device
          * @param paramName The parameter name
-         * @return The value
+         * @return The value64
          */
         public static String getString(cl_device_id device, int paramName)
         {
@@ -543,11 +543,11 @@ public class OpenCLDevice implements IDevice
         }
 
         /**
-         * Returns the value of the platform info parameter with the given name
+         * Returns the value64 of the platform info parameter with the given name
          *
          * @param platform The platform
          * @param paramName The parameter name
-         * @return The value
+         * @return The value64
          */
         public static String getString(cl_platform_id platform, int paramName)
         {
@@ -564,11 +564,11 @@ public class OpenCLDevice implements IDevice
         }
 
         /**
-         * Returns the value of the device info parameter with the given name
+         * Returns the value64 of the device info parameter with the given name
          *
          * @param device The device
          * @param paramName The parameter name
-         * @return The value
+         * @return The value64
          */
         public static long getSize(cl_device_id device, int paramName)
         {
@@ -581,7 +581,7 @@ public class OpenCLDevice implements IDevice
          * @param device The device
          * @param paramName The parameter name
          * @param numValues The number of values
-         * @return The value
+         * @return The value64
          */
         public static long[] getSizes(cl_device_id device, int paramName, int numValues)
         {

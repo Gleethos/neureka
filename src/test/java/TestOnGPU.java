@@ -27,10 +27,10 @@ public class TestOnGPU {
     //   //JOCLSimpleMandelbrot.start(null);
     //   org.jocl.samples.MyJOCLMandelbrot.start(null);
          //new Setup().initCL();
-       OpenCLDevice myDevice = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
-       System.out.println("Local mem size: "+myDevice.localMemSize());
-        System.out.println("name: "+myDevice.name());
-        System.out.println("vendor: "+myDevice.vendor());
+       /////OpenCLDevice myDevice = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
+       /////System.out.println("Local mem size: "+myDevice.localMemSize());
+       ///// System.out.println("name: "+myDevice.name());
+       ///// System.out.println("vendor: "+myDevice.vendor());
 
     //   try {
     //       Thread.sleep(7000000);

@@ -295,9 +295,9 @@ public abstract class Function implements IFunction {
                         ids[ii] = Tsr.fcn.indexing.i_of_i(i, inputs[ii].shape(), inputs[ii].translation(), Tsr.fcn.indexing.idxTln(inputs[ii].shape()));
                     }
                     for (int ii = 0; ii < inputs.length; ii++) {
-                        inp[ii] = inputs[ii].value()[ids[ii]];//i
+                        inp[ii] = inputs[ii].value64()[ids[ii]];//i
                     }
-                    finalOutput.value()[i] = _scalar_activation(inp, j, d);
+                    finalOutput.value64()[i] = _scalar_activation(inp, j, d);
                 });
                 return  output;
             }
@@ -442,8 +442,8 @@ public abstract class Function implements IFunction {
 
         @Contract(pure = true)
         public static void foreach(Tsr t1, Tsr t2, Actor action) {
-            double[] inputValue = (t1.value() == null) ? new double[t1.size()] : t1.value();
-            double[] outputValue = (t2.value() == null) ? new double[t2.size()] : t2.value();
+            double[] inputValue = (t1.value64() == null) ? new double[t1.size()] : t1.value64();
+            double[] outputValue = (t2.value64() == null) ? new double[t2.size()] : t2.value64();
             t1.foreach((i) -> action.apply(i, inputValue, outputValue));
             t2.setValue(outputValue);
             t1.setValue(inputValue);

@@ -27,7 +27,7 @@ public class Concept {
 	//---------------
 	
 	
-	int[] NodeData_anchor; // -> negative value mean that target package is advanced!
+	int[] NodeData_anchor; // -> negative value64 mean that target package is advanced!
 	// advanced means that there is a 'static' output! 
 	// memory nodes within root astructures have such kind of outputs!
 	//=> NEGATIVE VALUES ARE MEMORY NODES => have extra output within NodeData;

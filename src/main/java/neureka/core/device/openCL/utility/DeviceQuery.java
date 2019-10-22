@@ -189,11 +189,11 @@ public class DeviceQuery
     }
 
     /**
-     * Returns the value of the device info parameter with the given name
+     * Returns the value64 of the device info parameter with the given name
      *
      * @param device The device
      * @param paramName The parameter name
-     * @return The value
+     * @return The value64
      */
     private static int getInt(cl_device_id device, int paramName)
     {
@@ -206,7 +206,7 @@ public class DeviceQuery
      * @param device The device
      * @param paramName The parameter name
      * @param numValues The number of values
-     * @return The value
+     * @return The value64
      */
     private static int[] getInts(cl_device_id device, int paramName, int numValues)
     {
@@ -216,11 +216,11 @@ public class DeviceQuery
     }
 
     /**
-     * Returns the value of the device info parameter with the given name
+     * Returns the value64 of the device info parameter with the given name
      *
      * @param device The device
      * @param paramName The parameter name
-     * @return The value
+     * @return The value64
      */
     private static long getLong(cl_device_id device, int paramName)
     {
@@ -233,7 +233,7 @@ public class DeviceQuery
      * @param device The device
      * @param paramName The parameter name
      * @param numValues The number of values
-     * @return The value
+     * @return The value64
      */
     private static long[] getLongs(cl_device_id device, int paramName, int numValues)
     {
@@ -243,11 +243,11 @@ public class DeviceQuery
     }
 
     /**
-     * Returns the value of the device info parameter with the given name
+     * Returns the value64 of the device info parameter with the given name
      *
      * @param device The device
      * @param paramName The parameter name
-     * @return The value
+     * @return The value64
      */
     private static String getString(cl_device_id device, int paramName)
     {
@@ -264,11 +264,11 @@ public class DeviceQuery
     }
 
     /**
-     * Returns the value of the platform info parameter with the given name
+     * Returns the value64 of the platform info parameter with the given name
      *
      * @param platform The platform
      * @param paramName The parameter name
-     * @return The value
+     * @return The value64
      */
     private static String getString(cl_platform_id platform, int paramName)
     {
@@ -285,11 +285,11 @@ public class DeviceQuery
     }
 
     /**
-     * Returns the value of the device info parameter with the given name
+     * Returns the value64 of the device info parameter with the given name
      *
      * @param device The device
      * @param paramName The parameter name
-     * @return The value
+     * @return The value64
      */
     private static long getSize(cl_device_id device, int paramName)
     {
@@ -302,7 +302,7 @@ public class DeviceQuery
      * @param device The device
      * @param paramName The parameter name
      * @param numValues The number of values
-     * @return The value
+     * @return The value64
      */
     static long[] getSizes(cl_device_id device, int paramName, int numValues)
     {

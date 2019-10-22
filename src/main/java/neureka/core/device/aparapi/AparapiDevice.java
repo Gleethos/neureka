@@ -84,9 +84,9 @@ public class AparapiDevice implements IDevice {
     public IDevice get(Tsr tensor)
     {
         if (_kernel != null) {
-            Tsr.fcn.inject(valueOf(tensor, false), false, tensor);//_kernel.value(), false, tensor
+            Tsr.fcn.inject(valueOf(tensor, false), false, tensor);//_kernel.value64(), false, tensor
             if (tensor.rqsGradient()) {
-                Tsr.fcn.inject(valueOf(tensor, true), true, tensor);//_kernel.value(), true, tensor
+                Tsr.fcn.inject(valueOf(tensor, true), true, tensor);//_kernel.value64(), true, tensor
             }
             rmv(tensor);
         }
@@ -136,11 +136,11 @@ public class AparapiDevice implements IDevice {
             _tensors_map.put(tensor, _kernel.allocPtrFor(tensor, _register));
             _kernel.execute(
                     Range.create(//_device, //-> Causes Error! Why?
-                            _kernel.executionSizeOf_storeTsr(_register[0][_tensors_map.get(tensor)], tensor.value(), false)
+                            _kernel.executionSizeOf_storeTsr(_register[0][_tensors_map.get(tensor)], tensor.value64(), false)
                     )
             );
             if (tensor.rqsGradient()) {
-                double[] grd = (tensor.gradient() == null) ? new double[tensor.value().length] : tensor.gradient();
+                double[] grd = (tensor.gradient64() == null) ? new double[tensor.value64().length] : tensor.gradient64();
                 _kernel.execute(
                         Range.create(//_device, //-> Causes Error! Why?
                                 _kernel.executionSizeOf_storeTsr(
@@ -212,10 +212,10 @@ public class AparapiDevice implements IDevice {
             ) {
                 if (tsrs[2].isVirtual() || tsrs[2].size() == 1) {
                     _execute(new Tsr[]{tsrs[0], tsrs[1]}, IFunction.TYPES.LOOKUP.get("idy"), -1);
-                    _execute(tsrs[0], tsrs[2].value()[0], f_id, d);
+                    _execute(tsrs[0], tsrs[2].value64()[0], f_id, d);
                 } else {
                     _execute(new Tsr[]{tsrs[0], tsrs[2]}, IFunction.TYPES.LOOKUP.get("idy"), -1);
-                    _execute(tsrs[0], tsrs[1].value()[0], f_id, d);
+                    _execute(tsrs[0], tsrs[1].value64()[0], f_id, d);
                 }
             } else {
                 for (Tsr t : tsrs) {

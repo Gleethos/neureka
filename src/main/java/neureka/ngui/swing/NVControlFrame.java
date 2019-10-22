@@ -704,7 +704,7 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 	
 	private void displayVariables()
 	{
-		double[][] weights = {UnitCore.value()};
+		double[][] weights = {UnitCore.value64()};
 		displayLine("Node state: ");
 		if(weights==null) {display("Node has no connections. \n"); return;}
 		display("\n"); 

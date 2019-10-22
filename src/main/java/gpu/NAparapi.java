@@ -223,13 +223,13 @@ public class NAparapi{
 
       @Override public void run() {
 
-         /** Determine which RGB value we are going to process (0..RGB.length). */
+         /** Determine which RGB value64 we are going to process (0..RGB.length). */
          final int gid = getGlobalId();
-         /** Translate the gid into an x an y value. */
+         /** Translate the gid into an x an y value64. */
          final float x = ((((gid % width) * scale) - ((scale / 2) * width)) / width) + offsetx;
          final float y = ((((gid / width) * scale) - ((scale / 2) * height)) / height) + offsety;
          int count = getCount(x, y);
-         // Pull the value out of the palette for this iteration count.
+         // Pull the value64 out of the palette for this iteration count.
          rgb[gid] = pallette[count];
       }
       public void setScaleAndOffset(float _scale, float _offsetx, float _offsety) {

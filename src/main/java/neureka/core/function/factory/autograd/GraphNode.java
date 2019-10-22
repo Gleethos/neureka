@@ -13,7 +13,7 @@ import java.util.function.BiConsumer;
 public class GraphNode {
 
     /**
-     *  This gradient node is involved in auto-differentiation.
+     *  This gradient64 node is involved in auto-differentiation.
      * @return boolean
      */
     public boolean usesAD(){
@@ -74,6 +74,11 @@ public class GraphNode {
      */
     private GraphLock _lock;
 
+    /**
+     * How often the tensor of this graph node has been used as input to a function!
+     * */
+    private int _referenced_count;
+
     //==================================================================================================================
     /**
      * @return GraphLock
@@ -127,6 +132,14 @@ public class GraphNode {
         _function = f;
         _input = src;
         _lock = lock;
+        _referenced_count = 0;
+        GraphNode old_node = (GraphNode) value.find(GraphNode.class);
+        if(old_node!=null){
+            _targets_gradients = old_node._targets_gradients;//TODO: writes tests that reach this code!
+            _mode = old_node._mode;
+            _referenced_count = old_node._referenced_count + 1;
+        }
+
     }
 
     /**

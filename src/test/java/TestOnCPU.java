@@ -197,7 +197,7 @@ public class TestOnCPU {
         Tsr tensor2 = new Tsr(-4);
         Tsr tensor3 = new Tsr(2);
         tester.testInjection(
-                new Tsr[]{tensor1, tensor2, tensor3},
+                new Tsr[]{tensor1, tensor2, tensor3},//ERROR here
                 "(Ig[0]<-I[1])->I[2]",
                 new String[][]{
                         {"empty"},//result

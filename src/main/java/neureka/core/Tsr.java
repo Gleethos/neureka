@@ -108,18 +108,18 @@ public class Tsr {
     public double[] targetValue(boolean unique){
         if(!this.isOutsourced() && unique){
             double[] value = new double[this.size()];
-            double[] v = (gradientIsTargeted())?gradient():value();
+            double[] v = (gradientIsTargeted())? gradient64(): value64();
             for(int i=0; i<value.length; i++){
                 value[i] = v[i];
             }
             return value;
         } else {
-            return (gradientIsTargeted())?gradient():value();
+            return (gradientIsTargeted())? gradient64(): value64();
         }
     }
 
     public double[] targetValue(){
-        return (gradientIsTargeted())?gradient():value();
+        return (gradientIsTargeted())? gradient64(): value64();
     }
 
     public Tsr setTargetValue(double[] value){
@@ -135,13 +135,13 @@ public class Tsr {
         return this;
     }
 
-    public double[] gradient() {
+    public double[] gradient64() {
         if (this.rqsGradient() && this.isOutsourced() && this.has(AparapiDevice.class)) {
             return ((AparapiDevice) find(AparapiDevice.class)).valueOf(this, true);
         }
         return (this.isFP64())?(double[])_gradient:fcn.io.floatToDouble((float[])_gradient);
     }
-    public float[] gradientFP32(){
+    public float[] gradient32(){
         return (this.isFP64())?Tsr.fcn.io.doubleToFloat((double[])_gradient):(float[])_gradient;
     }
 
@@ -155,13 +155,13 @@ public class Tsr {
             this.setGradientIsTargeted(false);
         } else {
             if(this.isFP64()){
-                double[] value = g.value();
+                double[] value = g.value64();
                 _gradient = (_gradient==null)?new double[value.length]:_gradient;
                 for(int i=0; i<value.length; i++){
                     ((double[])_gradient)[i] = value[i];
                 }
             } else {
-                float[] value = g.valueFP32();
+                float[] value = g.value32();
                 _gradient = (_gradient==null)?new float[value.length]:_gradient;
                 for(int i=0; i<value.length; i++){
                     ((float[])_gradient)[i] = value[i];
@@ -175,7 +175,7 @@ public class Tsr {
         return _value instanceof double[];
     }
 
-    public double[] value() {
+    public double[] value64() {
         if (_value == null && this.isOutsourced() && this.has(IDevice.class)) {
             return ((IDevice) this.find(IDevice.class)).valueOf(this, false);
         }
@@ -190,7 +190,7 @@ public class Tsr {
         return newValue;
     }
 
-    public float[] valueFP32(){
+    public float[] value32(){
         if (_value == null && this.isOutsourced() && this.has(IDevice.class)) {
             return ((IDevice) this.find(IDevice.class)).floatValueOf(this, false);
         }
@@ -378,14 +378,14 @@ public class Tsr {
         boolean compact = mode.contains("c");
         strShape = "[" + strShape + "]";
         String asString = "";
-        asString += _stringified((value()), compact);//(this.isOutsourced())?this.value():_value
+        asString += _stringified((value64()), compact);//(this.isOutsourced())?this.value64():_value
         asString = strShape + ":(" + asString + ")";
         if(mode.contains("g")){
             if(this.rqsGradient()){
                 asString += ":g:";
-                double[] gradient = this.gradient();
+                double[] gradient = this.gradient64();
                 if(gradient!=null){
-                    asString += "("+_stringified((gradient()), compact)+")";
+                    asString += "("+_stringified((gradient64()), compact)+")";
                 } else {
                     asString += "(null)";
                 }
@@ -566,7 +566,7 @@ public class Tsr {
         _value = (_value==null)?new double[size]:_value;
         int length = (this.isFP64())?((double[])_value).length:((float[])_value).length;
         if (size != length && !this.isVirtual()) {
-            throw new IllegalArgumentException("Size of shape does not match stored value!");
+            throw new IllegalArgumentException("Size of shape does not match stored value64!");
         }
         _shape = cached(newShape);
         _translation = cached(fcn.indexing.idxTln(newShape));
@@ -764,7 +764,6 @@ public class Tsr {
                 return newData;
             }
 
-
             public static double getFrom(Tsr t, int i) {
                 if (t.isEmpty() || t.isUndefined()) {
                     return 0;
@@ -801,7 +800,7 @@ public class Tsr {
 
             public static Tsr addInto(Tsr t, Tsr source) {
                 if (t.isVirtual() && source.isVirtual()) {
-                    t.targetValue()[0] += ((source.gradientIsTargeted())?source.gradient():source.value())[0];
+                    t.targetValue()[0] += ((source.gradientIsTargeted())?source.gradient64():source.value64())[0];
                 } else {
                     if (t.isVirtual()) {
                         t.setIsVirtual(false);
@@ -828,7 +827,7 @@ public class Tsr {
 
             public static void subInto(Tsr t, Tsr source) {
                 if (t.isVirtual() && source.isVirtual()) {
-                    t.targetValue()[0] -= ((source.gradientIsTargeted())?source.gradient():source.value())[0];
+                    t.targetValue()[0] -= ((source.gradientIsTargeted())?source.gradient64():source.value64())[0];
                 } else {
                     if (t.isVirtual()) {
                         t.setIsVirtual(false);

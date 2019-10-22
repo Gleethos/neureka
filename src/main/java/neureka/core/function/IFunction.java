@@ -29,7 +29,7 @@ public interface IFunction
             if (result.has(GraphNode.class)) {
                 ((GraphNode) result.find(GraphNode.class)).trimTree(null);
             }
-            IFunction.CACHE.free(inputs);
+            IFunction.CACHE.free(newGid);
             for (Tsr t : inputs) {
                 t.setGradientIsTargeted(false);
             }
