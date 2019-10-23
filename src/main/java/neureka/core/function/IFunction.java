@@ -21,15 +21,19 @@ public interface IFunction
         }
 
         public static Tsr commit(Tsr[] inputs, IFunction function) {
-            GraphLock newGid = new GraphLock(function, inputs);
+            GraphLock newLock = new GraphLock(function, inputs);
             for (Tsr t : inputs) {
-                t.add(new GraphNode(t, null, null, newGid));
+                if(t.has(GraphNode.class)){
+                    ((GraphNode)t.find(GraphNode.class)).optainLocking(newLock);
+                } else {
+                    t.add(new GraphNode(t, null, null, newLock));
+                }
             }
             Tsr result = (function.activate(inputs));
             if (result.has(GraphNode.class)) {
                 ((GraphNode) result.find(GraphNode.class)).trimTree(null);
             }
-            IFunction.CACHE.free(newGid);
+            IFunction.CACHE.free(newLock);
             for (Tsr t : inputs) {
                 t.setGradientIsTargeted(false);
             }

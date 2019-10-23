@@ -88,6 +88,16 @@ public class GraphNode {
     }
 
     /**
+     * @param newLock
+     */
+    public synchronized void optainLocking(GraphLock newLock){
+        if(_lock!=null && !this.isOrigin()){//&& !this.isOrigin() ??
+            _referenced_count++;//This might also increment on tensors used as weights! (not outputs of functions!)
+        }
+        _lock = newLock;
+    }
+
+    /**
      * Node-ID
      * @return long
      */
@@ -127,19 +137,25 @@ public class GraphNode {
      * @param src
      * @param lock
      */
-    public GraphNode(Tsr value, IFunction f, Tsr[] src, GraphLock lock){
+    public GraphNode(Tsr value, IFunction f, Tsr[] src, GraphLock lock)
+    {
         _mode = (src!=null)? _modeOf(src, f):(value.rqsGradient())?1:0;
         _function = f;
         _input = src;
         _lock = lock;
         _referenced_count = 0;
-        GraphNode old_node = (GraphNode) value.find(GraphNode.class);
-        if(old_node!=null){
-            _targets_gradients = old_node._targets_gradients;//TODO: writes tests that reach this code!
-            _mode = old_node._mode;
-            _referenced_count = old_node._referenced_count + 1;
+        if(value.has(GraphNode.class)){
+            throw new IllegalArgumentException("[GraphNode]:(constructor): Invalid Argument! Node value tensor already owned by another node!");
+            //TODO: writes tests that reach this code!
         }
-
+        if(src!=null){
+            for(Tsr t : src){
+                if(!t.has(GraphNode.class)){
+                    throw new IllegalArgumentException("[GraphNode]:(constructor): Invalid Argument(s)! Node(s) of source tensor(s) not owned by other node(s)!");
+                    //TODO: writes tests that reach this code!
+                }
+            }
+        }
     }
 
     /**

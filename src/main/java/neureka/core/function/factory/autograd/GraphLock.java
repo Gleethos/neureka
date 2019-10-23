@@ -12,8 +12,18 @@ public class GraphLock {
      * */
     private IFunction _owner;
 
+    private boolean _is_locked = true;
+
     public GraphLock(IFunction owner, Tsr[] source){
         this._owner = owner;
+    }
+
+    public boolean isLocked(){
+        return _is_locked;
+    }
+
+    public void release(){
+        _is_locked = false;
     }
 
     @Override

@@ -18,11 +18,10 @@ public class GraphBuilder
         if(!function.isFlat()){
            return;
         }
-        if(IFunction.TYPES.LOOKUP.get("<")==function.id()){
-            return;
-        }
-        if(IFunction.TYPES.LOOKUP.get(">")==function.id()){
-            return;
+        for(Tsr t : inputs){
+            if(t.equals(output)){
+                return;
+            }
         }
         //--------------------------------------------------------------------------------------
         GraphLock gid = ((GraphNode)inputs[0].find(GraphNode.class)).lock();
@@ -36,7 +35,7 @@ public class GraphBuilder
                     GraphNode src_node = ((GraphNode) input.find(GraphNode.class));
                     if(src_node.function()!=null && src_node.function().id()==IFunction.TYPES.LOOKUP.get("x")){
                         Tsr d = function.derive(inputs, i);//TODO: is this ever used? / visited? - yes but why?
-                        node.put(input, d);// Sources created by x-mul are revers-mode cases!
+                        node.put(input, d);// Sources created by x-mul are reverse-mode cases!
                     }else{
                         if(src_node.usesAD()){
                             Tsr d = function.derive(inputs, i);
@@ -73,9 +72,8 @@ public class GraphBuilder
                 }
             }
         }
+        //--------------------------------------------------------------------------------------
     }
-    //--------------------------------------------------------------------------------------
-
 }
 
 

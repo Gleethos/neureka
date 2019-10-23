@@ -22,12 +22,7 @@ public class Cache
     public synchronized void free(GraphLock lock)//Tsr[] input
     {
         PROCESSING.remove(lock);
-        //for(Tsr t : input){
-        //    if(t.has(GraphNode.class)){
-        //        PROCESSING.remove(((GraphNode)t.find(GraphNode.class)).lock());
-        //        t.remove(GraphNode.class);
-        //    }
-        //}
+        lock.release();
     }
 
     public synchronized Tsr handle(Tsr[] input, IFunction function, Supplier<Tsr> activation)
@@ -41,23 +36,26 @@ public class Cache
         if(untracked==null){//If graph tracking (nodes) has not yet been initialized!
             return IFunction.setup.commit(input, function);
         }
+        //GraphLock newLock = new GraphLock(function, input);
+        GraphLock lock = ((GraphNode)untracked.find(GraphNode.class)).lock();
         for(Tsr t : input){
-            if(!t.has(GraphNode.class)){
-                GraphLock gid = ((GraphNode)untracked.find(GraphNode.class)).lock();
-                GraphNode rg = new GraphNode(t, null, null, gid);
+            if(t.has(GraphNode.class)){
+                ((GraphNode)t.find(GraphNode.class)).optainLocking(lock);
+            } else {
+                GraphNode rg = new GraphNode(t, null, null, lock);
                 t.add(rg);
             }
         }
         GraphNode node = (GraphNode) input[0].find(GraphNode.class);
-        Tsr result = get(node);
+        Tsr result = _get(node);
         if(result==null){
             result = activation.get();
-            put(result, node);
+            _put(result, node);
         }
         return result;
     }
 
-    private synchronized Tsr get(GraphNode node)
+    private synchronized Tsr _get(GraphNode node)
     {
         if(PROCESSING.containsKey(node.lock())){
             if(PROCESSING.get(node.lock()).containsKey(node)){
@@ -67,7 +65,7 @@ public class Cache
         return null;
     }
 
-    private synchronized void put(Tsr t, GraphNode node)
+    private synchronized void _put(Tsr t, GraphNode node)
     {
         if(node.isCachable()) {
             TreeMap<GraphNode, Tsr> variables;
