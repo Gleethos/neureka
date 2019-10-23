@@ -1,22 +1,22 @@
 package util;
 
 import neureka.core.Tsr;
-import neureka.core.device.aparapi.AparapiDevice;
+import neureka.core.device.IDevice;
 import neureka.core.function.factory.Function;
 
-public class NTester_Tensor extends NTester {
-
+public class NTester_Tensor extends NTester 
+{
     public NTester_Tensor(String name)
     {
         super(name);
     }
 
-    public int testShareDevice(AparapiDevice device, Tsr[] tsrs){
+    public int testShareDevice(IDevice device, Tsr[] tsrs){
         printSessionStart("Testing if tensors share device!");
-        println(BAR +"  AparapiDevice: "+device.toString());
+        println(BAR +"  IDevice: "+device.toString());
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         for(Tsr t : tsrs){
-            AparapiDevice found = ((AparapiDevice)t.find(AparapiDevice.class));
+            IDevice found = ((IDevice)t.find(IDevice.class));
             this.assertStringContains("result", (found==null)?"null":found.toString(), device.toString());
         }
         return (printSessionEnd()>0)?1:0;

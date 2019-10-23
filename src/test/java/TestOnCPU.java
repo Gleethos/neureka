@@ -8,8 +8,8 @@ import util.NTester_Tensor;
 public class TestOnCPU {
 
     @Test
-    public void testReadmeExamples(){
-
+    public void testReadmeExamples()
+    {
         NTester_Tensor tester = new NTester_Tensor("Tensor tester (only cpu)");
 
         Tsr x = new Tsr(new int[]{1}, 3).setRqsGradient(true);
@@ -92,6 +92,9 @@ public class TestOnCPU {
         tester.testTensor(y, new String[]{"[1]:(4.0);", " ->d[1]:(1.38629E0), "});
         //===
         tester.close();
+
+
+        //TODO: add tests using more then 1 function and check if the graph is build correctly!
     }
 
     @Test
@@ -200,7 +203,7 @@ public class TestOnCPU {
                 new Tsr[]{tensor1, tensor2, tensor3},//ERROR here
                 "(Ig[0]<-I[1])->I[2]",
                 new String[][]{
-                        {"empty"},//result
+                        {"empty"},//result ... Why? : Identity must not be lost ! (new Tsr() cannot be member of inputs...)
                         {"(3.0)", "g:(-4.0)"},//tensor1
                         {"(-4.0)"},//tensor2
                         {"(-4.0)"},//tensor3
@@ -245,6 +248,21 @@ public class TestOnCPU {
                         "  }, "
                 }
         );
+        //---//Broken down to 2 functions:
+        tensor1 = new Tsr(new int[]{1, 3}, 2);
+        tensor2 = new Tsr(new int[]{2, 1}, -1);
+        tensor1.setRqsGradient(true);
+        tensor2.setRqsGradient(true);
+        result = new Tsr(new Tsr[]{tensor1, tensor2}, "I[0]xI[1]");
+        result = new Tsr(new Tsr[]{result}, "lig(I[0]*-100)");
+        tester.testContains(result.toString("rc"),
+                new String[]{
+                        "[2x3]:(200.0, 200.0, 200.0, 200.0, 200.0, 200.0);",
+                        " =>d|[ [2x3]:(-100.0, -100.0, -100.0, -100.0, -100.0, -100.0) ]|:t{ [2x3]:(-2.0, -2.0, -2.0, -2.0, -2.0, -2.0);",
+                        " =>d|[ [1x3]:(2.0, 2.0, 2.0) ]|:t{ [2x1]:(-1.0, -1.0) },",
+                        " =>d|[ [2x1]:(-1.0, -1.0) ]|:t{ [1x3]:(2.0, 2.0, 2.0) },",
+                        "  }, "
+                }, "");
         //---
         tensor1 = new Tsr(new int[]{2, 3, 4}, 2);
         tensor1.setRqsGradient(false);
@@ -308,6 +326,15 @@ public class TestOnCPU {
                 new String[]{"d|[ [2x2]:(6.0, 8.0, 10.0, 12.0) ]|:t{ [2x2]:(1.0, 2.0, 3.0, 4.0) }"}
         );
         //---
+        tensor1 = new Tsr(new int[]{2, 2}, new double[]{1, 2, 3, 4});//-2*4 = 8 | *3 = -24
+        tensor1.setRqsGradient(true);
+        result = new Tsr(new Tsr[]{tensor1}, "(i0+2)");
+        result = new Tsr(new Tsr[]{result}, "I[0]^2");
+        tester.testContains(
+                result.toString("rc"),
+                new String[]{"d|[ [2x2]:(6.0, 8.0, 10.0, 12.0) ]|:t{ [2x2]:(1.0, 2.0, 3.0, 4.0) }"},
+                ""
+        );
         //=====================
         tensor1 = new Tsr(new int[]{2}, new double[]{1, 2});//-2*4 = 8 | *3 = -24
         tensor1.setRqsGradient(true);

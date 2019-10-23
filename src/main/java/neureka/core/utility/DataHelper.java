@@ -348,4 +348,21 @@ public class DataHelper<T> {
         }
         return newNumber;
     }
+
+    public static float[] doubleToFloat(double[] data){
+        float[] newData = new float[data.length];
+        for(int i=0; i<data.length; i++) newData[i] = (float) data[i];
+        return newData;
+    }
+
+    public static double[] floatToDouble(float[] data){
+        if(data==null){
+            return null;
+        }
+        double[] newData = new double[data.length];
+        for(int i=0; i<data.length; i++) newData[i] = (double)data[i];
+        return newData;
+    }
+
+
 }

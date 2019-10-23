@@ -7,6 +7,7 @@ import java.util.*;
 
 import neureka.core.Tsr;
 import neureka.core.device.IDevice;
+import neureka.core.utility.DataHelper;
 import org.jocl.*;
 
 
@@ -110,6 +111,11 @@ public class OpenCLDevice implements IDevice
         return this;
     }
 
+    @Override
+    public boolean has(Tsr tensor) {
+        return _mapping.containsKey(tensor);
+    }
+
     private void _store(Tsr tensor, cl_tsr newClTsr, int fp, boolean grd){
         //cl_tsr newClTsr = new cl_tsr();
         double[] hostData = (grd)?tensor.gradient64():tensor.value64();
@@ -191,36 +197,30 @@ public class OpenCLDevice implements IDevice
     @Override
     public IDevice rmv(Tsr tensor) {
         cl_tsr clt = _mapping.get(tensor);
-        //clEnqueueWriteBuffer(commandQueue, clTsr.value64, true, 0,
-        //        tensor.size() * Sizeof.cl_uint, Pointer.to(new double[666]), 0, null, null);
-        //remove translations/shapes from device!
-        clReleaseMemObject(clt.config);
+        clReleaseMemObject(clt.config);//remove translations/shapes from device!
         clReleaseMemObject(clt.value);
         _mapping.remove(tensor);
         return this;
     }
 
     @Override
-    public IDevice overwrite(Tsr tensor, double[] value) {
+    public IDevice overwrite(Tsr tensor, double[] value) {//TODO: Make value an object!
         cl_tsr clt = _mapping.get(tensor);
         if(clt.fp==1){
-            float[] fdata = new float[value.length];
-            for(int i=0; i<value.length; i++){
-                fdata[i] = (float)value[i];
-            }
+            float[] data = DataHelper.doubleToFloat(value);
             clEnqueueWriteBuffer(
                     commandQueue,
                     clt.value,
                     CL_TRUE,
                     0,
-                    Sizeof.cl_float * fdata.length,
-                    Pointer.to(fdata),
+                    Sizeof.cl_float * data.length,
+                    Pointer.to(data),
                     0,
                     null,
                     null
             );
         } else {
-            value = new double[tensor.size()];
+            //value = new double[tensor.size()];
             clEnqueueWriteBuffer(
                     commandQueue,
                     clt.value,
@@ -250,7 +250,7 @@ public class OpenCLDevice implements IDevice
     public double[] valueOf(Tsr tensor, boolean grd) {
         cl_tsr clt = _mapping.get(tensor);
         if(clt.fp==1){
-            return Tsr.fcn.io.floatToDouble(floatValueOf(tensor, grd));
+            return DataHelper.floatToDouble(floatValueOf(tensor, grd));
         } else {
             double[] data = new double[tensor.size()];
             clEnqueueReadBuffer(
@@ -287,7 +287,7 @@ public class OpenCLDevice implements IDevice
             );
             return data;
         } else {
-            return Tsr.fcn.io.doubleToFloat(valueOf(tensor, grd));
+            return DataHelper.doubleToFloat(valueOf(tensor, grd));
         }
     }
 

@@ -8,11 +8,13 @@ import com.aparapi.device.OpenCLDevice;
 import neureka.core.Tsr;
 import neureka.core.device.IDevice;
 import neureka.core.function.IFunction;
+import neureka.core.utility.DataHelper;
 
 /**
  *
  */
-public class AparapiDevice implements IDevice {
+public class AparapiDevice implements IDevice
+{
     /**
      * _tensors_map:
      * Holds REGISTER _pointers f tensors stored on the _device.
@@ -181,7 +183,7 @@ public class AparapiDevice implements IDevice {
     }
 
     public float[] floatValueOf(Tsr tensor, boolean grd){
-        return Tsr.fcn.io.doubleToFloat(valueOf(tensor, grd));
+        return DataHelper.doubleToFloat(valueOf(tensor, grd));
     }
 
     public IDevice execute(Tsr[] tsrs, int f_id, int d)

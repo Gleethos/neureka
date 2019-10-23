@@ -2,13 +2,15 @@ package neureka.core.device;
 
 import neureka.core.Tsr;
 
-public interface IDevice {
-
+public interface IDevice
+{
     void dispose();
 
     IDevice get(Tsr tensor);
 
     IDevice add(Tsr tensor);
+
+    boolean has(Tsr tensor);
 
     IDevice rmv(Tsr tensor);
 
@@ -21,5 +23,4 @@ public interface IDevice {
     double[] valueOf(Tsr tensor, boolean grd);
 
     float[] floatValueOf(Tsr tensor, boolean grd);
-
 }

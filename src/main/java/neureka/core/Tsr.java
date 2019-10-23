@@ -4,6 +4,7 @@ import neureka.core.device.IDevice;
 import neureka.core.device.aparapi.AparapiDevice;
 import neureka.core.function.IFunction;
 import neureka.core.function.factory.autograd.GraphNode;
+import neureka.core.utility.DataHelper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +20,7 @@ public class Tsr {
 
     // DEFAULT DEVICE (HOST CPU)
     //=========================
-    private static AparapiDevice CPU;
+    private static IDevice CPU;
     //OPenClDevice!!!!!!!
 
     //STATIC FUNCTIONS MEMORY:
@@ -98,9 +99,9 @@ public class Tsr {
     private Object _value, _gradient;//double[]
     //-----------------------------------------------------------------------
 
-    public AparapiDevice device() {
+    public IDevice device() {
         if (this.isOutsourced()) {
-            return (AparapiDevice) this.find(AparapiDevice.class);
+            return (IDevice) this.find(IDevice.class);
         }
         return CPU;
     }
@@ -124,7 +125,7 @@ public class Tsr {
 
     public Tsr setTargetValue(double[] value){
         if(this.isOutsourced()){
-            ((AparapiDevice) this.find(AparapiDevice.class)).overwrite(this, value);
+            ((IDevice) this.find(IDevice.class)).overwrite(this, value);
         } else {
             if(this.gradientIsTargeted()){
                 _gradient = value;
@@ -136,18 +137,18 @@ public class Tsr {
     }
 
     public double[] gradient64() {
-        if (this.rqsGradient() && this.isOutsourced() && this.has(AparapiDevice.class)) {
-            return ((AparapiDevice) find(AparapiDevice.class)).valueOf(this, true);
+        if (this.rqsGradient() && this.isOutsourced() && this.has(IDevice.class)) {
+            return ((IDevice) find(IDevice.class)).valueOf(this, true);
         }
-        return (this.isFP64())?(double[])_gradient:fcn.io.floatToDouble((float[])_gradient);
+        return (this.isFP64())?(double[])_gradient:DataHelper.floatToDouble((float[])_gradient);
     }
     public float[] gradient32(){
-        return (this.isFP64())?Tsr.fcn.io.doubleToFloat((double[])_gradient):(float[])_gradient;
+        return (this.isFP64())?DataHelper.doubleToFloat((double[])_gradient):(float[])_gradient;
     }
 
     public Tsr addToGradient(Tsr g) {
         if(this.isOutsourced()){
-            AparapiDevice device = (AparapiDevice) this.find(AparapiDevice.class);
+            IDevice device = (IDevice) this.find(IDevice.class);
             this.setGradientIsTargeted(true);
             device.add(g);
             device.execute(new Tsr[]{this, g}, IFunction.TYPES.LOOKUP.get("<"), -1);
@@ -179,10 +180,10 @@ public class Tsr {
         if (_value == null && this.isOutsourced() && this.has(IDevice.class)) {
             return ((IDevice) this.find(IDevice.class)).valueOf(this, false);
         }
-        double[] newValue = (this.isFP64())?(double[])_value:fcn.io.floatToDouble((float[])_value);
+        double[] newValue = (this.isFP64())?(double[])_value: DataHelper.floatToDouble((float[])_value);
         if (this.isVirtual()) {
             newValue = new double[this.size()];
-            double[] value = (this.isFP64())?(double[])_value:fcn.io.floatToDouble((float[])_value);
+            double[] value = (this.isFP64())?(double[])_value:DataHelper.floatToDouble((float[])_value);
             for (int i = 0; i < newValue.length; i++) {
                 newValue[i] = value[0];
             }
@@ -194,7 +195,7 @@ public class Tsr {
         if (_value == null && this.isOutsourced() && this.has(IDevice.class)) {
             return ((IDevice) this.find(IDevice.class)).floatValueOf(this, false);
         }
-        float[] newValue = (this.isFP64())?Tsr.fcn.io.doubleToFloat((double[])_value):(float[])_value;
+        float[] newValue = (this.isFP64())?DataHelper.doubleToFloat((double[])_value):(float[])_value;
         if (this.isVirtual()) {
             newValue = new float[this.size()];
             for (int i = 0; i < newValue.length; i++) {
@@ -208,7 +209,7 @@ public class Tsr {
     public Tsr setValue(double[] newValue) {
         _value = newValue;
         if (this.isOutsourced() && newValue != null) {
-            ((AparapiDevice) this.find(AparapiDevice.class)).add(this);
+            ((IDevice) this.find(IDevice.class)).add(this);
         }
         return this;
     }
@@ -269,9 +270,9 @@ public class Tsr {
             } else {
                 this.setGradientIsTargeted(false);
                 if(this.isOutsourced()){
-                    ((AparapiDevice)find(AparapiDevice.class)).get(this);
+                    ((IDevice)find(IDevice.class)).get(this);
                     _gradient = null;
-                    ((AparapiDevice)find(AparapiDevice.class)).add(this);
+                    ((IDevice)find(IDevice.class)).add(this);
                 }
                 _flags -= RQS_GRADIENT_MASK;
             }
@@ -294,12 +295,12 @@ public class Tsr {
         if (isOutsourced) {
             _value = null;
             _gradient = null;
-        } else if (this.has(AparapiDevice.class)) {
-            AparapiDevice device = (AparapiDevice) this.find(AparapiDevice.class);
+        } else if (this.has(IDevice.class)) {
+            IDevice device = (IDevice) this.find(IDevice.class);
             if (device.has(this)) {
                 device.get(this);
             }
-            this.remove(AparapiDevice.class);
+            this.remove(IDevice.class);
         }
         return this;
     }
@@ -678,7 +679,7 @@ public class Tsr {
         _components = tensor._components;
         _flags = tensor._flags;
         if(tensor.isOutsourced()){
-            AparapiDevice device = (AparapiDevice) tensor.find(AparapiDevice.class);
+            IDevice device = (IDevice) tensor.find(IDevice.class);
             device.swap(tensor, this);
         }
         return this;
@@ -699,7 +700,7 @@ public class Tsr {
 
     public Tsr delete() {
         if (this.isOutsourced()) {
-            ((AparapiDevice) this.find(AparapiDevice.class)).rmv(this);
+            ((IDevice) this.find(IDevice.class)).rmv(this);
         }
         _flags = -1;
         _value = null;
@@ -745,24 +746,6 @@ public class Tsr {
 
         public static class io
         {
-            public static float[] doubleToFloat(double[] data){
-                float[] newData = new float[data.length];
-                for(int i=0; i<data.length; i++){
-                    newData[i] = (float)data[i];
-                }
-                return newData;
-            }
-
-            public static double[] floatToDouble(float[] data){
-                if(data==null){
-                    return null;
-                }
-                double[] newData = new double[data.length];
-                for(int i=0; i<data.length; i++){
-                    newData[i] = (double)data[i];
-                }
-                return newData;
-            }
 
             public static double getFrom(Tsr t, int i) {
                 if (t.isEmpty() || t.isUndefined()) {
