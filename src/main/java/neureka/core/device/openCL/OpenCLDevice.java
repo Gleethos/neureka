@@ -32,7 +32,7 @@ public class OpenCLDevice implements IDevice
     /**
      * The OpenCL command queue
      */
-    private cl_command_queue commandQueue;
+    private cl_command_queue _queue;
 
 
     /**==============================================================================================================**/
@@ -45,7 +45,7 @@ public class OpenCLDevice implements IDevice
         System.out.println(this.type());
 
         // Create a command-queue for the selected device
-        commandQueue = clCreateCommandQueue(platform.getContext(), did, 0, null);
+        _queue = clCreateCommandQueue(platform.getContext(), did, 0, null);
 
         //System.out.println("Testing mem:");
         ////--- ########### ---\\
@@ -65,11 +65,11 @@ public class OpenCLDevice implements IDevice
         //        data[ii] = ii; // new Random().nextInt();
         //    }
         //    clEnqueueWriteBuffer(
-        //            commandQueue, memos[i], true, 0,
+        //            _queue, memos[i], true, 0,
         //            size * Sizeof.cl_uint, Pointer.to(data), 0, null, null);
         //}
         //int err = clEnqueueMigrateMemObjects(
-        //        commandQueue,
+        //        _queue,
         //        memos.length,
         //        memos
         //        ,
@@ -82,7 +82,6 @@ public class OpenCLDevice implements IDevice
         //} catch (InterruptedException e) {
         //    e.printStackTrace();
         //}
-
     }
 
     //---
@@ -92,7 +91,7 @@ public class OpenCLDevice implements IDevice
         _mapping.forEach((t, clt)->{
             get(t);
         });
-        clFinish(commandQueue);
+        clFinish(_queue);
     }
 
     @Override
@@ -143,7 +142,7 @@ public class OpenCLDevice implements IDevice
             newClTsr.value = mem;
         }
         clEnqueueWriteBuffer(
-                commandQueue,
+                _queue,
                 mem,
                 true, 0,
                 hostData.length * Sizeof.cl_float*fp,
@@ -181,7 +180,7 @@ public class OpenCLDevice implements IDevice
                 null, null
         );
         clEnqueueWriteBuffer(
-                commandQueue,
+                _queue,
                 newClTsr.config,
                 true, 0,
                 config.length * Sizeof.cl_int,
@@ -209,7 +208,7 @@ public class OpenCLDevice implements IDevice
         if(clt.fp==1){
             float[] data = DataHelper.doubleToFloat(value);
             clEnqueueWriteBuffer(
-                    commandQueue,
+                    _queue,
                     clt.value,
                     CL_TRUE,
                     0,
@@ -222,7 +221,7 @@ public class OpenCLDevice implements IDevice
         } else {
             //value = new double[tensor.size()];
             clEnqueueWriteBuffer(
-                    commandQueue,
+                    _queue,
                     clt.value,
                     CL_TRUE,
                     0,
@@ -254,7 +253,7 @@ public class OpenCLDevice implements IDevice
         } else {
             double[] data = new double[tensor.size()];
             clEnqueueReadBuffer(
-                    commandQueue,
+                    _queue,
                     (grd)?clt.grad:clt.value,
                     CL_TRUE,
                     0,
@@ -275,7 +274,7 @@ public class OpenCLDevice implements IDevice
         if(clt.fp==1){
             float[] data = new float[tensor.size()];
             clEnqueueReadBuffer(
-                    commandQueue,
+                    _queue,
                     (grd)?clt.grad:clt.value,
                     CL_TRUE,
                     0,
@@ -306,7 +305,7 @@ public class OpenCLDevice implements IDevice
         //clSetKernelArg(kernel, 8, Sizeof.cl_mem, Pointer.to(colorMapMem));
         //clSetKernelArg(kernel, 9, Sizeof.cl_int, Pointer.to(new int[]{ colorMap.length }));
 
-        clEnqueueNDRangeKernel(commandQueue, kernel, 1, null,
+        clEnqueueNDRangeKernel(_queue, kernel, 1, null,
                 new long[]{gwz}, null, 0, null, null);
 
         return null;
