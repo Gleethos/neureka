@@ -29,7 +29,7 @@ public abstract class AbstractKernel extends Kernel {
     //}
 
     //------------------------------------------
-
+    protected abstract void _put_new_val(float[] newVal);
     protected abstract void _put_new_val(double[] newVal);
     protected abstract void _put_new_val(int newValSize);
 
@@ -350,6 +350,15 @@ public abstract class AbstractKernel extends Kernel {
     }
 
     public int executionSizeOf_storeTsr(int t_id, double[] value, boolean grd){
+        _mde = new int[]{(grd)?-2:-1, t_id};// 1. define if stored as grd or not; 2. specify tsr id;
+        _put_new_val(value);
+        //__val = value64;
+        this.put(_mde);//.put(__val);
+        int g_sze = _tsr_sze(t_id);
+        return g_sze;
+    }
+
+    public int executionSizeOf_storeTsr(int t_id, float[] value, boolean grd){
         _mde = new int[]{(grd)?-2:-1, t_id};// 1. define if stored as grd or not; 2. specify tsr id;
         _put_new_val(value);
         //__val = value64;

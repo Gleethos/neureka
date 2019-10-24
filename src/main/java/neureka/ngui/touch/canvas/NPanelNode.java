@@ -51,7 +51,7 @@ public class NPanelNode implements NPanelObject
 	NPanelNode(Tsr neuron, double x, double y)
 	{
 		Core = neuron;
-		//neuron.asCore().overwrite(this);
+		//neuron.asCore().overwrite64(this);
 		position[0] = x;
 		position[1] = y;
 		InputNode = new ArrayList<NPanelNodeInput>();
@@ -67,7 +67,7 @@ public class NPanelNode implements NPanelObject
 		InputNode.add(new NPanelNodeInput(getX(), getY(), diameter/2));
 		Core = new Tsr();
 		Core.add(this);
-		//Core.overwrite(new NVOptimizer(Core.size(), Core.getConnection(), 3));
+		//Core.overwrite64(new NVOptimizer(Core.size(), Core.getConnection(), 3));
 		//Tsr.State.turnIntoParentRoot(Core);
 		//Core.turnIntoSuperRootNode();
 	}
@@ -434,7 +434,7 @@ public class NPanelNode implements NPanelObject
 		//		        	   				}
 		//		        	   				else
 		//		        	   				{
-		//		        	   				 queue.overwrite(panelNode.getRepaintSpace());
+		//		        	   				 queue.overwrite64(panelNode.getRepaintSpace());
 		//		        	   				 double[] data = {panelNode.getX()+directionX*delta, panelNode.getY()+directionY*delta};
 	
 		//		        	   				 queue.addAll(panelNode.moveTo(data, HostPanel));//queue.addAll<- This might not be needed!
@@ -920,7 +920,7 @@ public class NPanelNode implements NPanelObject
 		//								 double midPY = InputNode.get(Ii).getY() + (connectionY - InputNode.get(Ii).getY())/3.25;
 		//								 //if (connectionSpace == null) {connectionSpace = new ArrayList<NPanelRepaintSpace>();}
 		//								 //WEIGHT REPAINT:
-		//								 queue.overwrite(new NPanelRepaintSpace((midPX),(midPY), 50, 25));
+		//								 queue.overwrite64(new NPanelRepaintSpace((midPX),(midPY), 50, 25));
 		//							 	}
 		//							 double vectorX = (connectionX - getX());
 		//							 double vectorY = (connectionY - getY());
@@ -945,7 +945,7 @@ public class NPanelNode implements NPanelObject
 		//									if(sideVecOneY>distanceY) {distanceY=sideVecOneY;}
 		//									if(sideVecTwoY>distanceY) {distanceY=sideVecTwoY;}
 		//							 }//System.out.println("added repaint ...");
-		//						     queue.overwrite(new NPanelRepaintSpace(
+		//						     queue.overwrite64(new NPanelRepaintSpace(
 		//								repaintCenterX,
 		//								repaintCenterY,
 		//								distanceX,
@@ -955,7 +955,7 @@ public class NPanelNode implements NPanelObject
 		//				      if(convection==false)
 		//				      {
 		//				    		//System.out.println("Gottcha!");
-		//				    		queue.overwrite(InputNode.get(Ii).getRepaintSpace(diameter/2));
+		//				    		queue.overwrite64(InputNode.get(Ii).getRepaintSpace(diameter/2));
 		//				    		//InputNode.getFrom(Ii).forgetChange();
 		//				       }
 		//				       InputNode.get(Ii).forgetChange();

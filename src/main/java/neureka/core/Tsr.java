@@ -21,7 +21,7 @@ public class Tsr {
     // DEFAULT DEVICE (HOST CPU)
     //=========================
     private static IDevice CPU;
-    //OPenClDevice!!!!!!!
+    //OpenClDevice!!!!!!!
 
     //STATIC FUNCTIONS MEMORY:
     //=========================
@@ -106,7 +106,7 @@ public class Tsr {
         return CPU;
     }
 
-    public double[] targetValue(boolean unique){
+    public double[] targetValue64(boolean unique){
         if(!this.isOutsourced() && unique){
             double[] value = new double[this.size()];
             double[] v = (gradientIsTargeted())? gradient64(): value64();
@@ -119,13 +119,44 @@ public class Tsr {
         }
     }
 
-    public double[] targetValue(){
+    public float[] targetValue32(boolean unique){
+        if(!this.isOutsourced() && unique){
+            float[] value = new float[this.size()];
+            float[] v = (gradientIsTargeted())? gradient32(): value32();
+            for(int i=0; i<value.length; i++){
+                value[i] = v[i];
+            }
+            return value;
+        } else {
+            return (gradientIsTargeted())? gradient32(): value32();
+        }
+    }
+
+    public double[] targetValue64(){
         return (gradientIsTargeted())? gradient64(): value64();
     }
 
-    public Tsr setTargetValue(double[] value){
+    public float[] targetValue32(){
+        return (gradientIsTargeted())? gradient32(): value32();
+    }
+
+
+    public Tsr setTargetValue64(double[] value){
         if(this.isOutsourced()){
-            ((IDevice) this.find(IDevice.class)).overwrite(this, value);
+            ((IDevice) this.find(IDevice.class)).overwrite64(this, value);
+        } else {
+            if(this.gradientIsTargeted()){
+                _gradient = value;
+            } else {
+                _value = value;
+            }
+        }
+        return this;
+    }
+
+    public Tsr setTargetValue32(float[] value){
+        if(this.isOutsourced()){
+            ((IDevice) this.find(IDevice.class)).overwrite32(this, value);
         } else {
             if(this.gradientIsTargeted()){
                 _gradient = value;
@@ -762,7 +793,7 @@ public class Tsr {
         this.setIsVirtual(false);
         int sze = this.size();
         int[] idx = new int[this.shape().length];
-        double[] value = this.targetValue();
+        double[] value = this.targetValue64();
         for (int i = 0; i < sze; i++) {
             fcn.indexing.increment(idx, this.shape());
             int index = fcn.indexing.i_of_i(i,_shape, _translation, _idxmap);
@@ -784,39 +815,39 @@ public class Tsr {
                 if (t.isEmpty() || t.isUndefined()) {
                     return 0;
                 } else if (t.isVirtual()) {
-                    return t.targetValue()[0];
+                    return t.targetValue64()[0];
                 }
-                return t.targetValue()[indexing.i_of_i(i,t._shape, t._translation, t._idxmap)];
+                return t.targetValue64()[indexing.i_of_i(i,t._shape, t._translation, t._idxmap)];
             }
 
             public static double getFrom(Tsr t, int[] idx) {
                 t.setIsVirtual(false);
-                return t.targetValue()[indexing.iOf(idx, t.translation())];
+                return t.targetValue64()[indexing.iOf(idx, t.translation())];
             }
 
             public static void setInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
-                t.targetValue()[indexing.i_of_i(i,t._shape, t._translation, t._idxmap)] = value;
+                t.targetValue64()[indexing.i_of_i(i,t._shape, t._translation, t._idxmap)] = value;
             }
 
             public static void setInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t.targetValue()[indexing.iOf(idx, t.translation())] = value;
+                t.targetValue64()[indexing.iOf(idx, t.translation())] = value;
             }
 
             public static void addInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
-                t.targetValue()[indexing.i_of_i(i,t._shape, t._translation, t._idxmap)] += value;
+                t.targetValue64()[indexing.i_of_i(i,t._shape, t._translation, t._idxmap)] += value;
             }
 
             public static void addInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t.targetValue()[indexing.iOf(idx, t.translation())] += value;
+                t.targetValue64()[indexing.iOf(idx, t.translation())] += value;
             }
 
             public static Tsr addInto(Tsr t, Tsr source) {
                 if (t.isVirtual() && source.isVirtual()) {
-                    t.targetValue()[0] += ((source.gradientIsTargeted())?source.gradient64():source.value64())[0];
+                    t.targetValue64()[0] += ((source.gradientIsTargeted())?source.gradient64():source.value64())[0];
                 } else {
                     if (t.isVirtual()) {
                         t.setIsVirtual(false);
@@ -833,17 +864,17 @@ public class Tsr {
 
             public static void subInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
-                t.targetValue()[indexing.i_of_i(i,t._shape, t._translation, t._idxmap)] -= value;
+                t.targetValue64()[indexing.i_of_i(i,t._shape, t._translation, t._idxmap)] -= value;
             }
 
             public static void subInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t.targetValue()[indexing.iOf(idx, t.translation())] -= value;
+                t.targetValue64()[indexing.iOf(idx, t.translation())] -= value;
             }
 
             public static void subInto(Tsr t, Tsr source) {
                 if (t.isVirtual() && source.isVirtual()) {
-                    t.targetValue()[0] -= ((source.gradientIsTargeted())?source.gradient64():source.value64())[0];
+                    t.targetValue64()[0] -= ((source.gradientIsTargeted())?source.gradient64():source.value64())[0];
                 } else {
                     if (t.isVirtual()) {
                         t.setIsVirtual(false);
@@ -859,12 +890,12 @@ public class Tsr {
 
             public static void mulInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
-                t.targetValue()[indexing.i_of_i(i,t._shape, t._translation, t._idxmap)] *= value;
+                t.targetValue64()[indexing.i_of_i(i,t._shape, t._translation, t._idxmap)] *= value;
             }
 
             public static void mulInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t.targetValue()[indexing.iOf(idx, t.translation())] *= value;
+                t.targetValue64()[indexing.iOf(idx, t.translation())] *= value;
             }
 
         }

@@ -42,6 +42,13 @@ public class KernelFP32 extends AbstractKernel
     }
 
     @Override
+    protected void _put_new_val(float[] newVal){
+        //__val = newVal;
+        __val = newVal;
+        this.put(__val);
+    }
+
+    @Override
     protected void _put_new_val(int newValSize){
         __val = new float[newValSize];
         this.put(__val);

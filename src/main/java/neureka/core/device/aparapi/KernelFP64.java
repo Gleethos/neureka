@@ -1,5 +1,7 @@
 package neureka.core.device.aparapi;
 
+import neureka.core.utility.DataHelper;
+
 public class KernelFP64 extends AbstractKernel
 {
     /**   +============================+
@@ -27,6 +29,12 @@ public class KernelFP64 extends AbstractKernel
     @Override
     protected void _put_new_val(double[] newVal){
         __val = newVal;
+        this.put(__val);
+    }
+
+    @Override
+    protected void _put_new_val(float[] newVal){
+        __val = DataHelper.floatToDouble(newVal);
         this.put(__val);
     }
 

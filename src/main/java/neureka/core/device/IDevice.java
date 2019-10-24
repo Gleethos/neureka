@@ -14,7 +14,9 @@ public interface IDevice
 
     IDevice rmv(Tsr tensor);
 
-    IDevice overwrite(Tsr tensor, double[] value);
+    IDevice overwrite64(Tsr tensor, double[] value);
+
+    IDevice overwrite32(Tsr tensor, float[] value);
 
     IDevice swap(Tsr former, Tsr replacement);
 

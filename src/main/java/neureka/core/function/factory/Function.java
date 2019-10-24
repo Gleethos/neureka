@@ -282,9 +282,9 @@ public abstract class Function implements IFunction {
                     }
                 }
             } else if(TYPES.REGISTER[_id]=="<") {
-                return _src.get(0).activate(inputs).setTargetValue(_src.get(1).activate(inputs).targetValue(true));
+                return _src.get(0).activate(inputs).setTargetValue64(_src.get(1).activate(inputs).targetValue64(true));
             } else if(TYPES.REGISTER[_id]==">") {
-                return _src.get(1).activate(inputs).setTargetValue(_src.get(0).activate(inputs).targetValue(true));
+                return _src.get(1).activate(inputs).setTargetValue64(_src.get(0).activate(inputs).targetValue64(true));
             } else {
                 double[] inp = new double[inputs.length];
                 Tsr output = Tsr.fcn.newTsr(inputs[0].shape(), inputs[0].translation());
@@ -957,9 +957,9 @@ public abstract class Function implements IFunction {
             int[] t0Idx = new int[rank];
             int[] t1Idx = new int[rank];
             int[] t2Idx = new int[rank];
-            double[] t0_value = t0_drain.targetValue();
-            double[] t1_value = t1_source.targetValue();
-            double[] t2_value = t2_source.targetValue();
+            double[] t0_value = t0_drain.targetValue64();
+            double[] t1_value = t1_source.targetValue64();
+            double[] t2_value = t2_source.targetValue64();
             int drnSze = t0_drain.size();
             int i = 0;
 
@@ -1041,9 +1041,9 @@ public abstract class Function implements IFunction {
             int[] t0Idx = new int[rank];
             int[] t1Idx = new int[rank];
             int[] t2Idx = new int[rank];
-            double[] t0_value = t0_origin.targetValue();
-            double[] t1_value = t1_handle.targetValue();
-            double[] t2_value = t2_drain.targetValue();
+            double[] t0_value = t0_origin.targetValue64();
+            double[] t1_value = t1_handle.targetValue64();
+            double[] t2_value = t2_drain.targetValue64();
             int drnSze = t0_origin.size();
             int i = 0;
 

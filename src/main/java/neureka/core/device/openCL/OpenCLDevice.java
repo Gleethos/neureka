@@ -201,21 +201,10 @@ public class OpenCLDevice implements IDevice
     }
 
     @Override
-    public IDevice overwrite(Tsr tensor, double[] value) {//TODO: Make value an object!
+    public IDevice overwrite64(Tsr tensor, double[] value) {//TODO: Make value an object!
         cl_tsr clt = _mapping.get(tensor);
         if(clt.fp==1){
-            float[] data = DataHelper.doubleToFloat(value);
-            clEnqueueWriteBuffer(
-                    _queue,
-                    clt.value,
-                    CL_TRUE,
-                    0,
-                    Sizeof.cl_float * data.length,
-                    Pointer.to(data),
-                    0,
-                    null,
-                    null
-            );
+            overwrite32(tensor, DataHelper.doubleToFloat(value));
         } else {
             //value = new double[tensor.size()];
             clEnqueueWriteBuffer(
@@ -229,6 +218,28 @@ public class OpenCLDevice implements IDevice
                     null,
                     null
             );
+        }
+        return this;
+    }
+
+    @Override
+    public IDevice overwrite32(Tsr tensor, float[] value) {//TODO: Make value an object!
+        cl_tsr clt = _mapping.get(tensor);
+        if(clt.fp==1){
+           // float[] data = DataHelper.doubleToFloat(value);
+            clEnqueueWriteBuffer(
+                    _queue,
+                    clt.value,
+                    CL_TRUE,
+                    0,
+                    Sizeof.cl_float * value.length,
+                    Pointer.to(value),
+                    0,
+                    null,
+                    null
+            );
+        } else {
+           overwrite64(tensor, DataHelper.floatToDouble(value));
         }
         return this;
     }

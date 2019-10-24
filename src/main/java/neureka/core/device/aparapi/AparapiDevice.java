@@ -113,7 +113,26 @@ public class AparapiDevice implements IDevice
         return this;
     }
 
-    public IDevice overwrite(Tsr tensor, double[] value)
+    public IDevice overwrite64(Tsr tensor, double[] value)
+    {
+        boolean targetGradient = tensor.gradientIsTargeted();
+        if(tensor.rqsGradient()){
+            if(_tensors_map.containsKey(tensor)){
+                _kernel.execute(
+                        Range.create(_device,
+                                _kernel.executionSizeOf_storeTsr(
+                                        _register[0][_tensors_map.get(tensor)],
+                                        value,
+                                        targetGradient
+                                )
+                        )
+                );
+            }
+        }
+        return this;
+    }
+
+    public IDevice overwrite32(Tsr tensor, float[] value)
     {
         boolean targetGradient = tensor.gradientIsTargeted();
         if(tensor.rqsGradient()){
