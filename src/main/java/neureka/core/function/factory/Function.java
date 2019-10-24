@@ -1,6 +1,7 @@
 package neureka.core.function.factory;
 
 import neureka.core.Tsr;
+import neureka.core.device.IDevice;
 import neureka.core.device.aparapi.AparapiDevice;
 import neureka.core.function.IFunction;
 import neureka.core.function.factory.assembly.FunctionBuilder;
@@ -138,7 +139,7 @@ public abstract class Function implements IFunction {
             return output;
         }
         if (input.isOutsourced()) {
-            AparapiDevice device = (AparapiDevice) input.find(AparapiDevice.class);
+            IDevice device = (IDevice) input.find(IDevice.class);
             device.add(output);
             device.execute(new Tsr[]{output, input}, _id, (derive) ? 0 : -1);
         } else {

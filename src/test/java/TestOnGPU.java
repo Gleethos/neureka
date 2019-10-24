@@ -1,5 +1,6 @@
 
 import neureka.core.Tsr;
+import neureka.core.device.IDevice;
 import neureka.core.device.aparapi.AparapiDevice;
 import neureka.core.device.aparapi.KernelFP32;
 import neureka.core.device.aparapi.KernelFP64;
@@ -47,23 +48,26 @@ public class TestOnGPU {
         NTester_Tensor tester = new NTester_Tensor("Testing autograd on GPU");
 
         //---
-        AparapiDevice gpu = new AparapiDevice("intel gpu");//FP32 ought to be chosen by default here!
+        IDevice gpu = new AparapiDevice("intel gpu");//FP32 ought to be chosen by default here!
         tester.testContains(
-                (gpu.getKernel() instanceof KernelFP32)?"FP32":"FP64",
+                (((AparapiDevice)gpu).getKernel() instanceof KernelFP32)?"FP32":"FP64",
                 new String[]{"FP32"},
                 "Test device kernel FP-Type");
         _testAutograd(gpu, tester);
-
+        //---
         gpu = new AparapiDevice("intel gpu FP64");
         tester.testContains(
-                (gpu.getKernel() instanceof KernelFP64)?"FP62":"FP34",
+                (((AparapiDevice)gpu).getKernel() instanceof KernelFP64)?"FP62":"FP34",
                 new String[]{"FP34"},
                 "Test device kernel FP-Type");
         _testAutograd(gpu, tester);
         //---
+        //gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
+        //_testAutograd(gpu, tester);
+
         tester.close();
     }
-    private  void _testAutograd(AparapiDevice gpu, NTester_Tensor tester){
+    private  void _testAutograd(IDevice gpu, NTester_Tensor tester){
         Tsr tensor1, tensor2;
         tensor1 = new Tsr(new int[]{3, 5}, new double[]{
                 2, 3, 5,

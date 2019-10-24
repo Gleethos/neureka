@@ -96,7 +96,7 @@ public class Tsr {
     //DATA FIELDS:
     //=========================
     private int[] _shape, _translation, _idxmap;
-    private Object _value, _gradient;//double[]
+    private Object _value, _gradient;
     //-----------------------------------------------------------------------
 
     public IDevice device() {
@@ -139,7 +139,6 @@ public class Tsr {
     public float[] targetValue32(){
         return (gradientIsTargeted())? gradient32(): value32();
     }
-
 
     public Tsr setTargetValue64(double[] value){
         if(this.isOutsourced()){

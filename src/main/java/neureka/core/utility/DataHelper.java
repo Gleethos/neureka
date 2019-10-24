@@ -3,7 +3,8 @@ package neureka.core.utility;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class DataHelper<T> {
+public class DataHelper<T>
+{
     public T[] updateArray(T[] Array, int index, boolean remove, Class<T> tClass) {
         if (Array == null) {
             if (remove == true) {

@@ -7,6 +7,7 @@ import java.util.*;
 
 import neureka.core.Tsr;
 import neureka.core.device.IDevice;
+import neureka.core.function.IFunction;
 import neureka.core.utility.DataHelper;
 import org.jocl.*;
 
@@ -164,11 +165,11 @@ public class OpenCLDevice implements IDevice
         }
         int[] translation = tensor.translation();
         for(int i=rank; i<rank*2; i++){
-            config[i] = translation[i];
+            config[i] = translation[i-rank];
         }
         int[] idxmap = tensor.idxmap();
         for(int i=rank*2; i<rank*3; i++){
-            config[i] = idxmap[i];
+            config[i] = idxmap[i-rank*2];
         }
         //SHAPE/TRANSLATION/IDXMAP TRANSFER:
         newClt.config = clCreateBuffer(
@@ -302,25 +303,102 @@ public class OpenCLDevice implements IDevice
 
     @Override
     public IDevice execute(Tsr[] tsrs, int f_id, int d) {
-        int gwz = (tsrs[0]!=null)?tsrs[0].size():tsrs[1].size();
-        int offset = (tsrs[0]!=null)?0:1;
-        cl_kernel kernel = _platform.getKernels().get("");
-        clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).value));//=> drain
-        clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
-        clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+1]).value));//=>src1
-        clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
-        clSetKernelArg(kernel, 4, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).value));//=>src2
-        clSetKernelArg(kernel, 5, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
-        clSetKernelArg(kernel, 6, Sizeof.cl_int, Pointer.to(new int[]{ d }));
-        //clSetKernelArg(kernel, 8, Sizeof.cl_mem, Pointer.to(colorMapMem));
-        //clSetKernelArg(kernel, 9, Sizeof.cl_int, Pointer.to(new int[]{ colorMap.length }));
-
-        clEnqueueNDRangeKernel(_queue, kernel, 1, null,
-                new long[]{gwz}, null, 0, null, null);
-
+        //if(tsrs.length>2){
+        if(IFunction.TYPES.REGISTER[f_id]=="<")
+        {
+            int offset = (tsrs[0]==null)?1:0;
+            this._execute(new Tsr[]{tsrs[0+offset], tsrs[1+offset]}, IFunction.TYPES.LOOKUP.get("idy"), -1);
+        }
+        else if(IFunction.TYPES.REGISTER[f_id]==">")
+        {
+            int offset = (tsrs[0]==null)?1:0;
+            _execute(new Tsr[]{tsrs[1+offset], tsrs[0+offset]}, IFunction.TYPES.LOOKUP.get("idy"), -1);
+        }
+        else
+        {
+            if(tsrs[0]==null)//Creating a new tensor:
+            {
+                int[] shp = (IFunction.TYPES.REGISTER[f_id] == "x")
+                                ? Tsr.fcn.indexing.shpOfCon(tsrs[1].shape(), tsrs[2].shape())
+                                : tsrs[1].shape();
+                Tsr output = new Tsr(shp, 0.0);
+                this.add(output);
+                tsrs[0] = output;
+            }
+            if (
+                    tsrs.length == 3
+                            &&
+                            (
+                                    (tsrs[1].isVirtual() || tsrs[2].isVirtual())
+                                            ||
+                                    (!tsrs[1].isOutsourced() && tsrs[1].size() == 1 || !tsrs[2].isOutsourced() && tsrs[2].size() == 1)
+                            )
+            ) {
+                if (tsrs[2].isVirtual() || tsrs[2].size() == 1) {
+                    _execute(new Tsr[]{tsrs[0], tsrs[1]}, IFunction.TYPES.LOOKUP.get("idy"), -1);
+                    _execute(tsrs[0], tsrs[2].value64()[0], f_id, d);
+                } else {
+                    _execute(new Tsr[]{tsrs[0], tsrs[2]}, IFunction.TYPES.LOOKUP.get("idy"), -1);
+                    _execute(tsrs[0], tsrs[1].value64()[0], f_id, d);
+                }
+            } else {
+                for (Tsr t : tsrs) {
+                    if (!t.isOutsourced()) {
+                        this.add(t);
+                    }
+                }
+                _execute(tsrs, f_id, d);
+            }
+        }
+        //} else {
+        //    _execute(tsrs, f_id, d);
+        //}
         return null;
     }
 
+    public void _execute(Tsr[] tsrs, int f_id, int d){
+        if(tsrs.length>3){
+            //TODO: recursion... // WORK IN PROGRESS HERE!!
+            Tsr[] newTsrs = new Tsr[tsrs.length-1];
+            newTsrs[0] = new Tsr(newTsrs[1].shape());
+            if(newTsrs[1].is32()){
+                newTsrs[0].setTargetValue32(new float[newTsrs[1].size()]);
+            } else {
+                newTsrs[0].setTargetValue64(new double[newTsrs[1].size()]);
+            }
+            for(int i=2; i<newTsrs.length; i++){
+                newTsrs[i-1] = tsrs[i];
+            }// 0, 1, (2, 3, 4, 5)
+            _execute(newTsrs, f_id, d);//This recursion should work!
+            _execute(new Tsr[]{tsrs[0], tsrs[1], newTsrs[0]}, f_id, d);
+        } else {
+            int gwz = (tsrs[0]!=null)?tsrs[0].size():tsrs[1].size();
+            int offset = (tsrs[0]!=null)?0:1;
+            cl_kernel kernel = _platform.getKernels().get("");
+            clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).value));//=> drain
+            clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
+            clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+1]).value));//=>src1
+            clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
+            clSetKernelArg(kernel, 4, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).value));//=>src2
+            clSetKernelArg(kernel, 5, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
+            clSetKernelArg(kernel, 6, Sizeof.cl_int, Pointer.to(new int[]{ d }));
+            clEnqueueNDRangeKernel(
+                    _queue, kernel,
+                    1,
+                    null,
+                    new long[]{gwz},
+                    null,
+                    0,
+                    null,
+                    null
+            );
+        }
+    }
+
+    public void _execute(Tsr t, double value, int f_id, int d)
+    {
+
+    }
 
     //---
 
