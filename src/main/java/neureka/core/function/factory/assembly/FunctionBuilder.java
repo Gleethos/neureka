@@ -144,7 +144,7 @@ public class FunctionBuilder {
                                 if (currentChain == null) {
                                     newComponents.add(currentComponent);
                                 } else if (currentChain != null) {
-                                    newComponents.add(currentChain + currentComponent); //= String.valueOf(currentChain) + currentComponent
+                                    newComponents.add(currentChain + currentComponent); //= String.value64Of(currentChain) + currentComponent
                                 }
                                 newOperations.add(currentOperation);
                                 groupingOccured = true;

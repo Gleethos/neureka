@@ -86,9 +86,9 @@ public class AparapiDevice implements IDevice
     public IDevice get(Tsr tensor)
     {
         if (_kernel != null) {
-            Tsr.fcn.inject(valueOf(tensor, false), false, tensor);//_kernel.value64(), false, tensor
+            Tsr.fcn.inject(value64Of(tensor, false), false, tensor);//_kernel.value64(), false, tensor
             if (tensor.rqsGradient()) {
-                Tsr.fcn.inject(valueOf(tensor, true), true, tensor);//_kernel.value64(), true, tensor
+                Tsr.fcn.inject(value64Of(tensor, true), true, tensor);//_kernel.value64(), true, tensor
             }
             rmv(tensor);
         }
@@ -167,7 +167,7 @@ public class AparapiDevice implements IDevice
         return this;
     }
 
-    public double[] valueOf(Tsr tensor, boolean grd) {
+    public double[] value64Of(Tsr tensor, boolean grd) {
         _kernel.execute(
                 Range.create(//_device, //-> Causes Error! Why?
                         _kernel.executionSizeOf_fetchTsr(
@@ -182,8 +182,8 @@ public class AparapiDevice implements IDevice
         return _kernel.value();
     }
 
-    public float[] floatValueOf(Tsr tensor, boolean grd){
-        return DataHelper.doubleToFloat(valueOf(tensor, grd));
+    public float[] value32Of(Tsr tensor, boolean grd){
+        return DataHelper.doubleToFloat(value64Of(tensor, grd));
     }
 
     public IDevice execute(Tsr[] tsrs, int f_id, int d)

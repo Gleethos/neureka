@@ -88,17 +88,15 @@ public class OpenCLDevice implements IDevice
 
     @Override
     public void dispose() {
-        _mapping.forEach((t, clt)->{
-            get(t);
-        });
+        _mapping.forEach((t, clt)->get(t));
         clFinish(_queue);
     }
 
     @Override
     public IDevice get(Tsr tensor) {
-        tensor.setValue(valueOf(tensor, false));
+        tensor.setValue(value64Of(tensor, false));
         if(tensor.rqsGradient()){
-            tensor.setValue(valueOf(tensor, true));
+            tensor.setValue(value64Of(tensor, true));
         }
         rmv(tensor);
         return this;
@@ -117,22 +115,22 @@ public class OpenCLDevice implements IDevice
 
     private void _store(Tsr tensor, cl_tsr newClTsr, int fp, boolean grd){
         //cl_tsr newClTsr = new cl_tsr();
-        double[] hostData = (grd)?tensor.gradient64():tensor.value64();
         Pointer p;
+        int size;
         if(fp==1){
-            float[] newData = new float[hostData.length];
-            for(int i=0; i<newData.length; i++){
-                newData[i] = (float)hostData[i];
-            }
-            p = Pointer.to(newData);
+            float[] data = (grd)?tensor.gradient32():tensor.value32();
+            p = Pointer.to(data);
+            size = data.length;
         } else {
-            p = Pointer.to(hostData);
+            double[] data = (grd)?tensor.gradient64():tensor.value64();
+            p = Pointer.to(data);
+            size = data.length;
         }
         //VALUE TRANSFER:
         cl_mem mem = clCreateBuffer(
                 _platform.getContext(),
                 CL_MEM_READ_WRITE,
-                hostData.length * Sizeof.cl_float*fp,
+                size * Sizeof.cl_float*fp,
                 null,
                 null
         );
@@ -145,18 +143,18 @@ public class OpenCLDevice implements IDevice
                 _queue,
                 mem,
                 true, 0,
-                hostData.length * Sizeof.cl_float*fp,
+                size * Sizeof.cl_float*fp,
                 p,
                 0, null, null
         );
     }
 
     public IDevice add(Tsr tensor, int fp) {
-        cl_tsr newClTsr = new cl_tsr();
+        cl_tsr newClt = new cl_tsr();
         //VALUE TRANSFER:
-        _store(tensor, newClTsr, fp, false);
+        _store(tensor, newClt, fp, false);
         if(tensor.rqsGradient()){
-            _store(tensor, newClTsr, fp, true);
+            _store(tensor, newClt, fp, true);
         }
         int rank = tensor.shape().length;
         int[] config = new int[rank*3];
@@ -168,12 +166,12 @@ public class OpenCLDevice implements IDevice
         for(int i=rank; i<rank*2; i++){
             config[i] = translation[i];
         }
-        int[] baseline = tensor.idxmap();
+        int[] idxmap = tensor.idxmap();
         for(int i=rank*2; i<rank*3; i++){
-            config[i] = baseline[i];
+            config[i] = idxmap[i];
         }
-        //SHAPE TRANSFER:
-        newClTsr.config = clCreateBuffer(
+        //SHAPE/TRANSLATION/IDXMAP TRANSFER:
+        newClt.config = clCreateBuffer(
                 _platform.getContext(),
                 CL_MEM_READ_WRITE,
                 config.length * Sizeof.cl_int,
@@ -181,13 +179,13 @@ public class OpenCLDevice implements IDevice
         );
         clEnqueueWriteBuffer(
                 _queue,
-                newClTsr.config,
+                newClt.config,
                 true, 0,
                 config.length * Sizeof.cl_int,
                 Pointer.to(tensor.shape()),
                 0, null, null
         );
-        _mapping.put(tensor, newClTsr);
+        _mapping.put(tensor, newClt);
         tensor.add(this);
         tensor.setIsOutsourced(true);
         return this;
@@ -246,10 +244,11 @@ public class OpenCLDevice implements IDevice
         return this;
     }
 
-    public double[] valueOf(Tsr tensor, boolean grd) {
+    @Override
+    public double[] value64Of(Tsr tensor, boolean grd) {
         cl_tsr clt = _mapping.get(tensor);
         if(clt.fp==1){
-            return DataHelper.floatToDouble(floatValueOf(tensor, grd));
+            return DataHelper.floatToDouble(value32Of(tensor, grd));
         } else {
             double[] data = new double[tensor.size()];
             clEnqueueReadBuffer(
@@ -269,7 +268,7 @@ public class OpenCLDevice implements IDevice
     }
 
     @Override
-    public float[] floatValueOf(Tsr tensor, boolean grd){
+    public float[] value32Of(Tsr tensor, boolean grd){
         cl_tsr clt = _mapping.get(tensor);
         if(clt.fp==1){
             float[] data = new float[tensor.size()];
@@ -286,7 +285,7 @@ public class OpenCLDevice implements IDevice
             );
             return data;
         } else {
-            return DataHelper.doubleToFloat(valueOf(tensor, grd));
+            return DataHelper.doubleToFloat(value64Of(tensor, grd));
         }
     }
 

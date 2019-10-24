@@ -562,9 +562,9 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 		
 			if(isInteger(inputIndexingField.getText())) {
 				int newIndex = parseInteger(inputIndexingField.getText()); System.out.println("New history index: "+newIndex);
-				//shiftModField.setText("Bias: "+(String.valueOf(UnitCore.getBias(newIndex))));
+				//shiftModField.setText("Bias: "+(String.value64Of(UnitCore.getBias(newIndex))));
 				int newWeightIndex = parseInteger(connectionIndexingField.getText());
-				//weightModField.setText("Weight: "+(String.valueOf(UnitCore.getWeight(newIndex, newWeightIndex))));
+				//weightModField.setText("Weight: "+(String.value64Of(UnitCore.getWeight(newIndex, newWeightIndex))));
 		    	}
 		
 			else
@@ -584,7 +584,7 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 		if(e.getSource()==historyIndexingField) {if(e.getKeyChar()=='\n') {System.out.println("Value index sent!");
 		if(isInteger(historyIndexingField.getText())) {
 		int newIndex = parseInteger(historyIndexingField.getText()); System.out.println("New input index: "+newIndex);
-		//inputModField.setText((String.valueOf(UnitCore.getInput(0,newIndex))));
+		//inputModField.setText((String.value64Of(UnitCore.getInput(0,newIndex))));
 		}
 		else
 		{
@@ -973,10 +973,10 @@ public class NVControlFrame extends JFrame implements ActionListener, KeyListene
 		         
 		        newIndex = Math.abs(newIndex);
 		        
-				//shiftModField.setText("Bias: "+(String.valueOf(UnitCore.getBias(newIndex))));
+				//shiftModField.setText("Bias: "+(String.value64Of(UnitCore.getBias(newIndex))));
 				
 				int newWeightIndex = parseInteger(connectionIndexingField.getText());
-				//weightModField.setText("Weight: "+(String.valueOf(UnitCore.getWeight(newIndex, newWeightIndex))));
+				//weightModField.setText("Weight: "+(String.value64Of(UnitCore.getWeight(newIndex, newWeightIndex))));
 		       }
 			    else
 			   {

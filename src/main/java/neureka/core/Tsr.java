@@ -138,12 +138,12 @@ public class Tsr {
 
     public double[] gradient64() {
         if (this.rqsGradient() && this.isOutsourced() && this.has(IDevice.class)) {
-            return ((IDevice) find(IDevice.class)).valueOf(this, true);
+            return ((IDevice) find(IDevice.class)).value64Of(this, true);
         }
-        return (this.isFP64())?(double[])_gradient:DataHelper.floatToDouble((float[])_gradient);
+        return (this.is64())?(double[])_gradient:DataHelper.floatToDouble((float[])_gradient);
     }
     public float[] gradient32(){
-        return (this.isFP64())?DataHelper.doubleToFloat((double[])_gradient):(float[])_gradient;
+        return (this.is64())?DataHelper.doubleToFloat((double[])_gradient):(float[])_gradient;
     }
 
     public Tsr addToGradient(Tsr g) {
@@ -155,7 +155,7 @@ public class Tsr {
             device.get(g);
             this.setGradientIsTargeted(false);
         } else {
-            if(this.isFP64()){
+            if(this.is64()){
                 double[] value = g.value64();
                 _gradient = (_gradient==null)?new double[value.length]:_gradient;
                 for(int i=0; i<value.length; i++){
@@ -172,18 +172,51 @@ public class Tsr {
         return this;
     }
 
-    public boolean isFP64(){
+    public boolean is64(){
         return _value instanceof double[];
+    }
+    public  boolean is32(){
+        return _value instanceof float[];
+    }
+
+    public Tsr to32(){
+        if(this.is64()){
+            IDevice device = (IDevice) this.find(IDevice.class);
+            if(device!=null){
+                device.get(this);
+            }
+            _value = DataHelper.doubleToFloat((double[])_value);
+            _gradient = DataHelper.doubleToFloat((double[])_gradient);
+            if(device!=null){
+                device.add(this);
+            }
+        }
+        return this;
+    }
+
+    public Tsr to64(){
+        if(this.is32()){
+            IDevice device = (IDevice) this.find(IDevice.class);
+            if(device!=null){
+                device.get(this);
+            }
+            _value = DataHelper.floatToDouble((float[])_value);
+            _gradient = DataHelper.floatToDouble((float[])_gradient);
+            if(device!=null){
+                device.add(this);
+            }
+        }
+        return this;
     }
 
     public double[] value64() {
         if (_value == null && this.isOutsourced() && this.has(IDevice.class)) {
-            return ((IDevice) this.find(IDevice.class)).valueOf(this, false);
+            return ((IDevice) this.find(IDevice.class)).value64Of(this, false);
         }
-        double[] newValue = (this.isFP64())?(double[])_value: DataHelper.floatToDouble((float[])_value);
+        double[] newValue = (this.is64())?(double[])_value: DataHelper.floatToDouble((float[])_value);
         if (this.isVirtual()) {
             newValue = new double[this.size()];
-            double[] value = (this.isFP64())?(double[])_value:DataHelper.floatToDouble((float[])_value);
+            double[] value = (this.is64())?(double[])_value:DataHelper.floatToDouble((float[])_value);
             for (int i = 0; i < newValue.length; i++) {
                 newValue[i] = value[0];
             }
@@ -193,9 +226,9 @@ public class Tsr {
 
     public float[] value32(){
         if (_value == null && this.isOutsourced() && this.has(IDevice.class)) {
-            return ((IDevice) this.find(IDevice.class)).floatValueOf(this, false);
+            return ((IDevice) this.find(IDevice.class)).value32Of(this, false);
         }
-        float[] newValue = (this.isFP64())?DataHelper.doubleToFloat((double[])_value):(float[])_value;
+        float[] newValue = (this.is64())?DataHelper.doubleToFloat((double[])_value):(float[])_value;
         if (this.isVirtual()) {
             newValue = new float[this.size()];
             for (int i = 0; i < newValue.length; i++) {
@@ -234,7 +267,7 @@ public class Tsr {
                 ? fcn.indexing.szeOfShp(this.shape())
                 : (this.isVirtual()
                 ? fcn.indexing.szeOfShp(this.shape())
-                : ((this.isFP64())?((double[])_value).length:((float[])_value).length));
+                : ((this.is64())?((double[])_value).length:((float[])_value).length));
     }
 
     public int[] shpIdx(int idx) {
@@ -311,15 +344,15 @@ public class Tsr {
 
     public Tsr setIsVirtual(boolean isVirtual) {
         if (isVirtual() != isVirtual) {
-            double v = (((this.isFP64())?((double[])_value)[0]:((float[])_value)[0]));
+            double v = (((this.is64())?((double[])_value)[0]:((float[])_value)[0]));
             if (isVirtual) {
                 _value = new double[]{v};
                 _flags += IS_VIRTUAL_MASK;
             } else {
-                _value = (this.isFP64())?new double[this.size()]:new float[this.size()];
-                int length = (this.isFP64())?((double[])_value).length:((float[])_value).length;
+                _value = (this.is64())?new double[this.size()]:new float[this.size()];
+                int length = (this.is64())?((double[])_value).length:((float[])_value).length;
                 for (int i = 0; i < length; i++) {
-                    if(this.isFP64()){
+                    if(this.is64()){
                         ((double[])_value)[i] = v;
                     } else {
                         ((float[])_value)[i] = (float)v;
@@ -545,12 +578,12 @@ public class Tsr {
         _shape = tensor._shape;
         _translation = tensor._translation;
         _idxmap = tensor._idxmap;
-        _value = (this.isFP64())?new double[tensor.size()]:new float[tensor.size()];
+        _value = (this.is64())?new double[tensor.size()]:new float[tensor.size()];
         _components = null;//tensor._components;
         _flags = tensor._flags;
-        int length = (this.isFP64())?((double[])_value).length:((float[])_value).length;
+        int length = (this.is64())?((double[])_value).length:((float[])_value).length;
         for (int i = 0; i < length; i++) {
-            if(tensor.isFP64()){
+            if(tensor.is64()){
                 ((double[])_value)[i] = ((double[])tensor._value)[i];
             } else {
                 ((float[])_value)[i] = ((float[])tensor._value)[i];
@@ -565,7 +598,7 @@ public class Tsr {
     public Tsr initialShape(int[] newShape) {
         int size = fcn.indexing.szeOfShp(newShape);
         _value = (_value==null)?new double[size]:_value;
-        int length = (this.isFP64())?((double[])_value).length:((float[])_value).length;
+        int length = (this.is64())?((double[])_value).length:((float[])_value).length;
         if (size != length && !this.isVirtual()) {
             throw new IllegalArgumentException("Size of shape does not match stored value64!");
         }
@@ -898,13 +931,13 @@ public class Tsr {
             newTensor._shape = tensor._shape;
             newTensor._translation = tensor._translation;
             newTensor._idxmap = tensor._idxmap;
-            newTensor._value = (tensor.isFP64())?new double[tensor.size()]:new float[tensor.size()];
+            newTensor._value = (tensor.is64())?new double[tensor.size()]:new float[tensor.size()];
             newTensor._components = null;//tensor._components;
             newTensor._flags = tensor._flags;
-            if(tensor.isFP64()){
-                int length = (tensor.isFP64())?((double[])tensor._value).length:((float[])tensor._value).length;
+            if(tensor.is64()){
+                int length = (tensor.is64())?((double[])tensor._value).length:((float[])tensor._value).length;
                 for (int i = 0; i < length; i++) {
-                    if(tensor.isFP64()){
+                    if(tensor.is64()){
                         double[] value = (double[])tensor._value;
                         ((double[])newTensor._value)[i] = value[i];
                     }else {

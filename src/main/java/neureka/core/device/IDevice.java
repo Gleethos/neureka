@@ -20,7 +20,7 @@ public interface IDevice
 
     IDevice execute(Tsr[] tsrs, int f_id, int d);
 
-    double[] valueOf(Tsr tensor, boolean grd);
+    double[] value64Of(Tsr tensor, boolean grd);
 
-    float[] floatValueOf(Tsr tensor, boolean grd);
+    float[] value32Of(Tsr tensor, boolean grd);
 }

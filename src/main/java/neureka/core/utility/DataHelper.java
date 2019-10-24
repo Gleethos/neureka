@@ -350,6 +350,9 @@ public class DataHelper<T> {
     }
 
     public static float[] doubleToFloat(double[] data){
+        if(data==null){
+            return null;
+        }
         float[] newData = new float[data.length];
         for(int i=0; i<data.length; i++) newData[i] = (float) data[i];
         return newData;
