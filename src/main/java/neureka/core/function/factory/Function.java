@@ -211,7 +211,7 @@ public abstract class Function implements IFunction {
 
     private Tsr _execute(Tsr[] inputs, int j, int d)
     {
-        AparapiDevice device = (AparapiDevice) inputs[0].find(AparapiDevice.class);
+        IDevice device = (IDevice) inputs[0].find(IDevice.class);
         boolean onSameDevice = _shareGuestDevice(inputs) && TYPES.REGISTER[_id] != "," && !(TYPES.isConvection(_id) && d > -1);
         if (onSameDevice)
         {
@@ -349,7 +349,7 @@ public abstract class Function implements IFunction {
                             : Tsr.fcn.newTsr(_src.get(i).activate(new double[]{}, j), templateShape);
         }
         if(shareDevice){
-            AparapiDevice shared = (AparapiDevice) tsrs[0].find(AparapiDevice.class);
+            IDevice shared = (IDevice) tsrs[0].find(IDevice.class);
             if(tsrs.length>2){// Constant sources will be converted into full Tensors and stored on the gpu!
                 for(int i=0; i<tsrs.length; i++){
                     if(!tsrs[i].isOutsourced()){
@@ -363,13 +363,13 @@ public abstract class Function implements IFunction {
 
     private static boolean _shareGuestDevice(Tsr[] tsrs) {
         boolean onSameGuestDevice = true;
-        AparapiDevice device = null;
+        IDevice device = null;
         for (int ti = 0; ti < tsrs.length; ti++) {
-            device = (tsrs[ti].isOutsourced()) ? (AparapiDevice) tsrs[ti].find(AparapiDevice.class) : device;
+            device = (tsrs[ti].isOutsourced()) ? (IDevice) tsrs[ti].find(IDevice.class) : device;
         }
         if (device != null) {
             for (int ti = 0; ti < tsrs.length; ti++) {
-                onSameGuestDevice = (!tsrs[ti].isVirtual() && device == tsrs[ti].find(AparapiDevice.class)) && onSameGuestDevice;
+                onSameGuestDevice = (!tsrs[ti].isVirtual() && device == tsrs[ti].find(IDevice.class)) && onSameGuestDevice;
             }
         } else {
             onSameGuestDevice = false;

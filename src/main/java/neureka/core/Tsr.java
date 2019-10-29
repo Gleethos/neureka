@@ -281,6 +281,10 @@ public class Tsr {
         return _shape;
     }
 
+    public int rank(){
+        return _shape.length;
+    }
+
     public int[] idxmap(){
         return _idxmap;
     }
@@ -374,21 +378,27 @@ public class Tsr {
 
     public Tsr setIsVirtual(boolean isVirtual) {
         if (isVirtual() != isVirtual) {
-            double v = (((this.is64())?((double[])_value)[0]:((float[])_value)[0]));
-            if (isVirtual) {
-                _value = new double[]{v};
-                _flags += IS_VIRTUAL_MASK;
-            } else {
-                _value = (this.is64())?new double[this.size()]:new float[this.size()];
-                int length = (this.is64())?((double[])_value).length:((float[])_value).length;
-                for (int i = 0; i < length; i++) {
-                    if(this.is64()){
-                        ((double[])_value)[i] = v;
-                    } else {
-                        ((float[])_value)[i] = (float)v;
-                    }
+            if(this.isOutsourced()){
+                if (!isVirtual) {
+                    _flags -= IS_VIRTUAL_MASK;
                 }
-                _flags -= IS_VIRTUAL_MASK;
+            } else {
+                double v = (((this.is64())?((double[])_value)[0]:((float[])_value)[0]));
+                if (isVirtual) {
+                    _value = new double[]{v};
+                    _flags += IS_VIRTUAL_MASK;
+                } else {
+                    _value = (this.is64())?new double[this.size()]:new float[this.size()];
+                    int length = (this.is64())?((double[])_value).length:((float[])_value).length;
+                    for (int i = 0; i < length; i++) {
+                        if(this.is64()){
+                            ((double[])_value)[i] = v;
+                        } else {
+                            ((float[])_value)[i] = (float)v;
+                        }
+                    }
+                    _flags -= IS_VIRTUAL_MASK;
+                }
             }
         }
         return this;

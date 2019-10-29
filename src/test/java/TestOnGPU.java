@@ -62,21 +62,45 @@ public class TestOnGPU {
                 "Test device kernel FP-Type");
         _testAutograd(gpu, tester);
         //---
-        //gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
-        //_testAutograd(gpu, tester);
+        gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
+       _testAutograd(gpu, tester);
 
         tester.close();
     }
     private  void _testAutograd(IDevice gpu, NTester_Tensor tester){
         Tsr tensor1, tensor2;
-        tensor1 = new Tsr(new int[]{3, 5}, new double[]{
-                2, 3, 5,
-                -4, 6, 2,
-                -5, -2, -1,
-                2, 4, -1,
-                1, 2, 7
-        });
         //=====================================================================
+        tensor1 = new Tsr(new int[]{2, 2}, new double[]{
+                -1, 7,
+                -2, 3,
+        }).setRqsGradient(true);//ERROR!! ???
+        tensor2 = new Tsr(new int[]{2, 2}, new double[]{
+                -1, 7,
+                -2, 3,
+        });
+        gpu.add(tensor1).add(tensor2);
+        //System.out.println(new Tsr(t, "lig(I[0])"));
+        tester.testTensorAutoGrad(
+                new Tsr[]{tensor1, tensor2},
+                "I[0]*i1",
+                new String[]{
+                        "[2x2]:(1.0, 49.0, 4.0, 9.0)"
+                });
+        tester.testTensorAutoGrad(
+                new Tsr[]{tensor1, tensor2},
+                "I[0]xi1",
+                new String[]{
+                        "[1x1]:(63.0)",
+                        "[2x2]:(-1.0, 7.0, -2.0, 3.0) ]|:t{ [2x2]:(-1.0, 7.0, -2.0, 3.0) }"
+                });
+        //=====================================================================
+        tensor1 = new Tsr(new int[]{3, 5}, new double[]{
+                 2,  3,  5,
+                -4,  6,  2,
+                -5, -2, -1,
+                 2,  4, -1,
+                 1,  2,  7
+        });
         gpu.add(tensor1);
         //System.out.println(new Tsr(t, "lig(I[0])"));
         tester.testTensorAutoGrad(

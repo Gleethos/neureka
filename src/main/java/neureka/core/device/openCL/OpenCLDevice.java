@@ -120,10 +120,12 @@ public class OpenCLDevice implements IDevice
         int size;
         if(fp==1){
             float[] data = (grd)?tensor.gradient32():tensor.value32();
+            data = (data==null)?new float[tensor.size()]:data;
             p = Pointer.to(data);
             size = data.length;
         } else {
             double[] data = (grd)?tensor.gradient64():tensor.value64();
+            data = (data==null)?new double[tensor.size()]:data;
             p = Pointer.to(data);
             size = data.length;
         }
@@ -183,12 +185,29 @@ public class OpenCLDevice implements IDevice
                 newClt.config,
                 true, 0,
                 config.length * Sizeof.cl_int,
-                Pointer.to(tensor.shape()),
+                Pointer.to(config),
                 0, null, null
+        );
+        cl_mem[] memos;
+        if(tensor.rqsGradient()){
+            memos = new cl_mem[]{newClt.value, newClt.grad, newClt.config};
+        } else {
+            memos = new cl_mem[]{newClt.value, newClt.config};
+        }
+        int err = clEnqueueMigrateMemObjects(
+                _queue,
+                memos.length,
+                memos
+                ,
+                CL_MIGRATE_MEM_OBJECT_HOST,
+                0,
+                null,
+                null
         );
         _mapping.put(tensor, newClt);
         tensor.add(this);
         tensor.setIsOutsourced(true);
+        tensor.setIsVirtual(false);
         return this;
     }
 
@@ -227,7 +246,6 @@ public class OpenCLDevice implements IDevice
     public IDevice overwrite32(Tsr tensor, float[] value) {//TODO: Make value an object!
         cl_tsr clt = _mapping.get(tensor);
         if(clt.fp==1){
-           // float[] data = DataHelper.doubleToFloat(value);
             clEnqueueWriteBuffer(
                     _queue,
                     clt.value,
@@ -250,9 +268,9 @@ public class OpenCLDevice implements IDevice
         cl_tsr clTsr = _mapping.get(former);
         _mapping.remove(former);
         _mapping.put(replacement, clTsr);
-        replacement.add(this);
-        replacement.setIsOutsourced(true);
-        former.remove(IDevice.class);
+        //replacement.add(this);
+        //replacement.setIsOutsourced(true);
+        //former.remove(IDevice.class);
         return this;
     }
 
@@ -353,10 +371,15 @@ public class OpenCLDevice implements IDevice
         //} else {
         //    _execute(tsrs, f_id, d);
         //}
-        return null;
+        return this;
     }
 
     public void _execute(Tsr[] tsrs, int f_id, int d){
+        for(Tsr t : tsrs){
+            if(!t.isOutsourced()){
+                this.add(t);
+            }
+        }
         if(tsrs.length>3){
             //TODO: recursion... // WORK IN PROGRESS HERE!!
             Tsr[] newTsrs = new Tsr[tsrs.length-1];
@@ -374,14 +397,15 @@ public class OpenCLDevice implements IDevice
         } else {
             int gwz = (tsrs[0]!=null)?tsrs[0].size():tsrs[1].size();
             int offset = (tsrs[0]!=null)?0:1;
-            cl_kernel kernel = _platform.getKernels().get("");
+            cl_kernel kernel = _platform.getKernels().get(_platform.kernelNameOf(f_id));
             clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).value));//=> drain
             clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
             clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+1]).value));//=>src1
-            clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
-            clSetKernelArg(kernel, 4, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).value));//=>src2
-            clSetKernelArg(kernel, 5, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
-            clSetKernelArg(kernel, 6, Sizeof.cl_int, Pointer.to(new int[]{ d }));
+            clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+1]).config));
+            clSetKernelArg(kernel, 4, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+2]).value));//=>src2
+            clSetKernelArg(kernel, 5, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+2]).config));
+            clSetKernelArg(kernel, 6, Sizeof.cl_int, Pointer.to(new int[]{ tsrs[0].rank() }));
+            clSetKernelArg(kernel, 7, Sizeof.cl_int, Pointer.to(new int[]{ d }));
             clEnqueueNDRangeKernel(
                     _queue, kernel,
                     1,

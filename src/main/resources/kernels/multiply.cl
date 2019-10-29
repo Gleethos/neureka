@@ -1,6 +1,6 @@
 
-void cfg_of_cfg(__global int* cfg, int* prv_cfg, int rank);
-int i_of_i(int i, int* config, int rank);
+void _cfg_of_cfg(__global int* cfg, int* prv_cfg, int rank);
+int _i_of_i(int i, int* cfg, int rank);
 
 __kernel void multiply(
     __global float *drn, __global int *drn_conf,
@@ -9,10 +9,17 @@ __kernel void multiply(
     int rank,
     int d
     ){
-        int prv_drn_cfg[32]; cfg_of_cfg(drn_conf, prv_drn_cfg, rank);
-        int prv_src1_cfg[32]; cfg_of_cfg(src1_conf, prv_src1_cfg, rank);
-        int prv_src2_cfg[32]; cfg_of_cfg(src2_conf, prv_src2_cfg, rank);
+        int prv_drn_cfg[32];
+        _cfg_of_cfg(drn_conf, prv_drn_cfg, rank);
+        int prv_src1_cfg[32];
+        _cfg_of_cfg(src1_conf, prv_src1_cfg, rank);
+        int prv_src2_cfg[32];
+        _cfg_of_cfg(src2_conf, prv_src2_cfg, rank);
 
         unsigned int i = get_global_id(0);
-        drn[i_of_i(i, prv_drn_cfg, rank)] = src1[i_of_i(i, prv_src1_cfg, rank)] * src2[i_of_i(i, prv_src2_cfg, rank)];
+        drn[_i_of_i(i, prv_drn_cfg, rank)] = src1[_i_of_i(i, prv_src1_cfg, rank)] * src2[_i_of_i(i, prv_src2_cfg, rank)];
+        //drn[i] = src1[i] * src2[i];
+        //drn[i] = _i_of_i(i, prv_drn_cfg, rank);
+        //src1[i] = _i_of_i(i, prv_src1_cfg, rank);
+        //src2[i] = _i_of_i(i, prv_src2_cfg, rank);
     }

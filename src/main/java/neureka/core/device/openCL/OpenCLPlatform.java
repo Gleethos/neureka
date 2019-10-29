@@ -1,5 +1,6 @@
 package neureka.core.device.openCL;
 
+import neureka.core.function.IFunction;
 import org.jocl.*;
 
 import java.io.*;
@@ -8,13 +9,45 @@ import java.util.*;
 import static org.jocl.CL.*;
 import static org.jocl.CL.CL_DEVICE_TYPE_ALL;
 
-public class OpenCLPlatform {
+public class OpenCLPlatform
+{
 
     private cl_platform_id _pid;
     private List<OpenCLDevice> _devices;
     private cl_context _context;
-
     private Map<String, cl_kernel> _kernels;
+
+    private static Map<String, String> OPERATION_TO_KERNEL_MAPPING = new HashMap<String, String>();
+    static {
+        OPERATION_TO_KERNEL_MAPPING.put("relu", "relu");
+        OPERATION_TO_KERNEL_MAPPING.put("sig", "sigmoid");
+        OPERATION_TO_KERNEL_MAPPING.put("quad", "quadratic");
+        OPERATION_TO_KERNEL_MAPPING.put("lig", "ligmoid");
+        OPERATION_TO_KERNEL_MAPPING.put("idy", "identity");
+        OPERATION_TO_KERNEL_MAPPING.put("gaus", "gaussian");
+        OPERATION_TO_KERNEL_MAPPING.put("abs", "absolute");
+        OPERATION_TO_KERNEL_MAPPING.put("sin", "sinus");
+        OPERATION_TO_KERNEL_MAPPING.put("cos", "cosinus");
+        OPERATION_TO_KERNEL_MAPPING.put("sum", "add");
+        OPERATION_TO_KERNEL_MAPPING.put("prod", "multiply");
+        OPERATION_TO_KERNEL_MAPPING.put("^", "power");
+        OPERATION_TO_KERNEL_MAPPING.put("/", "divide");
+        OPERATION_TO_KERNEL_MAPPING.put("*", "multiply");
+        OPERATION_TO_KERNEL_MAPPING.put("%", "modulo");
+        OPERATION_TO_KERNEL_MAPPING.put("-", "subtract");
+        OPERATION_TO_KERNEL_MAPPING.put("+", "add");
+        OPERATION_TO_KERNEL_MAPPING.put("x", "convolve");
+        OPERATION_TO_KERNEL_MAPPING.put((""+((char)171)), "inv_conv_left");
+        OPERATION_TO_KERNEL_MAPPING.put((""+((char)187)), "inv_conv_right");
+        OPERATION_TO_KERNEL_MAPPING.put(",", "reshape");
+        OPERATION_TO_KERNEL_MAPPING.put("<", "inject_left");
+        OPERATION_TO_KERNEL_MAPPING.put(">", "inject_right");
+    }
+
+    public String kernelNameOf(int f_id){
+        String name = OPERATION_TO_KERNEL_MAPPING.get(IFunction.TYPES.REGISTER[f_id]);
+        return OPERATION_TO_KERNEL_MAPPING.get(IFunction.TYPES.REGISTER[f_id]);
+    }
 
     OpenCLPlatform(cl_platform_id pid){
         _pid = pid;
