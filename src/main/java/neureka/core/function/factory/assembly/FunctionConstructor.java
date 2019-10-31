@@ -21,11 +21,11 @@ public class FunctionConstructor
             return new Function(f_id, isFlat, sources, doAD){
                 @Override
                 public Tsr activate(Tsr[] inputs, int j) {
-                    return CACHE.handle(inputs, this,()-> _tensor_activation(sources.get(0).activate(inputs, j), false));
+                    return CACHE.preprocess(inputs, this,()-> _tensor_activation(sources.get(0).activate(inputs, j), false));
                 }
                 @Override
                 public Tsr activate(Tsr[] inputs) {
-                    return CACHE.handle(inputs, this, ()-> _tensor_activation(sources.get(0).activate(inputs), false));
+                    return CACHE.preprocess(inputs, this, ()-> _tensor_activation(sources.get(0).activate(inputs), false));
                 }
                 @Override
                 public Tsr derive(Tsr[] inputs, int d, int j) {
@@ -59,11 +59,11 @@ public class FunctionConstructor
             return new Function(f_id, isFlat, sources, doAD){
                 @Override
                 public Tsr activate(Tsr[] inputs, int j) {
-                    return CACHE.handle(inputs, this, ()-> _tensor_activation(inputs, j, -1));
+                    return CACHE.preprocess(inputs, this, ()-> _tensor_activation(inputs, j, -1));
                 }
                 @Override
                 public Tsr activate(Tsr[] inputs) {
-                    return CACHE.handle(inputs, this, ()-> _tensor_activation(inputs, -1, -1));
+                    return CACHE.preprocess(inputs, this, ()-> _tensor_activation(inputs, -1, -1));
                 }
                 @Override
                 public Tsr derive(Tsr[] inputs, int d, int j) {

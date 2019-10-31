@@ -398,14 +398,23 @@ public class OpenCLDevice implements IDevice
             int gwz = (tsrs[0]!=null)?tsrs[0].size():tsrs[1].size();
             int offset = (tsrs[0]!=null)?0:1;
             cl_kernel kernel = _platform.getKernels().get(_platform.kernelNameOf(f_id));
-            clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).value));//=> drain
-            clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
-            clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+1]).value));//=>src1
-            clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+1]).config));
-            clSetKernelArg(kernel, 4, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+2]).value));//=>src2
-            clSetKernelArg(kernel, 5, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+2]).config));
-            clSetKernelArg(kernel, 6, Sizeof.cl_int, Pointer.to(new int[]{ tsrs[0].rank() }));
-            clSetKernelArg(kernel, 7, Sizeof.cl_int, Pointer.to(new int[]{ d }));
+            if(IFunction.TYPES.isFunction(f_id)){
+                clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).value));//=> drain
+                clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
+                clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+1]).value));//=>src1
+                clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+1]).config));
+                clSetKernelArg(kernel, 4, Sizeof.cl_int, Pointer.to(new int[]{ tsrs[0].rank() }));
+                clSetKernelArg(kernel, 5, Sizeof.cl_int, Pointer.to(new int[]{ d }));
+            } else {
+                clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).value));//=> drain
+                clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
+                clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+1]).value));//=>src1
+                clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+1]).config));
+                clSetKernelArg(kernel, 4, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+2]).value));//=>src2
+                clSetKernelArg(kernel, 5, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+2]).config));
+                clSetKernelArg(kernel, 6, Sizeof.cl_int, Pointer.to(new int[]{ tsrs[0].rank() }));
+                clSetKernelArg(kernel, 7, Sizeof.cl_int, Pointer.to(new int[]{ d }));
+            }
             clEnqueueNDRangeKernel(
                     _queue, kernel,
                     1,

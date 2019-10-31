@@ -63,7 +63,7 @@ public class TestOnGPU {
         _testAutograd(gpu, tester);
         //---
         gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
-       _testAutograd(gpu, tester);
+        //_testAutograd(gpu, tester);
 
         tester.close();
     }
@@ -112,6 +112,7 @@ public class TestOnGPU {
         //===================
         tensor1 = new Tsr(new int[]{2}, 3);
         tensor2 = new Tsr(new int[]{2}, 4);
+        gpu.add(tensor1).add(tensor2);
         //result = new Tsr(new Tsr[]{tensor1, tensor2}, "i0*i1");
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1, tensor2},

@@ -2,26 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a07ad3e8-8754-4b05-b853-df2665879cc4" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileChanges/last-build.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileContent/annotation-processors.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileContent/fileContent.lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/resourceHashesCache.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/gc.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/jarAnalysis.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/taskHistory.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/NNetworkWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/NNetworkWindow.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/Tsr.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/Tsr.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/OpenCLDevice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/OpenCLDevice.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/OpenCLPlatform.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/OpenCLPlatform.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/environment/Cache.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/environment/Cache.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/environment/Types.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/environment/Types.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/assembly/FunctionConstructor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/assembly/FunctionConstructor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphBuilder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/ngui/swing/NGraphBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/ngui/swing/NGraphBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/neureka/ngui/touch/canvas/NGraphBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/neureka/ngui/touch/canvas/NGraphBuilder.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/kernels/multiply.cl" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/kernels/multiply.cl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/TestOnCPU.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestOnCPU.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/TestOnGPU.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestOnGPU.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -92,8 +88,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="171">
-              <caret line="228" selection-start-line="228" selection-end-line="228" />
+            <state relative-caret-position="211">
+              <caret line="150" column="12" selection-start-line="150" selection-start-column="12" selection-end-line="150" selection-end-column="12" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -102,79 +98,63 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/OpenCLPlatform.java">
+        <entry file="file://$PROJECT_DIR$/src/test/java/TestOnGPU.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="175">
-              <caret line="48" selection-start-line="48" selection-end-line="48" />
+            <state relative-caret-position="340">
+              <caret line="65" column="10" selection-start-line="65" selection-start-column="10" selection-end-line="65" selection-end-column="10" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/IFunction.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="10" column="17" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/environment/Types.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="117">
+              <caret line="12" selection-start-line="12" selection-end-line="12" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/environment/Cache.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="374">
+              <caret line="31" column="39" selection-start-line="31" selection-start-column="39" selection-end-line="31" selection-end-column="39" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/test/java/TestOnGPU.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphNode.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1071">
-              <caret line="105" selection-start-line="105" selection-end-line="105" />
+            <state relative-caret-position="24">
+              <caret line="280" column="13" selection-start-line="280" selection-start-column="13" selection-end-line="280" selection-end-column="13" />
               <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/kernels/multiply.cl">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="232">
-              <caret line="23" column="10" selection-start-line="23" selection-start-column="10" selection-end-line="23" selection-end-column="10" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/Tsr.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="103">
-              <caret line="690" selection-start-line="690" selection-end-line="690" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#9039#9040#0" expanded="true" />
-                <element signature="e#9068#9069#0" expanded="true" />
-                <element signature="e#9652#9653#0" expanded="true" />
-                <element signature="e#9712#9713#0" expanded="true" />
-                <element signature="e#13149#13150#0" expanded="true" />
-                <element signature="e#13785#13786#0" expanded="true" />
-                <element signature="e#13994#13995#0" expanded="true" />
-                <element signature="e#16984#16985#0" expanded="true" />
-                <element signature="e#17040#17041#0" expanded="true" />
-                <element signature="e#17085#17086#0" expanded="true" />
-                <element signature="e#17127#17128#0" expanded="true" />
-                <element signature="e#17179#17180#0" expanded="true" />
-                <element signature="e#17234#17235#0" expanded="true" />
-                <element signature="e#17292#17293#0" expanded="true" />
-                <element signature="e#17360#17361#0" expanded="true" />
-                <element signature="e#17424#17425#0" expanded="true" />
-                <element signature="e#18649#18650#0" expanded="true" />
-                <element signature="e#18681#18682#0" expanded="true" />
-                <element signature="e#19724#19725#0" expanded="true" />
-                <element signature="e#19771#19772#0" expanded="true" />
-                <element signature="e#20134#20135#0" expanded="true" />
-                <element signature="e#23119#23120#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/OpenCLDevice.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="155">
-              <caret line="400" selection-start-line="400" selection-end-line="400" />
-              <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="e#2637#2638#0" expanded="true" />
+                <element signature="e#2668#2669#0" expanded="true" />
+                <element signature="e#13644#13645#0" expanded="true" />
+                <element signature="e#13672#13673#0" expanded="true" />
+                <element signature="e#13747#13748#0" expanded="true" />
+                <element signature="e#13779#13780#0" expanded="true" />
+                <element signature="e#14766#14767#0" expanded="true" />
+                <element signature="e#14809#14810#0" expanded="true" />
+                <element signature="e#14868#14869#0" expanded="true" />
+                <element signature="e#14955#14956#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -183,11 +163,32 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/java/util/NTester_Tensor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="39" selection-start-line="39" selection-end-line="39" />
+            <state relative-caret-position="629">
+              <caret line="40" selection-start-line="40" selection-end-line="40" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/TestOnCPU.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="105">
+              <caret line="349" selection-start-line="349" selection-end-line="349" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/factory/assembly/FunctionBuilder.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="126">
+              <caret line="52" selection-start-line="52" selection-end-line="52" />
             </state>
           </provider>
         </entry>
@@ -203,13 +204,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>_put</find>
-      <find>ex</find>
-      <find>exec</find>
-      <find>_values[(p_data_drn + di)]</find>
-      <find>i_of_idx_on_</find>
-      <find>p_tln_src1, p_idx_src1</find>
-      <find>src2_id</find>
       <find>conv</find>
       <find>src2End</find>
       <find>src1End</find>
@@ -232,7 +226,14 @@
       <find>AparapiDe</find>
       <find>toString</find>
       <find>add(</find>
+      <find>lig</find>
       <find>value64Of</find>
+      <find>isVirtual</find>
+      <find>_inputs</find>
+      <find>_input</find>
+      <find>_has</find>
+      <find>_refer</find>
+      <find>_targets_gra</find>
     </findStrings>
     <replaceStrings>
       <replace>.setup.commit</replace>
@@ -279,12 +280,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/assembly/FunctionParser.java" />
-        <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/assembly/FunctionConstructor.java" />
-        <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/assembly/FunctionBuilder.java" />
-        <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/IKernel.java" />
-        <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/TensorKernel.java" />
-        <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/KernelFP64.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/KernelFP32.java" />
         <option value="$PROJECT_DIR$/src/test/java/util/NTester_TensorDevice.java" />
         <option value="$PROJECT_DIR$/src/test/java/TestOnlyCPU.java" />
@@ -306,11 +301,6 @@
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/src/test/java/util/NTester.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/utility/DeviceQuery.java" />
-        <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphBuilder.java" />
-        <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/IFunction.java" />
-        <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/environment/Cache.java" />
-        <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphNode.java" />
-        <option value="$PROJECT_DIR$/src/test/java/TestOnCPU.java" />
         <option value="$PROJECT_DIR$/src/test/java/util/NTester_Tensor.java" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/T64.java" />
@@ -322,20 +312,31 @@
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphLock.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/aparapi/AparapiDevice.java" />
         <option value="$PROJECT_DIR$/src/main/resources/kernels/test.txt" />
-        <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/OpenCLPlatform.java" />
-        <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java" />
         <option value="$PROJECT_DIR$/src/main/resources/kernels/convolve.cl" />
         <option value="$PROJECT_DIR$/src/main/resources/kernels/utility.cl" />
+        <option value="$PROJECT_DIR$/src/main/resources/kernels/multiply.cl" />
+        <option value="$PROJECT_DIR$/src/main/resources/kernels/subtract.cl" />
+        <option value="$PROJECT_DIR$/src/main/resources/kernels/divide.cl" />
+        <option value="$PROJECT_DIR$/src/main/resources/kernels/add.cl" />
+        <option value="$PROJECT_DIR$/src/main/resources/kernels/modulo.cl" />
+        <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/OpenCLPlatform.java" />
+        <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/OpenCLDevice.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/kernels/ligmoid.cl" />
         <option value="$PROJECT_DIR$/src/test/java/TestOnGPU.java" />
         <option value="$PROJECT_DIR$/src/main/java/neureka/core/Tsr.java" />
-        <option value="$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/OpenCLDevice.java" />
-        <option value="$PROJECT_DIR$/src/main/resources/kernels/multiply.cl" />
+        <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/environment/Cache.java" />
+        <option value="$PROJECT_DIR$/src/test/java/TestOnCPU.java" />
+        <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/IFunction.java" />
+        <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/environment/Types.java" />
+        <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphBuilder.java" />
+        <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java" />
+        <option value="$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphNode.java" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="1480" />
-    <option name="y" value="110" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="682" />
+    <option name="y" value="540" />
     <option name="width" value="1950" />
     <option name="height" value="1375" />
   </component>
@@ -344,7 +345,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
@@ -427,6 +427,62 @@
               <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="neureka" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="function" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
+              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="neureka" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="function" type="462c0819:PsiDirectoryNode" />
+              <item name="environment" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
+              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="neureka" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="function" type="462c0819:PsiDirectoryNode" />
+              <item name="factory" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
+              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="neureka" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="function" type="462c0819:PsiDirectoryNode" />
+              <item name="factory" type="462c0819:PsiDirectoryNode" />
+              <item name="assembly" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
+              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="neureka" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="function" type="462c0819:PsiDirectoryNode" />
+              <item name="factory" type="462c0819:PsiDirectoryNode" />
+              <item name="autograd" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="neureka" type="b2602c69:ProjectViewProjectNode" />
+              <item name="neureka" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="neureka" type="462c0819:PsiDirectoryNode" />
               <item name="frame" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -461,12 +517,13 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1572350375354" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1572524451634" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -663,47 +720,49 @@
       <workItem from="1572118667502" duration="12846000" />
       <workItem from="1572276442806" duration="7046000" />
       <workItem from="1572361721672" duration="55000" />
-      <workItem from="1572373060029" duration="5674000" />
+      <workItem from="1572373060029" duration="21588000" />
+      <workItem from="1572473418363" duration="3364000" />
+      <workItem from="1572504980814" duration="6578000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="neureka_[test] - 2019.10.29 at 21h 12m 45s.xml">
+    <history-entry file="neureka_[test] - 2019.10.31 at 13h 03m 56s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
-    <history-entry file="neureka_[test] - 2019.10.29 at 21h 14m 56s.xml">
+    <history-entry file="neureka_[test] - 2019.10.31 at 13h 04m 41s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
-    <history-entry file="neureka_[test] - 2019.10.29 at 21h 18m 47s.xml">
+    <history-entry file="neureka_[test] - 2019.10.31 at 13h 05m 15s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
-    <history-entry file="neureka_[test] - 2019.10.29 at 21h 19m 30s.xml">
+    <history-entry file="neureka_[test] - 2019.10.31 at 13h 05m 52s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
-    <history-entry file="neureka_[test] - 2019.10.29 at 21h 19m 31s.xml">
+    <history-entry file="neureka_[test] - 2019.10.31 at 13h 08m 56s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
-    <history-entry file="neureka_[test] - 2019.10.29 at 21h 23m 54s.xml">
+    <history-entry file="neureka_[test] - 2019.10.31 at 13h 09m 40s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
-    <history-entry file="neureka_[test] - 2019.10.29 at 21h 25m 24s.xml">
+    <history-entry file="neureka_[test] - 2019.10.31 at 13h 12m 32s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
-    <history-entry file="neureka_[test] - 2019.10.29 at 21h 26m 16s.xml">
+    <history-entry file="neureka_[test] - 2019.10.31 at 13h 13m 16s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
-    <history-entry file="neureka_[test] - 2019.10.29 at 21h 29m 06s.xml">
+    <history-entry file="neureka_[test] - 2019.10.31 at 13h 15m 07s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
-    <history-entry file="neureka_[test] - 2019.10.29 at 21h 29m 24s.xml">
+    <history-entry file="neureka_[test] - 2019.10.31 at 13h 16m 12s.xml">
       <configuration name="neureka [test]" configurationId="GradleRunConfiguration" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="470555000" />
+    <option name="totallyTimeSpent" value="496411000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="592" y="44" width="780" height="550" extended-state="0" />
+    <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Structure" order="0" side_tool="true" weight="0.25" />
@@ -716,9 +775,9 @@
       <window_info id="Persistence" order="7" side_tool="true" />
       <window_info id="Web" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.48599347" weight="0.32142857" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.7908795" visible="true" weight="0.414966" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.8625407" weight="0.5068681" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.48599347" weight="0.31868133" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.7908795" visible="true" weight="0.41346154" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.8625407" weight="0.35164836" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -740,7 +799,7 @@
       <window_info anchor="right" id="Database" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info anchor="right" id="Theme Preview" order="8" />
-      <window_info anchor="right" content_ui="combo" id="Project" order="9" sideWeight="0.49885058" visible="true" weight="0.39033943" />
+      <window_info anchor="right" content_ui="combo" id="Project" order="9" sideWeight="0.49885058" visible="true" weight="0.19348535" />
       <window_info anchor="right" id="Coverage" order="10" sideWeight="0.5011494" side_tool="true" weight="0.23893805" />
     </layout>
     <layout-to-restore>
@@ -812,32 +871,68 @@
           <option name="timeStamp" value="208" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/OpenCLPlatform.java</url>
-          <line>48</line>
-          <properties />
-          <option name="timeStamp" value="225" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/OpenCLDevice.java</url>
-          <line>379</line>
-          <properties />
-          <option name="timeStamp" value="241" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/OpenCLDevice.java</url>
-          <line>267</line>
-          <properties />
-          <option name="timeStamp" value="243" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/OpenCLDevice.java</url>
-          <line>408</line>
+          <line>417</line>
           <properties />
           <option name="timeStamp" value="247" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/TestOnGPU.java</url>
+          <line>65</line>
+          <properties />
+          <option name="timeStamp" value="256" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/TestOnGPU.java</url>
+          <line>70</line>
+          <properties />
+          <option name="timeStamp" value="257" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/TestOnGPU.java</url>
+          <line>72</line>
+          <properties />
+          <option name="timeStamp" value="258" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/TestOnGPU.java</url>
+          <line>105</line>
+          <properties />
+          <option name="timeStamp" value="261" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/TestOnGPU.java</url>
+          <line>112</line>
+          <properties />
+          <option name="timeStamp" value="262" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/TestOnGPU.java</url>
+          <line>121</line>
+          <properties />
+          <option name="timeStamp" value="264" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/TestOnGPU.java</url>
+          <line>137</line>
+          <properties />
+          <option name="timeStamp" value="265" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/TestOnGPU.java</url>
+          <line>144</line>
+          <properties />
+          <option name="timeStamp" value="266" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/TestOnCPU.java</url>
+          <line>349</line>
+          <properties />
+          <option name="timeStamp" value="267" />
+        </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/OpenCLDevice.java</url>
-          <line>498</line>
+          <line>507</line>
           <properties class="neureka.core.device.openCL.OpenCLDevice" method="maxConstantBufferSize">
             <option name="EMULATED" value="true" />
           </properties>
@@ -847,47 +942,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.aparapi/aparapi/1.10.0/926afa76f94a07642244c6de9c5629dda1e099f0/aparapi-1.10.0-sources.jar!/com/aparapi/device/IOpenCLDeviceConfigurator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="31" column="16" selection-start-line="31" selection-start-column="16" selection-end-line="31" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jocl/jocl/2.0.0/3e708e000dd6bbd62328201e4d3a5659cff13f88/jocl-2.0.0-sources.jar!/org/jocl/CL.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
-          <caret line="20540" column="24" selection-start-line="20540" selection-start-column="24" selection-end-line="20540" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.aparapi/aparapi/1.10.0/926afa76f94a07642244c6de9c5629dda1e099f0/aparapi-1.10.0-sources.jar!/com/aparapi/internal/jni/OpenCLJNI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="32" column="41" selection-start-line="32" selection-start-column="41" selection-end-line="32" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/utility.java" />
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.aparapi/aparapi/1.10.0/926afa76f94a07642244c6de9c5629dda1e099f0/aparapi-1.10.0-sources.jar!/com/aparapi/device/OpenCLDevice.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7684">
-          <caret line="531" column="50" selection-start-line="531" selection-start-column="50" selection-end-line="531" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.aparapi/aparapi/1.10.0/926afa76f94a07642244c6de9c5629dda1e099f0/aparapi-1.10.0-sources.jar!/com/aparapi/internal/opencl/OpenCLPlatform.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="17" selection-start-line="17" selection-end-line="17" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1714#1715#0" expanded="true" />
-            <element signature="e#1743#1744#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/Setup.java" />
     <entry file="file://$PROJECT_DIR$/settings.gradle">
       <provider selected="true" editor-type-id="text-editor" />
@@ -916,13 +970,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/kernels/QuadFloatMandelbrot.cl" />
-    <entry file="file://$PROJECT_DIR$/src/test/java/util/NTester.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="204" column="27" selection-start-line="204" selection-start-column="27" selection-end-line="204" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -1000,16 +1047,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/TestOnCPU.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3332">
-          <caret line="201" selection-start-line="201" selection-end-line="201" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/aparapi/AbstractKernel.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="272">
@@ -1017,31 +1054,6 @@
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3298">
-          <caret line="211" column="26" selection-start-line="211" selection-start-column="26" selection-end-line="211" selection-end-column="26" />
-          <folding>
-            <element signature="e#7705#7706#0" expanded="true" />
-            <element signature="e#7733#7734#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/aparapi/KernelFP32.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7752">
-          <caret line="466" column="40" selection-start-line="466" selection-start-column="40" selection-end-line="466" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/environment/Types.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="8" selection-start-line="10" selection-start-column="8" selection-end-line="16" selection-end-column="14" />
         </state>
       </provider>
     </entry>
@@ -1060,27 +1072,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="160">
           <caret line="22" column="12" selection-start-line="22" selection-start-column="12" selection-end-line="22" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
-          <caret line="75" selection-start-line="75" selection-end-line="75" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/IFunction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="113">
-          <caret line="19" selection-start-line="19" selection-end-line="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/kernels/convolve.cl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="884">
-          <caret line="52" column="37" selection-start-line="52" selection-start-column="37" selection-end-line="52" selection-end-column="37" />
         </state>
       </provider>
     </entry>
@@ -1132,24 +1123,160 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/environment/Cache.java">
+    <entry file="file://$PROJECT_DIR$/src/main/resources/kernels/subtract.cl">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="111">
-          <caret line="51" selection-start-line="51" selection-end-line="51" />
+        <state relative-caret-position="68">
+          <caret line="4" column="22" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/kernels/divide.cl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="20" selection-start-line="4" selection-start-column="20" selection-end-line="4" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/kernels/add.cl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="9" lean-forward="true" selection-start-line="9" selection-start-column="9" selection-end-line="9" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/kernels/modulo.cl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="19" column="50" selection-start-line="19" selection-start-column="50" selection-end-line="19" selection-end-column="50" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/kernels/multiply.cl">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
-          <caret line="23" column="10" selection-start-line="23" selection-start-column="10" selection-end-line="23" selection-end-column="10" />
+        <state relative-caret-position="102">
+          <caret line="6" column="31" selection-end-line="21" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/aparapi/KernelFP32.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="228" selection-start-line="228" selection-end-line="228" />
+        <state relative-caret-position="120">
+          <caret line="221" column="8" lean-forward="true" selection-start-line="221" selection-start-column="8" selection-end-line="233" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/util/NTester.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="341">
+          <caret line="120" selection-start-line="120" selection-end-line="120" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/OpenCLDevice.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="92">
+          <caret line="428" selection-start-line="428" selection-end-line="428" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#13793#13794#0" expanded="true" />
+            <element signature="e#13859#13860#0" expanded="true" />
+            <element signature="e#13888#13889#0" expanded="true" />
+            <element signature="e#13956#13957#0" expanded="true" />
+            <element signature="e#13986#13987#0" expanded="true" />
+            <element signature="e#14055#14056#0" expanded="true" />
+            <element signature="e#14580#14581#0" expanded="true" />
+            <element signature="e#14656#14657#0" expanded="true" />
+            <element signature="e#14698#14699#0" expanded="true" />
+            <element signature="e#14782#14783#0" expanded="true" />
+            <element signature="e#14821#14822#0" expanded="true" />
+            <element signature="e#14904#14905#0" expanded="true" />
+            <element signature="e#14941#14942#0" expanded="true" />
+            <element signature="e#15020#15021#0" expanded="true" />
+            <element signature="e#15058#15059#0" expanded="true" />
+            <element signature="e#15137#15138#0" expanded="true" />
+            <element signature="e#15171#15172#0" expanded="true" />
+            <element signature="e#15242#15243#0" expanded="true" />
+            <element signature="e#15278#15279#0" expanded="true" />
+            <element signature="e#15356#15357#0" expanded="true" />
+            <element signature="e#15390#15391#0" expanded="true" />
+            <element signature="e#15465#15466#0" expanded="true" />
+            <element signature="e#15507#15508#0" expanded="true" />
+            <element signature="e#15590#15591#0" expanded="true" />
+            <element signature="e#15622#15623#0" expanded="true" />
+            <element signature="e#15695#15696#0" expanded="true" />
+            <element signature="e#15728#15729#0" expanded="true" />
+            <element signature="e#15802#15803#0" expanded="true" />
+            <element signature="e#15844#15845#0" expanded="true" />
+            <element signature="e#15928#15929#0" expanded="true" />
+            <element signature="e#16528#16529#0" expanded="true" />
+            <element signature="e#16600#16601#0" expanded="true" />
+            <element signature="e#16636#16637#0" expanded="true" />
+            <element signature="e#16714#16715#0" expanded="true" />
+            <element signature="e#16751#16752#0" expanded="true" />
+            <element signature="e#16829#16830#0" expanded="true" />
+            <element signature="e#16864#16865#0" expanded="true" />
+            <element signature="e#16940#16941#0" expanded="true" />
+            <element signature="e#16976#16977#0" expanded="true" />
+            <element signature="e#17053#17054#0" expanded="true" />
+            <element signature="e#17090#17091#0" expanded="true" />
+            <element signature="e#17168#17169#0" expanded="true" />
+            <element signature="e#17204#17205#0" expanded="true" />
+            <element signature="e#17281#17282#0" expanded="true" />
+            <element signature="e#17318#17319#0" expanded="true" />
+            <element signature="e#17396#17397#0" expanded="true" />
+            <element signature="e#17432#17433#0" expanded="true" />
+            <element signature="e#17509#17510#0" expanded="true" />
+            <element signature="e#17545#17546#0" expanded="true" />
+            <element signature="e#17631#17632#0" expanded="true" />
+            <element signature="e#17668#17669#0" expanded="true" />
+            <element signature="e#17755#17756#0" expanded="true" />
+            <element signature="e#17790#17791#0" expanded="true" />
+            <element signature="e#17875#17876#0" expanded="true" />
+            <element signature="e#17911#17912#0" expanded="true" />
+            <element signature="e#17997#17998#0" expanded="true" />
+            <element signature="e#18034#18035#0" expanded="true" />
+            <element signature="e#18121#18122#0" expanded="true" />
+            <element signature="e#18159#18160#0" expanded="true" />
+            <element signature="e#18247#18248#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/kernels/convolve.cl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="884">
+          <caret line="52" column="37" selection-start-line="52" selection-start-column="37" selection-end-line="52" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/OpenCLPlatform.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="833">
+          <caret line="49" selection-start-line="49" selection-end-line="49" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/kernels/ligmoid.cl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" column="55" selection-start-line="18" selection-start-column="55" selection-end-line="18" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/environment/Cache.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="31" column="39" selection-start-line="31" selection-start-column="39" selection-end-line="31" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/util/NTester_Tensor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="629">
+          <caret line="40" selection-start-line="40" selection-end-line="40" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1158,72 +1285,109 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/Tsr.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="103">
-          <caret line="690" selection-start-line="690" selection-end-line="690" />
+        <state relative-caret-position="281">
+          <caret line="329" selection-start-line="329" selection-end-line="329" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#9039#9040#0" expanded="true" />
             <element signature="e#9068#9069#0" expanded="true" />
             <element signature="e#9652#9653#0" expanded="true" />
             <element signature="e#9712#9713#0" expanded="true" />
+            <element signature="e#10501#10502#0" expanded="true" />
+            <element signature="e#13061#13062#0" expanded="true" />
             <element signature="e#13149#13150#0" expanded="true" />
+            <element signature="e#13737#13738#0" expanded="true" />
             <element signature="e#13785#13786#0" expanded="true" />
+            <element signature="e#13956#13957#0" expanded="true" />
             <element signature="e#13994#13995#0" expanded="true" />
+            <element signature="e#16946#16947#0" expanded="true" />
             <element signature="e#16984#16985#0" expanded="true" />
-            <element signature="e#17040#17041#0" expanded="true" />
-            <element signature="e#17085#17086#0" expanded="true" />
-            <element signature="e#17127#17128#0" expanded="true" />
-            <element signature="e#17179#17180#0" expanded="true" />
-            <element signature="e#17234#17235#0" expanded="true" />
-            <element signature="e#17292#17293#0" expanded="true" />
-            <element signature="e#17360#17361#0" expanded="true" />
-            <element signature="e#17424#17425#0" expanded="true" />
-            <element signature="e#18649#18650#0" expanded="true" />
-            <element signature="e#18681#18682#0" expanded="true" />
-            <element signature="e#19724#19725#0" expanded="true" />
-            <element signature="e#19771#19772#0" expanded="true" />
+            <element signature="e#20094#20095#0" expanded="true" />
             <element signature="e#20134#20135#0" expanded="true" />
+            <element signature="e#22950#22951#0" expanded="true" />
+            <element signature="e#23002#23003#0" expanded="true" />
+            <element signature="e#23067#23068#0" expanded="true" />
             <element signature="e#23119#23120#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/OpenCLPlatform.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="48" selection-start-line="48" selection-end-line="48" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/device/openCL/OpenCLDevice.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="400" selection-start-line="400" selection-end-line="400" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/util/NTester_Tensor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="39" selection-start-line="39" selection-end-line="39" />
-          <folding>
-            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/TestOnGPU.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1071">
-          <caret line="105" selection-start-line="105" selection-end-line="105" />
+        <state relative-caret-position="340">
+          <caret line="65" column="10" selection-start-line="65" selection-start-column="10" selection-end-line="65" selection-end-column="10" />
           <folding>
             <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/factory/assembly/FunctionBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="52" selection-start-line="52" selection-end-line="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/IFunction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="10" column="17" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/environment/Types.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="117">
+          <caret line="12" selection-start-line="12" selection-end-line="12" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="13" column="29" selection-start-line="13" selection-start-column="29" selection-end-line="13" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/TestOnCPU.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="349" selection-start-line="349" selection-end-line="349" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/factory/Function.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="211">
+          <caret line="150" column="12" selection-start-line="150" selection-start-column="12" selection-end-line="150" selection-end-column="12" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/neureka/core/function/factory/autograd/GraphNode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="24">
+          <caret line="280" column="13" selection-start-line="280" selection-start-column="13" selection-end-line="280" selection-end-column="13" />
+          <folding>
+            <element signature="e#2637#2638#0" expanded="true" />
+            <element signature="e#2668#2669#0" expanded="true" />
+            <element signature="e#13644#13645#0" expanded="true" />
+            <element signature="e#13672#13673#0" expanded="true" />
+            <element signature="e#13747#13748#0" expanded="true" />
+            <element signature="e#13779#13780#0" expanded="true" />
+            <element signature="e#14766#14767#0" expanded="true" />
+            <element signature="e#14809#14810#0" expanded="true" />
+            <element signature="e#14868#14869#0" expanded="true" />
+            <element signature="e#14955#14956#0" expanded="true" />
           </folding>
         </state>
       </provider>

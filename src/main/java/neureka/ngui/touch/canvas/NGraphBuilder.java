@@ -111,7 +111,7 @@ public class NGraphBuilder {
 				    		{
 				    			//Tsr C1 = ((PanelNode)found).getCore().asCore();
 				    			//Tsr C2 = this.ConnectionPanelNeuron.getCore().asCore();
-				    			//C2.connect(C1, this.InputIndex);
+				    			//C2._connect(C1, this.InputIndex);
 				    		}
 				    		this.ChosenInputNode = node;
 

@@ -1,13 +1,18 @@
 package neureka.core.function.environment;
 
+import neureka.core.function.IFunction;
+import neureka.core.function.factory.assembly.FunctionBuilder;
+
 import java.util.HashMap;
+import java.util.Map;
 
-public class Types {
-
+public class Types
+{
     public String[] REGISTER;
-    public HashMap<String, Integer> LOOKUP;
+    public Map<String, Integer> LOOKUP;
 
-    public Types(){
+    public Types()
+    {
         REGISTER = new String[]{
                 "relu", "sig", "tanh", "quad", "lig", "idy", "gaus", "abs", "sin", "cos",
                 "sum", "prod",

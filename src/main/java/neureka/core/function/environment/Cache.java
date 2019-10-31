@@ -25,7 +25,7 @@ public class Cache
         lock.release();
     }
 
-    public synchronized Tsr handle(Tsr[] input, IFunction function, Supplier<Tsr> activation)
+    public synchronized Tsr preprocess(Tsr[] input, IFunction function, Supplier<Tsr> activation)
     {
         Tsr untracked = null;
         for(Tsr t : input){
@@ -52,6 +52,7 @@ public class Cache
             result = activation.get();
             _put(result, node);
         }
+        //add references/child to graph node?
         return result;
     }
 

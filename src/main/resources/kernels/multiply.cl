@@ -18,8 +18,4 @@ __kernel void multiply(
 
         unsigned int i = get_global_id(0);
         drn[_i_of_i(i, prv_drn_cfg, rank)] = src1[_i_of_i(i, prv_src1_cfg, rank)] * src2[_i_of_i(i, prv_src2_cfg, rank)];
-        //drn[i] = src1[i] * src2[i];
-        //drn[i] = _i_of_i(i, prv_drn_cfg, rank);
-        //src1[i] = _i_of_i(i, prv_src1_cfg, rank);
-        //src2[i] = _i_of_i(i, prv_src2_cfg, rank);
     }

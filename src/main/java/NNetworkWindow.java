@@ -29,7 +29,7 @@ public class NNetworkWindow extends Application{// implements EventHandler<Actio
 		btn.setText("Say 'Hello World'");
 		//btn.setOnAction(new EventHandler<ActionEvent>() {
 		//	@Override
-		//	public void handle(ActionEvent event) {
+		//	public void preprocess(ActionEvent event) {
 		//		System.out.println("Hello World!");
 		//	}
 		//});

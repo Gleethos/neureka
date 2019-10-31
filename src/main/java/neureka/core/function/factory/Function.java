@@ -2,12 +2,11 @@ package neureka.core.function.factory;
 
 import neureka.core.Tsr;
 import neureka.core.device.IDevice;
-import neureka.core.device.aparapi.AparapiDevice;
 import neureka.core.function.IFunction;
 import neureka.core.function.factory.assembly.FunctionBuilder;
 import neureka.core.function.factory.autograd.GraphLock;
+import neureka.core.function.factory.autograd.GraphNode;
 import neureka.core.function.factory.implementations.FConstant;
-import neureka.core.function.factory.autograd.GraphBuilder;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -149,7 +148,7 @@ public abstract class Function implements IFunction {
             );
         }
         if (!derive && _doAD) {
-            GraphBuilder.connect(output, new Tsr[]{input}, this);
+            new GraphNode(output,this, new Tsr[]{input}, ((GraphNode)input.find(GraphNode.class)).lock());
         }
         output.add(input.find(GraphLock.class));
         return output;
@@ -203,7 +202,7 @@ public abstract class Function implements IFunction {
             Tsr output = _execute(inputs, j, d);
             /**  Autograd-Graph will be generated below for the new GraphNode: **/
             if (d < 0 && _doAD) {
-                GraphBuilder.connect(output, inputs, this);
+                new GraphNode(output,this, inputs, ((GraphNode)inputs[0].find(GraphNode.class)).lock());
             }
             return output;
         }

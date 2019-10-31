@@ -775,6 +775,9 @@ public class Tsr {
         if (this.isOutsourced()) {
             ((IDevice) this.find(IDevice.class)).rmv(this);
         }
+        if(this.has(GraphNode.class) && !((GraphNode)this.find(GraphNode.class)).isVirtual()){
+            throw new IllegalStateException("Trying to delete a tensor which is part of a function graph!");
+        }
         _flags = -1;
         _value = null;
         _shape = null;
