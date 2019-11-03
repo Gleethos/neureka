@@ -13,6 +13,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -426,7 +427,7 @@ public class Tsr {
     }
 
     public boolean isLeave() {
-        return (!this.has(GraphNode.class)) || ((GraphNode) this.find(GraphNode.class)).isOrigin();
+        return (!this.has(GraphNode.class)) || ((GraphNode) this.find(GraphNode.class)).isLeave();
     }
 
     public boolean isBranch() {
@@ -436,7 +437,16 @@ public class Tsr {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //DISPLAY :
     //=========================
-    public String toString(String mode) {
+    public String toString(String mode){
+        return _toString(mode, (mode.contains("f"))?"    ":null);
+    }
+
+    private String _toString(String mode, String deep) {
+        String base = (deep==null)?"":"\n"+deep;
+        String delimiter = (deep==null)?"":"    ";
+        String half = (deep==null)?"":"  ";
+        String deeper = (deep==null)?deep:deep+delimiter;
+        int max = (mode.contains("s"))?3:50;
         if (this.isEmpty()) {
             return "empty";
         } else if (this.isUndefined()) {
@@ -452,14 +462,14 @@ public class Tsr {
         boolean compact = mode.contains("c");
         strShape = "[" + strShape + "]";
         String asString = "";
-        asString += _stringified((value64()), compact);//(this.isOutsourced())?this.value64():_value
+        asString += _stringified((value64()), compact, max);//(this.isOutsourced())?this.value64():_value
         asString = strShape + ":(" + asString + ")";
         if(mode.contains("g")){
             if(this.rqsGradient()){
                 asString += ":g:";
                 double[] gradient = this.gradient64();
                 if(gradient!=null){
-                    asString += "("+_stringified((gradient64()), compact)+")";
+                    asString += "("+_stringified((gradient64()), compact, max)+")";
                 } else {
                     asString += "(null)";
                 }
@@ -468,29 +478,40 @@ public class Tsr {
         if (mode.contains("r")) {
             if (this.has(GraphNode.class) && ((GraphNode) this.find(GraphNode.class)).size() > 0) {
                 GraphNode node = (GraphNode) this.find(GraphNode.class);
-                String[] relatives = {"; "};
-                node.forEach((t, g) -> relatives[0] += "=>d|[ " + g.toString(mode) + " ]|:t{ " + t.toString(mode) + " }, ");
-                asString += relatives[0];
+                AtomicReference<String> enclosed = new AtomicReference<>("; ");
+                node.forEach((t, d) -> {
+                    enclosed.set(enclosed.get() +
+                            base+"=>d|[ " +
+                            base+delimiter+    d._toString(mode, deeper) + " " +
+                            base+half+"]|:t{ " +
+                            base+delimiter+    t._toString(mode, deeper) + " " +
+                            base+half+"}, ");
+
+                });
+                asString += enclosed.get();
             }
         }
         if (mode.contains("d")) {
             if (this.has(GraphNode.class) && ((GraphNode) this.find(GraphNode.class)).size() > 0) {
                 GraphNode node = (GraphNode) this.find(GraphNode.class);
-                if (node.mode() != 0) {
-                    String[] relatives = {"; "};
-                    node.forEach((target, derivative) -> relatives[0] += "->d" + derivative.toString(mode) + ", ");
-                    asString += relatives[0];
+                if (node.mode() != 0) {//node.getMap().values().stream().coll
+                    AtomicReference<String> enclosed = new AtomicReference<>("; ");
+                    node.forEach((t, d) -> {
+                        enclosed.set(enclosed.get() +
+                                "->d" + d._toString(mode, deeper) + ", ");
+                    });
+                    asString += enclosed.get();
                 }
             }
         }
         return asString;
     }
 
-    private String _stringified(double[] v, boolean format){
+    private String _stringified(double[] v, boolean format, int max){
         String asString = "";
         int size = (this.isVirtual() ? this.size() : v.length);
-        int trim = (size-50);
-        size = (trim>0)?50:size;
+        int trim = (size-max);
+        size = (trim>0)?max:size;
         for (int i = 0; i < size; i++) {
             String vStr;
             if(format){

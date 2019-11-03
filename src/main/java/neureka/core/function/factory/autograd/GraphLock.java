@@ -50,7 +50,7 @@ public class GraphLock
      */
     @Override
     public String toString(){
-        return "GID["+this.hashCode()+"]:( "+ _owner.toString()+" )";
+        return "GID:"+Integer.toHexString(this.hashCode())+":f"+ _owner.toString()+"";
     }
 
 }

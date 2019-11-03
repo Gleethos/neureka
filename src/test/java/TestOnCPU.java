@@ -1,6 +1,7 @@
 import neureka.core.Tsr;
 import neureka.core.function.IFunction;
 import neureka.core.function.factory.assembly.FunctionBuilder;
+import neureka.core.function.factory.autograd.GraphNode;
 import org.junit.Test;
 import util.NTester_Function;
 import util.NTester_Tensor;
@@ -364,6 +365,25 @@ public class TestOnCPU {
                                 "},"
                 }
         );
+        result = new Tsr(new Tsr[]{tensor1}, "(-3*(2*(i0*-1)))*(-1*i0)");
+        GraphNode node = (GraphNode) result.find(GraphNode.class);
+        String asString = node.toString();
+        System.out.println(asString);
+        //asString = result.toString("frdc");
+        //System.out.println(asString);
+        tester.testContains(
+                asString,
+                new String[]{
+                        "[1]:(-24.0)",
+                        "[1]:(12.0)",
+                        "[1]:(2.0)",
+                        "f(NONE) => [1]:(-3.0)",
+                        "(-1.0*I[0])",
+                        "(I[0]*-1.0)",
+                        "f(I[0]*I[1])",
+                        "LEAVE RQS GRADIENT"
+                },
+                "Testing 'toString' of GraphNode");
         //---
         //======================
         //TESTING INVERS:

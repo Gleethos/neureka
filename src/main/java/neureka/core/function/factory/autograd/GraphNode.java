@@ -13,10 +13,9 @@ import java.util.function.BiConsumer;
  */
 public class GraphNode
 {
-
     private static IFunction MUL = FunctionBuilder.build("(I[0]*I[1])", false);
     private static IFunction ADD = FunctionBuilder.build("(I[0]+I[1])", false);
-
+    private static IFunction CONV = FunctionBuilder.build("I[0]>>I[1]>>I[2]", false);
 
     /**
      *  This gradient64 node is involved in auto-differentiation.
@@ -87,17 +86,27 @@ public class GraphNode
      */
     private GraphLock _lock;
 
-    ///**
-    // * How often the tensor of this graph node has been used as input to a function!
-    // * */
-    //private int _referenced_count;
-
+    /**
+     *  The chain-rule states that the derivative of f(x) = h(g(x)) with respect to x is: g'(x) * h'(g(x))
+     *  An example would be:
+     *  f(x) = ((x*y)*z)
+     *  f'(x) = (1*y) * (1*z) = z*y
+     *  The values z,y or z*y must not be deleted as they are needed for back-propagation!
+     */
     private boolean _is_used_as_derivative = false;
 
+    /**
+     *
+     */
     private List<GraphNode> _children;
 
+    /**
+     *
+     */
+    private long _nid = -1;
     //==================================================================================================================
     /**
+     * Unique object which locks the payload to the current computation graph.
      * @return GraphLock
      */
     public GraphLock lock(){
@@ -129,20 +138,11 @@ public class GraphNode
     }
 
     /**
-     * Node-ID
-     * @return long
+     *
+     * @return long Node-ID (Used for caching to avoid redundant computation within one computation graph)
      */
     public long nid(){
-        long nid = 1;
-        if(_parents !=null){
-            for(GraphNode n : _parents){
-                nid*=n.getPayload().hashCode();
-            }
-        }
-        if(_function !=null){
-            nid+=_function.hashCode();
-        }
-        return nid;
+        return _nid;
     }
 
     /**
@@ -158,7 +158,7 @@ public class GraphNode
      * This node (and the corresponding tensor) was not created by a function! (it's a leave tensor)
      * @return boolean
      */
-    public boolean isOrigin(){
+    public boolean isLeave(){
         return (_parents ==null && _function==null);
     }
 
@@ -171,14 +171,17 @@ public class GraphNode
 
     /**
      * @param output
-     * @param f
+     * @param function
      * @param inputs
      * @param lock
      */
-    public GraphNode(Tsr output, IFunction f, Tsr[] inputs, GraphLock lock)
+    public GraphNode(Tsr output, IFunction function, Tsr[] inputs, GraphLock lock)
     {
-        _mode = (inputs!=null)? _modeOf(inputs, f):(output.rqsGradient())?1:0;
-        _function = f;
+        if(output==null){
+            throw new RuntimeException("[GraphNode]:(constructor): Payload must no be null!");
+        }
+        _mode = (inputs!=null)? _modeOf(inputs, function):(output.rqsGradient())?1:0;
+        _function = function;
         _lock = lock;
         _payload = output;
         if(inputs!=null){
@@ -186,7 +189,7 @@ public class GraphNode
             for(int i=0; i<inputs.length; i++){
                 _parents[i] = (GraphNode)inputs[i].find(GraphNode.class);
                 if(_parents[i]==null){
-                    throw new IllegalStateException("[GraphNode]:(constructor): Input tensors of a new graph-node must contain origin graph-nodes!");
+                    throw new IllegalStateException("[GraphNode]:(constructor): Input tensors of a new graph-node must contain leave graph-nodes!");
                 } else {
                     _parents[i]._attachChild(this);
                 }
@@ -195,14 +198,26 @@ public class GraphNode
            _parents = null;
         }
         output.add(this);
-        _connect(this, output, inputs, f);
+        if(_nid==-1){
+            long nid = 1;
+            if(_parents !=null){
+                for(GraphNode n : _parents){
+                    nid*=n.getPayload().hashCode();
+                }
+            }
+            if(_function !=null){
+                nid+=_function.hashCode();
+            }
+            _nid = nid;
+        }
+        _connect(this, output, inputs, function);
     }
 
     private void _connect(GraphNode node, Tsr output, Tsr[] inputs, IFunction function)
     {
         /** Returning if the above cannot form an AD computation graph! :
          * */
-        if(function==null || !function.isFlat()) return; // Origin nodes cannot be connected!!
+        if(function==null || !function.isFlat()) return; // Leave nodes cannot be connected!!
 
         for(Tsr t : inputs){
             if(t.equals(output)) return;
@@ -257,16 +272,14 @@ public class GraphNode
         //--------------------------------------------------------------------------------------
     }
 
-
     /**
+     * Evaluate auto-grad mode:
      * @param inputs
      * @param function
      * @return int
      */
-    private static int _modeOf(Tsr[] inputs, IFunction function){
-        /**
-         *  Evaluate auto-grad mode:
-         * */
+    private static int _modeOf(Tsr[] inputs, IFunction function)
+    {
         int result_mode = 0;
         int[] modes = new int[inputs.length];
         int input_mode = 0;
@@ -292,36 +305,24 @@ public class GraphNode
      */
     public void trimTree(Tsr target)
     {// Find and remove redundant gradients: ... todo: and maybe forward ad nodes?!?!?!?!?
-        if(_parents==null || mode()==0){
-            return;
-        }
+        if(_parents==null || mode()==0) return;
         boolean dive = (target==null || mode()<0);
         if(!dive){
             TreeMap<Tsr, Tsr> blacklist = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
-            this.forEach((t, g)->{
-                if(t==target){
-                    blacklist.put(g, t);
-                }
-            });
+            this.forEach((t, d)->{ if(t==target) blacklist.put(d, t); });
             blacklist.forEach((b, t)->{
-                if(!b.has(GraphNode.class) || !((GraphNode)b.find(GraphNode.class)).isOrigin()){
+                if(!b.has(GraphNode.class) || !((GraphNode)b.find(GraphNode.class)).isLeave()){
                     _targets_derivatives.remove(t);
                     //TODO: get graph node and remove tensor reference! (this creates a virtual graph node (without payload!))
                     ((GraphNode)b.find(GraphNode.class))._payload = null;
                     b.delete();
                 }
             });
-            for(GraphNode node : _parents){
-                node.trimTree(target);
-            }
+            for(GraphNode node : _parents) node.trimTree(target);
         }else{
             for(GraphNode node : _parents){
                 node._deletionDive(_mode);
-                this.forEach((t, g)->{
-                    if(this.mode()>0 || g==node.getPayload()){
-                        node.trimTree(t);
-                    }
-                });
+                this.forEach((t, d)->{if(this.mode()>0 || d==node.getPayload())node.trimTree(t);});
             }
         }
         /** sources can be deleted because unused graph nodes are already trimmed off the tree (targets remain!)
@@ -332,25 +333,21 @@ public class GraphNode
 
     /**
      * The following properties must be true to allow payload deletion:
-     * - The node is not a origin node! (Node supplied by user/from outside the locked graph)
+     * - The node is not an leave node! (Node supplied by user/from outside the locked graph)
      * - The node is part of a chain of forward-AD nodes (mode>0)
-     * - The mode value of the node is smaller then the largest of anoher within a chain of forward-AD
-     * =>(The largest mode value is owned by 'the most recent derivative w.r.t some origin node')
+     * - The mode value of the node is smaller then the largest of another within a chain of forward-AD
+     * =>(The largest mode value is owned by 'the most recent derivative w.r.t some leave node')
      *
      * @param child_mode is used to assess if the payload in this node is useful for backpropagation!
      */
     private void _deletionDive(int child_mode){
-        if(_mode>0 && child_mode>_mode && !this.isOrigin()){
+        if(_mode>0 && child_mode>_mode && !this.isLeave()){
             _payload.remove(GraphNode.class);
-            if(!_is_used_as_derivative){
-                _payload.delete();
-            }
+            if(!_is_used_as_derivative) _payload.delete();
             _payload = null;
         }
         if(_parents!=null){
-            for(GraphNode n : _parents){
-                n._deletionDive(_mode);
-            }
+            for(GraphNode n : _parents) n._deletionDive(_mode);
         }
     }
 
@@ -361,13 +358,13 @@ public class GraphNode
     public void backward(Tsr error){
         if(this.usesAD()){
             if(this.usesForwardAD()){
-                this.forEach((t, g)->t.backward(new Tsr(new Tsr[]{error, g}, "I[0]*I[1]", false)));
+                this.forEach((t, d)->t.backward(MUL.activate(new Tsr[]{error, d})));
             }else if(this.usesReverseAD()){
-                this.forEach((t, g)->{
+                this.forEach((t, d)->{
                     if(_function.id()==Function.TYPES.LOOKUP.get("x")){// x operation required for chain-rule!
-                        t.backward(Function.setup.commit(new Tsr[]{error, g, new Tsr(t.shape(), 0)}, "I[0]>>I[1]>>I[2]", false));
+                        t.backward(CONV.activate(new Tsr[]{error, d, new Tsr(t.shape(), 0)}));
                     }else{
-                        t.backward(Function.setup.commit(new Tsr[]{error, g}, "I[0]*I[1]", false));
+                        MUL.activate(new Tsr[]{error, d});
                     }
                 });
             }
@@ -407,9 +404,7 @@ public class GraphNode
      * @return Tsr
      */
     public Tsr get(Tsr key){
-        if(_targets_derivatives ==null){
-           return null;
-        }
+        if(_targets_derivatives ==null) return null;
         return _targets_derivatives.get(key);
     }
 
@@ -419,9 +414,7 @@ public class GraphNode
      * @return boolean
      */
     public boolean has(Tsr target){
-        if(_targets_derivatives ==null){
-            return false;
-        }
+        if(_targets_derivatives ==null) return false;
         return _targets_derivatives.containsKey(target);
     }
 
@@ -444,10 +437,44 @@ public class GraphNode
      * @return void
      */
     public void forEach(BiConsumer<Tsr, Tsr> action){
-        if(_targets_derivatives ==null){
-            return;
-        }
+        if(_targets_derivatives ==null) return;
         _targets_derivatives.forEach(action);
     }
+
+    public String type(){
+        String type = "";
+        if(this.isLeave()) type+="LEAVE";
+        else type += "BRANCH";
+        if(_payload==null) type = type+" DELETED";
+        else if(_payload.rqsGradient()) type += " RQS GRADIENT";
+        return type;
+    }
+
+    @Override
+    public String toString(){
+        return "]> LOCK: "+lock()+" |> GRAPH:\n]\n"
+                    +_toString("]    0", true)
+                +"\n]\n]|END|>";
+    }
+
+    private String _toString(String deep, boolean isLast){//int depth){
+        String delimiter = ((isLast)?("    "):("|   "));
+        String arrow = ((char)187)+""+((_parents!=null)?(String.valueOf(_parents.length)):"0")+((char)187);
+        String asString = deep
+                +arrow+"("+this.type()+"): [NID:"+Long.toHexString(nid())+"]:<(  "
+                +"f"+((_function==null)?"(NONE)":_function)+" => "+((_payload==null)?"NULL":_payload.toString("cs"))+"  )>";
+        deep = deep.substring(0, deep.length()-1);
+        if(_parents!=null){
+            asString += "\n"+deep+((isLast)?"   \\\n":"|  \\\n");
+            for(int i=0; i<_parents.length; i++){
+                boolean last = (i==_parents.length-1);
+                asString += ((i!=0)?deep+delimiter+"|\n":"");
+                asString+=(_parents[i]._toString(deep+delimiter+i, last)+"\n");
+            }
+            asString = asString.substring(0, asString.length()-1);
+        }
+        return asString;
+    }
+
 
 }
