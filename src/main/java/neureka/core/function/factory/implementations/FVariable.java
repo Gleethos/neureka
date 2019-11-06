@@ -72,13 +72,13 @@ public class FVariable implements IFunction, IProvider {
     @Override
     public Tsr derive(Tsr[] inputs, int index, int j) {
         if (j != index) {
-            return Tsr.fcn.newTsr(0, inputs[0].shape());
+            return Tsr.fcn.create.newTsr(0, inputs[0].shape());
         }
         return derive(inputs, index);
     }
     @Override
     public Tsr derive(Tsr[] inputs, int index) {
-        return Tsr.fcn.newTsr(1, inputs[0].shape());
+        return Tsr.fcn.create.newTsr(1, inputs[0].shape());
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override

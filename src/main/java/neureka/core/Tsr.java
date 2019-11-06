@@ -167,6 +167,45 @@ public class Tsr {
         return this;
     }
 
+    public Tsr setTargetValue(Object value){
+        if(value instanceof float[]){
+            this.setTargetValue32((float[])value);
+        } else if(value instanceof  double[]){
+            this.setTargetValue64((double[])value);
+        } else if(value instanceof Float){
+            if(this.gradientIsTargeted()){
+                if(this.is32()){
+                    _gradient = Tsr.fcn.newFloatArray(((Float)value).floatValue(), this.size());
+                } else {
+                    _gradient = Tsr.fcn.newDoubleArray(((Float)value).doubleValue(), this.size());
+                }
+            } else {
+                this.setIsVirtual(true);
+                if(this.is32()){
+                    ((float[])_value)[0] = ((Float)value).floatValue();
+                } else {
+                    ((double[])_value)[0] = ((Float)value).doubleValue();
+                }
+            }
+        } else if(value instanceof Double){
+            if(this.gradientIsTargeted()){
+                if(this.is32()){
+                    _gradient = Tsr.fcn.newFloatArray(((Double)value).floatValue(), this.size());
+                } else {
+                    _gradient = Tsr.fcn.newDoubleArray(((Double)value).doubleValue(), this.size());
+                }
+            } else {
+                this.setIsVirtual(true);
+                if(this.is64()){
+                    ((double[])_value)[0] = ((Float)value).doubleValue();
+                } else {
+                    ((float[])_value)[0] = ((Float)value).floatValue();
+                }
+            }
+        }
+        return this;
+    }
+
     public double[] gradient64() {
         if (this.rqsGradient() && this.isOutsourced() && this.has(IDevice.class)) {
             return ((IDevice) find(IDevice.class)).value64Of(this, true);
@@ -384,7 +423,7 @@ public class Tsr {
                     _flags -= IS_VIRTUAL_MASK;
                 }
             } else {
-                double v = (((this.is64())?((double[])_value)[0]:((float[])_value)[0]));
+                double v = (_value==null)?0:(((this.is64())?((double[])_value)[0]:((float[])_value)[0]));
                 if (isVirtual) {
                     _value = new double[]{v};
                     _flags += IS_VIRTUAL_MASK;
@@ -936,7 +975,7 @@ public class Tsr {
         public static class exec {
 
             public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr) {
-                tensor = (newTsr)? cpyOf(tensor):tensor;
+                tensor = (newTsr)? create.cpyOf(tensor):tensor;
                 tensor._record(tensor.shape(), tensor.translation());
                 tensor._shape = cached(indexing.shpCheck(indexing.rearrange(tensor._shape, newForm), tensor));
                 tensor._translation = cached(indexing.rearrange(tensor._translation, tensor._shape, newForm));
@@ -948,84 +987,110 @@ public class Tsr {
 
         }
 
+        public static class create{
+            public static Tsr newTsrLike(Tsr template){//The output tensor will not have gradients!
+                Tsr t = new Tsr();
+                t._shape = template._shape;
+                t._idxmap = template._idxmap;
+                t._translation = template.translation();
+                if(template.is32()){
+                    t.setTargetValue32(new float[template.size()]);
+                } else {
+                    t.setTargetValue64(new double[template.size()]);
+                }
+                if(template.isOutsourced()){
+                    ((IDevice)template.find(IDevice.class)).add(t);
+                }
+                return t;
+            }
+
+            public static Tsr newTsr(double value, int[] shape) {
+                int sze = indexing.szeOfShp(shape);
+                Tsr tensor = new Tsr();
+                tensor._value = new double[sze];
+                tensor.initialShape(shape);
+                for (int i = 0; i < sze; i++) {
+                    ((double[])tensor._value)[i] = value;
+                }
+                return tensor;
+            }
+
+            public static Tsr newTsr(double[] value, int[] shape) {
+                Tsr tensor = new Tsr();
+                tensor._value = value;
+                tensor.initialShape(shape);
+                return tensor;
+            }
+
+            public static Tsr newTsr(int[] shape, int[] translation) {
+                Tsr tensor = new Tsr();
+                tensor._value = new double[indexing.szeOfShp(shape)];
+                tensor.initialShape(shape);
+                tensor._translation = (translation != null) ? translation : tensor._translation;//FUNCTIONS.put()
+                return tensor;
+            }
+
+            public static Tsr cpyOf(Tsr tensor) {
+                Tsr newTensor = new Tsr();
+                newTensor._shape = tensor._shape;
+                newTensor._translation = tensor._translation;
+                newTensor._idxmap = tensor._idxmap;
+                newTensor._value = (tensor.is64())?new double[tensor.size()]:new float[tensor.size()];
+                newTensor._components = null;//tensor._components;
+                newTensor._flags = tensor._flags;
+                if(tensor.is64()){
+                    int length = (tensor.is64())?((double[])tensor._value).length:((float[])tensor._value).length;
+                    for (int i = 0; i < length; i++) {
+                        if(tensor.is64()){
+                            double[] value = (double[])tensor._value;
+                            ((double[])newTensor._value)[i] = value[i];
+                        }else {
+                            float[] value = (float[])tensor._value;
+                            ((float[])newTensor._value)[i] = value[i];
+                        }
+                    }
+                }
+                if (tensor.isOutsourced()) {
+                    newTensor.add(tensor.device());
+                }
+                return newTensor;
+            }
+
+            public static Tsr cpyOf(Object[] things) {
+                for (int i = 0; i < things.length; i++) {
+                    if (things[i] instanceof int[]) {
+
+                    } else if (things[i] instanceof double[]) {
+
+                    }
+                }
+                return new Tsr();
+            }
+
+        }
+
+        public static double[] newDoubleArray(double value, int size){
+            double[] array = new double[size];
+            for(int i=0; i<size; i++){
+                array[i] = value;
+            }
+            return array;
+        }
+
+        public static float[] newFloatArray(float value, int size){
+            float[] array = new float[size];
+            for(int i=0; i<size; i++){
+                array[i] = value;
+            }
+            return array;
+        }
+
         public static void inject(double[] data, boolean grd, Tsr tensor) {
             if (grd) {
                 tensor._gradient = data;
             } else {
                 tensor._value = data;
             }
-        }
-
-        public static Tsr newTsr(double value, int[] shape) {
-            int sze = indexing.szeOfShp(shape);
-            Tsr tensor = new Tsr();
-            tensor._value = new double[sze];
-            tensor.initialShape(shape);
-            for (int i = 0; i < sze; i++) {
-                ((double[])tensor._value)[i] = value;
-            }
-            return tensor;
-        }
-
-        public static Tsr newTsr(double[] value, int[] shape) {
-            Tsr tensor = new Tsr();
-            tensor._value = value;
-            tensor.initialShape(shape);
-            return tensor;
-        }
-
-        public static Tsr newTsr(double[] value, int[] shape, int[] translation) {
-            Tsr tensor = new Tsr();
-            tensor._value = value;
-            tensor.initialShape(shape);
-            tensor._translation = translation;
-            return tensor;
-        }
-
-        public static Tsr newTsr(int[] shape, int[] translation) {
-            Tsr tensor = new Tsr();
-            tensor._value = new double[indexing.szeOfShp(shape)];
-            tensor.initialShape(shape);
-            tensor._translation = (translation != null) ? translation : tensor._translation;//FUNCTIONS.put()
-            return tensor;
-        }
-
-        public static Tsr cpyOf(Tsr tensor) {
-            Tsr newTensor = new Tsr();
-            newTensor._shape = tensor._shape;
-            newTensor._translation = tensor._translation;
-            newTensor._idxmap = tensor._idxmap;
-            newTensor._value = (tensor.is64())?new double[tensor.size()]:new float[tensor.size()];
-            newTensor._components = null;//tensor._components;
-            newTensor._flags = tensor._flags;
-            if(tensor.is64()){
-                int length = (tensor.is64())?((double[])tensor._value).length:((float[])tensor._value).length;
-                for (int i = 0; i < length; i++) {
-                    if(tensor.is64()){
-                        double[] value = (double[])tensor._value;
-                        ((double[])newTensor._value)[i] = value[i];
-                    }else {
-                        float[] value = (float[])tensor._value;
-                        ((float[])newTensor._value)[i] = value[i];
-                    }
-                }
-            }
-
-            if (tensor.isOutsourced()) {
-                newTensor.add(tensor.device());
-            }
-            return newTensor;
-        }
-
-        public static Tsr cpyOf(Object[] things) {
-            for (int i = 0; i < things.length; i++) {
-                if (things[i] instanceof int[]) {
-
-                } else if (things[i] instanceof double[]) {
-
-                }
-            }
-            return new Tsr();
         }
 
         public static class stringify{

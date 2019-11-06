@@ -131,7 +131,7 @@ public abstract class Function implements IFunction {
      */
     protected Tsr _tensor_activation(Tsr input, boolean derive)
     {
-        Tsr output = Tsr.fcn.newTsr(input.shape(), input.translation());
+        Tsr output = Tsr.fcn.create.newTsr(input.shape(), input.translation());
         if (!derive && !_isFlat) {
             output.inject(FunctionBuilder.build(_id, 1, true).activate(new Tsr[]{input}));
             output.add(input.find(GraphLock.class));
@@ -287,7 +287,7 @@ public abstract class Function implements IFunction {
                 return _src.get(1).activate(inputs).setTargetValue64(_src.get(0).activate(inputs).targetValue64(true));
             } else {
                 double[] inp = new double[inputs.length];
-                Tsr output = Tsr.fcn.newTsr(inputs[0].shape(), inputs[0].translation());
+                Tsr output = Tsr.fcn.create.newTsr(inputs[0].shape(), inputs[0].translation());
                 Tsr finalOutput = output;
                 output.foreach((i) -> {
                     int[] ids = new int[inputs.length];
@@ -303,7 +303,7 @@ public abstract class Function implements IFunction {
             }
         }
         //Todo: warning/exception.....
-        return Tsr.fcn.newTsr(inputs[0].shape(), inputs[0].translation());
+        return Tsr.fcn.create.newTsr(inputs[0].shape(), inputs[0].translation());
     }
     /**
      *      [2, 2, 3,  4]
@@ -344,8 +344,8 @@ public abstract class Function implements IFunction {
                     (tsrs[i] != null)
                             ? tsrs[i]
                             : (j < 0)
-                            ? Tsr.fcn.newTsr(((FConstant) _src.get(i)).value(), templateShape)
-                            : Tsr.fcn.newTsr(_src.get(i).activate(new double[]{}, j), templateShape);
+                            ? Tsr.fcn.create.newTsr(((FConstant) _src.get(i)).value(), templateShape)
+                            : Tsr.fcn.create.newTsr(_src.get(i).activate(new double[]{}, j), templateShape);
         }
         if(shareDevice){
             IDevice shared = (IDevice) tsrs[0].find(IDevice.class);

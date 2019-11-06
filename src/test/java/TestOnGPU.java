@@ -236,20 +236,20 @@ public class TestOnGPU {
     }
 
     private void _testTensorDevice(AparapiDevice gpu, NTester_TensorDevice tester){
-        Tsr tensor = Tsr.fcn.newTsr(new double[]{1, 3, 4, 2, -3, 2, -1, 6}, new int[]{2, 4});
+        Tsr tensor = Tsr.fcn.create.newTsr(new double[]{1, 3, 4, 2, -3, 2, -1, 6}, new int[]{2, 4});
         Tsr firstTensor = tensor;
         tester.testAddTensor(gpu, tensor,
                 new double[]{1, 3, 4, 2, -3, 2, -1, 6},
                 new int[]{2, 4},
                 new int[]{1, 2},
                 new int[]{0, 8, 0, 2, 0, 2});
-        tensor = Tsr.fcn.newTsr(new double[]{-7, -9}, new int[]{2});
+        tensor = Tsr.fcn.create.newTsr(new double[]{-7, -9}, new int[]{2});
         tester.testAddTensor(gpu, tensor,
                 new double[]{1, 3, 4, 2, -3, 2, -1, 6, -7, -9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,},
                 new int[]{2, 4},
                 new int[]{1, 2},
                 new int[]{0, 8, 0, 2, 0, 2, 8, 2, 0, 1, 0, 1});
-        tensor = Tsr.fcn.newTsr(new double[]{4, -4, 9, 4, 77}, new int[]{5});
+        tensor = Tsr.fcn.create.newTsr(new double[]{4, -4, 9, 4, 77}, new int[]{5});
         tester.testAddTensor(gpu, tensor,
                 new double[]{1, 3, 4, 2, -3, 2, -1, 6, -7, -9, 4, -4, 9, 4, 77, 0, 0, 0, 0, 0,},
                 new int[]{2, 4, 5, 0},
@@ -273,7 +273,7 @@ public class TestOnGPU {
                 new int[]{1, 2},
                 new int[]{8, 2, 0, 1, 0, 1, 10, 5, 2, 1, 0, 1}
         );
-        tensor = Tsr.fcn.newTsr(new double[]{888, 777, -33, 999}, new int[]{2, 2});
+        tensor = new Tsr(new int[]{2, 2}, new double[]{888, 777, -33, 999});
         tensor.setRqsGradient(true);
         tester.testAddTensor(gpu, tensor,
                 new double[]{888, 777, -33, 999, 0, 0, 0, 0, -7, -9, 4, -4, 9, 4, 77, 0, 0, 0, 0, 0,},

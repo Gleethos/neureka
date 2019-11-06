@@ -59,4 +59,25 @@ public class Types
         return (REGISTER[id] == "x" || REGISTER[id] == "«" || REGISTER[id] == "»");
     }
 
+    public boolean isCommutative(String f){
+        switch(f){
+            case "^": return false;
+            case "/": return  false;
+            case "*": return true;
+            case "%": return false;
+            case "-": return false;
+            case "+": return true;
+            case "x": return false;
+            case (""+((char)171)): return false;
+            case (""+((char)187)): return false;
+            case ",":return false;
+            case "<": return false;
+            case ">": return false;
+        }
+        return false;
+    }
+    public boolean isCommutative(int id){
+        return isCommutative(REGISTER[id]);
+    }
+
 }

@@ -1,6 +1,10 @@
 
 public class NGene {
 
+	public static String HelloWorld(){
+		return "Hello";
+	}
+
 	private static String CREATE = "EXP";
 	
 	private static String CONNECT = "CON";

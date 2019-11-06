@@ -17,5 +17,15 @@ __kernel void multiply(
         _cfg_of_cfg(src2_conf, prv_src2_cfg, rank);
 
         unsigned int i = get_global_id(0);
-        drn[_i_of_i(i, prv_drn_cfg, rank)] = src1[_i_of_i(i, prv_src1_cfg, rank)] * src2[_i_of_i(i, prv_src2_cfg, rank)];
+
+        if(d<0){
+            drn[_i_of_i(i, prv_drn_cfg, rank)] = src1[_i_of_i(i, prv_src1_cfg, rank)] * src2[_i_of_i(i, prv_src2_cfg, rank)];
+        } else {
+            if(d==0){
+                drn[_i_of_i(i, prv_drn_cfg, rank)] = src2[_i_of_i(i, prv_src2_cfg, rank)];
+            } else {
+                drn[_i_of_i(i, prv_drn_cfg, rank)] = src1[_i_of_i(i, prv_src1_cfg, rank)];
+            }
+        }
+
     }

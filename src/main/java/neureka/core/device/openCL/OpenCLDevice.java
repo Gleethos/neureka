@@ -8,6 +8,8 @@ import java.util.*;
 import neureka.core.Tsr;
 import neureka.core.device.IDevice;
 import neureka.core.function.IFunction;
+import neureka.core.function.factory.Function;
+import neureka.core.function.factory.autograd.GraphNode;
 import neureka.core.utility.DataHelper;
 import org.jocl.*;
 
@@ -44,45 +46,8 @@ public class OpenCLDevice implements IDevice
         _platform = platform;
         System.out.println(this.name());
         System.out.println(this.type());
-
         // Create a command-queue for the selected device
         _queue = clCreateCommandQueue(platform.getContext(), did, 0, null);
-
-        //System.out.println("Testing mem:");
-        ////--- ########### ---\\
-        ////Testing:
-        //cl_mem[] memos = new cl_mem[300];
-        //for(int i=0; i<memos.length; i++){
-        //    int size = 1000 * 1000;//CL_MEM_WRITE_ONLY
-        //    memos[i] = clCreateBuffer(
-        //            _platform.getContext(),
-        //            CL_MEM_READ_WRITE,
-        //            size * Sizeof.cl_uint,
-        //            null,
-        //            null
-        //    );
-        //    int[] data = new int[size];
-        //    for(int ii=0; ii<size; ii++){
-        //        data[ii] = ii; // new Random().nextInt();
-        //    }
-        //    clEnqueueWriteBuffer(
-        //            _queue, memos[i], true, 0,
-        //            size * Sizeof.cl_uint, Pointer.to(data), 0, null, null);
-        //}
-        //int err = clEnqueueMigrateMemObjects(
-        //        _queue,
-        //        memos.length,
-        //        memos
-        //        ,
-        //        CL_MIGRATE_MEM_OBJECT_HOST,
-        //        0,
-        //        null,
-        //        null);
-        //try {
-        //    Thread.sleep(2000);
-        //} catch (InterruptedException e) {
-        //    e.printStackTrace();
-        //}
     }
 
     //---
@@ -116,6 +81,7 @@ public class OpenCLDevice implements IDevice
 
     private void _store(Tsr tensor, cl_tsr newClTsr, int fp, boolean grd){
         //cl_tsr newClTsr = new cl_tsr();
+        //tensor.setIsVirtual(false);//TODO: optimize: if virtual: copy !efficiently
         Pointer p;
         int size;
         if(fp==1){
@@ -153,6 +119,7 @@ public class OpenCLDevice implements IDevice
     }
 
     public IDevice add(Tsr tensor, int fp) {
+        tensor.setIsVirtual(false);//TODO: optimize: if virtual: copy !efficiently
         cl_tsr newClt = new cl_tsr();
         //VALUE TRANSFER:
         _store(tensor, newClt, fp, false);
@@ -207,7 +174,6 @@ public class OpenCLDevice implements IDevice
         _mapping.put(tensor, newClt);
         tensor.add(this);
         tensor.setIsOutsourced(true);
-        tensor.setIsVirtual(false);
         return this;
     }
 
@@ -269,7 +235,7 @@ public class OpenCLDevice implements IDevice
         _mapping.remove(former);
         _mapping.put(replacement, clTsr);
         //replacement.add(this);
-        //replacement.setIsOutsourced(true);
+        //_replacement.setIsOutsourced(true);
         //former.remove(IDevice.class);
         return this;
     }
@@ -320,8 +286,8 @@ public class OpenCLDevice implements IDevice
     }
 
     @Override
-    public IDevice execute(Tsr[] tsrs, int f_id, int d) {
-        //if(tsrs.length>2){
+    public IDevice execute(Tsr[] tsrs, int f_id, int d)
+    {
         if(IFunction.TYPES.REGISTER[f_id]=="<")
         {
             int offset = (tsrs[0]==null)?1:0;
@@ -368,10 +334,33 @@ public class OpenCLDevice implements IDevice
                 _execute(tsrs, f_id, d);
             }
         }
-        //} else {
-        //    _execute(tsrs, f_id, d);
-        //}
         return this;
+    }
+
+    private Tsr[] _subset(Tsr[] tsrs, int padding, int start, int end){
+        Tsr[] newTsrs = new Tsr[padding+end-start];
+        for(int i=padding; i<newTsrs.length; i++){
+            newTsrs[padding+i] = tsrs[i+start-padding];
+        }
+        return newTsrs;
+    }
+
+    private Tsr[] _offsetted(Tsr[] tsrs, int offset){
+        Tsr[] newTsrs = new Tsr[tsrs.length-offset];
+        newTsrs[0] = Tsr.fcn.create.newTsrLike(tsrs[1]);//new Tsr(tsrs[1].shape());
+        if(!tsrs[1].has(GraphNode.class)){//Deleting intermediate results!
+            tsrs[1].delete();
+            tsrs[1] = null;
+        }
+        if(!tsrs[2].has(GraphNode.class)){//Deleting intermediate results!
+            tsrs[2].delete();
+            tsrs[2] = null;
+        }
+        for(int i=(1+offset); i<tsrs.length; i++){
+            newTsrs[i-offset] = tsrs[i];
+        }
+        newTsrs[1] = tsrs[0];
+        return newTsrs;
     }
 
     public void _execute(Tsr[] tsrs, int f_id, int d){
@@ -381,36 +370,54 @@ public class OpenCLDevice implements IDevice
             }
         }
         if(tsrs.length>3){
-            //TODO: recursion... // WORK IN PROGRESS HERE!!
-            Tsr[] newTsrs = new Tsr[tsrs.length-1];
-            newTsrs[0] = new Tsr(newTsrs[1].shape());
-            if(newTsrs[1].is32()){
-                newTsrs[0].setTargetValue32(new float[newTsrs[1].size()]);
+            if(d<0){
+                _execute(new Tsr[]{tsrs[0], tsrs[1], tsrs[2]}, f_id, d);
+                Tsr[] newTsrs = _offsetted(tsrs, 1);
+                _execute(newTsrs, f_id, d);//This recursion should work!
+                tsrs[0] = newTsrs[0];
             } else {
-                newTsrs[0].setTargetValue64(new double[newTsrs[1].size()]);
+                switch(Function.TYPES.REGISTER[f_id]){
+                    case "+": tsrs[0] = Tsr.fcn.create.newTsrLike(tsrs[1]).setTargetValue(1.0f);
+                        break;
+                    case "-": tsrs[0] = Tsr.fcn.create.newTsrLike(tsrs[1]).setTargetValue((d==0)?1.0f:-1.0f);
+                        break;
+                    case "^":
+                        if(d>0){
+                            for(int i=0; i<d; i++) {
+
+                            }
+                        }
+                        Tsr[] newTrs = _subset(tsrs, 1,  d+1, tsrs.length);
+                        newTrs[0] =  Tsr.fcn.create.newTsrLike(tsrs[1]);
+                        _execute(newTrs, IFunction.TYPES.LOOKUP.get("*"), -1);
+
+                        break;
+                    case "*":
+                        break;
+                    default:
+                        break;
+                }
             }
-            for(int i=2; i<newTsrs.length; i++){
-                newTsrs[i-1] = tsrs[i];
-            }// 0, 1, (2, 3, 4, 5)
-            _execute(newTsrs, f_id, d);//This recursion should work!
-            _execute(new Tsr[]{tsrs[0], tsrs[1], newTsrs[0]}, f_id, d);
         } else {
             int gwz = (tsrs[0]!=null)?tsrs[0].size():tsrs[1].size();
             int offset = (tsrs[0]!=null)?0:1;
             cl_kernel kernel = _platform.getKernels().get(_platform.kernelNameOf(f_id));
+            cl_mem drn = tsrs[offset].gradientIsTargeted()?_mapping.get(tsrs[offset]).grad:_mapping.get(tsrs[offset]).value;
+            cl_mem src1 = tsrs[offset+1].gradientIsTargeted()?_mapping.get(tsrs[offset+1]).grad:_mapping.get(tsrs[offset+1]).value;
             if(IFunction.TYPES.isFunction(f_id)){
-                clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).value));//=> drain
+                clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
                 clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
-                clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+1]).value));//=>src1
+                clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=>src1
                 clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+1]).config));
                 clSetKernelArg(kernel, 4, Sizeof.cl_int, Pointer.to(new int[]{ tsrs[0].rank() }));
                 clSetKernelArg(kernel, 5, Sizeof.cl_int, Pointer.to(new int[]{ d }));
             } else {
-                clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).value));//=> drain
+                cl_mem src2 = tsrs[offset+2].gradientIsTargeted()?_mapping.get(tsrs[offset+2]).grad:_mapping.get(tsrs[offset+2]).value;
+                clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
                 clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
-                clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+1]).value));//=>src1
+                clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=>src1
                 clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+1]).config));
-                clSetKernelArg(kernel, 4, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+2]).value));//=>src2
+                clSetKernelArg(kernel, 4, Sizeof.cl_mem, Pointer.to(src2));//=>src2
                 clSetKernelArg(kernel, 5, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset+2]).config));
                 clSetKernelArg(kernel, 6, Sizeof.cl_int, Pointer.to(new int[]{ tsrs[0].rank() }));
                 clSetKernelArg(kernel, 7, Sizeof.cl_int, Pointer.to(new int[]{ d }));
@@ -430,7 +437,52 @@ public class OpenCLDevice implements IDevice
 
     public void _execute(Tsr t, double value, int f_id, int d)
     {
-
+        if(d<0)
+        {
+            //execute
+            int gwz = t.size();
+            cl_kernel kernel = _platform.getKernels().get(
+                    _platform.kernelNameOf(f_id)+"_broadcast"
+            );
+            cl_mem drn = t.gradientIsTargeted()?_mapping.get(t).grad:_mapping.get(t).value;
+            cl_mem src1 = t.gradientIsTargeted()?_mapping.get(t).grad:_mapping.get(t).value;
+            clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
+            clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(t).config));
+            clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=>src1
+            clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(_mapping.get(t).config));
+            clSetKernelArg(kernel, 4, Sizeof.cl_float, Pointer.to(new float[]{(float)value}));
+            clSetKernelArg(kernel, 5, Sizeof.cl_int, Pointer.to(new int[]{ t.rank() }));
+            clSetKernelArg(kernel, 6, Sizeof.cl_int, Pointer.to(new int[]{ d }));
+            clEnqueueNDRangeKernel(
+                    _queue, kernel,
+                    1,
+                    null,
+                    new long[]{gwz},
+                    null,
+                    0,
+                    null,
+                    null
+            );
+        } else {
+            /**   Derivatives implementation: (values cannot be derived)    **/
+            if(
+                 IFunction.TYPES.REGISTER[f_id]=="+"||
+                 IFunction.TYPES.REGISTER[f_id]=="-"||
+                 IFunction.TYPES.REGISTER[f_id]=="%"
+            ){
+                _execute(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
+                _execute(t, 1, IFunction.TYPES.LOOKUP.get("+"), -1);
+            } else if(IFunction.TYPES.REGISTER[f_id]=="^"){
+                _execute(t, value-1, IFunction.TYPES.LOOKUP.get("^"), -1);
+                _execute(t, value, IFunction.TYPES.LOOKUP.get("*"), -1);
+            } else if(IFunction.TYPES.REGISTER[f_id]=="*"){
+                _execute(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
+                _execute(t, value, IFunction.TYPES.LOOKUP.get("+"), -1);
+            } else if(IFunction.TYPES.REGISTER[f_id]=="/"){
+                _execute(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
+                _execute(t, 1/value, IFunction.TYPES.LOOKUP.get("+"), -1);
+            }
+        }
     }
 
     //---
@@ -448,7 +500,6 @@ public class OpenCLDevice implements IDevice
     }
 
     public String type(){
-        // CL_DEVICE_TYPE
         long deviceType = DeviceQuery.getLong(_did, CL_DEVICE_TYPE);
         if( (deviceType & CL_DEVICE_TYPE_CPU) != 0)
             return "CPU";
@@ -582,8 +633,6 @@ public class OpenCLDevice implements IDevice
     public int prefVecWidthDouble(){
         return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE);
     }
-
-
 
     public static class DeviceQuery
     {

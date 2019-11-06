@@ -1,0 +1,25 @@
+unnamed package
+gpu
+gpu.wip
+neureka
+neureka.core
+neureka.core.device
+neureka.core.device.aparapi
+neureka.core.device.openCL
+neureka.core.device.openCL.utility
+neureka.core.function
+neureka.core.function.environment
+neureka.core.function.factory
+neureka.core.function.factory.assembly
+neureka.core.function.factory.autograd
+neureka.core.function.factory.implementations
+neureka.core.optimization
+neureka.core.optimization.factory.material
+neureka.core.optimization.factory.worker
+neureka.core.utility
+neureka.frame
+neureka.ngui.swing
+neureka.ngui.tile
+neureka.ngui.touch
+neureka.ngui.touch.canvas
+util
