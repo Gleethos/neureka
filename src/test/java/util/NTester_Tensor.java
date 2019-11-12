@@ -42,6 +42,7 @@ public class NTester_Tensor extends NTester
         for(String element : expected){
             this.assertStringContains("result", result, element);
         }
+        product.delete();
         return (printSessionEnd()>0)?1:0;
     }
 
@@ -58,6 +59,7 @@ public class NTester_Tensor extends NTester
         for(int i=0; i<source.length; i++){
             this.assertIsEqual(stringified(source[i].gradient64()), stringified(expectedGradient[i]));
         }
+        product.delete();
         return (printSessionEnd()>0)?1:0;
     }
 

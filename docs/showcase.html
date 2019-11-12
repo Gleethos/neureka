@@ -1,0 +1,209 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title> NEUREKA </title>
+        <link rel="icon" href="/src/favicon/favicon.ico" >
+        <meta name="description" content="Login and have fun!">
+        <meta name="author" content="Daniel Nepp">
+        <meta name="keywords" content=" AI, Deep Learning, Neuron, OpenCl, PyTorch, Java, Tensorflow, Machine Learning">
+        <!-----------------------------------ROBOTS---------------------------------------------->
+        <meta name="robots" content="all">
+        <meta name="revisit-after" content="30 days">
+        <!-----------------------------------JQUERY---------------------------------------------->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-----------------------------------BOOTSTRAP------------------------------------------>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <!-----------------------------------CUSTOM CSS------------------------------------------>
+        <link rel="stylesheet" href="src/style.css">
+
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/sunburst.min.css">
+        <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+    </head>
+    <body>
+        <div id="header">
+            <div id="NetBox" class = "mainframe">
+                <nav class="navbar" id="navTile">
+                    <div id="navContainer" class="">
+                        <div style = "" class = "topEarthGradient dynamicSideMargin">
+                            <h1>NEUREKA</h1>
+                        </div>
+                        <div class="pull-right nightBox" id="NavbarMenu" >
+                            <ul class="nav navbar-right" id="NavbarList">
+                                <li>
+                                    <a href="index.html">
+                                        <img src="https://image.flaticon.com/icons/png/512/25/25694.png">
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://github.com/Gleethos/neureka">
+                                        <img src="https://png2.kisspng.com/sh/9646f5d54230eeeeff0b635b0f3b7bd3/L0KzQYm3U8I3N6VAj5H0aYP2gLBuTfdqfJl6ep9sb33zhcXskr1qa5Dzi59yY3BxPbXskBlodl5sgeZxdXKwRbLpWPE0OZY6eqc8OUWxRoi8WMA0PGo2TaQ7MES8SIO5U8c1OV91htk=/kisspng-github-computer-icons-icon-design-github-5ab8a31e5b5395.6758034915220498223741.png">
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="core/index.html">
+                                        <img src="http://cdn.onlinewebfonts.com/svg/img_71011.png">
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="navi">
+                        <input type="checkbox" name="mobile-nav" id="mobile-nav" class="gaadiexp-check" onchange="this.blur()">
+                        <label for="mobile-nav" class="gaadiexp white" tabindex="0" style="margin-left: 0;"><span></span></label>
+                        <div role="navigation" class="header-nav">
+                            <div class="fixed-nav">
+                                <div class="menu">
+                                    <ul class="side-nav">
+                                        <li class="heading"></li>
+                                        <li></li>
+                                        <li class="heading"></li>
+                                        <li></li>
+                                        <li class="heading"></li>
+                                        <li></li>
+                                        <li class="heading"></li>
+                                        <li></li>
+                                        <ul class="left">
+                                            <li><a target="_blank" href="">Documentation</a></li>
+                                            <li><a target="_blank" href="">API</a></li>
+                                        </ul>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <div class="">
+                    <!----------------------------------LAYOUT------------------------------------------------->
+                    <main class="parallax">
+                        <div style="left:-10px;" class="parallax__layer parallax__layer--back ">
+                            <div>
+                                <image src="src/main/parallax/woods.png"></image>
+                            </div>
+                        </div>
+                        <div class="parallax__layer parallax__layer--base">
+                            <div id="mainTile" class="cardBox dynamicSideMargin">
+                                <div class = "mainContentWrapper">
+                                    <div class = "container-fluid">
+                                        <h1>Autograd</h1>
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-12">
+                                                <div class="contentBox">
+                                                    <h3>Introduction</h3>
+                                                    <p>
+                                                        Neureka implements so called Auto-Differentiation.
+                                                        AD-algorithms are the backbone of today's most advanced
+                                                        artificial neural networks.
+                                                        It allows for calculating derivatives with respect to
+                                                        weight variables used to correct errors incrementally
+                                                        throughout many training iterations
+                                                        whereby neural networks then gain the ability to
+                                                        approximate, generalize and thereby learning.
+                                                        Differentiation goes both ways: Forwards and Backwards.
+                                                        Namely:</br>
+                                                        Forward-mode-AD and backward-mode-AD.</br>
+                                                        Neureka utilizes both techniques to get the best performance.
+                                                        Especially the use of backward-mode-AD revolutionized
+                                                        machine learning in recent decades.
+                                                        Gradient decent using backward-mode-ad is termed back-propagation
+                                                        and for most cases this approach accelerates gradient
+                                                        descent by orders of magnitudes compared to other techniques,
+                                                        making the difference between a model
+                                                        taking weeks instead of years to train.
+                                                        Beyond its use in machine learning, Auto-differentiation is a powerful
+                                                        computational tool in a multitude of other areas, ranging from weather
+                                                        forecasting to analyzing numerical stability.
+                                                        Besides it's use in machine learning, AD is a common tool
+                                                        for many other fields dependent on algebraic numerical computation.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-8">
+                                                <pre><code class="hljs java">
+    Tsr x = new Tsr(3).setRqsGradient(true);
+    Tsr b = new Tsr(-4);
+    Tsr w = new Tsr(2);
+    Tsr y = new Tsr(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
+    /* *
+     *   f(x) = ((x-4)*2)^2; :=>  f(3) = 4
+     *   f(x)' = 8*x - 32 ;  :=>  f(3)' = -8
+     *
+     *   y.toString(): "[1]:(4.0); ->d[1]:(-8.0), "
+     * */
+                                                </code></pre>
+                                            </div>
+                                            <div class="col-sm 12 col-md-4">
+                                                <div class="contentBox">
+                                                    <p>
+                                                        In this example Neureka calculated the derivative of y w.r.t x.
+                                                        Forward-AD is used due to the fact that no other dependencies
+                                                        need to be considered.
+                                                        By utilizying forward-AD Neureka greatly decreases Memory consumption
+                                                        as well as increase performance.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-8">
+                                                <pre><code class="hljs java">
+     Tsr a = new Tsr(-3).setRqsGradient(true);
+     Tsr b = new Tsr(4).setRqsGradient(true);
+     Tsr c = new Tsr(2);
+     Tsr d = new Tsr(Tsr[]{a, b, c},"(relu(i0*i1)+i1)/i2");
+     /* *
+      * [1]:(1.94);
+      *      =>d|[ [1]:(0.5) ]|:
+      *          t{
+      *              [1]:(-0.12);
+      *                  =>d|[ [1]:(-0.03) ]|:
+      *                      t{ [1]:(4.0) },
+      *                  =>d|[ [1]:(0.04) ]|:
+      *                      t{ [1]:(-3.0) },
+      *          },
+      *      =>d|[ [1]:(0.5) ]|:
+      *          t{
+      *              [1]:(4.0)
+      *          },
+      * */
+                                                </code></pre>
+                                            </div>
+                                            <div class="col-sm 12 col-md-4">
+                                                <div class="contentBox">
+                                                    <p>
+
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+                <footer>
+                    <div class="footerBox">
+                        <section>
+                        </section>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/100/three.min.js"></script>
+        <script src="https://www.vantajs.com/dist/vanta.net.min.js"></script>
+        <script>
+            VANTA.NET({
+                el: "#NetBox"
+            })
+        </script>
+    </body>
+</html>

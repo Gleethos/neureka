@@ -346,6 +346,28 @@ public class TestOnCPU {
         );
         //---
         //=====================
+        tensor1 = new Tsr(-3).setRqsGradient(true);
+        tensor2 = new Tsr(4).setRqsGradient(true);
+        tensor3 = new Tsr(2);
+        tester.testTensorAutoGrad(
+                new Tsr[]{tensor1, tensor2, tensor3},
+                "(relu(i0*i1)+i1)/i2",
+                new String[]{
+                    "[1]:(1.94);",
+                        "=>d|[ [1]:(0.5) ]|:",
+                            "t{",
+                                "[1]:(-0.12);",
+                                    "=>d|[ [1]:(-0.03) ]|:",
+                                        "t{ [1]:(4.0) },",
+                                    "=>d|[ [1]:(0.04) ]|:",
+                                        "t{ [1]:(-3.0) },",
+                            "},",
+                        "=>d|[ [1]:(0.5) ]|:",
+                            "t{",
+                                "[1]:(4.0)",
+                            "},"}
+        );
+        //=====================
         tensor1 = new Tsr(new int[]{1}, new double[]{2});//-2*4 = 8 | *3 = -24
         tensor1.setRqsGradient(true);
         tester.testTensorAutoGrad(

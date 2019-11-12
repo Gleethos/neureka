@@ -169,6 +169,10 @@ public class GraphNode
         return _payload==null;
     }
 
+    public boolean isUsedAsDerivative(){
+        return _is_used_as_derivative;
+    }
+
     /**
      * @param output
      * @param function
@@ -351,6 +355,40 @@ public class GraphNode
         }
     }
 
+    public void deathBy(GraphNode child){
+        boolean childrenAreDead = true;
+        if(child==null){
+            throw new IllegalStateException("[GraphNode][deathBy]: Error! Child is null!");
+        } else if(this!=child){
+            if(!_children.contains(child)){
+                throw new IllegalStateException("[GraphNode][deathBy]: Error! Child is not recognized by parent!");
+            }
+            _children.set(_children.indexOf(child), null);
+            for(int i=0; i<_children.size(); i++){
+                childrenAreDead = (_children.get(i)==null)&&childrenAreDead;
+            }
+        }
+
+        if(childrenAreDead && !this.isLeave()){
+            if(_payload!=null && !_is_used_as_derivative){
+                _payload.remove(GraphNode.class);
+                if(child!=this){
+                    _payload.delete();
+                }
+            }
+            if(_parents!=null){
+                for(GraphNode parent : _parents){
+                    parent.deathBy(this);
+                }
+            }
+            _function = null;
+            _lock = null;
+            _parents = null;
+            _targets_derivatives = null;
+            _children = null;
+        }
+    }
+
     /**
      * @param error
      * @return void
@@ -460,8 +498,8 @@ public class GraphNode
     private String _toString(String deep, boolean isLast){//int depth){
         String delimiter = ((isLast)?("    "):("|   "));
         String arrow = ((char)187)+""+((_parents!=null)?(String.valueOf(_parents.length)):"0")+((char)187);
-        String asString = deep
-                +arrow+"("+this.type()+"): [NID:"+Long.toHexString(nid())+"]:<(  "
+        String asString = deep+
+            arrow+"("+this.type()+"): [NID:"+Long.toHexString(nid())+"]:<(  "
                 +"f"+((_function==null)?"(NONE)":_function)+" => "+((_payload==null)?"NULL":_payload.toString("cs"))+"  )>";
         deep = deep.substring(0, deep.length()-1);
         if(_parents!=null){

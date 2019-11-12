@@ -1,5 +1,6 @@
 package neureka.core.device.aparapi;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -68,6 +69,12 @@ public class AparapiDevice implements IDevice
 
     }
 
+    @Override
+    public Collection<Tsr> tensors(){
+        return _tensors_map.keySet();
+    }
+
+    @Override
     public void dispose() {
         _kernel.dispose();
     }
@@ -76,6 +83,7 @@ public class AparapiDevice implements IDevice
         return _kernel;
     }
 
+    @Override
     public boolean has(Tsr tensor) {
         return _tensors_map.containsKey(tensor);
     }

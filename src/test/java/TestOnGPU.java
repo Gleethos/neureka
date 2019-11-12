@@ -10,34 +10,14 @@ import org.junit.Test;
 import util.NTester_Tensor;
 import util.NTester_TensorDevice;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public class TestOnGPU {
 
     @Test
     public void testTesting(){
-        //AparapiDevice gpu = new AparapiDevice("intel gpu FP64");
-        //Tsr x = new Tsr(new int[]{300, 300, 1}, 2);
-        //Tsr y = new Tsr(new int[]{1, 300, 300}, -1);
-        //gpu.add(x).add(y);
-        //System.out.println("hey!");
-        //Tsr z = null;
-        //for(int i=0; i<100; i++){
-        //    z = new Tsr(x, "x", y);
-        //    gpu.rmv(z);
-        //}
-    //    System.out.println(z);
-    //   //JOCLSimpleMandelbrot.start(null);
-    //   org.jocl.samples.MyJOCLMandelbrot.start(null);
-         //new Setup().initCL();
-       /////OpenCLDevice myDevice = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
-       /////System.out.println("Local mem size: "+myDevice.localMemSize());
-       ///// System.out.println("name: "+myDevice.name());
-       ///// System.out.println("vendor: "+myDevice.vendor());
-
-    //   try {
-    //       Thread.sleep(7000000);
-    //   } catch (InterruptedException e) {
-    //       e.printStackTrace();
-    //   }
     }
 
     @Test
@@ -53,21 +33,23 @@ public class TestOnGPU {
                 (((AparapiDevice)gpu).getKernel() instanceof KernelFP32)?"FP32":"FP64",
                 new String[]{"FP32"},
                 "Test device kernel FP-Type");
-        _testAutograd(gpu, tester);
+        //_testAutograd(gpu, tester);
         //---
         gpu = new AparapiDevice("intel gpu FP64");
         tester.testContains(
                 (((AparapiDevice)gpu).getKernel() instanceof KernelFP64)?"FP62":"FP34",
                 new String[]{"FP34"},
                 "Test device kernel FP-Type");
-        _testAutograd(gpu, tester);
+        //_testAutograd(gpu, tester);
         //---
         gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
-        //_testAutograd(gpu, tester);
+        _testAutograd(gpu, tester);
 
         tester.close();
     }
-    private  void _testAutograd(IDevice gpu, NTester_Tensor tester){
+    private  void _testAutograd(IDevice gpu, NTester_Tensor tester)
+    {
+        List<Tsr> listOfTensors = new ArrayList<>();
         Tsr tensor1, tensor2;
         //=====================================================================
         tensor1 = new Tsr(new int[]{2, 2}, new double[]{
@@ -79,6 +61,8 @@ public class TestOnGPU {
                 -2, 3,
         });
         gpu.add(tensor1).add(tensor2);
+        listOfTensors.add(tensor1);
+        listOfTensors.add(tensor2);
         //System.out.println(new Tsr(t, "lig(I[0])"));
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1, tensor2},
@@ -102,6 +86,7 @@ public class TestOnGPU {
                  1,  2,  7
         });
         gpu.add(tensor1);
+        listOfTensors.add(tensor1);
         //System.out.println(new Tsr(t, "lig(I[0])"));
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1},
@@ -113,6 +98,8 @@ public class TestOnGPU {
         tensor1 = new Tsr(new int[]{2}, 3);
         tensor2 = new Tsr(new int[]{2}, 4);
         gpu.add(tensor1).add(tensor2);
+        listOfTensors.add(tensor1);
+        listOfTensors.add(tensor2);
         //result = new Tsr(new Tsr[]{tensor1, tensor2}, "i0*i1");
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1, tensor2},
@@ -135,6 +122,8 @@ public class TestOnGPU {
                 });
         gpu.add(tensor1);
         gpu.add(tensor2);
+        listOfTensors.add(tensor1);
+        listOfTensors.add(tensor2);
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1, tensor2},
                 "I0 x i1",
@@ -151,6 +140,8 @@ public class TestOnGPU {
                 3);
         gpu.add(tensor1);
         gpu.add(tensor2);
+        listOfTensors.add(tensor1);
+        listOfTensors.add(tensor2);
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1, tensor2},
                 "I0xi1",
@@ -168,6 +159,8 @@ public class TestOnGPU {
                 1, 2,
         });
         gpu.add(tensor1).add(tensor2);
+        listOfTensors.add(tensor1);
+        listOfTensors.add(tensor2);
         tester.testTensorAutoGrad(//4, 5, -13, -4 <= result values
                 new Tsr[]{tensor1, tensor2},
                 "i0xi1",
@@ -183,6 +176,9 @@ public class TestOnGPU {
         Tsr b = new Tsr(new int[]{1}, -4);
         Tsr w = new Tsr(new int[]{1}, 2);
         gpu.add(x).add(b).add(w);
+        listOfTensors.add(x);
+        listOfTensors.add(b);
+        listOfTensors.add(w);
         /**
          *      ((3-4)*2)^2 = 4
          *  dx:   8*3 - 32  = -8
@@ -197,6 +193,9 @@ public class TestOnGPU {
         b = new Tsr(new int[]{1}, 0.5);
         w = new Tsr(new int[]{1}, 0.5);
         gpu.add(x).add(b).add(w);
+        listOfTensors.add(x);
+        listOfTensors.add(b);
+        listOfTensors.add(w);
         y = new Tsr(new Tsr[]{x, b, w}, "(2^i0^i1^i2^2");
         tester.testTensor(y, new String[]{"[1]:(4.0);", " ->d[1]:(1.38629E0), "});
         tester.testShareDevice(gpu, new Tsr[]{y, x, b, w});
@@ -206,9 +205,51 @@ public class TestOnGPU {
         b = new Tsr(new int[]{1}, -5);
         w = new Tsr(new int[]{1}, -2);
         gpu.add(x).add(b).add(w);
+        listOfTensors.add(x);
+        listOfTensors.add(b);
+        listOfTensors.add(w);
         Tsr z = new Tsr(new Tsr[]{x, b, w}, "I0*i1*i2");
         tester.testTensor(z, new String[]{"[1]:(30.0)"});
         tester.testShareDevice(gpu, new Tsr[]{z, x, b, w});
+
+        //---
+        x = new Tsr(new int[]{1}, 3).setRqsGradient(true);
+        b = new Tsr(new int[]{1}, 0.5);
+        w = new Tsr(new int[]{1}, 4);
+        gpu.add(x).add(b).add(w);
+        listOfTensors.add(x);
+        listOfTensors.add(b);
+        listOfTensors.add(w);
+        y = new Tsr(new Tsr[]{x, b, w}, "(12/i0/i1/i2/2");//12/3/0.5/4/2 .... 12 * 1/ (0.0625)
+        tester.testTensor(y, new String[]{"[1]:(1.0);", " ->d[1]:(-0.33333E0), "});
+        tester.testShareDevice(gpu, new Tsr[]{y, x, b, w});
+        //---
+        System.gc();
+        Collection<Tsr> outsourced = gpu.tensors();
+        String sentence = "Number of outsourced tensors: ";
+        tester.testContains(
+                sentence +outsourced.size(),
+                new String[]{sentence+listOfTensors.size()},
+                "Testing for memory leaks!"
+        );
+        //---
+        boolean[] stillOnDevice = {true};
+        listOfTensors.forEach((t)->stillOnDevice[0] = outsourced.contains(t)&&stillOnDevice[0]);
+        sentence = "Used tensors still on device: ";
+        tester.testContains(
+                sentence +stillOnDevice[0],
+                new String[]{sentence+"true"},
+                "Testing for memory leaks!"
+        );
+        //---
+        listOfTensors.forEach((t)->gpu.rmv(t));
+        sentence = "Number of tensors after deleting: ";
+        tester.testContains(
+                sentence +gpu.tensors().size(),
+                new String[]{sentence+"0"},
+                "Testing if all tensors have been deleted!"
+        );
+        //---
     }
 
     @Test

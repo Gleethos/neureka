@@ -2,11 +2,14 @@ package neureka.core.device.openCL;
 
 import static org.jocl.CL.*;
 
+import java.lang.ref.Cleaner;
+import java.lang.ref.ReferenceQueue;
 import java.nio.*;
 import java.util.*;
 
 import neureka.core.Tsr;
 import neureka.core.device.IDevice;
+import neureka.core.device.WeakTensorReference;
 import neureka.core.function.IFunction;
 import neureka.core.function.factory.Function;
 import neureka.core.function.factory.autograd.GraphNode;
@@ -23,7 +26,11 @@ public class OpenCLDevice implements IDevice
         public cl_mem grad;
     }
 
-    private Map<Tsr, cl_tsr> _mapping = new HashMap<>();
+    //private Map<Tsr, cl_tsr> __mapping = new HashMap<>();
+
+    private Map<Object, cl_tsr> _mapping = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
+    // new HashMap<>();
+
 
     private cl_device_id _did;
 
@@ -37,7 +44,8 @@ public class OpenCLDevice implements IDevice
      */
     private cl_command_queue _queue;
 
-
+    private static Cleaner CLEANER = Cleaner.create();
+    private ReferenceQueue _reference_queue;
     /**==============================================================================================================**/
 
     public OpenCLDevice(OpenCLPlatform platform, cl_device_id did)
@@ -48,13 +56,33 @@ public class OpenCLDevice implements IDevice
         System.out.println(this.type());
         // Create a command-queue for the selected device
         _queue = clCreateCommandQueue(platform.getContext(), did, 0, null);
+        _reference_queue = new ReferenceQueue();
+
     }
 
     //---
 
     @Override
+    public Collection<Tsr> tensors(){
+        Collection<Object> collection = _mapping.keySet();
+        Collection<Tsr> extracted = new ArrayList<>();
+        collection.forEach((o)->{
+            WeakTensorReference r = (WeakTensorReference) o;
+            Tsr t = r.get();
+            if(t!=null){
+                ((ArrayList<Tsr>) extracted).add(t);
+            }
+        });//TODO:
+        //System.out.println("Ref Queue: "+_reference_queue.poll().get());
+        return extracted;
+        //return _mapping.keySet();
+    }
+
+
+
+    @Override
     public void dispose() {
-        _mapping.forEach((t, clt)->get(t));
+        _mapping.forEach((t, clt)->get(((WeakTensorReference)t).get()));
         clFinish(_queue);
     }
 
@@ -171,7 +199,9 @@ public class OpenCLDevice implements IDevice
                 null,
                 null
         );
-        _mapping.put(tensor, newClt);
+        WeakTensorReference r = new WeakTensorReference(tensor, _reference_queue);
+        _mapping.put(r, newClt);
+        CLEANER.register(tensor, ()->{_rmv(r); System.out.println("Garbage has been removed from GPU!!!");});
         tensor.add(this);
         tensor.setIsOutsourced(true);
         return this;
@@ -184,6 +214,12 @@ public class OpenCLDevice implements IDevice
         clReleaseMemObject(clt.value);
         _mapping.remove(tensor);
         return this;
+    }
+    private void _rmv(WeakTensorReference reference){
+        cl_tsr clt = _mapping.get(reference);
+        clReleaseMemObject(clt.config);//remove translations/shapes from device!
+        clReleaseMemObject(clt.value);
+        _mapping.remove(reference);
     }
 
     @Override
@@ -233,7 +269,8 @@ public class OpenCLDevice implements IDevice
     public IDevice swap(Tsr former, Tsr replacement) {
         cl_tsr clTsr = _mapping.get(former);
         _mapping.remove(former);
-        _mapping.put(replacement, clTsr);
+        WeakTensorReference r = new WeakTensorReference(replacement, _reference_queue);
+        _mapping.put(r, clTsr);
         //replacement.add(this);
         //_replacement.setIsOutsourced(true);
         //former.remove(IDevice.class);
@@ -300,15 +337,7 @@ public class OpenCLDevice implements IDevice
         }
         else
         {
-            if(tsrs[0]==null)//Creating a new tensor:
-            {
-                int[] shp = (IFunction.TYPES.REGISTER[f_id] == "x")
-                                ? Tsr.fcn.indexing.shpOfCon(tsrs[1].shape(), tsrs[2].shape())
-                                : tsrs[1].shape();
-                Tsr output = new Tsr(shp, 0.0);
-                this.add(output);
-                tsrs[0] = output;
-            }
+            _createNewDrainTensorIn(tsrs, f_id);
             if (
                     tsrs.length == 3
                             &&
@@ -318,6 +347,7 @@ public class OpenCLDevice implements IDevice
                                     (!tsrs[1].isOutsourced() && tsrs[1].size() == 1 || !tsrs[2].isOutsourced() && tsrs[2].size() == 1)
                             )
             ) {
+                //_createNewDrainTensorIn(tsrs, f_id);
                 if (tsrs[2].isVirtual() || tsrs[2].size() == 1) {
                     _execute(new Tsr[]{tsrs[0], tsrs[1]}, IFunction.TYPES.LOOKUP.get("idy"), -1);
                     _execute(tsrs[0], tsrs[2].value64()[0], f_id, d);
@@ -326,21 +356,29 @@ public class OpenCLDevice implements IDevice
                     _execute(tsrs[0], tsrs[1].value64()[0], f_id, d);
                 }
             } else {
-                for (Tsr t : tsrs) {
-                    if (!t.isOutsourced()) {
-                        this.add(t);
-                    }
-                }
                 _execute(tsrs, f_id, d);
             }
         }
         return this;
     }
 
-    private Tsr[] _subset(Tsr[] tsrs, int padding, int start, int end){
-        Tsr[] newTsrs = new Tsr[padding+end-start];
+    private Tsr[] _subset(Tsr[] tsrs, int padding, int index, int offset){
+        if(offset<0){
+            index += offset;
+            offset *= -1;
+        }
+        Tsr[] newTsrs = new Tsr[offset+padding];
         for(int i=padding; i<newTsrs.length; i++){
-            newTsrs[padding+i] = tsrs[i+start-padding];
+            newTsrs[i] = tsrs[index+i-padding];
+        }
+        return newTsrs;
+    }
+    private Tsr[] _without(Tsr[] tsrs, int index){
+        Tsr[] newTsrs = new Tsr[tsrs.length-1];
+        int i=0;
+        while(i<newTsrs.length){
+            newTsrs[i] = tsrs[i+((i<index)?0:1)];
+            i++;
         }
         return newTsrs;
     }
@@ -348,11 +386,11 @@ public class OpenCLDevice implements IDevice
     private Tsr[] _offsetted(Tsr[] tsrs, int offset){
         Tsr[] newTsrs = new Tsr[tsrs.length-offset];
         newTsrs[0] = Tsr.fcn.create.newTsrLike(tsrs[1]);//new Tsr(tsrs[1].shape());
-        if(!tsrs[1].has(GraphNode.class)){//Deleting intermediate results!
+        if(!tsrs[1].has(GraphNode.class)&&tsrs[1]!=tsrs[0]){//Deleting intermediate results!
             tsrs[1].delete();
             tsrs[1] = null;
         }
-        if(!tsrs[2].has(GraphNode.class)){//Deleting intermediate results!
+        if(!tsrs[2].has(GraphNode.class)&&tsrs[2]!=tsrs[0]){//Deleting intermediate results!
             tsrs[2].delete();
             tsrs[2] = null;
         }
@@ -363,42 +401,90 @@ public class OpenCLDevice implements IDevice
         return newTsrs;
     }
 
-    public void _execute(Tsr[] tsrs, int f_id, int d){
-        for(Tsr t : tsrs){
-            if(!t.isOutsourced()){
-                this.add(t);
+    public Tsr _execute(Tsr[] tsrs, int f_id, int d){
+        boolean[] notNative = new boolean[tsrs.length];
+        for (int i=0; i<tsrs.length; i++) {
+            if (tsrs[i]!=null && !tsrs[i].isOutsourced()) {
+                this.add(tsrs[i]);
+                notNative[i] = true;
+            } else {
+                notNative[i] = false;
             }
         }
-        if(tsrs.length>3){
+        if(tsrs.length>3) {
             if(d<0){
                 _execute(new Tsr[]{tsrs[0], tsrs[1], tsrs[2]}, f_id, d);
                 Tsr[] newTsrs = _offsetted(tsrs, 1);
                 _execute(newTsrs, f_id, d);//This recursion should work!
                 tsrs[0] = newTsrs[0];
             } else {
+                Tsr[] newTsrs;
                 switch(Function.TYPES.REGISTER[f_id]){
                     case "+": tsrs[0] = Tsr.fcn.create.newTsrLike(tsrs[1]).setTargetValue(1.0f);
                         break;
                     case "-": tsrs[0] = Tsr.fcn.create.newTsrLike(tsrs[1]).setTargetValue((d==0)?1.0f:-1.0f);
                         break;
                     case "^":
+                        newTsrs = _subset(tsrs, 1,  2, tsrs.length-2);
                         if(d>0){
-                            for(int i=0; i<d; i++) {
-
-                            }
+                            newTsrs[0] =  Tsr.fcn.create.newTsrLike(tsrs[1]);
+                            Tsr inner = _execute(newTsrs, IFunction.TYPES.LOOKUP.get("*"), d-1);
+                            Tsr exp = _execute(new Tsr[]{Tsr.fcn.create.newTsrLike(tsrs[1]), inner, tsrs[d]}, IFunction.TYPES.LOOKUP.get("*"), -1);
+                            //Tsr outer =
+                            //Tsr.fcn.create.newTsrLike(tsrs[1])
+                                    tsrs[0] =  _execute(new Tsr[]{tsrs[0], tsrs[1], exp}, f_id, 1);
+                            //tsrs[0] = _execute(new Tsr[]{tsrs[0], inner, outer}, IFunction.TYPES.LOOKUP.get("*"), -1);
+                            inner.delete();
+                            exp.delete();
+                        } else {
+                            newTsrs = _subset(tsrs, 1,  1, tsrs.length);
+                            newTsrs[0] =  Tsr.fcn.create.newTsrLike(tsrs[1]);
+                            Tsr exp = _execute(newTsrs, IFunction.TYPES.LOOKUP.get("*"), -1);
+                            //Tsr.fcn.create.newTsrLike(tsrs[1])
+                            tsrs[0] = _execute(new Tsr[]{tsrs[0], tsrs[1], exp}, f_id, 0);
+                            exp.delete();
                         }
-                        Tsr[] newTrs = _subset(tsrs, 1,  d+1, tsrs.length);
-                        newTrs[0] =  Tsr.fcn.create.newTsrLike(tsrs[1]);
-                        _execute(newTrs, IFunction.TYPES.LOOKUP.get("*"), -1);
-
                         break;
                     case "*":
+                        newTsrs = _without(tsrs, 1+d);
+                        if(newTsrs.length>2){
+                            newTsrs[0] = (newTsrs[0]==null)?Tsr.fcn.create.newTsrLike(tsrs[1]):newTsrs[0];
+                            tsrs[0] = _execute(newTsrs, IFunction.TYPES.LOOKUP.get("*"), -1);
+                        } else {
+                            tsrs[0] = newTsrs[1];
+                        }
+                        break;
+                    case "/":
+                        Tsr a = null;
+                        if(d>1){//[0][1][2][3][4]
+                            newTsrs = _subset(tsrs, 1, 1, d+1);
+                            newTsrs[0] =  Tsr.fcn.create.newTsrLike(tsrs[1]);
+                            a = _execute(newTsrs, IFunction.TYPES.LOOKUP.get("/"), -1);
+                        } else if(d==1){
+                            a = tsrs[1];
+                        } else if(d==0){
+                            a = Tsr.fcn.create.newTsrLike(tsrs[1], 1.0);
+                        }
+                        Tsr b;
+                        if((tsrs.length-(d+2))>1){//  12 / 3 / 0.5 / 4 / 2
+                            newTsrs = _subset(tsrs, 2, d+2, tsrs.length-(d+2));//or (d+2)
+                            newTsrs[1] =  Tsr.fcn.create.newTsrLike(tsrs[1], 1.0);
+                            newTsrs[0] = newTsrs[1];
+                            b = _execute(newTsrs, IFunction.TYPES.LOOKUP.get("/"), -1);
+                        } else {
+                            b = Tsr.fcn.create.newTsrLike(tsrs[1], 1.0);
+                        }
+                        _execute(new Tsr[]{tsrs[0], a, b}, IFunction.TYPES.LOOKUP.get("*"), -1);
+                        _execute(new Tsr[]{tsrs[0], tsrs[0], tsrs[d+1]}, IFunction.TYPES.LOOKUP.get("/"), 1);
+                        if(d==0)a.delete();
+                        b.delete();
                         break;
                     default:
                         break;
                 }
             }
         } else {
+            //_createNewDrainTensorIn(tsrs, f_id);
             int gwz = (tsrs[0]!=null)?tsrs[0].size():tsrs[1].size();
             int offset = (tsrs[0]!=null)?0:1;
             cl_kernel kernel = _platform.getKernels().get(_platform.kernelNameOf(f_id));
@@ -433,6 +519,12 @@ public class OpenCLDevice implements IDevice
                     null
             );
         }
+        for (int i=0; i<tsrs.length; i++) {
+            if (notNative[i]&&tsrs[i]!=null&&!tsrs[i].isUndefined()){
+                this.get(tsrs[i]);//When remove?
+            }
+        }
+        return tsrs[0];
     }
 
     public void _execute(Tsr t, double value, int f_id, int d)
@@ -485,6 +577,22 @@ public class OpenCLDevice implements IDevice
         }
     }
 
+
+    private void _createNewDrainTensorIn(Tsr[] tsrs, int f_id){
+        if(tsrs[0]==null)//Creating a new tensor:
+        {
+            int[] shp = (IFunction.TYPES.REGISTER[f_id] == "x")
+                    ? Tsr.fcn.indexing.shpOfCon(tsrs[1].shape(), tsrs[2].shape())
+                    : tsrs[1].shape();
+            Tsr output = new Tsr(shp, 0.0);
+            this.add(output);
+            tsrs[0] = output;
+        } else {
+            //throw new RuntimeException(
+            //    "[OpenCLDevice]:[ERROR]: Trying to create tensor where one is already present! (memory leak!)"
+            //);
+        }
+    }
     //---
 
     public String name(){

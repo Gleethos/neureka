@@ -197,9 +197,9 @@ public class Tsr {
             } else {
                 this.setIsVirtual(true);
                 if(this.is64()){
-                    ((double[])_value)[0] = ((Float)value).doubleValue();
+                    ((double[])_value)[0] = ((Double)value).doubleValue();
                 } else {
-                    ((float[])_value)[0] = ((Float)value).floatValue();
+                    ((float[])_value)[0] = ((Double)value).floatValue();
                 }
             }
         }
@@ -832,11 +832,18 @@ public class Tsr {
     }
 
     public Tsr delete() {
+        //if(isUndefined()){
+        //    return this;//THIS SHOULD NOT BE CALLED!! TODO RESOLVE!
+        //}
         if (this.isOutsourced()) {
             ((IDevice) this.find(IDevice.class)).rmv(this);
         }
-        if(this.has(GraphNode.class) && !((GraphNode)this.find(GraphNode.class)).isVirtual()){
-            throw new IllegalStateException("Trying to delete a tensor which is part of a function graph!");
+        GraphNode node =((GraphNode)this.find(GraphNode.class));
+        if(node != null){
+            if(!node.isVirtual() && node.isUsedAsDerivative()){
+                throw new IllegalStateException("Trying to delete a tensor which is part of a function graph and used as derivative!");
+            }
+            node.deathBy(node);
         }
         _flags = -1;
         _value = null;
@@ -987,12 +994,31 @@ public class Tsr {
 
         }
 
-        public static class create{
-            public static Tsr newTsrLike(Tsr template){//The output tensor will not have gradients!
+        public static class create
+        {
+            private static Tsr _newEmptyLike(Tsr template){
                 Tsr t = new Tsr();
                 t._shape = template._shape;
                 t._idxmap = template._idxmap;
                 t._translation = template.translation();
+                return t;
+            }
+
+            public static Tsr newTsrLike(Tsr template, double value){
+                Tsr t = _newEmptyLike(template);
+                if(template.is32()){
+                    t.setTargetValue((float)value);
+                } else {
+                    t.setTargetValue(value);
+                }
+                if(template.isOutsourced()){
+                    ((IDevice)template.find(IDevice.class)).add(t);
+                }
+                return t;
+            }
+
+            public static Tsr newTsrLike(Tsr template){//The output tensor will not have gradients!
+                Tsr t = _newEmptyLike(template);
                 if(template.is32()){
                     t.setTargetValue32(new float[template.size()]);
                 } else {
@@ -1003,6 +1029,7 @@ public class Tsr {
                 }
                 return t;
             }
+
 
             public static Tsr newTsr(double value, int[] shape) {
                 int sze = indexing.szeOfShp(shape);

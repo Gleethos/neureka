@@ -2,6 +2,9 @@ package neureka.core.device;
 
 import neureka.core.Tsr;
 
+import java.util.Collection;
+import java.util.List;
+
 public interface IDevice
 {
     void dispose();
@@ -25,4 +28,7 @@ public interface IDevice
     double[] value64Of(Tsr tensor, boolean grd);
 
     float[] value32Of(Tsr tensor, boolean grd);
+
+    Collection<Tsr> tensors();
+
 }
