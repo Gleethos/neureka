@@ -1,18 +1,18 @@
 package util;
 import neureka.core.Tsr;
+import neureka.frame.MessageFrame;
 import org.junit.Assert;
-import neureka.frame.NMessageFrame;
 
 public class NTester extends Assert
 {
-    private NMessageFrame _verbose_frame;
+    private MessageFrame _verbose_frame;
 
-    private static NMessageFrame RESULT_FRAME;
+    private static MessageFrame RESULT_FRAME;
     private static volatile int _global_tests;
     static {
         _global_tests = 0;
         if(System.getProperty("os.name").toLowerCase().contains("windows")){
-            RESULT_FRAME = new NMessageFrame("[NEUREKA UNIT TEST]: results");
+            RESULT_FRAME = new MessageFrame("[NEUREKA UNIT TEST]: results");
         }
     }
     protected static String BAR = "[|]";
@@ -27,7 +27,7 @@ public class NTester extends Assert
 
     public NTester(String name) {
         if(System.getProperty("os.name").toLowerCase().contains("windows")){
-            _verbose_frame = new NMessageFrame("[NEUREKA UNIT TEST]:("+name+"): verbose results");
+            _verbose_frame = new MessageFrame("[NEUREKA UNIT TEST]:("+name+"): verbose results");
             printlnResult("\nT[ "+name+" ]:");
         }
         _global_tests++;
@@ -35,7 +35,7 @@ public class NTester extends Assert
 
     public NTester(String name, boolean liveLog){
         if(liveLog && System.getProperty("os.name").toLowerCase().contains("windows")){
-            _verbose_frame = new NMessageFrame(name+" - TEST PROCESS");
+            _verbose_frame = new MessageFrame(name+" - TEST PROCESS");
             printResult("\nT["+name+"]: ");
         }
         _global_tests++;

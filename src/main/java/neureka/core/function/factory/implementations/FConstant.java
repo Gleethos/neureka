@@ -1,9 +1,9 @@
 package neureka.core.function.factory.implementations;
 
 import neureka.core.Tsr;
-import neureka.core.function.IFunction;
+import neureka.core.function.Function;
 
-public class FConstant implements IFunction
+public class FConstant implements Function
 {
 	private double _value;
 	public double value(){
@@ -27,7 +27,7 @@ public class FConstant implements IFunction
 
 
 	@Override
-	public IFunction newBuild(String expression)
+	public Function newBuild(String expression)
 	{	
 		String number = "";
 		for(int i=0; i<expression.length(); i++) 

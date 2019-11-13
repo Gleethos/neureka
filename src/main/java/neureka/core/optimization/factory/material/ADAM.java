@@ -1,8 +1,7 @@
 package neureka.core.optimization.factory.material;
 
 import neureka.core.Tsr;
-import neureka.core.function.IFunction;
-import neureka.core.function.factory.Function;
+import neureka.core.function.Function;
 import neureka.core.function.factory.assembly.FunctionBuilder;
 
 public class ADAM {
@@ -28,7 +27,7 @@ public class ADAM {
     }
 
     private void _optimize(){
-        IFunction inject = FunctionBuilder.build("I[0]<<Ig[1]", false);
+        Function inject = FunctionBuilder.build("I[0]<<Ig[1]", false);
         Tsr g = new Tsr(w.shape());
         inject.activate(new Tsr[]{g, w});
 
@@ -42,8 +41,8 @@ public class ADAM {
         vh = new Tsr(v, "/(1-", b2, ")");
 
         Tsr newW = new Tsr(w,"-",a,"*(",mh,"/(",vh,"^-2+",e,"))");
-        IFunction f = FunctionBuilder.build("I[0]<<I[1]", false);
-        IFunction r = FunctionBuilder.build("Ig[0]<<0", false);
+        Function f = FunctionBuilder.build("I[0]<<I[1]", false);
+        Function r = FunctionBuilder.build("Ig[0]<<0", false);
         f.activate(new Tsr[]{w, newW});
         r.activate(new Tsr[]{w});
     }

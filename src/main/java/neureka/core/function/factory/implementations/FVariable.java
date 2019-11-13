@@ -1,9 +1,9 @@
 package neureka.core.function.factory.implementations;
 
 import neureka.core.Tsr;
-import neureka.core.function.IFunction;
+import neureka.core.function.Function;
 
-public class FVariable implements IFunction, IProvider {
+public class FVariable implements Function, IProvider {
 
     private boolean _providesGradient = false;
 
@@ -27,7 +27,7 @@ public class FVariable implements IFunction, IProvider {
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
-    public IFunction newBuild(final String equation) {
+    public Function newBuild(final String equation) {
         if(equation.contains("g")){
             _providesGradient = true;
         }

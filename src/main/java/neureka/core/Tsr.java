@@ -1,8 +1,7 @@
 package neureka.core;
 
-import neureka.core.device.IDevice;
-import neureka.core.device.aparapi.AparapiDevice;
-import neureka.core.function.IFunction;
+import neureka.core.device.Device;
+import neureka.core.function.Function;
 import neureka.core.function.factory.autograd.GraphNode;
 import neureka.core.utility.DataHelper;
 import org.jetbrains.annotations.Contract;
@@ -21,7 +20,7 @@ public class Tsr {
 
     // DEFAULT DEVICE (HOST CPU)
     //=========================
-    private static IDevice CPU;
+    private static Device CPU;
     //OpenClDevice!!!!!!!
 
     //STATIC FUNCTIONS MEMORY:
@@ -30,7 +29,7 @@ public class Tsr {
 
     static {
         CONFIGS = new HashMap<>();//The things we do for memory
-        CPU = new AparapiDevice(null);//<= creates CPU-Aparapi-Kernel
+        CPU = null;//new AparapiDevice(null);//<= creates CPU-Aparapi-Kernel
     }
     //-----------------------------------------------------------------------
 
@@ -100,9 +99,9 @@ public class Tsr {
     private Object _value, _gradient;
     //-----------------------------------------------------------------------
 
-    public IDevice device() {
+    public Device device() {
         if (this.isOutsourced()) {
-            return (IDevice) this.find(IDevice.class);
+            return (Device) this.find(Device.class);
         }
         return CPU;
     }
@@ -143,7 +142,7 @@ public class Tsr {
 
     public Tsr setTargetValue64(double[] value){
         if(this.isOutsourced()){
-            ((IDevice) this.find(IDevice.class)).overwrite64(this, value);
+            ((Device) this.find(Device.class)).overwrite64(this, value);
         } else {
             if(this.gradientIsTargeted()){
                 _gradient = value;
@@ -156,7 +155,7 @@ public class Tsr {
 
     public Tsr setTargetValue32(float[] value){
         if(this.isOutsourced()){
-            ((IDevice) this.find(IDevice.class)).overwrite32(this, value);
+            ((Device) this.find(Device.class)).overwrite32(this, value);
         } else {
             if(this.gradientIsTargeted()){
                 _gradient = value;
@@ -207,8 +206,8 @@ public class Tsr {
     }
 
     public double[] gradient64() {
-        if (this.rqsGradient() && this.isOutsourced() && this.has(IDevice.class)) {
-            return ((IDevice) find(IDevice.class)).value64Of(this, true);
+        if (this.rqsGradient() && this.isOutsourced() && this.has(Device.class)) {
+            return ((Device) find(Device.class)).value64Of(this, true);
         }
         return (this.is64())?(double[])_gradient:DataHelper.floatToDouble((float[])_gradient);
     }
@@ -218,10 +217,10 @@ public class Tsr {
 
     public Tsr addToGradient(Tsr g) {
         if(this.isOutsourced()){
-            IDevice device = (IDevice) this.find(IDevice.class);
+            Device device = (Device) this.find(Device.class);
             this.setGradientIsTargeted(true);
             device.add(g);
-            device.execute(new Tsr[]{this, g}, IFunction.TYPES.LOOKUP.get("<"), -1);
+            device.execute(new Tsr[]{this, g}, Function.TYPES.LOOKUP.get("<"), -1);
             device.get(g);
             this.setGradientIsTargeted(false);
         } else {
@@ -251,7 +250,7 @@ public class Tsr {
 
     public Tsr to32(){
         if(this.is64()){
-            IDevice device = (IDevice) this.find(IDevice.class);
+            Device device = (Device) this.find(Device.class);
             if(device!=null){
                 device.get(this);
             }
@@ -266,7 +265,7 @@ public class Tsr {
 
     public Tsr to64(){
         if(this.is32()){
-            IDevice device = (IDevice) this.find(IDevice.class);
+            Device device = (Device) this.find(Device.class);
             if(device!=null){
                 device.get(this);
             }
@@ -280,8 +279,8 @@ public class Tsr {
     }
 
     public double[] value64() {
-        if (_value == null && this.isOutsourced() && this.has(IDevice.class)) {
-            return ((IDevice) this.find(IDevice.class)).value64Of(this, false);
+        if (_value == null && this.isOutsourced() && this.has(Device.class)) {
+            return ((Device) this.find(Device.class)).value64Of(this, false);
         }
         double[] newValue = (this.is64())?(double[])_value: DataHelper.floatToDouble((float[])_value);
         if (this.isVirtual()) {
@@ -295,8 +294,8 @@ public class Tsr {
     }
 
     public float[] value32(){
-        if (_value == null && this.isOutsourced() && this.has(IDevice.class)) {
-            return ((IDevice) this.find(IDevice.class)).value32Of(this, false);
+        if (_value == null && this.isOutsourced() && this.has(Device.class)) {
+            return ((Device) this.find(Device.class)).value32Of(this, false);
         }
         float[] newValue = (this.is64())?DataHelper.doubleToFloat((double[])_value):(float[])_value;
         if (this.isVirtual()) {
@@ -312,7 +311,7 @@ public class Tsr {
     public Tsr setValue(double[] newValue) {
         _value = newValue;
         if (this.isOutsourced() && newValue != null) {
-            ((IDevice) this.find(IDevice.class)).add(this);
+            ((Device) this.find(Device.class)).add(this);
         }
         return this;
     }
@@ -377,9 +376,9 @@ public class Tsr {
             } else {
                 this.setGradientIsTargeted(false);
                 if(this.isOutsourced()){
-                    ((IDevice)find(IDevice.class)).get(this);
+                    ((Device)find(Device.class)).get(this);
                     _gradient = null;
-                    ((IDevice)find(IDevice.class)).add(this);
+                    ((Device)find(Device.class)).add(this);
                 }
                 _flags -= RQS_GRADIENT_MASK;
             }
@@ -402,12 +401,12 @@ public class Tsr {
         if (isOutsourced) {
             _value = null;
             _gradient = null;
-        } else if (this.has(IDevice.class)) {
-            IDevice device = (IDevice) this.find(IDevice.class);
+        } else if (this.has(Device.class)) {
+            Device device = (Device) this.find(Device.class);
             if (device.has(this)) {
                 device.get(this);
             }
-            this.remove(IDevice.class);
+            this.remove(Device.class);
         }
         return this;
     }
@@ -758,7 +757,7 @@ public class Tsr {
         if (tensors == null || tensors.length == 0 || tensors[0] == null) {
             return;
         }
-        Tsr result = IFunction.setup.commit(tensors, operation, doAD);
+        Tsr result = Function.setup.commit(tensors, operation, doAD);
         boolean resultIsUnique = true;
         for(Tsr t : tensors){
             if(t == result){
@@ -812,7 +811,7 @@ public class Tsr {
         _components = tensor._components;
         _flags = tensor._flags;
         if(tensor.isOutsourced()){
-            IDevice device = (IDevice) tensor.find(IDevice.class);
+            Device device = (Device) tensor.find(Device.class);
             device.swap(tensor, this);
         }
         return this;
@@ -836,7 +835,7 @@ public class Tsr {
         //    return this;//THIS SHOULD NOT BE CALLED!! TODO RESOLVE!
         //}
         if (this.isOutsourced()) {
-            ((IDevice) this.find(IDevice.class)).rmv(this);
+            ((Device) this.find(Device.class)).rmv(this);
         }
         GraphNode node =((GraphNode)this.find(GraphNode.class));
         if(node != null){
@@ -1012,7 +1011,7 @@ public class Tsr {
                     t.setTargetValue(value);
                 }
                 if(template.isOutsourced()){
-                    ((IDevice)template.find(IDevice.class)).add(t);
+                    ((Device)template.find(Device.class)).add(t);
                 }
                 return t;
             }
@@ -1025,7 +1024,7 @@ public class Tsr {
                     t.setTargetValue64(new double[template.size()]);
                 }
                 if(template.isOutsourced()){
-                    ((IDevice)template.find(IDevice.class)).add(t);
+                    ((Device)template.find(Device.class)).add(t);
                 }
                 return t;
             }

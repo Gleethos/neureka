@@ -3,7 +3,7 @@ package neureka.core.function.environment;
 import neureka.core.Tsr;
 import neureka.core.function.factory.autograd.GraphLock;
 import neureka.core.function.factory.autograd.GraphNode;
-import neureka.core.function.IFunction;
+import neureka.core.function.Function;
 
 import java.util.HashMap;
 import java.util.TreeMap;
@@ -11,9 +11,9 @@ import java.util.function.Supplier;
 
 public class Cache
 {
-    private final HashMap<String, IFunction> FUNCTIONS = new HashMap<>();
+    private final HashMap<String, Function> FUNCTIONS = new HashMap<>();
 
-    public synchronized HashMap<String, IFunction> FUNCTIONS(){
+    public synchronized HashMap<String, Function> FUNCTIONS(){
         return this.FUNCTIONS;
     }
 
@@ -25,7 +25,7 @@ public class Cache
         lock.release();
     }
 
-    public synchronized Tsr preprocess(Tsr[] input, IFunction function, Supplier<Tsr> activation)
+    public synchronized Tsr preprocess(Tsr[] input, Function function, Supplier<Tsr> activation)
     {
         Tsr untracked = null;
         for(Tsr t : input){
@@ -34,7 +34,7 @@ public class Cache
             }
         }
         if(untracked==null){//If graph tracking (nodes) has not yet been initialized!
-            return IFunction.setup.commit(input, function);
+            return Function.setup.commit(input, function);
         }
         //GraphLock newLock = new GraphLock(function, input);
         GraphLock lock = ((GraphNode)untracked.find(GraphNode.class)).lock();

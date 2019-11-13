@@ -8,16 +8,15 @@ import java.nio.*;
 import java.util.*;
 
 import neureka.core.Tsr;
-import neureka.core.device.IDevice;
+import neureka.core.device.Device;
 import neureka.core.device.WeakTensorReference;
-import neureka.core.function.IFunction;
-import neureka.core.function.factory.Function;
+import neureka.core.function.Function;
 import neureka.core.function.factory.autograd.GraphNode;
 import neureka.core.utility.DataHelper;
 import org.jocl.*;
 
 
-public class OpenCLDevice implements IDevice
+public class OpenCLDevice implements Device
 {
     class cl_tsr{
         public int fp = 1;
@@ -63,7 +62,7 @@ public class OpenCLDevice implements IDevice
     //---
 
     @Override
-    public Collection<Tsr> tensors(){
+    public synchronized Collection<Tsr> tensors(){
         Collection<Object> collection = _mapping.keySet();
         Collection<Tsr> extracted = new ArrayList<>();
         collection.forEach((o)->{
@@ -87,7 +86,7 @@ public class OpenCLDevice implements IDevice
     }
 
     @Override
-    public IDevice get(Tsr tensor) {
+    public Device get(Tsr tensor) {
         tensor.setValue(value64Of(tensor, false));
         if(tensor.rqsGradient()){
             tensor.setValue(value64Of(tensor, true));
@@ -97,7 +96,7 @@ public class OpenCLDevice implements IDevice
     }
 
     @Override
-    public IDevice add(Tsr tensor) {
+    public Device add(Tsr tensor) {
         add(tensor, 1);
         return this;
     }
@@ -146,7 +145,7 @@ public class OpenCLDevice implements IDevice
         );
     }
 
-    public IDevice add(Tsr tensor, int fp) {
+    public Device add(Tsr tensor, int fp) {
         tensor.setIsVirtual(false);//TODO: optimize: if virtual: copy !efficiently
         cl_tsr newClt = new cl_tsr();
         //VALUE TRANSFER:
@@ -208,7 +207,7 @@ public class OpenCLDevice implements IDevice
     }
 
     @Override
-    public IDevice rmv(Tsr tensor) {
+    public Device rmv(Tsr tensor) {
         cl_tsr clt = _mapping.get(tensor);
         clReleaseMemObject(clt.config);//remove translations/shapes from device!
         clReleaseMemObject(clt.value);
@@ -223,7 +222,7 @@ public class OpenCLDevice implements IDevice
     }
 
     @Override
-    public IDevice overwrite64(Tsr tensor, double[] value) {//TODO: Make value an object!
+    public Device overwrite64(Tsr tensor, double[] value) {//TODO: Make value an object!
         cl_tsr clt = _mapping.get(tensor);
         if(clt.fp==1){
             overwrite32(tensor, DataHelper.doubleToFloat(value));
@@ -245,7 +244,7 @@ public class OpenCLDevice implements IDevice
     }
 
     @Override
-    public IDevice overwrite32(Tsr tensor, float[] value) {//TODO: Make value an object!
+    public Device overwrite32(Tsr tensor, float[] value) {//TODO: Make value an object!
         cl_tsr clt = _mapping.get(tensor);
         if(clt.fp==1){
             clEnqueueWriteBuffer(
@@ -266,14 +265,14 @@ public class OpenCLDevice implements IDevice
     }
 
     @Override
-    public IDevice swap(Tsr former, Tsr replacement) {
+    public Device swap(Tsr former, Tsr replacement) {
         cl_tsr clTsr = _mapping.get(former);
         _mapping.remove(former);
         WeakTensorReference r = new WeakTensorReference(replacement, _reference_queue);
         _mapping.put(r, clTsr);
         //replacement.add(this);
         //_replacement.setIsOutsourced(true);
-        //former.remove(IDevice.class);
+        //former.remove(Device.class);
         return this;
     }
 
@@ -323,17 +322,17 @@ public class OpenCLDevice implements IDevice
     }
 
     @Override
-    public IDevice execute(Tsr[] tsrs, int f_id, int d)
+    public Device execute(Tsr[] tsrs, int f_id, int d)
     {
-        if(IFunction.TYPES.REGISTER[f_id]=="<")
+        if(Function.TYPES.REGISTER[f_id]=="<")
         {
             int offset = (tsrs[0]==null)?1:0;
-            this._execute(new Tsr[]{tsrs[0+offset], tsrs[1+offset]}, IFunction.TYPES.LOOKUP.get("idy"), -1);
+            this._execute(new Tsr[]{tsrs[0+offset], tsrs[1+offset]}, Function.TYPES.LOOKUP.get("idy"), -1);
         }
-        else if(IFunction.TYPES.REGISTER[f_id]==">")
+        else if(Function.TYPES.REGISTER[f_id]==">")
         {
             int offset = (tsrs[0]==null)?1:0;
-            _execute(new Tsr[]{tsrs[1+offset], tsrs[0+offset]}, IFunction.TYPES.LOOKUP.get("idy"), -1);
+            _execute(new Tsr[]{tsrs[1+offset], tsrs[0+offset]}, Function.TYPES.LOOKUP.get("idy"), -1);
         }
         else
         {
@@ -349,10 +348,10 @@ public class OpenCLDevice implements IDevice
             ) {
                 //_createNewDrainTensorIn(tsrs, f_id);
                 if (tsrs[2].isVirtual() || tsrs[2].size() == 1) {
-                    _execute(new Tsr[]{tsrs[0], tsrs[1]}, IFunction.TYPES.LOOKUP.get("idy"), -1);
+                    _execute(new Tsr[]{tsrs[0], tsrs[1]}, Function.TYPES.LOOKUP.get("idy"), -1);
                     _execute(tsrs[0], tsrs[2].value64()[0], f_id, d);
                 } else {
-                    _execute(new Tsr[]{tsrs[0], tsrs[2]}, IFunction.TYPES.LOOKUP.get("idy"), -1);
+                    _execute(new Tsr[]{tsrs[0], tsrs[2]}, Function.TYPES.LOOKUP.get("idy"), -1);
                     _execute(tsrs[0], tsrs[1].value64()[0], f_id, d);
                 }
             } else {
@@ -428,18 +427,18 @@ public class OpenCLDevice implements IDevice
                         newTsrs = _subset(tsrs, 1,  2, tsrs.length-2);
                         if(d>0){
                             newTsrs[0] =  Tsr.fcn.create.newTsrLike(tsrs[1]);
-                            Tsr inner = _execute(newTsrs, IFunction.TYPES.LOOKUP.get("*"), d-1);
-                            Tsr exp = _execute(new Tsr[]{Tsr.fcn.create.newTsrLike(tsrs[1]), inner, tsrs[d]}, IFunction.TYPES.LOOKUP.get("*"), -1);
+                            Tsr inner = _execute(newTsrs, Function.TYPES.LOOKUP.get("*"), d-1);
+                            Tsr exp = _execute(new Tsr[]{Tsr.fcn.create.newTsrLike(tsrs[1]), inner, tsrs[d]}, Function.TYPES.LOOKUP.get("*"), -1);
                             //Tsr outer =
                             //Tsr.fcn.create.newTsrLike(tsrs[1])
                                     tsrs[0] =  _execute(new Tsr[]{tsrs[0], tsrs[1], exp}, f_id, 1);
-                            //tsrs[0] = _execute(new Tsr[]{tsrs[0], inner, outer}, IFunction.TYPES.LOOKUP.get("*"), -1);
+                            //tsrs[0] = _execute(new Tsr[]{tsrs[0], inner, outer}, Function.TYPES.LOOKUP.get("*"), -1);
                             inner.delete();
                             exp.delete();
                         } else {
                             newTsrs = _subset(tsrs, 1,  1, tsrs.length);
                             newTsrs[0] =  Tsr.fcn.create.newTsrLike(tsrs[1]);
-                            Tsr exp = _execute(newTsrs, IFunction.TYPES.LOOKUP.get("*"), -1);
+                            Tsr exp = _execute(newTsrs, Function.TYPES.LOOKUP.get("*"), -1);
                             //Tsr.fcn.create.newTsrLike(tsrs[1])
                             tsrs[0] = _execute(new Tsr[]{tsrs[0], tsrs[1], exp}, f_id, 0);
                             exp.delete();
@@ -449,7 +448,7 @@ public class OpenCLDevice implements IDevice
                         newTsrs = _without(tsrs, 1+d);
                         if(newTsrs.length>2){
                             newTsrs[0] = (newTsrs[0]==null)?Tsr.fcn.create.newTsrLike(tsrs[1]):newTsrs[0];
-                            tsrs[0] = _execute(newTsrs, IFunction.TYPES.LOOKUP.get("*"), -1);
+                            tsrs[0] = _execute(newTsrs, Function.TYPES.LOOKUP.get("*"), -1);
                         } else {
                             tsrs[0] = newTsrs[1];
                         }
@@ -459,7 +458,7 @@ public class OpenCLDevice implements IDevice
                         if(d>1){//[0][1][2][3][4]
                             newTsrs = _subset(tsrs, 1, 1, d+1);
                             newTsrs[0] =  Tsr.fcn.create.newTsrLike(tsrs[1]);
-                            a = _execute(newTsrs, IFunction.TYPES.LOOKUP.get("/"), -1);
+                            a = _execute(newTsrs, Function.TYPES.LOOKUP.get("/"), -1);
                         } else if(d==1){
                             a = tsrs[1];
                         } else if(d==0){
@@ -470,12 +469,12 @@ public class OpenCLDevice implements IDevice
                             newTsrs = _subset(tsrs, 2, d+2, tsrs.length-(d+2));//or (d+2)
                             newTsrs[1] =  Tsr.fcn.create.newTsrLike(tsrs[1], 1.0);
                             newTsrs[0] = newTsrs[1];
-                            b = _execute(newTsrs, IFunction.TYPES.LOOKUP.get("/"), -1);
+                            b = _execute(newTsrs, Function.TYPES.LOOKUP.get("/"), -1);
                         } else {
                             b = Tsr.fcn.create.newTsrLike(tsrs[1], 1.0);
                         }
-                        _execute(new Tsr[]{tsrs[0], a, b}, IFunction.TYPES.LOOKUP.get("*"), -1);
-                        _execute(new Tsr[]{tsrs[0], tsrs[0], tsrs[d+1]}, IFunction.TYPES.LOOKUP.get("/"), 1);
+                        _execute(new Tsr[]{tsrs[0], a, b}, Function.TYPES.LOOKUP.get("*"), -1);
+                        _execute(new Tsr[]{tsrs[0], tsrs[0], tsrs[d+1]}, Function.TYPES.LOOKUP.get("/"), 1);
                         if(d==0)a.delete();
                         b.delete();
                         break;
@@ -490,7 +489,7 @@ public class OpenCLDevice implements IDevice
             cl_kernel kernel = _platform.getKernels().get(_platform.kernelNameOf(f_id));
             cl_mem drn = tsrs[offset].gradientIsTargeted()?_mapping.get(tsrs[offset]).grad:_mapping.get(tsrs[offset]).value;
             cl_mem src1 = tsrs[offset+1].gradientIsTargeted()?_mapping.get(tsrs[offset+1]).grad:_mapping.get(tsrs[offset+1]).value;
-            if(IFunction.TYPES.isFunction(f_id)){
+            if(Function.TYPES.isFunction(f_id)){
                 clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
                 clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
                 clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=>src1
@@ -558,21 +557,21 @@ public class OpenCLDevice implements IDevice
         } else {
             /**   Derivatives implementation: (values cannot be derived)    **/
             if(
-                 IFunction.TYPES.REGISTER[f_id]=="+"||
-                 IFunction.TYPES.REGISTER[f_id]=="-"||
-                 IFunction.TYPES.REGISTER[f_id]=="%"
+                 Function.TYPES.REGISTER[f_id]=="+"||
+                 Function.TYPES.REGISTER[f_id]=="-"||
+                 Function.TYPES.REGISTER[f_id]=="%"
             ){
-                _execute(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
-                _execute(t, 1, IFunction.TYPES.LOOKUP.get("+"), -1);
-            } else if(IFunction.TYPES.REGISTER[f_id]=="^"){
-                _execute(t, value-1, IFunction.TYPES.LOOKUP.get("^"), -1);
-                _execute(t, value, IFunction.TYPES.LOOKUP.get("*"), -1);
-            } else if(IFunction.TYPES.REGISTER[f_id]=="*"){
-                _execute(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
-                _execute(t, value, IFunction.TYPES.LOOKUP.get("+"), -1);
-            } else if(IFunction.TYPES.REGISTER[f_id]=="/"){
-                _execute(t, 0, IFunction.TYPES.LOOKUP.get("*"), -1);
-                _execute(t, 1/value, IFunction.TYPES.LOOKUP.get("+"), -1);
+                _execute(t, 0, Function.TYPES.LOOKUP.get("*"), -1);
+                _execute(t, 1, Function.TYPES.LOOKUP.get("+"), -1);
+            } else if(Function.TYPES.REGISTER[f_id]=="^"){
+                _execute(t, value-1, Function.TYPES.LOOKUP.get("^"), -1);
+                _execute(t, value, Function.TYPES.LOOKUP.get("*"), -1);
+            } else if(Function.TYPES.REGISTER[f_id]=="*"){
+                _execute(t, 0, Function.TYPES.LOOKUP.get("*"), -1);
+                _execute(t, value, Function.TYPES.LOOKUP.get("+"), -1);
+            } else if(Function.TYPES.REGISTER[f_id]=="/"){
+                _execute(t, 0, Function.TYPES.LOOKUP.get("*"), -1);
+                _execute(t, 1/value, Function.TYPES.LOOKUP.get("+"), -1);
             }
         }
     }
@@ -581,7 +580,7 @@ public class OpenCLDevice implements IDevice
     private void _createNewDrainTensorIn(Tsr[] tsrs, int f_id){
         if(tsrs[0]==null)//Creating a new tensor:
         {
-            int[] shp = (IFunction.TYPES.REGISTER[f_id] == "x")
+            int[] shp = (Function.TYPES.REGISTER[f_id] == "x")
                     ? Tsr.fcn.indexing.shpOfCon(tsrs[1].shape(), tsrs[2].shape())
                     : tsrs[1].shape();
             Tsr output = new Tsr(shp, 0.0);

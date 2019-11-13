@@ -1,8 +1,8 @@
 package neureka.core.function.factory.autograd;
 
 import neureka.core.Tsr;
-import neureka.core.function.IFunction;
-import neureka.core.function.factory.Function;
+import neureka.core.function.Function;
+import neureka.core.function.factory.AbstractFunction;
 import neureka.core.function.factory.assembly.FunctionBuilder;
 
 import java.util.*;
@@ -13,9 +13,9 @@ import java.util.function.BiConsumer;
  */
 public class GraphNode
 {
-    private static IFunction MUL = FunctionBuilder.build("(I[0]*I[1])", false);
-    private static IFunction ADD = FunctionBuilder.build("(I[0]+I[1])", false);
-    private static IFunction CONV = FunctionBuilder.build("I[0]>>I[1]>>I[2]", false);
+    private static Function MUL = FunctionBuilder.build("(I[0]*I[1])", false);
+    private static Function ADD = FunctionBuilder.build("(I[0]+I[1])", false);
+    private static Function CONV = FunctionBuilder.build("I[0]>>I[1]>>I[2]", false);
 
     /**
      *  This gradient64 node is involved in auto-differentiation.
@@ -56,11 +56,11 @@ public class GraphNode
     private int _mode;
 
     /**
-     * Recorded Function.
+     * Recorded AbstractFunction.
      *
-     * @var IFunction _function
+     * @var Function _function
      * */
-    private IFunction _function;
+    private Function _function;
 
     /**
      * Input tensors. ('Parents' of the tensor of this node)
@@ -179,7 +179,7 @@ public class GraphNode
      * @param inputs
      * @param lock
      */
-    public GraphNode(Tsr output, IFunction function, Tsr[] inputs, GraphLock lock)
+    public GraphNode(Tsr output, Function function, Tsr[] inputs, GraphLock lock)
     {
         if(output==null){
             throw new RuntimeException("[GraphNode]:(constructor): Payload must no be null!");
@@ -217,7 +217,7 @@ public class GraphNode
         _connect(this, output, inputs, function);
     }
 
-    private void _connect(GraphNode node, Tsr output, Tsr[] inputs, IFunction function)
+    private void _connect(GraphNode node, Tsr output, Tsr[] inputs, Function function)
     {
         /** Returning if the above cannot form an AD computation graph! :
          * */
@@ -235,7 +235,7 @@ public class GraphNode
                 int i = 0;
                 for(Tsr input : inputs){
                     GraphNode src_node = ((GraphNode) input.find(GraphNode.class));
-                    if(src_node.function()!=null && src_node.function().id()==IFunction.TYPES.LOOKUP.get("x")){
+                    if(src_node.function()!=null && src_node.function().id()== Function.TYPES.LOOKUP.get("x")){
                         Tsr d = function.derive(inputs, i);//TODO: is this ever used? / visited? - yes but why?
                         node.put(input, d);// Sources created by x-mul are reverse-mode cases!
                     }else{
@@ -282,7 +282,7 @@ public class GraphNode
      * @param function
      * @return int
      */
-    private static int _modeOf(Tsr[] inputs, IFunction function)
+    private static int _modeOf(Tsr[] inputs, Function function)
     {
         int result_mode = 0;
         int[] modes = new int[inputs.length];
@@ -399,7 +399,7 @@ public class GraphNode
                 this.forEach((t, d)->t.backward(MUL.activate(new Tsr[]{error, d})));
             }else if(this.usesReverseAD()){
                 this.forEach((t, d)->{
-                    if(_function.id()==Function.TYPES.LOOKUP.get("x")){// x operation required for chain-rule!
+                    if(_function.id()== AbstractFunction.TYPES.LOOKUP.get("x")){// x operation required for chain-rule!
                         t.backward(CONV.activate(new Tsr[]{error, d, new Tsr(t.shape(), 0)}));
                     }else{
                         MUL.activate(new Tsr[]{error, d});
@@ -417,9 +417,9 @@ public class GraphNode
     }
 
     /**
-     * @return IFunction
+     * @return Function
      */
-    public IFunction function(){
+    public Function function(){
         return _function;
     }
 

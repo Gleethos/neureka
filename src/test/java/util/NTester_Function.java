@@ -1,7 +1,7 @@
 package util;
 
 import neureka.core.Tsr;
-import neureka.core.function.IFunction;
+import neureka.core.function.Function;
 import neureka.core.function.factory.assembly.FunctionBuilder;
 
 public class NTester_Function extends NTester {
@@ -13,7 +13,7 @@ public class NTester_Function extends NTester {
 	
 	public int testExpression(String expression, String expected, String description) 
 	{
-		IFunction function;// = new FunctionBuilder();
+		Function function;// = new FunctionBuilder();
 		function = new FunctionBuilder().build(expression, true);
 		printSessionStart(description);
 		println(BAR +" Value toString: "+expression);
@@ -30,10 +30,10 @@ public class NTester_Function extends NTester {
 		return (printSessionEnd()>0)?1:0;
 	}
 	public int testActivation(String expression, double[] input, double expected, String description) {
-		IFunction function;// = new FunctionBuilder();
+		Function function;// = new FunctionBuilder();
 		function = new FunctionBuilder().build(expression, true);
 		printSessionStart(description);
-		println(BAR +" IFunction: "+expression);
+		println(BAR +" Function: "+expression);
 		String inputStr = "";
 		for(int Ii=0; Ii<input.length; Ii++) {
 			inputStr+=input[Ii]+", ";
@@ -50,10 +50,10 @@ public class NTester_Function extends NTester {
 	}
 
 	public int testDeriviation(String expression, double[] input, int d,  double expected, String description) {
-		IFunction function;// = new FunctionBuilder();
+		Function function;// = new FunctionBuilder();
 		function = new FunctionBuilder().build(expression, true);
 		printSessionStart(description);
-		println(BAR +" Test Deriviation of IFunction: "+expression);
+		println(BAR +" Test Deriviation of Function: "+expression);
 		String inputStr = "";
 		for(int Ii=0; Ii<input.length; Ii++) {
 			inputStr+=input[Ii]+", ";
@@ -70,10 +70,10 @@ public class NTester_Function extends NTester {
 	}
 
 	public int testActivation(String expression, Tsr[] input, Tsr expected, String description) {
-		IFunction function;// = new FunctionBuilder();
+		Function function;// = new FunctionBuilder();
 		function = new FunctionBuilder().build(expression, true);
 		printSessionStart(description);
-		println(BAR +" IFunction: "+expression);
+		println(BAR +" Function: "+expression);
 		String inputStr = "";
 		for(int Ii=0; Ii<input.length; Ii++) {
 			inputStr+=input[Ii]+", ";
@@ -91,10 +91,10 @@ public class NTester_Function extends NTester {
 
 
 	public int testDerivative(String expression, Tsr[] input, int d, Tsr expected, String description) {
-		IFunction function;// = new FunctionBuilder();
+		Function function;// = new FunctionBuilder();
 		function = new FunctionBuilder().build(expression, true);
 		printSessionStart(description);
-		println(BAR +" Deriviation of IFunction: "+expression);
+		println(BAR +" Deriviation of Function: "+expression);
 		String inputStr = "";
 		for(int Ii=0; Ii<input.length; Ii++) {
 			inputStr+=input[Ii]+", ";

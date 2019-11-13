@@ -1,8 +1,8 @@
 package util;
 
 import neureka.core.Tsr;
-import neureka.core.device.IDevice;
-import neureka.core.function.factory.Function;
+import neureka.core.device.Device;
+import neureka.core.function.factory.AbstractFunction;
 
 public class NTester_Tensor extends NTester 
 {
@@ -11,12 +11,12 @@ public class NTester_Tensor extends NTester
         super(name);
     }
 
-    public int testShareDevice(IDevice device, Tsr[] tsrs){
+    public int testShareDevice(Device device, Tsr[] tsrs){
         printSessionStart("Testing if tensors share device!");
-        println(BAR +"  IDevice: "+device.toString());
+        println(BAR +"  Device: "+device.toString());
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         for(Tsr t : tsrs){
-            IDevice found = ((IDevice)t.find(IDevice.class));
+            Device found = ((Device)t.find(Device.class));
             this.assertStringContains("result", (found==null)?"null":found.toString(), device.toString());
         }
         return (printSessionEnd()>0)?1:0;
@@ -35,7 +35,7 @@ public class NTester_Tensor extends NTester
 
     public int testTensorAutoGrad(Tsr[] source, String operation, String[] expected){
         printSessionStart("Testing Tsr: autograd!");
-        println(BAR +"  IFunction: "+operation);
+        println(BAR +"  Function: "+operation);
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         Tsr product = new Tsr(source, operation);
         String result = product.toString("rc");
@@ -48,7 +48,7 @@ public class NTester_Tensor extends NTester
 
     public int testTensorAutoGrad(Tsr[] source, String operation, String[] expected, Tsr error, double[][] expectedGradient){
         printSessionStart("Testing Tsr: autograd!");
-        println(BAR +"  IFunction: "+operation);
+        println(BAR +"  Function: "+operation);
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         Tsr product = new Tsr(source, operation);
         product.backward(error);
@@ -88,7 +88,7 @@ public class NTester_Tensor extends NTester
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.fcn.indexing.shpOfCon(frstShp, scndShp);
         double[] rsltData = new double[Tsr.fcn.indexing.szeOfShp(drnMxd)];
-        Function.exec.convection(
+        AbstractFunction.exec.convection(
                 new Tsr(drnMxd, rsltData),
                 new Tsr(frstShp, frstData),
                 new Tsr(scndShp, scondData)
@@ -104,7 +104,7 @@ public class NTester_Tensor extends NTester
     ){
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.fcn.indexing.shpOfCon(frstShp, scndShp);
-        Function.exec.convection_inv(
+        AbstractFunction.exec.convection_inv(
                 new Tsr(frstShp, frstData),
                 (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
                 (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)

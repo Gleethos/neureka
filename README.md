@@ -86,7 +86,7 @@ Convolution:
 
 GPU execution:
 ```
-        IDevice gpu = new AparapiDevice("nvidia FP64");
+        Device gpu = new AparapDevice("nvidia FP64");
         x = new Tsr(
                 new int[]{3, 3},
                 new double[]{

@@ -2,9 +2,9 @@ package neureka.core.function.factory.implementations;
 
 
 import neureka.core.Tsr;
-import neureka.core.function.IFunction;
+import neureka.core.function.Function;
 
-public class FInput implements IFunction, IProvider
+public class FInput implements Function, IProvider
 {
     private int _index;
 
@@ -28,11 +28,11 @@ public class FInput implements IFunction, IProvider
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
-    public IFunction newBuild(final String equation) {
+    public Function newBuild(final String equation) {
         int number = 0;
         for (int i = 0; i < equation.length(); ++i) {
             if (equation.charAt(i) == 'j') {
-                IFunction newCore = new FVariable();
+                Function newCore = new FVariable();
                 newCore = newCore.newBuild(equation);
                 return newCore;
             }

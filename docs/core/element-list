@@ -1,10 +1,7 @@
 unnamed package
-gpu
-gpu.wip
 neureka
 neureka.core
 neureka.core.device
-neureka.core.device.aparapi
 neureka.core.device.openCL
 neureka.core.device.openCL.utility
 neureka.core.function
@@ -18,8 +15,4 @@ neureka.core.optimization.factory.material
 neureka.core.optimization.factory.worker
 neureka.core.utility
 neureka.frame
-neureka.ngui.swing
-neureka.ngui.tile
-neureka.ngui.touch
-neureka.ngui.touch.canvas
 util

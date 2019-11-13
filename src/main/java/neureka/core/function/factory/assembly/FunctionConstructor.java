@@ -2,23 +2,23 @@ package neureka.core.function.factory.assembly;
 
 import neureka.core.Tsr;
 import neureka.core.function.*;
+import neureka.core.function.factory.AbstractFunction;
 import neureka.core.function.factory.implementations.FConstant;
 import neureka.core.function.factory.implementations.FInput;
-import neureka.core.function.factory.Function;
 import neureka.core.function.factory.implementations.FVariable;
 
 import java.util.ArrayList;
 
 public class FunctionConstructor
 {
-    public static IFunction construct(int f_id, ArrayList<IFunction> sources, boolean doAD)
+    public static Function construct(int f_id, ArrayList<Function> sources, boolean doAD)
     {
         boolean isFlat = true;
-        for(IFunction f : sources){// Function does only reference tip nodes of the function graph:
+        for(Function f : sources){// AbstractFunction does only reference tip nodes of the function graph:
             isFlat = ((f instanceof FInput) || (f instanceof FVariable) || (f instanceof FConstant)) && isFlat;
         }
         if(f_id<=9) {// FUNCTIONS:
-            return new Function(f_id, isFlat, sources, doAD){
+            return new AbstractFunction(f_id, isFlat, sources, doAD){
                 @Override
                 public Tsr activate(Tsr[] inputs, int j) {
                     return CACHE.preprocess(inputs, this,()-> _tensor_activation(sources.get(0).activate(inputs, j), false));
@@ -56,7 +56,7 @@ public class FunctionConstructor
                 }
             };
         }else{
-            return new Function(f_id, isFlat, sources, doAD){
+            return new AbstractFunction(f_id, isFlat, sources, doAD){
                 @Override
                 public Tsr activate(Tsr[] inputs, int j) {
                     return CACHE.preprocess(inputs, this, ()-> _tensor_activation(inputs, j, -1));

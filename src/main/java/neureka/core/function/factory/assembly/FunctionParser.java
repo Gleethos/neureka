@@ -1,6 +1,6 @@
 package neureka.core.function.factory.assembly;
 
-import neureka.core.function.IFunction;
+import neureka.core.function.Function;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -11,8 +11,8 @@ import java.util.ListIterator;
 public class FunctionParser {
     public static int numberOfOperationsWithin(final List<String> operations) {
         int Count = 0;
-        for (int i = 0; i < IFunction.TYPES.REGISTER.length; ++i) {
-            if (FunctionParser.containsOperation(IFunction.TYPES.REGISTER[i], operations)) {
+        for (int i = 0; i < Function.TYPES.REGISTER.length; ++i) {
+            if (FunctionParser.containsOperation(Function.TYPES.REGISTER[i], operations)) {
                 ++Count;
             }
         }
@@ -77,8 +77,8 @@ public class FunctionParser {
         if (operation.length() > 8) {
             return false;
         }
-        for (int i = 0; i < IFunction.TYPES.REGISTER.length; ++i) {
-            if (IFunction.TYPES.REGISTER[i].equals(operation)) {
+        for (int i = 0; i < Function.TYPES.REGISTER.length; ++i) {
+            if (Function.TYPES.REGISTER[i].equals(operation)) {
                 return true;
             }
         }
@@ -177,23 +177,23 @@ public class FunctionParser {
         if (exp.equals("()")) {
             return "";
         }
-        exp = exp.replace("sigmoid", IFunction.TYPES.REGISTER[1]);
-        exp = exp.replace("quadratic", IFunction.TYPES.REGISTER[3]);
-        exp = exp.replace("quadr", IFunction.TYPES.REGISTER[3]);
-        exp = exp.replace("lig", IFunction.TYPES.REGISTER[4]);
-        exp = exp.replace("ligmoid", IFunction.TYPES.REGISTER[4]);
-        exp = exp.replace("softplus", IFunction.TYPES.REGISTER[4]);
-        exp = exp.replace("spls", IFunction.TYPES.REGISTER[4]);
-        exp = exp.replace("ligm", IFunction.TYPES.REGISTER[4]);
-        exp = exp.replace("identity", IFunction.TYPES.REGISTER[5]);
-        exp = exp.replace("ident", IFunction.TYPES.REGISTER[5]);
-        exp = exp.replace("self", IFunction.TYPES.REGISTER[5]);
-        exp = exp.replace("copy", IFunction.TYPES.REGISTER[5]);
-        exp = exp.replace("gaussian", IFunction.TYPES.REGISTER[6]);
-        exp = exp.replace("gauss", IFunction.TYPES.REGISTER[6]);
-        exp = exp.replace("absolute", IFunction.TYPES.REGISTER[7]);
-        exp = exp.replace("summation", IFunction.TYPES.REGISTER[10]);
-        exp = exp.replace("product", IFunction.TYPES.REGISTER[11]);
+        exp = exp.replace("sigmoid", Function.TYPES.REGISTER[1]);
+        exp = exp.replace("quadratic", Function.TYPES.REGISTER[3]);
+        exp = exp.replace("quadr", Function.TYPES.REGISTER[3]);
+        exp = exp.replace("lig", Function.TYPES.REGISTER[4]);
+        exp = exp.replace("ligmoid", Function.TYPES.REGISTER[4]);
+        exp = exp.replace("softplus", Function.TYPES.REGISTER[4]);
+        exp = exp.replace("spls", Function.TYPES.REGISTER[4]);
+        exp = exp.replace("ligm", Function.TYPES.REGISTER[4]);
+        exp = exp.replace("identity", Function.TYPES.REGISTER[5]);
+        exp = exp.replace("ident", Function.TYPES.REGISTER[5]);
+        exp = exp.replace("self", Function.TYPES.REGISTER[5]);
+        exp = exp.replace("copy", Function.TYPES.REGISTER[5]);
+        exp = exp.replace("gaussian", Function.TYPES.REGISTER[6]);
+        exp = exp.replace("gauss", Function.TYPES.REGISTER[6]);
+        exp = exp.replace("absolute", Function.TYPES.REGISTER[7]);
+        exp = exp.replace("summation", Function.TYPES.REGISTER[10]);
+        exp = exp.replace("product", Function.TYPES.REGISTER[11]);
 
         int bracketDepth = 0;
         for (int Ei = 0; Ei < exp.length(); ++Ei) {

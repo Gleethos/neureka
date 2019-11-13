@@ -1,5 +1,5 @@
 import neureka.core.Tsr;
-import neureka.core.function.IFunction;
+import neureka.core.function.Function;
 import neureka.core.function.factory.assembly.FunctionBuilder;
 import neureka.core.function.factory.autograd.GraphNode;
 import org.junit.Test;
@@ -178,8 +178,8 @@ public class TestOnCPU {
         tester.testTensor(x, new String[]{"[2x2]:(-1.0, 2.0, -3.0, 3.0):g:(-3.0, -3.0, -3.0, -3.0)"});
         //---
         x = new Tsr(new int[]{1}, 0.1).setRqsGradient(true);
-        IFunction tanh = FunctionBuilder.build("tanh(i0)", true);
-        IFunction tenxx = FunctionBuilder.build("i0*100", true);
+        Function tanh = FunctionBuilder.build("tanh(i0)", true);
+        Function tenxx = FunctionBuilder.build("i0*100", true);
         z = tenxx.activate(new Tsr[]{tanh.activate(new Tsr[]{x})});
         tester.testTensor(z, new String[]{"[1]:(9.95037E0)"});
         z.backward(new Tsr(new int[]{1}, 1));
@@ -212,11 +212,11 @@ public class TestOnCPU {
         tensor1 = new Tsr(3).setRqsGradient(true);
         tensor2 = new Tsr(-4);
         tensor3 = new Tsr(2);
-        Tsr result = IFunction.setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "(Ig[0]<-I[1])->I[2]", true);
+        Tsr result = Function.setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "(Ig[0]<-I[1])->I[2]", true);
         tester.testContains(
                 result.toString(),
                 new String[]{"(-4.0)"},
-                "Testing if IFunction.setup.commit() returns non unique result!"
+                "Testing if Function.setup.commit() returns non unique result!"
         );
         //---
         tensor1 = new Tsr(new int[]{1, 3}, 2);
@@ -428,20 +428,20 @@ public class TestOnCPU {
         tester.testTensorAutoGrad(new Tsr[]{tensor1, tensor2, tensor3},
                 "i0<<i1<<i2",
                 new String[]{"empty"});
-        result = IFunction.setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i0<<i1<<i2", true);
+        result = Function.setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i0<<i1<<i2", true);
         tester.testContains(
                 result.toString(),
                 new String[]{"[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"},
-                "Testing if IFunction.setup.commit() returns non unique result!"
+                "Testing if Function.setup.commit() returns non unique result!"
         );
         tester.testTensorAutoGrad(new Tsr[]{tensor1, tensor2, tensor3},//TODO:REACTIVATE!
                 "i2>>i1>>i0",
                 new String[]{"empty"});
-        result = IFunction.setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i2>>i1>>i0", true);
+        result = Function.setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i2>>i1>>i0", true);
         tester.testContains(
                 result.toString(),
                 new String[]{"[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"},
-                "Testing if IFunction.setup.commit() returns non unique result!"
+                "Testing if Function.setup.commit() returns non unique result!"
         );
         //=====================
         //---

@@ -1,6 +1,6 @@
 package neureka.core.function.factory.autograd;
 import neureka.core.Tsr;
-import neureka.core.function.IFunction;
+import neureka.core.function.Function;
 
 public class GraphLock
 {
@@ -8,13 +8,13 @@ public class GraphLock
      *  GraphLock is a component of tensors which lends it's identity
      *  as TreeMap key for function result caching and also in order to deny other functions
      *  access to tensors which are involved in the computation graph rendered by the 'lock owner',
-     *  namely any IFunction object!
+     *  namely any Function object!
      * */
 
     /**
      *  Owner of the lock of a graph:
      */
-    private IFunction _owner;
+    private Function _owner;
 
     /**
      *  Lock status (is locked if the graph is currently processing)
@@ -26,7 +26,7 @@ public class GraphLock
      * @param owner => The function which currently processes the graph of nodes of which this lock is referenced by.
      * @param sources
      */
-    public GraphLock(IFunction owner, Tsr[] sources){
+    public GraphLock(Function owner, Tsr[] sources){
         this._owner = owner;
     }
 
