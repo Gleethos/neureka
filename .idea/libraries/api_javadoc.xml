@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="api-javadoc">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/src/objectdb-2.7.6/doc/api-javadoc.zip!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
