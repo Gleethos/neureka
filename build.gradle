@@ -1,11 +1,11 @@
 
 plugins {
-    //id 'jacoco'
+    id 'jacoco'
     id 'java'
     id 'idea'
     //id 'application'
     id 'groovy'
-    id 'java-library'
+    //id 'java-library'
 }
 
 group 'com.gleethos'
@@ -37,6 +37,23 @@ dependencies {
     compile 'org.jetbrains:annotations:16.0.2'
 
 }
+
+jacoco {
+    toolVersion = "0.8.5"
+    reportsDir = file("build/reports/coverage")
+}
+
+
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("build/reports/coverage/jacocoHtml")
+    }
+}
+
+check.dependsOn jacocoTestReport
 
 //jar {
 //    mainClassName = 'Main'
