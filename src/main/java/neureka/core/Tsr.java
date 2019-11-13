@@ -579,8 +579,36 @@ public class Tsr {
         _construct(new Object[]{arg});
     }
     public Tsr(Object arg1, Object arg2){
-        _construct(new Object[]{arg1, arg2});
+        if(arg1 instanceof ArrayList){
+            arg1 = ((ArrayList)arg1).toArray();
+        }
+        if(arg1 instanceof Object[]){
+            if(((Object[])arg1)[0] instanceof Integer){
+                int length = ((Object[])arg1).length;
+                int[] array = new int[length];
+                for(int i=0; i<length; i++){
+                    array[i] = ((Integer)((Object[])arg1)[i]).intValue();
+                }
+                arg1 = array;
+            } else {
+                int length = ((Object[])arg1).length;
+                Tsr[] array = new Tsr[length];
+                for(int i=0; i<length; i++){
+                    array[i] = (Tsr)((Object[])arg1)[i];
+                }
+                arg1 = array;
+            }
+        }
+        if(arg1 instanceof int[] && (arg2 instanceof Double ||arg2 instanceof Integer)){
+            arg2 = (arg2 instanceof Integer)?((Integer)arg2).doubleValue():arg2;
+            _construct((int[])arg1, ((Double)arg2).doubleValue());
+        } else if(arg1 instanceof Tsr[] && arg2 instanceof String){
+            _construct((Tsr[])arg1, (String)arg2, true);
+        } else {
+            _construct(new Object[]{arg1, arg2});
+        }
     }
+
     public Tsr(Object arg1, Object arg2, Object arg3){
         _construct(new Object[]{arg1, arg2, arg3});
     }
@@ -852,6 +880,33 @@ public class Tsr {
         _components = null;
         _gradient = null;
         return this;
+    }
+
+    //TENSOR OPERATION (OVERLOADABLE):
+    //=================================
+    public Tsr plus(Tsr other) {
+        return new Tsr(new Tsr[]{this, other}, "i0+i1");
+    }
+    public Tsr minus(Tsr other) {
+        return new Tsr(new Tsr[]{this, other}, "i0-i1");
+    }
+    public Tsr multiply(Tsr other) {
+        return new Tsr(new Tsr[]{this, other}, "i0*i1");
+    }
+    public Tsr div(Tsr other) {
+        return new Tsr(new Tsr[]{this, other}, "i0/i1");
+    }
+    public Tsr mod(Tsr other) {
+        return new Tsr(new Tsr[]{this, other}, "i0%i1");
+    }
+    public Tsr power(Tsr other) {
+        return new Tsr(new Tsr[]{this, other}, "i0^i1");
+    }
+    public Tsr xor(Tsr other) {
+        return new Tsr(new Tsr[]{this, other}, "i0^i1");
+    }
+    public boolean equals(Tsr other) {
+        return (this.hashCode()==other.hashCode());
     }
 
     //ELEMENTARY OPERATIONS:
