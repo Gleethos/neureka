@@ -12,7 +12,6 @@ env:
 
 before_install:
   - chmod +x gradlew
-  - pip install codecov
   #- sudo apt-get update
   #- sudo apt install ocl-icd-opencl-dev
   #- sudo apt-get -qq update
@@ -24,5 +23,4 @@ script:
   #- ./gradlew codeCoverageReport
   
 after_success:
-  - codecov
   - bash <(curl -s https://codecov.io/bash)
