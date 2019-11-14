@@ -3,6 +3,8 @@ import neureka.core.Tsr;
 import neureka.frame.MessageFrame;
 import org.junit.Assert;
 
+import java.util.List;
+
 public class NTester extends Assert
 {
     private MessageFrame _verbose_frame;
@@ -59,7 +61,18 @@ public class NTester extends Assert
 
     }
 
+    public int testContains(String result, List<String> expected, String description){
+        printSessionStart(description);
+        println(BAR + "  Tensor: "+result);
+        println(BAR + "-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
+        for(String element : expected){
+            this.assertStringContains("result", result, element);
+        }
+        return (printSessionEnd()>0)?1:0;
+    }
+
     public int testContains(String result, String[] expected, String description){
+
         printSessionStart(description);
         println(BAR + "  Tensor: "+result);
         println(BAR + "-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");

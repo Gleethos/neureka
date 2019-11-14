@@ -36,6 +36,7 @@ dependencies {
     compile "org.jocl:jocl:2.0.0"
     compile 'org.jetbrains:annotations:16.0.2'
     compile 'org.codehaus.groovy:groovy-all:2.4.14'
+    //compile group: 'org.python', name: 'jython', version: '2.7.2b2'
 }
 
 jacoco {

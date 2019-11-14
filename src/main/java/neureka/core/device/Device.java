@@ -11,6 +11,7 @@ public interface Device
     Device get(Tsr tensor);
 
     Device add(Tsr tensor);
+    Device add(Tsr tensor, Tsr parent);
 
     boolean has(Tsr tensor);
 
@@ -21,6 +22,8 @@ public interface Device
     Device overwrite32(Tsr tensor, float[] value);
 
     Device swap(Tsr former, Tsr replacement);
+
+
 
     Device execute(Tsr[] tsrs, int f_id, int d);
 

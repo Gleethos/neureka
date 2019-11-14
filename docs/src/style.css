@@ -243,9 +243,40 @@ header p {font-family: Brush Script Std, Brush Script MT, cursive;
 {
     background-color: #00b9d3;  box-shadow: inset 0 0 55px 7px #00cdff; border-radius: 2.0em;
     margin-top: 2em; margin-bottom: 2em;
-    padding-bottom:4.5em; padding-top: 2.25em;
+    padding-bottom:3.5em; padding-top: 2.25em;
     height: 100%;
     background: rgba(200, 200, 255, 0.3);
+    text-align: center;
+}/*rgba(46, 80, 95, 0.3)*/
+
+
+.mainContentWrapper h1
+{
+    text-align: center;
+    font-family: "sans-serif", cursive, serif;
+}
+.mainContentWrapper h2
+{
+    display: inline-block;
+    text-align: center;
+    font-family: "sans-serif", cursive, serif;
+    border-bottom: 0.05em solid black;
+    box-shadow:  0 0 0.1em 0.01em #000000;
+    margin-bottom: 0.8em;
+    padding: 0.2em 0.7em 0.2em 0.7em;  color: #00033d;
+    text-align: center;
+    letter-spacing: 2px;
+    background-color: rgba(0, 185, 204, 0.5);
+    border-radius: 0.8em;
+}
+
+.mainContentWrapper img
+{
+    padding: 0.5em;
+    margin: 0.175em;
+    border: 0.05em solid black;
+    box-shadow: inset 0 0 3px 1px black;
+    border-radius: 0.2em; color: black;
 }/*rgba(46, 80, 95, 0.3)*/
 
 
@@ -271,16 +302,17 @@ code
 }
 
 .contentBox img
-{border: 5px solid gery; margin: 15px;
+{
+    border: 5px solid grey; margin: 15px;
     box-shadow: 0 0 5px 2px black; width:100%;
 }
 
 .contentBox p
 {/*  border-bottom: 0.1em solid #2e505f;      */
     padding: 0.08em;
-    margin-top: 0; margin-left: 0; margin-right: 0; margin-bottom: 0.2em;}
-
-
+    margin-top: 0; margin-left: 0; margin-right: 0; margin-bottom: 0.2em;
+    text-align: left;
+}
 
 .contentBox h3
 {
@@ -290,20 +322,13 @@ code
     padding: 0.1em; color: #00033d;
     text-align: center;
     letter-spacing: 2px;
-    background-color: cyan; border-radius: 0.085em 0.085em 0 0;}
-
-.contentSegment
-{border: 5px solid cyan; margin: 0em;
-    box-shadow: 0 0 5px 2px black; }
-
-.uploadBox{
-    color: cyan;
-    background-color: black; box-shadow: 0 0 10px 2px black; border-radius: 0.5em;
-    margin: 0.5em;
-    padding-bottom: 2em; padding-top:0.5em; height: 100%; width: 15.5em;
+    background-color: cyan; border-radius: 0.085em 0.085em 0 0;
 }
-.uploadBox button{color: black; float: left;}
-.uploadBox input{color: cyan; float: left;}
+
+.contentSegment {
+    border: 5px solid cyan; margin: 0em;
+    box-shadow: 0 0 5px 2px black;
+}
 
 .leftFloating{float: left; }
 .rightFloating{float: right; }
@@ -314,7 +339,8 @@ code
 
 video{width: 100%; height: auto;}
 
-.topEarthGradient{
+.topEarthGradient
+{
     background-color: blue; z-index: 0; position: relative;
 
     padding-left: 0.0em;
@@ -376,8 +402,8 @@ footer section
     margin-bottom: 20px;
 }
 
-footer section h4
-{text-decoration: underline;
+footer section h4 {
+    text-decoration: underline;
     text-indent: 5px;
     margin: 10px;
 }
@@ -567,7 +593,6 @@ footer ul
 
 .fixed-nav {
     height: 2em;
-    position: auto;
     width: 100%;
     z-index: 9000;
     left: 0px;

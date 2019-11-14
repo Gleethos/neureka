@@ -97,62 +97,36 @@ public class OpenCLDevice implements Device
 
     @Override
     public Device add(Tsr tensor) {
-        add(tensor, 1);
+        _add(tensor, 1, null);
         return this;
     }
 
     @Override
-    public boolean has(Tsr tensor) {
-        return _mapping.containsKey(tensor);
+    public Device add(Tsr tensor, Tsr parent) {
+        if(!parent.isOutsourced()){
+            throw new IllegalStateException(
+                    "[OpenClDevice][add(Tsr tensor, Tsr parent)]: Data parent is not outsourced!"
+            );
+        }
+        _add(tensor, 1, _mapping.get(parent));
+        return this;
     }
 
-    private void _store(Tsr tensor, cl_tsr newClTsr, int fp, boolean grd){
-        //cl_tsr newClTsr = new cl_tsr();
-        //tensor.setIsVirtual(false);//TODO: optimize: if virtual: copy !efficiently
-        Pointer p;
-        int size;
-        if(fp==1){
-            float[] data = (grd)?tensor.gradient32():tensor.value32();
-            data = (data==null)?new float[tensor.size()]:data;
-            p = Pointer.to(data);
-            size = data.length;
-        } else {
-            double[] data = (grd)?tensor.gradient64():tensor.value64();
-            data = (data==null)?new double[tensor.size()]:data;
-            p = Pointer.to(data);
-            size = data.length;
-        }
-        //VALUE TRANSFER:
-        cl_mem mem = clCreateBuffer(
-                _platform.getContext(),
-                CL_MEM_READ_WRITE,
-                size * Sizeof.cl_float*fp,
-                null,
-                null
-        );
-        if(grd){
-            newClTsr.grad = mem;
-        } else {
-            newClTsr.value = mem;
-        }
-        clEnqueueWriteBuffer(
-                _queue,
-                mem,
-                true, 0,
-                size * Sizeof.cl_float*fp,
-                p,
-                0, null, null
-        );
-    }
-
-    public Device add(Tsr tensor, int fp) {
+    private Device _add(Tsr tensor, int fp, cl_tsr parent) {
         tensor.setIsVirtual(false);//TODO: optimize: if virtual: copy !efficiently
         cl_tsr newClt = new cl_tsr();
         //VALUE TRANSFER:
-        _store(tensor, newClt, fp, false);
-        if(tensor.rqsGradient()){
-            _store(tensor, newClt, fp, true);
+        if(parent==null){
+            _store(tensor, newClt, fp, false);
+            if(tensor.rqsGradient()){
+                _store(tensor, newClt, fp, true);
+            }
+        } else {//tensor is a subset tensor of parent:
+            newClt.fp = parent.fp;
+            newClt.value = parent.value;
+            newClt.grad = parent.grad;
         }
+        //CONFIG TRANSFER:
         int rank = tensor.shape().length;
         int[] config = new int[rank*3];
         int[] shape = tensor.shape();
@@ -205,6 +179,51 @@ public class OpenCLDevice implements Device
         tensor.setIsOutsourced(true);
         return this;
     }
+
+    @Override
+    public boolean has(Tsr tensor) {
+        return _mapping.containsKey(tensor);
+    }
+
+    private void _store(Tsr tensor, cl_tsr newClTsr, int fp, boolean grd){
+        //cl_tsr newClTsr = new cl_tsr();
+        //tensor.setIsVirtual(false);//TODO: optimize: if virtual: copy !efficiently
+        Pointer p;
+        int size;
+        if(fp==1){
+            float[] data = (grd)?tensor.gradient32():tensor.value32();
+            data = (data==null)?new float[tensor.size()]:data;
+            p = Pointer.to(data);
+            size = data.length;
+        } else {
+            double[] data = (grd)?tensor.gradient64():tensor.value64();
+            data = (data==null)?new double[tensor.size()]:data;
+            p = Pointer.to(data);
+            size = data.length;
+        }
+        //VALUE TRANSFER:
+        cl_mem mem = clCreateBuffer(
+                _platform.getContext(),
+                CL_MEM_READ_WRITE,
+                size * Sizeof.cl_float*fp,
+                null,
+                null
+        );
+        if(grd){
+            newClTsr.grad = mem;
+        } else {
+            newClTsr.value = mem;
+        }
+        clEnqueueWriteBuffer(
+                _queue,
+                mem,
+                true, 0,
+                size * Sizeof.cl_float*fp,
+                p,
+                0, null, null
+        );
+    }
+
 
     @Override
     public Device rmv(Tsr tensor) {
