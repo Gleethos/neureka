@@ -1,10 +1,12 @@
 package neureka.core.function.factory.autograd;
 
 import neureka.core.Tsr;
+import neureka.core.device.WeakTensorReference;
 import neureka.core.function.Function;
 import neureka.core.function.factory.AbstractFunction;
 import neureka.core.function.factory.assembly.FunctionBuilder;
 
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.function.BiConsumer;
 
@@ -98,7 +100,7 @@ public class GraphNode
     /**
      *
      */
-    private List<GraphNode> _children;
+    private List<WeakReference<GraphNode>> _children;
 
     /**
      *
@@ -127,7 +129,8 @@ public class GraphNode
         if(_children==null){
             _children = new ArrayList<>();
         }
-        _children.add(newChild);
+        WeakTensorReference<GraphNode> ref = new WeakTensorReference<GraphNode>(newChild, null);
+        _children.add(ref);
     }
 
     /**
@@ -360,10 +363,20 @@ public class GraphNode
         if(child==null){
             throw new IllegalStateException("[GraphNode][deathBy]: Error! Child is null!");
         } else if(this!=child){
-            if(!_children.contains(child)){
+            boolean contains = false;
+            int index = 0;
+            for(int i=0; i<_children.size(); i++){
+                if(_children.get(i)!=null){
+                    if(_children.get(i).get().equals(child)){
+                        contains = true;
+                        index = i;
+                    }
+                }
+            }
+            if(!contains){
                 throw new IllegalStateException("[GraphNode][deathBy]: Error! Child is not recognized by parent!");
             }
-            _children.set(_children.indexOf(child), null);
+            _children.set(index, null);
             for(int i=0; i<_children.size(); i++){
                 childrenAreDead = (_children.get(i)==null)&&childrenAreDead;
             }

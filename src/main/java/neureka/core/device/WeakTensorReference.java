@@ -5,7 +5,7 @@ import neureka.core.Tsr;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
-public class WeakTensorReference extends WeakReference<Tsr>
+public class WeakTensorReference<T> extends WeakReference<T>
 {
     /**
      * Creates a new phantom reference that refers to the given object and
@@ -22,7 +22,7 @@ public class WeakTensorReference extends WeakReference<Tsr>
      */
     private int _hash;
 
-    public WeakTensorReference(Tsr referent, ReferenceQueue<? super Tsr> q) {
+    public WeakTensorReference(T referent, ReferenceQueue<? super T> q) {
         super(referent, q);
         _hash = referent.hashCode();
     }
@@ -36,9 +36,9 @@ public class WeakTensorReference extends WeakReference<Tsr>
         return _hash;
     }
 
-    //@Override
-    //public boolean equals(Object o){
-    //    return o.hashCode() == _hash;
-    //}
+    @Override
+    public boolean equals(Object o){
+        return o.hashCode() == _hash;
+    }
 
 }

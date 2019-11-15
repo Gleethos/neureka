@@ -67,7 +67,7 @@ public class OpenCLDevice implements Device
         Collection<Tsr> extracted = new ArrayList<>();
         collection.forEach((o)->{
             WeakTensorReference r = (WeakTensorReference) o;
-            Tsr t = r.get();
+            Tsr t = (Tsr)r.get();
             if(t!=null){
                 ((ArrayList<Tsr>) extracted).add(t);
             }
@@ -81,7 +81,7 @@ public class OpenCLDevice implements Device
 
     @Override
     public void dispose() {
-        _mapping.forEach((t, clt)->get(((WeakTensorReference)t).get()));
+        _mapping.forEach((t, clt)->get((Tsr)((WeakTensorReference)t).get()));
         clFinish(_queue);
     }
 

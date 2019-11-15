@@ -292,7 +292,7 @@ public abstract class AbstractFunction implements Function
                 output.foreach((i) -> {
                     int[] ids = new int[inputs.length];
                     for (int ii = 0; ii < inputs.length; ii++) {
-                        ids[ii] = Tsr.fcn.indexing.i_of_i(i, inputs[ii].shape(), inputs[ii].translation(), Tsr.fcn.indexing.idxTln(inputs[ii].shape()));
+                        ids[ii] = Tsr.fcn.indexing.i_of_i(i, inputs[ii]);//inputs[ii].shape(), inputs[ii].translation(), Tsr.fcn.indexing.idxTln(inputs[ii].shape())
                     }
                     for (int ii = 0; ii < inputs.length; ii++) {
                         inp[ii] = inputs[ii].value64()[ids[ii]];//i

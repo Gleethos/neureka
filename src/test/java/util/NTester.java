@@ -3,6 +3,7 @@ import neureka.core.Tsr;
 import neureka.frame.MessageFrame;
 import org.junit.Assert;
 
+import java.lang.reflect.Array;
 import java.util.List;
 
 public class NTester extends Assert

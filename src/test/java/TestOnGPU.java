@@ -25,6 +25,7 @@ public class TestOnGPU {
     }
     private  void _testAutograd(Device gpu, NTester_Tensor tester)
     {
+        //gpu.add(new Tsr(new int[]{1000000}, 3));
         List<Tsr> listOfTensors = new ArrayList<>();
         Tsr tensor1, tensor2;
         //=====================================================================
@@ -200,7 +201,15 @@ public class TestOnGPU {
         tester.testTensor(y, new String[]{"[1]:(1.0);", " ->d[1]:(-0.33333E0), "});
         tester.testShareDevice(gpu, new Tsr[]{y, x, b, w});
         //---
+        //---------------------------------------------
+        y = null;
+        z = null;
         System.gc();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Collection<Tsr> outsourced = gpu.tensors();
         String sentence = "Number of outsourced tensors: ";
         tester.testContains(
