@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class Tsr {
@@ -57,7 +56,7 @@ public class Tsr {
                 _components.remove(oldCompartment);
                 _components.trimToSize();
             }
-            _components.add((newComponent instanceof int[]) ? cached((int[]) newComponent) : newComponent);
+            _components.add((newComponent instanceof int[]) ? _cached((int[]) newComponent) : newComponent);
         } else {
             _components = new ArrayList<>();
             _components.add(newComponent);
@@ -317,14 +316,6 @@ public class Tsr {
     }
 
     public int[] shape() {
-        //if(this.has(int[].class)){
-        //    int[] shape = new int[this.rank()];
-        //    int[] idx = (int[])this.find(int[].class);
-        //    for(int i=0; i<shape.length; i++){
-        //        shape[i] = _shape[i] - idx[i];
-        //    }
-        //    return shape;
-        //}
         return _shape;
     }
 
@@ -552,18 +543,13 @@ public class Tsr {
 
     private String _stringified(double[] v, boolean format, int max){
         String asString = "";
-        int size = this.size();//(this.isVirtual() ? this.size() : v.length);
+        int size = this.size();
         int trim = (size-max);
         size = (trim>0)?max:size;
         for (int i = 0; i < size; i++) {
             String vStr;
             if(format){
-                vStr = fcn.stringify.formatFP(
-                        v[
-                                (this.isVirtual())
-                                        ? 0
-                                        : Tsr.fcn.indexing.i_of_i(i, this)
-            ]);
+                vStr = fcn.stringify.formatFP(v[(this.isVirtual()) ? 0 : Tsr.fcn.indexing.i_of_i(i, this)]);
             } else {
                 vStr = String.valueOf(v[(this.isVirtual()) ? 0 : Tsr.fcn.indexing.i_of_i(i, this)]);
             }
@@ -743,22 +729,25 @@ public class Tsr {
     /**
      * @param tensor which acts as template for this new tensor.
      */
-    public Tsr(Tsr tensor) {
-        _shape = tensor._shape;
-        _translation = tensor._translation;
-        _idxmap = tensor._idxmap;
-        _value = (this.is64())?new double[tensor.size()]:new float[tensor.size()];
+    public Tsr(Tsr tensor, boolean cpy) {
+        _value = (tensor.is64())?new double[tensor.size()]:new float[tensor.size()];
         _components = null;//tensor._components;
-        _flags = tensor._flags;
-        int length = (this.is64())?((double[])_value).length:((float[])_value).length;
-        for (int i = 0; i < length; i++) {
+        _flags = 0;//tensor._flags;
+        int length = (tensor.is64())?((double[])_value).length:((float[])_value).length;
+        if(cpy){
             if(tensor.is64()){
-                ((double[])_value)[i] = ((double[])tensor._value)[i];
+                double[] value = tensor.value64();
+                for (int i = 0; i < length; i++) {
+                    ((double[])_value)[i] = value[i];
+                }
             } else {
-                ((float[])_value)[i] = ((float[])tensor._value)[i];
+                float[] value = tensor.value32();
+                for (int i = 0; i < length; i++) {
+                    ((float[])_value)[i] = value[i];
+                }
             }
         }
-        this.setIsOutsourced(false);
+        initialShape(tensor.shape());
     }
 
     /**
@@ -770,15 +759,15 @@ public class Tsr {
         _value = (_value==null)?new double[size]:_value;
         int length = (this.is64())?((double[])_value).length:((float[])_value).length;
         if (size != length && !this.isVirtual()) {
-            throw new IllegalArgumentException("Size of shape does not match stored value64!");
+            throw new IllegalArgumentException("[Tsr][_iniShape]: Size of shape does not match stored value64!");
         }
-        _shape = cached(newShape);
-        _translation = cached(fcn.indexing.idxTln(newShape));
+        _shape = _cached(newShape);
+        _translation = _cached(fcn.indexing.idxTln(newShape));
         _idxmap = _translation;
         return this;
     }
 
-    private static int[] cached(int[] data) {
+    private static int[] _cached(int[] data) {
         long key = 0;
         for (int i = 0; i < data.length; i++) {
             if (data[i] <= 10) {
@@ -964,14 +953,13 @@ public class Tsr {
             }
             subset._value = this._value;
             subset._translation = this._translation;
-            subset._idxmap = cached(fcn.indexing.idxTln(newShape));
+            subset._idxmap = _cached(fcn.indexing.idxTln(newShape));
             if(this.isOutsourced()){
                 Device device = (Device) this.find(Device.class);
                 device.add(subset, this);
             }
-            subset._shape = cached(newShape);
+            subset._shape = _cached(newShape);
             subset.add(idx);
-
         }
         return subset;
     }
@@ -984,20 +972,7 @@ public class Tsr {
         int[] idx = new int[this.shape().length];
         for (int i = 0; i < sze; i++) {
             fcn.indexing.increment(idx, this.shape());
-            action.accept(fcn.indexing.i_of_i(i,this));//fcn.indexing.iOf(idx, this.translation())
-        }
-        return this;
-    }
-
-    public Tsr foreach(BiConsumer<Integer, Double> action) {
-        this.setIsVirtual(false);
-        int sze = this.size();
-        int[] idx = new int[this.shape().length];
-        double[] value = this.targetValue64();
-        for (int i = 0; i < sze; i++) {
-            fcn.indexing.increment(idx, this.shape());
-            int index = fcn.indexing.i_of_i(i,this);
-            action.accept(index, value[index]);
+            action.accept(i);//fcn.indexing.iOf(idx, this.translation())
         }
         return this;
     }
@@ -1099,14 +1074,14 @@ public class Tsr {
 
         }
 
-        public static class exec {
-
+        public static class exec
+        {
             public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr) {
-                tensor = (newTsr)? create.cpyOf(tensor):tensor;
+                tensor = (newTsr)? new Tsr(tensor, true):tensor;
                 //tensor._record(tensor.shape(), tensor.translation());
-                tensor._shape = cached(indexing.shpCheck(indexing.rearrange(tensor._shape, newForm), tensor));
-                tensor._translation = cached(indexing.rearrange(tensor._translation, tensor._shape, newForm));
-                tensor._idxmap =  cached(indexing.idxTln(tensor._shape));
+                tensor._shape = _cached(indexing.shpCheck(indexing.rearrange(tensor._shape, newForm), tensor));
+                tensor._translation = _cached(indexing.rearrange(tensor._translation, tensor._shape, newForm));
+                tensor._idxmap =  _cached(indexing.idxTln(tensor._shape));
                 return tensor;
             }
             //OPERATIONS:
@@ -1116,14 +1091,6 @@ public class Tsr {
 
         public static class create
         {
-            private static Tsr _newEmptyLike(Tsr template){
-                Tsr t = new Tsr();
-                t._shape = template._shape;
-                t._idxmap = template._idxmap;
-                t._translation = template.translation();
-                return t;
-            }
-
             public static Tsr newTsrLike(Tsr template, double value){
                 Tsr t = _newEmptyLike(template);
                 if(template.is32()){
@@ -1150,68 +1117,12 @@ public class Tsr {
                 return t;
             }
 
-
-            public static Tsr newTsr(double value, int[] shape) {
-                int sze = indexing.szeOfShp(shape);
-                Tsr tensor = new Tsr();
-                tensor._value = new double[sze];
-                tensor.initialShape(shape);
-                for (int i = 0; i < sze; i++) {
-                    ((double[])tensor._value)[i] = value;
-                }
-                return tensor;
-            }
-
-            public static Tsr newTsr(double[] value, int[] shape) {
-                Tsr tensor = new Tsr();
-                tensor._value = value;
-                tensor.initialShape(shape);
-                return tensor;
-            }
-
-            public static Tsr newTsr(int[] shape, int[] translation) {
-                Tsr tensor = new Tsr();
-                tensor._value = new double[indexing.szeOfShp(shape)];
-                tensor.initialShape(shape);
-                tensor._translation = (translation != null) ? translation : tensor._translation;//FUNCTIONS.put()
-                return tensor;
-            }
-
-            public static Tsr cpyOf(Tsr tensor) {
-                Tsr newTensor = new Tsr();
-                newTensor._shape = tensor._shape;
-                newTensor._translation = tensor._translation;
-                newTensor._idxmap = tensor._idxmap;
-                newTensor._value = (tensor.is64())?new double[tensor.size()]:new float[tensor.size()];
-                newTensor._components = null;//tensor._components;
-                newTensor._flags = tensor._flags;
-                if(tensor.is64()){
-                    int length = (tensor.is64())?((double[])tensor._value).length:((float[])tensor._value).length;
-                    for (int i = 0; i < length; i++) {
-                        if(tensor.is64()){
-                            double[] value = (double[])tensor._value;
-                            ((double[])newTensor._value)[i] = value[i];
-                        }else {
-                            float[] value = (float[])tensor._value;
-                            ((float[])newTensor._value)[i] = value[i];
-                        }
-                    }
-                }
-                if (tensor.isOutsourced()) {
-                    newTensor.add(tensor.device());
-                }
-                return newTensor;
-            }
-
-            public static Tsr cpyOf(Object[] things) {
-                for (int i = 0; i < things.length; i++) {
-                    if (things[i] instanceof int[]) {
-
-                    } else if (things[i] instanceof double[]) {
-
-                    }
-                }
-                return new Tsr();
+            private static Tsr _newEmptyLike(Tsr template){
+                Tsr t = new Tsr();
+                t._shape = template._shape;
+                t._idxmap = template._idxmap;
+                t._translation = template.translation();
+                return t;
             }
 
         }
@@ -1230,14 +1141,6 @@ public class Tsr {
                 array[i] = value;
             }
             return array;
-        }
-
-        public static void inject(double[] data, boolean grd, Tsr tensor) {
-            if (grd) {
-                tensor._gradient = data;
-            } else {
-                tensor._value = data;
-            }
         }
 
         public static class stringify{
@@ -1297,14 +1200,6 @@ public class Tsr {
                 }
                 return i;
             }
-            /*
-                1, 2, 3, 4, =>* 2, 3, 4,
-                5, 6, 7, 8, =>* 6, 7, 8,
-                9, 1, 2, 3, =>* 1, 2, 3,
-                4, 5, 6, 7, =>* 5, 6, 7,
-                8, 9, 1, 2,
-                3, 4, 5, 6
-             */
 
             @Contract(pure = true)
             public static void increment(@NotNull int[] shpIdx, @NotNull int[] shape) {
@@ -1406,7 +1301,8 @@ public class Tsr {
             @Contract(pure = true)
             public static int[] shpCheck(int[] newShp, Tsr t) {
                 if (szeOfShp(newShp) != t.size()) {
-                    throw new IllegalArgumentException("New _shape does not match tensor size!" +
+                    throw new IllegalArgumentException(
+                            "[Tsr][shpCheck(int[] newShp, Tsr t)]: New shape does not match tensor size!" +
                             " (" + stringify.str(newShp) + ((szeOfShp(newShp) < t.size()) ? "<" : ">") + stringify.str(t.shape()) + ")");
                 }
                 return newShp;
@@ -1461,21 +1357,6 @@ public class Tsr {
                 }
                 return size;
             }
-
-            /**-----------------------------------------
-             *
-             * 	[2][1][4][6][8][6]
-             * 	[3][-1][2][-4][-5][6]//[0][0][0]=>3 times othr
-             * 	is really:
-             * 	[4  ][-2][1  ][-6][-8][6  ]
-             *	   	   |	    |   |
-             * 	[  6][ 7][  2][ 1][ 4][  8] <= then multiplying with this
-             * 	[4|6][ 6][1|2][ 6][ 5][6|8]
-             *
-             *  a > b -> c = (a-b)+1
-             *  a < b -> c = (b-a)+1
-             *
-             * */
 
 
         }

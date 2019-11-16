@@ -72,22 +72,22 @@ public class FConstant implements Function
 
 	@Override
 	public Tsr activate(Tsr[] inputs, int j) {
-		return Tsr.fcn.create.newTsr(this._value, inputs[0].shape());
+		return new Tsr(inputs[0].shape(), this._value);
 	}
 
 	@Override
 	public Tsr activate(Tsr[] inputs) {
-		return Tsr.fcn.create.newTsr(this._value, inputs[0].shape());
+		return new Tsr(inputs[0].shape(), this._value);
 	}
 
 	@Override
 	public Tsr derive(Tsr[] inputs, int index, int j) {
-		return Tsr.fcn.create.newTsr(0, inputs[0].shape());
+		return new Tsr(inputs[0].shape(), 0.0);
 	}
 
 	@Override
 	public Tsr derive(Tsr[] inputs, int index) {
-		return Tsr.fcn.create.newTsr(0, inputs[0].shape());
+		return new Tsr(inputs[0].shape(), 0.0);
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }

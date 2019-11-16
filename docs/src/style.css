@@ -249,6 +249,10 @@ header p {font-family: Brush Script Std, Brush Script MT, cursive;
     text-align: center;
 }/*rgba(46, 80, 95, 0.3)*/
 
+.mainContentWrapper code
+{
+    text-align: left;
+}
 
 .mainContentWrapper h1
 {

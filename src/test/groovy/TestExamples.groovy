@@ -7,7 +7,8 @@ import util.NTester_Function;
 import util.NTester_Tensor;
 
 
-class TestExamples {
+class TestExamples
+{
 
     @Test
     void testReadmeExamples()
@@ -30,17 +31,17 @@ class TestExamples {
         /**
          *  Subset:
          */
-        def data = [
+        Tsr a = new Tsr([4, 6], [
                 1, 2, 3, 4,
                 5, 6, 7, 8,
                 9, 1, 2, 3,
                 4, 5, 6, 7,
                 8, 9, 1, 2,
                 3, 4, 5, 6
-        ]
-        Tsr a = new Tsr([4, 6], data)
+        ])
         b = a[[1, -2]]
         tester.testContains(b.toString(), ["2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"], "Testing slicing")
+        tester.testContains(((b.has(int[].class))?"Has index component":""), ["Has index component"], "Check if index component is present!")
         System.out.println(b)
         /**
          * 2, 3, 4,
@@ -54,6 +55,25 @@ class TestExamples {
         a.value64()[7] = a.value64()[7] * 2
         tester.testContains(b.toString(), ["12.0, 3.0, 4.0, 6.0, 7.0, 16.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"], "Testing slicing")
         //tester.testTensor(x, ["-16.0"])
+        //---
+        Tsr c = new Tsr([3, 4], [
+                -3, 2, 3,
+                5, 6, 2,
+                -1, 1, 2,
+                3, 4, 2,
+        ])
+        Tsr d = b + c
+        tester.testContains(d.toString(),
+                [
+                        "9.0, 5.0, 7.0, " +
+                         "11.0, 13.0, 18.0, " +
+                         "0.0, 3.0, 5.0, " +
+                         "8.0, 10.0, 9.0"
+                ],
+                "Testing slicing")
+
+
+
 
     }
 

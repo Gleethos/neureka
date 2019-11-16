@@ -131,7 +131,7 @@ public abstract class AbstractFunction implements Function
      */
     protected Tsr _tensor_activation(Tsr input, boolean derive)
     {
-        Tsr output = Tsr.fcn.create.newTsr(input.shape(), input.translation());
+        Tsr output = new Tsr(input, false);//Tsr.fcn.create.newTsr(input.shape(), input.translation());
         if (!derive && !_isFlat) {
             output.inject(FunctionBuilder.build(_id, 1, true).activate(new Tsr[]{input}));
             output.add(input.find(GraphLock.class));
@@ -287,23 +287,20 @@ public abstract class AbstractFunction implements Function
                 return _src.get(1).activate(inputs).setTargetValue64(_src.get(0).activate(inputs).targetValue64(true));
             } else {
                 double[] inp = new double[inputs.length];
-                Tsr output = Tsr.fcn.create.newTsr(inputs[0].shape(), inputs[0].translation());
+                Tsr output;// = Tsr.fcn.create.newTsr(inputs[0].shape(), inputs[0].translation());
+                output = new Tsr(inputs[0], false);
                 Tsr finalOutput = output;
                 output.foreach((i) -> {
-                    int[] ids = new int[inputs.length];
                     for (int ii = 0; ii < inputs.length; ii++) {
-                        ids[ii] = Tsr.fcn.indexing.i_of_i(i, inputs[ii]);//inputs[ii].shape(), inputs[ii].translation(), Tsr.fcn.indexing.idxTln(inputs[ii].shape())
+                        inp[ii] = inputs[ii].value64()[Tsr.fcn.indexing.i_of_i(i, inputs[ii])];//ids[ii]];//i
                     }
-                    for (int ii = 0; ii < inputs.length; ii++) {
-                        inp[ii] = inputs[ii].value64()[ids[ii]];//i
-                    }
-                    finalOutput.value64()[i] = _scalar_activation(inp, j, d);
+                    finalOutput.value64()[Tsr.fcn.indexing.i_of_i(i, finalOutput)] = _scalar_activation(inp, j, d);
                 });
                 return  output;
             }
         }
         //Todo: warning/exception.....
-        return Tsr.fcn.create.newTsr(inputs[0].shape(), inputs[0].translation());
+        return new Tsr(inputs[0], false);//Tsr.fcn.create.newTsr(inputs[0].shape(), inputs[0].translation());
     }
 
     /**
@@ -335,8 +332,8 @@ public abstract class AbstractFunction implements Function
                     (tsrs[i] != null)
                             ? tsrs[i]
                             : (j < 0)
-                            ? Tsr.fcn.create.newTsr(((FConstant) _src.get(i)).value(), templateShape)
-                            : Tsr.fcn.create.newTsr(_src.get(i).activate(new double[]{}, j), templateShape);
+                            ? new Tsr(templateShape, ((FConstant) _src.get(i)).value())//Tsr.fcn.create.newTsr(((FConstant) _src.get(i)).value(), templateShape)
+                            : new Tsr(templateShape,_src.get(i).activate(new double[]{}, j));//Tsr.fcn.create.newTsr(_src.get(i).activate(new double[]{}, j), templateShape);
         }
         if(shareDevice){
             Device shared = (Device) tsrs[0].find(Device.class);
