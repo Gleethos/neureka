@@ -7,11 +7,14 @@
 [![forthebadge](https://forthebadge.com/images/badges/check-it-out.svg)](https://forthebadge.com)
 ---
 
-[Neureka](https://gleethos.github.io/neureka/index.html) is a platform independent deep-learning library written in Java. 
+Neureka is a platform independent deep-learning library written in Java. 
 
-  - Java
-  - OpenCL
-  - Tensors
+  - Java, Kotlin, Groovy, Jython, Scala... 
+  - OpenCL accelerated.
+  - N-Dimensional Tensors.
+  - Flexible Tensor indexing and slicing.
+  
+  Visit [Neurekas homepage](https://gleethos.github.io/neureka/index.html) for more information!
   
 [![Beerpay](https://beerpay.io/Gleethos/neureka/badge.svg?style=beer-square)](https://beerpay.io/Gleethos/neureka)  [![Beerpay](https://beerpay.io/Gleethos/neureka/make-wish.svg?style=flat-square)](https://beerpay.io/Gleethos/neureka?focus=wish)
 
