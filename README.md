@@ -10,8 +10,8 @@
 [Neureka](https://gleethos.github.io/neureka/index.html) is a platform independent deep-learning library written in Java. 
 
   - Java
-  - Aparapi (OpenCl)
-  - JavaFX
+  - OpenCL
+  - Tensors
   
 [![Beerpay](https://beerpay.io/Gleethos/neureka/badge.svg?style=beer-square)](https://beerpay.io/Gleethos/neureka)  [![Beerpay](https://beerpay.io/Gleethos/neureka/make-wish.svg?style=flat-square)](https://beerpay.io/Gleethos/neureka?focus=wish)
 
@@ -21,7 +21,8 @@
 
   - Dynamic computation graph.
   - Auto differentiation (forwards/backwards).
-  - Unlimited tensor convolution.
+  - N-dimensional tensor convolution.
+  - slicing.
 
 Take a look:
 ```
@@ -110,14 +111,6 @@ GPU execution:
          * */
 ```
 
-
-You can also:
-  - Create a computation graph via a gui interface in JavaFX
-
-> Note:
-> Many features are not yet complete/tested 
->
-
 ### Tech
 This library is heavily inspired by [PyTorch](https://github.com/pytorch/pytorch).
 A powerful deep learning framework that combines
@@ -151,7 +144,7 @@ $ gradlew build
 
 ### Dependencies
 
-Neureka uses Aparapi and Javafx.
+Neureka uses OpenCl.
 
 
 ### Development

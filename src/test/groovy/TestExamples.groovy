@@ -27,7 +27,6 @@ class TestExamples
         tester.testTensor(y, "[1]:(4.0); ->d[1]:(-8.0), ")
         y.backward(new Tsr(2))
         y = b + w * x
-        System.out.println(y)
         /**
          *  Subset:
          */
@@ -42,7 +41,9 @@ class TestExamples
         b = a[[1, -2]]
         tester.testContains(b.toString(), ["2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"], "Testing slicing")
         tester.testContains(((b.has(int[].class))?"Has index component":""), ["Has index component"], "Check if index component is present!")
-        System.out.println(b)
+        b = a[1, -2]
+        tester.testContains(b.toString(), ["2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"], "Testing slicing")
+        tester.testContains(((b.has(int[].class))?"Has index component":""), ["Has index component"], "Check if index component is present!")
         /**
          * 2, 3, 4,
          * 6, 7, 8,
@@ -71,7 +72,18 @@ class TestExamples
                          "8.0, 10.0, 9.0"
                 ],
                 "Testing slicing")
-
+        //---
+        b = a[1..3, 2..4]
+        tester.testContains(b.toString(), ["1.0, 2.0, 3.0, 5.0, 6.0, 7.0, 9.0, 1.0, 2.0"], "Testing slicing")
+        tester.testContains(((b.has(int[].class))?"Has index component":""), ["Has index component"], "Check if index component is present!")
+        /**
+         1, 2, 3, 4,
+         5, 6, 7, 8,
+         9, 1, 2, 3, => 1, 2, 3,
+         4, 5, 6, 7, => 5, 6, 7,
+         8, 9, 1, 2, => 9, 1, 2,
+         3, 4, 5, 6
+         */
 
 
 

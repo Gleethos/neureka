@@ -11,6 +11,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -930,18 +931,15 @@ public class Tsr {
         return (this.hashCode()==other.hashCode());
     }
     public Tsr getAt(Object key) {
-        key = (key instanceof  ArrayList)?((ArrayList)key).toArray():key;
-        key = intArray((Object[]) key);
+        key = (key instanceof  List)?((List)key).toArray():key;
         Tsr subset = new Tsr();
-        if(key instanceof int[]) {
-            int[] idx = (int[])key;
-            boolean containsInv = false;
-            for(int i=0; i<this.rank(); i++){
-                if(idx[i]<0) containsInv = true;
-            }
-            int[] newShape = new int[this.rank()];//_shape;
-            if(containsInv) {
-                newShape = new int[this.rank()];
+        int[] idx = null;// = (int[])key;
+        int[] newShape = new int[this.rank()];
+        if(((Object[])key)[0] instanceof Integer)
+        {
+            key = intArray((Object[]) key);
+            idx = (int[])key;
+            if(key instanceof int[]) {
                 for(int i=0; i<this.rank(); i++) {
                     if(idx[i]>=0) {
                         newShape[i] = _shape[i]-idx[i];
@@ -951,16 +949,35 @@ public class Tsr {
                     }
                 }
             }
-            subset._value = this._value;
-            subset._translation = this._translation;
-            subset._idxmap = _cached(fcn.indexing.idxTln(newShape));
-            if(this.isOutsourced()){
-                Device device = (Device) this.find(Device.class);
-                device.add(subset, this);
-            }
-            subset._shape = _cached(newShape);
-            subset.add(idx);
         }
+        else if(((Object[])key)[0] instanceof List)
+        {
+            idx = new int[this.rank()];
+            Object[] array = (Object[])key;
+            for(int i=0; i<array.length; i++){
+                array[i] = ((List)array[i]).toArray();
+                int first = ((Integer)((Object[])array[i])[0]);
+                int last = ((Integer)((Object[])array[i])[((Object[])array[i]).length-1]);
+                array[i] = new int[]{first, last};
+            }
+            Object[] ranges = array;
+            if(ranges.length!=rank()) throw new IllegalArgumentException("[Tsr][getAt(Object key)]: Number of arguments must match tensor dim!");
+            for(int i=0; i<this.rank(); i++) {
+                int first =  (Integer) ((int[])ranges[i])[0];
+                int second =  (Integer) ((int[])ranges[i])[1];
+                newShape[i] = (second-first)+1;
+                idx[i] = first;
+            }
+        }
+        subset._value = this._value;
+        subset._translation = this._translation;
+        subset._idxmap = _cached(fcn.indexing.idxTln(newShape));
+        if(this.isOutsourced()){
+            Device device = (Device) this.find(Device.class);
+            device.add(subset, this);
+        }
+        subset._shape = _cached(newShape);
+        subset.add(idx);
         return subset;
     }
 
