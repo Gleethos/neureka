@@ -1,135 +1,139 @@
-
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title> NEUREKA </title>
-        <link rel="icon" href="/src/favicon/favicon.ico" >
-        <meta name="description" content="a Java tensor library">
-        <meta name="author" content="Daniel Nepp">
-        <meta name="keywords" content=" AI, Deep Learning, Neuron, OpenCl, PyTorch, Java, Tensorflow, Machine Learning">
-        <!-----------------------------------ROBOTS---------------------------------------------->
-        <meta name="robots" content="all">
-        <meta name="revisit-after" content="30 days">
-        <!-----------------------------------JQUERY---------------------------------------------->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <!-----------------------------------BOOTSTRAP------------------------------------------>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-        <!-----------------------------------CUSTOM CSS------------------------------------------>
-        <link rel="stylesheet" href="src/style.css">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title> NEUREKA </title>
+    <link rel="icon" href="/src/favicon/favicon.ico">
+    <meta name="description" content="a Java tensor library">
+    <meta name="author" content="Daniel Nepp">
+    <meta name="keywords" content=" AI, Deep Learning, Neuron, OpenCl, PyTorch, Java, Tensorflow, Machine Learning">
+    <!-----------------------------------ROBOTS---------------------------------------------->
+    <meta name="robots" content="all">
+    <meta name="revisit-after" content="30 days">
+    <!-----------------------------------JQUERY---------------------------------------------->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-----------------------------------BOOTSTRAP------------------------------------------>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-----------------------------------CUSTOM CSS------------------------------------------>
+    <link rel="stylesheet" href="src/style.css">
 
-        <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/sunburst.min.css">
-        <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
-        <script>hljs.initHighlightingOnLoad();</script>
-    </head>
-    <body>
-        <div id="header" class = "">
-            <div id="BirdBox" class = "mainframe" style="background-image: url('https://images.pexels.com/photos/1287142/pexels-photo-1287142.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260');">
-                <nav class="floatsUp" id="navTile">
-                    <div id="navContainer" class="">
-                        <div style = "" class = "topEarthGradient dynamicSideMargin">
-                            <h1>NEUREKA</h1>
-                        </div>
-                        <div class="pull-right nightBox" id="NavbarMenu" >
-                            <ul class="nav navbar-right" id="NavbarList">
-                                <li>
-                                    <a href="showcase.html">
-                                        <img src="https://webstockreview.net/images/graph-clipart-picto-15.png">
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://github.com/Gleethos/neureka">
-                                        <img src="https://png2.kisspng.com/sh/9646f5d54230eeeeff0b635b0f3b7bd3/L0KzQYm3U8I3N6VAj5H0aYP2gLBuTfdqfJl6ep9sb33zhcXskr1qa5Dzi59yY3BxPbXskBlodl5sgeZxdXKwRbLpWPE0OZY6eqc8OUWxRoi8WMA0PGo2TaQ7MES8SIO5U8c1OV91htk=/kisspng-github-computer-icons-icon-design-github-5ab8a31e5b5395.6758034915220498223741.png">
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="core/index.html">
-                                        <img src="http://cdn.onlinewebfonts.com/svg/img_71011.png">
-                                    </a>
-                                </li>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/sunburst.min.css">
+
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+<div id="header" class="">
+    <div id="BirdBox" class="mainframe"
+         style="background-image: url('https://images.pexels.com/photos/1287142/pexels-photo-1287142.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260');">
+        <nav class="floatsUp" id="navTile">
+            <div id="navContainer" class="">
+                <div style="" class="topEarthGradient dynamicSideMargin">
+                    <h1>NEUREKA</h1>
+                </div>
+                <div class="pull-right nightBox" id="NavbarMenu">
+                    <ul class="nav navbar-right" id="NavbarList">
+                        <li>
+                            <a href="showcase.html">
+                                <img src="https://webstockreview.net/images/graph-clipart-picto-15.png">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/Gleethos/neureka">
+                                <img src="https://png2.kisspng.com/sh/9646f5d54230eeeeff0b635b0f3b7bd3/L0KzQYm3U8I3N6VAj5H0aYP2gLBuTfdqfJl6ep9sb33zhcXskr1qa5Dzi59yY3BxPbXskBlodl5sgeZxdXKwRbLpWPE0OZY6eqc8OUWxRoi8WMA0PGo2TaQ7MES8SIO5U8c1OV91htk=/kisspng-github-computer-icons-icon-design-github-5ab8a31e5b5395.6758034915220498223741.png">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="core/index.html">
+                                <img src="http://cdn.onlinewebfonts.com/svg/img_71011.png">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div id="navi">
+                <input type="checkbox" name="mobile-nav" id="mobile-nav" class="gaadiexp-check" onchange="this.blur()">
+                <label for="mobile-nav" class="gaadiexp white" tabindex="0"
+                       style="margin-left: 0;"><span></span></label>
+                <div role="navigation" class="header-nav">
+                    <div class="fixed-nav">
+                        <div class="menu">
+                            <ul class="side-nav">
+                                <li><a target="_blank" href="showcase.html">Examples</a></li>
+                                <li><a target="_blank" href="core/index.html">Documentation</a></li>
+                                <li><a target="_blank" href="https://github.com/Gleethos/neureka">Github</a></li>
+                                <li><a target="_blank" href="">Introduction</a></li>
+                                <li><a target="_blank" href="">Reasons</a></li>
                             </ul>
                         </div>
                     </div>
-                    <div id="navi">
-                        <input type="checkbox" name="mobile-nav" id="mobile-nav" class="gaadiexp-check" onchange="this.blur()">
-                        <label for="mobile-nav" class="gaadiexp white" tabindex="0" style="margin-left: 0;"><span></span></label>
-                        <div role="navigation" class="header-nav">
-                            <div class="fixed-nav">
-                                <div class="menu">
-                                    <ul class="side-nav">
-                                        <li><a target="_blank" href="showcase.html">Examples</a></li>
-                                        <li><a target="_blank" href="core/index.html">Documentation</a></li>
-                                        <li><a target="_blank" href="https://github.com/Gleethos/neureka">Github</a></li>
-                                        <li><a target="_blank" href="">Introduction</a></li>
-                                        <li><a target="_blank" href="">Reasons</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="">
+            <!----------------------------------LAYOUT------------------------------------------------->
+            <main class="parallax">
+                <div style="left:-10px;" class="parallax__layer parallax__layer--back ">
+                    <div>
+                        <image src="src/main/parallax/woods.png"></image>
                     </div>
-                </nav>
+                </div>
+                <div class="parallax__layer parallax__layer--base">
+                    <div id="mainTile" class="cardBox dynamicSideMargin">
 
-                <div class="">
-                    <!----------------------------------LAYOUT------------------------------------------------->
-                    <main class="parallax">
-                        <div style="left:-10px;" class="parallax__layer parallax__layer--back ">
-                            <div>
-                                <image src="src/main/parallax/woods.png"></image>
-                            </div>
-                        </div>
-                        <div class="parallax__layer parallax__layer--base">
-                            <div id="mainTile" class="cardBox dynamicSideMargin">
+                        <div class="mainContentWrapper">
 
-                                <div class = "mainContentWrapper">
-
-                                    <div class = "container-fluid">
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6">
-                                                <h1>I have found it!</h1>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6">
-                                                <p>
-                                                    An open source platform independent machine learning library written in Java.
-                                                </p>
-                                            </div>
-                                        </div>
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-6">
+                                        <h1>I have found it!</h1>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6">
+                                        <p>
+                                            An open source platform independent machine learning library written in
+                                            Java.
+                                        </p>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
 
 
-                                <div class = "mainContentWrapper">
-                                    <div class = "container-fluid">
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-12">
-                                                <h2>But why? Is Java not verbose?</h2>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6">
-                                                <img style="width:100%;" src="//www.italymagazine.com/sites/default/files/styles/624xauto/public/feature-story/leader/esperimento-sulla-legge-di-archimede_e6db5ee50be2e5b2607c67242ee78838.jpg?itok=Fr9USe1H">
-                                            </div>
-                                            <div class="col-sm-12 col-md-6">
-                                                <div class="contentBox">
-                                                    <p>
-                                                        Popular deep learning libraries use python due to it's
-                                                        elegant Syntax. Java on the other Hand is considered
-                                                        verbose and bulky, so why would anybody ever write
-                                                        a deep learning library for Java?
-                                                        The answer is simple:</br>
-                                                        Nobody did!</br>
-                                                        This library is written for every JVM-language, namely:
-                                                        Groovy, Kotlin, Scala, and Jython just to name a few.
-                                                        This library can be integrated by any language which compiles to
-                                                        JVM bytecode!
-                                                        Take a look at some groovy:
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-12">
+                        <div class="mainContentWrapper">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12">
+                                        <h2>But why? Is Java not verbose?</h2>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6">
+                                        <img style="width:100%;"
+                                             src="//www.italymagazine.com/sites/default/files/styles/624xauto/public/feature-story/leader/esperimento-sulla-legge-di-archimede_e6db5ee50be2e5b2607c67242ee78838.jpg?itok=Fr9USe1H">
+                                    </div>
+                                    <div class="col-sm-12 col-md-6">
+                                        <div class="contentBox">
+                                            <p>
+                                                Popular deep learning libraries use python due to it's
+                                                elegant Syntax. Java on the other Hand is considered
+                                                verbose and bulky, so why would anybody ever write
+                                                a deep learning library for Java?
+                                                The answer is simple:</br>
+                                                Nobody did!</br>
+                                                This library is written for every JVM-language, namely:
+                                                Groovy, Kotlin, Scala, and Jython just to name a few.
+                                                This library can be integrated by any language which compiles to
+                                                JVM bytecode!
+                                                Take a look at some groovy:
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-12">
                                                <pre><code class="hljs java">
         Tsr b = new Tsr([1], -4)
         Tsr w = new Tsr([1], 2)
@@ -137,143 +141,212 @@
 
         Tsr y = b + w * x
         //  2 =-4 +(3 * 2)
+
+        //
+        //     SLICING:
+        //   -=========-
+        //
+        Tsr a = new Tsr([4, 6], [
+                1, 2, 3, 4,
+                5, 6, 7, 8,
+                9, 1, 2, 3,
+                4, 5, 6, 7,
+                8, 9, 1, 2,
+                3, 4, 5, 6
+        ])
+
+        // Slice with offsets:
+        b = a[1, -2] // [2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0]
+        //
+        //    1, 2, 3, 4, => 2, 3, 4,
+        //    5, 6, 7, 8, => 6, 7, 8,
+        //    9, 1, 2, 3, => 1, 2, 3,
+        //    4, 5, 6, 7, => 5, 6, 7,
+        //    8, 9, 1, 2,
+        //    3, 4, 5, 6
+        //
+
+        // Note: The underlying data of a will be inherited by b! :D
+        a.value64()[1] = a.value64()[1] * 6
+        a.value64()[7] = a.value64()[7] * 2
+        //>> b's values would then be: [12.0, 3.0, 4.0, 6.0, 7.0, 16.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0]
+
+        //Use b for calculations but keep in mind that it affects a! :
+        Tsr c = new Tsr([3, 4], [
+                -3, 2, 3,
+                 5, 6, 2,
+                -1, 1, 2,
+                 3, 4, 2,
+        ])
+        Tsr d = b + c
+        //
+        //    9,  5,  7,
+        //    11, 13, 18,
+        //    0,  3,  5,
+        //    8,  10, 9
+        //
+
+        // Use ranges (The '..' operator is similar to pythons ':' operator)
+        b = a[1..3, 2..4] // [3x3][1.0, 2.0, 3.0, 5.0, 6.0, 7.0, 9.0, 1.0, 2.0]
+        //
+        //    1, 2, 3, 4,
+        //    5, 6, 7, 8,
+        //    9, 1, 2, 3,  =>  1, 2, 3,
+        //    4, 5, 6, 7,  =>  5, 6, 7,
+        //    8, 9, 1, 2,  =>  9, 1, 2,
+        //    3, 4, 5, 6
+        //
+
+        //  '[i..j]:k' is equivalent to pythons 'i:j:k' syntax for indexing! (numpy)
+        //  i.. start index.
+        //  j.. end index. (inclusive!)
+        //  k.. step size.
+        b = a[[[0..3]:2, [1..4]:2]] // [2x2][5.0, 7.0, 4.0, 6.0]
+        //
+        //   1, 2, 3, 4,
+        //   5, 6, 7, 8,  =>  5,  7,
+        //   9, 1, 2, 3,
+        //   4, 5, 6, 7,  =>  4,  6,
+        //   8, 9, 1, 2,
+        //   3, 4, 5, 6
+        //
                                                 </code></pre>
-                                            </div>
-                                            <div class="col-sm-12 col-md-12">
-                                                <div class="contentBox">
-                                                    <p>
-                                                        Especially language features like
-                                                        operation overloading allow for elegant
-                                                        implementations.
-                                                        For rapid prototyping and small scale
-                                                        projects groovy, scala or jython
-                                                        might be the perfect choice, if
-                                                        however the best performance is of concern for
-                                                        you and your team than Neureka can
-                                                        still be used with Java or Kotlin
-                                                        to allow for more efficient runtime.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-8">
+                                    </div>
+                                    <div class="col-sm-12 col-md-12">
+                                        <div class="contentBox">
+                                            <p>
+                                                Especially language features like
+                                                operation overloading allow for elegant
+                                                implementations.
+                                                For rapid prototyping and small scale
+                                                projects groovy, scala or jython
+                                                might be the perfect choice, if
+                                                however the best performance is of concern for
+                                                you and your team than Neureka can
+                                                still be used with Java or Kotlin
+                                                to allow for more efficient runtime.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-8">
                                                <pre><code class="hljs java">
             Tsr x = new Tsr(3).setRqsGradient(true);
             Tsr b = new Tsr(-4);
             Tsr w = new Tsr(2);
             Tsr y = new Tsr(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
-            /**
-             *   f(x) = ((x-4)*2)^2; :=>  f(3) = 4
-             *   f(x)' = 8*x - 32 ;  :=>  f(3)' = -8
-             *
-             *   y.toString(): "[1]:(4.0); ->d[1]:(-8.0), "
-             * */
+
+            //   f(x) = ((x-4)*2)^2; :=>  f(3) = 4
+            //   f(x)' = 8*x - 32 ;  :=>  f(3)' = -8
+            //
+            //   y.toString(): "[1]:(4.0); ->d[1]:(-8.0), "
+
                                                 </code></pre>
-                                                </div>
-                                                <div class="col-sm-12 col-md-4">
+                                    </div>
+                                    <div class="col-sm-12 col-md-4">
 
-                                                </div>
-                                                <div class="col-sm 12 col-md-6">
-
-                                            </div>
-                                        </div>
-
+                                    </div>
+                                    <div class="col-sm 12 col-md-6">
 
                                     </div>
                                 </div>
-                                <div class = "mainContentWrapper">
-                                    <div class = "container-fluid">
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-12">
-                                                <h2>But isn't Java slow?</h2>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6">
-                                                <div class="contentBox">
-                                                    <h3>But Java is slow!</h3>
-                                                    <p>
-                                                        Python currently provides the most advanced
-                                                        environments and ecosystems for machine learning and
-                                                        data science. This is despite the fact that it is
-                                                        an interpreted language and thereby substantially slower than
-                                                        statically compiled languages and also allot
-                                                        slower than dynamically compiled and optimized bytecode
-                                                        executed during JVM runtime (JIT - compilation).
-                                                        Popular frameworks like PyTorch and Tensorflow
-                                                        compensate this deficit by utilizing C++ and Cuda internally.
-                                                        Neureka tries to achieve similar performance with a more balanced
-                                                        approach, where number crunching is offloaded to OpenCl whenever
-                                                        possible and otherwise is reliant on JVM's runtime optimizations.
-                                                        (Which should not be underestimated)
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6">
-                                                <div class="contentBox">
-                                                    <h3></h3>
-                                                    <p>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-12">
-                                            </div>
-                                            <div class="col-sm-12 col-md-8">
-
-                                            </div>
-                                            <div class="col-sm-12 col-md-8">
-
-                                            </div>
-                                            <div class="col-sm-12 col-md-4">
-
-                                            </div>
-                                            <div class="col-sm 12 col-md-6">
-
-                                            </div>
-                                        </div>
 
 
-                                    </div>
-                                </div>
                             </div>
                         </div>
-                    </main>
-                </div>
-                <footer>
-                    <div class="footerBox">
-                        <section>
-                        </section>
-                    </div>
-                </footer>
-            </div>
-        </div>
+                        <div class="mainContentWrapper">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12">
+                                        <h2>But isn't Java slow?</h2>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6">
+                                        <div class="contentBox">
+                                            <h3>But Java is slow!</h3>
+                                            <p>
+                                                Python currently provides the most advanced
+                                                environments and ecosystems for machine learning and
+                                                data science. This is despite the fact that it is
+                                                an interpreted language and thereby substantially slower than
+                                                statically compiled languages and also allot
+                                                slower than dynamically compiled and optimized bytecode
+                                                executed during JVM runtime (JIT - compilation).
+                                                Popular frameworks like PyTorch and Tensorflow
+                                                compensate this deficit by utilizing C++ and Cuda internally.
+                                                Neureka tries to achieve similar performance with a more balanced
+                                                approach, where number crunching is offloaded to OpenCl whenever
+                                                possible and otherwise is reliant on JVM's runtime optimizations.
+                                                (Which should not be underestimated)
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6">
+                                        <div class="contentBox">
+                                            <h3></h3>
+                                            <p>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-12">
+                                    </div>
+                                    <div class="col-sm-12 col-md-8">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/100/three.min.js"></script>
-    <script src="https://www.vantajs.com/dist/vanta.birds.min.js"></script>
-    <script>
-        //VANTA.BIRDS({
-        //    el: "#BirdBox",
-        //    color1: 0xd00ff,
-        //    colorMode: "lerp",
-        //    birdSize: 0.70,
-        //    wingSpan: 17.00,
-        //    speedLimit: 4.00,
-        //    separation: 21.00,
-        //    alignment: 16.00,
-        //    cohesion: 25.00,
-        //    backgroundAlpha: 0.00
-        //})
-        VANTA.BIRDS({
-            el: "#BirdBox",
-            backgroundColor: 0x0,
-            color1: 0x59cc65,
-            color2: 0xa6fc,
-            colorMode: "lerp",
-            birdSize: 0.70,
-            wingSpan: 17.00,
-            speedLimit: 4.00,
-            separation: 21.00,
-            alignment: 16.00,
-            cohesion: 25.00,
-            backgroundAlpha: 0.00
-        })
-    </script>
-    </body>
+                                    </div>
+                                    <div class="col-sm-12 col-md-8">
+
+                                    </div>
+                                    <div class="col-sm-12 col-md-4">
+
+                                    </div>
+                                    <div class="col-sm 12 col-md-6">
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <footer>
+            <div class="footerBox">
+                <section>
+                </section>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/100/three.min.js"></script>
+<script src="https://www.vantajs.com/dist/vanta.birds.min.js"></script>
+<script>
+    //VANTA.BIRDS({
+    //    el: "#BirdBox",
+    //    color1: 0xd00ff,
+    //    colorMode: "lerp",
+    //    birdSize: 0.70,
+    //    wingSpan: 17.00,
+    //    speedLimit: 4.00,
+    //    separation: 21.00,
+    //    alignment: 16.00,
+    //    cohesion: 25.00,
+    //    backgroundAlpha: 0.00
+    //})
+    VANTA.BIRDS({
+        el: "#BirdBox",
+        backgroundColor: 0x0,
+        color1: 0x59cc65,
+        color2: 0xa6fc,
+        colorMode: "lerp",
+        birdSize: 0.70,
+        wingSpan: 17.00,
+        speedLimit: 4.00,
+        separation: 21.00,
+        alignment: 16.00,
+        cohesion: 25.00,
+        backgroundAlpha: 0.00
+    })
+</script>
+</body>
 </html>

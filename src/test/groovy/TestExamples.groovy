@@ -84,6 +84,18 @@ class TestExamples
          8, 9, 1, 2, => 9, 1, 2,
          3, 4, 5, 6
          */
+        //---
+        b = a[[[0..3]:2, [1..4]:2]]
+        tester.testContains(b.toString(), ["5.0, 7.0, 4.0, 6.0"], "Testing slicing")
+        tester.testContains(((b.has(int[].class))?"Has index component":""), ["Has index component"], "Check if index component is present!")
+        /**
+         1, 2, 3, 4,
+         5, 6, 7, 8, => 5,  7,
+         9, 1, 2, 3,
+         4, 5, 6, 7, => 4,  6,
+         8, 9, 1, 2,
+         3, 4, 5, 6
+         */
 
 
 

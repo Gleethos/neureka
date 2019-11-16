@@ -9,10 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -786,7 +783,7 @@ public class Tsr {
             } else if (data[i] <= 10000000) {
                 key *= 10000000;
             }
-            key += Math.abs(data[i]);
+            key += Math.abs(data[i])+1;
         }
         int[] found = CONFIGS.get(key);
         if (found != null) {
@@ -931,42 +928,43 @@ public class Tsr {
         return (this.hashCode()==other.hashCode());
     }
     public Tsr getAt(Object key) {
-        key = (key instanceof  List)?((List)key).toArray():key;
+        //key = (key instanceof  List)?((List)key).toArray():key;
         Tsr subset = new Tsr();
         int[] idx = null;// = (int[])key;
         int[] newShape = new int[this.rank()];
-        if(((Object[])key)[0] instanceof Integer)
-        {
-            key = intArray((Object[]) key);
-            idx = (int[])key;
-            if(key instanceof int[]) {
-                for(int i=0; i<this.rank(); i++) {
-                    if(idx[i]>=0) {
-                        newShape[i] = _shape[i]-idx[i];
-                    } else {
-                        newShape[i] = _shape[i]+idx[i];
-                        idx[i] = 0;//_shape[i]+idx[i];
+        if(key instanceof List){
+            key = ((List)key).toArray();
+            if(((Object[])key)[0] instanceof Integer)
+            {
+                key = intArray((Object[]) key);
+                idx = (int[])key;
+                if(key instanceof int[]) {
+                    for(int i=0; i<this.rank(); i++) {
+                        if(idx[i]>=0) {
+                            newShape[i] = _shape[i]-idx[i];
+                        } else {
+                            newShape[i] = _shape[i]+idx[i];
+                            idx[i] = 0;//_shape[i]+idx[i];
+                        }
                     }
                 }
             }
-        }
-        else if(((Object[])key)[0] instanceof List)
-        {
-            idx = new int[this.rank()];
-            Object[] array = (Object[])key;
-            for(int i=0; i<array.length; i++){
-                array[i] = ((List)array[i]).toArray();
-                int first = ((Integer)((Object[])array[i])[0]);
-                int last = ((Integer)((Object[])array[i])[((Object[])array[i]).length-1]);
-                array[i] = new int[]{first, last};
+            else if(((Object[])key)[0] instanceof List)
+            {
+                idx = new int[this.rank()];
+                Object[] ranges = (Object[])key;
+                _configureFromRanges(ranges, idx, newShape);
             }
-            Object[] ranges = array;
-            if(ranges.length!=rank()) throw new IllegalArgumentException("[Tsr][getAt(Object key)]: Number of arguments must match tensor dim!");
-            for(int i=0; i<this.rank(); i++) {
-                int first =  (Integer) ((int[])ranges[i])[0];
-                int second =  (Integer) ((int[])ranges[i])[1];
-                newShape[i] = (second-first)+1;
-                idx[i] = first;
+        }//...not simple slice... Advanced:
+        else if(key instanceof Map)// ==> i, j, k slicing!
+        {
+            idx = new int[this.rank()*2];
+            Object[] ranges = ((Map)key).keySet().toArray();
+            _configureFromRanges(ranges, idx, newShape);
+            Object[] steps = ((Map)key).values().toArray();
+            for(int i=rank(); i<2*this.rank(); i++){
+                idx[i] = (Integer)steps[i-rank()];
+                newShape[i-rank()] /= (Integer)steps[i-rank()];
             }
         }
         subset._value = this._value;
@@ -979,6 +977,23 @@ public class Tsr {
         subset._shape = _cached(newShape);
         subset.add(idx);
         return subset;
+    }
+
+    private void _configureFromRanges(Object[] ranges, int[] idx, int[] newShape){
+        for(int i=0; i<ranges.length; i++){
+            ranges[i] = ((List)ranges[i]).toArray();
+            ranges[i] = (((Object[])ranges[i])[0] instanceof List)?((List)((Object[])ranges[i])[0]).toArray():((Object[])ranges[i]);
+            int first = ((Integer)((Object[])ranges[i])[0]);
+            int last = ((Integer)((Object[])ranges[i])[((Object[])ranges[i]).length-1]);
+            ranges[i] = new int[]{first, last};
+        }
+        if(ranges.length!=rank()) throw new IllegalArgumentException("[Tsr][getAt(Object key)]: Number of arguments must match tensor dim!");
+        for(int i=0; i<this.rank(); i++) {
+            int first =  (Integer) ((int[])ranges[i])[0];
+            int second =  (Integer) ((int[])ranges[i])[1];
+            newShape[i] = (second-first)+1;
+            idx[i] = first;
+        }
     }
 
     //ELEMENTARY OPERATIONS:
@@ -1202,14 +1217,19 @@ public class Tsr {
             @Contract(pure = true)
             public static int i_of_i(int i, Tsr t){
                 int[] idx = new int[t._shape.length];
+                int[] baseIdx = null;
                 if(t.has(int[].class)){
-                    int[] baseIdx = (int[])t.find(int[].class);
-                    for(int ii=0; ii<baseIdx.length; ii++){
+                    baseIdx = (int[])t.find(int[].class);
+                    for(int ii=0; ii<t.rank(); ii++){
                         idx[ii] = baseIdx[ii];
                     }
+                    baseIdx = (baseIdx.length==t.rank())?null:baseIdx;
                 }
                 for(int ii=t.rank()-1; ii>=0; ii--){
-                    idx[ii] += i/t._idxmap[ii];
+                    idx[ii] +=
+                            (
+                                (i / t._idxmap[ii])*((baseIdx==null)?1:baseIdx[t.rank()+ii])
+                            );
                     i %= t._idxmap[ii];
                 }
                 for(int ii=0; ii<t._shape.length; ii++){
