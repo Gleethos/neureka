@@ -77,8 +77,8 @@ class TestExamples
         tester.testContains(b.toString(), ["1.0, 2.0, 3.0, 5.0, 6.0, 7.0, 9.0, 1.0, 2.0"], "Testing slicing")
         tester.testContains(((b.has(int[].class))?"Has index component":""), ["Has index component"], "Check if index component is present!")
         /**
-         1, 2, 3, 4,
-         5, 6, 7, 8,
+         1, 12, 3, 4,
+         5, 6, 7, 16,
          9, 1, 2, 3, => 1, 2, 3,
          4, 5, 6, 7, => 5, 6, 7,
          8, 9, 1, 2, => 9, 1, 2,
@@ -89,8 +89,8 @@ class TestExamples
         tester.testContains(b.toString(), ["5.0, 7.0, 4.0, 6.0"], "Testing slicing")
         tester.testContains(((b.has(int[].class))?"Has index component":""), ["Has index component"], "Check if index component is present!")
         /**
-         1, 2, 3, 4,
-         5, 6, 7, 8, => 5,  7,
+         1, 12, 3, 4,
+         5, 6, 7, 16, => 5,  7,
          9, 1, 2, 3,
          4, 5, 6, 7, => 4,  6,
          8, 9, 1, 2,
