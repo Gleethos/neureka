@@ -1,4 +1,5 @@
-import neureka.core.Tsr;
+import neureka.core.Tsr
+import neureka.core.device.Device;
 import neureka.core.function.Function;
 import neureka.core.function.factory.assembly.FunctionBuilder;
 import neureka.core.function.factory.autograd.GraphNode;
@@ -11,13 +12,20 @@ class TestExamples
 {
 
     @Test
-    void testReadmeExamples()
+    void testOne()
+    {
+        Device device = new DummyDevice()
+        _testReadmeExamples(device)
+    }
+
+    void _testReadmeExamples(Device device)
     {
         NTester_Tensor tester = new NTester_Tensor("Tensor tester (only cpu)")
 
         Tsr x = new Tsr([1], 3).setRqsGradient(true)
         Tsr b = new Tsr([1], -4)
         Tsr w = new Tsr([1], 2)
+        device.add(x).add(b).add(w)
         /**
          *      ((3-4)*2)^2 = 4
          *  dx:   8*3 - 32  = -8
@@ -27,6 +35,8 @@ class TestExamples
         tester.testTensor(y, "[1]:(4.0); ->d[1]:(-8.0), ")
         y.backward(new Tsr(2))
         y = b + w * x
+
+
         /**
          *  Subset:
          */
@@ -38,6 +48,7 @@ class TestExamples
                 8, 9, 1, 2,
                 3, 4, 5, 6
         ])
+        device.add(a)
         b = a[[1, -2]]
         tester.testContains(b.toString(), ["2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"], "Testing slicing")
         tester.testContains(((b.has(int[].class))?"Has index component":""), ["Has index component"], "Check if index component is present!")
@@ -97,8 +108,33 @@ class TestExamples
          3, 4, 5, 6
          */
 
+        //---
+        a[[[0..3]:2, [1..4]:2]] = new Tsr([2, 2], [1, 2, 3, 4])
+        tester.testContains(b.toString(), ["1.0, 2.0, 3.0, 4.0"], "Testing slicing")
+        tester.testContains(a.toString(), ["1.0, 12.0, 3.0, 4.0, 1.0, 6.0, 2.0, 16.0, 9.0, 1.0, 2.0, 3.0, 3.0, 5.0, 4.0, 7.0, 8.0, 9.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0"], "Testing slicing")
+        System.out.println("Done")
+        /**a:>>
+             1, 12, 3, 4,
+             1, 6, 2, 16,
+             9, 1, 2, 3,
+             3, 5, 4, 7,
+             8, 9, 1, 2,
+             3, 4, 5, 6
+         */
+        //---
 
-
+        a[1..2, 1..2] = new Tsr([2, 2], [8, 8, 8, 8])
+        tester.testContains(b.toString(), ["1.0, 8.0, 3.0, 4.0"], "Testing slicing")
+        tester.testContains(a.toString(), ["1.0, 12.0, 3.0, 4.0, 1.0, 8.0, 8.0, 16.0, 9.0, 8.0, 8.0, 3.0, 3.0, 5.0, 4.0, 7.0, 8.0, 9.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0"], "Testing slicing")
+        System.out.println("Done")
+        /**a:>>
+         1, 12, 3, 4,
+         1, 6, 2, 16,
+         9, 1, 2, 3,
+         3, 5, 4, 7,
+         8, 9, 1, 2,
+         3, 4, 5, 6
+         */
     }
 
 }

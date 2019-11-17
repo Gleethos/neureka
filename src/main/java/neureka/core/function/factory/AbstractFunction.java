@@ -281,10 +281,16 @@ public abstract class AbstractFunction implements Function
                         }
                     }
                 }
-            } else if(TYPES.REGISTER[_id]=="<") {
-                return _src.get(0).activate(inputs).setTargetValue64(_src.get(1).activate(inputs).targetValue64(true));
-            } else if(TYPES.REGISTER[_id]==">") {
-                return _src.get(1).activate(inputs).setTargetValue64(_src.get(0).activate(inputs).targetValue64(true));
+            } else if(TYPES.REGISTER[_id]=="<" || TYPES.REGISTER[_id]==">") {
+                //return _src.get(0).activate(inputs).setTargetValue64(_src.get(1).activate(inputs).targetValue64(true));
+                Tsr output = (TYPES.REGISTER[_id]=="<")?_src.get(0).activate(inputs):_src.get(1).activate(inputs);
+                Tsr input =  (TYPES.REGISTER[_id]=="<")?_src.get(1).activate(inputs):_src.get(0).activate(inputs);
+                output.foreach((i) -> {
+                    boolean gradTarg = output.gradientIsTargeted();
+                    boolean rrc = input.gradientIsTargeted();
+                    output.targetValue64()[Tsr.fcn.indexing.i_of_i(i, output)] = input.targetValue64()[Tsr.fcn.indexing.i_of_i(i, input)];
+                });
+                return output;
             } else {
                 double[] inp = new double[inputs.length];
                 Tsr output;// = Tsr.fcn.create.newTsr(inputs[0].shape(), inputs[0].translation());
@@ -414,8 +420,18 @@ public abstract class AbstractFunction implements Function
                 return (j < 0) ? exec.subtraction(input, d, _src) : exec.subtraction(input, j, d, _src);
             case 17:
                 return (j < 0) ? exec.addition(input, d, _src) : exec.addition(input, j, d, _src);
-            case 18:
+            case 18://convection
                 return (j < 0) ? exec.multiplication(input, d, _src) : exec.multiplication(input, j, d, _src);
+            //case 19://inv left
+            //    return (j < 0) ? exec.multiplication(input, d, _src) : exec.multiplication(input, j, d, _src);
+            //case 20://inv right
+            //    return (j < 0) ? exec.multiplication(input, d, _src) : exec.multiplication(input, j, d, _src);
+            //case 21:// reshape
+            //    return (j < 0) ? exec.multiplication(input, d, _src) : exec.multiplication(input, j, d, _src);
+            //case 22://idy left
+            //    return (j < 0) ? exec.idy(input, d, _src) : exec.idy(input, d, _src);
+            //case 23://idy right
+            //    return (j < 0) ? exec.idy(new double[]{input[1], input[0]}, d, _src) : exec.idy(new double[]{input[1], input[0]}, d, _src);
             default:
                 return 0;
         }
@@ -801,6 +817,18 @@ public abstract class AbstractFunction implements Function
                 }
                 return ud;
             }
+        }
+
+        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+        @Contract(pure = true)
+        private static double idy(double[] inputs, int d, ArrayList<Function> src) {
+            if (d < 0) {
+                inputs[0] = inputs[1];
+            } else {
+            }
+            return 0;
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

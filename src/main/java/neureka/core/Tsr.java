@@ -438,6 +438,10 @@ public class Tsr {
     public Tsr setGradientIsTargeted(boolean gradientIsTargeted) {
         if (this.gradientIsTargeted() != gradientIsTargeted) {
             if (gradientIsTargeted) {
+                if(this.rqsGradient()&&_gradient==null){
+                    _gradient = new double[this.size()];
+                    //TODO: allocate float or allocate data on gpu!
+                }
                 _flags += (this.rqsGradient())?GRADIENT_IS_TARGETED_MASK:0;
             } else {
                 _flags -= GRADIENT_IS_TARGETED_MASK;
@@ -926,6 +930,11 @@ public class Tsr {
     }
     public boolean equals(Tsr other) {
         return (this.hashCode()==other.hashCode());
+    }
+    public Tsr putAt(Object key, Tsr value){
+        Tsr slice = getAt(key);
+        new Tsr(new Tsr[]{slice, value}, "I[0]<-I[1]", false);
+        return this;
     }
     public Tsr getAt(Object key) {
         //key = (key instanceof  List)?((List)key).toArray():key;

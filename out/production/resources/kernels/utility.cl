@@ -10,17 +10,12 @@ void _cfg_of_cfg(__global int* cfg, int* new_cfg, int rank){
 
 int _i_of_i(int i, int* cfg, int rank){ // cfg:   <[ shape | translation | idxmap | idx ]>
     int* idx = (cfg+rank*3);
-    for(int ii=0; ii<rank; ii++){
-        idx[ii] = i/cfg[2*rank+ii];
+    for(int ii=(rank)-1; ii>=0; ii--){
+        idx[ii] = i/cfg[2*rank+ii];//is derived from the shape of a tensor. Translates scalar index to dim-Index
         i %= cfg[2*rank+ii];
     }
-    //for(int ii=(3*rank)-1; ii>=0; ii--){
-    //    idx[ii] = i/cfg[2*rank+ii];//is derived from the shape of a tensor. Translates scalar index to dim-Index
-    //    i %= cfg[2*rank+ii];
-    //}
     for(int ii=0; ii<rank; ii++){
         i += idx[ii]*cfg[rank+ii];
-        // i += idx[ii]*cfg[rank+ii];
     }
     return i;
 }
