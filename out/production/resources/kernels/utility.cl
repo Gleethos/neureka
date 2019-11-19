@@ -14,7 +14,7 @@ int _i_of_i(int i, int* cfg, int rank){ // cfg:   <[ shape | translation | idxMa
     int* idxMap = (cfg+rank*2);
     int* translation = (cfg+rank);
     for(int ii=(rank)-1; ii>=0; ii--){
-        idx[ii] = (i/idxMap[ii])*idxScale[ii];//is derived from the shape of a tensor. Translates scalar index to dim-Index
+        idx[ii] += (i/idxMap[ii])*idxScale[ii];//is derived from the shape of a tensor. Translates scalar index to dim-Index
         i %= idxMap[ii];//(i / t._idxmap[ii])*((baseIdx==null)?1:baseIdx[t.rank()+ii])
     }
     for(int ii=0; ii<rank; ii++){

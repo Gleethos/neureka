@@ -88,11 +88,17 @@ public class OpenCLDevice implements Device
 
     @Override
     public Device get(Tsr tensor) {
-        tensor.setValue(value64Of(tensor, false));
+        //tensor.setIsOutsourced(false);
+        double[] value = value64Of(tensor, false);
+        double[] gradient = null;
         if(tensor.rqsGradient()){
-            tensor.setValue(value64Of(tensor, true));
+            gradient = value64Of(tensor, true);
         }
         rmv(tensor);
+        tensor.setGradientIsTargeted(true);
+        tensor.setTargetValue64(gradient);
+        tensor.setGradientIsTargeted(false);
+        tensor.setValue(value);
         return this;
     }
 
@@ -250,6 +256,7 @@ public class OpenCLDevice implements Device
         clReleaseMemObject(clt.config);//remove translations/shapes from device!
         clReleaseMemObject(clt.value);
         _mapping.remove(tensor);
+        tensor.setIsOutsourced(false);
         return this;
     }
     private void _rmv(WeakTensorReference reference){

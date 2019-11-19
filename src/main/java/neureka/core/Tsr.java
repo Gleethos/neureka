@@ -59,6 +59,9 @@ public class Tsr {
             _components = new ArrayList<>();
             _components.add(newComponent);
         }
+        if(newComponent instanceof Device && !this.has(Device.class)){
+            ((Device)newComponent).add(this);
+        }
         return this;
     }
 

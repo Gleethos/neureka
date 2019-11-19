@@ -23,10 +23,8 @@ __kernel void convolve(
         int p_idm = 2 * rank;
         int p_idx = 3 * rank;
         
-        //increment on drain:
-        for(int i=0; i<gid; i++){
-            _increment_idx(prv_drn_cfg, rank);
-        }
+        int di = _i_of_i(gid, prv_drn_cfg, rank);
+
         //i_of_i(i, prv_drn_cfg, rank)
         //increment src accordingly:
         int ri = 0;
@@ -90,7 +88,7 @@ __kernel void convolve(
                 }
             }
             //set _value in drn:
-            int di = _i_of_idx_on_tln(prv_drn_cfg, rank);
+            //int di = _i_of_idx_on_tln(prv_drn_cfg, rank);
             drn[di] = value;
         } else {// conv
             while (ri < rank) {
@@ -149,7 +147,7 @@ __kernel void convolve(
             }
             //set _value in drn:
             //int di = __i_of_idx_on_tln(prv_drn_cfg, rank);
-            int di = _i_of_i(gid, prv_drn_cfg, rank);
+            //int di = _i_of_i(gid, prv_drn_cfg, rank);
             drn[di] = value;
         }
 

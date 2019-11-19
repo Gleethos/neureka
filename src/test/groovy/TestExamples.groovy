@@ -128,6 +128,12 @@ class TestExamples
          8, 9, 1, 2,
          3, 4, 5, 6
          */
+        //---
+        Tsr p = new Tsr([2,2], [2, 55, 4, 7]).add((device instanceof DummyDevice)?null:device)
+        Tsr u = new Tsr([2,2], [5, 2, 7, 34]).add((device instanceof DummyDevice)?null:device)
+
+        p[] = u
+        tester.testContains(p.toString(), ["5.0, 2.0, 7.0, 34.0"], "Testing slicing")
 
         //---
         a[[[0..3]:2, [1..4]:2]] = new Tsr([2, 2], [1, 2, 3, 4])
