@@ -3,7 +3,8 @@ import neureka.core.device.Device;
 
 import java.util.Collection;
 
-public class DummyDevice implements Device {
+public class DummyDevice implements Device
+{
     @Override
     public void dispose() {
 

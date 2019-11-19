@@ -247,6 +247,8 @@ header p {font-family: Brush Script Std, Brush Script MT, cursive;
     height: 100%;
     background: rgba(200, 200, 255, 0.3);
     text-align: center;
+    --font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
 }/*rgba(46, 80, 95, 0.3)*/
 
 .mainContentWrapper code
@@ -283,6 +285,18 @@ header p {font-family: Brush Script Std, Brush Script MT, cursive;
     border-radius: 0.2em; color: black;
 }/*rgba(46, 80, 95, 0.3)*/
 
+.mainContentWrapper div
+{
+    margin-top: 0.33em; margin-bottom: 0.33em;
+}
+.mainContentWrapper img
+{
+    margin-top: 0.33em; margin-bottom: 0.33em;
+}
+.mainContentWrapper code
+{
+    margin-top: 0.33em; margin-bottom: 0.33em;
+}
 
 code
 {
@@ -293,22 +307,26 @@ code
     border-radius: 0.2em; color: black;
 }
 
-
 .contentBox
 {
-    background-color: #00f2ff;  font-size: 1em;
+    background-color: #31f5ff;  font-size: 1em;
     padding: 0.5em;
-    margin: 0.175em;
-    border: 0.05em solid black;
+    margin-left: 0.175em;
+    margin-right: 0.174em;
+    margin-top: 0.175em;
+    margin-bottom: 1em;
+
+    border: 0.02em solid black;
     box-shadow: inset 0 0 3px 1px black;
     border-radius: 0.2em; color: black;
-
+    height: 100%
 }
 
 .contentBox img
 {
-    border: 5px solid grey; margin: 15px;
-    box-shadow: 0 0 5px 2px black; width:100%;
+    border: 0 solid white; margin: 15px;
+    box-shadow: 0 0 0 0 white; width:auto;
+    float:right;
 }
 
 .contentBox p
@@ -316,6 +334,7 @@ code
     padding: 0.08em;
     margin-top: 0; margin-left: 0; margin-right: 0; margin-bottom: 0.2em;
     text-align: left;
+    float: left;
 }
 
 .contentBox h3
@@ -338,8 +357,15 @@ code
 .rightFloating{float: right; }
 
 .nightBox
-{background-color: black; box-shadow: 0 0 40px 3px black; border-radius: 1em;
-    border-left: 2px solid cyan; border-bottom: 2px solid cyan; border-top: 0px;}
+{
+    background-color: black;
+    box-shadow: 0 0 40px 3px black;
+    border-radius: 1em;
+    border-left: 0.095em solid cyan;
+    border-bottom: 0.075em solid cyan;
+    border-top: 0px;
+    padding-left: 0.2em;
+}
 
 video{width: 100%; height: auto;}
 

@@ -45,7 +45,7 @@
                                 </li>
                                 <li>
                                     <a href="https://github.com/Gleethos/neureka">
-                                        <img src="https://png2.kisspng.com/sh/9646f5d54230eeeeff0b635b0f3b7bd3/L0KzQYm3U8I3N6VAj5H0aYP2gLBuTfdqfJl6ep9sb33zhcXskr1qa5Dzi59yY3BxPbXskBlodl5sgeZxdXKwRbLpWPE0OZY6eqc8OUWxRoi8WMA0PGo2TaQ7MES8SIO5U8c1OV91htk=/kisspng-github-computer-icons-icon-design-github-5ab8a31e5b5395.6758034915220498223741.png">
+                                        <img src="https://png2.kisspng.com/sh/cb24b3f16277ecb5beb0f3a01d110452/L0KzQYq3VMI2N6JAf5H0aYP2gLBuTfNwdaF6jNd7LXnmf7B6TfdqfJl6ep9sbHnzPbL5lL11epJziAJqcnXxc8q0hwJmbV5oRddrZYP2Pcb4TgVvbJZ3fARqdHWwdb3sgCRzcZRmhJ9ubnfsfrbskvlvb154jOdtZT24c7S5V8BnaWQAeaRvND6zQ4m7U8M4P2I6Tag7NEa6R4m5U8YyNqFzf3==/kisspng-computer-icons-github-clip-art-transparency-free-c-ebess-uq-undergrate-electrical-engineering-stude-5cc270fa39a2f4.0384337715562467782361.png">
                                     </a>
                                 </li>
                                 <li>
@@ -85,6 +85,90 @@
                         </div>
                         <div class="parallax__layer parallax__layer--base">
                             <div id="mainTile" class="cardBox dynamicSideMargin">
+                                <div class = "mainContentWrapper">
+                                    <div class = container-fluid>
+
+                                        <h1>Features</h1>
+
+                                        <div class = "row">
+                                            <div class="col-sm-12 col-md-12">
+                                               <pre><code class="hljs java">
+
+        //
+        //     SLICING:
+        //   -=========-
+        //
+        Tsr a = new Tsr([4, 6], [
+                1, 2, 3, 4,
+                5, 6, 7, 8,
+                9, 1, 2, 3,
+                4, 5, 6, 7,
+                8, 9, 1, 2,
+                3, 4, 5, 6
+        ])
+
+        // Slice with offsets:
+        b = a[1, -2] // [2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0]
+        //
+        //    1, 2, 3, 4, => 2, 3, 4,
+        //    5, 6, 7, 8, => 6, 7, 8,
+        //    9, 1, 2, 3, => 1, 2, 3,
+        //    4, 5, 6, 7, => 5, 6, 7,
+        //    8, 9, 1, 2,
+        //    3, 4, 5, 6
+        //
+
+        // Note: The underlying data of a will be inherited by b! :D
+        a.value64()[1] = a.value64()[1] * 6
+        a.value64()[7] = a.value64()[7] * 2
+        //>> b's values would then be: [12.0, 3.0, 4.0, 6.0, 7.0, 16.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0]
+
+        //Use b for calculations but keep in mind that it affects a! :
+        Tsr c = new Tsr([3, 4], [
+                -3, 2, 3,
+                 5, 6, 2,
+                -1, 1, 2,
+                 3, 4, 2,
+        ])
+        Tsr d = b + c
+        //
+        //    9,  5,  7,
+        //    11, 13, 18,
+        //    0,  3,  5,
+        //    8,  10, 9
+        //
+
+        // Use ranges (The '..' operator is similar to pythons ':' operator)
+        b = a[1..3, 2..4] // [3x3][1.0, 2.0, 3.0, 5.0, 6.0, 7.0, 9.0, 1.0, 2.0]
+        //
+        //    1, 12, 3, 4,
+        //    5, 6, 7, 16,
+        //    9, 1, 2, 3,  =>  1, 2, 3,
+        //    4, 5, 6, 7,  =>  5, 6, 7,
+        //    8, 9, 1, 2,  =>  9, 1, 2,
+        //    3, 4, 5, 6
+        //
+
+        //  '[i..j]:k' is equivalent to pythons 'i:j:k' syntax for indexing! (numpy)
+        //  i.. start index.
+        //  j.. end index. (inclusive!)
+        //  k.. step size.
+        b = a[[[0..3]:2, [1..4]:2]] // [2x2][5.0, 7.0, 4.0, 6.0]
+        //
+        //   1, 12, 3, 4,
+        //   5, 6, 7, 16,  =>  5,  7,
+        //   9, 1, 2, 3,
+        //   4, 5, 6, 7,  =>  4,  6,
+        //   8, 9, 1, 2,
+        //   3, 4, 5, 6
+        //
+                                                </code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
                                 <div class = "mainContentWrapper">
                                     <div class = "container-fluid">
                                         <h1>Autograd</h1>

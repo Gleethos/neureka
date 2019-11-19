@@ -933,11 +933,23 @@ public class Tsr {
     }
     public Tsr putAt(Object key, Tsr value){
         Tsr slice = getAt(key);
+        boolean valueIsDeviceVisitor = false;
+        if(slice.has(Device.class) && !value.has(Device.class)){
+            Device device = (Device)slice.find(Device.class);
+            device.add(value);
+            valueIsDeviceVisitor = true;
+        }
         new Tsr(new Tsr[]{slice, value}, "I[0]<-I[1]", false);
+        if(valueIsDeviceVisitor) ((Device)value.find(Device.class)).get(value);
         return this;
     }
     public Tsr getAt(Object key) {
-        //key = (key instanceof  List)?((List)key).toArray():key;
+        if(key==null){
+            return this;
+        }
+        if(key instanceof List){
+            if(((List)key).size()==0) return this;
+        }
         Tsr subset = new Tsr();
         int[] idx = null;// = (int[])key;
         int[] newShape = new int[this.rank()];
@@ -979,12 +991,12 @@ public class Tsr {
         subset._value = this._value;
         subset._translation = this._translation;
         subset._idxmap = _cached(fcn.indexing.idxTln(newShape));
+        subset._shape = _cached(newShape);
+        subset.add(idx);
         if(this.isOutsourced()){
             Device device = (Device) this.find(Device.class);
             device.add(subset, this);
         }
-        subset._shape = _cached(newShape);
-        subset.add(idx);
         return subset;
     }
 

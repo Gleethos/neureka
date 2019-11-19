@@ -1,5 +1,7 @@
 import neureka.core.Tsr
-import neureka.core.device.Device;
+import neureka.core.device.Device
+import neureka.core.device.openCL.OpenCLDevice
+import neureka.core.device.openCL.OpenCLPlatform;
 import neureka.core.function.Function;
 import neureka.core.function.factory.assembly.FunctionBuilder;
 import neureka.core.function.factory.autograd.GraphNode;
@@ -16,6 +18,11 @@ class TestExamples
     {
         Device device = new DummyDevice()
         _testReadmeExamples(device)
+
+        if(!System.getProperty("os.name").toLowerCase().contains("windows")) return
+
+        Device gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0)
+        _testReadmeExamples(gpu)
     }
 
     void _testReadmeExamples(Device device)
@@ -62,9 +69,22 @@ class TestExamples
          * 5, 6, 7,
          *
          */
-
-        a.value64()[1] = a.value64()[1] * 6
-        a.value64()[7] = a.value64()[7] * 2
+        //---
+        if(device instanceof DummyDevice){
+            a.value64()[1] = a.value64()[1] * 6
+            a.value64()[7] = a.value64()[7] * 2
+        }else{
+            Tsr k = new Tsr([4, 6], [
+                    1, 6, 1, 1,
+                    1, 1, 1, 2,
+                    1, 1, 1, 1,
+                    1, 1, 1, 1,
+                    1, 1, 1, 1,
+                    1, 1, 1, 1
+            ])
+            device.add(k)
+            a[] = a*k
+        }
         tester.testContains(b.toString(), ["12.0, 3.0, 4.0, 6.0, 7.0, 16.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"], "Testing slicing")
         //tester.testTensor(x, ["-16.0"])
         //---
@@ -74,6 +94,7 @@ class TestExamples
                 -1, 1, 2,
                 3, 4, 2,
         ])
+        //device.add(c)
         Tsr d = b + c
         tester.testContains(d.toString(),
                 [

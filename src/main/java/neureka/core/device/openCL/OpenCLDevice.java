@@ -21,6 +21,7 @@ public class OpenCLDevice implements Device
     class cl_tsr{
         public int fp = 1;
         public cl_mem config;
+        public int size;//Size of arrays below:
         public cl_mem value;
         public cl_mem grad;
     }
@@ -125,23 +126,40 @@ public class OpenCLDevice implements Device
             newClt.fp = parent.fp;
             newClt.value = parent.value;
             newClt.grad = parent.grad;
+            newClt.size = parent.size;
         }
-        //CONFIG TRANSFER:
+        //CONFIG TRANSFER: <[ shape | translation | idxmap | idx | scale ]>
         int rank = tensor.shape().length;
-        int[] config = new int[rank*3];
+        int[] config = new int[rank*5];//3
         int[] shape = tensor.shape();
+        //---
         for(int i=0; i<rank; i++){
-            config[i] = shape[i];
+            config[i] = shape[i];// -=> SHAPE
         }
+        //---
         int[] translation = tensor.translation();
-        for(int i=rank; i<rank*2; i++){
+        for(int i=rank; i<rank*2; i++){// -=> TRANSLATION
             config[i] = translation[i-rank];
         }
+        //---
         int[] idxmap = tensor.idxmap();
-        for(int i=rank*2; i<rank*3; i++){
+        for(int i=rank*2; i<rank*3; i++){// -=> IDXMAP (translates scalar to dimension index)
             config[i] = idxmap[i-rank*2];
         }
-        //SHAPE/TRANSLATION/IDXMAP TRANSFER:
+        //---
+        int[] idx = (int[])tensor.find(int[].class); //Look for additional configurations!
+        if(idx!=null){
+            for(int i=rank*3; i<rank*4; i++){// -=> IDX Basline (sliced tensors have this property)
+                config[i] = idx[i-rank*3];
+            }
+        }
+        //---
+        for(int i=rank*4; i<rank*5; i++){// -=> IDX Baseline Scale (sliced tensors indexes might be scaled)
+            config[i] = ((idx!=null)&&idx.length>tensor.rank())?idx[i-rank*3]:1;
+        }
+        //---
+
+        //SHAPE/TRANSLATION/IDXMAP/SCALEMAP TRANSFER:
         newClt.config = clCreateBuffer(
                 _platform.getContext(),
                 CL_MEM_READ_WRITE,
@@ -165,8 +183,7 @@ public class OpenCLDevice implements Device
         int err = clEnqueueMigrateMemObjects(
                 _queue,
                 memos.length,
-                memos
-                ,
+                memos,
                 CL_MIGRATE_MEM_OBJECT_HOST,
                 0,
                 null,
@@ -201,6 +218,7 @@ public class OpenCLDevice implements Device
             p = Pointer.to(data);
             size = data.length;
         }
+        newClTsr.size = size;
         //VALUE TRANSFER:
         cl_mem mem = clCreateBuffer(
                 _platform.getContext(),
@@ -228,6 +246,7 @@ public class OpenCLDevice implements Device
     @Override
     public Device rmv(Tsr tensor) {
         cl_tsr clt = _mapping.get(tensor);
+        if(clt==null) return this; //THIS SHOULD NOT BE?
         clReleaseMemObject(clt.config);//remove translations/shapes from device!
         clReleaseMemObject(clt.value);
         _mapping.remove(tensor);
@@ -301,7 +320,7 @@ public class OpenCLDevice implements Device
         if(clt.fp==1){
             return DataHelper.floatToDouble(value32Of(tensor, grd));
         } else {
-            double[] data = new double[tensor.size()];
+            double[] data = new double[clt.size];//tensor.size()];
             clEnqueueReadBuffer(
                     _queue,
                     (grd)?clt.grad:clt.value,
@@ -315,14 +334,13 @@ public class OpenCLDevice implements Device
             );
             return data;
         }
-
     }
 
     @Override
     public float[] value32Of(Tsr tensor, boolean grd){
         cl_tsr clt = _mapping.get(tensor);
         if(clt.fp==1){
-            float[] data = new float[tensor.size()];
+            float[] data = new float[clt.size];//tensor.size()];
             clEnqueueReadBuffer(
                     _queue,
                     (grd)?clt.grad:clt.value,

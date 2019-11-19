@@ -225,10 +225,8 @@ public abstract class AbstractFunction implements Function
                 }
             }
             device.execute(tsrs, _id, new_d);
-            return tsrs[0];
-
+            return (tsrs[0]==null)?tsrs[1]:tsrs[0];
         } else {
-
             if (TYPES.REGISTER[_id] == "x") {
                 if (d < 0) {
                     return exec.convection(_src.get(0).activate(inputs), _src.get(1).activate(inputs));
@@ -286,22 +284,35 @@ public abstract class AbstractFunction implements Function
                 Tsr output = (TYPES.REGISTER[_id]=="<")?_src.get(0).activate(inputs):_src.get(1).activate(inputs);
                 Tsr input =  (TYPES.REGISTER[_id]=="<")?_src.get(1).activate(inputs):_src.get(0).activate(inputs);
                 output.foreach((i) -> {
-                    boolean gradTarg = output.gradientIsTargeted();
-                    boolean rrc = input.gradientIsTargeted();
                     output.targetValue64()[Tsr.fcn.indexing.i_of_i(i, output)] = input.targetValue64()[Tsr.fcn.indexing.i_of_i(i, input)];
                 });
                 return output;
             } else {
                 double[] inp = new double[inputs.length];
-                Tsr output;// = Tsr.fcn.create.newTsr(inputs[0].shape(), inputs[0].translation());
-                output = new Tsr(inputs[0], false);
-                Tsr finalOutput = output;
-                output.foreach((i) -> {
-                    for (int ii = 0; ii < inputs.length; ii++) {
-                        inp[ii] = inputs[ii].value64()[Tsr.fcn.indexing.i_of_i(i, inputs[ii])];//ids[ii]];//i
-                    }
-                    finalOutput.value64()[Tsr.fcn.indexing.i_of_i(i, finalOutput)] = _scalar_activation(inp, j, d);
-                });
+                Tsr output = new Tsr(inputs[0], false);
+                //Tsr finalOutput = output;
+                double[][] data = new double[inputs.length][];
+                for(int i=0; i<data.length; i++){
+                    data[i] = inputs[i].value64();
+                }
+                if(output.is64()){
+                    double[] outputValue = output.targetValue64();//.value64();
+                    output.foreach((i) -> {
+                        for (int ii = 0; ii < inputs.length; ii++) {
+                            inp[ii] = data[ii][Tsr.fcn.indexing.i_of_i(i, inputs[ii])];//ids[ii]];//i
+                        }
+                        outputValue[Tsr.fcn.indexing.i_of_i(i, output)] = _scalar_activation(inp, j, d);
+                    });
+                } else {
+                    float[] outputValue = output.targetValue32();//.value64();
+                    output.foreach((i) -> {
+                        for (int ii = 0; ii < inputs.length; ii++) {
+                            inp[ii] = data[ii][Tsr.fcn.indexing.i_of_i(i, inputs[ii])];//ids[ii]];//i
+                        }
+                        outputValue[Tsr.fcn.indexing.i_of_i(i, output)] = (float)_scalar_activation(inp, j, d);
+                    });
+                }
+
                 return  output;
             }
         }
