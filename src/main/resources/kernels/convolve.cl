@@ -2,9 +2,6 @@
 void _cfg_of_cfg(__global int* cfg, int* prv_cfg, int rank);
 int  _i_of_i(int i, int* config, int rank);
 int  _i_of_idx_on_tln(int* conf, int rank);
-void _increment_idx(int* conf, int rank);
-int  _increment_At(int* conf, int ri, int rank);
-int  _i_of_idx_on_shp(int gid, int* conf, int rank);
 
 __kernel void convolve(
     __global float *drn, __global int *drn_conf,
@@ -22,10 +19,9 @@ __kernel void convolve(
         int p_tln = 1 * rank;
         int p_idm = 2 * rank;
         int p_idx = 3 * rank;
-        
+
         int di = _i_of_i(gid, prv_drn_cfg, rank);
 
-        //i_of_i(i, prv_drn_cfg, rank)
         //increment src accordingly:
         int ri = 0;
         if(d >= 0){
