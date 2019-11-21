@@ -166,18 +166,17 @@ class TestExamples
 
         //---
         //b>>
-        //      5, 7,
-        //      4, 6
-        b.setRqsGradient(true)
-        c = new Tsr([1, 2, 2], [
-                -2, 3,
-                1, 2,
-        ])
-        device.add(b).add(c)
-
+        //      1, 8,
+        //      3, 4
+        //b.setRqsGradient(true)
+        //c = new Tsr([2, 2], [
+        //        -2, 3,//-2 + 24 + 3 + 8
+        //        1, 2,
+        //])
+        //device.add(b).add(c)
+        //System.out.println(b.toString())
         //x = new Tsr(b, "x", c)
-
-        //tester.testContains("", [""], "")
+        //tester.testContains(x.toString(), ["[1x1]:(33.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)"], "")
 
         //tester.testTensorAutoGrad(//4, 5, -13, -4 <= result values
         //        [b, c],

@@ -356,7 +356,7 @@ public class Tsr {
                 this.setGradientIsTargeted(false);
                 if(this.isOutsourced()){
                     ((Device)find(Device.class)).get(this);
-                    _gradient = null;
+                    _gradient = null;//TODO: THIS NEEDS UPDATE!
                     ((Device)find(Device.class)).add(this);
                 }
                 _flags -= RQS_GRADIENT_MASK;

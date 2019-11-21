@@ -18,12 +18,21 @@ import org.jocl.*;
 
 public class OpenCLDevice implements Device
 {
+    class cl_data{
+        public cl_mem data;
+        public int uses = 0;
+        public int size = 0;
+    }
+
     class cl_tsr{
         public int fp = 1;
         public cl_mem config;
-        public int size;//Size of arrays below:
-        public cl_mem value;
-        public cl_mem grad;
+        //public int size;//Size of arrays below:
+        //public cl_mem value;
+        //public cl_mem grad;
+        public cl_data grad = new cl_data();
+        public cl_data value = new cl_data();
+
     }
 
     //private Map<Tsr, cl_tsr> __mapping = new HashMap<>();
@@ -86,6 +95,23 @@ public class OpenCLDevice implements Device
         clFinish(_queue);
     }
 
+    //@Override
+    //public Device allocGradFor(Tsr tensor){
+    //    cl_tsr clt = _mapping.get(tensor);
+    //
+//
+//
+    //    return this;
+    //}
+//
+    //@Override
+    //public Device freeGradFor(Tsr tensor){
+    //    cl_tsr clt = _mapping.get(tensor);
+//
+//
+    //    return this;
+    //}
+
     @Override
     public Device get(Tsr tensor) {
         //tensor.setIsOutsourced(false);
@@ -131,8 +157,10 @@ public class OpenCLDevice implements Device
         } else {//tensor is a subset tensor of parent:
             newClt.fp = parent.fp;
             newClt.value = parent.value;
-            newClt.grad = parent.grad;
-            newClt.size = parent.size;
+            newClt.value.uses ++;
+            //newClt.grad = parent.grad;
+            //newClt.grad.uses ++;
+            //newClt.size = parent.size;
         }
         //CONFIG TRANSFER: <[ shape | translation | idxmap | idx | scale ]>
         int rank = tensor.shape().length;
@@ -182,9 +210,9 @@ public class OpenCLDevice implements Device
         );
         cl_mem[] memos;
         if(tensor.rqsGradient()){
-            memos = new cl_mem[]{newClt.value, newClt.grad, newClt.config};
+            memos = new cl_mem[]{newClt.value.data, newClt.grad.data, newClt.config};
         } else {
-            memos = new cl_mem[]{newClt.value, newClt.config};
+            memos = new cl_mem[]{newClt.value.data, newClt.config};
         }
         int err = clEnqueueMigrateMemObjects(
                 _queue,
@@ -197,7 +225,10 @@ public class OpenCLDevice implements Device
         );
         WeakTensorReference r = new WeakTensorReference(tensor, _reference_queue);
         _mapping.put(r, newClt);
-        CLEANER.register(tensor, ()->{_rmv(r); System.out.println("Garbage has been removed from GPU!!!");});
+        CLEANER.register(tensor, ()->{
+            _rmv(r); System.out.println("Garbage has been removed from GPU!!!");
+        });
+
         tensor.add(this);
         tensor.setIsOutsourced(true);
         return this;
@@ -224,7 +255,12 @@ public class OpenCLDevice implements Device
             p = Pointer.to(data);
             size = data.length;
         }
-        newClTsr.size = size;
+        newClTsr.value.size = size;
+        newClTsr.value.uses = 1;
+        if(grd){
+            newClTsr.grad.size = size;
+            newClTsr.grad.uses = 1;
+        }
         //VALUE TRANSFER:
         cl_mem mem = clCreateBuffer(
                 _platform.getContext(),
@@ -234,9 +270,9 @@ public class OpenCLDevice implements Device
                 null
         );
         if(grd){
-            newClTsr.grad = mem;
+            newClTsr.grad.data = mem;
         } else {
-            newClTsr.value = mem;
+            newClTsr.value.data = mem;
         }
         clEnqueueWriteBuffer(
                 _queue,
@@ -254,7 +290,7 @@ public class OpenCLDevice implements Device
         cl_tsr clt = _mapping.get(tensor);
         if(clt==null) return this; //THIS SHOULD NOT BE?
         clReleaseMemObject(clt.config);//remove translations/shapes from device!
-        clReleaseMemObject(clt.value);
+        clReleaseMemObject(clt.value.data);
         _mapping.remove(tensor);
         tensor.setIsOutsourced(false);
         return this;
@@ -262,7 +298,14 @@ public class OpenCLDevice implements Device
     private void _rmv(WeakTensorReference reference){
         cl_tsr clt = _mapping.get(reference);
         clReleaseMemObject(clt.config);//remove translations/shapes from device!
-        clReleaseMemObject(clt.value);
+        if(clt.value.uses<=1){
+            clReleaseMemObject(clt.value.data);
+        } else {
+            clt.value.uses --;
+        }
+        if(clt.grad.uses>0){
+            clReleaseMemObject(clt.grad.data);
+        }
         _mapping.remove(reference);
     }
 
@@ -275,7 +318,7 @@ public class OpenCLDevice implements Device
             //value = new double[tensor.size()];
             clEnqueueWriteBuffer(
                     _queue,
-                    clt.value,
+                    clt.value.data,
                     CL_TRUE,
                     0,
                     Sizeof.cl_double * value.length,
@@ -294,7 +337,7 @@ public class OpenCLDevice implements Device
         if(clt.fp==1){
             clEnqueueWriteBuffer(
                     _queue,
-                    clt.value,
+                    clt.value.data,
                     CL_TRUE,
                     0,
                     Sizeof.cl_float * value.length,
@@ -327,10 +370,10 @@ public class OpenCLDevice implements Device
         if(clt.fp==1){
             return DataHelper.floatToDouble(value32Of(tensor, grd));
         } else {
-            double[] data = new double[clt.size];//tensor.size()];
+            double[] data = new double[clt.value.size];//tensor.size()];
             clEnqueueReadBuffer(
                     _queue,
-                    (grd)?clt.grad:clt.value,
+                    (grd)?clt.grad.data:clt.value.data,
                     CL_TRUE,
                     0,
                     Sizeof.cl_double * data.length,
@@ -347,10 +390,10 @@ public class OpenCLDevice implements Device
     public float[] value32Of(Tsr tensor, boolean grd){
         cl_tsr clt = _mapping.get(tensor);
         if(clt.fp==1){
-            float[] data = new float[clt.size];//tensor.size()];
+            float[] data = new float[clt.value.size];//tensor.size()];
             clEnqueueReadBuffer(
                     _queue,
-                    (grd)?clt.grad:clt.value,
+                    (grd)?clt.grad.data:clt.value.data,
                     CL_TRUE,
                     0,
                     Sizeof.cl_float * data.length,
@@ -444,7 +487,7 @@ public class OpenCLDevice implements Device
         return newTsrs;
     }
 
-    public Tsr _execute(Tsr[] tsrs, int f_id, int d){
+    private Tsr _execute(Tsr[] tsrs, int f_id, int d){
         boolean[] notNative = new boolean[tsrs.length];
         for (int i=0; i<tsrs.length; i++) {
             if (tsrs[i]!=null && !tsrs[i].isOutsourced()) {
@@ -531,8 +574,8 @@ public class OpenCLDevice implements Device
             int gwz = (tsrs[0]!=null)?tsrs[0].size():tsrs[1].size();
             int offset = (tsrs[0]!=null)?0:1;
             cl_kernel kernel = _platform.getKernels().get(_platform.kernelNameOf(f_id));
-            cl_mem drn = tsrs[offset].gradientIsTargeted()?_mapping.get(tsrs[offset]).grad:_mapping.get(tsrs[offset]).value;
-            cl_mem src1 = tsrs[offset+1].gradientIsTargeted()?_mapping.get(tsrs[offset+1]).grad:_mapping.get(tsrs[offset+1]).value;
+            cl_mem drn = tsrs[offset].gradientIsTargeted()?_mapping.get(tsrs[offset]).grad.data:_mapping.get(tsrs[offset]).value.data;
+            cl_mem src1 = tsrs[offset+1].gradientIsTargeted()?_mapping.get(tsrs[offset+1]).grad.data:_mapping.get(tsrs[offset+1]).value.data;
             if(Function.TYPES.isFunction(f_id)){
                 clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
                 clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
@@ -541,7 +584,7 @@ public class OpenCLDevice implements Device
                 clSetKernelArg(kernel, 4, Sizeof.cl_int, Pointer.to(new int[]{ tsrs[0].rank() }));
                 clSetKernelArg(kernel, 5, Sizeof.cl_int, Pointer.to(new int[]{ d }));
             } else {
-                cl_mem src2 = tsrs[offset+2].gradientIsTargeted()?_mapping.get(tsrs[offset+2]).grad:_mapping.get(tsrs[offset+2]).value;
+                cl_mem src2 = tsrs[offset+2].gradientIsTargeted()?_mapping.get(tsrs[offset+2]).grad.data:_mapping.get(tsrs[offset+2]).value.data;
                 clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
                 clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
                 clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=>src1
@@ -570,7 +613,7 @@ public class OpenCLDevice implements Device
         return tsrs[0];
     }
 
-    public void _execute(Tsr t, double value, int f_id, int d)
+    private void _execute(Tsr t, double value, int f_id, int d)
     {
         if(d<0)
         {
@@ -579,8 +622,8 @@ public class OpenCLDevice implements Device
             cl_kernel kernel = _platform.getKernels().get(
                     _platform.kernelNameOf(f_id)+"_broadcast"
             );
-            cl_mem drn = t.gradientIsTargeted()?_mapping.get(t).grad:_mapping.get(t).value;
-            cl_mem src1 = t.gradientIsTargeted()?_mapping.get(t).grad:_mapping.get(t).value;
+            cl_mem drn = t.gradientIsTargeted()?_mapping.get(t).grad.data:_mapping.get(t).value.data;
+            cl_mem src1 = t.gradientIsTargeted()?_mapping.get(t).grad.data:_mapping.get(t).value.data;
             clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
             clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(t).config));
             clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=>src1

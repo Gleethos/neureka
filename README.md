@@ -90,7 +90,7 @@ Convolution:
 
 GPU execution:
 ```
-        Device gpu = new AparapDevice("nvidia FP64");
+        Device gpu = Device.find("nvidia FP64");
         x = new Tsr(
                 new int[]{3, 3},
                 new double[]{
@@ -128,7 +128,7 @@ in C++. Additionally, it's GPU acceleration is written in nvidia's cuda.
 Which means that even developers willing to compile for all platforms
 would still be locked out of AMD Systems when it comes to performance.
 
-For that reason Neureka is written in Java and OpenCl (Aparapi).
+For that reason Neureka is written in Java and OpenCl (OpenCLi).
 Although performance will certainly be impacted by this choice,
 uncomplicated deployment and ease of use are the benefits.
 Additionally, the use of OpenCl theoretically should allow for
