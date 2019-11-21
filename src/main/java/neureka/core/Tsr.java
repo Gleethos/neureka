@@ -2,6 +2,7 @@ package neureka.core;
 
 import neureka.core.device.Device;
 import neureka.core.function.Function;
+import neureka.core.function.factory.assembly.FunctionBuilder;
 import neureka.core.function.factory.autograd.GraphNode;
 import neureka.core.utility.DataHelper;
 import org.jetbrains.annotations.Contract;
@@ -95,7 +96,7 @@ public class Tsr {
     //DATA FIELDS:
     //=========================
     private int[] _shape, _translation, _idxmap;
-    private Object _value, _gradient;
+    private Object _value;// _gradient;
     //-----------------------------------------------------------------------
 
     public Device device() {
@@ -144,7 +145,12 @@ public class Tsr {
             ((Device) this.find(Device.class)).overwrite64(this, value);
         } else {
             if(this.gradientIsTargeted()){
-                _gradient = value;
+                //_gradient = value;
+                if(this.has(Tsr.class)){
+                    ((Tsr)this.find(Tsr.class)).setTargetValue64(value);
+                } else {
+                    this.add(new Tsr(this.shape(), value));
+                }
             } else {
                 _value = value;
             }
@@ -157,7 +163,12 @@ public class Tsr {
             ((Device) this.find(Device.class)).overwrite32(this, value);
         } else {
             if(this.gradientIsTargeted()){
-                _gradient = value;
+                //_gradient = value;//TODO: test
+                if(this.has(Tsr.class)){
+                    ((Tsr)this.find(Tsr.class)).setTargetValue32(value);
+                } else {
+                    this.add(new Tsr(this.shape(), value));
+                }
             } else {
                 _value = value;
             }
@@ -173,9 +184,19 @@ public class Tsr {
         } else if(value instanceof Float){
             if(this.gradientIsTargeted()){
                 if(this.is32()){
-                    _gradient = Tsr.fcn.newFloatArray(((Float)value).floatValue(), this.size());
+                    //_gradient = Tsr.fcn.newFloatArray(((Float)value).floatValue(), this.size());
+                    if(this.has(Tsr.class)){
+                        ((Tsr)this.find(Tsr.class)).setTargetValue32(Tsr.fcn.newFloatArray(((Float)value).floatValue(), this.size()));
+                    } else {
+                        this.add(new Tsr(this.shape(), Tsr.fcn.newFloatArray(((Float)value).floatValue(), this.size())));
+                    }
                 } else {
-                    _gradient = Tsr.fcn.newDoubleArray(((Float)value).doubleValue(), this.size());
+                    //_gradient = Tsr.fcn.newDoubleArray(((Float)value).doubleValue(), this.size());
+                    if(this.has(Tsr.class)){
+                        ((Tsr)this.find(Tsr.class)).setTargetValue64(Tsr.fcn.newDoubleArray(((Double)value).floatValue(), this.size()));
+                    } else {
+                        this.add(new Tsr(this.shape(), Tsr.fcn.newDoubleArray(((Double)value).floatValue(), this.size())));
+                    }
                 }
             } else {
                 this.setIsVirtual(true);
@@ -188,9 +209,19 @@ public class Tsr {
         } else if(value instanceof Double){
             if(this.gradientIsTargeted()){
                 if(this.is32()){
-                    _gradient = Tsr.fcn.newFloatArray(((Double)value).floatValue(), this.size());
+                    //_gradient = Tsr.fcn.newFloatArray(((Double)value).floatValue(), this.size());
+                    if(this.has(Tsr.class)){
+                        ((Tsr)this.find(Tsr.class)).setTargetValue32(Tsr.fcn.newFloatArray(((Double)value).floatValue(), this.size()));
+                    } else {
+                        this.add(new Tsr(this.shape(), Tsr.fcn.newFloatArray(((Double)value).floatValue(), this.size())));
+                    }
                 } else {
-                    _gradient = Tsr.fcn.newDoubleArray(((Double)value).doubleValue(), this.size());
+                    //_gradient = Tsr.fcn.newDoubleArray(((Double)value).doubleValue(), this.size());
+                    if(this.has(Tsr.class)){
+                        ((Tsr)this.find(Tsr.class)).setTargetValue64(Tsr.fcn.newDoubleArray(((Double)value).floatValue(), this.size()));
+                    } else {
+                        this.add(new Tsr(this.shape(), Tsr.fcn.newDoubleArray(((Double)value).floatValue(), this.size())));
+                    }
                 }
             } else {
                 this.setIsVirtual(true);
@@ -205,38 +236,49 @@ public class Tsr {
     }
 
     public double[] gradient64() {
-        if (this.rqsGradient() && this.isOutsourced() && this.has(Device.class)) {
-            return ((Device) find(Device.class)).value64Of(this, true);
-        }
-        return (this.is64())?(double[])_gradient:DataHelper.floatToDouble((float[])_gradient);
+        //if (this.rqsGradient() && this.isOutsourced() && this.has(Device.class)) {
+        //    return ((Device) find(Device.class)).value64Of(this, true);
+        //}
+        Tsr gradient = (Tsr)this.find(Tsr.class);
+        if(gradient==null) return null;
+        return (this.is32())?DataHelper.floatToDouble(gradient.value32()):gradient.value64();
+        //return (this.is64())?(double[])_gradient:DataHelper.floatToDouble((float[])_gradient);
     }
     public float[] gradient32(){
-        return (this.is64())?DataHelper.doubleToFloat((double[])_gradient):(float[])_gradient;
+        Tsr gradient = (Tsr)this.find(Tsr.class);
+        if(gradient==null) return null;
+        return (this.is64())?DataHelper.doubleToFloat((double[])gradient.value64()):(float[])gradient.value32();
     }
 
     public Tsr addToGradient(Tsr g) {
-        if(this.isOutsourced()){
-            Device device = (Device) this.find(Device.class);
-            this.setGradientIsTargeted(true);
-            device.add(g);
-            device.execute(new Tsr[]{this, g}, Function.TYPES.LOOKUP.get("<"), -1);
-            device.get(g);
-            this.setGradientIsTargeted(false);
-        } else {
-            if(this.is64()){
-                double[] value = g.value64();
-                _gradient = (_gradient==null)?new double[value.length]:_gradient;
-                for(int i=0; i<value.length; i++){
-                    ((double[])_gradient)[i] = value[i];
-                }
-            } else {
-                float[] value = g.value32();
-                _gradient = (_gradient==null)?new float[value.length]:_gradient;
-                for(int i=0; i<value.length; i++){
-                    ((float[])_gradient)[i] = value[i];
-                }
-            }
+        if(this.has(Tsr.class)){
+            Tsr gradient = (Tsr) find(Tsr.class);
+            this.add(FunctionBuilder.build("I[0]<-(I[0]+I[1])", false).activate(new Tsr[]{gradient, g}));
+        }else{
+            this.add(g);
         }
+        //if(this.isOutsourced()){
+        //    //Device device = (Device) this.find(Device.class);
+        //    //this.setGradientIsTargeted(true);
+        //    //device.add(g);
+        //    //device.execute(new Tsr[]{this, g}, Function.TYPES.LOOKUP.get("<"), -1);
+        //    //device.get(g);
+        //    //this.setGradientIsTargeted(false);
+        //} else {
+        //    //if(this.is64()){
+        //    //    double[] value = g.value64();
+        //    //    _gradient = (_gradient==null)?new double[value.length]:_gradient;
+        //    //    for(int i=0; i<value.length; i++){
+        //    //        ((double[])_gradient)[i] = value[i];
+        //    //    }
+        //    //} else {
+        //    //    float[] value = g.value32();
+        //    //    _gradient = (_gradient==null)?new float[value.length]:_gradient;
+        //    //    for(int i=0; i<value.length; i++){
+        //    //        ((float[])_gradient)[i] = value[i];
+        //    //    }
+        //    //}
+        //}
         return this;
     }
 
@@ -252,7 +294,10 @@ public class Tsr {
             Device device = (Device) this.find(Device.class);
             if(device!=null) device.get(this);
             _value = DataHelper.doubleToFloat((double[])_value);
-            _gradient = DataHelper.doubleToFloat((double[])_gradient);
+            //_gradient = DataHelper.doubleToFloat((double[])_gradient);
+            if(this.has(Tsr.class)){
+                ((Tsr)find(Tsr.class)).to32();
+            }
             if(device!=null) device.add(this);
         }
         return this;
@@ -263,7 +308,10 @@ public class Tsr {
             Device device = (Device) this.find(Device.class);
             if(device!=null) device.get(this);
             _value = DataHelper.floatToDouble((float[])_value);
-            _gradient = DataHelper.floatToDouble((float[])_gradient);
+            //_gradient = DataHelper.floatToDouble((float[])_gradient);
+            if(this.has(Tsr.class)){
+                ((Tsr)find(Tsr.class)).to64();
+            }
             if(device!=null) device.add(this);
 
         }
@@ -354,11 +402,12 @@ public class Tsr {
                 _flags += RQS_GRADIENT_MASK;
             } else {
                 this.setGradientIsTargeted(false);
-                if(this.isOutsourced()){
-                    ((Device)find(Device.class)).get(this);
-                    _gradient = null;//TODO: THIS NEEDS UPDATE!
-                    ((Device)find(Device.class)).add(this);
-                }
+                this.remove(Tsr.class);
+                //if(this.isOutsourced()){
+                //    ((Device)find(Device.class)).get(this);
+                //    //_gradient = null;//TODO: THIS NEEDS UPDATE!
+                //    ((Device)find(Device.class)).add(this);
+                //}
                 _flags -= RQS_GRADIENT_MASK;
             }
         }
@@ -379,13 +428,21 @@ public class Tsr {
         }
         if (isOutsourced) {
             _value = null;
-            _gradient = null;
+            //_gradient = null;
         } else if (this.has(Device.class)) {
             Device device = (Device) this.find(Device.class);
             if (device.has(this)) {
                 device.get(this);
             }
             this.remove(Device.class);
+            if(this.has(Tsr.class)){//This is new:
+                Tsr gradient = (Tsr) find(Tsr.class);
+                device = (Device) gradient.find(Device.class);
+                if (device.has(gradient)) {
+                    device.get(gradient);
+                }
+                gradient.remove(Device.class);
+            }
         }
         return this;
     }
@@ -427,8 +484,12 @@ public class Tsr {
     public Tsr setGradientIsTargeted(boolean gradientIsTargeted) {
         if (this.gradientIsTargeted() != gradientIsTargeted) {
             if (gradientIsTargeted) {
-                if(this.rqsGradient()&&_gradient==null){
-                    _gradient = new double[this.size()];
+                if(this.rqsGradient()&&!this.has(Tsr.class)){//_gradient==null){
+                    //_gradient = new double[this.size()];
+                    Device device = (Device)find(Device.class);
+                    Tsr gradient = new Tsr(this.shape(), 0);
+                    if(device!=null) device.add(gradient);
+                    this.add(gradient);
                     //TODO: allocate float or allocate data on gpu!
                 }
                 _flags += (this.rqsGradient())?GRADIENT_IS_TARGETED_MASK:0;
@@ -874,8 +935,9 @@ public class Tsr {
         _shape = null;
         _translation = null;
         _idxmap = null;
+        if(this.has(Tsr.class))((Tsr)find(Tsr.class)).delete();
         _components = null;
-        _gradient = null;
+        //_gradient = null;
         return this;
     }
 

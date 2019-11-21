@@ -27,19 +27,9 @@ public class OpenCLDevice implements Device
     class cl_tsr{
         public int fp = 1;
         public cl_mem config;
-        //public int size;//Size of arrays below:
-        //public cl_mem value;
-        //public cl_mem grad;
-        public cl_data grad = new cl_data();
         public cl_data value = new cl_data();
-
     }
-
-    //private Map<Tsr, cl_tsr> __mapping = new HashMap<>();
-
     private Map<Object, cl_tsr> _mapping = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
-    // new HashMap<>();
-
 
     private cl_device_id _did;
 
@@ -68,7 +58,6 @@ public class OpenCLDevice implements Device
         _reference_queue = new ReferenceQueue();
 
     }
-
     //---
 
     @Override
@@ -81,13 +70,9 @@ public class OpenCLDevice implements Device
             if(t!=null){
                 ((ArrayList<Tsr>) extracted).add(t);
             }
-        });//TODO:
-        //System.out.println("Ref Queue: "+_reference_queue.poll().get());
+        });
         return extracted;
-        //return _mapping.keySet();
     }
-
-
 
     @Override
     public void dispose() {
@@ -95,31 +80,12 @@ public class OpenCLDevice implements Device
         clFinish(_queue);
     }
 
-    //@Override
-    //public Device allocGradFor(Tsr tensor){
-    //    cl_tsr clt = _mapping.get(tensor);
-    //
-//
-//
-    //    return this;
-    //}
-//
-    //@Override
-    //public Device freeGradFor(Tsr tensor){
-    //    cl_tsr clt = _mapping.get(tensor);
-//
-//
-    //    return this;
-    //}
-
     @Override
     public Device get(Tsr tensor) {
         //tensor.setIsOutsourced(false);
         double[] value = value64Of(tensor, false);
         double[] gradient = null;
-        if(tensor.rqsGradient()){
-            gradient = value64Of(tensor, true);
-        }
+        if(tensor.rqsGradient()) gradient = value64Of(tensor, true);
         rmv(tensor);
         tensor.setGradientIsTargeted(true);
         tensor.setTargetValue64(gradient);
@@ -151,35 +117,27 @@ public class OpenCLDevice implements Device
         //VALUE TRANSFER:
         if(parent==null){
             _store(tensor, newClt, fp, false);
-            if(tensor.rqsGradient()){
-                _store(tensor, newClt, fp, true);
+            if(tensor.rqsGradient()&&tensor.has(Tsr.class)){
+                //_store(tensor, newClt, fp, true);
+                this.add(((Tsr)tensor.find(Tsr.class)));
             }
         } else {//tensor is a subset tensor of parent:
             newClt.fp = parent.fp;
             newClt.value = parent.value;
             newClt.value.uses ++;
-            //newClt.grad = parent.grad;
-            //newClt.grad.uses ++;
-            //newClt.size = parent.size;
         }
         //CONFIG TRANSFER: <[ shape | translation | idxmap | idx | scale ]>
         int rank = tensor.shape().length;
         int[] config = new int[rank*5];//3
         int[] shape = tensor.shape();
         //---
-        for(int i=0; i<rank; i++){
-            config[i] = shape[i];// -=> SHAPE
-        }
+        for(int i=0; i<rank; i++) config[i] = shape[i];// -=> SHAPE
         //---
         int[] translation = tensor.translation();
-        for(int i=rank; i<rank*2; i++){// -=> TRANSLATION
-            config[i] = translation[i-rank];
-        }
+        for(int i=rank; i<rank*2; i++) config[i] = translation[i-rank];// -=> TRANSLATION
         //---
         int[] idxmap = tensor.idxmap();
-        for(int i=rank*2; i<rank*3; i++){// -=> IDXMAP (translates scalar to dimension index)
-            config[i] = idxmap[i-rank*2];
-        }
+        for(int i=rank*2; i<rank*3; i++) config[i] = idxmap[i-rank*2];// -=> IDXMAP (translates scalar to dimension index)
         //---
         int[] idx = (int[])tensor.find(int[].class); //Look for additional configurations!
         if(idx!=null){
@@ -188,9 +146,8 @@ public class OpenCLDevice implements Device
             }
         }
         //---
-        for(int i=rank*4; i<rank*5; i++){// -=> IDX Baseline Scale (sliced tensors indexes might be scaled)
-            config[i] = ((idx!=null)&&idx.length>tensor.rank())?idx[i-rank*3]:1;
-        }
+        // -=> IDX Baseline Scale (sliced tensors indexes might be scaled)
+        for(int i=rank*4; i<rank*5; i++)config[i] = ((idx!=null)&&idx.length>tensor.rank())?idx[i-rank*3]:1;
         //---
 
         //SHAPE/TRANSLATION/IDXMAP/SCALEMAP TRANSFER:
@@ -210,7 +167,7 @@ public class OpenCLDevice implements Device
         );
         cl_mem[] memos;
         if(tensor.rqsGradient()){
-            memos = new cl_mem[]{newClt.value.data, newClt.grad.data, newClt.config};
+            memos = new cl_mem[]{newClt.value.data, newClt.config};//newClt.grad.data,
         } else {
             memos = new cl_mem[]{newClt.value.data, newClt.config};
         }
@@ -226,9 +183,9 @@ public class OpenCLDevice implements Device
         WeakTensorReference r = new WeakTensorReference(tensor, _reference_queue);
         _mapping.put(r, newClt);
         CLEANER.register(tensor, ()->{
-            _rmv(r); System.out.println("Garbage has been removed from GPU!!!");
+            _rmv(r);
+            System.out.println("Garbage has been removed from GPU!!!");
         });
-
         tensor.add(this);
         tensor.setIsOutsourced(true);
         return this;
@@ -240,8 +197,6 @@ public class OpenCLDevice implements Device
     }
 
     private void _store(Tsr tensor, cl_tsr newClTsr, int fp, boolean grd){
-        //cl_tsr newClTsr = new cl_tsr();
-        //tensor.setIsVirtual(false);//TODO: optimize: if virtual: copy !efficiently
         Pointer p;
         int size;
         if(fp==1){
@@ -257,10 +212,6 @@ public class OpenCLDevice implements Device
         }
         newClTsr.value.size = size;
         newClTsr.value.uses = 1;
-        if(grd){
-            newClTsr.grad.size = size;
-            newClTsr.grad.uses = 1;
-        }
         //VALUE TRANSFER:
         cl_mem mem = clCreateBuffer(
                 _platform.getContext(),
@@ -269,11 +220,7 @@ public class OpenCLDevice implements Device
                 null,
                 null
         );
-        if(grd){
-            newClTsr.grad.data = mem;
-        } else {
-            newClTsr.value.data = mem;
-        }
+        newClTsr.value.data = mem;
         clEnqueueWriteBuffer(
                 _queue,
                 mem,
@@ -303,9 +250,6 @@ public class OpenCLDevice implements Device
         } else {
             clt.value.uses --;
         }
-        if(clt.grad.uses>0){
-            clReleaseMemObject(clt.grad.data);
-        }
         _mapping.remove(reference);
     }
 
@@ -315,7 +259,6 @@ public class OpenCLDevice implements Device
         if(clt.fp==1){
             overwrite32(tensor, DataHelper.doubleToFloat(value));
         } else {
-            //value = new double[tensor.size()];
             clEnqueueWriteBuffer(
                     _queue,
                     clt.value.data,
@@ -358,9 +301,6 @@ public class OpenCLDevice implements Device
         _mapping.remove(former);
         WeakTensorReference r = new WeakTensorReference(replacement, _reference_queue);
         _mapping.put(r, clTsr);
-        //replacement.add(this);
-        //_replacement.setIsOutsourced(true);
-        //former.remove(Device.class);
         return this;
     }
 
@@ -373,7 +313,7 @@ public class OpenCLDevice implements Device
             double[] data = new double[clt.value.size];//tensor.size()];
             clEnqueueReadBuffer(
                     _queue,
-                    (grd)?clt.grad.data:clt.value.data,
+                    clt.value.data,//(grd)?clt.grad.data:clt.value.data,
                     CL_TRUE,
                     0,
                     Sizeof.cl_double * data.length,
@@ -393,7 +333,7 @@ public class OpenCLDevice implements Device
             float[] data = new float[clt.value.size];//tensor.size()];
             clEnqueueReadBuffer(
                     _queue,
-                    (grd)?clt.grad.data:clt.value.data,
+                    clt.value.data,//(grd)?clt.grad.data:clt.value.data,
                     CL_TRUE,
                     0,
                     Sizeof.cl_float * data.length,
@@ -516,17 +456,13 @@ public class OpenCLDevice implements Device
                             newTsrs[0] =  Tsr.fcn.create.newTsrLike(tsrs[1]);
                             Tsr inner = _execute(newTsrs, Function.TYPES.LOOKUP.get("*"), d-1);
                             Tsr exp = _execute(new Tsr[]{Tsr.fcn.create.newTsrLike(tsrs[1]), inner, tsrs[d]}, Function.TYPES.LOOKUP.get("*"), -1);
-                            //Tsr outer =
-                            //Tsr.fcn.create.newTsrLike(tsrs[1])
-                                    tsrs[0] =  _execute(new Tsr[]{tsrs[0], tsrs[1], exp}, f_id, 1);
-                            //tsrs[0] = _execute(new Tsr[]{tsrs[0], inner, outer}, Function.TYPES.LOOKUP.get("*"), -1);
+                            tsrs[0] =  _execute(new Tsr[]{tsrs[0], tsrs[1], exp}, f_id, 1);
                             inner.delete();
                             exp.delete();
                         } else {
                             newTsrs = _subset(tsrs, 1,  1, tsrs.length);
                             newTsrs[0] =  Tsr.fcn.create.newTsrLike(tsrs[1]);
                             Tsr exp = _execute(newTsrs, Function.TYPES.LOOKUP.get("*"), -1);
-                            //Tsr.fcn.create.newTsrLike(tsrs[1])
                             tsrs[0] = _execute(new Tsr[]{tsrs[0], tsrs[1], exp}, f_id, 0);
                             exp.delete();
                         }
@@ -574,8 +510,8 @@ public class OpenCLDevice implements Device
             int gwz = (tsrs[0]!=null)?tsrs[0].size():tsrs[1].size();
             int offset = (tsrs[0]!=null)?0:1;
             cl_kernel kernel = _platform.getKernels().get(_platform.kernelNameOf(f_id));
-            cl_mem drn = tsrs[offset].gradientIsTargeted()?_mapping.get(tsrs[offset]).grad.data:_mapping.get(tsrs[offset]).value.data;
-            cl_mem src1 = tsrs[offset+1].gradientIsTargeted()?_mapping.get(tsrs[offset+1]).grad.data:_mapping.get(tsrs[offset+1]).value.data;
+            cl_mem drn = _mapping.get(tsrs[offset]).value.data;
+            cl_mem src1 = _mapping.get(tsrs[offset+1]).value.data;
             if(Function.TYPES.isFunction(f_id)){
                 clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
                 clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
@@ -584,7 +520,7 @@ public class OpenCLDevice implements Device
                 clSetKernelArg(kernel, 4, Sizeof.cl_int, Pointer.to(new int[]{ tsrs[0].rank() }));
                 clSetKernelArg(kernel, 5, Sizeof.cl_int, Pointer.to(new int[]{ d }));
             } else {
-                cl_mem src2 = tsrs[offset+2].gradientIsTargeted()?_mapping.get(tsrs[offset+2]).grad.data:_mapping.get(tsrs[offset+2]).value.data;
+                cl_mem src2 = _mapping.get(tsrs[offset+2]).value.data;
                 clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
                 clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
                 clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=>src1
@@ -622,8 +558,8 @@ public class OpenCLDevice implements Device
             cl_kernel kernel = _platform.getKernels().get(
                     _platform.kernelNameOf(f_id)+"_broadcast"
             );
-            cl_mem drn = t.gradientIsTargeted()?_mapping.get(t).grad.data:_mapping.get(t).value.data;
-            cl_mem src1 = t.gradientIsTargeted()?_mapping.get(t).grad.data:_mapping.get(t).value.data;
+            cl_mem drn = _mapping.get(t).value.data;
+            cl_mem src1 = _mapping.get(t).value.data;
             clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
             clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(t).config));
             clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=>src1

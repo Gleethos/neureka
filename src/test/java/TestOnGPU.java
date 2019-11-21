@@ -205,6 +205,7 @@ public class TestOnGPU {
         //---------------------------------------------
         y = null;
         z = null;
+        listOfTensors.forEach((t)->t.setRqsGradient(false));//Removes gradients!
         System.gc();
         try {
             Thread.sleep(1000);
@@ -212,6 +213,8 @@ public class TestOnGPU {
             e.printStackTrace();
         }
         Collection<Tsr> outsourced = gpu.tensors();
+
+
         String sentence = "Number of outsourced tensors: ";
         tester.testContains(
                 sentence +outsourced.size(),

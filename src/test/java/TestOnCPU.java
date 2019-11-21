@@ -28,12 +28,12 @@ public class TestOnCPU {
         y = new Tsr("(","(",x,"+",b,")","*",w,")^2");
         tester.testTensor(y, new String[]{"[1]:(4.0); ->d[1]:(-8.0), "});
         y.backward(new Tsr(1));
-        tester.testTensor(x, new String[]{"-8.0"});
+        tester.testTensor(x, new String[]{"-24.0"});
 
         y = new Tsr("((",x,"+",b,")*",w,")^2");
         tester.testTensor(y, new String[]{"[1]:(4.0); ->d[1]:(-8.0), "});
         y.backward(new Tsr(-1));
-        tester.testTensor(x, new String[]{"8.0"});
+        tester.testTensor(x, new String[]{"-16.0"});
         //===========================================
         x = new Tsr(
                 new int[]{2, 3, 1},
