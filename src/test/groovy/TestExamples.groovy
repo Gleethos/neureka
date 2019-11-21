@@ -162,6 +162,30 @@ class TestExamples
          8, 9, 1, 2,
          3, 4, 5, 6
          */
+
+
+        //---
+        //b>>
+        //      5, 7,
+        //      4, 6
+        b.setRqsGradient(true)
+        c = new Tsr([1, 2, 2], [
+                -2, 3,
+                1, 2,
+        ])
+        device.add(b).add(c)
+
+        //x = new Tsr(b, "x", c)
+
+        //tester.testContains("", [""], "")
+
+        //tester.testTensorAutoGrad(//4, 5, -13, -4 <= result values
+        //        [b, c],
+        //        "i0xi1",
+        //        ["[2x1x2]:(4.0, -13.0, 5.0, -4.0); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"],
+        //        new Tsr([2, 1, 2], [1, 1, 1, 1]),
+        //        [[-1.0, -1.0, 5.0, 5.0], null]
+        //)
     }
 
 }

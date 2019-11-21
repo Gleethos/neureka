@@ -72,13 +72,13 @@ public class NTester_Tensor extends NTester
     }
 
     public int testTensorUtility_translation(int[] dim, int[] expected){
-        int [] result =  Tsr.fcn.indexing.idxTln(dim);
+        int [] result =  Tsr.fcn.indexing.newTlnOf(dim);
         printSessionStart("Testing Tsr.indexing: dimension _translation!");
         assertIsEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }
     public int testTensorBase_idxFromAnchor(int[] dim, int idx, int[] expected){
-        int [] result =  Tsr.fcn.indexing.idxOf(idx, Tsr.fcn.indexing.idxTln(dim));
+        int [] result =  Tsr.fcn.indexing.idxOf(idx, Tsr.fcn.indexing.newTlnOf(dim));
         printSessionStart("Testing Tsr.indexing: _shape to _translation to index!");
         assertIsEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;

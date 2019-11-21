@@ -130,7 +130,6 @@ public class TestOnGPU {
                 1, 2, //3, 1,
                 2, -3, //-2, -1,
         }).setRqsGradient(true);
-        //---
         tensor2 = new Tsr(new int[]{1, 2, 2}, new double[]{
                 -2, 3,
                 1, 2,
@@ -149,6 +148,8 @@ public class TestOnGPU {
         );
         //result = new Tsr(new Tsr[]{tensor1, tensor1}, "ig0<-i0");
         //tester.testContains(tensor1.toString("g"), new String[]{"test"}, "");
+
+        // ---
         Tsr x = new Tsr(new int[]{1}, 3).setRqsGradient(true);
         Tsr b = new Tsr(new int[]{1}, -4);
         Tsr w = new Tsr(new int[]{1}, 2);

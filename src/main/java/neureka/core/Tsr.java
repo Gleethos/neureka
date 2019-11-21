@@ -18,15 +18,14 @@ public class Tsr {
     // DEFAULT DEVICE (HOST CPU)
     //=========================
     private static Device CPU;
-    //OpenClDevice!!!!!!!
 
     //STATIC FUNCTIONS MEMORY:
     //=========================
-    private static HashMap<Long, int[]> CONFIGS;
+    private static Map<Long, int[]> CONFIGS;
 
     static {
-        CONFIGS = new HashMap<>();//The things we do for memory
-        CPU = null;//new AparapiDevice(null);//<= creates CPU-Aparapi-Kernel
+        CONFIGS = new WeakHashMap<>();
+        CPU = null;
     }
     //-----------------------------------------------------------------------
 
@@ -251,14 +250,10 @@ public class Tsr {
     public Tsr to32(){
         if(this.is64()){
             Device device = (Device) this.find(Device.class);
-            if(device!=null){
-                device.get(this);
-            }
+            if(device!=null) device.get(this);
             _value = DataHelper.doubleToFloat((double[])_value);
             _gradient = DataHelper.doubleToFloat((double[])_gradient);
-            if(device!=null){
-                device.add(this);
-            }
+            if(device!=null) device.add(this);
         }
         return this;
     }
@@ -266,14 +261,11 @@ public class Tsr {
     public Tsr to64(){
         if(this.is32()){
             Device device = (Device) this.find(Device.class);
-            if(device!=null){
-                device.get(this);
-            }
+            if(device!=null) device.get(this);
             _value = DataHelper.floatToDouble((float[])_value);
             _gradient = DataHelper.floatToDouble((float[])_gradient);
-            if(device!=null){
-                device.add(this);
-            }
+            if(device!=null) device.add(this);
+
         }
         return this;
     }
@@ -310,9 +302,7 @@ public class Tsr {
 
     public Tsr setValue(double[] newValue) {
         _value = newValue;
-        if (this.isOutsourced() && newValue != null) {
-            ((Device) this.find(Device.class)).add(this);
-        }
+        if (this.isOutsourced() && newValue != null) ((Device) this.find(Device.class)).add(this);
         return this;
     }
 
@@ -333,9 +323,7 @@ public class Tsr {
     }
 
     public int size() {
-        if (this.isEmpty()) {
-            return 0;
-        }
+        if (this.isEmpty()) return 0;
         return fcn.indexing.szeOfShp(this.shape());
     }
 
@@ -409,9 +397,7 @@ public class Tsr {
     public Tsr setIsVirtual(boolean isVirtual) {
         if (isVirtual() != isVirtual) {
             if(this.isOutsourced()){
-                if (!isVirtual) {
-                    _flags -= IS_VIRTUAL_MASK;
-                }
+                if (!isVirtual) _flags -= IS_VIRTUAL_MASK;
             } else {
                 double v = (_value==null)?0:(((this.is64())?((double[])_value)[0]:((float[])_value)[0]));
                 if (isVirtual) {
@@ -494,9 +480,7 @@ public class Tsr {
         int[] shape = shape();
         for (int i = 0; i < _shape.length; i++) {
             strShape += shape[i];
-            if (i < shape.length - 1) {
-                strShape += "x";
-            }
+            if (i < shape.length - 1) strShape += "x";
         }
         boolean compact = mode.contains("c");
         strShape = "[" + strShape + "]";
@@ -525,7 +509,6 @@ public class Tsr {
                             base+half+"]|:t{ " +
                             base+delimiter+    t._toString(mode, deeper) + " " +
                             base+half+"}, ");
-
                 });
                 asString += enclosed.get();
             }
@@ -608,22 +591,22 @@ public class Tsr {
     }
 
     private int[] intArray(Object[] arg){
-        int length = ((Object[])arg).length;
+        int length = arg.length;
         int[] array = new int[length];
         for(int i=0; i<length; i++){
-            array[i] = ((Integer)((Object[])arg)[i]).intValue();
+            array[i] = ((Integer)arg[i]).intValue();
         }
         return array;
     }
 
     private double[] doubleArray(Object[] arg){
-        int length = ((Object[])arg).length;
+        int length = arg.length;
         double[] array = new double[length];
         for(int i=0; i<length; i++){
-            if(((Object[])arg)[i] instanceof Integer){
-                array[i] = ((Integer)((Object[])arg)[i]).intValue();
-            } else if(((Object[])arg)[i] instanceof Double) {
-                array[i] = ((Double)((Object[])arg)[i]).doubleValue();
+            if(arg[i] instanceof Integer){
+                array[i] = ((Integer)arg[i]).intValue();
+            } else if(arg[i] instanceof Double) {
+                array[i] = ((Double)arg[i]).doubleValue();
             }
         }
         return array;
@@ -767,7 +750,7 @@ public class Tsr {
             throw new IllegalArgumentException("[Tsr][_iniShape]: Size of shape does not match stored value64!");
         }
         _shape = _cached(newShape);
-        _translation = _cached(fcn.indexing.idxTln(newShape));
+        _translation = _cached(fcn.indexing.newTlnOf(newShape));
         _idxmap = _translation;
         return this;
     }
@@ -775,21 +758,13 @@ public class Tsr {
     private static int[] _cached(int[] data) {
         long key = 0;
         for (int i = 0; i < data.length; i++) {
-            if (data[i] <= 10) {
-                key *= 10;
-            } else if (data[i] <= 100) {
-                key *= 100;
-            } else if (data[i] <= 1000) {
-                key *= 1000;
-            } else if (data[i] <= 10000) {
-                key *= 10000;
-            } else if (data[i] <= 100000) {
-                key *= 100000;
-            } else if (data[i] <= 1000000) {
-                key *= 1000000;
-            } else if (data[i] <= 10000000) {
-                key *= 10000000;
-            }
+            if (data[i] <= 10)  key *= 10;
+            else if (data[i] <= 100) key *= 100;
+            else if (data[i] <= 1000) key *= 1000;
+            else if (data[i] <= 10000) key *= 10000;
+            else if (data[i] <= 100000) key *= 100000;
+            else if (data[i] <= 1000000) key *= 1000000;
+            else if (data[i] <= 10000000) key *= 10000000;
             key += Math.abs(data[i])+1;
         }
         int[] found = CONFIGS.get(key);
@@ -804,9 +779,7 @@ public class Tsr {
     //TRACKED COMPUTATION :
     //=========================
     public Tsr(Tsr tensor, String operation) {
-        if (tensor == null) {
-            return;
-        }
+        if (tensor == null) return;
         _construct(new Tsr[]{tensor}, operation, true);
     }
 
@@ -819,9 +792,7 @@ public class Tsr {
     }
 
     private void _construct(Tsr[] tensors, String operation, boolean doAD) {
-        if (tensors == null || tensors.length == 0 || tensors[0] == null) {
-            return;
-        }
+        if (tensors == null || tensors.length == 0 || tensors[0] == null) return;
         Tsr result = Function.setup.commit(tensors, operation, doAD);
         boolean resultIsUnique = true;
         for(Tsr t : tensors){
@@ -947,9 +918,7 @@ public class Tsr {
         return this;
     }
     public Tsr getAt(Object key) {
-        if(key==null){
-            return this;
-        }
+        if(key==null) return this;
         if(key instanceof List){
             if(((List)key).size()==0) return this;
         }
@@ -993,7 +962,7 @@ public class Tsr {
         }
         subset._value = this._value;
         subset._translation = this._translation;
-        subset._idxmap = _cached(fcn.indexing.idxTln(newShape));
+        subset._idxmap = _cached(fcn.indexing.newTlnOf(newShape));
         subset._shape = _cached(newShape);
         subset.add(idx);
         if(this.isOutsourced()){
@@ -1052,7 +1021,7 @@ public class Tsr {
 
             public static double getFrom(Tsr t, int[] idx) {
                 t.setIsVirtual(false);
-                return t.targetValue64()[indexing.iOf(idx, t.translation())];
+                return t.targetValue64()[indexing.i_of_idx(idx, t)];
             }
 
             public static void setInto(Tsr t, int i, double value) {
@@ -1062,7 +1031,7 @@ public class Tsr {
 
             public static void setInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t.targetValue64()[indexing.iOf(idx, t.translation())] = value;
+                t.targetValue64()[indexing.i_of_idx(idx, t)] = value;
             }
 
             public static void addInto(Tsr t, int i, double value) {
@@ -1072,7 +1041,7 @@ public class Tsr {
 
             public static void addInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t.targetValue64()[indexing.iOf(idx, t.translation())] += value;
+                t.targetValue64()[indexing.i_of_idx(idx, t)] += value;
             }
 
             public static Tsr addInto(Tsr t, Tsr source) {
@@ -1099,7 +1068,7 @@ public class Tsr {
 
             public static void subInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t.targetValue64()[indexing.iOf(idx, t.translation())] -= value;
+                t.targetValue64()[indexing.i_of_idx(idx, t)] -= value;
             }
 
             public static void subInto(Tsr t, Tsr source) {
@@ -1125,7 +1094,7 @@ public class Tsr {
 
             public static void mulInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t.targetValue64()[indexing.iOf(idx, t.translation())] *= value;
+                t.targetValue64()[indexing.i_of_idx(idx, t)] *= value;
             }
 
         }
@@ -1137,7 +1106,7 @@ public class Tsr {
                 //tensor._record(tensor.shape(), tensor.translation());
                 tensor._shape = _cached(indexing.shpCheck(indexing.rearrange(tensor._shape, newForm), tensor));
                 tensor._translation = _cached(indexing.rearrange(tensor._translation, tensor._shape, newForm));
-                tensor._idxmap =  _cached(indexing.idxTln(tensor._shape));
+                tensor._idxmap =  _cached(indexing.newTlnOf(tensor._shape));
                 return tensor;
             }
             //OPERATIONS:
@@ -1239,27 +1208,28 @@ public class Tsr {
         public static class indexing
         {
             @Contract(pure = true)
-            public static int i_of_i(int i, Tsr t){
-                int[] idx = new int[t._shape.length];
-                int[] baseIdx = null;
+            public static int i_of_idx(int[] idx, Tsr t)
+            {
+                int i = 0;
+                int[] sliceCfg = null;
                 if(t.has(int[].class)){
-                    baseIdx = (int[])t.find(int[].class);
-                    for(int ii=0; ii<t.rank(); ii++){
-                        idx[ii] = baseIdx[ii];
-                    }
-                    baseIdx = (baseIdx.length==t.rank())?null:baseIdx;
-                }
-                for(int ii=t.rank()-1; ii>=0; ii--){
-                    idx[ii] +=
-                            (
-                                (i / t._idxmap[ii])*((baseIdx==null)?1:baseIdx[t.rank()+ii])
-                            );
-                    i %= t._idxmap[ii];
+                    sliceCfg = (int[])t.find(int[].class);
                 }
                 for(int ii=0; ii<t._shape.length; ii++){
-                    i += idx[ii]*t._translation[ii];
+                    int scale = ((sliceCfg==null||sliceCfg.length==t.rank())?1:sliceCfg[t.rank()+ii]);
+                    i += (idx[ii] * scale + ((sliceCfg==null)?0:sliceCfg[ii]))*t._translation[ii];
                 }
                 return i;
+            }
+
+            @Contract(pure = true)
+            public static int i_of_i(int i, Tsr t){
+                int[] idx = new int[t._shape.length];
+                for(int ii=t.rank()-1; ii>=0; ii--){
+                    idx[ii] += i / t._idxmap[ii];
+                    i %= t._idxmap[ii];
+                }
+                return indexing.i_of_idx(idx, t);
             }
 
             @Contract(pure = true)
@@ -1287,22 +1257,22 @@ public class Tsr {
             }
 
             @Contract(pure = true)
-            public static void decrement(@NotNull int[] shpIdx, @NotNull int[] shape) {
+            public static void decrement(@NotNull int[] idx, @NotNull int[] shape) {
                 int i = 0;
                 while (i >= 0 && i < shape.length) {
-                    i = decrementAt(i, shpIdx, shape);
+                    i = decrementAt(i, idx, shape);
                 }
             }
 
             @Contract(pure = true)
-            public static int decrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
-                if (shpIdx[i] == 0) {
+            public static int decrementAt(int i, @NotNull int[] idx, @NotNull int[] shape) {
+                if (idx[i] == 0) {
                     i++;
                 } else {
-                    shpIdx[i]--;
+                    idx[i]--;
                     i--;
-                    while (shpIdx[i] == 0) {
-                        shpIdx[i] = shape[i] - 1;
+                    while (idx[i] == 0) {
+                        idx[i] = shape[i] - 1;
                         i--;
                     }
                     i = -1;
@@ -1311,21 +1281,7 @@ public class Tsr {
             }
 
             @Contract(pure = true)
-            public static void incrementFor(int count, int[] shpIdx, int[] shape) {
-                for (int Di = 0; Di < count; Di++) {
-                    increment(shpIdx, shape);
-                }
-            }
-
-            @Contract(pure = true)
-            public static void decrementFor(int count, int[] shpIdx, int[] shape) {
-                for (int Di = 0; Di < count; Di++) {
-                    decrement(shpIdx, shape);
-                }
-            }
-
-            @Contract(pure = true)
-            public static int[] idxTln(int[] shape) {
+            public static int[] newTlnOf(int[] shape) {
                 int[] tln = new int[shape.length];
                 int prod = 1;
                 for (int i = 0; i < tln.length; i++) {
@@ -1371,7 +1327,7 @@ public class Tsr {
 
             @Contract(pure = true)
             public static int[] rearrange(int[] tln, int[] shp, @NotNull int[] newForm) {
-                int[] shpTln = idxTln(shp);
+                int[] shpTln = newTlnOf(shp);
                 int[] newTln = new int[newForm.length];
                 for (int i = 0; i < newForm.length; i++) {
                     if (newForm[i] < 0) {
@@ -1399,15 +1355,6 @@ public class Tsr {
                     shape[i] = Math.abs(shp1[i] - shp2[i]) + 1;
                 }
                 return shape;
-            }
-
-            @Contract(pure = true)
-            public static int iOf(int[] idx, int[] tln) {
-                int i = 0;
-                for (int ii = 0; ii < tln.length; ii++) {
-                    i += idx[ii] * tln[ii];
-                }
-                return i;
             }
 
             @Contract(pure = true)

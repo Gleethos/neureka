@@ -972,7 +972,8 @@ public abstract class AbstractFunction implements Function
         }
 
         @Contract(pure = true)
-        public static void convection(Tsr t0_drain, Tsr t1_source, Tsr t2_source) {
+        public static void convection(Tsr t0_drain, Tsr t1_source, Tsr t2_source)
+        {
             int[] t0Shp = t0_drain.shape();
             int[] t1Shp = t1_source.shape();
             int[] t2Shp = t2_source.shape();
@@ -989,7 +990,8 @@ public abstract class AbstractFunction implements Function
             int drnSze = t0_drain.size();
             int i = 0;
 
-            while (i < drnSze) {//increment on drain accordingly:
+            while (i < drnSze)
+            {//increment on drain accordingly:
                 int ri = 0;
                 while (ri < rank) {
                     if (t1Shp[ri] == t2Shp[ri]) {//setting 0
@@ -1012,8 +1014,8 @@ public abstract class AbstractFunction implements Function
                 while (running) {
                     ri = (ri == rank) ? 0 : ri;
                     if (incrementing == false) {
-                        int i1 = Tsr.fcn.indexing.iOf(t1Idx, t1Tln);
-                        int i2 = Tsr.fcn.indexing.iOf(t2Idx, t2Tln);
+                        int i1 = Tsr.fcn.indexing.i_of_idx(t1Idx, t1_source);//Tsr.fcn.indexing.iOf(t1Idx, t1Tln);
+                        int i2 = Tsr.fcn.indexing.i_of_idx(t2Idx, t2_source);//Tsr.fcn.indexing.iOf(t2Idx, t2Tln);
                         value += t1_value[i1] * t2_value[i2];
                         incrementing = true;
                         ri = 0;
@@ -1045,7 +1047,7 @@ public abstract class AbstractFunction implements Function
                         }
                     }
                 }//setInto _value in drn:
-                int i0 = Tsr.fcn.indexing.iOf(t0Idx, t0Tln);
+                int i0 = Tsr.fcn.indexing.i_of_idx(t0Idx, t0_drain);//Tsr.fcn.indexing.iOf(t0Idx, t0Tln);
                 t0_value[i0] = value;
                 //System.out.println(i0 + " - " + i);
                 i++;//increment on drain:
@@ -1104,8 +1106,10 @@ public abstract class AbstractFunction implements Function
                             }
                         }
                         if (isMatch) {
-                            int i1 = Tsr.fcn.indexing.iOf(t1Idx, t1Tln);
-                            int i2 = Tsr.fcn.indexing.iOf(t2Idx, t2Tln);
+                            //int i1 = Tsr.fcn.indexing.iOf(t1Idx, t1Tln);
+                            //int i2 = Tsr.fcn.indexing.iOf(t2Idx, t2Tln);
+                            int i1 = Tsr.fcn.indexing.i_of_idx(t1Idx, t1_handle);//Tsr.fcn.indexing.iOf(t1Idx, t1Tln);
+                            int i2 = Tsr.fcn.indexing.i_of_idx(t2Idx, t2_drain);//Tsr.fcn.indexing.iOf(t2Idx, t2Tln);
                             value += t1_value[i1] * t2_value[i2];
                         }
                         incrementing = true;
@@ -1135,7 +1139,7 @@ public abstract class AbstractFunction implements Function
                     }
                 }
                 //setInto _value in drn:
-                int i0 = Tsr.fcn.indexing.iOf(t0Idx, t0Tln);
+                int i0 = Tsr.fcn.indexing.i_of_idx(t0Idx, t0_origin);//Tsr.fcn.indexing.iOf(t0Idx, t0Tln);
                 t0_value[i0] = value;
                 i++;//increment on drain:
                 if (i < drnSze) {
