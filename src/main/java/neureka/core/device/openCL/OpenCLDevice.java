@@ -83,13 +83,18 @@ public class OpenCLDevice implements Device
     @Override
     public Device get(Tsr tensor) {
         //tensor.setIsOutsourced(false);
-        double[] value = value64Of(tensor, false);
-        double[] gradient = null;
-        if(tensor.rqsGradient()) gradient = value64Of(tensor, true);
+        double[] value = value64Of(tensor);
+        //double[] gradient = null;
+        //if(tensor.rqsGradient()) gradient = value64Of(tensor, true);
         rmv(tensor);
-        tensor.setGradientIsTargeted(true);
-        tensor.setTargetValue64(gradient);
-        tensor.setGradientIsTargeted(false);
+
+        if(tensor.has(Tsr.class)){
+            Tsr gradient = (Tsr)tensor.find(Tsr.class);
+            this.get(gradient);
+        }
+        //tensor.setGradientIsTargeted(true);
+        //tensor.setValue64(gradient);
+        //tensor.setGradientIsTargeted(false);
         tensor.setValue(value);
         return this;
     }
@@ -305,10 +310,10 @@ public class OpenCLDevice implements Device
     }
 
     @Override
-    public double[] value64Of(Tsr tensor, boolean grd) {
+    public double[] value64Of(Tsr tensor) {
         cl_tsr clt = _mapping.get(tensor);
         if(clt.fp==1){
-            return DataHelper.floatToDouble(value32Of(tensor, grd));
+            return DataHelper.floatToDouble(value32Of(tensor));
         } else {
             double[] data = new double[clt.value.size];//tensor.size()];
             clEnqueueReadBuffer(
@@ -327,7 +332,7 @@ public class OpenCLDevice implements Device
     }
 
     @Override
-    public float[] value32Of(Tsr tensor, boolean grd){
+    public float[] value32Of(Tsr tensor){
         cl_tsr clt = _mapping.get(tensor);
         if(clt.fp==1){
             float[] data = new float[clt.value.size];//tensor.size()];
@@ -344,7 +349,7 @@ public class OpenCLDevice implements Device
             );
             return data;
         } else {
-            return DataHelper.doubleToFloat(value64Of(tensor, grd));
+            return DataHelper.doubleToFloat(value64Of(tensor));
         }
     }
 
@@ -446,9 +451,9 @@ public class OpenCLDevice implements Device
             } else {
                 Tsr[] newTsrs;
                 switch(Function.TYPES.REGISTER[f_id]){
-                    case "+": tsrs[0] = Tsr.fcn.create.newTsrLike(tsrs[1]).setTargetValue(1.0f);
+                    case "+": tsrs[0] = Tsr.fcn.create.newTsrLike(tsrs[1]).setValue(1.0f);
                         break;
-                    case "-": tsrs[0] = Tsr.fcn.create.newTsrLike(tsrs[1]).setTargetValue((d==0)?1.0f:-1.0f);
+                    case "-": tsrs[0] = Tsr.fcn.create.newTsrLike(tsrs[1]).setValue((d==0)?1.0f:-1.0f);
                         break;
                     case "^":
                         newTsrs = _subset(tsrs, 1,  2, tsrs.length-2);

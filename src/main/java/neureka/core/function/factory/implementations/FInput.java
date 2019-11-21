@@ -48,6 +48,23 @@ public class FInput implements Function, IProvider
 
         return this;
     }
+
+    private Tsr _extract(Tsr t)
+    {
+        if(this.providesGradient() && t.rqsGradient()){
+            //inputs[_index()].setGradientIsTargeted(true);
+            Tsr gradient = (Tsr)t.find(Tsr.class);
+            if(t.rqsGradient()){
+                if(gradient==null){
+                    gradient = new Tsr(t.shape(), 0);
+                    t.add(gradient);
+                }
+                return gradient;
+            }
+        }
+        return t;
+    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public double activate(final double[] inputs, int j) {
@@ -68,17 +85,11 @@ public class FInput implements Function, IProvider
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public Tsr activate(Tsr[] inputs, int j) {
-        if(this.providesGradient() && inputs[_index()].rqsGradient()){
-            inputs[_index()].setGradientIsTargeted(true);
-        }
-        return inputs[_index()];
+        return _extract(inputs[_index()]);
     }
     @Override
     public Tsr activate(Tsr[] inputs) {
-        if(this.providesGradient() && inputs[_index()].rqsGradient()){
-            inputs[_index()].setGradientIsTargeted(true);
-        }
-        return inputs[_index()];
+        return _extract(inputs[_index()]);
     }
     @Override
     public Tsr derive(Tsr[] inputs, int index, int j) {

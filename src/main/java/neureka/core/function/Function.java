@@ -34,9 +34,9 @@ public interface Function
                 ((GraphNode) result.find(GraphNode.class)).trimTree(null);
             }
             Function.CACHE.free(newLock);
-            for (Tsr t : inputs) {
-                t.setGradientIsTargeted(false);
-            }
+            //for (Tsr t : inputs) {
+            //    t.setGradientIsTargeted(false);
+            //}
             return result;
         }
     }

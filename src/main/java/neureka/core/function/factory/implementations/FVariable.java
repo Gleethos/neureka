@@ -60,9 +60,9 @@ public class FVariable implements Function, IProvider {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public Tsr activate(Tsr[] inputs, int j) {
-        if(this.providesGradient() && inputs[j].rqsGradient()){
-            inputs[j].setGradientIsTargeted(true);
-        }
+        //if(this.providesGradient() && inputs[j].rqsGradient()){
+        //    inputs[j].setGradientIsTargeted(true);
+        //}
         return inputs[j];
     }
     @Override

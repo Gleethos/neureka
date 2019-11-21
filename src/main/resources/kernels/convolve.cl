@@ -84,7 +84,6 @@ __kernel void convolve(
                 }
             }
             //set _value in drn:
-            //int di = _i_of_idx_on_tln(prv_drn_cfg, rank);
             drn[di] = value;
         } else {// conv
             while (ri < rank) {
@@ -141,9 +140,6 @@ __kernel void convolve(
                     }
                 }
             }
-            //set _value in drn:
-            //int di = __i_of_idx_on_tln(prv_drn_cfg, rank);
-            //int di = _i_of_i(gid, prv_drn_cfg, rank);
             drn[di] = value;
         }
 

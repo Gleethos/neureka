@@ -41,9 +41,9 @@ public interface Device
 
     Device execute(Tsr[] tsrs, int f_id, int d);
 
-    double[] value64Of(Tsr tensor, boolean grd);
+    double[] value64Of(Tsr tensor);
 
-    float[] value32Of(Tsr tensor, boolean grd);
+    float[] value32Of(Tsr tensor);
 
     Collection<Tsr> tensors();
 

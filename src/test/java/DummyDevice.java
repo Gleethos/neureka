@@ -56,12 +56,12 @@ public class DummyDevice implements Device
     }
 
     @Override
-    public double[] value64Of(Tsr tensor, boolean grd) {
+    public double[] value64Of(Tsr tensor) {
         return new double[0];
     }
 
     @Override
-    public float[] value32Of(Tsr tensor, boolean grd) {
+    public float[] value32Of(Tsr tensor) {
         return new float[0];
     }
 

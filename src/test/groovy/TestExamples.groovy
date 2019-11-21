@@ -163,28 +163,20 @@ class TestExamples
          3, 4, 5, 6
          */
 
-
         //---
         //b>>
         //      1, 8,
         //      3, 4
-        //b.setRqsGradient(true)
-        //c = new Tsr([2, 2], [
-        //        -2, 3,//-2 + 24 + 3 + 8
-        //        1, 2,
-        //])
-        //device.add(b).add(c)
-        //System.out.println(b.toString())
-        //x = new Tsr(b, "x", c)
-        //tester.testContains(x.toString(), ["[1x1]:(33.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)"], "")
+        b.setRqsGradient(true)
+        c = new Tsr([2, 2], [
+                -2, 3,//-2 + 24 + 3 + 8
+                1, 2,
+        ])
+        device.add(b).add(c)
+        System.out.println(b.toString())
+        x = new Tsr(b, "x", c)//This test is important!
+        tester.testContains(x.toString(), ["[1x1]:(33.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)"], "")
 
-        //tester.testTensorAutoGrad(//4, 5, -13, -4 <= result values
-        //        [b, c],
-        //        "i0xi1",
-        //        ["[2x1x2]:(4.0, -13.0, 5.0, -4.0); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"],
-        //        new Tsr([2, 1, 2], [1, 1, 1, 1]),
-        //        [[-1.0, -1.0, 5.0, 5.0], null]
-        //)
     }
 
 }

@@ -280,11 +280,11 @@ public abstract class AbstractFunction implements Function
                     }
                 }
             } else if(TYPES.REGISTER[_id]=="<" || TYPES.REGISTER[_id]==">") {
-                //return _src.get(0).activate(inputs).setTargetValue64(_src.get(1).activate(inputs).targetValue64(true));
+                //return _src.get(0).activate(inputs).setValue64(_src.get(1).activate(inputs).value64(true));
                 Tsr output = (TYPES.REGISTER[_id]=="<")?_src.get(0).activate(inputs):_src.get(1).activate(inputs);
                 Tsr input =  (TYPES.REGISTER[_id]=="<")?_src.get(1).activate(inputs):_src.get(0).activate(inputs);
                 output.foreach((i) -> {
-                    output.targetValue64()[Tsr.fcn.indexing.i_of_i(i, output)] = input.targetValue64()[Tsr.fcn.indexing.i_of_i(i, input)];
+                    output.value64()[Tsr.fcn.indexing.i_of_i(i, output)] = input.value64()[Tsr.fcn.indexing.i_of_i(i, input)];
                 });
                 return output;
             } else {
@@ -296,7 +296,7 @@ public abstract class AbstractFunction implements Function
                     data[i] = inputs[i].value64();
                 }
                 if(output.is64()){
-                    double[] outputValue = output.targetValue64();//.value64();
+                    double[] outputValue = output.value64();//.value64();
                     output.foreach((i) -> {
                         for (int ii = 0; ii < inputs.length; ii++) {
                             inp[ii] = data[ii][Tsr.fcn.indexing.i_of_i(i, inputs[ii])];//ids[ii]];//i
@@ -304,7 +304,7 @@ public abstract class AbstractFunction implements Function
                         outputValue[Tsr.fcn.indexing.i_of_i(i, output)] = _scalar_activation(inp, j, d);
                     });
                 } else {
-                    float[] outputValue = output.targetValue32();//.value64();
+                    float[] outputValue = output.value32();//.value64();
                     output.foreach((i) -> {
                         for (int ii = 0; ii < inputs.length; ii++) {
                             inp[ii] = data[ii][Tsr.fcn.indexing.i_of_i(i, inputs[ii])];//ids[ii]];//i
@@ -312,7 +312,6 @@ public abstract class AbstractFunction implements Function
                         outputValue[Tsr.fcn.indexing.i_of_i(i, output)] = (float)_scalar_activation(inp, j, d);
                     });
                 }
-
                 return  output;
             }
         }
@@ -984,9 +983,9 @@ public abstract class AbstractFunction implements Function
             int[] t0Idx = new int[rank];
             int[] t1Idx = new int[rank];
             int[] t2Idx = new int[rank];
-            double[] t0_value = t0_drain.targetValue64();
-            double[] t1_value = t1_source.targetValue64();
-            double[] t2_value = t2_source.targetValue64();
+            double[] t0_value = t0_drain.value64();
+            double[] t1_value = t1_source.value64();
+            double[] t2_value = t2_source.value64();
             int drnSze = t0_drain.size();
             int i = 0;
 
@@ -1069,9 +1068,9 @@ public abstract class AbstractFunction implements Function
             int[] t0Idx = new int[rank];
             int[] t1Idx = new int[rank];
             int[] t2Idx = new int[rank];
-            double[] t0_value = t0_origin.targetValue64();
-            double[] t1_value = t1_handle.targetValue64();
-            double[] t2_value = t2_drain.targetValue64();
+            double[] t0_value = t0_origin.value64();
+            double[] t1_value = t1_handle.value64();
+            double[] t2_value = t2_drain.value64();
             int drnSze = t0_origin.size();
             int i = 0;
 
