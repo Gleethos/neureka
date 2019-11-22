@@ -1,0 +1,16 @@
+unnamed package
+neureka
+neureka.acceleration
+neureka.acceleration.openCL
+neureka.acceleration.openCL.utility
+neureka.function
+neureka.function.environment
+neureka.function.factory
+neureka.function.factory.assembly
+neureka.function.factory.autograd
+neureka.function.factory.implementations
+neureka.gui
+neureka.optimization
+neureka.optimization.implementations
+neureka.utility
+util

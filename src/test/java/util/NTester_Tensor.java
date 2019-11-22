@@ -1,8 +1,8 @@
 package util;
 
-import neureka.core.Tsr;
-import neureka.core.device.Device;
-import neureka.core.function.factory.AbstractFunction;
+import neureka.Tsr;
+import neureka.acceleration.Device;
+import neureka.function.factory.AbstractFunction;
 
 public class NTester_Tensor extends NTester 
 {

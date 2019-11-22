@@ -1,7 +1,7 @@
 
-import neureka.core.Tsr;
-import neureka.core.device.Device;
-import neureka.core.device.openCL.OpenCLPlatform;
+import neureka.Tsr;
+import neureka.acceleration.Device;
+import neureka.acceleration.openCL.OpenCLPlatform;
 import org.junit.Test;
 import util.NTester_Tensor;
 
@@ -12,7 +12,7 @@ import java.util.List;
 public class TestOnGPU {
 
     @Test
-    public void testAutograd(){
+    public void DefaultDeviceTests(){
         if(!System.getProperty("os.name").toLowerCase().contains("windows")){
             return;
         }

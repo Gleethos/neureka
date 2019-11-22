@@ -1,9 +1,8 @@
 package util;
-import neureka.core.Tsr;
-import neureka.frame.MessageFrame;
+import neureka.Tsr;
+import neureka.gui.MessageFrame;
 import org.junit.Assert;
 
-import java.lang.reflect.Array;
 import java.util.List;
 
 public class NTester extends Assert
@@ -97,7 +96,7 @@ public class NTester extends Assert
         _success += (_positive_assertions == _assertion_count)?1:0;
         println(BAR +"  "+((_positive_assertions >0)?"test successful!"+" "+ _positive_assertions :"test failed!"+" "+(_assertion_count + _positive_assertions))+"/"+ _assertion_count);
         println("[O][=][=][=][=][=][=][=][=][=][=][=]|> "+ _success +"/"+ _tests);
-        printResult((_positive_assertions == _assertion_count)?".":"E");
+        printResult((_positive_assertions == _assertion_count)? "" :"E");
         bottom();
         return _positive_assertions;
     }

@@ -1,8 +1,8 @@
 package util;
 
-import neureka.core.Tsr;
-import neureka.core.function.Function;
-import neureka.core.function.factory.assembly.FunctionBuilder;
+import neureka.Tsr;
+import neureka.function.Function;
+import neureka.function.factory.assembly.FunctionBuilder;
 
 public class NTester_Function extends NTester {
 
