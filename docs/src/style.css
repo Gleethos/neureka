@@ -132,7 +132,8 @@ main
 
 /* Navigation! */
 #navTitel
-{letter-spacing: 8px; font-family: Arial, sans-serif;
+{
+    letter-spacing: 8px; font-family: Arial, sans-serif;
     color: black; min-height: 2.5em;
     margin-left:1%; margin-bottom: 0px; font-size:150%; line-height: 100%;
     text-transform: uppercase; background-color: white;
@@ -141,7 +142,8 @@ main
     border-radius: 0px 0px 40px 0; float: left;
     border-left: 0.1em solid black; border-top: 0.1em solid black;
     margin-right: 0.1em; margin-top: 0.1em;
-    box-shadow: 0 0 15px 2px black;}
+    box-shadow: 0 0 15px 2px black;
+}
 
 #navTile
 {
@@ -236,8 +238,10 @@ header p {font-family: Brush Script Std, Brush Script MT, cursive;
 
 /*Main classes:*/
 .cardBox
-{box-shadow: 0 0 40px 3px #2e505f; border-radius: 4em;
-    background-color: white;}
+{
+    box-shadow: 0 0 40px 3px #2e505f; border-radius: 4em;
+    background-color: white;
+}
 
 .mainContentWrapper
 {
@@ -309,7 +313,7 @@ code
 
 .contentBox
 {
-    background-color: #31f5ff;  font-size: 1em;
+    background-color: rgb(217, 253, 255);  font-size: 1em;
     padding: 0.5em;
     margin-left: 0.175em;
     margin-right: 0.174em;

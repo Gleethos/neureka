@@ -1,6 +1,7 @@
 import neureka.Neureka
 import neureka.Tsr
 import neureka.acceleration.Device
+import neureka.acceleration.openCL.OpenCLDevice
 import neureka.acceleration.openCL.OpenCLPlatform
 import org.junit.Test
 import util.DummyDevice

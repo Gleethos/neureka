@@ -6,6 +6,7 @@ import java.lang.ref.Cleaner;
 import java.lang.ref.ReferenceQueue;
 import java.nio.*;
 import java.util.*;
+import java.util.function.Consumer;
 
 import neureka.Tsr;
 import neureka.acceleration.Device;
@@ -118,7 +119,6 @@ public class OpenCLDevice implements Device
 
     private Device _add(Tsr tensor, int fp, cl_tsr parent)
     {
-        tensor.setIsVirtual(false);//TODO: optimize: if virtual: copy !efficiently
         cl_tsr newClt = new cl_tsr();
         //VALUE TRANSFER:
         if(parent==null){
@@ -193,7 +193,11 @@ public class OpenCLDevice implements Device
             System.out.println("Garbage has been removed from GPU!!!");
         });
         tensor.add(this);
+        if(tensor.isVirtual()){
+            _execute(tensor, tensor.value64(0), Function.TYPES.LOOKUP.get("+"), -1);
+        }
         tensor.setIsOutsourced(true);
+        tensor.setIsVirtual(false);
         return this;
     }
 
@@ -203,18 +207,20 @@ public class OpenCLDevice implements Device
     }
 
     private void _store(Tsr tensor, cl_tsr newClTsr, int fp, boolean grd){
-        Pointer p;
-        int size;
-        if(fp==1){
-            float[] data = (grd)?tensor.gradient32():tensor.value32();
-            data = (data==null)?new float[tensor.size()]:data;
-            p = Pointer.to(data);
-            size = data.length;
-        } else {
-            double[] data = (grd)?tensor.gradient64():tensor.value64();
-            data = (data==null)?new double[tensor.size()]:data;
-            p = Pointer.to(data);
-            size = data.length;
+        Pointer p = null;
+        int size = tensor.size();
+        if(!tensor.isVirtual()){
+            if(fp==1){
+                float[] data = tensor.value32();
+                data = (data==null)?new float[tensor.size()]:data;
+                p = Pointer.to(data);
+                size = data.length;
+            } else {
+                double[] data = tensor.value64();
+                data = (data==null)?new double[tensor.size()]:data;
+                p = Pointer.to(data);
+                size = data.length;
+            }
         }
         newClTsr.value.size = size;
         newClTsr.value.uses = 1;
@@ -227,14 +233,16 @@ public class OpenCLDevice implements Device
                 null
         );
         newClTsr.value.data = mem;
-        clEnqueueWriteBuffer(
-                _queue,
-                mem,
-                true, 0,
-                size * Sizeof.cl_float*fp,
-                p,
-                0, null, null
-        );
+        if(!tensor.isVirtual()){
+            clEnqueueWriteBuffer(
+                    _queue,
+                    mem,
+                    true, 0,
+                    size * Sizeof.cl_float*fp,
+                    p,
+                    0, null, null
+            );
+        }
     }
 
 
@@ -371,13 +379,13 @@ public class OpenCLDevice implements Device
         {
             _createNewDrainTensorIn(tsrs, f_id);
             if (
-                    tsrs.length == 3
-                            &&
-                            (
-                                    (tsrs[1].isVirtual() || tsrs[2].isVirtual())
-                                            ||
-                                    (!tsrs[1].isOutsourced() && tsrs[1].size() == 1 || !tsrs[2].isOutsourced() && tsrs[2].size() == 1)
-                            )
+                tsrs.length == 3
+                    &&
+                    (
+                        (tsrs[1].isVirtual() || tsrs[2].isVirtual())
+                                ||
+                        (!tsrs[1].isOutsourced() && tsrs[1].size() == 1 || !tsrs[2].isOutsourced() && tsrs[2].size() == 1)
+                    )
             ) {
                 //_createNewDrainTensorIn(tsrs, f_id);
                 if (tsrs[2].isVirtual() || tsrs[2].size() == 1) {
@@ -557,9 +565,7 @@ public class OpenCLDevice implements Device
 
     private void _execute(Tsr t, double value, int f_id, int d)
     {
-        if(d<0)
-        {
-            //execute
+        if(d<0) {
             int gwz = t.size();
             cl_kernel kernel = _platform.getKernels().get(
                     _platform.kernelNameOf(f_id)+"_broadcast"
@@ -604,7 +610,6 @@ public class OpenCLDevice implements Device
             }
         }
     }
-
 
     private void _createNewDrainTensorIn(Tsr[] tsrs, int f_id){
         if(tsrs[0]==null)//Creating a new tensor:

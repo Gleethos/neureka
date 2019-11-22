@@ -97,8 +97,8 @@
                                     </div>
                                     <div class="col-sm-12 col-md-6">
                                         <p>
-                                            An open source platform independent machine learning library written in
-                                            Java.
+                                            A lightweight open source platform independent
+                                            machine learning library written in Java.
                                         </p>
                                     </div>
                                 </div>
@@ -149,27 +149,31 @@
                                         <div class="contentBox">
                                             <p>
                                                 Popular deep learning libraries use python due to it's
-                                                elegant Syntax. Java on the other Hand is considered
-                                                verbose and bulky, so why would anybody ever write
+                                                elegant Syntax. Java on the other hand is considered
+                                                verbose and bulky, so why would anybody ever build
                                                 a deep learning library for Java?
                                                 The answer is simple:</br>
                                                 Nobody did!</br>
                                                 This library is written for every JVM-language, namely:
                                                 Groovy, Kotlin, Scala, and Jython just to name a few.
-                                                This library can be integrated by any language which compiles to
+                                                Neureka can be integrated by any language which compiles to
                                                 JVM bytecode!
-                                                Take a look at some groovy and Java side by side:
+                                                Take a look at some Groovy and Java side by side:
                                             </p>
                                         </div>
                                     </div>
-                                    <div class="col-sm-12 col-md-12">
+                                    <div class="col-sm-0 col-md-2">
+                                    </div>
+                                    <div class="col-sm-12 col-md-8">
                                         <div class="contentBox">
                                             <p style="text-align: center; width:100%">
-                                                Both code snippets model the following equations:</br>
+                                                Both code snippets below express the following equations:</br>
                                                 f(x) = ((x-4)*2)^2; :=>  f(3) = 4</br>
                                                 f(x)' = 8*x - 32 ;  :=>  f(3)' = -8</br>
                                             </p>
                                         </div>
+                                    </div>
+                                    <div class="col-sm-0 col-md-2">
                                     </div>
                                     <div class="col-sm-12 col-md-6">
                                                <pre><code class="hljs java">
@@ -179,16 +183,16 @@ Tsr b = new Tsr(-4)
 Tsr w = new Tsr(2)
 
 Tsr y = ((x+b)*w)**2
-
 // y: "[1]:(4.0); ->d[1]:(-8.0), "
-
                                                 </code></pre>
                                     </div>
                                     <div class="col-sm-12 col-md-6">
                                         <div class="contentBox">
                                             <p>
-                                                Groovy supports operation overloading, and dynamic typing!
-                                                Especially these language features allow for elegant  and short implementations.
+                                                Groovy supports operator overloading.
+                                                Neureka implements certain methods which will be called when
+                                                a corresponding operator is used in Groovy or many other languages.
+                                                Such language features allow for elegant and short implementations.
                                                 For rapid prototyping and small scale projects groovy, scala or jython
                                                 might be the perfect choice.
                                             </p>

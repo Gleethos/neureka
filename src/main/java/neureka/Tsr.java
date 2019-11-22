@@ -230,6 +230,22 @@ public class Tsr
         return this;
     }
 
+    public double value64(int i){
+        if(this.isVirtual()){
+            if(this.is64()){
+                return ((double[])_value)[0];
+            } else {
+                return ((float[])_value)[0];
+            }
+        } else {
+            if(this.is64()){
+                return ((double[])_value)[i];
+            } else {
+                return ((float[])_value)[i];
+            }
+        }
+    }
+
     public double[] value64() {
         if (_value == null && this.isOutsourced() && this.has(Device.class)) {
             return ((Device) this.find(Device.class)).value64Of(this);
@@ -243,6 +259,22 @@ public class Tsr
             }
         }
         return newValue;
+    }
+
+    public float value32(int i){
+        if(this.isVirtual()){
+            if(this.is64()){
+                return (float) ((double[])_value)[0];
+            } else {
+                return ((float[])_value)[0];
+            }
+        } else {
+            if(this.is64()){
+                return (float) ((double[])_value)[i];
+            } else {
+                return ((float[])_value)[i];
+            }
+        }
     }
 
     public float[] value32(){
