@@ -348,7 +348,7 @@ public class GraphNode
      * @param child_mode is used to assess if the payload in this node is useful for backpropagation!
      */
     private void _deletionDive(int child_mode){
-        if(_mode>0 && child_mode>_mode && !this.isLeave()){
+        if(_mode>0 && child_mode>_mode && !this.isLeave() && _payload!=null){//If _payload==null return maybe?? (because graph already clean?)
             _payload.remove(GraphNode.class);
             if(!_is_used_as_derivative) _payload.delete();
             _payload = null;

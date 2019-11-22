@@ -864,6 +864,9 @@ public class Tsr
     public Tsr power(Tsr other) {
         return new Tsr(new Tsr[]{this, other}, "i0^i1");
     }
+    public Tsr power(Double value){
+        return power(new Tsr(this.shape(), value));
+    }
     public Tsr xor(Tsr other) {
         return new Tsr(new Tsr[]{this, other}, "i0^i1");
     }

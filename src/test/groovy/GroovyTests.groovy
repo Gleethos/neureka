@@ -1,7 +1,6 @@
 import neureka.Neureka
 import neureka.Tsr
 import neureka.acceleration.Device
-import neureka.acceleration.openCL.OpenCLDevice
 import neureka.acceleration.openCL.OpenCLPlatform
 import org.junit.Test
 import util.DummyDevice
@@ -9,6 +8,15 @@ import util.NTester_Tensor
 
 class GroovyTests
 {
+    @Test
+    void testPowerOverloaded(){
+        Tsr x = new Tsr(3).setRqsGradient(true)
+        Tsr b = new Tsr(-4)
+        Tsr w = new Tsr(2)
+        Tsr y = ((x+b)*w)**2
+        // y: "[1]:(4.0); ->d[1]:(-8.0), "
+        assert y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
+    }
 
     @Test
     void testAddingDeviceToTensor()
