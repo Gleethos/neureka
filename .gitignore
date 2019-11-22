@@ -1,10 +1,6 @@
-/build/
-\build\
 
-/.idea/
-\.idea\
+.idea/
 
-/.gradle/
-\.gradle\
+.gradle/
 
 neureka.iml

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="GroovyTests" tests="3" skipped="0" failures="0" errors="0" timestamp="2019-11-22T23:10:29" hostname="Gleethos" time="0.497">
+  <properties/>
+  <testcase name="testPower" classname="GroovyTests" time="0.154"/>
+  <testcase name="testAddingDeviceToTensor" classname="GroovyTests" time="0.021"/>
+  <testcase name="testSlicing" classname="GroovyTests" time="0.322"/>
+  <system-out><![CDATA[Kernel needed: add
+Garbage has been removed from GPU!!!
+Done
+Done
+[2x2]:(1.0, 8.0, 3.0, 4.0):g:(null)
+Kernel needed: add
+Kernel needed: add
+Kernel needed: multiply
+Kernel needed: multiply
+Kernel needed: multiply
+Kernel needed: identity
+Kernel needed: power
+Kernel needed: identity
+Kernel needed: power
+Kernel needed: multiply
+Kernel needed: multiply
+Kernel needed: multiply
+Kernel needed: multiply
+Kernel needed: multiply
+Kernel needed: add
+Kernel needed: add
+Kernel needed: multiply
+Kernel needed: add
+Kernel needed: multiply
+Kernel needed: identity
+Kernel needed: identity
+Kernel needed: identity
+Garbage has been removed from GPU!!!
+Garbage has been removed from GPU!!!
+Garbage has been removed from GPU!!!
+Garbage has been removed from GPU!!!
+Garbage has been removed from GPU!!!
+Garbage has been removed from GPU!!!
+Garbage has been removed from GPU!!!
+Garbage has been removed from GPU!!!
+Garbage has been removed from GPU!!!
+Done
+Kernel needed: identity
+Done
+[2x2]:(1.0, 8.0, 3.0, 4.0):g:(null)
+Kernel needed: convolve
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

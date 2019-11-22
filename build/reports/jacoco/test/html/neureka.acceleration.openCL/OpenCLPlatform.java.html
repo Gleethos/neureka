@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OpenCLPlatform.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.acceleration.openCL</a> &gt; <span class="el_source">OpenCLPlatform.java</span></div><h1>OpenCLPlatform.java</h1><pre class="source lang-java linenums">package neureka.acceleration.openCL;
+
+import neureka.function.Function;
+import org.jocl.*;
+
+import java.io.*;
+import java.util.*;
+
+import static org.jocl.CL.*;
+import static org.jocl.CL.CL_DEVICE_TYPE_ALL;
+
+public class OpenCLPlatform
+{
+
+    private cl_platform_id _pid;
+    private List&lt;OpenCLDevice&gt; _devices;
+    private cl_context _context;
+    private Map&lt;String, cl_kernel&gt; _kernels;
+
+<span class="fc" id="L20">    private static Map&lt;String, String&gt; OPERATION_TO_KERNEL_MAPPING = new HashMap&lt;String, String&gt;();</span>
+    static {
+<span class="fc" id="L22">        OPERATION_TO_KERNEL_MAPPING.put(&quot;relu&quot;, &quot;relu&quot;);</span>
+<span class="fc" id="L23">        OPERATION_TO_KERNEL_MAPPING.put(&quot;sig&quot;, &quot;sigmoid&quot;);</span>
+<span class="fc" id="L24">        OPERATION_TO_KERNEL_MAPPING.put(&quot;quad&quot;, &quot;quadratic&quot;);</span>
+<span class="fc" id="L25">        OPERATION_TO_KERNEL_MAPPING.put(&quot;lig&quot;, &quot;ligmoid&quot;);</span>
+<span class="fc" id="L26">        OPERATION_TO_KERNEL_MAPPING.put(&quot;idy&quot;, &quot;identity&quot;);</span>
+<span class="fc" id="L27">        OPERATION_TO_KERNEL_MAPPING.put(&quot;gaus&quot;, &quot;gaussian&quot;);</span>
+<span class="fc" id="L28">        OPERATION_TO_KERNEL_MAPPING.put(&quot;abs&quot;, &quot;absolute&quot;);</span>
+<span class="fc" id="L29">        OPERATION_TO_KERNEL_MAPPING.put(&quot;sin&quot;, &quot;sinus&quot;);</span>
+<span class="fc" id="L30">        OPERATION_TO_KERNEL_MAPPING.put(&quot;cos&quot;, &quot;cosinus&quot;);</span>
+<span class="fc" id="L31">        OPERATION_TO_KERNEL_MAPPING.put(&quot;sum&quot;, &quot;add&quot;);</span>
+<span class="fc" id="L32">        OPERATION_TO_KERNEL_MAPPING.put(&quot;prod&quot;, &quot;multiply&quot;);</span>
+<span class="fc" id="L33">        OPERATION_TO_KERNEL_MAPPING.put(&quot;^&quot;, &quot;power&quot;);</span>
+<span class="fc" id="L34">        OPERATION_TO_KERNEL_MAPPING.put(&quot;/&quot;, &quot;divide&quot;);</span>
+<span class="fc" id="L35">        OPERATION_TO_KERNEL_MAPPING.put(&quot;*&quot;, &quot;multiply&quot;);</span>
+<span class="fc" id="L36">        OPERATION_TO_KERNEL_MAPPING.put(&quot;%&quot;, &quot;modulo&quot;);</span>
+<span class="fc" id="L37">        OPERATION_TO_KERNEL_MAPPING.put(&quot;-&quot;, &quot;subtract&quot;);</span>
+<span class="fc" id="L38">        OPERATION_TO_KERNEL_MAPPING.put(&quot;+&quot;, &quot;add&quot;);</span>
+<span class="fc" id="L39">        OPERATION_TO_KERNEL_MAPPING.put(&quot;x&quot;, &quot;convolve&quot;);</span>
+<span class="fc" id="L40">        OPERATION_TO_KERNEL_MAPPING.put((&quot;&quot;+((char)171)), &quot;inv_conv_left&quot;);</span>
+<span class="fc" id="L41">        OPERATION_TO_KERNEL_MAPPING.put((&quot;&quot;+((char)187)), &quot;inv_conv_right&quot;);</span>
+<span class="fc" id="L42">        OPERATION_TO_KERNEL_MAPPING.put(&quot;,&quot;, &quot;reshape&quot;);</span>
+<span class="fc" id="L43">        OPERATION_TO_KERNEL_MAPPING.put(&quot;&lt;&quot;, &quot;inject_left&quot;);</span>
+<span class="fc" id="L44">        OPERATION_TO_KERNEL_MAPPING.put(&quot;&gt;&quot;, &quot;inject_right&quot;);</span>
+<span class="fc" id="L45">    }</span>
+
+    public String kernelNameOf(int f_id){
+<span class="fc" id="L48">        String name = OPERATION_TO_KERNEL_MAPPING.get(Function.TYPES.REGISTER[f_id]);</span>
+<span class="fc" id="L49">        System.out.println(&quot;Kernel needed: &quot;+name);</span>
+<span class="fc" id="L50">        return OPERATION_TO_KERNEL_MAPPING.get(Function.TYPES.REGISTER[f_id]);</span>
+    }
+
+<span class="fc" id="L53">    OpenCLPlatform(cl_platform_id pid){</span>
+<span class="fc" id="L54">        _pid = pid;</span>
+<span class="fc" id="L55">        String platformName = OpenCLDevice.DeviceQuery.getString(pid, CL_PLATFORM_NAME);</span>
+        // Obtain the number of devices for the current platform
+<span class="fc" id="L57">        int numDevices[] = new int[1];</span>
+<span class="fc" id="L58">        clGetDeviceIDs(pid, CL_DEVICE_TYPE_ALL, 0, null, numDevices);</span>
+<span class="fc" id="L59">        System.out.println(&quot;Number of devices in platform &quot;+platformName+&quot;: &quot;+numDevices[0]);</span>
+<span class="fc" id="L60">        cl_device_id devicesArray[] = new cl_device_id[numDevices[0]];</span>
+<span class="fc" id="L61">        clGetDeviceIDs(pid, CL_DEVICE_TYPE_ALL, numDevices[0], devicesArray, null);</span>
+
+        // Enable exceptions and subsequently omit error checks in this sample
+<span class="fc" id="L64">        CL.setExceptionsEnabled(true);</span>
+
+        // Initialize the context properties
+<span class="fc" id="L67">        cl_context_properties contextProperties = new cl_context_properties();</span>
+<span class="fc" id="L68">        contextProperties.addProperty(CL_CONTEXT_PLATFORM, pid);</span>
+
+        // Create a context for the selected device
+<span class="fc" id="L71">        _context = clCreateContext(</span>
+                contextProperties, devicesArray.length, devicesArray,
+                null, null, null
+        );
+        // Collect all devices of this platform
+<span class="fc" id="L76">        List&lt;OpenCLDevice&gt; myDevices = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        for(cl_device_id did : devicesArray) {</span>
+<span class="fc" id="L79">            OpenCLDevice clDevice = new OpenCLDevice(this , did);</span>
+<span class="fc" id="L80">            myDevices.add(clDevice);</span>
+        }
+<span class="fc" id="L82">        _devices = myDevices;</span>
+<span class="fc" id="L83">        _kernels = new HashMap&lt;&gt;();</span>
+
+        //Reading all kernels!
+<span class="fc" id="L86">        File curDir = new File(&quot;build/resources/main/kernels/&quot;);</span>
+<span class="fc" id="L87">        File[] filesList = curDir.listFiles();</span>
+        //for(File f : filesList){
+        //    if(f.isDirectory())
+        //        System.out.println(f.getName());
+        //    if(f.isFile()){
+        //        System.out.println(f.getName());
+        //    }
+        //}
+<span class="fc" id="L95">        String[] sources = new String[filesList.length];</span>
+<span class="fc" id="L96">        String[] kernelNames = new String[filesList.length];</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        for(int i=0; i&lt;sources.length; i++) {</span>
+<span class="fc" id="L98">            sources[i] = _setup.readFile(filesList[i].toString());</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">            if(sources[i].contains(&quot;__kernel&quot;)) {</span>
+<span class="fc" id="L100">                String[] parts = sources[i].split(&quot;__kernel&quot;)[1].split(&quot;\\(&quot;)[0].split(&quot; &quot;);</span>
+<span class="fc" id="L101">                kernelNames[i] = parts[parts.length-1];</span>
+            }
+        }
+        // Create the program
+<span class="fc" id="L105">        cl_program cpProgram = clCreateProgramWithSource(</span>
+                _context,
+                sources.length,
+                sources,
+                null,
+                null
+        );
+
+        // Build the program
+<span class="fc" id="L114">        int err = clBuildProgram(</span>
+                cpProgram,
+                devicesArray.length,
+                devicesArray,
+                &quot;-cl-mad-enable&quot;, null, null
+        );
+        //TODO: check compilation errors!
+
+        // Create the kernel
+<span class="fc bfc" id="L123" title="All 2 branches covered.">        for(String name : kernelNames){</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">            if(name!=null){</span>
+<span class="fc" id="L125">                _kernels.put(</span>
+<span class="fc" id="L126">                        name, clCreateKernel(cpProgram, name, null)</span>
+                );
+            }
+        }
+<span class="fc" id="L130">    }</span>
+
+    public cl_platform_id getID(){
+<span class="nc" id="L133">        return _pid;</span>
+    }
+
+    public List&lt;OpenCLDevice&gt; getDevices(){
+<span class="fc" id="L137">        return _devices;</span>
+    }
+
+    public Map&lt;String, cl_kernel&gt; getKernels(){
+<span class="fc" id="L141">        return _kernels;</span>
+    }
+
+    public cl_context getContext(){
+<span class="fc" id="L145">        return _context;</span>
+    }
+
+    public static List&lt;OpenCLPlatform&gt; PLATFORMS(){
+
+<span class="fc" id="L150">        return _setup.PLATFORMS;</span>
+    }
+
+    private static class _setup
+    {
+<span class="fc" id="L155">        public static List&lt;OpenCLPlatform&gt; PLATFORMS = findAllPlatforms();</span>
+
+        public  static List&lt;OpenCLPlatform&gt; findAllPlatforms()
+        {
+            // Obtain the number of platforms
+<span class="fc" id="L160">            int numPlatforms[] = new int[1];</span>
+<span class="fc" id="L161">            clGetPlatformIDs(0, null, numPlatforms);</span>
+
+            // Obtain the platform IDs
+<span class="fc" id="L164">            cl_platform_id platforms[] = new cl_platform_id[numPlatforms[0]];</span>
+<span class="fc" id="L165">            clGetPlatformIDs(platforms.length, platforms, null);</span>
+
+<span class="fc" id="L167">            List&lt;OpenCLPlatform&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">            for(cl_platform_id id : platforms){</span>
+<span class="fc" id="L169">                list.add(new OpenCLPlatform(id));</span>
+            }
+<span class="fc" id="L171">            return list;</span>
+        }
+        /**
+         * Helper function which reads the file with the given name and returns
+         * the contents of this file as a String. Will exit the application
+         * if the file can not be read.
+         *
+         * @param fileName The name of the file to read.
+         * @return The contents of the file
+         */
+        private static String readFile(String fileName)
+        {
+            try
+            {
+<span class="fc" id="L185">                BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));</span>
+<span class="fc" id="L186">                StringBuffer sb = new StringBuffer();</span>
+<span class="fc" id="L187">                String line = null;</span>
+                while (true)
+                {
+<span class="fc" id="L190">                    line = br.readLine();</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">                    if (line == null)</span>
+                    {
+<span class="fc" id="L193">                        break;</span>
+                    }
+<span class="fc" id="L195">                    sb.append(line).append(&quot;\n&quot;);</span>
+                }
+<span class="fc" id="L197">                return sb.toString();</span>
+            }
+<span class="nc" id="L199">            catch (IOException e)</span>
+            {
+<span class="nc" id="L201">                e.printStackTrace();</span>
+<span class="nc" id="L202">                System.exit(1);</span>
+<span class="nc" id="L203">                return null;</span>
+            }
+        }
+    }
+
+
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

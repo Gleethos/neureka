@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConsoleFrame.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.gui</a> &gt; <span class="el_source">ConsoleFrame.java</span></div><h1>ConsoleFrame.java</h1><pre class="source lang-java linenums">package neureka.gui;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.AdjustmentEvent;
+
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.text.BadLocationException;
+
+public class ConsoleFrame extends JFrame{
+
+	private JTextArea _outputField;
+	private JTextField _inputField;
+<span class="nc" id="L19">	private boolean _receptive = true;</span>
+<span class="nc" id="L20">	private String _input = &quot;&quot;;</span>
+	private int _linecount;
+<span class="nc" id="L22">	private boolean _entered = false;</span>
+
+<span class="nc" id="L24">	public ConsoleFrame(String title, int maxLineCount) {</span>
+<span class="nc" id="L25">			_linecount = maxLineCount;</span>
+<span class="nc" id="L26">			_input = &quot;&quot;;</span>
+<span class="nc" id="L27">			_entered = false;</span>
+<span class="nc" id="L28">			this.setTitle(title);</span>
+<span class="nc" id="L29">			this.setSize(800, 400);</span>
+<span class="nc" id="L30">			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span>
+<span class="nc" id="L31">			this.setLocationRelativeTo(null);</span>
+
+<span class="nc" id="L33">		_outputField = new JTextArea();</span>
+<span class="nc" id="L34">		_outputField.setText(&quot;This little area here is where you getFrom your feedback:  :D &quot; + &quot;\n&quot;);</span>
+		// _outputField.setBorder(BorderFactory.createLineBorder(Color.black));
+<span class="nc" id="L36">		_outputField.setEditable(false);</span>
+
+<span class="nc" id="L38">		Font txt = new Font(&quot;Verdana&quot;, Font.LAYOUT_LEFT_TO_RIGHT, 15);</span>
+<span class="nc" id="L39">		_outputField.setBackground(Color.BLACK);</span>
+<span class="nc" id="L40">		_outputField.setForeground(Color.CYAN);</span>
+<span class="nc" id="L41">		_outputField.setFont(txt);</span>
+
+<span class="nc" id="L43">		JScrollPane scroll = new JScrollPane(_outputField);</span>
+<span class="nc" id="L44">		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);</span>
+<span class="nc" id="L45">		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);</span>
+<span class="nc" id="L46">		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);</span>
+<span class="nc" id="L47">		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);</span>
+<span class="nc" id="L48">		scroll.setBackground(Color.DARK_GRAY);</span>
+<span class="nc" id="L49">		scroll.setForeground(Color.BLUE);</span>
+<span class="nc" id="L50">		scroll.getVerticalScrollBar().setBackground(Color.DARK_GRAY);</span>
+<span class="nc" id="L51">		scroll.getHorizontalScrollBar().setBackground(Color.DARK_GRAY);</span>
+
+<span class="nc" id="L53">		 scroll.getVerticalScrollBar().addAdjustmentListener(</span>
+<span class="nc" id="L54">				new AdjustmentListener() {</span>
+					public void adjustmentValueChanged(AdjustmentEvent e) {
+<span class="nc" id="L56">						e.getAdjustable().setValue(</span>
+<span class="nc" id="L57">								e.getAdjustable().getMaximum());</span>
+<span class="nc" id="L58">					}</span>
+				});
+<span class="nc" id="L60">		scroll.getHorizontalScrollBar().addAdjustmentListener(</span>
+<span class="nc" id="L61">				new AdjustmentListener() {</span>
+					public void adjustmentValueChanged(AdjustmentEvent e) {
+<span class="nc" id="L63">						e.getAdjustable().setValue(</span>
+<span class="nc" id="L64">								e.getAdjustable().getMaximum());</span>
+<span class="nc" id="L65">					}</span>
+				});
+<span class="nc" id="L67">		this.add(scroll, BorderLayout.CENTER);</span>
+
+		// this.addInto(_outputField, BorderLayout.CENTER);
+
+<span class="nc" id="L71">		_inputField = new JTextField();</span>
+<span class="nc" id="L72">		_inputField.setToolTipText(&quot;Insert _input here!&quot;);</span>
+<span class="nc" id="L73">		_inputField.setPreferredSize(new Dimension(0, 40));</span>
+<span class="nc" id="L74">		_inputField.setBackground(Color.BLACK);</span>
+<span class="nc" id="L75">		_inputField.setForeground(Color.CYAN);</span>
+<span class="nc" id="L76">		_inputField.setFont(txt);</span>
+<span class="nc" id="L77">		this.add(_inputField, BorderLayout.PAGE_END);</span>
+
+		// Eingabefeld Enter-Listener
+<span class="nc" id="L80">		_inputField.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc bnc" id="L82" title="All 2 branches missed.">				if (_receptive) {</span>
+<span class="nc" id="L83">					_input = _inputField.getText();</span>
+<span class="nc" id="L84">					_entered = true;</span>
+<span class="nc" id="L85">					_inputField.setText(&quot;&quot;);</span>
+				}
+<span class="nc" id="L87">			}</span>
+		});
+<span class="nc" id="L89">		this.getContentPane().add(scroll, BorderLayout.CENTER);</span>
+<span class="nc" id="L90">		this.setVisible(true);</span>
+<span class="nc" id="L91">	}</span>
+
+	public void println(String text) {
+<span class="nc" id="L94">		_outputField.setText(_outputField.getText() + text + &quot;\n&quot;);</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">		if (_outputField.getLineCount() &gt; _linecount) {</span>
+			try {
+<span class="nc" id="L97">				_outputField.replaceRange(&quot;&quot;, 0, _outputField.getLineEndOffset(0));</span>
+<span class="nc" id="L98">			} catch (BadLocationException e) {</span>
+<span class="nc" id="L99">				e.printStackTrace();</span>
+<span class="nc" id="L100">			}</span>
+		}
+<span class="nc" id="L102">	}</span>
+
+	public void print(String text) {
+<span class="nc" id="L105">		_outputField.setText(_outputField.getText() + text);</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">		if (_outputField.getLineCount() &gt; _linecount) {</span>
+			try {
+<span class="nc" id="L108">				_outputField</span>
+<span class="nc" id="L109">						.replaceRange(&quot;&quot;, 0, _outputField.getLineEndOffset(0));</span>
+<span class="nc" id="L110">			} catch (BadLocationException e) {</span>
+<span class="nc" id="L111">				e.printStackTrace();</span>
+<span class="nc" id="L112">			}</span>
+		}
+<span class="nc" id="L114">	}</span>
+
+	public String read() {
+<span class="nc" id="L117">		_entered = false;</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">		while (!_entered) {</span>
+			try {
+<span class="nc" id="L120">				Thread.sleep(10);</span>
+<span class="nc" id="L121">			} catch (InterruptedException e) {</span>
+<span class="nc" id="L122">				e.printStackTrace();</span>
+<span class="nc" id="L123">			}</span>
+		}
+<span class="nc" id="L125">		return _input;</span>
+	}
+	
+	
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

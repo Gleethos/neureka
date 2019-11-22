@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DeviceQuery.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.acceleration.openCL.utility</a> &gt; <span class="el_source">DeviceQuery.java</span></div><h1>DeviceQuery.java</h1><pre class="source lang-java linenums">package neureka.acceleration.openCL.utility;
+
+import static org.jocl.CL.*;
+
+import java.nio.*;
+import java.util.*;
+
+import neureka.acceleration.openCL.OpenCLDevice;
+import org.jocl.*;
+
+/**
+ * A program that queries and prints information about all
+ * available devices.
+ */
+<span class="nc" id="L15">public class DeviceQuery</span>
+{
+    /**
+     * The entry point of this program
+     *
+     */
+    public static void find(String request)
+    {
+        // Obtain the number of platforms
+<span class="nc" id="L24">        int numPlatforms[] = new int[1];</span>
+<span class="nc" id="L25">        clGetPlatformIDs(0, null, numPlatforms);</span>
+
+<span class="nc" id="L27">        System.out.println(&quot;Number of platforms: &quot;+numPlatforms[0]);</span>
+
+        // Obtain the platform IDs
+<span class="nc" id="L30">        cl_platform_id platforms[] = new cl_platform_id[numPlatforms[0]];</span>
+<span class="nc" id="L31">        clGetPlatformIDs(platforms.length, platforms, null);</span>
+
+<span class="nc" id="L33">        List&lt;OpenCLDevice&gt; myDevices = new ArrayList&lt;&gt;();</span>
+
+        // Collect all devices of all platforms
+<span class="nc" id="L36">        List&lt;cl_device_id&gt; devices = new ArrayList&lt;cl_device_id&gt;();</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        for (int i=0; i&lt;platforms.length; i++)</span>
+        {
+<span class="nc" id="L39">            String platformName = getString(platforms[i], CL_PLATFORM_NAME);</span>
+
+            // Obtain the number of devices for the current platform
+<span class="nc" id="L42">            int numDevices[] = new int[1];</span>
+<span class="nc" id="L43">            clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, 0, null, numDevices);</span>
+
+<span class="nc" id="L45">            System.out.println(&quot;Number of devices in platform &quot;+platformName+&quot;: &quot;+numDevices[0]);</span>
+
+<span class="nc" id="L47">            cl_device_id devicesArray[] = new cl_device_id[numDevices[0]];</span>
+<span class="nc" id="L48">            clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, numDevices[0], devicesArray, null);</span>
+
+<span class="nc" id="L50">            devices.addAll(Arrays.asList(devicesArray));</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">            for(cl_device_id did : devicesArray){</span>
+                //myDevices.add(new OpenCLDevice(platforms[i] , did));
+            }
+        }
+
+        // Print the infos about all devices
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        for (cl_device_id device : devices)</span>
+        {
+            // CL_DEVICE_NAME
+<span class="nc" id="L60">            String deviceName = getString(device, CL_DEVICE_NAME);</span>
+<span class="nc" id="L61">            System.out.println(&quot;--- Info for device &quot;+deviceName+&quot;: ---&quot;);</span>
+<span class="nc" id="L62">            System.out.printf(&quot;CL_DEVICE_NAME: \t\t\t%s\n&quot;, deviceName);</span>
+
+            // CL_DEVICE_VENDOR
+<span class="nc" id="L65">            String deviceVendor = getString(device, CL_DEVICE_VENDOR);</span>
+<span class="nc" id="L66">            System.out.printf(&quot;CL_DEVICE_VENDOR: \t\t\t%s\n&quot;, deviceVendor);</span>
+
+            // CL_DRIVER_VERSION
+<span class="nc" id="L69">            String driverVersion = getString(device, CL_DRIVER_VERSION);</span>
+<span class="nc" id="L70">            System.out.printf(&quot;CL_DRIVER_VERSION: \t\t\t%s\n&quot;, driverVersion);</span>
+
+            // CL_DEVICE_TYPE
+<span class="nc" id="L73">            long deviceType = getLong(device, CL_DEVICE_TYPE);</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">            if( (deviceType &amp; CL_DEVICE_TYPE_CPU) != 0)</span>
+<span class="nc" id="L75">                System.out.printf(&quot;CL_DEVICE_TYPE:\t\t\t\t%s\n&quot;, &quot;CL_DEVICE_TYPE_CPU&quot;);</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">            if( (deviceType &amp; CL_DEVICE_TYPE_GPU) != 0)</span>
+<span class="nc" id="L77">                System.out.printf(&quot;CL_DEVICE_TYPE:\t\t\t\t%s\n&quot;, &quot;CL_DEVICE_TYPE_GPU&quot;);</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">            if( (deviceType &amp; CL_DEVICE_TYPE_ACCELERATOR) != 0)</span>
+<span class="nc" id="L79">                System.out.printf(&quot;CL_DEVICE_TYPE:\t\t\t\t%s\n&quot;, &quot;CL_DEVICE_TYPE_ACCELERATOR&quot;);</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">            if( (deviceType &amp; CL_DEVICE_TYPE_DEFAULT) != 0)</span>
+<span class="nc" id="L81">                System.out.printf(&quot;CL_DEVICE_TYPE:\t\t\t\t%s\n&quot;, &quot;CL_DEVICE_TYPE_DEFAULT&quot;);</span>
+
+            // CL_DEVICE_MAX_COMPUTE_UNITS
+<span class="nc" id="L84">            int maxComputeUnits = getInt(device, CL_DEVICE_MAX_COMPUTE_UNITS);</span>
+<span class="nc" id="L85">            System.out.printf(&quot;CL_DEVICE_MAX_COMPUTE_UNITS:\t\t%d\n&quot;, maxComputeUnits);</span>
+
+            // CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS
+<span class="nc" id="L88">            long maxWorkItemDimensions = getLong(device, CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS);</span>
+<span class="nc" id="L89">            System.out.printf(&quot;CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS:\t%d\n&quot;, maxWorkItemDimensions);</span>
+
+            // CL_DEVICE_MAX_WORK_ITEM_SIZES
+<span class="nc" id="L92">            long maxWorkItemSizes[] = getSizes(device, CL_DEVICE_MAX_WORK_ITEM_SIZES, 3);</span>
+<span class="nc" id="L93">            System.out.printf(&quot;CL_DEVICE_MAX_WORK_ITEM_SIZES:\t\t%d / %d / %d \n&quot;,</span>
+<span class="nc" id="L94">                    maxWorkItemSizes[0], maxWorkItemSizes[1], maxWorkItemSizes[2]);</span>
+
+            // CL_DEVICE_MAX_WORK_GROUP_SIZE
+<span class="nc" id="L97">            long maxWorkGroupSize = getSize(device, CL_DEVICE_MAX_WORK_GROUP_SIZE);</span>
+<span class="nc" id="L98">            System.out.printf(&quot;CL_DEVICE_MAX_WORK_GROUP_SIZE:\t\t%d\n&quot;, maxWorkGroupSize);</span>
+
+            // CL_DEVICE_MAX_CLOCK_FREQUENCY
+<span class="nc" id="L101">            long maxClockFrequency = getLong(device, CL_DEVICE_MAX_CLOCK_FREQUENCY);</span>
+<span class="nc" id="L102">            System.out.printf(&quot;CL_DEVICE_MAX_CLOCK_FREQUENCY:\t\t%d MHz\n&quot;, maxClockFrequency);</span>
+
+            // CL_DEVICE_ADDRESS_BITS
+<span class="nc" id="L105">            int addressBits = getInt(device, CL_DEVICE_ADDRESS_BITS);</span>
+<span class="nc" id="L106">            System.out.printf(&quot;CL_DEVICE_ADDRESS_BITS:\t\t\t%d\n&quot;, addressBits);</span>
+
+            // CL_DEVICE_MAX_MEM_ALLOC_SIZE
+<span class="nc" id="L109">            long maxMemAllocSize = getLong(device, CL_DEVICE_MAX_MEM_ALLOC_SIZE);</span>
+<span class="nc" id="L110">            System.out.printf(&quot;CL_DEVICE_MAX_MEM_ALLOC_SIZE:\t\t%d MByte\n&quot;, (int)(maxMemAllocSize / (1024 * 1024)));</span>
+
+            // CL_DEVICE_GLOBAL_MEM_SIZE
+<span class="nc" id="L113">            long globalMemSize = getLong(device, CL_DEVICE_GLOBAL_MEM_SIZE);</span>
+<span class="nc" id="L114">            System.out.printf(&quot;CL_DEVICE_GLOBAL_MEM_SIZE:\t\t%d MByte\n&quot;, (int)(globalMemSize / (1024 * 1024)));</span>
+
+            // CL_DEVICE_ERROR_CORRECTION_SUPPORT
+<span class="nc" id="L117">            int errorCorrectionSupport = getInt(device, CL_DEVICE_ERROR_CORRECTION_SUPPORT);</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">            System.out.printf(&quot;CL_DEVICE_ERROR_CORRECTION_SUPPORT:\t%s\n&quot;, errorCorrectionSupport != 0 ? &quot;yes&quot; : &quot;no&quot;);</span>
+
+            // CL_DEVICE_LOCAL_MEM_TYPE
+<span class="nc" id="L121">            int localMemType = getInt(device, CL_DEVICE_LOCAL_MEM_TYPE);</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">            System.out.printf(&quot;CL_DEVICE_LOCAL_MEM_TYPE:\t\t%s\n&quot;, localMemType == 1 ? &quot;local&quot; : &quot;global&quot;);</span>
+
+            // CL_DEVICE_LOCAL_MEM_SIZE
+<span class="nc" id="L125">            long localMemSize = getLong(device, CL_DEVICE_LOCAL_MEM_SIZE);</span>
+<span class="nc" id="L126">            System.out.printf(&quot;CL_DEVICE_LOCAL_MEM_SIZE:\t\t%d KByte\n&quot;, (int)(localMemSize / 1024));</span>
+
+            // CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE
+<span class="nc" id="L129">            long maxConstantBufferSize = getLong(device, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE);</span>
+<span class="nc" id="L130">            System.out.printf(&quot;CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE:\t%d KByte\n&quot;, (int)(maxConstantBufferSize / 1024));</span>
+
+            // CL_DEVICE_QUEUE_PROPERTIES
+<span class="nc" id="L133">            long queueProperties = getLong(device, CL_DEVICE_QUEUE_PROPERTIES);</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">            if(( queueProperties &amp; CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE ) != 0)</span>
+<span class="nc" id="L135">                System.out.printf(&quot;CL_DEVICE_QUEUE_PROPERTIES:\t\t%s\n&quot;, &quot;CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE&quot;);</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">            if(( queueProperties &amp; CL_QUEUE_PROFILING_ENABLE ) != 0)</span>
+<span class="nc" id="L137">                System.out.printf(&quot;CL_DEVICE_QUEUE_PROPERTIES:\t\t%s\n&quot;, &quot;CL_QUEUE_PROFILING_ENABLE&quot;);</span>
+
+            // CL_DEVICE_IMAGE_SUPPORT
+<span class="nc" id="L140">            int imageSupport = getInt(device, CL_DEVICE_IMAGE_SUPPORT);</span>
+<span class="nc" id="L141">            System.out.printf(&quot;CL_DEVICE_IMAGE_SUPPORT:\t\t%d\n&quot;, imageSupport);</span>
+
+            // CL_DEVICE_MAX_READ_IMAGE_ARGS
+<span class="nc" id="L144">            int maxReadImageArgs = getInt(device, CL_DEVICE_MAX_READ_IMAGE_ARGS);</span>
+<span class="nc" id="L145">            System.out.printf(&quot;CL_DEVICE_MAX_READ_IMAGE_ARGS:\t\t%d\n&quot;, maxReadImageArgs);</span>
+
+            // CL_DEVICE_MAX_WRITE_IMAGE_ARGS
+<span class="nc" id="L148">            int maxWriteImageArgs = getInt(device, CL_DEVICE_MAX_WRITE_IMAGE_ARGS);</span>
+<span class="nc" id="L149">            System.out.printf(&quot;CL_DEVICE_MAX_WRITE_IMAGE_ARGS:\t\t%d\n&quot;, maxWriteImageArgs);</span>
+
+            // CL_DEVICE_SINGLE_FP_CONFIG
+<span class="nc" id="L152">            long singleFpConfig = getLong(device, CL_DEVICE_SINGLE_FP_CONFIG);</span>
+<span class="nc" id="L153">            System.out.printf(&quot;CL_DEVICE_SINGLE_FP_CONFIG:\t\t%s\n&quot;,</span>
+<span class="nc" id="L154">                    stringFor_cl_device_fp_config(singleFpConfig));</span>
+
+            // CL_DEVICE_IMAGE2D_MAX_WIDTH
+<span class="nc" id="L157">            long image2dMaxWidth = getSize(device, CL_DEVICE_IMAGE2D_MAX_WIDTH);</span>
+<span class="nc" id="L158">            System.out.printf(&quot;CL_DEVICE_2D_MAX_WIDTH\t\t\t%d\n&quot;, image2dMaxWidth);</span>
+
+            // CL_DEVICE_IMAGE2D_MAX_HEIGHT
+<span class="nc" id="L161">            long image2dMaxHeight = getSize(device, CL_DEVICE_IMAGE2D_MAX_HEIGHT);</span>
+<span class="nc" id="L162">            System.out.printf(&quot;CL_DEVICE_2D_MAX_HEIGHT\t\t\t%d\n&quot;, image2dMaxHeight);</span>
+
+            // CL_DEVICE_IMAGE3D_MAX_WIDTH
+<span class="nc" id="L165">            long image3dMaxWidth = getSize(device, CL_DEVICE_IMAGE3D_MAX_WIDTH);</span>
+<span class="nc" id="L166">            System.out.printf(&quot;CL_DEVICE_3D_MAX_WIDTH\t\t\t%d\n&quot;, image3dMaxWidth);</span>
+
+            // CL_DEVICE_IMAGE3D_MAX_HEIGHT
+<span class="nc" id="L169">            long image3dMaxHeight = getSize(device, CL_DEVICE_IMAGE3D_MAX_HEIGHT);</span>
+<span class="nc" id="L170">            System.out.printf(&quot;CL_DEVICE_3D_MAX_HEIGHT\t\t\t%d\n&quot;, image3dMaxHeight);</span>
+
+            // CL_DEVICE_IMAGE3D_MAX_DEPTH
+<span class="nc" id="L173">            long image3dMaxDepth = getSize(device, CL_DEVICE_IMAGE3D_MAX_DEPTH);</span>
+<span class="nc" id="L174">            System.out.printf(&quot;CL_DEVICE_3D_MAX_DEPTH\t\t\t%d\n&quot;, image3dMaxDepth);</span>
+
+            // CL_DEVICE_PREFERRED_VECTOR_WIDTH_&lt;type&gt;
+<span class="nc" id="L177">            System.out.printf(&quot;CL_DEVICE_PREFERRED_VECTOR_WIDTH_&lt;t&gt;\t&quot;);</span>
+<span class="nc" id="L178">            int preferredVectorWidthChar = getInt(device, CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR);</span>
+<span class="nc" id="L179">            int preferredVectorWidthShort = getInt(device, CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT);</span>
+<span class="nc" id="L180">            int preferredVectorWidthInt = getInt(device, CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT);</span>
+<span class="nc" id="L181">            int preferredVectorWidthLong = getInt(device, CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG);</span>
+<span class="nc" id="L182">            int preferredVectorWidthFloat = getInt(device, CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT);</span>
+<span class="nc" id="L183">            int preferredVectorWidthDouble = getInt(device, CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE);</span>
+<span class="nc" id="L184">            System.out.printf(&quot;CHAR %d, SHORT %d, INT %d, LONG %d, FLOAT %d, DOUBLE %d\n\n\n&quot;,</span>
+<span class="nc" id="L185">                    preferredVectorWidthChar, preferredVectorWidthShort,</span>
+<span class="nc" id="L186">                    preferredVectorWidthInt, preferredVectorWidthLong,</span>
+<span class="nc" id="L187">                    preferredVectorWidthFloat, preferredVectorWidthDouble);</span>
+<span class="nc" id="L188">        }</span>
+<span class="nc" id="L189">    }</span>
+
+    /**
+     * Returns the value64 of the device info parameter with the given name
+     *
+     * @param device The device
+     * @param paramName The parameter name
+     * @return The value64
+     */
+    private static int getInt(cl_device_id device, int paramName)
+    {
+<span class="nc" id="L200">        return getInts(device, paramName, 1)[0];</span>
+    }
+
+    /**
+     * Returns the values of the device info parameter with the given name
+     *
+     * @param device The device
+     * @param paramName The parameter name
+     * @param numValues The number of values
+     * @return The value64
+     */
+    private static int[] getInts(cl_device_id device, int paramName, int numValues)
+    {
+<span class="nc" id="L213">        int values[] = new int[numValues];</span>
+<span class="nc" id="L214">        clGetDeviceInfo(device, paramName, Sizeof.cl_int * numValues, Pointer.to(values), null);</span>
+<span class="nc" id="L215">        return values;</span>
+    }
+
+    /**
+     * Returns the value64 of the device info parameter with the given name
+     *
+     * @param device The device
+     * @param paramName The parameter name
+     * @return The value64
+     */
+    private static long getLong(cl_device_id device, int paramName)
+    {
+<span class="nc" id="L227">        return getLongs(device, paramName, 1)[0];</span>
+    }
+
+    /**
+     * Returns the values of the device info parameter with the given name
+     *
+     * @param device The device
+     * @param paramName The parameter name
+     * @param numValues The number of values
+     * @return The value64
+     */
+    private static long[] getLongs(cl_device_id device, int paramName, int numValues)
+    {
+<span class="nc" id="L240">        long values[] = new long[numValues];</span>
+<span class="nc" id="L241">        clGetDeviceInfo(device, paramName, Sizeof.cl_long * numValues, Pointer.to(values), null);</span>
+<span class="nc" id="L242">        return values;</span>
+    }
+
+    /**
+     * Returns the value64 of the device info parameter with the given name
+     *
+     * @param device The device
+     * @param paramName The parameter name
+     * @return The value64
+     */
+    private static String getString(cl_device_id device, int paramName)
+    {
+        // Obtain the length of the string that will be queried
+<span class="nc" id="L255">        long size[] = new long[1];</span>
+<span class="nc" id="L256">        clGetDeviceInfo(device, paramName, 0, null, size);</span>
+
+        // Create a buffer of the appropriate size and fill it with the info
+<span class="nc" id="L259">        byte buffer[] = new byte[(int)size[0]];</span>
+<span class="nc" id="L260">        clGetDeviceInfo(device, paramName, buffer.length, Pointer.to(buffer), null);</span>
+
+        // Create a string from the buffer (excluding the trailing \0 byte)
+<span class="nc" id="L263">        return new String(buffer, 0, buffer.length-1);</span>
+    }
+
+    /**
+     * Returns the value64 of the platform info parameter with the given name
+     *
+     * @param platform The platform
+     * @param paramName The parameter name
+     * @return The value64
+     */
+    private static String getString(cl_platform_id platform, int paramName)
+    {
+        // Obtain the length of the string that will be queried
+<span class="nc" id="L276">        long size[] = new long[1];</span>
+<span class="nc" id="L277">        clGetPlatformInfo(platform, paramName, 0, null, size);</span>
+
+        // Create a buffer of the appropriate size and fill it with the info
+<span class="nc" id="L280">        byte buffer[] = new byte[(int)size[0]];</span>
+<span class="nc" id="L281">        clGetPlatformInfo(platform, paramName, buffer.length, Pointer.to(buffer), null);</span>
+
+        // Create a string from the buffer (excluding the trailing \0 byte)
+<span class="nc" id="L284">        return new String(buffer, 0, buffer.length-1);</span>
+    }
+
+    /**
+     * Returns the value64 of the device info parameter with the given name
+     *
+     * @param device The device
+     * @param paramName The parameter name
+     * @return The value64
+     */
+    private static long getSize(cl_device_id device, int paramName)
+    {
+<span class="nc" id="L296">        return getSizes(device, paramName, 1)[0];</span>
+    }
+
+    /**
+     * Returns the values of the device info parameter with the given name
+     *
+     * @param device The device
+     * @param paramName The parameter name
+     * @param numValues The number of values
+     * @return The value64
+     */
+    static long[] getSizes(cl_device_id device, int paramName, int numValues)
+    {
+        // The size of the returned data has to depend on
+        // the size of a size_t, which is handled here
+<span class="nc" id="L311">        ByteBuffer buffer = ByteBuffer.allocate(</span>
+<span class="nc" id="L312">                numValues * Sizeof.size_t).order(ByteOrder.nativeOrder());</span>
+<span class="nc" id="L313">        clGetDeviceInfo(device, paramName, Sizeof.size_t * numValues,</span>
+<span class="nc" id="L314">                Pointer.to(buffer), null);</span>
+<span class="nc" id="L315">        long values[] = new long[numValues];</span>
+<span class="nc bnc" id="L316" title="All 2 branches missed.">        if (Sizeof.size_t == 4)</span>
+        {
+<span class="nc bnc" id="L318" title="All 2 branches missed.">            for (int i=0; i&lt;numValues; i++)</span>
+            {
+<span class="nc" id="L320">                values[i] = buffer.getInt(i * Sizeof.size_t);</span>
+            }
+        }
+        else
+        {
+<span class="nc bnc" id="L325" title="All 2 branches missed.">            for (int i=0; i&lt;numValues; i++)</span>
+            {
+<span class="nc" id="L327">                values[i] = buffer.getLong(i * Sizeof.size_t);</span>
+            }
+        }
+<span class="nc" id="L330">        return values;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
