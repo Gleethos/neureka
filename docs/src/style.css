@@ -625,6 +625,10 @@ footer ul
     border-bottom: 0.3em solid #fff;
 }
 
+.side-nav{
+    padding-top: 7em;
+}
+
 .fixed-nav {
     height: 2em;
     width: 100%;
@@ -634,7 +638,7 @@ footer ul
 
 .header-nav {
     float: left;
-    height: 4em;
+    height: 5em;
     position: absolute;
     width: 50%;
     left:0px;
