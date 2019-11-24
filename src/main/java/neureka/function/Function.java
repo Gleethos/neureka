@@ -31,7 +31,7 @@ public interface Function
             }
             Tsr result = (function.activate(inputs));
             if (result.has(GraphNode.class)) {
-                ((GraphNode) result.find(GraphNode.class)).trimTree(null);
+                ((GraphNode) result.find(GraphNode.class)).redundantGradientCleanup();
             }
             Function.CACHE.free(newLock);
             //for (Tsr t : inputs) {

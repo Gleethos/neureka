@@ -3,7 +3,6 @@ package neureka.function.factory.autograd;
 import neureka.Tsr;
 import neureka.acceleration.openCL.utility.WeakTensorReference;
 import neureka.function.Function;
-import neureka.function.factory.AbstractFunction;
 import neureka.function.factory.assembly.FunctionBuilder;
 
 import java.lang.ref.WeakReference;
@@ -72,7 +71,7 @@ public class GraphNode
     /**
      * The value of this graph node!
      * This node belongs to a tensor during creation but may lose
-     * it during memory cleanup : trimTree(Tsr target) ! -> payload might be deleted!
+     * it during memory cleanup : _targetedCleanup(Tsr target) ! -> payload might be deleted!
      */
     private Tsr _payload;
 
@@ -126,9 +125,7 @@ public class GraphNode
      * @param newChild which references it's input namely the parent (this) has...
      */
     private synchronized void _attachChild(GraphNode newChild){
-        if(_children==null){
-            _children = new ArrayList<>();
-        }
+        if(_children==null)_children = new ArrayList<>();
         WeakTensorReference<GraphNode> ref = new WeakTensorReference<GraphNode>(newChild, null);
         _children.add(ref);
     }
@@ -184,9 +181,7 @@ public class GraphNode
      */
     public GraphNode(Tsr output, Function function, Tsr[] inputs, GraphLock lock)
     {
-        if(output==null){
-            throw new RuntimeException("[GraphNode]:(constructor): Payload must no be null!");
-        }
+        if(output==null) throw new RuntimeException("[GraphNode]:(constructor): Payload must no be null!");
         _mode = (inputs!=null)? _modeOf(inputs, function):(output.rqsGradient())?1:0;
         _function = function;
         _lock = lock;
@@ -226,9 +221,7 @@ public class GraphNode
          * */
         if(function==null || !function.isFlat()) return; // Leave nodes cannot be connected!!
 
-        for(Tsr t : inputs){
-            if(t.equals(output)) return;
-        }
+        for(Tsr t : inputs) if(t.equals(output)) return;
         //--------------------------------------------------------------------------------------
         if(node.usesAD() && function.isFlat())
         {
@@ -306,15 +299,28 @@ public class GraphNode
         return result_mode;
     }
 
+    public void redundantGradientCleanup()
+    {
+        if(_parents==null || mode()==0) return;//Gradient cleanup not needed in this case!
+        for(GraphNode node : _parents){
+            node._payloadDeletionDive(_mode);
+            this.forEach((t, d)->{
+                if( this.mode()>0 || d==node.getPayload() ) node._targetedCleanup(t);
+            });
+        }
+    }
+
     /**
      * @param target
      * @return void
      */
-    public void trimTree(Tsr target)
-    {// Find and remove redundant gradients: ... todo: and maybe forward ad nodes?!?!?!?!?
-        if(_parents==null || mode()==0) return;
-        boolean dive = (target==null || mode()<0);
-        if(!dive){
+    private void _targetedCleanup(Tsr target)
+    {// Find and remove redundant gradients sharing the same target: ...
+        if(target==null) throw new IllegalStateException("[GraphNode][_targetedCleanup]: target tensor must not be null!");
+        if(_parents==null || mode()==0) return;//Gradient cleanup not needed in this case!
+        boolean cleanForwardAD = (mode()>0);
+        if(cleanForwardAD)
+        {
             TreeMap<Tsr, Tsr> blacklist = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
             this.forEach((t, d)->{ if(t==target) blacklist.put(d, t); });
             blacklist.forEach((b, t)->{
@@ -325,12 +331,9 @@ public class GraphNode
                     b.delete();
                 }
             });
-            for(GraphNode node : _parents) node.trimTree(target);
+            for(GraphNode node : _parents) node._targetedCleanup(target);
         }else{
-            for(GraphNode node : _parents){
-                node._deletionDive(_mode);
-                this.forEach((t, d)->{if(this.mode()>0 || d==node.getPayload())node.trimTree(t);});
-            }
+            redundantGradientCleanup();
         }
         /** sources can be deleted because unused graph nodes are already trimmed off the tree (targets remain!)
          * */
@@ -340,28 +343,37 @@ public class GraphNode
 
     /**
      * The following properties must be true to allow payload deletion:
-     * - The node is not an leave node! (Node supplied by user/from outside the locked graph)
+     * - The node is not a leave node! (Node supplied by user/from outside the locked graph)
+     * - The node is not a tip node! (Output node... ->($) )
      * - The node is part of a chain of forward-AD nodes (mode>0)
-     * - The mode value of the node is smaller then the largest of another within a chain of forward-AD
+     * - The mode value of the node is smaller then the largest of another within a chain of forward-AD ($)
      * =>(The largest mode value is owned by 'the most recent derivative w.r.t some leave node')
      *
      * @param child_mode is used to assess if the payload in this node is useful for backpropagation!
      */
-    private void _deletionDive(int child_mode){
+    private void _payloadDeletionDive(int child_mode)
+    {
         if(_mode>0 && child_mode>_mode && !this.isLeave() && _payload!=null){//If _payload==null return maybe?? (because graph already clean?)
             _payload.remove(GraphNode.class);
             if(!_is_used_as_derivative) _payload.delete();
             _payload = null;
         }
         if(_parents!=null){
-            for(GraphNode n : _parents) n._deletionDive(_mode);
+            for(GraphNode n : _parents) n._payloadDeletionDive(_mode);
         }
     }
 
-    public void deathBy(GraphNode child){
+    /**
+     * This method is called when a tensor is deleted and belongs to a computation graph.
+     * All parents of this tensor will be checked if deletions is possible.
+     * This is usually the case when the branch lineage is not tied to any other children!
+     * @param child
+     */
+    public void extinguishLineageBy(GraphNode child)
+    {
         boolean childrenAreDead = true;
         if(child==null){
-            throw new IllegalStateException("[GraphNode][deathBy]: Error! Child is null!");
+            throw new IllegalStateException("[GraphNode][extinguishLineageBy]: Error! Child is null!");
         } else if(this!=child){
             boolean contains = false;
             int index = 0;
@@ -374,14 +386,13 @@ public class GraphNode
                 }
             }
             if(!contains){
-                throw new IllegalStateException("[GraphNode][deathBy]: Error! Child is not recognized by parent!");
+                throw new IllegalStateException("[GraphNode][extinguishLineageBy]: Error! Child is not recognized by parent!");
             }
             _children.set(index, null);
             for(int i=0; i<_children.size(); i++){
-                childrenAreDead = (_children.get(i)==null)&&childrenAreDead;
+                childrenAreDead = (_children.get(i)==null) && childrenAreDead;
             }
         }
-
         if(childrenAreDead && !this.isLeave()){
             if(_payload!=null && !_is_used_as_derivative){
                 _payload.remove(GraphNode.class);
@@ -391,7 +402,7 @@ public class GraphNode
             }
             if(_parents!=null){
                 for(GraphNode parent : _parents){
-                    parent.deathBy(this);
+                    parent.extinguishLineageBy(this);
                 }
             }
             _function = null;
@@ -408,13 +419,14 @@ public class GraphNode
      */
     public void backward(Tsr error){
         if(this.usesAD()){
-            if(this.usesForwardAD()){
+            if(_payload==null) throw new RuntimeException();
+            if(this.usesForwardAD()){//Using forward-AD derivatives for reverse-mode AD!:
                 this.forEach((t, d)->t.backward(MUL.activate(new Tsr[]{error, d})));
-            }else if(this.usesReverseAD()){
+            }else if(this.usesReverseAD()){//Standard reverse mode-AD:
                 this.forEach((t, d)->{
-                    if(_function.id()== AbstractFunction.TYPES.LOOKUP.get("x")){// x operation required for chain-rule!
+                    if(_function.id()==Function.TYPES.LOOKUP.get("x")){// x operation requires individual operation!
                         t.backward(CONV.activate(new Tsr[]{error, d, new Tsr(t.shape(), 0)}));
-                    }else{
+                    } else {//Normal elementwise backpropagation:
                         MUL.activate(new Tsr[]{error, d});
                     }
                 });

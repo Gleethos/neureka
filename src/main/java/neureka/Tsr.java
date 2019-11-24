@@ -831,7 +831,7 @@ public class Tsr
             if(!node.isVirtual() && node.isUsedAsDerivative()){
                 throw new IllegalStateException("Trying to delete a tensor which is part of a function graph and used as derivative!");
             }
-            node.deathBy(node);
+            node.extinguishLineageBy(node);
         }
         _flags = -1;
         _value = null;

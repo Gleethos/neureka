@@ -831,7 +831,7 @@ public class Tsr
 <span class="pc bpc" id="L831" title="2 of 4 branches missed.">            if(!node.isVirtual() &amp;&amp; node.isUsedAsDerivative()){</span>
 <span class="nc" id="L832">                throw new IllegalStateException(&quot;Trying to delete a tensor which is part of a function graph and used as derivative!&quot;);</span>
             }
-<span class="fc" id="L834">            node.deathBy(node);</span>
+<span class="fc" id="L834">            node.extinguishLineageBy(node);</span>
         }
 <span class="fc" id="L836">        _flags = -1;</span>
 <span class="fc" id="L837">        _value = null;</span>
