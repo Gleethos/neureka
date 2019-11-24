@@ -418,8 +418,14 @@ public class GraphNode
      * @return void
      */
     public void backward(Tsr error){
+        if(_payload.isOutsourced()){
+            _payload.device().add(error);
+        }
+        if (_payload.rqsGradient()) {
+            _payload.addToGradient(error);
+        }
         if(this.usesAD()){
-            if(_payload==null) throw new RuntimeException();
+            //if(_payload==null) throw new RuntimeException();
             if(this.usesForwardAD()){//Using forward-AD derivatives for reverse-mode AD!:
                 this.forEach((t, d)->t.backward(MUL.activate(new Tsr[]{error, d})));
             }else if(this.usesReverseAD()){//Standard reverse mode-AD:

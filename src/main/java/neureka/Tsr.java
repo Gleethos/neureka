@@ -807,15 +807,7 @@ public class Tsr
     }
 
     public Tsr backward(Tsr error) {
-        if(this.isOutsourced()){
-            this.device().add(error);
-        }
-        if (this.rqsGradient()) {
-            this.addToGradient(error);
-        }
-        if (this.has(GraphNode.class)) {
-            ((GraphNode) this.find(GraphNode.class)).backward(error);
-        }
+        if (this.has(GraphNode.class)) ((GraphNode) this.find(GraphNode.class)).backward(error);
         return this;
     }
 
