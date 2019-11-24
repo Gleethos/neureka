@@ -4,6 +4,8 @@ import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.function.factory.AbstractFunction;
 
+import java.util.List;
+
 public class NTester_Tensor extends NTester 
 {
     public NTester_Tensor(String name)
@@ -20,6 +22,15 @@ public class NTester_Tensor extends NTester
             this.assertStringContains("result", (found==null)?"null":found.toString(), device.toString());
         }
         return (printSessionEnd()>0)?1:0;
+    }
+
+    public int testTensor(Tsr tensor, List<String> expected){
+        Object[] array = expected.toArray();
+        String[] strings = new String[expected.size()];
+        for(int i=0; i<strings.length; i++){
+            strings[i] = (String)array[i];
+        }
+        return testTensor(tensor, strings);
     }
 
     public int testTensor(Tsr tensor, String[] expected){

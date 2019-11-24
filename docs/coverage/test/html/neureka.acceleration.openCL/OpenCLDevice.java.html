@@ -249,7 +249,7 @@ public class OpenCLDevice implements Device
     @Override
     public Device rmv(Tsr tensor) {
 <span class="fc" id="L251">        cl_tsr clt = _mapping.get(tensor);</span>
-<span class="fc bfc" id="L252" title="All 2 branches covered.">        if(clt==null) return this; //THIS SHOULD NOT BE?</span>
+<span class="pc bpc" id="L252" title="1 of 2 branches missed.">        if(clt==null) return this; //THIS SHOULD NOT BE?</span>
 <span class="fc" id="L253">        clReleaseMemObject(clt.config);//remove translations/shapes from device!</span>
 <span class="fc" id="L254">        clReleaseMemObject(clt.value.data);</span>
 <span class="fc" id="L255">        _mapping.remove(tensor);</span>
@@ -259,10 +259,10 @@ public class OpenCLDevice implements Device
     private void _rmv(WeakTensorReference reference){
 <span class="fc" id="L260">        cl_tsr clt = _mapping.get(reference);</span>
 <span class="fc" id="L261">        clReleaseMemObject(clt.config);//remove translations/shapes from device!</span>
-<span class="fc bfc" id="L262" title="All 2 branches covered.">        if(clt.value.uses&lt;=1){</span>
+<span class="pc bpc" id="L262" title="1 of 2 branches missed.">        if(clt.value.uses&lt;=1){</span>
 <span class="fc" id="L263">            clReleaseMemObject(clt.value.data);</span>
         } else {
-<span class="fc" id="L265">            clt.value.uses --;</span>
+<span class="nc" id="L265">            clt.value.uses --;</span>
         }
 <span class="fc" id="L267">        _mapping.remove(reference);</span>
 <span class="fc" id="L268">    }</span>

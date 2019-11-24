@@ -3,369 +3,90 @@
 import java.util.ArrayList;
 import java.util.Random;
 
-<span class="nc" id="L6">public class DataHelper&lt;T&gt;</span>
+<span class="nc" id="L6">public class DataHelper</span>
 {
-    public T[] updateArray(T[] Array, int index, boolean remove, Class&lt;T&gt; tClass) {
-<span class="nc bnc" id="L9" title="All 2 branches missed.">        if (Array == null) {</span>
-<span class="nc bnc" id="L10" title="All 2 branches missed.">            if (remove == true) {</span>
-<span class="nc" id="L11">                return Array;</span>
-            } else {
-<span class="nc" id="L13">                Array = (T[]) java.lang.reflect.Array.newInstance(tClass, 1);//(Type[])new Object[1];</span>
-<span class="nc" id="L14">                return Array;</span>
-            }
-        }
-<span class="nc bnc" id="L17" title="All 2 branches missed.">        if (Array.length &lt; index) {</span>
-<span class="nc bnc" id="L18" title="All 2 branches missed.">            if (remove == true) {</span>
-<span class="nc" id="L19">                return Array;</span>
-            }
-        }
-<span class="nc" id="L22">        T[] oldArray = Array;</span>
-<span class="nc bnc" id="L23" title="All 2 branches missed.">        if (remove == false) {</span>
-<span class="nc" id="L24">            Array = (T[]) java.lang.reflect.Array.newInstance(tClass, oldArray.length + 1);//(Tsr[])new Object[oldBias.length + 1];</span>
-        } else {
-<span class="nc bnc" id="L26" title="All 2 branches missed.">            if (Array.length == 1) {</span>
-<span class="nc" id="L27">                Array = null;</span>
-<span class="nc" id="L28">                return Array;</span>
-            }
-<span class="nc" id="L30">            Array = (T[]) java.lang.reflect.Array.newInstance(tClass, oldArray.length - 1); //(Tsr[])new Object[oldBias.length - 1];</span>
-        }
-<span class="nc bnc" id="L32" title="All 2 branches missed.">        for (int Ii = 0; Ii &lt; Array.length; Ii++) {</span>
-<span class="nc bnc" id="L33" title="All 2 branches missed.">            if (remove == false) {</span>
-<span class="nc bnc" id="L34" title="All 2 branches missed.">                if (index &gt; Ii) {</span>
-<span class="nc" id="L35">                    Array[Ii] = oldArray[Ii];</span>
-                }
-<span class="nc bnc" id="L37" title="All 2 branches missed.">                if (index &lt; Ii) {</span>
-<span class="nc" id="L38">                    Array[Ii] = oldArray[Ii - 1];</span>
-                }
-            } else {
-<span class="nc bnc" id="L41" title="All 2 branches missed.">                if (index &gt; Ii) {</span>
-<span class="nc" id="L42">                    Array[Ii] = oldArray[Ii];</span>
-                }
-<span class="nc bnc" id="L44" title="All 2 branches missed.">                if (index == Ii) {</span>
-<span class="nc" id="L45">                    Array[Ii] = oldArray[Ii + 1];</span>
-                }
-<span class="nc bnc" id="L47" title="All 2 branches missed.">                if (index &lt; Ii) {</span>
-<span class="nc" id="L48">                    Array[Ii] = oldArray[Ii + 1];</span>
-                }
-            }
-        }
-<span class="nc" id="L52">        return Array;</span>
-    }
-
-    //===================================================================
-    public int[] updateArray(int[] Array, int index, boolean remove) {
-<span class="nc bnc" id="L57" title="All 2 branches missed.">        if (Array == null) {</span>
-<span class="nc bnc" id="L58" title="All 2 branches missed.">            if (remove == true) {</span>
-<span class="nc" id="L59">                return Array;</span>
-            } else {
-<span class="nc bnc" id="L61" title="All 2 branches missed.">                if (index == 0) {</span>
-<span class="nc" id="L62">                    Array = new int[1];</span>
-                }
-<span class="nc" id="L64">                return Array;</span>
-            }
-        }
-<span class="nc bnc" id="L67" title="All 2 branches missed.">        if (Array.length &lt; index) {</span>
-<span class="nc" id="L68">            return Array;</span>
-        }
-<span class="nc" id="L70">        int[] oldArray = Array;</span>
-<span class="nc bnc" id="L71" title="All 2 branches missed.">        if (remove == false) {</span>
-<span class="nc" id="L72">            Array = new int[oldArray.length + 1];</span>
-        } else {
-<span class="nc bnc" id="L74" title="All 2 branches missed.">            if (Array.length == 1) {</span>
-<span class="nc" id="L75">                Array = null;</span>
-<span class="nc" id="L76">                return Array;</span>
-            }
-<span class="nc" id="L78">            Array = new int[oldArray.length - 1];</span>
-        }
-<span class="nc bnc" id="L80" title="All 2 branches missed.">        for (int Ii = 0; Ii &lt; Array.length; Ii++) {</span>
-<span class="nc bnc" id="L81" title="All 2 branches missed.">            if (remove == false) {</span>
-<span class="nc bnc" id="L82" title="All 2 branches missed.">                if (index &gt; Ii) {</span>
-<span class="nc" id="L83">                    Array[Ii] = oldArray[Ii];</span>
-                }
-<span class="nc bnc" id="L85" title="All 2 branches missed.">                if (index == Ii) {</span>
-<span class="nc" id="L86">                    Array[Ii] = 0;</span>
-                }
-<span class="nc bnc" id="L88" title="All 2 branches missed.">                if (index &lt; Ii) {</span>
-<span class="nc" id="L89">                    Array[Ii] = oldArray[Ii - 1];</span>
-                }
-            } else {
-<span class="nc bnc" id="L92" title="All 2 branches missed.">                if (index &gt; Ii) {</span>
-<span class="nc" id="L93">                    Array[Ii] = oldArray[Ii];</span>
-                }
-<span class="nc bnc" id="L95" title="All 2 branches missed.">                if (index == Ii) {</span>
-<span class="nc" id="L96">                    Array[Ii] = oldArray[Ii + 1];</span>
-                }
-<span class="nc bnc" id="L98" title="All 2 branches missed.">                if (index &lt; Ii) {</span>
-<span class="nc" id="L99">                    Array[Ii] = oldArray[Ii + 1];</span>
-                }
-            }
-        }
-<span class="nc" id="L103">        return Array;</span>
-    }
-
-    //===================================================================
-    public double[] updateArray(double[] Array, int index, boolean remove) {
-<span class="nc bnc" id="L108" title="All 2 branches missed.">        if (Array == null) {</span>
-<span class="nc bnc" id="L109" title="All 2 branches missed.">            if (remove == true) {</span>
-<span class="nc" id="L110">                return Array;</span>
-            } else {
-<span class="nc bnc" id="L112" title="All 2 branches missed.">                if (index == 0) {</span>
-<span class="nc" id="L113">                    Array = new double[1];</span>
-                }
-<span class="nc" id="L115">                return Array;</span>
-            }
-        }
-<span class="nc bnc" id="L118" title="All 2 branches missed.">        if (Array.length &lt; index) {</span>
-<span class="nc" id="L119">            return Array;</span>
-        }
-<span class="nc" id="L121">        double[] oldArray = Array;</span>
-<span class="nc bnc" id="L122" title="All 2 branches missed.">        if (remove == false) {</span>
-<span class="nc" id="L123">            Array = new double[oldArray.length + 1];</span>
-        } else {
-<span class="nc bnc" id="L125" title="All 2 branches missed.">            if (Array.length == 1) {</span>
-<span class="nc" id="L126">                Array = null;</span>
-<span class="nc" id="L127">                return Array;</span>
-            }
-<span class="nc" id="L129">            Array = new double[oldArray.length - 1];</span>
-        }
-
-<span class="nc bnc" id="L132" title="All 2 branches missed.">        for (int Ii = 0; Ii &lt; Array.length; Ii++) {</span>
-<span class="nc bnc" id="L133" title="All 2 branches missed.">            if (remove == false) {</span>
-<span class="nc bnc" id="L134" title="All 2 branches missed.">                if (index &gt; Ii) {</span>
-<span class="nc" id="L135">                    Array[Ii] = oldArray[Ii];</span>
-                }
-<span class="nc bnc" id="L137" title="All 2 branches missed.">                if (index == Ii) {</span>
-<span class="nc" id="L138">                    Array[Ii] = 0;</span>
-                }
-<span class="nc bnc" id="L140" title="All 2 branches missed.">                if (index &lt; Ii) {</span>
-<span class="nc" id="L141">                    Array[Ii] = oldArray[Ii - 1];</span>
-                }
-            } else {
-<span class="nc bnc" id="L144" title="All 2 branches missed.">                if (index &gt; Ii) {</span>
-<span class="nc" id="L145">                    Array[Ii] = oldArray[Ii];</span>
-                }
-<span class="nc bnc" id="L147" title="All 2 branches missed.">                if (index == Ii) {</span>
-<span class="nc" id="L148">                    Array[Ii] = oldArray[Ii + 1];</span>
-                }
-<span class="nc bnc" id="L150" title="All 2 branches missed.">                if (index &lt; Ii) {</span>
-<span class="nc" id="L151">                    Array[Ii] = oldArray[Ii + 1];</span>
-                }
-            }
-        }
-<span class="nc" id="L155">        return Array;</span>
-    }
-
-    //===================================================================
-    public boolean[] updateArray(boolean[] Array, int index, boolean remove) {
-<span class="nc bnc" id="L160" title="All 2 branches missed.">        if (Array == null) {</span>
-<span class="nc bnc" id="L161" title="All 2 branches missed.">            if (remove == true) {</span>
-<span class="nc" id="L162">                return Array;</span>
-            } else {
-<span class="nc bnc" id="L164" title="All 2 branches missed.">                if (index == 0) {</span>
-<span class="nc" id="L165">                    Array = new boolean[1];</span>
-                }
-<span class="nc" id="L167">                return Array;</span>
-            }
-        }
-<span class="nc bnc" id="L170" title="All 2 branches missed.">        if (Array.length &lt; index) {</span>
-<span class="nc" id="L171">            return Array;</span>
-        }
-<span class="nc" id="L173">        boolean[] oldArray = Array;</span>
-<span class="nc bnc" id="L174" title="All 2 branches missed.">        if (remove == false) {</span>
-<span class="nc" id="L175">            Array = new boolean[oldArray.length + 1];</span>
-        } else {
-<span class="nc bnc" id="L177" title="All 2 branches missed.">            if (Array.length == 1) {</span>
-<span class="nc" id="L178">                Array = null;</span>
-<span class="nc" id="L179">                return Array;</span>
-            }
-<span class="nc" id="L181">            Array = new boolean[oldArray.length - 1];</span>
-        }
-<span class="nc bnc" id="L183" title="All 2 branches missed.">        for (int Ii = 0; Ii &lt; Array.length; Ii++) {</span>
-<span class="nc bnc" id="L184" title="All 2 branches missed.">            if (remove == false) {</span>
-<span class="nc bnc" id="L185" title="All 2 branches missed.">                if (index &gt; Ii) {</span>
-<span class="nc" id="L186">                    Array[Ii] = oldArray[Ii];</span>
-                }
-<span class="nc bnc" id="L188" title="All 2 branches missed.">                if (index == Ii) {</span>
-<span class="nc" id="L189">                    Array[Ii] = false;</span>
-                }
-<span class="nc bnc" id="L191" title="All 2 branches missed.">                if (index &lt; Ii) {</span>
-<span class="nc" id="L192">                    Array[Ii] = oldArray[Ii - 1];</span>
-                }
-            } else {
-<span class="nc bnc" id="L195" title="All 2 branches missed.">                if (index &gt; Ii) {</span>
-<span class="nc" id="L196">                    Array[Ii] = oldArray[Ii];</span>
-                }
-<span class="nc bnc" id="L198" title="All 2 branches missed.">                if (index == Ii) {</span>
-<span class="nc" id="L199">                    Array[Ii] = oldArray[Ii + 1];</span>
-                }
-<span class="nc bnc" id="L201" title="All 2 branches missed.">                if (index &lt; Ii) {</span>
-<span class="nc" id="L202">                    Array[Ii] = oldArray[Ii + 1];</span>
-                }
-            }
-        }
-<span class="nc" id="L206">        return Array;</span>
-    }
-
-    //===================================================================
-    public byte[] updateArray(byte[] Array, int index, boolean remove) {
-<span class="nc bnc" id="L211" title="All 2 branches missed.">        if (Array == null) {</span>
-<span class="nc bnc" id="L212" title="All 2 branches missed.">            if (remove == true) {</span>
-<span class="nc" id="L213">                return Array;</span>
-            } else {
-<span class="nc bnc" id="L215" title="All 2 branches missed.">                if (index == 0) {</span>
-<span class="nc" id="L216">                    Array = new byte[1];</span>
-                }
-<span class="nc" id="L218">                return Array;</span>
-            }
-        }
-<span class="nc bnc" id="L221" title="All 2 branches missed.">        if (Array.length &lt; index) {</span>
-<span class="nc" id="L222">            return Array;</span>
-        }
-<span class="nc" id="L224">        byte[] oldArray = Array;</span>
-<span class="nc bnc" id="L225" title="All 2 branches missed.">        if (remove == false) {</span>
-<span class="nc" id="L226">            Array = new byte[oldArray.length + 1];</span>
-        } else {
-<span class="nc bnc" id="L228" title="All 2 branches missed.">            if (Array.length == 1) {</span>
-<span class="nc" id="L229">                Array = null;</span>
-<span class="nc" id="L230">                return Array;</span>
-            }
-<span class="nc" id="L232">            Array = new byte[oldArray.length - 1];</span>
-        }
-<span class="nc bnc" id="L234" title="All 2 branches missed.">        for (int Ii = 0; Ii &lt; Array.length; Ii++) {</span>
-<span class="nc bnc" id="L235" title="All 2 branches missed.">            if (remove == false) {</span>
-<span class="nc bnc" id="L236" title="All 2 branches missed.">                if (index &gt; Ii) {</span>
-<span class="nc" id="L237">                    Array[Ii] = oldArray[Ii];</span>
-                }
-<span class="nc bnc" id="L239" title="All 2 branches missed.">                if (index == Ii) {</span>
-<span class="nc" id="L240">                    Array[Ii] = 0;</span>
-                }
-<span class="nc bnc" id="L242" title="All 2 branches missed.">                if (index &lt; Ii) {</span>
-<span class="nc" id="L243">                    Array[Ii] = oldArray[Ii - 1];</span>
-                }
-            } else {
-<span class="nc bnc" id="L246" title="All 2 branches missed.">                if (index &gt; Ii) {</span>
-<span class="nc" id="L247">                    Array[Ii] = oldArray[Ii];</span>
-                }
-<span class="nc bnc" id="L249" title="All 2 branches missed.">                if (index == Ii) {</span>
-<span class="nc" id="L250">                    Array[Ii] = oldArray[Ii + 1];</span>
-                }
-<span class="nc bnc" id="L252" title="All 2 branches missed.">                if (index &lt; Ii) {</span>
-<span class="nc" id="L253">                    Array[Ii] = oldArray[Ii + 1];</span>
-                }
-            }
-        }
-<span class="nc" id="L257">        return Array;</span>
-    }
-
-    //===================================================================
-    public interface Orderer {
-        Object[] order(Object[] node);
-    }
-
-<span class="fc" id="L265">    public static Orderer withoutDuplicates =</span>
-            (Object[] node) -&gt; {
-<span class="nc" id="L267">                ArrayList&lt;Object&gt; NodeList = new ArrayList&lt;Object&gt;();</span>
-<span class="nc bnc" id="L268" title="All 2 branches missed.">                for (int Ni = 0; Ni &lt; node.length; Ni++) {</span>
-<span class="nc bnc" id="L269" title="All 2 branches missed.">                    for (int Nii = Ni + 1; Nii &lt; node.length; Nii++) {</span>
-<span class="nc bnc" id="L270" title="All 4 branches missed.">                        if (node[Ni] != null &amp;&amp; node[Nii] != null) {</span>
-<span class="nc bnc" id="L271" title="All 2 branches missed.">                            if (node[Ni] == node[Nii]) {</span>
-<span class="nc" id="L272">                                node[Nii] = null;</span>
-                            }
-                        }
-                    }
-<span class="nc bnc" id="L276" title="All 2 branches missed.">                    if (node[Ni] != null) {</span>
-<span class="nc" id="L277">                        NodeList.add(node[Ni]);</span>
-                    }
-                }
-<span class="nc" id="L280">                Object[] array = new Object[NodeList.size()];</span>
-<span class="nc bnc" id="L281" title="All 2 branches missed.">                for (int i = 0; i &lt; NodeList.size(); i++) {</span>
-<span class="nc" id="L282">                    array[i] = NodeList.get(i);</span>
-                }
-<span class="nc" id="L284">                return array;</span>
-            };
-
     public static double getDoubleOf(long seed) {
         double newNumber;
-<span class="nc" id="L289">        double divisor = 0;</span>
-<span class="nc" id="L290">        divisor = (Math.pow(10, getIntegerOf(seed - 1, 2)) / Math.pow(10, getIntegerOf(seed + 1, 2)));</span>
-<span class="nc" id="L291">        final int[] prims = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61};</span>
-<span class="nc" id="L292">        int rank = (int) Math.abs(seed % prims.length);</span>
-<span class="nc" id="L293">        int min = 3;</span>
-<span class="nc" id="L294">        newNumber = 0;</span>
-<span class="nc bnc" id="L295" title="All 4 branches missed.">        while (newNumber == 0 || min &gt;= 0) {</span>
-<span class="nc" id="L296">            newNumber /= 2;</span>
-<span class="nc" id="L297">            newNumber += (Math.abs((getIntegerOf(prims[rank] + seed - 4, 10))));</span>
-<span class="nc bnc" id="L298" title="All 2 branches missed.">            if (divisor &lt; 10) {</span>
-<span class="nc" id="L299">                divisor *= 10;</span>
+<span class="nc" id="L10">        double divisor = 0;</span>
+<span class="nc" id="L11">        divisor = (Math.pow(10, getIntegerOf(seed - 1, 2)) / Math.pow(10, getIntegerOf(seed + 1, 2)));</span>
+<span class="nc" id="L12">        final int[] prims = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61};</span>
+<span class="nc" id="L13">        int rank = (int) Math.abs(seed % prims.length);</span>
+<span class="nc" id="L14">        int min = 3;</span>
+<span class="nc" id="L15">        newNumber = 0;</span>
+<span class="nc bnc" id="L16" title="All 4 branches missed.">        while (newNumber == 0 || min &gt;= 0) {</span>
+<span class="nc" id="L17">            newNumber /= 2;</span>
+<span class="nc" id="L18">            newNumber += (Math.abs((getIntegerOf(prims[rank] + seed - 4, 10))));</span>
+<span class="nc bnc" id="L19" title="All 2 branches missed.">            if (divisor &lt; 10) {</span>
+<span class="nc" id="L20">                divisor *= 10;</span>
             } else {
-<span class="nc" id="L301">                divisor /= 10;</span>
+<span class="nc" id="L22">                divisor /= 10;</span>
             }
-<span class="nc" id="L303">            newNumber /= divisor;</span>
-<span class="nc bnc" id="L304" title="All 2 branches missed.">            if (newNumber != 0) {</span>
-<span class="nc" id="L305">                min--;</span>
+<span class="nc" id="L24">            newNumber /= divisor;</span>
+<span class="nc bnc" id="L25" title="All 2 branches missed.">            if (newNumber != 0) {</span>
+<span class="nc" id="L26">                min--;</span>
             }
-<span class="nc" id="L307">            rank++;</span>
-<span class="nc" id="L308">            rank = Math.abs(rank % prims.length);</span>
+<span class="nc" id="L28">            rank++;</span>
+<span class="nc" id="L29">            rank = Math.abs(rank % prims.length);</span>
         }
-<span class="nc" id="L310">        newNumber = Math.abs(newNumber);</span>
-<span class="nc bnc" id="L311" title="All 2 branches missed.">        newNumber *= (Math.abs(getIntegerOf(seed + 4 - prims[rank], 100_000))&lt;50_106)?-1:1;</span>
-<span class="nc" id="L312">        return newNumber;</span>
+<span class="nc" id="L31">        newNumber = Math.abs(newNumber);</span>
+<span class="nc bnc" id="L32" title="All 2 branches missed.">        newNumber *= (Math.abs(getIntegerOf(seed + 4 - prims[rank], 100_000))&lt;50_106)?-1:1;</span>
+<span class="nc" id="L33">        return newNumber;</span>
     }
 
     public static int getIntegerOf(long seed, int m) {
-<span class="nc" id="L316">        int[] prims = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61};</span>
-<span class="nc" id="L317">        long rank = Double.doubleToRawLongBits(seed * Math.pow(61*Math.abs(seed % prims.length), 0.5));</span>
-<span class="nc" id="L318">        return getIntegerOf(seed, m, (int)(rank ^ (rank &gt;&gt;&gt; 32)));</span>
+<span class="nc" id="L37">        int[] prims = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61};</span>
+<span class="nc" id="L38">        long rank = Double.doubleToRawLongBits(seed * Math.pow(61*Math.abs(seed % prims.length), 0.5));</span>
+<span class="nc" id="L39">        return getIntegerOf(seed, m, (int)(rank ^ (rank &gt;&gt;&gt; 32)));</span>
     }
 
     public static int getIntegerOf(long seed, int m, int rank) {
-<span class="nc" id="L322">        int[] prims = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61};</span>
-<span class="nc" id="L323">        rank = Math.abs(rank % prims.length);</span>
-<span class="nc bnc" id="L324" title="All 2 branches missed.">        seed = (seed == 0)?6731299924898493759L:seed;</span>
-<span class="nc bnc" id="L325" title="All 2 branches missed.">        seed *= (((prims[rank] * seed + m) % 2 == 0)?-1:1);</span>
-<span class="nc" id="L326">        seed =  (4438274645895732L * seed * Double.doubleToRawLongBits(Math.pow(prims[rank], 0.5)) + seed);</span>
-<span class="nc" id="L327">        return ((int) (seed ^ (seed &gt;&gt;&gt; 32)))%m;</span>
+<span class="nc" id="L43">        int[] prims = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61};</span>
+<span class="nc" id="L44">        rank = Math.abs(rank % prims.length);</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        seed = (seed == 0)?6731299924898493759L:seed;</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">        seed *= (((prims[rank] * seed + m) % 2 == 0)?-1:1);</span>
+<span class="nc" id="L47">        seed =  (4438274645895732L * seed * Double.doubleToRawLongBits(Math.pow(prims[rank], 0.5)) + seed);</span>
+<span class="nc" id="L48">        return ((int) (seed ^ (seed &gt;&gt;&gt; 32)))%m;</span>
     }
 
     public static double randomDouble() {
-<span class="nc" id="L331">        Random dice = new Random();</span>
+<span class="nc" id="L52">        Random dice = new Random();</span>
         double newNumber;
-<span class="nc" id="L333">        double divisor = 0;</span>
-<span class="nc" id="L334">        divisor = (Math.pow(10, (dice.nextInt() % 2)) / Math.pow(10, (dice.nextInt() % 2)));</span>
-<span class="nc" id="L335">        int min = 3;</span>
-<span class="nc" id="L336">        newNumber = 0;</span>
-<span class="nc bnc" id="L337" title="All 4 branches missed.">        while (newNumber == 0 || min &gt;= 0) {</span>
-<span class="nc" id="L338">            newNumber /= 2;</span>
-<span class="nc" id="L339">            newNumber += ((dice.nextInt(21) - 10)) * (dice.nextInt(3) - 1);</span>
-<span class="nc bnc" id="L340" title="All 2 branches missed.">            if (divisor &lt; 10) {</span>
-<span class="nc" id="L341">                divisor *= 10;</span>
+<span class="nc" id="L54">        double divisor = 0;</span>
+<span class="nc" id="L55">        divisor = (Math.pow(10, (dice.nextInt() % 2)) / Math.pow(10, (dice.nextInt() % 2)));</span>
+<span class="nc" id="L56">        int min = 3;</span>
+<span class="nc" id="L57">        newNumber = 0;</span>
+<span class="nc bnc" id="L58" title="All 4 branches missed.">        while (newNumber == 0 || min &gt;= 0) {</span>
+<span class="nc" id="L59">            newNumber /= 2;</span>
+<span class="nc" id="L60">            newNumber += ((dice.nextInt(21) - 10)) * (dice.nextInt(3) - 1);</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">            if (divisor &lt; 10) {</span>
+<span class="nc" id="L62">                divisor *= 10;</span>
             } else {
-<span class="nc" id="L343">                divisor /= 10;</span>
+<span class="nc" id="L64">                divisor /= 10;</span>
             }
-<span class="nc" id="L345">            newNumber /= divisor;</span>
-<span class="nc bnc" id="L346" title="All 2 branches missed.">            if (newNumber != 0) {</span>
-<span class="nc" id="L347">                min--;</span>
+<span class="nc" id="L66">            newNumber /= divisor;</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">            if (newNumber != 0) {</span>
+<span class="nc" id="L68">                min--;</span>
             }
         }
-<span class="nc" id="L350">        return newNumber;</span>
+<span class="nc" id="L71">        return newNumber;</span>
     }
 
     public static float[] doubleToFloat(double[] data){
-<span class="pc bpc" id="L354" title="1 of 2 branches missed.">        if(data==null){</span>
-<span class="nc" id="L355">            return null;</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">        if(data==null){</span>
+<span class="nc" id="L76">            return null;</span>
         }
-<span class="fc" id="L357">        float[] newData = new float[data.length];</span>
-<span class="fc bfc" id="L358" title="All 2 branches covered.">        for(int i=0; i&lt;data.length; i++) newData[i] = (float) data[i];</span>
-<span class="fc" id="L359">        return newData;</span>
+<span class="fc" id="L78">        float[] newData = new float[data.length];</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        for(int i=0; i&lt;data.length; i++) newData[i] = (float) data[i];</span>
+<span class="fc" id="L80">        return newData;</span>
     }
 
     public static double[] floatToDouble(float[] data){
-<span class="pc bpc" id="L363" title="1 of 2 branches missed.">        if(data==null){</span>
-<span class="nc" id="L364">            return null;</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        if(data==null){</span>
+<span class="nc" id="L85">            return null;</span>
         }
-<span class="fc" id="L366">        double[] newData = new double[data.length];</span>
-<span class="fc bfc" id="L367" title="All 2 branches covered.">        for(int i=0; i&lt;data.length; i++) newData[i] = (double)data[i];</span>
-<span class="fc" id="L368">        return newData;</span>
+<span class="fc" id="L87">        double[] newData = new double[data.length];</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        for(int i=0; i&lt;data.length; i++) newData[i] = (double)data[i];</span>
+<span class="fc" id="L89">        return newData;</span>
     }
 
 

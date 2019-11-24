@@ -8,6 +8,42 @@ import util.NTester_Tensor
 
 class GroovyTests
 {
+
+    @Test
+    void testDataTypes(){
+
+        Tsr x = new Tsr(3)
+
+        x.to32()
+        assert x.getValue() instanceof float[]
+        assert x.is32()
+
+        x.to64()
+        assert x.getValue() instanceof double[]
+        assert x.is64()
+
+        float[] value32 = new float[1]
+        x.setValue(value32)
+        assert x.getValue() instanceof float[]
+        assert x.is32()
+
+        double[] value64 = new double[1]
+        x.setValue(value64)
+        assert x.getValue() instanceof double[]
+        assert x.is64()
+
+        assert x.isLeave()
+        assert !x.isOutsourced()
+        assert !x.isVirtual()
+        assert !x.hasDataParent()
+        assert !x.belongsToGraph()
+        assert x.device()==null
+        assert x.rank()==1
+        assert !x.rqsGradient()
+        assert x.size()==1
+
+    }
+
     @Test
     void testPowerOverloaded(){
         Tsr x = new Tsr(3).setRqsGradient(true)
@@ -16,6 +52,23 @@ class GroovyTests
         Tsr y = ((x+b)*w)**2
         // y: "[1]:(4.0); ->d[1]:(-8.0), "
         assert y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
+    }
+
+    @Test
+    void testPendingErrorOptimization()
+    {
+        Tsr a = new Tsr(2).setRqsGradient(true)
+        Tsr b = new Tsr(-4)
+        Tsr c = new Tsr(3).setRqsGradient(true)
+
+        Tsr s =  (a*b) + 2
+
+        Tsr x = s * (s+c)
+
+        x.backward(new Tsr(1))
+        assert c.toString().contains("g:(-6.0)")
+        assert a.toString().contains("g:(36.0)")
+        println(x)
     }
 
     @Test
@@ -53,8 +106,13 @@ class GroovyTests
         tester.testContains((y.idxmap()==null)?"true":"false", ["false"], "idxmap must be set!")
         tester.testTensor(y, "[1]:(4.0); ->d[1]:(-8.0), ")
         y.backward(new Tsr(2))
-        y = b + w * x
 
+        y = ((x+b)*w)**2
+        tester.testTensor(y, ["[1]:(4.0); ->d[1]:(-8.0), "])
+        y.backward(new Tsr(2))
+        tester.testTensor(x, ["-32.0"])
+
+        y = b + w * x
 
         /**
          *  Subset:

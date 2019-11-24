@@ -1,3 +1,4 @@
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.function.Function;
 import neureka.function.factory.assembly.FunctionBuilder;
@@ -221,6 +222,7 @@ public class DefaultTests {
         tensor2 = new Tsr(new int[]{2, 1}, -1);
         tensor1.setRqsGradient(true);
         tensor2.setRqsGradient(true);
+        Neureka.settings.debug.KEEP_DERIVATIVE_TARGET_PAYLOADS = true;
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1, tensor2},
                 "relu(I[0]xI[1])",
@@ -262,6 +264,7 @@ public class DefaultTests {
                         " =>d|[ [2x1]:(-1.0, -1.0) ]|:t{ [1x3]:(2.0, 2.0, 2.0) },",
                         "  }, "
                 }, "");
+        Neureka.settings.debug.KEEP_DERIVATIVE_TARGET_PAYLOADS = false;
         //---
         tensor1 = new Tsr(new int[]{2, 3, 4}, 2);
         tensor1.setRqsGradient(false);
@@ -290,6 +293,7 @@ public class DefaultTests {
                 }
         );
         //---
+        Neureka.settings.debug.KEEP_DERIVATIVE_TARGET_PAYLOADS = true;
         tensor1 = new Tsr(new int[]{3, 2, 1}, 4);
         tensor2 = new Tsr(new int[]{1, 1, 4}, -1);
         tensor3 = new Tsr(new int[]{3, 2, 1}, 2);
@@ -316,6 +320,7 @@ public class DefaultTests {
                         "[5x4x2]:(-24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0); =>d|[ [1x1x2]:(3.0, 3.0) ]|:t{ [5x4x1]:(-8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0); =>d|[ [1x4x1]:(-2.0, -2.0, -2.0, -2.0) ]|:t{ [5x1x1]:(4.0, 4.0, 4.0, 4.0, 4.0) },  }, "
                 }
         );
+        Neureka.settings.debug.KEEP_DERIVATIVE_TARGET_PAYLOADS = false;
         //=====================
         tensor1 = new Tsr(new int[]{2, 2}, new double[]{1, 2, 3, 4});//-2*4 = 8 | *3 = -24
         tensor1.setRqsGradient(true);
@@ -387,7 +392,7 @@ public class DefaultTests {
         );
         result = new Tsr(new Tsr[]{tensor1}, "(-3*(2*(i0*-1)))*(-1*i0)");
         GraphNode node = (GraphNode) result.find(GraphNode.class);
-        String asString = node.toString();
+        String asString = node.toString("g");
         System.out.println(asString);
         //asString = result.toString("frdc");
         //System.out.println(asString);

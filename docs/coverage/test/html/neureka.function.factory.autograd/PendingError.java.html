@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PendingError.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.function.factory.autograd</a> &gt; <span class="el_source">PendingError.java</span></div><h1>PendingError.java</h1><pre class="source lang-java linenums">package neureka.function.factory.autograd;
 
+import neureka.Tsr;
+import neureka.function.factory.assembly.FunctionBuilder;
+
 public class PendingError {
 
     private int _toBeReceived;
-    private GraphNode _location;
+    private Tsr _error;
 
-<span class="nc" id="L8">    public PendingError(GraphNode location, int toBeRecieved){</span>
-<span class="nc" id="L9">        _toBeReceived = toBeRecieved;</span>
-<span class="nc" id="L10">        _location = location;</span>
-<span class="nc" id="L11">    }</span>
+<span class="fc" id="L11">    public PendingError(Tsr error, int toBeReceived){</span>
+<span class="fc" id="L12">        _toBeReceived = toBeReceived;</span>
+<span class="fc" id="L13">        _error = error;</span>
+<span class="fc" id="L14">    }</span>
 
+    public void accumulate(Tsr error){
+<span class="fc" id="L17">        FunctionBuilder.build(</span>
+                &quot;I[0]&lt;-(I[0]+I[1])&quot;, false
+<span class="fc" id="L19">        ).activate(new Tsr[]{_error, error});</span>
+<span class="fc" id="L20">        _toBeReceived--;</span>
+<span class="fc" id="L21">    }</span>
 
+    public boolean isFullyAccumulated(){
+<span class="pc bpc" id="L24" title="1 of 2 branches missed.">        return _toBeReceived==0;</span>
+    }
+
+    public Tsr getAccumulatedError(){
+<span class="fc" id="L28">        return _error;</span>
+    }
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

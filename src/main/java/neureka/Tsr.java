@@ -106,6 +106,9 @@ public class Tsr
     private Object _value;// _gradient;
     //-----------------------------------------------------------------------
 
+    /**
+     * @return the device on which this tensor is stored or null if it is not outsourced.
+     */
     public Device device() {
         if (this.isOutsourced()) {
             return (Device) this.find(Device.class);
@@ -117,16 +120,7 @@ public class Tsr
         if(this.isOutsourced()){
             ((Device) this.find(Device.class)).overwrite64(this, value);
         } else {
-            //if(this.gradientIsTargeted()){
-            //    //_gradient = value;
-            //    if(this.has(Tsr.class)){
-            //        ((Tsr)this.find(Tsr.class)).setValue64(value);
-            //    } else {
-            //        this.add(new Tsr(this.shape(), value));
-            //    }
-            //} else {
-                _value = value;
-            //}
+            _value = value;
         }
         return this;
     }
@@ -135,16 +129,7 @@ public class Tsr
         if(this.isOutsourced()){
             ((Device) this.find(Device.class)).overwrite32(this, value);
         } else {
-            //if(this.gradientIsTargeted()){
-            //    //_gradient = value;//TODO: test
-            //    if(this.has(Tsr.class)){
-            //        ((Tsr)this.find(Tsr.class)).setValue32(value);
-            //    } else {
-            //        this.add(new Tsr(this.shape(), value));
-            //    }
-            //} else {
-                _value = value;
-            //}
+            _value = value;
         }
         return this;
     }
@@ -172,14 +157,18 @@ public class Tsr
         return this;
     }
 
+    public Object getValue(){
+        if(this.isOutsourced()){
+            Device device = ((Device)find(Device.class));
+            return (this.is32())?device.value32Of(this):device.value64Of(this);
+        }
+        return _value;
+    }
+
     public double[] gradient64() {
-        //if (this.rqsGradient() && this.isOutsourced() && this.has(Device.class)) {
-        //    return ((Device) find(Device.class)).value64Of(this, true);
-        //}
         Tsr gradient = (Tsr)this.find(Tsr.class);
         if(gradient==null) return null;
         return (this.is32())?DataHelper.floatToDouble(gradient.value32()):gradient.value64();
-        //return (this.is64())?(double[])_gradient:DataHelper.floatToDouble((float[])_gradient);
     }
     public float[] gradient32(){
         Tsr gradient = (Tsr)this.find(Tsr.class);
@@ -204,7 +193,7 @@ public class Tsr
         return _value instanceof float[];
     }
 
-    public Tsr to32(){
+    public Tsr to32() {
         if(this.is64()){
             Device device = (Device) this.find(Device.class);
             if(device!=null) device.get(this);
@@ -217,7 +206,7 @@ public class Tsr
         return this;
     }
 
-    public Tsr to64(){
+    public Tsr to64() {
         if(this.is32()){
             Device device = (Device) this.find(Device.class);
             if(device!=null) device.get(this);
@@ -230,7 +219,7 @@ public class Tsr
         return this;
     }
 
-    public double value64(int i){
+    public double value64(int i) {
         if(this.isVirtual()){
             if(this.is64()){
                 return ((double[])_value)[0];
@@ -261,7 +250,7 @@ public class Tsr
         return newValue;
     }
 
-    public float value32(int i){
+    public float value32(int i) {
         if(this.isVirtual()){
             if(this.is64()){
                 return (float) ((double[])_value)[0];
@@ -277,7 +266,7 @@ public class Tsr
         }
     }
 
-    public float[] value32(){
+    public float[] value32() {
         if (_value == null && this.isOutsourced() && this.has(Device.class)) {
             return ((Device) this.find(Device.class)).value32Of(this);
         }
@@ -341,19 +330,9 @@ public class Tsr
     public Tsr setRqsGradient(boolean rqsGradient) {
         if (rqsGradient() != rqsGradient) {
             if (rqsGradient) {
-                //Tsr gradient = new Tsr(this.shape(), 0);
-                //if(this.isOutsourced()){
-                //    ((Device)find(Device.class)).add(gradient);
-                //}
-                //this.add(gradient);
                 _flags += RQS_GRADIENT_MASK;
             } else {
                 this.remove(Tsr.class);
-                //if(this.isOutsourced()){
-                //    ((Device)find(Device.class)).get(this);
-                //    //_gradient = null;//TODO: THIS NEEDS UPDATE!
-                //    ((Device)find(Device.class)).add(this);
-                //}
                 _flags -= RQS_GRADIENT_MASK;
             }
         }
@@ -490,7 +469,7 @@ public class Tsr
                             base+"=>d|[ " +
                             base+delimiter+    d._toString(mode, deeper) + " " +
                             base+half+"]|:t{ " +
-                            base+delimiter+    t._toString(mode, deeper) + " " +
+                            base+delimiter+    ((t.getPayload()!=null)?t.getPayload()._toString(mode, deeper):t.toString("")) + " " +
                             base+half+"}, ");
                 });
                 asString += enclosed.get();
@@ -806,15 +785,17 @@ public class Tsr
         return this;
     }
 
+    /**
+     *
+     * @param error
+     * @return
+     */
     public Tsr backward(Tsr error) {
         if (this.has(GraphNode.class)) ((GraphNode) this.find(GraphNode.class)).backward(error);
         return this;
     }
 
     public Tsr delete() {
-        //if(isUndefined()){
-        //    return this;//THIS SHOULD NOT BE CALLED!! TODO RESOLVE!
-        //}
         if (this.isOutsourced()) {
             ((Device) this.find(Device.class)).rmv(this);
         }
@@ -830,7 +811,7 @@ public class Tsr
         _shape = null;
         _translation = null;
         _idxmap = null;
-        if(this.has(Tsr.class))((Tsr)find(Tsr.class)).delete();
+        if(this.has(Tsr.class))((Tsr)find(Tsr.class)).delete();//Deleting gradient
         _components = null;
         //_gradient = null;
         return this;
@@ -841,11 +822,17 @@ public class Tsr
     public Tsr plus(Tsr other) {
         return new Tsr(new Tsr[]{this, other}, "i0+i1");
     }
+    public Tsr plus(Double value) {
+        return plus(new Tsr(this.shape(), value));
+    }
     public Tsr minus(Tsr other) {
         return new Tsr(new Tsr[]{this, other}, "i0-i1");
     }
     public Tsr multiply(Tsr other) {
         return new Tsr(new Tsr[]{this, other}, "i0*i1");
+    }
+    public Tsr multiply(Double value) {
+        return multiply(new Tsr(this.shape(), value));
     }
     public Tsr div(Tsr other) {
         return new Tsr(new Tsr[]{this, other}, "i0/i1");
@@ -861,6 +848,9 @@ public class Tsr
     }
     public Tsr xor(Tsr other) {
         return new Tsr(new Tsr[]{this, other}, "i0^i1");
+    }
+    public Tsr xor(Double value) {
+        return xor(new Tsr(this.shape(), value));
     }
     public boolean equals(Tsr other) {
         return (this.hashCode()==other.hashCode());
@@ -957,7 +947,7 @@ public class Tsr
         int[] idx = new int[this.shape().length];
         for (int i = 0; i < sze; i++) {
             fcn.indexing.increment(idx, this.shape());
-            action.accept(i);//fcn.indexing.iOf(idx, this.translation())
+            action.accept(i);
         }
         return this;
     }
@@ -1069,14 +1059,12 @@ public class Tsr
                 tensor._idxmap =  _cached(indexing.newTlnOf(tensor._shape));
                 return tensor;
             }
-            //OPERATIONS:
-            //=========================
 
         }
 
         public static class create
         {
-            public static Tsr newTsrLike(Tsr template, double value){
+            public static Tsr newTsrLike(Tsr template, double value) {
                 Tsr t = _newEmptyLike(template);
                 if(template.is32()){
                     t.setValue((float)value);
@@ -1089,7 +1077,7 @@ public class Tsr
                 return t;
             }
 
-            public static Tsr newTsrLike(Tsr template){//The output tensor will not have gradients!
+            public static Tsr newTsrLike(Tsr template) {//The output tensor will not have gradients!
                 Tsr t = _newEmptyLike(template);
                 if(template.is32()){
                     t.setValue32(new float[template.size()]);
@@ -1102,7 +1090,7 @@ public class Tsr
                 return t;
             }
 
-            private static Tsr _newEmptyLike(Tsr template){
+            private static Tsr _newEmptyLike(Tsr template) {
                 Tsr t = new Tsr();
                 t._shape = template._shape;
                 t._idxmap = template._idxmap;

@@ -1,5 +1,6 @@
 package neureka.function.factory.autograd;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.acceleration.openCL.utility.WeakTensorReference;
 import neureka.function.Function;
@@ -7,6 +8,7 @@ import neureka.function.factory.assembly.FunctionBuilder;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 /**
@@ -14,6 +16,7 @@ import java.util.function.BiConsumer;
  */
 public class GraphNode
 {
+
     private static Function MUL = FunctionBuilder.build("(I[0]*I[1])", false);
     private static Function ADD = FunctionBuilder.build("(I[0]+I[1])", false);
     private static Function CONV = FunctionBuilder.build("I[0]>>I[1]>>I[2]", false);
@@ -35,7 +38,7 @@ public class GraphNode
     }
 
     /**
-     * This node propagates backward.
+     * This node propagates _backward.
      * @return boolean
      */
     public boolean usesReverseAD(){
@@ -49,7 +52,7 @@ public class GraphNode
      *  ----------+----------------------------------+-
      *  _mode > 0  | forward Auto-Differentiation    |
      *  ----------+----------------------------------+-
-     *  _mode < 0  | backward Auto-Differentiation   |
+     *  _mode < 0  | _backward Auto-Differentiation   |
      *  ----------+----------------------------------+-
      *
      * @var int _mode
@@ -78,10 +81,10 @@ public class GraphNode
     /**
      * Keys are targets and values are gradients with respect to that target
      * Note: values can be null if the recorded function is of type 'reshape'!
-     * Why? => because reshape operation does not need variables for backward pass!
+     * Why? => because reshape operation does not need variables for _backward pass!
      * */
-    private TreeMap<Tsr, Tsr> _targets_derivatives;
-
+    //private TreeMap<Tsr, Tsr> _targets_derivatives;
+    private TreeMap<GraphNode, Tsr> _targets_derivatives;
     /**
      * "Lock object" for graph identity. (result caching)
      */
@@ -162,6 +165,18 @@ public class GraphNode
         return (_parents ==null && _function==null);
     }
 
+    public boolean isGraphLeave(){
+        if(isLeave()){
+            return true;
+        }
+        for(GraphNode p : _parents){
+            if(p.lock()!=this.lock()){
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * @return if the tensor to which this graph node is attached has been deleted!
      */
@@ -233,12 +248,12 @@ public class GraphNode
                     GraphNode src_node = ((GraphNode) input.find(GraphNode.class));
                     if(src_node.function()!=null && src_node.function().id()== Function.TYPES.LOOKUP.get("x")){
                         Tsr d = function.derive(inputs, i);//TODO: is this ever used? / visited? - yes but why?
-                        node.put(input, d);// Sources created by x-mul are reverse-mode cases!
+                        node.put(src_node, d);// Sources created by x-mul are reverse-mode cases!
                     }else{
                         if(src_node.usesAD()){
                             Tsr d = function.derive(inputs, i);
                             if(src_node.size()==0 && node.size()==0){
-                                node.put(inputs[i], d);
+                                node.put((GraphNode) inputs[i].find(GraphNode.class), d);
                             } else {
                             /**  Chain rule (forward) for every _gradient w.r.t. leaves (reverseAD or user leaves):* */
                                 src_node.forEach(
@@ -263,7 +278,7 @@ public class GraphNode
                     GraphNode src_node = ((GraphNode) input.find(GraphNode.class));
                     if(src_node.mode()!=0 || input.rqsGradient()){
                         Tsr d = function.derive(inputs, i);
-                        node.put(input, d);// Add gradients with respect to every source tensor!
+                        node.put(src_node, d);// Add gradients with respect to every source tensor!
                     }
                     i++;
                 }
@@ -303,10 +318,12 @@ public class GraphNode
     {
         if(_parents==null || mode()==0) return;//Gradient cleanup not needed in this case!
         for(GraphNode node : _parents){
-            node._payloadDeletionDive(_mode);
-            this.forEach((t, d)->{
-                if( this.mode()>0 || d==node.getPayload() ) node._targetedCleanup(t);
-            });
+            if(!node.isGraphLeave()){
+                node._payloadDeletionDive(_mode);
+                this.forEach((t, d)->{
+                    if( this.mode()>0 || d==node.getPayload() ) node._targetedCleanup(t);
+                });
+            }
         }
     }
 
@@ -314,14 +331,14 @@ public class GraphNode
      * @param target
      * @return void
      */
-    private void _targetedCleanup(Tsr target)
-    {// Find and remove redundant gradients sharing the same target: ...
-        if(target==null) throw new IllegalStateException("[GraphNode][_targetedCleanup]: target tensor must not be null!");
+    private void _targetedCleanup(GraphNode target)
+    {// Find and remove redundant gradients sharing the same target: ... remove target payload if it is not used!
+        if(target==null) throw new IllegalStateException("[GraphNode][_targetedCleanup]: target node must not be null!");
         if(_parents==null || mode()==0) return;//Gradient cleanup not needed in this case!
         boolean cleanForwardAD = (mode()>0);
         if(cleanForwardAD)
         {
-            TreeMap<Tsr, Tsr> blacklist = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
+            TreeMap<Tsr, GraphNode> blacklist = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
             this.forEach((t, d)->{ if(t==target) blacklist.put(d, t); });
             blacklist.forEach((b, t)->{
                 if(!b.has(GraphNode.class) || !((GraphNode)b.find(GraphNode.class)).isLeave()){
@@ -331,7 +348,8 @@ public class GraphNode
                     b.delete();
                 }
             });
-            for(GraphNode node : _parents) node._targetedCleanup(target);
+            // Recursive cleanup: (but only within the current graph!)
+            for(GraphNode node : _parents) if(!node.isGraphLeave()) node._targetedCleanup(target);
         }else{
             redundantGradientCleanup();
         }
@@ -353,13 +371,21 @@ public class GraphNode
      */
     private void _payloadDeletionDive(int child_mode)
     {
-        if(_mode>0 && child_mode>_mode && !this.isLeave() && _payload!=null){//If _payload==null return maybe?? (because graph already clean?)
-            _payload.remove(GraphNode.class);
-            if(!_is_used_as_derivative) _payload.delete();
-            _payload = null;
+        if(!this.isLeave() && _payload!=null){
+            if(_mode>0 && child_mode>_mode){//If _payload==null return maybe?? (because graph already clean?)
+                _payload.remove(GraphNode.class);
+                if(!_is_used_as_derivative) _payload.delete();
+                _payload = null;
+            } else if(_mode<0){
+                if(!Neureka.settings.debug.KEEP_DERIVATIVE_TARGET_PAYLOADS){
+                    _payload.remove(GraphNode.class);
+                    if(!_is_used_as_derivative) _payload.delete();
+                    _payload = null;
+                }
+            }
         }
         if(_parents!=null){
-            for(GraphNode n : _parents) n._payloadDeletionDive(_mode);
+            for(GraphNode n : _parents) if(!n.isGraphLeave()) n._payloadDeletionDive(_mode);
         }
     }
 
@@ -414,30 +440,75 @@ public class GraphNode
     }
 
     /**
+     *
+     * @param error
+     */
+    public void backward(Tsr error){
+        Map<GraphNode, PendingError> pendings = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
+        _backward(error, pendings, true);
+        pendings.forEach((n, p)->{
+            if(!p.isFullyAccumulated()) throw new IllegalStateException("[GraphNode][_backward]: Pending error has not received expected accumulation.");
+            n.backward(p.getAccumulatedError());//Continue backprop recursively!
+        });
+    }
+
+    /**
      * @param error
      * @return void
      */
-    public void backward(Tsr error){
+    private void _backward(Tsr error, Map<GraphNode, PendingError> toBeBackpropagated, boolean force)
+    {
         if(_payload.isOutsourced()){
             _payload.device().add(error);
         }
         if (_payload.rqsGradient()) {
             _payload.addToGradient(error);
         }
-        if(this.usesAD()){
+        if(this.usesAD())
+        {
+            int ADPaths = _numberOfADChildren();
+            if(!force && ADPaths>1 && !this.isLeave()){
+                PendingError pending = toBeBackpropagated.get(this);
+                if(pending==null){
+                    pending = new PendingError(error, ADPaths-1);
+                    toBeBackpropagated.put(this, pending);
+                } else {
+                    pending.accumulate(error);
+                }
+                return;// NOTE: Multiple AD paths leading to one node in history should be accumulated first! (performance)
+            }
             //if(_payload==null) throw new RuntimeException();
             if(this.usesForwardAD()){//Using forward-AD derivatives for reverse-mode AD!:
-                this.forEach((t, d)->t.backward(MUL.activate(new Tsr[]{error, d})));
+                this.forEach((t, d)->t._backward(MUL.activate(new Tsr[]{error, d}), toBeBackpropagated, false));
             }else if(this.usesReverseAD()){//Standard reverse mode-AD:
                 this.forEach((t, d)->{
                     if(_function.id()==Function.TYPES.LOOKUP.get("x")){// x operation requires individual operation!
-                        t.backward(CONV.activate(new Tsr[]{error, d, new Tsr(t.shape(), 0)}));
+                        t._backward(CONV.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)}), toBeBackpropagated, false);
                     } else {//Normal elementwise backpropagation:
-                        MUL.activate(new Tsr[]{error, d});
+                        t._backward(MUL.activate(new Tsr[]{error, d}), toBeBackpropagated, false);
                     }
                 });
             }
         }
+    }
+
+    /**
+     * Counts how many child nodes will later on provide error values for backpropagation!
+     * @return
+     */
+    private int _numberOfADChildren(){
+        int count = 0;
+        if(_children!=null){
+            for(WeakReference weak : _children){
+                if(weak!=null && weak.get()!=null){
+                    GraphNode child = (GraphNode) weak.get();
+                    if(child.usesAD()){
+                        count++;
+                    }
+                }
+            }
+        }
+        return count;
     }
 
     /**
@@ -458,7 +529,7 @@ public class GraphNode
      * @param target
      * @param derivative
      */
-    public void put(Tsr target, Tsr derivative){
+    public void put(GraphNode target, Tsr derivative){
         if(_targets_derivatives ==null){
             _targets_derivatives = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
         }
@@ -472,7 +543,7 @@ public class GraphNode
      * @param key
      * @return Tsr
      */
-    public Tsr get(Tsr key){
+    public Tsr get(GraphNode key){
         if(_targets_derivatives ==null) return null;
         return _targets_derivatives.get(key);
     }
@@ -482,7 +553,7 @@ public class GraphNode
      * @param target
      * @return boolean
      */
-    public boolean has(Tsr target){
+    public boolean has(GraphNode target){
         if(_targets_derivatives ==null) return false;
         return _targets_derivatives.containsKey(target);
     }
@@ -490,7 +561,7 @@ public class GraphNode
     /**
      * @return Map<Tsr, Tsr>
      */
-    public Map<Tsr, Tsr> getMap(){
+    public Map<GraphNode, Tsr> getMap(){
         return _targets_derivatives;
     }
 
@@ -505,7 +576,7 @@ public class GraphNode
      * @param action
      * @return void
      */
-    public void forEach(BiConsumer<Tsr, Tsr> action){
+    public void forEach(BiConsumer<GraphNode, Tsr> action){
         if(_targets_derivatives ==null) return;
         _targets_derivatives.forEach(action);
     }
@@ -521,17 +592,31 @@ public class GraphNode
 
     @Override
     public String toString(){
-        return "]> LOCK: "+lock()+" |> GRAPH:\n]\n"
+        return toString("");
+    }
+
+
+    public String toString(String m){
+        if(m.contains("g")){
+            return "]> LOCK: "+lock()+" |> GRAPH:\n]\n"
                     +_toString("]    0", true)
-                +"\n]\n]|END|>";
+                    +"\n]\n]|END|>";
+        }
+        if(m.contains("v")){
+            return "("+this.type()+"): [NID:"+Long.toHexString(nid())+"]:<(  "
+                    +"f"+((_function==null)?"(NONE)":_function)+" => "+((_payload==null)?"NULL":_payload.toString("cs"))+"  )>";
+
+        } else {
+            return "[NID:"+Long.toHexString(nid())+"]:( "+((_payload==null)?"NULL":_payload.toString("cs"))+" )";
+        }
+
     }
 
     private String _toString(String deep, boolean isLast){//int depth){
         String delimiter = ((isLast)?("    "):("|   "));
         String arrow = ((char)187)+""+((_parents!=null)?(String.valueOf(_parents.length)):"0")+((char)187);
         String asString = deep+
-            arrow+"("+this.type()+"): [NID:"+Long.toHexString(nid())+"]:<(  "
-                +"f"+((_function==null)?"(NONE)":_function)+" => "+((_payload==null)?"NULL":_payload.toString("cs"))+"  )>";
+            arrow+ toString("v");
         deep = deep.substring(0, deep.length()-1);
         if(_parents!=null){
             asString += "\n"+deep+((isLast)?"   \\\n":"|  \\\n");
