@@ -1,6 +1,7 @@
 import neureka.Neureka
 import neureka.Tsr
 import neureka.acceleration.Device
+import neureka.acceleration.opencl.OpenCLDevice
 import neureka.acceleration.opencl.OpenCLPlatform
 import neureka.acceleration.opencl.utility.DeviceQuery
 import org.junit.Test
@@ -27,6 +28,17 @@ class GroovyTests
         assert query.contains("Info for device")
         assert query.contains("LOCAL_MEM_SIZE")
         assert query.contains("CL_DEVICE_TYPE")
+
+        OpenCLDevice cld = (OpenCLDevice)gpu;
+        assert cld.globalMemSize()>1000
+        assert !cld.name().equals("")
+        assert cld.image2DMaxHeight()>100
+        assert cld.image3DMaxHeight()>100
+        assert cld.maxClockFrequenzy()>100
+        assert !cld.vendor().equals("")
+        assert !cld.toString().equals("")
+        assert cld.maxConstantBufferSize()>1000
+        assert cld.maxWriteImageArgs()>1
         tester.close()
         //println(query)
     }

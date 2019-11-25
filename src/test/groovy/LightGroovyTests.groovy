@@ -19,20 +19,24 @@ class LightGroovyTests {
         x.to32()
         assert x.getValue() instanceof float[]
         assert x.is32()
+        assert x.value32(0)==3.0f
 
         x.to64()
         assert x.getValue() instanceof double[]
         assert x.is64()
+        assert x.value32(0)==3.0f
 
         float[] value32 = new float[1]
         x.setValue(value32)
         assert x.getValue() instanceof float[]
         assert x.is32()
+        assert x.value32(0)==0.0f
 
         double[] value64 = new double[1]
         x.setValue(value64)
         assert x.getValue() instanceof double[]
         assert x.is64()
+        assert x.value32(0)==0.0f
 
         assert x.isLeave()
         assert !x.isOutsourced()

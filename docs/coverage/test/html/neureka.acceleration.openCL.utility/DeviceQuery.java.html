@@ -67,8 +67,8 @@ import org.jocl.*;
 
             // CL_DEVICE_TYPE
 <span class="fc" id="L69">            long deviceType = getLong(device, CL_DEVICE_TYPE);</span>
-<span class="fc bfc" id="L70" title="All 2 branches covered.">            if( (deviceType &amp; CL_DEVICE_TYPE_CPU) != 0) result+=(&quot;CL_DEVICE_TYPE: CL_DEVICE_TYPE_CPU\n&quot;);</span>
-<span class="fc bfc" id="L71" title="All 2 branches covered.">            if( (deviceType &amp; CL_DEVICE_TYPE_GPU) != 0) result+=(&quot;CL_DEVICE_TYPE: CL_DEVICE_TYPE_GPU\n&quot;);</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">            if( (deviceType &amp; CL_DEVICE_TYPE_CPU) != 0) result+=(&quot;CL_DEVICE_TYPE: CL_DEVICE_TYPE_CPU\n&quot;);</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">            if( (deviceType &amp; CL_DEVICE_TYPE_GPU) != 0) result+=(&quot;CL_DEVICE_TYPE: CL_DEVICE_TYPE_GPU\n&quot;);</span>
 <span class="pc bpc" id="L72" title="1 of 2 branches missed.">            if( (deviceType &amp; CL_DEVICE_TYPE_ACCELERATOR) != 0) result+=(&quot;CL_DEVICE_TYPE: CL_DEVICE_TYPE_ACCELERATOR\n&quot;);</span>
 <span class="pc bpc" id="L73" title="1 of 2 branches missed.">            if( (deviceType &amp; CL_DEVICE_TYPE_DEFAULT) != 0) result+=(&quot;CL_DEVICE_TYPE: CL_DEVICE_TYPE_DEFAULT\n&quot;);</span>
 
@@ -111,7 +111,7 @@ import org.jocl.*;
 
             // CL_DEVICE_LOCAL_MEM_TYPE
 <span class="fc" id="L113">            int localMemType = getInt(device, CL_DEVICE_LOCAL_MEM_TYPE);</span>
-<span class="fc bfc" id="L114" title="All 2 branches covered.">            result += (&quot;CL_DEVICE_LOCAL_MEM_TYPE: &quot;+(localMemType == 1 ? &quot;local&quot; : &quot;global&quot;)+&quot;\n&quot;);</span>
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">            result += (&quot;CL_DEVICE_LOCAL_MEM_TYPE: &quot;+(localMemType == 1 ? &quot;local&quot; : &quot;global&quot;)+&quot;\n&quot;);</span>
 
             // CL_DEVICE_LOCAL_MEM_SIZE
 <span class="fc" id="L117">            long localMemSize = getLong(device, CL_DEVICE_LOCAL_MEM_SIZE);</span>

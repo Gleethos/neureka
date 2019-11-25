@@ -252,17 +252,17 @@ public class Tsr
     }
 
     public float value32(int i) {
-<span class="nc bnc" id="L255" title="All 2 branches missed.">        if(this.isVirtual()){</span>
+<span class="pc bpc" id="L255" title="1 of 2 branches missed.">        if(this.isVirtual()){</span>
 <span class="nc bnc" id="L256" title="All 2 branches missed.">            if(this.is64()){</span>
 <span class="nc" id="L257">                return (float) ((double[])_value)[0];</span>
             } else {
 <span class="nc" id="L259">                return ((float[])_value)[0];</span>
             }
         } else {
-<span class="nc bnc" id="L262" title="All 2 branches missed.">            if(this.is64()){</span>
-<span class="nc" id="L263">                return (float) ((double[])_value)[i];</span>
+<span class="fc bfc" id="L262" title="All 2 branches covered.">            if(this.is64()){</span>
+<span class="fc" id="L263">                return (float) ((double[])_value)[i];</span>
             } else {
-<span class="nc" id="L265">                return ((float[])_value)[i];</span>
+<span class="fc" id="L265">                return ((float[])_value)[i];</span>
             }
         }
     }
