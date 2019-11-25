@@ -8,6 +8,7 @@ import neureka.utility.DataHelper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
@@ -569,6 +570,8 @@ public class Tsr
                 array[i] = ((Integer)arg[i]).intValue();
             } else if(arg[i] instanceof Double) {
                 array[i] = ((Double)arg[i]).doubleValue();
+            } else if(arg[i] instanceof BigDecimal) {
+                array[i] = ((BigDecimal)arg[i]).doubleValue();
             }
         }
         return array;
@@ -597,10 +600,12 @@ public class Tsr
         if(args[1] instanceof Object[]){
             if(((Object[])args[1])[0] instanceof Integer){
                 args[1] = doubleArray((Object[]) args[1]);
+            } else if(((Object[])args[1])[0] instanceof BigDecimal){
+                args[1] = doubleArray((Object[]) args[1]);
             }
         }
         //CASES:
-        if(args[0] instanceof int[] && (args[1] instanceof Double ||args[1] instanceof Integer)){
+        if(args[0] instanceof int[] && (args[1] instanceof Double || args[1] instanceof Integer)){
             args[1] = (args[1] instanceof Integer)?((Integer)args[1]).doubleValue():args[1];
             _construct((int[])args[0], ((Double)args[1]).doubleValue());
             return;
@@ -856,7 +861,8 @@ public class Tsr
         return (this.hashCode()==other.hashCode());
     }
     public Tsr putAt(Object key, Tsr value){
-        Tsr slice = getAt(key);
+        if(value.isEmpty()) throw new IllegalArgumentException("[Tsr][putAt(Object key, Tsr value)]: Value is empty!");
+        Tsr slice = (key==null)?this:getAt(key);
         boolean valueIsDeviceVisitor = false;
         if(slice.has(Device.class) && !value.has(Device.class)){
             Device device = (Device)slice.find(Device.class);
@@ -998,15 +1004,7 @@ public class Tsr
                 if (t.isVirtual() && source.isVirtual()) {
                     t.value64()[0] += source.value64()[0];
                 } else {
-                    if (t.isVirtual()) {
-                        t.setIsVirtual(false);
-                    }
-                    int[] index = new int[t.shape().length];
-                    int size = t.size();
-                    for (int i = 0; i < size; i++) {
-                        addInto(t, index, getFrom(source, index));
-                        indexing.increment(index, t.shape());
-                    }
+                    FunctionBuilder.build("I[0]<-(I[0]+I[1])", false).activate(new Tsr[]{t, source});
                 }
                 return source;
             }
@@ -1064,6 +1062,20 @@ public class Tsr
 
         public static class create
         {
+
+            public static Tsr newRandom(int[] shape){
+                return newRandom(shape, 8701252152903546L);
+            }
+
+            public static Tsr newRandom(int[] shape, long seed){
+                int size = Tsr.fcn.indexing.szeOfShp(shape);
+                double[] value = new double[size];
+                for(int i=0; i<size; i++){
+                    value[i] = DataHelper.getDoubleOf(seed+i);
+                }
+                return new Tsr(shape, value);
+            }
+
             public static Tsr newTsrLike(Tsr template, double value) {
                 Tsr t = _newEmptyLike(template);
                 if(template.is32()){

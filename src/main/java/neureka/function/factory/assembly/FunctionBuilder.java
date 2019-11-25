@@ -209,7 +209,14 @@ public class FunctionBuilder {
                 newFunction = newFunction.newBuild(component);
                 return newFunction;
             }
-            component = FunctionParser.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =>Cleaning!
+            String cleaned = FunctionParser.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =>Cleaning!
+            String raw = component.replace(cleaned, "");
+            String assumed = FunctionParser.assumptionBasedOn(raw);
+            if(assumed==null){
+                component = cleaned;
+            } else {
+                component = assumed+cleaned;
+            }
             Function newBuild;
             newBuild = FunctionBuilder.build(component, doAD);
             return newBuild;

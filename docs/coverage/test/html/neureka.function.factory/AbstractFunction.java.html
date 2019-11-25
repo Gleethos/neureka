@@ -54,7 +54,7 @@ public abstract class AbstractFunction implements Function
     @Override
     public String toString() {
 <span class="fc" id="L56">        String reconstructed = &quot;&quot;;</span>
-<span class="pc bpc" id="L57" title="1 of 4 branches missed.">        if (_src.size() == 1 &amp;&amp; TYPES.REGISTER[_id].length() &gt; 1) {</span>
+<span class="fc bfc" id="L57" title="All 4 branches covered.">        if (_src.size() == 1 &amp;&amp; TYPES.REGISTER[_id].length() &gt; 1) {</span>
 <span class="fc" id="L58">            String expression = _src.get(0).toString();</span>
 <span class="pc bpc" id="L59" title="1 of 4 branches missed.">            if (expression.charAt(0) == '(' &amp;&amp; expression.charAt(expression.length() - 1) == ')') {</span>
 <span class="fc" id="L60">                return TYPES.REGISTER[_id] + expression;</span>
@@ -413,7 +413,7 @@ public abstract class AbstractFunction implements Function
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     protected double _scalar_activation(double[] input, int j, int d) {
-<span class="pc bpc" id="L416" title="3 of 10 branches missed.">        switch (_id) {</span>
+<span class="pc bpc" id="L416" title="2 of 10 branches missed.">        switch (_id) {</span>
             case 10:
 <span class="pc bpc" id="L418" title="1 of 2 branches missed.">                return (j &lt; 0) ? exec.summation(input, d, _src) : exec.summation(input, j, d, _src);</span>
             case 11:
@@ -425,7 +425,7 @@ public abstract class AbstractFunction implements Function
             case 14:
 <span class="pc bpc" id="L426" title="1 of 2 branches missed.">                return (j &lt; 0) ? exec.multiplication(input, d, _src) : exec.multiplication(input, j, d, _src);</span>
             case 15:
-<span class="nc bnc" id="L428" title="All 2 branches missed.">                return (j &lt; 0) ? exec.modulo(input, d, _src) : exec.modulo(input, j, d, _src);</span>
+<span class="pc bpc" id="L428" title="1 of 2 branches missed.">                return (j &lt; 0) ? exec.modulo(input, d, _src) : exec.modulo(input, j, d, _src);</span>
             case 16:
 <span class="fc bfc" id="L430" title="All 2 branches covered.">                return (j &lt; 0) ? exec.subtraction(input, d, _src) : exec.subtraction(input, j, d, _src);</span>
             case 17:
@@ -713,7 +713,7 @@ public abstract class AbstractFunction implements Function
 <span class="fc" id="L713">                double out = 0;</span>
 <span class="fc" id="L714">                double b = 1;</span>
 <span class="fc bfc" id="L715" title="All 2 branches covered.">                for (int i = 1; i &lt; src.size(); i++) {</span>
-<span class="pc bpc" id="L716" title="1 of 2 branches missed.">                    b *= (i==d)?1:src.get(i).activate(inputs);</span>
+<span class="fc bfc" id="L716" title="All 2 branches covered.">                    b *= (i==d)?1:src.get(i).activate(inputs);</span>
                 }
 <span class="fc bfc" id="L718" title="All 2 branches covered.">                for(int si=0; si&lt;src.size(); si++){</span>
 <span class="fc bfc" id="L719" title="All 2 branches covered.">                    if(si==0){</span>
@@ -858,15 +858,15 @@ public abstract class AbstractFunction implements Function
 
         @Contract(pure = true)
         private static double modulo(double[] inputs, int d, ArrayList&lt;Function&gt; src) {
-<span class="nc bnc" id="L861" title="All 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="nc" id="L862">                double result = src.get(0).activate(inputs);</span>
-<span class="nc bnc" id="L863" title="All 2 branches missed.">                for (int i = 1; i &lt; src.size(); i++) {</span>
-<span class="nc" id="L864">                    final double current = src.get(i).activate(inputs);</span>
-<span class="nc" id="L865">                    result %= current;</span>
+<span class="fc bfc" id="L861" title="All 2 branches covered.">            if (d &lt; 0) {</span>
+<span class="fc" id="L862">                double result = src.get(0).activate(inputs);</span>
+<span class="fc bfc" id="L863" title="All 2 branches covered.">                for (int i = 1; i &lt; src.size(); i++) {</span>
+<span class="fc" id="L864">                    final double current = src.get(i).activate(inputs);</span>
+<span class="fc" id="L865">                    result %= current;</span>
                 }
-<span class="nc" id="L867">                return result;</span>
+<span class="fc" id="L867">                return result;</span>
             } else {
-<span class="nc" id="L869">                return src.get(0).derive(inputs, d);</span>
+<span class="fc" id="L869">                return src.get(0).derive(inputs, d);</span>
             }
         }
 

@@ -115,6 +115,10 @@ public class DefaultTests {
         tester.testExpression("[0,2, 1,3, -1](sig(I0))", "([0,2,1,3,-1]:(sig(I[0])))", "");
         tester.testExpression("I[0]<-I[1]->I[2]", "((I[0]<-I[1])->I[2])", "");
         tester.testExpression("quadratic(I[0]) -> I[1] -> I[2]", "((quad(I[0])->I[1])->I[2])", "");
+        tester.testExpression("((tanh(i0)", "tanh(I[0])", "");
+        tester.testExpression("($$(gaus(i0*()", "gaus(I[0])", "");
+        tester.testExpression("rrlu(i0)", "relu(I[0])", "");
+        tester.testExpression("th(i0)*gzs(i0+I1)", "(tanh(I[0])*gaus(I[0]+I[1]))", "");
 
         //ACTIVATION TESTING:
         double[] input1 = {};
@@ -154,6 +158,12 @@ public class DefaultTests {
         };
         expected = new Tsr(new int[]{2}, new double[]{-0.0018221023888012912, 0.2845552390654007});
         tester.testDerivative("lig(i0*i1)*i2", tsrs, 1, expected, "");
+
+        //---
+        //expected = new Tsr(new int[]{2}, new double[]{-0.0, 0.0});
+        //tester.testActivation("sum(ij^3)", tsrs, expected, "");//TODO: get this running!
+
+
 
         tester.close();
     }

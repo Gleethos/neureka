@@ -2,6 +2,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.acceleration.Device
 import neureka.acceleration.openCL.OpenCLPlatform
+import neureka.acceleration.openCL.utility.DeviceQuery
 import org.junit.Test
 import util.DummyDevice
 import util.NTester_Tensor
@@ -42,6 +43,13 @@ class GroovyTests
         assert !x.rqsGradient()
         assert x.size()==1
 
+        int[] shape = new int[1]
+        shape[0] = 4
+        x = Tsr.fcn.create.newRandom(shape)
+        assert  x.toString().contains("[4]:(-0.1575, -1.57875E0, 5.2775, 0.40125)")
+        x = Tsr.fcn.create.newRandom(shape, 106605040595L)
+        assert x.toString().contains("[4]:(0.3675, -4.30875E0, -6.60625E0, 1.265E0)")
+
     }
 
     @Test
@@ -52,6 +60,52 @@ class GroovyTests
         Tsr y = ((x+b)*w)**2
         // y: "[1]:(4.0); ->d[1]:(-8.0), "
         assert y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
+    }
+
+    @Test
+    void testTensorManipulation(){
+
+        Tsr t = new Tsr([2, 2], [
+                1.0, 4.0,
+                2.0, 7.0,
+        ])
+        Tsr v = new Tsr([2, 2], [1.0, -1.0, 1.0, -1.0])
+        Tsr.fcn.io.addInto(t, v)
+        assert t.toString().contains("[2x2]:(2.0, 3.0, 3.0, 6.0)")
+
+        Tsr.fcn.io.addInto(t, 2, 3.0)
+        assert t.toString().contains("[2x2]:(2.0, 3.0, 6.0, 6.0)")
+
+        //
+        int[] idx = new int[2]
+        idx[1] = 1
+        Tsr.fcn.io.addInto(t, idx, -9.0)
+        assert t.toString().contains("[2x2]:(2.0, 3.0, -3.0, 6.0)")
+
+        assert Tsr.fcn.io.getFrom(t, idx)==-3.0
+
+        idx[0] = 1
+        Tsr.fcn.io.mulInto(t, idx, -1)
+        assert t.toString().contains("[2x2]:(2.0, 3.0, -3.0, -6.0)")
+
+        Tsr.fcn.io.setInto(t, idx, 0.0)
+        assert t.toString().contains("[2x2]:(2.0, 3.0, -3.0, 0.0)")
+
+        Tsr.fcn.io.setInto(t, 2, 99.0)
+        assert t.toString().contains("[2x2]:(2.0, 3.0, 99.0, 0.0)")
+
+
+    }
+
+    @Test
+    void testOperations()
+    {
+        Tsr a = new Tsr(2).setRqsGradient(true)
+        Tsr b = new Tsr(-4)
+        Tsr c = new Tsr(3).setRqsGradient(true)
+        assert (a/a).toString().contains("[1]:(1.0)")
+        assert (c%a).toString().contains("[1]:(1.0)")
+        assert (((b/b)^c%a)*3).toString().contains("[1]:(3.0)")
     }
 
     @Test
@@ -88,6 +142,15 @@ class GroovyTests
         if(!System.getProperty("os.name").toLowerCase().contains("windows")) return
         Device gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0)
         _testReadmeExamples(gpu)
+        String query = DeviceQuery.query()
+        assert query.contains("DEVICE_NAME")
+        assert query.contains("MAX_MEM_ALLOC_SIZE")
+        assert query.contains("VENDOR")
+        assert query.contains("CL_DEVICE_PREFERRED_VECTOR_WIDTH")
+        assert query.contains("Info for device")
+        assert query.contains("LOCAL_MEM_SIZE")
+        assert query.contains("CL_DEVICE_TYPE")
+        //println(query)
     }
 
     void _testReadmeExamples(Device device)

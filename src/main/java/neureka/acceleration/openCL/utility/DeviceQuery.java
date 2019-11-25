@@ -18,19 +18,18 @@ public class DeviceQuery
      * The entry point of this program
      *
      */
-    public static void find(String request)
+    public static String query()
     {
+        String result = "[DEVICE QUERY]:\n========================================================\n";
         // Obtain the number of platforms
         int numPlatforms[] = new int[1];
         clGetPlatformIDs(0, null, numPlatforms);
 
-        System.out.println("Number of platforms: "+numPlatforms[0]);
+        result+=("Number of platforms: "+numPlatforms[0]+"\n");
 
         // Obtain the platform IDs
         cl_platform_id platforms[] = new cl_platform_id[numPlatforms[0]];
         clGetPlatformIDs(platforms.length, platforms, null);
-
-        List<OpenCLDevice> myDevices = new ArrayList<>();
 
         // Collect all devices of all platforms
         List<cl_device_id> devices = new ArrayList<cl_device_id>();
@@ -42,150 +41,146 @@ public class DeviceQuery
             int numDevices[] = new int[1];
             clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, 0, null, numDevices);
 
-            System.out.println("Number of devices in platform "+platformName+": "+numDevices[0]);
+            result+=("Number of devices in platform "+platformName+": "+numDevices[0]+"\n");
 
             cl_device_id devicesArray[] = new cl_device_id[numDevices[0]];
             clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, numDevices[0], devicesArray, null);
 
             devices.addAll(Arrays.asList(devicesArray));
-            for(cl_device_id did : devicesArray){
-                //myDevices.add(new OpenCLDevice(platforms[i] , did));
-            }
         }
+        result += "========================================================\n";
 
         // Print the infos about all devices
         for (cl_device_id device : devices)
         {
             // CL_DEVICE_NAME
             String deviceName = getString(device, CL_DEVICE_NAME);
-            System.out.println("--- Info for device "+deviceName+": ---");
-            System.out.printf("CL_DEVICE_NAME: \t\t\t%s\n", deviceName);
+            result+=("\n[Info for device "+deviceName+"]: \n--------------------------------------------------------\n");
+            result+=("CL_DEVICE_NAME: "+deviceName+"\n");
 
             // CL_DEVICE_VENDOR
             String deviceVendor = getString(device, CL_DEVICE_VENDOR);
-            System.out.printf("CL_DEVICE_VENDOR: \t\t\t%s\n", deviceVendor);
+            result+=("CL_DEVICE_VENDOR: "+deviceVendor+"\n");
 
             // CL_DRIVER_VERSION
             String driverVersion = getString(device, CL_DRIVER_VERSION);
-            System.out.printf("CL_DRIVER_VERSION: \t\t\t%s\n", driverVersion);
+            result+=("CL_DRIVER_VERSION: "+driverVersion+"\n");
 
             // CL_DEVICE_TYPE
             long deviceType = getLong(device, CL_DEVICE_TYPE);
-            if( (deviceType & CL_DEVICE_TYPE_CPU) != 0)
-                System.out.printf("CL_DEVICE_TYPE:\t\t\t\t%s\n", "CL_DEVICE_TYPE_CPU");
-            if( (deviceType & CL_DEVICE_TYPE_GPU) != 0)
-                System.out.printf("CL_DEVICE_TYPE:\t\t\t\t%s\n", "CL_DEVICE_TYPE_GPU");
-            if( (deviceType & CL_DEVICE_TYPE_ACCELERATOR) != 0)
-                System.out.printf("CL_DEVICE_TYPE:\t\t\t\t%s\n", "CL_DEVICE_TYPE_ACCELERATOR");
-            if( (deviceType & CL_DEVICE_TYPE_DEFAULT) != 0)
-                System.out.printf("CL_DEVICE_TYPE:\t\t\t\t%s\n", "CL_DEVICE_TYPE_DEFAULT");
+            if( (deviceType & CL_DEVICE_TYPE_CPU) != 0) result+=("CL_DEVICE_TYPE: CL_DEVICE_TYPE_CPU\n");
+            if( (deviceType & CL_DEVICE_TYPE_GPU) != 0) result+=("CL_DEVICE_TYPE: CL_DEVICE_TYPE_GPU\n");
+            if( (deviceType & CL_DEVICE_TYPE_ACCELERATOR) != 0) result+=("CL_DEVICE_TYPE: CL_DEVICE_TYPE_ACCELERATOR\n");
+            if( (deviceType & CL_DEVICE_TYPE_DEFAULT) != 0) result+=("CL_DEVICE_TYPE: CL_DEVICE_TYPE_DEFAULT\n");
 
             // CL_DEVICE_MAX_COMPUTE_UNITS
             int maxComputeUnits = getInt(device, CL_DEVICE_MAX_COMPUTE_UNITS);
-            System.out.printf("CL_DEVICE_MAX_COMPUTE_UNITS:\t\t%d\n", maxComputeUnits);
+            result += ("CL_DEVICE_MAX_COMPUTE_UNITS: "+ maxComputeUnits+"\n");
 
             // CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS
             long maxWorkItemDimensions = getLong(device, CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS);
-            System.out.printf("CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS:\t%d\n", maxWorkItemDimensions);
+            result += ("CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS: "+ maxWorkItemDimensions+"\n");
 
             // CL_DEVICE_MAX_WORK_ITEM_SIZES
             long maxWorkItemSizes[] = getSizes(device, CL_DEVICE_MAX_WORK_ITEM_SIZES, 3);
-            System.out.printf("CL_DEVICE_MAX_WORK_ITEM_SIZES:\t\t%d / %d / %d \n",
-                    maxWorkItemSizes[0], maxWorkItemSizes[1], maxWorkItemSizes[2]);
+            result += ("CL_DEVICE_MAX_WORK_ITEM_SIZES: "+
+                    maxWorkItemSizes[0]+", "+ maxWorkItemSizes[1]+", "+maxWorkItemSizes[2]);
 
             // CL_DEVICE_MAX_WORK_GROUP_SIZE
             long maxWorkGroupSize = getSize(device, CL_DEVICE_MAX_WORK_GROUP_SIZE);
-            System.out.printf("CL_DEVICE_MAX_WORK_GROUP_SIZE:\t\t%d\n", maxWorkGroupSize);
+            result += ("CL_DEVICE_MAX_WORK_GROUP_SIZE: "+ maxWorkGroupSize+"\n");
 
             // CL_DEVICE_MAX_CLOCK_FREQUENCY
             long maxClockFrequency = getLong(device, CL_DEVICE_MAX_CLOCK_FREQUENCY);
-            System.out.printf("CL_DEVICE_MAX_CLOCK_FREQUENCY:\t\t%d MHz\n", maxClockFrequency);
+            result += ("CL_DEVICE_MAX_CLOCK_FREQUENCY: "+ maxClockFrequency+" MHz\n");
 
             // CL_DEVICE_ADDRESS_BITS
             int addressBits = getInt(device, CL_DEVICE_ADDRESS_BITS);
-            System.out.printf("CL_DEVICE_ADDRESS_BITS:\t\t\t%d\n", addressBits);
+            result += ("CL_DEVICE_ADDRESS_BITS: "+ addressBits+"\n");
 
             // CL_DEVICE_MAX_MEM_ALLOC_SIZE
             long maxMemAllocSize = getLong(device, CL_DEVICE_MAX_MEM_ALLOC_SIZE);
-            System.out.printf("CL_DEVICE_MAX_MEM_ALLOC_SIZE:\t\t%d MByte\n", (int)(maxMemAllocSize / (1024 * 1024)));
+            result+=("CL_DEVICE_MAX_MEM_ALLOC_SIZE: "+ (int)(maxMemAllocSize / (1024 * 1024))+" MByte\n");
 
             // CL_DEVICE_GLOBAL_MEM_SIZE
             long globalMemSize = getLong(device, CL_DEVICE_GLOBAL_MEM_SIZE);
-            System.out.printf("CL_DEVICE_GLOBAL_MEM_SIZE:\t\t%d MByte\n", (int)(globalMemSize / (1024 * 1024)));
+            result += ("CL_DEVICE_GLOBAL_MEM_SIZE: "+(int)(globalMemSize / (1024 * 1024))+" MByte\n");
 
             // CL_DEVICE_ERROR_CORRECTION_SUPPORT
             int errorCorrectionSupport = getInt(device, CL_DEVICE_ERROR_CORRECTION_SUPPORT);
-            System.out.printf("CL_DEVICE_ERROR_CORRECTION_SUPPORT:\t%s\n", errorCorrectionSupport != 0 ? "yes" : "no");
+            result += ("CL_DEVICE_ERROR_CORRECTION_SUPPORT: "+(errorCorrectionSupport != 0 ? "yes" : "no")+"\n");
 
             // CL_DEVICE_LOCAL_MEM_TYPE
             int localMemType = getInt(device, CL_DEVICE_LOCAL_MEM_TYPE);
-            System.out.printf("CL_DEVICE_LOCAL_MEM_TYPE:\t\t%s\n", localMemType == 1 ? "local" : "global");
+            result += ("CL_DEVICE_LOCAL_MEM_TYPE: "+(localMemType == 1 ? "local" : "global")+"\n");
 
             // CL_DEVICE_LOCAL_MEM_SIZE
             long localMemSize = getLong(device, CL_DEVICE_LOCAL_MEM_SIZE);
-            System.out.printf("CL_DEVICE_LOCAL_MEM_SIZE:\t\t%d KByte\n", (int)(localMemSize / 1024));
+            result += ("CL_DEVICE_LOCAL_MEM_SIZE: "+(int)(localMemSize / 1024)+" KByte\n");
 
             // CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE
             long maxConstantBufferSize = getLong(device, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE);
-            System.out.printf("CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE:\t%d KByte\n", (int)(maxConstantBufferSize / 1024));
+            result += ("CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE: "+(int)(maxConstantBufferSize / 1024)+" KByte\n");
 
             // CL_DEVICE_QUEUE_PROPERTIES
             long queueProperties = getLong(device, CL_DEVICE_QUEUE_PROPERTIES);
             if(( queueProperties & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE ) != 0)
-                System.out.printf("CL_DEVICE_QUEUE_PROPERTIES:\t\t%s\n", "CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE");
+                result += ("CL_DEVICE_QUEUE_PROPERTIES: CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE\n");
             if(( queueProperties & CL_QUEUE_PROFILING_ENABLE ) != 0)
-                System.out.printf("CL_DEVICE_QUEUE_PROPERTIES:\t\t%s\n", "CL_QUEUE_PROFILING_ENABLE");
+                result += ("CL_DEVICE_QUEUE_PROPERTIES: CL_QUEUE_PROFILING_ENABLE\n");
 
             // CL_DEVICE_IMAGE_SUPPORT
             int imageSupport = getInt(device, CL_DEVICE_IMAGE_SUPPORT);
-            System.out.printf("CL_DEVICE_IMAGE_SUPPORT:\t\t%d\n", imageSupport);
+            result += ("CL_DEVICE_IMAGE_SUPPORT: "+imageSupport+"\n");
 
             // CL_DEVICE_MAX_READ_IMAGE_ARGS
             int maxReadImageArgs = getInt(device, CL_DEVICE_MAX_READ_IMAGE_ARGS);
-            System.out.printf("CL_DEVICE_MAX_READ_IMAGE_ARGS:\t\t%d\n", maxReadImageArgs);
+            result += ("CL_DEVICE_MAX_READ_IMAGE_ARGS: "+maxReadImageArgs+"\n");
 
             // CL_DEVICE_MAX_WRITE_IMAGE_ARGS
             int maxWriteImageArgs = getInt(device, CL_DEVICE_MAX_WRITE_IMAGE_ARGS);
-            System.out.printf("CL_DEVICE_MAX_WRITE_IMAGE_ARGS:\t\t%d\n", maxWriteImageArgs);
+            result += ("CL_DEVICE_MAX_WRITE_IMAGE_ARGS:  "+maxWriteImageArgs+"\n");
 
             // CL_DEVICE_SINGLE_FP_CONFIG
             long singleFpConfig = getLong(device, CL_DEVICE_SINGLE_FP_CONFIG);
-            System.out.printf("CL_DEVICE_SINGLE_FP_CONFIG:\t\t%s\n",
-                    stringFor_cl_device_fp_config(singleFpConfig));
+            result+=("CL_DEVICE_SINGLE_FP_CONFIG: "+stringFor_cl_device_fp_config(singleFpConfig)+"\n");
 
             // CL_DEVICE_IMAGE2D_MAX_WIDTH
             long image2dMaxWidth = getSize(device, CL_DEVICE_IMAGE2D_MAX_WIDTH);
-            System.out.printf("CL_DEVICE_2D_MAX_WIDTH\t\t\t%d\n", image2dMaxWidth);
+            result += ("CL_DEVICE_2D_MAX_WIDTH "+image2dMaxWidth+"\n");
 
             // CL_DEVICE_IMAGE2D_MAX_HEIGHT
             long image2dMaxHeight = getSize(device, CL_DEVICE_IMAGE2D_MAX_HEIGHT);
-            System.out.printf("CL_DEVICE_2D_MAX_HEIGHT\t\t\t%d\n", image2dMaxHeight);
+            result += ("CL_DEVICE_2D_MAX_HEIGHT "+image2dMaxHeight+"\n");
 
             // CL_DEVICE_IMAGE3D_MAX_WIDTH
             long image3dMaxWidth = getSize(device, CL_DEVICE_IMAGE3D_MAX_WIDTH);
-            System.out.printf("CL_DEVICE_3D_MAX_WIDTH\t\t\t%d\n", image3dMaxWidth);
+            result += ("CL_DEVICE_3D_MAX_WIDTH "+image3dMaxWidth+"\n");
 
             // CL_DEVICE_IMAGE3D_MAX_HEIGHT
             long image3dMaxHeight = getSize(device, CL_DEVICE_IMAGE3D_MAX_HEIGHT);
-            System.out.printf("CL_DEVICE_3D_MAX_HEIGHT\t\t\t%d\n", image3dMaxHeight);
+            result+=("CL_DEVICE_3D_MAX_HEIGHT "+image3dMaxHeight+"\n");
 
             // CL_DEVICE_IMAGE3D_MAX_DEPTH
             long image3dMaxDepth = getSize(device, CL_DEVICE_IMAGE3D_MAX_DEPTH);
-            System.out.printf("CL_DEVICE_3D_MAX_DEPTH\t\t\t%d\n", image3dMaxDepth);
+            result += ("CL_DEVICE_3D_MAX_DEPTH "+image3dMaxDepth+"\n");
 
             // CL_DEVICE_PREFERRED_VECTOR_WIDTH_<type>
-            System.out.printf("CL_DEVICE_PREFERRED_VECTOR_WIDTH_<t>\t");
+            result += ("CL_DEVICE_PREFERRED_VECTOR_WIDTH_<t>\n");
             int preferredVectorWidthChar = getInt(device, CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR);
             int preferredVectorWidthShort = getInt(device, CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT);
             int preferredVectorWidthInt = getInt(device, CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT);
             int preferredVectorWidthLong = getInt(device, CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG);
             int preferredVectorWidthFloat = getInt(device, CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT);
             int preferredVectorWidthDouble = getInt(device, CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE);
-            System.out.printf("CHAR %d, SHORT %d, INT %d, LONG %d, FLOAT %d, DOUBLE %d\n\n\n",
-                    preferredVectorWidthChar, preferredVectorWidthShort,
-                    preferredVectorWidthInt, preferredVectorWidthLong,
-                    preferredVectorWidthFloat, preferredVectorWidthDouble);
+            result += ("CHAR "+preferredVectorWidthChar+
+                            ", SHORT "+preferredVectorWidthShort+
+                            ", INT "+preferredVectorWidthInt +
+                            ", LONG "+preferredVectorWidthLong+
+                            ", FLOAT "+preferredVectorWidthFloat+
+                            ", DOUBLE "+ preferredVectorWidthDouble+"\n");
         }
+        return result;
     }
 
     /**

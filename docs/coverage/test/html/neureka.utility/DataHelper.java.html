@@ -7,45 +7,45 @@ import java.util.Random;
 {
     public static double getDoubleOf(long seed) {
         double newNumber;
-<span class="nc" id="L10">        double divisor = 0;</span>
-<span class="nc" id="L11">        divisor = (Math.pow(10, getIntegerOf(seed - 1, 2)) / Math.pow(10, getIntegerOf(seed + 1, 2)));</span>
-<span class="nc" id="L12">        final int[] prims = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61};</span>
-<span class="nc" id="L13">        int rank = (int) Math.abs(seed % prims.length);</span>
-<span class="nc" id="L14">        int min = 3;</span>
-<span class="nc" id="L15">        newNumber = 0;</span>
-<span class="nc bnc" id="L16" title="All 4 branches missed.">        while (newNumber == 0 || min &gt;= 0) {</span>
-<span class="nc" id="L17">            newNumber /= 2;</span>
-<span class="nc" id="L18">            newNumber += (Math.abs((getIntegerOf(prims[rank] + seed - 4, 10))));</span>
-<span class="nc bnc" id="L19" title="All 2 branches missed.">            if (divisor &lt; 10) {</span>
-<span class="nc" id="L20">                divisor *= 10;</span>
+<span class="fc" id="L10">        double divisor = 0;</span>
+<span class="fc" id="L11">        divisor = (Math.pow(10, getIntegerOf(seed - 1, 2)) / Math.pow(10, getIntegerOf(seed + 1, 2)));</span>
+<span class="fc" id="L12">        final int[] prims = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61};</span>
+<span class="fc" id="L13">        int rank = (int) Math.abs(seed % prims.length);</span>
+<span class="fc" id="L14">        int min = 3;</span>
+<span class="fc" id="L15">        newNumber = 0;</span>
+<span class="fc bfc" id="L16" title="All 4 branches covered.">        while (newNumber == 0 || min &gt;= 0) {</span>
+<span class="fc" id="L17">            newNumber /= 2;</span>
+<span class="fc" id="L18">            newNumber += (Math.abs((getIntegerOf(prims[rank] + seed - 4, 10))));</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">            if (divisor &lt; 10) {</span>
+<span class="fc" id="L20">                divisor *= 10;</span>
             } else {
-<span class="nc" id="L22">                divisor /= 10;</span>
+<span class="fc" id="L22">                divisor /= 10;</span>
             }
-<span class="nc" id="L24">            newNumber /= divisor;</span>
-<span class="nc bnc" id="L25" title="All 2 branches missed.">            if (newNumber != 0) {</span>
-<span class="nc" id="L26">                min--;</span>
+<span class="fc" id="L24">            newNumber /= divisor;</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">            if (newNumber != 0) {</span>
+<span class="fc" id="L26">                min--;</span>
             }
-<span class="nc" id="L28">            rank++;</span>
-<span class="nc" id="L29">            rank = Math.abs(rank % prims.length);</span>
+<span class="fc" id="L28">            rank++;</span>
+<span class="fc" id="L29">            rank = Math.abs(rank % prims.length);</span>
         }
-<span class="nc" id="L31">        newNumber = Math.abs(newNumber);</span>
-<span class="nc bnc" id="L32" title="All 2 branches missed.">        newNumber *= (Math.abs(getIntegerOf(seed + 4 - prims[rank], 100_000))&lt;50_106)?-1:1;</span>
-<span class="nc" id="L33">        return newNumber;</span>
+<span class="fc" id="L31">        newNumber = Math.abs(newNumber);</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">        newNumber *= (Math.abs(getIntegerOf(seed + 4 - prims[rank], 100_000))&lt;50_106)?-1:1;</span>
+<span class="fc" id="L33">        return newNumber;</span>
     }
 
     public static int getIntegerOf(long seed, int m) {
-<span class="nc" id="L37">        int[] prims = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61};</span>
-<span class="nc" id="L38">        long rank = Double.doubleToRawLongBits(seed * Math.pow(61*Math.abs(seed % prims.length), 0.5));</span>
-<span class="nc" id="L39">        return getIntegerOf(seed, m, (int)(rank ^ (rank &gt;&gt;&gt; 32)));</span>
+<span class="fc" id="L37">        int[] prims = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61};</span>
+<span class="fc" id="L38">        long rank = Double.doubleToRawLongBits(seed * Math.pow(61*Math.abs(seed % prims.length), 0.5));</span>
+<span class="fc" id="L39">        return getIntegerOf(seed, m, (int)(rank ^ (rank &gt;&gt;&gt; 32)));</span>
     }
 
     public static int getIntegerOf(long seed, int m, int rank) {
-<span class="nc" id="L43">        int[] prims = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61};</span>
-<span class="nc" id="L44">        rank = Math.abs(rank % prims.length);</span>
-<span class="nc bnc" id="L45" title="All 2 branches missed.">        seed = (seed == 0)?6731299924898493759L:seed;</span>
-<span class="nc bnc" id="L46" title="All 2 branches missed.">        seed *= (((prims[rank] * seed + m) % 2 == 0)?-1:1);</span>
-<span class="nc" id="L47">        seed =  (4438274645895732L * seed * Double.doubleToRawLongBits(Math.pow(prims[rank], 0.5)) + seed);</span>
-<span class="nc" id="L48">        return ((int) (seed ^ (seed &gt;&gt;&gt; 32)))%m;</span>
+<span class="fc" id="L43">        int[] prims = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61};</span>
+<span class="fc" id="L44">        rank = Math.abs(rank % prims.length);</span>
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">        seed = (seed == 0)?6731299924898493759L:seed;</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        seed *= (((prims[rank] * seed + m) % 2 == 0)?-1:1);</span>
+<span class="fc" id="L47">        seed =  (4438274645895732L * seed * Double.doubleToRawLongBits(Math.pow(prims[rank], 0.5)) + seed);</span>
+<span class="fc" id="L48">        return ((int) (seed ^ (seed &gt;&gt;&gt; 32)))%m;</span>
     }
 
     public static double randomDouble() {

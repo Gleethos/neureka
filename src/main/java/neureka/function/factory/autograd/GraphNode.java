@@ -355,7 +355,7 @@ public class GraphNode
         }
         /** sources can be deleted because unused graph nodes are already trimmed off the tree (targets remain!)
          * */
-        //TODO: find target through inputs... delete forward mode AD node tensors!
+        //TODO: query target through inputs... delete forward mode AD node tensors!
         //_parents = null;//This might not be necessary...
     }
 
