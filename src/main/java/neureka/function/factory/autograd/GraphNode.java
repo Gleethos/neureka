@@ -2,7 +2,7 @@ package neureka.function.factory.autograd;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.acceleration.openCL.utility.WeakTensorReference;
+import neureka.acceleration.opencl.utility.WeakTensorReference;
 import neureka.function.Function;
 import neureka.function.factory.assembly.FunctionBuilder;
 

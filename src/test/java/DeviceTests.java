@@ -1,7 +1,7 @@
 
 import neureka.Tsr;
 import neureka.acceleration.Device;
-import neureka.acceleration.openCL.OpenCLPlatform;
+import neureka.acceleration.opencl.OpenCLPlatform;
 import org.junit.Test;
 import util.NTester_Tensor;
 
@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class TestOnGPU {
+public class DeviceTests {
 
     @Test
-    public void DefaultDeviceTests(){
+    public void testOpenCLDevice(){
         if(!System.getProperty("os.name").toLowerCase().contains("windows")){
             return;
         }

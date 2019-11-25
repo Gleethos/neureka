@@ -1,4 +1,4 @@
-package neureka.acceleration.openCL;
+package neureka.acceleration.opencl;
 
 import static org.jocl.CL.*;
 
@@ -6,11 +6,10 @@ import java.lang.ref.Cleaner;
 import java.lang.ref.ReferenceQueue;
 import java.nio.*;
 import java.util.*;
-import java.util.function.Consumer;
 
 import neureka.Tsr;
 import neureka.acceleration.Device;
-import neureka.acceleration.openCL.utility.WeakTensorReference;
+import neureka.acceleration.opencl.utility.WeakTensorReference;
 import neureka.function.Function;
 import neureka.function.factory.autograd.GraphNode;
 import neureka.utility.DataHelper;
@@ -190,7 +189,7 @@ public class OpenCLDevice implements Device
         _mapping.put(r, newClt);
         CLEANER.register(tensor, ()->{
             _rmv(r);
-            System.out.println("Garbage has been removed from GPU!!!");
+            //System.out.println("Garbage has been removed from GPU!!!");
         });
         tensor.add(this);
         if(tensor.isVirtual()){

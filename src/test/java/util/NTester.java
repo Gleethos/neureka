@@ -96,7 +96,7 @@ public class NTester extends Assert
         _success += (_positive_assertions == _assertion_count)?1:0;
         println(BAR +"  "+((_positive_assertions >0)?"test successful!"+" "+ _positive_assertions :"test failed!"+" "+(_assertion_count + _positive_assertions))+"/"+ _assertion_count);
         println("[O][=][=][=][=][=][=][=][=][=][=][=]|> "+ _success +"/"+ _tests);
-        printResult((_positive_assertions == _assertion_count)? "" :"E");
+        printResult((_positive_assertions == _assertion_count)? "." :"E");
         bottom();
         return _positive_assertions;
     }

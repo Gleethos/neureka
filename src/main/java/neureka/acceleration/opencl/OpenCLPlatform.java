@@ -1,4 +1,4 @@
-package neureka.acceleration.openCL;
+package neureka.acceleration.opencl;
 
 import neureka.function.Function;
 import org.jocl.*;

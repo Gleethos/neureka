@@ -7,7 +7,7 @@ import org.junit.Test;
 import util.NTester_Function;
 import util.NTester_Tensor;
 
-public class DefaultTests {
+public class DefaultJavaTests {
 
     @Test
     public void testAutograd()

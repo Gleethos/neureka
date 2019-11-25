@@ -1,4 +1,4 @@
-package neureka.acceleration.openCL.utility;
+package neureka.acceleration.opencl.utility;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;

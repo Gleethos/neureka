@@ -1,11 +1,10 @@
-package neureka.acceleration.openCL.utility;
+package neureka.acceleration.opencl.utility;
 
 import static org.jocl.CL.*;
 
 import java.nio.*;
 import java.util.*;
 
-import neureka.acceleration.openCL.OpenCLDevice;
 import org.jocl.*;
 
 /**

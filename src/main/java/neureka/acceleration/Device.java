@@ -1,7 +1,7 @@
 package neureka.acceleration;
 
 import neureka.Tsr;
-import neureka.acceleration.openCL.OpenCLPlatform;
+import neureka.acceleration.opencl.OpenCLPlatform;
 
 import java.util.Collection;
 
