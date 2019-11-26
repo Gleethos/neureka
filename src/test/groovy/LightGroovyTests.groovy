@@ -4,6 +4,7 @@ import neureka.Tsr
 import neureka.acceleration.Device
 import neureka.acceleration.opencl.OpenCLPlatform
 import neureka.acceleration.opencl.utility.DeviceQuery
+import neureka.function.factory.assembly.FunctionBuilder
 import org.junit.Test
 import util.DummyDevice
 import util.NTester
@@ -27,18 +28,21 @@ class LightGroovyTests {
         assert x.value32(0)==3.0f
 
         float[] value32 = new float[1]
+        value32[0] = 5
         x.setValue(value32)
         assert x.getValue() instanceof float[]
         assert x.is32()
-        assert x.value32(0)==0.0f
+        assert x.value32(0)==5.0f
 
         double[] value64 = new double[1]
+        value64[0] = 4.0
         x.setValue(value64)
         assert x.getValue() instanceof double[]
         assert x.is64()
-        assert x.value32(0)==0.0f
+        assert x.value32(0)==4.0f
 
         assert x.isLeave()
+        assert !x.isBranch()
         assert !x.isOutsourced()
         assert !x.isVirtual()
         assert !x.hasDataParent()
@@ -47,6 +51,13 @@ class LightGroovyTests {
         assert x.rank()==1
         assert !x.rqsGradient()
         assert x.size()==1
+
+        Tsr y = new Tsr(x, "th(I[0])")
+        assert y.isBranch()
+        assert !y.isLeave()
+        assert y.belongsToGraph()
+        assert x.belongsToGraph()
+        assert y.toString().contains("[1]:(0.97014E0)")
 
         int[] shape = new int[1]
         shape[0] = 4
@@ -58,13 +69,22 @@ class LightGroovyTests {
     }
 
     @Test
-    void testPowerOverloaded(){
+    void testPowerOverloadedAndInputFunctions(){
         Tsr x = new Tsr(3).setRqsGradient(true)
         Tsr b = new Tsr(-4)
         Tsr w = new Tsr(2)
         Tsr y = ((x+b)*w)**2
-        // y: "[1]:(4.0); ->d[1]:(-8.0), "
         assert y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
+        y = ((x+b)*w)^2
+        assert y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
+        y.backward(new Tsr(1))
+        assert new Tsr([y], "Ig[0]").toString().equals("empty")
+        assert new Tsr([x], "Ig[0]").toString().equals("empty")
+        Tsr[] trs = new Tsr[1]
+        trs[0] = x
+        assert FunctionBuilder.build("Ig[0]", false).activate(trs).toString().equals("[1]:(-8.0)")
+        trs[0] = y
+        assert FunctionBuilder.build("Ig[0]", false).activate(trs).toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
     }
 
     @Test
@@ -93,11 +113,24 @@ class LightGroovyTests {
         Tsr.fcn.io.mulInto(t, idx, -1)
         assert t.toString().contains("[2x2]:(2.0, 3.0, -3.0, -6.0)")
 
+        Tsr.fcn.io.mulInto(t, 3, -2)
+        assert t.toString().contains("[2x2]:(2.0, 3.0, -3.0, 12.0)")
+
         Tsr.fcn.io.setInto(t, idx, 0.0)
         assert t.toString().contains("[2x2]:(2.0, 3.0, -3.0, 0.0)")
 
         Tsr.fcn.io.setInto(t, 2, 99.0)
         assert t.toString().contains("[2x2]:(2.0, 3.0, 99.0, 0.0)")
+
+        //---
+        Tsr.fcn.io.subInto(t, 2, 99.0)
+        assert t.toString().contains("[2x2]:(2.0, 3.0, 0.0, 0.0)")
+        idx[0] = 0
+        Tsr.fcn.io.subInto(t, idx, -9.0)
+        assert t.toString().contains("[2x2]:(2.0, 3.0, 9.0, 0.0)")
+
+        Tsr.fcn.io.subInto(t, new Tsr([2, 2], [1, 2, 3, 4]))
+        assert t.toString().contains("[2x2]:(1.0, 1.0, 6.0, -4.0)")
 
 
     }

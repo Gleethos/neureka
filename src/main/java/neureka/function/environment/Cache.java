@@ -25,28 +25,25 @@ public class Cache
         lock.release();
     }
 
-    public synchronized Tsr preprocess(Tsr[] input, Function function, Supplier<Tsr> activation)
+    public synchronized Tsr preprocess(Tsr[] inputs, Function function, Supplier<Tsr> activation)
     {
         Tsr untracked = null;
-        for(Tsr t : input){
-            if(t.has(GraphNode.class)){
-                untracked = t;
-            }
+        for(Tsr t : inputs){
+            if(t.has(GraphNode.class)) untracked = t;
         }
         if(untracked==null){//If graph tracking (nodes) has not yet been initialized!
-            return Function.setup.commit(input, function);
+            return Function.setup.commit(inputs, function);
         }
-        //GraphLock newLock = new GraphLock(function, input);
         GraphLock lock = ((GraphNode)untracked.find(GraphNode.class)).lock();
-        for(Tsr t : input){
+        for(Tsr t : inputs){
             if(t.has(GraphNode.class)){
-                ((GraphNode)t.find(GraphNode.class)).optainLocking(lock);
+                ((GraphNode)t.find(GraphNode.class)).obtainLocking(lock);
             } else {
                 GraphNode rg = new GraphNode(t, null, null, lock);
                 t.add(rg);
             }
         }
-        GraphNode node = (GraphNode) input[0].find(GraphNode.class);
+        GraphNode node = (GraphNode) inputs[0].find(GraphNode.class);
         Tsr result = _get(node);
         if(result==null){
             result = activation.get();

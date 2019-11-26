@@ -17,27 +17,49 @@ public interface Function
     class setup
     {
         public static Tsr commit(Tsr[] tensors, String operation, boolean doAD) {
-            return commit(tensors, FunctionBuilder.build(operation, doAD));
+            return commit(null, tensors, FunctionBuilder.build(operation, doAD));
+        }
+
+        public static Tsr commit(Tsr drain, Tsr[] tensors, String operation, boolean doAD) {
+            return commit(drain, tensors, FunctionBuilder.build(operation, doAD));
         }
 
         public static Tsr commit(Tsr[] inputs, Function function) {
+            return commit(null, inputs, function);
+        }
+
+        public static Tsr commit(Tsr drain, Tsr[] inputs, Function function) {
             GraphLock newLock = new GraphLock(function, inputs);
             for (Tsr t : inputs) {
                 if(t.has(GraphNode.class)){
-                    ((GraphNode)t.find(GraphNode.class)).optainLocking(newLock);
+                    ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);
                 } else {
                     t.add(new GraphNode(t, null, null, newLock));
                 }
             }
-            Tsr result = (function.activate(inputs));
+            Tsr result = function.activate(inputs);
             if (result.has(GraphNode.class)) {
                 ((GraphNode) result.find(GraphNode.class)).redundantGradientCleanup();
             }
             Function.CACHE.free(newLock);
-            //for (Tsr t : inputs) {
-            //    t.setGradientIsTargeted(false);
-            //}
-            return result;
+            boolean resultIsUnique = true;
+            if(drain!=null){
+                for(Tsr t : inputs){
+                    Tsr g = (Tsr)t.find(Tsr.class);
+                    if(t == result || (g!=null && g==result)){
+                        resultIsUnique = false;
+                        break;
+                    }
+                }
+                //if(resultIsUnique){
+                //    drain.inject(result);
+                //}
+            }
+            if(resultIsUnique){
+                return result;
+            } else {
+                return  null;
+            }
         }
     }
 

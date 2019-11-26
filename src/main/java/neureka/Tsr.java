@@ -749,6 +749,10 @@ public class Tsr
         _construct(new Tsr[]{tensor}, operation, true);
     }
 
+    public Tsr(List<Tsr> tensors, String operation) {
+        _construct(tensors.toArray(new Tsr[tensors.size()]), operation, true);
+    }
+
     public Tsr(Tsr[] tensors, String operation) {
         _construct(tensors, operation, true);
     }
@@ -759,17 +763,8 @@ public class Tsr
 
     private void _construct(Tsr[] tensors, String operation, boolean doAD) {
         if (tensors == null || tensors.length == 0 || tensors[0] == null) return;
-        Tsr result = Function.setup.commit(tensors, operation, doAD);
-        boolean resultIsUnique = true;
-        for(Tsr t : tensors){
-            if(t == result){
-                resultIsUnique = false;
-                break;
-            }
-        }
-        if(resultIsUnique){
-            this.inject(result);
-        }
+        Tsr result = Function.setup.commit(this, tensors, operation, doAD);
+        this.inject(result);
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -777,6 +772,7 @@ public class Tsr
     //=========================
 
     public Tsr inject(Tsr tensor) {
+        if(tensor==null) return this;
         _value = tensor._value;
         _shape = tensor._shape;
         _idxmap = tensor._idxmap;

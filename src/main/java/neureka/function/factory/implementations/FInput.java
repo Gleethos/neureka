@@ -52,7 +52,6 @@ public class FInput implements Function, IProvider
     private Tsr _extract(Tsr t)
     {
         if(this.providesGradient() && t.rqsGradient()){
-            //inputs[_index()].setGradientIsTargeted(true);
             Tsr gradient = (Tsr)t.find(Tsr.class);
             if(t.rqsGradient()){
                 if(gradient==null){

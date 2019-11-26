@@ -120,7 +120,7 @@ public class GraphNode
     /**
      * @param newLock
      */
-    public synchronized void optainLocking(GraphLock newLock){
+    public synchronized void obtainLocking(GraphLock newLock){
         _lock = newLock;
     }
 
