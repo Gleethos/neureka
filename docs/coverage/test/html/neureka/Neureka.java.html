@@ -36,6 +36,29 @@ import neureka.acceleration.Device;
 
 
 
+
+        }
+
+<span class="nc" id="L42">        public static class ad{</span>
+
+            /**
+             * After backward passes the used derivatives are usually not needed.
+             * For debugging purposes however this flag remains and will
+             * not allow for garbage collection of the used derivatives.
+             */
+<span class="fc" id="L49">            public static boolean RETAIN_GRAPH_DERIVATIVES_AFTER_BACKWARD = false;</span>
+
+            /**
+             * This fla enables an optimization technique which only applies
+             * gradients as soon as they are needed by a tensor (the tensor is used again).
+             * If the flag is set to true
+             * then error values will accumulate whenever it makes sense.
+             * This technique however uses more memory but will
+             * improve performance for some networks substantially.
+             * The technique is termed JIT-Propagation.
+             */
+<span class="fc" id="L60">            public static boolean RETAIN_PENDING_ERROR_FOR_JITPROP = true;</span>
+
         }
 
 

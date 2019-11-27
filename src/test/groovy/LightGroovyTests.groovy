@@ -2,13 +2,8 @@
 import neureka.Neureka
 import neureka.Tsr
 import neureka.acceleration.Device
-import neureka.acceleration.opencl.OpenCLPlatform
-import neureka.acceleration.opencl.utility.DeviceQuery
 import neureka.function.factory.assembly.FunctionBuilder
 import org.junit.Test
-import util.DummyDevice
-import util.NTester
-import util.NTester_Tensor
 
 class LightGroovyTests {
 
@@ -77,7 +72,9 @@ class LightGroovyTests {
         assert y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
         y = ((x+b)*w)^2
         assert y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
+        Neureka.settings.ad.RETAIN_GRAPH_DERIVATIVES_AFTER_BACKWARD = true
         y.backward(new Tsr(1))
+        Neureka.settings.ad.RETAIN_GRAPH_DERIVATIVES_AFTER_BACKWARD = false
         assert new Tsr([y], "Ig[0]").toString().equals("empty")
         assert new Tsr([x], "Ig[0]").toString().equals("empty")
         Tsr[] trs = new Tsr[1]
@@ -154,13 +151,35 @@ class LightGroovyTests {
         Tsr c = new Tsr(3).setRqsGradient(true)
 
         Tsr s =  (a*b) + 2
+        Tsr x = s * (s+c)
 
+        Neureka.settings.ad.RETAIN_PENDING_ERROR_FOR_JITPROP = false
+        x.backward(new Tsr(1))
+        Neureka.settings.ad.RETAIN_PENDING_ERROR_FOR_JITPROP = true
+        assert c.toString().contains("g:(-6.0)")
+        assert a.toString().contains("g:(36.0)")
+        //---
+
+        println(x)
+    }
+
+    @Test
+    void testJITPropagation(){
+        Tsr a = new Tsr(2).setRqsGradient(true)
+        Tsr b = new Tsr(-4)
+        Tsr c = new Tsr(3).setRqsGradient(true)
+
+        Tsr s =  (a*b) + 2
         Tsr x = s * (s+c)
 
         x.backward(new Tsr(1))
+
         assert c.toString().contains("g:(-6.0)")
-        assert a.toString().contains("g:(36.0)")
-        println(x)
+        assert a.toString().contains("g:(null)")
+        a.applyGradient()
+        assert c.toString().contains("g:(-6.0)")
+        assert a.toString().contains("(38.0):g:(null)")
+        //---
     }
 
     @Test

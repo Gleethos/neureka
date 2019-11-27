@@ -4,6 +4,7 @@ import neureka.acceleration.Device;
 import neureka.function.Function;
 import neureka.function.factory.assembly.FunctionBuilder;
 import neureka.function.factory.autograd.GraphNode;
+import neureka.function.factory.autograd.JITProp;
 import neureka.utility.DataHelper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -796,6 +797,18 @@ public class Tsr
         return this;
     }
 
+    public void applyGradient(){
+        if(this.has(JITProp.class)){
+            JITProp jit = (JITProp) find(JITProp.class);
+            jit.execute();
+        }
+        if(this.has(Tsr.class)) {
+            Tsr g = (Tsr)find(Tsr.class);
+            FunctionBuilder.build("I[0]<-(I[0]+I[1])", false).activate(new Tsr[]{this, g});
+            remove(Tsr.class);
+        }
+    }
+
     public Tsr delete() {
         if (this.isOutsourced()) {
             ((Device) this.find(Device.class)).rmv(this);
@@ -812,9 +825,8 @@ public class Tsr
         _shape = null;
         _translation = null;
         _idxmap = null;
-        if(this.has(Tsr.class))((Tsr)find(Tsr.class)).delete();//Deleting gradient
+        if(this.has(Tsr.class))((Tsr)find(Tsr.class)).delete();
         _components = null;
-        //_gradient = null;
         return this;
     }
 

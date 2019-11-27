@@ -234,9 +234,11 @@ public class DefaultJavaTests {
         Function tenxx = FunctionBuilder.build("i0*100", true);
         z = tenxx.activate(new Tsr[]{tanh.activate(new Tsr[]{x})});
         tester.testTensor(z, new String[]{"[1]:(9.95037E0)"});
+        Neureka.settings.ad.RETAIN_GRAPH_DERIVATIVES_AFTER_BACKWARD = true;
         z.backward(new Tsr(new int[]{1}, 1));
         tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.0099E0)"});
         tester.testTensor(z, new String[]{"[1]:(9.95037E0); ->d[1]:(99.0099E0), "});
+        Neureka.settings.ad.RETAIN_GRAPH_DERIVATIVES_AFTER_BACKWARD = false;
         //---
         tester.testContains(
                 z.toString("dgc"),
@@ -511,6 +513,7 @@ public class DefaultJavaTests {
                 -2, 3,
                 1, 2,
         });
+        Neureka.settings.ad.RETAIN_GRAPH_DERIVATIVES_AFTER_BACKWARD = true;
         tester.testTensorAutoGrad(//4, 5, -13, -4 <= result values
                 new Tsr[]{tensor1, tensor2},
                 "i0xi1",
@@ -518,6 +521,7 @@ public class DefaultJavaTests {
                 new Tsr(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
                 new double[][]{{-1.0, -1.0, 5.0, 5.0}, null}
         );
+        Neureka.settings.ad.RETAIN_GRAPH_DERIVATIVES_AFTER_BACKWARD = false;
         //---
         //======================
         int[] shape = {4, 2, 9, 5, 6, 2};

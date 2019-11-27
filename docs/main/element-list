@@ -1,8 +1,8 @@
 unnamed package
 neureka
 neureka.acceleration
-neureka.acceleration.openCL
-neureka.acceleration.openCL.utility
+neureka.acceleration.opencl
+neureka.acceleration.opencl.utility
 neureka.function
 neureka.function.environment
 neureka.function.factory

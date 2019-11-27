@@ -85,6 +85,22 @@ public class GraphNode
      * */
     //private TreeMap<Tsr, Tsr> _targets_derivatives;
     private TreeMap<GraphNode, Tsr> _targets_derivatives;
+
+    /**
+     * This flag is used merely once. It is a key component
+     * of an optimization technique which only applies
+     * gradients as soon as they are needed by a tensor (the tensor is used again).
+     * If the flag Neureka.settings.ad.RETAIN_PENDING_ERROR_FOR_JITPROP is set to true
+     * then errors values will accumulate whenever it makes sense.
+     * This technique however uses more memory but will
+     * improve performance for some networks substantially.
+     */
+    private boolean _targets_derivatives_are_deletable = true;
+
+    public  boolean reliesOnJustInTimeProp(){
+        return !_targets_derivatives_are_deletable;
+    }
+
     /**
      * "Lock object" for graph identity. (result caching)
      */
@@ -446,10 +462,34 @@ public class GraphNode
     public void backward(Tsr error){
         Map<GraphNode, PendingError> pendings = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
         _backward(error, pendings, true);
-        pendings.forEach((n, p)->{
-            if(!p.isFullyAccumulated()) throw new IllegalStateException("[GraphNode][_backward]: Pending error has not received expected accumulation.");
-            n.backward(p.getAccumulatedError());//Continue backprop recursively!
-        });
+        if(!Neureka.settings.ad.RETAIN_PENDING_ERROR_FOR_JITPROP){
+            pendings.forEach((n, p)->{
+                if(!p.isFullyAccumulated()) throw new IllegalStateException("[GraphNode][_backward]: Pending error has not received expected accumulation.");
+                n.backward(p.getAccumulatedError());//Continue backprop recursively!
+            });
+        } else {
+            pendings.forEach((n, p)->{
+                n._carryPendingErrorToGradients(pendings);
+            });
+        }
+        _deleteDerivativesRecursively();
+    }
+
+    private void _carryPendingErrorToGradients(Map<GraphNode, PendingError> pendings){
+        _targets_derivatives_are_deletable = false;
+        this.forEach((t, d)->t._carryPendingErrorToGradients(pendings));
+        if(this.isLeave()){
+            if(_payload.rqsGradient()){
+                JITProp jit = (JITProp) _payload.find(JITProp.class);
+                if(jit==null){
+                    jit = new JITProp(pendings);
+                } else {
+                    jit.addPending(pendings);
+                }
+                _payload.add(jit);
+            }
+        }
+        return;
     }
 
     /**
@@ -464,18 +504,26 @@ public class GraphNode
         if (_payload.rqsGradient()) {
             _payload.addToGradient(error);
         }
+        if(!this.reliesOnJustInTimeProp() && isLeave()){
+            JITProp jit = (JITProp) _payload.find(JITProp.class);//Get JIT-Prop node.
+            if(jit!=null){
+                jit.noteFinished(toBeBackpropagated);//note pending errors and store them as 'done'
+            }
+        }
         if(this.usesAD())
         {
-            int ADPaths = _numberOfADChildren();
-            if(!force && ADPaths>1 && !this.isLeave()){
-                PendingError pending = toBeBackpropagated.get(this);
-                if(pending==null){
-                    pending = new PendingError(error, ADPaths-1);
-                    toBeBackpropagated.put(this, pending);
-                } else {
-                    pending.accumulate(error);
+            if(!this.reliesOnJustInTimeProp()){//false ==> We are inside a 'Just-In-Time Backprop' process
+                int ADPaths = _numberOfADChildren();
+                if(!force && ADPaths>1 && !this.isLeave()){
+                    PendingError pending = toBeBackpropagated.get(this);
+                    if(pending==null){
+                        pending = new PendingError(error, ADPaths-1);
+                        toBeBackpropagated.put(this, pending);
+                    } else {
+                        pending.accumulate(error);
+                    }
+                    return;// NOTE: Multiple AD paths leading to one node in history should be accumulated first! (performance)
                 }
-                return;// NOTE: Multiple AD paths leading to one node in history should be accumulated first! (performance)
             }
             //if(_payload==null) throw new RuntimeException();
             if(this.usesForwardAD()){//Using forward-AD derivatives for reverse-mode AD!:
@@ -491,6 +539,15 @@ public class GraphNode
             }
         }
     }
+
+    private void  _deleteDerivativesRecursively(){
+        if(!Neureka.settings.ad.RETAIN_GRAPH_DERIVATIVES_AFTER_BACKWARD){
+            if(_targets_derivatives_are_deletable) _targets_derivatives = null;
+            this.forEach((t, d)->t._deleteDerivativesRecursively());
+        }
+        return;
+    }
+
 
     /**
      * Counts how many child nodes will later on provide error values for backpropagation!
