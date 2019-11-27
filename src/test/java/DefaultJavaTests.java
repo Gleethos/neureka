@@ -158,11 +158,54 @@ public class DefaultJavaTests {
         };
         expected = new Tsr(new int[]{2}, new double[]{-0.0018221023888012912, 0.2845552390654007});
         tester.testDerivative("lig(i0*i1)*i2", tsrs, 1, expected, "");
-
         //---
-        //expected = new Tsr(new int[]{2}, new double[]{-0.0, 0.0});
-        //tester.testActivation("sum(ij^3)", tsrs, expected, "");//TODO: get this running!
+        expected = new Tsr(new int[]{2}, new double[]{(-1+7*7*7+2*2*2), (3*3*3+-1+2*2*2)});
+        tester.testActivation("sum(ij^3)", tsrs, expected, "");
 
+        expected = new Tsr(new int[]{2}, new double[]{3*Math.pow(7, 2), 3*Math.pow(-1, 2)});
+        tester.testDerivative("sum(ij^3)", tsrs, 1, expected, "");
+        //---
+        expected = new Tsr(new int[]{2}, new double[]{(1+7*7+2*2), (3*3+1+2*2)});
+        tester.testActivation("sum(ij*ij)", tsrs, expected, "");
+
+        expected = new Tsr(new int[]{2}, new double[]{2*Math.pow(7, 1), 2*Math.pow(-1, 1)});
+        tester.testDerivative("sum(ij*ij)", tsrs, 1, expected, "");
+        //--
+        expected = new Tsr(new int[]{2}, new double[]{(4), (2)});
+        tester.testActivation("sum(ij/2)", tsrs, expected, "");
+
+        expected = new Tsr(new int[]{2}, new double[]{1.0/2, 1.0/2});
+        tester.testDerivative("sum(ij/2)", tsrs, 1, expected, "");
+        //--
+        expected = new Tsr(new int[]{2}, new double[]{(1+9+4), (5+1+4)});
+        tester.testActivation("sum(ij+2)", tsrs, expected, "");
+
+        expected = new Tsr(new int[]{2}, new double[]{1.0, 1.0});
+        tester.testDerivative("sum(ij+2)", tsrs, 1, expected, "");
+        //--
+        expected = new Tsr(new int[]{2}, new double[]{(-3+5+0), (1+-3+0)});
+        tester.testActivation("sum(ij-2)", tsrs, expected, "");
+
+        expected = new Tsr(new int[]{2}, new double[]{1.0, 1.0});
+        tester.testDerivative("sum(ij-2)", tsrs, 1, expected, "");
+        //--
+        expected = new Tsr(new int[]{2}, new double[]{(8)*3, (4)*3});
+        tester.testActivation("sum(sum(ij))", tsrs, expected, "");
+
+        expected = new Tsr(new int[]{2}, new double[]{1.0, 1.0});
+        tester.testDerivative("sum(sum(ij))", tsrs, 1, expected, "");
+        //--
+        expected = new Tsr(new int[]{2}, new double[]{(-14)*3, (-6)*3});
+        tester.testActivation("sum(prod(ij))", tsrs, expected, "");
+
+        expected = new Tsr(new int[]{2}, new double[]{-2.0, 6.0});
+        tester.testDerivative("(prod(ij))", tsrs, 1, expected, "");
+
+        expected = new Tsr(new int[]{2}, new double[]{-2.0*3, 6.0*3});
+        tester.testDerivative("sum(prod(ij))", tsrs, 1, expected, "");
+        //--
+        expected = new Tsr(new int[]{2}, new double[]{(-14)%3, -0.0});
+        tester.testActivation("(prod(ij))%3", tsrs, expected, "");
 
 
         tester.close();

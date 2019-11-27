@@ -605,7 +605,16 @@ public abstract class AbstractFunction implements Function
                 }
                 return sum;
             } else {
-                return src.get(0).derive(inputs, d);
+                double sum = 0;
+                boolean nothingDone = true;
+                for (int i = 0; i < inputs.length; i++) {
+                    sum += src.get(0).derive(inputs, d, i);
+                    nothingDone = false;
+                }
+                if (nothingDone) {
+                    return src.get(0).activate(inputs);
+                }
+                return sum;
             }
 
         }
@@ -674,7 +683,7 @@ public abstract class AbstractFunction implements Function
         // f(x)^g(x) * d/dx(g(x)) * ln(f(x))
         // + f(x)^(g(x)-1) * g(x) * d/dx(f(x))
         @Contract(pure = true)
-        private static double power(double[] inputs, int d, int j, ArrayList<Function> src) {
+        private static double power(double[] inputs, int j, int d, ArrayList<Function> src) {
             if (d < 0) {
                 double result = src.get(0).activate(inputs, j);
                 for (int i = 1; i < src.size(); i++) {
@@ -687,7 +696,7 @@ public abstract class AbstractFunction implements Function
                 for(int si=0; si<src.size(); si++){
                     double b = 1;
                     for (int i = 1; i < src.size(); i++) {
-                        b *= (i==d)?1:src.get(i).activate(inputs, j);
+                        b *= src.get(i).activate(inputs, j);
                     }
                     if(si==0){
                         out += src.get(0).derive(inputs, d, j)*b*Math.pow(src.get(0).activate(inputs, j), b-1);
