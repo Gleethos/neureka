@@ -2,8 +2,8 @@ package neureka;
 
 import neureka.acceleration.Device;
 
-public class Neureka {
-
+public class Neureka
+{
     static Device findAcceleratorByName(String name){
         return Device.find(name);
     }
@@ -11,7 +11,6 @@ public class Neureka {
     static String version(){
         return "0.0.0";
     }
-
 
     public static class settings
     {
@@ -34,13 +33,10 @@ public class Neureka {
              */
             public static boolean KEEP_DERIVATIVE_TARGET_PAYLOADS = false;
 
-
-
-
         }
 
-        public static class ad{
-
+        public static class ad
+        {
             /**
              * After backward passes the used derivatives are usually not needed.
              * For debugging purposes however this flag remains and will
@@ -59,11 +55,14 @@ public class Neureka {
              */
             public static boolean RETAIN_PENDING_ERROR_FOR_JITPROP = true;
 
+            /**
+             * Gradients will automatically be applied to tensors as soon as
+             * they are being used for calculation.
+             * This feature works well with JIT-Propagation.
+             */
+            public static boolean APPLY_GRADIENT_WHEN_TENSOR_IS_USED = false;
+
         }
-
-
-
-
 
 
     }

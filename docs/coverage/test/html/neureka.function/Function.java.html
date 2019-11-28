@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Function.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.function</a> &gt; <span class="el_source">Function.java</span></div><h1>Function.java</h1><pre class="source lang-java linenums">
 package neureka.function;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.function.environment.Types;
 import neureka.function.factory.autograd.GraphLock;
@@ -11,58 +12,53 @@ import neureka.function.factory.autograd.JITProp;
 
 public interface Function
 {
-<span class="fc" id="L14">    Cache CACHE = new Cache();</span>
-<span class="fc" id="L15">    Types TYPES = new Types();</span>
+<span class="fc" id="L15">    Cache CACHE = new Cache();</span>
+<span class="fc" id="L16">    Types TYPES = new Types();</span>
     //------------------------------------------------------------------------------------------------------------------
 
-<span class="nc" id="L18">    class setup</span>
+<span class="nc" id="L19">    class setup</span>
     {
         public static Tsr commit(Tsr[] tensors, String operation, boolean doAD) {
-<span class="fc" id="L21">            return commit(null, tensors, FunctionBuilder.build(operation, doAD));</span>
+<span class="fc" id="L22">            return commit(null, tensors, FunctionBuilder.build(operation, doAD));</span>
         }
 
         public static Tsr commit(Tsr drain, Tsr[] tensors, String operation, boolean doAD) {
-<span class="fc" id="L25">            return commit(drain, tensors, FunctionBuilder.build(operation, doAD));</span>
+<span class="fc" id="L26">            return commit(drain, tensors, FunctionBuilder.build(operation, doAD));</span>
         }
 
         public static Tsr commit(Tsr[] inputs, Function function) {
-<span class="fc" id="L29">            return commit(null, inputs, function);</span>
+<span class="fc" id="L30">            return commit(null, inputs, function);</span>
         }
 
         public static Tsr commit(Tsr drain, Tsr[] inputs, Function function) {
-<span class="fc" id="L33">            GraphLock newLock = new GraphLock(function, inputs);</span>
-<span class="fc bfc" id="L34" title="All 2 branches covered.">            for (Tsr t : inputs) {</span>
-<span class="fc" id="L35">                JITProp jit = (JITProp) t.find(JITProp.class);</span>
+<span class="fc" id="L34">            GraphLock newLock = new GraphLock(function, inputs);</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">            for (Tsr t : inputs) {</span>
 <span class="fc bfc" id="L36" title="All 2 branches covered.">                if(t.has(GraphNode.class)){</span>
 <span class="fc" id="L37">                    ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);</span>
-<span class="pc bpc" id="L38" title="1 of 2 branches missed.">                    if(jit!=null){</span>
-<span class="nc" id="L39">                        jit.execute();//Just In Time Propagation</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">                    if(Neureka.settings.ad.APPLY_GRADIENT_WHEN_TENSOR_IS_USED){</span>
+<span class="fc" id="L39">                        t.applyGradient();</span>
                     }
-<span class="fc" id="L41">                    t.remove(JITProp.class);</span>
                 } else {
-<span class="pc bpc" id="L43" title="1 of 2 branches missed.">                    if(jit!=null) throw new IllegalStateException(&quot;[Function][commit]: Tensor has JIT-component but not a graph node.&quot;);</span>
-<span class="fc" id="L44">                    t.add(new GraphNode(t, null, null, newLock));</span>
+<span class="fc" id="L42">                    t.add(new GraphNode(t, null, null, newLock));</span>
                 }
             }
-<span class="fc" id="L47">            Tsr result = function.activate(inputs);</span>
-<span class="fc bfc" id="L48" title="All 2 branches covered.">            if (result.has(GraphNode.class)) {</span>
-<span class="fc" id="L49">                ((GraphNode) result.find(GraphNode.class)).redundantGradientCleanup();</span>
-            }
-<span class="fc" id="L51">            Function.CACHE.free(newLock);</span>
-<span class="fc" id="L52">            boolean resultIsUnique = true;</span>
-<span class="fc bfc" id="L53" title="All 2 branches covered.">            if(drain!=null){</span>
-<span class="fc bfc" id="L54" title="All 2 branches covered.">                for(Tsr t : inputs){</span>
-<span class="fc" id="L55">                    Tsr g = (Tsr)t.find(Tsr.class);</span>
-<span class="fc bfc" id="L56" title="All 6 branches covered.">                    if(t == result || (g!=null &amp;&amp; g==result)){</span>
-<span class="fc" id="L57">                        resultIsUnique = false;</span>
-<span class="fc" id="L58">                        break;</span>
+<span class="fc" id="L45">            Tsr result = function.activate(inputs);</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">            if (result.has(GraphNode.class)) ((GraphNode) result.find(GraphNode.class)).redundantGradientCleanup();</span>
+<span class="fc" id="L47">            Function.CACHE.free(newLock);</span>
+<span class="fc" id="L48">            boolean resultIsUnique = true;</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">            if(drain!=null){</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">                for(Tsr t : inputs){</span>
+<span class="fc" id="L51">                    Tsr g = (Tsr)t.find(Tsr.class);</span>
+<span class="fc bfc" id="L52" title="All 6 branches covered.">                    if(t == result || (g!=null &amp;&amp; g==result)){</span>
+<span class="fc" id="L53">                        resultIsUnique = false;</span>
+<span class="fc" id="L54">                        break;</span>
                     }
                 }
             }
-<span class="fc bfc" id="L62" title="All 2 branches covered.">            if(resultIsUnique){</span>
-<span class="fc" id="L63">                return result;</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">            if(resultIsUnique){</span>
+<span class="fc" id="L59">                return result;</span>
             } else {
-<span class="fc" id="L65">                return  null;</span>
+<span class="fc" id="L61">                return  null;</span>
             }
         }
     }

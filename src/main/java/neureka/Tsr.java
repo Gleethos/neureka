@@ -800,8 +800,8 @@ public class Tsr
     public void applyGradient(){
         if(this.has(JITProp.class)){
             JITProp jit = (JITProp) find(JITProp.class);
-            jit.execute();
             this.remove(JITProp.class);
+            jit.execute();
         }
         if(this.has(Tsr.class)) {
             Tsr g = (Tsr)find(Tsr.class);

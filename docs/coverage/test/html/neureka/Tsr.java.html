@@ -798,12 +798,12 @@ public class Tsr
     }
 
     public void applyGradient(){
-<span class="pc bpc" id="L801" title="1 of 2 branches missed.">        if(this.has(JITProp.class)){</span>
+<span class="fc bfc" id="L801" title="All 2 branches covered.">        if(this.has(JITProp.class)){</span>
 <span class="fc" id="L802">            JITProp jit = (JITProp) find(JITProp.class);</span>
-<span class="fc" id="L803">            jit.execute();</span>
-<span class="fc" id="L804">            this.remove(JITProp.class);</span>
+<span class="fc" id="L803">            this.remove(JITProp.class);</span>
+<span class="fc" id="L804">            jit.execute();</span>
         }
-<span class="pc bpc" id="L806" title="1 of 2 branches missed.">        if(this.has(Tsr.class)) {</span>
+<span class="fc bfc" id="L806" title="All 2 branches covered.">        if(this.has(Tsr.class)) {</span>
 <span class="fc" id="L807">            Tsr g = (Tsr)find(Tsr.class);</span>
 <span class="fc" id="L808">            FunctionBuilder.build(&quot;I[0]&lt;-(I[0]+I[1])&quot;, false).activate(new Tsr[]{this, g});</span>
 <span class="fc" id="L809">            remove(Tsr.class);</span>

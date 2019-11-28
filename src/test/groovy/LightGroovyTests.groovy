@@ -156,7 +156,7 @@ class LightGroovyTests {
         Neureka.settings.ad.RETAIN_PENDING_ERROR_FOR_JITPROP = false
         x.backward(new Tsr(1))
         Neureka.settings.ad.RETAIN_PENDING_ERROR_FOR_JITPROP = true
-        assert c.toString().contains("g:(-6.0)")
+        assert c.toString().contains("(3.0):g:(-6.0)")
         assert a.toString().contains("(2.0):g:(36.0)")
         //---
 
@@ -164,7 +164,7 @@ class LightGroovyTests {
     }
 
     @Test
-    void testJITPropagation(){
+    void testJITPropagationVariantOne(){
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = new Tsr(-4)
         Tsr c = new Tsr(3).setRqsGradient(true)
@@ -177,6 +177,28 @@ class LightGroovyTests {
         assert c.toString().contains("g:(-6.0)")
         assert a.toString().contains("g:(null)")
         a.applyGradient()
+        assert c.toString().contains("g:(-6.0)")
+        assert a.toString().contains("(38.0):g:(null)")
+        //---
+    }
+
+    @Test
+    void testJITPropagationVariantTwo(){
+        Tsr a = new Tsr(2).setRqsGradient(true)
+        Tsr b = new Tsr(-4)
+        Tsr c = new Tsr(3).setRqsGradient(true)
+
+        Tsr s =  (a*b) + 2
+        Tsr x = s * (s+c)
+
+        x.backward(new Tsr(1))
+
+        assert c.toString().contains("g:(-6.0)")
+        assert a.toString().contains("g:(null)")
+        Neureka.settings.ad.APPLY_GRADIENT_WHEN_TENSOR_IS_USED = true
+        Tsr y = a+3 //JIT-prop will be activated here...
+        Neureka.settings.ad.APPLY_GRADIENT_WHEN_TENSOR_IS_USED = false
+        assert y.toString().contains("(41.0)")
         assert c.toString().contains("g:(-6.0)")
         assert a.toString().contains("(38.0):g:(null)")
         //---

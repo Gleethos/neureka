@@ -1,6 +1,7 @@
 
 package neureka.function;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.function.environment.Types;
 import neureka.function.factory.autograd.GraphLock;
@@ -32,22 +33,17 @@ public interface Function
         public static Tsr commit(Tsr drain, Tsr[] inputs, Function function) {
             GraphLock newLock = new GraphLock(function, inputs);
             for (Tsr t : inputs) {
-                JITProp jit = (JITProp) t.find(JITProp.class);
                 if(t.has(GraphNode.class)){
                     ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);
-                    if(jit!=null){
-                        jit.execute();//Just In Time Propagation
+                    if(Neureka.settings.ad.APPLY_GRADIENT_WHEN_TENSOR_IS_USED){
+                        t.applyGradient();
                     }
-                    t.remove(JITProp.class);
                 } else {
-                    if(jit!=null) throw new IllegalStateException("[Function][commit]: Tensor has JIT-component but not a graph node.");
                     t.add(new GraphNode(t, null, null, newLock));
                 }
             }
             Tsr result = function.activate(inputs);
-            if (result.has(GraphNode.class)) {
-                ((GraphNode) result.find(GraphNode.class)).redundantGradientCleanup();
-            }
+            if (result.has(GraphNode.class)) ((GraphNode) result.find(GraphNode.class)).redundantGradientCleanup();
             Function.CACHE.free(newLock);
             boolean resultIsUnique = true;
             if(drain!=null){
