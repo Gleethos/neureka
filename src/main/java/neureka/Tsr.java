@@ -801,6 +801,7 @@ public class Tsr
         if(this.has(JITProp.class)){
             JITProp jit = (JITProp) find(JITProp.class);
             jit.execute();
+            this.remove(JITProp.class);
         }
         if(this.has(Tsr.class)) {
             Tsr g = (Tsr)find(Tsr.class);

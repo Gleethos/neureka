@@ -475,6 +475,12 @@ public class GraphNode
         _deleteDerivativesRecursively();
     }
 
+    /**
+     * This method is called only if JIT-propagation is enabled.
+     * It carries pending errors to the tensors requiring gradients which will
+     * later on processed them just in time.
+     * @param pendings
+     */
     private void _carryPendingErrorToGradients(Map<GraphNode, PendingError> pendings){
         _targets_derivatives_are_deletable = false;
         this.forEach((t, d)->t._carryPendingErrorToGradients(pendings));
@@ -493,7 +499,17 @@ public class GraphNode
     }
 
     /**
-     * @param error
+     * This method traverses the graph and applies errors
+     * to gradients.
+     *
+     * Note: JITProp is enabled when
+     * this node is on the path between
+     * a pending error and a tensor (rqsGradient==true) waiting
+     * to receive it.
+     * When _backward is called and JITProp is true then this means
+     * the method has been called by a JITProp class (stored at rqsGradient==true tensors...)
+     *
+     * @param error which is originally supplied by the user but later on is modified by derivatives...
      * @return void
      */
     private void _backward(Tsr error, Map<GraphNode, PendingError> toBeBackpropagated, boolean force)
@@ -522,7 +538,8 @@ public class GraphNode
                     } else {
                         pending.accumulate(error);
                     }
-                    return;// NOTE: Multiple AD paths leading to one node in history should be accumulated first! (performance)
+                    return;// NOTE: Multiple AD paths leading to one node in history will be accumulated first! (performance)
+                    //This optimization is a light version of JITProp. JITProp build on this!
                 }
             }
             //if(_payload==null) throw new RuntimeException();
@@ -540,6 +557,15 @@ public class GraphNode
         }
     }
 
+    /**
+     * This method is called after the backward call has been executed fully.
+     * Derivatives are no longer used and will therefore be deleted when possible.
+     * Deletion is forbidden if this node is flagged
+     * as JITProp job. This means that the node is on the path between gradients
+     * and pending error objects.
+     * Only if JITProp is enabled (Neureka.settings.ad...) this flag will
+     * deviate from its default state, namely: true!
+     */
     private void  _deleteDerivativesRecursively(){
         if(!Neureka.settings.ad.RETAIN_GRAPH_DERIVATIVES_AFTER_BACKWARD){
             if(_targets_derivatives_are_deletable) _targets_derivatives = null;
@@ -550,7 +576,7 @@ public class GraphNode
 
 
     /**
-     * Counts how many child nodes will later on provide error values for backpropagation!
+     * Counts how many child nodes will later on provide error values for back-propagation!
      * @return
      */
     private int _numberOfADChildren(){
@@ -583,8 +609,8 @@ public class GraphNode
     }
 
     /**
-     * @param target
-     * @param derivative
+     * @param target nodes are graph nodes which contain either tensors requiring errors for accumulation and/or more targets.
+     * @param derivative tensors are used during back-propagation in order to distribute an error throughout the graph.
      */
     public void put(GraphNode target, Tsr derivative){
         if(_targets_derivatives ==null){
@@ -597,12 +623,12 @@ public class GraphNode
     }
 
     /**
-     * @param key
+     * @param target
      * @return Tsr
      */
-    public Tsr get(GraphNode key){
+    public Tsr get(GraphNode target){
         if(_targets_derivatives ==null) return null;
-        return _targets_derivatives.get(key);
+        return _targets_derivatives.get(target);
     }
 
     /**
@@ -655,9 +681,7 @@ public class GraphNode
 
     public String toString(String m){
         if(m.contains("g")){
-            return "]> LOCK: "+lock()+" |> GRAPH:\n]\n"
-                    +_toString("]    0", true)
-                    +"\n]\n]|END|>";
+            return "]> LOCK: "+lock()+" |> GRAPH:\n]\n" +_toString("]    0", true) +"\n]\n]|END|>";
         }
         if(m.contains("v")){
             return "("+this.type()+"): [NID:"+Long.toHexString(nid())+"]:<(  "

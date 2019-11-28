@@ -157,7 +157,7 @@ class LightGroovyTests {
         x.backward(new Tsr(1))
         Neureka.settings.ad.RETAIN_PENDING_ERROR_FOR_JITPROP = true
         assert c.toString().contains("g:(-6.0)")
-        assert a.toString().contains("g:(36.0)")
+        assert a.toString().contains("(2.0):g:(36.0)")
         //---
 
         println(x)

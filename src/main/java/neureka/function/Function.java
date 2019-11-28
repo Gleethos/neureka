@@ -7,6 +7,7 @@ import neureka.function.factory.autograd.GraphLock;
 import neureka.function.factory.autograd.GraphNode;
 import neureka.function.factory.assembly.FunctionBuilder;
 import neureka.function.environment.Cache;
+import neureka.function.factory.autograd.JITProp;
 
 public interface Function
 {
@@ -31,9 +32,15 @@ public interface Function
         public static Tsr commit(Tsr drain, Tsr[] inputs, Function function) {
             GraphLock newLock = new GraphLock(function, inputs);
             for (Tsr t : inputs) {
+                JITProp jit = (JITProp) t.find(JITProp.class);
                 if(t.has(GraphNode.class)){
                     ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);
+                    if(jit!=null){
+                        jit.execute();//Just In Time Propagation
+                    }
+                    t.remove(JITProp.class);
                 } else {
+                    if(jit!=null) throw new IllegalStateException("[Function][commit]: Tensor has JIT-component but not a graph node.");
                     t.add(new GraphNode(t, null, null, newLock));
                 }
             }
@@ -51,9 +58,6 @@ public interface Function
                         break;
                     }
                 }
-                //if(resultIsUnique){
-                //    drain.inject(result);
-                //}
             }
             if(resultIsUnique){
                 return result;

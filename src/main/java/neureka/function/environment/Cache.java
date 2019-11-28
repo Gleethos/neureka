@@ -27,11 +27,16 @@ public class Cache
 
     public synchronized Tsr preprocess(Tsr[] inputs, Function function, Supplier<Tsr> activation)
     {
+        boolean locked = true;//input tensors might all have graph nodes but are left from previous computation. (=>need to locked again!)
         Tsr untracked = null;
         for(Tsr t : inputs){
-            if(t.has(GraphNode.class)) untracked = t;
+            GraphNode node = (GraphNode) t.find(GraphNode.class);
+            if(node!=null){
+                untracked=t;
+                locked = (locked)&&node.lock().isLocked();
+            }
         }
-        if(untracked==null){//If graph tracking (nodes) has not yet been initialized!
+        if(untracked==null || !locked){//If graph tracking (nodes) has not yet been initialized!
             return Function.setup.commit(inputs, function);
         }
         GraphLock lock = ((GraphNode)untracked.find(GraphNode.class)).lock();
