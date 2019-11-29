@@ -14,7 +14,6 @@ public interface Function
 {
     Cache CACHE = new Cache();
     Types TYPES = new Types();
-    //------------------------------------------------------------------------------------------------------------------
 
     class setup
     {

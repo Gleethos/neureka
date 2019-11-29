@@ -11,6 +11,47 @@ import util.NTester_Tensor
 
 class GroovyTests
 {
+
+    @Test
+    void testNetwork()
+    {
+        Tsr i_a = new Tsr([2, 1], [1, 2])
+        Tsr w_a = new Tsr([2, 2], [1, 3, 4, -1]).setRqsGradient(true)
+        Tsr o_a = new Tsr(i_a,"x", w_a)
+        //[1x2]:(7.0, 2.0); ->d[2x1]:(1.0, 2.0),
+        //---
+        Tsr w_b = new Tsr([2, 2], [-2, 1, 2, -1]).setRqsGradient(true)
+        Tsr o_b = new Tsr(o_a,"x", w_b)
+        //[2x1]:(-10.0, 5.0); ->d[2x2]:(-2.0, 1.0, 2.0, -1.0):g:(null), ->d[1x2]:(7.0, 2.0); ->d[2x1]:(1.0, 2.0), ,
+        //---
+        Tsr w_c = new Tsr([2, 2], [0.5, 3, -2, -0.5]).setRqsGradient(true)
+        Tsr o_c = new Tsr(o_a, "x", w_c)
+        //[2x1]:(-0.5, 20.0); ->d[1x2]:(7.0, 2.0); ->d[2x1]:(1.0, 2.0), , ->d[2x2]:(0.5, 3.0, -2.0, -0.5):g:(null),
+        //---
+        Tsr out = o_b*o_c
+
+        assert o_a.toString().contains("(7.0, 2.0)")
+        assert out.toString().contains("(5.0, 100.0)")
+        assert o_b.toString().contains("(-10.0, 5.0)")
+        assert o_c.toString().contains("(-0.5, 20.0)")
+
+        assert w_a.toString().contains("g:(null)")
+        assert w_b.toString().contains("g:(null)")
+
+        out.backward(new Tsr([2, 1], 1))
+
+        assert w_a.toString().contains("g:(null)")
+        assert !w_b.toString().contains("g:(null)")
+        Neureka.settings.ad.APPLY_GRADIENT_WHEN_TENSOR_IS_USED = true
+        w_a * 3
+        Neureka.settings.ad.APPLY_GRADIENT_WHEN_TENSOR_IS_USED = false
+        assert w_a.toString().contains("g:(null)")
+        assert !w_a.toString().contains("1.0, 3.0, 4.0, -1.0")
+        assert !w_b.toString().contains("g:(null)")
+
+        //TODO: calculate derivatives and errors and check correctness!
+    }
+
     @Test
     void testSlicing()
     {
@@ -40,7 +81,6 @@ class GroovyTests
         assert cld.maxConstantBufferSize()>1000
         assert cld.maxWriteImageArgs()>1
         tester.close()
-        //println(query)
     }
 
     void _testReadmeExamples(Device device, NTester tester)
@@ -55,11 +95,11 @@ class GroovyTests
          * */
         Tsr y = new Tsr([x, b, w], "((i0+i1)*i2)^2")
         tester.testContains((y.idxmap()==null)?"true":"false", ["false"], "idxmap must be set!")
-        tester.testTensor(y, "[1]:(4.0); ->d[1]:(-8.0), ")
+        tester.testTensor(y, "[1]:(4.0); ->d[1]:(-8.0)")
         y.backward(new Tsr(2))
 
         y = ((x+b)*w)**2
-        tester.testTensor(y, ["[1]:(4.0); ->d[1]:(-8.0), "])
+        tester.testTensor(y, ["[1]:(4.0); ->d[1]:(-8.0)"])
         y.backward(new Tsr(2))
         tester.testTensor(x, ["-32.0"])
 

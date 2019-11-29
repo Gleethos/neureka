@@ -6,14 +6,16 @@ import neureka.function.factory.autograd.GraphNode;
 import neureka.function.Function;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeMap;
+import java.util.WeakHashMap;
 import java.util.function.Supplier;
 
 public class Cache
 {
-    private final HashMap<String, Function> FUNCTIONS = new HashMap<>();
+    private final Map<String, Function> FUNCTIONS = new WeakHashMap<>();//new HashMap<>();
 
-    public synchronized HashMap<String, Function> FUNCTIONS(){
+    public synchronized Map<String, Function> FUNCTIONS(){
         return this.FUNCTIONS;
     }
 

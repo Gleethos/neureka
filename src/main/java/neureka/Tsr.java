@@ -5,6 +5,7 @@ import neureka.function.Function;
 import neureka.function.factory.assembly.FunctionBuilder;
 import neureka.function.factory.autograd.GraphNode;
 import neureka.function.factory.autograd.JITProp;
+import neureka.optimization.Optimizer;
 import neureka.utility.DataHelper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -805,8 +806,10 @@ public class Tsr
         }
         if(this.has(Tsr.class)) {
             Tsr g = (Tsr)find(Tsr.class);
-            FunctionBuilder.build("I[0]<-(I[0]+I[1])", false).activate(new Tsr[]{this, g});
+            Optimizer optimizer = (Optimizer) this.find(Optimizer.class);
+            if(optimizer!=null) optimizer.optimize(g);
             remove(Tsr.class);
+            FunctionBuilder.build("I[0]<-(I[0]+I[1])", false).activate(new Tsr[]{this, g});
         }
     }
 
