@@ -258,10 +258,10 @@ public class OpenCLDevice implements Device
     private void _rmv(WeakTensorReference reference){
 <span class="fc" id="L259">        cl_tsr clt = _mapping.get(reference);</span>
 <span class="fc" id="L260">        clReleaseMemObject(clt.config);//remove translations/shapes from device!</span>
-<span class="fc bfc" id="L261" title="All 2 branches covered.">        if(clt.value.uses&lt;=1){</span>
+<span class="pc bpc" id="L261" title="1 of 2 branches missed.">        if(clt.value.uses&lt;=1){</span>
 <span class="fc" id="L262">            clReleaseMemObject(clt.value.data);</span>
         } else {
-<span class="fc" id="L264">            clt.value.uses --;</span>
+<span class="nc" id="L264">            clt.value.uses --;</span>
         }
 <span class="fc" id="L266">        _mapping.remove(reference);</span>
 <span class="fc" id="L267">    }</span>
