@@ -1,5 +1,6 @@
 package neureka.acceleration.opencl;
 
+import neureka.Neureka;
 import neureka.function.Function;
 import org.jocl.*;
 
@@ -82,6 +83,19 @@ public class OpenCLPlatform
         _devices = myDevices;
         _kernels = new HashMap<>();
 
+        _compile(devicesArray);
+
+    }
+
+    public void recompile(){
+        cl_device_id[] devicesArray = new cl_device_id[_devices.size()];
+        for(int i=0; i<devicesArray.length; i++){
+            devicesArray[i] = _devices.get(i).CLDeviceID();
+        }
+        _compile(devicesArray);
+    }
+
+    private void _compile(cl_device_id[] devicesArray){
         //Reading all kernels!
         File curDir = new File("build/resources/main/kernels/");
         File[] filesList = curDir.listFiles();
@@ -96,6 +110,13 @@ public class OpenCLPlatform
         String[] kernelNames = new String[filesList.length];
         for(int i=0; i<sources.length; i++) {
             sources[i] = _setup.readFile(filesList[i].toString());
+            //if(sources[i].contains("Neureka.settings.tsr.REVERSE_INDEX_TRANSLATION")){
+            //    System.out.println(sources[i]);
+            //}
+            sources[i] = sources[i].replace(
+                    "Neureka.settings.tsr.REVERSE_INDEX_TRANSLATION",
+                    (Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED())?"true":"false"
+            );
             if(sources[i].contains("__kernel")) {
                 String[] parts = sources[i].split("__kernel")[1].split("\\(")[0].split(" ");
                 kernelNames[i] = parts[parts.length-1];
@@ -119,7 +140,7 @@ public class OpenCLPlatform
         );
         //TODO: check compilation errors!
 
-        // Create the kernel
+        // Create the kernels
         for(String name : kernelNames){
             if(name!=null){
                 _kernels.put(

@@ -36,6 +36,7 @@ public class DefaultJavaTests {
         y.backward(new Tsr(-1));
         tester.testTensor(x, new String[]{"-16.0"});
         //===========================================
+        Neureka.settings.tsr.SET_LEGACY_INDEXING(true);
         x = new Tsr(
                 new int[]{2, 3, 1},
                 new double[]{
@@ -55,7 +56,63 @@ public class DefaultJavaTests {
 
         z = new Tsr(new Object[]{x, "x", y});
         tester.testTensor(z, new String[]{"[2x1x2]:(19.0, 22.0, 1.0, -6.0)"});
+
+        Neureka.settings.tsr.SET_LEGACY_INDEXING(false);
+        //Same test again but this time with reversed indexing:
+        x = new Tsr(
+                new int[]{2, 3, 1},
+                new double[]{
+                        3, 2, -1,
+                        -2, 2, 4
+                }
+        );
+        y = new Tsr(
+                new int[]{1, 3, 2},
+                new double[]{
+                        4, -1,
+                        3,  2,
+                        3, -1
+                });
+        /*
+                15, 2,
+                10, 2
+         */
+        z = new Tsr(new Tsr[]{x, y}, "I0xi1");
+        tester.testTensor(z, new String[]{"[2x1x2]:(15.0, 2.0, 10.0, 2.0)"});
+        z = new Tsr(new Object[]{x, "x", y});
+        tester.testTensor(z, new String[]{"[2x1x2]:(15.0, 2.0, 10.0, 2.0)"});
         //=======================
+        Neureka.settings.tsr.SET_LEGACY_INDEXING(true);
+
+        x = new Tsr(
+                new int[]{3, 3},
+                new double[]{
+                        1, 2, 5,
+                        -1, 4, -2,
+                        -2, 3, 4,
+                }
+        );
+        y = new Tsr(
+                new int[]{2, 2},
+                new double[]{
+                        -1, 3,
+                        2, 3,
+                }).setRqsGradient(true);
+
+        tester.testTensor(y, new String[]{":g:(null)"});
+        z = new Tsr(new Tsr[]{x, y}, "I0xi1");
+        tester.testTensor(z, new String[]{"[2x2]:(15.0, 15.0, 18.0, 8.0)"});
+
+        z = new Tsr(new Object[]{x, "x", y});
+        tester.testTensor(z, new String[]{"[2x2]:(15.0, 15.0, 18.0, 8.0)"});
+
+        z.backward(new Tsr(new int[]{2, 2}, 1));
+        tester.testTensor(y, new String[]{"[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)"});
+        //---
+        Neureka.settings.tsr.SET_LEGACY_INDEXING(false);
+        //--- again but now reverse: (outcome should not change...)
+
+
         x = new Tsr(
                 new int[]{3, 3},
                 new double[]{
@@ -213,6 +270,7 @@ public class DefaultJavaTests {
 
     @Test
     public void testTensorOperationsAndAutograd() {
+        Neureka.settings.tsr.SET_LEGACY_INDEXING(true);
 
         NTester_Tensor tester = new NTester_Tensor("Testing core tensor functionality");
 
@@ -533,14 +591,14 @@ public class DefaultJavaTests {
         expected = new int[]{1, 4, 4 * 2, 4 * 2 * 9, 4 * 2 * 9 * 5, 4 * 2 * 9 * 5 * 6};
         tester.testTensorUtility_translation(shape, expected);
         //---
-        shape = new int[]{4, 2, 9, 5, 6, 2};
-        expected = new int[]{1, 1, 4, 0, 0, 0};
-        tester.testTensorBase_idxFromAnchor(shape, 37, expected);
-        //---
-        shape = new int[]{4, 3, 2, 5};
-        expected = new int[]{3, 2, 1, 2};
-        int idx = (1) * 3 + (1 * 4) * 2 + (1 * 4 * 3) * 1 + (1 * 4 * 3 * 2) * 2;
-        tester.testTensorBase_idxFromAnchor(shape, idx, expected);
+        //shape = new int[]{4, 2, 9, 5, 6, 2};
+        //expected = new int[]{1, 1, 4, 0, 0, 0};
+        //tester.testTensorBase_idxFromAnchor(shape, 37, expected);
+        ////---
+        //shape = new int[]{4, 3, 2, 5};
+        //expected = new int[]{3, 2, 1, 2};
+        //int idx = (1) * 3 + (1 * 4) * 2 + (1 * 4 * 3) * 1 + (1 * 4 * 3 * 2) * 2;
+        //tester.testTensorBase_idxFromAnchor(shape, idx, expected);
         //---
         int[] frstShape = {4, 1};
         double[] frstData = {

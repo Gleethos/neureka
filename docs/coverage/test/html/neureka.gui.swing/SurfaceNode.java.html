@@ -120,8 +120,8 @@ public class SurfaceNode implements SurfaceObject {
     }
 
     public void setHasMoved(boolean moved) {
-<span class="nc" id="L123">        hasJustBeenMoved = moved;</span>
-<span class="nc" id="L124">    }</span>
+<span class="fc" id="L123">        hasJustBeenMoved = moved;</span>
+<span class="fc" id="L124">    }</span>
 
     //------------------------------------------
     public SurfaceNodeInput getInputNode() {
@@ -181,20 +181,20 @@ public class SurfaceNode implements SurfaceObject {
         //GraphSurface.setObjectMap(GraphSurface.getObjectMap().removeAndUpdate(this));
         // if(GraphSurface.getObjectMap()==null) {GraphSurface.setObjectMap(new NPanelMapBranch(getX(), getY(), 50000));}
 
-<span class="nc" id="L184">        double startX = data[0];</span>
-<span class="nc" id="L185">        double startY = data[1];</span>
-<span class="nc" id="L186">        double targX = data[2];</span>
-<span class="nc" id="L187">        double targY = data[3];</span>
+<span class="fc" id="L184">        double startX = data[0];</span>
+<span class="fc" id="L185">        double startY = data[1];</span>
+<span class="fc" id="L186">        double targX = data[2];</span>
+<span class="fc" id="L187">        double targY = data[3];</span>
 
-<span class="nc" id="L189">        ArrayList&lt;SurfaceRepaintSpace&gt; queue = new ArrayList&lt;SurfaceRepaintSpace&gt;();</span>
-<span class="nc" id="L190">        hasJustBeenMoved = true;</span>
-<span class="nc bnc" id="L191" title="All 2 branches missed.">        if (testForBody(startX, startY)) {</span>
-<span class="nc" id="L192">            double shiftX = startX - position[0];</span>
-<span class="nc" id="L193">            double shiftY = startY - position[1];</span>
-<span class="nc" id="L194">            double[] newData = {(targX - shiftX), (targY - shiftY)};</span>
-<span class="nc" id="L195">            queue.addAll(moveTo(newData, Surface));</span>
+<span class="fc" id="L189">        ArrayList&lt;SurfaceRepaintSpace&gt; queue = new ArrayList&lt;SurfaceRepaintSpace&gt;();</span>
+<span class="fc" id="L190">        hasJustBeenMoved = true;</span>
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">        if (testForBody(startX, startY)) {</span>
+<span class="fc" id="L192">            double shiftX = startX - position[0];</span>
+<span class="fc" id="L193">            double shiftY = startY - position[1];</span>
+<span class="fc" id="L194">            double[] newData = {(targX - shiftX), (targY - shiftY)};</span>
+<span class="fc" id="L195">            queue.addAll(moveTo(newData, Surface));</span>
         }
-<span class="nc" id="L197">        return queue;</span>
+<span class="fc" id="L197">        return queue;</span>
     }
 
     //---------------------
@@ -286,7 +286,7 @@ public class SurfaceNode implements SurfaceObject {
         }
 <span class="fc" id="L287">        double mag = Math.abs(SurfaceUtility.magnitudeOf(velX, velY));</span>
 <span class="fc bfc" id="L288" title="All 4 branches covered.">        if (!isOnDeck &amp;&amp; mag &gt; 10) {</span>
-<span class="pc bpc" id="L289" title="1 of 2 branches missed.">            double s = (mag &gt; diameter) ? diameter : mag;</span>
+<span class="fc bfc" id="L289" title="All 2 branches covered.">            double s = (mag &gt; diameter) ? diameter : mag;</span>
 <span class="fc" id="L290">            queue.addAll(</span>
 <span class="fc" id="L291">                    this.moveTo(</span>
                             new double[]{
@@ -412,7 +412,7 @@ public class SurfaceNode implements SurfaceObject {
 <span class="fc" id="L412">                        Animator.countDownFor(this, (frameDelta / 4), animationID);</span>
                     }
 
-<span class="pc bpc" id="L415" title="1 of 4 branches missed.">                    if (Animator.getCounterOf(this, animationID) &lt;= 0 &amp;&amp; deckAnimationRunning == false) {</span>
+<span class="fc bfc" id="L415" title="All 4 branches covered.">                    if (Animator.getCounterOf(this, animationID) &lt;= 0 &amp;&amp; deckAnimationRunning == false) {</span>
 <span class="fc" id="L416">                        Animator.removeCounterOf(this, animationID);</span>
 <span class="fc" id="L417">                        deckButtonColor = new Color(0, 255, 255, (0));</span>
 <span class="fc" id="L418">                        wasOnDeckButton = false;</span>
@@ -427,7 +427,7 @@ public class SurfaceNode implements SurfaceObject {
 <span class="fc bfc" id="L427" title="All 2 branches covered.">            if (deckAnimationRunning) {</span>
 <span class="pc bpc" id="L428" title="1 of 2 branches missed.">                if (Animator.hasCounter(this, animationID)) {</span>
 <span class="fc" id="L429">                    Animator.countDownFor(this, 6 * frameDelta, animationID);</span>
-<span class="pc bpc" id="L430" title="1 of 2 branches missed.">                    if (Animator.getCounterOf(this, animationID) &lt;= 0) {</span>
+<span class="fc bfc" id="L430" title="All 2 branches covered.">                    if (Animator.getCounterOf(this, animationID) &lt;= 0) {</span>
 <span class="fc" id="L431">                        Animator.countUpFor(this, 1 - Animator.getCounterOf(this, animationID), animationID);</span>
                     }
                     //if(Animator.getCounterOf(this, animationID)&gt;=0) {animationID++;}
@@ -527,10 +527,10 @@ public class SurfaceNode implements SurfaceObject {
 <span class="fc" id="L527">            hoveringOverDeckButton = true;</span>
         }
 
-<span class="pc bpc" id="L530" title="1 of 2 branches missed.">        if(InputNode!=null) {</span>
-<span class="fc bfc" id="L531" title="All 2 branches covered.">            if (InputNode .testFor(trueMouseX, trueMouseY)) {</span>
-<span class="pc bpc" id="L532" title="1 of 2 branches missed.">                if (isOnDeck == true) wasOnDeck = true;</span>
-<span class="fc" id="L533">                isOnDeck = true;</span>
+<span class="fc bfc" id="L530" title="All 2 branches covered.">        if(InputNode!=null) {</span>
+<span class="pc bpc" id="L531" title="1 of 2 branches missed.">            if (InputNode .testFor(trueMouseX, trueMouseY)) {</span>
+<span class="nc bnc" id="L532" title="All 2 branches missed.">                if (isOnDeck == true) wasOnDeck = true;</span>
+<span class="nc" id="L533">                isOnDeck = true;</span>
             }
         }
 <span class="fc" id="L536">    }</span>
@@ -539,7 +539,7 @@ public class SurfaceNode implements SurfaceObject {
     @Override
     public boolean clickedAt(double x, double y, Surface hostSurface) {
 <span class="pc bpc" id="L541" title="1 of 2 branches missed.">        if (deckAnimationRunning == true) return false;</span>
-<span class="pc bpc" id="L542" title="1 of 2 branches missed.">        if (testForButton_Open((x), (y), hostSurface.getScale())) {//this.getNeuron().getPropertyHub().addProperty(new NNeuronControlFrame(&quot;TEST&quot;, this.getNeuron()));</span>
+<span class="fc bfc" id="L542" title="All 2 branches covered.">        if (testForButton_Open((x), (y), hostSurface.getScale())) {//this.getNeuron().getPropertyHub().addProperty(new NNeuronControlFrame(&quot;TEST&quot;, this.getNeuron()));</span>
 <span class="fc" id="L543">            this.deckAnimationRunning = true;</span>
         }
 <span class="fc" id="L545">        return true;</span>
@@ -547,13 +547,14 @@ public class SurfaceNode implements SurfaceObject {
 
     @Override
     public boolean doubleClickedAt(double x, double y, Surface hostSurface) {
-<span class="nc" id="L550">        boolean check = false;</span>
-<span class="nc bnc" id="L551" title="All 2 branches missed.">        if (InputNode .testFor(x, y)) check = true;</span>
-
-<span class="nc bnc" id="L553" title="All 2 branches missed.">        if (check == true) {</span>
-<span class="nc" id="L554">            this.InputNode = (new SurfaceNodeInput(getX(), getY(), diameter / 2));</span>
+<span class="fc" id="L550">        boolean check = false;</span>
+<span class="pc bpc" id="L551" title="1 of 2 branches missed.">        if(InputNode!=null){</span>
+<span class="nc bnc" id="L552" title="All 2 branches missed.">            if (InputNode.testFor(x, y)) check = true;</span>
+<span class="nc bnc" id="L553" title="All 2 branches missed.">            if (check == true) {</span>
+<span class="nc" id="L554">                this.InputNode = (new SurfaceNodeInput(getX(), getY(), diameter / 2));</span>
+            }
         }
-<span class="nc" id="L556">        return false;</span>
+<span class="fc" id="L557">        return false;</span>
     }
 
     // SENSING:
@@ -561,78 +562,78 @@ public class SurfaceNode implements SurfaceObject {
     // --------------------------------------------------------------------------------------------
     public boolean isAttachable(double trueX, double trueY, double panelScale) {
 
-<span class="nc bnc" id="L564" title="All 2 branches missed.">        if (deckAnimationRunning == false) {</span>
-<span class="nc bnc" id="L565" title="All 2 branches missed.">            if (testForButton_Open(trueX, trueY, panelScale)) {</span>
-<span class="nc" id="L566">                return false;</span>
+<span class="nc bnc" id="L565" title="All 2 branches missed.">        if (deckAnimationRunning == false) {</span>
+<span class="nc bnc" id="L566" title="All 2 branches missed.">            if (testForButton_Open(trueX, trueY, panelScale)) {</span>
+<span class="nc" id="L567">                return false;</span>
             }
         }
-<span class="nc bnc" id="L569" title="All 2 branches missed.">        if (InputNode!=null) {</span>
-<span class="nc bnc" id="L570" title="All 2 branches missed.">            if (InputNode .testFor(trueX, trueY)) return false;</span>
+<span class="nc bnc" id="L570" title="All 2 branches missed.">        if (InputNode!=null) {</span>
+<span class="nc bnc" id="L571" title="All 2 branches missed.">            if (InputNode .testFor(trueX, trueY)) return false;</span>
         }
-<span class="nc" id="L572">        double d = Math.pow(Math.pow((trueX - position[2]), 2) + Math.pow((trueY - position[3]), 2), 0.5);</span>
-<span class="nc bnc" id="L573" title="All 2 branches missed.">        if (d &lt;= diameter * 2.5) {</span>
-<span class="nc" id="L574">            return true;</span>
+<span class="nc" id="L573">        double d = Math.pow(Math.pow((trueX - position[2]), 2) + Math.pow((trueY - position[3]), 2), 0.5);</span>
+<span class="nc bnc" id="L574" title="All 2 branches missed.">        if (d &lt;= diameter * 2.5) {</span>
+<span class="nc" id="L575">            return true;</span>
         }
-<span class="nc" id="L576">        return true;</span>
+<span class="nc" id="L577">        return true;</span>
     }
 
     // TESTFOR FUNCTIONS:
     // --------------------------------------------------------------------------------------------
     public boolean testForBody(double x, double y) {
-<span class="fc" id="L582">        double d = Math.pow(Math.pow((x - position[0]), 2) + Math.pow((y - position[1]), 2), 0.5);</span>
-<span class="fc bfc" id="L583" title="All 2 branches covered.">        if(InputNode!=null) {</span>
-<span class="fc bfc" id="L584" title="All 2 branches covered.">            if (InputNode .testFor(x, y)) {</span>
-<span class="fc" id="L585">                return true;</span>
+<span class="fc" id="L583">        double d = Math.pow(Math.pow((x - position[0]), 2) + Math.pow((y - position[1]), 2), 0.5);</span>
+<span class="fc bfc" id="L584" title="All 2 branches covered.">        if(InputNode!=null) {</span>
+<span class="pc bpc" id="L585" title="1 of 2 branches missed.">            if (InputNode .testFor(x, y)) {</span>
+<span class="nc" id="L586">                return true;</span>
             }
         }
-<span class="fc bfc" id="L588" title="All 2 branches covered.">        if (d &lt;= diameter / 2) return true;</span>
-<span class="fc" id="L589">        return false;</span>
+<span class="fc bfc" id="L589" title="All 2 branches covered.">        if (d &lt;= diameter / 2) return true;</span>
+<span class="fc" id="L590">        return false;</span>
     }
 
     // --------------------------------------------------------------------------------------------
     public boolean testForBody_Root(double x, double y) {
-<span class="fc" id="L594">        return false;</span>
+<span class="fc" id="L595">        return false;</span>
     }
 
     // --------------------------------------------------------------------------------------------
     public boolean testForButton_Open(double trueMouseX, double trueMouseY, double panelScale) {
-<span class="fc bfc" id="L599" title="All 2 branches covered.">        if (this.deckAnimationRunning) {</span>
-<span class="fc" id="L600">            hoveringOverDeckButton = false;</span>
-<span class="fc" id="L601">            isOnDeck = false;</span>
-<span class="fc" id="L602">            return false;</span>
+<span class="fc bfc" id="L600" title="All 2 branches covered.">        if (this.deckAnimationRunning) {</span>
+<span class="fc" id="L601">            hoveringOverDeckButton = false;</span>
+<span class="fc" id="L602">            isOnDeck = false;</span>
+<span class="fc" id="L603">            return false;</span>
         }
-<span class="fc" id="L604">        double modifier = panelScaleModifier(panelScale);</span>
-<span class="fc" id="L605">        int x = (int) position[0];</span>
-<span class="fc" id="L606">        int y = (int) position[1];</span>
-<span class="fc" id="L607">        boolean check = true;</span>
-<span class="fc bfc" id="L608" title="All 2 branches covered.">        if (trueMouseX &lt; x - (int) (diameter / 4 * Math.pow(modifier, 100 / modifier)) / 2) {</span>
-<span class="fc" id="L609">            check = false;</span>
+<span class="fc" id="L605">        double modifier = panelScaleModifier(panelScale);</span>
+<span class="fc" id="L606">        int x = (int) position[0];</span>
+<span class="fc" id="L607">        int y = (int) position[1];</span>
+<span class="fc" id="L608">        boolean check = true;</span>
+<span class="fc bfc" id="L609" title="All 2 branches covered.">        if (trueMouseX &lt; x - (int) (diameter / 4 * Math.pow(modifier, 100 / modifier)) / 2) {</span>
+<span class="fc" id="L610">            check = false;</span>
         }
-<span class="fc bfc" id="L611" title="All 2 branches covered.">        if (trueMouseY &lt; y - (int) (diameter / 8 * Math.pow(modifier, 100 / modifier)) / 2) {</span>
-<span class="fc" id="L612">            check = false;</span>
+<span class="fc bfc" id="L612" title="All 2 branches covered.">        if (trueMouseY &lt; y - (int) (diameter / 8 * Math.pow(modifier, 100 / modifier)) / 2) {</span>
+<span class="fc" id="L613">            check = false;</span>
         }
-<span class="fc bfc" id="L614" title="All 2 branches covered.">        if (trueMouseX &gt; x + (int) (diameter / 4 * Math.pow(modifier, 100 / modifier)) / 2) {</span>
-<span class="fc" id="L615">            check = false;</span>
+<span class="fc bfc" id="L615" title="All 2 branches covered.">        if (trueMouseX &gt; x + (int) (diameter / 4 * Math.pow(modifier, 100 / modifier)) / 2) {</span>
+<span class="fc" id="L616">            check = false;</span>
         }
-<span class="fc bfc" id="L617" title="All 2 branches covered.">        if (trueMouseY &gt; y + (int) (diameter / 8 * Math.pow(modifier, 100 / modifier)) / 2) {</span>
-<span class="fc" id="L618">            check = false;</span>
+<span class="fc bfc" id="L618" title="All 2 branches covered.">        if (trueMouseY &gt; y + (int) (diameter / 8 * Math.pow(modifier, 100 / modifier)) / 2) {</span>
+<span class="fc" id="L619">            check = false;</span>
         }
-<span class="pc bpc" id="L620" title="1 of 4 branches missed.">        if (hoveringOverDeckButton == true &amp;&amp; deckAnimationRunning == false) {</span>
-<span class="fc" id="L621">            wasOnDeckButton = hoveringOverDeckButton;</span>
+<span class="pc bpc" id="L621" title="1 of 4 branches missed.">        if (hoveringOverDeckButton == true &amp;&amp; deckAnimationRunning == false) {</span>
+<span class="fc" id="L622">            wasOnDeckButton = hoveringOverDeckButton;</span>
         }
-<span class="fc" id="L623">        hoveringOverDeckButton = check;</span>
-<span class="pc bpc" id="L624" title="1 of 4 branches missed.">        if (check &amp;&amp; deckAnimationRunning == false) wasOnDeckButton = true;</span>
-<span class="fc" id="L625">        return check;</span>
+<span class="fc" id="L624">        hoveringOverDeckButton = check;</span>
+<span class="pc bpc" id="L625" title="1 of 4 branches missed.">        if (check &amp;&amp; deckAnimationRunning == false) wasOnDeckButton = true;</span>
+<span class="fc" id="L626">        return check;</span>
     }
 
     // --------------------------------------------------------------------------------------------
     public SurfaceNodeInput testFor_AndGet_InputNode(double trueX, double trueY) {
-<span class="pc bpc" id="L630" title="1 of 2 branches missed.">        if (InputNode!=null) {</span>
-<span class="pc bpc" id="L631" title="1 of 2 branches missed.">            if (InputNode .testFor(trueX, trueY)) {</span>
-<span class="nc" id="L632">                return InputNode ;</span>
+<span class="fc bfc" id="L631" title="All 2 branches covered.">        if (InputNode!=null) {</span>
+<span class="pc bpc" id="L632" title="1 of 2 branches missed.">            if (InputNode .testFor(trueX, trueY)) {</span>
+<span class="nc" id="L633">                return InputNode ;</span>
             }
         }
-<span class="fc" id="L635">        return null;</span>
+<span class="fc" id="L636">        return null;</span>
     }
 
     //CONNECTION REPAINT SPACE
@@ -641,364 +642,364 @@ public class SurfaceNode implements SurfaceObject {
     private ArrayList&lt;SurfaceRepaintSpace&gt; updateConnectionVectorAndGetRepaintSpace(boolean convection) // OPTIMIZATION?
     {//System.out.println(&quot;convection: &quot;+convection);
         //-&gt; checking if connection points are within frame!
-<span class="fc" id="L644">        double vX = 0;</span>
-<span class="fc" id="L645">        double vY = 0;</span>
-<span class="fc" id="L646">        ArrayList&lt;SurfaceRepaintSpace&gt; queue = new ArrayList&lt;SurfaceRepaintSpace&gt;();</span>
-<span class="fc" id="L647">        ArrayList&lt;SurfaceNode&gt; connection = this.getConnection();</span>
-<span class="pc bpc" id="L648" title="1 of 4 branches missed.">        if (connection != null &amp;&amp; connection.size() &gt; 0) {</span>
-<span class="fc bfc" id="L649" title="All 2 branches covered.">            for (int Ii = 0; Ii &lt; connection.size(); Ii++) {</span>
+<span class="fc" id="L645">        double vX = 0;</span>
+<span class="fc" id="L646">        double vY = 0;</span>
+<span class="fc" id="L647">        ArrayList&lt;SurfaceRepaintSpace&gt; queue = new ArrayList&lt;SurfaceRepaintSpace&gt;();</span>
+<span class="fc" id="L648">        ArrayList&lt;SurfaceNode&gt; connection = this.getConnection();</span>
+<span class="pc bpc" id="L649" title="1 of 4 branches missed.">        if (connection != null &amp;&amp; connection.size() &gt; 0) {</span>
+<span class="fc bfc" id="L650" title="All 2 branches covered.">            for (int Ii = 0; Ii &lt; connection.size(); Ii++) {</span>
                 //System.out.println(&quot;Ii:&quot;+Ii);
-<span class="fc" id="L651">                boolean connectionMoved = this.justMoved();</span>
-<span class="pc bpc" id="L652" title="1 of 4 branches missed.">                if (connection.get(Ii) != null &amp;&amp; !connectionMoved) {</span>
-<span class="pc bpc" id="L653" title="1 of 2 branches missed.">                    if ((connection.get(Ii)).justMoved()) {</span>
-<span class="nc" id="L654">                        connectionMoved = true;</span>
+<span class="fc" id="L652">                boolean connectionMoved = this.justMoved();</span>
+<span class="pc bpc" id="L653" title="1 of 4 branches missed.">                if (connection.get(Ii) != null &amp;&amp; !connectionMoved) {</span>
+<span class="pc bpc" id="L654" title="1 of 2 branches missed.">                    if ((connection.get(Ii)).justMoved()) {</span>
+<span class="nc" id="L655">                        connectionMoved = true;</span>
                     }
                 }
-<span class="pc bpc" id="L657" title="1 of 6 branches missed.">                if (connectionMoved || InputNode .changeOccured() || convection) {//=================================================================</span>
-<span class="pc bpc" id="L658" title="1 of 2 branches missed.">                    if (connection.get(Ii) != null) {</span>
-<span class="fc" id="L659">                        vX = (connection.get(Ii)).getX() - getX();</span>
-<span class="fc" id="L660">                        vY = (connection.get(Ii)).getY() - getY();</span>
-<span class="pc bpc" id="L661" title="3 of 4 branches missed.">                        if (vX == 0 &amp;&amp; vY == 0) {</span>
-<span class="nc" id="L662">                            Random dice = new Random();</span>
-<span class="nc" id="L663">                            vX = dice.nextDouble() % 1;</span>
-<span class="nc" id="L664">                            vY = dice.nextDouble() % 1;</span>
+<span class="pc bpc" id="L658" title="1 of 6 branches missed.">                if (connectionMoved || InputNode .changeOccured() || convection) {//=================================================================</span>
+<span class="pc bpc" id="L659" title="1 of 2 branches missed.">                    if (connection.get(Ii) != null) {</span>
+<span class="fc" id="L660">                        vX = (connection.get(Ii)).getX() - getX();</span>
+<span class="fc" id="L661">                        vY = (connection.get(Ii)).getY() - getY();</span>
+<span class="pc bpc" id="L662" title="3 of 4 branches missed.">                        if (vX == 0 &amp;&amp; vY == 0) {</span>
+<span class="nc" id="L663">                            Random dice = new Random();</span>
+<span class="nc" id="L664">                            vX = dice.nextDouble() % 1;</span>
+<span class="nc" id="L665">                            vY = dice.nextDouble() % 1;</span>
                         }
-<span class="fc" id="L666">                        InputNode .addToVel(2 * vX / getRadius(), 2 * vY / getRadius());</span>
-<span class="fc" id="L667">                        double pX = (connection.get(Ii)).getX();</span>
-<span class="fc" id="L668">                        double pY = (connection.get(Ii)).getY();</span>
-<span class="fc" id="L669">                        double pvX = (pX - getX());</span>
-<span class="fc" id="L670">                        double pvY = (pY - getY());// v from self center to current parent</span>
+<span class="fc" id="L667">                        InputNode .addToVel(2 * vX / getRadius(), 2 * vY / getRadius());</span>
+<span class="fc" id="L668">                        double pX = (connection.get(Ii)).getX();</span>
+<span class="fc" id="L669">                        double pY = (connection.get(Ii)).getY();</span>
+<span class="fc" id="L670">                        double pvX = (pX - getX());</span>
+<span class="fc" id="L671">                        double pvY = (pY - getY());// v from self center to current parent</span>
                         //---
-<span class="fc" id="L672">                        double ivX = InputNode .getX() - getX();</span>
-<span class="fc" id="L673">                        double ivY = InputNode .getY() - getY();// v from self center to input node</span>
-<span class="fc" id="L674">                        double d = SurfaceUtility.magnitudeOf(ivX, ivY);</span>
-<span class="fc" id="L675">                        ivX /= d;</span>
-<span class="fc" id="L676">                        ivY /= d;</span>
-<span class="fc" id="L677">                        d = SurfaceUtility.magnitudeOf(pvX, pvY);</span>
-<span class="fc" id="L678">                        ivX *= d;</span>
-<span class="fc" id="L679">                        ivY *= d;</span>
+<span class="fc" id="L673">                        double ivX = InputNode .getX() - getX();</span>
+<span class="fc" id="L674">                        double ivY = InputNode .getY() - getY();// v from self center to input node</span>
+<span class="fc" id="L675">                        double d = SurfaceUtility.magnitudeOf(ivX, ivY);</span>
+<span class="fc" id="L676">                        ivX /= d;</span>
+<span class="fc" id="L677">                        ivY /= d;</span>
+<span class="fc" id="L678">                        d = SurfaceUtility.magnitudeOf(pvX, pvY);</span>
+<span class="fc" id="L679">                        ivX *= d;</span>
+<span class="fc" id="L680">                        ivY *= d;</span>
 
-<span class="fc" id="L681">                        ivX = ivX - pX;</span>
-<span class="fc" id="L682">                        ivY = ivY - pY;</span>
+<span class="fc" id="L682">                        ivX = ivX - pX;</span>
+<span class="fc" id="L683">                        ivY = ivY - pY;</span>
                         //d = SurfaceUtility.magnitudeOf(ivX, ivY)/(getRadius());
                         //System.out.println(d+&quot; -&gt; &quot;+((2/(1+22/(d*d*d*d*d*d)))-1));
                         //d = ((10/(1+22/(d*d*d*d*d*d)))-9);//((2/(2+1/d))-1);
-<span class="fc" id="L686">                        ivX = -2 * ((getX() + ivX) / getRadius());//*Math.pow(d/(2*diameter), 2);</span>
-<span class="fc" id="L687">                        ivY = -2 * ((getY() + ivY) / getRadius());//*Math.pow(d/(2*diameter), 2);</span>
-<span class="fc" id="L688">                        connection.get(Ii).addToVel(ivX, ivY);</span>
+<span class="fc" id="L687">                        ivX = -2 * ((getX() + ivX) / getRadius());//*Math.pow(d/(2*diameter), 2);</span>
+<span class="fc" id="L688">                        ivY = -2 * ((getY() + ivY) / getRadius());//*Math.pow(d/(2*diameter), 2);</span>
+<span class="fc" id="L689">                        connection.get(Ii).addToVel(ivX, ivY);</span>
                         //---
-<span class="pc bpc" id="L690" title="1 of 4 branches missed.">                        if (InputNode .changeOccured() || convection) {</span>
+<span class="pc bpc" id="L691" title="1 of 4 branches missed.">                        if (InputNode .changeOccured() || convection) {</span>
 
-<span class="pc bpc" id="L692" title="1 of 2 branches missed.">                            if (dataDisplayUpdateRequest) {</span>
-<span class="nc" id="L693">                                double midPX = InputNode .getX() + (pX - InputNode .getX()) / 3.25;</span>
-<span class="nc" id="L694">                                double midPY = InputNode .getY() + (pY - InputNode .getY()) / 3.25;</span>
+<span class="pc bpc" id="L693" title="1 of 2 branches missed.">                            if (dataDisplayUpdateRequest) {</span>
+<span class="nc" id="L694">                                double midPX = InputNode .getX() + (pX - InputNode .getX()) / 3.25;</span>
+<span class="nc" id="L695">                                double midPY = InputNode .getY() + (pY - InputNode .getY()) / 3.25;</span>
                                 //Connection display REPAINT:
-<span class="nc" id="L696">                                queue.add(new SurfaceRepaintSpace((midPX), (midPY), 50, 25));</span>
+<span class="nc" id="L697">                                queue.add(new SurfaceRepaintSpace((midPX), (midPY), 50, 25));</span>
                             }
 
-<span class="fc" id="L699">                            double repaintCenterX = getX() + (pvX) / 2;</span>
-<span class="fc" id="L700">                            double repaintCenterY = getY() + (pvY) / 2;</span>
-<span class="fc" id="L701">                            double distanceX = Math.abs((pX - getX()) / 2);</span>
-<span class="fc" id="L702">                            double distanceY = Math.abs((pY - getY()) / 2);</span>
-<span class="pc bpc" id="L703" title="1 of 2 branches missed.">                            if (convection) {</span>
-<span class="nc" id="L704">                                d = Math.pow(Math.pow(pvX, 2) + Math.pow(pvY, 2), 0.5);</span>
-<span class="nc" id="L705">                                double v0X = pvX / d;</span>
-<span class="nc" id="L706">                                double v0Y = pvY / d;</span>
-<span class="nc" id="L707">                                double normalX = (-v0Y) * diameter / 2;</span>
-<span class="nc" id="L708">                                double normalY = (v0X) * diameter / 2;</span>
-<span class="nc" id="L709">                                double sideVecOneX = (pX + normalX) - repaintCenterX;</span>
-<span class="nc" id="L710">                                double sideVecOneY = (pY + normalY) - repaintCenterY;</span>
-<span class="nc" id="L711">                                double sideVecTwoX = (pX - normalX) - repaintCenterX;</span>
-<span class="nc" id="L712">                                double sideVecTwoY = (pY - normalY) - repaintCenterY;</span>
-<span class="nc bnc" id="L713" title="All 2 branches missed.">                                if (sideVecOneX &gt; distanceX) distanceX = sideVecOneX;</span>
-<span class="nc bnc" id="L714" title="All 2 branches missed.">                                if (sideVecTwoX &gt; distanceX) distanceX = sideVecTwoX;</span>
-<span class="nc bnc" id="L715" title="All 2 branches missed.">                                if (sideVecOneY &gt; distanceY) distanceY = sideVecOneY;</span>
-<span class="nc bnc" id="L716" title="All 2 branches missed.">                                if (sideVecTwoY &gt; distanceY) distanceY = sideVecTwoY;</span>
+<span class="fc" id="L700">                            double repaintCenterX = getX() + (pvX) / 2;</span>
+<span class="fc" id="L701">                            double repaintCenterY = getY() + (pvY) / 2;</span>
+<span class="fc" id="L702">                            double distanceX = Math.abs((pX - getX()) / 2);</span>
+<span class="fc" id="L703">                            double distanceY = Math.abs((pY - getY()) / 2);</span>
+<span class="pc bpc" id="L704" title="1 of 2 branches missed.">                            if (convection) {</span>
+<span class="nc" id="L705">                                d = Math.pow(Math.pow(pvX, 2) + Math.pow(pvY, 2), 0.5);</span>
+<span class="nc" id="L706">                                double v0X = pvX / d;</span>
+<span class="nc" id="L707">                                double v0Y = pvY / d;</span>
+<span class="nc" id="L708">                                double normalX = (-v0Y) * diameter / 2;</span>
+<span class="nc" id="L709">                                double normalY = (v0X) * diameter / 2;</span>
+<span class="nc" id="L710">                                double sideVecOneX = (pX + normalX) - repaintCenterX;</span>
+<span class="nc" id="L711">                                double sideVecOneY = (pY + normalY) - repaintCenterY;</span>
+<span class="nc" id="L712">                                double sideVecTwoX = (pX - normalX) - repaintCenterX;</span>
+<span class="nc" id="L713">                                double sideVecTwoY = (pY - normalY) - repaintCenterY;</span>
+<span class="nc bnc" id="L714" title="All 2 branches missed.">                                if (sideVecOneX &gt; distanceX) distanceX = sideVecOneX;</span>
+<span class="nc bnc" id="L715" title="All 2 branches missed.">                                if (sideVecTwoX &gt; distanceX) distanceX = sideVecTwoX;</span>
+<span class="nc bnc" id="L716" title="All 2 branches missed.">                                if (sideVecOneY &gt; distanceY) distanceY = sideVecOneY;</span>
+<span class="nc bnc" id="L717" title="All 2 branches missed.">                                if (sideVecTwoY &gt; distanceY) distanceY = sideVecTwoY;</span>
                             }
-<span class="fc" id="L718">                            queue.add(new SurfaceRepaintSpace(</span>
+<span class="fc" id="L719">                            queue.add(new SurfaceRepaintSpace(</span>
                                     repaintCenterX,
                                     repaintCenterY,
                                     distanceX,
                                     distanceY));
-<span class="pc bpc" id="L723" title="1 of 2 branches missed.">                            if (!convection) {</span>
-<span class="fc" id="L724">                                queue.add(InputNode .getRepaintSpace());</span>
+<span class="pc bpc" id="L724" title="1 of 2 branches missed.">                            if (!convection) {</span>
+<span class="fc" id="L725">                                queue.add(InputNode .getRepaintSpace());</span>
                             }
-<span class="fc" id="L726">                            InputNode .forgetChange();</span>
+<span class="fc" id="L727">                            InputNode .forgetChange();</span>
                         }
                     }//=================================================================
                 }
             }
         }
-<span class="fc" id="L732">        return queue;</span>
+<span class="fc" id="L733">        return queue;</span>
     }
 
     //PAINTING:
     //--------------------------------------------------------------------------------------------
     //=============================================================================================
     private void paintNodeConnections(Graphics2D brush, Animator Animator) {
-<span class="fc" id="L739">        Color connectionColor = Color.CYAN;</span>
-<span class="fc" id="L740">        int animationID = 0;</span>
-<span class="fc" id="L741">        int convectionCounter = 0;</span>
-<span class="fc" id="L742">        boolean activityCheck = false;</span>
-<span class="fc bfc" id="L743" title="All 2 branches covered.">        if (InputNode!=null)  {</span>
-<span class="pc bpc" id="L744" title="1 of 2 branches missed.">            if (InputNode .isActive()) {</span>
-<span class="nc" id="L745">                activityCheck = true;</span>
+<span class="fc" id="L740">        Color connectionColor = Color.CYAN;</span>
+<span class="fc" id="L741">        int animationID = 0;</span>
+<span class="fc" id="L742">        int convectionCounter = 0;</span>
+<span class="fc" id="L743">        boolean activityCheck = false;</span>
+<span class="fc bfc" id="L744" title="All 2 branches covered.">        if (InputNode!=null)  {</span>
+<span class="pc bpc" id="L745" title="1 of 2 branches missed.">            if (InputNode .isActive()) {</span>
+<span class="nc" id="L746">                activityCheck = true;</span>
                 //Ii = InputNode.size();
             }
         }
-<span class="fc" id="L749">        animationID = 3;</span>
-<span class="pc bpc" id="L750" title="1 of 2 branches missed.">        if (activityCheck) {</span>
-<span class="nc" id="L751">            convectionCounter = Animator.getCounterOf(this, animationID);</span>
+<span class="fc" id="L750">        animationID = 3;</span>
+<span class="pc bpc" id="L751" title="1 of 2 branches missed.">        if (activityCheck) {</span>
+<span class="nc" id="L752">            convectionCounter = Animator.getCounterOf(this, animationID);</span>
         }
         //=======================================================================================================================
-<span class="fc" id="L754">        ArrayList&lt;SurfaceNode&gt; connection = getConnection();</span>
-<span class="pc bpc" id="L755" title="1 of 2 branches missed.">        if (connection != null) {</span>
-<span class="fc bfc" id="L756" title="All 2 branches covered.">            for (int Ii = 0; Ii &lt; connection.size(); Ii++) {</span>
-<span class="pc bpc" id="L757" title="1 of 2 branches missed.">                if (connection.get(Ii) != null) {</span>
-<span class="fc" id="L758">                    double selfCenterX = InputNode .getX();</span>
-<span class="fc" id="L759">                    double selfCenterY = InputNode .getY();</span>
-<span class="fc" id="L760">                    double inputVecX = selfCenterX - getX();</span>
-<span class="fc" id="L761">                    double inputVecY = selfCenterY - getY();</span>
+<span class="fc" id="L755">        ArrayList&lt;SurfaceNode&gt; connection = getConnection();</span>
+<span class="pc bpc" id="L756" title="1 of 2 branches missed.">        if (connection != null) {</span>
+<span class="fc bfc" id="L757" title="All 2 branches covered.">            for (int Ii = 0; Ii &lt; connection.size(); Ii++) {</span>
+<span class="pc bpc" id="L758" title="1 of 2 branches missed.">                if (connection.get(Ii) != null) {</span>
+<span class="fc" id="L759">                    double selfCenterX = InputNode .getX();</span>
+<span class="fc" id="L760">                    double selfCenterY = InputNode .getY();</span>
+<span class="fc" id="L761">                    double inputVecX = selfCenterX - getX();</span>
+<span class="fc" id="L762">                    double inputVecY = selfCenterY - getY();</span>
 
-<span class="fc" id="L763">                    double connectionX = ((SurfaceNode) connection.get(Ii)).getX();</span>
-<span class="fc" id="L764">                    double connectionY = ((SurfaceNode) connection.get(Ii)).getY();</span>
+<span class="fc" id="L764">                    double connectionX = ((SurfaceNode) connection.get(Ii)).getX();</span>
+<span class="fc" id="L765">                    double connectionY = ((SurfaceNode) connection.get(Ii)).getY();</span>
 
-<span class="fc" id="L766">                    GeneralPath bezier = new GeneralPath();</span>
+<span class="fc" id="L767">                    GeneralPath bezier = new GeneralPath();</span>
 
-<span class="fc" id="L768">                    double vectorX = (connectionX - selfCenterX);</span>
-<span class="fc" id="L769">                    double vectorY = (connectionY - selfCenterY);</span>
+<span class="fc" id="L769">                    double vectorX = (connectionX - selfCenterX);</span>
+<span class="fc" id="L770">                    double vectorY = (connectionY - selfCenterY);</span>
 
-<span class="fc" id="L771">                    double otherX = selfCenterX + vectorX;</span>
-<span class="fc" id="L772">                    double otherY = selfCenterY + vectorY;</span>
+<span class="fc" id="L772">                    double otherX = selfCenterX + vectorX;</span>
+<span class="fc" id="L773">                    double otherY = selfCenterY + vectorY;</span>
 
-<span class="fc" id="L774">                    SurfaceUtility math = new SurfaceUtility();</span>
+<span class="fc" id="L775">                    SurfaceUtility math = new SurfaceUtility();</span>
 
-<span class="fc" id="L776">                    double deg = math.unitaryVectorProduct(vectorX, vectorY, inputVecX, inputVecY);</span>
+<span class="fc" id="L777">                    double deg = math.unitaryVectorProduct(vectorX, vectorY, inputVecX, inputVecY);</span>
                     //System.out.println(deg);
-<span class="fc" id="L778">                    double outerX = selfCenterX + inputVecX * (1 + Math.abs(deg));</span>
-<span class="fc" id="L779">                    double outerY = selfCenterY + inputVecY * (1 + Math.abs(deg));</span>
-<span class="fc" id="L780">                    deg = 1.5 * (1 - deg);</span>
+<span class="fc" id="L779">                    double outerX = selfCenterX + inputVecX * (1 + Math.abs(deg));</span>
+<span class="fc" id="L780">                    double outerY = selfCenterY + inputVecY * (1 + Math.abs(deg));</span>
+<span class="fc" id="L781">                    deg = 1.5 * (1 - deg);</span>
 
                     double orthoX, orthoY;
-<span class="fc bfc" id="L783" title="All 2 branches covered.">                    if (math.unitaryVectorProduct(vectorX, vectorY, -inputVecY, inputVecX) &lt; 0) {</span>
-<span class="fc" id="L784">                        orthoX = outerX + deg * inputVecY;</span>
-<span class="fc" id="L785">                        orthoY = outerY - deg * inputVecX;</span>
+<span class="fc bfc" id="L784" title="All 2 branches covered.">                    if (math.unitaryVectorProduct(vectorX, vectorY, -inputVecY, inputVecX) &lt; 0) {</span>
+<span class="fc" id="L785">                        orthoX = outerX + deg * inputVecY;</span>
+<span class="fc" id="L786">                        orthoY = outerY - deg * inputVecX;</span>
                     } else {
-<span class="fc" id="L787">                        orthoX = outerX - deg * inputVecY;</span>
-<span class="fc" id="L788">                        orthoY = outerY + deg * inputVecX;</span>
+<span class="fc" id="L788">                        orthoX = outerX - deg * inputVecY;</span>
+<span class="fc" id="L789">                        orthoY = outerY + deg * inputVecX;</span>
                     }
-<span class="fc" id="L790">                    double[] points = {</span>
+<span class="fc" id="L791">                    double[] points = {</span>
                             selfCenterX, selfCenterY,
                             outerX, outerY,
                             orthoX, orthoY,
                             otherX, otherY
                     };
 
-<span class="fc" id="L797">                    bezier.moveTo(points[0], points[1]);</span>
-<span class="fc" id="L798">                    bezier.curveTo(points[2], points[3], points[4], points[5], points[6], points[7]);</span>
+<span class="fc" id="L798">                    bezier.moveTo(points[0], points[1]);</span>
+<span class="fc" id="L799">                    bezier.curveTo(points[2], points[3], points[4], points[5], points[6], points[7]);</span>
 
-<span class="fc" id="L800">                    brush.setColor(connectionColor);</span>
-<span class="fc" id="L801">                    brush.setStroke(new BasicStroke(22));</span>
-<span class="fc" id="L802">                    brush.draw(bezier);</span>
+<span class="fc" id="L801">                    brush.setColor(connectionColor);</span>
+<span class="fc" id="L802">                    brush.setStroke(new BasicStroke(22));</span>
+<span class="fc" id="L803">                    brush.draw(bezier);</span>
 
-<span class="fc" id="L804">                    double[] curvePoint = null;</span>
-<span class="fc" id="L805">                    double ratio = 1 - ((double) (convectionCounter)) / convectionTime;</span>
+<span class="fc" id="L805">                    double[] curvePoint = null;</span>
+<span class="fc" id="L806">                    double ratio = 1 - ((double) (convectionCounter)) / convectionTime;</span>
 
-<span class="pc bpc" id="L807" title="1 of 2 branches missed.">                    if (activityCheck) {</span>
-<span class="nc" id="L808">                        SurfaceNode Other = ((SurfaceNode) connection.get(Ii));</span>
+<span class="pc bpc" id="L808" title="1 of 2 branches missed.">                    if (activityCheck) {</span>
+<span class="nc" id="L809">                        SurfaceNode Other = ((SurfaceNode) connection.get(Ii));</span>
 
-<span class="nc" id="L810">                        double d = Math.pow(Math.pow(vectorX, 2) + Math.pow(vectorY, 2), 0.5);</span>
+<span class="nc" id="L811">                        double d = Math.pow(Math.pow(vectorX, 2) + Math.pow(vectorY, 2), 0.5);</span>
                         //System.out.println(diameter);
-<span class="nc" id="L812">                        double normalX = (-vectorY / d) * Other.diameter / 2 * ratio;</span>
-<span class="nc" id="L813">                        double normalY = (vectorX / d) * Other.diameter / 2 * ratio;</span>
-<span class="nc" id="L814">                        Polygon convector = new Polygon();//System.out.println(&quot;painting convection!&quot;+ratio);</span>
-<span class="nc" id="L815">                        double invratio = 1 - ratio;</span>
-<span class="nc" id="L816">                        curvePoint = math.getCurvePointOn(invratio * invratio * invratio, points);</span>
-<span class="nc" id="L817">                        convector.addPoint((int) (curvePoint[0]), (int) (curvePoint[1]));</span>
-<span class="nc" id="L818">                        curvePoint = math.getCurvePointOn(invratio, points);//=&gt;Convector center</span>
-<span class="nc" id="L819">                        convector.addPoint((int) (curvePoint[0] + normalX), (int) (curvePoint[1] + normalY));</span>
-<span class="nc" id="L820">                        convector.addPoint((int) (selfCenterX), (int) (selfCenterY));</span>
-<span class="nc" id="L821">                        convector.addPoint((int) (curvePoint[0] - normalX), (int) (curvePoint[1] - normalY));</span>
-<span class="nc" id="L822">                        brush.fillPolygon(convector);</span>
+<span class="nc" id="L813">                        double normalX = (-vectorY / d) * Other.diameter / 2 * ratio;</span>
+<span class="nc" id="L814">                        double normalY = (vectorX / d) * Other.diameter / 2 * ratio;</span>
+<span class="nc" id="L815">                        Polygon convector = new Polygon();//System.out.println(&quot;painting convection!&quot;+ratio);</span>
+<span class="nc" id="L816">                        double invratio = 1 - ratio;</span>
+<span class="nc" id="L817">                        curvePoint = math.getCurvePointOn(invratio * invratio * invratio, points);</span>
+<span class="nc" id="L818">                        convector.addPoint((int) (curvePoint[0]), (int) (curvePoint[1]));</span>
+<span class="nc" id="L819">                        curvePoint = math.getCurvePointOn(invratio, points);//=&gt;Convector center</span>
+<span class="nc" id="L820">                        convector.addPoint((int) (curvePoint[0] + normalX), (int) (curvePoint[1] + normalY));</span>
+<span class="nc" id="L821">                        convector.addPoint((int) (selfCenterX), (int) (selfCenterY));</span>
+<span class="nc" id="L822">                        convector.addPoint((int) (curvePoint[0] - normalX), (int) (curvePoint[1] - normalY));</span>
+<span class="nc" id="L823">                        brush.fillPolygon(convector);</span>
                     }
-<span class="fc" id="L824">                    curvePoint = math.getCurvePointOn(1 / 3.25, points);</span>
+<span class="fc" id="L825">                    curvePoint = math.getCurvePointOn(1 / 3.25, points);</span>
 
-<span class="fc" id="L826">                    String value = &quot;&quot;;//+ this.get_tensor();</span>
-<span class="fc" id="L827">                    brush.fillOval((int) (curvePoint[0]) - 70, (int) (curvePoint[1]) - 25, 140, 50);</span>
-<span class="fc" id="L828">                    brush.setColor(Color.BLACK);</span>
+<span class="fc" id="L827">                    String value = &quot;&quot;;//+ this.get_tensor();</span>
+<span class="fc" id="L828">                    brush.fillOval((int) (curvePoint[0]) - 70, (int) (curvePoint[1]) - 25, 140, 50);</span>
+<span class="fc" id="L829">                    brush.setColor(Color.BLACK);</span>
 
-<span class="fc" id="L830">                    brush.drawString(value, (int) (curvePoint[0]) - value.length() * diameter / 250, (int) (curvePoint[1]) + 6);</span>
+<span class="fc" id="L831">                    brush.drawString(value, (int) (curvePoint[0]) - value.length() * diameter / 250, (int) (curvePoint[1]) + 6);</span>
                 }
             }
         }
-<span class="fc" id="L834">    }</span>
+<span class="fc" id="L835">    }</span>
 
     // --------------------------------------------------------------------------------------------
     public void paintRootUnitBody(Graphics2D brush, double panelScale, Animator Animator) {
 
-<span class="fc" id="L839">    }</span>
+<span class="fc" id="L840">    }</span>
 
     public void paintNeuron(Graphics2D brush, Surface surface) {//, double panelScale, Animator Animator) {
-<span class="fc" id="L842">        int x = (int) position[0];</span>
-<span class="fc" id="L843">        int y = (int) position[1];</span>
-<span class="fc" id="L844">        brush.setColor(Color.cyan);</span>
+<span class="fc" id="L843">        int x = (int) position[0];</span>
+<span class="fc" id="L844">        int y = (int) position[1];</span>
+<span class="fc" id="L845">        brush.setColor(Color.cyan);</span>
 
         //COLORING FOR TYPES:
         //=================================
-<span class="fc" id="L848">        deckColor = new Color(0, 60, 120);</span>
+<span class="fc" id="L849">        deckColor = new Color(0, 60, 120);</span>
         //=================================
         //NODE SIZE:
-<span class="fc" id="L851">        diameter = defaultDiameter;</span>
+<span class="fc" id="L852">        diameter = defaultDiameter;</span>
 
         //GHOST EFFECT:
         //--------------
-<span class="fc" id="L855">        Point2D center = new Point2D.Float(x, y);</span>
-<span class="fc" id="L856">        float gradientRadius = (float) ((diameter / 2) + 80);</span>
-<span class="fc" id="L857">        float[] dist = {0.0f, 0.5f, 1f};</span>
-<span class="fc" id="L858">        Color[] colors = {Color.cyan, Color.cyan, new Color(0, 0, 0, 0)};</span>
-<span class="fc" id="L859">        Paint oldPaint = brush.getPaint();</span>
-<span class="fc" id="L860">        RadialGradientPaint rgp = new RadialGradientPaint(center, gradientRadius, dist, colors, CycleMethod.NO_CYCLE);</span>
-<span class="fc" id="L861">        brush.setPaint(rgp);</span>
-<span class="fc" id="L862">        brush.fillOval(</span>
+<span class="fc" id="L856">        Point2D center = new Point2D.Float(x, y);</span>
+<span class="fc" id="L857">        float gradientRadius = (float) ((diameter / 2) + 80);</span>
+<span class="fc" id="L858">        float[] dist = {0.0f, 0.5f, 1f};</span>
+<span class="fc" id="L859">        Color[] colors = {Color.cyan, Color.cyan, new Color(0, 0, 0, 0)};</span>
+<span class="fc" id="L860">        Paint oldPaint = brush.getPaint();</span>
+<span class="fc" id="L861">        RadialGradientPaint rgp = new RadialGradientPaint(center, gradientRadius, dist, colors, CycleMethod.NO_CYCLE);</span>
+<span class="fc" id="L862">        brush.setPaint(rgp);</span>
+<span class="fc" id="L863">        brush.fillOval(</span>
                 x - 100 - (int) ((diameter / 2)), y - 100 - (int) ((diameter / 2)),
                 (diameter + 200), (diameter + 200)
         );
-<span class="fc" id="L866">        brush.setPaint(oldPaint);</span>
+<span class="fc" id="L867">        brush.setPaint(oldPaint);</span>
         //--------------
 
         //CYAN BASE:
         //--------------
-<span class="fc" id="L871">        brush.fillOval(x - (diameter + 40) / 2, y - (diameter + 40) / 2, diameter + 40, diameter + 40);</span>
+<span class="fc" id="L872">        brush.fillOval(x - (diameter + 40) / 2, y - (diameter + 40) / 2, diameter + 40, diameter + 40);</span>
 
         //--------------
-<span class="fc bfc" id="L874" title="All 2 branches covered.">        if(InputNode!=null){</span>
-<span class="fc" id="L875">            brush.setColor(Color.CYAN);</span>
-<span class="fc" id="L876">            InputNode .paint(brush);</span>
+<span class="fc bfc" id="L875" title="All 2 branches covered.">        if(InputNode!=null){</span>
+<span class="fc" id="L876">            brush.setColor(Color.CYAN);</span>
+<span class="fc" id="L877">            InputNode .paint(brush);</span>
         }
         //--------------
 
         //NEURON DECK:
         //--------------
-<span class="pc bpc" id="L882" title="1 of 4 branches missed.">        if (deckIsRemoved == true &amp;&amp; deckAnimationRunning == false) {</span>
-<span class="fc" id="L883">            paintNodeInterior(brush, (int) position[0], (int) position[1], surface);</span>
-<span class="pc bpc" id="L884" title="1 of 4 branches missed.">        } else if (deckIsRemoved == false &amp;&amp; deckAnimationRunning == false) {</span>
-<span class="fc" id="L885">            paintNodeDeck(brush, (int) position[0], (int) position[1], surface);</span>
-<span class="pc bpc" id="L886" title="1 of 2 branches missed.">        } else if (deckAnimationRunning == true) {</span>
-<span class="fc" id="L887">            paintNodeInterior(brush, (int) position[0], (int) position[1], surface);</span>
-<span class="fc" id="L888">            paintNodeDeck(brush, (int) position[0], (int) position[1], surface);</span>
+<span class="pc bpc" id="L883" title="1 of 4 branches missed.">        if (deckIsRemoved == true &amp;&amp; deckAnimationRunning == false) {</span>
+<span class="fc" id="L884">            paintNodeInterior(brush, (int) position[0], (int) position[1], surface);</span>
+<span class="pc bpc" id="L885" title="1 of 4 branches missed.">        } else if (deckIsRemoved == false &amp;&amp; deckAnimationRunning == false) {</span>
+<span class="fc" id="L886">            paintNodeDeck(brush, (int) position[0], (int) position[1], surface);</span>
+<span class="pc bpc" id="L887" title="1 of 2 branches missed.">        } else if (deckAnimationRunning == true) {</span>
+<span class="fc" id="L888">            paintNodeInterior(brush, (int) position[0], (int) position[1], surface);</span>
+<span class="fc" id="L889">            paintNodeDeck(brush, (int) position[0], (int) position[1], surface);</span>
         }
 
-<span class="fc bfc" id="L891" title="All 2 branches covered.">        if (InputNode != null) {// &amp;&amp; panelScale &gt; 0.1</span>
-<span class="fc" id="L892">            double mod = (surface.getScale() / 0.0275);</span>
+<span class="fc bfc" id="L892" title="All 2 branches covered.">        if (InputNode != null) {// &amp;&amp; panelScale &gt; 0.1</span>
+<span class="fc" id="L893">            double mod = (surface.getScale() / 0.0275);</span>
             //System.out.println(&quot;s: &quot;+panelScale);
-<span class="fc" id="L894">            String s = &quot;&quot;;</span>
-<span class="pc bpc" id="L895" title="1 of 2 branches missed.">            if (getGraphNode().getFunction() != null) {</span>
-<span class="fc" id="L896">                s += Function.TYPES.REGISTER[getGraphNode().getFunction().id()];</span>
+<span class="fc" id="L895">            String s = &quot;&quot;;</span>
+<span class="pc bpc" id="L896" title="1 of 2 branches missed.">            if (getGraphNode().getFunction() != null) {</span>
+<span class="fc" id="L897">                s += Function.TYPES.REGISTER[getGraphNode().getFunction().id()];</span>
             }
-<span class="fc" id="L898">            InputNode.paintTop(brush, s, (Math.pow(mod, 10)));</span>
+<span class="fc" id="L899">            InputNode.paintTop(brush, s, (Math.pow(mod, 10)));</span>
         }
 
-<span class="fc" id="L901">    }</span>
+<span class="fc" id="L902">    }</span>
 
     //NODE DECK:
     // --------------------------------------------------------------------------------------------
     private void paintNodeInterior(Graphics2D brush, int centerX, int centerY, Surface surface) {
-<span class="fc" id="L906">        double modifier = panelScaleModifier(surface.getScale());</span>
-<span class="fc bfc" id="L907" title="All 2 branches covered.">        double panelScale = (deckAnimationRunning) ? (diameter / 2) : surface.getScale();</span>
-<span class="fc" id="L908">        Animator animator = surface.getAnimator();</span>
-<span class="fc" id="L909">        double radius = (double) diameter / 2;</span>
-<span class="fc" id="L910">        int animationID = 0;</span>
-<span class="fc" id="L911">        double buttonAnimationModifier = 0;</span>
+<span class="fc" id="L907">        double modifier = panelScaleModifier(surface.getScale());</span>
+<span class="fc bfc" id="L908" title="All 2 branches covered.">        double panelScale = (deckAnimationRunning) ? (diameter / 2) : surface.getScale();</span>
+<span class="fc" id="L909">        Animator animator = surface.getAnimator();</span>
+<span class="fc" id="L910">        double radius = (double) diameter / 2;</span>
+<span class="fc" id="L911">        int animationID = 0;</span>
+<span class="fc" id="L912">        double buttonAnimationModifier = 0;</span>
 
-<span class="fc" id="L913">        animationID = 0;</span>
-<span class="fc bfc" id="L914" title="All 2 branches covered.">        if (animator.hasCounter(this, animationID)) {</span>
-<span class="fc" id="L915">            buttonAnimationModifier = (double) animator.getCounterOf(this, animationID) / buttonLimit;</span>
+<span class="fc" id="L914">        animationID = 0;</span>
+<span class="fc bfc" id="L915" title="All 2 branches covered.">        if (animator.hasCounter(this, animationID)) {</span>
+<span class="fc" id="L916">            buttonAnimationModifier = (double) animator.getCounterOf(this, animationID) / buttonLimit;</span>
         }
-<span class="fc" id="L917">        Ellipse2D.Double ellipse =</span>
+<span class="fc" id="L918">        Ellipse2D.Double ellipse =</span>
                 new Ellipse2D.Double(
                         centerX - (radius * modifier), centerY - (radius * modifier),
                         (2 * radius * modifier), (2 * radius * modifier)
                 );
-<span class="fc" id="L922">        brush.setColor(Color.BLACK);</span>
-<span class="fc" id="L923">        brush.fill(ellipse);</span>
+<span class="fc" id="L923">        brush.setColor(Color.BLACK);</span>
+<span class="fc" id="L924">        brush.fill(ellipse);</span>
 
-<span class="fc" id="L925">        brush.setColor(deckButtonColor);</span>
-<span class="fc" id="L926">        brush.fillRoundRect(centerX - (int) (buttonAnimationModifier * radius / 2 * Math.pow(modifier, 200 / modifier)) / 2,</span>
-<span class="fc" id="L927">                centerY - (int) (buttonAnimationModifier * radius / 4 * Math.pow(modifier, 300 / modifier)) / 2,</span>
-<span class="fc" id="L928">                (int) (buttonAnimationModifier * radius / 2 * Math.pow(modifier, 200 / modifier)),</span>
-<span class="fc" id="L929">                (int) (buttonAnimationModifier * radius / 4 * Math.pow(modifier, 300 / modifier)), (int) (radius / 6), (int) (radius / 6));</span>
+<span class="fc" id="L926">        brush.setColor(deckButtonColor);</span>
+<span class="fc" id="L927">        brush.fillRoundRect(centerX - (int) (buttonAnimationModifier * radius / 2 * Math.pow(modifier, 200 / modifier)) / 2,</span>
+<span class="fc" id="L928">                centerY - (int) (buttonAnimationModifier * radius / 4 * Math.pow(modifier, 300 / modifier)) / 2,</span>
+<span class="fc" id="L929">                (int) (buttonAnimationModifier * radius / 2 * Math.pow(modifier, 200 / modifier)),</span>
+<span class="fc" id="L930">                (int) (buttonAnimationModifier * radius / 4 * Math.pow(modifier, 300 / modifier)), (int) (radius / 6), (int) (radius / 6));</span>
 
-<span class="fc" id="L931">        _paintButton(brush, centerX, centerY, radius, modifier, buttonAnimationModifier, true);</span>
+<span class="fc" id="L932">        _paintButton(brush, centerX, centerY, radius, modifier, buttonAnimationModifier, true);</span>
 
-<span class="fc" id="L933">        _paintDisplayBox(</span>
+<span class="fc" id="L934">        _paintDisplayBox(</span>
                 brush,
                 centerX,
                 centerY,
-<span class="fc" id="L937">                surface.getScale(),</span>
+<span class="fc" id="L938">                surface.getScale(),</span>
                 buttonAnimationModifier,
                 true
         );
         //---
 
-<span class="fc" id="L943">        Font ValueFont = new Font(&quot;Tahoma&quot;, Font.PLAIN, (int) (diameter * (0.033333)));</span>
-<span class="fc" id="L944">        brush.setFont(ValueFont);</span>
+<span class="fc" id="L944">        Font ValueFont = new Font(&quot;Tahoma&quot;, Font.PLAIN, (int) (diameter * (0.033333)));</span>
+<span class="fc" id="L945">        brush.setFont(ValueFont);</span>
 
-<span class="fc" id="L946">        brush.setColor(Color.CYAN);</span>
+<span class="fc" id="L947">        brush.setColor(Color.CYAN);</span>
         //brush.drawString(&quot;Paralyzed: &quot;+this.get_tensor().rqsGradient()+&quot;;&quot;,
         //		       (int) (centerX - radius*0.2), (int) (centerY -radius*0.775));
-<span class="fc" id="L949">        brush.setColor(Color.DARK_GRAY);</span>
-<span class="fc" id="L950">        brush.fillRect((int) (centerX - radius * 0.4), (int) (centerY - radius * 0.77), (int) (2 * radius * 0.4), (int) (radius * 0.01));</span>
+<span class="fc" id="L950">        brush.setColor(Color.DARK_GRAY);</span>
+<span class="fc" id="L951">        brush.fillRect((int) (centerX - radius * 0.4), (int) (centerY - radius * 0.77), (int) (2 * radius * 0.4), (int) (radius * 0.01));</span>
 
-<span class="fc" id="L952">        brush.setColor(Color.CYAN);</span>
+<span class="fc" id="L953">        brush.setColor(Color.CYAN);</span>
         //brush.drawString(&quot;First: &quot;+this.get_tensor().rqsGradient()+&quot;; Hidden: &quot;+this.get_tensor().rqsGradient()+&quot;; Last: &quot;+this.get_tensor().rqsGradient()+&quot;;&quot;,
         //			   (int) (centerX - radius*0.5),  (int) (centerY -radius*0.65));
-<span class="fc" id="L955">        brush.setColor(Color.DARK_GRAY);</span>
-<span class="fc" id="L956">        brush.fillRect((int) (centerX - radius * 0.625), (int) (centerY - radius * 0.645), (int) (2 * radius * 0.625), (int) (radius * 0.01));</span>
+<span class="fc" id="L956">        brush.setColor(Color.DARK_GRAY);</span>
+<span class="fc" id="L957">        brush.fillRect((int) (centerX - radius * 0.625), (int) (centerY - radius * 0.645), (int) (2 * radius * 0.625), (int) (radius * 0.01));</span>
 
-<span class="fc" id="L958">        brush.setColor(Color.CYAN);</span>
+<span class="fc" id="L959">        brush.setColor(Color.CYAN);</span>
         //brush.drawString(&quot;Is root component: &quot;+this.get_tensor().is(Tsr.Root)+rootType+&quot;;&quot;,
         //		       (int) (centerX - radius*0.65), (int) (centerY -radius*0.520));
-<span class="fc" id="L961">        brush.setColor(Color.DARK_GRAY);</span>
-<span class="fc" id="L962">        brush.fillRect((int) (centerX - radius * 0.675), (int) (centerY - radius * 0.515), (int) (2 * radius * 0.675), (int) (radius * 0.01));</span>
+<span class="fc" id="L962">        brush.setColor(Color.DARK_GRAY);</span>
+<span class="fc" id="L963">        brush.fillRect((int) (centerX - radius * 0.675), (int) (centerY - radius * 0.515), (int) (2 * radius * 0.675), (int) (radius * 0.01));</span>
 
-<span class="fc" id="L964">        brush.setColor(Color.CYAN);</span>
-<span class="fc" id="L965">        brush.drawString(&quot;Gradient behavior&quot;, (int) (centerX - radius * 0.85), (int) (centerY - radius * 0.1));</span>
+<span class="fc" id="L965">        brush.setColor(Color.CYAN);</span>
+<span class="fc" id="L966">        brush.drawString(&quot;Gradient behavior&quot;, (int) (centerX - radius * 0.85), (int) (centerY - radius * 0.1));</span>
         //brush.drawString(&quot;AutoApply: &quot;+this.get_tensor().isInstantGradientApply()+&quot;;&quot;, (int) (centerX - radius*0.825), (int) (centerY -radius*0.0));
         //brush.drawString(&quot;Summing: &quot;+this.get_tensor().isGradientSumming()+&quot;;&quot;,        (int) (centerX - radius*0.825), (int) (centerY +radius*0.1));
-<span class="fc" id="L968">        brush.setColor(Color.DARK_GRAY);</span>
-<span class="fc" id="L969">        brush.fillRect((int) (centerX - radius * 0.9), (int) (centerY + radius * 0.15), (int) (2 * radius * 0.9), (int) (radius * 0.01));</span>
+<span class="fc" id="L969">        brush.setColor(Color.DARK_GRAY);</span>
+<span class="fc" id="L970">        brush.fillRect((int) (centerX - radius * 0.9), (int) (centerY + radius * 0.15), (int) (2 * radius * 0.9), (int) (radius * 0.01));</span>
 
-<span class="fc" id="L971">        brush.setColor(Color.CYAN);</span>
-<span class="fc" id="L972">        brush.drawString(&quot;Trainable&quot;, (int) (centerX + radius * 0.425), (int) (centerY - radius * 0.1));</span>
+<span class="fc" id="L972">        brush.setColor(Color.CYAN);</span>
+<span class="fc" id="L973">        brush.drawString(&quot;Trainable&quot;, (int) (centerX + radius * 0.425), (int) (centerY - radius * 0.1));</span>
         //brush.drawString(&quot;Bias: &quot;+this.get_tensor().biasIsTrainable()+&quot;; &quot;,    (int) (centerX + radius*0.425), (int) (centerY -radius*0.0));
         //brush.drawString(&quot;Weight: &quot;+this.get_tensor().asCore().weightIsTrainable()+&quot;;&quot;,  (int) (centerX + radius*0.4), (int) (centerY +radius*0.1));
 
-<span class="fc" id="L976">        brush.setColor(Color.CYAN);</span>
-<span class="fc" id="L977">        brush.drawString(&quot;Neuron ID&quot;, (int) (centerX - radius * 0.14), (int) (centerY + radius * 0.225));</span>
-<span class="fc" id="L978">        ValueFont = new Font(&quot;Tahoma&quot;, Font.PLAIN, (int) (diameter * (0.065)));</span>
-<span class="fc" id="L979">        brush.setFont(ValueFont);</span>
-<span class="fc" id="L980">        brush.setColor(Color.DARK_GRAY);</span>
+<span class="fc" id="L977">        brush.setColor(Color.CYAN);</span>
+<span class="fc" id="L978">        brush.drawString(&quot;Neuron ID&quot;, (int) (centerX - radius * 0.14), (int) (centerY + radius * 0.225));</span>
+<span class="fc" id="L979">        ValueFont = new Font(&quot;Tahoma&quot;, Font.PLAIN, (int) (diameter * (0.065)));</span>
+<span class="fc" id="L980">        brush.setFont(ValueFont);</span>
+<span class="fc" id="L981">        brush.setColor(Color.DARK_GRAY);</span>
         //brush.fillRect((int) (centerX - radius*0.1*Long.toString(this.get_tensor().getID()).length()), (int) (centerY +radius*0.385), (int)(2*radius*0.1*Long.toString(this.get_tensor().getID()).length()), (int)(radius*0.02));
 
-<span class="fc" id="L983">        brush.setColor(Color.CYAN);</span>
+<span class="fc" id="L984">        brush.setColor(Color.CYAN);</span>
         //brush.drawString(Long.toString(this.get_tensor().getID()),(int) (centerX - radius*0.0297*Long.toString(this.get_tensor().getID()).length()), (int) (centerY +radius*0.385));
         //brush.drawString(Long.toString(this.get_tensor().getID()),(int) (centerX - radius*0.02927*Long.toString(this.get_tensor().getID()).length()), (int) (centerY +radius*0.385));
 
-<span class="fc" id="L987">        ValueFont = new Font(&quot;Tahoma&quot;, Font.PLAIN, (int) (diameter * (0.033333)));</span>
-<span class="fc" id="L988">        brush.setFont(ValueFont);</span>
+<span class="fc" id="L988">        ValueFont = new Font(&quot;Tahoma&quot;, Font.PLAIN, (int) (diameter * (0.033333)));</span>
+<span class="fc" id="L989">        brush.setFont(ValueFont);</span>
 
-<span class="fc" id="L990">        brush.setColor(Color.CYAN);</span>
-<span class="fc" id="L991">        brush.drawString(&quot;Property Compartments&quot;, (int) (centerX - radius * 0.325), (int) (centerY + radius * 0.475));</span>
+<span class="fc" id="L991">        brush.setColor(Color.CYAN);</span>
+<span class="fc" id="L992">        brush.drawString(&quot;Property Compartments&quot;, (int) (centerX - radius * 0.325), (int) (centerY + radius * 0.475));</span>
 
-<span class="fc" id="L993">        brush.setColor(Color.DARK_GRAY);</span>
-<span class="fc" id="L994">        brush.fillRect((int) (centerX - radius * 0.5), (int) (centerY + radius * 0.49), (int) (2 * radius * 0.5), (int) (radius * 0.01));</span>
-<span class="fc" id="L995">        ValueFont = new Font(&quot;Tahoma&quot;, Font.PLAIN, (int) (diameter * (0.025)));</span>
+<span class="fc" id="L994">        brush.setColor(Color.DARK_GRAY);</span>
+<span class="fc" id="L995">        brush.fillRect((int) (centerX - radius * 0.5), (int) (centerY + radius * 0.49), (int) (2 * radius * 0.5), (int) (radius * 0.01));</span>
+<span class="fc" id="L996">        ValueFont = new Font(&quot;Tahoma&quot;, Font.PLAIN, (int) (diameter * (0.025)));</span>
 
-<span class="fc" id="L997">        brush.setFont(ValueFont);</span>
-<span class="fc" id="L998">        brush.setColor(Color.CYAN);</span>
-<span class="fc" id="L999">        String listedProperties = &quot;&quot;;</span>
-<span class="fc" id="L1000">        boolean somethingToList = true;</span>
-<span class="fc" id="L1001">        double YMod = -radius * 0.05;</span>
+<span class="fc" id="L998">        brush.setFont(ValueFont);</span>
+<span class="fc" id="L999">        brush.setColor(Color.CYAN);</span>
+<span class="fc" id="L1000">        String listedProperties = &quot;&quot;;</span>
+<span class="fc" id="L1001">        boolean somethingToList = true;</span>
+<span class="fc" id="L1002">        double YMod = -radius * 0.05;</span>
 
         //NVCloak Public = (NVCloak) this.get_tensor().find(NVCloak.class);
         //if(this.get_tensor().getFunction()!=null)
@@ -1012,167 +1013,167 @@ public class SurfaceNode implements SurfaceObject {
         //	if(Memory.hasDataMemory()) {listedProperties += &quot; (Data&quot;;}
         //	if(Memory.hasActivityMemory()) {listedProperties += &quot;, Activity&quot;;}else {listedProperties += &quot;);&quot;;}
         //}
-<span class="fc" id="L1015">        brush.drawString(listedProperties, (int) (centerX - radius * 0.013 * listedProperties.length()), (int) (centerY + radius * 0.6 + YMod));</span>
-<span class="fc" id="L1016">        YMod += radius * 0.075;</span>
-<span class="fc" id="L1017">        listedProperties = &quot;&quot;;</span>
+<span class="fc" id="L1016">        brush.drawString(listedProperties, (int) (centerX - radius * 0.013 * listedProperties.length()), (int) (centerY + radius * 0.6 + YMod));</span>
+<span class="fc" id="L1017">        YMod += radius * 0.075;</span>
+<span class="fc" id="L1018">        listedProperties = &quot;&quot;;</span>
 
-<span class="fc" id="L1019">        double[][] nodeResult = null;</span>
+<span class="fc" id="L1020">        double[][] nodeResult = null;</span>
         //if(Public!=null)
         //{
         //	nodeResult = Public.getPublicData();
         //}
-<span class="fc" id="L1024">        listedProperties += &quot;Public Values &quot;;</span>
-<span class="pc bpc" id="L1025" title="1 of 2 branches missed.">        if (nodeResult == null) {</span>
-<span class="fc" id="L1026">            listedProperties += &quot; (null)&quot;;</span>
+<span class="fc" id="L1025">        listedProperties += &quot;Public Values &quot;;</span>
+<span class="pc bpc" id="L1026" title="1 of 2 branches missed.">        if (nodeResult == null) {</span>
+<span class="fc" id="L1027">            listedProperties += &quot; (null)&quot;;</span>
         } else {
-<span class="nc bnc" id="L1028" title="All 2 branches missed.">            if (nodeResult.length == 1) {</span>
-<span class="nc" id="L1029">                listedProperties += &quot;(Activation:&quot; + nodeResult[0] + &quot;)&quot;;</span>
+<span class="nc bnc" id="L1029" title="All 2 branches missed.">            if (nodeResult.length == 1) {</span>
+<span class="nc" id="L1030">                listedProperties += &quot;(Activation:&quot; + nodeResult[0] + &quot;)&quot;;</span>
             }
-<span class="nc bnc" id="L1031" title="All 2 branches missed.">            if (nodeResult.length == 2) {</span>
-<span class="nc" id="L1032">                listedProperties += &quot;(Activation:&quot; + nodeResult[0] + &quot;, Error:&quot; + nodeResult[1] + &quot;)&quot;;</span>
+<span class="nc bnc" id="L1032" title="All 2 branches missed.">            if (nodeResult.length == 2) {</span>
+<span class="nc" id="L1033">                listedProperties += &quot;(Activation:&quot; + nodeResult[0] + &quot;, Error:&quot; + nodeResult[1] + &quot;)&quot;;</span>
             }
-<span class="nc bnc" id="L1034" title="All 2 branches missed.">            if (nodeResult.length == 3) {</span>
-<span class="nc" id="L1035">                listedProperties += &quot;(Activation:&quot; + nodeResult[0] + &quot;, Error:&quot; + nodeResult[1] + &quot;, Optimum:&quot; + nodeResult[2] + &quot;)&quot;;</span>
+<span class="nc bnc" id="L1035" title="All 2 branches missed.">            if (nodeResult.length == 3) {</span>
+<span class="nc" id="L1036">                listedProperties += &quot;(Activation:&quot; + nodeResult[0] + &quot;, Error:&quot; + nodeResult[1] + &quot;, Optimum:&quot; + nodeResult[2] + &quot;)&quot;;</span>
             }
         }
-<span class="fc" id="L1038">        brush.drawString(listedProperties, (int) (centerX - radius * 0.013 * listedProperties.length()), (int) (centerY + radius * 0.6 + YMod));</span>
+<span class="fc" id="L1039">        brush.drawString(listedProperties, (int) (centerX - radius * 0.013 * listedProperties.length()), (int) (centerY + radius * 0.6 + YMod));</span>
         //YMod += radius * 0.075;
         //listedProperties = &quot;&quot;;
         //III
-<span class="fc" id="L1042">        brush.setColor(Color.CYAN);</span>
+<span class="fc" id="L1043">        brush.setColor(Color.CYAN);</span>
 
         //if (this.get_tensor().rqsGradient()) {
         //	brush.drawString(&quot;Optimum:&quot;, (int) (centerX - 50), (int) (centerY - 240));
         //	brush.drawString(&quot;&quot;+Formatter.format(this.get_tensor()), (int) (centerX - 50), (int) (centerY - 210));
         //}
 
-<span class="fc" id="L1049">        ArrayList&lt;Painter&gt; PainterArray = new ArrayList&lt;Painter&gt;();</span>
+<span class="fc" id="L1050">        ArrayList&lt;Painter&gt; PainterArray = new ArrayList&lt;Painter&gt;();</span>
         if (true)//this.get_tensor().has(SurfaceNodeIOFrame.class))
         {
-<span class="fc" id="L1052">            PainterArray.add</span>
-<span class="fc" id="L1053">                    ((Graphics2D painterBrush, double x, double y) -&gt; {</span>
-<span class="nc" id="L1054">                        painterBrush.setColor(Color.DARK_GRAY);</span>
-<span class="nc" id="L1055">                        painterBrush.fillOval((int) (x - radius * 0.1), (int) (y - radius * 0.1), (int) ((radius * 0.1) * 2), (int) ((radius * 0.1) * 2));</span>
-<span class="nc" id="L1056">                    });</span>
+<span class="fc" id="L1053">            PainterArray.add</span>
+<span class="fc" id="L1054">                    ((Graphics2D painterBrush, double x, double y) -&gt; {</span>
+<span class="nc" id="L1055">                        painterBrush.setColor(Color.DARK_GRAY);</span>
+<span class="nc" id="L1056">                        painterBrush.fillOval((int) (x - radius * 0.1), (int) (y - radius * 0.1), (int) ((radius * 0.1) * 2), (int) ((radius * 0.1) * 2));</span>
+<span class="nc" id="L1057">                    });</span>
         }
 
-<span class="fc" id="L1059">    }</span>
+<span class="fc" id="L1060">    }</span>
 
     private void paintNodeDeck(Graphics2D brush, int centerX, int centerY, Surface surface) {
-<span class="fc" id="L1062">        double modifier = panelScaleModifier(surface.getScale());</span>
-<span class="fc bfc" id="L1063" title="All 2 branches covered.">        double panelScale = (deckAnimationRunning) ? (diameter / 2) : surface.getScale();</span>
-<span class="fc" id="L1064">        Animator animator = surface.getAnimator();</span>
-<span class="fc" id="L1065">        double radius = (double) diameter / 2;</span>
-<span class="fc" id="L1066">        int animationID = 0;</span>
-<span class="fc" id="L1067">        double buttonAnimationModifier = 0;</span>
-<span class="fc" id="L1068">        int deckAnimationCounter = 0;</span>
+<span class="fc" id="L1063">        double modifier = panelScaleModifier(surface.getScale());</span>
+<span class="fc bfc" id="L1064" title="All 2 branches covered.">        double panelScale = (deckAnimationRunning) ? (diameter / 2) : surface.getScale();</span>
+<span class="fc" id="L1065">        Animator animator = surface.getAnimator();</span>
+<span class="fc" id="L1066">        double radius = (double) diameter / 2;</span>
+<span class="fc" id="L1067">        int animationID = 0;</span>
+<span class="fc" id="L1068">        double buttonAnimationModifier = 0;</span>
+<span class="fc" id="L1069">        int deckAnimationCounter = 0;</span>
 
-<span class="fc" id="L1070">        animationID = 0;</span>
-<span class="fc bfc" id="L1071" title="All 2 branches covered.">        if (animator.hasCounter(this, animationID)) {</span>
-<span class="fc" id="L1072">            buttonAnimationModifier = (double) animator.getCounterOf(this, animationID) / buttonLimit;</span>
+<span class="fc" id="L1071">        animationID = 0;</span>
+<span class="fc bfc" id="L1072" title="All 2 branches covered.">        if (animator.hasCounter(this, animationID)) {</span>
+<span class="fc" id="L1073">            buttonAnimationModifier = (double) animator.getCounterOf(this, animationID) / buttonLimit;</span>
         }
-<span class="fc" id="L1074">        animationID = 2;</span>
-<span class="fc bfc" id="L1075" title="All 2 branches covered.">        if (animator.hasCounter(this, animationID)) {</span>
-<span class="fc" id="L1076">            deckAnimationCounter = animator.getCounterOf(this, animationID);</span>
+<span class="fc" id="L1075">        animationID = 2;</span>
+<span class="fc bfc" id="L1076" title="All 2 branches covered.">        if (animator.hasCounter(this, animationID)) {</span>
+<span class="fc" id="L1077">            deckAnimationCounter = animator.getCounterOf(this, animationID);</span>
         }
 
-<span class="fc" id="L1079">        double decimal = 0;</span>
-<span class="fc bfc" id="L1080" title="All 2 branches covered.">        if (deckAnimationCounter != 0) {</span>
-<span class="fc" id="L1081">            decimal = ((double) (deckAnimationCounter / 4) - deckAnimationLimit / 8);</span>
+<span class="fc" id="L1080">        double decimal = 0;</span>
+<span class="fc bfc" id="L1081" title="All 2 branches covered.">        if (deckAnimationCounter != 0) {</span>
+<span class="fc" id="L1082">            decimal = ((double) (deckAnimationCounter / 4) - deckAnimationLimit / 8);</span>
 
-<span class="fc" id="L1083">            decimal /= (deckAnimationLimit / 8);</span>
+<span class="fc" id="L1084">            decimal /= (deckAnimationLimit / 8);</span>
 
-<span class="pc bpc" id="L1085" title="1 of 2 branches missed.">            if (decimal &gt; 1) {</span>
-<span class="nc" id="L1086">                decimal = 1;</span>
-<span class="pc bpc" id="L1087" title="1 of 2 branches missed.">            } else if (decimal &lt; -1) {</span>
-<span class="nc" id="L1088">                decimal = -1;</span>
+<span class="pc bpc" id="L1086" title="1 of 2 branches missed.">            if (decimal &gt; 1) {</span>
+<span class="nc" id="L1087">                decimal = 1;</span>
+<span class="pc bpc" id="L1088" title="1 of 2 branches missed.">            } else if (decimal &lt; -1) {</span>
+<span class="nc" id="L1089">                decimal = -1;</span>
             }
-<span class="pc bpc" id="L1090" title="1 of 2 branches missed.">            if (deckIsRemoved) {</span>
-<span class="nc" id="L1091">                decimal *= -1;</span>
+<span class="pc bpc" id="L1091" title="1 of 2 branches missed.">            if (deckIsRemoved) {</span>
+<span class="nc" id="L1092">                decimal *= -1;</span>
             }
             //Transition clip:
-<span class="fc" id="L1094">            Area clipArea = new Area(new Rectangle.Double(centerX - radius, centerY - radius, radius * 2, radius * 2));</span>
-<span class="fc" id="L1095">            clipArea.subtract(new Area(new Ellipse2D.Double(centerX - radius * decimal, centerY - radius * decimal, radius * 2 * decimal, radius * 2 * decimal)));</span>
-<span class="fc" id="L1096">            brush.setClip(clipArea);</span>
+<span class="fc" id="L1095">            Area clipArea = new Area(new Rectangle.Double(centerX - radius, centerY - radius, radius * 2, radius * 2));</span>
+<span class="fc" id="L1096">            clipArea.subtract(new Area(new Ellipse2D.Double(centerX - radius * decimal, centerY - radius * decimal, radius * 2 * decimal, radius * 2 * decimal)));</span>
+<span class="fc" id="L1097">            brush.setClip(clipArea);</span>
         }
 
         //GRADIENT EFFECT:
-<span class="fc" id="L1100">        Point2D center = new Point2D.Float(centerX, centerY);</span>
-<span class="fc" id="L1101">        float gradientRadius = (float) (radius + 50);</span>
-<span class="fc" id="L1102">        float[] dist = {0.0f, 0.6f, 1f};</span>
-<span class="fc bfc" id="L1103" title="All 2 branches covered.">        if (decimal &gt; 0) {</span>
-<span class="fc" id="L1104">            dist[1] += (float) (0.399f * decimal);</span>
+<span class="fc" id="L1101">        Point2D center = new Point2D.Float(centerX, centerY);</span>
+<span class="fc" id="L1102">        float gradientRadius = (float) (radius + 50);</span>
+<span class="fc" id="L1103">        float[] dist = {0.0f, 0.6f, 1f};</span>
+<span class="fc bfc" id="L1104" title="All 2 branches covered.">        if (decimal &gt; 0) {</span>
+<span class="fc" id="L1105">            dist[1] += (float) (0.399f * decimal);</span>
         }
-<span class="fc" id="L1106">        Color[] colors = {deckColor, darkDeckColor, Color.black};</span>
-<span class="fc" id="L1107">        RadialGradientPaint rgp = new RadialGradientPaint(center, gradientRadius, dist, colors, CycleMethod.NO_CYCLE);</span>
-<span class="fc" id="L1108">        brush.setPaint(rgp);</span>
+<span class="fc" id="L1107">        Color[] colors = {deckColor, darkDeckColor, Color.black};</span>
+<span class="fc" id="L1108">        RadialGradientPaint rgp = new RadialGradientPaint(center, gradientRadius, dist, colors, CycleMethod.NO_CYCLE);</span>
+<span class="fc" id="L1109">        brush.setPaint(rgp);</span>
 
-<span class="fc" id="L1110">        Ellipse2D.Double ellipse = new Ellipse2D.Double(centerX - (radius * modifier), centerY - (radius * modifier),</span>
+<span class="fc" id="L1111">        Ellipse2D.Double ellipse = new Ellipse2D.Double(centerX - (radius * modifier), centerY - (radius * modifier),</span>
                 (2 * radius * modifier), (2 * radius * modifier));
-<span class="fc" id="L1112">        brush.fill(ellipse);</span>
+<span class="fc" id="L1113">        brush.fill(ellipse);</span>
 
-<span class="fc" id="L1114">        Font NFont = new Font(&quot;Tahoma&quot;, Font.BOLD, (int) (diameter * (0.05)));</span>
-<span class="fc" id="L1115">        brush.setFont(NFont);</span>
+<span class="fc" id="L1115">        Font NFont = new Font(&quot;Tahoma&quot;, Font.BOLD, (int) (diameter * (0.05)));</span>
+<span class="fc" id="L1116">        brush.setFont(NFont);</span>
 
-<span class="fc" id="L1117">        brush.setColor(darkDeckColor);</span>
-<span class="fc" id="L1118">        ellipse = new Ellipse2D.Double(</span>
-<span class="fc" id="L1119">                centerX - (buttonAnimationModifier * radius * Math.pow(modifier, 200 / modifier)) / 2,</span>
-<span class="fc" id="L1120">                centerY - (buttonAnimationModifier * radius / 1.9 * Math.pow(modifier, 300 / modifier)) / 2,</span>
-<span class="fc" id="L1121">                (buttonAnimationModifier * radius * Math.pow(modifier, 200 / modifier)),</span>
-<span class="fc" id="L1122">                (buttonAnimationModifier * radius / 1.9 * Math.pow(modifier, 300 / modifier))</span>
+<span class="fc" id="L1118">        brush.setColor(darkDeckColor);</span>
+<span class="fc" id="L1119">        ellipse = new Ellipse2D.Double(</span>
+<span class="fc" id="L1120">                centerX - (buttonAnimationModifier * radius * Math.pow(modifier, 200 / modifier)) / 2,</span>
+<span class="fc" id="L1121">                centerY - (buttonAnimationModifier * radius / 1.9 * Math.pow(modifier, 300 / modifier)) / 2,</span>
+<span class="fc" id="L1122">                (buttonAnimationModifier * radius * Math.pow(modifier, 200 / modifier)),</span>
+<span class="fc" id="L1123">                (buttonAnimationModifier * radius / 1.9 * Math.pow(modifier, 300 / modifier))</span>
         );
-<span class="fc" id="L1124">        brush.fill(ellipse);</span>
+<span class="fc" id="L1125">        brush.fill(ellipse);</span>
 
-<span class="fc" id="L1126">        brush.setColor(deckButtonColor);</span>
-<span class="fc" id="L1127">        brush.fillRoundRect(centerX - (int) (buttonAnimationModifier * radius / 2 * Math.pow(modifier, 200 / modifier)) / 2,</span>
-<span class="fc" id="L1128">                centerY - (int) (buttonAnimationModifier * radius / 4 * Math.pow(modifier, 300 / modifier)) / 2,</span>
-<span class="fc" id="L1129">                (int) (buttonAnimationModifier * radius / 2 * Math.pow(modifier, 200 / modifier)),</span>
-<span class="fc" id="L1130">                (int) (buttonAnimationModifier * radius / 4 * Math.pow(modifier, 300 / modifier)), (int) (radius / 6), (int) (radius / 6));</span>
+<span class="fc" id="L1127">        brush.setColor(deckButtonColor);</span>
+<span class="fc" id="L1128">        brush.fillRoundRect(centerX - (int) (buttonAnimationModifier * radius / 2 * Math.pow(modifier, 200 / modifier)) / 2,</span>
+<span class="fc" id="L1129">                centerY - (int) (buttonAnimationModifier * radius / 4 * Math.pow(modifier, 300 / modifier)) / 2,</span>
+<span class="fc" id="L1130">                (int) (buttonAnimationModifier * radius / 2 * Math.pow(modifier, 200 / modifier)),</span>
+<span class="fc" id="L1131">                (int) (buttonAnimationModifier * radius / 4 * Math.pow(modifier, 300 / modifier)), (int) (radius / 6), (int) (radius / 6));</span>
 
-<span class="fc" id="L1132">        double expMod = 1;</span>
-<span class="fc" id="L1133">        expMod = ((double) diameter / defaultDiameter) * panelScale / 0.15;</span>
-<span class="fc bfc" id="L1134" title="All 2 branches covered.">        if (expMod &gt; 0.7) {</span>
-<span class="fc bfc" id="L1135" title="All 2 branches covered.">            if (expMod &gt; 1) {</span>
-<span class="fc" id="L1136">                expMod = 1;</span>
+<span class="fc" id="L1133">        double expMod = 1;</span>
+<span class="fc" id="L1134">        expMod = ((double) diameter / defaultDiameter) * panelScale / 0.15;</span>
+<span class="fc bfc" id="L1135" title="All 2 branches covered.">        if (expMod &gt; 0.7) {</span>
+<span class="fc bfc" id="L1136" title="All 2 branches covered.">            if (expMod &gt; 1) {</span>
+<span class="fc" id="L1137">                expMod = 1;</span>
             }
-<span class="fc" id="L1138">            int expTrans = (int) (Math.pow(expMod, 10) * 255);</span>
+<span class="fc" id="L1139">            int expTrans = (int) (Math.pow(expMod, 10) * 255);</span>
 
-<span class="fc" id="L1140">            brush.setFont(new Font(&quot;Tahoma&quot;, Font.BOLD, (int) (diameter * (0.04))));</span>
-<span class="fc" id="L1141">            brush.setColor(new Color(Palette.SYSTEM_OCEAN.getRed(), Palette.SYSTEM_OCEAN.getGreen(), Palette.SYSTEM_OCEAN.getBlue(), expTrans));</span>
-<span class="fc" id="L1142">            brush.setColor(new Color(0, 0, 0, expTrans));</span>
+<span class="fc" id="L1141">            brush.setFont(new Font(&quot;Tahoma&quot;, Font.BOLD, (int) (diameter * (0.04))));</span>
+<span class="fc" id="L1142">            brush.setColor(new Color(Palette.SYSTEM_OCEAN.getRed(), Palette.SYSTEM_OCEAN.getGreen(), Palette.SYSTEM_OCEAN.getBlue(), expTrans));</span>
+<span class="fc" id="L1143">            brush.setColor(new Color(0, 0, 0, expTrans));</span>
         }
 
-<span class="fc" id="L1145">        _paintButton(brush, centerX, centerY, radius, modifier, buttonAnimationModifier, false);</span>
+<span class="fc" id="L1146">        _paintButton(brush, centerX, centerY, radius, modifier, buttonAnimationModifier, false);</span>
 
-<span class="fc" id="L1147">        Font ValueFont = new Font(&quot;Tahoma&quot;, Font.BOLD, (int) (diameter * (0.075)));</span>
-<span class="fc" id="L1148">        brush.setFont(ValueFont);</span>
+<span class="fc" id="L1148">        Font ValueFont = new Font(&quot;Tahoma&quot;, Font.BOLD, (int) (diameter * (0.075)));</span>
+<span class="fc" id="L1149">        brush.setFont(ValueFont);</span>
 
-<span class="fc" id="L1150">        _paintDisplayBox(</span>
+<span class="fc" id="L1151">        _paintDisplayBox(</span>
                 brush,
                 centerX,
                 centerY,
-<span class="fc" id="L1154">                surface.getScale(),</span>
+<span class="fc" id="L1155">                surface.getScale(),</span>
                 buttonAnimationModifier,
                 false
         );
 
-<span class="fc" id="L1159">        brush.setClip(null);</span>
-<span class="fc" id="L1160">    }</span>
+<span class="fc" id="L1160">        brush.setClip(null);</span>
+<span class="fc" id="L1161">    }</span>
 
     private void _paintButton(Graphics2D brush, int centerX, int centerY, double radius, double modifier, double buttonAnimationModifier, boolean interior) {
-<span class="fc" id="L1163">        Font NFont = new Font(&quot;Tahoma&quot;, Font.PLAIN, (int) (radius / 9 * buttonAnimationModifier * Math.pow(modifier, 100 / modifier)));</span>
-<span class="fc" id="L1164">        brush.setFont(NFont);//buttonAnimationModifier * (Math.pow(modifier, 100 / modifier))</span>
-<span class="fc" id="L1165">        double colorMod = buttonAnimationModifier * (Math.pow(modifier, 100 / modifier));</span>
-<span class="pc bpc" id="L1166" title="1 of 2 branches missed.">        if (colorMod &gt; 1) colorMod = 1;</span>
-<span class="pc bpc" id="L1167" title="1 of 2 branches missed.">        if (colorMod &lt; 0) colorMod = 0;</span>
-<span class="fc" id="L1168">        brush.setColor(</span>
+<span class="fc" id="L1164">        Font NFont = new Font(&quot;Tahoma&quot;, Font.PLAIN, (int) (radius / 9 * buttonAnimationModifier * Math.pow(modifier, 100 / modifier)));</span>
+<span class="fc" id="L1165">        brush.setFont(NFont);//buttonAnimationModifier * (Math.pow(modifier, 100 / modifier))</span>
+<span class="fc" id="L1166">        double colorMod = buttonAnimationModifier * (Math.pow(modifier, 100 / modifier));</span>
+<span class="pc bpc" id="L1167" title="1 of 2 branches missed.">        if (colorMod &gt; 1) colorMod = 1;</span>
+<span class="pc bpc" id="L1168" title="1 of 2 branches missed.">        if (colorMod &lt; 0) colorMod = 0;</span>
+<span class="fc" id="L1169">        brush.setColor(</span>
                 new Color(
-<span class="fc" id="L1170">                        (int) (deckColor.getRed() + (255 - deckColor.getRed()) * colorMod),</span>
-<span class="fc" id="L1171">                        (int) (deckColor.getGreen() + (255 - deckColor.getGreen()) * colorMod),</span>
-<span class="fc" id="L1172">                        (int) (deckColor.getBlue() + (255 - deckColor.getBlue()) * colorMod))</span>
+<span class="fc" id="L1171">                        (int) (deckColor.getRed() + (255 - deckColor.getRed()) * colorMod),</span>
+<span class="fc" id="L1172">                        (int) (deckColor.getGreen() + (255 - deckColor.getGreen()) * colorMod),</span>
+<span class="fc" id="L1173">                        (int) (deckColor.getBlue() + (255 - deckColor.getBlue()) * colorMod))</span>
         );
-<span class="fc bfc" id="L1174" title="All 2 branches covered.">        brush.drawString((!interior) ? &quot;OPEN&quot; : &quot;CLOSE&quot;, (int) (centerX - diameter * (0.08) * colorMod), (int) (centerY + diameter * (0.0154761) * colorMod));</span>
-<span class="fc" id="L1175">    }</span>
+<span class="fc bfc" id="L1175" title="All 2 branches covered.">        brush.drawString((!interior) ? &quot;OPEN&quot; : &quot;CLOSE&quot;, (int) (centerX - diameter * (0.08) * colorMod), (int) (centerY + diameter * (0.0154761) * colorMod));</span>
+<span class="fc" id="L1176">    }</span>
 
     private void _paintDisplayBox(
             Graphics2D brush,
@@ -1182,27 +1183,27 @@ public class SurfaceNode implements SurfaceObject {
             double buttonAnimationModifier,
             boolean interior
     ) {
-<span class="fc" id="L1185">        double modifier = 1;</span>
-<span class="fc bfc" id="L1186" title="All 2 branches covered.">        if (panelScale &lt; 0.1) modifier = panelScale / 0.1;</span>
-<span class="fc" id="L1187">        int transparency = (int) (modifier * modifier * modifier * 255);</span>
+<span class="fc" id="L1186">        double modifier = 1;</span>
+<span class="fc bfc" id="L1187" title="All 2 branches covered.">        if (panelScale &lt; 0.1) modifier = panelScale / 0.1;</span>
+<span class="fc" id="L1188">        int transparency = (int) (modifier * modifier * modifier * 255);</span>
 
-<span class="fc bfc" id="L1189" title="All 2 branches covered.">        modifier = (panelScale &lt; 0.1) ? (Math.pow(0.1 / panelScale, 2)) : 1;</span>
-<span class="fc bfc" id="L1190" title="All 2 branches covered.">        modifier = (modifier &gt; 2) ? 2.0 : modifier;</span>
+<span class="fc bfc" id="L1190" title="All 2 branches covered.">        modifier = (panelScale &lt; 0.1) ? (Math.pow(0.1 / panelScale, 2)) : 1;</span>
+<span class="fc bfc" id="L1191" title="All 2 branches covered.">        modifier = (modifier &gt; 2) ? 2.0 : modifier;</span>
 
         //System.out.println(modifier+&quot; ... nice&quot;);
 
-<span class="pc bpc" id="L1194" title="1 of 2 branches missed.">        if (transparency &gt; 15) {</span>
-<span class="fc" id="L1195">            double radius = getRadius();</span>
+<span class="pc bpc" id="L1195" title="1 of 2 branches missed.">        if (transparency &gt; 15) {</span>
+<span class="fc" id="L1196">            double radius = getRadius();</span>
             //---
-<span class="pc bpc" id="L1197" title="1 of 2 branches missed.">            String s = (this.getGraphNode().getPayload() == null) ? &quot;null&quot; : getGraphNode().getPayload().toString(&quot;sgc&quot;);</span>
+<span class="pc bpc" id="L1198" title="1 of 2 branches missed.">            String s = (this.getGraphNode().getPayload() == null) ? &quot;null&quot; : getGraphNode().getPayload().toString(&quot;sgc&quot;);</span>
             //s = (this.getGraphNode().getFunction()==null)?s:getGraphNode().getFunction().toString()+&quot;=&quot;+s;
             //System.out.println(s);
             //brush.setColor(Color.CYAN);
-<span class="fc bfc" id="L1201" title="All 2 branches covered.">            brush.setColor((!interior) ? new Color(0, 0, 0, transparency) : Color.CYAN);</span>
-<span class="fc" id="L1202">            double shift = (radius * 0.019 * s.length()) * modifier;</span>
-<span class="fc" id="L1203">            double height = 0.2;</span>
-<span class="fc" id="L1204">            double width = 0.3;</span>
-<span class="fc" id="L1205">            brush.fillRoundRect(</span>
+<span class="fc bfc" id="L1202" title="All 2 branches covered.">            brush.setColor((!interior) ? new Color(0, 0, 0, transparency) : Color.CYAN);</span>
+<span class="fc" id="L1203">            double shift = (radius * 0.019 * s.length()) * modifier;</span>
+<span class="fc" id="L1204">            double height = 0.2;</span>
+<span class="fc" id="L1205">            double width = 0.3;</span>
+<span class="fc" id="L1206">            brush.fillRoundRect(</span>
                     (int) (centerX - (radius * width) * modifier - shift / 2),
                     (int) (centerY - (radius * height) * modifier - radius * 0.325 * buttonAnimationModifier),
                     (int) ((radius * width) * modifier * 2 + shift),
@@ -1211,167 +1212,167 @@ public class SurfaceNode implements SurfaceObject {
                     (int) (radius * 0.2),
                     (int) (radius * 0.5)
             );
-<span class="fc" id="L1214">            Font ValueFont = new Font(&quot;Tahoma&quot;, Font.PLAIN, (int) (modifier * diameter * (0.0766666) / ((double) s.length() / 10.0)));</span>
-<span class="fc" id="L1215">            brush.setFont(ValueFont);</span>
-<span class="fc bfc" id="L1216" title="All 2 branches covered.">            brush.setColor((!interior) ? Color.CYAN : Color.BLACK);</span>
-<span class="fc" id="L1217">            brush.drawString(s,</span>
+<span class="fc" id="L1215">            Font ValueFont = new Font(&quot;Tahoma&quot;, Font.PLAIN, (int) (modifier * diameter * (0.0766666) / ((double) s.length() / 10.0)));</span>
+<span class="fc" id="L1216">            brush.setFont(ValueFont);</span>
+<span class="fc bfc" id="L1217" title="All 2 branches covered.">            brush.setColor((!interior) ? Color.CYAN : Color.BLACK);</span>
+<span class="fc" id="L1218">            brush.drawString(s,</span>
                     (int) (centerX - radius * 0.13 * modifier - shift),
                     (int) (centerY + radius * 0.0475 - radius * 0.325 * buttonAnimationModifier)
             );
             //---
         }
-<span class="fc" id="L1223">    }</span>
+<span class="fc" id="L1224">    }</span>
 
     // --------------------------------------------------------------------------------------------
     private double panelScaleModifier(double currentPanelScale) {
-<span class="fc bfc" id="L1227" title="All 2 branches covered.">        if (5 * currentPanelScale &lt; 1) {</span>
-<span class="fc" id="L1228">            return Math.pow((1 - (1 - currentPanelScale * 5) / 35), 7);</span>
+<span class="fc bfc" id="L1228" title="All 2 branches covered.">        if (5 * currentPanelScale &lt; 1) {</span>
+<span class="fc" id="L1229">            return Math.pow((1 - (1 - currentPanelScale * 5) / 35), 7);</span>
         } else {
-<span class="fc" id="L1230">            return 1;</span>
+<span class="fc" id="L1231">            return 1;</span>
         }
     }
 
     // --------------------------------------------------------------------------------------------
     public double getX() {
-<span class="fc" id="L1236">        return position[0];</span>
+<span class="fc" id="L1237">        return position[0];</span>
     }
 
     // --------------------------------------------------------------------------------------------
     public double getY() {
-<span class="fc" id="L1241">        return position[1];</span>
+<span class="fc" id="L1242">        return position[1];</span>
     }
 
     // --------------------------------------------------------------------------------------------
     public void addToX(double value) {
-<span class="nc" id="L1246">        position[0] += value;</span>
-<span class="nc" id="L1247">    }</span>
+<span class="nc" id="L1247">        position[0] += value;</span>
+<span class="nc" id="L1248">    }</span>
 
     // --------------------------------------------------------------------------------------------
     public void addToY(double value) {
-<span class="nc" id="L1251">        position[1] += value;</span>
-<span class="nc" id="L1252">    }</span>
+<span class="nc" id="L1252">        position[1] += value;</span>
+<span class="nc" id="L1253">    }</span>
 
     // --------------------------------------------------------------------------------------------
     //SurfaceObject implementation:
     @Override
     public double getLeftPeripheral() {
-<span class="fc" id="L1258">        return position[0] - diameter / 2;</span>
+<span class="fc" id="L1259">        return position[0] - diameter / 2;</span>
     }
 
     @Override
     public double getTopPeripheral() {
-<span class="fc" id="L1263">        return position[1] - diameter / 2;</span>
+<span class="fc" id="L1264">        return position[1] - diameter / 2;</span>
 
     }
 
     @Override
     public double getRightPeripheral() {
-<span class="fc" id="L1269">        return position[0] + diameter / 2;</span>
+<span class="fc" id="L1270">        return position[0] + diameter / 2;</span>
 
     }
 
     @Override
     public double getBottomPeripheral() {
-<span class="fc" id="L1275">        return position[1] + diameter / 2;</span>
+<span class="fc" id="L1276">        return position[1] + diameter / 2;</span>
 
     }
 
     @Override
     public int getLayerID() {
-<span class="fc" id="L1281">        int layerID = 3;</span>
+<span class="fc" id="L1282">        int layerID = 3;</span>
         //if (false)//this.get_tensor().rqsGradient())
         //{
         //    return layerID;
         //}
-<span class="fc" id="L1286">        layerID++;</span>
+<span class="fc" id="L1287">        layerID++;</span>
         //if(this.get_tensor().rqsGradient()) //this.get_tensor().is(Tsr.BasicRoot)||this.get_tensor().is(Tsr.RootInput)
         //{
         //	return layerID;
         //}
-<span class="fc" id="L1291">        layerID++;</span>
+<span class="fc" id="L1292">        layerID++;</span>
         //if(this.get_tensor().rqsGradient())
         //{
         //	return layerID;
         //}
-<span class="fc" id="L1296">        return layerID;</span>
+<span class="fc" id="L1297">        return layerID;</span>
     }
 
     @Override
     public boolean needsRepaintOnLayer(int layerID) {
-<span class="fc bfc" id="L1301" title="All 2 branches covered.">        if (layerID == 0) {</span>
+<span class="fc bfc" id="L1302" title="All 2 branches covered.">        if (layerID == 0) {</span>
             //if(this.get_tensor().rqsGradient()==false)
             //{
             //	return true;
             //}
-<span class="fc" id="L1306">            return true;</span>
+<span class="fc" id="L1307">            return true;</span>
         }
-<span class="fc bfc" id="L1308" title="All 2 branches covered.">        if (layerID == 1) {</span>
+<span class="fc bfc" id="L1309" title="All 2 branches covered.">        if (layerID == 1) {</span>
             //if(this.get_tensor().rqsGradient())
             //{
             //	return true;
             //}
-<span class="fc" id="L1313">            return true;</span>
+<span class="fc" id="L1314">            return true;</span>
         }
-<span class="fc bfc" id="L1315" title="All 2 branches covered.">        if (layerID == 2) {</span>
+<span class="fc bfc" id="L1316" title="All 2 branches covered.">        if (layerID == 2) {</span>
             //if(this.get_tensor().rqsGradient()==true)
             //{
             //	return true;
             //}
-<span class="fc" id="L1320">            return true;</span>
+<span class="fc" id="L1321">            return true;</span>
         }
-<span class="fc" id="L1322">        int mainLayerID = getLayerID();</span>
-<span class="fc bfc" id="L1323" title="All 2 branches covered.">        if (mainLayerID == layerID) {</span>
-<span class="fc" id="L1324">            return true;</span>
+<span class="fc" id="L1323">        int mainLayerID = getLayerID();</span>
+<span class="fc bfc" id="L1324" title="All 2 branches covered.">        if (mainLayerID == layerID) {</span>
+<span class="fc" id="L1325">            return true;</span>
         }
-<span class="fc" id="L1326">        return false;</span>
+<span class="fc" id="L1327">        return false;</span>
     }
 
     @Override
     public void repaintLayer(int layerID, Graphics2D brush, Surface HostSurface) {
-<span class="pc bpc" id="L1331" title="4 of 8 branches missed.">        switch (layerID) {</span>
+<span class="pc bpc" id="L1332" title="4 of 8 branches missed.">        switch (layerID) {</span>
             case 0://Paint Connections
-<span class="fc" id="L1333">                paintNodeConnections(brush, HostSurface.getAnimator());</span>
-<span class="fc" id="L1334">                break;</span>
+<span class="fc" id="L1334">                paintNodeConnections(brush, HostSurface.getAnimator());</span>
+<span class="fc" id="L1335">                break;</span>
             case 1://Paint root body
-<span class="fc" id="L1336">                paintRootUnitBody(brush, HostSurface.getScale(), HostSurface.getAnimator());</span>
-<span class="fc" id="L1337">                break;</span>
+<span class="fc" id="L1337">                paintRootUnitBody(brush, HostSurface.getScale(), HostSurface.getAnimator());</span>
+<span class="fc" id="L1338">                break;</span>
             case 2://Paint timeless root connections
-<span class="fc" id="L1339">                paintNodeConnections(brush, HostSurface.getAnimator());</span>
-<span class="fc" id="L1340">                break;</span>
+<span class="fc" id="L1340">                paintNodeConnections(brush, HostSurface.getAnimator());</span>
+<span class="fc" id="L1341">                break;</span>
             case 3://Paint basic root nodes
-<span class="nc" id="L1342">                paintNeuron(brush, HostSurface);</span>
-<span class="nc" id="L1343">                break;</span>
+<span class="nc" id="L1343">                paintNeuron(brush, HostSurface);</span>
+<span class="nc" id="L1344">                break;</span>
             case 4://Paint memory root nodes
-<span class="nc" id="L1345">                paintNeuron(brush, HostSurface);</span>
-<span class="nc" id="L1346">                break;</span>
+<span class="nc" id="L1346">                paintNeuron(brush, HostSurface);</span>
+<span class="nc" id="L1347">                break;</span>
             case 5://Paint super root nodes
-<span class="fc" id="L1348">                paintNeuron(brush, HostSurface);</span>
-<span class="fc" id="L1349">                break;</span>
+<span class="fc" id="L1349">                paintNeuron(brush, HostSurface);</span>
+<span class="fc" id="L1350">                break;</span>
             case 6://Paint default nodes
-<span class="nc" id="L1351">                paintNeuron(brush, HostSurface);</span>
+<span class="nc" id="L1352">                paintNeuron(brush, HostSurface);</span>
                 break;
         }
-<span class="fc" id="L1354">    }</span>
+<span class="fc" id="L1355">    }</span>
 
     @Override
     public double getRadius() {
-<span class="fc" id="L1358">        return diameter / 2;</span>
+<span class="fc" id="L1359">        return diameter / 2;</span>
     }
 
     @Override
     public boolean hasGripAt(double x, double y, Surface hostSurface) {
-<span class="fc bfc" id="L1363" title="All 2 branches covered.">        if (this.testForBody(x, y)) {</span>
-<span class="fc" id="L1364">            return true;</span>
+<span class="fc bfc" id="L1364" title="All 2 branches covered.">        if (this.testForBody(x, y)) {</span>
+<span class="fc" id="L1365">            return true;</span>
         }
-<span class="pc bpc" id="L1366" title="1 of 2 branches missed.">        if (this.testForBody_Root(x, y)) {</span>
-<span class="nc" id="L1367">            return true;</span>
+<span class="pc bpc" id="L1367" title="1 of 2 branches missed.">        if (this.testForBody_Root(x, y)) {</span>
+<span class="nc" id="L1368">            return true;</span>
         }
-<span class="fc" id="L1369">        return false;</span>
+<span class="fc" id="L1370">        return false;</span>
     }
 
     @Override
     public boolean killable() {
-<span class="fc" id="L1374">        return false;</span>
+<span class="fc" id="L1375">        return false;</span>
     }
 
 

@@ -35,7 +35,7 @@ public class Neureka
 
         }
 
-        public static class ad
+        public static class ad // Auto-Differentiation
         {
             /**
              * After backward passes the used derivatives are usually not needed.
@@ -64,9 +64,17 @@ public class Neureka
 
         }
 
-        public static class tsr{
+        public static class tsr{ // Tensor
 
-            public static boolean REVERSE_INDEX_TRANSLATION = true;
+            public static boolean LEGACY_INDEXING_IS_ENABLED(){
+                return LEGACY_INDEXING;
+            }
+
+            public static void SET_LEGACY_INDEXING(boolean enabled){
+                LEGACY_INDEXING = enabled;//NOTE: gpu code must recompiled! (OpenCLPlatform)
+            }
+
+            private static boolean LEGACY_INDEXING = false;//DEFAULT: true
 
 
         }

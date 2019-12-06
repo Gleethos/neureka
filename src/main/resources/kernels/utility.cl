@@ -19,9 +19,16 @@ int _i_of_i(int i, int* cfg, int rank)// cfg:   <[ shape | translation | idxMap 
 {
     int* idx = (cfg+rank*3);
     int* idxMap = (cfg+rank*2);
-    for(int ii=(rank)-1; ii>=0; ii--){
-        idx[ii] = (i/idxMap[ii]);//is derived from the shape of a tensor. Translates scalar index to dim-Index
-        i %= idxMap[ii];
+    if(Neureka.settings.tsr.REVERSE_INDEX_TRANSLATION){
+        for(int ii=(rank)-1; ii>=0; ii--){
+            idx[ii] = (i/idxMap[ii]);//is derived from the shape of a tensor. Translates scalar index to dim-Index
+            i %= idxMap[ii];
+        }
+    } else {//---
+        for(int ii=0; ii<rank; ii++){
+            idx[ii] = (i/idxMap[ii]);//is derived from the shape of a tensor. Translates scalar index to dim-Index
+            i %= idxMap[ii];
+        }
     }
     return _i_of_idx_on_tln(cfg, rank);
 }

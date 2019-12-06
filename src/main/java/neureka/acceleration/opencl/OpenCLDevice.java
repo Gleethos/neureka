@@ -33,6 +33,10 @@ public class OpenCLDevice implements Device
 
     private cl_device_id _did;
 
+    public cl_device_id CLDeviceID(){
+        return _did;
+    }
+
     /**
      * The OpenCLPlaform
      */

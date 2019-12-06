@@ -1266,66 +1266,72 @@ public class Tsr
             @Contract(pure = true)
             public static int i_of_i(int i, Tsr t){
                 int[] idx = new int[t._shape.length];
-                for(int ii=t.rank()-1; ii>=0; ii--){
-                    idx[ii] += i / t._idxmap[ii];
-                    i %= t._idxmap[ii];
+                if(Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED()){
+                    for(int ii=t.rank()-1; ii>=0; ii--){
+                        idx[ii] += i / t._idxmap[ii];
+                        i %= t._idxmap[ii];
+                    }
+                } else {
+                    for(int ii=0; ii<t.rank(); ii++){
+                        idx[ii] += i / t._idxmap[ii];
+                        i %= t._idxmap[ii];
+                    }
                 }
                 return indexing.i_of_idx(idx, t);
             }
 
             @Contract(pure = true)
             public static void increment(@NotNull int[] shpIdx, @NotNull int[] shape) {
-                int i = 0;
-                while (i >= 0 && i < shape.length) {//fixed
-                    i = incrementAt(i, shpIdx, shape);
+                if(Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED()){
+                    int i = 0;
+                    while (i >= 0 && i < shape.length) {//fixed
+                        i = incrementAt(i, shpIdx, shape);
+                    }
+                } else{//---
+                    int i = shape.length-1;
+                    while (i >= 0 && i < shape.length) {//WIP
+                        i = incrementAt(i, shpIdx, shape);
+                    }
                 }
+
             }
 
             @Contract(pure = true)
             public static int incrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
-                if (shpIdx[i] < (shape[i])) {//fixed
-                    shpIdx[i]++;
-                    if (shpIdx[i] == (shape[i])) {
-                        shpIdx[i] = 0;
-                        i++;
+                if(Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED()){
+                    if (shpIdx[i] < (shape[i])) {//fixed
+                        shpIdx[i]++;
+                        if (shpIdx[i] == (shape[i])) {
+                            shpIdx[i] = 0;
+                            i++;
+                        } else {
+                            i = -1;
+                        }
                     } else {
-                        i = -1;
+                        i++;
                     }
-                } else {
-                    i++;
-                }
-                return i;
-            }
-
-            @Contract(pure = true)
-            public static void decrement(@NotNull int[] idx, @NotNull int[] shape) {
-                int i = 0;
-                while (i >= 0 && i < shape.length) {
-                    i = decrementAt(i, idx, shape);
-                }
-            }
-
-            @Contract(pure = true)
-            public static int decrementAt(int i, @NotNull int[] idx, @NotNull int[] shape) {
-                if (idx[i] == 0) {
-                    i++;
-                } else {
-                    idx[i]--;
-                    i--;
-                    while (idx[i] == 0) {
-                        idx[i] = shape[i] - 1;
+                    return i;
+                } else {//---
+                    if (shpIdx[i] < (shape[i])) {//WIP
+                        shpIdx[i]++;
+                        if (shpIdx[i] == (shape[i])) {
+                            shpIdx[i] = 0;
+                            i--;
+                        } else {
+                            i = -1;
+                        }
+                    } else {
                         i--;
                     }
-                    i = -1;
+                    return i;
                 }
-                return i;
             }
 
             @Contract(pure = true)
             public static int[] newTlnOf(int[] shape) {
                 int[] tln = new int[shape.length];
                 int prod = 1;
-                if(Neureka.settings.tsr.REVERSE_INDEX_TRANSLATION){
+                if(Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED()){
                     for (int i = 0; i < tln.length; i++) {
                         tln[i] = prod;
                         prod *= shape[i];
@@ -1338,17 +1344,6 @@ public class Tsr
                 }
 
                 return tln;
-            }
-
-            @Contract(pure = true)
-            public static int[] idxOf(int i, int[] tln) {
-                int[] idx = new int[tln.length];
-                for (int ti = tln.length - 1; ti >= 0; ti--) {
-                    int r = i % tln[ti];
-                    idx[ti] = (i - r) / tln[ti];
-                    i = r;
-                }
-                return idx;
             }
 
             @Contract(pure = true)

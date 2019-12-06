@@ -67,7 +67,7 @@ public class GraphSurfaceBuilder
                     //Goal: find something on panel -&gt; top most thing -&gt; attach if is attachable...
 <span class="fc" id="L68">                    surface.getListener().setDragStart(x, y);</span>
 <span class="fc" id="L69">                    SurfaceObject found = surface.findObject(surface.realX(x), surface.realY(y), true, null);</span>
-<span class="pc bpc" id="L70" title="1 of 2 branches missed.">                    if (found != null) {</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">                    if (found != null) {</span>
 <span class="pc bpc" id="L71" title="1 of 2 branches missed.">                        if (found.clickedAt(surface.realX(x), surface.realY(y), surface)) {</span>
 <span class="pc bpc" id="L72" title="1 of 2 branches missed.">                            if (found instanceof SurfaceNode) {</span>
 <span class="fc" id="L73">                                SurfaceNode PU = (SurfaceNode) found;</span>
@@ -122,29 +122,29 @@ public class GraphSurfaceBuilder
                 (surface) -&gt;
                 {
 <span class="fc" id="L124">                    int[] DoubleClick = surface.getDoubleClick();</span>
-<span class="pc bpc" id="L125" title="1 of 2 branches missed.">                    if (DoubleClick == null) return;</span>
-<span class="nc" id="L126">                    int x = DoubleClick[0];</span>
-<span class="nc" id="L127">                    int y = DoubleClick[1];</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">                    if (DoubleClick == null) return;</span>
+<span class="fc" id="L126">                    int x = DoubleClick[0];</span>
+<span class="fc" id="L127">                    int y = DoubleClick[1];</span>
 
-<span class="nc" id="L129">                    SurfaceObject found = surface.findObject(surface.realX(x), surface.realY(y), true, null);</span>
-<span class="nc bnc" id="L130" title="All 2 branches missed.">                    if (found != null) {</span>
-<span class="nc" id="L131">                        found.doubleClickedAt(surface.realX(x), surface.realY(y), surface);</span>
+<span class="fc" id="L129">                    SurfaceObject found = surface.findObject(surface.realX(x), surface.realY(y), true, null);</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">                    if (found != null) {</span>
+<span class="fc" id="L131">                        found.doubleClickedAt(surface.realX(x), surface.realY(y), surface);</span>
                     } else {
-<span class="nc" id="L133">                        GraphNode ghnode = new GraphNode(new Tsr(), null, null, null);</span>
-<span class="nc" id="L134">                        SurfaceNode Unit = new SurfaceNode(</span>
+<span class="fc" id="L133">                        GraphNode ghnode = new GraphNode(new Tsr(), null, null, null);</span>
+<span class="fc" id="L134">                        SurfaceNode Unit = new SurfaceNode(</span>
                                 ghnode,
-<span class="nc" id="L136">                                surface.realX((double) x),</span>
-<span class="nc" id="L137">                                surface.realY((double) y),</span>
+<span class="fc" id="L136">                                surface.realX((double) x),</span>
+<span class="fc" id="L137">                                surface.realY((double) y),</span>
                                 this
                         );
-<span class="nc bnc" id="L140" title="All 2 branches missed.">                        if (surface.getMap() == null) {</span>
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">                        if (surface.getMap() == null) {</span>
 <span class="nc" id="L141">                            surface.setMap(new GridSpaceMap(Unit.getX(), Unit.getY(), 10000));</span>
                         }
-<span class="nc" id="L143">                        surface.setMap(surface.getMap().addAndUpdate(Unit));</span>
-<span class="nc" id="L144">                        Unit.setHasMoved(true);</span>
+<span class="fc" id="L143">                        surface.setMap(surface.getMap().addAndUpdate(Unit));</span>
+<span class="fc" id="L144">                        Unit.setHasMoved(true);</span>
                     }
-<span class="nc" id="L146">                    surface.setDoubleClick(null);</span>
-<span class="nc" id="L147">                }</span>
+<span class="fc" id="L146">                    surface.setDoubleClick(null);</span>
+<span class="fc" id="L147">                }</span>
         );
 <span class="fc" id="L149">        Surface.setScaleAction(</span>
                 (surface) -&gt;
@@ -209,32 +209,32 @@ public class GraphSurfaceBuilder
                 (surface) -&gt;
                 {
 <span class="fc" id="L211">                    int[] Swipe = surface.getSwipe();</span>
-<span class="pc bpc" id="L212" title="1 of 2 branches missed.">                    if (Swipe == null) return;</span>
-<span class="nc bnc" id="L213" title="All 2 branches missed.">                    if (surface.isInTouchMode()) {</span>
-<span class="nc" id="L214">                        surface.setFocusObject(surface.findObject(surface.realX(Swipe[0]), surface.realY(Swipe[1]), true, null));</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">                    if (Swipe == null) return;</span>
+<span class="pc bpc" id="L213" title="1 of 2 branches missed.">                    if (surface.isInTouchMode()) {</span>
+<span class="fc" id="L214">                        surface.setFocusObject(surface.findObject(surface.realX(Swipe[0]), surface.realY(Swipe[1]), true, null));</span>
 
-<span class="nc bnc" id="L216" title="All 2 branches missed.">                        if (surface.getFocusObject() != null) {</span>
-<span class="nc" id="L217">                            ArrayList&lt;SurfaceRepaintSpace&gt; RepaintQueue = surface.getRepaintQueue();</span>
-<span class="nc bnc" id="L218" title="All 2 branches missed.">                            if (RepaintQueue == null) {</span>
+<span class="fc bfc" id="L216" title="All 2 branches covered.">                        if (surface.getFocusObject() != null) {</span>
+<span class="fc" id="L217">                            ArrayList&lt;SurfaceRepaintSpace&gt; RepaintQueue = surface.getRepaintQueue();</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">                            if (RepaintQueue == null) {</span>
 <span class="nc" id="L219">                                RepaintQueue = new ArrayList&lt;SurfaceRepaintSpace&gt;();</span>
                             }
 
-<span class="nc" id="L222">                            surface.setLastSenseX(Swipe[2]);</span>
-<span class="nc" id="L223">                            surface.setLastSenseY(Swipe[3]);</span>
+<span class="fc" id="L222">                            surface.setLastSenseX(Swipe[2]);</span>
+<span class="fc" id="L223">                            surface.setLastSenseY(Swipe[3]);</span>
 
-<span class="nc" id="L225">                            double[] data = {surface.realX(Swipe[0]), surface.realY(Swipe[1]), surface.realX(Swipe[2]), surface.realY(Swipe[3])};</span>
-<span class="nc" id="L226">                            RepaintQueue.addAll(surface.getFocusObject().moveDirectional(data, surface));</span>
-<span class="nc" id="L227">                            surface.setRepaintQueue(RepaintQueue);</span>
-<span class="nc" id="L228">                            Swipe[0] = Swipe[2];</span>
-<span class="nc" id="L229">                            Swipe[1] = Swipe[3];</span>
-<span class="nc" id="L230">                            Swipe = null;</span>
-<span class="nc" id="L231">                            return;</span>
+<span class="fc" id="L225">                            double[] data = {surface.realX(Swipe[0]), surface.realY(Swipe[1]), surface.realX(Swipe[2]), surface.realY(Swipe[3])};</span>
+<span class="fc" id="L226">                            RepaintQueue.addAll(surface.getFocusObject().moveDirectional(data, surface));</span>
+<span class="fc" id="L227">                            surface.setRepaintQueue(RepaintQueue);</span>
+<span class="fc" id="L228">                            Swipe[0] = Swipe[2];</span>
+<span class="fc" id="L229">                            Swipe[1] = Swipe[3];</span>
+<span class="fc" id="L230">                            Swipe = null;</span>
+<span class="fc" id="L231">                            return;</span>
                         }
-<span class="nc bnc" id="L233" title="All 2 branches missed.">                        if (surface.getFocusObject() == null) {</span>
-<span class="nc" id="L234">                            surface.translatePanel(Swipe[2] - Swipe[0], Swipe[3] - Swipe[1]);</span>
-<span class="nc" id="L235">                            Swipe[0] = Swipe[2];</span>
-<span class="nc" id="L236">                            Swipe[1] = Swipe[3];</span>
-<span class="nc" id="L237">                            surface.setSwipe(null);</span>
+<span class="pc bpc" id="L233" title="1 of 2 branches missed.">                        if (surface.getFocusObject() == null) {</span>
+<span class="fc" id="L234">                            surface.translatePanel(Swipe[2] - Swipe[0], Swipe[3] - Swipe[1]);</span>
+<span class="fc" id="L235">                            Swipe[0] = Swipe[2];</span>
+<span class="fc" id="L236">                            Swipe[1] = Swipe[3];</span>
+<span class="fc" id="L237">                            surface.setSwipe(null);</span>
                         }
                     } else {
 <span class="nc bnc" id="L240" title="All 2 branches missed.">                        if (Swipe.length == 4) {</span>
@@ -244,8 +244,8 @@ public class GraphSurfaceBuilder
 <span class="nc" id="L244">                        Swipe[1] = Swipe[3];</span>
 <span class="nc" id="L245">                        surface.setSwipe(null);</span>
                     }
-<span class="nc" id="L247">                    surface.setSwipe(null);</span>
-<span class="nc" id="L248">                }</span>
+<span class="fc" id="L247">                    surface.setSwipe(null);</span>
+<span class="fc" id="L248">                }</span>
         );
 <span class="fc" id="L250">        Surface.setDragAction(</span>
                 (surface) -&gt;
@@ -259,10 +259,10 @@ public class GraphSurfaceBuilder
 <span class="fc" id="L259">                            double distance = Math.pow(Math.pow(PressPoint[1] - Drag[0], 2) + Math.pow(PressPoint[2] - Drag[1], 2), 0.5);</span>
 <span class="fc" id="L260">                            double mod = 1 * (Math.pow(distance, (distance)));</span>
 <span class="fc" id="L261">                            PressPoint[0] -= 1 * (mod);</span>
-<span class="pc bpc" id="L262" title="1 of 2 branches missed.">                            if (PressPoint[0] &lt; 0) {</span>
-<span class="nc" id="L263">                                PressPoint[0] = 0;</span>
+<span class="fc bfc" id="L262" title="All 2 branches covered.">                            if (PressPoint[0] &lt; 0) {</span>
+<span class="fc" id="L263">                                PressPoint[0] = 0;</span>
                             }
-<span class="pc bpc" id="L265" title="1 of 2 branches missed.">                            if (distance &gt; pressRadius) {</span>
+<span class="fc bfc" id="L265" title="All 2 branches covered.">                            if (distance &gt; pressRadius) {</span>
                                 //if (newMenu != null) {
                                 //    surface.getListener().PressPoint = null;
                                 //    Surface.setMap(Surface.getMap().removeAndUpdate(newMenu));

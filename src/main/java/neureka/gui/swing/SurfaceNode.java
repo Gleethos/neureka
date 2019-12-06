@@ -548,10 +548,11 @@ public class SurfaceNode implements SurfaceObject {
     @Override
     public boolean doubleClickedAt(double x, double y, Surface hostSurface) {
         boolean check = false;
-        if (InputNode .testFor(x, y)) check = true;
-
-        if (check == true) {
-            this.InputNode = (new SurfaceNodeInput(getX(), getY(), diameter / 2));
+        if(InputNode!=null){
+            if (InputNode.testFor(x, y)) check = true;
+            if (check == true) {
+                this.InputNode = (new SurfaceNodeInput(getX(), getY(), diameter / 2));
+            }
         }
         return false;
     }

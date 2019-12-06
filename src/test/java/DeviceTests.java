@@ -21,11 +21,19 @@ public class DeviceTests {
 
         Device gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
         Neureka.settings.ad.RETAIN_GRAPH_DERIVATIVES_AFTER_BACKWARD = true;
-        _testAutograd(gpu, tester);
+
+        Neureka.settings.tsr.SET_LEGACY_INDEXING(true);
+        OpenCLPlatform.PLATFORMS().get(0).recompile();
+        _testAutograd(gpu, tester, true);
+
+        Neureka.settings.tsr.SET_LEGACY_INDEXING(false);
+        OpenCLPlatform.PLATFORMS().get(0).recompile();
+        _testAutograd(gpu, tester, false);
+
         Neureka.settings.ad.RETAIN_GRAPH_DERIVATIVES_AFTER_BACKWARD = false;
         tester.close();
     }
-    private  void _testAutograd(Device gpu, NTester_Tensor tester)
+    private  void _testAutograd(Device gpu, NTester_Tensor tester, boolean legacyIndexing)
     {
         //gpu.add(new Tsr(new int[]{1000000}, 3));
         List<Tsr> listOfTensors = new ArrayList<>();
@@ -107,7 +115,7 @@ public class DeviceTests {
                 new Tsr[]{tensor1, tensor2},
                 "I0 x i1",
                 new String[]{
-                        "[2x1x2]:(19.0, 22.0, 1.0, -6.0)"
+                        (legacyIndexing)?"[2x1x2]:(19.0, 22.0, 1.0, -6.0)":"(15.0, 2.0, 10.0, 2.0)"
                 });
         //=======================
         tensor1 = new Tsr(
@@ -133,8 +141,8 @@ public class DeviceTests {
                 2, -3, //-2, -1,
         }).setRqsGradient(true);
         tensor2 = new Tsr(new int[]{1, 2, 2}, new double[]{
-                -2, 3,
-                1, 2,
+                -2, 3, // 0  7
+                1, 2,  // -7  0
         });
         gpu.add(tensor1).add(tensor2);
         listOfTensors.add(tensor1);
@@ -143,10 +151,14 @@ public class DeviceTests {
                 new Tsr[]{tensor1, tensor2},
                 "i0xi1",
                 new String[]{
-                        "[2x1x2]:(4.0, -13.0, 5.0, -4.0); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"
+                        "[2x1x2]:("
+                                +((legacyIndexing)?"4.0, -13.0, 5.0, -4.0":"0.0, 7.0, -7.0, 0.0")+
+                        "); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"
                 },
                 new Tsr(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
-                new double[][]{{-1.0, -1.0, 5.0, 5.0}, null}
+                (legacyIndexing)
+                        ?new double[][]{{-1.0, -1.0, 5.0, 5.0}, null}
+                        :new double[][]{{1.0, 3.0, 1.0, 3.0}, null}
         );
         //result = new Tsr(new Tsr[]{tensor1, tensor1}, "ig0<-i0");
         //tester.testContains(tensor1.toString("g"), new String[]{"test"}, "");

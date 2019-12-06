@@ -35,7 +35,7 @@ import neureka.acceleration.Device;
 
         }
 
-<span class="nc" id="L38">        public static class ad</span>
+<span class="nc" id="L38">        public static class ad // Auto-Differentiation</span>
         {
             /**
              * After backward passes the used derivatives are usually not needed.
@@ -64,9 +64,17 @@ import neureka.acceleration.Device;
 
         }
 
-<span class="nc" id="L67">        public static class tsr{</span>
+<span class="nc" id="L67">        public static class tsr{ // Tensor</span>
 
-<span class="fc" id="L69">            public static boolean REVERSE_INDEX_TRANSLATION = true;</span>
+            public static boolean LEGACY_INDEXING_IS_ENABLED(){
+<span class="fc" id="L70">                return LEGACY_INDEXING;</span>
+            }
+
+            public static void SET_LEGACY_INDEXING(boolean enabled){
+<span class="fc" id="L74">                LEGACY_INDEXING = enabled;//NOTE: gpu code must recompiled! (OpenCLPlatform)</span>
+<span class="fc" id="L75">            }</span>
+
+<span class="fc" id="L77">            private static boolean LEGACY_INDEXING = false;//DEFAULT: true</span>
 
 
         }

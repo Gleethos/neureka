@@ -11,45 +11,51 @@ import org.junit.Test
 class LightGroovyTests
 {
 
-
     @Test
-    void testVis(){
+    void testIndexingModes(){
 
-        Tsr a = new Tsr(2).setRqsGradient(true)
-        Tsr b = new Tsr(-4)
-        Tsr c = new Tsr(3).setRqsGradient(true)
+        Neureka.settings.tsr.SET_LEGACY_INDEXING(false)
 
-        Tsr s =  (a*b) + 2
-        Tsr x = new Tsr([s * (s+c)], "th(I[0])")
+        Tsr t0 = new Tsr([3, 2, 1], [
+                1, 2,
+                3, 4,
+                5, 6
+        ])
+        Tsr x0 = new Tsr([1, 2, 3], [
+                1, 2, 3,
+                4, 5, 6
+        ])
+        /*
+                9   12  15
+                19  26  33
+                29  40  51
+         */
+        Tsr out0 = new Tsr([t0, x0], "i0xi1")
+        println(t0)
 
-        GraphBoard w = new GraphBoard(x);
-        def map = w.getBuilder().getSurface().getMap()
-        Thread.sleep(3000)
-        def things = map.getAll()
-        assert things.size()>1
-        double[] frame = new double[4]
-        frame[0] = -4000000
-        frame[1] = +4000000
-        frame[2] = -4000000
-        frame[3] = +4000000
-        assert map.getAllWithin(frame).size()>1
-        map = map.removeAndUpdate(map.getAllWithin(frame).get(0))
-        assert map!=null
-        assert map.getAll().size()<things.size()
-        def action = new AbstractSpaceMap.MapAction(){
-            @Override
-            boolean act(SurfaceObject o){
-                return true;
-            }
-        }
-        assert map.findAllWithin(frame, action).size()>1
-        //assert map.
-        //print("")
-        //w.get
-        Thread.sleep(1000)
-        //while(true){
-        //
-        //}
+        println(t0.value64(4))
+
+        Neureka.settings.tsr.SET_LEGACY_INDEXING(true)
+
+        Tsr t1 = new Tsr([3, 2, 1], [
+                1, 2, 3,
+                4, 5, 6
+        ])
+        Tsr x1 = new Tsr([1, 2, 3], [
+                1, 2,
+                3, 4,
+                5, 6
+        ])
+        /*
+                9   12  15
+                19  26  33
+                26  40  51
+         */
+        Tsr out1 = new Tsr([t0, x0], "i0xi1")
+        println(t0.value64(4))
+
+        println(t1)
+
     }
 
     @Test
