@@ -34,16 +34,14 @@ public class JITProp {
 <span class="pc bpc" id="L34" title="3 of 4 branches missed.">            if(_finished==null || !_finished.contains(n)){</span>
 <span class="pc bpc" id="L35" title="1 of 2 branches missed.">                if(!p.isFullyAccumulated()) throw new IllegalStateException(&quot;[JITProp][execute]: Pending error has not received expected accumulation.&quot;);</span>
 <span class="fc" id="L36">                n.backward(p.getAccumulatedError());//Continue backprop recursively!</span>
-            } else {
-<span class="nc" id="L38">                System.out.println(&quot;[JITProp][execute]: This code has been reached! Great!&quot;);</span>
             }
-<span class="fc" id="L40">        });</span>
-<span class="fc" id="L41">        _finished = null;</span>
-<span class="fc" id="L42">        _pending = null;</span>
-<span class="fc" id="L43">    }</span>
+<span class="fc" id="L38">        });</span>
+<span class="fc" id="L39">        _finished = null;</span>
+<span class="fc" id="L40">        _pending = null;</span>
+<span class="fc" id="L41">    }</span>
 
     public boolean isDone(){
-<span class="nc bnc" id="L46" title="All 4 branches missed.">        return (_finished==null &amp;&amp; _pending==null);</span>
+<span class="nc bnc" id="L44" title="All 4 branches missed.">        return (_finished==null &amp;&amp; _pending==null);</span>
     }
 
 

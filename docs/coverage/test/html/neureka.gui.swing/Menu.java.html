@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Menu.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.gui.swing</a> &gt; <span class="el_source">Menu.java</span></div><h1>Menu.java</h1><pre class="source lang-java linenums">package neureka.gui.swing;
+
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+
+<span class="nc" id="L6">public class Menu implements SurfaceObject</span>
+{
+
+	//Icon painter (lambda!)
+	
+	private double X;
+	private double Y;
+	
+	
+	private double outerX;
+	private double outerY;
+	
+	
+	
+	
+	@Override
+	public boolean killable() {
+		// TODO Auto-generated method stub
+<span class="nc" id="L24">		return false;</span>
+	}
+
+	@Override
+	public boolean hasGripAt(double x, double y, Surface HostPanel) {
+		// TODO Auto-generated method stub
+<span class="nc" id="L30">		return false;</span>
+	}
+
+	@Override
+	public ArrayList&lt;SurfaceRepaintSpace&gt; moveCircular(double[] data, Surface Surface) {
+		// TODO Auto-generated method stub
+<span class="nc" id="L36">		return null;</span>
+	}
+
+	@Override
+	public ArrayList&lt;SurfaceRepaintSpace&gt; moveDirectional(double[] data, Surface Surface) {
+		// TODO Auto-generated method stub
+<span class="nc" id="L42">		return null;</span>
+	}
+
+	@Override
+	public ArrayList&lt;SurfaceRepaintSpace&gt; moveTo(double[] data, Surface Surface) {
+		// TODO Auto-generated method stub
+<span class="nc" id="L48">		return null;</span>
+	}
+
+	@Override
+	public ArrayList&lt;SurfaceRepaintSpace&gt; updateOn(Surface HostPanel) {
+		// TODO Auto-generated method stub
+<span class="nc" id="L54">		return null;</span>
+	}
+
+	@Override
+	public void movementAt(double x, double y, Surface HostPanel) {
+		// TODO Auto-generated method stub
+		
+<span class="nc" id="L61">	}</span>
+
+	@Override
+	public boolean clickedAt(double x, double y, Surface HostPanel) {
+		// TODO Auto-generated method stub
+<span class="nc" id="L66">		return false;</span>
+	}
+
+	@Override
+	public boolean doubleClickedAt(double x, double y, Surface HostPanel) {
+		// TODO Auto-generated method stub
+<span class="nc" id="L72">		return false;</span>
+	}
+
+	@Override
+	public double getX() {
+		// TODO Auto-generated method stub
+<span class="nc" id="L78">		return 0;</span>
+	}
+
+	@Override
+	public double getY() {
+		// TODO Auto-generated method stub
+<span class="nc" id="L84">		return 0;</span>
+	}
+
+	@Override
+	public double getRadius() {
+		// TODO Auto-generated method stub
+<span class="nc" id="L90">		return 0;</span>
+	}
+
+	@Override
+	public double getLeftPeripheral() {
+		// TODO Auto-generated method stub
+<span class="nc" id="L96">		return 0;</span>
+	}
+
+	@Override
+	public double getTopPeripheral() {
+		// TODO Auto-generated method stub
+<span class="nc" id="L102">		return 0;</span>
+	}
+
+	@Override
+	public double getRightPeripheral() {
+		// TODO Auto-generated method stub
+<span class="nc" id="L108">		return 0;</span>
+	}
+
+	@Override
+	public double getBottomPeripheral() {
+		// TODO Auto-generated method stub
+<span class="nc" id="L114">		return 0;</span>
+	}
+
+	@Override
+	public SurfaceRepaintSpace getRepaintSpace() {
+		// TODO Auto-generated method stub
+<span class="nc" id="L120">		return null;</span>
+	}
+
+	@Override
+	public boolean needsRepaintOnLayer(int layerID) {
+		// TODO Auto-generated method stub
+<span class="nc" id="L126">		return false;</span>
+	}
+
+	@Override
+	public void repaintLayer(int layerID, Graphics2D brush, Surface HostSurface) {
+		// TODO Auto-generated method stub
+		
+<span class="nc" id="L133">	}</span>
+
+	@Override
+	public int getLayerID() {
+		// TODO Auto-generated method stub
+<span class="nc" id="L138">		return 0;</span>
+	}
+
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

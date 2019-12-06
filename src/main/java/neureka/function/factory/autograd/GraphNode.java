@@ -66,10 +66,18 @@ public class GraphNode
      * */
     private Function _function;
 
+    public Function getFunction(){
+        return _function;
+    }
+
     /**
      * Input tensors. ('Parents' of the tensor of this node)
      * */
     private GraphNode[] _parents;
+
+    public GraphNode[] getParents(){
+        return _parents;
+    }
 
     /**
      * The value of this graph node!
@@ -120,6 +128,10 @@ public class GraphNode
      */
     private List<WeakReference<GraphNode>> _children;
 
+    public List<WeakReference<GraphNode>> getChildren(){
+        return  _children;
+    }
+
     /**
      *
      */
@@ -158,7 +170,7 @@ public class GraphNode
 
     /**
      *
-     * @return long Node-ID (Used for caching to avoid redundant computation within one computation graph)
+     * @return long AbstractSurfaceNode-ID (Used for caching to avoid redundant computation within one computation graph)
      */
     public long nid(){
         return _nid;
@@ -377,7 +389,7 @@ public class GraphNode
 
     /**
      * The following properties must be true to allow payload deletion:
-     * - The node is not a leave node! (Node supplied by user/from outside the locked graph)
+     * - The node is not a leave node! (AbstractSurfaceNode supplied by user/from outside the locked graph)
      * - The node is not a tip node! (Output node... ->($) )
      * - The node is part of a chain of forward-AD nodes (mode>0)
      * - The mode value of the node is smaller then the largest of another within a chain of forward-AD ($)

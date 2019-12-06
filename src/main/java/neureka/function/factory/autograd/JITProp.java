@@ -34,8 +34,6 @@ public class JITProp {
             if(_finished==null || !_finished.contains(n)){
                 if(!p.isFullyAccumulated()) throw new IllegalStateException("[JITProp][execute]: Pending error has not received expected accumulation.");
                 n.backward(p.getAccumulatedError());//Continue backprop recursively!
-            } else {
-                System.out.println("[JITProp][execute]: This code has been reached! Great!");
             }
         });
         _finished = null;

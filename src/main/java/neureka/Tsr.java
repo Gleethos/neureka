@@ -449,6 +449,9 @@ public class Tsr
         }
         boolean compact = mode.contains("c");
         strShape = "[" + strShape + "]";
+        if(mode.contains("shape")||mode.contains("shp")){
+            return strShape;
+        }
         String asString = "";
         asString += _stringified((value64()), compact, max);//(this.isOutsourced())?this.value64():_value
         asString = strShape + ":(" + asString + ")";
@@ -528,7 +531,22 @@ public class Tsr
         _construct(new Object[]{arg});
     }
     public Tsr(Object arg1, Object arg2){
-            _construct(new Object[]{arg1, arg2});
+        if(arg1 instanceof List){
+            if(arg2 instanceof String){
+                if(((List)arg1).get(0) instanceof Integer){
+                    List<Integer> shape = ((List)arg1);
+                    int[] shp = new int[shape.size()];
+                    for(int i=0; i<shp.length; i++){
+                        shp[i] = shape.get(i);
+                    }
+                    _construct(shp, (String)arg2);
+                } else if(((List)arg1).get(0) instanceof Tsr){
+                    _construct(((List<Tsr>)arg1).toArray(new Tsr[((List<Tsr>)arg1).size()]), (String)arg2, true);
+                }
+            }
+        }
+
+        _construct(new Object[]{arg1, arg2});
     }
     public Tsr(Object arg1, Object arg2, Object arg3){
         _construct(new Object[]{arg1, arg2, arg3});
@@ -553,6 +571,17 @@ public class Tsr
     }
     public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8, Object arg9, Object arg10){
         _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10});
+    }
+
+    public Tsr(int[] shape, String seed){
+        _construct(shape, seed);
+    }
+
+    private void _construct(int[] shape, String seed){
+        _construct(shape);
+        for(int i=0; i<this.size(); i++){
+            ((double[])_value)[i] = DataHelper.getDoubleOf(DataHelper.longHash(seed+i));
+        }
     }
 
     private int[] intArray(Object[] arg){
@@ -585,6 +614,10 @@ public class Tsr
 
     private void _construct(Object[] args) {
         if(args==null || args.length==0)return;
+        if(args[0] instanceof  Tsr && args.length==1){
+            inject(Tsr.fcn.create.newTsrLike((Tsr)args[0]));
+            return;
+        }
         args[0] = (args[0] instanceof ArrayList)?((ArrayList)args[0]).toArray():args[0];
         args[1] = (args[1] instanceof ArrayList)?((ArrayList)args[1]).toArray():args[1];
         if(args[0] instanceof Object[]){
@@ -657,6 +690,10 @@ public class Tsr
     }
 
     public Tsr(int[] shape) {
+        _construct(shape);
+    }
+
+    private void _construct(int[] shape){
         _value = new double[fcn.indexing.szeOfShp(shape)];
         this.initialShape(shape);
     }
@@ -751,10 +788,6 @@ public class Tsr
         _construct(new Tsr[]{tensor}, operation, true);
     }
 
-    public Tsr(List<Tsr> tensors, String operation) {
-        _construct(tensors.toArray(new Tsr[tensors.size()]), operation, true);
-    }
-
     public Tsr(Tsr[] tensors, String operation) {
         _construct(tensors, operation, true);
     }
@@ -836,6 +869,15 @@ public class Tsr
 
     //TENSOR OPERATION (OVERLOADABLE):
     //=================================
+    public Tsr T(){//Transposed!
+        String operation = "";
+        for(int i=rank()-1; i>=0; i--){//TODO: make a static version of this which is always availiable
+            operation += (i+((i==0)?"":", "));
+        }
+        operation = "["+operation+"]:(I[0])";
+        return new Tsr(this, operation);
+    }
+
     public Tsr plus(Tsr other) {
         return new Tsr(new Tsr[]{this, other}, "i0+i1");
     }
@@ -844,6 +886,9 @@ public class Tsr
     }
     public Tsr minus(Tsr other) {
         return new Tsr(new Tsr[]{this, other}, "i0-i1");
+    }
+    public Tsr negative(){
+        return FunctionBuilder.build("(-1*I[0])", false).activate(new Tsr[]{this});
     }
     public Tsr multiply(Tsr other) {
         return new Tsr(new Tsr[]{this, other}, "i0*i1");
@@ -881,7 +926,12 @@ public class Tsr
             device.add(value);
             valueIsDeviceVisitor = true;
         }
-        new Tsr(new Tsr[]{slice, value}, "I[0]<-I[1]", false);
+        if(this.isEmpty() && slice.isEmpty() || slice.size()!=value.size()){
+            inject(value);//Rethink this a little
+        } else {
+            new Tsr(new Tsr[]{slice, value}, "I[0]<-I[1]", false);
+        }
+        //FunctionBuilder.build("I[0]<-I[1]", false).activate(new Tsr[]{slice, value});
         if(valueIsDeviceVisitor) ((Device)value.find(Device.class)).get(value);
         return this;
     }
@@ -1067,6 +1117,22 @@ public class Tsr
                 tensor._shape = _cached(indexing.shpCheck(indexing.rearrange(tensor._shape, newForm), tensor));
                 tensor._translation = _cached(indexing.rearrange(tensor._translation, tensor._shape, newForm));
                 tensor._idxmap =  _cached(indexing.newTlnOf(tensor._shape));
+                int[] sliceCfg = null;
+                if(tensor.has(int[].class)){
+                    sliceCfg = (int[])tensor.find(int[].class);
+                }
+                if(sliceCfg!=null){
+                    int[] newSliceConfig = new int[sliceCfg.length];
+                    for(int i=0; i<newForm.length; i++){
+                        newSliceConfig[i] = sliceCfg[newForm[i]];
+                    }
+                    if(sliceCfg.length!=tensor.rank()){
+                        for(int i=0; i<newForm.length; i++){
+                            newSliceConfig[tensor.rank()+i] = sliceCfg[tensor.rank()+newForm[i]];
+                        }
+                    }
+                    tensor.add(newSliceConfig);
+                }
                 return tensor;
             }
 
@@ -1074,6 +1140,9 @@ public class Tsr
 
         public static class create
         {
+            public  static Tsr E(int[] shape){
+                return new Tsr(shape, 2.7182818284590452353602874713527);
+            }
 
             public static Tsr newRandom(int[] shape){
                 return newRandom(shape, 8701252152903546L);
@@ -1256,10 +1325,18 @@ public class Tsr
             public static int[] newTlnOf(int[] shape) {
                 int[] tln = new int[shape.length];
                 int prod = 1;
-                for (int i = 0; i < tln.length; i++) {
-                    tln[i] = prod;
-                    prod *= shape[i];
+                if(Neureka.settings.tsr.REVERSE_INDEX_TRANSLATION){
+                    for (int i = 0; i < tln.length; i++) {
+                        tln[i] = prod;
+                        prod *= shape[i];
+                    }
+                } else {
+                    for (int i = tln.length-1; i >= 0; i--) {
+                        tln[i] = prod;
+                        prod *= shape[i];
+                    }
                 }
+
                 return tln;
             }
 

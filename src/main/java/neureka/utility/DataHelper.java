@@ -5,6 +5,17 @@ import java.util.Random;
 
 public class DataHelper
 {
+
+    public static long longHash(String string) {
+        long h = 1125899906842597L; // prime
+        int len = string.length();
+
+        for (int i = 0; i < len; i++) {
+            h = 31*h + string.charAt(i);
+        }
+        return h;
+    }
+
     public static double getDoubleOf(long seed) {
         double newNumber;
         double divisor = 0;

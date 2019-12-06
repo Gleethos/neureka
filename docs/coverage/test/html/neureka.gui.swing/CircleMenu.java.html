@@ -1,0 +1,1081 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CircleMenu.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.gui.swing</a> &gt; <span class="el_source">CircleMenu.java</span></div><h1>CircleMenu.java</h1><pre class="source lang-java linenums">package neureka.gui.swing;
+
+import neureka.Tsr;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.MultipleGradientPaint.CycleMethod;
+import java.awt.Paint;
+import java.awt.Polygon;
+import java.awt.RadialGradientPaint;
+import java.awt.Rectangle;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+
+public class CircleMenu implements SurfaceObject {
+
+	private final static int ReferenceRadius      =300;
+	private final static int InnerReferenceRadius =100;
+	private final static long CounterLimit        =450000000L;
+
+<span class="nc" id="L25">	private int layerID = 6;</span>
+	
+	private double X;
+	private double Y;
+<span class="nc" id="L29">	private int highlightID = 2;</span>
+	private boolean needsRepaint;
+<span class="nc" id="L31">	private int baseMenuChoice = 0;</span>
+	
+<span class="nc" id="L33">	private boolean isDying = false;</span>
+<span class="nc" id="L34">	private float rotation=((float)(Math.PI));</span>
+	
+<span class="nc" id="L36">	private double animationCounter=-CounterLimit*4;</span>
+	private byte[] mapping;
+	private boolean[] checked;
+	private double birthScale;
+	
+	private Object PropertyContainer;
+	//private TSurface HostPanel;
+	
+	GraphSurfaceBuilder Builder;
+	
+<span class="nc" id="L46">	private MenuActor Actor = </span>
+	(int id, Object thing)-&gt;
+	{
+<span class="nc" id="L49">		System.out.println(&quot;Actor has not been setInto to do anything :/ &quot;);</span>
+<span class="nc" id="L50">	};</span>
+	
+<span class="nc" id="L52">	Color SystemOcean  = new Color(0,160,210);</span>
+<span class="nc" id="L53">	Color checkedGreen = new Color(10,255,100);</span>
+<span class="nc" id="L54">	Color neuronBlue = new Color(40, 100, 255);</span>
+	//-----------------------------------------------------------------------------------
+	CircleMenu(double centerX, double centerY, double scale, GraphSurfaceBuilder builder)
+<span class="nc" id="L57">	{</span>
+<span class="nc" id="L58">		X=centerX;</span>
+<span class="nc" id="L59">		Y=centerY;</span>
+<span class="nc" id="L60">		birthScale=scale*2;</span>
+<span class="nc" id="L61">		Builder = builder;</span>
+<span class="nc" id="L62">		PropertyContainer = Builder.getSurface().findAnything(centerX, centerX, true, this);</span>
+<span class="nc" id="L63">	}</span>
+	//----------------------------------------------------------------------------------------------
+	public void setLayerID(int id) 
+	{
+<span class="nc" id="L67">		System.out.println(&quot;setInto layerID...&quot;);</span>
+<span class="nc" id="L68">		layerID=id;</span>
+<span class="nc" id="L69">	}</span>
+	public void drawMenu(Graphics2D brush) 
+	{
+<span class="nc" id="L72">		double radius=ReferenceRadius/birthScale;</span>
+<span class="nc" id="L73">		double innerRadius=InnerReferenceRadius/birthScale;</span>
+<span class="nc" id="L74">		double primMod= ((double)animationCounter/CounterLimit);</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">		if(primMod&lt;=0) {primMod=0.0;}</span>
+<span class="nc" id="L76">		double secMod = ((double)(animationCounter+CounterLimit*4)/(CounterLimit*4));</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">		if(secMod&lt;=0) {secMod=0.0;}</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">		if(secMod&gt;1) {secMod=1;}</span>
+		
+<span class="nc" id="L80">		Area clipArea = new Area();</span>
+<span class="nc" id="L81">		clipArea = new Area(new Rectangle.Double((X-radius), (Y-radius), (2*radius), (2*radius)));</span>
+<span class="nc" id="L82">		clipArea.subtract(new Area(new Ellipse2D.Double((X-innerRadius*0.7), (Y-innerRadius*0.7),(2*innerRadius*0.7), (2*innerRadius*0.7))));</span>
+<span class="nc" id="L83">		brush.setClip(clipArea);</span>
+<span class="nc" id="L84">		int transparency = (int)(255*(secMod));</span>
+		//Math.abs(transparency);
+<span class="nc bnc" id="L86" title="All 2 branches missed.">		if(transparency&lt;0) {transparency=0;}</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">		if(transparency&gt;255) {transparency=255;}</span>
+<span class="nc" id="L88">		brush.setColor(new Color(0, 200,255, (int)(transparency)));</span>
+<span class="nc" id="L89">		brush.fillOval((int)(X-innerRadius), (int)(Y-innerRadius),(int)(2*innerRadius), (int)(2*innerRadius));</span>
+		//System.out.println(&quot;ho transparency: &quot;+transparency);
+<span class="nc" id="L91">		brush.setClip(null);</span>
+		
+<span class="nc bnc" id="L93" title="All 2 branches missed.">		if(mapping==null) {return;}</span>
+		
+<span class="nc bnc" id="L95" title="All 2 branches missed.">		if(primMod&gt;0) {</span>
+<span class="nc" id="L96">			clipArea.add(new Area(new Ellipse2D.Double(X-radius, Y-radius, radius*2, radius*2)));</span>
+			//clipArea.subtract(new Area(new Ellipse2D.Double(X-innerRadius, Y-innerRadius, innerRadius*2, innerRadius*2)));
+<span class="nc" id="L98">			brush.setClip(clipArea);</span>
+<span class="nc" id="L99">			Point2D center = new Point2D.Float((float)X, (float)Y);</span>
+<span class="nc" id="L100">				float gradientRadius = (float) (radius*primMod);</span>
+<span class="nc" id="L101">				float[] dist = { (float)0.3f, 0.35f, 1f };//(innerRadius)/radius)</span>
+<span class="nc" id="L102">				Color[] colors = { new Color(0, 0, 0, 0), Color.CYAN, new Color(0, 0, 0, 0) };</span>
+<span class="nc" id="L103">				Paint oldPaint = brush.getPaint();</span>
+<span class="nc" id="L104">				RadialGradientPaint rgp = new RadialGradientPaint(center, gradientRadius, dist, colors, CycleMethod.NO_CYCLE);</span>
+<span class="nc" id="L105">			brush.setPaint(rgp);</span>
+<span class="nc" id="L106">			brush.fillOval((int)(X-radius*primMod), (int)(Y-radius*primMod), (int)(radius*2*primMod), (int)(radius*2*primMod));</span>
+		 
+<span class="nc" id="L108">			brush.setClip(null);</span>
+<span class="nc" id="L109">			double alpha = 2*Math.PI/mapping.length;</span>
+<span class="nc" id="L110">			double alphaMod = primMod*2*Math.PI;</span>
+<span class="nc" id="L111">			double rotationX=Math.cos(rotation)*0-Math.sin(rotation)*-1;</span>
+<span class="nc" id="L112">			double rotationY=Math.sin(rotation)*0+Math.cos(rotation)*-1;</span>
+<span class="nc" id="L113">			double newRotationX = Math.cos(alphaMod-alpha)*rotationX-Math.sin(alphaMod-alpha)*rotationY;</span>
+<span class="nc" id="L114">			double newRotationY = Math.sin(alphaMod-alpha)*rotationX+Math.cos(alphaMod-alpha)*rotationY;</span>
+<span class="nc" id="L115">			rotationX = newRotationX;</span>
+<span class="nc" id="L116">			rotationY = newRotationY; </span>
+<span class="nc" id="L117">			brush.setColor(Color.magenta);</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">			for(int i=0; i&lt;mapping.length; i++) {</span>
+<span class="nc" id="L119">				newRotationX = Math.cos(alpha)*rotationX-Math.sin(alpha)*rotationY;</span>
+<span class="nc" id="L120">				newRotationY = Math.sin(alpha)*rotationX+Math.cos(alpha)*rotationY;</span>
+<span class="nc" id="L121">				rotationX = newRotationX;</span>
+<span class="nc" id="L122">				rotationY = newRotationY; </span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">				if((Math.abs(rotationX) + Math.abs(rotationY)) != 1) </span>
+			    	{
+<span class="nc" id="L125">						double correction = 2-Math.pow(Math.pow(rotationX, 2) + Math.pow(rotationY, 2), 0.5);</span>
+<span class="nc" id="L126">						rotationX *= correction;</span>
+<span class="nc" id="L127">						rotationY *= correction;</span>
+			    	}
+<span class="nc bnc" id="L129" title="All 2 branches missed.">				if(i==mapping.length-1) {</span>
+<span class="nc" id="L130">					newRotationX = Math.cos(alpha)*rotationX-Math.sin(alpha)*rotationY;</span>
+<span class="nc" id="L131">					newRotationY = Math.sin(alpha)*rotationX+Math.cos(alpha)*rotationY;</span>
+<span class="nc" id="L132">					double clipRadius = primMod*(radius-innerRadius)/2;</span>
+<span class="nc" id="L133">					double clipX =(X)+newRotationX*(clipRadius+innerRadius)*(primMod);</span>
+<span class="nc" id="L134">					double clipY =(Y)+newRotationY*(clipRadius+innerRadius)*(primMod);</span>
+<span class="nc" id="L135">					clipArea.add(new Area(new Rectangle((int)(X-radius), (int)(Y-radius), (int)(radius*2), (int)(radius*2))));</span>
+<span class="nc" id="L136">					clipArea.subtract(new Area(new Ellipse2D.Double(clipX-clipRadius*0.99, clipY-clipRadius*0.99, 2*clipRadius*0.98, 2*clipRadius*0.98)));</span>
+<span class="nc" id="L137">					brush.setClip(clipArea);</span>
+				   }
+<span class="nc" id="L139">				double ovalRadius = primMod*(radius-innerRadius)/2;</span>
+<span class="nc" id="L140">				double ovalX =(X)+rotationX*(ovalRadius+innerRadius)*(primMod);</span>
+<span class="nc" id="L141">				double ovalY =(Y)+rotationY*(ovalRadius+innerRadius)*(primMod);</span>
+<span class="nc" id="L142">				brush.fillRect((int)ovalX-10, (int)ovalY-10, 20, 20);</span>
+<span class="nc" id="L143">				center = new Point2D.Float((float)ovalX, (float)ovalY);</span>
+<span class="nc" id="L144">				gradientRadius = (float) ((radius*primMod-innerRadius*primMod)/2);</span>
+<span class="nc" id="L145">				dist[0]=0.8f;</span>
+<span class="nc" id="L146">				dist[1]=0.9f;</span>
+<span class="nc" id="L147">				dist[2]=1f;</span>
+<span class="nc" id="L148">			    colors[0]= new Color(10, 130, 255);</span>
+<span class="nc bnc" id="L149" title="All 6 branches missed.">			    if(checked!=null) {if(checked.length&gt;i) {if(checked[i]) {colors[1]=checkedGreen;}else {}</span>
+<span class="nc" id="L150">			    }else {colors[1]= new Color(5, 70, 255);}}else {System.out.println(&quot;Checked is null!!!!! = Bad&quot;);}</span>
+			    
+<span class="nc" id="L152">			    colors[2]=new Color(0, 0, 0, 0);</span>
+<span class="nc" id="L153">				oldPaint = brush.getPaint();</span>
+<span class="nc" id="L154">				 rgp = new RadialGradientPaint(center, gradientRadius, dist, colors, CycleMethod.NO_CYCLE);</span>
+<span class="nc" id="L155">				 brush.setColor(Color.black);</span>
+<span class="nc" id="L156">				 brush.fillOval((int)(ovalX-ovalRadius), (int)(ovalY-ovalRadius), (int)(2*ovalRadius), (int)(2*ovalRadius));</span>
+<span class="nc" id="L157">				 brush.setPaint(rgp);</span>
+<span class="nc" id="L158">				 brush.fillOval((int)(ovalX-ovalRadius*0.99), (int)(ovalY-ovalRadius*0.99), (int)(2*ovalRadius*0.98), (int)(2*ovalRadius*0.98));</span>
+		 
+<span class="nc" id="L160">				 drawMenuIcon(mapping[i],ovalX, ovalY, brush);</span>
+			}
+<span class="nc" id="L162">			brush.setClip(null);</span>
+<span class="nc" id="L163">			brush.setColor(Color.CYAN);</span>
+<span class="nc" id="L164">			brush.fillRect((int)(X-10), (int)(Y-10), 20, 20);</span>
+			//paint chosen:
+<span class="nc bnc" id="L166" title="All 2 branches missed.">			if(highlightID!=0) {</span>
+<span class="nc" id="L167">				 alpha *=(highlightID);</span>
+<span class="nc" id="L168">				 newRotationX = Math.cos(alpha)*rotationX-Math.sin(alpha)*rotationY;</span>
+<span class="nc" id="L169">			     newRotationY = Math.sin(alpha)*rotationX+Math.cos(alpha)*rotationY;</span>
+<span class="nc" id="L170">			     rotationX = newRotationX;</span>
+<span class="nc" id="L171">				 rotationY = newRotationY; </span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">				 if((Math.abs(rotationX) + Math.abs(rotationY)) != 1) </span>
+				    {
+<span class="nc" id="L174">					 	double correction = 2-Math.pow(Math.pow(rotationX, 2) + Math.pow(rotationY, 2), 0.5);</span>
+<span class="nc" id="L175">					 	rotationX *= correction;</span>
+<span class="nc" id="L176">					 	rotationY *= correction;</span>
+				    }
+<span class="nc" id="L178">				 double ovalRadius = primMod*(radius-innerRadius)/2;</span>
+<span class="nc" id="L179">				 double ovalX =(X)+rotationX*(ovalRadius+innerRadius)*(primMod);</span>
+<span class="nc" id="L180">				 double ovalY =(Y)+rotationY*(ovalRadius+innerRadius)*(primMod);</span>
+<span class="nc" id="L181">				 center = new Point2D.Float((float)ovalX, (float)ovalY);</span>
+<span class="nc" id="L182">					gradientRadius = (float) ((radius-innerRadius)/2);</span>
+<span class="nc" id="L183">					dist[0]=0.8f;</span>
+<span class="nc" id="L184">					dist[1]=0.9f;</span>
+<span class="nc" id="L185">					dist[2]=1f;</span>
+<span class="nc" id="L186">					colors[0]= Color.cyan;</span>
+<span class="nc" id="L187">				    colors[1]= Color.blue;</span>
+<span class="nc" id="L188">				    colors[2]=new Color(0, 0, 0, 0);</span>
+<span class="nc" id="L189">				    oldPaint = brush.getPaint();</span>
+<span class="nc" id="L190">					rgp = new RadialGradientPaint(center, gradientRadius, dist, colors, CycleMethod.NO_CYCLE);</span>
+<span class="nc" id="L191">				 brush.setColor(Color.black);</span>
+<span class="nc" id="L192">				 brush.fillOval((int)(ovalX-ovalRadius), (int)(ovalY-ovalRadius), (int)(ovalRadius*2), (int)(ovalRadius*2));</span>
+<span class="nc" id="L193">				 brush.setPaint(rgp);</span>
+<span class="nc" id="L194">				 brush.fillOval((int)(ovalX-ovalRadius*0.99), (int)(ovalY-ovalRadius*0.99), (int)(2*ovalRadius*0.98), (int)(2*ovalRadius*0.98));</span>
+<span class="nc" id="L195">				 drawMenuIcon(mapping[highlightID-1],ovalX, ovalY, brush);</span>
+			}
+		 }		
+<span class="nc" id="L198">	}</span>
+	public double[] getButtonCenterOfChoice(int choice) 
+	{
+<span class="nc bnc" id="L201" title="All 4 branches missed.">		if(mapping==null || choice&lt;=0) {return null;}</span>
+<span class="nc" id="L202">		double radius=ReferenceRadius/birthScale;</span>
+<span class="nc" id="L203">		double innerRadius=InnerReferenceRadius/birthScale;</span>
+<span class="nc" id="L204">		double primMod= ((double)animationCounter/CounterLimit);</span>
+<span class="nc bnc" id="L205" title="All 2 branches missed.">		if(primMod&lt;=0) {primMod=0.0;}</span>
+<span class="nc" id="L206">		double alpha = 2*Math.PI/mapping.length;</span>
+<span class="nc" id="L207">		double alphaMod = primMod*2*Math.PI;</span>
+<span class="nc" id="L208">		double rotationX=Math.cos(rotation)*0-Math.sin(rotation)*-1;</span>
+<span class="nc" id="L209">		double rotationY=Math.sin(rotation)*0+Math.cos(rotation)*-1;</span>
+<span class="nc" id="L210">		double newRotationX = Math.cos(alphaMod-alpha)*rotationX-Math.sin(alphaMod-alpha)*rotationY;</span>
+<span class="nc" id="L211">		double newRotationY = Math.sin(alphaMod-alpha)*rotationX+Math.cos(alphaMod-alpha)*rotationY;</span>
+<span class="nc" id="L212">		rotationX = newRotationX;</span>
+<span class="nc" id="L213">		rotationY = newRotationY; </span>
+		
+<span class="nc" id="L215">		newRotationX = Math.cos(alpha*choice)*rotationX-Math.sin(alpha*choice)*rotationY;</span>
+<span class="nc" id="L216">		newRotationY = Math.sin(alpha*choice)*rotationX+Math.cos(alpha*choice)*rotationY;</span>
+<span class="nc" id="L217">		rotationX = newRotationX;</span>
+<span class="nc" id="L218">		rotationY = newRotationY; </span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">		if((Math.abs(rotationX) + Math.abs(rotationY)) != 1) </span>
+		{
+<span class="nc" id="L221">			double correction = 2-Math.pow(Math.pow(rotationX, 2) + Math.pow(rotationY, 2), 0.5);</span>
+<span class="nc" id="L222">			rotationX *= correction;</span>
+<span class="nc" id="L223">			rotationY *= correction;</span>
+		}
+<span class="nc" id="L225">		double ovalRadius = primMod*(radius-innerRadius)/2;</span>
+<span class="nc" id="L226">		double ovalX =(X)+rotationX*(ovalRadius+innerRadius)*(primMod);</span>
+<span class="nc" id="L227">		double ovalY =(Y)+rotationY*(ovalRadius+innerRadius)*(primMod);</span>
+			
+<span class="nc" id="L229">		double[] choiceCenter = {ovalX, ovalY};</span>
+<span class="nc" id="L230">		return choiceCenter;</span>
+	}
+<span class="nc" id="L232">	public double animationState() {return animationCounter;}</span>
+<span class="nc" id="L233">	public void modifyAnimationState(int value) {animationCounter+=value; }//if(animationCounter&lt;=(-4*CounterLimit)) {animationCounter = -4*CounterLimit;}</span>
+<span class="nc bnc" id="L234" title="All 4 branches missed.">	public boolean killable() {if(isDying) {if(animationCounter&lt;=(-4*CounterLimit)) {return true;}}return false;}</span>
+<span class="nc" id="L235">	public double intrinsicScale() {return birthScale;}</span>
+<span class="nc" id="L236">	public double getX() {return X;}</span>
+<span class="nc" id="L237">	public double getY() {return Y;}</span>
+	//------------------------------------------------------------------------------------
+	@Override
+	public ArrayList&lt;SurfaceRepaintSpace&gt; updateOn(Surface HostPanel)
+	{
+<span class="nc" id="L242">		HostPanel.setMap(HostPanel.getMap().removeAndUpdate(this));</span>
+		//HostSurface.setObjectMap(HostSurface.getObjectMap().addAndUpdate(this));
+		
+<span class="nc" id="L245">		ArrayList&lt;SurfaceRepaintSpace&gt; queue = new ArrayList&lt;SurfaceRepaintSpace&gt;();</span>
+<span class="nc" id="L246">		int frameDelta = HostPanel.getCurrentFrameDelta();</span>
+<span class="nc bnc" id="L247" title="All 2 branches missed.">		if(isDying) </span>
+		{
+<span class="nc" id="L249">			animationCounter-=frameDelta;</span>
+<span class="nc" id="L250">			needsRepaint=true;</span>
+		}	
+		//System.out.println(&quot;counter: &quot;+animationCounter); 
+<span class="nc" id="L253">		boolean redefine = true;</span>
+<span class="nc bnc" id="L254" title="All 2 branches missed.">		if(PropertyContainer instanceof CircleMenu)</span>
+		{
+<span class="nc bnc" id="L256" title="All 2 branches missed.">			if(((CircleMenu)PropertyContainer).isDying)</span>
+			{
+<span class="nc" id="L258">				redefine = false;</span>
+<span class="nc" id="L259">				needsRepaint=true;</span>
+<span class="nc" id="L260">				isDying=true;</span>
+			}
+		}
+<span class="nc" id="L263">		Object something = ((GraphSurface)HostPanel).findAnything(X, Y, true, this);</span>
+<span class="nc bnc" id="L264" title="All 4 branches missed.">		if(something != PropertyContainer &amp;&amp;  redefine==true) </span>
+		{
+<span class="nc" id="L266">			animationCounter =-2*CounterLimit;</span>
+<span class="nc" id="L267">			PropertyContainer = something;</span>
+<span class="nc" id="L268">			mapping = null;</span>
+<span class="nc" id="L269">			checked = null;</span>
+<span class="nc" id="L270">			needsRepaint=true;</span>
+		}
+		//-------------------------------------------------------
+<span class="nc" id="L273">		boolean check = false;</span>
+		//-----------------------------------------------
+<span class="nc bnc" id="L275" title="All 2 branches missed.">		if(PropertyContainer instanceof CircleMenu)</span>
+		{
+<span class="nc" id="L277">			System.out.println(&quot;is menu&quot;);</span>
+<span class="nc" id="L278">			CircleMenu menu = (CircleMenu)PropertyContainer;</span>
+<span class="nc" id="L279">			int chosen = menu.testForChosen(X, Y); </span>
+<span class="nc bnc" id="L280" title="All 2 branches missed.">			if(chosen!=baseMenuChoice) </span>
+			{
+<span class="nc" id="L282">				check=true;</span>
+			}
+<span class="nc bnc" id="L284" title="All 2 branches missed.">			if(animationCounter&lt;CounterLimit) </span>
+			{
+<span class="nc" id="L286">				double[] adjustment = menu.getButtonCenterOfChoice(menu.testForChoice(X, Y));</span>
+<span class="nc bnc" id="L287" title="All 2 branches missed.">				if(adjustment!=null) </span>
+				{ 
+<span class="nc" id="L289">					double shiftX = (adjustment[0]-X)*((double)frameDelta/100000000);</span>
+<span class="nc" id="L290">					double shiftY = (adjustment[1]-Y)*((double)frameDelta/100000000);</span>
+<span class="nc" id="L291">					((GraphSurface)HostPanel).translatePanel(-(shiftX*HostPanel.getScale()),-(shiftY*HostPanel.getScale()));</span>
+<span class="nc" id="L292">					X += shiftX;</span>
+<span class="nc" id="L293">					Y += shiftY;</span>
+				}
+				
+			}
+<span class="nc bnc" id="L297" title="All 4 branches missed.">			if(menu.intrinsicScale()/birthScale &lt; 1.25 &amp;&amp; menu.intrinsicScale()/birthScale &gt; 0.75) </span>
+			{
+<span class="nc" id="L299">				((GraphSurface)HostPanel).scaleAtReal(X, Y, (double)(1-(1000/(double)frameDelta)));</span>
+<span class="nc" id="L300">			      birthScale*=(double)(1-(40000/(double)frameDelta));</span>
+			}
+			 
+<span class="nc" id="L303">		}//-----------------------------------------------</span>
+<span class="nc bnc" id="L304" title="All 2 branches missed.">		else if(PropertyContainer instanceof SurfaceNode)</span>
+		{
+<span class="nc" id="L306">			System.out.println(&quot;is Unit&quot;);</span>
+<span class="nc bnc" id="L307" title="All 2 branches missed.">			if(animationCounter&lt;CounterLimit) {</span>
+<span class="nc" id="L308">				double shiftX = (((SurfaceNode)PropertyContainer).getX()-X)*((double)frameDelta/100000000);</span>
+<span class="nc" id="L309">				double shiftY = (((SurfaceNode)PropertyContainer).getY()-Y)*((double)frameDelta/100000000);</span>
+<span class="nc" id="L310">				((GraphSurface)HostPanel).translatePanel(-(shiftX*HostPanel.getScale()),-(shiftY*HostPanel.getScale()));</span>
+<span class="nc" id="L311">				X += shiftX;</span>
+<span class="nc" id="L312">				Y += shiftY;</span>
+<span class="nc" id="L313">				double nodeScale = 80/((SurfaceNode)PropertyContainer).getUnitRadius();</span>
+<span class="nc bnc" id="L314" title="All 2 branches missed.">				if(nodeScale&gt;birthScale*1.1) {birthScale*=1.1;}</span>
+<span class="nc bnc" id="L315" title="All 2 branches missed.">				else if(nodeScale&lt;birthScale*0.9) {birthScale*=0.9;}</span>
+				}
+		}
+<span class="nc bnc" id="L318" title="All 4 branches missed.">		if(mapping==null || check==true) </span>
+		{
+<span class="nc bnc" id="L320" title="All 2 branches missed.">			if(PropertyContainer instanceof GraphSurface)</span>
+			{
+<span class="nc" id="L322">				byte[] newMapping = {-1, 2, 9, 1, 6, 5,4,7};</span>
+<span class="nc" id="L323">				boolean[] newChecked = {true, true, true, false, false, false, true, false};</span>
+<span class="nc" id="L324">				mapping = newMapping;</span>
+<span class="nc" id="L325">				checked = newChecked;</span>
+<span class="nc" id="L326">				needsRepaint=true;</span>
+<span class="nc" id="L327">			}</span>
+<span class="nc bnc" id="L328" title="All 2 branches missed.">			else if(PropertyContainer instanceof SurfaceNode)</span>
+			{
+<span class="nc" id="L330">				byte[] newMapping = {-1,  4, 8};</span>
+<span class="nc" id="L331">				boolean[] newChecked = {false, false, false};</span>
+<span class="nc" id="L332">				mapping = newMapping;</span>
+<span class="nc" id="L333">				checked = newChecked;</span>
+<span class="nc" id="L334">				needsRepaint=true;</span>
+<span class="nc" id="L335">			}</span>
+
+<span class="nc bnc" id="L337" title="All 2 branches missed.">			else if(PropertyContainer instanceof Tsr)</span>
+			{
+				
+			}
+<span class="nc bnc" id="L341" title="All 2 branches missed.">			else if(PropertyContainer instanceof CircleMenu)</span>
+			{//-----------------------------------------------------------------------
+<span class="nc" id="L343">				CircleMenu menu = (CircleMenu)PropertyContainer;</span>
+<span class="nc" id="L344">				int chosen = menu.testForChosen(X, Y);</span>
+<span class="nc" id="L345">				System.out.println(&quot;chosen f menu: &quot;+chosen);</span>
+<span class="nc" id="L346">				baseMenuChoice = chosen;</span>
+				//====================================================
+<span class="nc bnc" id="L348" title="All 2 branches missed.">				if(chosen &lt;= 0) </span>
+				{
+<span class="nc" id="L350">					mapping=null;</span>
+<span class="nc" id="L351">					checked=null;</span>
+				}
+				//====================================================
+<span class="nc bnc" id="L354" title="All 2 branches missed.">				else if(chosen==1) </span>
+				{
+<span class="nc" id="L356">					animationCounter=-2*CounterLimit;</span>
+<span class="nc" id="L357">					byte[]    newMapping = {-1,  5, 6};</span>
+<span class="nc" id="L358">					boolean[] newChecked = {true, true, true,};</span>
+<span class="nc" id="L359">					mapping = newMapping;</span>
+<span class="nc" id="L360">					checked = newChecked;</span>
+<span class="nc" id="L361">					needsRepaint=true;</span>
+<span class="nc" id="L362">				}</span>
+				//====================================================
+<span class="nc bnc" id="L364" title="All 2 branches missed.">				else if(chosen==2) </span>
+				{
+<span class="nc" id="L366">					animationCounter=-2*CounterLimit;</span>
+<span class="nc" id="L367">					byte[]    newMapping = {-1,  2, 3};</span>
+<span class="nc" id="L368">					boolean[] newChecked = {true, true, true,};</span>
+<span class="nc" id="L369">					mapping = newMapping;</span>
+<span class="nc" id="L370">					checked = newChecked;</span>
+<span class="nc" id="L371">					needsRepaint=true;</span>
+<span class="nc" id="L372">				}</span>
+				//====================================================
+<span class="nc bnc" id="L374" title="All 2 branches missed.">				else if(chosen==3) </span>
+				{
+					
+				}
+				//====================================================
+<span class="nc bnc" id="L379" title="All 2 branches missed.">				else if(chosen==4) //Settings Icon (panel settings)</span>
+				{
+<span class="nc bnc" id="L381" title="All 2 branches missed.">					if(menu.getMenuStackBaseContainer() instanceof SurfaceNode)</span>
+					{
+<span class="nc" id="L383">						animationCounter=-2*CounterLimit;</span>
+<span class="nc" id="L384">						byte[]    newMapping = {-1,  5, 9};</span>
+<span class="nc" id="L385">						boolean[] newChecked = {false, false, false,};</span>
+<span class="nc" id="L386">						mapping = newMapping;</span>
+<span class="nc" id="L387">						checked = newChecked;</span>
+<span class="nc" id="L388">						needsRepaint=true;</span>
+<span class="nc" id="L389">						Actor = </span>
+						(int choice, Object Container)-&gt;
+						{
+<span class="nc" id="L392">							double[] center = this.getButtonCenterOfChoice(choice);</span>
+<span class="nc bnc" id="L393" title="All 4 branches missed.">							if(choice==5 || choice==9)</span>
+							{
+<span class="nc" id="L395">								CircleMenu newButtonMenu</span>
+									= new CircleMenu(center[0], center[1], birthScale/2, Builder);
+								
+<span class="nc" id="L398">								newButtonMenu.animationCounter=0;</span>
+<span class="nc" id="L399">								Builder.addMenu(newButtonMenu);</span>
+							}  
+<span class="nc" id="L401">						};</span>
+<span class="nc" id="L402">					}</span>
+					//panel base
+				}
+				//====================================================
+<span class="nc bnc" id="L406" title="All 2 branches missed.">				else if(chosen==5) //inner node setting!</span>
+				{
+<span class="nc" id="L408">					animationCounter=-2*CounterLimit;</span>
+<span class="nc" id="L409">					byte[]    newMapping = {-1,  7, 6};//AbstractSurfaceNode functions -&gt; custom....</span>
+<span class="nc" id="L410">					boolean[] newChecked = {true, true};</span>
+<span class="nc" id="L411">					mapping = newMapping;</span>
+<span class="nc" id="L412">					checked = newChecked;</span>
+<span class="nc" id="L413">					needsRepaint=true;</span>
+<span class="nc" id="L414">					Actor = (int choice, Object Container)-&gt;{</span>
+<span class="nc bnc" id="L415" title="All 2 branches missed.">						if(Container instanceof GraphSurface) {</span>
+<span class="nc" id="L416">						    GraphSurface panel = (GraphSurface)Container;</span>
+						    //Setting node accordingly
+						}
+<span class="nc" id="L419">					};</span>
+<span class="nc" id="L420">				}</span>
+<span class="nc bnc" id="L421" title="All 2 branches missed.">				else if(chosen==9) //AbstractSurfaceNode _id menu</span>
+				{
+<span class="nc" id="L423">					animationCounter=-2*CounterLimit;</span>
+<span class="nc" id="L424">					byte[]    newMapping = {-1,  1, 2, 3};//NodeTypes</span>
+<span class="nc" id="L425">					boolean[] newChecked = {false, false, false, false};</span>
+<span class="nc" id="L426">					mapping = newMapping;</span>
+<span class="nc" id="L427">					checked = newChecked;</span>
+<span class="nc" id="L428">					needsRepaint=true;</span>
+<span class="nc" id="L429">					Actor = (int choice, Object Container)-&gt;{</span>
+<span class="nc bnc" id="L430" title="All 2 branches missed.">						if(Container instanceof SurfaceNode)</span>
+						{//1. turn into default node; 2. turn into super root; 3. turn into basic root;
+						    //SurfaceNode node = (SurfaceNode)Container;
+						    //Tsr neuron =  this.node.get_tensor();
+						    ////Setting node accordingly
+						    //if(choice==1) {
+						    //	//Tsr.State.turnIntoTrainableNeuron(neuron);System.out.println(&quot;Turning into default node&quot;);
+						    //}
+						    //if(choice==2) {
+						    //	//Tsr.State.turnIntoParentRoot(neuron);System.out.println(&quot;Turning into super root node&quot;);
+						    //}
+						    ////if(choice==3) {NCore.State.turnIntoBasicRoot(neuron);System.out.println(&quot;Turning into basic root node&quot;);}
+						}
+<span class="nc bnc" id="L443" title="All 2 branches missed.">						else if(Container instanceof GraphSurface) {</span>
+<span class="nc" id="L444">							 Tsr neuron = this.Builder.getBlueprintTensor();</span>
+<span class="nc bnc" id="L445" title="All 2 branches missed.">							 if(choice==1) {</span>
+							 	//Tsr.State.turnIntoTrainableNeuron(neuron);System.out.println(&quot;Turning into default node&quot;);
+							 }
+<span class="nc bnc" id="L448" title="All 2 branches missed.">							 if(choice==2) {</span>
+							 	//Tsr.State.turnIntoParentRoot(neuron);System.out.println(&quot;Turning into super root node&quot;);
+							 }
+							 //if(choice==3) {NCore.State.turnIntoBasicRoot(neuron);System.out.println(&quot;Turning into basic root node&quot;);}
+						}
+<span class="nc" id="L453">					};</span>
+				}
+				//====================================================
+			}//-----------------------------------------------------------------------
+<span class="nc" id="L457">			highlightID=0;</span>
+		}
+<span class="nc" id="L459">		double radius=ReferenceRadius/birthScale;</span>
+<span class="nc" id="L460">		double innerRadius=InnerReferenceRadius/birthScale;</span>
+<span class="nc" id="L461">		double primMod= ((double)animationCounter/CounterLimit);</span>
+<span class="nc bnc" id="L462" title="All 2 branches missed.">		if(primMod&lt;=0) {primMod=0.0;}</span>
+
+		//ArrayList&lt;SurfaceRepaintSpace&gt; queue = null;
+<span class="nc bnc" id="L465" title="All 4 branches missed.">		if(animationCounter&lt;CounterLimit &amp;&amp; isDying==false) </span>
+<span class="nc" id="L466">		{animationCounter+=frameDelta; needsRepaint=true;}</span>
+<span class="nc bnc" id="L467" title="All 2 branches missed.">		if(needsRepaint==true) </span>
+		{
+<span class="nc" id="L469">		       double scaledRadius = primMod*radius*1.075;</span>
+<span class="nc bnc" id="L470" title="All 2 branches missed.">		       if(scaledRadius&lt;innerRadius) {scaledRadius = innerRadius;}</span>
+<span class="nc" id="L471">		       queue.add(new SurfaceRepaintSpace(X, Y, (int)scaledRadius, (int)scaledRadius));//  queue.addInto(new SurfaceRepaintSpace(X, Y, (int)radius, (int)radius));</span>
+		       //if(X!=oldX || Y!=oldY) {queue.addInto(new SurfaceRepaintSpace(oldX, oldY, (int)scaledRadius, (int)scaledRadius)); oldX=X; oldY=Y;}
+<span class="nc" id="L473">		}</span>
+		else 
+<span class="nc" id="L475">		{animationCounter=CounterLimit;}</span>
+<span class="nc" id="L476">		needsRepaint = false; </span>
+<span class="nc" id="L477">		HostPanel.setMap(HostPanel.getMap().addAndUpdate(this));</span>
+<span class="nc" id="L478">		return queue;</span>
+	}
+	public SurfaceRepaintSpace getRepaintSpace()
+	{
+<span class="nc" id="L482">		double radius=ReferenceRadius/birthScale;</span>
+<span class="nc" id="L483">		double primMod= ((double)animationCounter/CounterLimit);</span>
+<span class="nc bnc" id="L484" title="All 2 branches missed.">		if(primMod&lt;=0) {primMod=0.0;}</span>
+<span class="nc" id="L485">		double scaledRadius = primMod*radius*0.65+radius*0.375;</span>
+<span class="nc" id="L486">		return new SurfaceRepaintSpace(X, Y, (int)scaledRadius, (int)scaledRadius);</span>
+	}
+	//----------------------------------------------------------
+	private Object getMenuStackBaseContainer() 
+	{
+<span class="nc bnc" id="L491" title="All 2 branches missed.">		if(PropertyContainer instanceof CircleMenu) {return ((CircleMenu)PropertyContainer).getMenuStackBaseContainer();}</span>
+<span class="nc" id="L492">		return PropertyContainer;</span>
+	}
+	//----------------------------------------------------------
+	private void drawMenuIcon(byte IconID, double x, double y,Graphics2D brush) 
+	{
+<span class="nc bnc" id="L497" title="All 12 branches missed.">		switch(IconID) </span>
+		{
+			case 0:
+<span class="nc" id="L500">				break;</span>
+<span class="nc" id="L501">			case -1:Icon_CloseMenu(x,y,brush);</span>
+<span class="nc" id="L502">			break;</span>
+<span class="nc" id="L503">			case 1:Icon_DefaultNode(x,y,brush);</span>
+<span class="nc" id="L504">			break;</span>
+<span class="nc" id="L505">			case 2:Icon_SuperRoot(x, y, brush);//Icon_SuperRoot(x,y,brush);</span>
+<span class="nc" id="L506">			break;</span>
+<span class="nc" id="L507">			case 3:Icon_BasicRoot(x,y,brush);</span>
+<span class="nc" id="L508">			break;</span>
+<span class="nc" id="L509">			case 4:Icon_PanelSettings(x,y,brush);   </span>
+<span class="nc" id="L510">			break;</span>
+<span class="nc" id="L511">			case 5:Icon_NodeSettings(x,y,brush);   </span>
+<span class="nc" id="L512">			break;	</span>
+<span class="nc" id="L513">			case 6:Icon_TanhNode(x,y,brush);</span>
+<span class="nc" id="L514">			break;</span>
+<span class="nc" id="L515">			case 7:Icon_NodeFunctionSettings(x,y,brush);</span>
+<span class="nc" id="L516">			break;</span>
+<span class="nc" id="L517">			case 8:Icon_BackEndNodeWindow(x, y, brush);	</span>
+<span class="nc" id="L518">			break;</span>
+<span class="nc" id="L519">			case 9:Icon_NodeType(x,y,brush);</span>
+<span class="nc" id="L520">			break;</span>
+			default:
+			break;
+		}
+<span class="nc" id="L524">	}</span>
+	private void clickedAtChoice(int IconID) {
+		//NSound sound = new NSound(&quot;button_click.wav&quot;,&quot;./sound/menu/&quot;);
+		//sound.start();
+<span class="nc" id="L528">		Actor.applyAction(IconID, getMenuStackBaseContainer());</span>
+<span class="nc" id="L529">		System.out.println(&quot;IconID: &quot;+IconID);</span>
+<span class="nc bnc" id="L530" title="All 11 branches missed.">		switch(IconID) </span>
+		{
+			case 0:
+<span class="nc" id="L533">			break;</span>
+<span class="nc" id="L534">			case -1:click_CloseMenu();</span>
+<span class="nc" id="L535">			break;</span>
+<span class="nc" id="L536">			case 1:click_DefaultNode();</span>
+<span class="nc" id="L537">			break;</span>
+<span class="nc" id="L538">			case 2:click_SuperRoot();</span>
+<span class="nc" id="L539">			break;</span>
+<span class="nc" id="L540">			case 3:click_BasicRoot();</span>
+<span class="nc" id="L541">			break;</span>
+<span class="nc" id="L542">			case 4:click_PanelSettings();   </span>
+<span class="nc" id="L543">			break;</span>
+<span class="nc" id="L544">			case 5:click_NodeSettings();   </span>
+<span class="nc" id="L545">			break;	</span>
+<span class="nc" id="L546">			case 6:click_TanhNode();</span>
+<span class="nc" id="L547">			break;</span>
+<span class="nc" id="L548">			case 7:click_NodeFunctionSettings();</span>
+<span class="nc" id="L549">			break;</span>
+<span class="nc" id="L550">			case 8:click_BackEndNodeWindow();	</span>
+<span class="nc" id="L551">			break;</span>
+			default:
+			break;
+		}
+<span class="nc" id="L555">	}</span>
+	//----------------------------------------------------------
+	@Override
+	public void movementAt(double x, double y, Surface HostSurface) {
+<span class="nc bnc" id="L559" title="All 2 branches missed.">		if(mapping==null) {return;}</span>
+<span class="nc" id="L560">		int test = testForChoice(x,y);</span>
+<span class="nc bnc" id="L561" title="All 2 branches missed.">		if(test!=highlightID) {</span>
+			//NSound sound = new NSound(&quot;button_hover.wav&quot;,&quot;./sound/menu/&quot;);
+			//sound.start();
+<span class="nc" id="L564">			needsRepaint=true; System.out.println(&quot;works&quot;);}</span>
+<span class="nc" id="L565">		highlightID = test;</span>
+<span class="nc" id="L566">	}</span>
+	//-------------------------------------------------------------------------------
+	private int testForChoice(double x, double y) 
+	{
+<span class="nc bnc" id="L570" title="All 2 branches missed.">		if(mapping==null) {return 0;}</span>
+<span class="nc" id="L571">		double radius=ReferenceRadius/birthScale;</span>
+<span class="nc" id="L572">		double innerRadius=InnerReferenceRadius/birthScale;</span>
+<span class="nc" id="L573">		double alpha = 2*Math.PI/mapping.length;</span>
+<span class="nc" id="L574">		double rotationX=Math.cos(rotation-alpha)*0-Math.sin(rotation-alpha)*-1;</span>
+<span class="nc" id="L575">		double rotationY=Math.sin(rotation-alpha)*0+Math.cos(rotation-alpha)*-1;</span>
+		
+<span class="nc bnc" id="L577" title="All 2 branches missed.">		for(int i=0; i&lt;mapping.length; i++)</span>
+		{
+<span class="nc" id="L579">			double newRotationX = Math.cos(alpha)*rotationX-Math.sin(alpha)*rotationY;</span>
+<span class="nc" id="L580">			double newRotationY = Math.sin(alpha)*rotationX+Math.cos(alpha)*rotationY;</span>
+<span class="nc" id="L581">			rotationX = newRotationX;</span>
+<span class="nc" id="L582">			rotationY = newRotationY; </span>
+<span class="nc bnc" id="L583" title="All 2 branches missed.">			if((Math.abs(rotationX) + Math.abs(rotationY)) != 1) </span>
+		    {
+<span class="nc" id="L585">				double correction = 2-Math.pow(Math.pow(rotationX, 2) + Math.pow(rotationY, 2), 0.5);</span>
+<span class="nc" id="L586">				rotationX *= correction;</span>
+<span class="nc" id="L587">				rotationY *= correction;</span>
+		    }
+<span class="nc" id="L589">			double ovalRadius = (animationCounter/CounterLimit)*(radius-innerRadius)/2;</span>
+<span class="nc" id="L590">			double ovalX =(X)+rotationX*(ovalRadius+innerRadius)*((double)animationCounter/CounterLimit);</span>
+<span class="nc" id="L591">			double ovalY =(Y)+rotationY*(ovalRadius+innerRadius)*((double)animationCounter/CounterLimit);</span>
+<span class="nc" id="L592">			double distance = Math.pow(Math.pow(x-ovalX, 2)+Math.pow(y-ovalY, 2), 0.5);</span>
+<span class="nc bnc" id="L593" title="All 2 branches missed.">			if(distance&lt;ovalRadius) {return i+1;}</span>
+		}
+<span class="nc" id="L595">	 return 0;</span>
+	}
+	//-------------------------------------------------------------------------------
+	public int testForChosen(double x, double y) 
+	{
+<span class="nc" id="L600">		int choice = testForChoice(x,y);</span>
+		//System.out.println(&quot;testForChose: choice: &quot;+choice);
+<span class="nc bnc" id="L602" title="All 6 branches missed.">		if(choice &gt; 0 &amp; mapping!=null) {return mapping[choice-1];}</span>
+<span class="nc" id="L603">		return choice;</span>
+	}
+	//-------------------------------------------------------------------------------
+	@Override
+	public boolean clickedAt(double x, double y, Surface HostPanel)
+<span class="nc" id="L608">	{int choice = testForChoice(x,y); </span>
+<span class="nc" id="L609">	 System.out.println(&quot;clickedAt: choice: &quot;+choice);</span>
+<span class="nc bnc" id="L610" title="All 2 branches missed.">	 if(choice!=0) {clickedAtChoice(mapping[choice-1]); return true;}return false;}</span>
+	
+	@Override
+	public boolean doubleClickedAt(double x, double y, Surface HostPanel)
+	{
+<span class="nc" id="L615">		return false;</span>
+	}
+	
+	//-------------------------------------------------------------------------------
+	public boolean testForBody(double x, double y){
+<span class="nc bnc" id="L620" title="All 2 branches missed.">		if(testForCenter(x,y)) {return true;}</span>
+<span class="nc bnc" id="L621" title="All 2 branches missed.">		if(testForChoice(x,y)!=0) {return true;}</span>
+<span class="nc" id="L622">		return false;</span>
+	}
+	//-------------------------------------------------------------------------------
+	private boolean testForCenter(double x, double y)
+	{
+<span class="nc" id="L627">		double innerRadius=InnerReferenceRadius/birthScale;</span>
+<span class="nc" id="L628">		double distance = Math.pow(Math.pow(X-x, 2)+Math.pow(Y-y, 2), 0.5);</span>
+<span class="nc bnc" id="L629" title="All 2 branches missed.">		if(distance&lt;innerRadius) {return true;}</span>
+<span class="nc" id="L630">		return false;</span>
+	}
+	
+	//------------------------------------------------
+	interface MenuActor{public abstract void applyAction(int ActionID, Object Property);}
+	//-------------------------------------------------------------------------------
+	@Override
+	public ArrayList&lt;SurfaceRepaintSpace&gt; moveDirectional(double[] data, Surface Surface)// double startX, double startY, double targX, double targY
+	{
+<span class="nc" id="L639">		double startX=data[0];</span>
+<span class="nc" id="L640">		double startY=data[1]; </span>
+<span class="nc" id="L641">		double targX=data[2]; </span>
+<span class="nc" id="L642">		double targY=data[3];</span>
+<span class="nc" id="L643">		ArrayList&lt;SurfaceRepaintSpace&gt; queue = new ArrayList&lt;SurfaceRepaintSpace&gt;();</span>
+<span class="nc bnc" id="L644" title="All 4 branches missed.">		if(testForChoice(startX, startY)!=0 &amp;&amp; testForCenter(startX,startY)==false) {</span>
+<span class="nc" id="L645">			Surface.setMap(Surface.getMap().removeAndUpdate(this));;</span>
+<span class="nc" id="L646">		    queue.add(getRepaintSpace());</span>
+<span class="nc" id="L647">			rotation += Math.atan2((targY-Y),(targX-X)) - Math.atan2((startY-Y),(startX-X));</span>
+<span class="nc" id="L648">			Surface.setMap(Surface.getMap().addAndUpdate(this));;</span>
+		}
+		else 
+		{	
+<span class="nc" id="L652">			Surface.setMap(Surface.getMap().removeAndUpdate(this));;</span>
+<span class="nc" id="L653">			queue.add(getRepaintSpace());</span>
+<span class="nc" id="L654">			X-=startX-targX; Y-=startY-targY;</span>
+<span class="nc" id="L655">			queue.add(getRepaintSpace());</span>
+<span class="nc" id="L656">			Surface.setMap(Surface.getMap().addAndUpdate(this));;</span>
+		}
+<span class="nc" id="L658">        needsRepaint=true;</span>
+<span class="nc" id="L659">		return queue;</span>
+	}
+	
+	@Override
+	public ArrayList&lt;SurfaceRepaintSpace&gt; moveCircular(double[] data, Surface Surface) //double centerX, double centerY, double x, double y
+	{
+<span class="nc" id="L665">		return null;</span>
+	}
+ 
+	@Override
+	public ArrayList&lt;SurfaceRepaintSpace&gt; moveTo(double[] data, Surface Surface) {//double x, double y
+		// TODO Auto-generated method stub
+<span class="nc" id="L671">		return null;</span>
+	}
+	@Override
+<span class="nc" id="L674">	public double getLeftPeripheral() {return this.X-this.getRadius();}</span>
+	@Override
+<span class="nc" id="L676">	public double getTopPeripheral() {return this.Y-this.getRadius();}</span>
+	@Override
+<span class="nc" id="L678">	public double getRightPeripheral() {return this.X+this.getRadius();}</span>
+	@Override
+<span class="nc" id="L680">	public double getBottomPeripheral() {return this.Y+this.getRadius();}</span>
+	@Override
+	public int getLayerID() {
+		//if(PropertyContainer instanceof NPanelCircleMenu) {
+		//	NPanelCircleMenu menu = (NPanelCircleMenu)PropertyContainer;
+		//	if(menu!=this) {
+		//		return menu.getLayerID()+1;
+		//	}
+		//}
+<span class="nc" id="L689">		return layerID;</span>
+	}
+	@Override
+<span class="nc bnc" id="L692" title="All 2 branches missed.">	public boolean needsRepaintOnLayer(int layerID) {if(this.getLayerID()==layerID) {return true;}return false;}</span>
+	@Override
+	public void repaintLayer(int layerID, Graphics2D brush, Surface HostSurface)
+	{
+		//HostSurface.setObjectMap(HostSurface.getObjectMap().removeAndUpdate(this));
+<span class="nc" id="L697">		this.drawMenu(brush);</span>
+		//HostSurface.setObjectMap(HostSurface.getObjectMap().addAndUpdate(this));
+<span class="nc" id="L699">	}</span>
+	@Override
+<span class="nc" id="L701">	public double getRadius() {return ReferenceRadius/birthScale;}</span>
+
+
+
+	//=================================================================================================================================================
+	//--------------------------------
+	private void Icon_CloseMenu(double x, double y, Graphics2D brush) {
+<span class="nc" id="L708">		double radius=(ReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+<span class="nc" id="L709">		double innerRadius=(InnerReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+<span class="nc" id="L710">		double ovalRadius = (radius-innerRadius)/3;</span>
+<span class="nc" id="L711">		brush.setColor(new Color(255, 70, 50));</span>
+<span class="nc" id="L712">		brush.fillOval((int)(x-ovalRadius), (int)(y-ovalRadius), (int)(ovalRadius*2), (int)(ovalRadius*2));</span>
+<span class="nc" id="L713">		ovalRadius*=0.75;</span>
+<span class="nc" id="L714">		brush.rotate(Math.PI*0.25, x, y);</span>
+<span class="nc" id="L715">		brush.setColor(Color.BLACK);</span>
+<span class="nc" id="L716">		brush.fillRect((int)(x-ovalRadius), (int)(y-ovalRadius/5), (int)(ovalRadius*2), (int)(ovalRadius*2/5));</span>
+<span class="nc" id="L717">		brush.fillRect((int)(x-ovalRadius/5), (int)(y-ovalRadius), (int)(ovalRadius*2/5), (int)(ovalRadius*2));</span>
+<span class="nc" id="L718">		brush.rotate(-Math.PI*0.25, x, y);</span>
+<span class="nc" id="L719">	}</span>
+<span class="nc" id="L720">	private void click_CloseMenu() {isDying=true;  System.out.println(&quot;Klicked at close&quot;);}</span>
+	//------------------------------------------------
+	private void Icon_BasicRoot(double x, double y, Graphics2D brush) {
+<span class="nc" id="L723">		double radius=(ReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+<span class="nc" id="L724">		double innerRadius=(InnerReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+<span class="nc" id="L725">		double ovalRadius = (radius-innerRadius)/5;</span>
+<span class="nc" id="L726">		brush.setColor(Color.BLACK);</span>
+<span class="nc" id="L727">		double oX = x+ovalRadius/2.55;</span>
+<span class="nc" id="L728">		double oY = y+ovalRadius/2.55;</span>
+		
+<span class="nc" id="L730">		Icon_NodeBase(x, y, brush);</span>
+<span class="nc" id="L731">		brush.setColor(Color.CYAN);</span>
+<span class="nc" id="L732">		brush.fillRect((int)(oX-ovalRadius/2), (int)(oY-ovalRadius/16),</span>
+			       (int)(2*ovalRadius/2), (int)(2*ovalRadius/16));
+<span class="nc" id="L734">		brush.fillRect((int)(oX-ovalRadius/16), (int)(oY-ovalRadius/2),</span>
+			       (int)(2*ovalRadius/16), (int)(2*ovalRadius/2));
+<span class="nc" id="L736">		brush.rotate(Math.PI/4,oX, oY);</span>
+<span class="nc" id="L737">		brush.fillRect((int)(oX-ovalRadius/2), (int)(oY-ovalRadius/16),</span>
+			       (int)(2*ovalRadius/2), (int)(2*ovalRadius/16));
+<span class="nc" id="L739">		brush.fillRect((int)(oX-ovalRadius/16), (int)(oY-ovalRadius/2),</span>
+			       (int)(2*ovalRadius/16), (int)(2*ovalRadius/2));
+<span class="nc" id="L741">		brush.rotate(-Math.PI/4,oX, oY );</span>
+		
+<span class="nc" id="L743">	}</span>
+	private void click_BasicRoot() {
+		
+<span class="nc" id="L746">	}</span>
+	//------------------------------------------------
+	private void Icon_NodeType(double x, double y, Graphics2D brush) {
+		//Icon_DefaultNode(x,y,brush);
+<span class="nc" id="L750">		Icon_NodeBase(x, y, brush);</span>
+<span class="nc" id="L751">		brush.setColor(Color.cyan);</span>
+<span class="nc" id="L752">		double radius=(ReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+<span class="nc" id="L753">		double innerRadius=(InnerReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+<span class="nc" id="L754">		double ovalRadius = ((radius-innerRadius)/5);</span>
+<span class="nc" id="L755">		double oX = x+ovalRadius/2.55;</span>
+<span class="nc" id="L756">		double oY = y+ovalRadius/2.55;</span>
+<span class="nc" id="L757">		Font txt = new Font(&quot;Verdana&quot;, Font.LAYOUT_LEFT_TO_RIGHT, (int)((70/birthScale)*(animationCounter/CounterLimit)));</span>
+<span class="nc" id="L758">		brush.setFont(txt);char[] c = new char[1]; c[0] = '?';</span>
+<span class="nc" id="L759">		brush.drawChars(c, 0, 1, (int)(oX-ovalRadius/2), (int)(oY+ovalRadius/1.5));</span>
+<span class="nc" id="L760">	}</span>
+	//------------------------------------------------
+	private void Icon_DefaultNode(double x, double y, Graphics2D brush) {
+<span class="nc" id="L763">		double radius=(ReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+<span class="nc" id="L764">		double innerRadius=(InnerReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+<span class="nc" id="L765">		double ovalRadius = ((radius-innerRadius)/5);</span>
+<span class="nc bnc" id="L766" title="All 2 branches missed.">		if(ovalRadius&lt;=0) {return;}</span>
+<span class="nc" id="L767">		brush.setColor(Color.BLACK);</span>
+<span class="nc" id="L768">		double oX = x+ovalRadius/2.55;</span>
+<span class="nc" id="L769">		double oY = y+ovalRadius/2.55;</span>
+<span class="nc" id="L770">		brush.fillOval((int)(oX-ovalRadius), (int)(oY-ovalRadius),</span>
+				       (int)(2*ovalRadius), (int)(2*ovalRadius));
+<span class="nc" id="L772">		brush.setColor(neuronBlue);</span>
+		//brush.setColor(Color.BLACK);
+<span class="nc" id="L774">		brush.fillOval((int)(oX-ovalRadius*0.8), (int)(oY-ovalRadius*0.8),</span>
+			       (int)(2*ovalRadius*0.8), (int)(2*ovalRadius*0.8));
+		//----------------------------
+<span class="nc" id="L777">		brush.setColor(Color.BLACK);</span>
+<span class="nc" id="L778">		ovalRadius = (radius-innerRadius)/15;</span>
+<span class="nc" id="L779">		oX = (x-ovalRadius);</span>
+<span class="nc" id="L780">		oY = (y-ovalRadius);</span>
+<span class="nc" id="L781">		brush.setStroke(new BasicStroke((int) (ovalRadius/2)));</span>
+<span class="nc" id="L782">		brush.drawLine((int)(oX), (int)(oY), (int)(oX-3*ovalRadius), (int)(oY));</span>
+<span class="nc" id="L783">		brush.rotate(Math.PI/4, oX, oY);</span>
+<span class="nc" id="L784">		brush.drawLine((int)(oX), (int)(oY), (int)(oX-3*ovalRadius), (int)(oY));</span>
+<span class="nc" id="L785">		brush.rotate(Math.PI/4, oX, oY);</span>
+<span class="nc" id="L786">		brush.drawLine((int)(oX), (int)(oY), (int)(oX-3*ovalRadius), (int)(oY));</span>
+<span class="nc" id="L787">		brush.rotate(-Math.PI/2, oX, oY);</span>
+		
+<span class="nc" id="L789">		brush.fillOval((int)(oX-ovalRadius), (int)(oY-ovalRadius),</span>
+			       (int)(2*ovalRadius), (int)(2*ovalRadius));
+<span class="nc" id="L791">		brush.setColor(Color.CYAN);</span>
+<span class="nc" id="L792">		brush.fillRect((int)(oX-ovalRadius/2), (int)(oY-ovalRadius/6),</span>
+			       (int)(2*ovalRadius/2), (int)(2*ovalRadius/6));
+<span class="nc" id="L794">		brush.fillRect((int)(oX-ovalRadius/6), (int)(oY-ovalRadius/2),</span>
+			       (int)(2*ovalRadius/6), (int)(2*ovalRadius/2));
+		
+		
+<span class="nc" id="L798">	}</span>
+	private void click_DefaultNode() {
+		
+<span class="nc" id="L801">	}</span>
+	//------------------------------------------------
+	private void Icon_NodeFunctionSettings(double x, double y, Graphics2D brush) {
+		
+<span class="nc" id="L805">		Icon_DefaultNode(x,y,brush);</span>
+<span class="nc" id="L806">		double radius=(ReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+<span class="nc" id="L807">		double innerRadius=(InnerReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+<span class="nc" id="L808">		double ovalRadius = (radius-innerRadius)/5;</span>
+<span class="nc" id="L809">		brush.setColor(Color.BLACK);</span>
+<span class="nc" id="L810">		double oX = x+ovalRadius/2.55;</span>
+<span class="nc" id="L811">		double oY = y+ovalRadius/2.55;</span>
+<span class="nc" id="L812">		double scaleHolder = birthScale;</span>
+<span class="nc" id="L813">		birthScale *= 2.5;</span>
+<span class="nc" id="L814">		Icon_PanelSettings(oX, oY, brush);</span>
+<span class="nc" id="L815">		birthScale = scaleHolder;</span>
+<span class="nc" id="L816">	}</span>
+	private void click_NodeFunctionSettings() {
+		
+<span class="nc" id="L819">	}</span>
+	//------------------------------------------------
+		private void Icon_SuperRoot(double x, double y, Graphics2D brush) {
+
+<span class="nc" id="L823">			double radius=(ReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+<span class="nc" id="L824">			double innerRadius=(InnerReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+			
+<span class="nc" id="L826">			double ovalRadius = (radius-innerRadius)/3;</span>
+			
+<span class="nc" id="L828">			brush.setColor(Color.BLACK);</span>
+<span class="nc" id="L829">			double oX = x-ovalRadius/14;</span>
+<span class="nc" id="L830">			double oY = y-ovalRadius/14;</span>
+<span class="nc" id="L831">			brush.fillOval((int)(oX-ovalRadius), (int)(oY-ovalRadius),</span>
+					       (int)(2*ovalRadius), (int)(2*ovalRadius));
+			
+<span class="nc" id="L834">			brush.setColor(SystemOcean);</span>
+<span class="nc" id="L835">			brush.fillOval((int)(oX-ovalRadius*0.9), (int)(oY-ovalRadius*0.9),</span>
+				       (int)(2*ovalRadius*0.9), (int)(2*ovalRadius*0.9));
+<span class="nc" id="L837">			brush.setClip(null);</span>
+
+<span class="nc" id="L839">			ovalRadius = (radius-innerRadius)/5;</span>
+<span class="nc" id="L840">			brush.setColor(Color.BLACK);</span>
+<span class="nc" id="L841">			oX = x+ovalRadius/2;</span>
+<span class="nc" id="L842">			oY = y+ovalRadius/2;</span>
+<span class="nc" id="L843">			double scaleHolder = birthScale;</span>
+<span class="nc" id="L844">			birthScale *= 1.25;</span>
+<span class="nc" id="L845">			Icon_DefaultNode(oX, oY, brush);</span>
+<span class="nc" id="L846">			birthScale = scaleHolder;</span>
+		
+<span class="nc" id="L848">		}</span>
+		private void click_SuperRoot() {
+			
+<span class="nc" id="L851">		}</span>
+		//------------------------------------------------
+		private void Icon_PanelSettings(double x, double y, Graphics2D brush) {
+					
+<span class="nc" id="L855">			double radius=(ReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+<span class="nc" id="L856">			double innerRadius=(InnerReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+<span class="nc" id="L857">			brush.setColor(Color.BLACK);</span>
+<span class="nc" id="L858">			Icon_CogwheelBase(x, y, brush);				</span>
+<span class="nc" id="L859">			double ovalRadius = (radius-innerRadius)/4;</span>
+<span class="nc" id="L860">			brush.setColor(Color.BLACK);</span>
+<span class="nc" id="L861">			brush.fillOval((int)(x-ovalRadius*0.5), (int)(y-ovalRadius*0.5),</span>
+						   (int)(2*ovalRadius*0.5), (int)(2*ovalRadius*0.5));
+
+<span class="nc" id="L864">				}</span>
+				private void click_PanelSettings() {
+					
+<span class="nc" id="L867">				}</span>
+				//------------------------------------------------
+				
+				
+		private void Icon_NodeSettings(double x, double y, Graphics2D brush) {
+					
+			//double radius=(R*(animationCounter/CounterLimit))/birthScale;
+			//double innerRadius=(r*(animationCounter/CounterLimit))/birthScale;
+					
+<span class="nc" id="L876">			brush.setColor(Color.BLACK);	</span>
+<span class="nc" id="L877">			Icon_CogwheelBase(x, y, brush);</span>
+						
+<span class="nc" id="L879">			double scaleHolder = birthScale;</span>
+<span class="nc" id="L880">			birthScale *= 1.575;</span>
+<span class="nc" id="L881">			Icon_DefaultNode(x, y, brush);</span>
+<span class="nc" id="L882">			birthScale = scaleHolder;</span>
+
+<span class="nc" id="L884">		}</span>
+		private void click_NodeSettings() {
+							
+<span class="nc" id="L887">		}			</span>
+				
+				
+		private void Icon_BackEndNodeWindow(double x, double y, Graphics2D brush){
+			
+			//double radius=(R*(animationCounter/CounterLimit))/birthScale;
+<span class="nc" id="L893">			double innerRadius=(InnerReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+			
+<span class="nc" id="L895">			brush.setColor(Color.BLACK);</span>
+			
+<span class="nc" id="L897">			double a = innerRadius*1.1;</span>
+<span class="nc" id="L898">			double b = innerRadius*1.0;</span>
+<span class="nc" id="L899">			brush.fillRect((int)(x-a/2), (int)(y-b/2), (int)a, (int)b);</span>
+			
+<span class="nc" id="L901">			brush.setColor(SystemOcean);</span>
+<span class="nc" id="L902">			brush.fillRect((int)(x+a*0.025), (int)(y-b/3.1), (int)(a/2.2-a*0.05), (int)(b/2.33));</span>
+<span class="nc" id="L903">			brush.fillRect((int)(x-a/2.2+a*0.025), (int)(y-b/2.3), (int)(a/2.2-a*0.05), (int)(b/3.55));</span>
+<span class="nc" id="L904">			double scaleHolder = birthScale;</span>
+<span class="nc" id="L905">			birthScale *= 5;</span>
+<span class="nc" id="L906">			brush.setColor(Color.BLACK);</span>
+<span class="nc" id="L907">			this.Icon_SigmoidBase((((x+a/4.375))), (((y-b/9))), brush);</span>
+<span class="nc" id="L908">			birthScale = scaleHolder;</span>
+<span class="nc" id="L909">			brush.setColor(Color.CYAN);</span>
+<span class="nc" id="L910">			brush.fillRect((int)(((x+a*0.025))), (int)(((y-b/2.3))), (int)((a/2.2)-a*0.05), (int)(b/15));</span>
+			
+<span class="nc" id="L912">			brush.fillRect((int)(((x+a*0.025))), (int)(((y+b*0.15))), (int)((a/2.2-a*0.05)), (int)(b/15));</span>
+<span class="nc" id="L913">			brush.fillRect((int)(((x-a/2.2+a*0.025))), (int)(((y-b*0.1))), (int)((a/2.2)-a*0.05), (int)(b/15));</span>
+<span class="nc" id="L914">			Area clipArea = new Area(new Rectangle.Double((x-a/2), (y-b/2), a, b));</span>
+<span class="nc" id="L915">			brush.setClip(clipArea);</span>
+<span class="nc" id="L916">			brush.setColor(SystemOcean);</span>
+<span class="nc" id="L917">			scaleHolder = birthScale;</span>
+<span class="nc" id="L918">			birthScale *= 3.25;</span>
+<span class="nc" id="L919">			this.Icon_CogwheelBase(x-a/4.25, y+b/4.5, brush);</span>
+<span class="nc" id="L920">			birthScale = scaleHolder;</span>
+<span class="nc" id="L921">			brush.setClip(null);</span>
+<span class="nc" id="L922">		}		</span>
+				
+		private void click_BackEndNodeWindow() {
+			
+			//if(PropertyContainer instanceof SurfaceNode) {
+			//
+			//	((SurfaceNode)PropertyContainer).
+			//		getCore().
+			//			overwrite64(
+			//					new SurfaceNodeIOFrame(&quot;Neuron &quot;+((SurfaceNode)PropertyContainer).getCore().getID(),((SurfaceNode)PropertyContainer).getCore()));
+			//}
+			
+<span class="nc" id="L934">		}</span>
+	//===============================================================================
+	//===============================================================================
+				//Basic subcomponents:
+				private void Icon_NodeBase(double x, double y, Graphics2D brush) {
+					
+<span class="nc" id="L940">					double radius=(ReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+<span class="nc" id="L941">					double innerRadius=(InnerReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+<span class="nc" id="L942">					double ovalRadius = (radius-innerRadius)/5;</span>
+<span class="nc bnc" id="L943" title="All 2 branches missed.">					if(ovalRadius&lt;=0) {return;}</span>
+<span class="nc" id="L944">					brush.setColor(Color.BLACK);</span>
+<span class="nc" id="L945">					double oX = x+ovalRadius/2.55;</span>
+<span class="nc" id="L946">					double oY = y+ovalRadius/2.55;</span>
+<span class="nc" id="L947">					brush.fillOval((int)(oX-ovalRadius), (int)(oY-ovalRadius),</span>
+							       (int)(2*ovalRadius), (int)(2*ovalRadius));
+
+				//----------------------------
+<span class="nc" id="L951">					brush.setColor(Color.BLACK);</span>
+<span class="nc" id="L952">					ovalRadius = (radius-innerRadius)/15;</span>
+<span class="nc" id="L953">					oX = (x-ovalRadius);</span>
+<span class="nc" id="L954">					oY = (y-ovalRadius);</span>
+<span class="nc" id="L955">					brush.setStroke(new BasicStroke((int) (ovalRadius/2)));</span>
+<span class="nc" id="L956">					brush.drawLine((int)(oX), (int)(oY), (int)(oX-3*ovalRadius), (int)(oY));</span>
+<span class="nc" id="L957">					brush.rotate(Math.PI/4, oX, oY);</span>
+<span class="nc" id="L958">					brush.drawLine((int)(oX), (int)(oY), (int)(oX-3*ovalRadius), (int)(oY));</span>
+<span class="nc" id="L959">					brush.rotate(Math.PI/4, oX, oY);</span>
+<span class="nc" id="L960">					brush.drawLine((int)(oX), (int)(oY), (int)(oX-3*ovalRadius), (int)(oY));</span>
+<span class="nc" id="L961">					brush.rotate(-Math.PI/2, oX, oY);</span>
+					
+<span class="nc" id="L963">					brush.fillOval((int)(oX-ovalRadius), (int)(oY-ovalRadius),</span>
+						           (int)(2*ovalRadius),  (int)(2*ovalRadius));
+					
+<span class="nc" id="L966">					brush.setColor(Color.CYAN);</span>
+<span class="nc" id="L967">					brush.fillRect((int)(oX-ovalRadius/2), (int)(oY-ovalRadius/6),</span>
+						           (int)(2*ovalRadius/2),  (int)(2*ovalRadius/6));
+					
+<span class="nc" id="L970">					brush.fillRect((int)(oX-ovalRadius/6), (int)(oY-ovalRadius/2),</span>
+						           (int)(2*ovalRadius/6),  (int)(2*ovalRadius/2));
+
+<span class="nc" id="L973">				}</span>
+				private void Icon_CogwheelBase(double x, double y, Graphics2D brush) {
+					
+<span class="nc" id="L976">					double radius=</span>
+							(ReferenceRadius*(animationCounter/CounterLimit))/birthScale;
+<span class="nc" id="L978">					double innerRadius=</span>
+							(InnerReferenceRadius*(animationCounter/CounterLimit))/birthScale;
+					
+<span class="nc" id="L981">					double ovalRadius = </span>
+							((radius-innerRadius)/4);
+					
+					//brush.setColor(Color.BLACK);
+<span class="nc" id="L985">					double oX = x;</span>
+<span class="nc" id="L986">					double oY = y;</span>
+					
+					//brush.fillRect((int)(x-ovalRadius), (int)(y-ovalRadius), (int)(2*ovalRadius), (int)(2*ovalRadius));
+					
+<span class="nc" id="L990">					Area clipArea = new Area(new Rectangle.Double((x-radius), (y-radius), (2*radius), (2*radius)));</span>
+<span class="nc" id="L991">					clipArea.subtract(new Area(new Ellipse2D.Double((oX-ovalRadius*0.7), (oY-ovalRadius*0.7),(2*ovalRadius*0.7), (2*ovalRadius*0.7))));</span>
+<span class="nc" id="L992">					brush.setClip(clipArea);</span>
+					
+<span class="nc" id="L994">					Polygon p = new Polygon(); </span>
+<span class="nc" id="L995">					p.addPoint((int)(oX-ovalRadius/4), (int)(oY+ovalRadius/10));</span>
+<span class="nc" id="L996">					p.addPoint((int)(oX-ovalRadius/7), (int)(oY-ovalRadius/3));</span>
+<span class="nc" id="L997">					p.addPoint((int)(oX+ovalRadius/7), (int)(oY-ovalRadius/3));</span>
+<span class="nc" id="L998">					p.addPoint((int)(oX+ovalRadius/4), (int)(oY+ovalRadius/10));</span>
+<span class="nc" id="L999">					p.translate(0, (int)(-ovalRadius));</span>
+<span class="nc" id="L1000">					int max= 9;</span>
+<span class="nc bnc" id="L1001" title="All 2 branches missed.">					for(int i=0; i&lt;max; i++) {</span>
+<span class="nc" id="L1002">						brush.rotate((2*Math.PI/max), oX, oY);</span>
+<span class="nc" id="L1003">					    brush.fillPolygon(p);</span>
+					}
+<span class="nc" id="L1005">					brush.fillOval((int)(oX-ovalRadius), (int)(oY-ovalRadius),</span>
+							       (int)(2*ovalRadius), (int)(2*ovalRadius));
+
+<span class="nc" id="L1008">					brush.setClip(null);</span>
+					
+<span class="nc" id="L1010">				}</span>
+			
+			private void Icon_SigmoidBase(double x, double y, Graphics2D brush) 
+			{
+				
+<span class="nc" id="L1015">				double radius=(ReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+<span class="nc" id="L1016">				double innerRadius=(InnerReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+
+				Area clipArea;
+<span class="nc" id="L1019">				double r = (radius-innerRadius)/2.5;</span>
+<span class="nc" id="L1020">				brush.fillRect((int)(x-r*1.25), (int)(y-1.25*r/9),</span>
+					       (int)(2*r*1.25), (int)(2*1.25*r/9));
+<span class="nc" id="L1022">				brush.fillRect((int)(x-1.25*r/9), (int)(y-r*1.25),</span>
+					       (int)(2*1.25*r/9), (int)(2*r*1.25));
+				
+<span class="nc" id="L1025">				double cX = x-r*0.2;</span>
+<span class="nc" id="L1026">				double cY = y-r+r*0.1;</span>
+<span class="nc" id="L1027">				clipArea = new Area(new Rectangle.Double((x), (y-r), (r), (r)));</span>
+<span class="nc" id="L1028">				clipArea.subtract(new Area(new Ellipse2D.Double((cX+r*0.375), (cY+0.175*r), (2*r+0.4*r), (2*r-0.35*r))));</span>
+<span class="nc" id="L1029">				brush.setClip(clipArea);</span>
+				//brush.setColor(Color.BLUE);
+<span class="nc" id="L1031">				brush.fillOval((int)(cX), (int)(cY), (int)(2*r+r*0.4), (int)(2*r));</span>
+				//brush.rotate(-Math.PI, x, y);
+<span class="nc" id="L1033">				cX = x-2*r-r*0.2;</span>
+<span class="nc" id="L1034">				cY = y-r-r*0.1;</span>
+<span class="nc" id="L1035">				clipArea = new Area(new Rectangle.Double((x-r), (y), (r), (r)));</span>
+<span class="nc" id="L1036">				clipArea.subtract(new Area(new Ellipse2D.Double((cX-r*0.4), (cY+0.2*r), (2*r+r*0.4), (2*r-0.4*r))));</span>
+<span class="nc" id="L1037">				brush.setClip(clipArea);</span>
+<span class="nc" id="L1038">				brush.fillOval((int)(cX), (int)(cY), (int)(2*r+r*0.4), (int)(2*r));</span>
+<span class="nc" id="L1039">				brush.setClip(null);</span>
+<span class="nc" id="L1040">			}</span>
+			//------------------------------------------------x
+			private void Icon_TanhNode(double x, double y, Graphics2D brush) {
+<span class="nc" id="L1043">				double radius=(ReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+<span class="nc" id="L1044">				double innerRadius=(InnerReferenceRadius*(animationCounter/CounterLimit))/birthScale;</span>
+<span class="nc" id="L1045">				double ovalRadius = (radius-innerRadius)/5;</span>
+<span class="nc" id="L1046">				brush.setColor(Color.BLACK);</span>
+<span class="nc" id="L1047">				double oX = x+ovalRadius/2.55;</span>
+<span class="nc" id="L1048">				double oY = y+ovalRadius/2.55;</span>
+				
+<span class="nc" id="L1050">				this.Icon_DefaultNode(x, y, brush);</span>
+				
+<span class="nc" id="L1052">				double scaleHolder = birthScale;</span>
+<span class="nc" id="L1053">				birthScale *= (4.5);</span>
+<span class="nc" id="L1054">				brush.setColor(Color.BLACK);</span>
+<span class="nc" id="L1055">				this.Icon_SigmoidBase(oX, oY, brush);</span>
+<span class="nc" id="L1056">				birthScale = scaleHolder;</span>
+
+<span class="nc" id="L1058">			}</span>
+			private void click_TanhNode() {
+				
+<span class="nc" id="L1061">			}</span>
+			@Override
+			public boolean hasGripAt(double x, double y, Surface HostPanel)
+			{
+<span class="nc" id="L1065">				return this.testForBody(x, y);</span>
+			}
+			
+
+		
+
+}
+
+
+
+
+
+
+
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

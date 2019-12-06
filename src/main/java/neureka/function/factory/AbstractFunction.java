@@ -262,23 +262,22 @@ public abstract class AbstractFunction implements Function
                     }
                 }
             } else if (TYPES.REGISTER[_id] == ",") {
-                int[] newForm = new int[inputs.length - 1];
-                for (int i = 0; i < inputs.length - 1; i++) {
-                    newForm[i] = (int) Tsr.fcn.io.getFrom(inputs[i], 0);
+                int[] newForm = new int[_src.size() - 1];
+                for (int i = 0; i < _src.size() - 1; i++) {
+                    newForm[i] = (int) Tsr.fcn.io.getFrom(_src.get(i).activate(inputs), 0);
                 }
-                if (d < 0) {
-                    Tsr t = inputs[inputs.length - 1];
-                    return Tsr.fcn.exec.reshaped(t, newForm, true);//t.reshape(newForm);
-                } else {//reverse reshape:
+                if (d >= 0) {//reverse reshape:
                     int[] reversed = new int[newForm.length];
                     for (int i = 0; i < newForm.length; i++) {
                         if(newForm[i]>=0){
                             reversed[newForm[i]] = i;
-                        } else if(_doAD){
-                            //TODO: exception! (not auto-differentiable)
+                        } else {//Exception! (not auto-differentiable)
+                            throw new IllegalStateException("[AbstractFunction][_execute]: reshape operation cannot be reversed!");
                         }
                     }
                 }
+                Tsr t = inputs[inputs.length - 1];
+                return Tsr.fcn.exec.reshaped(t, newForm, true);//t.reshape(newForm);
             } else if(TYPES.REGISTER[_id]=="<" || TYPES.REGISTER[_id]==">") {
                 //return _src.get(0).activate(inputs).setValue64(_src.get(1).activate(inputs).value64(true));
                 Tsr output = (TYPES.REGISTER[_id]=="<")?_src.get(0).activate(inputs):_src.get(1).activate(inputs);
@@ -316,7 +315,7 @@ public abstract class AbstractFunction implements Function
             }
         }
         //Todo: warning/exception.....
-        return new Tsr(inputs[0], false);//Tsr.fcn.create.newTsr(inputs[0].shape(), inputs[0].translation());
+        //return new Tsr(inputs[0], false);//Tsr.fcn.create.newTsr(inputs[0].shape(), inputs[0].translation());
     }
 
     /**
@@ -637,7 +636,6 @@ public abstract class AbstractFunction implements Function
                 double u, ud, v, vd;
                 u = src.get(0).activate(inputs, 0);
                 ud = src.get(0).derive(inputs, d, 0);
-                System.out.println(ud);
                 for (int ji = 1; ji < inputs.length; ji++) {
                     v = src.get(0).activate(inputs, ji);
                     vd = src.get(0).derive(inputs, d, ji);
@@ -667,7 +665,6 @@ public abstract class AbstractFunction implements Function
                 double u, ud, v, vd;
                 u = src.get(0).activate(inputs, 0);
                 ud = src.get(0).derive(inputs, d, 0);
-                System.out.println(ud);
                 for (int j = 1; j < inputs.length; j++) {
                     v = src.get(0).activate(inputs, j);
                     vd = src.get(0).derive(inputs, d, j);
@@ -805,11 +802,9 @@ public abstract class AbstractFunction implements Function
                 for (int ji = 1; ji < src.size(); ji++) {
                     v = src.get(ji).activate(inputs, j);
                     vd = src.get(ji).derive(inputs, d, j);
-                    //System.out.println("ud" + (u * vd + v * ud) + "=u" + u + "*vd" + vd + "+v" + v + "*ud" + ud);
                     ud = u * vd + v * ud;
                     u *= v;
                 }
-                //System.out.println("* d: " + ud + "; j: " + j);
                 return ud;
             }
         }
@@ -1057,7 +1052,6 @@ public abstract class AbstractFunction implements Function
                 }//setInto _value in drn:
                 int i0 = Tsr.fcn.indexing.i_of_idx(t0Idx, t0_drain);//Tsr.fcn.indexing.iOf(t0Idx, t0Tln);
                 t0_value[i0] = value;
-                //System.out.println(i0 + " - " + i);
                 i++;//increment on drain:
                 if (i < drnSze) {
                     Tsr.fcn.indexing.increment(t0Idx, t0Shp);

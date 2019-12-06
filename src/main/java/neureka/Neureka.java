@@ -64,6 +64,12 @@ public class Neureka
 
         }
 
+        public static class tsr{
+
+            public static boolean REVERSE_INDEX_TRANSLATION = true;
+
+
+        }
 
     }
 

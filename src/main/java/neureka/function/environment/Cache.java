@@ -51,7 +51,10 @@ public class Cache
             }
         }
         GraphNode node = (GraphNode) inputs[0].find(GraphNode.class);
-        Tsr result = _get(node);
+        Tsr result = null;
+        if(function!=null && function.id()!=Function.TYPES.LOOKUP.get("<")&&function.id()!=Function.TYPES.LOOKUP.get(">")){
+            result = _get(node);
+        }
         if(result==null){
             result = activation.get();
             _put(result, node);
