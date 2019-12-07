@@ -18,6 +18,10 @@ class GroovyTests
     @Test
     void testVisualizer(){
 
+        //=========================================================================
+        if(!System.getProperty("os.name").toLowerCase().contains("windows")) return
+        //=========================================================================
+
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = new Tsr(-4)
         Tsr c = new Tsr(3).setRqsGradient(true)
@@ -222,7 +226,9 @@ class GroovyTests
          */
 
         device.add(a)
-        b = a[[1, -2]]
+        b = a[[-1..-3, -6..-3]]
+        def s = a[[1, -2]]
+        assert s==((legacyIndexing)?9.0:2.0)
         tester.testContains(b.toString(),
                 [
                         (legacyIndexing)
@@ -230,7 +236,9 @@ class GroovyTests
                         :"7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
                 ], "Testing slicing")
         tester.testContains(((b.has(int[].class))?"Has index component":""), ["Has index component"], "Check if index component is present!")
-        b = a[1, -2]
+        b = a[-3..-1, 0..3]
+        s = a[1, -2]
+        assert s==((legacyIndexing)?9.0:2.0)
         tester.testContains(b.toString(),
                 [
                         (legacyIndexing)

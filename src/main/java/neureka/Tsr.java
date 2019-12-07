@@ -919,7 +919,7 @@ public class Tsr
     }
     public Tsr putAt(Object key, Tsr value){
         if(value.isEmpty()) throw new IllegalArgumentException("[Tsr][putAt(Object key, Tsr value)]: Value is empty!");
-        Tsr slice = (key==null)?this:getAt(key);
+        Tsr slice = (key==null)?this:(Tsr)getAt(key);
         boolean valueIsDeviceVisitor = false;
         if(slice.has(Device.class) && !value.has(Device.class)){
             Device device = (Device)slice.find(Device.class);
@@ -935,7 +935,7 @@ public class Tsr
         if(valueIsDeviceVisitor) ((Device)value.find(Device.class)).get(value);
         return this;
     }
-    public Tsr getAt(Object key) {
+    public Object getAt(Object key) {
         if(key==null) return this;
         if(key instanceof List){
             if(((List)key).size()==0) return this;
@@ -951,13 +951,15 @@ public class Tsr
                 idx = (int[])key;
                 if(key instanceof int[]) {
                     for(int i=0; i<this.rank(); i++) {
-                        if(idx[i]>=0) {
-                            newShape[i] = _shape[i]-idx[i];
-                        } else {
-                            newShape[i] = _shape[i]+idx[i];
-                            idx[i] = 0;//_shape[i]+idx[i];
-                        }
+                        idx[i] = (idx[i]<0)?_shape[i]+idx[i]:idx[i];
+                        //if(idx[i]>=0) {
+                        //    newShape[i] = _shape[i]-idx[i];
+                        //} else {
+                        //    newShape[i] = _shape[i]+idx[i];
+                        //    idx[i] = 0;//_shape[i]+idx[i];
+                        //}
                     }
+                    return Tsr.fcn.io.getFrom(this, idx);
                 }
             }
             else if(((Object[])key)[0] instanceof List)
@@ -1000,8 +1002,15 @@ public class Tsr
         }
         if(ranges.length!=rank()) throw new IllegalArgumentException("[Tsr][getAt(Object key)]: Number of arguments must match tensor dim!");
         for(int i=0; i<this.rank(); i++) {
-            int first =  (Integer) ((int[])ranges[i])[0];
-            int second =  (Integer) ((int[])ranges[i])[1];
+            int first =  ((int[])ranges[i])[0];
+            int second =  ((int[])ranges[i])[1];
+            if(first>second){
+                int temp = first;
+                first = second;
+                second = temp;
+            }
+            first = (first<0)?_shape[i]+first:first;
+            second = (second<0)?_shape[i]+second:second;
             newShape[i] = (second-first)+1;
             idx[i] = first;
         }

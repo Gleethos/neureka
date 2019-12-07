@@ -362,7 +362,7 @@ public class SurfaceNode implements SurfaceObject {
 <span class="pc bpc" id="L362" title="1 of 2 branches missed.">                    if (Animator.getCounterOf(this, animationID) &gt;= 0) {</span>
 <span class="fc" id="L363">                        Animator.countDownFor(this, frameDelta, animationID);</span>
                     }
-<span class="fc bfc" id="L365" title="All 6 branches covered.">                    if (Animator.getCounterOf(this, animationID) &lt;= 0 &amp;&amp; deckAnimationRunning == false &amp;&amp; wasOnDeckButton == false) {//</span>
+<span class="pc bpc" id="L365" title="1 of 6 branches missed.">                    if (Animator.getCounterOf(this, animationID) &lt;= 0 &amp;&amp; deckAnimationRunning == false &amp;&amp; wasOnDeckButton == false) {//</span>
 <span class="fc" id="L366">                        Animator.removeCounterOf(this, animationID);</span>
 <span class="fc" id="L367">                        wasOnDeck = false;</span>
                     }
@@ -412,7 +412,7 @@ public class SurfaceNode implements SurfaceObject {
 <span class="fc" id="L412">                        Animator.countDownFor(this, (frameDelta / 4), animationID);</span>
                     }
 
-<span class="fc bfc" id="L415" title="All 4 branches covered.">                    if (Animator.getCounterOf(this, animationID) &lt;= 0 &amp;&amp; deckAnimationRunning == false) {</span>
+<span class="pc bpc" id="L415" title="1 of 4 branches missed.">                    if (Animator.getCounterOf(this, animationID) &lt;= 0 &amp;&amp; deckAnimationRunning == false) {</span>
 <span class="fc" id="L416">                        Animator.removeCounterOf(this, animationID);</span>
 <span class="fc" id="L417">                        deckButtonColor = new Color(0, 255, 255, (0));</span>
 <span class="fc" id="L418">                        wasOnDeckButton = false;</span>
@@ -427,7 +427,7 @@ public class SurfaceNode implements SurfaceObject {
 <span class="fc bfc" id="L427" title="All 2 branches covered.">            if (deckAnimationRunning) {</span>
 <span class="pc bpc" id="L428" title="1 of 2 branches missed.">                if (Animator.hasCounter(this, animationID)) {</span>
 <span class="fc" id="L429">                    Animator.countDownFor(this, 6 * frameDelta, animationID);</span>
-<span class="fc bfc" id="L430" title="All 2 branches covered.">                    if (Animator.getCounterOf(this, animationID) &lt;= 0) {</span>
+<span class="pc bpc" id="L430" title="1 of 2 branches missed.">                    if (Animator.getCounterOf(this, animationID) &lt;= 0) {</span>
 <span class="fc" id="L431">                        Animator.countUpFor(this, 1 - Animator.getCounterOf(this, animationID), animationID);</span>
                     }
                     //if(Animator.getCounterOf(this, animationID)&gt;=0) {animationID++;}
@@ -539,7 +539,7 @@ public class SurfaceNode implements SurfaceObject {
     @Override
     public boolean clickedAt(double x, double y, Surface hostSurface) {
 <span class="pc bpc" id="L541" title="1 of 2 branches missed.">        if (deckAnimationRunning == true) return false;</span>
-<span class="fc bfc" id="L542" title="All 2 branches covered.">        if (testForButton_Open((x), (y), hostSurface.getScale())) {//this.getNeuron().getPropertyHub().addProperty(new NNeuronControlFrame(&quot;TEST&quot;, this.getNeuron()));</span>
+<span class="pc bpc" id="L542" title="1 of 2 branches missed.">        if (testForButton_Open((x), (y), hostSurface.getScale())) {//this.getNeuron().getPropertyHub().addProperty(new NNeuronControlFrame(&quot;TEST&quot;, this.getNeuron()));</span>
 <span class="fc" id="L543">            this.deckAnimationRunning = true;</span>
         }
 <span class="fc" id="L545">        return true;</span>
@@ -547,14 +547,14 @@ public class SurfaceNode implements SurfaceObject {
 
     @Override
     public boolean doubleClickedAt(double x, double y, Surface hostSurface) {
-<span class="fc" id="L550">        boolean check = false;</span>
-<span class="pc bpc" id="L551" title="1 of 2 branches missed.">        if(InputNode!=null){</span>
+<span class="nc" id="L550">        boolean check = false;</span>
+<span class="nc bnc" id="L551" title="All 2 branches missed.">        if(InputNode!=null){</span>
 <span class="nc bnc" id="L552" title="All 2 branches missed.">            if (InputNode.testFor(x, y)) check = true;</span>
 <span class="nc bnc" id="L553" title="All 2 branches missed.">            if (check == true) {</span>
 <span class="nc" id="L554">                this.InputNode = (new SurfaceNodeInput(getX(), getY(), diameter / 2));</span>
             }
         }
-<span class="fc" id="L557">        return false;</span>
+<span class="nc" id="L557">        return false;</span>
     }
 
     // SENSING:
@@ -628,8 +628,8 @@ public class SurfaceNode implements SurfaceObject {
 
     // --------------------------------------------------------------------------------------------
     public SurfaceNodeInput testFor_AndGet_InputNode(double trueX, double trueY) {
-<span class="fc bfc" id="L631" title="All 2 branches covered.">        if (InputNode!=null) {</span>
-<span class="pc bpc" id="L632" title="1 of 2 branches missed.">            if (InputNode .testFor(trueX, trueY)) {</span>
+<span class="pc bpc" id="L631" title="1 of 2 branches missed.">        if (InputNode!=null) {</span>
+<span class="nc bnc" id="L632" title="All 2 branches missed.">            if (InputNode .testFor(trueX, trueY)) {</span>
 <span class="nc" id="L633">                return InputNode ;</span>
             }
         }
@@ -651,8 +651,8 @@ public class SurfaceNode implements SurfaceObject {
                 //System.out.println(&quot;Ii:&quot;+Ii);
 <span class="fc" id="L652">                boolean connectionMoved = this.justMoved();</span>
 <span class="pc bpc" id="L653" title="1 of 4 branches missed.">                if (connection.get(Ii) != null &amp;&amp; !connectionMoved) {</span>
-<span class="pc bpc" id="L654" title="1 of 2 branches missed.">                    if ((connection.get(Ii)).justMoved()) {</span>
-<span class="nc" id="L655">                        connectionMoved = true;</span>
+<span class="fc bfc" id="L654" title="All 2 branches covered.">                    if ((connection.get(Ii)).justMoved()) {</span>
+<span class="fc" id="L655">                        connectionMoved = true;</span>
                     }
                 }
 <span class="pc bpc" id="L658" title="1 of 6 branches missed.">                if (connectionMoved || InputNode .changeOccured() || convection) {//=================================================================</span>

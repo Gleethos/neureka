@@ -80,6 +80,8 @@ class LightGroovyTests
     @Test
     void testNN() {
 
+        Neureka.settings.tsr.SET_LEGACY_INDEXING(false)
+
         Tsr X = new Tsr(// input data: 5 vectors in binary form
             [5, 3, 1],
             [
@@ -149,7 +151,6 @@ class LightGroovyTests
         assert output.value64()[1]>=0.0&&output.value64()[1]<=1.0
         assert output.value64()[2]>=0.0&&output.value64()[2]<=1.0
 
-
         assert output.value64()[0]>=0.0&&output.value64()[0]<=0.1
         assert output.value64()[1]>=0.95&&output.value64()[1]<=1.0
         assert output.value64()[2]>=0.95&&output.value64()[2]<=1.0
@@ -169,10 +170,10 @@ class LightGroovyTests
     void feedforward(Tsr weights1, Tsr weights2, Tsr input, Tsr output, Tsr layer1) {
         Tsr in0 = new Tsr([input, weights1], "i0xi1")
         layer1[] = sigmoid(in0)
-        println(layer1.toString("shp")+"=sig(  I"+input.toString("shp")+" X W"+weights1.toString("shp")+" )")
+        //println(layer1.toString("shp")+"=sig(  I"+input.toString("shp")+" X W"+weights1.toString("shp")+" )")
         Tsr in1 = new Tsr([layer1, weights2], "i0xi1")
         output[] = sigmoid(in1)
-        println(output.toString("shp")+"=sig( L1"+layer1.toString("shp")+" X W"+weights2.toString("shp")+" )\n")
+        //println(output.toString("shp")+"=sig( L1"+layer1.toString("shp")+" X W"+weights2.toString("shp")+" )\n")
     }
 
     void backprop(Tsr weights1, Tsr weights2, Tsr input, Tsr output, Tsr layer1, Tsr y) {
@@ -271,6 +272,8 @@ class LightGroovyTests
     @Test
     void testTensorManipulation()
     {
+        Neureka.settings.tsr.SET_LEGACY_INDEXING(true)//TODO: repeat tests with default indexing
+
         Tsr t = new Tsr([2, 2], [
                 1.0, 4.0,
                 2.0, 7.0,
