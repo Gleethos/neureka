@@ -13,9 +13,7 @@ class LightGroovyTests
 
     @Test
     void testIndexingModes(){
-
         Neureka.settings.tsr.SET_LEGACY_INDEXING(false)
-
         Tsr t0 = new Tsr([3, 2, 1], [
                 1, 2,
                 3, 4,
@@ -68,6 +66,7 @@ class LightGroovyTests
 
     @Test
     void testTranspose(){
+        Neureka.settings.tsr.SET_LEGACY_INDEXING(true)
         Tsr t = new Tsr([2, 3], [
                 1, 2,
                 3, 4,
@@ -75,11 +74,18 @@ class LightGroovyTests
         ])
         t = t.T()
         assert t.toString().contains("[3x2]:(1.0, 3.0, 5.0, 2.0, 4.0, 6.0)")
+        Neureka.settings.tsr.SET_LEGACY_INDEXING(false)
+        t = new Tsr([2, 3], [
+                1, 2, 3,
+                4, 5, 6
+        ])
+        t = t.T()
+        assert t.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
+
     }
 
     @Test
     void testNN() {
-
         Neureka.settings.tsr.SET_LEGACY_INDEXING(false)
 
         Tsr X = new Tsr(// input data: 5 vectors in binary form
@@ -312,6 +318,9 @@ class LightGroovyTests
 
         Tsr.fcn.io.subInto(t, new Tsr([2, 2], [1, 2, 3, 4]))
         assert t.toString().contains("[2x2]:(1.0, 1.0, 6.0, -4.0)")
+
+        Neureka.settings.tsr.SET_LEGACY_INDEXING(false)
+
     }
 
     @Test
