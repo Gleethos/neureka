@@ -101,8 +101,8 @@
                                                     </h3>
                                                     <p>
                                                         Just as in libraries like NumPy
-                                                        subsets of tensors or 'nd-arrays' can
-                                                        by extracted while retaining the same underlying
+                                                        subsets/slices of tensors or 'nd-arrays' can
+                                                        by extracted while also retaining the same underlying
                                                         data.
                                                         This powerful feature of Neureka is showcased via some
                                                         groovy code below!
@@ -112,16 +112,12 @@
                                             <div class="col-sm-12 col-md-12">
                                                <pre><code class="hljs java">
 
-         /**
-         *  Subset:
-         */
-        Tsr a = new Tsr([4, 6], [
-                1, 2, 3, 4,
-                5, 6, 7, 8,
-                9, 1, 2, 3,
-                4, 5, 6, 7,
-                8, 9, 1, 2,
-                3, 4, 5, 6
+        Tsr a = new Tsr(
+            [4, 6], [
+                1, 2, 3, 4, 5, 6,
+                7, 8, 9, 1, 2, 3,
+                4, 5, 6, 7, 8, 9,
+                1, 2, 3, 4, 5, 6
         ])
 
         b = a[-3..-1, 0..3]  // Using range operator to extract slices!
@@ -299,20 +295,22 @@
                                                         Neureka implements so called Auto-Differentiation.
                                                         AD-algorithms are the backbone of today's most advanced
                                                         artificial neural networks.
-                                                        It allows for calculating derivatives with respect to
+                                                        Such algorithms calculate derivatives with respect to
                                                         weight variables used to correct errors incrementally
-                                                        throughout many training iterations
+                                                        throughout many training iterations,
                                                         whereby neural networks then gain the ability to
-                                                        approximate, generalize and thereby learning.
-                                                        Differentiation goes both ways: Forwards and Backwards.
+                                                        approximate, generalize and thereby learn.
+                                                        Differentiation goes both ways: Forward and Backward.
                                                         Namely:</br>
                                                         Forward-mode-AD and backward-mode-AD.</br>
                                                         Neureka utilizes both techniques to get the best performance.
                                                         Especially the use of backward-mode-AD revolutionized
                                                         machine learning in recent decades.
-                                                        Gradient decent using backward-mode-ad is termed back-propagation
-                                                        and for most cases this approach accelerates gradient
-                                                        descent by orders of magnitudes compared to other techniques,
+                                                        So called stochastic gradient decent is the most well known
+                                                        algorithm which uses uses backward-mode-ad.
+                                                        This technique is known as Backpropagation.
+                                                        and for most cases this approach learning by
+                                                        orders of magnitudes compared to other techniques,
                                                         making the difference between a model
                                                         taking weeks instead of years to train.
                                                         Beyond its use in machine learning, Auto-differentiation is a powerful
