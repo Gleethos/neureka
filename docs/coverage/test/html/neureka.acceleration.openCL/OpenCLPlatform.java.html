@@ -120,10 +120,11 @@ public class OpenCLPlatform
 <span class="fc bfc" id="L120" title="All 2 branches covered.">            if(sources[i].contains(&quot;__kernel&quot;)) {</span>
 <span class="fc" id="L121">                String[] parts = sources[i].split(&quot;__kernel&quot;)[1].split(&quot;\\(&quot;)[0].split(&quot; &quot;);</span>
 <span class="fc" id="L122">                kernelNames[i] = parts[parts.length-1];</span>
+                //System.out.println(&quot;Compiled kernel: &quot;+kernelNames[i]);
             }
         }
         // Create the program
-<span class="fc" id="L126">        cl_program cpProgram = clCreateProgramWithSource(</span>
+<span class="fc" id="L127">        cl_program cpProgram = clCreateProgramWithSource(</span>
                 _context,
                 sources.length,
                 sources,
@@ -132,7 +133,7 @@ public class OpenCLPlatform
         );
 
         // Build the program
-<span class="fc" id="L135">        int err = clBuildProgram(</span>
+<span class="fc" id="L136">        int err = clBuildProgram(</span>
                 cpProgram,
                 devicesArray.length,
                 devicesArray,
@@ -141,55 +142,55 @@ public class OpenCLPlatform
         //TODO: check compilation errors!
 
         // Create the kernels
-<span class="fc bfc" id="L144" title="All 2 branches covered.">        for(String name : kernelNames){</span>
-<span class="fc bfc" id="L145" title="All 2 branches covered.">            if(name!=null){</span>
-<span class="fc" id="L146">                _kernels.put(</span>
-<span class="fc" id="L147">                        name, clCreateKernel(cpProgram, name, null)</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">        for(String name : kernelNames){</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">            if(name!=null){</span>
+<span class="fc" id="L147">                _kernels.put(</span>
+<span class="fc" id="L148">                        name, clCreateKernel(cpProgram, name, null)</span>
                 );
             }
         }
-<span class="fc" id="L151">    }</span>
+<span class="fc" id="L152">    }</span>
 
     public cl_platform_id getID(){
-<span class="nc" id="L154">        return _pid;</span>
+<span class="nc" id="L155">        return _pid;</span>
     }
 
     public List&lt;OpenCLDevice&gt; getDevices(){
-<span class="fc" id="L158">        return _devices;</span>
+<span class="fc" id="L159">        return _devices;</span>
     }
 
     public Map&lt;String, cl_kernel&gt; getKernels(){
-<span class="fc" id="L162">        return _kernels;</span>
+<span class="fc" id="L163">        return _kernels;</span>
     }
 
     public cl_context getContext(){
-<span class="fc" id="L166">        return _context;</span>
+<span class="fc" id="L167">        return _context;</span>
     }
 
     public static List&lt;OpenCLPlatform&gt; PLATFORMS(){
 
-<span class="fc" id="L171">        return _setup.PLATFORMS;</span>
+<span class="fc" id="L172">        return _setup.PLATFORMS;</span>
     }
 
     private static class _setup
     {
-<span class="fc" id="L176">        public static List&lt;OpenCLPlatform&gt; PLATFORMS = findAllPlatforms();</span>
+<span class="fc" id="L177">        public static List&lt;OpenCLPlatform&gt; PLATFORMS = findAllPlatforms();</span>
 
         public  static List&lt;OpenCLPlatform&gt; findAllPlatforms()
         {
             // Obtain the number of platforms
-<span class="fc" id="L181">            int numPlatforms[] = new int[1];</span>
-<span class="fc" id="L182">            clGetPlatformIDs(0, null, numPlatforms);</span>
+<span class="fc" id="L182">            int numPlatforms[] = new int[1];</span>
+<span class="fc" id="L183">            clGetPlatformIDs(0, null, numPlatforms);</span>
 
             // Obtain the platform IDs
-<span class="fc" id="L185">            cl_platform_id platforms[] = new cl_platform_id[numPlatforms[0]];</span>
-<span class="fc" id="L186">            clGetPlatformIDs(platforms.length, platforms, null);</span>
+<span class="fc" id="L186">            cl_platform_id platforms[] = new cl_platform_id[numPlatforms[0]];</span>
+<span class="fc" id="L187">            clGetPlatformIDs(platforms.length, platforms, null);</span>
 
-<span class="fc" id="L188">            List&lt;OpenCLPlatform&gt; list = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L189" title="All 2 branches covered.">            for(cl_platform_id id : platforms){</span>
-<span class="fc" id="L190">                list.add(new OpenCLPlatform(id));</span>
+<span class="fc" id="L189">            List&lt;OpenCLPlatform&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">            for(cl_platform_id id : platforms){</span>
+<span class="fc" id="L191">                list.add(new OpenCLPlatform(id));</span>
             }
-<span class="fc" id="L192">            return list;</span>
+<span class="fc" id="L193">            return list;</span>
         }
         /**
          * Helper function which reads the file with the given name and returns
@@ -203,25 +204,25 @@ public class OpenCLPlatform
         {
             try
             {
-<span class="fc" id="L206">                BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));</span>
-<span class="fc" id="L207">                StringBuffer sb = new StringBuffer();</span>
-<span class="fc" id="L208">                String line = null;</span>
+<span class="fc" id="L207">                BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));</span>
+<span class="fc" id="L208">                StringBuffer sb = new StringBuffer();</span>
+<span class="fc" id="L209">                String line = null;</span>
                 while (true)
                 {
-<span class="fc" id="L211">                    line = br.readLine();</span>
-<span class="fc bfc" id="L212" title="All 2 branches covered.">                    if (line == null)</span>
+<span class="fc" id="L212">                    line = br.readLine();</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">                    if (line == null)</span>
                     {
-<span class="fc" id="L214">                        break;</span>
+<span class="fc" id="L215">                        break;</span>
                     }
-<span class="fc" id="L216">                    sb.append(line).append(&quot;\n&quot;);</span>
+<span class="fc" id="L217">                    sb.append(line).append(&quot;\n&quot;);</span>
                 }
-<span class="fc" id="L218">                return sb.toString();</span>
+<span class="fc" id="L219">                return sb.toString();</span>
             }
-<span class="nc" id="L220">            catch (IOException e)</span>
+<span class="nc" id="L221">            catch (IOException e)</span>
             {
-<span class="nc" id="L222">                e.printStackTrace();</span>
-<span class="nc" id="L223">                System.exit(1);</span>
-<span class="nc" id="L224">                return null;</span>
+<span class="nc" id="L223">                e.printStackTrace();</span>
+<span class="nc" id="L224">                System.exit(1);</span>
+<span class="nc" id="L225">                return null;</span>
             }
         }
     }

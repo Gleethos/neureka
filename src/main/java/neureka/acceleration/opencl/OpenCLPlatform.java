@@ -120,6 +120,7 @@ public class OpenCLPlatform
             if(sources[i].contains("__kernel")) {
                 String[] parts = sources[i].split("__kernel")[1].split("\\(")[0].split(" ");
                 kernelNames[i] = parts[parts.length-1];
+                //System.out.println("Compiled kernel: "+kernelNames[i]);
             }
         }
         // Create the program

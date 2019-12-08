@@ -371,7 +371,7 @@ public abstract class AbstractFunction implements Function
         }
 <span class="fc bfc" id="L372" title="All 2 branches covered.">        if (device != null) {</span>
 <span class="fc bfc" id="L373" title="All 2 branches covered.">            for (int ti = 0; ti &lt; tsrs.length; ti++) {</span>
-<span class="pc bpc" id="L374" title="1 of 6 branches missed.">                onSameGuestDevice = (!tsrs[ti].isVirtual() &amp;&amp; device == tsrs[ti].find(Device.class)) &amp;&amp; onSameGuestDevice;</span>
+<span class="fc bfc" id="L374" title="All 6 branches covered.">                onSameGuestDevice = (!tsrs[ti].isVirtual() &amp;&amp; device == tsrs[ti].find(Device.class)) &amp;&amp; onSameGuestDevice;</span>
             }
         } else {
 <span class="fc" id="L377">            onSameGuestDevice = false;</span>

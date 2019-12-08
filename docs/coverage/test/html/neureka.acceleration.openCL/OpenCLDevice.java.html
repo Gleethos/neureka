@@ -385,18 +385,18 @@ public class OpenCLDevice implements Device
                 tsrs.length == 3
                     &amp;&amp;
                     (
-<span class="pc bpc" id="L388" title="2 of 4 branches missed.">                        (tsrs[1].isVirtual() || tsrs[2].isVirtual())</span>
+<span class="pc bpc" id="L388" title="1 of 4 branches missed.">                        (tsrs[1].isVirtual() || tsrs[2].isVirtual())</span>
                                 ||
 <span class="pc bpc" id="L390" title="4 of 8 branches missed.">                        (!tsrs[1].isOutsourced() &amp;&amp; tsrs[1].size() == 1 || !tsrs[2].isOutsourced() &amp;&amp; tsrs[2].size() == 1)</span>
                     )
             ) {
                 //_createNewDrainTensorIn(tsrs, f_id);
-<span class="pc bpc" id="L394" title="2 of 4 branches missed.">                if (tsrs[2].isVirtual() || tsrs[2].size() == 1) {</span>
+<span class="pc bpc" id="L394" title="1 of 4 branches missed.">                if (tsrs[2].isVirtual() || tsrs[2].size() == 1) {</span>
 <span class="fc" id="L395">                    _execute(new Tsr[]{tsrs[0], tsrs[1]}, Function.TYPES.LOOKUP.get(&quot;idy&quot;), -1);</span>
 <span class="fc" id="L396">                    _execute(tsrs[0], tsrs[2].value64()[0], f_id, d);</span>
                 } else {
-<span class="nc" id="L398">                    _execute(new Tsr[]{tsrs[0], tsrs[2]}, Function.TYPES.LOOKUP.get(&quot;idy&quot;), -1);</span>
-<span class="nc" id="L399">                    _execute(tsrs[0], tsrs[1].value64()[0], f_id, d);</span>
+<span class="fc" id="L398">                    _execute(new Tsr[]{tsrs[0], tsrs[2]}, Function.TYPES.LOOKUP.get(&quot;idy&quot;), -1);</span>
+<span class="fc" id="L399">                    _execute(tsrs[0], tsrs[1].value64()[0], f_id, d);</span>
                 }
             } else {
 <span class="fc" id="L402">                _execute(tsrs, f_id, d);</span>

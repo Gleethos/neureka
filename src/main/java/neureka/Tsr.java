@@ -831,6 +831,11 @@ public class Tsr
         return this;
     }
 
+    public Tsr backward(double value){
+        backward(new Tsr(_shape, value));
+        return this;
+    }
+
     public void applyGradient(){
         if(this.has(JITProp.class)){
             JITProp jit = (JITProp) find(JITProp.class);
@@ -921,7 +926,7 @@ public class Tsr
         if(value.isEmpty()) throw new IllegalArgumentException("[Tsr][putAt(Object key, Tsr value)]: Value is empty!");
         Tsr slice = (key==null)?this:(Tsr)getAt(key);
         boolean valueIsDeviceVisitor = false;
-        if(slice.has(Device.class) && !value.has(Device.class)){
+        if(slice.isOutsourced() && !value.isOutsourced()){
             Device device = (Device)slice.find(Device.class);
             device.add(value);
             valueIsDeviceVisitor = true;
