@@ -96,7 +96,7 @@ public class NTester_Tensor extends NTester
         AbstractFunction.exec.convection(
                 new Tsr(drnMxd, rsltData),
                 new Tsr(frstShp, frstData),
-                new Tsr(scndShp, scondData)
+                new Tsr(scndShp, scondData), -1
         );
         assertIsEqual(stringified(rsltData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;
@@ -109,10 +109,10 @@ public class NTester_Tensor extends NTester
     ){
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.fcn.indexing.shpOfCon(frstShp, scndShp);
-        AbstractFunction.exec.convection_inv(
+        AbstractFunction.exec.convection(//inv
                 new Tsr(frstShp, frstData),
                 (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
-                (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
+                (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData),0
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;

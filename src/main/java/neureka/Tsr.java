@@ -1026,11 +1026,39 @@ public class Tsr
     public Tsr foreach(Consumer<Integer> action) {
         this.setIsVirtual(false);
         int sze = this.size();
-        int[] idx = new int[this.shape().length];
-        for (int i = 0; i < sze; i++) {
-            fcn.indexing.increment(idx, this.shape());
-            action.accept(i);
+        boolean doThreading = false;
+        if(sze>128){
+            doThreading = ((sze/Runtime.getRuntime().availableProcessors()) > 32);
         }
+        if(!doThreading){
+            int[] idx = new int[this.shape().length];
+            for (int i = 0; i < sze; i++) {
+                fcn.indexing.increment(idx, this.shape());
+                action.accept(i);
+            }
+        } else {
+            int threadCount = Runtime.getRuntime().availableProcessors();
+            final int chunk=(sze/threadCount);
+            Thread[] th = new Thread[threadCount];
+            for(int i=0;i<threadCount;i++){
+                final int start = i*chunk;
+                final  int end = (i==threadCount-1)?sze:((i+1)*chunk);
+                th[i]=new Thread(()->{
+                    for(int k=start;k<end;k++) action.accept(Tsr.fcn.indexing.i_of_i(k, this));
+                });
+                th[i].start();
+            }
+            for(int i=0;i<threadCount;i++){
+                try {
+                    th[i].join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+
         return this;
     }
 

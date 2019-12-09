@@ -961,7 +961,7 @@ public abstract class AbstractFunction implements Function
             tensor1.setIsVirtual(false);
             tensor2.setIsVirtual(false);
             Tsr newTensor = new Tsr(Tsr.fcn.indexing.shpOfCon(tensor1.shape(), tensor2.shape()));
-            exec.convection(newTensor, tensor1, tensor2);
+            exec.convection(newTensor, tensor1, tensor2, -1);
             return newTensor;
         }
 
@@ -970,19 +970,16 @@ public abstract class AbstractFunction implements Function
             source1.setIsVirtual(false);
             source2.setIsVirtual(false);
             drain.setIsVirtual(false);
-            exec.convection_inv(source2, (!first) ? source1 : drain, (!first) ? drain : source1);
+            exec.convection(source2, (!first) ? source1 : drain, (!first) ? drain : source1, 0);
             return (first) ? source1 : source2;
         }
 
         @Contract(pure = true)
-        public static void convection(Tsr t0_drain, Tsr t1_source, Tsr t2_source)
+        public static void convection(Tsr t0_drain, Tsr t1_source, Tsr t2_source, int d)
         {
-            int[] t0Shp = t0_drain.shape();
+            int[] t0Shp = t0_drain.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
             int[] t1Shp = t1_source.shape();
             int[] t2Shp = t2_source.shape();
-            int[] t0Tln = t0_drain.translation();
-            int[] t1Tln = t1_source.translation();
-            int[] t2Tln = t2_source.translation();
             int rank = t0Shp.length;
             int[] t0Idx = new int[rank];
             int[] t1Idx = new int[rank];
@@ -993,161 +990,141 @@ public abstract class AbstractFunction implements Function
             int drnSze = t0_drain.size();
             int i = 0;
 
-            while (i < drnSze)
-            {//increment on drain accordingly:
-                int ri = 0;
-                while (ri < rank) {
-                    if (t1Shp[ri] == t2Shp[ri]) {//setting 0
-                        t1Idx[ri] = t0Idx[ri];//mtch[mi];
-                        t2Idx[ri] = t0Idx[ri];//mtch[mi];
-                    } else if (t1Shp[ri] > t2Shp[ri]) {//setting hdr1 idx to id idx
-                        t1Idx[ri] = t0Idx[ri];//mtch[mi];
-                        t2Idx[ri] = 0;
-                    } else if (t1Shp[ri] < t2Shp[ri]) {//setting hdr2 idx to id idx
-                        t1Idx[ri] = 0;
-                        t2Idx[ri] = t0Idx[ri];//mtch[mi];
+            if(d<0){
+                while (i < drnSze)
+                {//increment on drain accordingly:
+                    int ri = 0;
+                    while (ri < rank) {
+                        if (t1Shp[ri] == t2Shp[ri]) {//setting 0
+                            t1Idx[ri] = t0Idx[ri];//mtch[mi];
+                            t2Idx[ri] = t0Idx[ri];//mtch[mi];
+                        } else if (t1Shp[ri] > t2Shp[ri]) {//setting hdr1 idx to id idx
+                            t1Idx[ri] = t0Idx[ri];//mtch[mi];
+                            t2Idx[ri] = 0;
+                        } else if (t1Shp[ri] < t2Shp[ri]) {//setting hdr2 idx to id idx
+                            t1Idx[ri] = 0;
+                            t2Idx[ri] = t0Idx[ri];//mtch[mi];
+                        }
+                        ri++;
                     }
-                    ri++;
-                }
-                //----------
-                // multiplication:
-                double value = 0;
-                boolean running = true;
-                boolean incrementing = false;
-                while (running) {
-                    ri = (ri == rank) ? 0 : ri;
-                    if (incrementing == false) {
-                        int i1 = Tsr.fcn.indexing.i_of_idx(t1Idx, t1_source);//Tsr.fcn.indexing.iOf(t1Idx, t1Tln);
-                        int i2 = Tsr.fcn.indexing.i_of_idx(t2Idx, t2_source);//Tsr.fcn.indexing.iOf(t2Idx, t2Tln);
-                        value += t1_value[i1] * t2_value[i2];
-                        incrementing = true;
-                        ri = 0;
-                    } else {//incrementing:
-                        if (t1Idx[ri] < t1Shp[ri] && t2Idx[ri] < t2Shp[ri]) {
-                            t1Idx[ri]++;
-                            t2Idx[ri]++;
-                            if (t1Idx[ri] == t1Shp[ri] || t2Idx[ri] == t2Shp[ri]) {
-                                if (ri == (rank - 1)) {
-                                    running = false;
+                    //----------
+                    // multiplication:
+                    double value = 0;
+                    boolean running = true;
+                    boolean incrementing = false;
+                    while (running) {
+                        ri = (ri == rank) ? 0 : ri;
+                        if (incrementing == false) {
+                            int i1 = Tsr.fcn.indexing.i_of_idx(t1Idx, t1_source);//Tsr.fcn.indexing.iOf(t1Idx, t1Tln);
+                            int i2 = Tsr.fcn.indexing.i_of_idx(t2Idx, t2_source);//Tsr.fcn.indexing.iOf(t2Idx, t2Tln);
+                            value += t1_value[i1] * t2_value[i2];
+                            incrementing = true;
+                            ri = 0;
+                        } else {//incrementing:
+                            if (t1Idx[ri] < t1Shp[ri] && t2Idx[ri] < t2Shp[ri]) {
+                                t1Idx[ri]++;
+                                t2Idx[ri]++;
+                                if (t1Idx[ri] == t1Shp[ri] || t2Idx[ri] == t2Shp[ri]) {
+                                    if (ri == (rank - 1)) {
+                                        running = false;
+                                    }
+                                    if (t1Shp[ri] == t2Shp[ri]) {
+                                        t1Idx[ri] = t0Idx[ri];
+                                        t2Idx[ri] = t0Idx[ri];
+                                    } else if (t1Shp[ri] > t2Shp[ri]) {
+                                        t1Idx[ri] = t0Idx[ri];
+                                        t2Idx[ri] = 0;
+                                    } else if (t1Shp[ri] < t2Shp[ri]) {
+                                        t1Idx[ri] = 0;
+                                        t2Idx[ri] = t0Idx[ri];
+                                    }
+                                    ri++;
+                                } else {
+                                    incrementing = false;
+                                    ri = 0;
                                 }
-                                if (t1Shp[ri] == t2Shp[ri]) {
-                                    t1Idx[ri] = t0Idx[ri];
-                                    t2Idx[ri] = t0Idx[ri];
-                                } else if (t1Shp[ri] > t2Shp[ri]) {
+                            } else {
+                                ri++;
+                            }
+                        }
+                    }//setInto _value in drn:
+                    t0_value[Tsr.fcn.indexing.i_of_idx(t0Idx, t0_drain)] = value;
+                    //increment on drain:
+                    if (i < drnSze) Tsr.fcn.indexing.increment(t0Idx, t0Shp);
+                    i++;
+                }
+            }
+            else//---
+            {
+                while (i < drnSze) {//increment on drain accordingly:
+                    int ri = 0;
+                    while (ri < rank) {
+                        if (t2Idx[ri] == t2Shp[ri]) {//setting 0
+                            t1Idx[ri] = t0Idx[ri];
+                            t2Idx[ri] = 0;//mtch[mi];
+                        } else {
+                            if (t0Shp[ri] > t1Shp[ri]) {
+                                t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);
+                            } else {
+                                t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);
+                            }
+                        }
+                        ri++;
+                    }
+                    //----------
+                    // multiplication:
+                    double value = 0;
+                    boolean running = true;
+                    boolean incrementing = false;
+                    while (running) {
+                        ri = (ri == rank) ? 0 : ri;
+                        if (incrementing == false) {
+
+                            boolean isMatch = true;
+                            for (int rii = 0; rii < rank; rii++) {
+                                if (!(t1Idx[rii] < t1Shp[rii] && t1Idx[rii] >= 0)) {
+                                    isMatch = false;
+                                }
+                            }
+                            if (isMatch) {
+                                value +=
+                                        t1_value[Tsr.fcn.indexing.i_of_idx(t1Idx, t1_source)]
+                                                * t2_value[Tsr.fcn.indexing.i_of_idx(t2Idx, t2_source)];
+                            }
+                            incrementing = true;
+                            ri = 0;
+                        } else {//incrementing:
+                            if (t2Idx[ri] < t2Shp[ri]) {
+                                t2Idx[ri]++;
+                                if (t2Idx[ri] == t2Shp[ri]) {
+                                    if (ri == (rank - 1)) {
+                                        running = false;
+                                    }
                                     t1Idx[ri] = t0Idx[ri];
                                     t2Idx[ri] = 0;
-                                } else if (t1Shp[ri] < t2Shp[ri]) {
-                                    t1Idx[ri] = 0;
-                                    t2Idx[ri] = t0Idx[ri];
-                                }
-                                ri++;
-                            } else {
-                                incrementing = false;
-                                ri = 0;
-                            }
-                        } else {
-                            ri++;
-                        }
-                    }
-                }//setInto _value in drn:
-                int i0 = Tsr.fcn.indexing.i_of_idx(t0Idx, t0_drain);//Tsr.fcn.indexing.iOf(t0Idx, t0Tln);
-                t0_value[i0] = value;
-                i++;//increment on drain:
-                if (i < drnSze) {
-                    Tsr.fcn.indexing.increment(t0Idx, t0Shp);
-                }
-            }
-        }
-
-        @Contract(pure = true)
-        public static void convection_inv(Tsr t0_origin, Tsr t1_handle, Tsr t2_drain) {
-            int[] t0Shp = t0_origin.shape();
-            int[] t1Shp = t1_handle.shape();
-            int[] t2Shp = t2_drain.shape();
-            int[] t0Tln = t0_origin.translation();
-            int[] t1Tln = t1_handle.translation();
-            int[] t2Tln = t2_drain.translation();
-            int rank = t0Shp.length;
-            int[] t0Idx = new int[rank];
-            int[] t1Idx = new int[rank];
-            int[] t2Idx = new int[rank];
-            double[] t0_value = t0_origin.value64();
-            double[] t1_value = t1_handle.value64();
-            double[] t2_value = t2_drain.value64();
-            int drnSze = t0_origin.size();
-            int i = 0;
-
-            while (i < drnSze) {//increment on drain accordingly:
-                int ri = 0;
-                while (ri < rank) {
-                    if (t2Idx[ri] == t2Shp[ri]) {//setting 0
-                        t1Idx[ri] = t0Idx[ri];
-                        t2Idx[ri] = 0;//mtch[mi];
-                    } else {
-                        if (t0Shp[ri] > t1Shp[ri]) {
-                            t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);
-                        } else {
-                            t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);
-                        }
-                    }
-                    ri++;
-                }
-                //----------
-                // multiplication:
-                double value = 0;
-                boolean running = true;
-                boolean incrementing = false;
-                while (running) {
-                    ri = (ri == rank) ? 0 : ri;
-                    if (incrementing == false) {
-
-                        boolean isMatch = true;
-                        for (int rii = 0; rii < rank; rii++) {
-                            if (!(t1Idx[rii] < t1Shp[rii] && t1Idx[rii] >= 0)) {
-                                isMatch = false;
-                            }
-                        }
-                        if (isMatch) {
-                            //int i1 = Tsr.fcn.indexing.iOf(t1Idx, t1Tln);
-                            //int i2 = Tsr.fcn.indexing.iOf(t2Idx, t2Tln);
-                            int i1 = Tsr.fcn.indexing.i_of_idx(t1Idx, t1_handle);//Tsr.fcn.indexing.iOf(t1Idx, t1Tln);
-                            int i2 = Tsr.fcn.indexing.i_of_idx(t2Idx, t2_drain);//Tsr.fcn.indexing.iOf(t2Idx, t2Tln);
-                            value += t1_value[i1] * t2_value[i2];
-                        }
-                        incrementing = true;
-                        ri = 0;
-                    } else {//incrementing:
-                        if (t2Idx[ri] < t2Shp[ri]) {
-                            t2Idx[ri]++;
-                            if (t2Idx[ri] == t2Shp[ri]) {
-                                if (ri == (rank - 1)) {
-                                    running = false;
-                                }
-                                t1Idx[ri] = t0Idx[ri];
-                                t2Idx[ri] = 0;
-                                ri++;
-                            } else {
-                                if (t0Shp[ri] > t1Shp[ri]) {
-                                    t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);
+                                    ri++;
                                 } else {
-                                    t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);
+                                    if (t0Shp[ri] > t1Shp[ri]) {
+                                        t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);
+                                    } else {
+                                        t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);
+                                    }
+                                    incrementing = false;
+                                    ri = 0;
                                 }
-                                incrementing = false;
-                                ri = 0;
+                            } else {
+                                ri++;
                             }
-                        } else {
-                            ri++;
                         }
                     }
-                }
-                //setInto _value in drn:
-                int i0 = Tsr.fcn.indexing.i_of_idx(t0Idx, t0_origin);//Tsr.fcn.indexing.iOf(t0Idx, t0Tln);
-                t0_value[i0] = value;
-                i++;//increment on drain:
-                if (i < drnSze) {
-                    Tsr.fcn.indexing.increment(t0Idx, t0Shp);
+                    //setInto _value in drn:
+                    t0_value[Tsr.fcn.indexing.i_of_idx(t0Idx, t0_drain)] = value;
+                    //increment on drain:
+                    if (i < drnSze) Tsr.fcn.indexing.increment(t0Idx, t0Shp);
+                    i++;
                 }
             }
+
         }
 
     }

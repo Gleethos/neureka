@@ -22,7 +22,6 @@ public interface Device
         return result[0];
     }
 
-
     void dispose();
 
     Device get(Tsr tensor);
