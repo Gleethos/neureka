@@ -235,8 +235,8 @@ public class SurfaceNode implements SurfaceObject {
 
     public ArrayList&lt;SurfaceRepaintSpace&gt; updateOn(Surface hostSurface) {
         //System.out.println(&quot;wasOnDeck:&quot;+wasOnDeck+&quot;; isOnDeck:&quot;+isOnDeck+&quot;;&quot;);
-<span class="fc bfc" id="L238" title="All 4 branches covered.">        if (hostSurface.getScale() &lt; 0.13 &amp;&amp; deckIsRemoved) {</span>
-<span class="fc" id="L239">            deckAnimationRunning = true;</span>
+<span class="pc bpc" id="L238" title="1 of 4 branches missed.">        if (hostSurface.getScale() &lt; 0.13 &amp;&amp; deckIsRemoved) {</span>
+<span class="nc" id="L239">            deckAnimationRunning = true;</span>
         }
 <span class="fc" id="L241">        ArrayList&lt;SurfaceRepaintSpace&gt; queue = new ArrayList&lt;&gt;();</span>
 <span class="fc" id="L242">        double LP = getX() - diameter * 2;</span>
@@ -286,7 +286,7 @@ public class SurfaceNode implements SurfaceObject {
         }
 <span class="fc" id="L287">        double mag = Math.abs(SurfaceUtility.magnitudeOf(velX, velY));</span>
 <span class="fc bfc" id="L288" title="All 4 branches covered.">        if (!isOnDeck &amp;&amp; mag &gt; 10) {</span>
-<span class="pc bpc" id="L289" title="1 of 2 branches missed.">            double s = (mag &gt; diameter) ? diameter : mag;</span>
+<span class="fc bfc" id="L289" title="All 2 branches covered.">            double s = (mag &gt; diameter) ? diameter : mag;</span>
 <span class="fc" id="L290">            queue.addAll(</span>
 <span class="fc" id="L291">                    this.moveTo(</span>
                             new double[]{
@@ -326,8 +326,8 @@ public class SurfaceNode implements SurfaceObject {
 <span class="fc bfc" id="L326" title="All 2 branches covered.">        if (hostSurface.getScale() &lt; 0.2) {</span>
 <span class="fc" id="L327">            scaleCheck = false;</span>
         }
-<span class="fc bfc" id="L329" title="All 4 branches covered.">        if (hostSurface.getScale() &lt; 0.13 &amp;&amp; deckIsRemoved) {</span>
-<span class="fc" id="L330">            deckAnimationRunning = true;</span>
+<span class="pc bpc" id="L329" title="1 of 4 branches missed.">        if (hostSurface.getScale() &lt; 0.13 &amp;&amp; deckIsRemoved) {</span>
+<span class="nc" id="L330">            deckAnimationRunning = true;</span>
         }
 <span class="fc" id="L332">        boolean UnitNeedsToBeRepainted = false;</span>
 <span class="fc" id="L333">        ArrayList&lt;SurfaceRepaintSpace&gt; queue = new ArrayList&lt;SurfaceRepaintSpace&gt;();</span>
@@ -362,7 +362,7 @@ public class SurfaceNode implements SurfaceObject {
 <span class="pc bpc" id="L362" title="1 of 2 branches missed.">                    if (Animator.getCounterOf(this, animationID) &gt;= 0) {</span>
 <span class="fc" id="L363">                        Animator.countDownFor(this, frameDelta, animationID);</span>
                     }
-<span class="fc bfc" id="L365" title="All 6 branches covered.">                    if (Animator.getCounterOf(this, animationID) &lt;= 0 &amp;&amp; deckAnimationRunning == false &amp;&amp; wasOnDeckButton == false) {//</span>
+<span class="pc bpc" id="L365" title="1 of 6 branches missed.">                    if (Animator.getCounterOf(this, animationID) &lt;= 0 &amp;&amp; deckAnimationRunning == false &amp;&amp; wasOnDeckButton == false) {//</span>
 <span class="fc" id="L366">                        Animator.removeCounterOf(this, animationID);</span>
 <span class="fc" id="L367">                        wasOnDeck = false;</span>
                     }
@@ -412,7 +412,7 @@ public class SurfaceNode implements SurfaceObject {
 <span class="fc" id="L412">                        Animator.countDownFor(this, (frameDelta / 4), animationID);</span>
                     }
 
-<span class="fc bfc" id="L415" title="All 4 branches covered.">                    if (Animator.getCounterOf(this, animationID) &lt;= 0 &amp;&amp; deckAnimationRunning == false) {</span>
+<span class="pc bpc" id="L415" title="1 of 4 branches missed.">                    if (Animator.getCounterOf(this, animationID) &lt;= 0 &amp;&amp; deckAnimationRunning == false) {</span>
 <span class="fc" id="L416">                        Animator.removeCounterOf(this, animationID);</span>
 <span class="fc" id="L417">                        deckButtonColor = new Color(0, 255, 255, (0));</span>
 <span class="fc" id="L418">                        wasOnDeckButton = false;</span>
@@ -463,7 +463,7 @@ public class SurfaceNode implements SurfaceObject {
             //if(Animator.getCounterOf(this, animationID)&gt;=0) {animationID++;}
         }
         //=================================================================================================================================================
-        //Animation 3 -&gt; Weight convection
+        //Animation 3 -&gt; Weight convolve_template
         //=================================================================================================================================================
 <span class="fc" id="L468">        boolean activityCheck = false;</span>
 <span class="fc bfc" id="L469" title="All 2 branches covered.">        if (InputNode!=null)  {</span>
@@ -527,8 +527,8 @@ public class SurfaceNode implements SurfaceObject {
 <span class="fc" id="L527">            hoveringOverDeckButton = true;</span>
         }
 
-<span class="fc bfc" id="L530" title="All 2 branches covered.">        if(InputNode!=null) {</span>
-<span class="pc bpc" id="L531" title="1 of 2 branches missed.">            if (InputNode .testFor(trueMouseX, trueMouseY)) {</span>
+<span class="pc bpc" id="L530" title="1 of 2 branches missed.">        if(InputNode!=null) {</span>
+<span class="nc bnc" id="L531" title="All 2 branches missed.">            if (InputNode .testFor(trueMouseX, trueMouseY)) {</span>
 <span class="nc bnc" id="L532" title="All 2 branches missed.">                if (isOnDeck == true) wasOnDeck = true;</span>
 <span class="nc" id="L533">                isOnDeck = true;</span>
             }
@@ -549,8 +549,8 @@ public class SurfaceNode implements SurfaceObject {
     public boolean doubleClickedAt(double x, double y, Surface hostSurface) {
 <span class="fc" id="L550">        boolean check = false;</span>
 <span class="pc bpc" id="L551" title="1 of 2 branches missed.">        if(InputNode!=null){</span>
-<span class="pc bpc" id="L552" title="1 of 2 branches missed.">            if (InputNode.testFor(x, y)) check = true;</span>
-<span class="pc bpc" id="L553" title="1 of 2 branches missed.">            if (check == true) {</span>
+<span class="nc bnc" id="L552" title="All 2 branches missed.">            if (InputNode.testFor(x, y)) check = true;</span>
+<span class="nc bnc" id="L553" title="All 2 branches missed.">            if (check == true) {</span>
 <span class="nc" id="L554">                this.InputNode = (new SurfaceNodeInput(getX(), getY(), diameter / 2));</span>
             }
         }
@@ -629,7 +629,7 @@ public class SurfaceNode implements SurfaceObject {
     // --------------------------------------------------------------------------------------------
     public SurfaceNodeInput testFor_AndGet_InputNode(double trueX, double trueY) {
 <span class="pc bpc" id="L631" title="1 of 2 branches missed.">        if (InputNode!=null) {</span>
-<span class="pc bpc" id="L632" title="1 of 2 branches missed.">            if (InputNode .testFor(trueX, trueY)) {</span>
+<span class="nc bnc" id="L632" title="All 2 branches missed.">            if (InputNode .testFor(trueX, trueY)) {</span>
 <span class="nc" id="L633">                return InputNode ;</span>
             }
         }
@@ -640,7 +640,7 @@ public class SurfaceNode implements SurfaceObject {
     //=============================================================================================
     // --------------------------------------------------------------------------------------------
     private ArrayList&lt;SurfaceRepaintSpace&gt; updateConnectionVectorAndGetRepaintSpace(boolean convection) // OPTIMIZATION?
-    {//System.out.println(&quot;convection: &quot;+convection);
+    {//System.out.println(&quot;convolve_template: &quot;+convolve_template);
         //-&gt; checking if connection points are within frame!
 <span class="fc" id="L645">        double vX = 0;</span>
 <span class="fc" id="L646">        double vY = 0;</span>
@@ -812,7 +812,7 @@ public class SurfaceNode implements SurfaceObject {
                         //System.out.println(diameter);
 <span class="nc" id="L813">                        double normalX = (-vectorY / d) * Other.diameter / 2 * ratio;</span>
 <span class="nc" id="L814">                        double normalY = (vectorX / d) * Other.diameter / 2 * ratio;</span>
-<span class="nc" id="L815">                        Polygon convector = new Polygon();//System.out.println(&quot;painting convection!&quot;+ratio);</span>
+<span class="nc" id="L815">                        Polygon convector = new Polygon();//System.out.println(&quot;painting convolve_template!&quot;+ratio);</span>
 <span class="nc" id="L816">                        double invratio = 1 - ratio;</span>
 <span class="nc" id="L817">                        curvePoint = math.getCurvePointOn(invratio * invratio * invratio, points);</span>
 <span class="nc" id="L818">                        convector.addPoint((int) (curvePoint[0]), (int) (curvePoint[1]));</span>
@@ -880,9 +880,9 @@ public class SurfaceNode implements SurfaceObject {
 
         //NEURON DECK:
         //--------------
-<span class="pc bpc" id="L883" title="1 of 4 branches missed.">        if (deckIsRemoved == true &amp;&amp; deckAnimationRunning == false) {</span>
+<span class="fc bfc" id="L883" title="All 4 branches covered.">        if (deckIsRemoved == true &amp;&amp; deckAnimationRunning == false) {</span>
 <span class="fc" id="L884">            paintNodeInterior(brush, (int) position[0], (int) position[1], surface);</span>
-<span class="pc bpc" id="L885" title="1 of 4 branches missed.">        } else if (deckIsRemoved == false &amp;&amp; deckAnimationRunning == false) {</span>
+<span class="fc bfc" id="L885" title="All 4 branches covered.">        } else if (deckIsRemoved == false &amp;&amp; deckAnimationRunning == false) {</span>
 <span class="fc" id="L886">            paintNodeDeck(brush, (int) position[0], (int) position[1], surface);</span>
 <span class="pc bpc" id="L887" title="1 of 2 branches missed.">        } else if (deckAnimationRunning == true) {</span>
 <span class="fc" id="L888">            paintNodeInterior(brush, (int) position[0], (int) position[1], surface);</span>
@@ -912,7 +912,7 @@ public class SurfaceNode implements SurfaceObject {
 <span class="fc" id="L912">        double buttonAnimationModifier = 0;</span>
 
 <span class="fc" id="L914">        animationID = 0;</span>
-<span class="fc bfc" id="L915" title="All 2 branches covered.">        if (animator.hasCounter(this, animationID)) {</span>
+<span class="pc bpc" id="L915" title="1 of 2 branches missed.">        if (animator.hasCounter(this, animationID)) {</span>
 <span class="fc" id="L916">            buttonAnimationModifier = (double) animator.getCounterOf(this, animationID) / buttonLimit;</span>
         }
 <span class="fc" id="L918">        Ellipse2D.Double ellipse =</span>
@@ -1088,8 +1088,8 @@ public class SurfaceNode implements SurfaceObject {
 <span class="pc bpc" id="L1088" title="1 of 2 branches missed.">            } else if (decimal &lt; -1) {</span>
 <span class="nc" id="L1089">                decimal = -1;</span>
             }
-<span class="pc bpc" id="L1091" title="1 of 2 branches missed.">            if (deckIsRemoved) {</span>
-<span class="nc" id="L1092">                decimal *= -1;</span>
+<span class="fc bfc" id="L1091" title="All 2 branches covered.">            if (deckIsRemoved) {</span>
+<span class="fc" id="L1092">                decimal *= -1;</span>
             }
             //Transition clip:
 <span class="fc" id="L1095">            Area clipArea = new Area(new Rectangle.Double(centerX - radius, centerY - radius, radius * 2, radius * 2));</span>
@@ -1192,7 +1192,7 @@ public class SurfaceNode implements SurfaceObject {
 
         //System.out.println(modifier+&quot; ... nice&quot;);
 
-<span class="pc bpc" id="L1195" title="1 of 2 branches missed.">        if (transparency &gt; 15) {</span>
+<span class="fc bfc" id="L1195" title="All 2 branches covered.">        if (transparency &gt; 15) {</span>
 <span class="fc" id="L1196">            double radius = getRadius();</span>
             //---
 <span class="pc bpc" id="L1198" title="1 of 2 branches missed.">            String s = (this.getGraphNode().getPayload() == null) ? &quot;null&quot; : getGraphNode().getPayload().toString(&quot;sgc&quot;);</span>

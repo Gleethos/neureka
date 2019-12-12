@@ -16,10 +16,9 @@ import java.util.function.BiConsumer;
  */
 public class GraphNode
 {
-
     private static Function MUL = FunctionBuilder.build("(I[0]*I[1])", false);
     private static Function ADD = FunctionBuilder.build("(I[0]+I[1])", false);
-    private static Function CONV = FunctionBuilder.build("I[0]>>I[1]>>I[2]", false);
+    private static Function INV_X = FunctionBuilder.build("I[0]x>>I[1]x>>I[2]", false);
 
     /**
      *  This gradient64 node is involved in auto-differentiation.
@@ -60,41 +59,6 @@ public class GraphNode
     private int _mode;
 
     /**
-     * Recorded AbstractFunction.
-     *
-     * @var Function _function
-     * */
-    private Function _function;
-
-    public Function getFunction(){
-        return _function;
-    }
-
-    /**
-     * Input tensors. ('Parents' of the tensor of this node)
-     * */
-    private GraphNode[] _parents;
-
-    public GraphNode[] getParents(){
-        return _parents;
-    }
-
-    /**
-     * The value of this graph node!
-     * This node belongs to a tensor during creation but may lose
-     * it during memory cleanup : _targetedCleanup(Tsr target) ! -> payload might be deleted!
-     */
-    private Tsr _payload;
-
-    /**
-     * Keys are targets and values are gradients with respect to that target
-     * Note: values can be null if the recorded function is of type 'reshape'!
-     * Why? => because reshape operation does not need variables for _backward pass!
-     * */
-    //private TreeMap<Tsr, Tsr> _targets_derivatives;
-    private TreeMap<GraphNode, Tsr> _targets_derivatives;
-
-    /**
      * This flag is used merely once. It is a key component
      * of an optimization technique which only applies
      * gradients as soon as they are needed by a tensor (the tensor is used again).
@@ -103,16 +67,10 @@ public class GraphNode
      * This technique however uses more memory but will
      * improve performance for some networks substantially.
      */
-    private boolean _targets_derivatives_are_deletable = true;
-
     public  boolean reliesOnJustInTimeProp(){
         return !_targets_derivatives_are_deletable;
     }
-
-    /**
-     * "Lock object" for graph identity. (result caching)
-     */
-    private GraphLock _lock;
+    private boolean _targets_derivatives_are_deletable = true;
 
     /**
      *  The chain-rule states that the derivative of f(x) = h(g(x)) with respect to x is: g'(x) * h'(g(x))
@@ -121,29 +79,76 @@ public class GraphNode
      *  f'(x) = (1*y) * (1*z) = z*y
      *  The values z,y or z*y must not be deleted as they are needed for back-propagation!
      */
+    public boolean isUsedAsDerivative(){
+        return _is_used_as_derivative;
+    }
     private boolean _is_used_as_derivative = false;
 
-    /**
-     *
-     */
-    private List<WeakReference<GraphNode>> _children;
 
-    public List<WeakReference<GraphNode>> getChildren(){
-        return  _children;
+    /**
+     * Recorded AbstractFunction.
+     *
+     * @var Function _function
+     * */
+    public Function getFunction(){
+        return _function;
     }
+    private Function _function;
 
     /**
-     *
-     */
-    private long _nid = -1;
-    //==================================================================================================================
+     * Input tensors. ('Parents' of the tensor of this node)
+     * */
+    public GraphNode[] getParents(){
+        return _parents;
+    }
+    private GraphNode[] _parents;
+
     /**
+     * The value of this graph node!
+     * This node belongs to a tensor during creation but may lose
+     * it during memory cleanup : _targetedCleanup(Tsr target) -> payload might be deleted!
+     *
+     * @return the playload of this graph-node.
+     */
+    public Tsr getPayload(){
+        return _payload;
+    }
+    private Tsr _payload;
+
+    /**
+     * Keys are targets and values are gradients with respect to that target
+     * Note: values can be null if the recorded function is of type 'reshape'!
+     * Why? => because reshape operation does not need variables for _backward pass!
+     * */
+    private TreeMap<GraphNode, Tsr> _targets_derivatives;
+
+    /**
+     * "Lock object" for graph identity. (result caching)
      * Unique object which locks the payload to the current computation graph.
      * @return GraphLock
      */
     public GraphLock lock(){
         return _lock;
     }
+    private GraphLock _lock;
+
+    /**
+     *
+     */
+    public List<WeakReference<GraphNode>> getChildren(){
+        return  _children;
+    }
+    private List<WeakReference<GraphNode>> _children;
+
+    /**
+     * @return long AbstractSurfaceNode-ID (Used for caching to avoid redundant computation within one computation graph)
+     */
+    public long nid(){
+        return _nid;
+    }
+    private long _nid = -1;
+
+    //==================================================================================================================
 
     /**
      * @param newLock
@@ -159,21 +164,6 @@ public class GraphNode
         if(_children==null)_children = new ArrayList<>();
         WeakTensorReference<GraphNode> ref = new WeakTensorReference<GraphNode>(newChild, null);
         _children.add(ref);
-    }
-
-    /**
-     * @return the playload of this graph-node.
-     */
-    public Tsr getPayload(){
-        return _payload;
-    }
-
-    /**
-     *
-     * @return long AbstractSurfaceNode-ID (Used for caching to avoid redundant computation within one computation graph)
-     */
-    public long nid(){
-        return _nid;
     }
 
     /**
@@ -210,10 +200,6 @@ public class GraphNode
      */
     public boolean isVirtual(){
         return _payload==null;
-    }
-
-    public boolean isUsedAsDerivative(){
-        return _is_used_as_derivative;
     }
 
     /**
@@ -263,9 +249,7 @@ public class GraphNode
         /** Returning if the above cannot form an AD computation graph! :
          * */
         if(function==null || !function.isFlat()) return; // Leave nodes cannot be connected!!
-
         for(Tsr t : inputs) if(t.equals(output)) return;
-        //--------------------------------------------------------------------------------------
         if(node.usesAD() && function.isFlat())
         {
             /**  Preparing for back propagation:  * */
@@ -312,7 +296,6 @@ public class GraphNode
                 }
             }
         }
-        //--------------------------------------------------------------------------------------
     }
 
     /**
@@ -551,7 +534,7 @@ public class GraphNode
                         pending.accumulate(error);
                     }
                     return;// NOTE: Multiple AD paths leading to one node in history will be accumulated first! (performance)
-                    //This optimization is a light version of JITProp. JITProp build on this!
+                    //This optimization is a light version of JITProp. JITProp builds on this!
                 }
             }
             //if(_payload==null) throw new RuntimeException();
@@ -559,8 +542,8 @@ public class GraphNode
                 this.forEach((t, d)->t._backward(MUL.activate(new Tsr[]{error, d}), toBeBackpropagated, false));
             }else if(this.usesReverseAD()){//Standard reverse mode-AD:
                 this.forEach((t, d)->{
-                    if(_function.id()==Function.TYPES.LOOKUP.get("x")){// x operation requires individual operation!
-                        t._backward(CONV.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)}), toBeBackpropagated, false);
+                    if(_function.id()==Function.TYPES.LOOKUP.get("x")){// x operation requires inverse convolve_template operation!
+                        t._backward(INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)}), toBeBackpropagated, false);
                     } else {//Normal elementwise backpropagation:
                         t._backward(MUL.activate(new Tsr[]{error, d}), toBeBackpropagated, false);
                     }

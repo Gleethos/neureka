@@ -618,7 +618,7 @@ public class GraphSurface extends JPanel implements Surface, ActionListener {
 <span class="fc" id="L618">        ListIterator&lt;SurfaceObject&gt; Iterator = List.listIterator();</span>
 <span class="fc bfc" id="L619" title="All 2 branches covered.">        while (Iterator.hasNext()) {</span>
 <span class="fc" id="L620">            SurfaceObject current = Iterator.next();</span>
-<span class="fc bfc" id="L621" title="All 2 branches covered.">            if (best == null) {</span>
+<span class="pc bpc" id="L621" title="1 of 2 branches missed.">            if (best == null) {</span>
 <span class="fc" id="L622">                best = current;</span>
 <span class="pc bpc" id="L623" title="1 of 2 branches missed.">                if (upToException != null) {</span>
 <span class="nc bnc" id="L624" title="All 2 branches missed.">                    if (topMost) {</span>
@@ -632,8 +632,8 @@ public class GraphSurface extends JPanel implements Surface, ActionListener {
                     }
                 }
             } else {
-<span class="pc bpc" id="L635" title="1 of 2 branches missed.">                if (topMost) {//-----------------------</span>
-<span class="pc bpc" id="L636" title="1 of 2 branches missed.">                    if (upToException != null) {</span>
+<span class="nc bnc" id="L635" title="All 2 branches missed.">                if (topMost) {//-----------------------</span>
+<span class="nc bnc" id="L636" title="All 2 branches missed.">                    if (upToException != null) {</span>
 <span class="nc bnc" id="L637" title="All 2 branches missed.">                        if (best != null) {</span>
 <span class="nc bnc" id="L638" title="All 2 branches missed.">                            if (current.getLayerID() &gt; best.getLayerID()</span>
 <span class="nc bnc" id="L639" title="All 2 branches missed.">                                    &amp;&amp; upToException.getLayerID() &gt; current.getLayerID()) {</span>
@@ -650,7 +650,7 @@ public class GraphSurface extends JPanel implements Surface, ActionListener {
                         }
 
                     } else {
-<span class="pc bpc" id="L653" title="1 of 2 branches missed.">                        if ((current).getLayerID() &gt; best.getLayerID()) {</span>
+<span class="nc bnc" id="L653" title="All 2 branches missed.">                        if ((current).getLayerID() &gt; best.getLayerID()) {</span>
 <span class="nc" id="L654">                            best = current;</span>
                         }
                     }

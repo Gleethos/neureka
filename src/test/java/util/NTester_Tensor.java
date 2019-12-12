@@ -93,7 +93,7 @@ public class NTester_Tensor extends NTester
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.fcn.indexing.shpOfCon(frstShp, scndShp);
         double[] rsltData = new double[Tsr.fcn.indexing.szeOfShp(drnMxd)];
-        AbstractFunction.exec.convection(
+        AbstractFunction.exec.convolve_multiply(
                 new Tsr(drnMxd, rsltData),
                 new Tsr(frstShp, frstData),
                 new Tsr(scndShp, scondData), -1
@@ -109,7 +109,7 @@ public class NTester_Tensor extends NTester
     ){
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.fcn.indexing.shpOfCon(frstShp, scndShp);
-        AbstractFunction.exec.convection(//inv
+        AbstractFunction.exec.convolve_multiply(//inv
                 new Tsr(frstShp, frstData),
                 (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
                 (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData),0
@@ -117,6 +117,37 @@ public class NTester_Tensor extends NTester
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;
     }
+
+    public int testTensBroadcast(int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd){
+        printSessionStart("Test Tsr.indexing: tensor broadcast_template");
+        int[] drnMxd  = Tsr.fcn.indexing.shpOfBrc(frstShp, scndShp);
+        double[] rsltData = new double[Tsr.fcn.indexing.szeOfShp(drnMxd)];
+        AbstractFunction.exec.broadcast_multiply(
+                new Tsr(drnMxd, rsltData),
+                new Tsr(frstShp, frstData),
+                new Tsr(scndShp, scondData),
+                -1
+        );
+        assertIsEqual(stringified(rsltData), stringified(expctd));
+        return (printSessionEnd()>0)?1:0;
+    }
+
+    public int testInvTensBroadcast(
+            int[] frstShp, int[] scndShp,
+            double[] frstData, double[] scondData, double[] drnData,
+            double[] expctd, boolean first
+    ){
+        printSessionStart("Test Tsr.indexing: tensor broadcast_template");
+        int[] drnMxd  = Tsr.fcn.indexing.shpOfBrc(frstShp, scndShp);
+        AbstractFunction.exec.broadcast_multiply(//inv
+                new Tsr(frstShp, frstData),
+                (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
+                (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData),0
+        );
+        assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
+        return (printSessionEnd()>0)?1:0;
+    }
+
 
     /**
      * @param tensors

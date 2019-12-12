@@ -30,14 +30,6 @@ __kernel void gaussian(
                 );
         }else{
             drn[_i_of_i(i, prv_drn_cfg, rank)] =
-                -(float)2
-                * (src1[_i_of_i(i, prv_src1_cfg, rank)])
-                * (float)pow(
-                    (float)M_E,
-                    -(float)pow(
-                        (float)src1[_i_of_i(i, prv_src1_cfg, rank)],
-                        (float)2
-                    )
-                );
+                1 / (1 + (float)pow((float)M_E, -src1[_i_of_i(i, prv_src1_cfg, rank)]));
         }
     }

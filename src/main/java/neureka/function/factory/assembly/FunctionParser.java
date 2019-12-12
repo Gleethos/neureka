@@ -24,12 +24,18 @@ public class FunctionParser {
             return null;
         }
         String operation = "";
-        for (int Si = i; Si < exp.length(); ++Si) {
-            operation = (operation) + exp.charAt(Si);
+        for (int Si = exp.length()-1; Si >= i; Si--) {
+            operation = exp.substring(i, Si);//operation) + exp.charAt(Si);
             if (FunctionParser.isBasicOperation(operation)) {
                 return operation;
             }
         }
+        //for (int Si = i; Si < exp.length(); ++Si) {
+        //    operation = (operation) + exp.charAt(Si);
+        //    if (FunctionParser.isBasicOperation(operation)) {
+        //        return operation;
+        //    }
+        //}
         return null;
     }
 
@@ -49,17 +55,20 @@ public class FunctionParser {
             }
             if (bracketDepth == 0) {
                 String possibleOperation = "";
-                for (int Sii = Ei+1; Sii < exp.length(); ++Sii) {
-                    possibleOperation = possibleOperation + exp.charAt(Sii);
+                for (int Sii = exp.length()-1; Sii >= Ei+1; Sii--) {
+
+                    possibleOperation = exp.substring(Ei+1, Sii);//possibleOperation + exp.charAt(Sii);
                     if (FunctionParser.isBasicOperation(possibleOperation)) {
-                        component = component + exp.charAt(Ei);
-                        return component;
+                        if(exp.charAt(Ei)=='j' || !Character.isLetter(exp.charAt(Ei))){
+                            component = component + exp.charAt(Ei);
+                            return component;
+                        }
                     }
                 }
             }
             component += exp.charAt(Ei);
         }
-        return component;
+        return component;//(!largest.equals(""))?best:component;
     }
 
     public static boolean containsOperation(final String operation, final List<String> operations) {
@@ -74,14 +83,8 @@ public class FunctionParser {
     }
 
     public static boolean isBasicOperation(final String operation) {
-        if (operation.length() > 8) {
-            return false;
-        }
-        for (int i = 0; i < Function.TYPES.REGISTER.length; ++i) {
-            if (Function.TYPES.REGISTER[i].equals(operation)) {
-                return true;
-            }
-        }
+        if (operation.length() > 8) return false;
+        if(Function.TYPES.LOOKUP.get(operation)!=null) return true;
         return false;
     }
 

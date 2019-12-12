@@ -27,7 +27,7 @@ public class ADAM {
 <span class="nc" id="L27">    }</span>
 
     private void _optimize(){
-<span class="nc" id="L30">        Function inject = FunctionBuilder.build(&quot;I[0]&lt;&lt;Ig[1]&quot;, false);</span>
+<span class="nc" id="L30">        Function inject = FunctionBuilder.build(&quot;I[0]&lt;&lt;xIg[1]&quot;, false);</span>
 <span class="nc" id="L31">        Tsr g = new Tsr(w.shape());</span>
 <span class="nc" id="L32">        inject.activate(new Tsr[]{g, w});</span>
 
@@ -41,8 +41,8 @@ public class ADAM {
 <span class="nc" id="L41">        vh = new Tsr(v, &quot;/(1-&quot;, b2, &quot;)&quot;);</span>
 
 <span class="nc" id="L43">        Tsr newW = new Tsr(w,&quot;-&quot;,a,&quot;*(&quot;,mh,&quot;/(&quot;,vh,&quot;^-2+&quot;,e,&quot;))&quot;);</span>
-<span class="nc" id="L44">        Function f = FunctionBuilder.build(&quot;I[0]&lt;&lt;I[1]&quot;, false);</span>
-<span class="nc" id="L45">        Function r = FunctionBuilder.build(&quot;Ig[0]&lt;&lt;0&quot;, false);</span>
+<span class="nc" id="L44">        Function f = FunctionBuilder.build(&quot;I[0]&lt;&lt;xI[1]&quot;, false);</span>
+<span class="nc" id="L45">        Function r = FunctionBuilder.build(&quot;Ig[0]&lt;&lt;x0&quot;, false);</span>
 <span class="nc" id="L46">        f.activate(new Tsr[]{w, newW});</span>
 <span class="nc" id="L47">        r.activate(new Tsr[]{w});</span>
 <span class="nc" id="L48">    }</span>

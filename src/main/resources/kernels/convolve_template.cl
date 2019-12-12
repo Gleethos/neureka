@@ -3,7 +3,8 @@ void _cfg_of_cfg(__global int* cfg, int* prv_cfg, int rank);
 int  _i_of_i(int i, int* config, int rank);
 int  _i_of_idx_on_tln(int* conf, int rank);
 
-__kernel void convolve(
+__kernel void convolve_template(
+    //-=<ARGUMENT>=-//__global float *frn, __global int *frn_conf,
     __global float *drn, __global int *drn_conf,
     __global float *src1, __global int *src1_conf,
     __global float *src2, __global int *src2_conf,
@@ -13,6 +14,8 @@ __kernel void convolve(
         int prv_drn_cfg[32]; _cfg_of_cfg(drn_conf, prv_drn_cfg, rank);
         int prv_src1_cfg[32]; _cfg_of_cfg(src1_conf, prv_src1_cfg, rank);
         int prv_src2_cfg[32]; _cfg_of_cfg(src2_conf, prv_src2_cfg, rank);
+        //-=<CONFIGURATION>=-//int prv_frn_cfg[32]; _cfg_of_cfg(frn_conf, prv_frn_cfg, rank);
+
         int p_shp = 0 * rank;
         int p_tln = 1 * rank;
         int p_idm = 2 * rank;
@@ -48,7 +51,9 @@ __kernel void convolve(
                         isMatch = (prv_src1_cfg[p_idx+ri] < prv_src1_cfg[i] && prv_src1_cfg[p_idx+ri]>=0) && isMatch;
                     }
                     if(isMatch){
+//-=<OPERATION>=-//
                         value += src1[_i_of_idx_on_tln(prv_src1_cfg, rank)] * src2[_i_of_idx_on_tln(prv_src2_cfg, rank)];
+//-=<OPERATION>=-//
                     }
                     incrementing = true;
                     ri=0;
@@ -97,7 +102,9 @@ __kernel void convolve(
             while (running) {
                 ri = (ri==rank)?0:ri;
                 if (incrementing == false) {
+//-=<OPERATION>=-//
                     value += src1[_i_of_idx_on_tln(prv_src1_cfg, rank)] * src2[_i_of_idx_on_tln(prv_src2_cfg, rank)];
+//-=<OPERATION>=-//
                     incrementing = true;
                     ri=0;
                 } else {//incrementing:
@@ -128,7 +135,7 @@ __kernel void convolve(
             drn[di] = value;
         }
 
-    
+
     }
 
 

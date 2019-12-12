@@ -158,6 +158,7 @@ public class DefaultJavaTests {
     public void testTensorFunctions() {
 
         NTester_Function tester = new NTester_Function("Testing function fcn and scalar calculations");
+
         //EXPRESSION TESTING:
         tester.testExpression("ig0*(igj)xI[g1]", "((Ig[0]*Ig[j])xIg[1])", "");
         tester.testExpression("sum(ij)", "sum(I[j])", "");
@@ -176,6 +177,13 @@ public class DefaultJavaTests {
         tester.testExpression("($$(gaus(i0*()", "gaus(I[0])", "");
         tester.testExpression("rrlu(i0)", "relu(I[0])", "");
         tester.testExpression("th(i0)*gzs(i0+I1)", "(tanh(I[0])*gaus(I[0]+I[1]))", "");
+
+        tester.testExpression("th(i0)dgzs(i0+I1)", "(tanh(I[0])dgaus(I[0]+I[1]))", "");
+        tester.testExpression("ijdgzs(i0+I1)", "(I[j]dgaus(I[0]+I[1]))", "");
+        tester.testExpression("ijssum(i0+Ij)", "(I[j]ssum(I[0]+I[j]))", "");
+
+        tester.testExpression("i[0] d>> i[1]", "(I[0]d"+((char)187)+"I[1])", "");
+
 
         //ACTIVATION TESTING:
         double[] input1 = {};
@@ -542,18 +550,18 @@ public class DefaultJavaTests {
                 4, -2, -1, 5,
         });
         tester.testTensorAutoGrad(new Tsr[]{tensor1, tensor2, tensor3},
-                "i0<<i1<<i2",
+                "i0<<xi1<<xi2",
                 new String[]{"empty"});
-        result = Function.setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i0<<i1<<i2", true);
+        result = Function.setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i0<<xi1<<xi2", true);
         tester.testContains(
                 result.toString(),
                 new String[]{"[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"},
                 "Testing if Function.setup.commit() returns non unique result!"
         );
         tester.testTensorAutoGrad(new Tsr[]{tensor1, tensor2, tensor3},//TODO:REACTIVATE!
-                "i2>>i1>>i0",
+                "i2x>>i1x>>i0",
                 new String[]{"empty"});
-        result = Function.setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i2>>i1>>i0", true);
+        result = Function.setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i2x>>i1x>>i0", true);
         tester.testContains(
                 result.toString(),
                 new String[]{"[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"},
@@ -719,6 +727,64 @@ public class DefaultJavaTests {
                 },
                 true
         );
+        //---
+
+        //---
+        frstShape = new int[]{1, 3};
+        frstData = new double[]{
+                2,
+                -1,
+                3
+        };
+
+        scndShape = new int[]{2, 1};
+        scndData = new double[]{
+                4, -2,
+        };
+        tester.testTensBroadcast(
+                frstShape, scndShape,
+                frstData, scndData,
+                new double[]{
+                        8, -4,
+                        -4, 2,
+                        12, -6,
+                }
+        );
+        //---
+        //---
+        //---invers:
+        frstShape = new int[]{1, 3};
+        frstData = new double[]{
+                0,
+                0,
+                0
+        };
+        //---
+        scndShape = new int[]{2, 1};
+        scndData = new double[]{
+                2, -1,
+        };
+        tester.testInvTensBroadcast(//
+                frstShape, scndShape,
+                frstData, scndData,
+                new double[]{
+                        8, -4,
+                        -4, 2,
+                        12, -6,
+                },
+                new double[]{
+                     16+4,
+                     -8-2,
+                     24+6
+                },
+                true
+        );
+        //---
+
+
+
+
+        //---
         tester.close();
         //===========================================
     }

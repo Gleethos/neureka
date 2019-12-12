@@ -16,8 +16,8 @@ class GroovyTests
 {
 
     @Test
-    void testVisualizer(){
-
+    void testVisualizer()
+    {
         //=========================================================================
         if(!System.getProperty("os.name").toLowerCase().contains("windows")) return
         //=========================================================================

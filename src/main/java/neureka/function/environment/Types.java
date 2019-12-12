@@ -8,22 +8,33 @@ public class Types
     public String[] REGISTER;
     public Map<String, Integer> LOOKUP;
 
+    /**
+     *  // *,    /,    ^,    +,    -,
+     *  // x,    d,    p,    a,    s,
+     *  // <<, <<d,  <<p,  <<a,  <<s,
+     */
     public Types()
     {
         REGISTER = new String[]{
                 "relu", "sig", "tanh", "quad", "lig", "idy", "gaus", "abs", "sin", "cos",
                 "sum", "prod",
-                "^", "/", "*", "%", "-", "+", "x", ""+((char)171), ""+((char)187), ",",
+                "^", "/", "*", "%", "-", "+",
+                "x", ((char)171)+"x", "x"+((char)187),
+                "d", ((char)171)+"d", "d"+((char)187),
+                "p", ((char)171)+"p", "p"+((char)187),
+                "a", ((char)171)+"a", "a"+((char)187),
+                "s", ((char)171)+"s", "s"+((char)187),
                 // (char)171 -> <<    // (char)187 -> >>
+                ",",
                 "<", ">",
             };
         LOOKUP = new HashMap<>();
         for(int i=0; i<REGISTER.length; i++){
             LOOKUP.put(REGISTER[i], i);
-            if(REGISTER[i] == (""+((char)171))){
-                LOOKUP.put("<<", i);
-            } else if(REGISTER[i] == (""+((char)187))){
-                LOOKUP.put(">>", i);
+            if(REGISTER[i] == (((char)171))+"x"){
+                LOOKUP.put("<<x", i);
+            } else if(REGISTER[i] == ("x"+((char)187))){
+                LOOKUP.put("x>>", i);
             }
         }
     }
@@ -59,12 +70,16 @@ public class Types
     public boolean isCommutative(String f){
         switch(f){
             case "^": return false;
-            case "/": return  false;
+            case "/": return false;
             case "*": return true;
             case "%": return false;
             case "-": return false;
             case "+": return true;
             case "x": return false;
+            case "d": return false;
+            case "s": return false;
+            case "a": return false;
+            case "p": return false;
             case (""+((char)171)): return false;
             case (""+((char)187)): return false;
             case ",":return false;
@@ -76,5 +91,6 @@ public class Types
     public boolean isCommutative(int id){
         return isCommutative(REGISTER[id]);
     }
+
 
 }

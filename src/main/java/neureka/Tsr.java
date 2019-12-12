@@ -940,6 +940,9 @@ public class Tsr
         if(valueIsDeviceVisitor) ((Device)value.find(Device.class)).get(value);
         return this;
     }
+    public double getAt(int[] idx){
+        return value64()[Tsr.fcn.indexing.i_of_idx(idx, this)];
+    }
     public Object getAt(Object key) {
         if(key==null) return this;
         if(key instanceof List){
@@ -1307,6 +1310,11 @@ public class Tsr
 
             @Contract(pure = true)
             public static int i_of_i(int i, Tsr t){
+                return indexing.i_of_idx(idx_of_i(i, t), t);
+            }
+
+            @Contract(pure = true)
+            public static int[] idx_of_i(int i, Tsr t){
                 int[] idx = new int[t._shape.length];
                 if(Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED()){
                     for(int ii=t.rank()-1; ii>=0; ii--){
@@ -1319,7 +1327,7 @@ public class Tsr
                         i %= t._idxmap[ii];
                     }
                 }
-                return indexing.i_of_idx(idx, t);
+                return idx;
             }
 
             @Contract(pure = true)
@@ -1439,6 +1447,18 @@ public class Tsr
                 int[] shape = new int[(shp1.length + shp2.length) / 2];
                 for (int i = 0; i < shp1.length && i < shp2.length; i++) {
                     shape[i] = Math.abs(shp1[i] - shp2[i]) + 1;
+                }
+                return shape;
+            }
+
+            @Contract(pure = true)
+            public static int[] shpOfBrc(int[] shp1, int[] shp2) {
+                int[] shape = new int[(shp1.length + shp2.length) / 2];
+                for (int i = 0; i < shp1.length && i < shp2.length; i++) {
+                    shape[i] = Math.max(shp1[i], shp2[i]);
+                    if(Math.min(shp1[i], shp2[i])!=1&&Math.max(shp1[i], shp2[i])!=shape[i]){
+                        throw new IllegalStateException("Broadcast not possible. Shapes do not match!");
+                    }
                 }
                 return shape;
             }

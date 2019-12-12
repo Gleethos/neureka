@@ -229,7 +229,11 @@ public abstract class AbstractFunction implements Function
         } else {
             if (TYPES.REGISTER[_id] == "x") {
                 if (d < 0) {
-                    return exec.convection(_src.get(0).activate(inputs), _src.get(1).activate(inputs));
+                    Tsr tensor1 = _src.get(0).activate(inputs).setIsVirtual(false);
+                    Tsr tensor2 = _src.get(1).activate(inputs).setIsVirtual(false);
+                    Tsr newTensor = new Tsr(Tsr.fcn.indexing.shpOfCon(tensor1.shape(), tensor2.shape()));
+                    exec.convolve_multiply(newTensor, tensor1, tensor2, -1);
+                    return newTensor;
                 } else {
                     if (d == 0) {
                         return (_src.get(1).activate(inputs));
@@ -237,22 +241,26 @@ public abstract class AbstractFunction implements Function
                         return (_src.get(0).activate(inputs));
                     }
                 }
-            } else if (_id == TYPES.LOOKUP.get("<<") || _id == TYPES.LOOKUP.get(">>")) {
+            } else if (_id == TYPES.LOOKUP.get("<<x") || _id == TYPES.LOOKUP.get("x>>")) {
                 if (d < 0) {
-                    if (_id == TYPES.LOOKUP.get(">>")) {
-                        return exec.convection_inv(
-                                _src.get(0).activate(inputs),
-                                _src.get(1).activate(inputs),
-                                _src.get(2).activate(inputs),
-                                false
+                    if (_id == TYPES.LOOKUP.get("x>>")) {
+                        Tsr out = _src.get(2).activate(inputs);
+                        exec.convolve_multiply(
+                                out.setIsVirtual(false),
+                                _src.get(1).activate(inputs).setIsVirtual(false),
+                                _src.get(0).activate(inputs).setIsVirtual(false),
+                                0
                         );
+                        return out;
                     } else {
-                        return exec.convection_inv(
-                                _src.get(2).activate(inputs),
-                                _src.get(1).activate(inputs),
-                                _src.get(0).activate(inputs),
-                                false
+                        Tsr out = _src.get(0).activate(inputs);
+                        exec.convolve_multiply(
+                                out.setIsVirtual(false),
+                                _src.get(1).activate(inputs).setIsVirtual(false),
+                                _src.get(2).activate(inputs).setIsVirtual(false),
+                                0
                         );
+                        return out;
                     }
                 } else {//Todo: What then? :
                     if (d == 0) {
@@ -429,7 +437,7 @@ public abstract class AbstractFunction implements Function
                 return (j < 0) ? exec.subtraction(input, d, _src) : exec.subtraction(input, j, d, _src);
             case 17:
                 return (j < 0) ? exec.addition(input, d, _src) : exec.addition(input, j, d, _src);
-            case 18://convection
+            case 18://convolve_template
                 return (j < 0) ? exec.multiplication(input, d, _src) : exec.multiplication(input, j, d, _src);
             //case 19://inv left
             //    return (j < 0) ? exec.multiplication(input, d, _src) : exec.multiplication(input, j, d, _src);
@@ -956,27 +964,73 @@ public abstract class AbstractFunction implements Function
             }
         }
 
-        @Contract(pure = true)
-        public static Tsr convection(Tsr tensor1, Tsr tensor2) {
-            tensor1.setIsVirtual(false);
-            tensor2.setIsVirtual(false);
-            Tsr newTensor = new Tsr(Tsr.fcn.indexing.shpOfCon(tensor1.shape(), tensor2.shape()));
-            exec.convection(newTensor, tensor1, tensor2, -1);
-            return newTensor;
+        interface Range {
+            void execute(int start, int end);
+        }
+
+        private static void threaded(int sze, Range range){
+            boolean doThreading = false;
+            if(sze>128){
+                doThreading = ((sze/Runtime.getRuntime().availableProcessors()) > 32);
+            }
+            if(!doThreading){
+                range.execute(0, sze);
+            } else {
+                int threadCount = Runtime.getRuntime().availableProcessors();
+                final int chunk=(sze/threadCount);
+                Thread[] th = new Thread[threadCount];
+                for(int i=0;i<threadCount;i++){
+                    final int start = i*chunk;
+                    final  int end = (i==threadCount-1)?sze:((i+1)*chunk);
+                    th[i]=new Thread(()->{
+                        range.execute(start, end);
+                    });
+                    th[i].start();
+                }
+                for(int i=0;i<threadCount;i++){
+                    try {
+                        th[i].join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        public static void convolve_multiply(
+                Tsr t0_drain,
+                Tsr t1_source,
+                Tsr t2_source,
+                int d
+        ){
+            double[] t1_val = t1_source.value64();
+            double[] t2_val = t2_source.value64();
+            Operator operation;
+            if(d<0){
+                operation = (t0Idx, t1Idx, t2Idx)->{
+                    return t1_val[Tsr.fcn.indexing.i_of_idx(t1Idx, t1_source)] * t2_val[Tsr.fcn.indexing.i_of_idx(t2Idx, t2_source)];
+                };
+            } else {
+                operation = (t0Idx, t1Idx, t2Idx)->{
+                    return t1_val[Tsr.fcn.indexing.i_of_idx(t1Idx, t1_source)] * t2_val[Tsr.fcn.indexing.i_of_idx(t2Idx, t2_source)];
+                };
+            }
+            threaded(t0_drain.size(), ((start, end) -> {
+                convolve_template(
+                        t0_drain, t1_source, t2_source, d,
+                        start, end,
+                        operation
+                );
+            }));
         }
 
         @Contract(pure = true)
-        public static Tsr convection_inv(Tsr drain, Tsr source1, Tsr source2, boolean first) {
-            source1.setIsVirtual(false);
-            source2.setIsVirtual(false);
-            drain.setIsVirtual(false);
-            exec.convection(source2, (!first) ? source1 : drain, (!first) ? drain : source1, 0);
-            return (first) ? source1 : source2;
-        }
-
-        @Contract(pure = true)
-        public static void convection(Tsr t0_drain, Tsr t1_source, Tsr t2_source, int d)
-        {
+        public static void convolve_template(
+                Tsr t0_drain, Tsr t1_source, Tsr t2_source,
+                int d,
+                int i, int end,
+                Operator operation
+        ){
             int[] t0Shp = t0_drain.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
             int[] t1Shp = t1_source.shape();
             int[] t2Shp = t2_source.shape();
@@ -985,25 +1039,25 @@ public abstract class AbstractFunction implements Function
             int[] t1Idx = new int[rank];
             int[] t2Idx = new int[rank];
             double[] t0_value = t0_drain.value64();
-            double[] t1_value = t1_source.value64();
-            double[] t2_value = t2_source.value64();
-            int drnSze = t0_drain.size();
-            int i = 0;
+            //double[] t1_value = t1_source.value64();
+            //double[] t2_value = t2_source.value64();
+            //int drnSze = t0_drain.size();
+            //int i = 0;
 
             if(d<0){
-                while (i < drnSze)
+                while (i < end)//drnSze)
                 {//increment on drain accordingly:
                     int ri = 0;
                     while (ri < rank) {
-                        if (t1Shp[ri] == t2Shp[ri]) {//setting 0
-                            t1Idx[ri] = t0Idx[ri];//mtch[mi];
-                            t2Idx[ri] = t0Idx[ri];//mtch[mi];
-                        } else if (t1Shp[ri] > t2Shp[ri]) {//setting hdr1 idx to id idx
-                            t1Idx[ri] = t0Idx[ri];//mtch[mi];
+                        if (t1Shp[ri] == t2Shp[ri]) {
+                            t1Idx[ri] = t0Idx[ri];
+                            t2Idx[ri] = t0Idx[ri];
+                        } else if (t1Shp[ri] > t2Shp[ri]) {
+                            t1Idx[ri] = t0Idx[ri];
                             t2Idx[ri] = 0;
-                        } else if (t1Shp[ri] < t2Shp[ri]) {//setting hdr2 idx to id idx
+                        } else if (t1Shp[ri] < t2Shp[ri]) {
                             t1Idx[ri] = 0;
-                            t2Idx[ri] = t0Idx[ri];//mtch[mi];
+                            t2Idx[ri] = t0Idx[ri];
                         }
                         ri++;
                     }
@@ -1014,10 +1068,10 @@ public abstract class AbstractFunction implements Function
                     boolean incrementing = false;
                     while (running) {
                         ri = (ri == rank) ? 0 : ri;
-                        if (incrementing == false) {
-                            int i1 = Tsr.fcn.indexing.i_of_idx(t1Idx, t1_source);//Tsr.fcn.indexing.iOf(t1Idx, t1Tln);
-                            int i2 = Tsr.fcn.indexing.i_of_idx(t2Idx, t2_source);//Tsr.fcn.indexing.iOf(t2Idx, t2Tln);
-                            value += t1_value[i1] * t2_value[i2];
+                        if (!incrementing) {
+                            value += operation.execute(t0Idx, t1Idx, t2Idx);
+                                //t1_value[Tsr.fcn.indexing.i_of_idx(t1Idx, t1_source)]
+                                //    * t2_value[Tsr.fcn.indexing.i_of_idx(t2Idx, t2_source)];
                             incrementing = true;
                             ri = 0;
                         } else {//incrementing:
@@ -1025,9 +1079,7 @@ public abstract class AbstractFunction implements Function
                                 t1Idx[ri]++;
                                 t2Idx[ri]++;
                                 if (t1Idx[ri] == t1Shp[ri] || t2Idx[ri] == t2Shp[ri]) {
-                                    if (ri == (rank - 1)) {
-                                        running = false;
-                                    }
+                                    running = running && !(ri == (rank - 1));
                                     if (t1Shp[ri] == t2Shp[ri]) {
                                         t1Idx[ri] = t0Idx[ri];
                                         t2Idx[ri] = t0Idx[ri];
@@ -1041,7 +1093,6 @@ public abstract class AbstractFunction implements Function
                                     ri++;
                                 } else {
                                     incrementing = false;
-                                    ri = 0;
                                 }
                             } else {
                                 ri++;
@@ -1050,13 +1101,13 @@ public abstract class AbstractFunction implements Function
                     }//setInto _value in drn:
                     t0_value[Tsr.fcn.indexing.i_of_idx(t0Idx, t0_drain)] = value;
                     //increment on drain:
-                    if (i < drnSze) Tsr.fcn.indexing.increment(t0Idx, t0Shp);
+                    Tsr.fcn.indexing.increment(t0Idx, t0Shp);
                     i++;
                 }
             }
             else//---
             {
-                while (i < drnSze) {//increment on drain accordingly:
+                while (i < end) {//increment on drain accordingly:
                     int ri = 0;
                     while (ri < rank) {
                         if (t2Idx[ri] == t2Shp[ri]) {//setting 0
@@ -1078,18 +1129,13 @@ public abstract class AbstractFunction implements Function
                     boolean incrementing = false;
                     while (running) {
                         ri = (ri == rank) ? 0 : ri;
-                        if (incrementing == false) {
-
+                        if (!incrementing) {
                             boolean isMatch = true;
                             for (int rii = 0; rii < rank; rii++) {
-                                if (!(t1Idx[rii] < t1Shp[rii] && t1Idx[rii] >= 0)) {
-                                    isMatch = false;
-                                }
+                                isMatch = (t1Idx[rii] < t1Shp[rii] && t1Idx[rii] >= 0) && isMatch;
                             }
                             if (isMatch) {
-                                value +=
-                                        t1_value[Tsr.fcn.indexing.i_of_idx(t1Idx, t1_source)]
-                                                * t2_value[Tsr.fcn.indexing.i_of_idx(t2Idx, t2_source)];
+                                value += operation.execute(t0Idx, t1Idx, t2Idx);
                             }
                             incrementing = true;
                             ri = 0;
@@ -1097,9 +1143,7 @@ public abstract class AbstractFunction implements Function
                             if (t2Idx[ri] < t2Shp[ri]) {
                                 t2Idx[ri]++;
                                 if (t2Idx[ri] == t2Shp[ri]) {
-                                    if (ri == (rank - 1)) {
-                                        running = false;
-                                    }
+                                    running = running && !(ri == (rank - 1));
                                     t1Idx[ri] = t0Idx[ri];
                                     t2Idx[ri] = 0;
                                     ri++;
@@ -1110,21 +1154,148 @@ public abstract class AbstractFunction implements Function
                                         t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);
                                     }
                                     incrementing = false;
-                                    ri = 0;
                                 }
                             } else {
                                 ri++;
                             }
                         }
                     }
-                    //setInto _value in drn:
+                    //set value in drn:
                     t0_value[Tsr.fcn.indexing.i_of_idx(t0Idx, t0_drain)] = value;
                     //increment on drain:
-                    if (i < drnSze) Tsr.fcn.indexing.increment(t0Idx, t0Shp);
+                    Tsr.fcn.indexing.increment(t0Idx, t0Shp);
                     i++;
                 }
             }
 
+        }
+
+        interface Operator{
+            double execute(int[] t0Idx, int[] t1Idx, int[] t2Idx);
+        }
+
+        public static void broadcast_multiply(
+                Tsr t0_drain,
+                Tsr t1_source,
+                Tsr t2_source,
+                int d
+        ){
+            double[] t1_val = t1_source.value64();
+            double[] t2_val = t2_source.value64();
+            Operator operation;
+            if(d<0){
+                operation = (t0Idx, t1Idx, t2Idx)->{
+                    return t1_val[Tsr.fcn.indexing.i_of_idx(t1Idx, t1_source)] * t2_val[Tsr.fcn.indexing.i_of_idx(t2Idx, t2_source)];
+                };
+            } else {
+                operation = (t0Idx, t1Idx, t2Idx)->{
+                    return t1_val[Tsr.fcn.indexing.i_of_idx(t1Idx, t1_source)] * t2_val[Tsr.fcn.indexing.i_of_idx(t2Idx, t2_source)];
+                };
+            }
+            threaded(t0_drain.size(), (start, end)->{
+                broadcast_template(
+                        t0_drain, t1_source, t2_source, d,
+                        start, end,
+                        operation
+                );
+            });
+        }
+
+        @Contract(pure = true)
+        public static void broadcast_template(
+                Tsr t0_drain, Tsr t1_source, Tsr t2_source,
+                int d,
+                int i, int end,
+                Operator operation
+        ){
+            int[] t0Shp = t0_drain.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
+            int[] t1Shp = t1_source.shape();
+            int[] t2Shp = t2_source.shape();
+            int rank = t0Shp.length;
+            int[] t0Idx = Tsr.fcn.indexing.idx_of_i(i, t0_drain);//new int[rank];
+            int[] t1Idx = new int[rank];
+            int[] t2Idx = new int[rank];
+            double[] t0_value = t0_drain.value64();
+            //double[] t1_value = t1_source.value64();
+            //double[] t2_value = t2_source.value64();
+            //int drnSze = t0_drain.size();
+            //int i = 0;
+            if(d<0){
+                while (i < end)
+                {//increment on drain accordingly:
+                    int ri = 0;
+                    while (ri < rank) {
+                        if (t1Shp[ri] == t2Shp[ri]) {//Equal shapes -> out index is t1 & t2 index!for this ri
+                            t1Idx[ri] = t0Idx[ri];
+                            t2Idx[ri] = t0Idx[ri];
+                        } else if (t1Shp[ri] > t2Shp[ri]) {//Current shape axis of t2 must be 1 !
+                            t1Idx[ri] = t0Idx[ri];
+                            t2Idx[ri] = 0;//...therefore it can be set to 0!
+                        } else if (t1Shp[ri] < t2Shp[ri]) {//same principle:
+                            t1Idx[ri] = 0;
+                            t2Idx[ri] = t0Idx[ri];
+                        }
+                        ri++;
+                    }
+                    //----------
+                    //setInto _value in drn:
+                    t0_value[Tsr.fcn.indexing.i_of_idx(t0Idx, t0_drain)] =
+                        operation.execute(t0Idx, t1Idx, t2Idx);
+
+                    //increment on drain:
+                    Tsr.fcn.indexing.increment(t0Idx, t0Shp);
+                    i++;
+                }
+            }
+            else//---//Note: src2 is now former drain!
+            {
+                while (i < end) {//increment on drain accordingly:
+                    int ri = 0;
+                    while (ri < rank) {
+                        if(t0Shp[ri] == t1Shp[ri]){
+                            t1Idx[ri] = t0Idx[ri];//all shapes are equal -> shape index can be inherited from origin!
+                            t2Idx[ri] = t0Idx[ri];
+                        } else if (t0Shp[ri] > t1Shp[ri]) {
+                            t1Idx[ri] = 0;//Current origin index is larger: index can be inherited!
+                            t2Idx[ri] = t0Idx[ri];
+                        }
+                        ri++;
+                    }
+                    //----------
+                    // multiplication:
+                    double value = 0;
+                    boolean running = true;
+                    boolean incrementing = false;
+                    while (running) {
+                        ri = (ri == rank) ? 0 : ri;
+                        if (!incrementing) {
+                            value +=  operation.execute(t0Idx, t1Idx, t2Idx);
+                            incrementing = true;
+                            ri = 0;
+                        } else {//incrementing:
+                            if (t0Shp[ri] < t1Shp[ri]) {//Only if origin shape is smaller than handle and drain!
+                                t1Idx[ri]++;
+                                t2Idx[ri]++;
+                                if (t1Idx[ri] == t1Shp[ri]) {
+                                    t1Idx[ri] = 0;
+                                    t2Idx[ri] = 0;
+                                    ri++;
+                                    running = running && !(ri == (rank - 1));
+                                } else {
+                                    incrementing = false;//return to calculation!
+                                }
+                            } else {
+                                ri++;
+                            }
+                        }
+                    }
+                    //set value in drn:
+                    t0_value[Tsr.fcn.indexing.i_of_idx(t0Idx, t0_drain)] = value;
+                    //increment on drain:
+                    Tsr.fcn.indexing.increment(t0Idx, t0Shp);
+                    i++;
+                }
+            }
         }
 
     }

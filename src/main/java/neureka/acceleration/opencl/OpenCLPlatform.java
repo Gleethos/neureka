@@ -6,6 +6,8 @@ import org.jocl.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static org.jocl.CL.*;
 import static org.jocl.CL.CL_DEVICE_TYPE_ALL;
@@ -37,9 +39,9 @@ public class OpenCLPlatform
         OPERATION_TO_KERNEL_MAPPING.put("%", "modulo");
         OPERATION_TO_KERNEL_MAPPING.put("-", "subtract");
         OPERATION_TO_KERNEL_MAPPING.put("+", "add");
-        OPERATION_TO_KERNEL_MAPPING.put("x", "convolve");
-        OPERATION_TO_KERNEL_MAPPING.put((""+((char)171)), "inv_conv_left");
-        OPERATION_TO_KERNEL_MAPPING.put((""+((char)187)), "inv_conv_right");
+        OPERATION_TO_KERNEL_MAPPING.put("x", "convolve_multiply");
+        //OPERATION_TO_KERNEL_MAPPING.put((""+((char)171)), "inv_conv_left");
+        //OPERATION_TO_KERNEL_MAPPING.put((""+((char)187)), "inv_conv_right");
         OPERATION_TO_KERNEL_MAPPING.put(",", "reshape");
         OPERATION_TO_KERNEL_MAPPING.put("<", "inject_left");
         OPERATION_TO_KERNEL_MAPPING.put(">", "inject_right");
@@ -106,28 +108,46 @@ public class OpenCLPlatform
         //        System.out.println(f.getName());
         //    }
         //}
-        String[] sources = new String[filesList.length];
-        String[] kernelNames = new String[filesList.length];
-        for(int i=0; i<sources.length; i++) {
-            sources[i] = _setup.readFile(filesList[i].toString());
-            //if(sources[i].contains("Neureka.settings.tsr.REVERSE_INDEX_TRANSLATION")){
-            //    System.out.println(sources[i]);
-            //}
-            sources[i] = sources[i].replace(
+
+        ArrayList<String> names = new ArrayList<>();
+        ArrayList<String> sources = new ArrayList<>();
+
+        for(int i=0; i<filesList.length; i++) {
+            String kernelSource = _setup.readFile(filesList[i].toString());
+            kernelSource = kernelSource.replace(
                     "Neureka.settings.tsr.REVERSE_INDEX_TRANSLATION",
                     (Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED())?"true":"false"
             );
-            if(sources[i].contains("__kernel")) {
-                String[] parts = sources[i].split("__kernel")[1].split("\\(")[0].split(" ");
-                kernelNames[i] = parts[parts.length-1];
-                //System.out.println("Compiled kernel: "+kernelNames[i]);
+            boolean templateFound = false;
+            if(kernelSource.contains("__kernel"))
+            {
+                String[] parts = kernelSource.split("__kernel")[1].split("\\(")[0].split(" ");
+
+                templateFound = parts[parts.length-1].contains("template");
+                if(!templateFound){
+                    names.add(parts[parts.length-1]);
+                } else {
+                    convolve_kernels_of(
+                        parts[parts.length-1], kernelSource
+                    ).forEach((n, s)->{
+                            //System.out.println("\n"+n+"\n==============");
+                            //System.out.println(""+s+"\n--------------------------------\n");
+                            names.add(n);
+                            sources.add(s);
+                        }
+                    );
+                }
+            }
+            if(!templateFound){
+                sources.add(kernelSource);
             }
         }
+
         // Create the program
         cl_program cpProgram = clCreateProgramWithSource(
                 _context,
-                sources.length,
-                sources,
+                sources.size(),//kernelSources.length,
+                sources.toArray(new String[sources.size()]),
                 null,
                 null
         );
@@ -142,13 +162,105 @@ public class OpenCLPlatform
         //TODO: check compilation errors!
 
         // Create the kernels
-        for(String name : kernelNames){
+        for (String name : names) {
             if(name!=null){
-                _kernels.put(
-                        name, clCreateKernel(cpProgram, name, null)
-                );
+                _kernels.put(name, clCreateKernel(cpProgram, name, null));
             }
         }
+    }
+
+    private interface Parser {
+        void apply(String name, String first, String second, boolean advanced);
+    }
+
+    private Map<String, String> convolve_kernels_of(String name, String source)
+    {
+        Map<String, String> code = new HashMap<>();
+        String newName = name.replace("template", "");
+        source = source.replace("template", "");
+        String[] parts = source.split("//-=<OPERATION>=-//");
+
+        java.util.function.Function<String, String> correct = (s)->
+                "//-=<PARSED>=-//\n"+
+                s.replace("src1","src1[_i_of_idx_on_tln(prv_src1_cfg, rank)]")
+                .replace("src2", "src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]")
+                .replace("handle", "src1[_i_of_idx_on_tln(prv_src1_cfg, rank)]")
+                .replace("drain", "src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]")
+                .replace("origin", "drn[di]")
+                .replace("target","frn[_i_of_idx_on_tln(prv_frn_cfg, rank)]")+
+                "\n//-=<PARSED>=-//";
+
+        java.util.function.Function<String, String> asAdvanced = (s)->
+                s.replace("target","frn[_i_of_idx_on_tln(prv_frn2_cfg, rank)]")
+                .replace("//-=<ARGUMENT>=-//", "")
+                .replace("//-=<CONFIGURATION>=-//", "");
+
+        Parser parser = (n, f, s, advanced)->{
+            String convcode =
+                parts[0].replace(newName, newName+n)+
+                correct.apply(f)+
+                parts[2]+
+                correct.apply(s)+
+                parts[4];
+            convcode = (advanced)?asAdvanced.apply(convcode):convcode;
+            code.put(newName+n,convcode);
+        };
+        //Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
+        //Tsr t0_drain,  Tsr t1_src1,   Tsr t2_src2
+        //drn[di], src1[_i_of_idx_on_tln(prv_src1_cfg, rank)], src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]
+        //default:  src1 o src2 -> drain
+        //inverse:  src1/fdrn <-src2 <- drain
+        //===========================================================================
+        parser.apply(
+                "multiply",
+                "value = src1 * src2;\n",
+                "value += handle * drain;\n",
+                false
+        );
+        //--
+        parser.apply(
+                "add",
+                "value = src1 + src2;\n",
+                "value += 1 * drain;\n",
+                false
+        );
+        //--
+        parser.apply(
+                "subtract",
+                "value = src1 - src2;\n",
+                "if(d==0){\n" +//drn and src2 switch:
+                        "    value += 1 * drain;\n" +
+                        "} else {\n" +
+                        "    value += -1 * drain;"+
+                        "}",
+                false
+        );
+        //--
+        //===========================================================================
+        //--
+        parser.apply(
+                "divide",
+                "value = src1 / src2;\n",
+                "if(d==0){\n" +
+                        "    value += (1/handle) * drain;\n" +
+                        "} else {\n" +
+                        "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
+                        "}",
+                true
+        );
+        //--
+        parser.apply(
+                "power",
+                "value += pow(src1, src2);",
+                "if(d==0){\n" +
+                        "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
+                        "} else {\n" +
+                        "    value += (pow(target, handle) * log(handle)) * drain;\n" +
+                        "}",
+                true
+        );
+        //--
+        return code;
     }
 
     public cl_platform_id getID(){
@@ -168,7 +280,6 @@ public class OpenCLPlatform
     }
 
     public static List<OpenCLPlatform> PLATFORMS(){
-
         return _setup.PLATFORMS;
     }
 
@@ -210,10 +321,7 @@ public class OpenCLPlatform
                 while (true)
                 {
                     line = br.readLine();
-                    if (line == null)
-                    {
-                        break;
-                    }
+                    if (line == null) break;
                     sb.append(line).append("\n");
                 }
                 return sb.toString();
