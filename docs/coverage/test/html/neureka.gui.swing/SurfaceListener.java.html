@@ -39,8 +39,8 @@ public class SurfaceListener implements MouseListener, MouseMotionListener, Mous
 
     //--------------------------------------------------------------------------------------------------------------------------------
     public void mouseClicked(MouseEvent e) {
-<span class="fc bfc" id="L42" title="All 4 branches covered.">        if (clickedX == e.getX() &amp;&amp; clickedY == e.getY()) {</span>
-<span class="fc" id="L43">            Surface.doubleClickedAt(e.getX(), e.getY());</span>
+<span class="pc bpc" id="L42" title="3 of 4 branches missed.">        if (clickedX == e.getX() &amp;&amp; clickedY == e.getY()) {</span>
+<span class="nc" id="L43">            Surface.doubleClickedAt(e.getX(), e.getY());</span>
         } else {
 <span class="fc" id="L45">            Surface.clickedAt(e.getX(), e.getY());</span>
 <span class="fc" id="L46">            collapseDragVector();</span>
@@ -86,14 +86,14 @@ public class SurfaceListener implements MouseListener, MouseMotionListener, Mous
 
     //--------------------------------------------------------------------------------------------------------------------------------
     public void mouseDragged(MouseEvent e) {
-<span class="fc" id="L89">        addDragPoint(e.getX(), e.getY());</span>
-<span class="fc" id="L90">        Surface.draggedBy(SwipeVector);</span>
+<span class="nc" id="L89">        addDragPoint(e.getX(), e.getY());</span>
+<span class="nc" id="L90">        Surface.draggedBy(SwipeVector);</span>
 
-<span class="fc" id="L92">        Surface.draggedAt(e.getX(), e.getY());</span>
+<span class="nc" id="L92">        Surface.draggedAt(e.getX(), e.getY());</span>
 
-<span class="fc" id="L94">        currentMouseX = e.getX();</span>
-<span class="fc" id="L95">        currentMouseY = e.getY();</span>
-<span class="fc" id="L96">    }</span>
+<span class="nc" id="L94">        currentMouseX = e.getX();</span>
+<span class="nc" id="L95">        currentMouseY = e.getY();</span>
+<span class="nc" id="L96">    }</span>
 
     //--------------------------------------------------------------------------------------------------------------------------------
     public void addDragPoint(int x, int y) {

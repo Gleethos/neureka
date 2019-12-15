@@ -4,7 +4,7 @@ int  _i_of_i(int i, int* config, int rank);
 int  _i_of_idx_on_tln(int* conf, int rank);
 
 __kernel void convolve_template(
-    __global float *out,
+    //-=<ARGUMENT>=-//__global float *frn, __global int *frn_conf,
     __global float *drn, __global int *drn_conf,
     __global float *src1, __global int *src1_conf,
     __global float *src2, __global int *src2_conf,
@@ -14,6 +14,8 @@ __kernel void convolve_template(
         int prv_drn_cfg[32]; _cfg_of_cfg(drn_conf, prv_drn_cfg, rank);
         int prv_src1_cfg[32]; _cfg_of_cfg(src1_conf, prv_src1_cfg, rank);
         int prv_src2_cfg[32]; _cfg_of_cfg(src2_conf, prv_src2_cfg, rank);
+        //-=<CONFIGURATION>=-//int prv_frn_cfg[32]; _cfg_of_cfg(frn_conf, prv_frn_cfg, rank);
+
         int p_shp = 0 * rank;
         int p_tln = 1 * rank;
         int p_idm = 2 * rank;
@@ -77,7 +79,7 @@ __kernel void convolve_template(
                 }
             }
             //set _value in drn:
-            out[di] = value;
+            drn[di] = value;
         } else {// conv
             while (ri < rank) {
                 if (prv_src1_cfg[p_shp+ri] == prv_src2_cfg[p_shp+ri]) {//setting 0
@@ -130,7 +132,7 @@ __kernel void convolve_template(
                     }
                 }
             }
-            out[di] = value;
+            drn[di] = value;
         }
 
 

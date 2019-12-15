@@ -1,6 +1,7 @@
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.acceleration.CPU
 import neureka.acceleration.Device
 import neureka.function.factory.assembly.FunctionBuilder
 import neureka.gui.swing.AbstractSpaceMap
@@ -118,7 +119,8 @@ class LightGroovyTests
         assert !x.isVirtual()
         assert !x.hasDataParent()
         assert !x.belongsToGraph()
-        assert x.device()==null
+        assert x.device() !=null
+        assert x.device() instanceof CPU
         assert x.rank()==1
         assert !x.rqsGradient()
         assert x.size()==1

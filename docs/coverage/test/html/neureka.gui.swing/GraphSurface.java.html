@@ -117,8 +117,8 @@ public class GraphSurface extends JPanel implements Surface, ActionListener {
 <span class="fc" id="L117">    }</span>
 
     public void setDoubleClick(int[] newClick) {
-<span class="fc" id="L120">        DoubleClick = newClick;</span>
-<span class="fc" id="L121">    }</span>
+<span class="nc" id="L120">        DoubleClick = newClick;</span>
+<span class="nc" id="L121">    }</span>
 
     public void setMovement(int[] newMove) {
 <span class="fc" id="L124">        Sense = newMove;</span>
@@ -412,8 +412,8 @@ public class GraphSurface extends JPanel implements Surface, ActionListener {
     }
 
     public void setRepaintQueue(ArrayList&lt;SurfaceRepaintSpace&gt; newQueue) {
-<span class="fc" id="L415">        RepaintQueue = newQueue;</span>
-<span class="fc" id="L416">    }</span>
+<span class="nc" id="L415">        RepaintQueue = newQueue;</span>
+<span class="nc" id="L416">    }</span>
 
     //--------------------------------------------------------------------------------------------------------------------------------
     private ArrayList&lt;SurfaceRepaintSpace&gt; update() {
@@ -729,8 +729,8 @@ public class GraphSurface extends JPanel implements Surface, ActionListener {
 
     //--------------------------------------------------------------------------------------------------------------------------------
     public void draggedBy(int[] Vector) {
-<span class="fc" id="L732">        Swipe = Vector;</span>
-<span class="fc" id="L733">    }</span>
+<span class="nc" id="L732">        Swipe = Vector;</span>
+<span class="nc" id="L733">    }</span>
 
     public void translatePanel(double translateX, double translateY) {
 <span class="fc" id="L736">        Translator.translate(translateX * 1 / Scaler.getScaleX(), translateY * 1 / Scaler.getScaleY());</span>
@@ -761,14 +761,14 @@ public class GraphSurface extends JPanel implements Surface, ActionListener {
 <span class="fc bfc" id="L761" title="All 2 branches covered.">        if (height &lt; 0) {</span>
 <span class="fc" id="L762">            height = 0;</span>
         }
-<span class="fc bfc" id="L764" title="All 2 branches covered.">        if (LTCornerX &gt; getWidth()) {</span>
-<span class="fc" id="L765">            LTCornerX = getWidth();</span>
+<span class="pc bpc" id="L764" title="1 of 2 branches missed.">        if (LTCornerX &gt; getWidth()) {</span>
+<span class="nc" id="L765">            LTCornerX = getWidth();</span>
         }
 <span class="fc bfc" id="L767" title="All 2 branches covered.">        if (LTCornerY &gt; getHeight()) {</span>
 <span class="fc" id="L768">            LTCornerY = getHeight();</span>
         }
-<span class="fc bfc" id="L770" title="All 2 branches covered.">        if (width &gt; getWidth()) {</span>
-<span class="fc" id="L771">            width = getWidth();</span>
+<span class="pc bpc" id="L770" title="1 of 2 branches missed.">        if (width &gt; getWidth()) {</span>
+<span class="nc" id="L771">            width = getWidth();</span>
         }
 <span class="fc bfc" id="L773" title="All 2 branches covered.">        if (height &gt; getHeight()) {</span>
 <span class="fc" id="L774">            height = getHeight();</span>
@@ -834,19 +834,19 @@ public class GraphSurface extends JPanel implements Surface, ActionListener {
 
     @Override
     public void doubleClickedAt(int x, int y) {
-<span class="fc" id="L837">        int[] newDoubleClick = new int[2];</span>
-<span class="fc" id="L838">        newDoubleClick[0] = x;</span>
-<span class="fc" id="L839">        newDoubleClick[1] = y;</span>
-<span class="fc" id="L840">        DoubleClick = newDoubleClick;</span>
-<span class="fc" id="L841">    }</span>
+<span class="nc" id="L837">        int[] newDoubleClick = new int[2];</span>
+<span class="nc" id="L838">        newDoubleClick[0] = x;</span>
+<span class="nc" id="L839">        newDoubleClick[1] = y;</span>
+<span class="nc" id="L840">        DoubleClick = newDoubleClick;</span>
+<span class="nc" id="L841">    }</span>
 
     @Override
     public void draggedAt(int x, int y) {
-<span class="fc" id="L845">        int[] newDrag = new int[2];</span>
-<span class="fc" id="L846">        newDrag[0] = x;</span>
-<span class="fc" id="L847">        newDrag[1] = y;</span>
-<span class="fc" id="L848">        Drag = newDrag;</span>
-<span class="fc" id="L849">    }</span>
+<span class="nc" id="L845">        int[] newDrag = new int[2];</span>
+<span class="nc" id="L846">        newDrag[0] = x;</span>
+<span class="nc" id="L847">        newDrag[1] = y;</span>
+<span class="nc" id="L848">        Drag = newDrag;</span>
+<span class="nc" id="L849">    }</span>
     @Override
     public Animator getAnimator() {
 <span class="fc" id="L852">        return Animator;</span>

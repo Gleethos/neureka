@@ -463,7 +463,7 @@ public class SurfaceNode implements SurfaceObject {
             //if(Animator.getCounterOf(this, animationID)>=0) {animationID++;}
         }
         //=================================================================================================================================================
-        //Animation 3 -> Weight convolve_template
+        //Animation 3 -> Weight convolve
         //=================================================================================================================================================
         boolean activityCheck = false;
         if (InputNode!=null)  {
@@ -640,7 +640,7 @@ public class SurfaceNode implements SurfaceObject {
     //=============================================================================================
     // --------------------------------------------------------------------------------------------
     private ArrayList<SurfaceRepaintSpace> updateConnectionVectorAndGetRepaintSpace(boolean convection) // OPTIMIZATION?
-    {//System.out.println("convolve_template: "+convolve_template);
+    {//System.out.println("convolve: "+convolve);
         //-> checking if connection points are within frame!
         double vX = 0;
         double vY = 0;
@@ -812,7 +812,7 @@ public class SurfaceNode implements SurfaceObject {
                         //System.out.println(diameter);
                         double normalX = (-vectorY / d) * Other.diameter / 2 * ratio;
                         double normalY = (vectorX / d) * Other.diameter / 2 * ratio;
-                        Polygon convector = new Polygon();//System.out.println("painting convolve_template!"+ratio);
+                        Polygon convector = new Polygon();//System.out.println("painting convolve!"+ratio);
                         double invratio = 1 - ratio;
                         curvePoint = math.getCurvePointOn(invratio * invratio * invratio, points);
                         convector.addPoint((int) (curvePoint[0]), (int) (curvePoint[1]));

@@ -542,7 +542,7 @@ public class GraphNode
                 this.forEach((t, d)->t._backward(MUL.activate(new Tsr[]{error, d}), toBeBackpropagated, false));
             }else if(this.usesReverseAD()){//Standard reverse mode-AD:
                 this.forEach((t, d)->{
-                    if(_function.id()==Function.TYPES.LOOKUP.get("x")){// x operation requires inverse convolve_template operation!
+                    if(_function.id()==Function.TYPES.LOOKUP.get("x")){// x operation requires inverse convolve operation!
                         t._backward(INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)}), toBeBackpropagated, false);
                     } else {//Normal elementwise backpropagation:
                         t._backward(MUL.activate(new Tsr[]{error, d}), toBeBackpropagated, false);

@@ -48,4 +48,7 @@ public interface Device
 
     Collection<Tsr> tensors();
 
+
+
+
 }

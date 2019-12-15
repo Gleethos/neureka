@@ -773,9 +773,9 @@ public class DefaultJavaTests {
                         12, -6,
                 },
                 new double[]{
-                     16+4,
-                     -8-2,
-                     24+6
+                     16+4,//20
+                     -8-2,//-10
+                     24+6//30
                 },
                 true
         );

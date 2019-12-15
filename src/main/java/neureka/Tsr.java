@@ -1,5 +1,6 @@
 package neureka;
 
+import neureka.acceleration.CPU;
 import neureka.acceleration.Device;
 import neureka.function.Function;
 import neureka.function.factory.assembly.FunctionBuilder;
@@ -21,7 +22,7 @@ public class Tsr
 {
     // DEFAULT DEVICE (HOST CPU)
     //=========================
-    private static Device CPU;
+    public static Device CPU;
 
     //STATIC FUNCTIONS MEMORY:
     //=========================
@@ -29,7 +30,7 @@ public class Tsr
 
     static {
         CONFIGS = new WeakHashMap<>();
-        CPU = null;
+        CPU = new CPU();
     }
     //-----------------------------------------------------------------------
 
@@ -505,9 +506,9 @@ public class Tsr
         for (int i = 0; i < size; i++) {
             String vStr;
             if(format){
-                vStr = fcn.stringify.formatFP(v[(this.isVirtual()) ? 0 : Tsr.fcn.indexing.i_of_i(i, this)]);
+                vStr = fcn.stringify.formatFP(v[(this.isVirtual()) ? 0 : i_of_i(i)]);
             } else {
-                vStr = String.valueOf(v[(this.isVirtual()) ? 0 : Tsr.fcn.indexing.i_of_i(i, this)]);
+                vStr = String.valueOf(v[(this.isVirtual()) ? 0 : i_of_i(i)]);
             }
             asString += vStr;
             if (i < size - 1) {
@@ -941,7 +942,7 @@ public class Tsr
         return this;
     }
     public double getAt(int[] idx){
-        return value64()[Tsr.fcn.indexing.i_of_idx(idx, this)];
+        return value64()[i_of_idx(idx)];
     }
     public Object getAt(Object key) {
         if(key==null) return this;
@@ -1047,7 +1048,7 @@ public class Tsr
                 final int start = i*chunk;
                 final  int end = (i==threadCount-1)?sze:((i+1)*chunk);
                 th[i]=new Thread(()->{
-                    for(int k=start;k<end;k++) action.accept(Tsr.fcn.indexing.i_of_i(k, this));
+                    for(int k=start;k<end;k++) action.accept(i_of_i(k));
                 });
                 th[i].start();
             }
@@ -1065,6 +1066,44 @@ public class Tsr
         return this;
     }
 
+    //###########
+    public int i_of_idx(int[] idx)
+    {
+        int i = 0;
+        int[] sliceCfg = null;
+        if(has(int[].class)){
+            sliceCfg = (int[])find(int[].class);
+        }
+        for(int ii=0; ii<_shape.length; ii++){
+            int scale = ((sliceCfg==null||sliceCfg.length==rank())?1:sliceCfg[rank()+ii]);
+            i += (idx[ii] * scale + ((sliceCfg==null)?0:sliceCfg[ii]))*_translation[ii];
+        }
+        return i;
+    }
+
+    public int i_of_i(int i){
+        return i_of_idx(idx_of_i(i));
+    }
+
+    public int[] idx_of_i(int i){
+        int[] idx = new int[_shape.length];
+        if(Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED()){
+            for(int ii=rank()-1; ii>=0; ii--){
+                idx[ii] += i / _idxmap[ii];
+                i %= _idxmap[ii];
+            }
+        } else {
+            for(int ii=0; ii<rank(); ii++){
+                idx[ii] += i / _idxmap[ii];
+                i %= _idxmap[ii];
+            }
+        }
+        return idx;
+    }
+    //########
+    
+    
+    
     /**
      * ======================================================================================================
      * STATIC FUNCTIONS:
@@ -1079,32 +1118,32 @@ public class Tsr
                 } else if (t.isVirtual()) {
                     return t.value64()[0];
                 }
-                return t.value64()[indexing.i_of_i(i,t)];
+                return t.value64()[t.i_of_i(i)];
             }
 
             public static double getFrom(Tsr t, int[] idx) {
                 t.setIsVirtual(false);
-                return t.value64()[indexing.i_of_idx(idx, t)];
+                return t.value64()[t.i_of_idx(idx)];
             }
 
             public static void setInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
-                t.value64()[indexing.i_of_i(i,t)] = value;
+                t.value64()[t.i_of_i(i)] = value;
             }
 
             public static void setInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t.value64()[indexing.i_of_idx(idx, t)] = value;
+                t.value64()[t.i_of_idx(idx)] = value;
             }
 
             public static void addInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
-                t.value64()[indexing.i_of_i(i,t)] += value;
+                t.value64()[t.i_of_i(i)] += value;
             }
 
             public static void addInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t.value64()[indexing.i_of_idx(idx, t)] += value;
+                t.value64()[t.i_of_idx(idx)] += value;
             }
 
             public static Tsr addInto(Tsr t, Tsr source) {
@@ -1118,12 +1157,12 @@ public class Tsr
 
             public static void subInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
-                t.value64()[indexing.i_of_i(i,t)] -= value;
+                t.value64()[t.i_of_i(i)] -= value;
             }
 
             public static void subInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t.value64()[indexing.i_of_idx(idx, t)] -= value;
+                t.value64()[t.i_of_idx(idx)] -= value;
             }
 
             public static void subInto(Tsr t, Tsr source) {
@@ -1144,12 +1183,12 @@ public class Tsr
 
             public static void mulInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
-                t.value64()[indexing.i_of_i(i,t)] *= value;
+                t.value64()[t.i_of_i(i)] *= value;
             }
 
             public static void mulInto(Tsr t, int[] idx, double value) {
                 t.setIsVirtual(false);
-                t.value64()[indexing.i_of_idx(idx, t)] *= value;
+                t.value64()[t.i_of_idx(idx)] *= value;
             }
 
         }
@@ -1293,42 +1332,43 @@ public class Tsr
          */
         public static class indexing
         {
-            @Contract(pure = true)
-            public static int i_of_idx(int[] idx, Tsr t)
-            {
-                int i = 0;
-                int[] sliceCfg = null;
-                if(t.has(int[].class)){
-                    sliceCfg = (int[])t.find(int[].class);
-                }
-                for(int ii=0; ii<t._shape.length; ii++){
-                    int scale = ((sliceCfg==null||sliceCfg.length==t.rank())?1:sliceCfg[t.rank()+ii]);
-                    i += (idx[ii] * scale + ((sliceCfg==null)?0:sliceCfg[ii]))*t._translation[ii];
-                }
-                return i;
-            }
-
-            @Contract(pure = true)
-            public static int i_of_i(int i, Tsr t){
-                return indexing.i_of_idx(idx_of_i(i, t), t);
-            }
-
-            @Contract(pure = true)
-            public static int[] idx_of_i(int i, Tsr t){
-                int[] idx = new int[t._shape.length];
-                if(Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED()){
-                    for(int ii=t.rank()-1; ii>=0; ii--){
-                        idx[ii] += i / t._idxmap[ii];
-                        i %= t._idxmap[ii];
-                    }
-                } else {
-                    for(int ii=0; ii<t.rank(); ii++){
-                        idx[ii] += i / t._idxmap[ii];
-                        i %= t._idxmap[ii];
-                    }
-                }
-                return idx;
-            }
+            //@Contract(pure = true)
+            //public static int i_of_idx(int[] idx, Tsr t)
+            //{
+            //    int i = 0;
+            //    int[] sliceCfg = null;
+            //    if(t.has(int[].class)){
+            //        sliceCfg = (int[])t.find(int[].class);
+            //    }
+            //    for(int ii=0; ii<t._shape.length; ii++){
+            //        int scale = ((sliceCfg==null||sliceCfg.length==t.rank())?1:sliceCfg[t.rank()+ii]);
+            //        i += (idx[ii] * scale + ((sliceCfg==null)?0:sliceCfg[ii]))*t._translation[ii];
+            //    }
+            //    return i;
+            //}
+            //@Contract(pure = true)
+            //public static int i_of_i(int i, Tsr t){
+            //    return indexing.i_of_idx(idx_of_i(i, t), t);
+            //}
+            //@Contract(pure = true)
+            //public static int[] idx_of_i(int i, Tsr t){
+            //    int[] idx = new int[t._shape.length];
+            //    if(Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED()){
+            //        for(int ii=t.rank()-1; ii>=0; ii--){
+            //            idx[ii] += i / t._idxmap[ii];
+            //            i %= t._idxmap[ii];
+            //        }
+            //    } else {
+            //        for(int ii=0; ii<t.rank(); ii++){
+            //            idx[ii] += i / t._idxmap[ii];
+            //            i %= t._idxmap[ii];
+            //        }
+            //    }
+            //    return idx;
+            //}
+            
+            
+            
 
             @Contract(pure = true)
             public static void increment(@NotNull int[] shpIdx, @NotNull int[] shape) {

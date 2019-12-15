@@ -1,6 +1,7 @@
 package util;
 
 import neureka.Tsr;
+import neureka.acceleration.CPU;
 import neureka.acceleration.Device;
 import neureka.function.factory.AbstractFunction;
 
@@ -93,7 +94,7 @@ public class NTester_Tensor extends NTester
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.fcn.indexing.shpOfCon(frstShp, scndShp);
         double[] rsltData = new double[Tsr.fcn.indexing.szeOfShp(drnMxd)];
-        AbstractFunction.exec.convolve_multiply(
+        CPU.exec.convolve_multiply(
                 new Tsr(drnMxd, rsltData),
                 new Tsr(frstShp, frstData),
                 new Tsr(scndShp, scondData), -1
@@ -109,7 +110,7 @@ public class NTester_Tensor extends NTester
     ){
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.fcn.indexing.shpOfCon(frstShp, scndShp);
-        AbstractFunction.exec.convolve_multiply(//inv
+        CPU.exec.convolve_multiply(//inv
                 new Tsr(frstShp, frstData),
                 (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
                 (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData),0
@@ -122,7 +123,7 @@ public class NTester_Tensor extends NTester
         printSessionStart("Test Tsr.indexing: tensor broadcast_template");
         int[] drnMxd  = Tsr.fcn.indexing.shpOfBrc(frstShp, scndShp);
         double[] rsltData = new double[Tsr.fcn.indexing.szeOfShp(drnMxd)];
-        AbstractFunction.exec.broadcast_multiply(
+        CPU.exec.broadcast_multiply(
                 new Tsr(drnMxd, rsltData),
                 new Tsr(frstShp, frstData),
                 new Tsr(scndShp, scondData),
@@ -139,7 +140,7 @@ public class NTester_Tensor extends NTester
     ){
         printSessionStart("Test Tsr.indexing: tensor broadcast_template");
         int[] drnMxd  = Tsr.fcn.indexing.shpOfBrc(frstShp, scndShp);
-        AbstractFunction.exec.broadcast_multiply(//inv
+        CPU.exec.broadcast_multiply(//inv
                 new Tsr(frstShp, frstData),
                 (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
                 (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData),0

@@ -80,8 +80,8 @@ public class Types
             case "s": return false;
             case "a": return false;
             case "p": return false;
-            case (""+((char)171)): return false;
-            case (""+((char)187)): return false;
+            case (""+((char)171))+"x": return false;
+            case ("x"+((char)187)): return false;
             case ",":return false;
             case "<": return false;
             case ">": return false;

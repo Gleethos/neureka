@@ -542,7 +542,7 @@ public class GraphNode
 <span class="fc" id="L542">                this.forEach((t, d)-&gt;t._backward(MUL.activate(new Tsr[]{error, d}), toBeBackpropagated, false));</span>
 <span class="pc bpc" id="L543" title="1 of 2 branches missed.">            }else if(this.usesReverseAD()){//Standard reverse mode-AD:</span>
 <span class="fc" id="L544">                this.forEach((t, d)-&gt;{</span>
-<span class="fc bfc" id="L545" title="All 2 branches covered.">                    if(_function.id()==Function.TYPES.LOOKUP.get(&quot;x&quot;)){// x operation requires inverse convolve_template operation!</span>
+<span class="fc bfc" id="L545" title="All 2 branches covered.">                    if(_function.id()==Function.TYPES.LOOKUP.get(&quot;x&quot;)){// x operation requires inverse convolve operation!</span>
 <span class="fc" id="L546">                        t._backward(INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)}), toBeBackpropagated, false);</span>
                     } else {//Normal elementwise backpropagation:
 <span class="fc" id="L548">                        t._backward(MUL.activate(new Tsr[]{error, d}), toBeBackpropagated, false);</span>
