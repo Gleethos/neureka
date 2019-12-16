@@ -2,6 +2,7 @@ package neureka.function.factory.implementations;
 
 import neureka.Tsr;
 import neureka.function.Function;
+import neureka.function.factory.assembly.FunctionBuilder;
 
 public class FVariable implements Function, IProvider {
 
@@ -67,7 +68,10 @@ public class FVariable implements Function, IProvider {
     }
     @Override
     public Tsr activate(Tsr[] inputs) {
-        return new Tsr(inputs, "sum(I[j])");
+        String exp = "I[0]";
+        for(int i=1; i<inputs.length; i++)exp += "+I["+i+"]";
+        return FunctionBuilder.build(exp, false).activate(inputs);
+        //return new Tsr(inputs, exp);
     }
     @Override
     public Tsr derive(Tsr[] inputs, int index, int j) {

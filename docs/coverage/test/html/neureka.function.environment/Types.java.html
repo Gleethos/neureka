@@ -18,7 +18,13 @@ public class Types
 <span class="fc" id="L18">        REGISTER = new String[]{</span>
                 &quot;relu&quot;, &quot;sig&quot;, &quot;tanh&quot;, &quot;quad&quot;, &quot;lig&quot;, &quot;idy&quot;, &quot;gaus&quot;, &quot;abs&quot;, &quot;sin&quot;, &quot;cos&quot;,
                 &quot;sum&quot;, &quot;prod&quot;,
-                &quot;^&quot;, &quot;/&quot;, &quot;*&quot;, &quot;%&quot;, &quot;-&quot;, &quot;+&quot;,
+                &quot;^&quot;, ((char)171)+&quot;^&quot;, &quot;^&quot;+((char)187),
+                &quot;/&quot;, ((char)171)+&quot;/&quot;, &quot;/&quot;+((char)187),
+                &quot;*&quot;, ((char)171)+&quot;*&quot;, &quot;*&quot;+((char)187),
+                &quot;%&quot;, ((char)171)+&quot;%&quot;, &quot;%&quot;+((char)187),
+                &quot;-&quot;, ((char)171)+&quot;-&quot;, &quot;-&quot;+((char)187),
+                &quot;+&quot;, ((char)171)+&quot;+&quot;, &quot;+&quot;+((char)187),
+
                 &quot;x&quot;, ((char)171)+&quot;x&quot;, &quot;x&quot;+((char)187),
                 &quot;d&quot;, ((char)171)+&quot;d&quot;, &quot;d&quot;+((char)187),
                 &quot;p&quot;, ((char)171)+&quot;p&quot;, &quot;p&quot;+((char)187),
@@ -28,68 +34,68 @@ public class Types
                 &quot;,&quot;,
                 &quot;&lt;&quot;, &quot;&gt;&quot;,
             };
-<span class="fc" id="L31">        LOOKUP = new HashMap&lt;&gt;();</span>
-<span class="fc bfc" id="L32" title="All 2 branches covered.">        for(int i=0; i&lt;REGISTER.length; i++){</span>
-<span class="fc" id="L33">            LOOKUP.put(REGISTER[i], i);</span>
-<span class="fc bfc" id="L34" title="All 2 branches covered.">            if(REGISTER[i] == (((char)171))+&quot;x&quot;){</span>
-<span class="fc" id="L35">                LOOKUP.put(&quot;&lt;&lt;x&quot;, i);</span>
-<span class="fc bfc" id="L36" title="All 2 branches covered.">            } else if(REGISTER[i] == (&quot;x&quot;+((char)187))){</span>
-<span class="fc" id="L37">                LOOKUP.put(&quot;x&gt;&gt;&quot;, i);</span>
+<span class="fc" id="L37">        LOOKUP = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        for(int i=0; i&lt;REGISTER.length; i++){</span>
+<span class="fc" id="L39">            LOOKUP.put(REGISTER[i], i);</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">            if(REGISTER[i] == (((char)171))+&quot;x&quot;){</span>
+<span class="fc" id="L41">                LOOKUP.put(&quot;&lt;&lt;x&quot;, i);</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">            } else if(REGISTER[i] == (&quot;x&quot;+((char)187))){</span>
+<span class="fc" id="L43">                LOOKUP.put(&quot;x&gt;&gt;&quot;, i);</span>
             }
         }
-<span class="fc" id="L40">    }</span>
+<span class="fc" id="L46">    }</span>
 
     public boolean isOperation(String f){
-<span class="nc" id="L43">        return isOperation(LOOKUP.get(f));</span>
+<span class="nc" id="L49">        return isOperation(LOOKUP.get(f));</span>
     }
     public boolean isOperation(int id){
-<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        return (id&gt;=LOOKUP.get(&quot;^&quot;));</span>
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">        return (id&gt;=LOOKUP.get(&quot;^&quot;));</span>
     }
 
     public boolean isFunction(String f){
-<span class="nc" id="L50">        return isFunction(LOOKUP.get(f));</span>
+<span class="nc" id="L56">        return isFunction(LOOKUP.get(f));</span>
     }
     public boolean isFunction(int id){
-<span class="fc bfc" id="L53" title="All 2 branches covered.">        return (id&lt;=LOOKUP.get(&quot;cos&quot;));</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        return (id&lt;=LOOKUP.get(&quot;cos&quot;));</span>
     }
 
     public boolean isIndexer(String f){
-<span class="nc" id="L57">        return isIndexer(LOOKUP.get(f));</span>
+<span class="nc" id="L63">        return isIndexer(LOOKUP.get(f));</span>
     }
     public boolean isIndexer(int id){
-<span class="pc bpc" id="L60" title="1 of 4 branches missed.">        return (id&gt;=LOOKUP.get(&quot;sum&quot;))&amp;&amp;(id&lt;=LOOKUP.get(&quot;prod&quot;));</span>
+<span class="pc bpc" id="L66" title="1 of 4 branches missed.">        return (id&gt;=LOOKUP.get(&quot;sum&quot;))&amp;&amp;(id&lt;=LOOKUP.get(&quot;prod&quot;));</span>
     }
 
     public boolean isConvection(String f){
-<span class="nc" id="L64">        return isConvection(LOOKUP.get(f));</span>
+<span class="nc" id="L70">        return isConvection(LOOKUP.get(f));</span>
     }
     public boolean isConvection(int id){
-<span class="pc bpc" id="L67" title="2 of 6 branches missed.">        return (REGISTER[id] == &quot;x&quot; || REGISTER[id] == &quot;Â«&quot; || REGISTER[id] == &quot;Â»&quot;);</span>
+<span class="pc bpc" id="L73" title="2 of 6 branches missed.">        return (REGISTER[id] == &quot;x&quot; || REGISTER[id] == &quot;Â«&quot; || REGISTER[id] == &quot;Â»&quot;);</span>
     }
 
     public boolean isCommutative(String f){
-<span class="nc bnc" id="L71" title="All 17 branches missed.">        switch(f){</span>
-<span class="nc" id="L72">            case &quot;^&quot;: return false;</span>
-<span class="nc" id="L73">            case &quot;/&quot;: return false;</span>
-<span class="nc" id="L74">            case &quot;*&quot;: return true;</span>
-<span class="nc" id="L75">            case &quot;%&quot;: return false;</span>
-<span class="nc" id="L76">            case &quot;-&quot;: return false;</span>
-<span class="nc" id="L77">            case &quot;+&quot;: return true;</span>
-<span class="nc" id="L78">            case &quot;x&quot;: return false;</span>
-<span class="nc" id="L79">            case &quot;d&quot;: return false;</span>
-<span class="nc" id="L80">            case &quot;s&quot;: return false;</span>
-<span class="nc" id="L81">            case &quot;a&quot;: return false;</span>
-<span class="nc" id="L82">            case &quot;p&quot;: return false;</span>
-<span class="nc" id="L83">            case (&quot;&quot;+((char)171))+&quot;x&quot;: return false;</span>
-<span class="nc" id="L84">            case (&quot;x&quot;+((char)187)): return false;</span>
-<span class="nc" id="L85">            case &quot;,&quot;:return false;</span>
-<span class="nc" id="L86">            case &quot;&lt;&quot;: return false;</span>
-<span class="nc" id="L87">            case &quot;&gt;&quot;: return false;</span>
+<span class="nc bnc" id="L77" title="All 17 branches missed.">        switch(f){</span>
+<span class="nc" id="L78">            case &quot;^&quot;: return false;</span>
+<span class="nc" id="L79">            case &quot;/&quot;: return false;</span>
+<span class="nc" id="L80">            case &quot;*&quot;: return true;</span>
+<span class="nc" id="L81">            case &quot;%&quot;: return false;</span>
+<span class="nc" id="L82">            case &quot;-&quot;: return false;</span>
+<span class="nc" id="L83">            case &quot;+&quot;: return true;</span>
+<span class="nc" id="L84">            case &quot;x&quot;: return false;</span>
+<span class="nc" id="L85">            case &quot;d&quot;: return false;</span>
+<span class="nc" id="L86">            case &quot;s&quot;: return false;</span>
+<span class="nc" id="L87">            case &quot;a&quot;: return false;</span>
+<span class="nc" id="L88">            case &quot;p&quot;: return false;</span>
+<span class="nc" id="L89">            case (&quot;&quot;+((char)171))+&quot;x&quot;: return false;</span>
+<span class="nc" id="L90">            case (&quot;x&quot;+((char)187)): return false;</span>
+<span class="nc" id="L91">            case &quot;,&quot;:return false;</span>
+<span class="nc" id="L92">            case &quot;&lt;&quot;: return false;</span>
+<span class="nc" id="L93">            case &quot;&gt;&quot;: return false;</span>
         }
-<span class="nc" id="L89">        return false;</span>
+<span class="nc" id="L95">        return false;</span>
     }
     public boolean isCommutative(int id){
-<span class="nc" id="L92">        return isCommutative(REGISTER[id]);</span>
+<span class="nc" id="L98">        return isCommutative(REGISTER[id]);</span>
     }
 
 

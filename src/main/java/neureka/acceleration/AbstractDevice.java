@@ -2,6 +2,7 @@ package neureka.acceleration;
 
 import neureka.Tsr;
 import neureka.function.Function;
+import neureka.function.factory.autograd.GraphLock;
 import neureka.function.factory.autograd.GraphNode;
 
 public abstract class AbstractDevice implements  Device
@@ -72,7 +73,7 @@ public abstract class AbstractDevice implements  Device
             if(d<0){
                 _execute_tensors(new Tsr[]{tsrs[0], tsrs[1], tsrs[2]}, f_id, d);
                 Tsr[] newTsrs = _util._offsetted(tsrs, 1);
-                _execute_tensors(newTsrs, f_id, d);//This recursion should work!
+                newTsrs[0] =  _execute_tensors(newTsrs, f_id, d);//This recursion should work!
                 tsrs[0] = newTsrs[0];
             } else {
                 Tsr[] newTsrs;
@@ -91,8 +92,9 @@ public abstract class AbstractDevice implements  Device
                             inner.delete();
                             exp.delete();
                         } else {
-                            newTsrs = _util._subset(tsrs, 1,  1, tsrs.length);
+                            newTsrs = _util._subset(tsrs, 1,  1, tsrs.length-1);
                             newTsrs[0] =  Tsr.fcn.create.newTsrLike(tsrs[1]);
+                            for(Tsr t : newTsrs) if(!t.has(GraphNode.class))t.add(new GraphNode(t, null, null, new GraphLock(null, null)));
                             Tsr exp = _execute_tensors(newTsrs, Function.TYPES.LOOKUP.get("*"), -1);
                             tsrs[0] = _execute_tensors(new Tsr[]{tsrs[0], tsrs[1], exp}, f_id, 0);
                             exp.delete();

@@ -18,7 +18,13 @@ public class Types
         REGISTER = new String[]{
                 "relu", "sig", "tanh", "quad", "lig", "idy", "gaus", "abs", "sin", "cos",
                 "sum", "prod",
-                "^", "/", "*", "%", "-", "+",
+                "^", ((char)171)+"^", "^"+((char)187),
+                "/", ((char)171)+"/", "/"+((char)187),
+                "*", ((char)171)+"*", "*"+((char)187),
+                "%", ((char)171)+"%", "%"+((char)187),
+                "-", ((char)171)+"-", "-"+((char)187),
+                "+", ((char)171)+"+", "+"+((char)187),
+
                 "x", ((char)171)+"x", "x"+((char)187),
                 "d", ((char)171)+"d", "d"+((char)187),
                 "p", ((char)171)+"p", "p"+((char)187),

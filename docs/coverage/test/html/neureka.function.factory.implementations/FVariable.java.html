@@ -2,60 +2,61 @@
 
 import neureka.Tsr;
 import neureka.function.Function;
+import neureka.function.factory.assembly.FunctionBuilder;
 
-<span class="fc" id="L6">public class FVariable implements Function, IProvider {</span>
+<span class="fc" id="L7">public class FVariable implements Function, IProvider {</span>
 
-<span class="fc" id="L8">    private boolean _providesGradient = false;</span>
+<span class="fc" id="L9">    private boolean _providesGradient = false;</span>
 
     public boolean providesGradient(){
-<span class="fc" id="L11">        return _providesGradient;</span>
+<span class="fc" id="L12">        return _providesGradient;</span>
     }
 
     @Override
     public boolean isFlat() {
-<span class="nc" id="L16">        return false;</span>
+<span class="nc" id="L17">        return false;</span>
     }
     @Override
     public int id() {
-<span class="nc" id="L20">        return -1;</span>
+<span class="nc" id="L21">        return -1;</span>
     }
 
     @Override
     public String type() {
-<span class="nc" id="L25">        return &quot;variable&quot;;</span>
+<span class="nc" id="L26">        return &quot;variable&quot;;</span>
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public Function newBuild(final String equation) {
-<span class="fc bfc" id="L31" title="All 2 branches covered.">        if(equation.contains(&quot;g&quot;)){</span>
-<span class="fc" id="L32">            _providesGradient = true;</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">        if(equation.contains(&quot;g&quot;)){</span>
+<span class="fc" id="L33">            _providesGradient = true;</span>
         }
-<span class="fc" id="L34">        return this;</span>
+<span class="fc" id="L35">        return this;</span>
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public double activate(final double[] inputs, int j) {
-<span class="fc" id="L39">        return inputs[j];</span>
+<span class="fc" id="L40">        return inputs[j];</span>
     }
     @Override
     public double activate(final double[] inputs) {
-<span class="fc" id="L43">        double sum = 0;</span>
-<span class="fc bfc" id="L44" title="All 2 branches covered.">        for (int Ii = 0; Ii &lt; inputs.length; Ii++) {</span>
-<span class="fc" id="L45">            sum += activate(inputs, Ii);</span>
+<span class="fc" id="L44">        double sum = 0;</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        for (int Ii = 0; Ii &lt; inputs.length; Ii++) {</span>
+<span class="fc" id="L46">            sum += activate(inputs, Ii);</span>
         }
-<span class="fc" id="L47">        return sum;</span>
+<span class="fc" id="L48">        return sum;</span>
     }
     @Override
     public double derive(final double[] inputs, final int index) {
-<span class="fc" id="L51">        return 1.0;</span>
+<span class="fc" id="L52">        return 1.0;</span>
     }
     @Override
     public double derive(double[] inputs, int index, int j) {
-<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (j != index) {</span>
-<span class="fc" id="L56">            return 0;</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        if (j != index) {</span>
+<span class="fc" id="L57">            return 0;</span>
         }
-<span class="fc" id="L58">        return derive(inputs, index);</span>
+<span class="fc" id="L59">        return derive(inputs, index);</span>
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
@@ -63,27 +64,30 @@ import neureka.function.Function;
         //if(this.providesGradient() &amp;&amp; inputs[j].rqsGradient()){
         //    inputs[j].setGradientIsTargeted(true);
         //}
-<span class="nc" id="L66">        return inputs[j];</span>
+<span class="nc" id="L67">        return inputs[j];</span>
     }
     @Override
     public Tsr activate(Tsr[] inputs) {
-<span class="nc" id="L70">        return new Tsr(inputs, &quot;sum(I[j])&quot;);</span>
+<span class="nc" id="L71">        String exp = &quot;I[0]&quot;;</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        for(int i=1; i&lt;inputs.length; i++)exp += &quot;+I[&quot;+i+&quot;]&quot;;</span>
+<span class="nc" id="L73">        return FunctionBuilder.build(exp, false).activate(inputs);</span>
+        //return new Tsr(inputs, exp);
     }
     @Override
     public Tsr derive(Tsr[] inputs, int index, int j) {
-<span class="nc bnc" id="L74" title="All 2 branches missed.">        if (j != index) {</span>
-<span class="nc" id="L75">            return new Tsr(inputs[0].shape(), 0.0);</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        if (j != index) {</span>
+<span class="nc" id="L79">            return new Tsr(inputs[0].shape(), 0.0);</span>
         }
-<span class="nc" id="L77">        return derive(inputs, index);</span>
+<span class="nc" id="L81">        return derive(inputs, index);</span>
     }
     @Override
     public Tsr derive(Tsr[] inputs, int index) {
-<span class="nc" id="L81">        return new Tsr(inputs[0].shape(), 1.0);</span>
+<span class="nc" id="L85">        return new Tsr(inputs[0].shape(), 1.0);</span>
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public String toString() {
-<span class="fc bfc" id="L86" title="All 2 branches covered.">        return &quot;I&quot;+((this.providesGradient())?&quot;g&quot;:&quot;&quot;)+&quot;[j]&quot;;</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        return &quot;I&quot;+((this.providesGradient())?&quot;g&quot;:&quot;&quot;)+&quot;[j]&quot;;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

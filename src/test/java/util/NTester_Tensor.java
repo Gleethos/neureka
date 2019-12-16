@@ -97,7 +97,7 @@ public class NTester_Tensor extends NTester
         CPU.exec.convolve_multiply(
                 new Tsr(drnMxd, rsltData),
                 new Tsr(frstShp, frstData),
-                new Tsr(scndShp, scondData), -1
+                new Tsr(scndShp, scondData)
         );
         assertIsEqual(stringified(rsltData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;
@@ -110,10 +110,10 @@ public class NTester_Tensor extends NTester
     ){
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.fcn.indexing.shpOfCon(frstShp, scndShp);
-        CPU.exec.convolve_multiply(//inv
+        CPU.exec.convolve_multiply_inverse(//inv
                 new Tsr(frstShp, frstData),
                 (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
-                (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData),0
+                (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;
@@ -140,10 +140,10 @@ public class NTester_Tensor extends NTester
     ){
         printSessionStart("Test Tsr.indexing: tensor broadcast_template");
         int[] drnMxd  = Tsr.fcn.indexing.shpOfBrc(frstShp, scndShp);
-        CPU.exec.broadcast_multiply(//inv
+        CPU.exec.broadcast_multiply_inverse(//inv
                 new Tsr(frstShp, frstData),
                 (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
-                (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData),0
+                (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;

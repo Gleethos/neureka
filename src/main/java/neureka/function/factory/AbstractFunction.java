@@ -281,23 +281,7 @@ public abstract class AbstractFunction implements Function
                 Tsr.CPU.execute(new Tsr[]{output, input}, _id, d);
                 return output;
             } else {
-                //Tsr[] tsrs = new Tsr[1 + _src.size()];
-                //int new_d = d;
-                //boolean adjusted = false;
-                //for (int i = 1; i < tsrs.length; i++) {
-                //    tsrs[i] = _src.get(i-1).activate(inputs);
-                //    if(!adjusted && d>=0 && inputs[d]==tsrs[i]){
-                //        new_d = i-1;//The index of the derivative is adjusted here.
-                //        adjusted = true;// ...this occurs when source nodes are constants!
-                //    }
-                //}
-                //System.out.println(Function.TYPES.REGISTER[_id]);
-                //Tsr.CPU.execute(tsrs, _id, d);
-                //return inputs[0];
-                //device.execute(tsrs, _id, new_d);
-                //return (tsrs[0]==null)?tsrs[1]:tsrs[0];
-
-                //System.out.println(Function.TYPES.REGISTER[_id]);
+                //##########################
                 double[] inp = new double[inputs.length];
                 Tsr output = new Tsr(inputs[0], false);
                 //Tsr finalOutput = output;
@@ -322,6 +306,37 @@ public abstract class AbstractFunction implements Function
                         outputValue[output.i_of_i(i)] = (float)_scalar_activation(inp, j, d);
                     });
                 }
+                //##########################
+
+                //Tsr[] tsrs;
+                //if(Function.TYPES.isIndexer(_id)){
+                //    tsrs = new Tsr[1 + inputs.length];
+                //    boolean adjusted = false;
+                //    for (int i = 1; i < tsrs.length; i++) {
+                //        tsrs[i] = _src.get(0).activate(inputs, i-1);
+                //        if(!adjusted && d>=0 && inputs[d]==tsrs[i]){
+                //            adjusted = true;// ...this occurs when source nodes are constants!
+                //        }
+                //    }
+                //} else {
+                //    tsrs = new Tsr[1 + _src.size()];
+                //    boolean adjusted = false;
+                //    for (int i = 1; i < tsrs.length; i++) {
+                //        tsrs[i] = (j>=0)?_src.get(i-1).activate(inputs, j):_src.get(i-1).activate(inputs);
+                //        if(!adjusted && d>=0 && inputs[d]==tsrs[i]){
+                //            adjusted = true;// ...this occurs when source nodes are constants!
+                //        }
+                //    }
+                //}
+                //System.out.println(Function.TYPES.REGISTER[_id]);
+                ////int id = (TYPES.REGISTER[_id].contains("prod"))?TYPES.LOOKUP.get("*"):_id;
+                ////id = (TYPES.REGISTER[_id].contains("sum"))?TYPES.LOOKUP.get("+"):id;
+                ////if(!(TYPES.isIndexer(_id))){
+                //    Tsr.CPU.execute(tsrs, _id, d);
+                //}
+                //return (tsrs[0]==null)?tsrs[1]:tsrs[0];
+                //System.out.println(Function.TYPES.REGISTER[_id]);
+                //System.out.println((tsrs[0]==null)?tsrs[1]:tsrs[0]+" =?= "+output);
                 return  output;
             }
         }
@@ -395,26 +410,26 @@ public abstract class AbstractFunction implements Function
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     protected double _scalar_activation(double input, boolean derive) {
-        switch (_id) {
-            case 0:
+        switch (TYPES.REGISTER[_id]) {
+            case "relu":
                 return exec.reLu(input, derive);
-            case 1:
+            case "sig":
                 return exec.sigmoid(input, derive);
-            case 2:
+            case "tanh":
                 return exec.tanh(input, derive);
-            case 3:
+            case "quad":
                 return exec.quadratic(input, derive);
-            case 4:
+            case "lig":
                 return exec.ligmoid(input, derive);
-            case 5:
+            case "lin":
                 return exec.linear(input, derive);
-            case 6:
+            case "gaus":
                 return exec.gaussian(input, derive);
-            case 7:
+            case "abs":
                 return exec.absolute(input, derive);
-            case 8:
+            case "sin":
                 return exec.sinus(input, derive);
-            case 9:
+            case "cos":
                 return exec.cosinus(input, derive);
             default:
                 return input;
@@ -423,24 +438,24 @@ public abstract class AbstractFunction implements Function
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     protected double _scalar_activation(double[] input, int j, int d) {
-        switch (_id) {
-            case 10:
+        switch (TYPES.REGISTER[_id]) {
+            case "sum":
                 return (j < 0) ? exec.summation(input, d, _src) : exec.summation(input, j, d, _src);
-            case 11:
+            case "prod":
                 return (j < 0) ? exec.PI(input, d, _src) : exec.PI(input, j, d, _src);
-            case 12:
+            case "^":
                 return (j < 0) ? exec.power(input, d, _src) : exec.power(input, j, d, _src);
-            case 13:
+            case "/":
                 return (j < 0) ? exec.division(input, d, _src) : exec.division(input, j, d, _src);
-            case 14:
+            case "*":
                 return (j < 0) ? exec.multiplication(input, d, _src) : exec.multiplication(input, j, d, _src);
-            case 15:
+            case "%":
                 return (j < 0) ? exec.modulo(input, d, _src) : exec.modulo(input, j, d, _src);
-            case 16:
+            case "-":
                 return (j < 0) ? exec.subtraction(input, d, _src) : exec.subtraction(input, j, d, _src);
-            case 17:
+            case "+":
                 return (j < 0) ? exec.addition(input, d, _src) : exec.addition(input, j, d, _src);
-            case 18://convolve
+            case "x"://convolve
                 return (j < 0) ? exec.multiplication(input, d, _src) : exec.multiplication(input, j, d, _src);
             default:
                 return 0;

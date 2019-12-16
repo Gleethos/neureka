@@ -294,6 +294,10 @@ public class Tsr
         return _shape;
     }
 
+    public int shape(int i){
+        return _shape[i];
+    }
+
     public int rank(){
         return _shape.length;
     }
