@@ -29,11 +29,16 @@ public class FunctionConstructor
                 }
                 @Override
                 public Tsr derive(Tsr[] inputs, int d, int j) {
-                    return _tensor_activation(sources.get(0).activate(inputs, j), true);
+                    //Tsr ret = _tensor_activation(sources.get(0).activate(inputs, j), true);
+                    Tsr out = _tensor_activation(inputs, j, d);
+                    return out;
                 }
                 @Override
                 public Tsr derive(Tsr[] inputs, int d) {
-                    return _tensor_activation(sources.get(0).activate(inputs), true);
+                    //Tsr ret =  _tensor_activation(sources.get(0).activate(inputs), true);
+                    Tsr out = _tensor_activation(inputs, -1, d);
+                    //System.out.println(ret.toString()+" =?= "+out.toString());
+                    return out;
                 }
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 @Override

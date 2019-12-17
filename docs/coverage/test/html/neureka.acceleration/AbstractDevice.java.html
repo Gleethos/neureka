@@ -92,7 +92,7 @@ import neureka.function.factory.autograd.GraphNode;
 <span class="fc" id="L92">                            inner.delete();</span>
 <span class="fc" id="L93">                            exp.delete();</span>
 <span class="fc" id="L94">                        } else {</span>
-<span class="nc" id="L95">                            newTsrs = _util._subset(tsrs, 1,  1, tsrs.length-1);</span>
+<span class="nc" id="L95">                            newTsrs = _util._subset(tsrs, 1,  2, tsrs.length-2);</span>
 <span class="nc" id="L96">                            newTsrs[0] =  Tsr.fcn.create.newTsrLike(tsrs[1]);</span>
 <span class="nc bnc" id="L97" title="All 4 branches missed.">                            for(Tsr t : newTsrs) if(!t.has(GraphNode.class))t.add(new GraphNode(t, null, null, new GraphLock(null, null)));</span>
 <span class="nc" id="L98">                            Tsr exp = _execute_tensors(newTsrs, Function.TYPES.LOOKUP.get(&quot;*&quot;), -1);</span>
@@ -168,7 +168,7 @@ import neureka.function.factory.autograd.GraphNode;
 <span class="nc" id="L168">                _execute_tensor_scalar(t, value-1, Function.TYPES.LOOKUP.get(&quot;^&quot;), -1);</span>
 <span class="nc" id="L169">                _execute_tensor_scalar(t, value, Function.TYPES.LOOKUP.get(&quot;*&quot;), -1);</span>
 <span class="nc bnc" id="L170" title="All 4 branches missed.">            } else if(Function.TYPES.REGISTER[f_id]==&quot;*&quot;||Function.TYPES.REGISTER[f_id].contains(&quot;x&quot;)){</span>
-                //_execute_tensor_scalar(t, 0, Function.TYPES.LOOKUP.get(&quot;*&quot;), -1);
+<span class="nc" id="L171">                _execute_tensor_scalar(t, 0, Function.TYPES.LOOKUP.get(&quot;*&quot;), -1);//???</span>
 <span class="nc" id="L172">                _execute_tensor_scalar(t, value, Function.TYPES.LOOKUP.get(&quot;+&quot;), -1);</span>
 <span class="nc bnc" id="L173" title="All 2 branches missed.">            } else if(Function.TYPES.REGISTER[f_id]==&quot;/&quot;){</span>
 <span class="nc" id="L174">                _execute_tensor_scalar(t, 0, Function.TYPES.LOOKUP.get(&quot;*&quot;), -1);</span>

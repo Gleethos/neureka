@@ -473,6 +473,7 @@ public class DefaultJavaTests {
         tensor1 = new Tsr(-3).setRqsGradient(true);
         tensor2 = new Tsr(4).setRqsGradient(true);
         tensor3 = new Tsr(2);
+        System.out.println("...");
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1, tensor2, tensor3},
                 "(relu(i0*i1)+i1)/i2",

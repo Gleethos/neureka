@@ -67,7 +67,7 @@ import neureka.function.Function;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public double activate(final double[] inputs, int j) {
-<span class="nc" id="L70">        return inputs[_index()];</span>
+<span class="nc" id="L70">        return inputs[index()];</span>
     }
     @Override
     public double activate(final double[] inputs) {
@@ -75,7 +75,7 @@ import neureka.function.Function;
     }
     @Override
     public double derive(final double[] inputs, final int index) {
-<span class="fc bfc" id="L78" title="All 2 branches covered.">        return (index == _index()) ? 1 : 0;</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        return (index == index()) ? 1 : 0;</span>
     }
     @Override
     public double derive(double[] inputs, int index, int j) {
@@ -84,11 +84,11 @@ import neureka.function.Function;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public Tsr activate(Tsr[] inputs, int j) {
-<span class="nc" id="L87">        return _extract(inputs[_index()]);</span>
+<span class="nc" id="L87">        return _extract(inputs[index()]);</span>
     }
     @Override
     public Tsr activate(Tsr[] inputs) {
-<span class="fc" id="L91">        return _extract(inputs[_index()]);</span>
+<span class="fc" id="L91">        return _extract(inputs[index()]);</span>
     }
     @Override
     public Tsr derive(Tsr[] inputs, int index, int j) {
@@ -96,17 +96,17 @@ import neureka.function.Function;
     }
     @Override
     public Tsr derive(Tsr[] inputs, int index) {
-<span class="nc bnc" id="L99" title="All 2 branches missed.">        return (index == _index())</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        return (index == index())</span>
 <span class="nc" id="L100">                ? new Tsr(inputs[0].shape(), 1.0)</span>
 <span class="nc" id="L101">                : new Tsr(inputs[0].shape(), 0.0);</span>
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public String toString() {
-<span class="fc bfc" id="L106" title="All 2 branches covered.">        return &quot;I&quot;+((this.providesGradient())?&quot;g&quot;:&quot;&quot;)+&quot;[&quot; + _index() + &quot;]&quot;;</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        return &quot;I&quot;+((this.providesGradient())?&quot;g&quot;:&quot;&quot;)+&quot;[&quot; + index() + &quot;]&quot;;</span>
     }
 
-    private int _index(){
+    public int index(){
 <span class="fc bfc" id="L110" title="All 2 branches covered.">        return ((this.providesGradient())?(Math.abs(_index)-1):_index);</span>
     }
 

@@ -8,6 +8,7 @@ import neureka.function.factory.assembly.FunctionBuilder;
 import neureka.function.factory.autograd.GraphLock;
 import neureka.function.factory.autograd.GraphNode;
 import neureka.function.factory.implementations.FConstant;
+import neureka.function.factory.implementations.FInput;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -281,14 +282,13 @@ public abstract class AbstractFunction implements Function
                 Tsr.CPU.execute(new Tsr[]{output, input}, _id, d);
                 return output;
             } else {
-                //##########################
+
                 double[] inp = new double[inputs.length];
                 Tsr output = new Tsr(inputs[0], false);
                 //Tsr finalOutput = output;
                 double[][] data = new double[inputs.length][];
-                for(int i=0; i<data.length; i++){
-                    data[i] = inputs[i].value64();
-                }
+                for(int i=0; i<data.length; i++) data[i] = inputs[i].value64();
+
                 if(output.is64()){
                     double[] outputValue = output.value64();//.value64();
                     output.foreach((i) -> {
@@ -306,42 +306,89 @@ public abstract class AbstractFunction implements Function
                         outputValue[output.i_of_i(i)] = (float)_scalar_activation(inp, j, d);
                     });
                 }
-                //##########################
 
-                //Tsr[] tsrs;
-                //if(Function.TYPES.isIndexer(_id)){
-                //    tsrs = new Tsr[1 + inputs.length];
-                //    boolean adjusted = false;
-                //    for (int i = 1; i < tsrs.length; i++) {
-                //        tsrs[i] = _src.get(0).activate(inputs, i-1);
-                //        if(!adjusted && d>=0 && inputs[d]==tsrs[i]){
-                //            adjusted = true;// ...this occurs when source nodes are constants!
-                //        }
-                //    }
-                //} else {
-                //    tsrs = new Tsr[1 + _src.size()];
-                //    boolean adjusted = false;
-                //    for (int i = 1; i < tsrs.length; i++) {
-                //        tsrs[i] = (j>=0)?_src.get(i-1).activate(inputs, j):_src.get(i-1).activate(inputs);
-                //        if(!adjusted && d>=0 && inputs[d]==tsrs[i]){
-                //            adjusted = true;// ...this occurs when source nodes are constants!
-                //        }
-                //    }
-                //}
-                //System.out.println(Function.TYPES.REGISTER[_id]);
-                ////int id = (TYPES.REGISTER[_id].contains("prod"))?TYPES.LOOKUP.get("*"):_id;
-                ////id = (TYPES.REGISTER[_id].contains("sum"))?TYPES.LOOKUP.get("+"):id;
-                ////if(!(TYPES.isIndexer(_id))){
-                //    Tsr.CPU.execute(tsrs, _id, d);
-                //}
-                //return (tsrs[0]==null)?tsrs[1]:tsrs[0];
-                //System.out.println(Function.TYPES.REGISTER[_id]);
-                //System.out.println((tsrs[0]==null)?tsrs[1]:tsrs[0]+" =?= "+output);
+                Tsr output0 = null;
+                if(d>=0){
+                    //output0 =  _banana(inputs, d, j);
+                    //System.out.println(output0+" =?= "+output);
+                    //assert output0.toString().equals(output.toString());
+                    return  output;
+                }
+
                 return  output;
+
             }
         }
         //Todo: warning/exception.....
         //return new Tsr(inputs[0], false);//Tsr.fcn.create.newTsr(inputs[0].shape(), inputs[0].translation());
+    }
+
+    private Tsr _banana(Tsr[] inputs, int d, int j){
+        Tsr[] tsrs;
+        if(Function.TYPES.isIndexer(_id)) tsrs = new Tsr[1 +inputs.length]; else tsrs = new Tsr[1 + _src.size()];
+        if(d>=0){
+            //Chain-rule (forward ad):
+            //inner times out means:
+            //first derive source!
+            //like so:
+            if(Function.TYPES.isIndexer(_id)){
+                for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).derive(inputs, d, i-1);
+            } else {
+                for (int i = 1; i < tsrs.length; i++) tsrs[i] = (j>=0)?_src.get(i-1).derive(inputs, d, j):_src.get(i-1).derive(inputs, d);
+            }
+            //then add them all together! (is possible because of linearity...)
+            Tsr inner;
+            if(tsrs.length>2){
+                Tsr.CPU.execute(tsrs, TYPES.LOOKUP.get("+"), -1);
+                inner = tsrs[0];//this is now the inner derivative!
+            } else {
+                inner = tsrs[1];
+            }
+
+            tsrs[0] = null;
+            //then activate the source like so:
+            if(Function.TYPES.isIndexer(_id)){
+                for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).activate(inputs, i-1);
+            } else {
+                for (int i = 1; i < tsrs.length; i++) tsrs[i] = (j>=0)?_src.get(i-1).activate(inputs, j):_src.get(i-1).activate(inputs);
+            }
+
+            //get derivative index within src list:
+            for(int i=0; i<_src.size(); i++){
+                if(_src.get(i) instanceof FInput && d==((FInput)_src.get(i)).index()) {
+                    d = i;
+                    break;
+                }
+            }
+            //Use those tensors for the outer derivative:
+            Tsr.CPU.execute(tsrs, _id, d); //(d>=0)
+            //At the end:
+            //multiply inner times outer:
+            tsrs = new Tsr[]{null, inner, tsrs[0]};
+            Tsr.CPU.execute(tsrs, TYPES.LOOKUP.get("*"), -1);
+            return tsrs[0];
+        } else {
+            if(Function.TYPES.isIndexer(_id)){
+                tsrs = new Tsr[1 +inputs.length];
+                if(d<0){
+                    for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).activate(inputs, i-1);
+                } else {
+                    for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).derive(inputs, d, i-1);
+                }
+                Tsr.CPU.execute(tsrs, _id, d);
+            } else {
+                tsrs = new Tsr[1 + _src.size()];
+                if(d<0){
+                    for (int i = 1; i < tsrs.length; i++) tsrs[i] = (j>=0)?_src.get(i-1).activate(inputs, j):_src.get(i-1).activate(inputs);
+                } else {
+                    for (int i = 1; i < tsrs.length; i++) tsrs[i] = (j>=0)?_src.get(i-1).derive(inputs, d, j):_src.get(i-1).derive(inputs, d);
+                }
+                Tsr.CPU.execute(tsrs, _id, d);
+            }
+        }
+        //System.out.println(Function.TYPES.REGISTER[_id]);
+        return (tsrs[0]==null)?tsrs[1]:tsrs[0];
+
     }
 
     /**
@@ -458,7 +505,7 @@ public abstract class AbstractFunction implements Function
             case "x"://convolve
                 return (j < 0) ? exec.multiplication(input, d, _src) : exec.multiplication(input, j, d, _src);
             default:
-                return 0;
+                return _scalar_activation(input[0], d>=0);
         }
     }
 

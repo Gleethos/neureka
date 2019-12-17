@@ -92,7 +92,7 @@ public abstract class AbstractDevice implements  Device
                             inner.delete();
                             exp.delete();
                         } else {
-                            newTsrs = _util._subset(tsrs, 1,  1, tsrs.length-1);
+                            newTsrs = _util._subset(tsrs, 1,  2, tsrs.length-2);
                             newTsrs[0] =  Tsr.fcn.create.newTsrLike(tsrs[1]);
                             for(Tsr t : newTsrs) if(!t.has(GraphNode.class))t.add(new GraphNode(t, null, null, new GraphLock(null, null)));
                             Tsr exp = _execute_tensors(newTsrs, Function.TYPES.LOOKUP.get("*"), -1);
@@ -168,7 +168,7 @@ public abstract class AbstractDevice implements  Device
                 _execute_tensor_scalar(t, value-1, Function.TYPES.LOOKUP.get("^"), -1);
                 _execute_tensor_scalar(t, value, Function.TYPES.LOOKUP.get("*"), -1);
             } else if(Function.TYPES.REGISTER[f_id]=="*"||Function.TYPES.REGISTER[f_id].contains("x")){
-                //_execute_tensor_scalar(t, 0, Function.TYPES.LOOKUP.get("*"), -1);
+                _execute_tensor_scalar(t, 0, Function.TYPES.LOOKUP.get("*"), -1);//???
                 _execute_tensor_scalar(t, value, Function.TYPES.LOOKUP.get("+"), -1);
             } else if(Function.TYPES.REGISTER[f_id]=="/"){
                 _execute_tensor_scalar(t, 0, Function.TYPES.LOOKUP.get("*"), -1);

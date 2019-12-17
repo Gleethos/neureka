@@ -23,6 +23,7 @@ public class CPU extends AbstractDevice {
             case "gaus": exec.activate_gaussian(tsrs[0], tsrs[1], d);break;
             case "quad": exec.activate_quadratic(tsrs[0], tsrs[1], d);break;
             case "idy": exec.activate_identity(tsrs[0], tsrs[1], d);break;
+            case "relu": exec.activate_relu(tsrs[0], tsrs[1], d);break;
             case "sum": exec.broadcast_add(tsrs[0], tsrs[1], tsrs[2], d);break;
             case "prod": exec.broadcast_multiply(tsrs[0], tsrs[1], tsrs[2], d);break;
             //---
@@ -434,6 +435,46 @@ public class CPU extends AbstractDevice {
 
             }
         }
+
+        //---
+
+        //---
+
+        public static void activate_relu(
+                Tsr t0_drn,
+                Tsr t1_src,
+                int d
+        ) {
+            _threaded(t0_drn.size(), (start, end) -> {
+                _template.activate(
+                        t0_drn,// t1_src, null, d,
+                        start, end,
+                        _relu(t1_src, d)
+                );
+            });
+        }
+
+        private static Operator _relu(
+                Tsr t1_src, int d
+        ) {
+            double[] t1_val = t1_src.value64();
+            if (d < 0) {
+                return (t0Idx, t1Idx, t2Idx) -> {
+                    if(t1_val[t1_src.i_of_idx(t1Idx)]>=0){
+                        return t1_val[t1_src.i_of_idx(t1Idx)];
+                    }
+                    return t1_val[t1_src.i_of_idx(t1Idx)]*0.01;
+                };
+            } else {
+                return (t0Idx, t1Idx, t2Idx) -> {
+                    if(t1_val[t1_src.i_of_idx(t1Idx)]>=0){
+                        return 1;
+                    }
+                    return 0.01;
+                };
+            }
+        }
+
 
         //---
 

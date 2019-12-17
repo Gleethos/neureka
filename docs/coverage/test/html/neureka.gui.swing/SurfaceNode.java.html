@@ -651,8 +651,8 @@ public class SurfaceNode implements SurfaceObject {
                 //System.out.println(&quot;Ii:&quot;+Ii);
 <span class="fc" id="L652">                boolean connectionMoved = this.justMoved();</span>
 <span class="pc bpc" id="L653" title="1 of 4 branches missed.">                if (connection.get(Ii) != null &amp;&amp; !connectionMoved) {</span>
-<span class="pc bpc" id="L654" title="1 of 2 branches missed.">                    if ((connection.get(Ii)).justMoved()) {</span>
-<span class="nc" id="L655">                        connectionMoved = true;</span>
+<span class="fc bfc" id="L654" title="All 2 branches covered.">                    if ((connection.get(Ii)).justMoved()) {</span>
+<span class="fc" id="L655">                        connectionMoved = true;</span>
                     }
                 }
 <span class="pc bpc" id="L658" title="1 of 6 branches missed.">                if (connectionMoved || InputNode .changeOccured() || convection) {//=================================================================</span>

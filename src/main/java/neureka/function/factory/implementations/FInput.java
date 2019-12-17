@@ -67,7 +67,7 @@ public class FInput implements Function, IProvider
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public double activate(final double[] inputs, int j) {
-        return inputs[_index()];
+        return inputs[index()];
     }
     @Override
     public double activate(final double[] inputs) {
@@ -75,7 +75,7 @@ public class FInput implements Function, IProvider
     }
     @Override
     public double derive(final double[] inputs, final int index) {
-        return (index == _index()) ? 1 : 0;
+        return (index == index()) ? 1 : 0;
     }
     @Override
     public double derive(double[] inputs, int index, int j) {
@@ -84,11 +84,11 @@ public class FInput implements Function, IProvider
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public Tsr activate(Tsr[] inputs, int j) {
-        return _extract(inputs[_index()]);
+        return _extract(inputs[index()]);
     }
     @Override
     public Tsr activate(Tsr[] inputs) {
-        return _extract(inputs[_index()]);
+        return _extract(inputs[index()]);
     }
     @Override
     public Tsr derive(Tsr[] inputs, int index, int j) {
@@ -96,17 +96,17 @@ public class FInput implements Function, IProvider
     }
     @Override
     public Tsr derive(Tsr[] inputs, int index) {
-        return (index == _index())
+        return (index == index())
                 ? new Tsr(inputs[0].shape(), 1.0)
                 : new Tsr(inputs[0].shape(), 0.0);
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public String toString() {
-        return "I"+((this.providesGradient())?"g":"")+"[" + _index() + "]";
+        return "I"+((this.providesGradient())?"g":"")+"[" + index() + "]";
     }
 
-    private int _index(){
+    public int index(){
         return ((this.providesGradient())?(Math.abs(_index)-1):_index);
     }
 
