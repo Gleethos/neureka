@@ -4,12 +4,12 @@ import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.function.Function;
 import neureka.function.factory.assembly.FunctionBuilder;
-import neureka.function.factory.autograd.GraphLock;
 import neureka.function.factory.autograd.GraphNode;
 import neureka.function.factory.implementations.FConstant;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
 public abstract class AbstractFunction implements Function
 {
@@ -134,33 +134,6 @@ public abstract class AbstractFunction implements Function
     public abstract double derive(final double[] inputs, final int index);
 
     //==================================================================================================================
-    /**
-     * Responsible for handling functions with id's 0-9  (single input functions!)
-     */
-    protected Tsr _tensor_activation(Tsr input, boolean derive)
-    {
-        Tsr output = new Tsr(input, false);//Tsr.fcn.create.newTsr(input.shape(), input.translation());
-        if (!derive && !_isFlat) {
-            output.inject(FunctionBuilder.build(_id, 1, true).activate(new Tsr[]{input}));
-            output.add(input.find(GraphLock.class));
-            return output;
-        }
-        if (input.isOutsourced()) {
-            Device device = (Device) input.find(Device.class);
-            device.add(output);
-            device.execute(new Tsr[]{output, input}, _id, (derive) ? 0 : -1);
-        } else {
-            exec.foreach(
-                input, output,
-                (i, inputValue, outputValue) -> outputValue[i] = _scalar_activation(inputValue[i], derive)
-            );
-        }
-        if (!derive && _doAD) {
-            new GraphNode(output,this, new Tsr[]{input}, ((GraphNode)input.find(GraphNode.class)).lock());
-        }
-        output.add(input.find(GraphLock.class));
-        return output;
-    }
 
     /**
      * Responsible for handling functions with multiple inputs!
@@ -173,36 +146,19 @@ public abstract class AbstractFunction implements Function
     protected Tsr _tensor_activation(Tsr[] inputs, int j, int d)
     {
         /**  The code below deals with deep functions (non flat):  * */
-        if (!_isFlat)//&& d < 0
+        if (!_isFlat)
         {
             /** only flat functions can be executed **/
             if (TYPES.isFunction(_id)) {
                 if(d<0){
                     return (FunctionBuilder.build(TYPES.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).activate(inputs));
                 } else {
-                    return _newExec(inputs, d, ((j < 0) ? 0 : j));
-                    //return (FunctionBuilder.build(TYPES.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).derive(inputs, d));
+                    return _execution(inputs, d, ((j < 0) ? 0 : j), Tsr.CPU);
                 }
-
             } else {
-                int[] dx;
-                if (TYPES.isFunction(_id)||TYPES.isIndexer(_id)) {
-                    /**  SUMMATION, PI,  **/
-                    dx = new int[]{d};
-                    if(d<0) {
-                        Tsr[] tsrs = _source_activation(inputs, dx);
-                        return (FunctionBuilder.build(TYPES.REGISTER[_id] + "(I[j])", true).activate(tsrs));
-                    } else {
-                        return _dxing(dx, (di)->{
-                            return _newExec(inputs, d, j);
-                            //return (FunctionBuilder.build(TYPES.REGISTER[_id] + "(I[j])", true).derive(tsrs, di));
-                        });
-                    }
-                } else if (TYPES.isOperation(_id)) {
-                    /**  '+', '-', 'x', '*', '%', '«', '»', ',', ...  **/
+                if (TYPES.isOperation(_id)) {
+                    /*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
                     String operation = (TYPES.REGISTER[_id].length() > 1) ? TYPES.REGISTER[_id] : "";
-                    //dx = new int[_src.size()];
-                    //for(int i=0; i<dx.length; i++) dx[i] = d;
 
                     //String exp = operation;
                     if (j < 0) {
@@ -212,47 +168,12 @@ public abstract class AbstractFunction implements Function
                                 operation += "I[" + i + "]" + ((i + 1 < tsrs.length) ? TYPES.REGISTER[_id] : "");
                             }
                             return (FunctionBuilder.build(operation, _doAD).activate(tsrs));
-                        } else {
-                            return _dxing(_getSrcDx(), (di)->{
-                                return _newExec(inputs, d, j);
-                                //return (FunctionBuilder.build(exp, _doAD).derive(tsrs, di));
-                            });
-                        }
-                    } else {
-                        if(d<0){
-                            Tsr[] tsrs = _source_activation(inputs, j, null, null);
-                            return (FunctionBuilder.build(operation, _doAD).activate(tsrs, j));
-                        } else {
-                            return _dxing(_getSrcDx(), (di)->{
-                                return _newExec(inputs, d, j);
-                                //return (FunctionBuilder.build(exp, _doAD).derive(tsrs, di, j));
-                            });
                         }
                     }
+                    return _apply(()-> _execution(inputs, d, j, Tsr.CPU));
                 } else {
-                    /**  Tensor shape translation:  **/
-                    dx = new int[_src.size()];
-                    for(int i=0; i<dx.length; i++) dx[i] = d;
-                    Tsr[] tsrs = _source_activation(inputs, j, new int[]{1}, null);
-                    if (j < 0) {
-                        if(d<0){
-                            return FunctionBuilder.build(_id, tsrs.length, _doAD).activate(tsrs);
-                        } else {
-                            return _dxing(dx, (di)->{
-                                return _newExec(tsrs, d, j);
-                                //return FunctionBuilder.build(_id, tsrs.length, _doAD).derive(tsrs, di);
-                            });
-                        }
-                    } else {
-                        if(d<0){
-                            return FunctionBuilder.build(_id, tsrs.length, _doAD).activate(tsrs, j);
-                        } else {
-                            return _dxing(dx, (di)->{
-                                return _newExec(tsrs, d, j);
-                                //return FunctionBuilder.build(_id, tsrs.length, _doAD).derive(tsrs, di, j);
-                            });
-                        }
-                    }
+                    /*  Tensor shape translation:  */
+                    return _apply(()-> _execution(inputs, d, j, Tsr.CPU));
                 }
             }
         } else {
@@ -266,15 +187,21 @@ public abstract class AbstractFunction implements Function
         }
     }
 
-
-    private Tsr _dxing(int[] dx, java.util.function.Function<Integer, Tsr> actor){
+    private Tsr _apply(Supplier<Tsr> actor){
         Tsr out = null;
+        int[] dx = new int[_src.size()];
+        for (int i = 0; i < _src.size(); i++) {//constants need to be figured out!
+            if(dx!=null){
+                //d = (dx[i]>=0)?dx[i]:d;
+                dx[i] = (_src.get(i).dependsOn(dx[i]))?i:-1;
+            }
+        }
         for(int di : dx){
             if(di>=0){
                 if(out==null){
-                    out = actor.apply(di);
+                    out = actor.get();
                 } else {
-                    Tsr.CPU.execute(new Tsr[]{null, actor.apply(di), out}, TYPES.LOOKUP.get("+"), -1);
+                    Tsr.CPU.execute(new Tsr[]{null, actor.get(), out}, TYPES.LOOKUP.get("+"), -1);
                 }
             }
         }
@@ -287,18 +214,7 @@ public abstract class AbstractFunction implements Function
         boolean onSameDevice = _shareGuestDevice(inputs) && TYPES.REGISTER[_id] != "," && !(TYPES.isConvection(_id) && d > -1);
         if (onSameDevice)
         {
-            Tsr[] tsrs = new Tsr[1 + _src.size()];
-            int new_d = d;
-            boolean adjusted = false;
-            for (int i = 1; i < tsrs.length; i++) {
-                tsrs[i] = _src.get(i-1).activate(inputs);
-                if(!adjusted && d>=0 && inputs[d]==tsrs[i]){
-                    new_d = i-1;//The index of the derivative is adjusted here.
-                    adjusted = true;// ...this occurs when source nodes are constants!
-                }
-            }
-            device.execute(tsrs, _id, new_d);
-            return (tsrs[0]==null)?tsrs[1]:tsrs[0];
+            return  _apply(()-> _execution(inputs, d, j, device));
         }
         else
         {
@@ -323,13 +239,8 @@ public abstract class AbstractFunction implements Function
                     } else {
                         return tsrs[0];
                     }
-                } else {//Todo: What then? :
-                    if (d == 0) {
-                        return (_src.get(1).activate(inputs));
-                    } else {
-                        return (_src.get(0).activate(inputs));
-                    }
                 }
+                return null;
             } else if (TYPES.REGISTER[_id] == ",") {
                 int[] newForm = new int[_src.size() - 1];
                 for (int i = 0; i < _src.size() - 1; i++) {
@@ -347,54 +258,13 @@ public abstract class AbstractFunction implements Function
                 }
                 Tsr t = inputs[inputs.length - 1];
                 return Tsr.fcn.exec.reshaped(t, newForm, true);//t.reshape(newForm);
-            } else if(TYPES.REGISTER[_id]=="<" || TYPES.REGISTER[_id]==">") {
-                Tsr output = _src.get(0).activate(inputs);
-                Tsr input =  _src.get(1).activate(inputs);
-                Tsr.CPU.execute(new Tsr[]{output, input}, _id, d);
-                return output;
             } else {
-
-                double[] inp = new double[inputs.length];
-                Tsr output = new Tsr(inputs[0], false);
-                //Tsr finalOutput = output;
-                double[][] data = new double[inputs.length][];
-                for(int i=0; i<data.length; i++) data[i] = inputs[i].value64();
-
-                if(output.is64()){
-                    double[] outputValue = output.value64();//.value64();
-                    output.foreach((i) -> {
-                        for (int ii = 0; ii < inputs.length; ii++) {
-                            inp[ii] = data[ii][inputs[ii].i_of_i(i)];//ids[ii]];//i
-                        }
-                        outputValue[output.i_of_i(i)] = _scalar_activation(inp, j, d);
-                    });
-                } else {
-                    float[] outputValue = output.value32();//.value64();
-                    output.foreach((i) -> {
-                        for (int ii = 0; ii < inputs.length; ii++) {
-                            inp[ii] = data[ii][inputs[ii].i_of_i(i)];//ids[ii]];//i
-                        }
-                        outputValue[output.i_of_i(i)] = (float)_scalar_activation(inp, j, d);
-                    });
-                }
-
-                Tsr output0 = null;
-                if(true||d>=0){
-                    output0 =  _newExec(inputs, d, j);
-                    System.out.println(output0+" =?= "+output);
-                    //assert output0.toString().equals(output.toString());
-                    return  output0;
-                }
-
-                return  output;
-
+                return  _apply(()-> _execution(inputs, d, j, Tsr.CPU));
             }
         }
-        //Todo: warning/exception.....
-        //return new Tsr(inputs[0], false);//Tsr.fcn.create.newTsr(inputs[0].shape(), inputs[0].translation());
     }
 
-    private Tsr _newExec(Tsr[] inputs, int d, int j){
+    private Tsr _execution(Tsr[] inputs, int d, int j, Device device){
         Tsr[] tsrs;
         if(Function.TYPES.isIndexer(_id)) tsrs = new Tsr[1 +inputs.length]; else tsrs = new Tsr[1 + _src.size()];
         if(d>=0){
@@ -423,7 +293,6 @@ public abstract class AbstractFunction implements Function
             } else {
                 for (int i = 1; i < tsrs.length; i++) tsrs[i] = (j>=0)?_src.get(i-1).activate(inputs, j):_src.get(i-1).activate(inputs);
             }
-
             //get derivative index within src list:
             for(int i=0; i<_src.size(); i++){
                 if(_src.get(i).dependsOn(d)&&!TYPES.isIndexer(_id)) {
@@ -432,11 +301,11 @@ public abstract class AbstractFunction implements Function
                 }
             }
             //Use those tensors for the outer derivative:
-            Tsr.CPU.execute(tsrs, _id, d); //(d>=0)
+            device.execute(tsrs, _id, d); //(d>=0)
             //At the end:
             //multiply inner times outer:
             tsrs = new Tsr[]{null, inner, tsrs[0]};
-            Tsr.CPU.execute(tsrs, TYPES.LOOKUP.get("*"), -1);
+            device.execute(tsrs, TYPES.LOOKUP.get("*"), -1);
             return tsrs[0];
         } else {
             if(Function.TYPES.isIndexer(_id)){
@@ -446,7 +315,7 @@ public abstract class AbstractFunction implements Function
                 } else {
                     for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).derive(inputs, d, i-1);
                 }
-                Tsr.CPU.execute(tsrs, _id, d);
+                device.execute(tsrs, _id, d);
             } else {
                 tsrs = new Tsr[1 + _src.size()];
                 if(d<0){
@@ -454,43 +323,11 @@ public abstract class AbstractFunction implements Function
                 } else {
                     for (int i = 1; i < tsrs.length; i++) tsrs[i] = (j>=0)?_src.get(i-1).derive(inputs, d, j):_src.get(i-1).derive(inputs, d);
                 }
-                Tsr.CPU.execute(tsrs, _id, d);
+                device.execute(tsrs, _id, d);
             }
         }
-        //System.out.println(Function.TYPES.REGISTER[_id]);
         return (tsrs[0]==null)?tsrs[1]:tsrs[0];
 
-    }
-
-    /**
-     * **/
-    private Tsr[] _source_activation(Tsr[] input, int[] dx) {
-        Tsr[] tsrs = new Tsr[input.length];
-        int d = -1;
-        if(dx!=null&&dx[0]>=0){
-            d = (dx[0]>=0)?dx[0]:d;
-            dx[0] = (_src.get(0).dependsOn(dx[0]))?0:-1;
-        }
-        for (int i = 0; i < tsrs.length; i++) {
-            if(d<0){
-                tsrs[i] = _src.get(0).activate(input, i);
-            } else {
-                tsrs[i] = _src.get(0).derive(input, d, i);
-            }
-        }
-
-        return tsrs;
-    }
-
-    private int[] _getSrcDx(){
-        int[] dx = new int[_src.size()];
-        for (int i = 0; i < _src.size(); i++) {//constants need to be figured out!
-            if(dx!=null){
-                //d = (dx[i]>=0)?dx[i]:d;
-                dx[i] = (_src.get(i).dependsOn(dx[i]))?i:-1;
-            }
-        }
-        return dx;
     }
 
     private Tsr[] _source_activation(Tsr[] input, int j, int[] templateShape, int[] dx) {

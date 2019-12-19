@@ -46,11 +46,11 @@ import neureka.function.factory.assembly.FunctionBuilder;
     }
     @Override
     public double activate(final double[] inputs) {
-<span class="fc" id="L49">        double sum = 0;</span>
-<span class="fc bfc" id="L50" title="All 2 branches covered.">        for (int Ii = 0; Ii &lt; inputs.length; Ii++) {</span>
-<span class="fc" id="L51">            sum += activate(inputs, Ii);</span>
+<span class="nc" id="L49">        double sum = 0;</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">        for (int Ii = 0; Ii &lt; inputs.length; Ii++) {</span>
+<span class="nc" id="L51">            sum += activate(inputs, Ii);</span>
         }
-<span class="fc" id="L53">        return sum;</span>
+<span class="nc" id="L53">        return sum;</span>
     }
     @Override
     public double derive(final double[] inputs, final int index) {

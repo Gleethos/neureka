@@ -243,7 +243,7 @@ public class Tsr
 <span class="pc bpc" id="L243" title="2 of 6 branches missed.">        if (_value == null &amp;&amp; this.isOutsourced() &amp;&amp; this.has(Device.class)) {</span>
 <span class="fc" id="L244">            return ((Device) this.find(Device.class)).value64Of(this);</span>
         }
-<span class="fc bfc" id="L246" title="All 2 branches covered.">        double[] newValue = (this.is64())?(double[])_value: DataHelper.floatToDouble((float[])_value);</span>
+<span class="pc bpc" id="L246" title="1 of 2 branches missed.">        double[] newValue = (this.is64())?(double[])_value: DataHelper.floatToDouble((float[])_value);</span>
 <span class="fc bfc" id="L247" title="All 2 branches covered.">        if (this.isVirtual()) {</span>
 <span class="fc" id="L248">            newValue = new double[this.size()];</span>
 <span class="pc bpc" id="L249" title="1 of 2 branches missed.">            double[] value = (this.is64())?(double[])_value:DataHelper.floatToDouble((float[])_value);</span>
@@ -274,7 +274,7 @@ public class Tsr
 <span class="pc bpc" id="L274" title="2 of 6 branches missed.">        if (_value == null &amp;&amp; this.isOutsourced() &amp;&amp; this.has(Device.class)) {</span>
 <span class="fc" id="L275">            return ((Device) this.find(Device.class)).value32Of(this);</span>
         }
-<span class="fc bfc" id="L277" title="All 2 branches covered.">        float[] newValue = (this.is64())?DataHelper.doubleToFloat((double[])_value):(float[])_value;</span>
+<span class="pc bpc" id="L277" title="1 of 2 branches missed.">        float[] newValue = (this.is64())?DataHelper.doubleToFloat((double[])_value):(float[])_value;</span>
 <span class="pc bpc" id="L278" title="1 of 2 branches missed.">        if (this.isVirtual()) {</span>
 <span class="nc" id="L279">            newValue = new float[this.size()];</span>
 <span class="nc bnc" id="L280" title="All 2 branches missed.">            for (int i = 0; i &lt; newValue.length; i++) {</span>
@@ -728,11 +728,11 @@ public class Tsr
      * @param tensor which acts as template for this new tensor.
      */
 <span class="fc" id="L730">    public Tsr(Tsr tensor, boolean cpy) {</span>
-<span class="fc bfc" id="L731" title="All 2 branches covered.">        _value = (tensor.is64())?new double[tensor.size()]:new float[tensor.size()];</span>
+<span class="pc bpc" id="L731" title="1 of 2 branches missed.">        _value = (tensor.is64())?new double[tensor.size()]:new float[tensor.size()];</span>
 <span class="fc" id="L732">        _components = null;</span>
 <span class="fc" id="L733">        _flags = 0;</span>
-<span class="fc bfc" id="L734" title="All 2 branches covered.">        int length = (tensor.is64())?((double[])_value).length:((float[])_value).length;</span>
-<span class="fc bfc" id="L735" title="All 2 branches covered.">        if(cpy){</span>
+<span class="pc bpc" id="L734" title="1 of 2 branches missed.">        int length = (tensor.is64())?((double[])_value).length:((float[])_value).length;</span>
+<span class="pc bpc" id="L735" title="1 of 2 branches missed.">        if(cpy){</span>
 <span class="pc bpc" id="L736" title="1 of 2 branches missed.">            if(tensor.is64()){</span>
 <span class="fc" id="L737">                double[] value = tensor.value64();</span>
 <span class="fc bfc" id="L738" title="All 2 branches covered.">                for (int i = 0; i &lt; length; i++) {</span>
@@ -755,7 +755,7 @@ public class Tsr
     public Tsr initialShape(int[] newShape) {
 <span class="fc" id="L756">        int size = fcn.indexing.szeOfShp(newShape);</span>
 <span class="pc bpc" id="L757" title="1 of 2 branches missed.">        _value = (_value==null)?new double[size]:_value;</span>
-<span class="fc bfc" id="L758" title="All 2 branches covered.">        int length = (this.is64())?((double[])_value).length:((float[])_value).length;</span>
+<span class="pc bpc" id="L758" title="1 of 2 branches missed.">        int length = (this.is64())?((double[])_value).length:((float[])_value).length;</span>
 <span class="pc bpc" id="L759" title="1 of 4 branches missed.">        if (size != length &amp;&amp; !this.isVirtual()) {</span>
 <span class="nc" id="L760">            throw new IllegalArgumentException(&quot;[Tsr][_iniShape]: Size of shape does not match stored value64!&quot;);</span>
         }
@@ -1032,19 +1032,19 @@ public class Tsr
     //ELEMENTARY OPERATIONS:
     //=========================
     public Tsr foreach(Consumer&lt;Integer&gt; action) {
-<span class="fc" id="L1035">        this.setIsVirtual(false);</span>
-<span class="fc" id="L1036">        int sze = this.size();</span>
-<span class="fc" id="L1037">        boolean doThreading = false;</span>
-<span class="pc bpc" id="L1038" title="1 of 2 branches missed.">        if(sze&gt;128){</span>
+<span class="nc" id="L1035">        this.setIsVirtual(false);</span>
+<span class="nc" id="L1036">        int sze = this.size();</span>
+<span class="nc" id="L1037">        boolean doThreading = false;</span>
+<span class="nc bnc" id="L1038" title="All 2 branches missed.">        if(sze&gt;128){</span>
 <span class="nc bnc" id="L1039" title="All 2 branches missed.">            doThreading = ((sze/Runtime.getRuntime().availableProcessors()) &gt; 32);</span>
         }
-<span class="pc bpc" id="L1041" title="1 of 2 branches missed.">        if(!doThreading){</span>
-<span class="fc" id="L1042">            int[] idx = new int[this.shape().length];</span>
-<span class="fc bfc" id="L1043" title="All 2 branches covered.">            for (int i = 0; i &lt; sze; i++) {</span>
-<span class="fc" id="L1044">                fcn.indexing.increment(idx, this.shape());</span>
-<span class="fc" id="L1045">                action.accept(i);</span>
+<span class="nc bnc" id="L1041" title="All 2 branches missed.">        if(!doThreading){</span>
+<span class="nc" id="L1042">            int[] idx = new int[this.shape().length];</span>
+<span class="nc bnc" id="L1043" title="All 2 branches missed.">            for (int i = 0; i &lt; sze; i++) {</span>
+<span class="nc" id="L1044">                fcn.indexing.increment(idx, this.shape());</span>
+<span class="nc" id="L1045">                action.accept(i);</span>
             }
-<span class="fc" id="L1047">        } else {</span>
+<span class="nc" id="L1047">        } else {</span>
 <span class="nc" id="L1048">            int threadCount = Runtime.getRuntime().availableProcessors();</span>
 <span class="nc" id="L1049">            final int chunk=(sze/threadCount);</span>
 <span class="nc" id="L1050">            Thread[] th = new Thread[threadCount];</span>
@@ -1067,7 +1067,7 @@ public class Tsr
 
 
 
-<span class="fc" id="L1070">        return this;</span>
+<span class="nc" id="L1070">        return this;</span>
     }
 
     //###########

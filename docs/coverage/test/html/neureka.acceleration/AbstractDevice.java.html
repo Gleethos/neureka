@@ -24,7 +24,7 @@ import neureka.function.factory.autograd.GraphNode;
     {
 <span class="fc bfc" id="L25" title="All 2 branches covered.">        if(Function.TYPES.REGISTER[f_id]==&quot;&lt;&quot;)</span>
         {
-<span class="fc bfc" id="L27" title="All 2 branches covered.">            int offset = (tsrs[0]==null)?1:0;</span>
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">            int offset = (tsrs[0]==null)?1:0;</span>
 <span class="fc" id="L28">            _execute_tensors(new Tsr[]{tsrs[0+offset], tsrs[1+offset]}, Function.TYPES.LOOKUP.get(&quot;idy&quot;), -1);</span>
 <span class="fc" id="L29">        }</span>
 <span class="fc bfc" id="L30" title="All 2 branches covered.">        else if(Function.TYPES.REGISTER[f_id]==&quot;&gt;&quot;)</span>
