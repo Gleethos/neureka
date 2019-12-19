@@ -32,8 +32,8 @@ public class GridSpaceMap extends AbstractSpaceMap {
 <span class="nc" id="L32">		TLNode = node;</span>
 <span class="nc" id="L33">	}</span>
 	public void setTRNode(AbstractSpaceMap node) {
-<span class="fc" id="L35">		TRNode = node;</span>
-<span class="fc" id="L36">	}</span>
+<span class="nc" id="L35">		TRNode = node;</span>
+<span class="nc" id="L36">	}</span>
 	public void setBLNode(AbstractSpaceMap node) {
 <span class="fc" id="L38">		BLNode = node;</span>
 <span class="fc" id="L39">	}</span>
@@ -59,25 +59,25 @@ public class GridSpaceMap extends AbstractSpaceMap {
 <span class="fc bfc" id="L59" title="All 4 branches covered.">		else if(TP&lt;=Y &amp;&amp; Y&lt;=BP){isBranchable=false;}</span>
 
 <span class="fc bfc" id="L61" title="All 2 branches covered.">		if(  (Math.max(Math.abs(X-LP),Math.abs(X-RP))&gt;size </span>
-<span class="fc bfc" id="L62" title="All 2 branches covered.">		   || Math.max(Math.abs(Y-TP),Math.abs(Y-BP))&gt;size)) </span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">		   || Math.max(Math.abs(Y-TP),Math.abs(Y-BP))&gt;size)) </span>
 		{
-<span class="pc bpc" id="L64" title="1 of 4 branches missed.">			if(RP&lt;(X+size) &amp;&amp; BP&lt;(Y+size)) {</span>
+<span class="pc bpc" id="L64" title="3 of 4 branches missed.">			if(RP&lt;(X+size) &amp;&amp; BP&lt;(Y+size)) {</span>
 <span class="nc" id="L65">				GridSpaceMap newBranch = new GridSpaceMap((X-size),(Y-size), 2*size);</span>
 <span class="nc" id="L66">				newBranch.setBRNode(this);</span>
 <span class="nc" id="L67">				newBranch = (GridSpaceMap)newBranch.addAndUpdate(object);//Stack fucking overflow?!?</span>
 <span class="nc" id="L68">				return newBranch;</span>
 			}
-<span class="pc bpc" id="L70" title="1 of 4 branches missed.">			else if(LP&gt;(X-size) &amp;&amp; BP&lt;(Y+size)) {</span>
+<span class="pc bpc" id="L70" title="2 of 4 branches missed.">			else if(LP&gt;(X-size) &amp;&amp; BP&lt;(Y+size)) {</span>
 <span class="fc" id="L71">				GridSpaceMap newBranch = new GridSpaceMap((X+size),(Y-size), 2*size);</span>
 <span class="fc" id="L72">				newBranch.setBLNode(this);</span>
 <span class="fc" id="L73">				newBranch = (GridSpaceMap)newBranch.addAndUpdate(object);</span>
 <span class="fc" id="L74">				return newBranch;</span>
 			}
-<span class="pc bpc" id="L76" title="2 of 4 branches missed.">			else if(RP&lt;(X+size) &amp;&amp; TP&gt;(Y-size)) {</span>
-<span class="fc" id="L77">				GridSpaceMap newBranch = new GridSpaceMap((X-size),(Y+size), 2*size);</span>
-<span class="fc" id="L78">				newBranch.setTRNode(this);</span>
-<span class="fc" id="L79">				newBranch = (GridSpaceMap)newBranch.addAndUpdate(object);</span>
-<span class="fc" id="L80">				return newBranch;</span>
+<span class="nc bnc" id="L76" title="All 4 branches missed.">			else if(RP&lt;(X+size) &amp;&amp; TP&gt;(Y-size)) {</span>
+<span class="nc" id="L77">				GridSpaceMap newBranch = new GridSpaceMap((X-size),(Y+size), 2*size);</span>
+<span class="nc" id="L78">				newBranch.setTRNode(this);</span>
+<span class="nc" id="L79">				newBranch = (GridSpaceMap)newBranch.addAndUpdate(object);</span>
+<span class="nc" id="L80">				return newBranch;</span>
 			}
 <span class="nc bnc" id="L82" title="All 4 branches missed.">			else if(LP&gt;(X-size) &amp;&amp; TP&gt;(Y-size)) {</span>
 <span class="nc" id="L83">				GridSpaceMap newBranch = new GridSpaceMap((X+size),(Y+size), 2*size);</span>
@@ -147,7 +147,7 @@ public class GridSpaceMap extends AbstractSpaceMap {
 	{
 		//if(object==null) {return this;}
 		//Why not check if branchable? -&gt; The size f the object might have changed! -&gt; not on edge anymore
-<span class="fc bfc" id="L150" title="All 2 branches covered.">		if(Elements!=null) </span>
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">		if(Elements!=null) </span>
 		{
 <span class="fc bfc" id="L152" title="All 2 branches covered.">			if(Elements.remove(object))</span>
 			{
@@ -177,18 +177,18 @@ public class GridSpaceMap extends AbstractSpaceMap {
 	private synchronized AbstractSpaceMap bestSelf()
 	{
 <span class="fc" id="L179">		byte counter=0;</span>
-<span class="fc bfc" id="L180" title="All 2 branches covered.">		if(TLNode  ==null) {counter++;}</span>
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">		if(TLNode  ==null) {counter++;}</span>
 <span class="fc bfc" id="L181" title="All 2 branches covered.">		if(TRNode  ==null) {counter++;}</span>
 <span class="fc bfc" id="L182" title="All 2 branches covered.">		if(BLNode  ==null) {counter++;}</span>
 <span class="fc bfc" id="L183" title="All 2 branches covered.">		if(BRNode  ==null) {counter++;}</span>
 <span class="fc bfc" id="L184" title="All 2 branches covered.">		if(Elements==null) {counter++;}</span>
 <span class="pc bpc" id="L185" title="1 of 2 branches missed.">		if(counter==5) {return null;}</span>
 		//If the node is a branch: return ... else getFrom leave elements and put them into an new branch!
-<span class="pc bpc" id="L187" title="1 of 4 branches missed.">		if(counter==4 &amp;&amp; Elements==null) </span>
+<span class="pc bpc" id="L187" title="3 of 4 branches missed.">		if(counter==4 &amp;&amp; Elements==null) </span>
 		{
-<span class="pc bpc" id="L189" title="1 of 2 branches missed.">			if(TLNode!=null) {return TLNode;}</span>
-<span class="pc bpc" id="L190" title="1 of 2 branches missed.">			if(TRNode!=null) {return TRNode;}</span>
-<span class="pc bpc" id="L191" title="1 of 2 branches missed.">			if(BLNode!=null) {return BLNode;}</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">			if(TLNode!=null) {return TLNode;}</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">			if(TRNode!=null) {return TRNode;}</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">			if(BLNode!=null) {return BLNode;}</span>
 <span class="nc bnc" id="L192" title="All 2 branches missed.">			if(BRNode!=null) {return BRNode;}</span>
 		}
 <span class="fc" id="L194">		return this;</span>
@@ -393,14 +393,14 @@ public class GridSpaceMap extends AbstractSpaceMap {
 	public synchronized boolean applyToAll(MapAction Actor) {
 		
 <span class="fc" id="L395">		boolean[] actorCheck = {false};</span>
-<span class="fc bfc" id="L396" title="All 2 branches covered.">		if(Elements!=null) </span>
+<span class="pc bpc" id="L396" title="1 of 2 branches missed.">		if(Elements!=null) </span>
 		{//System.out.println(&quot;Branch node -&gt; apply to all! START&quot;);
 <span class="fc" id="L398">			Elements.forEach((current)-&gt;{</span>
 <span class="fc" id="L399">				boolean check = Actor.act(current);</span>
 <span class="pc bpc" id="L400" title="1 of 2 branches missed.">				if(check) {actorCheck[0]=true;}</span>
 <span class="fc" id="L401">			});</span>
 		}
-<span class="pc bpc" id="L403" title="1 of 4 branches missed.">		if(TLNode!=null) {if(TLNode.applyToAll(Actor)) {actorCheck[0]=true;}}</span>
+<span class="pc bpc" id="L403" title="2 of 4 branches missed.">		if(TLNode!=null) {if(TLNode.applyToAll(Actor)) {actorCheck[0]=true;}}</span>
 <span class="pc bpc" id="L404" title="1 of 4 branches missed.">		if(TRNode!=null) {if(TRNode.applyToAll(Actor)) {actorCheck[0]=true;}}</span>
 <span class="pc bpc" id="L405" title="1 of 4 branches missed.">		if(BLNode!=null) {if(BLNode.applyToAll(Actor)) {actorCheck[0]=true;}}</span>
 <span class="pc bpc" id="L406" title="1 of 4 branches missed.">		if(BRNode!=null) {if(BRNode.applyToAll(Actor)) {actorCheck[0]=true;}}</span>
@@ -491,12 +491,12 @@ public class GridSpaceMap extends AbstractSpaceMap {
 	public synchronized LinkedList&lt;SurfaceObject&gt; getAllWithin(double[] frame)
 	{
 <span class="fc" id="L493">		LinkedList&lt;SurfaceObject&gt; List = new LinkedList&lt;SurfaceObject&gt;();</span>
-<span class="fc bfc" id="L494" title="All 2 branches covered.">		if(Elements!=null){</span>
+<span class="pc bpc" id="L494" title="1 of 2 branches missed.">		if(Elements!=null){</span>
 <span class="fc" id="L495">			List.addAll(Elements);</span>
 		}
 <span class="fc" id="L497">		double LP = frame[0]; double RP = frame[1];</span>
 <span class="fc" id="L498">		double TP = frame[2]; double BP = frame[3];</span>
-<span class="fc bfc" id="L499" title="All 6 branches covered.">		if(TLNode!=null &amp;&amp; LP&lt;(X) &amp;&amp; TP&lt;(Y)) {</span>
+<span class="pc bpc" id="L499" title="1 of 6 branches missed.">		if(TLNode!=null &amp;&amp; LP&lt;(X) &amp;&amp; TP&lt;(Y)) {</span>
 <span class="fc" id="L500">			List.addAll(TLNode.getAllWithin(frame));</span>
 		}
 <span class="pc bpc" id="L502" title="1 of 6 branches missed.">		if(TRNode!=null &amp;&amp; RP&gt;(X) &amp;&amp; TP&lt;(Y)) {</span>
@@ -505,8 +505,8 @@ public class GridSpaceMap extends AbstractSpaceMap {
 <span class="pc bpc" id="L505" title="1 of 6 branches missed.">		if(BLNode!=null &amp;&amp; LP&lt;(X) &amp;&amp; BP&gt;(Y)) {</span>
 <span class="fc" id="L506">			List.addAll(BLNode.getAllWithin(frame));</span>
 		}
-<span class="fc bfc" id="L508" title="All 6 branches covered.">		if(BRNode!=null &amp;&amp; RP&gt;(X) &amp;&amp; TP&gt;(Y)) {</span>
-<span class="fc" id="L509">			List.addAll(BRNode.getAllWithin(frame));</span>
+<span class="pc bpc" id="L508" title="1 of 6 branches missed.">		if(BRNode!=null &amp;&amp; RP&gt;(X) &amp;&amp; TP&gt;(Y)) {</span>
+<span class="nc" id="L509">			List.addAll(BRNode.getAllWithin(frame));</span>
 		}
 <span class="fc" id="L511">		return List;</span>
 	}
@@ -540,7 +540,7 @@ public class GridSpaceMap extends AbstractSpaceMap {
 	public synchronized boolean applyToAllWithin(double[] frame, MapAction Actor) 
 	{
 <span class="fc" id="L542">		boolean[] check = {false};</span>
-<span class="fc bfc" id="L543" title="All 2 branches covered.">		if(Elements!=null)</span>
+<span class="pc bpc" id="L543" title="1 of 2 branches missed.">		if(Elements!=null)</span>
 		{
 <span class="fc" id="L545">				Elements.forEach(</span>
 				(o)-&gt;
@@ -554,10 +554,10 @@ public class GridSpaceMap extends AbstractSpaceMap {
 					
 <span class="fc" id="L555">				});</span>
 		}
-<span class="fc bfc" id="L557" title="All 4 branches covered.">		if(TLNode!=null) {if(TLNode.applyToAllWithin(frame,Actor)) {check[0]=true;}}</span>
-<span class="pc bpc" id="L558" title="1 of 4 branches missed.">		if(TRNode!=null) {if(TRNode.applyToAllWithin(frame,Actor)) {check[0]=true;}}</span>
+<span class="pc bpc" id="L557" title="2 of 4 branches missed.">		if(TLNode!=null) {if(TLNode.applyToAllWithin(frame,Actor)) {check[0]=true;}}</span>
+<span class="fc bfc" id="L558" title="All 4 branches covered.">		if(TRNode!=null) {if(TRNode.applyToAllWithin(frame,Actor)) {check[0]=true;}}</span>
 <span class="pc bpc" id="L559" title="1 of 4 branches missed.">		if(BLNode!=null) {if(BLNode.applyToAllWithin(frame,Actor)) {check[0]=true;}}</span>
-<span class="fc bfc" id="L560" title="All 4 branches covered.">		if(BRNode!=null) {if(BRNode.applyToAllWithin(frame,Actor)) {check[0]=true;}}</span>
+<span class="pc bpc" id="L560" title="1 of 4 branches missed.">		if(BRNode!=null) {if(BRNode.applyToAllWithin(frame,Actor)) {check[0]=true;}}</span>
 <span class="fc" id="L561">		return check[0];</span>
 	}
 		
@@ -795,7 +795,7 @@ public class GridSpaceMap extends AbstractSpaceMap {
 					(k,o)-&gt;
 					{
 <span class="pc bpc" id="L797" title="1 of 4 branches missed.">						if(o.getRightPeripheral()&gt;frame[0]&amp;&amp;o.getLeftPeripheral()&lt;frame[2]</span>
-<span class="fc bfc" id="L798" title="All 4 branches covered.">						 &amp;&amp;o.getBottomPeripheral()&gt;frame[1]&amp;&amp;o.getTopPeripheral()&lt;frame[3]) </span>
+<span class="pc bpc" id="L798" title="1 of 4 branches missed.">						 &amp;&amp;o.getBottomPeripheral()&gt;frame[1]&amp;&amp;o.getTopPeripheral()&lt;frame[3]) </span>
 						{
 <span class="pc bpc" id="L800" title="1 of 2 branches missed.">							if(Actor.act(o)) </span>
 <span class="fc" id="L801">							{check[0]=true;}</span>

@@ -26,6 +26,12 @@ public class FInput implements Function, IProvider
         return "input";
     }
 
+    @Override
+    public boolean dependsOn(int index){
+        if(index()==index) return true;
+        return false;
+    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public Function newBuild(final String equation) {

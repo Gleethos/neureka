@@ -25,69 +25,73 @@ import neureka.function.Function;
 <span class="nc" id="L25">		return &quot;_value&quot;;</span>
 	}
 
+	@Override
+	public boolean dependsOn(int index){
+<span class="fc" id="L30">		return false;</span>
+	}
 
 	@Override
 	public Function newBuild(String expression)
 	{	
-<span class="fc" id="L32">		String number = &quot;&quot;;</span>
-<span class="fc bfc" id="L33" title="All 2 branches covered.">		for(int i=0; i&lt;expression.length(); i++) </span>
+<span class="fc" id="L36">		String number = &quot;&quot;;</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">		for(int i=0; i&lt;expression.length(); i++) </span>
 		{
-<span class="fc bfc" id="L35" title="All 2 branches covered.">			if(expression.charAt(i)&gt;='0' </span>
-<span class="pc bpc" id="L36" title="1 of 2 branches missed.">			|| expression.charAt(i)&lt;='9' </span>
-<span class="nc bnc" id="L37" title="All 2 branches missed.">			|| expression.charAt(i)=='.' </span>
-<span class="nc bnc" id="L38" title="All 2 branches missed.">			|| expression.charAt(i)=='-' </span>
-<span class="nc bnc" id="L39" title="All 2 branches missed.">			|| expression.charAt(i)=='+') </span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">			if(expression.charAt(i)&gt;='0' </span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">			|| expression.charAt(i)&lt;='9' </span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">			|| expression.charAt(i)=='.' </span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">			|| expression.charAt(i)=='-' </span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">			|| expression.charAt(i)=='+') </span>
 			{
-<span class="fc" id="L41">				number += expression.charAt(i);</span>
+<span class="fc" id="L45">				number += expression.charAt(i);</span>
 			}
 		}
-<span class="fc" id="L44">		_value = Double.parseDouble(number);</span>
-<span class="fc" id="L45">		return this;</span>
+<span class="fc" id="L48">		_value = Double.parseDouble(number);</span>
+<span class="fc" id="L49">		return this;</span>
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
     public double activate(final double[] inputs, int j) {
-<span class="fc" id="L50">    	return _value;</span>
+<span class="fc" id="L54">    	return _value;</span>
     }
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
 	public double activate(double[] inputs) {
-<span class="fc" id="L55">		return _value;</span>
+<span class="fc" id="L59">		return _value;</span>
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
 	public double derive(double[] inputs, int index) {
-<span class="fc" id="L60">		return 0;</span>
+<span class="fc" id="L64">		return 0;</span>
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
 	public double derive(double[] inputs, int index, int j) {
-<span class="fc" id="L65">		return 0;</span>
+<span class="fc" id="L69">		return 0;</span>
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
 	public String toString() {
-<span class="fc" id="L70">		return _value +&quot;&quot;;</span>
+<span class="fc" id="L74">		return _value +&quot;&quot;;</span>
 	}
 
 	@Override
 	public Tsr activate(Tsr[] inputs, int j) {
-<span class="nc" id="L75">		return new Tsr(inputs[0].shape(), this._value);</span>
+<span class="fc" id="L79">		return new Tsr(inputs[0].shape(), this._value);</span>
 	}
 
 	@Override
 	public Tsr activate(Tsr[] inputs) {
-<span class="fc" id="L80">		return new Tsr(inputs[0].shape(), this._value);</span>
+<span class="fc" id="L84">		return new Tsr(inputs[0].shape(), this._value);</span>
 	}
 
 	@Override
 	public Tsr derive(Tsr[] inputs, int index, int j) {
-<span class="nc" id="L85">		return new Tsr(inputs[0].shape(), 0.0);</span>
+<span class="fc" id="L89">		return new Tsr(inputs[0].shape(), 0.0);</span>
 	}
 
 	@Override
 	public Tsr derive(Tsr[] inputs, int index) {
-<span class="nc" id="L90">		return new Tsr(inputs[0].shape(), 0.0);</span>
+<span class="fc" id="L94">		return new Tsr(inputs[0].shape(), 0.0);</span>
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }

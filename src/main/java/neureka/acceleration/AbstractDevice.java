@@ -36,7 +36,7 @@ public abstract class AbstractDevice implements  Device
         {
             _createNewDrainTensorIn(this, tsrs, f_id);
             if (
-                    d!=0 &&
+                    d<0 &&
                     tsrs.length == 3
                             &&
                             (
@@ -80,6 +80,8 @@ public abstract class AbstractDevice implements  Device
                 switch(Function.TYPES.REGISTER[f_id]){
                     case "+": tsrs[0] = Tsr.fcn.create.newTsrLike(tsrs[1]).setValue(1.0f);
                         break;
+                    case "sum": tsrs[0] = Tsr.fcn.create.newTsrLike(tsrs[1]).setValue(1.0f);
+                        break;
                     case "-": tsrs[0] = Tsr.fcn.create.newTsrLike(tsrs[1]).setValue((d==0)?1.0f:-1.0f);
                         break;
                     case "^":
@@ -101,6 +103,15 @@ public abstract class AbstractDevice implements  Device
                         }
                         break;
                     case "*":
+                        newTsrs = _util._without(tsrs, 1+d);
+                        if(newTsrs.length>2){
+                            newTsrs[0] = (newTsrs[0]==null)?Tsr.fcn.create.newTsrLike(tsrs[1]):newTsrs[0];
+                            tsrs[0] = _execute_tensors(newTsrs, Function.TYPES.LOOKUP.get("*"), -1);
+                        } else {
+                            tsrs[0] = newTsrs[1];
+                        }
+                        break;
+                    case "prod":
                         newTsrs = _util._without(tsrs, 1+d);
                         if(newTsrs.length>2){
                             newTsrs[0] = (newTsrs[0]==null)?Tsr.fcn.create.newTsrLike(tsrs[1]):newTsrs[0];
@@ -135,7 +146,7 @@ public abstract class AbstractDevice implements  Device
                         b.delete();
                         break;
                     default:
-                        break;
+                        throw new IllegalStateException("[CPU][enqueue]: Operation not found!");
                 }
             }
         } else {

@@ -257,7 +257,7 @@ public class DefaultJavaTests {
         expected = new Tsr(new int[]{2}, new double[]{(8)*3, (4)*3});
         tester.testActivation("sum(sum(ij))", tsrs, expected, "");
 
-        expected = new Tsr(new int[]{2}, new double[]{1.0, 1.0});
+        expected = new Tsr(new int[]{2}, new double[]{3.0, 3.0});
         tester.testDerivative("sum(sum(ij))", tsrs, 1, expected, "");
         //--
         expected = new Tsr(new int[]{2}, new double[]{(-14)*3, (-6)*3});
@@ -406,9 +406,11 @@ public class DefaultJavaTests {
                         "[2]:(4.0105E0, 4.0105E0); ",
                         "=>d|[ [2]:(3.9275E0, 3.9275E0) ]|" +
                                 ":t{ [2]:(0.99805E0, 0.99805E0); ",
-                        "=>d|[ [2]:(0.01556E0, 0.01556E0) ]|:t{ [2]:(4.0, 4.0) }, ",
-                        "=>d|[ [2]:(0.03112E0, 0.03112E0) ]|:t{ [2]:(2.0, 2.0) }, ",
-                        "}, ",
+                                        "=>d|[ [2]:(0.01556E0, 0.01556E0) ]|" +
+                                                ":t{ [2]:(4.0, 4.0) }, ",
+                                        "=>d|[ [2]:(0.03112E0, 0.03112E0) ]|" +
+                                                ":t{ [2]:(2.0, 2.0) }, ",
+                                "}, ",
                         "=>d|[ [2]:(0.97996E0, 0.97996E0) ]|" +
                                 ":t{ [2]:(4.0, 4.0) }, "
                 }

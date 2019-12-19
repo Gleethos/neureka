@@ -13,144 +13,147 @@ public class CPU extends AbstractDevice {
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, int f_id) {
 <span class="fc bfc" id="L15" title="All 2 branches covered.">        for(Tsr t : tsrs) t.setIsVirtual(false);</span>
-<span class="pc bpc" id="L16" title="34 of 38 branches missed.">        switch (Function.TYPES.REGISTER[f_id]) {</span>
-<span class="nc" id="L17">            case &quot;sig&quot;: exec.activate_sigmoid(tsrs[0], tsrs[1], d); break;</span>
+<span class="pc bpc" id="L16" title="22 of 39 branches missed.">        switch (Function.TYPES.REGISTER[f_id]) {</span>
+<span class="fc" id="L17">            case &quot;sig&quot;: exec.activate_sigmoid(tsrs[0], tsrs[1], d); break;</span>
 <span class="nc" id="L18">            case &quot;sin&quot;: exec.activate_sinus(tsrs[0], tsrs[1], d);break;</span>
-<span class="nc" id="L19">            case &quot;cos&quot;: exec.activate_cosinus(tsrs[0], tsrs[1], d);break;</span>
+<span class="fc" id="L19">            case &quot;cos&quot;: exec.activate_cosinus(tsrs[0], tsrs[1], d);break;</span>
 <span class="nc" id="L20">            case &quot;abs&quot;: exec.activate_absolute(tsrs[0], tsrs[1], d);break;</span>
-<span class="nc" id="L21">            case &quot;lig&quot;: exec.activate_ligmoid(tsrs[0], tsrs[1], d);break;</span>
-<span class="nc" id="L22">            case &quot;tanh&quot;: exec.activate_tanh(tsrs[0], tsrs[1], d);break;</span>
+<span class="fc" id="L21">            case &quot;lig&quot;: exec.activate_ligmoid(tsrs[0], tsrs[1], d);break;</span>
+<span class="fc" id="L22">            case &quot;tanh&quot;: exec.activate_tanh(tsrs[0], tsrs[1], d);break;</span>
 <span class="nc" id="L23">            case &quot;gaus&quot;: exec.activate_gaussian(tsrs[0], tsrs[1], d);break;</span>
 <span class="nc" id="L24">            case &quot;quad&quot;: exec.activate_quadratic(tsrs[0], tsrs[1], d);break;</span>
 <span class="fc" id="L25">            case &quot;idy&quot;: exec.activate_identity(tsrs[0], tsrs[1], d);break;</span>
-<span class="nc" id="L26">            case &quot;sum&quot;: exec.broadcast_add(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
-<span class="nc" id="L27">            case &quot;prod&quot;: exec.broadcast_multiply(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
+<span class="fc" id="L26">            case &quot;relu&quot;: exec.activate_relu(tsrs[0], tsrs[1], d);break;</span>
+<span class="fc" id="L27">            case &quot;sum&quot;: exec.broadcast_add(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
+<span class="fc" id="L28">            case &quot;prod&quot;: exec.broadcast_multiply(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
             //---
             case &quot;x&quot;:
-<span class="fc bfc" id="L30" title="All 2 branches covered.">                if (d &gt;= 0) {</span>
-<span class="fc bfc" id="L31" title="All 2 branches covered.">                    if (d == 0) tsrs[0] = tsrs[2]; else tsrs[0] = tsrs[1];</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">                if (d &gt;= 0) {</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">                    if (d == 0) tsrs[0] = tsrs[2]; else tsrs[0] = tsrs[1];</span>
                 } else {
-<span class="fc" id="L33">                    exec.convolve_multiply(tsrs[0], tsrs[1], tsrs[2]);</span>
+<span class="fc" id="L34">                    exec.convolve_multiply(tsrs[0], tsrs[1], tsrs[2]);</span>
                 }
-<span class="fc" id="L35">                break;</span>
-<span class="fc" id="L36">            case (&quot;x&quot; + ((char) 187)): exec.convolve_multiply_inverse(tsrs[2], tsrs[1], tsrs[0]);break;</span>
-<span class="fc" id="L37">            case (&quot;&quot; + ((char) 171)) + &quot;x&quot;: exec.convolve_multiply_inverse(tsrs[0], tsrs[1], tsrs[2]);break;</span>
+<span class="fc" id="L36">                break;</span>
+<span class="fc" id="L37">            case (&quot;x&quot; + ((char) 187)): exec.convolve_multiply_inverse(tsrs[2], tsrs[1], tsrs[0]);break;</span>
+<span class="fc" id="L38">            case (&quot;&quot; + ((char) 171)) + &quot;x&quot;: exec.convolve_multiply_inverse(tsrs[0], tsrs[1], tsrs[2]);break;</span>
             //---
-<span class="nc" id="L39">            case &quot;a&quot;: exec.convolve_add(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
-<span class="nc" id="L40">            case (&quot;a&quot; + ((char) 187)): exec.convolve_add_inverse(tsrs[2], tsrs[1], tsrs[0]);break;</span>
-<span class="nc" id="L41">            case (&quot;&quot; + ((char) 171)) + &quot;a&quot;: exec.convolve_add_inverse(tsrs[0], tsrs[1], tsrs[2]);break;</span>
+<span class="nc" id="L40">            case &quot;a&quot;: exec.convolve_add(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
+<span class="nc" id="L41">            case (&quot;a&quot; + ((char) 187)): exec.convolve_add_inverse(tsrs[2], tsrs[1], tsrs[0]);break;</span>
+<span class="nc" id="L42">            case (&quot;&quot; + ((char) 171)) + &quot;a&quot;: exec.convolve_add_inverse(tsrs[0], tsrs[1], tsrs[2]);break;</span>
             //---
-<span class="nc" id="L43">            case &quot;s&quot;: exec.convolve_subtract(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
-<span class="nc" id="L44">            case (&quot;s&quot; + ((char) 187)): exec.convolve_subtract_inverse(tsrs[2], tsrs[1], tsrs[0]);break;</span>
-<span class="nc" id="L45">            case (&quot;&quot; + ((char) 171)) + &quot;s&quot;: exec.convolve_subtract_inverse(tsrs[0], tsrs[1], tsrs[2]);break;</span>
+<span class="nc" id="L44">            case &quot;s&quot;: exec.convolve_subtract(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
+<span class="nc" id="L45">            case (&quot;s&quot; + ((char) 187)): exec.convolve_subtract_inverse(tsrs[2], tsrs[1], tsrs[0]);break;</span>
+<span class="nc" id="L46">            case (&quot;&quot; + ((char) 171)) + &quot;s&quot;: exec.convolve_subtract_inverse(tsrs[0], tsrs[1], tsrs[2]);break;</span>
             //---
-<span class="nc" id="L47">            case &quot;d&quot;: exec.convolve_divide(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
+<span class="nc" id="L48">            case &quot;d&quot;: exec.convolve_divide(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
             case (&quot;d&quot; + ((char) 187)):
                 //exec.convolve_divide_inverse(tsrs[2], tsrs[1], tsrs[0]);
-<span class="nc" id="L50">                break;</span>
+<span class="nc" id="L51">                break;</span>
             case (&quot;&quot; + ((char) 171)) + &quot;d&quot;:
                 //exec.convolve_divide_inverse(tsrs[0], tsrs[1], tsrs[2]);
-<span class="nc" id="L53">                break;</span>
+<span class="nc" id="L54">                break;</span>
             //---
             case &quot;p&quot;:
-<span class="nc" id="L56">                exec.convolve_power(tsrs[0], tsrs[1], tsrs[2], d);</span>
-<span class="nc" id="L57">                break;</span>
+<span class="nc" id="L57">                exec.convolve_power(tsrs[0], tsrs[1], tsrs[2], d);</span>
+<span class="nc" id="L58">                break;</span>
             case (&quot;p&quot; + ((char) 187)):
                 //exec.convolve_power_inverse(tsrs[2], tsrs[1], tsrs[0]);
-<span class="nc" id="L60">                break;</span>
+<span class="nc" id="L61">                break;</span>
             case (&quot;&quot; + ((char) 171)) + &quot;p&quot;:
                 //exec.convolve_power_inverse(tsrs[0], tsrs[1], tsrs[2]);
-<span class="nc" id="L63">                break;</span>
+<span class="nc" id="L64">                break;</span>
             //---
             case &quot;m&quot;:
-<span class="nc" id="L66">                exec.convolve_mod(tsrs[0], tsrs[1], tsrs[2], d);</span>
-<span class="nc" id="L67">                break;</span>
+<span class="nc" id="L67">                exec.convolve_mod(tsrs[0], tsrs[1], tsrs[2], d);</span>
+<span class="nc" id="L68">                break;</span>
             case (&quot;m&quot; + ((char) 187)):
                 //exec.convolve_mod_inverse(tsrs[2], tsrs[1], tsrs[0]);
-<span class="nc" id="L70">                break;</span>
+<span class="nc" id="L71">                break;</span>
             case (&quot;&quot; + ((char) 171)) + &quot;m&quot;:
                 //exec.convolve_mod_inverse(tsrs[0], tsrs[1], tsrs[2]);
-<span class="nc" id="L73">                break;</span>
+<span class="nc" id="L74">                break;</span>
             //---
 
-<span class="nc" id="L76">            case &quot;*&quot;: exec.broadcast_multiply(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
-<span class="nc" id="L77">            case &quot;+&quot;: exec.broadcast_add(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
-<span class="nc" id="L78">            case &quot;-&quot;: exec.broadcast_subtract(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
-<span class="nc" id="L79">            case &quot;/&quot;: exec.broadcast_divide(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
-<span class="nc" id="L80">            case &quot;%&quot;: exec.broadcast_mod(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
-<span class="nc" id="L81">            case &quot;^&quot;: exec.broadcast_power(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
-<span class="nc" id="L82">            case &quot;&lt;&quot;: exec.activate_identity(tsrs[0], tsrs[1], d);break;</span>
-<span class="nc" id="L83">            case &quot;&gt;&quot;: exec.activate_identity(tsrs[1], tsrs[0], d);break;</span>
+<span class="fc" id="L77">            case &quot;*&quot;: exec.broadcast_multiply(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
+<span class="fc" id="L78">            case &quot;+&quot;: exec.broadcast_add(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
+<span class="fc" id="L79">            case &quot;-&quot;: exec.broadcast_subtract(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
+<span class="fc" id="L80">            case &quot;/&quot;: exec.broadcast_divide(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
+<span class="fc" id="L81">            case &quot;%&quot;: exec.broadcast_mod(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
+<span class="fc" id="L82">            case &quot;^&quot;: exec.broadcast_power(tsrs[0], tsrs[1], tsrs[2], d);break;</span>
+<span class="nc" id="L83">            case &quot;&lt;&quot;: exec.activate_identity(tsrs[0], tsrs[1], d);break;</span>
+<span class="nc" id="L84">            case &quot;&gt;&quot;: exec.activate_identity(tsrs[1], tsrs[0], d);break;</span>
+            default:
+<span class="nc" id="L86">                throw new IllegalStateException(&quot;[CPU][enqueue]: Operation not found!&quot;);</span>
         }
-<span class="fc" id="L85">    }</span>
+<span class="fc" id="L88">    }</span>
 
     @Override
     protected void _enqueue(Tsr t, double value, int d, int f_id) {
-<span class="fc" id="L89">        int[] shape = new int[t.rank()];</span>
-<span class="fc bfc" id="L90" title="All 2 branches covered.">        for (int i = 0; i &lt; shape.length; i++) shape[i] = 1;</span>
-<span class="fc" id="L91">        _enqueue(new Tsr[]{t, t, new Tsr(shape, value)}, d, f_id);</span>
-<span class="fc" id="L92">    }</span>
+<span class="fc" id="L92">        int[] shape = new int[t.rank()];</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        for (int i = 0; i &lt; shape.length; i++) shape[i] = 1;</span>
+<span class="fc" id="L94">        _enqueue(new Tsr[]{t, t, new Tsr(shape, value)}, d, f_id);</span>
+<span class="fc" id="L95">    }</span>
 
     @Override
     public void dispose() {
-<span class="nc" id="L96">    }</span>
+<span class="nc" id="L99">    }</span>
 
     @Override
     public Device get(Tsr tensor) {
-<span class="fc" id="L100">        return this;</span>
+<span class="fc" id="L103">        return this;</span>
     }
 
     @Override
     public Device add(Tsr tensor) {
-<span class="fc" id="L105">        return this;</span>
+<span class="fc" id="L108">        return this;</span>
     }
 
     @Override
     public Device add(Tsr tensor, Tsr parent) {
-<span class="nc" id="L110">        return this;</span>
+<span class="nc" id="L113">        return this;</span>
     }
 
     @Override
     public boolean has(Tsr tensor) {
-<span class="nc" id="L115">        return false;</span>
+<span class="nc" id="L118">        return false;</span>
     }
 
     @Override
     public Device rmv(Tsr tensor) {
-<span class="nc" id="L120">        return this;</span>
+<span class="nc" id="L123">        return this;</span>
     }
 
     @Override
     public Device overwrite64(Tsr tensor, double[] value) {
-<span class="nc" id="L125">        return this;</span>
+<span class="nc" id="L128">        return this;</span>
     }
 
     @Override
     public Device overwrite32(Tsr tensor, float[] value) {
-<span class="nc" id="L130">        return this;</span>
+<span class="nc" id="L133">        return this;</span>
     }
 
     @Override
     public Device swap(Tsr former, Tsr replacement) {
-<span class="nc" id="L135">        return this;</span>
+<span class="nc" id="L138">        return this;</span>
     }
 
     @Override
     public double[] value64Of(Tsr tensor) {
-<span class="nc" id="L140">        return tensor.value64();</span>
+<span class="nc" id="L143">        return tensor.value64();</span>
     }
 
     @Override
     public float[] value32Of(Tsr tensor) {
-<span class="nc" id="L145">        return tensor.value32();</span>
+<span class="nc" id="L148">        return tensor.value32();</span>
     }
 
     @Override
     public Collection&lt;Tsr&gt; tensors() {
-<span class="nc" id="L150">        return null;</span>
+<span class="nc" id="L153">        return null;</span>
     }
 
-<span class="nc" id="L153">    public static class exec {</span>
+<span class="nc" id="L156">    public static class exec {</span>
         interface Range {
             void execute(int start, int end);
         }
@@ -161,9 +164,9 @@ public class CPU extends AbstractDevice {
 
 
         private static int _adjusted_d(int d, Tsr t0_drn, Tsr t1_src, Tsr t2_src) {
-<span class="fc bfc" id="L164" title="All 2 branches covered.">            for (int i = 0; i &lt; t0_drn.rank(); i++)</span>
-<span class="pc bpc" id="L165" title="1 of 4 branches missed.">                d = (t0_drn.shape(i) != t1_src.shape(i) || t1_src.shape(i) != t2_src.shape(i)) ? -1 : d;</span>
-<span class="fc" id="L166">            return d;</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">            for (int i = 0; i &lt; t0_drn.rank(); i++)</span>
+<span class="fc bfc" id="L168" title="All 4 branches covered.">                d = (t0_drn.shape(i) != t1_src.shape(i) || t1_src.shape(i) != t2_src.shape(i)) ? -1 : d;</span>
+<span class="fc" id="L169">            return d;</span>
         }
 
         //---
@@ -173,27 +176,27 @@ public class CPU extends AbstractDevice {
                 Tsr t1_src,
                 int d
         ) {
-<span class="nc" id="L176">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
-<span class="nc" id="L177">                _template.activate(</span>
+<span class="fc" id="L179">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
+<span class="fc" id="L180">                _template.activate(</span>
                         t0_drn,// t1_src, null, d,
                         start, end,
-<span class="nc" id="L180">                        _sigmoid(t1_src, d)</span>
+<span class="fc" id="L183">                        _sigmoid(t1_src, d)</span>
                 );
-<span class="nc" id="L182">            });</span>
-<span class="nc" id="L183">        }</span>
+<span class="fc" id="L185">            });</span>
+<span class="fc" id="L186">        }</span>
 
         private static Operator _sigmoid(
                 Tsr t1_src,
                 int d
         ) {
-<span class="nc" id="L189">            double[] t1_val = t1_src.value64();</span>
-<span class="nc bnc" id="L190" title="All 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="nc" id="L191">                return (t0Idx, t1Idx, t2Idx) -&gt;</span>
-<span class="nc" id="L192">                        1 / (1 + Math.pow(Math.E, -t1_val[t1_src.i_of_idx(t1Idx)]));</span>
+<span class="fc" id="L192">            double[] t1_val = t1_src.value64();</span>
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">            if (d &lt; 0) {</span>
+<span class="fc" id="L194">                return (t0Idx, t1Idx, t2Idx) -&gt;</span>
+<span class="fc" id="L195">                        1 / (1 + Math.pow(Math.E, -t1_val[t1_src.i_of_idx(t1Idx)]));</span>
             } else {
-<span class="nc" id="L194">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L195">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
-<span class="nc" id="L196">                    return (1 - Math.pow(((input) / Math.pow((1 + Math.pow((input), 2)), 0.5)), 2));</span>
+<span class="nc" id="L197">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="nc" id="L198">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
+<span class="nc" id="L199">                    return (1 - Math.pow(((input) / Math.pow((1 + Math.pow((input), 2)), 0.5)), 2));</span>
                 };
             }
         }
@@ -205,29 +208,29 @@ public class CPU extends AbstractDevice {
                 Tsr t1_src,
                 int d
         ) {
-<span class="nc" id="L208">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
-<span class="nc" id="L209">                _template.activate(</span>
+<span class="fc" id="L211">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
+<span class="fc" id="L212">                _template.activate(</span>
                         t0_drn,// t1_src, null, d,
                         start, end,
-<span class="nc" id="L212">                        _tanh(t1_src, d)</span>
+<span class="fc" id="L215">                        _tanh(t1_src, d)</span>
                 );
-<span class="nc" id="L214">            });</span>
-<span class="nc" id="L215">        }</span>
+<span class="fc" id="L217">            });</span>
+<span class="fc" id="L218">        }</span>
 
         private static Operator _tanh(
                 Tsr t1_src,
                 int d
         ) {
-<span class="nc" id="L221">            double[] t1_val = t1_src.value64();</span>
-<span class="nc bnc" id="L222" title="All 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="nc" id="L223">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L224">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
-<span class="nc" id="L225">                    return ((input)) / Math.pow((1 + Math.pow(((input)), 2)), 0.5);</span>
+<span class="fc" id="L224">            double[] t1_val = t1_src.value64();</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">            if (d &lt; 0) {</span>
+<span class="fc" id="L226">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L227">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
+<span class="fc" id="L228">                    return ((input)) / Math.pow((1 + Math.pow(((input)), 2)), 0.5);</span>
                 };
             } else {
-<span class="nc" id="L228">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L229">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
-<span class="nc" id="L230">                    return (1 - Math.pow(((input) / Math.pow((1 + Math.pow((input), 2)), 0.5)), 2));</span>
+<span class="fc" id="L231">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L232">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
+<span class="fc" id="L233">                    return (1 - Math.pow(((input) / Math.pow((1 + Math.pow((input), 2)), 0.5)), 2));</span>
                 };
             }
         }
@@ -239,28 +242,28 @@ public class CPU extends AbstractDevice {
                 Tsr t1_src,
                 int d
         ) {
-<span class="nc" id="L242">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
-<span class="nc" id="L243">                _template.activate(</span>
+<span class="nc" id="L245">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
+<span class="nc" id="L246">                _template.activate(</span>
                         t0_drn,// t1_src, null, d,
                         start, end,
-<span class="nc" id="L246">                        _quadratic(t1_src, d)</span>
+<span class="nc" id="L249">                        _quadratic(t1_src, d)</span>
                 );
-<span class="nc" id="L248">            });</span>
-<span class="nc" id="L249">        }</span>
+<span class="nc" id="L251">            });</span>
+<span class="nc" id="L252">        }</span>
 
         private static Operator _quadratic(
                 Tsr t1_src,
                 int d
         ) {
-<span class="nc" id="L255">            double[] t1_val = t1_src.value64();</span>
-<span class="nc bnc" id="L256" title="All 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="nc" id="L257">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L258">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
-<span class="nc" id="L259">                    return ((input) * (input));</span>
+<span class="nc" id="L258">            double[] t1_val = t1_src.value64();</span>
+<span class="nc bnc" id="L259" title="All 2 branches missed.">            if (d &lt; 0) {</span>
+<span class="nc" id="L260">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="nc" id="L261">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
+<span class="nc" id="L262">                    return ((input) * (input));</span>
                 };
             } else {
-<span class="nc" id="L262">                return (t0Idx, t1Idx, t2Idx) -&gt;</span>
-<span class="nc" id="L263">                        2 * t1_val[t1_src.i_of_idx(t1Idx)];</span>
+<span class="nc" id="L265">                return (t0Idx, t1Idx, t2Idx) -&gt;</span>
+<span class="nc" id="L266">                        2 * t1_val[t1_src.i_of_idx(t1Idx)];</span>
             }
         }
 
@@ -271,27 +274,27 @@ public class CPU extends AbstractDevice {
                 Tsr t1_src,
                 int d
         ) {
-<span class="nc" id="L274">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
-<span class="nc" id="L275">                _template.activate(</span>
+<span class="fc" id="L277">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
+<span class="fc" id="L278">                _template.activate(</span>
                         t0_drn,
                         start, end,
-<span class="nc" id="L278">                        _ligmoid(t1_src, d)</span>
+<span class="fc" id="L281">                        _ligmoid(t1_src, d)</span>
                 );
-<span class="nc" id="L280">            });</span>
-<span class="nc" id="L281">        }</span>
+<span class="fc" id="L283">            });</span>
+<span class="fc" id="L284">        }</span>
 
         private static Operator _ligmoid(
                 Tsr t1_src,
                 int d
         ) {
-<span class="nc" id="L287">            double[] t1_val = t1_src.value64();</span>
-<span class="nc bnc" id="L288" title="All 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="nc" id="L289">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L290">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
-<span class="nc" id="L291">                    return (Math.log(1 + Math.pow(Math.E, input)));</span>
+<span class="fc" id="L290">            double[] t1_val = t1_src.value64();</span>
+<span class="fc bfc" id="L291" title="All 2 branches covered.">            if (d &lt; 0) {</span>
+<span class="fc" id="L292">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L293">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
+<span class="fc" id="L294">                    return (Math.log(1 + Math.pow(Math.E, input)));</span>
                 };
             } else {
-<span class="nc" id="L294">                return (t0Idx, t1Idx, t2Idx) -&gt; _sigmoid(t1_src, -1).execute(t0Idx, t1Idx, t2Idx);</span>
+<span class="fc" id="L297">                return (t0Idx, t1Idx, t2Idx) -&gt; _sigmoid(t1_src, -1).execute(t0Idx, t1Idx, t2Idx);</span>
             }
         }
 
@@ -302,29 +305,29 @@ public class CPU extends AbstractDevice {
                 Tsr t1_src,
                 int d
         ) {
-<span class="nc" id="L305">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
-<span class="nc" id="L306">                _template.activate(</span>
+<span class="nc" id="L308">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
+<span class="nc" id="L309">                _template.activate(</span>
                         t0_drn,
                         start, end,
-<span class="nc" id="L309">                        _gaussian(t1_src, d)</span>
+<span class="nc" id="L312">                        _gaussian(t1_src, d)</span>
                 );
-<span class="nc" id="L311">            });</span>
-<span class="nc" id="L312">        }</span>
+<span class="nc" id="L314">            });</span>
+<span class="nc" id="L315">        }</span>
 
         private static Operator _gaussian(
                 Tsr t1_src,
                 int d
         ) {
-<span class="nc" id="L318">            double[] t1_val = t1_src.value64();</span>
-<span class="nc bnc" id="L319" title="All 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="nc" id="L320">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L321">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
-<span class="nc" id="L322">                    return Math.pow(Math.E, -Math.pow((input), 2));</span>
+<span class="nc" id="L321">            double[] t1_val = t1_src.value64();</span>
+<span class="nc bnc" id="L322" title="All 2 branches missed.">            if (d &lt; 0) {</span>
+<span class="nc" id="L323">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="nc" id="L324">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
+<span class="nc" id="L325">                    return Math.pow(Math.E, -Math.pow((input), 2));</span>
                 };
             } else {
-<span class="nc" id="L325">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L326">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
-<span class="nc" id="L327">                    return -2 * ((input)) * Math.pow(Math.E, -Math.pow((input), 2));</span>
+<span class="nc" id="L328">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="nc" id="L329">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
+<span class="nc" id="L330">                    return -2 * ((input)) * Math.pow(Math.E, -Math.pow((input), 2));</span>
                 };
 
             }
@@ -337,29 +340,29 @@ public class CPU extends AbstractDevice {
                 Tsr t1_src,
                 int d
         ) {
-<span class="nc" id="L340">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
-<span class="nc" id="L341">                _template.activate(</span>
+<span class="nc" id="L343">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
+<span class="nc" id="L344">                _template.activate(</span>
                         t0_drn,
                         start, end,
-<span class="nc" id="L344">                        _absolute(t1_src, d)</span>
+<span class="nc" id="L347">                        _absolute(t1_src, d)</span>
                 );
-<span class="nc" id="L346">            });</span>
-<span class="nc" id="L347">        }</span>
+<span class="nc" id="L349">            });</span>
+<span class="nc" id="L350">        }</span>
 
         private static Operator _absolute(
                 Tsr t1_src,
                 int d
         ) {
-<span class="nc" id="L353">            double[] t1_val = t1_src.value64();</span>
-<span class="nc bnc" id="L354" title="All 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="nc" id="L355">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L356">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
-<span class="nc" id="L357">                    return Math.abs(input);</span>
+<span class="nc" id="L356">            double[] t1_val = t1_src.value64();</span>
+<span class="nc bnc" id="L357" title="All 2 branches missed.">            if (d &lt; 0) {</span>
+<span class="nc" id="L358">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="nc" id="L359">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
+<span class="nc" id="L360">                    return Math.abs(input);</span>
                 };
             } else {
-<span class="nc" id="L360">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L361">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
-<span class="nc bnc" id="L362" title="All 2 branches missed.">                    return (input &lt; 0) ? -1 : 1;</span>
+<span class="nc" id="L363">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="nc" id="L364">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
+<span class="nc bnc" id="L365" title="All 2 branches missed.">                    return (input &lt; 0) ? -1 : 1;</span>
                 };
 
             }
@@ -372,29 +375,29 @@ public class CPU extends AbstractDevice {
                 Tsr t1_src,
                 int d
         ) {
-<span class="nc" id="L375">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
-<span class="nc" id="L376">                _template.activate(</span>
+<span class="nc" id="L378">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
+<span class="nc" id="L379">                _template.activate(</span>
                         t0_drn,
                         start, end,
-<span class="nc" id="L379">                        _sinus(t1_src, d)</span>
+<span class="nc" id="L382">                        _sinus(t1_src, d)</span>
                 );
-<span class="nc" id="L381">            });</span>
-<span class="nc" id="L382">        }</span>
+<span class="nc" id="L384">            });</span>
+<span class="nc" id="L385">        }</span>
 
         private static Operator _sinus(
                 Tsr t1_src,
                 int d
         ) {
-<span class="nc" id="L388">            double[] t1_val = t1_src.value64();</span>
-<span class="nc bnc" id="L389" title="All 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="nc" id="L390">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L391">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
-<span class="nc" id="L392">                    return Math.sin(input);</span>
+<span class="nc" id="L391">            double[] t1_val = t1_src.value64();</span>
+<span class="nc bnc" id="L392" title="All 2 branches missed.">            if (d &lt; 0) {</span>
+<span class="nc" id="L393">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="nc" id="L394">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
+<span class="nc" id="L395">                    return Math.sin(input);</span>
                 };
             } else {
-<span class="nc" id="L395">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L396">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
-<span class="nc" id="L397">                    return Math.cos(input);</span>
+<span class="nc" id="L398">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="nc" id="L399">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
+<span class="nc" id="L400">                    return Math.cos(input);</span>
                 };
 
             }
@@ -407,33 +410,73 @@ public class CPU extends AbstractDevice {
                 Tsr t1_src,
                 int d
         ) {
-<span class="nc" id="L410">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
-<span class="nc" id="L411">                _template.activate(</span>
+<span class="fc" id="L413">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
+<span class="fc" id="L414">                _template.activate(</span>
                         t0_drn,
                         start, end,
-<span class="nc" id="L414">                        _cosinus(t1_src, d)</span>
+<span class="fc" id="L417">                        _cosinus(t1_src, d)</span>
                 );
-<span class="nc" id="L416">            });</span>
-<span class="nc" id="L417">        }</span>
+<span class="fc" id="L419">            });</span>
+<span class="fc" id="L420">        }</span>
 
         private static Operator _cosinus(
                 Tsr t1_src,
                 int d
         ) {
-<span class="nc" id="L423">            double[] t1_val = t1_src.value64();</span>
-<span class="nc bnc" id="L424" title="All 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="nc" id="L425">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L426">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
-<span class="nc" id="L427">                    return Math.cos(input);</span>
+<span class="fc" id="L426">            double[] t1_val = t1_src.value64();</span>
+<span class="fc bfc" id="L427" title="All 2 branches covered.">            if (d &lt; 0) {</span>
+<span class="fc" id="L428">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L429">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
+<span class="fc" id="L430">                    return Math.cos(input);</span>
                 };
             } else {
-<span class="nc" id="L430">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L431">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
-<span class="nc" id="L432">                    return -Math.sin(input);</span>
+<span class="fc" id="L433">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L434">                    double input = t1_val[t1_src.i_of_idx(t1Idx)];</span>
+<span class="fc" id="L435">                    return -Math.sin(input);</span>
                 };
 
             }
         }
+
+        //---
+
+        //---
+
+        public static void activate_relu(
+                Tsr t0_drn,
+                Tsr t1_src,
+                int d
+        ) {
+<span class="fc" id="L450">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
+<span class="fc" id="L451">                _template.activate(</span>
+                        t0_drn,// t1_src, null, d,
+                        start, end,
+<span class="fc" id="L454">                        _relu(t1_src, d)</span>
+                );
+<span class="fc" id="L456">            });</span>
+<span class="fc" id="L457">        }</span>
+
+        private static Operator _relu(
+                Tsr t1_src, int d
+        ) {
+<span class="fc" id="L462">            double[] t1_val = t1_src.value64();</span>
+<span class="fc bfc" id="L463" title="All 2 branches covered.">            if (d &lt; 0) {</span>
+<span class="fc" id="L464">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="pc bpc" id="L465" title="1 of 2 branches missed.">                    if(t1_val[t1_src.i_of_idx(t1Idx)]&gt;=0){</span>
+<span class="nc" id="L466">                        return t1_val[t1_src.i_of_idx(t1Idx)];</span>
+                    }
+<span class="fc" id="L468">                    return t1_val[t1_src.i_of_idx(t1Idx)]*0.01;</span>
+                };
+            } else {
+<span class="fc" id="L471">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="pc bpc" id="L472" title="1 of 2 branches missed.">                    if(t1_val[t1_src.i_of_idx(t1Idx)]&gt;=0){</span>
+<span class="nc" id="L473">                        return 1;</span>
+                    }
+<span class="fc" id="L475">                    return 0.01;</span>
+                };
+            }
+        }
+
 
         //---
 
@@ -442,27 +485,27 @@ public class CPU extends AbstractDevice {
                 Tsr t1_src,
                 int d
         ) {
-<span class="fc" id="L445">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
-<span class="fc" id="L446">                _template.activate(</span>
+<span class="fc" id="L488">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
+<span class="fc" id="L489">                _template.activate(</span>
                         t0_drn,// t1_src, null, d,
                         start, end,
-<span class="fc" id="L449">                        _identity(t1_src, d)</span>
+<span class="fc" id="L492">                        _identity(t1_src, d)</span>
                 );
-<span class="fc" id="L451">            });</span>
-<span class="fc" id="L452">        }</span>
+<span class="fc" id="L494">            });</span>
+<span class="fc" id="L495">        }</span>
 
         private static Operator _identity(
                 Tsr t1_src,
                 int d
         ) {
-<span class="fc" id="L458">            double[] t1_val = t1_src.value64();</span>
-<span class="pc bpc" id="L459" title="1 of 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="fc" id="L460">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc" id="L461">                    return t1_val[t1_src.i_of_idx(t1Idx)];</span>
+<span class="fc" id="L501">            double[] t1_val = t1_src.value64();</span>
+<span class="pc bpc" id="L502" title="1 of 2 branches missed.">            if (d &lt; 0) {</span>
+<span class="fc" id="L503">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L504">                    return t1_val[t1_src.i_of_idx(t1Idx)];</span>
                 };
             } else {
-<span class="nc" id="L464">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L465">                    return t1_val[t1_src.i_of_idx(t1Idx)];</span>
+<span class="nc" id="L507">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="nc" id="L508">                    return t1_val[t1_src.i_of_idx(t1Idx)];</span>
                 };
             }
         }
@@ -472,65 +515,65 @@ public class CPU extends AbstractDevice {
         public static void convolve_multiply(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src
         ) {
-<span class="fc" id="L475">            _threaded(t0_drn.size(), ((start, end) -&gt; {</span>
-<span class="fc" id="L476">                _template.convolve(</span>
+<span class="fc" id="L518">            _threaded(t0_drn.size(), ((start, end) -&gt; {</span>
+<span class="fc" id="L519">                _template.convolve(</span>
                         t0_drn, t1_src, t2_src, -1,
                         start, end,
-<span class="fc" id="L479">                        _multiplication(t1_src, t2_src, -1)</span>
+<span class="fc" id="L522">                        _multiplication(t1_src, t2_src, -1)</span>
                 );
-<span class="fc" id="L481">            }));</span>
-<span class="fc" id="L482">        }</span>
+<span class="fc" id="L524">            }));</span>
+<span class="fc" id="L525">        }</span>
         public static void convolve_multiply_inverse(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src
         ) {
-<span class="fc" id="L486">            _threaded(t0_drn.size(), ((start, end) -&gt; {</span>
-<span class="fc" id="L487">                _template.convolve(</span>
+<span class="fc" id="L529">            _threaded(t0_drn.size(), ((start, end) -&gt; {</span>
+<span class="fc" id="L530">                _template.convolve(</span>
                         t0_drn, t1_src, t2_src, 0,
                         start, end,
-<span class="fc" id="L490">                        _multiplication(t1_src, t2_src, -1)</span>
+<span class="fc" id="L533">                        _multiplication(t1_src, t2_src, -1)</span>
                 );
-<span class="fc" id="L492">            }));</span>
-<span class="fc" id="L493">        }</span>
+<span class="fc" id="L535">            }));</span>
+<span class="fc" id="L536">        }</span>
 
         public static void broadcast_multiply(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
         ) {
-<span class="fc" id="L498">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
-<span class="fc" id="L499">                _template.broadcast(</span>
+<span class="fc" id="L541">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
+<span class="fc" id="L542">                _template.broadcast(</span>
                         t0_drn, t1_src, t2_src, d,
                         start, end,
-<span class="fc" id="L502">                        _multiplication(t1_src, t2_src, _adjusted_d(d, t0_drn, t1_src, t2_src))//if adjusted throw exception!</span>
+<span class="fc" id="L545">                        _multiplication(t1_src, t2_src, _adjusted_d(d, t0_drn, t1_src, t2_src))//if adjusted throw exception!</span>
                 );
-<span class="fc" id="L504">            });</span>
-<span class="fc" id="L505">        }</span>
+<span class="fc" id="L547">            });</span>
+<span class="fc" id="L548">        }</span>
         public static void broadcast_multiply_inverse(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src
         ) {
-<span class="fc" id="L509">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
-<span class="fc" id="L510">                _template.broadcast(</span>
+<span class="fc" id="L552">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
+<span class="fc" id="L553">                _template.broadcast(</span>
                         t0_drn, t1_src, t2_src, 0,
                         start, end,
-<span class="fc" id="L513">                        _multiplication(t1_src, t2_src, -1)//if adjusted throw exception!</span>
+<span class="fc" id="L556">                        _multiplication(t1_src, t2_src, -1)//if adjusted throw exception!</span>
                 );
-<span class="fc" id="L515">            });</span>
-<span class="fc" id="L516">        }</span>
+<span class="fc" id="L558">            });</span>
+<span class="fc" id="L559">        }</span>
 
 
         private static Operator _multiplication(
                 Tsr t1_src, Tsr t2_src, int d
         ) {
-<span class="fc" id="L522">            double[] t1_val = t1_src.value64();</span>
-<span class="fc" id="L523">            double[] t2_val = t2_src.value64();</span>
-<span class="pc bpc" id="L524" title="1 of 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="fc" id="L525">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc" id="L526">                    return t1_val[t1_src.i_of_idx(t1Idx)] * t2_val[t2_src.i_of_idx(t2Idx)];</span>
+<span class="fc" id="L565">            double[] t1_val = t1_src.value64();</span>
+<span class="fc" id="L566">            double[] t2_val = t2_src.value64();</span>
+<span class="fc bfc" id="L567" title="All 2 branches covered.">            if (d &lt; 0) {</span>
+<span class="fc" id="L568">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L569">                    return t1_val[t1_src.i_of_idx(t1Idx)] * t2_val[t2_src.i_of_idx(t2Idx)];</span>
                 };
             } else {
-<span class="nc" id="L529">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc bnc" id="L530" title="All 2 branches missed.">                    if (d == 0) {</span>
-<span class="nc" id="L531">                        return t2_val[t2_src.i_of_idx(t2Idx)];</span>
+<span class="fc" id="L572">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc bfc" id="L573" title="All 2 branches covered.">                    if (d == 0) {</span>
+<span class="fc" id="L574">                        return t2_val[t2_src.i_of_idx(t2Idx)];</span>
                     } else {
-<span class="nc" id="L533">                        return t1_val[t1_src.i_of_idx(t1Idx)];</span>
+<span class="fc" id="L576">                        return t1_val[t1_src.i_of_idx(t1Idx)];</span>
                     }
 
                 };
@@ -542,60 +585,60 @@ public class CPU extends AbstractDevice {
         public static void convolve_add(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
         ) {
-<span class="nc" id="L545">            _threaded(t0_drn.size(), ((start, end) -&gt; {</span>
-<span class="nc" id="L546">                _template.convolve(</span>
+<span class="nc" id="L588">            _threaded(t0_drn.size(), ((start, end) -&gt; {</span>
+<span class="nc" id="L589">                _template.convolve(</span>
                         t0_drn, t1_src, t2_src, d,
                         start, end,
-<span class="nc" id="L549">                        _addition(t1_src, t2_src, d)</span>
+<span class="nc" id="L592">                        _addition(t1_src, t2_src, d)</span>
                 );
-<span class="nc" id="L551">            }));</span>
-<span class="nc" id="L552">        }</span>
+<span class="nc" id="L594">            }));</span>
+<span class="nc" id="L595">        }</span>
         public static void convolve_add_inverse(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src
         ) {
-<span class="nc" id="L556">            _threaded(t0_drn.size(), ((start, end) -&gt; {</span>
-<span class="nc" id="L557">                _template.convolve(</span>
+<span class="nc" id="L599">            _threaded(t0_drn.size(), ((start, end) -&gt; {</span>
+<span class="nc" id="L600">                _template.convolve(</span>
                         t0_drn, t1_src, t2_src, 0,
                         start, end,
-<span class="nc" id="L560">                        _addition(t1_src, t2_src, -1)</span>
+<span class="nc" id="L603">                        _addition(t1_src, t2_src, -1)</span>
                 );
-<span class="nc" id="L562">            }));</span>
-<span class="nc" id="L563">        }</span>
+<span class="nc" id="L605">            }));</span>
+<span class="nc" id="L606">        }</span>
 
         public static void broadcast_add(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
         ) {
-<span class="nc" id="L568">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
-<span class="nc" id="L569">                _template.broadcast(</span>
+<span class="fc" id="L611">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
+<span class="fc" id="L612">                _template.broadcast(</span>
                         t0_drn, t1_src, t2_src, d,
                         start, end,
-<span class="nc" id="L572">                        _addition(t1_src, t2_src, d)</span>
+<span class="fc" id="L615">                        _addition(t1_src, t2_src, d)</span>
                 );
-<span class="nc" id="L574">            });</span>
-<span class="nc" id="L575">        }</span>
+<span class="fc" id="L617">            });</span>
+<span class="fc" id="L618">        }</span>
         public static void broadcast_add_inverse(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src
         ) {
-<span class="nc" id="L579">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
-<span class="nc" id="L580">                _template.broadcast(</span>
+<span class="nc" id="L622">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
+<span class="nc" id="L623">                _template.broadcast(</span>
                         t0_drn, t1_src, t2_src, 0,
                         start, end,
-<span class="nc" id="L583">                        _addition(t1_src, t2_src, 0)</span>
+<span class="nc" id="L626">                        _addition(t1_src, t2_src, 0)</span>
                 );
-<span class="nc" id="L585">            });</span>
-<span class="nc" id="L586">        }</span>
+<span class="nc" id="L628">            });</span>
+<span class="nc" id="L629">        }</span>
 
         private static Operator _addition(
                 Tsr t1_src, Tsr t2_src, int d
         ) {
-<span class="nc" id="L591">            double[] t1_val = t1_src.value64();</span>
-<span class="nc" id="L592">            double[] t2_val = t2_src.value64();</span>
-<span class="nc bnc" id="L593" title="All 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="nc" id="L594">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L595">                    return t1_val[t1_src.i_of_idx(t1Idx)] + t2_val[t2_src.i_of_idx(t2Idx)];</span>
+<span class="fc" id="L634">            double[] t1_val = t1_src.value64();</span>
+<span class="fc" id="L635">            double[] t2_val = t2_src.value64();</span>
+<span class="fc bfc" id="L636" title="All 2 branches covered.">            if (d &lt; 0) {</span>
+<span class="fc" id="L637">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L638">                    return t1_val[t1_src.i_of_idx(t1Idx)] + t2_val[t2_src.i_of_idx(t2Idx)];</span>
                 };
             } else {
-<span class="nc" id="L598">                return (t0Idx, t1Idx, t2Idx) -&gt; 1.0;</span>
+<span class="fc" id="L641">                return (t0Idx, t1Idx, t2Idx) -&gt; 1.0;</span>
             }
         }
 
@@ -604,61 +647,61 @@ public class CPU extends AbstractDevice {
         public static void convolve_subtract(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
         ) {
-<span class="nc" id="L607">            _threaded(t0_drn.size(), ((start, end) -&gt; {</span>
-<span class="nc" id="L608">                _template.convolve(</span>
+<span class="nc" id="L650">            _threaded(t0_drn.size(), ((start, end) -&gt; {</span>
+<span class="nc" id="L651">                _template.convolve(</span>
                         t0_drn, t1_src, t2_src, d,
                         start, end,
-<span class="nc" id="L611">                        _subtraction(t1_src, t2_src, d)</span>
+<span class="nc" id="L654">                        _subtraction(t1_src, t2_src, d)</span>
                 );
-<span class="nc" id="L613">            }));</span>
-<span class="nc" id="L614">        }</span>
+<span class="nc" id="L656">            }));</span>
+<span class="nc" id="L657">        }</span>
         public static void convolve_subtract_inverse(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src
         ) {
-<span class="nc" id="L618">            _threaded(t0_drn.size(), ((start, end) -&gt; {</span>
-<span class="nc" id="L619">                _template.convolve(</span>
+<span class="nc" id="L661">            _threaded(t0_drn.size(), ((start, end) -&gt; {</span>
+<span class="nc" id="L662">                _template.convolve(</span>
                         t0_drn, t1_src, t2_src, 0,
                         start, end,
-<span class="nc" id="L622">                        _subtraction(t1_src, t2_src, -1)</span>
+<span class="nc" id="L665">                        _subtraction(t1_src, t2_src, -1)</span>
                 );
-<span class="nc" id="L624">            }));</span>
-<span class="nc" id="L625">        }</span>
+<span class="nc" id="L667">            }));</span>
+<span class="nc" id="L668">        }</span>
 
         public static void broadcast_subtract(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
         ) {
-<span class="nc" id="L630">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
-<span class="nc" id="L631">                _template.broadcast(</span>
+<span class="fc" id="L673">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
+<span class="fc" id="L674">                _template.broadcast(</span>
                         t0_drn, t1_src, t2_src, d,
                         start, end,
-<span class="nc" id="L634">                        _subtraction(t1_src, t2_src, d)</span>
+<span class="fc" id="L677">                        _subtraction(t1_src, t2_src, d)</span>
                 );
-<span class="nc" id="L636">            });</span>
-<span class="nc" id="L637">        }</span>
+<span class="fc" id="L679">            });</span>
+<span class="fc" id="L680">        }</span>
         public static void broadcast_subtract_inverse(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src
         ) {
-<span class="nc" id="L641">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
-<span class="nc" id="L642">                _template.broadcast(</span>
+<span class="nc" id="L684">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
+<span class="nc" id="L685">                _template.broadcast(</span>
                         t0_drn, t1_src, t2_src, 0,
                         start, end,
-<span class="nc" id="L645">                        _subtraction(t1_src, t2_src, -1)</span>
+<span class="nc" id="L688">                        _subtraction(t1_src, t2_src, -1)</span>
                 );
-<span class="nc" id="L647">            });</span>
-<span class="nc" id="L648">        }</span>
+<span class="nc" id="L690">            });</span>
+<span class="nc" id="L691">        }</span>
 
         private static Operator _subtraction(
                 Tsr t1_src, Tsr t2_src, int d
         ) {
-<span class="nc" id="L653">            double[] t1_val = t1_src.value64();</span>
-<span class="nc" id="L654">            double[] t2_val = t2_src.value64();</span>
-<span class="nc bnc" id="L655" title="All 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="nc" id="L656">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L657">                    return t1_val[t1_src.i_of_idx(t1Idx)] - t2_val[t2_src.i_of_idx(t2Idx)];</span>
+<span class="fc" id="L696">            double[] t1_val = t1_src.value64();</span>
+<span class="fc" id="L697">            double[] t2_val = t2_src.value64();</span>
+<span class="fc bfc" id="L698" title="All 2 branches covered.">            if (d &lt; 0) {</span>
+<span class="fc" id="L699">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L700">                    return t1_val[t1_src.i_of_idx(t1Idx)] - t2_val[t2_src.i_of_idx(t2Idx)];</span>
                 };
             } else {
-<span class="nc" id="L660">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc bnc" id="L661" title="All 2 branches missed.">                    return (d == 0) ? 1.0 : -1.0;</span>
+<span class="fc" id="L703">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="pc bpc" id="L704" title="1 of 2 branches missed.">                    return (d == 0) ? 1.0 : -1.0;</span>
                 };
             }
         }
@@ -668,45 +711,45 @@ public class CPU extends AbstractDevice {
         public static void convolve_divide(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
         ) {
-<span class="nc" id="L671">            _threaded(t0_drn.size(), ((start, end) -&gt; {</span>
-<span class="nc" id="L672">                _template.convolve(</span>
+<span class="nc" id="L714">            _threaded(t0_drn.size(), ((start, end) -&gt; {</span>
+<span class="nc" id="L715">                _template.convolve(</span>
                         t0_drn, t1_src, t2_src, d,
                         start, end,
-<span class="nc" id="L675">                        _division(t1_src, t2_src, d)</span>
+<span class="nc" id="L718">                        _division(t1_src, t2_src, d)</span>
                 );
-<span class="nc" id="L677">            }));</span>
-<span class="nc" id="L678">        }</span>
+<span class="nc" id="L720">            }));</span>
+<span class="nc" id="L721">        }</span>
 
         public static void broadcast_divide(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
         ) {
-<span class="nc" id="L683">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
-<span class="nc" id="L684">                _template.broadcast(</span>
+<span class="fc" id="L726">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
+<span class="fc" id="L727">                _template.broadcast(</span>
                         t0_drn, t1_src, t2_src, d,
                         start, end,
-<span class="nc" id="L687">                        _division(t1_src, t2_src, d)</span>
+<span class="fc" id="L730">                        _division(t1_src, t2_src, d)</span>
                 );
-<span class="nc" id="L689">            });</span>
-<span class="nc" id="L690">        }</span>
+<span class="fc" id="L732">            });</span>
+<span class="fc" id="L733">        }</span>
 
         private static Operator _division(
                 Tsr t1_src, Tsr t2_src, int d
         ) {
-<span class="nc" id="L695">            double[] t1_val = t1_src.value64();</span>
-<span class="nc" id="L696">            double[] t2_val = t2_src.value64();</span>
-<span class="nc bnc" id="L697" title="All 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="nc" id="L698">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L699">                    return t1_val[t1_src.i_of_idx(t1Idx)] / t2_val[t2_src.i_of_idx(t2Idx)];</span>
+<span class="fc" id="L738">            double[] t1_val = t1_src.value64();</span>
+<span class="fc" id="L739">            double[] t2_val = t2_src.value64();</span>
+<span class="fc bfc" id="L740" title="All 2 branches covered.">            if (d &lt; 0) {</span>
+<span class="fc" id="L741">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L742">                    return t1_val[t1_src.i_of_idx(t1Idx)] / t2_val[t2_src.i_of_idx(t2Idx)];</span>
                 };
             } else {
-<span class="nc" id="L702">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc bnc" id="L703" title="All 2 branches missed.">                    if (d == 0) {</span>
-<span class="nc" id="L704">                        return 1 / t2_val[t2_src.i_of_idx(t2Idx)];</span>
+<span class="fc" id="L745">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc bfc" id="L746" title="All 2 branches covered.">                    if (d == 0) {</span>
+<span class="fc" id="L747">                        return 1 / t2_val[t2_src.i_of_idx(t2Idx)];</span>
                     } else {
-<span class="nc" id="L706">                        return</span>
-<span class="nc" id="L707">                                -(t1_val[t1_src.i_of_idx(t1Idx)]</span>
+<span class="fc" id="L749">                        return</span>
+<span class="fc" id="L750">                                -(t1_val[t1_src.i_of_idx(t1Idx)]</span>
                                         /
-<span class="nc" id="L709">                                        Math.pow(t2_val[t2_src.i_of_idx(t2Idx)], 2));</span>
+<span class="fc" id="L752">                                        Math.pow(t2_val[t2_src.i_of_idx(t2Idx)], 2));</span>
                     }
                 };
             }
@@ -717,52 +760,52 @@ public class CPU extends AbstractDevice {
         public static void convolve_power(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
         ) {
-<span class="nc" id="L720">            _threaded(t0_drn.size(), ((start, end) -&gt; {</span>
-<span class="nc" id="L721">                _template.convolve(</span>
+<span class="nc" id="L763">            _threaded(t0_drn.size(), ((start, end) -&gt; {</span>
+<span class="nc" id="L764">                _template.convolve(</span>
                         t0_drn, t1_src, t2_src, d,
                         start, end,
-<span class="nc" id="L724">                        _power(t1_src, t2_src, d)</span>
+<span class="nc" id="L767">                        _power(t1_src, t2_src, d)</span>
                 );
-<span class="nc" id="L726">            }));</span>
-<span class="nc" id="L727">        }</span>
+<span class="nc" id="L769">            }));</span>
+<span class="nc" id="L770">        }</span>
 
         public static void broadcast_power(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
         ) {
-<span class="nc" id="L732">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
-<span class="nc" id="L733">                _template.broadcast(</span>
+<span class="fc" id="L775">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
+<span class="fc" id="L776">                _template.broadcast(</span>
                         t0_drn, t1_src, t2_src, d,
                         start, end,
-<span class="nc" id="L736">                        _power(t1_src, t2_src, d)</span>
+<span class="fc" id="L779">                        _power(t1_src, t2_src, d)</span>
                 );
-<span class="nc" id="L738">            });</span>
-<span class="nc" id="L739">        }</span>
+<span class="fc" id="L781">            });</span>
+<span class="fc" id="L782">        }</span>
 
         private static Operator _power(
                 Tsr t1_src, Tsr t2_src, int d
         ) {
-<span class="nc" id="L744">            double[] t1_val = t1_src.value64();</span>
-<span class="nc" id="L745">            double[] t2_val = t2_src.value64();</span>
-<span class="nc bnc" id="L746" title="All 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="nc" id="L747">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L748">                    return Math.pow(</span>
-<span class="nc" id="L749">                            t1_val[t1_src.i_of_idx(t1Idx)],</span>
-<span class="nc" id="L750">                            t2_val[t2_src.i_of_idx(t2Idx)]</span>
+<span class="fc" id="L787">            double[] t1_val = t1_src.value64();</span>
+<span class="fc" id="L788">            double[] t2_val = t2_src.value64();</span>
+<span class="fc bfc" id="L789" title="All 2 branches covered.">            if (d &lt; 0) {</span>
+<span class="fc" id="L790">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L791">                    return Math.pow(</span>
+<span class="fc" id="L792">                            t1_val[t1_src.i_of_idx(t1Idx)],</span>
+<span class="fc" id="L793">                            t2_val[t2_src.i_of_idx(t2Idx)]</span>
                     );
                 };
             } else {
-<span class="nc" id="L754">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc bnc" id="L755" title="All 2 branches missed.">                    if (d == 0) {</span>
-<span class="nc" id="L756">                        return t2_val[t2_src.i_of_idx(t2Idx)]</span>
-<span class="nc" id="L757">                                * Math.pow(</span>
-<span class="nc" id="L758">                                t1_val[t1_src.i_of_idx(t1Idx)],</span>
-<span class="nc" id="L759">                                t2_val[t2_src.i_of_idx(t2Idx)] - 1</span>
+<span class="fc" id="L797">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc bfc" id="L798" title="All 2 branches covered.">                    if (d == 0) {</span>
+<span class="fc" id="L799">                        return t2_val[t2_src.i_of_idx(t2Idx)]</span>
+<span class="fc" id="L800">                                * Math.pow(</span>
+<span class="fc" id="L801">                                t1_val[t1_src.i_of_idx(t1Idx)],</span>
+<span class="fc" id="L802">                                t2_val[t2_src.i_of_idx(t2Idx)] - 1</span>
                         );
                     } else {
-<span class="nc" id="L762">                        return Math.pow(</span>
-<span class="nc" id="L763">                                t1_val[t1_src.i_of_idx(t1Idx)],</span>
-<span class="nc" id="L764">                                t2_val[t2_src.i_of_idx(t2Idx)]</span>
-<span class="nc" id="L765">                        ) * Math.log(t1_val[t1_src.i_of_idx(t1Idx)]);</span>
+<span class="fc" id="L805">                        return Math.pow(</span>
+<span class="fc" id="L806">                                t1_val[t1_src.i_of_idx(t1Idx)],</span>
+<span class="fc" id="L807">                                t2_val[t2_src.i_of_idx(t2Idx)]</span>
+<span class="fc" id="L808">                        ) * Math.log(t1_val[t1_src.i_of_idx(t1Idx)]);</span>
                     }
                 };
             }
@@ -773,45 +816,45 @@ public class CPU extends AbstractDevice {
         public static void convolve_mod(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
         ) {
-<span class="nc" id="L776">            _threaded(t0_drn.size(), ((start, end) -&gt; {</span>
-<span class="nc" id="L777">                _template.convolve(</span>
+<span class="nc" id="L819">            _threaded(t0_drn.size(), ((start, end) -&gt; {</span>
+<span class="nc" id="L820">                _template.convolve(</span>
                         t0_drn, t1_src, t2_src, d,
                         start, end,
-<span class="nc" id="L780">                        _modulo(t1_src, t2_src, d)</span>
+<span class="nc" id="L823">                        _modulo(t1_src, t2_src, d)</span>
                 );
-<span class="nc" id="L782">            }));</span>
-<span class="nc" id="L783">        }</span>
+<span class="nc" id="L825">            }));</span>
+<span class="nc" id="L826">        }</span>
 
         public static void broadcast_mod(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
         ) {
-<span class="nc" id="L788">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
-<span class="nc" id="L789">                _template.broadcast(</span>
+<span class="fc" id="L831">            _threaded(t0_drn.size(), (start, end) -&gt; {</span>
+<span class="fc" id="L832">                _template.broadcast(</span>
                         t0_drn, t1_src, t2_src, d,
                         start, end,
-<span class="nc" id="L792">                        _modulo(t1_src, t2_src, d)</span>
+<span class="fc" id="L835">                        _modulo(t1_src, t2_src, d)</span>
                 );
-<span class="nc" id="L794">            });</span>
-<span class="nc" id="L795">        }</span>
+<span class="fc" id="L837">            });</span>
+<span class="fc" id="L838">        }</span>
 
         private static Operator _modulo(
                 Tsr t1_src, Tsr t2_src, int d
         ) {
-<span class="nc" id="L800">            double[] t1_val = t1_src.value64();</span>
-<span class="nc" id="L801">            double[] t2_val = t2_src.value64();</span>
-<span class="nc bnc" id="L802" title="All 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="nc" id="L803">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L804">                    return t1_val[t1_src.i_of_idx(t1Idx)] % t2_val[t2_src.i_of_idx(t2Idx)];</span>
+<span class="fc" id="L843">            double[] t1_val = t1_src.value64();</span>
+<span class="fc" id="L844">            double[] t2_val = t2_src.value64();</span>
+<span class="fc bfc" id="L845" title="All 2 branches covered.">            if (d &lt; 0) {</span>
+<span class="fc" id="L846">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L847">                    return t1_val[t1_src.i_of_idx(t1Idx)] % t2_val[t2_src.i_of_idx(t2Idx)];</span>
                 };
             } else {
-<span class="nc" id="L807">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc bnc" id="L808" title="All 2 branches missed.">                    if (d == 0) {</span>
-<span class="nc" id="L809">                        return 1 / t2_val[t2_src.i_of_idx(t2Idx)];</span>
+<span class="fc" id="L850">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc bfc" id="L851" title="All 2 branches covered.">                    if (d == 0) {</span>
+<span class="fc" id="L852">                        return 1 / t2_val[t2_src.i_of_idx(t2Idx)];</span>
                     } else {
-<span class="nc" id="L811">                        return</span>
-<span class="nc" id="L812">                                -(t1_val[t1_src.i_of_idx(t1Idx)]</span>
+<span class="fc" id="L854">                        return</span>
+<span class="fc" id="L855">                                -(t1_val[t1_src.i_of_idx(t1Idx)]</span>
                                         /
-<span class="nc" id="L814">                                        Math.pow(t2_val[t2_src.i_of_idx(t2Idx)], 2));</span>
+<span class="fc" id="L857">                                        Math.pow(t2_val[t2_src.i_of_idx(t2Idx)], 2));</span>
                     }
                 };
             }
@@ -819,33 +862,33 @@ public class CPU extends AbstractDevice {
         //---
 
         private static void _threaded(int sze, Range range) {
-<span class="fc" id="L822">            boolean doThreading = false;</span>
-<span class="pc bpc" id="L823" title="1 of 2 branches missed.">            if (sze &gt; 128) {</span>
-<span class="nc bnc" id="L824" title="All 2 branches missed.">                doThreading = ((sze / Runtime.getRuntime().availableProcessors()) &gt; 32);</span>
+<span class="fc" id="L865">            boolean doThreading = false;</span>
+<span class="pc bpc" id="L866" title="1 of 2 branches missed.">            if (sze &gt; 128) {</span>
+<span class="nc bnc" id="L867" title="All 2 branches missed.">                doThreading = ((sze / Runtime.getRuntime().availableProcessors()) &gt; 32);</span>
             }
-<span class="pc bpc" id="L826" title="1 of 2 branches missed.">            if (!doThreading) {</span>
-<span class="fc" id="L827">                range.execute(0, sze);</span>
+<span class="pc bpc" id="L869" title="1 of 2 branches missed.">            if (!doThreading) {</span>
+<span class="fc" id="L870">                range.execute(0, sze);</span>
             } else {
-<span class="nc" id="L829">                int threadCount = Runtime.getRuntime().availableProcessors();</span>
-<span class="nc" id="L830">                final int chunk = (sze / threadCount);</span>
-<span class="nc" id="L831">                Thread[] th = new Thread[threadCount];</span>
-<span class="nc bnc" id="L832" title="All 2 branches missed.">                for (int i = 0; i &lt; threadCount; i++) {</span>
-<span class="nc" id="L833">                    final int start = i * chunk;</span>
-<span class="nc bnc" id="L834" title="All 2 branches missed.">                    final int end = (i == threadCount - 1) ? sze : ((i + 1) * chunk);</span>
-<span class="nc" id="L835">                    th[i] = new Thread(() -&gt; {</span>
-<span class="nc" id="L836">                        range.execute(start, end);</span>
-<span class="nc" id="L837">                    });</span>
-<span class="nc" id="L838">                    th[i].start();</span>
+<span class="nc" id="L872">                int threadCount = Runtime.getRuntime().availableProcessors();</span>
+<span class="nc" id="L873">                final int chunk = (sze / threadCount);</span>
+<span class="nc" id="L874">                Thread[] th = new Thread[threadCount];</span>
+<span class="nc bnc" id="L875" title="All 2 branches missed.">                for (int i = 0; i &lt; threadCount; i++) {</span>
+<span class="nc" id="L876">                    final int start = i * chunk;</span>
+<span class="nc bnc" id="L877" title="All 2 branches missed.">                    final int end = (i == threadCount - 1) ? sze : ((i + 1) * chunk);</span>
+<span class="nc" id="L878">                    th[i] = new Thread(() -&gt; {</span>
+<span class="nc" id="L879">                        range.execute(start, end);</span>
+<span class="nc" id="L880">                    });</span>
+<span class="nc" id="L881">                    th[i].start();</span>
                 }
-<span class="nc bnc" id="L840" title="All 2 branches missed.">                for (int i = 0; i &lt; threadCount; i++) {</span>
+<span class="nc bnc" id="L883" title="All 2 branches missed.">                for (int i = 0; i &lt; threadCount; i++) {</span>
                     try {
-<span class="nc" id="L842">                        th[i].join();</span>
-<span class="nc" id="L843">                    } catch (InterruptedException e) {</span>
-<span class="nc" id="L844">                        e.printStackTrace();</span>
-<span class="nc" id="L845">                    }</span>
+<span class="nc" id="L885">                        th[i].join();</span>
+<span class="nc" id="L886">                    } catch (InterruptedException e) {</span>
+<span class="nc" id="L887">                        e.printStackTrace();</span>
+<span class="nc" id="L888">                    }</span>
                 }
             }
-<span class="fc" id="L848">        }</span>
+<span class="fc" id="L891">        }</span>
 
 
         private static class _template {
@@ -856,141 +899,141 @@ public class CPU extends AbstractDevice {
                     int i, int end,
                     Operator operation
             ) {
-<span class="fc" id="L859">                int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
-<span class="fc" id="L860">                int[] t1Shp = t1_src.shape();</span>
-<span class="fc" id="L861">                int[] t2Shp = t2_src.shape();</span>
-<span class="fc" id="L862">                int rank = t0Shp.length;</span>
-<span class="fc" id="L863">                int[] t0Idx = new int[rank];</span>
-<span class="fc" id="L864">                int[] t1Idx = new int[rank];</span>
-<span class="fc" id="L865">                int[] t2Idx = new int[rank];</span>
-<span class="fc" id="L866">                double[] t0_value = t0_drn.value64();</span>
+<span class="fc" id="L902">                int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
+<span class="fc" id="L903">                int[] t1Shp = t1_src.shape();</span>
+<span class="fc" id="L904">                int[] t2Shp = t2_src.shape();</span>
+<span class="fc" id="L905">                int rank = t0Shp.length;</span>
+<span class="fc" id="L906">                int[] t0Idx = new int[rank];</span>
+<span class="fc" id="L907">                int[] t1Idx = new int[rank];</span>
+<span class="fc" id="L908">                int[] t2Idx = new int[rank];</span>
+<span class="fc" id="L909">                double[] t0_value = t0_drn.value64();</span>
                 //double[] t1_value = t1_src.value64();
                 //double[] t2_value = t2_src.value64();
                 //int drnSze = t0_drn.size();
                 //int i = 0;
 
-<span class="fc bfc" id="L872" title="All 2 branches covered.">                if (d &lt; 0) {</span>
-<span class="fc bfc" id="L873" title="All 2 branches covered.">                    while (i &lt; end)//drnSze)</span>
+<span class="fc bfc" id="L915" title="All 2 branches covered.">                if (d &lt; 0) {</span>
+<span class="fc bfc" id="L916" title="All 2 branches covered.">                    while (i &lt; end)//drnSze)</span>
                     {//increment on drain accordingly:
-<span class="fc" id="L875">                        int ri = 0;</span>
-<span class="fc bfc" id="L876" title="All 2 branches covered.">                        while (ri &lt; rank) {</span>
-<span class="fc bfc" id="L877" title="All 2 branches covered.">                            if (t1Shp[ri] == t2Shp[ri]) {</span>
-<span class="fc" id="L878">                                t1Idx[ri] = t0Idx[ri];</span>
-<span class="fc" id="L879">                                t2Idx[ri] = t0Idx[ri];</span>
-<span class="fc bfc" id="L880" title="All 2 branches covered.">                            } else if (t1Shp[ri] &gt; t2Shp[ri]) {</span>
-<span class="fc" id="L881">                                t1Idx[ri] = t0Idx[ri];</span>
-<span class="fc" id="L882">                                t2Idx[ri] = 0;</span>
-<span class="pc bpc" id="L883" title="1 of 2 branches missed.">                            } else if (t1Shp[ri] &lt; t2Shp[ri]) {</span>
-<span class="fc" id="L884">                                t1Idx[ri] = 0;</span>
-<span class="fc" id="L885">                                t2Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L918">                        int ri = 0;</span>
+<span class="fc bfc" id="L919" title="All 2 branches covered.">                        while (ri &lt; rank) {</span>
+<span class="fc bfc" id="L920" title="All 2 branches covered.">                            if (t1Shp[ri] == t2Shp[ri]) {</span>
+<span class="fc" id="L921">                                t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L922">                                t2Idx[ri] = t0Idx[ri];</span>
+<span class="fc bfc" id="L923" title="All 2 branches covered.">                            } else if (t1Shp[ri] &gt; t2Shp[ri]) {</span>
+<span class="fc" id="L924">                                t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L925">                                t2Idx[ri] = 0;</span>
+<span class="pc bpc" id="L926" title="1 of 2 branches missed.">                            } else if (t1Shp[ri] &lt; t2Shp[ri]) {</span>
+<span class="fc" id="L927">                                t1Idx[ri] = 0;</span>
+<span class="fc" id="L928">                                t2Idx[ri] = t0Idx[ri];</span>
                             }
-<span class="fc" id="L887">                            ri++;</span>
+<span class="fc" id="L930">                            ri++;</span>
                         }
                         //----------
                         // multiplication:
-<span class="fc" id="L891">                        double value = 0;</span>
-<span class="fc" id="L892">                        boolean running = true;</span>
-<span class="fc" id="L893">                        boolean incrementing = false;</span>
-<span class="fc bfc" id="L894" title="All 2 branches covered.">                        while (running) {</span>
-<span class="fc bfc" id="L895" title="All 2 branches covered.">                            ri = (ri == rank) ? 0 : ri;</span>
-<span class="fc bfc" id="L896" title="All 2 branches covered.">                            if (!incrementing) {</span>
-<span class="fc" id="L897">                                value += operation.execute(t0Idx, t1Idx, t2Idx);</span>
-<span class="fc" id="L898">                                incrementing = true;</span>
-<span class="fc" id="L899">                                ri = 0;</span>
+<span class="fc" id="L934">                        double value = 0;</span>
+<span class="fc" id="L935">                        boolean running = true;</span>
+<span class="fc" id="L936">                        boolean incrementing = false;</span>
+<span class="fc bfc" id="L937" title="All 2 branches covered.">                        while (running) {</span>
+<span class="fc bfc" id="L938" title="All 2 branches covered.">                            ri = (ri == rank) ? 0 : ri;</span>
+<span class="fc bfc" id="L939" title="All 2 branches covered.">                            if (!incrementing) {</span>
+<span class="fc" id="L940">                                value += operation.execute(t0Idx, t1Idx, t2Idx);</span>
+<span class="fc" id="L941">                                incrementing = true;</span>
+<span class="fc" id="L942">                                ri = 0;</span>
                             } else {//incrementing:
-<span class="pc bpc" id="L901" title="2 of 4 branches missed.">                                if (t1Idx[ri] &lt; t1Shp[ri] &amp;&amp; t2Idx[ri] &lt; t2Shp[ri]) {</span>
-<span class="fc" id="L902">                                    t1Idx[ri]++;</span>
-<span class="fc" id="L903">                                    t2Idx[ri]++;</span>
-<span class="fc bfc" id="L904" title="All 4 branches covered.">                                    if (t1Idx[ri] == t1Shp[ri] || t2Idx[ri] == t2Shp[ri]) {</span>
-<span class="pc bpc" id="L905" title="1 of 4 branches missed.">                                        running = running &amp;&amp; !(ri == (rank - 1));</span>
-<span class="fc bfc" id="L906" title="All 2 branches covered.">                                        if (t1Shp[ri] == t2Shp[ri]) {</span>
-<span class="fc" id="L907">                                            t1Idx[ri] = t0Idx[ri];</span>
-<span class="fc" id="L908">                                            t2Idx[ri] = t0Idx[ri];</span>
-<span class="fc bfc" id="L909" title="All 2 branches covered.">                                        } else if (t1Shp[ri] &gt; t2Shp[ri]) {</span>
-<span class="fc" id="L910">                                            t1Idx[ri] = t0Idx[ri];</span>
-<span class="fc" id="L911">                                            t2Idx[ri] = 0;</span>
-<span class="pc bpc" id="L912" title="1 of 2 branches missed.">                                        } else if (t1Shp[ri] &lt; t2Shp[ri]) {</span>
-<span class="fc" id="L913">                                            t1Idx[ri] = 0;</span>
-<span class="fc" id="L914">                                            t2Idx[ri] = t0Idx[ri];</span>
+<span class="pc bpc" id="L944" title="2 of 4 branches missed.">                                if (t1Idx[ri] &lt; t1Shp[ri] &amp;&amp; t2Idx[ri] &lt; t2Shp[ri]) {</span>
+<span class="fc" id="L945">                                    t1Idx[ri]++;</span>
+<span class="fc" id="L946">                                    t2Idx[ri]++;</span>
+<span class="fc bfc" id="L947" title="All 4 branches covered.">                                    if (t1Idx[ri] == t1Shp[ri] || t2Idx[ri] == t2Shp[ri]) {</span>
+<span class="pc bpc" id="L948" title="1 of 4 branches missed.">                                        running = running &amp;&amp; !(ri == (rank - 1));</span>
+<span class="fc bfc" id="L949" title="All 2 branches covered.">                                        if (t1Shp[ri] == t2Shp[ri]) {</span>
+<span class="fc" id="L950">                                            t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L951">                                            t2Idx[ri] = t0Idx[ri];</span>
+<span class="fc bfc" id="L952" title="All 2 branches covered.">                                        } else if (t1Shp[ri] &gt; t2Shp[ri]) {</span>
+<span class="fc" id="L953">                                            t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L954">                                            t2Idx[ri] = 0;</span>
+<span class="pc bpc" id="L955" title="1 of 2 branches missed.">                                        } else if (t1Shp[ri] &lt; t2Shp[ri]) {</span>
+<span class="fc" id="L956">                                            t1Idx[ri] = 0;</span>
+<span class="fc" id="L957">                                            t2Idx[ri] = t0Idx[ri];</span>
                                         }
-<span class="fc" id="L916">                                        ri++;</span>
+<span class="fc" id="L959">                                        ri++;</span>
                                     } else {
-<span class="fc" id="L918">                                        incrementing = false;</span>
+<span class="fc" id="L961">                                        incrementing = false;</span>
                                     }
                                 } else {
-<span class="nc" id="L921">                                    ri++;</span>
+<span class="nc" id="L964">                                    ri++;</span>
                                 }
                             }
                         }//setInto _value in drn:
-<span class="fc" id="L925">                        t0_value[t0_drn.i_of_idx(t0Idx)] = value;</span>
+<span class="fc" id="L968">                        t0_value[t0_drn.i_of_idx(t0Idx)] = value;</span>
                         //increment on drain:
-<span class="fc" id="L927">                        Tsr.fcn.indexing.increment(t0Idx, t0Shp);</span>
-<span class="fc" id="L928">                        i++;</span>
-<span class="fc" id="L929">                    }</span>
+<span class="fc" id="L970">                        Tsr.fcn.indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L971">                        i++;</span>
+<span class="fc" id="L972">                    }</span>
                 } else//---
                 {
-<span class="fc bfc" id="L932" title="All 2 branches covered.">                    while (i &lt; end) {//increment on drain accordingly:</span>
-<span class="fc" id="L933">                        int ri = 0;</span>
-<span class="fc bfc" id="L934" title="All 2 branches covered.">                        while (ri &lt; rank) {</span>
-<span class="pc bpc" id="L935" title="1 of 2 branches missed.">                            if (t2Idx[ri] == t2Shp[ri]) {//setting 0</span>
-<span class="nc" id="L936">                                t1Idx[ri] = t0Idx[ri];</span>
-<span class="nc" id="L937">                                t2Idx[ri] = 0;//mtch[mi];</span>
+<span class="fc bfc" id="L975" title="All 2 branches covered.">                    while (i &lt; end) {//increment on drain accordingly:</span>
+<span class="fc" id="L976">                        int ri = 0;</span>
+<span class="fc bfc" id="L977" title="All 2 branches covered.">                        while (ri &lt; rank) {</span>
+<span class="pc bpc" id="L978" title="1 of 2 branches missed.">                            if (t2Idx[ri] == t2Shp[ri]) {//setting 0</span>
+<span class="nc" id="L979">                                t1Idx[ri] = t0Idx[ri];</span>
+<span class="nc" id="L980">                                t2Idx[ri] = 0;//mtch[mi];</span>
                             } else {
-<span class="fc bfc" id="L939" title="All 2 branches covered.">                                if (t0Shp[ri] &gt; t1Shp[ri]) {</span>
-<span class="fc" id="L940">                                    t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);</span>
+<span class="fc bfc" id="L982" title="All 2 branches covered.">                                if (t0Shp[ri] &gt; t1Shp[ri]) {</span>
+<span class="fc" id="L983">                                    t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);</span>
                                 } else {
-<span class="fc" id="L942">                                    t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);</span>
+<span class="fc" id="L985">                                    t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);</span>
                                 }
                             }
-<span class="fc" id="L945">                            ri++;</span>
+<span class="fc" id="L988">                            ri++;</span>
                         }
                         //----------
                         // multiplication:
-<span class="fc" id="L949">                        double value = 0;</span>
-<span class="fc" id="L950">                        boolean running = true;</span>
-<span class="fc" id="L951">                        boolean incrementing = false;</span>
-<span class="fc bfc" id="L952" title="All 2 branches covered.">                        while (running) {</span>
-<span class="fc bfc" id="L953" title="All 2 branches covered.">                            ri = (ri == rank) ? 0 : ri;</span>
-<span class="fc bfc" id="L954" title="All 2 branches covered.">                            if (!incrementing) {</span>
-<span class="fc" id="L955">                                boolean isMatch = true;</span>
-<span class="fc bfc" id="L956" title="All 2 branches covered.">                                for (int rii = 0; rii &lt; rank; rii++) {</span>
-<span class="fc bfc" id="L957" title="All 6 branches covered.">                                    isMatch = (t1Idx[rii] &lt; t1Shp[rii] &amp;&amp; t1Idx[rii] &gt;= 0) &amp;&amp; isMatch;</span>
+<span class="fc" id="L992">                        double value = 0;</span>
+<span class="fc" id="L993">                        boolean running = true;</span>
+<span class="fc" id="L994">                        boolean incrementing = false;</span>
+<span class="fc bfc" id="L995" title="All 2 branches covered.">                        while (running) {</span>
+<span class="fc bfc" id="L996" title="All 2 branches covered.">                            ri = (ri == rank) ? 0 : ri;</span>
+<span class="fc bfc" id="L997" title="All 2 branches covered.">                            if (!incrementing) {</span>
+<span class="fc" id="L998">                                boolean isMatch = true;</span>
+<span class="fc bfc" id="L999" title="All 2 branches covered.">                                for (int rii = 0; rii &lt; rank; rii++) {</span>
+<span class="fc bfc" id="L1000" title="All 6 branches covered.">                                    isMatch = (t1Idx[rii] &lt; t1Shp[rii] &amp;&amp; t1Idx[rii] &gt;= 0) &amp;&amp; isMatch;</span>
                                 }
-<span class="fc bfc" id="L959" title="All 2 branches covered.">                                if (isMatch) {</span>
-<span class="fc" id="L960">                                    value += operation.execute(t0Idx, t1Idx, t2Idx);</span>
+<span class="fc bfc" id="L1002" title="All 2 branches covered.">                                if (isMatch) {</span>
+<span class="fc" id="L1003">                                    value += operation.execute(t0Idx, t1Idx, t2Idx);</span>
                                 }
-<span class="fc" id="L962">                                incrementing = true;</span>
-<span class="fc" id="L963">                                ri = 0;</span>
-<span class="fc" id="L964">                            } else {//incrementing:</span>
-<span class="pc bpc" id="L965" title="1 of 2 branches missed.">                                if (t2Idx[ri] &lt; t2Shp[ri]) {</span>
-<span class="fc" id="L966">                                    t2Idx[ri]++;</span>
-<span class="fc bfc" id="L967" title="All 2 branches covered.">                                    if (t2Idx[ri] == t2Shp[ri]) {</span>
-<span class="pc bpc" id="L968" title="1 of 4 branches missed.">                                        running = running &amp;&amp; !(ri == (rank - 1));</span>
-<span class="fc" id="L969">                                        t1Idx[ri] = t0Idx[ri];</span>
-<span class="fc" id="L970">                                        t2Idx[ri] = 0;</span>
-<span class="fc" id="L971">                                        ri++;</span>
+<span class="fc" id="L1005">                                incrementing = true;</span>
+<span class="fc" id="L1006">                                ri = 0;</span>
+<span class="fc" id="L1007">                            } else {//incrementing:</span>
+<span class="pc bpc" id="L1008" title="1 of 2 branches missed.">                                if (t2Idx[ri] &lt; t2Shp[ri]) {</span>
+<span class="fc" id="L1009">                                    t2Idx[ri]++;</span>
+<span class="fc bfc" id="L1010" title="All 2 branches covered.">                                    if (t2Idx[ri] == t2Shp[ri]) {</span>
+<span class="pc bpc" id="L1011" title="1 of 4 branches missed.">                                        running = running &amp;&amp; !(ri == (rank - 1));</span>
+<span class="fc" id="L1012">                                        t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L1013">                                        t2Idx[ri] = 0;</span>
+<span class="fc" id="L1014">                                        ri++;</span>
                                     } else {
-<span class="fc bfc" id="L973" title="All 2 branches covered.">                                        if (t0Shp[ri] &gt; t1Shp[ri]) {</span>
-<span class="fc" id="L974">                                            t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);</span>
+<span class="fc bfc" id="L1016" title="All 2 branches covered.">                                        if (t0Shp[ri] &gt; t1Shp[ri]) {</span>
+<span class="fc" id="L1017">                                            t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);</span>
                                         } else {
-<span class="fc" id="L976">                                            t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);</span>
+<span class="fc" id="L1019">                                            t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);</span>
                                         }
-<span class="fc" id="L978">                                        incrementing = false;</span>
+<span class="fc" id="L1021">                                        incrementing = false;</span>
                                     }
                                 } else {
-<span class="nc" id="L981">                                    ri++;</span>
+<span class="nc" id="L1024">                                    ri++;</span>
                                 }
                             }
                         }
                         //set value in drn:
-<span class="fc" id="L986">                        t0_value[t0_drn.i_of_idx(t0Idx)] = value;</span>
+<span class="fc" id="L1029">                        t0_value[t0_drn.i_of_idx(t0Idx)] = value;</span>
                         //increment on drain:
-<span class="fc" id="L988">                        Tsr.fcn.indexing.increment(t0Idx, t0Shp);</span>
-<span class="fc" id="L989">                        i++;</span>
-<span class="fc" id="L990">                    }</span>
+<span class="fc" id="L1031">                        Tsr.fcn.indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L1032">                        i++;</span>
+<span class="fc" id="L1033">                    }</span>
                 }
 
-<span class="fc" id="L993">            }</span>
+<span class="fc" id="L1036">            }</span>
 
             @Contract(pure = true)
             public static void broadcast(
@@ -999,119 +1042,119 @@ public class CPU extends AbstractDevice {
                     int i, int end,
                     Operator operation
             ) {
-<span class="fc" id="L1002">                int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
-<span class="fc" id="L1003">                int[] t1Shp = t1_src.shape();</span>
-<span class="pc bpc" id="L1004" title="1 of 2 branches missed.">                int[] t2Shp = (t2_src != null) ? t2_src.shape() : t1Shp;</span>
-<span class="fc" id="L1005">                int rank = t0Shp.length;</span>
-<span class="fc" id="L1006">                int[] t0Idx = t0_drn.idx_of_i(i);//new int[rank];</span>
-<span class="fc" id="L1007">                int[] t1Idx = new int[rank];</span>
-<span class="fc" id="L1008">                int[] t2Idx = new int[rank];</span>
-<span class="fc" id="L1009">                double[] t0_value = t0_drn.value64();</span>
+<span class="fc" id="L1045">                int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
+<span class="fc" id="L1046">                int[] t1Shp = t1_src.shape();</span>
+<span class="pc bpc" id="L1047" title="1 of 2 branches missed.">                int[] t2Shp = (t2_src != null) ? t2_src.shape() : t1Shp;</span>
+<span class="fc" id="L1048">                int rank = t0Shp.length;</span>
+<span class="fc" id="L1049">                int[] t0Idx = t0_drn.idx_of_i(i);//new int[rank];</span>
+<span class="fc" id="L1050">                int[] t1Idx = new int[rank];</span>
+<span class="fc" id="L1051">                int[] t2Idx = new int[rank];</span>
+<span class="fc" id="L1052">                double[] t0_value = t0_drn.value64();</span>
                 //double[] t1_value = t1_src.value64();
                 //double[] t2_value = t2_src.value64();
                 //int drnSze = t0_drn.size();
                 //int i = 0;
-<span class="fc bfc" id="L1014" title="All 2 branches covered.">                if (d &lt; 0) {</span>
-<span class="fc bfc" id="L1015" title="All 2 branches covered.">                    while (i &lt; end) {//increment on drain accordingly:</span>
-<span class="fc" id="L1016">                        int ri = 0;</span>
-<span class="fc bfc" id="L1017" title="All 2 branches covered.">                        while (ri &lt; rank) {</span>
-<span class="pc bpc" id="L1018" title="1 of 2 branches missed.">                            if (t1Shp[ri] == t2Shp[ri]) {//Equal shapes -&gt; out index is t1 &amp; t2 index!for this ri</span>
-<span class="nc" id="L1019">                                t1Idx[ri] = t0Idx[ri];</span>
-<span class="nc" id="L1020">                                t2Idx[ri] = t0Idx[ri];</span>
-<span class="fc bfc" id="L1021" title="All 2 branches covered.">                            } else if (t1Shp[ri] &gt; t2Shp[ri]) {//Current shape axis of t2 must be 1 !</span>
-<span class="fc" id="L1022">                                t1Idx[ri] = t0Idx[ri];</span>
-<span class="fc" id="L1023">                                t2Idx[ri] = 0;//...therefore it can be set to 0!</span>
-<span class="pc bpc" id="L1024" title="1 of 2 branches missed.">                            } else if (t1Shp[ri] &lt; t2Shp[ri]) {//same principle:</span>
-<span class="fc" id="L1025">                                t1Idx[ri] = 0;</span>
-<span class="fc" id="L1026">                                t2Idx[ri] = t0Idx[ri];</span>
+<span class="fc bfc" id="L1057" title="All 2 branches covered.">                if (d &lt; 0) {</span>
+<span class="fc bfc" id="L1058" title="All 2 branches covered.">                    while (i &lt; end) {//increment on drain accordingly:</span>
+<span class="fc" id="L1059">                        int ri = 0;</span>
+<span class="fc bfc" id="L1060" title="All 2 branches covered.">                        while (ri &lt; rank) {</span>
+<span class="fc bfc" id="L1061" title="All 2 branches covered.">                            if (t1Shp[ri] == t2Shp[ri]) {//Equal shapes -&gt; out index is t1 &amp; t2 index!for this ri</span>
+<span class="fc" id="L1062">                                t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L1063">                                t2Idx[ri] = t0Idx[ri];</span>
+<span class="fc bfc" id="L1064" title="All 2 branches covered.">                            } else if (t1Shp[ri] &gt; t2Shp[ri]) {//Current shape axis of t2 must be 1 !</span>
+<span class="fc" id="L1065">                                t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L1066">                                t2Idx[ri] = 0;//...therefore it can be set to 0!</span>
+<span class="pc bpc" id="L1067" title="1 of 2 branches missed.">                            } else if (t1Shp[ri] &lt; t2Shp[ri]) {//same principle:</span>
+<span class="fc" id="L1068">                                t1Idx[ri] = 0;</span>
+<span class="fc" id="L1069">                                t2Idx[ri] = t0Idx[ri];</span>
                             }
-<span class="fc" id="L1028">                            ri++;</span>
+<span class="fc" id="L1071">                            ri++;</span>
                         }
                         //----------
                         //setInto _value in drn:
-<span class="fc" id="L1032">                        t0_value[t0_drn.i_of_idx(t0Idx)] =</span>
-<span class="fc" id="L1033">                                operation.execute(t0Idx, t1Idx, t2Idx);</span>
+<span class="fc" id="L1075">                        t0_value[t0_drn.i_of_idx(t0Idx)] =</span>
+<span class="fc" id="L1076">                                operation.execute(t0Idx, t1Idx, t2Idx);</span>
 
                         //increment on drain:
-<span class="fc" id="L1036">                        Tsr.fcn.indexing.increment(t0Idx, t0Shp);</span>
-<span class="fc" id="L1037">                        i++;</span>
-<span class="fc" id="L1038">                    }</span>
+<span class="fc" id="L1079">                        Tsr.fcn.indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L1080">                        i++;</span>
+<span class="fc" id="L1081">                    }</span>
                 } else//---//Note: src2 is now former drain!
                 {
-<span class="fc bfc" id="L1041" title="All 2 branches covered.">                    while (i &lt; end) {//increment on drain accordingly:</span>
-<span class="fc" id="L1042">                        int ri = 0;</span>
-<span class="fc bfc" id="L1043" title="All 2 branches covered.">                        while (ri &lt; rank) {</span>
-<span class="pc bpc" id="L1044" title="1 of 2 branches missed.">                            if (t0Shp[ri] == t1Shp[ri]) {</span>
-<span class="nc" id="L1045">                                t1Idx[ri] = t0Idx[ri];//all shapes are equal -&gt; shape index can be inherited from origin!</span>
-<span class="nc" id="L1046">                                t2Idx[ri] = t0Idx[ri];</span>
-<span class="fc bfc" id="L1047" title="All 2 branches covered.">                            } else if (t0Shp[ri] &gt; t1Shp[ri]) {</span>
-<span class="fc" id="L1048">                                t1Idx[ri] = 0;//Current origin index is larger: index can be inherited!</span>
-<span class="fc" id="L1049">                                t2Idx[ri] = t0Idx[ri];</span>
+<span class="fc bfc" id="L1084" title="All 2 branches covered.">                    while (i &lt; end) {//increment on drain accordingly:</span>
+<span class="fc" id="L1085">                        int ri = 0;</span>
+<span class="fc bfc" id="L1086" title="All 2 branches covered.">                        while (ri &lt; rank) {</span>
+<span class="fc bfc" id="L1087" title="All 2 branches covered.">                            if (t0Shp[ri] == t1Shp[ri]) {</span>
+<span class="fc" id="L1088">                                t1Idx[ri] = t0Idx[ri];//all shapes are equal -&gt; shape index can be inherited from origin!</span>
+<span class="fc" id="L1089">                                t2Idx[ri] = t0Idx[ri];</span>
+<span class="fc bfc" id="L1090" title="All 2 branches covered.">                            } else if (t0Shp[ri] &gt; t1Shp[ri]) {</span>
+<span class="fc" id="L1091">                                t1Idx[ri] = 0;//Current origin index is larger: index can be inherited!</span>
+<span class="fc" id="L1092">                                t2Idx[ri] = t0Idx[ri];</span>
                             }
-<span class="fc" id="L1051">                            ri++;</span>
+<span class="fc" id="L1094">                            ri++;</span>
                         }
                         //----------
                         // multiplication:
-<span class="fc" id="L1055">                        double value = 0;</span>
-<span class="fc" id="L1056">                        boolean running = true;</span>
-<span class="fc" id="L1057">                        boolean incrementing = false;</span>
-<span class="fc bfc" id="L1058" title="All 2 branches covered.">                        while (running) {</span>
-<span class="fc bfc" id="L1059" title="All 2 branches covered.">                            ri = (ri == rank) ? 0 : ri;</span>
-<span class="fc bfc" id="L1060" title="All 2 branches covered.">                            if (!incrementing) {</span>
-<span class="fc" id="L1061">                                value += operation.execute(t0Idx, t1Idx, t2Idx);</span>
-<span class="fc" id="L1062">                                incrementing = true;</span>
-<span class="fc" id="L1063">                                ri = 0;</span>
+<span class="fc" id="L1098">                        double value = 0;</span>
+<span class="fc" id="L1099">                        boolean running = true;</span>
+<span class="fc" id="L1100">                        boolean incrementing = false;</span>
+<span class="fc bfc" id="L1101" title="All 2 branches covered.">                        while (running) {</span>
+<span class="fc bfc" id="L1102" title="All 2 branches covered.">                            ri = (ri == rank) ? 0 : ri;</span>
+<span class="fc bfc" id="L1103" title="All 2 branches covered.">                            if (!incrementing) {</span>
+<span class="fc" id="L1104">                                value += operation.execute(t0Idx, t1Idx, t2Idx);</span>
+<span class="fc" id="L1105">                                incrementing = true;</span>
+<span class="fc" id="L1106">                                ri = 0;</span>
                             } else {//incrementing:
-<span class="fc bfc" id="L1065" title="All 2 branches covered.">                                if (t0Shp[ri] &lt; t1Shp[ri]) {//Only if origin shape is smaller than handle and drain!</span>
-<span class="fc" id="L1066">                                    t1Idx[ri]++;</span>
-<span class="fc" id="L1067">                                    t2Idx[ri]++;</span>
-<span class="fc bfc" id="L1068" title="All 2 branches covered.">                                    if (t1Idx[ri] == t1Shp[ri]) {</span>
-<span class="fc" id="L1069">                                        t1Idx[ri] = 0;</span>
-<span class="fc" id="L1070">                                        t2Idx[ri] = 0;</span>
-<span class="pc bpc" id="L1071" title="2 of 4 branches missed.">                                        running = running &amp;&amp; !(ri == (rank - 1));</span>
-<span class="fc" id="L1072">                                        ri++;</span>
+<span class="fc bfc" id="L1108" title="All 2 branches covered.">                                if (t0Shp[ri] &lt; t1Shp[ri]) {//Only if origin shape is smaller than handle and drain!</span>
+<span class="fc" id="L1109">                                    t1Idx[ri]++;</span>
+<span class="fc" id="L1110">                                    t2Idx[ri]++;</span>
+<span class="fc bfc" id="L1111" title="All 2 branches covered.">                                    if (t1Idx[ri] == t1Shp[ri]) {</span>
+<span class="fc" id="L1112">                                        t1Idx[ri] = 0;</span>
+<span class="fc" id="L1113">                                        t2Idx[ri] = 0;</span>
+<span class="pc bpc" id="L1114" title="2 of 4 branches missed.">                                        running = running &amp;&amp; !(ri == (rank - 1));</span>
+<span class="fc" id="L1115">                                        ri++;</span>
                                     } else {
-<span class="fc" id="L1074">                                        incrementing = false;//return to calculation!</span>
+<span class="fc" id="L1117">                                        incrementing = false;//return to calculation!</span>
                                     }
                                 } else {
-<span class="pc bpc" id="L1077" title="2 of 4 branches missed.">                                    running = running &amp;&amp; !(ri == (rank - 1));</span>
-<span class="fc" id="L1078">                                    ri++;</span>
+<span class="pc bpc" id="L1120" title="1 of 4 branches missed.">                                    running = running &amp;&amp; !(ri == (rank - 1));</span>
+<span class="fc" id="L1121">                                    ri++;</span>
                                 }
                             }
                         }
                         //set value in drn:
-<span class="fc" id="L1083">                        t0_value[t0_drn.i_of_idx(t0Idx)] = value;</span>
+<span class="fc" id="L1126">                        t0_value[t0_drn.i_of_idx(t0Idx)] = value;</span>
                         //increment on drain:
-<span class="fc" id="L1085">                        Tsr.fcn.indexing.increment(t0Idx, t0Shp);</span>
-<span class="fc" id="L1086">                        i++;</span>
-<span class="fc" id="L1087">                    }</span>
+<span class="fc" id="L1128">                        Tsr.fcn.indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L1129">                        i++;</span>
+<span class="fc" id="L1130">                    }</span>
                 }
-<span class="fc" id="L1089">            }</span>
+<span class="fc" id="L1132">            }</span>
 
             @Contract(pure = true)
             private static void activate(
                     Tsr t0_drn, int i, int end,
                     Operator operation
             ) {
-<span class="fc" id="L1096">                int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
-<span class="fc" id="L1097">                int rank = t0Shp.length;</span>
-<span class="fc" id="L1098">                int[] t0Idx = t0_drn.idx_of_i(i);//new int[rank];</span>
-<span class="fc" id="L1099">                int[] t1Idx = new int[rank];</span>
-<span class="fc" id="L1100">                double[] t0_value = t0_drn.value64();</span>
-<span class="fc bfc" id="L1101" title="All 2 branches covered.">                while (i &lt; end) {//increment on drain accordingly:</span>
-<span class="fc" id="L1102">                    int ri = 0;</span>
-<span class="fc bfc" id="L1103" title="All 2 branches covered.">                    while (ri &lt; rank) {</span>
-<span class="fc" id="L1104">                        t1Idx[ri] = t0Idx[ri];</span>
-<span class="fc" id="L1105">                        ri++;</span>
+<span class="fc" id="L1139">                int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
+<span class="fc" id="L1140">                int rank = t0Shp.length;</span>
+<span class="fc" id="L1141">                int[] t0Idx = t0_drn.idx_of_i(i);//new int[rank];</span>
+<span class="fc" id="L1142">                int[] t1Idx = new int[rank];</span>
+<span class="fc" id="L1143">                double[] t0_value = t0_drn.value64();</span>
+<span class="fc bfc" id="L1144" title="All 2 branches covered.">                while (i &lt; end) {//increment on drain accordingly:</span>
+<span class="fc" id="L1145">                    int ri = 0;</span>
+<span class="fc bfc" id="L1146" title="All 2 branches covered.">                    while (ri &lt; rank) {</span>
+<span class="fc" id="L1147">                        t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L1148">                        ri++;</span>
                     }
                     //setInto _value in drn:
-<span class="fc" id="L1108">                    t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, null);</span>
+<span class="fc" id="L1151">                    t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, null);</span>
                     //increment on drain:
-<span class="fc" id="L1110">                    Tsr.fcn.indexing.increment(t0Idx, t0Shp);</span>
-<span class="fc" id="L1111">                    i++;</span>
-<span class="fc" id="L1112">                }</span>
+<span class="fc" id="L1153">                    Tsr.fcn.indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L1154">                    i++;</span>
+<span class="fc" id="L1155">                }</span>
 
-<span class="fc" id="L1114">            }</span>
+<span class="fc" id="L1157">            }</span>
 
 
         }

@@ -21,11 +21,13 @@ public class FunctionConstructor
             return new AbstractFunction(f_id, isFlat, sources, doAD){
                 @Override
                 public Tsr activate(Tsr[] inputs, int j) {
-                    return CACHE.preprocess(inputs, this,()-> _tensor_activation(sources.get(0).activate(inputs, j), false));
+                    return CACHE.preprocess(inputs, this,()-> _tensor_activation(new Tsr[]{sources.get(0).activate(inputs, j)}, j, -1), -1, j);
+                    //return CACHE.preprocess(inputs, this,()-> _tensor_activation(sources.get(0).activate(inputs, j), false));
                 }
                 @Override
                 public Tsr activate(Tsr[] inputs) {
-                    return CACHE.preprocess(inputs, this, ()-> _tensor_activation(sources.get(0).activate(inputs), false));
+                    return CACHE.preprocess(inputs, this,()-> _tensor_activation(new Tsr[]{sources.get(0).activate(inputs)}, -1, -1), -1, -1);
+                    //return CACHE.preprocess(inputs, this, ()-> _tensor_activation(sources.get(0).activate(inputs), false));
                 }
                 @Override
                 public Tsr derive(Tsr[] inputs, int d, int j) {
@@ -64,19 +66,19 @@ public class FunctionConstructor
             return new AbstractFunction(f_id, isFlat, sources, doAD){
                 @Override
                 public Tsr activate(Tsr[] inputs, int j) {
-                    return CACHE.preprocess(inputs, this, ()-> _tensor_activation(inputs, j, -1));
+                    return CACHE.preprocess(inputs, this, ()-> _tensor_activation(inputs, j, -1), -1, j);
                 }
                 @Override
                 public Tsr activate(Tsr[] inputs) {
-                    return CACHE.preprocess(inputs, this, ()-> _tensor_activation(inputs, -1, -1));
+                    return CACHE.preprocess(inputs, this, ()-> _tensor_activation(inputs, -1, -1), -1, -1);
                 }
                 @Override
                 public Tsr derive(Tsr[] inputs, int d, int j) {
-                    return _tensor_activation(inputs, j, d);
+                    return CACHE.preprocess(inputs, this, ()-> _tensor_activation(inputs, j, d), d, j);
                 }
                 @Override
                 public Tsr derive(Tsr[] inputs, int d) {
-                    return _tensor_activation(inputs, -1, d);
+                    return CACHE.preprocess(inputs, this, ()-> _tensor_activation(inputs, -1, d), d, -1);
                 }
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 @Override

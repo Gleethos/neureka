@@ -25,6 +25,10 @@ public class FConstant implements Function
 		return "_value";
 	}
 
+	@Override
+	public boolean dependsOn(int index){
+		return false;
+	}
 
 	@Override
 	public Function newBuild(String expression)

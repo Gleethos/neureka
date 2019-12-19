@@ -19,7 +19,7 @@ public class Cache
         return this.FUNCTIONS;
     }
 
-    private final TreeMap<GraphLock, TreeMap<GraphNode, Tsr>> PROCESSING = new TreeMap<>((a, b)->((int)(a.hashCode()-b.hashCode())));
+    private final TreeMap<GraphLock, TreeMap<Long, Tsr>> PROCESSING = new TreeMap<>((a, b)->((int)(a.hashCode()-b.hashCode())));
 
     public synchronized void free(GraphLock lock)//Tsr[] input
     {
@@ -27,7 +27,7 @@ public class Cache
         lock.release();
     }
 
-    public synchronized Tsr preprocess(Tsr[] inputs, Function function, Supplier<Tsr> activation)
+    public synchronized Tsr preprocess(Tsr[] inputs, Function function, Supplier<Tsr> activation, int d, int j)
     {
         boolean locked = true;//input tensors might all have graph nodes but are left from previous computation. (=>need to locked again!)
         Tsr untracked = null;
@@ -39,7 +39,7 @@ public class Cache
             }
         }
         if(untracked==null || !locked){//If graph tracking (nodes) has not yet been initialized!
-            return Function.setup.commit(inputs, function);
+            return Function.setup.commit(null, inputs, function, activation);
         }
         GraphLock lock = ((GraphNode)untracked.find(GraphNode.class)).lock();
         for(Tsr t : inputs){
@@ -53,37 +53,43 @@ public class Cache
         GraphNode node = (GraphNode) inputs[0].find(GraphNode.class);
         Tsr result = null;
         if(function!=null && function.id()!=Function.TYPES.LOOKUP.get("<")&&function.id()!=Function.TYPES.LOOKUP.get(">")){
-            result = _get(node);
+            result = _get(node, d, j);
         }
         if(result==null){
             result = activation.get();
-            _put(result, node);
+            _put(result, node, d, j);
         }
         //add references/child to graph node?
         return result;
     }
 
-    private synchronized Tsr _get(GraphNode node)
+    private synchronized Tsr _get(GraphNode node, int d, int j)
     {
+        d = (d>=0)?d+1:d;
+        j = (j>=0)?j+1:j;
+        long key = node.nid()+d*31+j;
         if(PROCESSING.containsKey(node.lock())){
-            if(PROCESSING.get(node.lock()).containsKey(node)){
-                return PROCESSING.get(node.lock()).get(node);
+            if(PROCESSING.get(node.lock()).containsKey(key)){
+                return PROCESSING.get(node.lock()).get(key);
             }
         }
         return null;
     }
 
-    private synchronized void _put(Tsr t, GraphNode node)
+    private synchronized void _put(Tsr t, GraphNode node, int d, int j)
     {
+        d = (d>=0)?d+1:d;
+        j = (j>=0)?j+1:j;
+        long key = node.nid()+d*31+j;
         if(node.isCachable()) {
-            TreeMap<GraphNode, Tsr> variables;
+            TreeMap<Long, Tsr> variables;
             if (!PROCESSING.containsKey(node.lock())) {
-                variables = new TreeMap<>((a, b) -> (int) (a.nid() - b.nid()));
+                variables = new TreeMap<>((a, b) -> (int) (a.hashCode() - b.hashCode()));
                 PROCESSING.put(node.lock(), variables);
             } else {
                 variables = PROCESSING.get(node.lock());
             }
-            variables.put(node, t);
+            variables.put(key, t);
         }
     }
 

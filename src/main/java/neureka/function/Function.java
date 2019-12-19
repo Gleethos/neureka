@@ -10,6 +10,8 @@ import neureka.function.factory.assembly.FunctionBuilder;
 import neureka.function.environment.Cache;
 import neureka.function.factory.autograd.JITProp;
 
+import java.util.function.Supplier;
+
 public interface Function
 {
     Cache CACHE = new Cache();
@@ -30,6 +32,11 @@ public interface Function
         }
 
         public static Tsr commit(Tsr drain, Tsr[] inputs, Function function) {
+            return commit(drain, inputs, function, null);
+        }
+
+        public static Tsr commit(Tsr drain, Tsr[] inputs, Function function, Supplier<Tsr> activation){
+
             GraphLock newLock = new GraphLock(function, inputs);
             for (Tsr t : inputs) {
                 if(t.has(GraphNode.class)){
@@ -41,7 +48,13 @@ public interface Function
                     t.add(new GraphNode(t, null, null, newLock));
                 }
             }
-            Tsr result = function.activate(inputs);
+            Tsr result = null;
+            if(activation==null){
+                result = function.activate(inputs);
+            } else {
+                result = activation.get();
+            }
+
             if (result.has(GraphNode.class)) ((GraphNode) result.find(GraphNode.class)).redundantGradientCleanup();
             Function.CACHE.free(newLock);
             boolean resultIsUnique = true;
@@ -60,6 +73,7 @@ public interface Function
                 return  null;
             }
         }
+
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -71,6 +85,7 @@ public interface Function
 
     String type();
 
+    boolean dependsOn(int index);
     //------------------------------------------------------------------------------------------------------------------
     double activate(double[] inputs, int j);// Iteration over input via j !
 

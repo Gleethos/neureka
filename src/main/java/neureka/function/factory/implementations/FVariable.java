@@ -26,6 +26,11 @@ public class FVariable implements Function, IProvider {
         return "variable";
     }
 
+    @Override
+    public boolean dependsOn(int index){
+        return true;
+    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public Function newBuild(final String equation) {

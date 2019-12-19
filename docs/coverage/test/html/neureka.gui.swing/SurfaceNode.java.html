@@ -286,7 +286,7 @@ public class SurfaceNode implements SurfaceObject {
         }
 <span class="fc" id="L287">        double mag = Math.abs(SurfaceUtility.magnitudeOf(velX, velY));</span>
 <span class="pc bpc" id="L288" title="1 of 4 branches missed.">        if (!isOnDeck &amp;&amp; mag &gt; 10) {</span>
-<span class="fc bfc" id="L289" title="All 2 branches covered.">            double s = (mag &gt; diameter) ? diameter : mag;</span>
+<span class="pc bpc" id="L289" title="1 of 2 branches missed.">            double s = (mag &gt; diameter) ? diameter : mag;</span>
 <span class="fc" id="L290">            queue.addAll(</span>
 <span class="fc" id="L291">                    this.moveTo(</span>
                             new double[]{

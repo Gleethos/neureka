@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 <span class="fc" id="L19">        return this.FUNCTIONS;</span>
     }
 
-<span class="fc" id="L22">    private final TreeMap&lt;GraphLock, TreeMap&lt;GraphNode, Tsr&gt;&gt; PROCESSING = new TreeMap&lt;&gt;((a, b)-&gt;((int)(a.hashCode()-b.hashCode())));</span>
+<span class="fc" id="L22">    private final TreeMap&lt;GraphLock, TreeMap&lt;Long, Tsr&gt;&gt; PROCESSING = new TreeMap&lt;&gt;((a, b)-&gt;((int)(a.hashCode()-b.hashCode())));</span>
 
     public synchronized void free(GraphLock lock)//Tsr[] input
     {
@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 <span class="fc" id="L27">        lock.release();</span>
 <span class="fc" id="L28">    }</span>
 
-    public synchronized Tsr preprocess(Tsr[] inputs, Function function, Supplier&lt;Tsr&gt; activation)
+    public synchronized Tsr preprocess(Tsr[] inputs, Function function, Supplier&lt;Tsr&gt; activation, int d, int j)
     {
 <span class="fc" id="L32">        boolean locked = true;//input tensors might all have graph nodes but are left from previous computation. (=&gt;need to locked again!)</span>
 <span class="fc" id="L33">        Tsr untracked = null;</span>
@@ -39,7 +39,7 @@ import java.util.function.Supplier;
             }
         }
 <span class="fc bfc" id="L41" title="All 4 branches covered.">        if(untracked==null || !locked){//If graph tracking (nodes) has not yet been initialized!</span>
-<span class="fc" id="L42">            return Function.setup.commit(inputs, function);</span>
+<span class="fc" id="L42">            return Function.setup.commit(null, inputs, function, activation);</span>
         }
 <span class="fc" id="L44">        GraphLock lock = ((GraphNode)untracked.find(GraphNode.class)).lock();</span>
 <span class="fc bfc" id="L45" title="All 2 branches covered.">        for(Tsr t : inputs){</span>
@@ -53,39 +53,45 @@ import java.util.function.Supplier;
 <span class="fc" id="L53">        GraphNode node = (GraphNode) inputs[0].find(GraphNode.class);</span>
 <span class="fc" id="L54">        Tsr result = null;</span>
 <span class="pc bpc" id="L55" title="1 of 6 branches missed.">        if(function!=null &amp;&amp; function.id()!=Function.TYPES.LOOKUP.get(&quot;&lt;&quot;)&amp;&amp;function.id()!=Function.TYPES.LOOKUP.get(&quot;&gt;&quot;)){</span>
-<span class="fc" id="L56">            result = _get(node);</span>
+<span class="fc" id="L56">            result = _get(node, d, j);</span>
         }
 <span class="pc bpc" id="L58" title="1 of 2 branches missed.">        if(result==null){</span>
 <span class="fc" id="L59">            result = activation.get();</span>
-<span class="fc" id="L60">            _put(result, node);</span>
+<span class="fc" id="L60">            _put(result, node, d, j);</span>
         }
         //add references/child to graph node?
 <span class="fc" id="L63">        return result;</span>
     }
 
-    private synchronized Tsr _get(GraphNode node)
+    private synchronized Tsr _get(GraphNode node, int d, int j)
     {
-<span class="fc bfc" id="L68" title="All 2 branches covered.">        if(PROCESSING.containsKey(node.lock())){</span>
-<span class="pc bpc" id="L69" title="1 of 2 branches missed.">            if(PROCESSING.get(node.lock()).containsKey(node)){</span>
-<span class="nc" id="L70">                return PROCESSING.get(node.lock()).get(node);</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        d = (d&gt;=0)?d+1:d;</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        j = (j&gt;=0)?j+1:j;</span>
+<span class="fc" id="L70">        long key = node.nid()+d*31+j;</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if(PROCESSING.containsKey(node.lock())){</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">            if(PROCESSING.get(node.lock()).containsKey(key)){</span>
+<span class="nc" id="L73">                return PROCESSING.get(node.lock()).get(key);</span>
             }
         }
-<span class="fc" id="L73">        return null;</span>
+<span class="fc" id="L76">        return null;</span>
     }
 
-    private synchronized void _put(Tsr t, GraphNode node)
+    private synchronized void _put(Tsr t, GraphNode node, int d, int j)
     {
-<span class="fc bfc" id="L78" title="All 2 branches covered.">        if(node.isCachable()) {</span>
-            TreeMap&lt;GraphNode, Tsr&gt; variables;
-<span class="fc bfc" id="L80" title="All 2 branches covered.">            if (!PROCESSING.containsKey(node.lock())) {</span>
-<span class="fc" id="L81">                variables = new TreeMap&lt;&gt;((a, b) -&gt; (int) (a.nid() - b.nid()));</span>
-<span class="fc" id="L82">                PROCESSING.put(node.lock(), variables);</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        d = (d&gt;=0)?d+1:d;</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        j = (j&gt;=0)?j+1:j;</span>
+<span class="fc" id="L83">        long key = node.nid()+d*31+j;</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">        if(node.isCachable()) {</span>
+            TreeMap&lt;Long, Tsr&gt; variables;
+<span class="fc bfc" id="L86" title="All 2 branches covered.">            if (!PROCESSING.containsKey(node.lock())) {</span>
+<span class="fc" id="L87">                variables = new TreeMap&lt;&gt;((a, b) -&gt; (int) (a.hashCode() - b.hashCode()));</span>
+<span class="fc" id="L88">                PROCESSING.put(node.lock(), variables);</span>
             } else {
-<span class="fc" id="L84">                variables = PROCESSING.get(node.lock());</span>
+<span class="fc" id="L90">                variables = PROCESSING.get(node.lock());</span>
             }
-<span class="fc" id="L86">            variables.put(node, t);</span>
+<span class="fc" id="L92">            variables.put(key, t);</span>
         }
-<span class="fc" id="L88">    }</span>
+<span class="fc" id="L94">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

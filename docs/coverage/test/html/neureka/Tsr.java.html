@@ -143,12 +143,12 @@ public class Tsr
 <span class="fc" id="L143">            this.setValue32((float[])value);</span>
 <span class="pc bpc" id="L144" title="1 of 2 branches missed.">        } else if(value instanceof  double[]){</span>
 <span class="nc" id="L145">            this.setValue64((double[])value);</span>
-<span class="pc bpc" id="L146" title="1 of 2 branches missed.">        } else if(value instanceof Float){</span>
-<span class="nc" id="L147">            this.setIsVirtual(true);</span>
-<span class="nc bnc" id="L148" title="All 2 branches missed.">            if(this.is32()){</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">        } else if(value instanceof Float){</span>
+<span class="fc" id="L147">            this.setIsVirtual(true);</span>
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">            if(this.is32()){</span>
 <span class="nc" id="L149">                ((float[])_value)[0] = ((Float)value).floatValue();</span>
             } else {
-<span class="nc" id="L151">                ((double[])_value)[0] = ((Float)value).doubleValue();</span>
+<span class="fc" id="L151">                ((double[])_value)[0] = ((Float)value).doubleValue();</span>
             }
 <span class="pc bpc" id="L153" title="1 of 2 branches missed.">        } else if(value instanceof Double){</span>
 <span class="fc" id="L154">            this.setIsVirtual(true);</span>
@@ -320,7 +320,7 @@ public class Tsr
     }
 
     public boolean isUndefined() {
-<span class="pc bpc" id="L323" title="1 of 2 branches missed.">        return _shape == null;</span>
+<span class="fc bfc" id="L323" title="All 2 branches covered.">        return _shape == null;</span>
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -510,7 +510,7 @@ public class Tsr
 <span class="fc bfc" id="L510" title="All 2 branches covered.">        for (int i = 0; i &lt; size; i++) {</span>
             String vStr;
 <span class="pc bpc" id="L512" title="1 of 2 branches missed.">            if(format){</span>
-<span class="fc bfc" id="L513" title="All 2 branches covered.">                vStr = fcn.stringify.formatFP(v[(this.isVirtual()) ? 0 : i_of_i(i)]);</span>
+<span class="pc bpc" id="L513" title="1 of 2 branches missed.">                vStr = fcn.stringify.formatFP(v[(this.isVirtual()) ? 0 : i_of_i(i)]);</span>
             } else {
 <span class="nc bnc" id="L515" title="All 2 branches missed.">                vStr = String.valueOf(v[(this.isVirtual()) ? 0 : i_of_i(i)]);</span>
             }
@@ -1265,7 +1265,7 @@ public class Tsr
                 } else {
 <span class="fc" id="L1266">                    t.setValue64(new double[template.size()]);</span>
                 }
-<span class="pc bpc" id="L1268" title="1 of 2 branches missed.">                if(template.isOutsourced()){</span>
+<span class="fc bfc" id="L1268" title="All 2 branches covered.">                if(template.isOutsourced()){</span>
 <span class="fc" id="L1269">                    ((Device)template.find(Device.class)).add(t);</span>
                 }
 <span class="fc" id="L1271">                return t;</span>

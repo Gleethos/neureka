@@ -82,6 +82,8 @@ public class CPU extends AbstractDevice {
             case "^": exec.broadcast_power(tsrs[0], tsrs[1], tsrs[2], d);break;
             case "<": exec.activate_identity(tsrs[0], tsrs[1], d);break;
             case ">": exec.activate_identity(tsrs[1], tsrs[0], d);break;
+            default:
+                throw new IllegalStateException("[CPU][enqueue]: Operation not found!");
         }
     }
 

@@ -16,17 +16,17 @@ import java.util.*;
      */
     public static Function build(int f_id, int size, boolean doAD)
     {
-<span class="pc bpc" id="L19" title="1 of 2 branches missed.">        if (f_id == 18){</span>
+<span class="nc bnc" id="L19" title="All 2 branches missed.">        if (f_id == 18){</span>
 <span class="nc" id="L20">            size = 2;</span>
-<span class="pc bpc" id="L21" title="1 of 2 branches missed.">        } else if(Function.TYPES.REGISTER[f_id]==&quot;,&quot;){</span>
+<span class="nc bnc" id="L21" title="All 2 branches missed.">        } else if(Function.TYPES.REGISTER[f_id]==&quot;,&quot;){</span>
 <span class="nc" id="L22">            ArrayList&lt;Function&gt; srcs = new ArrayList&lt;&gt;();</span>
 <span class="nc bnc" id="L23" title="All 2 branches missed.">            for(int i=0; i&lt;size; i++){</span>
 <span class="nc" id="L24">                srcs.add(new FInput().newBuild(&quot;&quot;+i));</span>
             }
 <span class="nc" id="L26">            return FunctionConstructor.construct(f_id, srcs, doAD);</span>
         }
-<span class="pc bpc" id="L28" title="1 of 2 branches missed.">        if (f_id &lt; 10) {</span>
-<span class="fc" id="L29">            return build(Function.TYPES.REGISTER[f_id] + &quot;(I[0])&quot;, doAD);</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">        if (f_id &lt; 10) {</span>
+<span class="nc" id="L29">            return build(Function.TYPES.REGISTER[f_id] + &quot;(I[0])&quot;, doAD);</span>
 <span class="nc bnc" id="L30" title="All 2 branches missed.">        } else if (f_id &lt; 12) {</span>
 <span class="nc" id="L31">            return build(Function.TYPES.REGISTER[f_id] + &quot;I[j]&quot;, doAD);</span>
         } else {

@@ -311,6 +311,9 @@ public class GraphNode
         int input_mode = 0;
         for(int Ii = 0; Ii< inputs.length; Ii++){
             GraphNode node = (GraphNode) inputs[Ii].find(GraphNode.class);
+            if(node == null){
+                throw new IllegalStateException("[GraphNode]:(constructor): Input tensors of a new graph-node must contain graph-nodes!");
+            }
             modes[Ii] = (inputs[Ii].rqsGradient())?1:node.mode();
             input_mode += (modes[Ii]!=0)?1:0;
         }
