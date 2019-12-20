@@ -39,9 +39,9 @@ public class FunctionBuilder {
     }
 
     /**
-     * @param expression
-     * @param doAD
-     * @return
+     * @param expression contains the function as String provided by the user
+     * @param doAD is used to turn autograd on or off for this function
+     * @return the function which has been built from the expression
      */
     public static Function build(String expression, boolean doAD) {
         expression =
@@ -61,9 +61,9 @@ public class FunctionBuilder {
     }
 
     /**
-     * @param expression
-     * @param doAD
-     * @return
+     * @param expression is a blueprint String for the function builder
+     * @param doAD enables or disables autograd for this function
+     * @return a function which has been built by the given expression
      */
     private static Function _build(String expression, boolean doAD){
         expression = expression
@@ -72,19 +72,16 @@ public class FunctionBuilder {
         expression = expression
                 .replace("<-", "<")
                 .replace("->", ">");
-        Function function = null;
-        ArrayList<Function> sources = new ArrayList<>();;
-        if (expression == null) {
-            expression = "";
-        }
-        if (expression == "") {
+        Function function;
+        ArrayList<Function> sources = new ArrayList<>();
+        if (expression.equals("")) {
             Function newCore = new FConstant();
             newCore = newCore.newBuild("0");
             return newCore;
         }
         expression = FunctionParser.unpackAndCorrect(expression);
-        List<String> Operations = new ArrayList<String>();
-        List<String> Components = new ArrayList<String>();
+        List<String> Operations = new ArrayList<>();
+        List<String> Components = new ArrayList<>();
         int i = 0;
         while (i < expression.length()) {
             final String newComponent = FunctionParser.parsedComponent(expression, i);
@@ -116,8 +113,8 @@ public class FunctionBuilder {
         }
         int ID = 0;
         while (ID < Count) {
-            final List<String> newOperations = new ArrayList<String>();
-            final List<String> newComponents = new ArrayList<String>();
+            final List<String> newOperations = new ArrayList<>();
+            final List<String> newComponents = new ArrayList<>();
             if (FunctionParser.containsOperation(Function.TYPES.REGISTER[ID], Operations)) {
                 String currentChain = null;
                 boolean groupingOccured = false;
@@ -126,7 +123,7 @@ public class FunctionBuilder {
                     String[] ComponentsArray = Components.toArray(new String[0]);
                     int length = ComponentsArray.length;
                     for (int Ci = 0; Ci < length; Ci++) {
-                        String currentComponent = null;
+                        String currentComponent;
                         currentComponent = ComponentsArray[Ci];
                         String currentOperation = null;
                         if (Operations.size() > Ci) {
@@ -143,7 +140,7 @@ public class FunctionBuilder {
                             } else {
                                 if (currentChain == null) {
                                     newComponents.add(currentComponent);
-                                } else if (currentChain != null) {
+                                } else {
                                     newComponents.add(currentChain + currentComponent); //= String.value64Of(currentChain) + currentComponent
                                 }
                                 newOperations.add(currentOperation);
@@ -221,9 +218,9 @@ public class FunctionBuilder {
             newBuild = FunctionBuilder.build(component, doAD);
             return newBuild;
         } else {// More than one component left:
-            if (Function.TYPES.REGISTER[f_id] == "x" || Function.TYPES.REGISTER[f_id]=="<" || Function.TYPES.REGISTER[f_id]==">") {
+            if (Function.TYPES.REGISTER[f_id].equals("x") || Function.TYPES.REGISTER[f_id].equals("<") || Function.TYPES.REGISTER[f_id].equals(">")) {
                 Components = _rebindPairwise(Components, f_id);
-            }else if(Function.TYPES.REGISTER[f_id] == ","){
+            }else if(Function.TYPES.REGISTER[f_id].equals(",")){
                 if(Components.get(0).startsWith("[")){
                     Components.set(0,Components.get(0).substring(1));
                     String[] splitted;

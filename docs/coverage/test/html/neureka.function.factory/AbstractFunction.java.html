@@ -61,10 +61,10 @@ public abstract class AbstractFunction implements Function
             }
 <span class="fc" id="L62">            return TYPES.REGISTER[_id] + &quot;(&quot; + expression + &quot;)&quot;;</span>
         } else {
-<span class="fc bfc" id="L64" title="All 2 branches covered.">            reconstructed = ((TYPES.REGISTER[_id] == &quot;,&quot;) ? &quot;[&quot; : &quot;&quot;) + reconstructed;</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">            reconstructed = ((TYPES.REGISTER[_id].equals(&quot;,&quot;)) ? &quot;[&quot; : &quot;&quot;) + reconstructed;</span>
 <span class="fc bfc" id="L65" title="All 2 branches covered.">            for (int i = 0; i &lt; _src.size(); ++i) {</span>
 <span class="pc bpc" id="L66" title="1 of 2 branches missed.">                if (_src.get(i) != null) {</span>
-<span class="fc bfc" id="L67" title="All 2 branches covered.">                    if ((TYPES.REGISTER[_id] == &quot;,&quot;)) {</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">                    if ((TYPES.REGISTER[_id].equals(&quot;,&quot;))) {</span>
 <span class="fc bfc" id="L68" title="All 2 branches covered.">                        if (i == _src.size() - 1) {</span>
 <span class="fc" id="L69">                            reconstructed = reconstructed</span>
                                 + &quot;]:(&quot; +
@@ -90,9 +90,9 @@ public abstract class AbstractFunction implements Function
                 }
 <span class="fc bfc" id="L91" title="All 4 branches covered.">                if (i &lt; _src.size() - ((TYPES.REGISTER[_id] == &quot;,&quot;) ? 2 : 1)) {</span>
 <span class="fc" id="L92">                    reconstructed = reconstructed</span>
-<span class="fc bfc" id="L93" title="All 2 branches covered.">                            + ((TYPES.REGISTER[_id]==&quot;&gt;&quot;)?&quot;-&quot;:&quot;&quot;)</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">                            + ((TYPES.REGISTER[_id].equals(&quot;&gt;&quot;))?&quot;-&quot;:&quot;&quot;)</span>
                             + TYPES.REGISTER[_id]
-<span class="fc bfc" id="L95" title="All 2 branches covered.">                            + ((TYPES.REGISTER[_id]==&quot;&lt;&quot;)?&quot;-&quot;:&quot;&quot;);</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">                            + ((TYPES.REGISTER[_id].equals(&quot;&lt;&quot;))?&quot;-&quot;:&quot;&quot;);</span>
                 }
             }
         }
@@ -211,14 +211,14 @@ public abstract class AbstractFunction implements Function
     private Tsr _execute(Tsr[] inputs, int j, int d)
     {
 <span class="fc" id="L213">        Device device = (Device) inputs[0].find(Device.class);</span>
-<span class="pc bpc" id="L214" title="1 of 8 branches missed.">        boolean onSameDevice = _shareGuestDevice(inputs) &amp;&amp; TYPES.REGISTER[_id] != &quot;,&quot; &amp;&amp; !(TYPES.isConvection(_id) &amp;&amp; d &gt; -1);</span>
+<span class="pc bpc" id="L214" title="1 of 8 branches missed.">        boolean onSameDevice = _shareGuestDevice(inputs) &amp;&amp; !TYPES.REGISTER[_id].equals(&quot;,&quot;) &amp;&amp; !(TYPES.isConvection(_id) &amp;&amp; d &gt; -1);</span>
 <span class="fc bfc" id="L215" title="All 2 branches covered.">        if (onSameDevice)</span>
         {
 <span class="fc" id="L217">            return  _apply(()-&gt; _execution(inputs, d, j, device));</span>
         }
         else
         {
-<span class="fc bfc" id="L221" title="All 2 branches covered.">            if (TYPES.REGISTER[_id] == &quot;x&quot;) {</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">            if (TYPES.REGISTER[_id].equals(&quot;x&quot;)) {</span>
 <span class="fc" id="L222">                    Tsr tensor1 = _src.get(0).activate(inputs).setIsVirtual(false);</span>
 <span class="fc" id="L223">                    Tsr tensor2 = _src.get(1).activate(inputs).setIsVirtual(false);</span>
 <span class="fc" id="L224">                    Tsr newTensor = new Tsr(Tsr.fcn.indexing.shpOfCon(tensor1.shape(), tensor2.shape()));</span>
@@ -241,7 +241,7 @@ public abstract class AbstractFunction implements Function
                     }
                 }
 <span class="nc" id="L243">                return null;</span>
-<span class="fc bfc" id="L244" title="All 2 branches covered.">            } else if (TYPES.REGISTER[_id] == &quot;,&quot;) {</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">            } else if (TYPES.REGISTER[_id].equals(&quot;,&quot;)) {</span>
 <span class="fc" id="L245">                int[] newForm = new int[_src.size() - 1];</span>
 <span class="fc bfc" id="L246" title="All 2 branches covered.">                for (int i = 0; i &lt; _src.size() - 1; i++) {</span>
 <span class="fc" id="L247">                    newForm[i] = (int) Tsr.fcn.io.getFrom(_src.get(i).activate(inputs), 0);</span>
@@ -266,13 +266,13 @@ public abstract class AbstractFunction implements Function
 
     private Tsr _execution(Tsr[] inputs, int d, int j, Device device){
         Tsr[] tsrs;
-<span class="fc bfc" id="L269" title="All 2 branches covered.">        if(Function.TYPES.isIndexer(_id)) tsrs = new Tsr[1 +inputs.length]; else tsrs = new Tsr[1 + _src.size()];</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">        if(TYPES.isIndexer(_id)) tsrs = new Tsr[1 +inputs.length]; else tsrs = new Tsr[1 + _src.size()];</span>
 <span class="fc bfc" id="L270" title="All 2 branches covered.">        if(d&gt;=0){</span>
-            //Chain-rule (forward ad):
+            //Chain-rule (forward AD):
             //inner times out means:
             //first derive source!
             //like so:
-<span class="fc bfc" id="L275" title="All 2 branches covered.">            if(Function.TYPES.isIndexer(_id)){</span>
+<span class="fc bfc" id="L275" title="All 2 branches covered.">            if(TYPES.isIndexer(_id)){</span>
 <span class="fc bfc" id="L276" title="All 2 branches covered.">                for (int i = 1; i &lt; tsrs.length; i++) tsrs[i] = _src.get(0).derive(inputs, d, i-1);</span>
             } else {
 <span class="fc bfc" id="L278" title="All 4 branches covered.">                for (int i = 1; i &lt; tsrs.length; i++) tsrs[i] = (j&gt;=0)?_src.get(i-1).derive(inputs, d, j):_src.get(i-1).derive(inputs, d);</span>
@@ -288,7 +288,7 @@ public abstract class AbstractFunction implements Function
 
 <span class="fc" id="L289">            tsrs[0] = null;</span>
             //then activate the source like so:
-<span class="fc bfc" id="L291" title="All 2 branches covered.">            if(Function.TYPES.isIndexer(_id)){</span>
+<span class="fc bfc" id="L291" title="All 2 branches covered.">            if(TYPES.isIndexer(_id)){</span>
 <span class="fc bfc" id="L292" title="All 2 branches covered.">                for (int i = 1; i &lt; tsrs.length; i++) tsrs[i] = _src.get(0).activate(inputs, i-1);</span>
             } else {
 <span class="fc bfc" id="L294" title="All 4 branches covered.">                for (int i = 1; i &lt; tsrs.length; i++) tsrs[i] = (j&gt;=0)?_src.get(i-1).activate(inputs, j):_src.get(i-1).activate(inputs);</span>
@@ -308,7 +308,7 @@ public abstract class AbstractFunction implements Function
 <span class="fc" id="L308">            device.execute(tsrs, TYPES.LOOKUP.get(&quot;*&quot;), -1);</span>
 <span class="fc" id="L309">            return tsrs[0];</span>
         } else {
-<span class="fc bfc" id="L311" title="All 2 branches covered.">            if(Function.TYPES.isIndexer(_id)){</span>
+<span class="fc bfc" id="L311" title="All 2 branches covered.">            if(TYPES.isIndexer(_id)){</span>
 <span class="fc" id="L312">                tsrs = new Tsr[1 +inputs.length];</span>
 <span class="pc bpc" id="L313" title="1 of 2 branches missed.">                if(d&lt;0){</span>
 <span class="fc bfc" id="L314" title="All 2 branches covered.">                    for (int i = 1; i &lt; tsrs.length; i++) tsrs[i] = _src.get(0).activate(inputs, i-1);</span>

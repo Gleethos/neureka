@@ -8,7 +8,6 @@ import neureka.function.factory.autograd.GraphLock;
 import neureka.function.factory.autograd.GraphNode;
 import neureka.function.factory.assembly.FunctionBuilder;
 import neureka.function.environment.Cache;
-import neureka.function.factory.autograd.JITProp;
 
 import java.util.function.Supplier;
 
@@ -41,7 +40,7 @@ public interface Function
             for (Tsr t : inputs) {
                 if(t.has(GraphNode.class)){
                     ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);
-                    if(Neureka.settings.ad.APPLY_GRADIENT_WHEN_TENSOR_IS_USED){
+                    if(Neureka.Settings.AD._applyGradientUntilTensorIsUsed){
                         t.applyGradient();
                     }
                 } else {

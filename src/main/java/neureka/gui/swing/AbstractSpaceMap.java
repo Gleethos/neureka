@@ -16,28 +16,19 @@ public abstract class AbstractSpaceMap {
 	public abstract AbstractSpaceMap removeAndUpdate(SurfaceObject node);
 	
 	public abstract int getCount();
-	
-	//public abstract SurfaceObject get(int i);
-	
+
 	public abstract LinkedList<SurfaceObject> getAll();
 	public abstract LinkedList<SurfaceObject> getAllWithin(double[] frame);
 
-	//public abstract LinkedList<SurfaceObject> getAllClosestTo(double x, double y);
-	
 	public abstract LinkedList<SurfaceObject> findAllAt(double x, double y, MapAction Actor);
 	public abstract LinkedList<SurfaceObject> findAllWithin(double[] frame, MapAction Actor);
-	
-	public abstract Object applyAndGet(AdvancedMapAction Actor);
-	public abstract Object applyAndGet(Object Data, AdvancedMapAction Actor);
-	public abstract void   apply	  (Object Data, AdvancedMapAction Actor);
-		
+
 	public abstract boolean applyToAll(MapAction Actor);
 	public abstract boolean applyToAllWithin(double[] frame, MapAction Actor);
 	
 	public abstract void paintStructure(Graphics2D brush);
 
-	public interface MapAction         {abstract boolean act(SurfaceObject thing);}
-	public interface AdvancedMapAction {abstract Object  act(Object first, SurfaceObject thing); }
+	public interface MapAction         {boolean act(SurfaceObject thing);}
 
 	protected static List<SurfaceObject> _withinFrame(LinkedList<SurfaceObject> list, HashMap<SurfaceObject, SurfaceObject> elements, double[] frame){
 		if(elements!=null){

@@ -62,7 +62,7 @@ public class GraphNode
      * This flag is used merely once. It is a key component
      * of an optimization technique which only applies
      * gradients as soon as they are needed by a tensor (the tensor is used again).
-     * If the flag Neureka.settings.ad.RETAIN_PENDING_ERROR_FOR_JITPROP is set to true
+     * If the flag Neureka.Settings.AD._RetainPendingErrorForJITProp is set to true
      * then errors values will accumulate whenever it makes sense.
      * This technique however uses more memory but will
      * improve performance for some networks substantially.
@@ -391,7 +391,7 @@ public class GraphNode
 <span class="pc bpc" id="L391" title="1 of 2 branches missed.">                if(!_is_used_as_derivative) _payload.delete();</span>
 <span class="fc" id="L392">                _payload = null;</span>
 <span class="fc bfc" id="L393" title="All 2 branches covered.">            } else if(_mode&lt;0){</span>
-<span class="fc bfc" id="L394" title="All 2 branches covered.">                if(!Neureka.settings.debug.KEEP_DERIVATIVE_TARGET_PAYLOADS){</span>
+<span class="fc bfc" id="L394" title="All 2 branches covered.">                if(!Neureka.Settings.Debug._keepDerivativeTargetPayloads){</span>
 <span class="fc" id="L395">                    _payload.remove(GraphNode.class);</span>
 <span class="pc bpc" id="L396" title="1 of 2 branches missed.">                    if(!_is_used_as_derivative) _payload.delete();</span>
 <span class="fc" id="L397">                    _payload = null;</span>
@@ -460,7 +460,7 @@ public class GraphNode
     public void backward(Tsr error){
 <span class="fc" id="L461">        Map&lt;GraphNode, PendingError&gt; pendings = new TreeMap&lt;&gt;((a, b)-&gt;a.hashCode()-b.hashCode());</span>
 <span class="fc" id="L462">        _backward(error, pendings, true);</span>
-<span class="fc bfc" id="L463" title="All 2 branches covered.">        if(!Neureka.settings.ad.RETAIN_PENDING_ERROR_FOR_JITPROP){</span>
+<span class="fc bfc" id="L463" title="All 2 branches covered.">        if(!Neureka.Settings.AD._RetainPendingErrorForJITProp){</span>
 <span class="fc" id="L464">            pendings.forEach((n, p)-&gt;{</span>
 <span class="pc bpc" id="L465" title="1 of 2 branches missed.">                if(!p.isFullyAccumulated()) throw new IllegalStateException(&quot;[GraphNode][_backward]: Pending error has not received expected accumulation.&quot;);</span>
 <span class="fc" id="L466">                n.backward(p.getAccumulatedError());//Continue backprop recursively!</span>
@@ -561,11 +561,11 @@ public class GraphNode
      * Deletion is forbidden if this node is flagged
      * as JITProp job. This means that the node is on the path between gradients
      * and pending error objects.
-     * Only if JITProp is enabled (Neureka.settings.ad...) this flag will
+     * Only if JITProp is enabled (Neureka.Settings.AD...) this flag will
      * deviate from its default state, namely: true!
      */
     private void  _deleteDerivativesRecursively(){
-<span class="fc bfc" id="L568" title="All 2 branches covered.">        if(!Neureka.settings.ad.RETAIN_GRAPH_DERIVATIVES_AFTER_BACKWARD){</span>
+<span class="fc bfc" id="L568" title="All 2 branches covered.">        if(!Neureka.Settings.AD._retainGraphDerivativesAfterBackward){</span>
 <span class="fc bfc" id="L569" title="All 2 branches covered.">            if(_targets_derivatives_are_deletable) _targets_derivatives = null;</span>
 <span class="fc" id="L570">            this.forEach((t, d)-&gt;t._deleteDerivativesRecursively());</span>
         }

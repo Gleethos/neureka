@@ -7,20 +7,17 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 
-import groovy.transform.SourceURI;
-import neureka.Tsr;
 import neureka.function.Function;
 import neureka.function.factory.autograd.GraphNode;
 
-public class SurfaceNode implements SurfaceObject {
+public class SurfaceNode implements SurfaceObject
+{
     private static int convectionTime = 500000000;
 
     private static final int buttonLimit = 250000000;
     private static final int deckAnimationLimit = 700000000;
 
-    private Color deckColor = new Color(0, 60, 110);//static!!!
-    private Color darkDeckColor = new Color(0, 5, 60);//static!!
-    private Color deckButtonColor = new Color(0, 0, 20, 255);//...
+    private Color deckButtonColor = new Color(0, 0, 20, 255);
     private double[] position = new double[2];
 
     private static final int defaultDiameter = 1680;
@@ -39,13 +36,13 @@ public class SurfaceNode implements SurfaceObject {
     private boolean hasRecentlyBeenMoved = false;
     private boolean hasJustBeenMoved = false;
 
-    private double velX, velY;
+    private double velX;
+    private double velY;
 
     private ArrayList<SurfaceNode> _parents = new ArrayList<>();
     private ArrayList<SurfaceNode> _children = new ArrayList<>();
 
     private GraphNode _node;
-
 
     public GraphNode getGraphNode() {
         return _node;
@@ -75,9 +72,7 @@ public class SurfaceNode implements SurfaceObject {
         velY += vy;
     }
 
-    interface Painter {
-        void paint(Graphics2D painterBrush, double x, double y);
-    }
+    interface Painter { void paint(Graphics2D painterBrush, double x, double y);}
 
     private SurfaceNodeInput InputNode = null;
 
@@ -85,18 +80,16 @@ public class SurfaceNode implements SurfaceObject {
     SurfaceNode(GraphNode node, double x, double y, GraphSurfaceBuilder surface) {
         velX = 0.0;
         velY = 0.0;
-        this.setGraphNode(node);
+        setGraphNode(node);
         position[0] = x;
         position[1] = y;
-        if(node.getParents()!=null){
-            InputNode = (new SurfaceNodeInput(getX(), getY(), diameter / 2));
-        }
+        if(node.getParents()!=null) InputNode = (new SurfaceNodeInput(getX(), getY(), diameter / 2.0));
         _construct(surface);
     }
 
     private void _construct(GraphSurfaceBuilder surface) {
         GraphNode node = getGraphNode();
-        if (node.isLeave() == false) {
+        if (!node.isLeave()) {
             for (GraphNode p : node.getParents()) {
                 SurfaceNode newNode = new SurfaceNode(
                         p,
@@ -160,11 +153,11 @@ public class SurfaceNode implements SurfaceObject {
         double alpha = data[0];
         double centerX = data[1];
         double centerY = data[2];
-        ArrayList<SurfaceRepaintSpace> queue = new ArrayList<SurfaceRepaintSpace>();
+        ArrayList<SurfaceRepaintSpace> queue = new ArrayList<>();
         double vectorX = position[0] - centerX;
         double vectorY = position[1] - centerY;
-        if (InputNode != null) {//InputNodevv.getFrom(Ii).rotate(alpha);
-            queue.addAll(InputNode .updateOn(getX(), getY(), diameter / 2));
+        if (InputNode != null) {
+            queue.addAll(InputNode .updateOn(getX(), getY(), diameter / 2.0));
             queue.addAll(InputNode .moveCircular(data, Surface));//alpha, centerX, centerY
         }
         queue.add(getRepaintSpace());
@@ -177,9 +170,8 @@ public class SurfaceNode implements SurfaceObject {
     }
 
     @Override
-    public ArrayList<SurfaceRepaintSpace> moveDirectional(double[] data, Surface Surface) {
-        //GraphSurface.setObjectMap(GraphSurface.getObjectMap().removeAndUpdate(this));
-        // if(GraphSurface.getObjectMap()==null) {GraphSurface.setObjectMap(new NPanelMapBranch(getX(), getY(), 50000));}
+    public ArrayList<SurfaceRepaintSpace> moveDirectional(double[] data, Surface Surface)
+    {
 
         double startX = data[0];
         double startY = data[1];
@@ -208,7 +200,7 @@ public class SurfaceNode implements SurfaceObject {
         ArrayList<SurfaceRepaintSpace> queue = new ArrayList<SurfaceRepaintSpace>();
         queue.add(getRepaintSpace());
         if (InputNode != null) {
-            queue.addAll(InputNode .updateOn(getX(), getY(), diameter / 2));
+            queue.addAll(InputNode .updateOn(getX(), getY(), diameter / 2.0));
             data = new double[4];
             data[0] = position[0];
             data[1] = position[1];
@@ -227,17 +219,14 @@ public class SurfaceNode implements SurfaceObject {
 
     // --------------------------------------------------------------------------------------------
     public SurfaceRepaintSpace getRepaintSpace() {
-        SurfaceRepaintSpace repaintSpace = null;
-        double r = (diameter / 2) * (1.1 + (1 - (diameter / defaultDiameter)) / 1.995);
+        double r = (diameter / 2.0) * (1.1 + (1 - (diameter / defaultDiameter)) / 1.995);
         return new SurfaceRepaintSpace(position[0], position[1], r, r);
     }
     // --------------------------------------------------------------------------------------------
 
     public ArrayList<SurfaceRepaintSpace> updateOn(Surface hostSurface) {
         //System.out.println("wasOnDeck:"+wasOnDeck+"; isOnDeck:"+isOnDeck+";");
-        if (hostSurface.getScale() < 0.13 && deckIsRemoved) {
-            deckAnimationRunning = true;
-        }
+        if (hostSurface.getScale() < 0.13 && deckIsRemoved) deckAnimationRunning = true;
         ArrayList<SurfaceRepaintSpace> queue = new ArrayList<>();
         double LP = getX() - diameter * 2;
         double RP = getX() + diameter * 2;
@@ -298,9 +287,7 @@ public class SurfaceNode implements SurfaceObject {
         }
         velX *= 0.7;
         velY *= 0.7;
-        if (InputNode!=null)  {
-            queue.addAll(InputNode .updateOn(getX(), getY(), diameter / 2));
-        }
+        if (InputNode!=null)  queue.addAll(InputNode .updateOn(getX(), getY(), diameter / 2.0));
         if (position.length != 2) {
             double[] old = position;
             position = new double[2];
@@ -323,12 +310,8 @@ public class SurfaceNode implements SurfaceObject {
         Animator Animator = hostSurface.getAnimator();
         int frameDelta = hostSurface.getCurrentFrameDelta();
         boolean scaleCheck = true;
-        if (hostSurface.getScale() < 0.2) {
-            scaleCheck = false;
-        }
-        if (hostSurface.getScale() < 0.13 && deckIsRemoved) {
-            deckAnimationRunning = true;
-        }
+        if (hostSurface.getScale() < 0.2) scaleCheck = false;
+        if (hostSurface.getScale() < 0.13 && deckIsRemoved) deckAnimationRunning = true;
         boolean UnitNeedsToBeRepainted = false;
         ArrayList<SurfaceRepaintSpace> queue = new ArrayList<SurfaceRepaintSpace>();
         int animationID = 0;
@@ -338,7 +321,6 @@ public class SurfaceNode implements SurfaceObject {
         //Animation 0 -> Deck Button
         //=================================================================================================================================================
         if (wasOnDeck) {
-            animationID = 0;
             //System.out.println("was on deck: "+Animator.getCounterOf(this, animationIDCounter));
             if (Animator.hasCounter(this, animationID)) {
                 if (Animator.getCounterOf(this, animationID) < buttonLimit && Animator.getCounterOf(this, animationID) > 0) {
@@ -346,8 +328,8 @@ public class SurfaceNode implements SurfaceObject {
                     queue.add(new SurfaceRepaintSpace(//Moving repaint frame on deck:
                             (position[0]),
                             (position[1] - 0.0825 * diameter * mod),
-                            (diameter / 4),
-                            (diameter / 8) + 0.065 * diameter * mod)
+                            (diameter / 4.0),
+                            (diameter / 8.0) + 0.065 * diameter * mod)
                     );
                 }
             }
@@ -362,7 +344,7 @@ public class SurfaceNode implements SurfaceObject {
                     if (Animator.getCounterOf(this, animationID) >= 0) {
                         Animator.countDownFor(this, frameDelta, animationID);
                     }
-                    if (Animator.getCounterOf(this, animationID) <= 0 && deckAnimationRunning == false && wasOnDeckButton == false) {//
+                    if (Animator.getCounterOf(this, animationID) <= 0 && !deckAnimationRunning && !wasOnDeckButton) {//
                         Animator.removeCounterOf(this, animationID);
                         wasOnDeck = false;
                     }
@@ -378,14 +360,14 @@ public class SurfaceNode implements SurfaceObject {
                     Animator.countDownFor(this, 6 * frameDelta, 0);
                 }
             }
-            if (wasOnDeck == true && Animator.getCounterOf(this, animationID) <= 0) {
+            if (wasOnDeck && Animator.getCounterOf(this, animationID) <= 0) {
                 Animator.countUpFor(this, 1 - Animator.getCounterOf(this, animationID), animationID);
             }
         }
         //=================================================================================================================================================
         // Animation 1 -> Deck button sense
         //=================================================================================================================================================
-        if (wasOnDeckButton && wasOnDeck) {//
+        if (wasOnDeckButton && wasOnDeck) {
             animationID = 1;
             //System.out.println("Button Shining: "+Animator.getCounterOf(this, animationIDCounter));
             if (Animator.hasCounter(this, animationID)) {
@@ -395,34 +377,26 @@ public class SurfaceNode implements SurfaceObject {
                         Animator.countDownFor(this, (frameDelta / 6), animationID);
                     }
                     double mod = ((double) Animator.getCounterOf(this, animationID) / (double) (2 * buttonLimit));
-                    if (mod > 1) {
-                        mod = 1;
-                    }
+                    if (mod > 1) mod = 1;
                     deckButtonColor = new Color(0, 255, 255, (int) (255 * mod));
                     //if (Animator.getCounterOf(this, animationIDCounter) > 0) {queue.addInto(new SurfaceRepaintSpace((position[0]), (position[1]), (110), (55)));}
                 } else {
                     if (Animator.getCounterOf(this, animationID) >= 0) {
                         double mod = ((double) Animator.getCounterOf(this, animationID) / (double) (2 * buttonLimit));
-                        if (mod > 1) {
-                            mod = 1;
-                        } else if (mod < 0) {
-                            mod = 0;
-                        }
+                        if (mod > 1)  mod = 1;
+                        else if (mod < 0) mod = 0;
                         deckButtonColor = new Color(0, 255, 255, (int) (255 * mod));
                         Animator.countDownFor(this, (frameDelta / 4), animationID);
                     }
-
-                    if (Animator.getCounterOf(this, animationID) <= 0 && deckAnimationRunning == false) {
+                    if (Animator.getCounterOf(this, animationID) <= 0 && !deckAnimationRunning) {
                         Animator.removeCounterOf(this, animationID);
                         deckButtonColor = new Color(0, 255, 255, (0));
                         wasOnDeckButton = false;
                     }
                 }
 
-            } else {
-                if (hoveringOverDeckButton) {
-                    Animator.setCounterFor(this, animationID, 1);
-                }
+            } else if (hoveringOverDeckButton){
+                Animator.setCounterFor(this, animationID, 1);
             }
             if (deckAnimationRunning) {
                 if (Animator.hasCounter(this, animationID)) {
@@ -430,7 +404,6 @@ public class SurfaceNode implements SurfaceObject {
                     if (Animator.getCounterOf(this, animationID) <= 0) {
                         Animator.countUpFor(this, 1 - Animator.getCounterOf(this, animationID), animationID);
                     }
-                    //if(Animator.getCounterOf(this, animationID)>=0) {animationID++;}
                 }
             }
 
@@ -452,7 +425,6 @@ public class SurfaceNode implements SurfaceObject {
                     } else {
                         deckIsRemoved = true;
                     }
-                    // animationID--;
                     deckAnimationRunning = false;
                 }
 
@@ -460,21 +432,17 @@ public class SurfaceNode implements SurfaceObject {
                 Animator.setCounterFor(this, animationID, 1);
                 //Somehow the animation ID is 2 sometimes although so many animations are not even setInto!
             }
-            //if(Animator.getCounterOf(this, animationID)>=0) {animationID++;}
         }
         //=================================================================================================================================================
         //Animation 3 -> Weight convolve
         //=================================================================================================================================================
         boolean activityCheck = false;
-        if (InputNode!=null)  {
-            if (InputNode .isActive()) {
-                activityCheck = true;
-                //Ii = InputNode.size();
-            }
+        if (InputNode!=null && InputNode .isActive())  {
+            activityCheck = true;
         }
         ArrayList<SurfaceRepaintSpace> newQueue = updateConnectionVectorAndGetRepaintSpace(activityCheck);
         if (newQueue != null) {
-            for (int Ri = 0; Ri < newQueue.size(); Ri++) queue.add(newQueue.get(Ri));
+            for (SurfaceRepaintSpace repaintSpace : newQueue) queue.add(repaintSpace);
         }
         if (activityCheck) {
             animationID = 3;
@@ -482,18 +450,13 @@ public class SurfaceNode implements SurfaceObject {
             // Animation 1 -> Deck button sense
             if (Animator.getCounterOf(this, animationID) >= 0) {
                 Animator.countUpFor(this, frameDelta, animationID);
-                if (Animator.getCounterOf(this, animationID) > convectionTime) //5000000
-                {
+                if (Animator.getCounterOf(this, animationID) > convectionTime) {
                     Animator.removeCounterOf(this, animationID);
-                    //if (InputNode!=null)  {
                     InputNode .setIsActive(false);
-                    //}
-                    //animationID--;
                 }
             } else {
                 Animator.setCounterFor(this, animationID, 1);
             }
-            //animationID++;
         }
 
         if (this.hasJustBeenMoved || UnitNeedsToBeRepainted) {
@@ -502,10 +465,8 @@ public class SurfaceNode implements SurfaceObject {
                 queue.add(InputNode .getRepaintSpace());
             }
         } else {
-            if (InputNode!=null)  {
-                if (InputNode .changeOccured()) {
-                    queue.add(InputNode .getRepaintSpace());
-                }
+            if (InputNode!=null && InputNode .changeOccured())  {
+                queue.add(InputNode .getRepaintSpace());
             }
         }
         return queue;
@@ -527,18 +488,16 @@ public class SurfaceNode implements SurfaceObject {
             hoveringOverDeckButton = true;
         }
 
-        if(InputNode!=null) {
-            if (InputNode .testFor(trueMouseX, trueMouseY)) {
-                if (isOnDeck == true) wasOnDeck = true;
-                isOnDeck = true;
-            }
+        if(InputNode!=null && InputNode.testFor(trueMouseX, trueMouseY)) {
+            if (isOnDeck) wasOnDeck = true;
+            isOnDeck = true;
         }
     }
 
     // --------------------------------------------------------------------------------------------
     @Override
     public boolean clickedAt(double x, double y, Surface hostSurface) {
-        if (deckAnimationRunning == true) return false;
+        if (deckAnimationRunning) return false;
         if (testForButton_Open((x), (y), hostSurface.getScale())) {//this.getNeuron().getPropertyHub().addProperty(new NNeuronControlFrame("TEST", this.getNeuron()));
             this.deckAnimationRunning = true;
         }
@@ -551,7 +510,7 @@ public class SurfaceNode implements SurfaceObject {
         if(InputNode!=null){
             if (InputNode.testFor(x, y)) check = true;
             if (check == true) {
-                this.InputNode = (new SurfaceNodeInput(getX(), getY(), diameter / 2));
+                this.InputNode = (new SurfaceNodeInput(getX(), getY(), diameter / 2.0));
             }
         }
         return false;
@@ -562,7 +521,7 @@ public class SurfaceNode implements SurfaceObject {
     // --------------------------------------------------------------------------------------------
     public boolean isAttachable(double trueX, double trueY, double panelScale) {
 
-        if (deckAnimationRunning == false) {
+        if (!deckAnimationRunning) {
             if (testForButton_Open(trueX, trueY, panelScale)) {
                 return false;
             }
@@ -581,11 +540,7 @@ public class SurfaceNode implements SurfaceObject {
     // --------------------------------------------------------------------------------------------
     public boolean testForBody(double x, double y) {
         double d = Math.pow(Math.pow((x - position[0]), 2) + Math.pow((y - position[1]), 2), 0.5);
-        if(InputNode!=null) {
-            if (InputNode .testFor(x, y)) {
-                return true;
-            }
-        }
+        if(InputNode!=null && InputNode .testFor(x, y)) return true;
         if (d <= diameter / 2) return true;
         return false;
     }
@@ -597,7 +552,7 @@ public class SurfaceNode implements SurfaceObject {
 
     // --------------------------------------------------------------------------------------------
     public boolean testForButton_Open(double trueMouseX, double trueMouseY, double panelScale) {
-        if (this.deckAnimationRunning) {
+        if (deckAnimationRunning) {
             hoveringOverDeckButton = false;
             isOnDeck = false;
             return false;
@@ -606,28 +561,18 @@ public class SurfaceNode implements SurfaceObject {
         int x = (int) position[0];
         int y = (int) position[1];
         boolean check = true;
-        if (trueMouseX < x - (int) (diameter / 4 * Math.pow(modifier, 100 / modifier)) / 2) {
-            check = false;
-        }
-        if (trueMouseY < y - (int) (diameter / 8 * Math.pow(modifier, 100 / modifier)) / 2) {
-            check = false;
-        }
-        if (trueMouseX > x + (int) (diameter / 4 * Math.pow(modifier, 100 / modifier)) / 2) {
-            check = false;
-        }
-        if (trueMouseY > y + (int) (diameter / 8 * Math.pow(modifier, 100 / modifier)) / 2) {
-            check = false;
-        }
-        if (hoveringOverDeckButton == true && deckAnimationRunning == false) {
-            wasOnDeckButton = hoveringOverDeckButton;
-        }
+        if (trueMouseX < x - (int) (diameter / 4 * Math.pow(modifier, 100 / modifier)) / 2) check = false;
+        if (trueMouseY < y - (int) (diameter / 8 * Math.pow(modifier, 100 / modifier)) / 2) check = false;
+        if (trueMouseX > x + (int) (diameter / 4 * Math.pow(modifier, 100 / modifier)) / 2) check = false;
+        if (trueMouseY > y + (int) (diameter / 8 * Math.pow(modifier, 100 / modifier)) / 2) check = false;
+        wasOnDeckButton = (hoveringOverDeckButton)?true:wasOnDeckButton;
         hoveringOverDeckButton = check;
-        if (check && deckAnimationRunning == false) wasOnDeckButton = true;
+        if (check) wasOnDeckButton = true;
         return check;
     }
 
     // --------------------------------------------------------------------------------------------
-    public SurfaceNodeInput testFor_AndGet_InputNode(double trueX, double trueY) {
+    SurfaceNodeInput testFor_AndGet_InputNode(double trueX, double trueY) {
         if (InputNode!=null) {
             if (InputNode .testFor(trueX, trueY)) {
                 return InputNode ;
@@ -642,36 +587,34 @@ public class SurfaceNode implements SurfaceObject {
     private ArrayList<SurfaceRepaintSpace> updateConnectionVectorAndGetRepaintSpace(boolean convection) // OPTIMIZATION?
     {//System.out.println("convolve: "+convolve);
         //-> checking if connection points are within frame!
-        double vX = 0;
-        double vY = 0;
-        ArrayList<SurfaceRepaintSpace> queue = new ArrayList<SurfaceRepaintSpace>();
+        double vX;
+        double vY;
+        ArrayList<SurfaceRepaintSpace> queue = new ArrayList<>();
         ArrayList<SurfaceNode> connection = this.getConnection();
         if (connection != null && connection.size() > 0) {
-            for (int Ii = 0; Ii < connection.size(); Ii++) {
-                //System.out.println("Ii:"+Ii);
+            for (SurfaceNode surfaceNode : connection) {
+
                 boolean connectionMoved = this.justMoved();
-                if (connection.get(Ii) != null && !connectionMoved) {
-                    if ((connection.get(Ii)).justMoved()) {
-                        connectionMoved = true;
-                    }
+                if (surfaceNode != null && !connectionMoved && surfaceNode.justMoved()) {
+                    connectionMoved = true;
                 }
-                if (connectionMoved || InputNode .changeOccured() || convection) {//=================================================================
-                    if (connection.get(Ii) != null) {
-                        vX = (connection.get(Ii)).getX() - getX();
-                        vY = (connection.get(Ii)).getY() - getY();
+                if (connectionMoved || InputNode.changeOccured() || convection) {
+                    if (surfaceNode != null) {
+                        vX = surfaceNode.getX() - getX();
+                        vY = surfaceNode.getY() - getY();
                         if (vX == 0 && vY == 0) {
                             Random dice = new Random();
                             vX = dice.nextDouble() % 1;
                             vY = dice.nextDouble() % 1;
                         }
-                        InputNode .addToVel(2 * vX / getRadius(), 2 * vY / getRadius());
-                        double pX = (connection.get(Ii)).getX();
-                        double pY = (connection.get(Ii)).getY();
+                        InputNode.addToVel(2 * vX / getRadius(), 2 * vY / getRadius());
+                        double pX = surfaceNode.getX();
+                        double pY = surfaceNode.getY();
                         double pvX = (pX - getX());
                         double pvY = (pY - getY());// v from self center to current parent
                         //---
-                        double ivX = InputNode .getX() - getX();
-                        double ivY = InputNode .getY() - getY();// v from self center to input node
+                        double ivX = InputNode.getX() - getX();
+                        double ivY = InputNode.getY() - getY();// v from self center to input node
                         double d = SurfaceUtility.magnitudeOf(ivX, ivY);
                         ivX /= d;
                         ivY /= d;
@@ -686,13 +629,13 @@ public class SurfaceNode implements SurfaceObject {
                         //d = ((10/(1+22/(d*d*d*d*d*d)))-9);//((2/(2+1/d))-1);
                         ivX = -2 * ((getX() + ivX) / getRadius());//*Math.pow(d/(2*diameter), 2);
                         ivY = -2 * ((getY() + ivY) / getRadius());//*Math.pow(d/(2*diameter), 2);
-                        connection.get(Ii).addToVel(ivX, ivY);
+                        surfaceNode.addToVel(ivX, ivY);
                         //---
-                        if (InputNode .changeOccured() || convection) {
+                        if (InputNode.changeOccured() || convection) {
 
                             if (dataDisplayUpdateRequest) {
-                                double midPX = InputNode .getX() + (pX - InputNode .getX()) / 3.25;
-                                double midPY = InputNode .getY() + (pY - InputNode .getY()) / 3.25;
+                                double midPX = InputNode.getX() + (pX - InputNode.getX()) / 3.25;
+                                double midPY = InputNode.getY() + (pY - InputNode.getY()) / 3.25;
                                 //Connection display REPAINT:
                                 queue.add(new SurfaceRepaintSpace((midPX), (midPY), 50, 25));
                             }
@@ -722,9 +665,9 @@ public class SurfaceNode implements SurfaceObject {
                                     distanceX,
                                     distanceY));
                             if (!convection) {
-                                queue.add(InputNode .getRepaintSpace());
+                                queue.add(InputNode.getRepaintSpace());
                             }
-                            InputNode .forgetChange();
+                            InputNode.forgetChange();
                         }
                     }//=================================================================
                 }
@@ -761,8 +704,8 @@ public class SurfaceNode implements SurfaceObject {
                     double inputVecX = selfCenterX - getX();
                     double inputVecY = selfCenterY - getY();
 
-                    double connectionX = ((SurfaceNode) connection.get(Ii)).getX();
-                    double connectionY = ((SurfaceNode) connection.get(Ii)).getY();
+                    double connectionX = connection.get(Ii).getX();
+                    double connectionY = connection.get(Ii).getY();
 
                     GeneralPath bezier = new GeneralPath();
 
@@ -846,7 +789,7 @@ public class SurfaceNode implements SurfaceObject {
 
         //COLORING FOR TYPES:
         //=================================
-        deckColor = new Color(0, 60, 120);
+        //PaletteUtils.NEURAL_BLUE = new Color(0, 60, 120);
         //=================================
         //NODE SIZE:
         diameter = defaultDiameter;
@@ -998,7 +941,6 @@ public class SurfaceNode implements SurfaceObject {
         brush.setFont(ValueFont);
         brush.setColor(Color.CYAN);
         String listedProperties = "";
-        boolean somethingToList = true;
         double YMod = -radius * 0.05;
 
         //NVCloak Public = (NVCloak) this.get_tensor().find(NVCloak.class);
@@ -1042,20 +984,14 @@ public class SurfaceNode implements SurfaceObject {
         //III
         brush.setColor(Color.CYAN);
 
-        //if (this.get_tensor().rqsGradient()) {
-        //	brush.drawString("Optimum:", (int) (centerX - 50), (int) (centerY - 240));
-        //	brush.drawString(""+Formatter.format(this.get_tensor()), (int) (centerX - 50), (int) (centerY - 210));
-        //}
-
         ArrayList<Painter> PainterArray = new ArrayList<Painter>();
-        if (true)//this.get_tensor().has(SurfaceNodeIOFrame.class))
-        {
-            PainterArray.add
-                    ((Graphics2D painterBrush, double x, double y) -> {
-                        painterBrush.setColor(Color.DARK_GRAY);
-                        painterBrush.fillOval((int) (x - radius * 0.1), (int) (y - radius * 0.1), (int) ((radius * 0.1) * 2), (int) ((radius * 0.1) * 2));
-                    });
-        }
+
+        PainterArray.add
+                ((Graphics2D painterBrush, double x, double y) -> {
+                    painterBrush.setColor(Color.DARK_GRAY);
+                    painterBrush.fillOval((int) (x - radius * 0.1), (int) (y - radius * 0.1), (int) ((radius * 0.1) * 2), (int) ((radius * 0.1) * 2));
+                });
+
 
     }
 
@@ -1104,7 +1040,7 @@ public class SurfaceNode implements SurfaceObject {
         if (decimal > 0) {
             dist[1] += (float) (0.399f * decimal);
         }
-        Color[] colors = {deckColor, darkDeckColor, Color.black};
+        Color[] colors = {PaletteUtils.NEURAL_BLUE, PaletteUtils.DARK_NEURAL_BLUE, Color.black};
         RadialGradientPaint rgp = new RadialGradientPaint(center, gradientRadius, dist, colors, CycleMethod.NO_CYCLE);
         brush.setPaint(rgp);
 
@@ -1115,7 +1051,7 @@ public class SurfaceNode implements SurfaceObject {
         Font NFont = new Font("Tahoma", Font.BOLD, (int) (diameter * (0.05)));
         brush.setFont(NFont);
 
-        brush.setColor(darkDeckColor);
+        brush.setColor(PaletteUtils.DARK_NEURAL_BLUE);
         ellipse = new Ellipse2D.Double(
                 centerX - (buttonAnimationModifier * radius * Math.pow(modifier, 200 / modifier)) / 2,
                 centerY - (buttonAnimationModifier * radius / 1.9 * Math.pow(modifier, 300 / modifier)) / 2,
@@ -1130,7 +1066,7 @@ public class SurfaceNode implements SurfaceObject {
                 (int) (buttonAnimationModifier * radius / 2 * Math.pow(modifier, 200 / modifier)),
                 (int) (buttonAnimationModifier * radius / 4 * Math.pow(modifier, 300 / modifier)), (int) (radius / 6), (int) (radius / 6));
 
-        double expMod = 1;
+        double expMod;
         expMod = ((double) diameter / defaultDiameter) * panelScale / 0.15;
         if (expMod > 0.7) {
             if (expMod > 1) {
@@ -1139,7 +1075,7 @@ public class SurfaceNode implements SurfaceObject {
             int expTrans = (int) (Math.pow(expMod, 10) * 255);
 
             brush.setFont(new Font("Tahoma", Font.BOLD, (int) (diameter * (0.04))));
-            brush.setColor(new Color(Palette.SYSTEM_OCEAN.getRed(), Palette.SYSTEM_OCEAN.getGreen(), Palette.SYSTEM_OCEAN.getBlue(), expTrans));
+            brush.setColor(new Color(PaletteUtils.SYSTEM_OCEAN.getRed(), PaletteUtils.SYSTEM_OCEAN.getGreen(), PaletteUtils.SYSTEM_OCEAN.getBlue(), expTrans));
             brush.setColor(new Color(0, 0, 0, expTrans));
         }
 
@@ -1162,15 +1098,15 @@ public class SurfaceNode implements SurfaceObject {
 
     private void _paintButton(Graphics2D brush, int centerX, int centerY, double radius, double modifier, double buttonAnimationModifier, boolean interior) {
         Font NFont = new Font("Tahoma", Font.PLAIN, (int) (radius / 9 * buttonAnimationModifier * Math.pow(modifier, 100 / modifier)));
-        brush.setFont(NFont);//buttonAnimationModifier * (Math.pow(modifier, 100 / modifier))
+        brush.setFont(NFont);
         double colorMod = buttonAnimationModifier * (Math.pow(modifier, 100 / modifier));
         if (colorMod > 1) colorMod = 1;
         if (colorMod < 0) colorMod = 0;
         brush.setColor(
                 new Color(
-                        (int) (deckColor.getRed() + (255 - deckColor.getRed()) * colorMod),
-                        (int) (deckColor.getGreen() + (255 - deckColor.getGreen()) * colorMod),
-                        (int) (deckColor.getBlue() + (255 - deckColor.getBlue()) * colorMod))
+                        (int) (PaletteUtils.NEURAL_BLUE.getRed() + (255 - PaletteUtils.NEURAL_BLUE.getRed()) * colorMod),
+                        (int) (PaletteUtils.NEURAL_BLUE.getGreen() + (255 - PaletteUtils.NEURAL_BLUE.getGreen()) * colorMod),
+                        (int) (PaletteUtils.NEURAL_BLUE.getBlue() + (255 - PaletteUtils.NEURAL_BLUE.getBlue()) * colorMod))
         );
         brush.drawString((!interior) ? "OPEN" : "CLOSE", (int) (centerX - diameter * (0.08) * colorMod), (int) (centerY + diameter * (0.0154761) * colorMod));
     }
@@ -1190,15 +1126,10 @@ public class SurfaceNode implements SurfaceObject {
         modifier = (panelScale < 0.1) ? (Math.pow(0.1 / panelScale, 2)) : 1;
         modifier = (modifier > 2) ? 2.0 : modifier;
 
-        //System.out.println(modifier+" ... nice");
-
         if (transparency > 15) {
             double radius = getRadius();
             //---
             String s = (this.getGraphNode().getPayload() == null) ? "null" : getGraphNode().getPayload().toString("sgc");
-            //s = (this.getGraphNode().getFunction()==null)?s:getGraphNode().getFunction().toString()+"="+s;
-            //System.out.println(s);
-            //brush.setColor(Color.CYAN);
             brush.setColor((!interior) ? new Color(0, 0, 0, transparency) : Color.CYAN);
             double shift = (radius * 0.019 * s.length()) * modifier;
             double height = 0.2;
@@ -1208,7 +1139,6 @@ public class SurfaceNode implements SurfaceObject {
                     (int) (centerY - (radius * height) * modifier - radius * 0.325 * buttonAnimationModifier),
                     (int) ((radius * width) * modifier * 2 + shift),
                     (int) ((radius * 2 * height) * modifier),
-
                     (int) (radius * 0.2),
                     (int) (radius * 0.5)
             );
@@ -1262,7 +1192,6 @@ public class SurfaceNode implements SurfaceObject {
     @Override
     public double getTopPeripheral() {
         return position[1] - diameter / 2;
-
     }
 
     @Override

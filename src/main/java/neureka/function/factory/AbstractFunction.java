@@ -61,10 +61,10 @@ public abstract class AbstractFunction implements Function
             }
             return TYPES.REGISTER[_id] + "(" + expression + ")";
         } else {
-            reconstructed = ((TYPES.REGISTER[_id] == ",") ? "[" : "") + reconstructed;
+            reconstructed = ((TYPES.REGISTER[_id].equals(",")) ? "[" : "") + reconstructed;
             for (int i = 0; i < _src.size(); ++i) {
                 if (_src.get(i) != null) {
-                    if ((TYPES.REGISTER[_id] == ",")) {
+                    if ((TYPES.REGISTER[_id].equals(","))) {
                         if (i == _src.size() - 1) {
                             reconstructed = reconstructed
                                 + "]:(" +
@@ -90,9 +90,9 @@ public abstract class AbstractFunction implements Function
                 }
                 if (i < _src.size() - ((TYPES.REGISTER[_id] == ",") ? 2 : 1)) {
                     reconstructed = reconstructed
-                            + ((TYPES.REGISTER[_id]==">")?"-":"")
+                            + ((TYPES.REGISTER[_id].equals(">"))?"-":"")
                             + TYPES.REGISTER[_id]
-                            + ((TYPES.REGISTER[_id]=="<")?"-":"");
+                            + ((TYPES.REGISTER[_id].equals("<"))?"-":"");
                 }
             }
         }
@@ -211,14 +211,14 @@ public abstract class AbstractFunction implements Function
     private Tsr _execute(Tsr[] inputs, int j, int d)
     {
         Device device = (Device) inputs[0].find(Device.class);
-        boolean onSameDevice = _shareGuestDevice(inputs) && TYPES.REGISTER[_id] != "," && !(TYPES.isConvection(_id) && d > -1);
+        boolean onSameDevice = _shareGuestDevice(inputs) && !TYPES.REGISTER[_id].equals(",") && !(TYPES.isConvection(_id) && d > -1);
         if (onSameDevice)
         {
             return  _apply(()-> _execution(inputs, d, j, device));
         }
         else
         {
-            if (TYPES.REGISTER[_id] == "x") {
+            if (TYPES.REGISTER[_id].equals("x")) {
                     Tsr tensor1 = _src.get(0).activate(inputs).setIsVirtual(false);
                     Tsr tensor2 = _src.get(1).activate(inputs).setIsVirtual(false);
                     Tsr newTensor = new Tsr(Tsr.fcn.indexing.shpOfCon(tensor1.shape(), tensor2.shape()));
@@ -241,7 +241,7 @@ public abstract class AbstractFunction implements Function
                     }
                 }
                 return null;
-            } else if (TYPES.REGISTER[_id] == ",") {
+            } else if (TYPES.REGISTER[_id].equals(",")) {
                 int[] newForm = new int[_src.size() - 1];
                 for (int i = 0; i < _src.size() - 1; i++) {
                     newForm[i] = (int) Tsr.fcn.io.getFrom(_src.get(i).activate(inputs), 0);
@@ -266,13 +266,13 @@ public abstract class AbstractFunction implements Function
 
     private Tsr _execution(Tsr[] inputs, int d, int j, Device device){
         Tsr[] tsrs;
-        if(Function.TYPES.isIndexer(_id)) tsrs = new Tsr[1 +inputs.length]; else tsrs = new Tsr[1 + _src.size()];
+        if(TYPES.isIndexer(_id)) tsrs = new Tsr[1 +inputs.length]; else tsrs = new Tsr[1 + _src.size()];
         if(d>=0){
-            //Chain-rule (forward ad):
+            //Chain-rule (forward AD):
             //inner times out means:
             //first derive source!
             //like so:
-            if(Function.TYPES.isIndexer(_id)){
+            if(TYPES.isIndexer(_id)){
                 for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).derive(inputs, d, i-1);
             } else {
                 for (int i = 1; i < tsrs.length; i++) tsrs[i] = (j>=0)?_src.get(i-1).derive(inputs, d, j):_src.get(i-1).derive(inputs, d);
@@ -288,7 +288,7 @@ public abstract class AbstractFunction implements Function
 
             tsrs[0] = null;
             //then activate the source like so:
-            if(Function.TYPES.isIndexer(_id)){
+            if(TYPES.isIndexer(_id)){
                 for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).activate(inputs, i-1);
             } else {
                 for (int i = 1; i < tsrs.length; i++) tsrs[i] = (j>=0)?_src.get(i-1).activate(inputs, j):_src.get(i-1).activate(inputs);
@@ -308,7 +308,7 @@ public abstract class AbstractFunction implements Function
             device.execute(tsrs, TYPES.LOOKUP.get("*"), -1);
             return tsrs[0];
         } else {
-            if(Function.TYPES.isIndexer(_id)){
+            if(TYPES.isIndexer(_id)){
                 tsrs = new Tsr[1 +inputs.length];
                 if(d<0){
                     for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).activate(inputs, i-1);

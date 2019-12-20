@@ -1,14 +1,11 @@
 package neureka.function.factory.autograd;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class JITProp {
 
-
-    private Set<GraphNode> _finished;// = new HashSet<>();
+    private Set<GraphNode> _finished;
 
     private  Map<GraphNode, PendingError> _pending;
 

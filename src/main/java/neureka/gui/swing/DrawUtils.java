@@ -1,76 +1,73 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Draw.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.gui.swing</a> &gt; <span class="el_source">Draw.java</span></div><h1>Draw.java</h1><pre class="source lang-java linenums">package neureka.gui.swing;
+package neureka.gui.swing;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 
-<span class="nc" id="L14">public class Draw {</span>
+public class DrawUtils {
 
     private final static int OUTER_REFERENCE_RADIUS = 300;
     private final static int INNER_REFERENCE_RADIUS = 100;
 
     //=================================================================================================================================================
 
-    public static void Icon_Star(double x, double y, double r, Graphics2D brush)
+    public static void IconStar(double x, double y, double r, Graphics2D brush)
     {
-<span class="fc" id="L23">        RoundRectangle2D rec = new RoundRectangle2D.Double(</span>
+        RoundRectangle2D rec = new RoundRectangle2D.Double(
                 (x - (r / 10)),
                 (y - r * 0.650),
                 (2* r / 10),
                 (1* r * 0.75),
                 (r * 0.4), (r * 0.4)
         );
-<span class="fc" id="L30">        int n = 5;</span>
-<span class="fc" id="L31">        double theta = 2*Math.PI/n;</span>
-<span class="fc bfc" id="L32" title="All 2 branches covered.">        for(int i=0; i&lt;n; i++){</span>
-<span class="fc" id="L33">            brush.fill(rec);</span>
-<span class="fc bfc" id="L34" title="All 2 branches covered.">            brush.rotate(((i==n-1)?-n+1:1)*theta, x, y);</span>
+        int n = 5;
+        double theta = 2*Math.PI/n;
+        for(int i=0; i<n; i++){
+            brush.fill(rec);
+            brush.rotate(((i==n-1)?-n+1:1)*theta, x, y);
 
         }
-<span class="fc" id="L37">    }</span>
+    }
 
-    public static void Icon_Plus(double x, double y, double r, Graphics2D brush){
-<span class="fc" id="L40">        Rectangle2D rec = new Rectangle2D.Double(</span>
+    public static void IconPlus(double x, double y, double r, Graphics2D brush){
+        Rectangle2D rec = new Rectangle2D.Double(
                 (x - (r / 10)),
                 (y - r * 0.650),
                 (2* r / 10),
                 (1* r * 0.75)
         );
-<span class="fc" id="L46">        int n = 4;</span>
-<span class="fc" id="L47">        double theta = 2*Math.PI/n;</span>
-<span class="fc bfc" id="L48" title="All 2 branches covered.">        for(int i=0; i&lt;n; i++){</span>
-<span class="fc" id="L49">            brush.fill(rec);</span>
-<span class="fc bfc" id="L50" title="All 2 branches covered.">            brush.rotate(((i==n-1)?-n+1:1)*theta, x, y);</span>
+        int n = 4;
+        double theta = 2*Math.PI/n;
+        for(int i=0; i<n; i++){
+            brush.fill(rec);
+            brush.rotate(((i==n-1)?-n+1:1)*theta, x, y);
 
         }
-<span class="fc" id="L53">    }</span>
+    }
 
     //------------------------------------------------
-    public static void Icon_Close(double x, double y, Graphics2D brush, double birthScale, double animScale) {
-<span class="nc" id="L57">        double radius = (OUTER_REFERENCE_RADIUS * animScale) / birthScale;</span>
-<span class="nc" id="L58">        double innerRadius = (INNER_REFERENCE_RADIUS * animScale) / birthScale;</span>
-<span class="nc" id="L59">        double ovalRadius = (radius - innerRadius) / 3;</span>
-<span class="nc" id="L60">        brush.setColor(new Color(255, 70, 50));</span>
-<span class="nc" id="L61">        brush.fillOval((int) (x - ovalRadius), (int) (y - ovalRadius), (int) (ovalRadius * 2), (int) (ovalRadius * 2));</span>
-<span class="nc" id="L62">        ovalRadius *= 0.75;</span>
-<span class="nc" id="L63">        brush.rotate(Math.PI * 0.25, x, y);</span>
-<span class="nc" id="L64">        brush.setColor(Color.BLACK);</span>
-<span class="nc" id="L65">        brush.fillRect((int) (x - ovalRadius), (int) (y - ovalRadius / 5), (int) (ovalRadius * 2), (int) (ovalRadius * 2 / 5));</span>
-<span class="nc" id="L66">        brush.fillRect((int) (x - ovalRadius / 5), (int) (y - ovalRadius), (int) (ovalRadius * 2 / 5), (int) (ovalRadius * 2));</span>
-<span class="nc" id="L67">        brush.rotate(-Math.PI * 0.25, x, y);</span>
-<span class="nc" id="L68">    }</span>
-
+    /*
+    public static void IconClose(double x, double y, Graphics2D brush, double birthScale, double animScale) {
+        double radius = (OUTER_REFERENCE_RADIUS * animScale) / birthScale;
+        double innerRadius = (INNER_REFERENCE_RADIUS * animScale) / birthScale;
+        double ovalRadius = (radius - innerRadius) / 3;
+        brush.setColor(new Color(255, 70, 50));
+        brush.fillOval((int) (x - ovalRadius), (int) (y - ovalRadius), (int) (ovalRadius * 2), (int) (ovalRadius * 2));
+        ovalRadius *= 0.75;
+        brush.rotate(Math.PI * 0.25, x, y);
+        brush.setColor(Color.BLACK);
+        brush.fillRect((int) (x - ovalRadius), (int) (y - ovalRadius / 5), (int) (ovalRadius * 2), (int) (ovalRadius * 2 / 5));
+        brush.fillRect((int) (x - ovalRadius / 5), (int) (y - ovalRadius), (int) (ovalRadius * 2 / 5), (int) (ovalRadius * 2));
+        brush.rotate(-Math.PI * 0.25, x, y);
+    }
+    */
     //------------------------------------------------
 
     /*
-    public static void Icon_BasicRoot(double x, double y, Graphics2D brush, double birthScale, double animScale) {
+    public static void IconBasicRoot(double x, double y, Graphics2D brush, double birthScale, double animScale) {
         double radius = (OUTER_REFERENCE_RADIUS * animScale) / birthScale;
         double innerRadius = (INNER_REFERENCE_RADIUS * animScale) / birthScale;
         double ovalRadius = (radius - innerRadius) / 5;
@@ -78,7 +75,7 @@ import java.awt.geom.RoundRectangle2D;
         double oX = x + ovalRadius / 2.55;
         double oY = y + ovalRadius / 2.55;
 
-        Icon_NodeBase(x, y, brush, birthScale, 1.0);
+        IconNodeBase(x, y, brush, birthScale, 1.0);
         brush.setColor(Color.CYAN);
         brush.fillRect((int) (oX - ovalRadius / 2), (int) (oY - ovalRadius / 16),
                 (int) (2 * ovalRadius / 2), (int) (2 * ovalRadius / 16));
@@ -90,21 +87,20 @@ import java.awt.geom.RoundRectangle2D;
         brush.fillRect((int) (oX - ovalRadius / 16), (int) (oY - ovalRadius / 2),
                 (int) (2 * ovalRadius / 16), (int) (2 * ovalRadius / 2));
         brush.rotate(-Math.PI / 4, oX, oY);
-
     }
     */
     /*
     //------------------------------------------------
-    public static void Icon_NodeType(double x, double y, Graphics2D brush, double birthScale, double animScale) {
-        //Icon_DefaultNode(x,y,brush, birthScale, 1.0);
-        Icon_NodeBase(x, y, brush, birthScale, 1.0);
+    public static void IconNodeType(double x, double y, Graphics2D brush, double birthScale, double animScale) {
+        //IconDefaultNode(x,y,brush, birthScale, 1.0);
+        IconNodeBase(x, y, brush, birthScale, 1.0);
         brush.setColor(Color.cyan);
         double radius = (OUTER_REFERENCE_RADIUS * animScale) / birthScale;
         double innerRadius = (INNER_REFERENCE_RADIUS * animScale) / birthScale;
         double ovalRadius = ((radius - innerRadius) / 5);
         double oX = x + ovalRadius / 2.55;
         double oY = y + ovalRadius / 2.55;
-        Font txt = new Font(&quot;Verdana&quot;, Font.LAYOUT_LEFT_TO_RIGHT, (int) ((70 / birthScale) * animScale));
+        Font txt = new Font("Verdana", Font.LAYOUT_LEFT_TO_RIGHT, (int) ((70 / birthScale) * animScale));
         brush.setFont(txt);
         char[] c = new char[1];
         c[0] = '?';
@@ -113,11 +109,11 @@ import java.awt.geom.RoundRectangle2D;
     */
     /*
     //------------------------------------------------
-    public static void Icon_DefaultNode(double x, double y, Graphics2D brush, double birthScale, double animScale) {
+    public static void IconDefaultNode(double x, double y, Graphics2D brush, double birthScale, double animScale) {
         double radius = (OUTER_REFERENCE_RADIUS * animScale) / birthScale;
         double innerRadius = (INNER_REFERENCE_RADIUS * animScale) / birthScale;
         double ovalRadius = ((radius - innerRadius) / 5);
-        if (ovalRadius &lt;= 0) {
+        if (ovalRadius <= 0) {
             return;
         }
         brush.setColor(Color.BLACK);
@@ -125,7 +121,7 @@ import java.awt.geom.RoundRectangle2D;
         double oY = y + ovalRadius / 2.55;
         brush.fillOval((int) (oX - ovalRadius), (int) (oY - ovalRadius),
                 (int) (2 * ovalRadius), (int) (2 * ovalRadius));
-        brush.setColor(Palette.NEURAL_BLUE);
+        brush.setColor(PaletteUtils.NEURAL_BLUE);
         //brush.setColor(Color.BLACK);
         brush.fillOval((int) (oX - ovalRadius * 0.8), (int) (oY - ovalRadius * 0.8),
                 (int) (2 * ovalRadius * 0.8), (int) (2 * ovalRadius * 0.8));
@@ -149,15 +145,15 @@ import java.awt.geom.RoundRectangle2D;
                 (int) (2 * ovalRadius / 2), (int) (2 * ovalRadius / 6));
         brush.fillRect((int) (oX - ovalRadius / 6), (int) (oY - ovalRadius / 2),
                 (int) (2 * ovalRadius / 6), (int) (2 * ovalRadius / 2));
-
-
     }
-    */
-    /*
-    //------------------------------------------------
-    public static void Icon_NodeFunctionSettings(double x, double y, Graphics2D brush, double birthScale, double animScale) {
 
-        Icon_DefaultNode(x, y, brush, birthScale, 1.0);
+    */
+    //------------------------------------------------
+    /*
+
+    public static void IconNodeFunctionSettings(double x, double y, Graphics2D brush, double birthScale, double animScale) {
+
+        IconDefaultNode(x, y, brush, birthScale, 1.0);
         double radius = (OUTER_REFERENCE_RADIUS * animScale) / birthScale;
         double innerRadius = (INNER_REFERENCE_RADIUS * animScale) / birthScale;
         double ovalRadius = (radius - innerRadius) / 5;
@@ -166,13 +162,13 @@ import java.awt.geom.RoundRectangle2D;
         double oY = y + ovalRadius / 2.55;
         double scaleHolder = birthScale;
         birthScale *= 2.5;
-        Icon_PanelSettings(oX, oY, brush, birthScale, 1.0);
+        IconPanelSettings(oX, oY, brush, birthScale, 1.0);
         birthScale = scaleHolder;
     }
     */
     /*
     //------------------------------------------------
-    public static void Icon_SuperRoot(double x, double y, Graphics2D brush, double birthScale, double animScale) {
+    public static void IconSuperRoot(double x, double y, Graphics2D brush, double birthScale, double animScale) {
 
         double radius = (OUTER_REFERENCE_RADIUS * animScale) / birthScale;
         double innerRadius = (INNER_REFERENCE_RADIUS * animScale) / birthScale;
@@ -196,19 +192,19 @@ import java.awt.geom.RoundRectangle2D;
         oY = y + ovalRadius / 2;
         double scaleHolder = birthScale;
         birthScale *= 1.25;
-        Icon_DefaultNode(oX, oY, brush, birthScale, 1.0);
+        IconDefaultNode(oX, oY, brush, birthScale, 1.0);
         birthScale = scaleHolder;
 
     }
     */
     /*
     //------------------------------------------------
-    public static void Icon_PanelSettings(double x, double y, Graphics2D brush, double birthScale, double animScale) {
+    public static void IconPanelSettings(double x, double y, Graphics2D brush, double birthScale, double animScale) {
 
         double radius = (OUTER_REFERENCE_RADIUS * animScale) / birthScale;
         double innerRadius = (INNER_REFERENCE_RADIUS * animScale) / birthScale;
         brush.setColor(Color.BLACK);
-        Icon_CogwheelBase(x, y, brush, birthScale, 1.0);
+        IconCogwheelBase(x, y, brush, birthScale, 1.0);
         double ovalRadius = (radius - innerRadius) / 4;
         brush.setColor(Color.BLACK);
         brush.fillOval((int) (x - ovalRadius * 0.5), (int) (y - ovalRadius * 0.5),
@@ -219,20 +215,20 @@ import java.awt.geom.RoundRectangle2D;
     */
     /*
 
-    public static void Icon_NodeSettings(double x, double y, Graphics2D brush, double birthScale, double animScale) {
+    public static void IconNodeSettings(double x, double y, Graphics2D brush, double birthScale, double animScale) {
 
         brush.setColor(Color.BLACK);
-        Icon_CogwheelBase(x, y, brush, birthScale, 1.0);
+        IconCogwheelBase(x, y, brush, birthScale, 1.0);
         //double scaleHolder = birthScale;
         birthScale *= 1.575;
-        Icon_DefaultNode(x, y, brush, birthScale, 1.0);
+        IconDefaultNode(x, y, brush, birthScale, 1.0);
         //birthScale = scaleHolder;
 
     }
 
     */
     /*
-    public static void Icon_BackEndNodeWindow(double x, double y, Graphics2D brush, double birthScale, double animScale) {
+    public static void IconBackEndNodeWindow(double x, double y, Graphics2D brush, double birthScale, double animScale) {
 
         double innerRadius = (INNER_REFERENCE_RADIUS * animScale) / birthScale;
         
@@ -241,13 +237,13 @@ import java.awt.geom.RoundRectangle2D;
         double b = innerRadius * 1.0;
         brush.fillRect((int) (x - a / 2), (int) (y - b / 2), (int) a, (int) b);
 
-        brush.setColor(Palette.SYSTEM_OCEAN);
+        brush.setColor(PaletteUtils.SYSTEM_OCEAN);
         brush.fillRect((int) (x + a * 0.025), (int) (y - b / 3.1), (int) (a / 2.2 - a * 0.05), (int) (b / 2.33));
         brush.fillRect((int) (x - a / 2.2 + a * 0.025), (int) (y - b / 2.3), (int) (a / 2.2 - a * 0.05), (int) (b / 3.55));
         double scaleHolder = birthScale;
         birthScale *= 5;
         brush.setColor(Color.BLACK);
-        Icon_SigmoidBase((((x + a / 4.375))), (((y - b / 9))), brush, birthScale, 1.0);
+        IconSigmoidBase((((x + a / 4.375))), (((y - b / 9))), brush, birthScale, 1.0);
         birthScale = scaleHolder;
         brush.setColor(Color.CYAN);
         brush.fillRect((int) (((x + a * 0.025))), (int) (((y - b / 2.3))), (int) ((a / 2.2) - a * 0.05), (int) (b / 15));
@@ -256,10 +252,10 @@ import java.awt.geom.RoundRectangle2D;
         brush.fillRect((int) (((x - a / 2.2 + a * 0.025))), (int) (((y - b * 0.1))), (int) ((a / 2.2) - a * 0.05), (int) (b / 15));
         Area clipArea = new Area(new Rectangle.Double((x - a / 2), (y - b / 2), a, b));
         brush.setClip(clipArea);
-        brush.setColor(Palette.SYSTEM_OCEAN);
+        brush.setColor(PaletteUtils.SYSTEM_OCEAN);
         scaleHolder = birthScale;
         birthScale *= 3.25;
-        Icon_CogwheelBase(x - a / 4.25, y + b / 4.5, brush, birthScale, 1.0);
+        IconCogwheelBase(x - a / 4.25, y + b / 4.5, brush, birthScale, 1.0);
         birthScale = scaleHolder;
         brush.setClip(null);
     }
@@ -269,12 +265,12 @@ import java.awt.geom.RoundRectangle2D;
     //===============================================================================
     //===============================================================================
     //Basic subcomponents:
-    public static void Icon_NodeBase(double x, double y, Graphics2D brush, double birthScale, double animScale) {
+    public static void IconNodeBase(double x, double y, Graphics2D brush, double birthScale, double animScale) {
 
         double radius = (OUTER_REFERENCE_RADIUS * animScale) / birthScale;
         double innerRadius = (INNER_REFERENCE_RADIUS * animScale) / birthScale;
         double ovalRadius = (radius - innerRadius) / 5;
-        if (ovalRadius &lt;= 0) {
+        if (ovalRadius <= 0) {
             return;
         }
         brush.setColor(Color.BLACK);
@@ -309,7 +305,7 @@ import java.awt.geom.RoundRectangle2D;
     }
     */
     /*
-    public static void Icon_CogwheelBase(double x, double y, Graphics2D brush, double birthScale, double animScale) {
+    public static void IconCogwheelBase(double x, double y, Graphics2D brush, double birthScale, double animScale) {
 
         double radius =
                 (OUTER_REFERENCE_RADIUS * animScale) / birthScale;
@@ -336,7 +332,7 @@ import java.awt.geom.RoundRectangle2D;
         p.addPoint((int) (oX + ovalRadius / 4), (int) (oY + ovalRadius / 10));
         p.translate(0, (int) (-ovalRadius));
         int max = 9;
-        for (int i = 0; i &lt; max; i++) {
+        for (int i = 0; i < max; i++) {
             brush.rotate((2 * Math.PI / max), oX, oY);
             brush.fillPolygon(p);
         }
@@ -348,40 +344,40 @@ import java.awt.geom.RoundRectangle2D;
     }
     */
 
-    public static void Icon_SigmoidBase(double x, double y, Graphics2D brush, double birthScale, double animScale) {
+    public static void IconSigmoidBase(double x, double y, Graphics2D brush, double birthScale, double animScale) {
 
-<span class="fc" id="L353">        double radius = (OUTER_REFERENCE_RADIUS * animScale) / birthScale;</span>
-<span class="fc" id="L354">        double innerRadius = (INNER_REFERENCE_RADIUS * animScale) / birthScale;</span>
+        double radius = (OUTER_REFERENCE_RADIUS * animScale) / birthScale;
+        double innerRadius = (INNER_REFERENCE_RADIUS * animScale) / birthScale;
 
         Area clipArea;
-<span class="fc" id="L357">        double r = (radius - innerRadius) / 2.5;</span>
-<span class="fc" id="L358">        x += 0.05*r;</span>
-<span class="fc" id="L359">        y += 0.05*r;</span>
-<span class="fc" id="L360">        brush.fillRect((int) (x - r * 1.25), (int) (y - 1.25 * r / 9),</span>
+        double r = (radius - innerRadius) / 2.5;
+        x += 0.05*r;
+        y += 0.05*r;
+        brush.fillRect((int) (x - r * 1.25), (int) (y - 1.25 * r / 9),
                 (int) (2 * r * 1.25), (int) (2 * 1.25 * r / 9));
-<span class="fc" id="L362">        brush.fillRect((int) (x - 1.25 * r / 9), (int) (y - r * 1.25),</span>
+        brush.fillRect((int) (x - 1.25 * r / 9), (int) (y - r * 1.25),
                 (int) (2 * 1.25 * r / 9), (int) (2 * r * 1.25));
 
-<span class="fc" id="L365">        double cX = x - r * 0.2;</span>
-<span class="fc" id="L366">        double cY = y - r + r * 0.1;</span>
-<span class="fc" id="L367">        clipArea = new Area(new Rectangle.Double((x), (y - r), (r), (r)));</span>
-<span class="fc" id="L368">        clipArea.subtract(new Area(new Ellipse2D.Double((cX + r * 0.375), (cY + 0.175 * r), (2 * r + 0.4 * r), (2 * r - 0.35 * r))));</span>
-<span class="fc" id="L369">        brush.setClip(clipArea);</span>
+        double cX = x - r * 0.2;
+        double cY = y - r + r * 0.1;
+        clipArea = new Area(new Rectangle.Double((x), (y - r), (r), (r)));
+        clipArea.subtract(new Area(new Ellipse2D.Double((cX + r * 0.375), (cY + 0.175 * r), (2 * r + 0.4 * r), (2 * r - 0.35 * r))));
+        brush.setClip(clipArea);
         //brush.setColor(Color.BLUE);
-<span class="fc" id="L371">        brush.fillOval((int) (cX), (int) (cY), (int) (2 * r + r * 0.4), (int) (2 * r));</span>
+        brush.fillOval((int) (cX), (int) (cY), (int) (2 * r + r * 0.4), (int) (2 * r));
         //brush.rotate(-Math.PI, x, y);
-<span class="fc" id="L373">        cX = x - 2 * r - r * 0.2;</span>
-<span class="fc" id="L374">        cY = y - r - r * 0.1;</span>
-<span class="fc" id="L375">        clipArea = new Area(new Rectangle.Double((x - r), (y), (r), (r)));</span>
-<span class="fc" id="L376">        clipArea.subtract(new Area(new Ellipse2D.Double((cX - r * 0.4), (cY + 0.2 * r), (2 * r + r * 0.4), (2 * r - 0.4 * r))));</span>
-<span class="fc" id="L377">        brush.setClip(clipArea);</span>
-<span class="fc" id="L378">        brush.fillOval((int) (cX), (int) (cY), (int) (2 * r + r * 0.4), (int) (2 * r));</span>
-<span class="fc" id="L379">        brush.setClip(null);</span>
-<span class="fc" id="L380">    }</span>
+        cX = x - 2 * r - r * 0.2;
+        cY = y - r - r * 0.1;
+        clipArea = new Area(new Rectangle.Double((x - r), (y), (r), (r)));
+        clipArea.subtract(new Area(new Ellipse2D.Double((cX - r * 0.4), (cY + 0.2 * r), (2 * r + r * 0.4), (2 * r - 0.4 * r))));
+        brush.setClip(clipArea);
+        brush.fillOval((int) (cX), (int) (cY), (int) (2 * r + r * 0.4), (int) (2 * r));
+        brush.setClip(null);
+    }
 
     /*
     //------------------------------------------------x
-    public static void Icon_TanhNode(double x, double y, Graphics2D brush, double birthScale, double animScale) {
+    public static void IconTanhNode(double x, double y, Graphics2D brush, double birthScale, double animScale) {
         double radius = (OUTER_REFERENCE_RADIUS * animScale) / birthScale;
         double innerRadius = (INNER_REFERENCE_RADIUS * animScale) / birthScale;
         double ovalRadius = (radius - innerRadius) / 5;
@@ -389,12 +385,12 @@ import java.awt.geom.RoundRectangle2D;
         double oX = x + ovalRadius / 2.55;
         double oY = y + ovalRadius / 2.55;
 
-        Icon_DefaultNode(x, y, brush, birthScale, 1.0);
+        IconDefaultNode(x, y, brush, birthScale, 1.0);
 
         double scaleHolder = birthScale;
         birthScale *= (4.5);
         brush.setColor(Color.BLACK);
-        Icon_SigmoidBase(oX, oY, brush, birthScale, 1.0);
+        IconSigmoidBase(oX, oY, brush, birthScale, 1.0);
         birthScale = scaleHolder;
 
     }
@@ -411,4 +407,3 @@ import java.awt.geom.RoundRectangle2D;
 
 
 
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

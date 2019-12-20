@@ -22,12 +22,12 @@ import neureka.function.factory.autograd.GraphNode;
 
     protected void _execute(Tsr[] tsrs, int f_id, int d)
     {
-<span class="fc bfc" id="L25" title="All 2 branches covered.">        if(Function.TYPES.REGISTER[f_id]==&quot;&lt;&quot;)</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">        if(Function.TYPES.REGISTER[f_id].equals(&quot;&lt;&quot;))</span>
         {
 <span class="pc bpc" id="L27" title="1 of 2 branches missed.">            int offset = (tsrs[0]==null)?1:0;</span>
 <span class="fc" id="L28">            _execute_tensors(new Tsr[]{tsrs[0+offset], tsrs[1+offset]}, Function.TYPES.LOOKUP.get(&quot;idy&quot;), -1);</span>
 <span class="fc" id="L29">        }</span>
-<span class="fc bfc" id="L30" title="All 2 branches covered.">        else if(Function.TYPES.REGISTER[f_id]==&quot;&gt;&quot;)</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        else if(Function.TYPES.REGISTER[f_id].equals(&quot;&gt;&quot;))</span>
         {
 <span class="pc bpc" id="L32" title="1 of 2 branches missed.">            int offset = (tsrs[0]==null)?1:0;</span>
 <span class="fc" id="L33">            _execute_tensors(new Tsr[]{tsrs[1+offset], tsrs[0+offset]}, Function.TYPES.LOOKUP.get(&quot;idy&quot;), -1);</span>
@@ -168,20 +168,20 @@ import neureka.function.factory.autograd.GraphNode;
 <span class="fc" id="L168">            _enqueue(t, value, d, f_id);</span>
         } else {
             /**   Derivatives implementation: (values cannot be derived)    **/
-<span class="nc bnc" id="L171" title="All 6 branches missed.">            if(</span>
-                    Function.TYPES.REGISTER[f_id]==&quot;+&quot;||
-                            Function.TYPES.REGISTER[f_id]==&quot;-&quot;||
-                            Function.TYPES.REGISTER[f_id]==&quot;%&quot;
+<span class="nc" id="L171">            if(</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">                    Function.TYPES.REGISTER[f_id].equals(&quot;+&quot;)||</span>
+<span class="nc bnc" id="L173" title="All 2 branches missed.">                            Function.TYPES.REGISTER[f_id].equals(&quot;-&quot;)||</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">                            Function.TYPES.REGISTER[f_id].equals(&quot;%&quot;)</span>
             ){
 <span class="nc" id="L176">                _execute_tensor_scalar(t, 0, Function.TYPES.LOOKUP.get(&quot;*&quot;), -1);</span>
 <span class="nc" id="L177">                _execute_tensor_scalar(t, 1, Function.TYPES.LOOKUP.get(&quot;+&quot;), -1);</span>
-<span class="nc bnc" id="L178" title="All 2 branches missed.">            } else if(Function.TYPES.REGISTER[f_id]==&quot;^&quot;){</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">            } else if(Function.TYPES.REGISTER[f_id].equals(&quot;^&quot;)){</span>
 <span class="nc" id="L179">                _execute_tensor_scalar(t, value-1, Function.TYPES.LOOKUP.get(&quot;^&quot;), -1);</span>
 <span class="nc" id="L180">                _execute_tensor_scalar(t, value, Function.TYPES.LOOKUP.get(&quot;*&quot;), -1);</span>
-<span class="nc bnc" id="L181" title="All 4 branches missed.">            } else if(Function.TYPES.REGISTER[f_id]==&quot;*&quot;||Function.TYPES.REGISTER[f_id].contains(&quot;x&quot;)){</span>
+<span class="nc bnc" id="L181" title="All 4 branches missed.">            } else if(Function.TYPES.REGISTER[f_id].equals(&quot;*&quot;)||Function.TYPES.REGISTER[f_id].contains(&quot;x&quot;)){</span>
 <span class="nc" id="L182">                _execute_tensor_scalar(t, 0, Function.TYPES.LOOKUP.get(&quot;*&quot;), -1);//???</span>
 <span class="nc" id="L183">                _execute_tensor_scalar(t, value, Function.TYPES.LOOKUP.get(&quot;+&quot;), -1);</span>
-<span class="nc bnc" id="L184" title="All 2 branches missed.">            } else if(Function.TYPES.REGISTER[f_id]==&quot;/&quot;){</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">            } else if(Function.TYPES.REGISTER[f_id].equals(&quot;/&quot;)){</span>
 <span class="nc" id="L185">                _execute_tensor_scalar(t, 0, Function.TYPES.LOOKUP.get(&quot;*&quot;), -1);</span>
 <span class="nc" id="L186">                _execute_tensor_scalar(t, 1/value, Function.TYPES.LOOKUP.get(&quot;+&quot;), -1);</span>
             }
@@ -191,7 +191,7 @@ import neureka.function.factory.autograd.GraphNode;
     private static void _createNewDrainTensorIn(Device device, Tsr[] tsrs, int f_id){
 <span class="fc bfc" id="L192" title="All 2 branches covered.">        if(tsrs[0]==null)//Creating a new tensor:</span>
         {
-<span class="fc bfc" id="L194" title="All 2 branches covered.">            int[] shp = (Function.TYPES.REGISTER[f_id] == &quot;x&quot;)</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">            int[] shp = (Function.TYPES.REGISTER[f_id].endsWith(&quot;x&quot;))</span>
 <span class="fc" id="L195">                    ? Tsr.fcn.indexing.shpOfCon(tsrs[1].shape(), tsrs[2].shape())</span>
 <span class="fc" id="L196">                    : tsrs[1].shape();</span>
 <span class="fc" id="L197">            Tsr output = new Tsr(shp, 0.0);</span>

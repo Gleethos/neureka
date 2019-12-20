@@ -22,12 +22,12 @@ public abstract class AbstractDevice implements  Device
 
     protected void _execute(Tsr[] tsrs, int f_id, int d)
     {
-        if(Function.TYPES.REGISTER[f_id]=="<")
+        if(Function.TYPES.REGISTER[f_id].equals("<"))
         {
             int offset = (tsrs[0]==null)?1:0;
             _execute_tensors(new Tsr[]{tsrs[0+offset], tsrs[1+offset]}, Function.TYPES.LOOKUP.get("idy"), -1);
         }
-        else if(Function.TYPES.REGISTER[f_id]==">")
+        else if(Function.TYPES.REGISTER[f_id].equals(">"))
         {
             int offset = (tsrs[0]==null)?1:0;
             _execute_tensors(new Tsr[]{tsrs[1+offset], tsrs[0+offset]}, Function.TYPES.LOOKUP.get("idy"), -1);
@@ -169,19 +169,19 @@ public abstract class AbstractDevice implements  Device
         } else {
             /**   Derivatives implementation: (values cannot be derived)    **/
             if(
-                    Function.TYPES.REGISTER[f_id]=="+"||
-                            Function.TYPES.REGISTER[f_id]=="-"||
-                            Function.TYPES.REGISTER[f_id]=="%"
+                    Function.TYPES.REGISTER[f_id].equals("+")||
+                            Function.TYPES.REGISTER[f_id].equals("-")||
+                            Function.TYPES.REGISTER[f_id].equals("%")
             ){
                 _execute_tensor_scalar(t, 0, Function.TYPES.LOOKUP.get("*"), -1);
                 _execute_tensor_scalar(t, 1, Function.TYPES.LOOKUP.get("+"), -1);
-            } else if(Function.TYPES.REGISTER[f_id]=="^"){
+            } else if(Function.TYPES.REGISTER[f_id].equals("^")){
                 _execute_tensor_scalar(t, value-1, Function.TYPES.LOOKUP.get("^"), -1);
                 _execute_tensor_scalar(t, value, Function.TYPES.LOOKUP.get("*"), -1);
-            } else if(Function.TYPES.REGISTER[f_id]=="*"||Function.TYPES.REGISTER[f_id].contains("x")){
+            } else if(Function.TYPES.REGISTER[f_id].equals("*")||Function.TYPES.REGISTER[f_id].contains("x")){
                 _execute_tensor_scalar(t, 0, Function.TYPES.LOOKUP.get("*"), -1);//???
                 _execute_tensor_scalar(t, value, Function.TYPES.LOOKUP.get("+"), -1);
-            } else if(Function.TYPES.REGISTER[f_id]=="/"){
+            } else if(Function.TYPES.REGISTER[f_id].equals("/")){
                 _execute_tensor_scalar(t, 0, Function.TYPES.LOOKUP.get("*"), -1);
                 _execute_tensor_scalar(t, 1/value, Function.TYPES.LOOKUP.get("+"), -1);
             }
@@ -191,7 +191,7 @@ public abstract class AbstractDevice implements  Device
     private static void _createNewDrainTensorIn(Device device, Tsr[] tsrs, int f_id){
         if(tsrs[0]==null)//Creating a new tensor:
         {
-            int[] shp = (Function.TYPES.REGISTER[f_id] == "x")
+            int[] shp = (Function.TYPES.REGISTER[f_id].endsWith("x"))
                     ? Tsr.fcn.indexing.shpOfCon(tsrs[1].shape(), tsrs[2].shape())
                     : tsrs[1].shape();
             Tsr output = new Tsr(shp, 0.0);

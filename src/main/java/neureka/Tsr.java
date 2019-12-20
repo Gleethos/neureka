@@ -1091,7 +1091,7 @@ public class Tsr
 
     public int[] idx_of_i(int i){
         int[] idx = new int[_shape.length];
-        if(Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED()){
+        if(Neureka.Settings.Indexing.legacy()){
             for(int ii=rank()-1; ii>=0; ii--){
                 idx[ii] += i / _idxmap[ii];
                 i %= _idxmap[ii];
@@ -1357,7 +1357,7 @@ public class Tsr
             //@Contract(pure = true)
             //public static int[] idx_of_i(int i, Tsr t){
             //    int[] idx = new int[t._shape.length];
-            //    if(Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED()){
+            //    if(Neureka.Settings.Indexing.legacy()){
             //        for(int ii=t.rank()-1; ii>=0; ii--){
             //            idx[ii] += i / t._idxmap[ii];
             //            i %= t._idxmap[ii];
@@ -1376,7 +1376,7 @@ public class Tsr
 
             @Contract(pure = true)
             public static void increment(@NotNull int[] shpIdx, @NotNull int[] shape) {
-                if(Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED()){
+                if(Neureka.Settings.Indexing.legacy()){
                     int i = 0;
                     while (i >= 0 && i < shape.length) {//fixed
                         i = incrementAt(i, shpIdx, shape);
@@ -1392,7 +1392,7 @@ public class Tsr
 
             @Contract(pure = true)
             public static int incrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
-                if(Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED()){
+                if(Neureka.Settings.Indexing.legacy()){
                     if (shpIdx[i] < (shape[i])) {//fixed
                         shpIdx[i]++;
                         if (shpIdx[i] == (shape[i])) {
@@ -1425,7 +1425,7 @@ public class Tsr
             public static int[] newTlnOf(int[] shape) {
                 int[] tln = new int[shape.length];
                 int prod = 1;
-                if(Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED()){
+                if(Neureka.Settings.Indexing.legacy()){
                     for (int i = 0; i < tln.length; i++) {
                         tln[i] = prod;
                         prod *= shape[i];

@@ -59,7 +59,7 @@ class GroovyTests
 
     @Test
     void testNetworkLegacyIndexing() {
-        Neureka.settings.tsr.SET_LEGACY_INDEXING(true)
+        Neureka.Settings.Indexing.setLegacy(true)
         Tsr i_a = new Tsr([2, 1], [1, 2])
         Tsr w_a = new Tsr([2, 2], [1, 3, 4, -1]).setRqsGradient(true)
         Tsr o_a = new Tsr(i_a, "x", w_a)
@@ -87,9 +87,9 @@ class GroovyTests
 
         assert w_a.toString().contains("g:(null)")
         assert !w_b.toString().contains("g:(null)")
-        Neureka.settings.ad.APPLY_GRADIENT_WHEN_TENSOR_IS_USED = true
+        Neureka.Settings.AD._applyGradientUntilTensorIsUsed = true
         w_a * 3
-        Neureka.settings.ad.APPLY_GRADIENT_WHEN_TENSOR_IS_USED = false
+        Neureka.Settings.AD._applyGradientUntilTensorIsUsed = false
         assert w_a.toString().contains("g:(null)")
         assert !w_a.toString().contains("1.0, 3.0, 4.0, -1.0")
         assert !w_b.toString().contains("g:(null)")
@@ -99,7 +99,7 @@ class GroovyTests
     @Test
     void testNetwork()
     {
-        Neureka.settings.tsr.SET_LEGACY_INDEXING(false)
+        Neureka.Settings.Indexing.setLegacy(false)
 
         Tsr i_a = new Tsr([2, 1], [1, 2])
         Tsr w_a = new Tsr([2, 2], [1, 3, 4, -1]).setRqsGradient(true)
@@ -128,9 +128,9 @@ class GroovyTests
 
         assert w_a.toString().contains("g:(null)")
         assert !w_b.toString().contains("g:(null)")
-        Neureka.settings.ad.APPLY_GRADIENT_WHEN_TENSOR_IS_USED = true
+        Neureka.Settings.AD._applyGradientUntilTensorIsUsed = true
         w_a * 3
-        Neureka.settings.ad.APPLY_GRADIENT_WHEN_TENSOR_IS_USED = false
+        Neureka.Settings.AD._applyGradientUntilTensorIsUsed = false
         assert w_a.toString().contains("g:(null)")
         assert !w_a.toString().contains("1.0, 3.0, 4.0, -1.0")
         assert !w_b.toString().contains("g:(null)")
@@ -143,10 +143,10 @@ class GroovyTests
         NTester_Tensor tester = new NTester_Tensor("Tensor tester (only cpu)")
         Device device = new DummyDevice()
 
-        Neureka.settings.tsr.SET_LEGACY_INDEXING(true)
+        Neureka.Settings.Indexing.setLegacy(true)
         _testReadmeExamples(device, tester, true)
 
-        Neureka.settings.tsr.SET_LEGACY_INDEXING(false)
+        Neureka.Settings.Indexing.setLegacy(false)
         _testReadmeExamples(device, tester, false)
 
         //=========================================================================
@@ -154,11 +154,11 @@ class GroovyTests
         //=========================================================================
         Device gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0)
 
-        Neureka.settings.tsr.SET_LEGACY_INDEXING(true)
+        Neureka.Settings.Indexing.setLegacy(true)
         OpenCLPlatform.PLATFORMS().get(0).recompile()
         _testReadmeExamples(gpu, tester, true)
 
-        Neureka.settings.tsr.SET_LEGACY_INDEXING(false)
+        Neureka.Settings.Indexing.setLegacy(false)
         OpenCLPlatform.PLATFORMS().get(0).recompile()
         _testReadmeExamples(gpu, tester, false)
 
@@ -472,7 +472,7 @@ class GroovyTests
 
     void _testNN(Device device)
     {
-        Neureka.settings.tsr.SET_LEGACY_INDEXING(false)
+        Neureka.Settings.Indexing.setLegacy(false)
 
         Tsr X = new Tsr(// input data: 5 vectors in binary form
                 [5, 3, 1],

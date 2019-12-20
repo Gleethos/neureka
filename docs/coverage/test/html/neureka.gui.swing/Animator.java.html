@@ -66,7 +66,7 @@ public class Animator {
 <span class="fc" id="L66">	    	 ArrayList&lt;Animation&gt; List = AnimationMap.get(owner);//.setInto(counterID, AnimationMap.getFrom(owner).getFrom(counterID)-1);</span>
 <span class="fc bfc" id="L67" title="All 2 branches covered.">	     	 for(int Ai=0; Ai&lt;List.size(); Ai++) </span>
 	     	 {
-<span class="fc bfc" id="L69" title="All 2 branches covered.">	     		 if(List.get(Ai).ID==counterID) {List.get(Ai).Counter -=value;}</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">	     		 if(List.get(Ai).ID==counterID) {List.get(Ai).Counter -=value;}</span>
 	     	 }
 	     }
 <span class="fc" id="L72">	}</span>
@@ -91,15 +91,15 @@ public class Animator {
 <span class="nc" id="L91">	}</span>
 	public void countUpFor(Object owner, int value, int counterID) 
 	{
-<span class="pc bpc" id="L94" title="1 of 2 branches missed.">	     if(AnimationMap.containsKey(owner)) </span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">	     if(AnimationMap.containsKey(owner)) </span>
 	     {
-<span class="fc" id="L96">	    	 ArrayList&lt;Animation&gt; List = AnimationMap.get(owner);//.setInto(counterID, AnimationMap.getFrom(owner).getFrom(counterID)-1);</span>
-<span class="fc bfc" id="L97" title="All 2 branches covered.">	      	 for(int Ai=0; Ai&lt;List.size(); Ai++) </span>
+<span class="nc" id="L96">	    	 ArrayList&lt;Animation&gt; List = AnimationMap.get(owner);//.setInto(counterID, AnimationMap.getFrom(owner).getFrom(counterID)-1);</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">	      	 for(int Ai=0; Ai&lt;List.size(); Ai++) </span>
 	      	 {
-<span class="fc bfc" id="L99" title="All 2 branches covered.">	      		 if(List.get(Ai).ID==counterID) {List.get(Ai).Counter +=value;}</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">	      		 if(List.get(Ai).ID==counterID) {List.get(Ai).Counter +=value;}</span>
 	      	 }
 	     }
-<span class="fc" id="L102">	}</span>
+<span class="nc" id="L102">	}</span>
 	//=======================================================================================
 	//---------------------------------------------------------------------------------------
 	//=======================================================================================
@@ -115,7 +115,7 @@ public class Animator {
 <span class="fc" id="L115">			 ArrayList&lt;Animation&gt; List = AnimationMap.get(owner);//.setInto(counterID, AnimationMap.getFrom(owner).getFrom(counterID)-1);</span>
 <span class="pc bpc" id="L116" title="1 of 2 branches missed.">		     for(int Ai=0; Ai&lt;List.size(); Ai++) </span>
 		     {
-<span class="fc bfc" id="L118" title="All 2 branches covered.">		    	 if(List.get(Ai).ID==counterID) {return List.get(Ai).Counter;}</span>
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">		    	 if(List.get(Ai).ID==counterID) {return List.get(Ai).Counter;}</span>
 		     }
 		 }
 <span class="nc" id="L121">		 return -1;</span>
@@ -136,7 +136,7 @@ public class Animator {
 <span class="fc" id="L136">			ArrayList&lt;Animation&gt; List = AnimationMap.get(owner);//.setInto(counterID, AnimationMap.getFrom(owner).getFrom(counterID)-1);</span>
 <span class="fc bfc" id="L137" title="All 2 branches covered.">		    for(int Ai=0; Ai&lt;List.size(); Ai++) </span>
 		    {
-<span class="fc bfc" id="L139" title="All 2 branches covered.">		    	if(List.get(Ai).ID==counterID) {List.remove(Ai);}</span>
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">		    	if(List.get(Ai).ID==counterID) {List.remove(Ai);}</span>
 		    }
 		}
 <span class="fc" id="L142">	}</span>
@@ -147,9 +147,9 @@ public class Animator {
 <span class="fc bfc" id="L147" title="All 2 branches covered.">		if(AnimationMap.containsKey(owner)) </span>
 		{
 <span class="fc" id="L149">			ArrayList&lt;Animation&gt; List = AnimationMap.get(owner);//.setInto(counterID, AnimationMap.getFrom(owner).getFrom(counterID)-1);</span>
-<span class="fc bfc" id="L150" title="All 2 branches covered.">		    for(int Ai=0; Ai&lt;List.size(); Ai++) </span>
+<span class="pc bfc" id="L150" title="All 2 branches covered.">		    for(int Ai=0; Ai&lt;List.size(); Ai++) </span>
 		    {
-<span class="fc bfc" id="L152" title="All 2 branches covered.">		    	if(List.get(Ai).ID==counterID) {return true;}</span>
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">		    	if(List.get(Ai).ID==counterID) {return true;}</span>
 		    }
 		}
 <span class="fc" id="L155">		return false;</span>

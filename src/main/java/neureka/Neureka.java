@@ -4,17 +4,19 @@ import neureka.acceleration.Device;
 
 public class Neureka
 {
-    static Device findAcceleratorByName(String name){
+    public static Device findAcceleratorByName(String name){
         return Device.find(name);
     }
 
-    static String version(){
+
+
+    public static String version(){
         return "0.0.0";
     }
 
-    public static class settings
+    public static class Settings
     {
-        public static class debug
+        public static class Debug
         {
             /**
              * Every derivative is calculated with respect to some graph node.
@@ -31,18 +33,18 @@ public class Neureka
              * It is used for the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
              */
-            public static boolean KEEP_DERIVATIVE_TARGET_PAYLOADS = false;
+            public static boolean _keepDerivativeTargetPayloads = false;
 
         }
 
-        public static class ad // Auto-Differentiation
+        public static class AD // Auto-Differentiation
         {
             /**
              * After backward passes the used derivatives are usually not needed.
              * For debugging purposes however this flag remains and will
              * not allow for garbage collection of the used derivatives.
              */
-            public static boolean RETAIN_GRAPH_DERIVATIVES_AFTER_BACKWARD = false;
+            public static boolean _retainGraphDerivativesAfterBackward = false;
 
             /**
              * This fla enables an optimization technique which only applies
@@ -53,29 +55,31 @@ public class Neureka
              * improve performance for some networks substantially.
              * The technique is termed JIT-Propagation.
              */
-            public static boolean RETAIN_PENDING_ERROR_FOR_JITPROP = true;
+            public static boolean _RetainPendingErrorForJITProp = true;
 
             /**
              * Gradients will automatically be applied to tensors as soon as
              * they are being used for calculation.
              * This feature works well with JIT-Propagation.
              */
-            public static boolean APPLY_GRADIENT_WHEN_TENSOR_IS_USED = false;
+            public static boolean _applyGradientUntilTensorIsUsed = false;
+
+
 
         }
 
-        public static class tsr{ // Tensor
+        public static class Indexing
+        {
 
-            public static boolean LEGACY_INDEXING_IS_ENABLED(){
-                return LEGACY_INDEXING;
+            private static boolean _legacyIndexing = false;//DEFAULT: true
+
+            public static boolean legacy(){
+                return _legacyIndexing;
             }
 
-            public static void SET_LEGACY_INDEXING(boolean enabled){
-                LEGACY_INDEXING = enabled;//NOTE: gpu code must recompiled! (OpenCLPlatform)
+            public static void setLegacy(boolean enabled){
+                _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (OpenCLPlatform)
             }
-
-            private static boolean LEGACY_INDEXING = false;//DEFAULT: true
-
 
         }
 

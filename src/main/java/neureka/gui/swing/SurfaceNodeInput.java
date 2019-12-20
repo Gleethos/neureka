@@ -98,13 +98,13 @@ public class SurfaceNodeInput {
             );
             switch (display) {
                 case "+":
-                    Draw.Icon_Plus(_X, _Y, _radius * 0.85, brush);
+                    DrawUtils.IconPlus(_X, _Y, _radius * 0.85, brush);
                     break;
                 case "*":
-                    Draw.Icon_Star(_X, _Y, _radius * 0.85, brush);
+                    DrawUtils.IconStar(_X, _Y, _radius * 0.85, brush);
                     break;
                 case "tanh":
-                    Draw.Icon_SigmoidBase(_X, _Y, brush, 1, radius*0.00525);
+                    DrawUtils.IconSigmoidBase(_X, _Y, brush, 1, radius*0.00525);
                     break;
                 default:
                     Font ValueFont = new Font("SansSerif", Font.BOLD, ((int)(2 * radius) / (display.length())));

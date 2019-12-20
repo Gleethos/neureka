@@ -4,17 +4,19 @@ import neureka.acceleration.Device;
 
 <span class="nc" id="L5">public class Neureka</span>
 {
-    static Device findAcceleratorByName(String name){
+    public static Device findAcceleratorByName(String name){
 <span class="fc" id="L8">        return Device.find(name);</span>
     }
 
-    static String version(){
-<span class="nc" id="L12">        return &quot;0.0.0&quot;;</span>
+
+
+    public static String version(){
+<span class="nc" id="L14">        return &quot;0.0.0&quot;;</span>
     }
 
-<span class="nc" id="L15">    public static class settings</span>
+<span class="nc" id="L17">    public static class Settings</span>
     {
-<span class="nc" id="L17">        public static class debug</span>
+<span class="nc" id="L19">        public static class Debug</span>
         {
             /**
              * Every derivative is calculated with respect to some graph node.
@@ -31,18 +33,18 @@ import neureka.acceleration.Device;
              * It is used for the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
              */
-<span class="fc" id="L34">            public static boolean KEEP_DERIVATIVE_TARGET_PAYLOADS = false;</span>
+<span class="fc" id="L36">            public static boolean _keepDerivativeTargetPayloads = false;</span>
 
         }
 
-<span class="nc" id="L38">        public static class ad // Auto-Differentiation</span>
+<span class="nc" id="L40">        public static class AD // Auto-Differentiation</span>
         {
             /**
              * After backward passes the used derivatives are usually not needed.
              * For debugging purposes however this flag remains and will
              * not allow for garbage collection of the used derivatives.
              */
-<span class="fc" id="L45">            public static boolean RETAIN_GRAPH_DERIVATIVES_AFTER_BACKWARD = false;</span>
+<span class="fc" id="L47">            public static boolean _retainGraphDerivativesAfterBackward = false;</span>
 
             /**
              * This fla enables an optimization technique which only applies
@@ -53,29 +55,31 @@ import neureka.acceleration.Device;
              * improve performance for some networks substantially.
              * The technique is termed JIT-Propagation.
              */
-<span class="fc" id="L56">            public static boolean RETAIN_PENDING_ERROR_FOR_JITPROP = true;</span>
+<span class="fc" id="L58">            public static boolean _RetainPendingErrorForJITProp = true;</span>
 
             /**
              * Gradients will automatically be applied to tensors as soon as
              * they are being used for calculation.
              * This feature works well with JIT-Propagation.
              */
-<span class="fc" id="L63">            public static boolean APPLY_GRADIENT_WHEN_TENSOR_IS_USED = false;</span>
+<span class="fc" id="L65">            public static boolean _applyGradientUntilTensorIsUsed = false;</span>
+
+
 
         }
 
-<span class="nc" id="L67">        public static class tsr{ // Tensor</span>
+<span class="nc" id="L71">        public static class Indexing</span>
+        {
 
-            public static boolean LEGACY_INDEXING_IS_ENABLED(){
-<span class="fc" id="L70">                return LEGACY_INDEXING;</span>
+<span class="fc" id="L74">            private static boolean _legacyIndexing = false;//DEFAULT: true</span>
+
+            public static boolean legacy(){
+<span class="fc" id="L77">                return _legacyIndexing;</span>
             }
 
-            public static void SET_LEGACY_INDEXING(boolean enabled){
-<span class="fc" id="L74">                LEGACY_INDEXING = enabled;//NOTE: gpu code must recompiled! (OpenCLPlatform)</span>
-<span class="fc" id="L75">            }</span>
-
-<span class="fc" id="L77">            private static boolean LEGACY_INDEXING = false;//DEFAULT: true</span>
-
+            public static void setLegacy(boolean enabled){
+<span class="fc" id="L81">                _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (OpenCLPlatform)</span>
+<span class="fc" id="L82">            }</span>
 
         }
 

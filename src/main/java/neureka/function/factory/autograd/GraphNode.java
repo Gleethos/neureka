@@ -62,7 +62,7 @@ public class GraphNode
      * This flag is used merely once. It is a key component
      * of an optimization technique which only applies
      * gradients as soon as they are needed by a tensor (the tensor is used again).
-     * If the flag Neureka.settings.ad.RETAIN_PENDING_ERROR_FOR_JITPROP is set to true
+     * If the flag Neureka.Settings.AD._RetainPendingErrorForJITProp is set to true
      * then errors values will accumulate whenever it makes sense.
      * This technique however uses more memory but will
      * improve performance for some networks substantially.
@@ -391,7 +391,7 @@ public class GraphNode
                 if(!_is_used_as_derivative) _payload.delete();
                 _payload = null;
             } else if(_mode<0){
-                if(!Neureka.settings.debug.KEEP_DERIVATIVE_TARGET_PAYLOADS){
+                if(!Neureka.Settings.Debug._keepDerivativeTargetPayloads){
                     _payload.remove(GraphNode.class);
                     if(!_is_used_as_derivative) _payload.delete();
                     _payload = null;
@@ -460,7 +460,7 @@ public class GraphNode
     public void backward(Tsr error){
         Map<GraphNode, PendingError> pendings = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
         _backward(error, pendings, true);
-        if(!Neureka.settings.ad.RETAIN_PENDING_ERROR_FOR_JITPROP){
+        if(!Neureka.Settings.AD._RetainPendingErrorForJITProp){
             pendings.forEach((n, p)->{
                 if(!p.isFullyAccumulated()) throw new IllegalStateException("[GraphNode][_backward]: Pending error has not received expected accumulation.");
                 n.backward(p.getAccumulatedError());//Continue backprop recursively!
@@ -561,11 +561,11 @@ public class GraphNode
      * Deletion is forbidden if this node is flagged
      * as JITProp job. This means that the node is on the path between gradients
      * and pending error objects.
-     * Only if JITProp is enabled (Neureka.settings.ad...) this flag will
+     * Only if JITProp is enabled (Neureka.Settings.AD...) this flag will
      * deviate from its default state, namely: true!
      */
     private void  _deleteDerivativesRecursively(){
-        if(!Neureka.settings.ad.RETAIN_GRAPH_DERIVATIVES_AFTER_BACKWARD){
+        if(!Neureka.Settings.AD._retainGraphDerivativesAfterBackward){
             if(_targets_derivatives_are_deletable) _targets_derivatives = null;
             this.forEach((t, d)->t._deleteDerivativesRecursively());
         }

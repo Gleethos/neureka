@@ -1091,7 +1091,7 @@ public class Tsr
 
     public int[] idx_of_i(int i){
 <span class="fc" id="L1093">        int[] idx = new int[_shape.length];</span>
-<span class="fc bfc" id="L1094" title="All 2 branches covered.">        if(Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED()){</span>
+<span class="fc bfc" id="L1094" title="All 2 branches covered.">        if(Neureka.Settings.Indexing.legacy()){</span>
 <span class="fc bfc" id="L1095" title="All 2 branches covered.">            for(int ii=rank()-1; ii&gt;=0; ii--){</span>
 <span class="fc" id="L1096">                idx[ii] += i / _idxmap[ii];</span>
 <span class="fc" id="L1097">                i %= _idxmap[ii];</span>
@@ -1357,7 +1357,7 @@ public class Tsr
             //@Contract(pure = true)
             //public static int[] idx_of_i(int i, Tsr t){
             //    int[] idx = new int[t._shape.length];
-            //    if(Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED()){
+            //    if(Neureka.Settings.Indexing.legacy()){
             //        for(int ii=t.rank()-1; ii&gt;=0; ii--){
             //            idx[ii] += i / t._idxmap[ii];
             //            i %= t._idxmap[ii];
@@ -1376,7 +1376,7 @@ public class Tsr
 
             @Contract(pure = true)
             public static void increment(@NotNull int[] shpIdx, @NotNull int[] shape) {
-<span class="fc bfc" id="L1379" title="All 2 branches covered.">                if(Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED()){</span>
+<span class="fc bfc" id="L1379" title="All 2 branches covered.">                if(Neureka.Settings.Indexing.legacy()){</span>
 <span class="fc" id="L1380">                    int i = 0;</span>
 <span class="fc bfc" id="L1381" title="All 4 branches covered.">                    while (i &gt;= 0 &amp;&amp; i &lt; shape.length) {//fixed</span>
 <span class="fc" id="L1382">                        i = incrementAt(i, shpIdx, shape);</span>
@@ -1392,7 +1392,7 @@ public class Tsr
 
             @Contract(pure = true)
             public static int incrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
-<span class="fc bfc" id="L1395" title="All 2 branches covered.">                if(Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED()){</span>
+<span class="fc bfc" id="L1395" title="All 2 branches covered.">                if(Neureka.Settings.Indexing.legacy()){</span>
 <span class="pc bpc" id="L1396" title="1 of 2 branches missed.">                    if (shpIdx[i] &lt; (shape[i])) {//fixed</span>
 <span class="fc" id="L1397">                        shpIdx[i]++;</span>
 <span class="fc bfc" id="L1398" title="All 2 branches covered.">                        if (shpIdx[i] == (shape[i])) {</span>
@@ -1425,7 +1425,7 @@ public class Tsr
             public static int[] newTlnOf(int[] shape) {
 <span class="fc" id="L1426">                int[] tln = new int[shape.length];</span>
 <span class="fc" id="L1427">                int prod = 1;</span>
-<span class="fc bfc" id="L1428" title="All 2 branches covered.">                if(Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED()){</span>
+<span class="fc bfc" id="L1428" title="All 2 branches covered.">                if(Neureka.Settings.Indexing.legacy()){</span>
 <span class="fc bfc" id="L1429" title="All 2 branches covered.">                    for (int i = 0; i &lt; tln.length; i++) {</span>
 <span class="fc" id="L1430">                        tln[i] = prod;</span>
 <span class="fc" id="L1431">                        prod *= shape[i];</span>

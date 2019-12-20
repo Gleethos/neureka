@@ -6,8 +6,6 @@ import org.jocl.*;
 
 import java.io.*;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import static org.jocl.CL.*;
 import static org.jocl.CL.CL_DEVICE_TYPE_ALL;
@@ -115,8 +113,8 @@ public class OpenCLPlatform
         for(int i=0; i<filesList.length; i++) {
             String kernelSource = _setup.readFile(filesList[i].toString());
             kernelSource = kernelSource.replace(
-                    "Neureka.settings.tsr.REVERSE_INDEX_TRANSLATION",
-                    (Neureka.settings.tsr.LEGACY_INDEXING_IS_ENABLED())?"true":"false"
+                    "Neureka.Settings.Indexing.REVERSE_INDEX_TRANSLATION",
+                    (Neureka.Settings.Indexing.legacy())?"true":"false"
             );
             boolean templateFound = false;
             if(kernelSource.contains("__kernel"))
