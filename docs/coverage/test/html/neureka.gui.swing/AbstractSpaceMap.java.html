@@ -16,45 +16,36 @@ import java.util.List;
 	public abstract AbstractSpaceMap removeAndUpdate(SurfaceObject node);
 	
 	public abstract int getCount();
-	
-	//public abstract SurfaceObject get(int i);
-	
+
 	public abstract LinkedList&lt;SurfaceObject&gt; getAll();
 	public abstract LinkedList&lt;SurfaceObject&gt; getAllWithin(double[] frame);
 
-	//public abstract LinkedList&lt;SurfaceObject&gt; getAllClosestTo(double x, double y);
-	
 	public abstract LinkedList&lt;SurfaceObject&gt; findAllAt(double x, double y, MapAction Actor);
 	public abstract LinkedList&lt;SurfaceObject&gt; findAllWithin(double[] frame, MapAction Actor);
-	
-	public abstract Object applyAndGet(AdvancedMapAction Actor);
-	public abstract Object applyAndGet(Object Data, AdvancedMapAction Actor);
-	public abstract void   apply	  (Object Data, AdvancedMapAction Actor);
-		
+
 	public abstract boolean applyToAll(MapAction Actor);
 	public abstract boolean applyToAllWithin(double[] frame, MapAction Actor);
 	
 	public abstract void paintStructure(Graphics2D brush);
 
-	public interface MapAction         {abstract boolean act(SurfaceObject thing);}
-	public interface AdvancedMapAction {abstract Object  act(Object first, SurfaceObject thing); }
+	public interface MapAction         {boolean act(SurfaceObject thing);}
 
 	protected static List&lt;SurfaceObject&gt; _withinFrame(LinkedList&lt;SurfaceObject&gt; list, HashMap&lt;SurfaceObject, SurfaceObject&gt; elements, double[] frame){
-<span class="pc bpc" id="L43" title="1 of 2 branches missed.">		if(elements!=null){</span>
-<span class="fc" id="L44">			elements.forEach(</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">		if(elements!=null){</span>
+<span class="fc" id="L35">			elements.forEach(</span>
 					(k, o)-&gt;
 					{
-<span class="fc" id="L47">						double LP = frame[0]; double RP = frame[1];</span>
-<span class="fc" id="L48">						double TP = frame[2]; double BP = frame[3];</span>
-<span class="fc" id="L49">						if(</span>
-<span class="fc bfc" id="L50" title="All 4 branches covered.">								o.getRightPeripheral() &lt; RP &amp;&amp; o.getLeftPeripheral() &gt; LP &amp;&amp;</span>
-<span class="fc bfc" id="L51" title="All 4 branches covered.">								o.getBottomPeripheral() &lt; BP &amp;&amp; o.getTopPeripheral() &gt; TP</span>
+<span class="fc" id="L38">						double LP = frame[0]; double RP = frame[1];</span>
+<span class="fc" id="L39">						double TP = frame[2]; double BP = frame[3];</span>
+<span class="fc" id="L40">						if(</span>
+<span class="fc bfc" id="L41" title="All 4 branches covered.">								o.getRightPeripheral() &lt; RP &amp;&amp; o.getLeftPeripheral() &gt; LP &amp;&amp;</span>
+<span class="fc bfc" id="L42" title="All 4 branches covered.">								o.getBottomPeripheral() &lt; BP &amp;&amp; o.getTopPeripheral() &gt; TP</span>
 						) {
-<span class="fc" id="L53">							list.add(o);</span>
+<span class="fc" id="L44">							list.add(o);</span>
 						}
-<span class="fc" id="L55">					});</span>
+<span class="fc" id="L46">					});</span>
 		}
-<span class="fc" id="L57">		return list;</span>
+<span class="fc" id="L48">		return list;</span>
 	}
 
 }

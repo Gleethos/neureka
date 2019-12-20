@@ -1133,28 +1133,27 @@ public class CPU extends AbstractDevice {
 
             @Contract(pure = true)
             private static void activate(
-                    Tsr t0_drn, int i, int end,
-                    Operator operation
+                    Tsr t0_drn, int i, int end, Operator operation
             ) {
-<span class="fc" id="L1139">                int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
-<span class="fc" id="L1140">                int rank = t0Shp.length;</span>
-<span class="fc" id="L1141">                int[] t0Idx = t0_drn.idx_of_i(i);//new int[rank];</span>
-<span class="fc" id="L1142">                int[] t1Idx = new int[rank];</span>
-<span class="fc" id="L1143">                double[] t0_value = t0_drn.value64();</span>
-<span class="fc bfc" id="L1144" title="All 2 branches covered.">                while (i &lt; end) {//increment on drain accordingly:</span>
-<span class="fc" id="L1145">                    int ri = 0;</span>
-<span class="fc bfc" id="L1146" title="All 2 branches covered.">                    while (ri &lt; rank) {</span>
-<span class="fc" id="L1147">                        t1Idx[ri] = t0Idx[ri];</span>
-<span class="fc" id="L1148">                        ri++;</span>
+<span class="fc" id="L1138">                int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
+<span class="fc" id="L1139">                int rank = t0Shp.length;</span>
+<span class="fc" id="L1140">                int[] t0Idx = t0_drn.idx_of_i(i);//new int[rank];</span>
+<span class="fc" id="L1141">                int[] t1Idx = new int[rank];</span>
+<span class="fc" id="L1142">                double[] t0_value = t0_drn.value64();</span>
+<span class="fc bfc" id="L1143" title="All 2 branches covered.">                while (i &lt; end) {//increment on drain accordingly:</span>
+<span class="fc" id="L1144">                    int ri = 0;</span>
+<span class="fc bfc" id="L1145" title="All 2 branches covered.">                    while (ri &lt; rank) {</span>
+<span class="fc" id="L1146">                        t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L1147">                        ri++;</span>
                     }
                     //setInto _value in drn:
-<span class="fc" id="L1151">                    t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, null);</span>
+<span class="fc" id="L1150">                    t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, null);</span>
                     //increment on drain:
-<span class="fc" id="L1153">                    Tsr.fcn.indexing.increment(t0Idx, t0Shp);</span>
-<span class="fc" id="L1154">                    i++;</span>
-<span class="fc" id="L1155">                }</span>
+<span class="fc" id="L1152">                    Tsr.fcn.indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L1153">                    i++;</span>
+<span class="fc" id="L1154">                }</span>
 
-<span class="fc" id="L1157">            }</span>
+<span class="fc" id="L1156">            }</span>
 
 
         }

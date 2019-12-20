@@ -7,17 +7,15 @@ import neureka.function.factory.autograd.GraphNode;
 
 public abstract class AbstractDevice implements  Device
 {
-
     protected abstract void _enqueue(Tsr[] tsrs, int d, int f_id);
 
     protected abstract void _enqueue(Tsr t, double value, int d, int f_id);
 
 
     @Override
-    public Device execute(Tsr[] tsrs, int f_id, int d)
-    {
+    public Device execute(Tsr[] tsrs, int f_id, int d) {
         _execute(tsrs, f_id, d);
-        return this;//0.0-0.0, 1.0-4.0, 1.0-1.0
+        return this;
     }
 
     protected void _execute(Tsr[] tsrs, int f_id, int d)
@@ -25,19 +23,18 @@ public abstract class AbstractDevice implements  Device
         if(Function.TYPES.REGISTER[f_id].equals("<"))
         {
             int offset = (tsrs[0]==null)?1:0;
-            _execute_tensors(new Tsr[]{tsrs[0+offset], tsrs[1+offset]}, Function.TYPES.LOOKUP.get("idy"), -1);
+            _execute_recursively(new Tsr[]{tsrs[0+offset], tsrs[1+offset]}, Function.TYPES.LOOKUP.get("idy"), -1);
         }
         else if(Function.TYPES.REGISTER[f_id].equals(">"))
         {
             int offset = (tsrs[0]==null)?1:0;
-            _execute_tensors(new Tsr[]{tsrs[1+offset], tsrs[0+offset]}, Function.TYPES.LOOKUP.get("idy"), -1);
+            _execute_recursively(new Tsr[]{tsrs[1+offset], tsrs[0+offset]}, Function.TYPES.LOOKUP.get("idy"), -1);
         }
         else
         {
             _createNewDrainTensorIn(this, tsrs, f_id);
             if (
-                    d<0 &&
-                    tsrs.length == 3
+                    d<0 && tsrs.length == 3
                             &&
                             (
                                     (tsrs[1].isVirtual() || tsrs[2].isVirtual())
@@ -46,19 +43,19 @@ public abstract class AbstractDevice implements  Device
                             )
             ) {
                 if (tsrs[2].isVirtual() || tsrs[2].size() == 1) {
-                    _execute_tensors(new Tsr[]{tsrs[0], tsrs[1]}, Function.TYPES.LOOKUP.get("idy"), -1);
+                    _execute_recursively(new Tsr[]{tsrs[0], tsrs[1]}, Function.TYPES.LOOKUP.get("idy"), -1);
                     _execute_tensor_scalar(tsrs[0], tsrs[2].value64()[0], f_id, d);
                 } else {
-                    _execute_tensors(new Tsr[]{tsrs[0], tsrs[2]}, Function.TYPES.LOOKUP.get("idy"), -1);
+                    _execute_recursively(new Tsr[]{tsrs[0], tsrs[2]}, Function.TYPES.LOOKUP.get("idy"), -1);
                     _execute_tensor_scalar(tsrs[0], tsrs[1].value64()[0], f_id, d);
                 }
             } else {
-                _execute_tensors(tsrs, f_id, d);
+                _execute_recursively(tsrs, f_id, d);
             }
         }
     }
 
-    private Tsr _execute_tensors(Tsr[] tsrs, int f_id, int d)
+    private Tsr _execute_recursively(Tsr[] tsrs, int f_id, int d)
     {
         boolean[] notNative = new boolean[tsrs.length];
         for (int i=0; i<tsrs.length; i++) {
@@ -71,16 +68,16 @@ public abstract class AbstractDevice implements  Device
         }
         if(tsrs.length>3) {
             if(d<0){
-                _execute_tensors(new Tsr[]{tsrs[0], tsrs[1], tsrs[2]}, f_id, d);
+                _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], tsrs[2]}, f_id, d);
                 Tsr[] newTsrs = _util._offsetted(tsrs, 1);
-                newTsrs[0] =  _execute_tensors(newTsrs, f_id, d);//This recursion should work!
+                newTsrs[0] =  _execute_recursively(newTsrs, f_id, d);//This recursion should work!
                 tsrs[0] = newTsrs[0];
             } else {
                 Tsr[] newTsrs;
                 switch(Function.TYPES.REGISTER[f_id]){
-                    case "+": tsrs[0] = Tsr.fcn.create.newTsrLike(tsrs[1]).setValue(1.0f);
-                        break;
-                    case "sum": tsrs[0] = Tsr.fcn.create.newTsrLike(tsrs[1]).setValue(1.0f);
+                    case "+":
+                    case "sum":
+                        tsrs[0] = Tsr.fcn.create.newTsrLike(tsrs[1]).setValue(1.0f);
                         break;
                     case "-": tsrs[0] = Tsr.fcn.create.newTsrLike(tsrs[1]).setValue((d==0)?1.0f:-1.0f);
                         break;
@@ -88,34 +85,26 @@ public abstract class AbstractDevice implements  Device
                         newTsrs = _util._subset(tsrs, 1,  2, tsrs.length-2);
                         if(d>0){
                             newTsrs[0] =  Tsr.fcn.create.newTsrLike(tsrs[1]);
-                            Tsr inner = _execute_tensors(newTsrs, Function.TYPES.LOOKUP.get("*"), d-1);
-                            Tsr exp = _execute_tensors(new Tsr[]{Tsr.fcn.create.newTsrLike(tsrs[1]), inner, tsrs[d]}, Function.TYPES.LOOKUP.get("*"), -1);
-                            tsrs[0] =  _execute_tensors(new Tsr[]{tsrs[0], tsrs[1], exp}, f_id, 1);
+                            Tsr inner = _execute_recursively(newTsrs, Function.TYPES.LOOKUP.get("*"), d-1);
+                            Tsr exp = _execute_recursively(new Tsr[]{Tsr.fcn.create.newTsrLike(tsrs[1]), inner, tsrs[d]}, Function.TYPES.LOOKUP.get("*"), -1);
+                            tsrs[0] =  _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], exp}, f_id, 1);
                             inner.delete();
                             exp.delete();
                         } else {
                             newTsrs = _util._subset(tsrs, 1,  2, tsrs.length-2);
                             newTsrs[0] =  Tsr.fcn.create.newTsrLike(tsrs[1]);
                             for(Tsr t : newTsrs) if(!t.has(GraphNode.class))t.add(new GraphNode(t, null, null, new GraphLock(null, null)));
-                            Tsr exp = _execute_tensors(newTsrs, Function.TYPES.LOOKUP.get("*"), -1);
-                            tsrs[0] = _execute_tensors(new Tsr[]{tsrs[0], tsrs[1], exp}, f_id, 0);
+                            Tsr exp = _execute_recursively(newTsrs, Function.TYPES.LOOKUP.get("*"), -1);
+                            tsrs[0] = _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], exp}, f_id, 0);
                             exp.delete();
                         }
                         break;
                     case "*":
-                        newTsrs = _util._without(tsrs, 1+d);
-                        if(newTsrs.length>2){
-                            newTsrs[0] = (newTsrs[0]==null)?Tsr.fcn.create.newTsrLike(tsrs[1]):newTsrs[0];
-                            tsrs[0] = _execute_tensors(newTsrs, Function.TYPES.LOOKUP.get("*"), -1);
-                        } else {
-                            tsrs[0] = newTsrs[1];
-                        }
-                        break;
                     case "prod":
                         newTsrs = _util._without(tsrs, 1+d);
                         if(newTsrs.length>2){
                             newTsrs[0] = (newTsrs[0]==null)?Tsr.fcn.create.newTsrLike(tsrs[1]):newTsrs[0];
-                            tsrs[0] = _execute_tensors(newTsrs, Function.TYPES.LOOKUP.get("*"), -1);
+                            tsrs[0] = _execute_recursively(newTsrs, Function.TYPES.LOOKUP.get("*"), -1);
                         } else {
                             tsrs[0] = newTsrs[1];
                         }
@@ -125,7 +114,7 @@ public abstract class AbstractDevice implements  Device
                         if(d>1){//[0][1][2][3][4]
                             newTsrs = _util._subset(tsrs, 1, 1, d+1);
                             newTsrs[0] =  Tsr.fcn.create.newTsrLike(tsrs[1]);
-                            a = _execute_tensors(newTsrs, Function.TYPES.LOOKUP.get("/"), -1);
+                            a = _execute_recursively(newTsrs, Function.TYPES.LOOKUP.get("/"), -1);
                         } else if(d==1){
                             a = tsrs[1];
                         } else if(d==0){
@@ -136,17 +125,17 @@ public abstract class AbstractDevice implements  Device
                             newTsrs = _util._subset(tsrs, 2, d+2, tsrs.length-(d+2));//or (d+2)
                             newTsrs[1] =  Tsr.fcn.create.newTsrLike(tsrs[1], 1.0);
                             newTsrs[0] = newTsrs[1];
-                            b = _execute_tensors(newTsrs, Function.TYPES.LOOKUP.get("/"), -1);
+                            b = _execute_recursively(newTsrs, Function.TYPES.LOOKUP.get("/"), -1);
                         } else {
                             b = Tsr.fcn.create.newTsrLike(tsrs[1], 1.0);
                         }
-                        _execute_tensors(new Tsr[]{tsrs[0], a, b}, Function.TYPES.LOOKUP.get("*"), -1);
-                        _execute_tensors(new Tsr[]{tsrs[0], tsrs[0], tsrs[d+1]}, Function.TYPES.LOOKUP.get("/"), 1);
+                        _execute_recursively(new Tsr[]{tsrs[0], a, b}, Function.TYPES.LOOKUP.get("*"), -1);
+                        _execute_recursively(new Tsr[]{tsrs[0], tsrs[0], tsrs[d+1]}, Function.TYPES.LOOKUP.get("/"), 1);
                         if(d==0)a.delete();
                         b.delete();
                         break;
                     default:
-                        throw new IllegalStateException("[CPU][enqueue]: Operation not found!");
+                        throw new IllegalStateException("[AbstractDevice]: Operation not found!");
                 }
             }
         } else {
@@ -197,14 +186,9 @@ public abstract class AbstractDevice implements  Device
             Tsr output = new Tsr(shp, 0.0);
             device.add(output);
             tsrs[0] = output;
-        } else {
-            //throw new RuntimeException(
-            //    "[OpenCLDevice]:[ERROR]: Trying to create tensor where one is already present! (memory leak!)"
-            //);
         }
     }
     //---
-
 
     protected static class _util {
 

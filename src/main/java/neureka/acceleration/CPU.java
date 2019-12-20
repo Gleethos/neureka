@@ -1133,8 +1133,7 @@ public class CPU extends AbstractDevice {
 
             @Contract(pure = true)
             private static void activate(
-                    Tsr t0_drn, int i, int end,
-                    Operator operation
+                    Tsr t0_drn, int i, int end, Operator operation
             ) {
                 int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
                 int rank = t0Shp.length;
