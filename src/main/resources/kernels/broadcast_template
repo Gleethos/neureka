@@ -24,7 +24,7 @@ __kernel void broadcast_template(
 
         //increment src accordingly:
         int ri = 0;
-        if(d >= 0){
+        if(d < 0){
             while (ri < rank) {
                 if (prv_src1_cfg[p_shp+ri] == prv_src2_cfg[p_shp+ri]) {
                     prv_src1_cfg[p_idx+ri] = prv_drn_cfg[p_idx+ri];
@@ -81,12 +81,13 @@ __kernel void broadcast_template(
                         if (prv_src1_cfg[p_idx+ri] == prv_src1_cfg[p_shp+ri]) {
                             prv_src1_cfg[p_idx+ri] = 0;
                             prv_src2_cfg[p_idx+ri] = 0;
-                            ri++;
                             running = running && !(ri == (rank - 1));
+                            ri++;
                         } else {
                             incrementing = false;//return to calculation!
                         }
                     } else {
+                        running = running && !(ri == (rank - 1));
                         ri++;
                     }
                 }

@@ -363,7 +363,10 @@ public class OpenCLDevice extends AbstractDevice
     protected void _enqueue(Tsr[] tsrs, int d, int f_id){
         int gwz = (tsrs[0]!=null)?tsrs[0].size():tsrs[1].size();
         int offset = (tsrs[0]!=null)?0:1;
-        cl_kernel kernel = _platform.getKernels().get(_platform.kernelNameOf(f_id));
+        String chosen = _platform.kernelNameOf(f_id);
+        //System.out.println("chosen enq: "+chosen);
+        cl_kernel kernel = _platform.getKernels().get(chosen);
+
         cl_mem drn = _mapping.get(tsrs[offset]).value.data;
         cl_mem src1 = _mapping.get(tsrs[offset+1]).value.data;
         if(Function.TYPES.isFunction(f_id)){
@@ -399,9 +402,9 @@ public class OpenCLDevice extends AbstractDevice
     @Override
     protected void _enqueue(Tsr t, double value, int d, int f_id){
         int gwz = t.size();
-        cl_kernel kernel = _platform.getKernels().get(
-                _platform.kernelNameOf(f_id)+"_broadcast"
-        );
+        String chosen =  "scalar_"+_platform.kernelNameOf(f_id).replace("operate_", "");//+"_broadcast";
+        //System.out.println("chosen: "+chosen);
+        cl_kernel kernel = _platform.getKernels().get(chosen);
         cl_mem drn = _mapping.get(t).value.data;
         cl_mem src1 = _mapping.get(t).value.data;
         clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain

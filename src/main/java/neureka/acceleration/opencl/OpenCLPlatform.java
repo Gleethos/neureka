@@ -20,24 +20,36 @@ public class OpenCLPlatform
 
     private static Map<String, String> OPERATION_TO_KERNEL_MAPPING = new HashMap<String, String>();
     static {
-        OPERATION_TO_KERNEL_MAPPING.put("relu", "relu");
-        OPERATION_TO_KERNEL_MAPPING.put("sig", "sigmoid");
-        OPERATION_TO_KERNEL_MAPPING.put("quad", "quadratic");
-        OPERATION_TO_KERNEL_MAPPING.put("lig", "ligmoid");
-        OPERATION_TO_KERNEL_MAPPING.put("idy", "identity");
-        OPERATION_TO_KERNEL_MAPPING.put("gaus", "gaussian");
-        OPERATION_TO_KERNEL_MAPPING.put("abs", "absolute");
-        OPERATION_TO_KERNEL_MAPPING.put("sin", "sinus");
-        OPERATION_TO_KERNEL_MAPPING.put("cos", "cosinus");
-        OPERATION_TO_KERNEL_MAPPING.put("sum", "add");
-        OPERATION_TO_KERNEL_MAPPING.put("prod", "multiply");
-        OPERATION_TO_KERNEL_MAPPING.put("^", "power");
-        OPERATION_TO_KERNEL_MAPPING.put("/", "divide");
-        OPERATION_TO_KERNEL_MAPPING.put("*", "multiply");
-        OPERATION_TO_KERNEL_MAPPING.put("%", "modulo");
-        OPERATION_TO_KERNEL_MAPPING.put("-", "subtract");
-        OPERATION_TO_KERNEL_MAPPING.put("+", "add");
+        OPERATION_TO_KERNEL_MAPPING.put("relu", "activate_relu");
+        OPERATION_TO_KERNEL_MAPPING.put("sig", "activate_sigmoid");
+        OPERATION_TO_KERNEL_MAPPING.put("quad", "activate_quadratic");
+        OPERATION_TO_KERNEL_MAPPING.put("lig", "activate_ligmoid");
+        OPERATION_TO_KERNEL_MAPPING.put("idy", "activate_identity");
+        OPERATION_TO_KERNEL_MAPPING.put("gaus", "activate_gaussian");
+        OPERATION_TO_KERNEL_MAPPING.put("abs", "activate_absolute");
+        OPERATION_TO_KERNEL_MAPPING.put("sin", "activate_sinus");
+        OPERATION_TO_KERNEL_MAPPING.put("cos", "activate_cosinus");
+        //---
+        OPERATION_TO_KERNEL_MAPPING.put("sum", "operate_add");
+        OPERATION_TO_KERNEL_MAPPING.put("prod", "operate_multiply");
+        OPERATION_TO_KERNEL_MAPPING.put("^", "operate_power");
+        OPERATION_TO_KERNEL_MAPPING.put("/", "operate_divide");
+        OPERATION_TO_KERNEL_MAPPING.put("*", "operate_multiply");
+        OPERATION_TO_KERNEL_MAPPING.put("%", "operate_modulo");
+        OPERATION_TO_KERNEL_MAPPING.put("-", "operate_subtract");
+        OPERATION_TO_KERNEL_MAPPING.put("+", "operate_add");
+
         OPERATION_TO_KERNEL_MAPPING.put("x", "convolve_multiply");
+        OPERATION_TO_KERNEL_MAPPING.put("d", "convolve_divide");
+        OPERATION_TO_KERNEL_MAPPING.put("p", "convolve_power");
+        OPERATION_TO_KERNEL_MAPPING.put("a", "convolve_add");
+        OPERATION_TO_KERNEL_MAPPING.put("s", "convolve_subtract");
+
+        //"x", ((char)171)+"x", "x"+((char)187),
+        //"d", ((char)171)+"d", "d"+((char)187),
+        //"p", ((char)171)+"p", "p"+((char)187),
+        //"a", ((char)171)+"a", "a"+((char)187),
+        //"s", ((char)171)+"s", "s"+((char)187),
         //OPERATION_TO_KERNEL_MAPPING.put((""+((char)171)), "inv_conv_left");
         //OPERATION_TO_KERNEL_MAPPING.put((""+((char)187)), "inv_conv_right");
         OPERATION_TO_KERNEL_MAPPING.put(",", "reshape");
@@ -47,7 +59,7 @@ public class OpenCLPlatform
 
     public String kernelNameOf(int f_id){
         String name = OPERATION_TO_KERNEL_MAPPING.get(Function.TYPES.REGISTER[f_id]);
-        System.out.println("Kernel needed: "+name);
+        //System.out.println("Kernel needed: "+name);
         return OPERATION_TO_KERNEL_MAPPING.get(Function.TYPES.REGISTER[f_id]);
     }
 
@@ -182,6 +194,10 @@ public class OpenCLPlatform
                 "//-=<PARSED>=-//\n"+
                 s.replace("src1","src1[_i_of_idx_on_tln(prv_src1_cfg, rank)]")
                 .replace("src2", "src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]")
+                .replace("input1", "src1[_i_of_i(i, prv_src1_cfg, rank)]")
+                .replace("input2", "src2[_i_of_i(i, prv_src2_cfg, rank)]")
+                .replace("input", "src1[_i_of_i(i, prv_src1_cfg, rank)]")
+                .replace("output", "drn[_i_of_i(i, prv_drn_cfg, rank)]")
                 .replace("handle", "src1[_i_of_idx_on_tln(prv_src1_cfg, rank)]")
                 .replace("drain", "src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]")
                 .replace("origin", "drn[di]")
@@ -209,55 +225,213 @@ public class OpenCLPlatform
         //default:  src1 o src2 -> drain
         //inverse:  src1/fdrn <-src2 <- drain
         //===========================================================================
-        parser.apply(
-                "multiply",
-                "value = src1 * src2;\n",
-                "value += handle * drain;\n",
-                false
-        );
-        //--
-        parser.apply(
-                "add",
-                "value = src1 + src2;\n",
-                "value += 1 * drain;\n",
-                false
-        );
-        //--
-        parser.apply(
-                "subtract",
-                "value = src1 - src2;\n",
-                "if(d==0){\n" +//drn and src2 switch:
-                        "    value += 1 * drain;\n" +
-                        "} else {\n" +
-                        "    value += -1 * drain;"+
-                        "}",
-                false
-        );
-        //--
-        //===========================================================================
-        //--
-        parser.apply(
-                "divide",
-                "value = src1 / src2;\n",
-                "if(d==0){\n" +
-                        "    value += (1/handle) * drain;\n" +
-                        "} else {\n" +
-                        "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
-                        "}",
-                true
-        );
-        //--
-        parser.apply(
-                "power",
-                "value += pow(src1, src2);",
-                "if(d==0){\n" +
-                        "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
-                        "} else {\n" +
-                        "    value += (pow(target, handle) * log(handle)) * drain;\n" +
-                        "}",
-                true
-        );
-        //--
+        if(newName.contains("activate")){
+            parser.apply(
+                    "cosinus",
+                    "drn[_i_of_i(i, prv_drn_cfg, rank)] = cos(input);\n",
+                    "drn[_i_of_i(i, prv_drn_cfg, rank)] = -sin(input);\n",
+                    false
+            );
+            parser.apply(
+                    "gaussian",
+                    "output =\n" +
+                         "                (float)pow(\n" +
+                         "                    (float)M_E,\n" +
+                         "                    -(float)pow(\n" +
+                         "                        (float)input,\n" +
+                         "                        (float)2\n" +
+                         "                    )\n" +
+                         "                );\n",
+                    "output = 1 / (1 + (float)pow((float)M_E, -input));\n",
+                    false
+            );
+            parser.apply(
+                    "ligmoid",
+                    "output = (\n" +
+                            "                    (float) log(\n" +
+                            "                        1+pow(\n" +
+                            "                            (float)\n" +
+                            "                            M_E,\n" +
+                            "                            (float)\n" +
+                            "                            input\n" +
+                            "                        )\n" +
+                            "                    )\n" +
+                            "            );",
+                    "output =\n" +
+                            "                    1 /\n" +
+                            "                            (1 + (float)\n" +
+                            "                                pow(\n" +
+                            "                                    (float)\n" +
+                            "                                    M_E,\n" +
+                            "                                    (float)\n" +
+                            "                                    input\n" +
+                            "                                )\n" +
+                            "                            );\n",
+                    false
+            );
+            parser.apply(
+                    "sigmoid",
+                    "output = 1 / (1 + (float)pow((float)M_E, -input));\n",
+                    "output = input * (1 - input);\n",
+                    false
+            );
+            parser.apply(
+                    "sinus",
+                    "output = sin(input);\n",
+                    "output = cos(input);\n",
+                    false
+            );
+            parser.apply(
+                    "relu",
+                    "if (input >= 0) {  output = input; } else { output = input * (float)0.01; }\n",
+                    "if (input >= 0) { output = (float)1; } else { output = (float)0.01; }\n",
+                    false
+            );
+            parser.apply(
+                    "identity",
+                    "output = input;\n",
+                    "output = input;\n",
+                    false
+            );
+            parser.apply(
+                    "tanh",
+                    "output = input/pow(1+pow(input, 2.0f), 0.5f);\n",
+                    "output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n",
+                    false
+            );
+
+        } else  if(newName.contains("operate")){
+            parser.apply(
+                    "multiply",
+                    "output = input1 * input2;\n",
+                    "if(d==0){output = input2;}else{output = input1;}\n",
+                    false
+            );
+            parser.apply(
+                    "add",
+                    "output = input1 + input2;\n",
+                    "output = 1;\n",
+                    false
+            );
+            parser.apply(
+                    "subtract",
+                    "output = input1 - input2;\n",
+                    "if(d==0){\n" +//drn and src2 switch:
+                            "    output = 1;\n" +
+                            "} else {\n" +
+                            "    output = -1;"+
+                            "}",
+                    false
+            );
+            parser.apply(
+                    "divide",
+                    "output = input1 / input2;\n",
+                    "if(d==0){\n" +
+                            "    output = 1/input2;\n" +
+                            "} else {\n" +
+                            "    output = -input2 /(float)pow(input1, 2.0f);\n" +
+                            "}",
+                    true
+            );
+            parser.apply(
+                    "power",
+                    "output = pow(input1, input2);",
+                    "if(d==0){\n" +
+                            "    output = input2 * pow(input1, input2-1.0f);\n" +
+                            "} else {\n" +
+                            "    output = pow(input1, input2) * log(input1);\n" +
+                            "}",
+                    true
+            );
+        } else if(newName.contains("scalar")) {
+            parser.apply(
+                    "multiply",
+                    "output = input1 * value;\n",
+                    "if(d==0){output = value;}else{output = input1;}\n",
+                    false
+            );
+            parser.apply(
+                    "add",
+                    "output = input1 + value;\n",
+                    "output = 1;\n",
+                    false
+            );
+            parser.apply(
+                    "subtract",
+                    "output = input1 - value;\n",
+                    "if(d==0){\n" +//drn and src2 switch:
+                            "    output = 1;\n" +
+                            "} else {\n" +
+                            "    output = -1;"+
+                            "}",
+                    false
+            );
+            parser.apply(
+                    "divide",
+                    "output = input1 / value;\n",
+                    "if(d==0){\n" +
+                            "    output = 1/value;\n" +
+                            "} else {\n" +
+                            "    output = -value /(float)pow(input1, 2.0f);\n" +
+                            "}",
+                    true
+            );
+            parser.apply(
+                    "power",
+                    "output = pow(input1, value);",
+                    "if(d==0){\n" +
+                            "    output = (value * pow(input1, value-(float)1 ));\n" +
+                            "} else {\n" +
+                            "    output = (pow(input1, value) * log(value));\n" +
+                            "}",
+                    true
+            );
+        } else {// broadcast / convolve:
+            parser.apply(
+                    "multiply",
+                    "value = src1 * src2;\n",
+                    "value += handle * drain;\n",
+                    false
+            );
+            parser.apply(
+                    "add",
+                    "value = src1 + src2;\n",
+                    "value += 1 * drain;\n",
+                    false
+            );
+            parser.apply(
+                    "subtract",
+                    "value = src1 - src2;\n",
+                    "if(d==0){\n" +//drn and src2 switch:
+                            "    value += 1 * drain;\n" +
+                            "} else {\n" +
+                            "    value += -1 * drain;"+
+                            "}",
+                    false
+            );
+            parser.apply(
+                    "divide",
+                    "value = src1 / src2;\n",
+                    "if(d==0){\n" +
+                            "    value += (1/handle) * drain;\n" +
+                            "} else {\n" +
+                            "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
+                            "}",
+                    true
+            );
+            parser.apply(
+                    "power",
+                    "value += pow(src1, src2);",
+                    "if(d==0){\n" +
+                            "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
+                            "} else {\n" +
+                            "    value += (pow(target, handle) * log(handle)) * drain;\n" +
+                            "}",
+                    true
+            );
+            //code.forEach((k, v)->{System.out.println(k+"\n------------\n"+v);});
+        }
+
         return code;
     }
 
