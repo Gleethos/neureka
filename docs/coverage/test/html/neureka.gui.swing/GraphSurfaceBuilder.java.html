@@ -46,12 +46,12 @@ public class GraphSurfaceBuilder
 <span class="fc" id="L46">                    brush.setColor(Color.GREEN);</span>
 <span class="fc" id="L47">                    brush.fillOval((int) surface.realX(surface.lastSenseX()) - 5, (int) surface.realY(surface.lastSenseY()) - 5, 10, 10);</span>
 
-<span class="fc bfc" id="L49" title="All 2 branches covered.">                    if (this.ChosenInputNode != null) {</span>
-<span class="fc" id="L50">                        double x = this.ChosenInputNode.getX();</span>
-<span class="fc" id="L51">                        double y = this.ChosenInputNode.getY();</span>
-<span class="fc" id="L52">                        brush.setColor(Color.CYAN);</span>
-<span class="fc" id="L53">                        brush.setStroke(new BasicStroke(22));</span>
-<span class="fc" id="L54">                        brush.drawLine((int) x, (int) y, (int) surface.realX(surface.lastSenseX()), (int) surface.realY(surface.lastSenseY()));</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">                    if (this.ChosenInputNode != null) {</span>
+<span class="nc" id="L50">                        double x = this.ChosenInputNode.getX();</span>
+<span class="nc" id="L51">                        double y = this.ChosenInputNode.getY();</span>
+<span class="nc" id="L52">                        brush.setColor(Color.CYAN);</span>
+<span class="nc" id="L53">                        brush.setStroke(new BasicStroke(22));</span>
+<span class="nc" id="L54">                        brush.drawLine((int) x, (int) y, (int) surface.realX(surface.lastSenseX()), (int) surface.realY(surface.lastSenseY()));</span>
                     }
 <span class="fc" id="L56">                }</span>
         );
@@ -73,15 +73,15 @@ public class GraphSurfaceBuilder
 <span class="fc" id="L73">                                SurfaceNode PU = (SurfaceNode) found;</span>
 <span class="fc" id="L74">                                SurfaceNodeInput node = PU.testFor_AndGet_InputNode(surface.realX(x), surface.realY(y));</span>
 
-<span class="pc bpc" id="L76" title="1 of 4 branches missed.">                                if (this.ChosenInputNode != null &amp;&amp; node == null) {</span>
-<span class="fc" id="L77">                                    ((SurfaceNode) found).connect(this.ConnectionSurfaceNode);</span>
+<span class="pc bpc" id="L76" title="3 of 4 branches missed.">                                if (this.ChosenInputNode != null &amp;&amp; node == null) {</span>
+<span class="nc" id="L77">                                    ((SurfaceNode) found).connect(this.ConnectionSurfaceNode);</span>
                                     //Tsr C2 = this.ConnectionSurfaceNode.getCore().asCore();
                                     //C2._connect(C1, this.InputIndex);
                                 }
 <span class="fc" id="L81">                                this.ChosenInputNode = node;</span>
 
-<span class="pc bpc" id="L83" title="1 of 4 branches missed.">                                if (this.ChosenInputNode != null &amp;&amp; PU != null) {</span>
-<span class="fc" id="L84">                                    this.ConnectionSurfaceNode = PU;</span>
+<span class="pc bpc" id="L83" title="3 of 4 branches missed.">                                if (this.ChosenInputNode != null &amp;&amp; PU != null) {</span>
+<span class="nc" id="L84">                                    this.ConnectionSurfaceNode = PU;</span>
                                     //for (int i = 0; i &lt; PU.getInputNode().size(); i++) {
                                     //    if (PU.getInputNode().get(i) == this.ChosenInputNode) {
                                     //        this.InputIndex = i;
@@ -190,16 +190,16 @@ public class GraphSurfaceBuilder
 <span class="fc" id="L190">                        surface.getFocusObject().movementAt(realX, realY, surface);</span>
                     }
 <span class="fc" id="L192">                    surface.setFocusObject(surface.findObject(realX, realY, true, null));</span>
-<span class="fc bfc" id="L193" title="All 2 branches covered.">                    if (this.ChosenInputNode != null) {</span>
-<span class="fc" id="L194">                        double cx = this.ChosenInputNode.getX();</span>
-<span class="fc" id="L195">                        double cy = this.ChosenInputNode.getY();</span>
-<span class="fc" id="L196">                        double sx = surface.realLastSenseX();</span>
-<span class="fc" id="L197">                        double sy = surface.realLastSenseY();</span>
-<span class="fc" id="L198">                        SurfaceRepaintSpace space = new SurfaceRepaintSpace((cx + sx) / 2, (cy + sy) / 2, Math.abs(cx - sx) / 2, Math.abs(cy - sy) / 2);</span>
-<span class="fc" id="L199">                        ArrayList&lt;SurfaceRepaintSpace&gt; queue = surface.getRepaintQueue();</span>
-<span class="pc bpc" id="L200" title="1 of 2 branches missed.">                        queue = (queue == null) ? new ArrayList&lt;&gt;() : queue;</span>
-<span class="fc" id="L201">                        queue.add(space);</span>
-<span class="fc" id="L202">                        surface.setRepaintQueue(queue);</span>
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">                    if (this.ChosenInputNode != null) {</span>
+<span class="nc" id="L194">                        double cx = this.ChosenInputNode.getX();</span>
+<span class="nc" id="L195">                        double cy = this.ChosenInputNode.getY();</span>
+<span class="nc" id="L196">                        double sx = surface.realLastSenseX();</span>
+<span class="nc" id="L197">                        double sy = surface.realLastSenseY();</span>
+<span class="nc" id="L198">                        SurfaceRepaintSpace space = new SurfaceRepaintSpace((cx + sx) / 2, (cy + sy) / 2, Math.abs(cx - sx) / 2, Math.abs(cy - sy) / 2);</span>
+<span class="nc" id="L199">                        ArrayList&lt;SurfaceRepaintSpace&gt; queue = surface.getRepaintQueue();</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">                        queue = (queue == null) ? new ArrayList&lt;&gt;() : queue;</span>
+<span class="nc" id="L201">                        queue.add(space);</span>
+<span class="nc" id="L202">                        surface.setRepaintQueue(queue);</span>
                     }
 <span class="fc" id="L204">                    surface.setLastSenseX(x);</span>
 <span class="fc" id="L205">                    surface.setLastSenseY(y);</span>

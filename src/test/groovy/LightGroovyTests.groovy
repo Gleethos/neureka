@@ -10,6 +10,25 @@ class LightGroovyTests
 {
 
     @Test
+    void testIndexMapping(){
+        Tsr t = new Tsr([3, 4],[
+                1, 2, 3, 4,
+                9, 8, 6, 5,
+                4, 5, 6, 7
+        ])
+        t.map([
+                ["1", "2", "3"],
+                ["a", "b", "c", "d"]
+        ])
+        Tsr x = t["2", 1..2]
+        assert x.toString().contains("[1x2]:(8.0, 6.0)")
+
+        x = t["2".."3", "b".."c"]
+
+        assert x.toString().contains("[2x2]:(8.0, 6.0, 5.0, 6.0)")
+    }
+
+    @Test
     void testIndexingModes(){
         Neureka.Settings.Indexing.setLegacy(false)
         Tsr t0 = new Tsr([3, 2, 1], [

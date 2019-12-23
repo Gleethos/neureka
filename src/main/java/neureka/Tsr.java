@@ -2,6 +2,7 @@ package neureka;
 
 import neureka.acceleration.CPU;
 import neureka.acceleration.Device;
+import neureka.framing.Index;
 import neureka.function.Function;
 import neureka.function.factory.assembly.FunctionBuilder;
 import neureka.function.factory.autograd.GraphNode;
@@ -927,6 +928,38 @@ public class Tsr
     public boolean equals(Tsr other) {
         return (this.hashCode()==other.hashCode());
     }
+
+    public Tsr map(String[][] labels){
+        Index index = (Index)find(Index.class);
+        if(index==null){
+            index = new Index(this.rank());
+            add(index);
+        }
+        for(int i=0; i<labels.length; i++){
+            if(labels[i]!=null){
+                for(int ii=0; ii<labels[i].length; ii++){
+                    if(labels[i][ii]!=null) index.set(labels[i][ii], i, ii);
+                }
+            }
+        }
+        return this;
+    }
+    public Tsr map(List<List> labels){
+        Index index = (Index)find(Index.class);
+        if(index==null){
+            index = new Index(this.rank());
+            add(index);
+        }
+        for(int i=0; i<labels.size(); i++){
+            if(labels.get(i)!=null){
+                for(int ii=0; ii<labels.get(i).size(); ii++){
+                    if(labels.get(i).get(ii)!=null) index.set(labels.get(i).get(ii), i, ii);
+                }
+            }
+        }
+        return this;
+    }
+
     public Tsr putAt(Object key, Tsr value){
         if(value.isEmpty()) throw new IllegalArgumentException("[Tsr][putAt(Object key, Tsr value)]: Value is empty!");
         Tsr slice = (key==null)?this:(Tsr)getAt(key);
@@ -950,10 +983,8 @@ public class Tsr
     }
     public Object getAt(Object key) {
         if(key==null) return this;
-        if(key instanceof List){
-            if(((List)key).size()==0) return this;
-        }
-        Tsr subset = new Tsr();
+        if(key instanceof List) if(((List)key).size()==0) return this;
+
         int[] idx = null;// = (int[])key;
         int[] newShape = new int[this.rank()];
         if(key instanceof List){
@@ -965,34 +996,29 @@ public class Tsr
                 if(key instanceof int[]) {
                     for(int i=0; i<this.rank(); i++) {
                         idx[i] = (idx[i]<0)?_shape[i]+idx[i]:idx[i];
-                        //if(idx[i]>=0) {
-                        //    newShape[i] = _shape[i]-idx[i];
-                        //} else {
-                        //    newShape[i] = _shape[i]+idx[i];
-                        //    idx[i] = 0;//_shape[i]+idx[i];
-                        //}
                     }
                     return Tsr.fcn.io.getFrom(this, idx);
                 }
             }
-            else if(((Object[])key)[0] instanceof List)
+            else// if(((Object[])key)[0] instanceof List)
             {
                 idx = new int[this.rank()];
                 Object[] ranges = (Object[])key;
-                _configureFromRanges(ranges, idx, newShape);
+                _configureSubsetFromRanges(ranges, idx, newShape);
             }
         }//...not simple slice... Advanced:
         else if(key instanceof Map)// ==> i, j, k slicing!
         {
             idx = new int[this.rank()*2];
             Object[] ranges = ((Map)key).keySet().toArray();
-            _configureFromRanges(ranges, idx, newShape);
+            _configureSubsetFromRanges(ranges, idx, newShape);
             Object[] steps = ((Map)key).values().toArray();
             for(int i=rank(); i<2*this.rank(); i++){
                 idx[i] = (Integer)steps[i-rank()];
                 newShape[i-rank()] /= (Integer)steps[i-rank()];
             }
         }
+        Tsr subset = new Tsr();
         subset._value = this._value;
         subset._translation = this._translation;
         subset._idxmap = _cached(fcn.indexing.newTlnOf(newShape));
@@ -1005,15 +1031,48 @@ public class Tsr
         return subset;
     }
 
-    private void _configureFromRanges(Object[] ranges, int[] idx, int[] newShape){
+    private void _configureSubsetFromRanges(Object[] ranges, int[] idx, int[] newShape){
+        if(ranges.length!=rank()) throw new IllegalArgumentException("[Tsr]: Number of arguments must match tensor dim!");
         for(int i=0; i<ranges.length; i++){
-            ranges[i] = ((List)ranges[i]).toArray();
-            ranges[i] = (((Object[])ranges[i])[0] instanceof List)?((List)((Object[])ranges[i])[0]).toArray():((Object[])ranges[i]);
-            int first = ((Integer)((Object[])ranges[i])[0]);
-            int last = ((Integer)((Object[])ranges[i])[((Object[])ranges[i]).length-1]);
-            ranges[i] = new int[]{first, last};
+            if(!(ranges[i] instanceof  List)){
+                Index index = (Index)find(Index.class);
+                if(index!=null){
+                    Integer position = index.get(ranges[i], i);
+                    //position = (position==null)?ranges[i].hashCode()%newShape[i]:position;
+                    ranges[i] = new int[]{position, position};
+                } else {
+                    throw new IllegalStateException("[Tsr]: Given index key at axis "+i+" not found!");
+                }
+            }else{
+                ranges[i] = ((List)ranges[i]).toArray();
+                int first = 0;
+                int last = 0;
+                ranges[i] = (((Object[])ranges[i])[0] instanceof List)?((List)((Object[])ranges[i])[0]).toArray():((Object[])ranges[i]);
+                if(!(((Object[])(ranges[i]))[0] instanceof Integer) || !(((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1] instanceof Integer)){
+                    Index index = (Index)find(Index.class);
+                    if(!(((Object[])(ranges[i]))[0] instanceof Integer)){
+                        if(index!=null){
+                            first = index.get(((Object[])(ranges[i]))[0], i);
+                        }
+                    }  else {
+                        first = (Integer) ((Object[])(ranges[i]))[0];
+                    }
+                    if(!(((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1] instanceof Integer)){
+                        if(index!=null){
+                            last = index.get(((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1], i);
+                        }
+                    } else {
+                        last = (Integer) ((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1];
+                    }
+                } else {
+                    first = ((Integer)((Object[])ranges[i])[0]);
+                    last = ((Integer)((Object[])ranges[i])[((Object[])ranges[i]).length-1]);
+                }
+                ranges[i] = new int[]{first, last};
+
+            }
+
         }
-        if(ranges.length!=rank()) throw new IllegalArgumentException("[Tsr][getAt(Object key)]: Number of arguments must match tensor dim!");
         for(int i=0; i<this.rank(); i++) {
             int first =  ((int[])ranges[i])[0];
             int second =  ((int[])ranges[i])[1];

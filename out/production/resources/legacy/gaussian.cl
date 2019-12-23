@@ -14,10 +14,6 @@ __kernel void gaussian(
         _cfg_of_cfg(src1_conf, prv_src1_cfg, rank);
 
         unsigned int i = get_global_id(0);
-        drn[_i_of_i(i, prv_drn_cfg, rank)] =
-            (float)pow(
-                (float)src1[_i_of_i(i, prv_src1_cfg, rank)],2
-            );
 
         if(d<0){
             drn[_i_of_i(i, prv_drn_cfg, rank)] =
@@ -29,7 +25,6 @@ __kernel void gaussian(
                     )
                 );
         }else{
-            drn[_i_of_i(i, prv_drn_cfg, rank)] =
-                1 / (1 + (float)pow((float)M_E, -src1[_i_of_i(i, prv_src1_cfg, rank)]));
+            drn[_i_of_i(i, prv_drn_cfg, rank)] = 1 / (1 + (float)pow((float)M_E, -src1[_i_of_i(i, prv_src1_cfg, rank)]));
         }
     }

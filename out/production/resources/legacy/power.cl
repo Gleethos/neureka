@@ -28,7 +28,10 @@ __kernel void power(
                     pow(src1[_i_of_i(i, prv_src1_cfg, rank)], src2[_i_of_i(i, prv_src2_cfg, rank)]-(float)1);
             } else {
                 drn[_i_of_i(i, prv_drn_cfg, rank)] =
-                                    pow(src1[_i_of_i(i, prv_src1_cfg, rank)], src2[_i_of_i(i, prv_src2_cfg, rank)])
+                                    pow(
+                                        src1[_i_of_i(i, prv_src1_cfg, rank)],
+                                        src2[_i_of_i(i, prv_src2_cfg, rank)]
+                                        )
                                     *
                                     log(src1[_i_of_i(i, prv_src1_cfg, rank)]);
             }
