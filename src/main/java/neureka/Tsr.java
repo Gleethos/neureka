@@ -3,6 +3,7 @@ package neureka;
 import neureka.acceleration.CPU;
 import neureka.acceleration.Device;
 import neureka.framing.Index;
+import neureka.framing.Relation;
 import neureka.function.Function;
 import neureka.function.factory.assembly.FunctionBuilder;
 import neureka.function.factory.autograd.GraphNode;
@@ -393,6 +394,8 @@ public class Tsr
                 if (isVirtual) {
                     _value = new double[]{v};
                     _flags += IS_VIRTUAL_MASK;
+                    Relation parent = (Relation)find(Relation.class);
+                    if(parent!=null) parent.foreachChild((c)->c._value=_value);
                 } else {
                     _value = (this.is64())?new double[this.size()]:new float[this.size()];
                     int length = (this.is64())?((double[])_value).length:((float[])_value).length;
@@ -413,8 +416,19 @@ public class Tsr
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //GENERIC PROPERTIES :
     //=========================
-    public boolean hasDataParent(){
-        return this.has(Tsr.class);
+    public boolean isSlice(){
+        Relation child = (Relation)find(Relation.class);
+        return (child!=null && child.hasParent());
+    }
+
+    public int sliceCount(){
+        Relation child = (Relation)find(Relation.class);
+        return (child!=null)?child.childCount():0;
+    }
+
+    public boolean isSliceParent(){
+        Relation parent = (Relation)find(Relation.class);
+        return (parent!=null && parent.hasChildren());
     }
 
     public boolean belongsToGraph() {
@@ -929,7 +943,7 @@ public class Tsr
         return (this.hashCode()==other.hashCode());
     }
 
-    public Tsr map(String[][] labels){
+    public Tsr label(String[][] labels){
         Index index = (Index)find(Index.class);
         if(index==null){
             index = new Index(this.rank());
@@ -944,7 +958,7 @@ public class Tsr
         }
         return this;
     }
-    public Tsr map(List<List> labels){
+    public Tsr label(List<List> labels){
         Index index = (Index)find(Index.class);
         if(index==null){
             index = new Index(this.rank());
@@ -989,7 +1003,9 @@ public class Tsr
         int[] newShape = new int[this.rank()];
         if(key instanceof List){
             key = ((List)key).toArray();
-            if(((Object[])key)[0] instanceof Integer)
+            boolean allInt = true;
+            for(Object o : (Object[])key) allInt = allInt && o instanceof Integer;
+            if(allInt)
             {
                 key = intArray((Object[]) key);
                 idx = (int[])key;
@@ -1002,16 +1018,18 @@ public class Tsr
             }
             else// if(((Object[])key)[0] instanceof List)
             {
-                idx = new int[this.rank()];
+                boolean hasScale = false;
+                for(Object o : (Object[])key) hasScale = hasScale || o instanceof Map;
+                idx = new int[((hasScale)?2:1)*this.rank()];
                 Object[] ranges = (Object[])key;
-                _configureSubsetFromRanges(ranges, idx, newShape);
+                _configureSubsetFromRanges(ranges, idx, newShape, 0);
             }
         }//...not simple slice... Advanced:
         else if(key instanceof Map)// ==> i, j, k slicing!
         {
             idx = new int[this.rank()*2];
             Object[] ranges = ((Map)key).keySet().toArray();
-            _configureSubsetFromRanges(ranges, idx, newShape);
+            _configureSubsetFromRanges(ranges, idx, newShape, 0);
             Object[] steps = ((Map)key).values().toArray();
             for(int i=rank(); i<2*this.rank(); i++){
                 idx[i] = (Integer)steps[i-rank()];
@@ -1023,43 +1041,66 @@ public class Tsr
         subset._translation = this._translation;
         subset._idxmap = _cached(fcn.indexing.newTlnOf(newShape));
         subset._shape = _cached(newShape);
+        if(idx.length==2*rank()){
+            for(int i=rank(); i<idx.length; i++) idx[i] = (idx[i]==0)?1:idx[i];
+        }
         subset.add(idx);
         if(this.isOutsourced()){
             Device device = (Device) this.find(Device.class);
             device.add(subset, this);
         }
+        if(this.isVirtual()) subset.setIsVirtual(true);
+        subset.add(new Relation().addParent(this));
+        Relation parent = (Relation) find(Relation.class);
+        parent = (parent!=null)?parent:new Relation();
+        parent.addChild(subset);
+        this.add(parent);
         return subset;
     }
 
-    private void _configureSubsetFromRanges(Object[] ranges, int[] idx, int[] newShape){
-        if(ranges.length!=rank()) throw new IllegalArgumentException("[Tsr]: Number of arguments must match tensor dim!");
+    private int _configureSubsetFromRanges(Object[] ranges, int[] idx, int[] newShape, int offset){
+        //if(ranges.length!=rank()) throw new IllegalArgumentException("[Tsr]: Number of arguments must match tensor dim!");
         for(int i=0; i<ranges.length; i++){
+            int first = 0;
+            int last = 0;
             if(!(ranges[i] instanceof  List)){
-                Index index = (Index)find(Index.class);
-                if(index!=null){
-                    Integer position = index.get(ranges[i], i);
-                    //position = (position==null)?ranges[i].hashCode()%newShape[i]:position;
-                    ranges[i] = new int[]{position, position};
+                if(ranges[i] instanceof Map){
+                    Object[] ks = ((Map)ranges[i]).keySet().toArray();
+                    Object[] steps = ((Map)ranges[i]).values().toArray();
+                    int new_i = _configureSubsetFromRanges(ks, idx, newShape, i+offset);
+                    for(int ii=rank(); ii<(rank()+steps.length); ii++){
+                        idx[ii+i+offset]
+                                = (Integer)steps[ii-rank()];
+                        newShape[ii+i+offset-rank()] /= idx[ii+i+offset];
+                    }
+                    i = new_i;
+                    continue;
                 } else {
-                    throw new IllegalStateException("[Tsr]: Given index key at axis "+i+" not found!");
+                    Index index = (Index)find(Index.class);
+                    if(index!=null){
+                        Integer position = index.get(ranges[i], i+offset);
+                        //position = (position==null)?ranges[i].hashCode()%newShape[i]:position;
+                        first = position;
+                        last = position;
+                    } else {
+                        throw new IllegalStateException("[Tsr]: Given index key at axis "+i+offset+" not found!");
+                    }
                 }
             }else{
                 ranges[i] = ((List)ranges[i]).toArray();
-                int first = 0;
-                int last = 0;
                 ranges[i] = (((Object[])ranges[i])[0] instanceof List)?((List)((Object[])ranges[i])[0]).toArray():((Object[])ranges[i]);
                 if(!(((Object[])(ranges[i]))[0] instanceof Integer) || !(((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1] instanceof Integer)){
                     Index index = (Index)find(Index.class);
                     if(!(((Object[])(ranges[i]))[0] instanceof Integer)){
                         if(index!=null){
-                            first = index.get(((Object[])(ranges[i]))[0], i);
+                            first = index.get(((Object[])(ranges[i]))[0], i+offset);
                         }
                     }  else {
                         first = (Integer) ((Object[])(ranges[i]))[0];
                     }
                     if(!(((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1] instanceof Integer)){
                         if(index!=null){
-                            last = index.get(((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1], i);
+                            last = index.get(((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1], i+offset);
                         }
                     } else {
                         last = (Integer) ((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1];
@@ -1068,24 +1109,18 @@ public class Tsr
                     first = ((Integer)((Object[])ranges[i])[0]);
                     last = ((Integer)((Object[])ranges[i])[((Object[])ranges[i]).length-1]);
                 }
-                ranges[i] = new int[]{first, last};
-
             }
-
-        }
-        for(int i=0; i<this.rank(); i++) {
-            int first =  ((int[])ranges[i])[0];
-            int second =  ((int[])ranges[i])[1];
-            if(first>second){
+            if(first>last){
                 int temp = first;
-                first = second;
-                second = temp;
+                first = last;
+                last = temp;
             }
             first = (first<0)?_shape[i]+first:first;
-            second = (second<0)?_shape[i]+second:second;
-            newShape[i] = (second-first)+1;
-            idx[i] = first;
+            last = (last<0)?_shape[i]+last:last;
+            newShape[i+offset] = (last-first)+1;
+            idx[i+offset] = first;
         }
+        return ranges.length+offset-1;
     }
 
     //ELEMENTARY OPERATIONS:

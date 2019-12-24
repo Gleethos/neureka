@@ -8,24 +8,58 @@ import org.junit.Test
 
 class LightGroovyTests
 {
-
     @Test
     void testIndexMapping(){
+
+        Neureka.Settings.Indexing.setLegacy(false)
         Tsr t = new Tsr([3, 4],[
                 1, 2, 3, 4,
                 9, 8, 6, 5,
                 4, 5, 6, 7
         ])
-        t.map([
+        t.label([
                 ["1", "2", "3"],
-                ["a", "b", "c", "d"]
+                ["a", "b", "y", "z"]
         ])
         Tsr x = t["2", 1..2]
         assert x.toString().contains("[1x2]:(8.0, 6.0)")
 
-        x = t["2".."3", "b".."c"]
+        x = t["2".."3", "b".."y"]
 
         assert x.toString().contains("[2x2]:(8.0, 6.0, 5.0, 6.0)")
+
+        t = new Tsr([2, 3, 4], 7)
+        t.label([
+                ["1", "2"],
+                ["a", "b", "y"],
+                ["tim", "tom", "tina", "tanya"]
+        ])
+
+        x = t["2", "b".."y", [["tim","tanya"]:2]]
+
+        assert x.toString().contains("[1x2x2]:(7.0, 7.0, 7.0, 7.0)")
+        assert x.isVirtual()
+        assert x.isSlice()
+        assert t.isSliceParent()
+
+        x = t["2", [["b".."y"]:1, ["tim","tanya"]:2]]
+
+        assert x.toString().contains("[1x2x2]:(7.0, 7.0, 7.0, 7.0)")
+        assert x.isVirtual()
+        assert x.isSlice()
+        assert t.isSliceParent()
+
+        assert t.sliceCount()==2
+
+        x = t[[["2"]:1, ["b".."y"]:1, ["tim","tanya"]:2]]
+
+        assert x.toString().contains("[1x2x2]:(7.0, 7.0, 7.0, 7.0)")
+        assert x.isVirtual()
+        assert x.isSlice()
+        assert t.isSliceParent()
+
+        assert t.sliceCount()==3
+
     }
 
     @Test
@@ -133,7 +167,8 @@ class LightGroovyTests
         assert !x.isBranch()
         assert !x.isOutsourced()
         assert !x.isVirtual()
-        assert !x.hasDataParent()
+        assert !x.isSlice()
+        assert !x.isSliceParent()
         assert !x.belongsToGraph()
         assert x.device() !=null
         assert x.device() instanceof CPU

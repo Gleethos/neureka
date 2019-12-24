@@ -25,7 +25,7 @@ public class GraphSurface extends JPanel implements Surface, ActionListener {
     private AffineTransform Scaler = new AffineTransform();
     private AffineTransform Translator = new AffineTransform();
 
-    //Space search map:
+    //Space search label:
     AbstractSpaceMap PanelMap = null;
 
     // Animations:

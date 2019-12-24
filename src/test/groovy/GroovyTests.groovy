@@ -39,7 +39,7 @@ class GroovyTests
         frame[1] = +4000000
         frame[2] = -4000000
         frame[3] = +4000000
-        //assert map.getAllWithin(frame).size()>1
+        //assert label.getAllWithin(frame).size()>1
         map = map.removeAndUpdate(map.getAllWithin(frame).get(0))
         assert map!=null
         assert map.getAll().size()<things.size()

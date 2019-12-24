@@ -203,7 +203,7 @@ public class GraphBoard implements ActionListener, KeyListener, MouseListener, M
 
         if (e.getKeyCode() == 117) {
             GraphBuilder.getSurface().switchMapRendering();
-            System.out.println("map rendering mode");
+            System.out.println("label rendering mode");
         }
     }
 
