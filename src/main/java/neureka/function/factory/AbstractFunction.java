@@ -153,14 +153,11 @@ public abstract class AbstractFunction implements Function
                 if(d<0){
                     return (FunctionBuilder.build(TYPES.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).activate(inputs));
                 } else {
-                    return _execution(inputs, d, ((j < 0) ? 0 : j), Tsr.CPU);
+                    return _apply(()-> _execution(inputs, d, ((j < 0) ? 0 : j), Tsr.CPU));
                 }
             } else {
-                if (TYPES.isOperation(_id)) {
-                    /*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
+                if (TYPES.isOperation(_id)) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
                     String operation = (TYPES.REGISTER[_id].length() > 1) ? TYPES.REGISTER[_id] : "";
-
-                    //String exp = operation;
                     if (j < 0) {
                         if(d<0){
                             Tsr[] tsrs = _source_activation(inputs, j, null, null);

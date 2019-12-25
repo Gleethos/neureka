@@ -226,7 +226,7 @@ public class SurfaceNode implements SurfaceObject
 
     public ArrayList&lt;SurfaceRepaintSpace&gt; updateOn(Surface hostSurface) {
         //System.out.println(&quot;wasOnDeck:&quot;+wasOnDeck+&quot;; isOnDeck:&quot;+isOnDeck+&quot;;&quot;);
-<span class="fc bfc" id="L229" title="All 4 branches covered.">        if (hostSurface.getScale() &lt; 0.13 &amp;&amp; deckIsRemoved) deckAnimationRunning = true;</span>
+<span class="pc bpc" id="L229" title="1 of 4 branches missed.">        if (hostSurface.getScale() &lt; 0.13 &amp;&amp; deckIsRemoved) deckAnimationRunning = true;</span>
 <span class="fc" id="L230">        ArrayList&lt;SurfaceRepaintSpace&gt; queue = new ArrayList&lt;&gt;();</span>
 <span class="fc" id="L231">        double LP = getX() - diameter * 2;</span>
 <span class="fc" id="L232">        double RP = getX() + diameter * 2;</span>
@@ -311,7 +311,7 @@ public class SurfaceNode implements SurfaceObject
 <span class="fc" id="L311">        int frameDelta = hostSurface.getCurrentFrameDelta();</span>
 <span class="fc" id="L312">        boolean scaleCheck = true;</span>
 <span class="fc bfc" id="L313" title="All 2 branches covered.">        if (hostSurface.getScale() &lt; 0.2) scaleCheck = false;</span>
-<span class="fc bfc" id="L314" title="All 4 branches covered.">        if (hostSurface.getScale() &lt; 0.13 &amp;&amp; deckIsRemoved) deckAnimationRunning = true;</span>
+<span class="pc bpc" id="L314" title="1 of 4 branches missed.">        if (hostSurface.getScale() &lt; 0.13 &amp;&amp; deckIsRemoved) deckAnimationRunning = true;</span>
 <span class="fc" id="L315">        boolean UnitNeedsToBeRepainted = false;</span>
 <span class="fc" id="L316">        ArrayList&lt;SurfaceRepaintSpace&gt; queue = new ArrayList&lt;SurfaceRepaintSpace&gt;();</span>
 <span class="fc" id="L317">        int animationID = 0;</span>
@@ -371,7 +371,7 @@ public class SurfaceNode implements SurfaceObject
 <span class="fc" id="L371">            animationID = 1;</span>
             //System.out.println(&quot;Button Shining: &quot;+Animator.getCounterOf(this, animationIDCounter));
 <span class="fc bfc" id="L373" title="All 2 branches covered.">            if (Animator.hasCounter(this, animationID)) {</span>
-<span class="fc bfc" id="L374" title="All 4 branches covered.">                if (hoveringOverDeckButton &amp;&amp; scaleCheck) {</span>
+<span class="pc bpc" id="L374" title="1 of 4 branches missed.">                if (hoveringOverDeckButton &amp;&amp; scaleCheck) {</span>
 <span class="fc" id="L375">                    Animator.countUpFor(this, (frameDelta / 6), animationID);</span>
 <span class="pc bpc" id="L376" title="1 of 2 branches missed.">                    if (Animator.getCounterOf(this, animationID) &gt;= 2 * buttonLimit) {//255</span>
 <span class="nc" id="L377">                        Animator.countDownFor(this, (frameDelta / 6), animationID);</span>
@@ -388,20 +388,20 @@ public class SurfaceNode implements SurfaceObject
 <span class="fc" id="L388">                        deckButtonColor = new Color(0, 255, 255, (int) (255 * mod));</span>
 <span class="fc" id="L389">                        Animator.countDownFor(this, (frameDelta / 4), animationID);</span>
                     }
-<span class="pc bpc" id="L391" title="1 of 4 branches missed.">                    if (Animator.getCounterOf(this, animationID) &lt;= 0 &amp;&amp; !deckAnimationRunning) {</span>
+<span class="fc bfc" id="L391" title="All 4 branches covered.">                    if (Animator.getCounterOf(this, animationID) &lt;= 0 &amp;&amp; !deckAnimationRunning) {</span>
 <span class="fc" id="L392">                        Animator.removeCounterOf(this, animationID);</span>
 <span class="fc" id="L393">                        deckButtonColor = new Color(0, 255, 255, (0));</span>
 <span class="fc" id="L394">                        wasOnDeckButton = false;</span>
                     }
                 }
 
-<span class="fc bfc" id="L398" title="All 2 branches covered.">            } else if (hoveringOverDeckButton){</span>
+<span class="pc bpc" id="L398" title="1 of 2 branches missed.">            } else if (hoveringOverDeckButton){</span>
 <span class="fc" id="L399">                Animator.setCounterFor(this, animationID, 1);</span>
             }
 <span class="fc bfc" id="L401" title="All 2 branches covered.">            if (deckAnimationRunning) {</span>
 <span class="pc bpc" id="L402" title="1 of 2 branches missed.">                if (Animator.hasCounter(this, animationID)) {</span>
 <span class="fc" id="L403">                    Animator.countDownFor(this, 6 * frameDelta, animationID);</span>
-<span class="pc bpc" id="L404" title="1 of 2 branches missed.">                    if (Animator.getCounterOf(this, animationID) &lt;= 0) {</span>
+<span class="fc bfc" id="L404" title="All 2 branches covered.">                    if (Animator.getCounterOf(this, animationID) &lt;= 0) {</span>
 <span class="fc" id="L405">                        Animator.countUpFor(this, 1 - Animator.getCounterOf(this, animationID), animationID);</span>
                     }
                 }
