@@ -26,7 +26,7 @@ public class Tsr
     //=========================
     public static Device CPU;
 
-    //STATIC FUNCTIONS MEMORY:
+    // CACHED CONFIGRATIONS:
     //=========================
     private static Map<Long, int[]> CONFIGS;
 
@@ -95,7 +95,7 @@ public class Tsr
             _components.remove(oldComponent);
             _components.trimToSize();
         }
-        if (_components.size() == 0) {
+        if (_components!=null && _components.size() == 0) {
             _components = null;
         }
         return this;
@@ -188,6 +188,10 @@ public class Tsr
             this.add(FunctionBuilder.build("I[0]<-(I[0]+I[1])", false).activate(new Tsr[]{gradient, g}));
         }else{
             this.add(g);
+            Device device = (Device)find(Device.class);
+            if(device!=null){
+                device.add(g);
+            }
         }
         return this;
     }
@@ -369,7 +373,7 @@ public class Tsr
                 device.get(this);
             }
             this.remove(Device.class);
-            if(this.has(Tsr.class)){//This is new:
+            if(this.has(Tsr.class)){
                 Tsr gradient = (Tsr) find(Tsr.class);
                 device = (Device) gradient.find(Device.class);
                 if (device.has(gradient)) {
@@ -848,6 +852,7 @@ public class Tsr
      */
     public Tsr backward(Tsr error) {
         if (this.has(GraphNode.class)) ((GraphNode) this.find(GraphNode.class)).backward(error);
+        else if(this.rqsGradient()) addToGradient(error);
         return this;
     }
 

@@ -82,8 +82,7 @@ public class DeviceQuery
 
             // CL_DEVICE_MAX_WORK_ITEM_SIZES
             long maxWorkItemSizes[] = getSizes(device, CL_DEVICE_MAX_WORK_ITEM_SIZES, 3);
-            result += ("CL_DEVICE_MAX_WORK_ITEM_SIZES: "+
-                    maxWorkItemSizes[0]+", "+ maxWorkItemSizes[1]+", "+maxWorkItemSizes[2]);
+            result += ("CL_DEVICE_MAX_WORK_ITEM_SIZES: "+maxWorkItemSizes[0]+", "+ maxWorkItemSizes[1]+", "+maxWorkItemSizes[2]+"\n");
 
             // CL_DEVICE_MAX_WORK_GROUP_SIZE
             long maxWorkGroupSize = getSize(device, CL_DEVICE_MAX_WORK_GROUP_SIZE);

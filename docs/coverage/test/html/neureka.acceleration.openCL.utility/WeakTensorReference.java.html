@@ -27,17 +27,16 @@ public class WeakTensorReference&lt;T&gt; extends WeakReference&lt;T&gt;
 
     @Override
     public int hashCode(){
-        //Tsr t = this.get();
-        //if(t!=null){
-        //    return t.hashCode();
-        //}
-<span class="fc" id="L34">        return _hash;</span>
+<span class="fc" id="L30">        return _hash;</span>
     }
 
     @Override
     public boolean equals(Object o){
-<span class="nc bnc" id="L39" title="All 2 branches missed.">        return o.hashCode() == _hash;</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">        return o.hashCode() == _hash;</span>
     }
+
+
+
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

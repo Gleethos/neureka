@@ -27,10 +27,6 @@ public class WeakTensorReference<T> extends WeakReference<T>
 
     @Override
     public int hashCode(){
-        //Tsr t = this.get();
-        //if(t!=null){
-        //    return t.hashCode();
-        //}
         return _hash;
     }
 
@@ -38,5 +34,8 @@ public class WeakTensorReference<T> extends WeakReference<T>
     public boolean equals(Object o){
         return o.hashCode() == _hash;
     }
+
+
+
 
 }

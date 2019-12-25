@@ -377,6 +377,7 @@ public class OpenCLDevice extends AbstractDevice
             clSetKernelArg(kernel, 4, Sizeof.cl_int, Pointer.to(new int[]{ tsrs[0].rank() }));
             clSetKernelArg(kernel, 5, Sizeof.cl_int, Pointer.to(new int[]{ d }));
         } else {
+            //TODO: Function.TYPES.rqsAdditionalArgument(f_id)
             cl_mem src2 = _mapping.get(tsrs[offset+2]).value.data;
             clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
             clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));

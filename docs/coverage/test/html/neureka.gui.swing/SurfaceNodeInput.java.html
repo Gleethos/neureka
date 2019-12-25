@@ -222,8 +222,8 @@ public class SurfaceNodeInput {
     public boolean testFor(double x, double y) {
 <span class="fc" id="L223">        double d = Math.pow((Math.pow((x - _X), 2) + Math.pow((y - _Y), 2)), 0.5);</span>
 <span class="fc" id="L224">        double radius = _radius;//getInputNodeRadiusFrom(unitRadius);</span>
-<span class="pc bpc" id="L225" title="1 of 2 branches missed.">        if (d &lt;= radius) {</span>
-<span class="nc" id="L226">            return true;</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">        if (d &lt;= radius) {</span>
+<span class="fc" id="L226">            return true;</span>
         }
 <span class="fc" id="L228">        return false;</span>
     }

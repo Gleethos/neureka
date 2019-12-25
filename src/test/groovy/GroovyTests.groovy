@@ -162,7 +162,6 @@ class GroovyTests
         OpenCLPlatform.PLATFORMS().get(0).recompile()
         _testReadmeExamples(gpu, tester, false)
 
-
         String query = DeviceQuery.query()
         assert query.contains("DEVICE_NAME")
         assert query.contains("MAX_MEM_ALLOC_SIZE")
@@ -171,6 +170,8 @@ class GroovyTests
         assert query.contains("Info for device")
         assert query.contains("LOCAL_MEM_SIZE")
         assert query.contains("CL_DEVICE_TYPE")
+
+        //print(query)
 
         OpenCLDevice cld = (OpenCLDevice)gpu;
         assert cld.globalMemSize()>1000
@@ -182,6 +183,7 @@ class GroovyTests
         assert !cld.toString().equals("")
         assert cld.maxConstantBufferSize()>1000
         assert cld.maxWriteImageArgs()>1
+
         tester.close()
     }
 
@@ -467,6 +469,26 @@ class GroovyTests
 
         Device gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0)
         _testNN(gpu)
+
+        //SOme more asserts:
+        //System.gc()
+        //System.gc()
+        //Thread.sleep(600)
+        //System.gc()
+        //System.gc()
+        //Thread.sleep(600)
+
+
+        Tsr t = new Tsr([2, 2], 4).setRqsGradient(true).add(gpu)
+        t.backward(1)
+        Tsr g = t.find(Tsr.class)
+        assert g.toString().contains("[2x2]:(1.0, 1.0, 1.0, 1.0)")
+        assert t.toString().contains("[2x2]:(4.0, 4.0, 4.0, 4.0):g:(1.0, 1.0, 1.0, 1.0)")
+        assert t.isOutsourced()
+        assert g.isOutsourced()
+        //t.setIsOutsourced(false)
+        //assert !g.isOutsourced()
+
 
     }
 
