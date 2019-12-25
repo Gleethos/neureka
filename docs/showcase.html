@@ -289,7 +289,7 @@
                                                         weight variables used to correct errors incrementally
                                                         throughout many training iterations,
                                                         whereby neural networks then gain the ability to
-                                                        approximate, generalize and thereby learn.
+                                                        approximate, generalize and learn.
                                                         Differentiation goes both ways: Forward and Backward.
                                                         Namely:</br>
                                                         Forward-mode-AD and backward-mode-AD.</br>
@@ -299,14 +299,14 @@
                                                         So called stochastic gradient decent is the most well known
                                                         algorithm which uses uses backward-mode-ad.
                                                         This technique is known as Backpropagation.
-                                                        and for most cases this approach learning by
+                                                        and for most cases this approach increases performance by
                                                         orders of magnitudes compared to other techniques,
                                                         making the difference between a model
                                                         taking weeks instead of years to train.
                                                         Beyond its use in machine learning, Auto-differentiation is a powerful
                                                         computational tool in a multitude of other areas, ranging from weather
                                                         forecasting to analyzing numerical stability.
-                                                        Besides it's use in machine learning, AD is a common tool
+                                                        AD is a common tool
                                                         for many other fields dependent on algebraic numerical computation.
                                                     </p>
                                                 </div>
@@ -359,7 +359,7 @@
                                                         also without too many inputs requiring gradients.
                                                         </br>
                                                         Besides forward-mode-AD optimizations Neureka
-                                                        can also aggressively free the memory of intermediate
+                                                        also aggressively frees the memory of intermediate
                                                         values used to calculate results.
                                                         </br></br>
                                                         Try formalizing your computations via String expressions
@@ -393,7 +393,12 @@
                                             <div class="col-sm 12 col-md-4">
                                                 <div class="contentBox">
                                                     <p>
-
+                                                        As you can see in this example,
+                                                        having multiple variables requiring gradients
+                                                        as inputs to constructed functions
+                                                        will produce many intermediate derivatives wich
+                                                        are needed for backward AD.
+                                                        This however increases memory consumption.
                                                     </p>
                                                 </div>
                                             </div>
