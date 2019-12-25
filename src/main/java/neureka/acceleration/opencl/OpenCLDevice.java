@@ -361,6 +361,28 @@ public class OpenCLDevice extends AbstractDevice
 
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, int f_id){
+
+        switch (Function.TYPES.REGISTER[f_id]) {
+            case "x":
+                if (d >= 0) {
+                    if (d == 0) tsrs[0] = tsrs[2]; else tsrs[0] = tsrs[1];
+                } else {
+                    tsrs = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
+                }
+                break;
+            case ("x" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};break;
+            case ("a" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};break;
+            case ("s" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};break;
+            case ("d" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};break;
+            case ("p" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};break;
+            case ("m" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};break;
+            case ">": tsrs = new Tsr[]{tsrs[1], tsrs[0]};break;
+        }
+
+
+
+
+
         int gwz = (tsrs[0]!=null)?tsrs[0].size():tsrs[1].size();
         int offset = (tsrs[0]!=null)?0:1;
         String chosen = _platform.kernelNameOf(f_id);

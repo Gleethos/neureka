@@ -595,8 +595,8 @@ public class SurfaceNode implements SurfaceObject
 <span class="fc bfc" id="L595" title="All 2 branches covered.">            for (SurfaceNode surfaceNode : connection) {</span>
 
 <span class="fc" id="L597">                boolean connectionMoved = this.justMoved();</span>
-<span class="pc bpc" id="L598" title="1 of 6 branches missed.">                if (surfaceNode != null &amp;&amp; !connectionMoved &amp;&amp; surfaceNode.justMoved()) {</span>
-<span class="fc" id="L599">                    connectionMoved = true;</span>
+<span class="pc bpc" id="L598" title="2 of 6 branches missed.">                if (surfaceNode != null &amp;&amp; !connectionMoved &amp;&amp; surfaceNode.justMoved()) {</span>
+<span class="nc" id="L599">                    connectionMoved = true;</span>
                 }
 <span class="pc bpc" id="L601" title="1 of 6 branches missed.">                if (connectionMoved || InputNode.changeOccured() || convection) {</span>
 <span class="pc bpc" id="L602" title="1 of 2 branches missed.">                    if (surfaceNode != null) {</span>

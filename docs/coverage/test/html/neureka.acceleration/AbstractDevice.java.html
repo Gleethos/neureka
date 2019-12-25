@@ -180,8 +180,8 @@ import neureka.function.factory.autograd.GraphNode;
     private static void _createNewDrainTensorIn(Device device, Tsr[] tsrs, int f_id){
 <span class="fc bfc" id="L181" title="All 2 branches covered.">        if(tsrs[0]==null)//Creating a new tensor:</span>
         {
-<span class="fc bfc" id="L183" title="All 2 branches covered.">            int[] shp = (Function.TYPES.REGISTER[f_id].endsWith(&quot;x&quot;))</span>
-<span class="fc" id="L184">                    ? Tsr.fcn.indexing.shpOfCon(tsrs[1].shape(), tsrs[2].shape())</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">            int[] shp = (Function.TYPES.REGISTER[f_id].endsWith(&quot;x&quot;))</span>
+<span class="nc" id="L184">                    ? Tsr.fcn.indexing.shpOfCon(tsrs[1].shape(), tsrs[2].shape())</span>
 <span class="fc" id="L185">                    : tsrs[1].shape();</span>
 <span class="fc" id="L186">            Tsr output = new Tsr(shp, 0.0);</span>
 <span class="fc" id="L187">            device.add(output);</span>

@@ -195,57 +195,50 @@ public abstract class AbstractFunction implements Function
     {
         Device device = (Device) inputs[0].find(Device.class);
         boolean onSameDevice = _shareGuestDevice(inputs);
-        boolean doAccel = (!TYPES.REGISTER[_id].equals(",") && !(TYPES.isConvection(_id) && d >=0) && onSameDevice);
+        boolean doAccel = (!TYPES.REGISTER[_id].equals(",") && onSameDevice);// && !(TYPES.isConvection(_id) && d >=0)
         Device myDevice = (doAccel&&device!=null)?device:Tsr.CPU;
-        if (doAccel)
-        {
-            return  _apply(d, ()-> _execution(inputs, d, j, myDevice));
-        }
-        else
-        {
-            if (TYPES.REGISTER[_id].equals("x")) {
-                    Tsr tensor1 = _src.get(0).activate(inputs).setIsVirtual(false);
-                    Tsr tensor2 = _src.get(1).activate(inputs).setIsVirtual(false);
-                    Tsr newTensor = new Tsr(Tsr.fcn.indexing.shpOfCon(tensor1.shape(), tensor2.shape()));
-                    Tsr[] array = new Tsr[]{newTensor, tensor1, tensor2};
-                    Tsr.CPU.execute(array, _id, d);
-                    return array[0];
-            } else if (_id == TYPES.LOOKUP.get("<<x") || _id == TYPES.LOOKUP.get("x>>")) {
-                if (d < 0) {
-                    Tsr[] tsrs = new Tsr[]{
-                            _src.get(0).activate(inputs).setIsVirtual(false),
-                            _src.get(1).activate(inputs).setIsVirtual(false),
-                            _src.get(2).activate(inputs).setIsVirtual(false)
-                    };
-                    Tsr.CPU.execute(tsrs, _id, 0);
 
-                    if (_id == TYPES.LOOKUP.get("x>>")) {
-                        return tsrs[2];
-                    } else {
-                        return tsrs[0];
-                    }
+        if (TYPES.REGISTER[_id].equals("x")) {
+                Tsr tensor1 = _src.get(0).activate(inputs).setIsVirtual(false);
+                Tsr tensor2 = _src.get(1).activate(inputs).setIsVirtual(false);
+                Tsr newTensor = new Tsr(Tsr.fcn.indexing.shpOfCon(tensor1.shape(), tensor2.shape()));
+                Tsr[] array = new Tsr[]{newTensor, tensor1, tensor2};
+                Tsr.CPU.execute(array, _id, d);//TODO: FIX!!
+                return array[0];
+        } else if (_id == TYPES.LOOKUP.get("<<x") || _id == TYPES.LOOKUP.get("x>>")) {
+            if (d < 0) {
+                Tsr[] tsrs = new Tsr[]{
+                        _src.get(0).activate(inputs).setIsVirtual(false),
+                        _src.get(1).activate(inputs).setIsVirtual(false),
+                        _src.get(2).activate(inputs).setIsVirtual(false)
+                };
+                myDevice.execute(tsrs, _id, 0);
+                if (_id == TYPES.LOOKUP.get("x>>")) {
+                    return tsrs[2];
+                } else {
+                    return tsrs[0];
                 }
-                return null;
-            } else if (TYPES.REGISTER[_id].equals(",")) {
-                int[] newForm = new int[_src.size() - 1];
-                for (int i = 0; i < _src.size() - 1; i++) {
-                    newForm[i] = (int) Tsr.fcn.io.getFrom(_src.get(i).activate(inputs), 0);
-                }
-                if (d >= 0) {//reverse reshape:
-                    int[] reversed = new int[newForm.length];
-                    for (int i = 0; i < newForm.length; i++) {
-                        if(newForm[i]>=0){
-                            reversed[newForm[i]] = i;
-                        } else {//Exception! (not auto-differentiable)
-                            throw new IllegalStateException("[AbstractFunction][_execute]: reshape operation cannot be reversed!");
-                        }
-                    }
-                }
-                Tsr t = inputs[inputs.length - 1];
-                return Tsr.fcn.exec.reshaped(t, newForm, true);//t.reshape(newForm);
-            } else {
-                return  _apply(d, ()-> _execution(inputs, d, j, Tsr.CPU));
             }
+            return null;
+        } else if (TYPES.REGISTER[_id].equals(",")) {
+            int[] newForm = new int[_src.size() - 1];
+            for (int i = 0; i < _src.size() - 1; i++) {
+                newForm[i] = (int) Tsr.fcn.io.getFrom(_src.get(i).activate(inputs), 0);
+            }
+            if (d >= 0) {//reverse reshape:
+                int[] reversed = new int[newForm.length];
+                for (int i = 0; i < newForm.length; i++) {
+                    if(newForm[i]>=0){
+                        reversed[newForm[i]] = i;
+                    } else {//Exception! (not auto-differentiable)
+                        throw new IllegalStateException("[AbstractFunction][_execute]: reshape operation cannot be reversed!");
+                    }
+                }
+            }
+            Tsr t = inputs[inputs.length - 1];
+            return Tsr.fcn.exec.reshaped(t, newForm, true);//t.reshape(newForm);
+        } else {
+            return  _apply(d, ()-> _execution(inputs, d, j, myDevice));
         }
     }
 
