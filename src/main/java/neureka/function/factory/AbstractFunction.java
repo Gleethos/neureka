@@ -148,31 +148,19 @@ public abstract class AbstractFunction implements Function
         /**  The code below deals with deep functions (non flat):  * */
         if (!_isFlat)
         {
-            /** only flat functions can be executed **/
-            if (TYPES.isFunction(_id)) {
-                if(d<0){
-                    return (FunctionBuilder.build(TYPES.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).activate(inputs));
-                } else {
-                    return _apply(()-> _execution(inputs, d, ((j < 0) ? 0 : j), Tsr.CPU));
-                }
+            if(d>=0){
+                return _apply(d, ()-> _execution(inputs, d, j, Tsr.CPU));
             } else {
-                if (TYPES.isOperation(_id)) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
-                    String operation = (TYPES.REGISTER[_id].length() > 1) ? TYPES.REGISTER[_id] : "";
-                    if (j < 0) {
-                        if(d<0){
-                            Tsr[] tsrs = _source_activation(inputs, j, null, null);
-                            for (int i = 0; i < tsrs.length; i++) {
-                                operation += "I[" + i + "]" + ((i + 1 < tsrs.length) ? TYPES.REGISTER[_id] : "");
-                            }
-                            return (FunctionBuilder.build(operation, _doAD).activate(tsrs));
-                        }
-                    }
-                    return _apply(()-> _execution(inputs, d, j, Tsr.CPU));
-                } else {
-                    /*  Tensor shape translation:  */
-                    return _apply(()-> _execution(inputs, d, j, Tsr.CPU));
+                if (TYPES.isFunction(_id)) {
+                    //return _apply(d, ()-> _execution(inputs, d, j, Tsr.CPU));
+                    //System.out.println(_src.size());
+                    return (FunctionBuilder.build(TYPES.REGISTER[_id] + "(I[" + ((j < 0) ? 0 : j) + "])", true).activate(inputs));
+                } else if (TYPES.isOperation(_id)) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
+                    return _apply(d, ()-> _execution(inputs, d, j, Tsr.CPU));
                 }
+                return _apply(d, ()-> _execution(inputs, d, j, Tsr.CPU));
             }
+            /** only flat functions can be executed **/
         } else {
             /**  The following code is reached in flat functions only:  * */
             Tsr output = _execute(inputs, j, d);
@@ -184,23 +172,21 @@ public abstract class AbstractFunction implements Function
         }
     }
 
-    private Tsr _apply(Supplier<Tsr> actor){
+    private Tsr _apply(int d, Supplier<Tsr> actor){
         Tsr out = null;
-        int[] dx = new int[_src.size()];
-        for (int i = 0; i < _src.size(); i++) {//constants need to be figured out!
-            if(dx!=null){
-                //d = (dx[i]>=0)?dx[i]:d;
-                dx[i] = (_src.get(i).dependsOn(dx[i]))?i:-1;
-            }
-        }
-        for(int di : dx){
-            if(di>=0){
-                if(out==null){
-                    out = actor.get();
-                } else {
-                    Tsr.CPU.execute(new Tsr[]{null, actor.get(), out}, TYPES.LOOKUP.get("+"), -1);
+        if(d>=0){
+            for (int i = 0; i < _src.size(); i++) {//constants need to be figured out!
+                int di = (_src.get(i).dependsOn(d))?i:-1;
+                if(di>=0){
+                    if(out==null){
+                        out = actor.get();
+                    } else {
+                        Tsr.CPU.execute(new Tsr[]{null, actor.get(), out}, TYPES.LOOKUP.get("+"), -1);
+                    }
                 }
             }
+        } else {
+            out = actor.get();
         }
         return out;
     }
@@ -208,10 +194,12 @@ public abstract class AbstractFunction implements Function
     private Tsr _execute(Tsr[] inputs, int j, int d)
     {
         Device device = (Device) inputs[0].find(Device.class);
-        boolean onSameDevice = _shareGuestDevice(inputs) && !TYPES.REGISTER[_id].equals(",") && !(TYPES.isConvection(_id) && d > -1);
-        if (onSameDevice)
+        boolean onSameDevice = _shareGuestDevice(inputs);
+        boolean doAccel = (!TYPES.REGISTER[_id].equals(",") && !(TYPES.isConvection(_id) && d >=0) && onSameDevice);
+        Device myDevice = (doAccel&&device!=null)?device:Tsr.CPU;
+        if (doAccel)
         {
-            return  _apply(()-> _execution(inputs, d, j, device));
+            return  _apply(d, ()-> _execution(inputs, d, j, myDevice));
         }
         else
         {
@@ -256,15 +244,26 @@ public abstract class AbstractFunction implements Function
                 Tsr t = inputs[inputs.length - 1];
                 return Tsr.fcn.exec.reshaped(t, newForm, true);//t.reshape(newForm);
             } else {
-                return  _apply(()-> _execution(inputs, d, j, Tsr.CPU));
+                return  _apply(d, ()-> _execution(inputs, d, j, Tsr.CPU));
             }
         }
     }
 
-    private Tsr _execution(Tsr[] inputs, int d, int j, Device device){
+    private Tsr _execution(Tsr[] inputs, int d, int j, Device device) {
+        if (TYPES.isOperation(_id)) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
+            //return _apply(d, ()-> _execution(inputs, d, j, Tsr.CPU));
+            if (j < 0 && d<0 &&!_isFlat) {
+                String operation = "";
+                Tsr[] tsrs = _src_acti(inputs, j, d, 0);
+                for (int i = 0; i < tsrs.length; i++) {
+                    operation += "I["+i+"]"+((i==tsrs.length-1)?"":TYPES.REGISTER[_id]);
+                }
+                return (FunctionBuilder.build(operation, _doAD).activate(tsrs));
+            }
+        }
         Tsr[] tsrs;
         if(TYPES.isIndexer(_id)) tsrs = new Tsr[1 +inputs.length]; else tsrs = new Tsr[1 + _src.size()];
-        if(d>=0){
+        if(d>=0) {
             //Chain-rule (forward AD):
             //inner times out means:
             //first derive source!
@@ -282,7 +281,6 @@ public abstract class AbstractFunction implements Function
             } else {
                 inner = tsrs[1];
             }
-
             tsrs[0] = null;
             //then activate the source like so:
             if(TYPES.isIndexer(_id)){
@@ -314,12 +312,7 @@ public abstract class AbstractFunction implements Function
                 }
                 device.execute(tsrs, _id, d);
             } else {
-                tsrs = new Tsr[1 + _src.size()];
-                if(d<0){
-                    for (int i = 1; i < tsrs.length; i++) tsrs[i] = (j>=0)?_src.get(i-1).activate(inputs, j):_src.get(i-1).activate(inputs);
-                } else {
-                    for (int i = 1; i < tsrs.length; i++) tsrs[i] = (j>=0)?_src.get(i-1).derive(inputs, d, j):_src.get(i-1).derive(inputs, d);
-                }
+                tsrs = _src_acti(inputs, j, d, 1);//new Tsr[1 + _src.size()];
                 device.execute(tsrs, _id, d);
             }
         }
@@ -327,47 +320,45 @@ public abstract class AbstractFunction implements Function
 
     }
 
-    private Tsr[] _source_activation(Tsr[] input, int j, int[] templateShape, int[] dx) {
-        boolean shareDevice = _shareGuestDevice(input);
-        Tsr[] tsrs = new Tsr[_src.size()];
-        int d = -1;
-        for (int i = 0; i < _src.size(); i++) {//constants need to be figured out!
-            if(dx!=null){
-                d = (dx[i]>=0)?dx[i]:d;
-                dx[i] = (_src.get(i).dependsOn(dx[i]))?i:-1;
+    private Tsr[] _src_acti(Tsr[] inputs, int j, int d, int offset){
+        int[] tempShape = null;
+        Tsr[] tsrs = new Tsr[_src.size()+offset];
+        for (int i = offset; i < tsrs.length; i++) {//constants need to be figured out!
+            if (!(_src.get(i-offset) instanceof FConstant)) {
+                if(d<0){
+                    tsrs[i] = (j>=0)?_src.get(i-offset).activate(inputs, j):_src.get(i-offset).activate(inputs);
+                } else {
+                    tsrs[i] = (j>=0)?_src.get(i-offset).derive(inputs, d, j):_src.get(i-offset).derive(inputs, d);
+                }
+                tempShape = (tempShape == null) ? tsrs[i].shape() : tempShape;
             }
         }
+        for (int i = offset; i < tsrs.length; i++) {
+            if(tsrs[i]==null) {
+                tsrs[i] =
+                        (j < 0)
+                                ? new Tsr(tempShape, ((FConstant) _src.get(i-offset)).value())
+                                : new Tsr(tempShape,_src.get(i-offset).activate(new double[]{}, j));
+            }
+        }
+        return tsrs;
+    }
+
+    private Tsr[] _source_activation(Tsr[] input, int j) {
+        int[] tempShape = null;
+        Tsr[] tsrs = new Tsr[_src.size()];
         for (int i = 0; i < tsrs.length; i++) {//constants need to be figured out!
-            if (_src.get(i) instanceof FConstant) {
-                tsrs[i] = null;
-            } else {
-                if(d<0){
-                    tsrs[i] = (j < 0) ? _src.get(i).activate(input) : _src.get(i).activate(input, j);
-                } else {
-                    tsrs[i] = (j < 0) ? _src.get(i).derive(input, d) : _src.get(i).derive(input, d, j);
-                }
-                templateShape =
-                        (templateShape == null)
-                                ? tsrs[i].shape()
-                                : templateShape;
+            if (!(_src.get(i) instanceof FConstant)) {
+                tsrs[i] = (j < 0) ? _src.get(i).activate(input) : _src.get(i).activate(input, j);
+                tempShape = (tempShape == null) ? tsrs[i].shape() : tempShape;
             }
         }
         for (int i = 0; i < tsrs.length; i++) {
-            tsrs[i] =
-                    (tsrs[i] != null)
-                            ? tsrs[i]
-                            : (j < 0)
-                            ? new Tsr(templateShape, ((FConstant) _src.get(i)).value())//Tsr.fcn.create.newTsr(((FConstant) _src.get(i)).value(), templateShape)
-                            : new Tsr(templateShape,_src.get(i).activate(new double[]{}, j));//Tsr.fcn.create.newTsr(_src.get(i).activate(new double[]{}, j), templateShape);
-        }
-        if(shareDevice){
-            Device shared = (Device) tsrs[0].find(Device.class);
-            if(tsrs.length>2){// Constant sources will be converted into full Tensors and stored on the gpu!
-                for(int i=0; i<tsrs.length; i++){
-                    if(!tsrs[i].isOutsourced()){
-                        shared.add(tsrs[i]);
-                    }
-                }
+            if(tsrs[i]==null) {
+                tsrs[i] =
+                    (j < 0)
+                        ? new Tsr(tempShape, ((FConstant) _src.get(i)).value())
+                        : new Tsr(tempShape,_src.get(i).activate(new double[]{}, j));
             }
         }
         return tsrs;
