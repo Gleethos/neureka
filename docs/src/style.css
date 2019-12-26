@@ -412,21 +412,6 @@ footer
     box-shadow:  0px -15px 170px 3px #00ffe5;
 }
 
-.footerBox
-{
-    padding-left: 0.5em;
-    border-left: 2px solid white;
-    display: inline-block;
-    vertical-align: top;
-    margin-bottom: 20px;
-}
-
-footer .footerBox h4
-{text-decoration: underline;
-    text-indent: 5px;
-    margin: 10px;
-}
-
 footer section
 {
     border-left: 3px solid white;
