@@ -86,8 +86,8 @@ public class SurfaceNodeInput {
 <span class="fc" id="L86">        double radius = _radius;//getInputNodeRadiusFrom(neuronRadius);</span>
 <span class="fc" id="L87">        brush.setColor(Color.BLACK);</span>
 <span class="fc" id="L88">        brush.fillOval((int) (_X - (radius * 0.72)), (int) (_Y - (radius * 0.72)), (int) (radius * 0.72) * 2, (int) (radius * 0.72) * 2);</span>
-<span class="pc bpc" id="L89" title="2 of 4 branches missed.">        if (transparancy &gt; 0.01 &amp;&amp; display.length() &gt; 0) {</span>
-<span class="pc bpc" id="L90" title="1 of 2 branches missed.">            if (transparancy &gt; 1) {</span>
+<span class="pc bpc" id="L89" title="1 of 4 branches missed.">        if (transparancy &gt; 0.01 &amp;&amp; display.length() &gt; 0) {</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">            if (transparancy &gt; 1) {</span>
 <span class="fc" id="L91">                transparancy = 1;</span>
             }
 <span class="fc" id="L93">            brush.setColor(</span>
@@ -220,12 +220,12 @@ public class SurfaceNodeInput {
 
     //===================================================================================================
     public boolean testFor(double x, double y) {
-<span class="nc" id="L223">        double d = Math.pow((Math.pow((x - _X), 2) + Math.pow((y - _Y), 2)), 0.5);</span>
-<span class="nc" id="L224">        double radius = _radius;//getInputNodeRadiusFrom(unitRadius);</span>
-<span class="nc bnc" id="L225" title="All 2 branches missed.">        if (d &lt;= radius) {</span>
-<span class="nc" id="L226">            return true;</span>
+<span class="fc" id="L223">        double d = Math.pow((Math.pow((x - _X), 2) + Math.pow((y - _Y), 2)), 0.5);</span>
+<span class="fc" id="L224">        double radius = _radius;//getInputNodeRadiusFrom(unitRadius);</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">        if (d &lt;= radius) {</span>
+<span class="fc" id="L226">            return true;</span>
         }
-<span class="nc" id="L228">        return false;</span>
+<span class="fc" id="L228">        return false;</span>
     }
     //==========================================================================================================
 

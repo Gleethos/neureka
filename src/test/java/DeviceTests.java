@@ -231,8 +231,8 @@ public class DeviceTests {
 
         String sentence = "Number of outsourced tensors: ";
         tester.testContains(
-                sentence +outsourced.size(),
-                new String[]{sentence+listOfTensors.size()},
+                sentence +(outsourced.size()),
+                new String[]{sentence+(listOfTensors.size()-2)},
                 "Testing for memory leaks!"
         );
         //---
@@ -241,7 +241,7 @@ public class DeviceTests {
         sentence = "Used tensors still on device: ";
         tester.testContains(
                 sentence +stillOnDevice[0],
-                new String[]{sentence+"true"},
+                new String[]{sentence+"false"},//true
                 "Testing for memory leaks!"
         );
         //---

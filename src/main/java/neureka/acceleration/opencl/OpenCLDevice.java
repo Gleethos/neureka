@@ -366,6 +366,7 @@ public class OpenCLDevice extends AbstractDevice
             case "x":
                 if (d >= 0) {
                     if (d == 0) tsrs[0] = tsrs[2]; else tsrs[0] = tsrs[1];
+                    return;
                 } else {
                     tsrs = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
                 }

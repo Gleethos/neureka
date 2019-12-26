@@ -863,29 +863,29 @@ public class CPU extends AbstractDevice {
 
         private static void _threaded(int sze, Range range) {
 <span class="fc" id="L865">            boolean doThreading = false;</span>
-<span class="fc bfc" id="L866" title="All 2 branches covered.">            if (sze &gt; 128) {</span>
-<span class="pc bpc" id="L867" title="1 of 2 branches missed.">                doThreading = ((sze / Runtime.getRuntime().availableProcessors()) &gt; 32);</span>
+<span class="pc bpc" id="L866" title="1 of 2 branches missed.">            if (sze &gt; 128) {</span>
+<span class="nc bnc" id="L867" title="All 2 branches missed.">                doThreading = ((sze / Runtime.getRuntime().availableProcessors()) &gt; 32);</span>
             }
-<span class="fc bfc" id="L869" title="All 2 branches covered.">            if (!doThreading) {</span>
+<span class="pc bpc" id="L869" title="1 of 2 branches missed.">            if (!doThreading) {</span>
 <span class="fc" id="L870">                range.execute(0, sze);</span>
             } else {
-<span class="fc" id="L872">                int threadCount = Runtime.getRuntime().availableProcessors();</span>
-<span class="fc" id="L873">                final int chunk = (sze / threadCount);</span>
-<span class="fc" id="L874">                Thread[] th = new Thread[threadCount];</span>
-<span class="fc bfc" id="L875" title="All 2 branches covered.">                for (int i = 0; i &lt; threadCount; i++) {</span>
-<span class="fc" id="L876">                    final int start = i * chunk;</span>
-<span class="fc bfc" id="L877" title="All 2 branches covered.">                    final int end = (i == threadCount - 1) ? sze : ((i + 1) * chunk);</span>
-<span class="fc" id="L878">                    th[i] = new Thread(() -&gt; {</span>
-<span class="fc" id="L879">                        range.execute(start, end);</span>
-<span class="fc" id="L880">                    });</span>
-<span class="fc" id="L881">                    th[i].start();</span>
+<span class="nc" id="L872">                int threadCount = Runtime.getRuntime().availableProcessors();</span>
+<span class="nc" id="L873">                final int chunk = (sze / threadCount);</span>
+<span class="nc" id="L874">                Thread[] th = new Thread[threadCount];</span>
+<span class="nc bnc" id="L875" title="All 2 branches missed.">                for (int i = 0; i &lt; threadCount; i++) {</span>
+<span class="nc" id="L876">                    final int start = i * chunk;</span>
+<span class="nc bnc" id="L877" title="All 2 branches missed.">                    final int end = (i == threadCount - 1) ? sze : ((i + 1) * chunk);</span>
+<span class="nc" id="L878">                    th[i] = new Thread(() -&gt; {</span>
+<span class="nc" id="L879">                        range.execute(start, end);</span>
+<span class="nc" id="L880">                    });</span>
+<span class="nc" id="L881">                    th[i].start();</span>
                 }
-<span class="fc bfc" id="L883" title="All 2 branches covered.">                for (int i = 0; i &lt; threadCount; i++) {</span>
+<span class="nc bnc" id="L883" title="All 2 branches missed.">                for (int i = 0; i &lt; threadCount; i++) {</span>
                     try {
-<span class="fc" id="L885">                        th[i].join();</span>
+<span class="nc" id="L885">                        th[i].join();</span>
 <span class="nc" id="L886">                    } catch (InterruptedException e) {</span>
 <span class="nc" id="L887">                        e.printStackTrace();</span>
-<span class="fc" id="L888">                    }</span>
+<span class="nc" id="L888">                    }</span>
                 }
             }
 <span class="fc" id="L891">        }</span>

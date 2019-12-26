@@ -1,6 +1,7 @@
 package neureka.function.factory;
 
 import neureka.Tsr;
+import neureka.acceleration.CPU;
 import neureka.acceleration.Device;
 import neureka.function.Function;
 import neureka.function.factory.assembly.FunctionBuilder;
@@ -195,16 +196,17 @@ public abstract class AbstractFunction implements Function
     {
         Device device = (Device) inputs[0].find(Device.class);
         boolean onSameDevice = _shareGuestDevice(inputs);
-        boolean doAccel = (!TYPES.REGISTER[_id].equals(",") && onSameDevice);// && !(TYPES.isConvection(_id) && d >=0)
+        boolean doAccel = (!TYPES.REGISTER[_id].equals(",") && onSameDevice);
         Device myDevice = (doAccel&&device!=null)?device:Tsr.CPU;
 
         if (TYPES.REGISTER[_id].equals("x")) {
-                Tsr tensor1 = _src.get(0).activate(inputs).setIsVirtual(false);
-                Tsr tensor2 = _src.get(1).activate(inputs).setIsVirtual(false);
-                Tsr newTensor = new Tsr(Tsr.fcn.indexing.shpOfCon(tensor1.shape(), tensor2.shape()));
-                Tsr[] array = new Tsr[]{newTensor, tensor1, tensor2};
-                Tsr.CPU.execute(array, _id, d);//TODO: FIX!!
-                return array[0];
+            Tsr tensor1 = _src.get(0).activate(inputs).setIsVirtual(false);
+            Tsr tensor2 = _src.get(1).activate(inputs).setIsVirtual(false);
+            Tsr newTensor = new Tsr(Tsr.fcn.indexing.shpOfCon(tensor1.shape(), tensor2.shape()));
+            Tsr[] array = new Tsr[]{newTensor, tensor1, tensor2};
+            myDevice.execute(array, _id, d);
+            return array[0];
+
         } else if (_id == TYPES.LOOKUP.get("<<x") || _id == TYPES.LOOKUP.get("x>>")) {
             if (d < 0) {
                 Tsr[] tsrs = new Tsr[]{
@@ -213,11 +215,7 @@ public abstract class AbstractFunction implements Function
                         _src.get(2).activate(inputs).setIsVirtual(false)
                 };
                 myDevice.execute(tsrs, _id, 0);
-                if (_id == TYPES.LOOKUP.get("x>>")) {
-                    return tsrs[2];
-                } else {
-                    return tsrs[0];
-                }
+                if (_id == TYPES.LOOKUP.get("x>>")) return tsrs[2]; else return tsrs[0];
             }
             return null;
         } else if (TYPES.REGISTER[_id].equals(",")) {
