@@ -22,38 +22,115 @@ import java.util.function.Consumer;
 
 public class Tsr
 {
-    // DEFAULT DEVICE (HOST CPU)
-    //=========================
-    public static Device CPU;
-
-    // CACHED CONFIGRATIONS:
-    //=========================
-    private static Map<Long, int[]> CONFIGS;
-
     static {
         CONFIGS = new WeakHashMap<>();
         CPU = new CPU();
     }
-    //-----------------------------------------------------------------------
+
+    // DEFAULT DEVICE (HOST CPU)
+    //=========================
+    public static Device CPU;
+
+    // CACHED CONFIGURATIONS:
+    //=========================
+    private static Map<Long, int[]> CONFIGS;
 
     //MODULE I / O :
     //=========================
     private ArrayList<Object> _components = new ArrayList<Object>();
 
+    //VALUE DATA FIELDS:
+    //=========================
+    private int[] _shape, _translation, _idxmap;
+    private Object _value;
+
+    //FLAG FIELDS:
+    //=========================
+    private int _flags = 0 + 0 + 0 + 0;//Default
+    private final static int RQS_GRADIENT_MASK = 1;
+    private final static int IS_OUTSOURCED_MASK = 2;
+    private final static int IS_VIRTUAL_MASK = 4;
+
     //-----------------------------------------------------------------------
-    public ArrayList<Object> getComponents() {
-        return _components;
+
+    public boolean rqsGradient() {
+        return (_flags & RQS_GRADIENT_MASK) == RQS_GRADIENT_MASK;
     }
 
-    public Tsr setComponents(ArrayList<Object> properties) {
-        _components = properties;
+    public Tsr setRqsGradient(boolean rqsGradient) {
+        if (rqsGradient() != rqsGradient) {
+            if (rqsGradient) {
+                _flags += RQS_GRADIENT_MASK;
+            } else {
+                this.remove(Tsr.class);
+                _flags -= RQS_GRADIENT_MASK;
+            }
+        }
+        return this;
+    }
+    //---
+    public boolean isOutsourced() {
+        return (_flags & IS_OUTSOURCED_MASK) == IS_OUTSOURCED_MASK;
+    }
+
+    public Tsr setIsOutsourced(boolean isOutsourced) {
+        if (isOutsourced() != isOutsourced) {
+            if (isOutsourced) _flags += IS_OUTSOURCED_MASK;
+            else _flags -= IS_OUTSOURCED_MASK;
+        }
+        if (isOutsourced) {
+            _value = null;
+        } else if (this.has(Device.class)) {
+            Device device = (Device) this.find(Device.class);
+            if (device.has(this)) {
+                device.get(this);
+            }
+            this.remove(Device.class);
+            if(this.has(Tsr.class)){
+                Tsr gradient = (Tsr) find(Tsr.class);
+                device = (Device) gradient.find(Device.class);
+                if (device.has(gradient)) {
+                    device.get(gradient);
+                }
+                gradient.remove(Device.class);
+            }
+        }
+        return this;
+    }
+    //---
+    public boolean isVirtual() {
+        return (_flags & IS_VIRTUAL_MASK) == IS_VIRTUAL_MASK;
+    }
+
+    public Tsr setIsVirtual(boolean isVirtual) {
+        if (isVirtual() != isVirtual) {
+            if(this.isOutsourced()){
+                if (!isVirtual) _flags -= IS_VIRTUAL_MASK;
+            } else {
+                double v = (_value==null)?0:(((this.is64())?((double[])_value)[0]:((float[])_value)[0]));
+                if (isVirtual) {
+                    _value = new double[]{v};
+                    _flags += IS_VIRTUAL_MASK;
+                    Relation parent = (Relation)find(Relation.class);
+                    if(parent!=null) parent.foreachChild((c)->c._value=_value);
+                } else {
+                    _value = (this.is64())?new double[this.size()]:new float[this.size()];
+                    int length = (this.is64())?((double[])_value).length:((float[])_value).length;
+                    for (int i = 0; i < length; i++) {
+                        if(this.is64()) ((double[])_value)[i] = v;
+                        else ((float[])_value)[i] = (float)v;
+                    }
+                    _flags -= IS_VIRTUAL_MASK;
+                }
+            }
+        }
         return this;
     }
 
+    //-----------------------------------------------------------------------
+
     public Tsr add(Object newComponent) {
-        if (newComponent == null) {
-            return this;
-        }
+        if (newComponent == null) return this;
         Object oldCompartment = null;
         if (_components != null) {
             oldCompartment = find(newComponent.getClass());
@@ -67,9 +144,7 @@ public class Tsr
         _components.add((newComponent instanceof int[]) ? _cached((int[]) newComponent) : newComponent);
         if(newComponent instanceof Device){
             if(oldCompartment!=null){
-                if(oldCompartment.equals(newComponent)){
-                    return this;
-                }
+                if(oldCompartment.equals(newComponent)) return this;
             }
             if(!((Device)newComponent).has(this)){
                 ((Device)newComponent).add(this);
@@ -104,13 +179,6 @@ public class Tsr
     public boolean has(Class componentClass) {
         return find(componentClass) != null;
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    //DATA FIELDS:
-    //=========================
-    private int[] _shape, _translation, _idxmap;
-    private Object _value;// _gradient;
-    //-----------------------------------------------------------------------
 
     /**
      * @return the device on which this tensor is stored or null if it is not outsourced.
@@ -176,6 +244,7 @@ public class Tsr
         if(gradient==null) return null;
         return (this.is32())?DataHelper.floatToDouble(gradient.value32()):gradient.value64();
     }
+
     public float[] gradient32(){
         Tsr gradient = (Tsr)this.find(Tsr.class);
         if(gradient==null) return null;
@@ -189,9 +258,7 @@ public class Tsr
         }else{
             this.add(g);
             Device device = (Device)find(Device.class);
-            if(device!=null){
-                device.add(g);
-            }
+            if(device!=null) device.add(g);
         }
         return this;
     }
@@ -199,6 +266,7 @@ public class Tsr
     public boolean is64(){
         return _value instanceof double[];
     }
+
     public  boolean is32(){
         return _value instanceof float[];
     }
@@ -208,9 +276,7 @@ public class Tsr
             Device device = (Device) this.find(Device.class);
             if(device!=null) device.get(this);
             _value = DataHelper.doubleToFloat((double[])_value);
-            if(this.has(Tsr.class)){
-                ((Tsr)find(Tsr.class)).to32();
-            }
+            if(this.has(Tsr.class)) ((Tsr)find(Tsr.class)).to32();
             if(device!=null) device.add(this);
         }
         return this;
@@ -221,9 +287,7 @@ public class Tsr
             Device device = (Device) this.find(Device.class);
             if(device!=null) device.get(this);
             _value = DataHelper.floatToDouble((float[])_value);
-            if(this.has(Tsr.class)){
-                ((Tsr)find(Tsr.class)).to64();
-            }
+            if(this.has(Tsr.class)) ((Tsr)find(Tsr.class)).to64();
             if(device!=null) device.add(this);
         }
         return this;
@@ -231,17 +295,11 @@ public class Tsr
 
     public double value64(int i) {
         if(this.isVirtual()){
-            if(this.is64()){
-                return ((double[])_value)[0];
-            } else {
-                return ((float[])_value)[0];
-            }
+            if(this.is64()) return ((double[])_value)[0];
+            else return ((float[])_value)[0];
         } else {
-            if(this.is64()){
-                return ((double[])_value)[i];
-            } else {
-                return ((float[])_value)[i];
-            }
+            if(this.is64()) return ((double[])_value)[i];
+            else return ((float[])_value)[i];
         }
     }
 
@@ -253,26 +311,18 @@ public class Tsr
         if (this.isVirtual()) {
             newValue = new double[this.size()];
             double[] value = (this.is64())?(double[])_value:DataHelper.floatToDouble((float[])_value);
-            for (int i = 0; i < newValue.length; i++) {
-                newValue[i] = value[0];
-            }
+            for (int i = 0; i < newValue.length; i++) newValue[i] = value[0];
         }
         return newValue;
     }
 
     public float value32(int i) {
         if(this.isVirtual()){
-            if(this.is64()){
-                return (float) ((double[])_value)[0];
-            } else {
-                return ((float[])_value)[0];
-            }
+            if(this.is64()) return (float) ((double[])_value)[0];
+            else return ((float[])_value)[0];
         } else {
-            if(this.is64()){
-                return (float) ((double[])_value)[i];
-            } else {
-                return ((float[])_value)[i];
-            }
+            if(this.is64()) return (float) ((double[])_value)[i];
+            else return ((float[])_value)[i];
         }
     }
 
@@ -330,94 +380,6 @@ public class Tsr
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    //FLAG FIELDS:
-    //=========================
-    private int _flags = 0 + 0 + 0 + 0;//Default
-    private final static int RQS_GRADIENT_MASK = 1;
-    private final static int IS_OUTSOURCED_MASK = 2;
-    private final static int IS_VIRTUAL_MASK = 4;
-    //-----------------------------------------------------------------------
-    public boolean rqsGradient() {
-        return (_flags & RQS_GRADIENT_MASK) == RQS_GRADIENT_MASK;
-    }
-
-    public Tsr setRqsGradient(boolean rqsGradient) {
-        if (rqsGradient() != rqsGradient) {
-            if (rqsGradient) {
-                _flags += RQS_GRADIENT_MASK;
-            } else {
-                this.remove(Tsr.class);
-                _flags -= RQS_GRADIENT_MASK;
-            }
-        }
-        return this;
-    }
-    //---
-    public boolean isOutsourced() {
-        return (_flags & IS_OUTSOURCED_MASK) == IS_OUTSOURCED_MASK;
-    }
-
-    public Tsr setIsOutsourced(boolean isOutsourced) {
-        if (isOutsourced() != isOutsourced) {
-            if (isOutsourced) {
-                _flags += IS_OUTSOURCED_MASK;
-            } else {
-                _flags -= IS_OUTSOURCED_MASK;
-            }
-        }
-        if (isOutsourced) {
-            _value = null;
-        } else if (this.has(Device.class)) {
-            Device device = (Device) this.find(Device.class);
-            if (device.has(this)) {
-                device.get(this);
-            }
-            this.remove(Device.class);
-            if(this.has(Tsr.class)){
-                Tsr gradient = (Tsr) find(Tsr.class);
-                device = (Device) gradient.find(Device.class);
-                if (device.has(gradient)) {
-                    device.get(gradient);
-                }
-                gradient.remove(Device.class);
-            }
-        }
-        return this;
-    }
-    //---
-    public boolean isVirtual() {
-        return (_flags & IS_VIRTUAL_MASK) == IS_VIRTUAL_MASK;
-    }
-
-    public Tsr setIsVirtual(boolean isVirtual) {
-        if (isVirtual() != isVirtual) {
-            if(this.isOutsourced()){
-                if (!isVirtual) _flags -= IS_VIRTUAL_MASK;
-            } else {
-                double v = (_value==null)?0:(((this.is64())?((double[])_value)[0]:((float[])_value)[0]));
-                if (isVirtual) {
-                    _value = new double[]{v};
-                    _flags += IS_VIRTUAL_MASK;
-                    Relation parent = (Relation)find(Relation.class);
-                    if(parent!=null) parent.foreachChild((c)->c._value=_value);
-                } else {
-                    _value = (this.is64())?new double[this.size()]:new float[this.size()];
-                    int length = (this.is64())?((double[])_value).length:((float[])_value).length;
-                    for (int i = 0; i < length; i++) {
-                        if(this.is64()){
-                            ((double[])_value)[i] = v;
-                        } else {
-                            ((float[])_value)[i] = (float)v;
-                        }
-                    }
-                    _flags -= IS_VIRTUAL_MASK;
-                }
-            }
-        }
-        return this;
-    }
-    //---
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //GENERIC PROPERTIES :
     //=========================
     public boolean isSlice(){
@@ -682,7 +644,7 @@ public class Tsr
         for(Object o : args){
             containsString = (o instanceof  String)?true:containsString;
             if(o instanceof Tsr){
-                if(!list.contains((Tsr)o)){
+                if(!list.contains(o)){
                     list.add((Tsr)o);
                     numberOfTensors ++;
                 }
@@ -738,7 +700,7 @@ public class Tsr
         _construct(shape, value);
     }
 
-    private void _construct(int[] shape, double[] value){
+    private void _construct(int[] shape, double[] value) {
         _value = value;
         initialShape(shape);
     }
@@ -754,14 +716,10 @@ public class Tsr
         if(cpy){
             if(tensor.is64()){
                 double[] value = tensor.value64();
-                for (int i = 0; i < length; i++) {
-                    ((double[])_value)[i] = value[i];
-                }
+                if (length >= 0) System.arraycopy(value, 0, ((double[]) _value), 0, length);
             } else {
                 float[] value = tensor.value32();
-                for (int i = 0; i < length; i++) {
-                    ((float[])_value)[i] = value[i];
-                }
+                if (length >= 0) System.arraycopy(value, 0, ((float[]) _value), 0, length);
             }
         }
         initialShape(tensor.shape());
@@ -877,9 +835,7 @@ public class Tsr
     }
 
     public Tsr delete() {
-        if (this.isOutsourced()) {
-            ((Device) this.find(Device.class)).rmv(this);
-        }
+        if (this.isOutsourced()) ((Device) this.find(Device.class)).rmv(this);
         GraphNode node =((GraphNode)this.find(GraphNode.class));
         if(node != null){
             if(!node.isVirtual() && node.isUsedAsDerivative()){
@@ -993,7 +949,6 @@ public class Tsr
         } else {
             new Tsr(new Tsr[]{slice, value}, "I[0]<-I[1]", false);
         }
-        //FunctionBuilder.build("I[0]<-I[1]", false).activate(new Tsr[]{slice, value});
         if(valueIsDeviceVisitor) ((Device)value.find(Device.class)).get(value);
         return this;
     }
@@ -1003,26 +958,22 @@ public class Tsr
     public Object getAt(Object key) {
         if(key==null) return this;
         if(key instanceof List) if(((List)key).size()==0) return this;
-
-        int[] idx = null;// = (int[])key;
+        int[] idx = null;
         int[] newShape = new int[this.rank()];
         if(key instanceof List){
             key = ((List)key).toArray();
             boolean allInt = true;
             for(Object o : (Object[])key) allInt = allInt && o instanceof Integer;
-            if(allInt)
-            {
+            if(allInt) {
                 key = intArray((Object[]) key);
                 idx = (int[])key;
-                if(key instanceof int[]) {
+                if(key != null) {
                     for(int i=0; i<this.rank(); i++) {
                         idx[i] = (idx[i]<0)?_shape[i]+idx[i]:idx[i];
                     }
                     return Tsr.fcn.io.getFrom(this, idx);
                 }
-            }
-            else// if(((Object[])key)[0] instanceof List)
-            {
+            } else {
                 boolean hasScale = false;
                 for(Object o : (Object[])key) hasScale = hasScale || o instanceof Map;
                 idx = new int[((hasScale)?2:1)*this.rank()];
@@ -1169,14 +1120,10 @@ public class Tsr
         return this;
     }
 
-    //###########
-    public int i_of_idx(int[] idx)
-    {
+    public int i_of_idx(int[] idx) {
         int i = 0;
         int[] sliceCfg = null;
-        if(has(int[].class)){
-            sliceCfg = (int[])find(int[].class);
-        }
+        if(has(int[].class)) sliceCfg = (int[])find(int[].class);
         for(int ii=0; ii<_shape.length; ii++){
             int scale = ((sliceCfg==null||sliceCfg.length==rank())?1:sliceCfg[rank()+ii]);
             i += (idx[ii] * scale + ((sliceCfg==null)?0:sliceCfg[ii]))*_translation[ii];
@@ -1188,7 +1135,7 @@ public class Tsr
         return i_of_idx(idx_of_i(i));
     }
 
-    public int[] idx_of_i(int i){
+    public int[] idx_of_i(int i) {
         int[] idx = new int[_shape.length];
         if(Neureka.Settings.Indexing.legacy()){
             for(int ii=rank()-1; ii>=0; ii--){
@@ -1196,17 +1143,14 @@ public class Tsr
                 i %= _idxmap[ii];
             }
         } else {
-            for(int ii=0; ii<rank(); ii++){
+            for(int ii=0; ii<rank(); ii++) {
                 idx[ii] += i / _idxmap[ii];
                 i %= _idxmap[ii];
             }
         }
         return idx;
     }
-    //########
-    
-    
-    
+
     /**
      * ======================================================================================================
      * STATIC FUNCTIONS:
@@ -1300,14 +1244,11 @@ public class Tsr
         {
             public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr) {
                 tensor = (newTsr)? new Tsr(tensor, true):tensor;
-                //tensor._record(tensor.shape(), tensor.translation());
                 tensor._shape = _cached(indexing.shpCheck(indexing.rearrange(tensor._shape, newForm), tensor));
                 tensor._translation = _cached(indexing.rearrange(tensor._translation, tensor._shape, newForm));
                 tensor._idxmap =  _cached(indexing.newTlnOf(tensor._shape));
                 int[] sliceCfg = null;
-                if(tensor.has(int[].class)){
-                    sliceCfg = (int[])tensor.find(int[].class);
-                }
+                if(tensor.has(int[].class)) sliceCfg = (int[])tensor.find(int[].class);
                 if(sliceCfg!=null){
                     int[] newSliceConfig = new int[sliceCfg.length];
                     for(int i=0; i<newForm.length; i++){
@@ -1382,17 +1323,13 @@ public class Tsr
 
         public static double[] newDoubleArray(double value, int size){
             double[] array = new double[size];
-            for(int i=0; i<size; i++){
-                array[i] = value;
-            }
+            for(int i=0; i<size; i++) array[i] = value;
             return array;
         }
 
         public static float[] newFloatArray(float value, int size){
             float[] array = new float[size];
-            for(int i=0; i<size; i++){
-                array[i] = value;
-            }
+            for(int i=0; i<size; i++) array[i] = value;
             return array;
         }
 
@@ -1435,44 +1372,6 @@ public class Tsr
          */
         public static class indexing
         {
-            //@Contract(pure = true)
-            //public static int i_of_idx(int[] idx, Tsr t)
-            //{
-            //    int i = 0;
-            //    int[] sliceCfg = null;
-            //    if(t.has(int[].class)){
-            //        sliceCfg = (int[])t.find(int[].class);
-            //    }
-            //    for(int ii=0; ii<t._shape.length; ii++){
-            //        int scale = ((sliceCfg==null||sliceCfg.length==t.rank())?1:sliceCfg[t.rank()+ii]);
-            //        i += (idx[ii] * scale + ((sliceCfg==null)?0:sliceCfg[ii]))*t._translation[ii];
-            //    }
-            //    return i;
-            //}
-            //@Contract(pure = true)
-            //public static int i_of_i(int i, Tsr t){
-            //    return indexing.i_of_idx(idx_of_i(i, t), t);
-            //}
-            //@Contract(pure = true)
-            //public static int[] idx_of_i(int i, Tsr t){
-            //    int[] idx = new int[t._shape.length];
-            //    if(Neureka.Settings.Indexing.legacy()){
-            //        for(int ii=t.rank()-1; ii>=0; ii--){
-            //            idx[ii] += i / t._idxmap[ii];
-            //            i %= t._idxmap[ii];
-            //        }
-            //    } else {
-            //        for(int ii=0; ii<t.rank(); ii++){
-            //            idx[ii] += i / t._idxmap[ii];
-            //            i %= t._idxmap[ii];
-            //        }
-            //    }
-            //    return idx;
-            //}
-            
-            
-            
-
             @Contract(pure = true)
             public static void increment(@NotNull int[] shpIdx, @NotNull int[] shape) {
                 if(Neureka.Settings.Indexing.legacy()){
@@ -1480,7 +1379,7 @@ public class Tsr
                     while (i >= 0 && i < shape.length) {//fixed
                         i = incrementAt(i, shpIdx, shape);
                     }
-                } else{//---
+                } else{
                     int i = shape.length-1;
                     while (i >= 0 && i < shape.length) {//WIP
                         i = incrementAt(i, shpIdx, shape);
@@ -1504,7 +1403,7 @@ public class Tsr
                         i++;
                     }
                     return i;
-                } else {//---
+                } else {
                     if (shpIdx[i] < (shape[i])) {//WIP
                         shpIdx[i]++;
                         if (shpIdx[i] == (shape[i])) {
@@ -1535,7 +1434,6 @@ public class Tsr
                         prod *= shape[i];
                     }
                 }
-
                 return tln;
             }
 
@@ -1609,16 +1507,12 @@ public class Tsr
             @Contract(pure = true)
             public static int szeOfShp(int[] shape) {
                 int size = 1;
-                for (int Di = 0; Di < shape.length; Di++) {
-                    size *= shape[Di];
-                }
+                for (int Di = 0; Di < shape.length; Di++) size *= shape[Di];
                 return size;
             }
-
 
         }
 
     }
-
 
 }
