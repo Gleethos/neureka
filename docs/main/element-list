@@ -1,8 +1,8 @@
-unnamed package
 neureka
 neureka.acceleration
 neureka.acceleration.opencl
 neureka.acceleration.opencl.utility
+neureka.framing
 neureka.function
 neureka.function.environment
 neureka.function.factory
@@ -10,7 +10,7 @@ neureka.function.factory.assembly
 neureka.function.factory.autograd
 neureka.function.factory.implementations
 neureka.gui
+neureka.gui.swing
 neureka.optimization
 neureka.optimization.implementations
 neureka.utility
-util
