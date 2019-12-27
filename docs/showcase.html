@@ -276,27 +276,36 @@
                                                         Labeled indexes:
                                                     </h3>
                                                     <p>
-
+                                                        Labeling makes it more
+                                                        intuitive to work with big data.
+                                                        By calling the 'label' method
+                                                        it's possible to add a custom
+                                                        set of Strings as index alias for any dimension
+                                                        of a given tensor.
                                                     </p>
                                                 </div>
                                             </div>
                                             <div class="col-sm-12 col-md-12">
                                                 <pre><code class="hljs java">
+        // Example I:
+
         Tsr t = new Tsr([3, 4],[
                 1, 2, 3, 4,
                 9, 8, 6, 5,
                 4, 5, 6, 7
         ])
         t.label([
-                ["1", "2", "3"],
-                ["a", "b", "y", "z"]
+                ["1", "2", "3"],     // axis 0
+                ["a", "b", "y", "z"] // axis 1
         ])
-        Tsr x = t["2", 1..2]
-        // x.toString(): "[1x2]:(8.0, 6.0)"
 
-        x = t["2".."3", "b".."y"]
+        // Accessing data via labels:
 
-        // x.toString(): "[2x2]:(8.0, 6.0, 5.0, 6.0)"
+        Tsr x = t["2", 1..2] // x.toString(): "[1x2]:(8.0, 6.0)"
+
+        x = t["2".."3", "b".."y"] // x.toString(): "[2x2]:(8.0, 6.0, 5.0, 6.0)"
+
+        // Example II:
 
         t = new Tsr([2, 3, 4], 7)
         t.label([
@@ -305,17 +314,9 @@
                 ["tim", "tom", "tina", "tanya"]
         ])
 
-        x = t["2", "b".."y", [["tim","tanya"]:2]]
-
-        // x.toString(): "[1x2x2]:(7.0, 7.0, 7.0, 7.0)"
-
-        x = t["2", [["b".."y"]:1, ["tim","tanya"]:2]]
-
-        // x.toString(): "[1x2x2]:(7.0, 7.0, 7.0, 7.0)"
-
-        x = t[[["2"]:1, ["b".."y"]:1, ["tim","tanya"]:2]]
-
-        // x.toString(): "[1x2x2]:(7.0, 7.0, 7.0, 7.0)"
+        x = t["2", "b".."y", [["tim","tanya"]:2]] // x.toString(): "[1x2x2]:(7.0, 7.0, 7.0, 7.0)"
+        x = t["2", [["b".."y"]:1, ["tim","tanya"]:2]] // x.toString(): "[1x2x2]:(7.0, 7.0, 7.0, 7.0)"
+        x = t[[["2"]:1, ["b".."y"]:1, ["tim","tanya"]:2]] // x.toString(): "[1x2x2]:(7.0, 7.0, 7.0, 7.0)"
 
                                                 </code></pre>
                                             </div>
