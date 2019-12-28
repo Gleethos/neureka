@@ -15,6 +15,7 @@ Neureka is a platform independent deep-learning library written in Java.
   - Flexible Tensor indexing and slicing.
   
   Visit [Neurekas homepage](https://gleethos.github.io/neureka/index.html) for more information!
+  
   Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/raw/master/production/neureka-0.0.0.jar)
   
 [![Beerpay](https://beerpay.io/Gleethos/neureka/badge.svg?style=beer-square)](https://beerpay.io/Gleethos/neureka)  [![Beerpay](https://beerpay.io/Gleethos/neureka/make-wish.svg?style=flat-square)](https://beerpay.io/Gleethos/neureka?focus=wish)
@@ -125,13 +126,13 @@ PyTorch however does not carry with it the benefit of *'write once run everywher
 [On the state of Deep Learning outside of CUDA’s walled garden.](https://towardsdatascience.com/on-the-state-of-deep-learning-outside-of-cudas-walled-garden-d88c8bbb4342)
 
 This is due to the fact that internally PyTorch is written
-in C++. Additionally, it's GPU acceleration is written in nvidia's cuda. 
+in C++ and it's GPU acceleration is written in nvidia's cuda. 
 Which means that even developers willing to compile for all platforms
-would still be locked out of AMD Systems when it comes to performance.
+would still be locked out of AMD and Intel Systems when it comes to performance.
 
-For that reason Neureka is written in Java and OpenCl (OpenCLi).
-Although performance will certainly be impacted by this choice,
-uncomplicated deployment and ease of use are the benefits.
+For that reason Neureka is written in Java and OpenCl.
+Although performance on nvidia devices will certainly be impacted 
+by this choice, uncomplicated cross platform deployment and ease of use are the benefits.
 Additionally, the use of OpenCl theoretically should allow for
 FPGA utilization. This however has not been tested.
 
@@ -141,6 +142,7 @@ the fact that Java itself is among the most dominant platforms.
 [What Java needs for true Machine / Deep Learning support.](https://medium.com/@hsheil/what-java-needs-for-true-machine-deep-learning-support-1571ffdbb594)
 
 #### Building for source
+
 Execute the following:
 ```sh
 $ gradlew build
@@ -156,19 +158,16 @@ Neureka uses OpenCl.
 Want to contribute? Great!
 
 There is currently a lack of sufficient documentation on this repository.
-If you have questions simply contact me or read through the test cases 
+If you have questions simply contact me or read through the test suite 
 of this project to understand what Neureka is supposed to be!
 
+Feedback is greatly appreciated!
 
 ### Todos
 
- - Write MORE Tests
- - Much MORE.
- - Allot!
- 
- ![Work In Progress](https://unpkg.com/vvwip/WIP.svg)
+ - Make a wish! :)
 
-License
+### License
 
 ----
 
