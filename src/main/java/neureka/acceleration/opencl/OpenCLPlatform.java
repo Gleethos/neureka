@@ -53,7 +53,8 @@ public class OpenCLPlatform
         //OPERATION_TO_KERNEL_MAPPING.put((""+((char)171)), "inv_conv_left");
         //OPERATION_TO_KERNEL_MAPPING.put((""+((char)187)), "inv_conv_right");
         OPERATION_TO_KERNEL_MAPPING.put(",", "reshape");
-        OPERATION_TO_KERNEL_MAPPING.put("<", "inject_left");
+
+        OPERATION_TO_KERNEL_MAPPING.put("<", "operate_identity");
         OPERATION_TO_KERNEL_MAPPING.put(">", "inject_right");
     }
 
@@ -384,6 +385,12 @@ public class OpenCLPlatform
                             "} else {\n" +
                             "    output = (pow(input1, value) * log(value));\n" +
                             "}",
+                    true
+            );
+            parser.apply(
+                    "identity",
+                    "output = value;\n",
+                    "output = value;\n",
                     true
             );
         } else {// broadcast / convolve:

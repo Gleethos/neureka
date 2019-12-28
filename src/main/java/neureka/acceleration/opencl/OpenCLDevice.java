@@ -191,7 +191,7 @@ public class OpenCLDevice extends AbstractDevice
         });
         tensor.add(this);
         if(tensor.isVirtual()){
-            _execute_tensor_scalar(tensor, tensor.value64(0), Function.TYPES.LOOKUP.get("+"), -1);
+            _execute_tensor_scalar(tensor, tensor.value64(0), Function.TYPES.LOOKUP.get("<"), -1);
         }
         tensor.setIsOutsourced(true);
         tensor.setIsVirtual(false);

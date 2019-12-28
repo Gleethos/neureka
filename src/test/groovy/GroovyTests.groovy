@@ -15,6 +15,21 @@ import util.NTester_Tensor
 class GroovyTests
 {
 
+    //@Test
+    //void crazyMemTest(){
+    //    println(Runtime.getRuntime().maxMemory())
+    //    Device gpu = Neureka.findAcceleratorByName("nvidia")
+    //    Tsr a = new Tsr([13000, 1], 2).add(gpu)
+    //    Tsr b = new Tsr([1, 13000], 7).add(gpu)
+    //    Tsr c
+    //    for(i in 0..300){
+    //        c = new Tsr(a,"x", b)
+    //        println("-["+c.size()+"]"+i)
+    //    }
+    //    println("Yess")
+    //    println(c)
+    //}
+
     @Test
     void testVisualizer()
     {

@@ -1,26 +1,24 @@
 
+//-----------------------------------------------------------------
+
 plugins {
     id 'jacoco'
     id 'java'
     id 'idea'
-    //id 'application'
     id 'groovy'
-    //id 'java-library'
 }
 
 group 'com.gleethos'
 version '0.0.0'
 
-//-----------------------------
+//-----------------------------------------------------------------
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
-repositories {
-    mavenCentral()
-}
+repositories { mavenCentral() }
 
-//---
+//-----------------------------------------------------------------
 
 def currentOS = org.gradle.internal.os.OperatingSystem.current()
 def platform
@@ -31,21 +29,23 @@ if (currentOS.isWindows()) {
 } else if (currentOS.isMacOsX()) {
     platform = 'mac'
 }
+
+//-----------------------------------------------------------------
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile "org.jocl:jocl:2.0.0"
     compile 'org.jetbrains:annotations:16.0.2'
     compile 'org.codehaus.groovy:groovy-all:2.4.14'
-    //compile group: 'org.python', name: 'jython', version: '2.7.2b2'
 }
+
+//-----------------------------------------------------------------
 
 jacoco {
     toolVersion = "0.8.5"
     //reportsDir = file("build/reports/coverage")
     reportsDir = file("docs/coverage")
 }
-
-
 
 jacocoTestReport {
     reports {
@@ -57,14 +57,19 @@ jacocoTestReport {
 
 check.dependsOn jacocoTestReport
 
-//jar {
+//-----------------------------------------------------------------
+
+jar {
 //    mainClassName = 'Main'
-//    from configurations.compile.collect{ zipTree it }
+    from configurations.compile.collect{ zipTree it }
 //    manifest.attributes "Main-Class" : "Main"
-//}
+}
+
+//-----------------------------------------------------------------
 
 test {
-    filter {
-        includeTestsMatching "*"
-    }
+    filter { includeTestsMatching "*" }
+    minHeapSize = "1g"
+    maxHeapSize = "5g"
 }
+

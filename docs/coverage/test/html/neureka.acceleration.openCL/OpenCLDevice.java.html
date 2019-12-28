@@ -191,7 +191,7 @@ public class OpenCLDevice extends AbstractDevice
 <span class="fc" id="L191">        });</span>
 <span class="fc" id="L192">        tensor.add(this);</span>
 <span class="fc bfc" id="L193" title="All 2 branches covered.">        if(tensor.isVirtual()){</span>
-<span class="fc" id="L194">            _execute_tensor_scalar(tensor, tensor.value64(0), Function.TYPES.LOOKUP.get(&quot;+&quot;), -1);</span>
+<span class="fc" id="L194">            _execute_tensor_scalar(tensor, tensor.value64(0), Function.TYPES.LOOKUP.get(&quot;&lt;&quot;), -1);</span>
         }
 <span class="fc" id="L196">        tensor.setIsOutsourced(true);</span>
 <span class="fc" id="L197">        tensor.setIsVirtual(false);</span>
@@ -465,8 +465,8 @@ public class OpenCLDevice extends AbstractDevice
 
     public String type(){
 <span class="fc" id="L467">        long deviceType = DeviceQuery.getLong(_did, CL_DEVICE_TYPE);</span>
-<span class="fc bfc" id="L468" title="All 2 branches covered.">        if( (deviceType &amp; CL_DEVICE_TYPE_CPU) != 0)</span>
-<span class="fc" id="L469">            return &quot;CPU&quot;;</span>
+<span class="pc bpc" id="L468" title="1 of 2 branches missed.">        if( (deviceType &amp; CL_DEVICE_TYPE_CPU) != 0)</span>
+<span class="nc" id="L469">            return &quot;CPU&quot;;</span>
 <span class="pc bpc" id="L470" title="1 of 2 branches missed.">        if( (deviceType &amp; CL_DEVICE_TYPE_GPU) != 0)</span>
 <span class="fc" id="L471">            return &quot;GPU&quot;;</span>
 <span class="nc bnc" id="L472" title="All 2 branches missed.">        if( (deviceType &amp; CL_DEVICE_TYPE_ACCELERATOR) != 0)</span>
