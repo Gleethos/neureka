@@ -20,18 +20,6 @@ repositories { mavenCentral() }
 
 //-----------------------------------------------------------------
 
-def currentOS = org.gradle.internal.os.OperatingSystem.current()
-def platform
-if (currentOS.isWindows()) {
-    platform = 'win'
-} else if (currentOS.isLinux()) {
-    platform = 'linux'
-} else if (currentOS.isMacOsX()) {
-    platform = 'mac'
-}
-
-//-----------------------------------------------------------------
-
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile "org.jocl:jocl:2.0.0"
@@ -68,8 +56,30 @@ jar {
 //-----------------------------------------------------------------
 
 test {
-    filter { includeTestsMatching "*" }
+    //jar{ from configurations.compile.collect{ zipTree it } }
+    //filter { includeTestsMatching "*" }
     minHeapSize = "1g"
     maxHeapSize = "5g"
+}
+
+//-----------------------------------------------------------------
+
+def currentOS = org.gradle.internal.os.OperatingSystem.current()
+def platform
+if (currentOS.isWindows()) {
+    platform = 'win'
+} else if (currentOS.isLinux()) {
+    platform = 'linux'
+} else if (currentOS.isMacOsX()) {
+    platform = 'mac'
+}
+
+
+task deploy {
+    if (platform=='linux') {
+        //sh './gradlew clean build jar check'
+    } else {
+       // bat 'gradlew.bat clean build jar check'
+    }
 }
 
