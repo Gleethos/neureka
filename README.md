@@ -10,23 +10,24 @@
 
 Neureka is a platform independent deep-learning library written in Java. 
 
-- Java, Kotlin, Groovy, Jython, Scala...
+  - Java, Kotlin, Groovy, Jython, Scala...
  
-- OpenCL accelerated.
+  - OpenCL accelerated.
 
-- N-Dimensional Tensors.
+  - N-Dimensional Tensors.
 
-- Flexible Tensor indexing and slicing.
+  - Flexible Tensor indexing and slicing.
   
 Visit [Neurekas homepage](https://gleethos.github.io/neureka/index.html) for more information!
   
 Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/raw/master/production/neureka-0.0.1.jar)
   
-[![Beerpay](https://beerpay.io/Gleethos/neureka/badge.svg?style=beer-square)](https://beerpay.io/Gleethos/neureka)  [![Beerpay](https://beerpay.io/Gleethos/neureka/make-wish.svg?style=flat-square)](https://beerpay.io/Gleethos/neureka?focus=wish)
+[![Beerpay](https://beerpay.io/Gleethos/neureka/badge.svg?style=beer-square)](https://beerpay.io/Gleethos/neureka)  
+[![Beerpay](https://beerpay.io/Gleethos/neureka/make-wish.svg?style=flat-square)](https://beerpay.io/Gleethos/neureka?focus=wish)
 
 ---  
 
-## Features! ##
+## Features ##
 
   - Dynamic computation graph.
 
@@ -199,7 +200,7 @@ Feedback is greatly appreciated!
 
 ---
 
-## Support on Beerpay
+## Support on Beerpay ##
 Hey dude! Help me out for a couple of :beers:!
 
 [![Beerpay](https://beerpay.io/Gleethos/neureka/badge.svg?style=beer-square)](https://beerpay.io/Gleethos/neureka)  [![Beerpay](https://beerpay.io/Gleethos/neureka/make-wish.svg?style=flat-square)](https://beerpay.io/Gleethos/neureka?focus=wish)
