@@ -33,6 +33,7 @@ jacoco {
     toolVersion = "0.8.5"
     //reportsDir = file("build/reports/coverage")
     //reportsDir = file("docs/coverage")
+    reportsDir = file(".")
 }
 
 jacocoTestReport {

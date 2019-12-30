@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SurfaceNodeInput.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.gui.swing</a> &gt; <span class="el_source">SurfaceNodeInput.java</span></div><h1>SurfaceNodeInput.java</h1><pre class="source lang-java linenums">
+package neureka.gui.swing;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.MultipleGradientPaint.CycleMethod;
+import java.awt.Paint;
+import java.awt.RadialGradientPaint;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Random;
+
+
+public class SurfaceNodeInput {
+
+<span class="fc" id="L17">    private boolean _isActive = false;</span>
+<span class="fc" id="L18">    private boolean _changeOccurred = false;</span>
+
+    private double _radius;
+
+    private double _X;
+    private double _Y;
+
+    private double _velX;
+    private double _velY;
+
+    public void addToVel(double velX, double velY) {
+<span class="fc" id="L29">        _velX += velX;</span>
+<span class="fc" id="L30">        _velY += velY;</span>
+<span class="fc" id="L31">    }</span>
+
+    private static final int defaultUnitDiameter = 1680;
+
+<span class="fc" id="L35">    SurfaceNodeInput(double neuronX, double neuronY, double unitRadius) {//referenceRadius = 0.1;</span>
+<span class="fc" id="L36">        Random dice = new Random();</span>
+<span class="fc" id="L37">        double alpha = dice.nextDouble();</span>
+<span class="fc" id="L38">        double mod = this.getInputNodeOrbitModFrom(unitRadius);</span>
+<span class="fc" id="L39">        _radius = getInputNodeRadiusFrom(unitRadius)*1.75;</span>
+<span class="fc" id="L40">        _X = neuronX + Math.cos(alpha) * unitRadius * mod;</span>
+<span class="fc" id="L41">        _Y = neuronY + Math.sin(alpha) * unitRadius * mod;</span>
+<span class="fc" id="L42">    }</span>
+
+    private double getInputNodeRadiusFrom(double unitRadius) {
+<span class="fc" id="L45">        return 0.25 * unitRadius * (Math.pow((1.5 - unitRadius / defaultUnitDiameter), 3));</span>
+    }
+
+    private double getInputNodeOrbitModFrom(double unitRadius) {
+<span class="fc" id="L49">        return 1.15 + (1 * (0.375 - unitRadius / defaultUnitDiameter));</span>
+    }
+    //===================================================================================================
+
+    public double angleOf(double x, double y) {
+<span class="nc" id="L54">        double l = lengthOf(_X - x, y - _Y);</span>
+<span class="nc" id="L55">        return -Math.atan2((_Y - y) / l, (_X - x) / l);</span>
+    }
+
+    private double lengthOf(double vecX, double vecY) {
+<span class="fc" id="L59">        return Math.pow(Math.pow(vecX, 2) + Math.pow(vecY, 2), 0.5);</span>
+    }
+
+    public SurfaceRepaintSpace getRepaintSpace() {
+<span class="fc" id="L63">        double radius = 1.1 * _radius;//getInputNodeRadiusFrom(unitRadius);</span>
+<span class="fc" id="L64">        return new SurfaceRepaintSpace(_X, _Y, radius, radius);</span>
+    }
+
+    public void paint(Graphics2D brush) {
+        //System.out.println(brush.getColor());
+<span class="fc" id="L69">        double radius = _radius;//getInputNodeRadiusFrom(neuronRadius);</span>
+        //brush.setColor(Color.GREEN);
+<span class="fc" id="L71">        brush.fillOval((int) (_X - radius), (int) (_Y - radius), (int) radius * 2, (int) radius * 2);</span>
+<span class="fc" id="L72">        Point2D center = new Point2D.Float((int) _X, (int) _Y);</span>
+<span class="fc" id="L73">        float gradientRadius = (float) radius;</span>
+<span class="fc" id="L74">        float[] dist = {0.0f, 0.7f, 0.8f};//0, 7, 8</span>
+<span class="fc" id="L75">        Color[] colors = {Color.BLACK, Color.BLACK, brush.getColor()};</span>
+<span class="fc" id="L76">        Paint oldPaint = brush.getPaint();</span>
+<span class="fc" id="L77">        RadialGradientPaint rgp</span>
+                = new RadialGradientPaint(center, gradientRadius, dist, colors, CycleMethod.NO_CYCLE);
+<span class="fc" id="L79">        brush.setPaint(rgp);</span>
+<span class="fc" id="L80">        brush.fillOval((int) (_X - radius), (int) (_Y - radius), (int) radius * 2, (int) radius * 2);</span>
+<span class="fc" id="L81">        brush.setPaint(oldPaint);</span>
+
+<span class="fc" id="L83">    }</span>
+
+    public void paintTop(Graphics2D brush, String display, double transparancy) {
+<span class="fc" id="L86">        double radius = _radius;//getInputNodeRadiusFrom(neuronRadius);</span>
+<span class="fc" id="L87">        brush.setColor(Color.BLACK);</span>
+<span class="fc" id="L88">        brush.fillOval((int) (_X - (radius * 0.72)), (int) (_Y - (radius * 0.72)), (int) (radius * 0.72) * 2, (int) (radius * 0.72) * 2);</span>
+<span class="pc bpc" id="L89" title="2 of 4 branches missed.">        if (transparancy &gt; 0.01 &amp;&amp; display.length() &gt; 0) {</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">            if (transparancy &gt; 1) {</span>
+<span class="fc" id="L91">                transparancy = 1;</span>
+            }
+<span class="fc" id="L93">            brush.setColor(</span>
+                    new Color(
+<span class="fc" id="L95">                            (int) (Color.CYAN.getRed() * transparancy),</span>
+<span class="fc" id="L96">                            (int) (Color.CYAN.getGreen() * transparancy),</span>
+<span class="fc" id="L97">                            (int) (Color.CYAN.getBlue() * transparancy))</span>
+            );
+<span class="pc bpc" id="L99" title="1 of 4 branches missed.">            switch (display) {</span>
+                case &quot;+&quot;:
+<span class="fc" id="L101">                    DrawUtils.IconPlus(_X, _Y, _radius * 0.85, brush);</span>
+<span class="fc" id="L102">                    break;</span>
+                case &quot;*&quot;:
+<span class="fc" id="L104">                    DrawUtils.IconStar(_X, _Y, _radius * 0.85, brush);</span>
+<span class="fc" id="L105">                    break;</span>
+                case &quot;tanh&quot;:
+<span class="fc" id="L107">                    DrawUtils.IconSigmoidBase(_X, _Y, brush, 1, radius*0.00525);</span>
+<span class="fc" id="L108">                    break;</span>
+                default:
+<span class="nc" id="L110">                    Font ValueFont = new Font(&quot;SansSerif&quot;, Font.BOLD, ((int)(2 * radius) / (display.length())));</span>
+<span class="nc" id="L111">                    brush.setFont(ValueFont);</span>
+<span class="nc" id="L112">                    brush.drawString(</span>
+                            display,
+<span class="nc" id="L114">                            (int) (_X - (display.length() * ValueFont.getSize() * 0.3)),</span>
+<span class="nc" id="L115">                            (int) (_Y + (ValueFont.getSize() * 0.45))</span>
+                    );
+            }
+
+        }
+<span class="fc" id="L120">    }</span>
+
+    //===================================================================================================
+    public boolean isActive() {
+<span class="fc" id="L124">        return _isActive;</span>
+    }
+
+    public void setIsActive(boolean active) {
+<span class="nc" id="L128">        _isActive = active;</span>
+<span class="nc" id="L129">    }</span>
+
+    public ArrayList&lt;SurfaceRepaintSpace&gt; moveCircular(double[] data, Surface Surface) {
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        if (data.length == 3) {</span>
+<span class="nc" id="L133">            return moveCircularBy(data, Surface);</span>
+        }
+<span class="nc" id="L135">        double centerX = data[0];</span>
+<span class="nc" id="L136">        double centerY = data[1];</span>
+<span class="nc" id="L137">        double x = data[2];</span>
+<span class="nc" id="L138">        double y = data[3];</span>
+<span class="nc" id="L139">        double vecX = _X - centerX;</span>
+<span class="nc" id="L140">        double vecY = _Y - centerY;</span>
+<span class="nc" id="L141">        double newVecX = x - centerX;</span>
+<span class="nc" id="L142">        double newVecY = y - centerY;</span>
+<span class="nc" id="L143">        double alpha = -1 * (Math.atan2(vecX, vecY) - Math.atan2(newVecY, newVecX));</span>
+
+<span class="nc" id="L145">        ArrayList&lt;SurfaceRepaintSpace&gt; queue = new ArrayList&lt;SurfaceRepaintSpace&gt;();</span>
+<span class="nc" id="L146">        queue.add(this.getRepaintSpace());</span>
+<span class="nc" id="L147">        vecX = Math.cos(alpha) * vecX - Math.sin(alpha) * vecY;</span>
+<span class="nc" id="L148">        vecY = Math.cos(alpha) * vecY + Math.sin(alpha) * vecX;</span>
+<span class="nc" id="L149">        _X = centerX + vecX;</span>
+<span class="nc" id="L150">        _Y = centerY + vecY;</span>
+<span class="nc bnc" id="L151" title="All 4 branches missed.">        if (queue.get(0).X == _X &amp;&amp; queue.get(0).Y == _Y) {</span>
+<span class="nc" id="L152">            queue.remove(0);</span>
+<span class="nc" id="L153">            return queue;</span>
+        }
+<span class="nc" id="L155">        _changeOccurred = true;</span>
+<span class="nc" id="L156">        queue.add(this.getRepaintSpace());</span>
+<span class="nc" id="L157">        return queue;</span>
+    }
+
+    //
+    private ArrayList&lt;SurfaceRepaintSpace&gt; moveCircularBy(double[] data, Surface Surface) {
+<span class="nc" id="L162">        ArrayList&lt;SurfaceRepaintSpace&gt; queue = new ArrayList&lt;SurfaceRepaintSpace&gt;();</span>
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        if (data[0] &lt; 1e-3) return queue;</span>
+<span class="nc" id="L164">        double alpha = data[0];</span>
+<span class="nc" id="L165">        double centerX = data[1];</span>
+<span class="nc" id="L166">        double centerY = data[2];</span>
+<span class="nc" id="L167">        double vecX = _X - centerX;</span>
+<span class="nc" id="L168">        double vecY = _Y - centerY;</span>
+        //double unitRadius = Math.pow((Math.pow(vecX, 2) + Math.pow(vecY, 2)), 0.5);
+<span class="nc" id="L170">        queue.add(this.getRepaintSpace());</span>
+<span class="nc" id="L171">        vecX = Math.cos(alpha) * vecX - Math.sin(alpha) * vecY;</span>
+<span class="nc" id="L172">        vecY = Math.cos(alpha) * vecY + Math.sin(alpha) * vecX;</span>
+<span class="nc" id="L173">        _X = centerX + vecX;</span>
+<span class="nc" id="L174">        _Y = centerY + vecY;</span>
+<span class="nc bnc" id="L175" title="All 4 branches missed.">        if (queue.get(0).X == _X &amp;&amp; queue.get(0).Y == _Y) {</span>
+<span class="nc" id="L176">            queue.remove(0);</span>
+<span class="nc" id="L177">            return queue;</span>
+        }
+<span class="nc" id="L179">        _changeOccurred = true;</span>
+<span class="nc" id="L180">        queue.add(this.getRepaintSpace());</span>
+<span class="nc" id="L181">        return queue;</span>
+    }
+
+    public ArrayList&lt;SurfaceRepaintSpace&gt; updateOn(double centerX, double centerY, double hostRadius) {
+<span class="fc" id="L185">        ArrayList&lt;SurfaceRepaintSpace&gt; queue = new ArrayList&lt;SurfaceRepaintSpace&gt;();</span>
+<span class="fc" id="L186">        queue.add(this.getRepaintSpace());</span>
+
+<span class="fc" id="L188">        _X += _velX;</span>
+<span class="fc" id="L189">        _Y += _velY;</span>
+<span class="fc" id="L190">        _velX *= 0.8;</span>
+<span class="fc" id="L191">        _velY *= 0.8;</span>
+
+<span class="fc" id="L193">        hostRadius *= this.getInputNodeOrbitModFrom(hostRadius);</span>
+<span class="fc" id="L194">        double vecX = _X - centerX;</span>
+<span class="fc" id="L195">        double vecY = _Y - centerY;</span>
+<span class="fc" id="L196">        double l = lengthOf(vecX, vecY);</span>
+<span class="fc" id="L197">        _X = centerX + (vecX / l) * hostRadius;</span>
+<span class="fc" id="L198">        _Y = centerY + (vecY / l) * hostRadius;</span>
+<span class="fc bfc" id="L199" title="All 4 branches covered.">        if (queue.get(0).X - _X &lt; 1e-3 &amp;&amp; queue.get(0).Y - _Y &lt; 1e-3) {</span>
+<span class="fc" id="L200">            queue.remove(0);</span>
+<span class="fc" id="L201">            return queue;</span>
+        }
+<span class="fc" id="L203">        _changeOccurred = true;</span>
+<span class="fc" id="L204">        queue.add(this.getRepaintSpace());</span>
+<span class="fc" id="L205">        return queue;</span>
+    }
+
+
+    public boolean changeOccured() {
+<span class="fc" id="L210">        return _changeOccurred;</span>
+    }
+
+    public void noticeChange() {
+<span class="nc" id="L214">        _changeOccurred = true;</span>
+<span class="nc" id="L215">    }</span>
+
+    public void forgetChange() {
+<span class="fc" id="L218">        _changeOccurred = false;</span>
+<span class="fc" id="L219">    }</span>
+
+    //===================================================================================================
+    public boolean testFor(double x, double y) {
+<span class="nc" id="L223">        double d = Math.pow((Math.pow((x - _X), 2) + Math.pow((y - _Y), 2)), 0.5);</span>
+<span class="nc" id="L224">        double radius = _radius;//getInputNodeRadiusFrom(unitRadius);</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">        if (d &lt;= radius) {</span>
+<span class="nc" id="L226">            return true;</span>
+        }
+<span class="nc" id="L228">        return false;</span>
+    }
+    //==========================================================================================================
+
+    public ArrayList&lt;SurfaceRepaintSpace&gt; moveDirectional(double[] data, Surface Surface) {
+<span class="fc" id="L233">        double startX = data[0];</span>
+<span class="fc" id="L234">        double startY = data[1];</span>
+<span class="fc" id="L235">        double targX = data[2];</span>
+<span class="fc" id="L236">        double targY = data[3];</span>
+<span class="fc" id="L237">        ArrayList&lt;SurfaceRepaintSpace&gt; queue = new ArrayList&lt;SurfaceRepaintSpace&gt;();</span>
+<span class="fc" id="L238">        queue.add(getRepaintSpace());</span>
+        //queue.getFrom(0).dY+=100;
+<span class="fc" id="L240">        double vecX = targX - startX;</span>
+<span class="fc" id="L241">        double vecY = targY - startY;</span>
+<span class="fc" id="L242">        _X += vecX;</span>
+<span class="fc" id="L243">        _Y += vecY;</span>
+<span class="fc" id="L244">        queue.add(getRepaintSpace());</span>
+<span class="fc" id="L245">        return queue;</span>
+    }
+
+    public double getX() {
+<span class="fc" id="L249">        return _X;</span>
+    }
+
+    public double getY() {
+<span class="fc" id="L253">        return _Y;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
