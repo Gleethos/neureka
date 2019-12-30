@@ -8,10 +8,8 @@ public class Neureka
         return Device.find(name);
     }
 
-
-
     public static String version(){
-        return "0.0.0";
+        return "0.0.1";
     }
 
     public static class Settings

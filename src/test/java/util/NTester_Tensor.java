@@ -120,7 +120,7 @@ public class NTester_Tensor extends NTester
     }
 
     public int testTensBroadcast(int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd){
-        printSessionStart("Test Tsr.indexing: tensor broadcast_template");
+        printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
         int[] drnMxd  = Tsr.fcn.indexing.shpOfBrc(frstShp, scndShp);
         double[] rsltData = new double[Tsr.fcn.indexing.szeOfShp(drnMxd)];
         CPU.exec.broadcast_multiply(
@@ -138,7 +138,7 @@ public class NTester_Tensor extends NTester
             double[] frstData, double[] scondData, double[] drnData,
             double[] expctd, boolean first
     ){
-        printSessionStart("Test Tsr.indexing: tensor broadcast_template");
+        printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
         int[] drnMxd  = Tsr.fcn.indexing.shpOfBrc(frstShp, scndShp);
         CPU.exec.broadcast_multiply_inverse(//inv
                 new Tsr(frstShp, frstData),
