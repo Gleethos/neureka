@@ -2,8 +2,8 @@
 //-----------------------------------------------------------------
 
 plugins {
-    id 'jacoco'
     id 'java'
+    id 'jacoco'
     id 'idea'
     id 'groovy'
 }
@@ -32,7 +32,7 @@ dependencies {
 jacoco {
     toolVersion = "0.8.5"
     //reportsDir = file("build/reports/coverage")
-    reportsDir = file("docs/coverage")
+    //reportsDir = file("docs/coverage")
 }
 
 jacocoTestReport {
