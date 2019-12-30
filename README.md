@@ -26,15 +26,15 @@ Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/ra
 
 ---  
 
-# Features! #
+## Features! ##
 
-- Dynamic computation graph.
+  - Dynamic computation graph.
 
-- Auto differentiation (forwards/backwards).
+  - Auto differentiation (forwards/backwards).
 
-- N-dimensional tensor convolution.
+  - N-dimensional tensor convolution.
 
-- slicing.
+  - slicing.
 
 Take a look:
 ```
@@ -126,6 +126,7 @@ GPU execution:
 ---
 
 ## Tech ##
+
 This library is heavily inspired by [PyTorch](https://github.com/pytorch/pytorch).
 A powerful deep learning framework that combines
 [dynamic computation](https://medium.com/@omaraymanomar/dynamic-vs-static-computation-graph-2579d1934ecf), performance and debugging freedom!
@@ -186,7 +187,7 @@ Feedback is greatly appreciated!
 
 ## Todos ##
 
-- Make a wish! :)
+  - Make a wish! :)
 
 ---
 
