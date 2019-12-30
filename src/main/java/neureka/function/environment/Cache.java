@@ -5,7 +5,6 @@ import neureka.function.factory.autograd.GraphLock;
 import neureka.function.factory.autograd.GraphNode;
 import neureka.function.Function;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.WeakHashMap;
@@ -13,7 +12,7 @@ import java.util.function.Supplier;
 
 public class Cache
 {
-    private final Map<String, Function> FUNCTIONS = new WeakHashMap<>();//new HashMap<>();
+    private final Map<String, Function> FUNCTIONS = new WeakHashMap<>();
 
     public synchronized Map<String, Function> FUNCTIONS(){
         return this.FUNCTIONS;
@@ -65,9 +64,7 @@ public class Cache
 
     private synchronized Tsr _get(GraphNode node, int d, int j)
     {
-        d = (d>=0)?d+1:d;
-        j = (j>=0)?j+1:j;
-        long key = node.nid()+d*31+j;
+        long key = node.nid()+_keyed(d)*31+_keyed(j);
         if(PROCESSING.containsKey(node.lock())){
             if(PROCESSING.get(node.lock()).containsKey(key)){
                 return PROCESSING.get(node.lock()).get(key);
@@ -78,9 +75,7 @@ public class Cache
 
     private synchronized void _put(Tsr t, GraphNode node, int d, int j)
     {
-        d = (d>=0)?d+1:d;
-        j = (j>=0)?j+1:j;
-        long key = node.nid()+d*31+j;
+        long key = node.nid()+_keyed(d)*31+_keyed(j);
         if(node.isCachable()) {
             TreeMap<Long, Tsr> variables;
             if (!PROCESSING.containsKey(node.lock())) {
@@ -91,6 +86,10 @@ public class Cache
             }
             variables.put(key, t);
         }
+    }
+
+    private int _keyed(int number){
+        return (number>=0)?number+1:number;
     }
 
 }

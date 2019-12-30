@@ -14,15 +14,12 @@ public class FunctionBuilder {
      * @param doAD
      * @return
      */
-    public static Function build(int f_id, int size, boolean doAD)
-    {
-        if (f_id == 18){
+    public static Function build(int f_id, int size, boolean doAD) {
+        if (f_id == 18) {
             size = 2;
-        } else if(Function.TYPES.REGISTER[f_id]==","){
+        } else if (Function.TYPES.REGISTER[f_id] == ",") {
             ArrayList<Function> srcs = new ArrayList<>();
-            for(int i=0; i<size; i++){
-                srcs.add(new FInput().newBuild(""+i));
-            }
+            for (int i = 0; i < size; i++) srcs.add(new FInput().newBuild("" + i));
             return FunctionConstructor.construct(f_id, srcs, doAD);
         }
         if (f_id < 10) {
@@ -40,35 +37,35 @@ public class FunctionBuilder {
 
     /**
      * @param expression contains the function as String provided by the user
-     * @param doAD is used to turn autograd on or off for this function
+     * @param doAD       is used to turn autograd on or off for this function
      * @return the function which has been built from the expression
      */
     public static Function build(String expression, boolean doAD) {
         expression =
-            (expression.length()>0
-                    && (expression.charAt(0) != '('||expression.charAt(expression.length() - 1) != ')'))
+                (expression.length() > 0
+                        && (expression.charAt(0) != '(' || expression.charAt(expression.length() - 1) != ')'))
                         ? ("(" + expression + ")")
                         : expression;
-        String k = (doAD)?"d"+expression:expression;
+        String k = (doAD) ? "d" + expression : expression;
         if (Function.CACHE.FUNCTIONS().containsKey(k)) {
             return Function.CACHE.FUNCTIONS().get(k);
         }
         Function built = _build(expression, doAD);//, tipReached);
         if (built != null) {
-            Function.CACHE.FUNCTIONS().put(((doAD)?"d":"")+"(" + built.toString() + ")", built);
+            Function.CACHE.FUNCTIONS().put(((doAD) ? "d" : "") + "(" + built.toString() + ")", built);
         }
         return built;
     }
 
     /**
      * @param expression is a blueprint String for the function builder
-     * @param doAD enables or disables autograd for this function
+     * @param doAD       enables or disables autograd for this function
      * @return a function which has been built by the given expression
      */
-    private static Function _build(String expression, boolean doAD){
+    private static Function _build(String expression, boolean doAD) {
         expression = expression
-                        .replace("<<", ""+((char)171))
-                        .replace(">>", ""+((char)187));
+                .replace("<<", "" + ((char) 171))
+                .replace(">>", "" + ((char) 187));
         expression = expression
                 .replace("<-", "<")
                 .replace("->", ">");
@@ -86,23 +83,19 @@ public class FunctionBuilder {
         while (i < expression.length()) {
             final String newComponent = FunctionParser.parsedComponent(expression, i);
             if (newComponent != null) {
-                if (Components.size() <= Operations.size()) {
-                    Components.add(newComponent);
-                }
+                if (Components.size() <= Operations.size()) Components.add(newComponent);
                 i += newComponent.length();
                 final String newOperation = FunctionParser.parsedOperation(expression, i);
                 if (newOperation != null) {
                     i += newOperation.length();
-                    if (newOperation.length() <= 0) {
-                        continue;
-                    }
+                    if (newOperation.length() <= 0) continue;
                     Operations.add(newOperation);
                 }
             } else {
                 ++i;
             }
         }
-        //===
+        //---
         int Count = Function.TYPES.REGISTER.length;
         for (int j = Function.TYPES.REGISTER.length; j > 0; --j) {
             if (!FunctionParser.containsOperation(Function.TYPES.REGISTER[j - 1], Operations)) {
@@ -165,7 +158,7 @@ public class FunctionBuilder {
             }
             ++ID;
         }//closed while(ID < Count)
-        //---------------------------------------------------------
+
         // identifying function id:
         int f_id = 0;
         if (Operations.size() >= 1) {
@@ -178,18 +171,17 @@ public class FunctionBuilder {
         // building sources and function:
         if (Components.size() == 1) {
             String possibleFunction = FunctionParser.parsedOperation(Components.get(0).toLowerCase(), 0);
-            if (possibleFunction != null) {
-                if (possibleFunction.length() > 1) {
-                    for (int Oi = 0; Oi < Function.TYPES.REGISTER.length; Oi++) {
-                        if (Function.TYPES.REGISTER[Oi].equals(possibleFunction)) {
-                            f_id = Oi;
-                            Function newCore = FunctionBuilder.build(
-                                    FunctionParser.parsedComponent(Components.get(0), possibleFunction.length()), doAD
-                                );
-                            sources.add(newCore);
-                            function = FunctionConstructor.construct(f_id, sources, doAD);
-                            return function;
-                        }
+            if (possibleFunction != null && possibleFunction.length() > 1) {
+
+                for (int Oi = 0; Oi < Function.TYPES.REGISTER.length; Oi++) {
+                    if (Function.TYPES.REGISTER[Oi].equals(possibleFunction)) {
+                        f_id = Oi;
+                        Function newCore = FunctionBuilder.build(
+                                FunctionParser.parsedComponent(Components.get(0), possibleFunction.length()), doAD
+                        );
+                        sources.add(newCore);
+                        function = FunctionConstructor.construct(f_id, sources, doAD);
+                        return function;
                     }
                 }
             }
@@ -209,10 +201,10 @@ public class FunctionBuilder {
             String cleaned = FunctionParser.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =>Cleaning!
             String raw = component.replace(cleaned, "");
             String assumed = FunctionParser.assumptionBasedOn(raw);
-            if(assumed==null){
+            if (assumed == null) {
                 component = cleaned;
             } else {
-                component = assumed+cleaned;
+                component = assumed + cleaned;
             }
             Function newBuild;
             newBuild = FunctionBuilder.build(component, doAD);
@@ -220,24 +212,23 @@ public class FunctionBuilder {
         } else {// More than one component left:
             if (Function.TYPES.REGISTER[f_id].equals("x") || Function.TYPES.REGISTER[f_id].equals("<") || Function.TYPES.REGISTER[f_id].equals(">")) {
                 Components = _rebindPairwise(Components, f_id);
-            }else if(Function.TYPES.REGISTER[f_id].equals(",")){
-                if(Components.get(0).startsWith("[")){
-                    Components.set(0,Components.get(0).substring(1));
-                    String[] splitted;
-                    if(Components.get(Components.size()-1).contains("]")){
-                        int offset = 1;
-                        if(Components.get(Components.size()-1).contains("]:")){
-                            offset = 2;
-                            splitted = Components.get(Components.size()-1).split("]:");
-                        }else{
-                            splitted = Components.get(Components.size()-1).split("]");
-                        }
-                        if(splitted.length>1){
-                            splitted = new String[]{splitted[0], Components.get(Components.size()-1).substring(splitted[0].length()+offset)};
-                            Components.remove(Components.size()-1);
-                            for(String part : splitted){
-                                Components.add(part);
-                            }
+            } else if (Function.TYPES.REGISTER[f_id].equals(",") && Components.get(0).startsWith("[")) {
+
+                Components.set(0, Components.get(0).substring(1));
+                String[] splitted;
+                if (Components.get(Components.size() - 1).contains("]")) {
+                    int offset = 1;
+                    if (Components.get(Components.size() - 1).contains("]:")) {
+                        offset = 2;
+                        splitted = Components.get(Components.size() - 1).split("]:");
+                    } else {
+                        splitted = Components.get(Components.size() - 1).split("]");
+                    }
+                    if (splitted.length > 1) {
+                        splitted = new String[]{splitted[0], Components.get(Components.size() - 1).substring(splitted[0].length() + offset)};
+                        Components.remove(Components.size() - 1);
+                        for (String part : splitted) {
+                            Components.add(part);
                         }
                     }
                 }
@@ -249,17 +240,11 @@ public class FunctionBuilder {
                 sources.add(newCore2);
             }
             sources.trimToSize();
-            if (sources.size() == 1) {
-                return sources.get(0);
-            }
-            if (sources.size() == 0) {
-                return null;
-            }
+            if (sources.size() == 1) return sources.get(0);
+            if (sources.size() == 0) return null;
             ArrayList<Function> newVariable = new ArrayList<Function>();
             for (int Vi = 0; Vi < sources.size(); Vi++) {
-                if (sources.get(Vi) != null) {
-                    newVariable.add(sources.get(Vi));
-                }
+                if (sources.get(Vi) != null) newVariable.add(sources.get(Vi));
             }
             sources = newVariable;
             function = FunctionConstructor.construct(f_id, sources, doAD);
@@ -282,9 +267,5 @@ public class FunctionBuilder {
         }
         return components;
     }
-    //============================================================================================================================================================================================
-
-
-
 
 }
