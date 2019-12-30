@@ -1,33 +1,40 @@
-# [NEUREKA](https://gleethos.github.io/neureka/index.html) - [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6bfd22ba9b8c410285b19e3d37f4fbc6)](https://www.codacy.com/manual/Gleethos/neureka?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Gleethos/neureka&amp;utm_campaign=Badge_Grade) - [![Build Status](https://travis-ci.com/Gleethos/neureka.svg?branch=master)](https://travis-ci.org/gleethos/neureka) - [![Code Coverage](https://img.shields.io/codecov/c/github/gleethos/neureka)](https://codecov.io/github/gleethos/neureka) - [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  
+# [NEUREKA](https://gleethos.github.io/neureka/index.html) - [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6bfd22ba9b8c410285b19e3d37f4fbc6)](https://www.codacy.com/manual/Gleethos/neureka?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Gleethos/neureka&amp;utm_campaign=Badge_Grade) - [![Build Status](https://travis-ci.com/Gleethos/neureka.svg?branch=master)](https://travis-ci.org/gleethos/neureka) - [![Code Coverage](https://img.shields.io/codecov/c/github/gleethos/neureka)](https://codecov.io/github/gleethos/neureka) - [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  #
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-java.svg)](https://forthebadge.com) 
 [![forthebadge](https://forthebadge.com/images/badges/built-with-swag.svg)](https://forthebadge.com) 
 [![forthebadge](https://forthebadge.com/images/badges/for-you.svg)](https://forthebadge.com) 
 [![forthebadge](https://forthebadge.com/images/badges/certified-elijah-wood.svg)](https://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/check-it-out.svg)](https://forthebadge.com)
+
 ---
 
 Neureka is a platform independent deep-learning library written in Java. 
 
-  - Java, Kotlin, Groovy, Jython, Scala... 
-  - OpenCL accelerated.
-  - N-Dimensional Tensors.
-  - Flexible Tensor indexing and slicing.
+- Java, Kotlin, Groovy, Jython, Scala...
+ 
+- OpenCL accelerated.
+
+- N-Dimensional Tensors.
+
+- Flexible Tensor indexing and slicing.
   
-  Visit [Neurekas homepage](https://gleethos.github.io/neureka/index.html) for more information!
+Visit [Neurekas homepage](https://gleethos.github.io/neureka/index.html) for more information!
   
-  Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/raw/master/production/neureka-0.0.1.jar)
+Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/raw/master/production/neureka-0.0.1.jar)
   
 [![Beerpay](https://beerpay.io/Gleethos/neureka/badge.svg?style=beer-square)](https://beerpay.io/Gleethos/neureka)  [![Beerpay](https://beerpay.io/Gleethos/neureka/make-wish.svg?style=flat-square)](https://beerpay.io/Gleethos/neureka?focus=wish)
 
 ---  
 
-# Features!
+# Features! #
 
-  - Dynamic computation graph.
-  - Auto differentiation (forwards/backwards).
-  - N-dimensional tensor convolution.
-  - slicing.
+- Dynamic computation graph.
+
+- Auto differentiation (forwards/backwards).
+
+- N-dimensional tensor convolution.
+
+- slicing.
 
 Take a look:
 ```
@@ -116,7 +123,9 @@ GPU execution:
          * */
 ```
 
-### Tech
+---
+
+## Tech ##
 This library is heavily inspired by [PyTorch](https://github.com/pytorch/pytorch).
 A powerful deep learning framework that combines
 [dynamic computation](https://medium.com/@omaraymanomar/dynamic-vs-static-computation-graph-2579d1934ecf), performance and debugging freedom!
@@ -141,19 +150,29 @@ the fact that Java itself is among the most dominant platforms.
 
 [What Java needs for true Machine / Deep Learning support.](https://medium.com/@hsheil/what-java-needs-for-true-machine-deep-learning-support-1571ffdbb594)
 
-#### Building for source
+---
+
+## Building from source ##
 
 Execute the following:
 ```sh
 $ gradlew build
 ```
 
-### Dependencies
+Jar file:
+```sh
+$ gradlew jar
+```
 
-Neureka uses OpenCl.
+---
 
+## Dependencies ##
 
-### Development
+Neureka uses OpenCl (JOCL binding).
+
+---
+
+## Development ##
 
 Want to contribute? Great!
 
@@ -163,13 +182,15 @@ of this project to understand what Neureka is supposed to be!
 
 Feedback is greatly appreciated!
 
-### Todos
+---
 
- - Make a wish! :)
+## Todos ##
 
-### License
+- Make a wish! :)
 
-----
+---
+
+## License ##
 
 **It's Free!** ... 
 
@@ -181,3 +202,5 @@ Feedback is greatly appreciated!
 Hey dude! Help me out for a couple of :beers:!
 
 [![Beerpay](https://beerpay.io/Gleethos/neureka/badge.svg?style=beer-square)](https://beerpay.io/Gleethos/neureka)  [![Beerpay](https://beerpay.io/Gleethos/neureka/make-wish.svg?style=flat-square)](https://beerpay.io/Gleethos/neureka?focus=wish)
+
+---
