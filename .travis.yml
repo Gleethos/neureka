@@ -12,9 +12,6 @@ env:
 
 before_install:
   - chmod +x gradlew
-  #- sudo apt-get update
-  #- sudo apt install ocl-icd-opencl-dev
-  #- sudo apt-get -qq update
 
 script:
   - chmod +x gradlew
@@ -24,4 +21,4 @@ script:
   
 after_success:
   - if [ -e ./gradlew ]; then ./gradlew jacocoTestReport;else gradle jacocoTestReport;fi
-  - bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash) -f docs/coverage/test/jacocoTestReport.xml

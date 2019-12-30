@@ -32,13 +32,12 @@ dependencies {
 jacoco {
     toolVersion = "0.8.5"
     //reportsDir = file("build/reports/coverage")
-    //reportsDir = file("docs/coverage")
-    reportsDir = file(".")
+    reportsDir = file("docs/coverage")
 }
 
 jacocoTestReport {
-    reports {
-        xml.enabled false
+    reports {xml
+        xml.enabled true
         csv.enabled false
         //html.destination file("build/reports/coverage/jacocoHtml")
     }
