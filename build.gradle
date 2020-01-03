@@ -16,7 +16,10 @@ version '0.0.1'
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
-repositories { mavenCentral() }
+repositories {
+    mavenCentral()
+    jcenter { url "http://jcenter.bintray.com/" }
+}
 
 //-----------------------------------------------------------------
 

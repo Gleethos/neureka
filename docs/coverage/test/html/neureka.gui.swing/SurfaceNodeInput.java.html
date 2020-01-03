@@ -90,7 +90,7 @@ public class SurfaceNodeInput implements SurfaceObject{
 <span class="fc" id="L90">        brush.setColor(Color.BLACK);</span>
 <span class="fc" id="L91">        brush.fillOval((int) (_X - (radius * 0.72)), (int) (_Y - (radius * 0.72)), (int) (radius * 0.72) * 2, (int) (radius * 0.72) * 2);</span>
 <span class="pc bpc" id="L92" title="2 of 4 branches missed.">        if (transparancy &gt; 0.01 &amp;&amp; display.length() &gt; 0) {</span>
-<span class="fc bfc" id="L93" title="All 2 branches covered.">            if (transparancy &gt; 1) {</span>
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">            if (transparancy &gt; 1) {</span>
 <span class="fc" id="L94">                transparancy = 1;</span>
             }
 <span class="fc" id="L96">            brush.setColor(</span>
@@ -99,13 +99,13 @@ public class SurfaceNodeInput implements SurfaceObject{
 <span class="fc" id="L99">                            (int) (Color.CYAN.getGreen() * transparancy),</span>
 <span class="fc" id="L100">                            (int) (Color.CYAN.getBlue() * transparancy))</span>
             );
-<span class="pc bpc" id="L102" title="1 of 4 branches missed.">            switch (display) {</span>
+<span class="pc bpc" id="L102" title="2 of 4 branches missed.">            switch (display) {</span>
                 case &quot;+&quot;:
 <span class="fc" id="L104">                    DrawUtils.IconPlus(_X, _Y, _radius * 0.85, brush);</span>
 <span class="fc" id="L105">                    break;</span>
                 case &quot;*&quot;:
-<span class="fc" id="L107">                    DrawUtils.IconStar(_X, _Y, _radius * 0.85, brush);</span>
-<span class="fc" id="L108">                    break;</span>
+<span class="nc" id="L107">                    DrawUtils.IconStar(_X, _Y, _radius * 0.85, brush);</span>
+<span class="nc" id="L108">                    break;</span>
                 case &quot;tanh&quot;:
 <span class="fc" id="L110">                    DrawUtils.IconSigmoidBase(_X, _Y, brush, 1, radius*0.00525);</span>
 <span class="fc" id="L111">                    break;</span>
@@ -216,12 +216,12 @@ public class SurfaceNodeInput implements SurfaceObject{
 
     //===================================================================================================
     public boolean testFor(double x, double y) {
-<span class="fc" id="L219">        double d = Math.pow((Math.pow((x - _X), 2) + Math.pow((y - _Y), 2)), 0.5);</span>
-<span class="fc" id="L220">        double radius = _radius;//getInputNodeRadiusFrom(unitRadius);</span>
-<span class="pc bpc" id="L221" title="1 of 2 branches missed.">        if (d &lt;= radius) {</span>
+<span class="nc" id="L219">        double d = Math.pow((Math.pow((x - _X), 2) + Math.pow((y - _Y), 2)), 0.5);</span>
+<span class="nc" id="L220">        double radius = _radius;//getInputNodeRadiusFrom(unitRadius);</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">        if (d &lt;= radius) {</span>
 <span class="nc" id="L222">            return true;</span>
         }
-<span class="fc" id="L224">        return false;</span>
+<span class="nc" id="L224">        return false;</span>
     }
     //==========================================================================================================
 

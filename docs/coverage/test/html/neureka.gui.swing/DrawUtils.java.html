@@ -16,21 +16,21 @@ import java.awt.geom.RoundRectangle2D;
 
     public static void IconStar(double x, double y, double r, Graphics2D brush)
     {
-<span class="fc" id="L19">        RoundRectangle2D rec = new RoundRectangle2D.Double(</span>
+<span class="nc" id="L19">        RoundRectangle2D rec = new RoundRectangle2D.Double(</span>
                 (x - (r / 10)),
                 (y - r * 0.650),
                 (2* r / 10),
                 (1* r * 0.75),
                 (r * 0.4), (r * 0.4)
         );
-<span class="fc" id="L26">        int n = 5;</span>
-<span class="fc" id="L27">        double theta = 2*Math.PI/n;</span>
-<span class="fc bfc" id="L28" title="All 2 branches covered.">        for(int i=0; i&lt;n; i++){</span>
-<span class="fc" id="L29">            brush.fill(rec);</span>
-<span class="fc bfc" id="L30" title="All 2 branches covered.">            brush.rotate(((i==n-1)?-n+1:1)*theta, x, y);</span>
+<span class="nc" id="L26">        int n = 5;</span>
+<span class="nc" id="L27">        double theta = 2*Math.PI/n;</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">        for(int i=0; i&lt;n; i++){</span>
+<span class="nc" id="L29">            brush.fill(rec);</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">            brush.rotate(((i==n-1)?-n+1:1)*theta, x, y);</span>
 
         }
-<span class="fc" id="L33">    }</span>
+<span class="nc" id="L33">    }</span>
 
     public static void IconPlus(double x, double y, double r, Graphics2D brush){
 <span class="fc" id="L36">        Rectangle2D rec = new Rectangle2D.Double(</span>
