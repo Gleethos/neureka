@@ -195,11 +195,14 @@ public class GraphSurfaceBuilder
                         double cy = this.ChosenInputNode.getY();
                         double sx = surface.realLastSenseX();
                         double sy = surface.realLastSenseY();
-                        SurfaceRepaintSpace space = new SurfaceRepaintSpace((cx + sx) / 2, (cy + sy) / 2, Math.abs(cx - sx) / 2, Math.abs(cy - sy) / 2);
-                        ArrayList<SurfaceRepaintSpace> queue = surface.getRepaintQueue();
-                        queue = (queue == null) ? new ArrayList<>() : queue;
-                        queue.add(space);
-                        surface.setRepaintQueue(queue);
+                        //SurfaceRepaintSpace space = new SurfaceRepaintSpace(
+                        //        (cx + sx) / 2,
+                        //        (cy + sy) / 2,
+                        //        Math.abs(cx - sx) / 2,
+                        //        Math.abs(cy - sy) / 2,
+                        //        null
+                        //);
+                        //surface.layers()[10].add(space);
                     }
                     surface.setLastSenseX(x);
                     surface.setLastSenseY(y);
@@ -214,20 +217,15 @@ public class GraphSurfaceBuilder
                         surface.setFocusObject(surface.findObject(surface.realX(Swipe[0]), surface.realY(Swipe[1]), true, null));
 
                         if (surface.getFocusObject() != null) {
-                            ArrayList<SurfaceRepaintSpace> RepaintQueue = surface.getRepaintQueue();
-                            if (RepaintQueue == null) {
-                                RepaintQueue = new ArrayList<SurfaceRepaintSpace>();
-                            }
 
                             surface.setLastSenseX(Swipe[2]);
                             surface.setLastSenseY(Swipe[3]);
 
                             double[] data = {surface.realX(Swipe[0]), surface.realY(Swipe[1]), surface.realX(Swipe[2]), surface.realY(Swipe[3])};
-                            RepaintQueue.addAll(surface.getFocusObject().moveDirectional(data, surface));
-                            surface.setRepaintQueue(RepaintQueue);
+                            surface.getFocusObject().moveDirectional(data, surface);
+
                             Swipe[0] = Swipe[2];
                             Swipe[1] = Swipe[3];
-                            Swipe = null;
                             return;
                         }
                         if (surface.getFocusObject() == null) {

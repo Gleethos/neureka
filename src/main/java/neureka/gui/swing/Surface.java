@@ -1,7 +1,14 @@
 package neureka.gui.swing;
 
+import java.awt.*;
+import java.util.List;
+
 public interface Surface
 {
+
+	public interface ObjectPainter{
+		void paint(Graphics2D brush);
+	}
 	//Interaction:
 	//--------------------------------------------------------------------------------------------------------------------------------
 		public void doubleClickedAt(int x, int y);
@@ -38,5 +45,9 @@ public interface Surface
 		public void setMap(AbstractSpaceMap newMap);
 		
 		public void releasedAt(int x, int y);
-	
+
+		public List<ObjectPainter>[] layers();
+
+		public SurfaceRepaintSpace getCurrentFrameSpace();
+
 }

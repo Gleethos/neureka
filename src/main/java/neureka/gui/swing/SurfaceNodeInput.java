@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 
-public class SurfaceNodeInput {
+public class SurfaceNodeInput implements SurfaceObject{
 
     private boolean _isActive = false;
     private boolean _changeOccurred = false;
@@ -59,9 +59,12 @@ public class SurfaceNodeInput {
         return Math.pow(Math.pow(vecX, 2) + Math.pow(vecY, 2), 0.5);
     }
 
+    @Override
     public SurfaceRepaintSpace getRepaintSpace() {
         double radius = 1.1 * _radius;//getInputNodeRadiusFrom(unitRadius);
-        return new SurfaceRepaintSpace(_X, _Y, radius, radius);
+        return new SurfaceRepaintSpace(
+                _X-radius, _Y-radius, _X+radius, _Y+radius
+                );
     }
 
     public void paint(Graphics2D brush) {
@@ -128,9 +131,11 @@ public class SurfaceNodeInput {
         _isActive = active;
     }
 
-    public ArrayList<SurfaceRepaintSpace> moveCircular(double[] data, Surface Surface) {
+    @Override
+    public void moveCircular(double[] data, Surface Surface) {
         if (data.length == 3) {
-            return moveCircularBy(data, Surface);
+           moveCircularBy(data, Surface);
+           return;
         }
         double centerX = data[0];
         double centerY = data[1];
@@ -142,49 +147,50 @@ public class SurfaceNodeInput {
         double newVecY = y - centerY;
         double alpha = -1 * (Math.atan2(vecX, vecY) - Math.atan2(newVecY, newVecX));
 
-        ArrayList<SurfaceRepaintSpace> queue = new ArrayList<SurfaceRepaintSpace>();
-        queue.add(this.getRepaintSpace());
+        //ArrayList<SurfaceRepaintSpace> queue = new ArrayList<SurfaceRepaintSpace>();
+        //queue.add(
+        //    Surface.layers()[7].add(getRepaintSpace(Surface));
+        //);
         vecX = Math.cos(alpha) * vecX - Math.sin(alpha) * vecY;
         vecY = Math.cos(alpha) * vecY + Math.sin(alpha) * vecX;
         _X = centerX + vecX;
         _Y = centerY + vecY;
-        if (queue.get(0).X == _X && queue.get(0).Y == _Y) {
-            queue.remove(0);
-            return queue;
-        }
+        //if (queue.get(0).X == _X && queue.get(0).Y == _Y) {
+        //    queue.remove(0);
+        //    return queue;
+        //}
         _changeOccurred = true;
-        queue.add(this.getRepaintSpace());
-        return queue;
+        //queue.add(this.getRepaintSpace());
+        //Surface.layers()[7].add(getRepaintSpace(Surface));
+        //return queue;
     }
 
     //
-    private ArrayList<SurfaceRepaintSpace> moveCircularBy(double[] data, Surface Surface) {
-        ArrayList<SurfaceRepaintSpace> queue = new ArrayList<SurfaceRepaintSpace>();
-        if (data[0] < 1e-3) return queue;
+    private void moveCircularBy(double[] data, Surface Surface) {
+        //ArrayList<SurfaceRepaintSpace> queue = new ArrayList<SurfaceRepaintSpace>();
+        if (data[0] < 1e-3) return;// queue;
         double alpha = data[0];
         double centerX = data[1];
         double centerY = data[2];
         double vecX = _X - centerX;
         double vecY = _Y - centerY;
-        //double unitRadius = Math.pow((Math.pow(vecX, 2) + Math.pow(vecY, 2)), 0.5);
-        queue.add(this.getRepaintSpace());
         vecX = Math.cos(alpha) * vecX - Math.sin(alpha) * vecY;
         vecY = Math.cos(alpha) * vecY + Math.sin(alpha) * vecX;
         _X = centerX + vecX;
         _Y = centerY + vecY;
-        if (queue.get(0).X == _X && queue.get(0).Y == _Y) {
-            queue.remove(0);
-            return queue;
-        }
+        //if (queue.get(0).X == _X && queue.get(0).Y == _Y) {
+        //    queue.remove(0);
+        //    return queue;
+        //}
         _changeOccurred = true;
-        queue.add(this.getRepaintSpace());
-        return queue;
+        //queue.add(
+        //        Surface.layers()[7].add(
+        //        this.getRepaintSpace(Surface)
+        //    );
+        return;// queue;
     }
 
-    public ArrayList<SurfaceRepaintSpace> updateOn(double centerX, double centerY, double hostRadius) {
-        ArrayList<SurfaceRepaintSpace> queue = new ArrayList<SurfaceRepaintSpace>();
-        queue.add(this.getRepaintSpace());
-
+    public void updateOn(double centerX, double centerY, double hostRadius, Surface surface) {
         _X += _velX;
         _Y += _velY;
         _velX *= 0.8;
@@ -196,22 +202,12 @@ public class SurfaceNodeInput {
         double l = lengthOf(vecX, vecY);
         _X = centerX + (vecX / l) * hostRadius;
         _Y = centerY + (vecY / l) * hostRadius;
-        if (queue.get(0).X - _X < 1e-3 && queue.get(0).Y - _Y < 1e-3) {
-            queue.remove(0);
-            return queue;
-        }
         _changeOccurred = true;
-        queue.add(this.getRepaintSpace());
-        return queue;
     }
 
 
     public boolean changeOccured() {
         return _changeOccurred;
-    }
-
-    public void noticeChange() {
-        _changeOccurred = true;
     }
 
     public void forgetChange() {
@@ -229,28 +225,111 @@ public class SurfaceNodeInput {
     }
     //==========================================================================================================
 
-    public ArrayList<SurfaceRepaintSpace> moveDirectional(double[] data, Surface Surface) {
+    public void moveDirectional(double[] data, Surface Surface) {
         double startX = data[0];
         double startY = data[1];
         double targX = data[2];
         double targY = data[3];
-        ArrayList<SurfaceRepaintSpace> queue = new ArrayList<SurfaceRepaintSpace>();
-        queue.add(getRepaintSpace());
+        //ArrayList<SurfaceRepaintSpace> queue = new ArrayList<SurfaceRepaintSpace>();
+        //queue.add(getRepaintSpace(Surface));
+        //Surface.layers()[7].add(getRepaintSpace(Surface));
         //queue.getFrom(0).dY+=100;
         double vecX = targX - startX;
         double vecY = targY - startY;
         _X += vecX;
         _Y += vecY;
-        queue.add(getRepaintSpace());
-        return queue;
+        //queue.add(getRepaintSpace(Surface));
+        //Surface.layers()[7].add(getRepaintSpace(Surface));
+        //return queue;
     }
 
+    @Override
     public double getX() {
         return _X;
     }
 
+    @Override
     public double getY() {
         return _Y;
     }
+
+    @Override
+    public boolean killable() {
+        return false;
+    }
+
+    @Override
+    public boolean hasGripAt(double x, double y, Surface HostPanel) {
+        return false;
+    }
+
+    @Override
+    public void moveTo(double[] data, Surface Surface) {
+
+    }
+
+    @Override
+    public void updateOn(Surface HostPanel) {
+
+    }
+
+    @Override
+    public void movementAt(double x, double y, Surface HostPanel) {
+
+    }
+
+    @Override
+    public boolean clickedAt(double x, double y, Surface HostPanel) {
+        return false;
+    }
+
+    @Override
+    public boolean doubleClickedAt(double x, double y, Surface HostPanel) {
+        return false;
+    }
+
+    @Override
+    public double getRadius() {
+        return _radius;
+    }
+
+    @Override
+    public double getLeftPeripheral() {
+        return _X-_radius;
+    }
+
+    @Override
+    public double getTopPeripheral() {
+        return _Y+_radius;
+    }
+
+    @Override
+    public double getRightPeripheral() {
+        return _X+_radius;
+    }
+
+    @Override
+    public double getBottomPeripheral() {
+        return _Y-_radius;
+    }
+
+
+
+    @Override
+    public boolean needsRepaintOnLayer(int layerID) {
+        return false;
+    }
+
+    @Override
+    public void repaintLayer(int layerID, Graphics2D brush, Surface HostSurface) {
+
+    }
+
+    @Override
+    public int getLayerID() {
+        return 0;
+    }
+
+
 
 }

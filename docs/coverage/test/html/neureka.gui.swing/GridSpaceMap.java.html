@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GridSpaceMap.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.gui.swing</a> &gt; <span class="el_source">GridSpaceMap.java</span></div><h1>GridSpaceMap.java</h1><pre class="source lang-java linenums">package neureka.gui.swing;
 
-import javax.swing.text.Element;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -9,39 +8,39 @@ import java.util.*;
 
 public class GridSpaceMap extends AbstractSpaceMap {
 
-    AbstractSpaceMap TLNode, TRNode, BLNode, BRNode;
-    double X, Y;
-    double size;
-    LinkedList&lt;SurfaceObject&gt; Elements;
+    private AbstractSpaceMap TLNode, TRNode, BLNode, BRNode;
+    private double X, Y;
+    private double size;
+    private LinkedList&lt;SurfaceObject&gt; Elements;
     //CREATE : &quot;EDGE MAP&quot;
 
-<span class="fc" id="L18">    GridSpaceMap(double centerX, double centerY, double size) {</span>
-<span class="fc" id="L19">        X = centerX;</span>
-<span class="fc" id="L20">        Y = centerY;</span>
-<span class="fc" id="L21">        this.size = size;</span>
-<span class="fc" id="L22">        TLNode = null;</span>
-<span class="fc" id="L23">        TRNode = null;</span>
-<span class="fc" id="L24">        BLNode = null;</span>
-<span class="fc" id="L25">        BRNode = null;</span>
-<span class="fc" id="L26">        Elements = null;</span>
-<span class="fc" id="L27">    }</span>
+<span class="fc" id="L17">    public GridSpaceMap(double centerX, double centerY, double size) {</span>
+<span class="fc" id="L18">        X = centerX;</span>
+<span class="fc" id="L19">        Y = centerY;</span>
+<span class="fc" id="L20">        this.size = size;</span>
+<span class="fc" id="L21">        TLNode = null;</span>
+<span class="fc" id="L22">        TRNode = null;</span>
+<span class="fc" id="L23">        BLNode = null;</span>
+<span class="fc" id="L24">        BRNode = null;</span>
+<span class="fc" id="L25">        Elements = null;</span>
+<span class="fc" id="L26">    }</span>
     //------------------------------------------------------------------
 
     public void setTLNode(AbstractSpaceMap node) {
-<span class="nc" id="L31">        TLNode = node;</span>
-<span class="nc" id="L32">    }</span>
+<span class="fc" id="L30">        TLNode = node;</span>
+<span class="fc" id="L31">    }</span>
 
     public void setTRNode(AbstractSpaceMap node) {
-<span class="nc" id="L35">        TRNode = node;</span>
-<span class="nc" id="L36">    }</span>
+<span class="fc" id="L34">        TRNode = node;</span>
+<span class="fc" id="L35">    }</span>
 
     public void setBLNode(AbstractSpaceMap node) {
-<span class="fc" id="L39">        BLNode = node;</span>
-<span class="fc" id="L40">    }</span>
+<span class="fc" id="L38">        BLNode = node;</span>
+<span class="fc" id="L39">    }</span>
 
     public void setBRNode(AbstractSpaceMap node) {
-<span class="fc" id="L43">        BRNode = node;</span>
-<span class="fc" id="L44">    }</span>
+<span class="fc" id="L42">        BRNode = node;</span>
+<span class="fc" id="L43">    }</span>
     //------------------------------------------------------------------
     //==============================================================================
 
@@ -49,92 +48,92 @@ public class GridSpaceMap extends AbstractSpaceMap {
     //------------------------------------------------------------------
     @Override
     public synchronized AbstractSpaceMap addAndUpdate(SurfaceObject object) {
-<span class="fc" id="L52">        double LP = object.getLeftPeripheral();</span>
-<span class="fc" id="L53">        double RP = object.getRightPeripheral();</span>
-<span class="fc" id="L54">        double TP = object.getTopPeripheral();</span>
-<span class="fc" id="L55">        double BP = object.getBottomPeripheral();</span>
+<span class="fc" id="L51">        double LP = object.getLeftPeripheral();</span>
+<span class="fc" id="L52">        double RP = object.getRightPeripheral();</span>
+<span class="fc" id="L53">        double TP = object.getTopPeripheral();</span>
+<span class="fc" id="L54">        double BP = object.getBottomPeripheral();</span>
 
-<span class="fc" id="L57">        boolean isBranchable = true;</span>
-<span class="fc bfc" id="L58" title="All 4 branches covered.">        if (LP &lt;= X &amp;&amp; X &lt;= RP) {</span>
-<span class="fc" id="L59">            isBranchable = false;</span>
-<span class="fc bfc" id="L60" title="All 4 branches covered.">        } else if (TP &lt;= Y &amp;&amp; Y &lt;= BP) {</span>
-<span class="fc" id="L61">            isBranchable = false;</span>
+<span class="fc" id="L56">        boolean isBranchable = true;</span>
+<span class="fc bfc" id="L57" title="All 4 branches covered.">        if (LP &lt;= X &amp;&amp; X &lt;= RP) {</span>
+<span class="fc" id="L58">            isBranchable = false;</span>
+<span class="fc bfc" id="L59" title="All 4 branches covered.">        } else if (TP &lt;= Y &amp;&amp; Y &lt;= BP) {</span>
+<span class="fc" id="L60">            isBranchable = false;</span>
         }
 
-<span class="fc bfc" id="L64" title="All 2 branches covered.">        if ((Math.max(Math.abs(X - LP), Math.abs(X - RP)) &gt; size</span>
-<span class="pc bpc" id="L65" title="1 of 2 branches missed.">                || Math.max(Math.abs(Y - TP), Math.abs(Y - BP)) &gt; size)) {</span>
-<span class="pc bpc" id="L66" title="1 of 4 branches missed.">            if (RP &lt; (X + size) &amp;&amp; BP &lt; (Y + size)) {</span>
-<span class="fc" id="L67">                GridSpaceMap newBranch = new GridSpaceMap((X - size), (Y - size), 2 * size);</span>
-<span class="fc" id="L68">                newBranch.setBRNode(this);</span>
-<span class="fc" id="L69">                newBranch = (GridSpaceMap) newBranch.addAndUpdate(object);//Stack fucking overflow?!?</span>
-<span class="fc" id="L70">                return newBranch;</span>
-<span class="pc bpc" id="L71" title="2 of 4 branches missed.">            } else if (LP &gt; (X - size) &amp;&amp; BP &lt; (Y + size)) {</span>
-<span class="fc" id="L72">                GridSpaceMap newBranch = new GridSpaceMap((X + size), (Y - size), 2 * size);</span>
-<span class="fc" id="L73">                newBranch.setBLNode(this);</span>
-<span class="fc" id="L74">                newBranch = (GridSpaceMap) newBranch.addAndUpdate(object);</span>
-<span class="fc" id="L75">                return newBranch;</span>
-<span class="nc bnc" id="L76" title="All 4 branches missed.">            } else if (RP &lt; (X + size) &amp;&amp; TP &gt; (Y - size)) {</span>
-<span class="nc" id="L77">                GridSpaceMap newBranch = new GridSpaceMap((X - size), (Y + size), 2 * size);</span>
-<span class="nc" id="L78">                newBranch.setTRNode(this);</span>
-<span class="nc" id="L79">                newBranch = (GridSpaceMap) newBranch.addAndUpdate(object);</span>
-<span class="nc" id="L80">                return newBranch;</span>
-<span class="nc bnc" id="L81" title="All 4 branches missed.">            } else if (LP &gt; (X - size) &amp;&amp; TP &gt; (Y - size)) {</span>
-<span class="nc" id="L82">                GridSpaceMap newBranch = new GridSpaceMap((X + size), (Y + size), 2 * size);</span>
-<span class="nc" id="L83">                newBranch.setTLNode(this);</span>
-<span class="nc" id="L84">                newBranch = (GridSpaceMap) newBranch.addAndUpdate(object);</span>
-<span class="nc" id="L85">                return newBranch;</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        if ((Math.max(Math.abs(X - LP), Math.abs(X - RP)) &gt; size</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">                || Math.max(Math.abs(Y - TP), Math.abs(Y - BP)) &gt; size)) {</span>
+<span class="fc bfc" id="L65" title="All 4 branches covered.">            if (RP &lt; (X + size) &amp;&amp; BP &lt; (Y + size)) {</span>
+<span class="fc" id="L66">                GridSpaceMap newBranch = new GridSpaceMap((X - size), (Y - size), 2 * size);</span>
+<span class="fc" id="L67">                newBranch.setBRNode(this);</span>
+<span class="fc" id="L68">                newBranch = (GridSpaceMap) newBranch.addAndUpdate(object);//Stack fucking overflow?!?</span>
+<span class="fc" id="L69">                return newBranch;</span>
+<span class="pc bpc" id="L70" title="1 of 4 branches missed.">            } else if (LP &gt; (X - size) &amp;&amp; BP &lt; (Y + size)) {</span>
+<span class="fc" id="L71">                GridSpaceMap newBranch = new GridSpaceMap((X + size), (Y - size), 2 * size);</span>
+<span class="fc" id="L72">                newBranch.setBLNode(this);</span>
+<span class="fc" id="L73">                newBranch = (GridSpaceMap) newBranch.addAndUpdate(object);</span>
+<span class="fc" id="L74">                return newBranch;</span>
+<span class="pc bpc" id="L75" title="1 of 4 branches missed.">            } else if (RP &lt; (X + size) &amp;&amp; TP &gt; (Y - size)) {</span>
+<span class="fc" id="L76">                GridSpaceMap newBranch = new GridSpaceMap((X - size), (Y + size), 2 * size);</span>
+<span class="fc" id="L77">                newBranch.setTRNode(this);</span>
+<span class="fc" id="L78">                newBranch = (GridSpaceMap) newBranch.addAndUpdate(object);</span>
+<span class="fc" id="L79">                return newBranch;</span>
+<span class="pc bpc" id="L80" title="2 of 4 branches missed.">            } else if (LP &gt; (X - size) &amp;&amp; TP &gt; (Y - size)) {</span>
+<span class="fc" id="L81">                GridSpaceMap newBranch = new GridSpaceMap((X + size), (Y + size), 2 * size);</span>
+<span class="fc" id="L82">                newBranch.setTLNode(this);</span>
+<span class="fc" id="L83">                newBranch = (GridSpaceMap) newBranch.addAndUpdate(object);</span>
+<span class="fc" id="L84">                return newBranch;</span>
             }
         }
-<span class="fc bfc" id="L88" title="All 2 branches covered.">        if (isBranchable == false) {</span>
-<span class="fc bfc" id="L89" title="All 2 branches covered.">            if (Elements == null) {</span>
-<span class="fc" id="L90">                Elements = new LinkedList&lt;SurfaceObject&gt;();</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if (isBranchable == false) {</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">            if (Elements == null) {</span>
+<span class="fc" id="L89">                Elements = new LinkedList&lt;SurfaceObject&gt;();</span>
             }
-<span class="fc" id="L92">            Elements.add(object);</span>
-<span class="fc" id="L93">            return this;</span>
+<span class="fc" id="L91">            Elements.add(object);</span>
+<span class="fc" id="L92">            return this;</span>
         }
-<span class="fc bfc" id="L95" title="All 4 branches covered.">        if (RP &lt;= X &amp;&amp; BP &lt;= Y) {</span>
-<span class="fc" id="L96">            TLNode = add(TLNode, object, false, false);</span>
-<span class="fc bfc" id="L97" title="All 4 branches covered.">        } else if (LP &gt; X &amp;&amp; BP &lt;= Y) {</span>
-<span class="fc" id="L98">            TRNode = add(TRNode, object, true, false);</span>
-<span class="pc bpc" id="L99" title="1 of 4 branches missed.">        } else if (RP &lt; X &amp;&amp; TP &gt;= Y) {</span>
-<span class="fc" id="L100">            BLNode = add(BLNode, object, false, true);</span>
-<span class="pc bpc" id="L101" title="2 of 4 branches missed.">        } else if (LP &gt;= X &amp;&amp; TP &gt; Y) {</span>
-<span class="fc" id="L102">            BRNode = add(BRNode, object, true, true);//Stack fucking overflow?!?</span>
+<span class="pc bpc" id="L94" title="1 of 4 branches missed.">        if (RP &lt;= X &amp;&amp; BP &lt;= Y) {</span>
+<span class="nc" id="L95">            TLNode = add(TLNode, object, false, false);</span>
+<span class="fc bfc" id="L96" title="All 4 branches covered.">        } else if (LP &gt; X &amp;&amp; BP &lt;= Y) {</span>
+<span class="fc" id="L97">            TRNode = add(TRNode, object, true, false);</span>
+<span class="pc bpc" id="L98" title="1 of 4 branches missed.">        } else if (RP &lt; X &amp;&amp; TP &gt;= Y) {</span>
+<span class="fc" id="L99">            BLNode = add(BLNode, object, false, true);</span>
+<span class="pc bpc" id="L100" title="2 of 4 branches missed.">        } else if (LP &gt;= X &amp;&amp; TP &gt; Y) {</span>
+<span class="fc" id="L101">            BRNode = add(BRNode, object, true, true);//Stack fucking overflow?!?</span>
         }
-<span class="fc" id="L104">        return this;</span>
+<span class="fc" id="L103">        return this;</span>
     }
 
     private AbstractSpaceMap add(AbstractSpaceMap MapNode, SurfaceObject newObject, boolean quadrantX, boolean quadrantY) {
-<span class="fc bfc" id="L108" title="All 2 branches covered.">        if (MapNode != null) {</span>
-<span class="fc bfc" id="L109" title="All 2 branches covered.">            if (MapNode instanceof Leave) {</span>
-<span class="pc bpc" id="L110" title="1 of 2 branches missed.">                if (MapNode.getCount() &gt;= MAX) {</span>
-<span class="nc" id="L111">                    double vecX = size / 2;</span>
-<span class="nc bnc" id="L112" title="All 2 branches missed.">                    if (quadrantX == false) {</span>
-<span class="nc" id="L113">                        vecX *= -1;</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        if (MapNode != null) {</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">            if (MapNode instanceof Leave) {</span>
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">                if (MapNode.getCount() &gt;= MAX) {</span>
+<span class="nc" id="L110">                    double vecX = size / 2;</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">                    if (quadrantX == false) {</span>
+<span class="nc" id="L112">                        vecX *= -1;</span>
                     }
-<span class="nc" id="L115">                    double vecY = size / 2;</span>
-<span class="nc bnc" id="L116" title="All 2 branches missed.">                    if (quadrantY == false) {</span>
-<span class="nc" id="L117">                        vecY *= -1;</span>
+<span class="nc" id="L114">                    double vecY = size / 2;</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">                    if (quadrantY == false) {</span>
+<span class="nc" id="L116">                        vecY *= -1;</span>
                     }
-<span class="nc" id="L119">                    GridSpaceMap newBranch = new GridSpaceMap(X + vecX, Y + vecY, size / 2);</span>
-<span class="nc" id="L120">                    newBranch = (GridSpaceMap) newBranch.addAndUpdate(newObject);</span>
+<span class="nc" id="L118">                    GridSpaceMap newBranch = new GridSpaceMap(X + vecX, Y + vecY, size / 2);</span>
+<span class="nc" id="L119">                    newBranch = (GridSpaceMap) newBranch.addAndUpdate(newObject);</span>
 
-<span class="nc" id="L122">                    LinkedList&lt;SurfaceObject&gt; oldNodes = ((Leave) MapNode).getLeaveElements();</span>
-<span class="nc bnc" id="L123" title="All 2 branches missed.">                    for (int i = 0; i &lt; oldNodes.size(); i++) {</span>
-<span class="nc" id="L124">                        newBranch = (GridSpaceMap) newBranch.addAndUpdate(oldNodes.get(i));</span>
+<span class="nc" id="L121">                    List&lt;SurfaceObject&gt; oldNodes = ((Leave) MapNode).getLeaveElements();</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">                    for (int i = 0; i &lt; oldNodes.size(); i++) {</span>
+<span class="nc" id="L123">                        newBranch = (GridSpaceMap) newBranch.addAndUpdate(oldNodes.get(i));</span>
                     }
-<span class="nc" id="L126">                    return newBranch;</span>
+<span class="nc" id="L125">                    return newBranch;</span>
                 } else {
-<span class="fc" id="L128">                    return MapNode.addAndUpdate(newObject);</span>
+<span class="fc" id="L127">                    return MapNode.addAndUpdate(newObject);</span>
                 }
             } else {
-<span class="fc" id="L131">                return MapNode.addAndUpdate(newObject);</span>
+<span class="fc" id="L130">                return MapNode.addAndUpdate(newObject);</span>
             }//Stack fucking overflow?!?!
         } else {
-<span class="fc" id="L134">            MapNode = new Leave();</span>
-<span class="fc" id="L135">            MapNode = MapNode.addAndUpdate(newObject);</span>
+<span class="fc" id="L133">            MapNode = new Leave();</span>
+<span class="fc" id="L134">            MapNode = MapNode.addAndUpdate(newObject);</span>
         }
-<span class="fc" id="L137">        return MapNode;</span>
+<span class="fc" id="L136">        return MapNode;</span>
     }
     //==============================================================================
 
@@ -145,416 +144,340 @@ public class GridSpaceMap extends AbstractSpaceMap {
     public synchronized AbstractSpaceMap removeAndUpdate(SurfaceObject object) {
         //if(object==null) {return this;}
         //Why not check if branchable? -&gt; The size f the object might have changed! -&gt; not on edge anymore
-<span class="fc bfc" id="L148" title="All 2 branches covered.">        if (Elements != null) {</span>
-<span class="fc bfc" id="L149" title="All 2 branches covered.">            if (Elements.remove(object)) {</span>
-<span class="fc bfc" id="L150" title="All 2 branches covered.">                if (Elements.size() == 0) {</span>
-<span class="fc" id="L151">                    Elements = null;</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        if (Elements != null) {</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">            if (Elements.remove(object)) {</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">                if (Elements.size() == 0) {</span>
+<span class="fc" id="L150">                    Elements = null;</span>
                 }
-<span class="fc" id="L153">                return bestSelf();</span>
+<span class="fc" id="L152">                return bestSelf();</span>
             }
         }
-<span class="fc" id="L156">        double LP = object.getLeftPeripheral();</span>
-<span class="fc" id="L157">        double RP = object.getRightPeripheral();</span>
-<span class="fc" id="L158">        double TP = object.getTopPeripheral();</span>
-<span class="fc" id="L159">        double BP = object.getBottomPeripheral();</span>
-<span class="fc bfc" id="L160" title="All 4 branches covered.">        if (RP &lt;= X &amp;&amp; BP &lt;= Y) {</span>
-<span class="fc" id="L161">            TLNode = remove(TLNode, object);</span>
-<span class="fc bfc" id="L162" title="All 4 branches covered.">        } else if (LP &gt; X &amp;&amp; BP &lt;= Y) {//</span>
-<span class="fc" id="L163">            TRNode = remove(TRNode, object);</span>
-<span class="pc bpc" id="L164" title="1 of 4 branches missed.">        } else if (RP &lt; X &amp;&amp; TP &gt;= Y) {//</span>
-<span class="fc" id="L165">            BLNode = remove(BLNode, object);</span>
-<span class="pc bpc" id="L166" title="2 of 4 branches missed.">        } else if (LP &gt;= X &amp;&amp; TP &gt; Y) {//</span>
-<span class="fc" id="L167">            BRNode = remove(BRNode, object);</span>
+<span class="fc" id="L155">        double LP = object.getLeftPeripheral();</span>
+<span class="fc" id="L156">        double RP = object.getRightPeripheral();</span>
+<span class="fc" id="L157">        double TP = object.getTopPeripheral();</span>
+<span class="fc" id="L158">        double BP = object.getBottomPeripheral();</span>
+<span class="pc bpc" id="L159" title="1 of 4 branches missed.">        if (RP &lt;= X &amp;&amp; BP &lt;= Y) {</span>
+<span class="nc" id="L160">            TLNode = remove(TLNode, object);</span>
+<span class="fc bfc" id="L161" title="All 4 branches covered.">        } else if (LP &gt; X &amp;&amp; BP &lt;= Y) {//</span>
+<span class="fc" id="L162">            TRNode = remove(TRNode, object);</span>
+<span class="pc bpc" id="L163" title="1 of 4 branches missed.">        } else if (RP &lt; X &amp;&amp; TP &gt;= Y) {//</span>
+<span class="fc" id="L164">            BLNode = remove(BLNode, object);</span>
+<span class="pc bpc" id="L165" title="2 of 4 branches missed.">        } else if (LP &gt;= X &amp;&amp; TP &gt; Y) {//</span>
+<span class="fc" id="L166">            BRNode = remove(BRNode, object);</span>
         }
-<span class="fc" id="L169">        return bestSelf();</span>
+<span class="fc" id="L168">        return bestSelf();</span>
     }
 
     private synchronized AbstractSpaceMap bestSelf() {
-<span class="fc" id="L173">        byte counter = 0;</span>
-<span class="fc bfc" id="L174" title="All 2 branches covered.">        if (TLNode == null) {</span>
-<span class="fc" id="L175">            counter++;</span>
+<span class="fc" id="L172">        byte counter = 0;</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">        if (TLNode == null) {</span>
+<span class="fc" id="L174">            counter++;</span>
         }
-<span class="fc bfc" id="L177" title="All 2 branches covered.">        if (TRNode == null) {</span>
-<span class="fc" id="L178">            counter++;</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">        if (TRNode == null) {</span>
+<span class="fc" id="L177">            counter++;</span>
         }
-<span class="fc bfc" id="L180" title="All 2 branches covered.">        if (BLNode == null) {</span>
-<span class="fc" id="L181">            counter++;</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">        if (BLNode == null) {</span>
+<span class="fc" id="L180">            counter++;</span>
         }
-<span class="fc bfc" id="L183" title="All 2 branches covered.">        if (BRNode == null) {</span>
-<span class="fc" id="L184">            counter++;</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">        if (BRNode == null) {</span>
+<span class="fc" id="L183">            counter++;</span>
         }
-<span class="fc bfc" id="L186" title="All 2 branches covered.">        if (Elements == null) {</span>
-<span class="fc" id="L187">            counter++;</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        if (Elements == null) {</span>
+<span class="fc" id="L186">            counter++;</span>
         }
-<span class="pc bpc" id="L189" title="1 of 2 branches missed.">        if (counter == 5) {</span>
-<span class="nc" id="L190">            return null;</span>
+<span class="pc bpc" id="L188" title="1 of 2 branches missed.">        if (counter == 5) {</span>
+<span class="nc" id="L189">            return null;</span>
         }
         //If the node is a branch: return ... else getFrom leave elements and put them into an new branch!
-<span class="pc bpc" id="L193" title="1 of 4 branches missed.">        if (counter == 4 &amp;&amp; Elements == null) {</span>
-<span class="pc bpc" id="L194" title="1 of 2 branches missed.">            if (TLNode != null) {</span>
-<span class="nc" id="L195">                return TLNode;</span>
+<span class="pc bpc" id="L192" title="1 of 4 branches missed.">        if (counter == 4 &amp;&amp; Elements == null) {</span>
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">            if (TLNode != null) {</span>
+<span class="nc" id="L194">                return TLNode;</span>
             }
-<span class="pc bpc" id="L197" title="1 of 2 branches missed.">            if (TRNode != null) {</span>
-<span class="nc" id="L198">                return TRNode;</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">            if (TRNode != null) {</span>
+<span class="fc" id="L197">                return TRNode;</span>
             }
-<span class="fc bfc" id="L200" title="All 2 branches covered.">            if (BLNode != null) {</span>
-<span class="fc" id="L201">                return BLNode;</span>
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">            if (BLNode != null) {</span>
+<span class="nc" id="L200">                return BLNode;</span>
             }
-<span class="pc bpc" id="L203" title="1 of 2 branches missed.">            if (BRNode != null) {</span>
-<span class="fc" id="L204">                return BRNode;</span>
+<span class="pc bpc" id="L202" title="1 of 2 branches missed.">            if (BRNode != null) {</span>
+<span class="fc" id="L203">                return BRNode;</span>
             }
         }
-<span class="fc" id="L207">        return this;</span>
+<span class="fc" id="L206">        return this;</span>
     }
 
     private synchronized AbstractSpaceMap remove(AbstractSpaceMap MapNode, SurfaceObject oldNode) {
-<span class="pc bpc" id="L211" title="1 of 2 branches missed.">        if (MapNode != null) {</span>
-<span class="fc" id="L212">            MapNode = MapNode.removeAndUpdate(oldNode);</span>
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">        if (MapNode != null) {</span>
+<span class="fc" id="L211">            MapNode = MapNode.removeAndUpdate(oldNode);</span>
         }
-<span class="fc" id="L214">        return MapNode;</span>
+<span class="fc" id="L213">        return MapNode;</span>
     }
     //==============================================================================
 
     @Override
     public synchronized int getCount() {
-<span class="nc" id="L220">        int nodeCount = 0;</span>
-<span class="nc bnc" id="L221" title="All 2 branches missed.">        if (Elements != null) {</span>
-<span class="nc" id="L222">            nodeCount += Elements.size();</span>
+<span class="fc" id="L219">        int nodeCount = 0;</span>
+<span class="pc bpc" id="L220" title="1 of 2 branches missed.">        if (Elements != null) {</span>
+<span class="nc" id="L221">            nodeCount += Elements.size();</span>
         }
-<span class="nc" id="L224">        return nodeCount;</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">        if (TLNode != null) {</span>
+<span class="fc" id="L224">            nodeCount += TLNode.getCount();</span>
+        }
+<span class="fc bfc" id="L226" title="All 2 branches covered.">        if (TRNode != null) {</span>
+<span class="fc" id="L227">            nodeCount += TRNode.getCount();</span>
+        }
+<span class="fc bfc" id="L229" title="All 2 branches covered.">        if (BLNode != null) {</span>
+<span class="fc" id="L230">            nodeCount += BLNode.getCount();</span>
+        }
+<span class="fc bfc" id="L232" title="All 2 branches covered.">        if (BRNode != null) {</span>
+<span class="fc" id="L233">            nodeCount += BRNode.getCount();</span>
+        }
+<span class="fc" id="L235">        return nodeCount;</span>
     }
-
-	/*
-	@Override
-	public synchronized SurfaceObject get(int i)
-	{
-		int nodeCount = 0;
-		int currentCount=0;
-		if(Elements!=null) {
-			int count = Elements.size();
-			if(i&lt;count) 
-			   {return Elements.get(i);}
-			else
-			   {nodeCount+=count;}
-		}
-		
-		if(TLNode!=null) 
-		{
-			currentCount=TLNode.getCount();
-			if(i&lt;(nodeCount+currentCount)) {return TLNode.get(i-nodeCount);}
-			nodeCount += currentCount;
-		}
-		if(TRNode!=null) 
-		{
-			currentCount=TRNode.getCount();
-			if(i&lt;(nodeCount+currentCount)) {return TRNode.get(i-nodeCount);}
-			nodeCount += currentCount;
-		}
-		if(BLNode!=null) 
-		{
-			currentCount=BLNode.getCount();
-			if(i&lt;(nodeCount+currentCount)) {return BLNode.get(i-nodeCount);}
-			nodeCount += currentCount;
-		}
-		if(BRNode!=null) 
-		{
-			currentCount=BRNode.getCount();
-			if(i&lt;(nodeCount+currentCount)) {return BRNode.get(i-nodeCount);}
-			nodeCount += currentCount;
-		}
-		return null;
-	}
-	*/
-
-	/*
-	@Override
-	public synchronized LinkedList&lt;SurfaceObject&gt; getAllClosestTo(double x, double y)
-	{	
-		LinkedList&lt;SurfaceObject&gt; present = Elements;
-		if(present==null) {
-			if    (x &lt;= X &amp;&amp; y &lt;= Y &amp;&amp; TLNode!=null) {
-				return TLNode.getAllClosestTo(x, y);
-			}
-			else if(x &gt; X &amp;&amp; y &lt;= Y &amp;&amp; TRNode!=null) {
-				return TRNode.getAllClosestTo(x, y);
-			}
-			else if(x &lt; X &amp;&amp; y &gt;= Y &amp;&amp; BLNode!=null) {
-				return BLNode.getAllClosestTo(x, y);
-			}
-			else if(x &gt;= X &amp;&amp; y &gt; Y &amp;&amp; BRNode!=null) {
-				return BRNode.getAllClosestTo(x, y);
-			}
-		}
-		else 
-		{
-			if (x &lt;= X &amp;&amp; y &lt;= Y &amp;&amp; TLNode!=null) {
-			    LinkedList&lt;SurfaceObject&gt; found = TLNode.getAllClosestTo(x, y);
-				if(found!=null) {found.addAll(present);}
-				return found;
-			}
-			else if(x &gt; X &amp;&amp; y &lt;= Y &amp;&amp; TRNode!=null) {
-				LinkedList&lt;SurfaceObject&gt; found = TRNode.getAllClosestTo(x, y);
-				if(found!=null) {found.addAll(present);}
-				return found;
-			}
-			else if(x &lt; X &amp;&amp; y &gt;= Y &amp;&amp; BLNode!=null) {
-				LinkedList&lt;SurfaceObject&gt; found = BLNode.getAllClosestTo(x, y);
-				if(found!=null) {found.addAll(present);}
-				return found;
-			}
-			else if(x &gt;= X &amp;&amp; y &gt; Y &amp;&amp; BRNode!=null) {
-				LinkedList&lt;SurfaceObject&gt; found = BRNode.getAllClosestTo(x, y);
-				if(found!=null) {found.addAll(present);}
-				return found;
-			}
-		}
-		return null;
-	}
-	*/
 
     @Override
     public synchronized LinkedList&lt;SurfaceObject&gt; findAllAt(double x, double y, MapAction condition) {
-<span class="fc" id="L317">        LinkedList&lt;SurfaceObject&gt; someFound = new LinkedList&lt;SurfaceObject&gt;();</span>
-<span class="fc bfc" id="L318" title="All 2 branches covered.">        if (Elements != null) {</span>
-<span class="fc" id="L319">            someFound.addAll(filter(condition, Elements));</span>
+<span class="fc" id="L240">        LinkedList&lt;SurfaceObject&gt; someFound = new LinkedList&lt;SurfaceObject&gt;();</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">        if (Elements != null) {</span>
+<span class="fc" id="L242">            someFound.addAll(filter(condition, Elements));</span>
         }
-<span class="fc bfc" id="L321" title="All 4 branches covered.">        if (x &lt;= X &amp;&amp; y &lt;= Y) {</span>
-<span class="pc bpc" id="L322" title="1 of 2 branches missed.">            if (TLNode != null) {</span>
-<span class="fc" id="L323">                someFound.addAll(TLNode.findAllAt(x, y, condition));</span>
+<span class="pc bpc" id="L244" title="1 of 4 branches missed.">        if (x &lt;= X &amp;&amp; y &lt;= Y) {</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">            if (TLNode != null) {</span>
+<span class="nc" id="L246">                someFound.addAll(TLNode.findAllAt(x, y, condition));</span>
             }
-<span class="fc" id="L325">            return someFound;</span>
-<span class="pc bpc" id="L326" title="1 of 4 branches missed.">        } else if (x &gt; X &amp;&amp; y &lt;= Y) {</span>
-<span class="nc bnc" id="L327" title="All 2 branches missed.">            if (TRNode != null) {</span>
-<span class="nc" id="L328">                someFound.addAll(TRNode.findAllAt(x, y, condition));</span>
+<span class="nc" id="L248">            return someFound;</span>
+<span class="fc bfc" id="L249" title="All 4 branches covered.">        } else if (x &gt; X &amp;&amp; y &lt;= Y) {</span>
+<span class="fc bfc" id="L250" title="All 2 branches covered.">            if (TRNode != null) {</span>
+<span class="fc" id="L251">                someFound.addAll(TRNode.findAllAt(x, y, condition));</span>
             }
-<span class="nc" id="L330">            return someFound;</span>
-<span class="pc bpc" id="L331" title="1 of 4 branches missed.">        } else if (x &lt; X &amp;&amp; y &gt;= Y) {</span>
-<span class="pc bpc" id="L332" title="1 of 2 branches missed.">            if (BLNode != null) {</span>
-<span class="fc" id="L333">                someFound.addAll(BLNode.findAllAt(x, y, condition));</span>
+<span class="fc" id="L253">            return someFound;</span>
+<span class="pc bpc" id="L254" title="1 of 4 branches missed.">        } else if (x &lt; X &amp;&amp; y &gt;= Y) {</span>
+<span class="pc bpc" id="L255" title="1 of 2 branches missed.">            if (BLNode != null) {</span>
+<span class="fc" id="L256">                someFound.addAll(BLNode.findAllAt(x, y, condition));</span>
             }
-<span class="fc" id="L335">            return someFound;</span>
-<span class="pc bpc" id="L336" title="2 of 4 branches missed.">        } else if (x &gt;= X &amp;&amp; y &gt; Y) {</span>
-<span class="pc bpc" id="L337" title="1 of 2 branches missed.">            if (BRNode != null) {</span>
-<span class="fc" id="L338">                someFound.addAll(BRNode.findAllAt(x, y, condition));</span>
+<span class="fc" id="L258">            return someFound;</span>
+<span class="pc bpc" id="L259" title="2 of 4 branches missed.">        } else if (x &gt;= X &amp;&amp; y &gt; Y) {</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">            if (BRNode != null) {</span>
+<span class="fc" id="L261">                someFound.addAll(BRNode.findAllAt(x, y, condition));</span>
             }
-<span class="fc" id="L340">            return someFound;</span>
+<span class="fc" id="L263">            return someFound;</span>
         }
-<span class="nc" id="L342">        return null;</span>
+<span class="nc" id="L265">        return null;</span>
     }
 
     private synchronized LinkedList&lt;SurfaceObject&gt; filter(MapAction Actor, LinkedList&lt;SurfaceObject&gt; List) {
-<span class="fc" id="L346">        LinkedList&lt;SurfaceObject&gt; filteredList = new LinkedList&lt;SurfaceObject&gt;();</span>
-<span class="fc" id="L347">        List.forEach((current) -&gt; {</span>
-<span class="pc bpc" id="L348" title="1 of 2 branches missed.">            if (Actor.act(current)) {</span>
-<span class="nc" id="L349">                filteredList.add(current);</span>
+<span class="fc" id="L269">        LinkedList&lt;SurfaceObject&gt; filteredList = new LinkedList&lt;SurfaceObject&gt;();</span>
+<span class="fc" id="L270">        List.forEach((current) -&gt; {</span>
+<span class="fc bfc" id="L271" title="All 2 branches covered.">            if (Actor.act(current)) {</span>
+<span class="fc" id="L272">                filteredList.add(current);</span>
             }
-<span class="fc" id="L351">        });</span>
-<span class="fc" id="L352">        return filteredList;</span>
+<span class="fc" id="L274">        });</span>
+<span class="fc" id="L275">        return filteredList;</span>
     }
 
 
     @Override
     public synchronized void paintStructure(Graphics2D brush) {
 
-<span class="nc" id="L359">        Font F = new Font(&quot;Tahoma&quot;, Font.PLAIN, (int) (size * (0.1)));</span>
-<span class="nc" id="L360">        Color C = brush.getColor();</span>
-<span class="nc" id="L361">        Color B = Color.ORANGE;</span>
-<span class="nc" id="L362">        brush.setFont(F);</span>
+<span class="nc" id="L282">        Font F = new Font(&quot;Tahoma&quot;, Font.PLAIN, (int) (size * (0.1)));</span>
+<span class="nc" id="L283">        Color C = brush.getColor();</span>
+<span class="nc" id="L284">        Color B = Color.ORANGE;</span>
+<span class="nc" id="L285">        brush.setFont(F);</span>
 
-<span class="nc bnc" id="L364" title="All 2 branches missed.">        if (TLNode != null) {</span>
-<span class="nc" id="L365">            brush.setColor(C);</span>
-<span class="nc" id="L366">            TLNode.paintStructure(brush);</span>
-<span class="nc" id="L367">            brush.fillOval((int) (X - 2000), (int) (Y - 2000), 2000, 2000);</span>
-<span class="nc" id="L368">            brush.setColor(B);</span>
-<span class="nc" id="L369">            brush.drawString(TLNode.getCount() + &quot;&quot;, (int) (X - 1600), (int) (Y - 1200));</span>
+<span class="nc bnc" id="L287" title="All 2 branches missed.">        if (TLNode != null) {</span>
+<span class="nc" id="L288">            brush.setColor(C);</span>
+<span class="nc" id="L289">            TLNode.paintStructure(brush);</span>
+<span class="nc" id="L290">            brush.fillOval((int) (X - 2000), (int) (Y - 2000), 2000, 2000);</span>
+<span class="nc" id="L291">            brush.setColor(B);</span>
+<span class="nc" id="L292">            brush.drawString(TLNode.getCount() + &quot;&quot;, (int) (X - 1600), (int) (Y - 1200));</span>
         }
-<span class="nc bnc" id="L371" title="All 2 branches missed.">        if (TRNode != null) {</span>
-<span class="nc" id="L372">            brush.setColor(C);</span>
-<span class="nc" id="L373">            TRNode.paintStructure(brush);</span>
-<span class="nc" id="L374">            brush.fillOval((int) (X), (int) (Y - 2000), 2000, 2000);</span>
-<span class="nc" id="L375">            brush.setColor(B);</span>
-<span class="nc" id="L376">            brush.drawString(TRNode.getCount() + &quot;&quot;, (int) (X + 1000), (int) (Y - 1200));</span>
+<span class="nc bnc" id="L294" title="All 2 branches missed.">        if (TRNode != null) {</span>
+<span class="nc" id="L295">            brush.setColor(C);</span>
+<span class="nc" id="L296">            TRNode.paintStructure(brush);</span>
+<span class="nc" id="L297">            brush.fillOval((int) (X), (int) (Y - 2000), 2000, 2000);</span>
+<span class="nc" id="L298">            brush.setColor(B);</span>
+<span class="nc" id="L299">            brush.drawString(TRNode.getCount() + &quot;&quot;, (int) (X + 1000), (int) (Y - 1200));</span>
         }
-<span class="nc bnc" id="L378" title="All 2 branches missed.">        if (BLNode != null) {</span>
-<span class="nc" id="L379">            brush.setColor(C);</span>
-<span class="nc" id="L380">            BLNode.paintStructure(brush);</span>
-<span class="nc" id="L381">            brush.fillOval((int) (X - 2000), (int) (Y), 2000, 2000);</span>
-<span class="nc" id="L382">            brush.setColor(B);</span>
-<span class="nc" id="L383">            brush.drawString(BLNode.getCount() + &quot;&quot;, (int) (X - 1600), (int) (Y + 1200));</span>
+<span class="nc bnc" id="L301" title="All 2 branches missed.">        if (BLNode != null) {</span>
+<span class="nc" id="L302">            brush.setColor(C);</span>
+<span class="nc" id="L303">            BLNode.paintStructure(brush);</span>
+<span class="nc" id="L304">            brush.fillOval((int) (X - 2000), (int) (Y), 2000, 2000);</span>
+<span class="nc" id="L305">            brush.setColor(B);</span>
+<span class="nc" id="L306">            brush.drawString(BLNode.getCount() + &quot;&quot;, (int) (X - 1600), (int) (Y + 1200));</span>
         }
-<span class="nc bnc" id="L385" title="All 2 branches missed.">        if (BRNode != null) {</span>
-<span class="nc" id="L386">            brush.setColor(C);</span>
-<span class="nc" id="L387">            BRNode.paintStructure(brush);</span>
-<span class="nc" id="L388">            brush.fillOval((int) (X), (int) (Y), 2000, 2000);</span>
-<span class="nc" id="L389">            brush.setColor(B);</span>
-<span class="nc" id="L390">            brush.drawString(BRNode.getCount() + &quot;&quot;, (int) (X + 1000), (int) (Y + 1200));</span>
+<span class="nc bnc" id="L308" title="All 2 branches missed.">        if (BRNode != null) {</span>
+<span class="nc" id="L309">            brush.setColor(C);</span>
+<span class="nc" id="L310">            BRNode.paintStructure(brush);</span>
+<span class="nc" id="L311">            brush.fillOval((int) (X), (int) (Y), 2000, 2000);</span>
+<span class="nc" id="L312">            brush.setColor(B);</span>
+<span class="nc" id="L313">            brush.drawString(BRNode.getCount() + &quot;&quot;, (int) (X + 1000), (int) (Y + 1200));</span>
         }
-<span class="nc bnc" id="L392" title="All 2 branches missed.">        if (Elements != null) {</span>
-<span class="nc" id="L393">            ListIterator&lt;SurfaceObject&gt; ElementIterator = Elements.listIterator();</span>
-<span class="nc bnc" id="L394" title="All 2 branches missed.">            while (ElementIterator.hasNext()) {//System.out.println(&quot;checking elements...&quot;);</span>
-<span class="nc" id="L395">                SurfaceObject current = ElementIterator.next();</span>
-<span class="nc" id="L396">                brush.setColor(Color.GREEN);</span>
-<span class="nc" id="L397">                brush.fillOval((int) (current.getX() - 1000), (int) (current.getY() - 1000), 2000, 2000);</span>
-<span class="nc" id="L398">            }</span>
-<span class="nc" id="L399">            brush.setColor(Color.RED);</span>
-<span class="nc" id="L400">            brush.fillOval((int) (X - 1000), (int) (Y - 1000), 2000, 2000);</span>
-<span class="nc" id="L401">            brush.setColor(B);</span>
-<span class="nc" id="L402">            brush.drawString(this.getCount() + &quot;&quot;, (int) (X - 300), (int) (Y - 50));</span>
-<span class="nc" id="L403">            brush.setColor(C);</span>
+<span class="nc bnc" id="L315" title="All 2 branches missed.">        if (Elements != null) {</span>
+<span class="nc" id="L316">            ListIterator&lt;SurfaceObject&gt; ElementIterator = Elements.listIterator();</span>
+<span class="nc bnc" id="L317" title="All 2 branches missed.">            while (ElementIterator.hasNext()) {//System.out.println(&quot;checking elements...&quot;);</span>
+<span class="nc" id="L318">                SurfaceObject current = ElementIterator.next();</span>
+<span class="nc" id="L319">                brush.setColor(Color.GREEN);</span>
+<span class="nc" id="L320">                brush.fillOval((int) (current.getX() - 1000), (int) (current.getY() - 1000), 2000, 2000);</span>
+<span class="nc" id="L321">            }</span>
+<span class="nc" id="L322">            brush.setColor(Color.RED);</span>
+<span class="nc" id="L323">            brush.fillOval((int) (X - 1000), (int) (Y - 1000), 2000, 2000);</span>
+<span class="nc" id="L324">            brush.setColor(B);</span>
+<span class="nc" id="L325">            brush.drawString(this.getCount() + &quot;&quot;, (int) (X - 300), (int) (Y - 50));</span>
+<span class="nc" id="L326">            brush.setColor(C);</span>
         }
-<span class="nc" id="L405">        brush.setColor(Color.GREEN);</span>
-<span class="nc" id="L406">        brush.drawLine((int) (X), (int) (Y - size), (int) (X), (int) (Y + size));</span>
-<span class="nc" id="L407">        brush.drawLine((int) (X - size), (int) (Y), (int) (X + size), (int) (Y));</span>
-<span class="nc" id="L408">        brush.setColor(Color.BLUE);</span>
-<span class="nc" id="L409">        brush.drawRect((int) (X - size), (int) (Y - size), (int) (size * 2), (int) (size * 2));</span>
-<span class="nc" id="L410">    }</span>
+<span class="nc" id="L328">        brush.setColor(Color.GREEN);</span>
+<span class="nc" id="L329">        brush.drawLine((int) (X), (int) (Y - size), (int) (X), (int) (Y + size));</span>
+<span class="nc" id="L330">        brush.drawLine((int) (X - size), (int) (Y), (int) (X + size), (int) (Y));</span>
+<span class="nc" id="L331">        brush.setColor(Color.BLUE);</span>
+<span class="nc" id="L332">        brush.drawRect((int) (X - size), (int) (Y - size), (int) (size * 2), (int) (size * 2));</span>
+<span class="nc" id="L333">    }</span>
 
     @Override
     public synchronized boolean applyToAll(MapAction Actor) {
 
-<span class="fc" id="L415">        boolean[] actorCheck = {false};</span>
-<span class="fc bfc" id="L416" title="All 2 branches covered.">        if (Elements != null) {//System.out.println(&quot;Branch node -&gt; apply to all! START&quot;);</span>
-<span class="fc" id="L417">            Elements.forEach((current) -&gt; {</span>
-<span class="fc" id="L418">                boolean check = Actor.act(current);</span>
-<span class="pc bpc" id="L419" title="1 of 2 branches missed.">                if (check) {</span>
-<span class="fc" id="L420">                    actorCheck[0] = true;</span>
+<span class="fc" id="L338">        boolean[] actorCheck = {false};</span>
+<span class="fc bfc" id="L339" title="All 2 branches covered.">        if (Elements != null) {//System.out.println(&quot;Branch node -&gt; apply to all! START&quot;);</span>
+<span class="fc" id="L340">            Elements.forEach((current) -&gt; {</span>
+<span class="fc" id="L341">                boolean check = Actor.act(current);</span>
+<span class="pc bpc" id="L342" title="1 of 2 branches missed.">                if (check) {</span>
+<span class="fc" id="L343">                    actorCheck[0] = true;</span>
                 }
-<span class="fc" id="L422">            });</span>
+<span class="fc" id="L345">            });</span>
         }
-<span class="fc bfc" id="L424" title="All 2 branches covered.">        if (TLNode != null) {</span>
-<span class="pc bpc" id="L425" title="1 of 2 branches missed.">            if (TLNode.applyToAll(Actor)) {</span>
-<span class="fc" id="L426">                actorCheck[0] = true;</span>
+<span class="fc bfc" id="L347" title="All 2 branches covered.">        if (TLNode != null) {</span>
+<span class="pc bpc" id="L348" title="1 of 2 branches missed.">            if (TLNode.applyToAll(Actor)) {</span>
+<span class="nc" id="L349">                actorCheck[0] = true;</span>
             }
         }
-<span class="fc bfc" id="L429" title="All 2 branches covered.">        if (TRNode != null) {</span>
-<span class="pc bpc" id="L430" title="1 of 2 branches missed.">            if (TRNode.applyToAll(Actor)) {</span>
-<span class="fc" id="L431">                actorCheck[0] = true;</span>
+<span class="fc bfc" id="L352" title="All 2 branches covered.">        if (TRNode != null) {</span>
+<span class="fc bfc" id="L353" title="All 2 branches covered.">            if (TRNode.applyToAll(Actor)) {</span>
+<span class="fc" id="L354">                actorCheck[0] = true;</span>
             }
         }
-<span class="pc bpc" id="L434" title="1 of 2 branches missed.">        if (BLNode != null) {</span>
-<span class="pc bpc" id="L435" title="1 of 2 branches missed.">            if (BLNode.applyToAll(Actor)) {</span>
-<span class="fc" id="L436">                actorCheck[0] = true;</span>
+<span class="fc bfc" id="L357" title="All 2 branches covered.">        if (BLNode != null) {</span>
+<span class="pc bpc" id="L358" title="1 of 2 branches missed.">            if (BLNode.applyToAll(Actor)) {</span>
+<span class="fc" id="L359">                actorCheck[0] = true;</span>
             }
         }
-<span class="fc bfc" id="L439" title="All 2 branches covered.">        if (BRNode != null) {</span>
-<span class="pc bpc" id="L440" title="1 of 2 branches missed.">            if (BRNode.applyToAll(Actor)) {</span>
-<span class="fc" id="L441">                actorCheck[0] = true;</span>
+<span class="fc bfc" id="L362" title="All 2 branches covered.">        if (BRNode != null) {</span>
+<span class="pc bpc" id="L363" title="1 of 2 branches missed.">            if (BRNode.applyToAll(Actor)) {</span>
+<span class="fc" id="L364">                actorCheck[0] = true;</span>
             }
         }
-<span class="fc" id="L444">        return actorCheck[0];</span>
+<span class="fc" id="L367">        return actorCheck[0];</span>
     }
 
     @Override
-    public synchronized AbstractSpaceMap addAll(LinkedList&lt;SurfaceObject&gt; elements) {
-<span class="nc bnc" id="L449" title="All 2 branches missed.">        if (elements == null) {</span>
-<span class="nc" id="L450">            return this;</span>
+    public synchronized AbstractSpaceMap addAll(List&lt;SurfaceObject&gt; elements) {
+<span class="nc bnc" id="L372" title="All 2 branches missed.">        if (elements == null) {</span>
+<span class="nc" id="L373">            return this;</span>
         }
-<span class="nc" id="L452">        AbstractSpaceMap[] newNode = {this};</span>
-<span class="nc" id="L453">        elements.forEach((current) -&gt; {</span>
-<span class="nc" id="L454">            newNode[0] = newNode[0].addAndUpdate(current);</span>
-<span class="nc" id="L455">        });</span>
-<span class="nc" id="L456">        return newNode[0];</span>
+<span class="nc" id="L375">        AbstractSpaceMap[] newNode = {this};</span>
+<span class="nc" id="L376">        elements.forEach((current) -&gt; {</span>
+<span class="nc" id="L377">            newNode[0] = newNode[0].addAndUpdate(current);</span>
+<span class="nc" id="L378">        });</span>
+<span class="nc" id="L379">        return newNode[0];</span>
     }
 
     @Override
     public synchronized LinkedList&lt;SurfaceObject&gt; getAll() {
-<span class="fc" id="L461">        LinkedList&lt;SurfaceObject&gt; List = new LinkedList&lt;&gt;();</span>
-<span class="fc bfc" id="L462" title="All 2 branches covered.">        if (Elements != null) {</span>
-<span class="fc" id="L463">            List.addAll(Elements);</span>
+<span class="fc" id="L384">        LinkedList&lt;SurfaceObject&gt; List = new LinkedList&lt;&gt;();</span>
+<span class="fc bfc" id="L385" title="All 2 branches covered.">        if (Elements != null) {</span>
+<span class="fc" id="L386">            List.addAll(Elements);</span>
         }
-<span class="pc bpc" id="L465" title="1 of 2 branches missed.">        if (TLNode != null) {</span>
-<span class="nc" id="L466">            List.addAll(TLNode.getAll());</span>
+<span class="fc bfc" id="L388" title="All 2 branches covered.">        if (TLNode != null) {</span>
+<span class="fc" id="L389">            List.addAll(TLNode.getAll());</span>
         }
-<span class="fc bfc" id="L468" title="All 2 branches covered.">        if (TRNode != null) {</span>
-<span class="fc" id="L469">            List.addAll(TRNode.getAll());</span>
+<span class="fc bfc" id="L391" title="All 2 branches covered.">        if (TRNode != null) {</span>
+<span class="fc" id="L392">            List.addAll(TRNode.getAll());</span>
         }
-<span class="fc bfc" id="L471" title="All 2 branches covered.">        if (BLNode != null) {</span>
-<span class="fc" id="L472">            List.addAll(BLNode.getAll());</span>
+<span class="fc bfc" id="L394" title="All 2 branches covered.">        if (BLNode != null) {</span>
+<span class="fc" id="L395">            List.addAll(BLNode.getAll());</span>
         }
-<span class="pc bpc" id="L474" title="1 of 2 branches missed.">        if (BRNode != null) {</span>
-<span class="fc" id="L475">            List.addAll(BRNode.getAll());</span>
+<span class="fc bfc" id="L397" title="All 2 branches covered.">        if (BRNode != null) {</span>
+<span class="fc" id="L398">            List.addAll(BRNode.getAll());</span>
         }
-<span class="fc" id="L477">        return List;</span>
+<span class="fc" id="L400">        return List;</span>
     }
 
     public double getX() {
-<span class="nc" id="L481">        return X;</span>
+<span class="nc" id="L404">        return X;</span>
     }
 
     public double getY() {
-<span class="nc" id="L485">        return Y;</span>
+<span class="nc" id="L408">        return Y;</span>
     }
 
     public double getSize() {
-<span class="nc" id="L489">        return size;</span>
+<span class="nc" id="L412">        return size;</span>
     }
 
 
     @Override
     public synchronized LinkedList&lt;SurfaceObject&gt; getAllWithin(double[] frame) {
-<span class="fc" id="L495">        LinkedList&lt;SurfaceObject&gt; List = new LinkedList&lt;&gt;();</span>
-<span class="fc bfc" id="L496" title="All 2 branches covered.">        if (Elements != null) List.addAll(Elements);</span>
-<span class="fc" id="L497">        double LP = frame[0];</span>
-<span class="fc" id="L498">        double RP = frame[1];</span>
-<span class="fc" id="L499">        double TP = frame[2];</span>
-<span class="fc" id="L500">        double BP = frame[3];</span>
-<span class="fc bfc" id="L501" title="All 6 branches covered.">        if (TLNode != null &amp;&amp; LP &lt; (X) &amp;&amp; TP &lt; (Y)) List.addAll(TLNode.getAllWithin(frame));</span>
-<span class="fc bfc" id="L502" title="All 6 branches covered.">        if (TRNode != null &amp;&amp; RP &gt; (X) &amp;&amp; TP &lt; (Y)) List.addAll(TRNode.getAllWithin(frame));</span>
-<span class="pc bpc" id="L503" title="1 of 6 branches missed.">        if (BLNode != null &amp;&amp; LP &lt; (X) &amp;&amp; BP &gt; (Y)) List.addAll(BLNode.getAllWithin(frame));</span>
-<span class="fc bfc" id="L504" title="All 6 branches covered.">        if (BRNode != null &amp;&amp; RP &gt; (X) &amp;&amp; TP &gt; (Y)) List.addAll(BRNode.getAllWithin(frame));</span>
-<span class="fc" id="L505">        return List;</span>
+<span class="fc" id="L418">        LinkedList&lt;SurfaceObject&gt; List = new LinkedList&lt;&gt;();</span>
+<span class="fc bfc" id="L419" title="All 2 branches covered.">        if (Elements != null) List.addAll(Elements);</span>
+<span class="fc" id="L420">        double LP = frame[0];</span>
+<span class="fc" id="L421">        double RP = frame[1];</span>
+<span class="fc" id="L422">        double TP = frame[2];</span>
+<span class="fc" id="L423">        double BP = frame[3];</span>
+<span class="pc bpc" id="L424" title="2 of 6 branches missed.">        if (TLNode != null &amp;&amp; LP &lt; (X) &amp;&amp; TP &lt; (Y)) List.addAll(TLNode.getAllWithin(frame));</span>
+<span class="pc bpc" id="L425" title="2 of 6 branches missed.">        if (TRNode != null &amp;&amp; RP &gt; (X) &amp;&amp; TP &lt; (Y)) List.addAll(TRNode.getAllWithin(frame));</span>
+<span class="pc bpc" id="L426" title="1 of 6 branches missed.">        if (BLNode != null &amp;&amp; LP &lt; (X) &amp;&amp; BP &gt; (Y)) List.addAll(BLNode.getAllWithin(frame));</span>
+<span class="fc bfc" id="L427" title="All 6 branches covered.">        if (BRNode != null &amp;&amp; RP &gt; (X) &amp;&amp; BP &gt; (Y)) List.addAll(BRNode.getAllWithin(frame));</span>
+<span class="fc" id="L428">        return List;</span>
     }
 
     @Override
     public synchronized LinkedList&lt;SurfaceObject&gt; findAllWithin(double[] frame, MapAction Actor) {
-<span class="nc" id="L510">        LinkedList&lt;SurfaceObject&gt; List = new LinkedList&lt;SurfaceObject&gt;();</span>
-<span class="nc bnc" id="L511" title="All 2 branches missed.">        if (Elements != null) {</span>
-<span class="nc" id="L512">            Elements.forEach(</span>
+<span class="fc" id="L433">        LinkedList&lt;SurfaceObject&gt; List = new LinkedList&lt;SurfaceObject&gt;();</span>
+<span class="pc bpc" id="L434" title="1 of 2 branches missed.">        if (Elements != null) {</span>
+<span class="nc" id="L435">            Elements.forEach(</span>
                     (o) -&gt; {
-<span class="nc bnc" id="L514" title="All 2 branches missed.">                        if (Actor.act(o)) {</span>
-<span class="nc bnc" id="L515" title="All 4 branches missed.">                            if (o.getRightPeripheral() &gt; frame[0] &amp;&amp; o.getLeftPeripheral() &lt; frame[2]</span>
-<span class="nc bnc" id="L516" title="All 4 branches missed.">                                    &amp;&amp; o.getBottomPeripheral() &gt; frame[1] &amp;&amp; o.getTopPeripheral() &lt; frame[3]) {</span>
-<span class="nc" id="L517">                                List.add(o);</span>
+<span class="nc bnc" id="L437" title="All 2 branches missed.">                        if (Actor.act(o)) {</span>
+<span class="nc bnc" id="L438" title="All 4 branches missed.">                            if (o.getRightPeripheral() &gt; frame[0] &amp;&amp; o.getLeftPeripheral() &lt; frame[2]</span>
+<span class="nc bnc" id="L439" title="All 4 branches missed.">                                    &amp;&amp; o.getBottomPeripheral() &gt; frame[1] &amp;&amp; o.getTopPeripheral() &lt; frame[3]) {</span>
+<span class="nc" id="L440">                                List.add(o);</span>
                             }
                         }
-<span class="nc" id="L520">                    });</span>
+<span class="nc" id="L443">                    });</span>
         }
-<span class="nc bnc" id="L522" title="All 2 branches missed.">        if (TLNode != null) List.addAll(TLNode.findAllWithin(frame, Actor));</span>
-<span class="nc bnc" id="L523" title="All 2 branches missed.">        if (TRNode != null) List.addAll(TRNode.findAllWithin(frame, Actor));</span>
-<span class="nc bnc" id="L524" title="All 2 branches missed.">        if (BLNode != null) List.addAll(BLNode.findAllWithin(frame, Actor));</span>
-<span class="nc bnc" id="L525" title="All 2 branches missed.">        if (BRNode != null) List.addAll(BRNode.findAllWithin(frame, Actor));</span>
-<span class="nc" id="L526">        return List;</span>
+<span class="pc bpc" id="L445" title="1 of 2 branches missed.">        if (TLNode != null) List.addAll(TLNode.findAllWithin(frame, Actor));</span>
+<span class="fc bfc" id="L446" title="All 2 branches covered.">        if (TRNode != null) List.addAll(TRNode.findAllWithin(frame, Actor));</span>
+<span class="fc bfc" id="L447" title="All 2 branches covered.">        if (BLNode != null) List.addAll(BLNode.findAllWithin(frame, Actor));</span>
+<span class="pc bpc" id="L448" title="1 of 2 branches missed.">        if (BRNode != null) List.addAll(BRNode.findAllWithin(frame, Actor));</span>
+<span class="fc" id="L449">        return List;</span>
     }
 
     @Override
     public synchronized boolean applyToAllWithin(double[] frame, MapAction Actor) {
-<span class="fc" id="L531">        boolean[] check = {false};</span>
-<span class="fc bfc" id="L532" title="All 2 branches covered.">        if (Elements != null) {</span>
-<span class="fc" id="L533">            Elements.forEach(</span>
+<span class="fc" id="L454">        boolean[] check = {false};</span>
+<span class="pc bpc" id="L455" title="1 of 2 branches missed.">        if (Elements != null) {</span>
+<span class="nc" id="L456">            Elements.forEach(</span>
                     (o) -&gt; {
-<span class="pc bpc" id="L535" title="1 of 4 branches missed.">                        if (o.getRightPeripheral() &gt; frame[0] &amp;&amp; o.getLeftPeripheral() &lt; frame[2]</span>
-<span class="pc bpc" id="L536" title="1 of 4 branches missed.">                         &amp;&amp; o.getBottomPeripheral() &gt; frame[1] &amp;&amp; o.getTopPeripheral() &lt; frame[3])</span>
+<span class="nc bnc" id="L458" title="All 4 branches missed.">                        if (o.getRightPeripheral() &gt; frame[0] &amp;&amp; o.getLeftPeripheral() &lt; frame[2]</span>
+<span class="nc bnc" id="L459" title="All 4 branches missed.">                         &amp;&amp; o.getBottomPeripheral() &gt; frame[1] &amp;&amp; o.getTopPeripheral() &lt; frame[3])</span>
                         {
-<span class="pc bpc" id="L538" title="1 of 2 branches missed.">                            if (Actor.act(o)) check[0] = true;</span>
+<span class="nc bnc" id="L461" title="All 2 branches missed.">                            if (Actor.act(o)) check[0] = true;</span>
                         }
 
-<span class="fc" id="L541">                    });</span>
+<span class="nc" id="L464">                    });</span>
         }
-<span class="fc bfc" id="L543" title="All 2 branches covered.">        if (TLNode != null) {</span>
-<span class="fc bfc" id="L544" title="All 2 branches covered.">            if (TLNode.applyToAllWithin(frame, Actor)) check[0] = true;</span>
+<span class="fc bfc" id="L466" title="All 2 branches covered.">        if (TLNode != null) {</span>
+<span class="pc bpc" id="L467" title="1 of 2 branches missed.">            if (TLNode.applyToAllWithin(frame, Actor)) check[0] = true;</span>
         }
-<span class="fc bfc" id="L546" title="All 2 branches covered.">        if (TRNode != null) {</span>
-<span class="pc bpc" id="L547" title="1 of 2 branches missed.">            if (TRNode.applyToAllWithin(frame, Actor)) check[0] = true;</span>
+<span class="fc bfc" id="L469" title="All 2 branches covered.">        if (TRNode != null) {</span>
+<span class="pc bpc" id="L470" title="1 of 2 branches missed.">            if (TRNode.applyToAllWithin(frame, Actor)) check[0] = true;</span>
         }
-<span class="pc bpc" id="L549" title="1 of 2 branches missed.">        if (BLNode != null) {</span>
-<span class="fc bfc" id="L550" title="All 2 branches covered.">            if (BLNode.applyToAllWithin(frame, Actor)) check[0] = true;</span>
+<span class="pc bpc" id="L472" title="1 of 2 branches missed.">        if (BLNode != null) {</span>
+<span class="nc bnc" id="L473" title="All 2 branches missed.">            if (BLNode.applyToAllWithin(frame, Actor)) check[0] = true;</span>
 
         }
-<span class="fc bfc" id="L553" title="All 2 branches covered.">        if (BRNode != null) {</span>
-<span class="fc bfc" id="L554" title="All 2 branches covered.">            if (BRNode.applyToAllWithin(frame, Actor)) check[0] = true;</span>
+<span class="fc bfc" id="L476" title="All 2 branches covered.">        if (BRNode != null) {</span>
+<span class="pc bpc" id="L477" title="1 of 2 branches missed.">            if (BRNode.applyToAllWithin(frame, Actor)) check[0] = true;</span>
 
         }
-<span class="fc" id="L557">        return check[0];</span>
+<span class="fc" id="L480">        return check[0];</span>
     }
 
 
@@ -571,15 +494,15 @@ public class GridSpaceMap extends AbstractSpaceMap {
      * */
     //===============================================================================================
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<span class="fc" id="L574">    public class Leave extends AbstractSpaceMap {</span>
+<span class="fc" id="L497">    public class Leave extends AbstractSpaceMap {</span>
 
-<span class="fc" id="L576">        HashMap&lt;SurfaceObject, SurfaceObject&gt; Elements = null;</span>
+<span class="fc" id="L499">        HashMap&lt;SurfaceObject, SurfaceObject&gt; Elements = null;</span>
 
         //-------------------------------------------------------------------
-        public synchronized LinkedList&lt;SurfaceObject&gt; getLeaveElements() {
-<span class="fc" id="L580">            LinkedList&lt;SurfaceObject&gt; List = new LinkedList&lt;SurfaceObject&gt;();</span>
-<span class="fc" id="L581">            Elements.forEach((k, v) -&gt; List.add(v));</span>
-<span class="fc" id="L582">            return List;</span>
+        public synchronized List&lt;SurfaceObject&gt; getLeaveElements() {
+<span class="fc" id="L503">            LinkedList&lt;SurfaceObject&gt; List = new LinkedList&lt;SurfaceObject&gt;();</span>
+<span class="fc" id="L504">            Elements.forEach((k, v) -&gt; List.add(v));</span>
+<span class="fc" id="L505">            return List;</span>
         }
 
         //-------------------------------------------------------------------
@@ -587,161 +510,161 @@ public class GridSpaceMap extends AbstractSpaceMap {
         //------------------------------------------------------------------
         @Override
         public synchronized AbstractSpaceMap addAndUpdate(SurfaceObject node) {
-<span class="pc bpc" id="L590" title="1 of 2 branches missed.">            if (node == null) return this;</span>
-<span class="fc bfc" id="L591" title="All 2 branches covered.">            if (Elements == null) {</span>
-<span class="fc" id="L592">                Elements = new HashMap&lt;&gt;();</span>
+<span class="pc bpc" id="L513" title="1 of 2 branches missed.">            if (node == null) return this;</span>
+<span class="fc bfc" id="L514" title="All 2 branches covered.">            if (Elements == null) {</span>
+<span class="fc" id="L515">                Elements = new HashMap&lt;&gt;();</span>
             } else {
-<span class="pc bpc" id="L594" title="1 of 2 branches missed.">                if (Elements.size() &gt;= MAX) {</span>
+<span class="pc bpc" id="L517" title="1 of 2 branches missed.">                if (Elements.size() &gt;= MAX) {</span>
                     AbstractSpaceMap newNode;
-<span class="nc" id="L596">                    double[] newCenterX = {node.getX()};</span>
-<span class="nc" id="L597">                    double[] newCenterY = {node.getY()};</span>
+<span class="nc" id="L519">                    double[] newCenterX = {node.getX()};</span>
+<span class="nc" id="L520">                    double[] newCenterY = {node.getY()};</span>
 
-<span class="nc" id="L599">                    Elements.forEach((k, v) -&gt;</span>
+<span class="nc" id="L522">                    Elements.forEach((k, v) -&gt;</span>
                     {
-<span class="nc" id="L601">                        newCenterX[0] += v.getX();</span>
-<span class="nc" id="L602">                        newCenterY[0] += v.getY();</span>
-<span class="nc" id="L603">                    });</span>
-<span class="nc" id="L604">                    newCenterX[0] /= Elements.size() + 1;</span>
-<span class="nc" id="L605">                    newCenterY[0] /= Elements.size() + 1;</span>
-<span class="nc" id="L606">                    double[] newSize = {Math.pow(Math.pow(newCenterX[0] - node.getX(), 2) + Math.pow(newCenterY[0] - node.getY(), 2), 0.5)};</span>
+<span class="nc" id="L524">                        newCenterX[0] += v.getX();</span>
+<span class="nc" id="L525">                        newCenterY[0] += v.getY();</span>
+<span class="nc" id="L526">                    });</span>
+<span class="nc" id="L527">                    newCenterX[0] /= Elements.size() + 1;</span>
+<span class="nc" id="L528">                    newCenterY[0] /= Elements.size() + 1;</span>
+<span class="nc" id="L529">                    double[] newSize = {Math.pow(Math.pow(newCenterX[0] - node.getX(), 2) + Math.pow(newCenterY[0] - node.getY(), 2), 0.5)};</span>
 
-<span class="nc" id="L608">                    LinkedList&lt;SurfaceObject&gt; List = new LinkedList&lt;SurfaceObject&gt;();</span>
-<span class="nc" id="L609">                    Elements.forEach((k, v) -&gt;</span>
+<span class="nc" id="L531">                    LinkedList&lt;SurfaceObject&gt; List = new LinkedList&lt;SurfaceObject&gt;();</span>
+<span class="nc" id="L532">                    Elements.forEach((k, v) -&gt;</span>
                     {
-<span class="nc" id="L611">                        List.add(v);</span>
-<span class="nc" id="L612">                        double distance = Math.pow(Math.pow(newCenterX[0] - v.getX(), 2) + Math.pow(newCenterY[0] - v.getY(), 2), 0.5);</span>
-<span class="nc bnc" id="L613" title="All 2 branches missed.">                        if (distance &gt; newSize[0]) {</span>
-<span class="nc" id="L614">                            newSize[0] = distance;</span>
+<span class="nc" id="L534">                        List.add(v);</span>
+<span class="nc" id="L535">                        double distance = Math.pow(Math.pow(newCenterX[0] - v.getX(), 2) + Math.pow(newCenterY[0] - v.getY(), 2), 0.5);</span>
+<span class="nc bnc" id="L536" title="All 2 branches missed.">                        if (distance &gt; newSize[0]) {</span>
+<span class="nc" id="L537">                            newSize[0] = distance;</span>
                         }
-<span class="nc" id="L616">                    });</span>
-<span class="nc" id="L617">                    newNode = new GridSpaceMap(newCenterX[0], newCenterY[0], newSize[0]);</span>
-<span class="nc" id="L618">                    newNode.addAll(List);</span>
-<span class="nc" id="L619">                    newNode = newNode.addAndUpdate(node);</span>
-<span class="nc" id="L620">                    return newNode;//new grid</span>
+<span class="nc" id="L539">                    });</span>
+<span class="nc" id="L540">                    newNode = new GridSpaceMap(newCenterX[0], newCenterY[0], newSize[0]);</span>
+<span class="nc" id="L541">                    newNode.addAll(List);</span>
+<span class="nc" id="L542">                    newNode = newNode.addAndUpdate(node);</span>
+<span class="nc" id="L543">                    return newNode;//new grid</span>
                 }
             }
-<span class="fc" id="L623">            Elements.put(node, node);//Elements.addInto(node);</span>
-<span class="fc" id="L624">            return this;</span>
+<span class="fc" id="L546">            Elements.put(node, node);//Elements.addInto(node);</span>
+<span class="fc" id="L547">            return this;</span>
         }
 
         //==============================================================================
         //------------------------------------------------------------------
         @Override
         public synchronized AbstractSpaceMap removeAndUpdate(SurfaceObject node) {
-<span class="pc bpc" id="L631" title="1 of 2 branches missed.">            if (Elements != null) Elements.remove(node);</span>
-<span class="fc bfc" id="L632" title="All 2 branches covered.">            if (Elements.size() == 0) return null;</span>
-<span class="fc" id="L633">            return this;</span>
+<span class="pc bpc" id="L554" title="1 of 2 branches missed.">            if (Elements != null) Elements.remove(node);</span>
+<span class="fc bfc" id="L555" title="All 2 branches covered.">            if (Elements.size() == 0) return null;</span>
+<span class="fc" id="L556">            return this;</span>
         }
 
         //==============================================================================
         @Override
         public synchronized int getCount() {
-<span class="pc bpc" id="L639" title="1 of 2 branches missed.">            if (Elements != null) return Elements.size();</span>
-<span class="nc" id="L640">            return 0;</span>
+<span class="pc bpc" id="L562" title="1 of 2 branches missed.">            if (Elements != null) return Elements.size();</span>
+<span class="nc" id="L563">            return 0;</span>
         }
 
         //==============================================================================
 
         @Override
-        public synchronized LinkedList&lt;SurfaceObject&gt; findAllAt(double x, double y, MapAction condition) {
-<span class="pc bpc" id="L647" title="1 of 2 branches missed.">            if (Elements == null) return null;</span>
-<span class="fc" id="L648">            LinkedList&lt;SurfaceObject&gt; List = new LinkedList&lt;SurfaceObject&gt;();</span>
-<span class="fc" id="L649">            Elements.forEach((k, v) -&gt; {</span>
-<span class="fc bfc" id="L650" title="All 2 branches covered.">                if (condition.act(v)) {</span>
-<span class="fc" id="L651">                    List.add(v);</span>
+        public synchronized List&lt;SurfaceObject&gt; findAllAt(double x, double y, MapAction condition) {
+<span class="pc bpc" id="L570" title="1 of 2 branches missed.">            if (Elements == null) return null;</span>
+<span class="fc" id="L571">            List&lt;SurfaceObject&gt; List = new LinkedList&lt;SurfaceObject&gt;();</span>
+<span class="fc" id="L572">            Elements.forEach((k, v) -&gt; {</span>
+<span class="fc bfc" id="L573" title="All 2 branches covered.">                if (condition.act(v)) {</span>
+<span class="fc" id="L574">                    List.add(v);</span>
                 }
-<span class="fc" id="L653">            });</span>
-<span class="fc" id="L654">            return List;</span>
+<span class="fc" id="L576">            });</span>
+<span class="fc" id="L577">            return List;</span>
         }
 
         //==============================================================================
         @Override
         public synchronized void paintStructure(Graphics2D brush) {
-<span class="nc bnc" id="L660" title="All 2 branches missed.">            if (Elements == null) return;</span>
-<span class="nc" id="L661">            Elements.forEach((k, v) -&gt;</span>
+<span class="nc bnc" id="L583" title="All 2 branches missed.">            if (Elements == null) return;</span>
+<span class="nc" id="L584">            Elements.forEach((k, v) -&gt;</span>
             {
-<span class="nc" id="L663">                brush.drawOval((int) (v.getX() - 500), (int) (v.getY() - 500), 1000, 1000);</span>
-<span class="nc" id="L664">                brush.drawOval((int) (v.getX() - 700), (int) (v.getY() - 700), 1400, 1400);</span>
-<span class="nc" id="L665">                brush.drawOval((int) (v.getX() - 1000), (int) (v.getY() - 1000), 2000, 2000);</span>
-<span class="nc" id="L666">                brush.drawOval((int) (v.getX() - 2000), (int) (v.getY() - 2000), 4000, 4000);</span>
-<span class="nc" id="L667">            });</span>
-<span class="nc" id="L668">        }</span>
+<span class="nc" id="L586">                brush.drawOval((int) (v.getX() - 500), (int) (v.getY() - 500), 1000, 1000);</span>
+<span class="nc" id="L587">                brush.drawOval((int) (v.getX() - 700), (int) (v.getY() - 700), 1400, 1400);</span>
+<span class="nc" id="L588">                brush.drawOval((int) (v.getX() - 1000), (int) (v.getY() - 1000), 2000, 2000);</span>
+<span class="nc" id="L589">                brush.drawOval((int) (v.getX() - 2000), (int) (v.getY() - 2000), 4000, 4000);</span>
+<span class="nc" id="L590">            });</span>
+<span class="nc" id="L591">        }</span>
 
         //==============================================================================
         @Override
         public synchronized boolean applyToAll(MapAction Actor) {
-<span class="pc bpc" id="L673" title="1 of 2 branches missed.">            if (Elements == null) return false;</span>
-<span class="fc" id="L674">            boolean[] actorCheck = {false};</span>
+<span class="pc bpc" id="L596" title="1 of 2 branches missed.">            if (Elements == null) return false;</span>
+<span class="fc" id="L597">            boolean[] actorCheck = {false};</span>
 
-<span class="fc" id="L676">            Elements.forEach((k, v) -&gt; {</span>
-<span class="pc bpc" id="L677" title="1 of 2 branches missed.">                if (Actor.act(v)) {</span>
-<span class="fc" id="L678">                    actorCheck[0] = true;</span>
+<span class="fc" id="L599">            Elements.forEach((k, v) -&gt; {</span>
+<span class="pc bpc" id="L600" title="1 of 2 branches missed.">                if (Actor.act(v)) {</span>
+<span class="fc" id="L601">                    actorCheck[0] = true;</span>
                 }
-<span class="fc" id="L680">            });</span>
-<span class="fc" id="L681">            return actorCheck[0];</span>
+<span class="fc" id="L603">            });</span>
+<span class="fc" id="L604">            return actorCheck[0];</span>
         }
 
         //==============================================================================
         @Override
-        public synchronized AbstractSpaceMap addAll(LinkedList&lt;SurfaceObject&gt; elements) {
-<span class="nc bnc" id="L687" title="All 2 branches missed.">            if (elements == null) return this;</span>
-<span class="nc bnc" id="L688" title="All 2 branches missed.">            if (Elements == null) {</span>
-<span class="nc bnc" id="L689" title="All 2 branches missed.">                if (elements.size() &lt;= MAX) {</span>
-<span class="nc" id="L690">                    Elements = new HashMap&lt;&gt;();</span>
-<span class="nc" id="L691">                    elements.forEach((v) -&gt; {</span>
-<span class="nc" id="L692">                        Elements.put(v, v);</span>
-<span class="nc" id="L693">                    });</span>
+        public synchronized AbstractSpaceMap addAll(List&lt;SurfaceObject&gt; elements) {
+<span class="nc bnc" id="L610" title="All 2 branches missed.">            if (elements == null) return this;</span>
+<span class="nc bnc" id="L611" title="All 2 branches missed.">            if (Elements == null) {</span>
+<span class="nc bnc" id="L612" title="All 2 branches missed.">                if (elements.size() &lt;= MAX) {</span>
+<span class="nc" id="L613">                    Elements = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L614">                    elements.forEach((v) -&gt; {</span>
+<span class="nc" id="L615">                        Elements.put(v, v);</span>
+<span class="nc" id="L616">                    });</span>
                 }
-<span class="nc" id="L695">                return this;</span>
+<span class="nc" id="L618">                return this;</span>
             }
 
-<span class="nc bnc" id="L698" title="All 2 branches missed.">            if ((elements.size() + Elements.size()) &gt; MAX) {</span>
-<span class="nc" id="L699">                return this;</span>
+<span class="nc bnc" id="L621" title="All 2 branches missed.">            if ((elements.size() + Elements.size()) &gt; MAX) {</span>
+<span class="nc" id="L622">                return this;</span>
             }//return new branch!
 
-<span class="nc" id="L702">            elements.forEach((v) -&gt; {</span>
-<span class="nc" id="L703">                Elements.put(v, v);</span>
-<span class="nc" id="L704">            });</span>
-<span class="nc" id="L705">            return this;</span>
+<span class="nc" id="L625">            elements.forEach((v) -&gt; {</span>
+<span class="nc" id="L626">                Elements.put(v, v);</span>
+<span class="nc" id="L627">            });</span>
+<span class="nc" id="L628">            return this;</span>
         }
 
         //==============================================================================
         @Override
-        public synchronized LinkedList&lt;SurfaceObject&gt; getAll() {
-<span class="fc" id="L711">            return this.getLeaveElements();</span>
+        public synchronized List&lt;SurfaceObject&gt; getAll() {
+<span class="fc" id="L634">            return this.getLeaveElements();</span>
         }
 
         //==============================================================================
 
         @Override
         public synchronized LinkedList&lt;SurfaceObject&gt; getAllWithin(double[] frame) {
-<span class="fc" id="L718">            LinkedList&lt;SurfaceObject&gt; List = new LinkedList&lt;SurfaceObject&gt;();</span>
-<span class="fc" id="L719">            _withinFrame(List, Elements, frame);</span>
-<span class="fc" id="L720">            return List;</span>
+<span class="fc" id="L641">            LinkedList&lt;SurfaceObject&gt; List = new LinkedList&lt;SurfaceObject&gt;();</span>
+<span class="fc" id="L642">            _withinFrame(List, Elements, frame);</span>
+<span class="fc" id="L643">            return List;</span>
         }
 
         @Override
         public synchronized LinkedList&lt;SurfaceObject&gt; findAllWithin(double[] frame, MapAction Actor) {
-<span class="nc" id="L725">            LinkedList&lt;SurfaceObject&gt; List = new LinkedList&lt;SurfaceObject&gt;();</span>
-<span class="nc" id="L726">            _withinFrame(List, Elements, frame);</span>
-<span class="nc" id="L727">            return List;</span>
+<span class="fc" id="L648">            LinkedList&lt;SurfaceObject&gt; List = new LinkedList&lt;SurfaceObject&gt;();</span>
+<span class="fc" id="L649">            _withinFrame(List, Elements, frame);</span>
+<span class="fc" id="L650">            return List;</span>
         }
 
         @Override
         public synchronized boolean applyToAllWithin(double[] frame, MapAction Actor) {
-<span class="fc" id="L732">            boolean[] check = {false};</span>
-<span class="pc bpc" id="L733" title="1 of 2 branches missed.">            if (Elements != null) {</span>
-<span class="fc" id="L734">                Elements.forEach(</span>
+<span class="fc" id="L655">            boolean[] check = {false};</span>
+<span class="pc bpc" id="L656" title="1 of 2 branches missed.">            if (Elements != null) {</span>
+<span class="fc" id="L657">                Elements.forEach(</span>
                         (k, o) -&gt;
                         {
-<span class="pc bpc" id="L737" title="1 of 4 branches missed.">                            if (o.getRightPeripheral() &gt; frame[0] &amp;&amp; o.getLeftPeripheral() &lt; frame[2]</span>
-<span class="pc bpc" id="L738" title="1 of 4 branches missed.">                                    &amp;&amp; o.getBottomPeripheral() &gt; frame[1] &amp;&amp; o.getTopPeripheral() &lt; frame[3]) {</span>
-<span class="pc bpc" id="L739" title="1 of 2 branches missed.">                                if (Actor.act(o)) check[0] = true;</span>
+<span class="pc bpc" id="L660" title="2 of 4 branches missed.">                            if (o.getLeftPeripheral() &gt; frame[0] &amp;&amp; o.getRightPeripheral() &lt; frame[1]</span>
+<span class="pc bpc" id="L661" title="2 of 4 branches missed.">                                    &amp;&amp; o.getTopPeripheral() &gt; frame[2] &amp;&amp; o.getBottomPeripheral() &lt; frame[3]) {</span>
+<span class="pc bpc" id="L662" title="1 of 2 branches missed.">                                if (Actor.act(o)) check[0] = true;</span>
                             }
 
-<span class="fc" id="L742">                        });</span>
+<span class="fc" id="L665">                        });</span>
             }
-<span class="fc" id="L744">            return check[0];</span>
+<span class="fc" id="L667">            return check[0];</span>
         }
     }
     //===============================================================================================

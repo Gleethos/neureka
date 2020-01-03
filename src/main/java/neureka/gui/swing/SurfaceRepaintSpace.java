@@ -3,86 +3,49 @@ package neureka.gui.swing;
 
 public class SurfaceRepaintSpace {
 
-    public double X, Y;
-    public double dX, dY;
+    private double _TLX, _TLY, _BRX, _BRY;
 
-    SurfaceRepaintSpace(double centerX, double centerY, double distanceX, double distanceY) {
-        X = centerX;
-        Y = centerY;
-        dX = distanceX;
-        dY = distanceY;
+    public SurfaceRepaintSpace(
+            double TLX,
+            double TLY,
+            double BRX,
+            double BRY
+    ) {
+        _TLX = TLX;
+        _TLY = TLY;
+        _BRX = BRX;
+        _BRY = BRY;
+
     }
 
-    public double getCenterX() {
-        return X;
+    public boolean contains(SurfaceRepaintSpace other){
+        if(_TLX<=other._TLX && _TLY<=other._TLY && _BRX>=other._BRX && _BRY>=other._BRY){
+            return true;
+        }
+        return false;
     }
 
-    public double getCenterY() {
-        return Y;
+    public double getWidth(){
+        return _BRX-_TLX;
+    }
+    public double getHeight(){
+        return _BRY-_TLY;
     }
 
-    public double getDistanceX() {
-        return dX;
+    public double getLeftPeripheral(){
+        return _TLX;
     }
 
-    public double getDistanceY() {
-        return dY;
+    public double getTopPeripheral(){
+        return _TLY;
     }
 
-    public void include(double x, double y) {
-        double LTCornerX = X - dX;
-        double LTCornerY = Y - dY;
-
-        double RBCornerX = X + dX;
-        double RBCornerY = Y + dY;
-
-        if (x < X - dX) {
-            LTCornerX = x;
-        } else if (x > X + dX) {
-            RBCornerX = x;
-        }
-
-        if (y < Y - dY) {
-            RBCornerY = y;
-        } else if (y > Y + dY) {
-            LTCornerY = y;
-        }
-
-        X = (LTCornerX + RBCornerX) / 2;
-        Y = (LTCornerY + RBCornerY) / 2;
-
-        dX = X - LTCornerX;
-        dY = Y - RBCornerY;
+    public double getRightPeripheral(){
+        return _BRX;
     }
 
-
-    public void include(double x, double y, double dx, double dy) {
-
-        double LTCornerX = X - dX;
-        double LTCornerY = Y - dY;
-
-        double RBCornerX = X + dX;
-        double RBCornerY = Y + dY;
-
-        if (Math.abs(x - dx) > Math.abs(X - dX)) {
-            LTCornerX = x - dx;
-        }
-        if (Math.abs(x + dx) > Math.abs(X + dX)) {
-            RBCornerX = x + dx;
-        }
-
-        if (Math.abs(y - dy) > Math.abs(Y - dY)) {
-            RBCornerY = y - dy;
-        }
-        if (Math.abs(y + dy) > Math.abs(Y + dY)) {
-            LTCornerY = y + dy;
-        }
-
-        X = (LTCornerX + RBCornerX) / 2;
-        Y = (LTCornerY + RBCornerY) / 2;
-
-        dX = Math.abs(X - RBCornerX);
-        dY = Math.abs(Y - RBCornerY);
+    public double getBottomPeripheral(){
+        return _BRY;
     }
 
 

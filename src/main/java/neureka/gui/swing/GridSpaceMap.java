@@ -1,6 +1,5 @@
 package neureka.gui.swing;
 
-import javax.swing.text.Element;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -9,13 +8,13 @@ import java.util.*;
 
 public class GridSpaceMap extends AbstractSpaceMap {
 
-    AbstractSpaceMap TLNode, TRNode, BLNode, BRNode;
-    double X, Y;
-    double size;
-    LinkedList<SurfaceObject> Elements;
+    private AbstractSpaceMap TLNode, TRNode, BLNode, BRNode;
+    private double X, Y;
+    private double size;
+    private LinkedList<SurfaceObject> Elements;
     //CREATE : "EDGE MAP"
 
-    GridSpaceMap(double centerX, double centerY, double size) {
+    public GridSpaceMap(double centerX, double centerY, double size) {
         X = centerX;
         Y = centerY;
         this.size = size;
@@ -119,7 +118,7 @@ public class GridSpaceMap extends AbstractSpaceMap {
                     GridSpaceMap newBranch = new GridSpaceMap(X + vecX, Y + vecY, size / 2);
                     newBranch = (GridSpaceMap) newBranch.addAndUpdate(newObject);
 
-                    LinkedList<SurfaceObject> oldNodes = ((Leave) MapNode).getLeaveElements();
+                    List<SurfaceObject> oldNodes = ((Leave) MapNode).getLeaveElements();
                     for (int i = 0; i < oldNodes.size(); i++) {
                         newBranch = (GridSpaceMap) newBranch.addAndUpdate(oldNodes.get(i));
                     }
@@ -221,96 +220,20 @@ public class GridSpaceMap extends AbstractSpaceMap {
         if (Elements != null) {
             nodeCount += Elements.size();
         }
+        if (TLNode != null) {
+            nodeCount += TLNode.getCount();
+        }
+        if (TRNode != null) {
+            nodeCount += TRNode.getCount();
+        }
+        if (BLNode != null) {
+            nodeCount += BLNode.getCount();
+        }
+        if (BRNode != null) {
+            nodeCount += BRNode.getCount();
+        }
         return nodeCount;
     }
-
-	/*
-	@Override
-	public synchronized SurfaceObject get(int i)
-	{
-		int nodeCount = 0;
-		int currentCount=0;
-		if(Elements!=null) {
-			int count = Elements.size();
-			if(i<count) 
-			   {return Elements.get(i);}
-			else
-			   {nodeCount+=count;}
-		}
-		
-		if(TLNode!=null) 
-		{
-			currentCount=TLNode.getCount();
-			if(i<(nodeCount+currentCount)) {return TLNode.get(i-nodeCount);}
-			nodeCount += currentCount;
-		}
-		if(TRNode!=null) 
-		{
-			currentCount=TRNode.getCount();
-			if(i<(nodeCount+currentCount)) {return TRNode.get(i-nodeCount);}
-			nodeCount += currentCount;
-		}
-		if(BLNode!=null) 
-		{
-			currentCount=BLNode.getCount();
-			if(i<(nodeCount+currentCount)) {return BLNode.get(i-nodeCount);}
-			nodeCount += currentCount;
-		}
-		if(BRNode!=null) 
-		{
-			currentCount=BRNode.getCount();
-			if(i<(nodeCount+currentCount)) {return BRNode.get(i-nodeCount);}
-			nodeCount += currentCount;
-		}
-		return null;
-	}
-	*/
-
-	/*
-	@Override
-	public synchronized LinkedList<SurfaceObject> getAllClosestTo(double x, double y)
-	{	
-		LinkedList<SurfaceObject> present = Elements;
-		if(present==null) {
-			if    (x <= X && y <= Y && TLNode!=null) {
-				return TLNode.getAllClosestTo(x, y);
-			}
-			else if(x > X && y <= Y && TRNode!=null) {
-				return TRNode.getAllClosestTo(x, y);
-			}
-			else if(x < X && y >= Y && BLNode!=null) {
-				return BLNode.getAllClosestTo(x, y);
-			}
-			else if(x >= X && y > Y && BRNode!=null) {
-				return BRNode.getAllClosestTo(x, y);
-			}
-		}
-		else 
-		{
-			if (x <= X && y <= Y && TLNode!=null) {
-			    LinkedList<SurfaceObject> found = TLNode.getAllClosestTo(x, y);
-				if(found!=null) {found.addAll(present);}
-				return found;
-			}
-			else if(x > X && y <= Y && TRNode!=null) {
-				LinkedList<SurfaceObject> found = TRNode.getAllClosestTo(x, y);
-				if(found!=null) {found.addAll(present);}
-				return found;
-			}
-			else if(x < X && y >= Y && BLNode!=null) {
-				LinkedList<SurfaceObject> found = BLNode.getAllClosestTo(x, y);
-				if(found!=null) {found.addAll(present);}
-				return found;
-			}
-			else if(x >= X && y > Y && BRNode!=null) {
-				LinkedList<SurfaceObject> found = BRNode.getAllClosestTo(x, y);
-				if(found!=null) {found.addAll(present);}
-				return found;
-			}
-		}
-		return null;
-	}
-	*/
 
     @Override
     public synchronized LinkedList<SurfaceObject> findAllAt(double x, double y, MapAction condition) {
@@ -445,7 +368,7 @@ public class GridSpaceMap extends AbstractSpaceMap {
     }
 
     @Override
-    public synchronized AbstractSpaceMap addAll(LinkedList<SurfaceObject> elements) {
+    public synchronized AbstractSpaceMap addAll(List<SurfaceObject> elements) {
         if (elements == null) {
             return this;
         }
@@ -501,7 +424,7 @@ public class GridSpaceMap extends AbstractSpaceMap {
         if (TLNode != null && LP < (X) && TP < (Y)) List.addAll(TLNode.getAllWithin(frame));
         if (TRNode != null && RP > (X) && TP < (Y)) List.addAll(TRNode.getAllWithin(frame));
         if (BLNode != null && LP < (X) && BP > (Y)) List.addAll(BLNode.getAllWithin(frame));
-        if (BRNode != null && RP > (X) && TP > (Y)) List.addAll(BRNode.getAllWithin(frame));
+        if (BRNode != null && RP > (X) && BP > (Y)) List.addAll(BRNode.getAllWithin(frame));
         return List;
     }
 
@@ -576,7 +499,7 @@ public class GridSpaceMap extends AbstractSpaceMap {
         HashMap<SurfaceObject, SurfaceObject> Elements = null;
 
         //-------------------------------------------------------------------
-        public synchronized LinkedList<SurfaceObject> getLeaveElements() {
+        public synchronized List<SurfaceObject> getLeaveElements() {
             LinkedList<SurfaceObject> List = new LinkedList<SurfaceObject>();
             Elements.forEach((k, v) -> List.add(v));
             return List;
@@ -643,9 +566,9 @@ public class GridSpaceMap extends AbstractSpaceMap {
         //==============================================================================
 
         @Override
-        public synchronized LinkedList<SurfaceObject> findAllAt(double x, double y, MapAction condition) {
+        public synchronized List<SurfaceObject> findAllAt(double x, double y, MapAction condition) {
             if (Elements == null) return null;
-            LinkedList<SurfaceObject> List = new LinkedList<SurfaceObject>();
+            List<SurfaceObject> List = new LinkedList<SurfaceObject>();
             Elements.forEach((k, v) -> {
                 if (condition.act(v)) {
                     List.add(v);
@@ -683,7 +606,7 @@ public class GridSpaceMap extends AbstractSpaceMap {
 
         //==============================================================================
         @Override
-        public synchronized AbstractSpaceMap addAll(LinkedList<SurfaceObject> elements) {
+        public synchronized AbstractSpaceMap addAll(List<SurfaceObject> elements) {
             if (elements == null) return this;
             if (Elements == null) {
                 if (elements.size() <= MAX) {
@@ -707,7 +630,7 @@ public class GridSpaceMap extends AbstractSpaceMap {
 
         //==============================================================================
         @Override
-        public synchronized LinkedList<SurfaceObject> getAll() {
+        public synchronized List<SurfaceObject> getAll() {
             return this.getLeaveElements();
         }
 
@@ -734,8 +657,8 @@ public class GridSpaceMap extends AbstractSpaceMap {
                 Elements.forEach(
                         (k, o) ->
                         {
-                            if (o.getRightPeripheral() > frame[0] && o.getLeftPeripheral() < frame[2]
-                                    && o.getBottomPeripheral() > frame[1] && o.getTopPeripheral() < frame[3]) {
+                            if (o.getLeftPeripheral() > frame[0] && o.getRightPeripheral() < frame[1]
+                                    && o.getTopPeripheral() > frame[2] && o.getBottomPeripheral() < frame[3]) {
                                 if (Actor.act(o)) check[0] = true;
                             }
 

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GraphSurface.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.gui.swing</a> &gt; <span class="el_source">GraphSurface.java</span></div><h1>GraphSurface.java</h1><pre class="source lang-java linenums">package neureka.gui.swing;
 
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -12,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 
 import javax.swing.JPanel;
@@ -37,27 +37,25 @@ public class GraphSurface extends JPanel implements Surface, ActionListener {
 
     private Timer GUITimer;
 
-    // Rendering:
-    private ArrayList&lt;SurfaceRepaintSpace&gt; RepaintQueue;
 
     // Sense Focus:
     private SurfaceObject FocusObject;
 
     public SurfaceObject getFocusObject() {
-<span class="fc" id="L47">        return FocusObject;</span>
+<span class="fc" id="L45">        return FocusObject;</span>
     }
 
     public void setFocusObject(SurfaceObject object) {
-<span class="fc" id="L51">        FocusObject = object;</span>
-<span class="fc" id="L52">    }</span>
+<span class="fc" id="L49">        FocusObject = object;</span>
+<span class="fc" id="L50">    }</span>
 
     @Override
     protected boolean requestFocusInWindow(boolean temporary) {
-<span class="nc" id="L56">        return super.requestFocusInWindow(temporary);</span>
+<span class="nc" id="L54">        return super.requestFocusInWindow(temporary);</span>
     }
 
-<span class="fc" id="L59">    private double CenterX = getWidth() / 2;</span>
-<span class="fc" id="L60">    private double CenterY = getHeight() / 2;</span>
+<span class="fc" id="L57">    private double CenterX = getWidth() / 2;</span>
+<span class="fc" id="L58">    private double CenterY = getHeight() / 2;</span>
 
     private int[] LongPress;
     private int[] Swipe;
@@ -69,73 +67,73 @@ public class GraphSurface extends JPanel implements Surface, ActionListener {
     private int[] Press;
 
     public int[] getLongPress() {
-<span class="fc" id="L72">        return LongPress;</span>
+<span class="fc" id="L70">        return LongPress;</span>
     }
 
     public int[] getSwipe() {
-<span class="fc" id="L76">        return Swipe;</span>
+<span class="fc" id="L74">        return Swipe;</span>
     }
 
     public int[] getDoubleClick() {
-<span class="fc" id="L80">        return DoubleClick;</span>
+<span class="fc" id="L78">        return DoubleClick;</span>
     }
 
     public int[] getSense() {
-<span class="fc" id="L84">        return Sense;</span>
+<span class="fc" id="L82">        return Sense;</span>
     }
 
     public double[] getScaling() {
-<span class="fc" id="L88">        return Scaling;</span>
+<span class="fc" id="L86">        return Scaling;</span>
     }
 
     public int[] getDrag() {
-<span class="fc" id="L92">        return Drag;</span>
+<span class="fc" id="L90">        return Drag;</span>
     }
 
     public void setDrag(int[] newDragging) {
-<span class="nc" id="L96">        Drag = newDragging;</span>
-<span class="nc" id="L97">    }</span>
+<span class="nc" id="L94">        Drag = newDragging;</span>
+<span class="nc" id="L95">    }</span>
 
     public void setPress(int[] newPress) {
-<span class="fc" id="L100">        Press = newPress;</span>
-<span class="fc" id="L101">    }</span>
+<span class="fc" id="L98">        Press = newPress;</span>
+<span class="fc" id="L99">    }</span>
 
     public void setLongPress(int[] newPress) {
-<span class="nc" id="L104">        LongPress = newPress;</span>
-<span class="nc" id="L105">    }</span>
+<span class="nc" id="L102">        LongPress = newPress;</span>
+<span class="nc" id="L103">    }</span>
 
     public int[] getPress() {
-<span class="nc" id="L108">        return Press;</span>
+<span class="nc" id="L106">        return Press;</span>
     }
 
     public void setClick(int[] newClick) {
-<span class="fc" id="L112">        Click = newClick;</span>
-<span class="fc" id="L113">    }</span>
+<span class="fc" id="L110">        Click = newClick;</span>
+<span class="fc" id="L111">    }</span>
 
     public void setScaling(double[] newScaling) {
-<span class="fc" id="L116">        Scaling = newScaling;</span>
-<span class="fc" id="L117">    }</span>
+<span class="fc" id="L114">        Scaling = newScaling;</span>
+<span class="fc" id="L115">    }</span>
 
     public void setDoubleClick(int[] newClick) {
-<span class="fc" id="L120">        DoubleClick = newClick;</span>
-<span class="fc" id="L121">    }</span>
+<span class="fc" id="L118">        DoubleClick = newClick;</span>
+<span class="fc" id="L119">    }</span>
 
     public void setMovement(int[] newMove) {
-<span class="fc" id="L124">        Sense = newMove;</span>
-<span class="fc" id="L125">    }</span>
+<span class="fc" id="L122">        Sense = newMove;</span>
+<span class="fc" id="L123">    }</span>
 
     public void setSwipe(int[] newSwipe) {
-<span class="fc" id="L128">        Swipe = newSwipe;</span>
-<span class="fc" id="L129">    }</span>
+<span class="fc" id="L126">        Swipe = newSwipe;</span>
+<span class="fc" id="L127">    }</span>
 
-<span class="fc" id="L131">    private boolean touchMode = true;</span>
+<span class="fc" id="L129">    private boolean touchMode = true;</span>
 
-<span class="fc" id="L133">    private boolean drawRepaintSpaces = true;</span>
-<span class="fc" id="L134">    private boolean advancedRendering = false;</span>
-<span class="fc" id="L135">    private boolean mapRendering = false;</span>
+<span class="fc" id="L131">    private boolean drawRepaintSpaces = true;</span>
+<span class="fc" id="L132">    private boolean advancedRendering = false;</span>
+<span class="fc" id="L133">    private boolean mapRendering = false;</span>
 
-<span class="fc" id="L137">    private int Shade = 0;</span>
-<span class="fc" id="L138">    private boolean shadedClipping = true;</span>
+<span class="fc" id="L135">    private int Shade = 0;</span>
+<span class="fc" id="L136">    private boolean shadedClipping = true;</span>
 
     private long frameStart;
     private int frameDelta;
@@ -148,891 +146,768 @@ public class GraphSurface extends JPanel implements Surface, ActionListener {
     }
 
     public AffineTransform getScaler() {
-<span class="fc" id="L151">        return Scaler;</span>
+<span class="fc" id="L149">        return Scaler;</span>
     }
 
     public AffineTransform getTranslator() {
-<span class="fc" id="L155">        return Translator;</span>
+<span class="fc" id="L153">        return Translator;</span>
     }
 
     public double getCenterX() {
-<span class="fc" id="L159">        return CenterX;</span>
+<span class="fc" id="L157">        return CenterX;</span>
     }
 
     public double getCenterY() {
-<span class="fc" id="L163">        return CenterY;</span>
+<span class="fc" id="L161">        return CenterY;</span>
     }
 
     public void setCenterX(double value) {
-<span class="fc" id="L167">        CenterX = value;</span>
-<span class="fc" id="L168">    }</span>
+<span class="fc" id="L165">        CenterX = value;</span>
+<span class="fc" id="L166">    }</span>
 
     public void setCenterY(double value) {
-<span class="fc" id="L171">        CenterY = value;</span>
-<span class="fc" id="L172">    }</span>
+<span class="fc" id="L169">        CenterY = value;</span>
+<span class="fc" id="L170">    }</span>
 
     public SurfaceListener getListener() {
-<span class="fc" id="L175">        return Listener;</span>
+<span class="fc" id="L173">        return Listener;</span>
     }
 
     public double getFPS() {
-<span class="fc" id="L179">        return fps;</span>
+<span class="nc" id="L177">        return fps;</span>
     }
 
     public double getSmoothedFPS() {
-<span class="fc" id="L183">        return smoothFPS;</span>
+<span class="nc" id="L181">        return smoothFPS;</span>
     }
 
     // Settings:
     public boolean isAntialiasing() {
-<span class="fc" id="L188">        return advancedRendering;</span>
+<span class="fc" id="L186">        return advancedRendering;</span>
     }
 
     public boolean isMaprendering() {
-<span class="fc" id="L192">        return mapRendering;</span>
+<span class="fc" id="L190">        return mapRendering;</span>
     }
 
     public boolean isClipRendering() {
-<span class="fc" id="L196">        return drawRepaintSpaces;</span>
+<span class="fc" id="L194">        return drawRepaintSpaces;</span>
     }
 
     public boolean isClipShadeRendering() {
-<span class="fc" id="L200">        return shadedClipping;</span>
+<span class="nc" id="L198">        return shadedClipping;</span>
     }
 
     public boolean isInTouchMode() {
-<span class="fc" id="L204">        return touchMode;</span>
+<span class="fc" id="L202">        return touchMode;</span>
     }
 
     public int getShade() {
-<span class="fc" id="L208">        return Shade;</span>
+<span class="nc" id="L206">        return Shade;</span>
     }
 
     public void setShade(int value) {
-<span class="fc" id="L212">        Shade = value;</span>
-<span class="fc" id="L213">    }</span>
+<span class="nc" id="L210">        Shade = value;</span>
+<span class="nc" id="L211">    }</span>
+
+
+    private SurfaceRepaintSpace _currentFrameSpace;
+
+    @Override
+    public SurfaceRepaintSpace getCurrentFrameSpace() {
+<span class="fc" id="L218">        return _currentFrameSpace;</span>
+    }
+
+<span class="fc" id="L221">    List&lt;ObjectPainter&gt;[] _layers = new List[]{</span>
+            new ArrayList&lt;ObjectPainter&gt;(),
+            new ArrayList&lt;ObjectPainter&gt;(),
+            new ArrayList&lt;ObjectPainter&gt;(),
+            new ArrayList&lt;ObjectPainter&gt;(),
+            new ArrayList&lt;ObjectPainter&gt;(),
+            new ArrayList&lt;ObjectPainter&gt;(),
+            new ArrayList&lt;ObjectPainter&gt;(),
+            new ArrayList&lt;ObjectPainter&gt;(),
+            new ArrayList&lt;ObjectPainter&gt;(),
+            new ArrayList&lt;ObjectPainter&gt;(),
+            new ArrayList&lt;ObjectPainter&gt;(),
+            new ArrayList&lt;ObjectPainter&gt;(),
+            new ArrayList&lt;ObjectPainter&gt;(),
+            new ArrayList&lt;ObjectPainter&gt;()
+    };
+
+    public List&lt;ObjectPainter&gt;[] layers() {
+<span class="fc" id="L239">        return _layers;</span>
+    }
+
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public void setPressAction(SurfaceAction action) {
-<span class="fc" id="L217">        applyPress = action;</span>
-<span class="fc" id="L218">    }</span>
+<span class="fc" id="L245">        applyPress = action;</span>
+<span class="fc" id="L246">    }</span>
 
-<span class="fc" id="L220">    SurfaceAction applyPress = Utility.DefaultPressAction;</span>
+<span class="fc" id="L248">    SurfaceAction applyPress = Utility.DefaultPressAction;</span>
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public void setLongPressAction(SurfaceAction action) {
-<span class="fc" id="L224">        applyLongPress = action;</span>
-<span class="fc" id="L225">    }</span>
+<span class="fc" id="L252">        applyLongPress = action;</span>
+<span class="fc" id="L253">    }</span>
 
-<span class="fc" id="L227">    SurfaceAction applyLongPress = Utility.DefaultLongPressAction;</span>
+<span class="fc" id="L255">    SurfaceAction applyLongPress = Utility.DefaultLongPressAction;</span>
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public void setDoubleClickAction(SurfaceAction action) {
-<span class="fc" id="L231">        applyDoubleClick = action;</span>
-<span class="fc" id="L232">    }</span>
+<span class="fc" id="L259">        applyDoubleClick = action;</span>
+<span class="fc" id="L260">    }</span>
 
-<span class="fc" id="L234">    SurfaceAction applyDoubleClick = Utility.DefaultDoubleClickAction;</span>
+<span class="fc" id="L262">    SurfaceAction applyDoubleClick = Utility.DefaultDoubleClickAction;</span>
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public void setClickAction(SurfaceAction action) {
-<span class="fc" id="L238">        applyClick = action;</span>
-<span class="fc" id="L239">    }</span>
+<span class="fc" id="L266">        applyClick = action;</span>
+<span class="fc" id="L267">    }</span>
 
-<span class="fc" id="L241">    SurfaceAction applyClick = Utility.DefaultClickAction;</span>
+<span class="fc" id="L269">    SurfaceAction applyClick = Utility.DefaultClickAction;</span>
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public void setScaleAction(SurfaceAction action) {
-<span class="fc" id="L245">        applyScaling = action;</span>
-<span class="fc" id="L246">    }</span>
+<span class="fc" id="L273">        applyScaling = action;</span>
+<span class="fc" id="L274">    }</span>
 
-<span class="fc" id="L248">    SurfaceAction applyScaling = Utility.DefaultScalingAction;</span>
+<span class="fc" id="L276">    SurfaceAction applyScaling = Utility.DefaultScalingAction;</span>
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public void setSenseAction(SurfaceAction action) {
-<span class="fc" id="L252">        applySense = action;</span>
-<span class="fc" id="L253">    }</span>
+<span class="fc" id="L280">        applySense = action;</span>
+<span class="fc" id="L281">    }</span>
 
-<span class="fc" id="L255">    SurfaceAction applySense = Utility.DefaultSenseAction;</span>
+<span class="fc" id="L283">    SurfaceAction applySense = Utility.DefaultSenseAction;</span>
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public void setSwipeAction(SurfaceAction action) {
-<span class="fc" id="L259">        applySwipe = action;</span>
-<span class="fc" id="L260">    }</span>
+<span class="fc" id="L287">        applySwipe = action;</span>
+<span class="fc" id="L288">    }</span>
 
-<span class="fc" id="L262">    SurfaceAction applySwipe = Utility.DefaultSwipeAction;</span>
+<span class="fc" id="L290">    SurfaceAction applySwipe = Utility.DefaultSwipeAction;</span>
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public void setDragAction(SurfaceAction action) {
-<span class="fc" id="L266">        applyDrag = action;</span>
-<span class="fc" id="L267">    }</span>
+<span class="fc" id="L294">        applyDrag = action;</span>
+<span class="fc" id="L295">    }</span>
 
-<span class="fc" id="L269">    SurfaceAction applyDrag = Utility.DefaultDragAction;</span>
+<span class="fc" id="L297">    SurfaceAction applyDrag = Utility.DefaultDragAction;</span>
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public interface SurfacePainter {
-        public void actOn(GraphSurface panel, Graphics2D brush);
+        void actOn(GraphSurface panel, Graphics2D brush);
     }
 
     public void setPaintAction(SurfacePainter action) {
-<span class="fc" id="L277">        Painter = action;</span>
-<span class="fc" id="L278">    }</span>
+<span class="fc" id="L305">        Painter = action;</span>
+<span class="fc" id="L306">    }</span>
 
     SurfacePainter Painter;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
     //=======================================================================================
-<span class="fc" id="L285">    public GraphSurface() {</span>
-        //this.setSize(200, 200);
-<span class="fc" id="L287">        Painter = GraphSurface.Utility.DefaultPainter;</span>
-<span class="fc" id="L288">        Animator = new Animator();</span>
-<span class="fc" id="L289">        Listener = new SurfaceListener(this);</span>
-<span class="fc" id="L290">        this.addMouseListener(Listener);</span>
-<span class="fc" id="L291">        this.addMouseWheelListener(Listener);</span>
-<span class="fc" id="L292">        this.addMouseMotionListener(Listener);</span>
-<span class="fc" id="L293">        setBackground(Color.black);</span>
-<span class="fc" id="L294">        repaint(0, 0, getWidth(), getHeight());</span>
-<span class="fc" id="L295">        GUITimer = new Timer(0, this);</span>
-<span class="fc" id="L296">        GUITimer.start();</span>
-<span class="fc" id="L297">    }</span>
+<span class="fc" id="L313">    public GraphSurface() {</span>
+<span class="fc" id="L314">        Painter = GraphSurface.Utility.DefaultPainter;</span>
+<span class="fc" id="L315">        Animator = new Animator();</span>
+<span class="fc" id="L316">        Listener = new SurfaceListener(this);</span>
+<span class="fc" id="L317">        this.addMouseListener(Listener);</span>
+<span class="fc" id="L318">        this.addMouseWheelListener(Listener);</span>
+<span class="fc" id="L319">        this.addMouseMotionListener(Listener);</span>
+<span class="fc" id="L320">        setBackground(Color.black);</span>
+<span class="fc" id="L321">        repaint(0, 0, getWidth(), getHeight());</span>
+<span class="fc" id="L322">        GUITimer = new Timer(0, this);</span>
+<span class="fc" id="L323">        GUITimer.start();</span>
+<span class="fc" id="L324">    }</span>
 
-    public void repaintAll() {
-<span class="nc" id="L300">        repaint(0, 0, getWidth(), getHeight());</span>
-<span class="nc" id="L301">    }</span>
+    public void updateAndRedraw() {
+<span class="fc" id="L327">        update();</span>
+<span class="fc" id="L328">        startRepaintQueue();</span>
 
-    public void updateAndRedraw()
-    {
-<span class="fc" id="L305">        nullRepaintQueue();</span>
-<span class="pc bpc" id="L306" title="1 of 2 branches missed.">        if (RepaintQueue == null) RepaintQueue = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L307">        RepaintQueue.addAll(update());</span>
-        //repaint(0, 0, 250, 30);//framerate
-<span class="fc" id="L309">        startRepaintQueue();</span>
-
-<span class="fc" id="L311">        frameDelta = (int) (Math.abs((System.nanoTime() - frameStart)));</span>
-<span class="fc" id="L312">        fps = 1e9 / (((double) frameDelta));</span>
-<span class="fc bfc" id="L313" title="All 2 branches covered.">        if(fps&gt;60){</span>
-<span class="fc" id="L314">            double time = (double)(fps-60.0)/4;</span>
-            try{
-<span class="fc bfc" id="L316" title="All 2 branches covered.">                if(time&lt;50){</span>
-<span class="fc" id="L317">                    Thread.sleep((long)time);</span>
+<span class="fc" id="L330">        frameDelta = (int) (Math.abs((System.nanoTime() - frameStart)));</span>
+<span class="fc" id="L331">        fps = 1e9 / (((double) frameDelta));</span>
+<span class="fc bfc" id="L332" title="All 2 branches covered.">        if (fps &gt; 60) {</span>
+<span class="fc" id="L333">            double time = (fps - 60.0) / 4;</span>
+            try {
+<span class="fc bfc" id="L335" title="All 2 branches covered.">                if (time &lt; 50) {</span>
+<span class="fc" id="L336">                    Thread.sleep((long) time);</span>
                 }
-<span class="nc" id="L319">            } catch (Exception e){</span>
+<span class="nc" id="L338">            } catch (Exception e) {</span>
 
-<span class="fc" id="L321">            }</span>
+<span class="fc" id="L340">            }</span>
         }
-<span class="fc" id="L323">        frameDelta = (int) (Math.abs((System.nanoTime() - frameStart)));</span>
-<span class="fc" id="L324">        fps = 1e9 / (((double) frameDelta));</span>
-<span class="fc" id="L325">        smoothFPS = (fps + 12 * smoothFPS) / 13;</span>
-<span class="fc" id="L326">        frameStart = System.nanoTime();//double seconds = (frameDelta);</span>
+<span class="fc" id="L342">        frameDelta = (int) (Math.abs((System.nanoTime() - frameStart)));</span>
+<span class="fc" id="L343">        fps = 1e9 / (((double) frameDelta));</span>
+<span class="fc" id="L344">        smoothFPS = (fps + 12 * smoothFPS) / 13;</span>
+<span class="fc" id="L345">        frameStart = System.nanoTime();</span>
 
-<span class="fc bfc" id="L328" title="All 2 branches covered.">        if (scaleAnimationCounter &gt; 0) {</span>
-<span class="fc" id="L329">            double scale = 1 / Math.pow(1 + (1 / ((double) scaleAnimationCounter + 15)), 2);</span>
-            //System.out.println(scale);
-<span class="fc" id="L331">            this.scaleAt(getWidth() / 2, getHeight() / 2, scale);</span>
-<span class="fc" id="L332">            scaleAnimationCounter -= 1;</span>
-<span class="fc" id="L333">            repaint(0, 0, getWidth(), getHeight());</span>
+<span class="fc bfc" id="L347" title="All 2 branches covered.">        if (scaleAnimationCounter &gt; 0) {</span>
+<span class="fc" id="L348">            double scale = 1 / Math.pow(1 + (1 / ((double) scaleAnimationCounter + 15)), 2);</span>
+<span class="fc" id="L349">            this.scaleAt(getWidth() / 2, getHeight() / 2, scale);</span>
+<span class="fc" id="L350">            scaleAnimationCounter -= 1;</span>
+<span class="fc" id="L351">            repaint(0, 0, getWidth(), getHeight());</span>
         }
 
-<span class="fc" id="L336">    }</span>
+<span class="fc" id="L354">    }</span>
 
     //================================================================================================================================
     public int lastSenseX() {
-<span class="fc" id="L340">        return lastSenseX;</span>
+<span class="fc" id="L358">        return lastSenseX;</span>
     }
 
     public int lastSenseY() {
-<span class="fc" id="L344">        return lastSenseY;</span>
+<span class="fc" id="L362">        return lastSenseY;</span>
     }
 
     public void setLastSenseX(int value) {
-<span class="fc" id="L348">        lastSenseX = value;</span>
-<span class="fc" id="L349">    }</span>
+<span class="fc" id="L366">        lastSenseX = value;</span>
+<span class="fc" id="L367">    }</span>
 
     public void setLastSenseY(int value) {
-<span class="fc" id="L352">        lastSenseY = value;</span>
-<span class="fc" id="L353">    }</span>
+<span class="fc" id="L370">        lastSenseY = value;</span>
+<span class="fc" id="L371">    }</span>
 
     public double realLastSenseX() {
-<span class="nc" id="L356">        return realX(lastSenseX);</span>
+<span class="nc" id="L374">        return realX(lastSenseX);</span>
     }
 
     public double realLastSenseY() {
-<span class="nc" id="L360">        return realY(lastSenseY);</span>
+<span class="nc" id="L378">        return realY(lastSenseY);</span>
     }
 
     //--------------------------------------------------------------------------------------------------------------------------------
     public void switchTouchMode() {
-<span class="nc bnc" id="L365" title="All 2 branches missed.">        if (touchMode == false) {</span>
-<span class="nc" id="L366">            touchMode = true;</span>
+<span class="nc bnc" id="L383" title="All 2 branches missed.">        if (!touchMode) {</span>
+<span class="nc" id="L384">            touchMode = true;</span>
         } else {
-<span class="nc" id="L368">            touchMode = false;</span>
+<span class="nc" id="L386">            touchMode = false;</span>
         }
-<span class="nc" id="L370">    }</span>
+<span class="nc" id="L388">    }</span>
 
     public void switchMapRendering() {
-<span class="nc bnc" id="L373" title="All 2 branches missed.">        if (mapRendering == false) {</span>
-<span class="nc" id="L374">            mapRendering = true;</span>
+<span class="nc bnc" id="L391" title="All 2 branches missed.">        if (!mapRendering) {</span>
+<span class="nc" id="L392">            mapRendering = true;</span>
         } else {
-<span class="nc" id="L376">            mapRendering = false;</span>
+<span class="nc" id="L394">            mapRendering = false;</span>
         }
-<span class="nc" id="L378">    }</span>
+<span class="nc" id="L396">    }</span>
 
     public void switchDrawRepaintSpaces() {
-<span class="nc bnc" id="L381" title="All 2 branches missed.">        if (drawRepaintSpaces == false) {</span>
-<span class="nc" id="L382">            drawRepaintSpaces = true;</span>
+<span class="nc bnc" id="L399" title="All 2 branches missed.">        if (!drawRepaintSpaces) {</span>
+<span class="nc" id="L400">            drawRepaintSpaces = true;</span>
         } else {
-<span class="nc" id="L384">            drawRepaintSpaces = false;</span>
+<span class="nc" id="L402">            drawRepaintSpaces = false;</span>
         }
-<span class="nc" id="L386">    }</span>
+<span class="nc" id="L404">    }</span>
 
     public void switchAdvancedRendering() {
-<span class="nc bnc" id="L389" title="All 2 branches missed.">        if (advancedRendering == false) {</span>
-<span class="nc" id="L390">            advancedRendering = true;</span>
+<span class="nc bnc" id="L407" title="All 2 branches missed.">        if (!advancedRendering) {</span>
+<span class="nc" id="L408">            advancedRendering = true;</span>
         } else {
-<span class="nc" id="L392">            advancedRendering = false;</span>
+<span class="nc" id="L410">            advancedRendering = false;</span>
         }
-<span class="nc" id="L394">    }</span>
+<span class="nc" id="L412">    }</span>
 
     public void switchShadedClipping() {
-<span class="nc bnc" id="L397" title="All 2 branches missed.">        if (shadedClipping == false) {</span>
-<span class="nc" id="L398">            shadedClipping = true;</span>
+<span class="nc bnc" id="L415" title="All 2 branches missed.">        if (!shadedClipping) {</span>
+<span class="nc" id="L416">            shadedClipping = true;</span>
         } else {
-<span class="nc" id="L400">            shadedClipping = false;</span>
+<span class="nc" id="L418">            shadedClipping = false;</span>
         }
-<span class="nc" id="L402">    }</span>
+<span class="nc" id="L420">    }</span>
 
     //--------------------------------------------------------------------------------------------------------------------------------
     public int getCurrentFrameDelta() {
-<span class="fc" id="L406">        return frameDelta;</span>
+<span class="fc" id="L424">        return frameDelta;</span>
     }
 
     //--------------------------------------------------------------------------------------------------------------------------------
-    public ArrayList&lt;SurfaceRepaintSpace&gt; getRepaintQueue() {
-<span class="fc" id="L411">        return this.RepaintQueue;</span>
-    }
+    private void update() {
+<span class="fc" id="L429">        Listener.updateOn(this);</span>
+<span class="fc" id="L430">        applySwipe.actOn(this);</span>
+<span class="fc" id="L431">        applyClick.actOn(this);</span>
+<span class="fc" id="L432">        applyLongPress.actOn(this);</span>
+<span class="fc" id="L433">        applyDoubleClick.actOn(this);</span>
+<span class="fc" id="L434">        applyScaling.actOn(this);</span>
+<span class="fc" id="L435">        applySense.actOn(this);</span>
+<span class="fc" id="L436">        applyDrag.actOn(this);</span>
 
-    public void setRepaintQueue(ArrayList&lt;SurfaceRepaintSpace&gt; newQueue) {
-<span class="fc" id="L415">        RepaintQueue = newQueue;</span>
-<span class="fc" id="L416">    }</span>
+<span class="fc" id="L438">        double tlx = realX(0);</span>
+<span class="fc" id="L439">        double tly = realY(0);</span>
+<span class="fc" id="L440">        double brx = tlx+((getWidth()) / (getScale()*1)) ;</span>
+<span class="fc" id="L441">        double bry = tly+((getHeight())/ (getScale()*1));</span>
+<span class="fc" id="L442">        _currentFrameSpace = new SurfaceRepaintSpace(tlx, tly, brx, bry);</span>
 
-    //--------------------------------------------------------------------------------------------------------------------------------
-    private ArrayList&lt;SurfaceRepaintSpace&gt; update() {
-<span class="fc" id="L420">        ArrayList&lt;SurfaceRepaintSpace&gt; queue = new ArrayList&lt;SurfaceRepaintSpace&gt;();</span>
-<span class="fc" id="L421">        Listener.updateOn(this);</span>
-<span class="fc" id="L422">        applySwipe.actOn(this);</span>
-<span class="fc" id="L423">        applyClick.actOn(this);</span>
-<span class="fc" id="L424">        applyLongPress.actOn(this);</span>
-<span class="fc" id="L425">        applyDoubleClick.actOn(this);</span>
-<span class="fc" id="L426">        applyScaling.actOn(this);</span>
-<span class="fc" id="L427">        applySense.actOn(this);</span>
-<span class="fc" id="L428">        applyDrag.actOn(this);</span>
+<span class="fc bfc" id="L444" title="All 2 branches covered.">        if (PanelMap != null) {</span>
 
-<span class="fc bfc" id="L430" title="All 2 branches covered.">        if (PanelMap != null) {</span>
-<span class="fc" id="L431">            LinkedList&lt;SurfaceObject&gt; killList = new LinkedList&lt;SurfaceObject&gt;();</span>
-<span class="fc" id="L432">            LinkedList&lt;SurfaceObject&gt; updateList = new LinkedList&lt;SurfaceObject&gt;();</span>
-<span class="fc" id="L433">            Object[] enclosedQueue = {queue};</span>
-<span class="fc" id="L434">            PanelMap.applyToAll</span>
-<span class="fc" id="L435">                    (</span>
-                            (SurfaceObject thing) -&gt;
-                            {
-<span class="fc" id="L438">                                updateList.add(thing);</span>
-<span class="pc bpc" id="L439" title="1 of 2 branches missed.">                                if ((thing).killable()) {</span>
-<span class="nc" id="L440">                                    killList.add((thing));</span>
-                                }
-<span class="fc" id="L442">                                return true;</span>
-                            }
-                    );
-<span class="fc" id="L445">            updateList.forEach(</span>
-                    (SurfaceObject thing) -&gt;
-                    {
-<span class="fc" id="L448">                        ((ArrayList&lt;SurfaceRepaintSpace&gt;) enclosedQueue[0]).addAll((thing.updateOn(this)));</span>
-<span class="fc" id="L449">                    }</span>
+<span class="fc" id="L446">            LinkedList&lt;SurfaceObject&gt; killList = new LinkedList&lt;SurfaceObject&gt;();</span>
+<span class="fc" id="L447">            LinkedList&lt;SurfaceObject&gt; updateList = new LinkedList&lt;SurfaceObject&gt;();</span>
+<span class="fc" id="L448">            PanelMap.applyToAll(</span>
+                    (SurfaceObject thing) -&gt; {
+<span class="fc" id="L450">                        updateList.add(thing);</span>
+<span class="pc bpc" id="L451" title="1 of 2 branches missed.">                        if ((thing).killable()) killList.add((thing));</span>
+<span class="fc" id="L452">                        return true;</span>
+                    }
             );
-<span class="pc" id="L451">            killList.forEach((element) -&gt;PanelMap = PanelMap.removeAndUpdate(element));</span>
+<span class="pc bpc" id="L455" title="1 of 2 branches missed.">            if (killList.size() &gt; 0) {</span>
+<span class="nc" id="L456">                System.out.println(&quot;KILLING OCCURRED! :O&quot;);</span>
+            }
+<span class="fc" id="L458">            updateList.forEach((SurfaceObject thing) -&gt; thing.updateOn(this));</span>
+<span class="pc bpc" id="L459" title="1 of 2 branches missed.">            for(int ki = 0; ki&lt;killList.size(); ki++) PanelMap = PanelMap.removeAndUpdate(killList.get(ki));</span>
+
         }
-<span class="fc" id="L453">        return queue;</span>
-    }
+<span class="fc" id="L462">    }</span>
 
     //--------------------------------------------------------------------------------------------------------------------------------
     public void startRepaintQueue() {
-<span class="fc bfc" id="L458" title="All 2 branches covered.">        if (RepaintQueue != null) {</span>
-<span class="fc" id="L459">            RepaintQueue.forEach(</span>
-                    (repaintSpace) -&gt;
-                    {
-<span class="pc bpc" id="L462" title="1 of 2 branches missed.">                        if (repaintSpace != null) {</span>
-<span class="fc" id="L463">                            repaintAndScaleOnscreenArea</span>
-<span class="fc" id="L464">                                    (</span>
-<span class="fc" id="L465">                                            realToOnPanelX(repaintSpace.getCenterX()),</span>
-<span class="fc" id="L466">                                            realToOnPanelY(repaintSpace.getCenterY()),</span>
-<span class="fc" id="L467">                                            repaintSpace.getDistanceX(),</span>
-<span class="fc" id="L468">                                            repaintSpace.getDistanceY()</span>
-                                    );
-                        }
-<span class="fc" id="L471">                    });</span>
-        }
-<span class="fc" id="L473">    }</span>
+        //_layers[0].add(
+        //        (brush) -&gt; {
+        //            if (this.isClipShadeRendering()) {
+        //                double newS = this.getShade() % (200 * Math.PI);
+        //                int color = (int) Math.abs(((Math.pow(Math.sin((Math.PI / 200) * newS), 3))) * 200);
+        //                color = (int) Math.abs(color);
+        //                if (color &lt; 0) color *= -1;
+        //                brush.setColor(new Color(color, color, color));
+        //                brush.fillRect(
+        //                        (int) (_currentFrameSpace.getLeftPeripheral()),
+        //                        (int) (_currentFrameSpace.getTopPeripheral()),
+        //                        (int) _currentFrameSpace.getWidth(),//.getDistanceX() * 2,
+        //                        (int) _currentFrameSpace.getHeight()//.getDistanceY() * 2
+        //                );
+        //                newS++;
+        //                newS %= 200;
+        //                this.setShade((int) newS);
+        //            }
+        //            Font old = brush.getFont();
+        //            brush.setFont(new Font(&quot;Tahoma&quot;, Font.BOLD, 22));
+        //            brush.setColor(Color.GREEN);
+        //            brush.drawString((int) this.getFPS() + &quot;; &quot; + this.getSmoothedFPS(), 0, brush.getFont().getSize());
+        //            brush.setFont(old);
+        //        }
+        //);
+<span class="fc" id="L491">        repaint(0, 0, getWidth(), getHeight());</span>
+
+
+<span class="fc" id="L494">    }</span>
 
     //--------------------------------------------------------------------------------------------------------------------------------
-    public void nullRepaintQueue() {
-<span class="fc" id="L477">        RepaintQueue = null;</span>
-<span class="fc" id="L478">    }</span>
+    public void paintComponent(Graphics g)
+    {
+<span class="fc" id="L499">        super.paintComponent(g);</span>
+<span class="fc" id="L500">        Graphics2D brush = (Graphics2D) g;</span>
+<span class="pc bpc" id="L501" title="1 of 2 branches missed.">        if (this.isAntialiasing())</span>
+<span class="nc" id="L502">            brush.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);</span>
+<span class="fc" id="L503">        else brush.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);</span>
 
-    //--------------------------------------------------------------------------------------------------------------------------------
-    public void paintComponent(Graphics g) {
-<span class="fc" id="L482">        super.paintComponent(g);</span>
-<span class="fc" id="L483">        Graphics2D brush = (Graphics2D) g;</span>
-<span class="pc bpc" id="L484" title="1 of 2 branches missed.">        if (this.isAntialiasing()) {</span>
-<span class="nc" id="L485">            brush.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);</span>
-        } else {
-<span class="fc" id="L487">            brush.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);</span>
+        // Painting top layers now :
+
+        // Surface shift:
+<span class="pc bpc" id="L508" title="1 of 4 branches missed.">        if ((this.getCenterY() != ((double) this.getHeight()) / 2) || (this.getCenterX() != ((double) this.getWidth()) / 2)) {</span>
+<span class="fc" id="L509">            double newCenterX = ((double) this.getWidth()) / 2;</span>
+<span class="fc" id="L510">            double newCenterY = ((double) this.getHeight()) / 2;</span>
+<span class="fc" id="L511">            this.translatePanel((newCenterX - this.getCenterX()), (newCenterY - this.getCenterY()));</span>
+<span class="fc" id="L512">            this.setCenterX(newCenterX);</span>
+<span class="fc" id="L513">            this.setCenterY(newCenterY);</span>
         }
+        // Surface scale:
+<span class="fc" id="L516">        brush.transform(this.getScaler());</span>
+<span class="fc" id="L517">        brush.transform(this.getTranslator());</span>
 
-<span class="pc bpc" id="L490" title="1 of 2 branches missed.">        if (this.isClipShadeRendering()) {</span>
-<span class="fc" id="L491">            double newS = this.getShade() % (200 * Math.PI);</span>
+        //Map visualization
+<span class="pc bpc" id="L520" title="3 of 4 branches missed.">        if (this.isMaprendering() &amp;&amp; getMap() != null) getMap().paintStructure(brush);</span>
 
-            //Shade%=200*Math.PI; Shade= Math.abs(Shade);
-<span class="fc" id="L494">            int color = (int) Math.abs(((Math.pow(Math.sin((Math.PI / 200) * newS), 3))) * 200);</span>
-<span class="fc" id="L495">            color = (int) Math.abs(color);</span>
-<span class="pc bpc" id="L496" title="1 of 2 branches missed.">            if (color &lt; 0) {</span>
-<span class="nc" id="L497">                color *= -1;</span>
-            }
-<span class="fc" id="L499">            brush.setColor(new Color(color, color, color));</span>
-<span class="fc" id="L500">            brush.fillRect(0, 0, this.getWidth(), this.getHeight());</span>
-<span class="fc" id="L501">            newS++;</span>
-<span class="fc" id="L502">            newS %= 200;</span>
-<span class="fc" id="L503">            this.setShade((int) newS);</span>
-        }
-<span class="fc" id="L505">        Font old = brush.getFont();</span>
-<span class="fc" id="L506">        brush.setFont(new Font(&quot;Tahoma&quot;, Font.BOLD, 22));</span>
-<span class="fc" id="L507">        brush.setColor(Color.GREEN);</span>
-<span class="fc" id="L508">        brush.drawString((int) this.getFPS() + &quot;; &quot; + this.getSmoothedFPS(), 0, brush.getFont().getSize());</span>
-<span class="fc" id="L509">        brush.setFont(old);</span>
-
-<span class="pc bpc" id="L511" title="1 of 4 branches missed.">        if ((this.getCenterY() != ((double) this.getHeight()) / 2) || (this.getCenterX() != ((double) this.getWidth()) / 2)) {</span>
-<span class="fc" id="L512">            double newCenterX = ((double) this.getWidth()) / 2;</span>
-<span class="fc" id="L513">            double newCenterY = ((double) this.getHeight()) / 2;</span>
-<span class="fc" id="L514">            this.translatePanel((newCenterX - this.getCenterX()), (newCenterY - this.getCenterY()));</span>
-<span class="fc" id="L515">            this.setCenterX(newCenterX);</span>
-<span class="fc" id="L516">            this.setCenterY(newCenterY);</span>
-        }
-
-<span class="fc" id="L519">        brush.transform(this.getScaler());</span>
-<span class="fc" id="L520">        brush.transform(this.getTranslator());</span>
-
-<span class="pc bpc" id="L522" title="1 of 2 branches missed.">        if (this.isMaprendering()) {</span>
-<span class="nc bnc" id="L523" title="All 2 branches missed.">            if (getMap() != null) {</span>
-<span class="nc" id="L524">                getMap().paintStructure(brush);</span>
-            }
-        }
         //========================
-<span class="fc" id="L528">        Painter.actOn(this, brush);</span>
+<span class="fc" id="L523">        Painter.actOn(this, brush);</span>
         //========================
-<span class="pc bpc" id="L530" title="1 of 2 branches missed.">        if (this.getMap() != null) {</span>
-<span class="fc" id="L531">            LinkedList&lt;SurfaceObject&gt;[] paintQueue = new LinkedList[9];</span>
-<span class="fc" id="L532">            LinkedList[][] enclosed = {paintQueue};</span>
-
-<span class="fc bfc" id="L534" title="All 2 branches covered.">            for (int[] Li = {0}; Li[0] &lt; paintQueue.length; Li[0]++) {</span>
-<span class="fc" id="L535">                paintQueue[Li[0]] = new LinkedList&lt;SurfaceObject&gt;();</span>
-            }
-
-<span class="fc" id="L538">            double[] frame =</span>
-                    {
-<span class="fc" id="L540">                            this.realX(0), this.realY(0),</span>
-<span class="fc" id="L541">                            this.realX(this.getWidth()), this.realY(this.getHeight())</span>
-                    };
-
-<span class="fc" id="L544">            this.getMap().applyToAllWithin(frame,</span>
-                    (thing) -&gt;
-                    {
-<span class="fc" id="L547">                        LinkedList&lt;SurfaceObject&gt;[] layeredQueue = (LinkedList&lt;SurfaceObject&gt;[]) enclosed[0];</span>
-<span class="pc bpc" id="L548" title="1 of 2 branches missed.">                        if (thing.getLayerID() &gt;= layeredQueue.length) {</span>
-<span class="nc" id="L549">                            LinkedList&lt;SurfaceObject&gt;[] newQueue = new LinkedList[thing.getLayerID() + 1];</span>
-<span class="nc bnc" id="L550" title="All 2 branches missed.">                            for (int Li = 0; Li &lt; layeredQueue.length; Li++) {</span>
-<span class="nc" id="L551">                                newQueue[Li] = layeredQueue[Li];</span>
-                            }
-<span class="nc bnc" id="L553" title="All 2 branches missed.">                            for (int Li = layeredQueue.length; Li &lt; newQueue.length; Li++) {</span>
-<span class="nc" id="L554">                                newQueue[Li] = new LinkedList&lt;SurfaceObject&gt;();</span>
-                            }
-
-<span class="nc" id="L557">                            layeredQueue = newQueue;</span>
-                        }
-                        //layeredQueue[0].addInto(thing);// has connections? is within frame?
-<span class="fc bfc" id="L560" title="All 2 branches covered.">                        for (int Li = 0; Li &lt; layeredQueue.length; Li++) {</span>
-<span class="fc bfc" id="L561" title="All 2 branches covered.">                            if ((thing).needsRepaintOnLayer(Li)) {</span>
-<span class="fc" id="L562">                                layeredQueue[Li].add(thing);</span>
-                            }
-                        }
-<span class="fc" id="L565">                        enclosed[0] = layeredQueue;</span>
-<span class="fc" id="L566">                        return true;</span>
-                    });
-<span class="fc" id="L568">            paintQueue = enclosed[0];</span>
-
-<span class="fc bfc" id="L570" title="All 2 branches covered.">            for (int[] Li = {0}; Li[0] &lt; paintQueue.length; Li[0]++) {</span>
-<span class="fc" id="L571">                paintQueue[Li[0]].forEach((current) -&gt; current.repaintLayer(Li[0], brush, this));</span>
-                /* Connections - 0
-                 * Root Bodies - 1
-                 * Root Connections - 2
-                 * Basic Root Nodes - 3
-                 * Value Root Nodes - 4
-                 * Memory Root Nodes - 5
-                 * Super Root Nodes - 6
-                 * Default Nodes - 7
-                 * Menus
-                 * */
-            }
-            //============================================================================================================
-        }
+        //    /* Connections - 0
+        //     * Root Bodies - 1
+        //     * Root Connections - 2
+        //     * Basic Root Nodes - 3
+        //     * Value Root Nodes - 4
+        //     * Memory Root Nodes - 5
+        //     * Super Root Nodes - 6
+        //     * Default Nodes - 7
+        //     * Menus
+        //     * */
+        //}
 
         //RENDERING VISUALIZATION:
-<span class="pc bpc" id="L587" title="1 of 2 branches missed.">        if (this.isClipRendering()) {//System.out.println(&quot;Drawing repaint spaces!!&quot;);</span>
-<span class="fc bfc" id="L588" title="All 2 branches covered.">            if (this.getRepaintQueue() != null) {</span>
-<span class="fc" id="L589">                brush.setColor(Color.WHITE);</span>
-<span class="fc" id="L590">                brush.setStroke(new BasicStroke(5f));</span>
-<span class="fc" id="L591">                this.getRepaintQueue().forEach(</span>
-<span class="fc" id="L592">                        (space) -&gt; brush.drawRect((int) (space.getCenterX() - space.getDistanceX()), (int) (space.getCenterY() - space.getDistanceY()), (int) (space.getDistanceX()) * 2, (int) (space.getDistanceY()) * 2)</span>
-                );
+<span class="pc bpc" id="L538" title="1 of 2 branches missed.">        if (this.isClipRendering()) {</span>
+<span class="fc" id="L539">            brush.setColor(Color.WHITE);</span>
+<span class="fc bfc" id="L540" title="All 2 branches covered.">            for (int lid = 0; lid &lt; layers().length; lid++) {</span>
+<span class="fc" id="L541">                layers()[lid].forEach((space) -&gt; space.paint(brush));</span>
+<span class="fc" id="L542">                layers()[lid] = new ArrayList&lt;ObjectPainter&gt;();</span>
             }
         }
         //===
-
-<span class="fc" id="L598">    }</span>
+<span class="fc" id="L546">    }</span>
 
     //--------------------------------------------------------------------------------------------------------------------------------
     public void movementAt(int x, int y) {
-<span class="fc" id="L602">        int[] newSense = new int[2];</span>
-<span class="fc" id="L603">        newSense[0] = x;</span>
-<span class="fc" id="L604">        newSense[1] = y;</span>
-<span class="fc" id="L605">        Sense = newSense;</span>
-<span class="fc" id="L606">    }</span>
+<span class="fc" id="L550">        int[] newSense = new int[2];</span>
+<span class="fc" id="L551">        newSense[0] = x;</span>
+<span class="fc" id="L552">        newSense[1] = y;</span>
+<span class="fc" id="L553">        Sense = newSense;</span>
+<span class="fc" id="L554">    }</span>
 
     //--------------------------------------------------------------------------------------------------------------------------------
     private SurfaceObject find(double x, double y, boolean topMost, SurfaceObject upToException, AbstractSpaceMap.MapAction action) {
-<span class="fc" id="L610">        LinkedList&lt;SurfaceObject&gt; List = null;</span>
-<span class="pc bpc" id="L611" title="1 of 2 branches missed.">        if (PanelMap != null) {</span>
-<span class="fc" id="L612">            List = PanelMap.findAllAt(x, y, action);</span>
-        }
-<span class="pc bpc" id="L614" title="1 of 2 branches missed.">        if (List == null) {</span>
-<span class="nc" id="L615">            return null;</span>
-        }
-<span class="fc" id="L617">        SurfaceObject best = null;</span>
-<span class="fc" id="L618">        ListIterator&lt;SurfaceObject&gt; Iterator = List.listIterator();</span>
-<span class="fc bfc" id="L619" title="All 2 branches covered.">        while (Iterator.hasNext()) {</span>
-<span class="fc" id="L620">            SurfaceObject current = Iterator.next();</span>
-<span class="pc bpc" id="L621" title="1 of 2 branches missed.">            if (best == null) {</span>
-<span class="fc" id="L622">                best = current;</span>
-<span class="pc bpc" id="L623" title="1 of 2 branches missed.">                if (upToException != null) {</span>
-<span class="nc bnc" id="L624" title="All 2 branches missed.">                    if (topMost) {</span>
-<span class="nc bnc" id="L625" title="All 2 branches missed.">                        if (upToException.getLayerID() &lt; current.getLayerID()) {</span>
-<span class="nc" id="L626">                            best = null;</span>
+<span class="fc" id="L558">        List&lt;SurfaceObject&gt; List = null;</span>
+<span class="pc bpc" id="L559" title="1 of 2 branches missed.">        if (PanelMap != null) List = PanelMap.findAllAt(x, y, action);</span>
+<span class="pc bpc" id="L560" title="1 of 2 branches missed.">        if (List == null) return null;</span>
+<span class="fc" id="L561">        SurfaceObject best = null;</span>
+<span class="fc" id="L562">        ListIterator&lt;SurfaceObject&gt; Iterator = List.listIterator();</span>
+<span class="fc bfc" id="L563" title="All 2 branches covered.">        while (Iterator.hasNext()) {</span>
+<span class="fc" id="L564">            SurfaceObject current = Iterator.next();</span>
+<span class="pc bpc" id="L565" title="1 of 2 branches missed.">            if (best == null) {</span>
+<span class="fc" id="L566">                best = current;</span>
+<span class="pc bpc" id="L567" title="1 of 2 branches missed.">                if (upToException != null) {</span>
+<span class="nc bnc" id="L568" title="All 2 branches missed.">                    if (topMost) {</span>
+<span class="nc bnc" id="L569" title="All 2 branches missed.">                        if (upToException.getLayerID() &lt; current.getLayerID()) {</span>
+<span class="nc" id="L570">                            best = null;</span>
                         }
                     } else {
-<span class="nc bnc" id="L629" title="All 2 branches missed.">                        if (upToException.getLayerID() &gt; current.getLayerID()) {</span>
-<span class="nc" id="L630">                            best = null;</span>
+<span class="nc bnc" id="L573" title="All 2 branches missed.">                        if (upToException.getLayerID() &gt; current.getLayerID()) {</span>
+<span class="nc" id="L574">                            best = null;</span>
                         }
                     }
                 }
             } else {
-<span class="nc bnc" id="L635" title="All 2 branches missed.">                if (topMost) {//-----------------------</span>
-<span class="nc bnc" id="L636" title="All 2 branches missed.">                    if (upToException != null) {</span>
-<span class="nc bnc" id="L637" title="All 2 branches missed.">                        if (best != null) {</span>
-<span class="nc bnc" id="L638" title="All 2 branches missed.">                            if (current.getLayerID() &gt; best.getLayerID()</span>
-<span class="nc bnc" id="L639" title="All 2 branches missed.">                                    &amp;&amp; upToException.getLayerID() &gt; current.getLayerID()) {</span>
-<span class="nc bnc" id="L640" title="All 2 branches missed.">                                if (current != upToException) {</span>
-<span class="nc" id="L641">                                    best = current;</span>
-                                }
-                            }
-                        } else {
-<span class="nc bnc" id="L645" title="All 2 branches missed.">                            if (upToException.getLayerID() &gt; current.getLayerID()) {</span>
-<span class="nc bnc" id="L646" title="All 2 branches missed.">                                if (current != upToException) {</span>
-<span class="nc" id="L647">                                    best = current;</span>
-                                }
-                            }
+<span class="nc bnc" id="L579" title="All 2 branches missed.">                if (topMost) {</span>
+<span class="nc bnc" id="L580" title="All 2 branches missed.">                    if (upToException != null) {</span>
+<span class="nc bnc" id="L581" title="All 4 branches missed.">                        if (current.getLayerID() &gt; best.getLayerID() &amp;&amp; upToException.getLayerID() &gt; current.getLayerID()) {</span>
+<span class="nc" id="L582">                            best = current;</span>
                         }
-
                     } else {
-<span class="nc bnc" id="L653" title="All 2 branches missed.">                        if ((current).getLayerID() &gt; best.getLayerID()) {</span>
-<span class="nc" id="L654">                            best = current;</span>
+<span class="nc bnc" id="L585" title="All 2 branches missed.">                        if ((current).getLayerID() &gt; best.getLayerID()) {</span>
+<span class="nc" id="L586">                            best = current;</span>
                         }
                     }
-
                 }//-----------------------
                 else {//-----------------------
-<span class="nc bnc" id="L660" title="All 2 branches missed.">                    if (upToException != null) {</span>
-<span class="nc bnc" id="L661" title="All 2 branches missed.">                        if (best != null) {</span>
-<span class="nc bnc" id="L662" title="All 4 branches missed.">                            if (current.getLayerID() &lt; best.getLayerID() &amp;&amp; upToException.getLayerID() &lt; current.getLayerID()) {</span>
-<span class="nc bnc" id="L663" title="All 2 branches missed.">                                if (current != upToException) {</span>
-<span class="nc" id="L664">                                    best = current;</span>
-                                }
-                            }
-                        } else {
-<span class="nc bnc" id="L668" title="All 2 branches missed.">                            if (upToException.getLayerID() &gt; current.getLayerID()) {</span>
-<span class="nc bnc" id="L669" title="All 2 branches missed.">                                if (current != upToException) {</span>
-<span class="nc" id="L670">                                    best = current;</span>
-                                }
-                            }
+<span class="nc bnc" id="L591" title="All 2 branches missed.">                    if (upToException != null) {</span>
+<span class="nc bnc" id="L592" title="All 4 branches missed.">                        if (current.getLayerID() &lt; best.getLayerID() &amp;&amp; upToException.getLayerID() &lt; current.getLayerID()) {</span>
+<span class="nc" id="L593">                            best = current;</span>
                         }
                     } else {
-<span class="nc bnc" id="L675" title="All 2 branches missed.">                        if ((current).getLayerID() &gt;= best.getLayerID()) {</span>
-<span class="nc" id="L676">                            best = current;</span>
+<span class="nc bnc" id="L596" title="All 2 branches missed.">                        if ((current).getLayerID() &gt;= best.getLayerID()) {</span>
+<span class="nc" id="L597">                            best = current;</span>
                         }
                     }
                 }//-----------------------
             }
-<span class="fc" id="L681">        }</span>
-<span class="pc bpc" id="L682" title="3 of 4 branches missed.">        if (upToException != null &amp;&amp; best != null) {</span>
-<span class="nc bnc" id="L683" title="All 2 branches missed.">            if (best == upToException) {</span>
-<span class="nc" id="L684">                return null;</span>
+<span class="fc" id="L602">        }</span>
+<span class="pc bpc" id="L603" title="3 of 4 branches missed.">        if (upToException != null &amp;&amp; best != null) {</span>
+<span class="nc bnc" id="L604" title="All 2 branches missed.">            if (best == upToException) {</span>
+<span class="nc" id="L605">                return null;</span>
             }
         }
-<span class="fc" id="L687">        return best;</span>
+<span class="fc" id="L608">        return best;</span>
     }
 
     //============================================================
-    //--------------------------------------------------------------------------------------------------------------------------------
-    public Object findAnything(double x, double y, boolean topMost, SurfaceObject upToException) {
-<span class="nc" id="L693">        SurfaceObject something = findObject(x, y, topMost, upToException);</span>
-<span class="nc bnc" id="L694" title="All 2 branches missed.">        if (something != null) {</span>
-<span class="nc" id="L695">            return something;</span>
-        }
-<span class="nc" id="L697">        return this;</span>
-    }
+
 
     //--------------------------------------------------------------------------------------------------------------------------------
     public SurfaceObject findObject(double x, double y, boolean topMost, SurfaceObject upToException) {
-<span class="fc" id="L702">        return find(x, y, topMost, upToException,</span>
+<span class="fc" id="L616">        return find(x, y, topMost, upToException,</span>
                 (SurfaceObject element) -&gt; {
-<span class="pc bpc" id="L704" title="1 of 2 branches missed.">                    if (element instanceof SurfaceObject) {</span>
-<span class="fc bfc" id="L705" title="All 2 branches covered.">                        if ((element).hasGripAt(x, y, this)) {</span>
-<span class="fc" id="L706">                            return true;</span>
+<span class="pc bpc" id="L618" title="1 of 2 branches missed.">                    if (element instanceof SurfaceObject) {</span>
+<span class="fc bfc" id="L619" title="All 2 branches covered.">                        if ((element).hasGripAt(x, y, this)) {</span>
+<span class="fc" id="L620">                            return true;</span>
                         }//System.out.println(&quot;yeahh&quot;);
                     }
-<span class="fc" id="L709">                    return false;</span>
+<span class="fc" id="L623">                    return false;</span>
                 });
     }
 
     //--------------------------------------------------------------------------------------------------------------------------------
     public double realX(double x) {
-<span class="fc" id="L715">        return ((x) / Scaler.getScaleX()) - Translator.getTranslateX();</span>
-    }//
+<span class="fc" id="L629">        return ((x) / Scaler.getScaleX()) - Translator.getTranslateX();</span>
+    }
 
     public double realY(double y) {
-<span class="fc" id="L719">        return ((y) / Scaler.getScaleY()) - Translator.getTranslateY();</span>
-    }//
+<span class="fc" id="L633">        return ((y) / Scaler.getScaleY()) - Translator.getTranslateY();</span>
+    }
 
     public double realToOnPanelX(double x) {
-<span class="fc" id="L723">        return ((x + Translator.getTranslateX()) * Scaler.getScaleX());</span>
-    }//
+<span class="nc" id="L637">        return ((x + Translator.getTranslateX()) * Scaler.getScaleX());</span>
+    }
 
     public double realToOnPanelY(double y) {
-<span class="fc" id="L727">        return ((y + Translator.getTranslateY()) * Scaler.getScaleY());</span>
-    }//
+<span class="nc" id="L641">        return ((y + Translator.getTranslateY()) * Scaler.getScaleY());</span>
+    }
 
     //--------------------------------------------------------------------------------------------------------------------------------
     public void draggedBy(int[] Vector) {
-<span class="fc" id="L732">        Swipe = Vector;</span>
-<span class="fc" id="L733">    }</span>
+<span class="fc" id="L646">        Swipe = Vector;</span>
+<span class="fc" id="L647">    }</span>
 
     public void translatePanel(double translateX, double translateY) {
-<span class="fc" id="L736">        Translator.translate(translateX * 1 / Scaler.getScaleX(), translateY * 1 / Scaler.getScaleY());</span>
-<span class="fc bfc" id="L737" title="All 2 branches covered.">        if (RepaintQueue != null) {</span>
-<span class="fc" id="L738">            RepaintQueue = null;</span>
-        }
-<span class="fc" id="L740">        repaint(0, 0, getWidth(), getHeight());//Repaint spaces?</span>
-<span class="fc" id="L741">    }</span>
-
+<span class="fc" id="L650">        Translator.translate(translateX * 1 / Scaler.getScaleX(), translateY * 1 / Scaler.getScaleY());</span>
+<span class="fc" id="L651">        repaint(0, 0, getWidth(), getHeight());//Repaint spaces?</span>
+<span class="fc" id="L652">    }</span>
     //--------------------------------------------------------------------------------------------------------------------------------
-    private void repaintAndScaleOnscreenArea(double centerX, double centerY, double distanceX, double distanceY) {
-<span class="fc" id="L745">        int LTCornerX = (int) (centerX - 1 - (distanceX * Scaler.getScaleX()));</span>
-<span class="fc" id="L746">        int LTCornerY = (int) (centerY - 1 - (distanceY * Scaler.getScaleY()));</span>
-<span class="fc" id="L747">        int width = (int) (2 + 2 * distanceX * Scaler.getScaleX());</span>
-<span class="fc" id="L748">        int height = (int) (2 + 2 * distanceY * Scaler.getScaleY());</span>
 
-<span class="fc bfc" id="L750" title="All 2 branches covered.">        if (LTCornerX &lt; 0) {</span>
-<span class="fc" id="L751">            width += LTCornerX;</span>
-<span class="fc" id="L752">            LTCornerX = 0;</span>
-        }
-<span class="fc bfc" id="L754" title="All 2 branches covered.">        if (LTCornerY &lt; 0) {</span>
-<span class="fc" id="L755">            height += LTCornerY;</span>
-<span class="fc" id="L756">            LTCornerY = 0;</span>
-        }
-<span class="pc bpc" id="L758" title="1 of 2 branches missed.">        if (width &lt; 0) {</span>
-<span class="nc" id="L759">            width = 0;</span>
-        }
-<span class="pc bpc" id="L761" title="1 of 2 branches missed.">        if (height &lt; 0) {</span>
-<span class="nc" id="L762">            height = 0;</span>
-        }
-<span class="fc bfc" id="L764" title="All 2 branches covered.">        if (LTCornerX &gt; getWidth()) {</span>
-<span class="fc" id="L765">            LTCornerX = getWidth();</span>
-        }
-<span class="fc bfc" id="L767" title="All 2 branches covered.">        if (LTCornerY &gt; getHeight()) {</span>
-<span class="fc" id="L768">            LTCornerY = getHeight();</span>
-        }
-<span class="fc bfc" id="L770" title="All 2 branches covered.">        if (width &gt; getWidth()) {</span>
-<span class="fc" id="L771">            width = getWidth();</span>
-        }
-<span class="fc bfc" id="L773" title="All 2 branches covered.">        if (height &gt; getHeight()) {</span>
-<span class="fc" id="L774">            height = getHeight();</span>
-        }
-
-<span class="fc" id="L777">        repaint(LTCornerX, LTCornerY, width, height);</span>
-<span class="fc" id="L778">    }</span>
-
-    //--------------------------------------------------------------------------------------------------------------------------------
-    public void scaleAtReal(double x, double y, double scaleFactor) {
-<span class="nc" id="L782">        scaleAt((int) realToOnPanelX(x), (int) realToOnPanelY(y), scaleFactor);</span>
-<span class="nc" id="L783">    }</span>
 
     //--------------------------------------------------------------------------------------------------------------------------------
     //GraphSurface interaction:
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public void scaleAt(int x, int y, double scaleFactor) {
-<span class="fc" id="L790">        double[] newScaling = new double[3];</span>
-<span class="fc" id="L791">        newScaling[0] = x;</span>
-<span class="fc" id="L792">        newScaling[1] = y;</span>
-<span class="fc" id="L793">        newScaling[2] = scaleFactor;</span>
-<span class="fc" id="L794">        Scaling = newScaling;</span>
-<span class="fc" id="L795">    }</span>
+<span class="fc" id="L661">        double[] newScaling = new double[3];</span>
+<span class="fc" id="L662">        newScaling[0] = x;</span>
+<span class="fc" id="L663">        newScaling[1] = y;</span>
+<span class="fc" id="L664">        newScaling[2] = scaleFactor;</span>
+<span class="fc" id="L665">        Scaling = newScaling;</span>
+<span class="fc" id="L666">    }</span>
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public void clickedAt(int x, int y) {
-<span class="fc" id="L800">        int[] newClick = new int[2];</span>
-<span class="fc" id="L801">        newClick[0] = x;</span>
-<span class="fc" id="L802">        newClick[1] = y;</span>
-<span class="fc" id="L803">        Click = newClick;</span>
-<span class="fc" id="L804">    }</span>
+<span class="fc" id="L671">        int[] newClick = new int[2];</span>
+<span class="fc" id="L672">        newClick[0] = x;</span>
+<span class="fc" id="L673">        newClick[1] = y;</span>
+<span class="fc" id="L674">        Click = newClick;</span>
+<span class="fc" id="L675">    }</span>
 
     public int[] getClick() {
-<span class="fc" id="L807">        return Click;</span>
+<span class="fc" id="L678">        return Click;</span>
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public void pressedAt(int x, int y) {
-<span class="fc" id="L813">        int[] newDrag = new int[2];</span>
-<span class="fc" id="L814">        newDrag[0] = x;</span>
-<span class="fc" id="L815">        newDrag[1] = y;</span>
-<span class="fc" id="L816">        Drag = newDrag;</span>
-<span class="fc" id="L817">    }</span>
+<span class="fc" id="L684">        int[] newDrag = new int[2];</span>
+<span class="fc" id="L685">        newDrag[0] = x;</span>
+<span class="fc" id="L686">        newDrag[1] = y;</span>
+<span class="fc" id="L687">        Drag = newDrag;</span>
+<span class="fc" id="L688">    }</span>
 
     @Override
     public void longPressedAt(int x, int y) {
-<span class="nc" id="L821">        int[] newLongPress = new int[2];</span>
-<span class="nc" id="L822">        newLongPress[0] = x;</span>
-<span class="nc" id="L823">        newLongPress[1] = y;</span>
-<span class="nc" id="L824">        LongPress = newLongPress;</span>
-<span class="nc" id="L825">    }</span>
+<span class="nc" id="L692">        int[] newLongPress = new int[2];</span>
+<span class="nc" id="L693">        newLongPress[0] = x;</span>
+<span class="nc" id="L694">        newLongPress[1] = y;</span>
+<span class="nc" id="L695">        LongPress = newLongPress;</span>
+<span class="nc" id="L696">    }</span>
 
     @Override
-<span class="fc" id="L828">    public void releasedAt(int x, int y) { }</span>
+    public void releasedAt(int x, int y) {
+<span class="fc" id="L700">    }</span>
 
     @Override
     public double getScale() {
-<span class="fc" id="L832">        return Scaler.getScaleX();</span>
+<span class="fc" id="L704">        return Scaler.getScaleX();</span>
     }
 
     @Override
     public void doubleClickedAt(int x, int y) {
-<span class="fc" id="L837">        int[] newDoubleClick = new int[2];</span>
-<span class="fc" id="L838">        newDoubleClick[0] = x;</span>
-<span class="fc" id="L839">        newDoubleClick[1] = y;</span>
-<span class="fc" id="L840">        DoubleClick = newDoubleClick;</span>
-<span class="fc" id="L841">    }</span>
+<span class="fc" id="L709">        int[] newDoubleClick = new int[2];</span>
+<span class="fc" id="L710">        newDoubleClick[0] = x;</span>
+<span class="fc" id="L711">        newDoubleClick[1] = y;</span>
+<span class="fc" id="L712">        DoubleClick = newDoubleClick;</span>
+<span class="fc" id="L713">    }</span>
 
     @Override
     public void draggedAt(int x, int y) {
-<span class="fc" id="L845">        int[] newDrag = new int[2];</span>
-<span class="fc" id="L846">        newDrag[0] = x;</span>
-<span class="fc" id="L847">        newDrag[1] = y;</span>
-<span class="fc" id="L848">        Drag = newDrag;</span>
-<span class="fc" id="L849">    }</span>
+<span class="fc" id="L717">        int[] newDrag = new int[2];</span>
+<span class="fc" id="L718">        newDrag[0] = x;</span>
+<span class="fc" id="L719">        newDrag[1] = y;</span>
+<span class="fc" id="L720">        Drag = newDrag;</span>
+<span class="fc" id="L721">    }</span>
+
     @Override
     public Animator getAnimator() {
-<span class="fc" id="L852">        return Animator;</span>
+<span class="fc" id="L725">        return Animator;</span>
     }
 
     @Override
     public int getFrameDelta() {
-<span class="fc" id="L857">        return frameDelta;</span>
+<span class="fc" id="L730">        return frameDelta;</span>
     }
 
     @Override
     public AbstractSpaceMap getMap() {
-<span class="fc" id="L862">        return PanelMap;</span>
+<span class="fc" id="L735">        return PanelMap;</span>
     }
 
     @Override
     public void setMap(AbstractSpaceMap newMap) {
-<span class="fc" id="L867">        PanelMap = newMap;</span>
-<span class="fc" id="L868">    }</span>
+<span class="fc" id="L740">        PanelMap = newMap;</span>
+<span class="fc" id="L741">    }</span>
 
 
-<span class="nc" id="L871">    public static class Utility {</span>
-<span class="fc" id="L872">        static SurfacePainter DefaultPainter =</span>
+<span class="nc" id="L744">    public static class Utility {</span>
+<span class="fc" id="L745">        static SurfacePainter DefaultPainter =</span>
                 (surface, brush) -&gt;
                 {
-<span class="nc bnc" id="L875" title="All 2 branches missed.">                    if (surface.isMaprendering()) {</span>
-<span class="nc bnc" id="L876" title="All 2 branches missed.">                        if (surface.getMap() != null) {</span>
-<span class="nc" id="L877">                            surface.getMap().paintStructure(brush);</span>
+<span class="nc bnc" id="L748" title="All 2 branches missed.">                    if (surface.isMaprendering()) {</span>
+<span class="nc bnc" id="L749" title="All 2 branches missed.">                        if (surface.getMap() != null) {</span>
+<span class="nc" id="L750">                            surface.getMap().paintStructure(brush);</span>
                         }
                     }
-<span class="nc" id="L880">                    brush.setColor(Color.GREEN);</span>
-<span class="nc" id="L881">                    brush.fillOval((int) surface.realX(surface.lastSenseX()) - 5, (int) surface.realY(surface.lastSenseY()) - 5, 10, 10);</span>
-<span class="nc" id="L882">                };</span>
+<span class="nc" id="L753">                    brush.setColor(Color.GREEN);</span>
+<span class="nc" id="L754">                    brush.fillOval((int) surface.realX(surface.lastSenseX()) - 5, (int) surface.realY(surface.lastSenseY()) - 5, 10, 10);</span>
+<span class="nc" id="L755">                };</span>
         //-------------------------------------
-<span class="fc" id="L884">        static SurfaceAction DefaultPressAction =</span>
+<span class="fc" id="L757">        static SurfaceAction DefaultPressAction =</span>
                 (surface) -&gt;
                 {
-<span class="nc" id="L887">                    int[] Press = surface.getPress();</span>
-<span class="nc bnc" id="L888" title="All 2 branches missed.">                    if (Press == null) {</span>
-<span class="nc" id="L889">                        return;</span>
+<span class="nc" id="L760">                    int[] Press = surface.getPress();</span>
+<span class="nc bnc" id="L761" title="All 2 branches missed.">                    if (Press == null) {</span>
+<span class="nc" id="L762">                        return;</span>
                     }
-<span class="nc" id="L891">                    int x = Press[0];</span>
-<span class="nc" id="L892">                    int y = Press[1];</span>
+<span class="nc" id="L764">                    int x = Press[0];</span>
+<span class="nc" id="L765">                    int y = Press[1];</span>
 
-<span class="nc" id="L894">                    surface.setPress(null);</span>
-<span class="nc" id="L895">                };</span>
+<span class="nc" id="L767">                    surface.setPress(null);</span>
+<span class="nc" id="L768">                };</span>
         //-------------------------------------
-<span class="fc" id="L897">        static SurfaceAction DefaultLongPressAction =</span>
+<span class="fc" id="L770">        static SurfaceAction DefaultLongPressAction =</span>
                 (surface) -&gt;
                 {
-<span class="fc" id="L900">                    int[] LongPress = surface.getLongPress();</span>
-<span class="pc bpc" id="L901" title="1 of 2 branches missed.">                    if (LongPress == null) {</span>
-<span class="fc" id="L902">                        return;</span>
+<span class="fc" id="L773">                    int[] LongPress = surface.getLongPress();</span>
+<span class="pc bpc" id="L774" title="1 of 2 branches missed.">                    if (LongPress == null) {</span>
+<span class="fc" id="L775">                        return;</span>
                     }
-<span class="nc" id="L904">                    int x = LongPress[0];</span>
-<span class="nc" id="L905">                    int y = LongPress[1];</span>
+<span class="nc" id="L777">                    int x = LongPress[0];</span>
+<span class="nc" id="L778">                    int y = LongPress[1];</span>
 
-<span class="nc" id="L907">                    surface.setLongPress(null);</span>
-<span class="nc" id="L908">                };</span>
+<span class="nc" id="L780">                    surface.setLongPress(null);</span>
+<span class="nc" id="L781">                };</span>
         //-------------------------------------
-<span class="fc" id="L910">        static SurfaceAction DefaultClickAction =</span>
+<span class="fc" id="L783">        static SurfaceAction DefaultClickAction =</span>
                 (surface) -&gt;
                 {
-<span class="fc" id="L913">                    int[] Click = surface.getClick();</span>
-<span class="pc bpc" id="L914" title="1 of 2 branches missed.">                    if (Click == null) {</span>
-<span class="fc" id="L915">                        return;</span>
+<span class="fc" id="L786">                    int[] Click = surface.getClick();</span>
+<span class="pc bpc" id="L787" title="1 of 2 branches missed.">                    if (Click == null) {</span>
+<span class="fc" id="L788">                        return;</span>
                     }
-<span class="nc" id="L917">                    int x = Click[0];</span>
-<span class="nc" id="L918">                    int y = Click[1];</span>
+<span class="nc" id="L790">                    int x = Click[0];</span>
+<span class="nc" id="L791">                    int y = Click[1];</span>
 
-<span class="nc" id="L920">                    surface.getListener().setDragStart(x, y);</span>
-<span class="nc" id="L921">                    SurfaceObject found = surface.findObject(surface.realX(x), surface.realY(y), true, null);</span>
-<span class="nc bnc" id="L922" title="All 2 branches missed.">                    if (found != null) {</span>
-<span class="nc bnc" id="L923" title="All 2 branches missed.">                        if (found.clickedAt(surface.realX(x), surface.realY(y), surface)) {</span>
-<span class="nc" id="L924">                            found.clickedAt(x, y, surface);</span>
+<span class="nc" id="L793">                    surface.getListener().setDragStart(x, y);</span>
+<span class="nc" id="L794">                    SurfaceObject found = surface.findObject(surface.realX(x), surface.realY(y), true, null);</span>
+<span class="nc bnc" id="L795" title="All 2 branches missed.">                    if (found != null) {</span>
+<span class="nc bnc" id="L796" title="All 2 branches missed.">                        if (found.clickedAt(surface.realX(x), surface.realY(y), surface)) {</span>
+<span class="nc" id="L797">                            found.clickedAt(x, y, surface);</span>
                         }
                     }
-<span class="nc" id="L927">                    surface.setClick(null);</span>
-<span class="nc" id="L928">                    surface.repaint(0, 0, surface.getWidth(), surface.getHeight());</span>
-<span class="nc" id="L929">                };</span>
+<span class="nc" id="L800">                    surface.setClick(null);</span>
+<span class="nc" id="L801">                    surface.repaint(0, 0, surface.getWidth(), surface.getHeight());</span>
+<span class="nc" id="L802">                };</span>
         //-------------------------------------
-<span class="fc" id="L931">        static SurfaceAction DefaultDoubleClickAction = (surface) -&gt;</span>
+<span class="fc" id="L804">        static SurfaceAction DefaultDoubleClickAction = (surface) -&gt;</span>
         {
-<span class="fc" id="L933">            int[] DoubleClick = surface.getDoubleClick();</span>
-<span class="pc bpc" id="L934" title="1 of 2 branches missed.">            if (DoubleClick == null) {</span>
-<span class="fc" id="L935">                return;</span>
+<span class="fc" id="L806">            int[] DoubleClick = surface.getDoubleClick();</span>
+<span class="pc bpc" id="L807" title="1 of 2 branches missed.">            if (DoubleClick == null) {</span>
+<span class="fc" id="L808">                return;</span>
             }
 
-<span class="nc" id="L938">            int x = DoubleClick[0];</span>
-<span class="nc" id="L939">            int y = DoubleClick[1];</span>
+<span class="nc" id="L811">            int x = DoubleClick[0];</span>
+<span class="nc" id="L812">            int y = DoubleClick[1];</span>
 
-<span class="nc" id="L941">            SurfaceObject found = surface.findObject(surface.realX(x), surface.realY(y), true, null);</span>
-<span class="nc bnc" id="L942" title="All 2 branches missed.">            if (found != null) {</span>
-<span class="nc" id="L943">                found.doubleClickedAt(surface.realX(x), surface.realY(y), surface);</span>
+<span class="nc" id="L814">            SurfaceObject found = surface.findObject(surface.realX(x), surface.realY(y), true, null);</span>
+<span class="nc bnc" id="L815" title="All 2 branches missed.">            if (found != null) {</span>
+<span class="nc" id="L816">                found.doubleClickedAt(surface.realX(x), surface.realY(y), surface);</span>
             } else {
                 //Double clicked in empty space!
             }
-<span class="nc" id="L947">            surface.setDoubleClick(null);</span>
-<span class="nc" id="L948">        };</span>
+<span class="nc" id="L820">            surface.setDoubleClick(null);</span>
+<span class="nc" id="L821">        };</span>
 
-<span class="fc" id="L950">        static SurfaceAction DefaultScalingAction =</span>
+<span class="fc" id="L823">        static SurfaceAction DefaultScalingAction =</span>
                 (surface) -&gt;
                 {
-<span class="fc bfc" id="L953" title="All 2 branches covered.">                    if (surface.getScaling() == null) return;</span>
-<span class="fc" id="L954">                    int x = (int) surface.getScaling()[0];</span>
-<span class="fc" id="L955">                    int y = (int) surface.getScaling()[1];</span>
-<span class="fc" id="L956">                    double scaleFactor = surface.getScaling()[2];</span>
-<span class="fc" id="L957">                    surface.setLastSenseX(x);</span>
-<span class="fc" id="L958">                    surface.setLastSenseY(y);</span>
-<span class="fc" id="L959">                    surface.translatePanel(-x, -y);</span>
-<span class="fc" id="L960">                    surface.getScaler().scale((scaleFactor), (scaleFactor));</span>
-<span class="fc" id="L961">                    surface.translatePanel(x, y);</span>
-<span class="fc" id="L962">                    surface.setScaling(null);</span>
-<span class="fc" id="L963">                    surface.repaint(0, 0, surface.getWidth(), surface.getHeight());</span>
-<span class="fc" id="L964">                };</span>
+<span class="fc bfc" id="L826" title="All 2 branches covered.">                    if (surface.getScaling() == null) return;</span>
+<span class="fc" id="L827">                    int x = (int) surface.getScaling()[0];</span>
+<span class="fc" id="L828">                    int y = (int) surface.getScaling()[1];</span>
+<span class="fc" id="L829">                    double scaleFactor = surface.getScaling()[2];</span>
+<span class="fc" id="L830">                    surface.setLastSenseX(x);</span>
+<span class="fc" id="L831">                    surface.setLastSenseY(y);</span>
+<span class="fc" id="L832">                    surface.translatePanel(-x, -y);</span>
+<span class="fc" id="L833">                    surface.getScaler().scale((scaleFactor), (scaleFactor));</span>
+<span class="fc" id="L834">                    surface.translatePanel(x, y);</span>
+<span class="fc" id="L835">                    surface.setScaling(null);</span>
+<span class="fc" id="L836">                    surface.repaint(0, 0, surface.getWidth(), surface.getHeight());</span>
+<span class="fc" id="L837">                };</span>
 
-<span class="fc" id="L966">        static SurfaceAction DefaultSenseAction =</span>
+<span class="fc" id="L839">        static SurfaceAction DefaultSenseAction =</span>
                 (surface) -&gt;
                 {
-<span class="fc" id="L969">                    int[] Sense = surface.getSense();</span>
-<span class="pc bpc" id="L970" title="1 of 2 branches missed.">                    if (Sense == null) return;</span>
-<span class="nc" id="L971">                    int x = Sense[0];</span>
-<span class="nc" id="L972">                    int y = Sense[1];</span>
-<span class="nc" id="L973">                    surface.setMovement(null);</span>
-<span class="nc" id="L974">                    double realX = surface.realX(x);</span>
-<span class="nc" id="L975">                    double realY = surface.realY(y);</span>
+<span class="fc" id="L842">                    int[] Sense = surface.getSense();</span>
+<span class="pc bpc" id="L843" title="1 of 2 branches missed.">                    if (Sense == null) return;</span>
+<span class="nc" id="L844">                    int x = Sense[0];</span>
+<span class="nc" id="L845">                    int y = Sense[1];</span>
+<span class="nc" id="L846">                    surface.setMovement(null);</span>
+<span class="nc" id="L847">                    double realX = surface.realX(x);</span>
+<span class="nc" id="L848">                    double realY = surface.realY(y);</span>
                     //This needs improvement! -&gt; find neuron function needs to be optimized!
-<span class="nc bnc" id="L977" title="All 2 branches missed.">                    if (surface.getFocusObject() != null) surface.getFocusObject().movementAt(realX, realY, surface);</span>
+<span class="nc bnc" id="L850" title="All 2 branches missed.">                    if (surface.getFocusObject() != null) surface.getFocusObject().movementAt(realX, realY, surface);</span>
                     //Overlapping nodes need to be considered!
-<span class="nc" id="L979">                    surface.setFocusObject(surface.findObject(realX, realY, true, null));</span>
-<span class="nc" id="L980">                    surface.setLastSenseX(x);</span>
-<span class="nc" id="L981">                    surface.setLastSenseY(y);</span>
-<span class="nc" id="L982">                };</span>
+<span class="nc" id="L852">                    surface.setFocusObject(surface.findObject(realX, realY, true, null));</span>
+<span class="nc" id="L853">                    surface.setLastSenseX(x);</span>
+<span class="nc" id="L854">                    surface.setLastSenseY(y);</span>
+<span class="nc" id="L855">                };</span>
 
-<span class="fc" id="L984">        static SurfaceAction DefaultSwipeAction =</span>
+<span class="fc" id="L857">        static SurfaceAction DefaultSwipeAction =</span>
                 (surface) -&gt;
                 {
-<span class="fc" id="L987">                    int[] Swipe = surface.getSwipe();</span>
-<span class="pc bpc" id="L988" title="1 of 2 branches missed.">                    if (Swipe == null) return;</span>
-<span class="nc bnc" id="L989" title="All 2 branches missed.">                    if (surface.isInTouchMode()) {</span>
-<span class="nc" id="L990">                        surface.setFocusObject(surface.findObject(surface.realX(Swipe[0]), surface.realY(Swipe[1]), true, null));</span>
-<span class="nc bnc" id="L991" title="All 2 branches missed.">                        if (surface.getFocusObject() != null) {</span>
-<span class="nc" id="L992">                            ArrayList&lt;SurfaceRepaintSpace&gt; RepaintQueue = surface.getRepaintQueue();</span>
-<span class="nc bnc" id="L993" title="All 2 branches missed.">                            if (RepaintQueue == null) RepaintQueue = new ArrayList&lt;SurfaceRepaintSpace&gt;();</span>
-<span class="nc" id="L994">                            surface.setLastSenseX(Swipe[2]);</span>
-<span class="nc" id="L995">                            surface.setLastSenseY(Swipe[3]);</span>
-<span class="nc" id="L996">                            double[] data = {surface.realX(Swipe[0]), surface.realY(Swipe[1]), surface.realX(Swipe[2]), surface.realY(Swipe[3])};</span>
-<span class="nc" id="L997">                            RepaintQueue.addAll(surface.getFocusObject().moveDirectional(data, surface));</span>
-<span class="nc" id="L998">                            surface.setRepaintQueue(RepaintQueue);</span>
-<span class="nc" id="L999">                            Swipe[0] = Swipe[2];</span>
-<span class="nc" id="L1000">                            Swipe[1] = Swipe[3];</span>
-<span class="nc" id="L1001">                            Swipe = null;</span>
-<span class="nc" id="L1002">                            return;</span>
+<span class="fc" id="L860">                    int[] Swipe = surface.getSwipe();</span>
+<span class="pc bpc" id="L861" title="1 of 2 branches missed.">                    if (Swipe == null) return;</span>
+<span class="nc bnc" id="L862" title="All 2 branches missed.">                    if (surface.isInTouchMode()) {</span>
+<span class="nc" id="L863">                        surface.setFocusObject(surface.findObject(surface.realX(Swipe[0]), surface.realY(Swipe[1]), true, null));</span>
+<span class="nc bnc" id="L864" title="All 2 branches missed.">                        if (surface.getFocusObject() != null) {</span>
+                            //ArrayList&lt;SurfaceRepaintSpace&gt; RepaintQueue = surface.getRepaintQueue();
+                            //if (RepaintQueue == null) RepaintQueue = new ArrayList&lt;SurfaceRepaintSpace&gt;();
+<span class="nc" id="L867">                            surface.setLastSenseX(Swipe[2]);</span>
+<span class="nc" id="L868">                            surface.setLastSenseY(Swipe[3]);</span>
+<span class="nc" id="L869">                            double[] data = {surface.realX(Swipe[0]), surface.realY(Swipe[1]), surface.realX(Swipe[2]), surface.realY(Swipe[3])};</span>
+                            //RepaintQueue.addAll(
+<span class="nc" id="L871">                            surface.getFocusObject().moveDirectional(data, surface);</span>
+                            //);
+                            //surface.setRepaintQueue(RepaintQueue);
+<span class="nc" id="L874">                            Swipe[0] = Swipe[2];</span>
+<span class="nc" id="L875">                            Swipe[1] = Swipe[3];</span>
+<span class="nc" id="L876">                            Swipe = null;</span>
+<span class="nc" id="L877">                            return;</span>
                         }
-<span class="nc bnc" id="L1004" title="All 2 branches missed.">                        if (surface.getFocusObject() == null) {</span>
-<span class="nc" id="L1005">                            surface.translatePanel(Swipe[2] - Swipe[0], Swipe[3] - Swipe[1]);</span>
-<span class="nc" id="L1006">                            Swipe[0] = Swipe[2];</span>
-<span class="nc" id="L1007">                            Swipe[1] = Swipe[3];</span>
-<span class="nc" id="L1008">                            surface.setSwipe(null);</span>
+<span class="nc bnc" id="L879" title="All 2 branches missed.">                        if (surface.getFocusObject() == null) {</span>
+<span class="nc" id="L880">                            surface.translatePanel(Swipe[2] - Swipe[0], Swipe[3] - Swipe[1]);</span>
+<span class="nc" id="L881">                            Swipe[0] = Swipe[2];</span>
+<span class="nc" id="L882">                            Swipe[1] = Swipe[3];</span>
+<span class="nc" id="L883">                            surface.setSwipe(null);</span>
                         }
                     } else {
-<span class="nc bnc" id="L1011" title="All 2 branches missed.">                        if (Swipe.length == 4) surface.translatePanel(Swipe[2] - Swipe[0], Swipe[3] - Swipe[1]);</span>
-<span class="nc" id="L1012">                        Swipe[0] = Swipe[2];</span>
-<span class="nc" id="L1013">                        Swipe[1] = Swipe[3];</span>
-<span class="nc" id="L1014">                        surface.setSwipe(null);</span>
+<span class="nc bnc" id="L886" title="All 2 branches missed.">                        if (Swipe.length == 4) surface.translatePanel(Swipe[2] - Swipe[0], Swipe[3] - Swipe[1]);</span>
+<span class="nc" id="L887">                        Swipe[0] = Swipe[2];</span>
+<span class="nc" id="L888">                        Swipe[1] = Swipe[3];</span>
+<span class="nc" id="L889">                        surface.setSwipe(null);</span>
                     }
-<span class="nc" id="L1016">                    surface.setSwipe(null);</span>
-<span class="nc" id="L1017">                };</span>
-<span class="fc" id="L1018">        static SurfaceAction DefaultDragAction =</span>
+<span class="nc" id="L891">                    surface.setSwipe(null);</span>
+<span class="nc" id="L892">                };</span>
+<span class="fc" id="L893">        static SurfaceAction DefaultDragAction =</span>
                 (surface) -&gt;
                 {
-<span class="fc" id="L1021">                    int[] Drag = surface.getSwipe();</span>
-<span class="pc bpc" id="L1022" title="1 of 2 branches missed.">                    if (Drag == null) return;</span>
-<span class="nc bnc" id="L1023" title="All 2 branches missed.">                    if (surface.isInTouchMode()) {</span>
+<span class="fc" id="L896">                    int[] Drag = surface.getSwipe();</span>
+<span class="pc bpc" id="L897" title="1 of 2 branches missed.">                    if (Drag == null) return;</span>
+<span class="nc bnc" id="L898" title="All 2 branches missed.">                    if (surface.isInTouchMode()) {</span>
 
                     } else {
 
                     }
-<span class="nc" id="L1028">                    surface.setSwipe(null);</span>
-<span class="nc" id="L1029">                };</span>
+<span class="nc" id="L903">                    surface.setSwipe(null);</span>
+<span class="nc" id="L904">                };</span>
     }
 
     @Override
     public void actionPerformed(ActionEvent arg0) {
-<span class="pc bpc" id="L1034" title="1 of 2 branches missed.">        if (arg0.getSource() == GUITimer) updateAndRedraw();</span>
-<span class="fc" id="L1035">    }</span>
+<span class="pc bpc" id="L909" title="1 of 2 branches missed.">        if (arg0.getSource() == GUITimer) updateAndRedraw();</span>
+<span class="fc" id="L910">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -9,7 +9,7 @@ public abstract class AbstractSpaceMap {
 
 	static public int MAX = 8;
 	
-	public abstract AbstractSpaceMap addAll(LinkedList<SurfaceObject> elements);
+	public abstract AbstractSpaceMap addAll(List<SurfaceObject> elements);
 	
 	public abstract AbstractSpaceMap addAndUpdate(SurfaceObject node);
 	
@@ -17,11 +17,11 @@ public abstract class AbstractSpaceMap {
 	
 	public abstract int getCount();
 
-	public abstract LinkedList<SurfaceObject> getAll();
-	public abstract LinkedList<SurfaceObject> getAllWithin(double[] frame);
+	public abstract List<SurfaceObject> getAll();
+	public abstract List<SurfaceObject> getAllWithin(double[] frame);
 
-	public abstract LinkedList<SurfaceObject> findAllAt(double x, double y, MapAction Actor);
-	public abstract LinkedList<SurfaceObject> findAllWithin(double[] frame, MapAction Actor);
+	public abstract List<SurfaceObject> findAllAt(double x, double y, MapAction Actor);
+	public abstract List<SurfaceObject> findAllWithin(double[] frame, MapAction Actor);
 
 	public abstract boolean applyToAll(MapAction Actor);
 	public abstract boolean applyToAllWithin(double[] frame, MapAction Actor);
@@ -30,7 +30,7 @@ public abstract class AbstractSpaceMap {
 
 	public interface MapAction         {boolean act(SurfaceObject thing);}
 
-	protected static List<SurfaceObject> _withinFrame(LinkedList<SurfaceObject> list, HashMap<SurfaceObject, SurfaceObject> elements, double[] frame){
+	protected static List<SurfaceObject> _withinFrame(List<SurfaceObject> list, HashMap<SurfaceObject, SurfaceObject> elements, double[] frame){
 		if(elements!=null){
 			elements.forEach(
 					(k, o)->

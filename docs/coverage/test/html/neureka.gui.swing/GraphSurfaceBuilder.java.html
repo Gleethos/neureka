@@ -127,8 +127,8 @@ public class GraphSurfaceBuilder
 <span class="fc" id="L127">                    int y = DoubleClick[1];</span>
 
 <span class="fc" id="L129">                    SurfaceObject found = surface.findObject(surface.realX(x), surface.realY(y), true, null);</span>
-<span class="fc bfc" id="L130" title="All 2 branches covered.">                    if (found != null) {</span>
-<span class="fc" id="L131">                        found.doubleClickedAt(surface.realX(x), surface.realY(y), surface);</span>
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">                    if (found != null) {</span>
+<span class="nc" id="L131">                        found.doubleClickedAt(surface.realX(x), surface.realY(y), surface);</span>
                     } else {
 <span class="fc" id="L133">                        GraphNode ghnode = new GraphNode(new Tsr(), null, null, null);</span>
 <span class="fc" id="L134">                        SurfaceNode Unit = new SurfaceNode(</span>
@@ -195,74 +195,72 @@ public class GraphSurfaceBuilder
 <span class="nc" id="L195">                        double cy = this.ChosenInputNode.getY();</span>
 <span class="nc" id="L196">                        double sx = surface.realLastSenseX();</span>
 <span class="nc" id="L197">                        double sy = surface.realLastSenseY();</span>
-<span class="nc" id="L198">                        SurfaceRepaintSpace space = new SurfaceRepaintSpace((cx + sx) / 2, (cy + sy) / 2, Math.abs(cx - sx) / 2, Math.abs(cy - sy) / 2);</span>
-<span class="nc" id="L199">                        ArrayList&lt;SurfaceRepaintSpace&gt; queue = surface.getRepaintQueue();</span>
-<span class="nc bnc" id="L200" title="All 2 branches missed.">                        queue = (queue == null) ? new ArrayList&lt;&gt;() : queue;</span>
-<span class="nc" id="L201">                        queue.add(space);</span>
-<span class="nc" id="L202">                        surface.setRepaintQueue(queue);</span>
+                        //SurfaceRepaintSpace space = new SurfaceRepaintSpace(
+                        //        (cx + sx) / 2,
+                        //        (cy + sy) / 2,
+                        //        Math.abs(cx - sx) / 2,
+                        //        Math.abs(cy - sy) / 2,
+                        //        null
+                        //);
+                        //surface.layers()[10].add(space);
                     }
-<span class="fc" id="L204">                    surface.setLastSenseX(x);</span>
-<span class="fc" id="L205">                    surface.setLastSenseY(y);</span>
-<span class="fc" id="L206">                }</span>
+<span class="fc" id="L207">                    surface.setLastSenseX(x);</span>
+<span class="fc" id="L208">                    surface.setLastSenseY(y);</span>
+<span class="fc" id="L209">                }</span>
         );
-<span class="fc" id="L208">        Surface.setSwipeAction(</span>
+<span class="fc" id="L211">        Surface.setSwipeAction(</span>
                 (surface) -&gt;
                 {
-<span class="fc" id="L211">                    int[] Swipe = surface.getSwipe();</span>
-<span class="fc bfc" id="L212" title="All 2 branches covered.">                    if (Swipe == null) return;</span>
-<span class="pc bpc" id="L213" title="1 of 2 branches missed.">                    if (surface.isInTouchMode()) {</span>
-<span class="fc" id="L214">                        surface.setFocusObject(surface.findObject(surface.realX(Swipe[0]), surface.realY(Swipe[1]), true, null));</span>
+<span class="fc" id="L214">                    int[] Swipe = surface.getSwipe();</span>
+<span class="fc bfc" id="L215" title="All 2 branches covered.">                    if (Swipe == null) return;</span>
+<span class="pc bpc" id="L216" title="1 of 2 branches missed.">                    if (surface.isInTouchMode()) {</span>
+<span class="fc" id="L217">                        surface.setFocusObject(surface.findObject(surface.realX(Swipe[0]), surface.realY(Swipe[1]), true, null));</span>
 
-<span class="pc bpc" id="L216" title="1 of 2 branches missed.">                        if (surface.getFocusObject() != null) {</span>
-<span class="fc" id="L217">                            ArrayList&lt;SurfaceRepaintSpace&gt; RepaintQueue = surface.getRepaintQueue();</span>
-<span class="pc bpc" id="L218" title="1 of 2 branches missed.">                            if (RepaintQueue == null) {</span>
-<span class="nc" id="L219">                                RepaintQueue = new ArrayList&lt;SurfaceRepaintSpace&gt;();</span>
-                            }
+<span class="pc bpc" id="L219" title="1 of 2 branches missed.">                        if (surface.getFocusObject() != null) {</span>
 
-<span class="fc" id="L222">                            surface.setLastSenseX(Swipe[2]);</span>
-<span class="fc" id="L223">                            surface.setLastSenseY(Swipe[3]);</span>
+<span class="fc" id="L221">                            surface.setLastSenseX(Swipe[2]);</span>
+<span class="fc" id="L222">                            surface.setLastSenseY(Swipe[3]);</span>
 
-<span class="fc" id="L225">                            double[] data = {surface.realX(Swipe[0]), surface.realY(Swipe[1]), surface.realX(Swipe[2]), surface.realY(Swipe[3])};</span>
-<span class="fc" id="L226">                            RepaintQueue.addAll(surface.getFocusObject().moveDirectional(data, surface));</span>
-<span class="fc" id="L227">                            surface.setRepaintQueue(RepaintQueue);</span>
-<span class="fc" id="L228">                            Swipe[0] = Swipe[2];</span>
-<span class="fc" id="L229">                            Swipe[1] = Swipe[3];</span>
-<span class="fc" id="L230">                            Swipe = null;</span>
-<span class="fc" id="L231">                            return;</span>
+<span class="fc" id="L224">                            double[] data = {surface.realX(Swipe[0]), surface.realY(Swipe[1]), surface.realX(Swipe[2]), surface.realY(Swipe[3])};</span>
+<span class="fc" id="L225">                            surface.getFocusObject().moveDirectional(data, surface);</span>
+
+<span class="fc" id="L227">                            Swipe[0] = Swipe[2];</span>
+<span class="fc" id="L228">                            Swipe[1] = Swipe[3];</span>
+<span class="fc" id="L229">                            return;</span>
                         }
-<span class="nc bnc" id="L233" title="All 2 branches missed.">                        if (surface.getFocusObject() == null) {</span>
-<span class="nc" id="L234">                            surface.translatePanel(Swipe[2] - Swipe[0], Swipe[3] - Swipe[1]);</span>
-<span class="nc" id="L235">                            Swipe[0] = Swipe[2];</span>
-<span class="nc" id="L236">                            Swipe[1] = Swipe[3];</span>
-<span class="nc" id="L237">                            surface.setSwipe(null);</span>
+<span class="nc bnc" id="L231" title="All 2 branches missed.">                        if (surface.getFocusObject() == null) {</span>
+<span class="nc" id="L232">                            surface.translatePanel(Swipe[2] - Swipe[0], Swipe[3] - Swipe[1]);</span>
+<span class="nc" id="L233">                            Swipe[0] = Swipe[2];</span>
+<span class="nc" id="L234">                            Swipe[1] = Swipe[3];</span>
+<span class="nc" id="L235">                            surface.setSwipe(null);</span>
                         }
                     } else {
-<span class="nc bnc" id="L240" title="All 2 branches missed.">                        if (Swipe.length == 4) {</span>
-<span class="nc" id="L241">                            surface.translatePanel(Swipe[2] - Swipe[0], Swipe[3] - Swipe[1]);</span>
+<span class="nc bnc" id="L238" title="All 2 branches missed.">                        if (Swipe.length == 4) {</span>
+<span class="nc" id="L239">                            surface.translatePanel(Swipe[2] - Swipe[0], Swipe[3] - Swipe[1]);</span>
                         }
-<span class="nc" id="L243">                        Swipe[0] = Swipe[2];</span>
-<span class="nc" id="L244">                        Swipe[1] = Swipe[3];</span>
-<span class="nc" id="L245">                        surface.setSwipe(null);</span>
+<span class="nc" id="L241">                        Swipe[0] = Swipe[2];</span>
+<span class="nc" id="L242">                        Swipe[1] = Swipe[3];</span>
+<span class="nc" id="L243">                        surface.setSwipe(null);</span>
                     }
-<span class="nc" id="L247">                    surface.setSwipe(null);</span>
-<span class="nc" id="L248">                }</span>
+<span class="nc" id="L245">                    surface.setSwipe(null);</span>
+<span class="nc" id="L246">                }</span>
         );
-<span class="fc" id="L250">        Surface.setDragAction(</span>
+<span class="fc" id="L248">        Surface.setDragAction(</span>
                 (surface) -&gt;
                 {
-<span class="fc" id="L253">                    int[] Drag = surface.getDrag();</span>
-<span class="fc bfc" id="L254" title="All 2 branches covered.">                    if (Drag == null) return;</span>
+<span class="fc" id="L251">                    int[] Drag = surface.getDrag();</span>
+<span class="fc bfc" id="L252" title="All 2 branches covered.">                    if (Drag == null) return;</span>
 
-<span class="pc bpc" id="L256" title="1 of 2 branches missed.">                    if (surface.isInTouchMode()) {</span>
-<span class="fc" id="L257">                        int[] PressPoint = surface.getListener().PressPoint;</span>
-<span class="fc bfc" id="L258" title="All 2 branches covered.">                        if (PressPoint != null) {</span>
-<span class="fc" id="L259">                            double distance = Math.pow(Math.pow(PressPoint[1] - Drag[0], 2) + Math.pow(PressPoint[2] - Drag[1], 2), 0.5);</span>
-<span class="fc" id="L260">                            double mod = 1 * (Math.pow(distance, (distance)));</span>
-<span class="fc" id="L261">                            PressPoint[0] -= 1 * (mod);</span>
-<span class="fc bfc" id="L262" title="All 2 branches covered.">                            if (PressPoint[0] &lt; 0) {</span>
-<span class="fc" id="L263">                                PressPoint[0] = 0;</span>
+<span class="pc bpc" id="L254" title="1 of 2 branches missed.">                    if (surface.isInTouchMode()) {</span>
+<span class="fc" id="L255">                        int[] PressPoint = surface.getListener().PressPoint;</span>
+<span class="fc bfc" id="L256" title="All 2 branches covered.">                        if (PressPoint != null) {</span>
+<span class="fc" id="L257">                            double distance = Math.pow(Math.pow(PressPoint[1] - Drag[0], 2) + Math.pow(PressPoint[2] - Drag[1], 2), 0.5);</span>
+<span class="fc" id="L258">                            double mod = 1 * (Math.pow(distance, (distance)));</span>
+<span class="fc" id="L259">                            PressPoint[0] -= 1 * (mod);</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">                            if (PressPoint[0] &lt; 0) {</span>
+<span class="fc" id="L261">                                PressPoint[0] = 0;</span>
                             }
-<span class="pc bpc" id="L265" title="1 of 2 branches missed.">                            if (distance &gt; pressRadius) {</span>
+<span class="fc bfc" id="L263" title="All 2 branches covered.">                            if (distance &gt; pressRadius) {</span>
                                 //if (newMenu != null) {
                                 //    surface.getListener().PressPoint = null;
                                 //    Surface.setMap(Surface.getMap().removeAndUpdate(newMenu));
@@ -277,10 +275,10 @@ public class GraphSurfaceBuilder
                     } else {
 
                     }
-<span class="fc" id="L280">                    surface.setSwipe(null);</span>
-<span class="fc" id="L281">                }</span>
+<span class="fc" id="L278">                    surface.setSwipe(null);</span>
+<span class="fc" id="L279">                }</span>
         );
-<span class="fc" id="L283">    }</span>
+<span class="fc" id="L281">    }</span>
 
 
 }

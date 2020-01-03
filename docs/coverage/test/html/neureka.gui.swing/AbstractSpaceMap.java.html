@@ -9,7 +9,7 @@ import java.util.List;
 
 <span class="fc" id="L10">	static public int MAX = 8;</span>
 	
-	public abstract AbstractSpaceMap addAll(LinkedList&lt;SurfaceObject&gt; elements);
+	public abstract AbstractSpaceMap addAll(List&lt;SurfaceObject&gt; elements);
 	
 	public abstract AbstractSpaceMap addAndUpdate(SurfaceObject node);
 	
@@ -17,11 +17,11 @@ import java.util.List;
 	
 	public abstract int getCount();
 
-	public abstract LinkedList&lt;SurfaceObject&gt; getAll();
-	public abstract LinkedList&lt;SurfaceObject&gt; getAllWithin(double[] frame);
+	public abstract List&lt;SurfaceObject&gt; getAll();
+	public abstract List&lt;SurfaceObject&gt; getAllWithin(double[] frame);
 
-	public abstract LinkedList&lt;SurfaceObject&gt; findAllAt(double x, double y, MapAction Actor);
-	public abstract LinkedList&lt;SurfaceObject&gt; findAllWithin(double[] frame, MapAction Actor);
+	public abstract List&lt;SurfaceObject&gt; findAllAt(double x, double y, MapAction Actor);
+	public abstract List&lt;SurfaceObject&gt; findAllWithin(double[] frame, MapAction Actor);
 
 	public abstract boolean applyToAll(MapAction Actor);
 	public abstract boolean applyToAllWithin(double[] frame, MapAction Actor);
@@ -30,7 +30,7 @@ import java.util.List;
 
 	public interface MapAction         {boolean act(SurfaceObject thing);}
 
-	protected static List&lt;SurfaceObject&gt; _withinFrame(LinkedList&lt;SurfaceObject&gt; list, HashMap&lt;SurfaceObject, SurfaceObject&gt; elements, double[] frame){
+	protected static List&lt;SurfaceObject&gt; _withinFrame(List&lt;SurfaceObject&gt; list, HashMap&lt;SurfaceObject, SurfaceObject&gt; elements, double[] frame){
 <span class="pc bpc" id="L34" title="1 of 2 branches missed.">		if(elements!=null){</span>
 <span class="fc" id="L35">			elements.forEach(</span>
 					(k, o)-&gt;

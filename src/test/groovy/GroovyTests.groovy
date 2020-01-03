@@ -65,7 +65,7 @@ class GroovyTests
             }
         }
         assert map.findAllWithin(frame, action).size()>1
-        Thread.sleep(5000)
+        Thread.sleep(15000)
         //while(true){
         //
         //}

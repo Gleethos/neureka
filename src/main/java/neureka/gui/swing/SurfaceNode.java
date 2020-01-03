@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.MultipleGradientPaint.CycleMethod;
 import java.awt.geom.*;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 import neureka.function.Function;
@@ -29,7 +29,6 @@ public class SurfaceNode implements SurfaceObject
     private boolean hoveringOverDeckButton = false;
     private boolean wasOnDeckButton = false;
 
-    private boolean dataDisplayUpdateRequest = true;
 
     private boolean isOnDeck = false;
     private boolean wasOnDeck = false;
@@ -122,9 +121,9 @@ public class SurfaceNode implements SurfaceObject
     }
 
     @Override
-    public ArrayList<SurfaceRepaintSpace> moveCircular(double[] data, Surface Surface) //double centerX, double centerY, double x, double y
+    public void moveCircular(double[] data, Surface Surface) //double centerX, double centerY, double x, double y
     {
-        if (data.length == 3) return moveCircularBy(data, Surface);
+        if (data.length == 3){ moveCircularBy(data, Surface); return; }
         double centerX = data[0];
         double centerY = data[1];
         double x = data[2];
@@ -144,96 +143,124 @@ public class SurfaceNode implements SurfaceObject
         double alpha;
         alpha = -(Math.atan2(newVecY, newVecX) - Math.atan2(vectorY, vectorX));//Math.PI;
         double[] newData = {alpha, centerX, centerY};
-        return moveCircularBy(newData, Surface);
+        moveCircularBy(newData, Surface);
     }
 
-    private ArrayList<SurfaceRepaintSpace> moveCircularBy(double[] data, Surface Surface) {
+    private void moveCircularBy(double[] data, Surface Surface) {
         Surface.setMap(Surface.getMap().removeAndUpdate(this));
         if (Surface.getMap() == null) Surface.setMap(new GridSpaceMap(getX(), getY(), 50000));
         double alpha = data[0];
         double centerX = data[1];
         double centerY = data[2];
-        ArrayList<SurfaceRepaintSpace> queue = new ArrayList<>();
+        //ArrayList<SurfaceRepaintSpace> queue = new ArrayList<>();
         double vectorX = position[0] - centerX;
         double vectorY = position[1] - centerY;
         if (InputNode != null) {
-            queue.addAll(InputNode .updateOn(getX(), getY(), diameter / 2.0));
-            queue.addAll(InputNode .moveCircular(data, Surface));//alpha, centerX, centerY
+            //queue.addAll(
+                    InputNode.updateOn(getX(), getY(), diameter / 2.0, Surface);
+                    //);
+            //queue.addAll(
+                    InputNode.moveCircular(data, Surface);
+                    //);//alpha, centerX, centerY
         }
-        queue.add(getRepaintSpace());
+        //queue.add(getRepaintSpace());
+        // TODO: IF CHANGE OCCURRED!
+        //Surface.layers()[7].add(getRepaintSpace(Surface));
+
         position[0] = (centerX + (Math.cos(alpha) * (vectorX) - Math.sin(alpha) * (vectorY)));
         position[1] = (centerY + (Math.cos(alpha) * (vectorY) + Math.sin(alpha) * (vectorX)));
-        queue.add(getRepaintSpace());
+        //queue.add(getRepaintSpace());
+        //TODO: CHANGE OCCURRED
+        //Surface.layers()[7].add(getRepaintSpace(Surface));
         this.hasJustBeenMoved = true;
         Surface.setMap(Surface.getMap().addAndUpdate(this));
-        return queue;
     }
 
     @Override
-    public ArrayList<SurfaceRepaintSpace> moveDirectional(double[] data, Surface Surface)
+    public void moveDirectional(double[] data, Surface Surface)
     {
-
         double startX = data[0];
         double startY = data[1];
         double targX = data[2];
         double targY = data[3];
 
-        ArrayList<SurfaceRepaintSpace> queue = new ArrayList<SurfaceRepaintSpace>();
+        //ArrayList<SurfaceRepaintSpace> queue = new ArrayList<SurfaceRepaintSpace>();
         hasJustBeenMoved = true;
         if (testForBody(startX, startY)) {
             double shiftX = startX - position[0];
             double shiftY = startY - position[1];
             double[] newData = {(targX - shiftX), (targY - shiftY)};
-            queue.addAll(moveTo(newData, Surface));
+            //queue.addAll(
+                    moveTo(newData, Surface);
+            //);
         }
-        return queue;
+        //return queue;
     }
 
     //---------------------
     @Override
-    public ArrayList<SurfaceRepaintSpace> moveTo(double[] data, Surface Surface) //
+    public void moveTo(double[] data, Surface Surface) //
     {
         Surface.setMap(Surface.getMap().removeAndUpdate(this));
         if (Surface.getMap() == null) Surface.setMap(new GridSpaceMap(getX(), getY(), 50000));
         double x = data[0];
         double y = data[1];
-        ArrayList<SurfaceRepaintSpace> queue = new ArrayList<SurfaceRepaintSpace>();
-        queue.add(getRepaintSpace());
+        //ArrayList<SurfaceRepaintSpace> queue = new ArrayList<SurfaceRepaintSpace>();
+        //queue.add(
+        //Surface.layers()[6].add(getRepaintSpace(Surface));
+        //);
         if (InputNode != null) {
-            queue.addAll(InputNode .updateOn(getX(), getY(), diameter / 2.0));
+            //queue.addAll(
+                    InputNode .updateOn(getX(), getY(), diameter / 2.0, Surface);
+            //);
             data = new double[4];
             data[0] = position[0];
             data[1] = position[1];
             data[2] = x;
             data[3] = y;
-            queue.addAll(InputNode .moveDirectional(data, Surface));
+            //queue.addAll(
+                    InputNode .moveDirectional(data, Surface);
+            //);
         }
         position[0] = x;
         position[1] = y;
-        queue.add(getRepaintSpace());
+        //queue.add(getRepaintSpace());
+        //Surface.layers()[6].add(getRepaintSpace(Surface));
 
         hasJustBeenMoved = true;
         Surface.setMap(Surface.getMap().addAndUpdate(this));
-        return queue;
+        //return queue;
     }
 
     // --------------------------------------------------------------------------------------------
+    private void _paintMe(Graphics2D brush, int lid, Surface HostSurface){
+        switch (lid) {
+
+            case 2://Paint timeless root connections
+                paintNodeConnections(brush, HostSurface.getAnimator());
+                break;
+            case 3://Paint basic root nodes
+                paintNeuron(brush, HostSurface);
+                break;
+
+        }
+    }
+
+    @Override
     public SurfaceRepaintSpace getRepaintSpace() {
-        double r = (diameter / 2.0) * (1.1 + (1 - (diameter / defaultDiameter)) / 1.995);
-        return new SurfaceRepaintSpace(position[0], position[1], r, r);
+        return new SurfaceRepaintSpace(position[0]-getRadius(), position[1]-getRadius(), position[0]+getRadius(), position[1]+getRadius());
     }
     // --------------------------------------------------------------------------------------------
 
-    public ArrayList<SurfaceRepaintSpace> updateOn(Surface hostSurface) {
-        //System.out.println("wasOnDeck:"+wasOnDeck+"; isOnDeck:"+isOnDeck+";");
+    public void updateOn(Surface hostSurface) {
+
         if (hostSurface.getScale() < 0.13 && deckIsRemoved) deckAnimationRunning = true;
-        ArrayList<SurfaceRepaintSpace> queue = new ArrayList<>();
         double LP = getX() - diameter * 2;
         double RP = getX() + diameter * 2;
         double TP = getY() - diameter * 2;
         double BP = getY() + diameter * 2;
         double[] frame = {LP, RP, TP, BP};
-        LinkedList<SurfaceObject> objects = hostSurface.getMap().getAllWithin(frame);
+        List<SurfaceObject> objects = hostSurface.getMap().getAllWithin(frame);
         if (objects != null) {
             double[] data = {0.0, 0.0};
             objects.forEach((o) -> {
@@ -276,44 +303,45 @@ public class SurfaceNode implements SurfaceObject
         double mag = Math.abs(SurfaceUtility.magnitudeOf(velX, velY));
         if (!isOnDeck && mag > 10) {
             double s = (mag > diameter) ? diameter : mag;
-            queue.addAll(
                     this.moveTo(
                             new double[]{
                                     this.getX() - s * velX / mag,
                                     this.getY() - s * velY / mag
                             },
                             hostSurface
-                    ));
+                );
         }
         velX *= 0.7;
         velY *= 0.7;
-        if (InputNode!=null)  queue.addAll(InputNode .updateOn(getX(), getY(), diameter / 2.0));
+        if (InputNode!=null)  InputNode.updateOn(getX(), getY(), diameter / 2.0, hostSurface);
         if (position.length != 2) {
             double[] old = position;
             position = new double[2];
             position[0] = old[0];
             position[1] = old[1];
         }
-        queue.addAll(updateAnimations(hostSurface));
-        if (dataDisplayUpdateRequest) {
-            dataDisplayUpdateRequest = false;
-            queue.add(new SurfaceRepaintSpace((position[0]), (position[1]), (420), (310)));
-        }
+        updateAnimations(hostSurface);
+
         if (hasJustBeenMoved && !hasRecentlyBeenMoved) hasRecentlyBeenMoved = true;
         else if (hasJustBeenMoved && hasRecentlyBeenMoved) hasJustBeenMoved = false;
         else if (hasJustBeenMoved && hasRecentlyBeenMoved) hasRecentlyBeenMoved = false;
-        return queue;
+
+        if(hostSurface.getCurrentFrameSpace().contains(getRepaintSpace())){
+            hostSurface.layers()[6].add((brush)->paintNeuron(brush, hostSurface));
+            hostSurface.layers()[2].add((brush)->paintNodeConnections(brush, hostSurface.getAnimator()));
+        }
+
     }
     //--------------------------
 
-    private ArrayList<SurfaceRepaintSpace> updateAnimations(Surface hostSurface) {
+    private void updateAnimations(Surface hostSurface) {
         Animator Animator = hostSurface.getAnimator();
         int frameDelta = hostSurface.getCurrentFrameDelta();
         boolean scaleCheck = true;
         if (hostSurface.getScale() < 0.2) scaleCheck = false;
         if (hostSurface.getScale() < 0.13 && deckIsRemoved) deckAnimationRunning = true;
         boolean UnitNeedsToBeRepainted = false;
-        ArrayList<SurfaceRepaintSpace> queue = new ArrayList<SurfaceRepaintSpace>();
+        //ArrayList<SurfaceRepaintSpace> queue = new ArrayList<SurfaceRepaintSpace>();
         int animationID = 0;
 
         // Animation CACHE! -> counter counts only animated cases.
@@ -325,12 +353,15 @@ public class SurfaceNode implements SurfaceObject
             if (Animator.hasCounter(this, animationID)) {
                 if (Animator.getCounterOf(this, animationID) < buttonLimit && Animator.getCounterOf(this, animationID) > 0) {
                     double mod = ((double) Animator.getCounterOf(this, 0) / buttonLimit);
-                    queue.add(new SurfaceRepaintSpace(//Moving repaint frame on deck:
-                            (position[0]),
-                            (position[1] - 0.0825 * diameter * mod),
-                            (diameter / 4.0),
-                            (diameter / 8.0) + 0.065 * diameter * mod)
-                    );
+                    //hostSurface.layers()[7].add(
+                    //        //new SurfaceRepaintSpace(//Moving repaint frame on deck:
+                    //        //    (position[0]),
+                    //        //    (position[1] - 0.0825 * diameter * mod),
+                    //        //    (diameter / 4.0),
+                    //        //    (diameter / 8.0) + 0.065 * diameter * mod,
+                    //        (brush)->_paintMe(brush, 6, hostSurface)
+                    //        //)
+                    //);
                 }
             }
             if (Animator.hasCounter(this, animationID)) {//System.out.println("Deck counter existing");
@@ -440,10 +471,7 @@ public class SurfaceNode implements SurfaceObject
         if (InputNode!=null && InputNode .isActive())  {
             activityCheck = true;
         }
-        ArrayList<SurfaceRepaintSpace> newQueue = updateConnectionVectorAndGetRepaintSpace(activityCheck);
-        if (newQueue != null) {
-            for (SurfaceRepaintSpace repaintSpace : newQueue) queue.add(repaintSpace);
-        }
+        updateConnectionVectorAndGetRepaintSpace(activityCheck, hostSurface);
         if (activityCheck) {
             animationID = 3;
             //Error was here => IDCounter was -1!!! Note: This has something to do with the deck animation!
@@ -460,16 +488,18 @@ public class SurfaceNode implements SurfaceObject
         }
 
         if (this.hasJustBeenMoved || UnitNeedsToBeRepainted) {
-            queue.add(this.getRepaintSpace());
+            //queue.add(this.getRepaintSpace());
+            //hostSurface.layers()[7].add(getRepaintSpace(hostSurface));
             if (InputNode!=null)  {
-                queue.add(InputNode .getRepaintSpace());
+                //queue.add(InputNode .getRepaintSpace());
+                //hostSurface.layers()[7].add(InputNode .getRepaintSpace(hostSurface));
             }
         } else {
             if (InputNode!=null && InputNode .changeOccured())  {
-                queue.add(InputNode .getRepaintSpace());
+                //queue.add(InputNode .getRepaintSpace());
+                //hostSurface.layers()[7].add(InputNode .getRepaintSpace(hostSurface));
             }
         }
-        return queue;
     }
 
     // --------------------------------------------------------------------------------------------
@@ -584,12 +614,11 @@ public class SurfaceNode implements SurfaceObject
     //CONNECTION REPAINT SPACE
     //=============================================================================================
     // --------------------------------------------------------------------------------------------
-    private ArrayList<SurfaceRepaintSpace> updateConnectionVectorAndGetRepaintSpace(boolean convection) // OPTIMIZATION?
+    private void updateConnectionVectorAndGetRepaintSpace(boolean convection, Surface surface) // OPTIMIZATION?
     {//System.out.println("convolve: "+convolve);
         //-> checking if connection points are within frame!
         double vX;
         double vY;
-        ArrayList<SurfaceRepaintSpace> queue = new ArrayList<>();
         ArrayList<SurfaceNode> connection = this.getConnection();
         if (connection != null && connection.size() > 0) {
             for (SurfaceNode surfaceNode : connection) {
@@ -633,13 +662,6 @@ public class SurfaceNode implements SurfaceObject
                         //---
                         if (InputNode.changeOccured() || convection) {
 
-                            if (dataDisplayUpdateRequest) {
-                                double midPX = InputNode.getX() + (pX - InputNode.getX()) / 3.25;
-                                double midPY = InputNode.getY() + (pY - InputNode.getY()) / 3.25;
-                                //Connection display REPAINT:
-                                queue.add(new SurfaceRepaintSpace((midPX), (midPY), 50, 25));
-                            }
-
                             double repaintCenterX = getX() + (pvX) / 2;
                             double repaintCenterY = getY() + (pvY) / 2;
                             double distanceX = Math.abs((pX - getX()) / 2);
@@ -659,21 +681,24 @@ public class SurfaceNode implements SurfaceObject
                                 if (sideVecOneY > distanceY) distanceY = sideVecOneY;
                                 if (sideVecTwoY > distanceY) distanceY = sideVecTwoY;
                             }
-                            queue.add(new SurfaceRepaintSpace(
-                                    repaintCenterX,
-                                    repaintCenterY,
-                                    distanceX,
-                                    distanceY));
-                            if (!convection) {
-                                queue.add(InputNode.getRepaintSpace());
-                            }
+                            //surface.layers()[2].add(
+                            //        //new SurfaceRepaintSpace(
+                            //        //repaintCenterX,
+                            //        //repaintCenterY,
+                            //        //distanceX,
+                            //        //distanceY,
+                            //        (brush)->_paintMe(brush, 2, surface)
+                            //        // )
+                            //);
+                            //if (!convection) {
+                            //    surface.layers()[2].add(InputNode.getRepaintSpace(surface));
+                            //}
                             InputNode.forgetChange();
                         }
                     }//=================================================================
                 }
             }
         }
-        return queue;
     }
 
     //PAINTING:
@@ -778,11 +803,11 @@ public class SurfaceNode implements SurfaceObject
     }
 
     // --------------------------------------------------------------------------------------------
-    public void paintRootUnitBody(Graphics2D brush, double panelScale, Animator Animator) {
+    private void paintRootUnitBody(Graphics2D brush, double panelScale, Animator Animator) {
 
     }
 
-    public void paintNeuron(Graphics2D brush, Surface surface) {//, double panelScale, Animator Animator) {
+    private void paintNeuron(Graphics2D brush, Surface surface) {//, double panelScale, Animator Animator) {
         int x = (int) position[0];
         int y = (int) position[1];
         brush.setColor(Color.cyan);
@@ -817,7 +842,7 @@ public class SurfaceNode implements SurfaceObject
         //--------------
         if(InputNode!=null){
             brush.setColor(Color.CYAN);
-            InputNode .paint(brush);
+            InputNode.paint(brush);
         }
         //--------------
 
@@ -1186,73 +1211,36 @@ public class SurfaceNode implements SurfaceObject
     //SurfaceObject implementation:
     @Override
     public double getLeftPeripheral() {
-        return position[0] - diameter / 2;
+        return position[0] - diameter / 2.0;
     }
 
     @Override
     public double getTopPeripheral() {
-        return position[1] - diameter / 2;
+        return position[1] - diameter / 2.0;
     }
 
     @Override
     public double getRightPeripheral() {
-        return position[0] + diameter / 2;
+        return position[0] + diameter / 2.0;
 
     }
 
     @Override
     public double getBottomPeripheral() {
-        return position[1] + diameter / 2;
+        return position[1] + diameter / 2.0;
 
     }
 
     @Override
     public int getLayerID() {
         int layerID = 3;
-        //if (false)//this.get_tensor().rqsGradient())
-        //{
-        //    return layerID;
-        //}
         layerID++;
-        //if(this.get_tensor().rqsGradient()) //this.get_tensor().is(Tsr.BasicRoot)||this.get_tensor().is(Tsr.RootInput)
-        //{
-        //	return layerID;
-        //}
         layerID++;
-        //if(this.get_tensor().rqsGradient())
-        //{
-        //	return layerID;
-        //}
         return layerID;
     }
 
     @Override
     public boolean needsRepaintOnLayer(int layerID) {
-        if (layerID == 0) {
-            //if(this.get_tensor().rqsGradient()==false)
-            //{
-            //	return true;
-            //}
-            return true;
-        }
-        if (layerID == 1) {
-            //if(this.get_tensor().rqsGradient())
-            //{
-            //	return true;
-            //}
-            return true;
-        }
-        if (layerID == 2) {
-            //if(this.get_tensor().rqsGradient()==true)
-            //{
-            //	return true;
-            //}
-            return true;
-        }
-        int mainLayerID = getLayerID();
-        if (mainLayerID == layerID) {
-            return true;
-        }
         return false;
     }
 
@@ -1290,12 +1278,8 @@ public class SurfaceNode implements SurfaceObject
 
     @Override
     public boolean hasGripAt(double x, double y, Surface hostSurface) {
-        if (this.testForBody(x, y)) {
-            return true;
-        }
-        if (this.testForBody_Root(x, y)) {
-            return true;
-        }
+        if (this.testForBody(x, y)) return true;
+        if (this.testForBody_Root(x, y)) return true;
         return false;
     }
 
