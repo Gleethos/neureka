@@ -3,7 +3,7 @@ package neureka.gui.swing;
 
 public class SurfaceUtility {
 
-    public double[] getCurvePointOn(double t, double[] point) {
+    public static double[] getCurvePointOn(double t, double[] point) {
         if (point.length % 2 == 1) {
             return null;
         }
@@ -16,7 +16,7 @@ public class SurfaceUtility {
         return result;
     }
 
-    public int choose(int n, int k) {
+    public static int choose(int n, int k) {
         int nCk = 1;
         for (int ki = 0; ki < k; ki++) {
             nCk = nCk * (n - ki) / (ki + 1);

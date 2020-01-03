@@ -3,9 +3,9 @@
 
 <span class="fc" id="L4">public class SurfaceUtility {</span>
 
-    public double[] getCurvePointOn(double t, double[] point) {
-<span class="pc bpc" id="L7" title="1 of 2 branches missed.">        if (point.length % 2 == 1) {</span>
-<span class="nc" id="L8">            return null;</span>
+    public static double[] getCurvePointOn(double t, double[] point) {
+<span class="fc bfc" id="L7" title="All 2 branches covered.">        if (point.length % 2 == 1) {</span>
+<span class="fc" id="L8">            return null;</span>
         }
 <span class="fc" id="L10">        double[] result = {0, 0};</span>
 <span class="fc" id="L11">        int n = point.length / 2 - 1;</span>
@@ -16,7 +16,7 @@
 <span class="fc" id="L16">        return result;</span>
     }
 
-    public int choose(int n, int k) {
+    public static int choose(int n, int k) {
 <span class="fc" id="L20">        int nCk = 1;</span>
 <span class="fc bfc" id="L21" title="All 2 branches covered.">        for (int ki = 0; ki &lt; k; ki++) {</span>
 <span class="fc" id="L22">            nCk = nCk * (n - ki) / (ki + 1);</span>

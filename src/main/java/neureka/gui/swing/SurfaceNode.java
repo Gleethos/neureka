@@ -774,8 +774,7 @@ public class SurfaceNode implements SurfaceObject
                     double ratio = 1 - ((double) (convectionCounter)) / convectionTime;
 
                     if (activityCheck) {
-                        SurfaceNode Other = ((SurfaceNode) connection.get(Ii));
-
+                        SurfaceNode Other = (connection.get(Ii));
                         double d = Math.pow(Math.pow(vectorX, 2) + Math.pow(vectorY, 2), 0.5);
                         //System.out.println(diameter);
                         double normalX = (-vectorY / d) * Other.diameter / 2 * ratio;

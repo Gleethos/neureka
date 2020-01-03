@@ -39,8 +39,8 @@ public class SurfaceListener implements MouseListener, MouseMotionListener, Mous
 
     //--------------------------------------------------------------------------------------------------------------------------------
     public void mouseClicked(MouseEvent e) {
-<span class="pc bpc" id="L42" title="1 of 4 branches missed.">        if (clickedX == e.getX() &amp;&amp; clickedY == e.getY()) {</span>
-<span class="fc" id="L43">            Surface.doubleClickedAt(e.getX(), e.getY());</span>
+<span class="pc bpc" id="L42" title="3 of 4 branches missed.">        if (clickedX == e.getX() &amp;&amp; clickedY == e.getY()) {</span>
+<span class="nc" id="L43">            Surface.doubleClickedAt(e.getX(), e.getY());</span>
         } else {
 <span class="fc" id="L45">            Surface.clickedAt(e.getX(), e.getY());</span>
 <span class="fc" id="L46">            collapseDragVector();</span>
@@ -59,7 +59,7 @@ public class SurfaceListener implements MouseListener, MouseMotionListener, Mous
     //--------------------------------------------------------------------------------------------------------------------------------
     public void mouseExited(MouseEvent e) {
 
-<span class="fc" id="L62">    }</span>
+<span class="nc" id="L62">    }</span>
 
     //--------------------------------------------------------------------------------------------------------------------------------
     public void mousePressed(MouseEvent e) {

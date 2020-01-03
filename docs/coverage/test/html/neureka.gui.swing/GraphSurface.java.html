@@ -115,8 +115,8 @@ public class GraphSurface extends JPanel implements Surface, ActionListener {
 <span class="fc" id="L115">    }</span>
 
     public void setDoubleClick(int[] newClick) {
-<span class="fc" id="L118">        DoubleClick = newClick;</span>
-<span class="fc" id="L119">    }</span>
+<span class="nc" id="L118">        DoubleClick = newClick;</span>
+<span class="nc" id="L119">    }</span>
 
     public void setMovement(int[] newMove) {
 <span class="fc" id="L122">        Sense = newMove;</span>
@@ -706,11 +706,11 @@ public class GraphSurface extends JPanel implements Surface, ActionListener {
 
     @Override
     public void doubleClickedAt(int x, int y) {
-<span class="fc" id="L709">        int[] newDoubleClick = new int[2];</span>
-<span class="fc" id="L710">        newDoubleClick[0] = x;</span>
-<span class="fc" id="L711">        newDoubleClick[1] = y;</span>
-<span class="fc" id="L712">        DoubleClick = newDoubleClick;</span>
-<span class="fc" id="L713">    }</span>
+<span class="nc" id="L709">        int[] newDoubleClick = new int[2];</span>
+<span class="nc" id="L710">        newDoubleClick[0] = x;</span>
+<span class="nc" id="L711">        newDoubleClick[1] = y;</span>
+<span class="nc" id="L712">        DoubleClick = newDoubleClick;</span>
+<span class="nc" id="L713">    }</span>
 
     @Override
     public void draggedAt(int x, int y) {

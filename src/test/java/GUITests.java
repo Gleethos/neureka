@@ -5,6 +5,43 @@ import java.awt.*;
 
 public class GUITests {
 
+    @Test
+    public void testSurfaceUtility(){
+
+        assert SurfaceUtility.magnitudeOf(4, 0)==4.0;
+        assert SurfaceUtility.magnitudeOf(0, 7)==7.0;
+        assert SurfaceUtility.magnitudeOf(-Math.pow(7, 0.5), 3)==4;
+        assert SurfaceUtility.magnitudeOf(-Math.pow(7, 0.5), -3)==4;
+
+        assert SurfaceUtility.choose(4, 3)==4;
+        assert SurfaceUtility.choose(8, 3)==56;
+        assert SurfaceUtility.choose(19, 6)==27132;
+
+        double[] point = SurfaceUtility.getCurvePointOn(
+                0.432,
+                new double[]{
+                        3, 5,
+                        7, -2,
+                        10, 1,
+                        -20, 4
+                    }
+                );
+        assert point.length==2;
+        assert point[0]==2.984114176000001;
+        assert point[1]==0.9182156800000003;
+
+        point = SurfaceUtility.getCurvePointOn(
+                0.432,
+                new double[]{
+                        3, 5,
+                        7, -2,
+                        10, 1,
+                        -20, 4,
+                        -14
+                }
+        );
+        assert point==null;
+    }
 
     @Test
     public void testAnimator()
