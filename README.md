@@ -57,21 +57,21 @@ Matrix multiplication:
     x = new Tsr(
                 new int[]{2, 3, 1},
                 new double[]{
-                        3,   2,
-                       -1,  -2,
-                        2,   4
+                        3,   2, -1,
+                        -2,  2,  4
                 }
     );
     y = new Tsr(
             new int[]{1, 3, 2},
             new double[]{
-                    4, -1,  3,
-                    2,  3, -1
+                    4, -1,  
+                    3,  2,  
+                    3, -1
             });
     Tsr z = new Tsr(new Tsr[]{x, y}, "i[0] x i[1]");
     
     /**
-     *   z.toString(): "[2x1x2]:(19.0, 22.0, 1.0, -6.0), "    
+     *   z.toString(): "[2x1x2]:(15.0, 2.0, 10.0, 2.0), "    
      * */
 ```
 Convolution:
@@ -100,7 +100,7 @@ Convolution:
 
 GPU execution:
 ```
-        Device gpu = Device.find("nvidia FP64");
+        Device gpu = Device.find("nvidia");
         x = new Tsr(
                 new int[]{3, 3},
                 new double[]{

@@ -666,7 +666,6 @@ public class Tsr
             }
         }
         _construct(tsrs, f, doAD);
-
     }
 
     public Tsr() {}// creates empty tensor;
