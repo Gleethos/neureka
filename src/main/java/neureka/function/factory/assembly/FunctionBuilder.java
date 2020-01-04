@@ -187,13 +187,26 @@ public class FunctionBuilder {
             }
             //---
             String component = FunctionParser.unpackAndCorrect(Components.get(0));
-            if ((component.charAt(0) <= '9' && component.charAt(0) >= '0') || component.charAt(0) == '-' || component.charAt(0) == '+') {
+            boolean possiblyInverseInput = (component.length()>1 && component.toLowerCase().substring(0,2).equals("-i"));
+            if (!possiblyInverseInput &&
+                    (
+                            (component.charAt(0) <= '9' && component.charAt(0) >= '0')
+                            || component.charAt(0) == '-' || component.charAt(0) == '+'
+                    )
+                ) {
                 Function newFunction = new FConstant();
                 newFunction = newFunction.newBuild(component);
                 return newFunction;
             }
-            if (component.charAt(0) == 'i' || component.charAt(0) == 'I' ||
-                    (component.contains("[") && component.contains("]") && component.matches(".[0-9]+."))) {//TODO: Make this regex better!!
+            if (
+                    possiblyInverseInput ||
+                    component.charAt(0) == 'i' ||
+                    component.charAt(0) == 'I' ||
+                    (
+                            component.contains("[") && component.contains("]")
+                            && component.matches(".[0-9]+.")
+                    )
+            ) {//TODO: Make this regex better!!
                 Function newFunction = new FInput();
                 newFunction = newFunction.newBuild(component);
                 return newFunction;

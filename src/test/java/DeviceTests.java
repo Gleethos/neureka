@@ -12,6 +12,8 @@ import java.util.List;
 
 public class DeviceTests {
 
+
+
     @Test
     public void testFlags(){
         Tsr t = new Tsr(6);

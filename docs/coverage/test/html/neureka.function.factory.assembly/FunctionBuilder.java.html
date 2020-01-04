@@ -187,68 +187,81 @@ import java.util.*;
             }
             //---
 <span class="fc" id="L189">            String component = FunctionParser.unpackAndCorrect(Components.get(0));</span>
-<span class="pc bpc" id="L190" title="1 of 8 branches missed.">            if ((component.charAt(0) &lt;= '9' &amp;&amp; component.charAt(0) &gt;= '0') || component.charAt(0) == '-' || component.charAt(0) == '+') {</span>
-<span class="fc" id="L191">                Function newFunction = new FConstant();</span>
-<span class="fc" id="L192">                newFunction = newFunction.newBuild(component);</span>
-<span class="fc" id="L193">                return newFunction;</span>
-            }
-<span class="fc bfc" id="L195" title="All 4 branches covered.">            if (component.charAt(0) == 'i' || component.charAt(0) == 'I' ||</span>
-<span class="pc bpc" id="L196" title="2 of 6 branches missed.">                    (component.contains(&quot;[&quot;) &amp;&amp; component.contains(&quot;]&quot;) &amp;&amp; component.matches(&quot;.[0-9]+.&quot;))) {//TODO: Make this regex better!!</span>
-<span class="fc" id="L197">                Function newFunction = new FInput();</span>
+<span class="fc bfc" id="L190" title="All 4 branches covered.">            boolean possiblyInverseInput = (component.length()&gt;1 &amp;&amp; component.toLowerCase().substring(0,2).equals(&quot;-i&quot;));</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">            if (!possiblyInverseInput &amp;&amp;</span>
+                    (
+<span class="fc bfc" id="L193" title="All 4 branches covered.">                            (component.charAt(0) &lt;= '9' &amp;&amp; component.charAt(0) &gt;= '0')</span>
+<span class="pc bpc" id="L194" title="1 of 4 branches missed.">                            || component.charAt(0) == '-' || component.charAt(0) == '+'</span>
+                    )
+                ) {
+<span class="fc" id="L197">                Function newFunction = new FConstant();</span>
 <span class="fc" id="L198">                newFunction = newFunction.newBuild(component);</span>
 <span class="fc" id="L199">                return newFunction;</span>
             }
-<span class="fc" id="L201">            String cleaned = FunctionParser.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =&gt;Cleaning!</span>
-<span class="fc" id="L202">            String raw = component.replace(cleaned, &quot;&quot;);</span>
-<span class="fc" id="L203">            String assumed = FunctionParser.assumptionBasedOn(raw);</span>
-<span class="fc bfc" id="L204" title="All 2 branches covered.">            if (assumed == null) {</span>
-<span class="fc" id="L205">                component = cleaned;</span>
+<span class="fc bfc" id="L201" title="All 2 branches covered.">            if (</span>
+                    possiblyInverseInput ||
+<span class="fc bfc" id="L203" title="All 2 branches covered.">                    component.charAt(0) == 'i' ||</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">                    component.charAt(0) == 'I' ||</span>
+                    (
+<span class="pc bpc" id="L206" title="1 of 4 branches missed.">                            component.contains(&quot;[&quot;) &amp;&amp; component.contains(&quot;]&quot;)</span>
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">                            &amp;&amp; component.matches(&quot;.[0-9]+.&quot;)</span>
+                    )
+            ) {//TODO: Make this regex better!!
+<span class="fc" id="L210">                Function newFunction = new FInput();</span>
+<span class="fc" id="L211">                newFunction = newFunction.newBuild(component);</span>
+<span class="fc" id="L212">                return newFunction;</span>
+            }
+<span class="fc" id="L214">            String cleaned = FunctionParser.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =&gt;Cleaning!</span>
+<span class="fc" id="L215">            String raw = component.replace(cleaned, &quot;&quot;);</span>
+<span class="fc" id="L216">            String assumed = FunctionParser.assumptionBasedOn(raw);</span>
+<span class="fc bfc" id="L217" title="All 2 branches covered.">            if (assumed == null) {</span>
+<span class="fc" id="L218">                component = cleaned;</span>
             } else {
-<span class="fc" id="L207">                component = assumed + cleaned;</span>
+<span class="fc" id="L220">                component = assumed + cleaned;</span>
             }
             Function newBuild;
-<span class="fc" id="L210">            newBuild = FunctionBuilder.build(component, doAD);</span>
-<span class="fc" id="L211">            return newBuild;</span>
+<span class="fc" id="L223">            newBuild = FunctionBuilder.build(component, doAD);</span>
+<span class="fc" id="L224">            return newBuild;</span>
         } else {// More than one component left:
-<span class="fc bfc" id="L213" title="All 6 branches covered.">            if (Function.TYPES.REGISTER[f_id].equals(&quot;x&quot;) || Function.TYPES.REGISTER[f_id].equals(&quot;&lt;&quot;) || Function.TYPES.REGISTER[f_id].equals(&quot;&gt;&quot;)) {</span>
-<span class="fc" id="L214">                Components = _rebindPairwise(Components, f_id);</span>
-<span class="fc bfc" id="L215" title="All 4 branches covered.">            } else if (Function.TYPES.REGISTER[f_id].equals(&quot;,&quot;) &amp;&amp; Components.get(0).startsWith(&quot;[&quot;)) {</span>
+<span class="fc bfc" id="L226" title="All 6 branches covered.">            if (Function.TYPES.REGISTER[f_id].equals(&quot;x&quot;) || Function.TYPES.REGISTER[f_id].equals(&quot;&lt;&quot;) || Function.TYPES.REGISTER[f_id].equals(&quot;&gt;&quot;)) {</span>
+<span class="fc" id="L227">                Components = _rebindPairwise(Components, f_id);</span>
+<span class="fc bfc" id="L228" title="All 4 branches covered.">            } else if (Function.TYPES.REGISTER[f_id].equals(&quot;,&quot;) &amp;&amp; Components.get(0).startsWith(&quot;[&quot;)) {</span>
 
-<span class="fc" id="L217">                Components.set(0, Components.get(0).substring(1));</span>
+<span class="fc" id="L230">                Components.set(0, Components.get(0).substring(1));</span>
                 String[] splitted;
-<span class="pc bpc" id="L219" title="1 of 2 branches missed.">                if (Components.get(Components.size() - 1).contains(&quot;]&quot;)) {</span>
-<span class="fc" id="L220">                    int offset = 1;</span>
-<span class="fc bfc" id="L221" title="All 2 branches covered.">                    if (Components.get(Components.size() - 1).contains(&quot;]:&quot;)) {</span>
-<span class="fc" id="L222">                        offset = 2;</span>
-<span class="fc" id="L223">                        splitted = Components.get(Components.size() - 1).split(&quot;]:&quot;);</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">                if (Components.get(Components.size() - 1).contains(&quot;]&quot;)) {</span>
+<span class="fc" id="L233">                    int offset = 1;</span>
+<span class="fc bfc" id="L234" title="All 2 branches covered.">                    if (Components.get(Components.size() - 1).contains(&quot;]:&quot;)) {</span>
+<span class="fc" id="L235">                        offset = 2;</span>
+<span class="fc" id="L236">                        splitted = Components.get(Components.size() - 1).split(&quot;]:&quot;);</span>
                     } else {
-<span class="fc" id="L225">                        splitted = Components.get(Components.size() - 1).split(&quot;]&quot;);</span>
+<span class="fc" id="L238">                        splitted = Components.get(Components.size() - 1).split(&quot;]&quot;);</span>
                     }
-<span class="pc bpc" id="L227" title="1 of 2 branches missed.">                    if (splitted.length &gt; 1) {</span>
-<span class="fc" id="L228">                        splitted = new String[]{splitted[0], Components.get(Components.size() - 1).substring(splitted[0].length() + offset)};</span>
-<span class="fc" id="L229">                        Components.remove(Components.size() - 1);</span>
-<span class="fc bfc" id="L230" title="All 2 branches covered.">                        for (String part : splitted) {</span>
-<span class="fc" id="L231">                            Components.add(part);</span>
+<span class="pc bpc" id="L240" title="1 of 2 branches missed.">                    if (splitted.length &gt; 1) {</span>
+<span class="fc" id="L241">                        splitted = new String[]{splitted[0], Components.get(Components.size() - 1).substring(splitted[0].length() + offset)};</span>
+<span class="fc" id="L242">                        Components.remove(Components.size() - 1);</span>
+<span class="fc bfc" id="L243" title="All 2 branches covered.">                        for (String part : splitted) {</span>
+<span class="fc" id="L244">                            Components.add(part);</span>
                         }
                     }
                 }
             }
-<span class="fc" id="L236">            final ListIterator&lt;String&gt; ComponentIterator2 = Components.listIterator();</span>
-<span class="fc bfc" id="L237" title="All 2 branches covered.">            while (ComponentIterator2.hasNext()) {</span>
-<span class="fc" id="L238">                final String currentComponent2 = ComponentIterator2.next();</span>
-<span class="fc" id="L239">                Function newCore2 = FunctionBuilder.build(currentComponent2, doAD);//Dangerous recursion lives here!</span>
-<span class="fc" id="L240">                sources.add(newCore2);</span>
-<span class="fc" id="L241">            }</span>
-<span class="fc" id="L242">            sources.trimToSize();</span>
-<span class="pc bpc" id="L243" title="1 of 2 branches missed.">            if (sources.size() == 1) return sources.get(0);</span>
-<span class="fc bfc" id="L244" title="All 2 branches covered.">            if (sources.size() == 0) return null;</span>
-<span class="fc" id="L245">            ArrayList&lt;Function&gt; newVariable = new ArrayList&lt;Function&gt;();</span>
-<span class="fc bfc" id="L246" title="All 2 branches covered.">            for (int Vi = 0; Vi &lt; sources.size(); Vi++) {</span>
-<span class="fc bfc" id="L247" title="All 2 branches covered.">                if (sources.get(Vi) != null) newVariable.add(sources.get(Vi));</span>
+<span class="fc" id="L249">            final ListIterator&lt;String&gt; ComponentIterator2 = Components.listIterator();</span>
+<span class="fc bfc" id="L250" title="All 2 branches covered.">            while (ComponentIterator2.hasNext()) {</span>
+<span class="fc" id="L251">                final String currentComponent2 = ComponentIterator2.next();</span>
+<span class="fc" id="L252">                Function newCore2 = FunctionBuilder.build(currentComponent2, doAD);//Dangerous recursion lives here!</span>
+<span class="fc" id="L253">                sources.add(newCore2);</span>
+<span class="fc" id="L254">            }</span>
+<span class="fc" id="L255">            sources.trimToSize();</span>
+<span class="pc bpc" id="L256" title="1 of 2 branches missed.">            if (sources.size() == 1) return sources.get(0);</span>
+<span class="fc bfc" id="L257" title="All 2 branches covered.">            if (sources.size() == 0) return null;</span>
+<span class="fc" id="L258">            ArrayList&lt;Function&gt; newVariable = new ArrayList&lt;Function&gt;();</span>
+<span class="fc bfc" id="L259" title="All 2 branches covered.">            for (int Vi = 0; Vi &lt; sources.size(); Vi++) {</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">                if (sources.get(Vi) != null) newVariable.add(sources.get(Vi));</span>
             }
-<span class="fc" id="L249">            sources = newVariable;</span>
-<span class="fc" id="L250">            function = FunctionConstructor.construct(f_id, sources, doAD);</span>
-<span class="fc" id="L251">            return function;</span>
+<span class="fc" id="L262">            sources = newVariable;</span>
+<span class="fc" id="L263">            function = FunctionConstructor.construct(f_id, sources, doAD);</span>
+<span class="fc" id="L264">            return function;</span>
         }
     }
 
@@ -258,14 +271,14 @@ import java.util.*;
      * @return
      */
     private static List&lt;String&gt; _rebindPairwise(List&lt;String&gt; components, int f_id) {
-<span class="fc bfc" id="L261" title="All 2 branches covered.">        if (components.size() &gt; 2) {</span>
-<span class="fc" id="L262">            String newComponent = &quot;(&quot; + components.get(0) + Function.TYPES.REGISTER[f_id] + components.get(1) + &quot;)&quot;;</span>
-<span class="fc" id="L263">            components.remove(components.get(0));</span>
-<span class="fc" id="L264">            components.remove(components.get(0));</span>
-<span class="fc" id="L265">            components.add(0, newComponent);</span>
-<span class="fc" id="L266">            components = _rebindPairwise(components, f_id);</span>
+<span class="fc bfc" id="L274" title="All 2 branches covered.">        if (components.size() &gt; 2) {</span>
+<span class="fc" id="L275">            String newComponent = &quot;(&quot; + components.get(0) + Function.TYPES.REGISTER[f_id] + components.get(1) + &quot;)&quot;;</span>
+<span class="fc" id="L276">            components.remove(components.get(0));</span>
+<span class="fc" id="L277">            components.remove(components.get(0));</span>
+<span class="fc" id="L278">            components.add(0, newComponent);</span>
+<span class="fc" id="L279">            components = _rebindPairwise(components, f_id);</span>
         }
-<span class="fc" id="L268">        return components;</span>
+<span class="fc" id="L281">        return components;</span>
     }
 
 }

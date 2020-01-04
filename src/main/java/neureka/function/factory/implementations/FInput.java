@@ -3,6 +3,7 @@ package neureka.function.factory.implementations;
 
 import neureka.Tsr;
 import neureka.function.Function;
+import neureka.function.factory.assembly.FunctionBuilder;
 
 public class FInput implements Function, IProvider
 {
@@ -35,6 +36,10 @@ public class FInput implements Function, IProvider
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public Function newBuild(final String equation) {
+
+        if(equation.charAt(0)=='-'){
+            return FunctionBuilder.build(equation.substring(1)+"*-1", true);
+        }
         int number = 0;
         for (int i = 0; i < equation.length(); ++i) {
             if (equation.charAt(i) == 'j') {

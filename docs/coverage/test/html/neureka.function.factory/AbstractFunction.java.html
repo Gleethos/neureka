@@ -383,13 +383,13 @@ public abstract class AbstractFunction implements Function {
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     protected double _scalar_activation(double[] input, int j, int d) {
-<span class="pc bpc" id="L386" title="4 of 10 branches missed.">        switch (TYPES.REGISTER[_id]) {</span>
+<span class="pc bpc" id="L386" title="3 of 10 branches missed.">        switch (TYPES.REGISTER[_id]) {</span>
             case &quot;sum&quot;:
 <span class="pc bpc" id="L388" title="1 of 2 branches missed.">                return (j &lt; 0) ? exec.summation(input, d, _src) : exec.summation(input, j, d, _src);</span>
             case &quot;prod&quot;:
 <span class="fc bfc" id="L390" title="All 2 branches covered.">                return (j &lt; 0) ? exec.PI(input, d, _src) : exec.PI(input, j, d, _src);</span>
             case &quot;^&quot;:
-<span class="nc bnc" id="L392" title="All 2 branches missed.">                return (j &lt; 0) ? exec.power(input, d, _src) : exec.power(input, j, d, _src);</span>
+<span class="pc bpc" id="L392" title="1 of 2 branches missed.">                return (j &lt; 0) ? exec.power(input, d, _src) : exec.power(input, j, d, _src);</span>
             case &quot;/&quot;:
 <span class="pc bpc" id="L394" title="1 of 2 branches missed.">                return (j &lt; 0) ? exec.division(input, d, _src) : exec.division(input, j, d, _src);</span>
             case &quot;*&quot;:
@@ -668,13 +668,13 @@ public abstract class AbstractFunction implements Function {
 
         @Contract(pure = true)
         private static double power(double[] inputs, int d, ArrayList&lt;Function&gt; src) {
-<span class="nc bnc" id="L671" title="All 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="nc" id="L672">                double result = src.get(0).activate(inputs);</span>
-<span class="nc bnc" id="L673" title="All 2 branches missed.">                for (int i = 1; i &lt; src.size(); i++) {</span>
-<span class="nc" id="L674">                    final double current = src.get(i).activate(inputs);</span>
-<span class="nc" id="L675">                    result = Math.pow(result, current);</span>
+<span class="pc bpc" id="L671" title="1 of 2 branches missed.">            if (d &lt; 0) {</span>
+<span class="fc" id="L672">                double result = src.get(0).activate(inputs);</span>
+<span class="fc bfc" id="L673" title="All 2 branches covered.">                for (int i = 1; i &lt; src.size(); i++) {</span>
+<span class="fc" id="L674">                    final double current = src.get(i).activate(inputs);</span>
+<span class="fc" id="L675">                    result = Math.pow(result, current);</span>
                 }
-<span class="nc" id="L677">                return result;</span>
+<span class="fc" id="L677">                return result;</span>
             } else {
 <span class="nc" id="L679">                double out = 0;</span>
 <span class="nc" id="L680">                double b = 1;</span>
@@ -719,7 +719,7 @@ public abstract class AbstractFunction implements Function {
 
         @Contract(pure = true)
         private static double division(double[] inputs, int d, ArrayList&lt;Function&gt; src) {
-<span class="pc bpc" id="L722" title="1 of 2 branches missed.">            if (d &lt; 0) {</span>
+<span class="fc bfc" id="L722" title="All 2 branches covered.">            if (d &lt; 0) {</span>
 <span class="fc" id="L723">                double result = src.get(0).activate(inputs);</span>
 <span class="fc bfc" id="L724" title="All 2 branches covered.">                for (int i = 1; i &lt; src.size(); i++) {</span>
 <span class="fc" id="L725">                    final double current = src.get(i).activate(inputs);</span>
@@ -727,20 +727,20 @@ public abstract class AbstractFunction implements Function {
                 }
 <span class="fc" id="L728">                return result;</span>
             } else {
-<span class="nc" id="L730">                double derivative = 0;</span>
-<span class="nc" id="L731">                double tempVar = src.get(0).activate(inputs);</span>
-<span class="nc" id="L732">                derivative = src.get(0).derive(inputs, d);</span>
+<span class="fc" id="L730">                double derivative = 0;</span>
+<span class="fc" id="L731">                double tempVar = src.get(0).activate(inputs);</span>
+<span class="fc" id="L732">                derivative = src.get(0).derive(inputs, d);</span>
 
-<span class="nc bnc" id="L734" title="All 2 branches missed.">                for (int i = 0; i &lt; src.size() - 1; i++) {</span>
+<span class="fc bfc" id="L734" title="All 2 branches covered.">                for (int i = 0; i &lt; src.size() - 1; i++) {</span>
                     double u, ud, v, vd;
-<span class="nc" id="L736">                    v = src.get(i + 1).activate(inputs);</span>
-<span class="nc" id="L737">                    vd = src.get(i + 1).derive(inputs, d);</span>
-<span class="nc" id="L738">                    u = tempVar;</span>
-<span class="nc" id="L739">                    ud = derivative;</span>
-<span class="nc" id="L740">                    derivative = (ud * v - u * vd) / Math.pow(v, 2);</span>
-<span class="nc" id="L741">                    tempVar /= v;</span>
+<span class="fc" id="L736">                    v = src.get(i + 1).activate(inputs);</span>
+<span class="fc" id="L737">                    vd = src.get(i + 1).derive(inputs, d);</span>
+<span class="fc" id="L738">                    u = tempVar;</span>
+<span class="fc" id="L739">                    ud = derivative;</span>
+<span class="fc" id="L740">                    derivative = (ud * v - u * vd) / Math.pow(v, 2);</span>
+<span class="fc" id="L741">                    tempVar /= v;</span>
                 }
-<span class="nc" id="L743">                return derivative;</span>
+<span class="fc" id="L743">                return derivative;</span>
             }
         }
 
@@ -900,7 +900,7 @@ public abstract class AbstractFunction implements Function {
 
         @Contract(pure = true)
         private static double addition(double[] inputs, int d, ArrayList&lt;Function&gt; src) {
-<span class="pc bpc" id="L903" title="1 of 2 branches missed.">            if (d &lt; 0) {</span>
+<span class="fc bfc" id="L903" title="All 2 branches covered.">            if (d &lt; 0) {</span>
 <span class="fc" id="L904">                double result = src.get(0).activate(inputs);</span>
 <span class="fc bfc" id="L905" title="All 2 branches covered.">                for (int Vi = 1; Vi &lt; src.size(); Vi++) {</span>
 <span class="fc" id="L906">                    final double current = src.get(Vi).activate(inputs);</span>
@@ -908,11 +908,11 @@ public abstract class AbstractFunction implements Function {
                 }
 <span class="fc" id="L909">                return result;</span>
             } else {
-<span class="nc" id="L911">                double derivative = 0;</span>
-<span class="nc bnc" id="L912" title="All 2 branches missed.">                for (int i = 0; i &lt; src.size(); ++i) {</span>
-<span class="nc" id="L913">                    derivative += src.get(i).derive(inputs, d);</span>
+<span class="fc" id="L911">                double derivative = 0;</span>
+<span class="fc bfc" id="L912" title="All 2 branches covered.">                for (int i = 0; i &lt; src.size(); ++i) {</span>
+<span class="fc" id="L913">                    derivative += src.get(i).derive(inputs, d);</span>
                 }
-<span class="nc" id="L915">                return derivative;</span>
+<span class="fc" id="L915">                return derivative;</span>
             }
         }
 

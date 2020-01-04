@@ -13,7 +13,6 @@ public class DefaultJavaTests {
     public void testAutograd()
     {
         NTester_Tensor tester = new NTester_Tensor("Tensor tester (only cpu)");
-
         Tsr x = new Tsr(new int[]{1}, 3).setRqsGradient(true);
         Tsr b = new Tsr(new int[]{1}, -4);
         Tsr w = new Tsr(new int[]{1}, 2);
@@ -83,7 +82,6 @@ public class DefaultJavaTests {
         tester.testTensor(z, new String[]{"[2x1x2]:(15.0, 2.0, 10.0, 2.0)"});
         //=======================
         Neureka.Settings.Indexing.setLegacy(true);
-
         x = new Tsr(
                 new int[]{3, 3},
                 new double[]{
@@ -111,8 +109,6 @@ public class DefaultJavaTests {
         //---
         Neureka.Settings.Indexing.setLegacy(false);
         //--- again but now reverse: (outcome should not change...)
-
-
         x = new Tsr(
                 new int[]{3, 3},
                 new double[]{
@@ -183,7 +179,6 @@ public class DefaultJavaTests {
         tester.testExpression("ijssum(i0+Ij)", "(I[j]ssum(I[0]+I[j]))", "");
 
         tester.testExpression("i[0] d>> i[1]", "(I[0]d"+((char)187)+"I[1])", "");
-
 
         //ACTIVATION TESTING:
         double[] input1 = {};
@@ -271,7 +266,6 @@ public class DefaultJavaTests {
         //--
         expected = new Tsr(new int[]{2}, new double[]{(-14)%3, -0.0});
         tester.testActivation("(prod(ij))%3", tsrs, expected, "");
-
 
         tester.close();
     }
