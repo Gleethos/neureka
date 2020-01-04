@@ -94,6 +94,8 @@ public class Tsr
                 }
                 gradient.remove(Device.class);
             }
+        } else if (_value==null){
+            setIsVirtual(true);
         }
         return this;
     }
