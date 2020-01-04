@@ -125,9 +125,12 @@ public class Tsr
                     _flags -= IS_VIRTUAL_MASK;
                 }
             }
+        } else if(isVirtual && _value==null){
+            _value = new double[]{0};
         }
         return this;
     }
+
 
     //-----------------------------------------------------------------------
 
@@ -310,7 +313,7 @@ public class Tsr
             return ((Device) this.find(Device.class)).value64Of(this);
         }
         double[] newValue = (this.is64())?(double[])_value: DataHelper.floatToDouble((float[])_value);
-        if (this.isVirtual()) {
+        if (this.isVirtual() && newValue!=null) {
             newValue = new double[this.size()];
             double[] value = (this.is64())?(double[])_value:DataHelper.floatToDouble((float[])_value);
             for (int i = 0; i < newValue.length; i++) newValue[i] = value[0];
@@ -333,7 +336,7 @@ public class Tsr
             return ((Device) this.find(Device.class)).value32Of(this);
         }
         float[] newValue = (this.is64())?DataHelper.doubleToFloat((double[])_value):(float[])_value;
-        if (this.isVirtual()) {
+        if (this.isVirtual() && newValue!=null) {
             newValue = new float[this.size()];
             for (int i = 0; i < newValue.length; i++) {
                 newValue[i] = newValue[0];
