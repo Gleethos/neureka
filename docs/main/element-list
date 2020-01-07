@@ -10,7 +10,6 @@ neureka.function.factory.assembly
 neureka.function.factory.autograd
 neureka.function.factory.implementations
 neureka.gui
-neureka.gui.swing
 neureka.optimization
 neureka.optimization.implementations
 neureka.utility
