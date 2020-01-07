@@ -463,7 +463,7 @@ public class GraphNode
 <span class="fc bfc" id="L463" title="All 2 branches covered.">        if(!Neureka.Settings.AD._retainPendingErrorForJITProp){</span>
 <span class="fc" id="L464">            toBeBackpropagated.forEach((n, p)-&gt;{</span>
 <span class="pc bpc" id="L465" title="1 of 2 branches missed.">                if(!p.isFullyAccumulated()) throw new IllegalStateException(&quot;[GraphNode][_backward]: Pending error has not received expected accumulation.&quot;);</span>
-<span class="fc" id="L466">                n.backward(p.getAccumulatedError());//Continue backprop recursively!</span>
+<span class="fc" id="L466">                n.backward(p.getAccumulatedError());//Continue back-propagation recursively!</span>
 <span class="fc" id="L467">            });</span>
         } else {
 <span class="fc" id="L469">            toBeBackpropagated.forEach((n, p)-&gt;{</span>
@@ -637,17 +637,10 @@ public class GraphNode
     }
 
     /**
-     * @return Map&lt;Tsr, Tsr&gt;
-     */
-    public Map&lt;GraphNode, Tsr&gt; getMap(){
-<span class="nc" id="L643">        return _targets_derivatives;</span>
-    }
-
-    /**
      * @return int
      */
     public int size(){
-<span class="fc bfc" id="L650" title="All 2 branches covered.">        return (_targets_derivatives !=null)?this._targets_derivatives.size():0;</span>
+<span class="fc bfc" id="L643" title="All 2 branches covered.">        return (_targets_derivatives !=null)?this._targets_derivatives.size():0;</span>
     }
 
     /**
@@ -655,55 +648,55 @@ public class GraphNode
      * @return void
      */
     public void forEach(BiConsumer&lt;GraphNode, Tsr&gt; action){
-<span class="fc bfc" id="L658" title="All 2 branches covered.">        if(_targets_derivatives ==null) return;</span>
-<span class="fc" id="L659">        _targets_derivatives.forEach(action);</span>
-<span class="fc" id="L660">    }</span>
+<span class="fc bfc" id="L651" title="All 2 branches covered.">        if(_targets_derivatives ==null) return;</span>
+<span class="fc" id="L652">        _targets_derivatives.forEach(action);</span>
+<span class="fc" id="L653">    }</span>
 
     public String type(){
-<span class="fc" id="L663">        String type = &quot;&quot;;</span>
-<span class="fc bfc" id="L664" title="All 2 branches covered.">        if(this.isLeave()) type+=&quot;LEAVE&quot;;</span>
-<span class="fc" id="L665">        else type += &quot;BRANCH&quot;;</span>
-<span class="fc bfc" id="L666" title="All 2 branches covered.">        if(_payload==null) type = type+&quot; DELETED&quot;;</span>
-<span class="fc bfc" id="L667" title="All 2 branches covered.">        else if(_payload.rqsGradient()) type += &quot; RQS GRADIENT&quot;;</span>
-<span class="fc" id="L668">        return type;</span>
+<span class="fc" id="L656">        String type = &quot;&quot;;</span>
+<span class="fc bfc" id="L657" title="All 2 branches covered.">        if(this.isLeave()) type+=&quot;LEAVE&quot;;</span>
+<span class="fc" id="L658">        else type += &quot;BRANCH&quot;;</span>
+<span class="fc bfc" id="L659" title="All 2 branches covered.">        if(_payload==null) type = type+&quot; DELETED&quot;;</span>
+<span class="fc bfc" id="L660" title="All 2 branches covered.">        else if(_payload.rqsGradient()) type += &quot; RQS GRADIENT&quot;;</span>
+<span class="fc" id="L661">        return type;</span>
     }
 
     @Override
     public String toString(){
-<span class="nc" id="L673">        return toString(&quot;&quot;);</span>
+<span class="nc" id="L666">        return toString(&quot;&quot;);</span>
     }
 
 
     public String toString(String m){
-<span class="fc bfc" id="L678" title="All 2 branches covered.">        if(m.contains(&quot;g&quot;)){</span>
-<span class="fc" id="L679">            return &quot;]&gt; LOCK: &quot;+lock()+&quot; |&gt; GRAPH:\n]\n&quot; +_toString(&quot;]    0&quot;, true) +&quot;\n]\n]|END|&gt;&quot;;</span>
+<span class="fc bfc" id="L671" title="All 2 branches covered.">        if(m.contains(&quot;g&quot;)){</span>
+<span class="fc" id="L672">            return &quot;]&gt; LOCK: &quot;+lock()+&quot; |&gt; GRAPH:\n]\n&quot; +_toString(&quot;]    0&quot;, true) +&quot;\n]\n]|END|&gt;&quot;;</span>
         }
-<span class="pc bpc" id="L681" title="1 of 2 branches missed.">        if(m.contains(&quot;v&quot;)){</span>
-<span class="fc" id="L682">            return &quot;(&quot;+this.type()+&quot;): [NID:&quot;+Long.toHexString(nid())+&quot;]:&lt;(  &quot;</span>
-<span class="fc bfc" id="L683" title="All 4 branches covered.">                    +&quot;f&quot;+((_function==null)?&quot;(NONE)&quot;:_function)+&quot; =&gt; &quot;+((_payload==null)?&quot;NULL&quot;:_payload.toString(&quot;cs&quot;))+&quot;  )&gt;&quot;;</span>
+<span class="pc bpc" id="L674" title="1 of 2 branches missed.">        if(m.contains(&quot;v&quot;)){</span>
+<span class="fc" id="L675">            return &quot;(&quot;+this.type()+&quot;): [NID:&quot;+Long.toHexString(nid())+&quot;]:&lt;(  &quot;</span>
+<span class="fc bfc" id="L676" title="All 4 branches covered.">                    +&quot;f&quot;+((_function==null)?&quot;(NONE)&quot;:_function)+&quot; =&gt; &quot;+((_payload==null)?&quot;NULL&quot;:_payload.toString(&quot;cs&quot;))+&quot;  )&gt;&quot;;</span>
 
         } else {
-<span class="nc bnc" id="L686" title="All 2 branches missed.">            return &quot;[NID:&quot;+Long.toHexString(nid())+&quot;]:( &quot;+((_payload==null)?&quot;NULL&quot;:_payload.toString(&quot;cs&quot;))+&quot; )&quot;;</span>
+<span class="nc bnc" id="L679" title="All 2 branches missed.">            return &quot;[NID:&quot;+Long.toHexString(nid())+&quot;]:( &quot;+((_payload==null)?&quot;NULL&quot;:_payload.toString(&quot;cs&quot;))+&quot; )&quot;;</span>
         }
 
     }
 
     private String _toString(String deep, boolean isLast){//int depth){
-<span class="fc bfc" id="L692" title="All 2 branches covered.">        String delimiter = ((isLast)?(&quot;    &quot;):(&quot;|   &quot;));</span>
-<span class="fc bfc" id="L693" title="All 2 branches covered.">        String arrow = ((char)187)+&quot;&quot;+((_parents!=null)?(String.valueOf(_parents.length)):&quot;0&quot;)+((char)187);</span>
-<span class="fc" id="L694">        String asString = deep+</span>
-<span class="fc" id="L695">            arrow+ toString(&quot;v&quot;);</span>
-<span class="fc" id="L696">        deep = deep.substring(0, deep.length()-1);</span>
-<span class="fc bfc" id="L697" title="All 2 branches covered.">        if(_parents!=null){</span>
-<span class="fc bfc" id="L698" title="All 2 branches covered.">            asString += &quot;\n&quot;+deep+((isLast)?&quot;   \\\n&quot;:&quot;|  \\\n&quot;);</span>
-<span class="fc bfc" id="L699" title="All 2 branches covered.">            for(int i=0; i&lt;_parents.length; i++){</span>
-<span class="fc bfc" id="L700" title="All 2 branches covered.">                boolean last = (i==_parents.length-1);</span>
-<span class="fc bfc" id="L701" title="All 2 branches covered.">                asString += ((i!=0)?deep+delimiter+&quot;|\n&quot;:&quot;&quot;);</span>
-<span class="fc" id="L702">                asString+=(_parents[i]._toString(deep+delimiter+i, last)+&quot;\n&quot;);</span>
+<span class="fc bfc" id="L685" title="All 2 branches covered.">        String delimiter = ((isLast)?(&quot;    &quot;):(&quot;|   &quot;));</span>
+<span class="fc bfc" id="L686" title="All 2 branches covered.">        String arrow = ((char)187)+&quot;&quot;+((_parents!=null)?(String.valueOf(_parents.length)):&quot;0&quot;)+((char)187);</span>
+<span class="fc" id="L687">        String asString = deep+</span>
+<span class="fc" id="L688">            arrow+ toString(&quot;v&quot;);</span>
+<span class="fc" id="L689">        deep = deep.substring(0, deep.length()-1);</span>
+<span class="fc bfc" id="L690" title="All 2 branches covered.">        if(_parents!=null){</span>
+<span class="fc bfc" id="L691" title="All 2 branches covered.">            asString += &quot;\n&quot;+deep+((isLast)?&quot;   \\\n&quot;:&quot;|  \\\n&quot;);</span>
+<span class="fc bfc" id="L692" title="All 2 branches covered.">            for(int i=0; i&lt;_parents.length; i++){</span>
+<span class="fc bfc" id="L693" title="All 2 branches covered.">                boolean last = (i==_parents.length-1);</span>
+<span class="fc bfc" id="L694" title="All 2 branches covered.">                asString += ((i!=0)?deep+delimiter+&quot;|\n&quot;:&quot;&quot;);</span>
+<span class="fc" id="L695">                asString+=(_parents[i]._toString(deep+delimiter+i, last)+&quot;\n&quot;);</span>
             }
-<span class="fc" id="L704">            asString = asString.substring(0, asString.length()-1);</span>
+<span class="fc" id="L697">            asString = asString.substring(0, asString.length()-1);</span>
         }
-<span class="fc" id="L706">        return asString;</span>
+<span class="fc" id="L699">        return asString;</span>
     }
 
 
