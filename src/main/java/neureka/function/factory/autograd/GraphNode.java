@@ -463,7 +463,7 @@ public class GraphNode
         if(!Neureka.Settings.AD._retainPendingErrorForJITProp){
             toBeBackpropagated.forEach((n, p)->{
                 if(!p.isFullyAccumulated()) throw new IllegalStateException("[GraphNode][_backward]: Pending error has not received expected accumulation.");
-                n.backward(p.getAccumulatedError());//Continue backprop recursively!
+                n.backward(p.getAccumulatedError());//Continue back-propagation recursively!
             });
         } else {
             toBeBackpropagated.forEach((n, p)->{
@@ -634,13 +634,6 @@ public class GraphNode
     public boolean has(GraphNode target){
         if(_targets_derivatives ==null) return false;
         return _targets_derivatives.containsKey(target);
-    }
-
-    /**
-     * @return Map<Tsr, Tsr>
-     */
-    public Map<GraphNode, Tsr> getMap(){
-        return _targets_derivatives;
     }
 
     /**
