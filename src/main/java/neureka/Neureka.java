@@ -53,7 +53,7 @@ public class Neureka
              * improve performance for some networks substantially.
              * The technique is termed JIT-Propagation.
              */
-            public static boolean _RetainPendingErrorForJITProp = true;
+            public static boolean _retainPendingErrorForJITProp = true;
 
             /**
              * Gradients will automatically be applied to tensors as soon as

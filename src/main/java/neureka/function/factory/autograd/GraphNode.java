@@ -62,15 +62,15 @@ public class GraphNode
      * This flag is used merely once. It is a key component
      * of an optimization technique which only applies
      * gradients as soon as they are needed by a tensor (the tensor is used again).
-     * If the flag Neureka.Settings.AD._RetainPendingErrorForJITProp is set to true
+     * If the flag Neureka.Settings.AD._retainPendingErrorForJITProp is set to true
      * then errors values will accumulate whenever it makes sense.
      * This technique however uses more memory but will
      * improve performance for some networks substantially.
      */
     public  boolean reliesOnJustInTimeProp(){
-        return !_targets_derivatives_are_deletable;
+        return _relies_on_JIPProp;
     }
-    private boolean _targets_derivatives_are_deletable = true;
+    private boolean _relies_on_JIPProp = false;
 
     /**
      *  The chain-rule states that the derivative of f(x) = h(g(x)) with respect to x is: g'(x) * h'(g(x))
@@ -458,16 +458,16 @@ public class GraphNode
      * @param error
      */
     public void backward(Tsr error){
-        Map<GraphNode, PendingError> pendings = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
-        _backward(error, pendings, true);
-        if(!Neureka.Settings.AD._RetainPendingErrorForJITProp){
-            pendings.forEach((n, p)->{
+        Map<GraphNode, PendingError> toBeBackpropagated = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
+        _backward(error, toBeBackpropagated, false);// Entry-point to inner recursive back-propagation!
+        if(!Neureka.Settings.AD._retainPendingErrorForJITProp){
+            toBeBackpropagated.forEach((n, p)->{
                 if(!p.isFullyAccumulated()) throw new IllegalStateException("[GraphNode][_backward]: Pending error has not received expected accumulation.");
                 n.backward(p.getAccumulatedError());//Continue backprop recursively!
             });
         } else {
-            pendings.forEach((n, p)->{
-                n._carryPendingErrorToGradients(pendings);
+            toBeBackpropagated.forEach((n, p)->{
+                n._carryPendingErrorToGradients(toBeBackpropagated);
             });
         }
         _deleteDerivativesRecursively();
@@ -476,22 +476,17 @@ public class GraphNode
     /**
      * This method is called only if JIT-propagation is enabled.
      * It carries pending errors to the tensors requiring gradients which will
-     * later on processed them just in time.
-     * @param pendings
+     * later on be processed just in time.
+     * @param toBeBackpropagated
      */
-    private void _carryPendingErrorToGradients(Map<GraphNode, PendingError> pendings){
-        _targets_derivatives_are_deletable = false;
-        this.forEach((t, d)->t._carryPendingErrorToGradients(pendings));
-        if(this.isLeave()){
-            if(_payload.rqsGradient()){
-                JITProp jit = (JITProp) _payload.find(JITProp.class);
-                if(jit==null){
-                    jit = new JITProp(pendings);
-                } else {
-                    jit.addPending(pendings);
-                }
-                _payload.add(jit);
-            }
+    private void _carryPendingErrorToGradients(Map<GraphNode, PendingError> toBeBackpropagated){
+        _relies_on_JIPProp = true;
+        this.forEach((t, d)->t._carryPendingErrorToGradients(toBeBackpropagated));
+        if(this.isLeave() && _payload.rqsGradient()){
+            JITProp jit = (JITProp) _payload.find(JITProp.class);
+            if(jit==null) jit = new JITProp(toBeBackpropagated);
+            else jit.addPending(toBeBackpropagated);
+            _payload.add(jit);
         }
         return;
     }
@@ -510,7 +505,7 @@ public class GraphNode
      * @param error which is originally supplied by the user but later on is modified by derivatives...
      * @return void
      */
-    private void _backward(Tsr error, Map<GraphNode, PendingError> toBeBackpropagated, boolean force)
+    private void _backward(Tsr error, Map<GraphNode, PendingError> toBeBackpropagated, boolean allowPendingError)
     {
         if(_payload.isOutsourced()){
             _payload.device().add(error);
@@ -526,9 +521,10 @@ public class GraphNode
         }
         if(this.usesAD())
         {
-            if(!this.reliesOnJustInTimeProp()){//false ==> We are inside a 'Just-In-Time Backprop' process
-                int ADPaths = _numberOfADChildren();
-                if(!force && ADPaths>1 && !this.isLeave()){
+            if(!this.reliesOnJustInTimeProp() && allowPendingError && !this.isLeave())
+            {//==> We are NOT inside a 'Just-In-Time-Backprop' process (new pending error can be created)
+                int ADPaths = _numberOfADChildren();// Multiple children triggers creation of a pending error
+                if(ADPaths>1){
                     PendingError pending = toBeBackpropagated.get(this);
                     if(pending==null){
                         pending = new PendingError(error, ADPaths-1);
@@ -536,19 +532,20 @@ public class GraphNode
                     } else {
                         pending.accumulate(error);
                     }
-                    return;// NOTE: Multiple AD paths leading to one node in history will be accumulated first! (performance)
+                    return;
+                    // NOTE: Multiple AD paths leading to one node in history will be accumulated first! (performance)
                     //This optimization is a light version of JITProp. JITProp builds on this!
                 }
             }
             //if(_payload==null) throw new RuntimeException();
             if(this.usesForwardAD()){//Using forward-AD derivatives for reverse-mode AD!:
-                this.forEach((t, d)->t._backward(MUL.activate(new Tsr[]{error, d}), toBeBackpropagated, false));
+                this.forEach((t, d)->t._backward(MUL.activate(new Tsr[]{error, d}), toBeBackpropagated, true));
             }else if(this.usesReverseAD()){//Standard reverse mode-AD:
                 this.forEach((t, d)->{
                     if(_function.id()==Function.TYPES.LOOKUP.get("x")){// x operation requires inverse convolve operation!
-                        t._backward(INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)}), toBeBackpropagated, false);
+                        t._backward(INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)}), toBeBackpropagated, true);
                     } else {//Normal elementwise backpropagation:
-                        t._backward(MUL.activate(new Tsr[]{error, d}), toBeBackpropagated, false);
+                        t._backward(MUL.activate(new Tsr[]{error, d}), toBeBackpropagated, true);
                     }
                 });
             }
@@ -566,7 +563,7 @@ public class GraphNode
      */
     private void  _deleteDerivativesRecursively(){
         if(!Neureka.Settings.AD._retainGraphDerivativesAfterBackward){
-            if(_targets_derivatives_are_deletable) _targets_derivatives = null;
+            if(!_relies_on_JIPProp) _targets_derivatives = null;
             this.forEach((t, d)->t._deleteDerivativesRecursively());
         }
         return;

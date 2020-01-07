@@ -282,15 +282,15 @@ class LightGroovyTests
         Tsr s =  (a*b) + 2
         Tsr x = s * (s+c)
 
-        Neureka.Settings.AD._RetainPendingErrorForJITProp = false
+        Neureka.Settings.AD._retainPendingErrorForJITProp = false
         x.backward(new Tsr(1))
-        Neureka.Settings.AD._RetainPendingErrorForJITProp = true
+        Neureka.Settings.AD._retainPendingErrorForJITProp = true
         assert c.toString().contains("(3.0):g:(-6.0)")
         assert a.toString().contains("(2.0):g:(36.0)")
 
-        Neureka.Settings.AD._RetainPendingErrorForJITProp = false
+        Neureka.Settings.AD._retainPendingErrorForJITProp = false
         x.backward(4)
-        Neureka.Settings.AD._RetainPendingErrorForJITProp = true
+        Neureka.Settings.AD._retainPendingErrorForJITProp = true
         assert c.toString().contains("(3.0):g:(-6.0)")
         assert a.toString().contains("(2.0):g:(36.0)")
     }
@@ -305,15 +305,15 @@ class LightGroovyTests
         Tsr s =  (a*b) + 2
         Tsr x = s * (s+c)
 
-        Neureka.Settings.AD._RetainPendingErrorForJITProp = false
+        Neureka.Settings.AD._retainPendingErrorForJITProp = false
         x.backward(1)
-        Neureka.Settings.AD._RetainPendingErrorForJITProp = true
+        Neureka.Settings.AD._retainPendingErrorForJITProp = true
         assert c.toString().contains("(3.0):g:(-6.0)")
         assert a.toString().contains("(2.0):g:(36.0)")
 
-        Neureka.Settings.AD._RetainPendingErrorForJITProp = false
+        Neureka.Settings.AD._retainPendingErrorForJITProp = false
         x.backward(new Tsr(4))
-        Neureka.Settings.AD._RetainPendingErrorForJITProp = true
+        Neureka.Settings.AD._retainPendingErrorForJITProp = true
         assert c.toString().contains("(3.0):g:(-6.0)")
         assert a.toString().contains("(2.0):g:(36.0)")
     }
