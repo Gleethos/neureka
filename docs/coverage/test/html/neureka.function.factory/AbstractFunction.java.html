@@ -355,7 +355,7 @@ public abstract class AbstractFunction implements Function {
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     protected double _scalar_activation(double input, boolean derive) {
-<span class="pc bpc" id="L358" title="8 of 11 branches missed.">        switch (TYPES.REGISTER[_id]) {</span>
+<span class="pc bpc" id="L358" title="6 of 11 branches missed.">        switch (TYPES.REGISTER[_id]) {</span>
             case &quot;relu&quot;:
 <span class="nc" id="L360">                return exec.reLu(input, derive);</span>
             case &quot;sig&quot;:
@@ -373,9 +373,9 @@ public abstract class AbstractFunction implements Function {
             case &quot;abs&quot;:
 <span class="nc" id="L374">                return exec.absolute(input, derive);</span>
             case &quot;sin&quot;:
-<span class="nc" id="L376">                return exec.sinus(input, derive);</span>
+<span class="fc" id="L376">                return exec.sinus(input, derive);</span>
             case &quot;cos&quot;:
-<span class="nc" id="L378">                return exec.cosinus(input, derive);</span>
+<span class="fc" id="L378">                return exec.cosinus(input, derive);</span>
             default:
 <span class="nc" id="L380">                return input;</span>
         }
@@ -515,20 +515,20 @@ public abstract class AbstractFunction implements Function {
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double sinus(double input, boolean derive) {
-<span class="nc bnc" id="L518" title="All 2 branches missed.">            if (!derive) {</span>
-<span class="nc" id="L519">                return Math.sin(input);</span>
+<span class="fc bfc" id="L518" title="All 2 branches covered.">            if (!derive) {</span>
+<span class="fc" id="L519">                return Math.sin(input);</span>
             } else {
-<span class="nc" id="L521">                return Math.cos(input);</span>
+<span class="fc" id="L521">                return Math.cos(input);</span>
             }
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double cosinus(double input, boolean derive) {
-<span class="nc bnc" id="L528" title="All 2 branches missed.">            if (!derive) {</span>
-<span class="nc" id="L529">                return Math.cos(input);</span>
+<span class="fc bfc" id="L528" title="All 2 branches covered.">            if (!derive) {</span>
+<span class="fc" id="L529">                return Math.cos(input);</span>
             } else {
-<span class="nc" id="L531">                return -Math.sin(input);</span>
+<span class="fc" id="L531">                return -Math.sin(input);</span>
             }
         }
 

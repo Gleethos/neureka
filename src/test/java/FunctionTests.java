@@ -22,6 +22,19 @@ public class FunctionTests {
         assert f.activate(new double[]{1})==0.5;
         assert f.derive(new double[]{0.2}, 0)==-0.5217778675999797;
 
+        f = FunctionBuilder.build("(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)", false);
+        assert f.activate(new double[]{3})==3.049021713079475;
+        assert f.activate(new double[]{2.5})==3.507365283517986;
+        assert f.activate(new double[]{0})==0.2;
+
+
+        assert f.derive(new double[]{0}, 0)==1.1;
+        assert f.derive(new double[]{0.5}, 0)==0.646867884000033;
+        assert f.derive(new double[]{1.6}, 0)==-0.00697440343353687;
+        assert f.derive(new double[]{-4}, 0)==3.9174193383745917;
+
+        //System.out.println(f.derive(new double[]{-4}, 0));
+
     }
 
 
