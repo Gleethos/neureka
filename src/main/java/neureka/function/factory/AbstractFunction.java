@@ -225,7 +225,7 @@ public abstract class AbstractFunction implements Function {
             //first derive source!
             //like so:
             if (TYPES.isIndexer(_id)) {
-                for (int i = 1; i < tsrs.length; i++){
+                for (int i = 1; i < tsrs.length; i++) {
                     tsrs[i] = _src.get(0).derive(inputs, d, i - 1);
                 }
             } else {
@@ -676,20 +676,27 @@ public abstract class AbstractFunction implements Function {
                 }
                 return result;
             } else {
-                double out = 0;
                 double b = 1;
+                double bd = 0;
+                double a = 0;
                 for (int i = 1; i < src.size(); i++) {
-                    b *= (i == d) ? 1 : src.get(i).activate(inputs);
-                }
-                for (int si = 0; si < src.size(); si++) {
-                    if (si == 0) {
-                        out += src.get(0).derive(inputs, d) * b * Math.pow(src.get(0).activate(inputs), b - 1);
-                    } else {
-                        double a = src.get(0).activate(inputs);
-                        out += (a >= 0) ? src.get(si).derive(inputs, d) * b * Math.log(a) : 0;
+                    double dd = 1;
+                    a = src.get(i).activate(inputs);
+                    for (int di = 1; di < src.size(); di++) {
+                        if (di != i) dd *= a;
+                        else dd *= src.get(di).derive(inputs, d);
                     }
+                    bd += dd;
+                    b *= a;
                 }
+                double out = 0;
+                a = src.get(0).activate(inputs);
+                out += src.get(0).derive(inputs, d) * b * Math.pow(a, b - 1);
+                out += (a >= 0) ? bd *  Math.pow(a, b) * Math.log(a) : 0;
                 return out;
+                //}
+
+
             }
         }
 
