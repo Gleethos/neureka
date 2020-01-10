@@ -7,9 +7,9 @@ neureka.function
 neureka.function.environment
 neureka.function.factory
 neureka.function.factory.assembly
-neureka.function.factory.autograd
+neureka.autograd
 neureka.function.factory.implementations
-neureka.gui
+util.gui
 neureka.optimization
 neureka.optimization.implementations
 neureka.utility

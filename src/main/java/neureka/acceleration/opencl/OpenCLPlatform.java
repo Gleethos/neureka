@@ -1,16 +1,11 @@
 package neureka.acceleration.opencl;
 
 import neureka.Neureka;
-import neureka.function.Function;
+import neureka.calculus.Function;
 import org.jocl.*;
 
 import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import static org.jocl.CL.*;
 import static org.jocl.CL.CL_DEVICE_TYPE_ALL;

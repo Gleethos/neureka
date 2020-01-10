@@ -1,9 +1,9 @@
 package neureka.acceleration;
 
 import neureka.Tsr;
-import neureka.function.Function;
-import neureka.function.factory.autograd.GraphLock;
-import neureka.function.factory.autograd.GraphNode;
+import neureka.calculus.Function;
+import neureka.autograd.GraphLock;
+import neureka.autograd.GraphNode;
 
 public abstract class AbstractDevice implements  Device
 {

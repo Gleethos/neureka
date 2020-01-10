@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GraphLock.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.autograd</a> &gt; <span class="el_source">GraphLock.java</span></div><h1>GraphLock.java</h1><pre class="source lang-java linenums">package neureka.autograd;
+import neureka.Tsr;
+import neureka.calculus.Function;
+
+public class GraphLock
+{
+    /**
+     *  GraphLock is a component of tensors which lends it's identity
+     *  as TreeMap key for function result caching and also in order to deny other functions
+     *  access to tensors which are involved in the computation graph rendered by the 'lock owner',
+     *  namely any Function object!
+     * */
+
+    /**
+     *  Owner of the lock of a graph:
+     */
+    private Function _owner;
+
+    /**
+     *  Lock status (is locked if the graph is currently processing)
+     */
+<span class="fc" id="L22">    private boolean _is_locked = true;</span>
+
+    /**
+     * CONSTRUCTOR
+     * @param owner =&gt; The function which currently processes the graph of nodes of which this lock is referenced by.
+     * @param sources
+     */
+<span class="fc" id="L29">    public GraphLock(Function owner, Tsr[] sources){</span>
+<span class="fc" id="L30">        this._owner = owner;</span>
+<span class="fc" id="L31">    }</span>
+
+    /**
+     * @return =&gt; Returns true if the graph is locked
+     */
+    public boolean isLocked(){
+<span class="fc" id="L37">        return _is_locked;</span>
+    }
+
+    /**
+     *  Releases this lock and permits nodes of this graph
+     *  to be used for further processing.
+     */
+    public void release(){
+<span class="fc" id="L45">        _is_locked = false;</span>
+<span class="fc" id="L46">    }</span>
+
+    /**
+     * @return A description based on the identity of this lock and its owner (a function)!
+     */
+    @Override
+    public String toString(){
+<span class="fc" id="L53">        return &quot;GID:&quot;+Integer.toHexString(this.hashCode())+&quot;:f&quot;+ _owner.toString()+&quot;&quot;;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

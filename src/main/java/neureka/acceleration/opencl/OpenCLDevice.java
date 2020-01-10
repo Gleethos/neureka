@@ -11,7 +11,7 @@ import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
 import neureka.acceleration.opencl.utility.WeakTensorReference;
-import neureka.function.Function;
+import neureka.calculus.Function;
 import neureka.utility.DataHelper;
 import org.jocl.*;
 

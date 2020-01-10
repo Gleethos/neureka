@@ -116,7 +116,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <!-- ======== START OF CLASS DATA ======== -->
 <main role="main">
 <div class="header">
-<div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">neureka.function.factory.autograd</a></div>
+<div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">neureka.autograd</a></div>
 <h2 title="Class JITProp" class="title">Class JITProp</h2>
 </div>
 <div class="contentContainer">
@@ -124,7 +124,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li>neureka.function.factory.autograd.JITProp</li>
+<li>neureka.autograd.JITProp</li>
 </ul>
 </li>
 </ul>
@@ -154,7 +154,7 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr class="altColor">
-<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(java.util.Map)">JITProp</a></span>&#8203;(java.util.Map&lt;<a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>,&#8203;<a href="PendingError.html" title="class in neureka.function.factory.autograd">PendingError</a>&gt;&nbsp;pendings)</code></th>
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(java.util.Map)">JITProp</a></span>&#8203;(java.util.Map&lt;<a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>,&#8203;<a href="PendingError.html" title="class in neureka.autograd">PendingError</a>&gt;&nbsp;pendings)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 </table>
@@ -177,7 +177,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addPending(java.util.Map)">addPending</a></span>&#8203;(java.util.Map&lt;<a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>,&#8203;<a href="PendingError.html" title="class in neureka.function.factory.autograd">PendingError</a>&gt;&nbsp;pendings)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addPending(java.util.Map)">addPending</a></span>&#8203;(java.util.Map&lt;<a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>,&#8203;<a href="PendingError.html" title="class in neureka.autograd">PendingError</a>&gt;&nbsp;pendings)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -192,7 +192,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#noteFinished(java.util.Map)">noteFinished</a></span>&#8203;(java.util.Map&lt;<a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>,&#8203;<a href="PendingError.html" title="class in neureka.function.factory.autograd">PendingError</a>&gt;&nbsp;finishedJITProps)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#noteFinished(java.util.Map)">noteFinished</a></span>&#8203;(java.util.Map&lt;<a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>,&#8203;<a href="PendingError.html" title="class in neureka.autograd">PendingError</a>&gt;&nbsp;finishedJITProps)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 </table>
@@ -225,7 +225,7 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>JITProp</h4>
-<pre>public&nbsp;JITProp&#8203;(java.util.Map&lt;<a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>,&#8203;<a href="PendingError.html" title="class in neureka.function.factory.autograd">PendingError</a>&gt;&nbsp;pendings)</pre>
+<pre>public&nbsp;JITProp&#8203;(java.util.Map&lt;<a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>,&#8203;<a href="PendingError.html" title="class in neureka.autograd">PendingError</a>&gt;&nbsp;pendings)</pre>
 </li>
 </ul>
 </li>
@@ -244,7 +244,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>addPending</h4>
-<pre class="methodSignature">public&nbsp;void&nbsp;addPending&#8203;(java.util.Map&lt;<a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>,&#8203;<a href="PendingError.html" title="class in neureka.function.factory.autograd">PendingError</a>&gt;&nbsp;pendings)</pre>
+<pre class="methodSignature">public&nbsp;void&nbsp;addPending&#8203;(java.util.Map&lt;<a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>,&#8203;<a href="PendingError.html" title="class in neureka.autograd">PendingError</a>&gt;&nbsp;pendings)</pre>
 </li>
 </ul>
 <a id="noteFinished(java.util.Map)">
@@ -253,7 +253,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>noteFinished</h4>
-<pre class="methodSignature">public&nbsp;void&nbsp;noteFinished&#8203;(java.util.Map&lt;<a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>,&#8203;<a href="PendingError.html" title="class in neureka.function.factory.autograd">PendingError</a>&gt;&nbsp;finishedJITProps)</pre>
+<pre class="methodSignature">public&nbsp;void&nbsp;noteFinished&#8203;(java.util.Map&lt;<a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>,&#8203;<a href="PendingError.html" title="class in neureka.autograd">PendingError</a>&gt;&nbsp;finishedJITProps)</pre>
 </li>
 </ul>
 <a id="execute()">

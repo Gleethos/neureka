@@ -1,8 +1,8 @@
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.function.Function;
-import neureka.function.factory.assembly.FunctionBuilder;
-import neureka.function.factory.autograd.GraphNode;
+import neureka.calculus.Function;
+import neureka.calculus.factory.assembly.FunctionBuilder;
+import neureka.autograd.GraphNode;
 import org.junit.Test;
 import util.NTester_Function;
 import util.NTester_Tensor;
@@ -294,11 +294,11 @@ public class DefaultJavaTests {
         Function tenxx = FunctionBuilder.build("i0*100", true);
         z = tenxx.activate(new Tsr[]{tanh.activate(new Tsr[]{x})});
         tester.testTensor(z, new String[]{"[1]:(9.95037E0)"});
-        Neureka.Settings.AD._retainGraphDerivativesAfterBackward = true;
+        Neureka.Settings.AD.setRetainGraphDerivativesAfterBackward(true);
         z.backward(new Tsr(new int[]{1}, 1));
         tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.0099E0)"});
         tester.testTensor(z, new String[]{"[1]:(9.95037E0); ->d[1]:(99.0099E0), "});
-        Neureka.Settings.AD._retainGraphDerivativesAfterBackward = false;
+        Neureka.Settings.AD.setRetainGraphDerivativesAfterBackward(false);
         //---
         tester.testContains(
                 z.toString("dgc"),
@@ -337,7 +337,7 @@ public class DefaultJavaTests {
         tensor2 = new Tsr(new int[]{2, 1}, -1);
         tensor1.setRqsGradient(true);
         tensor2.setRqsGradient(true);
-        Neureka.Settings.Debug._keepDerivativeTargetPayloads = true;
+        Neureka.Settings.Debug.setKeepDerivativeTargetPayloads(true);
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1, tensor2},
                 "relu(I[0]xI[1])",
@@ -379,7 +379,7 @@ public class DefaultJavaTests {
                         " =>d|[ [2x1]:(-1.0, -1.0) ]|:t{ [1x3]:(2.0, 2.0, 2.0) },",
                         "  }, "
                 }, "");
-        Neureka.Settings.Debug._keepDerivativeTargetPayloads = false;
+        Neureka.Settings.Debug.setKeepDerivativeTargetPayloads(false);
         //---
         tensor1 = new Tsr(new int[]{2, 3, 4}, 2);
         tensor1.setRqsGradient(false);
@@ -410,7 +410,7 @@ public class DefaultJavaTests {
                 }
         );
         //---
-        Neureka.Settings.Debug._keepDerivativeTargetPayloads = true;
+        Neureka.Settings.Debug.setKeepDerivativeTargetPayloads(true);
         tensor1 = new Tsr(new int[]{3, 2, 1}, 4);
         tensor2 = new Tsr(new int[]{1, 1, 4}, -1);
         tensor3 = new Tsr(new int[]{3, 2, 1}, 2);
@@ -437,7 +437,7 @@ public class DefaultJavaTests {
                         "[5x4x2]:(-24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0); =>d|[ [1x1x2]:(3.0, 3.0) ]|:t{ [5x4x1]:(-8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0); =>d|[ [1x4x1]:(-2.0, -2.0, -2.0, -2.0) ]|:t{ [5x1x1]:(4.0, 4.0, 4.0, 4.0, 4.0) },  }, "
                 }
         );
-        Neureka.Settings.Debug._keepDerivativeTargetPayloads = false;
+        Neureka.Settings.Debug.setKeepDerivativeTargetPayloads(false);
         //=====================
         tensor1 = new Tsr(new int[]{2, 2}, new double[]{1, 2, 3, 4});//-2*4 = 8 | *3 = -24
         tensor1.setRqsGradient(true);
@@ -576,7 +576,7 @@ public class DefaultJavaTests {
                 -2, 3,
                 1, 2,
         });
-        Neureka.Settings.AD._retainGraphDerivativesAfterBackward = true;
+        Neureka.Settings.AD.setRetainGraphDerivativesAfterBackward(true);
         tester.testTensorAutoGrad(//4, 5, -13, -4 <= result values
                 new Tsr[]{tensor1, tensor2},
                 "i0xi1",
@@ -584,7 +584,7 @@ public class DefaultJavaTests {
                 new Tsr(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
                 new double[][]{{-1.0, -1.0, 5.0, 5.0}, null}
         );
-        Neureka.Settings.AD._retainGraphDerivativesAfterBackward = false;
+        Neureka.Settings.AD.setRetainGraphDerivativesAfterBackward(false);
         //---
         //======================
         int[] shape = {4, 2, 9, 5, 6, 2};

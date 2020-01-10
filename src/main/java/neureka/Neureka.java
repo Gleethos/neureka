@@ -1,6 +1,8 @@
 package neureka;
 
 import neureka.acceleration.Device;
+import neureka.calculus.Function;
+import neureka.calculus.factory.assembly.FunctionBuilder;
 
 public class Neureka
 {
@@ -8,12 +10,33 @@ public class Neureka
         return Device.find(name);
     }
 
+    public static Function create(String expression){
+        return create(expression, true);
+    }
+
+    public static Function create(String expression, boolean doAD){
+        return FunctionBuilder.build(expression, doAD);
+    }
+
+
     public static String version(){
-        return "0.0.1";
+        return "1.0.0";
     }
 
     public static class Settings
     {
+
+        public static boolean isLocked(){
+            return  _isLocked;
+        }
+
+        public static void setIsLocked(boolean locked){
+            _isLocked = locked;
+        }
+
+        private static boolean _isLocked = false;
+
+
         public static class Debug
         {
             /**
@@ -31,7 +54,19 @@ public class Neureka
              * It is used for the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
              */
-            public static boolean _keepDerivativeTargetPayloads = false;
+            private static boolean _keepDerivativeTargetPayloads = false;
+
+            public static boolean keepDerivativeTargetPayloads(){
+                return _keepDerivativeTargetPayloads;
+            }
+
+            public static void setKeepDerivativeTargetPayloads(boolean keep){
+                if(_isLocked) return;
+                _keepDerivativeTargetPayloads = keep;
+            }
+
+
+
 
         }
 
@@ -42,7 +77,15 @@ public class Neureka
              * For debugging purposes however this flag remains and will
              * not allow for garbage collection of the used derivatives.
              */
-            public static boolean _retainGraphDerivativesAfterBackward = false;
+            private static boolean _retainGraphDerivativesAfterBackward = false;
+
+            public static boolean retainGraphDerivativesAfterBackward(){
+                return _retainGraphDerivativesAfterBackward;
+            }
+            public static void setRetainGraphDerivativesAfterBackward(boolean retain){
+                if(_isLocked) return;
+                _retainGraphDerivativesAfterBackward = retain;
+            }
 
             /**
              * This fla enables an optimization technique which only applies
@@ -53,16 +96,32 @@ public class Neureka
              * improve performance for some networks substantially.
              * The technique is termed JIT-Propagation.
              */
-            public static boolean _retainPendingErrorForJITProp = true;
+            private static boolean _retainPendingErrorForJITProp = true;
+
+            public static boolean retainPendingErrorForJITProp(){
+                return _retainPendingErrorForJITProp;
+            }
+
+            public static void setRetainPendingErrorForJITProp(boolean retain){
+                if(_isLocked) return;
+                _retainPendingErrorForJITProp = retain;
+            }
 
             /**
              * Gradients will automatically be applied to tensors as soon as
              * they are being used for calculation.
              * This feature works well with JIT-Propagation.
              */
-            public static boolean _applyGradientUntilTensorIsUsed = false;
+            private static boolean _applyGradientWhenTensorIsUsed = false;
 
+            public static boolean applyGradientWhenTensorIsUsed(){
+                return _applyGradientWhenTensorIsUsed;
+            }
 
+            public static void setApplyGradientUntilTensorIsUsed(boolean apply){
+                if(_isLocked) return;
+                _applyGradientWhenTensorIsUsed = apply;
+            }
 
         }
 
@@ -71,11 +130,13 @@ public class Neureka
 
             private static boolean _legacyIndexing = false;//DEFAULT: true
 
+
             public static boolean legacy(){
                 return _legacyIndexing;
             }
 
             public static void setLegacy(boolean enabled){
+                if(_isLocked) return;
                 _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (OpenCLPlatform)
             }
 

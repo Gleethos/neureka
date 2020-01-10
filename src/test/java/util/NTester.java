@@ -1,6 +1,6 @@
 package util;
 import neureka.Tsr;
-import neureka.gui.MessageFrame;
+import util.gui.MessageFrame;
 import org.junit.Assert;
 
 import java.util.List;

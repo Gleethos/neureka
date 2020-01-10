@@ -1,7 +1,7 @@
 package neureka.acceleration;
 
 import neureka.Tsr;
-import neureka.function.Function;
+import neureka.calculus.Function;
 import org.jetbrains.annotations.Contract;
 
 import java.util.Collection;

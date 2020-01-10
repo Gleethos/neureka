@@ -116,7 +116,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <!-- ======== START OF CLASS DATA ======== -->
 <main role="main">
 <div class="header">
-<div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">neureka.function.environment</a></div>
+<div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">neureka.calculus.environment</a></div>
 <h2 title="Class Cache" class="title">Class Cache</h2>
 </div>
 <div class="contentContainer">
@@ -124,7 +124,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li>neureka.function.environment.Cache</li>
+<li>neureka.calculus.environment.Cache</li>
 </ul>
 </li>
 </ul>
@@ -177,18 +177,18 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#free(neureka.function.factory.autograd.GraphLock)">free</a></span>&#8203;(<a href="../factory/autograd/GraphLock.html" title="class in neureka.function.factory.autograd">GraphLock</a>&nbsp;lock)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#free(neureka.autograd.GraphLock)">free</a></span>&#8203;(<a href="../factory/autograd/GraphLock.html" title="class in neureka.autograd">GraphLock</a>&nbsp;lock)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>java.util.Map&lt;java.lang.String,&#8203;<a href="../Function.html" title="interface in neureka.function">Function</a>&gt;</code></td>
+<td class="colFirst"><code>java.util.Map&lt;java.lang.String,&#8203;<a href="../Function.html" title="interface in neureka.calculus">Function</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#FUNCTIONS()">FUNCTIONS</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="../../Tsr.html" title="class in neureka">Tsr</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#preprocess(neureka.Tsr%5B%5D,neureka.function.Function,java.util.function.Supplier,int,int)">preprocess</a></span>&#8203;(<a href="../../Tsr.html" title="class in neureka">Tsr</a>[]&nbsp;inputs,
-          <a href="../Function.html" title="interface in neureka.function">Function</a>&nbsp;function,
+          <a href="../Function.html" title="interface in neureka.calculus">Function</a>&nbsp;function,
           java.util.function.Supplier&lt;<a href="../../Tsr.html" title="class in neureka">Tsr</a>&gt;&nbsp;activation,
           int&nbsp;d,
           int&nbsp;j)</code></th>
@@ -243,16 +243,16 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>FUNCTIONS</h4>
-<pre class="methodSignature">public&nbsp;java.util.Map&lt;java.lang.String,&#8203;<a href="../Function.html" title="interface in neureka.function">Function</a>&gt;&nbsp;FUNCTIONS()</pre>
+<pre class="methodSignature">public&nbsp;java.util.Map&lt;java.lang.String,&#8203;<a href="../Function.html" title="interface in neureka.calculus">Function</a>&gt;&nbsp;FUNCTIONS()</pre>
 </li>
 </ul>
-<a id="free(neureka.function.factory.autograd.GraphLock)">
+<a id="free(neureka.autograd.GraphLock)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>free</h4>
-<pre class="methodSignature">public&nbsp;void&nbsp;free&#8203;(<a href="../factory/autograd/GraphLock.html" title="class in neureka.function.factory.autograd">GraphLock</a>&nbsp;lock)</pre>
+<pre class="methodSignature">public&nbsp;void&nbsp;free&#8203;(<a href="../factory/autograd/GraphLock.html" title="class in neureka.autograd">GraphLock</a>&nbsp;lock)</pre>
 </li>
 </ul>
 <a id="preprocess(neureka.Tsr[],neureka.function.Function,java.util.function.Supplier,int,int)">
@@ -262,7 +262,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>preprocess</h4>
 <pre class="methodSignature">public&nbsp;<a href="../../Tsr.html" title="class in neureka">Tsr</a>&nbsp;preprocess&#8203;(<a href="../../Tsr.html" title="class in neureka">Tsr</a>[]&nbsp;inputs,
-                      <a href="../Function.html" title="interface in neureka.function">Function</a>&nbsp;function,
+                      <a href="../Function.html" title="interface in neureka.calculus">Function</a>&nbsp;function,
                       java.util.function.Supplier&lt;<a href="../../Tsr.html" title="class in neureka">Tsr</a>&gt;&nbsp;activation,
                       int&nbsp;d,
                       int&nbsp;j)</pre>

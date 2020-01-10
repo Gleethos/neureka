@@ -46,7 +46,7 @@ public class DeviceTests {
         NTester_Tensor tester = new NTester_Tensor("Testing autograd on GPU");
 
         Device gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
-        Neureka.Settings.AD._retainGraphDerivativesAfterBackward = true;
+        Neureka.Settings.AD.setRetainGraphDerivativesAfterBackward(true);
 
         Neureka.Settings.Indexing.setLegacy(true);
         OpenCLPlatform.PLATFORMS().get(0).recompile();
@@ -56,7 +56,7 @@ public class DeviceTests {
         OpenCLPlatform.PLATFORMS().get(0).recompile();
         _testAutograd(gpu, tester, false);
 
-        Neureka.Settings.AD._retainGraphDerivativesAfterBackward = false;
+        Neureka.Settings.AD.setRetainGraphDerivativesAfterBackward(false);
         tester.close();
     }
     private  void _testAutograd(Device gpu, NTester_Tensor tester, boolean legacyIndexing)

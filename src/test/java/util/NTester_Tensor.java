@@ -3,7 +3,6 @@ package util;
 import neureka.Tsr;
 import neureka.acceleration.CPU;
 import neureka.acceleration.Device;
-import neureka.function.factory.AbstractFunction;
 
 import java.util.List;
 

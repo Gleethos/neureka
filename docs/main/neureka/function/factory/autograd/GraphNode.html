@@ -116,7 +116,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <!-- ======== START OF CLASS DATA ======== -->
 <main role="main">
 <div class="header">
-<div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">neureka.function.factory.autograd</a></div>
+<div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">neureka.autograd</a></div>
 <h2 title="Class GraphNode" class="title">Class GraphNode</h2>
 </div>
 <div class="contentContainer">
@@ -124,7 +124,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li>neureka.function.factory.autograd.GraphNode</li>
+<li>neureka.autograd.GraphNode</li>
 </ul>
 </li>
 </ul>
@@ -154,10 +154,10 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr class="altColor">
-<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(neureka.Tsr,neureka.function.Function,neureka.Tsr%5B%5D,neureka.function.factory.autograd.GraphLock)">GraphNode</a></span>&#8203;(<a href="../../../Tsr.html" title="class in neureka">Tsr</a>&nbsp;output,
-         <a href="../../Function.html" title="interface in neureka.function">Function</a>&nbsp;function,
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(neureka.Tsr,neureka.function.Function,neureka.Tsr%5B%5D,neureka.autograd.GraphLock)">GraphNode</a></span>&#8203;(<a href="../../../Tsr.html" title="class in neureka">Tsr</a>&nbsp;output,
+         <a href="../../Function.html" title="interface in neureka.calculus">Function</a>&nbsp;function,
          <a href="../../../Tsr.html" title="class in neureka">Tsr</a>[]&nbsp;inputs,
-         <a href="GraphLock.html" title="class in neureka.function.factory.autograd">GraphLock</a>&nbsp;lock)</code></th>
+         <a href="GraphLock.html" title="class in neureka.autograd">GraphLock</a>&nbsp;lock)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 </table>
@@ -185,40 +185,40 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#extinguishLineageBy(neureka.function.factory.autograd.GraphNode)">extinguishLineageBy</a></span>&#8203;(<a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>&nbsp;child)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#extinguishLineageBy(neureka.autograd.GraphNode)">extinguishLineageBy</a></span>&#8203;(<a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>&nbsp;child)</code></th>
 <td class="colLast">
 <div class="block">This method is called when a tensor is deleted and belongs to a computation graph.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#forEach(java.util.function.BiConsumer)">forEach</a></span>&#8203;(java.util.function.BiConsumer&lt;<a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>,&#8203;<a href="../../../Tsr.html" title="class in neureka">Tsr</a>&gt;&nbsp;action)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#forEach(java.util.function.BiConsumer)">forEach</a></span>&#8203;(java.util.function.BiConsumer&lt;<a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>,&#8203;<a href="../../../Tsr.html" title="class in neureka">Tsr</a>&gt;&nbsp;action)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code><a href="../../Function.html" title="interface in neureka.function">Function</a></code></td>
+<td class="colFirst"><code><a href="../../Function.html" title="interface in neureka.calculus">Function</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#function()">function</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="../../../Tsr.html" title="class in neureka">Tsr</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#get(neureka.function.factory.autograd.GraphNode)">get</a></span>&#8203;(<a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>&nbsp;target)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#get(neureka.autograd.GraphNode)">get</a></span>&#8203;(<a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>&nbsp;target)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
-<td class="colFirst"><code>java.util.List&lt;java.lang.ref.WeakReference&lt;<a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>&gt;&gt;</code></td>
+<td class="colFirst"><code>java.util.List&lt;java.lang.ref.WeakReference&lt;<a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>&gt;&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getChildren()">getChildren</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
-<td class="colFirst"><code><a href="../../Function.html" title="interface in neureka.function">Function</a></code></td>
+<td class="colFirst"><code><a href="../../Function.html" title="interface in neureka.calculus">Function</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getFunction()">getFunction</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Recorded AbstractFunction.</div>
 </td>
 </tr>
 <tr id="i7" class="rowColor">
-<td class="colFirst"><code><a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>[]</code></td>
+<td class="colFirst"><code><a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>[]</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getParents()">getParents</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Input tensors.</div>
@@ -233,7 +233,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#has(neureka.function.factory.autograd.GraphNode)">has</a></span>&#8203;(<a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>&nbsp;target)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#has(neureka.autograd.GraphNode)">has</a></span>&#8203;(<a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>&nbsp;target)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i10" class="altColor">
@@ -272,7 +272,7 @@ extends java.lang.Object</pre>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i15" class="rowColor">
-<td class="colFirst"><code><a href="GraphLock.html" title="class in neureka.function.factory.autograd">GraphLock</a></code></td>
+<td class="colFirst"><code><a href="GraphLock.html" title="class in neureka.autograd">GraphLock</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#lock()">lock</a></span>()</code></th>
 <td class="colLast">
 <div class="block">"Lock object" for graph identity.</div>
@@ -290,12 +290,12 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#obtainLocking(neureka.function.factory.autograd.GraphLock)">obtainLocking</a></span>&#8203;(<a href="GraphLock.html" title="class in neureka.function.factory.autograd">GraphLock</a>&nbsp;newLock)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#obtainLocking(neureka.autograd.GraphLock)">obtainLocking</a></span>&#8203;(<a href="GraphLock.html" title="class in neureka.autograd">GraphLock</a>&nbsp;newLock)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i19" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#put(neureka.function.factory.autograd.GraphNode,neureka.Tsr)">put</a></span>&#8203;(<a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>&nbsp;target,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#put(neureka.autograd.GraphNode,neureka.Tsr)">put</a></span>&#8203;(<a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>&nbsp;target,
    <a href="../../../Tsr.html" title="class in neureka">Tsr</a>&nbsp;derivative)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -376,16 +376,16 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a id="&lt;init&gt;(neureka.Tsr,neureka.function.Function,neureka.Tsr[],neureka.function.factory.autograd.GraphLock)">
+<a id="&lt;init&gt;(neureka.Tsr,neureka.function.Function,neureka.Tsr[],neureka.autograd.GraphLock)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>GraphNode</h4>
 <pre>public&nbsp;GraphNode&#8203;(<a href="../../../Tsr.html" title="class in neureka">Tsr</a>&nbsp;output,
-                 <a href="../../Function.html" title="interface in neureka.function">Function</a>&nbsp;function,
+                 <a href="../../Function.html" title="interface in neureka.calculus">Function</a>&nbsp;function,
                  <a href="../../../Tsr.html" title="class in neureka">Tsr</a>[]&nbsp;inputs,
-                 <a href="GraphLock.html" title="class in neureka.function.factory.autograd">GraphLock</a>&nbsp;lock)</pre>
+                 <a href="GraphLock.html" title="class in neureka.autograd">GraphLock</a>&nbsp;lock)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>output</code> - </dd>
@@ -483,7 +483,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getFunction</h4>
-<pre class="methodSignature">public&nbsp;<a href="../../Function.html" title="interface in neureka.function">Function</a>&nbsp;getFunction()</pre>
+<pre class="methodSignature">public&nbsp;<a href="../../Function.html" title="interface in neureka.calculus">Function</a>&nbsp;getFunction()</pre>
 <div class="block">Recorded AbstractFunction.</div>
 </li>
 </ul>
@@ -493,7 +493,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getParents</h4>
-<pre class="methodSignature">public&nbsp;<a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>[]&nbsp;getParents()</pre>
+<pre class="methodSignature">public&nbsp;<a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>[]&nbsp;getParents()</pre>
 <div class="block">Input tensors. ('Parents' of the tensor of this node)</div>
 </li>
 </ul>
@@ -519,7 +519,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>lock</h4>
-<pre class="methodSignature">public&nbsp;<a href="GraphLock.html" title="class in neureka.function.factory.autograd">GraphLock</a>&nbsp;lock()</pre>
+<pre class="methodSignature">public&nbsp;<a href="GraphLock.html" title="class in neureka.autograd">GraphLock</a>&nbsp;lock()</pre>
 <div class="block">"Lock object" for graph identity. (result caching)
  Unique object which locks the payload to the current computation graph.</div>
 <dl>
@@ -534,7 +534,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getChildren</h4>
-<pre class="methodSignature">public&nbsp;java.util.List&lt;java.lang.ref.WeakReference&lt;<a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>&gt;&gt;&nbsp;getChildren()</pre>
+<pre class="methodSignature">public&nbsp;java.util.List&lt;java.lang.ref.WeakReference&lt;<a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>&gt;&gt;&nbsp;getChildren()</pre>
 </li>
 </ul>
 <a id="nid()">
@@ -550,13 +550,13 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a id="obtainLocking(neureka.function.factory.autograd.GraphLock)">
+<a id="obtainLocking(neureka.autograd.GraphLock)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>obtainLocking</h4>
-<pre class="methodSignature">public&nbsp;void&nbsp;obtainLocking&#8203;(<a href="GraphLock.html" title="class in neureka.function.factory.autograd">GraphLock</a>&nbsp;newLock)</pre>
+<pre class="methodSignature">public&nbsp;void&nbsp;obtainLocking&#8203;(<a href="GraphLock.html" title="class in neureka.autograd">GraphLock</a>&nbsp;newLock)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>newLock</code> - </dd>
@@ -623,13 +623,13 @@ extends java.lang.Object</pre>
 <pre class="methodSignature">public&nbsp;void&nbsp;redundantGradientCleanup()</pre>
 </li>
 </ul>
-<a id="extinguishLineageBy(neureka.function.factory.autograd.GraphNode)">
+<a id="extinguishLineageBy(neureka.autograd.GraphNode)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>extinguishLineageBy</h4>
-<pre class="methodSignature">public&nbsp;void&nbsp;extinguishLineageBy&#8203;(<a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>&nbsp;child)</pre>
+<pre class="methodSignature">public&nbsp;void&nbsp;extinguishLineageBy&#8203;(<a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>&nbsp;child)</pre>
 <div class="block">This method is called when a tensor is deleted and belongs to a computation graph.
  All parents of this tensor will be checked if deletions is possible.
  This is usually the case when the branch lineage is not tied to any other children!</div>
@@ -671,20 +671,20 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>function</h4>
-<pre class="methodSignature">public&nbsp;<a href="../../Function.html" title="interface in neureka.function">Function</a>&nbsp;function()</pre>
+<pre class="methodSignature">public&nbsp;<a href="../../Function.html" title="interface in neureka.calculus">Function</a>&nbsp;function()</pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Function</dd>
 </dl>
 </li>
 </ul>
-<a id="put(neureka.function.factory.autograd.GraphNode,neureka.Tsr)">
+<a id="put(neureka.autograd.GraphNode,neureka.Tsr)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>put</h4>
-<pre class="methodSignature">public&nbsp;void&nbsp;put&#8203;(<a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>&nbsp;target,
+<pre class="methodSignature">public&nbsp;void&nbsp;put&#8203;(<a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>&nbsp;target,
                 <a href="../../../Tsr.html" title="class in neureka">Tsr</a>&nbsp;derivative)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -693,13 +693,13 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a id="get(neureka.function.factory.autograd.GraphNode)">
+<a id="get(neureka.autograd.GraphNode)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>get</h4>
-<pre class="methodSignature">public&nbsp;<a href="../../../Tsr.html" title="class in neureka">Tsr</a>&nbsp;get&#8203;(<a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>&nbsp;target)</pre>
+<pre class="methodSignature">public&nbsp;<a href="../../../Tsr.html" title="class in neureka">Tsr</a>&nbsp;get&#8203;(<a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>&nbsp;target)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>target</code> - </dd>
@@ -708,13 +708,13 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a id="has(neureka.function.factory.autograd.GraphNode)">
+<a id="has(neureka.autograd.GraphNode)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>has</h4>
-<pre class="methodSignature">public&nbsp;boolean&nbsp;has&#8203;(<a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>&nbsp;target)</pre>
+<pre class="methodSignature">public&nbsp;boolean&nbsp;has&#8203;(<a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>&nbsp;target)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>target</code> - </dd>
@@ -742,7 +742,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>forEach</h4>
-<pre class="methodSignature">public&nbsp;void&nbsp;forEach&#8203;(java.util.function.BiConsumer&lt;<a href="GraphNode.html" title="class in neureka.function.factory.autograd">GraphNode</a>,&#8203;<a href="../../../Tsr.html" title="class in neureka">Tsr</a>&gt;&nbsp;action)</pre>
+<pre class="methodSignature">public&nbsp;void&nbsp;forEach&#8203;(java.util.function.BiConsumer&lt;<a href="GraphNode.html" title="class in neureka.autograd">GraphNode</a>,&#8203;<a href="../../../Tsr.html" title="class in neureka">Tsr</a>&gt;&nbsp;action)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>action</code> - </dd>

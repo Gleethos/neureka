@@ -1,20 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Neureka.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka</a> &gt; <span class="el_source">Neureka.java</span></div><h1>Neureka.java</h1><pre class="source lang-java linenums">package neureka;
 
 import neureka.acceleration.Device;
+import neureka.calculus.Function;
+import neureka.calculus.factory.assembly.FunctionBuilder;
 
-<span class="nc" id="L5">public class Neureka</span>
+<span class="nc" id="L7">public class Neureka</span>
 {
     public static Device findAcceleratorByName(String name){
-<span class="fc" id="L8">        return Device.find(name);</span>
+<span class="fc" id="L10">        return Device.find(name);</span>
     }
+
+    public static Function create(String expression){
+<span class="nc" id="L14">        return create(expression, true);</span>
+    }
+
+    public static Function create(String expression, boolean doAD){
+<span class="nc" id="L18">        return FunctionBuilder.build(expression, doAD);</span>
+    }
+
 
     public static String version(){
-<span class="nc" id="L12">        return &quot;0.0.1&quot;;</span>
+<span class="nc" id="L23">        return &quot;1.0.0&quot;;</span>
     }
 
-<span class="nc" id="L15">    public static class Settings</span>
+<span class="nc" id="L26">    public static class Settings</span>
     {
-<span class="nc" id="L17">        public static class Debug</span>
+
+        public static boolean isLocked(){
+<span class="nc" id="L30">            return  _isLocked;</span>
+        }
+
+        public static void setIsLocked(boolean locked){
+<span class="nc" id="L34">            _isLocked = locked;</span>
+<span class="nc" id="L35">        }</span>
+
+<span class="fc" id="L37">        private static boolean _isLocked = false;</span>
+
+
+<span class="nc" id="L40">        public static class Debug</span>
         {
             /**
              * Every derivative is calculated with respect to some graph node.
@@ -31,18 +54,38 @@ import neureka.acceleration.Device;
              * It is used for the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
              */
-<span class="fc" id="L34">            public static boolean _keepDerivativeTargetPayloads = false;</span>
+<span class="fc" id="L57">            private static boolean _keepDerivativeTargetPayloads = false;</span>
+
+            public static boolean keepDerivativeTargetPayloads(){
+<span class="fc" id="L60">                return _keepDerivativeTargetPayloads;</span>
+            }
+
+            public static void setKeepDerivativeTargetPayloads(boolean keep){
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
+<span class="fc" id="L65">                _keepDerivativeTargetPayloads = keep;</span>
+<span class="fc" id="L66">            }</span>
+
+
+
 
         }
 
-<span class="nc" id="L38">        public static class AD // Auto-Differentiation</span>
+<span class="nc" id="L73">        public static class AD // Auto-Differentiation</span>
         {
             /**
              * After backward passes the used derivatives are usually not needed.
              * For debugging purposes however this flag remains and will
              * not allow for garbage collection of the used derivatives.
              */
-<span class="fc" id="L45">            public static boolean _retainGraphDerivativesAfterBackward = false;</span>
+<span class="fc" id="L80">            private static boolean _retainGraphDerivativesAfterBackward = false;</span>
+
+            public static boolean retainGraphDerivativesAfterBackward(){
+<span class="fc" id="L83">                return _retainGraphDerivativesAfterBackward;</span>
+            }
+            public static void setRetainGraphDerivativesAfterBackward(boolean retain){
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
+<span class="fc" id="L87">                _retainGraphDerivativesAfterBackward = retain;</span>
+<span class="fc" id="L88">            }</span>
 
             /**
              * This fla enables an optimization technique which only applies
@@ -53,31 +96,49 @@ import neureka.acceleration.Device;
              * improve performance for some networks substantially.
              * The technique is termed JIT-Propagation.
              */
-<span class="fc" id="L56">            public static boolean _retainPendingErrorForJITProp = true;</span>
+<span class="fc" id="L99">            private static boolean _retainPendingErrorForJITProp = true;</span>
+
+            public static boolean retainPendingErrorForJITProp(){
+<span class="fc" id="L102">                return _retainPendingErrorForJITProp;</span>
+            }
+
+            public static void setRetainPendingErrorForJITProp(boolean retain){
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
+<span class="fc" id="L107">                _retainPendingErrorForJITProp = retain;</span>
+<span class="fc" id="L108">            }</span>
 
             /**
              * Gradients will automatically be applied to tensors as soon as
              * they are being used for calculation.
              * This feature works well with JIT-Propagation.
              */
-<span class="fc" id="L63">            public static boolean _applyGradientUntilTensorIsUsed = false;</span>
+<span class="fc" id="L115">            private static boolean _applyGradientWhenTensorIsUsed = false;</span>
 
+            public static boolean applyGradientWhenTensorIsUsed(){
+<span class="fc" id="L118">                return _applyGradientWhenTensorIsUsed;</span>
+            }
 
+            public static void setApplyGradientUntilTensorIsUsed(boolean apply){
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
+<span class="fc" id="L123">                _applyGradientWhenTensorIsUsed = apply;</span>
+<span class="fc" id="L124">            }</span>
 
         }
 
-<span class="nc" id="L69">        public static class Indexing</span>
+<span class="nc" id="L128">        public static class Indexing</span>
         {
 
-<span class="fc" id="L72">            private static boolean _legacyIndexing = false;//DEFAULT: true</span>
+<span class="fc" id="L131">            private static boolean _legacyIndexing = false;//DEFAULT: true</span>
+
 
             public static boolean legacy(){
-<span class="fc" id="L75">                return _legacyIndexing;</span>
+<span class="fc" id="L135">                return _legacyIndexing;</span>
             }
 
             public static void setLegacy(boolean enabled){
-<span class="fc" id="L79">                _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (OpenCLPlatform)</span>
-<span class="fc" id="L80">            }</span>
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
+<span class="fc" id="L140">                _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (OpenCLPlatform)</span>
+<span class="fc" id="L141">            }</span>
 
         }
 

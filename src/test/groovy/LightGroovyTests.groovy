@@ -3,7 +3,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.acceleration.CPU
 import neureka.acceleration.Device
-import neureka.function.factory.assembly.FunctionBuilder
+import neureka.calculus.factory.assembly.FunctionBuilder
 import org.junit.Test
 
 class LightGroovyTests
@@ -201,9 +201,9 @@ class LightGroovyTests
         assert y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
         y = ((x+b)*w)^2
         assert y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
-        Neureka.Settings.AD._retainGraphDerivativesAfterBackward = true
+        Neureka.Settings.AD.setRetainGraphDerivativesAfterBackward(true);
         y.backward(new Tsr(1))
-        Neureka.Settings.AD._retainGraphDerivativesAfterBackward = false
+        Neureka.Settings.AD.setRetainGraphDerivativesAfterBackward(false);
         assert new Tsr([y], "Ig[0]").toString().equals("empty")
         assert new Tsr([x], "Ig[0]").toString().equals("empty")
         Tsr[] trs = new Tsr[1]
@@ -282,15 +282,15 @@ class LightGroovyTests
         Tsr s =  (a*b) + 2
         Tsr x = s * (s+c)
 
-        Neureka.Settings.AD._retainPendingErrorForJITProp = false
+        Neureka.Settings.AD.setRetainPendingErrorForJITProp(false)
         x.backward(new Tsr(1))
-        Neureka.Settings.AD._retainPendingErrorForJITProp = true
+        Neureka.Settings.AD.setRetainPendingErrorForJITProp(true)
         assert c.toString().contains("(3.0):g:(-6.0)")
         assert a.toString().contains("(2.0):g:(36.0)")
 
-        Neureka.Settings.AD._retainPendingErrorForJITProp = false
+        Neureka.Settings.AD.setRetainPendingErrorForJITProp(false)
         x.backward(4)
-        Neureka.Settings.AD._retainPendingErrorForJITProp = true
+        Neureka.Settings.AD.setRetainPendingErrorForJITProp(true)
         assert c.toString().contains("(3.0):g:(-6.0)")
         assert a.toString().contains("(2.0):g:(36.0)")
     }
@@ -305,15 +305,15 @@ class LightGroovyTests
         Tsr s =  (a*b) + 2
         Tsr x = s * (s+c)
 
-        Neureka.Settings.AD._retainPendingErrorForJITProp = false
+        Neureka.Settings.AD.setRetainPendingErrorForJITProp(false)
         x.backward(1)
-        Neureka.Settings.AD._retainPendingErrorForJITProp = true
+        Neureka.Settings.AD.setRetainPendingErrorForJITProp(true)
         assert c.toString().contains("(3.0):g:(-6.0)")
         assert a.toString().contains("(2.0):g:(36.0)")
 
-        Neureka.Settings.AD._retainPendingErrorForJITProp = false
+        Neureka.Settings.AD.setRetainPendingErrorForJITProp(true)
         x.backward(new Tsr(4))
-        Neureka.Settings.AD._retainPendingErrorForJITProp = true
+        Neureka.Settings.AD.setRetainPendingErrorForJITProp(true)
         assert c.toString().contains("(3.0):g:(-6.0)")
         assert a.toString().contains("(2.0):g:(36.0)")
     }
@@ -352,9 +352,9 @@ class LightGroovyTests
 
         assert c.toString().contains("g:(-6.0)")
         assert a.toString().contains("g:(null)")
-        Neureka.Settings.AD._applyGradientUntilTensorIsUsed = true
+        Neureka.Settings.AD.setApplyGradientUntilTensorIsUsed(true)
         Tsr y = a+3 //JIT-prop will be activated here...
-        Neureka.Settings.AD._applyGradientUntilTensorIsUsed = false
+        Neureka.Settings.AD.setApplyGradientUntilTensorIsUsed(false)
         assert y.toString().contains("(41.0)")
         assert c.toString().contains("g:(-6.0)")
         assert a.toString().contains("(38.0):g:(null)")
