@@ -36,9 +36,17 @@ public class Neureka
 
         private static boolean _isLocked = false;
 
+        public static void reset(){
+            Debug.reset();
+            AD.reset();
+            Indexing.reset();
+        }
 
         public static class Debug
         {
+            public static void reset(){
+                _keepDerivativeTargetPayloads = false;
+            }
             /**
              * Every derivative is calculated with respect to some graph node.
              * Graph nodes contain payload tensors.
@@ -66,12 +74,15 @@ public class Neureka
             }
 
 
-
-
         }
 
         public static class AD // Auto-Differentiation
         {
+            public static void reset(){
+                _retainGraphDerivativesAfterBackward = false;
+                _retainPendingErrorForJITProp = true;
+                _applyGradientWhenTensorIsUsed = false;
+            }
             /**
              * After backward passes the used derivatives are usually not needed.
              * For debugging purposes however this flag remains and will
@@ -118,7 +129,7 @@ public class Neureka
                 return _applyGradientWhenTensorIsUsed;
             }
 
-            public static void setApplyGradientUntilTensorIsUsed(boolean apply){
+            public static void setApplyGradientWhenTensorIsUsed(boolean apply){
                 if(_isLocked) return;
                 _applyGradientWhenTensorIsUsed = apply;
             }
@@ -127,8 +138,11 @@ public class Neureka
 
         public static class Indexing
         {
+            public static void reset(){
+                _legacyIndexing = false;
+            }
 
-            private static boolean _legacyIndexing = false;//DEFAULT: true
+            private static boolean _legacyIndexing = false;
 
 
             public static boolean legacy(){

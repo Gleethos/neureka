@@ -21,7 +21,7 @@ public class GraphNode
     private static Function INV_X = FunctionBuilder.build("I[0]x>>I[1]x>>I[2]", false);
 
     /**
-     *  This gradient64 node is involved in auto-differentiation.
+     *  This gradient node is involved in auto-differentiation.
      * @return boolean
      */
     public boolean usesAD(){
@@ -317,7 +317,7 @@ public class GraphNode
             modes[Ii] = (inputs[Ii].rqsGradient())?1:node.mode();
             input_mode += (modes[Ii]!=0)?1:0;
         }
-        if(input_mode==1 && ("x,".replace(function.type(), "")=="x,")){//Convolution and reshaping prohibit forward AD
+        if(input_mode==1 && ("x,".replace(function.type(), "").equals("x,"))){//Convolution and reshaping prohibit forward AD
             for(int Ii = 0; Ii< inputs.length; Ii++){
                 result_mode += (modes[Ii]==0)?0:(modes[Ii]<0)?1:modes[Ii]+1;
             }
@@ -526,9 +526,10 @@ public class GraphNode
         }
         if(this.usesAD())
         {
+            /** Checking JIT-Prop conditions and create Pending error if possible **/
             if(!this.reliesOnJustInTimeProp() && allowPendingError && !this.isLeave())
             {//==> We are NOT inside a 'Just-In-Time-Backprop' process (new pending error can be created)
-                int ADPaths = _numberOfADChildren();// Multiple children triggers creation of a pending error
+                int ADPaths = _numberOfReverseModeADChildren();// Multiple children triggers creation of a pending error
                 if(ADPaths>1){
                     PendingError pending = pendingBackProp.get(this);
                     if(pending==null){
@@ -542,6 +543,7 @@ public class GraphNode
                     //This optimization is a light version of JITProp. JITProp builds on this!
                 }
             }
+
             //if(_payload==null) throw new RuntimeException();
             if(this.usesForwardAD()){//Using forward-AD derivatives for reverse-mode AD!:
                 this.forEach((t, d)->t._backward(MUL.activate(new Tsr[]{error, d}), pendingBackProp, true));
@@ -579,13 +581,13 @@ public class GraphNode
      * Counts how many child nodes will later on provide error values for back-propagation!
      * @return
      */
-    private int _numberOfADChildren(){
+    private int _numberOfReverseModeADChildren(){
         int count = 0;
         if(_children!=null){
             for(WeakReference weak : _children){
                 if(weak!=null && weak.get()!=null){
                     GraphNode child = (GraphNode) weak.get();
-                    if(child.usesAD()){
+                    if(child.usesReverseAD()){
                         count++;
                     }
                 }

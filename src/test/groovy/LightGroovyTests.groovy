@@ -3,11 +3,38 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.acceleration.CPU
 import neureka.acceleration.Device
+import neureka.autograd.JITProp
 import neureka.calculus.factory.assembly.FunctionBuilder
 import org.junit.Test
 
 class LightGroovyTests
 {
+
+    @Test
+    void testNoJITPropWhenForwardAD(){
+        Neureka.Settings.AD.setRetainPendingErrorForJITProp(true)
+        Neureka.Settings.AD.setApplyGradientWhenTensorIsUsed(true)
+        Neureka.Settings.AD.setRetainGraphDerivativesAfterBackward(false)
+        Tsr a = new Tsr(2).setRqsGradient(true)
+        Tsr b = new Tsr(-4)
+        Tsr c = new Tsr(3).setRqsGradient(true)
+        Tsr s = (a+b) * c
+        Tsr x = (s^2)+s
+        assert s.toString().contains("->d[1]:(-2.0)")
+        assert s.toString().contains("->d[1]:(3.0)")
+        assert s.toString().contains("[1]:(-6.0)")
+        assert !a.has(JITProp.class)
+        assert !b.has(JITProp.class)
+        assert !c.has(JITProp.class)
+        x.backward(3)
+        assert !a.has(JITProp.class)
+        assert !b.has(JITProp.class)
+        assert !c.has(JITProp.class)
+        assert a.toString().contains("g:(-99.0)")
+        assert c.toString().contains("g:(66.0)")
+        Neureka.Settings.reset()
+    }
+
     @Test
     void testIndexMapping(){
 
@@ -352,9 +379,9 @@ class LightGroovyTests
 
         assert c.toString().contains("g:(-6.0)")
         assert a.toString().contains("g:(null)")
-        Neureka.Settings.AD.setApplyGradientUntilTensorIsUsed(true)
+        Neureka.Settings.AD.setApplyGradientWhenTensorIsUsed(true)
         Tsr y = a+3 //JIT-prop will be activated here...
-        Neureka.Settings.AD.setApplyGradientUntilTensorIsUsed(false)
+        Neureka.Settings.AD.setApplyGradientWhenTensorIsUsed(false)
         assert y.toString().contains("(41.0)")
         assert c.toString().contains("g:(-6.0)")
         assert a.toString().contains("(38.0):g:(null)")

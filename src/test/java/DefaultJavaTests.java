@@ -12,6 +12,7 @@ public class DefaultJavaTests {
     @Test
     public void testAutograd()
     {
+
         NTester_Tensor tester = new NTester_Tensor("Tensor tester (only cpu)");
         Tsr x = new Tsr(new int[]{1}, 3).setRqsGradient(true);
         Tsr b = new Tsr(new int[]{1}, -4);

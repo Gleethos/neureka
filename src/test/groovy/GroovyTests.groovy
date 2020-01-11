@@ -59,9 +59,9 @@ class GroovyTests
 
         assert w_a.toString().contains("g:(null)")
         assert !w_b.toString().contains("g:(null)")
-        Neureka.Settings.AD.setApplyGradientUntilTensorIsUsed(true)
+        Neureka.Settings.AD.setApplyGradientWhenTensorIsUsed(true)
         w_a * 3
-        Neureka.Settings.AD.setApplyGradientUntilTensorIsUsed(false)
+        Neureka.Settings.AD.setApplyGradientWhenTensorIsUsed(false)
         assert w_a.toString().contains("g:(null)")
         assert !w_a.toString().contains("1.0, 3.0, 4.0, -1.0")
         assert !w_b.toString().contains("g:(null)")
@@ -100,9 +100,9 @@ class GroovyTests
 
         assert w_a.toString().contains("g:(null)")
         assert !w_b.toString().contains("g:(null)")
-        Neureka.Settings.AD.setApplyGradientUntilTensorIsUsed(true)
+        Neureka.Settings.AD.setApplyGradientWhenTensorIsUsed(true)
         w_a * 3
-        Neureka.Settings.AD.setApplyGradientUntilTensorIsUsed(false)
+        Neureka.Settings.AD.setApplyGradientWhenTensorIsUsed(false)
         assert w_a.toString().contains("g:(null)")
         assert !w_a.toString().contains("1.0, 3.0, 4.0, -1.0")
         assert !w_b.toString().contains("g:(null)")
