@@ -1,4 +1,4 @@
-package neureka.calculus.factory.implementations;
+package neureka.calculus.factory.components;
 
 
 import neureka.Tsr;

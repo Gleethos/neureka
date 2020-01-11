@@ -27,18 +27,17 @@ public class FunctionTests {
         assert f.activate(new double[]{2.5})==3.507365283517986;
         assert f.activate(new double[]{0})==0.2;
 
-
         assert f.derive(new double[]{0}, 0)==1.1;
         assert f.derive(new double[]{0.5}, 0)==0.646867884000033;
         assert f.derive(new double[]{1.6}, 0)==-0.00697440343353687;
         assert f.derive(new double[]{-4}, 0)==3.9174193383745917;
 
-        f = FunctionBuilder.build("sum((cos(I[j]*5)/5+I[0])*(1+sin(I[j])/2))", false);
+        f = FunctionBuilder.build("sum((cos(I[j]*5)/5+I[j])*(1+sin(I[j])/2))", false);
         double[] inputs = {0.0, 0.5, 1.6, -4.0};
-        double d = 1.1+0.646867884000033-0.00697440343353687+3.9174193383745917;
-        double result = f.derive(inputs, 0);
-
-        System.out.println(result+" =?= "+d);
+        double[] expected = {1.1, 0.646867884000033, -0.00697440343353687, 3.9174193383745917};
+        for(int i=0; i<expected.length; i++){
+            assert f.derive(inputs, i)==expected[i];
+        }
 
     }
 

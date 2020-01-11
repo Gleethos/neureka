@@ -5,7 +5,7 @@ import neureka.acceleration.Device;
 import neureka.calculus.Function;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
-import neureka.calculus.factory.implementations.FunctionConstant;
+import neureka.calculus.factory.components.FunctionConstant;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -695,109 +695,106 @@ public abstract class AbstractFunction implements Function {
 <span class="fc" id="L695">                out += src.get(0).derive(inputs, d) * b * Math.pow(a, b - 1);</span>
 <span class="pc bpc" id="L696" title="1 of 2 branches missed.">                out += (a &gt;= 0) ? bd *  Math.pow(a, b) * Math.log(a) : 0;</span>
 <span class="fc" id="L697">                return out;</span>
-                //}
-
-
             }
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         private static double division(double[] inputs, int j, int d, ArrayList&lt;Function&gt; src) {
-<span class="fc bfc" id="L707" title="All 2 branches covered.">            if (d &lt; 0) {</span>
-<span class="fc" id="L708">                double result = src.get(0).activate(inputs, j);</span>
-<span class="fc bfc" id="L709" title="All 2 branches covered.">                for (int Vi = 1; Vi &lt; src.size(); Vi++) {</span>
-<span class="fc" id="L710">                    final double current = src.get(Vi).activate(inputs, j);</span>
-<span class="fc" id="L711">                    result /= current;</span>
+<span class="fc bfc" id="L704" title="All 2 branches covered.">            if (d &lt; 0) {</span>
+<span class="fc" id="L705">                double result = src.get(0).activate(inputs, j);</span>
+<span class="fc bfc" id="L706" title="All 2 branches covered.">                for (int Vi = 1; Vi &lt; src.size(); Vi++) {</span>
+<span class="fc" id="L707">                    final double current = src.get(Vi).activate(inputs, j);</span>
+<span class="fc" id="L708">                    result /= current;</span>
                 }
-<span class="fc" id="L713">                return result;</span>
+<span class="fc" id="L710">                return result;</span>
             } else {
                 double u, ud, v, vd;
-<span class="fc" id="L716">                u = src.get(0).activate(inputs, j);</span>
-<span class="fc" id="L717">                ud = src.get(0).derive(inputs, d, j);</span>
-<span class="fc bfc" id="L718" title="All 2 branches covered.">                for (int i = 0; i &lt; src.size() - 1; i++) {</span>
-<span class="fc" id="L719">                    v = src.get(i + 1).activate(inputs, j);</span>
-<span class="fc" id="L720">                    vd = src.get(i + 1).derive(inputs, d, j);</span>
-<span class="fc" id="L721">                    ud = (ud * v - u * vd) / Math.pow(v, 2);</span>
-<span class="fc" id="L722">                    u /= v;</span>
+<span class="fc" id="L713">                u = src.get(0).activate(inputs, j);</span>
+<span class="fc" id="L714">                ud = src.get(0).derive(inputs, d, j);</span>
+<span class="fc bfc" id="L715" title="All 2 branches covered.">                for (int i = 0; i &lt; src.size() - 1; i++) {</span>
+<span class="fc" id="L716">                    v = src.get(i + 1).activate(inputs, j);</span>
+<span class="fc" id="L717">                    vd = src.get(i + 1).derive(inputs, d, j);</span>
+<span class="fc" id="L718">                    ud = (ud * v - u * vd) / Math.pow(v, 2);</span>
+<span class="fc" id="L719">                    u /= v;</span>
                 }
-<span class="fc" id="L724">                return ud;</span>
+<span class="fc" id="L721">                return ud;</span>
             }
         }
 
         @Contract(pure = true)
         private static double division(double[] inputs, int d, ArrayList&lt;Function&gt; src) {
-<span class="fc bfc" id="L730" title="All 2 branches covered.">            if (d &lt; 0) {</span>
-<span class="fc" id="L731">                double result = src.get(0).activate(inputs);</span>
-<span class="fc bfc" id="L732" title="All 2 branches covered.">                for (int i = 1; i &lt; src.size(); i++) {</span>
-<span class="fc" id="L733">                    final double current = src.get(i).activate(inputs);</span>
-<span class="fc" id="L734">                    result /= current;</span>
+<span class="fc bfc" id="L727" title="All 2 branches covered.">            if (d &lt; 0) {</span>
+<span class="fc" id="L728">                double result = src.get(0).activate(inputs);</span>
+<span class="fc bfc" id="L729" title="All 2 branches covered.">                for (int i = 1; i &lt; src.size(); i++) {</span>
+<span class="fc" id="L730">                    final double current = src.get(i).activate(inputs);</span>
+<span class="fc" id="L731">                    result /= current;</span>
                 }
-<span class="fc" id="L736">                return result;</span>
+<span class="fc" id="L733">                return result;</span>
             } else {
-<span class="fc" id="L738">                double derivative = 0;</span>
-<span class="fc" id="L739">                double tempVar = src.get(0).activate(inputs);</span>
-<span class="fc" id="L740">                derivative = src.get(0).derive(inputs, d);</span>
+<span class="fc" id="L735">                double derivative = 0;</span>
+<span class="fc" id="L736">                double tempVar = src.get(0).activate(inputs);</span>
+<span class="fc" id="L737">                derivative = src.get(0).derive(inputs, d);</span>
 
-<span class="fc bfc" id="L742" title="All 2 branches covered.">                for (int i = 0; i &lt; src.size() - 1; i++) {</span>
+<span class="fc bfc" id="L739" title="All 2 branches covered.">                for (int i = 0; i &lt; src.size() - 1; i++) {</span>
                     double u, ud, v, vd;
-<span class="fc" id="L744">                    v = src.get(i + 1).activate(inputs);</span>
-<span class="fc" id="L745">                    vd = src.get(i + 1).derive(inputs, d);</span>
-<span class="fc" id="L746">                    u = tempVar;</span>
-<span class="fc" id="L747">                    ud = derivative;</span>
-<span class="fc" id="L748">                    derivative = (ud * v - u * vd) / Math.pow(v, 2);</span>
-<span class="fc" id="L749">                    tempVar /= v;</span>
+<span class="fc" id="L741">                    v = src.get(i + 1).activate(inputs);</span>
+<span class="fc" id="L742">                    vd = src.get(i + 1).derive(inputs, d);</span>
+<span class="fc" id="L743">                    u = tempVar;</span>
+<span class="fc" id="L744">                    ud = derivative;</span>
+<span class="fc" id="L745">                    derivative = (ud * v - u * vd) / Math.pow(v, 2);</span>
+<span class="fc" id="L746">                    tempVar /= v;</span>
                 }
-<span class="fc" id="L751">                return derivative;</span>
+<span class="fc" id="L748">                return derivative;</span>
             }
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         private static double multiplication(double[] inputs, int j, int d, ArrayList&lt;Function&gt; src) {
-<span class="fc bfc" id="L758" title="All 2 branches covered.">            if (d &lt; 0) {</span>
-<span class="fc" id="L759">                double result = src.get(0).activate(inputs, j);</span>
-<span class="fc bfc" id="L760" title="All 2 branches covered.">                for (int i = 1; i &lt; src.size(); i++) {</span>
-<span class="fc" id="L761">                    final double current = src.get(i).activate(inputs, j);</span>
-<span class="fc" id="L762">                    result *= current;</span>
+<span class="fc bfc" id="L755" title="All 2 branches covered.">            if (d &lt; 0) {</span>
+<span class="fc" id="L756">                double result = src.get(0).activate(inputs, j);</span>
+<span class="fc bfc" id="L757" title="All 2 branches covered.">                for (int i = 1; i &lt; src.size(); i++) {</span>
+<span class="fc" id="L758">                    final double current = src.get(i).activate(inputs, j);</span>
+<span class="fc" id="L759">                    result *= current;</span>
                 }
-<span class="fc" id="L764">                return result;</span>
+<span class="fc" id="L761">                return result;</span>
             } else {
                 double u, ud, v, vd;
-<span class="fc" id="L767">                u = src.get(0).activate(inputs, j);</span>
-<span class="fc" id="L768">                ud = src.get(0).derive(inputs, d, j);</span>
+<span class="fc" id="L764">                u = src.get(0).activate(inputs, j);</span>
+<span class="fc" id="L765">                ud = src.get(0).derive(inputs, d, j);</span>
 
-<span class="fc bfc" id="L770" title="All 2 branches covered.">                for (int ji = 1; ji &lt; src.size(); ji++) {</span>
-<span class="fc" id="L771">                    v = src.get(ji).activate(inputs, j);</span>
-<span class="fc" id="L772">                    vd = src.get(ji).derive(inputs, d, j);</span>
-<span class="fc" id="L773">                    ud = u * vd + v * ud;</span>
-<span class="fc" id="L774">                    u *= v;</span>
+<span class="fc bfc" id="L767" title="All 2 branches covered.">                for (int ji = 1; ji &lt; src.size(); ji++) {</span>
+<span class="fc" id="L768">                    v = src.get(ji).activate(inputs, j);</span>
+<span class="fc" id="L769">                    vd = src.get(ji).derive(inputs, d, j);</span>
+<span class="fc" id="L770">                    ud = u * vd + v * ud;</span>
+<span class="fc" id="L771">                    u *= v;</span>
                 }
-<span class="fc" id="L776">                return ud;</span>
+<span class="fc" id="L773">                return ud;</span>
             }
         }
 
         @Contract(pure = true)
         private static double multiplication(double[] inputs, int d, ArrayList&lt;Function&gt; src) {
-<span class="fc bfc" id="L782" title="All 2 branches covered.">            if (d &lt; 0) {</span>
-<span class="fc" id="L783">                double result = src.get(0).activate(inputs);</span>
-<span class="fc bfc" id="L784" title="All 2 branches covered.">                for (int i = 1; i &lt; src.size(); i++) {</span>
-<span class="fc" id="L785">                    final double current = src.get(i).activate(inputs);</span>
-<span class="fc" id="L786">                    result *= current;</span>
+<span class="fc bfc" id="L779" title="All 2 branches covered.">            if (d &lt; 0) {</span>
+<span class="fc" id="L780">                double result = src.get(0).activate(inputs);</span>
+<span class="fc bfc" id="L781" title="All 2 branches covered.">                for (int i = 1; i &lt; src.size(); i++) {</span>
+<span class="fc" id="L782">                    final double current = src.get(i).activate(inputs);</span>
+<span class="fc" id="L783">                    result *= current;</span>
                 }
-<span class="fc" id="L788">                return result;</span>
+<span class="fc" id="L785">                return result;</span>
             } else {
                 double u, ud, v, vd;
-<span class="fc" id="L791">                u = src.get(0).activate(inputs);</span>
-<span class="fc" id="L792">                ud = src.get(0).derive(inputs, d);</span>
-<span class="fc bfc" id="L793" title="All 2 branches covered.">                for (int j = 1; j &lt; src.size(); j++) {</span>
-<span class="fc" id="L794">                    v = src.get(j).activate(inputs);</span>
-<span class="fc" id="L795">                    vd = src.get(j).derive(inputs, d);</span>
+<span class="fc" id="L788">                u = src.get(0).activate(inputs);</span>
+<span class="fc" id="L789">                ud = src.get(0).derive(inputs, d);</span>
+<span class="fc bfc" id="L790" title="All 2 branches covered.">                for (int j = 1; j &lt; src.size(); j++) {</span>
+<span class="fc" id="L791">                    v = src.get(j).activate(inputs);</span>
+<span class="fc" id="L792">                    vd = src.get(j).derive(inputs, d);</span>
 
-<span class="fc" id="L797">                    ud = u * vd + v * ud;</span>
-<span class="fc" id="L798">                    u *= v;//this step can be avoided (TODO optimize)</span>
+<span class="fc" id="L794">                    ud = u * vd + v * ud;</span>
+<span class="fc" id="L795">                    u *= v;//this step can be avoided (TODO optimize)</span>
                 }
-<span class="fc" id="L800">                return ud;</span>
+<span class="fc" id="L797">                return ud;</span>
             }
         }
 
@@ -806,121 +803,121 @@ public abstract class AbstractFunction implements Function {
 
         @Contract(pure = true)
         private static double idy(double[] inputs, int d, ArrayList&lt;Function&gt; src) {
-<span class="nc bnc" id="L809" title="All 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="nc" id="L810">                inputs[0] = inputs[1];</span>
+<span class="nc bnc" id="L806" title="All 2 branches missed.">            if (d &lt; 0) {</span>
+<span class="nc" id="L807">                inputs[0] = inputs[1];</span>
             } else {
             }
-<span class="nc" id="L813">            return 0;</span>
+<span class="nc" id="L810">            return 0;</span>
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         private static double modulo(double[] inputs, int j, int d, ArrayList&lt;Function&gt; src) {
-<span class="nc bnc" id="L819" title="All 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="nc" id="L820">                double result = src.get(0).activate(inputs, j);</span>
-<span class="nc bnc" id="L821" title="All 2 branches missed.">                for (int i = 1; i &lt; src.size(); i++) {</span>
-<span class="nc" id="L822">                    final double current = src.get(i).activate(inputs, j);</span>
-<span class="nc" id="L823">                    result %= current;</span>
+<span class="nc bnc" id="L816" title="All 2 branches missed.">            if (d &lt; 0) {</span>
+<span class="nc" id="L817">                double result = src.get(0).activate(inputs, j);</span>
+<span class="nc bnc" id="L818" title="All 2 branches missed.">                for (int i = 1; i &lt; src.size(); i++) {</span>
+<span class="nc" id="L819">                    final double current = src.get(i).activate(inputs, j);</span>
+<span class="nc" id="L820">                    result %= current;</span>
                 }
-<span class="nc" id="L825">                return result;</span>
+<span class="nc" id="L822">                return result;</span>
             } else {
-<span class="nc" id="L827">                return src.get(0).derive(inputs, d, j);// j ?</span>
+<span class="nc" id="L824">                return src.get(0).derive(inputs, d, j);// j ?</span>
             }
         }
 
         @Contract(pure = true)
         private static double modulo(double[] inputs, int d, ArrayList&lt;Function&gt; src) {
-<span class="nc bnc" id="L833" title="All 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="nc" id="L834">                double result = src.get(0).activate(inputs);</span>
-<span class="nc bnc" id="L835" title="All 2 branches missed.">                for (int i = 1; i &lt; src.size(); i++) {</span>
-<span class="nc" id="L836">                    final double current = src.get(i).activate(inputs);</span>
-<span class="nc" id="L837">                    result %= current;</span>
+<span class="nc bnc" id="L830" title="All 2 branches missed.">            if (d &lt; 0) {</span>
+<span class="nc" id="L831">                double result = src.get(0).activate(inputs);</span>
+<span class="nc bnc" id="L832" title="All 2 branches missed.">                for (int i = 1; i &lt; src.size(); i++) {</span>
+<span class="nc" id="L833">                    final double current = src.get(i).activate(inputs);</span>
+<span class="nc" id="L834">                    result %= current;</span>
                 }
-<span class="nc" id="L839">                return result;</span>
+<span class="nc" id="L836">                return result;</span>
             } else {
-<span class="nc" id="L841">                return src.get(0).derive(inputs, d);</span>
+<span class="nc" id="L838">                return src.get(0).derive(inputs, d);</span>
             }
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         private static double subtraction(double[] inputs, int j, int d, ArrayList&lt;Function&gt; src) {
-<span class="nc bnc" id="L848" title="All 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="nc" id="L849">                double result = src.get(0).activate(inputs, j);</span>
-<span class="nc bnc" id="L850" title="All 2 branches missed.">                for (int Vi = 1; Vi &lt; src.size(); Vi++) {</span>
-<span class="nc" id="L851">                    final double current = src.get(Vi).activate(inputs, j);</span>
-<span class="nc" id="L852">                    result -= current;</span>
+<span class="nc bnc" id="L845" title="All 2 branches missed.">            if (d &lt; 0) {</span>
+<span class="nc" id="L846">                double result = src.get(0).activate(inputs, j);</span>
+<span class="nc bnc" id="L847" title="All 2 branches missed.">                for (int Vi = 1; Vi &lt; src.size(); Vi++) {</span>
+<span class="nc" id="L848">                    final double current = src.get(Vi).activate(inputs, j);</span>
+<span class="nc" id="L849">                    result -= current;</span>
                 }
-<span class="nc" id="L854">                return result;</span>
+<span class="nc" id="L851">                return result;</span>
             } else {
-<span class="nc" id="L856">                double derivative = 0;</span>
-<span class="nc bnc" id="L857" title="All 2 branches missed.">                for (int i = 0; i &lt; src.size(); ++i) {</span>
-<span class="nc bnc" id="L858" title="All 2 branches missed.">                    if (i == 0) {</span>
-<span class="nc" id="L859">                        derivative += src.get(i).derive(inputs, d, j);</span>
+<span class="nc" id="L853">                double derivative = 0;</span>
+<span class="nc bnc" id="L854" title="All 2 branches missed.">                for (int i = 0; i &lt; src.size(); ++i) {</span>
+<span class="nc bnc" id="L855" title="All 2 branches missed.">                    if (i == 0) {</span>
+<span class="nc" id="L856">                        derivative += src.get(i).derive(inputs, d, j);</span>
                     } else {
-<span class="nc" id="L861">                        derivative -= src.get(i).derive(inputs, d, j);</span>
+<span class="nc" id="L858">                        derivative -= src.get(i).derive(inputs, d, j);</span>
                     }
                 }
-<span class="nc" id="L864">                return derivative;</span>
+<span class="nc" id="L861">                return derivative;</span>
             }
         }
 
         @Contract(pure = true)
         private static double subtraction(double[] inputs, int d, ArrayList&lt;Function&gt; src) {
-<span class="pc bpc" id="L870" title="1 of 2 branches missed.">            if (d &lt; 0) {</span>
-<span class="fc" id="L871">                double result = src.get(0).activate(inputs);</span>
-<span class="fc bfc" id="L872" title="All 2 branches covered.">                for (int i = 1; i &lt; src.size(); i++) {</span>
-<span class="fc" id="L873">                    final double current = src.get(i).activate(inputs);</span>
-<span class="fc" id="L874">                    result -= current;</span>
+<span class="pc bpc" id="L867" title="1 of 2 branches missed.">            if (d &lt; 0) {</span>
+<span class="fc" id="L868">                double result = src.get(0).activate(inputs);</span>
+<span class="fc bfc" id="L869" title="All 2 branches covered.">                for (int i = 1; i &lt; src.size(); i++) {</span>
+<span class="fc" id="L870">                    final double current = src.get(i).activate(inputs);</span>
+<span class="fc" id="L871">                    result -= current;</span>
                 }
-<span class="fc" id="L876">                return result;</span>
+<span class="fc" id="L873">                return result;</span>
             } else {
-<span class="nc" id="L878">                double derivative = 0;</span>
-<span class="nc bnc" id="L879" title="All 2 branches missed.">                for (int i = 0; i &lt; src.size(); ++i) {</span>
-<span class="nc bnc" id="L880" title="All 2 branches missed.">                    if (i == 0) {</span>
-<span class="nc" id="L881">                        derivative += src.get(i).derive(inputs, d);</span>
+<span class="nc" id="L875">                double derivative = 0;</span>
+<span class="nc bnc" id="L876" title="All 2 branches missed.">                for (int i = 0; i &lt; src.size(); ++i) {</span>
+<span class="nc bnc" id="L877" title="All 2 branches missed.">                    if (i == 0) {</span>
+<span class="nc" id="L878">                        derivative += src.get(i).derive(inputs, d);</span>
                     } else {
-<span class="nc" id="L883">                        derivative -= src.get(i).derive(inputs, d);</span>
+<span class="nc" id="L880">                        derivative -= src.get(i).derive(inputs, d);</span>
                     }
                 }
-<span class="nc" id="L886">                return derivative;</span>
+<span class="nc" id="L883">                return derivative;</span>
             }
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         private static double addition(double[] inputs, int j, int d, ArrayList&lt;Function&gt; src) {
-<span class="fc bfc" id="L893" title="All 2 branches covered.">            if (d &lt; 0) {</span>
-<span class="fc" id="L894">                double result = src.get(0).activate(inputs, j);</span>
-<span class="fc bfc" id="L895" title="All 2 branches covered.">                for (int i = 1; i &lt; src.size(); i++) {</span>
-<span class="fc" id="L896">                    final double current = src.get(i).activate(inputs, j);</span>
-<span class="fc" id="L897">                    result += current;</span>
+<span class="fc bfc" id="L890" title="All 2 branches covered.">            if (d &lt; 0) {</span>
+<span class="fc" id="L891">                double result = src.get(0).activate(inputs, j);</span>
+<span class="fc bfc" id="L892" title="All 2 branches covered.">                for (int i = 1; i &lt; src.size(); i++) {</span>
+<span class="fc" id="L893">                    final double current = src.get(i).activate(inputs, j);</span>
+<span class="fc" id="L894">                    result += current;</span>
                 }
-<span class="fc" id="L899">                return result;</span>
+<span class="fc" id="L896">                return result;</span>
             } else {
-<span class="fc" id="L901">                double derivative = 0;</span>
-<span class="fc bfc" id="L902" title="All 2 branches covered.">                for (int i = 0; i &lt; src.size(); ++i) {</span>
-<span class="fc" id="L903">                    derivative += src.get(i).derive(inputs, d, j);</span>
+<span class="fc" id="L898">                double derivative = 0;</span>
+<span class="fc bfc" id="L899" title="All 2 branches covered.">                for (int i = 0; i &lt; src.size(); ++i) {</span>
+<span class="fc" id="L900">                    derivative += src.get(i).derive(inputs, d, j);</span>
                 }
-<span class="fc" id="L905">                return derivative;</span>
+<span class="fc" id="L902">                return derivative;</span>
             }
         }
 
         @Contract(pure = true)
         private static double addition(double[] inputs, int d, ArrayList&lt;Function&gt; src) {
-<span class="fc bfc" id="L911" title="All 2 branches covered.">            if (d &lt; 0) {</span>
-<span class="fc" id="L912">                double result = src.get(0).activate(inputs);</span>
-<span class="fc bfc" id="L913" title="All 2 branches covered.">                for (int Vi = 1; Vi &lt; src.size(); Vi++) {</span>
-<span class="fc" id="L914">                    final double current = src.get(Vi).activate(inputs);</span>
-<span class="fc" id="L915">                    result += current;</span>
+<span class="fc bfc" id="L908" title="All 2 branches covered.">            if (d &lt; 0) {</span>
+<span class="fc" id="L909">                double result = src.get(0).activate(inputs);</span>
+<span class="fc bfc" id="L910" title="All 2 branches covered.">                for (int Vi = 1; Vi &lt; src.size(); Vi++) {</span>
+<span class="fc" id="L911">                    final double current = src.get(Vi).activate(inputs);</span>
+<span class="fc" id="L912">                    result += current;</span>
                 }
-<span class="fc" id="L917">                return result;</span>
+<span class="fc" id="L914">                return result;</span>
             } else {
-<span class="fc" id="L919">                double derivative = 0;</span>
-<span class="fc bfc" id="L920" title="All 2 branches covered.">                for (int i = 0; i &lt; src.size(); ++i) {</span>
-<span class="fc" id="L921">                    derivative += src.get(i).derive(inputs, d);</span>
+<span class="fc" id="L916">                double derivative = 0;</span>
+<span class="fc bfc" id="L917" title="All 2 branches covered.">                for (int i = 0; i &lt; src.size(); ++i) {</span>
+<span class="fc" id="L918">                    derivative += src.get(i).derive(inputs, d);</span>
                 }
-<span class="fc" id="L923">                return derivative;</span>
+<span class="fc" id="L920">                return derivative;</span>
             }
         }
 

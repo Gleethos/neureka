@@ -41,7 +41,7 @@ public class GraphNode
      * @return boolean
      */
     public boolean usesReverseAD(){
-<span class="pc bpc" id="L44" title="1 of 2 branches missed.">        return (_mode &lt;0);</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        return (_mode &lt;0);</span>
     }
 
     /**
@@ -587,7 +587,7 @@ public class GraphNode
 <span class="fc bfc" id="L587" title="All 2 branches covered.">            for(WeakReference weak : _children){</span>
 <span class="pc bpc" id="L588" title="2 of 4 branches missed.">                if(weak!=null &amp;&amp; weak.get()!=null){</span>
 <span class="fc" id="L589">                    GraphNode child = (GraphNode) weak.get();</span>
-<span class="pc bpc" id="L590" title="1 of 2 branches missed.">                    if(child.usesReverseAD()){</span>
+<span class="fc bfc" id="L590" title="All 2 branches covered.">                    if(child.usesReverseAD()){</span>
 <span class="fc" id="L591">                        count++;</span>
                     }
                 }

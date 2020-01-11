@@ -1,8 +1,8 @@
 package neureka.calculus.factory.assembly;
 
 import neureka.calculus.Function;
-import neureka.calculus.factory.implementations.FunctionConstant;
-import neureka.calculus.factory.implementations.FunctionInput;
+import neureka.calculus.factory.components.FunctionConstant;
+import neureka.calculus.factory.components.FunctionInput;
 
 import java.util.*;
 

@@ -5,7 +5,7 @@ import neureka.acceleration.Device;
 import neureka.calculus.Function;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
-import neureka.calculus.factory.implementations.FunctionConstant;
+import neureka.calculus.factory.components.FunctionConstant;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -695,9 +695,6 @@ public abstract class AbstractFunction implements Function {
                 out += src.get(0).derive(inputs, d) * b * Math.pow(a, b - 1);
                 out += (a >= 0) ? bd *  Math.pow(a, b) * Math.log(a) : 0;
                 return out;
-                //}
-
-
             }
         }
 
