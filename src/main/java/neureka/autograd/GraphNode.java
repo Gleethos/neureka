@@ -496,50 +496,6 @@ public class GraphNode
         }
         _deleteDerivativesRecursively();//Cleanup after back-propagation!
     }
-
-    public void backwardJIT(Tsr error, GraphNode source)
-    {
-        if(_payload.isOutsourced()) _payload.device().add(error);
-        if (_payload.rqsGradient()) _payload.addToGradient(error);
-        JITProp jit = (JITProp) _payload.find(JITProp.class);//Get JIT-Prop node.
-        if(jit!=null){
-            jit.noteFinished(source);//note pending errors and store them as 'done'
-        }
-        if(this.usesAD())
-        {
-            if(this.usesForwardAD()){//Using forward-AD derivatives for reverse-mode AD!:
-                this.forEach((t, d)->t.backwardJIT(MUL.activate(new Tsr[]{error, d}), source));
-            }else if(this.usesReverseAD()){//Standard reverse mode-AD:
-                this.forEach((t, d)->{
-                    if(_function.id()==Function.TYPES.LOOKUP.get("x")){// x operation requires inverse convolve operation!
-                        t.backwardJIT(INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)}), source);
-                    } else {//Normal elementwise backpropagation:
-                        t.backwardJIT(MUL.activate(new Tsr[]{error, d}), source);
-                    }
-                });
-            }
-        }
-        _deleteDerivativesRecursively();//Cleanup after back-propagation!
-    }
-
-    /**
-     * This method is called only if JIT-propagation is enabled.
-     * It carries pending errors to the tensors requiring gradients which will
-     * later on be processed just in time.
-     * @param pendingBackProp
-     */
-    private void _carryPendingBackPropToGradients(Map<GraphNode, PendingError> pendingBackProp){
-        _relies_on_JIPProp = true;
-        this.forEach((t, d)->t._carryPendingBackPropToGradients(pendingBackProp));
-        if(this.isLeave() && _payload.rqsGradient()){
-            JITProp jit = (JITProp) _payload.find(JITProp.class);
-            if(jit==null) jit = new JITProp(pendingBackProp);
-            else jit.addPending(pendingBackProp);
-            _payload.add(jit);
-        }
-        return;
-    }
-
     /**
      * This method traverses the graph and applies errors to gradients.
      *
@@ -562,30 +518,10 @@ public class GraphNode
         if(_payload.isOutsourced()) _payload.device().add(error);
         if (_payload.rqsGradient()) _payload.addToGradient(error);
 
-        //boolean addError = _payload.rqsGradient();
-        //if(this.reliesOnJustInTimeProp())// && isLeave())
-        //{
-        //    JITProp jit = (JITProp) _payload.find(JITProp.class);//Get JIT-Prop node.
-        //    if(jit!=null){
-        //        //if(jit.finished()!=null){
-        //        //    Iterator it = pendingBackProp.entrySet().iterator();
-        //        //    while (it.hasNext()) {
-        //        //        Object node = ((Map.Entry)it.next()).getKey();
-        //        //        if(jit.finished().contains(node)){
-        //        //            addError = false;
-        //        //        }
-        //        //    }
-        //        //}
-        //        jit.noteFinished(pendingBackProp);//note pending errors and store them as 'done'
-        //    }
-        //}
-
-        //if (addError) _payload.addToGradient(error);
-
         if(this.usesAD())
         {
             /** Checking JIT-Prop conditions and create Pending error if possible **/
-            if(!this.reliesOnJustInTimeProp() && allowPendingError && !this.isLeave())
+            if(allowPendingError && !this.isLeave())
             {//==> We are NOT inside a 'Just-In-Time-Backprop' process (new pending error can be created)
                 int ADPaths = _numberOfReverseModeADChildren();// Multiple children triggers creation of a pending error
                 if(ADPaths>1){
@@ -602,8 +538,7 @@ public class GraphNode
                 }
             }
 
-            //if(_payload==null) throw new RuntimeException();
-            if(this.usesForwardAD()){//Using forward-AD derivatives for reverse-mode AD!:
+            if(this.usesForwardAD()) {//Using forward-AD derivatives for reverse-mode AD!:
                 this.forEach((t, d)->t._backward(MUL.activate(new Tsr[]{error, d}), pendingBackProp, true));
             }else if(this.usesReverseAD()){//Standard reverse mode-AD:
                 this.forEach((t, d)->{
@@ -611,6 +546,63 @@ public class GraphNode
                         t._backward(INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)}), pendingBackProp, true);
                     } else {//Normal elementwise backpropagation:
                         t._backward(MUL.activate(new Tsr[]{error, d}), pendingBackProp, true);
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     * This method is called only if JIT-propagation is enabled.
+     * It carries pending errors to the tensors requiring gradients which will
+     * later on be processed just in time.
+     * @param pendingBackProp
+     */
+    private void _carryPendingBackPropToGradients(Map<GraphNode, PendingError> pendingBackProp){
+        _relies_on_JIPProp = true;
+        this.forEach((t, d)->t._carryPendingBackPropToGradients(pendingBackProp));
+        if(this.isLeave() && _payload.rqsGradient()){
+            JITProp jit = (JITProp) _payload.find(JITProp.class);
+            if(jit==null) jit = new JITProp(pendingBackProp);
+            else jit.addPending(pendingBackProp);
+            _payload.add(jit);
+        }
+        return;
+    }
+
+    /**
+     * This method is called only when JITProp is active.
+     * If an error has accumulated inside a JITProp component and
+     * the component is triggered to continue pending backward calls
+     * then this happens through this method.
+     * The node from where the pending error stems from
+     * is being passed down the graph (back in 'time')
+     * in order to mark this error source as 'done'
+     * so that other JITProp components do not propagate
+     * this 'source' node multiple times.
+     *
+     * @param error
+     * @param source
+     */
+    public void backwardJIT(Tsr error, GraphNode source)
+    {
+        _backwardJIT(error, source);
+        _deleteDerivativesRecursively();//Cleanup after back-propagation!
+    }
+    private void _backwardJIT(Tsr error, GraphNode source){
+        if(_payload.isOutsourced()) _payload.device().add(error);
+        if (_payload.rqsGradient()) _payload.addToGradient(error);
+        JITProp jit = (JITProp) _payload.find(JITProp.class);//Get JIT-Prop node.
+        if(jit!=null)jit.noteFinished(source);//note pending errors and store them as 'done'
+        if(this.usesAD()) {
+            if(this.usesForwardAD()){//Using forward-AD derivatives for reverse-mode AD!:
+                this.forEach((t, d)->t._backwardJIT(MUL.activate(new Tsr[]{error, d}), source));
+            }else if(this.usesReverseAD()){//Standard reverse mode-AD:
+                this.forEach((t, d)->{
+                    if(_function.id()==Function.TYPES.LOOKUP.get("x")){// x operation requires inverse convolve operation!
+                        t._backwardJIT(INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)}), source);
+                    } else {//Normal elementwise backpropagation:
+                        t._backwardJIT(MUL.activate(new Tsr[]{error, d}), source);
                     }
                 });
             }
