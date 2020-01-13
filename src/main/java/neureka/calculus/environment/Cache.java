@@ -45,7 +45,7 @@ public class Cache
             if(t.has(GraphNode.class)){
                 ((GraphNode)t.find(GraphNode.class)).obtainLocking(lock);
             } else {
-                GraphNode rg = new GraphNode(t, null, null, lock);
+                GraphNode rg = new GraphNode(null, lock, ()->t);
                 t.add(rg);
             }
         }

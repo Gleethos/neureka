@@ -1,7 +1,9 @@
 package neureka.calculus.factory;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.acceleration.Device;
+import neureka.autograd.JITProp;
 import neureka.calculus.Function;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
@@ -150,12 +152,12 @@ public abstract class AbstractFunction implements Function {
             /** only flat functions can be executed **/
         } else {
             /**  The following code is reached in flat functions only:  * */
-            Tsr output = _execute(inputs, j, d, device);
-            /**  Autograd-Graph will be generated below for the new GraphNode: **/
-            if (d < 0 && _doAD) {
-                new GraphNode(output, this, inputs, ((GraphNode) inputs[0].find(GraphNode.class)).lock());
+            
+            if (d < 0 && _doAD) {/**  Autograd-Graph will be generated below for the new GraphNode: **/
+                return new GraphNode(this, inputs, ()->_execute(inputs, j, d, device)).getPayload();
+            } else {
+                return _execute(inputs, j, d, device);
             }
-            return output;
         }
     }
 

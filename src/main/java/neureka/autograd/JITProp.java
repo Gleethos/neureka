@@ -1,5 +1,6 @@
 package neureka.autograd;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,22 +19,26 @@ public class JITProp {
         _pending.putAll(pendings);
     }
 
-    public void noteFinished(Map<GraphNode, PendingError> finishedJITProps){
+    public void noteFinished(GraphNode finishedJITProps){
         if(_finished==null){
-            _finished = finishedJITProps.keySet();
-        } else {
-            _finished.addAll(finishedJITProps.keySet());
+            _finished = new HashSet<>();// finishedJITProps.keySet();
         }
+        _finished.add(finishedJITProps);//.addAll(finishedJITProps.keySet());
+
+    }
+
+    public Set<GraphNode> finished(){
+        return _finished;
     }
 
     public void execute(){
         _pending.forEach((n, p)->{
             if(_finished==null || !_finished.contains(n)){
                 if(!p.isFullyAccumulated()) throw new IllegalStateException("[JITProp][execute]: Pending error has not received expected accumulation.");
-                n.backward(p.getAccumulatedError());//Continue backprop recursively!
+                n.backwardJIT(p.getAccumulatedError(), n);//Continue backprop recursively!
             }
         });
-        _finished = null;
+        //_finished = null;
         _pending = null;
     }
 

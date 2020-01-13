@@ -41,11 +41,8 @@ public interface Function
             for (Tsr t : inputs) {
                 if(t.has(GraphNode.class)){
                     ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);
-                    if(Neureka.Settings.AD.applyGradientWhenTensorIsUsed()){
-                        t.applyGradient();
-                    }
                 } else {
-                    t.add(new GraphNode(t, null, null, newLock));
+                    t.add(new GraphNode(null, newLock, ()->t));
                 }
             }
             Tsr result = null;

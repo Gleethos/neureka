@@ -45,7 +45,7 @@ import java.util.function.Supplier;
 <span class="fc bfc" id="L45" title="All 2 branches covered.">            if(t.has(GraphNode.class)){</span>
 <span class="fc" id="L46">                ((GraphNode)t.find(GraphNode.class)).obtainLocking(lock);</span>
             } else {
-<span class="fc" id="L48">                GraphNode rg = new GraphNode(t, null, null, lock);</span>
+<span class="fc" id="L48">                GraphNode rg = new GraphNode(null, lock, ()-&gt;t);</span>
 <span class="fc" id="L49">                t.add(rg);</span>
             }
         }

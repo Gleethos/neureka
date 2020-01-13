@@ -41,36 +41,33 @@ public interface Function
 <span class="fc bfc" id="L41" title="All 2 branches covered.">            for (Tsr t : inputs) {</span>
 <span class="fc bfc" id="L42" title="All 2 branches covered.">                if(t.has(GraphNode.class)){</span>
 <span class="fc" id="L43">                    ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);</span>
-<span class="fc bfc" id="L44" title="All 2 branches covered.">                    if(Neureka.Settings.AD.applyGradientWhenTensorIsUsed()){</span>
-<span class="fc" id="L45">                        t.applyGradient();</span>
-                    }
                 } else {
-<span class="fc" id="L48">                    t.add(new GraphNode(t, null, null, newLock));</span>
+<span class="fc" id="L45">                    t.add(new GraphNode(null, newLock, ()-&gt;t));</span>
                 }
             }
-<span class="fc" id="L51">            Tsr result = null;</span>
-<span class="fc bfc" id="L52" title="All 2 branches covered.">            if(activation==null){</span>
-<span class="fc" id="L53">                result = function.activate(inputs);</span>
+<span class="fc" id="L48">            Tsr result = null;</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">            if(activation==null){</span>
+<span class="fc" id="L50">                result = function.activate(inputs);</span>
             } else {
-<span class="fc" id="L55">                result = activation.get();</span>
+<span class="fc" id="L52">                result = activation.get();</span>
             }
 
-<span class="fc bfc" id="L58" title="All 2 branches covered.">            if (result.has(GraphNode.class)) ((GraphNode) result.find(GraphNode.class)).redundantGradientCleanup();</span>
-<span class="fc" id="L59">            Function.CACHE.free(newLock);</span>
-<span class="fc" id="L60">            boolean resultIsUnique = true;</span>
-<span class="fc bfc" id="L61" title="All 2 branches covered.">            if(drain!=null){</span>
-<span class="fc bfc" id="L62" title="All 2 branches covered.">                for(Tsr t : inputs){</span>
-<span class="fc" id="L63">                    Tsr g = (Tsr)t.find(Tsr.class);</span>
-<span class="fc bfc" id="L64" title="All 6 branches covered.">                    if(t == result || (g!=null &amp;&amp; g==result)){</span>
-<span class="fc" id="L65">                        resultIsUnique = false;</span>
-<span class="fc" id="L66">                        break;</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">            if (result.has(GraphNode.class)) ((GraphNode) result.find(GraphNode.class)).redundantGradientCleanup();</span>
+<span class="fc" id="L56">            Function.CACHE.free(newLock);</span>
+<span class="fc" id="L57">            boolean resultIsUnique = true;</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">            if(drain!=null){</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">                for(Tsr t : inputs){</span>
+<span class="fc" id="L60">                    Tsr g = (Tsr)t.find(Tsr.class);</span>
+<span class="fc bfc" id="L61" title="All 6 branches covered.">                    if(t == result || (g!=null &amp;&amp; g==result)){</span>
+<span class="fc" id="L62">                        resultIsUnique = false;</span>
+<span class="fc" id="L63">                        break;</span>
                     }
                 }
             }
-<span class="fc bfc" id="L70" title="All 2 branches covered.">            if(resultIsUnique){</span>
-<span class="fc" id="L71">                return result;</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">            if(resultIsUnique){</span>
+<span class="fc" id="L68">                return result;</span>
             } else {
-<span class="fc" id="L73">                return  null;</span>
+<span class="fc" id="L70">                return  null;</span>
             }
         }
 

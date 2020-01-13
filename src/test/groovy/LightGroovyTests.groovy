@@ -11,6 +11,104 @@ class LightGroovyTests
 {
 
     @Test
+    void testNoPreemptiveApplyWhenJITProp(){
+        Neureka.Settings.AD.setRetainPendingErrorForJITProp(true)
+        Neureka.Settings.AD.setApplyGradientWhenTensorIsUsed(true)
+        Neureka.Settings.AD.setRetainGraphDerivativesAfterBackward(false)
+
+        Tsr a = new Tsr(2).setRqsGradient(true)
+        Tsr b = new Tsr(-3)
+        Tsr c = new Tsr(3).setRqsGradient(true)
+
+        Tsr s = (a+b) * c // (2 - 3) * 3 = -3
+        Tsr x = (s/a)+s // (-3)^2 -3 = 6
+
+        assert !a.has(JITProp.class)
+        assert !b.has(JITProp.class)
+        assert !c.has(JITProp.class)
+        x.backward(1)
+        assert a.has(JITProp.class)
+        assert !b.has(JITProp.class)
+        assert c.has(JITProp.class)
+        assert a.toString().contains("g:(0.75)")
+        assert c.toString().contains("g:(null)")
+        assert x.toString().contains("(-4.5)")
+
+        def f = FunctionBuilder.build("I[0]*I[1]", false)
+        Tsr[] inputs = new Tsr[2];
+        inputs[0] = c
+        inputs[1] = a
+        Tsr result = f.activate(inputs)
+        assert a.toString().contains("g:(0.75)")
+        assert c.toString().contains("g:(null)")
+        assert x.toString().contains("(-4.5)")
+
+        f = FunctionBuilder.build("I[0]*I[1]", true)
+        result = f.activate(inputs)
+        assert a.toString().contains("g:(null)")
+        assert c.toString().contains("g:(null)")
+        assert x.toString().contains("(-4.5)")
+
+        Neureka.Settings.reset()
+    }
+
+    @Test
+    void testAutogradWithoutJITAndAutoApply(){
+        Neureka.Settings.AD.setRetainPendingErrorForJITProp(false)
+        Neureka.Settings.AD.setApplyGradientWhenTensorIsUsed(false)
+        Neureka.Settings.AD.setRetainGraphDerivativesAfterBackward(false)
+
+        Tsr a = new Tsr(2).setRqsGradient(true)
+        Tsr b = new Tsr(-3)
+        Tsr c = new Tsr(3).setRqsGradient(true)
+
+        Tsr s = (a+b) * c // (2 - 3) * 3 = -3
+        Tsr x = (s/a)+s // (-3)^2 -3 = 6
+
+        assert !a.has(JITProp.class)
+        assert !b.has(JITProp.class)
+        assert !c.has(JITProp.class)
+        x.backward(1)
+        assert !a.has(JITProp.class)
+        assert !b.has(JITProp.class)
+        assert !c.has(JITProp.class)
+        assert a.toString().contains("g:(5.25)")// This has been checked!
+        assert c.toString().contains("g:(-1.5)")// This has been checked!
+        assert x.toString().contains("(-4.5)")
+        a.applyGradient()
+        c.applyGradient()
+        assert a.toString().contains("(7.25):g:(null)")
+        assert c.toString().contains("(1.5):g:(null)")
+        Neureka.Settings.reset()
+    }
+
+
+    @Test
+    void testIndifferentialAndJITWithAutoApply(){
+        Neureka.Settings.AD.setRetainPendingErrorForJITProp(true)
+        Neureka.Settings.AD.setApplyGradientWhenTensorIsUsed(true)
+        Neureka.Settings.AD.setRetainGraphDerivativesAfterBackward(false)
+
+        Tsr a = new Tsr(2).setRqsGradient(true)
+        Tsr b = new Tsr(-3)
+        Tsr c = new Tsr(3).setRqsGradient(true)
+
+        Tsr s = (a+b) * c // (2 - 3) * 3 = -3
+        Tsr x = (s^a)+s // (-3)^2 -3 = 6
+
+        assert !a.has(JITProp.class)
+        assert !b.has(JITProp.class)
+        assert !c.has(JITProp.class)
+        x.backward(3)
+        assert a.has(JITProp.class)
+        assert !b.has(JITProp.class)
+        assert c.has(JITProp.class)
+        assert a.toString().contains("g:(NaN)")// NaN is expected! (derivative not possible!)
+        assert c.toString().contains("g:(null)")
+        Neureka.Settings.reset()
+    }
+
+    @Test
     void testNoJITPropWhenForwardAD(){
         Neureka.Settings.AD.setRetainPendingErrorForJITProp(true)
         Neureka.Settings.AD.setApplyGradientWhenTensorIsUsed(true)
@@ -372,8 +470,8 @@ class LightGroovyTests
         Tsr b = new Tsr(-4)
         Tsr c = new Tsr(3).setRqsGradient(true)
 
-        Tsr s =  (a*b) + 2
-        Tsr x = s * (s+c)
+        Tsr s =  (a*b) + 2 // -6 = (2*-4) +2
+        Tsr x = s * (s+c) //  -6 * (-6+3) // 18
 
         x.backward(new Tsr(1))
 

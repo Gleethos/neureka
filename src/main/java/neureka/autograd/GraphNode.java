@@ -10,6 +10,7 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 /**
  *
@@ -203,19 +204,40 @@ public class GraphNode
     }
 
     /**
-     * @param output
-     * @param function
-     * @param inputs
-     * @param lock
+     *
+     * @param function Is the function that lead to the creation of this node.
+     * @param context Can be either an array of tensors or a new lock (for leave node or fresh function locking)
+     * @param payloadSupplier Provides the payload of this node.
      */
-    public GraphNode(Tsr output, Function function, Tsr[] inputs, GraphLock lock)
+    public GraphNode(Function function, Object context, Supplier<Tsr> payloadSupplier){
+        if(context instanceof GraphLock){
+            _construct(payloadSupplier.get(), function, null, (GraphLock)context);
+        } else if (context instanceof Tsr[]){
+            Tsr[] inputs = (Tsr[])context;
+            /* Applying JITProp and gradients */
+            if (Neureka.Settings.AD.applyGradientWhenTensorIsUsed()) {
+                for (Tsr t : inputs) {
+                    if (t.has(JITProp.class)) {
+                        JITProp jit = (JITProp) t.find(JITProp.class);
+                        jit.execute();
+                    }
+                }
+                for (Tsr t : inputs) t.remove(JITProp.class);
+                for (Tsr t : inputs) t.applyGradient();
+            }
+            _construct(payloadSupplier.get(), function, inputs, ((GraphNode) inputs[0].find(GraphNode.class)).lock());
+        }
+    }
+
+    private void _construct(Tsr output, Function function, Tsr[] inputs, GraphLock lock)
     {
         if(output==null) throw new RuntimeException("[GraphNode]:(constructor): Payload must no be null!");
         _mode = (inputs!=null)? _modeOf(inputs, function):(output.rqsGradient())?1:0;
         _function = function;
         _lock = lock;
         _payload = output;
-        if(inputs!=null){
+        if(inputs!=null)
+        {
             _parents = new GraphNode[inputs.length];
             for(int i=0; i<inputs.length; i++){
                 _parents[i] = (GraphNode)inputs[i].find(GraphNode.class);
@@ -226,7 +248,7 @@ public class GraphNode
                 }
             }
         }else {
-           _parents = null;
+            _parents = null;
         }
         output.add(this);
         if(_nid==-1){
@@ -475,6 +497,31 @@ public class GraphNode
         _deleteDerivativesRecursively();//Cleanup after back-propagation!
     }
 
+    public void backwardJIT(Tsr error, GraphNode source)
+    {
+        if(_payload.isOutsourced()) _payload.device().add(error);
+        if (_payload.rqsGradient()) _payload.addToGradient(error);
+        JITProp jit = (JITProp) _payload.find(JITProp.class);//Get JIT-Prop node.
+        if(jit!=null){
+            jit.noteFinished(source);//note pending errors and store them as 'done'
+        }
+        if(this.usesAD())
+        {
+            if(this.usesForwardAD()){//Using forward-AD derivatives for reverse-mode AD!:
+                this.forEach((t, d)->t.backwardJIT(MUL.activate(new Tsr[]{error, d}), source));
+            }else if(this.usesReverseAD()){//Standard reverse mode-AD:
+                this.forEach((t, d)->{
+                    if(_function.id()==Function.TYPES.LOOKUP.get("x")){// x operation requires inverse convolve operation!
+                        t.backwardJIT(INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)}), source);
+                    } else {//Normal elementwise backpropagation:
+                        t.backwardJIT(MUL.activate(new Tsr[]{error, d}), source);
+                    }
+                });
+            }
+        }
+        _deleteDerivativesRecursively();//Cleanup after back-propagation!
+    }
+
     /**
      * This method is called only if JIT-propagation is enabled.
      * It carries pending errors to the tensors requiring gradients which will
@@ -512,18 +559,29 @@ public class GraphNode
      */
     private void _backward(Tsr error, Map<GraphNode, PendingError> pendingBackProp, boolean allowPendingError)
     {
-        if(_payload.isOutsourced()){
-            _payload.device().add(error);
-        }
-        if (_payload.rqsGradient()) {
-            _payload.addToGradient(error);
-        }
-        if(!this.reliesOnJustInTimeProp() && isLeave()){
-            JITProp jit = (JITProp) _payload.find(JITProp.class);//Get JIT-Prop node.
-            if(jit!=null){
-                jit.noteFinished(pendingBackProp);//note pending errors and store them as 'done'
-            }
-        }
+        if(_payload.isOutsourced()) _payload.device().add(error);
+        if (_payload.rqsGradient()) _payload.addToGradient(error);
+
+        //boolean addError = _payload.rqsGradient();
+        //if(this.reliesOnJustInTimeProp())// && isLeave())
+        //{
+        //    JITProp jit = (JITProp) _payload.find(JITProp.class);//Get JIT-Prop node.
+        //    if(jit!=null){
+        //        //if(jit.finished()!=null){
+        //        //    Iterator it = pendingBackProp.entrySet().iterator();
+        //        //    while (it.hasNext()) {
+        //        //        Object node = ((Map.Entry)it.next()).getKey();
+        //        //        if(jit.finished().contains(node)){
+        //        //            addError = false;
+        //        //        }
+        //        //    }
+        //        //}
+        //        jit.noteFinished(pendingBackProp);//note pending errors and store them as 'done'
+        //    }
+        //}
+
+        //if (addError) _payload.addToGradient(error);
+
         if(this.usesAD())
         {
             /** Checking JIT-Prop conditions and create Pending error if possible **/

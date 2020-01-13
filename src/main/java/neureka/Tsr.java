@@ -824,11 +824,13 @@ public class Tsr
     }
 
     public void applyGradient(){
+        //if(doJITProp){
         if(this.has(JITProp.class)){
-            JITProp jit = (JITProp) find(JITProp.class);
-            this.remove(JITProp.class);
+            JITProp jit = (JITProp) this.find(JITProp.class);
+            remove(JITProp.class);
             jit.execute();
         }
+        //}
         if(this.has(Tsr.class)) {
             Tsr g = (Tsr)find(Tsr.class);
             Optimizer optimizer = (Optimizer) this.find(Optimizer.class);
