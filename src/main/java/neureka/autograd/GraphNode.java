@@ -619,7 +619,6 @@ public class GraphNode
               be continued to be propagated.
               Otherwise it makes sense to accumulate errors further and wait for JIT-Prop traversing!
              */
-            _pending_error = null;
             return;//This node will continue its propagation via a JIT-Prop component!
         }
         if(this.usesAD()) {

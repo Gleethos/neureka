@@ -10,6 +10,34 @@ public class NTester_Function extends NTester {
 	{
 		super(name);
 	}
+
+	public int testScalarActivation(Function f, double[] inputs, double expected, String description){
+		double actual = f.activate(inputs);
+		printSessionStart(description);
+		println(BAR +" inputs : "+stringified(inputs));
+		println(BAR +" Expected: "+expected);
+		println(BAR +" function : "+f.toString()+"");
+		println(BAR +" String actual = function.toString();");
+		println(BAR +" [actual]:"+actual);
+		println(BAR +"----------------------------------------------------");
+		println(BAR +" Result:");
+		assertIsEqual(actual, expected);
+		return (printSessionEnd()>0)?1:0;
+	}
+
+	public int testScalarDerivative(Function f, double[] inputs, int index, double expected, String description){
+		double actual = f.derive(inputs, index);
+		printSessionStart(description);
+		println(BAR +" inputs : "+stringified(inputs));
+		println(BAR +" Expected: "+expected);
+		println(BAR +" function : "+f.toString()+"");
+		println(BAR +" String actual = function.toString();");
+		println(BAR +" [actual]:"+actual);
+		println(BAR +"----------------------------------------------------");
+		println(BAR +" Result:");
+		assertIsEqual(actual, expected);
+		return (printSessionEnd()>0)?1:0;
+	}
 	
 	public int testExpression(String expression, String expected, String description) 
 	{

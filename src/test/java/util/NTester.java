@@ -98,6 +98,7 @@ public class NTester extends Assert
         println("[O][=][=][=][=][=][=][=][=][=][=][=]|> "+ _success +"/"+ _tests);
         printResult((_positive_assertions == _assertion_count)? "." :"E");
         bottom();
+        assert _positive_assertions == _assertion_count;
         return _positive_assertions;
     }
 
