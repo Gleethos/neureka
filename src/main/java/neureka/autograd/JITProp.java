@@ -4,21 +4,29 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class JITProp {
-
+public class JITProp
+{
     private Set<GraphNode> _finished;
 
-    private  Map<GraphNode, PendingError> _pending;
+    private  Set<GraphNode> _pending;
 
-    public JITProp(Map<GraphNode, PendingError> pendings){
+    public JITProp(Set<GraphNode> pendings){//Map<GraphNode, PendingError> pendings){
         _pending = pendings;
     }
 
-    public void addPending(Map<GraphNode, PendingError> pendings){
+    /**
+     *
+     * @param pendings
+     */
+    public void addPending(Set<GraphNode> pendings){//Map<GraphNode, PendingError> pendings){
         if(!isDone()) throw new IllegalStateException("[JITProp][addPending]: Trying to add pending errors to JITProp which is done.");
-        _pending.putAll(pendings);
+        _pending.addAll(pendings);
     }
 
+    /**
+     *
+     * @param finishedJITProps
+     */
     public void noteFinished(GraphNode finishedJITProps){
         if(_finished==null){
             _finished = new HashSet<>();// finishedJITProps.keySet();
@@ -31,17 +39,24 @@ public class JITProp {
         return _finished;
     }
 
+    /**
+     *
+     */
     public void execute(){
-        _pending.forEach((n, p)->{
+        _pending.forEach((n)->{
             if(_finished==null || !_finished.contains(n)){
-                if(!p.isFullyAccumulated()) throw new IllegalStateException("[JITProp][execute]: Pending error has not received expected accumulation.");
-                n.backwardJIT(p.getAccumulatedError(), n);//Continue backprop recursively!
+                PendingError pe = n.getAndRemovePendingError();
+                if(!pe.isFullyAccumulated()) throw new IllegalStateException("[JITProp][execute]: Pending error has not received expected accumulation.");
+                n.backwardJIT(pe.getAccumulatedError());//Continue backprop recursively!
             }
         });
-        //_finished = null;
         _pending = null;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isDone(){
         return (_finished==null && _pending==null);
     }

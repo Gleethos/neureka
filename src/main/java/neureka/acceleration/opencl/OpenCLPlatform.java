@@ -66,11 +66,9 @@ public class OpenCLPlatform {
 
     OpenCLPlatform(cl_platform_id pid) {
         _pid = pid;
-        String platformName = OpenCLDevice.DeviceQuery.getString(pid, CL_PLATFORM_NAME);
         // Obtain the number of devices for the current platform
         int numDevices[] = new int[1];
         clGetDeviceIDs(pid, CL_DEVICE_TYPE_ALL, 0, null, numDevices);
-        System.out.println("Number of devices in platform " + platformName + ": " + numDevices[0]);
         cl_device_id devicesArray[] = new cl_device_id[numDevices[0]];
         clGetDeviceIDs(pid, CL_DEVICE_TYPE_ALL, numDevices[0], devicesArray, null);
 

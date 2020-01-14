@@ -470,7 +470,6 @@ public class DefaultJavaTests {
         tensor1 = new Tsr(-3).setRqsGradient(true);
         tensor2 = new Tsr(4).setRqsGradient(true);
         tensor3 = new Tsr(2);
-        System.out.println("...");
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1, tensor2, tensor3},
                 "(relu(i0*i1)+i1)/i2",
@@ -512,9 +511,6 @@ public class DefaultJavaTests {
         result = new Tsr(new Tsr[]{tensor1}, "(-3*(2*(i0*-1)))*(-1*i0)");
         GraphNode node = (GraphNode) result.find(GraphNode.class);
         String asString = node.toString("g");
-        System.out.println(asString);
-        //asString = result.toString("frdc");
-        //System.out.println(asString);
         tester.testContains(
                 asString,
                 new String[]{

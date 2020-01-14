@@ -299,11 +299,11 @@ public class Tsr
     }
 
     public double value64(int i) {
-<span class="fc bfc" id="L302" title="All 2 branches covered.">        if(this.isVirtual()){</span>
+<span class="pc bpc" id="L302" title="1 of 2 branches missed.">        if(this.isVirtual()){</span>
 <span class="pc bpc" id="L303" title="1 of 2 branches missed.">            if(this.is64()) return ((double[])_value)[0];</span>
 <span class="nc" id="L304">            else return ((float[])_value)[0];</span>
         } else {
-<span class="pc bpc" id="L306" title="1 of 2 branches missed.">            if(this.is64()) return ((double[])_value)[i];</span>
+<span class="nc bnc" id="L306" title="All 2 branches missed.">            if(this.is64()) return ((double[])_value)[i];</span>
 <span class="nc" id="L307">            else return ((float[])_value)[i];</span>
         }
     }

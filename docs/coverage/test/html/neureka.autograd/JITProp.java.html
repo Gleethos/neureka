@@ -4,46 +4,61 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class JITProp {
-
+public class JITProp
+{
     private Set&lt;GraphNode&gt; _finished;
 
-    private  Map&lt;GraphNode, PendingError&gt; _pending;
+    private  Set&lt;GraphNode&gt; _pending;
 
-<span class="fc" id="L13">    public JITProp(Map&lt;GraphNode, PendingError&gt; pendings){</span>
+<span class="fc" id="L13">    public JITProp(Set&lt;GraphNode&gt; pendings){//Map&lt;GraphNode, PendingError&gt; pendings){</span>
 <span class="fc" id="L14">        _pending = pendings;</span>
 <span class="fc" id="L15">    }</span>
 
-    public void addPending(Map&lt;GraphNode, PendingError&gt; pendings){
-<span class="nc bnc" id="L18" title="All 2 branches missed.">        if(!isDone()) throw new IllegalStateException(&quot;[JITProp][addPending]: Trying to add pending errors to JITProp which is done.&quot;);</span>
-<span class="nc" id="L19">        _pending.putAll(pendings);</span>
-<span class="nc" id="L20">    }</span>
+    /**
+     *
+     * @param pendings
+     */
+    public void addPending(Set&lt;GraphNode&gt; pendings){//Map&lt;GraphNode, PendingError&gt; pendings){
+<span class="nc bnc" id="L22" title="All 2 branches missed.">        if(!isDone()) throw new IllegalStateException(&quot;[JITProp][addPending]: Trying to add pending errors to JITProp which is done.&quot;);</span>
+<span class="nc" id="L23">        _pending.addAll(pendings);</span>
+<span class="nc" id="L24">    }</span>
 
+    /**
+     *
+     * @param finishedJITProps
+     */
     public void noteFinished(GraphNode finishedJITProps){
-<span class="pc bpc" id="L23" title="1 of 2 branches missed.">        if(_finished==null){</span>
-<span class="fc" id="L24">            _finished = new HashSet&lt;&gt;();// finishedJITProps.keySet();</span>
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">        if(_finished==null){</span>
+<span class="fc" id="L32">            _finished = new HashSet&lt;&gt;();// finishedJITProps.keySet();</span>
         }
-<span class="fc" id="L26">        _finished.add(finishedJITProps);//.addAll(finishedJITProps.keySet());</span>
+<span class="fc" id="L34">        _finished.add(finishedJITProps);//.addAll(finishedJITProps.keySet());</span>
 
-<span class="fc" id="L28">    }</span>
+<span class="fc" id="L36">    }</span>
 
     public Set&lt;GraphNode&gt; finished(){
-<span class="nc" id="L31">        return _finished;</span>
+<span class="nc" id="L39">        return _finished;</span>
     }
 
+    /**
+     *
+     */
     public void execute(){
-<span class="fc" id="L35">        _pending.forEach((n, p)-&gt;{</span>
-<span class="pc bpc" id="L36" title="1 of 4 branches missed.">            if(_finished==null || !_finished.contains(n)){</span>
-<span class="pc bpc" id="L37" title="1 of 2 branches missed.">                if(!p.isFullyAccumulated()) throw new IllegalStateException(&quot;[JITProp][execute]: Pending error has not received expected accumulation.&quot;);</span>
-<span class="fc" id="L38">                n.backwardJIT(p.getAccumulatedError(), n);//Continue backprop recursively!</span>
+<span class="fc" id="L46">        _pending.forEach((n)-&gt;{</span>
+<span class="pc bpc" id="L47" title="1 of 4 branches missed.">            if(_finished==null || !_finished.contains(n)){</span>
+<span class="fc" id="L48">                PendingError pe = n.getAndRemovePendingError();</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">                if(!pe.isFullyAccumulated()) throw new IllegalStateException(&quot;[JITProp][execute]: Pending error has not received expected accumulation.&quot;);</span>
+<span class="fc" id="L50">                n.backwardJIT(pe.getAccumulatedError());//Continue backprop recursively!</span>
             }
-<span class="fc" id="L40">        });</span>
-        //_finished = null;
-<span class="fc" id="L42">        _pending = null;</span>
-<span class="fc" id="L43">    }</span>
+<span class="fc" id="L52">        });</span>
+<span class="fc" id="L53">        _pending = null;</span>
+<span class="fc" id="L54">    }</span>
 
+    /**
+     *
+     * @return
+     */
     public boolean isDone(){
-<span class="nc bnc" id="L46" title="All 4 branches missed.">        return (_finished==null &amp;&amp; _pending==null);</span>
+<span class="nc bnc" id="L61" title="All 4 branches missed.">        return (_finished==null &amp;&amp; _pending==null);</span>
     }
 
 

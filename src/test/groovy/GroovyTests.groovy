@@ -343,7 +343,8 @@ class GroovyTests
         //---
         a[[[0..3]:2, [1..4]:2]] = new Tsr([2, 2], [1, 2, 3, 4])
         tester.testContains(b.toString(), ["1.0, 2.0, 3.0, 4.0"], "Testing slicing")
-        tester.testContains(a.toString(),
+        tester.testContains(
+                a.toString(),
                 [
                         (legacyIndexing)
                         ?"1.0, 12.0, 3.0, 4.0, " +
@@ -356,8 +357,9 @@ class GroovyTests
                          "7.0, 16.0, 9.0, 1.0, 2.0, 3.0, " +
                          "4.0, 3.0, 6.0, 4.0, 8.0, 9.0, " +
                          "1.0, 2.0, 3.0, 4.0, 5.0, 6.0"
-                ], "Testing slicing")
-        System.out.println("Done")
+                ],
+                "Testing slicing"
+        )
         /**a:>>
              1, 12, 3, 4,
              1, 6, 2, 16,
@@ -377,7 +379,8 @@ class GroovyTests
                 :"1.0, 2.0, "+
                  "8.0, 4.0"
         ], "Testing slicing")
-        tester.testContains(a.toString(), [
+        tester.testContains(
+                a.toString(), [
                 (legacyIndexing)?
                 "1.0, 12.0, 3.0, 4.0, " +
                 "1.0, 8.0, 8.0, 16.0, " +
@@ -389,8 +392,9 @@ class GroovyTests
                  "7.0, 8.0, 8.0, 1.0, 2.0, 3.0, " +
                  "4.0, 8.0, 8.0, 4.0, 8.0, 9.0, " +
                  "1.0, 2.0, 3.0, 4.0, 5.0, 6.0"
-        ], "Testing slicing")
-        System.out.println("Done")
+        ],
+                "Testing slicing"
+        )
         /**a:>>
          1, 12, 3, 4,
          1, 8, 8, 16,
@@ -417,7 +421,6 @@ class GroovyTests
                 1, 2,
         ])
         device.add(b).add(c)//-2+6+8+8 = 22
-        System.out.println(b.toString())
         x = new Tsr(b, "x", c)//This test is important!
         tester.testContains(x.toString(),
                 [
@@ -450,7 +453,6 @@ class GroovyTests
         //System.gc()
         //Thread.sleep(600)
 
-
         Tsr t = new Tsr([2, 2], 4).setRqsGradient(true).add(gpu)
         t.backward(1)
         Tsr g = t.find(Tsr.class)
@@ -467,7 +469,6 @@ class GroovyTests
     void _testNN(Device device)
     {
         Neureka.Settings.Indexing.setLegacy(false)
-
         Tsr X = new Tsr(// input data: 5 vectors in binary form
                 [5, 3, 1],
                 [
@@ -529,9 +530,9 @@ class GroovyTests
             feedforward(weights1, weights2, input, output, layer1)
             backprop(weights1, weights2, input, output, layer1, y)
         }
-        println('Input:'+ X)
-        println('Expected output:'+ y)
-        println('Predicted output:'+ output)
+        //println('Input:'+ X)
+        //println('Expected output:'+ y)
+        //println('Predicted output:'+ output)
 
         assert output.value64()[0]>=0.0&&output.value64()[0]<=1.0
         assert output.value64()[1]>=0.0&&output.value64()[1]<=1.0

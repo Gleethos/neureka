@@ -182,9 +182,7 @@ class LightGroovyTests
         assert x.isVirtual()
         assert x.isSlice()
         assert t.isSliceParent()
-
         assert t.sliceCount()==3
-
     }
 
     @Test
@@ -205,12 +203,11 @@ class LightGroovyTests
                 29  40  51
          */
         Tsr out0 = new Tsr([t0, x0], "i0xi1")
-        println(t0)
-
-        println(t0.value64(4))
+        //TODO: asserts!
+        //println(t0)
+        //println(t0.value64(4))
 
         Neureka.Settings.Indexing.setLegacy(true)
-
         Tsr t1 = new Tsr([3, 2, 1], [
                 1, 2, 3,
                 4, 5, 6
@@ -226,9 +223,9 @@ class LightGroovyTests
                 26  40  51
          */
         Tsr out1 = new Tsr([t0, x0], "i0xi1")
-        println(t0.value64(4))
-
-        println(t1)
+        //TODO: asserts!
+        //println(t0.value64(4))
+        //println(t1)
 
     }
 

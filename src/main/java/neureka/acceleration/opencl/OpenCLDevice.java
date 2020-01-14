@@ -55,8 +55,8 @@ public class OpenCLDevice extends AbstractDevice
     {
         _did = did;
         _platform = platform;
-        System.out.println(this.name());
-        System.out.println(this.type());
+        //System.out.println(this.name());
+        //System.out.println(this.type());
         // Create a command-queue for the selected device
         _queue = clCreateCommandQueue(platform.getContext(), did, 0, null);
         _reference_queue = new ReferenceQueue();
@@ -426,8 +426,7 @@ public class OpenCLDevice extends AbstractDevice
     @Override
     protected void _enqueue(Tsr t, double value, int d, int f_id){
         int gwz = t.size();
-        String chosen =  "scalar_"+_platform.kernelNameOf(f_id).replace("operate_", "");//+"_broadcast";
-        //System.out.println("chosen: "+chosen);
+        String chosen =  "scalar_"+_platform.kernelNameOf(f_id).replace("operate_", "");
         cl_kernel kernel = _platform.getKernels().get(chosen);
         cl_mem drn = _mapping.get(t).value.data;
         cl_mem src1 = _mapping.get(t).value.data;
