@@ -6,9 +6,10 @@ plugins {
     id 'jacoco'
     id 'idea'
     id 'groovy'
+    id 'maven-publish'
 }
 
-group 'com.gleethos'
+group 'org.gleethos'
 version '1.0.0'
 
 //-----------------------------------------------------------------
@@ -19,6 +20,17 @@ targetCompatibility = JavaVersion.VERSION_11
 repositories {
     mavenCentral()
     jcenter { url "http://jcenter.bintray.com/" }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'org.gleethos.neureka'
+            artifactId 'neureka'
+            version '1.0.0'
+            from components.java
+        }
+    }
 }
 
 //-----------------------------------------------------------------
@@ -79,7 +91,7 @@ task deploy {
     if (platform=='linux') {
         //sh './gradlew clean build jar check'
     } else {
-       // bat 'gradlew.bat clean build jar check'
+        // bat 'gradlew.bat clean build jar check'
     }
 }
 
