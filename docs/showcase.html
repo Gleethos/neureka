@@ -15,7 +15,7 @@
         <meta name="robots" content="all">
         <meta name="revisit-after" content="30 days">
         <!-----------------------------------JQUERY---------------------------------------------->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <link href="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
         <!-----------------------------------BOOTSTRAP------------------------------------------>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -26,7 +26,7 @@
 
         <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/sunburst.min.css">
         <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
-        <script>hljs.initHighlightingOnLoad();</script>
+
     </head>
     <body>
         <div id="header">
@@ -64,6 +64,8 @@
                                 <div class="menu">
                                     <ul class="side-nav">
                                         <li></li>
+                                        <li></li>
+                                        <li><a target="_blank" Style="cursor: pointer; color: cyan;" onclick="loadContent('../TOC')">Table Of Content</a></li>
                                         <li><a target="_blank" href="index.html">Home</a></li>
                                         <li><a target="_blank" href="main/index.html">Documentation</a></li>
                                         <li><a target="_blank" href="https://github.com/Gleethos/neureka">Github</a></li>
@@ -91,360 +93,35 @@
                                 <div class = "mainContentWrapper">
                                     <div class = container-fluid>
 
-                                        <h1>Features</h1>
+                                        <h1 id = "ContentTitle"></h1>
 
-                                        <div class = "row">
-                                            <div class="col-sm 12 col-md-12">
-                                                <div class="contentBox">
-                                                    <h3>
-                                                        Indexing:
-                                                    </h3>
-                                                    <p>
-                                                        Every value within a tensor can be retrieved
-                                                        by addressing it with an array of index numbers.
-                                                        This powerful feature of Neureka is showcased via some
-                                                        groovy code below!
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-12">
-                                               <pre><code class="hljs java">
+                                        <script>
+                                            function loadContent(target){
+                                                $('#DynamicContent').hide("fast", function() {
+                                                    $('#ContentTitle').hide("fast", function(){
+                                                        var split = target.split("/");
+                                                        split = split[split.length-1];console.log(split);
+                                                        split = split.replace("TOC", "Table of Content");
+                                                        $('#ContentTitle').html(
+                                                            split.charAt(0).toUpperCase() + split.substring(1)
+                                                        ).show("fast");
+                                                    });
+                                                    $('#DynamicContent').html("").load('src/pages/'+target+'.html');
+                                                });
+                                                setTimeout(function() {
+                                                        hljs.initHighlighting.called = false;
+                                                        hljs.initHighlighting();
+                                                        $('#DynamicContent').show("fast");
+                                                    },
+                                                    500
+                                                );
+                                            }
+                                            $(document).ready(function(){loadContent('../TOC');});
+                                        </script>
+                                        <div id="DynamicContent" class = "row">
 
-        Tsr a = new Tsr(
-            [4, 6], [
-                1, 2, 3, 4, 5, 6,
-                7, 8, 9, 1, 2, 3,
-                4, 5, 6, 7, 8, 9,
-                1, 2, 3, 4, 5, 6
-        ])
-
-        def s = a[1, -2] // Getting single values via indexing!
-
-        //  s:>> 2.0
-
-        s = a[[1, -2]]
-
-        //  s:>> 2.0  // Passing index lists works too!
-
-                                                </code></pre>
-                                            </div>
-                                            <div class="col-sm 12 col-md-12">
-                                                <div class="contentBox">
-                                                    <h3>
-                                                        Slicing
-                                                    </h3>
-                                                    <p>
-                                                        Just as in libraries like NumPy
-                                                        subsets/slices of tensors or 'nd-arrays' can
-                                                        by extracted while also retaining the same underlying
-                                                        data.
-                                                        Groovys '..' operator is equivalent to
-                                                        Pythons ':'.
-                                                        In NumPy this operator is used to extract subsets of
-                                                        nd arrays. Here is the equivalent in Neureka:
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-12">
-                                               <pre><code class="hljs java">
-
-        // Use ranges (The '..' operator is similar to pythons ':' operator)
-        b = a[-3..-1, 0..3]  // Using range operator to extract slices!
-        //= a[ 1..3,  0..3]
-
-        //  a:>> ->b
-        //  1, 2, 3, 4, 5, 6,
-        //  7, 8, 9, 1, 2, 3, => 7, 8, 9, 1
-        //  4, 5, 6, 7, 8, 9, => 4, 5, 6, 7
-        //  1, 2, 3, 4, 5, 6  => 1, 2, 3, 4
-
-        //  b:>>
-        //  7.0, 8.0, 9.0, 1.0,
-        //  4.0, 5.0, 6.0, 7.0,
-        //  1.0, 2.0, 3.0, 4.0
-
-        a.value64()[1] = a.value64()[1] * 6  // Modifying a...
-        a.value64()[7] = a.value64()[7] * 2
-
-        //  b:>>
-        //  7.0, 16.0, 9.0, 1.0,  //  ...produces side effects in b now.
-        //  4.0, 5.0, 6.0, 7.0,
-        //  1.0, 2.0, 3.0, 4.0"
-
-        Tsr c = new Tsr([3, 4], [
-                -3, 2, 3,
-                5, 6, 2,
-                -1, 1, 2,
-                3, 4, 2,
-        ])
-
-        Tsr d = b + c  // Slices can be used for operations just like their 'parents'.
-
-        //  4, 18, 12, 6     7, 16, 9, 1    -3, 2,  3, 5,
-        //  10, 7, 5,  8  =  4,  5, 6, 7  +  6, 2, -1, 1,
-        //  3,  5, 7   6     1,  2, 3, 4     2, 3,  4, 2,
-
-        b = a[1..3, 2..4]  // Another example:
-
-        //   a:>> ->b
-        //   1, 12, 3, 4, 5, 6,
-        //   7, 16, 9, 1, 2, 3, =>  9, 1, 2,
-        //   4, 5, 6, 7, 8, 9,  =>  6, 7, 8,
-        //   1, 2, 3, 4, 5, 6   =>  3, 4, 5,
-
-        //   b:>>
-        //   9.0, 1.0, 2.0,
-        //   6.0, 7.0, 8.0,
-        //   3.0, 4.0, 5.0
-
-                                                </code></pre>
-                                            </div>
-                                            <div class="col-sm 12 col-md-12">
-                                                <div class="contentBox">
-                                                    <h3>
-                                                        Subsets / Slices with steps:
-                                                    </h3>
-                                                    <p>
-                                                        Within the given range (which defines the subset location)
-                                                        a 'scale'- or 'step'-size can be chosen for every dimension.
-                                                        The dimension of the output tensor will then have
-                                                        a size which is calculated according to the number of
-                                                        steps which fit into the subset space:
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-12">
-                                                <pre><code class="hljs java">
-
-        //  '[i..j]:k' is equivalent to pythons 'i:j:k' syntax for indexing! (numpy)
-        //  i.. start index.
-        //  j.. end index. (inclusive!)
-        //  k.. step size.
-
-        b = a[[[0..3]:2, [1..4]:2]]
-
-        //   b:>>
-        //   12.0, 4.0,
-        //   5.0,  7.0
-
-        //  a:>>
-        //  1, 12, 3, 4, 5, 6, => 12, 4,
-        //  7, 16, 9, 1, 2, 3,
-        //  4, 5, 6, 7, 8, 9,  => 5,  7,
-        //  1, 2, 3, 4, 5, 6
-
-        Tsr p = new Tsr([2,2], [2, 55, 4, 7])
-        Tsr u = new Tsr([2,2], [5, 2, 7, 34])
-
-        p[] = u  // 'Injecting' data into tensor!
-
-        //   p:>>
-        //   5.0, 2.0,
-        //   7.0, 34.0
-
-        a[[[0..3]:2, [1..4]:2]] = new Tsr([2, 2], [1, 2, 3, 4]) // Doing so in tensor a...
-
-        //   b:>>
-        //   1.0, 2.0,  //  ...has side effects in b.
-        //   3.0, 4.0   //  b's data is overwritten in this case.
-
-        //   a:>>
-        //   1.0,  1.0, 3.0, 2.0, 5.0, 6.0,
-        //   7.0, 16.0, 9.0, 1.0, 2.0, 3.0,
-        //   4.0,  3.0, 6.0, 4.0, 8.0, 9.0,
-        //   1.0,  2.0, 3.0, 4.0, 5.0, 6.0
-
-        a[1..2, 1..2] = new Tsr([2, 2], [8, 8, 8, 8])
-
-        //   b:>>
-        //   1.0, 2.0,  // Here b is partially overwritten.
-        //   8.0, 4.0,
-
-        //   a:>>
-        //   1.0, 1.0, 3.0, 2.0, 5.0, 6.0,
-        //   7.0, 8.0, 8.0, 1.0, 2.0, 3.0,
-        //   4.0, 8.0, 8.0, 4.0, 8.0, 9.0,
-        //   1.0, 2.0, 3.0, 4.0, 5.0, 6.0
-
-
-
-                                                </code></pre>
-                                            </div>
-                                            <div class="col-sm 12 col-md-12">
-                                                <div class="contentBox">
-                                                    <h3>
-                                                        Labeled indexes:
-                                                    </h3>
-                                                    <p>
-                                                        Labeling makes it more
-                                                        intuitive to work with big data.
-                                                        By calling the 'label' method
-                                                        it's possible to add a custom
-                                                        set of Strings as index alias for any dimension
-                                                        of a given tensor.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-12">
-                                                <pre><code class="hljs java">
-        // Example I:
-
-        Tsr t = new Tsr([3, 4],[
-                1, 2, 3, 4,
-                9, 8, 6, 5,
-                4, 5, 6, 7
-        ])
-        t.label([
-                ["1", "2", "3"],     // axis 0
-                ["a", "b", "y", "z"] // axis 1
-        ])
-
-        // Accessing data via labels:
-
-        Tsr x = t["2", 1..2] // x.toString(): "[1x2]:(8.0, 6.0)"
-
-        x = t["2".."3", "b".."y"] // x.toString(): "[2x2]:(8.0, 6.0, 5.0, 6.0)"
-
-        // Example II:
-
-        t = new Tsr([2, 3, 4], 7)
-        t.label([
-                ["1", "2"],
-                ["a", "b", "y"],
-                ["tim", "tom", "tina", "tanya"]
-        ])
-
-        x = t["2", "b".."y", [["tim","tanya"]:2]] // x.toString(): "[1x2x2]:(7.0, 7.0, 7.0, 7.0)"
-        x = t["2", [["b".."y"]:1, ["tim","tanya"]:2]] // x.toString(): "[1x2x2]:(7.0, 7.0, 7.0, 7.0)"
-        x = t[[["2"]:1, ["b".."y"]:1, ["tim","tanya"]:2]] // x.toString(): "[1x2x2]:(7.0, 7.0, 7.0, 7.0)"
-
-                                                </code></pre>
-                                            </div>
-                                            <div class="col-sm-12 col-md-12">
-                                                <div class="contentBox">
-                                                    <h3>Autograd</h3>
-                                                    <p>
-                                                        Neureka implements so called Auto-Differentiation.
-                                                        AD-algorithms are the backbone of today's most advanced
-                                                        artificial neural networks.
-                                                        Such algorithms calculate derivatives with respect to
-                                                        weight variables used to correct errors incrementally
-                                                        throughout many training iterations,
-                                                        whereby neural networks then gain the ability to
-                                                        approximate, generalize and learn.
-                                                        Differentiation goes both ways: Forward and Backward.
-                                                        Namely:</br>
-                                                        Forward-mode-AD and backward-mode-AD.</br>
-                                                        Neureka utilizes both techniques to get the best performance.
-                                                        Especially the use of backward-mode-AD revolutionized
-                                                        machine learning in recent decades.
-                                                        So called stochastic gradient decent is the most well known
-                                                        algorithm which uses uses backward-mode-ad.
-                                                        This technique is known as Backpropagation.
-                                                        and for most cases this approach increases performance by
-                                                        orders of magnitudes compared to other techniques,
-                                                        making the difference between a model
-                                                        taking weeks instead of years to train.
-                                                        Beyond its use in machine learning, Auto-differentiation is a powerful
-                                                        computational tool in a multitude of other areas, ranging from weather
-                                                        forecasting to analyzing numerical stability.
-                                                        AD is a common tool
-                                                        for many other fields dependent on algebraic numerical computation.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-8">
-                                                <pre><code class="hljs java">
-    Tsr x = new Tsr(3).setRqsGradient(true);
-    Tsr b = new Tsr(-4);
-    Tsr w = new Tsr(2);
-    Tsr y = new Tsr(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
-
-    //   f(x) = ((x-4)*2)^2; :=>  f(3) = 4
-    //   f(x)' = 8*x - 32 ;  :=>  f(3)' = -8
-    //
-    //   y.toString(): "[1]:(4.0); ->d[1]:(-8.0), "
-
-    y.backward(2)
-
-    //   x.toString(): "[1]:(3.0):g:(-16.0)"
-
-    x.applyGradient()
-
-    //   x.toString(): "[1]:(-13.0):g:(null)"
-
-                                                </code></pre>
-                                            </div>
-                                            <div class="col-sm 12 col-md-4">
-                                                <div class="contentBox">
-                                                    <p>
-                                                        In this example Neureka calculates the derivative of y w.r.t x.
-                                                        </br>
-                                                        Forward-AD is used due to the fact that no other dependencies
-                                                        need to be considered.
-                                                        When backward is called, the requested error of '2'
-                                                        is being multiplied by the calculated error and then
-                                                        attached to x.
-                                                        </br>
-                                                        This newly created gradient can then be applied.
-                                                        By also utilizing forward-mode-AD Neureka greatly decreases Memory consumption
-                                                        as well as increase performance.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm 12 col-md-12">
-                                                <div class="contentBox">
-                                                    <p>
-                                                        Keep in mind however that this optimization is only
-                                                        possible when your calculation is being defined
-                                                        by an equation embedded into a string expression and
-                                                        also without too many inputs requiring gradients.
-                                                        </br>
-                                                        Besides forward-mode-AD optimizations Neureka
-                                                        also aggressively frees the memory of intermediate
-                                                        values used to calculate results.
-                                                        </br></br>
-                                                        Try formalizing your computations via String expressions
-                                                        whenever your can in order to get the best performance.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-8">
-                                                <pre><code class="hljs java">
-     Tsr a = new Tsr(-3).setRqsGradient(true);
-     Tsr b = new Tsr(4).setRqsGradient(true);
-     Tsr c = new Tsr(2);
-     Tsr d = new Tsr(Tsr[]{a, b, c},"(relu(i0*i1)+i1)/i2");
-
-     //  [1]:(1.94);
-     //       =>d|[ [1]:(0.5) ]|:
-     //           t{
-     //               [1]:(-0.12);
-     //                   =>d|[ [1]:(-0.03) ]|:
-     //                       t{ [1]:(4.0) },
-     //                   =>d|[ [1]:(0.04) ]|:
-     //                       t{ [1]:(-3.0) },
-     //           },
-     //       =>d|[ [1]:(0.5) ]|:
-     //           t{
-     //               [1]:(4.0)
-     //           },
-
-                                                </code></pre>
-                                            </div>
-                                            <div class="col-sm 12 col-md-4">
-                                                <div class="contentBox">
-                                                    <p>
-                                                        As you can see in this example,
-                                                        having multiple variables requiring gradients
-                                                        as inputs to constructed functions
-                                                        will produce many intermediate derivatives wich
-                                                        are needed for backward AD.
-                                                        This however increases memory consumption.
-                                                    </p>
-                                                </div>
-                                            </div>
                                         </div>
+
                                     </div>
 
                                 </div>

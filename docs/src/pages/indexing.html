@@ -1,0 +1,34 @@
+<div class="col-sm 12 col-md-12">
+    <div class="contentBox">
+        <h3>
+            Indexing:
+        </h3>
+        <p>
+            Every value within a tensor can be retrieved
+            by addressing it with an array of index numbers.
+            This powerful feature of Neureka is showcased via some
+            groovy code below!
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12">
+                                               <pre><code class="hljs java">
+
+        Tsr a = new Tsr(
+            [4, 6], [
+                1, 2, 3, 4, 5, 6,
+                7, 8, 9, 1, 2, 3,
+                4, 5, 6, 7, 8, 9,
+                1, 2, 3, 4, 5, 6
+        ])
+
+        def s = a[1, -2] // Getting single values via indexing!
+
+        //  s:>> 2.0
+
+        s = a[[1, -2]]
+
+        //  s:>> 2.0  // Passing index lists works too!
+
+                                                </code></pre>
+</div>

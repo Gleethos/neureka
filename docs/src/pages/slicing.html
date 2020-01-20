@@ -1,0 +1,142 @@
+<div class="col-sm 12 col-md-12">
+    <div class="contentBox">
+        <h3>
+            Slicing
+        </h3>
+        <p>
+            Just as in libraries like NumPy
+            subsets/slices of tensors or 'nd-arrays' can
+            by extracted while also retaining the same underlying
+            data.
+            Groovys '..' operator is equivalent to
+            Pythons ':'.
+            In NumPy this operator is used to extract subsets of
+            nd arrays. Here is the equivalent in Neureka:
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12">
+                                               <pre><code class="hljs java">
+
+        // Use ranges (The '..' operator is similar to pythons ':' operator)
+        b = a[-3..-1, 0..3]  // Using range operator to extract slices!
+        //= a[ 1..3,  0..3]
+
+        //  a:>> ->b
+        //  1, 2, 3, 4, 5, 6,
+        //  7, 8, 9, 1, 2, 3, => 7, 8, 9, 1
+        //  4, 5, 6, 7, 8, 9, => 4, 5, 6, 7
+        //  1, 2, 3, 4, 5, 6  => 1, 2, 3, 4
+
+        //  b:>>
+        //  7.0, 8.0, 9.0, 1.0,
+        //  4.0, 5.0, 6.0, 7.0,
+        //  1.0, 2.0, 3.0, 4.0
+
+        a.value64()[1] = a.value64()[1] * 6  // Modifying a...
+        a.value64()[7] = a.value64()[7] * 2
+
+        //  b:>>
+        //  7.0, 16.0, 9.0, 1.0,  //  ...produces side effects in b now.
+        //  4.0, 5.0, 6.0, 7.0,
+        //  1.0, 2.0, 3.0, 4.0"
+
+        Tsr c = new Tsr([3, 4], [
+                -3, 2, 3,
+                5, 6, 2,
+                -1, 1, 2,
+                3, 4, 2,
+        ])
+
+        Tsr d = b + c  // Slices can be used for operations just like their 'parents'.
+
+        //  4, 18, 12, 6     7, 16, 9, 1    -3, 2,  3, 5,
+        //  10, 7, 5,  8  =  4,  5, 6, 7  +  6, 2, -1, 1,
+        //  3,  5, 7   6     1,  2, 3, 4     2, 3,  4, 2,
+
+        b = a[1..3, 2..4]  // Another example:
+
+        //   a:>> ->b
+        //   1, 12, 3, 4, 5, 6,
+        //   7, 16, 9, 1, 2, 3, =>  9, 1, 2,
+        //   4, 5, 6, 7, 8, 9,  =>  6, 7, 8,
+        //   1, 2, 3, 4, 5, 6   =>  3, 4, 5,
+
+        //   b:>>
+        //   9.0, 1.0, 2.0,
+        //   6.0, 7.0, 8.0,
+        //   3.0, 4.0, 5.0
+
+                                                </code></pre>
+</div>
+<div class="col-sm 12 col-md-12">
+    <div class="contentBox">
+        <h3>
+            Subsets / Slices with steps:
+        </h3>
+        <p>
+            Within the given range (which defines the subset location)
+            a 'scale'- or 'step'-size can be chosen for every dimension.
+            The dimension of the output tensor will then have
+            a size which is calculated according to the number of
+            steps which fit into the subset space:
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12">
+                                                <pre><code class="hljs java">
+
+        //  '[i..j]:k' is equivalent to pythons 'i:j:k' syntax for indexing! (numpy)
+        //  i.. start index.
+        //  j.. end index. (inclusive!)
+        //  k.. step size.
+
+        b = a[[[0..3]:2, [1..4]:2]]
+
+        //   b:>>
+        //   12.0, 4.0,
+        //   5.0,  7.0
+
+        //  a:>>
+        //  1, 12, 3, 4, 5, 6, => 12, 4,
+        //  7, 16, 9, 1, 2, 3,
+        //  4, 5, 6, 7, 8, 9,  => 5,  7,
+        //  1, 2, 3, 4, 5, 6
+
+        Tsr p = new Tsr([2,2], [2, 55, 4, 7])
+        Tsr u = new Tsr([2,2], [5, 2, 7, 34])
+
+        p[] = u  // 'Injecting' data into tensor!
+
+        //   p:>>
+        //   5.0, 2.0,
+        //   7.0, 34.0
+
+        a[[[0..3]:2, [1..4]:2]] = new Tsr([2, 2], [1, 2, 3, 4]) // Doing so in tensor a...
+
+        //   b:>>
+        //   1.0, 2.0,  //  ...has side effects in b.
+        //   3.0, 4.0   //  b's data is overwritten in this case.
+
+        //   a:>>
+        //   1.0,  1.0, 3.0, 2.0, 5.0, 6.0,
+        //   7.0, 16.0, 9.0, 1.0, 2.0, 3.0,
+        //   4.0,  3.0, 6.0, 4.0, 8.0, 9.0,
+        //   1.0,  2.0, 3.0, 4.0, 5.0, 6.0
+
+        a[1..2, 1..2] = new Tsr([2, 2], [8, 8, 8, 8])
+
+        //   b:>>
+        //   1.0, 2.0,  // Here b is partially overwritten.
+        //   8.0, 4.0,
+
+        //   a:>>
+        //   1.0, 1.0, 3.0, 2.0, 5.0, 6.0,
+        //   7.0, 8.0, 8.0, 1.0, 2.0, 3.0,
+        //   4.0, 8.0, 8.0, 4.0, 8.0, 9.0,
+        //   1.0, 2.0, 3.0, 4.0, 5.0, 6.0
+
+
+
+                                                </code></pre>
+</div>

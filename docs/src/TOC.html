@@ -1,0 +1,87 @@
+<style>
+
+    :root {
+        --mainColor: #00e968;
+    }
+
+    .NavBox a {
+        background: linear-gradient(
+                to bottom, var(--mainColor) 0%,
+                var(--mainColor) 100%
+        );
+        background-position: 0 100%;
+        background-repeat: repeat-x;
+        background-size: 4px 2px;
+        color: #000;
+        text-decoration: none;
+        transition: background-size .2s;
+        cursor: pointer;
+        border-radius: 0.1em;
+        padding: 0.25em 0.25em 0.25em 0.25em;
+        margin: 0.25em 0.25em 0.25em 0.25em;
+    }
+
+    .NavBox a:hover {
+        background-size: 4px 50px;
+        color: cyan;
+        background-color: #99dcff;
+    }
+
+
+    .toc_container {
+        border: 1px solid #aaa;
+        display: table;
+        font-size: 95%;
+        margin-bottom: 1em;
+        padding: 20px;
+        width: 100%;
+    }
+
+    .toc_container li, .toc_container ul, .toc_container ul li {
+        list-style: outside none none !important;
+    }
+
+    .toc_container a {
+        font-weight: 300;
+        font-size: 1.25em;
+    }
+
+    .toc_container div {
+        margin-bottom: 1.5em;
+        padding: 1em;
+        border: 1px solid black;
+    }
+
+
+</style>
+
+<div class="NavBox col-sm-12 col-md-6">
+    <div class="contentBox">
+        <div class="toc_container">
+            <h3 href="#">Tensors</h3>
+            <div>
+                <a class="navTopic" onclick="loadContent('indexing')">
+                    Indexing
+                </a>
+                <a class="navTopic" onclick="loadContent('slicing')">
+                    Slicing
+                </a>
+                <a class="navTopic" onclick="loadContent('labeling')">
+                    Index Labeling
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="NavBox col-sm-12 col-md-6">
+    <div class="contentBox">
+        <div class="toc_container">
+            <h3 href="#">Calculus</h3>
+            <div>
+                <a class="navTopic" onclick="loadContent('autograd')">
+                    Autograd
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
