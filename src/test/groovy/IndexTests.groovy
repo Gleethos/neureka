@@ -11,6 +11,35 @@ import util.NTester_Tensor
 
 class IndexTests
 {
+
+
+    @Test
+    void myTest(){
+
+        Neureka.Settings.reset()
+
+        Tsr a = new Tsr(2).setRqsGradient(true)
+
+        Tsr b = a*3/5
+
+        Tsr c = b ^ new Tsr(3)
+
+        Tsr d = c / 100
+
+        print(d)
+
+
+
+
+
+
+
+
+
+    }
+
+
+
     @Test
     void testSlicing()
     {

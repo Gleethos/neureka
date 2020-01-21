@@ -891,6 +891,10 @@ public class Tsr
     public Tsr div(Tsr other) {
         return new Tsr(new Tsr[]{this, other}, "i0/i1");
     }
+    public Tsr div(Double value) {
+        return div(new Tsr(this.shape(), value));
+    }
+
     public Tsr mod(Tsr other) {
         return new Tsr(new Tsr[]{this, other}, "i0%i1");
     }

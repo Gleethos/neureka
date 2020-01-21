@@ -93,7 +93,7 @@ public abstract class AbstractDevice implements  Device
                         } else {
                             newTsrs = _util._subset(tsrs, 1,  2, tsrs.length-2);
                             newTsrs[0] =  Tsr.fcn.create.newTsrLike(tsrs[1]);
-                            for(Tsr t : newTsrs) if(!t.has(GraphNode.class))t.add(new GraphNode(null, new GraphLock(null, null), ()->t));
+                            for(Tsr t : newTsrs) if(!t.has(GraphNode.class)) new GraphNode(null, new GraphLock(null, null), ()->t);
                             Tsr exp = _execute_recursively(newTsrs, Function.TYPES.LOOKUP.get("*"), -1);
                             tsrs[0] = _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], exp}, f_id, 0);
                             exp.delete();

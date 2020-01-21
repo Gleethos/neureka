@@ -42,7 +42,7 @@ public interface Function
                 if(t.has(GraphNode.class)){
                     ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);
                 } else {
-                    t.add(new GraphNode(null, newLock, ()->t));
+                    new GraphNode(null, newLock, ()->t);
                 }
             }
             Tsr result = null;

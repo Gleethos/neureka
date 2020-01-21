@@ -176,7 +176,7 @@ public class GraphNode
      * @param newChild which references it's input namely the parent (this) has...
      */
     private synchronized void _attachChild(GraphNode newChild){
-        if(_children==null)_children = new ArrayList<>();
+        if(_children==null) _children = new ArrayList<>();
         WeakTensorReference<GraphNode> ref = new WeakTensorReference<GraphNode>(newChild, null);
         _children.add(ref);
     }
@@ -199,13 +199,9 @@ public class GraphNode
     }
 
     public boolean isGraphLeave(){
-        if(isLeave()){
-            return true;
-        }
+        if(isLeave()) return true;
         for(GraphNode p : _parents){
-            if(p.lock()!=this.lock()){
-                return true;
-            }
+            if(p.lock()!=this.lock()) return true;
         }
         return false;
     }
@@ -224,7 +220,7 @@ public class GraphNode
      * @param payloadSupplier Provides the payload of this node.
      */
     public GraphNode(Function function, Object context, Supplier<Tsr> payloadSupplier){
-        if(context instanceof GraphLock){
+        if(context instanceof GraphLock) {//Note function always null in this case:
             _construct(payloadSupplier.get(), function, null, (GraphLock)context);
         } else if (context instanceof Tsr[]){
             Tsr[] inputs = (Tsr[])context;
@@ -264,7 +260,7 @@ public class GraphNode
         }else {
             _parents = null;
         }
-        output.add(this);
+        output.add(this);//TODO: make this conditional!!
         if(_nid==-1){
             long nid = 1;
             if(_parents !=null) {
@@ -368,7 +364,7 @@ public class GraphNode
     {
         if(_parents==null || mode()==0) return;//Gradient cleanup not needed in this case!
         for(GraphNode node : _parents){
-            if(!node.isGraphLeave()){
+            if(!node.isGraphLeave()) {//Graph leaves are leaves of the current function (defined by its graph lock)
                 node._payloadDeletionDive(_mode);
                 this.forEach((t, d)->{
                     if( this.mode()>0 || d==node.getPayload() ) node._targetedCleanup(t);
@@ -384,8 +380,7 @@ public class GraphNode
     {// Find and remove redundant gradients sharing the same target: ... remove target payload if it is not used!
         if(target==null) throw new IllegalStateException("[GraphNode][_targetedCleanup]: target node must not be null!");
         if(_parents==null || mode()==0) return;//Gradient cleanup not needed in this case!
-        boolean cleanForwardAD = (mode()>0);
-        if(cleanForwardAD)
+        if(usesForwardAD())//clean up Forward-AD path
         {
             TreeMap<Tsr, GraphNode> blacklist = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
             this.forEach((t, d)->{ if(t==target) blacklist.put(d, t); });
@@ -402,8 +397,7 @@ public class GraphNode
         }else{
             redundantGradientCleanup();
         }
-        /** sources can be deleted because unused graph nodes are already trimmed off the tree (targets remain!)
-         * */
+        /** sources can be deleted because unused graph nodes are already trimmed off the tree (targets remain!)* */
         //TODO: query target through inputs... delete forward mode AD node tensors!
         //_parents = null;//This might not be necessary...
     }
@@ -420,8 +414,8 @@ public class GraphNode
      */
     private void _payloadDeletionDive(int child_mode)
     {
-        if(!this.isLeave() && _payload!=null){
-            if(_mode>0 && child_mode>_mode){//If _payload==null return maybe?? (because graph already clean?)
+        if(!this.isLeave() && _payload!=null) {
+            if(_mode>0 && child_mode>_mode) {//If _payload==null return maybe?? (because graph already clean?)
                 _payload.remove(GraphNode.class);
                 if(!_is_used_as_derivative) _payload.delete();
                 _payload = null;
@@ -433,14 +427,14 @@ public class GraphNode
                 }
             }
         }
-        if(_parents!=null){
+        if(_parents!=null) {//Graph leaves are leaves of the current function (defined by its graph lock)
             for(GraphNode n : _parents) if(!n.isGraphLeave()) n._payloadDeletionDive(_mode);
-        }
+        }// Will only traverse current function
     }
 
     /**
      * This method is called when a tensor is deleted and belongs to a computation graph.
-     * All parents of this tensor will be checked if deletions is possible.
+     * All parents of this tensor will be checked if deletion is possible.
      * This is usually the case when the branch lineage is not tied to any other children!
      * @param child
      */
