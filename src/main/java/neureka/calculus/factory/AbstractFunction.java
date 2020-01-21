@@ -43,6 +43,11 @@ public abstract class AbstractFunction implements Function {
     }
 
     @Override
+    public boolean doesAD(){
+        return _doAD;
+    }
+
+    @Override
     public int id() {
         return _id;
     }

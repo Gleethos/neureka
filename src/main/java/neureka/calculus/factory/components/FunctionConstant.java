@@ -16,6 +16,11 @@ public class FunctionConstant implements Function
 	}
 
 	@Override
+	public boolean doesAD(){
+		return false;
+	}
+
+	@Override
 	public int id() {
 		return -1;
 	}

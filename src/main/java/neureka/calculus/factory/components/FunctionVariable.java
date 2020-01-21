@@ -16,6 +16,12 @@ public class FunctionVariable implements Function, GradientProvider {
     public boolean isFlat() {
         return false;
     }
+
+    @Override
+    public boolean doesAD(){
+        return false;
+    }
+
     @Override
     public int id() {
         return -1;

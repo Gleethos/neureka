@@ -28,6 +28,9 @@ public class Cache
 
     public synchronized Tsr preprocess(Tsr[] inputs, Function function, Supplier<Tsr> activation, int d, int j)
     {
+        if(!function.doesAD()) {
+            return activation.get();//TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD => NO GRAPH NODES
+        }
         boolean locked = true;//input tensors might all have graph nodes but are left from previous computation. (=>need to locked again!)
         Tsr untracked = null;
         for(Tsr t : inputs){
@@ -45,7 +48,7 @@ public class Cache
             if(t.has(GraphNode.class)){
                 ((GraphNode)t.find(GraphNode.class)).obtainLocking(lock);
             } else {
-               new GraphNode(null, lock, ()->t);
+               new GraphNode(function, lock, ()->t);
                 //t.add(rg);
             }
         }

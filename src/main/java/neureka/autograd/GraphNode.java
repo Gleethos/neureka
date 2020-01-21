@@ -219,7 +219,9 @@ public class GraphNode
      * @param context Can be either an array of tensors or a new lock (for leave node or fresh function locking)
      * @param payloadSupplier Provides the payload of this node.
      */
-    public GraphNode(Function function, Object context, Supplier<Tsr> payloadSupplier){
+    public GraphNode(Function function, Object context, Supplier<Tsr> payloadSupplier)
+    {
+        if(function==null) throw new IllegalArgumentException("[GraphNode](Constructor): Function must not be null!");
         if(context instanceof GraphLock) {//Note function always null in this case:
             _construct(payloadSupplier.get(), function, null, (GraphLock)context);
         } else if (context instanceof Tsr[]){
@@ -242,12 +244,17 @@ public class GraphNode
     private void _construct(Tsr output, Function function, Tsr[] inputs, GraphLock lock)
     {
         if(output==null) throw new RuntimeException("[GraphNode]:(constructor): Payload must no be null!");
-        _mode = (inputs!=null)? _modeOf(inputs, function):(output.rqsGradient())?1:0;
-        _function = function;
+        if(!function.doesAD()) return;
         _lock = lock;
         _payload = output;
-        if(inputs!=null)
-        {
+        output.add(this);//TODO: make this conditional!!
+        if(inputs==null) {
+            _mode = (output.rqsGradient())?1:0;
+            _function = null;
+            _parents = null;
+        } else {
+            _mode = _modeOf(inputs, function);
+            _function = function;
             _parents = new GraphNode[inputs.length];
             for(int i=0; i<inputs.length; i++) {
                 _parents[i] = (GraphNode)inputs[i].find(GraphNode.class);
@@ -257,10 +264,7 @@ public class GraphNode
                     _parents[i]._attachChild(this);
                 }
             }
-        }else {
-            _parents = null;
         }
-        output.add(this);//TODO: make this conditional!!
         if(_nid==-1){
             long nid = 1;
             if(_parents !=null) {
@@ -278,9 +282,8 @@ public class GraphNode
 
     private void _connect(GraphNode node, Tsr output, Tsr[] inputs, Function function)
     {
-        /** Returning if the above cannot form an AD computation graph! :
-         * */
-        if(function==null || !function.isFlat()) return; // Leave nodes cannot be connected!!
+        /** Returning if the above cannot form an AD computation graph! : * */
+        if(inputs==null || !function.isFlat()) return; // Leave nodes cannot be connected!!
         for(Tsr t : inputs) if(t.equals(output)) return;
         if(node.usesAD() && function.isFlat())
         {
@@ -388,7 +391,7 @@ public class GraphNode
                 if(!b.has(GraphNode.class) || !((GraphNode)b.find(GraphNode.class)).isLeave()){
                     _targets_derivatives.remove(t);
                     //TODO: get graph node and remove tensor reference! (this creates a virtual graph node (without payload!))
-                    ((GraphNode)b.find(GraphNode.class))._payload = null;
+                    if(b.has(GraphNode.class)) ((GraphNode)b.find(GraphNode.class))._payload = null;
                     b.delete();
                 }
             });

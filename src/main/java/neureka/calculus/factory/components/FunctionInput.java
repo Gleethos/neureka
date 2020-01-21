@@ -17,6 +17,12 @@ public class FunctionInput implements Function, GradientProvider
     public boolean isFlat() {
         return true;
     }
+
+    @Override
+    public boolean doesAD(){
+        return false;
+    }
+
     @Override
     public int id() {
         return -1;

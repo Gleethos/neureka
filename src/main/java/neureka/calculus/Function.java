@@ -42,7 +42,7 @@ public interface Function
                 if(t.has(GraphNode.class)){
                     ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);
                 } else {
-                    new GraphNode(null, newLock, ()->t);
+                    new GraphNode(function, newLock, ()->t);
                 }
             }
             Tsr result = null;
@@ -75,6 +75,8 @@ public interface Function
 
     //------------------------------------------------------------------------------------------------------------------
     Function newBuild(String expression);
+
+    boolean doesAD();//Note: only branch nodes can 'do Auto-Differentiation'
 
     boolean isFlat();
 

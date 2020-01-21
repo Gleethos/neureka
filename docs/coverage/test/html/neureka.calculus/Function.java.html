@@ -42,7 +42,7 @@ public interface Function
 <span class="fc bfc" id="L42" title="All 2 branches covered.">                if(t.has(GraphNode.class)){</span>
 <span class="fc" id="L43">                    ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);</span>
                 } else {
-<span class="fc" id="L45">                    new GraphNode(null, newLock, ()-&gt;t);</span>
+<span class="fc" id="L45">                    new GraphNode(function, newLock, ()-&gt;t);</span>
                 }
             }
 <span class="fc" id="L48">            Tsr result = null;</span>
@@ -75,6 +75,8 @@ public interface Function
 
     //------------------------------------------------------------------------------------------------------------------
     Function newBuild(String expression);
+
+    boolean doesAD();//Note: only branch nodes can 'do Auto-Differentiation'
 
     boolean isFlat();
 
