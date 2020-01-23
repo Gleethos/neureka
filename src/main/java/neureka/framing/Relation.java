@@ -1,14 +1,40 @@
 package neureka.framing;
 
+import neureka.Component;
 import neureka.Tsr;
 
 import java.lang.ref.WeakReference;
 import java.util.function.Consumer;
 
-public class Relation {
+public class Relation implements Component {
 
-    private WeakReference<Tsr>[] _children;
-    private Tsr _parent;
+    private Tsr _parent;// Children need their parents. They shall not be garbage collected.
+
+    private WeakReference<Tsr>[] _children;// Children may be garbage collected if not needed.
+
+    @Override
+    public void update(Tsr oldOwner, Tsr newOwner){
+        if(_parent!=null){
+            Relation pr = (Relation)_parent.find(Relation.class);
+            for(int i=0; i<pr._children.length; i++){
+                if(pr._children[i].get()== oldOwner){
+                    pr._children[i] = new WeakReference<>(newOwner);
+                }
+            }
+        }
+        if(_children!=null){
+            for(WeakReference<Tsr> c : _children){
+                Tsr t = c.get();
+                if(t!=null){
+                    Relation cr = (Relation) t.find(Relation.class);
+                    if(cr!=null){
+                        cr._parent = newOwner;
+                    }
+                }
+            }
+        }
+    }
+
 
     public Relation addParent(Tsr parent){
         _parent = parent;

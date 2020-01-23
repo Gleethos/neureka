@@ -37,9 +37,9 @@ publishing {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile "org.jocl:jocl:2.0.0"
+    compile "org.jocl:jocl:2.+"
     compile 'org.jetbrains:annotations:16.0.2'
-    compile 'org.codehaus.groovy:groovy-all:2.4.14'
+    compile 'org.codehaus.groovy:groovy-all:3.+'
 }
 
 //-----------------------------------------------------------------

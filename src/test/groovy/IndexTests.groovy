@@ -4,6 +4,7 @@ import neureka.acceleration.Device
 import neureka.acceleration.opencl.OpenCLDevice
 import neureka.acceleration.opencl.OpenCLPlatform
 import neureka.acceleration.opencl.utility.DeviceQuery
+import neureka.autograd.GraphNode
 import org.junit.Test
 import util.DummyDevice
 import util.NTester
@@ -11,33 +12,6 @@ import util.NTester_Tensor
 
 class IndexTests
 {
-
-
-    @Test
-    void myTest(){
-
-        Neureka.Settings.reset()
-
-        Tsr a = new Tsr(2).setRqsGradient(true)
-
-        Tsr b = a*3/5
-
-        Tsr c = b ^ new Tsr(3)
-
-        Tsr d = c / 100
-
-        print(d)
-
-
-
-
-
-
-
-
-
-    }
-
 
 
     @Test

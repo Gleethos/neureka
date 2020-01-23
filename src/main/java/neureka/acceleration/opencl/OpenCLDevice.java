@@ -47,8 +47,6 @@ public class OpenCLDevice extends AbstractDevice
      */
     private cl_command_queue _queue;
 
-    private static Cleaner CLEANER = Cleaner.create();
-    private ReferenceQueue _reference_queue;
     /**==============================================================================================================**/
 
     public OpenCLDevice(OpenCLPlatform platform, cl_device_id did)
@@ -185,7 +183,7 @@ public class OpenCLDevice extends AbstractDevice
         );
         WeakTensorReference r = new WeakTensorReference(tensor, _reference_queue);
         _mapping.put(r, newClt);
-        CLEANER.register(tensor, ()->{
+        cleaning(tensor, ()->{
             _rmv(r);
             //System.out.println("Garbage has been removed from GPU!!!");
         });

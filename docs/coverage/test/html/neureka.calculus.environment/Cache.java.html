@@ -29,7 +29,7 @@ import java.util.function.Supplier;
     public synchronized Tsr preprocess(Tsr[] inputs, Function function, Supplier&lt;Tsr&gt; activation, int d, int j)
     {
 <span class="fc bfc" id="L31" title="All 2 branches covered.">        if(!function.doesAD()) {</span>
-<span class="fc" id="L32">            return activation.get();</span>
+<span class="fc" id="L32">            return activation.get();//TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD =&gt; NO GRAPH NODES</span>
         }
 <span class="fc" id="L34">        boolean locked = true;//input tensors might all have graph nodes but are left from previous computation. (=&gt;need to locked again!)</span>
 <span class="fc" id="L35">        Tsr untracked = null;</span>

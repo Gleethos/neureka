@@ -170,7 +170,7 @@ public abstract class AbstractFunction implements Function {
 <span class="fc bfc" id="L170" title="All 2 branches covered.">        if (TYPES.REGISTER[_id].equals(&quot;x&quot;)) {</span>
 <span class="fc" id="L171">            Tsr tensor1 = _src.get(0).activate(inputs).setIsVirtual(false);</span>
 <span class="fc" id="L172">            Tsr tensor2 = _src.get(1).activate(inputs).setIsVirtual(false);</span>
-<span class="fc" id="L173">            Tsr newTensor = new Tsr(Tsr.fcn.indexing.shpOfCon(tensor1.shape(), tensor2.shape()));</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">            Tsr newTensor = (d&lt;0)?new Tsr(Tsr.fcn.indexing.shpOfCon(tensor1.shape(), tensor2.shape())):null;</span>
 <span class="fc" id="L174">            Tsr[] array = new Tsr[]{newTensor, tensor1, tensor2};</span>
 <span class="fc" id="L175">            myDevice.execute(array, _id, d);</span>
 <span class="fc" id="L176">            return array[0];</span>

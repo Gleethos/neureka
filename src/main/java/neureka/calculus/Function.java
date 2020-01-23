@@ -52,7 +52,7 @@ public interface Function
                 result = activation.get();
             }
 
-            if (result.has(GraphNode.class)) ((GraphNode) result.find(GraphNode.class)).redundantGradientCleanup();
+            //if (result.has(GraphNode.class)) ((GraphNode) result.find(GraphNode.class)).redundantGradientCleanup();
             Function.CACHE.free(newLock);
             boolean resultIsUnique = true;
             if(drain!=null){

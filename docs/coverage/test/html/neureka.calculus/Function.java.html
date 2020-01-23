@@ -52,7 +52,7 @@ public interface Function
 <span class="fc" id="L52">                result = activation.get();</span>
             }
 
-<span class="fc bfc" id="L55" title="All 2 branches covered.">            if (result.has(GraphNode.class)) ((GraphNode) result.find(GraphNode.class)).redundantGradientCleanup();</span>
+            //if (result.has(GraphNode.class)) ((GraphNode) result.find(GraphNode.class)).redundantGradientCleanup();
 <span class="fc" id="L56">            Function.CACHE.free(newLock);</span>
 <span class="fc" id="L57">            boolean resultIsUnique = true;</span>
 <span class="fc bfc" id="L58" title="All 2 branches covered.">            if(drain!=null){</span>

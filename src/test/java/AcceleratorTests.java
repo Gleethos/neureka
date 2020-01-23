@@ -3,6 +3,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.acceleration.opencl.OpenCLPlatform;
+import neureka.autograd.GraphNode;
 import org.junit.Test;
 import util.NTester_Tensor;
 
@@ -213,26 +214,29 @@ public class AcceleratorTests
         listOfTensors.add(b);
         listOfTensors.add(w);
         y = new Tsr(new Tsr[]{x, b, w}, "(12/i0/i1/i2/2");//12/3/0.5/4/2 .... 12 * 1/ (0.0625)
+        //listOfTensors.add(y);
         tester.testTensor(y, new String[]{"[1]:(1.0);", " ->d[1]:(-0.33333E0), "});
         tester.testShareDevice(gpu, new Tsr[]{y, x, b, w});
         //---
         //---------------------------------------------
         y = null;
         z = null;
+        x = null;
+        b = null;
+        w = null;
+        tensor1 = null;
+        tensor2 = null;
         listOfTensors.forEach((t)->t.setRqsGradient(false));//Removes gradients!
         System.gc();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        try { Thread.sleep(400); } catch (InterruptedException e) { e.printStackTrace(); }
+        System.gc();
+        try { Thread.sleep(400); } catch (InterruptedException e) { e.printStackTrace(); }
         Collection<Tsr> outsourced = gpu.tensors();
-
 
         String sentence = "Number of outsourced tensors: ";
         tester.testContains(
                 sentence +(outsourced.size()),
-                new String[]{sentence+(listOfTensors.size()-2)},
+                new String[]{sentence+(listOfTensors.size())},
                 "Testing for memory leaks!"
         );
         //---
@@ -241,7 +245,7 @@ public class AcceleratorTests
         sentence = "Used tensors still on device: ";
         tester.testContains(
                 sentence +stillOnDevice[0],
-                new String[]{sentence+"false"},//true
+                new String[]{sentence+"true"},//true
                 "Testing for memory leaks!"
         );
         //---

@@ -34,6 +34,8 @@ public interface Device
 
     Device rmv(Tsr tensor);
 
+    Device cleaning(Tsr tensor, Runnable action);
+
     Device overwrite64(Tsr tensor, double[] value);
 
     Device overwrite32(Tsr tensor, float[] value);

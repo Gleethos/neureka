@@ -170,7 +170,7 @@ public abstract class AbstractFunction implements Function {
         if (TYPES.REGISTER[_id].equals("x")) {
             Tsr tensor1 = _src.get(0).activate(inputs).setIsVirtual(false);
             Tsr tensor2 = _src.get(1).activate(inputs).setIsVirtual(false);
-            Tsr newTensor = new Tsr(Tsr.fcn.indexing.shpOfCon(tensor1.shape(), tensor2.shape()));
+            Tsr newTensor = (d<0)?new Tsr(Tsr.fcn.indexing.shpOfCon(tensor1.shape(), tensor2.shape())):null;
             Tsr[] array = new Tsr[]{newTensor, tensor1, tensor2};
             myDevice.execute(array, _id, d);
             return array[0];

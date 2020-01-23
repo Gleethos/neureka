@@ -38,6 +38,11 @@ public class DummyDevice implements Device
     }
 
     @Override
+    public Device cleaning(Tsr tensor, Runnable action) {
+        return null;
+    }
+
+    @Override
     public Device overwrite64(Tsr tensor, double[] value) {
         return this;
     }

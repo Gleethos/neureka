@@ -792,6 +792,7 @@ public class Tsr
     //MODIFICATION :
     //=========================
 
+
     public Tsr inject(Tsr tensor) {
         if(tensor==null) return this;
         _value = tensor._value;
@@ -800,10 +801,19 @@ public class Tsr
         _translation = tensor._translation;
         _components = tensor._components;
         _flags = tensor._flags;
-        if(tensor.isOutsourced()){
-            Device device = (Device) tensor.find(Device.class);
-            device.swap(tensor, this);
+        //if(tensor.isOutsourced()){
+        //    Device device = (Device) tensor.find(Device.class);
+        //    device.swap(tensor, this);
+        //}
+        if(_components!=null){//Inform components about their new owner:
+            _components.forEach((c)->{if(c instanceof Component) ((Component)c).update(tensor, this);});
         }
+        tensor._value = null;
+        tensor._shape = null;
+        tensor._idxmap = null;
+        tensor._translation = null;
+        tensor._components = null;
+        tensor._flags = -1;
         return this;
     }
 
@@ -847,7 +857,7 @@ public class Tsr
             if(!node.isVirtual() && node.isUsedAsDerivative()){
                 throw new IllegalStateException("Trying to delete a tensor which is part of a function graph and used as derivative!");
             }
-            node.extinguishLineageBy(node);
+            //node.extinguishLineageBy(node);
         }
         _flags = -1;
         _value = null;

@@ -1,16 +1,34 @@
 package neureka.acceleration;
 
+import neureka.Component;
 import neureka.Tsr;
 import neureka.calculus.Function;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
 
-public abstract class AbstractDevice implements  Device
+import java.lang.ref.Cleaner;
+import java.lang.ref.ReferenceQueue;
+
+public abstract class AbstractDevice implements  Device, Component
 {
+    private static Cleaner CLEANER = Cleaner.create();
+    protected ReferenceQueue _reference_queue;
+
+
     protected abstract void _enqueue(Tsr[] tsrs, int d, int f_id);
 
     protected abstract void _enqueue(Tsr t, double value, int d, int f_id);
 
+    @Override
+    public void update(Tsr oldOwner, Tsr newOwner){
+        swap(oldOwner, newOwner);
+    }
+
+    @Override
+    public Device cleaning(Tsr  tensor, Runnable action){
+        CLEANER.register(tensor, action);
+        return this;
+    }
 
     @Override
     public Device execute(Tsr[] tsrs, int f_id, int d) {
