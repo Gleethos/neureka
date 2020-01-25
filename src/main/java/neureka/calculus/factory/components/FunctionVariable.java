@@ -1,6 +1,7 @@
 package neureka.calculus.factory.components;
 
 import neureka.Tsr;
+import neureka.autograd.GraphNode;
 import neureka.calculus.Function;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
@@ -72,9 +73,6 @@ public class FunctionVariable implements Function, GradientProvider {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public Tsr activate(Tsr[] inputs, int j) {
-        //if(this.providesGradient() && inputs[j].rqsGradient()){
-        //    inputs[j].setGradientIsTargeted(true);
-        //}
         return inputs[j];
     }
     @Override
@@ -82,7 +80,6 @@ public class FunctionVariable implements Function, GradientProvider {
         String exp = "I[0]";
         for(int i=1; i<inputs.length; i++)exp += "+I["+i+"]";
         return FunctionBuilder.build(exp, false).activate(inputs);
-        //return new Tsr(inputs, exp);
     }
     @Override
     public Tsr derive(Tsr[] inputs, int index, int j) {
@@ -99,5 +96,10 @@ public class FunctionVariable implements Function, GradientProvider {
     @Override
     public String toString() {
         return "I"+((this.providesGradient())?"g":"")+"[j]";
+    }
+
+    @Override
+    public ReverseAD getReverseAD(GraphNode node, Tsr[] inputs){
+        return (Tsr error)->error;
     }
 }

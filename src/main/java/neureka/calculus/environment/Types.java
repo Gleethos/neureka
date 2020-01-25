@@ -70,7 +70,8 @@ public class Types
         return isConvection(LOOKUP.get(f));
     }
     public boolean isConvection(int id){
-        return (REGISTER[id].equals("x") || REGISTER[id].contains("«") || REGISTER[id].contains("»"));
+        return (id>=LOOKUP.get("x") && id<LOOKUP.get(","));
+        //return (REGISTER[id].equals("x") || REGISTER[id].contains("«") || REGISTER[id].contains("»"));
     }
 
     public boolean isCommutative(String f){

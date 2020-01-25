@@ -458,7 +458,7 @@ public class Tsr
             }
         }
 <span class="fc bfc" id="L460" title="All 2 branches covered.">        if (mode.contains(&quot;r&quot;)) {</span>
-<span class="fc bfc" id="L461" title="All 4 branches covered.">            if (this.has(GraphNode.class) &amp;&amp; ((GraphNode) this.find(GraphNode.class)).size() &gt; 0) {</span>
+<span class="fc bfc" id="L461" title="All 4 branches covered.">            if (this.has(GraphNode.class) &amp;&amp; ((GraphNode) this.find(GraphNode.class)).derivatives() &gt; 0) {</span>
 <span class="fc" id="L462">                GraphNode node = (GraphNode) this.find(GraphNode.class);</span>
 <span class="fc" id="L463">                AtomicReference&lt;String&gt; enclosed = new AtomicReference&lt;&gt;(&quot;; &quot;);</span>
 <span class="fc" id="L464">                node.forEach((t, d) -&gt; {</span>
@@ -473,7 +473,7 @@ public class Tsr
             }
         }
 <span class="fc bfc" id="L475" title="All 2 branches covered.">        if (mode.contains(&quot;d&quot;)) {</span>
-<span class="fc bfc" id="L476" title="All 4 branches covered.">            if (this.has(GraphNode.class) &amp;&amp; ((GraphNode) this.find(GraphNode.class)).size() &gt; 0) {</span>
+<span class="fc bfc" id="L476" title="All 4 branches covered.">            if (this.has(GraphNode.class) &amp;&amp; ((GraphNode) this.find(GraphNode.class)).derivatives() &gt; 0) {</span>
 <span class="fc" id="L477">                GraphNode node = (GraphNode) this.find(GraphNode.class);</span>
 <span class="pc bpc" id="L478" title="1 of 2 branches missed.">                if (node.mode() != 0) {//node.getMap().values().stream().coll</span>
 <span class="fc" id="L479">                    AtomicReference&lt;String&gt; enclosed = new AtomicReference&lt;&gt;(&quot;; &quot;);</span>
@@ -854,7 +854,7 @@ public class Tsr
 <span class="fc bfc" id="L854" title="All 2 branches covered.">        if (this.isOutsourced()) ((Device) this.find(Device.class)).rmv(this);</span>
 <span class="fc" id="L855">        GraphNode node =((GraphNode)this.find(GraphNode.class));</span>
 <span class="fc bfc" id="L856" title="All 2 branches covered.">        if(node != null){</span>
-<span class="pc bpc" id="L857" title="2 of 4 branches missed.">            if(!node.isVirtual() &amp;&amp; node.isUsedAsDerivative()){</span>
+<span class="pc bpc" id="L857" title="1 of 2 branches missed.">            if(node.isUsedAsDerivative()){//&amp;| !node.isVirtual()</span>
 <span class="nc" id="L858">                throw new IllegalStateException(&quot;Trying to delete a tensor which is part of a function graph and used as derivative!&quot;);</span>
             }
             //node.extinguishLineageBy(node);

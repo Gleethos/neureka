@@ -458,7 +458,7 @@ public class Tsr
             }
         }
         if (mode.contains("r")) {
-            if (this.has(GraphNode.class) && ((GraphNode) this.find(GraphNode.class)).size() > 0) {
+            if (this.has(GraphNode.class) && ((GraphNode) this.find(GraphNode.class)).derivatives() > 0) {
                 GraphNode node = (GraphNode) this.find(GraphNode.class);
                 AtomicReference<String> enclosed = new AtomicReference<>("; ");
                 node.forEach((t, d) -> {
@@ -473,7 +473,7 @@ public class Tsr
             }
         }
         if (mode.contains("d")) {
-            if (this.has(GraphNode.class) && ((GraphNode) this.find(GraphNode.class)).size() > 0) {
+            if (this.has(GraphNode.class) && ((GraphNode) this.find(GraphNode.class)).derivatives() > 0) {
                 GraphNode node = (GraphNode) this.find(GraphNode.class);
                 if (node.mode() != 0) {//node.getMap().values().stream().coll
                     AtomicReference<String> enclosed = new AtomicReference<>("; ");
@@ -854,7 +854,7 @@ public class Tsr
         if (this.isOutsourced()) ((Device) this.find(Device.class)).rmv(this);
         GraphNode node =((GraphNode)this.find(GraphNode.class));
         if(node != null){
-            if(!node.isVirtual() && node.isUsedAsDerivative()){
+            if(node.isUsedAsDerivative()){//&| !node.isVirtual()
                 throw new IllegalStateException("Trying to delete a tensor which is part of a function graph and used as derivative!");
             }
             //node.extinguishLineageBy(node);

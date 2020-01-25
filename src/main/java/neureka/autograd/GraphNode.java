@@ -3,12 +3,10 @@ package neureka.autograd;
 import neureka.Component;
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.acceleration.Device;
 import neureka.acceleration.opencl.utility.WeakTensorReference;
 import neureka.calculus.Function;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
-import java.lang.ref.Cleaner;
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.List;
@@ -55,7 +53,7 @@ public class GraphNode implements Component
      *  -----------+----------------------------------+-
      *  _mode > 0  |  forward Auto-Differentiation    |
      *  -----------+----------------------------------+-
-     *  _mode < 0  |  _backward Auto-Differentiation  |
+     *  _mode < 0  |  backward Auto-Differentiation   |
      *  -----------+----------------------------------+-
      *
      * */
@@ -106,7 +104,6 @@ public class GraphNode implements Component
     /**
      * Recorded AbstractFunction.
      *
-     * @var Function _function
      * */
     public Function getFunction(){
         return _function;
@@ -123,8 +120,17 @@ public class GraphNode implements Component
 
     /**
      * The value of this graph node!
-     * This node belongs to a tensor during creation but may lose
-     * it during memory cleanup : _targetedCleanup(Tsr target) -> payload might be deleted!
+     * This node belongs to a tensor during creation.
+     *
+     * The payload is referenced weakly and might be garbage collected.
+     * When the tensor becomes phantom reachable the lambda defined
+     * in this method will be executed.
+     * It is stored inside the Cleaner within the device of the payload.
+     * Cleaning means to null the targets_derivatives map.
+     * Leaning however only occures if the payload reference is still null.
+     * If it is not null then this means that the payload
+     * changed (happens during injection)
+     *
      *
      * @return the playload of this graph-node.
      */
@@ -156,7 +162,6 @@ public class GraphNode implements Component
         }
     }
 
-    //TODO: Make garbage collection trigger derivatives cleanup!!!!!! //Warning: check if reference is still null... injected...
     private WeakReference<Tsr> _payload;
 
     @Override
@@ -278,10 +283,10 @@ public class GraphNode implements Component
     private void _construct(Tsr output, Function function, Tsr[] inputs, GraphLock lock)
     {
         if(output==null) throw new RuntimeException("[GraphNode]:(constructor): Payload must no be null!");
-        if(!function.doesAD()) return;
+        if(!function.doesAD()) return;//!!
         _lock = lock;
         _setPayload(output);
-        output.add(this);//TODO: make this conditional!!
+        output.add(this);
         if(inputs==null) {
             _mode = (output.rqsGradient())?1:0;
             _function = null;
@@ -292,7 +297,6 @@ public class GraphNode implements Component
             _parents = new GraphNode[inputs.length];
             for(int i=0; i<inputs.length; i++) {
                 _parents[i] = (GraphNode)inputs[i].find(GraphNode.class);
-                //System.out.println(inputs[i].toString("sc")+" | "+_parents[i]);
                 if(_parents[i]==null){
                     throw new IllegalStateException("[GraphNode]:(constructor): Input tensors of a new graph-node must contain leave graph-nodes!");
                 } else {
@@ -318,14 +322,14 @@ public class GraphNode implements Component
             }
             _nid = nid;
         }
-        _connect(this, output, inputs, function);
-    }
-
-    private void _connect(GraphNode node, Tsr output, Tsr[] inputs, Function function)
-    {
         /** Returning if the above cannot form an AD computation graph! : * */
         if(inputs==null || !function.isFlat()) return; // Leave nodes cannot be connected!!
         for(Tsr t : inputs) if(t.equals(output)) return;
+        _connect(this, inputs, function);
+    }
+
+    private void _connect(GraphNode node, Tsr[] inputs, Function function)
+    {
         if(node.usesAD() && function.isFlat())
         {
             /**  Preparing for back propagation:  * */
@@ -340,7 +344,7 @@ public class GraphNode implements Component
                     }else{
                         if(src_node.usesAD()){
                             Tsr d = function.derive(inputs, i);
-                            if(src_node.size()==0 && node.size()==0){
+                            if(src_node.derivatives()==0 && node.derivatives()==0){
                                 node.put((GraphNode) inputs[i].find(GraphNode.class), d);
                             } else {
                             /**  Chain rule (forward) for every _gradient w.r.t. leaves (reverseAD or user leaves):* */
@@ -413,10 +417,7 @@ public class GraphNode implements Component
      * @param error The current error which is created by multiplying it with current derivatives and traversing it.
      */
     public void backward(Tsr error){
-        Map<GraphNode, PendingError> pendingBackProp = new LinkedHashMap<GraphNode, PendingError>(32, 0.777f);//new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
-
         Set<GraphNode> pendingNodes = new HashSet<>();
-
         _backward(error, pendingNodes, false);// Entry-point to private recursive back-propagation!
         if(Neureka.Settings.AD.retainPendingErrorForJITProp()){
             pendingNodes.forEach((n)->n._carryPendingBackPropToGradients(pendingNodes));
@@ -535,7 +536,7 @@ public class GraphNode implements Component
               be continued to be propagated.
               Otherwise it makes sense to accumulate errors further and wait for JIT-Prop traversing!
              */
-            return;//This node will continue its propagation via a JIT-Prop component!
+            return;//This node will continue its propagation via a JIT-Prop component later!
         }
         if(this.usesAD()) {
             if(this.usesForwardAD()){//Using forward-AD derivatives for reverse-mode AD!:
@@ -580,9 +581,7 @@ public class GraphNode implements Component
             for(WeakReference weak : _children){
                 if(weak!=null && weak.get()!=null){
                     GraphNode child = (GraphNode) weak.get();
-                    if(child.usesReverseAD()){
-                        count++;
-                    }
+                    if(child.usesReverseAD()) count++;
                 }
             }
         }
@@ -639,7 +638,7 @@ public class GraphNode implements Component
     /**
      * @return int
      */
-    public int size(){
+    public int derivatives(){
         return (_targets_derivatives !=null)?this._targets_derivatives.size():0;
     }
 

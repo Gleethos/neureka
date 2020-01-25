@@ -1,6 +1,7 @@
 package neureka.calculus.factory.components;
 
 import neureka.Tsr;
+import neureka.autograd.GraphNode;
 import neureka.calculus.Function;
 
 public class FunctionConstant implements Function
@@ -99,4 +100,10 @@ public class FunctionConstant implements Function
 		return new Tsr(inputs[0].shape(), 0.0);
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	@Override
+	public ReverseAD getReverseAD(GraphNode node, Tsr[] inputs){
+		return (Tsr error)->error;
+	}
+
 }

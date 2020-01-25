@@ -37,9 +37,9 @@ publishing {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile "org.jocl:jocl:2.+"
     compile 'org.jetbrains:annotations:16.0.2'
-    compile 'org.codehaus.groovy:groovy-all:3.+'
+    compile group: 'org.jocl', name: 'jocl', version: '2.0.1'
+    compile group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.0-rc-3'
 }
 
 //-----------------------------------------------------------------
@@ -68,7 +68,6 @@ jar {
 //-----------------------------------------------------------------
 
 test {
-    //jar{ from configurations.compile.collect{ zipTree it } }
     //filter { includeTestsMatching "*" }
     minHeapSize = "1g"
     maxHeapSize = "5g"
@@ -87,11 +86,13 @@ if (currentOS.isWindows()) {
 }
 
 
-task deploy {
+task deploy(type:Exec) {
+    String s = "${projectDir}".replace("\\", "/")
+    //workingDir "${projectDir}".replace("\\", "/")
     if (platform=='linux') {
-        //sh './gradlew clean build jar check'
+        commandLine s+"/gradlew clean build jar check"
     } else {
-        // bat 'gradlew.bat clean build jar check'
+        commandLine s+"/gradlew.bat clean build jar check"
     }
 }
 

@@ -141,6 +141,20 @@ public abstract class AbstractFunction implements Function {
 
     //==================================================================================================================
 
+    @Override
+    public ReverseAD getReverseAD(GraphNode node, Tsr[] inputs){
+
+        if(TYPES.isOperation(_id) && !TYPES.isConvection(_id)){
+            return (Tsr error)->error;
+        } else if(TYPES.isConvection(_id)) {
+
+        }
+
+
+        return (Tsr error)->error;
+
+    }
+
     /**
      * Responsible for handling functions with multiple inputs!
      *

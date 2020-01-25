@@ -103,6 +103,14 @@ public interface Function
 
     Tsr derive(Tsr[] inputs, int index);
 
+    //---
+
+    ReverseAD getReverseAD(GraphNode node, Tsr[] inputs);
+
+    interface ReverseAD {
+        Tsr get(Tsr error);
+    }
+
     //------------------------------------------------------------------------------------------------------------------
     String toString();
 }

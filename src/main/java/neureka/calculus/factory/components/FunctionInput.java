@@ -2,6 +2,7 @@ package neureka.calculus.factory.components;
 
 
 import neureka.Tsr;
+import neureka.autograd.GraphNode;
 import neureka.calculus.Function;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
@@ -125,6 +126,11 @@ public class FunctionInput implements Function, GradientProvider
 
     public int index(){
         return ((this.providesGradient())?(Math.abs(_index)-1):_index);
+    }
+
+    @Override
+    public ReverseAD getReverseAD(GraphNode node, Tsr[] inputs){
+        return (Tsr error)->error;
     }
 
 }

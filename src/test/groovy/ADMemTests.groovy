@@ -1,10 +1,37 @@
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
+import neureka.calculus.Function
 import org.junit.Test
 
 class ADMemTests {
 
+    @Test
+    void testReverseReshape(){
+
+        Neureka.Settings.reset()
+
+        Tsr a = new Tsr([2, 3], [
+                1, 2, 3,
+                4, 5, 6
+        ]).setRqsGradient(true)
+
+        Function rs = Neureka.create("[1, 0]:(I[0])")
+
+        Tsr b = rs.activate(a)
+
+        b.backward(new Tsr([3, 2],[
+                -1, 2,
+                 4, 3,
+                 7, 8
+        ]))
+
+        println(b)
+
+
+
+
+    }
 
     @Test
     void testPayloadsAndDerivativesAreNull(){
