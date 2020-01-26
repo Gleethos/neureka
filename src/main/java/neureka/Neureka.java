@@ -84,9 +84,9 @@ public class Neureka
                 _applyGradientWhenTensorIsUsed = false;
             }
             /**
-             * After backward passes the used derivatives are usually not needed.
+             * After backward passes the used size are usually not needed.
              * For debugging purposes however this flag remains and will
-             * not allow for garbage collection of the used derivatives.
+             * not allow for garbage collection of the used size.
              */
             private static boolean _retainGraphDerivativesAfterBackward = false;
 

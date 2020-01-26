@@ -49,7 +49,7 @@ class ThoroughGroovyTests
         assert w_a.toString().contains("g:(null)")
         assert !w_a.toString().contains("1.0, 3.0, 4.0, -1.0")
         assert !w_b.toString().contains("g:(null)")
-        //TODO: calculate derivatives and errors and check correctness!
+        //TODO: calculate size and errors and check correctness!
     }
 
     @Test
@@ -90,7 +90,7 @@ class ThoroughGroovyTests
         assert w_a.toString().contains("g:(null)")
         assert !w_a.toString().contains("1.0, 3.0, 4.0, -1.0")
         assert !w_b.toString().contains("g:(null)")
-        //TODO: calculate derivatives and errors and check correctness!
+        //TODO: calculate size and errors and check correctness!
     }
 
 

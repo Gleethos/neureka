@@ -433,7 +433,7 @@ public class OpenCLPlatform {
                             "}",
                     true
             );
-            //code.forEach((k, v)->{System.out.println(k+"\n------------\n"+v);});
+            //code.forEachForward((k, v)->{System.out.println(k+"\n------------\n"+v);});
         }
 
         return code;

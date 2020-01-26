@@ -1,9 +1,7 @@
 package neureka.calculus.factory;
 
-import neureka.Neureka;
 import neureka.Tsr;
 import neureka.acceleration.Device;
-import neureka.autograd.JITProp;
 import neureka.calculus.Function;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
@@ -141,19 +139,32 @@ public abstract class AbstractFunction implements Function {
 
     //==================================================================================================================
 
+    private static Function MUL = FunctionBuilder.build("(I[0]*I[1])", false);
+    private static Function ADD = FunctionBuilder.build("(I[0]+I[1])", false);
+    private static Function INV_X = FunctionBuilder.build("I[0]x>>I[1]x>>I[2]", false);
+
+
     @Override
-    public ReverseAD getReverseAD(GraphNode node, Tsr[] inputs){
+    public RADLambda getReverseAD(GraphNode node, Tsr[] inputs, int i){
 
-        if(TYPES.isOperation(_id) && !TYPES.isConvection(_id)){
-            return (Tsr error)->error;
-        } else if(TYPES.isConvection(_id)) {
-
+        if (TYPES.isOperation(_id) && !TYPES.isConvection(_id))
+        {
+            Tsr d = this.derive(inputs, i);
+            return (error, t)->(error == null)?d:MUL.activate(new Tsr[]{error, d});
         }
-
-
-        return (Tsr error)->error;
-
+        else if (TYPES.isConvection(_id))
+        {
+            Tsr d = this.derive(inputs, i);
+            return (error, t)->(error == null)?d:INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)});
+        }
+        return (error, t)->error;
     }
+
+    //@Override
+    //public FADLambda getForwardAD(GraphNode node, Tsr[] inputs, int i){
+    //    Tsr d = this.derive(inputs, i);
+    //    return (error)->(error == null)?d:MUL.activate(new Tsr[]{error, d});
+    //}
 
     /**
      * Responsible for handling functions with multiple inputs!

@@ -174,7 +174,7 @@ public class GraphNode implements Component
      * Note: values can be null if the recorded function is of type 'reshape'!
      * Why? => because reshape operation does not need variables for _backward pass!
      * */
-    private TreeMap<GraphNode, Tsr> _targets_derivatives;
+    private TreeMap<GraphNode, Object> _targets_derivatives;
 
     /**
      * "Lock object" for graph identity. (result caching)
@@ -268,10 +268,7 @@ public class GraphNode implements Component
             /* Applying JITProp and gradients */
             if (Neureka.Settings.AD.applyGradientWhenTensorIsUsed()) {
                 for (Tsr t : inputs) {
-                    if (t.has(JITProp.class)) {
-                        JITProp jit = (JITProp) t.find(JITProp.class);
-                        jit.execute();
-                    }
+                    if (t.has(JITProp.class)) ((JITProp) t.find(JITProp.class)).execute();
                 }
                 for (Tsr t : inputs) t.remove(JITProp.class);
                 for (Tsr t : inputs) t.applyGradient();
@@ -307,13 +304,10 @@ public class GraphNode implements Component
         if(_nid==-1){
             long nid = 1;
             if(_parents !=null) {
-                //int i=0;
                 for(GraphNode n : _parents) {
                     if(n.getPayload()==null){
                         System.out.println("Hi..."+n.getPayload());
-                        //System.out.println("Hi..."+inputs[i]);
                     }
-                    //i++;
                     nid*=n.getPayload().hashCode(); //payload might be 0! Why? -> garbage collected!
                 }
             }
@@ -325,54 +319,45 @@ public class GraphNode implements Component
         /** Returning if the above cannot form an AD computation graph! : * */
         if(inputs==null || !function.isFlat()) return; // Leave nodes cannot be connected!!
         for(Tsr t : inputs) if(t.equals(output)) return;
-        _connect(this, inputs, function);
-    }
 
-    private void _connect(GraphNode node, Tsr[] inputs, Function function)
-    {
-        if(node.usesAD() && function.isFlat())
+        if(this.usesAD() && function.isFlat())
         {
             /**  Preparing for back propagation:  * */
-            if(node.usesForwardAD())
+            if(this.usesForwardAD())
             {
-                int i = 0;
-                for(Tsr input : inputs){
-                    GraphNode src_node = ((GraphNode) input.find(GraphNode.class));
+                for(int i=0; i<inputs.length; i++){
+                    GraphNode src_node = ((GraphNode) inputs[i].find(GraphNode.class));
                     if(src_node.function()!=null && src_node.function().id()== Function.TYPES.LOOKUP.get("x")){
                         Tsr d = function.derive(inputs, i);//TODO: is this ever used? / visited? - yes but why?
-                        node.put(src_node, d);// Sources created by x-mul are reverse-mode cases!
+                        this.put(src_node, d);// Sources created by x-mul are reverse-mode cases!
                     }else{
                         if(src_node.usesAD()){
                             Tsr d = function.derive(inputs, i);
-                            if(src_node.derivatives()==0 && node.derivatives()==0){
-                                node.put((GraphNode) inputs[i].find(GraphNode.class), d);
+                            if(src_node.size()==0 && this.size()==0){
+                                this.put((GraphNode) inputs[i].find(GraphNode.class), d);
                             } else {
-                            /**  Chain rule (forward) for every _gradient w.r.t. leaves (reverseAD or user leaves):* */
-                                src_node.forEach(
-                                    (t, g)->{
-                                        if(node.has(t)){
-                                            Tsr dg = node.get(t);
-                                            node.put(t, ADD.activate(new Tsr[]{dg, MUL.activate(new Tsr[]{d, g})}));
-                                        }else{
-                                            node.put(t, MUL.activate(new Tsr[]{d, g}));
-                                        }//TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
-                                    });
+                                /**  Chain rule (forward) for every _gradient w.r.t. leaves (reverseAD or user leaves):* */
+                                src_node.forEachDerivative(
+                                        (t, td)->{
+                                            if(this.has(t)) {
+                                                Tsr dg = (Tsr)this.get(t);
+                                                this.put(t, ADD.activate(new Tsr[]{dg, MUL.activate(new Tsr[]{d, td})}));
+                                            } else {
+                                                this.put(t, MUL.activate(new Tsr[]{d, td}));
+                                            }//TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
+                                        });
                             }
                         }
                     }
-                    i++;
                 }
             }
-            else if(node.usesReverseAD())
+            else if(this.usesReverseAD())
             {
-                int i = 0;
-                for(Tsr input : inputs){
-                    GraphNode src_node = ((GraphNode) input.find(GraphNode.class));
-                    if(src_node.mode()!=0 || input.rqsGradient()){
-                        Tsr d = function.derive(inputs, i);
-                        node.put(src_node, d);// Add gradients with respect to every source tensor!
+                for(int i=0; i<inputs.length; i++){
+                    GraphNode src_node = ((GraphNode) inputs[i].find(GraphNode.class));
+                    if(src_node.mode()!=0 || inputs[i].rqsGradient()){
+                        this.put(src_node, function.getReverseAD(this, inputs, i));
                     }
-                    i++;
                 }
             }
         }
@@ -414,7 +399,7 @@ public class GraphNode implements Component
      * Accumulations occurs inside the private '_backward' method which traverses the computation graph
      * recursively, halts when errors can be accumulated, adds a PendingError and returns to the method below!
      * Here all the nodes and error values will then be carried (propagated) to the gradients!
-     * @param error The current error which is created by multiplying it with current derivatives and traversing it.
+     * @param error The current error which is created by multiplying it with current size and traversing it.
      */
     public void backward(Tsr error){
         Set<GraphNode> pendingNodes = new HashSet<>();
@@ -443,7 +428,7 @@ public class GraphNode implements Component
      * and their intermediate error accumulations  in 'toBeBackpropagated'.
      * The method halts when errors are accumulated and returns.
      *
-     * @param error It is originally supplied by the user but later on is modified by derivatives...
+     * @param error It is originally supplied by the user but later on is modified by size...
      */
     private void _backward(Tsr error, Set<GraphNode> pendingNodes, boolean allowPendingError)//Map<GraphNode, PendingError> pendingBackProp, boolean allowPendingError)
     {
@@ -469,17 +454,12 @@ public class GraphNode implements Component
                 }
             }
 
-            if(this.usesForwardAD()) {//Using forward-AD derivatives for reverse-mode AD!:
-                this.forEach((t, d)->t._backward(MUL.activate(new Tsr[]{error, d}), pendingNodes, true));
+            if(this.usesForwardAD()) {//Using forward-AD size for reverse-mode AD!:
+                this.forEachForward((t, d)->t._backward(MUL.activate(new Tsr[]{error, d}), pendingNodes, true));
             }else if(this.usesReverseAD()){//Standard reverse mode-AD:
-                this.forEach((t, d)->{
-                    if(_function.id()==Function.TYPES.LOOKUP.get("x")){// x operation requires inverse convolve operation!
-                        t._backward(INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)}), pendingNodes, true);
-                    } else {//Normal elementwise backpropagation:
-                        t._backward(MUL.activate(new Tsr[]{error, d}), pendingNodes, true);
-                    }
-                });
+                this.forEachBackward((t, d)->t._backward(d.get(error, t), pendingNodes, true));
             }
+
         }
     }
 
@@ -487,13 +467,13 @@ public class GraphNode implements Component
      * This method is called only if JIT-propagation is enabled.
      * It carries pending errors to the tensors requiring gradients which will
      * later on be processed just in time.
-     * The path is being marked with '_relies_on_JITProp' so that intermediate derivatives will
+     * The path is being marked with '_relies_on_JITProp' so that intermediate size will
      * not be deleted.
      * @param pendingBackProp
      */
     private void _carryPendingBackPropToGradients(Set<GraphNode> pendingBackProp){//Map<GraphNode, PendingError> pendingBackProp){
         _relies_on_JIPProp = true;
-        this.forEach((t, d)->t._carryPendingBackPropToGradients(pendingBackProp));
+        this.forEachDerivative((t, d)->t._carryPendingBackPropToGradients(pendingBackProp));
         if(this.isLeave() && getPayload().rqsGradient()){
             JITProp jit = (JITProp) getPayload().find(JITProp.class);
             if(jit==null) jit = new JITProp(pendingBackProp);
@@ -539,17 +519,13 @@ public class GraphNode implements Component
             return;//This node will continue its propagation via a JIT-Prop component later!
         }
         if(this.usesAD()) {
-            if(this.usesForwardAD()){//Using forward-AD derivatives for reverse-mode AD!:
-                this.forEach((t, d)->t._backwardJIT(MUL.activate(new Tsr[]{error, d}), source));
+
+            if(this.usesForwardAD()) {//Using forward-AD size for reverse-mode AD!:
+                this.forEachForward((t, d)->t._backwardJIT(MUL.activate(new Tsr[]{error, d}), source));
             }else if(this.usesReverseAD()){//Standard reverse mode-AD:
-                this.forEach((t, d)->{
-                    if(_function.id()==Function.TYPES.LOOKUP.get("x")){// x operation requires inverse convolve operation!
-                        t._backwardJIT(INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)}), source);
-                    } else {//Normal elementwise backpropagation:
-                        t._backwardJIT(MUL.activate(new Tsr[]{error, d}), source);
-                    }
-                });
+                this.forEachBackward((t, d)->t._backwardJIT(d.get(error, t), source));
             }
+
         }
     }
 
@@ -565,7 +541,7 @@ public class GraphNode implements Component
     private void  _deleteDerivativesRecursively(){
         if(!Neureka.Settings.AD.retainGraphDerivativesAfterBackward()){
             if(!reliesOnJustInTimeProp()) _targets_derivatives = null;
-            this.forEach((t, d)->t._deleteDerivativesRecursively());
+            this.forEachDerivative((t, d)->t._deleteDerivativesRecursively());
         }
         return;
     }
@@ -604,23 +580,28 @@ public class GraphNode implements Component
 
     /**
      * @param target nodes are graph nodes which contain either tensors requiring errors for accumulation and/or more targets.
-     * @param derivative tensors are used during back-propagation in order to distribute an error throughout the graph.
+     * @param o tensors are used during back-propagation in order to distribute an error throughout the graph.
      */
-    public void put(GraphNode target, Tsr derivative){
+    public void put(GraphNode target, Object o){
         if(_targets_derivatives ==null){
             _targets_derivatives = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
         }
-        _targets_derivatives.put(target, derivative);
-        if(derivative.has(GraphNode.class)){
-            ((GraphNode)derivative.find(GraphNode.class))._is_used_as_derivative = true;
+        _targets_derivatives.put(target, o);
+
+        if(o instanceof  Tsr){
+            Tsr d = (Tsr)o;
+            if(d!=null && d.has(GraphNode.class)){
+                ((GraphNode)d.find(GraphNode.class))._is_used_as_derivative = true;
+            }
         }
+
     }
 
     /**
      * @param target
      * @return Tsr
      */
-    public Tsr get(GraphNode target){
+    public Object get(GraphNode target){
         if(_targets_derivatives ==null) return null;
         return _targets_derivatives.get(target);
     }
@@ -638,7 +619,7 @@ public class GraphNode implements Component
     /**
      * @return int
      */
-    public int derivatives(){
+    public int size(){
         return (_targets_derivatives !=null)?this._targets_derivatives.size():0;
     }
 
@@ -646,10 +627,40 @@ public class GraphNode implements Component
      * @param action
      * @return void
      */
-    public void forEach(BiConsumer<GraphNode, Tsr> action){
+    public void forEachBackward(BiConsumer<GraphNode, Function.RADLambda> action){
         if(_targets_derivatives ==null) return;
-        _targets_derivatives.forEach(action);
+        _targets_derivatives.forEach((t, o)->{
+            if(o instanceof Function.RADLambda)action.accept(t, (Function.RADLambda) o);
+        });
     }
+
+    /**
+     * @param action
+     * @return void
+     */
+    public void forEachForward(BiConsumer<GraphNode, Tsr> action){
+        if(_targets_derivatives ==null) return;
+        _targets_derivatives.forEach((t, o)->{
+            if(o instanceof Tsr)action.accept(t, (Tsr)o);
+            //else if (o instanceof Function.FADLambda)action.accept(t, (Function.FADLambda) o);
+        });
+    }
+
+    public void forEachDerivative(BiConsumer<GraphNode, Tsr> action){
+        if(_targets_derivatives == null) return;
+        _targets_derivatives.forEach((t, o)->{
+            if(o instanceof Tsr){
+                action.accept(t, (Tsr)o);
+            //} else if(o instanceof Function.FADLambda) {
+            //    Tsr d = ((Function.FADLambda)o).get(null);
+            //    action.accept(t, d);
+            } else {
+                Tsr d = ((Function.RADLambda)o).get(null, null);
+                action.accept(t, d);
+            }
+        });
+    }
+
 
     /**
      *
@@ -719,14 +730,14 @@ public class GraphNode implements Component
     //    //for(GraphNode node : _parents){
     //    //    if(!node.isGraphLeave()) {//Graph leaves are leaves of the current function (defined by its graph lock)
     //    //        node._recursivePayloadDeletion(_mode);
-    //    //        this.forEach((t, d)->{
+    //    //        this.forEachForward((t, d)->{
     //    //            if( this.mode()>0 || d==node.getPayload() ) node._targetedCleanup(t);
     //    //        });
     //    //    }
     //    //}
     //}
     ///**
-    // * @param target The target node of a derivative which is being traversed. Other derivatives targeting it will be removed!
+    // * @param target The target node of a derivative which is being traversed. Other size targeting it will be removed!
     // */
     //private void _targetedCleanup(GraphNode target)
     //{// Find and remove redundant gradients sharing the same target: ... remove target payload if it is not used!
@@ -735,8 +746,8 @@ public class GraphNode implements Component
     //    //if(usesForwardAD())//clean up Forward-AD path
     //    //{
     //    //    TreeMap<Tsr, GraphNode> blacklist = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
-    //    //    this.forEach((t, d)->{ if(t==target) blacklist.put(d, t); });
-    //    //    blacklist.forEach((b, t)->{
+    //    //    this.forEachForward((t, d)->{ if(t==target) blacklist.put(d, t); });
+    //    //    blacklist.forEachForward((b, t)->{
     //    //        if(!b.has(GraphNode.class) || !((GraphNode)b.find(GraphNode.class)).isLeave()){
     //    //            _targets_derivatives.remove(t);
     //    //            //TODO: get graph node and remove tensor reference! (this creates a virtual graph node (without payload!))

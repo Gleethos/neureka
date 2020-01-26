@@ -102,8 +102,13 @@ public class FunctionConstant implements Function
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	@Override
-	public ReverseAD getReverseAD(GraphNode node, Tsr[] inputs){
-		return (Tsr error)->error;
+	public RADLambda getReverseAD(GraphNode node, Tsr[] inputs, int i){
+		return (error, t)->error;
 	}
+
+	//@Override
+	//public FADLambda getForwardAD(GraphNode node, Tsr[] inputs, int i){
+	//	return (error)->error;
+	//}
 
 }

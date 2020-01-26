@@ -129,9 +129,14 @@ import neureka.calculus.factory.assembly.FunctionBuilder;
     }
 
     @Override
-    public ReverseAD getReverseAD(GraphNode node, Tsr[] inputs){
-<span class="nc" id="L133">        return (Tsr error)-&gt;error;</span>
+    public RADLambda getReverseAD(GraphNode node, Tsr[] inputs, int i){
+<span class="nc" id="L133">        return (error, t)-&gt;error;</span>
     }
+
+    //@Override
+    //public FADLambda getForwardAD(GraphNode node, Tsr[] inputs, int i){
+    //    return (error)-&gt;error;
+    //}
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

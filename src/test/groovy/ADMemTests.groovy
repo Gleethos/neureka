@@ -47,7 +47,7 @@ class ADMemTests {
         for(int i=0; i<n.parents.length; i++){
             assert n.parents[i].payload != null
             boolean[] exists = {false}
-            n.parents[i].forEach({t, g -> exists[0] = true })
+            n.parents[i].forEachDerivative({ t, g -> exists[0] = true })
             assert exists[0]
         }
         a = null

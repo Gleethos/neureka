@@ -458,10 +458,10 @@ public class Tsr
             }
         }
 <span class="fc bfc" id="L460" title="All 2 branches covered.">        if (mode.contains(&quot;r&quot;)) {</span>
-<span class="fc bfc" id="L461" title="All 4 branches covered.">            if (this.has(GraphNode.class) &amp;&amp; ((GraphNode) this.find(GraphNode.class)).derivatives() &gt; 0) {</span>
+<span class="fc bfc" id="L461" title="All 4 branches covered.">            if (this.has(GraphNode.class) &amp;&amp; ((GraphNode) this.find(GraphNode.class)).size() &gt; 0) {</span>
 <span class="fc" id="L462">                GraphNode node = (GraphNode) this.find(GraphNode.class);</span>
 <span class="fc" id="L463">                AtomicReference&lt;String&gt; enclosed = new AtomicReference&lt;&gt;(&quot;; &quot;);</span>
-<span class="fc" id="L464">                node.forEach((t, d) -&gt; {</span>
+<span class="fc" id="L464">                node.forEachDerivative((t, d) -&gt; {</span>
 <span class="fc" id="L465">                    enclosed.set(enclosed.get() +</span>
                             base+&quot;=&gt;d|[ &quot; +
 <span class="fc" id="L467">                            base+delimiter+    d._toString(mode, deeper) + &quot; &quot; +</span>
@@ -473,11 +473,11 @@ public class Tsr
             }
         }
 <span class="fc bfc" id="L475" title="All 2 branches covered.">        if (mode.contains(&quot;d&quot;)) {</span>
-<span class="fc bfc" id="L476" title="All 4 branches covered.">            if (this.has(GraphNode.class) &amp;&amp; ((GraphNode) this.find(GraphNode.class)).derivatives() &gt; 0) {</span>
+<span class="fc bfc" id="L476" title="All 4 branches covered.">            if (this.has(GraphNode.class) &amp;&amp; ((GraphNode) this.find(GraphNode.class)).size() &gt; 0) {</span>
 <span class="fc" id="L477">                GraphNode node = (GraphNode) this.find(GraphNode.class);</span>
 <span class="pc bpc" id="L478" title="1 of 2 branches missed.">                if (node.mode() != 0) {//node.getMap().values().stream().coll</span>
 <span class="fc" id="L479">                    AtomicReference&lt;String&gt; enclosed = new AtomicReference&lt;&gt;(&quot;; &quot;);</span>
-<span class="fc" id="L480">                    node.forEach((t, d) -&gt; {</span>
+<span class="fc" id="L480">                    node.forEachDerivative((t, d) -&gt; {</span>
 <span class="fc" id="L481">                        enclosed.set(enclosed.get() +</span>
 <span class="fc" id="L482">                                &quot;-&gt;d&quot; + d._toString(mode, deeper) + &quot;, &quot;);</span>
 <span class="fc" id="L483">                    });</span>

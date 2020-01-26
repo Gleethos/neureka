@@ -458,10 +458,10 @@ public class Tsr
             }
         }
         if (mode.contains("r")) {
-            if (this.has(GraphNode.class) && ((GraphNode) this.find(GraphNode.class)).derivatives() > 0) {
+            if (this.has(GraphNode.class) && ((GraphNode) this.find(GraphNode.class)).size() > 0) {
                 GraphNode node = (GraphNode) this.find(GraphNode.class);
                 AtomicReference<String> enclosed = new AtomicReference<>("; ");
-                node.forEach((t, d) -> {
+                node.forEachDerivative((t, d) -> {
                     enclosed.set(enclosed.get() +
                             base+"=>d|[ " +
                             base+delimiter+    d._toString(mode, deeper) + " " +
@@ -473,11 +473,11 @@ public class Tsr
             }
         }
         if (mode.contains("d")) {
-            if (this.has(GraphNode.class) && ((GraphNode) this.find(GraphNode.class)).derivatives() > 0) {
+            if (this.has(GraphNode.class) && ((GraphNode) this.find(GraphNode.class)).size() > 0) {
                 GraphNode node = (GraphNode) this.find(GraphNode.class);
                 if (node.mode() != 0) {//node.getMap().values().stream().coll
                     AtomicReference<String> enclosed = new AtomicReference<>("; ");
-                    node.forEach((t, d) -> {
+                    node.forEachDerivative((t, d) -> {
                         enclosed.set(enclosed.get() +
                                 "->d" + d._toString(mode, deeper) + ", ");
                     });
