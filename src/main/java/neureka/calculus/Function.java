@@ -2,6 +2,7 @@
 package neureka.calculus;
 
 import neureka.Tsr;
+import neureka.autograd.ADAgent;
 import neureka.calculus.environment.Types;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
@@ -104,7 +105,7 @@ public interface Function
 
     //---
 
-    RADLambda getReverseAD(GraphNode node, Tsr[] inputs, int i);
+    ADAgent getReverseAD(GraphNode node, Tsr[] inputs, int i);
 
     interface RADLambda {
         Tsr get(Tsr error, GraphNode t);

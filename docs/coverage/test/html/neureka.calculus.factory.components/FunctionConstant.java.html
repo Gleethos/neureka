@@ -1,109 +1,110 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FunctionConstant.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.factory.components</a> &gt; <span class="el_source">FunctionConstant.java</span></div><h1>FunctionConstant.java</h1><pre class="source lang-java linenums">package neureka.calculus.factory.components;
 
 import neureka.Tsr;
+import neureka.autograd.ADAgent;
 import neureka.autograd.GraphNode;
 import neureka.calculus.Function;
 
-<span class="fc" id="L7">public class FunctionConstant implements Function</span>
+<span class="fc" id="L8">public class FunctionConstant implements Function</span>
 {
 	private double _value;
 	public double value(){
-<span class="fc" id="L11">		return this._value;</span>
+<span class="fc" id="L12">		return this._value;</span>
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
 	public boolean isFlat(){
-<span class="nc" id="L16">		return  false;</span>
+<span class="nc" id="L17">		return  false;</span>
 	}
 
 	@Override
 	public boolean doesAD(){
-<span class="nc" id="L21">		return false;</span>
+<span class="nc" id="L22">		return false;</span>
 	}
 
 	@Override
 	public int id() {
-<span class="nc" id="L26">		return -1;</span>
+<span class="nc" id="L27">		return -1;</span>
 	}
 
 	@Override
 	public String type() {
-<span class="nc" id="L31">		return &quot;_value&quot;;</span>
+<span class="nc" id="L32">		return &quot;_value&quot;;</span>
 	}
 
 	@Override
 	public boolean dependsOn(int index){
-<span class="fc" id="L36">		return false;</span>
+<span class="fc" id="L37">		return false;</span>
 	}
 
 	@Override
 	public Function newBuild(String expression)
 	{	
-<span class="fc" id="L42">		String number = &quot;&quot;;</span>
-<span class="fc bfc" id="L43" title="All 2 branches covered.">		for(int i=0; i&lt;expression.length(); i++) </span>
+<span class="fc" id="L43">		String number = &quot;&quot;;</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">		for(int i=0; i&lt;expression.length(); i++) </span>
 		{
-<span class="fc bfc" id="L45" title="All 2 branches covered.">			if(expression.charAt(i)&gt;='0' </span>
-<span class="pc bpc" id="L46" title="1 of 2 branches missed.">			|| expression.charAt(i)&lt;='9' </span>
-<span class="nc bnc" id="L47" title="All 2 branches missed.">			|| expression.charAt(i)=='.' </span>
-<span class="nc bnc" id="L48" title="All 2 branches missed.">			|| expression.charAt(i)=='-' </span>
-<span class="nc bnc" id="L49" title="All 2 branches missed.">			|| expression.charAt(i)=='+') </span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">			if(expression.charAt(i)&gt;='0' </span>
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">			|| expression.charAt(i)&lt;='9' </span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">			|| expression.charAt(i)=='.' </span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">			|| expression.charAt(i)=='-' </span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">			|| expression.charAt(i)=='+') </span>
 			{
-<span class="fc" id="L51">				number += expression.charAt(i);</span>
+<span class="fc" id="L52">				number += expression.charAt(i);</span>
 			}
 		}
-<span class="fc" id="L54">		_value = Double.parseDouble(number);</span>
-<span class="fc" id="L55">		return this;</span>
+<span class="fc" id="L55">		_value = Double.parseDouble(number);</span>
+<span class="fc" id="L56">		return this;</span>
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
     public double activate(final double[] inputs, int j) {
-<span class="fc" id="L60">    	return _value;</span>
+<span class="fc" id="L61">    	return _value;</span>
     }
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
 	public double activate(double[] inputs) {
-<span class="fc" id="L65">		return _value;</span>
+<span class="fc" id="L66">		return _value;</span>
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
 	public double derive(double[] inputs, int index) {
-<span class="fc" id="L70">		return 0;</span>
+<span class="fc" id="L71">		return 0;</span>
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
 	public double derive(double[] inputs, int index, int j) {
-<span class="fc" id="L75">		return 0;</span>
+<span class="fc" id="L76">		return 0;</span>
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Override
 	public String toString() {
-<span class="fc" id="L80">		return _value +&quot;&quot;;</span>
+<span class="fc" id="L81">		return _value +&quot;&quot;;</span>
 	}
 
 	@Override
 	public Tsr activate(Tsr[] inputs, int j) {
-<span class="fc" id="L85">		return new Tsr(inputs[0].shape(), this._value);</span>
+<span class="fc" id="L86">		return new Tsr(inputs[0].shape(), this._value);</span>
 	}
 
 	@Override
 	public Tsr activate(Tsr[] inputs) {
-<span class="fc" id="L90">		return new Tsr(inputs[0].shape(), this._value);</span>
+<span class="fc" id="L91">		return new Tsr(inputs[0].shape(), this._value);</span>
 	}
 
 	@Override
 	public Tsr derive(Tsr[] inputs, int index, int j) {
-<span class="fc" id="L95">		return new Tsr(inputs[0].shape(), 0.0);</span>
+<span class="fc" id="L96">		return new Tsr(inputs[0].shape(), 0.0);</span>
 	}
 
 	@Override
 	public Tsr derive(Tsr[] inputs, int index) {
-<span class="fc" id="L100">		return new Tsr(inputs[0].shape(), 0.0);</span>
+<span class="fc" id="L101">		return new Tsr(inputs[0].shape(), 0.0);</span>
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	@Override
-	public RADLambda getReverseAD(GraphNode node, Tsr[] inputs, int i){
-<span class="nc" id="L106">		return (error, t)-&gt;error;</span>
+	public ADAgent getReverseAD(GraphNode node, Tsr[] inputs, int i){
+<span class="nc" id="L107">		return null;</span>
 	}
 
 	//@Override

@@ -11,6 +11,7 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -174,7 +175,7 @@ public class GraphNode implements Component
      * Note: values can be null if the recorded function is of type 'reshape'!
      * Why? => because reshape operation does not need variables for _backward pass!
      * */
-    private TreeMap<GraphNode, Object> _targets_derivatives;
+    private TreeMap<GraphNode, ADAgent> _targets_derivatives;
 
     /**
      * "Lock object" for graph identity. (result caching)
@@ -448,9 +449,9 @@ public class GraphNode implements Component
             }
 
             if(this.usesForwardAD()) {//Using forward-AD size for reverse-mode AD!:
-                this.forEachForward((t, d)->t._backward(MUL.activate(new Tsr[]{error, d}), pendingNodes, true));
+                this.forEachForward(error, (t, d)->t._backward(d, pendingNodes, true));
             }else if(this.usesReverseAD()){//Standard reverse mode-AD:
-                this.forEachBackward((t, d)->t._backward(d.get(error, t), pendingNodes, true));
+                this.forEachBackward(error, (t, e)->t._backward(e, pendingNodes, true));
             }
 
         }
@@ -514,9 +515,9 @@ public class GraphNode implements Component
         if(this.usesAD()) {
 
             if(this.usesForwardAD()) {//Using forward-AD size for reverse-mode AD!:
-                this.forEachForward((t, d)->t._backwardJIT(MUL.activate(new Tsr[]{error, d}), source));
+                this.forEachForward(error, (t, e)->t._backwardJIT(e, source));
             }else if(this.usesReverseAD()){//Standard reverse mode-AD:
-                this.forEachBackward((t, d)->t._backwardJIT(d.get(error, t), source));
+                this.forEachBackward(error, (t, e)->t._backwardJIT(e, source));
             }
 
         }
@@ -579,10 +580,16 @@ public class GraphNode implements Component
         if(_targets_derivatives ==null){
             _targets_derivatives = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
         }
-        _targets_derivatives.put(target, o);
+        ADAgent agent = null;
+        if(o instanceof Tsr){
+            agent = new ADAgent((Tsr)o);
+        } else {
+            agent = (ADAgent)o;
+        }
+        _targets_derivatives.put(target, agent);
 
-        if(o instanceof  Tsr){
-            Tsr d = (Tsr)o;
+        if(agent.isForward()){
+            Tsr d = agent.derivative();//(Tsr)o;
             if(d!=null && d.has(GraphNode.class)){
                 ((GraphNode)d.find(GraphNode.class))._is_used_as_derivative = true;
             }
@@ -620,10 +627,10 @@ public class GraphNode implements Component
      * @param action
      * @return void
      */
-    public void forEachBackward(BiConsumer<GraphNode, Function.RADLambda> action){
+    public void forEachBackward(Tsr error, BiConsumer<GraphNode, Tsr> action){
         if(_targets_derivatives ==null) return;
         _targets_derivatives.forEach((t, o)->{
-            if(o instanceof Function.RADLambda)action.accept(t, (Function.RADLambda) o);
+            if(!o.isForward())action.accept(t, o.backward(t, error));
         });
     }
 
@@ -631,10 +638,12 @@ public class GraphNode implements Component
      * @param action
      * @return void
      */
-    public void forEachForward(BiConsumer<GraphNode, Tsr> action){
+    public void forEachForward(Tsr error, BiConsumer<GraphNode, Tsr> action){
         if(_targets_derivatives ==null) return;
         _targets_derivatives.forEach((t, o)->{
-            if(o instanceof Tsr)action.accept(t, (Tsr)o);
+            if(o.isForward()) action.accept(t, MUL.activate(new Tsr[]{error, o.derivative()}));
+            //MUL.activate(new Tsr[]{error, d})
+            //if(o instanceof Tsr)action.accept(t, (Tsr)o);
             //else if (o instanceof Function.FADLambda)action.accept(t, (Function.FADLambda) o);
         });
     }
@@ -642,15 +651,16 @@ public class GraphNode implements Component
     public void forEachDerivative(BiConsumer<GraphNode, Tsr> action){
         if(_targets_derivatives == null) return;
         _targets_derivatives.forEach((t, o)->{
-            if(o instanceof Tsr){
-                action.accept(t, (Tsr)o);
+            //if(o instanceof Tsr){
+                //action.accept(t, (Tsr)o);
+                action.accept(t, o.derivative());
             //} else if(o instanceof Function.FADLambda) {
             //    Tsr d = ((Function.FADLambda)o).get(null);
             //    action.accept(t, d);
-            } else {
-                Tsr d = ((Function.RADLambda)o).get(null, null);
-                action.accept(t, d);
-            }
+            //} else {
+            //    Tsr d = ((Function.RADLambda)o).get(null, null);
+            //    action.accept(t, d);
+            //}
         });
     }
 

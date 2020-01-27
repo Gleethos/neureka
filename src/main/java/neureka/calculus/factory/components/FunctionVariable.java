@@ -1,6 +1,7 @@
 package neureka.calculus.factory.components;
 
 import neureka.Tsr;
+import neureka.autograd.ADAgent;
 import neureka.autograd.GraphNode;
 import neureka.calculus.Function;
 import neureka.calculus.factory.assembly.FunctionBuilder;
@@ -99,8 +100,8 @@ public class FunctionVariable implements Function, GradientProvider {
     }
 
     @Override
-    public RADLambda getReverseAD(GraphNode node, Tsr[] inputs, int i){
-        return (error, t)->error;
+    public ADAgent getReverseAD(GraphNode node, Tsr[] inputs, int i){
+        return null;
     }
 
     //@Override
