@@ -33,20 +33,22 @@ public class ADAgent {
 <span class="fc" id="L33">        _bad = null;</span>
 <span class="fc" id="L34">    }</span>
 
+
+
     public Tsr forward(Tsr derivative){
-<span class="nc" id="L37">        return _fad.execute(derivative);</span>
+<span class="nc" id="L39">        return _fad.execute(derivative);</span>
     }
 
     public Tsr backward(GraphNode t, Tsr error){
-<span class="fc" id="L41">        return _bad.execute(t, error);</span>
+<span class="fc" id="L43">        return _bad.execute(t, error);</span>
     }
 
     public Tsr derivative(){
-<span class="fc" id="L45">        return _derivative.get();</span>
+<span class="fc" id="L47">        return _derivative.get();</span>
     }
 
     public boolean isForward(){
-<span class="fc bfc" id="L49" title="All 2 branches covered.">        return (_bad==null);</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        return (_bad==null);</span>
     }
 
 

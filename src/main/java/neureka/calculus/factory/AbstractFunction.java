@@ -146,46 +146,51 @@ public abstract class AbstractFunction implements Function {
 
 
     @Override
-    public ADAgent getReverseAD(GraphNode node, Tsr[] inputs, int i){
+    public ADAgent getADAgent(Tsr[] inputs, int i, boolean forward){
 
-        if(_id==TYPES.LOOKUP.get(","))
-        {
-            return new ADAgent(
-                    ()->null,
-                    derivative -> FunctionBuilder.build(this.toString(), false).activate(new Tsr[]{derivative}),
-                    (t, error) -> FunctionBuilder.build(this.toString(), false).activate(new Tsr[]{error})
-            );
-        }
-        else if (TYPES.isOperation(_id) && !TYPES.isConvection(_id))
-        {
+        if(forward){
             Tsr d = this.derive(inputs, i);
             return new ADAgent(
                     ()->d,
                     derivative -> MUL.activate(new Tsr[]{derivative, d}),
-                    (t, error) -> MUL.activate(new Tsr[]{error, d})
+                    null
             );
-        }
-        else if (TYPES.isConvection(_id))
-        {
-            Tsr d = this.derive(inputs, i);
-            return new ADAgent(
-                    ()->d,
-                    derivative -> MUL.activate(new Tsr[]{derivative, d}),
-                    (t, error) -> INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})
-            );
+        } else {
+            if(_id==TYPES.LOOKUP.get(","))
+            {
+                return new ADAgent(
+                        ()->null,
+                        derivative -> FunctionBuilder.build(this.toString(), false).activate(new Tsr[]{derivative}),
+                        (t, error) -> FunctionBuilder.build(this.toString(), false).activate(new Tsr[]{error})
+                );
+            }
+            else if (TYPES.isOperation(_id) && !TYPES.isConvection(_id))
+            {
+                Tsr d = this.derive(inputs, i);
+                return new ADAgent(
+                        ()->d,
+                        derivative -> MUL.activate(new Tsr[]{derivative, d}),
+                        (t, error) -> MUL.activate(new Tsr[]{error, d})
+                );
+            }
+            else if (TYPES.isConvection(_id))
+            {
+                Tsr d = this.derive(inputs, i);
+                return new ADAgent(
+                        ()->d,
+                        derivative -> MUL.activate(new Tsr[]{derivative, d}),
+                        (t, error) -> INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})
+                );
+            }
         }
         return new ADAgent(
                 ()->null,
                 derivative -> null,
                 (t, error) -> null
         );
+
     }
 
-    //@Override
-    //public FADLambda getForwardAD(GraphNode node, Tsr[] inputs, int i){
-    //    Tsr d = this.derive(inputs, i);
-    //    return (error)->(error == null)?d:MUL.activate(new Tsr[]{error, d});
-    //}
 
     /**
      * Responsible for handling functions with multiple inputs!

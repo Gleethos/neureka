@@ -103,7 +103,7 @@ public class FunctionConstant implements Function
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	@Override
-	public ADAgent getReverseAD(GraphNode node, Tsr[] inputs, int i){
+	public ADAgent getADAgent(Tsr[] inputs, int i, boolean forward){
 		return null;
 	}
 

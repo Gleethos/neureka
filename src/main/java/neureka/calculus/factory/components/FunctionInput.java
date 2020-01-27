@@ -130,7 +130,7 @@ public class FunctionInput implements Function, GradientProvider
     }
 
     @Override
-    public ADAgent getReverseAD(GraphNode node, Tsr[] inputs, int i){
+    public ADAgent getADAgent(Tsr[] inputs, int i, boolean forward){
         return null;
     }
 

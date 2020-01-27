@@ -105,16 +105,8 @@ public interface Function
 
     //---
 
-    ADAgent getReverseAD(GraphNode node, Tsr[] inputs, int i);
+    ADAgent getADAgent(Tsr[] inputs, int i, boolean forward);
 
-    interface RADLambda {
-        Tsr get(Tsr error, GraphNode t);
-    }
-
-    //FADLambda getForwardAD(GraphNode node, Tsr[] inputs, int i);
-    //interface FADLambda {
-    //    Tsr get(Tsr error);
-    //}
 
     //------------------------------------------------------------------------------------------------------------------
     String toString();
