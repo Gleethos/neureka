@@ -22,11 +22,11 @@ class ADMemTests {
 
         b.backward(new Tsr([3, 2],[
                 -1, 2,
-                 4, 3,
-                 7, 8
+                 4, 7,
+                 -9, 8
         ]))
-
-        println(b)
+        assert a.toString().contains("[2x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0):g:(-1.0, 4.0, -9.0, 2.0, 7.0, 8.0)")
+        assert b.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
 
 
 

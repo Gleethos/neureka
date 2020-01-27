@@ -304,16 +304,9 @@ public class GraphNode implements Component
         if(_nid==-1){
             long nid = 1;
             if(_parents !=null) {
-                for(GraphNode n : _parents) {
-                    if(n.getPayload()==null){
-                        System.out.println("Hi..."+n.getPayload());
-                    }
-                    nid*=n.getPayload().hashCode(); //payload might be 0! Why? -> garbage collected!
-                }
+                for(GraphNode n : _parents) nid*=n.getPayload().hashCode(); //payload might be 0! Why? -> garbage collected!
             }
-            if(_function !=null){
-                nid+=_function.hashCode();
-            }
+            if(_function !=null) nid+=_function.hashCode();
             _nid = nid;
         }
         /** Returning if the above cannot form an AD computation graph! : * */
@@ -716,135 +709,6 @@ public class GraphNode implements Component
         }
         return asString;
     }
-
-
-    /**
-     * DEPRECATED!!!!!!
-     *
-     * Deliberate memory freeing deprecated:
-     * ====================================
-     */
-    //public void redundantGradientCleanup()
-    //{
-    //    //if(_parents==null || mode()==0) return;//Gradient cleanup not needed in this case!
-    //    //for(GraphNode node : _parents){
-    //    //    if(!node.isGraphLeave()) {//Graph leaves are leaves of the current function (defined by its graph lock)
-    //    //        node._recursivePayloadDeletion(_mode);
-    //    //        this.forEachForward((t, d)->{
-    //    //            if( this.mode()>0 || d==node.getPayload() ) node._targetedCleanup(t);
-    //    //        });
-    //    //    }
-    //    //}
-    //}
-    ///**
-    // * @param target The target node of a derivative which is being traversed. Other size targeting it will be removed!
-    // */
-    //private void _targetedCleanup(GraphNode target)
-    //{// Find and remove redundant gradients sharing the same target: ... remove target payload if it is not used!
-    //    //if(target==null) throw new IllegalStateException("[GraphNode][_targetedCleanup]: target node must not be null!");
-    //    //if(_parents==null || mode()==0) return;//Gradient cleanup not needed in this case!
-    //    //if(usesForwardAD())//clean up Forward-AD path
-    //    //{
-    //    //    TreeMap<Tsr, GraphNode> blacklist = new TreeMap<>((a, b)->a.hashCode()-b.hashCode());
-    //    //    this.forEachForward((t, d)->{ if(t==target) blacklist.put(d, t); });
-    //    //    blacklist.forEachForward((b, t)->{
-    //    //        if(!b.has(GraphNode.class) || !((GraphNode)b.find(GraphNode.class)).isLeave()){
-    //    //            _targets_derivatives.remove(t);
-    //    //            //TODO: get graph node and remove tensor reference! (this creates a virtual graph node (without payload!))
-    //    //            if(b.has(GraphNode.class)) ((GraphNode)b.find(GraphNode.class))._setPayload(null);
-    //    //            b.delete();
-    //    //        }
-    //    //    });
-    //    //    // Recursive cleanup: (but only within the current graph!)
-    //    //    for(GraphNode node : _parents) if(!node.isGraphLeave()) node._targetedCleanup(target);
-    //    //}else{
-    //    //    redundantGradientCleanup();
-    //    //}
-    //    ///** sources can be deleted because unused graph nodes are already trimmed off the tree (targets remain!)* */
-    //    ////TODO: query target through inputs... delete forward mode AD node tensors!
-    //    ////_parents = null;//This might not be necessary...
-    //}
-    ///**
-    // * The following properties must be true to allow payload deletion:
-    // * - The node is not a leave node! (AbstractSurfaceNode supplied by user/from outside the locked graph)
-    // * - The node is not a tip node! (Output node... ->($) )
-    // * - The node is part of a chain of forward-AD nodes (mode>0)
-    // * - The mode value of the node is smaller then the largest of another within a chain of forward-AD ($)
-    // * =>(The largest mode value is owned by 'the most recent derivative w.r.t some leave node')
-    // *
-    // * @param child_mode is used to assess if the payload in this node is useful for backpropagation!
-    // */
-    //private void _recursivePayloadDeletion(int child_mode)
-    //{
-    //    //if(!this.isLeave() && getPayload()!=null) {
-    //    //    if(_mode>0 && child_mode>_mode) {//If getPayload()==null return maybe?? (because graph already clean?)
-    //    //        getPayload().remove(GraphNode.class);
-    //    //        if(!_is_used_as_derivative) getPayload().delete();
-    //    //        _setPayload(null);
-    //    //    } else if(_mode<0){
-    //    //        if(!Neureka.Settings.Debug.keepDerivativeTargetPayloads()){
-    //    //            getPayload().remove(GraphNode.class);
-    //    //            if(!_is_used_as_derivative) getPayload().delete();
-    //    //            _setPayload(null);
-    //    //        }
-    //    //    }
-    //    //}
-    //    //if(_parents!=null) {//Graph leaves are leaves of the current function (defined by its graph lock)
-    //    //    for(GraphNode n : _parents) if(!n.isGraphLeave()) n._recursivePayloadDeletion(_mode);
-    //    //}// Will only traverse current function
-    //}
-    ///**
-    // * This method is called when a tensor is deleted and belongs to a computation graph.
-    // * All parents of this tensor will be checked if deletion is possible.
-    // * This is usually the case when the branch lineage is not tied to any other children!
-    // * @param child
-    // */
-    //public void extinguishLineageBy(GraphNode child)
-    //{
-    //    //boolean childrenAreDead = true;
-    //    //if(child==null){
-    //    //    throw new IllegalStateException("[GraphNode][extinguishLineageBy]: Error! Child is null!");
-    //    //} else if(this!=child){
-    //    //    boolean contains = false;
-    //    //    int index = 0;
-    //    //    for(int i=0; i<_children.size(); i++){
-    //    //        if(_children.get(i)!=null){
-    //    //            if(_children.get(i).get().equals(child)){
-    //    //                contains = true;
-    //    //                index = i;
-    //    //            }
-    //    //        }
-    //    //    }
-    //    //    if(!contains){
-    //    //        throw new IllegalStateException("[GraphNode][extinguishLineageBy]: Error! Child is not recognized by parent!");
-    //    //    }
-    //    //    _children.set(index, null);
-    //    //    for(int i=0; i<_children.size(); i++){
-    //    //        childrenAreDead = (_children.get(i)==null) && childrenAreDead;
-    //    //    }
-    //    //}
-    //    //if(childrenAreDead && !this.isLeave()){
-    //    //    if(getPayload()!=null && !_is_used_as_derivative){
-    //    //        getPayload().remove(GraphNode.class);
-    //    //        if(child!=this){
-    //    //            getPayload().delete();
-    //    //        }
-    //    //    }
-    //    //    if(_parents!=null){
-    //    //        for(GraphNode parent : _parents){
-    //    //            parent.extinguishLineageBy(this);
-    //    //        }
-    //    //    }
-    //    //    _function = null;
-    //    //    _lock = null;
-    //    //    _parents = null;
-    //    //    _targets_derivatives = null;
-    //    //    _children = null;
-    //    //}
-    //}
-
-
-
 
 
 

@@ -449,12 +449,18 @@ public class Tsr
         if(mode.contains("g")){
             if(this.rqsGradient()){
                 asString += ":g:";
-                double[] gradient = this.gradient64();
+                Tsr gradient = (Tsr)this.find(Tsr.class);
                 if(gradient!=null){
-                    asString += "("+_stringified((gradient64()), compact, max)+")";
+                    asString += gradient.toString("c").replace(strShape+":","");
                 } else {
-                    asString += "(null)";
+                    asString+="(null)";
                 }
+                //double[] gradient = this.gradient64();
+                //if(gradient!=null){
+                //    asString += "("+_stringified((gradient64()), compact, max)+")";
+                //} else {
+                //    asString += "(null)";
+                //}
             }
         }
         if (mode.contains("r")) {

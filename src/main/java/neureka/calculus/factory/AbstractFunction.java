@@ -147,8 +147,16 @@ public abstract class AbstractFunction implements Function {
     @Override
     public RADLambda getReverseAD(GraphNode node, Tsr[] inputs, int i){
 
-        if (TYPES.isOperation(_id) && !TYPES.isConvection(_id))
+        if(_id==TYPES.LOOKUP.get(","))
         {
+            return (error, t)->{
+                Tsr d = FunctionBuilder.build(this.toString(), false).activate(new Tsr[]{error});
+                return d;
+            };
+        }
+        else if (TYPES.isOperation(_id) && !TYPES.isConvection(_id))
+        {
+
             Tsr d = this.derive(inputs, i);
             return (error, t)->(error == null)?d:MUL.activate(new Tsr[]{error, d});
         }
@@ -226,6 +234,7 @@ public abstract class AbstractFunction implements Function {
                         throw new IllegalStateException("[AbstractFunction][_execute]: reshape operation cannot be reversed!");
                     }
                 }
+                newForm = reversed;
             }
             Tsr t = inputs[inputs.length - 1];
             return Tsr.fcn.exec.reshaped(t, newForm, true);//t.reshape(newForm);
