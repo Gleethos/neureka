@@ -7,7 +7,7 @@ import org.junit.Test
 class ADMemTests {
 
     @Test
-    void testReverseReshape(){
+    void testReverseReshape() {
 
         Neureka.Settings.reset()
 
@@ -20,33 +20,38 @@ class ADMemTests {
 
         Tsr b = rs.activate(a)
 
-        b.backward(new Tsr([3, 2],[
+        b.backward(new Tsr([3, 2], [
                 -1, 2,
-                 4, 7,
-                 -9, 8
+                4, 7,
+                -9, 8
         ]))
         assert a.toString().contains("[2x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0):g:(-1.0, 4.0, -9.0, 2.0, 7.0, 8.0)")
         assert b.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
 
 
-
-
     }
 
     @Test
-    void testPayloadsAndDerivativesAreNull(){
+    void testPayloadsAndDerivativesAreNull() {
 
         Neureka.Settings.reset()
 
         Tsr a = new Tsr(2).setRqsGradient(true)
-        Tsr b = a*3/5
+        Tsr b = a * 3 / 5
         Tsr c = b ^ new Tsr(3)
         Tsr d = c / 100
         GraphNode n = d.find(GraphNode.class)
 
-        for(int i=0; i<n.parents.length; i++){
+        assert n.parents[0].isCachable()
+        assert !n.parents[0].isLeave()
+        assert n.parents[0].isGraphLeave()
+        assert n.parents[1].isLeave()
+        assert n.parents[1].isGraphLeave()
+
+
+        for (int i = 0; i < n.parents.length; i++) {
             assert n.parents[i].payload != null
-            boolean[] exists = {false}
+            boolean[] exists = { false }
             n.parents[i].forEachDerivative({ t, g -> exists[0] = true })
             assert exists[0]
         }
@@ -59,14 +64,12 @@ class ADMemTests {
         Thread.sleep(200)
         System.gc()
 
-        for(int i=0; i<n.parents.length; i++){
+        for (int i = 0; i < n.parents.length; i++) {
             assert n.parents[i].payload == null
             assert !n.parents[i].hasDerivatives()
         }
 
     }
-
-
 
 
 }
