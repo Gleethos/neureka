@@ -11,6 +11,7 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -469,7 +470,7 @@ public class GraphNode implements Component {
      */
     private void _carryPendingBackPropToGradients(Set<GraphNode> pendingBackProp) {
         _relies_on_JIPProp++;
-        this.forEachDerivative((t, d) -> t._carryPendingBackPropToGradients(pendingBackProp));
+        this.forEachTarget((t) -> t._carryPendingBackPropToGradients(pendingBackProp));
         if (getPayload().rqsGradient()) {//this.isLeave() &&
             JITProp jit = (JITProp) getPayload().find(JITProp.class);
             if (jit == null) jit = new JITProp(pendingBackProp);
@@ -523,8 +524,6 @@ public class GraphNode implements Component {
             if (this.usesForwardAD()) this.forEachForward(error, (t, e) -> t._backwardJIT(e, source));
             else if (this.usesReverseAD()) this.forEachBackward(error, (t, e) -> t._backwardJIT(e, source));
             //Standard reverse mode-AD:
-
-
         }
     }
 
@@ -540,7 +539,7 @@ public class GraphNode implements Component {
     private void _deleteDerivativesRecursively() {
         if (!Neureka.Settings.AD.retainGraphDerivativesAfterBackward()) {
             if (!reliesOnJustInTimeProp()) _targets_derivatives = null;
-            this.forEachDerivative((t, d) -> t._deleteDerivativesRecursively());
+            this.forEachTarget((t) -> t._deleteDerivativesRecursively());
         }
         return;
     }
@@ -645,9 +644,14 @@ public class GraphNode implements Component {
         });
     }
 
-    public void forEachDerivative(BiConsumer<GraphNode, Tsr> action) {
+    public void forEachDerivative(BiConsumer<GraphNode, ADAgent> action) {
         if (_targets_derivatives == null) return;
-        _targets_derivatives.forEach((t, o) -> action.accept(t, o.derivative()));
+        _targets_derivatives.forEach((t, o) -> action.accept(t, o));
+    }
+
+    public void forEachTarget(Consumer<GraphNode> action) {
+        if (_targets_derivatives == null) return;
+        _targets_derivatives.forEach((t, o) -> action.accept(t));
     }
 
 

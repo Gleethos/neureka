@@ -51,7 +51,16 @@ public class ADAgent {
         return (_bad==null);
     }
 
+    @Override
+    public String toString(){
+        if(this.derivative()!=null){
+            return derivative().toString();
+        }
+        if(this.isForward()){
 
+        }
+        return "null";
+    }
 
 
 

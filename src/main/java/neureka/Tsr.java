@@ -455,22 +455,17 @@ public class Tsr
                 } else {
                     asString+="(null)";
                 }
-                //double[] gradient = this.gradient64();
-                //if(gradient!=null){
-                //    asString += "("+_stringified((gradient64()), compact, max)+")";
-                //} else {
-                //    asString += "(null)";
-                //}
             }
         }
         if (mode.contains("r")) {
             if (this.has(GraphNode.class) && ((GraphNode) this.find(GraphNode.class)).size() > 0) {
                 GraphNode node = (GraphNode) this.find(GraphNode.class);
                 AtomicReference<String> enclosed = new AtomicReference<>("; ");
-                node.forEachDerivative((t, d) -> {
+                node.forEachDerivative((t, o) -> {
+                    String ada = (o.derivative()!=null)?o.derivative()._toString(mode, deeper):o.toString();
                     enclosed.set(enclosed.get() +
                             base+"=>d|[ " +
-                            base+delimiter+    d._toString(mode, deeper) + " " +
+                            base+delimiter+ada + " " +
                             base+half+"]|:t{ " +
                             base+delimiter+    ((t.getPayload()!=null)?t.getPayload()._toString(mode, deeper):t.toString("")) + " " +
                             base+half+"}, ");
@@ -483,9 +478,10 @@ public class Tsr
                 GraphNode node = (GraphNode) this.find(GraphNode.class);
                 if (node.mode() != 0) {//node.getMap().values().stream().coll
                     AtomicReference<String> enclosed = new AtomicReference<>("; ");
-                    node.forEachDerivative((t, d) -> {
+                    node.forEachDerivative((t, o) -> {
+                        String ada = (o.derivative()!=null)?o.derivative()._toString(mode, deeper):o.toString();
                         enclosed.set(enclosed.get() +
-                                "->d" + d._toString(mode, deeper) + ", ");
+                                "->d" + ada + ", ");
                     });
                     asString += enclosed.get();
                 }

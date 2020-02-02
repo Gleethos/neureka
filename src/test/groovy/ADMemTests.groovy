@@ -19,6 +19,8 @@ class ADMemTests {
         Function rs = Neureka.create("[1, 0]:(I[0])")
 
         Tsr b = rs.activate(a)
+        GraphNode n = a.find(GraphNode.class)
+        assert n.getChildren().size()==1
 
         b.backward(new Tsr([3, 2], [
                 -1, 2,
@@ -48,11 +50,10 @@ class ADMemTests {
         assert n.parents[1].isLeave()
         assert n.parents[1].isGraphLeave()
 
-
         for (int i = 0; i < n.parents.length; i++) {
             assert n.parents[i].payload != null
             boolean[] exists = { false }
-            n.parents[i].forEachDerivative({ t, g -> exists[0] = true })
+            n.parents[i].forEachTarget({ t -> exists[0] = true })
             assert exists[0]
         }
         a = null
