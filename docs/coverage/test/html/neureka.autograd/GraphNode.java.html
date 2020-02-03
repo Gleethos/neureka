@@ -197,7 +197,7 @@ public class GraphNode implements Component {
      *
      */
     public List&lt;WeakReference&lt;GraphNode&gt;&gt; getChildren() {
-<span class="nc" id="L200">        return _children;</span>
+<span class="fc" id="L200">        return _children;</span>
     }
 
     private List&lt;WeakReference&lt;GraphNode&gt;&gt; _children;
@@ -249,9 +249,9 @@ public class GraphNode implements Component {
     }
 
     public boolean isGraphLeave() {
-<span class="nc bnc" id="L252" title="All 2 branches missed.">        if (isLeave()) return true;</span>
-<span class="nc bnc" id="L253" title="All 2 branches missed.">        for (GraphNode p : _parents) {</span>
-<span class="nc bnc" id="L254" title="All 2 branches missed.">            if (p.lock() != this.lock()) return true;</span>
+<span class="fc bfc" id="L252" title="All 2 branches covered.">        if (isLeave()) return true;</span>
+<span class="pc bpc" id="L253" title="1 of 2 branches missed.">        for (GraphNode p : _parents) {</span>
+<span class="pc bpc" id="L254" title="1 of 2 branches missed.">            if (p.lock() != this.lock()) return true;</span>
         }
 <span class="nc" id="L256">        return false;</span>
     }

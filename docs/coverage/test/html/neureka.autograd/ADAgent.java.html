@@ -51,7 +51,16 @@ public class ADAgent {
 <span class="fc bfc" id="L51" title="All 2 branches covered.">        return (_bad==null);</span>
     }
 
+    @Override
+    public String toString(){
+<span class="nc bnc" id="L56" title="All 2 branches missed.">        if(this.derivative()!=null){</span>
+<span class="nc" id="L57">            return derivative().toString();</span>
+        }
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        if(this.isForward()){</span>
 
+        }
+<span class="nc" id="L62">        return &quot;null&quot;;</span>
+    }
 
 
 
