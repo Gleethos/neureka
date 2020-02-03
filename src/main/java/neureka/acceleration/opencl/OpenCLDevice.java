@@ -87,10 +87,7 @@ public class OpenCLDevice extends AbstractDevice
     {
         double[] value = value64Of(tensor);
         rmv(tensor);
-        if(tensor.has(Tsr.class)){
-            Tsr gradient = (Tsr)tensor.find(Tsr.class);
-            this.get(gradient);
-        }
+        tensor.forComponent(Tsr.class, (gradient)->this.get((Tsr)gradient));
         tensor.setValue(value);
         return this;
     }

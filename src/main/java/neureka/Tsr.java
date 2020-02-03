@@ -29,7 +29,7 @@ public class Tsr
 
     // DEFAULT DEVICE (HOST CPU)
     //=========================
-    public static Device CPU;
+    private static Device CPU;
 
     // CACHED CONFIGURATIONS:
     //=========================
@@ -80,21 +80,18 @@ public class Tsr
         }
         if (isOutsourced) {
             _value = null;
-        } else if (this.has(Device.class)) {
-            Device device = (Device) this.find(Device.class);
-            if (device.has(this)) {
-                device.get(this);
-            }
-            this.remove(Device.class);
-            if(this.has(Tsr.class)){
-                Tsr gradient = (Tsr) find(Tsr.class);
-                device = (Device) gradient.find(Device.class);
-                if (device.has(gradient)) {
-                    device.get(gradient);
-                }
-                gradient.remove(Device.class);
-            }
-        } else if (_value==null){
+        } else if (
+                !forComponent( Device.class, (d)->{
+                    if (((Device)d).has(this)) ((Device)d).get(this);
+                    this.remove(Device.class);
+                    forComponent(Tsr.class, (gradient)->
+                            ((Tsr) gradient).forComponent(Device.class, (gd)->{
+                                if (((Device)gd).has((Tsr)gradient)) ((Device)gd).get((Tsr) gradient);
+                                ((Tsr) gradient).remove(Device.class);
+                            })
+                    );
+                }) && _value==null
+        ){
             setIsVirtual(true);
         }
         return this;
@@ -185,40 +182,40 @@ public class Tsr
         return find(componentClass) != null;
     }
 
+    public boolean forComponent(Class cc, Consumer<Object> action){
+        Object component = this.find(cc);
+        if(component!=null){
+            action.accept(component);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * @return the device on which this tensor is stored or null if it is not outsourced.
      */
     public Device device() {
-        if (this.isOutsourced()) {
-            return (Device) this.find(Device.class);
-        }
+        if (this.isOutsourced()) return (Device) this.find(Device.class);
         return CPU;
     }
 
     public Tsr setValue64(double[] value){
-        if(this.isOutsourced()){
-            ((Device) this.find(Device.class)).overwrite64(this, value);
-        } else {
-            _value = value;
-        }
+        if(this.isOutsourced()) ((Device) this.find(Device.class)).overwrite64(this, value);
+        else _value = value;
         return this;
     }
 
     public Tsr setValue32(float[] value){
-        if(this.isOutsourced()){
-            ((Device) this.find(Device.class)).overwrite32(this, value);
-        } else {
-            _value = value;
-        }
+        if(this.isOutsourced()) ((Device) this.find(Device.class)).overwrite32(this, value);
+        else _value = value;
         return this;
     }
 
     public Tsr setValue(Object value){
-        if(value instanceof float[]){
-            this.setValue32((float[])value);
-        } else if(value instanceof  double[]){
-            this.setValue64((double[])value);
-        } else if(value instanceof Float){
+        if(value instanceof float[]) this.setValue32((float[])value);
+        else if(value instanceof  double[]) this.setValue64((double[])value);
+        else if(value instanceof Float) {
             this.setIsVirtual(true);
             if(this.is32()){
                 ((float[])_value)[0] = ((Float)value).floatValue();
@@ -256,14 +253,11 @@ public class Tsr
         return (this.is64())?DataHelper.doubleToFloat((double[])gradient.value64()):(float[])gradient.value32();
     }
 
-    public Tsr addToGradient(Tsr g) {
-        if(this.has(Tsr.class)){
-            Tsr gradient = (Tsr) find(Tsr.class);
-            this.add(FunctionBuilder.build("I[0]<-(I[0]+I[1])", false).activate(new Tsr[]{gradient, g}));
-        }else{
-            this.add(g);
-            Device device = (Device)find(Device.class);
-            if(device!=null) device.add(g);
+    public Tsr addToGradient(Tsr error) {
+        if(!forComponent(Tsr.class, (g)->{
+            this.add(FunctionBuilder.build("I[0]<-(I[0]+I[1])", false).activate(new Tsr[]{(Tsr)g, error}));
+        })){
+            this.add(error).forComponent(Device.class, (d)->((Device)d).add(error));
         }
         return this;
     }
@@ -281,7 +275,7 @@ public class Tsr
             Device device = (Device) this.find(Device.class);
             if(device!=null) device.get(this);
             _value = DataHelper.doubleToFloat((double[])_value);
-            if(this.has(Tsr.class)) ((Tsr)find(Tsr.class)).to32();
+            forComponent(Tsr.class, (g)->((Tsr)g).to32());
             if(device!=null) device.add(this);
         }
         return this;
@@ -292,7 +286,7 @@ public class Tsr
             Device device = (Device) this.find(Device.class);
             if(device!=null) device.get(this);
             _value = DataHelper.floatToDouble((float[])_value);
-            if(this.has(Tsr.class)) ((Tsr)find(Tsr.class)).to64();
+            forComponent(Tsr.class, (g)->((Tsr)g).to64());
             if(device!=null) device.add(this);
         }
         return this;
@@ -338,9 +332,7 @@ public class Tsr
         float[] newValue = (this.is64())?DataHelper.doubleToFloat((double[])_value):(float[])_value;
         if (this.isVirtual() && newValue!=null) {
             newValue = new float[this.size()];
-            for (int i = 0; i < newValue.length; i++) {
-                newValue[i] = newValue[0];
-            }
+            for (int i = 0; i < newValue.length; i++) newValue[i] = newValue[0];
         }
         return newValue;
     }
@@ -440,9 +432,7 @@ public class Tsr
         }
         boolean compact = mode.contains("c");
         strShape = "[" + strShape + "]";
-        if(mode.contains("shape")||mode.contains("shp")){
-            return strShape;
-        }
+        if(mode.contains("shape")||mode.contains("shp")) return strShape;
         String asString = "";
         asString += _stringified((value64()), compact, max);//(this.isOutsourced())?this.value64():_value
         asString = strShape + ":(" + asString + ")";
@@ -455,12 +445,6 @@ public class Tsr
                 } else {
                     asString+="(null)";
                 }
-                //double[] gradient = this.gradient64();
-                //if(gradient!=null){
-                //    asString += "("+_stringified((gradient64()), compact, max)+")";
-                //} else {
-                //    asString += "(null)";
-                //}
             }
         }
         if (mode.contains("r")) {
@@ -468,12 +452,17 @@ public class Tsr
                 GraphNode node = (GraphNode) this.find(GraphNode.class);
                 AtomicReference<String> enclosed = new AtomicReference<>("; ");
                 node.forEachDerivative((t, d) -> {
-                    enclosed.set(enclosed.get() +
-                            base+"=>d|[ " +
-                            base+delimiter+    d._toString(mode, deeper) + " " +
-                            base+half+"]|:t{ " +
-                            base+delimiter+    ((t.getPayload()!=null)?t.getPayload()._toString(mode, deeper):t.toString("")) + " " +
-                            base+half+"}, ");
+                    if(d.derivative()==null){
+                        enclosed.set(enclosed.get() +
+                                "->d(null), ");
+                    } else {
+                        enclosed.set(enclosed.get() +
+                                base+"=>d|[ " +
+                                base+delimiter+    d.derivative()._toString(mode, deeper) + " " +
+                                base+half+"]|:t{ " +
+                                base+delimiter+    ((t.getPayload()!=null)?t.getPayload()._toString(mode, deeper):t.toString("")) + " " +
+                                base+half+"}, ");
+                    }
                 });
                 asString += enclosed.get();
             }
@@ -484,8 +473,13 @@ public class Tsr
                 if (node.mode() != 0) {//node.getMap().values().stream().coll
                     AtomicReference<String> enclosed = new AtomicReference<>("; ");
                     node.forEachDerivative((t, d) -> {
-                        enclosed.set(enclosed.get() +
-                                "->d" + d._toString(mode, deeper) + ", ");
+                        if(d.derivative()==null){
+                            enclosed.set(enclosed.get() + "->d(null), ");
+                        } else {
+                            enclosed.set(enclosed.get() +
+                                    "->d" + d.derivative()._toString(mode, deeper) + ", ");
+                        }
+
                     });
                     asString += enclosed.get();
                 }
@@ -502,16 +496,13 @@ public class Tsr
         for (int i = 0; i < size; i++) {
             String vStr;
             if(format){
-                vStr = fcn.stringify.formatFP(v[(this.isVirtual()) ? 0 : i_of_i(i)]);
+                vStr = fcn.stringify.formatFP(v[(this.isVirtual()) ? 0 : _i_of_i(i)]);
             } else {
-                vStr = String.valueOf(v[(this.isVirtual()) ? 0 : i_of_i(i)]);
+                vStr = String.valueOf(v[(this.isVirtual()) ? 0 : _i_of_i(i)]);
             }
             asString += vStr;
-            if (i < size - 1) {
-                asString += ", ";
-            } else if(trim>0){
-                asString += ", ... + "+trim+" more";
-            }
+            if (i < size - 1) asString += ", ";
+            else if (trim > 0) asString += ", ... + "+trim+" more";
         }
         return asString;
     }
@@ -533,9 +524,7 @@ public class Tsr
                 if(((List)arg1).get(0) instanceof Integer){
                     List<Integer> shape = ((List)arg1);
                     int[] shp = new int[shape.size()];
-                    for(int i=0; i<shp.length; i++){
-                        shp[i] = shape.get(i);
-                    }
+                    for(int i=0; i<shp.length; i++) shp[i] = shape.get(i);
                     _construct(shp, (String)arg2);
                 } else if(((List)arg1).get(0) instanceof Tsr){
                     _construct(((List<Tsr>)arg1).toArray(new Tsr[((List<Tsr>)arg1).size()]), (String)arg2, true);
@@ -576,17 +565,13 @@ public class Tsr
 
     private void _construct(int[] shape, String seed){
         _construct(shape);
-        for(int i=0; i<this.size(); i++){
-            ((double[])_value)[i] = DataHelper.getDoubleOf(DataHelper.longHash(seed+i));
-        }
+        for(int i=0; i<this.size(); i++) ((double[])_value)[i] = DataHelper.getDoubleOf(DataHelper.longHash(seed+i));
     }
 
     private int[] intArray(Object[] arg){
         int length = arg.length;
         int[] array = new int[length];
-        for(int i=0; i<length; i++){
-            array[i] = ((Integer)arg[i]).intValue();
-        }
+        for(int i=0; i<length; i++) array[i] = (Integer) arg[i];
         return array;
     }
 
@@ -594,13 +579,9 @@ public class Tsr
         int length = arg.length;
         double[] array = new double[length];
         for(int i=0; i<length; i++){
-            if(arg[i] instanceof Integer){
-                array[i] = ((Integer)arg[i]).intValue();
-            } else if(arg[i] instanceof Double) {
-                array[i] = ((Double)arg[i]).doubleValue();
-            } else if(arg[i] instanceof BigDecimal) {
-                array[i] = ((BigDecimal)arg[i]).doubleValue();
-            }
+            if(arg[i] instanceof Integer) array[i] = (Integer) arg[i];
+            else if(arg[i] instanceof Double) array[i] = (Double) arg[i];
+            else if(arg[i] instanceof BigDecimal) array[i] = ((BigDecimal)arg[i]).doubleValue();
         }
         return array;
     }
@@ -623,18 +604,13 @@ public class Tsr
             } else {
                 int length = ((Object[])args[0]).length;
                 Tsr[] array = new Tsr[length];
-                for(int i=0; i<length; i++){
-                    array[i] = (Tsr)((Object[])args[0])[i];
-                }
+                for(int i=0; i<length; i++) array[i] = (Tsr)((Object[])args[0])[i];
                 args[0] = array;
             }
         }
         if(args[1] instanceof Object[]){
-            if(((Object[])args[1])[0] instanceof Integer){
-                args[1] = doubleArray((Object[]) args[1]);
-            } else if(((Object[])args[1])[0] instanceof BigDecimal){
-                args[1] = doubleArray((Object[]) args[1]);
-            }
+            if(((Object[])args[1])[0] instanceof Integer) args[1] = doubleArray((Object[]) args[1]);
+            else if(((Object[])args[1])[0] instanceof BigDecimal) args[1] = doubleArray((Object[]) args[1]);
         }
         //CASES:
         if(args[0] instanceof int[] && (args[1] instanceof Double || args[1] instanceof Integer)){
@@ -762,6 +738,7 @@ public class Tsr
             else if (data[i] <= 100000) key *= 100000;
             else if (data[i] <= 1000000) key *= 1000000;
             else if (data[i] <= 10000000) key *= 10000000;
+            else if (data[i] <= 100000000) key *= 100000000;
             key += Math.abs(data[i])+1;
         }
         int[] found = CONFIGS.get(key);
@@ -807,10 +784,6 @@ public class Tsr
         _translation = tensor._translation;
         _components = tensor._components;
         _flags = tensor._flags;
-        //if(tensor.isOutsourced()){
-        //    Device device = (Device) tensor.find(Device.class);
-        //    device.swap(tensor, this);
-        //}
         if(_components!=null){//Inform components about their new owner:
             _components.forEach((c)->{if(c instanceof Component) ((Component)c).update(tensor, this);});
         }
@@ -829,8 +802,9 @@ public class Tsr
      * @return
      */
     public Tsr backward(Tsr error) {
-        if (this.has(GraphNode.class)) ((GraphNode) this.find(GraphNode.class)).backward(error);
-        else if(this.rqsGradient()) addToGradient(error);
+        if(!forComponent(GraphNode.class, (node)->((GraphNode)node).backward(error))){
+            if(this.rqsGradient()) addToGradient(error);
+        }
         return this;
     }
 
@@ -839,38 +813,28 @@ public class Tsr
         return this;
     }
 
-    public void applyGradient(){
-        //if(doJITProp){
-        if(this.has(JITProp.class)){
-            JITProp jit = (JITProp) this.find(JITProp.class);
-            remove(JITProp.class);
-            jit.execute();
-        }
-        //}
-        if(this.has(Tsr.class)) {
-            Tsr g = (Tsr)find(Tsr.class);
-            Optimizer optimizer = (Optimizer) this.find(Optimizer.class);
-            if(optimizer!=null) optimizer.optimize(g);
+    public void applyGradient() {
+        forComponent(JITProp.class, (jit)->((JITProp)jit).execute());
+        forComponent(Tsr.class, (g)->{
+            forComponent(Optimizer.class, (o)->((Optimizer)o).optimize((Tsr)g));
             remove(Tsr.class);
-            FunctionBuilder.build("I[0]<-(I[0]+I[1])", false).activate(new Tsr[]{this, g});
-        }
+            FunctionBuilder.build("I[0]<-(I[0]+I[1])", false).activate(new Tsr[]{this, (Tsr)g});
+        });
     }
 
     public Tsr delete() {
-        if (this.isOutsourced()) ((Device) this.find(Device.class)).rmv(this);
-        GraphNode node =((GraphNode)this.find(GraphNode.class));
-        if(node != null){
-            if(node.isUsedAsDerivative()){//&| !node.isVirtual()
+        forComponent(Device.class, (d)->((Device)d).rmv(this));
+        forComponent(GraphNode.class, (n)->{
+            if(((GraphNode)n).isUsedAsDerivative()){//&| !node.isVirtual()
                 throw new IllegalStateException("Trying to delete a tensor which is part of a function graph and used as derivative!");
-            }
-            //node.extinguishLineageBy(node);
-        }
+            }//n.extinguishLineageBy(node);
+        });
         _flags = -1;
         _value = null;
         _shape = null;
         _translation = null;
         _idxmap = null;
-        if(this.has(Tsr.class))((Tsr)find(Tsr.class)).delete();
+        forComponent(Tsr.class, (g)->((Tsr)g).delete());
         _components = null;
         return this;
     }
@@ -970,11 +934,8 @@ public class Tsr
             device.add(value);
             valueIsDeviceVisitor = true;
         }
-        if(this.isEmpty() && slice.isEmpty() || slice.size()!=value.size()){
-            inject(value);//Rethink this a little
-        } else {
-            new Tsr(new Tsr[]{slice, value}, "I[0]<-I[1]", false);
-        }
+        if(this.isEmpty() && slice.isEmpty() || slice.size()!=value.size()) inject(value);//Rethink this a little
+        else new Tsr(new Tsr[]{slice, value}, "I[0]<-I[1]", false);
         if(valueIsDeviceVisitor) ((Device)value.find(Device.class)).get(value);
         return this;
     }
@@ -1105,47 +1066,6 @@ public class Tsr
         return ranges.length+offset-1;
     }
 
-    //ELEMENTARY OPERATIONS:
-    //=========================
-    public Tsr foreach(Consumer<Integer> action) {
-        this.setIsVirtual(false);
-        int sze = this.size();
-        boolean doThreading = false;
-        if(sze>128){
-            doThreading = ((sze/Runtime.getRuntime().availableProcessors()) > 32);
-        }
-        if(!doThreading){
-            int[] idx = new int[this.shape().length];
-            for (int i = 0; i < sze; i++) {
-                fcn.indexing.increment(idx, this.shape());
-                action.accept(i);
-            }
-        } else {
-            int threadCount = Runtime.getRuntime().availableProcessors();
-            final int chunk=(sze/threadCount);
-            Thread[] th = new Thread[threadCount];
-            for(int i=0;i<threadCount;i++){
-                final int start = i*chunk;
-                final  int end = (i==threadCount-1)?sze:((i+1)*chunk);
-                th[i]=new Thread(()->{
-                    for(int k=start;k<end;k++) action.accept(i_of_i(k));
-                });
-                th[i].start();
-            }
-            for(int i=0;i<threadCount;i++){
-                try {
-                    th[i].join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-
-
-        return this;
-    }
-
     public int i_of_idx(int[] idx) {
         int i = 0;
         int[] sliceCfg = null;
@@ -1157,7 +1077,7 @@ public class Tsr
         return i;
     }
 
-    public int i_of_i(int i){
+    private int _i_of_i(int i){
         return i_of_idx(idx_of_i(i));
     }
 
@@ -1191,7 +1111,7 @@ public class Tsr
                 } else if (t.isVirtual()) {
                     return t.value64()[0];
                 }
-                return t.value64()[t.i_of_i(i)];
+                return t.value64()[t._i_of_i(i)];
             }
 
             public static double getFrom(Tsr t, int[] idx) {
@@ -1201,7 +1121,7 @@ public class Tsr
 
             public static void setInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
-                t.value64()[t.i_of_i(i)] = value;
+                t.value64()[t._i_of_i(i)] = value;
             }
 
             public static void setInto(Tsr t, int[] idx, double value) {
@@ -1211,7 +1131,7 @@ public class Tsr
 
             public static void addInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
-                t.value64()[t.i_of_i(i)] += value;
+                t.value64()[t._i_of_i(i)] += value;
             }
 
             public static void addInto(Tsr t, int[] idx, double value) {
@@ -1230,7 +1150,7 @@ public class Tsr
 
             public static void subInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
-                t.value64()[t.i_of_i(i)] -= value;
+                t.value64()[t._i_of_i(i)] -= value;
             }
 
             public static void subInto(Tsr t, int[] idx, double value) {
@@ -1256,7 +1176,7 @@ public class Tsr
 
             public static void mulInto(Tsr t, int i, double value) {
                 t.setIsVirtual(false);
-                t.value64()[t.i_of_i(i)] *= value;
+                t.value64()[t._i_of_i(i)] *= value;
             }
 
             public static void mulInto(Tsr t, int[] idx, double value) {
@@ -1313,27 +1233,17 @@ public class Tsr
 
             public static Tsr newTsrLike(Tsr template, double value) {
                 Tsr t = _newEmptyLike(template);
-                if(template.is32()){
-                    t.setValue((float)value);
-                } else {
-                    t.setValue(value);
-                }
-                if(template.isOutsourced()){
-                    ((Device)template.find(Device.class)).add(t);
-                }
+                if(template.is32()) t.setValue((float)value);
+                else t.setValue(value);
+                if(template.isOutsourced()) ((Device)template.find(Device.class)).add(t);
                 return t;
             }
 
             public static Tsr newTsrLike(Tsr template) {//The output tensor will not have gradients!
                 Tsr t = _newEmptyLike(template);
-                if(template.is32()){
-                    t.setValue32(new float[template.size()]);
-                } else {
-                    t.setValue64(new double[template.size()]);
-                }
-                if(template.isOutsourced()){
-                    ((Device)template.find(Device.class)).add(t);
-                }
+                if(template.is32()) t.setValue32(new float[template.size()]);
+                else t.setValue64(new double[template.size()]);
+                if(template.isOutsourced()) ((Device)template.find(Device.class)).add(t);
                 return t;
             }
 
@@ -1345,18 +1255,6 @@ public class Tsr
                 return t;
             }
 
-        }
-
-        public static double[] newDoubleArray(double value, int size){
-            double[] array = new double[size];
-            for(int i=0; i<size; i++) array[i] = value;
-            return array;
-        }
-
-        public static float[] newFloatArray(float value, int size){
-            float[] array = new float[size];
-            for(int i=0; i<size; i++) array[i] = value;
-            return array;
         }
 
         public static class stringify{
@@ -1467,11 +1365,8 @@ public class Tsr
             public static int[] rearrange(int[] array, @NotNull int[] ptr) {
                 int[] newShp = new int[ptr.length];
                 for (int i = 0; i < ptr.length; i++) {
-                    if (ptr[i] < 0) {
-                        newShp[i] = Math.abs(ptr[i]);
-                    } else if (ptr[i] >= 0) {
-                        newShp[i] = array[ptr[i]];
-                    }
+                    if (ptr[i] < 0) newShp[i] = Math.abs(ptr[i]);
+                    else if (ptr[i] >= 0) newShp[i] = array[ptr[i]];
                 }
                 return newShp;
             }
@@ -1491,30 +1386,16 @@ public class Tsr
                 int[] shpTln = newTlnOf(shp);
                 int[] newTln = new int[newForm.length];
                 for (int i = 0; i < newForm.length; i++) {
-                    if (newForm[i] < 0) {
-                        newTln[i] = shpTln[i];
-                    } else if (newForm[i] >= 0) {
-                        newTln[i] = tln[newForm[i]];
-                    }
+                    if (newForm[i] < 0) newTln[i] = shpTln[i];
+                    else if (newForm[i] >= 0) newTln[i] = tln[newForm[i]];
                 }
                 return newTln;
             }
 
             @Contract(pure = true)
-            private static String strInt(int[] array) {
-                String S = "";
-                for (int i = 0; i < array.length; i++) {
-                    S += "[" + array[i] + "]";
-                }
-                return S;
-            }
-
-            @Contract(pure = true)
             public static int[] shpOfCon(int[] shp1, int[] shp2) {
                 int[] shape = new int[(shp1.length + shp2.length) / 2];
-                for (int i = 0; i < shp1.length && i < shp2.length; i++) {
-                    shape[i] = Math.abs(shp1[i] - shp2[i]) + 1;
-                }
+                for (int i = 0; i < shp1.length && i < shp2.length; i++) shape[i] = Math.abs(shp1[i] - shp2[i]) + 1;
                 return shape;
             }
 

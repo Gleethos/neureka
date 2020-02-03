@@ -20,6 +20,8 @@ class ADMemTests {
 
         Tsr b = rs.activate(a)
 
+        assert  b.toString().contains("")
+
         b.backward(new Tsr([3, 2],[
                 -1, 2,
                  4, 7,
@@ -27,9 +29,21 @@ class ADMemTests {
         ]))
         assert a.toString().contains("[2x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0):g:(-1.0, 4.0, -9.0, 2.0, 7.0, 8.0)")
         assert b.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
+        GraphNode node = a.find(GraphNode.class)
+        assert node.isLeave()
+        assert node.function()==null
+        assert node.mode() == 1
+        assert node.size()==0
+        assert node.nid()==1
+        assert node.lock().isLocked()==false
 
-
-
+        node = b.find(GraphNode.class)
+        assert !node.isLeave()
+        assert node.function()!=null
+        assert node.mode() == -1
+        assert node.size()==0
+        assert node.nid()!=1
+        assert node.lock().isLocked()==false
 
     }
 
@@ -47,7 +61,7 @@ class ADMemTests {
         for(int i=0; i<n.parents.length; i++){
             assert n.parents[i].payload != null
             boolean[] exists = {false}
-            n.parents[i].forEachDerivative({ t, g -> exists[0] = true })
+            n.parents[i].forEachTarget({ t -> exists[0] = true })
             assert exists[0]
         }
         a = null

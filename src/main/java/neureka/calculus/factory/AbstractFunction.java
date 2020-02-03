@@ -365,7 +365,7 @@ public abstract class AbstractFunction implements Function {
         Device device = (Device) inputs[0].find(Device.class);
         boolean onSameDevice = _shareGuestDevice(inputs);
         boolean doAccel = (!TYPES.REGISTER[_id].equals(",") && onSameDevice);
-        Device myDevice = (doAccel && device != null) ? device : Tsr.CPU;
+        Device myDevice = (doAccel && device != null) ? device : inputs[0].device();
         return myDevice;
     }
 
@@ -469,15 +469,6 @@ public abstract class AbstractFunction implements Function {
     public static class exec {
         private interface Actor {
             void apply(Integer i, double[] v1, double[] v2);
-        }
-
-        @Contract(pure = true)
-        public static void foreach(Tsr t1, Tsr t2, Actor action) {
-            double[] inputValue = (t1.value64() == null) ? new double[t1.size()] : t1.value64();
-            double[] outputValue = (t2.value64() == null) ? new double[t2.size()] : t2.value64();
-            t1.foreach((i) -> action.apply(i, inputValue, outputValue));
-            t2.setValue(outputValue);
-            t1.setValue(inputValue);
         }
 
         //--------------------------------------------------------------------------------------------------------------

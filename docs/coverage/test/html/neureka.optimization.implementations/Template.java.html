@@ -7,11 +7,9 @@ import neureka.optimization.Optimizer;
 
     @Override
     public void optimize(Tsr t){
-<span class="nc" id="L10">        double[] value = t.value64();//TODO: Add multi-threading!</span>
-<span class="nc" id="L11">        t.foreach((i)-&gt;this.foreach(i, value));</span>
+        //double[] value = t.value64();//TODO: Add multi-threading!
+        //t.foreach((i)-&gt;this.foreach(i, value));
 <span class="nc" id="L12">    }</span>
-
-    protected abstract void foreach(int i, double[] value);
 
 
 
