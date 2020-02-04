@@ -137,15 +137,15 @@ public class OpenCLDevice extends AbstractDevice
         int[] idxmap = tensor.idxmap();
         for(int i=rank*2; i<rank*3; i++) config[i] = idxmap[i-rank*2];// -=> IDXMAP (translates scalar to dimension index)
         //---
-        int[] idx = (int[])tensor.find(int[].class); //Look for additional configurations!
-        if(idx!=null){
+        int[] idxbase = (int[])tensor.find(int[].class); //Look for additional configurations!
+        if(idxbase!=null){
             for(int i=rank*3; i<rank*4; i++){// -=> IDX Basline (sliced tensors have this property)
-                config[i] = idx[i-rank*3];
+                config[i] = idxbase[i-rank*3];
             }
         }
         //---
         // -=> IDX Baseline Scale (sliced tensors indexes might be scaled)
-        for(int i=rank*4; i<rank*5; i++)config[i] = ((idx!=null)&&idx.length>tensor.rank())?idx[i-rank*3]:1;
+        for(int i=rank*4; i<rank*5; i++)config[i] = ((idxbase!=null)&&idxbase.length>tensor.rank())?idxbase[i-rank*3]:1;
         //---
 
         //SHAPE/TRANSLATION/IDXMAP/SCALEMAP TRANSFER:

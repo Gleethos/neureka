@@ -9,6 +9,7 @@ import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.optimization.Optimizer;
+import neureka.utility.AbstractComponentOwner;
 import neureka.utility.DataHelper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -18,35 +19,34 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
-public class Tsr
+public class Tsr extends AbstractComponentOwner
 {
     static {
         CONFIGS = new WeakHashMap<>();
         CPU = new CPU();
     }
 
-    // DEFAULT DEVICE (HOST CPU)
-    //=========================
+    /**
+     *  Default device (host cpu)
+     */
     private static Device CPU;
 
-    // CACHED CONFIGURATIONS:
-    //=========================
+    /**
+     *  Cached configuration
+     */
     private static Map<Long, int[]> CONFIGS;
 
-    //MODULE I / O :
-    //=========================
-    private ArrayList<Object> _components = new ArrayList<Object>();
-
-    //VALUE DATA FIELDS:
-    //=========================
+    /**
+     *  Value data fields
+     */
     private int[] _shape, _translation, _idxmap;
     private Object _value;
 
-    //FLAG FIELDS:
-    //=========================
-    private int _flags = 0 + 0 + 0 + 0;//Default
+    /**
+     *  Flag Fields
+     */
+    private int _flags = 0;//Default
     private final static int RQS_GRADIENT_MASK = 1;
     private final static int IS_OUTSOURCED_MASK = 2;
     private final static int IS_VIRTUAL_MASK = 4;
@@ -131,65 +131,24 @@ public class Tsr
 
     //-----------------------------------------------------------------------
 
-    public Tsr add(Object newComponent) {
-        if (newComponent == null) return this;
-        Object oldCompartment = null;
-        if (_components != null) {
-            oldCompartment = find(newComponent.getClass());
-            if (oldCompartment != null) {
-                _components.remove(oldCompartment);
-                _components.trimToSize();
-            }
-        } else {
-            _components = new ArrayList<>();
-        }
-        _components.add((newComponent instanceof int[]) ? _cached((int[]) newComponent) : newComponent);
+    /**
+     * This method is executed when a new Component is added to the tensor.
+     * The public add method is implemented in the super class
+     * 'AbstractComponentOwner' from which this class inherits.
+     * In this super class the component logic is implemented.
+     *
+     * @param newComponent A component used to access features. (GraphNode, Index, Relation, int[], ...)
+     * @return The unchanged object or maybe in future versions: null (component rejected)
+     */
+    @Override
+    protected Object _add(Object newComponent){
+        newComponent = (newComponent instanceof int[]) ? _cached((int[]) newComponent) : newComponent;
         if(newComponent instanceof Device){
-            if(oldCompartment!=null){
-                if(oldCompartment.equals(newComponent)) return this;
-            }
             if(!((Device)newComponent).has(this)){
                 ((Device)newComponent).add(this);
             }
         }
-        return this;
-    }
-
-    public Object find(Class componentClass) {
-        if (_components != null) {
-            for (int Pi = 0; Pi < _components.size(); Pi++) {
-                if (componentClass.isInstance(_components.get(Pi))) {
-                    return _components.get(Pi);
-                }
-            }
-        }
-        return null;
-    }
-
-    public Tsr remove(Class componentClass) {
-        Object oldComponent = find(componentClass);
-        if (oldComponent != null) {
-            _components.remove(oldComponent);
-            _components.trimToSize();
-        }
-        if (_components!=null && _components.size() == 0) {
-            _components = null;
-        }
-        return this;
-    }
-
-    public boolean has(Class componentClass) {
-        return find(componentClass) != null;
-    }
-
-    public boolean forComponent(Class cc, Consumer<Object> action){
-        Object component = this.find(cc);
-        if(component!=null){
-            action.accept(component);
-            return true;
-        } else {
-            return false;
-        }
+        return newComponent;
     }
 
     /**
@@ -842,10 +801,8 @@ public class Tsr
     //TENSOR OPERATION (OVERLOADABLE):
     //=================================
     public Tsr T(){//Transposed!
-        String operation = "";
-        for(int i=rank()-1; i>=0; i--){//TODO: make a static version of this which is always availiable
-            operation += (i+((i==0)?"":", "));
-        }
+        String operation = "";//TODO: make a static version of this which is always available
+        for(int i=rank()-1; i>=0; i--) operation += (i+((i==0)?"":", "));
         operation = "["+operation+"]:(I[0])";
         return new Tsr(this, operation);
     }
@@ -874,7 +831,6 @@ public class Tsr
     public Tsr div(Double value) {
         return div(new Tsr(this.shape(), value));
     }
-
     public Tsr mod(Tsr other) {
         return new Tsr(new Tsr[]{this, other}, "i0%i1");
     }
@@ -945,7 +901,7 @@ public class Tsr
     public Object getAt(Object key) {
         if(key==null) return this;
         if(key instanceof List) if(((List)key).size()==0) return this;
-        int[] idx = null;
+        int[] idxbase = null;
         int[] newShape = new int[this.rank()];
         if(key instanceof List){
             key = ((List)key).toArray();
@@ -953,29 +909,27 @@ public class Tsr
             for(Object o : (Object[])key) allInt = allInt && o instanceof Integer;
             if(allInt) {
                 key = intArray((Object[]) key);
-                idx = (int[])key;
+                idxbase = (int[])key;
                 if(key != null) {
-                    for(int i=0; i<this.rank(); i++) {
-                        idx[i] = (idx[i]<0)?_shape[i]+idx[i]:idx[i];
-                    }
-                    return Tsr.fcn.io.getFrom(this, idx);
+                    for(int i=0; i<this.rank(); i++) idxbase[i] = (idxbase[i]<0)?_shape[i]+idxbase[i]:idxbase[i];
+                    return Tsr.fcn.io.getFrom(this, idxbase);
                 }
             } else {
                 boolean hasScale = false;
                 for(Object o : (Object[])key) hasScale = hasScale || o instanceof Map;
-                idx = new int[((hasScale)?2:1)*this.rank()];
+                idxbase = new int[((hasScale)?2:1)*this.rank()];
                 Object[] ranges = (Object[])key;
-                _configureSubsetFromRanges(ranges, idx, newShape, 0);
+                _configureSubsetFromRanges(ranges, idxbase, newShape, 0);
             }
         }//...not simple slice... Advanced:
         else if(key instanceof Map)// ==> i, j, k slicing!
         {
-            idx = new int[this.rank()*2];
+            idxbase = new int[this.rank()*2];
             Object[] ranges = ((Map)key).keySet().toArray();
-            _configureSubsetFromRanges(ranges, idx, newShape, 0);
+            _configureSubsetFromRanges(ranges, idxbase, newShape, 0);
             Object[] steps = ((Map)key).values().toArray();
             for(int i=rank(); i<2*this.rank(); i++){
-                idx[i] = (Integer)steps[i-rank()];
+                idxbase[i] = (Integer)steps[i-rank()];
                 newShape[i-rank()] /= (Integer)steps[i-rank()];
             }
         }
@@ -984,10 +938,10 @@ public class Tsr
         subset._translation = this._translation;
         subset._idxmap = _cached(fcn.indexing.newTlnOf(newShape));
         subset._shape = _cached(newShape);
-        if(idx.length==2*rank()){
-            for(int i=rank(); i<idx.length; i++) idx[i] = (idx[i]==0)?1:idx[i];
+        if(idxbase.length==2*rank()){
+            for(int i=rank(); i<idxbase.length; i++) idxbase[i] = (idxbase[i]==0)?1:idxbase[i];
         }
-        subset.add(idx);
+        subset.add(idxbase);
         if(this.isOutsourced()){
             Device device = (Device) this.find(Device.class);
             device.add(subset, this);
@@ -1001,28 +955,36 @@ public class Tsr
         return subset;
     }
 
-    private int _configureSubsetFromRanges(Object[] ranges, int[] idx, int[] newShape, int offset){
-        //if(ranges.length!=rank()) throw new IllegalArgumentException("[Tsr]: Number of arguments must match tensor dim!");
-        for(int i=0; i<ranges.length; i++){
+    /**
+     *
+     * @param ranges Elements of this array might be multiple things:
+     *               - A map whose first entry represents a mapping between range and steps.
+     *               - A list from which a first and last entry will be interpreted as range.
+     *               - Any other object which might bew found in a 'Index' component.
+     * @param idxbase Start index for every rank.
+     * @param newShape New shape of the new sub-tensor.
+     * @param offset Rank offset incremented according to recursive calls.
+     * @return A new rank index.
+     */
+    private int _configureSubsetFromRanges(Object[] ranges, int[] idxbase, int[] newShape, int offset){
+        for (int i=0; i<ranges.length; i++) {
             int first = 0;
             int last = 0;
-            if(!(ranges[i] instanceof  List)){
-                if(ranges[i] instanceof Map){
+            if (!(ranges[i] instanceof  List)){
+                if (ranges[i] instanceof Map){
                     Object[] ks = ((Map)ranges[i]).keySet().toArray();
                     Object[] steps = ((Map)ranges[i]).values().toArray();
-                    int new_i = _configureSubsetFromRanges(ks, idx, newShape, i+offset);
-                    for(int ii=rank(); ii<(rank()+steps.length); ii++){
-                        idx[ii+i+offset]
-                                = (Integer)steps[ii-rank()];
-                        newShape[ii+i+offset-rank()] /= idx[ii+i+offset];
+                    int new_i = _configureSubsetFromRanges(ks, idxbase, newShape, i+offset);
+                    for (int ii=rank(); ii<(rank()+steps.length); ii++) {
+                        idxbase[ii+i+offset] = (Integer)steps[ii-rank()];
+                        newShape[ii+i+offset-rank()] /= idxbase[ii+i+offset];
                     }
                     i = new_i;
                     continue;
                 } else {
                     Index index = (Index)find(Index.class);
-                    if(index!=null){
+                    if (index!=null){
                         Integer position = index.get(ranges[i], i+offset);
-                        //position = (position==null)?ranges[i].hashCode()%newShape[i]:position;
                         first = position;
                         last = position;
                     } else {
@@ -1032,17 +994,17 @@ public class Tsr
             }else{
                 ranges[i] = ((List)ranges[i]).toArray();
                 ranges[i] = (((Object[])ranges[i])[0] instanceof List)?((List)((Object[])ranges[i])[0]).toArray():((Object[])ranges[i]);
-                if(!(((Object[])(ranges[i]))[0] instanceof Integer) || !(((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1] instanceof Integer)){
+                if (!(((Object[])(ranges[i]))[0] instanceof Integer) || !(((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1] instanceof Integer)){
                     Index index = (Index)find(Index.class);
-                    if(!(((Object[])(ranges[i]))[0] instanceof Integer)){
-                        if(index!=null){
+                    if (!(((Object[])(ranges[i]))[0] instanceof Integer)){
+                        if (index!=null){
                             first = index.get(((Object[])(ranges[i]))[0], i+offset);
                         }
                     }  else {
                         first = (Integer) ((Object[])(ranges[i]))[0];
                     }
-                    if(!(((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1] instanceof Integer)){
-                        if(index!=null){
+                    if (!(((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1] instanceof Integer)){
+                        if (index!=null){
                             last = index.get(((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1], i+offset);
                         }
                     } else {
@@ -1053,7 +1015,7 @@ public class Tsr
                     last = ((Integer)((Object[])ranges[i])[((Object[])ranges[i]).length-1]);
                 }
             }
-            if(first>last){
+            if (first>last){
                 int temp = first;
                 first = last;
                 last = temp;
@@ -1061,7 +1023,7 @@ public class Tsr
             first = (first<0)?_shape[i]+first:first;
             last = (last<0)?_shape[i]+last:last;
             newShape[i+offset] = (last-first)+1;
-            idx[i+offset] = first;
+            idxbase[i+offset] = first;
         }
         return ranges.length+offset-1;
     }
@@ -1069,8 +1031,8 @@ public class Tsr
     public int i_of_idx(int[] idx) {
         int i = 0;
         int[] sliceCfg = null;
-        if(has(int[].class)) sliceCfg = (int[])find(int[].class);
-        for(int ii=0; ii<_shape.length; ii++){
+        if (has(int[].class)) sliceCfg = (int[])find(int[].class);
+        for (int ii=0; ii<_shape.length; ii++) {
             int scale = ((sliceCfg==null||sliceCfg.length==rank())?1:sliceCfg[rank()+ii]);
             i += (idx[ii] * scale + ((sliceCfg==null)?0:sliceCfg[ii]))*_translation[ii];
         }
@@ -1083,13 +1045,13 @@ public class Tsr
 
     public int[] idx_of_i(int i) {
         int[] idx = new int[_shape.length];
-        if(Neureka.Settings.Indexing.legacy()){
-            for(int ii=rank()-1; ii>=0; ii--){
+        if (Neureka.Settings.Indexing.legacy()){
+            for (int ii=rank()-1; ii>=0; ii--){
                 idx[ii] += i / _idxmap[ii];
                 i %= _idxmap[ii];
             }
         } else {
-            for(int ii=0; ii<rank(); ii++) {
+            for (int ii=0; ii<rank(); ii++) {
                 idx[ii] += i / _idxmap[ii];
                 i %= _idxmap[ii];
             }
@@ -1106,11 +1068,8 @@ public class Tsr
         public static class io
         {
             public static double getFrom(Tsr t, int i) {
-                if (t.isEmpty() || t.isUndefined()) {
-                    return 0;
-                } else if (t.isVirtual()) {
-                    return t.value64()[0];
-                }
+                if (t.isEmpty() || t.isUndefined()) return 0;
+                else if (t.isVirtual()) return t.value64()[0];
                 return t.value64()[t._i_of_i(i)];
             }
 
@@ -1140,11 +1099,8 @@ public class Tsr
             }
 
             public static Tsr addInto(Tsr t, Tsr source) {
-                if (t.isVirtual() && source.isVirtual()) {
-                    t.value64()[0] += source.value64()[0];
-                } else {
-                    FunctionBuilder.build("I[0]<-(I[0]+I[1])", false).activate(new Tsr[]{t, source});
-                }
+                if (t.isVirtual() && source.isVirtual()) t.value64()[0] += source.value64()[0];
+                else FunctionBuilder.build("I[0]<-(I[0]+I[1])", false).activate(new Tsr[]{t, source});
                 return source;
             }
 
@@ -1162,9 +1118,7 @@ public class Tsr
                 if (t.isVirtual() && source.isVirtual()) {
                     t.value64()[0] -= source.value64()[0];
                 } else {
-                    if (t.isVirtual()) {
-                        t.setIsVirtual(false);
-                    }
+                    if (t.isVirtual()) t.setIsVirtual(false);
                     int[] index = new int[t.shape().length];
                     int size = t.size();
                     for (int i = 0; i < size; i++) {
@@ -1189,19 +1143,19 @@ public class Tsr
         public static class exec
         {
             public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr) {
-                tensor = (newTsr)? new Tsr(tensor, true):tensor;
+                tensor = (newTsr) ? new Tsr(tensor, true) : tensor;
                 tensor._shape = _cached(indexing.shpCheck(indexing.rearrange(tensor._shape, newForm), tensor));
                 tensor._translation = _cached(indexing.rearrange(tensor._translation, tensor._shape, newForm));
                 tensor._idxmap =  _cached(indexing.newTlnOf(tensor._shape));
                 int[] sliceCfg = null;
-                if(tensor.has(int[].class)) sliceCfg = (int[])tensor.find(int[].class);
-                if(sliceCfg!=null){
+                if (tensor.has(int[].class)) sliceCfg = (int[])tensor.find(int[].class);
+                if (sliceCfg!=null){
                     int[] newSliceConfig = new int[sliceCfg.length];
-                    for(int i=0; i<newForm.length; i++){
+                    for (int i=0; i<newForm.length; i++){
                         newSliceConfig[i] = sliceCfg[newForm[i]];
                     }
-                    if(sliceCfg.length!=tensor.rank()){
-                        for(int i=0; i<newForm.length; i++){
+                    if (sliceCfg.length!=tensor.rank()){
+                        for (int i=0; i<newForm.length; i++){
                             newSliceConfig[tensor.rank()+i] = sliceCfg[tensor.rank()+newForm[i]];
                         }
                     }
@@ -1225,25 +1179,23 @@ public class Tsr
             public static Tsr newRandom(int[] shape, long seed){
                 int size = Tsr.fcn.indexing.szeOfShp(shape);
                 double[] value = new double[size];
-                for(int i=0; i<size; i++){
-                    value[i] = DataHelper.getDoubleOf(seed+i);
-                }
+                for (int i=0; i<size; i++) value[i] = DataHelper.getDoubleOf(seed+i);
                 return new Tsr(shape, value);
             }
 
             public static Tsr newTsrLike(Tsr template, double value) {
                 Tsr t = _newEmptyLike(template);
-                if(template.is32()) t.setValue((float)value);
+                if (template.is32()) t.setValue((float)value);
                 else t.setValue(value);
-                if(template.isOutsourced()) ((Device)template.find(Device.class)).add(t);
+                if (template.isOutsourced()) ((Device)template.find(Device.class)).add(t);
                 return t;
             }
 
             public static Tsr newTsrLike(Tsr template) {//The output tensor will not have gradients!
                 Tsr t = _newEmptyLike(template);
-                if(template.is32()) t.setValue32(new float[template.size()]);
+                if (template.is32()) t.setValue32(new float[template.size()]);
                 else t.setValue64(new double[template.size()]);
-                if(template.isOutsourced()) ((Device)template.find(Device.class)).add(t);
+                if (template.isOutsourced()) ((Device)template.find(Device.class)).add(t);
                 return t;
             }
 
@@ -1257,14 +1209,15 @@ public class Tsr
 
         }
 
-        public static class stringify{
+        public static class stringify
+        {
             @Contract(pure = true)
             public static String formatFP(double v){
                 DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.US);
                 DecimalFormat Formatter = new DecimalFormat("##0.0##E0", formatSymbols);
                 String vStr = String.valueOf(v);
-                if(vStr.length()>7){
-                    if(vStr.substring(0, 2).equals("0.")){
+                if (vStr.length()>7){
+                    if (vStr.substring(0, 2).equals("0.")){
                         vStr = vStr.substring(0, 7)+"E0";
                     } else if(vStr.substring(0, 3).equals("-0.")){
                         vStr = vStr.substring(0, 8)+"E0";
@@ -1278,13 +1231,9 @@ public class Tsr
             }
 
             @Contract(pure = true)
-            public static String str(int[] shp) {
+            private static String _strShp(int[] shp) {
                 String str = "";
-                int i = 0;
-                for (int s : shp) {
-                    str += s + ((i != shp.length - 1) ? ", " : "");
-                    i++;
-                }
+                for(int i=0; i<shp.length; i++) str += shp[i] + ((i != shp.length - 1) ? ", " : "");
                 return "[" + str + "]";
             }
 
@@ -1298,24 +1247,16 @@ public class Tsr
         {
             @Contract(pure = true)
             public static void increment(@NotNull int[] shpIdx, @NotNull int[] shape) {
-                if(Neureka.Settings.Indexing.legacy()){
-                    int i = 0;
-                    while (i >= 0 && i < shape.length) {//fixed
-                        i = incrementAt(i, shpIdx, shape);
-                    }
-                } else{
-                    int i = shape.length-1;
-                    while (i >= 0 && i < shape.length) {//WIP
-                        i = incrementAt(i, shpIdx, shape);
-                    }
-                }
-
+                int i;
+                if (Neureka.Settings.Indexing.legacy()) i = 0;
+                else i = shape.length-1;
+                while (i >= 0 && i < shape.length) i = _incrementAt(i, shpIdx, shape);
             }
 
             @Contract(pure = true)
-            public static int incrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
+            private static int _incrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
                 if(Neureka.Settings.Indexing.legacy()){
-                    if (shpIdx[i] < (shape[i])) {//fixed
+                    if (shpIdx[i] < (shape[i])) {
                         shpIdx[i]++;
                         if (shpIdx[i] == (shape[i])) {
                             shpIdx[i] = 0;
@@ -1328,7 +1269,7 @@ public class Tsr
                     }
                     return i;
                 } else {
-                    if (shpIdx[i] < (shape[i])) {//WIP
+                    if (shpIdx[i] < (shape[i])) {
                         shpIdx[i]++;
                         if (shpIdx[i] == (shape[i])) {
                             shpIdx[i] = 0;
@@ -1376,7 +1317,7 @@ public class Tsr
                 if (szeOfShp(newShp) != t.size()) {
                     throw new IllegalArgumentException(
                             "[Tsr][shpCheck(int[] newShp, Tsr t)]: New shape does not match tensor size!" +
-                            " (" + stringify.str(newShp) + ((szeOfShp(newShp) < t.size()) ? "<" : ">") + stringify.str(t.shape()) + ")");
+                            " (" + stringify._strShp(newShp) + ((szeOfShp(newShp) < t.size()) ? "<" : ">") + stringify._strShp(t.shape()) + ")");
                 }
                 return newShp;
             }
@@ -1414,7 +1355,7 @@ public class Tsr
             @Contract(pure = true)
             public static int szeOfShp(int[] shape) {
                 int size = 1;
-                for (int Di = 0; Di < shape.length; Di++) size *= shape[Di];
+                for (int i : shape) size *= i;
                 return size;
             }
 

@@ -33,8 +33,6 @@ public class ADAgent {
         _bad = null;
     }
 
-
-
     public Tsr forward(Tsr derivative){
         return _fad.execute(derivative);
     }

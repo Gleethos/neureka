@@ -137,15 +137,15 @@ public class OpenCLDevice extends AbstractDevice
 <span class="fc" id="L137">        int[] idxmap = tensor.idxmap();</span>
 <span class="fc bfc" id="L138" title="All 2 branches covered.">        for(int i=rank*2; i&lt;rank*3; i++) config[i] = idxmap[i-rank*2];// -=&gt; IDXMAP (translates scalar to dimension index)</span>
         //---
-<span class="fc" id="L140">        int[] idx = (int[])tensor.find(int[].class); //Look for additional configurations!</span>
-<span class="fc bfc" id="L141" title="All 2 branches covered.">        if(idx!=null){</span>
+<span class="fc" id="L140">        int[] idxbase = (int[])tensor.find(int[].class); //Look for additional configurations!</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        if(idxbase!=null){</span>
 <span class="fc bfc" id="L142" title="All 2 branches covered.">            for(int i=rank*3; i&lt;rank*4; i++){// -=&gt; IDX Basline (sliced tensors have this property)</span>
-<span class="fc" id="L143">                config[i] = idx[i-rank*3];</span>
+<span class="fc" id="L143">                config[i] = idxbase[i-rank*3];</span>
             }
         }
         //---
         // -=&gt; IDX Baseline Scale (sliced tensors indexes might be scaled)
-<span class="fc bfc" id="L148" title="All 6 branches covered.">        for(int i=rank*4; i&lt;rank*5; i++)config[i] = ((idx!=null)&amp;&amp;idx.length&gt;tensor.rank())?idx[i-rank*3]:1;</span>
+<span class="fc bfc" id="L148" title="All 6 branches covered.">        for(int i=rank*4; i&lt;rank*5; i++)config[i] = ((idxbase!=null)&amp;&amp;idxbase.length&gt;tensor.rank())?idxbase[i-rank*3]:1;</span>
         //---
 
         //SHAPE/TRANSLATION/IDXMAP/SCALEMAP TRANSFER:
@@ -459,8 +459,8 @@ public class OpenCLDevice extends AbstractDevice
 
     public String type(){
 <span class="fc" id="L461">        long deviceType = DeviceQuery.getLong(_did, CL_DEVICE_TYPE);</span>
-<span class="fc bfc" id="L462" title="All 2 branches covered.">        if( (deviceType &amp; CL_DEVICE_TYPE_CPU) != 0)</span>
-<span class="fc" id="L463">            return &quot;CPU&quot;;</span>
+<span class="pc bpc" id="L462" title="1 of 2 branches missed.">        if( (deviceType &amp; CL_DEVICE_TYPE_CPU) != 0)</span>
+<span class="nc" id="L463">            return &quot;CPU&quot;;</span>
 <span class="pc bpc" id="L464" title="1 of 2 branches missed.">        if( (deviceType &amp; CL_DEVICE_TYPE_GPU) != 0)</span>
 <span class="fc" id="L465">            return &quot;GPU&quot;;</span>
 <span class="nc bnc" id="L466" title="All 2 branches missed.">        if( (deviceType &amp; CL_DEVICE_TYPE_ACCELERATOR) != 0)</span>
