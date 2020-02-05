@@ -17,6 +17,13 @@ public interface Function
     Cache CACHE = new Cache();
     Types TYPES = new Types();
 
+    static Function create(String expression){
+        return create(expression, true);
+    }
+
+    static Function create(String expression, boolean doAD){
+        return FunctionBuilder.build(expression, doAD);
+    }
 
     class setup
     {
@@ -52,8 +59,6 @@ public interface Function
             } else {
                 result = activation.get();
             }
-
-            //if (result.has(GraphNode.class)) ((GraphNode) result.find(GraphNode.class)).redundantGradientCleanup();
             Function.CACHE.free(newLock);
             boolean resultIsUnique = true;
             if(drain!=null){
@@ -65,11 +70,8 @@ public interface Function
                     }
                 }
             }
-            if(resultIsUnique){
-                return result;
-            } else {
-                return  null;
-            }
+            if(resultIsUnique) return result;
+            else return null;
         }
 
     }
@@ -87,6 +89,8 @@ public interface Function
 
     boolean dependsOn(int index);
     //------------------------------------------------------------------------------------------------------------------
+    double activate(double input);
+
     double activate(double[] inputs, int j);// Iteration over input via j !
 
     double activate(double[] inputs);
@@ -96,6 +100,8 @@ public interface Function
     double derive(double[] inputs, int index);
 
     //------------------------------------------------------------------------------------------------------------------
+    Tsr activate(Tsr input);
+
     Tsr activate(Tsr[] inputs, int j);// Iteration over input via j !
 
     Tsr activate(Tsr[] inputs);
@@ -105,12 +111,12 @@ public interface Function
     Tsr derive(Tsr[] inputs, int index);
 
     //---
+    String toString();
 
     ADAgent getADAgent(Tsr[] inputs, int i, boolean forward);
 
-
     //------------------------------------------------------------------------------------------------------------------
-    String toString();
+
 }
 
  

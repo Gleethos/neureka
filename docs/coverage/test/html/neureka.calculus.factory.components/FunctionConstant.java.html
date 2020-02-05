@@ -56,55 +56,69 @@ import neureka.calculus.Function;
 <span class="fc" id="L56">		return this;</span>
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	@Override
+	public double activate(double input){
+<span class="nc" id="L62">		return activate(new double[]{input});</span>
+	}
+
 	@Override
     public double activate(final double[] inputs, int j) {
-<span class="fc" id="L61">    	return _value;</span>
+<span class="fc" id="L67">    	return _value;</span>
     }
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	@Override
 	public double activate(double[] inputs) {
-<span class="fc" id="L66">		return _value;</span>
+<span class="fc" id="L72">		return _value;</span>
 	}
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	@Override
 	public double derive(double[] inputs, int index) {
-<span class="fc" id="L71">		return 0;</span>
+<span class="fc" id="L77">		return 0;</span>
 	}
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	@Override
 	public double derive(double[] inputs, int index, int j) {
-<span class="fc" id="L76">		return 0;</span>
+<span class="fc" id="L82">		return 0;</span>
 	}
+
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	@Override
-	public String toString() {
-<span class="fc" id="L81">		return _value +&quot;&quot;;</span>
+	public Tsr activate(Tsr input){
+<span class="nc" id="L89">		return activate(new Tsr[]{input});</span>
 	}
 
 	@Override
 	public Tsr activate(Tsr[] inputs, int j) {
-<span class="fc" id="L86">		return new Tsr(inputs[0].shape(), this._value);</span>
+<span class="fc" id="L94">		return new Tsr(inputs[0].shape(), this._value);</span>
 	}
 
 	@Override
 	public Tsr activate(Tsr[] inputs) {
-<span class="fc" id="L91">		return new Tsr(inputs[0].shape(), this._value);</span>
+<span class="fc" id="L99">		return new Tsr(inputs[0].shape(), this._value);</span>
 	}
 
 	@Override
 	public Tsr derive(Tsr[] inputs, int index, int j) {
-<span class="fc" id="L96">		return new Tsr(inputs[0].shape(), 0.0);</span>
+<span class="fc" id="L104">		return new Tsr(inputs[0].shape(), 0.0);</span>
 	}
 
 	@Override
 	public Tsr derive(Tsr[] inputs, int index) {
-<span class="fc" id="L101">		return new Tsr(inputs[0].shape(), 0.0);</span>
+<span class="fc" id="L109">		return new Tsr(inputs[0].shape(), 0.0);</span>
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	@Override
+	public String toString() {
+<span class="fc" id="L115">		return _value +&quot;&quot;;</span>
+	}
+
+
+	@Override
 	public ADAgent getADAgent(Tsr[] inputs, int i, boolean forward){
-<span class="nc" id="L107">		return null;</span>
+<span class="nc" id="L121">		return null;</span>
 	}
 
 	//@Override

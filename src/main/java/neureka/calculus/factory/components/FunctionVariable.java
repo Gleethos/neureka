@@ -42,16 +42,22 @@ public class FunctionVariable implements Function, GradientProvider {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public Function newBuild(final String equation) {
-        if(equation.contains("g")){
-            _providesGradient = true;
-        }
+        if(equation.contains("g")) _providesGradient = true;
         return this;
     }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    @Override
+    public double activate(double input){
+        return activate(new double[]{input});
+    }
+
     @Override
     public double activate(final double[] inputs, int j) {
         return inputs[j];
     }
+
     @Override
     public double activate(final double[] inputs) {
         double sum = 0;
@@ -60,10 +66,12 @@ public class FunctionVariable implements Function, GradientProvider {
         }
         return sum;
     }
+
     @Override
     public double derive(final double[] inputs, final int index) {
         return 1.0;
     }
+
     @Override
     public double derive(double[] inputs, int index, int j) {
         if (j != index) {
@@ -72,16 +80,24 @@ public class FunctionVariable implements Function, GradientProvider {
         return derive(inputs, index);
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    @Override
+    public Tsr activate(Tsr input){
+        return activate(new Tsr[]{input});
+    }
+
     @Override
     public Tsr activate(Tsr[] inputs, int j) {
         return inputs[j];
     }
+
     @Override
     public Tsr activate(Tsr[] inputs) {
         String exp = "I[0]";
         for(int i=1; i<inputs.length; i++)exp += "+I["+i+"]";
         return FunctionBuilder.build(exp, false).activate(inputs);
     }
+
     @Override
     public Tsr derive(Tsr[] inputs, int index, int j) {
         if (j != index) {
@@ -89,11 +105,14 @@ public class FunctionVariable implements Function, GradientProvider {
         }
         return derive(inputs, index);
     }
+
     @Override
     public Tsr derive(Tsr[] inputs, int index) {
         return new Tsr(inputs[0].shape(), 1.0);
     }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     @Override
     public String toString() {
         return "I"+((this.providesGradient())?"g":"")+"[j]";
@@ -103,11 +122,6 @@ public class FunctionVariable implements Function, GradientProvider {
     public ADAgent getADAgent(Tsr[] inputs, int i, boolean forward){
         return null;
     }
-
-    //@Override
-    //public FADLambda getForwardAD(GraphNode node, Tsr[] inputs, int i){
-    //    return (error)->error;
-    //}
 
 
 }

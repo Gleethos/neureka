@@ -488,9 +488,17 @@ public class Tsr extends AbstractComponentOwner
                 } else if(((List)arg1).get(0) instanceof Tsr){
                     _construct(((List<Tsr>)arg1).toArray(new Tsr[((List<Tsr>)arg1).size()]), (String)arg2, true);
                 }
+            } else if (arg2 instanceof List && ((List)arg2).get(0) instanceof Integer){
+                List range = (List)arg2;
+                List<Integer> shape = ((List)arg1);
+                int[] shp = new int[shape.size()];
+                for(int i=0; i<shp.length; i++) shp[i] = shape.get(i);
+                double[] value = new double[fcn.indexing.szeOfShp(shp)];//TODO: type evaluation
+                for(int i=0; i<value.length; i++) value[i] = (Integer)range.get(i%range.size());
+                _construct(shp, value);
+                return;
             }
         }
-
         _construct(new Object[]{arg1, arg2});
     }
     public Tsr(Object arg1, Object arg2, Object arg3){
@@ -903,7 +911,7 @@ public class Tsr extends AbstractComponentOwner
         if(key instanceof List) if(((List)key).size()==0) return this;
         int[] idxbase = null;
         int[] newShape = new int[this.rank()];
-        if(key instanceof List){
+        if(key instanceof List) {
             key = ((List)key).toArray();
             boolean allInt = true;
             for(Object o : (Object[])key) allInt = allInt && o instanceof Integer;
@@ -1020,9 +1028,9 @@ public class Tsr extends AbstractComponentOwner
                 first = last;
                 last = temp;
             }
-            first = (first<0)?_shape[i]+first:first;
-            last = (last<0)?_shape[i]+last:last;
-            newShape[i+offset] = (last-first)+1;
+            first = (first < 0) ? _shape[i]+first : first;
+            last = (last < 0) ? _shape[i]+last : last;
+            newShape[i+offset] = (last - first) + 1;
             idxbase[i+offset] = first;
         }
         return ranges.length+offset-1;
@@ -1033,8 +1041,8 @@ public class Tsr extends AbstractComponentOwner
         int[] sliceCfg = null;
         if (has(int[].class)) sliceCfg = (int[])find(int[].class);
         for (int ii=0; ii<_shape.length; ii++) {
-            int scale = ((sliceCfg==null||sliceCfg.length==rank())?1:sliceCfg[rank()+ii]);
-            i += (idx[ii] * scale + ((sliceCfg==null)?0:sliceCfg[ii]))*_translation[ii];
+            int scale = (sliceCfg==null || sliceCfg.length==rank()) ? 1 : sliceCfg[rank()+ii];
+            i += (idx[ii] * scale + ((sliceCfg==null) ? 0 : sliceCfg[ii])) * _translation[ii];
         }
         return i;
     }

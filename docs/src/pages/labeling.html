@@ -9,7 +9,7 @@
             intuitive to work with big data.
             By calling the 'label' method
             it's possible to add a custom
-            set of Strings as index alias for any dimension
+            set of Strings as index aliases for any dimension
             of a given tensor.
         </p>
     </div>
@@ -34,15 +34,21 @@
 
         x = t["2".."3", "b".."y"] // x.toString(): "[2x2]:(8.0, 6.0, 5.0, 6.0)"
 
+                                                </code></pre>
+</div>
+<div class="col-sm-12 col-md-12">
+                                                <pre><code class="hljs java">
+
         // Example II:
 
-        t = new Tsr([2, 3, 4], 7)
+        Tsr t = new Tsr([2, 3, 4], 7)
         t.label([
                 ["1", "2"],
                 ["a", "b", "y"],
                 ["tim", "tom", "tina", "tanya"]
         ])
 
+        Tsr x
         x = t["2", "b".."y", [["tim","tanya"]:2]] // x.toString(): "[1x2x2]:(7.0, 7.0, 7.0, 7.0)"
         x = t["2", [["b".."y"]:1, ["tim","tanya"]:2]] // x.toString(): "[1x2x2]:(7.0, 7.0, 7.0, 7.0)"
         x = t[[["2"]:1, ["b".."y"]:1, ["tim","tanya"]:2]] // x.toString(): "[1x2x2]:(7.0, 7.0, 7.0, 7.0)"

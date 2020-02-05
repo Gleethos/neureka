@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractComponentOwner.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.utility</a> &gt; <span class="el_source">AbstractComponentOwner.java</span></div><h1>AbstractComponentOwner.java</h1><pre class="source lang-java linenums">package neureka.utility;
+
+import java.util.ArrayList;
+import java.util.function.Consumer;
+
+<span class="fc" id="L6">public abstract class AbstractComponentOwner {</span>
+
+    /**
+     *  Tensor components
+     */
+<span class="fc" id="L11">    protected ArrayList&lt;Object&gt; _components = new ArrayList&lt;Object&gt;();</span>
+
+    /**
+     * @param componentClass The type/class of the component which shall be found and returned.
+     * @return The correct component or null if nothing has been found.
+     */
+    public Object find(Class componentClass) {
+<span class="fc bfc" id="L18" title="All 2 branches covered.">        if (_components != null) {</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">            for (int Pi = 0; Pi &lt; _components.size(); Pi++) {</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">                if (componentClass.isInstance(_components.get(Pi))) {</span>
+<span class="fc" id="L21">                    return _components.get(Pi);</span>
+                }
+            }
+        }
+<span class="fc" id="L25">        return null;</span>
+    }
+
+    /**
+     *
+     * @param componentClass The type/class of a component which will be removed by this method.
+     * @return This very class.
+     */
+    public AbstractComponentOwner remove(Class componentClass) {
+<span class="fc" id="L34">        Object oldComponent = find(componentClass);</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if (oldComponent != null) {</span>
+<span class="fc" id="L36">            _components.remove(oldComponent);</span>
+<span class="fc" id="L37">            _components.trimToSize();</span>
+        }
+<span class="pc bpc" id="L39" title="1 of 4 branches missed.">        if (_components!=null &amp;&amp; _components.size() == 0) {</span>
+<span class="fc" id="L40">            _components = null;</span>
+        }
+<span class="fc" id="L42">        return this;</span>
+    }
+
+    /**
+     *
+     * @param componentClass The class/type of a component that might exist in components.
+     * @return True if the component of the given type/class has been found.
+     */
+    public boolean has(Class componentClass) {
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        return find(componentClass) != null;</span>
+    }
+
+    /**
+     *
+     * @param newComponent The new component which should be added to the components list.
+     * @return This very class.
+     */
+    public AbstractComponentOwner add(Object newComponent) {
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        if (newComponent == null) return this;</span>
+<span class="fc" id="L61">        Object oldCompartment = null;</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (_components != null) {</span>
+<span class="fc" id="L63">            oldCompartment = find(newComponent.getClass());</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">            if (oldCompartment != null) {</span>
+<span class="fc" id="L65">                _components.remove(oldCompartment);</span>
+<span class="fc" id="L66">                _components.trimToSize();</span>
+            }
+        } else {
+<span class="fc" id="L69">            _components = new ArrayList&lt;&gt;();</span>
+        }
+<span class="fc" id="L71">        _components.add(_add(newComponent));</span>
+<span class="fc" id="L72">        return this;</span>
+    }
+
+    /**
+     * @param newComponent The component which should be added to the components list.
+     * @return The same component or null if it has been rejected.
+     */
+    protected abstract Object _add(Object newComponent);
+
+    /**
+     *
+     * @param cc Component class of whose type the requested component is.
+     * @param action An action applied on the requested component if found.
+     * @return True if a component could be found, false otherwise.
+     */
+    public boolean forComponent(Class cc, Consumer&lt;Object&gt; action){
+<span class="fc" id="L88">        Object component = this.find(cc);</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        if(component!=null){</span>
+<span class="fc" id="L90">            action.accept(component);</span>
+<span class="fc" id="L91">            return true;</span>
+        } else {
+<span class="fc" id="L93">            return false;</span>
+        }
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

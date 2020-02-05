@@ -15,7 +15,7 @@ public class Neureka
     }
 
     public static Function create(String expression, boolean doAD){
-        return FunctionBuilder.build(expression, doAD);
+        return Function.create(expression, doAD);
     }
 
 

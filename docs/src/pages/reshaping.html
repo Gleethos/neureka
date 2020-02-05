@@ -1,0 +1,53 @@
+<div class="col-sm 12 col-md-12">
+    <div class="contentBox">
+        <h3>
+            Reshaping:
+        </h3>
+        <p>
+            The dimensions of a tensor can be rearranged freely.
+            Additionally the number of dimensions of a tensor can be
+            increased or reduced as well.
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12">
+                                               <pre><code class="hljs java">
+
+        Function f = Neureka.create("[2, 0, 1]:(I[0])")
+
+        Tsr t = new Tsr([3, 4, 2], 1..5)
+
+        //  t:>>
+        //  [3x4x2]:(
+        //      1.0, 2.0,
+        //      3.0, 4.0,
+        //      5.0, 1.0,
+        //      2.0, 3.0,
+        //
+        //      4.0, 5.0,
+        //      1.0, 2.0,
+        //      3.0, 4.0,
+        //      5.0, 1.0,
+        //
+        //      2.0, 3.0,
+        //      4.0, 5.0,
+        //      1.0, 2.0,
+        //      3.0, 4.0
+        //  )
+
+        Tsr r = f.activate(t)
+
+        //  r:>>
+        //  [2x3x4]:(
+        //      1.0, 3.0, 5.0, 2.0,
+        //      4.0, 1.0, 3.0, 5.0,
+        //      2.0, 4.0, 1.0, 3.0,
+        //
+        //      2.0, 4.0, 1.0, 3.0,
+        //      5.0, 2.0, 4.0, 1.0,
+        //      3.0, 5.0, 2.0, 4.0
+        //  )
+
+
+                                                </code></pre>
+</div>

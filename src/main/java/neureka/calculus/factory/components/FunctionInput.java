@@ -84,42 +84,63 @@ public class FunctionInput implements Function, GradientProvider
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    @Override
+    public double activate(double input){
+        return activate(new double[]{input});
+    }
+
     @Override
     public double activate(final double[] inputs, int j) {
         return inputs[index()];
     }
+
     @Override
     public double activate(final double[] inputs) {
         return inputs[(_index>=0)?_index:(Math.abs(_index)-1)];
     }
+
     @Override
     public double derive(final double[] inputs, final int index) {
         return (index == index()) ? 1 : 0;
     }
+
     @Override
     public double derive(double[] inputs, int index, int j) {
         return derive(inputs, index);
     }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    @Override
+    public Tsr activate(Tsr input){
+        return activate(new Tsr[]{input});
+    }
+
     @Override
     public Tsr activate(Tsr[] inputs, int j) {
         return _extract(inputs[index()]);
     }
+
     @Override
     public Tsr activate(Tsr[] inputs) {
         return _extract(inputs[index()]);
     }
+
     @Override
     public Tsr derive(Tsr[] inputs, int index, int j) {
         return derive(inputs, index);
     }
+
     @Override
     public Tsr derive(Tsr[] inputs, int index) {
         return (index == index())
                 ? new Tsr(inputs[0].shape(), 1.0)
                 : new Tsr(inputs[0].shape(), 0.0);
     }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     @Override
     public String toString() {
         return "I"+((this.providesGradient())?"g":"")+"[" + index() + "]";

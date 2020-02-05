@@ -114,6 +114,11 @@ public abstract class AbstractFunction implements Function {
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
+    public Tsr activate(Tsr input){
+        return activate(new Tsr[]{input});
+    }
+
+    @Override
     public abstract Tsr activate(Tsr[] inputs, int j);
 
     @Override
@@ -126,6 +131,11 @@ public abstract class AbstractFunction implements Function {
     public abstract Tsr derive(Tsr[] inputs, int index);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    @Override
+    public double activate(double input){
+        return activate(new double[]{input});
+    }
+
     @Override
     public abstract double activate(final double[] inputs, int j);
 

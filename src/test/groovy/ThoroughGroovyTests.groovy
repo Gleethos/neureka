@@ -5,6 +5,7 @@ import neureka.acceleration.CPU
 import neureka.acceleration.Device
 import neureka.acceleration.opencl.OpenCLPlatform
 import neureka.autograd.JITProp
+import neureka.calculus.Function
 import neureka.calculus.factory.assembly.FunctionBuilder
 import org.junit.Test
 import util.DummyDevice
@@ -12,6 +13,23 @@ import util.DummyDevice
 class ThoroughGroovyTests
 {
 
+    @Test
+    void testReshaping(){
+
+        Neureka.Settings.reset()
+
+        Function f = Neureka.create("[2, 0, 1]:(I[0])")
+
+        Tsr t = new Tsr([3, 4, 2], 1..5)
+
+        assert t.toString().contains("[3x4x2]:(1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0)")
+
+        Tsr r = f.activate(t)
+
+        assert r.toString().contains("[2x3x4]")
+        assert r.toString().contains("[2x3x4]:(1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0)")
+
+    }
 
     @Test
     void testNetworkLegacyIndexing() {

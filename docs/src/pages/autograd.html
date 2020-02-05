@@ -17,8 +17,8 @@
             Especially the use of backward-mode-AD revolutionized
             machine learning in recent decades.
             So called stochastic gradient decent is the most well known
-            algorithm which uses uses backward-mode-ad.
-            This technique is known as Backpropagation.
+            algorithm which uses backward-mode-AD.
+            This technique is widely known as Backpropagation.
             and for most cases this approach increases performance by
             orders of magnitudes compared to other techniques,
             making the difference between a model
@@ -26,8 +26,7 @@
             Beyond its use in machine learning, Auto-differentiation is a powerful
             computational tool in a multitude of other areas, ranging from weather
             forecasting to analyzing numerical stability.
-            AD is a common tool
-            for many other fields dependent on algebraic numerical computation.
+            AD is a common tool for many other fields dependent on algebraic numerical computation.
         </p>
     </div>
 </div>
@@ -56,12 +55,12 @@
 <div class="col-sm 12 col-md-4">
     <div class="contentBox">
         <p>
-            In this example Neureka calculates the derivative of y w.r.t x.
+            In this example Neureka calculates the derivative of y with respect to x.
             </br>
             Forward-AD is used due to the fact that no other dependencies
             need to be considered.
-            When backward is called, the requested error of '2'
-            is being multiplied by the calculated error and then
+            When 'backward' is called, the requested error of '2'
+            is being multiplied by the calculated derivative and then
             attached to x.
             </br>
             This newly created gradient can then be applied.
@@ -94,6 +93,7 @@
      Tsr c = new Tsr(2);
      Tsr d = new Tsr(Tsr[]{a, b, c},"(relu(i0*i1)+i1)/i2");
 
+     //  s:>>
      //  [1]:(1.94);
      //       =>d|[ [1]:(0.5) ]|:
      //           t{
@@ -108,6 +108,8 @@
      //               [1]:(4.0)
      //           },
 
+     // d|[ ... ]|  ... derivative
+     // t{ ... }    ... targeted tensor (of a derivative)
                                                 </code></pre>
 </div>
 <div class="col-sm 12 col-md-4">
@@ -115,10 +117,10 @@
         <p>
             As you can see in this example,
             having multiple variables requiring gradients
-            as inputs to constructed functions
-            will produce many intermediate derivatives wich
+            as inputs to the constructed function
+            will produce many intermediate derivatives which
             are needed for backward AD.
-            This however increases memory consumption.
+            Multiple AD dependencies increases memory consumption.
         </p>
     </div>
 </div>

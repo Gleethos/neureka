@@ -56,29 +56,37 @@ public class FunctionConstant implements Function
 		return this;
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	@Override
+	public double activate(double input){
+		return activate(new double[]{input});
+	}
+
 	@Override
     public double activate(final double[] inputs, int j) {
     	return _value;
     }
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	@Override
 	public double activate(double[] inputs) {
 		return _value;
 	}
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	@Override
 	public double derive(double[] inputs, int index) {
 		return 0;
 	}
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	@Override
 	public double derive(double[] inputs, int index, int j) {
 		return 0;
 	}
+
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	@Override
-	public String toString() {
-		return _value +"";
+	public Tsr activate(Tsr input){
+		return activate(new Tsr[]{input});
 	}
 
 	@Override
@@ -101,6 +109,12 @@ public class FunctionConstant implements Function
 		return new Tsr(inputs[0].shape(), 0.0);
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	@Override
+	public String toString() {
+		return _value +"";
+	}
+
 
 	@Override
 	public ADAgent getADAgent(Tsr[] inputs, int i, boolean forward){
