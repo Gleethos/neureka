@@ -526,9 +526,9 @@ public class Tsr extends AbstractComponentOwner
 <span class="nc" id="L526">        _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10});</span>
 <span class="nc" id="L527">    }</span>
 
-<span class="nc" id="L529">    public Tsr(int[] shape, String seed){</span>
-<span class="nc" id="L530">        _construct(shape, seed);</span>
-<span class="nc" id="L531">    }</span>
+<span class="fc" id="L529">    public Tsr(int[] shape, String seed){</span>
+<span class="fc" id="L530">        _construct(shape, seed);</span>
+<span class="fc" id="L531">    }</span>
 
     private void _construct(int[] shape, String seed){
 <span class="fc" id="L534">        _construct(shape);</span>
@@ -859,19 +859,19 @@ public class Tsr extends AbstractComponentOwner
     }
 
     public Tsr label(String[][] labels){
-<span class="nc" id="L862">        Index index = (Index)find(Index.class);</span>
-<span class="nc bnc" id="L863" title="All 2 branches missed.">        if(index==null){</span>
+<span class="fc" id="L862">        Index index = (Index)find(Index.class);</span>
+<span class="pc bpc" id="L863" title="1 of 2 branches missed.">        if(index==null){</span>
 <span class="nc" id="L864">            index = new Index(this.rank());</span>
 <span class="nc" id="L865">            add(index);</span>
         }
-<span class="nc bnc" id="L867" title="All 2 branches missed.">        for(int i=0; i&lt;labels.length; i++){</span>
-<span class="nc bnc" id="L868" title="All 2 branches missed.">            if(labels[i]!=null){</span>
-<span class="nc bnc" id="L869" title="All 2 branches missed.">                for(int ii=0; ii&lt;labels[i].length; ii++){</span>
-<span class="nc bnc" id="L870" title="All 2 branches missed.">                    if(labels[i][ii]!=null) index.set(labels[i][ii], i, ii);</span>
+<span class="fc bfc" id="L867" title="All 2 branches covered.">        for(int i=0; i&lt;labels.length; i++){</span>
+<span class="pc bpc" id="L868" title="1 of 2 branches missed.">            if(labels[i]!=null){</span>
+<span class="fc bfc" id="L869" title="All 2 branches covered.">                for(int ii=0; ii&lt;labels[i].length; ii++){</span>
+<span class="pc bpc" id="L870" title="1 of 2 branches missed.">                    if(labels[i][ii]!=null) index.set(labels[i][ii], i, ii);</span>
                 }
             }
         }
-<span class="nc" id="L874">        return this;</span>
+<span class="fc" id="L874">        return this;</span>
     }
     public Tsr label(List&lt;List&gt; labels){
 <span class="fc" id="L877">        Index index = (Index)find(Index.class);</span>

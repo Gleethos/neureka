@@ -1,0 +1,28 @@
+<div class="col-sm 12 col-md-12">
+    <div class="contentBox">
+        <h3>
+            Stringed seeding:
+        </h3>
+        <p>
+            Deterministic randomness can be achieved by using seeds.
+            Strings are a good source of randomness when hashed, which is what
+            Neureka does internally to produce new random numbers close to 0.
+            When a seed is being passed to the constructor of a tensor
+            it will serve as a source of randomness used to fill this new tensor
+            instance with values.
+            Equal strings will produce equal values.
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12">
+                                               <pre><code class="hljs java">
+
+        Tsr t1 = new Tsr([2, 3], "I am a seed! :)")
+        Tsr t2 = new Tsr(new int[]{2, 3}, "I am a seed! :)")
+        Tsr t3 = new Tsr(new int[]{2, 3}, "I am also a seed! But different. :)")
+
+        // t1.toString() == t2.toString()
+        // t3.toString() != t2.toString()
+
+                                                </code></pre>
+</div>

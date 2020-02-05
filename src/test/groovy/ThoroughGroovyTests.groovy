@@ -12,23 +12,31 @@ import util.DummyDevice
 
 class ThoroughGroovyTests
 {
-
     @Test
-    void testReshaping(){
+    void testStringSeededTensor(){
 
         Neureka.Settings.reset()
 
+        Tsr t1 = new Tsr([2, 3], "I am a seed! :)")
+        Tsr t2 = new Tsr(new int[]{2, 3}, "I am a seed! :)")
+
+        assert t1.toString()==t2.toString()
+
+        Tsr t3 = new Tsr(new int[]{2, 3}, "I am also a seed! But different. :)")
+
+        assert t1.toString()!=t3.toString()
+
+    }
+
+    @Test
+    void testReshaping(){
+        Neureka.Settings.reset()
         Function f = Neureka.create("[2, 0, 1]:(I[0])")
-
         Tsr t = new Tsr([3, 4, 2], 1..5)
-
         assert t.toString().contains("[3x4x2]:(1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0)")
-
         Tsr r = f.activate(t)
-
         assert r.toString().contains("[2x3x4]")
         assert r.toString().contains("[2x3x4]:(1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0)")
-
     }
 
     @Test
@@ -445,6 +453,24 @@ class ThoroughGroovyTests
         assert x.isSlice()
         assert t.isSliceParent()
         assert t.sliceCount()==3
+
+        t.label(
+            new String[][]{
+                    new String[]{"1", "2"},
+                    new String[]{"a", "b", "y"},
+                    new String[]{"tim", "tom", "tina", "tanya"}
+            }
+        )
+
+        x = t[["1","2"], "b".."y", [["tim","tanya"]:2]]
+
+        assert x.toString().contains("[2x2x2]:(7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0)")
+        assert x.isVirtual()
+        assert x.isSlice()
+        assert t.isSliceParent()
+        assert t.sliceCount()==4
+
+        //TODO: assert that slices are garbage collected...
     }
 
     @Test
