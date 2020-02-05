@@ -595,9 +595,9 @@ class ThoroughGroovyTests
 
         int[] shape = new int[1]
         shape[0] = 4
-        x = Tsr.fcn.create.newRandom(shape)
+        x = Tsr.Util.Create.newRandom(shape)
         assert  x.toString().contains("[4]:(-0.1575, -1.57875E0, 5.2775, 0.40125)")
-        x = Tsr.fcn.create.newRandom(shape, 106605040595L)
+        x = Tsr.Util.Create.newRandom(shape, 106605040595L)
         assert x.toString().contains("[4]:(0.3675, -4.30875E0, -6.60625E0, 1.265E0)")
     }
 
@@ -633,38 +633,38 @@ class ThoroughGroovyTests
                 2.0, 7.0,
         ])
         Tsr v = new Tsr([2, 2], [1.0, -1.0, 1.0, -1.0])
-        Tsr.fcn.io.addInto(t, v)
+        Tsr.Util.io.addInto(t, v)
         assert t.toString().contains("[2x2]:(2.0, 3.0, 3.0, 6.0)")
 
-        Tsr.fcn.io.addInto(t, 2, 3.0)
+        Tsr.Util.io.addInto(t, 2, 3.0)
         assert t.toString().contains("[2x2]:(2.0, 3.0, 6.0, 6.0)")
 
         int[] idx = new int[2]
         idx[1] = 1
-        Tsr.fcn.io.addInto(t, idx, -9.0)
+        Tsr.Util.io.addInto(t, idx, -9.0)
         assert t.toString().contains("[2x2]:(2.0, 3.0, -3.0, 6.0)")
-        assert Tsr.fcn.io.getFrom(t, idx)==-3.0
+        assert Tsr.Util.io.getFrom(t, idx)==-3.0
 
         idx[0] = 1
-        Tsr.fcn.io.mulInto(t, idx, -1)
+        Tsr.Util.io.mulInto(t, idx, -1)
         assert t.toString().contains("[2x2]:(2.0, 3.0, -3.0, -6.0)")
 
-        Tsr.fcn.io.mulInto(t, 3, -2)
+        Tsr.Util.io.mulInto(t, 3, -2)
         assert t.toString().contains("[2x2]:(2.0, 3.0, -3.0, 12.0)")
 
-        Tsr.fcn.io.setInto(t, idx, 0.0)
+        Tsr.Util.io.setInto(t, idx, 0.0)
         assert t.toString().contains("[2x2]:(2.0, 3.0, -3.0, 0.0)")
 
-        Tsr.fcn.io.setInto(t, 2, 99.0)
+        Tsr.Util.io.setInto(t, 2, 99.0)
         assert t.toString().contains("[2x2]:(2.0, 3.0, 99.0, 0.0)")
         //---
-        Tsr.fcn.io.subInto(t, 2, 99.0)
+        Tsr.Util.io.subInto(t, 2, 99.0)
         assert t.toString().contains("[2x2]:(2.0, 3.0, 0.0, 0.0)")
         idx[0] = 0
-        Tsr.fcn.io.subInto(t, idx, -9.0)
+        Tsr.Util.io.subInto(t, idx, -9.0)
         assert t.toString().contains("[2x2]:(2.0, 3.0, 9.0, 0.0)")
 
-        Tsr.fcn.io.subInto(t, new Tsr([2, 2], [1, 2, 3, 4]))
+        Tsr.Util.io.subInto(t, new Tsr([2, 2], [1, 2, 3, 4]))
         assert t.toString().contains("[2x2]:(1.0, 1.0, 6.0, -4.0)")
 
         Neureka.Settings.Indexing.setLegacy(false)

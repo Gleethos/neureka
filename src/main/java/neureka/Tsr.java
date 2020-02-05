@@ -324,7 +324,7 @@ public class Tsr extends AbstractComponentOwner
 
     public int size() {
         if (this.isEmpty()) return 0;
-        return fcn.indexing.szeOfShp(this.shape());
+        return Util.Indexing.szeOfShp(this.shape());
     }
 
     public boolean isEmpty() {
@@ -455,7 +455,7 @@ public class Tsr extends AbstractComponentOwner
         for (int i = 0; i < size; i++) {
             String vStr;
             if(format){
-                vStr = fcn.stringify.formatFP(v[(this.isVirtual()) ? 0 : _i_of_i(i)]);
+                vStr = Util.Stringify.formatFP(v[(this.isVirtual()) ? 0 : _i_of_i(i)]);
             } else {
                 vStr = String.valueOf(v[(this.isVirtual()) ? 0 : _i_of_i(i)]);
             }
@@ -493,7 +493,7 @@ public class Tsr extends AbstractComponentOwner
                 List<Integer> shape = ((List)arg1);
                 int[] shp = new int[shape.size()];
                 for(int i=0; i<shp.length; i++) shp[i] = shape.get(i);
-                double[] value = new double[fcn.indexing.szeOfShp(shp)];//TODO: type evaluation
+                double[] value = new double[Util.Indexing.szeOfShp(shp)];//TODO: type evaluation
                 for(int i=0; i<value.length; i++) value[i] = (Integer)range.get(i%range.size());
                 _construct(shp, value);
                 return;
@@ -560,7 +560,7 @@ public class Tsr extends AbstractComponentOwner
     private void _construct(Object[] args) {
         if(args==null || args.length==0)return;
         if(args[0] instanceof  Tsr && args.length==1){
-            inject(Tsr.fcn.create.newTsrLike((Tsr)args[0]));
+            inject(Util.Create.newTsrLike((Tsr)args[0]));
             return;
         }
         args[0] = (args[0] instanceof ArrayList)?((ArrayList)args[0]).toArray():args[0];
@@ -633,7 +633,7 @@ public class Tsr extends AbstractComponentOwner
     }
 
     private void _construct(int[] shape){
-        _value = new double[fcn.indexing.szeOfShp(shape)];
+        _value = new double[Util.Indexing.szeOfShp(shape)];
         this.initialShape(shape);
     }
 
@@ -642,7 +642,7 @@ public class Tsr extends AbstractComponentOwner
     }
 
     private void _construct(int[] shape, double value){
-        int size = fcn.indexing.szeOfShp(shape);
+        int size = Util.Indexing.szeOfShp(shape);
         _value = new double[1];
         this.setIsVirtual((size > 1));
         this.initialShape(shape);
@@ -683,14 +683,14 @@ public class Tsr extends AbstractComponentOwner
      * @return
      */
     public Tsr initialShape(int[] newShape) {
-        int size = fcn.indexing.szeOfShp(newShape);
+        int size = Util.Indexing.szeOfShp(newShape);
         _value = (_value==null)?new double[size]:_value;
         int length = (this.is64())?((double[])_value).length:((float[])_value).length;
         if (size != length && !this.isVirtual()) {
             throw new IllegalArgumentException("[Tsr][_iniShape]: Size of shape does not match stored value64!");
         }
         _shape = _cached(newShape);
-        _translation = _cached(fcn.indexing.newTlnOf(newShape));
+        _translation = _cached(Util.Indexing.newTlnOf(newShape));
         _idxmap = _translation;
         return this;
     }
@@ -920,7 +920,7 @@ public class Tsr extends AbstractComponentOwner
                 idxbase = (int[])key;
                 if(key != null) {
                     for(int i=0; i<this.rank(); i++) idxbase[i] = (idxbase[i]<0)?_shape[i]+idxbase[i]:idxbase[i];
-                    return Tsr.fcn.io.getFrom(this, idxbase);
+                    return Util.io.getFrom(this, idxbase);
                 }
             } else {
                 boolean hasScale = false;
@@ -944,7 +944,7 @@ public class Tsr extends AbstractComponentOwner
         Tsr subset = new Tsr();
         subset._value = this._value;
         subset._translation = this._translation;
-        subset._idxmap = _cached(fcn.indexing.newTlnOf(newShape));
+        subset._idxmap = _cached(Util.Indexing.newTlnOf(newShape));
         subset._shape = _cached(newShape);
         if(idxbase.length==2*rank()){
             for(int i=rank(); i<idxbase.length; i++) idxbase[i] = (idxbase[i]==0)?1:idxbase[i];
@@ -1068,10 +1068,9 @@ public class Tsr extends AbstractComponentOwner
     }
 
     /**
-     * ======================================================================================================
-     * STATIC FUNCTIONS:
+     *  Static methods.
      */
-    public static class fcn
+    public static class Util
     {
         public static class io
         {
@@ -1131,7 +1130,7 @@ public class Tsr extends AbstractComponentOwner
                     int size = t.size();
                     for (int i = 0; i < size; i++) {
                         io.subInto(t, index, io.getFrom(source, index));
-                        indexing.increment(index, t.shape());
+                        Indexing.increment(index, t.shape());
                     }
                 }
             }
@@ -1148,13 +1147,13 @@ public class Tsr extends AbstractComponentOwner
 
         }
 
-        public static class exec
+        public static class Exec
         {
             public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr) {
                 tensor = (newTsr) ? new Tsr(tensor, true) : tensor;
-                tensor._shape = _cached(indexing.shpCheck(indexing.rearrange(tensor._shape, newForm), tensor));
-                tensor._translation = _cached(indexing.rearrange(tensor._translation, tensor._shape, newForm));
-                tensor._idxmap =  _cached(indexing.newTlnOf(tensor._shape));
+                tensor._shape = _cached(Indexing._shpCheck(Indexing.rearrange(tensor._shape, newForm), tensor));
+                tensor._translation = _cached(Indexing._rearrange(tensor._translation, tensor._shape, newForm));
+                tensor._idxmap =  _cached(Indexing.newTlnOf(tensor._shape));
                 int[] sliceCfg = null;
                 if (tensor.has(int[].class)) sliceCfg = (int[])tensor.find(int[].class);
                 if (sliceCfg!=null){
@@ -1174,7 +1173,7 @@ public class Tsr extends AbstractComponentOwner
 
         }
 
-        public static class create
+        public static class Create
         {
             public  static Tsr E(int[] shape){
                 return new Tsr(shape, 2.7182818284590452353602874713527);
@@ -1185,7 +1184,7 @@ public class Tsr extends AbstractComponentOwner
             }
 
             public static Tsr newRandom(int[] shape, long seed){
-                int size = Tsr.fcn.indexing.szeOfShp(shape);
+                int size = Indexing.szeOfShp(shape);
                 double[] value = new double[size];
                 for (int i=0; i<size; i++) value[i] = DataHelper.getDoubleOf(seed+i);
                 return new Tsr(shape, value);
@@ -1217,7 +1216,7 @@ public class Tsr extends AbstractComponentOwner
 
         }
 
-        public static class stringify
+        public static class Stringify
         {
             @Contract(pure = true)
             public static String formatFP(double v){
@@ -1248,10 +1247,9 @@ public class Tsr extends AbstractComponentOwner
         }
 
         /**
-         * ======================================================================================================
-         * INDEXING FUNCTIONS:
+         * Indexing methods.
          */
-        public static class indexing
+        public static class Indexing
         {
             @Contract(pure = true)
             public static void increment(@NotNull int[] shpIdx, @NotNull int[] shape) {
@@ -1321,17 +1319,17 @@ public class Tsr extends AbstractComponentOwner
             }
 
             @Contract(pure = true)
-            public static int[] shpCheck(int[] newShp, Tsr t) {
+            private static int[] _shpCheck(int[] newShp, Tsr t) {
                 if (szeOfShp(newShp) != t.size()) {
                     throw new IllegalArgumentException(
                             "[Tsr][shpCheck(int[] newShp, Tsr t)]: New shape does not match tensor size!" +
-                            " (" + stringify._strShp(newShp) + ((szeOfShp(newShp) < t.size()) ? "<" : ">") + stringify._strShp(t.shape()) + ")");
+                            " (" + Stringify._strShp(newShp) + ((szeOfShp(newShp) < t.size()) ? "<" : ">") + Stringify._strShp(t.shape()) + ")");
                 }
                 return newShp;
             }
 
             @Contract(pure = true)
-            public static int[] rearrange(int[] tln, int[] shp, @NotNull int[] newForm) {
+            private static int[] _rearrange(int[] tln, int[] shp, @NotNull int[] newForm) {
                 int[] shpTln = newTlnOf(shp);
                 int[] newTln = new int[newForm.length];
                 for (int i = 0; i < newForm.length; i++) {

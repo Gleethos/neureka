@@ -231,7 +231,7 @@ public abstract class AbstractFunction implements Function {
 <span class="fc bfc" id="L231" title="All 2 branches covered.">        if (TYPES.REGISTER[_id].equals(&quot;x&quot;)) {</span>
 <span class="fc" id="L232">            Tsr tensor1 = _src.get(0).activate(inputs).setIsVirtual(false);</span>
 <span class="fc" id="L233">            Tsr tensor2 = _src.get(1).activate(inputs).setIsVirtual(false);</span>
-<span class="fc bfc" id="L234" title="All 2 branches covered.">            Tsr newTensor = (d&lt;0)?new Tsr(Tsr.fcn.indexing.shpOfCon(tensor1.shape(), tensor2.shape())):null;</span>
+<span class="fc bfc" id="L234" title="All 2 branches covered.">            Tsr newTensor = (d&lt;0)?new Tsr(Tsr.Util.Indexing.shpOfCon(tensor1.shape(), tensor2.shape())):null;</span>
 <span class="fc" id="L235">            Tsr[] array = new Tsr[]{newTensor, tensor1, tensor2};</span>
 <span class="fc" id="L236">            myDevice.execute(array, _id, d);</span>
 <span class="fc" id="L237">            return array[0];</span>
@@ -251,7 +251,7 @@ public abstract class AbstractFunction implements Function {
 <span class="fc bfc" id="L251" title="All 2 branches covered.">        } else if (TYPES.REGISTER[_id].equals(&quot;,&quot;)) {</span>
 <span class="fc" id="L252">            int[] newForm = new int[_src.size() - 1];</span>
 <span class="fc bfc" id="L253" title="All 2 branches covered.">            for (int i = 0; i &lt; _src.size() - 1; i++) {</span>
-<span class="fc" id="L254">                newForm[i] = (int) Tsr.fcn.io.getFrom(_src.get(i).activate(inputs), 0);</span>
+<span class="fc" id="L254">                newForm[i] = (int) Tsr.Util.io.getFrom(_src.get(i).activate(inputs), 0);</span>
             }
 <span class="pc bpc" id="L256" title="1 of 2 branches missed.">            if (d &gt;= 0) {//reverse reshape:</span>
 <span class="nc" id="L257">                int[] reversed = new int[newForm.length];</span>
@@ -265,7 +265,7 @@ public abstract class AbstractFunction implements Function {
 <span class="nc" id="L265">                newForm = reversed;</span>
             }
 <span class="fc" id="L267">            Tsr t = inputs[inputs.length - 1];</span>
-<span class="fc" id="L268">            return Tsr.fcn.exec.reshaped(t, newForm, true);//t.reshape(newForm);</span>
+<span class="fc" id="L268">            return Tsr.Util.Exec.reshaped(t, newForm, true);//t.reshape(newForm);</span>
         } else {
 <span class="fc" id="L270">            return _apply(myDevice, d, () -&gt; _execution(inputs, d, j, myDevice));</span>
         }

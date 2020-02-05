@@ -231,7 +231,7 @@ public abstract class AbstractFunction implements Function {
         if (TYPES.REGISTER[_id].equals("x")) {
             Tsr tensor1 = _src.get(0).activate(inputs).setIsVirtual(false);
             Tsr tensor2 = _src.get(1).activate(inputs).setIsVirtual(false);
-            Tsr newTensor = (d<0)?new Tsr(Tsr.fcn.indexing.shpOfCon(tensor1.shape(), tensor2.shape())):null;
+            Tsr newTensor = (d<0)?new Tsr(Tsr.Util.Indexing.shpOfCon(tensor1.shape(), tensor2.shape())):null;
             Tsr[] array = new Tsr[]{newTensor, tensor1, tensor2};
             myDevice.execute(array, _id, d);
             return array[0];
@@ -251,7 +251,7 @@ public abstract class AbstractFunction implements Function {
         } else if (TYPES.REGISTER[_id].equals(",")) {
             int[] newForm = new int[_src.size() - 1];
             for (int i = 0; i < _src.size() - 1; i++) {
-                newForm[i] = (int) Tsr.fcn.io.getFrom(_src.get(i).activate(inputs), 0);
+                newForm[i] = (int) Tsr.Util.io.getFrom(_src.get(i).activate(inputs), 0);
             }
             if (d >= 0) {//reverse reshape:
                 int[] reversed = new int[newForm.length];
@@ -265,7 +265,7 @@ public abstract class AbstractFunction implements Function {
                 newForm = reversed;
             }
             Tsr t = inputs[inputs.length - 1];
-            return Tsr.fcn.exec.reshaped(t, newForm, true);//t.reshape(newForm);
+            return Tsr.Util.Exec.reshaped(t, newForm, true);//t.reshape(newForm);
         } else {
             return _apply(myDevice, d, () -> _execution(inputs, d, j, myDevice));
         }

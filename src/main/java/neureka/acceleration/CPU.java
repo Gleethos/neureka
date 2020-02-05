@@ -967,7 +967,7 @@ public class CPU extends AbstractDevice {
                         }//setInto _value in drn:
                         t0_value[t0_drn.i_of_idx(t0Idx)] = value;
                         //increment on drain:
-                        Tsr.fcn.indexing.increment(t0Idx, t0Shp);
+                        Tsr.Util.Indexing.increment(t0Idx, t0Shp);
                         i++;
                     }
                 } else//---
@@ -1028,7 +1028,7 @@ public class CPU extends AbstractDevice {
                         //set value in drn:
                         t0_value[t0_drn.i_of_idx(t0Idx)] = value;
                         //increment on drain:
-                        Tsr.fcn.indexing.increment(t0Idx, t0Shp);
+                        Tsr.Util.Indexing.increment(t0Idx, t0Shp);
                         i++;
                     }
                 }
@@ -1076,7 +1076,7 @@ public class CPU extends AbstractDevice {
                                 operation.execute(t0Idx, t1Idx, t2Idx);
 
                         //increment on drain:
-                        Tsr.fcn.indexing.increment(t0Idx, t0Shp);
+                        Tsr.Util.Indexing.increment(t0Idx, t0Shp);
                         i++;
                     }
                 } else//---//Note: src2 is now former drain!
@@ -1125,7 +1125,7 @@ public class CPU extends AbstractDevice {
                         //set value in drn:
                         t0_value[t0_drn.i_of_idx(t0Idx)] = value;
                         //increment on drain:
-                        Tsr.fcn.indexing.increment(t0Idx, t0Shp);
+                        Tsr.Util.Indexing.increment(t0Idx, t0Shp);
                         i++;
                     }
                 }
@@ -1149,7 +1149,7 @@ public class CPU extends AbstractDevice {
                     //setInto _value in drn:
                     t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, null);
                     //increment on drain:
-                    Tsr.fcn.indexing.increment(t0Idx, t0Shp);
+                    Tsr.Util.Indexing.increment(t0Idx, t0Shp);
                     i++;
                 }
 

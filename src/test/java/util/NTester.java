@@ -200,7 +200,7 @@ public class NTester extends Assert
         }
         String result = "";
         for(double ai : a) {
-            result += Tsr.fcn.stringify.formatFP(ai)+", ";
+            result += Tsr.Util.Stringify.formatFP(ai)+", ";
         }
         return result;
     }

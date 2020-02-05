@@ -967,7 +967,7 @@ public class CPU extends AbstractDevice {
                         }//setInto _value in drn:
 <span class="fc" id="L968">                        t0_value[t0_drn.i_of_idx(t0Idx)] = value;</span>
                         //increment on drain:
-<span class="fc" id="L970">                        Tsr.fcn.indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L970">                        Tsr.Util.Indexing.increment(t0Idx, t0Shp);</span>
 <span class="fc" id="L971">                        i++;</span>
 <span class="fc" id="L972">                    }</span>
                 } else//---
@@ -1028,7 +1028,7 @@ public class CPU extends AbstractDevice {
                         //set value in drn:
 <span class="fc" id="L1029">                        t0_value[t0_drn.i_of_idx(t0Idx)] = value;</span>
                         //increment on drain:
-<span class="fc" id="L1031">                        Tsr.fcn.indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L1031">                        Tsr.Util.Indexing.increment(t0Idx, t0Shp);</span>
 <span class="fc" id="L1032">                        i++;</span>
 <span class="fc" id="L1033">                    }</span>
                 }
@@ -1076,7 +1076,7 @@ public class CPU extends AbstractDevice {
 <span class="fc" id="L1076">                                operation.execute(t0Idx, t1Idx, t2Idx);</span>
 
                         //increment on drain:
-<span class="fc" id="L1079">                        Tsr.fcn.indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L1079">                        Tsr.Util.Indexing.increment(t0Idx, t0Shp);</span>
 <span class="fc" id="L1080">                        i++;</span>
 <span class="fc" id="L1081">                    }</span>
                 } else//---//Note: src2 is now former drain!
@@ -1125,7 +1125,7 @@ public class CPU extends AbstractDevice {
                         //set value in drn:
 <span class="fc" id="L1126">                        t0_value[t0_drn.i_of_idx(t0Idx)] = value;</span>
                         //increment on drain:
-<span class="fc" id="L1128">                        Tsr.fcn.indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L1128">                        Tsr.Util.Indexing.increment(t0Idx, t0Shp);</span>
 <span class="fc" id="L1129">                        i++;</span>
 <span class="fc" id="L1130">                    }</span>
                 }
@@ -1149,7 +1149,7 @@ public class CPU extends AbstractDevice {
                     //setInto _value in drn:
 <span class="fc" id="L1150">                    t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, null);</span>
                     //increment on drain:
-<span class="fc" id="L1152">                    Tsr.fcn.indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L1152">                    Tsr.Util.Indexing.increment(t0Idx, t0Shp);</span>
 <span class="fc" id="L1153">                    i++;</span>
 <span class="fc" id="L1154">                }</span>
 
