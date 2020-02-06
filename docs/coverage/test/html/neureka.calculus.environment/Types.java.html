@@ -1,12 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Types.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.environment</a> &gt; <span class="el_source">Types.java</span></div><h1>Types.java</h1><pre class="source lang-java linenums">package neureka.calculus.environment;
 
+import neureka.autograd.ADAgent;
+import neureka.calculus.factory.OperationType;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Types
 {
-    public String[] REGISTER;
-    public Map&lt;String, Integer&gt; LOOKUP;
+    public int COUNT(){
+<span class="fc" id="L14">        return OperationType.COUNT();</span>
+    }
+
+    public String REGISTER(int i){
+<span class="fc" id="L18">        return OperationType.REGISTER(i).identifier();</span>
+    }
+
+    public int LOOKUP(String exp){
+<span class="fc" id="L22">        OperationType type = OperationType.LOOKUP(exp);</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        return (type!=null)?type.id():-1;</span>
+    }
+
+    public List&lt;OperationType&gt; getAll(){
+<span class="nc" id="L27">        return _types;</span>
+    }
+
+    private ArrayList&lt;OperationType&gt; _types;
 
     /**
      *  // *,    /,    ^,    +,    -,
@@ -14,89 +35,123 @@ public class Types
      *  // &lt;&lt;, &lt;&lt;d,  &lt;&lt;p,  &lt;&lt;a,  &lt;&lt;s,
      */
     public Types()
-<span class="fc" id="L17">    {</span>
-<span class="fc" id="L18">        REGISTER = new String[]{</span>
-                &quot;relu&quot;, &quot;sig&quot;, &quot;tanh&quot;, &quot;quad&quot;, &quot;lig&quot;, &quot;idy&quot;, &quot;gaus&quot;, &quot;abs&quot;, &quot;sin&quot;, &quot;cos&quot;,
-                &quot;sum&quot;, &quot;prod&quot;,
-                &quot;^&quot;, ((char)171)+&quot;^&quot;, &quot;^&quot;+((char)187),
-                &quot;/&quot;, ((char)171)+&quot;/&quot;, &quot;/&quot;+((char)187),
-                &quot;*&quot;, ((char)171)+&quot;*&quot;, &quot;*&quot;+((char)187),
-                &quot;%&quot;, ((char)171)+&quot;%&quot;, &quot;%&quot;+((char)187),
-                &quot;-&quot;, ((char)171)+&quot;-&quot;, &quot;-&quot;+((char)187),
-                &quot;+&quot;, ((char)171)+&quot;+&quot;, &quot;+&quot;+((char)187),
+<span class="fc" id="L38">    {</span>
+<span class="fc" id="L39">        OperationType[] types = new OperationType[]{</span>
+                new OperationType(&quot;relu&quot;, true, false, false, true, true),
+                new OperationType(&quot;sig&quot; , true, false, false, true, true),
+                new OperationType(&quot;tanh&quot;, true, false, false, true, true),
+                new OperationType(&quot;quad&quot;, true, false, false, true, true),
+                new OperationType(&quot;lig&quot; , true, false, false, true, true),
+                new OperationType(&quot;idy&quot; , true, false, false, true, true),
+                new OperationType(&quot;gaus&quot;, true, false, false, true, true),
+                new OperationType(&quot;abs&quot; , true, false, false, true, true),
+                new OperationType(&quot;sin&quot; , true, false, false, true, true),
+                new OperationType(&quot;cos&quot; , true, false, false, true, true),
 
-                &quot;x&quot;, ((char)171)+&quot;x&quot;, &quot;x&quot;+((char)187),
-                &quot;d&quot;, ((char)171)+&quot;d&quot;, &quot;d&quot;+((char)187),
-                &quot;p&quot;, ((char)171)+&quot;p&quot;, &quot;p&quot;+((char)187),
-                &quot;a&quot;, ((char)171)+&quot;a&quot;, &quot;a&quot;+((char)187),
-                &quot;s&quot;, ((char)171)+&quot;s&quot;, &quot;s&quot;+((char)187),
+                // Indexer:
+                new OperationType(&quot;sum&quot; , false, false, true, false, true, true),
+                new OperationType(&quot;prod&quot;, false, false,  true, false, true, true),
+
+                // Operations (auto broadcast):
+                new OperationType(&quot;^&quot;, false, false, false, false, false),
+                new OperationType(((char)171)+&quot;^&quot;, false, false, false, false, false),
+                new OperationType(&quot;^&quot;+((char)187), false, false, false, false, false),
+
+                new OperationType(&quot;/&quot;, false, false, false, false, false),
+                new OperationType(((char)171)+&quot;/&quot;, false, false, false, false, false),
+                new OperationType(&quot;/&quot;+((char)187), false, false, false, false, false),
+
+                new OperationType(&quot;*&quot;, false, false, false, true, false),
+                new OperationType(((char)171)+&quot;*&quot;, false, false, false, false, false),
+                new OperationType(&quot;*&quot;+((char)187), false, false, false, false, false),
+
+                new OperationType(&quot;%&quot;, false, false, false, false, false),
+                new OperationType(((char)171)+&quot;%&quot;, false, false, false, false, false),
+                new OperationType(&quot;%&quot;+((char)187), false, false, false, false, false),
+
+                new OperationType(&quot;-&quot;, false, false, false, false, false),
+                new OperationType(((char)171)+&quot;-&quot;, false, false, false, false, false),
+                new OperationType(&quot;-&quot;+((char)187), false, false, false, false, false),
+
+                new OperationType(&quot;+&quot;, false, false, false, true, false),
+                new OperationType(((char)171)+&quot;+&quot;, false, false, false, false, false),
+                new OperationType(&quot;+&quot;+((char)187), false, false, false, false, false),
+
+                // Convolution:
+                new OperationType(&quot;x&quot;, false, false, true, false, false),
+                new OperationType(((char)171)+&quot;x&quot;, false, false, true, false, false),
+                new OperationType(&quot;x&quot;+((char)187), false, false, true, false, false),
+
+                new OperationType(&quot;d&quot;, false, false, true, false, false),
+                new OperationType(((char)171)+&quot;d&quot;, false, false, true, false, false),
+                new OperationType(&quot;d&quot;+((char)187), false, false, true, false, false),
+
+                new OperationType(&quot;p&quot;, false, false, true, false, false),
+                new OperationType(((char)171)+&quot;p&quot;, false, false, true, false, false),
+                new OperationType(&quot;p&quot;+((char)187), false, false, true, false, false),
+
+                new OperationType(&quot;a&quot;, false, false, true, false, false),
+                new OperationType(((char)171)+&quot;a&quot;, false, false, true, false, false),
+                new OperationType(&quot;a&quot;+((char)187), false, false, true, false, false),
+
+                new OperationType(&quot;s&quot;, false, false, true, false, false),
+                new OperationType(((char)171)+&quot;s&quot;, false, false, true, false, false),
+                new OperationType(&quot;s&quot;+((char)187), false, false, true, false, false),
                 // (char)171 -&gt; &lt;&lt;    // (char)187 -&gt; &gt;&gt;
-                &quot;,&quot;,
-                &quot;&lt;&quot;, &quot;&gt;&quot;,
-            };
-<span class="fc" id="L37">        LOOKUP = new HashMap&lt;&gt;();</span>
-<span class="fc bfc" id="L38" title="All 2 branches covered.">        for(int i=0; i&lt;REGISTER.length; i++){</span>
-<span class="fc" id="L39">            LOOKUP.put(REGISTER[i], i);</span>
-<span class="fc bfc" id="L40" title="All 2 branches covered.">            if(REGISTER[i].equals((((char)171))+&quot;x&quot;)){</span>
-<span class="fc" id="L41">                LOOKUP.put(&quot;&lt;&lt;x&quot;, i);</span>
-<span class="fc bfc" id="L42" title="All 2 branches covered.">            } else if(REGISTER[i].equals(&quot;x&quot;+((char)187))){</span>
-<span class="fc" id="L43">                LOOKUP.put(&quot;x&gt;&gt;&quot;, i);</span>
-            }
-        }
-<span class="fc" id="L46">    }</span>
+
+                // Reshape:
+                new OperationType(&quot;,&quot;, false, false, false, false, false),
+
+                // Injecting:
+                new OperationType(&quot;&lt;&quot;, false, false, false, false, false),
+                new OperationType(&quot;&gt;&quot;, false, false, false, false, false),
+        };
+<span class="fc" id="L109">        _types = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        for(OperationType type : types) _types.add(type);</span>
+
+<span class="fc" id="L112">    }</span>
+
 
     public boolean isOperation(String f){
-<span class="nc" id="L49">        return isOperation(LOOKUP.get(f));</span>
+<span class="nc" id="L116">        return isOperation(LOOKUP(f));</span>
     }
     public boolean isOperation(int id){
-<span class="fc bfc" id="L52" title="All 2 branches covered.">        return (id&gt;=LOOKUP.get(&quot;^&quot;));</span>
+<span class="fc" id="L119">        OperationType type = OperationType.REGISTER(id);</span>
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">        return (type!=null)?type.isOperation():false;</span>
     }
 
     public boolean isFunction(String f){
-<span class="nc" id="L56">        return isFunction(LOOKUP.get(f));</span>
+<span class="nc" id="L124">        return isFunction(LOOKUP(f));</span>
     }
     public boolean isFunction(int id){
-<span class="fc bfc" id="L59" title="All 2 branches covered.">        return (id&lt;=LOOKUP.get(&quot;cos&quot;));</span>
+<span class="fc" id="L127">        OperationType type = OperationType.REGISTER(id);</span>
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">        return (type!=null)?type.isFunction():false;</span>
     }
 
     public boolean isIndexer(String f){
-<span class="nc" id="L63">        return isIndexer(LOOKUP.get(f));</span>
+<span class="nc" id="L132">        return isIndexer(LOOKUP(f));</span>
     }
     public boolean isIndexer(int id){
-<span class="fc bfc" id="L66" title="All 4 branches covered.">        return (id&gt;=LOOKUP.get(&quot;sum&quot;))&amp;&amp;(id&lt;=LOOKUP.get(&quot;prod&quot;));</span>
+<span class="fc" id="L135">        OperationType type = OperationType.REGISTER(id);</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">        return (type!=null)?type.isIndexer():false;</span>
     }
 
     public boolean isConvection(String f){
-<span class="nc" id="L70">        return isConvection(LOOKUP.get(f));</span>
+<span class="nc" id="L140">        return isConvection(LOOKUP(f));</span>
     }
     public boolean isConvection(int id){
-<span class="pc bpc" id="L73" title="1 of 4 branches missed.">        return (id&gt;=LOOKUP.get(&quot;x&quot;) &amp;&amp; id&lt;LOOKUP.get(&quot;,&quot;));</span>
+<span class="fc" id="L143">        OperationType type = OperationType.REGISTER(id);</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">        return (type!=null)?type.isConvection():false;</span>
         //return (REGISTER[id].equals(&quot;x&quot;) || REGISTER[id].contains(&quot;Â«&quot;) || REGISTER[id].contains(&quot;Â»&quot;));
     }
 
     public boolean isCommutative(String f){
-<span class="nc bnc" id="L78" title="All 17 branches missed.">        switch(f){</span>
-<span class="nc" id="L79">            case &quot;^&quot;: return false;</span>
-<span class="nc" id="L80">            case &quot;/&quot;: return false;</span>
-<span class="nc" id="L81">            case &quot;*&quot;: return true;</span>
-<span class="nc" id="L82">            case &quot;%&quot;: return false;</span>
-<span class="nc" id="L83">            case &quot;-&quot;: return false;</span>
-<span class="nc" id="L84">            case &quot;+&quot;: return true;</span>
-<span class="nc" id="L85">            case &quot;x&quot;: return false;</span>
-<span class="nc" id="L86">            case &quot;d&quot;: return false;</span>
-<span class="nc" id="L87">            case &quot;s&quot;: return false;</span>
-<span class="nc" id="L88">            case &quot;a&quot;: return false;</span>
-<span class="nc" id="L89">            case &quot;p&quot;: return false;</span>
-<span class="nc" id="L90">            case (&quot;&quot;+((char)171))+&quot;x&quot;: return false;</span>
-<span class="nc" id="L91">            case (&quot;x&quot;+((char)187)): return false;</span>
-<span class="nc" id="L92">            case &quot;,&quot;:return false;</span>
-<span class="nc" id="L93">            case &quot;&lt;&quot;: return false;</span>
-<span class="nc" id="L94">            case &quot;&gt;&quot;: return false;</span>
-        }
-<span class="nc" id="L96">        return false;</span>
+<span class="nc" id="L149">        OperationType type = OperationType.LOOKUP(f);</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        return (type!=null)?type.isCommutative():false;</span>
     }
     public boolean isCommutative(int id){
-<span class="nc" id="L99">        return isCommutative(REGISTER[id]);</span>
+<span class="nc" id="L153">        OperationType type = OperationType.REGISTER(id);</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">        return (type!=null)?type.isCommutative():false;</span>
     }
 
 

@@ -41,7 +41,7 @@ import java.util.function.Supplier;
             }
         }
 <span class="fc bfc" id="L43" title="All 4 branches covered.">        if(untracked==null || !locked){//If graph tracking (nodes) has not yet been initialized!</span>
-<span class="fc" id="L44">            return Function.setup.commit(null, inputs, function, activation);</span>
+<span class="fc" id="L44">            return Function.Setup.commit(null, inputs, function, activation);</span>
         }
 <span class="fc" id="L46">        GraphLock lock = ((GraphNode)untracked.find(GraphNode.class)).lock();</span>
 <span class="fc bfc" id="L47" title="All 2 branches covered.">        for(Tsr t : inputs){</span>
@@ -54,7 +54,7 @@ import java.util.function.Supplier;
         }
 <span class="fc" id="L55">        GraphNode node = (GraphNode) inputs[0].find(GraphNode.class);</span>
 <span class="fc" id="L56">        Tsr result = null;</span>
-<span class="pc bpc" id="L57" title="1 of 6 branches missed.">        if(function!=null &amp;&amp; function.id()!=Function.TYPES.LOOKUP.get(&quot;&lt;&quot;)&amp;&amp;function.id()!=Function.TYPES.LOOKUP.get(&quot;&gt;&quot;)){</span>
+<span class="pc bpc" id="L57" title="1 of 6 branches missed.">        if(function!=null &amp;&amp; function.id()!=Function.TYPES.LOOKUP(&quot;&lt;&quot;)&amp;&amp;function.id()!=Function.TYPES.LOOKUP(&quot;&gt;&quot;)){</span>
 <span class="fc" id="L58">            result = _get(node, d, j);</span>
         }
 <span class="pc bpc" id="L60" title="1 of 2 branches missed.">        if(result==null){</span>

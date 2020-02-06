@@ -17,19 +17,19 @@ public class FunctionBuilder {
     public static Function build(int f_id, int size, boolean doAD) {
         if (f_id == 18) {
             size = 2;
-        } else if (Function.TYPES.REGISTER[f_id] == ",") {
+        } else if (Function.TYPES.REGISTER(f_id) == ",") {
             ArrayList<Function> srcs = new ArrayList<>();
             for (int i = 0; i < size; i++) srcs.add(new FunctionInput().newBuild("" + i));
             return FunctionConstructor.construct(f_id, srcs, doAD);
         }
         if (f_id < 10) {
-            return build(Function.TYPES.REGISTER[f_id] + "(I[0])", doAD);
+            return build(Function.TYPES.REGISTER(f_id) + "(I[0])", doAD);
         } else if (f_id < 12) {
-            return build(Function.TYPES.REGISTER[f_id] + "I[j]", doAD);
+            return build(Function.TYPES.REGISTER(f_id) + "I[j]", doAD);
         } else {
             String expression = "I[0]";
             for (int i = 0; i < size - 1; i++) {
-                expression += Function.TYPES.REGISTER[f_id] + "I[" + (i + 1) + "]";
+                expression += Function.TYPES.REGISTER(f_id) + "I[" + (i + 1) + "]";
             }
             return build(expression, doAD);
         }
@@ -96,9 +96,9 @@ public class FunctionBuilder {
             }
         }
         //---
-        int Count = Function.TYPES.REGISTER.length;
-        for (int j = Function.TYPES.REGISTER.length; j > 0; --j) {
-            if (!FunctionParser.containsOperation(Function.TYPES.REGISTER[j - 1], Operations)) {
+        int Count = Function.TYPES.COUNT();
+        for (int j = Function.TYPES.COUNT(); j > 0; --j) {
+            if (!FunctionParser.containsOperation(Function.TYPES.REGISTER(j - 1), Operations)) {
                 --Count;
             } else {
                 j = 0;
@@ -108,7 +108,7 @@ public class FunctionBuilder {
         while (ID < Count) {
             final List<String> newOperations = new ArrayList<>();
             final List<String> newComponents = new ArrayList<>();
-            if (FunctionParser.containsOperation(Function.TYPES.REGISTER[ID], Operations)) {
+            if (FunctionParser.containsOperation(Function.TYPES.REGISTER(ID), Operations)) {
                 String currentChain = null;
                 boolean groupingOccured = false;
                 boolean enoughtPresent = FunctionParser.numberOfOperationsWithin(Operations) > 1;// Otherwise: I[j]^4 goes nuts!
@@ -123,9 +123,9 @@ public class FunctionBuilder {
                             currentOperation = Operations.get(Ci);
                         }
                         if (currentOperation != null) {
-                            if (currentOperation.equals(Function.TYPES.REGISTER[ID])) {
+                            if (currentOperation.equals(Function.TYPES.REGISTER(ID))) {
                                 final String newChain =
-                                        FunctionParser.groupBy(Function.TYPES.REGISTER[ID], currentChain, currentComponent, currentOperation);
+                                        FunctionParser.groupBy(Function.TYPES.REGISTER(ID), currentChain, currentComponent, currentOperation);
                                 if (newChain != null) {
                                     currentChain = newChain;
                                 }
@@ -162,8 +162,8 @@ public class FunctionBuilder {
         // identifying function id:
         int f_id = 0;
         if (Operations.size() >= 1) {
-            for (int k = 0; k < Function.TYPES.REGISTER.length; ++k) {
-                if (Function.TYPES.REGISTER[k].equals(Operations.get(0))) {
+            for (int k = 0; k < Function.TYPES.COUNT(); ++k) {
+                if (Function.TYPES.REGISTER(k).equals(Operations.get(0))) {
                     f_id = k;
                 }
             }
@@ -173,8 +173,8 @@ public class FunctionBuilder {
             String possibleFunction = FunctionParser.parsedOperation(Components.get(0).toLowerCase(), 0);
             if (possibleFunction != null && possibleFunction.length() > 1) {
 
-                for (int Oi = 0; Oi < Function.TYPES.REGISTER.length; Oi++) {
-                    if (Function.TYPES.REGISTER[Oi].equals(possibleFunction)) {
+                for (int Oi = 0; Oi < Function.TYPES.COUNT(); Oi++) {
+                    if (Function.TYPES.REGISTER(Oi).equals(possibleFunction)) {
                         f_id = Oi;
                         Function newCore = FunctionBuilder.build(
                                 FunctionParser.parsedComponent(Components.get(0), possibleFunction.length()), doAD
@@ -223,9 +223,9 @@ public class FunctionBuilder {
             newBuild = FunctionBuilder.build(component, doAD);
             return newBuild;
         } else {// More than one component left:
-            if (Function.TYPES.REGISTER[f_id].equals("x") || Function.TYPES.REGISTER[f_id].equals("<") || Function.TYPES.REGISTER[f_id].equals(">")) {
+            if (Function.TYPES.REGISTER(f_id).equals("x") || Function.TYPES.REGISTER(f_id).equals("<") || Function.TYPES.REGISTER(f_id).equals(">")) {
                 Components = _rebindPairwise(Components, f_id);
-            } else if (Function.TYPES.REGISTER[f_id].equals(",") && Components.get(0).startsWith("[")) {
+            } else if (Function.TYPES.REGISTER(f_id).equals(",") && Components.get(0).startsWith("[")) {
 
                 Components.set(0, Components.get(0).substring(1));
                 String[] splitted;
@@ -272,7 +272,7 @@ public class FunctionBuilder {
      */
     private static List<String> _rebindPairwise(List<String> components, int f_id) {
         if (components.size() > 2) {
-            String newComponent = "(" + components.get(0) + Function.TYPES.REGISTER[f_id] + components.get(1) + ")";
+            String newComponent = "(" + components.get(0) + Function.TYPES.REGISTER(f_id) + components.get(1) + ")";
             components.remove(components.get(0));
             components.remove(components.get(0));
             components.add(0, newComponent);

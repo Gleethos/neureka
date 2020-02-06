@@ -186,7 +186,7 @@ public class OpenCLDevice extends AbstractDevice
 <span class="fc" id="L186">        });</span>
 <span class="fc" id="L187">        tensor.add(this);</span>
 <span class="fc bfc" id="L188" title="All 2 branches covered.">        if(tensor.isVirtual()){</span>
-<span class="fc" id="L189">            _execute_tensor_scalar(tensor, tensor.value64(0), Function.TYPES.LOOKUP.get(&quot;&lt;&quot;), -1);</span>
+<span class="fc" id="L189">            _execute_tensor_scalar(tensor, tensor.value64(0), Function.TYPES.LOOKUP(&quot;&lt;&quot;), -1);</span>
         }
 <span class="fc" id="L191">        tensor.setIsOutsourced(true);</span>
 <span class="fc" id="L192">        tensor.setIsVirtual(false);</span>
@@ -357,7 +357,7 @@ public class OpenCLDevice extends AbstractDevice
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, int f_id){
 
-<span class="pc bpc" id="L360" title="7 of 9 branches missed.">        switch (Function.TYPES.REGISTER[f_id]) {</span>
+<span class="pc bpc" id="L360" title="7 of 9 branches missed.">        switch (Function.TYPES.REGISTER(f_id)) {</span>
             case &quot;x&quot;:
 <span class="fc bfc" id="L362" title="All 2 branches covered.">                if (d &gt;= 0) {</span>
 <span class="pc bpc" id="L363" title="1 of 2 branches missed.">                    if (d == 0) tsrs[0] = tsrs[2]; else tsrs[0] = tsrs[1];</span>

@@ -41,7 +41,7 @@ public class Cache
             }
         }
         if(untracked==null || !locked){//If graph tracking (nodes) has not yet been initialized!
-            return Function.setup.commit(null, inputs, function, activation);
+            return Function.Setup.commit(null, inputs, function, activation);
         }
         GraphLock lock = ((GraphNode)untracked.find(GraphNode.class)).lock();
         for(Tsr t : inputs){
@@ -54,7 +54,7 @@ public class Cache
         }
         GraphNode node = (GraphNode) inputs[0].find(GraphNode.class);
         Tsr result = null;
-        if(function!=null && function.id()!=Function.TYPES.LOOKUP.get("<")&&function.id()!=Function.TYPES.LOOKUP.get(">")){
+        if(function!=null && function.id()!=Function.TYPES.LOOKUP("<")&&function.id()!=Function.TYPES.LOOKUP(">")){
             result = _get(node, d, j);
         }
         if(result==null){

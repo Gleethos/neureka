@@ -13,7 +13,7 @@ public class CPU extends AbstractDevice {
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, int f_id) {
         for(Tsr t : tsrs) t.setIsVirtual(false);
-        switch (Function.TYPES.REGISTER[f_id]) {
+        switch (Function.TYPES.REGISTER(f_id)) {
             case "sig": exec.activate_sigmoid(tsrs[0], tsrs[1], d); break;
             case "sin": exec.activate_sinus(tsrs[0], tsrs[1], d);break;
             case "cos": exec.activate_cosinus(tsrs[0], tsrs[1], d);break;

@@ -186,7 +186,7 @@ public class OpenCLDevice extends AbstractDevice
         });
         tensor.add(this);
         if(tensor.isVirtual()){
-            _execute_tensor_scalar(tensor, tensor.value64(0), Function.TYPES.LOOKUP.get("<"), -1);
+            _execute_tensor_scalar(tensor, tensor.value64(0), Function.TYPES.LOOKUP("<"), -1);
         }
         tensor.setIsOutsourced(true);
         tensor.setIsVirtual(false);
@@ -357,7 +357,7 @@ public class OpenCLDevice extends AbstractDevice
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, int f_id){
 
-        switch (Function.TYPES.REGISTER[f_id]) {
+        switch (Function.TYPES.REGISTER(f_id)) {
             case "x":
                 if (d >= 0) {
                     if (d == 0) tsrs[0] = tsrs[2]; else tsrs[0] = tsrs[1];

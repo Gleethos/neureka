@@ -326,7 +326,7 @@ public class GraphNode implements Component {
 <span class="fc bfc" id="L326" title="All 2 branches covered.">            if (this.usesForwardAD()) {</span>
 <span class="fc bfc" id="L327" title="All 2 branches covered.">                for (int i = 0; i &lt; inputs.length; i++) {</span>
 <span class="fc" id="L328">                    GraphNode src_node = ((GraphNode) inputs[i].find(GraphNode.class));</span>
-<span class="fc bfc" id="L329" title="All 4 branches covered.">                    if (src_node._function != null &amp;&amp; src_node._function.id() == Function.TYPES.LOOKUP.get(&quot;x&quot;)) {</span>
+<span class="fc bfc" id="L329" title="All 4 branches covered.">                    if (src_node._function != null &amp;&amp; src_node._function.id() == Function.TYPES.LOOKUP(&quot;x&quot;)) {</span>
 <span class="fc" id="L330">                        this.put(src_node, function.getADAgent(inputs, i, true));</span>
                         //TODO: is this ever used? / visited? - yes but why?
                         // Sources created by x-mul are reverse-mode cases!

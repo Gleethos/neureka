@@ -37,15 +37,15 @@ public abstract class AbstractDevice implements  Device, Component
 
     protected void _execute(Tsr[] tsrs, int f_id, int d)
     {
-        if(Function.TYPES.REGISTER[f_id].equals("<"))
+        if(Function.TYPES.REGISTER(f_id).equals("<"))
         {
             int offset = (tsrs[0]==null)?1:0;
-            _execute_recursively(new Tsr[]{tsrs[0+offset], tsrs[1+offset]}, Function.TYPES.LOOKUP.get("idy"), -1);
+            _execute_recursively(new Tsr[]{tsrs[0+offset], tsrs[1+offset]}, Function.TYPES.LOOKUP("idy"), -1);
         }
-        else if(Function.TYPES.REGISTER[f_id].equals(">"))
+        else if(Function.TYPES.REGISTER(f_id).equals(">"))
         {
             int offset = (tsrs[0]==null)?1:0;
-            _execute_recursively(new Tsr[]{tsrs[1+offset], tsrs[0+offset]}, Function.TYPES.LOOKUP.get("idy"), -1);
+            _execute_recursively(new Tsr[]{tsrs[1+offset], tsrs[0+offset]}, Function.TYPES.LOOKUP("idy"), -1);
         }
         else
         {
@@ -60,10 +60,10 @@ public abstract class AbstractDevice implements  Device, Component
                             )
             ) {
                 if (tsrs[2].isVirtual() || tsrs[2].size() == 1) {
-                    _execute_recursively(new Tsr[]{tsrs[0], tsrs[1]}, Function.TYPES.LOOKUP.get("idy"), -1);
+                    _execute_recursively(new Tsr[]{tsrs[0], tsrs[1]}, Function.TYPES.LOOKUP("idy"), -1);
                     _execute_tensor_scalar(tsrs[0], tsrs[2].value64()[0], f_id, d);
                 } else {
-                    _execute_recursively(new Tsr[]{tsrs[0], tsrs[2]}, Function.TYPES.LOOKUP.get("idy"), -1);
+                    _execute_recursively(new Tsr[]{tsrs[0], tsrs[2]}, Function.TYPES.LOOKUP("idy"), -1);
                     _execute_tensor_scalar(tsrs[0], tsrs[1].value64()[0], f_id, d);
                 }
             } else {
@@ -91,7 +91,7 @@ public abstract class AbstractDevice implements  Device, Component
                 tsrs[0] = newTsrs[0];
             } else {
                 Tsr[] newTsrs;
-                switch(Function.TYPES.REGISTER[f_id]){
+                switch(Function.TYPES.REGISTER(f_id)){
                     case "+":
                     case "sum":
                         tsrs[0] = Tsr.Util.Create.newTsrLike(tsrs[1]).setValue(1.0f);
@@ -102,8 +102,8 @@ public abstract class AbstractDevice implements  Device, Component
                         newTsrs = _util._subset(tsrs, 1,  2, tsrs.length-2);
                         if(d>0){
                             newTsrs[0] =  Tsr.Util.Create.newTsrLike(tsrs[1]);
-                            Tsr inner = _execute_recursively(newTsrs, Function.TYPES.LOOKUP.get("*"), d-1);
-                            Tsr exp = _execute_recursively(new Tsr[]{Tsr.Util.Create.newTsrLike(tsrs[1]), inner, tsrs[d]}, Function.TYPES.LOOKUP.get("*"), -1);
+                            Tsr inner = _execute_recursively(newTsrs, Function.TYPES.LOOKUP("*"), d-1);
+                            Tsr exp = _execute_recursively(new Tsr[]{Tsr.Util.Create.newTsrLike(tsrs[1]), inner, tsrs[d]}, Function.TYPES.LOOKUP("*"), -1);
                             tsrs[0] =  _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], exp}, f_id, 1);
                             inner.delete();
                             exp.delete();
@@ -111,7 +111,7 @@ public abstract class AbstractDevice implements  Device, Component
                             newTsrs = _util._subset(tsrs, 1,  2, tsrs.length-2);
                             newTsrs[0] =  Tsr.Util.Create.newTsrLike(tsrs[1]);
                             //for(Tsr t : newTsrs) if(!t.has(GraphNode.class))new GraphNode(null, new GraphLock(null, null), ()->t);
-                            Tsr exp = _execute_recursively(newTsrs, Function.TYPES.LOOKUP.get("*"), -1);
+                            Tsr exp = _execute_recursively(newTsrs, Function.TYPES.LOOKUP("*"), -1);
                             tsrs[0] = _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], exp}, f_id, 0);
                             exp.delete();
                         }
@@ -121,7 +121,7 @@ public abstract class AbstractDevice implements  Device, Component
                         newTsrs = _util._without(tsrs, 1+d);
                         if(newTsrs.length>2){
                             newTsrs[0] = (newTsrs[0]==null)? Tsr.Util.Create.newTsrLike(tsrs[1]):newTsrs[0];
-                            tsrs[0] = _execute_recursively(newTsrs, Function.TYPES.LOOKUP.get("*"), -1);
+                            tsrs[0] = _execute_recursively(newTsrs, Function.TYPES.LOOKUP("*"), -1);
                         } else {
                             tsrs[0] = newTsrs[1];
                         }
@@ -131,7 +131,7 @@ public abstract class AbstractDevice implements  Device, Component
                         if(d>1){//[0][1][2][3][4]
                             newTsrs = _util._subset(tsrs, 1, 1, d+1);
                             newTsrs[0] =  Tsr.Util.Create.newTsrLike(tsrs[1]);
-                            a = _execute_recursively(newTsrs, Function.TYPES.LOOKUP.get("/"), -1);
+                            a = _execute_recursively(newTsrs, Function.TYPES.LOOKUP("/"), -1);
                         } else if(d==1){
                             a = tsrs[1];
                         } else if(d==0){
@@ -142,12 +142,12 @@ public abstract class AbstractDevice implements  Device, Component
                             newTsrs = _util._subset(tsrs, 2, d+2, tsrs.length-(d+2));//or (d+2)
                             newTsrs[1] =  Tsr.Util.Create.newTsrLike(tsrs[1], 1.0);
                             newTsrs[0] = newTsrs[1];
-                            b = _execute_recursively(newTsrs, Function.TYPES.LOOKUP.get("/"), -1);
+                            b = _execute_recursively(newTsrs, Function.TYPES.LOOKUP("/"), -1);
                         } else {
                             b = Tsr.Util.Create.newTsrLike(tsrs[1], 1.0);
                         }
-                        _execute_recursively(new Tsr[]{tsrs[0], a, b}, Function.TYPES.LOOKUP.get("*"), -1);
-                        _execute_recursively(new Tsr[]{tsrs[0], tsrs[0], tsrs[d+1]}, Function.TYPES.LOOKUP.get("/"), 1);
+                        _execute_recursively(new Tsr[]{tsrs[0], a, b}, Function.TYPES.LOOKUP("*"), -1);
+                        _execute_recursively(new Tsr[]{tsrs[0], tsrs[0], tsrs[d+1]}, Function.TYPES.LOOKUP("/"), 1);
                         if(d==0)a.delete();
                         b.delete();
                         break;
@@ -175,21 +175,21 @@ public abstract class AbstractDevice implements  Device, Component
         } else {
             /**   Derivatives implementation: (values cannot be derived)    **/
             if(
-                    Function.TYPES.REGISTER[f_id].equals("+")||
-                            Function.TYPES.REGISTER[f_id].equals("-")||
-                            Function.TYPES.REGISTER[f_id].equals("%")
+                    Function.TYPES.REGISTER(f_id).equals("+")||
+                            Function.TYPES.REGISTER(f_id).equals("-")||
+                            Function.TYPES.REGISTER(f_id).equals("%")
             ){
-                _execute_tensor_scalar(t, 0, Function.TYPES.LOOKUP.get("*"), -1);
-                _execute_tensor_scalar(t, 1, Function.TYPES.LOOKUP.get("+"), -1);
-            } else if(Function.TYPES.REGISTER[f_id].equals("^")){
-                _execute_tensor_scalar(t, value-1, Function.TYPES.LOOKUP.get("^"), -1);
-                _execute_tensor_scalar(t, value, Function.TYPES.LOOKUP.get("*"), -1);
-            } else if(Function.TYPES.REGISTER[f_id].equals("*")||Function.TYPES.REGISTER[f_id].contains("x")){
-                _execute_tensor_scalar(t, 0, Function.TYPES.LOOKUP.get("*"), -1);//???
-                _execute_tensor_scalar(t, value, Function.TYPES.LOOKUP.get("+"), -1);
-            } else if(Function.TYPES.REGISTER[f_id].equals("/")){
-                _execute_tensor_scalar(t, 0, Function.TYPES.LOOKUP.get("*"), -1);
-                _execute_tensor_scalar(t, 1/value, Function.TYPES.LOOKUP.get("+"), -1);
+                _execute_tensor_scalar(t, 0, Function.TYPES.LOOKUP("*"), -1);
+                _execute_tensor_scalar(t, 1, Function.TYPES.LOOKUP("+"), -1);
+            } else if(Function.TYPES.REGISTER(f_id).equals("^")){
+                _execute_tensor_scalar(t, value-1, Function.TYPES.LOOKUP("^"), -1);
+                _execute_tensor_scalar(t, value, Function.TYPES.LOOKUP("*"), -1);
+            } else if(Function.TYPES.REGISTER(f_id).equals("*")||Function.TYPES.REGISTER(f_id).contains("x")){
+                _execute_tensor_scalar(t, 0, Function.TYPES.LOOKUP("*"), -1);//???
+                _execute_tensor_scalar(t, value, Function.TYPES.LOOKUP("+"), -1);
+            } else if(Function.TYPES.REGISTER(f_id).equals("/")){
+                _execute_tensor_scalar(t, 0, Function.TYPES.LOOKUP("*"), -1);
+                _execute_tensor_scalar(t, 1/value, Function.TYPES.LOOKUP("+"), -1);
             }
         }
     }
@@ -197,7 +197,7 @@ public abstract class AbstractDevice implements  Device, Component
     private static void _createNewDrainTensorIn(Device device, Tsr[] tsrs, int f_id){
         if(tsrs[0]==null)//Creating a new tensor:
         {
-            int[] shp = (Function.TYPES.REGISTER[f_id].endsWith("x"))
+            int[] shp = (Function.TYPES.REGISTER(f_id).endsWith("x"))
                     ? Tsr.Util.Indexing.shpOfCon(tsrs[1].shape(), tsrs[2].shape())
                     : tsrs[1].shape();
             Tsr output = new Tsr(shp, 0.0);

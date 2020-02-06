@@ -59,9 +59,9 @@ public class OpenCLPlatform {
 <span class="fc" id="L59">    }</span>
 
     public String kernelNameOf(int f_id) {
-<span class="fc" id="L62">        String name = OPERATION_TO_KERNEL_MAPPING.get(Function.TYPES.REGISTER[f_id]);</span>
+<span class="fc" id="L62">        String name = OPERATION_TO_KERNEL_MAPPING.get(Function.TYPES.REGISTER(f_id));</span>
         //System.out.println(&quot;Kernel needed: &quot;+name);
-<span class="fc" id="L64">        return OPERATION_TO_KERNEL_MAPPING.get(Function.TYPES.REGISTER[f_id]);</span>
+<span class="fc" id="L64">        return OPERATION_TO_KERNEL_MAPPING.get(Function.TYPES.REGISTER(f_id));</span>
     }
 
 <span class="fc" id="L67">    OpenCLPlatform(cl_platform_id pid) {</span>

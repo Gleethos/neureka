@@ -25,7 +25,7 @@ public interface Function
 <span class="fc" id="L25">        return FunctionBuilder.build(expression, doAD);</span>
     }
 
-<span class="nc" id="L28">    class setup</span>
+<span class="nc" id="L28">    class Setup</span>
     {
         public static Tsr commit(Tsr[] tensors, String operation, boolean doAD) {
 <span class="fc" id="L31">            return commit(null, tensors, FunctionBuilder.build(operation, doAD));</span>

@@ -4,7 +4,6 @@ import neureka.calculus.Function;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 import org.junit.Test;
-import util.NTester_Function;
 import util.NTester_Tensor;
 
 public class BroadJavaTests {
@@ -206,7 +205,7 @@ public class BroadJavaTests {
         tensor1 = new Tsr(3).setRqsGradient(true);
         tensor2 = new Tsr(-4);
         tensor3 = new Tsr(2);
-        Tsr result = Function.setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "(Ig[0]<-I[1])->I[2]", true);
+        Tsr result = Function.Setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "(Ig[0]<-I[1])->I[2]", true);
         tester.testContains(
                 result.toString(),
                 new String[]{"(-4.0)"},
@@ -425,7 +424,7 @@ public class BroadJavaTests {
         tester.testTensorAutoGrad(new Tsr[]{tensor1, tensor2, tensor3},
                 "i0<<xi1<<xi2",
                 new String[]{"empty"});
-        result = Function.setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i0<<xi1<<xi2", true);
+        result = Function.Setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i0<<xi1<<xi2", true);
         tester.testContains(
                 result.toString(),
                 new String[]{"[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"},
@@ -434,7 +433,7 @@ public class BroadJavaTests {
         tester.testTensorAutoGrad(new Tsr[]{tensor1, tensor2, tensor3},//TODO:REACTIVATE!
                 "i2x>>i1x>>i0",
                 new String[]{"empty"});
-        result = Function.setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i2x>>i1x>>i0", true);
+        result = Function.Setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i2x>>i1x>>i0", true);
         tester.testContains(
                 result.toString(),
                 new String[]{"[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"},

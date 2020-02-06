@@ -734,7 +734,7 @@ public class Tsr extends AbstractComponentOwner
 
     private void _construct(Tsr[] tensors, String operation, boolean doAD) {
         if (tensors == null || tensors.length == 0 || tensors[0] == null) return;
-        Tsr result = Function.setup.commit(this, tensors, operation, doAD);
+        Tsr result = Function.Setup.commit(this, tensors, operation, doAD);
         this.inject(result);
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -11,8 +11,8 @@ import java.util.ListIterator;
 <span class="nc" id="L11">public class FunctionParser {</span>
     public static int numberOfOperationsWithin(final List&lt;String&gt; operations) {
 <span class="fc" id="L13">        int Count = 0;</span>
-<span class="fc bfc" id="L14" title="All 2 branches covered.">        for (int i = 0; i &lt; Function.TYPES.REGISTER.length; ++i) {</span>
-<span class="fc bfc" id="L15" title="All 2 branches covered.">            if (FunctionParser.containsOperation(Function.TYPES.REGISTER[i], operations)) {</span>
+<span class="fc bfc" id="L14" title="All 2 branches covered.">        for (int i = 0; i &lt; Function.TYPES.COUNT(); ++i) {</span>
+<span class="fc bfc" id="L15" title="All 2 branches covered.">            if (FunctionParser.containsOperation(Function.TYPES.REGISTER(i), operations)) {</span>
 <span class="fc" id="L16">                ++Count;</span>
             }
         }
@@ -84,7 +84,7 @@ import java.util.ListIterator;
 
     public static boolean isBasicOperation(final String operation) {
 <span class="fc bfc" id="L86" title="All 2 branches covered.">        if (operation.length() &gt; 8) return false;</span>
-<span class="fc bfc" id="L87" title="All 2 branches covered.">        if(Function.TYPES.LOOKUP.get(operation)!=null) return true;</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if(Function.TYPES.LOOKUP(operation)&gt;=0) return true;</span>
 <span class="fc" id="L88">        return false;</span>
     }
 
@@ -180,23 +180,23 @@ import java.util.ListIterator;
 <span class="fc bfc" id="L180" title="All 2 branches covered.">        if (exp.equals(&quot;()&quot;)) {</span>
 <span class="fc" id="L181">            return &quot;&quot;;</span>
         }
-<span class="fc" id="L183">        exp = exp.replace(&quot;sigmoid&quot;, Function.TYPES.REGISTER[1]);</span>
-<span class="fc" id="L184">        exp = exp.replace(&quot;quadratic&quot;, Function.TYPES.REGISTER[3]);</span>
-<span class="fc" id="L185">        exp = exp.replace(&quot;quadr&quot;, Function.TYPES.REGISTER[3]);</span>
-<span class="fc" id="L186">        exp = exp.replace(&quot;lig&quot;, Function.TYPES.REGISTER[4]);</span>
-<span class="fc" id="L187">        exp = exp.replace(&quot;ligmoid&quot;, Function.TYPES.REGISTER[4]);</span>
-<span class="fc" id="L188">        exp = exp.replace(&quot;softplus&quot;, Function.TYPES.REGISTER[4]);</span>
-<span class="fc" id="L189">        exp = exp.replace(&quot;spls&quot;, Function.TYPES.REGISTER[4]);</span>
-<span class="fc" id="L190">        exp = exp.replace(&quot;ligm&quot;, Function.TYPES.REGISTER[4]);</span>
-<span class="fc" id="L191">        exp = exp.replace(&quot;identity&quot;, Function.TYPES.REGISTER[5]);</span>
-<span class="fc" id="L192">        exp = exp.replace(&quot;ident&quot;, Function.TYPES.REGISTER[5]);</span>
-<span class="fc" id="L193">        exp = exp.replace(&quot;self&quot;, Function.TYPES.REGISTER[5]);</span>
-<span class="fc" id="L194">        exp = exp.replace(&quot;copy&quot;, Function.TYPES.REGISTER[5]);</span>
-<span class="fc" id="L195">        exp = exp.replace(&quot;gaussian&quot;, Function.TYPES.REGISTER[6]);</span>
-<span class="fc" id="L196">        exp = exp.replace(&quot;gauss&quot;, Function.TYPES.REGISTER[6]);</span>
-<span class="fc" id="L197">        exp = exp.replace(&quot;absolute&quot;, Function.TYPES.REGISTER[7]);</span>
-<span class="fc" id="L198">        exp = exp.replace(&quot;summation&quot;, Function.TYPES.REGISTER[10]);</span>
-<span class="fc" id="L199">        exp = exp.replace(&quot;product&quot;, Function.TYPES.REGISTER[11]);</span>
+<span class="fc" id="L183">        exp = exp.replace(&quot;sigmoid&quot;, Function.TYPES.REGISTER(1));</span>
+<span class="fc" id="L184">        exp = exp.replace(&quot;quadratic&quot;, Function.TYPES.REGISTER(3));</span>
+<span class="fc" id="L185">        exp = exp.replace(&quot;quadr&quot;, Function.TYPES.REGISTER(3));</span>
+<span class="fc" id="L186">        exp = exp.replace(&quot;lig&quot;, Function.TYPES.REGISTER(4));</span>
+<span class="fc" id="L187">        exp = exp.replace(&quot;ligmoid&quot;, Function.TYPES.REGISTER(4));</span>
+<span class="fc" id="L188">        exp = exp.replace(&quot;softplus&quot;, Function.TYPES.REGISTER(4));</span>
+<span class="fc" id="L189">        exp = exp.replace(&quot;spls&quot;, Function.TYPES.REGISTER(4));</span>
+<span class="fc" id="L190">        exp = exp.replace(&quot;ligm&quot;, Function.TYPES.REGISTER(4));</span>
+<span class="fc" id="L191">        exp = exp.replace(&quot;identity&quot;, Function.TYPES.REGISTER(5));</span>
+<span class="fc" id="L192">        exp = exp.replace(&quot;ident&quot;, Function.TYPES.REGISTER(5));</span>
+<span class="fc" id="L193">        exp = exp.replace(&quot;self&quot;, Function.TYPES.REGISTER(5));</span>
+<span class="fc" id="L194">        exp = exp.replace(&quot;copy&quot;, Function.TYPES.REGISTER(5));</span>
+<span class="fc" id="L195">        exp = exp.replace(&quot;gaussian&quot;, Function.TYPES.REGISTER(6));</span>
+<span class="fc" id="L196">        exp = exp.replace(&quot;gauss&quot;, Function.TYPES.REGISTER(6));</span>
+<span class="fc" id="L197">        exp = exp.replace(&quot;absolute&quot;, Function.TYPES.REGISTER(7));</span>
+<span class="fc" id="L198">        exp = exp.replace(&quot;summation&quot;, Function.TYPES.REGISTER(10));</span>
+<span class="fc" id="L199">        exp = exp.replace(&quot;product&quot;, Function.TYPES.REGISTER(11));</span>
 
 <span class="fc" id="L201">        int bracketDepth = 0;</span>
 <span class="fc bfc" id="L202" title="All 2 branches covered.">        for (int Ei = 0; Ei &lt; exp.length(); ++Ei) {</span>
@@ -245,8 +245,8 @@ import java.util.ListIterator;
     public static String assumptionBasedOn(String expression){
 <span class="fc" id="L246">        double largest = -1;</span>
 <span class="fc" id="L247">        int best = 0;</span>
-<span class="fc bfc" id="L248" title="All 2 branches covered.">        for(int i=0; i&lt;Function.TYPES.REGISTER.length; i++){</span>
-<span class="fc" id="L249">            double s = similarity(expression, Function.TYPES.REGISTER[i]);</span>
+<span class="fc bfc" id="L248" title="All 2 branches covered.">        for(int i=0; i&lt;Function.TYPES.COUNT(); i++){</span>
+<span class="fc" id="L249">            double s = similarity(expression, Function.TYPES.REGISTER(i));</span>
 <span class="fc bfc" id="L250" title="All 2 branches covered.">            if(largest==-1){</span>
 <span class="fc" id="L251">                largest = s;</span>
 <span class="fc bfc" id="L252" title="All 2 branches covered.">            } else if(s &gt; largest){</span>
@@ -254,7 +254,7 @@ import java.util.ListIterator;
 <span class="fc" id="L254">                largest = s;</span>
             }
         }
-<span class="fc bfc" id="L257" title="All 2 branches covered.">        return (largest&gt;0.1)?Function.TYPES.REGISTER[best]:null;</span>
+<span class="fc bfc" id="L257" title="All 2 branches covered.">        return (largest&gt;0.1)?Function.TYPES.REGISTER(best):null;</span>
     }
 
     public static double similarity(String s1, String s2) {

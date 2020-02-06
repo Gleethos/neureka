@@ -11,8 +11,8 @@ import java.util.ListIterator;
 public class FunctionParser {
     public static int numberOfOperationsWithin(final List<String> operations) {
         int Count = 0;
-        for (int i = 0; i < Function.TYPES.REGISTER.length; ++i) {
-            if (FunctionParser.containsOperation(Function.TYPES.REGISTER[i], operations)) {
+        for (int i = 0; i < Function.TYPES.COUNT(); ++i) {
+            if (FunctionParser.containsOperation(Function.TYPES.REGISTER(i), operations)) {
                 ++Count;
             }
         }
@@ -84,7 +84,7 @@ public class FunctionParser {
 
     public static boolean isBasicOperation(final String operation) {
         if (operation.length() > 8) return false;
-        if(Function.TYPES.LOOKUP.get(operation)!=null) return true;
+        if(Function.TYPES.LOOKUP(operation)>=0) return true;
         return false;
     }
 
@@ -180,23 +180,23 @@ public class FunctionParser {
         if (exp.equals("()")) {
             return "";
         }
-        exp = exp.replace("sigmoid", Function.TYPES.REGISTER[1]);
-        exp = exp.replace("quadratic", Function.TYPES.REGISTER[3]);
-        exp = exp.replace("quadr", Function.TYPES.REGISTER[3]);
-        exp = exp.replace("lig", Function.TYPES.REGISTER[4]);
-        exp = exp.replace("ligmoid", Function.TYPES.REGISTER[4]);
-        exp = exp.replace("softplus", Function.TYPES.REGISTER[4]);
-        exp = exp.replace("spls", Function.TYPES.REGISTER[4]);
-        exp = exp.replace("ligm", Function.TYPES.REGISTER[4]);
-        exp = exp.replace("identity", Function.TYPES.REGISTER[5]);
-        exp = exp.replace("ident", Function.TYPES.REGISTER[5]);
-        exp = exp.replace("self", Function.TYPES.REGISTER[5]);
-        exp = exp.replace("copy", Function.TYPES.REGISTER[5]);
-        exp = exp.replace("gaussian", Function.TYPES.REGISTER[6]);
-        exp = exp.replace("gauss", Function.TYPES.REGISTER[6]);
-        exp = exp.replace("absolute", Function.TYPES.REGISTER[7]);
-        exp = exp.replace("summation", Function.TYPES.REGISTER[10]);
-        exp = exp.replace("product", Function.TYPES.REGISTER[11]);
+        exp = exp.replace("sigmoid", Function.TYPES.REGISTER(1));
+        exp = exp.replace("quadratic", Function.TYPES.REGISTER(3));
+        exp = exp.replace("quadr", Function.TYPES.REGISTER(3));
+        exp = exp.replace("lig", Function.TYPES.REGISTER(4));
+        exp = exp.replace("ligmoid", Function.TYPES.REGISTER(4));
+        exp = exp.replace("softplus", Function.TYPES.REGISTER(4));
+        exp = exp.replace("spls", Function.TYPES.REGISTER(4));
+        exp = exp.replace("ligm", Function.TYPES.REGISTER(4));
+        exp = exp.replace("identity", Function.TYPES.REGISTER(5));
+        exp = exp.replace("ident", Function.TYPES.REGISTER(5));
+        exp = exp.replace("self", Function.TYPES.REGISTER(5));
+        exp = exp.replace("copy", Function.TYPES.REGISTER(5));
+        exp = exp.replace("gaussian", Function.TYPES.REGISTER(6));
+        exp = exp.replace("gauss", Function.TYPES.REGISTER(6));
+        exp = exp.replace("absolute", Function.TYPES.REGISTER(7));
+        exp = exp.replace("summation", Function.TYPES.REGISTER(10));
+        exp = exp.replace("product", Function.TYPES.REGISTER(11));
 
         int bracketDepth = 0;
         for (int Ei = 0; Ei < exp.length(); ++Ei) {
@@ -245,8 +245,8 @@ public class FunctionParser {
     public static String assumptionBasedOn(String expression){
         double largest = -1;
         int best = 0;
-        for(int i=0; i<Function.TYPES.REGISTER.length; i++){
-            double s = similarity(expression, Function.TYPES.REGISTER[i]);
+        for(int i=0; i<Function.TYPES.COUNT(); i++){
+            double s = similarity(expression, Function.TYPES.REGISTER(i));
             if(largest==-1){
                 largest = s;
             } else if(s > largest){
@@ -254,7 +254,7 @@ public class FunctionParser {
                 largest = s;
             }
         }
-        return (largest>0.1)?Function.TYPES.REGISTER[best]:null;
+        return (largest>0.1)?Function.TYPES.REGISTER(best):null;
     }
 
     public static double similarity(String s1, String s2) {

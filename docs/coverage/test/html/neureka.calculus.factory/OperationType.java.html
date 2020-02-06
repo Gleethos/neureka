@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OperationType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.factory</a> &gt; <span class="el_source">OperationType.java</span></div><h1>OperationType.java</h1><pre class="source lang-java linenums">package neureka.calculus.factory;
+
+import neureka.Tsr;
+import neureka.autograd.ADAgent;
+import neureka.calculus.factory.assembly.FunctionBuilder;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+public class OperationType {
+
+<span class="fc" id="L13">    private static Map&lt;String, OperationType&gt; _LOOKUP = new HashMap&lt;&gt;();</span>
+
+<span class="fc" id="L15">    private static ArrayList&lt;OperationType&gt; _REGISTER = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L17">    private static int _ID = 0;</span>
+
+    public static OperationType LOOKUP(String identifier){
+<span class="fc" id="L20">        return _LOOKUP.getOrDefault(identifier, null);</span>
+    }
+
+    public static OperationType REGISTER(int index){
+<span class="fc" id="L24">        return _REGISTER.get(index);</span>
+    }
+
+    public static int COUNT(){
+<span class="fc" id="L28">        return _ID;</span>
+    }
+
+    private int _id;
+    private String  _identifier;
+    private boolean _isFunction;
+    private boolean _isOperation;
+    private boolean _isIndexer;
+    private boolean _isConvection;
+    private boolean _isCommutative;
+    private boolean _isAssociative;
+
+    public OperationType(
+            String  identifier,
+            boolean isFunction,
+            boolean isOperation,
+            boolean isIndexer,
+            boolean isConvection,
+            boolean isCommutative,
+            boolean isAssociative
+<span class="fc" id="L48">    ) {</span>
+<span class="fc" id="L49">        _construct(</span>
+                identifier,
+                isFunction,
+                isOperation,
+                isIndexer,
+                isConvection,
+                isCommutative,
+                isAssociative
+        );
+<span class="fc" id="L58">    }</span>
+
+    public OperationType(
+            String  identifier,
+            boolean isFunction,
+            boolean isIndexer,
+            boolean isConvection,
+            boolean isCommutative,
+            boolean isAssociative
+<span class="fc" id="L67">    ) {</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        _construct(</span>
+                identifier,
+                isFunction,
+                !isFunction,
+                isIndexer,
+                isConvection,
+                isCommutative,
+                isAssociative
+        );
+<span class="fc" id="L77">    }</span>
+
+    private void _construct(
+            String  identifier,
+            boolean isFunction,
+            boolean isOperation,
+            boolean isIndexer,
+            boolean isConvection,
+            boolean isCommutative,
+            boolean isAssociative
+    ) {
+<span class="fc" id="L88">        _id = _ID;</span>
+<span class="fc" id="L89">        _ID++;</span>
+<span class="fc" id="L90">        _identifier = identifier;</span>
+<span class="fc" id="L91">        _isFunction = isFunction;</span>
+<span class="fc" id="L92">        _isOperation = isOperation;</span>
+<span class="fc" id="L93">        _isIndexer = isIndexer;</span>
+<span class="fc" id="L94">        _isConvection = isConvection;</span>
+<span class="fc" id="L95">        _isCommutative = isCommutative;</span>
+<span class="fc" id="L96">        _isAssociative = isAssociative;</span>
+
+<span class="fc" id="L98">        _REGISTER.add(this);</span>
+<span class="fc" id="L99">        _LOOKUP.put(identifier, this);</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        if(identifier.equals((((char)171))+&quot;x&quot;)) _LOOKUP.put(&quot;&lt;&lt;x&quot;, this);</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        else if(identifier.equals(&quot;x&quot;+((char)187))) _LOOKUP.put(&quot;x&gt;&gt;&quot;, this);</span>
+<span class="fc" id="L102">    }</span>
+
+    public int id(){
+<span class="fc" id="L105">        return _id;</span>
+    }
+
+    public String identifier(){
+<span class="fc" id="L109">        return _identifier;</span>
+    }
+
+    public boolean isOperation(){
+<span class="fc" id="L113">        return _isOperation;</span>
+    }
+
+    public boolean isFunction(){
+<span class="fc" id="L117">        return _isFunction;</span>
+    }
+
+    public boolean isIndexer(){
+<span class="fc" id="L121">        return _isIndexer;</span>
+    }
+
+    public boolean isConvection(){
+<span class="fc" id="L125">        return _isConvection;</span>
+    }
+
+    public boolean isCommutative(){
+<span class="nc" id="L129">        return  _isCommutative;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -25,7 +25,7 @@ public interface Function
         return FunctionBuilder.build(expression, doAD);
     }
 
-    class setup
+    class Setup
     {
         public static Tsr commit(Tsr[] tensors, String operation, boolean doAD) {
             return commit(null, tensors, FunctionBuilder.build(operation, doAD));

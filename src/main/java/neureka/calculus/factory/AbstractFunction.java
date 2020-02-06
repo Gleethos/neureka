@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public abstract class AbstractFunction implements Function {
-    private int _id;
+    
+    private OperationType _type;
+    //private int _ id;
     private boolean _isFlat;
     private boolean _doAD;
     private ArrayList<Function> _src;
@@ -25,7 +27,8 @@ public abstract class AbstractFunction implements Function {
      * @param doAD
      */
     protected AbstractFunction(int f_id, boolean isFlat, ArrayList<Function> source, boolean doAD) {
-        _id = f_id;
+        _type = OperationType.REGISTER(f_id);
+        //_ id = f_type.id();
         _isFlat = isFlat;
         _src = source;
         _doAD = doAD;
@@ -48,28 +51,28 @@ public abstract class AbstractFunction implements Function {
 
     @Override
     public int id() {
-        return _id;
+        return _type.id();//_type.id();
     }
 
     @Override
     public String type() {
-        return TYPES.REGISTER[_id];
+        return _type.identifier();
     }
 
     @Override
     public String toString() {
         String reconstructed = "";
-        if (_src.size() == 1 && TYPES.REGISTER[_id].length() > 1) {
+        if (_src.size() == 1 && _type.identifier().length() > 1) {
             String expression = _src.get(0).toString();
             if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
-                return TYPES.REGISTER[_id] + expression;
+                return _type.identifier() + expression;
             }
-            return TYPES.REGISTER[_id] + "(" + expression + ")";
+            return _type.identifier() + "(" + expression + ")";
         } else {
-            reconstructed = ((TYPES.REGISTER[_id].equals(",")) ? "[" : "") + reconstructed;
+            reconstructed = ((_type.identifier().equals(",")) ? "[" : "") + reconstructed;
             for (int i = 0; i < _src.size(); ++i) {
                 if (_src.get(i) != null) {
-                    if ((TYPES.REGISTER[_id].equals(","))) {
+                    if ((_type.identifier().equals(","))) {
                         if (i == _src.size() - 1) {
                             reconstructed = reconstructed
                                     + "]:(" +
@@ -93,11 +96,11 @@ public abstract class AbstractFunction implements Function {
                 } else {
                     reconstructed = reconstructed + "(null)";
                 }
-                if (i < _src.size() - ((TYPES.REGISTER[_id] == ",") ? 2 : 1)) {
+                if (i < _src.size() - ((_type.identifier() == ",") ? 2 : 1)) {
                     reconstructed = reconstructed
-                            + ((TYPES.REGISTER[_id].equals(">")) ? "-" : "")
-                            + TYPES.REGISTER[_id]
-                            + ((TYPES.REGISTER[_id].equals("<")) ? "-" : "");
+                            + ((_type.identifier().equals(">")) ? "-" : "")
+                            + _type.identifier()
+                            + ((_type.identifier().equals("<")) ? "-" : "");
                 }
             }
         }
@@ -157,7 +160,6 @@ public abstract class AbstractFunction implements Function {
 
     @Override
     public ADAgent getADAgent(Tsr[] inputs, int i, boolean forward){
-
         if(forward){
             Tsr d = this.derive(inputs, i);
             return new ADAgent(
@@ -166,7 +168,7 @@ public abstract class AbstractFunction implements Function {
                     null
             );
         } else {
-            if(_id==TYPES.LOOKUP.get(","))
+            if(_type.identifier().equals(","))
             {
                 return new ADAgent(
                         ()->null,
@@ -174,7 +176,7 @@ public abstract class AbstractFunction implements Function {
                         (t, error) -> FunctionBuilder.build(this.toString(), false).activate(new Tsr[]{error})
                 );
             }
-            else if (TYPES.isOperation(_id) && !TYPES.isConvection(_id))
+            else if (_type.isOperation() && !_type.isConvection())
             {
                 Tsr d = this.derive(inputs, i);
                 return new ADAgent(
@@ -183,7 +185,7 @@ public abstract class AbstractFunction implements Function {
                         (t, error) -> MUL.activate(new Tsr[]{error, d})
                 );
             }
-            else if (TYPES.isConvection(_id))
+            else if (_type.isConvection())
             {
                 Tsr d = this.derive(inputs, i);
                 return new ADAgent(
@@ -228,27 +230,27 @@ public abstract class AbstractFunction implements Function {
     }
 
     private Tsr _execute(Tsr[] inputs, int j, int d, Device myDevice) {
-        if (TYPES.REGISTER[_id].equals("x")) {
+        if (_type.identifier().equals("x")) {
             Tsr tensor1 = _src.get(0).activate(inputs).setIsVirtual(false);
             Tsr tensor2 = _src.get(1).activate(inputs).setIsVirtual(false);
             Tsr newTensor = (d<0)?new Tsr(Tsr.Util.Indexing.shpOfCon(tensor1.shape(), tensor2.shape())):null;
             Tsr[] array = new Tsr[]{newTensor, tensor1, tensor2};
-            myDevice.execute(array, _id, d);
+            myDevice.execute(array, _type.id(), d);
             return array[0];
 
-        } else if (_id == TYPES.LOOKUP.get("<<x") || _id == TYPES.LOOKUP.get("x>>")) {
+        } else if (_type.id() == TYPES.LOOKUP("<<x") || _type.id() == TYPES.LOOKUP("x>>")) {
             if (d < 0) {
                 Tsr[] tsrs = new Tsr[]{
                         _src.get(0).activate(inputs).setIsVirtual(false),
                         _src.get(1).activate(inputs).setIsVirtual(false),
                         _src.get(2).activate(inputs).setIsVirtual(false)
                 };
-                myDevice.execute(tsrs, _id, 0);
-                if (_id == TYPES.LOOKUP.get("x>>")) return tsrs[2];
+                myDevice.execute(tsrs, _type.id(), 0);
+                if (_type.id() == TYPES.LOOKUP("x>>")) return tsrs[2];
                 else return tsrs[0];
             }
             return null;
-        } else if (TYPES.REGISTER[_id].equals(",")) {
+        } else if (_type.identifier().equals(",")) {
             int[] newForm = new int[_src.size() - 1];
             for (int i = 0; i < _src.size() - 1; i++) {
                 newForm[i] = (int) Tsr.Util.io.getFrom(_src.get(i).activate(inputs), 0);
@@ -273,27 +275,27 @@ public abstract class AbstractFunction implements Function {
 
     private Tsr _execution(Tsr[] inputs, int d, int j, Device device) {
         if (!_isFlat && j < 0 && d < 0) {
-            if (TYPES.isOperation(_id)) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
+            if (TYPES.isOperation(_type.id())) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
                 String operation = "";
                 Tsr[] tsrs = _src_acti(inputs, j, d, 0);
                 for (int i = 0; i < tsrs.length; i++) {
-                    operation += "I[" + i + "]" + ((i == tsrs.length - 1) ? "" : TYPES.REGISTER[_id]);
+                    operation += "I[" + i + "]" + ((i == tsrs.length - 1) ? "" : _type.identifier());
                 }
                 return (FunctionBuilder.build(operation, _doAD).activate(tsrs));
-            } else if (TYPES.isFunction(_id)) {
-                return (FunctionBuilder.build(TYPES.REGISTER[_id] + "(I[0])", true).activate(inputs));
+            } else if (TYPES.isFunction(_type.id())) {
+                return (FunctionBuilder.build(_type.identifier() + "(I[0])", true).activate(inputs));
             }
         }
 
         Tsr[] tsrs;
-        if (TYPES.isIndexer(_id)) tsrs = new Tsr[1 + inputs.length];
+        if (TYPES.isIndexer(_type.id())) tsrs = new Tsr[1 + inputs.length];
         else tsrs = new Tsr[1 + _src.size()];
         if (d >= 0) {
             //Chain-rule (forward AD):
             //inner times out means:
             //first derive source!
             //like so:
-            if (TYPES.isIndexer(_id)) {
+            if (TYPES.isIndexer(_type.id())) {
                 for (int i = 1; i < tsrs.length; i++) {
                     tsrs[i] = _src.get(0).derive(inputs, d, i - 1);
                 }
@@ -305,14 +307,14 @@ public abstract class AbstractFunction implements Function {
             //then add them all together! (is possible because of linearity...)
             Tsr inner;
             if (tsrs.length > 2) {
-                device.execute(tsrs, TYPES.LOOKUP.get("+"), -1);
+                device.execute(tsrs, TYPES.LOOKUP("+"), -1);
                 inner = tsrs[0];//this is now the inner derivative!
             } else {
                 inner = tsrs[1];
             }
             tsrs[0] = null;
             //then activate the source like so:
-            if (TYPES.isIndexer(_id)) {
+            if (TYPES.isIndexer(_type.id())) {
                 for (int i = 1; i < tsrs.length; i++) {
                     tsrs[i] = _src.get(0).activate(inputs, i - 1);
                 }
@@ -323,30 +325,30 @@ public abstract class AbstractFunction implements Function {
             }
             //get derivative index within src list:
             for (int i = 0; i < _src.size(); i++) {
-                if (_src.get(i).dependsOn(d) && !TYPES.isIndexer(_id)) {
+                if (_src.get(i).dependsOn(d) && !TYPES.isIndexer(_type.id())) {
                     d = i;
                     break;
                 }
             }
             //Use those tensors for the outer derivative:
-            device.execute(tsrs, _id, d); //(d>=0)
+            device.execute(tsrs, _type.id(), d); //(d>=0)
             //At the end:
             //multiply inner times outer:
             tsrs = new Tsr[]{null, inner, tsrs[0]};
-            device.execute(tsrs, TYPES.LOOKUP.get("*"), -1);
+            device.execute(tsrs, TYPES.LOOKUP("*"), -1);
             return tsrs[0];
         } else {
-            if (TYPES.isIndexer(_id)) {
+            if (TYPES.isIndexer(_type.id())) {
                 tsrs = new Tsr[1 + inputs.length];
                 if (d < 0) {
                     for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).activate(inputs, i - 1);
                 } else {
                     for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).derive(inputs, d, i - 1);
                 }
-                device.execute(tsrs, _id, d);
+                device.execute(tsrs, _type.id(), d);
             } else {
                 tsrs = _src_acti(inputs, j, d, 1);//new Tsr[1 + _src.size()];
-                device.execute(tsrs, _id, d);
+                device.execute(tsrs, _type.id(), d);
             }
         }
         return (tsrs[0] == null) ? tsrs[1] : tsrs[0];
@@ -361,7 +363,7 @@ public abstract class AbstractFunction implements Function {
                     if (out == null) {
                         out = actor.get();
                     } else {
-                        device.execute(new Tsr[]{null, actor.get(), out}, TYPES.LOOKUP.get("+"), -1);
+                        device.execute(new Tsr[]{null, actor.get(), out}, TYPES.LOOKUP("+"), -1);
                     }
                 }
             }
@@ -374,7 +376,7 @@ public abstract class AbstractFunction implements Function {
     private Device _device(Tsr[] inputs) {
         Device device = (Device) inputs[0].find(Device.class);
         boolean onSameDevice = _shareGuestDevice(inputs);
-        boolean doAccel = (!TYPES.REGISTER[_id].equals(",") && onSameDevice);
+        boolean doAccel = (!_type.identifier().equals(",") && onSameDevice);
         Device myDevice = (doAccel && device != null) ? device : inputs[0].device();
         return myDevice;
     }
@@ -424,7 +426,7 @@ public abstract class AbstractFunction implements Function {
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     protected double _scalar_activation(double input, boolean derive) {
-        switch (TYPES.REGISTER[_id]) {
+        switch (_type.identifier()) {
             case "relu":
                 return exec.reLu(input, derive);
             case "sig":
@@ -452,7 +454,7 @@ public abstract class AbstractFunction implements Function {
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     protected double _scalar_activation(double[] input, int j, int d) {
-        switch (TYPES.REGISTER[_id]) {
+        switch (_type.identifier()) {
             case "sum":
                 return (j < 0) ? exec.summation(input, d, _src) : exec.summation(input, j, d, _src);
             case "prod":
