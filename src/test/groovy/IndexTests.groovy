@@ -13,7 +13,6 @@ import util.NTester_Tensor
 class IndexTests
 {
 
-
     @Test
     void testSlicing()
     {
@@ -47,8 +46,6 @@ class IndexTests
         assert query.contains("Info for device")
         assert query.contains("LOCAL_MEM_SIZE")
         assert query.contains("CL_DEVICE_TYPE")
-
-        //print(query)
 
         OpenCLDevice cld = (OpenCLDevice)gpu;
         assert cld.globalMemSize()>1000

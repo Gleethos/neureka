@@ -12,20 +12,34 @@ import util.DummyDevice
 
 class ThoroughGroovyTests
 {
+
     @Test
-    void testStringSeededTensor(){
+    void testStringSeededTensor() {
 
         Neureka.Settings.reset()
-
         Tsr t1 = new Tsr([2, 3], "I am a seed! :)")
         Tsr t2 = new Tsr(new int[]{2, 3}, "I am a seed! :)")
-
         assert t1.toString()==t2.toString()
-
         Tsr t3 = new Tsr(new int[]{2, 3}, "I am also a seed! But different. :)")
-
         assert t1.toString()!=t3.toString()
+    }
 
+    @Test
+    void testIndexingAfterReshaping()
+    {
+        Tsr t1 = new Tsr([4, 3], 1..12)
+        assert t1.i_of_idx(new int[]{2, 1})==7
+        assert t1.i_of_idx(new int[]{1, 2})==5
+        assert t1.idx_of_i(5)[0]==1
+        assert t1.idx_of_i(5)[1]==2
+        Tsr t2 = Neureka.create("[1, 0]:(I[0])").activate(t1)
+        assert t2.i_of_idx(new int[]{1, 2})==7
+        assert t2.idx_of_i(7)[0]==1
+        assert t2.idx_of_i(7)[1]==3
+        assert t1.toString().contains("[4x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0)")
+        assert t2.toString().contains("[3x4]:(1.0, 4.0, 7.0, 10.0, 2.0, 5.0, 8.0, 11.0, 3.0, 6.0, 9.0, 12.0)")
+        assert t1.i_of_idx(t1.idx_of_i(7)) == 7  // Element 7 '8.0' is at index 7!
+        assert t2.i_of_idx(t2.idx_of_i(7)) == 10 // Element 7 '11.0' is at index 10!
     }
 
     @Test
