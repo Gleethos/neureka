@@ -140,8 +140,8 @@ public class Types
 <span class="nc" id="L140">        return isConvection(LOOKUP(f));</span>
     }
     public boolean isConvection(int id){
-<span class="fc" id="L143">        OperationType type = OperationType.REGISTER(id);</span>
-<span class="pc bpc" id="L144" title="1 of 2 branches missed.">        return (type!=null)?type.isConvection():false;</span>
+<span class="nc" id="L143">        OperationType type = OperationType.REGISTER(id);</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">        return (type!=null)?type.isConvection():false;</span>
         //return (REGISTER[id].equals(&quot;x&quot;) || REGISTER[id].contains(&quot;Â«&quot;) || REGISTER[id].contains(&quot;Â»&quot;));
     }
 

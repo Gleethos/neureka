@@ -18,14 +18,12 @@ public class Neureka
         return Function.create(expression, doAD);
     }
 
-
     public static String version(){
         return "1.0.0";
     }
 
     public static class Settings
     {
-
         public static boolean isLocked(){
             return  _isLocked;
         }

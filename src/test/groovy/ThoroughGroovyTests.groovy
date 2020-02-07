@@ -534,9 +534,9 @@ class ThoroughGroovyTests
     @Test
     void testRandomTensor(){
         Tsr r = new Tsr([2, 2], "jnrejn")
-        assert r.toString().contains("7.205, -6.63625E0, -7.2275, 0.77874E0")
+        assert r.toString().contains("0.02600E0, -2.06129E0, -0.48373E0, 0.94884E0")
         r = new Tsr([2, 2], "jnrejn2")
-        assert !r.toString().contains("7.205, -6.63625E0, -7.2275, 0.77874E0")
+        assert !r.toString().contains("0.02600E0, -2.06129E0, -0.48373E0, 0.94884E0")
     }
 
     @Test
@@ -610,9 +610,9 @@ class ThoroughGroovyTests
         int[] shape = new int[1]
         shape[0] = 4
         x = Tsr.Util.Create.newRandom(shape)
-        assert  x.toString().contains("[4]:(-0.1575, -1.57875E0, 5.2775, 0.40125)")
+        assert  x.toString().contains("[4]:(-0.14690E0, -0.13858E0, -2.30775E0, 0.67281E0)")
         x = Tsr.Util.Create.newRandom(shape, 106605040595L)
-        assert x.toString().contains("[4]:(0.3675, -4.30875E0, -6.60625E0, 1.265E0)")
+        assert x.toString().contains("[4]:(-0.36765E0, -0.45818E0, -1.6556E0, 0.73242E0)")
     }
 
     @Test

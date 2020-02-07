@@ -532,7 +532,8 @@ public class Tsr extends AbstractComponentOwner
 
     private void _construct(int[] shape, String seed){
         _construct(shape);
-        for(int i=0; i<this.size(); i++) ((double[])_value)[i] = DataHelper.getDoubleOf(DataHelper.longHash(seed+i));
+        //for(int i=0; i<this.size(); i++) ((double[])_value)[i] = DataHelper.getDoubleOf(DataHelper.longHash(seed+i));
+        _value = DataHelper.seededDoubleArray((double[])_value, seed);
     }
 
     private int[] intArray(Object[] arg){
@@ -1185,9 +1186,10 @@ public class Tsr extends AbstractComponentOwner
 
             public static Tsr newRandom(int[] shape, long seed){
                 int size = Indexing.szeOfShp(shape);
-                double[] value = new double[size];
-                for (int i=0; i<size; i++) value[i] = DataHelper.getDoubleOf(seed+i);
-                return new Tsr(shape, value);
+                //DataHelper.newSeededDoubleArray(seed, size);
+                //double[] value = new double[size];
+                //for (int i=0; i<size; i++) value[i] = DataHelper.getDoubleOf(seed+i);
+                return new Tsr(shape, DataHelper.newSeededDoubleArray(seed, size));
             }
 
             public static Tsr newTsrLike(Tsr template, double value) {

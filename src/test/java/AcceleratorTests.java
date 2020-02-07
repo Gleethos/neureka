@@ -10,11 +10,13 @@ import util.NTester_Tensor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 
 public class AcceleratorTests
 {
     @Test
     public void testOpenCLDevice(){
+
         if(!System.getProperty("os.name").toLowerCase().contains("windows")){
             return;
         }
