@@ -531,10 +531,9 @@ public class GraphNode implements Component {
      */
     private void _deleteDerivativesRecursively() {
         if (!Neureka.Settings.AD.retainGraphDerivativesAfterBackward()) {
-            if (!reliesOnJustInTimeProp()) _targets_derivatives = null;
-            this.forEachTarget((t) -> t._deleteDerivativesRecursively());
+            if (!this.reliesOnJustInTimeProp()) _targets_derivatives = null;
+            if (!this.isGraphLeave()) forEachTarget(GraphNode::_deleteDerivativesRecursively);
         }
-        return;
     }
 
 

@@ -12,10 +12,24 @@ import util.DummyDevice
 
 class ThoroughGroovyTests
 {
+    @Test
+    void testNeurekaClass(){
+
+        Neureka.Settings.reset()
+        assert !Neureka.Settings.isLocked()
+        assert !Neureka.Settings.Indexing.legacy()
+        assert !Neureka.Settings.Debug.keepDerivativeTargetPayloads()
+        assert !Neureka.Settings.AD.applyGradientWhenTensorIsUsed()
+        assert Neureka.Settings.AD.retainPendingErrorForJITProp()
+        assert !Neureka.Settings.AD.retainGraphDerivativesAfterBackward()
+
+        assert  Neureka.version()=="1.0.0"
+
+    }
 
     @Test
-    void testStringSeededTensor() {
-
+    void testStringSeededTensor()
+    {
         Neureka.Settings.reset()
         Tsr t1 = new Tsr([2, 3], "I am a seed! :)")
         Tsr t2 = new Tsr(new int[]{2, 3}, "I am a seed! :)")

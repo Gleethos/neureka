@@ -250,10 +250,10 @@ public class GraphNode implements Component {
 
     public boolean isGraphLeave() {
 <span class="fc bfc" id="L252" title="All 2 branches covered.">        if (isLeave()) return true;</span>
-<span class="pc bpc" id="L253" title="1 of 2 branches missed.">        for (GraphNode p : _parents) {</span>
-<span class="pc bpc" id="L254" title="1 of 2 branches missed.">            if (p.lock() != this.lock()) return true;</span>
+<span class="fc bfc" id="L253" title="All 2 branches covered.">        for (GraphNode p : _parents) {</span>
+<span class="fc bfc" id="L254" title="All 2 branches covered.">            if (p.lock() != this.lock()) return true;</span>
         }
-<span class="nc" id="L256">        return false;</span>
+<span class="fc" id="L256">        return false;</span>
     }
 
     /**
@@ -531,11 +531,10 @@ public class GraphNode implements Component {
      */
     private void _deleteDerivativesRecursively() {
 <span class="fc bfc" id="L533" title="All 2 branches covered.">        if (!Neureka.Settings.AD.retainGraphDerivativesAfterBackward()) {</span>
-<span class="fc bfc" id="L534" title="All 2 branches covered.">            if (!reliesOnJustInTimeProp()) _targets_derivatives = null;</span>
-<span class="fc" id="L535">            this.forEachTarget((t) -&gt; t._deleteDerivativesRecursively());</span>
+<span class="fc bfc" id="L534" title="All 2 branches covered.">            if (!this.reliesOnJustInTimeProp()) _targets_derivatives = null;</span>
+<span class="fc bfc" id="L535" title="All 2 branches covered.">            if (!this.isGraphLeave()) forEachTarget(GraphNode::_deleteDerivativesRecursively);</span>
         }
-<span class="fc" id="L537">        return;</span>
-    }
+<span class="fc" id="L537">    }</span>
 
 
     /**
@@ -544,30 +543,30 @@ public class GraphNode implements Component {
      * @return
      */
     private int _numberOfReverseModeADChildren() {
-<span class="fc" id="L547">        int count = 0;</span>
-<span class="pc bpc" id="L548" title="1 of 2 branches missed.">        if (_children != null) {</span>
-<span class="fc bfc" id="L549" title="All 2 branches covered.">            for (WeakReference weak : _children) {</span>
-<span class="pc bpc" id="L550" title="2 of 4 branches missed.">                if (weak != null &amp;&amp; weak.get() != null) {</span>
-<span class="fc" id="L551">                    GraphNode child = (GraphNode) weak.get();</span>
-<span class="fc bfc" id="L552" title="All 2 branches covered.">                    if (child.usesReverseAD()) count++;</span>
+<span class="fc" id="L546">        int count = 0;</span>
+<span class="pc bpc" id="L547" title="1 of 2 branches missed.">        if (_children != null) {</span>
+<span class="fc bfc" id="L548" title="All 2 branches covered.">            for (WeakReference weak : _children) {</span>
+<span class="pc bpc" id="L549" title="2 of 4 branches missed.">                if (weak != null &amp;&amp; weak.get() != null) {</span>
+<span class="fc" id="L550">                    GraphNode child = (GraphNode) weak.get();</span>
+<span class="fc bfc" id="L551" title="All 2 branches covered.">                    if (child.usesReverseAD()) count++;</span>
                 }
-<span class="fc" id="L554">            }</span>
+<span class="fc" id="L553">            }</span>
         }
-<span class="fc" id="L556">        return count;</span>
+<span class="fc" id="L555">        return count;</span>
     }
 
     /**
      * @return int
      */
     public int mode() {
-<span class="fc" id="L563">        return _mode;</span>
+<span class="fc" id="L562">        return _mode;</span>
     }
 
     /**
      * @return Function
      */
     public Function function() {
-<span class="fc" id="L570">        return _function;</span>
+<span class="fc" id="L569">        return _function;</span>
     }
 
     /**
@@ -575,28 +574,28 @@ public class GraphNode implements Component {
      * @param o      tensors are used during back-propagation in order to distribute an error throughout the graph.
      */
     public void put(GraphNode target, Object o) {
-<span class="fc bfc" id="L578" title="All 2 branches covered.">        if (_targets_derivatives == null) _targets_derivatives = new TreeMap&lt;&gt;((a, b) -&gt; a.hashCode() - b.hashCode());</span>
-<span class="fc" id="L579">        ADAgent agent = null;</span>
-<span class="fc bfc" id="L580" title="All 2 branches covered.">        if (o instanceof Tsr) agent = new ADAgent((Tsr) o);</span>
-<span class="fc" id="L581">        else agent = (ADAgent) o;</span>
+<span class="fc bfc" id="L577" title="All 2 branches covered.">        if (_targets_derivatives == null) _targets_derivatives = new TreeMap&lt;&gt;((a, b) -&gt; a.hashCode() - b.hashCode());</span>
+<span class="fc" id="L578">        ADAgent agent = null;</span>
+<span class="fc bfc" id="L579" title="All 2 branches covered.">        if (o instanceof Tsr) agent = new ADAgent((Tsr) o);</span>
+<span class="fc" id="L580">        else agent = (ADAgent) o;</span>
 
-<span class="fc" id="L583">        _targets_derivatives.put(target, agent);</span>
+<span class="fc" id="L582">        _targets_derivatives.put(target, agent);</span>
 
-<span class="fc bfc" id="L585" title="All 2 branches covered.">        if (agent.isForward()) {</span>
-<span class="fc" id="L586">            Tsr d = agent.derivative();</span>
-<span class="pc bpc" id="L587" title="2 of 4 branches missed.">            if (d != null &amp;&amp; d.has(GraphNode.class))</span>
-<span class="nc" id="L588">                ((GraphNode) d.find(GraphNode.class))._is_used_as_derivative = true;</span>
+<span class="fc bfc" id="L584" title="All 2 branches covered.">        if (agent.isForward()) {</span>
+<span class="fc" id="L585">            Tsr d = agent.derivative();</span>
+<span class="pc bpc" id="L586" title="2 of 4 branches missed.">            if (d != null &amp;&amp; d.has(GraphNode.class))</span>
+<span class="nc" id="L587">                ((GraphNode) d.find(GraphNode.class))._is_used_as_derivative = true;</span>
         }
 
-<span class="fc" id="L591">    }</span>
+<span class="fc" id="L590">    }</span>
 
     /**
      * @param target
      * @return Tsr
      */
     public Object get(GraphNode target) {
-<span class="nc bnc" id="L598" title="All 2 branches missed.">        if (_targets_derivatives == null) return null;</span>
-<span class="nc" id="L599">        return _targets_derivatives.get(target);</span>
+<span class="nc bnc" id="L597" title="All 2 branches missed.">        if (_targets_derivatives == null) return null;</span>
+<span class="nc" id="L598">        return _targets_derivatives.get(target);</span>
     }
 
     /**
@@ -604,15 +603,15 @@ public class GraphNode implements Component {
      * @return boolean
      */
     public boolean has(GraphNode target) {
-<span class="fc bfc" id="L607" title="All 2 branches covered.">        if (_targets_derivatives == null) return false;</span>
-<span class="fc" id="L608">        return _targets_derivatives.containsKey(target);</span>
+<span class="fc bfc" id="L606" title="All 2 branches covered.">        if (_targets_derivatives == null) return false;</span>
+<span class="fc" id="L607">        return _targets_derivatives.containsKey(target);</span>
     }
 
     /**
      * @return int
      */
     public int size() {
-<span class="fc bfc" id="L615" title="All 2 branches covered.">        return (_targets_derivatives != null) ? this._targets_derivatives.size() : 0;</span>
+<span class="fc bfc" id="L614" title="All 2 branches covered.">        return (_targets_derivatives != null) ? this._targets_derivatives.size() : 0;</span>
     }
 
     /**
@@ -620,103 +619,103 @@ public class GraphNode implements Component {
      * @return void
      */
     public void forEachBackward(Tsr error, BiConsumer&lt;GraphNode, Tsr&gt; action) {
-<span class="fc bfc" id="L623" title="All 2 branches covered.">        if (_targets_derivatives == null) return;</span>
-<span class="fc" id="L624">        _targets_derivatives.forEach((t, o) -&gt; {</span>
-<span class="pc bpc" id="L625" title="1 of 2 branches missed.">            if (!o.isForward()) action.accept(t, o.backward(t, error));</span>
-<span class="fc" id="L626">        });</span>
-<span class="fc" id="L627">    }</span>
+<span class="fc bfc" id="L622" title="All 2 branches covered.">        if (_targets_derivatives == null) return;</span>
+<span class="fc" id="L623">        _targets_derivatives.forEach((t, o) -&gt; {</span>
+<span class="pc bpc" id="L624" title="1 of 2 branches missed.">            if (!o.isForward()) action.accept(t, o.backward(t, error));</span>
+<span class="fc" id="L625">        });</span>
+<span class="fc" id="L626">    }</span>
 
     /**
      * @param action
      * @return void
      */
     public void forEachForward(Tsr error, BiConsumer&lt;GraphNode, Tsr&gt; action) {
-<span class="fc bfc" id="L634" title="All 2 branches covered.">        if (_targets_derivatives == null) return;</span>
-<span class="fc" id="L635">        _targets_derivatives.forEach((t, o) -&gt; {</span>
-<span class="pc bpc" id="L636" title="1 of 2 branches missed.">            if (o.isForward()) action.accept(t, MUL.activate(new Tsr[]{error, o.derivative()}));</span>
-<span class="fc" id="L637">        });</span>
-<span class="fc" id="L638">    }</span>
+<span class="fc bfc" id="L633" title="All 2 branches covered.">        if (_targets_derivatives == null) return;</span>
+<span class="fc" id="L634">        _targets_derivatives.forEach((t, o) -&gt; {</span>
+<span class="pc bpc" id="L635" title="1 of 2 branches missed.">            if (o.isForward()) action.accept(t, MUL.activate(new Tsr[]{error, o.derivative()}));</span>
+<span class="fc" id="L636">        });</span>
+<span class="fc" id="L637">    }</span>
 
     /**
      * @param action
      * @return void
      */
     public void forEachDerivative(BiConsumer&lt;GraphNode, ADAgent&gt; action) {
-<span class="pc bpc" id="L645" title="1 of 2 branches missed.">        if (_targets_derivatives == null) return;</span>
-<span class="fc" id="L646">        _targets_derivatives.forEach((t, o) -&gt; action.accept(t, o));</span>
-<span class="fc" id="L647">    }</span>
+<span class="pc bpc" id="L644" title="1 of 2 branches missed.">        if (_targets_derivatives == null) return;</span>
+<span class="fc" id="L645">        _targets_derivatives.forEach((t, o) -&gt; action.accept(t, o));</span>
+<span class="fc" id="L646">    }</span>
 
     /**
      * @param action
      * @return void
      */
     public void forEachTarget(Consumer&lt;GraphNode&gt; action) {
-<span class="fc bfc" id="L654" title="All 2 branches covered.">        if (_targets_derivatives == null) return;</span>
-<span class="fc" id="L655">        _targets_derivatives.forEach((t, o) -&gt; action.accept(t));</span>
-<span class="fc" id="L656">    }</span>
+<span class="fc bfc" id="L653" title="All 2 branches covered.">        if (_targets_derivatives == null) return;</span>
+<span class="fc" id="L654">        _targets_derivatives.forEach((t, o) -&gt; action.accept(t));</span>
+<span class="fc" id="L655">    }</span>
 
     /**
      * @param derivative
      * @param action
      */
     public void forEach(Tsr derivative, BiConsumer&lt;GraphNode, Tsr&gt; action) {
-<span class="pc bpc" id="L663" title="1 of 2 branches missed.">        if (_targets_derivatives == null) return;</span>
-<span class="fc" id="L664">        _targets_derivatives.forEach((t, o) -&gt; action.accept(t, MUL.activate(new Tsr[]{derivative, o.derivative()})));</span>
-<span class="fc" id="L665">    }</span>
+<span class="pc bpc" id="L662" title="1 of 2 branches missed.">        if (_targets_derivatives == null) return;</span>
+<span class="fc" id="L663">        _targets_derivatives.forEach((t, o) -&gt; action.accept(t, MUL.activate(new Tsr[]{derivative, o.derivative()})));</span>
+<span class="fc" id="L664">    }</span>
 
 
     /**
      * @return
      */
     public boolean hasDerivatives() {
-<span class="pc bpc" id="L672" title="3 of 4 branches missed.">        return (_targets_derivatives != null) &amp;&amp; _targets_derivatives.size() &gt; 0;</span>
+<span class="pc bpc" id="L671" title="3 of 4 branches missed.">        return (_targets_derivatives != null) &amp;&amp; _targets_derivatives.size() &gt; 0;</span>
     }
 
     public String type() {
-<span class="fc" id="L676">        String type = &quot;&quot;;</span>
-<span class="fc bfc" id="L677" title="All 2 branches covered.">        if (this.isLeave()) type += &quot;LEAVE&quot;;</span>
-<span class="fc" id="L678">        else type += &quot;BRANCH&quot;;</span>
-<span class="pc bpc" id="L679" title="1 of 2 branches missed.">        if (getPayload() == null) type = type + &quot; DELETED&quot;;</span>
-<span class="fc bfc" id="L680" title="All 2 branches covered.">        else if (getPayload().rqsGradient()) type += &quot; RQS GRADIENT&quot;;</span>
-<span class="fc" id="L681">        return type;</span>
+<span class="fc" id="L675">        String type = &quot;&quot;;</span>
+<span class="fc bfc" id="L676" title="All 2 branches covered.">        if (this.isLeave()) type += &quot;LEAVE&quot;;</span>
+<span class="fc" id="L677">        else type += &quot;BRANCH&quot;;</span>
+<span class="pc bpc" id="L678" title="1 of 2 branches missed.">        if (getPayload() == null) type = type + &quot; DELETED&quot;;</span>
+<span class="fc bfc" id="L679" title="All 2 branches covered.">        else if (getPayload().rqsGradient()) type += &quot; RQS GRADIENT&quot;;</span>
+<span class="fc" id="L680">        return type;</span>
     }
 
     @Override
     public String toString() {
-<span class="nc" id="L686">        return toString(&quot;&quot;);</span>
+<span class="nc" id="L685">        return toString(&quot;&quot;);</span>
     }
 
 
     public String toString(String m) {
-<span class="fc bfc" id="L691" title="All 2 branches covered.">        if (m.contains(&quot;g&quot;)) {</span>
-<span class="fc" id="L692">            return &quot;]&gt; LOCK: &quot; + lock() + &quot; |&gt; GRAPH:\n]\n&quot; + _toString(&quot;]    0&quot;, true) + &quot;\n]\n]|END|&gt;&quot;;</span>
+<span class="fc bfc" id="L690" title="All 2 branches covered.">        if (m.contains(&quot;g&quot;)) {</span>
+<span class="fc" id="L691">            return &quot;]&gt; LOCK: &quot; + lock() + &quot; |&gt; GRAPH:\n]\n&quot; + _toString(&quot;]    0&quot;, true) + &quot;\n]\n]|END|&gt;&quot;;</span>
         }
-<span class="pc bpc" id="L694" title="1 of 2 branches missed.">        if (m.contains(&quot;v&quot;)) {</span>
-<span class="fc" id="L695">            return &quot;(&quot; + this.type() + &quot;): [NID:&quot; + Long.toHexString(nid()) + &quot;]:&lt;(  &quot;</span>
-<span class="pc bpc" id="L696" title="1 of 4 branches missed.">                    + &quot;f&quot; + ((_function == null) ? &quot;(NONE)&quot; : _function) + &quot; =&gt; &quot; + ((getPayload() == null) ? &quot;NULL&quot; : getPayload().toString(&quot;cs&quot;)) + &quot;  )&gt;&quot;;</span>
+<span class="pc bpc" id="L693" title="1 of 2 branches missed.">        if (m.contains(&quot;v&quot;)) {</span>
+<span class="fc" id="L694">            return &quot;(&quot; + this.type() + &quot;): [NID:&quot; + Long.toHexString(nid()) + &quot;]:&lt;(  &quot;</span>
+<span class="pc bpc" id="L695" title="1 of 4 branches missed.">                    + &quot;f&quot; + ((_function == null) ? &quot;(NONE)&quot; : _function) + &quot; =&gt; &quot; + ((getPayload() == null) ? &quot;NULL&quot; : getPayload().toString(&quot;cs&quot;)) + &quot;  )&gt;&quot;;</span>
 
         } else {
-<span class="nc bnc" id="L699" title="All 2 branches missed.">            return &quot;[NID:&quot; + Long.toHexString(nid()) + &quot;]:( &quot; + ((getPayload() == null) ? &quot;NULL&quot; : getPayload().toString(&quot;cs&quot;)) + &quot; )&quot;;</span>
+<span class="nc bnc" id="L698" title="All 2 branches missed.">            return &quot;[NID:&quot; + Long.toHexString(nid()) + &quot;]:( &quot; + ((getPayload() == null) ? &quot;NULL&quot; : getPayload().toString(&quot;cs&quot;)) + &quot; )&quot;;</span>
         }
 
     }
 
     private String _toString(String deep, boolean isLast) {//int depth){
-<span class="fc bfc" id="L705" title="All 2 branches covered.">        String delimiter = ((isLast) ? (&quot;    &quot;) : (&quot;|   &quot;));</span>
-<span class="fc bfc" id="L706" title="All 2 branches covered.">        String arrow = ((char) 187) + &quot;&quot; + ((_parents != null) ? (String.valueOf(_parents.length)) : &quot;0&quot;) + ((char) 187);</span>
-<span class="fc" id="L707">        String asString = deep +</span>
-<span class="fc" id="L708">                arrow + toString(&quot;v&quot;);</span>
-<span class="fc" id="L709">        deep = deep.substring(0, deep.length() - 1);</span>
-<span class="fc bfc" id="L710" title="All 2 branches covered.">        if (_parents != null) {</span>
-<span class="fc bfc" id="L711" title="All 2 branches covered.">            asString += &quot;\n&quot; + deep + ((isLast) ? &quot;   \\\n&quot; : &quot;|  \\\n&quot;);</span>
-<span class="fc bfc" id="L712" title="All 2 branches covered.">            for (int i = 0; i &lt; _parents.length; i++) {</span>
-<span class="fc bfc" id="L713" title="All 2 branches covered.">                boolean last = (i == _parents.length - 1);</span>
-<span class="fc bfc" id="L714" title="All 2 branches covered.">                asString += ((i != 0) ? deep + delimiter + &quot;|\n&quot; : &quot;&quot;);</span>
-<span class="fc" id="L715">                asString += (_parents[i]._toString(deep + delimiter + i, last) + &quot;\n&quot;);</span>
+<span class="fc bfc" id="L704" title="All 2 branches covered.">        String delimiter = ((isLast) ? (&quot;    &quot;) : (&quot;|   &quot;));</span>
+<span class="fc bfc" id="L705" title="All 2 branches covered.">        String arrow = ((char) 187) + &quot;&quot; + ((_parents != null) ? (String.valueOf(_parents.length)) : &quot;0&quot;) + ((char) 187);</span>
+<span class="fc" id="L706">        String asString = deep +</span>
+<span class="fc" id="L707">                arrow + toString(&quot;v&quot;);</span>
+<span class="fc" id="L708">        deep = deep.substring(0, deep.length() - 1);</span>
+<span class="fc bfc" id="L709" title="All 2 branches covered.">        if (_parents != null) {</span>
+<span class="fc bfc" id="L710" title="All 2 branches covered.">            asString += &quot;\n&quot; + deep + ((isLast) ? &quot;   \\\n&quot; : &quot;|  \\\n&quot;);</span>
+<span class="fc bfc" id="L711" title="All 2 branches covered.">            for (int i = 0; i &lt; _parents.length; i++) {</span>
+<span class="fc bfc" id="L712" title="All 2 branches covered.">                boolean last = (i == _parents.length - 1);</span>
+<span class="fc bfc" id="L713" title="All 2 branches covered.">                asString += ((i != 0) ? deep + delimiter + &quot;|\n&quot; : &quot;&quot;);</span>
+<span class="fc" id="L714">                asString += (_parents[i]._toString(deep + delimiter + i, last) + &quot;\n&quot;);</span>
             }
-<span class="fc" id="L717">            asString = asString.substring(0, asString.length() - 1);</span>
+<span class="fc" id="L716">            asString = asString.substring(0, asString.length() - 1);</span>
         }
-<span class="fc" id="L719">        return asString;</span>
+<span class="fc" id="L718">        return asString;</span>
     }
 
 
