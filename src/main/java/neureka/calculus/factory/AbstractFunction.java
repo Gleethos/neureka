@@ -253,7 +253,7 @@ public abstract class AbstractFunction implements Function {
         } else if (_type.identifier().equals(",")) {
             int[] newForm = new int[_src.size() - 1];
             for (int i = 0; i < _src.size() - 1; i++) {
-                newForm[i] = (int) Tsr.io.getFrom(_src.get(i).activate(inputs), 0);
+                newForm[i] = (int) Tsr.IO.getFrom(_src.get(i).activate(inputs), 0);
             }
             if (d >= 0) {//reverse reshape:
                 int[] reversed = new int[newForm.length];

@@ -3,26 +3,35 @@
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
-<span class="fc" id="L6">public abstract class AbstractComponentOwner {</span>
+/**
+ *  This is the root precursor class to the final Tsr class from which
+ *  tensor instances can be created.
+ *  The inheritance model of a tensor is structured as follows:
+ *  Tsr inherits from AbstractTensor which inherits from AbstractComponentOwner
+ *  The inheritance model is linear, meaning that all classes involved
+ *  are not extended more than once.
+ *
+ */
+<span class="fc" id="L15">public abstract class AbstractComponentOwner {</span>
 
     /**
      *  (Tensor) components
      */
-<span class="fc" id="L11">    protected ArrayList&lt;Object&gt; _components = new ArrayList&lt;Object&gt;();</span>
+<span class="fc" id="L20">    protected ArrayList&lt;Object&gt; _components = new ArrayList&lt;Object&gt;();</span>
 
     /**
      * @param componentClass The type/class of the component which shall be found and returned.
      * @return The correct component or null if nothing has been found.
      */
     public Object find(Class componentClass) {
-<span class="fc bfc" id="L18" title="All 2 branches covered.">        if (_components != null) {</span>
-<span class="fc bfc" id="L19" title="All 2 branches covered.">            for (int Pi = 0; Pi &lt; _components.size(); Pi++) {</span>
-<span class="fc bfc" id="L20" title="All 2 branches covered.">                if (componentClass.isInstance(_components.get(Pi))) {</span>
-<span class="fc" id="L21">                    return _components.get(Pi);</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        if (_components != null) {</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">            for (int Pi = 0; Pi &lt; _components.size(); Pi++) {</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">                if (componentClass.isInstance(_components.get(Pi))) {</span>
+<span class="fc" id="L30">                    return _components.get(Pi);</span>
                 }
             }
         }
-<span class="fc" id="L25">        return null;</span>
+<span class="fc" id="L34">        return null;</span>
     }
 
     /**
@@ -31,15 +40,15 @@ import java.util.function.Consumer;
      * @return This very class.
      */
     public AbstractComponentOwner remove(Class componentClass) {
-<span class="fc" id="L34">        Object oldComponent = find(componentClass);</span>
-<span class="fc bfc" id="L35" title="All 2 branches covered.">        if (oldComponent != null) {</span>
-<span class="fc" id="L36">            _components.remove(oldComponent);</span>
-<span class="fc" id="L37">            _components.trimToSize();</span>
+<span class="fc" id="L43">        Object oldComponent = find(componentClass);</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        if (oldComponent != null) {</span>
+<span class="fc" id="L45">            _components.remove(oldComponent);</span>
+<span class="fc" id="L46">            _components.trimToSize();</span>
         }
-<span class="pc bpc" id="L39" title="1 of 4 branches missed.">        if (_components!=null &amp;&amp; _components.size() == 0) {</span>
-<span class="fc" id="L40">            _components = null;</span>
+<span class="pc bpc" id="L48" title="1 of 4 branches missed.">        if (_components!=null &amp;&amp; _components.size() == 0) {</span>
+<span class="fc" id="L49">            _components = null;</span>
         }
-<span class="fc" id="L42">        return this;</span>
+<span class="fc" id="L51">        return this;</span>
     }
 
     /**
@@ -48,7 +57,7 @@ import java.util.function.Consumer;
      * @return True if the component of the given type/class has been found.
      */
     public boolean has(Class componentClass) {
-<span class="fc bfc" id="L51" title="All 2 branches covered.">        return find(componentClass) != null;</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        return find(componentClass) != null;</span>
     }
 
     /**
@@ -57,19 +66,19 @@ import java.util.function.Consumer;
      * @return This very class.
      */
     public AbstractComponentOwner add(Object newComponent) {
-<span class="fc bfc" id="L60" title="All 2 branches covered.">        if (newComponent == null) return this;</span>
-<span class="fc" id="L61">        Object oldCompartment = null;</span>
-<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (_components != null) {</span>
-<span class="fc" id="L63">            oldCompartment = find(newComponent.getClass());</span>
-<span class="fc bfc" id="L64" title="All 2 branches covered.">            if (oldCompartment != null) {</span>
-<span class="fc" id="L65">                _components.remove(oldCompartment);</span>
-<span class="fc" id="L66">                _components.trimToSize();</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        if (newComponent == null) return this;</span>
+<span class="fc" id="L70">        Object oldCompartment = null;</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (_components != null) {</span>
+<span class="fc" id="L72">            oldCompartment = find(newComponent.getClass());</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">            if (oldCompartment != null) {</span>
+<span class="fc" id="L74">                _components.remove(oldCompartment);</span>
+<span class="fc" id="L75">                _components.trimToSize();</span>
             }
         } else {
-<span class="fc" id="L69">            _components = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L78">            _components = new ArrayList&lt;&gt;();</span>
         }
-<span class="fc" id="L71">        _components.add(_addOrReject(newComponent));</span>
-<span class="fc" id="L72">        return this;</span>
+<span class="fc" id="L80">        _components.add(_addOrReject(newComponent));</span>
+<span class="fc" id="L81">        return this;</span>
     }
 
     /**
@@ -85,12 +94,12 @@ import java.util.function.Consumer;
      * @return True if a component could be found, false otherwise.
      */
     public boolean forComponent(Class cc, Consumer&lt;Object&gt; action){
-<span class="fc" id="L88">        Object component = this.find(cc);</span>
-<span class="fc bfc" id="L89" title="All 2 branches covered.">        if(component!=null){</span>
-<span class="fc" id="L90">            action.accept(component);</span>
-<span class="fc" id="L91">            return true;</span>
+<span class="fc" id="L97">        Object component = this.find(cc);</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        if(component!=null){</span>
+<span class="fc" id="L99">            action.accept(component);</span>
+<span class="fc" id="L100">            return true;</span>
         } else {
-<span class="fc" id="L93">            return false;</span>
+<span class="fc" id="L102">            return false;</span>
         }
     }
 

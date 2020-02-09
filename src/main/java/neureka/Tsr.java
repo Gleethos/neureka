@@ -734,7 +734,7 @@ public class Tsr extends AbstractTensor<Tsr>
                 idxbase = (int[])key;
                 if(key != null) {
                     for(int i=0; i<this.rank(); i++) idxbase[i] = (idxbase[i]<0)?_shape[i]+idxbase[i]:idxbase[i];
-                    return io.getFrom(this, idxbase);
+                    return IO.getFrom(this, idxbase);
                 }
             } else {
                 boolean hasScale = false;
@@ -850,7 +850,7 @@ public class Tsr extends AbstractTensor<Tsr>
         return ranges.length+offset-1;
     }
     
-    public static class io
+    public static class IO
     {
         public static double getFrom(Tsr t, int i) {
             if (t.isEmpty() || t.isUndefined()) return 0;
@@ -907,7 +907,7 @@ public class Tsr extends AbstractTensor<Tsr>
                 int[] index = new int[t.shape().length];
                 int size = t.size();
                 for (int i = 0; i < size; i++) {
-                    io.subInto(t, index, io.getFrom(source, index));
+                    IO.subInto(t, index, IO.getFrom(source, index));
                     Utility.Indexing.increment(index, t.shape());
                 }
             }

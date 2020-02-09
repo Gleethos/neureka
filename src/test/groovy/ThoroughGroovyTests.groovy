@@ -662,38 +662,38 @@ class ThoroughGroovyTests
                 2.0, 7.0,
         ])
         Tsr v = new Tsr([2, 2], [1.0, -1.0, 1.0, -1.0])
-        Tsr.io.addInto(t, v)
+        Tsr.IO.addInto(t, v)
         assert t.toString().contains("[2x2]:(2.0, 3.0, 3.0, 6.0)")
 
-        Tsr.io.addInto(t, 2, 3.0)
+        Tsr.IO.addInto(t, 2, 3.0)
         assert t.toString().contains("[2x2]:(2.0, 3.0, 6.0, 6.0)")
 
         int[] idx = new int[2]
         idx[1] = 1
-        Tsr.io.addInto(t, idx, -9.0)
+        Tsr.IO.addInto(t, idx, -9.0)
         assert t.toString().contains("[2x2]:(2.0, 3.0, -3.0, 6.0)")
-        assert Tsr.io.getFrom(t, idx)==-3.0
+        assert Tsr.IO.getFrom(t, idx)==-3.0
 
         idx[0] = 1
-        Tsr.io.mulInto(t, idx, -1)
+        Tsr.IO.mulInto(t, idx, -1)
         assert t.toString().contains("[2x2]:(2.0, 3.0, -3.0, -6.0)")
 
-        Tsr.io.mulInto(t, 3, -2)
+        Tsr.IO.mulInto(t, 3, -2)
         assert t.toString().contains("[2x2]:(2.0, 3.0, -3.0, 12.0)")
 
-        Tsr.io.setInto(t, idx, 0.0)
+        Tsr.IO.setInto(t, idx, 0.0)
         assert t.toString().contains("[2x2]:(2.0, 3.0, -3.0, 0.0)")
 
-        Tsr.io.setInto(t, 2, 99.0)
+        Tsr.IO.setInto(t, 2, 99.0)
         assert t.toString().contains("[2x2]:(2.0, 3.0, 99.0, 0.0)")
         //---
-        Tsr.io.subInto(t, 2, 99.0)
+        Tsr.IO.subInto(t, 2, 99.0)
         assert t.toString().contains("[2x2]:(2.0, 3.0, 0.0, 0.0)")
         idx[0] = 0
-        Tsr.io.subInto(t, idx, -9.0)
+        Tsr.IO.subInto(t, idx, -9.0)
         assert t.toString().contains("[2x2]:(2.0, 3.0, 9.0, 0.0)")
 
-        Tsr.io.subInto(t, new Tsr([2, 2], [1, 2, 3, 4]))
+        Tsr.IO.subInto(t, new Tsr([2, 2], [1, 2, 3, 4]))
         assert t.toString().contains("[2x2]:(1.0, 1.0, 6.0, -4.0)")
 
         Neureka.Settings.Indexing.setLegacy(false)
