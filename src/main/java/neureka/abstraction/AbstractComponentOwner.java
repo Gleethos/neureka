@@ -1,12 +1,21 @@
-package neureka.utility;
+package neureka.abstraction;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
+/**
+ *  This is the root precursor class to the final Tsr class from which
+ *  tensor instances can be created.
+ *  The inheritance model of a tensor is structured as follows:
+ *  Tsr inherits from AbstractTensor which inherits from AbstractComponentOwner
+ *  The inheritance model is linear, meaning that all classes involved
+ *  are not extended more than once.
+ *
+ */
 public abstract class AbstractComponentOwner {
 
     /**
-     *  Tensor components
+     *  (Tensor) components
      */
     protected ArrayList<Object> _components = new ArrayList<Object>();
 
@@ -68,7 +77,7 @@ public abstract class AbstractComponentOwner {
         } else {
             _components = new ArrayList<>();
         }
-        _components.add(_add(newComponent));
+        _components.add(_addOrReject(newComponent));
         return this;
     }
 
@@ -76,7 +85,7 @@ public abstract class AbstractComponentOwner {
      * @param newComponent The component which should be added to the components list.
      * @return The same component or null if it has been rejected.
      */
-    protected abstract Object _add(Object newComponent);
+    protected abstract Object _addOrReject(Object newComponent);
 
     /**
      *

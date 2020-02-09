@@ -5,7 +5,7 @@ import neureka.acceleration.Device;
 
 import java.util.Collection;
 
-public class DummyDevice implements Device
+public class DummyDevice implements Device<Tsr>
 {
     @Override
     public void dispose() {

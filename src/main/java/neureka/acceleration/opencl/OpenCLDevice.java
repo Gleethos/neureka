@@ -47,21 +47,26 @@ public class OpenCLDevice extends AbstractDevice
      */
     private cl_command_queue _queue;
 
-    /**==============================================================================================================**/
+    //==================================================================================================================
 
+    /**
+     *
+     * @param platform
+     * @param did
+     */
     public OpenCLDevice(OpenCLPlatform platform, cl_device_id did)
     {
         _did = did;
         _platform = platform;
-        //System.out.println(this.name());
-        //System.out.println(this.type());
         // Create a command-queue for the selected device
         _queue = clCreateCommandQueue(platform.getContext(), did, 0, null);
         _reference_queue = new ReferenceQueue();
-
     }
-    //---
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized Collection<Tsr> tensors(){
         Collection<Object> collection = _mapping.keySet();
@@ -460,7 +465,7 @@ public class OpenCLDevice extends AbstractDevice
     public String type(){
         long deviceType = DeviceQuery.getLong(_did, CL_DEVICE_TYPE);
         if( (deviceType & CL_DEVICE_TYPE_CPU) != 0)
-            return "CPU";
+            return "_CPU";
         if( (deviceType & CL_DEVICE_TYPE_GPU) != 0)
             return "GPU";
         if( (deviceType & CL_DEVICE_TYPE_ACCELERATOR) != 0)

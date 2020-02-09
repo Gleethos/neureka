@@ -1,11 +1,10 @@
 package neureka.acceleration;
 
-import neureka.Tsr;
 import neureka.acceleration.opencl.OpenCLPlatform;
 
 import java.util.Collection;
 
-public interface Device
+public interface Device<Type>
 {
     static Device find(String name){
         //TODO: Device plugin finding!
@@ -24,31 +23,31 @@ public interface Device
 
     void dispose();
 
-    Device get(Tsr tensor);
+    Device get(Type tensor);
 
-    Device add(Tsr tensor);
+    Device add(Type tensor);
 
-    Device add(Tsr tensor, Tsr parent);
+    Device add(Type tensor, Type parent);
 
-    boolean has(Tsr tensor);
+    boolean has(Type tensor);
 
-    Device rmv(Tsr tensor);
+    Device rmv(Type tensor);
 
-    Device cleaning(Tsr tensor, Runnable action);
+    Device cleaning(Type tensor, Runnable action);
 
-    Device overwrite64(Tsr tensor, double[] value);
+    Device overwrite64(Type tensor, double[] value);
 
-    Device overwrite32(Tsr tensor, float[] value);
+    Device overwrite32(Type tensor, float[] value);
 
-    Device swap(Tsr former, Tsr replacement);
+    Device swap(Type former, Type replacement);
 
-    Device execute(Tsr[] tsrs, int f_id, int d);
+    Device execute(Type[] Types, int f_id, int d);
 
-    double[] value64Of(Tsr tensor);
+    double[] value64Of(Type tensor);
 
-    float[] value32Of(Tsr tensor);
+    float[] value32Of(Type tensor);
 
-    Collection<Tsr> tensors();
+    Collection<Type> tensors();
 
 
 

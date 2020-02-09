@@ -1,4 +1,5 @@
 neureka
+neureka.abstraction
 neureka.acceleration
 neureka.acceleration.opencl
 neureka.acceleration.opencl.utility

@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 <span class="fc" id="L6">public abstract class AbstractComponentOwner {</span>
 
     /**
-     *  Tensor components
+     *  (Tensor) components
      */
 <span class="fc" id="L11">    protected ArrayList&lt;Object&gt; _components = new ArrayList&lt;Object&gt;();</span>
 
@@ -68,7 +68,7 @@ import java.util.function.Consumer;
         } else {
 <span class="fc" id="L69">            _components = new ArrayList&lt;&gt;();</span>
         }
-<span class="fc" id="L71">        _components.add(_add(newComponent));</span>
+<span class="fc" id="L71">        _components.add(_addOrReject(newComponent));</span>
 <span class="fc" id="L72">        return this;</span>
     }
 
@@ -76,7 +76,7 @@ import java.util.function.Consumer;
      * @param newComponent The component which should be added to the components list.
      * @return The same component or null if it has been rejected.
      */
-    protected abstract Object _add(Object newComponent);
+    protected abstract Object _addOrReject(Object newComponent);
 
     /**
      *

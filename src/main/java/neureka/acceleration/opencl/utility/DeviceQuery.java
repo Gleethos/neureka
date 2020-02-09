@@ -16,6 +16,7 @@ public class DeviceQuery
     /**
      * The entry point of this program
      *
+     * @return
      */
     public static String query()
     {

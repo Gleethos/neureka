@@ -8,7 +8,7 @@ import neureka.autograd.GraphNode;
 import java.lang.ref.Cleaner;
 import java.lang.ref.ReferenceQueue;
 
-public abstract class AbstractDevice implements  Device, Component
+public abstract class AbstractDevice implements  Device<Tsr>, Component
 {
     private static Cleaner CLEANER = Cleaner.create();
     protected ReferenceQueue _reference_queue;
@@ -94,22 +94,22 @@ public abstract class AbstractDevice implements  Device, Component
                 switch(Function.TYPES.REGISTER(f_id)){
                     case "+":
                     case "sum":
-                        tsrs[0] = Tsr.Util.Create.newTsrLike(tsrs[1]).setValue(1.0f);
+                        tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue(1.0f);
                         break;
-                    case "-": tsrs[0] = Tsr.Util.Create.newTsrLike(tsrs[1]).setValue((d==0)?1.0f:-1.0f);
+                    case "-": tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue((d==0)?1.0f:-1.0f);
                         break;
                     case "^":
                         newTsrs = _util._subset(tsrs, 1,  2, tsrs.length-2);
                         if(d>0){
-                            newTsrs[0] =  Tsr.Util.Create.newTsrLike(tsrs[1]);
+                            newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);
                             Tsr inner = _execute_recursively(newTsrs, Function.TYPES.LOOKUP("*"), d-1);
-                            Tsr exp = _execute_recursively(new Tsr[]{Tsr.Util.Create.newTsrLike(tsrs[1]), inner, tsrs[d]}, Function.TYPES.LOOKUP("*"), -1);
+                            Tsr exp = _execute_recursively(new Tsr[]{Tsr.Create.newTsrLike(tsrs[1]), inner, tsrs[d]}, Function.TYPES.LOOKUP("*"), -1);
                             tsrs[0] =  _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], exp}, f_id, 1);
                             inner.delete();
                             exp.delete();
                         } else {
                             newTsrs = _util._subset(tsrs, 1,  2, tsrs.length-2);
-                            newTsrs[0] =  Tsr.Util.Create.newTsrLike(tsrs[1]);
+                            newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);
                             //for(Tsr t : newTsrs) if(!t.has(GraphNode.class))new GraphNode(null, new GraphLock(null, null), ()->t);
                             Tsr exp = _execute_recursively(newTsrs, Function.TYPES.LOOKUP("*"), -1);
                             tsrs[0] = _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], exp}, f_id, 0);
@@ -120,7 +120,7 @@ public abstract class AbstractDevice implements  Device, Component
                     case "prod":
                         newTsrs = _util._without(tsrs, 1+d);
                         if(newTsrs.length>2){
-                            newTsrs[0] = (newTsrs[0]==null)? Tsr.Util.Create.newTsrLike(tsrs[1]):newTsrs[0];
+                            newTsrs[0] = (newTsrs[0]==null)? Tsr.Create.newTsrLike(tsrs[1]):newTsrs[0];
                             tsrs[0] = _execute_recursively(newTsrs, Function.TYPES.LOOKUP("*"), -1);
                         } else {
                             tsrs[0] = newTsrs[1];
@@ -130,21 +130,21 @@ public abstract class AbstractDevice implements  Device, Component
                         Tsr a = null;
                         if(d>1){//[0][1][2][3][4]
                             newTsrs = _util._subset(tsrs, 1, 1, d+1);
-                            newTsrs[0] =  Tsr.Util.Create.newTsrLike(tsrs[1]);
+                            newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);
                             a = _execute_recursively(newTsrs, Function.TYPES.LOOKUP("/"), -1);
                         } else if(d==1){
                             a = tsrs[1];
                         } else if(d==0){
-                            a = Tsr.Util.Create.newTsrLike(tsrs[1], 1.0);
+                            a = Tsr.Create.newTsrLike(tsrs[1], 1.0);
                         }
                         Tsr b;
                         if((tsrs.length-(d+2))>1){//  12 / 3 / 0.5 / 4 / 2
                             newTsrs = _util._subset(tsrs, 2, d+2, tsrs.length-(d+2));//or (d+2)
-                            newTsrs[1] =  Tsr.Util.Create.newTsrLike(tsrs[1], 1.0);
+                            newTsrs[1] =  Tsr.Create.newTsrLike(tsrs[1], 1.0);
                             newTsrs[0] = newTsrs[1];
                             b = _execute_recursively(newTsrs, Function.TYPES.LOOKUP("/"), -1);
                         } else {
-                            b = Tsr.Util.Create.newTsrLike(tsrs[1], 1.0);
+                            b = Tsr.Create.newTsrLike(tsrs[1], 1.0);
                         }
                         _execute_recursively(new Tsr[]{tsrs[0], a, b}, Function.TYPES.LOOKUP("*"), -1);
                         _execute_recursively(new Tsr[]{tsrs[0], tsrs[0], tsrs[d+1]}, Function.TYPES.LOOKUP("/"), 1);
@@ -198,7 +198,7 @@ public abstract class AbstractDevice implements  Device, Component
         if(tsrs[0]==null)//Creating a new tensor:
         {
             int[] shp = (Function.TYPES.REGISTER(f_id).endsWith("x"))
-                    ? Tsr.Util.Indexing.shpOfCon(tsrs[1].shape(), tsrs[2].shape())
+                    ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].shape(), tsrs[2].shape())
                     : tsrs[1].shape();
             Tsr output = new Tsr(shp, 0.0);
             device.add(output);
@@ -232,7 +232,7 @@ public abstract class AbstractDevice implements  Device, Component
 
         public static Tsr[] _offsetted(Tsr[] tsrs, int offset){
             Tsr[] newTsrs = new Tsr[tsrs.length-offset];
-            newTsrs[0] = Tsr.Util.Create.newTsrLike(tsrs[1]);//new Tsr(tsrs[1].shape());
+            newTsrs[0] = Tsr.Create.newTsrLike(tsrs[1]);//new Tsr(tsrs[1].shape());
             if(!tsrs[1].has(GraphNode.class)&&tsrs[1]!=tsrs[0]){//Deleting intermediate results!
                 tsrs[1].delete();
                 tsrs[1] = null;

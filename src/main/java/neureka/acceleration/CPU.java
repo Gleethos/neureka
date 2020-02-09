@@ -7,8 +7,6 @@ import org.jetbrains.annotations.Contract;
 import java.util.Collection;
 
 public class CPU extends AbstractDevice {
-    public CPU() {
-    }
 
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, int f_id) {
@@ -83,7 +81,7 @@ public class CPU extends AbstractDevice {
             case "<": exec.activate_identity(tsrs[0], tsrs[1], d);break;
             case ">": exec.activate_identity(tsrs[1], tsrs[0], d);break;
             default:
-                throw new IllegalStateException("[CPU][enqueue]: Operation not found!");
+                throw new IllegalStateException("[_CPU][enqueue]: Operation not found!");
         }
     }
 
@@ -967,7 +965,7 @@ public class CPU extends AbstractDevice {
                         }//setInto _value in drn:
                         t0_value[t0_drn.i_of_idx(t0Idx)] = value;
                         //increment on drain:
-                        Tsr.Util.Indexing.increment(t0Idx, t0Shp);
+                        Tsr.Utility.Indexing.increment(t0Idx, t0Shp);
                         i++;
                     }
                 } else//---
@@ -1028,7 +1026,7 @@ public class CPU extends AbstractDevice {
                         //set value in drn:
                         t0_value[t0_drn.i_of_idx(t0Idx)] = value;
                         //increment on drain:
-                        Tsr.Util.Indexing.increment(t0Idx, t0Shp);
+                        Tsr.Utility.Indexing.increment(t0Idx, t0Shp);
                         i++;
                     }
                 }
@@ -1076,7 +1074,7 @@ public class CPU extends AbstractDevice {
                                 operation.execute(t0Idx, t1Idx, t2Idx);
 
                         //increment on drain:
-                        Tsr.Util.Indexing.increment(t0Idx, t0Shp);
+                        Tsr.Utility.Indexing.increment(t0Idx, t0Shp);
                         i++;
                     }
                 } else//---//Note: src2 is now former drain!
@@ -1125,7 +1123,7 @@ public class CPU extends AbstractDevice {
                         //set value in drn:
                         t0_value[t0_drn.i_of_idx(t0Idx)] = value;
                         //increment on drain:
-                        Tsr.Util.Indexing.increment(t0Idx, t0Shp);
+                        Tsr.Utility.Indexing.increment(t0Idx, t0Shp);
                         i++;
                     }
                 }
@@ -1149,7 +1147,7 @@ public class CPU extends AbstractDevice {
                     //setInto _value in drn:
                     t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, null);
                     //increment on drain:
-                    Tsr.Util.Indexing.increment(t0Idx, t0Shp);
+                    Tsr.Utility.Indexing.increment(t0Idx, t0Shp);
                     i++;
                 }
 

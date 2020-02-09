@@ -1,10 +1,18 @@
 package util;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.acceleration.CPU;
 import neureka.acceleration.Device;
+import neureka.calculus.factory.assembly.FunctionBuilder;
+import neureka.utility.DataHelper;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 
 public class NTester_Tensor extends NTester 
 {
@@ -76,14 +84,14 @@ public class NTester_Tensor extends NTester
 
 
     public int testTensorUtility_reshape(int[] dim, int[] newForm, int[] expected){
-        int[] result = Tsr.Util.Indexing.rearrange(dim, newForm);
+        int[] result = Tsr.Utility.Indexing.rearrange(dim, newForm);
         printSessionStart("Testing Tsr.indexing: dimension reshaping!");
         assertIsEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }
 
     public int testTensorUtility_translation(int[] dim, int[] expected){
-        int [] result =  Tsr.Util.Indexing.newTlnOf(dim);
+        int [] result =  Tsr.Utility.Indexing.newTlnOf(dim);
         printSessionStart("Testing Tsr.indexing: dimension _translation!");
         assertIsEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
@@ -91,8 +99,8 @@ public class NTester_Tensor extends NTester
 
     public int testTensCon(int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd){
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
-        int[] drnMxd  = Tsr.Util.Indexing.shpOfCon(frstShp, scndShp);
-        double[] rsltData = new double[Tsr.Util.Indexing.szeOfShp(drnMxd)];
+        int[] drnMxd  = Tsr.Utility.Indexing.shpOfCon(frstShp, scndShp);
+        double[] rsltData = new double[Tsr.Utility.Indexing.szeOfShp(drnMxd)];
         CPU.exec.convolve_multiply(
                 new Tsr(drnMxd, rsltData),
                 new Tsr(frstShp, frstData),
@@ -108,7 +116,7 @@ public class NTester_Tensor extends NTester
             double[] expctd, boolean first
     ){
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
-        int[] drnMxd  = Tsr.Util.Indexing.shpOfCon(frstShp, scndShp);
+        int[] drnMxd  = Tsr.Utility.Indexing.shpOfCon(frstShp, scndShp);
         CPU.exec.convolve_multiply_inverse(//inv
                 new Tsr(frstShp, frstData),
                 (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
@@ -120,8 +128,8 @@ public class NTester_Tensor extends NTester
 
     public int testTensBroadcast(int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd){
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
-        int[] drnMxd  = Tsr.Util.Indexing.shpOfBrc(frstShp, scndShp);
-        double[] rsltData = new double[Tsr.Util.Indexing.szeOfShp(drnMxd)];
+        int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
+        double[] rsltData = new double[Tsr.Utility.Indexing.szeOfShp(drnMxd)];
         CPU.exec.broadcast_multiply(
                 new Tsr(drnMxd, rsltData),
                 new Tsr(frstShp, frstData),
@@ -138,7 +146,7 @@ public class NTester_Tensor extends NTester
             double[] expctd, boolean first
     ){
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
-        int[] drnMxd  = Tsr.Util.Indexing.shpOfBrc(frstShp, scndShp);
+        int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
         CPU.exec.broadcast_multiply_inverse(//inv
                 new Tsr(frstShp, frstData),
                 (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
@@ -173,6 +181,8 @@ public class NTester_Tensor extends NTester
         }
         return (printSessionEnd()>0)?1:0;
     }
+
+
 
 
 }

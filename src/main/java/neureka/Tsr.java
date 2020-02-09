@@ -1,6 +1,5 @@
 package neureka;
 
-import neureka.acceleration.CPU;
 import neureka.acceleration.Device;
 import neureka.framing.Index;
 import neureka.framing.Relation;
@@ -9,75 +8,26 @@ import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.optimization.Optimizer;
-import neureka.utility.AbstractComponentOwner;
+import neureka.abstraction.AbstractTensor;
 import neureka.utility.DataHelper;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class Tsr extends AbstractComponentOwner
+public class Tsr extends AbstractTensor<Tsr>
 {
-    static {
-        CONFIGS = new WeakHashMap<>();
-        CPU = new CPU();
-    }
-
-    /**
-     *  Default device (host cpu)
-     */
-    private static Device CPU;
-
-    /**
-     *  Cached configuration
-     */
-    private static Map<Long, int[]> CONFIGS;
-
-    /**
-     *  Value data fields
-     */
-    private int[] _shape, _translation, _idxmap;
-    private Object _value;
-
-    /**
-     *  Flag Fields
-     */
-    private int _flags = 0;//Default
-    private final static int RQS_GRADIENT_MASK = 1;
-    private final static int IS_OUTSOURCED_MASK = 2;
-    private final static int IS_VIRTUAL_MASK = 4;
-
     //-----------------------------------------------------------------------
-
-    public boolean rqsGradient() {
-        return (_flags & RQS_GRADIENT_MASK) == RQS_GRADIENT_MASK;
-    }
-
+    @Override
     public Tsr setRqsGradient(boolean rqsGradient) {
-        if (rqsGradient() != rqsGradient) {
-            if (rqsGradient) {
-                _flags += RQS_GRADIENT_MASK;
-            } else {
-                this.remove(Tsr.class);
-                _flags -= RQS_GRADIENT_MASK;
-            }
-        }
+        if (rqsGradient() != rqsGradient && !rqsGradient) this.remove(Tsr.class);
+        _setRqsGradient(rqsGradient);
         return this;
     }
     //---
-    public boolean isOutsourced() {
-        return (_flags & IS_OUTSOURCED_MASK) == IS_OUTSOURCED_MASK;
-    }
-
+    @Override
     public Tsr setIsOutsourced(boolean isOutsourced) {
-        if (isOutsourced() != isOutsourced) {
-            if (isOutsourced) _flags += IS_OUTSOURCED_MASK;
-            else _flags -= IS_OUTSOURCED_MASK;
-        }
+        _setIsOutsourced(isOutsourced);
         if (isOutsourced) {
             _value = null;
         } else if (
@@ -97,19 +47,16 @@ public class Tsr extends AbstractComponentOwner
         return this;
     }
     //---
-    public boolean isVirtual() {
-        return (_flags & IS_VIRTUAL_MASK) == IS_VIRTUAL_MASK;
-    }
-
+    @Override
     public Tsr setIsVirtual(boolean isVirtual) {
         if (isVirtual() != isVirtual) {
             if(this.isOutsourced()){
-                if (!isVirtual) _flags -= IS_VIRTUAL_MASK;
+                if (!isVirtual) _setIsVirtual(isVirtual);
             } else {
                 double v = (_value==null)?0:(((this.is64())?((double[])_value)[0]:((float[])_value)[0]));
                 if (isVirtual) {
                     _value = new double[]{v};
-                    _flags += IS_VIRTUAL_MASK;
+                    //_flags += IS_VIRTUAL_MASK;
                     Relation parent = (Relation)find(Relation.class);
                     if(parent!=null) parent.foreachChild((c)->c._value=_value);
                 } else {
@@ -119,8 +66,8 @@ public class Tsr extends AbstractComponentOwner
                         if(this.is64()) ((double[])_value)[i] = v;
                         else ((float[])_value)[i] = (float)v;
                     }
-                    _flags -= IS_VIRTUAL_MASK;
                 }
+                _setIsVirtual(isVirtual);
             }
         } else if(isVirtual && _value==null){
             _value = new double[]{0};
@@ -131,33 +78,6 @@ public class Tsr extends AbstractComponentOwner
 
     //-----------------------------------------------------------------------
 
-    /**
-     * This method is executed when a new Component is added to the tensor.
-     * The public add method is implemented in the super class
-     * 'AbstractComponentOwner' from which this class inherits.
-     * In this super class the component logic is implemented.
-     *
-     * @param newComponent A component used to access features. (GraphNode, Index, Relation, int[], ...)
-     * @return The unchanged object or maybe in future versions: null (component rejected)
-     */
-    @Override
-    protected Object _add(Object newComponent){
-        newComponent = (newComponent instanceof int[]) ? _cached((int[]) newComponent) : newComponent;
-        if(newComponent instanceof Device){
-            if(!((Device)newComponent).has(this)){
-                ((Device)newComponent).add(this);
-            }
-        }
-        return newComponent;
-    }
-
-    /**
-     * @return the device on which this tensor is stored or null if it is not outsourced.
-     */
-    public Device device() {
-        if (this.isOutsourced()) return (Device) this.find(Device.class);
-        return CPU;
-    }
 
     public Tsr setValue64(double[] value){
         if(this.isOutsourced()) ((Device) this.find(Device.class)).overwrite64(this, value);
@@ -219,14 +139,6 @@ public class Tsr extends AbstractComponentOwner
             this.add(error).forComponent(Device.class, (d)->((Device)d).add(error));
         }
         return this;
-    }
-
-    public boolean is64(){
-        return _value instanceof double[];
-    }
-
-    public  boolean is32(){
-        return _value instanceof float[];
     }
 
     public Tsr to32() {
@@ -302,68 +214,6 @@ public class Tsr extends AbstractComponentOwner
         return this;
     }
 
-    public int[] shape() {
-        return _shape;
-    }
-
-    public int shape(int i){
-        return _shape[i];
-    }
-
-    public int rank(){
-        return _shape.length;
-    }
-
-    public int[] idxmap(){
-        return _idxmap;
-    }
-
-    public int[] translation() {
-        return _translation;
-    }
-
-    public int size() {
-        if (this.isEmpty()) return 0;
-        return Util.Indexing.szeOfShp(this.shape());
-    }
-
-    public boolean isEmpty() {
-        return _value == null && !this.isOutsourced();
-    }
-
-    public boolean isUndefined() {
-        return _shape == null;
-    }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    //GENERIC PROPERTIES :
-    //=========================
-    public boolean isSlice(){
-        Relation child = (Relation)find(Relation.class);
-        return (child!=null && child.hasParent());
-    }
-
-    public int sliceCount(){
-        Relation child = (Relation)find(Relation.class);
-        return (child!=null)?child.childCount():0;
-    }
-
-    public boolean isSliceParent(){
-        Relation parent = (Relation)find(Relation.class);
-        return (parent!=null && parent.hasChildren());
-    }
-
-    public boolean belongsToGraph() {
-        return this.has(GraphNode.class);
-    }
-
-    public boolean isLeave() {
-        return (!this.has(GraphNode.class)) || ((GraphNode) this.find(GraphNode.class)).isLeave();
-    }
-
-    public boolean isBranch() {
-        return !this.isLeave();
-    }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //DISPLAY :
@@ -412,8 +262,7 @@ public class Tsr extends AbstractComponentOwner
                 AtomicReference<String> enclosed = new AtomicReference<>("; ");
                 node.forEachDerivative((t, d) -> {
                     if(d.derivative()==null){
-                        enclosed.set(enclosed.get() +
-                                "->d(null), ");
+                        enclosed.set(enclosed.get() + "->d(null), ");
                     } else {
                         enclosed.set(enclosed.get() +
                                 base+"=>d|[ " +
@@ -435,10 +284,8 @@ public class Tsr extends AbstractComponentOwner
                         if(d.derivative()==null){
                             enclosed.set(enclosed.get() + "->d(null), ");
                         } else {
-                            enclosed.set(enclosed.get() +
-                                    "->d" + d.derivative()._toString(mode, deeper) + ", ");
+                            enclosed.set(enclosed.get() + "->d" + d.derivative()._toString(mode, deeper) + ", ");
                         }
-
                     });
                     asString += enclosed.get();
                 }
@@ -455,7 +302,7 @@ public class Tsr extends AbstractComponentOwner
         for (int i = 0; i < size; i++) {
             String vStr;
             if(format){
-                vStr = Util.Stringify.formatFP(v[(this.isVirtual()) ? 0 : _i_of_i(i)]);
+                vStr = Utility.Stringify.formatFP(v[(this.isVirtual()) ? 0 : _i_of_i(i)]);
             } else {
                 vStr = String.valueOf(v[(this.isVirtual()) ? 0 : _i_of_i(i)]);
             }
@@ -493,7 +340,7 @@ public class Tsr extends AbstractComponentOwner
                 List<Integer> shape = ((List)arg1);
                 int[] shp = new int[shape.size()];
                 for(int i=0; i<shp.length; i++) shp[i] = shape.get(i);
-                double[] value = new double[Util.Indexing.szeOfShp(shp)];//TODO: type evaluation
+                double[] value = new double[Utility.Indexing.szeOfShp(shp)];//TODO: type evaluation
                 for(int i=0; i<value.length; i++) value[i] = (Integer)range.get(i%range.size());
                 _construct(shp, value);
                 return;
@@ -532,7 +379,6 @@ public class Tsr extends AbstractComponentOwner
 
     private void _construct(int[] shape, String seed){
         _construct(shape);
-        //for(int i=0; i<this.size(); i++) ((double[])_value)[i] = DataHelper.getDoubleOf(DataHelper.longHash(seed+i));
         _value = DataHelper.seededDoubleArray((double[])_value, seed);
     }
 
@@ -561,7 +407,7 @@ public class Tsr extends AbstractComponentOwner
     private void _construct(Object[] args) {
         if(args==null || args.length==0)return;
         if(args[0] instanceof  Tsr && args.length==1){
-            inject(Util.Create.newTsrLike((Tsr)args[0]));
+            inject(Create.newTsrLike((Tsr)args[0]));
             return;
         }
         args[0] = (args[0] instanceof ArrayList)?((ArrayList)args[0]).toArray():args[0];
@@ -634,8 +480,8 @@ public class Tsr extends AbstractComponentOwner
     }
 
     private void _construct(int[] shape){
-        _value = new double[Util.Indexing.szeOfShp(shape)];
-        this.initialShape(shape);
+        _value = new double[Utility.Indexing.szeOfShp(shape)];
+        this._configureFromNewShape(shape);
     }
 
     public Tsr(int[] shape, double value) {
@@ -643,10 +489,10 @@ public class Tsr extends AbstractComponentOwner
     }
 
     private void _construct(int[] shape, double value){
-        int size = Util.Indexing.szeOfShp(shape);
+        int size = Utility.Indexing.szeOfShp(shape);
         _value = new double[1];
         this.setIsVirtual((size > 1));
-        this.initialShape(shape);
+        this._configureFromNewShape(shape);
         ((double[])_value)[0] = value;
     }
 
@@ -656,7 +502,7 @@ public class Tsr extends AbstractComponentOwner
 
     private void _construct(int[] shape, double[] value) {
         _value = value;
-        initialShape(shape);
+        _configureFromNewShape(shape);
     }
 
     /**
@@ -665,7 +511,7 @@ public class Tsr extends AbstractComponentOwner
     public Tsr(Tsr tensor, boolean cpy) {
         _value = (tensor.is64())?new double[tensor.size()]:new float[tensor.size()];
         _components = null;
-        _flags = 0;
+        _setFlags(0);
         int length = (tensor.is64())?((double[])_value).length:((float[])_value).length;
         if(cpy){
             if(tensor.is64()){
@@ -676,47 +522,9 @@ public class Tsr extends AbstractComponentOwner
                 if (length >= 0) System.arraycopy(value, 0, ((float[]) _value), 0, length);
             }
         }
-        initialShape(tensor.shape());
+        _configureFromNewShape(tensor.shape());
     }
 
-    /**
-     * @param newShape
-     * @return
-     */
-    public Tsr initialShape(int[] newShape) {
-        int size = Util.Indexing.szeOfShp(newShape);
-        _value = (_value==null)?new double[size]:_value;
-        int length = (this.is64())?((double[])_value).length:((float[])_value).length;
-        if (size != length && !this.isVirtual()) {
-            throw new IllegalArgumentException("[Tsr][_iniShape]: Size of shape does not match stored value64!");
-        }
-        _shape = _cached(newShape);
-        _translation = _cached(Util.Indexing.newTlnOf(newShape));
-        _idxmap = _translation;
-        return this;
-    }
-
-    private static int[] _cached(int[] data) {
-        long key = 0;
-        for (int i = 0; i < data.length; i++) {
-            if (data[i] <= 10)  key *= 10;
-            else if (data[i] <= 100) key *= 100;
-            else if (data[i] <= 1000) key *= 1000;
-            else if (data[i] <= 10000) key *= 10000;
-            else if (data[i] <= 100000) key *= 100000;
-            else if (data[i] <= 1000000) key *= 1000000;
-            else if (data[i] <= 10000000) key *= 10000000;
-            else if (data[i] <= 100000000) key *= 100000000;
-            key += Math.abs(data[i])+1;
-        }
-        int[] found = CONFIGS.get(key);
-        if (found != null) {
-            return found;
-        } else {
-            CONFIGS.put(key, data);
-            return data;
-        }
-    }
 
     //TRACKED COMPUTATION :
     //=========================
@@ -751,7 +559,7 @@ public class Tsr extends AbstractComponentOwner
         _idxmap = tensor._idxmap;
         _translation = tensor._translation;
         _components = tensor._components;
-        _flags = tensor._flags;
+        _setFlags(tensor._getFlags());
         if(_components!=null){//Inform components about their new owner:
             _components.forEach((c)->{if(c instanceof Component) ((Component)c).update(tensor, this);});
         }
@@ -760,14 +568,14 @@ public class Tsr extends AbstractComponentOwner
         tensor._idxmap = null;
         tensor._translation = null;
         tensor._components = null;
-        tensor._flags = -1;
+        tensor._setFlags(-1);
         return this;
     }
 
     /**
      *
-     * @param error
-     * @return
+     * @param error A tensor which is back-propagated to gradients. Must match the size og this tensor.
+     * @return The tensor on which this method was called.
      */
     public Tsr backward(Tsr error) {
         if(!forComponent(GraphNode.class, (node)->((GraphNode)node).backward(error))){
@@ -776,7 +584,12 @@ public class Tsr extends AbstractComponentOwner
         return this;
     }
 
-    public Tsr backward(double value){
+    /**
+     *
+     * @param value
+     * @return
+     */
+    public Tsr backward(double value) {
         backward(new Tsr(_shape, value));
         return this;
     }
@@ -797,7 +610,7 @@ public class Tsr extends AbstractComponentOwner
                 throw new IllegalStateException("Trying to delete a tensor which is part of a function graph and used as derivative!");
             }//n.extinguishLineageBy(node);
         });
-        _flags = -1;
+        _setFlags(-1);
         _value = null;
         _shape = null;
         _translation = null;
@@ -921,7 +734,7 @@ public class Tsr extends AbstractComponentOwner
                 idxbase = (int[])key;
                 if(key != null) {
                     for(int i=0; i<this.rank(); i++) idxbase[i] = (idxbase[i]<0)?_shape[i]+idxbase[i]:idxbase[i];
-                    return Util.io.getFrom(this, idxbase);
+                    return io.getFrom(this, idxbase);
                 }
             } else {
                 boolean hasScale = false;
@@ -945,7 +758,7 @@ public class Tsr extends AbstractComponentOwner
         Tsr subset = new Tsr();
         subset._value = this._value;
         subset._translation = this._translation;
-        subset._idxmap = _cached(Util.Indexing.newTlnOf(newShape));
+        subset._idxmap = _cached(Utility.Indexing.newTlnOf(newShape));
         subset._shape = _cached(newShape);
         if(idxbase.length==2*rank()){
             for(int i=rank(); i<idxbase.length; i++) idxbase[i] = (idxbase[i]==0)?1:idxbase[i];
@@ -1036,337 +849,148 @@ public class Tsr extends AbstractComponentOwner
         }
         return ranges.length+offset-1;
     }
-
-    public int i_of_idx(int[] idx) {
-        int i = 0;
-        int[] sliceCfg = null;
-        if (has(int[].class)) sliceCfg = (int[])find(int[].class);
-        for (int ii=0; ii<_shape.length; ii++) {
-            int scale = (sliceCfg==null || sliceCfg.length==rank()) ? 1 : sliceCfg[rank()+ii];
-            i += (idx[ii] * scale + ((sliceCfg==null) ? 0 : sliceCfg[ii])) * _translation[ii];
-        }
-        return i;
-    }
-
-    private int _i_of_i(int i){
-        return i_of_idx(idx_of_i(i));
-    }
-
-    public int[] idx_of_i(int i) {
-        int[] idx = new int[_shape.length];
-        if (Neureka.Settings.Indexing.legacy()){
-            for (int ii=rank()-1; ii>=0; ii--){
-                idx[ii] += i / _idxmap[ii];
-                i %= _idxmap[ii];
-            }
-        } else {
-            for (int ii=0; ii<rank(); ii++) {
-                idx[ii] += i / _idxmap[ii];
-                i %= _idxmap[ii];
-            }
-        }
-        return idx;
-    }
-
-    /**
-     *  Static methods.
-     */
-    public static class Util
+    
+    public static class io
     {
-        public static class io
-        {
-            public static double getFrom(Tsr t, int i) {
-                if (t.isEmpty() || t.isUndefined()) return 0;
-                else if (t.isVirtual()) return t.value64()[0];
-                return t.value64()[t._i_of_i(i)];
-            }
-
-            public static double getFrom(Tsr t, int[] idx) {
-                t.setIsVirtual(false);
-                return t.value64()[t.i_of_idx(idx)];
-            }
-
-            public static void setInto(Tsr t, int i, double value) {
-                t.setIsVirtual(false);
-                t.value64()[t._i_of_i(i)] = value;
-            }
-
-            public static void setInto(Tsr t, int[] idx, double value) {
-                t.setIsVirtual(false);
-                t.value64()[t.i_of_idx(idx)] = value;
-            }
-
-            public static void addInto(Tsr t, int i, double value) {
-                t.setIsVirtual(false);
-                t.value64()[t._i_of_i(i)] += value;
-            }
-
-            public static void addInto(Tsr t, int[] idx, double value) {
-                t.setIsVirtual(false);
-                t.value64()[t.i_of_idx(idx)] += value;
-            }
-
-            public static Tsr addInto(Tsr t, Tsr source) {
-                if (t.isVirtual() && source.isVirtual()) t.value64()[0] += source.value64()[0];
-                else FunctionBuilder.build("I[0]<-(I[0]+I[1])", false).activate(new Tsr[]{t, source});
-                return source;
-            }
-
-            public static void subInto(Tsr t, int i, double value) {
-                t.setIsVirtual(false);
-                t.value64()[t._i_of_i(i)] -= value;
-            }
-
-            public static void subInto(Tsr t, int[] idx, double value) {
-                t.setIsVirtual(false);
-                t.value64()[t.i_of_idx(idx)] -= value;
-            }
-
-            public static void subInto(Tsr t, Tsr source) {
-                if (t.isVirtual() && source.isVirtual()) {
-                    t.value64()[0] -= source.value64()[0];
-                } else {
-                    if (t.isVirtual()) t.setIsVirtual(false);
-                    int[] index = new int[t.shape().length];
-                    int size = t.size();
-                    for (int i = 0; i < size; i++) {
-                        io.subInto(t, index, io.getFrom(source, index));
-                        Indexing.increment(index, t.shape());
-                    }
-                }
-            }
-
-            public static void mulInto(Tsr t, int i, double value) {
-                t.setIsVirtual(false);
-                t.value64()[t._i_of_i(i)] *= value;
-            }
-
-            public static void mulInto(Tsr t, int[] idx, double value) {
-                t.setIsVirtual(false);
-                t.value64()[t.i_of_idx(idx)] *= value;
-            }
-
+        public static double getFrom(Tsr t, int i) {
+            if (t.isEmpty() || t.isUndefined()) return 0;
+            else if (t.isVirtual()) return t.value64()[0];
+            return t.value64()[t._i_of_i(i)];
         }
 
-        public static class Exec
-        {
-            public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr) {
-                tensor = (newTsr) ? new Tsr(tensor, true) : tensor;
-                tensor._shape = _cached(Indexing._shpCheck(Indexing.rearrange(tensor._shape, newForm), tensor));
-                tensor._translation = _cached(Indexing._rearrange(tensor._translation, tensor._shape, newForm));
-                tensor._idxmap =  _cached(Indexing.newTlnOf(tensor._shape));
-                int[] sliceCfg = null;
-                if (tensor.has(int[].class)) sliceCfg = (int[])tensor.find(int[].class);
-                if (sliceCfg!=null){
-                    int[] newSliceConfig = new int[sliceCfg.length];
+        public static double getFrom(Tsr t, int[] idx) {
+            t.setIsVirtual(false);
+            return t.value64()[t.i_of_idx(idx)];
+        }
+
+        public static void setInto(Tsr t, int i, double value) {
+            t.setIsVirtual(false);
+            t.value64()[t._i_of_i(i)] = value;
+        }
+
+        public static void setInto(Tsr t, int[] idx, double value) {
+            t.setIsVirtual(false);
+            t.value64()[t.i_of_idx(idx)] = value;
+        }
+
+        public static void addInto(Tsr t, int i, double value) {
+            t.setIsVirtual(false);
+            t.value64()[t._i_of_i(i)] += value;
+        }
+
+        public static void addInto(Tsr t, int[] idx, double value) {
+            t.setIsVirtual(false);
+            t.value64()[t.i_of_idx(idx)] += value;
+        }
+
+        public static Tsr addInto(Tsr t, Tsr source) {
+            if (t.isVirtual() && source.isVirtual()) t.value64()[0] += source.value64()[0];
+            else FunctionBuilder.build("I[0]<-(I[0]+I[1])", false).activate(new Tsr[]{t, source});
+            return source;
+        }
+
+        public static void subInto(Tsr t, int i, double value) {
+            t.setIsVirtual(false);
+            t.value64()[t._i_of_i(i)] -= value;
+        }
+
+        public static void subInto(Tsr t, int[] idx, double value) {
+            t.setIsVirtual(false);
+            t.value64()[t.i_of_idx(idx)] -= value;
+        }
+
+        public static void subInto(Tsr t, Tsr source) {
+            if (t.isVirtual() && source.isVirtual()) {
+                t.value64()[0] -= source.value64()[0];
+            } else {
+                if (t.isVirtual()) t.setIsVirtual(false);
+                int[] index = new int[t.shape().length];
+                int size = t.size();
+                for (int i = 0; i < size; i++) {
+                    io.subInto(t, index, io.getFrom(source, index));
+                    Utility.Indexing.increment(index, t.shape());
+                }
+            }
+        }
+
+        public static void mulInto(Tsr t, int i, double value) {
+            t.setIsVirtual(false);
+            t.value64()[t._i_of_i(i)] *= value;
+        }
+
+        public static void mulInto(Tsr t, int[] idx, double value) {
+            t.setIsVirtual(false);
+            t.value64()[t.i_of_idx(idx)] *= value;
+        }
+
+    }
+
+    public static class Exec
+    {
+        public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr) {
+            tensor = (newTsr) ? new Tsr(tensor, true) : tensor;
+            tensor._shape = _cached(Utility.Indexing.shpCheck(Utility.Indexing.rearrange(tensor._shape, newForm), tensor));
+            tensor._translation = _cached(Utility.Indexing.rearrange(tensor._translation, tensor._shape, newForm));
+            tensor._idxmap =  _cached(Utility.Indexing.newTlnOf(tensor._shape));
+            int[] sliceCfg = null;
+            if (tensor.has(int[].class)) sliceCfg = (int[])tensor.find(int[].class);
+            if (sliceCfg!=null){
+                int[] newSliceConfig = new int[sliceCfg.length];
+                for (int i=0; i<newForm.length; i++){
+                    newSliceConfig[i] = sliceCfg[newForm[i]];
+                }
+                if (sliceCfg.length!=tensor.rank()){
                     for (int i=0; i<newForm.length; i++){
-                        newSliceConfig[i] = sliceCfg[newForm[i]];
+                        newSliceConfig[tensor.rank()+i] = sliceCfg[tensor.rank()+newForm[i]];
                     }
-                    if (sliceCfg.length!=tensor.rank()){
-                        for (int i=0; i<newForm.length; i++){
-                            newSliceConfig[tensor.rank()+i] = sliceCfg[tensor.rank()+newForm[i]];
-                        }
-                    }
-                    tensor.add(newSliceConfig);
                 }
-                return tensor;
+                tensor.add(newSliceConfig);
             }
-
+            return tensor;
         }
 
-        public static class Create
-        {
-            public  static Tsr E(int[] shape){
-                return new Tsr(shape, 2.7182818284590452353602874713527);
-            }
+    }
 
-            public static Tsr newRandom(int[] shape){
-                return newRandom(shape, 8701252152903546L);
-            }
-
-            public static Tsr newRandom(int[] shape, long seed){
-                int size = Indexing.szeOfShp(shape);
-                //DataHelper.newSeededDoubleArray(seed, size);
-                //double[] value = new double[size];
-                //for (int i=0; i<size; i++) value[i] = DataHelper.getDoubleOf(seed+i);
-                return new Tsr(shape, DataHelper.newSeededDoubleArray(seed, size));
-            }
-
-            public static Tsr newTsrLike(Tsr template, double value) {
-                Tsr t = _newEmptyLike(template);
-                if (template.is32()) t.setValue((float)value);
-                else t.setValue(value);
-                if (template.isOutsourced()) ((Device)template.find(Device.class)).add(t);
-                return t;
-            }
-
-            public static Tsr newTsrLike(Tsr template) {//The output tensor will not have gradients!
-                Tsr t = _newEmptyLike(template);
-                if (template.is32()) t.setValue32(new float[template.size()]);
-                else t.setValue64(new double[template.size()]);
-                if (template.isOutsourced()) ((Device)template.find(Device.class)).add(t);
-                return t;
-            }
-
-            private static Tsr _newEmptyLike(Tsr template) {
-                Tsr t = new Tsr();
-                t._shape = template._shape;
-                t._idxmap = template._idxmap;
-                t._translation = template.translation();
-                return t;
-            }
-
+    public static class Create
+    {
+        public  static Tsr E(int[] shape){
+            return new Tsr(shape, 2.7182818284590452353602874713527);
         }
 
-        public static class Stringify
-        {
-            @Contract(pure = true)
-            public static String formatFP(double v){
-                DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.US);
-                DecimalFormat Formatter = new DecimalFormat("##0.0##E0", formatSymbols);
-                String vStr = String.valueOf(v);
-                if (vStr.length()>7){
-                    if (vStr.substring(0, 2).equals("0.")){
-                        vStr = vStr.substring(0, 7)+"E0";
-                    } else if(vStr.substring(0, 3).equals("-0.")){
-                        vStr = vStr.substring(0, 8)+"E0";
-                    } else {
-                        vStr = Formatter.format(v);
-                        vStr = (!vStr.contains(".0E0"))?vStr:vStr.replace(".0E0",".0");
-                        vStr = (vStr.contains("."))?vStr:vStr.replace("E0",".0");
-                    }
-                }
-                return vStr;
-            }
-
-            @Contract(pure = true)
-            private static String _strShp(int[] shp) {
-                String str = "";
-                for(int i=0; i<shp.length; i++) str += shp[i] + ((i != shp.length - 1) ? ", " : "");
-                return "[" + str + "]";
-            }
-
+        public static Tsr newRandom(int[] shape){
+            return newRandom(shape, 8701252152903546L);
         }
 
-        /**
-         * Indexing methods.
-         */
-        public static class Indexing
-        {
-            @Contract(pure = true)
-            public static void increment(@NotNull int[] shpIdx, @NotNull int[] shape) {
-                int i;
-                if (Neureka.Settings.Indexing.legacy()) i = 0;
-                else i = shape.length-1;
-                while (i >= 0 && i < shape.length) i = _incrementAt(i, shpIdx, shape);
-            }
+        public static Tsr newRandom(int[] shape, long seed){
+            int size = Utility.Indexing.szeOfShp(shape);
+            //DataHelper.newSeededDoubleArray(seed, size);
+            //double[] value = new double[size];
+            //for (int i=0; i<size; i++) value[i] = DataHelper.getDoubleOf(seed+i);
+            return new Tsr(shape, DataHelper.newSeededDoubleArray(seed, size));
+        }
 
-            @Contract(pure = true)
-            private static int _incrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
-                if(Neureka.Settings.Indexing.legacy()){
-                    if (shpIdx[i] < (shape[i])) {
-                        shpIdx[i]++;
-                        if (shpIdx[i] == (shape[i])) {
-                            shpIdx[i] = 0;
-                            i++;
-                        } else {
-                            i = -1;
-                        }
-                    } else {
-                        i++;
-                    }
-                    return i;
-                } else {
-                    if (shpIdx[i] < (shape[i])) {
-                        shpIdx[i]++;
-                        if (shpIdx[i] == (shape[i])) {
-                            shpIdx[i] = 0;
-                            i--;
-                        } else {
-                            i = -1;
-                        }
-                    } else {
-                        i--;
-                    }
-                    return i;
-                }
-            }
+        public static Tsr newTsrLike(Tsr template, double value) {
+            Tsr t = _newEmptyLike(template);
+            if (template.is32()) t.setValue((float)value);
+            else t.setValue(value);
+            if (template.isOutsourced()) ((Device)template.find(Device.class)).add(t);
+            return t;
+        }
 
-            @Contract(pure = true)
-            public static int[] newTlnOf(int[] shape) {
-                int[] tln = new int[shape.length];
-                int prod = 1;
-                if(Neureka.Settings.Indexing.legacy()){
-                    for (int i = 0; i < tln.length; i++) {
-                        tln[i] = prod;
-                        prod *= shape[i];
-                    }
-                } else {
-                    for (int i = tln.length-1; i >= 0; i--) {
-                        tln[i] = prod;
-                        prod *= shape[i];
-                    }
-                }
-                return tln;
-            }
+        public static Tsr newTsrLike(Tsr template) {//The output tensor will not have gradients!
+            Tsr t = _newEmptyLike(template);
+            if (template.is32()) t.setValue32(new float[template.size()]);
+            else t.setValue64(new double[template.size()]);
+            if (template.isOutsourced()) ((Device)template.find(Device.class)).add(t);
+            return t;
+        }
 
-            @Contract(pure = true)
-            public static int[] rearrange(int[] array, @NotNull int[] ptr) {
-                int[] newShp = new int[ptr.length];
-                for (int i = 0; i < ptr.length; i++) {
-                    if (ptr[i] < 0) newShp[i] = Math.abs(ptr[i]);
-                    else if (ptr[i] >= 0) newShp[i] = array[ptr[i]];
-                }
-                return newShp;
-            }
-
-            @Contract(pure = true)
-            private static int[] _shpCheck(int[] newShp, Tsr t) {
-                if (szeOfShp(newShp) != t.size()) {
-                    throw new IllegalArgumentException(
-                            "[Tsr][shpCheck(int[] newShp, Tsr t)]: New shape does not match tensor size!" +
-                            " (" + Stringify._strShp(newShp) + ((szeOfShp(newShp) < t.size()) ? "<" : ">") + Stringify._strShp(t.shape()) + ")");
-                }
-                return newShp;
-            }
-
-            @Contract(pure = true)
-            private static int[] _rearrange(int[] tln, int[] shp, @NotNull int[] newForm) {
-                int[] shpTln = newTlnOf(shp);
-                int[] newTln = new int[newForm.length];
-                for (int i = 0; i < newForm.length; i++) {
-                    if (newForm[i] < 0) newTln[i] = shpTln[i];
-                    else if (newForm[i] >= 0) newTln[i] = tln[newForm[i]];
-                }
-                return newTln;
-            }
-
-            @Contract(pure = true)
-            public static int[] shpOfCon(int[] shp1, int[] shp2) {
-                int[] shape = new int[(shp1.length + shp2.length) / 2];
-                for (int i = 0; i < shp1.length && i < shp2.length; i++) shape[i] = Math.abs(shp1[i] - shp2[i]) + 1;
-                return shape;
-            }
-
-            @Contract(pure = true)
-            public static int[] shpOfBrc(int[] shp1, int[] shp2) {
-                int[] shape = new int[(shp1.length + shp2.length) / 2];
-                for (int i = 0; i < shp1.length && i < shp2.length; i++) {
-                    shape[i] = Math.max(shp1[i], shp2[i]);
-                    if(Math.min(shp1[i], shp2[i])!=1&&Math.max(shp1[i], shp2[i])!=shape[i]){
-                        throw new IllegalStateException("Broadcast not possible. Shapes do not match!");
-                    }
-                }
-                return shape;
-            }
-
-            @Contract(pure = true)
-            public static int szeOfShp(int[] shape) {
-                int size = 1;
-                for (int i : shape) size *= i;
-                return size;
-            }
-
+        private static Tsr _newEmptyLike(Tsr template) {
+            Tsr t = new Tsr();
+            t._shape = template._shape;
+            t._idxmap = template._idxmap;
+            t._translation = template.translation();
+            return t;
         }
 
     }

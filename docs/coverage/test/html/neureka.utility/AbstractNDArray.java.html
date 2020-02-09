@@ -14,11 +14,343 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
-<span class="nc" id="L17">public abstract class AbstractNDArray&lt;Type&gt; extends AbstractComponentOwner{</span>
+<span class="fc" id="L17">public abstract class AbstractNDArray&lt;Type&gt; extends AbstractComponentOwner{</span>
+
+    static {
+<span class="fc" id="L20">        CONFIGS = new WeakHashMap&lt;&gt;();</span>
+<span class="fc" id="L21">        CPU = new CPU();</span>
+<span class="fc" id="L22">    }</span>
+
+    /**
+     *  Default device (host cpu)
+     */
+    protected static Device CPU;
+
+    /**
+     *  Cached configuration
+     */
+    protected static Map&lt;Long, int[]&gt; CONFIGS;
+
+    /**
+     *  Value data fields
+     */
+    protected int[] _shape, _translation, _idxmap;
+    protected Object _value;
+
+    /**
+     *  Flag Fields
+     */
+<span class="fc" id="L43">    protected int _flags = 0;//Default</span>
+    protected final static int RQS_GRADIENT_MASK = 1;
+    protected final static int IS_OUTSOURCED_MASK = 2;
+    protected final static int IS_VIRTUAL_MASK = 4;
+
+//-----------------------------------------------------------------------
+
+    public boolean rqsGradient() {
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        return (_flags &amp; RQS_GRADIENT_MASK) == RQS_GRADIENT_MASK;</span>
+    }
+
+    public Type setRqsGradient(boolean rqsGradient) {
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (rqsGradient() != rqsGradient) {</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">            if (rqsGradient) {</span>
+<span class="fc" id="L57">                _flags += RQS_GRADIENT_MASK;</span>
+            } else {
+<span class="fc" id="L59">                this.remove(Tsr.class);</span>
+<span class="fc" id="L60">                _flags -= RQS_GRADIENT_MASK;</span>
+            }
+        }
+<span class="fc" id="L63">        return (Type)this;</span>
+    }
+    //---
+    public boolean isOutsourced() {
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        return (_flags &amp; IS_OUTSOURCED_MASK) == IS_OUTSOURCED_MASK;</span>
+    }
+
+    public Type setIsOutsourced(boolean isOutsourced) {
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (isOutsourced() != isOutsourced) {</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">            if (isOutsourced) _flags += IS_OUTSOURCED_MASK;</span>
+<span class="fc" id="L73">            else _flags -= IS_OUTSOURCED_MASK;</span>
+        }
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (isOutsourced) {</span>
+<span class="fc" id="L76">            _value = null;</span>
+<span class="fc" id="L77">        } else if (</span>
+<span class="pc bpc" id="L78" title="1 of 4 branches missed.">                !forComponent( Device.class, (d)-&gt;{</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">                    if (((Device)d).has(this)) ((Device)d).get(this);</span>
+<span class="fc" id="L80">                    this.remove(Device.class);</span>
+<span class="fc" id="L81">                    forComponent(Tsr.class, (gradient)-&gt;</span>
+<span class="nc" id="L82">                            ((Tsr) gradient).forComponent(Device.class, (gd)-&gt;{</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">                                if (((Device)gd).has((Tsr)gradient)) ((Device)gd).get((Tsr) gradient);</span>
+<span class="nc" id="L84">                                ((Tsr) gradient).remove(Device.class);</span>
+<span class="nc" id="L85">                            })</span>
+                    );
+<span class="fc" id="L87">                }) &amp;&amp; _value==null</span>
+        ){
+<span class="fc" id="L89">            setIsVirtual(true);</span>
+        }
+<span class="fc" id="L91">        return (Type)this;</span>
+    }
+    //---
+    public boolean isVirtual() {
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        return (_flags &amp; IS_VIRTUAL_MASK) == IS_VIRTUAL_MASK;</span>
+    }
+
+    public Type setIsVirtual(boolean isVirtual) {
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (isVirtual() != isVirtual) {</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">            if(this.isOutsourced()){</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">                if (!isVirtual) _flags -= IS_VIRTUAL_MASK;</span>
+            } else {
+<span class="pc bpc" id="L103" title="1 of 4 branches missed.">                double v = (_value==null)?0:(((this.is64())?((double[])_value)[0]:((float[])_value)[0]));</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">                if (isVirtual) {</span>
+<span class="fc" id="L105">                    _value = new double[]{v};</span>
+<span class="fc" id="L106">                    _flags += IS_VIRTUAL_MASK;</span>
+<span class="fc" id="L107">                    Relation parent = (Relation)find(Relation.class);</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">                    if(parent!=null) parent.foreachChild((c)-&gt;c._value=_value);</span>
+<span class="fc" id="L109">                } else {</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">                    _value = (this.is64())?new double[this.size()]:new float[this.size()];</span>
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">                    int length = (this.is64())?((double[])_value).length:((float[])_value).length;</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">                    for (int i = 0; i &lt; length; i++) {</span>
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">                        if(this.is64()) ((double[])_value)[i] = v;</span>
+<span class="nc" id="L114">                        else ((float[])_value)[i] = (float)v;</span>
+                    }
+<span class="fc" id="L116">                    _flags -= IS_VIRTUAL_MASK;</span>
+                }
+<span class="fc" id="L118">            }</span>
+<span class="pc bpc" id="L119" title="1 of 4 branches missed.">        } else if(isVirtual &amp;&amp; _value==null){</span>
+<span class="fc" id="L120">            _value = new double[]{0};</span>
+        }
+<span class="fc" id="L122">        return (Type)this;</span>
+    }
 
 
+    //-----------------------------------------------------------------------
+
+    /**
+     * This method is executed when a new Component is added to the tensor.
+     * The public add method is implemented in the super class
+     * 'AbstractComponentOwner' from which this class inherits.
+     * In this super class the component logic is implemented.
+     *
+     * @param newComponent A component used to access features. (GraphNode, Index, Relation, int[], ...)
+     * @return The unchanged object or maybe in future versions: null (component rejected)
+     */
+    @Override
+    protected Object _add(Object newComponent){
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        newComponent = (newComponent instanceof int[]) ? _cached((int[]) newComponent) : newComponent;</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        if(newComponent instanceof Device){</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">            if(!((Device)newComponent).has(this)){</span>
+<span class="fc" id="L142">                ((Device)newComponent).add(this);</span>
+            }
+        }
+<span class="fc" id="L145">        return newComponent;</span>
+    }
+
+    protected static int[] _cached(int[] data) {
+<span class="fc" id="L149">        long key = 0;</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">        for (int i = 0; i &lt; data.length; i++) {</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">            if (data[i] &lt;= 10)  key *= 10;</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">            else if (data[i] &lt;= 100) key *= 100;</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">            else if (data[i] &lt;= 1000) key *= 1000;</span>
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">            else if (data[i] &lt;= 10000) key *= 10000;</span>
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">            else if (data[i] &lt;= 100000) key *= 100000;</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">            else if (data[i] &lt;= 1000000) key *= 1000000;</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">            else if (data[i] &lt;= 10000000) key *= 10000000;</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">            else if (data[i] &lt;= 100000000) key *= 100000000;</span>
+<span class="fc" id="L159">            key += Math.abs(data[i])+1;</span>
+        }
+<span class="fc" id="L161">        int[] found = CONFIGS.get(key);</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">        if (found != null) {</span>
+<span class="fc" id="L163">            return found;</span>
+        } else {
+<span class="fc" id="L165">            CONFIGS.put(key, data);</span>
+<span class="fc" id="L166">            return data;</span>
+        }
+    }
 
 
+    /**
+     * @return the device on which this tensor is stored or null if it is not outsourced.
+     */
+    public Device device() {
+<span class="fc bfc" id="L175" title="All 2 branches covered.">        if (this.isOutsourced()) return (Device) this.find(Device.class);</span>
+<span class="fc" id="L176">        return CPU;</span>
+    }
 
+    public Type setValue64(double[] value){
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if(this.isOutsourced()) ((Device) this.find(Device.class)).overwrite64(this, value);</span>
+<span class="fc" id="L181">        else _value = value;</span>
+<span class="fc" id="L182">        return (Type)this;</span>
+    }
+
+    public Type setValue32(float[] value){
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">        if(this.isOutsourced()) ((Device) this.find(Device.class)).overwrite32(this, value);</span>
+<span class="fc" id="L187">        else _value = value;</span>
+<span class="fc" id="L188">        return (Type)this;</span>
+    }
+
+    public Type setValue(Object value){
+<span class="fc bfc" id="L192" title="All 2 branches covered.">        if(value instanceof float[]) this.setValue32((float[])value);</span>
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">        else if(value instanceof  double[]) this.setValue64((double[])value);</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">        else if(value instanceof Float) {</span>
+<span class="fc" id="L195">            this.setIsVirtual(true);</span>
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">            if(this.is32()){</span>
+<span class="nc" id="L197">                ((float[])_value)[0] = ((Float)value).floatValue();</span>
+            } else {
+<span class="fc" id="L199">                ((double[])_value)[0] = ((Float)value).doubleValue();</span>
+            }
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">        } else if(value instanceof Double){</span>
+<span class="fc" id="L202">            this.setIsVirtual(true);</span>
+<span class="pc bpc" id="L203" title="1 of 2 branches missed.">            if(this.is64()){</span>
+<span class="fc" id="L204">                ((double[])_value)[0] = ((Double)value).doubleValue();</span>
+            } else {
+<span class="nc" id="L206">                ((float[])_value)[0] = ((Double)value).floatValue();</span>
+            }
+        }
+<span class="fc" id="L209">        return (Type)this;</span>
+    }
+
+    public Object getValue(){
+<span class="pc bpc" id="L213" title="1 of 2 branches missed.">        if(this.isOutsourced()){</span>
+<span class="nc" id="L214">            Device device = ((Device)find(Device.class));</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">            return (this.is32())?device.value32Of(this):device.value64Of(this);</span>
+        }
+<span class="fc" id="L217">        return _value;</span>
+    }
+
+    public double[] gradient64() {
+<span class="fc" id="L221">        Tsr gradient = (Tsr)this.find(Tsr.class);</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">        if(gradient==null) return null;</span>
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">        return (this.is32())?DataHelper.floatToDouble(gradient.value32()):gradient.value64();</span>
+    }
+
+    public float[] gradient32(){
+<span class="nc" id="L227">        Tsr gradient = (Tsr)this.find(Tsr.class);</span>
+<span class="nc bnc" id="L228" title="All 2 branches missed.">        if(gradient==null) return null;</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">        return (this.is64())?DataHelper.doubleToFloat((double[])gradient.value64()):(float[])gradient.value32();</span>
+    }
+
+    public Type addToGradient(Type error) {
+<span class="fc bfc" id="L233" title="All 2 branches covered.">        if(!forComponent(Tsr.class, (g)-&gt;{</span>
+<span class="fc" id="L234">            this.add(FunctionBuilder.build(&quot;I[0]&lt;-(I[0]+I[1])&quot;, false).activate(new Tsr[]{(Tsr)g, (Tsr)error}));</span>
+<span class="fc" id="L235">        })){</span>
+<span class="fc" id="L236">            this.add(error).forComponent(Device.class, (d)-&gt;((Device)d).add(error));</span>
+        }
+<span class="fc" id="L238">        return (Type)this;</span>
+    }
+
+    public boolean is64(){
+<span class="fc" id="L242">        return _value instanceof double[];</span>
+    }
+
+    public  boolean is32(){
+<span class="fc" id="L246">        return _value instanceof float[];</span>
+    }
+
+    public Type to32() {
+<span class="pc bpc" id="L250" title="1 of 2 branches missed.">        if(this.is64()){</span>
+<span class="fc" id="L251">            Device device = (Device) this.find(Device.class);</span>
+<span class="pc bpc" id="L252" title="1 of 2 branches missed.">            if(device!=null) device.get(this);</span>
+<span class="fc" id="L253">            _value = DataHelper.doubleToFloat((double[])_value);</span>
+<span class="pc" id="L254">            forComponent(Tsr.class, (g)-&gt;((Tsr)g).to32());</span>
+<span class="pc bpc" id="L255" title="1 of 2 branches missed.">            if(device!=null) device.add(this);</span>
+        }
+<span class="fc" id="L257">        return (Type)this;</span>
+    }
+
+    public Type to64() {
+<span class="pc bpc" id="L261" title="1 of 2 branches missed.">        if(this.is32()){</span>
+<span class="fc" id="L262">            Device device = (Device) this.find(Device.class);</span>
+<span class="pc bpc" id="L263" title="1 of 2 branches missed.">            if(device!=null) device.get(this);</span>
+<span class="fc" id="L264">            _value = DataHelper.floatToDouble((float[])_value);</span>
+<span class="pc" id="L265">            forComponent(Tsr.class, (g)-&gt;((Tsr)g).to64());</span>
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">            if(device!=null) device.add(this);</span>
+        }
+<span class="fc" id="L268">        return (Type)this;</span>
+    }
+
+    public double value64(int i) {
+<span class="pc bpc" id="L272" title="1 of 2 branches missed.">        if(this.isVirtual()){</span>
+<span class="pc bpc" id="L273" title="1 of 2 branches missed.">            if(this.is64()) return ((double[])_value)[0];</span>
+<span class="nc" id="L274">            else return ((float[])_value)[0];</span>
+        } else {
+<span class="nc bnc" id="L276" title="All 2 branches missed.">            if(this.is64()) return ((double[])_value)[i];</span>
+<span class="nc" id="L277">            else return ((float[])_value)[i];</span>
+        }
+    }
+
+    public double[] value64() {
+<span class="pc bpc" id="L282" title="1 of 6 branches missed.">        if (_value == null &amp;&amp; this.isOutsourced() &amp;&amp; this.has(Device.class)) {</span>
+<span class="fc" id="L283">            return ((Device) this.find(Device.class)).value64Of(this);</span>
+        }
+<span class="fc bfc" id="L285" title="All 2 branches covered.">        double[] newValue = (this.is64())?(double[])_value: DataHelper.floatToDouble((float[])_value);</span>
+<span class="fc bfc" id="L286" title="All 4 branches covered.">        if (this.isVirtual() &amp;&amp; newValue!=null) {</span>
+<span class="fc" id="L287">            newValue = new double[this.size()];</span>
+<span class="pc bpc" id="L288" title="1 of 2 branches missed.">            double[] value = (this.is64())?(double[])_value:DataHelper.floatToDouble((float[])_value);</span>
+<span class="fc bfc" id="L289" title="All 2 branches covered.">            for (int i = 0; i &lt; newValue.length; i++) newValue[i] = value[0];</span>
+        }
+<span class="fc" id="L291">        return newValue;</span>
+    }
+
+    public float value32(int i) {
+<span class="pc bpc" id="L295" title="1 of 2 branches missed.">        if(this.isVirtual()){</span>
+<span class="nc bnc" id="L296" title="All 2 branches missed.">            if(this.is64()) return (float) ((double[])_value)[0];</span>
+<span class="nc" id="L297">            else return ((float[])_value)[0];</span>
+        } else {
+<span class="fc bfc" id="L299" title="All 2 branches covered.">            if(this.is64()) return (float) ((double[])_value)[i];</span>
+<span class="fc" id="L300">            else return ((float[])_value)[i];</span>
+        }
+    }
+
+    public float[] value32() {
+<span class="pc bpc" id="L305" title="1 of 6 branches missed.">        if (_value == null &amp;&amp; this.isOutsourced() &amp;&amp; this.has(Device.class)) {</span>
+<span class="fc" id="L306">            return ((Device) this.find(Device.class)).value32Of(this);</span>
+        }
+<span class="fc bfc" id="L308" title="All 2 branches covered.">        float[] newValue = (this.is64())?DataHelper.doubleToFloat((double[])_value):(float[])_value;</span>
+<span class="pc bpc" id="L309" title="1 of 4 branches missed.">        if (this.isVirtual() &amp;&amp; newValue!=null) {</span>
+<span class="nc" id="L310">            newValue = new float[this.size()];</span>
+<span class="nc bnc" id="L311" title="All 2 branches missed.">            for (int i = 0; i &lt; newValue.length; i++) newValue[i] = newValue[0];</span>
+        }
+<span class="fc" id="L313">        return newValue;</span>
+    }
+
+    public Type setValue(double[] newValue) {
+<span class="fc" id="L317">        _value = newValue;</span>
+<span class="pc bpc" id="L318" title="3 of 4 branches missed.">        if (this.isOutsourced() &amp;&amp; newValue != null) ((Device) this.find(Device.class)).add(this);</span>
+<span class="fc" id="L319">        return (Type)this;</span>
+    }
+
+    public int[] shape() {
+<span class="fc" id="L323">        return _shape;</span>
+    }
+
+    public int shape(int i){
+<span class="fc" id="L327">        return _shape[i];</span>
+    }
+
+    public int rank(){
+<span class="fc" id="L331">        return _shape.length;</span>
+    }
+
+    public int[] idxmap(){
+<span class="fc" id="L335">        return _idxmap;</span>
+    }
+
+    public int[] translation() {
+<span class="fc" id="L339">        return _translation;</span>
+    }
+
+    public int size() {
+<span class="pc bpc" id="L343" title="1 of 2 branches missed.">        if (this.isEmpty()) return 0;</span>
+<span class="fc" id="L344">        return Tsr.Util.Indexing.szeOfShp(this.shape());</span>
+    }
+
+    public boolean isEmpty() {
+<span class="fc bfc" id="L348" title="All 4 branches covered.">        return _value == null &amp;&amp; !this.isOutsourced();</span>
+    }
+
+    public boolean isUndefined() {
+<span class="fc bfc" id="L352" title="All 2 branches covered.">        return _shape == null;</span>
+    }
+    
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
