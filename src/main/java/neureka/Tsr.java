@@ -1,5 +1,6 @@
 package neureka;
 
+import neureka.abstraction.AbstractComponentOwner;
 import neureka.acceleration.Device;
 import neureka.framing.Index;
 import neureka.framing.Relation;
@@ -606,9 +607,9 @@ public class Tsr extends AbstractTensor<Tsr>
     public Tsr delete() {
         forComponent(Device.class, (d)->((Device)d).rmv(this));
         forComponent(GraphNode.class, (n)->{
-            if(((GraphNode)n).isUsedAsDerivative()){//&| !node.isVirtual()
+            if(((GraphNode)n).isUsedAsDerivative()) {
                 throw new IllegalStateException("Trying to delete a tensor which is part of a function graph and used as derivative!");
-            }//n.extinguishLineageBy(node);
+            }
         });
         _setFlags(-1);
         _value = null;
@@ -672,7 +673,7 @@ public class Tsr extends AbstractTensor<Tsr>
         return (this.hashCode()==other.hashCode());
     }
 
-    public Tsr label(String[][] labels){
+    public Tsr label(String[][] labels) {
         Index index = (Index)find(Index.class);
         if(index==null){
             index = new Index(this.rank());
@@ -687,19 +688,15 @@ public class Tsr extends AbstractTensor<Tsr>
         }
         return this;
     }
+
     public Tsr label(List<List> labels){
         Index index = (Index)find(Index.class);
-        if(index==null){
-            index = new Index(this.rank());
-            add(index);
-        }
-        for(int i=0; i<labels.size(); i++){
-            if(labels.get(i)!=null){
-                for(int ii=0; ii<labels.get(i).size(); ii++){
-                    if(labels.get(i).get(ii)!=null) index.set(labels.get(i).get(ii), i, ii);
-                }
-            }
-        }
+        if(index==null) add(new Index(labels));
+        return this;
+    }
+
+    public Tsr label(Map<Object, List<Object>> labels){
+        this.add(new Index(labels, this));
         return this;
     }
 
@@ -717,9 +714,11 @@ public class Tsr extends AbstractTensor<Tsr>
         if(valueIsDeviceVisitor) ((Device)value.find(Device.class)).get(value);
         return this;
     }
+
     public double getAt(int[] idx){
         return value64()[i_of_idx(idx)];
     }
+
     public Object getAt(Object key) {
         if(key==null) return this;
         if(key instanceof List) if(((List)key).size()==0) return this;

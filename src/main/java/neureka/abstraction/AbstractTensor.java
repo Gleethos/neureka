@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.acceleration.CPU;
 import neureka.acceleration.Device;
 import neureka.autograd.GraphNode;
+import neureka.framing.Index;
 import neureka.framing.Relation;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -297,11 +298,27 @@ public abstract class AbstractTensor<InstanceType> extends AbstractComponentOwne
     // Direct Access to component (Device)
 
     /**
-     * @return the device on which this tensor is stored or null if it is not outsourced.
+     * @return The device on which this tensor is stored or 'CPU' if it is not outsourced.
      */
     public Device device() {
         if (this.isOutsourced()) return (Device) this.find(Device.class);
         return _CPU;
+    }
+
+    /**
+     *
+     * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
+     */
+    public GraphNode graphNode(){
+        return (GraphNode) find(GraphNode.class);
+    }
+
+    /**
+     *
+     * @return Custom Index object.
+     */
+    public Index index(){
+        return (Index) find(Index.class);
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

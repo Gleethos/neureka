@@ -1,48 +1,167 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Index.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.framing</a> &gt; <span class="el_source">Index.java</span></div><h1>Index.java</h1><pre class="source lang-java linenums">package neureka.framing;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import neureka.Tsr;
+
+import java.util.*;
+import java.util.function.Function;
 
 public class Index {
 
     /*
         index is a 2d array.
-
      */
 
-    private Map&lt;Object, Integer&gt;[] _mapping;
+    private Map&lt;Object, Map&lt;Object, Integer&gt;&gt; _mapping;
 
-<span class="fc" id="L17">    public Index(int size){</span>
-<span class="fc" id="L18">        _mapping = new Map[size];//new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L19" title="All 2 branches covered.">        for(int i=0; i&lt;size; i++) _mapping[i] = (new HashMap&lt;&gt;());</span>
-<span class="fc" id="L20">    }</span>
+<span class="fc" id="L16">    public Index(List&lt;List&gt; labels){</span>
+<span class="fc" id="L17">        _mapping = new LinkedHashMap&lt;&gt;(labels.size());</span>
+<span class="fc bfc" id="L18" title="All 2 branches covered.">        for(int i=0; i&lt;labels.size(); i++) _mapping.put(i, new LinkedHashMap&lt;&gt;());</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">        for(int i=0; i&lt;labels.size(); i++){</span>
+<span class="pc bpc" id="L20" title="1 of 2 branches missed.">            if(labels.get(i)!=null){</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">                for(int ii=0; ii&lt;labels.get(i).size(); ii++){</span>
+<span class="pc bpc" id="L22" title="1 of 2 branches missed.">                    if(labels.get(i).get(ii)!=null) set(labels.get(i).get(ii), i, ii);</span>
+                }
+            }
+        }
+<span class="fc" id="L26">    }</span>
+
+<span class="nc" id="L28">    public Index(int size) {</span>
+<span class="nc" id="L29">        _mapping = new LinkedHashMap&lt;&gt;(size);</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        for(int i=0; i&lt;size; i++) _mapping.put(i, new LinkedHashMap&lt;&gt;());</span>
+<span class="nc" id="L31">    }</span>
+
+<span class="fc" id="L33">    public Index(Map&lt;Object, List&lt;Object&gt;&gt; labels, Tsr host){</span>
+<span class="fc" id="L34">        _mapping = new LinkedHashMap&lt;&gt;(labels.size()*3);</span>
+<span class="fc" id="L35">        int[] index = {0};</span>
+<span class="fc" id="L36">        labels.forEach((k, v)-&gt;{</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">            if(v!=null){</span>
+<span class="fc" id="L38">                Map&lt;Object, Integer&gt; idxmap = new LinkedHashMap&lt;&gt;(v.size()*3);</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">                for(int i=0; i&lt;v.size(); i++) idxmap.put(v.get(i), i);</span>
+<span class="fc" id="L40">                _mapping.put(k, idxmap);</span>
+<span class="fc" id="L41">            } else {</span>
+<span class="fc" id="L42">                int size = host.shape()[index[0]];</span>
+<span class="fc" id="L43">                Map&lt;Object, Integer&gt; idxmap = new LinkedHashMap&lt;&gt;(size);</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">                for(int i=0; i&lt;size; i++) idxmap.put(i, i);</span>
+<span class="fc" id="L45">                _mapping.put(k, idxmap);</span>
+            }
+<span class="fc" id="L47">            index[0]++;</span>
+<span class="fc" id="L48">        });</span>
+        //Object[] asArray = axisLabels.toArray();
+        //_mapping = new HashMap&lt;&gt;(axisLabels.size());
+        //for(int i=0; i&lt;axisLabels.size(); i++) _mapping.put(asArray[i], new HashMap&lt;&gt;());//[i] = (new HashMap&lt;&gt;());
+<span class="fc" id="L52">    }</span>
 
     public int[] get(List&lt;Object&gt; keys){
-<span class="nc" id="L23">        return get(keys.toArray(new Object[keys.size()]));</span>
+<span class="nc" id="L55">        return get(keys.toArray(new Object[keys.size()]));</span>
     }
 
     public int[] get(Object[] keys){
-<span class="nc" id="L27">        int[] idx = new int[_mapping.length];</span>
-<span class="nc bnc" id="L28" title="All 2 branches missed.">        for(int i=0; i&lt;idx.length; i++) idx[i] = _mapping[i].get(keys[i]);</span>
-<span class="nc" id="L29">        return idx;</span>
+<span class="nc" id="L59">        int[] idx = new int[keys.length];//_mapping.length];</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        for(int i=0; i&lt;idx.length; i++) idx[i] = _mapping.get(i).get(keys[i]);</span>
+<span class="nc" id="L61">        return idx;</span>
     }
 
-    public int get(Object key, int axis){
-<span class="fc" id="L33">        return _mapping[axis].get(key);</span>
+    public int get(Object key, Object axis){
+<span class="fc" id="L65">        return _mapping.get(axis).get(key);</span>
     }
 
-    public void set(Object indexKey, int axis, int index){
-<span class="fc" id="L37">        _mapping[axis].put(indexKey, index);</span>
-<span class="fc" id="L38">    }</span>
+    public void set(Object indexKey, Object axis, int index){
+<span class="fc" id="L69">        _mapping.get(axis).put(indexKey, index);</span>
+<span class="fc" id="L70">    }</span>
 
-    public List&lt;Object&gt; keysOf(int axis, int index){
-<span class="nc" id="L41">        List&lt;Object&gt; keys = new ArrayList&lt;&gt;();</span>
-<span class="nc bnc" id="L42" title="All 2 branches missed.">        _mapping[axis].forEach((k, v)-&gt;{if(v==index) keys.add(k);});</span>
-<span class="nc" id="L43">        return keys;</span>
+    public List&lt;Object&gt; keysOf(Object axis, int index){
+<span class="nc" id="L73">        List&lt;Object&gt; keys = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        _mapping.get(axis).forEach((k, v)-&gt;{if(v==index) keys.add(k);});</span>
+<span class="nc" id="L75">        return keys;</span>
     }
 
+    private String _fixed(String str, int size){
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        if(str.length()&lt;size){</span>
+<span class="fc" id="L80">            int first = size/2;</span>
+<span class="fc" id="L81">            int second = size - first;</span>
+<span class="fc" id="L82">            first -= str.length()/2;</span>
+<span class="fc" id="L83">            second -= str.length()-str.length()/2;</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            for (int i=0; i&lt;first; i++) str = &quot; &quot;+str;</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">            for (int i=0; i&lt;second; i++) str += &quot; &quot;;</span>
+        }
+<span class="fc" id="L87">        return str;</span>
+    }
+
+
+    @Override
+    public String toString(){
+<span class="fc" id="L93">        final int WIDTH = 16;</span>
+<span class="fc" id="L94">        final String WALL = &quot; | &quot;;</span>
+<span class="fc" id="L95">        final String HEADLINE = &quot;=&quot;;</span>
+<span class="fc" id="L96">        final String ROWLINE = &quot;-&quot;;</span>
+<span class="fc" id="L97">        final String CROSS = &quot;+&quot;;</span>
+
+<span class="fc" id="L99">        int indexShift = (WALL.length()/2);</span>
+<span class="fc" id="L100">        int crossMod = WIDTH+WALL.length();</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        Function&lt;Integer, Boolean&gt; isCross = (i)-&gt;(i-indexShift)%crossMod==0;</span>
+
+<span class="fc" id="L103">        StringBuilder builder = new StringBuilder();</span>
+
+        //builder.append(&quot;Tensor Index: axis/indexes\n&quot;);
+
+<span class="fc" id="L107">        builder.append(WALL);</span>
+
+<span class="fc" id="L109">        int[] axisLabelSizes = new int[_mapping.size()];</span>
+<span class="fc" id="L110">        int[] axisCounter = {0};</span>
+<span class="fc" id="L111">        _mapping.forEach((k, v)-&gt;{</span>
+<span class="fc" id="L112">            String axisHeader = k.toString();</span>
+<span class="fc" id="L113">            axisHeader = _fixed(axisHeader, WIDTH);</span>
+<span class="fc" id="L114">            axisLabelSizes[axisCounter[0]] = axisHeader.length();</span>
+<span class="fc" id="L115">            builder.append(axisHeader);</span>
+<span class="fc" id="L116">            builder.append(WALL);</span>
+<span class="fc" id="L117">            axisCounter[0]++;</span>
+<span class="fc" id="L118">        });</span>
+<span class="fc" id="L119">        int lineLength = builder.length();</span>
+<span class="fc" id="L120">        builder.append(&quot;\n&quot;);</span>
+<span class="fc bfc" id="L121" title="All 4 branches covered.">        for(int i=0; i&lt;lineLength; i++) builder.append((isCross.apply(i))?CROSS:HEADLINE);</span>
+<span class="fc" id="L122">        builder.append(&quot;\n&quot;);</span>
+<span class="fc" id="L123">        boolean[] hasMoreIndexes = {true};</span>
+<span class="fc" id="L124">        int[] depth = {0};</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        while (hasMoreIndexes[0]){</span>
+<span class="fc" id="L126">            axisCounter[0] = 0;</span>
+<span class="fc" id="L127">            Object[] keyOfDepth = {null};</span>
+<span class="fc" id="L128">            builder.append(WALL);</span>
+<span class="fc" id="L129">            _mapping.forEach((k, v)-&gt;{</span>
+<span class="fc" id="L130">                keyOfDepth[0] = null;</span>
+                //if(v!=null){
+<span class="fc" id="L132">                    v.forEach((ik, iv)-&gt;{</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">                        if(iv.intValue()==depth[0]){</span>
+<span class="fc" id="L134">                            keyOfDepth[0] = ik;</span>
+                        }
+<span class="fc" id="L136">                    });</span>
+                //}
+<span class="fc bfc" id="L138" title="All 2 branches covered.">                if(keyOfDepth[0]!=null){</span>
+<span class="fc" id="L139">                    builder.append(_fixed((keyOfDepth[0]).toString(), WIDTH));</span>
+                } else {
+                    //for(int i=0; i&lt;axisLabelSizes[axisCounter[0]]; i++) builder.append(&quot; &quot;);
+<span class="fc" id="L142">                    builder.append(_fixed(&quot;---&quot;, WIDTH));</span>
+                }
+<span class="fc" id="L144">                builder.append(WALL);</span>
+<span class="fc" id="L145">                axisCounter[0] ++;</span>
+<span class="fc" id="L146">            });</span>
+<span class="fc" id="L147">            depth[0]++;</span>
+<span class="fc" id="L148">            builder.append(&quot;\n&quot;);</span>
+<span class="fc bfc" id="L149" title="All 4 branches covered.">            for(int i=0; i&lt;lineLength; i++) builder.append((isCross.apply(i))?CROSS:ROWLINE);</span>
+<span class="fc" id="L150">            builder.append(&quot;\n&quot;);</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">            if(keyOfDepth[0]==null) hasMoreIndexes[0] = false;</span>
+<span class="fc" id="L152">        }</span>
+
+<span class="fc" id="L154">        StringBuilder result = new StringBuilder().append(&quot;\nTensor Index: axis/indexes&quot;);</span>
+<span class="fc" id="L155">        result.append(&quot;\n&quot;);</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">        for(int i=0; i&lt;lineLength; i++) result.append(HEADLINE);</span>
+<span class="fc" id="L157">        result.append(&quot;\n&quot;);</span>
+
+<span class="fc" id="L159">        result.append(builder);</span>
+
+
+<span class="fc" id="L162">        return result.toString();</span>
+
+    }
 
 
 
