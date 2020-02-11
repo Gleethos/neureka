@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JITProp.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.autograd</a> &gt; <span class="el_source">JITProp.java</span></div><h1>JITProp.java</h1><pre class="source lang-java linenums">package neureka.autograd;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class JITProp
@@ -10,55 +9,55 @@ public class JITProp
 
     private  Set&lt;GraphNode&gt; _pending;
 
-<span class="fc" id="L13">    public JITProp(Set&lt;GraphNode&gt; pendings){//Map&lt;GraphNode, PendingError&gt; pendings){</span>
-<span class="fc" id="L14">        _pending = pendings;</span>
-<span class="fc" id="L15">    }</span>
+<span class="fc" id="L12">    public JITProp(Set&lt;GraphNode&gt; pendings){//Map&lt;GraphNode, PendingError&gt; pendings){</span>
+<span class="fc" id="L13">        _pending = pendings;</span>
+<span class="fc" id="L14">    }</span>
 
     /**
      *
      * @param pendings
      */
     public void addPending(Set&lt;GraphNode&gt; pendings){//Map&lt;GraphNode, PendingError&gt; pendings){
-<span class="nc bnc" id="L22" title="All 2 branches missed.">        if(!isDone()) throw new IllegalStateException(&quot;[JITProp][addPending]: Trying to add pending errors to JITProp which is done.&quot;);</span>
-<span class="nc" id="L23">        _pending.addAll(pendings);</span>
-<span class="nc" id="L24">    }</span>
+<span class="nc bnc" id="L21" title="All 2 branches missed.">        if(!isDone()) throw new IllegalStateException(&quot;[JITProp][addPending]: Trying to add pending errors to JITProp which is done.&quot;);</span>
+<span class="nc" id="L22">        _pending.addAll(pendings);</span>
+<span class="nc" id="L23">    }</span>
 
     /**
      *
      * @param finishedJITProps
      */
     public void noteFinished(GraphNode finishedJITProps){
-<span class="pc bpc" id="L31" title="1 of 2 branches missed.">        if(_finished==null){</span>
-<span class="fc" id="L32">            _finished = new HashSet&lt;&gt;();// finishedJITProps.keySet();</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if(_finished==null){</span>
+<span class="fc" id="L31">            _finished = new HashSet&lt;&gt;();// finishedJITProps.keySet();</span>
         }
-<span class="fc" id="L34">        _finished.add(finishedJITProps);//.addAll(finishedJITProps.keySet());</span>
+<span class="fc" id="L33">        _finished.add(finishedJITProps);//.addAll(finishedJITProps.keySet());</span>
 
-<span class="fc" id="L36">    }</span>
+<span class="fc" id="L35">    }</span>
 
     public Set&lt;GraphNode&gt; finished(){
-<span class="nc" id="L39">        return _finished;</span>
+<span class="nc" id="L38">        return _finished;</span>
     }
 
     /**
      *
      */
     public void execute(){
-<span class="fc" id="L46">        _pending.forEach((n)-&gt;{</span>
-<span class="pc bpc" id="L47" title="1 of 4 branches missed.">            if(_finished==null || !_finished.contains(n)){</span>
-<span class="fc" id="L48">                PendingError pe = n.getAndRemovePendingError();</span>
-<span class="pc bpc" id="L49" title="1 of 2 branches missed.">                if(!pe.isFullyAccumulated()) throw new IllegalStateException(&quot;[JITProp][execute]: Pending error has not received expected accumulation.&quot;);</span>
-<span class="fc" id="L50">                n.backwardJIT(pe.getAccumulatedError());//Continue backprop recursively!</span>
+<span class="fc" id="L45">        _pending.forEach((n)-&gt;{</span>
+<span class="pc bpc" id="L46" title="1 of 4 branches missed.">            if(_finished==null || !_finished.contains(n)){</span>
+<span class="fc" id="L47">                PendingError pe = n.getAndRemovePendingError();</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">                if(!pe.isFullyAccumulated()) throw new IllegalStateException(&quot;[JITProp][execute]: Pending error has not received expected accumulation.&quot;);</span>
+<span class="fc" id="L49">                n.backwardJIT(pe.getAccumulatedError());//Continue backprop recursively!</span>
             }
-<span class="fc" id="L52">        });</span>
-<span class="fc" id="L53">        _pending = null;</span>
-<span class="fc" id="L54">    }</span>
+<span class="fc" id="L51">        });</span>
+<span class="fc" id="L52">        _pending = null;</span>
+<span class="fc" id="L53">    }</span>
 
     /**
      *
      * @return
      */
     public boolean isDone(){
-<span class="nc bnc" id="L61" title="All 4 branches missed.">        return (_finished==null &amp;&amp; _pending==null);</span>
+<span class="nc bnc" id="L60" title="All 4 branches missed.">        return (_finished==null &amp;&amp; _pending==null);</span>
     }
 
 

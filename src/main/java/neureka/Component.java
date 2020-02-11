@@ -1,7 +1,6 @@
 package neureka;
 
-public interface Component {
-
+public interface Component
+{
     void update(Tsr oldOwner, Tsr newOwner);
-
 }

@@ -43,16 +43,25 @@ class ShallowTensorComponentTests {
         assert asString.contains("|     Axis One     |     Axis Two     |    Axis Three    |")
 
         t.label([
-                "Axis One" : ["1", "2"],
+                "Axis One" : ["x", "y"],
                 "Axis Two" : null,
-                "Axis Three" : [1, 2]
+                "Axis Three" : ["tim", "tina"]
         ])
         asString = t.index().toString()
 
+        assert t.index().keysOf("Axis Three", 0).contains("tim")
+        assert t.index().keysOf("Axis Three", 1).contains("tina")
+        assert t.index().keysOf("Axis One").contains("x")
+        assert t.index().keysOf("Axis One").contains("y")
         assert !asString.contains(" a ")
         assert !asString.contains(" b ")
         assert !asString.contains(" c ")
+        assert asString.contains("x")
+        assert asString.contains("tim")
+        assert asString.contains("tina")
+        assert asString.contains("0")
         assert asString.contains("1")
+        assert asString.contains("2")
 
         assert asString.contains("Axis One")
         assert asString.contains("Axis Two")
@@ -60,8 +69,22 @@ class ShallowTensorComponentTests {
 
         assert asString.contains("|     Axis One     |     Axis Two     |    Axis Three    |")
 
+        t.index().replace("Axis Two", 1, "Hello")
 
-        //print(t.index().toString())
+        asString = t.index().toString()
+
+        assert !asString.contains(" a ")
+        assert !asString.contains(" b ")
+        assert !asString.contains(" c ")
+        assert asString.contains("x")
+        assert asString.contains("tim")
+        assert asString.contains("tina")
+        assert asString.contains("0")
+        assert !asString.contains("1")
+        assert asString.contains("Hello")
+        assert asString.contains("2")
+
+        print(t.index().toString())
 
 
     }

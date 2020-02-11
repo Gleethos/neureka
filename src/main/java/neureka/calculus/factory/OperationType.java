@@ -1,9 +1,5 @@
 package neureka.calculus.factory;
 
-import neureka.Tsr;
-import neureka.autograd.ADAgent;
-import neureka.calculus.factory.assembly.FunctionBuilder;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

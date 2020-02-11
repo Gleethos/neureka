@@ -1,6 +1,5 @@
 package neureka;
 
-import neureka.abstraction.AbstractComponentOwner;
 import neureka.acceleration.Device;
 import neureka.framing.Index;
 import neureka.framing.Relation;
@@ -682,7 +681,7 @@ public class Tsr extends AbstractTensor<Tsr>
         for(int i=0; i<labels.length; i++){
             if(labels[i]!=null){
                 for(int ii=0; ii<labels[i].length; ii++){
-                    if(labels[i][ii]!=null) index.set(labels[i][ii], i, ii);
+                    if(labels[i][ii]!=null) index.set(i, labels[i][ii], ii);
                 }
             }
         }
