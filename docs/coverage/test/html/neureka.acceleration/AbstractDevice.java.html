@@ -8,7 +8,7 @@ import neureka.autograd.GraphNode;
 import java.lang.ref.Cleaner;
 import java.lang.ref.ReferenceQueue;
 
-<span class="fc" id="L11">public abstract class AbstractDevice implements  Device&lt;Tsr&gt;, Component</span>
+<span class="fc" id="L11">public abstract class AbstractDevice implements  Device&lt;Tsr&gt;, Component&lt;Tsr&gt;</span>
 {
 <span class="fc" id="L13">    private static Cleaner CLEANER = Cleaner.create();</span>
     protected ReferenceQueue _reference_queue;

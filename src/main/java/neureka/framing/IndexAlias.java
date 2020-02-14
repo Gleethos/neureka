@@ -4,12 +4,12 @@ import neureka.Tsr;
 import java.util.*;
 import java.util.function.Function;
 
-public class Index
+public class IndexAlias
 {
 
     private Map<Object, Object> _mapping;
 
-    public Index(List<List> labels){
+    public IndexAlias(List<List> labels){
         _mapping = new LinkedHashMap<>(labels.size());
         for(int i=0; i<labels.size(); i++) _mapping.put(i, new LinkedHashMap<>());
         for(int i=0; i<labels.size(); i++){
@@ -21,12 +21,12 @@ public class Index
         }
     }
 
-    public Index(int size) {
+    public IndexAlias(int size) {
         _mapping = new LinkedHashMap<>(size);
         for(int i=0; i<size; i++) _mapping.put(i, new LinkedHashMap<>());
     }
 
-    public Index(Map<Object, List<Object>> labels, Tsr host){
+    public IndexAlias(Map<Object, List<Object>> labels, Tsr host){
         _mapping = new LinkedHashMap<>(labels.size()*3);
         int[] index = {0};
         labels.forEach((k, v)->{
@@ -178,7 +178,7 @@ public class Index
             if(keyOfDepth[0]==null) hasMoreIndexes[0] = false;
         }
 
-        StringBuilder result = new StringBuilder().append("\nTensor Index: axis/indexes");
+        StringBuilder result = new StringBuilder().append("\nTensor IndexAlias: axis/indexes");
         result.append("\n");
         for(int i=0; i<lineLength; i++) result.append(HEADLINE);
         result.append("\n");

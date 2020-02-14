@@ -2,11 +2,6 @@ package neureka.abstraction;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.acceleration.CPU;
-import neureka.acceleration.Device;
-import neureka.autograd.GraphNode;
-import neureka.framing.Index;
-import neureka.framing.Relation;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,26 +16,19 @@ import java.util.WeakHashMap;
  *  This is the precursor class to the final Tsr class from which
  *  tensor instances can be created.
  *  The inheritance model of a tensor is structured as follows:
- *  Tsr inherits from AbstractTensor which inherits from AbstractComponentOwner
+ *  Tsr inherits from AbstractNDArray which inherits from AbstractComponentOwner
  *  The inheritance model is linear, meaning that all classes involved
  *  are not extended more than once.
  *
- * @param <InstanceType> The final inheritance tip is the Tsr class which is also this type
  */
-public abstract class AbstractTensor<InstanceType> extends AbstractComponentOwner
+public abstract class AbstractNDArray extends AbstractComponentOwner
 {
     static
     {
         _CONFIGS = new WeakHashMap<>();
-        _CPU = new CPU();
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
-     *  Default device (host cpu)
-     */
-    private static Device<Tsr> _CPU;
 
     /**
      *  Cached configuration
@@ -48,19 +36,21 @@ public abstract class AbstractTensor<InstanceType> extends AbstractComponentOwne
     private static Map<Long, int[]> _CONFIGS;
 
     /**
-     *  Value data fields
+     *  The shape of the NDArray.
      */
-    protected int[] _shape, _translation, _idxmap;
-    protected Object _value;
-
+    protected int[] _shape;
     /**
-     *  Flag Fields
+     *  The translation from a shape index (idx) to the index of the underlying data array.
      */
-    private int _flags = 0;//Default
-
-    private final static int RQS_GRADIENT_MASK = 1;
-    private final static int IS_OUTSOURCED_MASK = 2;
-    private final static int IS_VIRTUAL_MASK = 4;
+    protected int[] _translation;
+    /**
+     *  The mapping of idx array.
+     */
+    protected int[] _idxmap;
+    /**
+     *  The value of this tensor. Usually a array of type double[] or float[].
+     */
+    protected Object _value;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -72,21 +62,6 @@ public abstract class AbstractTensor<InstanceType> extends AbstractComponentOwne
         return _value instanceof float[];
     }
 
-    /**
-     * @param newShape
-     * @return
-     */
-    protected void _configureFromNewShape(int[] newShape) {
-        int size = Utility.Indexing.szeOfShp(newShape);
-        _value = (_value==null) ? new double[size] : _value;
-        int length = (this.is64())?((double[])_value).length:((float[])_value).length;
-        if (size != length && !this.isVirtual()) {
-            throw new IllegalArgumentException("[Tsr][_iniShape]: Size of shape does not match stored value64!");
-        }
-        _shape = _cached(newShape);
-        _translation = _cached(Utility.Indexing.newTlnOf(newShape));
-        _idxmap = _translation;
-    }
 
     protected static int[] _cached(int[] data) {
         long key = 0;
@@ -129,7 +104,7 @@ public abstract class AbstractTensor<InstanceType> extends AbstractComponentOwne
 
     public int[] idx_of_i(int i) {
         int[] idx = new int[_shape.length];
-        if (Neureka.Settings.Indexing.legacy()){
+        if (Neureka.instance().settings().indexing().legacy()){
             for (int ii=rank()-1; ii>=0; ii--){
                 idx[ii] += i / _idxmap[ii];
                 i %= _idxmap[ii];
@@ -166,162 +141,14 @@ public abstract class AbstractTensor<InstanceType> extends AbstractComponentOwne
     }
 
     public int size() {
-        if (this.isEmpty()) return 0;
+        //if (this.isEmpty()) return 0;
         return Utility.Indexing.szeOfShp(this.shape());
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    protected void _setFlags(int flags){
-        if(_flags == -1) return;
-        _flags = flags;
-    }
-
-    protected int _getFlags(){
-        return _flags;
-    }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    public abstract InstanceType setRqsGradient(boolean rqsGradient);
-
-
-    public boolean rqsGradient() {
-        return (_flags & RQS_GRADIENT_MASK) == RQS_GRADIENT_MASK;
-    }
-
-    protected  void _setRqsGradient(boolean rqsGradient) {
-        if (rqsGradient() != rqsGradient) {
-            if (rqsGradient) {
-                _flags += RQS_GRADIENT_MASK;
-            } else {
-                _flags -= RQS_GRADIENT_MASK;
-            }
-        }
-    }
-
-    //>>>
-
-    public abstract InstanceType setIsOutsourced(boolean isOutsourced);
-
-    public boolean isOutsourced() {
-        return (_flags & IS_OUTSOURCED_MASK) == IS_OUTSOURCED_MASK;
-    }
-
-    protected void _setIsOutsourced(boolean isOutsourced) {
-        if (isOutsourced() != isOutsourced) {
-            if (isOutsourced) _flags += IS_OUTSOURCED_MASK;
-            else _flags -= IS_OUTSOURCED_MASK;
-        }
-    }
-
-    //>>>
-
-    public abstract InstanceType setIsVirtual(boolean isVirtual);
-
-    public boolean isVirtual() {
-        return (_flags & IS_VIRTUAL_MASK) == IS_VIRTUAL_MASK;
-    }
-
-    protected void _setIsVirtual(boolean isVirtual) {
-        if (isVirtual() != isVirtual) {
-            if (isVirtual) {
-                _flags += IS_VIRTUAL_MASK;
-            } else {
-                _flags -= IS_VIRTUAL_MASK;
-            }
-        }
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //
-
-    /**
-     * This method is executed when a new Component is added to the tensor.
-     * The public add method is implemented in the super class
-     * 'AbstractComponentOwner' from which this class inherits.
-     * In this super class the component logic is implemented.
-     *
-     * @param newComponent A component used to access features. (GraphNode, Index, Relation, int[], ...)
-     * @return The unchanged object or maybe in future versions: null (component rejected)
-     */
-    @Override
-    protected Object _addOrReject(Object newComponent){
-        newComponent = (newComponent instanceof int[]) ? _cached((int[]) newComponent) : newComponent;
-        if(newComponent instanceof Device){
-            if(!((Device)newComponent).has(this)){
-                ((Device)newComponent).add(this);
-            }
-        }
-        return newComponent;
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // HIGH LEVEL PROPERTIES :
-
-    public boolean isEmpty() {
-        return _value == null && !this.isOutsourced();
-    }
-
-    public boolean isUndefined() {
-        return _shape == null;
-    }
-
-    public boolean isSlice(){
-        Relation child = (Relation)find(Relation.class);
-        return (child!=null && child.hasParent());
-    }
-
-    public int sliceCount(){
-        Relation child = (Relation)find(Relation.class);
-        return (child!=null)?child.childCount():0;
-    }
-
-    public boolean isSliceParent(){
-        Relation parent = (Relation)find(Relation.class);
-        return (parent!=null && parent.hasChildren());
-    }
-
-    public boolean belongsToGraph() {
-        return this.has(GraphNode.class);
-    }
-
-    public boolean isLeave() {
-        return (!this.has(GraphNode.class)) || ((GraphNode) this.find(GraphNode.class)).isLeave();
-    }
-
-    public boolean isBranch() {
-        return !this.isLeave();
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Direct Access to component (Device)
-
-    /**
-     * @return The device on which this tensor is stored or 'CPU' if it is not outsourced.
-     */
-    public Device device() {
-        if (this.isOutsourced()) return (Device) this.find(Device.class);
-        return _CPU;
-    }
-
-    /**
-     *
-     * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
-     */
-    public GraphNode graphNode(){
-        return (GraphNode) find(GraphNode.class);
-    }
-
-    /**
-     *
-     * @return Custom Index object.
-     */
-    public Index index(){
-        return (Index) find(Index.class);
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      *  Static methods.
@@ -351,8 +178,8 @@ public abstract class AbstractTensor<InstanceType> extends AbstractComponentOwne
 
             @Contract(pure = true)
             private static String _strShp(int[] shp) {
-                String str = "";
-                for(int i=0; i<shp.length; i++) str += shp[i] + ((i != shp.length - 1) ? ", " : "");
+                StringBuilder str = new StringBuilder();
+                for(int i=0; i<shp.length; i++) str.append(shp[i]).append((i != shp.length - 1) ? ", " : "");
                 return "[" + str + "]";
             }
         }
@@ -365,14 +192,14 @@ public abstract class AbstractTensor<InstanceType> extends AbstractComponentOwne
             @Contract(pure = true)
             public static void increment(@NotNull int[] shpIdx, @NotNull int[] shape) {
                 int i;
-                if (Neureka.Settings.Indexing.legacy()) i = 0;
+                if (Neureka.instance().settings().indexing().legacy()) i = 0;
                 else i = shape.length-1;
                 while (i >= 0 && i < shape.length) i = _incrementAt(i, shpIdx, shape);
             }
 
             @Contract(pure = true)
             private static int _incrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
-                if(Neureka.Settings.Indexing.legacy()){
+                if(Neureka.instance().settings().indexing().legacy()){
                     if (shpIdx[i] < (shape[i])) {
                         shpIdx[i]++;
                         if (shpIdx[i] == (shape[i])) {
@@ -405,7 +232,7 @@ public abstract class AbstractTensor<InstanceType> extends AbstractComponentOwne
             public static int[] newTlnOf(int[] shape) {
                 int[] tln = new int[shape.length];
                 int prod = 1;
-                if(Neureka.Settings.Indexing.legacy()){
+                if(Neureka.instance().settings().indexing().legacy()){
                     for (int i = 0; i < tln.length; i++) {
                         tln[i] = prod;
                         prod *= shape[i];

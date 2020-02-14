@@ -172,8 +172,8 @@ public abstract class AbstractFunction implements Function {
             {
                 return new ADAgent(
                         ()->null,
-                        derivative -> FunctionBuilder.build(this.toString(), false).activate(new Tsr[]{derivative}),
-                        (t, error) -> FunctionBuilder.build(this.toString(), false).activate(new Tsr[]{error})
+                        derivative -> FunctionBuilder.build(this.toString(), false).derive(new Tsr[]{derivative},0),
+                        (t, error) -> FunctionBuilder.build(this.toString(), false).derive(new Tsr[]{error},0)
                 );
             }
             else if (_type.isOperation() && !_type.isConvection())
@@ -291,7 +291,7 @@ public abstract class AbstractFunction implements Function {
         if (TYPES.isIndexer(_type.id())) tsrs = new Tsr[1 + inputs.length];
         else tsrs = new Tsr[1 + _src.size()];
         if (d >= 0) {
-            //Chain-rule (forward AD):
+            //Chain-rule (forward AutoDiff):
             //inner times out means:
             //first derive source!
             //like so:

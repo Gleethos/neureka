@@ -3,14 +3,12 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.acceleration.opencl.OpenCLPlatform;
-import neureka.autograd.GraphNode;
 import org.junit.Test;
 import util.NTester_Tensor;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Random;
 
 public class AcceleratorTests
 {
@@ -23,17 +21,17 @@ public class AcceleratorTests
         NTester_Tensor tester = new NTester_Tensor("Testing autograd on GPU");
 
         Device gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
-        Neureka.Settings.AD.setRetainGraphDerivativesAfterBackward(true);
+        Neureka.instance().settings().autoDiff().setRetainGraphDerivativesAfterBackward(true);
 
-        Neureka.Settings.Indexing.setLegacy(true);
+        Neureka.instance().settings().indexing().setLegacy(true);
         OpenCLPlatform.PLATFORMS().get(0).recompile();
         _testAutograd(gpu, tester, true);
 
-        Neureka.Settings.Indexing.setLegacy(false);
+        Neureka.instance().settings().indexing().setLegacy(false);
         OpenCLPlatform.PLATFORMS().get(0).recompile();
         _testAutograd(gpu, tester, false);
 
-        Neureka.Settings.AD.setRetainGraphDerivativesAfterBackward(false);
+        Neureka.instance().settings().autoDiff().setRetainGraphDerivativesAfterBackward(false);
         tester.close();
     }
     private  void _testAutograd(Device gpu, NTester_Tensor tester, boolean legacyIndexing)

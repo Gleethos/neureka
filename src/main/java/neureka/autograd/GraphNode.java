@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 /**
  *
  */
-public class GraphNode implements Component {
+public class GraphNode implements Component<Tsr> {
     private static Function MUL = FunctionBuilder.build("(I[0]*I[1])", false);
     private static Function ADD = FunctionBuilder.build("(I[0]+I[1])", false);
     private static Function INV_X = FunctionBuilder.build("I[0]x>>I[1]x>>I[2]", false);
@@ -65,7 +65,7 @@ public class GraphNode implements Component {
      * This flag is used for a performance optimization feature namely 'Just In Time Propagation'.
      * This feature accumulated errors and continues propagation
      * as soon as they are needed. (At the end of 'backward()' or when the tensor is used again).
-     * If the flag Neureka.Settings.AD._retainPendingErrorForJITProp is set to true
+     * If the flag Neureka.instance().settings().AutoDiff()._retainPendingErrorForJITProp is set to true
      * then error values will accumulate whenever it makes sense.
      * This technique however uses more memory but will
      * improve performance for some networks substantially.
@@ -276,7 +276,7 @@ public class GraphNode implements Component {
         } else if (context instanceof Tsr[]) {
             Tsr[] inputs = (Tsr[]) context;
             /* Applying JITProp and gradients */
-            if (Neureka.Settings.AD.applyGradientWhenTensorIsUsed()) {
+            if (Neureka.instance().settings().autoDiff().applyGradientWhenTensorIsUsed()) {
                 for (Tsr t : inputs) t.forComponent(JITProp.class, (jit)->((JITProp)jit).execute());
                 for (Tsr t : inputs) t.remove(JITProp.class);
                 for (Tsr t : inputs) t.applyGradient();
@@ -287,7 +287,7 @@ public class GraphNode implements Component {
 
     private void _construct(Tsr output, Function function, Tsr[] inputs, GraphLock lock) {
         if (output == null) throw new RuntimeException("[GraphNode]:(_construct): Payload must no be null!");
-        if (!function.doesAD()) return;//Only functions with AD enabled create computation graph!
+        if (!function.doesAD()) return;//Only functions with AutoDiff enabled create computation graph!
         _lock = lock;
         _setPayload(output);
         output.add(this);
@@ -317,7 +317,7 @@ public class GraphNode implements Component {
             if (_function != null) nid += _function.hashCode();
             _nid = nid;
         }
-        /* Returning if the above cannot form an AD computation graph! : */
+        /* Returning if the above cannot form an AutoDiff computation graph! : */
         if (inputs == null || !function.isFlat()) return; // Leave nodes cannot be connected!!
         for (Tsr t : inputs) if (t.equals(output)) return;
 
@@ -376,7 +376,7 @@ public class GraphNode implements Component {
             modes[Ii] = (inputs[Ii].rqsGradient()) ? 1 : node.mode();
             input_mode += (modes[Ii] != 0) ? 1 : 0;
         }
-        if (input_mode == 1 && ("x,".replace(function.type(), "").equals("x,"))) {//Convolution and reshaping prohibit forward AD
+        if (input_mode == 1 && ("x,".replace(function.type(), "").equals("x,"))) {//Convolution and reshaping prohibit forward AutoDiff
             for (int Ii = 0; Ii < inputs.length; Ii++) {
                 result_mode += (modes[Ii] == 0) ? 0 : (modes[Ii] < 0) ? 1 : modes[Ii] + 1;
             }
@@ -399,7 +399,7 @@ public class GraphNode implements Component {
     public void backward(Tsr error) {
         Set<GraphNode> pendingNodes = new HashSet<>();
         _backward(error, pendingNodes, false);// Entry-point to private recursive back-propagation!
-        if (Neureka.Settings.AD.retainPendingErrorForJITProp()) {
+        if (Neureka.instance().settings().autoDiff().retainPendingErrorForJITProp()) {
             pendingNodes.forEach((n) -> n._carryPendingBackPropToGradients(pendingNodes));
         } else {
             pendingNodes.forEach((n) -> {
@@ -423,7 +423,7 @@ public class GraphNode implements Component {
      * The method halts when an error can be accumulated and returns.
      * This graph node however is being noted in the 'pendingNodes' Set.
      *
-     * @param error A tensor which traverses the computation graph according to the rules of reverse mode AD.
+     * @param error A tensor which traverses the computation graph according to the rules of reverse mode AutoDiff.
      */
     private void _backward(Tsr error, Set<GraphNode> pendingNodes, boolean allowPendingError)//Map<GraphNode, PendingError> pendingBackProp, boolean allowPendingError)
     {
@@ -442,14 +442,14 @@ public class GraphNode implements Component {
                         _pending_error.accumulate(error);
                     }
                     return;//Backprop will be continued later! This node is being remembered in 'PendingError'
-                    // NOTE: Multiple AD paths leading to one node in history will be accumulated first! (performance)
+                    // NOTE: Multiple AutoDiff paths leading to one node in history will be accumulated first! (performance)
                     //This optimization is a light version of JITProp. JITProp builds on this!
                 }
             }
-            //Using forward-AD size for reverse-mode AD!:
+            //Using forward-AutoDiff size for reverse-mode AutoDiff!:
             if (this.usesForwardAD()) this.forEachForward(error, (t, d) -> t._backward(d, pendingNodes, true));
             else if (this.usesReverseAD()) this.forEachBackward(error, (t, e) -> t._backward(e, pendingNodes, true));
-            //Standard reverse mode-AD:
+            //Standard reverse mode-AutoDiff:
 
         }
     }
@@ -511,10 +511,10 @@ public class GraphNode implements Component {
             return;//This node will continue its propagation via a JIT-Prop component later!
         }
         if (this.usesAD()) {
-            //Using forward-AD size for reverse-mode AD!:
+            //Using forward-AutoDiff size for reverse-mode AutoDiff!:
             if (this.usesForwardAD()) this.forEachForward(error, (t, e) -> t._backwardJIT(e, source));
             else if (this.usesReverseAD()) this.forEachBackward(error, (t, e) -> t._backwardJIT(e, source));
-            //Standard reverse mode-AD:
+            //Standard reverse mode-AutoDiff:
 
 
         }
@@ -526,11 +526,11 @@ public class GraphNode implements Component {
      * Deletion is forbidden if this node is flagged
      * as JITProp job. This means that the node is on the path between gradients
      * and pending error objects.
-     * Only if JITProp is enabled (Neureka.Settings.AD...) this flag will
+     * Only if JITProp is enabled (Neureka.instance().settings().AutoDiff()...) this flag will
      * deviate from its default state, namely: true!
      */
     private void _deleteDerivativesRecursively() {
-        if (!Neureka.Settings.AD.retainGraphDerivativesAfterBackward()) {
+        if (!Neureka.instance().settings().autoDiff().retainGraphDerivativesAfterBackward()) {
             if (!this.reliesOnJustInTimeProp()) _targets_derivatives = null;
             if (!this.isGraphLeave()) forEachTarget(GraphNode::_deleteDerivativesRecursively);
         }

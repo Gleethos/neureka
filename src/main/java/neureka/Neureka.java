@@ -1,48 +1,121 @@
 package neureka;
 
-import neureka.acceleration.Device;
-import neureka.calculus.Function;
-import neureka.calculus.factory.assembly.FunctionBuilder;
+import groovy.lang.Binding;
+import groovy.lang.Closure;
+import groovy.lang.GroovyShell;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 
 public class Neureka
 {
-    public static Device findAcceleratorByName(String name){
-        return Device.find(name);
+    private static final Neureka _instance;
+    private Settings _settings;
+    private Utility _utility;
+
+    static{
+        _instance = new Neureka();
+        new GroovyShell().evaluate(_instance.utility().readResource("library_settings.groovy"));
+        new GroovyShell().evaluate(_instance.utility().readResource("scripting_setup.groovy"));
     }
 
-    public static Function create(String expression){
-        return create(expression, true);
+    private Neureka(){
+            _settings = new Settings();
+            _utility = new Utility();
     }
 
-    public static Function create(String expression, boolean doAD){
-        return Function.create(expression, doAD);
+    public static Neureka instance(){
+        return _instance;
+    }
+
+    public static Neureka instance(Closure c){
+        c.setDelegate(_instance);
+        c.call();
+        return _instance;
+    }
+
+    public Settings settings(){
+        return _settings;
+    }
+
+    public Settings settings(Closure c){
+        c.setDelegate(_settings);
+        c.call();
+        return _settings;
+    }
+
+    public Utility utility(){
+        return _utility;
     }
 
     public static String version(){
         return "1.0.0";
     }
 
-    public static class Settings
+    public class Settings
     {
-        public static boolean isLocked(){
+        private Debug _debug;
+        private AutoDiff _autoDiff;
+        private Indexing _indexing;
+
+        private boolean _isLocked = false;
+
+        private Settings(){
+            _debug = new Debug();
+            _autoDiff = new AutoDiff();
+            _indexing = new Indexing();
+        }
+
+        public Debug debug(){
+            return _debug;
+        }
+
+        public Debug debug(Closure c){
+            c.setDelegate(_debug);
+            c.call();
+            return _debug;
+        }
+
+        public AutoDiff autoDiff(){
+            return _autoDiff;
+        }
+
+        public AutoDiff autoDiff(Closure c){
+            c.setDelegate(_autoDiff);
+            c.call();
+            return _autoDiff;
+        }
+
+        public Indexing indexing(){
+            return _indexing;
+        }
+
+        public Indexing indexing(Closure c){
+            c.setDelegate(_indexing);
+            c.call();
+            return _indexing;
+        }
+
+        public boolean isLocked(){
             return  _isLocked;
         }
 
-        public static void setIsLocked(boolean locked){
+        public void setIsLocked(boolean locked){
             _isLocked = locked;
         }
 
-        private static boolean _isLocked = false;
-
-        public static void reset(){
-            Debug.reset();
-            AD.reset();
-            Indexing.reset();
+        public void reset(){
+            debug().reset();
+            autoDiff().reset();
+            indexing().reset();
         }
 
-        public static class Debug
+        public class Debug
         {
-            public static void reset(){
+            Debug(){
                 _keepDerivativeTargetPayloads = false;
             }
             /**
@@ -51,7 +124,7 @@ public class Neureka
              * A tensor might not always be used for backpropagation.
              * Therefore it will be deleted if possible.
              * Targeted tensors are either leave tensors (They require gradients)
-             * or they are angle points between forward- and reverse-mode-AD!
+             * or they are angle points between forward- and reverse-mode-AutoDiff!
              * In this case:
              * If the tensor is not needed for backpropagation it will be deleted.
              * The graph node will dereference the tensor either way.
@@ -60,41 +133,37 @@ public class Neureka
              * It is used for the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
              */
-            private static boolean _keepDerivativeTargetPayloads = false;
+            private boolean _keepDerivativeTargetPayloads;
 
-            public static boolean keepDerivativeTargetPayloads(){
+            public void reset(){
+                _keepDerivativeTargetPayloads = false;
+            }
+
+            public boolean keepDerivativeTargetPayloads(){
                 return _keepDerivativeTargetPayloads;
             }
 
-            public static void setKeepDerivativeTargetPayloads(boolean keep){
+            public void setKeepDerivativeTargetPayloads(boolean keep){
                 if(_isLocked) return;
                 _keepDerivativeTargetPayloads = keep;
             }
 
-
         }
 
-        public static class AD // Auto-Differentiation
+        public class AutoDiff // Auto-Differentiation
         {
-            public static void reset(){
+            AutoDiff(){
                 _retainGraphDerivativesAfterBackward = false;
                 _retainPendingErrorForJITProp = true;
                 _applyGradientWhenTensorIsUsed = false;
             }
+
             /**
              * After backward passes the used size are usually not needed.
              * For debugging purposes however this flag remains and will
              * not allow for garbage collection of the used size.
              */
-            private static boolean _retainGraphDerivativesAfterBackward = false;
-
-            public static boolean retainGraphDerivativesAfterBackward(){
-                return _retainGraphDerivativesAfterBackward;
-            }
-            public static void setRetainGraphDerivativesAfterBackward(boolean retain){
-                if(_isLocked) return;
-                _retainGraphDerivativesAfterBackward = retain;
-            }
+            private boolean _retainGraphDerivativesAfterBackward;
 
             /**
              * This fla enables an optimization technique which only applies
@@ -105,49 +174,68 @@ public class Neureka
              * improve performance for some networks substantially.
              * The technique is termed JIT-Propagation.
              */
-            private static boolean _retainPendingErrorForJITProp = true;
-
-            public static boolean retainPendingErrorForJITProp(){
-                return _retainPendingErrorForJITProp;
-            }
-
-            public static void setRetainPendingErrorForJITProp(boolean retain){
-                if(_isLocked) return;
-                _retainPendingErrorForJITProp = retain;
-            }
+            private boolean _retainPendingErrorForJITProp;
 
             /**
              * Gradients will automatically be applied to tensors as soon as
              * they are being used for calculation.
              * This feature works well with JIT-Propagation.
              */
-            private static boolean _applyGradientWhenTensorIsUsed = false;
+            private boolean _applyGradientWhenTensorIsUsed;
 
-            public static boolean applyGradientWhenTensorIsUsed(){
+
+            public void reset(){
+                _retainGraphDerivativesAfterBackward = false;
+                _retainPendingErrorForJITProp = true;
+                _applyGradientWhenTensorIsUsed = false;
+            }
+
+            public boolean retainGraphDerivativesAfterBackward(){
+                return _retainGraphDerivativesAfterBackward;
+            }
+            public void setRetainGraphDerivativesAfterBackward(boolean retain){
+                if(_isLocked) return;
+                _retainGraphDerivativesAfterBackward = retain;
+            }
+
+            public boolean retainPendingErrorForJITProp(){
+                return _retainPendingErrorForJITProp;
+            }
+
+            public void setRetainPendingErrorForJITProp(boolean retain){
+                if(_isLocked) return;
+                _retainPendingErrorForJITProp = retain;
+            }
+
+            public boolean applyGradientWhenTensorIsUsed(){
                 return _applyGradientWhenTensorIsUsed;
             }
 
-            public static void setApplyGradientWhenTensorIsUsed(boolean apply){
+            public void setApplyGradientWhenTensorIsUsed(boolean apply){
                 if(_isLocked) return;
                 _applyGradientWhenTensorIsUsed = apply;
             }
 
         }
 
-        public static class Indexing
+        public class Indexing
         {
-            public static void reset(){
+            Indexing(){
                 _legacyIndexing = false;
             }
 
-            private static boolean _legacyIndexing = false;
 
+            private boolean _legacyIndexing;
 
-            public static boolean legacy(){
+            public void reset(){
+                _legacyIndexing = false;
+            }
+
+            public boolean legacy(){
                 return _legacyIndexing;
             }
 
-            public static void setLegacy(boolean enabled){
+            public void setLegacy(boolean enabled){
                 if(_isLocked) return;
                 _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (OpenCLPlatform)
             }
@@ -155,5 +243,34 @@ public class Neureka
         }
 
     }
+
+    public class Utility {
+
+
+        private String readResource(String path){//String fileName) {
+            InputStream stream = _instance.getClass().getClassLoader().getResourceAsStream(path);
+            try {
+                BufferedReader br = new BufferedReader(new InputStreamReader(stream));//new FileInputStream(fileName)));
+                StringBuffer sb = new StringBuffer();
+                String line = null;
+                while (true) {
+                    line = br.readLine();
+                    if (line == null) break;
+                    sb.append(line).append("\n");
+                }
+                return sb.toString();
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+                return null;
+            }
+        }
+
+
+
+
+
+    }
+
 
 }

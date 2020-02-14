@@ -172,8 +172,8 @@ public abstract class AbstractFunction implements Function {
             {
 <span class="fc" id="L173">                return new ADAgent(</span>
 <span class="fc" id="L174">                        ()-&gt;null,</span>
-<span class="nc" id="L175">                        derivative -&gt; FunctionBuilder.build(this.toString(), false).activate(new Tsr[]{derivative}),</span>
-<span class="fc" id="L176">                        (t, error) -&gt; FunctionBuilder.build(this.toString(), false).activate(new Tsr[]{error})</span>
+<span class="nc" id="L175">                        derivative -&gt; FunctionBuilder.build(this.toString(), false).derive(new Tsr[]{derivative},0),</span>
+<span class="fc" id="L176">                        (t, error) -&gt; FunctionBuilder.build(this.toString(), false).derive(new Tsr[]{error},0)</span>
                 );
             }
 <span class="pc bpc" id="L179" title="1 of 4 branches missed.">            else if (_type.isOperation() &amp;&amp; !_type.isConvection())</span>
@@ -255,16 +255,16 @@ public abstract class AbstractFunction implements Function {
 <span class="fc bfc" id="L255" title="All 2 branches covered.">            for (int i = 0; i &lt; _src.size() - 1; i++) {</span>
 <span class="fc" id="L256">                newForm[i] = (int) Tsr.IO.getFrom(_src.get(i).activate(inputs), 0);</span>
             }
-<span class="pc bpc" id="L258" title="1 of 2 branches missed.">            if (d &gt;= 0) {//reverse reshape:</span>
-<span class="nc" id="L259">                int[] reversed = new int[newForm.length];</span>
-<span class="nc bnc" id="L260" title="All 2 branches missed.">                for (int i = 0; i &lt; newForm.length; i++) {</span>
-<span class="nc bnc" id="L261" title="All 2 branches missed.">                    if (newForm[i] &gt;= 0) {</span>
-<span class="nc" id="L262">                        reversed[newForm[i]] = i;</span>
+<span class="fc bfc" id="L258" title="All 2 branches covered.">            if (d &gt;= 0) {//reverse reshape:</span>
+<span class="fc" id="L259">                int[] reversed = new int[newForm.length];</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">                for (int i = 0; i &lt; newForm.length; i++) {</span>
+<span class="pc bpc" id="L261" title="1 of 2 branches missed.">                    if (newForm[i] &gt;= 0) {</span>
+<span class="fc" id="L262">                        reversed[newForm[i]] = i;</span>
                     } else {//Exception! (not auto-differentiable)
 <span class="nc" id="L264">                        throw new IllegalStateException(&quot;[AbstractFunction][_execute]: reshape operation cannot be reversed!&quot;);</span>
                     }
                 }
-<span class="nc" id="L267">                newForm = reversed;</span>
+<span class="fc" id="L267">                newForm = reversed;</span>
             }
 <span class="fc" id="L269">            Tsr t = inputs[inputs.length - 1];</span>
 <span class="fc" id="L270">            return Tsr.Exec.reshaped(t, newForm, true);//t.reshape(newForm);</span>
@@ -291,7 +291,7 @@ public abstract class AbstractFunction implements Function {
 <span class="fc bfc" id="L291" title="All 2 branches covered.">        if (TYPES.isIndexer(_type.id())) tsrs = new Tsr[1 + inputs.length];</span>
 <span class="fc" id="L292">        else tsrs = new Tsr[1 + _src.size()];</span>
 <span class="fc bfc" id="L293" title="All 2 branches covered.">        if (d &gt;= 0) {</span>
-            //Chain-rule (forward AD):
+            //Chain-rule (forward AutoDiff):
             //inner times out means:
             //first derive source!
             //like so:

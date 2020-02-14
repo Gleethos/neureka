@@ -9,14 +9,14 @@ class ADMemTests {
     @Test
     void testReverseReshape() {
 
-        Neureka.Settings.reset()
+        Neureka.instance().settings().reset()
 
         Tsr a = new Tsr([2, 3], [
                 1, 2, 3,
                 4, 5, 6
         ]).setRqsGradient(true)
 
-        Function rs = Neureka.create("[1, 0]:(I[0])")
+        Function rs = Function.create("[1, 0]:(I[0])")
 
         Tsr b = rs.activate(a)
         GraphNode n = a.find(GraphNode.class)
@@ -53,7 +53,7 @@ class ADMemTests {
     @Test
     void testPayloadsAndDerivativesAreNull() {
 
-        Neureka.Settings.reset()
+        Neureka.instance().settings().reset()
 
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = a * 3 / 5

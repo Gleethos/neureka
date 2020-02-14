@@ -10,19 +10,19 @@ import util.DummyDevice
 import util.NTester
 import util.NTester_Tensor
 
-class IndexTests
+class IndexAliasTests
 {
 
     @Test
     void testSlicing()
     {
-        NTester_Tensor tester = new NTester_Tensor("Index-Testing: slices/subset creation and calculation")
+        NTester_Tensor tester = new NTester_Tensor("IndexAlias-Testing: slices/subset creation and calculation")
         Device device = new DummyDevice()
 
-        Neureka.Settings.Indexing.setLegacy(true)
+        Neureka.instance().settings().indexing().setLegacy(true)
         _testReadmeExamples(device, tester, true)
 
-        Neureka.Settings.Indexing.setLegacy(false)
+        Neureka.instance().settings().indexing().setLegacy(false)
         _testReadmeExamples(device, tester, false)
 
         //=========================================================================
@@ -30,11 +30,11 @@ class IndexTests
         //=========================================================================
         Device gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0)
 
-        Neureka.Settings.Indexing.setLegacy(true)
+        Neureka.instance().settings().indexing().setLegacy(true)
         OpenCLPlatform.PLATFORMS().get(0).recompile()
         _testReadmeExamples(gpu, tester, true)
 
-        Neureka.Settings.Indexing.setLegacy(false)
+        Neureka.instance().settings().indexing().setLegacy(false)
         OpenCLPlatform.PLATFORMS().get(0).recompile()
         _testReadmeExamples(gpu, tester, false)
 

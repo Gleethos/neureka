@@ -6,7 +6,7 @@ import neureka.Tsr;
 import java.lang.ref.WeakReference;
 import java.util.function.Consumer;
 
-public class Relation implements Component {
+public class Relation implements Component<Tsr> {
 
     private Tsr _parent;// Children need their parents. They shall not be garbage collected.
 

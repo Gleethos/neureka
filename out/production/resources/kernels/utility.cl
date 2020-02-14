@@ -19,14 +19,14 @@ int _i_of_i(int i, int* cfg, int rank)// cfg:   <[ shape | translation | idxMap 
 {
     int* idx = (cfg+rank*3);
     int* idxMap = (cfg+rank*2);
-    if(Neureka.Settings.Indexing.REVERSE_INDEX_TRANSLATION){
+    if(Neureka.instance().settings().indexing().REVERSE_INDEX_TRANSLATION){
         for(int ii=(rank)-1; ii>=0; ii--){
-            idx[ii] = (i/idxMap[ii]);//is derived from the shape of a tensor. Translates scalar index to dim-Index
+            idx[ii] = (i/idxMap[ii]);//is derived from the shape of a tensor. Translates scalar indexAlias to dim-Index
             i %= idxMap[ii];
         }
     } else {//---
         for(int ii=0; ii<rank; ii++){
-            idx[ii] = (i/idxMap[ii]);//is derived from the shape of a tensor. Translates scalar index to dim-Index
+            idx[ii] = (i/idxMap[ii]);//is derived from the shape of a tensor. Translates scalar indexAlias to dim-Index
             i %= idxMap[ii];
         }
     }

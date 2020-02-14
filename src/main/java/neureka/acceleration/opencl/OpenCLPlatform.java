@@ -87,7 +87,7 @@ public class OpenCLPlatform {
         // Collect all devices of this platform
         List<OpenCLDevice> myDevices = new ArrayList<>();
 
-        for (cl_device_id did : devicesArray) {
+        for (cl_device_id did : devicesArray) {//TODO: make devices singletons!
             OpenCLDevice clDevice = new OpenCLDevice(this, did);
             myDevices.add(clDevice);
         }
@@ -122,14 +122,15 @@ public class OpenCLPlatform {
         for(String name : fileNames){
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream("kernels/"+name);
             templateSources.add(_setup.readFile(inputStream));
+
         }
         ArrayList<String> names = new ArrayList<>();
         ArrayList<String> sources = new ArrayList<>();
         for (int i = 0; i < fileNames.length; i++) {
             String kernelSource = templateSources.get(i);//_setup.readFile(filesList[i]);
             kernelSource = kernelSource.replace(
-                    "Neureka.Settings.Indexing.REVERSE_INDEX_TRANSLATION",
-                    (Neureka.Settings.Indexing.legacy()) ? "true" : "false"
+                    "Neureka.instance().settings().indexing().REVERSE_INDEX_TRANSLATION",
+                    (Neureka.instance().settings().indexing().legacy()) ? "true" : "false"
             );
             boolean templateFound = false;
             if (kernelSource.contains("__kernel")) {

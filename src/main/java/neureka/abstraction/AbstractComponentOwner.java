@@ -7,7 +7,7 @@ import java.util.function.Consumer;
  *  This is the root precursor class to the final Tsr class from which
  *  tensor instances can be created.
  *  The inheritance model of a tensor is structured as follows:
- *  Tsr inherits from AbstractTensor which inherits from AbstractComponentOwner
+ *  Tsr inherits from AbstractNDArray which inherits from AbstractComponentOwner
  *  The inheritance model is linear, meaning that all classes involved
  *  are not extended more than once.
  *
@@ -48,7 +48,7 @@ public abstract class AbstractComponentOwner {
         if (_components!=null && _components.size() == 0) {
             _components = null;
         }
-        return this;
+        return  this;
     }
 
     /**
@@ -78,7 +78,7 @@ public abstract class AbstractComponentOwner {
             _components = new ArrayList<>();
         }
         _components.add(_addOrReject(newComponent));
-        return this;
+        return  this;
     }
 
     /**

@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 /**
  *
  */
-public class GraphNode implements Component {
+public class GraphNode implements Component&lt;Tsr&gt; {
 <span class="fc" id="L21">    private static Function MUL = FunctionBuilder.build(&quot;(I[0]*I[1])&quot;, false);</span>
 <span class="fc" id="L22">    private static Function ADD = FunctionBuilder.build(&quot;(I[0]+I[1])&quot;, false);</span>
 <span class="fc" id="L23">    private static Function INV_X = FunctionBuilder.build(&quot;I[0]x&gt;&gt;I[1]x&gt;&gt;I[2]&quot;, false);</span>
@@ -65,7 +65,7 @@ public class GraphNode implements Component {
      * This flag is used for a performance optimization feature namely 'Just In Time Propagation'.
      * This feature accumulated errors and continues propagation
      * as soon as they are needed. (At the end of 'backward()' or when the tensor is used again).
-     * If the flag Neureka.Settings.AD._retainPendingErrorForJITProp is set to true
+     * If the flag Neureka.instance().settings().AutoDiff()._retainPendingErrorForJITProp is set to true
      * then error values will accumulate whenever it makes sense.
      * This technique however uses more memory but will
      * improve performance for some networks substantially.
@@ -276,7 +276,7 @@ public class GraphNode implements Component {
 <span class="pc bpc" id="L276" title="1 of 2 branches missed.">        } else if (context instanceof Tsr[]) {</span>
 <span class="fc" id="L277">            Tsr[] inputs = (Tsr[]) context;</span>
             /* Applying JITProp and gradients */
-<span class="fc bfc" id="L279" title="All 2 branches covered.">            if (Neureka.Settings.AD.applyGradientWhenTensorIsUsed()) {</span>
+<span class="fc bfc" id="L279" title="All 2 branches covered.">            if (Neureka.instance().settings().autoDiff().applyGradientWhenTensorIsUsed()) {</span>
 <span class="fc bfc" id="L280" title="All 2 branches covered.">                for (Tsr t : inputs) t.forComponent(JITProp.class, (jit)-&gt;((JITProp)jit).execute());</span>
 <span class="fc bfc" id="L281" title="All 2 branches covered.">                for (Tsr t : inputs) t.remove(JITProp.class);</span>
 <span class="fc bfc" id="L282" title="All 2 branches covered.">                for (Tsr t : inputs) t.applyGradient();</span>
@@ -287,7 +287,7 @@ public class GraphNode implements Component {
 
     private void _construct(Tsr output, Function function, Tsr[] inputs, GraphLock lock) {
 <span class="pc bpc" id="L289" title="1 of 2 branches missed.">        if (output == null) throw new RuntimeException(&quot;[GraphNode]:(_construct): Payload must no be null!&quot;);</span>
-<span class="fc bfc" id="L290" title="All 2 branches covered.">        if (!function.doesAD()) return;//Only functions with AD enabled create computation graph!</span>
+<span class="fc bfc" id="L290" title="All 2 branches covered.">        if (!function.doesAD()) return;//Only functions with AutoDiff enabled create computation graph!</span>
 <span class="fc" id="L291">        _lock = lock;</span>
 <span class="fc" id="L292">        _setPayload(output);</span>
 <span class="fc" id="L293">        output.add(this);</span>
@@ -317,7 +317,7 @@ public class GraphNode implements Component {
 <span class="fc bfc" id="L317" title="All 2 branches covered.">            if (_function != null) nid += _function.hashCode();</span>
 <span class="fc" id="L318">            _nid = nid;</span>
         }
-        /* Returning if the above cannot form an AD computation graph! : */
+        /* Returning if the above cannot form an AutoDiff computation graph! : */
 <span class="pc bpc" id="L321" title="1 of 4 branches missed.">        if (inputs == null || !function.isFlat()) return; // Leave nodes cannot be connected!!</span>
 <span class="fc bfc" id="L322" title="All 4 branches covered.">        for (Tsr t : inputs) if (t.equals(output)) return;</span>
 
@@ -376,7 +376,7 @@ public class GraphNode implements Component {
 <span class="fc bfc" id="L376" title="All 2 branches covered.">            modes[Ii] = (inputs[Ii].rqsGradient()) ? 1 : node.mode();</span>
 <span class="fc bfc" id="L377" title="All 2 branches covered.">            input_mode += (modes[Ii] != 0) ? 1 : 0;</span>
         }
-<span class="fc bfc" id="L379" title="All 4 branches covered.">        if (input_mode == 1 &amp;&amp; (&quot;x,&quot;.replace(function.type(), &quot;&quot;).equals(&quot;x,&quot;))) {//Convolution and reshaping prohibit forward AD</span>
+<span class="fc bfc" id="L379" title="All 4 branches covered.">        if (input_mode == 1 &amp;&amp; (&quot;x,&quot;.replace(function.type(), &quot;&quot;).equals(&quot;x,&quot;))) {//Convolution and reshaping prohibit forward AutoDiff</span>
 <span class="fc bfc" id="L380" title="All 2 branches covered.">            for (int Ii = 0; Ii &lt; inputs.length; Ii++) {</span>
 <span class="fc bfc" id="L381" title="All 4 branches covered.">                result_mode += (modes[Ii] == 0) ? 0 : (modes[Ii] &lt; 0) ? 1 : modes[Ii] + 1;</span>
             }
@@ -399,7 +399,7 @@ public class GraphNode implements Component {
     public void backward(Tsr error) {
 <span class="fc" id="L400">        Set&lt;GraphNode&gt; pendingNodes = new HashSet&lt;&gt;();</span>
 <span class="fc" id="L401">        _backward(error, pendingNodes, false);// Entry-point to private recursive back-propagation!</span>
-<span class="fc bfc" id="L402" title="All 2 branches covered.">        if (Neureka.Settings.AD.retainPendingErrorForJITProp()) {</span>
+<span class="fc bfc" id="L402" title="All 2 branches covered.">        if (Neureka.instance().settings().autoDiff().retainPendingErrorForJITProp()) {</span>
 <span class="fc" id="L403">            pendingNodes.forEach((n) -&gt; n._carryPendingBackPropToGradients(pendingNodes));</span>
         } else {
 <span class="fc" id="L405">            pendingNodes.forEach((n) -&gt; {</span>
@@ -423,7 +423,7 @@ public class GraphNode implements Component {
      * The method halts when an error can be accumulated and returns.
      * This graph node however is being noted in the 'pendingNodes' Set.
      *
-     * @param error A tensor which traverses the computation graph according to the rules of reverse mode AD.
+     * @param error A tensor which traverses the computation graph according to the rules of reverse mode AutoDiff.
      */
     private void _backward(Tsr error, Set&lt;GraphNode&gt; pendingNodes, boolean allowPendingError)//Map&lt;GraphNode, PendingError&gt; pendingBackProp, boolean allowPendingError)
     {
@@ -442,14 +442,14 @@ public class GraphNode implements Component {
 <span class="fc" id="L442">                        _pending_error.accumulate(error);</span>
                     }
 <span class="fc" id="L444">                    return;//Backprop will be continued later! This node is being remembered in 'PendingError'</span>
-                    // NOTE: Multiple AD paths leading to one node in history will be accumulated first! (performance)
+                    // NOTE: Multiple AutoDiff paths leading to one node in history will be accumulated first! (performance)
                     //This optimization is a light version of JITProp. JITProp builds on this!
                 }
             }
-            //Using forward-AD size for reverse-mode AD!:
+            //Using forward-AutoDiff size for reverse-mode AutoDiff!:
 <span class="fc bfc" id="L450" title="All 2 branches covered.">            if (this.usesForwardAD()) this.forEachForward(error, (t, d) -&gt; t._backward(d, pendingNodes, true));</span>
 <span class="pc bpc" id="L451" title="1 of 2 branches missed.">            else if (this.usesReverseAD()) this.forEachBackward(error, (t, e) -&gt; t._backward(e, pendingNodes, true));</span>
-            //Standard reverse mode-AD:
+            //Standard reverse mode-AutoDiff:
 
         }
 <span class="fc" id="L455">    }</span>
@@ -511,10 +511,10 @@ public class GraphNode implements Component {
 <span class="nc" id="L511">            return;//This node will continue its propagation via a JIT-Prop component later!</span>
         }
 <span class="pc bpc" id="L513" title="1 of 2 branches missed.">        if (this.usesAD()) {</span>
-            //Using forward-AD size for reverse-mode AD!:
+            //Using forward-AutoDiff size for reverse-mode AutoDiff!:
 <span class="fc bfc" id="L515" title="All 2 branches covered.">            if (this.usesForwardAD()) this.forEachForward(error, (t, e) -&gt; t._backwardJIT(e, source));</span>
 <span class="pc bpc" id="L516" title="1 of 2 branches missed.">            else if (this.usesReverseAD()) this.forEachBackward(error, (t, e) -&gt; t._backwardJIT(e, source));</span>
-            //Standard reverse mode-AD:
+            //Standard reverse mode-AutoDiff:
 
 
         }
@@ -526,11 +526,11 @@ public class GraphNode implements Component {
      * Deletion is forbidden if this node is flagged
      * as JITProp job. This means that the node is on the path between gradients
      * and pending error objects.
-     * Only if JITProp is enabled (Neureka.Settings.AD...) this flag will
+     * Only if JITProp is enabled (Neureka.instance().settings().AutoDiff()...) this flag will
      * deviate from its default state, namely: true!
      */
     private void _deleteDerivativesRecursively() {
-<span class="fc bfc" id="L533" title="All 2 branches covered.">        if (!Neureka.Settings.AD.retainGraphDerivativesAfterBackward()) {</span>
+<span class="fc bfc" id="L533" title="All 2 branches covered.">        if (!Neureka.instance().settings().autoDiff().retainGraphDerivativesAfterBackward()) {</span>
 <span class="fc bfc" id="L534" title="All 2 branches covered.">            if (!this.reliesOnJustInTimeProp()) _targets_derivatives = null;</span>
 <span class="fc bfc" id="L535" title="All 2 branches covered.">            if (!this.isGraphLeave()) forEachTarget(GraphNode::_deleteDerivativesRecursively);</span>
         }
