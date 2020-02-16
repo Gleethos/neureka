@@ -16,6 +16,7 @@ class IndexAliasTests
     @Test
     void testSlicing()
     {
+        Neureka.instance().settings().reset()
         NTester_Tensor tester = new NTester_Tensor("IndexAlias-Testing: slices/subset creation and calculation")
         Device device = new DummyDevice()
 

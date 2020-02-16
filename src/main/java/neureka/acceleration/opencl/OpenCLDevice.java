@@ -3,6 +3,7 @@ package neureka.acceleration.opencl;
 import static org.jocl.CL.*;
 
 import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
 import java.nio.*;
 import java.util.*;
 
@@ -16,21 +17,21 @@ import org.jocl.*;
 
 
 public class OpenCLDevice extends AbstractDevice {
-    class cl_data {
+    static class cl_data {
         public cl_mem data;
         public int uses = 0;
         public int size = 0;
     }
 
-    class cl_tsr {
+    static class cl_tsr {
         public int fp = 1;
         public cl_mem config;
         public cl_data value = new cl_data();
     }
 
-    private Map<Object, cl_tsr> _mapping = new TreeMap<>((a, b) -> a.hashCode() - b.hashCode());
+    private final Map<Object, cl_tsr> _mapping = new TreeMap<>(Comparator.comparingInt(Object::hashCode));
 
-    private cl_device_id _did;
+    private final cl_device_id _did;
 
     public cl_device_id CLDeviceID() {
         return _did;
@@ -39,12 +40,12 @@ public class OpenCLDevice extends AbstractDevice {
     /**
      * The OpenCLPlaform
      */
-    private OpenCLPlatform _platform;
+    private final OpenCLPlatform _platform;
 
     /**
      * The OpenCL command queue
      */
-    private cl_command_queue _queue;
+    private final cl_command_queue _queue;
 
     //==================================================================================================================
 
@@ -52,12 +53,17 @@ public class OpenCLDevice extends AbstractDevice {
      * @param platform
      * @param did
      */
-    OpenCLDevice(OpenCLPlatform platform, cl_device_id did) {
+    private OpenCLDevice(OpenCLPlatform platform, cl_device_id did) {
         _did = did;
         _platform = platform;
         // Create a command-queue for the selected device
         _queue = clCreateCommandQueueWithProperties(platform.getContext(), did, null, null);
         _reference_queue = new ReferenceQueue();
+    }
+
+    public static OpenCLDevice instance(OpenCLPlatform platform, cl_device_id did){
+        if(!platform.has(did)) platform.put(did,  new OpenCLDevice(platform, did));
+        return platform.get(did);
     }
 
     /**
@@ -68,7 +74,7 @@ public class OpenCLDevice extends AbstractDevice {
         Collection<Object> collection = _mapping.keySet();
         Collection<Tsr> extracted = new ArrayList<>();
         collection.forEach((o) -> {
-            WeakTensorReference r = (WeakTensorReference) o;
+            WeakReference r = (WeakReference) o;
             Tsr t = (Tsr) r.get();
             if (t != null) extracted.add(t);
         });
@@ -77,7 +83,7 @@ public class OpenCLDevice extends AbstractDevice {
 
     @Override
     public void dispose() {
-        _mapping.forEach((t, clt) -> get((Tsr) ((WeakTensorReference) t).get()));
+        _mapping.forEach((t, clt) -> get((Tsr) ((WeakReference) t).get()));
         clFinish(_queue);
     }
 
@@ -134,8 +140,9 @@ public class OpenCLDevice extends AbstractDevice {
         }
         //---
         // -=> IDX Baseline Scale (sliced tensors indexes might be scaled)
-        for (int i = rank * 4; i < rank * 5; i++)
+        for (int i = rank * 4; i < rank * 5; i++) {
             config[i] = ((idxbase != null) && idxbase.length > tensor.rank()) ? idxbase[i - rank * 3] : 1;
+        }
         //---
 
         //SHAPE/TRANSLATION/IDXMAP/SCALEMAP TRANSFER:
@@ -154,11 +161,9 @@ public class OpenCLDevice extends AbstractDevice {
                 0, null, null
         );
         cl_mem[] memos;
-        if (tensor.rqsGradient()) {
-            memos = new cl_mem[]{newClt.value.data, newClt.config};//newClt.grad.data,
-        } else {
-            memos = new cl_mem[]{newClt.value.data, newClt.config};
-        }
+        if (tensor.rqsGradient()) memos = new cl_mem[]{newClt.value.data, newClt.config};
+        else memos = new cl_mem[]{newClt.value.data, newClt.config};
+
         int err = clEnqueueMigrateMemObjects(
                 _queue,
                 memos.length,
@@ -168,7 +173,7 @@ public class OpenCLDevice extends AbstractDevice {
                 null,
                 null
         );
-        WeakTensorReference r = new WeakTensorReference(tensor, _reference_queue);
+        WeakReference r = new WeakTensorReference(tensor, _reference_queue);
         _mapping.put(r, newClt);
         cleaning(tensor, () -> {
             _rmv(r);
@@ -239,14 +244,11 @@ public class OpenCLDevice extends AbstractDevice {
         return this;
     }
 
-    private void _rmv(WeakTensorReference reference) {
+    private void _rmv(WeakReference reference) {
         cl_tsr clt = _mapping.get(reference);
         clReleaseMemObject(clt.config);//remove translations/shapes from device!
-        if (clt.value.uses <= 1) {
-            clReleaseMemObject(clt.value.data);
-        } else {
-            clt.value.uses--;
-        }
+        if (clt.value.uses <= 1) clReleaseMemObject(clt.value.data);
+        else clt.value.uses--;
         _mapping.remove(reference);
     }
 

@@ -129,8 +129,8 @@ public class Neureka
              * If the tensor is not needed for backpropagation it will be deleted.
              * The graph node will dereference the tensor either way.
              *
-             * The flag determines this behaivior with respect to target nodes.
-             * It is used for the test suit to validate that the right tensors were calculated.
+             * The flag determines this behavior with respect to target nodes.
+             * It is used in the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
              */
             private boolean _keepDerivativeTargetPayloads;
@@ -153,20 +153,12 @@ public class Neureka
         public class AutoDiff // Auto-Differentiation
         {
             AutoDiff(){
-                _retainGraphDerivativesAfterBackward = false;
                 _retainPendingErrorForJITProp = true;
                 _applyGradientWhenTensorIsUsed = false;
             }
 
             /**
-             * After backward passes the used size are usually not needed.
-             * For debugging purposes however this flag remains and will
-             * not allow for garbage collection of the used size.
-             */
-            private boolean _retainGraphDerivativesAfterBackward;
-
-            /**
-             * This fla enables an optimization technique which only applies
+             * This flag enables an optimization technique which only applies
              * gradients as soon as they are needed by a tensor (the tensor is used again).
              * If the flag is set to true
              * then error values will accumulate whenever it makes sense.
@@ -185,17 +177,8 @@ public class Neureka
 
 
             public void reset(){
-                _retainGraphDerivativesAfterBackward = false;
                 _retainPendingErrorForJITProp = true;
                 _applyGradientWhenTensorIsUsed = false;
-            }
-
-            public boolean retainGraphDerivativesAfterBackward(){
-                return _retainGraphDerivativesAfterBackward;
-            }
-            public void setRetainGraphDerivativesAfterBackward(boolean retain){
-                if(_isLocked) return;
-                _retainGraphDerivativesAfterBackward = retain;
             }
 
             public boolean retainPendingErrorForJITProp(){
@@ -244,19 +227,24 @@ public class Neureka
 
     }
 
-    public class Utility {
-
-
-        private String readResource(String path){//String fileName) {
+    public static class Utility {
+        /**
+         * Helper method which reads the file with the given name and returns
+         * the contents of this file as a String. Will exit the application
+         * if the file can not be read.
+         *
+         * @param path
+         * @return The contents of the file
+         */
+        public String readResource(String path){
             InputStream stream = _instance.getClass().getClassLoader().getResourceAsStream(path);
             try {
                 BufferedReader br = new BufferedReader(new InputStreamReader(stream));//new FileInputStream(fileName)));
                 StringBuffer sb = new StringBuffer();
-                String line = null;
-                while (true) {
+                String line = "";
+                while (line!=null) {
                     line = br.readLine();
-                    if (line == null) break;
-                    sb.append(line).append("\n");
+                    if (line != null) sb.append(line).append("\n");
                 }
                 return sb.toString();
             } catch (IOException e) {

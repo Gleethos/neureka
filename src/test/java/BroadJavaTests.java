@@ -154,6 +154,7 @@ public class BroadJavaTests {
 
     @Test
     public void testTensorOperationsAndAutograd() {
+        Neureka.instance().settings().reset();
         Neureka.instance().settings().indexing().setLegacy(true);
 
         NTester_Tensor tester = new NTester_Tensor("Testing core tensor functionality");
@@ -176,11 +177,11 @@ public class BroadJavaTests {
         Function tenxx = FunctionBuilder.build("i0*100", true);
         z = tenxx.activate(new Tsr[]{tanh.activate(new Tsr[]{x})});
         tester.testTensor(z, new String[]{"[1]:(9.95037E0)"});
-        Neureka.instance().settings().autoDiff().setRetainGraphDerivativesAfterBackward(true);
+        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(true);
         z.backward(new Tsr(new int[]{1}, 1));
         tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.0099E0)"});
         tester.testTensor(z, new String[]{"[1]:(9.95037E0); ->d[1]:(99.0099E0), "});
-        Neureka.instance().settings().autoDiff().setRetainGraphDerivativesAfterBackward(false);
+        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false);
         //---
         tester.testContains(
                 z.toString("dgc"),
@@ -454,7 +455,7 @@ public class BroadJavaTests {
                 -2, 3,
                 1, 2,
         });
-        Neureka.instance().settings().autoDiff().setRetainGraphDerivativesAfterBackward(true);
+        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(true);
         tester.testTensorAutoGrad(//4, 5, -13, -4 <= result values
                 new Tsr[]{tensor1, tensor2},
                 "i0xi1",
@@ -462,7 +463,7 @@ public class BroadJavaTests {
                 new Tsr(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
                 new double[][]{{-1.0, -1.0, 5.0, 5.0}, null}
         );
-        Neureka.instance().settings().autoDiff().setRetainGraphDerivativesAfterBackward(false);
+        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false);
         //---
         //======================
         int[] shape = {4, 2, 9, 5, 6, 2};

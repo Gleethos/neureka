@@ -129,8 +129,8 @@ public class Neureka
              * If the tensor is not needed for backpropagation it will be deleted.
              * The graph node will dereference the tensor either way.
              *
-             * The flag determines this behaivior with respect to target nodes.
-             * It is used for the test suit to validate that the right tensors were calculated.
+             * The flag determines this behavior with respect to target nodes.
+             * It is used in the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
              */
             private boolean _keepDerivativeTargetPayloads;
@@ -153,20 +153,12 @@ public class Neureka
         public class AutoDiff // Auto-Differentiation
         {
 <span class="fc" id="L155">            AutoDiff(){</span>
-<span class="fc" id="L156">                _retainGraphDerivativesAfterBackward = false;</span>
-<span class="fc" id="L157">                _retainPendingErrorForJITProp = true;</span>
-<span class="fc" id="L158">                _applyGradientWhenTensorIsUsed = false;</span>
-<span class="fc" id="L159">            }</span>
+<span class="fc" id="L156">                _retainPendingErrorForJITProp = true;</span>
+<span class="fc" id="L157">                _applyGradientWhenTensorIsUsed = false;</span>
+<span class="fc" id="L158">            }</span>
 
             /**
-             * After backward passes the used size are usually not needed.
-             * For debugging purposes however this flag remains and will
-             * not allow for garbage collection of the used size.
-             */
-            private boolean _retainGraphDerivativesAfterBackward;
-
-            /**
-             * This fla enables an optimization technique which only applies
+             * This flag enables an optimization technique which only applies
              * gradients as soon as they are needed by a tensor (the tensor is used again).
              * If the flag is set to true
              * then error values will accumulate whenever it makes sense.
@@ -185,84 +177,80 @@ public class Neureka
 
 
             public void reset(){
-<span class="fc" id="L188">                _retainGraphDerivativesAfterBackward = false;</span>
-<span class="fc" id="L189">                _retainPendingErrorForJITProp = true;</span>
-<span class="fc" id="L190">                _applyGradientWhenTensorIsUsed = false;</span>
-<span class="fc" id="L191">            }</span>
-
-            public boolean retainGraphDerivativesAfterBackward(){
-<span class="fc" id="L194">                return _retainGraphDerivativesAfterBackward;</span>
-            }
-            public void setRetainGraphDerivativesAfterBackward(boolean retain){
-<span class="pc bpc" id="L197" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
-<span class="fc" id="L198">                _retainGraphDerivativesAfterBackward = retain;</span>
-<span class="fc" id="L199">            }</span>
+<span class="fc" id="L180">                _retainPendingErrorForJITProp = true;</span>
+<span class="fc" id="L181">                _applyGradientWhenTensorIsUsed = false;</span>
+<span class="fc" id="L182">            }</span>
 
             public boolean retainPendingErrorForJITProp(){
-<span class="fc" id="L202">                return _retainPendingErrorForJITProp;</span>
+<span class="fc" id="L185">                return _retainPendingErrorForJITProp;</span>
             }
 
             public void setRetainPendingErrorForJITProp(boolean retain){
-<span class="pc bpc" id="L206" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
-<span class="fc" id="L207">                _retainPendingErrorForJITProp = retain;</span>
-<span class="fc" id="L208">            }</span>
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
+<span class="fc" id="L190">                _retainPendingErrorForJITProp = retain;</span>
+<span class="fc" id="L191">            }</span>
 
             public boolean applyGradientWhenTensorIsUsed(){
-<span class="fc" id="L211">                return _applyGradientWhenTensorIsUsed;</span>
+<span class="fc" id="L194">                return _applyGradientWhenTensorIsUsed;</span>
             }
 
             public void setApplyGradientWhenTensorIsUsed(boolean apply){
-<span class="pc bpc" id="L215" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
-<span class="fc" id="L216">                _applyGradientWhenTensorIsUsed = apply;</span>
-<span class="fc" id="L217">            }</span>
+<span class="pc bpc" id="L198" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
+<span class="fc" id="L199">                _applyGradientWhenTensorIsUsed = apply;</span>
+<span class="fc" id="L200">            }</span>
 
         }
 
         public class Indexing
         {
-<span class="fc" id="L223">            Indexing(){</span>
-<span class="fc" id="L224">                _legacyIndexing = false;</span>
-<span class="fc" id="L225">            }</span>
+<span class="fc" id="L206">            Indexing(){</span>
+<span class="fc" id="L207">                _legacyIndexing = false;</span>
+<span class="fc" id="L208">            }</span>
 
 
             private boolean _legacyIndexing;
 
             public void reset(){
-<span class="fc" id="L231">                _legacyIndexing = false;</span>
-<span class="fc" id="L232">            }</span>
+<span class="fc" id="L214">                _legacyIndexing = false;</span>
+<span class="fc" id="L215">            }</span>
 
             public boolean legacy(){
-<span class="fc" id="L235">                return _legacyIndexing;</span>
+<span class="fc" id="L218">                return _legacyIndexing;</span>
             }
 
             public void setLegacy(boolean enabled){
-<span class="pc bpc" id="L239" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
-<span class="fc" id="L240">                _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (OpenCLPlatform)</span>
-<span class="fc" id="L241">            }</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
+<span class="fc" id="L223">                _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (OpenCLPlatform)</span>
+<span class="fc" id="L224">            }</span>
 
         }
 
     }
 
-<span class="fc" id="L247">    public class Utility {</span>
-
-
-        private String readResource(String path){//String fileName) {
-<span class="fc" id="L251">            InputStream stream = _instance.getClass().getClassLoader().getResourceAsStream(path);</span>
+<span class="fc" id="L230">    public static class Utility {</span>
+        /**
+         * Helper method which reads the file with the given name and returns
+         * the contents of this file as a String. Will exit the application
+         * if the file can not be read.
+         *
+         * @param path
+         * @return The contents of the file
+         */
+        public String readResource(String path){
+<span class="fc" id="L240">            InputStream stream = _instance.getClass().getClassLoader().getResourceAsStream(path);</span>
             try {
-<span class="fc" id="L253">                BufferedReader br = new BufferedReader(new InputStreamReader(stream));//new FileInputStream(fileName)));</span>
-<span class="fc" id="L254">                StringBuffer sb = new StringBuffer();</span>
-<span class="fc" id="L255">                String line = null;</span>
-                while (true) {
-<span class="fc" id="L257">                    line = br.readLine();</span>
-<span class="fc bfc" id="L258" title="All 2 branches covered.">                    if (line == null) break;</span>
-<span class="fc" id="L259">                    sb.append(line).append(&quot;\n&quot;);</span>
+<span class="fc" id="L242">                BufferedReader br = new BufferedReader(new InputStreamReader(stream));//new FileInputStream(fileName)));</span>
+<span class="fc" id="L243">                StringBuffer sb = new StringBuffer();</span>
+<span class="fc" id="L244">                String line = &quot;&quot;;</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">                while (line!=null) {</span>
+<span class="fc" id="L246">                    line = br.readLine();</span>
+<span class="fc bfc" id="L247" title="All 2 branches covered.">                    if (line != null) sb.append(line).append(&quot;\n&quot;);</span>
                 }
-<span class="fc" id="L261">                return sb.toString();</span>
-<span class="nc" id="L262">            } catch (IOException e) {</span>
-<span class="nc" id="L263">                e.printStackTrace();</span>
-<span class="nc" id="L264">                System.exit(1);</span>
-<span class="nc" id="L265">                return null;</span>
+<span class="fc" id="L249">                return sb.toString();</span>
+<span class="nc" id="L250">            } catch (IOException e) {</span>
+<span class="nc" id="L251">                e.printStackTrace();</span>
+<span class="nc" id="L252">                System.exit(1);</span>
+<span class="nc" id="L253">                return null;</span>
             }
         }
 

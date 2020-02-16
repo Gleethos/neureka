@@ -67,7 +67,7 @@ class ThoroughGroovyTests
         assert !Neureka.instance().settings().debug().keepDerivativeTargetPayloads()
         assert !Neureka.instance().settings().autoDiff().applyGradientWhenTensorIsUsed()
         assert Neureka.instance().settings().autoDiff().retainPendingErrorForJITProp()
-        assert !Neureka.instance().settings().autoDiff().retainGraphDerivativesAfterBackward()
+        //assert !Neureka.instance().settings().autoDiff().retainGraphDerivativesAfterBackward()
 
         assert  Neureka.version()=="1.0.0"
 
@@ -358,7 +358,7 @@ class ThoroughGroovyTests
     void testNoPreemptiveApplyWhenJITProp(){
         Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(true)
         Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(true)
-        Neureka.instance().settings().autoDiff().setRetainGraphDerivativesAfterBackward(false)
+        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false)
 
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = new Tsr(-3)
@@ -400,7 +400,7 @@ class ThoroughGroovyTests
     void testAutogradWithoutJITAndAutoApply(){
         Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(false)
         Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(false)
-        Neureka.instance().settings().autoDiff().setRetainGraphDerivativesAfterBackward(false)
+        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false)
 
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = new Tsr(-3)
@@ -431,7 +431,7 @@ class ThoroughGroovyTests
     void testIndifferentialAndJITWithAutoApply(){
         Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(true)
         Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(true)
-        Neureka.instance().settings().autoDiff().setRetainGraphDerivativesAfterBackward(false)
+        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false)
 
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = new Tsr(-3)
@@ -456,7 +456,7 @@ class ThoroughGroovyTests
     void testNoJITPropWhenForwardAD(){
         Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(true)
         Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(true)
-        Neureka.instance().settings().autoDiff().setRetainGraphDerivativesAfterBackward(false)
+        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false)
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = new Tsr(-4)
         Tsr c = new Tsr(3).setRqsGradient(true)
@@ -685,9 +685,9 @@ class ThoroughGroovyTests
         assert y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
         y = ((x+b)*w)^2
         assert y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
-        Neureka.instance().settings().autoDiff().setRetainGraphDerivativesAfterBackward(true);
+        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(true);
         y.backward(new Tsr(1))
-        Neureka.instance().settings().autoDiff().setRetainGraphDerivativesAfterBackward(false);
+        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false);
         assert new Tsr([y], "Ig[0]").toString().equals("empty")
         assert new Tsr([x], "Ig[0]").toString().equals("empty")
         Tsr[] trs = new Tsr[1]

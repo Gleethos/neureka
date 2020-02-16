@@ -5,7 +5,6 @@ Neureka.instance {
     settings {
 
         autoDiff {
-            delegate.retainGraphDerivativesAfterBackward = false
             delegate.retainPendingErrorForJITProp = true
             delegate.applyGradientWhenTensorIsUsed = true
         }

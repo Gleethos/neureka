@@ -33,7 +33,7 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
     /**
      *  Cached configuration
      */
-    private static Map<Long, int[]> _CONFIGS;
+    private final static Map<Long, int[]> _CONFIGS;
 
     /**
      *  The shape of the NDArray.
@@ -65,16 +65,16 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
 
     protected static int[] _cached(int[] data) {
         long key = 0;
-        for (int i = 0; i < data.length; i++) {
-            if (data[i] <= 10)  key *= 10;
-            else if (data[i] <= 100) key *= 100;
-            else if (data[i] <= 1000) key *= 1000;
-            else if (data[i] <= 10000) key *= 10000;
-            else if (data[i] <= 100000) key *= 100000;
-            else if (data[i] <= 1000000) key *= 1000000;
-            else if (data[i] <= 10000000) key *= 10000000;
-            else if (data[i] <= 100000000) key *= 100000000;
-            key += Math.abs(data[i])+1;
+        for (int e : data) {
+            if (e <= 10) key *= 10;
+            else if (e <= 100) key *= 100;
+            else if (e <= 1000) key *= 1000;
+            else if (e <= 10000) key *= 10000;
+            else if (e <= 100000) key *= 100000;
+            else if (e <= 1000000) key *= 1000000;
+            else if (e <= 10000000) key *= 10000000;
+            else if (e <= 100000000) key *= 100000000;
+            key += Math.abs(e) + 1;
         }
         int[] found = _CONFIGS.get(key);
         if (found != null) {
@@ -163,9 +163,9 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
                 DecimalFormat Formatter = new DecimalFormat("##0.0##E0", formatSymbols);
                 String vStr = String.valueOf(v);
                 if (vStr.length()>7){
-                    if (vStr.substring(0, 2).equals("0.")){
+                    if (vStr.startsWith("0.")){
                         vStr = vStr.substring(0, 7)+"E0";
-                    } else if(vStr.substring(0, 3).equals("-0.")){
+                    } else if(vStr.startsWith("-0.")){
                         vStr = vStr.substring(0, 8)+"E0";
                     } else {
                         vStr = Formatter.format(v);

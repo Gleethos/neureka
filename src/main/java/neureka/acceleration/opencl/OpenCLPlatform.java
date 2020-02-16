@@ -3,8 +3,6 @@ package neureka.acceleration.opencl;
 import neureka.Neureka;
 import neureka.calculus.Function;
 import org.jocl.*;
-
-import java.io.*;
 import java.util.*;
 
 import static org.jocl.CL.*;
@@ -12,12 +10,12 @@ import static org.jocl.CL.CL_DEVICE_TYPE_ALL;
 
 public class OpenCLPlatform {
 
-    private cl_platform_id _pid;
-    private List<OpenCLDevice> _devices;
-    private cl_context _context;
-    private Map<String, cl_kernel> _kernels;
+    private final cl_platform_id _pid;
+    private final Map<cl_device_id, OpenCLDevice> _id_device;
+    private final cl_context _context;
+    private final Map<String, cl_kernel> _kernels;
 
-    private static Map<String, String> OPERATION_TO_KERNEL_MAPPING = new HashMap<String, String>();
+    private static final Map<String, String> OPERATION_TO_KERNEL_MAPPING = new HashMap<String, String>();
 
     static {
         OPERATION_TO_KERNEL_MAPPING.put("relu", "activate_relu");
@@ -59,12 +57,14 @@ public class OpenCLPlatform {
     }
 
     public String kernelNameOf(int f_id) {
-        String name = OPERATION_TO_KERNEL_MAPPING.get(Function.TYPES.REGISTER(f_id));
+        //String name = OPERATION_TO_KERNEL_MAPPING.get(Function.TYPES.REGISTER(f_id));
         //System.out.println("Kernel needed: "+name);
         return OPERATION_TO_KERNEL_MAPPING.get(Function.TYPES.REGISTER(f_id));
     }
 
-    OpenCLPlatform(cl_platform_id pid) {
+    private OpenCLPlatform(cl_platform_id pid)
+    {
+        _id_device = new TreeMap<>(Comparator.comparingInt(NativePointerObject::hashCode));
         _pid = pid;
         // Obtain the number of devices for the current platform
         int numDevices[] = new int[1];
@@ -84,25 +84,20 @@ public class OpenCLPlatform {
                 contextProperties, devicesArray.length, devicesArray,
                 null, null, null
         );
+
         // Collect all devices of this platform
-        List<OpenCLDevice> myDevices = new ArrayList<>();
-
-        for (cl_device_id did : devicesArray) {//TODO: make devices singletons!
-            OpenCLDevice clDevice = new OpenCLDevice(this, did);
-            myDevices.add(clDevice);
+        for (cl_device_id did : devicesArray) {
+            OpenCLDevice clDevice = OpenCLDevice.instance(this, did);
+            _id_device.put(did, clDevice);
         }
-        _devices = myDevices;
         _kernels = new HashMap<>();
-
         _compile(devicesArray);
-
     }
 
     public void recompile() {
-        cl_device_id[] devicesArray = new cl_device_id[_devices.size()];
-        for (int i = 0; i < devicesArray.length; i++) {
-            devicesArray[i] = _devices.get(i).CLDeviceID();
-        }
+        List<OpenCLDevice> devices = getDevices();
+        cl_device_id[] devicesArray = new cl_device_id[devices.size()];
+        for (int i = 0; i < devicesArray.length; i++) devicesArray[i] = devices.get(i).CLDeviceID();
         _compile(devicesArray);
     }
 
@@ -111,7 +106,7 @@ public class OpenCLPlatform {
         //Reading all kernels!
         List<String> templateSources = new ArrayList<>();
 
-        String[] fileNames  = {
+        String[] fileNames = {
                 "activate_template.cl",
                 "broadcast_template.cl",
                 "convolve_template.cl",
@@ -120,9 +115,7 @@ public class OpenCLPlatform {
                 "utility.cl"
         };
         for(String name : fileNames){
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("kernels/"+name);
-            templateSources.add(_setup.readFile(inputStream));
-
+            templateSources.add(Neureka.instance().utility().readResource("kernels/"+name));
         }
         ArrayList<String> names = new ArrayList<>();
         ArrayList<String> sources = new ArrayList<>();
@@ -156,8 +149,8 @@ public class OpenCLPlatform {
         // Create the program
         cl_program cpProgram = clCreateProgramWithSource(
                 _context,
-                sources.size(),//kernelSources.length,
-                sources.toArray(new String[sources.size()]),
+                sources.size(),
+                sources.toArray(new String[0]),
                 null,
                 null
         );
@@ -173,9 +166,7 @@ public class OpenCLPlatform {
 
         // Create the kernels
         for (String name : names) {
-            if (name != null) {
-                _kernels.put(name, clCreateKernel(cpProgram, name, null));
-            }
+            if (name != null) _kernels.put(name, clCreateKernel(cpProgram, name, null));
         }
     }
 
@@ -183,7 +174,8 @@ public class OpenCLPlatform {
         void apply(String name, String first, String second, boolean advanced);
     }
 
-    private Map<String, String> convolve_kernels_of(String name, String source) {
+    private Map<String, String> convolve_kernels_of(String name, String source)
+    {
         Map<String, String> code = new HashMap<>();
         String newName = name.replace("template", "");
         source = source.replace("template", "");
@@ -234,38 +226,36 @@ public class OpenCLPlatform {
             parser.apply(
                     "gaussian",
                     "output =\n" +
-                            "                (float)pow(\n" +
-                            "                    (float)M_E,\n" +
-                            "                    -(float)pow(\n" +
-                            "                        (float)input,\n" +
-                            "                        (float)2\n" +
-                            "                    )\n" +
-                            "                );\n",
+                         "    (float)pow(\n" +
+                         "        (float)M_E,\n" +
+                         "        -(float)pow(\n" +
+                         "            (float)input,\n" +
+                         "            (float)2\n" +
+                         "        )\n" +
+                         "    );\n",
                     "output = 1 / (1 + (float)pow((float)M_E, -input));\n",
                     false
             );
             parser.apply(
                     "ligmoid",
-                    "output = (\n" +
-                            "                    (float) log(\n" +
-                            "                        1+pow(\n" +
-                            "                            (float)\n" +
-                            "                            M_E,\n" +
-                            "                            (float)\n" +
-                            "                            input\n" +
-                            "                        )\n" +
-                            "                    )\n" +
-                            "            );",
+                    "output = \n" +
+                            "(\n" +
+                         "        (float) log(\n" +
+                         "            1+pow(\n" +
+                         "                (float)\n" +
+                         "                M_E,\n" +
+                         "                (float)\n" +
+                         "                input\n" +
+                         "            )\n" +
+                         "        )\n" +
+                         "    );",
                     "output =\n" +
-                            "                    1 /\n" +
-                            "                            (1 + (float)\n" +
-                            "                                pow(\n" +
-                            "                                    (float)\n" +
-                            "                                    M_E,\n" +
-                            "                                    (float)\n" +
-                            "                                    input\n" +
-                            "                                )\n" +
-                            "                            );\n",
+                           "    1 /\n" +
+                           "        (1 + (float) pow(\n" +
+                           "                (float)M_E,\n" +
+                           "                (float)input\n" +
+                           "            )\n" +
+                           "        );\n",
                     false
             );
             parser.apply(
@@ -445,8 +435,22 @@ public class OpenCLPlatform {
     }
 
     public List<OpenCLDevice> getDevices() {
-        return _devices;
+        List<OpenCLDevice> devices = new ArrayList<>();
+        _id_device.forEach((k, v)-> devices.add(v));
+        return devices;
+        //return _devices;
     }
+
+    public boolean has(cl_device_id did){
+        return _id_device.containsKey(did);
+    }
+    public OpenCLDevice get(cl_device_id did){
+        return _id_device.get(did);
+    }
+    public void put(cl_device_id did, OpenCLDevice device){
+       _id_device.put(did, device);
+    }
+
 
     public Map<String, cl_kernel> getKernels() {
         return _kernels;
@@ -460,16 +464,17 @@ public class OpenCLPlatform {
         return _setup.PLATFORMS;
     }
 
-    private static class _setup {
+    private static class _setup
+    {
         public static List<OpenCLPlatform> PLATFORMS = findAllPlatforms();
 
         public static List<OpenCLPlatform> findAllPlatforms() {
             // Obtain the number of platforms
-            int numPlatforms[] = new int[1];
+            int[] numPlatforms = new int[1];
             clGetPlatformIDs(0, null, numPlatforms);
 
             // Obtain the platform IDs
-            cl_platform_id platforms[] = new cl_platform_id[numPlatforms[0]];
+            cl_platform_id[] platforms = new cl_platform_id[numPlatforms[0]];
             clGetPlatformIDs(platforms.length, platforms, null);
 
             List<OpenCLPlatform> list = new ArrayList<>();
@@ -479,31 +484,6 @@ public class OpenCLPlatform {
             return list;
         }
 
-        /**
-         * Helper function which reads the file with the given name and returns
-         * the contents of this file as a String. Will exit the application
-         * if the file can not be read.
-         *
-         * @param
-         * @return The contents of the file
-         */
-        private static String readFile(InputStream stream){//String fileName) {
-            try {
-                BufferedReader br = new BufferedReader(new InputStreamReader(stream));//new FileInputStream(fileName)));
-                StringBuffer sb = new StringBuffer();
-                String line = null;
-                while (true) {
-                    line = br.readLine();
-                    if (line == null) break;
-                    sb.append(line).append("\n");
-                }
-                return sb.toString();
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.exit(1);
-                return null;
-            }
-        }
     }
 
 

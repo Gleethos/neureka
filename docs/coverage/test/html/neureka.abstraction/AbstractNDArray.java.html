@@ -33,7 +33,7 @@ import java.util.WeakHashMap;
     /**
      *  Cached configuration
      */
-    private static Map&lt;Long, int[]&gt; _CONFIGS;
+    private final static Map&lt;Long, int[]&gt; _CONFIGS;
 
     /**
      *  The shape of the NDArray.
@@ -65,16 +65,16 @@ import java.util.WeakHashMap;
 
     protected static int[] _cached(int[] data) {
 <span class="fc" id="L67">        long key = 0;</span>
-<span class="fc bfc" id="L68" title="All 2 branches covered.">        for (int i = 0; i &lt; data.length; i++) {</span>
-<span class="fc bfc" id="L69" title="All 2 branches covered.">            if (data[i] &lt;= 10)  key *= 10;</span>
-<span class="fc bfc" id="L70" title="All 2 branches covered.">            else if (data[i] &lt;= 100) key *= 100;</span>
-<span class="fc bfc" id="L71" title="All 2 branches covered.">            else if (data[i] &lt;= 1000) key *= 1000;</span>
-<span class="pc bpc" id="L72" title="1 of 2 branches missed.">            else if (data[i] &lt;= 10000) key *= 10000;</span>
-<span class="pc bpc" id="L73" title="1 of 2 branches missed.">            else if (data[i] &lt;= 100000) key *= 100000;</span>
-<span class="nc bnc" id="L74" title="All 2 branches missed.">            else if (data[i] &lt;= 1000000) key *= 1000000;</span>
-<span class="nc bnc" id="L75" title="All 2 branches missed.">            else if (data[i] &lt;= 10000000) key *= 10000000;</span>
-<span class="nc bnc" id="L76" title="All 2 branches missed.">            else if (data[i] &lt;= 100000000) key *= 100000000;</span>
-<span class="fc" id="L77">            key += Math.abs(data[i])+1;</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        for (int e : data) {</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">            if (e &lt;= 10) key *= 10;</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">            else if (e &lt;= 100) key *= 100;</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">            else if (e &lt;= 1000) key *= 1000;</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">            else if (e &lt;= 10000) key *= 10000;</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">            else if (e &lt;= 100000) key *= 100000;</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">            else if (e &lt;= 1000000) key *= 1000000;</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">            else if (e &lt;= 10000000) key *= 10000000;</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">            else if (e &lt;= 100000000) key *= 100000000;</span>
+<span class="fc" id="L77">            key += Math.abs(e) + 1;</span>
         }
 <span class="fc" id="L79">        int[] found = _CONFIGS.get(key);</span>
 <span class="fc bfc" id="L80" title="All 2 branches covered.">        if (found != null) {</span>
@@ -163,9 +163,9 @@ import java.util.WeakHashMap;
 <span class="fc" id="L163">                DecimalFormat Formatter = new DecimalFormat(&quot;##0.0##E0&quot;, formatSymbols);</span>
 <span class="fc" id="L164">                String vStr = String.valueOf(v);</span>
 <span class="fc bfc" id="L165" title="All 2 branches covered.">                if (vStr.length()&gt;7){</span>
-<span class="fc bfc" id="L166" title="All 2 branches covered.">                    if (vStr.substring(0, 2).equals(&quot;0.&quot;)){</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">                    if (vStr.startsWith(&quot;0.&quot;)){</span>
 <span class="fc" id="L167">                        vStr = vStr.substring(0, 7)+&quot;E0&quot;;</span>
-<span class="fc bfc" id="L168" title="All 2 branches covered.">                    } else if(vStr.substring(0, 3).equals(&quot;-0.&quot;)){</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">                    } else if(vStr.startsWith(&quot;-0.&quot;)){</span>
 <span class="fc" id="L169">                        vStr = vStr.substring(0, 8)+&quot;E0&quot;;</span>
                     } else {
 <span class="fc" id="L171">                        vStr = Formatter.format(v);</span>

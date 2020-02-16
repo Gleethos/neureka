@@ -530,7 +530,7 @@ public class GraphNode implements Component&lt;Tsr&gt; {
      * deviate from its default state, namely: true!
      */
     private void _deleteDerivativesRecursively() {
-<span class="fc bfc" id="L533" title="All 2 branches covered.">        if (!Neureka.instance().settings().autoDiff().retainGraphDerivativesAfterBackward()) {</span>
+<span class="fc bfc" id="L533" title="All 2 branches covered.">        if (!Neureka.instance().settings().debug().keepDerivativeTargetPayloads()) {</span>
 <span class="fc bfc" id="L534" title="All 2 branches covered.">            if (!this.reliesOnJustInTimeProp()) _targets_derivatives = null;</span>
 <span class="fc bfc" id="L535" title="All 2 branches covered.">            if (!this.isGraphLeave()) forEachTarget(GraphNode::_deleteDerivativesRecursively);</span>
         }

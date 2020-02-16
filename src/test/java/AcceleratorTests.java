@@ -6,6 +6,7 @@ import neureka.acceleration.opencl.OpenCLPlatform;
 import org.junit.Test;
 import util.NTester_Tensor;
 
+import javax.swing.plaf.IconUIResource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -21,7 +22,7 @@ public class AcceleratorTests
         NTester_Tensor tester = new NTester_Tensor("Testing autograd on GPU");
 
         Device gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
-        Neureka.instance().settings().autoDiff().setRetainGraphDerivativesAfterBackward(true);
+        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(true);
 
         Neureka.instance().settings().indexing().setLegacy(true);
         OpenCLPlatform.PLATFORMS().get(0).recompile();
@@ -31,10 +32,10 @@ public class AcceleratorTests
         OpenCLPlatform.PLATFORMS().get(0).recompile();
         _testAutograd(gpu, tester, false);
 
-        Neureka.instance().settings().autoDiff().setRetainGraphDerivativesAfterBackward(false);
+        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false);
         tester.close();
     }
-    private  void _testAutograd(Device gpu, NTester_Tensor tester, boolean legacyIndexing)
+    private void _testAutograd(Device gpu, NTester_Tensor tester, boolean legacyIndexing)
     {
         //gpu.add(new Tsr(new int[]{1000000}, 3));
         List<Tsr> listOfTensors = new ArrayList<>();
@@ -258,6 +259,45 @@ public class AcceleratorTests
         );
         //---
     }
+
+
+    @Test
+    public void testThreadedCPUExecution(){
+
+        Tsr a = new Tsr(new int[]{100, 60, 1}, 4);
+        Tsr b = new Tsr(new int[]{100, 1, 60}, -2);
+
+        int initialCount = java.lang.Thread.activeCount();
+        int[] max = {initialCount};
+        Thread t = new Thread(()->{
+            while (max[0]>0){
+                int current = java.lang.Thread.activeCount();
+                if(current>max[0]) max[0] = current;
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
+
+        Tsr c = a.div(b);
+        //System.out.println(c);
+
+        int maxFound = max[0]-1;//Minus the thread that was used to monitor number of threads!
+        max[0] = -1;
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(maxFound+">"+initialCount);
+        assert maxFound>initialCount;
+
+    }
+
+
 
 
 
