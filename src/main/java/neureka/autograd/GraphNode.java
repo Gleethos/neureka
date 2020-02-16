@@ -18,9 +18,9 @@ import java.util.function.Supplier;
  *
  */
 public class GraphNode implements Component<Tsr> {
-    private static Function MUL = FunctionBuilder.build("(I[0]*I[1])", false);
-    private static Function ADD = FunctionBuilder.build("(I[0]+I[1])", false);
-    private static Function INV_X = FunctionBuilder.build("I[0]x>>I[1]x>>I[2]", false);
+    private final static Function MUL = FunctionBuilder.build("(I[0]*I[1])", false);
+    private final static Function ADD = FunctionBuilder.build("(I[0]+I[1])", false);
+    private final static Function INV_X = FunctionBuilder.build("I[0]x>>I[1]x>>I[2]", false);
 
     /**
      * This gradient node is involved in auto-differentiation.
@@ -151,17 +151,12 @@ public class GraphNode implements Component<Tsr> {
                 if (this.getPayload() == null) {
                     boolean allChildrenUseForwardAD = true;
                     if (_children != null) {
-                        for (WeakReference<GraphNode> child : _children) {
-                            if (child.get() != null) {
-                                if (child.get().usesReverseAD()) {
-                                    allChildrenUseForwardAD = false;
-                                }
-                            }
+                        for (WeakReference<GraphNode> childRef : _children) {
+                            GraphNode childNode = childRef.get();
+                            if (childNode != null && childNode.usesReverseAD()) allChildrenUseForwardAD = false;
                         }
                     }
-                    if (allChildrenUseForwardAD) {
-                        _targets_derivatives = null;
-                    }
+                    if (allChildrenUseForwardAD) _targets_derivatives = null;
                 }
             });
         }
@@ -225,7 +220,7 @@ public class GraphNode implements Component<Tsr> {
      */
     private synchronized void _attachChild(GraphNode newChild) {
         if (_children == null) _children = new ArrayList<>();
-        WeakTensorReference<GraphNode> ref = new WeakTensorReference<GraphNode>(newChild, null);
+        WeakReference<GraphNode> ref = new WeakTensorReference<>(newChild, null);
         _children.add(ref);
     }
 
@@ -335,7 +330,7 @@ public class GraphNode implements Component<Tsr> {
                             if (src_node.size() == 0 && this.size() == 0) {
                                 this.put((GraphNode) inputs[i].find(GraphNode.class), function.getADAgent(inputs, i, true));
                             } else {
-                                /**  Chain rule (forward) for every _gradient w.r.t. leaves (reverseAD or user leaves):* */
+                                /*  Chain rule (forward) for every _gradient w.r.t. leaves (reverseAD or user leaves): */
                                 src_node.forEach(function.derive(inputs, i),
                                 (t, td) -> {
                                     if (this.has(t)) this.put(t, ADD.activate(new Tsr[]{td, (Tsr) this.get(t)}));
@@ -383,7 +378,7 @@ public class GraphNode implements Component<Tsr> {
         } else {
             result_mode = -input_mode;
         }
-        result_mode = ("<>".replace(function.type(), "") == "<>") ? result_mode : 0;
+        result_mode = ("<>".replace(function.type(), "").equals("<>")) ? result_mode : 0;
         return result_mode;
     }
 
@@ -472,7 +467,6 @@ public class GraphNode implements Component<Tsr> {
             else jit.addPending(pendingBackProp);
             getPayload().add(jit);
         }
-        return;
     }
 
     /**
@@ -545,9 +539,9 @@ public class GraphNode implements Component<Tsr> {
     private int _numberOfReverseModeADChildren() {
         int count = 0;
         if (_children != null) {
-            for (WeakReference weak : _children) {
+            for (WeakReference<GraphNode> weak : _children) {
                 if (weak != null && weak.get() != null) {
-                    GraphNode child = (GraphNode) weak.get();
+                    GraphNode child = weak.get();
                     if (child.usesReverseAD()) count++;
                 }
             }
@@ -642,7 +636,7 @@ public class GraphNode implements Component<Tsr> {
      */
     public void forEachDerivative(BiConsumer<GraphNode, ADAgent> action) {
         if (_targets_derivatives == null) return;
-        _targets_derivatives.forEach((t, o) -> action.accept(t, o));
+        _targets_derivatives.forEach(action::accept);
     }
 
     /**
@@ -703,19 +697,19 @@ public class GraphNode implements Component<Tsr> {
     private String _toString(String deep, boolean isLast) {//int depth){
         String delimiter = ((isLast) ? ("    ") : ("|   "));
         String arrow = ((char) 187) + "" + ((_parents != null) ? (String.valueOf(_parents.length)) : "0") + ((char) 187);
-        String asString = deep +
-                arrow + toString("v");
+        StringBuilder asString = new StringBuilder(deep +
+                arrow + toString("v"));
         deep = deep.substring(0, deep.length() - 1);
         if (_parents != null) {
-            asString += "\n" + deep + ((isLast) ? "   \\\n" : "|  \\\n");
+            asString.append("\n").append(deep).append((isLast) ? "   \\\n" : "|  \\\n");
             for (int i = 0; i < _parents.length; i++) {
                 boolean last = (i == _parents.length - 1);
-                asString += ((i != 0) ? deep + delimiter + "|\n" : "");
-                asString += (_parents[i]._toString(deep + delimiter + i, last) + "\n");
+                asString.append((i != 0) ? deep + delimiter + "|\n" : "");
+                asString.append(_parents[i]._toString(deep + delimiter + i, last)).append("\n");
             }
-            asString = asString.substring(0, asString.length() - 1);
+            asString = new StringBuilder(asString.substring(0, asString.length() - 1));
         }
-        return asString;
+        return asString.toString();
     }
 
 

@@ -841,9 +841,7 @@ public class CPU extends AbstractDevice {
             double[] t1_val = t1_src.value64();
             double[] t2_val = t2_src.value64();
             if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    return t1_val[t1_src.i_of_idx(t1Idx)] % t2_val[t2_src.i_of_idx(t2Idx)];
-                };
+                return (t0Idx, t1Idx, t2Idx) -> t1_val[t1_src.i_of_idx(t1Idx)] % t2_val[t2_src.i_of_idx(t2Idx)];
             } else {
                 return (t0Idx, t1Idx, t2Idx) -> {
                     if (d == 0) {
@@ -873,9 +871,7 @@ public class CPU extends AbstractDevice {
                 for (int i = 0; i < threadCount; i++) {
                     final int start = i * chunk;
                     final int end = (i == threadCount - 1) ? sze : ((i + 1) * chunk);
-                    th[i] = new Thread(() -> {
-                        range.execute(start, end);
-                    });
+                    th[i] = new Thread(() -> range.execute(start, end));
                     th[i].start();
                 }
                 for (int i = 0; i < threadCount; i++) {

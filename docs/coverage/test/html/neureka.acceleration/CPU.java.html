@@ -841,18 +841,16 @@ import java.util.Collection;
 <span class="fc" id="L841">            double[] t1_val = t1_src.value64();</span>
 <span class="fc" id="L842">            double[] t2_val = t2_src.value64();</span>
 <span class="fc bfc" id="L843" title="All 2 branches covered.">            if (d &lt; 0) {</span>
-<span class="fc" id="L844">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc" id="L845">                    return t1_val[t1_src.i_of_idx(t1Idx)] % t2_val[t2_src.i_of_idx(t2Idx)];</span>
-                };
+<span class="fc" id="L844">                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[t1_src.i_of_idx(t1Idx)] % t2_val[t2_src.i_of_idx(t2Idx)];</span>
             } else {
-<span class="fc" id="L848">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc bfc" id="L849" title="All 2 branches covered.">                    if (d == 0) {</span>
-<span class="fc" id="L850">                        return 1 / t2_val[t2_src.i_of_idx(t2Idx)];</span>
+<span class="fc" id="L846">                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc bfc" id="L847" title="All 2 branches covered.">                    if (d == 0) {</span>
+<span class="fc" id="L848">                        return 1 / t2_val[t2_src.i_of_idx(t2Idx)];</span>
                     } else {
-<span class="fc" id="L852">                        return</span>
-<span class="fc" id="L853">                                -(t1_val[t1_src.i_of_idx(t1Idx)]</span>
+<span class="fc" id="L850">                        return</span>
+<span class="fc" id="L851">                                -(t1_val[t1_src.i_of_idx(t1Idx)]</span>
                                         /
-<span class="fc" id="L855">                                        Math.pow(t2_val[t2_src.i_of_idx(t2Idx)], 2));</span>
+<span class="fc" id="L853">                                        Math.pow(t2_val[t2_src.i_of_idx(t2Idx)], 2));</span>
                     }
                 };
             }
@@ -860,33 +858,31 @@ import java.util.Collection;
         //---
 
         private static void _threaded(int sze, Range range) {
-<span class="fc" id="L863">            boolean doThreading = false;</span>
-<span class="fc bfc" id="L864" title="All 2 branches covered.">            if (sze &gt; 128) {</span>
-<span class="pc bpc" id="L865" title="1 of 2 branches missed.">                doThreading = ((sze / Runtime.getRuntime().availableProcessors()) &gt; 32);</span>
+<span class="fc" id="L861">            boolean doThreading = false;</span>
+<span class="fc bfc" id="L862" title="All 2 branches covered.">            if (sze &gt; 128) {</span>
+<span class="pc bpc" id="L863" title="1 of 2 branches missed.">                doThreading = ((sze / Runtime.getRuntime().availableProcessors()) &gt; 32);</span>
             }
-<span class="fc bfc" id="L867" title="All 2 branches covered.">            if (!doThreading) {</span>
-<span class="fc" id="L868">                range.execute(0, sze);</span>
+<span class="fc bfc" id="L865" title="All 2 branches covered.">            if (!doThreading) {</span>
+<span class="fc" id="L866">                range.execute(0, sze);</span>
             } else {
-<span class="fc" id="L870">                int threadCount = Runtime.getRuntime().availableProcessors();</span>
-<span class="fc" id="L871">                final int chunk = (sze / threadCount);</span>
-<span class="fc" id="L872">                Thread[] th = new Thread[threadCount];</span>
-<span class="fc bfc" id="L873" title="All 2 branches covered.">                for (int i = 0; i &lt; threadCount; i++) {</span>
-<span class="fc" id="L874">                    final int start = i * chunk;</span>
-<span class="fc bfc" id="L875" title="All 2 branches covered.">                    final int end = (i == threadCount - 1) ? sze : ((i + 1) * chunk);</span>
-<span class="fc" id="L876">                    th[i] = new Thread(() -&gt; {</span>
-<span class="fc" id="L877">                        range.execute(start, end);</span>
-<span class="fc" id="L878">                    });</span>
-<span class="fc" id="L879">                    th[i].start();</span>
+<span class="fc" id="L868">                int threadCount = Runtime.getRuntime().availableProcessors();</span>
+<span class="fc" id="L869">                final int chunk = (sze / threadCount);</span>
+<span class="fc" id="L870">                Thread[] th = new Thread[threadCount];</span>
+<span class="fc bfc" id="L871" title="All 2 branches covered.">                for (int i = 0; i &lt; threadCount; i++) {</span>
+<span class="fc" id="L872">                    final int start = i * chunk;</span>
+<span class="fc bfc" id="L873" title="All 2 branches covered.">                    final int end = (i == threadCount - 1) ? sze : ((i + 1) * chunk);</span>
+<span class="fc" id="L874">                    th[i] = new Thread(() -&gt; range.execute(start, end));</span>
+<span class="fc" id="L875">                    th[i].start();</span>
                 }
-<span class="fc bfc" id="L881" title="All 2 branches covered.">                for (int i = 0; i &lt; threadCount; i++) {</span>
+<span class="fc bfc" id="L877" title="All 2 branches covered.">                for (int i = 0; i &lt; threadCount; i++) {</span>
                     try {
-<span class="fc" id="L883">                        th[i].join();</span>
-<span class="nc" id="L884">                    } catch (InterruptedException e) {</span>
-<span class="nc" id="L885">                        e.printStackTrace();</span>
-<span class="fc" id="L886">                    }</span>
+<span class="fc" id="L879">                        th[i].join();</span>
+<span class="nc" id="L880">                    } catch (InterruptedException e) {</span>
+<span class="nc" id="L881">                        e.printStackTrace();</span>
+<span class="fc" id="L882">                    }</span>
                 }
             }
-<span class="fc" id="L889">        }</span>
+<span class="fc" id="L885">        }</span>
 
 
         private static class _template {
@@ -897,141 +893,141 @@ import java.util.Collection;
                     int i, int end,
                     Operator operation
             ) {
-<span class="fc" id="L900">                int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
-<span class="fc" id="L901">                int[] t1Shp = t1_src.shape();</span>
-<span class="fc" id="L902">                int[] t2Shp = t2_src.shape();</span>
-<span class="fc" id="L903">                int rank = t0Shp.length;</span>
-<span class="fc" id="L904">                int[] t0Idx = new int[rank];</span>
-<span class="fc" id="L905">                int[] t1Idx = new int[rank];</span>
-<span class="fc" id="L906">                int[] t2Idx = new int[rank];</span>
-<span class="fc" id="L907">                double[] t0_value = t0_drn.value64();</span>
+<span class="fc" id="L896">                int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
+<span class="fc" id="L897">                int[] t1Shp = t1_src.shape();</span>
+<span class="fc" id="L898">                int[] t2Shp = t2_src.shape();</span>
+<span class="fc" id="L899">                int rank = t0Shp.length;</span>
+<span class="fc" id="L900">                int[] t0Idx = new int[rank];</span>
+<span class="fc" id="L901">                int[] t1Idx = new int[rank];</span>
+<span class="fc" id="L902">                int[] t2Idx = new int[rank];</span>
+<span class="fc" id="L903">                double[] t0_value = t0_drn.value64();</span>
                 //double[] t1_value = t1_src.value64();
                 //double[] t2_value = t2_src.value64();
                 //int drnSze = t0_drn.size();
                 //int i = 0;
 
-<span class="fc bfc" id="L913" title="All 2 branches covered.">                if (d &lt; 0) {</span>
-<span class="fc bfc" id="L914" title="All 2 branches covered.">                    while (i &lt; end)//drnSze)</span>
+<span class="fc bfc" id="L909" title="All 2 branches covered.">                if (d &lt; 0) {</span>
+<span class="fc bfc" id="L910" title="All 2 branches covered.">                    while (i &lt; end)//drnSze)</span>
                     {//increment on drain accordingly:
-<span class="fc" id="L916">                        int ri = 0;</span>
-<span class="fc bfc" id="L917" title="All 2 branches covered.">                        while (ri &lt; rank) {</span>
-<span class="fc bfc" id="L918" title="All 2 branches covered.">                            if (t1Shp[ri] == t2Shp[ri]) {</span>
-<span class="fc" id="L919">                                t1Idx[ri] = t0Idx[ri];</span>
-<span class="fc" id="L920">                                t2Idx[ri] = t0Idx[ri];</span>
-<span class="fc bfc" id="L921" title="All 2 branches covered.">                            } else if (t1Shp[ri] &gt; t2Shp[ri]) {</span>
-<span class="fc" id="L922">                                t1Idx[ri] = t0Idx[ri];</span>
-<span class="fc" id="L923">                                t2Idx[ri] = 0;</span>
-<span class="pc bpc" id="L924" title="1 of 2 branches missed.">                            } else if (t1Shp[ri] &lt; t2Shp[ri]) {</span>
-<span class="fc" id="L925">                                t1Idx[ri] = 0;</span>
-<span class="fc" id="L926">                                t2Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L912">                        int ri = 0;</span>
+<span class="fc bfc" id="L913" title="All 2 branches covered.">                        while (ri &lt; rank) {</span>
+<span class="fc bfc" id="L914" title="All 2 branches covered.">                            if (t1Shp[ri] == t2Shp[ri]) {</span>
+<span class="fc" id="L915">                                t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L916">                                t2Idx[ri] = t0Idx[ri];</span>
+<span class="fc bfc" id="L917" title="All 2 branches covered.">                            } else if (t1Shp[ri] &gt; t2Shp[ri]) {</span>
+<span class="fc" id="L918">                                t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L919">                                t2Idx[ri] = 0;</span>
+<span class="pc bpc" id="L920" title="1 of 2 branches missed.">                            } else if (t1Shp[ri] &lt; t2Shp[ri]) {</span>
+<span class="fc" id="L921">                                t1Idx[ri] = 0;</span>
+<span class="fc" id="L922">                                t2Idx[ri] = t0Idx[ri];</span>
                             }
-<span class="fc" id="L928">                            ri++;</span>
+<span class="fc" id="L924">                            ri++;</span>
                         }
                         //----------
                         // multiplication:
-<span class="fc" id="L932">                        double value = 0;</span>
-<span class="fc" id="L933">                        boolean running = true;</span>
-<span class="fc" id="L934">                        boolean incrementing = false;</span>
-<span class="fc bfc" id="L935" title="All 2 branches covered.">                        while (running) {</span>
-<span class="fc bfc" id="L936" title="All 2 branches covered.">                            ri = (ri == rank) ? 0 : ri;</span>
-<span class="fc bfc" id="L937" title="All 2 branches covered.">                            if (!incrementing) {</span>
-<span class="fc" id="L938">                                value += operation.execute(t0Idx, t1Idx, t2Idx);</span>
-<span class="fc" id="L939">                                incrementing = true;</span>
-<span class="fc" id="L940">                                ri = 0;</span>
+<span class="fc" id="L928">                        double value = 0;</span>
+<span class="fc" id="L929">                        boolean running = true;</span>
+<span class="fc" id="L930">                        boolean incrementing = false;</span>
+<span class="fc bfc" id="L931" title="All 2 branches covered.">                        while (running) {</span>
+<span class="fc bfc" id="L932" title="All 2 branches covered.">                            ri = (ri == rank) ? 0 : ri;</span>
+<span class="fc bfc" id="L933" title="All 2 branches covered.">                            if (!incrementing) {</span>
+<span class="fc" id="L934">                                value += operation.execute(t0Idx, t1Idx, t2Idx);</span>
+<span class="fc" id="L935">                                incrementing = true;</span>
+<span class="fc" id="L936">                                ri = 0;</span>
                             } else {//incrementing:
-<span class="pc bpc" id="L942" title="2 of 4 branches missed.">                                if (t1Idx[ri] &lt; t1Shp[ri] &amp;&amp; t2Idx[ri] &lt; t2Shp[ri]) {</span>
-<span class="fc" id="L943">                                    t1Idx[ri]++;</span>
-<span class="fc" id="L944">                                    t2Idx[ri]++;</span>
-<span class="fc bfc" id="L945" title="All 4 branches covered.">                                    if (t1Idx[ri] == t1Shp[ri] || t2Idx[ri] == t2Shp[ri]) {</span>
-<span class="pc bpc" id="L946" title="1 of 4 branches missed.">                                        running = running &amp;&amp; !(ri == (rank - 1));</span>
-<span class="fc bfc" id="L947" title="All 2 branches covered.">                                        if (t1Shp[ri] == t2Shp[ri]) {</span>
-<span class="fc" id="L948">                                            t1Idx[ri] = t0Idx[ri];</span>
-<span class="fc" id="L949">                                            t2Idx[ri] = t0Idx[ri];</span>
-<span class="fc bfc" id="L950" title="All 2 branches covered.">                                        } else if (t1Shp[ri] &gt; t2Shp[ri]) {</span>
-<span class="fc" id="L951">                                            t1Idx[ri] = t0Idx[ri];</span>
-<span class="fc" id="L952">                                            t2Idx[ri] = 0;</span>
-<span class="pc bpc" id="L953" title="1 of 2 branches missed.">                                        } else if (t1Shp[ri] &lt; t2Shp[ri]) {</span>
-<span class="fc" id="L954">                                            t1Idx[ri] = 0;</span>
-<span class="fc" id="L955">                                            t2Idx[ri] = t0Idx[ri];</span>
+<span class="pc bpc" id="L938" title="2 of 4 branches missed.">                                if (t1Idx[ri] &lt; t1Shp[ri] &amp;&amp; t2Idx[ri] &lt; t2Shp[ri]) {</span>
+<span class="fc" id="L939">                                    t1Idx[ri]++;</span>
+<span class="fc" id="L940">                                    t2Idx[ri]++;</span>
+<span class="fc bfc" id="L941" title="All 4 branches covered.">                                    if (t1Idx[ri] == t1Shp[ri] || t2Idx[ri] == t2Shp[ri]) {</span>
+<span class="pc bpc" id="L942" title="1 of 4 branches missed.">                                        running = running &amp;&amp; !(ri == (rank - 1));</span>
+<span class="fc bfc" id="L943" title="All 2 branches covered.">                                        if (t1Shp[ri] == t2Shp[ri]) {</span>
+<span class="fc" id="L944">                                            t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L945">                                            t2Idx[ri] = t0Idx[ri];</span>
+<span class="fc bfc" id="L946" title="All 2 branches covered.">                                        } else if (t1Shp[ri] &gt; t2Shp[ri]) {</span>
+<span class="fc" id="L947">                                            t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L948">                                            t2Idx[ri] = 0;</span>
+<span class="pc bpc" id="L949" title="1 of 2 branches missed.">                                        } else if (t1Shp[ri] &lt; t2Shp[ri]) {</span>
+<span class="fc" id="L950">                                            t1Idx[ri] = 0;</span>
+<span class="fc" id="L951">                                            t2Idx[ri] = t0Idx[ri];</span>
                                         }
-<span class="fc" id="L957">                                        ri++;</span>
+<span class="fc" id="L953">                                        ri++;</span>
                                     } else {
-<span class="fc" id="L959">                                        incrementing = false;</span>
+<span class="fc" id="L955">                                        incrementing = false;</span>
                                     }
                                 } else {
-<span class="nc" id="L962">                                    ri++;</span>
+<span class="nc" id="L958">                                    ri++;</span>
                                 }
                             }
                         }//setInto _value in drn:
-<span class="fc" id="L966">                        t0_value[t0_drn.i_of_idx(t0Idx)] = value;</span>
+<span class="fc" id="L962">                        t0_value[t0_drn.i_of_idx(t0Idx)] = value;</span>
                         //increment on drain:
-<span class="fc" id="L968">                        Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
-<span class="fc" id="L969">                        i++;</span>
-<span class="fc" id="L970">                    }</span>
+<span class="fc" id="L964">                        Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L965">                        i++;</span>
+<span class="fc" id="L966">                    }</span>
                 } else//---
                 {
-<span class="fc bfc" id="L973" title="All 2 branches covered.">                    while (i &lt; end) {//increment on drain accordingly:</span>
-<span class="fc" id="L974">                        int ri = 0;</span>
-<span class="fc bfc" id="L975" title="All 2 branches covered.">                        while (ri &lt; rank) {</span>
-<span class="pc bpc" id="L976" title="1 of 2 branches missed.">                            if (t2Idx[ri] == t2Shp[ri]) {//setting 0</span>
-<span class="nc" id="L977">                                t1Idx[ri] = t0Idx[ri];</span>
-<span class="nc" id="L978">                                t2Idx[ri] = 0;//mtch[mi];</span>
+<span class="fc bfc" id="L969" title="All 2 branches covered.">                    while (i &lt; end) {//increment on drain accordingly:</span>
+<span class="fc" id="L970">                        int ri = 0;</span>
+<span class="fc bfc" id="L971" title="All 2 branches covered.">                        while (ri &lt; rank) {</span>
+<span class="pc bpc" id="L972" title="1 of 2 branches missed.">                            if (t2Idx[ri] == t2Shp[ri]) {//setting 0</span>
+<span class="nc" id="L973">                                t1Idx[ri] = t0Idx[ri];</span>
+<span class="nc" id="L974">                                t2Idx[ri] = 0;//mtch[mi];</span>
                             } else {
-<span class="fc bfc" id="L980" title="All 2 branches covered.">                                if (t0Shp[ri] &gt; t1Shp[ri]) {</span>
-<span class="fc" id="L981">                                    t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);</span>
+<span class="fc bfc" id="L976" title="All 2 branches covered.">                                if (t0Shp[ri] &gt; t1Shp[ri]) {</span>
+<span class="fc" id="L977">                                    t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);</span>
                                 } else {
-<span class="fc" id="L983">                                    t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);</span>
+<span class="fc" id="L979">                                    t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);</span>
                                 }
                             }
-<span class="fc" id="L986">                            ri++;</span>
+<span class="fc" id="L982">                            ri++;</span>
                         }
                         //----------
                         // multiplication:
-<span class="fc" id="L990">                        double value = 0;</span>
-<span class="fc" id="L991">                        boolean running = true;</span>
-<span class="fc" id="L992">                        boolean incrementing = false;</span>
-<span class="fc bfc" id="L993" title="All 2 branches covered.">                        while (running) {</span>
-<span class="fc bfc" id="L994" title="All 2 branches covered.">                            ri = (ri == rank) ? 0 : ri;</span>
-<span class="fc bfc" id="L995" title="All 2 branches covered.">                            if (!incrementing) {</span>
-<span class="fc" id="L996">                                boolean isMatch = true;</span>
-<span class="fc bfc" id="L997" title="All 2 branches covered.">                                for (int rii = 0; rii &lt; rank; rii++) {</span>
-<span class="fc bfc" id="L998" title="All 6 branches covered.">                                    isMatch = (t1Idx[rii] &lt; t1Shp[rii] &amp;&amp; t1Idx[rii] &gt;= 0) &amp;&amp; isMatch;</span>
+<span class="fc" id="L986">                        double value = 0;</span>
+<span class="fc" id="L987">                        boolean running = true;</span>
+<span class="fc" id="L988">                        boolean incrementing = false;</span>
+<span class="fc bfc" id="L989" title="All 2 branches covered.">                        while (running) {</span>
+<span class="fc bfc" id="L990" title="All 2 branches covered.">                            ri = (ri == rank) ? 0 : ri;</span>
+<span class="fc bfc" id="L991" title="All 2 branches covered.">                            if (!incrementing) {</span>
+<span class="fc" id="L992">                                boolean isMatch = true;</span>
+<span class="fc bfc" id="L993" title="All 2 branches covered.">                                for (int rii = 0; rii &lt; rank; rii++) {</span>
+<span class="fc bfc" id="L994" title="All 6 branches covered.">                                    isMatch = (t1Idx[rii] &lt; t1Shp[rii] &amp;&amp; t1Idx[rii] &gt;= 0) &amp;&amp; isMatch;</span>
                                 }
-<span class="fc bfc" id="L1000" title="All 2 branches covered.">                                if (isMatch) {</span>
-<span class="fc" id="L1001">                                    value += operation.execute(t0Idx, t1Idx, t2Idx);</span>
+<span class="fc bfc" id="L996" title="All 2 branches covered.">                                if (isMatch) {</span>
+<span class="fc" id="L997">                                    value += operation.execute(t0Idx, t1Idx, t2Idx);</span>
                                 }
-<span class="fc" id="L1003">                                incrementing = true;</span>
-<span class="fc" id="L1004">                                ri = 0;</span>
-<span class="fc" id="L1005">                            } else {//incrementing:</span>
-<span class="pc bpc" id="L1006" title="1 of 2 branches missed.">                                if (t2Idx[ri] &lt; t2Shp[ri]) {</span>
-<span class="fc" id="L1007">                                    t2Idx[ri]++;</span>
-<span class="fc bfc" id="L1008" title="All 2 branches covered.">                                    if (t2Idx[ri] == t2Shp[ri]) {</span>
-<span class="pc bpc" id="L1009" title="1 of 4 branches missed.">                                        running = running &amp;&amp; !(ri == (rank - 1));</span>
-<span class="fc" id="L1010">                                        t1Idx[ri] = t0Idx[ri];</span>
-<span class="fc" id="L1011">                                        t2Idx[ri] = 0;</span>
-<span class="fc" id="L1012">                                        ri++;</span>
+<span class="fc" id="L999">                                incrementing = true;</span>
+<span class="fc" id="L1000">                                ri = 0;</span>
+<span class="fc" id="L1001">                            } else {//incrementing:</span>
+<span class="pc bpc" id="L1002" title="1 of 2 branches missed.">                                if (t2Idx[ri] &lt; t2Shp[ri]) {</span>
+<span class="fc" id="L1003">                                    t2Idx[ri]++;</span>
+<span class="fc bfc" id="L1004" title="All 2 branches covered.">                                    if (t2Idx[ri] == t2Shp[ri]) {</span>
+<span class="pc bpc" id="L1005" title="1 of 4 branches missed.">                                        running = running &amp;&amp; !(ri == (rank - 1));</span>
+<span class="fc" id="L1006">                                        t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L1007">                                        t2Idx[ri] = 0;</span>
+<span class="fc" id="L1008">                                        ri++;</span>
                                     } else {
-<span class="fc bfc" id="L1014" title="All 2 branches covered.">                                        if (t0Shp[ri] &gt; t1Shp[ri]) {</span>
-<span class="fc" id="L1015">                                            t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);</span>
+<span class="fc bfc" id="L1010" title="All 2 branches covered.">                                        if (t0Shp[ri] &gt; t1Shp[ri]) {</span>
+<span class="fc" id="L1011">                                            t1Idx[ri] = (t0Idx[ri] - t2Idx[ri]);</span>
                                         } else {
-<span class="fc" id="L1017">                                            t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);</span>
+<span class="fc" id="L1013">                                            t1Idx[ri] = (t0Idx[ri] + t2Idx[ri]);</span>
                                         }
-<span class="fc" id="L1019">                                        incrementing = false;</span>
+<span class="fc" id="L1015">                                        incrementing = false;</span>
                                     }
                                 } else {
-<span class="nc" id="L1022">                                    ri++;</span>
+<span class="nc" id="L1018">                                    ri++;</span>
                                 }
                             }
                         }
                         //set value in drn:
-<span class="fc" id="L1027">                        t0_value[t0_drn.i_of_idx(t0Idx)] = value;</span>
+<span class="fc" id="L1023">                        t0_value[t0_drn.i_of_idx(t0Idx)] = value;</span>
                         //increment on drain:
-<span class="fc" id="L1029">                        Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
-<span class="fc" id="L1030">                        i++;</span>
-<span class="fc" id="L1031">                    }</span>
+<span class="fc" id="L1025">                        Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L1026">                        i++;</span>
+<span class="fc" id="L1027">                    }</span>
                 }
 
-<span class="fc" id="L1034">            }</span>
+<span class="fc" id="L1030">            }</span>
 
             @Contract(pure = true)
             public static void broadcast(
@@ -1040,118 +1036,118 @@ import java.util.Collection;
                     int i, int end,
                     Operator operation
             ) {
-<span class="fc" id="L1043">                int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
-<span class="fc" id="L1044">                int[] t1Shp = t1_src.shape();</span>
-<span class="pc bpc" id="L1045" title="1 of 2 branches missed.">                int[] t2Shp = (t2_src != null) ? t2_src.shape() : t1Shp;</span>
-<span class="fc" id="L1046">                int rank = t0Shp.length;</span>
-<span class="fc" id="L1047">                int[] t0Idx = t0_drn.idx_of_i(i);//new int[rank];</span>
-<span class="fc" id="L1048">                int[] t1Idx = new int[rank];</span>
-<span class="fc" id="L1049">                int[] t2Idx = new int[rank];</span>
-<span class="fc" id="L1050">                double[] t0_value = t0_drn.value64();</span>
+<span class="fc" id="L1039">                int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
+<span class="fc" id="L1040">                int[] t1Shp = t1_src.shape();</span>
+<span class="pc bpc" id="L1041" title="1 of 2 branches missed.">                int[] t2Shp = (t2_src != null) ? t2_src.shape() : t1Shp;</span>
+<span class="fc" id="L1042">                int rank = t0Shp.length;</span>
+<span class="fc" id="L1043">                int[] t0Idx = t0_drn.idx_of_i(i);//new int[rank];</span>
+<span class="fc" id="L1044">                int[] t1Idx = new int[rank];</span>
+<span class="fc" id="L1045">                int[] t2Idx = new int[rank];</span>
+<span class="fc" id="L1046">                double[] t0_value = t0_drn.value64();</span>
                 //double[] t1_value = t1_src.value64();
                 //double[] t2_value = t2_src.value64();
                 //int drnSze = t0_drn.size();
                 //int i = 0;
-<span class="fc bfc" id="L1055" title="All 2 branches covered.">                if (d &lt; 0) {</span>
-<span class="fc bfc" id="L1056" title="All 2 branches covered.">                    while (i &lt; end) {//increment on drain accordingly:</span>
-<span class="fc" id="L1057">                        int ri = 0;</span>
-<span class="fc bfc" id="L1058" title="All 2 branches covered.">                        while (ri &lt; rank) {</span>
-<span class="fc bfc" id="L1059" title="All 2 branches covered.">                            if (t1Shp[ri] == t2Shp[ri]) {//Equal shapes -&gt; out index is t1 &amp; t2 index!for this ri</span>
-<span class="fc" id="L1060">                                t1Idx[ri] = t0Idx[ri];</span>
-<span class="fc" id="L1061">                                t2Idx[ri] = t0Idx[ri];</span>
-<span class="fc bfc" id="L1062" title="All 2 branches covered.">                            } else if (t1Shp[ri] &gt; t2Shp[ri]) {//Current shape axis of t2 must be 1 !</span>
-<span class="fc" id="L1063">                                t1Idx[ri] = t0Idx[ri];</span>
-<span class="fc" id="L1064">                                t2Idx[ri] = 0;//...therefore it can be set to 0!</span>
-<span class="pc bpc" id="L1065" title="1 of 2 branches missed.">                            } else if (t1Shp[ri] &lt; t2Shp[ri]) {//same principle:</span>
-<span class="fc" id="L1066">                                t1Idx[ri] = 0;</span>
-<span class="fc" id="L1067">                                t2Idx[ri] = t0Idx[ri];</span>
+<span class="fc bfc" id="L1051" title="All 2 branches covered.">                if (d &lt; 0) {</span>
+<span class="fc bfc" id="L1052" title="All 2 branches covered.">                    while (i &lt; end) {//increment on drain accordingly:</span>
+<span class="fc" id="L1053">                        int ri = 0;</span>
+<span class="fc bfc" id="L1054" title="All 2 branches covered.">                        while (ri &lt; rank) {</span>
+<span class="fc bfc" id="L1055" title="All 2 branches covered.">                            if (t1Shp[ri] == t2Shp[ri]) {//Equal shapes -&gt; out index is t1 &amp; t2 index!for this ri</span>
+<span class="fc" id="L1056">                                t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L1057">                                t2Idx[ri] = t0Idx[ri];</span>
+<span class="fc bfc" id="L1058" title="All 2 branches covered.">                            } else if (t1Shp[ri] &gt; t2Shp[ri]) {//Current shape axis of t2 must be 1 !</span>
+<span class="fc" id="L1059">                                t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L1060">                                t2Idx[ri] = 0;//...therefore it can be set to 0!</span>
+<span class="pc bpc" id="L1061" title="1 of 2 branches missed.">                            } else if (t1Shp[ri] &lt; t2Shp[ri]) {//same principle:</span>
+<span class="fc" id="L1062">                                t1Idx[ri] = 0;</span>
+<span class="fc" id="L1063">                                t2Idx[ri] = t0Idx[ri];</span>
                             }
-<span class="fc" id="L1069">                            ri++;</span>
+<span class="fc" id="L1065">                            ri++;</span>
                         }
                         //----------
                         //setInto _value in drn:
-<span class="fc" id="L1073">                        t0_value[t0_drn.i_of_idx(t0Idx)] =</span>
-<span class="fc" id="L1074">                                operation.execute(t0Idx, t1Idx, t2Idx);</span>
+<span class="fc" id="L1069">                        t0_value[t0_drn.i_of_idx(t0Idx)] =</span>
+<span class="fc" id="L1070">                                operation.execute(t0Idx, t1Idx, t2Idx);</span>
 
                         //increment on drain:
-<span class="fc" id="L1077">                        Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
-<span class="fc" id="L1078">                        i++;</span>
-<span class="fc" id="L1079">                    }</span>
+<span class="fc" id="L1073">                        Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L1074">                        i++;</span>
+<span class="fc" id="L1075">                    }</span>
                 } else//---//Note: src2 is now former drain!
                 {
-<span class="fc bfc" id="L1082" title="All 2 branches covered.">                    while (i &lt; end) {//increment on drain accordingly:</span>
-<span class="fc" id="L1083">                        int ri = 0;</span>
-<span class="fc bfc" id="L1084" title="All 2 branches covered.">                        while (ri &lt; rank) {</span>
-<span class="fc bfc" id="L1085" title="All 2 branches covered.">                            if (t0Shp[ri] == t1Shp[ri]) {</span>
-<span class="fc" id="L1086">                                t1Idx[ri] = t0Idx[ri];//all shapes are equal -&gt; shape index can be inherited from origin!</span>
-<span class="fc" id="L1087">                                t2Idx[ri] = t0Idx[ri];</span>
-<span class="fc bfc" id="L1088" title="All 2 branches covered.">                            } else if (t0Shp[ri] &gt; t1Shp[ri]) {</span>
-<span class="fc" id="L1089">                                t1Idx[ri] = 0;//Current origin index is larger: index can be inherited!</span>
-<span class="fc" id="L1090">                                t2Idx[ri] = t0Idx[ri];</span>
+<span class="fc bfc" id="L1078" title="All 2 branches covered.">                    while (i &lt; end) {//increment on drain accordingly:</span>
+<span class="fc" id="L1079">                        int ri = 0;</span>
+<span class="fc bfc" id="L1080" title="All 2 branches covered.">                        while (ri &lt; rank) {</span>
+<span class="fc bfc" id="L1081" title="All 2 branches covered.">                            if (t0Shp[ri] == t1Shp[ri]) {</span>
+<span class="fc" id="L1082">                                t1Idx[ri] = t0Idx[ri];//all shapes are equal -&gt; shape index can be inherited from origin!</span>
+<span class="fc" id="L1083">                                t2Idx[ri] = t0Idx[ri];</span>
+<span class="fc bfc" id="L1084" title="All 2 branches covered.">                            } else if (t0Shp[ri] &gt; t1Shp[ri]) {</span>
+<span class="fc" id="L1085">                                t1Idx[ri] = 0;//Current origin index is larger: index can be inherited!</span>
+<span class="fc" id="L1086">                                t2Idx[ri] = t0Idx[ri];</span>
                             }
-<span class="fc" id="L1092">                            ri++;</span>
+<span class="fc" id="L1088">                            ri++;</span>
                         }
                         //----------
                         // multiplication:
-<span class="fc" id="L1096">                        double value = 0;</span>
-<span class="fc" id="L1097">                        boolean running = true;</span>
-<span class="fc" id="L1098">                        boolean incrementing = false;</span>
-<span class="fc bfc" id="L1099" title="All 2 branches covered.">                        while (running) {</span>
-<span class="fc bfc" id="L1100" title="All 2 branches covered.">                            ri = (ri == rank) ? 0 : ri;</span>
-<span class="fc bfc" id="L1101" title="All 2 branches covered.">                            if (!incrementing) {</span>
-<span class="fc" id="L1102">                                value += operation.execute(t0Idx, t1Idx, t2Idx);</span>
-<span class="fc" id="L1103">                                incrementing = true;</span>
-<span class="fc" id="L1104">                                ri = 0;</span>
+<span class="fc" id="L1092">                        double value = 0;</span>
+<span class="fc" id="L1093">                        boolean running = true;</span>
+<span class="fc" id="L1094">                        boolean incrementing = false;</span>
+<span class="fc bfc" id="L1095" title="All 2 branches covered.">                        while (running) {</span>
+<span class="fc bfc" id="L1096" title="All 2 branches covered.">                            ri = (ri == rank) ? 0 : ri;</span>
+<span class="fc bfc" id="L1097" title="All 2 branches covered.">                            if (!incrementing) {</span>
+<span class="fc" id="L1098">                                value += operation.execute(t0Idx, t1Idx, t2Idx);</span>
+<span class="fc" id="L1099">                                incrementing = true;</span>
+<span class="fc" id="L1100">                                ri = 0;</span>
                             } else {//incrementing:
-<span class="fc bfc" id="L1106" title="All 2 branches covered.">                                if (t0Shp[ri] &lt; t1Shp[ri]) {//Only if origin shape is smaller than handle and drain!</span>
-<span class="fc" id="L1107">                                    t1Idx[ri]++;</span>
-<span class="fc" id="L1108">                                    t2Idx[ri]++;</span>
-<span class="fc bfc" id="L1109" title="All 2 branches covered.">                                    if (t1Idx[ri] == t1Shp[ri]) {</span>
-<span class="fc" id="L1110">                                        t1Idx[ri] = 0;</span>
-<span class="fc" id="L1111">                                        t2Idx[ri] = 0;</span>
-<span class="pc bpc" id="L1112" title="2 of 4 branches missed.">                                        running = running &amp;&amp; !(ri == (rank - 1));</span>
-<span class="fc" id="L1113">                                        ri++;</span>
+<span class="fc bfc" id="L1102" title="All 2 branches covered.">                                if (t0Shp[ri] &lt; t1Shp[ri]) {//Only if origin shape is smaller than handle and drain!</span>
+<span class="fc" id="L1103">                                    t1Idx[ri]++;</span>
+<span class="fc" id="L1104">                                    t2Idx[ri]++;</span>
+<span class="fc bfc" id="L1105" title="All 2 branches covered.">                                    if (t1Idx[ri] == t1Shp[ri]) {</span>
+<span class="fc" id="L1106">                                        t1Idx[ri] = 0;</span>
+<span class="fc" id="L1107">                                        t2Idx[ri] = 0;</span>
+<span class="pc bpc" id="L1108" title="2 of 4 branches missed.">                                        running = running &amp;&amp; !(ri == (rank - 1));</span>
+<span class="fc" id="L1109">                                        ri++;</span>
                                     } else {
-<span class="fc" id="L1115">                                        incrementing = false;//return to calculation!</span>
+<span class="fc" id="L1111">                                        incrementing = false;//return to calculation!</span>
                                     }
                                 } else {
-<span class="pc bpc" id="L1118" title="1 of 4 branches missed.">                                    running = running &amp;&amp; !(ri == (rank - 1));</span>
-<span class="fc" id="L1119">                                    ri++;</span>
+<span class="pc bpc" id="L1114" title="1 of 4 branches missed.">                                    running = running &amp;&amp; !(ri == (rank - 1));</span>
+<span class="fc" id="L1115">                                    ri++;</span>
                                 }
                             }
                         }
                         //set value in drn:
-<span class="fc" id="L1124">                        t0_value[t0_drn.i_of_idx(t0Idx)] = value;</span>
+<span class="fc" id="L1120">                        t0_value[t0_drn.i_of_idx(t0Idx)] = value;</span>
                         //increment on drain:
-<span class="fc" id="L1126">                        Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
-<span class="fc" id="L1127">                        i++;</span>
-<span class="fc" id="L1128">                    }</span>
+<span class="fc" id="L1122">                        Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L1123">                        i++;</span>
+<span class="fc" id="L1124">                    }</span>
                 }
-<span class="fc" id="L1130">            }</span>
+<span class="fc" id="L1126">            }</span>
 
             @Contract(pure = true)
             private static void activate(
                     Tsr t0_drn, int i, int end, Operator operation
             ) {
-<span class="fc" id="L1136">                int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
-<span class="fc" id="L1137">                int rank = t0Shp.length;</span>
-<span class="fc" id="L1138">                int[] t0Idx = t0_drn.idx_of_i(i);//new int[rank];</span>
-<span class="fc" id="L1139">                int[] t1Idx = new int[rank];</span>
-<span class="fc" id="L1140">                double[] t0_value = t0_drn.value64();</span>
-<span class="fc bfc" id="L1141" title="All 2 branches covered.">                while (i &lt; end) {//increment on drain accordingly:</span>
-<span class="fc" id="L1142">                    int ri = 0;</span>
-<span class="fc bfc" id="L1143" title="All 2 branches covered.">                    while (ri &lt; rank) {</span>
-<span class="fc" id="L1144">                        t1Idx[ri] = t0Idx[ri];</span>
-<span class="fc" id="L1145">                        ri++;</span>
+<span class="fc" id="L1132">                int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
+<span class="fc" id="L1133">                int rank = t0Shp.length;</span>
+<span class="fc" id="L1134">                int[] t0Idx = t0_drn.idx_of_i(i);//new int[rank];</span>
+<span class="fc" id="L1135">                int[] t1Idx = new int[rank];</span>
+<span class="fc" id="L1136">                double[] t0_value = t0_drn.value64();</span>
+<span class="fc bfc" id="L1137" title="All 2 branches covered.">                while (i &lt; end) {//increment on drain accordingly:</span>
+<span class="fc" id="L1138">                    int ri = 0;</span>
+<span class="fc bfc" id="L1139" title="All 2 branches covered.">                    while (ri &lt; rank) {</span>
+<span class="fc" id="L1140">                        t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L1141">                        ri++;</span>
                     }
                     //setInto _value in drn:
-<span class="fc" id="L1148">                    t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, null);</span>
+<span class="fc" id="L1144">                    t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, null);</span>
                     //increment on drain:
-<span class="fc" id="L1150">                    Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
-<span class="fc" id="L1151">                    i++;</span>
-<span class="fc" id="L1152">                }</span>
+<span class="fc" id="L1146">                    Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L1147">                    i++;</span>
+<span class="fc" id="L1148">                }</span>
 
-<span class="fc" id="L1154">            }</span>
+<span class="fc" id="L1150">            }</span>
 
 
         }

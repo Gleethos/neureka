@@ -289,7 +289,7 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
                 int[] shape = new int[(shp1.length + shp2.length) / 2];
                 for (int i = 0; i < shp1.length && i < shp2.length; i++) {
                     shape[i] = Math.max(shp1[i], shp2[i]);
-                    if(Math.min(shp1[i], shp2[i])!=1&&Math.max(shp1[i], shp2[i])!=shape[i]){
+                    if (Math.min(shp1[i], shp2[i])!=1&&Math.max(shp1[i], shp2[i])!=shape[i]) {
                         throw new IllegalStateException("Broadcast not possible. Shapes do not match!");
                     }
                 }

@@ -8,9 +8,9 @@ import neureka.autograd.GraphNode;
 import java.lang.ref.Cleaner;
 import java.lang.ref.ReferenceQueue;
 
-public abstract class AbstractDevice implements  Device<Tsr>, Component<Tsr>
+public abstract class AbstractDevice implements  Device, Component<Tsr>
 {
-    private static Cleaner CLEANER = Cleaner.create();
+    private final static Cleaner CLEANER = Cleaner.create();
     protected ReferenceQueue _reference_queue;
 
 
@@ -40,12 +40,12 @@ public abstract class AbstractDevice implements  Device<Tsr>, Component<Tsr>
         if(Function.TYPES.REGISTER(f_id).equals("<"))
         {
             int offset = (tsrs[0]==null)?1:0;
-            _execute_recursively(new Tsr[]{tsrs[0+offset], tsrs[1+offset]}, Function.TYPES.LOOKUP("idy"), -1);
+            _execute_recursively(new Tsr[]{tsrs[offset], tsrs[1+offset]}, Function.TYPES.LOOKUP("idy"), -1);
         }
         else if(Function.TYPES.REGISTER(f_id).equals(">"))
         {
             int offset = (tsrs[0]==null)?1:0;
-            _execute_recursively(new Tsr[]{tsrs[1+offset], tsrs[0+offset]}, Function.TYPES.LOOKUP("idy"), -1);
+            _execute_recursively(new Tsr[]{tsrs[1+offset], tsrs[offset]}, Function.TYPES.LOOKUP("idy"), -1);
         }
         else
         {
@@ -110,7 +110,6 @@ public abstract class AbstractDevice implements  Device<Tsr>, Component<Tsr>
                         } else {
                             newTsrs = _util._subset(tsrs, 1,  2, tsrs.length-2);
                             newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);
-                            //for(Tsr t : newTsrs) if(!t.has(GraphNode.class))new GraphNode(null, new GraphLock(null, null), ()->t);
                             Tsr exp = _execute_recursively(newTsrs, Function.TYPES.LOOKUP("*"), -1);
                             tsrs[0] = _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], exp}, f_id, 0);
                             exp.delete();
@@ -173,7 +172,7 @@ public abstract class AbstractDevice implements  Device<Tsr>, Component<Tsr>
         if(d<0) {
             _enqueue(t, value, d, f_id);
         } else {
-            /**   Derivatives implementation: (values cannot be derived)    **/
+            /* Derivatives implementation: (values cannot be derived) */
             if(
                     Function.TYPES.REGISTER(f_id).equals("+")||
                             Function.TYPES.REGISTER(f_id).equals("-")||
@@ -207,7 +206,8 @@ public abstract class AbstractDevice implements  Device<Tsr>, Component<Tsr>
     }
     //---
 
-    protected static class _util {
+    protected static class _util
+    {
 
         public static Tsr[] _subset(Tsr[] tsrs, int padding, int index, int offset){
             if(offset<0){
@@ -215,18 +215,12 @@ public abstract class AbstractDevice implements  Device<Tsr>, Component<Tsr>
                 offset *= -1;
             }
             Tsr[] newTsrs = new Tsr[offset+padding];
-            for(int i=padding; i<newTsrs.length; i++){
-                newTsrs[i] = tsrs[index+i-padding];
-            }
+            System.arraycopy(tsrs, index, newTsrs, padding, offset);
             return newTsrs;
         }
         public static Tsr[] _without(Tsr[] tsrs, int index){
             Tsr[] newTsrs = new Tsr[tsrs.length-1];
-            int i=0;
-            while(i<newTsrs.length){
-                newTsrs[i] = tsrs[i+((i<index)?0:1)];
-                i++;
-            }
+            for (int i=0; i<newTsrs.length; i++) newTsrs[i] = tsrs[i+((i<index)?0:1)];
             return newTsrs;
         }
 
@@ -241,9 +235,7 @@ public abstract class AbstractDevice implements  Device<Tsr>, Component<Tsr>
                 tsrs[2].delete();
                 tsrs[2] = null;
             }
-            for(int i=(1+offset); i<tsrs.length; i++){
-                newTsrs[i-offset] = tsrs[i];
-            }
+            System.arraycopy(tsrs, 1+offset, newTsrs, 1, tsrs.length-1-offset);
             newTsrs[1] = tsrs[0];
             return newTsrs;
         }

@@ -1,16 +1,17 @@
 package neureka.acceleration;
 
+import neureka.Tsr;
 import neureka.acceleration.opencl.OpenCLPlatform;
 
 import java.util.Collection;
 
-public interface Device<Type>
+public interface Device
 {
     static Device find(String name){
         //TODO: Device plugin finding!
         Device[] result = {null};
         String search = name.toLowerCase();
-        OpenCLPlatform.PLATFORMS().forEach((p)->{
+        OpenCLPlatform.PLATFORMS().forEach((p)-> {
             p.getDevices().forEach((d)->{
                 String str = (d.name()+" | "+d.vendor()+" | "+d.type()).toLowerCase();
                 if(str.contains(search)){
@@ -23,31 +24,31 @@ public interface Device<Type>
 
     void dispose();
 
-    Device get(Type tensor);
+    Device get(Tsr tensor);
 
-    Device add(Type tensor);
+    Device add(Tsr tensor);
 
-    Device add(Type tensor, Type parent);
+    Device add(Tsr tensor, Tsr parent);
 
-    boolean has(Type tensor);
+    boolean has(Tsr tensor);
 
-    Device rmv(Type tensor);
+    Device rmv(Tsr tensor);
 
-    Device cleaning(Type tensor, Runnable action);
+    Device cleaning(Tsr tensor, Runnable action);
 
-    Device overwrite64(Type tensor, double[] value);
+    Device overwrite64(Tsr tensor, double[] value);
 
-    Device overwrite32(Type tensor, float[] value);
+    Device overwrite32(Tsr tensor, float[] value);
 
-    Device swap(Type former, Type replacement);
+    Device swap(Tsr former, Tsr replacement);
 
-    Device execute(Type[] Types, int f_id, int d);
+    Device execute(Tsr[] Tsrs, int f_id, int d);
 
-    double[] value64Of(Type tensor);
+    double[] value64Of(Tsr tensor);
 
-    float[] value32Of(Type tensor);
+    float[] value32Of(Tsr tensor);
 
-    Collection<Type> tensors();
+    Collection<Tsr> tensors();
 
 
 
