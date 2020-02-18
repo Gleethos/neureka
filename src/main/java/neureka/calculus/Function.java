@@ -45,6 +45,7 @@ public interface Function
 
         public static Tsr commit(Tsr drain, Tsr[] inputs, Function function, Supplier<Tsr> activation){
 
+
             GraphLock newLock = new GraphLock(function, inputs);
             for (Tsr t : inputs) {
                 if(t.has(GraphNode.class)){

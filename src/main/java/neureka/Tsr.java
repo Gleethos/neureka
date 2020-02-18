@@ -1108,8 +1108,23 @@ public class Tsr extends AbstractNDArray
     public String toString() {
         return toString("dgc");
     }
-    
-    
+
+    public static void makeFit(Tsr[] tsrs){
+        int largest = 0;
+        for(Tsr t : tsrs){
+            if(t.rank()>largest) largest = t.rank();
+        }
+        for(int i=0; i<tsrs.length; i++){
+            if(tsrs[i].rank()!=largest){
+                int[] oldShape = tsrs[i].shape();
+                int[] newReshape = new int[largest];
+                int padding = largest-oldShape.length;
+                for(int ii=0; ii<padding; ii++) newReshape[ii] = -1;
+                for(int ii=padding; ii<largest; ii++) newReshape[ii] = i-padding;
+                //...
+            }
+        }
+    }
 
     public static class Create
     {

@@ -1108,49 +1108,64 @@ public class Tsr extends AbstractNDArray
     public String toString() {
 <span class="fc" id="L1109">        return toString(&quot;dgc&quot;);</span>
     }
-    
-    
 
-<span class="nc" id="L1114">    public static class Create</span>
+    public static void makeFit(Tsr[] tsrs){
+<span class="nc" id="L1113">        int largest = 0;</span>
+<span class="nc bnc" id="L1114" title="All 2 branches missed.">        for(Tsr t : tsrs){</span>
+<span class="nc bnc" id="L1115" title="All 2 branches missed.">            if(t.rank()&gt;largest) largest = t.rank();</span>
+        }
+<span class="nc bnc" id="L1117" title="All 2 branches missed.">        for(int i=0; i&lt;tsrs.length; i++){</span>
+<span class="nc bnc" id="L1118" title="All 2 branches missed.">            if(tsrs[i].rank()!=largest){</span>
+<span class="nc" id="L1119">                int[] oldShape = tsrs[i].shape();</span>
+<span class="nc" id="L1120">                int[] newReshape = new int[largest];</span>
+<span class="nc" id="L1121">                int padding = largest-oldShape.length;</span>
+<span class="nc bnc" id="L1122" title="All 2 branches missed.">                for(int ii=0; ii&lt;padding; ii++) newReshape[ii] = -1;</span>
+<span class="nc bnc" id="L1123" title="All 2 branches missed.">                for(int ii=padding; ii&lt;largest; ii++) newReshape[ii] = i-padding;</span>
+                //...
+            }
+        }
+<span class="nc" id="L1127">    }</span>
+
+<span class="nc" id="L1129">    public static class Create</span>
     {
         public  static Tsr E(int[] shape){
-<span class="nc" id="L1117">            return new Tsr(shape, 2.7182818284590452353602874713527);</span>
+<span class="nc" id="L1132">            return new Tsr(shape, 2.7182818284590452353602874713527);</span>
         }
 
         public static Tsr newRandom(int[] shape){
-<span class="fc" id="L1121">            return newRandom(shape, 8701252152903546L);</span>
+<span class="fc" id="L1136">            return newRandom(shape, 8701252152903546L);</span>
         }
 
         public static Tsr newRandom(int[] shape, long seed){
-<span class="fc" id="L1125">            int size = Utility.Indexing.szeOfShp(shape);</span>
+<span class="fc" id="L1140">            int size = Utility.Indexing.szeOfShp(shape);</span>
             //DataHelper.newSeededDoubleArray(seed, size);
             //double[] value = new double[size];
             //for (int i=0; i&lt;size; i++) value[i] = DataHelper.getDoubleOf(seed+i);
-<span class="fc" id="L1129">            return new Tsr(shape, DataHelper.newSeededDoubleArray(seed, size));</span>
+<span class="fc" id="L1144">            return new Tsr(shape, DataHelper.newSeededDoubleArray(seed, size));</span>
         }
 
         public static Tsr newTsrLike(Tsr template, double value) {
-<span class="fc" id="L1133">            Tsr t = _newEmptyLike(template);</span>
-<span class="pc bpc" id="L1134" title="1 of 2 branches missed.">            if (template.is32()) t.setValue((float)value);</span>
-<span class="fc" id="L1135">            else t.setValue(value);</span>
-<span class="pc bpc" id="L1136" title="1 of 2 branches missed.">            if (template.isOutsourced()) ((Device)template.find(Device.class)).add(t);</span>
-<span class="fc" id="L1137">            return t;</span>
+<span class="fc" id="L1148">            Tsr t = _newEmptyLike(template);</span>
+<span class="pc bpc" id="L1149" title="1 of 2 branches missed.">            if (template.is32()) t.setValue((float)value);</span>
+<span class="fc" id="L1150">            else t.setValue(value);</span>
+<span class="pc bpc" id="L1151" title="1 of 2 branches missed.">            if (template.isOutsourced()) ((Device)template.find(Device.class)).add(t);</span>
+<span class="fc" id="L1152">            return t;</span>
         }
 
         public static Tsr newTsrLike(Tsr template) {//The output tensor will not have gradients!
-<span class="fc" id="L1141">            Tsr t = _newEmptyLike(template);</span>
-<span class="pc bpc" id="L1142" title="1 of 2 branches missed.">            if (template.is32()) t.setValue32(new float[template.size()]);</span>
-<span class="fc" id="L1143">            else t.setValue64(new double[template.size()]);</span>
-<span class="fc bfc" id="L1144" title="All 2 branches covered.">            if (template.isOutsourced()) ((Device)template.find(Device.class)).add(t);</span>
-<span class="fc" id="L1145">            return t;</span>
+<span class="fc" id="L1156">            Tsr t = _newEmptyLike(template);</span>
+<span class="pc bpc" id="L1157" title="1 of 2 branches missed.">            if (template.is32()) t.setValue32(new float[template.size()]);</span>
+<span class="fc" id="L1158">            else t.setValue64(new double[template.size()]);</span>
+<span class="fc bfc" id="L1159" title="All 2 branches covered.">            if (template.isOutsourced()) ((Device)template.find(Device.class)).add(t);</span>
+<span class="fc" id="L1160">            return t;</span>
         }
 
         private static Tsr _newEmptyLike(Tsr template) {
-<span class="fc" id="L1149">            Tsr t = new Tsr();</span>
-<span class="fc" id="L1150">            t._shape = template._shape;</span>
-<span class="fc" id="L1151">            t._idxmap = template._idxmap;</span>
-<span class="fc" id="L1152">            t._translation = template.translation();</span>
-<span class="fc" id="L1153">            return t;</span>
+<span class="fc" id="L1164">            Tsr t = new Tsr();</span>
+<span class="fc" id="L1165">            t._shape = template._shape;</span>
+<span class="fc" id="L1166">            t._idxmap = template._idxmap;</span>
+<span class="fc" id="L1167">            t._translation = template.translation();</span>
+<span class="fc" id="L1168">            return t;</span>
         }
 
     }

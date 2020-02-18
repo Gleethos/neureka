@@ -13,6 +13,19 @@ import util.DummyDevice
 class ThoroughGroovyTests
 {
     @Test
+    void testAutoReshapeAndBroadcast(){
+
+        Tsr a = new Tsr([2,2], 1..5)
+        Tsr b = new Tsr([2,1], 3..4)
+        Tsr c = new Tsr([2], 8..9)
+
+        assert (a+b).toString().contains("4.0, 5.0, 7.0, 8.0")
+
+        //assert (a+c).toString().contains("9.0, 11.0, 10.0, 13.0")
+
+    }
+
+    @Test
     void testTensorConstructors()
     {
         Tsr a = new Tsr(3)
@@ -35,8 +48,8 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testOperatorOverloading(){
-
+    void testOperatorOverloading()
+    {
         Tsr a = new Tsr(5)
         Tsr b = new Tsr(3)
 
@@ -53,8 +66,6 @@ class ThoroughGroovyTests
         assert (2.0^b).toString().contains("8.0")
         assert (2.0**b).toString().contains("8.0")
         assert (4.0-a).toString().contains("-1.0")
-
-
     }
 
 

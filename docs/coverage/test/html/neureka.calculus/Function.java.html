@@ -45,33 +45,34 @@ public interface Function
 
         public static Tsr commit(Tsr drain, Tsr[] inputs, Function function, Supplier&lt;Tsr&gt; activation){
 
-<span class="fc" id="L48">            GraphLock newLock = new GraphLock(function, inputs);</span>
-<span class="fc bfc" id="L49" title="All 2 branches covered.">            for (Tsr t : inputs) {</span>
-<span class="fc bfc" id="L50" title="All 2 branches covered.">                if(t.has(GraphNode.class)){</span>
-<span class="fc" id="L51">                    ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);</span>
+
+<span class="fc" id="L49">            GraphLock newLock = new GraphLock(function, inputs);</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">            for (Tsr t : inputs) {</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">                if(t.has(GraphNode.class)){</span>
+<span class="fc" id="L52">                    ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);</span>
                 } else {
-<span class="fc" id="L53">                    new GraphNode(function, newLock, ()-&gt;t);</span>
+<span class="fc" id="L54">                    new GraphNode(function, newLock, ()-&gt;t);</span>
                 }
             }
-<span class="fc" id="L56">            Tsr result = null;</span>
-<span class="fc bfc" id="L57" title="All 2 branches covered.">            if(activation==null){</span>
-<span class="fc" id="L58">                result = function.activate(inputs);</span>
+<span class="fc" id="L57">            Tsr result = null;</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">            if(activation==null){</span>
+<span class="fc" id="L59">                result = function.activate(inputs);</span>
             } else {
-<span class="fc" id="L60">                result = activation.get();</span>
+<span class="fc" id="L61">                result = activation.get();</span>
             }
-<span class="fc" id="L62">            Function.CACHE.free(newLock);</span>
-<span class="fc" id="L63">            boolean resultIsUnique = true;</span>
-<span class="fc bfc" id="L64" title="All 2 branches covered.">            if(drain!=null){</span>
-<span class="fc bfc" id="L65" title="All 2 branches covered.">                for(Tsr t : inputs){</span>
-<span class="fc" id="L66">                    Tsr g = (Tsr)t.find(Tsr.class);</span>
-<span class="fc bfc" id="L67" title="All 6 branches covered.">                    if(t == result || (g!=null &amp;&amp; g==result)){</span>
-<span class="fc" id="L68">                        resultIsUnique = false;</span>
-<span class="fc" id="L69">                        break;</span>
+<span class="fc" id="L63">            Function.CACHE.free(newLock);</span>
+<span class="fc" id="L64">            boolean resultIsUnique = true;</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">            if(drain!=null){</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">                for(Tsr t : inputs){</span>
+<span class="fc" id="L67">                    Tsr g = (Tsr)t.find(Tsr.class);</span>
+<span class="fc bfc" id="L68" title="All 6 branches covered.">                    if(t == result || (g!=null &amp;&amp; g==result)){</span>
+<span class="fc" id="L69">                        resultIsUnique = false;</span>
+<span class="fc" id="L70">                        break;</span>
                     }
                 }
             }
-<span class="fc bfc" id="L73" title="All 2 branches covered.">            if(resultIsUnique) return result;</span>
-<span class="fc" id="L74">            else return null;</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">            if(resultIsUnique) return result;</span>
+<span class="fc" id="L75">            else return null;</span>
         }
 
     }
