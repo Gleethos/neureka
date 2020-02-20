@@ -328,7 +328,7 @@ public class GraphNode implements Component<Tsr> {
                     } else {
                         if (src_node.usesAD()) {
                             if (src_node.size() == 0 && this.size() == 0) {
-                                this.put((GraphNode) inputs[i].find(GraphNode.class), function.getADAgent(inputs, i, true));
+                                this.put(src_node, function.getADAgent(inputs, i, true));
                             } else {
                                 /*  Chain rule (forward) for every _gradient w.r.t. leaves (reverseAD or user leaves): */
                                 src_node.forEach(function.derive(inputs, i),
@@ -371,14 +371,14 @@ public class GraphNode implements Component<Tsr> {
             modes[Ii] = (inputs[Ii].rqsGradient()) ? 1 : node.mode();
             input_mode += (modes[Ii] != 0) ? 1 : 0;
         }
-        if (input_mode == 1 && ("x,".replace(function.type(), "").equals("x,"))) {//Convolution and reshaping prohibit forward AutoDiff
+        if (input_mode == 1 && function.type().allowsForward(inputs)) {//Convolution and reshaping prohibit forward AutoDiff
             for (int Ii = 0; Ii < inputs.length; Ii++) {
                 result_mode += (modes[Ii] == 0) ? 0 : (modes[Ii] < 0) ? 1 : modes[Ii] + 1;
             }
         } else {
             result_mode = -input_mode;
         }
-        result_mode = ("<>".replace(function.type(), "").equals("<>")) ? result_mode : 0;
+        result_mode = ("<>".replace(function.type().identifier(), "").equals("<>")) ? result_mode : 0;
         return result_mode;
     }
 

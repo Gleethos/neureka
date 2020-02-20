@@ -2,8 +2,8 @@
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.autograd.GraphNode;
 import neureka.calculus.Function;
+import neureka.calculus.factory.OperationType;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
 <span class="fc" id="L9">public class FunctionVariable implements Function, GradientProvider {</span>
@@ -30,8 +30,8 @@ import neureka.calculus.factory.assembly.FunctionBuilder;
     }
 
     @Override
-    public String type() {
-<span class="nc" id="L34">        return &quot;variable&quot;;</span>
+    public OperationType type() {
+<span class="nc" id="L34">        return null;</span>
     }
 
     @Override

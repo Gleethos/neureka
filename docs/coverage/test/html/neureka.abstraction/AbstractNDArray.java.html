@@ -177,10 +177,10 @@ import java.util.WeakHashMap;
             }
 
             @Contract(pure = true)
-            private static String _strShp(int[] shp) {
-<span class="nc" id="L181">                StringBuilder str = new StringBuilder();</span>
-<span class="nc bnc" id="L182" title="All 4 branches missed.">                for(int i=0; i&lt;shp.length; i++) str.append(shp[i]).append((i != shp.length - 1) ? &quot;, &quot; : &quot;&quot;);</span>
-<span class="nc" id="L183">                return &quot;[&quot; + str + &quot;]&quot;;</span>
+            public static String strConf(int[] conf) {
+<span class="fc" id="L181">                StringBuilder str = new StringBuilder();</span>
+<span class="fc bfc" id="L182" title="All 4 branches covered.">                for(int i=0; i&lt;conf.length; i++) str.append(conf[i]).append((i != conf.length - 1) ? &quot;, &quot; : &quot;&quot;);</span>
+<span class="fc" id="L183">                return &quot;[&quot; + str + &quot;]&quot;;</span>
             }
         }
 
@@ -261,7 +261,7 @@ import java.util.WeakHashMap;
 <span class="pc bpc" id="L261" title="1 of 2 branches missed.">                if (szeOfShp(newShp) != t.size()) {</span>
 <span class="nc" id="L262">                    throw new IllegalArgumentException(</span>
                             &quot;[Tsr][shpCheck(int[] newShp, Tsr t)]: New shape does not match tensor size!&quot; +
-<span class="nc bnc" id="L264" title="All 2 branches missed.">                                    &quot; (&quot; + Utility.Stringify._strShp(newShp) + ((szeOfShp(newShp) &lt; t.size()) ? &quot;&lt;&quot; : &quot;&gt;&quot;) + Utility.Stringify._strShp(t.shape()) + &quot;)&quot;);</span>
+<span class="nc bnc" id="L264" title="All 2 branches missed.">                                    &quot; (&quot; + Utility.Stringify.strConf(newShp) + ((szeOfShp(newShp) &lt; t.size()) ? &quot;&lt;&quot; : &quot;&gt;&quot;) + Utility.Stringify.strConf(t.shape()) + &quot;)&quot;);</span>
                 }
 <span class="fc" id="L266">                return newShp;</span>
             }

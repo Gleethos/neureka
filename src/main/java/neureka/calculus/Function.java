@@ -6,6 +6,7 @@ import neureka.autograd.ADAgent;
 import neureka.calculus.environment.Types;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
+import neureka.calculus.factory.OperationType;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.calculus.environment.Cache;
 
@@ -14,8 +15,8 @@ import java.util.function.Supplier;
 public interface Function
 {
     //Global context and cache:
-    Cache CACHE = new Cache();
-    Types TYPES = new Types();
+    Cache CACHE = Cache.instance();
+    Types TYPES = Types.instance();
 
     static Function create(String expression){
         return create(expression, true);
@@ -45,6 +46,7 @@ public interface Function
 
         public static Tsr commit(Tsr drain, Tsr[] inputs, Function function, Supplier<Tsr> activation){
 
+            Tsr.makeFit(inputs);// reshaping if needed
 
             GraphLock newLock = new GraphLock(function, inputs);
             for (Tsr t : inputs) {
@@ -86,7 +88,7 @@ public interface Function
 
     int id();
 
-    String type();
+    OperationType type();
 
     boolean dependsOn(int index);
     //------------------------------------------------------------------------------------------------------------------

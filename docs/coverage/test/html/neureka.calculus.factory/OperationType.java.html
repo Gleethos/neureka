@@ -1,27 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OperationType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.factory</a> &gt; <span class="el_source">OperationType.java</span></div><h1>OperationType.java</h1><pre class="source lang-java linenums">package neureka.calculus.factory;
 
+import neureka.Tsr;
+import neureka.autograd.ADAgent;
+import neureka.calculus.Function;
+import neureka.calculus.factory.assembly.FunctionBuilder;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class OperationType {
 
-<span class="fc" id="L9">    private static Map&lt;String, OperationType&gt; _LOOKUP = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L14">    private static Map&lt;String, OperationType&gt; _LOOKUP = new HashMap&lt;&gt;();</span>
 
-<span class="fc" id="L11">    private static ArrayList&lt;OperationType&gt; _REGISTER = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L16">    private static ArrayList&lt;OperationType&gt; _REGISTER = new ArrayList&lt;&gt;();</span>
 
-<span class="fc" id="L13">    private static int _ID = 0;</span>
+<span class="fc" id="L18">    private static int _ID = 0;</span>
 
     public static OperationType LOOKUP(String identifier){
-<span class="fc" id="L16">        return _LOOKUP.getOrDefault(identifier, null);</span>
+<span class="fc" id="L21">        return _LOOKUP.getOrDefault(identifier, null);</span>
     }
 
     public static OperationType REGISTER(int index){
-<span class="fc" id="L20">        return _REGISTER.get(index);</span>
+<span class="fc" id="L25">        return _REGISTER.get(index);</span>
     }
 
     public static int COUNT(){
-<span class="fc" id="L24">        return _ID;</span>
+<span class="fc" id="L29">        return _ID;</span>
     }
 
     private int _id;
@@ -33,6 +38,82 @@ public class OperationType {
     private boolean _isCommutative;
     private boolean _isAssociative;
 
+    private static OperationType[] _TYPES;
+
+    static  {
+<span class="fc" id="L44">        _TYPES = new OperationType[]{</span>
+                new OperationType(&quot;relu&quot;, true, false, false, true, true),
+                new OperationType(&quot;sig&quot; , true, false, false, true, true),
+                new OperationType(&quot;tanh&quot;, true, false, false, true, true),
+                new OperationType(&quot;quad&quot;, true, false, false, true, true),
+                new OperationType(&quot;lig&quot; , true, false, false, true, true),
+                new OperationType(&quot;idy&quot; , true, false, false, true, true),
+                new OperationType(&quot;gaus&quot;, true, false, false, true, true),
+                new OperationType(&quot;abs&quot; , true, false, false, true, true),
+                new OperationType(&quot;sin&quot; , true, false, false, true, true),
+                new OperationType(&quot;cos&quot; , true, false, false, true, true),
+
+                // Indexer:
+                new OperationType(&quot;sum&quot; , false, false, true, false, true, true),
+                new OperationType(&quot;prod&quot;, false, false,  true, false, true, true),
+
+                // Operations (auto broadcast):
+                new OperationType(&quot;^&quot;, false, false, false, false, false),
+                new OperationType(((char)171)+&quot;^&quot;, false, false, false, false, false),
+                new OperationType(&quot;^&quot;+((char)187), false, false, false, false, false),
+
+                new OperationType(&quot;/&quot;, false, false, false, false, false),
+                new OperationType(((char)171)+&quot;/&quot;, false, false, false, false, false),
+                new OperationType(&quot;/&quot;+((char)187), false, false, false, false, false),
+
+                new OperationType(&quot;*&quot;, false, false, false, true, false),
+                new OperationType(((char)171)+&quot;*&quot;, false, false, false, false, false),
+                new OperationType(&quot;*&quot;+((char)187), false, false, false, false, false),
+
+                new OperationType(&quot;%&quot;, false, false, false, false, false),
+                new OperationType(((char)171)+&quot;%&quot;, false, false, false, false, false),
+                new OperationType(&quot;%&quot;+((char)187), false, false, false, false, false),
+
+                new OperationType(&quot;-&quot;, false, false, false, false, false),
+                new OperationType(((char)171)+&quot;-&quot;, false, false, false, false, false),
+                new OperationType(&quot;-&quot;+((char)187), false, false, false, false, false),
+
+                new OperationType(&quot;+&quot;, false, false, false, true, false),
+                new OperationType(((char)171)+&quot;+&quot;, false, false, false, false, false),
+                new OperationType(&quot;+&quot;+((char)187), false, false, false, false, false),
+
+                // Convolution:
+                new OperationType(&quot;x&quot;, false, false, true, false, false),
+                new OperationType(((char)171)+&quot;x&quot;, false, false, true, false, false),
+                new OperationType(&quot;x&quot;+((char)187), false, false, true, false, false),
+
+                new OperationType(&quot;d&quot;, false, false, true, false, false),
+                new OperationType(((char)171)+&quot;d&quot;, false, false, true, false, false),
+                new OperationType(&quot;d&quot;+((char)187), false, false, true, false, false),
+
+                new OperationType(&quot;p&quot;, false, false, true, false, false),
+                new OperationType(((char)171)+&quot;p&quot;, false, false, true, false, false),
+                new OperationType(&quot;p&quot;+((char)187), false, false, true, false, false),
+
+                new OperationType(&quot;a&quot;, false, false, true, false, false),
+                new OperationType(((char)171)+&quot;a&quot;, false, false, true, false, false),
+                new OperationType(&quot;a&quot;+((char)187), false, false, true, false, false),
+
+                new OperationType(&quot;s&quot;, false, false, true, false, false),
+                new OperationType(((char)171)+&quot;s&quot;, false, false, true, false, false),
+                new OperationType(&quot;s&quot;+((char)187), false, false, true, false, false),
+                // (char)171 -&gt; &lt;&lt;    // (char)187 -&gt; &gt;&gt;
+
+                // Reshape:
+                new OperationType(&quot;,&quot;, false, false, false, false, false),
+
+                // Injecting:
+                new OperationType(&quot;&lt;&quot;, false, false, false, false, false),
+                new OperationType(&quot;&gt;&quot;, false, false, false, false, false),
+        };
+    }
+
+
     public OperationType(
             String  identifier,
             boolean isFunction,
@@ -41,8 +122,8 @@ public class OperationType {
             boolean isConvection,
             boolean isCommutative,
             boolean isAssociative
-<span class="fc" id="L44">    ) {</span>
-<span class="fc" id="L45">        _construct(</span>
+<span class="fc" id="L125">    ) {</span>
+<span class="fc" id="L126">        _construct(</span>
                 identifier,
                 isFunction,
                 isOperation,
@@ -51,7 +132,7 @@ public class OperationType {
                 isCommutative,
                 isAssociative
         );
-<span class="fc" id="L54">    }</span>
+<span class="fc" id="L135">    }</span>
 
     public OperationType(
             String  identifier,
@@ -60,8 +141,8 @@ public class OperationType {
             boolean isConvection,
             boolean isCommutative,
             boolean isAssociative
-<span class="fc" id="L63">    ) {</span>
-<span class="fc bfc" id="L64" title="All 2 branches covered.">        _construct(</span>
+<span class="fc" id="L144">    ) {</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">        _construct(</span>
                 identifier,
                 isFunction,
                 !isFunction,
@@ -70,7 +151,7 @@ public class OperationType {
                 isCommutative,
                 isAssociative
         );
-<span class="fc" id="L73">    }</span>
+<span class="fc" id="L154">    }</span>
 
     private void _construct(
             String  identifier,
@@ -81,49 +162,127 @@ public class OperationType {
             boolean isCommutative,
             boolean isAssociative
     ) {
-<span class="fc" id="L84">        _id = _ID;</span>
-<span class="fc" id="L85">        _ID++;</span>
-<span class="fc" id="L86">        _identifier = identifier;</span>
-<span class="fc" id="L87">        _isFunction = isFunction;</span>
-<span class="fc" id="L88">        _isOperation = isOperation;</span>
-<span class="fc" id="L89">        _isIndexer = isIndexer;</span>
-<span class="fc" id="L90">        _isConvection = isConvection;</span>
-<span class="fc" id="L91">        _isCommutative = isCommutative;</span>
-<span class="fc" id="L92">        _isAssociative = isAssociative;</span>
+<span class="fc" id="L165">        _id = _ID;</span>
+<span class="fc" id="L166">        _ID++;</span>
+<span class="fc" id="L167">        _identifier = identifier;</span>
+<span class="fc" id="L168">        _isFunction = isFunction;</span>
+<span class="fc" id="L169">        _isOperation = isOperation;</span>
+<span class="fc" id="L170">        _isIndexer = isIndexer;</span>
+<span class="fc" id="L171">        _isConvection = isConvection;</span>
+<span class="fc" id="L172">        _isCommutative = isCommutative;</span>
+<span class="fc" id="L173">        _isAssociative = isAssociative;</span>
 
-<span class="fc" id="L94">        _REGISTER.add(this);</span>
-<span class="fc" id="L95">        _LOOKUP.put(identifier, this);</span>
-<span class="fc bfc" id="L96" title="All 2 branches covered.">        if(identifier.equals((((char)171))+&quot;x&quot;)) _LOOKUP.put(&quot;&lt;&lt;x&quot;, this);</span>
-<span class="fc bfc" id="L97" title="All 2 branches covered.">        else if(identifier.equals(&quot;x&quot;+((char)187))) _LOOKUP.put(&quot;x&gt;&gt;&quot;, this);</span>
-<span class="fc" id="L98">    }</span>
+<span class="fc" id="L175">        _REGISTER.add(this);</span>
+<span class="fc" id="L176">        _LOOKUP.put(identifier, this);</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">        if(identifier.equals((((char)171))+&quot;x&quot;)) _LOOKUP.put(&quot;&lt;&lt;x&quot;, this);</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        else if(identifier.equals(&quot;x&quot;+((char)187))) _LOOKUP.put(&quot;x&gt;&gt;&quot;, this);</span>
+<span class="fc" id="L179">    }</span>
+
+    public static OperationType[] all(){
+<span class="nc" id="L182">        return _TYPES;</span>
+    }
+
 
     public int id(){
-<span class="fc" id="L101">        return _id;</span>
+<span class="fc" id="L187">        return _id;</span>
     }
 
     public String identifier(){
-<span class="fc" id="L105">        return _identifier;</span>
+<span class="fc" id="L191">        return _identifier;</span>
     }
 
     public boolean isOperation(){
-<span class="fc" id="L109">        return _isOperation;</span>
+<span class="fc" id="L195">        return _isOperation;</span>
     }
 
     public boolean isFunction(){
-<span class="fc" id="L113">        return _isFunction;</span>
+<span class="fc" id="L199">        return _isFunction;</span>
     }
 
     public boolean isIndexer(){
-<span class="fc" id="L117">        return _isIndexer;</span>
+<span class="fc" id="L203">        return _isIndexer;</span>
     }
 
     public boolean isConvection(){
-<span class="fc" id="L121">        return _isConvection;</span>
+<span class="fc" id="L207">        return _isConvection;</span>
     }
 
     public boolean isCommutative(){
-<span class="nc" id="L125">        return  _isCommutative;</span>
+<span class="nc" id="L211">        return  _isCommutative;</span>
     }
+
+
+<span class="fc" id="L215">    private static Function MUL = FunctionBuilder.build(&quot;(I[0]*I[1])&quot;, false);</span>
+<span class="fc" id="L216">    private static Function ADD = FunctionBuilder.build(&quot;(I[0]+I[1])&quot;, false);</span>
+<span class="fc" id="L217">    private static Function INV_X = FunctionBuilder.build(&quot;I[0]x&gt;&gt;I[1]x&gt;&gt;I[2]&quot;, false);</span>
+
+    public boolean allowsForward(Tsr[] inputs){
+<span class="fc bfc" id="L220" title="All 2 branches covered.">        if(this.isConvection()) return false;</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        if(this.identifier().equals(&quot;,&quot;)) return false; //Reshape</span>
+<span class="fc" id="L222">        Tsr last = null;</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">        for(Tsr t : inputs){</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">            if(last!=null){</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">                if(!last.shape().equals(t.shape())){</span>
+<span class="fc" id="L226">                    return false;</span>
+                }
+            }
+<span class="fc" id="L229">            last = t;</span>
+        }
+<span class="fc" id="L231">        return true;</span>
+    }
+
+    //@Override
+    public ADAgent getADAgentOf(Function f, Tsr[] inputs, int i, boolean forward){
+
+        //Tsr d = (allowsForward(inputs))?f.derive(inputs, i):null;
+
+<span class="fc bfc" id="L239" title="All 2 branches covered.">        if(forward){</span>
+<span class="fc" id="L240">            Tsr d = f.derive(inputs, i);</span>
+<span class="fc" id="L241">            return new ADAgent(</span>
+<span class="fc" id="L242">                    ()-&gt;d,</span>
+<span class="nc" id="L243">                    (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
+                    null
+            );
+        } else {
+<span class="fc bfc" id="L247" title="All 2 branches covered.">            if(this.identifier().equals(&quot;,&quot;))</span>
+            {
+<span class="fc" id="L249">                return new ADAgent(</span>
+<span class="fc" id="L250">                        ()-&gt;null,</span>
+<span class="nc" id="L251">                        (t, derivative) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0),</span>
+<span class="fc" id="L252">                        (t, error) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0)</span>
+                );
+            }
+<span class="pc bpc" id="L255" title="1 of 4 branches missed.">            else if (this.isOperation() &amp;&amp; !this.isConvection())</span>
+            {
+<span class="fc" id="L257">                Tsr d = f.derive(inputs, i);</span>
+<span class="fc" id="L258">                return new ADAgent(</span>
+<span class="fc" id="L259">                        ()-&gt;d,</span>
+<span class="nc" id="L260">                        (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
+<span class="fc" id="L261">                        (t, error) -&gt; MUL.activate(new Tsr[]{error, d})</span>
+                );
+            }
+<span class="pc bpc" id="L264" title="1 of 2 branches missed.">            else if (this.isConvection())</span>
+            {
+<span class="fc" id="L266">                Tsr d = f.derive(inputs, i);</span>
+<span class="fc" id="L267">                return new ADAgent(</span>
+<span class="fc" id="L268">                        ()-&gt;d,</span>
+<span class="nc" id="L269">                        (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
+<span class="fc" id="L270">                        (t, error) -&gt; INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})</span>
+                );
+            }
+        }
+<span class="nc" id="L274">        return new ADAgent(</span>
+<span class="nc" id="L275">                ()-&gt;null,</span>
+<span class="nc" id="L276">                (t, derivative) -&gt; null,</span>
+<span class="nc" id="L277">                (t, error) -&gt; null</span>
+        );
+
+    }
+
+
+
+
+
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

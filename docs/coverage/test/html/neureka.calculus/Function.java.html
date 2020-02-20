@@ -6,6 +6,7 @@ import neureka.autograd.ADAgent;
 import neureka.calculus.environment.Types;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
+import neureka.calculus.factory.OperationType;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.calculus.environment.Cache;
 
@@ -14,65 +15,66 @@ import java.util.function.Supplier;
 public interface Function
 {
     //Global context and cache:
-<span class="fc" id="L17">    Cache CACHE = new Cache();</span>
-<span class="fc" id="L18">    Types TYPES = new Types();</span>
+<span class="fc" id="L18">    Cache CACHE = Cache.instance();</span>
+<span class="fc" id="L19">    Types TYPES = Types.instance();</span>
 
     static Function create(String expression){
-<span class="fc" id="L21">        return create(expression, true);</span>
+<span class="fc" id="L22">        return create(expression, true);</span>
     }
 
     static Function create(String expression, boolean doAD){
-<span class="fc" id="L25">        return FunctionBuilder.build(expression, doAD);</span>
+<span class="fc" id="L26">        return FunctionBuilder.build(expression, doAD);</span>
     }
 
-<span class="nc" id="L28">    class Setup</span>
+<span class="nc" id="L29">    class Setup</span>
     {
         public static Tsr commit(Tsr[] tensors, String operation, boolean doAD) {
-<span class="fc" id="L31">            return commit(null, tensors, FunctionBuilder.build(operation, doAD));</span>
+<span class="fc" id="L32">            return commit(null, tensors, FunctionBuilder.build(operation, doAD));</span>
         }
 
         public static Tsr commit(Tsr drain, Tsr[] tensors, String operation, boolean doAD) {
-<span class="fc" id="L35">            return commit(drain, tensors, FunctionBuilder.build(operation, doAD));</span>
+<span class="fc" id="L36">            return commit(drain, tensors, FunctionBuilder.build(operation, doAD));</span>
         }
 
         public static Tsr commit(Tsr[] inputs, Function function) {
-<span class="nc" id="L39">            return commit(null, inputs, function);</span>
+<span class="nc" id="L40">            return commit(null, inputs, function);</span>
         }
 
         public static Tsr commit(Tsr drain, Tsr[] inputs, Function function) {
-<span class="fc" id="L43">            return commit(drain, inputs, function, null);</span>
+<span class="fc" id="L44">            return commit(drain, inputs, function, null);</span>
         }
 
         public static Tsr commit(Tsr drain, Tsr[] inputs, Function function, Supplier&lt;Tsr&gt; activation){
 
+<span class="fc" id="L49">            Tsr.makeFit(inputs);// reshaping if needed</span>
 
-<span class="fc" id="L49">            GraphLock newLock = new GraphLock(function, inputs);</span>
-<span class="fc bfc" id="L50" title="All 2 branches covered.">            for (Tsr t : inputs) {</span>
-<span class="fc bfc" id="L51" title="All 2 branches covered.">                if(t.has(GraphNode.class)){</span>
-<span class="fc" id="L52">                    ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);</span>
+<span class="fc" id="L51">            GraphLock newLock = new GraphLock(function, inputs);</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">            for (Tsr t : inputs) {</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">                if(t.has(GraphNode.class)){</span>
+<span class="fc" id="L54">                    ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);</span>
                 } else {
-<span class="fc" id="L54">                    new GraphNode(function, newLock, ()-&gt;t);</span>
+<span class="fc" id="L56">                    new GraphNode(function, newLock, ()-&gt;t);</span>
                 }
             }
-<span class="fc" id="L57">            Tsr result = null;</span>
-<span class="fc bfc" id="L58" title="All 2 branches covered.">            if(activation==null){</span>
-<span class="fc" id="L59">                result = function.activate(inputs);</span>
+<span class="fc" id="L59">            Tsr result = null;</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">            if(activation==null){</span>
+<span class="fc" id="L61">                result = function.activate(inputs);</span>
             } else {
-<span class="fc" id="L61">                result = activation.get();</span>
+<span class="fc" id="L63">                result = activation.get();</span>
             }
-<span class="fc" id="L63">            Function.CACHE.free(newLock);</span>
-<span class="fc" id="L64">            boolean resultIsUnique = true;</span>
-<span class="fc bfc" id="L65" title="All 2 branches covered.">            if(drain!=null){</span>
-<span class="fc bfc" id="L66" title="All 2 branches covered.">                for(Tsr t : inputs){</span>
-<span class="fc" id="L67">                    Tsr g = (Tsr)t.find(Tsr.class);</span>
-<span class="fc bfc" id="L68" title="All 6 branches covered.">                    if(t == result || (g!=null &amp;&amp; g==result)){</span>
-<span class="fc" id="L69">                        resultIsUnique = false;</span>
-<span class="fc" id="L70">                        break;</span>
+<span class="fc" id="L65">            Function.CACHE.free(newLock);</span>
+<span class="fc" id="L66">            boolean resultIsUnique = true;</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">            if(drain!=null){</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">                for(Tsr t : inputs){</span>
+<span class="fc" id="L69">                    Tsr g = (Tsr)t.find(Tsr.class);</span>
+<span class="fc bfc" id="L70" title="All 6 branches covered.">                    if(t == result || (g!=null &amp;&amp; g==result)){</span>
+<span class="fc" id="L71">                        resultIsUnique = false;</span>
+<span class="fc" id="L72">                        break;</span>
                     }
                 }
             }
-<span class="fc bfc" id="L74" title="All 2 branches covered.">            if(resultIsUnique) return result;</span>
-<span class="fc" id="L75">            else return null;</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">            if(resultIsUnique) return result;</span>
+<span class="fc" id="L77">            else return null;</span>
         }
 
     }
@@ -86,7 +88,7 @@ public interface Function
 
     int id();
 
-    String type();
+    OperationType type();
 
     boolean dependsOn(int index);
     //------------------------------------------------------------------------------------------------------------------

@@ -7,15 +7,19 @@ import java.util.List;
 
 public class NTester extends Assert
 {
-    private MessageFrame _verbose_frame;
+    //private MessageFrame _verbose_frame;
 
     private static MessageFrame RESULT_FRAME;
+    private static MessageFrame ERROR_FRAME;
+
     private static volatile int _global_tests;
     static {
         _global_tests = 0;
         if(System.getProperty("os.name").toLowerCase().contains("windows")){
             RESULT_FRAME = new MessageFrame("[NEUREKA UNIT TEST]: results");
+            ERROR_FRAME =  new MessageFrame("[NEUREKA UNIT TEST]: fails");
         }
+
     }
     protected static String BAR = "[|]";
     protected static String LINE = "--------------------------------------------------------------------------------------------";
@@ -29,7 +33,7 @@ public class NTester extends Assert
 
     public NTester(String name) {
         if(System.getProperty("os.name").toLowerCase().contains("windows")){
-            _verbose_frame = new MessageFrame("[NEUREKA UNIT TEST]:("+name+"): verbose results");
+            //_verbose_frame = new MessageFrame("[NEUREKA UNIT TEST]:("+name+"): verbose results");
             printlnResult("\nT[ "+name+" ]:");
         }
         _global_tests++;
@@ -37,7 +41,8 @@ public class NTester extends Assert
 
     public NTester(String name, boolean liveLog){
         if(liveLog && System.getProperty("os.name").toLowerCase().contains("windows")){
-            _verbose_frame = new MessageFrame(name+" - TEST PROCESS");
+            //_verbose_frame = new MessageFrame(name+" - TEST PROCESS");
+
             printResult("\nT["+name+"]: ");
         }
         _global_tests++;
@@ -98,7 +103,8 @@ public class NTester extends Assert
         println("[O][=][=][=][=][=][=][=][=][=][=][=]|> "+ _success +"/"+ _tests);
         printResult((_positive_assertions == _assertion_count)? "." :"E");
         bottom();
-        assert _positive_assertions == _assertion_count;
+        if(_positive_assertions != _assertion_count) failSession();
+        //assert _positive_assertions == _assertion_count;
         return _positive_assertions;
     }
 
@@ -132,7 +138,7 @@ public class NTester extends Assert
                     :"not contains")+" [expected]:("+expected+")"+((result.length()>22)?"":" -> test failed!"));
             _positive_assertions = (_positive_assertions <0)? _positive_assertions -1:-1;
             println(BAR + LINE);
-            assertEquals(_session, false, true);
+            //failSession();
             return false;
         }
     }
@@ -154,7 +160,7 @@ public class NTester extends Assert
                     :"=|=")+" [expected]:("+expected+")"+((result.length()>22)?"":" -> test failed!"));
             _positive_assertions = (_positive_assertions <0)? _positive_assertions -1:-1;
             println(BAR + LINE);
-            assertEquals(_session, false, true);
+            //failSession();
             return false;
         }
     }
@@ -167,7 +173,7 @@ public class NTester extends Assert
                     :"==")+" [expected]:("+expected+") -> test successful.");
             _positive_assertions = (_positive_assertions <0)? _positive_assertions : _positive_assertions +1;
             println(BAR + LINE);
-            assertEquals(true, true);
+            assertTrue(true);
             return true;
         } else {
             println(BAR +"  [result]:("+result+") "+((result.length()>22)
@@ -175,9 +181,14 @@ public class NTester extends Assert
                     :"=|=")+" [expected]:("+expected+") -> test failed!");
             _positive_assertions = (_positive_assertions <0)? _positive_assertions -1:-1;
             println(BAR + LINE);
-            assertEquals(_session, false, true);
+            //failSession();
             return false;
         }
+    }
+
+    protected void failSession(){
+        ERROR_FRAME.print(_session);
+        fail(_session);
     }
 
     protected String stringified(int[] a){
@@ -225,16 +236,24 @@ public class NTester extends Assert
 
     protected void print(String message){
         _session +=message;
-        if(_verbose_frame !=null){
-            _verbose_frame.print(message);
-        }
+        //if(_verbose_frame !=null){
+        //    _verbose_frame.print(message);
+        //}
+        //if(ERROR_FRAME !=null){
+        //    ERROR_FRAME.print(message);
+        //}
     }
     protected void println(String message){
         _session +=message+"\n";
-        if(_verbose_frame !=null){
-            _verbose_frame.println(message);
-        }
+        //if(_verbose_frame !=null){
+        //    _verbose_frame.println(message);
+        //}
+        //if(ERROR_FRAME !=null){
+        //    ERROR_FRAME.println(message);
+        //}
     }
+
+
     protected void printResult(String message){
         if(RESULT_FRAME !=null){
             RESULT_FRAME.print(message);
@@ -247,8 +266,8 @@ public class NTester extends Assert
     }
 
     protected void bottom(){
-        if(_verbose_frame !=null && RESULT_FRAME !=null){
-            _verbose_frame.bottom();
+        if(RESULT_FRAME !=null){//_verbose_frame !=null &&
+                //_verbose_frame.bottom();
             RESULT_FRAME.bottom();
         }
     }

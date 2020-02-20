@@ -177,9 +177,9 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
             }
 
             @Contract(pure = true)
-            private static String _strShp(int[] shp) {
+            public static String strConf(int[] conf) {
                 StringBuilder str = new StringBuilder();
-                for(int i=0; i<shp.length; i++) str.append(shp[i]).append((i != shp.length - 1) ? ", " : "");
+                for(int i=0; i<conf.length; i++) str.append(conf[i]).append((i != conf.length - 1) ? ", " : "");
                 return "[" + str + "]";
             }
         }
@@ -261,7 +261,7 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
                 if (szeOfShp(newShp) != t.size()) {
                     throw new IllegalArgumentException(
                             "[Tsr][shpCheck(int[] newShp, Tsr t)]: New shape does not match tensor size!" +
-                                    " (" + Utility.Stringify._strShp(newShp) + ((szeOfShp(newShp) < t.size()) ? "<" : ">") + Utility.Stringify._strShp(t.shape()) + ")");
+                                    " (" + Utility.Stringify.strConf(newShp) + ((szeOfShp(newShp) < t.size()) ? "<" : ">") + Utility.Stringify.strConf(t.shape()) + ")");
                 }
                 return newShp;
             }

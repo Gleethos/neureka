@@ -17,11 +17,13 @@ class ThoroughGroovyTests
 
         Tsr a = new Tsr([2,2], 1..5)
         Tsr b = new Tsr([2,1], 3..4)
-        Tsr c = new Tsr([2], 8..9)
-
+        Tsr c = new Tsr([2], 8..9).setRqsGradient(true)
         assert (a+b).toString().contains("4.0, 5.0, 7.0, 8.0")
+        Tsr t = (a+c)
+        assert t.toString().contains("9.0, 11.0, 11.0, 13.0")
+        //t.backward(new Tsr([2, 2], [5, -2, 7, 3]))
 
-        //assert (a+c).toString().contains("9.0, 11.0, 10.0, 13.0")
+        assert c.toString().contains("")
 
     }
 

@@ -2,8 +2,8 @@
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.autograd.GraphNode;
 import neureka.calculus.Function;
+import neureka.calculus.factory.OperationType;
 
 <span class="fc" id="L8">public class FunctionConstant implements Function</span>
 {
@@ -28,8 +28,8 @@ import neureka.calculus.Function;
 	}
 
 	@Override
-	public String type() {
-<span class="nc" id="L32">		return &quot;_value&quot;;</span>
+	public OperationType type() {
+<span class="nc" id="L32">		return null;</span>
 	}
 
 	@Override

@@ -2,8 +2,8 @@ package neureka.calculus.factory.components;
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.autograd.GraphNode;
 import neureka.calculus.Function;
+import neureka.calculus.factory.OperationType;
 
 public class FunctionConstant implements Function
 {
@@ -28,8 +28,8 @@ public class FunctionConstant implements Function
 	}
 
 	@Override
-	public String type() {
-		return "_value";
+	public OperationType type() {
+		return null;
 	}
 
 	@Override

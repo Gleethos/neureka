@@ -12,6 +12,17 @@ import java.util.function.Supplier;
 
 public class Cache
 {
+    private static Cache _cache = new Cache();
+
+    private Cache(){ }
+
+    public static Cache instance(){
+        Cache c = _cache;
+        _cache = null;
+        return c;
+    }
+
+
     private final Map<String, Function> FUNCTIONS = new WeakHashMap<>();
 
     public synchronized Map<String, Function> FUNCTIONS(){

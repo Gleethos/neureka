@@ -847,7 +847,7 @@ public class Tsr extends AbstractNDArray
     public static class Exec
     {
         public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr) {
-            tensor = (newTsr) ? new Tsr(tensor, true) : tensor;
+            tensor = (newTsr) ? new Tsr(tensor, true) : tensor;//TODO: use getAT(key)
             tensor._shape = _cached(Utility.Indexing.shpCheck(Utility.Indexing.rearrange(tensor._shape, newForm), tensor));
             tensor._translation = _cached(Utility.Indexing.rearrange(tensor._translation, tensor._shape, newForm));
             tensor._idxmap =  _cached(Utility.Indexing.newTlnOf(tensor._shape));
@@ -1109,6 +1109,9 @@ public class Tsr extends AbstractNDArray
         return toString("dgc");
     }
 
+
+    // STATIC:
+
     public static void makeFit(Tsr[] tsrs){
         int largest = 0;
         for(Tsr t : tsrs){
@@ -1121,9 +1124,13 @@ public class Tsr extends AbstractNDArray
                 int padding = largest-oldShape.length;
                 for(int ii=0; ii<padding; ii++) newReshape[ii] = -1;
                 for(int ii=padding; ii<largest; ii++) newReshape[ii] = i-padding;
-                //...
+                Function f = Function.create(
+                    AbstractNDArray.Utility.Stringify.strConf(newReshape) +":(I[0])"
+                );
+                tsrs[i] = f.activate(tsrs[i]);
             }
         }
+
     }
 
     public static class Create

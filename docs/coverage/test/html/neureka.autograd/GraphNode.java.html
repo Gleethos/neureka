@@ -328,7 +328,7 @@ public class GraphNode implements Component&lt;Tsr&gt; {
                     } else {
 <span class="fc bfc" id="L329" title="All 2 branches covered.">                        if (src_node.usesAD()) {</span>
 <span class="pc bpc" id="L330" title="1 of 4 branches missed.">                            if (src_node.size() == 0 &amp;&amp; this.size() == 0) {</span>
-<span class="fc" id="L331">                                this.put((GraphNode) inputs[i].find(GraphNode.class), function.getADAgent(inputs, i, true));</span>
+<span class="fc" id="L331">                                this.put(src_node, function.getADAgent(inputs, i, true));</span>
                             } else {
                                 /*  Chain rule (forward) for every _gradient w.r.t. leaves (reverseAD or user leaves): */
 <span class="fc" id="L334">                                src_node.forEach(function.derive(inputs, i),</span>
@@ -371,14 +371,14 @@ public class GraphNode implements Component&lt;Tsr&gt; {
 <span class="fc bfc" id="L371" title="All 2 branches covered.">            modes[Ii] = (inputs[Ii].rqsGradient()) ? 1 : node.mode();</span>
 <span class="fc bfc" id="L372" title="All 2 branches covered.">            input_mode += (modes[Ii] != 0) ? 1 : 0;</span>
         }
-<span class="fc bfc" id="L374" title="All 4 branches covered.">        if (input_mode == 1 &amp;&amp; (&quot;x,&quot;.replace(function.type(), &quot;&quot;).equals(&quot;x,&quot;))) {//Convolution and reshaping prohibit forward AutoDiff</span>
+<span class="fc bfc" id="L374" title="All 4 branches covered.">        if (input_mode == 1 &amp;&amp; function.type().allowsForward(inputs)) {//Convolution and reshaping prohibit forward AutoDiff</span>
 <span class="fc bfc" id="L375" title="All 2 branches covered.">            for (int Ii = 0; Ii &lt; inputs.length; Ii++) {</span>
 <span class="fc bfc" id="L376" title="All 4 branches covered.">                result_mode += (modes[Ii] == 0) ? 0 : (modes[Ii] &lt; 0) ? 1 : modes[Ii] + 1;</span>
             }
         } else {
 <span class="fc" id="L379">            result_mode = -input_mode;</span>
         }
-<span class="fc bfc" id="L381" title="All 2 branches covered.">        result_mode = (&quot;&lt;&gt;&quot;.replace(function.type(), &quot;&quot;).equals(&quot;&lt;&gt;&quot;)) ? result_mode : 0;</span>
+<span class="fc bfc" id="L381" title="All 2 branches covered.">        result_mode = (&quot;&lt;&gt;&quot;.replace(function.type().identifier(), &quot;&quot;).equals(&quot;&lt;&gt;&quot;)) ? result_mode : 0;</span>
 <span class="fc" id="L382">        return result_mode;</span>
     }
 

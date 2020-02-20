@@ -55,8 +55,8 @@ public abstract class AbstractFunction implements Function {
     }
 
     @Override
-    public String type() {
-        return _type.identifier();
+    public OperationType type() {
+        return _type;
     }
 
     @Override
@@ -153,56 +153,10 @@ public abstract class AbstractFunction implements Function {
 
     //==================================================================================================================
 
-    private static Function MUL = FunctionBuilder.build("(I[0]*I[1])", false);
-    private static Function ADD = FunctionBuilder.build("(I[0]+I[1])", false);
-    private static Function INV_X = FunctionBuilder.build("I[0]x>>I[1]x>>I[2]", false);
-
-
     @Override
     public ADAgent getADAgent(Tsr[] inputs, int i, boolean forward){
-        if(forward){
-            Tsr d = this.derive(inputs, i);
-            return new ADAgent(
-                    ()->d,
-                    derivative -> MUL.activate(new Tsr[]{derivative, d}),
-                    null
-            );
-        } else {
-            if(_type.identifier().equals(","))
-            {
-                return new ADAgent(
-                        ()->null,
-                        derivative -> FunctionBuilder.build(this.toString(), false).derive(new Tsr[]{derivative},0),
-                        (t, error) -> FunctionBuilder.build(this.toString(), false).derive(new Tsr[]{error},0)
-                );
-            }
-            else if (_type.isOperation() && !_type.isConvection())
-            {
-                Tsr d = this.derive(inputs, i);
-                return new ADAgent(
-                        ()->d,
-                        derivative -> MUL.activate(new Tsr[]{derivative, d}),
-                        (t, error) -> MUL.activate(new Tsr[]{error, d})
-                );
-            }
-            else if (_type.isConvection())
-            {
-                Tsr d = this.derive(inputs, i);
-                return new ADAgent(
-                        ()->d,
-                        derivative -> MUL.activate(new Tsr[]{derivative, d}),
-                        (t, error) -> INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})
-                );
-            }
-        }
-        return new ADAgent(
-                ()->null,
-                derivative -> null,
-                (t, error) -> null
-        );
-
+        return _type.getADAgentOf(this, inputs, i, forward);
     }
-
 
     /**
      * Responsible for handling functions with multiple inputs!
@@ -220,7 +174,7 @@ public abstract class AbstractFunction implements Function {
             /** only flat functions can be executed **/
         } else {
             /**  The following code is reached in flat functions only:  * */
-            
+
             if (d < 0 && _doAD) {/**  Autograd-Graph will be generated below for the new GraphNode: **/
                 return new GraphNode(this, inputs, ()->_execute(inputs, j, d, device)).getPayload();
             } else {
@@ -256,13 +210,19 @@ public abstract class AbstractFunction implements Function {
                 newForm[i] = (int) Tsr.IO.getFrom(_src.get(i).activate(inputs), 0);
             }
             if (d >= 0) {//reverse reshape:
-                int[] reversed = new int[newForm.length];
-                for (int i = 0; i < newForm.length; i++) {
-                    if (newForm[i] >= 0) {
-                        reversed[newForm[i]] = i;
-                    } else {//Exception! (not auto-differentiable)
-                        throw new IllegalStateException("[AbstractFunction][_execute]: reshape operation cannot be reversed!");
-                    }
+                int reverseLength = 0;
+                for (int e : newForm) {
+                    if(e>=0) reverseLength++;
+                }
+                int[] reversed = new int[reverseLength];
+                int reshape_i = 0;
+                int reverse_i = 0;
+                while (reverse_i < reverseLength) {
+                    if (newForm[reshape_i] >= 0) {
+                        reversed[newForm[reshape_i]] = reshape_i;
+                        reverse_i++;
+                    }//TODO: also check < -1 reverse ...
+                    reshape_i++;
                 }
                 newForm = reversed;
             }
@@ -275,27 +235,27 @@ public abstract class AbstractFunction implements Function {
 
     private Tsr _execution(Tsr[] inputs, int d, int j, Device device) {
         if (!_isFlat && j < 0 && d < 0) {
-            if (TYPES.isOperation(_type.id())) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
+            if (_type.isOperation()) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
                 String operation = "";
                 Tsr[] tsrs = _src_acti(inputs, j, d, 0);
                 for (int i = 0; i < tsrs.length; i++) {
                     operation += "I[" + i + "]" + ((i == tsrs.length - 1) ? "" : _type.identifier());
                 }
                 return (FunctionBuilder.build(operation, _doAD).activate(tsrs));
-            } else if (TYPES.isFunction(_type.id())) {
+            } else if (_type.isFunction()) {
                 return (FunctionBuilder.build(_type.identifier() + "(I[0])", true).activate(inputs));
             }
         }
 
         Tsr[] tsrs;
-        if (TYPES.isIndexer(_type.id())) tsrs = new Tsr[1 + inputs.length];
+        if (_type.isIndexer()) tsrs = new Tsr[1 + inputs.length];
         else tsrs = new Tsr[1 + _src.size()];
         if (d >= 0) {
             //Chain-rule (forward AutoDiff):
             //inner times out means:
             //first derive source!
             //like so:
-            if (TYPES.isIndexer(_type.id())) {
+            if (_type.isIndexer()) {
                 for (int i = 1; i < tsrs.length; i++) {
                     tsrs[i] = _src.get(0).derive(inputs, d, i - 1);
                 }
@@ -314,7 +274,7 @@ public abstract class AbstractFunction implements Function {
             }
             tsrs[0] = null;
             //then activate the source like so:
-            if (TYPES.isIndexer(_type.id())) {
+            if (_type.isIndexer()) {
                 for (int i = 1; i < tsrs.length; i++) {
                     tsrs[i] = _src.get(0).activate(inputs, i - 1);
                 }
@@ -325,7 +285,7 @@ public abstract class AbstractFunction implements Function {
             }
             //get derivative index within src list:
             for (int i = 0; i < _src.size(); i++) {
-                if (_src.get(i).dependsOn(d) && !TYPES.isIndexer(_type.id())) {
+                if (_src.get(i).dependsOn(d) && !_type.isIndexer()) {
                     d = i;
                     break;
                 }
@@ -338,7 +298,7 @@ public abstract class AbstractFunction implements Function {
             device.execute(tsrs, TYPES.LOOKUP("*"), -1);
             return tsrs[0];
         } else {
-            if (TYPES.isIndexer(_type.id())) {
+            if (_type.isIndexer()) {
                 tsrs = new Tsr[1 + inputs.length];
                 if (d < 0) {
                     for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).activate(inputs, i - 1);
