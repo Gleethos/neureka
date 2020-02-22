@@ -1,10 +1,10 @@
 package neureka.acceleration;
 
 import neureka.Tsr;
-import neureka.calculus.Function;
 import neureka.calculus.factory.OperationType;
 import org.jetbrains.annotations.Contract;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 public class CPU extends AbstractDevice {
@@ -12,17 +12,12 @@ public class CPU extends AbstractDevice {
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, OperationType type) {
         for(Tsr t : tsrs) t.setIsVirtual(false);
+        if(type.isFunction()){
+            exec.activate(tsrs, d, type);
+            return;
+        }
         switch (type.identifier()) {
-            case "sig": exec.activate_sigmoid(tsrs[0], tsrs[1], d); break;
-            case "sin": exec.activate_sinus(tsrs[0], tsrs[1], d);break;
-            case "cos": exec.activate_cosinus(tsrs[0], tsrs[1], d);break;
-            case "abs": exec.activate_absolute(tsrs[0], tsrs[1], d);break;
-            case "lig": exec.activate_ligmoid(tsrs[0], tsrs[1], d);break;
-            case "tanh": exec.activate_tanh(tsrs[0], tsrs[1], d);break;
-            case "gaus": exec.activate_gaussian(tsrs[0], tsrs[1], d);break;
-            case "quad": exec.activate_quadratic(tsrs[0], tsrs[1], d);break;
-            case "idy": exec.activate_identity(tsrs[0], tsrs[1], d);break;
-            case "relu": exec.activate_relu(tsrs[0], tsrs[1], d);break;
+
             case "sum": exec.broadcast_add(tsrs[0], tsrs[1], tsrs[2], d);break;
             case "prod": exec.broadcast_multiply(tsrs[0], tsrs[1], tsrs[2], d);break;
             //---
@@ -79,8 +74,8 @@ public class CPU extends AbstractDevice {
             case "/": exec.broadcast_divide(tsrs[0], tsrs[1], tsrs[2], d);break;
             case "%": exec.broadcast_mod(tsrs[0], tsrs[1], tsrs[2], d);break;
             case "^": exec.broadcast_power(tsrs[0], tsrs[1], tsrs[2], d);break;
-            case "<": exec.activate_identity(tsrs[0], tsrs[1], d);break;
-            case ">": exec.activate_identity(tsrs[1], tsrs[0], d);break;
+            //case "<": exec.activate_identity(tsrs[0], tsrs[1], d);break;
+            //case ">": exec.activate_identity(tsrs[1], tsrs[0], d);break;
             default:
                 throw new IllegalStateException("[_CPU][enqueue]: Operation not found!");
         }
@@ -89,7 +84,7 @@ public class CPU extends AbstractDevice {
     @Override
     protected void _enqueue(Tsr t, double value, int d, OperationType type) {
         int[] shape = new int[t.rank()];
-        for (int i = 0; i < shape.length; i++) shape[i] = 1;
+        Arrays.fill(shape, 1);
         _enqueue(new Tsr[]{t, t, new Tsr(shape, value)}, d, type);
     }
 
@@ -157,10 +152,9 @@ public class CPU extends AbstractDevice {
             void execute(int start, int end);
         }
 
-        interface Operator {
+        public interface Operator {
             double execute(int[] t0Idx, int[] t1Idx, int[] t2Idx);
         }
-
 
         private static int _adjusted_d(int d, Tsr t0_drn, Tsr t1_src, Tsr t2_src) {
             for (int i = 0; i < t0_drn.rank(); i++)
@@ -169,348 +163,19 @@ public class CPU extends AbstractDevice {
         }
 
         //---
-
-        public static void activate_sigmoid(
-                Tsr t0_drn,
-                Tsr t1_src,
-                int d
-        ) {
-            _threaded(t0_drn.size(), (start, end) -> {
+        public static void activate(Tsr[] tsrs, int d, OperationType type){
+            _threaded(tsrs[0].size(), (start, end) -> {
                 _template.activate(
-                        t0_drn,// t1_src, null, d,
-                        start, end,
-                        _sigmoid(t1_src, d)
+                        tsrs[0], start, end,
+                        type.getCreator().create(tsrs, d)
                 );
             });
         }
 
-        private static Operator _sigmoid(
-                Tsr t1_src,
-                int d
-        ) {
-            double[] t1_val = t1_src.value64();
-            if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) ->
-                        1 / (1 + Math.pow(Math.E, -t1_val[t1_src.i_of_idx(t1Idx)]));
-            } else {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    double input = t1_val[t1_src.i_of_idx(t1Idx)];
-                    return (1 - Math.pow(((input) / Math.pow((1 + Math.pow((input), 2)), 0.5)), 2));
-                };
-            }
-        }
-
+        //---
+        //---
         //---
 
-        public static void activate_tanh(
-                Tsr t0_drn,
-                Tsr t1_src,
-                int d
-        ) {
-            _threaded(t0_drn.size(), (start, end) -> {
-                _template.activate(
-                        t0_drn,// t1_src, null, d,
-                        start, end,
-                        _tanh(t1_src, d)
-                );
-            });
-        }
-
-        private static Operator _tanh(
-                Tsr t1_src,
-                int d
-        ) {
-            double[] t1_val = t1_src.value64();
-            if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    double input = t1_val[t1_src.i_of_idx(t1Idx)];
-                    return ((input)) / Math.pow((1 + Math.pow(((input)), 2)), 0.5);
-                };
-            } else {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    double input = t1_val[t1_src.i_of_idx(t1Idx)];
-                    return (1 - Math.pow(((input) / Math.pow((1 + Math.pow((input), 2)), 0.5)), 2));
-                };
-            }
-        }
-
-        //---
-
-        public static void activate_quadratic(
-                Tsr t0_drn,
-                Tsr t1_src,
-                int d
-        ) {
-            _threaded(t0_drn.size(), (start, end) -> {
-                _template.activate(
-                        t0_drn,// t1_src, null, d,
-                        start, end,
-                        _quadratic(t1_src, d)
-                );
-            });
-        }
-
-        private static Operator _quadratic(
-                Tsr t1_src,
-                int d
-        ) {
-            double[] t1_val = t1_src.value64();
-            if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    double input = t1_val[t1_src.i_of_idx(t1Idx)];
-                    return ((input) * (input));
-                };
-            } else {
-                return (t0Idx, t1Idx, t2Idx) ->
-                        2 * t1_val[t1_src.i_of_idx(t1Idx)];
-            }
-        }
-
-        //---
-
-        public static void activate_ligmoid(
-                Tsr t0_drn,
-                Tsr t1_src,
-                int d
-        ) {
-            _threaded(t0_drn.size(), (start, end) -> {
-                _template.activate(
-                        t0_drn,
-                        start, end,
-                        _ligmoid(t1_src, d)
-                );
-            });
-        }
-
-        private static Operator _ligmoid(
-                Tsr t1_src,
-                int d
-        ) {
-            double[] t1_val = t1_src.value64();
-            if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    double input = t1_val[t1_src.i_of_idx(t1Idx)];
-                    return (Math.log(1 + Math.pow(Math.E, input)));
-                };
-            } else {
-                return (t0Idx, t1Idx, t2Idx) -> _sigmoid(t1_src, -1).execute(t0Idx, t1Idx, t2Idx);
-            }
-        }
-
-        //---
-
-        public static void activate_gaussian(
-                Tsr t0_drn,
-                Tsr t1_src,
-                int d
-        ) {
-            _threaded(t0_drn.size(), (start, end) -> {
-                _template.activate(
-                        t0_drn,
-                        start, end,
-                        _gaussian(t1_src, d)
-                );
-            });
-        }
-
-        private static Operator _gaussian(
-                Tsr t1_src,
-                int d
-        ) {
-            double[] t1_val = t1_src.value64();
-            if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    double input = t1_val[t1_src.i_of_idx(t1Idx)];
-                    return Math.pow(Math.E, -Math.pow((input), 2));
-                };
-            } else {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    double input = t1_val[t1_src.i_of_idx(t1Idx)];
-                    return -2 * ((input)) * Math.pow(Math.E, -Math.pow((input), 2));
-                };
-
-            }
-        }
-
-        //---
-
-        public static void activate_absolute(
-                Tsr t0_drn,
-                Tsr t1_src,
-                int d
-        ) {
-            _threaded(t0_drn.size(), (start, end) -> {
-                _template.activate(
-                        t0_drn,
-                        start, end,
-                        _absolute(t1_src, d)
-                );
-            });
-        }
-
-        private static Operator _absolute(
-                Tsr t1_src,
-                int d
-        ) {
-            double[] t1_val = t1_src.value64();
-            if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    double input = t1_val[t1_src.i_of_idx(t1Idx)];
-                    return Math.abs(input);
-                };
-            } else {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    double input = t1_val[t1_src.i_of_idx(t1Idx)];
-                    return (input < 0) ? -1 : 1;
-                };
-
-            }
-        }
-
-        //---
-
-        public static void activate_sinus(
-                Tsr t0_drn,
-                Tsr t1_src,
-                int d
-        ) {
-            _threaded(t0_drn.size(), (start, end) -> {
-                _template.activate(
-                        t0_drn,
-                        start, end,
-                        _sinus(t1_src, d)
-                );
-            });
-        }
-
-        private static Operator _sinus(
-                Tsr t1_src,
-                int d
-        ) {
-            double[] t1_val = t1_src.value64();
-            if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    double input = t1_val[t1_src.i_of_idx(t1Idx)];
-                    return Math.sin(input);
-                };
-            } else {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    double input = t1_val[t1_src.i_of_idx(t1Idx)];
-                    return Math.cos(input);
-                };
-
-            }
-        }
-
-        //---
-
-        public static void activate_cosinus(
-                Tsr t0_drn,
-                Tsr t1_src,
-                int d
-        ) {
-            _threaded(t0_drn.size(), (start, end) -> {
-                _template.activate(
-                        t0_drn,
-                        start, end,
-                        _cosinus(t1_src, d)
-                );
-            });
-        }
-
-        private static Operator _cosinus(
-                Tsr t1_src,
-                int d
-        ) {
-            double[] t1_val = t1_src.value64();
-            if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    double input = t1_val[t1_src.i_of_idx(t1Idx)];
-                    return Math.cos(input);
-                };
-            } else {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    double input = t1_val[t1_src.i_of_idx(t1Idx)];
-                    return -Math.sin(input);
-                };
-
-            }
-        }
-
-        //---
-
-        //---
-
-        public static void activate_relu(
-                Tsr t0_drn,
-                Tsr t1_src,
-                int d
-        ) {
-            _threaded(t0_drn.size(), (start, end) -> {
-                _template.activate(
-                        t0_drn,// t1_src, null, d,
-                        start, end,
-                        _relu(t1_src, d)
-                );
-            });
-        }
-
-        private static Operator _relu(
-                Tsr t1_src, int d
-        ) {
-            double[] t1_val = t1_src.value64();
-            if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    if(t1_val[t1_src.i_of_idx(t1Idx)]>=0){
-                        return t1_val[t1_src.i_of_idx(t1Idx)];
-                    }
-                    return t1_val[t1_src.i_of_idx(t1Idx)]*0.01;
-                };
-            } else {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    if(t1_val[t1_src.i_of_idx(t1Idx)]>=0){
-                        return 1;
-                    }
-                    return 0.01;
-                };
-            }
-        }
-
-
-        //---
-
-        public static void activate_identity(
-                Tsr t0_drn,
-                Tsr t1_src,
-                int d
-        ) {
-            _threaded(t0_drn.size(), (start, end) -> {
-                _template.activate(
-                        t0_drn,// t1_src, null, d,
-                        start, end,
-                        _identity(t1_src, d)
-                );
-            });
-        }
-
-        private static Operator _identity(
-                Tsr t1_src,
-                int d
-        ) {
-            double[] t1_val = t1_src.value64();
-            if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    return t1_val[t1_src.i_of_idx(t1Idx)];
-                };
-            } else {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    return t1_val[t1_src.i_of_idx(t1Idx)];
-                };
-            }
-        }
-
-
-        //---
         public static void convolve_multiply(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src
         ) {
@@ -564,17 +229,11 @@ public class CPU extends AbstractDevice {
             double[] t1_val = t1_src.value64();
             double[] t2_val = t2_src.value64();
             if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    return t1_val[t1_src.i_of_idx(t1Idx)] * t2_val[t2_src.i_of_idx(t2Idx)];
-                };
+                return (t0Idx, t1Idx, t2Idx) -> t1_val[t1_src.i_of_idx(t1Idx)] * t2_val[t2_src.i_of_idx(t2Idx)];
             } else {
                 return (t0Idx, t1Idx, t2Idx) -> {
-                    if (d == 0) {
-                        return t2_val[t2_src.i_of_idx(t2Idx)];
-                    } else {
-                        return t1_val[t1_src.i_of_idx(t1Idx)];
-                    }
-
+                    if (d == 0) return t2_val[t2_src.i_of_idx(t2Idx)];
+                    else return t1_val[t1_src.i_of_idx(t1Idx)];
                 };
             }
         }
@@ -965,7 +624,8 @@ public class CPU extends AbstractDevice {
                         Tsr.Utility.Indexing.increment(t0Idx, t0Shp);
                         i++;
                     }
-                } else//---
+                }
+                else//---
                 {
                     while (i < end) {//increment on drain accordingly:
                         int ri = 0;
@@ -1074,7 +734,8 @@ public class CPU extends AbstractDevice {
                         Tsr.Utility.Indexing.increment(t0Idx, t0Shp);
                         i++;
                     }
-                } else//---//Note: src2 is now former drain!
+                }
+                else//---//Note: src2 is now former drain!
                 {
                     while (i < end) {//increment on drain accordingly:
                         int ri = 0;

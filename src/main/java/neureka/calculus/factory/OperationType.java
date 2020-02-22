@@ -1,6 +1,7 @@
 package neureka.calculus.factory;
 
 import neureka.Tsr;
+import neureka.acceleration.CPU;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.factory.assembly.FunctionBuilder;
@@ -24,8 +25,11 @@ public class OperationType {
     public static OperationType instance(int index){
         return _REGISTER.get(index);
     }
-
-
+    
+    public interface OperationCreator{
+        CPU.exec.Operator create(Tsr[] inputs, int d);
+    }
+    
     public static OperationType instance(String identifier){
         return _LOOKUP.get(identifier);
     }
@@ -42,79 +46,223 @@ public class OperationType {
     private boolean _isConvection;
     private boolean _isCommutative;
     private boolean _isAssociative;
+    private OperationCreator _operationCreator;
 
     private static OperationType[] _TYPES;
 
     static  {
         _TYPES = new OperationType[]{
-                new OperationType("relu", true, false, false, true, true),
-                new OperationType("sig" , true, false, false, true, true),
-                new OperationType("tanh", true, false, false, true, true),
-                new OperationType("quad", true, false, false, true, true),
-                new OperationType("lig" , true, false, false, true, true),
-                new OperationType("idy" , true, false, false, true, true),
-                new OperationType("gaus", true, false, false, true, true),
-                new OperationType("abs" , true, false, false, true, true),
-                new OperationType("sin" , true, false, false, true, true),
-                new OperationType("cos" , true, false, false, true, true),
+                new OperationType("relu", true, false, false, true, true, 
+                        (inputs, d)->{
+                            double[] t1_val = inputs[1].value64();
+                            if (d < 0) {
+                                return (t0Idx, t1Idx, t2Idx) -> {
+                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]>=0){
+                                        return t1_val[inputs[1].i_of_idx(t1Idx)];
+                                    }
+                                    return t1_val[inputs[1].i_of_idx(t1Idx)]*0.01;
+                                };
+                            } else {
+                                return (t0Idx, t1Idx, t2Idx) -> {
+                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]>=0){
+                                        return 1;
+                                    }
+                                    return 0.01;
+                                };
+                            }
+                        }
+                ),
+                new OperationType("sig" , true, false, false, true, true,
+                        (inputs, d)->{
+                            double[] t1_val = inputs[1].value64();
+                            if (d < 0) {
+                                return (t0Idx, t1Idx, t2Idx) ->
+                                        1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));
+                            } else {
+                                return (t0Idx, t1Idx, t2Idx) -> {
+                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];
+                                    return (1 - Math.pow(((input) / Math.pow((1 + Math.pow((input), 2)), 0.5)), 2));
+                                };
+                            }
+                        }
+                ),
+                new OperationType("tanh", true, false, false, true, true,
+                        (inputs, d)->{
+                            double[] t1_val = inputs[1].value64();
+                            if (d < 0) {
+                                return (t0Idx, t1Idx, t2Idx) -> {
+                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];
+                                    return ((input)) / Math.pow((1 + Math.pow(((input)), 2)), 0.5);
+                                };
+                            } else {
+                                return (t0Idx, t1Idx, t2Idx) -> {
+                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];
+                                    return (1 - Math.pow(((input) / Math.pow((1 + Math.pow((input), 2)), 0.5)), 2));
+                                };
+                            }
+                        }
+                ),
+                new OperationType("quad", true, false, false, true, true,
+                        (inputs, d)->{
+                            double[] t1_val = inputs[1].value64();
+                            if (d < 0) {
+                                return (t0Idx, t1Idx, t2Idx) -> {
+                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];
+                                    return ((input) * (input));
+                                };
+                            } else {
+                                return (t0Idx, t1Idx, t2Idx) ->
+                                        2 * t1_val[inputs[1].i_of_idx(t1Idx)];
+                            }
+                        }
+                ),
+                new OperationType("lig" , true, false, false, true, true,
+                        (inputs, d)->{
+                            double[] t1_val = inputs[1].value64();
+                            if (d < 0) {
+                                return (t0Idx, t1Idx, t2Idx) -> {
+                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];
+                                    return (Math.log(1 + Math.pow(Math.E, input)));
+                                };
+                            } else {
+                                return (t0Idx, t1Idx, t2Idx) -> 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));
+                            }
+                        }
+                ),
+                new OperationType("idy" , true, false, false, true, true,
+                        (inputs, d)->{
+                            double[] t1_val = inputs[1].value64();
+                            if (d < 0) {
+                                return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
+                            } else {
+                                return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
+                            }
+                        }
+                ),
+                new OperationType("gaus", true, false, false, true, true,
+                        (inputs, d)->{
+                            double[] t1_val = inputs[1].value64();
+                            if (d < 0) {
+                                return (t0Idx, t1Idx, t2Idx) -> {
+                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];
+                                    return Math.pow(Math.E, -Math.pow((input), 2));
+                                };
+                            } else {
+                                return (t0Idx, t1Idx, t2Idx) -> {
+                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];
+                                    return -2 * ((input)) * Math.pow(Math.E, -Math.pow((input), 2));
+                                };
+
+                            }
+                        }
+                ),
+                new OperationType("abs" , true, false, false, true, true,
+                        (inputs, d)->{
+                            double[] t1_val = inputs[1].value64();
+                            if (d < 0) {
+                                return (t0Idx, t1Idx, t2Idx) -> {
+                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];
+                                    return Math.abs(input);
+                                };
+                            } else {
+                                return (t0Idx, t1Idx, t2Idx) -> {
+                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];
+                                    return (input < 0) ? -1 : 1;
+                                };
+                            }
+                        }
+                ),
+                new OperationType("sin" , true, false, false, true, true,
+                        (inputs, d)->{
+                            double[] t1_val = inputs[1].value64();
+                            if (d < 0) {
+                                return (t0Idx, t1Idx, t2Idx) -> {
+                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];
+                                    return Math.sin(input);
+                                };
+                            } else {
+                                return (t0Idx, t1Idx, t2Idx) -> {
+                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];
+                                    return Math.cos(input);
+                                };
+                            }
+                        }
+                ),
+                new OperationType("cos" , true, false, false, true, true,
+                        (inputs, d)->{
+                            double[] t1_val = inputs[1].value64();
+                            if (d < 0) {
+                                return (t0Idx, t1Idx, t2Idx) -> {
+                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];
+                                    return Math.cos(input);
+                                };
+                            } else {
+                                return (t0Idx, t1Idx, t2Idx) -> {
+                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];
+                                    return -Math.sin(input);
+                                };
+
+                            }
+                        }
+                ),
 
                 // Indexer:
-                new OperationType("sum" , false, false, true, false, true, true),
-                new OperationType("prod", false, false,  true, false, true, true),
+                new OperationType("sum" , false, false, true, false, true, true, null),
+                new OperationType("prod", false, false,  true, false, true, true, null),
 
                 // Operations (auto broadcast):
-                new OperationType("^", false, false, false, false, false),
-                new OperationType(((char)171)+"^", false, false, false, false, false),
-                new OperationType("^"+((char)187), false, false, false, false, false),
+                new OperationType("^", false, false, false, false, false, null),
+                new OperationType(((char)171)+"^", false, false, false, false, false, null),
+                new OperationType("^"+((char)187), false, false, false, false, false, null),
 
-                new OperationType("/", false, false, false, false, false),
-                new OperationType(((char)171)+"/", false, false, false, false, false),
-                new OperationType("/"+((char)187), false, false, false, false, false),
+                new OperationType("/", false, false, false, false, false, null),
+                new OperationType(((char)171)+"/", false, false, false, false, false, null),
+                new OperationType("/"+((char)187), false, false, false, false, false, null),
 
-                new OperationType("*", false, false, false, true, false),
-                new OperationType(((char)171)+"*", false, false, false, false, false),
-                new OperationType("*"+((char)187), false, false, false, false, false),
+                new OperationType("*", false, false, false, true, false, null),
+                new OperationType(((char)171)+"*", false, false, false, false, false, null),
+                new OperationType("*"+((char)187), false, false, false, false, false, null),
 
-                new OperationType("%", false, false, false, false, false),
-                new OperationType(((char)171)+"%", false, false, false, false, false),
-                new OperationType("%"+((char)187), false, false, false, false, false),
+                new OperationType("%", false, false, false, false, false, null),
+                new OperationType(((char)171)+"%", false, false, false, false, false, null),
+                new OperationType("%"+((char)187), false, false, false, false, false, null),
 
-                new OperationType("-", false, false, false, false, false),
-                new OperationType(((char)171)+"-", false, false, false, false, false),
-                new OperationType("-"+((char)187), false, false, false, false, false),
+                new OperationType("-", false, false, false, false, false, null),
+                new OperationType(((char)171)+"-", false, false, false, false, false, null),
+                new OperationType("-"+((char)187), false, false, false, false, false, null),
 
-                new OperationType("+", false, false, false, true, false),
-                new OperationType(((char)171)+"+", false, false, false, false, false),
-                new OperationType("+"+((char)187), false, false, false, false, false),
+                new OperationType("+", false, false, false, true, false, null),
+                new OperationType(((char)171)+"+", false, false, false, false, false, null),
+                new OperationType("+"+((char)187), false, false, false, false, false, null),
 
                 // Convolution:
-                new OperationType("x", false, false, true, false, false),
-                new OperationType(((char)171)+"x", false, false, true, false, false),
-                new OperationType("x"+((char)187), false, false, true, false, false),
+                new OperationType("x", false, false, true, false, false, null),
+                new OperationType(((char)171)+"x", false, false, true, false, false, null),
+                new OperationType("x"+((char)187), false, false, true, false, false, null),
 
-                new OperationType("d", false, false, true, false, false),
-                new OperationType(((char)171)+"d", false, false, true, false, false),
-                new OperationType("d"+((char)187), false, false, true, false, false),
+                new OperationType("d", false, false, true, false, false, null),
+                new OperationType(((char)171)+"d", false, false, true, false, false, null),
+                new OperationType("d"+((char)187), false, false, true, false, false, null),
 
-                new OperationType("p", false, false, true, false, false),
-                new OperationType(((char)171)+"p", false, false, true, false, false),
-                new OperationType("p"+((char)187), false, false, true, false, false),
+                new OperationType("p", false, false, true, false, false, null),
+                new OperationType(((char)171)+"p", false, false, true, false, false, null),
+                new OperationType("p"+((char)187), false, false, true, false, false, null),
 
-                new OperationType("a", false, false, true, false, false),
-                new OperationType(((char)171)+"a", false, false, true, false, false),
-                new OperationType("a"+((char)187), false, false, true, false, false),
+                new OperationType("a", false, false, true, false, false, null),
+                new OperationType(((char)171)+"a", false, false, true, false, false, null),
+                new OperationType("a"+((char)187), false, false, true, false, false, null),
 
-                new OperationType("s", false, false, true, false, false),
-                new OperationType(((char)171)+"s", false, false, true, false, false),
-                new OperationType("s"+((char)187), false, false, true, false, false),
+                new OperationType("s", false, false, true, false, false, null),
+                new OperationType(((char)171)+"s", false, false, true, false, false, null),
+                new OperationType("s"+((char)187), false, false, true, false, false, null),
                 // (char)171 -> <<    // (char)187 -> >>
 
                 // Reshape:
-                new OperationType(",", false, false, false, false, false),
+                new OperationType(",", false, false, false, false, false, null),
 
                 // Injecting:
-                new OperationType("<", false, false, false, false, false),
-                new OperationType(">", false, false, false, false, false),
+                new OperationType("<", false, false, false, false, false, null),
+                new OperationType(">", false, false, false, false, false, null),
         };
     }
 
@@ -126,7 +274,8 @@ public class OperationType {
             boolean isIndexer,
             boolean isConvection,
             boolean isCommutative,
-            boolean isAssociative
+            boolean isAssociative,
+            OperationCreator creator
     ) {
         _construct(
                 identifier,
@@ -135,7 +284,8 @@ public class OperationType {
                 isIndexer,
                 isConvection,
                 isCommutative,
-                isAssociative
+                isAssociative,
+                creator
         );
     }
 
@@ -145,7 +295,8 @@ public class OperationType {
             boolean isIndexer,
             boolean isConvection,
             boolean isCommutative,
-            boolean isAssociative
+            boolean isAssociative,
+            OperationCreator creator
     ) {
         _construct(
                 identifier,
@@ -154,7 +305,8 @@ public class OperationType {
                 isIndexer,
                 isConvection,
                 isCommutative,
-                isAssociative
+                isAssociative,
+                creator
         );
     }
 
@@ -165,7 +317,8 @@ public class OperationType {
             boolean isIndexer,
             boolean isConvection,
             boolean isCommutative,
-            boolean isAssociative
+            boolean isAssociative,
+            OperationCreator creator
     ) {
         _id = _ID;
         _ID++;
@@ -176,7 +329,8 @@ public class OperationType {
         _isConvection = isConvection;
         _isCommutative = isCommutative;
         _isAssociative = isAssociative;
-
+        _operationCreator = creator;
+        
         _REGISTER.add(this);
         _LOOKUP.put(identifier, this);
         if(identifier.equals((((char)171))+"x")) _LOOKUP.put("<<x", this);
@@ -187,6 +341,9 @@ public class OperationType {
         return _TYPES;
     }
 
+    public OperationCreator getCreator(){
+        return _operationCreator;
+    }
 
     public int id(){
         return _id;

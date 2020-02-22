@@ -68,9 +68,9 @@ public class OpenCLPlatform {
 <span class="fc" id="L68">        _id_device = new TreeMap&lt;&gt;(Comparator.comparingInt(NativePointerObject::hashCode));</span>
 <span class="fc" id="L69">        _pid = pid;</span>
         // Obtain the number of devices for the current platform
-<span class="fc" id="L71">        int numDevices[] = new int[1];</span>
+<span class="fc" id="L71">        int[] numDevices = new int[1];</span>
 <span class="fc" id="L72">        clGetDeviceIDs(pid, CL_DEVICE_TYPE_ALL, 0, null, numDevices);</span>
-<span class="fc" id="L73">        cl_device_id devicesArray[] = new cl_device_id[numDevices[0]];</span>
+<span class="fc" id="L73">        cl_device_id[] devicesArray = new cl_device_id[numDevices[0]];</span>
 <span class="fc" id="L74">        clGetDeviceIDs(pid, CL_DEVICE_TYPE_ALL, numDevices[0], devicesArray, null);</span>
 
         // Enable exceptions and subsequently omit error checks in this sample
@@ -142,22 +142,20 @@ public class OpenCLPlatform {
                     );
                 }
             }
-<span class="fc bfc" id="L145" title="All 2 branches covered.">            if (!templateFound) {</span>
-<span class="fc" id="L146">                sources.add(kernelSource);</span>
-            }
+<span class="fc bfc" id="L145" title="All 2 branches covered.">            if (!templateFound) sources.add(kernelSource);</span>
         }
 
         // Create the program
-<span class="fc" id="L151">        cl_program cpProgram = clCreateProgramWithSource(</span>
+<span class="fc" id="L149">        cl_program cpProgram = clCreateProgramWithSource(</span>
                 _context,
-<span class="fc" id="L153">                sources.size(),</span>
-<span class="fc" id="L154">                sources.toArray(new String[0]),</span>
+<span class="fc" id="L151">                sources.size(),</span>
+<span class="fc" id="L152">                sources.toArray(new String[0]),</span>
                 null,
                 null
         );
 
         // Build the program
-<span class="fc" id="L160">        int err = clBuildProgram(</span>
+<span class="fc" id="L158">        int err = clBuildProgram(</span>
                 cpProgram,
                 devicesArray.length,
                 devicesArray,
@@ -166,10 +164,10 @@ public class OpenCLPlatform {
         //TODO: check compilation errors!
 
         // Create the kernels
-<span class="fc bfc" id="L169" title="All 2 branches covered.">        for (String name : names) {</span>
-<span class="pc bpc" id="L170" title="1 of 2 branches missed.">            if (name != null) _kernels.put(name, clCreateKernel(cpProgram, name, null));</span>
-<span class="fc" id="L171">        }</span>
-<span class="fc" id="L172">    }</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">        for (String name : names) {</span>
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">            if (name != null) _kernels.put(name, clCreateKernel(cpProgram, name, null));</span>
+<span class="fc" id="L169">        }</span>
+<span class="fc" id="L170">    }</span>
 
     private interface Parser {
         void apply(String name, String first, String second, boolean advanced);
@@ -177,54 +175,54 @@ public class OpenCLPlatform {
 
     private Map&lt;String, String&gt; convolve_kernels_of(String name, String source)
     {
-<span class="fc" id="L180">        Map&lt;String, String&gt; code = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L181">        String newName = name.replace(&quot;template&quot;, &quot;&quot;);</span>
-<span class="fc" id="L182">        source = source.replace(&quot;template&quot;, &quot;&quot;);</span>
-<span class="fc" id="L183">        String[] parts = source.split(&quot;//-=&lt;OPERATION&gt;=-//&quot;);</span>
+<span class="fc" id="L178">        Map&lt;String, String&gt; code = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L179">        String newName = name.replace(&quot;template&quot;, &quot;&quot;);</span>
+<span class="fc" id="L180">        source = source.replace(&quot;template&quot;, &quot;&quot;);</span>
+<span class="fc" id="L181">        String[] parts = source.split(&quot;//-=&lt;OPERATION&gt;=-//&quot;);</span>
 
-<span class="fc" id="L185">        java.util.function.Function&lt;String, String&gt; correct = (s) -&gt;</span>
-<span class="fc" id="L186">                &quot;//-=&lt;PARSED&gt;=-//\n&quot; +</span>
-<span class="fc" id="L187">                        s.replace(&quot;src1&quot;, &quot;src1[_i_of_idx_on_tln(prv_src1_cfg, rank)]&quot;)</span>
-<span class="fc" id="L188">                                .replace(&quot;src2&quot;, &quot;src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]&quot;)</span>
-<span class="fc" id="L189">                                .replace(&quot;input1&quot;, &quot;src1[_i_of_i(i, prv_src1_cfg, rank)]&quot;)</span>
-<span class="fc" id="L190">                                .replace(&quot;input2&quot;, &quot;src2[_i_of_i(i, prv_src2_cfg, rank)]&quot;)</span>
-<span class="fc" id="L191">                                .replace(&quot;input&quot;, &quot;src1[_i_of_i(i, prv_src1_cfg, rank)]&quot;)</span>
-<span class="fc" id="L192">                                .replace(&quot;output&quot;, &quot;drn[_i_of_i(i, prv_drn_cfg, rank)]&quot;)</span>
-<span class="fc" id="L193">                                .replace(&quot;handle&quot;, &quot;src1[_i_of_idx_on_tln(prv_src1_cfg, rank)]&quot;)</span>
-<span class="fc" id="L194">                                .replace(&quot;drain&quot;, &quot;src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]&quot;)</span>
-<span class="fc" id="L195">                                .replace(&quot;origin&quot;, &quot;drn[di]&quot;)</span>
-<span class="fc" id="L196">                                .replace(&quot;target&quot;, &quot;frn[_i_of_idx_on_tln(prv_frn_cfg, rank)]&quot;) +</span>
+<span class="fc" id="L183">        java.util.function.Function&lt;String, String&gt; correct = (s) -&gt;</span>
+<span class="fc" id="L184">                &quot;//-=&lt;PARSED&gt;=-//\n&quot; +</span>
+<span class="fc" id="L185">                        s.replace(&quot;src1&quot;, &quot;src1[_i_of_idx_on_tln(prv_src1_cfg, rank)]&quot;)</span>
+<span class="fc" id="L186">                                .replace(&quot;src2&quot;, &quot;src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]&quot;)</span>
+<span class="fc" id="L187">                                .replace(&quot;input1&quot;, &quot;src1[_i_of_i(i, prv_src1_cfg, rank)]&quot;)</span>
+<span class="fc" id="L188">                                .replace(&quot;input2&quot;, &quot;src2[_i_of_i(i, prv_src2_cfg, rank)]&quot;)</span>
+<span class="fc" id="L189">                                .replace(&quot;input&quot;, &quot;src1[_i_of_i(i, prv_src1_cfg, rank)]&quot;)</span>
+<span class="fc" id="L190">                                .replace(&quot;output&quot;, &quot;drn[_i_of_i(i, prv_drn_cfg, rank)]&quot;)</span>
+<span class="fc" id="L191">                                .replace(&quot;handle&quot;, &quot;src1[_i_of_idx_on_tln(prv_src1_cfg, rank)]&quot;)</span>
+<span class="fc" id="L192">                                .replace(&quot;drain&quot;, &quot;src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]&quot;)</span>
+<span class="fc" id="L193">                                .replace(&quot;origin&quot;, &quot;drn[di]&quot;)</span>
+<span class="fc" id="L194">                                .replace(&quot;target&quot;, &quot;frn[_i_of_idx_on_tln(prv_frn_cfg, rank)]&quot;) +</span>
                         &quot;\n//-=&lt;PARSED&gt;=-//&quot;;
 
-<span class="fc" id="L199">        java.util.function.Function&lt;String, String&gt; asAdvanced = (s) -&gt;</span>
-<span class="fc" id="L200">                s.replace(&quot;target&quot;, &quot;frn[_i_of_idx_on_tln(prv_frn2_cfg, rank)]&quot;)</span>
-<span class="fc" id="L201">                        .replace(&quot;//-=&lt;ARGUMENT&gt;=-//&quot;, &quot;&quot;)</span>
-<span class="fc" id="L202">                        .replace(&quot;//-=&lt;CONFIGURATION&gt;=-//&quot;, &quot;&quot;);</span>
+<span class="fc" id="L197">        java.util.function.Function&lt;String, String&gt; asAdvanced = (s) -&gt;</span>
+<span class="fc" id="L198">                s.replace(&quot;target&quot;, &quot;frn[_i_of_idx_on_tln(prv_frn2_cfg, rank)]&quot;)</span>
+<span class="fc" id="L199">                        .replace(&quot;//-=&lt;ARGUMENT&gt;=-//&quot;, &quot;&quot;)</span>
+<span class="fc" id="L200">                        .replace(&quot;//-=&lt;CONFIGURATION&gt;=-//&quot;, &quot;&quot;);</span>
 
-<span class="fc" id="L204">        Parser parser = (n, f, s, advanced) -&gt; {</span>
-<span class="fc" id="L205">            String convcode =</span>
-<span class="fc" id="L206">                    parts[0].replace(newName, newName + n) +</span>
-<span class="fc" id="L207">                            correct.apply(f) +</span>
+<span class="fc" id="L202">        Parser parser = (n, f, s, advanced) -&gt; {</span>
+<span class="fc" id="L203">            String convcode =</span>
+<span class="fc" id="L204">                    parts[0].replace(newName, newName + n) +</span>
+<span class="fc" id="L205">                            correct.apply(f) +</span>
                             parts[2] +
-<span class="fc" id="L209">                            correct.apply(s) +</span>
+<span class="fc" id="L207">                            correct.apply(s) +</span>
                             parts[4];
-<span class="fc bfc" id="L211" title="All 2 branches covered.">            convcode = (advanced) ? asAdvanced.apply(convcode) : convcode;</span>
-<span class="fc" id="L212">            code.put(newName + n, convcode);</span>
-<span class="fc" id="L213">        };</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">            convcode = (advanced) ? asAdvanced.apply(convcode) : convcode;</span>
+<span class="fc" id="L210">            code.put(newName + n, convcode);</span>
+<span class="fc" id="L211">        };</span>
         //Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0
         //Tsr t0_drain,  Tsr t1_src1,   Tsr t2_src2
         //drn[di], src1[_i_of_idx_on_tln(prv_src1_cfg, rank)], src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]
         //default:  src1 o src2 -&gt; drain
         //inverse:  src1/fdrn &lt;-src2 &lt;- drain
         //===========================================================================
-<span class="fc bfc" id="L220" title="All 2 branches covered.">        if (newName.contains(&quot;activate&quot;)) {</span>
-<span class="fc" id="L221">            parser.apply(</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">        if (newName.contains(&quot;activate&quot;)) {</span>
+<span class="fc" id="L219">            parser.apply(</span>
                     &quot;cosinus&quot;,
                     &quot;drn[_i_of_i(i, prv_drn_cfg, rank)] = cos(input);\n&quot;,
                     &quot;drn[_i_of_i(i, prv_drn_cfg, rank)] = -sin(input);\n&quot;,
                     false
             );
-<span class="fc" id="L227">            parser.apply(</span>
+<span class="fc" id="L225">            parser.apply(</span>
                     &quot;gaussian&quot;,
                     &quot;output =\n&quot; +
                          &quot;    (float)pow(\n&quot; +
@@ -237,7 +235,7 @@ public class OpenCLPlatform {
                     &quot;output = 1 / (1 + (float)pow((float)M_E, -input));\n&quot;,
                     false
             );
-<span class="fc" id="L240">            parser.apply(</span>
+<span class="fc" id="L238">            parser.apply(</span>
                     &quot;ligmoid&quot;,
                     &quot;output = \n&quot; +
                             &quot;(\n&quot; +
@@ -259,51 +257,51 @@ public class OpenCLPlatform {
                            &quot;        );\n&quot;,
                     false
             );
-<span class="fc" id="L262">            parser.apply(</span>
+<span class="fc" id="L260">            parser.apply(</span>
                     &quot;sigmoid&quot;,
                     &quot;output = 1 / (1 + (float)pow((float)M_E, -input));\n&quot;,
                     &quot;output = input * (1 - input);\n&quot;,
                     false
             );
-<span class="fc" id="L268">            parser.apply(</span>
+<span class="fc" id="L266">            parser.apply(</span>
                     &quot;sinus&quot;,
                     &quot;output = sin(input);\n&quot;,
                     &quot;output = cos(input);\n&quot;,
                     false
             );
-<span class="fc" id="L274">            parser.apply(</span>
+<span class="fc" id="L272">            parser.apply(</span>
                     &quot;relu&quot;,
                     &quot;if (input &gt;= 0) {  output = input; } else { output = input * (float)0.01; }\n&quot;,
                     &quot;if (input &gt;= 0) { output = (float)1; } else { output = (float)0.01; }\n&quot;,
                     false
             );
-<span class="fc" id="L280">            parser.apply(</span>
+<span class="fc" id="L278">            parser.apply(</span>
                     &quot;identity&quot;,
                     &quot;output = input;\n&quot;,
                     &quot;output = input;\n&quot;,
                     false
             );
-<span class="fc" id="L286">            parser.apply(</span>
+<span class="fc" id="L284">            parser.apply(</span>
                     &quot;tanh&quot;,
                     &quot;output = input/pow(1+pow(input, 2.0f), 0.5f);\n&quot;,
                     &quot;output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n&quot;,
                     false
             );
 
-<span class="fc bfc" id="L293" title="All 2 branches covered.">        } else if (newName.contains(&quot;operate&quot;)) {</span>
-<span class="fc" id="L294">            parser.apply(</span>
+<span class="fc bfc" id="L291" title="All 2 branches covered.">        } else if (newName.contains(&quot;operate&quot;)) {</span>
+<span class="fc" id="L292">            parser.apply(</span>
                     &quot;multiply&quot;,
                     &quot;output = input1 * input2;\n&quot;,
                     &quot;if(d==0){output = input2;}else{output = input1;}\n&quot;,
                     false
             );
-<span class="fc" id="L300">            parser.apply(</span>
+<span class="fc" id="L298">            parser.apply(</span>
                     &quot;add&quot;,
                     &quot;output = input1 + input2;\n&quot;,
                     &quot;output = 1;\n&quot;,
                     false
             );
-<span class="fc" id="L306">            parser.apply(</span>
+<span class="fc" id="L304">            parser.apply(</span>
                     &quot;subtract&quot;,
                     &quot;output = input1 - input2;\n&quot;,
                     &quot;if(d==0){\n&quot; +//drn and src2 switch:
@@ -313,7 +311,7 @@ public class OpenCLPlatform {
                             &quot;}&quot;,
                     false
             );
-<span class="fc" id="L316">            parser.apply(</span>
+<span class="fc" id="L314">            parser.apply(</span>
                     &quot;divide&quot;,
                     &quot;output = input1 / input2;\n&quot;,
                     &quot;if(d==0){\n&quot; +
@@ -323,7 +321,7 @@ public class OpenCLPlatform {
                             &quot;}&quot;,
                     true
             );
-<span class="fc" id="L326">            parser.apply(</span>
+<span class="fc" id="L324">            parser.apply(</span>
                     &quot;power&quot;,
                     &quot;output = pow(input1, input2);&quot;,
                     &quot;if(d==0){\n&quot; +
@@ -333,20 +331,20 @@ public class OpenCLPlatform {
                             &quot;}&quot;,
                     true
             );
-<span class="fc bfc" id="L336" title="All 2 branches covered.">        } else if (newName.contains(&quot;scalar&quot;)) {</span>
-<span class="fc" id="L337">            parser.apply(</span>
+<span class="fc bfc" id="L334" title="All 2 branches covered.">        } else if (newName.contains(&quot;scalar&quot;)) {</span>
+<span class="fc" id="L335">            parser.apply(</span>
                     &quot;multiply&quot;,
                     &quot;output = input1 * value;\n&quot;,
                     &quot;if(d==0){output = value;}else{output = input1;}\n&quot;,
                     false
             );
-<span class="fc" id="L343">            parser.apply(</span>
+<span class="fc" id="L341">            parser.apply(</span>
                     &quot;add&quot;,
                     &quot;output = input1 + value;\n&quot;,
                     &quot;output = 1;\n&quot;,
                     false
             );
-<span class="fc" id="L349">            parser.apply(</span>
+<span class="fc" id="L347">            parser.apply(</span>
                     &quot;subtract&quot;,
                     &quot;output = input1 - value;\n&quot;,
                     &quot;if(d==0){\n&quot; +//drn and src2 switch:
@@ -356,7 +354,7 @@ public class OpenCLPlatform {
                             &quot;}&quot;,
                     false
             );
-<span class="fc" id="L359">            parser.apply(</span>
+<span class="fc" id="L357">            parser.apply(</span>
                     &quot;divide&quot;,
                     &quot;output = input1 / value;\n&quot;,
                     &quot;if(d==0){\n&quot; +
@@ -366,7 +364,7 @@ public class OpenCLPlatform {
                             &quot;}&quot;,
                     true
             );
-<span class="fc" id="L369">            parser.apply(</span>
+<span class="fc" id="L367">            parser.apply(</span>
                     &quot;power&quot;,
                     &quot;output = pow(input1, value);&quot;,
                     &quot;if(d==0){\n&quot; +
@@ -376,26 +374,26 @@ public class OpenCLPlatform {
                             &quot;}&quot;,
                     true
             );
-<span class="fc" id="L379">            parser.apply(</span>
+<span class="fc" id="L377">            parser.apply(</span>
                     &quot;identity&quot;,
                     &quot;output = value;\n&quot;,
                     &quot;output = value;\n&quot;,
                     true
             );
         } else {// broadcast / convolve:
-<span class="fc" id="L386">            parser.apply(</span>
+<span class="fc" id="L384">            parser.apply(</span>
                     &quot;multiply&quot;,
                     &quot;value = src1 * src2;\n&quot;,
                     &quot;value += handle * drain;\n&quot;,
                     false
             );
-<span class="fc" id="L392">            parser.apply(</span>
+<span class="fc" id="L390">            parser.apply(</span>
                     &quot;add&quot;,
                     &quot;value = src1 + src2;\n&quot;,
                     &quot;value += 1 * drain;\n&quot;,
                     false
             );
-<span class="fc" id="L398">            parser.apply(</span>
+<span class="fc" id="L396">            parser.apply(</span>
                     &quot;subtract&quot;,
                     &quot;value = src1 - src2;\n&quot;,
                     &quot;if(d==0){\n&quot; +//drn and src2 switch:
@@ -405,7 +403,7 @@ public class OpenCLPlatform {
                             &quot;}&quot;,
                     false
             );
-<span class="fc" id="L408">            parser.apply(</span>
+<span class="fc" id="L406">            parser.apply(</span>
                     &quot;divide&quot;,
                     &quot;value = src1 / src2;\n&quot;,
                     &quot;if(d==0){\n&quot; +
@@ -415,7 +413,7 @@ public class OpenCLPlatform {
                             &quot;}&quot;,
                     true
             );
-<span class="fc" id="L418">            parser.apply(</span>
+<span class="fc" id="L416">            parser.apply(</span>
                     &quot;power&quot;,
                     &quot;value += pow(src1, src2);&quot;,
                     &quot;if(d==0){\n&quot; +
@@ -428,61 +426,61 @@ public class OpenCLPlatform {
             //code.forEachForward((k, v)-&gt;{System.out.println(k+&quot;\n------------\n&quot;+v);});
         }
 
-<span class="fc" id="L431">        return code;</span>
+<span class="fc" id="L429">        return code;</span>
     }
 
     public cl_platform_id getID() {
-<span class="nc" id="L435">        return _pid;</span>
+<span class="nc" id="L433">        return _pid;</span>
     }
 
     public List&lt;OpenCLDevice&gt; getDevices() {
-<span class="fc" id="L439">        List&lt;OpenCLDevice&gt; devices = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L440">        _id_device.forEach((k, v)-&gt; devices.add(v));</span>
-<span class="fc" id="L441">        return devices;</span>
+<span class="fc" id="L437">        List&lt;OpenCLDevice&gt; devices = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L438">        _id_device.forEach((k, v)-&gt; devices.add(v));</span>
+<span class="fc" id="L439">        return devices;</span>
         //return _devices;
     }
 
     public boolean has(cl_device_id did){
-<span class="fc" id="L446">        return _id_device.containsKey(did);</span>
+<span class="fc" id="L444">        return _id_device.containsKey(did);</span>
     }
     public OpenCLDevice get(cl_device_id did){
-<span class="fc" id="L449">        return _id_device.get(did);</span>
+<span class="fc" id="L447">        return _id_device.get(did);</span>
     }
     public void put(cl_device_id did, OpenCLDevice device){
-<span class="fc" id="L452">       _id_device.put(did, device);</span>
-<span class="fc" id="L453">    }</span>
+<span class="fc" id="L450">       _id_device.put(did, device);</span>
+<span class="fc" id="L451">    }</span>
 
 
     public Map&lt;String, cl_kernel&gt; getKernels() {
-<span class="fc" id="L457">        return _kernels;</span>
+<span class="fc" id="L455">        return _kernels;</span>
     }
 
     public cl_context getContext() {
-<span class="fc" id="L461">        return _context;</span>
+<span class="fc" id="L459">        return _context;</span>
     }
 
     public static List&lt;OpenCLPlatform&gt; PLATFORMS() {
-<span class="fc" id="L465">        return _setup.PLATFORMS;</span>
+<span class="fc" id="L463">        return _setup.PLATFORMS;</span>
     }
 
     private static class _setup
     {
-<span class="fc" id="L470">        public static List&lt;OpenCLPlatform&gt; PLATFORMS = findAllPlatforms();</span>
+<span class="fc" id="L468">        public static List&lt;OpenCLPlatform&gt; PLATFORMS = findAllPlatforms();</span>
 
         public static List&lt;OpenCLPlatform&gt; findAllPlatforms() {
             // Obtain the number of platforms
-<span class="fc" id="L474">            int[] numPlatforms = new int[1];</span>
-<span class="fc" id="L475">            clGetPlatformIDs(0, null, numPlatforms);</span>
+<span class="fc" id="L472">            int[] numPlatforms = new int[1];</span>
+<span class="fc" id="L473">            clGetPlatformIDs(0, null, numPlatforms);</span>
 
             // Obtain the platform IDs
-<span class="fc" id="L478">            cl_platform_id[] platforms = new cl_platform_id[numPlatforms[0]];</span>
-<span class="fc" id="L479">            clGetPlatformIDs(platforms.length, platforms, null);</span>
+<span class="fc" id="L476">            cl_platform_id[] platforms = new cl_platform_id[numPlatforms[0]];</span>
+<span class="fc" id="L477">            clGetPlatformIDs(platforms.length, platforms, null);</span>
 
-<span class="fc" id="L481">            List&lt;OpenCLPlatform&gt; list = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L482" title="All 2 branches covered.">            for (cl_platform_id id : platforms) {</span>
-<span class="fc" id="L483">                list.add(new OpenCLPlatform(id));</span>
+<span class="fc" id="L479">            List&lt;OpenCLPlatform&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L480" title="All 2 branches covered.">            for (cl_platform_id id : platforms) {</span>
+<span class="fc" id="L481">                list.add(new OpenCLPlatform(id));</span>
             }
-<span class="fc" id="L485">            return list;</span>
+<span class="fc" id="L483">            return list;</span>
         }
 
     }

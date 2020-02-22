@@ -132,11 +132,8 @@ public class FunctionBuilder {
                                 }
                                 groupingOccured = true;
                             } else {
-                                if (currentChain == null) {
-                                    newComponents.add(currentComponent);
-                                } else {
-                                    newComponents.add(currentChain + currentComponent); //= String.value64Of(currentChain) + currentComponent
-                                }
+                                if (currentChain == null) newComponents.add(currentComponent);
+                                else newComponents.add(currentChain + currentComponent); //= String.value64Of(currentChain) + currentComponent
                                 newOperations.add(currentOperation);
                                 groupingOccured = true;
                                 currentChain = null;
@@ -178,7 +175,11 @@ public class FunctionBuilder {
                     if (OperationType.instance(Oi).identifier().equals(possibleFunction)) {
                         f_id = Oi;
                         Function newCore = FunctionBuilder.build(
-                                FunctionParser.parsedComponent(Components.get(0), possibleFunction.length()), doAD
+                            FunctionParser.parsedComponent(
+                                    Components.get(0),
+                                    possibleFunction.length()
+                            ),
+                            doAD
                         );
                         sources.add(newCore);
                         function = FunctionConstructor.construct(f_id, sources, doAD);
@@ -241,9 +242,7 @@ public class FunctionBuilder {
                     }
                 }
             }
-            final ListIterator<String> ComponentIterator2 = Components.listIterator();
-            while (ComponentIterator2.hasNext()) {
-                final String currentComponent2 = ComponentIterator2.next();
+            for (String currentComponent2 : Components) {
                 Function newCore2 = FunctionBuilder.build(currentComponent2, doAD);//Dangerous recursion lives here!
                 sources.add(newCore2);
             }
@@ -251,8 +250,8 @@ public class FunctionBuilder {
             if (sources.size() == 1) return sources.get(0);
             if (sources.size() == 0) return null;
             ArrayList<Function> newVariable = new ArrayList<>();
-            for (int Vi = 0; Vi < sources.size(); Vi++) {
-                if (sources.get(Vi) != null) newVariable.add(sources.get(Vi));
+            for (Function source : sources) {
+                if (source != null) newVariable.add(source);
             }
             sources = newVariable;
             function = FunctionConstructor.construct(f_id, sources, doAD);
