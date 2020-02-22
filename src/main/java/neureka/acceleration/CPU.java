@@ -2,6 +2,7 @@ package neureka.acceleration;
 
 import neureka.Tsr;
 import neureka.calculus.Function;
+import neureka.calculus.factory.OperationType;
 import org.jetbrains.annotations.Contract;
 
 import java.util.Collection;
@@ -9,9 +10,9 @@ import java.util.Collection;
 public class CPU extends AbstractDevice {
 
     @Override
-    protected void _enqueue(Tsr[] tsrs, int d, int f_id) {
+    protected void _enqueue(Tsr[] tsrs, int d, OperationType type) {
         for(Tsr t : tsrs) t.setIsVirtual(false);
-        switch (Function.TYPES.REGISTER(f_id)) {
+        switch (type.identifier()) {
             case "sig": exec.activate_sigmoid(tsrs[0], tsrs[1], d); break;
             case "sin": exec.activate_sinus(tsrs[0], tsrs[1], d);break;
             case "cos": exec.activate_cosinus(tsrs[0], tsrs[1], d);break;
@@ -86,10 +87,10 @@ public class CPU extends AbstractDevice {
     }
 
     @Override
-    protected void _enqueue(Tsr t, double value, int d, int f_id) {
+    protected void _enqueue(Tsr t, double value, int d, OperationType type) {
         int[] shape = new int[t.rank()];
         for (int i = 0; i < shape.length; i++) shape[i] = 1;
-        _enqueue(new Tsr[]{t, t, new Tsr(shape, value)}, d, f_id);
+        _enqueue(new Tsr[]{t, t, new Tsr(shape, value)}, d, type);
     }
 
     @Override

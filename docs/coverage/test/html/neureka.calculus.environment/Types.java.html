@@ -19,7 +19,7 @@ public class Types
     }
 
     public String REGISTER(int i){
-<span class="fc" id="L22">        return OperationType.REGISTER(i).identifier();</span>
+<span class="fc" id="L22">        return OperationType.instance(i).identifier();</span>
     }
 
     public int LOOKUP(String exp){
@@ -31,8 +31,8 @@ public class Types
 <span class="nc" id="L31">        return isFunction(LOOKUP(f));</span>
     }
     public boolean isFunction(int id){
-<span class="fc" id="L34">        OperationType type = OperationType.REGISTER(id);</span>
-<span class="pc bpc" id="L35" title="1 of 2 branches missed.">        return (type!=null)?type.isFunction():false;</span>
+<span class="nc" id="L34">        OperationType type = OperationType.instance(id);</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">        return (type!=null)?type.isFunction():false;</span>
     }
 
 

@@ -313,38 +313,37 @@ public class GraphNode implements Component<Tsr> {
             _nid = nid;
         }
         /* Returning if the above cannot form an AutoDiff computation graph! : */
-        if (inputs == null || !function.isFlat()) return; // Leave nodes cannot be connected!!
-        for (Tsr t : inputs) if (t.equals(output)) return;
+        if (inputs == null || !function.isFlat()) return; // Leave nodes have!
+        for (Tsr t : inputs) if (t.equals(output)) return; // Output must be a unique tensor for AD!
 
         if (this.usesAD() && function.isFlat()) {
             /* Preparing for back propagation: */
             if (this.usesForwardAD()) {
                 for (int i = 0; i < inputs.length; i++) {
                     GraphNode src_node = ((GraphNode) inputs[i].find(GraphNode.class));
-                    if (src_node._function != null && src_node._function.id() == Function.TYPES.LOOKUP("x")) {
-                        this.put(src_node, function.getADAgent(inputs, i, true));
-                        //TODO: is this ever used? / visited? - yes but why?
-                        // Sources created by x-mul are reverse-mode cases!
-                    } else {
-                        if (src_node.usesAD()) {
-                            if (src_node.size() == 0 && this.size() == 0) {
-                                this.put(src_node, function.getADAgent(inputs, i, true));
-                            } else {
-                                /*  Chain rule (forward) for every _gradient w.r.t. leaves (reverseAD or user leaves): */
-                                src_node.forEach(function.derive(inputs, i),
-                                (t, td) -> {
-                                    if (this.has(t)) this.put(t, ADD.activate(new Tsr[]{td, (Tsr) this.get(t)}));
-                                    else this.put(t, td);
-                                    //TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
-                                });
-                            }
+                    if (src_node.usesAD()) {
+                        if (
+                                src_node.size() == 0 && this.size() == 0
+                                    ||// Sources created by x-mul are reverse-mode cases!
+                                !src_node.isLeave() && src_node.function().type().isConvection()
+                        ) {
+                            this.put(src_node, function.getADAgent(inputs, i, true));
+                        } else {
+                            /*  Chain rule (forward) for every derivative w.r.t. leaves (reverseAD or user leaves): */
+                            src_node.forEach(
+                            function.derive(inputs, i),
+                            (t, td) -> {
+                                if (this.has(t)) this.put(t, ADD.activate(new Tsr[]{td, (Tsr) this.get(t)}));
+                                else this.put(t, td);
+                                //TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
+                            });
                         }
                     }
                 }
             } else if (this.usesReverseAD()) {
                 for (int i = 0; i < inputs.length; i++) {
                     GraphNode src_node = ((GraphNode) inputs[i].find(GraphNode.class));
-                    if (src_node.mode() != 0 || inputs[i].rqsGradient()) {
+                    if (src_node.usesAD() || inputs[i].rqsGradient()) {
                         this.put(src_node, function.getADAgent(inputs, i, false));
                     }
                 }

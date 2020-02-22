@@ -2,6 +2,7 @@
 
 import neureka.Tsr;
 import neureka.acceleration.opencl.OpenCLPlatform;
+import neureka.calculus.factory.OperationType;
 
 import java.util.Collection;
 
@@ -9,17 +10,17 @@ public interface Device
 {
     static Device find(String name){
         //TODO: Device plugin finding!
-<span class="fc" id="L12">        Device[] result = {null};</span>
-<span class="fc" id="L13">        String search = name.toLowerCase();</span>
-<span class="fc" id="L14">        OpenCLPlatform.PLATFORMS().forEach((p)-&gt; {</span>
-<span class="fc" id="L15">            p.getDevices().forEach((d)-&gt;{</span>
-<span class="fc" id="L16">                String str = (d.name()+&quot; | &quot;+d.vendor()+&quot; | &quot;+d.type()).toLowerCase();</span>
-<span class="fc bfc" id="L17" title="All 2 branches covered.">                if(str.contains(search)){</span>
-<span class="fc" id="L18">                    result[0] = d;</span>
+<span class="fc" id="L13">        Device[] result = {null};</span>
+<span class="fc" id="L14">        String search = name.toLowerCase();</span>
+<span class="fc" id="L15">        OpenCLPlatform.PLATFORMS().forEach((p)-&gt; {</span>
+<span class="fc" id="L16">            p.getDevices().forEach((d)-&gt;{</span>
+<span class="fc" id="L17">                String str = (d.name()+&quot; | &quot;+d.vendor()+&quot; | &quot;+d.type()).toLowerCase();</span>
+<span class="fc bfc" id="L18" title="All 2 branches covered.">                if(str.contains(search)){</span>
+<span class="fc" id="L19">                    result[0] = d;</span>
                 }
-<span class="fc" id="L20">            });</span>
-<span class="fc" id="L21">        });</span>
-<span class="fc" id="L22">        return result[0];</span>
+<span class="fc" id="L21">            });</span>
+<span class="fc" id="L22">        });</span>
+<span class="fc" id="L23">        return result[0];</span>
     }
 
     void dispose();
@@ -42,7 +43,7 @@ public interface Device
 
     Device swap(Tsr former, Tsr replacement);
 
-    Device execute(Tsr[] Tsrs, int f_id, int d);
+    Device execute(Tsr[] Tsrs, OperationType type, int d);
 
     double[] value64Of(Tsr tensor);
 

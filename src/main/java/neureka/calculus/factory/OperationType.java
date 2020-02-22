@@ -21,8 +21,13 @@ public class OperationType {
         return _LOOKUP.getOrDefault(identifier, null);
     }
 
-    public static OperationType REGISTER(int index){
+    public static OperationType instance(int index){
         return _REGISTER.get(index);
+    }
+
+
+    public static OperationType instance(String identifier){
+        return _LOOKUP.get(identifier);
     }
 
     public static int COUNT(){
@@ -240,7 +245,9 @@ public class OperationType {
             Tsr d = f.derive(inputs, i);
             return new ADAgent(
                     ()->d,
-                    (t, derivative) -> MUL.activate(new Tsr[]{derivative, d}),
+                    (t, derivative) ->{
+                        return MUL.activate(new Tsr[]{derivative, d});
+                    },
                     null
             );
         } else {

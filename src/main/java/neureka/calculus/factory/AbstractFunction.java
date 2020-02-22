@@ -14,11 +14,11 @@ import java.util.function.Supplier;
 
 public abstract class AbstractFunction implements Function {
     
-    private OperationType _type;
+    private final OperationType _type;
     //private int _ id;
-    private boolean _isFlat;
-    private boolean _doAD;
-    private ArrayList<Function> _src;
+    private final boolean _isFlat;
+    private final boolean _doAD;
+    private final ArrayList<Function> _src;
 
     /**
      * @param f_id
@@ -27,8 +27,7 @@ public abstract class AbstractFunction implements Function {
      * @param doAD
      */
     protected AbstractFunction(int f_id, boolean isFlat, ArrayList<Function> source, boolean doAD) {
-        _type = OperationType.REGISTER(f_id);
-        //_ id = f_type.id();
+        _type = OperationType.instance(f_id);
         _isFlat = isFlat;
         _src = source;
         _doAD = doAD;
@@ -61,7 +60,7 @@ public abstract class AbstractFunction implements Function {
 
     @Override
     public String toString() {
-        String reconstructed = "";
+        StringBuilder reconstructed = new StringBuilder();
         if (_src.size() == 1 && _type.identifier().length() > 1) {
             String expression = _src.get(0).toString();
             if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
@@ -69,38 +68,27 @@ public abstract class AbstractFunction implements Function {
             }
             return _type.identifier() + "(" + expression + ")";
         } else {
-            reconstructed = ((_type.identifier().equals(",")) ? "[" : "") + reconstructed;
+            reconstructed.insert(0, ((_type.identifier().equals(",")) ? "[" : ""));
             for (int i = 0; i < _src.size(); ++i) {
                 if (_src.get(i) != null) {
                     if ((_type.identifier().equals(","))) {
                         if (i == _src.size() - 1) {
-                            reconstructed = reconstructed
-                                    + "]:(" +
-                                    (
-                                            (_src.get(i) instanceof FunctionConstant)
-                                                    ? _src.get(i).toString().split("\\.")[0]
-                                                    : _src.get(i).toString()
-                                    )
-                                    + ")";
+                            reconstructed.append("]:(").append((_src.get(i) instanceof FunctionConstant)
+                                    ? _src.get(i).toString().split("\\.")[0]
+                                    : _src.get(i).toString()).append(")");
                         } else {
-                            reconstructed = reconstructed +
-                                    (
-                                            (_src.get(i) instanceof FunctionConstant)
-                                                    ? _src.get(i).toString().split("\\.")[0]
-                                                    : _src.get(i).toString()
-                                    );
+                            reconstructed.append((_src.get(i) instanceof FunctionConstant)
+                                    ? _src.get(i).toString().split("\\.")[0]
+                                    : _src.get(i).toString());
                         }
                     } else {
-                        reconstructed = reconstructed + _src.get(i).toString();
+                        reconstructed.append(_src.get(i).toString());
                     }
                 } else {
-                    reconstructed = reconstructed + "(null)";
+                    reconstructed.append("(null)");
                 }
-                if (i < _src.size() - ((_type.identifier() == ",") ? 2 : 1)) {
-                    reconstructed = reconstructed
-                            + ((_type.identifier().equals(">")) ? "-" : "")
-                            + _type.identifier()
-                            + ((_type.identifier().equals("<")) ? "-" : "");
+                if (i < _src.size() - ((_type.identifier().equals(",")) ? 2 : 1)) {
+                    reconstructed.append((_type.identifier().equals(">")) ? "-" : "").append(_type.identifier()).append((_type.identifier().equals("<")) ? "-" : "");
                 }
             }
         }
@@ -171,11 +159,11 @@ public abstract class AbstractFunction implements Function {
         /**  The code below deals with deep functions (non flat):  * */
         if (!_isFlat) {
             return _apply(device, d, () -> _execution(inputs, d, j, device));
-            /** only flat functions can be executed **/
+            /* only flat functions can be executed */
         } else {
-            /**  The following code is reached in flat functions only:  * */
+            /* The following code is reached in flat functions only:  */
 
-            if (d < 0 && _doAD) {/**  Autograd-Graph will be generated below for the new GraphNode: **/
+            if (d < 0 && _doAD) {/* Autograd-Graph will be generated below for the new GraphNode: */
                 return new GraphNode(this, inputs, ()->_execute(inputs, j, d, device)).getPayload();
             } else {
                 return _execute(inputs, j, d, device);
@@ -189,18 +177,18 @@ public abstract class AbstractFunction implements Function {
             Tsr tensor2 = _src.get(1).activate(inputs).setIsVirtual(false);
             Tsr newTensor = (d<0)?new Tsr(Tsr.Utility.Indexing.shpOfCon(tensor1.shape(), tensor2.shape())):null;
             Tsr[] array = new Tsr[]{newTensor, tensor1, tensor2};
-            myDevice.execute(array, _type.id(), d);
+            myDevice.execute(array, _type, d);
             return array[0];
 
-        } else if (_type.id() == TYPES.LOOKUP("<<x") || _type.id() == TYPES.LOOKUP("x>>")) {
+        } else if (_type.id() == OperationType.instance("<<x").id() || _type.id() == OperationType.instance("x>>").id()) {
             if (d < 0) {
                 Tsr[] tsrs = new Tsr[]{
                         _src.get(0).activate(inputs).setIsVirtual(false),
                         _src.get(1).activate(inputs).setIsVirtual(false),
                         _src.get(2).activate(inputs).setIsVirtual(false)
                 };
-                myDevice.execute(tsrs, _type.id(), 0);
-                if (_type.id() == TYPES.LOOKUP("x>>")) return tsrs[2];
+                myDevice.execute(tsrs, _type, 0);
+                if (_type.id() == OperationType.instance("x>>").id()) return tsrs[2];
                 else return tsrs[0];
             }
             return null;
@@ -236,12 +224,12 @@ public abstract class AbstractFunction implements Function {
     private Tsr _execution(Tsr[] inputs, int d, int j, Device device) {
         if (!_isFlat && j < 0 && d < 0) {
             if (_type.isOperation()) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
-                String operation = "";
+                StringBuilder operation = new StringBuilder();
                 Tsr[] tsrs = _src_acti(inputs, j, d, 0);
                 for (int i = 0; i < tsrs.length; i++) {
-                    operation += "I[" + i + "]" + ((i == tsrs.length - 1) ? "" : _type.identifier());
+                    operation.append("I[").append(i).append("]").append((i == tsrs.length - 1) ? "" : _type.identifier());
                 }
-                return (FunctionBuilder.build(operation, _doAD).activate(tsrs));
+                return (FunctionBuilder.build(operation.toString(), _doAD).activate(tsrs));
             } else if (_type.isFunction()) {
                 return (FunctionBuilder.build(_type.identifier() + "(I[0])", true).activate(inputs));
             }
@@ -267,7 +255,7 @@ public abstract class AbstractFunction implements Function {
             //then add them all together! (is possible because of linearity...)
             Tsr inner;
             if (tsrs.length > 2) {
-                device.execute(tsrs, TYPES.LOOKUP("+"), -1);
+                device.execute(tsrs, OperationType.instance("+"), -1);
                 inner = tsrs[0];//this is now the inner derivative!
             } else {
                 inner = tsrs[1];
@@ -291,24 +279,20 @@ public abstract class AbstractFunction implements Function {
                 }
             }
             //Use those tensors for the outer derivative:
-            device.execute(tsrs, _type.id(), d); //(d>=0)
+            device.execute(tsrs, _type, d); //(d>=0)
             //At the end:
             //multiply inner times outer:
             tsrs = new Tsr[]{null, inner, tsrs[0]};
-            device.execute(tsrs, TYPES.LOOKUP("*"), -1);
+            device.execute(tsrs, OperationType.instance("*"), -1);
             return tsrs[0];
         } else {
             if (_type.isIndexer()) {
                 tsrs = new Tsr[1 + inputs.length];
-                if (d < 0) {
-                    for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).activate(inputs, i - 1);
-                } else {
-                    for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).derive(inputs, d, i - 1);
-                }
-                device.execute(tsrs, _type.id(), d);
+                for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).activate(inputs, i - 1);
+                device.execute(tsrs, _type, d);
             } else {
                 tsrs = _src_acti(inputs, j, d, 1);//new Tsr[1 + _src.size()];
-                device.execute(tsrs, _type.id(), d);
+                device.execute(tsrs, _type, d);
             }
         }
         return (tsrs[0] == null) ? tsrs[1] : tsrs[0];
@@ -323,7 +307,7 @@ public abstract class AbstractFunction implements Function {
                     if (out == null) {
                         out = actor.get();
                     } else {
-                        device.execute(new Tsr[]{null, actor.get(), out}, TYPES.LOOKUP("+"), -1);
+                        device.execute(new Tsr[]{null, actor.get(), out}, OperationType.instance("+"), -1);
                     }
                 }
             }
@@ -337,8 +321,7 @@ public abstract class AbstractFunction implements Function {
         Device device = (Device) inputs[0].find(Device.class);
         boolean onSameDevice = _shareGuestDevice(inputs);
         boolean doAccel = (!_type.identifier().equals(",") && onSameDevice);
-        Device myDevice = (doAccel && device != null) ? device : inputs[0].device();
-        return myDevice;
+        return (doAccel && device != null) ? device : inputs[0].device();
     }
 
     private Tsr[] _src_acti(Tsr[] inputs, int j, int d, int offset) {
@@ -368,12 +351,12 @@ public abstract class AbstractFunction implements Function {
     private static boolean _shareGuestDevice(Tsr[] tsrs) {
         boolean onSameGuestDevice = true;
         Device device = null;
-        for (int ti = 0; ti < tsrs.length; ti++) {
-            device = (tsrs[ti].isOutsourced()) ? (Device) tsrs[ti].find(Device.class) : device;
+        for (Tsr tsr : tsrs) {
+            device = (tsr.isOutsourced()) ? (Device) tsr.find(Device.class) : device;
         }
         if (device != null) {
-            for (int ti = 0; ti < tsrs.length; ti++) {
-                onSameGuestDevice = (!tsrs[ti].isVirtual() && device == tsrs[ti].find(Device.class)) && onSameGuestDevice;
+            for (Tsr tsr : tsrs) {
+                onSameGuestDevice = (!tsr.isVirtual() && device == tsr.find(Device.class)) && onSameGuestDevice;
             }
         } else {
             onSameGuestDevice = false;
@@ -388,25 +371,25 @@ public abstract class AbstractFunction implements Function {
     protected double _scalar_activation(double input, boolean derive) {
         switch (_type.identifier()) {
             case "relu":
-                return exec.reLu(input, derive);
+                return Exec.reLu(input, derive);
             case "sig":
-                return exec.sigmoid(input, derive);
+                return Exec.sigmoid(input, derive);
             case "tanh":
-                return exec.tanh(input, derive);
+                return Exec.tanh(input, derive);
             case "quad":
-                return exec.quadratic(input, derive);
+                return Exec.quadratic(input, derive);
             case "lig":
-                return exec.ligmoid(input, derive);
+                return Exec.ligmoid(input, derive);
             case "lin":
-                return exec.linear(input, derive);
+                return Exec.linear(input, derive);
             case "gaus":
-                return exec.gaussian(input, derive);
+                return Exec.gaussian(input, derive);
             case "abs":
-                return exec.absolute(input, derive);
+                return Exec.absolute(input, derive);
             case "sin":
-                return exec.sinus(input, derive);
+                return Exec.sinus(input, derive);
             case "cos":
-                return exec.cosinus(input, derive);
+                return Exec.cosinus(input, derive);
             default:
                 return input;
         }
@@ -416,50 +399,41 @@ public abstract class AbstractFunction implements Function {
     protected double _scalar_activation(double[] input, int j, int d) {
         switch (_type.identifier()) {
             case "sum":
-                return (j < 0) ? exec.summation(input, d, _src) : exec.summation(input, j, d, _src);
+                return (j < 0) ? Exec.summation(input, d, _src) : Exec.summation(input, j, d, _src);
             case "prod":
-                return (j < 0) ? exec.PI(input, d, _src) : exec.PI(input, j, d, _src);
+                return (j < 0) ? Exec.PI(input, d, _src) : Exec.PI(input, j, d, _src);
             case "^":
-                return (j < 0) ? exec.power(input, d, _src) : exec.power(input, j, d, _src);
+                return (j < 0) ? Exec.power(input, d, _src) : Exec.power(input, j, d, _src);
             case "/":
-                return (j < 0) ? exec.division(input, d, _src) : exec.division(input, j, d, _src);
+                return (j < 0) ? Exec.division(input, d, _src) : Exec.division(input, j, d, _src);
             case "*":
-                return (j < 0) ? exec.multiplication(input, d, _src) : exec.multiplication(input, j, d, _src);
+                return (j < 0) ? Exec.multiplication(input, d, _src) : Exec.multiplication(input, j, d, _src);
             case "%":
-                return (j < 0) ? exec.modulo(input, d, _src) : exec.modulo(input, j, d, _src);
+                return (j < 0) ? Exec.modulo(input, d, _src) : Exec.modulo(input, j, d, _src);
             case "-":
-                return (j < 0) ? exec.subtraction(input, d, _src) : exec.subtraction(input, j, d, _src);
+                return (j < 0) ? Exec.subtraction(input, d, _src) : Exec.subtraction(input, j, d, _src);
             case "+":
-                return (j < 0) ? exec.addition(input, d, _src) : exec.addition(input, j, d, _src);
+                return (j < 0) ? Exec.addition(input, d, _src) : Exec.addition(input, j, d, _src);
             case "x"://convolve
-                return (j < 0) ? exec.multiplication(input, d, _src) : exec.multiplication(input, j, d, _src);
+                return (j < 0) ? Exec.multiplication(input, d, _src) : Exec.multiplication(input, j, d, _src);
             default:
                 return _scalar_activation(input[0], d >= 0);
         }
     }
 
-    public static class exec {
-        private interface Actor {
-            void apply(Integer i, double[] v1, double[] v2);
-        }
+    public static class Exec {
 
         //--------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double reLu(double input, boolean derive) {
             double output;
             if (!derive) {
-                if (input >= 0) {
-                    output = (input);
-                } else {
-                    output = (input) * 0.01;
-                }
+                if (input >= 0) output = (input);
+                else output = (input) * 0.01;
                 return output;
             } else {
-                if (input >= 0) {
-                    output = 1;
-                } else {
-                    output = 0.01;
-                }
+                if (input >= 0) output = 1;
+                else output = 0.01;
                 return output;
             }
         }
@@ -487,71 +461,50 @@ public abstract class AbstractFunction implements Function {
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double quadratic(double input, boolean derive) {
-            if (!derive) {
-                return ((input) * (input));
-            } else {
-                return 2 * input;
-            }
+            if (!derive) return (input * input);
+            else return 2 * input;
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double ligmoid(double input, boolean derive) {
-            if (!derive) {
-                return (Math.log(1 + Math.pow(Math.E, input)));
-            } else {
-                return sigmoid(input, false);
-            }
+            if (!derive) return (Math.log(1 + Math.pow(Math.E, input)));
+            else return sigmoid(input, false);
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double linear(double input, boolean derive) {
-            if (!derive) {
-                return (input);
-            } else {
-                return 1;
-            }
+            if (!derive) return (input);
+            else return 1;
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double gaussian(double input, boolean derive) {
-            if (!derive) {
-                return Math.pow(Math.E, -Math.pow((input), 2));
-            } else {
-                return -2 * ((input)) * Math.pow(Math.E, -Math.pow((input), 2));
-            }
+            if (!derive) return Math.pow(Math.E, -Math.pow((input), 2));
+            else return -2 * ((input)) * Math.pow(Math.E, -Math.pow((input), 2));
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double absolute(double input, boolean derive) {
-            if (!derive) {
-                return Math.abs(input);
-            } else {
-                return (input < 0) ? -1 : 1;
-            }
+            if (!derive) return Math.abs(input);
+            else return (input < 0) ? -1 : 1;
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double sinus(double input, boolean derive) {
-            if (!derive) {
-                return Math.sin(input);
-            } else {
-                return Math.cos(input);
-            }
+            if (!derive) return Math.sin(input);
+            else return Math.cos(input);
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double cosinus(double input, boolean derive) {
-            if (!derive) {
-                return Math.cos(input);
-            } else {
-                return -Math.sin(input);
-            }
+            if (!derive) return Math.cos(input);
+            else return -Math.sin(input);
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -611,9 +564,7 @@ public abstract class AbstractFunction implements Function {
                     prod *= src.get(0).activate(inputs, Ii);
                     nothingDone = false;
                 }
-                if (nothingDone) {
-                    return src.get(0).activate(inputs, j);
-                }
+                if (nothingDone) return src.get(0).activate(inputs, j);
                 return prod;
             } else {
                 double u, ud, v, vd;
@@ -640,9 +591,7 @@ public abstract class AbstractFunction implements Function {
                     nothingDone = false;
                     //}
                 }
-                if (nothingDone) {
-                    return src.get(0).activate(inputs);
-                }
+                if (nothingDone) return src.get(0).activate(inputs);
                 return prod;
             } else {
                 double u, ud, v, vd;

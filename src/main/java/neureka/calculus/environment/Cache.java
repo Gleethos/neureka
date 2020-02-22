@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
 import neureka.calculus.Function;
+import neureka.calculus.factory.OperationType;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -65,7 +66,7 @@ public class Cache
         }
         GraphNode node = (GraphNode) inputs[0].find(GraphNode.class);
         Tsr result = null;
-        if(function!=null && function.id()!=Function.TYPES.LOOKUP("<")&&function.id()!=Function.TYPES.LOOKUP(">")){
+        if(function!=null && function.id()!= OperationType.instance("<").id()&&function.id()!=OperationType.instance(">").id()){
             result = _get(node, d, j);
         }
         if(result==null){

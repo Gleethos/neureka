@@ -19,7 +19,7 @@ public class Types
     }
 
     public String REGISTER(int i){
-        return OperationType.REGISTER(i).identifier();
+        return OperationType.instance(i).identifier();
     }
 
     public int LOOKUP(String exp){
@@ -31,7 +31,7 @@ public class Types
         return isFunction(LOOKUP(f));
     }
     public boolean isFunction(int id){
-        OperationType type = OperationType.REGISTER(id);
+        OperationType type = OperationType.instance(id);
         return (type!=null)?type.isFunction():false;
     }
 

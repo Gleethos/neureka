@@ -12,6 +12,7 @@ import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
 import neureka.acceleration.opencl.utility.WeakTensorReference;
 import neureka.calculus.Function;
+import neureka.calculus.factory.OperationType;
 import neureka.utility.DataHelper;
 import org.jocl.*;
 
@@ -181,7 +182,7 @@ public class OpenCLDevice extends AbstractDevice {
         });
         tensor.add(this);
         if (tensor.isVirtual()) {
-            _execute_tensor_scalar(tensor, tensor.value64(0), Function.TYPES.LOOKUP("<"), -1);
+            _execute_tensor_scalar(tensor, tensor.value64(0), OperationType.instance("<"), -1);
         }
         tensor.setIsOutsourced(true);
         tensor.setIsVirtual(false);
@@ -348,9 +349,9 @@ public class OpenCLDevice extends AbstractDevice {
     }
 
     @Override
-    protected void _enqueue(Tsr[] tsrs, int d, int f_id) {
+    protected void _enqueue(Tsr[] tsrs, int d, OperationType type) {
 
-        switch (Function.TYPES.REGISTER(f_id)) {
+        switch (type.identifier()) {
             case "x":
                 if (d >= 0) {
                     if (d == 0) tsrs[0] = tsrs[2];
@@ -386,13 +387,13 @@ public class OpenCLDevice extends AbstractDevice {
 
         int gwz = (tsrs[0] != null) ? tsrs[0].size() : tsrs[1].size();
         int offset = (tsrs[0] != null) ? 0 : 1;
-        String chosen = _platform.kernelNameOf(f_id);
+        String chosen = _platform.kernelNameOf(type);
         //System.out.println("chosen enq: "+chosen);
         cl_kernel kernel = _platform.getKernels().get(chosen);
 
         cl_mem drn = _mapping.get(tsrs[offset]).value.data;
         cl_mem src1 = _mapping.get(tsrs[offset + 1]).value.data;
-        if (Function.TYPES.isFunction(f_id)) {
+        if (type.isFunction()) {
             clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
             clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
             clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=>src1
@@ -424,9 +425,9 @@ public class OpenCLDevice extends AbstractDevice {
     }
 
     @Override
-    protected void _enqueue(Tsr t, double value, int d, int f_id) {
+    protected void _enqueue(Tsr t, double value, int d, OperationType type) {
         int gwz = t.size();
-        String chosen = "scalar_" + _platform.kernelNameOf(f_id).replace("operate_", "");
+        String chosen = "scalar_" + _platform.kernelNameOf(type).replace("operate_", "");
         cl_kernel kernel = _platform.getKernels().get(chosen);
         cl_mem drn = _mapping.get(t).value.data;
         cl_mem src1 = _mapping.get(t).value.data;

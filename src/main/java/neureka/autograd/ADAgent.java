@@ -6,20 +6,16 @@ import java.util.function.Supplier;
 
 public class ADAgent {
 
-    //public interface ForwardAD{
-    //    Tsr execute(Tsr derivative);
-    //}
-
-    public interface BackwardAD{
+    public interface ADAction {
         Tsr execute(GraphNode t, Tsr error);
     }
 
-    private BackwardAD _fad;
-    private BackwardAD _bad;
+    private ADAction _fad;
+    private ADAction _bad;
     private Supplier<Tsr> _derivative;
 
     public ADAgent(
-      Supplier<Tsr> derivative, BackwardAD fad, BackwardAD bad
+            Supplier<Tsr> derivative, ADAction fad, ADAction bad
     ){
         _derivative = derivative;
         _fad = fad;

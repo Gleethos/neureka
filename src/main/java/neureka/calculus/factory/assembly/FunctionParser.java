@@ -3,7 +3,6 @@ package neureka.calculus.factory.assembly;
 import neureka.calculus.Function;
 
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Utility for parsing
@@ -30,12 +29,6 @@ public class FunctionParser {
                 return operation;
             }
         }
-        //for (int Si = i; Si < exp.length(); ++Si) {
-        //    operation = (operation) + exp.charAt(Si);
-        //    if (FunctionParser.isBasicOperation(operation)) {
-        //        return operation;
-        //    }
-        //}
         return null;
     }
 
@@ -44,9 +37,9 @@ public class FunctionParser {
         if (exp.length() <= i) {
             return null;
         }
-        String component = "";
+        StringBuilder component = new StringBuilder();
         int bracketDepth = 0;
-        component = "";
+        component = new StringBuilder();
         for (int Ei = i; Ei < exp.length(); ++Ei) {
             if (exp.charAt(Ei) == ')') {
                 --bracketDepth;
@@ -60,32 +53,27 @@ public class FunctionParser {
                     possibleOperation = exp.substring(Ei+1, Sii);//possibleOperation + exp.charAt(Sii);
                     if (FunctionParser.isBasicOperation(possibleOperation)) {
                         if(exp.charAt(Ei)=='j' || !Character.isLetter(exp.charAt(Ei))){
-                            component = component + exp.charAt(Ei);
-                            return component;
+                            component.append(exp.charAt(Ei));
+                            return component.toString();
                         }
                     }
                 }
             }
-            component += exp.charAt(Ei);
+            component.append(exp.charAt(Ei));
         }
-        return component;//(!largest.equals(""))?best:component;
+        return component.toString();//(!largest.equals(""))?best:component;
     }
 
     public static boolean containsOperation(final String operation, final List<String> operations) {
-        final ListIterator<String> OperationIterator = operations.listIterator();
-        while (OperationIterator.hasNext()) {
-            final String currentOperation = OperationIterator.next();
-            if (currentOperation.equals(operation)) {
-                return true;
-            }
+        for (String currentOperation : operations) {
+            if (currentOperation.equals(operation)) return true;
         }
         return false;
     }
 
     public static boolean isBasicOperation(final String operation) {
         if (operation.length() > 8) return false;
-        if(Function.TYPES.LOOKUP(operation)>=0) return true;
-        return false;
+        return Function.TYPES.LOOKUP(operation) >= 0;
     }
 
     public static String groupBy(final String operation, final String currentChain, final String currentComponent, final String currentOperation) {
@@ -104,25 +92,22 @@ public class FunctionParser {
     }
 
     private static boolean isWeired(char c) {
-        if (c == '"' || c == '$' || c == '%' || c == '&' || c == '=' || c == '#' || c == '|' || c == '~' || c == ':'
-                || c == ';' || c == '@' || c == '?' || c == '\\' || c == '>' || c == '<' || c == ' ') {
-            return true;
-        }
-        return false;
+        return c == '"' || c == '$' || c == '%' || c == '&' || c == '=' || c == '#' || c == '|' || c == '~' || c == ':'
+                || c == ';' || c == '@' || c == '?' || c == '\\' || c == '>' || c == '<' || c == ' ';
     }
 
     public static String removeHeadAndTail(final String exp) {
-        String corrected = "";
+        StringBuilder corrected = new StringBuilder();
         for (int i = 1; i < exp.length() - 1; ++i) {
-            corrected = corrected + exp.charAt(i);
+            corrected.append(exp.charAt(i));
         }
-        return corrected;
+        return corrected.toString();
     }
 
     public static String cleanedHeadAndTail(String exp) {
         exp = exp.trim();
         int Ci = 0;
-        String Updated = "";
+        StringBuilder Updated = new StringBuilder();
         boolean condition = true;
         while (condition) {
             if (FunctionParser.isWeired(exp.charAt(Ci)) || (exp.charAt(Ci) >= 'A' && exp.charAt(Ci) <= 'Z') || (exp.charAt(Ci) >= 'a' && exp.charAt(Ci) <= 'z')) {
@@ -135,10 +120,10 @@ public class FunctionParser {
             }
         }
         for (int Gi = Ci; Gi < exp.length(); Gi++) {
-            Updated += exp.charAt(Gi);
+            Updated.append(exp.charAt(Gi));
         }
-        exp = Updated;
-        Updated = "";
+        exp = Updated.toString();
+        Updated = new StringBuilder();
         if (exp.length() > 0) {
             Ci = 0;
             condition = true;
@@ -154,9 +139,9 @@ public class FunctionParser {
                 }
             }
             for (int Gi = 0; Gi <= l - Ci; Gi++) {
-                Updated += exp.charAt(Gi);
+                Updated.append(exp.charAt(Gi));
             }
-            exp = Updated;
+            exp = Updated.toString();
         }
         if (exp.length() > 0) {
             if (exp.charAt(0) == '(' && exp.charAt(exp.length() - 1) != ')') {
@@ -208,19 +193,21 @@ public class FunctionParser {
         }
         if (bracketDepth != 0) {
             if (bracketDepth < 0) {
+                StringBuilder expBuilder = new StringBuilder(exp);
                 for (int Bi = 0; Bi < -bracketDepth; ++Bi) {
-                    exp = "(" + exp;
+                    expBuilder.insert(0, "(");
                 }
-            } else if (bracketDepth > 0) {
-                for (int Bi = 0; Bi < bracketDepth; ++Bi) {
-                    exp = exp + ")";
-                }
+                exp = expBuilder.toString();
+            } else {
+                StringBuilder expBuilder = new StringBuilder(exp);
+                expBuilder.append(")".repeat(bracketDepth));
+                exp = expBuilder.toString();
             }
         }
 
         boolean parsing = true;
         boolean needsStitching = false;
-        while (parsing && exp.charAt(0) == '(' && exp.charAt(exp.length() - 1) == ')') {
+        while (parsing && (exp.charAt(0) == '(') && (exp.charAt(exp.length() - 1) == ')')) {
             bracketDepth = 0;
             needsStitching = true;
             for (int i = 0; i < exp.length(); ++i) {

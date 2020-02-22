@@ -2,6 +2,7 @@ package neureka.acceleration;
 
 import neureka.Tsr;
 import neureka.acceleration.opencl.OpenCLPlatform;
+import neureka.calculus.factory.OperationType;
 
 import java.util.Collection;
 
@@ -42,7 +43,7 @@ public interface Device
 
     Device swap(Tsr former, Tsr replacement);
 
-    Device execute(Tsr[] Tsrs, int f_id, int d);
+    Device execute(Tsr[] Tsrs, OperationType type, int d);
 
     double[] value64Of(Tsr tensor);
 

@@ -13,8 +13,8 @@ import util.DummyDevice
 class ThoroughGroovyTests
 {
     @Test
-    void testAutoReshapeAndBroadcast(){
-
+    void testAutoReshapeAndBroadcast()
+    {
         Tsr a = new Tsr([2,2], 1..5)
         Tsr b = new Tsr([2,1], 3..4)
         Tsr c = new Tsr([2], 8..9).setRqsGradient(true)
@@ -22,9 +22,7 @@ class ThoroughGroovyTests
         Tsr t = (a+c)
         assert t.toString().contains("9.0, 11.0, 11.0, 13.0")
         //t.backward(new Tsr([2, 2], [5, -2, 7, 3]))
-
         assert c.toString().contains("")
-
     }
 
     @Test
@@ -72,18 +70,15 @@ class ThoroughGroovyTests
 
 
     @Test
-    void testNeurekaClass(){
-
+    void testNeurekaClass()
+    {
         Neureka.instance().settings().reset()
         assert !Neureka.instance().settings().isLocked()
         assert !Neureka.instance().settings().indexing().legacy()
         assert !Neureka.instance().settings().debug().keepDerivativeTargetPayloads()
         assert !Neureka.instance().settings().autoDiff().applyGradientWhenTensorIsUsed()
         assert Neureka.instance().settings().autoDiff().retainPendingErrorForJITProp()
-        //assert !Neureka.instance().settings().autoDiff().retainGraphDerivativesAfterBackward()
-
         assert  Neureka.version()=="1.0.0"
-
     }
 
     @Test
@@ -117,7 +112,8 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testReshaping(){
+    void testReshaping()
+    {
         Neureka.instance().settings().reset()
         Function f = Function.create("[2, 0, 1]:(I[0])")
         Tsr t = new Tsr([3, 4, 2], 1..5)
@@ -128,7 +124,8 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testNetworkLegacyIndexing() {
+    void testNetworkLegacyIndexing()
+    {
         Neureka.instance().settings().indexing().setLegacy(true)
         Tsr i_a = new Tsr([2, 1], [1, 2])
         Tsr w_a = new Tsr([2, 2], [1, 3, 4, -1]).setRqsGradient(true)
@@ -212,8 +209,8 @@ class ThoroughGroovyTests
 
 
     @Test
-    void testNN(){
-
+    void testNN()
+    {
         Device device = new DummyDevice()
         _testNN(device)
 
@@ -225,12 +222,6 @@ class ThoroughGroovyTests
         _testNN(gpu)
 
         //SOme more asserts:
-        //System.gc()
-        //System.gc()
-        //Thread.sleep(600)
-        //System.gc()
-        //System.gc()
-        //Thread.sleep(600)
 
         Tsr t = new Tsr([2, 2], 4).setRqsGradient(true).add(gpu)
         t.backward(1)
@@ -332,7 +323,8 @@ class ThoroughGroovyTests
 
     Tsr sigmoid(Tsr x) {
         return new Tsr(x, "sig(I[0])")
-        //return new Tsr(((Tsr.fcn.create.E(x.shape())**(-x))+1), "1/I[0]")//1.0 / (1 + Tsr.fcn.create.E(x.shape())**(-x))
+        //return new Tsr(((Tsr.Create.E(x.shape())**(-x))+1), "1/I[0]")
+        //return 1.0 / (1 + Tsr.Create.E(x.shape())**(-x))
     }
 
     Tsr sigmoid_derivative(Tsr x) {

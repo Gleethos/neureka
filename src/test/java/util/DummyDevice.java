@@ -2,6 +2,7 @@ package util;
 
 import neureka.Tsr;
 import neureka.acceleration.Device;
+import neureka.calculus.factory.OperationType;
 
 import java.util.Collection;
 
@@ -58,7 +59,7 @@ public class DummyDevice implements Device
     }
 
     @Override
-    public Device execute(Tsr[] tsrs, int f_id, int d) {
+    public Device execute(Tsr[] tsrs, OperationType type, int d) {
         return this;
     }
 

@@ -2,6 +2,7 @@ package neureka.acceleration.opencl;
 
 import neureka.Neureka;
 import neureka.calculus.Function;
+import neureka.calculus.factory.OperationType;
 import org.jocl.*;
 import java.util.*;
 
@@ -56,10 +57,10 @@ public class OpenCLPlatform {
         OPERATION_TO_KERNEL_MAPPING.put(">", "inject_right");
     }
 
-    public String kernelNameOf(int f_id) {
+    public String kernelNameOf(OperationType type) {
         //String name = OPERATION_TO_KERNEL_MAPPING.get(Function.TYPES.REGISTER(f_id));
         //System.out.println("Kernel needed: "+name);
-        return OPERATION_TO_KERNEL_MAPPING.get(Function.TYPES.REGISTER(f_id));
+        return OPERATION_TO_KERNEL_MAPPING.get(type.identifier());
     }
 
     private OpenCLPlatform(cl_platform_id pid)

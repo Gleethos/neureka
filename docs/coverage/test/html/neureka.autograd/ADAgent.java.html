@@ -6,59 +6,55 @@ import java.util.function.Supplier;
 
 public class ADAgent {
 
-    //public interface ForwardAD{
-    //    Tsr execute(Tsr derivative);
-    //}
-
-    public interface BackwardAD{
+    public interface ADAction {
         Tsr execute(GraphNode t, Tsr error);
     }
 
-    private BackwardAD _fad;
-    private BackwardAD _bad;
+    private ADAction _fad;
+    private ADAction _bad;
     private Supplier&lt;Tsr&gt; _derivative;
 
     public ADAgent(
-      Supplier&lt;Tsr&gt; derivative, BackwardAD fad, BackwardAD bad
-<span class="fc" id="L23">    ){</span>
-<span class="fc" id="L24">        _derivative = derivative;</span>
-<span class="fc" id="L25">        _fad = fad;</span>
-<span class="fc" id="L26">        _bad = bad;</span>
-<span class="fc" id="L27">    }</span>
+            Supplier&lt;Tsr&gt; derivative, ADAction fad, ADAction bad
+<span class="fc" id="L19">    ){</span>
+<span class="fc" id="L20">        _derivative = derivative;</span>
+<span class="fc" id="L21">        _fad = fad;</span>
+<span class="fc" id="L22">        _bad = bad;</span>
+<span class="fc" id="L23">    }</span>
     public ADAgent(
             Tsr derivative
-<span class="fc" id="L30">    ){</span>
-<span class="fc" id="L31">        _derivative = ()-&gt;derivative;</span>
-<span class="fc" id="L32">        _fad = null;</span>
-<span class="fc" id="L33">        _bad = null;</span>
-<span class="fc" id="L34">    }</span>
+<span class="fc" id="L26">    ){</span>
+<span class="fc" id="L27">        _derivative = ()-&gt;derivative;</span>
+<span class="fc" id="L28">        _fad = null;</span>
+<span class="fc" id="L29">        _bad = null;</span>
+<span class="fc" id="L30">    }</span>
 
     public Tsr forward(GraphNode t, Tsr error){
-<span class="nc" id="L37">        return _fad.execute(t, error);</span>
+<span class="nc" id="L33">        return _fad.execute(t, error);</span>
         //return _fad.execute(derivative);
     }
 
     public Tsr backward(GraphNode t, Tsr error){
-<span class="fc" id="L42">        return _bad.execute(t, error);</span>
+<span class="fc" id="L38">        return _bad.execute(t, error);</span>
     }
 
     public Tsr derivative(){
-<span class="fc" id="L46">        return _derivative.get();</span>
+<span class="fc" id="L42">        return _derivative.get();</span>
     }
 
     public boolean isForward(){
-<span class="fc bfc" id="L50" title="All 2 branches covered.">        return (_bad==null);</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        return (_bad==null);</span>
     }
 
     @Override
     public String toString(){
-<span class="nc bnc" id="L55" title="All 2 branches missed.">        if(this.derivative()!=null){</span>
-<span class="nc" id="L56">            return derivative().toString();</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        if(this.derivative()!=null){</span>
+<span class="nc" id="L52">            return derivative().toString();</span>
         }
-<span class="nc bnc" id="L58" title="All 2 branches missed.">        if(this.isForward()){</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        if(this.isForward()){</span>
 
         }
-<span class="nc" id="L61">        return &quot;null&quot;;</span>
+<span class="nc" id="L57">        return &quot;null&quot;;</span>
     }
 
 
