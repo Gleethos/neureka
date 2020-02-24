@@ -216,92 +216,30 @@ public class OpenCLPlatform {
         //inverse:  src1/fdrn &lt;-src2 &lt;- drain
         //===========================================================================
 <span class="fc bfc" id="L218" title="All 2 branches covered.">        if (newName.contains(&quot;activate&quot;)) {</span>
-<span class="fc" id="L219">            parser.apply(</span>
-                    &quot;cosinus&quot;,
-                    &quot;drn[_i_of_i(i, prv_drn_cfg, rank)] = cos(input);\n&quot;,
-                    &quot;drn[_i_of_i(i, prv_drn_cfg, rank)] = -sin(input);\n&quot;,
-                    false
-            );
-<span class="fc" id="L225">            parser.apply(</span>
-                    &quot;gaussian&quot;,
-                    &quot;output =\n&quot; +
-                         &quot;    (float)pow(\n&quot; +
-                         &quot;        (float)M_E,\n&quot; +
-                         &quot;        -(float)pow(\n&quot; +
-                         &quot;            (float)input,\n&quot; +
-                         &quot;            (float)2\n&quot; +
-                         &quot;        )\n&quot; +
-                         &quot;    );\n&quot;,
-                    &quot;output = 1 / (1 + (float)pow((float)M_E, -input));\n&quot;,
-                    false
-            );
-<span class="fc" id="L238">            parser.apply(</span>
-                    &quot;ligmoid&quot;,
-                    &quot;output = \n&quot; +
-                            &quot;(\n&quot; +
-                         &quot;        (float) log(\n&quot; +
-                         &quot;            1+pow(\n&quot; +
-                         &quot;                (float)\n&quot; +
-                         &quot;                M_E,\n&quot; +
-                         &quot;                (float)\n&quot; +
-                         &quot;                input\n&quot; +
-                         &quot;            )\n&quot; +
-                         &quot;        )\n&quot; +
-                         &quot;    );&quot;,
-                    &quot;output =\n&quot; +
-                           &quot;    1 /\n&quot; +
-                           &quot;        (1 + (float) pow(\n&quot; +
-                           &quot;                (float)M_E,\n&quot; +
-                           &quot;                (float)input\n&quot; +
-                           &quot;            )\n&quot; +
-                           &quot;        );\n&quot;,
-                    false
-            );
-<span class="fc" id="L260">            parser.apply(</span>
-                    &quot;sigmoid&quot;,
-                    &quot;output = 1 / (1 + (float)pow((float)M_E, -input));\n&quot;,
-                    &quot;output = input * (1 - input);\n&quot;,
-                    false
-            );
-<span class="fc" id="L266">            parser.apply(</span>
-                    &quot;sinus&quot;,
-                    &quot;output = sin(input);\n&quot;,
-                    &quot;output = cos(input);\n&quot;,
-                    false
-            );
-<span class="fc" id="L272">            parser.apply(</span>
-                    &quot;relu&quot;,
-                    &quot;if (input &gt;= 0) {  output = input; } else { output = input * (float)0.01; }\n&quot;,
-                    &quot;if (input &gt;= 0) { output = (float)1; } else { output = (float)0.01; }\n&quot;,
-                    false
-            );
-<span class="fc" id="L278">            parser.apply(</span>
-                    &quot;identity&quot;,
-                    &quot;output = input;\n&quot;,
-                    &quot;output = input;\n&quot;,
-                    false
-            );
-<span class="fc" id="L284">            parser.apply(</span>
-                    &quot;tanh&quot;,
-                    &quot;output = input/pow(1+pow(input, 2.0f), 0.5f);\n&quot;,
-                    &quot;output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n&quot;,
-                    false
-            );
-
-<span class="fc bfc" id="L291" title="All 2 branches covered.">        } else if (newName.contains(&quot;operate&quot;)) {</span>
-<span class="fc" id="L292">            parser.apply(</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">            for(OperationType type : OperationType.all()){</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">                if(type.isFunction()){</span>
+<span class="fc" id="L221">                    parser.apply(</span>
+<span class="fc" id="L222">                            type.getName(),</span>
+<span class="fc" id="L223">                            type.getOperationAsString(),</span>
+<span class="fc" id="L224">                            type.getDeriviationAsString(),</span>
+                            false
+                    );
+                }
+            }
+<span class="fc bfc" id="L229" title="All 2 branches covered.">        } else if (newName.contains(&quot;operate&quot;)) {</span>
+<span class="fc" id="L230">            parser.apply(</span>
                     &quot;multiply&quot;,
                     &quot;output = input1 * input2;\n&quot;,
                     &quot;if(d==0){output = input2;}else{output = input1;}\n&quot;,
                     false
             );
-<span class="fc" id="L298">            parser.apply(</span>
+<span class="fc" id="L236">            parser.apply(</span>
                     &quot;add&quot;,
                     &quot;output = input1 + input2;\n&quot;,
                     &quot;output = 1;\n&quot;,
                     false
             );
-<span class="fc" id="L304">            parser.apply(</span>
+<span class="fc" id="L242">            parser.apply(</span>
                     &quot;subtract&quot;,
                     &quot;output = input1 - input2;\n&quot;,
                     &quot;if(d==0){\n&quot; +//drn and src2 switch:
@@ -311,7 +249,7 @@ public class OpenCLPlatform {
                             &quot;}&quot;,
                     false
             );
-<span class="fc" id="L314">            parser.apply(</span>
+<span class="fc" id="L252">            parser.apply(</span>
                     &quot;divide&quot;,
                     &quot;output = input1 / input2;\n&quot;,
                     &quot;if(d==0){\n&quot; +
@@ -321,7 +259,7 @@ public class OpenCLPlatform {
                             &quot;}&quot;,
                     true
             );
-<span class="fc" id="L324">            parser.apply(</span>
+<span class="fc" id="L262">            parser.apply(</span>
                     &quot;power&quot;,
                     &quot;output = pow(input1, input2);&quot;,
                     &quot;if(d==0){\n&quot; +
@@ -331,69 +269,31 @@ public class OpenCLPlatform {
                             &quot;}&quot;,
                     true
             );
-<span class="fc bfc" id="L334" title="All 2 branches covered.">        } else if (newName.contains(&quot;scalar&quot;)) {</span>
-<span class="fc" id="L335">            parser.apply(</span>
-                    &quot;multiply&quot;,
-                    &quot;output = input1 * value;\n&quot;,
-                    &quot;if(d==0){output = value;}else{output = input1;}\n&quot;,
-                    false
-            );
-<span class="fc" id="L341">            parser.apply(</span>
-                    &quot;add&quot;,
-                    &quot;output = input1 + value;\n&quot;,
-                    &quot;output = 1;\n&quot;,
-                    false
-            );
-<span class="fc" id="L347">            parser.apply(</span>
-                    &quot;subtract&quot;,
-                    &quot;output = input1 - value;\n&quot;,
-                    &quot;if(d==0){\n&quot; +//drn and src2 switch:
-                            &quot;    output = 1;\n&quot; +
-                            &quot;} else {\n&quot; +
-                            &quot;    output = -1;&quot; +
-                            &quot;}&quot;,
-                    false
-            );
-<span class="fc" id="L357">            parser.apply(</span>
-                    &quot;divide&quot;,
-                    &quot;output = input1 / value;\n&quot;,
-                    &quot;if(d==0){\n&quot; +
-                            &quot;    output = 1/value;\n&quot; +
-                            &quot;} else {\n&quot; +
-                            &quot;    output = -value /(float)pow(input1, 2.0f);\n&quot; +
-                            &quot;}&quot;,
-                    true
-            );
-<span class="fc" id="L367">            parser.apply(</span>
-                    &quot;power&quot;,
-                    &quot;output = pow(input1, value);&quot;,
-                    &quot;if(d==0){\n&quot; +
-                            &quot;    output = (value * pow(input1, value-(float)1 ));\n&quot; +
-                            &quot;} else {\n&quot; +
-                            &quot;    output = (pow(input1, value) * log(value));\n&quot; +
-                            &quot;}&quot;,
-                    true
-            );
-<span class="fc" id="L377">            parser.apply(</span>
-                    &quot;identity&quot;,
-                    &quot;output = value;\n&quot;,
-                    &quot;output = value;\n&quot;,
-                    true
-            );
+<span class="fc bfc" id="L272" title="All 2 branches covered.">        } else if (newName.contains(&quot;scalar&quot;)) {</span>
+<span class="fc bfc" id="L273" title="All 2 branches covered.">            for(OperationType type : OperationType.all()){</span>
+<span class="fc bfc" id="L274" title="All 2 branches covered.">                if(type.supportsScalar()){</span>
+<span class="fc" id="L275">                    parser.apply(</span>
+<span class="fc" id="L276">                            type.getName(),</span>
+<span class="fc" id="L277">                            type.getScalarOperationAsString(),</span>
+<span class="fc" id="L278">                            type.getScalarDeriviationAsString(),</span>
+                            false
+                    );
+                }
+            }
         } else {// broadcast / convolve:
-<span class="fc" id="L384">            parser.apply(</span>
+<span class="fc" id="L284">            parser.apply(</span>
                     &quot;multiply&quot;,
                     &quot;value = src1 * src2;\n&quot;,
                     &quot;value += handle * drain;\n&quot;,
                     false
             );
-<span class="fc" id="L390">            parser.apply(</span>
+<span class="fc" id="L290">            parser.apply(</span>
                     &quot;add&quot;,
                     &quot;value = src1 + src2;\n&quot;,
                     &quot;value += 1 * drain;\n&quot;,
                     false
             );
-<span class="fc" id="L396">            parser.apply(</span>
+<span class="fc" id="L296">            parser.apply(</span>
                     &quot;subtract&quot;,
                     &quot;value = src1 - src2;\n&quot;,
                     &quot;if(d==0){\n&quot; +//drn and src2 switch:
@@ -403,7 +303,7 @@ public class OpenCLPlatform {
                             &quot;}&quot;,
                     false
             );
-<span class="fc" id="L406">            parser.apply(</span>
+<span class="fc" id="L306">            parser.apply(</span>
                     &quot;divide&quot;,
                     &quot;value = src1 / src2;\n&quot;,
                     &quot;if(d==0){\n&quot; +
@@ -413,7 +313,7 @@ public class OpenCLPlatform {
                             &quot;}&quot;,
                     true
             );
-<span class="fc" id="L416">            parser.apply(</span>
+<span class="fc" id="L316">            parser.apply(</span>
                     &quot;power&quot;,
                     &quot;value += pow(src1, src2);&quot;,
                     &quot;if(d==0){\n&quot; +
@@ -426,61 +326,61 @@ public class OpenCLPlatform {
             //code.forEachForward((k, v)-&gt;{System.out.println(k+&quot;\n------------\n&quot;+v);});
         }
 
-<span class="fc" id="L429">        return code;</span>
+<span class="fc" id="L329">        return code;</span>
     }
 
     public cl_platform_id getID() {
-<span class="nc" id="L433">        return _pid;</span>
+<span class="nc" id="L333">        return _pid;</span>
     }
 
     public List&lt;OpenCLDevice&gt; getDevices() {
-<span class="fc" id="L437">        List&lt;OpenCLDevice&gt; devices = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L438">        _id_device.forEach((k, v)-&gt; devices.add(v));</span>
-<span class="fc" id="L439">        return devices;</span>
+<span class="fc" id="L337">        List&lt;OpenCLDevice&gt; devices = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L338">        _id_device.forEach((k, v)-&gt; devices.add(v));</span>
+<span class="fc" id="L339">        return devices;</span>
         //return _devices;
     }
 
     public boolean has(cl_device_id did){
-<span class="fc" id="L444">        return _id_device.containsKey(did);</span>
+<span class="fc" id="L344">        return _id_device.containsKey(did);</span>
     }
     public OpenCLDevice get(cl_device_id did){
-<span class="fc" id="L447">        return _id_device.get(did);</span>
+<span class="fc" id="L347">        return _id_device.get(did);</span>
     }
     public void put(cl_device_id did, OpenCLDevice device){
-<span class="fc" id="L450">       _id_device.put(did, device);</span>
-<span class="fc" id="L451">    }</span>
+<span class="fc" id="L350">       _id_device.put(did, device);</span>
+<span class="fc" id="L351">    }</span>
 
 
     public Map&lt;String, cl_kernel&gt; getKernels() {
-<span class="fc" id="L455">        return _kernels;</span>
+<span class="fc" id="L355">        return _kernels;</span>
     }
 
     public cl_context getContext() {
-<span class="fc" id="L459">        return _context;</span>
+<span class="fc" id="L359">        return _context;</span>
     }
 
     public static List&lt;OpenCLPlatform&gt; PLATFORMS() {
-<span class="fc" id="L463">        return _setup.PLATFORMS;</span>
+<span class="fc" id="L363">        return _setup.PLATFORMS;</span>
     }
 
     private static class _setup
     {
-<span class="fc" id="L468">        public static List&lt;OpenCLPlatform&gt; PLATFORMS = findAllPlatforms();</span>
+<span class="fc" id="L368">        public static List&lt;OpenCLPlatform&gt; PLATFORMS = findAllPlatforms();</span>
 
         public static List&lt;OpenCLPlatform&gt; findAllPlatforms() {
             // Obtain the number of platforms
-<span class="fc" id="L472">            int[] numPlatforms = new int[1];</span>
-<span class="fc" id="L473">            clGetPlatformIDs(0, null, numPlatforms);</span>
+<span class="fc" id="L372">            int[] numPlatforms = new int[1];</span>
+<span class="fc" id="L373">            clGetPlatformIDs(0, null, numPlatforms);</span>
 
             // Obtain the platform IDs
-<span class="fc" id="L476">            cl_platform_id[] platforms = new cl_platform_id[numPlatforms[0]];</span>
-<span class="fc" id="L477">            clGetPlatformIDs(platforms.length, platforms, null);</span>
+<span class="fc" id="L376">            cl_platform_id[] platforms = new cl_platform_id[numPlatforms[0]];</span>
+<span class="fc" id="L377">            clGetPlatformIDs(platforms.length, platforms, null);</span>
 
-<span class="fc" id="L479">            List&lt;OpenCLPlatform&gt; list = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L480" title="All 2 branches covered.">            for (cl_platform_id id : platforms) {</span>
-<span class="fc" id="L481">                list.add(new OpenCLPlatform(id));</span>
+<span class="fc" id="L379">            List&lt;OpenCLPlatform&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L380" title="All 2 branches covered.">            for (cl_platform_id id : platforms) {</span>
+<span class="fc" id="L381">                list.add(new OpenCLPlatform(id));</span>
             }
-<span class="fc" id="L483">            return list;</span>
+<span class="fc" id="L383">            return list;</span>
         }
 
     }

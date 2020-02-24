@@ -216,78 +216,16 @@ public class OpenCLPlatform {
         //inverse:  src1/fdrn <-src2 <- drain
         //===========================================================================
         if (newName.contains("activate")) {
-            parser.apply(
-                    "cosinus",
-                    "drn[_i_of_i(i, prv_drn_cfg, rank)] = cos(input);\n",
-                    "drn[_i_of_i(i, prv_drn_cfg, rank)] = -sin(input);\n",
-                    false
-            );
-            parser.apply(
-                    "gaussian",
-                    "output =\n" +
-                         "    (float)pow(\n" +
-                         "        (float)M_E,\n" +
-                         "        -(float)pow(\n" +
-                         "            (float)input,\n" +
-                         "            (float)2\n" +
-                         "        )\n" +
-                         "    );\n",
-                    "output = 1 / (1 + (float)pow((float)M_E, -input));\n",
-                    false
-            );
-            parser.apply(
-                    "ligmoid",
-                    "output = \n" +
-                            "(\n" +
-                         "        (float) log(\n" +
-                         "            1+pow(\n" +
-                         "                (float)\n" +
-                         "                M_E,\n" +
-                         "                (float)\n" +
-                         "                input\n" +
-                         "            )\n" +
-                         "        )\n" +
-                         "    );",
-                    "output =\n" +
-                           "    1 /\n" +
-                           "        (1 + (float) pow(\n" +
-                           "                (float)M_E,\n" +
-                           "                (float)input\n" +
-                           "            )\n" +
-                           "        );\n",
-                    false
-            );
-            parser.apply(
-                    "sigmoid",
-                    "output = 1 / (1 + (float)pow((float)M_E, -input));\n",
-                    "output = input * (1 - input);\n",
-                    false
-            );
-            parser.apply(
-                    "sinus",
-                    "output = sin(input);\n",
-                    "output = cos(input);\n",
-                    false
-            );
-            parser.apply(
-                    "relu",
-                    "if (input >= 0) {  output = input; } else { output = input * (float)0.01; }\n",
-                    "if (input >= 0) { output = (float)1; } else { output = (float)0.01; }\n",
-                    false
-            );
-            parser.apply(
-                    "identity",
-                    "output = input;\n",
-                    "output = input;\n",
-                    false
-            );
-            parser.apply(
-                    "tanh",
-                    "output = input/pow(1+pow(input, 2.0f), 0.5f);\n",
-                    "output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n",
-                    false
-            );
-
+            for(OperationType type : OperationType.all()){
+                if(type.isFunction()){
+                    parser.apply(
+                            type.getName(),
+                            type.getOperationAsString(),
+                            type.getDeriviationAsString(),
+                            false
+                    );
+                }
+            }
         } else if (newName.contains("operate")) {
             parser.apply(
                     "multiply",
@@ -332,54 +270,16 @@ public class OpenCLPlatform {
                     true
             );
         } else if (newName.contains("scalar")) {
-            parser.apply(
-                    "multiply",
-                    "output = input1 * value;\n",
-                    "if(d==0){output = value;}else{output = input1;}\n",
-                    false
-            );
-            parser.apply(
-                    "add",
-                    "output = input1 + value;\n",
-                    "output = 1;\n",
-                    false
-            );
-            parser.apply(
-                    "subtract",
-                    "output = input1 - value;\n",
-                    "if(d==0){\n" +//drn and src2 switch:
-                            "    output = 1;\n" +
-                            "} else {\n" +
-                            "    output = -1;" +
-                            "}",
-                    false
-            );
-            parser.apply(
-                    "divide",
-                    "output = input1 / value;\n",
-                    "if(d==0){\n" +
-                            "    output = 1/value;\n" +
-                            "} else {\n" +
-                            "    output = -value /(float)pow(input1, 2.0f);\n" +
-                            "}",
-                    true
-            );
-            parser.apply(
-                    "power",
-                    "output = pow(input1, value);",
-                    "if(d==0){\n" +
-                            "    output = (value * pow(input1, value-(float)1 ));\n" +
-                            "} else {\n" +
-                            "    output = (pow(input1, value) * log(value));\n" +
-                            "}",
-                    true
-            );
-            parser.apply(
-                    "identity",
-                    "output = value;\n",
-                    "output = value;\n",
-                    true
-            );
+            for(OperationType type : OperationType.all()){
+                if(type.supportsScalar()){
+                    parser.apply(
+                            type.getName(),
+                            type.getScalarOperationAsString(),
+                            type.getScalarDeriviationAsString(),
+                            false
+                    );
+                }
+            }
         } else {// broadcast / convolve:
             parser.apply(
                     "multiply",
