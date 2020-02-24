@@ -83,6 +83,10 @@ public class CPU extends AbstractDevice {
 
     @Override
     protected void _enqueue(Tsr t, double value, int d, OperationType type) {
+        if(type.supportsScalar()){
+            exec.scalar(new Tsr[]{t, t}, value, d, type);
+            return;
+        }
         int[] shape = new int[t.rank()];
         Arrays.fill(shape, 1);
         _enqueue(new Tsr[]{t, t, new Tsr(shape, value)}, d, type);
@@ -172,7 +176,16 @@ public class CPU extends AbstractDevice {
             });
         }
 
+
         //---
+        public static void scalar(Tsr[] tsrs, double scalar, int d, OperationType type){
+            _threaded(tsrs[0].size(), (start, end) -> {
+                _template.activate(
+                        tsrs[0], start, end,
+                        type.getScalarOperationCreator().create(tsrs, scalar, d)
+                );
+            });
+        }
         //---
         //---
 

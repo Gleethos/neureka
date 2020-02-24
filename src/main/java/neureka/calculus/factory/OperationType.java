@@ -66,23 +66,19 @@ public class OperationType {
                             double[] t1_val = inputs[1].value64();
                             if (d < 0) {
                                 return (t0Idx, t1Idx, t2Idx) -> {
-                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]>=0){
-                                        return t1_val[inputs[1].i_of_idx(t1Idx)];
-                                    }
-                                    return t1_val[inputs[1].i_of_idx(t1Idx)]*0.01;
+                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]>=0) return t1_val[inputs[1].i_of_idx(t1Idx)];
+                                    else return t1_val[inputs[1].i_of_idx(t1Idx)]*0.01;
                                 };
                             } else {
                                 return (t0Idx, t1Idx, t2Idx) -> {
-                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]>=0){
-                                        return 1;
-                                    }
-                                    return 0.01;
+                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]>=0) return 1;
+                                    else return 0.01;
                                 };
                             }
                         },
                         "if (input >= 0) {  output = input; } else { output = input * (float)0.01; }\n",
                         "if (input >= 0) { output = (float)1; } else { output = (float)0.01; }\n",
-                        (inputs, value, d)->null,
+                        null,
                         "",
                         ""
                 ),
@@ -90,8 +86,7 @@ public class OperationType {
                         (inputs, d)->{
                             double[] t1_val = inputs[1].value64();
                             if (d < 0) {
-                                return (t0Idx, t1Idx, t2Idx) ->
-                                        1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));
+                                return (t0Idx, t1Idx, t2Idx) -> 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));
                             } else {
                                 return (t0Idx, t1Idx, t2Idx) -> {
                                     double input = t1_val[inputs[1].i_of_idx(t1Idx)];
@@ -101,7 +96,7 @@ public class OperationType {
                         },
                         "output = 1 / (1 + (float)pow((float)M_E, -input));\n",
                         "output = input * (1 - input);\n",
-                        (inputs, value, d)->null,
+                        null,
                         "",
                         ""
                 ),
@@ -122,7 +117,7 @@ public class OperationType {
                         },
                         "output = input/pow(1+pow(input, 2.0f), 0.5f);\n",
                         "output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n",
-                        (inputs, value, d)->null,
+                        null,
                         "",
                         ""
                 ),
@@ -134,28 +129,19 @@ public class OperationType {
                                     double input = t1_val[inputs[1].i_of_idx(t1Idx)];
                                     return ((input) * (input));
                                 };
-                            } else {
-                                return (t0Idx, t1Idx, t2Idx) ->
-                                        2 * t1_val[inputs[1].i_of_idx(t1Idx)];
-                            }
+                            } else return (t0Idx, t1Idx, t2Idx) -> 2 * t1_val[inputs[1].i_of_idx(t1Idx)];
                         },
                         "output = input*input;\n",
                         "output = 2*input;\n",
-                        (inputs, value, d)->null,
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("ligmoid", "lig" , true, false, false, true, true,
                         (inputs, d)->{
                             double[] t1_val = inputs[1].value64();
-                            if (d < 0) {
-                                return (t0Idx, t1Idx, t2Idx) -> {
-                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];
-                                    return (Math.log(1 + Math.pow(Math.E, input)));
-                                };
-                            } else {
-                                return (t0Idx, t1Idx, t2Idx) -> 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));
-                            }
+                            if (d < 0) return (t0Idx, t1Idx, t2Idx) -> Math.log(1 + Math.pow(Math.E, t1_val[inputs[1].i_of_idx(t1Idx)]));
+                            else return (t0Idx, t1Idx, t2Idx) -> 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));
                         },
                         "output = \n" +
                                 "(\n" +
@@ -175,22 +161,19 @@ public class OperationType {
                                 "                (float)input\n" +
                                 "            )\n" +
                                 "        );\n",
-                        (inputs, value, d)->null,
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("identity", "idy" , true, false, false, true, true,
                         (inputs, d)->{
                             double[] t1_val = inputs[1].value64();
-                            if (d < 0) {
-                                return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
-                            } else {
-                                return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
-                            }
+                            if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
+                            else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
                         },
                         "output = input;\n",
                         "output = input;\n",
-                        (inputs, value, d)->null,
+                        null,
                         "output = value;\n",
                         "output = value;\n"
                 ),
@@ -219,7 +202,7 @@ public class OperationType {
                                 "        )\n" +
                                 "    );\n",
                         "output = 1 / (1 + (float)pow((float)M_E, -input));\n",
-                        (inputs, value, d)->null,
+                        null,
                         "",
                         ""
                 ),
@@ -240,7 +223,7 @@ public class OperationType {
                         },
                         "output = fabs(input);\n",
                         "output = 1;\n",
-                        (inputs, value, d)->null,
+                        null,
                         "",
                         ""
                 ),
@@ -261,7 +244,7 @@ public class OperationType {
                         },
                         "output = sin(input);\n",
                         "output = cos(input);\n",
-                        (inputs, value, d)->null,
+                        null,
                         "",
                         ""
                 ),
@@ -283,7 +266,7 @@ public class OperationType {
                         },
                         "output = cos(input);\n",
                         "output = -sin(input);\n",
-                        (inputs, value, d)->null,
+                        null,
                         "",
                         ""
                 ),
@@ -293,7 +276,7 @@ public class OperationType {
                         null,
                         "output = input;",
                         "output = 1;",
-                        (inputs, value, d)->null,
+                        null,
                         "",
                         ""
                 ),
@@ -301,34 +284,56 @@ public class OperationType {
                         null,
                         "output = input;",
                         "output = 1;",
-                        (inputs, value, d)->null,
+                        null,
                         "",
                         ""
                 ),
                 //-=-
                 // Operations (auto broadcast):
                 new OperationType("power", "^", false, false, false, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        (inputs, value, d)->{
+                            double[] t1_val = inputs[1].value64();
+                            if (d < 0) {
+                                return (t0Idx, t1Idx, t2Idx) -> Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);
+                            } else {
+                                if(d==0){
+                                    return (t0Idx, t1Idx, t2Idx) -> value*Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value-1);
+                                } else {
+                                    return (t0Idx, t1Idx, t2Idx) -> {
+                                        double input = t1_val[inputs[1].i_of_idx(t1Idx)];
+                                        return Math.pow(input, value)*Math.log(value);
+                                    };
+                                }
+                            }
+                        },
                         "output = pow(input1, value);",
                         "if(d==0){\n" +
-                                "    output = (value * pow(input1, value-(float)1 ));\n" +
+                                "    output = value * pow(input1, value-(float)1 );\n" +
                                 "} else {\n" +
-                                "    output = (pow(input1, value) * log(value));\n" +
+                                "    output = pow(input1, value) * log(value);\n" +
                                 "}"
                 ),
                 new OperationType("inv_power_left", ((char)171)+"^", false, false, false, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("inv_power_right", "^"+((char)187), false, false, false, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 //---
                 new OperationType("divide", "/", false, false, false, false, false, null, "", "",
-                        (inputs, value, d)->{return null;},
+                        (inputs, value, d)->{
+                            double[] t1_val = inputs[1].value64();
+                            if (d < 0) {
+                                return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] / value;
+                            } else {
+                                if(d==0) return (t0Idx, t1Idx, t2Idx) -> 1 / value;
+                                else return (t0Idx, t1Idx, t2Idx) -> - value/Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], 2);
+                            }
+                        },
                         "output = input1 / value;\n",
                         "if(d==0){\n" +
                                 "    output = 1/value;\n" +
@@ -337,50 +342,66 @@ public class OperationType {
                                 "}"
                 ),
                 new OperationType("inv_division_left", ((char)171)+"/", false, false, false, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("inv_division_right", "/"+((char)187), false, false, false, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 //---
                 new OperationType("multiply", "*", false, false, false, true, false, null, "", "",
-                        (inputs, value, d)->{return null;},
+                        (inputs, value, d)->{
+                            double[] t1_val = inputs[1].value64();
+                            if (d < 0) {
+                                return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * value;
+                            } else {
+                                if(d==0) return (t0Idx, t1Idx, t2Idx) -> value;
+                                else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
+                            }
+                        },
                         "output = input1 * value;\n",
                         "if(d==0){output = value;}else{output = input1;}\n"
                 ),
                 new OperationType("", ((char)171)+"*", false, false, false, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("", "*"+((char)187), false, false, false, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 //---
                 new OperationType("modulo", "%", false, false, false, false, false, null, "", "",
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("", ((char)171)+"%", false, false, false, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("", "%"+((char)187), false, false, false, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 //---
                 new OperationType("subtract", "-", false, false, false, false, false, null, "", "",
-                        (inputs, value, d)->{return null;},
+                        (inputs, value, d)->{
+                            double[] t1_val = inputs[1].value64();
+                            if (d < 0) {
+                                return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] - value;
+                            } else {
+                                if(d==0) return (t0Idx, t1Idx, t2Idx) -> 1;
+                                else return (t0Idx, t1Idx, t2Idx) -> -1;
+                            }
+                        },
                         "output = input1 - value;\n",
                         "if(d==0){\n" +//drn and src2 switch:
                                 "    output = 1;\n" +
@@ -389,109 +410,113 @@ public class OperationType {
                                 "}"
                 ),
                 new OperationType("", ((char)171)+"-", false, false, false, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("", "-"+((char)187), false, false, false, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 //---
                 new OperationType("add", "+", false, false, false, true, false, null, "", "",
-                        (inputs, value, d)->{return null;},
+                        (inputs, value, d)->{
+                            double[] t1_val = inputs[1].value64();
+                            if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] + value;
+                            else return (t0Idx, t1Idx, t2Idx) -> 1;
+                        },
                         "output = input1 + value;\n",
                         "output = 1;\n"
                 ),
                 new OperationType("", ((char)171)+"+", false, false, false, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("", "+"+((char)187), false, false, false, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 //---
                 // Convolution:
                 new OperationType("convolve", "x", false, false, true, false, false, null, "", "",
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("", ((char)171)+"x", false, false, true, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("", "x"+((char)187), false, false, true, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 //---
                 new OperationType("", "d", false, false, true, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("", ((char)171)+"d", false, false, true, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("", "d"+((char)187), false, false, true, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 //---
                 new OperationType("", "p", false, false, true, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("", ((char)171)+"p", false, false, true, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("", "p"+((char)187), false, false, true, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 //---
                 new OperationType("", "a", false, false, true, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("", ((char)171)+"a", false, false, true, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("", "a"+((char)187), false, false, true, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 //---
                 new OperationType("", "s", false, false, true, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("", ((char)171)+"s", false, false, true, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("", "s"+((char)187), false, false, true, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
@@ -499,19 +524,19 @@ public class OperationType {
                 //---
                 // Reshape:
                 new OperationType("", ",", false, false, false, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 //---
                 // Injecting:
                 new OperationType("", "<", false, false, false, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
                 new OperationType("", ">", false, false, false, false, false, null, "", "", 
-                        (inputs, value, d)->{return null;},
+                        null,
                         "",
                         ""
                 ),
