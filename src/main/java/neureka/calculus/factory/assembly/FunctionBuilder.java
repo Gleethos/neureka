@@ -1,7 +1,7 @@
 package neureka.calculus.factory.assembly;
 
 import neureka.calculus.Function;
-import neureka.calculus.factory.OperationType;
+import neureka.calculus.environment.OperationType;
 import neureka.calculus.factory.components.FunctionConstant;
 import neureka.calculus.factory.components.FunctionInput;
 

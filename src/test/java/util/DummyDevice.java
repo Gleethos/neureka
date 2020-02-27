@@ -2,7 +2,7 @@ package util;
 
 import neureka.Tsr;
 import neureka.acceleration.Device;
-import neureka.calculus.factory.OperationType;
+import neureka.calculus.environment.OperationType;
 
 import java.util.Collection;
 

@@ -1,38 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Types.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.environment</a> &gt; <span class="el_source">Types.java</span></div><h1>Types.java</h1><pre class="source lang-java linenums">package neureka.calculus.environment;
 
-import neureka.calculus.factory.OperationType;
+import neureka.calculus.environment.OperationType;
 
 public class Types
 {
-<span class="fc" id="L7">    private static Types _types = new Types();</span>
+    private static Types _types;// = new Types();
 
     private Types(){ }
 
     public static Types instance(){
-<span class="fc" id="L12">        Types t = _types;</span>
-<span class="fc" id="L13">        _types = null;</span>
-<span class="fc" id="L14">        return t;</span>
+<span class="fc" id="L12">        _types = new Types();</span>
+<span class="fc" id="L13">        Types t = _types;</span>
+<span class="fc" id="L14">        _types = null;</span>
+<span class="fc" id="L15">        return t;</span>
     }
 
     public int COUNT(){
-<span class="fc" id="L18">        return OperationType.COUNT();</span>
+<span class="nc" id="L19">        return OperationType.COUNT();</span>
     }
 
     public String REGISTER(int i){
-<span class="fc" id="L22">        return OperationType.instance(i).identifier();</span>
+<span class="nc" id="L23">        return OperationType.instance(i).identifier();</span>
     }
 
     public int LOOKUP(String exp){
-<span class="fc" id="L26">        OperationType type = OperationType.LOOKUP(exp);</span>
-<span class="fc bfc" id="L27" title="All 2 branches covered.">        return (type!=null)?type.id():-1;</span>
+<span class="nc" id="L27">        OperationType type = OperationType.LOOKUP(exp);</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">        return (type!=null)?type.id():-1;</span>
     }
 
     public boolean isFunction(String f){
-<span class="nc" id="L31">        return isFunction(LOOKUP(f));</span>
+<span class="nc" id="L32">        return isFunction(LOOKUP(f));</span>
     }
     public boolean isFunction(int id){
-<span class="nc" id="L34">        OperationType type = OperationType.instance(id);</span>
-<span class="nc bnc" id="L35" title="All 2 branches missed.">        return (type!=null)?type.isFunction():false;</span>
+<span class="nc" id="L35">        OperationType type = OperationType.instance(id);</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">        return (type!=null)?type.isFunction():false;</span>
     }
 
 

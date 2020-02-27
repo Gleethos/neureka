@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
+import neureka.calculus.environment.OperationType;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 import neureka.calculus.factory.components.FunctionConstant;

@@ -16,7 +16,7 @@ public class Neureka
     private Settings _settings;
     private Utility _utility;
 
-    static{
+    static {
 <span class="fc" id="L20">        _instance = new Neureka();</span>
 <span class="fc" id="L21">        new GroovyShell().evaluate(_instance.utility().readResource(&quot;library_settings.groovy&quot;));</span>
 <span class="fc" id="L22">        new GroovyShell().evaluate(_instance.utility().readResource(&quot;scripting_setup.groovy&quot;));</span>

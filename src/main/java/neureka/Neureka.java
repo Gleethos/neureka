@@ -16,7 +16,7 @@ public class Neureka
     private Settings _settings;
     private Utility _utility;
 
-    static{
+    static {
         _instance = new Neureka();
         new GroovyShell().evaluate(_instance.utility().readResource("library_settings.groovy"));
         new GroovyShell().evaluate(_instance.utility().readResource("scripting_setup.groovy"));

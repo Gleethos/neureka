@@ -3,7 +3,7 @@ package neureka.calculus.factory.components;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
-import neureka.calculus.factory.OperationType;
+import neureka.calculus.environment.OperationType;
 
 public class FunctionConstant implements Function
 {

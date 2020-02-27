@@ -2,7 +2,7 @@ package neureka.acceleration;
 
 import neureka.Tsr;
 import neureka.acceleration.opencl.OpenCLPlatform;
-import neureka.calculus.factory.OperationType;
+import neureka.calculus.environment.OperationType;
 
 import java.util.Collection;
 

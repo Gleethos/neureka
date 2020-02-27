@@ -2,10 +2,8 @@ package neureka.acceleration;
 
 import neureka.Component;
 import neureka.Tsr;
-import neureka.acceleration.opencl.OpenCLDevice;
-import neureka.calculus.Function;
 import neureka.autograd.GraphNode;
-import neureka.calculus.factory.OperationType;
+import neureka.calculus.environment.OperationType;
 
 import java.lang.ref.Cleaner;
 import java.lang.ref.ReferenceQueue;
@@ -93,7 +91,7 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
                 tsrs[0] = newTsrs[0];
             } else {
                 Tsr[] newTsrs;
-                switch(Function.TYPES.REGISTER(type.id())){
+                switch(type.identifier()){
                     case "+":
                     case "sum":
                         tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue(1.0f);

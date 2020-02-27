@@ -4,7 +4,6 @@ import neureka.Tsr;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
 import neureka.calculus.Function;
-import neureka.calculus.factory.OperationType;
 
 import java.util.Map;
 import java.util.TreeMap;

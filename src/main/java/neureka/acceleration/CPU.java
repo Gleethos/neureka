@@ -1,7 +1,7 @@
 package neureka.acceleration;
 
 import neureka.Tsr;
-import neureka.calculus.factory.OperationType;
+import neureka.calculus.environment.OperationType;
 import org.jetbrains.annotations.Contract;
 
 import java.util.Arrays;

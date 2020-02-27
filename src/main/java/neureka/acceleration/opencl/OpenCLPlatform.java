@@ -1,8 +1,7 @@
 package neureka.acceleration.opencl;
 
 import neureka.Neureka;
-import neureka.calculus.Function;
-import neureka.calculus.factory.OperationType;
+import neureka.calculus.environment.OperationType;
 import org.jocl.*;
 import java.util.*;
 

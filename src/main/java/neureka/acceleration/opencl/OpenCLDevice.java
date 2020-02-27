@@ -11,8 +11,7 @@ import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
 import neureka.acceleration.opencl.utility.WeakTensorReference;
-import neureka.calculus.Function;
-import neureka.calculus.factory.OperationType;
+import neureka.calculus.environment.OperationType;
 import neureka.utility.DataHelper;
 import org.jocl.*;
 
@@ -176,10 +175,7 @@ public class OpenCLDevice extends AbstractDevice {
         );
         WeakReference r = new WeakTensorReference(tensor, _reference_queue);
         _mapping.put(r, newClt);
-        cleaning(tensor, () -> {
-            _rmv(r);
-            //System.out.println("Garbage has been removed from GPU!!!");
-        });
+        cleaning(tensor, () -> _rmv(r));//Removing garbage tensors from gpu!
         tensor.add(this);
         if (tensor.isVirtual()) {
             _execute_tensor_scalar(tensor, tensor.value64(0), OperationType.instance("<"), -1);

@@ -4,7 +4,7 @@ package neureka.calculus.factory.components;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
-import neureka.calculus.factory.OperationType;
+import neureka.calculus.environment.OperationType;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
 public class FunctionInput implements Function, GradientProvider

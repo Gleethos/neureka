@@ -19,7 +19,7 @@ public class OperationType {
 <span class="fc" id="L19">    private static int _ID = 0;</span>
 
     public static OperationType LOOKUP(String identifier){
-<span class="fc" id="L22">        return _LOOKUP.getOrDefault(identifier, null);</span>
+<span class="nc" id="L22">        return _LOOKUP.getOrDefault(identifier, null);</span>
     }
 
     public static OperationType instance(int index){
@@ -60,19 +60,20 @@ public class OperationType {
     private static OperationType[] _TYPES;
 
     static  {
-<span class="fc" id="L63">        _TYPES = new OperationType[] {</span>
+
+<span class="fc" id="L64">    _TYPES = new OperationType[] {</span>
                 new OperationType(&quot;relu&quot;, &quot;relu&quot;, true, false, false, true, true,
                         (inputs, d)-&gt;{
-<span class="fc" id="L66">                            double[] t1_val = inputs[1].value64();</span>
-<span class="fc bfc" id="L67" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L68">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="pc bpc" id="L69" title="1 of 2 branches missed.">                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="fc" id="L70">                                    else return t1_val[inputs[1].i_of_idx(t1Idx)]*0.01;</span>
+<span class="fc" id="L67">                            double[] t1_val = inputs[1].value64();</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L69">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="fc" id="L71">                                    else return t1_val[inputs[1].i_of_idx(t1Idx)]*0.01;</span>
                                 };
                             } else {
-<span class="fc" id="L73">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="pc bpc" id="L74" title="1 of 2 branches missed.">                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return 1;</span>
-<span class="fc" id="L75">                                    else return 0.01;</span>
+<span class="fc" id="L74">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return 1;</span>
+<span class="fc" id="L76">                                    else return 0.01;</span>
                                 };
                             }
                         },
@@ -84,13 +85,13 @@ public class OperationType {
                 ),
                 new OperationType(&quot;sigmoid&quot;, &quot;sig&quot; , true, false, false, true, true,
                         (inputs, d)-&gt;{
-<span class="fc" id="L87">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L88" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L89">                                return (t0Idx, t1Idx, t2Idx) -&gt; 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));</span>
+<span class="fc" id="L88">                            double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L90">                                return (t0Idx, t1Idx, t2Idx) -&gt; 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));</span>
                             } else {
-<span class="nc" id="L91">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L92">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="nc" id="L93">                                    return (1 - Math.pow(((input) / Math.pow((1 + Math.pow((input), 2)), 0.5)), 2));</span>
+<span class="nc" id="L92">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="nc" id="L93">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="nc" id="L94">                                    return (1 - Math.pow(((input) / Math.pow((1 + Math.pow((input), 2)), 0.5)), 2));</span>
                                 };
                             }
                         },
@@ -102,16 +103,16 @@ public class OperationType {
                 ),
                 new OperationType(&quot;tanh&quot;, &quot;tanh&quot;, true, false, false, true, true,
                         (inputs, d)-&gt;{
-<span class="fc" id="L105">                            double[] t1_val = inputs[1].value64();</span>
-<span class="fc bfc" id="L106" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L107">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc" id="L108">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="fc" id="L109">                                    return ((input)) / Math.pow((1 + Math.pow(((input)), 2)), 0.5);</span>
+<span class="fc" id="L106">                            double[] t1_val = inputs[1].value64();</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L108">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L109">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="fc" id="L110">                                    return input / Math.pow(1 + Math.pow(input, 2), 0.5);</span>
                                 };
                             } else {
-<span class="fc" id="L112">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc" id="L113">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="fc" id="L114">                                    return (1 - Math.pow(((input) / Math.pow((1 + Math.pow((input), 2)), 0.5)), 2));</span>
+<span class="fc" id="L113">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L114">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="fc" id="L115">                                    return 1 - Math.pow(input / Math.pow(1 + Math.pow(input, 2), 0.5), 2);</span>
                                 };
                             }
                         },
@@ -123,13 +124,13 @@ public class OperationType {
                 ),
                 new OperationType(&quot;quadratic&quot;, &quot;quad&quot;, true, false, false, true, true,
                         (inputs, d)-&gt;{
-<span class="nc" id="L126">                            double[] t1_val = inputs[1].value64();</span>
-<span class="nc bnc" id="L127" title="All 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="nc" id="L128">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L129">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="nc" id="L130">                                    return ((input) * (input));</span>
+<span class="nc" id="L127">                            double[] t1_val = inputs[1].value64();</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">                            if (d &lt; 0) {</span>
+<span class="nc" id="L129">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="nc" id="L130">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="nc" id="L131">                                    return input * input;</span>
                                 };
-<span class="nc" id="L132">                            } else return (t0Idx, t1Idx, t2Idx) -&gt; 2 * t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="nc" id="L133">                            } else return (t0Idx, t1Idx, t2Idx) -&gt; 2 * t1_val[inputs[1].i_of_idx(t1Idx)];</span>
                         },
                         &quot;output = input*input;\n&quot;,
                         &quot;output = 2*input;\n&quot;,
@@ -139,9 +140,9 @@ public class OperationType {
                 ),
                 new OperationType(&quot;ligmoid&quot;, &quot;lig&quot; , true, false, false, true, true,
                         (inputs, d)-&gt;{
-<span class="fc" id="L142">                            double[] t1_val = inputs[1].value64();</span>
-<span class="fc bfc" id="L143" title="All 2 branches covered.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; Math.log(1 + Math.pow(Math.E, t1_val[inputs[1].i_of_idx(t1Idx)]));</span>
-<span class="fc" id="L144">                            else return (t0Idx, t1Idx, t2Idx) -&gt; 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));</span>
+<span class="fc" id="L143">                            double[] t1_val = inputs[1].value64();</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; Math.log(1 + Math.pow(Math.E, t1_val[inputs[1].i_of_idx(t1Idx)]));</span>
+<span class="fc" id="L145">                            else return (t0Idx, t1Idx, t2Idx) -&gt; 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));</span>
                         },
                         &quot;output = \n&quot; +
                                 &quot;(\n&quot; +
@@ -167,9 +168,9 @@ public class OperationType {
                 ),
                 new OperationType(&quot;identity&quot;, &quot;idy&quot; , true, false, false, true, true,
                         (inputs, d)-&gt;{
-<span class="fc" id="L170">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L171" title="1 of 2 branches missed.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="nc" id="L172">                            else return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="fc" id="L171">                            double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="nc" id="L173">                            else return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
                         },
                         &quot;output = input;\n&quot;,
                         &quot;output = input;\n&quot;,
@@ -179,16 +180,13 @@ public class OperationType {
                 ),
                 new OperationType(&quot;gaussian&quot;, &quot;gaus&quot;, true, false, false, true, true,
                         (inputs, d)-&gt;{
-<span class="nc" id="L182">                            double[] t1_val = inputs[1].value64();</span>
-<span class="nc bnc" id="L183" title="All 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="nc" id="L184">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L185">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="nc" id="L186">                                    return Math.pow(Math.E, -Math.pow((input), 2));</span>
-                                };
+<span class="nc" id="L183">                            double[] t1_val = inputs[1].value64();</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">                            if (d &lt; 0) {</span>
+<span class="nc" id="L185">                                return (t0Idx, t1Idx, t2Idx) -&gt; Math.pow(Math.E, -Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], 2));</span>
                             } else {
-<span class="nc" id="L189">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L190">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="nc" id="L191">                                    return -2 * ((input)) * Math.pow(Math.E, -Math.pow((input), 2));</span>
+<span class="nc" id="L187">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="nc" id="L188">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="nc" id="L189">                                    return -2 * input * Math.pow(Math.E, -Math.pow(input, 2));</span>
                                 };
 
                             }
@@ -208,39 +206,24 @@ public class OperationType {
                 ),
                 new OperationType(&quot;absolute&quot;, &quot;abs&quot; , true, false, false, true, true,
                         (inputs, d)-&gt;{
-<span class="nc" id="L211">                            double[] t1_val = inputs[1].value64();</span>
-<span class="nc bnc" id="L212" title="All 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="nc" id="L213">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L214">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="nc" id="L215">                                    return Math.abs(input);</span>
-                                };
+<span class="nc" id="L209">                            double[] t1_val = inputs[1].value64();</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">                            if (d &lt; 0) {</span>
+<span class="nc" id="L211">                                return (t0Idx, t1Idx, t2Idx) -&gt; Math.abs(t1_val[inputs[1].i_of_idx(t1Idx)]);</span>
                             } else {
-<span class="nc" id="L218">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L219">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="nc bnc" id="L220" title="All 2 branches missed.">                                    return (input &lt; 0) ? -1 : 1;</span>
-                                };
+<span class="nc bnc" id="L213" title="All 2 branches missed.">                                return (t0Idx, t1Idx, t2Idx) -&gt; (t1_val[inputs[1].i_of_idx(t1Idx)] &lt; 0) ? -1 : 1;</span>
                             }
                         },
                         &quot;output = fabs(input);\n&quot;,
-                        &quot;output = 1;\n&quot;,
+                        &quot;output = (input &lt; 0) ? -1 : 1;\n&quot;,
                         null,
                         &quot;&quot;,
                         &quot;&quot;
                 ),
                 new OperationType(&quot;sinus&quot;, &quot;sin&quot; , true, false, false, true, true,
                         (inputs, d)-&gt;{
-<span class="nc" id="L232">                            double[] t1_val = inputs[1].value64();</span>
-<span class="nc bnc" id="L233" title="All 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="nc" id="L234">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L235">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="nc" id="L236">                                    return Math.sin(input);</span>
-                                };
-                            } else {
-<span class="nc" id="L239">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L240">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="nc" id="L241">                                    return Math.cos(input);</span>
-                                };
-                            }
+<span class="nc" id="L224">                            double[] t1_val = inputs[1].value64();</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; Math.sin(t1_val[inputs[1].i_of_idx(t1Idx)]);</span>
+<span class="nc" id="L226">                            else return (t0Idx, t1Idx, t2Idx) -&gt; Math.cos(t1_val[inputs[1].i_of_idx(t1Idx)]);</span>
                         },
                         &quot;output = sin(input);\n&quot;,
                         &quot;output = cos(input);\n&quot;,
@@ -250,19 +233,9 @@ public class OperationType {
                 ),
                 new OperationType(&quot;cosinus&quot;, &quot;cos&quot; , true, false, false, true, true,
                         (inputs, d)-&gt;{
-<span class="fc" id="L253">                            double[] t1_val = inputs[1].value64();</span>
-<span class="fc bfc" id="L254" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L255">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc" id="L256">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="fc" id="L257">                                    return Math.cos(input);</span>
-                                };
-                            } else {
-<span class="fc" id="L260">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc" id="L261">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="fc" id="L262">                                    return -Math.sin(input);</span>
-                                };
-
-                            }
+<span class="fc" id="L236">                            double[] t1_val = inputs[1].value64();</span>
+<span class="fc bfc" id="L237" title="All 2 branches covered.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; Math.cos(t1_val[inputs[1].i_of_idx(t1Idx)]);</span>
+<span class="fc" id="L238">                            else return (t0Idx, t1Idx, t2Idx) -&gt; -Math.sin(t1_val[inputs[1].i_of_idx(t1Idx)]);</span>
                         },
                         &quot;output = cos(input);\n&quot;,
                         &quot;output = -sin(input);\n&quot;,
@@ -292,17 +265,14 @@ public class OperationType {
                 // Operations (auto broadcast):
                 new OperationType(&quot;power&quot;, &quot;^&quot;, false, false, false, false, false, null, &quot;&quot;, &quot;&quot;, 
                         (inputs, value, d)-&gt;{
-<span class="fc" id="L295">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L296" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L297">                                return (t0Idx, t1Idx, t2Idx) -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);</span>
+<span class="fc" id="L268">                            double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L269" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L270">                                return (t0Idx, t1Idx, t2Idx) -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);</span>
                             } else {
-<span class="nc bnc" id="L299" title="All 2 branches missed.">                                if(d==0){</span>
-<span class="nc" id="L300">                                    return (t0Idx, t1Idx, t2Idx) -&gt; value*Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value-1);</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">                                if(d==0){</span>
+<span class="nc" id="L273">                                    return (t0Idx, t1Idx, t2Idx) -&gt; value*Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value-1);</span>
                                 } else {
-<span class="nc" id="L302">                                    return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L303">                                        double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="nc" id="L304">                                        return Math.pow(input, value)*Math.log(value);</span>
-                                    };
+<span class="nc" id="L275">                                    return (t0Idx, t1Idx, t2Idx) -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value)*Math.log(value);</span>
                                 }
                             }
                         },
@@ -326,12 +296,12 @@ public class OperationType {
                 //---
                 new OperationType(&quot;divide&quot;, &quot;/&quot;, false, false, false, false, false, null, &quot;&quot;, &quot;&quot;,
                         (inputs, value, d)-&gt;{
-<span class="fc" id="L329">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L330" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L331">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] / value;</span>
+<span class="fc" id="L299">                            double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L300" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L301">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] / value;</span>
                             } else {
-<span class="nc bnc" id="L333" title="All 2 branches missed.">                                if(d==0) return (t0Idx, t1Idx, t2Idx) -&gt; 1 / value;</span>
-<span class="nc" id="L334">                                else return (t0Idx, t1Idx, t2Idx) -&gt; - value/Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], 2);</span>
+<span class="nc bnc" id="L303" title="All 2 branches missed.">                                if(d==0) return (t0Idx, t1Idx, t2Idx) -&gt; 1 / value;</span>
+<span class="nc" id="L304">                                else return (t0Idx, t1Idx, t2Idx) -&gt; -value/Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], 2);</span>
                             }
                         },
                         &quot;output = input1 / value;\n&quot;,
@@ -354,12 +324,12 @@ public class OperationType {
                 //---
                 new OperationType(&quot;multiply&quot;, &quot;*&quot;, false, false, false, true, false, null, &quot;&quot;, &quot;&quot;,
                         (inputs, value, d)-&gt;{
-<span class="fc" id="L357">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L358" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L359">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * value;</span>
+<span class="fc" id="L327">                            double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L328" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L329">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * value;</span>
                             } else {
-<span class="nc bnc" id="L361" title="All 2 branches missed.">                                if(d==0) return (t0Idx, t1Idx, t2Idx) -&gt; value;</span>
-<span class="nc" id="L362">                                else return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="nc bnc" id="L331" title="All 2 branches missed.">                                if(d==0) return (t0Idx, t1Idx, t2Idx) -&gt; value;</span>
+<span class="nc" id="L332">                                else return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
                             }
                         },
                         &quot;output = input1 * value;\n&quot;,
@@ -394,12 +364,12 @@ public class OperationType {
                 //---
                 new OperationType(&quot;subtract&quot;, &quot;-&quot;, false, false, false, false, false, null, &quot;&quot;, &quot;&quot;,
                         (inputs, value, d)-&gt;{
-<span class="fc" id="L397">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L398" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L399">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] - value;</span>
+<span class="fc" id="L367">                            double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L368" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L369">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] - value;</span>
                             } else {
-<span class="nc bnc" id="L401" title="All 2 branches missed.">                                if(d==0) return (t0Idx, t1Idx, t2Idx) -&gt; 1;</span>
-<span class="nc" id="L402">                                else return (t0Idx, t1Idx, t2Idx) -&gt; -1;</span>
+<span class="nc bnc" id="L371" title="All 2 branches missed.">                                if(d==0) return (t0Idx, t1Idx, t2Idx) -&gt; 1;</span>
+<span class="nc" id="L372">                                else return (t0Idx, t1Idx, t2Idx) -&gt; -1;</span>
                             }
                         },
                         &quot;output = input1 - value;\n&quot;,
@@ -422,9 +392,9 @@ public class OperationType {
                 //---
                 new OperationType(&quot;add&quot;, &quot;+&quot;, false, false, false, true, false, null, &quot;&quot;, &quot;&quot;,
                         (inputs, value, d)-&gt;{
-<span class="fc" id="L425">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L426" title="1 of 2 branches missed.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + value;</span>
-<span class="nc" id="L427">                            else return (t0Idx, t1Idx, t2Idx) -&gt; 1;</span>
+<span class="fc" id="L395">                            double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L396" title="1 of 2 branches missed.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + value;</span>
+<span class="nc" id="L397">                            else return (t0Idx, t1Idx, t2Idx) -&gt; 1;</span>
                         },
                         &quot;output = input1 + value;\n&quot;,
                         &quot;output = 1;\n&quot;
@@ -539,10 +509,10 @@ public class OperationType {
                         null,
                         &quot;&quot;,
                         &quot;&quot;
-                ),
+                )
                 //---
         };
-    }
+<span class="fc" id="L515">    }</span>
 
 
     public OperationType(
@@ -560,8 +530,8 @@ public class OperationType {
             ScalarOperationCreator scalarOperationCreator,
             String scalarOperationAsString,
             String scalarDeriviationAsString
-<span class="fc" id="L563">    ) {</span>
-<span class="fc" id="L564">        _construct(</span>
+<span class="fc" id="L533">    ) {</span>
+<span class="fc" id="L534">        _construct(</span>
                 name,
                 identifier,
                 isFunction,
@@ -577,7 +547,7 @@ public class OperationType {
                 scalarOperationAsString,
                 scalarDeriviationAsString
         );
-<span class="fc" id="L580">    }</span>
+<span class="fc" id="L550">    }</span>
 
     public OperationType(
             String name, 
@@ -593,8 +563,8 @@ public class OperationType {
             ScalarOperationCreator scalarOperationCreator,
             String scalarOperationAsString,
             String scalarDeriviationAsString
-<span class="fc" id="L596">    ) {</span>
-<span class="fc bfc" id="L597" title="All 2 branches covered.">        _construct(</span>
+<span class="fc" id="L566">    ) {</span>
+<span class="fc bfc" id="L567" title="All 2 branches covered.">        _construct(</span>
                 name,
                 identifier,
                 isFunction,
@@ -610,7 +580,7 @@ public class OperationType {
                 scalarOperationAsString,
                 scalarDeriviationAsString
         );
-<span class="fc" id="L613">    }</span>
+<span class="fc" id="L583">    }</span>
 
     private void _construct(
             String name,
@@ -628,160 +598,161 @@ public class OperationType {
             String scalarOperationAsString,
             String scalarDeriviationAsString
     ) {
-<span class="fc" id="L631">        _name = name;</span>
-<span class="fc" id="L632">        _id = _ID;</span>
-<span class="fc" id="L633">        _ID++;</span>
-<span class="fc" id="L634">        _identifier = identifier;</span>
-<span class="fc" id="L635">        _isFunction = isFunction;</span>
-<span class="fc" id="L636">        _isOperation = isOperation;</span>
-<span class="fc" id="L637">        _isIndexer = isIndexer;</span>
-<span class="fc" id="L638">        _isConvection = isConvection;</span>
-<span class="fc" id="L639">        _isCommutative = isCommutative;</span>
-<span class="fc" id="L640">        _isAssociative = isAssociative;</span>
-<span class="fc" id="L641">        _operationCreator = creator;</span>
-<span class="fc" id="L642">        _operationAsString = operationAsString;</span>
-<span class="fc" id="L643">        _deriviationAsString = deriviationAsString;</span>
-<span class="fc" id="L644">        _scalarOperationCreator = scalarOperationCreator;</span>
-<span class="fc" id="L645">        _scalarOperationAsString = scalarOperationAsString;</span>
-<span class="fc" id="L646">        _scalarDeriviationAsString = scalarDeriviationAsString; </span>
+<span class="fc" id="L601">        _name = name;</span>
+<span class="fc" id="L602">        _id = _ID;</span>
+<span class="fc" id="L603">        _ID++;</span>
+<span class="fc" id="L604">        _identifier = identifier;</span>
+<span class="fc" id="L605">        _isFunction = isFunction;</span>
+<span class="fc" id="L606">        _isOperation = isOperation;</span>
+<span class="fc" id="L607">        _isIndexer = isIndexer;</span>
+<span class="fc" id="L608">        _isConvection = isConvection;</span>
+<span class="fc" id="L609">        _isCommutative = isCommutative;</span>
+<span class="fc" id="L610">        _isAssociative = isAssociative;</span>
+<span class="fc" id="L611">        _operationCreator = creator;</span>
+<span class="fc" id="L612">        _operationAsString = operationAsString;</span>
+<span class="fc" id="L613">        _deriviationAsString = deriviationAsString;</span>
+<span class="fc" id="L614">        _scalarOperationCreator = scalarOperationCreator;</span>
+<span class="fc" id="L615">        _scalarOperationAsString = scalarOperationAsString;</span>
+<span class="fc" id="L616">        _scalarDeriviationAsString = scalarDeriviationAsString; </span>
 
-<span class="fc" id="L648">        _REGISTER.add(this);</span>
-<span class="fc" id="L649">        _LOOKUP.put(identifier, this);</span>
-<span class="fc bfc" id="L650" title="All 2 branches covered.">        if(identifier.equals((((char)171))+&quot;x&quot;)) _LOOKUP.put(&quot;&lt;&lt;x&quot;, this);</span>
-<span class="fc bfc" id="L651" title="All 2 branches covered.">        else if(identifier.equals(&quot;x&quot;+((char)187))) _LOOKUP.put(&quot;x&gt;&gt;&quot;, this);</span>
-<span class="fc" id="L652">    }</span>
+<span class="fc" id="L618">        _REGISTER.add(this);</span>
+<span class="fc" id="L619">        _LOOKUP.put(identifier, this);</span>
+<span class="fc bfc" id="L620" title="All 2 branches covered.">        if(identifier.equals((((char)171))+&quot;x&quot;)) _LOOKUP.put(&quot;&lt;&lt;x&quot;, this);</span>
+<span class="fc bfc" id="L621" title="All 2 branches covered.">        else if(identifier.equals(&quot;x&quot;+((char)187))) _LOOKUP.put(&quot;x&gt;&gt;&quot;, this);</span>
+<span class="fc" id="L622">    }</span>
 
     public static OperationType[] all(){
-<span class="fc" id="L655">        return _TYPES;</span>
+<span class="fc" id="L625">        return _TYPES;</span>
     }
 
     public String getName(){
-<span class="fc" id="L659">        return _name;</span>
+<span class="fc" id="L629">        return _name;</span>
     }
 
     public OperationCreator getCreator(){
-<span class="fc" id="L663">        return _operationCreator;</span>
+<span class="fc" id="L633">        return _operationCreator;</span>
     }
 
     public String getOperationAsString(){
-<span class="fc" id="L667">        return _operationAsString;</span>
+<span class="fc" id="L637">        return _operationAsString;</span>
     }
 
     public String getDeriviationAsString(){
-<span class="fc" id="L671">        return _deriviationAsString;</span>
+<span class="fc" id="L641">        return _deriviationAsString;</span>
     }
 
     public ScalarOperationCreator getScalarOperationCreator(){
-<span class="fc" id="L675">        return _scalarOperationCreator;</span>
+<span class="fc" id="L645">        return _scalarOperationCreator;</span>
     }
     
     public String getScalarOperationAsString(){
-<span class="fc" id="L679">        return _scalarOperationAsString;</span>
+<span class="fc" id="L649">        return _scalarOperationAsString;</span>
     }
     
     public String getScalarDeriviationAsString(){
-<span class="fc" id="L683">        return _scalarDeriviationAsString;</span>
+<span class="fc" id="L653">        return _scalarDeriviationAsString;</span>
     } 
     
     public int id(){
-<span class="fc" id="L687">        return _id;</span>
+<span class="fc" id="L657">        return _id;</span>
     }
 
     public String identifier(){
-<span class="fc" id="L691">        return _identifier;</span>
+<span class="fc" id="L661">        return _identifier;</span>
     }
 
     public boolean isOperation(){
-<span class="fc" id="L695">        return _isOperation;</span>
+<span class="fc" id="L665">        return _isOperation;</span>
     }
 
     public boolean isFunction(){
-<span class="fc" id="L699">        return _isFunction;</span>
+<span class="fc" id="L669">        return _isFunction;</span>
     }
 
     public boolean isIndexer(){
-<span class="fc" id="L703">        return _isIndexer;</span>
+<span class="fc" id="L673">        return _isIndexer;</span>
     }
 
     public boolean isConvection(){
-<span class="fc" id="L707">        return _isConvection;</span>
+<span class="fc" id="L677">        return _isConvection;</span>
     }
 
     public boolean isCommutative(){
-<span class="nc" id="L711">        return  _isCommutative;</span>
+<span class="nc" id="L681">        return  _isCommutative;</span>
     }
 
     public boolean supportsScalar(){
-<span class="fc bfc" id="L715" title="All 2 branches covered.">        return !_scalarOperationAsString.equals(&quot;&quot;)</span>
+<span class="fc bfc" id="L685" title="All 2 branches covered.">        return !_scalarOperationAsString.equals(&quot;&quot;)</span>
                 &amp;&amp;
-<span class="pc bpc" id="L717" title="1 of 2 branches missed.">               !_scalarDeriviationAsString.equals(&quot;&quot;);</span>
+<span class="pc bpc" id="L687" title="1 of 2 branches missed.">               !_scalarDeriviationAsString.equals(&quot;&quot;);</span>
     }
 
-<span class="fc" id="L720">    private static Function MUL = FunctionBuilder.build(&quot;(I[0]*I[1])&quot;, false);</span>
-<span class="fc" id="L721">    private static Function ADD = FunctionBuilder.build(&quot;(I[0]+I[1])&quot;, false);</span>
-<span class="fc" id="L722">    private static Function INV_X = FunctionBuilder.build(&quot;I[0]x&gt;&gt;I[1]x&gt;&gt;I[2]&quot;, false);</span>
+    //private static Function MUL    ;
+    //private static Function ADD    ;
+    //private static Function INV_X ;
 
     public boolean allowsForward(Tsr[] inputs){
-<span class="fc bfc" id="L725" title="All 2 branches covered.">        if(this.isConvection()) return false;</span>
-<span class="fc bfc" id="L726" title="All 2 branches covered.">        if(this.identifier().equals(&quot;,&quot;)) return false; //Reshape</span>
-<span class="fc" id="L727">        Tsr last = null;</span>
-<span class="fc bfc" id="L728" title="All 2 branches covered.">        for(Tsr t : inputs){</span>
-<span class="fc bfc" id="L729" title="All 2 branches covered.">            if(last!=null){</span>
-<span class="fc bfc" id="L730" title="All 2 branches covered.">                if(!last.shape().equals(t.shape())){</span>
-<span class="fc" id="L731">                    return false;</span>
+<span class="fc bfc" id="L695" title="All 2 branches covered.">        if(this.isConvection()) return false;</span>
+<span class="fc bfc" id="L696" title="All 2 branches covered.">        if(this.identifier().equals(&quot;,&quot;)) return false; //Reshape</span>
+<span class="fc" id="L697">        Tsr last = null;</span>
+<span class="fc bfc" id="L698" title="All 2 branches covered.">        for(Tsr t : inputs){</span>
+<span class="fc bfc" id="L699" title="All 2 branches covered.">            if(last!=null){</span>
+<span class="fc bfc" id="L700" title="All 2 branches covered.">                if(!last.shape().equals(t.shape())){</span>
+<span class="fc" id="L701">                    return false;</span>
                 }
             }
-<span class="fc" id="L734">            last = t;</span>
+<span class="fc" id="L704">            last = t;</span>
         }
-<span class="fc" id="L736">        return true;</span>
+<span class="fc" id="L706">        return true;</span>
     }
 
     //@Override
     public ADAgent getADAgentOf(Function f, Tsr[] inputs, int i, boolean forward){
 
         //Tsr d = (allowsForward(inputs))?f.derive(inputs, i):null;
+<span class="fc" id="L713">        Function MUL   = FunctionBuilder.build(&quot;(I[0]*I[1])&quot;, false);</span>
+<span class="fc" id="L714">        Function ADD   = FunctionBuilder.build(&quot;(I[0]+I[1])&quot;, false);</span>
+<span class="fc" id="L715">        Function INV_X = FunctionBuilder.build(&quot;I[0]x&gt;&gt;I[1]x&gt;&gt;I[2]&quot;, false);</span>
 
-<span class="fc bfc" id="L744" title="All 2 branches covered.">        if(forward){</span>
-<span class="fc" id="L745">            Tsr d = f.derive(inputs, i);</span>
-<span class="fc" id="L746">            return new ADAgent(</span>
-<span class="fc" id="L747">                    ()-&gt;d,</span>
-                    (t, derivative) -&gt;{
-<span class="nc" id="L749">                        return MUL.activate(new Tsr[]{derivative, d});</span>
-                    },
+<span class="fc bfc" id="L717" title="All 2 branches covered.">        if(forward){</span>
+<span class="fc" id="L718">            Tsr d = f.derive(inputs, i);</span>
+<span class="fc" id="L719">            return new ADAgent(</span>
+<span class="fc" id="L720">                    ()-&gt;d,</span>
+<span class="nc" id="L721">                    (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
                     null
             );
         } else {
-<span class="fc bfc" id="L754" title="All 2 branches covered.">            if(this.identifier().equals(&quot;,&quot;))</span>
+<span class="fc bfc" id="L725" title="All 2 branches covered.">            if(this.identifier().equals(&quot;,&quot;))</span>
             {
-<span class="fc" id="L756">                return new ADAgent(</span>
-<span class="fc" id="L757">                        ()-&gt;null,</span>
-<span class="nc" id="L758">                        (t, derivative) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0),</span>
-<span class="fc" id="L759">                        (t, error) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0)</span>
+<span class="fc" id="L727">                return new ADAgent(</span>
+<span class="fc" id="L728">                        ()-&gt;null,</span>
+<span class="nc" id="L729">                        (t, derivative) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0),</span>
+<span class="fc" id="L730">                        (t, error) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0)</span>
                 );
             }
-<span class="pc bpc" id="L762" title="1 of 4 branches missed.">            else if (this.isOperation() &amp;&amp; !this.isConvection())</span>
+<span class="pc bpc" id="L733" title="1 of 4 branches missed.">            else if (this.isOperation() &amp;&amp; !this.isConvection())</span>
             {
-<span class="fc" id="L764">                Tsr d = f.derive(inputs, i);</span>
-<span class="fc" id="L765">                return new ADAgent(</span>
-<span class="fc" id="L766">                        ()-&gt;d,</span>
-<span class="nc" id="L767">                        (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
-<span class="fc" id="L768">                        (t, error) -&gt; MUL.activate(new Tsr[]{error, d})</span>
+<span class="fc" id="L735">                Tsr d = f.derive(inputs, i);</span>
+<span class="fc" id="L736">                return new ADAgent(</span>
+<span class="fc" id="L737">                        ()-&gt;d,</span>
+<span class="nc" id="L738">                        (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
+<span class="fc" id="L739">                        (t, error) -&gt; MUL.activate(new Tsr[]{error, d})</span>
                 );
             }
-<span class="pc bpc" id="L771" title="1 of 2 branches missed.">            else if (this.isConvection())</span>
+<span class="pc bpc" id="L742" title="1 of 2 branches missed.">            else if (this.isConvection())</span>
             {
-<span class="fc" id="L773">                Tsr d = f.derive(inputs, i);</span>
-<span class="fc" id="L774">                return new ADAgent(</span>
-<span class="fc" id="L775">                        ()-&gt;d,</span>
-<span class="nc" id="L776">                        (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
-<span class="fc" id="L777">                        (t, error) -&gt; INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})</span>
+<span class="fc" id="L744">                Tsr d = f.derive(inputs, i);</span>
+<span class="fc" id="L745">                return new ADAgent(</span>
+<span class="fc" id="L746">                        ()-&gt;d,</span>
+<span class="nc" id="L747">                        (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
+<span class="fc" id="L748">                        (t, error) -&gt; INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})</span>
                 );
             }
         }
-<span class="nc" id="L781">        return new ADAgent(</span>
-<span class="nc" id="L782">                ()-&gt;null,</span>
-<span class="nc" id="L783">                (t, derivative) -&gt; null,</span>
-<span class="nc" id="L784">                (t, error) -&gt; null</span>
+<span class="nc" id="L752">        return new ADAgent(</span>
+<span class="nc" id="L753">                ()-&gt;null,</span>
+<span class="nc" id="L754">                (t, derivative) -&gt; null,</span>
+<span class="nc" id="L755">                (t, error) -&gt; null</span>
         );
 
     }

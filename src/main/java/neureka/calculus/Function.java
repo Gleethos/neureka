@@ -3,10 +3,9 @@ package neureka.calculus;
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.calculus.environment.Types;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
-import neureka.calculus.factory.OperationType;
+import neureka.calculus.environment.OperationType;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.calculus.environment.Cache;
 
@@ -16,7 +15,6 @@ public interface Function
 {
     //Global context and cache:
     Cache CACHE = Cache.instance();
-    Types TYPES = Types.instance();
 
     static Function create(String expression){
         return create(expression, true);

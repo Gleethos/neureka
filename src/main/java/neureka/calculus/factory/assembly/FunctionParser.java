@@ -1,6 +1,6 @@
 package neureka.calculus.factory.assembly;
 
-import neureka.calculus.Function;
+import neureka.calculus.environment.OperationType;
 
 import java.util.List;
 
@@ -10,8 +10,8 @@ import java.util.List;
 public class FunctionParser {
     public static int numberOfOperationsWithin(final List<String> operations) {
         int Count = 0;
-        for (int i = 0; i < Function.TYPES.COUNT(); ++i) {
-            if (FunctionParser.containsOperation(Function.TYPES.REGISTER(i), operations)) {
+        for (int i = 0; i < OperationType.COUNT(); ++i) {
+            if (FunctionParser.containsOperation(OperationType.instance(i).identifier(), operations)) {
                 ++Count;
             }
         }
@@ -73,7 +73,7 @@ public class FunctionParser {
 
     public static boolean isBasicOperation(final String operation) {
         if (operation.length() > 8) return false;
-        return Function.TYPES.LOOKUP(operation) >= 0;
+        return (OperationType.instance(operation) != null) && OperationType.instance(operation).id() >= 0;
     }
 
     public static String groupBy(final String operation, final String currentChain, final String currentComponent, final String currentOperation) {
@@ -165,23 +165,23 @@ public class FunctionParser {
         if (exp.equals("()")) {
             return "";
         }
-        exp = exp.replace("sigmoid", Function.TYPES.REGISTER(1));
-        exp = exp.replace("quadratic", Function.TYPES.REGISTER(3));
-        exp = exp.replace("quadr", Function.TYPES.REGISTER(3));
-        exp = exp.replace("lig", Function.TYPES.REGISTER(4));
-        exp = exp.replace("ligmoid", Function.TYPES.REGISTER(4));
-        exp = exp.replace("softplus", Function.TYPES.REGISTER(4));
-        exp = exp.replace("spls", Function.TYPES.REGISTER(4));
-        exp = exp.replace("ligm", Function.TYPES.REGISTER(4));
-        exp = exp.replace("identity", Function.TYPES.REGISTER(5));
-        exp = exp.replace("ident", Function.TYPES.REGISTER(5));
-        exp = exp.replace("self", Function.TYPES.REGISTER(5));
-        exp = exp.replace("copy", Function.TYPES.REGISTER(5));
-        exp = exp.replace("gaussian", Function.TYPES.REGISTER(6));
-        exp = exp.replace("gauss", Function.TYPES.REGISTER(6));
-        exp = exp.replace("absolute", Function.TYPES.REGISTER(7));
-        exp = exp.replace("summation", Function.TYPES.REGISTER(10));
-        exp = exp.replace("product", Function.TYPES.REGISTER(11));
+        exp = exp.replace("sigmoid", "sig");//Function.TYPES.REGISTER(1));
+        exp = exp.replace("quadratic", "quad");//Function.TYPES.REGISTER(3));
+        exp = exp.replace("quadr", "quad");//Function.TYPES.REGISTER(3));
+        exp = exp.replace("lig", "lig");//Function.TYPES.REGISTER(4));
+        exp = exp.replace("ligmoid", "lig");//Function.TYPES.REGISTER(4));
+        exp = exp.replace("softplus", "lig");//Function.TYPES.REGISTER(4));
+        exp = exp.replace("spls", "lig");//Function.TYPES.REGISTER(4));
+        exp = exp.replace("ligm", "lig");//Function.TYPES.REGISTER(4));
+        exp = exp.replace("identity", "idy");//Function.TYPES.REGISTER(5));
+        exp = exp.replace("ident", "idy");//Function.TYPES.REGISTER(5));
+        exp = exp.replace("self", "idy");//Function.TYPES.REGISTER(5));
+        exp = exp.replace("copy", "idy");//Function.TYPES.REGISTER(5));
+        exp = exp.replace("gaussian", "gaus");//Function.TYPES.REGISTER(6));
+        exp = exp.replace("gauss", "gaus");//Function.TYPES.REGISTER(6));
+        exp = exp.replace("absolute", "abs");//Function.TYPES.REGISTER(7));
+        exp = exp.replace("summation", "sum");//Function.TYPES.REGISTER(10));
+        exp = exp.replace("product", "prod");//Function.TYPES.REGISTER(11));
 
         int bracketDepth = 0;
         for (int Ei = 0; Ei < exp.length(); ++Ei) {
@@ -232,8 +232,8 @@ public class FunctionParser {
     public static String assumptionBasedOn(String expression){
         double largest = -1;
         int best = 0;
-        for(int i=0; i<Function.TYPES.COUNT(); i++){
-            double s = similarity(expression, Function.TYPES.REGISTER(i));
+        for(int i=0; i<OperationType.COUNT(); i++){
+            double s = similarity(expression, OperationType.instance(i).identifier());
             if(largest==-1){
                 largest = s;
             } else if(s > largest){
@@ -241,7 +241,7 @@ public class FunctionParser {
                 largest = s;
             }
         }
-        return (largest>0.1)?Function.TYPES.REGISTER(best):null;
+        return (largest>0.1)?OperationType.instance(best).identifier():null;
     }
 
     public static double similarity(String s1, String s2) {
