@@ -756,7 +756,7 @@ public class Tsr extends AbstractNDArray
                     last = ((Integer)((Object[])ranges[i])[((Object[])ranges[i]).length-1]);
                 }
             }
-            if (first>last){
+            if (first<0 && last<0 && first>last){
                 int temp = first;
                 first = last;
                 last = temp;
@@ -890,18 +890,12 @@ public class Tsr extends AbstractNDArray
         else if(value instanceof  double[]) this.setValue64((double[])value);
         else if(value instanceof Float) {
             this.setIsVirtual(true);
-            if(this.is32()){
-                ((float[])_value)[0] = (Float) value;
-            } else {
-                ((double[])_value)[0] = ((Float)value).doubleValue();
-            }
+            if(this.is32()) ((float[])_value)[0] = (Float) value;
+            else ((double[])_value)[0] = ((Float)value).doubleValue();
         } else if(value instanceof Double){
             this.setIsVirtual(true);
-            if(this.is64()){
-                ((double[])_value)[0] = (Double) value;
-            } else {
-                ((float[])_value)[0] = ((Double)value).floatValue();
-            }
+            if(this.is64()) ((double[])_value)[0] = (Double) value;
+            else ((float[])_value)[0] = ((Double)value).floatValue();
         }
         return this;
     }
@@ -1023,11 +1017,8 @@ public class Tsr extends AbstractNDArray
         String half = (deep==null)?"":"  ";
         String deeper = (deep==null)?deep:deep+delimiter;
         int max = (mode.contains("s"))?3:50;
-        if (this.isEmpty()) {
-            return "empty";
-        } else if (this.isUndefined()) {
-            return "undefined";
-        }
+        if (this.isEmpty()) return "empty";
+        else if (this.isUndefined()) return "undefined";
         StringBuilder strShape = new StringBuilder();
         int[] shape = shape();
         for (int i = 0; i < _shape.length; i++) {
@@ -1035,11 +1026,20 @@ public class Tsr extends AbstractNDArray
             if (i < shape.length - 1) strShape.append("x");
         }
         boolean compact = mode.contains("c");
-        strShape = new StringBuilder("[" + strShape + "]");
+        strShape = new StringBuilder(
+                (Neureka.instance().settings().view().legacy())
+                        ? "[" + strShape + "]"
+                        : "(" + strShape + ")"
+        );
         if(mode.contains("shape")||mode.contains("shp")) return strShape.toString();
         String asString = "";
-        asString += _stringified((value64()), compact, max);//(this.isOutsourced())?this.value64():_value
-        asString = strShape + ":(" + asString + ")";
+        asString += _stringified((value64()), compact, max);
+        asString = strShape +
+                (
+                        (Neureka.instance().settings().view().legacy())
+                                ? ":(" + asString + ")"
+                                : ":[" + asString + "]"
+                );
         if(mode.contains("g")){
             if(this.rqsGradient()){
                 asString += ":g:";

@@ -16,6 +16,10 @@ Neureka.instance {
         debug {
             delegate.keepDerivativeTargetPayloads = false
         }
+
+        view {
+            delegate.legacy = false
+        }
     }
 
 }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Neureka.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka</a> &gt; <span class="el_source">Neureka.java</span></div><h1>Neureka.java</h1><pre class="source lang-java linenums">package neureka;
 
-import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
 
@@ -17,42 +16,42 @@ public class Neureka
     private Utility _utility;
 
     static {
-<span class="fc" id="L20">        _instance = new Neureka();</span>
-<span class="fc" id="L21">        new GroovyShell().evaluate(_instance.utility().readResource(&quot;library_settings.groovy&quot;));</span>
-<span class="fc" id="L22">        new GroovyShell().evaluate(_instance.utility().readResource(&quot;scripting_setup.groovy&quot;));</span>
-<span class="fc" id="L23">    }</span>
+<span class="fc" id="L19">        _instance = new Neureka();</span>
+<span class="fc" id="L20">        new GroovyShell().evaluate(_instance.utility().readResource(&quot;library_settings.groovy&quot;));</span>
+<span class="fc" id="L21">        new GroovyShell().evaluate(_instance.utility().readResource(&quot;scripting_setup.groovy&quot;));</span>
+<span class="fc" id="L22">    }</span>
 
-<span class="fc" id="L25">    private Neureka(){</span>
-<span class="fc" id="L26">            _settings = new Settings();</span>
-<span class="fc" id="L27">            _utility = new Utility();</span>
-<span class="fc" id="L28">    }</span>
+<span class="fc" id="L24">    private Neureka(){</span>
+<span class="fc" id="L25">            _settings = new Settings();</span>
+<span class="fc" id="L26">            _utility = new Utility();</span>
+<span class="fc" id="L27">    }</span>
 
     public static Neureka instance(){
-<span class="fc" id="L31">        return _instance;</span>
+<span class="fc" id="L30">        return _instance;</span>
     }
 
     public static Neureka instance(Closure c){
-<span class="fc" id="L35">        c.setDelegate(_instance);</span>
-<span class="fc" id="L36">        c.call();</span>
-<span class="fc" id="L37">        return _instance;</span>
+<span class="fc" id="L34">        c.setDelegate(_instance);</span>
+<span class="fc" id="L35">        c.call();</span>
+<span class="fc" id="L36">        return _instance;</span>
     }
 
     public Settings settings(){
-<span class="fc" id="L41">        return _settings;</span>
+<span class="fc" id="L40">        return _settings;</span>
     }
 
     public Settings settings(Closure c){
-<span class="fc" id="L45">        c.setDelegate(_settings);</span>
-<span class="fc" id="L46">        c.call();</span>
-<span class="fc" id="L47">        return _settings;</span>
+<span class="fc" id="L44">        c.setDelegate(_settings);</span>
+<span class="fc" id="L45">        c.call();</span>
+<span class="fc" id="L46">        return _settings;</span>
     }
 
     public Utility utility(){
-<span class="fc" id="L51">        return _utility;</span>
+<span class="fc" id="L50">        return _utility;</span>
     }
 
     public static String version(){
-<span class="fc" id="L55">        return &quot;1.0.0&quot;;</span>
+<span class="fc" id="L54">        return &quot;1.0.0&quot;;</span>
     }
 
     public class Settings
@@ -60,6 +59,7 @@ public class Neureka
         private Debug _debug;
         private AutoDiff _autoDiff;
         private Indexing _indexing;
+        private View _view;
 
 <span class="fc" id="L64">        private boolean _isLocked = false;</span>
 
@@ -67,57 +67,66 @@ public class Neureka
 <span class="fc" id="L67">            _debug = new Debug();</span>
 <span class="fc" id="L68">            _autoDiff = new AutoDiff();</span>
 <span class="fc" id="L69">            _indexing = new Indexing();</span>
-<span class="fc" id="L70">        }</span>
+<span class="fc" id="L70">            _view = new View();</span>
+<span class="fc" id="L71">        }</span>
 
         public Debug debug(){
-<span class="fc" id="L73">            return _debug;</span>
+<span class="fc" id="L74">            return _debug;</span>
         }
 
         public Debug debug(Closure c){
-<span class="fc" id="L77">            c.setDelegate(_debug);</span>
-<span class="fc" id="L78">            c.call();</span>
-<span class="fc" id="L79">            return _debug;</span>
+<span class="fc" id="L78">            c.setDelegate(_debug);</span>
+<span class="fc" id="L79">            c.call();</span>
+<span class="fc" id="L80">            return _debug;</span>
         }
 
         public AutoDiff autoDiff(){
-<span class="fc" id="L83">            return _autoDiff;</span>
+<span class="fc" id="L84">            return _autoDiff;</span>
         }
 
         public AutoDiff autoDiff(Closure c){
-<span class="fc" id="L87">            c.setDelegate(_autoDiff);</span>
-<span class="fc" id="L88">            c.call();</span>
-<span class="fc" id="L89">            return _autoDiff;</span>
+<span class="fc" id="L88">            c.setDelegate(_autoDiff);</span>
+<span class="fc" id="L89">            c.call();</span>
+<span class="fc" id="L90">            return _autoDiff;</span>
         }
 
         public Indexing indexing(){
-<span class="fc" id="L93">            return _indexing;</span>
+<span class="fc" id="L94">            return _indexing;</span>
         }
 
         public Indexing indexing(Closure c){
-<span class="fc" id="L97">            c.setDelegate(_indexing);</span>
-<span class="fc" id="L98">            c.call();</span>
-<span class="fc" id="L99">            return _indexing;</span>
+<span class="fc" id="L98">            c.setDelegate(_indexing);</span>
+<span class="fc" id="L99">            c.call();</span>
+<span class="fc" id="L100">            return _indexing;</span>
+        }
+
+        public View view(){
+<span class="fc" id="L104">            return _view;</span>
+        }
+
+        public View view(Closure c){
+<span class="fc" id="L108">            c.setDelegate(_view);</span>
+<span class="fc" id="L109">            c.call();</span>
+<span class="fc" id="L110">            return _view;</span>
         }
 
         public boolean isLocked(){
-<span class="fc" id="L103">            return  _isLocked;</span>
+<span class="fc" id="L114">            return  _isLocked;</span>
         }
 
         public void setIsLocked(boolean locked){
-<span class="nc" id="L107">            _isLocked = locked;</span>
-<span class="nc" id="L108">        }</span>
+<span class="nc" id="L118">            _isLocked = locked;</span>
+<span class="nc" id="L119">        }</span>
 
         public void reset(){
-<span class="fc" id="L111">            debug().reset();</span>
-<span class="fc" id="L112">            autoDiff().reset();</span>
-<span class="fc" id="L113">            indexing().reset();</span>
-<span class="fc" id="L114">        }</span>
+<span class="fc" id="L122">            debug().reset();</span>
+<span class="fc" id="L123">            autoDiff().reset();</span>
+<span class="fc" id="L124">            indexing().reset();</span>
+<span class="fc" id="L125">            view().reset();</span>
+<span class="fc" id="L126">        }</span>
 
         public class Debug
         {
-<span class="fc" id="L118">            Debug(){</span>
-<span class="fc" id="L119">                _keepDerivativeTargetPayloads = false;</span>
-<span class="fc" id="L120">            }</span>
             /**
              * Every derivative is calculated with respect to some graph node.
              * Graph nodes contain payload tensors.
@@ -135,28 +144,27 @@ public class Neureka
              */
             private boolean _keepDerivativeTargetPayloads;
 
+<span class="fc" id="L147">            Debug(){</span>
+<span class="fc" id="L148">                reset();</span>
+<span class="fc" id="L149">            }</span>
+
             public void reset(){
-<span class="fc" id="L139">                _keepDerivativeTargetPayloads = false;</span>
-<span class="fc" id="L140">            }</span>
+<span class="fc" id="L152">                _keepDerivativeTargetPayloads = false;</span>
+<span class="fc" id="L153">            }</span>
 
             public boolean keepDerivativeTargetPayloads(){
-<span class="fc" id="L143">                return _keepDerivativeTargetPayloads;</span>
+<span class="fc" id="L156">                return _keepDerivativeTargetPayloads;</span>
             }
 
             public void setKeepDerivativeTargetPayloads(boolean keep){
-<span class="pc bpc" id="L147" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
-<span class="fc" id="L148">                _keepDerivativeTargetPayloads = keep;</span>
-<span class="fc" id="L149">            }</span>
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
+<span class="fc" id="L161">                _keepDerivativeTargetPayloads = keep;</span>
+<span class="fc" id="L162">            }</span>
 
         }
 
         public class AutoDiff // Auto-Differentiation
         {
-<span class="fc" id="L155">            AutoDiff(){</span>
-<span class="fc" id="L156">                _retainPendingErrorForJITProp = true;</span>
-<span class="fc" id="L157">                _applyGradientWhenTensorIsUsed = false;</span>
-<span class="fc" id="L158">            }</span>
-
             /**
              * This flag enables an optimization technique which only applies
              * gradients as soon as they are needed by a tensor (the tensor is used again).
@@ -175,59 +183,85 @@ public class Neureka
              */
             private boolean _applyGradientWhenTensorIsUsed;
 
+<span class="fc" id="L186">            AutoDiff(){</span>
+<span class="fc" id="L187">                reset();</span>
+<span class="fc" id="L188">            }</span>
 
             public void reset(){
-<span class="fc" id="L180">                _retainPendingErrorForJITProp = true;</span>
-<span class="fc" id="L181">                _applyGradientWhenTensorIsUsed = false;</span>
-<span class="fc" id="L182">            }</span>
+<span class="fc" id="L191">                _retainPendingErrorForJITProp = true;</span>
+<span class="fc" id="L192">                _applyGradientWhenTensorIsUsed = false;</span>
+<span class="fc" id="L193">            }</span>
 
             public boolean retainPendingErrorForJITProp(){
-<span class="fc" id="L185">                return _retainPendingErrorForJITProp;</span>
+<span class="fc" id="L196">                return _retainPendingErrorForJITProp;</span>
             }
 
             public void setRetainPendingErrorForJITProp(boolean retain){
-<span class="pc bpc" id="L189" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
-<span class="fc" id="L190">                _retainPendingErrorForJITProp = retain;</span>
-<span class="fc" id="L191">            }</span>
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
+<span class="fc" id="L201">                _retainPendingErrorForJITProp = retain;</span>
+<span class="fc" id="L202">            }</span>
 
             public boolean applyGradientWhenTensorIsUsed(){
-<span class="fc" id="L194">                return _applyGradientWhenTensorIsUsed;</span>
+<span class="fc" id="L205">                return _applyGradientWhenTensorIsUsed;</span>
             }
 
             public void setApplyGradientWhenTensorIsUsed(boolean apply){
-<span class="pc bpc" id="L198" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
-<span class="fc" id="L199">                _applyGradientWhenTensorIsUsed = apply;</span>
-<span class="fc" id="L200">            }</span>
+<span class="pc bpc" id="L209" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
+<span class="fc" id="L210">                _applyGradientWhenTensorIsUsed = apply;</span>
+<span class="fc" id="L211">            }</span>
 
         }
 
         public class Indexing
         {
-<span class="fc" id="L206">            Indexing(){</span>
-<span class="fc" id="L207">                _legacyIndexing = false;</span>
-<span class="fc" id="L208">            }</span>
-
-
             private boolean _legacyIndexing;
 
+<span class="fc" id="L219">            Indexing(){</span>
+<span class="fc" id="L220">                reset();</span>
+<span class="fc" id="L221">            }</span>
+
             public void reset(){
-<span class="fc" id="L214">                _legacyIndexing = false;</span>
-<span class="fc" id="L215">            }</span>
+<span class="fc" id="L224">                _legacyIndexing = false;</span>
+<span class="fc" id="L225">            }</span>
 
             public boolean legacy(){
-<span class="fc" id="L218">                return _legacyIndexing;</span>
+<span class="fc" id="L228">                return _legacyIndexing;</span>
             }
 
             public void setLegacy(boolean enabled){
-<span class="pc bpc" id="L222" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
-<span class="fc" id="L223">                _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (OpenCLPlatform)</span>
-<span class="fc" id="L224">            }</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
+<span class="fc" id="L233">                _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (in OpenCLPlatform)</span>
+<span class="fc" id="L234">            }</span>
+
+        }
+
+        public class View
+        {
+
+            private boolean _legacyView;
+
+<span class="fc" id="L243">            View() {</span>
+<span class="fc" id="L244">                reset();</span>
+<span class="fc" id="L245">            }</span>
+
+            public void reset(){
+<span class="fc" id="L248">                _legacyView = false;</span>
+<span class="fc" id="L249">            }</span>
+
+            public boolean legacy(){
+<span class="fc" id="L252">                return _legacyView;</span>
+            }
+
+            public void setLegacy(boolean enabled){
+<span class="pc bpc" id="L256" title="1 of 2 branches missed.">                if(_isLocked) return;</span>
+<span class="fc" id="L257">                _legacyView = enabled;</span>
+<span class="fc" id="L258">            }</span>
 
         }
 
     }
 
-<span class="fc" id="L230">    public static class Utility {</span>
+<span class="fc" id="L264">    public static class Utility {</span>
         /**
          * Helper method which reads the file with the given name and returns
          * the contents of this file as a String. Will exit the application
@@ -237,20 +271,20 @@ public class Neureka
          * @return The contents of the file
          */
         public String readResource(String path){
-<span class="fc" id="L240">            InputStream stream = _instance.getClass().getClassLoader().getResourceAsStream(path);</span>
+<span class="fc" id="L274">            InputStream stream = _instance.getClass().getClassLoader().getResourceAsStream(path);</span>
             try {
-<span class="fc" id="L242">                BufferedReader br = new BufferedReader(new InputStreamReader(stream));//new FileInputStream(fileName)));</span>
-<span class="fc" id="L243">                StringBuffer sb = new StringBuffer();</span>
-<span class="fc" id="L244">                String line = &quot;&quot;;</span>
-<span class="fc bfc" id="L245" title="All 2 branches covered.">                while (line!=null) {</span>
-<span class="fc" id="L246">                    line = br.readLine();</span>
-<span class="fc bfc" id="L247" title="All 2 branches covered.">                    if (line != null) sb.append(line).append(&quot;\n&quot;);</span>
+<span class="fc" id="L276">                BufferedReader br = new BufferedReader(new InputStreamReader(stream));//new FileInputStream(fileName)));</span>
+<span class="fc" id="L277">                StringBuffer sb = new StringBuffer();</span>
+<span class="fc" id="L278">                String line = &quot;&quot;;</span>
+<span class="fc bfc" id="L279" title="All 2 branches covered.">                while (line!=null) {</span>
+<span class="fc" id="L280">                    line = br.readLine();</span>
+<span class="fc bfc" id="L281" title="All 2 branches covered.">                    if (line != null) sb.append(line).append(&quot;\n&quot;);</span>
                 }
-<span class="fc" id="L249">                return sb.toString();</span>
-<span class="nc" id="L250">            } catch (IOException e) {</span>
-<span class="nc" id="L251">                e.printStackTrace();</span>
-<span class="nc" id="L252">                System.exit(1);</span>
-<span class="nc" id="L253">                return null;</span>
+<span class="fc" id="L283">                return sb.toString();</span>
+<span class="nc" id="L284">            } catch (IOException e) {</span>
+<span class="nc" id="L285">                e.printStackTrace();</span>
+<span class="nc" id="L286">                System.exit(1);</span>
+<span class="nc" id="L287">                return null;</span>
             }
         }
 

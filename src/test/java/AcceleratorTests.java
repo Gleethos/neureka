@@ -14,8 +14,10 @@ import java.util.List;
 public class AcceleratorTests
 {
     @Test
-    public void testOpenCLDevice(){
-
+    public void testOpenCLDevice()
+    {
+        Neureka.instance().settings().reset();
+        Neureka.instance().settings().view().setLegacy(true);
         if(!System.getProperty("os.name").toLowerCase().contains("windows")){
             return;
         }

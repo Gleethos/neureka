@@ -1,6 +1,5 @@
 package neureka;
 
-import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
 
@@ -60,6 +59,7 @@ public class Neureka
         private Debug _debug;
         private AutoDiff _autoDiff;
         private Indexing _indexing;
+        private View _view;
 
         private boolean _isLocked = false;
 
@@ -67,6 +67,7 @@ public class Neureka
             _debug = new Debug();
             _autoDiff = new AutoDiff();
             _indexing = new Indexing();
+            _view = new View();
         }
 
         public Debug debug(){
@@ -99,6 +100,16 @@ public class Neureka
             return _indexing;
         }
 
+        public View view(){
+            return _view;
+        }
+
+        public View view(Closure c){
+            c.setDelegate(_view);
+            c.call();
+            return _view;
+        }
+
         public boolean isLocked(){
             return  _isLocked;
         }
@@ -111,13 +122,11 @@ public class Neureka
             debug().reset();
             autoDiff().reset();
             indexing().reset();
+            view().reset();
         }
 
         public class Debug
         {
-            Debug(){
-                _keepDerivativeTargetPayloads = false;
-            }
             /**
              * Every derivative is calculated with respect to some graph node.
              * Graph nodes contain payload tensors.
@@ -134,6 +143,10 @@ public class Neureka
              * This flag should not be modified in production! (memory leak)
              */
             private boolean _keepDerivativeTargetPayloads;
+
+            Debug(){
+                reset();
+            }
 
             public void reset(){
                 _keepDerivativeTargetPayloads = false;
@@ -152,11 +165,6 @@ public class Neureka
 
         public class AutoDiff // Auto-Differentiation
         {
-            AutoDiff(){
-                _retainPendingErrorForJITProp = true;
-                _applyGradientWhenTensorIsUsed = false;
-            }
-
             /**
              * This flag enables an optimization technique which only applies
              * gradients as soon as they are needed by a tensor (the tensor is used again).
@@ -175,6 +183,9 @@ public class Neureka
              */
             private boolean _applyGradientWhenTensorIsUsed;
 
+            AutoDiff(){
+                reset();
+            }
 
             public void reset(){
                 _retainPendingErrorForJITProp = true;
@@ -203,12 +214,11 @@ public class Neureka
 
         public class Indexing
         {
-            Indexing(){
-                _legacyIndexing = false;
-            }
-
-
             private boolean _legacyIndexing;
+
+            Indexing(){
+                reset();
+            }
 
             public void reset(){
                 _legacyIndexing = false;
@@ -220,7 +230,31 @@ public class Neureka
 
             public void setLegacy(boolean enabled){
                 if(_isLocked) return;
-                _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (OpenCLPlatform)
+                _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (in OpenCLPlatform)
+            }
+
+        }
+
+        public class View
+        {
+
+            private boolean _legacyView;
+
+            View() {
+                reset();
+            }
+
+            public void reset(){
+                _legacyView = false;
+            }
+
+            public boolean legacy(){
+                return _legacyView;
+            }
+
+            public void setLegacy(boolean enabled){
+                if(_isLocked) return;
+                _legacyView = enabled;
             }
 
         }

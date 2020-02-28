@@ -13,6 +13,7 @@ public class BroadJavaTests {
     {
         Neureka.instance().settings().reset();
         Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(false);
+        Neureka.instance().settings().view().setLegacy(true);
 
         NTester_Tensor tester = new NTester_Tensor("Tensor tester (only cpu)");
         Tsr x = new Tsr(new int[]{1}, 3).setRqsGradient(true);
@@ -156,6 +157,7 @@ public class BroadJavaTests {
     public void testTensorOperationsAndAutograd() {
         Neureka.instance().settings().reset();
         Neureka.instance().settings().indexing().setLegacy(true);
+        Neureka.instance().settings().view().setLegacy(true);
 
         NTester_Tensor tester = new NTester_Tensor("Testing core tensor functionality");
 

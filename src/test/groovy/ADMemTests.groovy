@@ -10,6 +10,7 @@ class ADMemTests {
     void testReverseReshape() {
 
         Neureka.instance().settings().reset()
+        Neureka.instance().settings().view().setLegacy(true)
 
         Tsr a = new Tsr([2, 3], [
                 1, 2, 3,
