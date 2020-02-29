@@ -692,12 +692,12 @@ public class OperationType {
     //private static Function INV_X ;
 
     public boolean allowsForward(Tsr[] inputs){
-<span class="fc bfc" id="L695" title="All 2 branches covered.">        if(this.isConvection()) return false;</span>
-<span class="fc bfc" id="L696" title="All 2 branches covered.">        if(this.identifier().equals(&quot;,&quot;)) return false; //Reshape</span>
+<span class="fc bfc" id="L695" title="All 2 branches covered.">        if (this.isConvection()) return false;</span>
+<span class="fc bfc" id="L696" title="All 2 branches covered.">        if (this.identifier().equals(&quot;,&quot;)) return false; //Reshape</span>
 <span class="fc" id="L697">        Tsr last = null;</span>
-<span class="fc bfc" id="L698" title="All 2 branches covered.">        for(Tsr t : inputs){</span>
-<span class="fc bfc" id="L699" title="All 2 branches covered.">            if(last!=null){</span>
-<span class="fc bfc" id="L700" title="All 2 branches covered.">                if(!last.shape().equals(t.shape())){</span>
+<span class="fc bfc" id="L698" title="All 2 branches covered.">        for (Tsr t : inputs) {</span>
+<span class="fc bfc" id="L699" title="All 2 branches covered.">            if (last!=null) {</span>
+<span class="fc bfc" id="L700" title="All 2 branches covered.">                if (!last.shape().equals(t.shape())) {</span>
 <span class="fc" id="L701">                    return false;</span>
                 }
             }

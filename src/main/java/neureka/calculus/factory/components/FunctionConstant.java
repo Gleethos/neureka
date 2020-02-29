@@ -121,9 +121,5 @@ public class FunctionConstant implements Function
 		return null;
 	}
 
-	//@Override
-	//public FADLambda getForwardAD(GraphNode node, Tsr[] inputs, int i){
-	//	return (error)->error;
-	//}
 
 }

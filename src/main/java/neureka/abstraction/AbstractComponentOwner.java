@@ -25,9 +25,9 @@ public abstract class AbstractComponentOwner {
      */
     public Object find(Class componentClass) {
         if (_components != null) {
-            for (int Pi = 0; Pi < _components.size(); Pi++) {
-                if (componentClass.isInstance(_components.get(Pi))) {
-                    return _components.get(Pi);
+            for (Object component : _components) {
+                if (componentClass.isInstance(component)) {
+                    return component;
                 }
             }
         }
@@ -45,7 +45,7 @@ public abstract class AbstractComponentOwner {
             _components.remove(oldComponent);
             _components.trimToSize();
         }
-        if (_components!=null && _components.size() == 0) {
+        if (_components != null && _components.size() == 0) {
             _components = null;
         }
         return  this;
@@ -93,9 +93,9 @@ public abstract class AbstractComponentOwner {
      * @param action An action applied on the requested component if found.
      * @return True if a component could be found, false otherwise.
      */
-    public boolean forComponent(Class cc, Consumer<Object> action){
+    public boolean forComponent(Class cc, Consumer<Object> action) {
         Object component = this.find(cc);
-        if(component!=null){
+        if (component!=null) {
             action.accept(component);
             return true;
         } else {

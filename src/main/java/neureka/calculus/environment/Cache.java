@@ -39,14 +39,14 @@ public class Cache
 
     public synchronized Tsr preprocess(Tsr[] inputs, Function function, Supplier<Tsr> activation, int d, int j)
     {
-        if(!function.doesAD()) {
+        if (!function.doesAD()) {
             return activation.get();//TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD => NO GRAPH NODES
         }
         boolean locked = true;//input tensors might all have graph nodes but are left from previous computation. (=>need to locked again!)
         Tsr untracked = null;
-        for(Tsr t : inputs){
+        for (Tsr t : inputs){
             GraphNode node = (GraphNode) t.find(GraphNode.class);
-            if(node!=null){
+            if (node != null) {
                 untracked=t;
                 locked = (locked)&&node.lock().isLocked();
             }
@@ -55,8 +55,8 @@ public class Cache
             return Function.Setup.commit(null, inputs, function, activation);
         }
         GraphLock lock = ((GraphNode)untracked.find(GraphNode.class)).lock();
-        for(Tsr t : inputs){
-            if(t.has(GraphNode.class)){
+        for (Tsr t : inputs){
+            if (t.has(GraphNode.class)){
                 ((GraphNode)t.find(GraphNode.class)).obtainLocking(lock);
             } else {
                new GraphNode(function, lock, ()->t);
@@ -65,10 +65,10 @@ public class Cache
         }
         GraphNode node = (GraphNode) inputs[0].find(GraphNode.class);
         Tsr result = null;
-        if(function!=null && function.id()!= OperationType.instance("<").id()&&function.id()!=OperationType.instance(">").id()){
+        if (function != null && function.id() != OperationType.instance("<").id()&&function.id()!=OperationType.instance(">").id()){
             result = _get(node, d, j);
         }
-        if(result==null){
+        if(result == null){
             result = activation.get();
             _put(result, node, d, j);
         }
@@ -79,8 +79,8 @@ public class Cache
     private synchronized Tsr _get(GraphNode node, int d, int j)
     {
         long key = node.nid()+_keyed(d)*31+_keyed(j);
-        if(PROCESSING.containsKey(node.lock())){
-            if(PROCESSING.get(node.lock()).containsKey(key)){
+        if (PROCESSING.containsKey(node.lock())){
+            if (PROCESSING.get(node.lock()).containsKey(key)) {
                 return PROCESSING.get(node.lock()).get(key);
             }
         }
@@ -90,10 +90,10 @@ public class Cache
     private synchronized void _put(Tsr t, GraphNode node, int d, int j)
     {
         long key = node.nid()+_keyed(d)*31+_keyed(j);
-        if(node.isCachable()) {
+        if (node.isCachable()) {
             TreeMap<Long, Tsr> variables;
             if (!PROCESSING.containsKey(node.lock())) {
-                variables = new TreeMap<>((a, b) -> (int) (a.hashCode() - b.hashCode()));
+                variables = new TreeMap<>((a, b) -> (a.hashCode() - b.hashCode()));
                 PROCESSING.put(node.lock(), variables);
             } else {
                 variables = PROCESSING.get(node.lock());

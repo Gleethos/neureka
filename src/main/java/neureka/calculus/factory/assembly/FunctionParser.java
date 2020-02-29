@@ -34,9 +34,7 @@ public class FunctionParser {
 
     public static String parsedComponent(String exp, final int i) {
         exp = exp.trim();
-        if (exp.length() <= i) {
-            return null;
-        }
+        if (exp.length() <= i) return null;
         StringBuilder component = new StringBuilder();
         int bracketDepth = 0;
         component = new StringBuilder();
@@ -52,7 +50,7 @@ public class FunctionParser {
 
                     possibleOperation = exp.substring(Ei+1, Sii);//possibleOperation + exp.charAt(Sii);
                     if (FunctionParser.isBasicOperation(possibleOperation)) {
-                        if(exp.charAt(Ei)=='j' || !Character.isLetter(exp.charAt(Ei))){
+                        if (exp.charAt(Ei)=='j' || !Character.isLetter(exp.charAt(Ei))) {
                             component.append(exp.charAt(Ei));
                             return component.toString();
                         }
@@ -61,7 +59,7 @@ public class FunctionParser {
             }
             component.append(exp.charAt(Ei));
         }
-        return component.toString();//(!largest.equals(""))?best:component;
+        return component.toString();
     }
 
     public static boolean containsOperation(final String operation, final List<String> operations) {
@@ -156,15 +154,10 @@ public class FunctionParser {
     }
 
     public static String unpackAndCorrect(String exp) {
-        if (exp == null) {
-            return null;
-        }
-        if (exp.length() == 0) {
-            return "";
-        }
-        if (exp.equals("()")) {
-            return "";
-        }
+        if ( exp == null ) return null;
+        if ( exp.length() == 0 ) return "";
+        if ( exp.equals("()") ) return "";
+
         exp = exp.replace("sigmoid", "sig");//Function.TYPES.REGISTER(1));
         exp = exp.replace("quadratic", "quad");//Function.TYPES.REGISTER(3));
         exp = exp.replace("quadr", "quad");//Function.TYPES.REGISTER(3));
@@ -185,11 +178,8 @@ public class FunctionParser {
 
         int bracketDepth = 0;
         for (int Ei = 0; Ei < exp.length(); ++Ei) {
-            if (exp.charAt(Ei) == ')') {
-                --bracketDepth;
-            } else if (exp.charAt(Ei) == '(') {
-                ++bracketDepth;
-            }
+            if (exp.charAt(Ei) == ')') --bracketDepth;
+            else if (exp.charAt(Ei) == '(') ++bracketDepth;
         }
         if (bracketDepth != 0) {
             if (bracketDepth < 0) {
@@ -198,11 +188,7 @@ public class FunctionParser {
                     expBuilder.insert(0, "(");
                 }
                 exp = expBuilder.toString();
-            } else {
-                StringBuilder expBuilder = new StringBuilder(exp);
-                expBuilder.append(")".repeat(bracketDepth));
-                exp = expBuilder.toString();
-            }
+            } else exp = new StringBuilder(exp).append(")".repeat(bracketDepth)).toString();
         }
 
         boolean parsing = true;
@@ -211,20 +197,12 @@ public class FunctionParser {
             bracketDepth = 0;
             needsStitching = true;
             for (int i = 0; i < exp.length(); ++i) {
-                if (exp.charAt(i) == ')') {
-                    --bracketDepth;
-                } else if (exp.charAt(i) == '(') {
-                    ++bracketDepth;
-                }
-                if (bracketDepth == 0 && i != exp.length() - 1) {
-                    needsStitching = false;
-                }
+                if (exp.charAt(i) == ')') --bracketDepth;
+                else if (exp.charAt(i) == '(') ++bracketDepth;
+                if (bracketDepth == 0 && i != exp.length() - 1) needsStitching = false;
             }
-            if (needsStitching) {
-                exp = FunctionParser.removeHeadAndTail(exp);
-            } else {
-                parsing = false;
-            }
+            if (needsStitching) exp = FunctionParser.removeHeadAndTail(exp);
+            else parsing = false;
         }
         return exp;
     }
@@ -232,30 +210,30 @@ public class FunctionParser {
     public static String assumptionBasedOn(String expression){
         double largest = -1;
         int best = 0;
-        for(int i=0; i<OperationType.COUNT(); i++){
+        for (int i=0; i<OperationType.COUNT(); i++){
             double s = similarity(expression, OperationType.instance(i).identifier());
-            if(largest==-1){
+            if (largest==-1) {
                 largest = s;
-            } else if(s > largest){
+            } else if (s > largest) {
                 best = i;
                 largest = s;
             }
         }
-        return (largest>0.1)?OperationType.instance(best).identifier():null;
+        return ( largest > 0.1 ) ? OperationType.instance(best).identifier() : null;
     }
 
     public static double similarity(String s1, String s2) {
-        String longer = (s1.length()>s2.length())?s1:s2, shorter = (s1.length()>s2.length())?s2:s1;
+        String longer = (s1.length() > s2.length()) ?s1 : s2, shorter = (s1.length() > s2.length()) ? s2 : s1;
         if (s1.length() < s2.length()) { // longer should always have greater length
             longer = s2; shorter = s1;
         }
         int longerLength = longer.length();
-        if (longerLength == 0) { return 1.0; /* both strings are zero length */ }
+        if (longerLength == 0) return 1.0; /* both strings are zero length */
         double d = 0;
         int delta = (longer.length()-shorter.length());
-        for(int i=0; i<(delta+1); i++){
-            for(int si=0; si<shorter.length(); si++){
-                if(longer.charAt(i+si)==shorter.charAt(si)){
+        for (int i=0; i<(delta+1); i++){
+            for (int si=0; si<shorter.length(); si++){
+                if (longer.charAt(i+si)==shorter.charAt(si)){
                     d++;
                 }
             }

@@ -692,12 +692,12 @@ public class OperationType {
     //private static Function INV_X ;
 
     public boolean allowsForward(Tsr[] inputs){
-        if(this.isConvection()) return false;
-        if(this.identifier().equals(",")) return false; //Reshape
+        if (this.isConvection()) return false;
+        if (this.identifier().equals(",")) return false; //Reshape
         Tsr last = null;
-        for(Tsr t : inputs){
-            if(last!=null){
-                if(!last.shape().equals(t.shape())){
+        for (Tsr t : inputs) {
+            if (last!=null) {
+                if (!last.shape().equals(t.shape())) {
                     return false;
                 }
             }

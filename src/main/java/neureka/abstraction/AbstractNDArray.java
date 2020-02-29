@@ -141,7 +141,6 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
     }
 
     public int size() {
-        //if (this.isEmpty()) return 0;
         return Utility.Indexing.szeOfShp(this.shape());
     }
 
@@ -179,7 +178,7 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
             @Contract(pure = true)
             public static String strConf(int[] conf) {
                 StringBuilder str = new StringBuilder();
-                for(int i=0; i<conf.length; i++) str.append(conf[i]).append((i != conf.length - 1) ? ", " : "");
+                for (int i=0; i<conf.length; i++) str.append(conf[i]).append((i != conf.length - 1) ? ", " : "");
                 return "[" + str + "]";
             }
         }
@@ -199,7 +198,7 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
 
             @Contract(pure = true)
             private static int _incrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
-                if(Neureka.instance().settings().indexing().legacy()){
+                if (Neureka.instance().settings().indexing().legacy()) {
                     if (shpIdx[i] < (shape[i])) {
                         shpIdx[i]++;
                         if (shpIdx[i] == (shape[i])) {
@@ -232,7 +231,7 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
             public static int[] newTlnOf(int[] shape) {
                 int[] tln = new int[shape.length];
                 int prod = 1;
-                if(Neureka.instance().settings().indexing().legacy()){
+                if (Neureka.instance().settings().indexing().legacy()) {
                     for (int i = 0; i < tln.length; i++) {
                         tln[i] = prod;
                         prod *= shape[i];

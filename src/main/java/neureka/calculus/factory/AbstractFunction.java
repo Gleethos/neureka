@@ -201,7 +201,7 @@ public abstract class AbstractFunction implements Function {
             if (d >= 0) {//reverse reshape:
                 int reverseLength = 0;
                 for (int e : newForm) {
-                    if(e>=0) reverseLength++;
+                    if (e>=0) reverseLength++;
                 }
                 int[] reversed = new int[reverseLength];
                 int reshape_i = 0;

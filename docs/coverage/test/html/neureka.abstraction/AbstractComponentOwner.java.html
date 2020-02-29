@@ -25,11 +25,11 @@ import java.util.function.Consumer;
      */
     public Object find(Class componentClass) {
 <span class="fc bfc" id="L27" title="All 2 branches covered.">        if (_components != null) {</span>
-<span class="fc bfc" id="L28" title="All 2 branches covered.">            for (int Pi = 0; Pi &lt; _components.size(); Pi++) {</span>
-<span class="fc bfc" id="L29" title="All 2 branches covered.">                if (componentClass.isInstance(_components.get(Pi))) {</span>
-<span class="fc" id="L30">                    return _components.get(Pi);</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">            for (Object component : _components) {</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">                if (componentClass.isInstance(component)) {</span>
+<span class="fc" id="L30">                    return component;</span>
                 }
-            }
+<span class="fc" id="L32">            }</span>
         }
 <span class="fc" id="L34">        return null;</span>
     }
@@ -45,7 +45,7 @@ import java.util.function.Consumer;
 <span class="fc" id="L45">            _components.remove(oldComponent);</span>
 <span class="fc" id="L46">            _components.trimToSize();</span>
         }
-<span class="pc bpc" id="L48" title="1 of 4 branches missed.">        if (_components!=null &amp;&amp; _components.size() == 0) {</span>
+<span class="pc bpc" id="L48" title="1 of 4 branches missed.">        if (_components != null &amp;&amp; _components.size() == 0) {</span>
 <span class="fc" id="L49">            _components = null;</span>
         }
 <span class="fc" id="L51">        return  this;</span>
@@ -93,9 +93,9 @@ import java.util.function.Consumer;
      * @param action An action applied on the requested component if found.
      * @return True if a component could be found, false otherwise.
      */
-    public boolean forComponent(Class cc, Consumer&lt;Object&gt; action){
+    public boolean forComponent(Class cc, Consumer&lt;Object&gt; action) {
 <span class="fc" id="L97">        Object component = this.find(cc);</span>
-<span class="fc bfc" id="L98" title="All 2 branches covered.">        if(component!=null){</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        if (component!=null) {</span>
 <span class="fc" id="L99">            action.accept(component);</span>
 <span class="fc" id="L100">            return true;</span>
         } else {

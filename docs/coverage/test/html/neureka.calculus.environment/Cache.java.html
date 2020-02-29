@@ -39,14 +39,14 @@ public class Cache
 
     public synchronized Tsr preprocess(Tsr[] inputs, Function function, Supplier&lt;Tsr&gt; activation, int d, int j)
     {
-<span class="fc bfc" id="L42" title="All 2 branches covered.">        if(!function.doesAD()) {</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        if (!function.doesAD()) {</span>
 <span class="fc" id="L43">            return activation.get();//TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD =&gt; NO GRAPH NODES</span>
         }
 <span class="fc" id="L45">        boolean locked = true;//input tensors might all have graph nodes but are left from previous computation. (=&gt;need to locked again!)</span>
 <span class="fc" id="L46">        Tsr untracked = null;</span>
-<span class="fc bfc" id="L47" title="All 2 branches covered.">        for(Tsr t : inputs){</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        for (Tsr t : inputs){</span>
 <span class="fc" id="L48">            GraphNode node = (GraphNode) t.find(GraphNode.class);</span>
-<span class="fc bfc" id="L49" title="All 2 branches covered.">            if(node!=null){</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">            if (node != null) {</span>
 <span class="fc" id="L50">                untracked=t;</span>
 <span class="fc bfc" id="L51" title="All 4 branches covered.">                locked = (locked)&amp;&amp;node.lock().isLocked();</span>
             }
@@ -55,8 +55,8 @@ public class Cache
 <span class="fc" id="L55">            return Function.Setup.commit(null, inputs, function, activation);</span>
         }
 <span class="fc" id="L57">        GraphLock lock = ((GraphNode)untracked.find(GraphNode.class)).lock();</span>
-<span class="fc bfc" id="L58" title="All 2 branches covered.">        for(Tsr t : inputs){</span>
-<span class="fc bfc" id="L59" title="All 2 branches covered.">            if(t.has(GraphNode.class)){</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        for (Tsr t : inputs){</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">            if (t.has(GraphNode.class)){</span>
 <span class="fc" id="L60">                ((GraphNode)t.find(GraphNode.class)).obtainLocking(lock);</span>
             } else {
 <span class="fc" id="L62">               new GraphNode(function, lock, ()-&gt;t);</span>
@@ -65,10 +65,10 @@ public class Cache
         }
 <span class="fc" id="L66">        GraphNode node = (GraphNode) inputs[0].find(GraphNode.class);</span>
 <span class="fc" id="L67">        Tsr result = null;</span>
-<span class="pc bpc" id="L68" title="1 of 6 branches missed.">        if(function!=null &amp;&amp; function.id()!= OperationType.instance(&quot;&lt;&quot;).id()&amp;&amp;function.id()!=OperationType.instance(&quot;&gt;&quot;).id()){</span>
+<span class="pc bpc" id="L68" title="1 of 6 branches missed.">        if (function != null &amp;&amp; function.id() != OperationType.instance(&quot;&lt;&quot;).id()&amp;&amp;function.id()!=OperationType.instance(&quot;&gt;&quot;).id()){</span>
 <span class="fc" id="L69">            result = _get(node, d, j);</span>
         }
-<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        if(result==null){</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        if(result == null){</span>
 <span class="fc" id="L72">            result = activation.get();</span>
 <span class="fc" id="L73">            _put(result, node, d, j);</span>
         }
@@ -79,8 +79,8 @@ public class Cache
     private synchronized Tsr _get(GraphNode node, int d, int j)
     {
 <span class="fc" id="L81">        long key = node.nid()+_keyed(d)*31+_keyed(j);</span>
-<span class="fc bfc" id="L82" title="All 2 branches covered.">        if(PROCESSING.containsKey(node.lock())){</span>
-<span class="pc bpc" id="L83" title="1 of 2 branches missed.">            if(PROCESSING.get(node.lock()).containsKey(key)){</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        if (PROCESSING.containsKey(node.lock())){</span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">            if (PROCESSING.get(node.lock()).containsKey(key)) {</span>
 <span class="nc" id="L84">                return PROCESSING.get(node.lock()).get(key);</span>
             }
         }
@@ -90,10 +90,10 @@ public class Cache
     private synchronized void _put(Tsr t, GraphNode node, int d, int j)
     {
 <span class="fc" id="L92">        long key = node.nid()+_keyed(d)*31+_keyed(j);</span>
-<span class="fc bfc" id="L93" title="All 2 branches covered.">        if(node.isCachable()) {</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        if (node.isCachable()) {</span>
             TreeMap&lt;Long, Tsr&gt; variables;
 <span class="fc bfc" id="L95" title="All 2 branches covered.">            if (!PROCESSING.containsKey(node.lock())) {</span>
-<span class="fc" id="L96">                variables = new TreeMap&lt;&gt;((a, b) -&gt; (int) (a.hashCode() - b.hashCode()));</span>
+<span class="fc" id="L96">                variables = new TreeMap&lt;&gt;((a, b) -&gt; (a.hashCode() - b.hashCode()));</span>
 <span class="fc" id="L97">                PROCESSING.put(node.lock(), variables);</span>
             } else {
 <span class="fc" id="L99">                variables = PROCESSING.get(node.lock());</span>

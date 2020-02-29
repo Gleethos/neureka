@@ -37,8 +37,7 @@ public class FunctionInput implements Function, GradientProvider
 
     @Override
     public boolean dependsOn(int index){
-        if(index()==index) return true;
-        return false;
+        return index() == index;
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -70,10 +69,10 @@ public class FunctionInput implements Function, GradientProvider
 
     private Tsr _extract(Tsr t)
     {
-        if(this.providesGradient() && t.rqsGradient()){
+        if (this.providesGradient() && t.rqsGradient()) {
             Tsr gradient = (Tsr)t.find(Tsr.class);
-            if(t.rqsGradient()){
-                if(gradient==null){
+            if (t.rqsGradient()) {
+                if (gradient==null) {
                     gradient = new Tsr(t.shape(), 0);
                     t.add(gradient);
                 }
@@ -155,9 +154,5 @@ public class FunctionInput implements Function, GradientProvider
         return null;
     }
 
-    //@Override
-    //public FADLambda getForwardAD(GraphNode node, Tsr[] inputs, int i){
-    //    return (error)->error;
-    //}
 
 }
