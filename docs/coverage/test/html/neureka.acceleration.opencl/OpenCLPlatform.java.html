@@ -322,64 +322,63 @@ public class OpenCLPlatform {
                             &quot;}&quot;,
                     true
             );
-            //code.forEachForward((k, v)-&gt;{System.out.println(k+&quot;\n------------\n&quot;+v);});
         }
 
-<span class="fc" id="L328">        return code;</span>
+<span class="fc" id="L327">        return code;</span>
     }
 
     public cl_platform_id getID() {
-<span class="nc" id="L332">        return _pid;</span>
+<span class="nc" id="L331">        return _pid;</span>
     }
 
     public List&lt;OpenCLDevice&gt; getDevices() {
-<span class="fc" id="L336">        List&lt;OpenCLDevice&gt; devices = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L337">        _id_device.forEach((k, v)-&gt; devices.add(v));</span>
-<span class="fc" id="L338">        return devices;</span>
+<span class="fc" id="L335">        List&lt;OpenCLDevice&gt; devices = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L336">        _id_device.forEach((k, v)-&gt; devices.add(v));</span>
+<span class="fc" id="L337">        return devices;</span>
         //return _devices;
     }
 
     public boolean has(cl_device_id did){
-<span class="fc" id="L343">        return _id_device.containsKey(did);</span>
+<span class="fc" id="L342">        return _id_device.containsKey(did);</span>
     }
     public OpenCLDevice get(cl_device_id did){
-<span class="fc" id="L346">        return _id_device.get(did);</span>
+<span class="fc" id="L345">        return _id_device.get(did);</span>
     }
     public void put(cl_device_id did, OpenCLDevice device){
-<span class="fc" id="L349">       _id_device.put(did, device);</span>
-<span class="fc" id="L350">    }</span>
+<span class="fc" id="L348">       _id_device.put(did, device);</span>
+<span class="fc" id="L349">    }</span>
 
 
     public Map&lt;String, cl_kernel&gt; getKernels() {
-<span class="fc" id="L354">        return _kernels;</span>
+<span class="fc" id="L353">        return _kernels;</span>
     }
 
     public cl_context getContext() {
-<span class="fc" id="L358">        return _context;</span>
+<span class="fc" id="L357">        return _context;</span>
     }
 
     public static List&lt;OpenCLPlatform&gt; PLATFORMS() {
-<span class="fc" id="L362">        return _setup.PLATFORMS;</span>
+<span class="fc" id="L361">        return _setup.PLATFORMS;</span>
     }
 
     private static class _setup
     {
-<span class="fc" id="L367">        public static List&lt;OpenCLPlatform&gt; PLATFORMS = findAllPlatforms();</span>
+<span class="fc" id="L366">        public static List&lt;OpenCLPlatform&gt; PLATFORMS = findAllPlatforms();</span>
 
         public static List&lt;OpenCLPlatform&gt; findAllPlatforms() {
             // Obtain the number of platforms
-<span class="fc" id="L371">            int[] numPlatforms = new int[1];</span>
-<span class="fc" id="L372">            clGetPlatformIDs(0, null, numPlatforms);</span>
+<span class="fc" id="L370">            int[] numPlatforms = new int[1];</span>
+<span class="fc" id="L371">            clGetPlatformIDs(0, null, numPlatforms);</span>
 
             // Obtain the platform IDs
-<span class="fc" id="L375">            cl_platform_id[] platforms = new cl_platform_id[numPlatforms[0]];</span>
-<span class="fc" id="L376">            clGetPlatformIDs(platforms.length, platforms, null);</span>
+<span class="fc" id="L374">            cl_platform_id[] platforms = new cl_platform_id[numPlatforms[0]];</span>
+<span class="fc" id="L375">            clGetPlatformIDs(platforms.length, platforms, null);</span>
 
-<span class="fc" id="L378">            List&lt;OpenCLPlatform&gt; list = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L379" title="All 2 branches covered.">            for (cl_platform_id id : platforms) {</span>
-<span class="fc" id="L380">                list.add(new OpenCLPlatform(id));</span>
+<span class="fc" id="L377">            List&lt;OpenCLPlatform&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L378" title="All 2 branches covered.">            for (cl_platform_id id : platforms) {</span>
+<span class="fc" id="L379">                list.add(new OpenCLPlatform(id));</span>
             }
-<span class="fc" id="L382">            return list;</span>
+<span class="fc" id="L381">            return list;</span>
         }
 
     }
