@@ -4,118 +4,80 @@ import neureka.calculus.environment.OperationType;
 
 public class Addition extends OperationType {
 
+<span class="fc" id="L7">    private static final Broadcast _broadcast = new Broadcast(</span>
+            &quot;&quot;, &quot;&quot;,
+            (inputs, d) -&gt; {
+<span class="fc" id="L10">                double[] t1_val = inputs[1].value64();</span>
+<span class="fc" id="L11">                double[] t2_val = inputs[2].value64();</span>
+<span class="fc bfc" id="L12" title="All 2 branches covered.">                if (d &lt; 0) {</span>
+<span class="fc" id="L13">                    return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+                } else {
+<span class="fc" id="L15">                    return (t0Idx, t1Idx, t2Idx) -&gt; 1.0;</span>
+                }
+            }
+    );
+
     public Addition(){
 
-<span class="fc" id="L9">        super(</span>
-                &quot;add&quot;, &quot;+&quot;, false, false, false, true, false, &quot;&quot;, &quot;&quot;, null,
-                &quot;output = input1 + value;\n&quot;,
-                &quot;output = 1;\n&quot;,
-                (inputs, value, d) -&gt; {
-<span class="fc" id="L14">                    double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L15" title="1 of 2 branches missed.">                    if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + value;</span>
-<span class="nc" id="L16">                    else return (t0Idx, t1Idx, t2Idx) -&gt; 1;</span>
-                },
-                &quot;&quot;,
-                &quot;&quot;,
+<span class="fc" id="L22">        super(</span>
+                &quot;add&quot;,
+                &quot;+&quot;,
+                false, false, false, true, false,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
-                (inputs, d) -&gt; {
-<span class="fc" id="L24">                    double[] t1_val = inputs[1].value64();</span>
-<span class="fc" id="L25">                    double[] t2_val = inputs[2].value64();</span>
-<span class="fc bfc" id="L26" title="All 2 branches covered.">                    if (d &lt; 0) {</span>
-<span class="fc" id="L27">                        return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + t2_val[inputs[2].i_of_idx(t2Idx)];</span>
-                    } else {
-<span class="fc" id="L29">                        return (t0Idx, t1Idx, t2Idx) -&gt; 1.0;</span>
-                    }
-                }
+                new Scalarization(
+                        &quot;output = input1 + value;\n&quot;,
+                        &quot;output = 1;\n&quot;,
+                        (inputs, value, d) -&gt; {
+<span class="fc" id="L31">                            double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + value;</span>
+<span class="nc" id="L33">                            else return (t0Idx, t1Idx, t2Idx) -&gt; 1;</span>
+                        }),
+                null,
+                _broadcast
+
         );
-<span class="fc" id="L33">        new OperationType(</span>
+<span class="fc" id="L39">        new OperationType(</span>
                 &quot;&quot;, ((char) 171) + &quot;+&quot;, false, false, false, false, false,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
-                null
+                _broadcast
         );
-<span class="fc" id="L48">        new OperationType(</span>
+<span class="fc" id="L46">        new OperationType(</span>
                 &quot;&quot;, &quot;+&quot; + ((char) 187), false, false, false, false, false,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
-                null
+                _broadcast
         );
 
         // Convolutoion:
 
 
-<span class="fc" id="L67">        new OperationType(</span>
+<span class="fc" id="L57">        new OperationType(</span>
                 &quot;&quot;, &quot;a&quot;, false, false, true, false, false,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
-                (inputs, d) -&gt; {
-<span class="nc" id="L81">                    return null;</span>
-                }
+                _broadcast
         );
-<span class="fc" id="L84">        new OperationType(</span>
+<span class="fc" id="L64">        new OperationType(</span>
                 &quot;&quot;, ((char) 171) + &quot;a&quot;, false, false, true, false, false,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
-                null
+                _broadcast
         );
-<span class="fc" id="L99">        new OperationType(</span>
+<span class="fc" id="L71">        new OperationType(</span>
                 &quot;&quot;, &quot;a&quot; + ((char) 187), false, false, true, false, false,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
-                null
+                _broadcast
         );
 
 
-
-
-<span class="fc" id="L118">    }</span>
+<span class="fc" id="L80">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

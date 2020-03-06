@@ -175,7 +175,7 @@ import java.util.Collection;
 <span class="fc" id="L175">            _threaded(tsrs[0].size(), (start, end) -&gt; {</span>
 <span class="fc" id="L176">                _template.activate(</span>
                         tsrs[0], start, end,
-<span class="fc" id="L178">                        type.getActivationCreator().create(tsrs, d)</span>
+<span class="fc" id="L178">                        type.getActivation().getCreator().create(tsrs, d)</span>
                 );
 <span class="fc" id="L180">            });</span>
 <span class="fc" id="L181">        }</span>
@@ -186,7 +186,7 @@ import java.util.Collection;
 <span class="fc" id="L186">                _template.broadcast(</span>
                         tsrs[0], tsrs[1], tsrs[2], _d,
                         start, end,
-<span class="fc" id="L189">                        type.getOperationCreator().create(tsrs,  _d)</span>
+<span class="fc" id="L189">                        type.getBroadcast().getCreator().create(tsrs,  _d)</span>
                 );
 <span class="fc" id="L191">            });</span>
 <span class="fc" id="L192">        }</span>
@@ -197,7 +197,7 @@ import java.util.Collection;
 <span class="fc" id="L197">            _threaded(tsrs[0].size(), (start, end) -&gt; {</span>
 <span class="fc" id="L198">                _template.activate(</span>
                         tsrs[0], start, end,
-<span class="fc" id="L200">                        type.getScalarOperationCreator().create(tsrs, scalar, d)</span>
+<span class="fc" id="L200">                        type.getScalarization().getCreator().create(tsrs, scalar, d)</span>
                 );
 <span class="fc" id="L202">            });</span>
 <span class="fc" id="L203">        }</span>

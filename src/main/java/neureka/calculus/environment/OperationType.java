@@ -56,21 +56,10 @@ public class OperationType implements Type
     protected boolean _isCommutative = false;
     protected boolean _isAssociative = false;
 
-    protected String _activationAsString = "";
-    protected String _activationDeriviationAsString = "";
-    protected OperationType.OperationCreator _activationOperationCreator = null;
-
-    protected String _scalarOperationAsString = "";
-    protected String _scalarDeriviationAsString = "";
-    protected OperationType.ScalarOperationCreator _scalarOperationCreator = null;
-
-    protected String _convolveOperationAsString = "";
-    protected String _convolveDeriviationAsString = "";
-    protected OperationType.OperationCreator _convolveOperationCreator = null;
-
-    protected String _operationAsString = "";
-    protected String _operationDeriviationAsString = "";
-    protected OperationType.OperationCreator _operationCreator = null;
+    protected Activation _activation;
+    protected Convolution _convolution;
+    protected Broadcast _broadcast;
+    protected Scalarization _scalarization;
 
     static
     {
@@ -100,60 +89,6 @@ public class OperationType implements Type
         new CopyRight();
     }
 
-    protected OperationType(
-            String name,
-            String  identifier,
-            boolean isFunction,
-            boolean isOperation,
-            boolean isIndexer,
-            boolean isConvection,
-            boolean isCommutative,
-            boolean isAssociative,
-
-            String activationOperationAsString,
-            String activationDeriviationAsString,
-            OperationCreator activationCreator,
-
-            String scalarOperationAsString,
-            String scalarDeriviationAsString,
-            ScalarOperationCreator scalarOperationCreator,
-
-            String convolveOperationAsString,
-            String convolveDerivativeAsString,
-            OperationCreator convolveCreator,
-
-            String operationAsString,
-            String operationDeriviationAsString,
-            OperationCreator operationCreator
-    ) {
-        _construct(
-                name,
-                identifier,
-                isFunction,
-                isOperation,
-                isIndexer,
-                isConvection,
-                isCommutative,
-                isAssociative,
-
-                activationCreator,
-                activationOperationAsString,
-                activationDeriviationAsString,
-
-                scalarOperationCreator,
-                scalarOperationAsString,
-                scalarDeriviationAsString,
-
-                convolveOperationAsString,
-                convolveDerivativeAsString,
-                convolveCreator,
-
-                operationAsString,
-                operationDeriviationAsString,
-                operationCreator
-        );
-    }
-
     public OperationType(
             String name,
             String identifier,
@@ -163,47 +98,43 @@ public class OperationType implements Type
             boolean isCommutative,
             boolean isAssociative,
 
-            String activationOperationAsString,
-            String activationDeriviationAsString,
-            OperationCreator activationCreator,
-
-            String scalarOperationAsString,
-            String scalarDeriviationAsString,
-            ScalarOperationCreator scalarOperationCreator,
-
-            String convolveOperationAsString,
-            String convolveDerivativeAsString,
-            OperationCreator convolveCreator,
-
-            String operationAsString,
-            String operationDeriviationAsString,
-            OperationType.OperationCreator operationCreator
+            Activation activation,
+            Scalarization scalarization,
+            Convolution convolution,
+            Broadcast broadcast
     ) {
         _construct(
-                name,
-                identifier,
-                isFunction,
-                !isFunction,
-                isIndexer,
-                isConvection,
-                isCommutative,
-                isAssociative,
+                name, identifier, isFunction, !isFunction, isIndexer, isConvection, isCommutative, isAssociative,
 
-                activationCreator,
-                activationOperationAsString,
-                activationDeriviationAsString,
+                activation,
+                scalarization,
+                convolution,
+                broadcast
+        );
+    }
 
-                scalarOperationCreator,
-                scalarOperationAsString,
-                scalarDeriviationAsString,
+    public OperationType(
+            String name,
+            String identifier,
+            boolean isFunction,
+            boolean isOperation,
+            boolean isIndexer,
+            boolean isConvection,
+            boolean isCommutative,
+            boolean isAssociative,
 
-                convolveOperationAsString,
-                convolveDerivativeAsString,
-                convolveCreator,
+            Activation activation,
+            Scalarization scalarization,
+            Convolution convolution,
+            Broadcast broadcast
+    ) {
+        _construct(
+                name, identifier, isFunction, isOperation, isIndexer, isConvection, isCommutative, isAssociative,
 
-                operationAsString,
-                operationDeriviationAsString,
-                operationCreator
+                activation,
+                scalarization,
+                convolution,
+                broadcast
         );
     }
 
@@ -217,22 +148,11 @@ public class OperationType implements Type
             boolean isCommutative,
             boolean isAssociative,
 
-            OperationType.OperationCreator activationCreator,
-            String activationOperationAsString,
-            String activationDeriviationAsString,
-
-            OperationType.ScalarOperationCreator scalarOperationCreator,
-            String scalarOperationAsString,
-            String scalarDeriviationAsString,
-
-            String convolveOperationAsString,
-            String convolveDerivativeAsString,
-            OperationType.OperationCreator convolveCreator,
-            
-            String operationAsString,
-            String operationDeriviationAsString,
-            OperationType.OperationCreator operationCreator
-    ) {
+            Activation activation,
+            Scalarization scalarization,
+            Convolution convolution,
+            Broadcast broadcast
+    ){
         _name = name;
         _id = _ID;
         _ID++;
@@ -243,23 +163,12 @@ public class OperationType implements Type
         _isConvection = isConvection;
         _isCommutative = isCommutative;
         _isAssociative = isAssociative;
-        
-        _activationOperationCreator = activationCreator;
-        _activationAsString = activationOperationAsString;
-        _activationDeriviationAsString = activationDeriviationAsString;
-        
-        _scalarOperationCreator = scalarOperationCreator;
-        _scalarOperationAsString = scalarOperationAsString;
-        _scalarDeriviationAsString = scalarDeriviationAsString;
 
-        _convolveOperationAsString = convolveOperationAsString;
-        _convolveDeriviationAsString =  convolveDerivativeAsString;
-        _convolveOperationCreator = convolveCreator;
+        _activation = activation;
+        _scalarization = scalarization;
+        _convolution = convolution;
+        _broadcast = broadcast;
 
-        _operationAsString = operationAsString;
-        _operationDeriviationAsString = operationDeriviationAsString;
-        _operationCreator = operationCreator;
-        
         _REGISTER.add(this);
         _LOOKUP.put(identifier, this);
         if(
@@ -289,64 +198,37 @@ public class OperationType implements Type
 
     //==================================================================================================================
 
+    @Override
     public String getName(){
         return _name;
     }
 
     //-----------------
 
-    public OperationCreator getActivationCreator(){
-        return _activationOperationCreator;
-    }
-
-    public String getActivationOperationAsString(){
-        return _activationAsString;
-    }
-
-    public String getActivationDeriviationAsString(){
-        return _activationDeriviationAsString;
+    @Override
+    public Activation getActivation(){
+        return _activation;
     }
 
     //-----------------
 
-    public ScalarOperationCreator getScalarOperationCreator(){
-        return _scalarOperationCreator;
-    }
-
-    public String getScalarOperationAsString(){
-        return _scalarOperationAsString;
-    }
-
-    public String getScalarDeriviationAsString(){
-        return _scalarDeriviationAsString;
+    @Override
+    public Scalarization getScalarization(){
+        return _scalarization;
     }
 
     //-----------------
 
-    public OperationCreator getConvolveOperationCreator() {
-        return _convolveOperationCreator;
-    }
-
-    public String getConvolveOperationAsString(){
-        return _convolveOperationAsString;
-    }
-
-    public String getConvolveDeriviationAsString(){
-        return _convolveDeriviationAsString;
+    @Override
+    public Convolution getConvolution(){
+        return _convolution;
     }
 
     //-----------------
 
-    public OperationCreator getOperationCreator() {
-        return _operationCreator;
-    }
-
-    public String getOperationAsString(){
-        return _operationAsString;
-    }
-
-    public String getOperationDeriviationAsString(){
-        return _operationDeriviationAsString;
+    @Override
+    public Broadcast getBroadcast(){
+        return _broadcast;
     }
 
     //==================================================================================================================
@@ -380,7 +262,7 @@ public class OperationType implements Type
     }
 
     public boolean supportsScalar(){
-        return !_scalarOperationAsString.equals("") && !_scalarDeriviationAsString.equals("");
+        return _scalarization != null;
     }
 
     public boolean allowsForward(Tsr[] inputs){

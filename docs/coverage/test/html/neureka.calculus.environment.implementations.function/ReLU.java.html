@@ -13,35 +13,31 @@ public class ReLU extends OperationType {
                 false,
                 true,
                 true,
-                &quot;if (input &gt;= 0) {  output = input; } else { output = input * (float)0.01; }\n&quot;,
-                &quot;if (input &gt;= 0) { output = (float)1; } else { output = (float)0.01; }\n&quot;,
-                (inputs, d)-&gt;{
-<span class="fc" id="L19">                    double[] t1_val = inputs[1].value64();</span>
-<span class="fc bfc" id="L20" title="All 2 branches covered.">                    if (d &lt; 0) {</span>
-<span class="fc" id="L21">                        return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc bfc" id="L22" title="All 2 branches covered.">                            if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="fc" id="L23">                            else return t1_val[inputs[1].i_of_idx(t1Idx)]*0.01;</span>
-                        };
-                    } else {
-<span class="fc" id="L26">                        return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc bfc" id="L27" title="All 2 branches covered.">                            if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return 1;</span>
-<span class="fc" id="L28">                            else return 0.01;</span>
-                        };
-                    }
-                },
-                &quot;&quot;,
-                &quot;&quot;,
+
+                new Activation(
+                        &quot;if (input &gt;= 0) {  output = input; } else { output = input * (float)0.01; }\n&quot;,
+                        &quot;if (input &gt;= 0) { output = (float)1; } else { output = (float)0.01; }\n&quot;,
+                        (inputs, d)-&gt;{
+<span class="fc" id="L21">                            double[] t1_val = inputs[1].value64();</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L23">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="fc" id="L25">                                    else return t1_val[inputs[1].i_of_idx(t1Idx)]*0.01;</span>
+                                };
+                            } else {
+<span class="fc" id="L28">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return 1;</span>
+<span class="fc" id="L30">                                    else return 0.01;</span>
+                                };
+                            }
+                        }),
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null
         );
 
 
-<span class="fc" id="L44">    }</span>
+<span class="fc" id="L40">    }</span>
 
 
 }

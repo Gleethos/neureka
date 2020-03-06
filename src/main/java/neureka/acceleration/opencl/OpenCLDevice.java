@@ -427,6 +427,7 @@ public class OpenCLDevice extends AbstractDevice {
         cl_kernel kernel = _platform.getKernels().get(chosen);
         cl_mem drn = _mapping.get(t).value.data;
         cl_mem src1 = _mapping.get(t).value.data;
+        System.out.println("Chosen kernel: "+chosen);
         clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
         clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(t).config));
         clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=>src1

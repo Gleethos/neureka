@@ -219,8 +219,8 @@ public class OpenCLPlatform {
 <span class="fc bfc" id="L219" title="All 2 branches covered.">                if(type.isFunction()){</span>
 <span class="fc" id="L220">                    parser.apply(</span>
 <span class="fc" id="L221">                            type.getName(),</span>
-<span class="fc" id="L222">                            type.getActivationOperationAsString(),</span>
-<span class="fc" id="L223">                            type.getActivationDeriviationAsString(),</span>
+<span class="fc" id="L222">                            type.getActivation().getAsString(),</span>
+<span class="fc" id="L223">                            type.getActivation().getDeriviationAsString(),</span>
                             false
                     );
                 }
@@ -273,8 +273,8 @@ public class OpenCLPlatform {
 <span class="fc bfc" id="L273" title="All 2 branches covered.">                if(type.supportsScalar()){</span>
 <span class="fc" id="L274">                    parser.apply(</span>
 <span class="fc" id="L275">                            type.getName(),</span>
-<span class="fc" id="L276">                            type.getScalarOperationAsString(),</span>
-<span class="fc" id="L277">                            type.getScalarDeriviationAsString(),</span>
+<span class="fc" id="L276">                            type.getScalarization().getAsString(),</span>
+<span class="fc" id="L277">                            type.getScalarization().getDeriviationAsString(),</span>
                             false
                     );
                 }

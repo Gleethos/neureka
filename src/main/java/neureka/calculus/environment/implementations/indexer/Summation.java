@@ -6,16 +6,14 @@ public class Summation extends OperationType {
 
     public Summation(){
         super("summation", "sum" , false, false, true, false, true, true,
-                "output = input;",
-                "output = 1;",
+                new Activation("output = input;",
+                        "output = 1;",
+                        null)
+                ,
                 null,
-                "",
-                "",
                 null,
-                "",
-                "",
-                null,
-                "",
+                new Broadcast(
+                        "",
                 "",
                 (inputs, d)->{
                     double[] t1_val = inputs[1].value64();
@@ -25,7 +23,7 @@ public class Summation extends OperationType {
                     } else {
                         return (t0Idx, t1Idx, t2Idx) -> 1.0;
                     }
-                }
+                })
         );
     }
 

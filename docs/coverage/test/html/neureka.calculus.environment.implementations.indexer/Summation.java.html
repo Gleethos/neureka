@@ -6,28 +6,26 @@ public class Summation extends OperationType {
 
     public Summation(){
 <span class="fc" id="L8">        super(&quot;summation&quot;, &quot;sum&quot; , false, false, true, false, true, true,</span>
-                &quot;output = input;&quot;,
-                &quot;output = 1;&quot;,
+                new Activation(&quot;output = input;&quot;,
+                        &quot;output = 1;&quot;,
+                        null)
+                ,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
-                null,
-                &quot;&quot;,
+                new Broadcast(
+                        &quot;&quot;,
                 &quot;&quot;,
                 (inputs, d)-&gt;{
-<span class="fc" id="L21">                    double[] t1_val = inputs[1].value64();</span>
-<span class="fc" id="L22">                    double[] t2_val = inputs[2].value64();</span>
-<span class="pc bpc" id="L23" title="1 of 2 branches missed.">                    if (d &lt; 0) {</span>
-<span class="fc" id="L24">                        return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="fc" id="L19">                    double[] t1_val = inputs[1].value64();</span>
+<span class="fc" id="L20">                    double[] t2_val = inputs[2].value64();</span>
+<span class="pc bpc" id="L21" title="1 of 2 branches missed.">                    if (d &lt; 0) {</span>
+<span class="fc" id="L22">                        return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + t2_val[inputs[2].i_of_idx(t2Idx)];</span>
                     } else {
-<span class="nc" id="L26">                        return (t0Idx, t1Idx, t2Idx) -&gt; 1.0;</span>
+<span class="nc" id="L24">                        return (t0Idx, t1Idx, t2Idx) -&gt; 1.0;</span>
                     }
-                }
+                })
         );
-<span class="fc" id="L30">    }</span>
+<span class="fc" id="L28">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

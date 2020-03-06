@@ -8,25 +8,20 @@ public class Sinus extends OperationType {
 
 <span class="fc" id="L9">        super(</span>
                 &quot;sinus&quot;, &quot;sin&quot; , true, false, false, true, true,
-                &quot;output = sin(input);\n&quot;,
-                &quot;output = cos(input);\n&quot;,
-                (inputs, d)-&gt;{
-<span class="nc" id="L14">                    double[] t1_val = inputs[1].value64();</span>
-<span class="nc bnc" id="L15" title="All 2 branches missed.">                    if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; Math.sin(t1_val[inputs[1].i_of_idx(t1Idx)]);</span>
-<span class="nc" id="L16">                    else return (t0Idx, t1Idx, t2Idx) -&gt; Math.cos(t1_val[inputs[1].i_of_idx(t1Idx)]);</span>
-                },
-                &quot;&quot;,
-                &quot;&quot;,
+                new Activation(
+                        &quot;output = sin(input);\n&quot;,
+                        &quot;output = cos(input);\n&quot;,
+                        (inputs, d)-&gt;{
+<span class="nc" id="L15">                            double[] t1_val = inputs[1].value64();</span>
+<span class="nc bnc" id="L16" title="All 2 branches missed.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; Math.sin(t1_val[inputs[1].i_of_idx(t1Idx)]);</span>
+<span class="nc" id="L17">                            else return (t0Idx, t1Idx, t2Idx) -&gt; Math.cos(t1_val[inputs[1].i_of_idx(t1Idx)]);</span>
+                        }),
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null
         );
 
-<span class="fc" id="L29">    }</span>
+<span class="fc" id="L24">    }</span>
 
 
 }

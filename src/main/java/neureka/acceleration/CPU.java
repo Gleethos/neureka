@@ -175,7 +175,7 @@ public class CPU extends AbstractDevice {
             _threaded(tsrs[0].size(), (start, end) -> {
                 _template.activate(
                         tsrs[0], start, end,
-                        type.getActivationCreator().create(tsrs, d)
+                        type.getActivation().getCreator().create(tsrs, d)
                 );
             });
         }
@@ -186,7 +186,7 @@ public class CPU extends AbstractDevice {
                 _template.broadcast(
                         tsrs[0], tsrs[1], tsrs[2], _d,
                         start, end,
-                        type.getOperationCreator().create(tsrs,  _d)
+                        type.getBroadcast().getCreator().create(tsrs,  _d)
                 );
             });
         }
@@ -197,7 +197,7 @@ public class CPU extends AbstractDevice {
             _threaded(tsrs[0].size(), (start, end) -> {
                 _template.activate(
                         tsrs[0], start, end,
-                        type.getScalarOperationCreator().create(tsrs, scalar, d)
+                        type.getScalarization().getCreator().create(tsrs, scalar, d)
                 );
             });
         }

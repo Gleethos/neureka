@@ -7,40 +7,36 @@ public class Ligmoid extends OperationType {
 
     public Ligmoid(){
 <span class="fc" id="L9">        super(&quot;ligmoid&quot;, &quot;lig&quot; , true, false, false, true, true,</span>
-                &quot;output = \n&quot; +
-                        &quot;(\n&quot; +
-                        &quot;        (float) log(\n&quot; +
-                        &quot;            1+pow(\n&quot; +
-                        &quot;                (float)\n&quot; +
-                        &quot;                M_E,\n&quot; +
-                        &quot;                (float)\n&quot; +
-                        &quot;                input\n&quot; +
-                        &quot;            )\n&quot; +
-                        &quot;        )\n&quot; +
-                        &quot;    );&quot;,
-                &quot;output =\n&quot; +
-                        &quot;    1 /\n&quot; +
-                        &quot;        (1 + (float) pow(\n&quot; +
-                        &quot;                (float)M_E,\n&quot; +
-                        &quot;                (float)input\n&quot; +
-                        &quot;            )\n&quot; +
-                        &quot;        );\n&quot;,
-                (inputs, d)-&gt;{
-<span class="fc" id="L29">                    double[] t1_val = inputs[1].value64();</span>
-<span class="fc bfc" id="L30" title="All 2 branches covered.">                    if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; Math.log(1 + Math.pow(Math.E, t1_val[inputs[1].i_of_idx(t1Idx)]));</span>
-<span class="fc" id="L31">                    else return (t0Idx, t1Idx, t2Idx) -&gt; 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));</span>
-                },
-                &quot;&quot;,
-                &quot;&quot;,
+                new Activation(
+                        &quot;output = \n&quot; +
+                                &quot;(\n&quot; +
+                                &quot;        (float) log(\n&quot; +
+                                &quot;            1+pow(\n&quot; +
+                                &quot;                (float)\n&quot; +
+                                &quot;                M_E,\n&quot; +
+                                &quot;                (float)\n&quot; +
+                                &quot;                input\n&quot; +
+                                &quot;            )\n&quot; +
+                                &quot;        )\n&quot; +
+                                &quot;    );&quot;,
+                        &quot;output =\n&quot; +
+                                &quot;    1 /\n&quot; +
+                                &quot;        (1 + (float) pow(\n&quot; +
+                                &quot;                (float)M_E,\n&quot; +
+                                &quot;                (float)input\n&quot; +
+                                &quot;            )\n&quot; +
+                                &quot;        );\n&quot;,
+                        (inputs, d)-&gt;{
+<span class="fc" id="L30">                            double[] t1_val = inputs[1].value64();</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; Math.log(1 + Math.pow(Math.E, t1_val[inputs[1].i_of_idx(t1Idx)]));</span>
+<span class="fc" id="L32">                            else return (t0Idx, t1Idx, t2Idx) -&gt; 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));</span>
+                        }
+                ),
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null
         );
-<span class="fc" id="L43">    }</span>
+<span class="fc" id="L39">    }</span>
 
 
 }

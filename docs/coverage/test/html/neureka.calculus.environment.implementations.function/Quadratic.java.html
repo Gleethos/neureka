@@ -14,29 +14,24 @@ public class Quadratic extends OperationType {
                 false,
                 true,
                 true,
-                &quot;output = input*input;\n&quot;,
-                &quot;output = 2*input;\n&quot;,
-                (inputs, d)-&gt;{
-<span class="fc" id="L20">                    double[] t1_val = inputs[1].value64();</span>
-<span class="fc bfc" id="L21" title="All 2 branches covered.">                    if (d &lt; 0) {</span>
-<span class="fc" id="L22">                        return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc" id="L23">                            double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="fc" id="L24">                            return input * input;</span>
-                        };
-<span class="fc" id="L26">                    } else return (t0Idx, t1Idx, t2Idx) -&gt; 2 * t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-                },
-                &quot;&quot;,
-                &quot;&quot;,
+                new Activation(
+                        &quot;output = input*input;\n&quot;,
+                        &quot;output = 2*input;\n&quot;,
+                        (inputs, d)-&gt;{
+<span class="fc" id="L21">                            double[] t1_val = inputs[1].value64();</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L23">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L24">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="fc" id="L25">                                    return input * input;</span>
+                                };
+<span class="fc" id="L27">                            } else return (t0Idx, t1Idx, t2Idx) -&gt; 2 * t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+                        }),
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null
         );
 
-<span class="fc" id="L39">    }</span>
+<span class="fc" id="L34">    }</span>
 
 
 }

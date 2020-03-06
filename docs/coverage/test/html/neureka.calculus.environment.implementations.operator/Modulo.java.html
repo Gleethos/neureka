@@ -7,62 +7,42 @@ public class Modulo extends OperationType {
     public Modulo(){
 
 <span class="fc" id="L9">        super(</span>
-                &quot;modulo&quot;, &quot;%&quot;, false, false, false, false, false, &quot;&quot;, &quot;&quot;, null,
-                &quot;&quot;,
-                &quot;&quot;,
+                &quot;modulo&quot;, &quot;%&quot;, false, false, false, false, false,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
-                (inputs, d) -&gt; {
-<span class="fc" id="L20">                    double[] t1_val = inputs[1].value64();</span>
-<span class="fc" id="L21">                    double[] t2_val = inputs[2].value64();</span>
-<span class="fc bfc" id="L22" title="All 2 branches covered.">                    if (d &lt; 0) {</span>
-<span class="fc" id="L23">                        return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] % t2_val[inputs[2].i_of_idx(t2Idx)];</span>
-                    } else {
-<span class="fc" id="L25">                        return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc bfc" id="L26" title="All 2 branches covered.">                            if (d == 0) {</span>
-<span class="fc" id="L27">                                return 1 / t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+                null,
+                new Broadcast(
+                        &quot;&quot;,
+                        &quot;&quot;,
+                        (inputs, d) -&gt; {
+<span class="fc" id="L18">                            double[] t1_val = inputs[1].value64();</span>
+<span class="fc" id="L19">                            double[] t2_val = inputs[2].value64();</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L21">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] % t2_val[inputs[2].i_of_idx(t2Idx)];</span>
                             } else {
-<span class="fc" id="L29">                                return</span>
-<span class="fc" id="L30">                                        -(t1_val[inputs[1].i_of_idx(t1Idx)]</span>
-                                                /
-<span class="fc" id="L32">                                                Math.pow(t2_val[inputs[2].i_of_idx(t2Idx)], 2));</span>
+<span class="fc" id="L23">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">                                    if (d == 0) {</span>
+<span class="fc" id="L25">                                        return 1 / t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+                                    } else {
+<span class="fc" id="L27">                                        return</span>
+<span class="fc" id="L28">                                                -(t1_val[inputs[1].i_of_idx(t1Idx)]</span>
+                                                        /
+<span class="fc" id="L30">                                                        Math.pow(t2_val[inputs[2].i_of_idx(t2Idx)], 2));</span>
+                                    }
+                                };
                             }
-                        };
-                    }
-                }
+                        })
+
         );
-<span class="fc" id="L38">        new OperationType(</span>
-                &quot;&quot;, ((char) 171) + &quot;%&quot;, false, false, false, false, false, &quot;&quot;, &quot;&quot;, null,
-                &quot;&quot;,
-                &quot;&quot;,
-                null,
-                &quot;&quot;,
-                &quot;&quot;,
-                null,
-                &quot;&quot;,
-                &quot;&quot;,
-                null
+<span class="fc" id="L37">        new OperationType(</span>
+                &quot;&quot;, ((char) 171) + &quot;%&quot;, false, false, false, false, false,
+                null, null, null, null
         );
-<span class="fc" id="L50">        new OperationType(</span>
+<span class="fc" id="L41">        new OperationType(</span>
                 &quot;&quot;, &quot;%&quot; + ((char) 187), false, false, false, false, false,
-                &quot;&quot;,
-                &quot;&quot;,
-                null,
-                &quot;&quot;,
-                &quot;&quot;,
-                null,
-                &quot;&quot;,
-                &quot;&quot;,
-                null,
-                &quot;&quot;,
-                &quot;&quot;,
-                null
+                null, null, null, null
         );
-<span class="fc" id="L65">    }</span>
+<span class="fc" id="L45">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

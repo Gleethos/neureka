@@ -7,7 +7,7 @@ public class Gaussian extends OperationType {
     public Gaussian(){
 
 <span class="fc" id="L9">        super(&quot;gaussian&quot;, &quot;gaus&quot;, true, false, false, true, true,</span>
-                &quot;output =\n&quot; +
+                new Activation(&quot;output =\n&quot; +
                         &quot;    (float)pow(\n&quot; +
                         &quot;        (float)M_E,\n&quot; +
                         &quot;        -(float)pow(\n&quot; +
@@ -15,31 +15,25 @@ public class Gaussian extends OperationType {
                         &quot;            (float)2\n&quot; +
                         &quot;        )\n&quot; +
                         &quot;    );\n&quot;,
-                &quot;output = 1 / (1 + (float)pow((float)M_E, -input));\n&quot;,
-                (inputs, d)-&gt;{
-<span class="nc" id="L20">                    double[] t1_val = inputs[1].value64();</span>
-<span class="nc bnc" id="L21" title="All 2 branches missed.">                    if (d &lt; 0) {</span>
-<span class="nc" id="L22">                        return (t0Idx, t1Idx, t2Idx) -&gt; Math.pow(Math.E, -Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], 2));</span>
-                    } else {
-<span class="nc" id="L24">                        return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L25">                            double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="nc" id="L26">                            return -2 * input * Math.pow(Math.E, -Math.pow(input, 2));</span>
-                        };
+                        &quot;output = 1 / (1 + (float)pow((float)M_E, -input));\n&quot;,
+                        (inputs, d)-&gt;{
+<span class="nc" id="L20">                            double[] t1_val = inputs[1].value64();</span>
+<span class="nc bnc" id="L21" title="All 2 branches missed.">                            if (d &lt; 0) {</span>
+<span class="nc" id="L22">                                return (t0Idx, t1Idx, t2Idx) -&gt; Math.pow(Math.E, -Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], 2));</span>
+                            } else {
+<span class="nc" id="L24">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="nc" id="L25">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="nc" id="L26">                                    return -2 * input * Math.pow(Math.E, -Math.pow(input, 2));</span>
+                                };
 
-                    }
-                },
-                &quot;&quot;,
-                &quot;&quot;,
+                            }
+                        }),
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null
         );
 
-<span class="fc" id="L42">    }</span>
+<span class="fc" id="L36">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

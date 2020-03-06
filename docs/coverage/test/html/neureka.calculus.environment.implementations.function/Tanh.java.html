@@ -6,33 +6,28 @@ public class Tanh extends OperationType {
 
     public Tanh(){
 <span class="fc" id="L8">        super(&quot;tanh&quot;, &quot;tanh&quot;, true, false, false, true, true,</span>
-                &quot;output = input/pow(1+pow(input, 2.0f), 0.5f);\n&quot;,
-                &quot;output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n&quot;,
-                (inputs, d)-&gt;{
-<span class="fc" id="L12">                    double[] t1_val = inputs[1].value64();</span>
-<span class="fc bfc" id="L13" title="All 2 branches covered.">                    if (d &lt; 0) {</span>
-<span class="fc" id="L14">                        return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc" id="L15">                            double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="fc" id="L16">                            return input / Math.pow(1 + Math.pow(input, 2), 0.5);</span>
-                        };
-                    } else {
-<span class="fc" id="L19">                        return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc" id="L20">                            double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="fc" id="L21">                            return 1 - Math.pow(input / Math.pow(1 + Math.pow(input, 2), 0.5), 2);</span>
-                        };
-                    }
-                },
-                &quot;&quot;,
-                &quot;&quot;,
+                new Activation(
+                        &quot;output = input/pow(1+pow(input, 2.0f), 0.5f);\n&quot;,
+                        &quot;output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n&quot;,
+                        (inputs, d)-&gt;{
+<span class="fc" id="L13">                            double[] t1_val = inputs[1].value64();</span>
+<span class="fc bfc" id="L14" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L15">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L16">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="fc" id="L17">                                    return input / Math.pow(1 + Math.pow(input, 2), 0.5);</span>
+                                };
+                            } else {
+<span class="fc" id="L20">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L21">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="fc" id="L22">                                    return 1 - Math.pow(input / Math.pow(1 + Math.pow(input, 2), 0.5), 2);</span>
+                                };
+                            }
+                        }),
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null,
-                &quot;&quot;,
-                &quot;&quot;,
                 null
         );
-<span class="fc" id="L35">    }</span>
+<span class="fc" id="L30">    }</span>
 
 
 

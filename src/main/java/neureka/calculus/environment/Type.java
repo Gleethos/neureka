@@ -60,39 +60,25 @@ public interface Type
 
     //==================================================================================================================
 
-    String getName();
+    Activation getActivation();
 
     //-----------------
 
-    //Activation getActivation();
-
-    OperationType.OperationCreator getActivationCreator();
-
-    String getActivationOperationAsString();
-
-    String getActivationDeriviationAsString();
-
-    //-----------------
-
-    //Scalarization getScalarization();
-
-    OperationType.ScalarOperationCreator getScalarOperationCreator();
-
-    String getScalarOperationAsString();
-
-    String getScalarDeriviationAsString();
+    Scalarization getScalarization();
         
     //-----------------
 
-    //Convolution getConvolution();
+    Convolution getConvolution();
 
-    OperationType.OperationCreator getConvolveOperationCreator();
-    
-    String getConvolveOperationAsString();
+    //-----------------
 
-    String getConvolveDeriviationAsString();
+    Broadcast getBroadcast();
 
     //==================================================================================================================
+
+    String getName();
+
+    //-----------------
 
     int id();
     

@@ -219,8 +219,8 @@ public class OpenCLPlatform {
                 if(type.isFunction()){
                     parser.apply(
                             type.getName(),
-                            type.getActivationOperationAsString(),
-                            type.getActivationDeriviationAsString(),
+                            type.getActivation().getAsString(),
+                            type.getActivation().getDeriviationAsString(),
                             false
                     );
                 }
@@ -273,8 +273,8 @@ public class OpenCLPlatform {
                 if(type.supportsScalar()){
                     parser.apply(
                             type.getName(),
-                            type.getScalarOperationAsString(),
-                            type.getScalarDeriviationAsString(),
+                            type.getScalarization().getAsString(),
+                            type.getScalarization().getDeriviationAsString(),
                             false
                     );
                 }
