@@ -14,9 +14,20 @@ public class Summation extends OperationType {
                 null,
                 &quot;&quot;,
                 &quot;&quot;,
-                null
+                null,
+                &quot;&quot;,
+                &quot;&quot;,
+                (inputs, d)-&gt;{
+<span class="fc" id="L21">                    double[] t1_val = inputs[1].value64();</span>
+<span class="fc" id="L22">                    double[] t2_val = inputs[2].value64();</span>
+<span class="pc bpc" id="L23" title="1 of 2 branches missed.">                    if (d &lt; 0) {</span>
+<span class="fc" id="L24">                        return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+                    } else {
+<span class="nc" id="L26">                        return (t0Idx, t1Idx, t2Idx) -&gt; 1.0;</span>
+                    }
+                }
         );
-<span class="fc" id="L19">    }</span>
+<span class="fc" id="L30">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

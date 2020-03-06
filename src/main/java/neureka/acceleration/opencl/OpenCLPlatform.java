@@ -219,8 +219,8 @@ public class OpenCLPlatform {
                 if(type.isFunction()){
                     parser.apply(
                             type.getName(),
-                            type.getOperationAsString(),
-                            type.getDeriviationAsString(),
+                            type.getActivationOperationAsString(),
+                            type.getActivationDeriviationAsString(),
                             false
                     );
                 }

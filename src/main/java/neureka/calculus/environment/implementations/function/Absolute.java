@@ -6,7 +6,8 @@ public class Absolute extends OperationType {
 
     public Absolute(){
 
-        super("absolute", "abs" , true, false, false, true, true,
+        super(
+                "absolute", "abs" , true, false, false, true, true,
                 "output = fabs(input);\n",
                 "output = (input < 0) ? -1 : 1;\n",
                 (inputs, d)->{
@@ -17,6 +18,9 @@ public class Absolute extends OperationType {
                         return (t0Idx, t1Idx, t2Idx) -> (t1_val[inputs[1].i_of_idx(t1Idx)] < 0) ? -1 : 1;
                     }
                 },
+                "",
+                "",
+                null,
                 "",
                 "",
                 null,

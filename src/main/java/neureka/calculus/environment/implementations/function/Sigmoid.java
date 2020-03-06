@@ -33,6 +33,9 @@ public class Sigmoid extends OperationType {
                 null,
                 "",
                 "",
+                null,
+                "",
+                "",
                 null
         );
 

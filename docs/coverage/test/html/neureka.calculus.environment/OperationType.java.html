@@ -7,8 +7,12 @@ import neureka.calculus.Function;
 import neureka.calculus.environment.implementations.function.*;
 import neureka.calculus.environment.implementations.indexer.Product;
 import neureka.calculus.environment.implementations.indexer.Summation;
-import neureka.calculus.environment.implementations.operator.Power;
+import neureka.calculus.environment.implementations.operator.*;
+import neureka.calculus.environment.implementations.other.CopyLeft;
+import neureka.calculus.environment.implementations.other.CopyRight;
+import neureka.calculus.environment.implementations.other.Reshape;
 import neureka.calculus.factory.assembly.FunctionBuilder;
+import org.codehaus.groovy.runtime.ResourceGroovyMethods;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,16 +20,16 @@ import java.util.Map;
 
 public class OperationType implements Type
 {
-<span class="fc" id="L19">    private static Map&lt;String, OperationType&gt; _LOOKUP = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L23">    private static final Map&lt;String, OperationType&gt; _LOOKUP = new HashMap&lt;&gt;();</span>
 
-<span class="fc" id="L21">    private static ArrayList&lt;OperationType&gt; _REGISTER = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L25">    private static final ArrayList&lt;OperationType&gt; _REGISTER = new ArrayList&lt;&gt;();</span>
 
     public static OperationType LOOKUP(String identifier) {
-<span class="nc" id="L24">        return _LOOKUP.getOrDefault(identifier, null);</span>
+<span class="nc" id="L28">        return _LOOKUP.getOrDefault(identifier, null);</span>
     }
 
     public static OperationType instance(int index){
-<span class="fc" id="L28">        return _REGISTER.get(index);</span>
+<span class="fc" id="L32">        return _REGISTER.get(index);</span>
     }
 
     public interface OperationCreator{
@@ -36,34 +40,171 @@ public class OperationType implements Type
     }
 
     public static OperationType instance(String identifier){
-<span class="fc" id="L39">        return _LOOKUP.get(identifier);</span>
+<span class="fc" id="L43">        return _LOOKUP.get(identifier);</span>
     }
 
-    protected static OperationType[] _TYPES;
+<span class="fc" id="L46">    private static int _ID = 0;</span>
 
-<span class="fc" id="L44">    private static int _ID = 0;</span>
+<span class="fc" id="L48">    protected int _id = -1;</span>
+<span class="fc" id="L49">    protected String _name = &quot;&quot;;</span>
+<span class="fc" id="L50">    protected String  _identifier = &quot;&quot;;</span>
+<span class="fc" id="L51">    protected boolean _isFunction = false;</span>
+<span class="fc" id="L52">    protected boolean _isOperation = false;</span>
+<span class="fc" id="L53">    protected boolean _isIndexer = false;</span>
+<span class="fc" id="L54">    protected boolean _isConvection = false;</span>
+<span class="fc" id="L55">    protected boolean _isCommutative = false;</span>
+<span class="fc" id="L56">    protected boolean _isAssociative = false;</span>
 
-    protected int _id;
-    protected String _name;
-    protected String  _identifier;
-    protected boolean _isFunction;
-    protected boolean _isOperation;
-    protected boolean _isIndexer;
-    protected boolean _isConvection;
-    protected boolean _isCommutative;
-    protected boolean _isAssociative;
+<span class="fc" id="L58">    protected String _activationAsString = &quot;&quot;;</span>
+<span class="fc" id="L59">    protected String _activationDeriviationAsString = &quot;&quot;;</span>
+<span class="fc" id="L60">    protected OperationType.OperationCreator _activationOperationCreator = null;</span>
 
-    protected String _operationAsString;
-    protected String _deriviationAsString;
-    protected OperationType.OperationCreator _operationCreator;
+<span class="fc" id="L62">    protected String _scalarOperationAsString = &quot;&quot;;</span>
+<span class="fc" id="L63">    protected String _scalarDeriviationAsString = &quot;&quot;;</span>
+<span class="fc" id="L64">    protected OperationType.ScalarOperationCreator _scalarOperationCreator = null;</span>
 
-    protected String _scalarOperationAsString;
-    protected String _scalarDeriviationAsString;
-    protected OperationType.ScalarOperationCreator _scalarOperationCreator;
+<span class="fc" id="L66">    protected String _broadcastOperationAsString = &quot;&quot;;</span>
+<span class="fc" id="L67">    protected String _broadcastDeriviationAsString = &quot;&quot;;</span>
+<span class="fc" id="L68">    protected OperationType.OperationCreator _broadcastOperationCreator = null;</span>
 
-    protected String _broadcastOperationAsString;
-    protected String _broadcastDeriviationAsString;
-    protected OperationType.OperationCreator _broadcastOperationCreator;
+<span class="fc" id="L70">    protected String _operationAsString = &quot;&quot;;</span>
+<span class="fc" id="L71">    protected String _operationDeriviationAsString = &quot;&quot;;</span>
+<span class="fc" id="L72">    protected OperationType.OperationCreator _operationCreator = null;</span>
+
+    static
+    {
+<span class="fc" id="L76">        new ReLU();</span>
+<span class="fc" id="L77">        new Sigmoid();</span>
+<span class="fc" id="L78">        new Tanh();</span>
+<span class="fc" id="L79">        new Quadratic();</span>
+<span class="fc" id="L80">        new Ligmoid();</span>
+<span class="fc" id="L81">        new Identity();</span>
+<span class="fc" id="L82">        new Gaussian();</span>
+<span class="fc" id="L83">        new Absolute();</span>
+<span class="fc" id="L84">        new Sinus();</span>
+<span class="fc" id="L85">        new Cosinus();</span>
+
+<span class="fc" id="L87">        new Summation();</span>
+<span class="fc" id="L88">        new Product();</span>
+
+<span class="fc" id="L90">        new Power();</span>
+<span class="fc" id="L91">        new Division();</span>
+<span class="fc" id="L92">        new Multiplication();</span>
+<span class="fc" id="L93">        new Modulo();</span>
+<span class="fc" id="L94">        new Subtraction();</span>
+<span class="fc" id="L95">        new Addition();</span>
+
+<span class="fc" id="L97">        new Reshape();</span>
+<span class="fc" id="L98">        new CopyLeft();</span>
+<span class="fc" id="L99">        new CopyRight();</span>
+<span class="fc" id="L100">    }</span>
+
+    protected OperationType(
+            String name,
+            String  identifier,
+            boolean isFunction,
+            boolean isOperation,
+            boolean isIndexer,
+            boolean isConvection,
+            boolean isCommutative,
+            boolean isAssociative,
+
+            String activationOperationAsString,
+            String activationDeriviationAsString,
+            OperationCreator activationCreator,
+
+            String scalarOperationAsString,
+            String scalarDeriviationAsString,
+            ScalarOperationCreator scalarOperationCreator,
+
+            String broadcastOperationAsString,
+            String broadcastDerivativeAsString,
+            OperationCreator broadcastCreator,
+
+            String operationAsString,
+            String operationDeriviationAsString,
+            OperationType.OperationCreator operationCreator
+<span class="fc" id="L127">    ) {</span>
+<span class="fc" id="L128">        _construct(</span>
+                name,
+                identifier,
+                isFunction,
+                isOperation,
+                isIndexer,
+                isConvection,
+                isCommutative,
+                isAssociative,
+
+                activationCreator,
+                activationOperationAsString,
+                activationDeriviationAsString,
+
+                scalarOperationCreator,
+                scalarOperationAsString,
+                scalarDeriviationAsString,
+
+                broadcastOperationAsString,
+                broadcastDerivativeAsString,
+                broadcastCreator,
+
+                operationAsString,
+                operationDeriviationAsString,
+                operationCreator
+        );
+<span class="fc" id="L154">    }</span>
+
+    public OperationType(
+            String name,
+            String identifier,
+            boolean isFunction,
+            boolean isIndexer,
+            boolean isConvection,
+            boolean isCommutative,
+            boolean isAssociative,
+
+            String activationOperationAsString,
+            String activationDeriviationAsString,
+            OperationCreator activationCreator,
+
+            String scalarOperationAsString,
+            String scalarDeriviationAsString,
+            ScalarOperationCreator scalarOperationCreator,
+
+            String broadcastOperationAsString,
+            String broadcastDerivativeAsString,
+            OperationCreator broadcastCreator,
+
+            String operationAsString,
+            String operationDeriviationAsString,
+            OperationType.OperationCreator operationCreator
+<span class="fc" id="L180">    ) {</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        _construct(</span>
+                name,
+                identifier,
+                isFunction,
+                !isFunction,
+                isIndexer,
+                isConvection,
+                isCommutative,
+                isAssociative,
+
+                activationCreator,
+                activationOperationAsString,
+                activationDeriviationAsString,
+
+                scalarOperationCreator,
+                scalarOperationAsString,
+                scalarDeriviationAsString,
+
+                broadcastOperationAsString,
+                broadcastDerivativeAsString,
+                broadcastCreator,
+
+                operationAsString,
+                operationDeriviationAsString,
+                operationCreator
+        );
+<span class="fc" id="L207">    }</span>
 
     protected void _construct(
             String name,
@@ -74,677 +215,243 @@ public class OperationType implements Type
             boolean isConvection,
             boolean isCommutative,
             boolean isAssociative,
-            OperationType.OperationCreator creator,
-            String operationAsString,
-            String deriviationAsString,
+
+            OperationType.OperationCreator activationCreator,
+            String activationOperationAsString,
+            String activationDeriviationAsString,
+
             OperationType.ScalarOperationCreator scalarOperationCreator,
             String scalarOperationAsString,
             String scalarDeriviationAsString,
 
             String broadcastOperationAsString,
             String broadcastDerivativeAsString,
-            OperationType.OperationCreator broadcastCreator
+            OperationType.OperationCreator broadcastCreator,
+            
+            String operationAsString,
+            String operationDeriviationAsString,
+            OperationType.OperationCreator operationCreator
     ) {
-<span class="fc" id="L88">        _name = name;</span>
-<span class="fc" id="L89">        _id = _ID;</span>
-<span class="fc" id="L90">        _ID++;</span>
-<span class="fc" id="L91">        _identifier = identifier;</span>
-<span class="fc" id="L92">        _isFunction = isFunction;</span>
-<span class="fc" id="L93">        _isOperation = isOperation;</span>
-<span class="fc" id="L94">        _isIndexer = isIndexer;</span>
-<span class="fc" id="L95">        _isConvection = isConvection;</span>
-<span class="fc" id="L96">        _isCommutative = isCommutative;</span>
-<span class="fc" id="L97">        _isAssociative = isAssociative;</span>
-<span class="fc" id="L98">        _operationCreator = creator;</span>
-<span class="fc" id="L99">        _operationAsString = operationAsString;</span>
-<span class="fc" id="L100">        _deriviationAsString = deriviationAsString;</span>
-<span class="fc" id="L101">        _scalarOperationCreator = scalarOperationCreator;</span>
-<span class="fc" id="L102">        _scalarOperationAsString = scalarOperationAsString;</span>
-<span class="fc" id="L103">        _scalarDeriviationAsString = scalarDeriviationAsString;</span>
+<span class="fc" id="L235">        _name = name;</span>
+<span class="fc" id="L236">        _id = _ID;</span>
+<span class="fc" id="L237">        _ID++;</span>
+<span class="fc" id="L238">        _identifier = identifier;</span>
+<span class="fc" id="L239">        _isFunction = isFunction;</span>
+<span class="fc" id="L240">        _isOperation = isOperation;</span>
+<span class="fc" id="L241">        _isIndexer = isIndexer;</span>
+<span class="fc" id="L242">        _isConvection = isConvection;</span>
+<span class="fc" id="L243">        _isCommutative = isCommutative;</span>
+<span class="fc" id="L244">        _isAssociative = isAssociative;</span>
+        
+<span class="fc" id="L246">        _activationOperationCreator = activationCreator;</span>
+<span class="fc" id="L247">        _activationAsString = activationOperationAsString;</span>
+<span class="fc" id="L248">        _activationDeriviationAsString = activationDeriviationAsString;</span>
+        
+<span class="fc" id="L250">        _scalarOperationCreator = scalarOperationCreator;</span>
+<span class="fc" id="L251">        _scalarOperationAsString = scalarOperationAsString;</span>
+<span class="fc" id="L252">        _scalarDeriviationAsString = scalarDeriviationAsString;</span>
 
-<span class="fc" id="L105">        _broadcastOperationAsString = broadcastOperationAsString;</span>
-<span class="fc" id="L106">        _broadcastDeriviationAsString =  broadcastDerivativeAsString;</span>
-<span class="fc" id="L107">        _broadcastOperationCreator = broadcastCreator;</span>
+<span class="fc" id="L254">        _broadcastOperationAsString = broadcastOperationAsString;</span>
+<span class="fc" id="L255">        _broadcastDeriviationAsString =  broadcastDerivativeAsString;</span>
+<span class="fc" id="L256">        _broadcastOperationCreator = broadcastCreator;</span>
 
-<span class="fc" id="L109">        _REGISTER.add(this);</span>
-<span class="fc" id="L110">        _LOOKUP.put(identifier, this);</span>
-<span class="fc bfc" id="L111" title="All 2 branches covered.">        if(identifier.equals((((char)171))+&quot;x&quot;)) _LOOKUP.put(&quot;&lt;&lt;x&quot;, this);</span>
-<span class="fc bfc" id="L112" title="All 2 branches covered.">        else if(identifier.equals(&quot;x&quot;+((char)187))) _LOOKUP.put(&quot;x&gt;&gt;&quot;, this);</span>
-<span class="fc" id="L113">    }</span>
+<span class="fc" id="L258">        _operationAsString = operationAsString;</span>
+<span class="fc" id="L259">        _operationDeriviationAsString = operationDeriviationAsString;</span>
+<span class="fc" id="L260">        _operationCreator = operationCreator;</span>
+        
+<span class="fc" id="L262">        _REGISTER.add(this);</span>
+<span class="fc" id="L263">        _LOOKUP.put(identifier, this);</span>
+<span class="fc" id="L264">        if(</span>
+                identifier
+<span class="fc" id="L266">                        .replace((&quot;&quot;+((char)171)), &quot;&quot;)</span>
+<span class="fc" id="L267">                        .replace((&quot;&quot;+((char)187)), &quot;&quot;)</span>
+<span class="fc bfc" id="L268" title="All 2 branches covered.">                        .matches(&quot;[a-z]&quot;)</span>
+        ){
+<span class="fc bfc" id="L270" title="All 2 branches covered.">            if(identifier.contains((&quot;&quot;+((char)171)))) {</span>
+<span class="fc" id="L271">                System.out.println(identifier.replace((&quot;&quot;+((char)171)), &quot;&lt;&lt;&quot;));</span>
+<span class="fc" id="L272">                _LOOKUP.put(identifier.replace((&quot;&quot;+((char)171)), &quot;&lt;&lt;&quot;), this);</span>
+            }
+<span class="fc bfc" id="L274" title="All 2 branches covered.">            if(identifier.contains((&quot;&quot;+((char)187)))) {</span>
+<span class="fc" id="L275">                System.out.println(identifier.replace((&quot;&quot;+((char)187)),&quot;&gt;&gt;&quot;));</span>
+<span class="fc" id="L276">                _LOOKUP.put(identifier.replace((&quot;&quot;+((char)187)),&quot;&gt;&gt;&quot;), this);</span>
+            }
+        }
 
-
+        //if(identifier.equals((((char)171))+&quot;x&quot;)) _LOOKUP.put(&quot;&lt;&lt;x&quot;, this);
+        //else if(identifier.equals(&quot;x&quot;+((char)187))) _LOOKUP.put(&quot;x&gt;&gt;&quot;, this);
+<span class="fc" id="L282">    }</span>
 
     public static OperationType[] all(){
-<span class="fc" id="L118">        return _TYPES;</span>
+<span class="fc" id="L285">        return _REGISTER.toArray(new OperationType[0]);</span>
     }
 
-
     public static int COUNT(){
-<span class="fc" id="L123">        return _ID;</span>
+<span class="fc" id="L289">        return _ID;</span>
     }
 
     //==================================================================================================================
 
     public String getName(){
-<span class="fc" id="L129">        return _name;</span>
+<span class="fc" id="L295">        return _name;</span>
     }
 
     //-----------------
 
-    public OperationCreator getCreator(){
-<span class="fc" id="L135">        return _operationCreator;</span>
+    public OperationCreator getActivationCreator(){
+<span class="fc" id="L301">        return _activationOperationCreator;</span>
     }
 
-    public String getOperationAsString(){
-<span class="fc" id="L139">        return _operationAsString;</span>
+    public String getActivationOperationAsString(){
+<span class="fc" id="L305">        return _activationAsString;</span>
     }
 
-    public String getDeriviationAsString(){
-<span class="fc" id="L143">        return _deriviationAsString;</span>
+    public String getActivationDeriviationAsString(){
+<span class="fc" id="L309">        return _activationDeriviationAsString;</span>
     }
 
     //-----------------
 
     public ScalarOperationCreator getScalarOperationCreator(){
-<span class="fc" id="L149">        return _scalarOperationCreator;</span>
+<span class="fc" id="L315">        return _scalarOperationCreator;</span>
     }
 
     public String getScalarOperationAsString(){
-<span class="fc" id="L153">        return _scalarOperationAsString;</span>
+<span class="fc" id="L319">        return _scalarOperationAsString;</span>
     }
 
     public String getScalarDeriviationAsString(){
-<span class="fc" id="L157">        return _scalarDeriviationAsString;</span>
+<span class="fc" id="L323">        return _scalarDeriviationAsString;</span>
     }
 
     //-----------------
 
     public OperationCreator getBroadcastOperationCreator() {
-<span class="nc" id="L163">        return _broadcastOperationCreator;</span>
+<span class="nc" id="L329">        return _broadcastOperationCreator;</span>
     }
 
     public String getBroadcastOperationAsString(){
-<span class="nc" id="L167">        return _broadcastOperationAsString;</span>
+<span class="nc" id="L333">        return _broadcastOperationAsString;</span>
     }
 
     public String getBroadcastDeriviationAsString(){
-<span class="nc" id="L171">        return _broadcastDeriviationAsString;</span>
+<span class="nc" id="L337">        return _broadcastDeriviationAsString;</span>
     }
+
+    //-----------------
+
+    public OperationCreator getOperationCreator() {
+<span class="fc" id="L343">        return _operationCreator;</span>
+    }
+
+    public String getOperationAsString(){
+<span class="nc" id="L347">        return _operationAsString;</span>
+    }
+
+    public String getOperationDeriviationAsString(){
+<span class="nc" id="L351">        return _operationDeriviationAsString;</span>
+    }
+
 
 
     //==================================================================================================================
 
     public int id(){
-<span class="fc" id="L178">        return _id;</span>
+<span class="fc" id="L359">        return _id;</span>
     }
 
     public String identifier(){
-<span class="fc" id="L182">        return _identifier;</span>
+<span class="fc" id="L363">        return _identifier;</span>
     }
 
     public boolean isOperation(){
-<span class="fc" id="L186">        return _isOperation;</span>
+<span class="fc" id="L367">        return _isOperation;</span>
     }
 
     public boolean isFunction(){
-<span class="fc" id="L190">        return _isFunction;</span>
+<span class="fc" id="L371">        return _isFunction;</span>
     }
 
     public boolean isIndexer(){
-<span class="fc" id="L194">        return _isIndexer;</span>
+<span class="fc" id="L375">        return _isIndexer;</span>
     }
 
     public boolean isConvection(){
-<span class="fc" id="L198">        return _isConvection;</span>
+<span class="fc" id="L379">        return _isConvection;</span>
     }
 
     public boolean isCommutative(){
-<span class="nc" id="L202">        return  _isCommutative;</span>
+<span class="nc" id="L383">        return  _isCommutative;</span>
     }
 
     public boolean supportsScalar(){
-<span class="fc bfc" id="L206" title="All 2 branches covered.">        return !_scalarOperationAsString.equals(&quot;&quot;)</span>
-                &amp;&amp;
-<span class="pc bpc" id="L208" title="1 of 2 branches missed.">                !_scalarDeriviationAsString.equals(&quot;&quot;);</span>
+<span class="pc bpc" id="L387" title="1 of 4 branches missed.">        return !_scalarOperationAsString.equals(&quot;&quot;) &amp;&amp; !_scalarDeriviationAsString.equals(&quot;&quot;);</span>
     }
 
     public boolean allowsForward(Tsr[] inputs){
-<span class="fc bfc" id="L212" title="All 2 branches covered.">        if (this.isConvection()) return false;</span>
-<span class="fc bfc" id="L213" title="All 2 branches covered.">        if (this.identifier().equals(&quot;,&quot;)) return false; //Reshape</span>
-<span class="fc" id="L214">        Tsr last = null;</span>
-<span class="fc bfc" id="L215" title="All 2 branches covered.">        for (Tsr t : inputs) {</span>
-<span class="fc bfc" id="L216" title="All 2 branches covered.">            if (last!=null) {</span>
-<span class="fc bfc" id="L217" title="All 2 branches covered.">                if (!last.shape().equals(t.shape())) {</span>
-<span class="fc" id="L218">                    return false;</span>
+<span class="fc bfc" id="L391" title="All 2 branches covered.">        if (this.isConvection()) return false;</span>
+<span class="fc bfc" id="L392" title="All 2 branches covered.">        if (this.identifier().equals(&quot;,&quot;)) return false; //Reshape</span>
+<span class="fc" id="L393">        Tsr last = null;</span>
+<span class="fc bfc" id="L394" title="All 2 branches covered.">        for (Tsr t : inputs) {</span>
+<span class="fc bfc" id="L395" title="All 2 branches covered.">            if (last!=null) {</span>
+<span class="fc bfc" id="L396" title="All 2 branches covered.">                if (!last.shape().equals(t.shape())) {</span>
+<span class="fc" id="L397">                    return false;</span>
                 }
             }
-<span class="fc" id="L221">            last = t;</span>
+<span class="fc" id="L400">            last = t;</span>
         }
-<span class="fc" id="L223">        return true;</span>
+<span class="fc" id="L402">        return true;</span>
     }
 
     //@Override
     public ADAgent getADAgentOf(Function f, Tsr[] inputs, int i, boolean forward){
 
         //Tsr d = (allowsForward(inputs))?f.derive(inputs, i):null;
-<span class="fc" id="L230">        Function MUL   = FunctionBuilder.build(&quot;(I[0]*I[1])&quot;, false);</span>
-<span class="fc" id="L231">        Function ADD   = FunctionBuilder.build(&quot;(I[0]+I[1])&quot;, false);</span>
-<span class="fc" id="L232">        Function INV_X = FunctionBuilder.build(&quot;I[0]x&gt;&gt;I[1]x&gt;&gt;I[2]&quot;, false);</span>
+<span class="fc" id="L409">        Function MUL   = FunctionBuilder.build(&quot;(I[0]*I[1])&quot;, false);</span>
+<span class="fc" id="L410">        Function ADD   = FunctionBuilder.build(&quot;(I[0]+I[1])&quot;, false);</span>
+<span class="fc" id="L411">        Function INV_X = FunctionBuilder.build(&quot;I[0]x&gt;&gt;I[1]x&gt;&gt;I[2]&quot;, false);</span>
 
-<span class="fc bfc" id="L234" title="All 2 branches covered.">        if(forward){</span>
-<span class="fc" id="L235">            Tsr d = f.derive(inputs, i);</span>
-<span class="fc" id="L236">            return new ADAgent(</span>
-<span class="fc" id="L237">                    ()-&gt;d,</span>
-<span class="nc" id="L238">                    (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
+<span class="fc bfc" id="L413" title="All 2 branches covered.">        if(forward){</span>
+<span class="fc" id="L414">            Tsr d = f.derive(inputs, i);</span>
+<span class="fc" id="L415">            return new ADAgent(</span>
+<span class="fc" id="L416">                    ()-&gt;d,</span>
+<span class="nc" id="L417">                    (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
                     null
             );
         } else {
-<span class="fc bfc" id="L242" title="All 2 branches covered.">            if(this.identifier().equals(&quot;,&quot;))</span>
+<span class="fc bfc" id="L421" title="All 2 branches covered.">            if(this.identifier().equals(&quot;,&quot;))</span>
             {
-<span class="fc" id="L244">                return new ADAgent(</span>
-<span class="fc" id="L245">                        ()-&gt;null,</span>
-<span class="nc" id="L246">                        (t, derivative) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0),</span>
-<span class="fc" id="L247">                        (t, error) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0)</span>
+<span class="fc" id="L423">                return new ADAgent(</span>
+<span class="fc" id="L424">                        ()-&gt;null,</span>
+<span class="nc" id="L425">                        (t, derivative) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0),</span>
+<span class="fc" id="L426">                        (t, error) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0)</span>
                 );
             }
-<span class="pc bpc" id="L250" title="1 of 4 branches missed.">            else if (this.isOperation() &amp;&amp; !this.isConvection())</span>
+<span class="pc bpc" id="L429" title="1 of 4 branches missed.">            else if (this.isOperation() &amp;&amp; !this.isConvection())</span>
             {
-<span class="fc" id="L252">                Tsr d = f.derive(inputs, i);</span>
-<span class="fc" id="L253">                return new ADAgent(</span>
-<span class="fc" id="L254">                        ()-&gt;d,</span>
-<span class="nc" id="L255">                        (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
-<span class="fc" id="L256">                        (t, error) -&gt; MUL.activate(new Tsr[]{error, d})</span>
+<span class="fc" id="L431">                Tsr d = f.derive(inputs, i);</span>
+<span class="fc" id="L432">                return new ADAgent(</span>
+<span class="fc" id="L433">                        ()-&gt;d,</span>
+<span class="nc" id="L434">                        (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
+<span class="fc" id="L435">                        (t, error) -&gt; MUL.activate(new Tsr[]{error, d})</span>
                 );
             }
-<span class="pc bpc" id="L259" title="1 of 2 branches missed.">            else if (this.isConvection())</span>
+<span class="pc bpc" id="L438" title="1 of 2 branches missed.">            else if (this.isConvection())</span>
             {
-<span class="fc" id="L261">                Tsr d = f.derive(inputs, i);</span>
-<span class="fc" id="L262">                return new ADAgent(</span>
-<span class="fc" id="L263">                        ()-&gt;d,</span>
-<span class="nc" id="L264">                        (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
-<span class="fc" id="L265">                        (t, error) -&gt; INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})</span>
+<span class="fc" id="L440">                Tsr d = f.derive(inputs, i);</span>
+<span class="fc" id="L441">                return new ADAgent(</span>
+<span class="fc" id="L442">                        ()-&gt;d,</span>
+<span class="nc" id="L443">                        (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
+<span class="fc" id="L444">                        (t, error) -&gt; INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})</span>
                 );
             }
         }
-<span class="nc" id="L269">        return new ADAgent(</span>
-<span class="nc" id="L270">                ()-&gt;null,</span>
-<span class="nc" id="L271">                (t, derivative) -&gt; null,</span>
-<span class="nc" id="L272">                (t, error) -&gt; null</span>
+<span class="nc" id="L448">        return new ADAgent(</span>
+<span class="nc" id="L449">                ()-&gt;null,</span>
+<span class="nc" id="L450">                (t, derivative) -&gt; null,</span>
+<span class="nc" id="L451">                (t, error) -&gt; null</span>
         );
 
     }
-
-
-
-
-
-    static
-    {
-<span class="fc" id="L283">        _TYPES = new OperationType[]</span>
-        {
-                new ReLU(),
-                new Sigmoid(),
-                new Tanh(),
-                new Quadratic(),
-                new Ligmoid(),
-                new Identity(),
-                new Gaussian(),
-                new Absolute(),
-                new Sinus(),
-                new Cosinus(),
-
-                // Indexer:
-                new Summation(),
-                new Product(),
-
-                //-=-
-                // Operations (auto broadcast):
-                new OperationType(&quot;random&quot;, &quot;rand&quot;, false, false, false, false, false, &quot;&quot;, &quot;&quot;, null,
-                        &quot;output = pow(input1, value);&quot;,
-                        &quot;if(d==0){\n&quot; +
-                                &quot;    output = value * pow(input1, value-(float)1 );\n&quot; +
-                                &quot;} else {\n&quot; +
-                                &quot;    output = pow(input1, value) * log(value);\n&quot; +
-                                &quot;}&quot;,
-                        (inputs, value, d)-&gt;{
-<span class="nc" id="L310">                            double[] t1_val = inputs[1].value64();</span>
-<span class="nc" id="L311">                            return (t0Idx, t1Idx, t2Idx) -&gt;</span>
-<span class="nc" id="L312">                                    Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);</span>
-
-                        },
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-
-                //-=-
-                // Operations (auto broadcast):
-                new Power(),
-                new OperationType(&quot;inv_power_left&quot;, ((char)171)+&quot;^&quot;, false, false, false, false, false, &quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;inv_power_right&quot;, &quot;^&quot;+((char)187), false, false, false, false, false, &quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                //---
-                new OperationType(&quot;divide&quot;, &quot;/&quot;, false, false, false, false, false, &quot;&quot;, &quot;&quot;,null,
-                        &quot;output = input1 / value;\n&quot;,
-                        &quot;if(d==0){\n&quot; +
-                                &quot;    output = 1/value;\n&quot; +
-                                &quot;} else {\n&quot; +
-                                &quot;    output = -value /(float)pow(input1, 2.0f);\n&quot; +
-                                &quot;}&quot;,
-                        (inputs, value, d)-&gt;{
-<span class="fc" id="L348">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L349" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L350">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] / value;</span>
-                            } else {
-<span class="nc bnc" id="L352" title="All 2 branches missed.">                                if(d==0) return (t0Idx, t1Idx, t2Idx) -&gt; 1 / value;</span>
-<span class="nc" id="L353">                                else return (t0Idx, t1Idx, t2Idx) -&gt; -value/Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], 2);</span>
-                            }
-                        },
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;inv_division_left&quot;, ((char)171)+&quot;/&quot;, false, false, false, false, false, &quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;inv_division_right&quot;, &quot;/&quot;+((char)187), false, false, false, false, false, &quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                //---
-                new OperationType(&quot;multiply&quot;, &quot;*&quot;, false, false, false, true, false,  &quot;&quot;, &quot;&quot;, null,
-                        &quot;output = input1 * value;\n&quot;,
-                        &quot;if(d==0){output = value;}else{output = input1;}\n&quot;,
-                        (inputs, value, d)-&gt;{
-<span class="fc" id="L381">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L382" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L383">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * value;</span>
-                            } else {
-<span class="nc bnc" id="L385" title="All 2 branches missed.">                                if(d==0) return (t0Idx, t1Idx, t2Idx) -&gt; value;</span>
-<span class="nc" id="L386">                                else return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-                            }
-                        },
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;&quot;, ((char)171)+&quot;*&quot;, false, false, false, false, false, &quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;&quot;, &quot;*&quot;+((char)187), false, false, false, false, false,  &quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                //---
-                new OperationType(&quot;modulo&quot;, &quot;%&quot;, false, false, false, false, false, &quot;&quot;, &quot;&quot;,null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;&quot;, ((char)171)+&quot;%&quot;, false, false, false, false, false,  &quot;&quot;, &quot;&quot;,null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;&quot;, &quot;%&quot;+((char)187), false, false, false, false, false, &quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                //---
-                new OperationType(&quot;subtract&quot;, &quot;-&quot;, false, false, false, false, false, &quot;&quot;, &quot;&quot;,null,
-                        &quot;output = input1 - value;\n&quot;,
-                        &quot;if(d==0){\n&quot; +//drn and src2 switch:
-                                &quot;    output = 1;\n&quot; +
-                                &quot;} else {\n&quot; +
-                                &quot;    output = -1;&quot; +
-                                &quot;}&quot;,
-                        (inputs, value, d)-&gt;{
-<span class="fc" id="L443">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L444" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L445">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] - value;</span>
-                            } else {
-<span class="nc bnc" id="L447" title="All 2 branches missed.">                                if(d==0) return (t0Idx, t1Idx, t2Idx) -&gt; 1;</span>
-<span class="nc" id="L448">                                else return (t0Idx, t1Idx, t2Idx) -&gt; -1;</span>
-                            }
-                        },
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;&quot;, ((char)171)+&quot;-&quot;, false, false, false, false, false, &quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;&quot;, &quot;-&quot;+((char)187), false, false, false, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                //---
-                new OperationType(&quot;add&quot;, &quot;+&quot;, false, false, false, true, false, &quot;&quot;, &quot;&quot;,null,
-                        &quot;output = input1 + value;\n&quot;,
-                        &quot;output = 1;\n&quot;,
-                        (inputs, value, d)-&gt;{
-<span class="fc" id="L476">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L477" title="1 of 2 branches missed.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + value;</span>
-<span class="nc" id="L478">                            else return (t0Idx, t1Idx, t2Idx) -&gt; 1;</span>
-                        },
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;&quot;, ((char)171)+&quot;+&quot;, false, false, false, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;&quot;, &quot;+&quot;+((char)187), false, false, false, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                //---
-                // Convolution:
-                new OperationType(&quot;convolve&quot;, &quot;x&quot;, false, false, true, false, false, &quot;&quot;, &quot;&quot;,null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;&quot;, ((char)171)+&quot;x&quot;, false, false, true, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;&quot;, &quot;x&quot;+((char)187), false, false, true, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                //---
-                new OperationType(&quot;&quot;, &quot;d&quot;, false, false, true, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;&quot;, ((char)171)+&quot;d&quot;, false, false, true, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;&quot;, &quot;d&quot;+((char)187), false, false, true, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                //---
-                new OperationType(&quot;&quot;, &quot;p&quot;, false, false, true, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;&quot;, ((char)171)+&quot;p&quot;, false, false, true, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;&quot;, &quot;p&quot;+((char)187), false, false, true, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                //---
-                new OperationType(&quot;&quot;, &quot;a&quot;, false, false, true, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;&quot;, ((char)171)+&quot;a&quot;, false, false, true, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;&quot;, &quot;a&quot;+((char)187), false, false, true, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                //---
-                new OperationType(&quot;&quot;, &quot;s&quot;, false, false, true, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;&quot;, ((char)171)+&quot;s&quot;, false, false, true, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;&quot;, &quot;s&quot;+((char)187), false, false, true, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                // (char)171 -&gt; &lt;&lt;    // (char)187 -&gt; &gt;&gt;
-                //---
-                // Reshape:
-                new OperationType(&quot;&quot;, &quot;,&quot;, false, false, false, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                //---
-                // Injecting:
-                new OperationType(&quot;&quot;, &quot;&lt;&quot;, false, false, false, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                ),
-                new OperationType(&quot;&quot;, &quot;&gt;&quot;, false, false, false, false, false,&quot;&quot;, &quot;&quot;, null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null,
-                        &quot;&quot;,
-                        &quot;&quot;,
-                        null
-                )
-                //---
-        };
-<span class="fc" id="L657">    }</span>
-
-
-    protected OperationType(
-            String name,
-            String  identifier,
-            boolean isFunction,
-            boolean isOperation,
-            boolean isIndexer,
-            boolean isConvection,
-            boolean isCommutative,
-            boolean isAssociative,
-
-            String operationAsString,
-            String deriviationAsString,
-            OperationCreator creator,
-
-            String scalarOperationAsString,
-            String scalarDeriviationAsString,
-            ScalarOperationCreator scalarOperationCreator,
-
-            String broadcastOperationAsString,
-            String broadcastDerivativeAsString,
-            OperationCreator broadcastCreator
-<span class="fc" id="L681">    ) {</span>
-<span class="fc" id="L682">        _construct(</span>
-                name,
-                identifier,
-                isFunction,
-                isOperation,
-                isIndexer,
-                isConvection,
-                isCommutative,
-                isAssociative,
-                creator,
-                operationAsString,
-                deriviationAsString,
-                scalarOperationCreator,
-                scalarOperationAsString,
-                scalarDeriviationAsString,
-
-                broadcastOperationAsString,
-                broadcastDerivativeAsString,
-                broadcastCreator
-        );
-<span class="fc" id="L702">    }</span>
-
-    protected OperationType(
-            String name,
-            String  identifier,
-            boolean isFunction,
-            boolean isIndexer,
-            boolean isConvection,
-            boolean isCommutative,
-            boolean isAssociative,
-
-            String operationAsString,
-            String deriviationAsString,
-            OperationCreator creator,
-
-            String scalarOperationAsString,
-            String scalarDeriviationAsString,
-            ScalarOperationCreator scalarOperationCreator,
-
-            String broadcastOperationAsString,
-            String broadcastDerivativeAsString,
-            OperationCreator broadcastCreator
-<span class="fc" id="L724">    ) {</span>
-<span class="fc bfc" id="L725" title="All 2 branches covered.">        _construct(</span>
-                name,
-                identifier,
-                isFunction,
-                !isFunction,
-                isIndexer,
-                isConvection,
-                isCommutative,
-                isAssociative,
-                creator,
-                operationAsString,
-                deriviationAsString,
-                scalarOperationCreator,
-                scalarOperationAsString,
-                scalarDeriviationAsString,
-
-                broadcastOperationAsString,
-                broadcastDerivativeAsString,
-                broadcastCreator
-        );
-<span class="fc" id="L745">    }</span>
-
-
 
 
 }

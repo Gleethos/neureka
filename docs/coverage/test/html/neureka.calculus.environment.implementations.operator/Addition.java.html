@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Addition.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.environment.implementations.operator</a> &gt; <span class="el_source">Addition.java</span></div><h1>Addition.java</h1><pre class="source lang-java linenums">package neureka.calculus.environment.implementations.operator;
+
+import neureka.calculus.environment.OperationType;
+
+public class Addition extends OperationType {
+
+    public Addition(){
+
+<span class="fc" id="L9">        super(</span>
+                &quot;add&quot;, &quot;+&quot;, false, false, false, true, false, &quot;&quot;, &quot;&quot;, null,
+                &quot;output = input1 + value;\n&quot;,
+                &quot;output = 1;\n&quot;,
+                (inputs, value, d) -&gt; {
+<span class="fc" id="L14">                    double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L15" title="1 of 2 branches missed.">                    if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + value;</span>
+<span class="nc" id="L16">                    else return (t0Idx, t1Idx, t2Idx) -&gt; 1;</span>
+                },
+                &quot;&quot;,
+                &quot;&quot;,
+                null,
+                &quot;&quot;,
+                &quot;&quot;,
+                (inputs, d) -&gt; {
+<span class="fc" id="L24">                    double[] t1_val = inputs[1].value64();</span>
+<span class="fc" id="L25">                    double[] t2_val = inputs[2].value64();</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">                    if (d &lt; 0) {</span>
+<span class="fc" id="L27">                        return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+                    } else {
+<span class="fc" id="L29">                        return (t0Idx, t1Idx, t2Idx) -&gt; 1.0;</span>
+                    }
+                }
+        );
+<span class="fc" id="L33">        new OperationType(</span>
+                &quot;&quot;, ((char) 171) + &quot;+&quot;, false, false, false, false, false,
+                &quot;&quot;,
+                &quot;&quot;,
+                null,
+                &quot;&quot;,
+                &quot;&quot;,
+                null,
+                &quot;&quot;,
+                &quot;&quot;,
+                null,
+                &quot;&quot;,
+                &quot;&quot;,
+                null
+        );
+<span class="fc" id="L48">        new OperationType(</span>
+                &quot;&quot;, &quot;+&quot; + ((char) 187), false, false, false, false, false,
+                &quot;&quot;,
+                &quot;&quot;,
+                null,
+                &quot;&quot;,
+                &quot;&quot;,
+                null,
+                &quot;&quot;,
+                &quot;&quot;,
+                null,
+                &quot;&quot;,
+                &quot;&quot;,
+                null
+        );
+
+        // Convolutoion:
+
+
+<span class="fc" id="L67">        new OperationType(</span>
+                &quot;&quot;, &quot;a&quot;, false, false, true, false, false,
+                &quot;&quot;,
+                &quot;&quot;,
+                null,
+                &quot;&quot;,
+                &quot;&quot;,
+                null,
+                &quot;&quot;,
+                &quot;&quot;,
+                null,
+                &quot;&quot;,
+                &quot;&quot;,
+                (inputs, d) -&gt; {
+<span class="nc" id="L81">                    return null;</span>
+                }
+        );
+<span class="fc" id="L84">        new OperationType(</span>
+                &quot;&quot;, ((char) 171) + &quot;a&quot;, false, false, true, false, false,
+                &quot;&quot;,
+                &quot;&quot;,
+                null,
+                &quot;&quot;,
+                &quot;&quot;,
+                null,
+                &quot;&quot;,
+                &quot;&quot;,
+                null,
+                &quot;&quot;,
+                &quot;&quot;,
+                null
+        );
+<span class="fc" id="L99">        new OperationType(</span>
+                &quot;&quot;, &quot;a&quot; + ((char) 187), false, false, true, false, false,
+                &quot;&quot;,
+                &quot;&quot;,
+                null,
+                &quot;&quot;,
+                &quot;&quot;,
+                null,
+                &quot;&quot;,
+                &quot;&quot;,
+                null,
+                &quot;&quot;,
+                &quot;&quot;,
+                null
+        );
+
+
+
+
+<span class="fc" id="L118">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

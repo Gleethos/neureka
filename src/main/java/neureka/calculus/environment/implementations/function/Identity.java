@@ -19,6 +19,9 @@ public class Identity extends OperationType {
                 null,
                 "",
                 "",
+                null,
+                "",
+                "",
                 null
         );
 

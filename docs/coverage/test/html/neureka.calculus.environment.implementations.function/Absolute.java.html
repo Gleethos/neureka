@@ -6,17 +6,21 @@ public class Absolute extends OperationType {
 
     public Absolute(){
 
-<span class="fc" id="L9">        super(&quot;absolute&quot;, &quot;abs&quot; , true, false, false, true, true,</span>
+<span class="fc" id="L9">        super(</span>
+                &quot;absolute&quot;, &quot;abs&quot; , true, false, false, true, true,
                 &quot;output = fabs(input);\n&quot;,
                 &quot;output = (input &lt; 0) ? -1 : 1;\n&quot;,
                 (inputs, d)-&gt;{
-<span class="fc" id="L13">                    double[] t1_val = inputs[1].value64();</span>
-<span class="fc bfc" id="L14" title="All 2 branches covered.">                    if (d &lt; 0) {</span>
-<span class="fc" id="L15">                        return (t0Idx, t1Idx, t2Idx) -&gt; Math.abs(t1_val[inputs[1].i_of_idx(t1Idx)]);</span>
+<span class="fc" id="L14">                    double[] t1_val = inputs[1].value64();</span>
+<span class="fc bfc" id="L15" title="All 2 branches covered.">                    if (d &lt; 0) {</span>
+<span class="fc" id="L16">                        return (t0Idx, t1Idx, t2Idx) -&gt; Math.abs(t1_val[inputs[1].i_of_idx(t1Idx)]);</span>
                     } else {
-<span class="fc bfc" id="L17" title="All 2 branches covered.">                        return (t0Idx, t1Idx, t2Idx) -&gt; (t1_val[inputs[1].i_of_idx(t1Idx)] &lt; 0) ? -1 : 1;</span>
+<span class="fc bfc" id="L18" title="All 2 branches covered.">                        return (t0Idx, t1Idx, t2Idx) -&gt; (t1_val[inputs[1].i_of_idx(t1Idx)] &lt; 0) ? -1 : 1;</span>
                     }
                 },
+                &quot;&quot;,
+                &quot;&quot;,
+                null,
                 &quot;&quot;,
                 &quot;&quot;,
                 null,
@@ -25,7 +29,7 @@ public class Absolute extends OperationType {
                 null
         );
 
-<span class="fc" id="L28">    }</span>
+<span class="fc" id="L32">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

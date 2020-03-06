@@ -20,6 +20,9 @@ public class Cosinus extends OperationType {
                 null,
                 "",
                 "",
+                null,
+                "",
+                "",
                 null
         );
 

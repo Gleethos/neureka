@@ -12,11 +12,11 @@ public interface Type {
 
     //-----------------
 
-    OperationType.OperationCreator getCreator();
+    OperationType.OperationCreator getActivationCreator();
 
-    String getOperationAsString();
+    String getActivationOperationAsString();
 
-    String getDeriviationAsString();
+    String getActivationDeriviationAsString();
 
     //-----------------
 

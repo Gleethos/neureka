@@ -35,6 +35,9 @@ public class Ligmoid extends OperationType {
                 null,
                 "",
                 "",
+                null,
+                "",
+                "",
                 null
         );
     }

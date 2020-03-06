@@ -16,10 +16,14 @@ public class CPU extends AbstractDevice {
             exec.activate(tsrs, d, type);
             return;
         }
+        if(type.isOperation()&&!type.isConvection()) {
+            exec.broadcast(tsrs, d, type);
+            return;
+        }
         switch (type.identifier()) {
 
-            case "sum": exec.broadcast_add(tsrs[0], tsrs[1], tsrs[2], d);break;
-            case "prod": exec.broadcast_multiply(tsrs[0], tsrs[1], tsrs[2], d);break;
+            case "sum": exec.broadcast(tsrs, d, type);break;// exec.broadcast_add(tsrs[0], tsrs[1], tsrs[2], d);break;
+            case "prod": exec.broadcast(tsrs, d, type);break;//exec.broadcast_multiply(tsrs[0], tsrs[1], tsrs[2], d);break;
             //---
             case "x":
                 if (d >= 0) {
@@ -68,12 +72,12 @@ public class CPU extends AbstractDevice {
                 break;
             //---
 
-            case "*": exec.broadcast_multiply(tsrs[0], tsrs[1], tsrs[2], d);break;
-            case "+": exec.broadcast_add(tsrs[0], tsrs[1], tsrs[2], d);break;
-            case "-": exec.broadcast_subtract(tsrs[0], tsrs[1], tsrs[2], d);break;
-            case "/": exec.broadcast_divide(tsrs[0], tsrs[1], tsrs[2], d);break;
-            case "%": exec.broadcast_mod(tsrs[0], tsrs[1], tsrs[2], d);break;
-            case "^": exec.broadcast_power(tsrs[0], tsrs[1], tsrs[2], d);break;
+            //case "*": exec.broadcast_multiply(tsrs[0], tsrs[1], tsrs[2], d);break;
+            //case "+": exec.broadcast_add(tsrs[0], tsrs[1], tsrs[2], d);break;
+            //case "-": exec.broadcast_subtract(tsrs[0], tsrs[1], tsrs[2], d);break;
+            //case "/": exec.broadcast_divide(tsrs[0], tsrs[1], tsrs[2], d);break;
+            //case "%": exec.broadcast_mod(tsrs[0], tsrs[1], tsrs[2], d);break;
+            //case "^": exec.broadcast_power(tsrs[0], tsrs[1], tsrs[2], d);break;
             //case "<": exec.activate_identity(tsrs[0], tsrs[1], d);break;
             //case ">": exec.activate_identity(tsrs[1], tsrs[0], d);break;
             default:
@@ -171,7 +175,18 @@ public class CPU extends AbstractDevice {
             _threaded(tsrs[0].size(), (start, end) -> {
                 _template.activate(
                         tsrs[0], start, end,
-                        type.getCreator().create(tsrs, d)
+                        type.getActivationCreator().create(tsrs, d)
+                );
+            });
+        }
+
+        public static void broadcast(Tsr[] tsrs, int d, OperationType type){
+            _threaded(tsrs[0].size(), (start, end) -> {
+                int _d = _adjusted_d(d, tsrs[0], tsrs[1], tsrs[2]);
+                _template.broadcast(
+                        tsrs[0], tsrs[1], tsrs[2], _d,
+                        start, end,
+                        type.getOperationCreator().create(tsrs,  _d)
                 );
             });
         }
@@ -276,17 +291,6 @@ public class CPU extends AbstractDevice {
             }));
         }
 
-        public static void broadcast_add(
-                Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
-        ) {
-            _threaded(t0_drn.size(), (start, end) -> {
-                _template.broadcast(
-                        t0_drn, t1_src, t2_src, d,
-                        start, end,
-                        _addition(t1_src, t2_src, d)
-                );
-            });
-        }
         public static void broadcast_add_inverse(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src
         ) {
@@ -338,17 +342,6 @@ public class CPU extends AbstractDevice {
             }));
         }
 
-        public static void broadcast_subtract(
-                Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
-        ) {
-            _threaded(t0_drn.size(), (start, end) -> {
-                _template.broadcast(
-                        t0_drn, t1_src, t2_src, d,
-                        start, end,
-                        _subtraction(t1_src, t2_src, d)
-                );
-            });
-        }
         public static void broadcast_subtract_inverse(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src
         ) {
@@ -391,17 +384,6 @@ public class CPU extends AbstractDevice {
             }));
         }
 
-        public static void broadcast_divide(
-                Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
-        ) {
-            _threaded(t0_drn.size(), (start, end) -> {
-                _template.broadcast(
-                        t0_drn, t1_src, t2_src, d,
-                        start, end,
-                        _division(t1_src, t2_src, d)
-                );
-            });
-        }
 
         private static Operator _division(
                 Tsr t1_src, Tsr t2_src, int d
@@ -440,17 +422,7 @@ public class CPU extends AbstractDevice {
             }));
         }
 
-        public static void broadcast_power(
-                Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
-        ) {
-            _threaded(t0_drn.size(), (start, end) -> {
-                _template.broadcast(
-                        t0_drn, t1_src, t2_src, d,
-                        start, end,
-                        _power(t1_src, t2_src, d)
-                );
-            });
-        }
+
 
         private static Operator _power(
                 Tsr t1_src, Tsr t2_src, int d
@@ -494,18 +466,6 @@ public class CPU extends AbstractDevice {
                         _modulo(t1_src, t2_src, d)
                 );
             }));
-        }
-
-        public static void broadcast_mod(
-                Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
-        ) {
-            _threaded(t0_drn.size(), (start, end) -> {
-                _template.broadcast(
-                        t0_drn, t1_src, t2_src, d,
-                        start, end,
-                        _modulo(t1_src, t2_src, d)
-                );
-            });
         }
 
         private static Operator _modulo(

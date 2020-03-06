@@ -20,6 +20,9 @@ public class Sinus extends OperationType {
                 null,
                 "",
                 "",
+                null,
+                "",
+                "",
                 null
         );
 

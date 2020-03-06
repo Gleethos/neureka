@@ -27,6 +27,9 @@ public class Tanh extends OperationType {
                 null,
                 "",
                 "",
+                null,
+                "",
+                "",
                 null
         );
     }

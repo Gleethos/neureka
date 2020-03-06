@@ -27,8 +27,119 @@ public class Power extends OperationType
                 },
                 "",
                 "",
+                null,
+                "",
+                "",
+                (inputs, d)->{
+                    double[] t1_val = inputs[1].value64();
+                    double[] t2_val = inputs[2].value64();
+                    if (d < 0) {
+                        return (t0Idx, t1Idx, t2Idx) -> Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], t2_val[inputs[2].i_of_idx(t2Idx)]);
+                    } else {
+                        return (t0Idx, t1Idx, t2Idx) -> {
+                            if (d == 0) {
+                                return t2_val[inputs[2].i_of_idx(t2Idx)]
+                                        * Math.pow(
+                                        t1_val[inputs[1].i_of_idx(t1Idx)],
+                                        t2_val[inputs[2].i_of_idx(t2Idx)] - 1
+                                );
+                            } else {
+                                return Math.pow(
+                                        t1_val[inputs[1].i_of_idx(t1Idx)],
+                                        t2_val[inputs[2].i_of_idx(t2Idx)]
+                                ) * Math.log(t1_val[inputs[1].i_of_idx(t1Idx)]);
+                            }
+                        };
+                    }
+                }
+        );
+
+
+        new OperationType(
+                "inv_power_left", ((char)171)+"^", false, false, false, false, false,
+                "",
+                "",
+                null,
+                "",
+                "",
+                null,
+                "",
+                "",
+                null,
+                "",
+                "",
                 null
         );
+
+
+        new OperationType("inv_power_right", "^" + ((char) 187), false, false, false, false, false,
+                "",
+                "",
+                null,
+                "",
+                "",
+                null,
+                "",
+                "",
+                null,
+                "",
+                "",
+                null
+        );
+
+        // Convolution:
+
+
+        new OperationType(
+                "", "p", false, false, true, false, false,
+                "",
+                "",
+                null,
+                "",
+                "",
+                null,
+                "",
+                "",
+                null,
+                "",
+                "",
+                (inputs, d) -> {
+                    return null;
+                }
+        );
+        new OperationType(
+                "", ((char) 171) + "p", false, false, true, false, false,
+                "",
+                "",
+                null,
+                "",
+                "",
+                null,
+                "",
+                "",
+                null,
+                "",
+                "",
+                null
+        );
+        new OperationType(
+                "", "p" + ((char) 187), false, false, true, false, false,
+                "",
+                "",
+                null,
+                "",
+                "",
+                null,
+                "",
+                "",
+                null,
+                "",
+                "",
+                null
+        );
+
+
+
 
     }
 

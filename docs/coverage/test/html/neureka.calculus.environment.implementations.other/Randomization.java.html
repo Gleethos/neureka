@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Randomization.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.environment.implementations.other</a> &gt; <span class="el_source">Randomization.java</span></div><h1>Randomization.java</h1><pre class="source lang-java linenums">package neureka.calculus.environment.implementations.other;
+
+import neureka.calculus.environment.OperationType;
+
+import java.util.Random;
+
+public class Randomization extends OperationType{
+
+    public Randomization(){
+
+        // Operations (auto broadcast):
+<span class="nc" id="L12">        super(</span>
+                &quot;random&quot;, &quot;rand&quot;, false, false, false, false, false,
+                &quot;&quot;,
+                &quot;&quot;,
+                null,
+                &quot;output = pow(input1, value);&quot;,
+                &quot;if(d==0){\n&quot; +
+                        &quot;    output = value * pow(input1, value-(float)1 );\n&quot; +
+                        &quot;} else {\n&quot; +
+                        &quot;    output = pow(input1, value) * log(value);\n&quot; +
+                        &quot;}&quot;,
+                (inputs, value, d)-&gt;{
+<span class="nc" id="L24">                    Random dice = new Random();</span>
+<span class="nc" id="L25">                    dice.setSeed(Double.doubleToLongBits(value));</span>
+<span class="nc" id="L26">                    double[] t1_val = inputs[1].value64();</span>
+<span class="nc" id="L27">                    return (t0Idx, t1Idx, t2Idx) -&gt; dice.nextGaussian();</span>
+                            //Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);
+                },
+                &quot;&quot;,
+                &quot;&quot;,
+                null,
+                &quot;&quot;,
+                &quot;&quot;,
+                null
+        );
+
+<span class="nc" id="L38">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

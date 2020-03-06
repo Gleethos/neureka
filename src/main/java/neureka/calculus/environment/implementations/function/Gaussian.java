@@ -33,6 +33,9 @@ public class Gaussian extends OperationType {
                 null,
                 "",
                 "",
+                null,
+                "",
+                "",
                 null
         );
 

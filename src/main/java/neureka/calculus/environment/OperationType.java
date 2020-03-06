@@ -7,8 +7,12 @@ import neureka.calculus.Function;
 import neureka.calculus.environment.implementations.function.*;
 import neureka.calculus.environment.implementations.indexer.Product;
 import neureka.calculus.environment.implementations.indexer.Summation;
-import neureka.calculus.environment.implementations.operator.Power;
+import neureka.calculus.environment.implementations.operator.*;
+import neureka.calculus.environment.implementations.other.CopyLeft;
+import neureka.calculus.environment.implementations.other.CopyRight;
+import neureka.calculus.environment.implementations.other.Reshape;
 import neureka.calculus.factory.assembly.FunctionBuilder;
+import org.codehaus.groovy.runtime.ResourceGroovyMethods;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,9 +20,9 @@ import java.util.Map;
 
 public class OperationType implements Type
 {
-    private static Map<String, OperationType> _LOOKUP = new HashMap<>();
+    private static final Map<String, OperationType> _LOOKUP = new HashMap<>();
 
-    private static ArrayList<OperationType> _REGISTER = new ArrayList<>();
+    private static final ArrayList<OperationType> _REGISTER = new ArrayList<>();
 
     public static OperationType LOOKUP(String identifier) {
         return _LOOKUP.getOrDefault(identifier, null);
@@ -39,31 +43,168 @@ public class OperationType implements Type
         return _LOOKUP.get(identifier);
     }
 
-    protected static OperationType[] _TYPES;
-
     private static int _ID = 0;
 
-    protected int _id;
-    protected String _name;
-    protected String  _identifier;
-    protected boolean _isFunction;
-    protected boolean _isOperation;
-    protected boolean _isIndexer;
-    protected boolean _isConvection;
-    protected boolean _isCommutative;
-    protected boolean _isAssociative;
+    protected int _id = -1;
+    protected String _name = "";
+    protected String  _identifier = "";
+    protected boolean _isFunction = false;
+    protected boolean _isOperation = false;
+    protected boolean _isIndexer = false;
+    protected boolean _isConvection = false;
+    protected boolean _isCommutative = false;
+    protected boolean _isAssociative = false;
 
-    protected String _operationAsString;
-    protected String _deriviationAsString;
-    protected OperationType.OperationCreator _operationCreator;
+    protected String _activationAsString = "";
+    protected String _activationDeriviationAsString = "";
+    protected OperationType.OperationCreator _activationOperationCreator = null;
 
-    protected String _scalarOperationAsString;
-    protected String _scalarDeriviationAsString;
-    protected OperationType.ScalarOperationCreator _scalarOperationCreator;
+    protected String _scalarOperationAsString = "";
+    protected String _scalarDeriviationAsString = "";
+    protected OperationType.ScalarOperationCreator _scalarOperationCreator = null;
 
-    protected String _broadcastOperationAsString;
-    protected String _broadcastDeriviationAsString;
-    protected OperationType.OperationCreator _broadcastOperationCreator;
+    protected String _broadcastOperationAsString = "";
+    protected String _broadcastDeriviationAsString = "";
+    protected OperationType.OperationCreator _broadcastOperationCreator = null;
+
+    protected String _operationAsString = "";
+    protected String _operationDeriviationAsString = "";
+    protected OperationType.OperationCreator _operationCreator = null;
+
+    static
+    {
+        new ReLU();
+        new Sigmoid();
+        new Tanh();
+        new Quadratic();
+        new Ligmoid();
+        new Identity();
+        new Gaussian();
+        new Absolute();
+        new Sinus();
+        new Cosinus();
+
+        new Summation();
+        new Product();
+
+        new Power();
+        new Division();
+        new Multiplication();
+        new Modulo();
+        new Subtraction();
+        new Addition();
+
+        new Reshape();
+        new CopyLeft();
+        new CopyRight();
+    }
+
+    protected OperationType(
+            String name,
+            String  identifier,
+            boolean isFunction,
+            boolean isOperation,
+            boolean isIndexer,
+            boolean isConvection,
+            boolean isCommutative,
+            boolean isAssociative,
+
+            String activationOperationAsString,
+            String activationDeriviationAsString,
+            OperationCreator activationCreator,
+
+            String scalarOperationAsString,
+            String scalarDeriviationAsString,
+            ScalarOperationCreator scalarOperationCreator,
+
+            String broadcastOperationAsString,
+            String broadcastDerivativeAsString,
+            OperationCreator broadcastCreator,
+
+            String operationAsString,
+            String operationDeriviationAsString,
+            OperationType.OperationCreator operationCreator
+    ) {
+        _construct(
+                name,
+                identifier,
+                isFunction,
+                isOperation,
+                isIndexer,
+                isConvection,
+                isCommutative,
+                isAssociative,
+
+                activationCreator,
+                activationOperationAsString,
+                activationDeriviationAsString,
+
+                scalarOperationCreator,
+                scalarOperationAsString,
+                scalarDeriviationAsString,
+
+                broadcastOperationAsString,
+                broadcastDerivativeAsString,
+                broadcastCreator,
+
+                operationAsString,
+                operationDeriviationAsString,
+                operationCreator
+        );
+    }
+
+    public OperationType(
+            String name,
+            String identifier,
+            boolean isFunction,
+            boolean isIndexer,
+            boolean isConvection,
+            boolean isCommutative,
+            boolean isAssociative,
+
+            String activationOperationAsString,
+            String activationDeriviationAsString,
+            OperationCreator activationCreator,
+
+            String scalarOperationAsString,
+            String scalarDeriviationAsString,
+            ScalarOperationCreator scalarOperationCreator,
+
+            String broadcastOperationAsString,
+            String broadcastDerivativeAsString,
+            OperationCreator broadcastCreator,
+
+            String operationAsString,
+            String operationDeriviationAsString,
+            OperationType.OperationCreator operationCreator
+    ) {
+        _construct(
+                name,
+                identifier,
+                isFunction,
+                !isFunction,
+                isIndexer,
+                isConvection,
+                isCommutative,
+                isAssociative,
+
+                activationCreator,
+                activationOperationAsString,
+                activationDeriviationAsString,
+
+                scalarOperationCreator,
+                scalarOperationAsString,
+                scalarDeriviationAsString,
+
+                broadcastOperationAsString,
+                broadcastDerivativeAsString,
+                broadcastCreator,
+
+                operationAsString,
+                operationDeriviationAsString,
+                operationCreator
+        );
+    }
 
     protected void _construct(
             String name,
@@ -74,16 +215,22 @@ public class OperationType implements Type
             boolean isConvection,
             boolean isCommutative,
             boolean isAssociative,
-            OperationType.OperationCreator creator,
-            String operationAsString,
-            String deriviationAsString,
+
+            OperationType.OperationCreator activationCreator,
+            String activationOperationAsString,
+            String activationDeriviationAsString,
+
             OperationType.ScalarOperationCreator scalarOperationCreator,
             String scalarOperationAsString,
             String scalarDeriviationAsString,
 
             String broadcastOperationAsString,
             String broadcastDerivativeAsString,
-            OperationType.OperationCreator broadcastCreator
+            OperationType.OperationCreator broadcastCreator,
+            
+            String operationAsString,
+            String operationDeriviationAsString,
+            OperationType.OperationCreator operationCreator
     ) {
         _name = name;
         _id = _ID;
@@ -95,9 +242,11 @@ public class OperationType implements Type
         _isConvection = isConvection;
         _isCommutative = isCommutative;
         _isAssociative = isAssociative;
-        _operationCreator = creator;
-        _operationAsString = operationAsString;
-        _deriviationAsString = deriviationAsString;
+        
+        _activationOperationCreator = activationCreator;
+        _activationAsString = activationOperationAsString;
+        _activationDeriviationAsString = activationDeriviationAsString;
+        
         _scalarOperationCreator = scalarOperationCreator;
         _scalarOperationAsString = scalarOperationAsString;
         _scalarDeriviationAsString = scalarDeriviationAsString;
@@ -106,18 +255,32 @@ public class OperationType implements Type
         _broadcastDeriviationAsString =  broadcastDerivativeAsString;
         _broadcastOperationCreator = broadcastCreator;
 
+        _operationAsString = operationAsString;
+        _operationDeriviationAsString = operationDeriviationAsString;
+        _operationCreator = operationCreator;
+        
         _REGISTER.add(this);
         _LOOKUP.put(identifier, this);
-        if(identifier.equals((((char)171))+"x")) _LOOKUP.put("<<x", this);
-        else if(identifier.equals("x"+((char)187))) _LOOKUP.put("x>>", this);
+        if(
+                identifier
+                        .replace((""+((char)171)), "")
+                        .replace((""+((char)187)), "")
+                        .matches("[a-z]")
+        ){
+            if(identifier.contains((""+((char)171)))) {
+                System.out.println(identifier.replace((""+((char)171)), "<<"));
+                _LOOKUP.put(identifier.replace((""+((char)171)), "<<"), this);
+            }
+            if(identifier.contains((""+((char)187)))) {
+                System.out.println(identifier.replace((""+((char)187)),">>"));
+                _LOOKUP.put(identifier.replace((""+((char)187)),">>"), this);
+            }
+        }
     }
-
-
 
     public static OperationType[] all(){
-        return _TYPES;
+        return _REGISTER.toArray(new OperationType[0]);
     }
-
 
     public static int COUNT(){
         return _ID;
@@ -131,16 +294,16 @@ public class OperationType implements Type
 
     //-----------------
 
-    public OperationCreator getCreator(){
-        return _operationCreator;
+    public OperationCreator getActivationCreator(){
+        return _activationOperationCreator;
     }
 
-    public String getOperationAsString(){
-        return _operationAsString;
+    public String getActivationOperationAsString(){
+        return _activationAsString;
     }
 
-    public String getDeriviationAsString(){
-        return _deriviationAsString;
+    public String getActivationDeriviationAsString(){
+        return _activationDeriviationAsString;
     }
 
     //-----------------
@@ -171,6 +334,19 @@ public class OperationType implements Type
         return _broadcastDeriviationAsString;
     }
 
+    //-----------------
+
+    public OperationCreator getOperationCreator() {
+        return _operationCreator;
+    }
+
+    public String getOperationAsString(){
+        return _operationAsString;
+    }
+
+    public String getOperationDeriviationAsString(){
+        return _operationDeriviationAsString;
+    }
 
     //==================================================================================================================
 
@@ -203,9 +379,7 @@ public class OperationType implements Type
     }
 
     public boolean supportsScalar(){
-        return !_scalarOperationAsString.equals("")
-                &&
-                !_scalarDeriviationAsString.equals("");
+        return !_scalarOperationAsString.equals("") && !_scalarDeriviationAsString.equals("");
     }
 
     public boolean allowsForward(Tsr[] inputs){
@@ -273,478 +447,6 @@ public class OperationType implements Type
         );
 
     }
-
-
-
-
-
-    static
-    {
-        _TYPES = new OperationType[]
-        {
-                new ReLU(),
-                new Sigmoid(),
-                new Tanh(),
-                new Quadratic(),
-                new Ligmoid(),
-                new Identity(),
-                new Gaussian(),
-                new Absolute(),
-                new Sinus(),
-                new Cosinus(),
-
-                // Indexer:
-                new Summation(),
-                new Product(),
-
-                //-=-
-                // Operations (auto broadcast):
-                new OperationType("random", "rand", false, false, false, false, false, "", "", null,
-                        "output = pow(input1, value);",
-                        "if(d==0){\n" +
-                                "    output = value * pow(input1, value-(float)1 );\n" +
-                                "} else {\n" +
-                                "    output = pow(input1, value) * log(value);\n" +
-                                "}",
-                        (inputs, value, d)->{
-                            double[] t1_val = inputs[1].value64();
-                            return (t0Idx, t1Idx, t2Idx) ->
-                                    Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);
-
-                        },
-                        "",
-                        "",
-                        null
-                ),
-
-                //-=-
-                // Operations (auto broadcast):
-                new Power(),
-                new OperationType("inv_power_left", ((char)171)+"^", false, false, false, false, false, "", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("inv_power_right", "^"+((char)187), false, false, false, false, false, "", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                //---
-                new OperationType("divide", "/", false, false, false, false, false, "", "",null,
-                        "output = input1 / value;\n",
-                        "if(d==0){\n" +
-                                "    output = 1/value;\n" +
-                                "} else {\n" +
-                                "    output = -value /(float)pow(input1, 2.0f);\n" +
-                                "}",
-                        (inputs, value, d)->{
-                            double[] t1_val = inputs[1].value64();
-                            if (d < 0) {
-                                return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] / value;
-                            } else {
-                                if(d==0) return (t0Idx, t1Idx, t2Idx) -> 1 / value;
-                                else return (t0Idx, t1Idx, t2Idx) -> -value/Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], 2);
-                            }
-                        },
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("inv_division_left", ((char)171)+"/", false, false, false, false, false, "", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("inv_division_right", "/"+((char)187), false, false, false, false, false, "", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                //---
-                new OperationType("multiply", "*", false, false, false, true, false,  "", "", null,
-                        "output = input1 * value;\n",
-                        "if(d==0){output = value;}else{output = input1;}\n",
-                        (inputs, value, d)->{
-                            double[] t1_val = inputs[1].value64();
-                            if (d < 0) {
-                                return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * value;
-                            } else {
-                                if(d==0) return (t0Idx, t1Idx, t2Idx) -> value;
-                                else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
-                            }
-                        },
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("", ((char)171)+"*", false, false, false, false, false, "", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("", "*"+((char)187), false, false, false, false, false,  "", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                //---
-                new OperationType("modulo", "%", false, false, false, false, false, "", "",null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("", ((char)171)+"%", false, false, false, false, false,  "", "",null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("", "%"+((char)187), false, false, false, false, false, "", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                //---
-                new OperationType("subtract", "-", false, false, false, false, false, "", "",null,
-                        "output = input1 - value;\n",
-                        "if(d==0){\n" +//drn and src2 switch:
-                                "    output = 1;\n" +
-                                "} else {\n" +
-                                "    output = -1;" +
-                                "}",
-                        (inputs, value, d)->{
-                            double[] t1_val = inputs[1].value64();
-                            if (d < 0) {
-                                return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] - value;
-                            } else {
-                                if(d==0) return (t0Idx, t1Idx, t2Idx) -> 1;
-                                else return (t0Idx, t1Idx, t2Idx) -> -1;
-                            }
-                        },
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("", ((char)171)+"-", false, false, false, false, false, "", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("", "-"+((char)187), false, false, false, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                //---
-                new OperationType("add", "+", false, false, false, true, false, "", "",null,
-                        "output = input1 + value;\n",
-                        "output = 1;\n",
-                        (inputs, value, d)->{
-                            double[] t1_val = inputs[1].value64();
-                            if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] + value;
-                            else return (t0Idx, t1Idx, t2Idx) -> 1;
-                        },
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("", ((char)171)+"+", false, false, false, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("", "+"+((char)187), false, false, false, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                //---
-                // Convolution:
-                new OperationType("convolve", "x", false, false, true, false, false, "", "",null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("", ((char)171)+"x", false, false, true, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("", "x"+((char)187), false, false, true, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                //---
-                new OperationType("", "d", false, false, true, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("", ((char)171)+"d", false, false, true, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("", "d"+((char)187), false, false, true, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                //---
-                new OperationType("", "p", false, false, true, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("", ((char)171)+"p", false, false, true, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("", "p"+((char)187), false, false, true, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                //---
-                new OperationType("", "a", false, false, true, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("", ((char)171)+"a", false, false, true, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("", "a"+((char)187), false, false, true, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                //---
-                new OperationType("", "s", false, false, true, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("", ((char)171)+"s", false, false, true, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("", "s"+((char)187), false, false, true, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                // (char)171 -> <<    // (char)187 -> >>
-                //---
-                // Reshape:
-                new OperationType("", ",", false, false, false, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                //---
-                // Injecting:
-                new OperationType("", "<", false, false, false, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                ),
-                new OperationType("", ">", false, false, false, false, false,"", "", null,
-                        "",
-                        "",
-                        null,
-                        "",
-                        "",
-                        null
-                )
-                //---
-        };
-    }
-
-
-    protected OperationType(
-            String name,
-            String  identifier,
-            boolean isFunction,
-            boolean isOperation,
-            boolean isIndexer,
-            boolean isConvection,
-            boolean isCommutative,
-            boolean isAssociative,
-
-            String operationAsString,
-            String deriviationAsString,
-            OperationCreator creator,
-
-            String scalarOperationAsString,
-            String scalarDeriviationAsString,
-            ScalarOperationCreator scalarOperationCreator,
-
-            String broadcastOperationAsString,
-            String broadcastDerivativeAsString,
-            OperationCreator broadcastCreator
-    ) {
-        _construct(
-                name,
-                identifier,
-                isFunction,
-                isOperation,
-                isIndexer,
-                isConvection,
-                isCommutative,
-                isAssociative,
-                creator,
-                operationAsString,
-                deriviationAsString,
-                scalarOperationCreator,
-                scalarOperationAsString,
-                scalarDeriviationAsString,
-
-                broadcastOperationAsString,
-                broadcastDerivativeAsString,
-                broadcastCreator
-        );
-    }
-
-    protected OperationType(
-            String name,
-            String  identifier,
-            boolean isFunction,
-            boolean isIndexer,
-            boolean isConvection,
-            boolean isCommutative,
-            boolean isAssociative,
-
-            String operationAsString,
-            String deriviationAsString,
-            OperationCreator creator,
-
-            String scalarOperationAsString,
-            String scalarDeriviationAsString,
-            ScalarOperationCreator scalarOperationCreator,
-
-            String broadcastOperationAsString,
-            String broadcastDerivativeAsString,
-            OperationCreator broadcastCreator
-    ) {
-        _construct(
-                name,
-                identifier,
-                isFunction,
-                !isFunction,
-                isIndexer,
-                isConvection,
-                isCommutative,
-                isAssociative,
-                creator,
-                operationAsString,
-                deriviationAsString,
-                scalarOperationCreator,
-                scalarOperationAsString,
-                scalarDeriviationAsString,
-
-                broadcastOperationAsString,
-                broadcastDerivativeAsString,
-                broadcastCreator
-        );
-    }
-
-
 
 
 }
