@@ -12,7 +12,6 @@ import neureka.calculus.environment.implementations.other.CopyLeft;
 import neureka.calculus.environment.implementations.other.CopyRight;
 import neureka.calculus.environment.implementations.other.Reshape;
 import neureka.calculus.factory.assembly.FunctionBuilder;
-import org.codehaus.groovy.runtime.ResourceGroovyMethods;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +19,8 @@ import java.util.Map;
 
 public class OperationType implements Type
 {
+
+
     private static final Map<String, OperationType> _LOOKUP = new HashMap<>();
 
     private static final ArrayList<OperationType> _REGISTER = new ArrayList<>();
@@ -63,9 +64,9 @@ public class OperationType implements Type
     protected String _scalarDeriviationAsString = "";
     protected OperationType.ScalarOperationCreator _scalarOperationCreator = null;
 
-    protected String _broadcastOperationAsString = "";
-    protected String _broadcastDeriviationAsString = "";
-    protected OperationType.OperationCreator _broadcastOperationCreator = null;
+    protected String _convolveOperationAsString = "";
+    protected String _convolveDeriviationAsString = "";
+    protected OperationType.OperationCreator _convolveOperationCreator = null;
 
     protected String _operationAsString = "";
     protected String _operationDeriviationAsString = "";
@@ -117,13 +118,13 @@ public class OperationType implements Type
             String scalarDeriviationAsString,
             ScalarOperationCreator scalarOperationCreator,
 
-            String broadcastOperationAsString,
-            String broadcastDerivativeAsString,
-            OperationCreator broadcastCreator,
+            String convolveOperationAsString,
+            String convolveDerivativeAsString,
+            OperationCreator convolveCreator,
 
             String operationAsString,
             String operationDeriviationAsString,
-            OperationType.OperationCreator operationCreator
+            OperationCreator operationCreator
     ) {
         _construct(
                 name,
@@ -143,9 +144,9 @@ public class OperationType implements Type
                 scalarOperationAsString,
                 scalarDeriviationAsString,
 
-                broadcastOperationAsString,
-                broadcastDerivativeAsString,
-                broadcastCreator,
+                convolveOperationAsString,
+                convolveDerivativeAsString,
+                convolveCreator,
 
                 operationAsString,
                 operationDeriviationAsString,
@@ -170,9 +171,9 @@ public class OperationType implements Type
             String scalarDeriviationAsString,
             ScalarOperationCreator scalarOperationCreator,
 
-            String broadcastOperationAsString,
-            String broadcastDerivativeAsString,
-            OperationCreator broadcastCreator,
+            String convolveOperationAsString,
+            String convolveDerivativeAsString,
+            OperationCreator convolveCreator,
 
             String operationAsString,
             String operationDeriviationAsString,
@@ -196,9 +197,9 @@ public class OperationType implements Type
                 scalarOperationAsString,
                 scalarDeriviationAsString,
 
-                broadcastOperationAsString,
-                broadcastDerivativeAsString,
-                broadcastCreator,
+                convolveOperationAsString,
+                convolveDerivativeAsString,
+                convolveCreator,
 
                 operationAsString,
                 operationDeriviationAsString,
@@ -224,9 +225,9 @@ public class OperationType implements Type
             String scalarOperationAsString,
             String scalarDeriviationAsString,
 
-            String broadcastOperationAsString,
-            String broadcastDerivativeAsString,
-            OperationType.OperationCreator broadcastCreator,
+            String convolveOperationAsString,
+            String convolveDerivativeAsString,
+            OperationType.OperationCreator convolveCreator,
             
             String operationAsString,
             String operationDeriviationAsString,
@@ -251,9 +252,9 @@ public class OperationType implements Type
         _scalarOperationAsString = scalarOperationAsString;
         _scalarDeriviationAsString = scalarDeriviationAsString;
 
-        _broadcastOperationAsString = broadcastOperationAsString;
-        _broadcastDeriviationAsString =  broadcastDerivativeAsString;
-        _broadcastOperationCreator = broadcastCreator;
+        _convolveOperationAsString = convolveOperationAsString;
+        _convolveDeriviationAsString =  convolveDerivativeAsString;
+        _convolveOperationCreator = convolveCreator;
 
         _operationAsString = operationAsString;
         _operationDeriviationAsString = operationDeriviationAsString;
@@ -322,16 +323,16 @@ public class OperationType implements Type
 
     //-----------------
 
-    public OperationCreator getBroadcastOperationCreator() {
-        return _broadcastOperationCreator;
+    public OperationCreator getConvolveOperationCreator() {
+        return _convolveOperationCreator;
     }
 
-    public String getBroadcastOperationAsString(){
-        return _broadcastOperationAsString;
+    public String getConvolveOperationAsString(){
+        return _convolveOperationAsString;
     }
 
-    public String getBroadcastDeriviationAsString(){
-        return _broadcastDeriviationAsString;
+    public String getConvolveDeriviationAsString(){
+        return _convolveDeriviationAsString;
     }
 
     //-----------------
