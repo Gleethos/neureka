@@ -16,11 +16,13 @@ import neureka.utility.DataHelper;
 import org.jocl.*;
 
 
-public class OpenCLDevice extends AbstractDevice {
+public class OpenCLDevice extends AbstractDevice
+{
     static class cl_data {
         public cl_mem data;
         public int uses = 0;
         public int size = 0;
+        public cl_event event;
     }
 
     static class cl_tsr {
@@ -53,12 +55,25 @@ public class OpenCLDevice extends AbstractDevice {
      * @param platform
      * @param did
      */
-    private OpenCLDevice(OpenCLPlatform platform, cl_device_id did) {
+    private OpenCLDevice(OpenCLPlatform platform, cl_device_id did)
+    {
         _did = did;
         _platform = platform;
         // Create a command-queue for the selected device
-        _queue = clCreateCommandQueueWithProperties(platform.getContext(), did, null, null);
+        _queue = clCreateCommandQueueWithProperties(
+                platform.getContext(),
+                did,
+                null,
+                null
+        );
         _reference_queue = new ReferenceQueue();
+        Runtime.getRuntime().addShutdownHook(new Thread(()->{
+            _mapping.forEach((k, v)->{
+                //TODO: clWaitForEvent(1, event);
+                clReleaseMemObject(v.config);
+                clReleaseMemObject(v.value.data);
+            });
+        }));
     }
 
     public static OpenCLDevice instance(OpenCLPlatform platform, cl_device_id did){
@@ -74,8 +89,7 @@ public class OpenCLDevice extends AbstractDevice {
         Collection<Object> collection = _mapping.keySet();
         Collection<Tsr> extracted = new ArrayList<>();
         collection.forEach((o) -> {
-            WeakReference r = (WeakReference) o;
-            Tsr t = (Tsr) r.get();
+            Tsr t = (Tsr) ((WeakReference) o).get();
             if (t != null) extracted.add(t);
         });
         return extracted;
@@ -155,10 +169,13 @@ public class OpenCLDevice extends AbstractDevice {
         clEnqueueWriteBuffer(
                 _queue,
                 newClt.config,
-                true, 0,
+                CL_TRUE,
+                0,
                 config.length * Sizeof.cl_int,
                 Pointer.to(config),
-                0, null, null
+                0,
+                null,
+                null
         );
         cl_mem[] memos;
         if (tensor.rqsGradient()) memos = new cl_mem[]{newClt.value.data, newClt.config};
@@ -221,10 +238,13 @@ public class OpenCLDevice extends AbstractDevice {
             clEnqueueWriteBuffer(
                     _queue,
                     mem,
-                    true, 0,
+                    CL_TRUE,
+                    0,
                     size * Sizeof.cl_float * fp,
                     p,
-                    0, null, null
+                    0,
+                    null,
+                    null
             );
         }
     }
@@ -255,25 +275,53 @@ public class OpenCLDevice extends AbstractDevice {
         if (clt.fp == 1) {
             overwrite32(tensor, DataHelper.doubleToFloat(value));
         } else {
+            if(clt.value.event!=null){
+                clWaitForEvents(1, new cl_event[]{clt.value.event});
+            }
+            clt.value.event = new cl_event();
             clEnqueueWriteBuffer(
                     _queue,
                     clt.value.data,
-                    CL_TRUE,
+                    CL_FALSE,
                     0,
                     Sizeof.cl_double * value.length,
                     Pointer.to(value),
                     0,
                     null,
-                    null
+                    clt.value.event
             );
         }
         return this;
     }
 
+    private void _releaseEvents(Tsr[] tsrs){
+        for(Tsr t : tsrs){
+            if(_mapping.get(t).value.event!=null){
+                clReleaseEvent(_mapping.get(t).value.event);
+                _mapping.get(t).value.event = null;
+            }
+        }
+    }
+
+    private cl_event[] _getWaitList(Tsr[] tsrs){
+        List<cl_event> list = new ArrayList<>();
+        for (Tsr t : tsrs) {
+            cl_event event = _mapping.get(t).value.event;
+            if (event != null && !list.contains(event)) {
+                list.add(event);
+            }
+        }
+        return list.toArray(new cl_event[0]);
+    }
+
     @Override
-    public Device overwrite32(Tsr tensor, float[] value) {//TODO: Make value an object!
+    public Device overwrite32(Tsr tensor, float[] value) {
         cl_tsr clt = _mapping.get(tensor);
         if (clt.fp == 1) {
+            if(clt.value.event!=null){
+                clWaitForEvents(1, new cl_event[]{clt.value.event});
+            }
+            clt.value.event = new cl_event();
             clEnqueueWriteBuffer(
                     _queue,
                     clt.value.data,
@@ -283,7 +331,7 @@ public class OpenCLDevice extends AbstractDevice {
                     Pointer.to(value),
                     0,
                     null,
-                    null
+                    clt.value.event
             );
         } else {
             overwrite64(tensor, DataHelper.floatToDouble(value));
@@ -295,8 +343,7 @@ public class OpenCLDevice extends AbstractDevice {
     public Device swap(Tsr former, Tsr replacement) {
         cl_tsr clTsr = _mapping.get(former);
         _mapping.remove(former);
-        WeakTensorReference r = new WeakTensorReference(replacement, _reference_queue);
-        _mapping.put(r, clTsr);
+        _mapping.put(new WeakTensorReference(replacement, _reference_queue), clTsr);
         return this;
     }
 
@@ -306,10 +353,10 @@ public class OpenCLDevice extends AbstractDevice {
         if (clt.fp == 1) {
             return DataHelper.floatToDouble(value32Of(tensor));
         } else {
-            double[] data = new double[clt.value.size];//tensor.size()];
+            double[] data = new double[clt.value.size];
             clEnqueueReadBuffer(
                     _queue,
-                    clt.value.data,//(grd)?clt.grad.data:clt.value.data,
+                    clt.value.data,
                     CL_TRUE,
                     0,
                     Sizeof.cl_double * data.length,
@@ -326,10 +373,10 @@ public class OpenCLDevice extends AbstractDevice {
     public float[] value32Of(Tsr tensor) {
         cl_tsr clt = _mapping.get(tensor);
         if (clt.fp == 1) {
-            float[] data = new float[clt.value.size];//tensor.size()];
+            float[] data = new float[clt.value.size];
             clEnqueueReadBuffer(
                     _queue,
-                    clt.value.data,//(grd)?clt.grad.data:clt.value.data,
+                    clt.value.data,
                     CL_TRUE,
                     0,
                     Sizeof.cl_float * data.length,
@@ -345,8 +392,8 @@ public class OpenCLDevice extends AbstractDevice {
     }
 
     @Override
-    protected void _enqueue(Tsr[] tsrs, int d, OperationType type) {
-
+    protected void _enqueue(Tsr[] tsrs, int d, OperationType type)
+    {
         switch (type.identifier()) {
             case "x":
                 if (d >= 0) {
@@ -380,11 +427,9 @@ public class OpenCLDevice extends AbstractDevice {
                 break;
         }
 
-
         int gwz = (tsrs[0] != null) ? tsrs[0].size() : tsrs[1].size();
         int offset = (tsrs[0] != null) ? 0 : 1;
         String chosen = _platform.kernelNameOf(type);
-        //System.out.println("chosen enq: "+chosen);
         cl_kernel kernel = _platform.getKernels().get(chosen);
 
         cl_mem drn = _mapping.get(tsrs[offset]).value.data;
@@ -408,16 +453,28 @@ public class OpenCLDevice extends AbstractDevice {
             clSetKernelArg(kernel, 6, Sizeof.cl_int, Pointer.to(new int[]{tsrs[0].rank()}));
             clSetKernelArg(kernel, 7, Sizeof.cl_int, Pointer.to(new int[]{d}));
         }
-        clEnqueueNDRangeKernel(
-                _queue, kernel,
-                1,
-                null,
-                new long[]{gwz},
-                null,
-                0,
-                null,
-                null
-        );
+
+        cl_event[] events = _getWaitList(tsrs);
+        if(events.length>0){
+            clWaitForEvents(events.length, events);
+            _releaseEvents(tsrs);
+        }
+        //cl_event event = new cl_event();
+        //for(Tsr t : tsrs) _mapping.get(t).value.event = event;
+        //new Thread(()->{
+            clEnqueueNDRangeKernel(
+                    _queue, kernel,
+                    1,
+                    null,
+                    new long[]{gwz},
+                    null,
+                    0,
+                    null,
+                    null//event
+            );
+        //}).start();
+
+
     }
 
     @Override
@@ -427,7 +484,6 @@ public class OpenCLDevice extends AbstractDevice {
         cl_kernel kernel = _platform.getKernels().get(chosen);
         cl_mem drn = _mapping.get(t).value.data;
         cl_mem src1 = _mapping.get(t).value.data;
-        System.out.println("Chosen kernel: "+chosen);
         clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
         clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(t).config));
         clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=>src1
@@ -435,16 +491,19 @@ public class OpenCLDevice extends AbstractDevice {
         clSetKernelArg(kernel, 4, Sizeof.cl_float, Pointer.to(new float[]{(float) value}));
         clSetKernelArg(kernel, 5, Sizeof.cl_int, Pointer.to(new int[]{t.rank()}));
         clSetKernelArg(kernel, 6, Sizeof.cl_int, Pointer.to(new int[]{d}));
+
+        cl_event[] events = _getWaitList(new Tsr[]{t});
         clEnqueueNDRangeKernel(
                 _queue, kernel,
                 1,
                 null,
                 new long[]{gwz},
                 null,
-                0,
-                null,
+                events.length,
+                (events.length==0)?null:events,
                 null
         );
+        _releaseEvents(new Tsr[]{t});
     }
 
 

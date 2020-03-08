@@ -57,8 +57,6 @@ public class OpenCLPlatform {
     }
 
     public String kernelNameOf(OperationType type) {
-        //String name = OPERATION_TO_KERNEL_MAPPING.get(Function.TYPES.REGISTER(f_id));
-        //System.out.println("Kernel needed: "+name);
         return OPERATION_TO_KERNEL_MAPPING.get(type.identifier());
     }
 

@@ -876,13 +876,13 @@ public class Tsr extends AbstractNDArray
 
 
     public Tsr setValue64(double[] value) {
-<span class="pc bpc" id="L879" title="1 of 2 branches missed.">        if (this.isOutsourced()) ((Device) this.find(Device.class)).overwrite64(this, value);</span>
+<span class="fc bfc" id="L879" title="All 2 branches covered.">        if (this.isOutsourced()) ((Device) this.find(Device.class)).overwrite64(this, value);</span>
 <span class="fc" id="L880">        else _value = value;</span>
 <span class="fc" id="L881">        return this;</span>
     }
 
     public Tsr setValue32(float[] value) {
-<span class="pc bpc" id="L885" title="1 of 2 branches missed.">        if (this.isOutsourced()) ((Device) this.find(Device.class)).overwrite32(this, value);</span>
+<span class="fc bfc" id="L885" title="All 2 branches covered.">        if (this.isOutsourced()) ((Device) this.find(Device.class)).overwrite32(this, value);</span>
 <span class="fc" id="L886">        else _value = value;</span>
 <span class="fc" id="L887">        return this;</span>
     }

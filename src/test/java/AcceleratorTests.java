@@ -54,7 +54,7 @@ public class AcceleratorTests
         gpu.add(tensor1).add(tensor2);
         listOfTensors.add(tensor1);
         listOfTensors.add(tensor2);
-        //System.out.println(new Tsr(t, "lig(I[0])"));
+
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1, tensor2},
                 "I[0]*i1",
@@ -78,7 +78,6 @@ public class AcceleratorTests
         });
         gpu.add(tensor1);
         listOfTensors.add(tensor1);
-        //System.out.println(new Tsr(t, "lig(I[0])"));
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1},
                 "lig(I[0])",
@@ -262,6 +261,30 @@ public class AcceleratorTests
         //---
     }
 
+    @Test
+    public void test_gpu_IO(){
+
+        Neureka.instance().settings().reset();
+        if(!System.getProperty("os.name").toLowerCase().contains("windows")){
+            return;
+        }
+        Device gpu = Device.find("nvidia");
+
+        Tsr t = new Tsr(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2});
+        t.add(gpu);
+        assert t.toString().contains("(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]");
+        t.setValue32(new float[]{1, 1, 1, 1, 1});
+        assert t.toString().contains("(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]");
+        t.setValue32(new float[]{3, 5, 6});
+        t.setValue32(new float[]{4, 2, 3});
+        assert t.toString().contains("(3x2):[4.0, 2.0, 3.0, 1.0, 1.0, -2.0]");
+        t.setValue64(new double[]{9, 4, 7, -12});
+        t.setValue64(new double[]{-5, -2, 1});
+        assert t.toString().contains("(3x2):[-5.0, -2.0, 1.0, -12.0, 1.0, -2.0]");
+        t.setValue32(new float[]{22, 24, 35, 80});
+        t.setValue64(new double[]{-1, -1, -1});
+        assert t.toString().contains("(3x2):[-1.0, -1.0, -1.0, 80.0, 1.0, -2.0]");
+    }
 
     @Test
     public void testThreadedCPUExecution(){
@@ -283,10 +306,7 @@ public class AcceleratorTests
             }
         });
         t.start();
-
         Tsr c = a.div(b);
-        //System.out.println(c);
-
         int maxFound = max[0]-1;//Minus the thread that was used to monitor number of threads!
         max[0] = -1;
         try {
@@ -294,7 +314,6 @@ public class AcceleratorTests
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println(maxFound+">"+initialCount);
         assert maxFound>initialCount;
 
     }

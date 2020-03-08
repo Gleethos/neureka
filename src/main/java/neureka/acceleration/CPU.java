@@ -2,6 +2,7 @@ package neureka.acceleration;
 
 import neureka.Tsr;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
 
 import java.util.Arrays;
@@ -160,10 +161,6 @@ public class CPU extends AbstractDevice {
             void execute(int start, int end);
         }
 
-        public interface Operator {
-            double execute(int[] t0Idx, int[] t1Idx, int[] t2Idx);
-        }
-
         private static int _adjusted_d(int d, Tsr t0_drn, Tsr t1_src, Tsr t2_src) {
             for (int i = 0; i < t0_drn.rank(); i++)
                 d = (t0_drn.shape(i) != t1_src.shape(i) || t1_src.shape(i) != t2_src.shape(i)) ? -1 : d;
@@ -251,7 +248,7 @@ public class CPU extends AbstractDevice {
         }
 
 
-        private static Operator _multiplication(
+        private static Type.Operator _multiplication(
                 Tsr t1_src, Tsr t2_src, int d
         ) {
             double[] t1_val = t1_src.value64();
@@ -303,7 +300,7 @@ public class CPU extends AbstractDevice {
             });
         }
 
-        private static Operator _addition(
+        private static Type.Operator _addition(
                 Tsr t1_src, Tsr t2_src, int d
         ) {
             double[] t1_val = t1_src.value64();
@@ -354,7 +351,7 @@ public class CPU extends AbstractDevice {
             });
         }
 
-        private static Operator _subtraction(
+        private static Type.Operator _subtraction(
                 Tsr t1_src, Tsr t2_src, int d
         ) {
             double[] t1_val = t1_src.value64();
@@ -385,7 +382,7 @@ public class CPU extends AbstractDevice {
         }
 
 
-        private static Operator _division(
+        private static Type.Operator _division(
                 Tsr t1_src, Tsr t2_src, int d
         ) {
             double[] t1_val = t1_src.value64();
@@ -424,7 +421,7 @@ public class CPU extends AbstractDevice {
 
 
 
-        private static Operator _power(
+        private static Type.Operator _power(
                 Tsr t1_src, Tsr t2_src, int d
         ) {
             double[] t1_val = t1_src.value64();
@@ -468,7 +465,7 @@ public class CPU extends AbstractDevice {
             }));
         }
 
-        private static Operator _modulo(
+        private static Type.Operator _modulo(
                 Tsr t1_src, Tsr t2_src, int d
         ) {
             double[] t1_val = t1_src.value64();
@@ -524,7 +521,7 @@ public class CPU extends AbstractDevice {
                     Tsr t0_drn, Tsr t1_src, Tsr t2_src,
                     int d,
                     int i, int end,
-                    Operator operation
+                    Type.Operator operation
             ) {
                 int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
                 int[] t1Shp = t1_src.shape();
@@ -668,7 +665,7 @@ public class CPU extends AbstractDevice {
                     Tsr t0_drn, Tsr t1_src, Tsr t2_src,
                     int d,
                     int i, int end,
-                    Operator operation
+                    Type.Operator operation
             ) {
                 int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
                 int[] t1Shp = t1_src.shape();
@@ -762,7 +759,7 @@ public class CPU extends AbstractDevice {
 
             @Contract(pure = true)
             private static void activate(
-                    Tsr t0_drn, int i, int end, Operator operation
+                    Tsr t0_drn, int i, int end, Type.Operator operation
             ) {
                 int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
                 int rank = t0Shp.length;

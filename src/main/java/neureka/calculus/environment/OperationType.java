@@ -1,7 +1,6 @@
 package neureka.calculus.environment;
 
 import neureka.Tsr;
-import neureka.acceleration.CPU;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.environment.implementations.function.*;
@@ -19,29 +18,16 @@ import java.util.Map;
 
 public class OperationType implements Type
 {
-
-
     private static final Map<String, OperationType> _LOOKUP = new HashMap<>();
 
     private static final ArrayList<OperationType> _REGISTER = new ArrayList<>();
-
-    public static OperationType LOOKUP(String identifier) {
-        return _LOOKUP.getOrDefault(identifier, null);
-    }
 
     public static OperationType instance(int index){
         return _REGISTER.get(index);
     }
 
-    public interface OperationCreator{
-        CPU.exec.Operator create(Tsr[] inputs, int d);
-    }
-    public interface ScalarOperationCreator {
-        CPU.exec.Operator create(Tsr[] inputs, double scalar, int d);
-    }
-
     public static OperationType instance(String identifier){
-        return _LOOKUP.get(identifier);
+        return _LOOKUP.getOrDefault(identifier, null);
     }
 
     private static int _ID = 0;
@@ -105,7 +91,6 @@ public class OperationType implements Type
     ) {
         _construct(
                 name, identifier, isFunction, !isFunction, isIndexer, isConvection, isCommutative, isAssociative,
-
                 activation,
                 scalarization,
                 convolution,
@@ -130,7 +115,6 @@ public class OperationType implements Type
     ) {
         _construct(
                 name, identifier, isFunction, isOperation, isIndexer, isConvection, isCommutative, isAssociative,
-
                 activation,
                 scalarization,
                 convolution,
@@ -172,17 +156,15 @@ public class OperationType implements Type
         _REGISTER.add(this);
         _LOOKUP.put(identifier, this);
         if(
-                identifier
-                        .replace((""+((char)171)), "")
-                        .replace((""+((char)187)), "")
-                        .matches("[a-z]")
+            identifier
+                .replace((""+((char)171)), "")
+                .replace((""+((char)187)), "")
+                .matches("[a-z]")
         ){
             if(identifier.contains((""+((char)171)))) {
-                System.out.println(identifier.replace((""+((char)171)), "<<"));
                 _LOOKUP.put(identifier.replace((""+((char)171)), "<<"), this);
             }
             if(identifier.contains((""+((char)187)))) {
-                System.out.println(identifier.replace((""+((char)187)),">>"));
                 _LOOKUP.put(identifier.replace((""+((char)187)),">>"), this);
             }
         }
@@ -265,7 +247,8 @@ public class OperationType implements Type
         return _scalarization != null;
     }
 
-    public boolean allowsForward(Tsr[] inputs){
+    public boolean allowsForward(Tsr[] inputs)
+    {
         if (this.isConvection()) return false;
         if (this.identifier().equals(",")) return false; //Reshape
         Tsr last = null;
@@ -281,11 +264,10 @@ public class OperationType implements Type
     }
 
     //@Override
-    public ADAgent getADAgentOf(Function f, Tsr[] inputs, int i, boolean forward){
+    public ADAgent getADAgentOf(Function f, Tsr[] inputs, int i, boolean forward)
+    {
 
-        //Tsr d = (allowsForward(inputs))?f.derive(inputs, i):null;
         Function MUL   = FunctionBuilder.build("(I[0]*I[1])", false);
-        Function ADD   = FunctionBuilder.build("(I[0]+I[1])", false);
         Function INV_X = FunctionBuilder.build("I[0]x>>I[1]x>>I[2]", false);
 
         if(forward){

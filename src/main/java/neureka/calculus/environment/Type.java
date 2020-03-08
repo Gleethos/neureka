@@ -1,6 +1,7 @@
 package neureka.calculus.environment;
 
 import neureka.Tsr;
+import neureka.acceleration.CPU;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 
@@ -8,6 +9,17 @@ import java.net.Proxy;
 
 public interface Type
 {
+    public interface Operator {
+        double execute(int[] t0Idx, int[] t1Idx, int[] t2Idx);
+    }
+
+    interface OperationCreator{
+        Operator create(Tsr[] inputs, int d);
+    }
+    interface ScalarOperationCreator {
+        Operator create(Tsr[] inputs, double scalar, int d);
+    }
+
     abstract class TypeComponent<CreatorType>
     {
         protected String _operation;
