@@ -33,47 +33,51 @@ public class Addition extends OperationType {
                             else return (t0Idx, t1Idx, t2Idx) -> 1;
                         }),
                 null,
-                _broadcast
-
+                _broadcast,
+                null
         );
         new OperationType(
                 "", ((char) 171) + "+", false, false, false, false, false,
                 null,
                 null,
                 null,
-                _broadcast
+                _broadcast,
+                null
         );
         new OperationType(
                 "", "+" + ((char) 187), false, false, false, false, false,
                 null,
                 null,
                 null,
-                _broadcast
+                _broadcast,
+                null
         );
 
         // Convolutoion:
-
 
         new OperationType(
                 "", "a", false, false, true, false, false,
                 null,
                 null,
                 null,
-                _broadcast
+                _broadcast,
+                null
         );
         new OperationType(
                 "", ((char) 171) + "a", false, false, true, false, false,
                 null,
                 null,
                 null,
-                _broadcast
+                _broadcast,
+                null
         );
         new OperationType(
                 "", "a" + ((char) 187), false, false, true, false, false,
                 null,
                 null,
                 null,
-                _broadcast
+                _broadcast,
+                null
         );
 
 

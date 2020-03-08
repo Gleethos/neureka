@@ -23,7 +23,8 @@ public class Summation extends OperationType {
                     } else {
                         return (t0Idx, t1Idx, t2Idx) -> 1.0;
                     }
-                })
+                }),
+                null
         );
     }
 

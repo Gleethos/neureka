@@ -28,6 +28,7 @@ public class Quadratic extends OperationType {
                         }),
                 null,
                 null,
+                null,
                 null
         );
 

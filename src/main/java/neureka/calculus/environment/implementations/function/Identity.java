@@ -18,6 +18,7 @@ public class Identity extends OperationType {
                         "output = value;\n",
                         null),
                 null,
+                null,
                 null
         );
 

@@ -4,6 +4,8 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.acceleration.CPU;
 import neureka.acceleration.Device;
+import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.Type;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.utility.DataHelper;
 import org.jetbrains.annotations.Contract;
@@ -130,11 +132,13 @@ public class NTester_Tensor extends NTester
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
         double[] rsltData = new double[Tsr.Utility.Indexing.szeOfShp(drnMxd)];
-        CPU.exec.broadcast_multiply(
+
+        CPU.exec.broadcast(new Tsr[]{
                 new Tsr(drnMxd, rsltData),
                 new Tsr(frstShp, frstData),
-                new Tsr(scndShp, scondData),
-                -1
+                new Tsr(scndShp, scondData)},
+                -1,
+                OperationType.instance("*")
         );
         assertIsEqual(stringified(rsltData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;

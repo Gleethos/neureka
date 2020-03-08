@@ -31,16 +31,17 @@ public class Modulo extends OperationType {
                                     }
                                 };
                             }
-                        })
+                        }),
+                null
 
         );
         new OperationType(
                 "", ((char) 171) + "%", false, false, false, false, false,
-                null, null, null, null
+                null, null, null, null, null
         );
         new OperationType(
                 "", "%" + ((char) 187), false, false, false, false, false,
-                null, null, null, null
+                null, null, null, null, null
         );
     }
 

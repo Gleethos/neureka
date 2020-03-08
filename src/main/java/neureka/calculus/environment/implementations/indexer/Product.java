@@ -26,7 +26,8 @@ public class Product extends OperationType {
                                     else return t1_val[inputs[1].i_of_idx(t1Idx)];
                                 };
                             }
-                        })
+                        }),
+                null
 
         );
 

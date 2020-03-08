@@ -9,7 +9,7 @@ import java.net.Proxy;
 
 public interface Type
 {
-    public interface Operator {
+    interface Operator {
         double execute(int[] t0Idx, int[] t1Idx, int[] t2Idx);
     }
 
@@ -42,32 +42,41 @@ public interface Type
         }
     }
 
+    //==================================================================================================================
+
     class Activation extends TypeComponent&lt;OperationType.OperationCreator&gt;
     {
         public Activation(String strActivation, String strDeriviation, OperationType.OperationCreator creator){
-<span class="fc" id="L48">            super(strActivation, strDeriviation, creator);</span>
-<span class="fc" id="L49">        }</span>
+<span class="fc" id="L50">            super(strActivation, strDeriviation, creator);</span>
+<span class="fc" id="L51">        }</span>
     }
 
     class Convolution extends TypeComponent&lt;OperationType.OperationCreator&gt;
     {
         public Convolution(String strConvolution, String strDeriviation, OperationType.OperationCreator creator){
-<span class="nc" id="L55">            super(strConvolution, strDeriviation, creator);</span>
-<span class="nc" id="L56">        }</span>
+<span class="fc" id="L57">            super(strConvolution, strDeriviation, creator);</span>
+<span class="fc" id="L58">        }</span>
     }
 
     class Broadcast extends TypeComponent&lt;OperationType.OperationCreator&gt;
     {
         public Broadcast(String strBroadcast, String strDeriviation, OperationType.OperationCreator creator){
-<span class="fc" id="L62">            super(strBroadcast, strDeriviation, creator);</span>
-<span class="fc" id="L63">        }</span>
+<span class="fc" id="L64">            super(strBroadcast, strDeriviation, creator);</span>
+<span class="fc" id="L65">        }</span>
     }
 
     class Scalarization extends TypeComponent&lt;OperationType.ScalarOperationCreator&gt;
     {
         public Scalarization(String strScalarized, String strDeriviation, OperationType.ScalarOperationCreator creator){
-<span class="fc" id="L69">            super(strScalarized, strDeriviation, creator);</span>
-<span class="fc" id="L70">        }</span>
+<span class="fc" id="L71">            super(strScalarized, strDeriviation, creator);</span>
+<span class="fc" id="L72">        }</span>
+    }
+
+    class Operation extends TypeComponent&lt;OperationType.OperationCreator&gt;
+    {
+        public Operation(String strOperation, String strDeriviation, OperationType.OperationCreator creator){
+<span class="nc" id="L78">            super(strOperation, strDeriviation, creator);</span>
+<span class="nc" id="L79">        }</span>
     }
 
     //==================================================================================================================
@@ -85,6 +94,10 @@ public interface Type
     //-----------------
 
     Broadcast getBroadcast();
+
+    //-----------------
+
+    Operation getOperation();
 
     //==================================================================================================================
 

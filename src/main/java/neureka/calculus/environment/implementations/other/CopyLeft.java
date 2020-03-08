@@ -8,7 +8,7 @@ public class CopyLeft extends OperationType {
 
         super(
                 "", "<", false, false, false, false, false,
-                null, null, null, null
+                null, null, null, null, null
         );
 
     }

@@ -9,7 +9,7 @@ import java.net.Proxy;
 
 public interface Type
 {
-    public interface Operator {
+    interface Operator {
         double execute(int[] t0Idx, int[] t1Idx, int[] t2Idx);
     }
 
@@ -42,6 +42,8 @@ public interface Type
         }
     }
 
+    //==================================================================================================================
+
     class Activation extends TypeComponent<OperationType.OperationCreator>
     {
         public Activation(String strActivation, String strDeriviation, OperationType.OperationCreator creator){
@@ -70,6 +72,13 @@ public interface Type
         }
     }
 
+    class Operation extends TypeComponent<OperationType.OperationCreator>
+    {
+        public Operation(String strOperation, String strDeriviation, OperationType.OperationCreator creator){
+            super(strOperation, strDeriviation, creator);
+        }
+    }
+
     //==================================================================================================================
 
     Activation getActivation();
@@ -85,6 +94,10 @@ public interface Type
     //-----------------
 
     Broadcast getBroadcast();
+
+    //-----------------
+
+    Operation getOperation();
 
     //==================================================================================================================
 

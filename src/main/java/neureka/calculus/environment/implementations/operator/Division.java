@@ -44,31 +44,32 @@ public class Division extends OperationType {
                                     }
                                 };
                             }
-                        })
+                        }),
+                null
 
         );
         new OperationType(
                 "inv_division_left", ((char) 171) + "/", false, false, false, false, false,
-                null, null, null, null
+                null, null, null, null, null
         );
         new OperationType(
                 "inv_division_right", "/" + ((char) 187), false, false, false, false, false,
-                null, null, null, null
+                null, null, null, null, null
         );
 
         // Convolution:
 
         new OperationType(
                 "", "d", false, false, true, false, false,
-                null, null, null, null
+                null, null, null, null, null
         );
         new OperationType(
                 "", ((char) 171) + "d", false, false, true, false, false,
-                null, null, null, null
+                null, null, null, null, null
         );
         new OperationType(
                 "", "d" + ((char) 187), false, false, true, false, false,
-                null, null, null, null
+                null, null, null, null, null
         );
 
     }

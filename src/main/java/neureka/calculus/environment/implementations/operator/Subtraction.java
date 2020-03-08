@@ -41,16 +41,17 @@ public class Subtraction extends OperationType {
                                     return (d == 0) ? 1.0 : -1.0;
                                 };
                             }
-                        })
+                        }),
+                null
 
         );
         new OperationType(
                 "", ((char) 171) + "-", false, false, false, false, false,
-                null, null, null, null
+                null, null, null, null, null
         );
         new OperationType(
                 "", "-" + ((char) 187), false, false, false, false, false,
-                null, null, null, null
+                null, null, null, null, null
         );
 
         // Convolution:
@@ -58,15 +59,15 @@ public class Subtraction extends OperationType {
 
         new OperationType(
                 "", "s", false, false, true, false, false,
-                null, null, null, null
+                null, null, null, null, null
         );
         new OperationType(
                 "", ((char) 171) + "s", false, false, true, false, false,
-                null, null, null, null
+                null, null, null, null, null
         );
         new OperationType(
                 "", "s" + ((char) 187), false, false, true, false, false,
-                null, null, null, null
+                null, null, null, null, null
         );
 
 

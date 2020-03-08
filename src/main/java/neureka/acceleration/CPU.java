@@ -21,16 +21,33 @@ public class CPU extends AbstractDevice {
             exec.broadcast(tsrs, d, type);
             return;
         }
+        if(type.isConvection()){
+            if(type.identifier().contains(((char) 187)+"")){
+                // RIGHT CONVECTION!
+                //return;
+            }
+            else if(type.identifier().contains(((char) 171)+""))
+            {
+                // LEFT CONVECTION
+                //return;
+            }
+            else
+            {
+
+            }
+        }
+
         switch (type.identifier()) {
 
-            case "sum": exec.broadcast(tsrs, d, type);break;// exec.broadcast_add(tsrs[0], tsrs[1], tsrs[2], d);break;
-            case "prod": exec.broadcast(tsrs, d, type);break;//exec.broadcast_multiply(tsrs[0], tsrs[1], tsrs[2], d);break;
+            case "sum": exec.broadcast(tsrs, d, type);break;
+            case "prod": exec.broadcast(tsrs, d, type);break;
             //---
             case "x":
                 if (d >= 0) {
                     if (d == 0) tsrs[0] = tsrs[2]; else tsrs[0] = tsrs[1];
                 } else {
-                    exec.convolve_multiply(tsrs[0], tsrs[1], tsrs[2]);
+                    exec.convolve(tsrs, -1, type);
+                    //exec.convolve_multiply(tsrs[0], tsrs[1], tsrs[2]);
                 }
                 break;
             case ("x" + ((char) 187)): exec.convolve_multiply_inverse(tsrs[2], tsrs[1], tsrs[0]);break;
@@ -72,15 +89,6 @@ public class CPU extends AbstractDevice {
                 //exec.convolve_mod_inverse(tsrs[0], tsrs[1], tsrs[2]);
                 break;
             //---
-
-            //case "*": exec.broadcast_multiply(tsrs[0], tsrs[1], tsrs[2], d);break;
-            //case "+": exec.broadcast_add(tsrs[0], tsrs[1], tsrs[2], d);break;
-            //case "-": exec.broadcast_subtract(tsrs[0], tsrs[1], tsrs[2], d);break;
-            //case "/": exec.broadcast_divide(tsrs[0], tsrs[1], tsrs[2], d);break;
-            //case "%": exec.broadcast_mod(tsrs[0], tsrs[1], tsrs[2], d);break;
-            //case "^": exec.broadcast_power(tsrs[0], tsrs[1], tsrs[2], d);break;
-            //case "<": exec.activate_identity(tsrs[0], tsrs[1], d);break;
-            //case ">": exec.activate_identity(tsrs[1], tsrs[0], d);break;
             default:
                 throw new IllegalStateException("[_CPU][enqueue]: Operation not found!");
         }
@@ -156,7 +164,8 @@ public class CPU extends AbstractDevice {
         return null;
     }
 
-    public static class exec {
+    public static class exec
+    {
         interface Range {
             void execute(int start, int end);
         }
@@ -177,6 +186,8 @@ public class CPU extends AbstractDevice {
             });
         }
 
+        //---
+
         public static void broadcast(Tsr[] tsrs, int d, OperationType type){
             _threaded(tsrs[0].size(), (start, end) -> {
                 int _d = _adjusted_d(d, tsrs[0], tsrs[1], tsrs[2]);
@@ -188,8 +199,21 @@ public class CPU extends AbstractDevice {
             });
         }
 
+        //---
+
+        public static void convolve(Tsr[] tsrs, int d, OperationType type){
+            _threaded(tsrs[0].size(), (start, end) -> {
+                int _d = _adjusted_d(d, tsrs[0], tsrs[1], tsrs[2]);
+                _template.convolve(
+                        tsrs[0], tsrs[1], tsrs[2], _d,
+                        start, end,
+                        type.getConvolution().getCreator().create(tsrs,  _d)
+                );
+            });
+        }
 
         //---
+
         public static void scalar(Tsr[] tsrs, double scalar, int d, OperationType type){
             _threaded(tsrs[0].size(), (start, end) -> {
                 _template.activate(
@@ -198,7 +222,8 @@ public class CPU extends AbstractDevice {
                 );
             });
         }
-        //---
+
+        //==============================================================================================================
         //---
 
         public static void convolve_multiply(
@@ -224,17 +249,6 @@ public class CPU extends AbstractDevice {
             }));
         }
 
-        public static void broadcast_multiply(
-                Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
-        ) {
-            _threaded(t0_drn.size(), (start, end) -> {
-                _template.broadcast(
-                        t0_drn, t1_src, t2_src, d,
-                        start, end,
-                        _multiplication(t1_src, t2_src, _adjusted_d(d, t0_drn, t1_src, t2_src))//if adjusted throw exception!
-                );
-            });
-        }
         public static void broadcast_multiply_inverse(
                 Tsr t0_drn, Tsr t1_src, Tsr t2_src
         ) {
@@ -357,13 +371,9 @@ public class CPU extends AbstractDevice {
             double[] t1_val = t1_src.value64();
             double[] t2_val = t2_src.value64();
             if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    return t1_val[t1_src.i_of_idx(t1Idx)] - t2_val[t2_src.i_of_idx(t2Idx)];
-                };
+                return (t0Idx, t1Idx, t2Idx) -> t1_val[t1_src.i_of_idx(t1Idx)] - t2_val[t2_src.i_of_idx(t2Idx)];
             } else {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    return (d == 0) ? 1.0 : -1.0;
-                };
+                return (t0Idx, t1Idx, t2Idx) -> (d == 0) ? 1.0 : -1.0;
             }
         }
 
@@ -388,9 +398,7 @@ public class CPU extends AbstractDevice {
             double[] t1_val = t1_src.value64();
             double[] t2_val = t2_src.value64();
             if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    return t1_val[t1_src.i_of_idx(t1Idx)] / t2_val[t2_src.i_of_idx(t2Idx)];
-                };
+                return (t0Idx, t1Idx, t2Idx) -> t1_val[t1_src.i_of_idx(t1Idx)] / t2_val[t2_src.i_of_idx(t2Idx)];
             } else {
                 return (t0Idx, t1Idx, t2Idx) -> {
                     if (d == 0) {
@@ -427,12 +435,10 @@ public class CPU extends AbstractDevice {
             double[] t1_val = t1_src.value64();
             double[] t2_val = t2_src.value64();
             if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    return Math.pow(
+                return (t0Idx, t1Idx, t2Idx) -> Math.pow(
                             t1_val[t1_src.i_of_idx(t1Idx)],
                             t2_val[t2_src.i_of_idx(t2Idx)]
                     );
-                };
             } else {
                 return (t0Idx, t1Idx, t2Idx) -> {
                     if (d == 0) {

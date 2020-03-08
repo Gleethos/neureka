@@ -26,6 +26,7 @@ public class Randomization extends OperationType{
                             //Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);
                         }),
                 null,
+                null,
                 null
         );
 

@@ -50,19 +50,19 @@ public class Power extends OperationType
                                     }
                                 };
                             }
-                        })
-
+                        }),
+                        null
         );
 
 
         new OperationType(
                 "inv_power_left", ((char)171)+"^", false, false, false, false, false,
-                null, null, null, null
+                null, null, null, null, null
         );
 
 
         new OperationType("inv_power_right", "^" + ((char) 187), false, false, false, false, false,
-                null, null, null, null
+                null, null, null, null, null
         );
 
         // Convolution:
@@ -70,15 +70,15 @@ public class Power extends OperationType
 
         new OperationType(
                 "", "p", false, false, true, false, false,
-                null, null, null, null
+                null, null, null, null, null
         );
         new OperationType(
                 "", ((char) 171) + "p", false, false, true, false, false,
-                null, null, null, null
+                null, null, null, null, null
         );
         new OperationType(
                 "", "p" + ((char) 187), false, false, true, false, false,
-                null, null, null, null
+                null, null, null, null, null
         );
 
 

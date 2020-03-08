@@ -15,6 +15,7 @@ import neureka.calculus.factory.assembly.FunctionBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.LoggingPermission;
 
 public class OperationType implements Type
 {
@@ -46,6 +47,7 @@ public class OperationType implements Type
     protected Convolution _convolution;
     protected Broadcast _broadcast;
     protected Scalarization _scalarization;
+    protected Operation _operation;
 
     static
     {
@@ -87,14 +89,16 @@ public class OperationType implements Type
             Activation activation,
             Scalarization scalarization,
             Convolution convolution,
-            Broadcast broadcast
+            Broadcast broadcast,
+            Operation operation
     ) {
         _construct(
                 name, identifier, isFunction, !isFunction, isIndexer, isConvection, isCommutative, isAssociative,
                 activation,
                 scalarization,
                 convolution,
-                broadcast
+                broadcast,
+                operation
         );
     }
 
@@ -111,14 +115,16 @@ public class OperationType implements Type
             Activation activation,
             Scalarization scalarization,
             Convolution convolution,
-            Broadcast broadcast
+            Broadcast broadcast,
+            Operation operation
     ) {
         _construct(
                 name, identifier, isFunction, isOperation, isIndexer, isConvection, isCommutative, isAssociative,
                 activation,
                 scalarization,
                 convolution,
-                broadcast
+                broadcast,
+                operation
         );
     }
 
@@ -135,7 +141,8 @@ public class OperationType implements Type
             Activation activation,
             Scalarization scalarization,
             Convolution convolution,
-            Broadcast broadcast
+            Broadcast broadcast,
+            Operation operation
     ){
         _name = name;
         _id = _ID;
@@ -152,6 +159,7 @@ public class OperationType implements Type
         _scalarization = scalarization;
         _convolution = convolution;
         _broadcast = broadcast;
+        _operation = operation;
 
         _REGISTER.add(this);
         _LOOKUP.put(identifier, this);
@@ -211,6 +219,13 @@ public class OperationType implements Type
     @Override
     public Broadcast getBroadcast(){
         return _broadcast;
+    }
+
+    //-----------------
+
+    @Override
+    public Operation getOperation(){
+        return _operation;
     }
 
     //==================================================================================================================

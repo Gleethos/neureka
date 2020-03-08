@@ -33,6 +33,7 @@ public class ReLU extends OperationType {
                         }),
                 null,
                 null,
+                null,
                 null
         );
 
