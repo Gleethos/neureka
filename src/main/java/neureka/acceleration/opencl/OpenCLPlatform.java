@@ -277,7 +277,19 @@ public class OpenCLPlatform {
                     );
                 }
             }
-        } else {// broadcast / convolve:
+        } else if(newName.contains("broadcast")){//broadcast
+            for(OperationType type : OperationType.all()){
+                if(type.supportsBroadcast()){
+                    parser.apply(
+                            type.getName(),
+                            type.getBroadcast().getAsString(),
+                            type.getBroadcast().getDeriviationAsString(),
+                            false
+                    );
+                }
+            }
+        } else {
+            // broadcast / convolve:
             parser.apply(
                     "multiply",
                     "value = src1 * src2;\n",

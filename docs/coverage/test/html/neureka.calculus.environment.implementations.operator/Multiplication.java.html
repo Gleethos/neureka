@@ -49,7 +49,7 @@ public class Multiplication extends OperationType {
         // Convolution:
 
 <span class="fc" id="L51">        new OperationType(</span>
-                &quot;convolve&quot;, &quot;x&quot;, false, false, true, false, false,
+                &quot;convolve_mul&quot;, &quot;x&quot;, false, false, true, false, false,
                 null,
                 null,
                 new Convolution(
@@ -72,11 +72,11 @@ public class Multiplication extends OperationType {
                 null
         );
 <span class="fc" id="L74">        new OperationType(</span>
-                &quot;&quot;, ((char) 171) + &quot;x&quot;, false, false, true, false, false,
+                &quot;inv_convolve_mul_left&quot;, ((char) 171) + &quot;x&quot;, false, false, true, false, false,
                 null, null, null, null, null
         );
 <span class="fc" id="L78">        new OperationType(</span>
-                &quot;&quot;, &quot;x&quot; + ((char) 187), false, false, true, false, false,
+                &quot;inv_convolve_mul_right&quot;, &quot;x&quot; + ((char) 187), false, false, true, false, false,
                 null, null, null, null, null
         );
 

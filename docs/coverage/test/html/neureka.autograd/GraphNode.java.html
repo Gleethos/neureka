@@ -325,7 +325,7 @@ public class GraphNode implements Component&lt;Tsr&gt; {
 <span class="fc" id="L325">                        if (</span>
 <span class="pc bpc" id="L326" title="1 of 4 branches missed.">                                src_node.size() == 0 &amp;&amp; this.size() == 0</span>
                                     ||// Sources created by x-mul are reverse-mode cases!
-<span class="pc bpc" id="L328" title="1 of 4 branches missed.">                                !src_node.isLeave() &amp;&amp; src_node.function().type().isConvection()</span>
+<span class="pc bpc" id="L328" title="1 of 4 branches missed.">                                !src_node.isLeave() &amp;&amp; !src_node.function().type().allowsForward(inputs)</span>
                         ) {
 <span class="fc" id="L330">                            this.put(src_node, function.getADAgent(inputs, i, true));</span>
                         } else {

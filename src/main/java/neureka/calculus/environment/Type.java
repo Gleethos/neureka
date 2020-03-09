@@ -83,21 +83,37 @@ public interface Type
 
     Activation getActivation();
 
+    boolean supportsActivation();
+
     //-----------------
 
     Scalarization getScalarization();
-        
+
+    boolean supportsScalar();
+
     //-----------------
 
     Convolution getConvolution();
+
+    boolean supportsConvolution();
 
     //-----------------
 
     Broadcast getBroadcast();
 
+    boolean supportsBroadcast();
+
     //-----------------
 
     Operation getOperation();
+
+    boolean supportsOperation();
+
+    //==================================================================================================================
+
+    OperationType getTypeFor(Tsr[] inputs, int d);
+
+    Function createFunction();
 
     //==================================================================================================================
 
@@ -118,8 +134,6 @@ public interface Type
     boolean isConvection();
     
     boolean isCommutative();
-    
-    boolean supportsScalar();
 
     boolean allowsForward(Tsr[] inputs);
 

@@ -325,7 +325,7 @@ public class GraphNode implements Component<Tsr> {
                         if (
                                 src_node.size() == 0 && this.size() == 0
                                     ||// Sources created by x-mul are reverse-mode cases!
-                                !src_node.isLeave() && src_node.function().type().isConvection()
+                                !src_node.isLeave() && !src_node.function().type().allowsForward(inputs)
                         ) {
                             this.put(src_node, function.getADAgent(inputs, i, true));
                         } else {

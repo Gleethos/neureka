@@ -200,11 +200,21 @@ public class OperationType implements Type
         return _activation;
     }
 
+    @Override
+    public boolean supportsActivation(){
+        return _activation!=null;
+    }
+
     //-----------------
 
     @Override
     public Scalarization getScalarization(){
         return _scalarization;
+    }
+
+    @Override
+    public boolean supportsScalar(){
+        return _scalarization != null;
     }
 
     //-----------------
@@ -214,6 +224,11 @@ public class OperationType implements Type
         return _convolution;
     }
 
+    @Override
+    public boolean supportsConvolution(){
+        return _convolution!=null;
+    }
+
     //-----------------
 
     @Override
@@ -221,11 +236,33 @@ public class OperationType implements Type
         return _broadcast;
     }
 
+    @Override
+    public boolean supportsBroadcast(){
+        return _broadcast!=null;
+    }
+
     //-----------------
 
     @Override
     public Operation getOperation(){
         return _operation;
+    }
+
+    @Override
+    public boolean supportsOperation(){
+        return _operation!=null;
+    }
+
+    //==================================================================================================================
+
+    @Override
+    public OperationType getTypeFor(Tsr[] tsrs, int d){
+        return this;
+    }
+
+    @Override
+    public Function createFunction(){
+        return null;
     }
 
     //==================================================================================================================
@@ -256,10 +293,6 @@ public class OperationType implements Type
 
     public boolean isCommutative(){
         return  _isCommutative;
-    }
-
-    public boolean supportsScalar(){
-        return _scalarization != null;
     }
 
     public boolean allowsForward(Tsr[] inputs)
