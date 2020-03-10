@@ -1,4 +1,5 @@
 import neureka.Tsr
+import neureka.calculus.Function
 
 /**
  *  Operator overloading for native classes:
@@ -34,3 +35,9 @@ Integer.metaClass.multiply = ( Tsr t ) -> new Tsr(delegate.toString(),"*", t)
 Double.metaClass.multiply = ( Tsr t ) -> new Tsr(delegate.toString(),"*", t)
 BigDecimal.metaClass.multiply = ( Tsr t ) -> new Tsr(delegate.toString(),"*", t)
 
+// String to Function
+
+String.metaClass.asFunction = (boolean doAD) -> Function.create(delegate, doAD)
+String.metaClass.asFunction = () -> delegate.asFunction(true)
+
+String.metaClass.getAt = (List<Tsr> inputs)->delegate.asFunction().activate(inputs.toArray(new Tsr[0]))

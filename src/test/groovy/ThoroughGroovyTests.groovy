@@ -12,6 +12,20 @@ import util.DummyDevice
 
 class ThoroughGroovyTests
 {
+
+    @Test
+    void test_asFunction_method_inside_String(){
+
+        Neureka.instance().settings().reset()
+        Tsr a = new Tsr([1,2], [3, 2])
+        Tsr b = new Tsr([2,1], [-1, 4])
+        Tsr c = "I[0]xI[1]".asFunction().activate(new Tsr[]{a, b})
+        assert c.toString().contains("(2x2):[-3.0, -2.0, 12.0, 8.0]")
+        c = "I[0]xI[1]"[a, b]
+        assert c.toString().contains("(2x2):[-3.0, -2.0, 12.0, 8.0]")
+
+    }
+
     @Test
     void testManualConvolution()
     {
