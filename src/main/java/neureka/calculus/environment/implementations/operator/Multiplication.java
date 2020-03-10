@@ -1,11 +1,15 @@
 package neureka.calculus.environment.implementations.operator;
 
+import neureka.Tsr;
+import neureka.autograd.ADAgent;
+import neureka.calculus.Function;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.factory.assembly.FunctionBuilder;
 
 public class Multiplication extends OperationType {
 
-    public Multiplication(){
-
+    public Multiplication()
+    {
         super(
                 "multiply", "*", false, false, false, true, false,
                 null,
@@ -83,6 +87,8 @@ public class Multiplication extends OperationType {
 
 
     }
+
+
 
 
 

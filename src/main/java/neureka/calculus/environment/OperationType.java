@@ -255,18 +255,6 @@ public class OperationType implements Type
 
     //==================================================================================================================
 
-    @Override
-    public OperationType getTypeFor(Tsr[] tsrs, int d){
-        return this;
-    }
-
-    @Override
-    public Function createFunction(){
-        return null;
-    }
-
-    //==================================================================================================================
-
     public int id(){
         return _id;
     }
@@ -311,14 +299,12 @@ public class OperationType implements Type
         return true;
     }
 
-    //@Override
+    @Override
     public ADAgent getADAgentOf(Function f, Tsr[] inputs, int i, boolean forward)
     {
-
         Function MUL   = FunctionBuilder.build("(I[0]*I[1])", false);
-        Function INV_X = FunctionBuilder.build("I[0]x>>I[1]x>>I[2]", false);
-
-        if(forward){
+        if(forward)
+        {
             Tsr d = f.derive(inputs, i);
             return new ADAgent(
                     ()->d,
@@ -326,15 +312,7 @@ public class OperationType implements Type
                     null
             );
         } else {
-            if(this.identifier().equals(","))
-            {
-                return new ADAgent(
-                        ()->null,
-                        (t, derivative) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0),
-                        (t, error) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0)
-                );
-            }
-            else if (this.isOperation() && !this.isConvection())
+            if (this.isOperation() && !this.isConvection())
             {
                 Tsr d = f.derive(inputs, i);
                 return new ADAgent(
@@ -345,6 +323,14 @@ public class OperationType implements Type
             }
             else if (this.isConvection())
             {
+                Function INV_X = FunctionBuilder.build(
+                        "I[0]" +
+                                identifier() +
+                                ">>I[1]" +
+                                identifier() +
+                                ">>I[2]",
+                        false
+                );
                 Tsr d = f.derive(inputs, i);
                 return new ADAgent(
                         ()->d,

@@ -307,8 +307,9 @@ public class BroadJavaTests {
                         "[1x1x4]:(-48.0, -48.0, -48.0, -48.0);",
                         " =>d|[ [3x2x1]:(2.0, 2.0, 2.0, 2.0, 2.0, 2.0) ]|" +
                                 ":t{ [3x2x4]:(-4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0); ",
-                        "=>d|[ [3x2x1]:(4.0, 4.0, 4.0, 4.0, 4.0, 4.0) ]|" +
-                                ":t{ [1x1x4]:(-1.0, -1.0, -1.0, -1.0) },  }, "
+                                    "=>d|[ [3x2x1]:(4.0, 4.0, 4.0, 4.0, 4.0, 4.0) ]|" +
+                                        ":t{ [1x1x4]:(-1.0, -1.0, -1.0, -1.0) },  " +
+                                "}, "
                 });
         //--
         tensor1 = new Tsr(new int[]{5, 1, 1}, 4);//-2*4 = 8 | *3 = -24
@@ -476,15 +477,6 @@ public class BroadJavaTests {
         shape = new int[]{4, 2, 9, 5, 6, 2};
         expected = new int[]{1, 4, 4 * 2, 4 * 2 * 9, 4 * 2 * 9 * 5, 4 * 2 * 9 * 5 * 6};
         tester.testTensorUtility_translation(shape, expected);
-        //---
-        //shape = new int[]{4, 2, 9, 5, 6, 2};
-        //expected = new int[]{1, 1, 4, 0, 0, 0};
-        //tester.testTensorBase_idxFromAnchor(shape, 37, expected);
-        ////---
-        //shape = new int[]{4, 3, 2, 5};
-        //expected = new int[]{3, 2, 1, 2};
-        //int idx = (1) * 3 + (1 * 4) * 2 + (1 * 4 * 3) * 1 + (1 * 4 * 3 * 2) * 2;
-        //tester.testTensorBase_idxFromAnchor(shape, idx, expected);
         //---
         int[] frstShape = {4, 1};
         double[] frstData = {
@@ -658,9 +650,6 @@ public class BroadJavaTests {
                 true
         );
         //---
-
-
-
 
         //---
         tester.close();

@@ -163,7 +163,6 @@ public abstract class AbstractFunction implements Function {
             /* only flat functions can be executed */
         } else {
             /* The following code is reached in flat functions only:  */
-
             if (d < 0 && _doAD) {/* Autograd-Graph will be generated below for the new GraphNode: */
                 return new GraphNode(this, inputs, ()->_execute(inputs, j, d, device)).getPayload();
             } else {
@@ -180,7 +179,6 @@ public abstract class AbstractFunction implements Function {
             Tsr[] array = new Tsr[]{newTensor, tensor1, tensor2};
             myDevice.execute(array, _type, d);
             return array[0];
-
         } else if (_type.id() == OperationType.instance("<<x").id() || _type.id() == OperationType.instance("x>>").id()) {
             if (d < 0) {
                 Tsr[] tsrs = new Tsr[]{

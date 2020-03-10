@@ -255,108 +255,94 @@ public class OperationType implements Type
 
     //==================================================================================================================
 
-    @Override
-    public OperationType getTypeFor(Tsr[] tsrs, int d){
-<span class="nc" id="L260">        return this;</span>
-    }
-
-    @Override
-    public Function createFunction(){
-<span class="nc" id="L265">        return null;</span>
-    }
-
-    //==================================================================================================================
-
     public int id(){
-<span class="fc" id="L271">        return _id;</span>
+<span class="fc" id="L259">        return _id;</span>
     }
 
     public String identifier(){
-<span class="fc" id="L275">        return _identifier;</span>
+<span class="fc" id="L263">        return _identifier;</span>
     }
 
     public boolean isOperation(){
-<span class="fc" id="L279">        return _isOperation;</span>
+<span class="fc" id="L267">        return _isOperation;</span>
     }
 
     public boolean isFunction(){
-<span class="fc" id="L283">        return _isFunction;</span>
+<span class="fc" id="L271">        return _isFunction;</span>
     }
 
     public boolean isIndexer(){
-<span class="fc" id="L287">        return _isIndexer;</span>
+<span class="fc" id="L275">        return _isIndexer;</span>
     }
 
     public boolean isConvection(){
-<span class="fc" id="L291">        return _isConvection;</span>
+<span class="fc" id="L279">        return _isConvection;</span>
     }
 
     public boolean isCommutative(){
-<span class="nc" id="L295">        return  _isCommutative;</span>
+<span class="nc" id="L283">        return  _isCommutative;</span>
     }
 
     public boolean allowsForward(Tsr[] inputs)
     {
-<span class="fc bfc" id="L300" title="All 2 branches covered.">        if (this.isConvection()) return false;</span>
-<span class="fc bfc" id="L301" title="All 2 branches covered.">        if (this.identifier().equals(&quot;,&quot;)) return false; //Reshape</span>
-<span class="fc" id="L302">        Tsr last = null;</span>
-<span class="fc bfc" id="L303" title="All 2 branches covered.">        for (Tsr t : inputs) {</span>
-<span class="fc bfc" id="L304" title="All 2 branches covered.">            if (last!=null) {</span>
-<span class="fc bfc" id="L305" title="All 2 branches covered.">                if (!last.shape().equals(t.shape())) {</span>
-<span class="fc" id="L306">                    return false;</span>
+<span class="fc bfc" id="L288" title="All 2 branches covered.">        if (this.isConvection()) return false;</span>
+<span class="fc bfc" id="L289" title="All 2 branches covered.">        if (this.identifier().equals(&quot;,&quot;)) return false; //Reshape</span>
+<span class="fc" id="L290">        Tsr last = null;</span>
+<span class="fc bfc" id="L291" title="All 2 branches covered.">        for (Tsr t : inputs) {</span>
+<span class="fc bfc" id="L292" title="All 2 branches covered.">            if (last!=null) {</span>
+<span class="fc bfc" id="L293" title="All 2 branches covered.">                if (!last.shape().equals(t.shape())) {</span>
+<span class="fc" id="L294">                    return false;</span>
                 }
             }
-<span class="fc" id="L309">            last = t;</span>
+<span class="fc" id="L297">            last = t;</span>
         }
-<span class="fc" id="L311">        return true;</span>
+<span class="fc" id="L299">        return true;</span>
     }
 
-    //@Override
+    @Override
     public ADAgent getADAgentOf(Function f, Tsr[] inputs, int i, boolean forward)
     {
-
-<span class="fc" id="L318">        Function MUL   = FunctionBuilder.build(&quot;(I[0]*I[1])&quot;, false);</span>
-<span class="fc" id="L319">        Function INV_X = FunctionBuilder.build(&quot;I[0]x&gt;&gt;I[1]x&gt;&gt;I[2]&quot;, false);</span>
-
-<span class="fc bfc" id="L321" title="All 2 branches covered.">        if(forward){</span>
-<span class="fc" id="L322">            Tsr d = f.derive(inputs, i);</span>
-<span class="fc" id="L323">            return new ADAgent(</span>
-<span class="fc" id="L324">                    ()-&gt;d,</span>
-<span class="nc" id="L325">                    (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
+<span class="fc" id="L305">        Function MUL   = FunctionBuilder.build(&quot;(I[0]*I[1])&quot;, false);</span>
+<span class="fc bfc" id="L306" title="All 2 branches covered.">        if(forward)</span>
+        {
+<span class="fc" id="L308">            Tsr d = f.derive(inputs, i);</span>
+<span class="fc" id="L309">            return new ADAgent(</span>
+<span class="fc" id="L310">                    ()-&gt;d,</span>
+<span class="nc" id="L311">                    (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
                     null
             );
         } else {
-<span class="fc bfc" id="L329" title="All 2 branches covered.">            if(this.identifier().equals(&quot;,&quot;))</span>
+<span class="pc bpc" id="L315" title="1 of 4 branches missed.">            if (this.isOperation() &amp;&amp; !this.isConvection())</span>
             {
-<span class="fc" id="L331">                return new ADAgent(</span>
-<span class="fc" id="L332">                        ()-&gt;null,</span>
-<span class="nc" id="L333">                        (t, derivative) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0),</span>
-<span class="fc" id="L334">                        (t, error) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0)</span>
+<span class="fc" id="L317">                Tsr d = f.derive(inputs, i);</span>
+<span class="fc" id="L318">                return new ADAgent(</span>
+<span class="fc" id="L319">                        ()-&gt;d,</span>
+<span class="nc" id="L320">                        (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
+<span class="fc" id="L321">                        (t, error) -&gt; MUL.activate(new Tsr[]{error, d})</span>
                 );
             }
-<span class="pc bpc" id="L337" title="1 of 4 branches missed.">            else if (this.isOperation() &amp;&amp; !this.isConvection())</span>
+<span class="pc bpc" id="L324" title="1 of 2 branches missed.">            else if (this.isConvection())</span>
             {
-<span class="fc" id="L339">                Tsr d = f.derive(inputs, i);</span>
-<span class="fc" id="L340">                return new ADAgent(</span>
-<span class="fc" id="L341">                        ()-&gt;d,</span>
-<span class="nc" id="L342">                        (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
-<span class="fc" id="L343">                        (t, error) -&gt; MUL.activate(new Tsr[]{error, d})</span>
+<span class="fc" id="L326">                Function INV_X = FunctionBuilder.build(</span>
+                        &quot;I[0]&quot; +
+<span class="fc" id="L328">                                identifier() +</span>
+                                &quot;&gt;&gt;I[1]&quot; +
+<span class="fc" id="L330">                                identifier() +</span>
+                                &quot;&gt;&gt;I[2]&quot;,
+                        false
                 );
-            }
-<span class="pc bpc" id="L346" title="1 of 2 branches missed.">            else if (this.isConvection())</span>
-            {
-<span class="fc" id="L348">                Tsr d = f.derive(inputs, i);</span>
-<span class="fc" id="L349">                return new ADAgent(</span>
-<span class="fc" id="L350">                        ()-&gt;d,</span>
-<span class="nc" id="L351">                        (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
-<span class="fc" id="L352">                        (t, error) -&gt; INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})</span>
+<span class="fc" id="L334">                Tsr d = f.derive(inputs, i);</span>
+<span class="fc" id="L335">                return new ADAgent(</span>
+<span class="fc" id="L336">                        ()-&gt;d,</span>
+<span class="nc" id="L337">                        (t, derivative) -&gt; MUL.activate(new Tsr[]{derivative, d}),</span>
+<span class="fc" id="L338">                        (t, error) -&gt; INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})</span>
                 );
             }
         }
-<span class="nc" id="L356">        return new ADAgent(</span>
-<span class="nc" id="L357">                ()-&gt;null,</span>
-<span class="nc" id="L358">                (t, derivative) -&gt; null,</span>
-<span class="nc" id="L359">                (t, error) -&gt; null</span>
+<span class="nc" id="L342">        return new ADAgent(</span>
+<span class="nc" id="L343">                ()-&gt;null,</span>
+<span class="nc" id="L344">                (t, derivative) -&gt; null,</span>
+<span class="nc" id="L345">                (t, error) -&gt; null</span>
         );
 
     }
