@@ -229,7 +229,7 @@ public abstract class AbstractFunction implements Function {
                     operation.append("I[").append(i).append("]").append((i == tsrs.length - 1) ? "" : _type.identifier());
                 }
                 return (FunctionBuilder.build(operation.toString(), _doAD).activate(tsrs));
-            } else if (_type.isFunction()) {
+            } else if (_type.supportsActivation() && !_type.isIndexer()) {
                 return (FunctionBuilder.build(_type.identifier() + "(I[0])", true).activate(inputs));
             }
         }

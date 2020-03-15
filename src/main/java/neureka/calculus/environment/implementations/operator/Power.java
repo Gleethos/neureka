@@ -4,8 +4,32 @@ import neureka.calculus.environment.OperationType;
 
 public class Power extends OperationType
 {
-    public Power(){
 
+    private final static OperationCreator _creator = (inputs, d)->{
+        double[] t1_val = inputs[1].value64();
+        double[] t2_val = inputs[2].value64();
+        if (d < 0) {
+            return (t0Idx, t1Idx, t2Idx) -> Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], t2_val[inputs[2].i_of_idx(t2Idx)]);
+        } else {
+            return (t0Idx, t1Idx, t2Idx) -> {
+                if (d == 0) {
+                    return t2_val[inputs[2].i_of_idx(t2Idx)]
+                            * Math.pow(
+                            t1_val[inputs[1].i_of_idx(t1Idx)],
+                            t2_val[inputs[2].i_of_idx(t2Idx)] - 1
+                    );
+                } else {
+                    return Math.pow(
+                            t1_val[inputs[1].i_of_idx(t1Idx)],
+                            t2_val[inputs[2].i_of_idx(t2Idx)]
+                    ) * Math.log(t1_val[inputs[1].i_of_idx(t1Idx)]);
+                }
+            };
+        }
+    };
+
+    public Power()
+    {
         super("power", "^", false, false, false, false, false,
                 null,
                 new Scalarization("output = pow(input1, value);",
@@ -27,31 +51,24 @@ public class Power extends OperationType
                             }
                         }),
                 null,
-                new Broadcast("",
-                        "",
-                        (inputs, d)->{
-                            double[] t1_val = inputs[1].value64();
-                            double[] t2_val = inputs[2].value64();
-                            if (d < 0) {
-                                return (t0Idx, t1Idx, t2Idx) -> Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], t2_val[inputs[2].i_of_idx(t2Idx)]);
-                            } else {
-                                return (t0Idx, t1Idx, t2Idx) -> {
-                                    if (d == 0) {
-                                        return t2_val[inputs[2].i_of_idx(t2Idx)]
-                                                * Math.pow(
-                                                t1_val[inputs[1].i_of_idx(t1Idx)],
-                                                t2_val[inputs[2].i_of_idx(t2Idx)] - 1
-                                        );
-                                    } else {
-                                        return Math.pow(
-                                                t1_val[inputs[1].i_of_idx(t1Idx)],
-                                                t2_val[inputs[2].i_of_idx(t2Idx)]
-                                        ) * Math.log(t1_val[inputs[1].i_of_idx(t1Idx)]);
-                                    }
-                                };
-                            }
-                        }),
-                        null
+                new Broadcast(
+                        "value += pow(src1, src2);",
+                        "if(d==0){\n" +
+                                "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
+                                "} else {\n" +
+                                "    value += (pow(target, handle) * log(handle)) * drain;\n" +
+                                "}",
+                        _creator
+                ),
+                new Operation(
+                        "output = pow(input1, input2);",
+                        "if(d==0){\n" +
+                                "    output = input2 * pow(input1, input2-1.0f);\n" +
+                                "} else {\n" +
+                                "    output = pow(input1, input2) * log(input1);\n" +
+                                "}",
+                        _creator
+                )
         );
 
 
@@ -69,8 +86,20 @@ public class Power extends OperationType
 
 
         new OperationType(
-                "", "p", false, false, true, false, false,
-                null, null, null, null, null
+                "power", "p", false, false, true, false, false,
+                null,
+                null,
+                new Convolution(
+                        "value += pow(src1, src2);",
+                        "if(d==0){\n" +
+                                        "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
+                                        "} else {\n" +
+                                        "    value += (pow(target, handle) * log(handle)) * drain;\n" +
+                                        "}",
+                        null
+                ),
+                null,
+                null
         );
         new OperationType(
                 "", ((char) 171) + "p", false, false, true, false, false,

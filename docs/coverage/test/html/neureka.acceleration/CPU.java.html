@@ -13,7 +13,7 @@ import java.util.Collection;
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, OperationType type) {
 <span class="fc bfc" id="L15" title="All 2 branches covered.">        for(Tsr t : tsrs) t.setIsVirtual(false);</span>
-<span class="fc bfc" id="L16" title="All 2 branches covered.">        if(type.isFunction()){</span>
+<span class="fc bfc" id="L16" title="All 4 branches covered.">        if(type.supportsActivation() &amp;&amp; !type.isIndexer()){</span>
 <span class="fc" id="L17">            exec.activate(tsrs, d, type);</span>
 <span class="fc" id="L18">            return;</span>
         }
@@ -90,7 +90,7 @@ import java.util.Collection;
 <span class="nc" id="L90">                break;</span>
             //---
             default:
-<span class="nc" id="L93">                throw new IllegalStateException(&quot;[_CPU][enqueue]: Operation not found!&quot;);</span>
+<span class="nc" id="L93">                throw new IllegalStateException(&quot;[_CPU][enqueue]: Operation '&quot;+type.identifier()+&quot;' not found!&quot;);</span>
         }
 <span class="fc" id="L95">    }</span>
 

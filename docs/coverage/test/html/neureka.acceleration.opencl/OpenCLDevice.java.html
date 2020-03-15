@@ -432,7 +432,7 @@ public class OpenCLDevice extends AbstractDevice
 
 <span class="fc" id="L433">        cl_mem drn = _mapping.get(tsrs[offset]).value.data;</span>
 <span class="fc" id="L434">        cl_mem src1 = _mapping.get(tsrs[offset + 1]).value.data;</span>
-<span class="fc bfc" id="L435" title="All 2 branches covered.">        if (type.isFunction()) {</span>
+<span class="pc bpc" id="L435" title="1 of 4 branches missed.">        if (type.supportsActivation() &amp;&amp; !type.isIndexer()) {</span>
 <span class="fc" id="L436">            clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=&gt; drain</span>
 <span class="fc" id="L437">            clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));</span>
 <span class="fc" id="L438">            clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=&gt;src1</span>

@@ -4,22 +4,26 @@ import neureka.calculus.environment.OperationType;
 
 public class Addition extends OperationType {
 
-<span class="fc" id="L7">    private static final Broadcast _broadcast = new Broadcast(</span>
-            &quot;&quot;, &quot;&quot;,
+<span class="fc" id="L7">    private static final OperationCreator _creator =</span>
             (inputs, d) -&gt; {
-<span class="fc" id="L10">                double[] t1_val = inputs[1].value64();</span>
-<span class="fc" id="L11">                double[] t2_val = inputs[2].value64();</span>
-<span class="fc bfc" id="L12" title="All 2 branches covered.">                if (d &lt; 0) {</span>
-<span class="fc" id="L13">                    return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="fc" id="L9">                double[] t1_val = inputs[1].value64();</span>
+<span class="fc" id="L10">                double[] t2_val = inputs[2].value64();</span>
+<span class="fc bfc" id="L11" title="All 2 branches covered.">                if (d &lt; 0) {</span>
+<span class="fc" id="L12">                    return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + t2_val[inputs[2].i_of_idx(t2Idx)];</span>
                 } else {
-<span class="fc" id="L15">                    return (t0Idx, t1Idx, t2Idx) -&gt; 1.0;</span>
+<span class="fc" id="L14">                    return (t0Idx, t1Idx, t2Idx) -&gt; 1.0;</span>
                 }
-            }
+            };
+
+<span class="fc" id="L18">    private static final Broadcast _broadcast = new Broadcast(</span>
+            &quot;value = src1 + src2;\n&quot;,
+            &quot;value += 1 * drain;\n&quot;,
+            _creator
     );
 
     public Addition(){
 
-<span class="fc" id="L22">        super(</span>
+<span class="fc" id="L26">        super(</span>
                 &quot;add&quot;,
                 &quot;+&quot;,
                 false, false, false, true, false,
@@ -28,15 +32,19 @@ public class Addition extends OperationType {
                         &quot;output = input1 + value;\n&quot;,
                         &quot;output = 1;\n&quot;,
                         (inputs, value, d) -&gt; {
-<span class="fc" id="L31">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L32" title="1 of 2 branches missed.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + value;</span>
-<span class="nc" id="L33">                            else return (t0Idx, t1Idx, t2Idx) -&gt; 1;</span>
+<span class="fc" id="L35">                            double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + value;</span>
+<span class="nc" id="L37">                            else return (t0Idx, t1Idx, t2Idx) -&gt; 1;</span>
                         }),
                 null,
                 _broadcast,
-                null
+                new Operation(
+                        &quot;output = input1 + input2;\n&quot;,
+                        &quot;output = 1;\n&quot;,
+                        _creator
+                )
         );
-<span class="fc" id="L39">        new OperationType(</span>
+<span class="fc" id="L47">        new OperationType(</span>
                 &quot;&quot;, ((char) 171) + &quot;+&quot;, false, false, false, false, false,
                 null,
                 null,
@@ -44,7 +52,7 @@ public class Addition extends OperationType {
                 _broadcast,
                 null
         );
-<span class="fc" id="L47">        new OperationType(</span>
+<span class="fc" id="L55">        new OperationType(</span>
                 &quot;&quot;, &quot;+&quot; + ((char) 187), false, false, false, false, false,
                 null,
                 null,
@@ -55,33 +63,37 @@ public class Addition extends OperationType {
 
         // Convolutoion:
 
-<span class="fc" id="L58">        new OperationType(</span>
-                &quot;&quot;, &quot;a&quot;, false, false, true, false, false,
+<span class="fc" id="L66">        new OperationType(</span>
+                &quot;add&quot;, &quot;a&quot;, false, false, true, false, false,
                 null,
                 null,
-                null,
-                _broadcast,
+                new Convolution(
+                        &quot;value = src1 + src2;\n&quot;,
+                        &quot;value += 1 * drain;\n&quot;,
+                        null
+                ),
+                null,//_broadcast,
                 null
         );
-<span class="fc" id="L66">        new OperationType(</span>
+<span class="fc" id="L78">        new OperationType(</span>
                 &quot;&quot;, ((char) 171) + &quot;a&quot;, false, false, true, false, false,
                 null,
                 null,
                 null,
-                _broadcast,
+                null,//_broadcast,
                 null
         );
-<span class="fc" id="L74">        new OperationType(</span>
+<span class="fc" id="L86">        new OperationType(</span>
                 &quot;&quot;, &quot;a&quot; + ((char) 187), false, false, true, false, false,
                 null,
                 null,
                 null,
-                _broadcast,
+                null,//_broadcast,
                 null
         );
 
 
-<span class="fc" id="L84">    }</span>
+<span class="fc" id="L96">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

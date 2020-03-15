@@ -229,7 +229,7 @@ public abstract class AbstractFunction implements Function {
 <span class="fc bfc" id="L229" title="All 2 branches covered.">                    operation.append(&quot;I[&quot;).append(i).append(&quot;]&quot;).append((i == tsrs.length - 1) ? &quot;&quot; : _type.identifier());</span>
                 }
 <span class="fc" id="L231">                return (FunctionBuilder.build(operation.toString(), _doAD).activate(tsrs));</span>
-<span class="fc bfc" id="L232" title="All 2 branches covered.">            } else if (_type.isFunction()) {</span>
+<span class="pc bpc" id="L232" title="1 of 4 branches missed.">            } else if (_type.supportsActivation() &amp;&amp; !_type.isIndexer()) {</span>
 <span class="fc" id="L233">                return (FunctionBuilder.build(_type.identifier() + &quot;(I[0])&quot;, true).activate(inputs));</span>
             }
         }

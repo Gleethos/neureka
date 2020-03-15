@@ -132,7 +132,7 @@ public class OpenCLPlatform {
                 if (!templateFound) {
                     names.add(parts[parts.length - 1]);
                 } else {
-                    convolve_kernels_of(parts[parts.length - 1], kernelSource)
+                    _getParsedKernelsFromTemplate(parts[parts.length - 1], kernelSource)
                             .forEach((n, s) -> {
                                 names.add(n);
                                 sources.add(s);
@@ -173,7 +173,7 @@ public class OpenCLPlatform {
         void apply(String name, String first, String second);
     }
 
-    private Map<String, String> convolve_kernels_of(String templateName, String kernelSource)
+    private Map<String, String> _getParsedKernelsFromTemplate(String templateName, String kernelSource)
     {
         Map<String, String> code = new HashMap<>();
         String preName = templateName.replace("template", "");
@@ -218,130 +218,39 @@ public class OpenCLPlatform {
         //default:  src1 o src2 -> drain
         //inverse:  src1/fdrn <-src2 <- drain
         //===========================================================================
-        if (preName.contains("activate")) {
-            for(OperationType type : OperationType.all()){
-                if(type.isFunction()){
-                    parser.apply(
+        for(OperationType type : OperationType.all()) {
+            if (preName.contains("activate") && type.supportsActivation()) {
+                parser.apply(
                             type.getName(),
                             type.getActivation().getAsString(),
                             type.getActivation().getDeriviationAsString()
                     );
-                }
-            }
-        } else if (preName.contains("operate")) {
-            parser.apply(
-                    "multiply",
-                    "output = input1 * input2;\n",
-                    "if(d==0){output = input2;}else{output = input1;}\n"
-            );
-            parser.apply(
-                    "add",
-                    "output = input1 + input2;\n",
-                    "output = 1;\n"
-            );
-            parser.apply(
-                    "subtract",
-                    "output = input1 - input2;\n",
-                    "if(d==0){\n" +//drn and src2 switch:
-                            "    output = 1;\n" +
-                            "} else {\n" +
-                            "    output = -1;" +
-                            "}"
-            );
-            parser.apply(
-                    "divide",
-                    "output = input1 / input2;\n",
-                    "if(d==0){\n" +
-                            "    output = 1/input2;\n" +
-                            "} else {\n" +
-                            "    output = -input2 /(float)pow(input1, 2.0f);\n" +
-                            "}"//,true
-            );
-            parser.apply(
-                    "power",
-                    "output = pow(input1, input2);",
-                    "if(d==0){\n" +
-                            "    output = input2 * pow(input1, input2-1.0f);\n" +
-                            "} else {\n" +
-                            "    output = pow(input1, input2) * log(input1);\n" +
-                            "}"//,true
-            );
-        } else if (preName.contains("scalar")) {
-            for(OperationType type : OperationType.all()){
-                if(type.supportsScalar()){
-                    parser.apply(
+            } else if (preName.contains("operate") && type.supportsOperation()) {
+                parser.apply(
+                            type.getName(),
+                            type.getOperation().getAsString(),
+                            type.getOperation().getDeriviationAsString()
+                    );
+            } else if (preName.contains("scalar") && type.supportsScalar()) {
+                parser.apply(
                             type.getName(),
                             type.getScalarization().getAsString(),
                             type.getScalarization().getDeriviationAsString()
                     );
-                }
-            }
-        } else if(preName.contains("broadcast")){//broadcast
-            for(OperationType type : OperationType.all()){
-                if(type.supportsBroadcast()){
-                    parser.apply(
+            } else if(preName.contains("broadcast") && type.supportsBroadcast()){//broadcast
+                parser.apply(
                             type.getName(),
                             type.getBroadcast().getAsString(),
                             type.getBroadcast().getDeriviationAsString()
                     );
-                }
-            }
-        } else {
-            // convolve:
-            for(OperationType type : OperationType.all()) {
-
-                if(type.supportsConvolution()){
-                    parser.apply(
+            } else if(preName.contains("convolve") && type.supportsConvolution()) {
+                parser.apply(
                             type.getName(),
                             type.getConvolution().getAsString(),
                             type.getConvolution().getDeriviationAsString()
                     );
-                }
             }
-            //parser.apply(
-            //        "multiply",
-            //        "value = src1 * src2;\n",
-            //        "value += handle * drain;\n",
-            //        false
-            //);
-            //parser.apply(
-            //        "add",
-            //        "value = src1 + src2;\n",
-            //        "value += 1 * drain;\n",
-            //        false
-            //);
-            //parser.apply(
-            //        "subtract",
-            //        "value = src1 - src2;\n",
-            //        "if(d==0){\n" +//drn and src2 switch:
-            //                "    value += 1 * drain;\n" +
-            //                "} else {\n" +
-            //                "    value += -1 * drain;" +
-            //                "}",
-            //        false
-            //);
-            //parser.apply(
-            //        "divide",
-            //        "value = src1 / src2;\n",
-            //        "if(d==0){\n" +
-            //                "    value += (1/handle) * drain;\n" +
-            //                "} else {\n" +
-            //                "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
-            //                "}",
-            //        true
-            //);
-            //parser.apply(
-            //        "power",
-            //        "value += pow(src1, src2);",
-            //        "if(d==0){\n" +
-            //                "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
-            //                "} else {\n" +
-            //                "    value += (pow(target, handle) * log(handle)) * drain;\n" +
-            //                "}",
-            //        true
-            //);
         }
-
         return code;
     }
 

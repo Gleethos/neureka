@@ -432,7 +432,7 @@ public class OpenCLDevice extends AbstractDevice
 
         cl_mem drn = _mapping.get(tsrs[offset]).value.data;
         cl_mem src1 = _mapping.get(tsrs[offset + 1]).value.data;
-        if (type.isFunction()) {
+        if (type.supportsActivation() && !type.isIndexer()) {
             clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
             clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(_mapping.get(tsrs[offset]).config));
             clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=>src1

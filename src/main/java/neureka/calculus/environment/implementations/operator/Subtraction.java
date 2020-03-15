@@ -4,6 +4,21 @@ import neureka.calculus.environment.OperationType;
 
 public class Subtraction extends OperationType {
 
+    private static final OperationCreator _creator =
+            (inputs, d) -> {
+                double[] t1_val = inputs[1].value64();
+                double[] t2_val = inputs[2].value64();
+                if (d < 0) {
+                    return (t0Idx, t1Idx, t2Idx) -> {
+                        return t1_val[inputs[1].i_of_idx(t1Idx)] - t2_val[inputs[2].i_of_idx(t2Idx)];
+                    };
+                } else {
+                    return (t0Idx, t1Idx, t2Idx) -> {
+                        return (d == 0) ? 1.0 : -1.0;
+                    };
+                }
+            };
+
     public Subtraction(){
 
         super(
@@ -27,22 +42,24 @@ public class Subtraction extends OperationType {
                         })
                 ,
                 null,
-                new Broadcast("",
-                        "",
-                        (inputs, d) -> {
-                            double[] t1_val = inputs[1].value64();
-                            double[] t2_val = inputs[2].value64();
-                            if (d < 0) {
-                                return (t0Idx, t1Idx, t2Idx) -> {
-                                    return t1_val[inputs[1].i_of_idx(t1Idx)] - t2_val[inputs[2].i_of_idx(t2Idx)];
-                                };
-                            } else {
-                                return (t0Idx, t1Idx, t2Idx) -> {
-                                    return (d == 0) ? 1.0 : -1.0;
-                                };
-                            }
-                        }),
-                null
+                new Broadcast(
+                        "value = src1 - src2;\n",
+                        "if(d==0){\n" +//drn and src2 switch:
+                                   "    value += 1 * drain;\n" +
+                                   "} else {\n" +
+                                   "    value += -1 * drain;" +
+                                   "}",
+                        _creator
+                ),
+                new Operation(
+                        "output = input1 - input2;\n",
+                        "if(d==0){\n" +//drn and src2 switch:
+                                "    output = 1;\n" +
+                                "} else {\n" +
+                                "    output = -1;" +
+                                "}",
+                        _creator
+                )
 
         );
         new OperationType(

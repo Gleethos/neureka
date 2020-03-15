@@ -4,8 +4,7 @@ import neureka.calculus.environment.OperationType;
 
 public class Addition extends OperationType {
 
-    private static final Broadcast _broadcast = new Broadcast(
-            "", "",
+    private static final OperationCreator _creator =
             (inputs, d) -> {
                 double[] t1_val = inputs[1].value64();
                 double[] t2_val = inputs[2].value64();
@@ -14,7 +13,12 @@ public class Addition extends OperationType {
                 } else {
                     return (t0Idx, t1Idx, t2Idx) -> 1.0;
                 }
-            }
+            };
+
+    private static final Broadcast _broadcast = new Broadcast(
+            "value = src1 + src2;\n",
+            "value += 1 * drain;\n",
+            _creator
     );
 
     public Addition(){
@@ -34,7 +38,11 @@ public class Addition extends OperationType {
                         }),
                 null,
                 _broadcast,
-                null
+                new Operation(
+                        "output = input1 + input2;\n",
+                        "output = 1;\n",
+                        _creator
+                )
         );
         new OperationType(
                 "", ((char) 171) + "+", false, false, false, false, false,
@@ -56,11 +64,15 @@ public class Addition extends OperationType {
         // Convolutoion:
 
         new OperationType(
-                "", "a", false, false, true, false, false,
+                "add", "a", false, false, true, false, false,
                 null,
                 null,
-                null,
-                _broadcast,
+                new Convolution(
+                        "value = src1 + src2;\n",
+                        "value += 1 * drain;\n",
+                        null
+                ),
+                null,//_broadcast,
                 null
         );
         new OperationType(
@@ -68,7 +80,7 @@ public class Addition extends OperationType {
                 null,
                 null,
                 null,
-                _broadcast,
+                null,//_broadcast,
                 null
         );
         new OperationType(
@@ -76,7 +88,7 @@ public class Addition extends OperationType {
                 null,
                 null,
                 null,
-                _broadcast,
+                null,//_broadcast,
                 null
         );
 

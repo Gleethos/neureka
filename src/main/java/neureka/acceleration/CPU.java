@@ -13,7 +13,7 @@ public class CPU extends AbstractDevice {
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, OperationType type) {
         for(Tsr t : tsrs) t.setIsVirtual(false);
-        if(type.isFunction()){
+        if(type.supportsActivation() && !type.isIndexer()){
             exec.activate(tsrs, d, type);
             return;
         }
@@ -90,7 +90,7 @@ public class CPU extends AbstractDevice {
                 break;
             //---
             default:
-                throw new IllegalStateException("[_CPU][enqueue]: Operation not found!");
+                throw new IllegalStateException("[_CPU][enqueue]: Operation '"+type.identifier()+"' not found!");
         }
     }
 

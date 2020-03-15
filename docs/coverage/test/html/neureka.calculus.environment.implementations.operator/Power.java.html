@@ -4,9 +4,33 @@ import neureka.calculus.environment.OperationType;
 
 public class Power extends OperationType
 {
-    public Power(){
 
-<span class="fc" id="L9">        super(&quot;power&quot;, &quot;^&quot;, false, false, false, false, false,</span>
+<span class="fc" id="L8">    private final static OperationCreator _creator = (inputs, d)-&gt;{</span>
+<span class="fc" id="L9">        double[] t1_val = inputs[1].value64();</span>
+<span class="fc" id="L10">        double[] t2_val = inputs[2].value64();</span>
+<span class="fc bfc" id="L11" title="All 2 branches covered.">        if (d &lt; 0) {</span>
+<span class="fc" id="L12">            return (t0Idx, t1Idx, t2Idx) -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], t2_val[inputs[2].i_of_idx(t2Idx)]);</span>
+        } else {
+<span class="fc" id="L14">            return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc bfc" id="L15" title="All 2 branches covered.">                if (d == 0) {</span>
+<span class="fc" id="L16">                    return t2_val[inputs[2].i_of_idx(t2Idx)]</span>
+<span class="fc" id="L17">                            * Math.pow(</span>
+<span class="fc" id="L18">                            t1_val[inputs[1].i_of_idx(t1Idx)],</span>
+<span class="fc" id="L19">                            t2_val[inputs[2].i_of_idx(t2Idx)] - 1</span>
+                    );
+                } else {
+<span class="fc" id="L22">                    return Math.pow(</span>
+<span class="fc" id="L23">                            t1_val[inputs[1].i_of_idx(t1Idx)],</span>
+<span class="fc" id="L24">                            t2_val[inputs[2].i_of_idx(t2Idx)]</span>
+<span class="fc" id="L25">                    ) * Math.log(t1_val[inputs[1].i_of_idx(t1Idx)]);</span>
+                }
+            };
+        }
+    };
+
+    public Power()
+    {
+<span class="fc" id="L33">        super(&quot;power&quot;, &quot;^&quot;, false, false, false, false, false,</span>
                 null,
                 new Scalarization(&quot;output = pow(input1, value);&quot;,
                         &quot;if(d==0){\n&quot; +
@@ -15,68 +39,73 @@ public class Power extends OperationType
                                 &quot;    output = pow(input1, value) * log(value);\n&quot; +
                                 &quot;}&quot;,
                         (inputs, value, d)-&gt;{
-<span class="fc" id="L18">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L19" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L20">                                return (t0Idx, t1Idx, t2Idx) -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);</span>
+<span class="fc" id="L42">                            double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L44">                                return (t0Idx, t1Idx, t2Idx) -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);</span>
                             } else {
-<span class="nc bnc" id="L22" title="All 2 branches missed.">                                if(d==0){</span>
-<span class="nc" id="L23">                                    return (t0Idx, t1Idx, t2Idx) -&gt; value*Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value-1);</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">                                if(d==0){</span>
+<span class="nc" id="L47">                                    return (t0Idx, t1Idx, t2Idx) -&gt; value*Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value-1);</span>
                                 } else {
-<span class="nc" id="L25">                                    return (t0Idx, t1Idx, t2Idx) -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value)*Math.log(value);</span>
+<span class="nc" id="L49">                                    return (t0Idx, t1Idx, t2Idx) -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value)*Math.log(value);</span>
                                 }
                             }
                         }),
                 null,
-                new Broadcast(&quot;&quot;,
-                        &quot;&quot;,
-                        (inputs, d)-&gt;{
-<span class="fc" id="L33">                            double[] t1_val = inputs[1].value64();</span>
-<span class="fc" id="L34">                            double[] t2_val = inputs[2].value64();</span>
-<span class="fc bfc" id="L35" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L36">                                return (t0Idx, t1Idx, t2Idx) -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], t2_val[inputs[2].i_of_idx(t2Idx)]);</span>
-                            } else {
-<span class="fc" id="L38">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc bfc" id="L39" title="All 2 branches covered.">                                    if (d == 0) {</span>
-<span class="fc" id="L40">                                        return t2_val[inputs[2].i_of_idx(t2Idx)]</span>
-<span class="fc" id="L41">                                                * Math.pow(</span>
-<span class="fc" id="L42">                                                t1_val[inputs[1].i_of_idx(t1Idx)],</span>
-<span class="fc" id="L43">                                                t2_val[inputs[2].i_of_idx(t2Idx)] - 1</span>
-                                        );
-                                    } else {
-<span class="fc" id="L46">                                        return Math.pow(</span>
-<span class="fc" id="L47">                                                t1_val[inputs[1].i_of_idx(t1Idx)],</span>
-<span class="fc" id="L48">                                                t2_val[inputs[2].i_of_idx(t2Idx)]</span>
-<span class="fc" id="L49">                                        ) * Math.log(t1_val[inputs[1].i_of_idx(t1Idx)]);</span>
-                                    }
-                                };
-                            }
-                        }),
-                        null
+                new Broadcast(
+                        &quot;value += pow(src1, src2);&quot;,
+                        &quot;if(d==0){\n&quot; +
+                                &quot;    value = (handle * pow(target, handle-(float)1 )) * drain;\n&quot; +
+                                &quot;} else {\n&quot; +
+                                &quot;    value += (pow(target, handle) * log(handle)) * drain;\n&quot; +
+                                &quot;}&quot;,
+                        _creator
+                ),
+                new Operation(
+                        &quot;output = pow(input1, input2);&quot;,
+                        &quot;if(d==0){\n&quot; +
+                                &quot;    output = input2 * pow(input1, input2-1.0f);\n&quot; +
+                                &quot;} else {\n&quot; +
+                                &quot;    output = pow(input1, input2) * log(input1);\n&quot; +
+                                &quot;}&quot;,
+                        _creator
+                )
         );
 
 
-<span class="fc" id="L58">        new OperationType(</span>
+<span class="fc" id="L75">        new OperationType(</span>
                 &quot;inv_power_left&quot;, ((char)171)+&quot;^&quot;, false, false, false, false, false,
                 null, null, null, null, null
         );
 
 
-<span class="fc" id="L64">        new OperationType(&quot;inv_power_right&quot;, &quot;^&quot; + ((char) 187), false, false, false, false, false,</span>
+<span class="fc" id="L81">        new OperationType(&quot;inv_power_right&quot;, &quot;^&quot; + ((char) 187), false, false, false, false, false,</span>
                 null, null, null, null, null
         );
 
         // Convolution:
 
 
-<span class="fc" id="L71">        new OperationType(</span>
-                &quot;&quot;, &quot;p&quot;, false, false, true, false, false,
-                null, null, null, null, null
+<span class="fc" id="L88">        new OperationType(</span>
+                &quot;power&quot;, &quot;p&quot;, false, false, true, false, false,
+                null,
+                null,
+                new Convolution(
+                        &quot;value += pow(src1, src2);&quot;,
+                        &quot;if(d==0){\n&quot; +
+                                        &quot;    value = (handle * pow(target, handle-(float)1 )) * drain;\n&quot; +
+                                        &quot;} else {\n&quot; +
+                                        &quot;    value += (pow(target, handle) * log(handle)) * drain;\n&quot; +
+                                        &quot;}&quot;,
+                        null
+                ),
+                null,
+                null
         );
-<span class="fc" id="L75">        new OperationType(</span>
+<span class="fc" id="L104">        new OperationType(</span>
                 &quot;&quot;, ((char) 171) + &quot;p&quot;, false, false, true, false, false,
                 null, null, null, null, null
         );
-<span class="fc" id="L79">        new OperationType(</span>
+<span class="fc" id="L108">        new OperationType(</span>
                 &quot;&quot;, &quot;p&quot; + ((char) 187), false, false, true, false, false,
                 null, null, null, null, null
         );
@@ -84,7 +113,7 @@ public class Power extends OperationType
 
 
 
-<span class="fc" id="L87">    }</span>
+<span class="fc" id="L116">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

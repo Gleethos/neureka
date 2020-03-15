@@ -120,9 +120,7 @@ public interface Type
     String identifier();
     
     boolean isOperation();
-    
-    boolean isFunction();
-    
+
     boolean isIndexer();
     
     boolean isConvection();

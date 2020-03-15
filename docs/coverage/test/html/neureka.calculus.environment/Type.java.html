@@ -75,8 +75,8 @@ public interface Type
     class Operation extends TypeComponent&lt;OperationType.OperationCreator&gt;
     {
         public Operation(String strOperation, String strDeriviation, OperationType.OperationCreator creator){
-<span class="nc" id="L78">            super(strOperation, strDeriviation, creator);</span>
-<span class="nc" id="L79">        }</span>
+<span class="fc" id="L78">            super(strOperation, strDeriviation, creator);</span>
+<span class="fc" id="L79">        }</span>
     }
 
     //==================================================================================================================
@@ -120,9 +120,7 @@ public interface Type
     String identifier();
     
     boolean isOperation();
-    
-    boolean isFunction();
-    
+
     boolean isIndexer();
     
     boolean isConvection();

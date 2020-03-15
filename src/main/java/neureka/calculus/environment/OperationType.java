@@ -36,7 +36,7 @@ public class OperationType implements Type
     protected int _id = -1;
     protected String _name = "";
     protected String  _identifier = "";
-    protected boolean _isFunction = false;
+    //protected boolean _isFunction = false;
     protected boolean _isOperation = false;
     protected boolean _isIndexer = false;
     protected boolean _isConvection = false;
@@ -131,7 +131,7 @@ public class OperationType implements Type
     protected void _construct(
             String name,
             String  identifier,
-            boolean isFunction,
+            boolean isFunction,//TODO: remove!
             boolean isOperation,
             boolean isIndexer,
             boolean isConvection,
@@ -148,7 +148,7 @@ public class OperationType implements Type
         _id = _ID;
         _ID++;
         _identifier = identifier;
-        _isFunction = isFunction;
+        //_isFunction = isFunction;
         _isOperation = isOperation;
         _isIndexer = isIndexer;
         _isConvection = isConvection;
@@ -264,11 +264,8 @@ public class OperationType implements Type
     }
 
     public boolean isOperation(){
-        return _isOperation;
-    }
-
-    public boolean isFunction(){
-        return _isFunction;
+        //if(_isOperation!=supportsOperation())System.out.println("OMG:  "+identifier());
+        return _isOperation;//supportsOperation();//_isOperation;
     }
 
     public boolean isIndexer(){
