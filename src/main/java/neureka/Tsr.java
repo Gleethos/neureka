@@ -346,7 +346,13 @@ public class Tsr extends AbstractNDArray
     private int[] _intArray(Object[] arg) {
         int length = arg.length;
         int[] array = new int[length];
-        for (int i=0; i<length; i++) array[i] = (Integer) arg[i];
+        for (int i=0; i<length; i++){
+            if(arg[i] instanceof Double){
+                array[i] = ((Double) arg[i]).intValue();
+            } else {
+                array[i] = (Integer) arg[i];
+            }
+        }
         return array;
     }
 
@@ -367,14 +373,18 @@ public class Tsr extends AbstractNDArray
 
     private void _construct(Object[] args) {
         if (args==null || args.length==0) return;
-        if (args[0] instanceof  Tsr && args.length==1) {
-            _become(Create.newTsrLike((Tsr)args[0]));
-            return;
+        if(args.length==1){
+            if (args[0] instanceof  Tsr) {
+                _become(Create.newTsrLike((Tsr)args[0]));
+                return;
+            } else if (args[0] instanceof List || args[0] instanceof int[]){
+                args = new Object[]{args[0], 0};
+            }
         }
         args[0] = (args[0] instanceof ArrayList)?((ArrayList)args[0]).toArray():args[0];
         args[1] = (args[1] instanceof ArrayList)?((ArrayList)args[1]).toArray():args[1];
         if (args[0] instanceof Object[]){
-            if (((Object[])args[0])[0] instanceof Integer) {
+            if (((Object[])args[0])[0] instanceof Integer || ((Object[])args[0])[0] instanceof Double) {
                 args[0] = _intArray((Object[])args[0]);//array;
             } else {
                 int length = ((Object[])args[0]).length;

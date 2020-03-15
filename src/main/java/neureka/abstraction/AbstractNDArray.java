@@ -76,6 +76,12 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
             else if (e <= 100000000) key *= 100000000;
             key += Math.abs(e) + 1;
         }
+        int rank = data.length;
+        while(rank != 0) {
+            rank /= 10;
+            key*=10;
+        }
+        key += data.length;
         int[] found = _CONFIGS.get(key);
         if (found != null) {
             return found;

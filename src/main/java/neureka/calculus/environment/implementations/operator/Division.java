@@ -60,8 +60,20 @@ public class Division extends OperationType {
         // Convolution:
 
         new OperationType(
-                "", "d", false, false, true, false, false,
-                null, null, null, null, null
+                "divide", "d", false, false, true, false, false,
+                null,
+                null,
+                new Convolution(
+                        "value = src1 / src2;\n",
+                        "if(d==0) {\n" +
+                                   "    value += (1/handle) * drain;\n" +
+                                   "} else {\n" +
+                                   "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
+                                   "}",
+                        null
+                ),
+                null,
+                null
         );
         new OperationType(
                 "", ((char) 171) + "d", false, false, true, false, false,

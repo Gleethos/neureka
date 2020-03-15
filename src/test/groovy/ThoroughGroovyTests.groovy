@@ -9,9 +9,49 @@ import neureka.calculus.Function
 import neureka.calculus.factory.assembly.FunctionBuilder
 import org.junit.Test
 import util.DummyDevice
+import util.Utility
 
 class ThoroughGroovyTests
 {
+
+    @Test
+    void test_benchmark_script(){
+        String benchmark = Utility.readResource("benchmark.groovy", this)
+        def lambda = new GroovyShell().evaluate(benchmark)
+
+        def session = (int start, int size, int multiplier, String filename)->{
+            def map = [:]
+            def result
+
+            for(i in start..start+size){
+                result = lambda(i,i*multiplier)
+                result.each(k, v)->{
+                    if(map[k]==null){
+                        map[k] = v
+                    } else {
+                        map[k] += v
+                    }
+                }
+            }
+            //StringBuilder asCSV = new StringBuilder()
+            File asCSV = new File("docs/benchmarks/"+filename)
+            map.each(k, v)->{
+                asCSV.append(k)
+                asCSV.append(",")
+            }
+            asCSV.append("\n")
+            for(i in 1..size){
+                map.each((k, v)->{
+                    asCSV.append(v[i-1])
+                    asCSV.append(",")
+                })
+                asCSV.append("\n")
+            }
+            print(asCSV.toString())
+        }
+        //session(10, 1, 10, "short_benchmark.csv")
+
+    }
 
     @Test
     void test_asFunction_method_inside_String(){
@@ -23,7 +63,10 @@ class ThoroughGroovyTests
         assert c.toString().contains("(2x2):[-3.0, -2.0, 12.0, 8.0]")
         c = "I[0]xI[1]"[a, b]
         assert c.toString().contains("(2x2):[-3.0, -2.0, 12.0, 8.0]")
-
+        c = "i0 x i1"%[a, b]
+        assert c.toString().contains("(2x2):[-3.0, -2.0, 12.0, 8.0]")
+        c = "i0"%a
+        assert c.toString().contains("(1x2):[3.0, 2.0]")
     }
 
     @Test

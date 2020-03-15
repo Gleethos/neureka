@@ -703,8 +703,7 @@ public class CPU extends AbstractDevice {
                         }
                         //----------
                         //setInto _value in drn:
-                        t0_value[t0_drn.i_of_idx(t0Idx)] =
-                                operation.execute(t0Idx, t1Idx, t2Idx);
+                        t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, t2Idx);
 
                         //increment on drain:
                         Tsr.Utility.Indexing.increment(t0Idx, t0Shp);

@@ -38,6 +38,7 @@ public class OpenCLPlatform {
         OPERATION_TO_KERNEL_MAPPING.put("+", "operate_add");
 
         OPERATION_TO_KERNEL_MAPPING.put("x", "convolve_multiply");
+        //OPERATION_TO_KERNEL_MAPPING.put("x", "convolve_convolve_mul");
         OPERATION_TO_KERNEL_MAPPING.put("d", "convolve_divide");
         OPERATION_TO_KERNEL_MAPPING.put("p", "convolve_power");
         OPERATION_TO_KERNEL_MAPPING.put("a", "convolve_add");
@@ -112,13 +113,13 @@ public class OpenCLPlatform {
                 "scalar_template.cl",
                 "utility.cl"
         };
-        for(String name : fileNames){
+        for(String name : fileNames) {
             templateSources.add(Neureka.instance().utility().readResource("kernels/"+name));
         }
         ArrayList<String> names = new ArrayList<>();
         ArrayList<String> sources = new ArrayList<>();
         for (int i = 0; i < fileNames.length; i++) {
-            String kernelSource = templateSources.get(i);//_setup.readFile(filesList[i]);
+            String kernelSource = templateSources.get(i);
             kernelSource = kernelSource.replace(
                     "Neureka.instance().settings().indexing().REVERSE_INDEX_TRANSLATION",
                     (Neureka.instance().settings().indexing().legacy()) ? "true" : "false"
@@ -156,7 +157,9 @@ public class OpenCLPlatform {
                 cpProgram,
                 devicesArray.length,
                 devicesArray,
-                "-cl-mad-enable", null, null
+                "-cl-mad-enable",
+                null,
+                null
         );
         //TODO: check compilation errors!
 
@@ -167,14 +170,14 @@ public class OpenCLPlatform {
     }
 
     private interface Parser {
-        void apply(String name, String first, String second, boolean advanced);
+        void apply(String name, String first, String second);
     }
 
-    private Map<String, String> convolve_kernels_of(String name, String source)
+    private Map<String, String> convolve_kernels_of(String templateName, String kernelSource)
     {
         Map<String, String> code = new HashMap<>();
-        String newName = name.replace("template", "");
-        source = source.replace("template", "");
+        String preName = templateName.replace("template", "");
+        String source = kernelSource.replace("template", "");
         String[] parts = source.split("//-=<OPERATION>=-//");
 
         java.util.function.Function<String, String> correct = (s) ->
@@ -193,18 +196,21 @@ public class OpenCLPlatform {
 
         java.util.function.Function<String, String> asAdvanced = (s) ->
                 s.replace("target", "frn[_i_of_idx_on_tln(prv_frn2_cfg, rank)]")
+                .replace("input3","frn[_i_of_idx_on_tln(prv_frn2_cfg, rank)]")
                         .replace("//-=<ARGUMENT>=-//", "")
                         .replace("//-=<CONFIGURATION>=-//", "");
 
-        Parser parser = (n, f, s, advanced) -> {
+        Parser parser = (n, f, s) -> {
             String convcode =
-                    parts[0].replace(newName, newName + n) +
+                    parts[0].replace(preName, preName + n) +
                             correct.apply(f) +
                             parts[2] +
                             correct.apply(s) +
                             parts[4];
-            convcode = (advanced) ? asAdvanced.apply(convcode) : convcode;
-            code.put(newName + n, convcode);
+            boolean isAdvanced = s.contains("target")&&s.contains("drain")&&s.contains("handle")
+                    || s.contains("input1")&&s.contains("input2")&&s.contains("input3");
+            convcode = (isAdvanced) ? asAdvanced.apply(convcode) : convcode;
+            code.put(preName + n, convcode);
         };
         //Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
         //Tsr t0_drain,  Tsr t1_src1,   Tsr t2_src2
@@ -212,29 +218,26 @@ public class OpenCLPlatform {
         //default:  src1 o src2 -> drain
         //inverse:  src1/fdrn <-src2 <- drain
         //===========================================================================
-        if (newName.contains("activate")) {
+        if (preName.contains("activate")) {
             for(OperationType type : OperationType.all()){
                 if(type.isFunction()){
                     parser.apply(
                             type.getName(),
                             type.getActivation().getAsString(),
-                            type.getActivation().getDeriviationAsString(),
-                            false
+                            type.getActivation().getDeriviationAsString()
                     );
                 }
             }
-        } else if (newName.contains("operate")) {
+        } else if (preName.contains("operate")) {
             parser.apply(
                     "multiply",
                     "output = input1 * input2;\n",
-                    "if(d==0){output = input2;}else{output = input1;}\n",
-                    false
+                    "if(d==0){output = input2;}else{output = input1;}\n"
             );
             parser.apply(
                     "add",
                     "output = input1 + input2;\n",
-                    "output = 1;\n",
-                    false
+                    "output = 1;\n"
             );
             parser.apply(
                     "subtract",
@@ -243,8 +246,7 @@ public class OpenCLPlatform {
                             "    output = 1;\n" +
                             "} else {\n" +
                             "    output = -1;" +
-                            "}",
-                    false
+                            "}"
             );
             parser.apply(
                     "divide",
@@ -253,8 +255,7 @@ public class OpenCLPlatform {
                             "    output = 1/input2;\n" +
                             "} else {\n" +
                             "    output = -input2 /(float)pow(input1, 2.0f);\n" +
-                            "}",
-                    true
+                            "}"//,true
             );
             parser.apply(
                     "power",
@@ -263,75 +264,82 @@ public class OpenCLPlatform {
                             "    output = input2 * pow(input1, input2-1.0f);\n" +
                             "} else {\n" +
                             "    output = pow(input1, input2) * log(input1);\n" +
-                            "}",
-                    true
+                            "}"//,true
             );
-        } else if (newName.contains("scalar")) {
+        } else if (preName.contains("scalar")) {
             for(OperationType type : OperationType.all()){
                 if(type.supportsScalar()){
                     parser.apply(
                             type.getName(),
                             type.getScalarization().getAsString(),
-                            type.getScalarization().getDeriviationAsString(),
-                            false
+                            type.getScalarization().getDeriviationAsString()
                     );
                 }
             }
-        } else if(newName.contains("broadcast")){//broadcast
+        } else if(preName.contains("broadcast")){//broadcast
             for(OperationType type : OperationType.all()){
                 if(type.supportsBroadcast()){
                     parser.apply(
                             type.getName(),
                             type.getBroadcast().getAsString(),
-                            type.getBroadcast().getDeriviationAsString(),
-                            false
+                            type.getBroadcast().getDeriviationAsString()
                     );
                 }
             }
         } else {
-            // broadcast / convolve:
-            parser.apply(
-                    "multiply",
-                    "value = src1 * src2;\n",
-                    "value += handle * drain;\n",
-                    false
-            );
-            parser.apply(
-                    "add",
-                    "value = src1 + src2;\n",
-                    "value += 1 * drain;\n",
-                    false
-            );
-            parser.apply(
-                    "subtract",
-                    "value = src1 - src2;\n",
-                    "if(d==0){\n" +//drn and src2 switch:
-                            "    value += 1 * drain;\n" +
-                            "} else {\n" +
-                            "    value += -1 * drain;" +
-                            "}",
-                    false
-            );
-            parser.apply(
-                    "divide",
-                    "value = src1 / src2;\n",
-                    "if(d==0){\n" +
-                            "    value += (1/handle) * drain;\n" +
-                            "} else {\n" +
-                            "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
-                            "}",
-                    true
-            );
-            parser.apply(
-                    "power",
-                    "value += pow(src1, src2);",
-                    "if(d==0){\n" +
-                            "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
-                            "} else {\n" +
-                            "    value += (pow(target, handle) * log(handle)) * drain;\n" +
-                            "}",
-                    true
-            );
+            // convolve:
+            for(OperationType type : OperationType.all()) {
+
+                if(type.supportsConvolution()){
+                    parser.apply(
+                            type.getName(),
+                            type.getConvolution().getAsString(),
+                            type.getConvolution().getDeriviationAsString()
+                    );
+                }
+            }
+            //parser.apply(
+            //        "multiply",
+            //        "value = src1 * src2;\n",
+            //        "value += handle * drain;\n",
+            //        false
+            //);
+            //parser.apply(
+            //        "add",
+            //        "value = src1 + src2;\n",
+            //        "value += 1 * drain;\n",
+            //        false
+            //);
+            //parser.apply(
+            //        "subtract",
+            //        "value = src1 - src2;\n",
+            //        "if(d==0){\n" +//drn and src2 switch:
+            //                "    value += 1 * drain;\n" +
+            //                "} else {\n" +
+            //                "    value += -1 * drain;" +
+            //                "}",
+            //        false
+            //);
+            //parser.apply(
+            //        "divide",
+            //        "value = src1 / src2;\n",
+            //        "if(d==0){\n" +
+            //                "    value += (1/handle) * drain;\n" +
+            //                "} else {\n" +
+            //                "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
+            //                "}",
+            //        true
+            //);
+            //parser.apply(
+            //        "power",
+            //        "value += pow(src1, src2);",
+            //        "if(d==0){\n" +
+            //                "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
+            //                "} else {\n" +
+            //                "    value += (pow(target, handle) * log(handle)) * drain;\n" +
+            //                "}",
+            //        true
+            //);
         }
 
         return code;

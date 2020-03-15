@@ -41,3 +41,8 @@ String.metaClass.asFunction = (boolean doAD) -> Function.create(delegate, doAD)
 String.metaClass.asFunction = () -> delegate.asFunction(true)
 
 String.metaClass.getAt = (List<Tsr> inputs)->delegate.asFunction().activate(inputs.toArray(new Tsr[0]))
+String.metaClass.mod = (List<Tsr> inputs)->delegate.asFunction().activate(inputs.toArray(new Tsr[0]))
+String.metaClass.mod = (Tsr t)->delegate.asFunction().activate(t)
+
+
+

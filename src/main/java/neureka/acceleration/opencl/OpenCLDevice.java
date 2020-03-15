@@ -275,9 +275,7 @@ public class OpenCLDevice extends AbstractDevice
         if (clt.fp == 1) {
             overwrite32(tensor, DataHelper.doubleToFloat(value));
         } else {
-            if(clt.value.event!=null){
-                clWaitForEvents(1, new cl_event[]{clt.value.event});
-            }
+            if(clt.value.event!=null) clWaitForEvents(1, new cl_event[]{clt.value.event});
             clt.value.event = new cl_event();
             clEnqueueWriteBuffer(
                     _queue,
