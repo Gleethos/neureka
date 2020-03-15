@@ -26,7 +26,7 @@ public class Multiplication extends OperationType {
     public Multiplication()
     {
         super(
-                "multiply", "*", false, false, false, true, false,
+                "multiply", "*", true, false, false, true, false,
                 null,
                 new Scalarization(
                         "output = input1 * value;\n",
@@ -53,7 +53,7 @@ public class Multiplication extends OperationType {
                 )
         );
         new OperationType(
-                "", ((char) 171) + "*", false, false, false, false, false,
+                "", ((char) 171) + "*", true, false, false, false, false,
                 null,
                 null,
                 null,
@@ -61,7 +61,7 @@ public class Multiplication extends OperationType {
                 null
         );
         new OperationType(
-                "", "*" + ((char) 187), false, false, false, false, false,
+                "", "*" + ((char) 187), true, false, false, false, false,
                 null,
                 null,
                 null,
@@ -90,7 +90,7 @@ public class Multiplication extends OperationType {
                 );
 
         new OperationType(
-                "multiply", "x", false, false, true, false, false,
+                "multiply", "x", true, false, true, false, false,
                 null,
                 null,
                 convolution,
@@ -98,7 +98,7 @@ public class Multiplication extends OperationType {
                 null
         );
         new OperationType(
-                "inv_convolve_mul_left", ((char) 171) + "x", false, false, true, false, false,
+                "inv_convolve_mul_left", ((char) 171) + "x", true, false, true, false, false,
                 null,
                 null,
                 convolution,
@@ -106,7 +106,7 @@ public class Multiplication extends OperationType {
                 null
         );
         new OperationType(
-                "inv_convolve_mul_right", "x" + ((char) 187), false, false, true, false, false,
+                "inv_convolve_mul_right", "x" + ((char) 187), true, false, true, false, false,
                 null,
                 null,
                 new Convolution(

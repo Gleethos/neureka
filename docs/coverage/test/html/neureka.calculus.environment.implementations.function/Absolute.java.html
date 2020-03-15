@@ -7,7 +7,7 @@ public class Absolute extends OperationType {
     public Absolute(){
 
 <span class="fc" id="L9">        super(</span>
-                &quot;absolute&quot;, &quot;abs&quot; , true, false, false, true, true,
+                &quot;absolute&quot;, &quot;abs&quot; , false, false, false, true, true,
                 new Activation(&quot;output = fabs(input);\n&quot;,
                         &quot;output = (input &lt; 0) ? -1 : 1;\n&quot;,
                         (inputs, d)-&gt;{

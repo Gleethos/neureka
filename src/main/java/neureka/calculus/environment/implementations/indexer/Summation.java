@@ -5,7 +5,7 @@ import neureka.calculus.environment.OperationType;
 public class Summation extends OperationType {
 
     public Summation(){
-        super("summation", "sum" , false, false, true, false, true, true,
+        super("summation", "sum" , false, true, false, true, true,
                 new Activation("output = input;",
                         "output = 1;",
                         null)

@@ -15,7 +15,6 @@ import neureka.calculus.factory.assembly.FunctionBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.LoggingPermission;
 
 public class OperationType implements Type
 {
@@ -36,7 +35,6 @@ public class OperationType implements Type
     protected int _id = -1;
     protected String _name = "";
     protected String  _identifier = "";
-    //protected boolean _isFunction = false;
     protected boolean _isOperation = false;
     protected boolean _isIndexer = false;
     protected boolean _isConvection = false;
@@ -80,32 +78,6 @@ public class OperationType implements Type
     public OperationType(
             String name,
             String identifier,
-            boolean isFunction,
-            boolean isIndexer,
-            boolean isConvection,
-            boolean isCommutative,
-            boolean isAssociative,
-
-            Activation activation,
-            Scalarization scalarization,
-            Convolution convolution,
-            Broadcast broadcast,
-            Operation operation
-    ) {
-        _construct(
-                name, identifier, isFunction, !isFunction, isIndexer, isConvection, isCommutative, isAssociative,
-                activation,
-                scalarization,
-                convolution,
-                broadcast,
-                operation
-        );
-    }
-
-    public OperationType(
-            String name,
-            String identifier,
-            boolean isFunction,
             boolean isOperation,
             boolean isIndexer,
             boolean isConvection,
@@ -118,37 +90,10 @@ public class OperationType implements Type
             Broadcast broadcast,
             Operation operation
     ) {
-        _construct(
-                name, identifier, isFunction, isOperation, isIndexer, isConvection, isCommutative, isAssociative,
-                activation,
-                scalarization,
-                convolution,
-                broadcast,
-                operation
-        );
-    }
-
-    protected void _construct(
-            String name,
-            String  identifier,
-            boolean isFunction,//TODO: remove!
-            boolean isOperation,
-            boolean isIndexer,
-            boolean isConvection,
-            boolean isCommutative,
-            boolean isAssociative,
-
-            Activation activation,
-            Scalarization scalarization,
-            Convolution convolution,
-            Broadcast broadcast,
-            Operation operation
-    ){
         _name = name;
         _id = _ID;
         _ID++;
         _identifier = identifier;
-        //_isFunction = isFunction;
         _isOperation = isOperation;
         _isIndexer = isIndexer;
         _isConvection = isConvection;
@@ -178,7 +123,7 @@ public class OperationType implements Type
         }
     }
 
-    public static OperationType[] all(){
+    public static OperationType[] ALL(){
         return _REGISTER.toArray(new OperationType[0]);
     }
 
@@ -255,31 +200,38 @@ public class OperationType implements Type
 
     //==================================================================================================================
 
+    @Override
     public int id(){
         return _id;
     }
 
+    @Override
     public String identifier(){
         return _identifier;
     }
 
+    @Override
     public boolean isOperation(){
         //if(_isOperation!=supportsOperation())System.out.println("OMG:  "+identifier());
         return _isOperation;//supportsOperation();//_isOperation;
     }
 
+    @Override
     public boolean isIndexer(){
         return _isIndexer;
     }
 
+    @Override
     public boolean isConvection(){
         return _isConvection;
     }
 
+    @Override
     public boolean isCommutative(){
         return  _isCommutative;
     }
 
+    @Override
     public boolean allowsForward(Tsr[] inputs)
     {
         if (this.isConvection()) return false;
@@ -287,9 +239,7 @@ public class OperationType implements Type
         Tsr last = null;
         for (Tsr t : inputs) {
             if (last!=null) {
-                if (!last.shape().equals(t.shape())) {
-                    return false;
-                }
+                if (!last.shape().equals(t.shape())) return false;
             }
             last = t;
         }
@@ -299,7 +249,7 @@ public class OperationType implements Type
     @Override
     public ADAgent getADAgentOf(Function f, Tsr[] inputs, int i, boolean forward)
     {
-        Function MUL   = FunctionBuilder.build("(I[0]*I[1])", false);
+        Function MUL = FunctionBuilder.build("(I[0]*I[1])", false);
         if(forward)
         {
             Tsr d = f.derive(inputs, i);
@@ -321,11 +271,7 @@ public class OperationType implements Type
             else if (this.isConvection())
             {
                 Function INV_X = FunctionBuilder.build(
-                        "I[0]" +
-                                identifier() +
-                                ">>I[1]" +
-                                identifier() +
-                                ">>I[2]",
+                        "I[0]" + identifier() + ">>I[1]" + identifier() + ">>I[2]",
                         false
                 );
                 Tsr d = f.derive(inputs, i);

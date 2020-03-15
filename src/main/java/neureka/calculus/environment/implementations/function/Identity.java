@@ -6,7 +6,7 @@ public class Identity extends OperationType {
 
     public Identity(){
 
-        super("identity", "idy" , true, false, false, true, true,
+        super("identity", "idy" , false, false, false, true, true,
                 new Activation("output = input;\n",
                         "output = input;\n",
                         (inputs, d)->{

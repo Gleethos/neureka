@@ -26,7 +26,7 @@ public class Multiplication extends OperationType {
     public Multiplication()
     {
 <span class="fc" id="L28">        super(</span>
-                &quot;multiply&quot;, &quot;*&quot;, false, false, false, true, false,
+                &quot;multiply&quot;, &quot;*&quot;, true, false, false, true, false,
                 null,
                 new Scalarization(
                         &quot;output = input1 * value;\n&quot;,
@@ -53,7 +53,7 @@ public class Multiplication extends OperationType {
                 )
         );
 <span class="fc" id="L55">        new OperationType(</span>
-                &quot;&quot;, ((char) 171) + &quot;*&quot;, false, false, false, false, false,
+                &quot;&quot;, ((char) 171) + &quot;*&quot;, true, false, false, false, false,
                 null,
                 null,
                 null,
@@ -61,7 +61,7 @@ public class Multiplication extends OperationType {
                 null
         );
 <span class="fc" id="L63">        new OperationType(</span>
-                &quot;&quot;, &quot;*&quot; + ((char) 187), false, false, false, false, false,
+                &quot;&quot;, &quot;*&quot; + ((char) 187), true, false, false, false, false,
                 null,
                 null,
                 null,
@@ -90,7 +90,7 @@ public class Multiplication extends OperationType {
                 );
 
 <span class="fc" id="L92">        new OperationType(</span>
-                &quot;multiply&quot;, &quot;x&quot;, false, false, true, false, false,
+                &quot;multiply&quot;, &quot;x&quot;, true, false, true, false, false,
                 null,
                 null,
                 convolution,
@@ -98,7 +98,7 @@ public class Multiplication extends OperationType {
                 null
         );
 <span class="fc" id="L100">        new OperationType(</span>
-                &quot;inv_convolve_mul_left&quot;, ((char) 171) + &quot;x&quot;, false, false, true, false, false,
+                &quot;inv_convolve_mul_left&quot;, ((char) 171) + &quot;x&quot;, true, false, true, false, false,
                 null,
                 null,
                 convolution,
@@ -106,7 +106,7 @@ public class Multiplication extends OperationType {
                 null
         );
 <span class="fc" id="L108">        new OperationType(</span>
-                &quot;inv_convolve_mul_right&quot;, &quot;x&quot; + ((char) 187), false, false, true, false, false,
+                &quot;inv_convolve_mul_right&quot;, &quot;x&quot; + ((char) 187), true, false, true, false, false,
                 null,
                 null,
                 new Convolution(

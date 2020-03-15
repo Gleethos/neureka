@@ -22,7 +22,7 @@ public class Subtraction extends OperationType {
     public Subtraction(){
 
         super(
-                "subtract", "-", false, false, false, false, false,
+                "subtract", "-", true, false, false, false, false,
 
                 null,
                 new Scalarization("output = input1 - value;\n",
@@ -63,11 +63,11 @@ public class Subtraction extends OperationType {
 
         );
         new OperationType(
-                "", ((char) 171) + "-", false, false, false, false, false,
+                "", ((char) 171) + "-", true, false, false, false, false,
                 null, null, null, null, null
         );
         new OperationType(
-                "", "-" + ((char) 187), false, false, false, false, false,
+                "", "-" + ((char) 187), true, false, false, false, false,
                 null, null, null, null, null
         );
 
@@ -75,15 +75,15 @@ public class Subtraction extends OperationType {
 
 
         new OperationType(
-                "", "s", false, false, true, false, false,
+                "", "s", true, false, true, false, false,
                 null, null, null, null, null
         );
         new OperationType(
-                "", ((char) 171) + "s", false, false, true, false, false,
+                "", ((char) 171) + "s", true, false, true, false, false,
                 null, null, null, null, null
         );
         new OperationType(
-                "", "s" + ((char) 187), false, false, true, false, false,
+                "", "s" + ((char) 187), true, false, true, false, false,
                 null, null, null, null, null
         );
 

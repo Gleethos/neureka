@@ -26,7 +26,7 @@ public class Addition extends OperationType {
 <span class="fc" id="L26">        super(</span>
                 &quot;add&quot;,
                 &quot;+&quot;,
-                false, false, false, true, false,
+                true, false, false, true, false,
                 null,
                 new Scalarization(
                         &quot;output = input1 + value;\n&quot;,
@@ -45,7 +45,7 @@ public class Addition extends OperationType {
                 )
         );
 <span class="fc" id="L47">        new OperationType(</span>
-                &quot;&quot;, ((char) 171) + &quot;+&quot;, false, false, false, false, false,
+                &quot;&quot;, ((char) 171) + &quot;+&quot;, true, false, false, false, false,
                 null,
                 null,
                 null,
@@ -53,7 +53,7 @@ public class Addition extends OperationType {
                 null
         );
 <span class="fc" id="L55">        new OperationType(</span>
-                &quot;&quot;, &quot;+&quot; + ((char) 187), false, false, false, false, false,
+                &quot;&quot;, &quot;+&quot; + ((char) 187), true, false, false, false, false,
                 null,
                 null,
                 null,
@@ -64,7 +64,7 @@ public class Addition extends OperationType {
         // Convolutoion:
 
 <span class="fc" id="L66">        new OperationType(</span>
-                &quot;add&quot;, &quot;a&quot;, false, false, true, false, false,
+                &quot;add&quot;, &quot;a&quot;, true, false, true, false, false,
                 null,
                 null,
                 new Convolution(
@@ -76,7 +76,7 @@ public class Addition extends OperationType {
                 null
         );
 <span class="fc" id="L78">        new OperationType(</span>
-                &quot;&quot;, ((char) 171) + &quot;a&quot;, false, false, true, false, false,
+                &quot;&quot;, ((char) 171) + &quot;a&quot;, true, false, true, false, false,
                 null,
                 null,
                 null,
@@ -84,7 +84,7 @@ public class Addition extends OperationType {
                 null
         );
 <span class="fc" id="L86">        new OperationType(</span>
-                &quot;&quot;, &quot;a&quot; + ((char) 187), false, false, true, false, false,
+                &quot;&quot;, &quot;a&quot; + ((char) 187), true, false, true, false, false,
                 null,
                 null,
                 null,

@@ -7,7 +7,7 @@ public class Absolute extends OperationType {
     public Absolute(){
 
         super(
-                "absolute", "abs" , true, false, false, true, true,
+                "absolute", "abs" , false, false, false, true, true,
                 new Activation("output = fabs(input);\n",
                         "output = (input < 0) ? -1 : 1;\n",
                         (inputs, d)->{

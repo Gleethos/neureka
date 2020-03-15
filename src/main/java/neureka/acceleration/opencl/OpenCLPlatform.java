@@ -218,7 +218,7 @@ public class OpenCLPlatform {
         //default:  src1 o src2 -> drain
         //inverse:  src1/fdrn <-src2 <- drain
         //===========================================================================
-        for(OperationType type : OperationType.all()) {
+        for(OperationType type : OperationType.ALL()) {
             if (preName.contains("activate") && type.supportsActivation()) {
                 parser.apply(
                             type.getName(),

@@ -218,7 +218,7 @@ public class OpenCLPlatform {
         //default:  src1 o src2 -&gt; drain
         //inverse:  src1/fdrn &lt;-src2 &lt;- drain
         //===========================================================================
-<span class="fc bfc" id="L221" title="All 2 branches covered.">        for(OperationType type : OperationType.all()) {</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        for(OperationType type : OperationType.ALL()) {</span>
 <span class="fc bfc" id="L222" title="All 4 branches covered.">            if (preName.contains(&quot;activate&quot;) &amp;&amp; type.supportsActivation()) {</span>
 <span class="fc" id="L223">                parser.apply(</span>
 <span class="fc" id="L224">                            type.getName(),</span>

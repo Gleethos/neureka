@@ -5,7 +5,7 @@ import neureka.calculus.environment.OperationType;
 public class Tanh extends OperationType {
 
     public Tanh(){
-<span class="fc" id="L8">        super(&quot;tanh&quot;, &quot;tanh&quot;, true, false, false, true, true,</span>
+<span class="fc" id="L8">        super(&quot;tanh&quot;, &quot;tanh&quot;, false, false, false, true, true,</span>
                 new Activation(
                         &quot;output = input/pow(1+pow(input, 2.0f), 0.5f);\n&quot;,
                         &quot;output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n&quot;,

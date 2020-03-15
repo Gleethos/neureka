@@ -26,7 +26,7 @@ public class Addition extends OperationType {
         super(
                 "add",
                 "+",
-                false, false, false, true, false,
+                true, false, false, true, false,
                 null,
                 new Scalarization(
                         "output = input1 + value;\n",
@@ -45,7 +45,7 @@ public class Addition extends OperationType {
                 )
         );
         new OperationType(
-                "", ((char) 171) + "+", false, false, false, false, false,
+                "", ((char) 171) + "+", true, false, false, false, false,
                 null,
                 null,
                 null,
@@ -53,7 +53,7 @@ public class Addition extends OperationType {
                 null
         );
         new OperationType(
-                "", "+" + ((char) 187), false, false, false, false, false,
+                "", "+" + ((char) 187), true, false, false, false, false,
                 null,
                 null,
                 null,
@@ -64,7 +64,7 @@ public class Addition extends OperationType {
         // Convolutoion:
 
         new OperationType(
-                "add", "a", false, false, true, false, false,
+                "add", "a", true, false, true, false, false,
                 null,
                 null,
                 new Convolution(
@@ -76,7 +76,7 @@ public class Addition extends OperationType {
                 null
         );
         new OperationType(
-                "", ((char) 171) + "a", false, false, true, false, false,
+                "", ((char) 171) + "a", true, false, true, false, false,
                 null,
                 null,
                 null,
@@ -84,7 +84,7 @@ public class Addition extends OperationType {
                 null
         );
         new OperationType(
-                "", "a" + ((char) 187), false, false, true, false, false,
+                "", "a" + ((char) 187), true, false, true, false, false,
                 null,
                 null,
                 null,

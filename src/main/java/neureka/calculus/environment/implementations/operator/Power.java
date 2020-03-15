@@ -30,7 +30,7 @@ public class Power extends OperationType
 
     public Power()
     {
-        super("power", "^", false, false, false, false, false,
+        super("power", "^", true, false, false, false, false,
                 null,
                 new Scalarization("output = pow(input1, value);",
                         "if(d==0){\n" +
@@ -73,12 +73,12 @@ public class Power extends OperationType
 
 
         new OperationType(
-                "inv_power_left", ((char)171)+"^", false, false, false, false, false,
+                "inv_power_left", ((char)171)+"^", true, false, false, false, false,
                 null, null, null, null, null
         );
 
 
-        new OperationType("inv_power_right", "^" + ((char) 187), false, false, false, false, false,
+        new OperationType("inv_power_right", "^" + ((char) 187), true, false, false, false, false,
                 null, null, null, null, null
         );
 
@@ -86,7 +86,7 @@ public class Power extends OperationType
 
 
         new OperationType(
-                "power", "p", false, false, true, false, false,
+                "power", "p", true, false, true, false, false,
                 null,
                 null,
                 new Convolution(
@@ -102,11 +102,11 @@ public class Power extends OperationType
                 null
         );
         new OperationType(
-                "", ((char) 171) + "p", false, false, true, false, false,
+                "", ((char) 171) + "p", true, false, true, false, false,
                 null, null, null, null, null
         );
         new OperationType(
-                "", "p" + ((char) 187), false, false, true, false, false,
+                "", "p" + ((char) 187), true, false, true, false, false,
                 null, null, null, null, null
         );
 

@@ -10,7 +10,7 @@ public class Randomization extends OperationType{
 
         // Operations (auto broadcast):
         super(
-                "random", "rand", false, false, false, false, false,
+                "random", "rand", true, false, false, false, false,
                 null,
                 new Scalarization("output = pow(input1, value);",
                         "if(d==0){\n" +

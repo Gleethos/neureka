@@ -8,7 +8,7 @@ public class ReLU extends OperationType {
         super(
                 "relu",
                 "relu",
-                true,
+                false,
                 false,
                 false,
                 true,

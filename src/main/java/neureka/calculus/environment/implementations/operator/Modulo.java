@@ -7,7 +7,7 @@ public class Modulo extends OperationType {
     public Modulo(){
 
         super(
-                "modulo", "%", false, false, false, false, false,
+                "modulo", "%", true, false, false, false, false,
                 null,
                 null,
                 null,
@@ -36,11 +36,11 @@ public class Modulo extends OperationType {
 
         );
         new OperationType(
-                "", ((char) 171) + "%", false, false, false, false, false,
+                "", ((char) 171) + "%", true, false, false, false, false,
                 null, null, null, null, null
         );
         new OperationType(
-                "", "%" + ((char) 187), false, false, false, false, false,
+                "", "%" + ((char) 187), true, false, false, false, false,
                 null, null, null, null, null
         );
     }

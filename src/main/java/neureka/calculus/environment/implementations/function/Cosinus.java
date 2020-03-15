@@ -7,7 +7,7 @@ public class Cosinus extends OperationType {
     public Cosinus(){
 
         super(
-                "cosinus", "cos" , true, false, false, true, true,
+                "cosinus", "cos" , false, false, false, true, true,
                 new Activation("output = cos(input);\n",
                         "output = -sin(input);\n",
                         (inputs, d)->{

@@ -6,7 +6,7 @@ import neureka.calculus.environment.OperationType;
 public class Ligmoid extends OperationType {
 
     public Ligmoid(){
-        super("ligmoid", "lig" , true, false, false, true, true,
+        super("ligmoid", "lig" , false, false, false, true, true,
                 new Activation(
                         "output = \n" +
                                 "(\n" +

@@ -6,7 +6,7 @@ public class Gaussian extends OperationType {
 
     public Gaussian(){
 
-        super("gaussian", "gaus", true, false, false, true, true,
+        super("gaussian", "gaus", false, false, false, true, true,
                 new Activation("output =\n" +
                         "    (float)pow(\n" +
                         "        (float)M_E,\n" +
