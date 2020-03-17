@@ -1,20 +1,11 @@
 package util;
 
-import neureka.Neureka;
 import neureka.Tsr;
 import neureka.acceleration.CPU;
 import neureka.acceleration.Device;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.Type;
-import neureka.calculus.factory.assembly.FunctionBuilder;
-import neureka.utility.DataHelper;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.List;
-import java.util.Locale;
 
 public class NTester_Tensor extends NTester 
 {
@@ -103,10 +94,16 @@ public class NTester_Tensor extends NTester
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfCon(frstShp, scndShp);
         double[] rsltData = new double[Tsr.Utility.Indexing.szeOfShp(drnMxd)];
-        CPU.exec.convolve_multiply(
+        //CPU.exec.convolve_multiply(
+        //        new Tsr(drnMxd, rsltData),
+        //        new Tsr(frstShp, frstData),
+        //        new Tsr(scndShp, scondData)
+        //);
+        CPU.Exec.convolve(new Tsr[]{
                 new Tsr(drnMxd, rsltData),
                 new Tsr(frstShp, frstData),
                 new Tsr(scndShp, scondData)
+            }, -1, OperationType.instance("x")
         );
         assertIsEqual(stringified(rsltData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;
@@ -119,10 +116,19 @@ public class NTester_Tensor extends NTester
     ){
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfCon(frstShp, scndShp);
-        CPU.exec.convolve_multiply_inverse(//inv
-                new Tsr(frstShp, frstData),
-                (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
-                (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
+        //CPU.exec.convolve_multiply_inverse(//inv
+        //        new Tsr(frstShp, frstData),
+        //        (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
+        //        (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
+        //);
+        CPU.Exec.convolve(
+                new Tsr[]{
+                        new Tsr(frstShp, frstData),
+                        (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
+                        (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
+                },
+                0,
+                OperationType.instance(((char) 171)+"x")
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;
@@ -133,7 +139,7 @@ public class NTester_Tensor extends NTester
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
         double[] rsltData = new double[Tsr.Utility.Indexing.szeOfShp(drnMxd)];
 
-        CPU.exec.broadcast(new Tsr[]{
+        CPU.Exec.broadcast(new Tsr[]{
                 new Tsr(drnMxd, rsltData),
                 new Tsr(frstShp, frstData),
                 new Tsr(scndShp, scondData)},
@@ -151,12 +157,32 @@ public class NTester_Tensor extends NTester
     ){
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
-        CPU.exec.broadcast_multiply_inverse(//inv
-                new Tsr(frstShp, frstData),
-                (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
-                (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
+        //CPU.exec.broadcast_multiply_inverse(//inv
+        //        new Tsr(frstShp, frstData),
+        //        (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
+        //        (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
+        //);
+        CPU.Exec.broadcast(
+                new Tsr[]{
+                        new Tsr(frstShp, frstData),
+                        (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
+                        (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
+                },
+                0,
+                OperationType.instance(((char) 171) + "*")
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
+        CPU.Exec.broadcast(
+                new Tsr[]{
+                        new Tsr(frstShp, frstData),
+                        (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
+                        (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData),
+                },
+                0,
+                OperationType.instance("*" + ((char) 187))
+        );
+        assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
+
         return (printSessionEnd()>0)?1:0;
     }
 

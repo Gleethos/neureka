@@ -52,12 +52,22 @@ public class Multiplication extends OperationType {
                         _creator
                 )
         );
+        OperationCreator creator =
+                (inputs, d) -> {
+                    double[] t1_val = inputs[1].value64();
+                    double[] t2_val = inputs[2].value64();
+                    return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];
+                };
         new OperationType(
                 "", ((char) 171) + "*", true, false, false, false, false,
                 null,
                 null,
                 null,
-                null,
+                new Broadcast(
+                        "value = src1 * src2;\n",
+                        "value += handle * drain;\n",
+                        creator
+                ),
                 null
         );
         new OperationType(
@@ -65,7 +75,11 @@ public class Multiplication extends OperationType {
                 null,
                 null,
                 null,
-                null,
+                new Broadcast(
+                        "value = src1 * src2;\n",
+                        "value += handle * drain;\n",
+                        creator
+                ),
                 null
         );
 
@@ -109,22 +123,7 @@ public class Multiplication extends OperationType {
                 "inv_convolve_mul_right", "x" + ((char) 187), true, false, true, false, false,
                 null,
                 null,
-                new Convolution(
-                        "value = src1 * src2;\n",
-                        "value += handle * drain;\n",
-                        (inputs, d) -> {
-                            double[] t1_val = inputs[1].value64();
-                            double[] t2_val = inputs[2].value64();
-                            if (d < 0) {
-                                return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];
-                            } else {
-                                return (t0Idx, t1Idx, t2Idx) -> {
-                                    if (d == 0) return t2_val[inputs[2].i_of_idx(t2Idx)];
-                                    else return t1_val[inputs[1].i_of_idx(t1Idx)];
-                                };
-                            }
-                        }
-                ),
+                convolution,
                 null,
                 null
         );

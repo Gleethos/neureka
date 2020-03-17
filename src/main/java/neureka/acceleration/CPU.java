@@ -14,90 +14,32 @@ public class CPU extends AbstractDevice {
     protected void _enqueue(Tsr[] tsrs, int d, OperationType type) {
         for(Tsr t : tsrs) t.setIsVirtual(false);
         if(type.supportsActivation() && !type.isIndexer()){
-            exec.activate(tsrs, d, type);
+            Exec.activate(tsrs, d, type);
             return;
         }
         if(type.isOperation()&&!type.isConvection()) {
-            exec.broadcast(tsrs, d, type);
+            Exec.broadcast(tsrs, d, type);
             return;
         }
         if(type.isConvection()){
-            if(type.identifier().contains(((char) 187)+"")){
-                // RIGHT CONVECTION!
-                //return;
-            }
-            else if(type.identifier().contains(((char) 171)+""))
-            {
-                // LEFT CONVECTION
-                //return;
-            }
+            if(type.identifier().contains(((char) 187)+"")) Exec.convolve(new Tsr[]{tsrs[2], tsrs[1], tsrs[0]}, d, type);
+            else if(type.identifier().contains(((char) 171)+"")) Exec.convolve(new Tsr[]{tsrs[0], tsrs[1], tsrs[2]}, d, type);
             else
             {
-
-            }
-        }
-
-        switch (type.identifier()) {
-
-            case "sum": exec.broadcast(tsrs, d, type);break;
-            case "prod": exec.broadcast(tsrs, d, type);break;
-            //---
-            case "x":
                 if (d >= 0) {
                     if (d == 0) tsrs[0] = tsrs[2]; else tsrs[0] = tsrs[1];
                 } else {
-                    exec.convolve(tsrs, -1, type);
-                    //exec.convolve_multiply(tsrs[0], tsrs[1], tsrs[2]);
+                    Exec.convolve(tsrs, -1, type);
                 }
-                break;
-            case ("x" + ((char) 187)): exec.convolve_multiply_inverse(tsrs[2], tsrs[1], tsrs[0]);break;
-            case ("" + ((char) 171)) + "x": exec.convolve_multiply_inverse(tsrs[0], tsrs[1], tsrs[2]);break;
-            //---
-            case "a": exec.convolve_add(tsrs[0], tsrs[1], tsrs[2], d);break;
-            case ("a" + ((char) 187)): exec.convolve_add_inverse(tsrs[2], tsrs[1], tsrs[0]);break;
-            case ("" + ((char) 171)) + "a": exec.convolve_add_inverse(tsrs[0], tsrs[1], tsrs[2]);break;
-            //---
-            case "s": exec.convolve_subtract(tsrs[0], tsrs[1], tsrs[2], d);break;
-            case ("s" + ((char) 187)): exec.convolve_subtract_inverse(tsrs[2], tsrs[1], tsrs[0]);break;
-            case ("" + ((char) 171)) + "s": exec.convolve_subtract_inverse(tsrs[0], tsrs[1], tsrs[2]);break;
-            //---
-            case "d": exec.convolve_divide(tsrs[0], tsrs[1], tsrs[2], d);break;
-            case ("d" + ((char) 187)):
-                //exec.convolve_divide_inverse(tsrs[2], tsrs[1], tsrs[0]);
-                break;
-            case ("" + ((char) 171)) + "d":
-                //exec.convolve_divide_inverse(tsrs[0], tsrs[1], tsrs[2]);
-                break;
-            //---
-            case "p":
-                exec.convolve_power(tsrs[0], tsrs[1], tsrs[2], d);
-                break;
-            case ("p" + ((char) 187)):
-                //exec.convolve_power_inverse(tsrs[2], tsrs[1], tsrs[0]);
-                break;
-            case ("" + ((char) 171)) + "p":
-                //exec.convolve_power_inverse(tsrs[0], tsrs[1], tsrs[2]);
-                break;
-            //---
-            case "m":
-                exec.convolve_mod(tsrs[0], tsrs[1], tsrs[2], d);
-                break;
-            case ("m" + ((char) 187)):
-                //exec.convolve_mod_inverse(tsrs[2], tsrs[1], tsrs[0]);
-                break;
-            case ("" + ((char) 171)) + "m":
-                //exec.convolve_mod_inverse(tsrs[0], tsrs[1], tsrs[2]);
-                break;
-            //---
-            default:
-                throw new IllegalStateException("[_CPU][enqueue]: Operation '"+type.identifier()+"' not found!");
-        }
+            }
+
+        } else if (type.isIndexer()) Exec.broadcast(tsrs, d, type);
     }
 
     @Override
     protected void _enqueue(Tsr t, double value, int d, OperationType type) {
         if(type.supportsScalar()){
-            exec.scalar(new Tsr[]{t, t}, value, d, type);
+            Exec.scalar(new Tsr[]{t, t}, value, d, type);
             return;
         }
         int[] shape = new int[t.rank()];
@@ -164,334 +106,59 @@ public class CPU extends AbstractDevice {
         return null;
     }
 
-    public static class exec
+    public static class Exec
     {
         interface Range {
             void execute(int start, int end);
         }
 
-        private static int _adjusted_d(int d, Tsr t0_drn, Tsr t1_src, Tsr t2_src) {
-            for (int i = 0; i < t0_drn.rank(); i++)
-                d = (t0_drn.shape(i) != t1_src.shape(i) || t1_src.shape(i) != t2_src.shape(i)) ? -1 : d;
-            return d;
-        }
-
         //---
         public static void activate(Tsr[] tsrs, int d, OperationType type){
-            _threaded(tsrs[0].size(), (start, end) -> {
-                _template.activate(
-                        tsrs[0], start, end,
-                        type.getActivation().getCreator().create(tsrs, d)
-                );
-            });
+            _threaded(tsrs[0].size(),
+                    (start, end) ->
+                    _template.activate(
+                            tsrs[0], start, end,
+                            type.getActivation().getCreator().create(tsrs, d)
+                    )
+            );
         }
 
         //---
 
         public static void broadcast(Tsr[] tsrs, int d, OperationType type){
-            _threaded(tsrs[0].size(), (start, end) -> {
-                int _d = _adjusted_d(d, tsrs[0], tsrs[1], tsrs[2]);
+            _threaded(tsrs[0].size(), (start, end) ->
                 _template.broadcast(
-                        tsrs[0], tsrs[1], tsrs[2], _d,
+                        tsrs[0], tsrs[1], tsrs[2], d,
                         start, end,
-                        type.getBroadcast().getCreator().create(tsrs,  _d)
-                );
-            });
+                        type.getBroadcast().getCreator().create(tsrs,  d)
+                )
+            );
         }
 
         //---
 
         public static void convolve(Tsr[] tsrs, int d, OperationType type){
-            _threaded(tsrs[0].size(), (start, end) -> {
-                int _d = _adjusted_d(d, tsrs[0], tsrs[1], tsrs[2]);
+            _threaded(tsrs[0].size(), (start, end) ->
                 _template.convolve(
-                        tsrs[0], tsrs[1], tsrs[2], _d,
+                        tsrs[0], tsrs[1], tsrs[2], d,
                         start, end,
-                        type.getConvolution().getCreator().create(tsrs,  _d)
-                );
-            });
+                        type.getConvolution().getCreator().create(tsrs,  -1)
+                )
+            );
         }
 
         //---
 
         public static void scalar(Tsr[] tsrs, double scalar, int d, OperationType type){
-            _threaded(tsrs[0].size(), (start, end) -> {
-                _template.activate(
+            _threaded(tsrs[0].size(), (start, end) ->
+                    _template.activate(
                         tsrs[0], start, end,
                         type.getScalarization().getCreator().create(tsrs, scalar, d)
-                );
-            });
+                )
+            );
         }
 
         //==============================================================================================================
-        //---
-
-        public static void convolve_multiply(
-                Tsr t0_drn, Tsr t1_src, Tsr t2_src
-        ) {
-            _threaded(t0_drn.size(), ((start, end) -> {
-                _template.convolve(
-                        t0_drn, t1_src, t2_src, -1,
-                        start, end,
-                        _multiplication(t1_src, t2_src, -1)
-                );
-            }));
-        }
-        public static void convolve_multiply_inverse(
-                Tsr t0_drn, Tsr t1_src, Tsr t2_src
-        ) {
-            _threaded(t0_drn.size(), ((start, end) -> {
-                _template.convolve(
-                        t0_drn, t1_src, t2_src, 0,
-                        start, end,
-                        _multiplication(t1_src, t2_src, -1)
-                );
-            }));
-        }
-
-        public static void broadcast_multiply_inverse(
-                Tsr t0_drn, Tsr t1_src, Tsr t2_src
-        ) {
-            _threaded(t0_drn.size(), (start, end) -> {
-                _template.broadcast(
-                        t0_drn, t1_src, t2_src, 0,
-                        start, end,
-                        _multiplication(t1_src, t2_src, -1)//if adjusted throw exception!
-                );
-            });
-        }
-
-
-        private static Type.Operator _multiplication(
-                Tsr t1_src, Tsr t2_src, int d
-        ) {
-            double[] t1_val = t1_src.value64();
-            double[] t2_val = t2_src.value64();
-            if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> t1_val[t1_src.i_of_idx(t1Idx)] * t2_val[t2_src.i_of_idx(t2Idx)];
-            } else {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    if (d == 0) return t2_val[t2_src.i_of_idx(t2Idx)];
-                    else return t1_val[t1_src.i_of_idx(t1Idx)];
-                };
-            }
-        }
-
-        //---
-
-        public static void convolve_add(
-                Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
-        ) {
-            _threaded(t0_drn.size(), ((start, end) -> {
-                _template.convolve(
-                        t0_drn, t1_src, t2_src, d,
-                        start, end,
-                        _addition(t1_src, t2_src, d)
-                );
-            }));
-        }
-        public static void convolve_add_inverse(
-                Tsr t0_drn, Tsr t1_src, Tsr t2_src
-        ) {
-            _threaded(t0_drn.size(), ((start, end) -> {
-                _template.convolve(
-                        t0_drn, t1_src, t2_src, 0,
-                        start, end,
-                        _addition(t1_src, t2_src, -1)
-                );
-            }));
-        }
-
-        public static void broadcast_add_inverse(
-                Tsr t0_drn, Tsr t1_src, Tsr t2_src
-        ) {
-            _threaded(t0_drn.size(), (start, end) -> {
-                _template.broadcast(
-                        t0_drn, t1_src, t2_src, 0,
-                        start, end,
-                        _addition(t1_src, t2_src, 0)
-                );
-            });
-        }
-
-        private static Type.Operator _addition(
-                Tsr t1_src, Tsr t2_src, int d
-        ) {
-            double[] t1_val = t1_src.value64();
-            double[] t2_val = t2_src.value64();
-            if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    return t1_val[t1_src.i_of_idx(t1Idx)] + t2_val[t2_src.i_of_idx(t2Idx)];
-                };
-            } else {
-                return (t0Idx, t1Idx, t2Idx) -> 1.0;
-            }
-        }
-
-        //---
-
-        public static void convolve_subtract(
-                Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
-        ) {
-            _threaded(t0_drn.size(), ((start, end) -> {
-                _template.convolve(
-                        t0_drn, t1_src, t2_src, d,
-                        start, end,
-                        _subtraction(t1_src, t2_src, d)
-                );
-            }));
-        }
-        public static void convolve_subtract_inverse(
-                Tsr t0_drn, Tsr t1_src, Tsr t2_src
-        ) {
-            _threaded(t0_drn.size(), ((start, end) -> {
-                _template.convolve(
-                        t0_drn, t1_src, t2_src, 0,
-                        start, end,
-                        _subtraction(t1_src, t2_src, -1)
-                );
-            }));
-        }
-
-        public static void broadcast_subtract_inverse(
-                Tsr t0_drn, Tsr t1_src, Tsr t2_src
-        ) {
-            _threaded(t0_drn.size(), (start, end) -> {
-                _template.broadcast(
-                        t0_drn, t1_src, t2_src, 0,
-                        start, end,
-                        _subtraction(t1_src, t2_src, -1)
-                );
-            });
-        }
-
-        private static Type.Operator _subtraction(
-                Tsr t1_src, Tsr t2_src, int d
-        ) {
-            double[] t1_val = t1_src.value64();
-            double[] t2_val = t2_src.value64();
-            if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> t1_val[t1_src.i_of_idx(t1Idx)] - t2_val[t2_src.i_of_idx(t2Idx)];
-            } else {
-                return (t0Idx, t1Idx, t2Idx) -> (d == 0) ? 1.0 : -1.0;
-            }
-        }
-
-        //---
-
-        public static void convolve_divide(
-                Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
-        ) {
-            _threaded(t0_drn.size(), ((start, end) -> {
-                _template.convolve(
-                        t0_drn, t1_src, t2_src, d,
-                        start, end,
-                        _division(t1_src, t2_src, d)
-                );
-            }));
-        }
-
-
-        private static Type.Operator _division(
-                Tsr t1_src, Tsr t2_src, int d
-        ) {
-            double[] t1_val = t1_src.value64();
-            double[] t2_val = t2_src.value64();
-            if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> t1_val[t1_src.i_of_idx(t1Idx)] / t2_val[t2_src.i_of_idx(t2Idx)];
-            } else {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    if (d == 0) {
-                        return 1 / t2_val[t2_src.i_of_idx(t2Idx)];
-                    } else {
-                        return
-                                -(t1_val[t1_src.i_of_idx(t1Idx)]
-                                        /
-                                        Math.pow(t2_val[t2_src.i_of_idx(t2Idx)], 2));
-                    }
-                };
-            }
-        }
-        //---
-
-        //---
-        public static void convolve_power(
-                Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
-        ) {
-            _threaded(t0_drn.size(), ((start, end) -> {
-                _template.convolve(
-                        t0_drn, t1_src, t2_src, d,
-                        start, end,
-                        _power(t1_src, t2_src, d)
-                );
-            }));
-        }
-
-
-
-        private static Type.Operator _power(
-                Tsr t1_src, Tsr t2_src, int d
-        ) {
-            double[] t1_val = t1_src.value64();
-            double[] t2_val = t2_src.value64();
-            if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> Math.pow(
-                            t1_val[t1_src.i_of_idx(t1Idx)],
-                            t2_val[t2_src.i_of_idx(t2Idx)]
-                    );
-            } else {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    if (d == 0) {
-                        return t2_val[t2_src.i_of_idx(t2Idx)]
-                                * Math.pow(
-                                t1_val[t1_src.i_of_idx(t1Idx)],
-                                t2_val[t2_src.i_of_idx(t2Idx)] - 1
-                        );
-                    } else {
-                        return Math.pow(
-                                t1_val[t1_src.i_of_idx(t1Idx)],
-                                t2_val[t2_src.i_of_idx(t2Idx)]
-                        ) * Math.log(t1_val[t1_src.i_of_idx(t1Idx)]);
-                    }
-                };
-            }
-        }
-
-        //---
-        //---
-        public static void convolve_mod(
-                Tsr t0_drn, Tsr t1_src, Tsr t2_src, int d
-        ) {
-            _threaded(t0_drn.size(), ((start, end) -> {
-                _template.convolve(
-                        t0_drn, t1_src, t2_src, d,
-                        start, end,
-                        _modulo(t1_src, t2_src, d)
-                );
-            }));
-        }
-
-        private static Type.Operator _modulo(
-                Tsr t1_src, Tsr t2_src, int d
-        ) {
-            double[] t1_val = t1_src.value64();
-            double[] t2_val = t2_src.value64();
-            if (d < 0) {
-                return (t0Idx, t1Idx, t2Idx) -> t1_val[t1_src.i_of_idx(t1Idx)] % t2_val[t2_src.i_of_idx(t2Idx)];
-            } else {
-                return (t0Idx, t1Idx, t2Idx) -> {
-                    if (d == 0) {
-                        return 1 / t2_val[t2_src.i_of_idx(t2Idx)];
-                    } else {
-                        return
-                                -(t1_val[t1_src.i_of_idx(t1Idx)]
-                                        /
-                                        Math.pow(t2_val[t2_src.i_of_idx(t2Idx)], 2));
-                    }
-                };
-            }
-        }
-        //---
 
         private static void _threaded(int sze, Range range) {
             boolean doThreading = false;

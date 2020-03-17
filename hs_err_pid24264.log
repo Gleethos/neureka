@@ -21,7 +21,7 @@
 Command Line: -Dorg.gradle.native=false -javaagent:build/tmp/expandedArchives/org.jacoco.agent-0.8.5.jar_6a2df60c47de373ea127d14406367999/jacocoagent.jar=destfile=build/jacoco/test.exec,append=true,inclnolocationclasses=false,dumponexit=true,output=file,jmx=false -Xms1g -Xmx5g -Dfile.encoding=windows-1252 -Duser.country=AT -Duser.language=de -Duser.variant -ea worker.org.gradle.process.internal.worker.GradleWorkerMain 'Gradle Test Executor 4'
 
 Host: Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz, 12 cores, 15G,  Windows 10 , 64 bit Build 18362 (10.0.18362.329)
-Time: Sun Mar 15 11:37:30 2020 Mitteleuropäische Zeit elapsed time: 63 seconds (0d 0h 1m 3s)
+Time: Sun Mar 15 11:37:30 2020 Mitteleuropï¿½ische Zeit elapsed time: 63 seconds (0d 0h 1m 3s)
 
 ---------------  T H R E A D  ---------------
 
@@ -1335,11 +1335,11 @@ Deoptimization events (10 events):
 Event: 63.054 Thread 0x0000015fa3d39800 Uncommon trap: reason=class_check action=maybe_recompile pc=0x0000015f90149418 method=neureka.abstraction.AbstractNDArray.is64()Z @ 10 c2
 Event: 63.064 Thread 0x0000015fa3d39800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000015f902ceab4 method=neureka.Tsr._construct([Lneureka/Tsr;Ljava/lang/String;Z)V @ 24 c2
 Event: 63.069 Thread 0x0000015fa3d39800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000015f9027b818 method=java.util.WeakHashMap.getEntry(Ljava/lang/Object;)Ljava/util/WeakHashMap$Entry; @ 56 c2
-Event: 63.071 Thread 0x0000015fa3d39800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000015f90278e24 method=neureka.acceleration.CPU$exec$_template.convolve(Lneureka/Tsr;Lneureka/Tsr;Lneureka/Tsr;IIILneureka/calculus/environment/Type$Operator;)V @ 70 c2
+Event: 63.071 Thread 0x0000015fa3d39800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000015f90278e24 method=neureka.acceleration.CPU$Exec$_template.convolve(Lneureka/Tsr;Lneureka/Tsr;Lneureka/Tsr;IIILneureka/calculus/environment/Type$Operator;)V @ 70 c2
 Event: 63.074 Thread 0x0000015fa3d39800 Uncommon trap: reason=class_check action=maybe_recompile pc=0x0000015f9035f1a0 method=jdk.internal.math.FloatingDecimal.parseDouble(Ljava/lang/String;)D @ 4 c2
 Event: 63.074 Thread 0x0000015fa3d39800 Uncommon trap: reason=class_check action=maybe_recompile pc=0x0000015f9035f1a0 method=jdk.internal.math.FloatingDecimal.parseDouble(Ljava/lang/String;)D @ 4 c2
 Event: 63.075 Thread 0x0000015fa15f5800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000015f9037625c method=java.lang.ref.Reference.processPendingReferences()V @ 91 c2
-Event: 63.075 Thread 0x0000015fa3d39800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000015f90282bc8 method=neureka.acceleration.CPU$exec$_template.broadcast(Lneureka/Tsr;Lneureka/Tsr;Lneureka/Tsr;IIILneureka/calculus/environment/Type$Operator;)V @ 162 c2
+Event: 63.075 Thread 0x0000015fa3d39800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000015f90282bc8 method=neureka.acceleration.CPU$Exec$_template.broadcast(Lneureka/Tsr;Lneureka/Tsr;Lneureka/Tsr;IIILneureka/calculus/environment/Type$Operator;)V @ 162 c2
 Event: 63.076 Thread 0x0000015fa3d39800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000015f902876f8 method=neureka.Tsr.makeFit([Lneureka/Tsr;)V @ 112 c2
 Event: 63.076 Thread 0x0000015fa3d39800 Uncommon trap: reason=class_check action=maybe_recompile pc=0x0000015f9035f1a0 method=jdk.internal.math.FloatingDecimal.parseDouble(Ljava/lang/String;)D @ 4 c2
 
