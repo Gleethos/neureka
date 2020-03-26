@@ -7,7 +7,6 @@ import neureka.acceleration.opencl.OpenCLPlatform;
 import org.junit.Test;
 import util.NTester_Tensor;
 
-import javax.swing.plaf.IconUIResource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
 public class AcceleratorTests
 {
     @Test
-    public void testOpenCLDevice()
+    public void test_openCL_device_if_present()
     {
         Neureka.instance().settings().reset();
         Neureka.instance().settings().view().setLegacy(true);
@@ -29,16 +28,16 @@ public class AcceleratorTests
 
         Neureka.instance().settings().indexing().setLegacy(true);
         OpenCLPlatform.PLATFORMS().get(0).recompile();
-        _testAutograd(gpu, tester, true);
+        _test_autograd(gpu, tester, true);
 
         Neureka.instance().settings().indexing().setLegacy(false);
         OpenCLPlatform.PLATFORMS().get(0).recompile();
-        _testAutograd(gpu, tester, false);
+        _test_autograd(gpu, tester, false);
 
         Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false);
         tester.close();
     }
-    private void _testAutograd(Device gpu, NTester_Tensor tester, boolean legacyIndexing)
+    private void _test_autograd(Device gpu, NTester_Tensor tester, boolean legacyIndexing)
     {
         //gpu.add(new Tsr(new int[]{1000000}, 3));
         List<Tsr> listOfTensors = new ArrayList<>();
@@ -292,17 +291,19 @@ public class AcceleratorTests
 
         Tsr a = new Tsr(new int[]{100, 60, 1}, 4);
         Tsr b = new Tsr(new int[]{100, 1, 60}, -2);
-
         Device cpu = a.device();
-        HostCPU.NativeExecutor exec = ((HostCPU)cpu).getExecutor();//.getPool()
+        assert cpu!=null;
+        HostCPU.NativeExecutor exec = ((HostCPU)cpu).getExecutor();
         assert exec!=null;
         assert exec.getPool()!=null;
 
-        int[] min = {exec.getPool().getPoolSize()};
+        int[] min = {exec.getPool().getCorePoolSize()};
+        assert min[0]==Runtime.getRuntime().availableProcessors();
+        System.out.println("Thread pool size: "+min[0]+"; Processors: "+Runtime.getRuntime().availableProcessors());
         Thread t = new Thread(()->{
             while (min[0]>0){
-                int current = exec.getPool().getPoolSize()-exec.getPool().getActiveCount();
-                if(current<min[0]) min[0] = current;
+                int current = exec.getPool().getCorePoolSize()-exec.getPool().getActiveCount();
+                if(current<min[0]){ System.out.println("Update: "+min[0]+"->"+current); min[0] = current; }
             }
         });
         t.start();
