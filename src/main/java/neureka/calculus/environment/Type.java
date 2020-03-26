@@ -1,11 +1,8 @@
 package neureka.calculus.environment;
 
 import neureka.Tsr;
-import neureka.acceleration.CPU;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
-
-import java.net.Proxy;
 
 public interface Type
 {

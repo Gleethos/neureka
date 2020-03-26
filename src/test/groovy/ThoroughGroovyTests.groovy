@@ -1,7 +1,7 @@
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.acceleration.CPU
+import neureka.acceleration.host.HostCPU
 import neureka.acceleration.Device
 import neureka.acceleration.opencl.OpenCLPlatform
 import neureka.autograd.JITProp
@@ -794,7 +794,7 @@ class ThoroughGroovyTests
         assert !x.isSliceParent()
         assert !x.belongsToGraph()
         assert x.device() !=null
-        assert x.device() instanceof CPU
+        assert x.device() instanceof HostCPU
         assert x.rank()==1
         assert !x.rqsGradient()
         assert x.size()==1

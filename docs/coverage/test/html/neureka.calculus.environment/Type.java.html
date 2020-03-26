@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Type.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.environment</a> &gt; <span class="el_source">Type.java</span></div><h1>Type.java</h1><pre class="source lang-java linenums">package neureka.calculus.environment;
 
 import neureka.Tsr;
-import neureka.acceleration.CPU;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
-
-import java.net.Proxy;
 
 public interface Type
 {
@@ -26,19 +23,19 @@ public interface Type
         protected String _deriviation;
         protected CreatorType _creator;
 
-<span class="fc" id="L29">        TypeComponent(String operation, String deriviation, CreatorType creator){</span>
-<span class="fc" id="L30">            _operation = operation;</span>
-<span class="fc" id="L31">            _deriviation = deriviation;</span>
-<span class="fc" id="L32">            _creator = creator;</span>
-<span class="fc" id="L33">        }</span>
+<span class="fc" id="L26">        TypeComponent(String operation, String deriviation, CreatorType creator){</span>
+<span class="fc" id="L27">            _operation = operation;</span>
+<span class="fc" id="L28">            _deriviation = deriviation;</span>
+<span class="fc" id="L29">            _creator = creator;</span>
+<span class="fc" id="L30">        }</span>
         public String getAsString(){
-<span class="fc" id="L35">            return _operation;</span>
+<span class="fc" id="L32">            return _operation;</span>
         }
         public String getDeriviationAsString(){
-<span class="fc" id="L38">            return _deriviation;</span>
+<span class="fc" id="L35">            return _deriviation;</span>
         }
         public CreatorType getCreator(){
-<span class="fc" id="L41">            return _creator;</span>
+<span class="fc" id="L38">            return _creator;</span>
         }
     }
 
@@ -47,36 +44,36 @@ public interface Type
     class Activation extends TypeComponent&lt;OperationType.OperationCreator&gt;
     {
         public Activation(String strActivation, String strDeriviation, OperationType.OperationCreator creator){
-<span class="fc" id="L50">            super(strActivation, strDeriviation, creator);</span>
-<span class="fc" id="L51">        }</span>
+<span class="fc" id="L47">            super(strActivation, strDeriviation, creator);</span>
+<span class="fc" id="L48">        }</span>
     }
 
     class Convolution extends TypeComponent&lt;OperationType.OperationCreator&gt;
     {
         public Convolution(String strConvolution, String strDeriviation, OperationType.OperationCreator creator){
-<span class="fc" id="L57">            super(strConvolution, strDeriviation, creator);</span>
-<span class="fc" id="L58">        }</span>
+<span class="fc" id="L54">            super(strConvolution, strDeriviation, creator);</span>
+<span class="fc" id="L55">        }</span>
     }
 
     class Broadcast extends TypeComponent&lt;OperationType.OperationCreator&gt;
     {
         public Broadcast(String strBroadcast, String strDeriviation, OperationType.OperationCreator creator){
-<span class="fc" id="L64">            super(strBroadcast, strDeriviation, creator);</span>
-<span class="fc" id="L65">        }</span>
+<span class="fc" id="L61">            super(strBroadcast, strDeriviation, creator);</span>
+<span class="fc" id="L62">        }</span>
     }
 
     class Scalarization extends TypeComponent&lt;OperationType.ScalarOperationCreator&gt;
     {
         public Scalarization(String strScalarized, String strDeriviation, OperationType.ScalarOperationCreator creator){
-<span class="fc" id="L71">            super(strScalarized, strDeriviation, creator);</span>
-<span class="fc" id="L72">        }</span>
+<span class="fc" id="L68">            super(strScalarized, strDeriviation, creator);</span>
+<span class="fc" id="L69">        }</span>
     }
 
     class Operation extends TypeComponent&lt;OperationType.OperationCreator&gt;
     {
         public Operation(String strOperation, String strDeriviation, OperationType.OperationCreator creator){
-<span class="fc" id="L78">            super(strOperation, strDeriviation, creator);</span>
-<span class="fc" id="L79">        }</span>
+<span class="fc" id="L75">            super(strOperation, strDeriviation, creator);</span>
+<span class="fc" id="L76">        }</span>
     }
 
     //==================================================================================================================

@@ -1,7 +1,8 @@
 package util;
 
 import neureka.Tsr;
-import neureka.acceleration.CPU;
+import neureka.abstraction.AbstractNDArray;
+import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.Device;
 import neureka.calculus.environment.OperationType;
 
@@ -94,12 +95,7 @@ public class NTester_Tensor extends NTester
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfCon(frstShp, scndShp);
         double[] rsltData = new double[Tsr.Utility.Indexing.szeOfShp(drnMxd)];
-        //CPU.exec.convolve_multiply(
-        //        new Tsr(drnMxd, rsltData),
-        //        new Tsr(frstShp, frstData),
-        //        new Tsr(scndShp, scondData)
-        //);
-        CPU.Exec.convolve(new Tsr[]{
+        new HostCPU().getExecutor().convolve(new Tsr[]{
                 new Tsr(drnMxd, rsltData),
                 new Tsr(frstShp, frstData),
                 new Tsr(scndShp, scondData)
@@ -121,7 +117,7 @@ public class NTester_Tensor extends NTester
         //        (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
         //        (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
         //);
-        CPU.Exec.convolve(
+        new HostCPU().getExecutor().convolve(
                 new Tsr[]{
                         new Tsr(frstShp, frstData),
                         (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
@@ -139,7 +135,7 @@ public class NTester_Tensor extends NTester
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
         double[] rsltData = new double[Tsr.Utility.Indexing.szeOfShp(drnMxd)];
 
-        CPU.Exec.broadcast(new Tsr[]{
+        new HostCPU().getExecutor().broadcast(new Tsr[]{
                 new Tsr(drnMxd, rsltData),
                 new Tsr(frstShp, frstData),
                 new Tsr(scndShp, scondData)},
@@ -157,12 +153,7 @@ public class NTester_Tensor extends NTester
     ){
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
-        //CPU.exec.broadcast_multiply_inverse(//inv
-        //        new Tsr(frstShp, frstData),
-        //        (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
-        //        (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
-        //);
-        CPU.Exec.broadcast(
+        new HostCPU().getExecutor().broadcast(
                 new Tsr[]{
                         new Tsr(frstShp, frstData),
                         (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
@@ -172,7 +163,7 @@ public class NTester_Tensor extends NTester
                 OperationType.instance(((char) 171) + "*")
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
-        CPU.Exec.broadcast(
+        new HostCPU().getExecutor().broadcast(
                 new Tsr[]{
                         new Tsr(frstShp, frstData),
                         (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
@@ -197,9 +188,7 @@ public class NTester_Tensor extends NTester
         printSessionStart("Test injection: I[0] <- I[1], I[0] -> I[1] : "+f);
         Tsr[] result = new Tsr[tensors.length+1];
         result[0] = new Tsr(tensors, f);
-        for(int i=1; i<result.length; i++){
-            result[i] = tensors[i-1];
-        }
+        System.arraycopy(tensors, 0, result, 1, result.length - 1);
         for(int i=0; i<result.length; i++){
             if(expected[i]!=null && expected[i].length!=0){
                 String[] parts = expected[i];

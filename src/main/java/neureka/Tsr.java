@@ -1,7 +1,7 @@
 package neureka;
 
 import neureka.abstraction.AbstractNDArray;
-import neureka.acceleration.CPU;
+import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.Device;
 import neureka.framing.IndexAlias;
 import neureka.framing.Relation;
@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Tsr extends AbstractNDArray
 {
     static{
-        _CPU = new CPU();
+        _CPU = new HostCPU();
     }
     
     /**
