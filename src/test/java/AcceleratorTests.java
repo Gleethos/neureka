@@ -296,26 +296,26 @@ public class AcceleratorTests
         HostCPU.NativeExecutor exec = ((HostCPU)cpu).getExecutor();
         assert exec!=null;
         assert exec.getPool()!=null;
-
-        int[] min = {exec.getPool().getCorePoolSize()};
-        assert min[0]==Runtime.getRuntime().availableProcessors();
-        Thread t = new Thread(()->{
-            while (min[0]>0){
-                int current = exec.getPool().getCorePoolSize()-exec.getPool().getActiveCount();
-                if(current<min[0]) min[0] = current;
+        if(exec.getPool().getCorePoolSize()>2){
+            int[] min = {exec.getPool().getCorePoolSize()};
+            assert min[0]==Runtime.getRuntime().availableProcessors();
+            Thread t = new Thread(()->{
+                while (min[0]>0){
+                    int current = exec.getPool().getCorePoolSize()-exec.getPool().getActiveCount();
+                    if(current<min[0]) min[0] = current;
+                }
+            });
+            t.start();
+            Tsr c = a.div(b);
+            int result = min[0];
+            try {
+                min[0] = 0;
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        });
-        t.start();
-        Tsr c = a.div(b);
-        int result = min[0];
-        try {
-            min[0] = 0;
-            t.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            assert result<=(exec.getPool().getCorePoolSize()/2);
         }
-        assert result<=exec.getPool().getCorePoolSize()/2;
-
     }
 
 
