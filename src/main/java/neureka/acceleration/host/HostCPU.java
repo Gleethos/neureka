@@ -9,27 +9,21 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.*;
 
-public class HostCPU extends AbstractDevice {
-    private final ThreadPoolExecutor _pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+public class HostCPU extends AbstractDevice
+{
+    private final NativeExecutor _executor = new NativeExecutor();
 
-    private final Exec _executor = new Exec();
-
-    public Exec getExecutor() {
+    public NativeExecutor getExecutor() {
         return _executor;
     }
 
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, OperationType type) {
         for (Tsr t : tsrs) t.setIsVirtual(false);
-        if (type.supportsActivation() && !type.isIndexer()) {
-            _executor.activate(tsrs, d, type);
-            return;
-        }
-        if (type.isOperation() && !type.isConvection()) {
-            _executor.broadcast(tsrs, d, type);
-            return;
-        }
-        if (type.isConvection()) {
+        if (type.supportsActivation() && !type.isIndexer()) _executor.activate(tsrs, d, type);
+        else if (type.isOperation() && !type.isConvection()) _executor.broadcast(tsrs, d, type);
+        else if (type.isConvection())
+        {
             if (type.identifier().contains(((char) 187) + ""))
                 _executor.convolve(new Tsr[]{tsrs[2], tsrs[1], tsrs[0]}, d, type);
             else if (type.identifier().contains(((char) 171) + ""))
@@ -42,24 +36,22 @@ public class HostCPU extends AbstractDevice {
                     _executor.convolve(tsrs, -1, type);
                 }
             }
-
         } else if (type.isIndexer()) _executor.broadcast(tsrs, d, type);
     }
 
     @Override
     protected void _enqueue(Tsr t, double value, int d, OperationType type) {
-        if (type.supportsScalar()) {
-            _executor.scalar(new Tsr[]{t, t}, value, d, type);
-            return;
+        if (type.supportsScalar()) _executor.scalar(new Tsr[]{t, t}, value, d, type);
+        else {
+            int[] shape = new int[t.rank()];
+            Arrays.fill(shape, 1);
+            _enqueue(new Tsr[]{t, t, new Tsr(shape, value)}, d, type);
         }
-        int[] shape = new int[t.rank()];
-        Arrays.fill(shape, 1);
-        _enqueue(new Tsr[]{t, t, new Tsr(shape, value)}, d, type);
     }
 
     @Override
     public void dispose() {
-        _pool.shutdown();
+        _executor.getPool().shutdown();
     }
 
     @Override
@@ -121,7 +113,14 @@ public class HostCPU extends AbstractDevice {
         void execute(int start, int end);
     }
 
-    public class Exec {
+    public class NativeExecutor
+    {
+        private final ThreadPoolExecutor _pool =
+                (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+        public ThreadPoolExecutor getPool(){
+            return _pool;
+        }
 
         public void activate(Tsr[] tsrs, int d, OperationType type) {
             _threaded(tsrs[0].size(),
@@ -185,10 +184,7 @@ public class HostCPU extends AbstractDevice {
                         e.printStackTrace();
                     }
                 }
-                assert _pool.getActiveCount()==0;
-            } else {
-                range.execute(0, sze);
-            }
+            } else range.execute(0, sze);
         }
 
 
