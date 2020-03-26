@@ -24,11 +24,11 @@ public class HostCPU extends AbstractDevice
         else if (type.isOperation() && !type.isConvection()) _executor.broadcast(tsrs, d, type);
         else if (type.isConvection())
         {
-            if (type.identifier().contains(((char) 187) + ""))
+            if (type.identifier().contains(((char) 187) + "")) {
                 _executor.convolve(new Tsr[]{tsrs[2], tsrs[1], tsrs[0]}, d, type);
-            else if (type.identifier().contains(((char) 171) + ""))
+            } else if (type.identifier().contains(((char) 171) + "")) {
                 _executor.convolve(new Tsr[]{tsrs[0], tsrs[1], tsrs[2]}, d, type);
-            else {
+            } else {
                 if (d >= 0) {
                     if (d == 0) tsrs[0] = tsrs[2];
                     else tsrs[0] = tsrs[1];

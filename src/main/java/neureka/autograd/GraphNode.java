@@ -415,7 +415,7 @@ public class GraphNode implements Component<Tsr> {
      * Instead the 'backwardJIT' method is called by the JITProp component if present.
      * Intermediate error accumulations are stored in the '_pending_error' variable.
      * The method halts when an error can be accumulated and returns.
-     * This graph node however is being noted in the 'pendingNodes' Set.
+     * This graph node however is not forgotten but being noted in the 'pendingNodes' Set.
      *
      * @param error A tensor which traverses the computation graph according to the rules of reverse mode AutoDiff.
      */
@@ -432,19 +432,18 @@ public class GraphNode implements Component<Tsr> {
                     if (_pending_error == null) {
                         _pending_error = new PendingError(error, ADPaths - 1);
                         pendingNodes.add(this);
-                    } else {
-                        _pending_error.accumulate(error);
-                    }
-                    return;//Backprop will be continued later! This node is being remembered in 'PendingError'
-                    // NOTE: Multiple AutoDiff paths leading to one node in history will be accumulated first! (performance)
-                    //This optimization is a light version of JITProp. JITProp builds on this!
+                    } else _pending_error.accumulate(error);
+                    return;
+                    /* Backprop will be continued later! This node is being remembered in 'PendingError'
+                       NOTE: Multiple AutoDiff paths leading to one node in history will be accumulated first! (performance)
+                             This optimization is a light version of JITProp. JITProp builds on this!
+                    */
                 }
             }
-            //Using forward-AutoDiff size for reverse-mode AutoDiff!:
+            //Using forward-AutoDiff size for reverse-mode AutoDiff!
             if (this.usesForwardAD()) this.forEachForward(error, (t, d) -> t._backward(d, pendingNodes, true));
             else if (this.usesReverseAD()) this.forEachBackward(error, (t, e) -> t._backward(e, pendingNodes, true));
-            //Standard reverse mode-AutoDiff:
-
+            //Standard reverse mode-AutoDiff!
         }
     }
 
@@ -504,12 +503,10 @@ public class GraphNode implements Component<Tsr> {
             return;//This node will continue its propagation via a JIT-Prop component later!
         }
         if (this.usesAD()) {
-            //Using forward-AutoDiff size for reverse-mode AutoDiff!:
+            //Using forward-AutoDiff size for reverse-mode AutoDiff!
             if (this.usesForwardAD()) this.forEachForward(error, (t, e) -> t._backwardJIT(e, source));
             else if (this.usesReverseAD()) this.forEachBackward(error, (t, e) -> t._backwardJIT(e, source));
-            //Standard reverse mode-AutoDiff:
-
-
+            //Standard reverse mode-AutoDiff!
         }
     }
 
@@ -529,11 +526,10 @@ public class GraphNode implements Component<Tsr> {
         }
     }
 
-
     /**
      * Counts how many child nodes will later on provide error values for back-propagation!
      *
-     * @return
+     * @return The number of child nodes using reverse-mode auto-differentiation.
      */
     private int _numberOfReverseModeADChildren() {
         int count = 0;
@@ -541,7 +537,7 @@ public class GraphNode implements Component<Tsr> {
             for (WeakReference<GraphNode> weak : _children) {
                 if (weak != null && weak.get() != null) {
                     GraphNode child = weak.get();
-                    if (child.usesReverseAD()) count++;
+                    if (child!=null && child.usesReverseAD()) count++;
                 }
             }
         }
@@ -568,7 +564,7 @@ public class GraphNode implements Component<Tsr> {
      */
     public void put(GraphNode target, Object o) {
         if (_targets_derivatives == null) _targets_derivatives = new TreeMap<>((a, b) -> a.hashCode() - b.hashCode());
-        ADAgent agent = null;
+        ADAgent agent;
         if (o instanceof Tsr) agent = new ADAgent((Tsr) o);
         else agent = (ADAgent) o;
 
@@ -592,6 +588,9 @@ public class GraphNode implements Component<Tsr> {
     }
 
     /**
+     * This method checks if a given graph node is an AD target of this node.
+     * This would mean that this node contains an AD-action for the given one.
+     *
      * @param target
      * @return boolean
      */
@@ -601,6 +600,9 @@ public class GraphNode implements Component<Tsr> {
     }
 
     /**
+     * This is the number of AD-actions stored inside this node.
+     * It can be interpreted as the 'number of AD paths'.
+     *
      * @return int
      */
     public int size() {
@@ -635,7 +637,7 @@ public class GraphNode implements Component<Tsr> {
      */
     public void forEachDerivative(BiConsumer<GraphNode, ADAgent> action) {
         if (_targets_derivatives == null) return;
-        _targets_derivatives.forEach(action::accept);
+        _targets_derivatives.forEach(action);
     }
 
     /**
@@ -658,12 +660,15 @@ public class GraphNode implements Component<Tsr> {
 
 
     /**
-     * @return
+     * @return Checks if this node stores target / AD-action (usually derivatives) pairs.
      */
     public boolean hasDerivatives() {
         return (_targets_derivatives != null) && _targets_derivatives.size() > 0;
     }
 
+    /**
+     * @return Returns the type of the node as descriptive String in capital letters.
+     */
     public String type() {
         String type = "";
         if (this.isLeave()) type += "LEAVE";
@@ -678,7 +683,10 @@ public class GraphNode implements Component<Tsr> {
         return toString("");
     }
 
-
+    /**
+     * @param m Stands for 'mode' and is expected to contain certain letters which are used as settings.
+     * @return Returns a String representation of this node.
+     */
     public String toString(String m) {
         if (m.contains("g")) {
             return "]> LOCK: " + lock() + " |> GRAPH:\n]\n" + _toString("]    0", true) + "\n]\n]|END|>";
@@ -693,7 +701,17 @@ public class GraphNode implements Component<Tsr> {
 
     }
 
-    private String _toString(String deep, boolean isLast) {//int depth){
+    /**
+     * A private recursive method used by its public counterpart ( 'toString(String m)' )
+     * in order to build a indented multi-line tree-like
+     * String representation of the entire computation graph
+     * starting at the node from where this method is called.
+     *
+     * @param deep The current depth / indentation
+     * @param isLast Tells if this is the last parent node of this child.
+     * @return A indented multi-line tree-like String representation of the computation graph.
+     */
+    private String _toString(String deep, boolean isLast) {
         String delimiter = ((isLast) ? ("    ") : ("|   "));
         String arrow = ((char) 187) + "" + ((_parents != null) ? (String.valueOf(_parents.length)) : "0") + ((char) 187);
         StringBuilder asString = new StringBuilder(deep +

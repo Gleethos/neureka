@@ -24,11 +24,11 @@ import java.util.concurrent.*;
 <span class="fc bfc" id="L24" title="All 4 branches covered.">        else if (type.isOperation() &amp;&amp; !type.isConvection()) _executor.broadcast(tsrs, d, type);</span>
 <span class="fc bfc" id="L25" title="All 2 branches covered.">        else if (type.isConvection())</span>
         {
-<span class="fc bfc" id="L27" title="All 2 branches covered.">            if (type.identifier().contains(((char) 187) + &quot;&quot;))</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">            if (type.identifier().contains(((char) 187) + &quot;&quot;)) {</span>
 <span class="fc" id="L28">                _executor.convolve(new Tsr[]{tsrs[2], tsrs[1], tsrs[0]}, d, type);</span>
-<span class="fc bfc" id="L29" title="All 2 branches covered.">            else if (type.identifier().contains(((char) 171) + &quot;&quot;))</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">            } else if (type.identifier().contains(((char) 171) + &quot;&quot;)) {</span>
 <span class="fc" id="L30">                _executor.convolve(new Tsr[]{tsrs[0], tsrs[1], tsrs[2]}, d, type);</span>
-            else {
+            } else {
 <span class="fc bfc" id="L32" title="All 2 branches covered.">                if (d &gt;= 0) {</span>
 <span class="fc bfc" id="L33" title="All 2 branches covered.">                    if (d == 0) tsrs[0] = tsrs[2];</span>
 <span class="fc" id="L34">                    else tsrs[0] = tsrs[1];</span>
@@ -113,7 +113,7 @@ import java.util.concurrent.*;
         void execute(int start, int end);
     }
 
-<span class="pc bpc" id="L116" title="1 of 2 branches missed.">    public class NativeExecutor</span>
+<span class="fc" id="L116">    public class NativeExecutor</span>
     {
 <span class="fc" id="L118">        private final ThreadPoolExecutor _pool =</span>
 <span class="fc" id="L119">                (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());</span>
@@ -184,11 +184,8 @@ import java.util.concurrent.*;
 <span class="nc" id="L184">                        e.printStackTrace();</span>
 <span class="pc" id="L185">                    }</span>
                 }
-<span class="pc bpc" id="L187" title="2 of 4 branches missed.">                assert _pool.getActiveCount()==0;</span>
-<span class="fc" id="L188">            } else {</span>
-<span class="fc" id="L189">                range.execute(0, sze);</span>
-            }
-<span class="fc" id="L191">        }</span>
+<span class="fc" id="L187">            } else range.execute(0, sze);</span>
+<span class="fc" id="L188">        }</span>
 
 
     }
