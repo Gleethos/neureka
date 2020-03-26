@@ -9,7 +9,7 @@ import util.NTester_Tensor;
 public class BroadJavaTests {
 
     @Test
-    public void testAutograd()
+    public void test_autograd()
     {
         Neureka.instance().settings().reset();
         Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(false);
@@ -154,7 +154,7 @@ public class BroadJavaTests {
     }
 
     @Test
-    public void testTensorOperationsAndAutograd() {
+    public void test_tensor_operations_and_autograd() {
         Neureka.instance().settings().reset();
         Neureka.instance().settings().indexing().setLegacy(true);
         Neureka.instance().settings().view().setLegacy(true);

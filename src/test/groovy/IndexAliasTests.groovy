@@ -14,7 +14,7 @@ class IndexAliasTests
 {
 
     @Test
-    void testSlicing()
+    void test_slicing()
     {
         Neureka.instance().settings().reset()
         Neureka.instance().settings().view().setLegacy(true)

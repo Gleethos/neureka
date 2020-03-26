@@ -8,7 +8,7 @@ public class CalculusTests {
 
 
     @Test
-    public void testScalarCalculus(){
+    public void test_scalar_calculus(){
 
         NTester_Function tester = new NTester_Function("Calculus-Testing: Scalar calculus");
 
@@ -52,7 +52,7 @@ public class CalculusTests {
 
 
     @Test
-    public void testTensorCalculus()
+    public void test_tensor_calculus()
     {
 
         NTester_Function tester = new NTester_Function("Calculus-Testing: Function parsing and tensor calculus");

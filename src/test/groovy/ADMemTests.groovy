@@ -7,7 +7,7 @@ import org.junit.Test
 class ADMemTests {
 
     @Test
-    void testReverseReshape() {
+    void test_reverse_reshape() {
 
         Neureka.instance().settings().reset()
         Neureka.instance().settings().view().setLegacy(true)
@@ -47,12 +47,12 @@ class ADMemTests {
         assert node.mode() == -1
         assert node.size()==0
         assert node.nid()!=1
-        assert node.lock().isLocked()==false
+        assert !node.lock().isLocked()
 
     }
 
     @Test
-    void testPayloadsAndDerivativesAreNull() {
+    void test_payloads_and_derivatives_are_null() {
 
         Neureka.instance().settings().reset()
 

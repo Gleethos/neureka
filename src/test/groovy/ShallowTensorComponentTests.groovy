@@ -6,7 +6,7 @@ import org.junit.Test
 class ShallowTensorComponentTests {
 
     @Test
-    void testAllOperations(){
+    void test_all_operations(){
 
         Neureka.instance().settings().reset()
         Tsr t = new Tsr([2, 3], [-4, 7, -1, 2, 3, 8])
@@ -29,7 +29,7 @@ class ShallowTensorComponentTests {
     }
 
     @Test
-    void testIndex()
+    void test_custom_index()
     {
         Tsr t = new Tsr([2, 3, 2], 1..100)
 

@@ -5,7 +5,7 @@ public class LightJavaTests {
 
 
     @Test
-    public void testFlags(){
+    public void test_flags(){
         Tsr t = new Tsr(6);
         assert !t.isOutsourced();
         t.setIsOutsourced(true);

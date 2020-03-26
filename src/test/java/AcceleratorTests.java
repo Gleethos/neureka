@@ -251,7 +251,7 @@ public class AcceleratorTests
                 "Testing for memory leaks!"
         );
         //---
-        listOfTensors.forEach((t)->gpu.rmv(t));
+        listOfTensors.forEach(gpu::rmv);
         sentence = "Number of tensors after deleting: ";
         tester.testContains(
                 sentence +gpu.tensors().size(),

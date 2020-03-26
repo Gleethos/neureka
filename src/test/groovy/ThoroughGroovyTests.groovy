@@ -117,7 +117,7 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testAutoReshapeAndBroadcast()
+    void test_auto_reshape_and_broadcast()
     {
         Neureka.instance().settings().reset()
         Neureka.instance().settings().view().setLegacy(true)
@@ -134,7 +134,7 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testTensorConstructors()
+    void test_tensor_constructors()
     {
         Tsr a = new Tsr(3)
         Tsr b = new Tsr(2)
@@ -155,30 +155,9 @@ class ThoroughGroovyTests
         assert t.toString().contains("5.0")
     }
 
-    @Test
-    void testOperatorOverloading()
-    {
-        Tsr a = new Tsr(5)
-        Tsr b = new Tsr(3)
-
-        assert (2+a).toString().contains("7.0")
-        assert (2*b).toString().contains("6.0")
-        assert (6/b).toString().contains("2.0")
-        assert (2^b).toString().contains("8.0")
-        assert (2**b).toString().contains("8.0")
-        assert (4-a).toString().contains("-1.0")
-
-        assert (2.0+a).toString().contains("7.0")
-        assert (2.0*b).toString().contains("6.0")
-        assert (6.0/b).toString().contains("2.0")
-        assert (2.0^b).toString().contains("8.0")
-        assert (2.0**b).toString().contains("8.0")
-        assert (4.0-a).toString().contains("-1.0")
-    }
-
 
     @Test
-    void testNeurekaClass()
+    void test_neureka_class()
     {
         Neureka.instance().settings().reset()
         assert !Neureka.instance().settings().isLocked()
@@ -190,7 +169,7 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testStringSeededTensor()
+    void test_string_seeded_tensor()
     {
         Neureka.instance().settings().reset()
         Tsr t1 = new Tsr([2, 3], "I am a seed! :)")
@@ -201,7 +180,7 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testIndexingAfterReshaping()
+    void test_indexing_after_reshaping()
     {
         Neureka.instance().settings().reset()
         Neureka.instance().settings().view().setLegacy(true)
@@ -221,7 +200,7 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testReshaping()
+    void test_reshaping()
     {
         Neureka.instance().settings().reset()
         Neureka.instance().settings().view().setLegacy(true)
@@ -235,7 +214,7 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testNetworkLegacyIndexing()
+    void test_network_legacy_indexing()
     {
         Neureka.instance().settings().indexing().setLegacy(true)
         Neureka.instance().settings().view().setLegacy(true)
@@ -277,7 +256,7 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testNetwork()
+    void test_network()
     {
         Neureka.instance().settings().reset()
         Neureka.instance().settings().view().setLegacy(true)
@@ -477,7 +456,7 @@ class ThoroughGroovyTests
 
 
     @Test
-    void testNoPreemptiveApplyWhenJITProp()
+    void test_no_preemptive_apply_when_JIT_prop()
     {
         Neureka.instance().settings().reset()
         Neureka.instance().settings().view().setLegacy(true)
@@ -522,7 +501,7 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testAutogradWithoutJITAndAutoApply()
+    void test_autograd_without_JIT_and_auto_apply()
     {
         Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(false)
         Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(false)
@@ -555,7 +534,7 @@ class ThoroughGroovyTests
 
 
     @Test
-    void testIndifferentialAndJITWithAutoApply()
+    void test_indifferential_and_JIT_with_auto_apply()
     {
         Neureka.instance().settings().reset()
         Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(true)
@@ -583,7 +562,7 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testNoJITPropWhenForwardAD(){
+    void test_no_JIT_prop_when_forward_AD(){
         Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(true)
         Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(true)
         Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false)
@@ -610,7 +589,7 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testIndexMapping(){
+    void test_index_mapping(){
 
         Neureka.instance().settings().indexing().setLegacy(false)
         Neureka.instance().settings().view().setLegacy(true)
@@ -681,7 +660,7 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testIndexingModes(){
+    void test_indexing_modes(){
         Neureka.instance().settings().indexing().setLegacy(false)
         Tsr t0 = new Tsr([3, 2, 1], [
                 1, 2,
@@ -725,7 +704,7 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testRandomTensor(){
+    void test_random_tensor(){
         Tsr r = new Tsr([2, 2], "jnrejn")
         assert r.toString().contains("0.02600E0, -2.06129E0, -0.48373E0, 0.94884E0")
         r = new Tsr([2, 2], "jnrejn2")
@@ -733,7 +712,7 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testTranspose()
+    void test_tensor_transpose()
     {
         Neureka.instance().settings().reset()
         Neureka.instance().settings().view().setLegacy(true)
@@ -888,12 +867,32 @@ class ThoroughGroovyTests
     @Test
     void test_operator_overloading()
     {
-        Tsr a = new Tsr(2).setRqsGradient(true)
-        Tsr b = new Tsr(-4)
-        Tsr c = new Tsr(3).setRqsGradient(true)
-        assert (a/a).toString().contains("[1]:(1.0)")
-        assert (c%a).toString().contains("[1]:(1.0)")
-        assert (((b/b)^c%a)*3).toString().contains("[1]:(3.0)")
+        {
+            Tsr a = new Tsr(2).setRqsGradient(true)
+            Tsr b = new Tsr(-4)
+            Tsr c = new Tsr(3).setRqsGradient(true)
+            assert (a/a).toString().contains("[1]:(1.0)")
+            assert (c%a).toString().contains("[1]:(1.0)")
+            assert (((b/b)^c%a)*3).toString().contains("[1]:(3.0)")
+        }
+        {
+            Tsr a = new Tsr(5)
+            Tsr b = new Tsr(3)
+
+            assert (2+a).toString().contains("7.0")
+            assert (2*b).toString().contains("6.0")
+            assert (6/b).toString().contains("2.0")
+            assert (2^b).toString().contains("8.0")
+            assert (2**b).toString().contains("8.0")
+            assert (4-a).toString().contains("-1.0")
+
+            assert (2.0+a).toString().contains("7.0")
+            assert (2.0*b).toString().contains("6.0")
+            assert (6.0/b).toString().contains("2.0")
+            assert (2.0^b).toString().contains("8.0")
+            assert (2.0**b).toString().contains("8.0")
+            assert (4.0-a).toString().contains("-1.0")
+        }
     }
 
     @Test
