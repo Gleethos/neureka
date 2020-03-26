@@ -165,7 +165,7 @@ import java.util.concurrent.*;
 
         private void _threaded(int sze, Range range)
         {
-<span class="fc" id="L168">            int cores = Runtime.getRuntime().availableProcessors() - _pool.getActiveCount();</span>
+<span class="fc" id="L168">            final int cores = _pool.getCorePoolSize() - _pool.getActiveCount();</span>
 <span class="fc bfc" id="L169" title="All 4 branches covered.">            if (sze &gt;= 32 &amp;&amp; ((sze / cores) &gt;= 8))</span>
             {
 <span class="fc" id="L171">                final int chunk = sze / cores;</span>

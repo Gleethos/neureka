@@ -70,7 +70,7 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testManualConvolution()
+    void test_manual_convolution()
     {
         Neureka.instance().settings().reset()
         Neureka.instance().settings().view().setLegacy(false)
@@ -83,7 +83,7 @@ class ThoroughGroovyTests
         Tsr v = rowconvol[0..-1,0..-3]
         Tsr j = rowconvol[0..-1,2..-1]
         Tsr u = a[1..-2,1..-2]
-        Tsr colconvol = k + v + j - 9*u//(98, 98)+(98, 98)+(98, 98)-9*(98, 98)
+        Tsr colconvol = k + v + j - 9 * u//(98, 98)+(98, 98)+(98, 98)-9*(98, 98)
         print(colconvol)
         String asStr = x.toString()
         assert asStr.contains("(98x100)")
@@ -324,7 +324,7 @@ class ThoroughGroovyTests
 
 
     @Test
-    void testNN()
+    void test_NN_with_manual_backprop()
     {
         Neureka.instance().settings().reset()
         Neureka.instance().settings().view().setLegacy(true)
@@ -756,7 +756,7 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testDataTypes()
+    void test_data_types()
     {
         Neureka.instance().settings().reset()
         Neureka.instance().settings().view().setLegacy(true)
@@ -815,7 +815,7 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testPowerOverloadedAndInputFunctions()
+    void test_power_overloaded_aAnd_input_functions()
     {
         Tsr x = new Tsr(3).setRqsGradient(true)
         Neureka.instance().settings().view().setLegacy(true)
@@ -838,7 +838,7 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testTensorManipulation()
+    void test_tensor_manipulation_and_IO()
     {
         Neureka.instance().settings().indexing().setLegacy(true)//TODO: repeat tests with default indexing
 
@@ -886,7 +886,7 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testOperations()
+    void test_operator_overloading()
     {
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = new Tsr(-4)
@@ -897,8 +897,11 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testPendingErrorOptimization()
+    void test_pending_error_optimization()
     {
+        Neureka.instance().settings().reset()
+        Neureka.instance().settings().view().legacy = true
+
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = new Tsr(-4)
         Tsr c = new Tsr(3).setRqsGradient(true)
@@ -920,7 +923,7 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testPendingErrorOptimization2()
+    void test_pending_error_optimization_2()
     {
         Neureka.instance().settings().reset()
         Neureka.instance().settings().view().setLegacy(true)
@@ -947,8 +950,9 @@ class ThoroughGroovyTests
 
 
     @Test
-    void testJITPropagationVariantOne()
+    void test_JIT_propagation_variant_one()
     {
+        Neureka.instance().settings().reset()
         Neureka.instance().settings().view().setLegacy(true)
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = new Tsr(-4)
@@ -967,8 +971,9 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testJITPropagationVariantTwo()
+    void test_JIT_propagation_variant_two()
     {
+        Neureka.instance().settings().reset()
         Neureka.instance().settings().view().setLegacy(true)
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = new Tsr(-4)
@@ -990,8 +995,9 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void testAddingDeviceToTensor()
+    void test_adding_device_to_tensor()
     {
+        Neureka.instance().settings().reset()
         if(!System.getProperty("os.name").toLowerCase().contains("windows")) return
         Device gpu = Device.find("nvidia")
         def t = new Tsr([3, 4, 1], 3).add(gpu)

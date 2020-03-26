@@ -7,8 +7,6 @@ import java.util.List;
 
 public class NTester extends Assert
 {
-    //private MessageFrame _verbose_frame;
-
     private static MessageFrame RESULT_FRAME;
     private static MessageFrame ERROR_FRAME;
 
@@ -19,7 +17,6 @@ public class NTester extends Assert
             RESULT_FRAME = new MessageFrame("[NEUREKA UNIT TEST]: results");
             ERROR_FRAME =  new MessageFrame("[NEUREKA UNIT TEST]: fails");
         }
-
     }
     protected static String BAR = "[|]";
     protected static String LINE = "--------------------------------------------------------------------------------------------";
@@ -49,18 +46,12 @@ public class NTester extends Assert
     }
 
     public void close(){
-        //if(_verbose_frame !=null){
-        //    _verbose_frame.close();
-        //    _verbose_frame=null;
-        //}
         if(RESULT_FRAME !=null && _global_tests>3){
             try {
                 Thread.sleep((int)Math.pow(_global_tests-3, 2)*1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            //RESULT_FRAME.close();
-            //RESULT_FRAME=null;
         }
 
 
@@ -192,67 +183,54 @@ public class NTester extends Assert
     }
 
     protected String stringified(int[] a){
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for(int ai : a) {
-            result += ai+", ";
+            result.append(ai).append(", ");
         }
-        return result;
+        return result.toString();
     }
     protected String stringified(short[] a){
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for(short ai : a) {
-            result += ai+", ";
+            result.append(ai).append(", ");
         }
-        return result;
+        return result.toString();
     }
     public String stringified(double[] a){
         if(a==null){
             return "null";
         }
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for(double ai : a) {
-            result += Tsr.Utility.Stringify.formatFP(ai)+", ";
+            result.append(Tsr.Utility.Stringify.formatFP(ai)).append(", ");
         }
-        return result;
+        return result.toString();
     }
     protected String stringified(double[][] a){
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for(double[] ai : a) {
-            result+="(";
+            result.append("(");
             for(double aii : ai){
-                result += aii+", ";
+                result.append(aii).append(", ");
             }
-            result+="), ";
+            result.append("), ");
         }
-        return result;
+        return result.toString();
     }
     protected String stringified(float[] a){
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for(float ai : a) {
-            result += ai+", ";
+            result.append(ai).append(", ");
         }
-        return result;
+        return result.toString();
     }
 
     protected void print(String message){
         _session +=message;
-        //if(_verbose_frame !=null){
-        //    _verbose_frame.print(message);
-        //}
-        //if(ERROR_FRAME !=null){
-        //    ERROR_FRAME.print(message);
-        //}
     }
     protected void println(String message){
         _session +=message+"\n";
-        //if(_verbose_frame !=null){
-        //    _verbose_frame.println(message);
-        //}
-        //if(ERROR_FRAME !=null){
-        //    ERROR_FRAME.println(message);
-        //}
     }
-
 
     protected void printResult(String message){
         if(RESULT_FRAME !=null){

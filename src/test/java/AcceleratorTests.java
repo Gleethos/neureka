@@ -314,7 +314,7 @@ public class AcceleratorTests
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        assert result<exec.getPool().getCorePoolSize();
+        assert result<=exec.getPool().getCorePoolSize()/2;
 
     }
 
