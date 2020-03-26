@@ -2,6 +2,7 @@
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.acceleration.Device;
+import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.opencl.OpenCLPlatform;
 import org.junit.Test;
 import util.NTester_Tensor;
@@ -287,34 +288,33 @@ public class AcceleratorTests
     }
 
     @Test
-    public void testThreadedCPUExecution(){
+    public void test_threaded_CPU_execution() {
 
         Tsr a = new Tsr(new int[]{100, 60, 1}, 4);
         Tsr b = new Tsr(new int[]{100, 1, 60}, -2);
 
-        int initialCount = java.lang.Thread.activeCount();
-        int[] max = {initialCount};
+        Device cpu = a.device();
+        HostCPU.NativeExecutor exec = ((HostCPU)cpu).getExecutor();//.getPool()
+        assert exec!=null;
+        assert exec.getPool()!=null;
+
+        int[] min = {exec.getPool().getPoolSize()};
         Thread t = new Thread(()->{
-            while (max[0]>0){
-                int current = java.lang.Thread.activeCount();
-                if(current>max[0]) max[0] = current;
-                try {
-                    Thread.sleep(5);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            while (min[0]>0){
+                int current = exec.getPool().getPoolSize()-exec.getPool().getActiveCount();
+                if(current<min[0]) min[0] = current;
             }
         });
         t.start();
         Tsr c = a.div(b);
-        int maxFound = max[0]-1;//Minus the thread that was used to monitor number of threads!
-        max[0] = -1;
+        int result = min[0];
         try {
+            min[0] = 0;
             t.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        assert maxFound>initialCount;
+        assert result==0;
 
     }
 
