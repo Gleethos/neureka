@@ -299,11 +299,10 @@ public class AcceleratorTests
 
         int[] min = {exec.getPool().getCorePoolSize()};
         assert min[0]==Runtime.getRuntime().availableProcessors();
-        System.out.println("Thread pool size: "+min[0]+"; Processors: "+Runtime.getRuntime().availableProcessors());
         Thread t = new Thread(()->{
             while (min[0]>0){
                 int current = exec.getPool().getCorePoolSize()-exec.getPool().getActiveCount();
-                if(current<min[0]){ System.out.println("Update: "+min[0]+"->"+current); min[0] = current; }
+                if(current<min[0]) min[0] = current;
             }
         });
         t.start();
@@ -315,7 +314,7 @@ public class AcceleratorTests
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        assert result==0;
+        assert result<exec.getPool().getCorePoolSize();
 
     }
 
