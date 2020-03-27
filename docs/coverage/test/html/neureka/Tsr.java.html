@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Tsr extends AbstractNDArray
 {
     static{
-<span class="fc" id="L22">        _CPU = new HostCPU();</span>
+<span class="fc" id="L22">        _CPU = HostCPU.instance();</span>
 <span class="fc" id="L23">    }</span>
     
     /**

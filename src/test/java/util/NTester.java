@@ -29,8 +29,7 @@ public class NTester extends Assert
     private String _session = "";
 
     public NTester(String name) {
-        if(System.getProperty("os.name").toLowerCase().contains("windows")){
-            //_verbose_frame = new MessageFrame("[NEUREKA UNIT TEST]:("+name+"): verbose results");
+        if(System.getProperty("os.name").toLowerCase().contains("windows")) {
             printlnResult("\nT[ "+name+" ]:");
         }
         _global_tests++;

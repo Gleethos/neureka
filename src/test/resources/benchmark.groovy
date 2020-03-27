@@ -1,76 +1,81 @@
 
    import neureka.Tsr
+   import neureka.acceleration.Device
 
-   return (int iterations, int difficulty)->
+   return (int iterations, int difficulty, Device device)->
    {
       Map<String, List> map = [:]
       int N, size
-      long time, delta
+      long time
+      double delta
       Closure execute = (Closure c)->c()
+      Closure measure = (String attribute_name, Closure c)->{
+         time = System.nanoTime()
+         c()
+         delta = (System.nanoTime() - time)/1_000_000_000
+         map[attribute_name] = [delta]
+      }
       //==========================================================================#
       // Matrix multiplication
       N = 1 * iterations
-      size = 2 * difficulty
+      size = 1 * difficulty
       //-------------
       execute {
-         Tsr A = new Tsr([size, size, 1], "banana")
-         Tsr B = new Tsr([1, size, size], "apple")
-         time = System.nanoTime()
-         for (int i; i < N; i++) new Tsr([A, B], "I[0]xI[1]")
-         delta = (System.nanoTime() - time)/1_000_000_000
-         map["matrix_multiplication"] = [delta]
+         Tsr A = new Tsr([size, size, 1], "apple").add(device)
+         Tsr B = new Tsr([1, size, size], "banana").add(device)
+         measure "matrix_multiplication", {
+            for (int i; i < N; i++) "I[0]xI[1]"%[A, B]
+         }
       }
       //==========================================================================#
       // Vector multiplication
       N = 1 * iterations
-      size = 25 * difficulty
+      size = 1 * difficulty**2
       //-------------
       execute {
-         Tsr C = new Tsr([size], "blueberry")
-         Tsr D = new Tsr([size], "grapefruit")
+         Tsr C = new Tsr([size], "blueberry").add(device)
+         Tsr D = new Tsr([size], "grapefruit").add(device)
          time = System.nanoTime()
-         for(int i; i<N; i++) new Tsr([C, D],"I[0]xI[1]")
-         delta = (System.nanoTime() - time)/1_000_000_000
-         map["vector_multiplication"] = [delta]
+         measure "vector_multiplication", {
+            for(int i; i<N; i++) "I[0]xI[1]"%[C, D]
+         }
       }
       //==========================================================================#
       // Manual Convolution
       N = 1 * iterations
-      size = 5 * difficulty
+      size = 1 * difficulty
       //-------------
       execute {
-         Tsr a = new Tsr([size, size], 3..19)
-         time = System.nanoTime()
-         for(int i; i<N; i++){
-            Tsr rowconvol = a[1..-2,0..-1] + a[0..-3,0..-1] + a[2..-1,0..-1]//(98, 100) (98, 100) (98, 100)
-            Tsr colconvol = rowconvol[0..-1,1..-2] + rowconvol[0..-1,0..-3] + rowconvol[0..-1,2..-1] - 9*a[1..-2,1..-2]//(98, 98)+(98, 98)+(98, 98)-9*(98, 98)
+         Tsr a = new Tsr([size, size], 3..19).add(device)
+         measure "manual_convolution", {
+            for(int i; i<N; i++){
+               Tsr rowconvol = a[1..-2,0..-1] + a[0..-3,0..-1] + a[2..-1,0..-1]//(98, 100) (98, 100) (98, 100)
+               Tsr colconvol = rowconvol[0..-1,1..-2] + rowconvol[0..-1,0..-3] + rowconvol[0..-1,2..-1] - 9*a[1..-2,1..-2]//(98, 98)+(98, 98)+(98, 98)-9*(98, 98)
+            }
          }
-         delta = (System.nanoTime() - time)/1_000_000_000
-         map["manual_convolution"] = [delta]
       }
       //==========================================================================#
       // Tensor Math
       N = 1 * iterations
-      size = difficulty
+      size = 1 * difficulty
       //-------------
       execute {
          def dim = [Math.floor(size/10), Math.floor(size/6), Math.floor(size/3)]
          dim[0] = ((dim[0]==0)?2:dim[0])
          dim[1] = ((dim[1]==0)?2:dim[1])
          dim[2] = ((dim[2]==0)?1:dim[2])
-         Tsr t1 = new Tsr(dim)
-         Tsr t2 = new Tsr(dim)
-         time = System.nanoTime()
-         for(int i; i<N; i++){
-            Tsr v = t1 * 10
-            v = v * t2 / t1
-            v = v ** 0.5
+         Tsr t1 = new Tsr(dim).add(device)
+         Tsr t2 = new Tsr(dim).add(device)
+         measure "tensor_math", {
+            for(int i; i<N; i++){
+               Tsr v = t1 * 10
+               v = v * t2 / t1
+               v = v ** 0.5
+            }
          }
-         delta = (System.nanoTime() - time)/1_000_000_000
-         map["tensor_math"] = [delta]
       }
       //==========================================================================#
-      map["size"] = [size]
+      map["iterations"] = [iterations]
       map["difficulty"] = [difficulty]
       //==========================================================================#
 

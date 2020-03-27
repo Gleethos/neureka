@@ -67,13 +67,13 @@ public class OpenCLDevice extends AbstractDevice
                 null
         );
         _reference_queue = new ReferenceQueue();
-        Runtime.getRuntime().addShutdownHook(new Thread(()->{
-            _mapping.forEach((k, v)->{
-                //TODO: clWaitForEvent(1, event);
-                clReleaseMemObject(v.config);
-                clReleaseMemObject(v.value.data);
-            });
-        }));
+        //Runtime.getRuntime().addShutdownHook(new Thread(()->{
+        //    _mapping.forEach((k, v)->{
+        //        if(v.value.event!=null) clWaitForEvents(1, new cl_event[]{v.value.event});
+        //        clReleaseMemObject(v.config);
+        //        clReleaseMemObject(v.value.data);
+        //    });
+        //}));
     }
 
     public static OpenCLDevice instance(OpenCLPlatform platform, cl_device_id did){

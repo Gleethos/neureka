@@ -12,10 +12,6 @@ public class MessageFrame extends JFrame
 {
 	JScrollPane _scroll;
 	private static int _window_count = 0;
-	private static int _width = 500;
-	private static int _height = 400;
-	private static int _wpos = 0;
-	private static int _hpos = 0;
 	private JTextArea _output_field;
 	private int _linecount;
 	//=================================================
@@ -32,14 +28,14 @@ public class MessageFrame extends JFrame
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int wdiv = 3;
 		int hdiv = 3;
-		_width = (int)screenSize.getWidth()/wdiv;
-		_height = (int)(screenSize.getHeight()*0.925)/hdiv;
-		_wpos = _window_count %(wdiv);
-		_hpos = _window_count /(wdiv);
+		int _width = (int) screenSize.getWidth() / wdiv;
+		int _height = (int) (screenSize.getHeight() * 0.925) / hdiv;
+		int _wpos = _window_count % (wdiv);
+		int _hpos = _window_count / (wdiv);
 		_window_count++;
 		_linecount = maxLineCount;
 		this.setTitle(title);
-		this.setSize(this._width, this._height);
+		this.setSize(_width, _height);
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.setLocation(_wpos * _width, _hpos * _height);
 
@@ -63,7 +59,7 @@ public class MessageFrame extends JFrame
 		this.setVisible(true);
 	}
 	
-	public void println(String text) 
+	public synchronized void println(String text)
 	{
 		_output_field.setText(_output_field.getText() + text + "\n");
 		if (_output_field.getLineCount() > _linecount)
@@ -78,7 +74,7 @@ public class MessageFrame extends JFrame
 			}
 		}
 	}
-	public void print(String text) 
+	public synchronized void print(String text)
 	{
 		_output_field.setText(_output_field.getText() + text);
 		if (_output_field.getLineCount() > _linecount)
@@ -95,7 +91,7 @@ public class MessageFrame extends JFrame
 		}
 	}
 
-	public void bottom(){
+	public synchronized void bottom(){
 		JScrollBar vertical = _scroll.getVerticalScrollBar();
 		vertical.setValue( vertical.getMaximum()+10 );
 	}

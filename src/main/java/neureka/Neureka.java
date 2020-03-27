@@ -7,33 +7,49 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Neureka
 {
-    private static final Neureka _instance;
+    private static final Map<Thread, Neureka> _instances;
+    private static String _settings_source;
+    private static String _setup_source;
+
     private Settings _settings;
     private Utility _utility;
 
     static {
-        _instance = new Neureka();
-        new GroovyShell().evaluate(_instance.utility().readResource("library_settings.groovy"));
-        new GroovyShell().evaluate(_instance.utility().readResource("scripting_setup.groovy"));
+        _instances = new ConcurrentHashMap<>();
     }
 
     private Neureka(){
-            _settings = new Settings();
-            _utility = new Utility();
+        _settings = new Settings();
+        _utility = new Utility();
     }
 
     public static Neureka instance(){
-        return _instance;
+        if(_instances.containsKey(Thread.currentThread())) return _instances.get(Thread.currentThread());
+        else {
+            Neureka instance = new Neureka();
+            _instances.put(Thread.currentThread(), instance);
+            synchronized (Neureka.class) {
+                if( _settings_source==null || _setup_source==null ) {
+                    _settings_source = instance.utility().readResource("library_settings.groovy");
+                    _setup_source = instance.utility().readResource("scripting_setup.groovy");
+                }
+            }
+            new GroovyShell().evaluate(_settings_source);
+            new GroovyShell().evaluate(_setup_source);
+            return instance;
+        }
     }
 
     public static Neureka instance(Closure c){
-        c.setDelegate(_instance);
+        c.setDelegate(Neureka.instance());
         c.call();
-        return _instance;
+        return Neureka.instance();
     }
 
     public Settings settings(){
@@ -271,7 +287,7 @@ public class Neureka
          * @return The contents of the file
          */
         public String readResource(String path){
-            InputStream stream = _instance.getClass().getClassLoader().getResourceAsStream(path);
+            InputStream stream = getClass().getClassLoader().getResourceAsStream(path);
             try {
                 BufferedReader br = new BufferedReader(new InputStreamReader(stream));//new FileInputStream(fileName)));
                 StringBuffer sb = new StringBuffer();

@@ -11,7 +11,20 @@ import java.util.concurrent.*;
 
 public class HostCPU extends AbstractDevice
 {
-    private final NativeExecutor _executor = new NativeExecutor();
+    private static final HostCPU _instance;
+    static {
+        _instance = new HostCPU();
+    }
+
+    private final NativeExecutor _executor;
+
+    private HostCPU(){
+        _executor = new NativeExecutor();
+    }
+
+    public static HostCPU instance(){
+        return _instance;
+    }
 
     public NativeExecutor getExecutor() {
         return _executor;

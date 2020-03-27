@@ -67,13 +67,13 @@ public class OpenCLDevice extends AbstractDevice
                 null
         );
 <span class="fc" id="L69">        _reference_queue = new ReferenceQueue();</span>
-<span class="fc" id="L70">        Runtime.getRuntime().addShutdownHook(new Thread(()-&gt;{</span>
-<span class="fc" id="L71">            _mapping.forEach((k, v)-&gt;{</span>
-                //TODO: clWaitForEvent(1, event);
-<span class="fc" id="L73">                clReleaseMemObject(v.config);</span>
-<span class="fc" id="L74">                clReleaseMemObject(v.value.data);</span>
-<span class="fc" id="L75">            });</span>
-<span class="fc" id="L76">        }));</span>
+        //Runtime.getRuntime().addShutdownHook(new Thread(()-&gt;{
+        //    _mapping.forEach((k, v)-&gt;{
+        //        if(v.value.event!=null) clWaitForEvents(1, new cl_event[]{v.value.event});
+        //        clReleaseMemObject(v.config);
+        //        clReleaseMemObject(v.value.data);
+        //    });
+        //}));
 <span class="fc" id="L77">    }</span>
 
     public static OpenCLDevice instance(OpenCLPlatform platform, cl_device_id did){
@@ -264,8 +264,8 @@ public class OpenCLDevice extends AbstractDevice
     private void _rmv(WeakReference reference) {
 <span class="fc" id="L265">        cl_tsr clt = _mapping.get(reference);</span>
 <span class="fc" id="L266">        clReleaseMemObject(clt.config);//remove translations/shapes from device!</span>
-<span class="fc bfc" id="L267" title="All 2 branches covered.">        if (clt.value.uses &lt;= 1) clReleaseMemObject(clt.value.data);</span>
-<span class="fc" id="L268">        else clt.value.uses--;</span>
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">        if (clt.value.uses &lt;= 1) clReleaseMemObject(clt.value.data);</span>
+<span class="nc" id="L268">        else clt.value.uses--;</span>
 <span class="fc" id="L269">        _mapping.remove(reference);</span>
 <span class="fc" id="L270">    }</span>
 

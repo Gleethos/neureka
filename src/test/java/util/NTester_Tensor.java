@@ -95,7 +95,7 @@ public class NTester_Tensor extends NTester
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfCon(frstShp, scndShp);
         double[] rsltData = new double[Tsr.Utility.Indexing.szeOfShp(drnMxd)];
-        new HostCPU().getExecutor().convolve(new Tsr[]{
+        HostCPU.instance().getExecutor().convolve(new Tsr[]{
                 new Tsr(drnMxd, rsltData),
                 new Tsr(frstShp, frstData),
                 new Tsr(scndShp, scondData)
@@ -117,7 +117,7 @@ public class NTester_Tensor extends NTester
         //        (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
         //        (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
         //);
-        new HostCPU().getExecutor().convolve(
+        HostCPU.instance().getExecutor().convolve(
                 new Tsr[]{
                         new Tsr(frstShp, frstData),
                         (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
@@ -135,7 +135,7 @@ public class NTester_Tensor extends NTester
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
         double[] rsltData = new double[Tsr.Utility.Indexing.szeOfShp(drnMxd)];
 
-        new HostCPU().getExecutor().broadcast(new Tsr[]{
+        HostCPU.instance().getExecutor().broadcast(new Tsr[]{
                 new Tsr(drnMxd, rsltData),
                 new Tsr(frstShp, frstData),
                 new Tsr(scndShp, scondData)},
@@ -153,7 +153,7 @@ public class NTester_Tensor extends NTester
     ){
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
-        new HostCPU().getExecutor().broadcast(
+        HostCPU.instance().getExecutor().broadcast(
                 new Tsr[]{
                         new Tsr(frstShp, frstData),
                         (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
@@ -163,7 +163,7 @@ public class NTester_Tensor extends NTester
                 OperationType.instance(((char) 171) + "*")
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
-        new HostCPU().getExecutor().broadcast(
+        HostCPU.instance().getExecutor().broadcast(
                 new Tsr[]{
                         new Tsr(frstShp, frstData),
                         (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
