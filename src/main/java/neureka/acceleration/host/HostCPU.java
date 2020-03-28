@@ -187,20 +187,17 @@ public class HostCPU extends AbstractDevice
                 for (int i = 0; i < cores; i++) {
                     final int start = i * chunk;
                     final int end = (i == cores - 1) ? sze : ((i + 1) * chunk);
+                    System.out.println("start: "+start+" - end: "+end);
                     futures[i] = (FutureTask) _pool.submit(() -> range.execute(start, end));
                 }
+                System.out.println("Number of tasks: "+futures.length);
+                System.out.println("size: "+sze);
                 for (FutureTask f : futures) {
                     try {
                         f.get();
                     } catch (InterruptedException e) {
-                        System.out.println("Number of tasks: "+futures.length);
-                        System.out.println("size: "+sze);
-                        System.out.println("... in InterruptedException!");
                         e.printStackTrace();
                     } catch (ExecutionException e) {
-                        System.out.println("Number of tasks: "+futures.length);
-                        System.out.println("size: "+sze);
-                        System.out.println("... in ExecutionException!");
                         e.printStackTrace();
                     }
                 }
