@@ -1,28 +1,31 @@
 package neureka.acceleration.host;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.Type;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.*;
+import java.util.function.Supplier;
 
-public class HostCPU extends AbstractDevice
-{
+public class HostCPU extends AbstractDevice {
     private static final HostCPU _instance;
+
     static {
         _instance = new HostCPU();
     }
 
     private final NativeExecutor _executor;
 
-    private HostCPU(){
+    private HostCPU() {
         _executor = new NativeExecutor();
     }
 
-    public static HostCPU instance(){
+    public static HostCPU instance() {
         return _instance;
     }
 
@@ -35,8 +38,7 @@ public class HostCPU extends AbstractDevice
         for (Tsr t : tsrs) t.setIsVirtual(false);
         if (type.supportsActivation() && !type.isIndexer()) _executor.activate(tsrs, d, type);
         else if (type.isOperation() && !type.isConvection()) _executor.broadcast(tsrs, d, type);
-        else if (type.isConvection())
-        {
+        else if (type.isConvection()) {
             if (type.identifier().contains(((char) 187) + "")) {
                 _executor.convolve(new Tsr[]{tsrs[2], tsrs[1], tsrs[0]}, d, type);
             } else if (type.identifier().contains(((char) 171) + "")) {
@@ -126,17 +128,17 @@ public class HostCPU extends AbstractDevice
         void execute(int start, int end);
     }
 
-    public class NativeExecutor
-    {
+    public class NativeExecutor {
         private final ThreadPoolExecutor _pool =
                 (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-        public ThreadPoolExecutor getPool(){
+        public ThreadPoolExecutor getPool() {
             return _pool;
         }
 
         public void activate(Tsr[] tsrs, int d, OperationType type) {
-            _threaded(tsrs[0].size(),
+            _threaded(
+                    tsrs[0].size(),
                     (start, end) ->
                             Kernel.activate(
                                     tsrs[0], start, end,
@@ -146,53 +148,58 @@ public class HostCPU extends AbstractDevice
         }
 
         public void broadcast(Tsr[] tsrs, int d, OperationType type) {
-            _threaded(tsrs[0].size(), (start, end) ->
-                    Kernel.broadcast(
-                            tsrs[0], tsrs[1], tsrs[2], d,
-                            start, end,
-                            type.getBroadcast().getCreator().create(tsrs, d)
-                    )
+            _threaded(
+                    tsrs[0].size(),
+                    (start, end) ->
+                            Kernel.broadcast(
+                                    tsrs[0], tsrs[1], tsrs[2], d,
+                                    start, end,
+                                    type.getBroadcast().getCreator().create(tsrs, d)
+                            )
             );
         }
 
         public void convolve(Tsr[] tsrs, int d, OperationType type) {
-            _threaded(tsrs[0].size(), (start, end) ->
-                    Kernel.convolve(
-                            tsrs[0], tsrs[1], tsrs[2], d,
-                            start, end,
-                            type.getConvolution().getCreator().create(tsrs, -1)
-                    )
+            _threaded(
+                    tsrs[0].size(),
+                    (start, end) ->
+                            Kernel.convolve(
+                                    tsrs[0], tsrs[1], tsrs[2], d,
+                                    start, end,
+                                    type.getConvolution().getCreator().create(tsrs, -1)
+                            )
             );
         }
 
         public void scalar(Tsr[] tsrs, double scalar, int d, OperationType type) {
-            _threaded(tsrs[0].size(), (start, end) ->
-                    Kernel.activate(
-                            tsrs[0], start, end,
-                            type.getScalarization().getCreator().create(tsrs, scalar, d)
-                    )
+            _threaded(
+                    tsrs[0].size(),
+                    (start, end) ->
+                            Kernel.activate(
+                                    tsrs[0], start, end,
+                                    type.getScalarization().getCreator().create(tsrs, scalar, d)
+                            )
             );
         }
 
         //==============================================================================================================
 
-        private void _threaded(int sze, Range range)
-        {
+        private void _threaded(int sze, Range range) {
             int cores = _pool.getCorePoolSize() - _pool.getActiveCount();
-            cores = (cores==0)?1:cores;
-            if (sze >= 32 && ((sze / cores) >= 8))
-            {
+            cores = (cores == 0) ? 1 : cores;
+            if (sze >= 32 && ((sze / cores) >= 8)) {
                 final int chunk = sze / cores;
-                FutureTask[] futures = new FutureTask[cores];
+                Future[] futures = new Future[cores];
                 for (int i = 0; i < cores; i++) {
                     final int start = i * chunk;
                     final int end = (i == cores - 1) ? sze : ((i + 1) * chunk);
-                    System.out.println("start: "+start+" - end: "+end);
-                    futures[i] = (FutureTask) _pool.submit(() -> range.execute(start, end));
+                    Neureka neureka = Neureka.instance();
+                    futures[i] = _pool.submit(() -> {
+                        Neureka.setContext(Thread.currentThread(), neureka);
+                        range.execute(start, end);
+                    });
                 }
-                System.out.println("Number of tasks: "+futures.length);
-                System.out.println("size: "+sze);
-                for (FutureTask f : futures) {
+                for (Future f : futures) {
                     try {
                         f.get();
                     } catch (InterruptedException e) {

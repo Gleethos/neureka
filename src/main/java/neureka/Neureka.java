@@ -30,10 +30,18 @@ public class Neureka
     }
 
     public static Neureka instance(){
-        if(_instances.containsKey(Thread.currentThread())) return _instances.get(Thread.currentThread());
+        return instance(Thread.currentThread());
+    }
+
+    public static void setContext(Thread thread, Neureka instance){
+        _instances.put(thread, instance);
+    }
+
+    public static Neureka instance(Thread thread){
+        if(_instances.containsKey(thread)) return _instances.get(thread);
         else {
             Neureka instance = new Neureka();
-            _instances.put(Thread.currentThread(), instance);
+            setContext(thread, instance);
             synchronized (Neureka.class) {
                 if( _settings_source==null || _setup_source==null ) {
                     _settings_source = instance.utility().readResource("library_settings.groovy");
