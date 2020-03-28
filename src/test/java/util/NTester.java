@@ -13,9 +13,11 @@ public class NTester extends Assert
     private static volatile int _global_tests;
     static {
         _global_tests = 0;
-        if(System.getProperty("os.name").toLowerCase().contains("windows")){
-            RESULT_FRAME = new MessageFrame("[NEUREKA UNIT TEST]: results");
-            ERROR_FRAME =  new MessageFrame("[NEUREKA UNIT TEST]: fails");
+        if(System.getProperty("os.name").toLowerCase().contains("windows")
+            && (RESULT_FRAME==null || ERROR_FRAME==null)
+        ){
+            //RESULT_FRAME = new MessageFrame("[NEUREKA UNIT TEST]: results");
+            //ERROR_FRAME =  new MessageFrame("[NEUREKA UNIT TEST]: fails");
         }
     }
     protected static String BAR = "[|]";

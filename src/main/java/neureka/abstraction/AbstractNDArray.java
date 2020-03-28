@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -25,7 +26,7 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
 {
     static
     {
-        _CONFIGS = new WeakHashMap<>();
+        _CONFIGS = Collections.synchronizedMap(new WeakHashMap<>()) ;
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

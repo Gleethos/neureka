@@ -5,9 +5,7 @@ import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
 import neureka.calculus.Function;
 
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.WeakHashMap;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class Cache
@@ -23,13 +21,13 @@ public class Cache
     }
 
 
-    private final Map<String, Function> FUNCTIONS = new WeakHashMap<>();
+    private final Map<String, Function> FUNCTIONS = Collections.synchronizedMap(new WeakHashMap<>());
 
     public synchronized Map<String, Function> FUNCTIONS(){
         return this.FUNCTIONS;
     }
 
-    private final TreeMap<GraphLock, TreeMap<Long, Tsr>> PROCESSING = new TreeMap<>((a, b)->((int)(a.hashCode()-b.hashCode())));
+    private final Map<GraphLock, TreeMap<Long, Tsr>> PROCESSING = Collections.synchronizedMap(new TreeMap<>((a, b)->((int)(a.hashCode()-b.hashCode()))));
 
     public synchronized void free(GraphLock lock)//Tsr[] input
     {

@@ -178,7 +178,8 @@ public class HostCPU extends AbstractDevice
 
         private void _threaded(int sze, Range range)
         {
-            final int cores = _pool.getCorePoolSize() - _pool.getActiveCount();
+            int cores = _pool.getCorePoolSize() - _pool.getActiveCount();
+            cores = (cores==0)?1:cores;
             if (sze >= 32 && ((sze / cores) >= 8))
             {
                 final int chunk = sze / cores;
