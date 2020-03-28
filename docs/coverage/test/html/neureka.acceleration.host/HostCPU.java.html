@@ -178,27 +178,28 @@ public class HostCPU extends AbstractDevice
 
         private void _threaded(int sze, Range range)
         {
-<span class="fc" id="L181">            final int cores = _pool.getCorePoolSize() - _pool.getActiveCount();</span>
-<span class="fc bfc" id="L182" title="All 4 branches covered.">            if (sze &gt;= 32 &amp;&amp; ((sze / cores) &gt;= 8))</span>
+<span class="fc" id="L181">            int cores = _pool.getCorePoolSize() - _pool.getActiveCount();</span>
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">            cores = (cores==0)?1:cores;</span>
+<span class="fc bfc" id="L183" title="All 4 branches covered.">            if (sze &gt;= 32 &amp;&amp; ((sze / cores) &gt;= 8))</span>
             {
-<span class="fc" id="L184">                final int chunk = sze / cores;</span>
-<span class="fc" id="L185">                Future[] futures = new Future[cores];</span>
-<span class="fc bfc" id="L186" title="All 2 branches covered.">                for (int i = 0; i &lt; cores; i++) {</span>
-<span class="fc" id="L187">                    final int start = i * chunk;</span>
-<span class="fc bfc" id="L188" title="All 2 branches covered.">                    final int end = (i == cores - 1) ? sze : ((i + 1) * chunk);</span>
-<span class="fc" id="L189">                    futures[i] = _pool.submit(() -&gt; range.execute(start, end));</span>
+<span class="fc" id="L185">                final int chunk = sze / cores;</span>
+<span class="fc" id="L186">                FutureTask[] futures = new FutureTask[cores];</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">                for (int i = 0; i &lt; cores; i++) {</span>
+<span class="fc" id="L188">                    final int start = i * chunk;</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">                    final int end = (i == cores - 1) ? sze : ((i + 1) * chunk);</span>
+<span class="fc" id="L190">                    futures[i] = (FutureTask) _pool.submit(() -&gt; range.execute(start, end));</span>
                 }
-<span class="fc bfc" id="L191" title="All 2 branches covered.">                for (Future f : futures) {</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">                for (FutureTask f : futures) {</span>
                     try {
-<span class="fc" id="L193">                        f.get();</span>
-<span class="nc" id="L194">                    } catch (InterruptedException e) {</span>
-<span class="nc" id="L195">                        e.printStackTrace();</span>
-<span class="nc" id="L196">                    } catch (ExecutionException e) {</span>
-<span class="nc" id="L197">                        e.printStackTrace();</span>
-<span class="pc" id="L198">                    }</span>
+<span class="fc" id="L194">                        f.get();</span>
+<span class="nc" id="L195">                    } catch (InterruptedException e) {</span>
+<span class="nc" id="L196">                        e.printStackTrace();</span>
+<span class="nc" id="L197">                    } catch (ExecutionException e) {</span>
+<span class="nc" id="L198">                        e.printStackTrace();</span>
+<span class="pc" id="L199">                    }</span>
                 }
-<span class="fc" id="L200">            } else range.execute(0, sze);</span>
-<span class="fc" id="L201">        }</span>
+<span class="fc" id="L201">            } else range.execute(0, sze);</span>
+<span class="fc" id="L202">        }</span>
 
 
     }

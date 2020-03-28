@@ -183,13 +183,13 @@ public class HostCPU extends AbstractDevice
             if (sze >= 32 && ((sze / cores) >= 8))
             {
                 final int chunk = sze / cores;
-                Future[] futures = new Future[cores];
+                FutureTask[] futures = new FutureTask[cores];
                 for (int i = 0; i < cores; i++) {
                     final int start = i * chunk;
                     final int end = (i == cores - 1) ? sze : ((i + 1) * chunk);
-                    futures[i] = _pool.submit(() -> range.execute(start, end));
+                    futures[i] = (FutureTask) _pool.submit(() -> range.execute(start, end));
                 }
-                for (Future f : futures) {
+                for (FutureTask f : futures) {
                     try {
                         f.get();
                     } catch (InterruptedException e) {

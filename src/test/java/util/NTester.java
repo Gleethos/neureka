@@ -179,7 +179,7 @@ public class NTester extends Assert
     }
 
     protected void failSession(){
-        ERROR_FRAME.print(_session);
+        if(ERROR_FRAME!=null) ERROR_FRAME.print(_session);
         fail(_session);
     }
 
