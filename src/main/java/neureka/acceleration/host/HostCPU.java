@@ -193,8 +193,14 @@ public class HostCPU extends AbstractDevice
                     try {
                         f.get();
                     } catch (InterruptedException e) {
+                        System.out.println("Number of tasks: "+futures.length);
+                        System.out.println("size: "+sze);
+                        System.out.println("... in InterruptedException!");
                         e.printStackTrace();
                     } catch (ExecutionException e) {
+                        System.out.println("Number of tasks: "+futures.length);
+                        System.out.println("size: "+sze);
+                        System.out.println("... in ExecutionException!");
                         e.printStackTrace();
                     }
                 }
