@@ -145,21 +145,12 @@ public class OpenCLDevice extends AbstractDevice
         int rank = tensor.shape().length;
         int[] config = new int[rank * 5];
         System.arraycopy(tensor.shape(), 0, config, 0, rank);// -=> SHAPE COPY
-        System.arraycopy(tensor.translation(), 0, config, rank, rank);// -=> TRANSLATION COPY
+        System.arraycopy(tensor.translation(), 0, config, rank * 1, rank);// -=> TRANSLATION COPY
         System.arraycopy(tensor.idxmap(), 0, config, rank * 2, rank);// -=> IDXMAP COPY (translates scalar to dimension index)
-        //---
-        int[] idxbase = (int[]) tensor.find(int[].class); //Look for additional configurations!
-        if (idxbase != null) {
-            System.arraycopy(idxbase, 0, config, rank * 3, rank);// -=> IDX Basline (sliced tensors have this property)
-        }
-        //---
-        // -=> IDX Baseline Scale (sliced tensors indexes might be scaled)
-        for (int i = rank * 4; i < rank * 5; i++) {
-            config[i] = ((idxbase != null) && idxbase.length > tensor.rank()) ? idxbase[i - rank * 3] : 1;
-        }
-        //---
+        System.arraycopy(tensor.offset(), 0, config, rank * 3, rank);// -=> SPREAD
+        System.arraycopy(tensor.spread(), 0, config, rank * 4, rank);
 
-        //SHAPE/TRANSLATION/IDXMAP/SCALEMAP TRANSFER:
+        //SHAPE/TRANSLATION/IDXMAP/OFFSET/SPREAD TRANSFER:
         newClt.config = clCreateBuffer(
                 _platform.getContext(),
                 CL_MEM_READ_WRITE,

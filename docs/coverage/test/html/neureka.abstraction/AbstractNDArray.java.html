@@ -47,7 +47,15 @@ import java.util.WeakHashMap;
     /**
      *  The mapping of idx array.
      */
-    protected int[] _idxmap;
+    protected int[] _idxmap; // Used to avoid distorion when reshaping!
+    /**
+     *  Produces the strides of a tensor subset / slice
+     */
+    protected int[] _spread;
+    /**
+     *  Defines the position of a subset / slice tensor within its parent!
+     */
+    protected int[] _offset;
     /**
      *  The value of this tensor. Usually a array of type double[] or float[].
      */
@@ -56,99 +64,104 @@ import java.util.WeakHashMap;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     public boolean is64(){
-<span class="fc" id="L59">        return _value instanceof double[];</span>
+<span class="fc" id="L67">        return _value instanceof double[];</span>
     }
 
     public  boolean is32(){
-<span class="fc" id="L63">        return _value instanceof float[];</span>
+<span class="fc" id="L71">        return _value instanceof float[];</span>
     }
 
 
     protected static int[] _cached(int[] data) {
-<span class="fc" id="L68">        long key = 0;</span>
-<span class="fc bfc" id="L69" title="All 2 branches covered.">        for (int e : data) {</span>
-<span class="fc bfc" id="L70" title="All 2 branches covered.">            if (e &lt;= 10) key *= 10;</span>
-<span class="fc bfc" id="L71" title="All 2 branches covered.">            else if (e &lt;= 100) key *= 100;</span>
-<span class="fc bfc" id="L72" title="All 2 branches covered.">            else if (e &lt;= 1000) key *= 1000;</span>
-<span class="pc bpc" id="L73" title="1 of 2 branches missed.">            else if (e &lt;= 10000) key *= 10000;</span>
-<span class="pc bpc" id="L74" title="1 of 2 branches missed.">            else if (e &lt;= 100000) key *= 100000;</span>
-<span class="nc bnc" id="L75" title="All 2 branches missed.">            else if (e &lt;= 1000000) key *= 1000000;</span>
-<span class="nc bnc" id="L76" title="All 2 branches missed.">            else if (e &lt;= 10000000) key *= 10000000;</span>
-<span class="nc bnc" id="L77" title="All 2 branches missed.">            else if (e &lt;= 100000000) key *= 100000000;</span>
-<span class="fc" id="L78">            key += Math.abs(e) + 1;</span>
+<span class="fc" id="L76">        if(true) return data;</span>
+        long key = 0;
+        for (int e : data) {
+            if (e &lt;= 10) key *= 10;
+            else if (e &lt;= 100) key *= 100;
+            else if (e &lt;= 1000) key *= 1000;
+            else if (e &lt;= 10000) key *= 10000;
+            else if (e &lt;= 100000) key *= 100000;
+            else if (e &lt;= 1000000) key *= 1000000;
+            else if (e &lt;= 10000000) key *= 10000000;
+            else if (e &lt;= 100000000) key *= 100000000;
+            else if (e &lt;= 1000000000) key *= 1000000000;
+            key += Math.abs(e) + 1;
         }
-<span class="fc" id="L80">        int rank = data.length;</span>
-<span class="fc bfc" id="L81" title="All 2 branches covered.">        while(rank != 0) {</span>
-<span class="fc" id="L82">            rank /= 10;</span>
-<span class="fc" id="L83">            key*=10;</span>
+        int rank = data.length;
+        while(rank != 0) {
+            rank /= 10;
+            key*=10;
         }
-<span class="fc" id="L85">        key += data.length;</span>
-<span class="fc" id="L86">        int[] found = _CONFIGS.get(key);</span>
-<span class="fc bfc" id="L87" title="All 2 branches covered.">        if (found != null) {</span>
-<span class="fc" id="L88">            return found;</span>
+        key += data.length;
+        int[] found = _CONFIGS.get(key);
+        if (found != null) {
+            return found;
         } else {
-<span class="fc" id="L90">            _CONFIGS.put(key, data);</span>
-<span class="fc" id="L91">            return data;</span>
+            _CONFIGS.put(key, data);
+            return data;
         }
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     public int i_of_idx(int[] idx) {
-<span class="fc" id="L98">        int i = 0;</span>
-<span class="fc" id="L99">        int[] sliceCfg = null;</span>
-<span class="fc bfc" id="L100" title="All 2 branches covered.">        if (has(int[].class)) sliceCfg = (int[])find(int[].class);</span>
-<span class="fc bfc" id="L101" title="All 2 branches covered.">        for (int ii=0; ii&lt;_shape.length; ii++) {</span>
-<span class="fc bfc" id="L102" title="All 4 branches covered.">            int scale = (sliceCfg==null || sliceCfg.length==rank()) ? 1 : sliceCfg[rank()+ii];</span>
-<span class="fc bfc" id="L103" title="All 2 branches covered.">            i += (idx[ii] * scale + ((sliceCfg==null) ? 0 : sliceCfg[ii])) * _translation[ii];</span>
-        }
-<span class="fc" id="L105">        return i;</span>
+<span class="fc" id="L108">        int i = 0;</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        for (int ii=0; ii&lt;_shape.length; ii++) i += (idx[ii] * _spread[ii] + _offset[ii]) * _translation[ii];</span>
+<span class="fc" id="L110">        return i;</span>
     }
 
-    protected int _i_of_i(int i){
-<span class="fc" id="L109">        return i_of_idx(idx_of_i(i));</span>
+    public int i_of_i(int i){
+<span class="fc" id="L114">        return i_of_idx(idx_of_i(i));</span>
     }
 
     public int[] idx_of_i(int i) {
-<span class="fc" id="L113">        int[] idx = new int[_shape.length];</span>
-<span class="fc bfc" id="L114" title="All 2 branches covered.">        if (Neureka.instance().settings().indexing().legacy()){</span>
-<span class="fc bfc" id="L115" title="All 2 branches covered.">            for (int ii=rank()-1; ii&gt;=0; ii--){</span>
-<span class="fc" id="L116">                idx[ii] += i / _idxmap[ii];</span>
-<span class="fc" id="L117">                i %= _idxmap[ii];</span>
-            }
-        } else {
-<span class="fc bfc" id="L120" title="All 2 branches covered.">            for (int ii=0; ii&lt;rank(); ii++) {</span>
+<span class="fc" id="L118">        int[] idx = new int[_shape.length];</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        if (Neureka.instance().settings().indexing().legacy()){</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">            for (int ii=rank()-1; ii&gt;=0; ii--){</span>
 <span class="fc" id="L121">                idx[ii] += i / _idxmap[ii];</span>
 <span class="fc" id="L122">                i %= _idxmap[ii];</span>
             }
+        } else {
+<span class="fc bfc" id="L125" title="All 2 branches covered.">            for (int ii=0; ii&lt;rank(); ii++) {</span>
+<span class="fc" id="L126">                idx[ii] += i / _idxmap[ii];</span>
+<span class="fc" id="L127">                i %= _idxmap[ii];</span>
+            }
         }
-<span class="fc" id="L125">        return idx;</span>
+<span class="fc" id="L130">        return idx;</span>
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     public int[] shape() {
-<span class="fc" id="L131">        return _shape;</span>
+<span class="fc" id="L136">        return _shape;</span>
     }
 
     public int shape(int i){
-<span class="nc" id="L135">        return _shape[i];</span>
+<span class="nc" id="L140">        return _shape[i];</span>
     }
 
     public int rank(){
-<span class="fc" id="L139">        return _shape.length;</span>
+<span class="fc" id="L144">        return _shape.length;</span>
     }
 
     public int[] idxmap(){
-<span class="fc" id="L143">        return _idxmap;</span>
+<span class="fc" id="L148">        return _idxmap;</span>
     }
 
     public int[] translation() {
-<span class="fc" id="L147">        return _translation;</span>
+<span class="fc" id="L152">        return _translation;</span>
+    }
+
+    public int[] spread(){
+<span class="fc" id="L156">        return _spread;</span>
+    }
+
+    public int[] offset(){
+<span class="fc" id="L160">        return _offset;</span>
     }
 
     public int size() {
-<span class="fc" id="L151">        return Utility.Indexing.szeOfShp(this.shape());</span>
+<span class="fc" id="L164">        return Utility.Indexing.szeOfShp(this.shape());</span>
     }
 
 
@@ -159,154 +172,154 @@ import java.util.WeakHashMap;
     /**
      *  Static methods.
      */
-<span class="nc" id="L162">    public static class Utility</span>
+<span class="nc" id="L175">    public static class Utility</span>
     {
-<span class="nc" id="L164">        public static class Stringify</span>
+<span class="nc" id="L177">        public static class Stringify</span>
         {
             @Contract(pure = true)
             public static String formatFP(double v){
-<span class="fc" id="L168">                DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.US);</span>
-<span class="fc" id="L169">                DecimalFormat Formatter = new DecimalFormat(&quot;##0.0##E0&quot;, formatSymbols);</span>
-<span class="fc" id="L170">                String vStr = String.valueOf(v);</span>
-<span class="fc bfc" id="L171" title="All 2 branches covered.">                if (vStr.length()&gt;7){</span>
-<span class="fc bfc" id="L172" title="All 2 branches covered.">                    if (vStr.startsWith(&quot;0.&quot;)){</span>
-<span class="fc" id="L173">                        vStr = vStr.substring(0, 7)+&quot;E0&quot;;</span>
-<span class="fc bfc" id="L174" title="All 2 branches covered.">                    } else if(vStr.startsWith(&quot;-0.&quot;)){</span>
-<span class="fc" id="L175">                        vStr = vStr.substring(0, 8)+&quot;E0&quot;;</span>
+<span class="fc" id="L181">                DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.US);</span>
+<span class="fc" id="L182">                DecimalFormat Formatter = new DecimalFormat(&quot;##0.0##E0&quot;, formatSymbols);</span>
+<span class="fc" id="L183">                String vStr = String.valueOf(v);</span>
+<span class="fc bfc" id="L184" title="All 2 branches covered.">                if (vStr.length()&gt;7){</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">                    if (vStr.startsWith(&quot;0.&quot;)){</span>
+<span class="fc" id="L186">                        vStr = vStr.substring(0, 7)+&quot;E0&quot;;</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">                    } else if(vStr.startsWith(&quot;-0.&quot;)){</span>
+<span class="fc" id="L188">                        vStr = vStr.substring(0, 8)+&quot;E0&quot;;</span>
                     } else {
-<span class="fc" id="L177">                        vStr = Formatter.format(v);</span>
-<span class="pc bpc" id="L178" title="1 of 2 branches missed.">                        vStr = (!vStr.contains(&quot;.0E0&quot;))?vStr:vStr.replace(&quot;.0E0&quot;,&quot;.0&quot;);</span>
-<span class="fc bfc" id="L179" title="All 2 branches covered.">                        vStr = (vStr.contains(&quot;.&quot;))?vStr:vStr.replace(&quot;E0&quot;,&quot;.0&quot;);</span>
+<span class="fc" id="L190">                        vStr = Formatter.format(v);</span>
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">                        vStr = (!vStr.contains(&quot;.0E0&quot;))?vStr:vStr.replace(&quot;.0E0&quot;,&quot;.0&quot;);</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">                        vStr = (vStr.contains(&quot;.&quot;))?vStr:vStr.replace(&quot;E0&quot;,&quot;.0&quot;);</span>
                     }
                 }
-<span class="fc" id="L182">                return vStr;</span>
+<span class="fc" id="L195">                return vStr;</span>
             }
 
             @Contract(pure = true)
             public static String strConf(int[] conf) {
-<span class="fc" id="L187">                StringBuilder str = new StringBuilder();</span>
-<span class="fc bfc" id="L188" title="All 4 branches covered.">                for (int i=0; i&lt;conf.length; i++) str.append(conf[i]).append((i != conf.length - 1) ? &quot;, &quot; : &quot;&quot;);</span>
-<span class="fc" id="L189">                return &quot;[&quot; + str + &quot;]&quot;;</span>
+<span class="fc" id="L200">                StringBuilder str = new StringBuilder();</span>
+<span class="fc bfc" id="L201" title="All 4 branches covered.">                for (int i=0; i&lt;conf.length; i++) str.append(conf[i]).append((i != conf.length - 1) ? &quot;, &quot; : &quot;&quot;);</span>
+<span class="fc" id="L202">                return &quot;[&quot; + str + &quot;]&quot;;</span>
             }
         }
 
         /**
          * Indexing methods.
          */
-<span class="nc" id="L196">        public static class Indexing</span>
+<span class="nc" id="L209">        public static class Indexing</span>
         {
             @Contract(pure = true)
             public static void increment(@NotNull int[] shpIdx, @NotNull int[] shape) {
                 int i;
-<span class="fc bfc" id="L201" title="All 2 branches covered.">                if (Neureka.instance().settings().indexing().legacy()) i = 0;</span>
-<span class="fc" id="L202">                else i = shape.length-1;</span>
-<span class="fc bfc" id="L203" title="All 4 branches covered.">                while (i &gt;= 0 &amp;&amp; i &lt; shape.length) i = _incrementAt(i, shpIdx, shape);</span>
-<span class="fc" id="L204">            }</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">                if (Neureka.instance().settings().indexing().legacy()) i = 0;</span>
+<span class="fc" id="L215">                else i = shape.length-1;</span>
+<span class="fc bfc" id="L216" title="All 4 branches covered.">                while (i &gt;= 0 &amp;&amp; i &lt; shape.length) i = _incrementAt(i, shpIdx, shape);</span>
+<span class="fc" id="L217">            }</span>
 
             @Contract(pure = true)
             private static int _incrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
-<span class="fc bfc" id="L208" title="All 2 branches covered.">                if (Neureka.instance().settings().indexing().legacy()) {</span>
-<span class="pc bpc" id="L209" title="1 of 2 branches missed.">                    if (shpIdx[i] &lt; (shape[i])) {</span>
-<span class="fc" id="L210">                        shpIdx[i]++;</span>
-<span class="fc bfc" id="L211" title="All 2 branches covered.">                        if (shpIdx[i] == (shape[i])) {</span>
-<span class="fc" id="L212">                            shpIdx[i] = 0;</span>
-<span class="fc" id="L213">                            i++;</span>
-                        } else {
-<span class="fc" id="L215">                            i = -1;</span>
-                        }
-                    } else {
-<span class="nc" id="L218">                        i++;</span>
-                    }
-<span class="fc" id="L220">                    return i;</span>
-                } else {
+<span class="fc bfc" id="L221" title="All 2 branches covered.">                if (Neureka.instance().settings().indexing().legacy()) {</span>
 <span class="pc bpc" id="L222" title="1 of 2 branches missed.">                    if (shpIdx[i] &lt; (shape[i])) {</span>
 <span class="fc" id="L223">                        shpIdx[i]++;</span>
 <span class="fc bfc" id="L224" title="All 2 branches covered.">                        if (shpIdx[i] == (shape[i])) {</span>
 <span class="fc" id="L225">                            shpIdx[i] = 0;</span>
-<span class="fc" id="L226">                            i--;</span>
+<span class="fc" id="L226">                            i++;</span>
                         } else {
 <span class="fc" id="L228">                            i = -1;</span>
                         }
                     } else {
-<span class="nc" id="L231">                        i--;</span>
+<span class="nc" id="L231">                        i++;</span>
                     }
 <span class="fc" id="L233">                    return i;</span>
+                } else {
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">                    if (shpIdx[i] &lt; (shape[i])) {</span>
+<span class="fc" id="L236">                        shpIdx[i]++;</span>
+<span class="fc bfc" id="L237" title="All 2 branches covered.">                        if (shpIdx[i] == (shape[i])) {</span>
+<span class="fc" id="L238">                            shpIdx[i] = 0;</span>
+<span class="fc" id="L239">                            i--;</span>
+                        } else {
+<span class="fc" id="L241">                            i = -1;</span>
+                        }
+                    } else {
+<span class="nc" id="L244">                        i--;</span>
+                    }
+<span class="fc" id="L246">                    return i;</span>
                 }
             }
 
             @Contract(pure = true)
             public static int[] newTlnOf(int[] shape) {
-<span class="fc" id="L239">                int[] tln = new int[shape.length];</span>
-<span class="fc" id="L240">                int prod = 1;</span>
-<span class="fc bfc" id="L241" title="All 2 branches covered.">                if (Neureka.instance().settings().indexing().legacy()) {</span>
-<span class="fc bfc" id="L242" title="All 2 branches covered.">                    for (int i = 0; i &lt; tln.length; i++) {</span>
-<span class="fc" id="L243">                        tln[i] = prod;</span>
-<span class="fc" id="L244">                        prod *= shape[i];</span>
+<span class="fc" id="L252">                int[] tln = new int[shape.length];</span>
+<span class="fc" id="L253">                int prod = 1;</span>
+<span class="fc bfc" id="L254" title="All 2 branches covered.">                if (Neureka.instance().settings().indexing().legacy()) {</span>
+<span class="fc bfc" id="L255" title="All 2 branches covered.">                    for (int i = 0; i &lt; tln.length; i++) {</span>
+<span class="fc" id="L256">                        tln[i] = prod;</span>
+<span class="fc" id="L257">                        prod *= shape[i];</span>
                     }
                 } else {
-<span class="fc bfc" id="L247" title="All 2 branches covered.">                    for (int i = tln.length-1; i &gt;= 0; i--) {</span>
-<span class="fc" id="L248">                        tln[i] = prod;</span>
-<span class="fc" id="L249">                        prod *= shape[i];</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">                    for (int i = tln.length-1; i &gt;= 0; i--) {</span>
+<span class="fc" id="L261">                        tln[i] = prod;</span>
+<span class="fc" id="L262">                        prod *= shape[i];</span>
                     }
                 }
-<span class="fc" id="L252">                return tln;</span>
+<span class="fc" id="L265">                return tln;</span>
             }
 
             @Contract(pure = true)
-            public static int[] rearrange(int[] array, @NotNull int[] ptr) {
-<span class="fc" id="L257">                int[] newShp = new int[ptr.length];</span>
-<span class="fc bfc" id="L258" title="All 2 branches covered.">                for (int i = 0; i &lt; ptr.length; i++) {</span>
-<span class="fc bfc" id="L259" title="All 2 branches covered.">                    if (ptr[i] &lt; 0) newShp[i] = Math.abs(ptr[i]);</span>
-<span class="pc bpc" id="L260" title="1 of 2 branches missed.">                    else if (ptr[i] &gt;= 0) newShp[i] = array[ptr[i]];</span>
+            public static int[] rearrange(@NotNull int[] array, @NotNull int[] ptr) {
+<span class="fc" id="L270">                int[] newShp = new int[ptr.length];</span>
+<span class="fc bfc" id="L271" title="All 2 branches covered.">                for (int i = 0; i &lt; ptr.length; i++) {</span>
+<span class="fc bfc" id="L272" title="All 2 branches covered.">                    if (ptr[i] &lt; 0) newShp[i] = Math.abs(ptr[i]);</span>
+<span class="pc bpc" id="L273" title="1 of 2 branches missed.">                    else if (ptr[i] &gt;= 0) newShp[i] = array[ptr[i]];</span>
                 }
-<span class="fc" id="L262">                return newShp;</span>
+<span class="fc" id="L275">                return newShp;</span>
             }
 
             @Contract(pure = true)
             public static int[] shpCheck(int[] newShp, Tsr t) {
-<span class="pc bpc" id="L267" title="1 of 2 branches missed.">                if (szeOfShp(newShp) != t.size()) {</span>
-<span class="nc" id="L268">                    throw new IllegalArgumentException(</span>
+<span class="pc bpc" id="L280" title="1 of 2 branches missed.">                if (szeOfShp(newShp) != t.size()) {</span>
+<span class="nc" id="L281">                    throw new IllegalArgumentException(</span>
                             &quot;[Tsr][shpCheck(int[] newShp, Tsr t)]: New shape does not match tensor size!&quot; +
-<span class="nc bnc" id="L270" title="All 2 branches missed.">                                    &quot; (&quot; + Utility.Stringify.strConf(newShp) + ((szeOfShp(newShp) &lt; t.size()) ? &quot;&lt;&quot; : &quot;&gt;&quot;) + Utility.Stringify.strConf(t.shape()) + &quot;)&quot;);</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">                                    &quot; (&quot; + Utility.Stringify.strConf(newShp) + ((szeOfShp(newShp) &lt; t.size()) ? &quot;&lt;&quot; : &quot;&gt;&quot;) + Utility.Stringify.strConf(t.shape()) + &quot;)&quot;);</span>
                 }
-<span class="fc" id="L272">                return newShp;</span>
+<span class="fc" id="L285">                return newShp;</span>
             }
 
             @Contract(pure = true)
             public static int[] rearrange(int[] tln, int[] shp, @NotNull int[] newForm) {
-<span class="fc" id="L277">                int[] shpTln = newTlnOf(shp);</span>
-<span class="fc" id="L278">                int[] newTln = new int[newForm.length];</span>
-<span class="fc bfc" id="L279" title="All 2 branches covered.">                for (int i = 0; i &lt; newForm.length; i++) {</span>
-<span class="fc bfc" id="L280" title="All 2 branches covered.">                    if (newForm[i] &lt; 0) newTln[i] = shpTln[i];</span>
-<span class="pc bpc" id="L281" title="1 of 2 branches missed.">                    else if (newForm[i] &gt;= 0) newTln[i] = tln[newForm[i]];</span>
+<span class="fc" id="L290">                int[] shpTln = newTlnOf(shp);</span>
+<span class="fc" id="L291">                int[] newTln = new int[newForm.length];</span>
+<span class="fc bfc" id="L292" title="All 2 branches covered.">                for (int i = 0; i &lt; newForm.length; i++) {</span>
+<span class="fc bfc" id="L293" title="All 2 branches covered.">                    if (newForm[i] &lt; 0) newTln[i] = shpTln[i];</span>
+<span class="pc bpc" id="L294" title="1 of 2 branches missed.">                    else if (newForm[i] &gt;= 0) newTln[i] = tln[newForm[i]];</span>
                 }
-<span class="fc" id="L283">                return newTln;</span>
+<span class="fc" id="L296">                return newTln;</span>
             }
 
             @Contract(pure = true)
             public static int[] shpOfCon(int[] shp1, int[] shp2) {
-<span class="fc" id="L288">                int[] shape = new int[(shp1.length + shp2.length) / 2];</span>
-<span class="pc bpc" id="L289" title="1 of 4 branches missed.">                for (int i = 0; i &lt; shp1.length &amp;&amp; i &lt; shp2.length; i++) shape[i] = Math.abs(shp1[i] - shp2[i]) + 1;</span>
-<span class="fc" id="L290">                return shape;</span>
+<span class="fc" id="L301">                int[] shape = new int[(shp1.length + shp2.length) / 2];</span>
+<span class="pc bpc" id="L302" title="1 of 4 branches missed.">                for (int i = 0; i &lt; shp1.length &amp;&amp; i &lt; shp2.length; i++) shape[i] = Math.abs(shp1[i] - shp2[i]) + 1;</span>
+<span class="fc" id="L303">                return shape;</span>
             }
 
             @Contract(pure = true)
             public static int[] shpOfBrc(int[] shp1, int[] shp2) {
-<span class="fc" id="L295">                int[] shape = new int[(shp1.length + shp2.length) / 2];</span>
-<span class="pc bpc" id="L296" title="1 of 4 branches missed.">                for (int i = 0; i &lt; shp1.length &amp;&amp; i &lt; shp2.length; i++) {</span>
-<span class="fc" id="L297">                    shape[i] = Math.max(shp1[i], shp2[i]);</span>
-<span class="pc bpc" id="L298" title="3 of 4 branches missed.">                    if (Math.min(shp1[i], shp2[i])!=1&amp;&amp;Math.max(shp1[i], shp2[i])!=shape[i]) {</span>
-<span class="nc" id="L299">                        throw new IllegalStateException(&quot;Broadcast not possible. Shapes do not match!&quot;);</span>
+<span class="fc" id="L308">                int[] shape = new int[(shp1.length + shp2.length) / 2];</span>
+<span class="pc bpc" id="L309" title="1 of 4 branches missed.">                for (int i = 0; i &lt; shp1.length &amp;&amp; i &lt; shp2.length; i++) {</span>
+<span class="fc" id="L310">                    shape[i] = Math.max(shp1[i], shp2[i]);</span>
+<span class="pc bpc" id="L311" title="3 of 4 branches missed.">                    if (Math.min(shp1[i], shp2[i])!=1&amp;&amp;Math.max(shp1[i], shp2[i])!=shape[i]) {</span>
+<span class="nc" id="L312">                        throw new IllegalStateException(&quot;Broadcast not possible. Shapes do not match!&quot;);</span>
                     }
                 }
-<span class="fc" id="L302">                return shape;</span>
+<span class="fc" id="L315">                return shape;</span>
             }
 
             @Contract(pure = true)
             public static int szeOfShp(int[] shape) {
-<span class="fc" id="L307">                int size = 1;</span>
-<span class="fc bfc" id="L308" title="All 2 branches covered.">                for (int i : shape) size *= i;</span>
-<span class="fc" id="L309">                return size;</span>
+<span class="fc" id="L320">                int size = 1;</span>
+<span class="fc bfc" id="L321" title="All 2 branches covered.">                for (int i : shape) size *= i;</span>
+<span class="fc" id="L322">                return size;</span>
             }
 
         }

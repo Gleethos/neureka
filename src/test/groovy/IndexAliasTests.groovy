@@ -4,7 +4,6 @@ import neureka.acceleration.Device
 import neureka.acceleration.opencl.OpenCLDevice
 import neureka.acceleration.opencl.OpenCLPlatform
 import neureka.acceleration.opencl.utility.DeviceQuery
-import neureka.autograd.GraphNode
 import org.junit.Test
 import util.DummyDevice
 import util.NTester
@@ -114,7 +113,7 @@ class IndexAliasTests
                         ?"2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"
                         :"7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
                 ], "Testing slicing")
-        tester.testContains(((b.has(int[].class))?"Has index component":""), ["Has index component"], "Check if index component is present!")
+        tester.testContains(((b.spread()!=null)?"Has index component":"Doesn't have it! :/"), ["Has index component"], "Check if index component is present!")
         b = a[-3..-1, 0..3]
         s = a[1, -2]
         assert s==((legacyIndexing)?9.0:2.0)
@@ -124,7 +123,7 @@ class IndexAliasTests
                         ?"2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"
                         :"7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
                 ], "Testing slicing")
-        tester.testContains(((b.has(int[].class))?"Has index component":""), ["Has index component"], "Check if index component is present!")
+        tester.testContains(((b.spread()!=null)?"Has index component":"Doesn't have it! :/"), ["Has index component"], "Check if index component is present!")
         /**
          * 2, 3, 4,
          * 6, 7, 8,
@@ -199,7 +198,7 @@ class IndexAliasTests
                 ],
                 "Testing slicing"
         )
-        tester.testContains(((b.has(int[].class))?"Has index component":""), ["Has index component"], "Check if index component is present!")
+        tester.testContains(((b.spread()!=null)?"Has index component":"Doesn't have it! :/"), ["Has index component"], "Check if index component is present!")
         /**
          1, 12, 3, 4,
          5, 6, 7, 16,
@@ -222,7 +221,7 @@ class IndexAliasTests
                         ?"5.0, 7.0, 4.0, 6.0"
                         :"12.0, 4.0, 5.0, 7.0"
                 ], "Testing slicing")
-        tester.testContains(((b.has(int[].class))?"Has index component":""), ["Has index component"], "Check if index component is present!")
+        tester.testContains(((b.spread()!=null)?"Has index component":"Doesn't have it! :/"), ["Has index component"], "Check if index component is present!")
         /**
          1, 12, 3, 4,
          5, 6, 7, 16, => 5,  7,

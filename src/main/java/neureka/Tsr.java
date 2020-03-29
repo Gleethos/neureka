@@ -226,6 +226,8 @@ public class Tsr extends AbstractNDArray
         _shape = tensor._shape;
         _idxmap = tensor._idxmap;
         _translation = tensor._translation;
+        _spread = tensor._spread;
+        _offset = tensor._offset;
         _components = tensor._components;
         _flags = tensor._flags;
         if (_components!=null) {//Inform components about their new owner:
@@ -237,6 +239,8 @@ public class Tsr extends AbstractNDArray
         tensor._shape = null;
         tensor._idxmap = null;
         tensor._translation = null;
+        tensor._spread = null;
+        tensor._offset = null;
         tensor._components = null;
         tensor._flags = -1;
         return this;
@@ -276,6 +280,10 @@ public class Tsr extends AbstractNDArray
         _shape = _cached(newShape);
         _translation = _cached(Utility.Indexing.newTlnOf(newShape));
         _idxmap = _translation;
+        _offset = _cached(new int[newShape.length]);// TODO _cached(...
+        _spread = new int[newShape.length];
+        Arrays.fill(_spread, 1);
+        _cached(_spread);
     }
 
 
@@ -494,6 +502,8 @@ public class Tsr extends AbstractNDArray
             }
         }
         _configureFromNewShape(tensor.shape());
+        //_offset = tensor._offset;
+        //_spread = tensor._spread;
     }
 
 
@@ -691,10 +701,20 @@ public class Tsr extends AbstractNDArray
         subset._translation = this._translation;
         subset._idxmap = _cached(Utility.Indexing.newTlnOf(newShape));
         subset._shape = _cached(newShape);
+
+        int[] newSpread = new int[rank()];
+        int[] newOffset = new int[rank()];
+        Arrays.fill(newSpread, 1);
         if (idxbase.length==2*rank()){
             for(int i=rank(); i<idxbase.length; i++) idxbase[i] = (idxbase[i]==0)?1:idxbase[i];
         }
-        subset.add(idxbase);
+        for(int i=0; i<idxbase.length; i++){
+            if(i>=rank()) newSpread[i-rank()] = idxbase[i];
+            else newOffset[i] = idxbase[i];
+        }
+        subset._spread = newSpread;
+        subset._offset = newOffset;
+
         if (this.isOutsourced()){
             Device device = (Device) this.find(Device.class);
             device.add(subset, this);
@@ -786,7 +806,7 @@ public class Tsr extends AbstractNDArray
         public static double getFrom(Tsr t, int i) {
             if (t.isEmpty() || t.isUndefined()) return 0;
             else if (t.isVirtual()) return t.value64()[0];
-            return t.value64()[t._i_of_i(i)];
+            return t.value64()[t.i_of_i(i)];
         }
 
         public static double getFrom(Tsr t, int[] idx) {
@@ -796,7 +816,7 @@ public class Tsr extends AbstractNDArray
 
         public static void setInto(Tsr t, int i, double value) {
             t.setIsVirtual(false);
-            t.value64()[t._i_of_i(i)] = value;
+            t.value64()[t.i_of_i(i)] = value;
         }
 
         public static void setInto(Tsr t, int[] idx, double value) {
@@ -806,7 +826,7 @@ public class Tsr extends AbstractNDArray
 
         public static void addInto(Tsr t, int i, double value) {
             t.setIsVirtual(false);
-            t.value64()[t._i_of_i(i)] += value;
+            t.value64()[t.i_of_i(i)] += value;
         }
 
         public static void addInto(Tsr t, int[] idx, double value) {
@@ -822,7 +842,7 @@ public class Tsr extends AbstractNDArray
 
         public static void subInto(Tsr t, int i, double value) {
             t.setIsVirtual(false);
-            t.value64()[t._i_of_i(i)] -= value;
+            t.value64()[t.i_of_i(i)] -= value;
         }
 
         public static void subInto(Tsr t, int[] idx, double value) {
@@ -846,7 +866,7 @@ public class Tsr extends AbstractNDArray
 
         public static void mulInto(Tsr t, int i, double value) {
             t.setIsVirtual(false);
-            t.value64()[t._i_of_i(i)] *= value;
+            t.value64()[t.i_of_i(i)] *= value;
         }
 
         public static void mulInto(Tsr t, int[] idx, double value) {
@@ -863,20 +883,18 @@ public class Tsr extends AbstractNDArray
             tensor._shape = _cached(Utility.Indexing.shpCheck(Utility.Indexing.rearrange(tensor._shape, newForm), tensor));
             tensor._translation = _cached(Utility.Indexing.rearrange(tensor._translation, tensor._shape, newForm));
             tensor._idxmap =  _cached(Utility.Indexing.newTlnOf(tensor._shape));
-            int[] sliceCfg = null;
-            if (tensor.has(int[].class)) sliceCfg = (int[])tensor.find(int[].class);
-            if (sliceCfg!=null){
-                int[] newSliceConfig = new int[sliceCfg.length];
-                for (int i=0; i<newForm.length; i++){
-                    newSliceConfig[i] = sliceCfg[newForm[i]];
-                }
-                if (sliceCfg.length!=tensor.rank()){
-                    for (int i=0; i<newForm.length; i++){
-                        newSliceConfig[tensor.rank()+i] = sliceCfg[tensor.rank()+newForm[i]];
-                    }
-                }
-                tensor.add(newSliceConfig);
+            int[] newShp = new int[newForm.length];
+            for (int i = 0; i < newForm.length; i++) {
+                if (newForm[i] < 0) newShp[i] = 1;//Math.abs(newForm[i]);
+                else if (newForm[i] >= 0) newShp[i] = tensor._spread[newForm[i]];
             }
+            tensor._spread =  _cached(newShp);
+            newShp = new int[newForm.length];
+            for (int i = 0; i < newForm.length; i++) {
+                if (newForm[i] < 0) newShp[i] = 0;//Math.abs(newForm[i]);
+                else if (newForm[i] >= 0) newShp[i] = tensor._offset[newForm[i]];
+            }
+            tensor._offset =  _cached(newShp);
             return tensor;
         }
 
@@ -1108,8 +1126,8 @@ public class Tsr extends AbstractNDArray
         size = (trim > 0) ? max : size;
         for (int i = 0; i < size; i++) {
             String vStr;
-            if (format) vStr = Utility.Stringify.formatFP(v[(this.isVirtual()) ? 0 : _i_of_i(i)]);
-            else vStr = String.valueOf(v[(this.isVirtual()) ? 0 : _i_of_i(i)]);
+            if (format) vStr = Utility.Stringify.formatFP(v[(this.isVirtual()) ? 0 : i_of_i(i)]);
+            else vStr = String.valueOf(v[(this.isVirtual()) ? 0 : i_of_i(i)]);
             asString.append(vStr);
             if (i < size - 1) asString.append(", ");
             else if (trim > 0) asString.append(", ... + ").append(trim).append(" more");
@@ -1179,6 +1197,8 @@ public class Tsr extends AbstractNDArray
             t._shape = template._shape;
             t._idxmap = template._idxmap;
             t._translation = template.translation();
+            t._spread = template.spread();
+            t._offset = template.offset();
             return t;
         }
 

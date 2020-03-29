@@ -47,7 +47,15 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
     /**
      *  The mapping of idx array.
      */
-    protected int[] _idxmap;
+    protected int[] _idxmap; // Used to avoid distorion when reshaping!
+    /**
+     *  Produces the strides of a tensor subset / slice
+     */
+    protected int[] _spread;
+    /**
+     *  Defines the position of a subset / slice tensor within its parent!
+     */
+    protected int[] _offset;
     /**
      *  The value of this tensor. Usually a array of type double[] or float[].
      */
@@ -65,6 +73,7 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
 
 
     protected static int[] _cached(int[] data) {
+        if(true) return data;
         long key = 0;
         for (int e : data) {
             if (e <= 10) key *= 10;
@@ -75,6 +84,7 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
             else if (e <= 1000000) key *= 1000000;
             else if (e <= 10000000) key *= 10000000;
             else if (e <= 100000000) key *= 100000000;
+            else if (e <= 1000000000) key *= 1000000000;
             key += Math.abs(e) + 1;
         }
         int rank = data.length;
@@ -96,16 +106,11 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
 
     public int i_of_idx(int[] idx) {
         int i = 0;
-        int[] sliceCfg = null;
-        if (has(int[].class)) sliceCfg = (int[])find(int[].class);
-        for (int ii=0; ii<_shape.length; ii++) {
-            int scale = (sliceCfg==null || sliceCfg.length==rank()) ? 1 : sliceCfg[rank()+ii];
-            i += (idx[ii] * scale + ((sliceCfg==null) ? 0 : sliceCfg[ii])) * _translation[ii];
-        }
+        for (int ii=0; ii<_shape.length; ii++) i += (idx[ii] * _spread[ii] + _offset[ii]) * _translation[ii];
         return i;
     }
 
-    protected int _i_of_i(int i){
+    public int i_of_i(int i){
         return i_of_idx(idx_of_i(i));
     }
 
@@ -145,6 +150,14 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
 
     public int[] translation() {
         return _translation;
+    }
+
+    public int[] spread(){
+        return _spread;
+    }
+
+    public int[] offset(){
+        return _offset;
     }
 
     public int size() {
@@ -253,7 +266,7 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
             }
 
             @Contract(pure = true)
-            public static int[] rearrange(int[] array, @NotNull int[] ptr) {
+            public static int[] rearrange(@NotNull int[] array, @NotNull int[] ptr) {
                 int[] newShp = new int[ptr.length];
                 for (int i = 0; i < ptr.length; i++) {
                     if (ptr[i] < 0) newShp[i] = Math.abs(ptr[i]);

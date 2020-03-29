@@ -20,49 +20,21 @@ class ThoroughGroovyTests
     @Test
     void test_benchmark_script(){
         String benchmark = Utility.readResource("benchmark.groovy", this)
-        def lambda = new GroovyShell().evaluate(benchmark)
-
-        def session = (Map conf, String filename, Device device)->{
-            def map = [:]
-            def result
-            BufferedWriter writer = Files.newBufferedWriter(Paths.get("docs/benchmarks/"+filename));
-            writer.write("");
-            writer.flush();
-            for(i in conf["difficulty"]..conf["difficulty"]+conf["sample_size"]){
-                result = lambda(conf["iterations"], i+(i-conf["difficulty"])*conf["intensifier"], device)
-                result.each(k, v)->{
-                    if (map[k]==null) map[k] = v
-                    else map[k] += v
-                }
-            }
-            File asCSV = new File("docs/benchmarks/"+filename)
-            map.each(k, v)->{
-                asCSV.append(k)
-                asCSV.append(",")
-            }
-            asCSV.append("\n")
-            for(i in 1..conf["sample_size"]){
-                map.each((k, v)->{
-                    asCSV.append(v[i-1])
-                    asCSV.append(",")
-                })
-                asCSV.append("\n")
-            }
-        }
+        def session = new GroovyShell().evaluate(benchmark)
         //session([
-        //                "iterations":1,
-        //                "sample_size":11,
-        //                "difficulty":10,
-        //                "intensifier":50
+        //            "iterations":1,
+        //            "sample_size":11,
+        //            "difficulty":10,
+        //            "intensifier":50
         //        ],
         //        "neureka_bench_GPU.csv",
         //        Device.find("nvidia")
         //)
         //session([
-        //        "iterations":1,
-        //        "sample_size":11,
-        //        "difficulty":10,
-        //        "intensifier":50
+        //            "iterations":1,
+        //            "sample_size":11,
+        //            "difficulty":10,
+        //            "intensifier":50
         //        ],
         //        "neureka_bench_CPU.csv",
         //        HostCPU.instance()
@@ -70,8 +42,8 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void test_asFunction_method_inside_String(){
-
+    void test_asFunction_method_inside_String()
+    {
         Neureka.instance().settings().reset()
         Tsr a = new Tsr([1,2], [3, 2])
         Tsr b = new Tsr([2,1], [-1, 4])
