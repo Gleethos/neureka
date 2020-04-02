@@ -10,7 +10,6 @@ import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-
 public class Neureka
 {
     private static final Map<Thread, Neureka> _instances;
@@ -43,18 +42,13 @@ public class Neureka
             Neureka instance = new Neureka();
             setContext(thread, instance);
             synchronized (Neureka.class) {
-                if( _settings_source==null || _setup_source==null ) {
-                    _settings_source = instance.utility().readResource("library_settings.groovy");
-                    _setup_source = instance.utility().readResource("scripting_setup.groovy");
-                }
+                instance.reset();
             }
-            new GroovyShell().evaluate(_settings_source);
-            new GroovyShell().evaluate(_setup_source);
             return instance;
         }
     }
 
-    public static Neureka instance(Closure c){
+    public static Neureka instance(Closure c) {
         c.setDelegate(Neureka.instance());
         c.call();
         return Neureka.instance();
@@ -78,6 +72,19 @@ public class Neureka
         return "1.0.0";
     }
 
+    public void reset(){
+            if( _settings_source==null || _setup_source==null ) {
+                _settings_source = utility().readResource("library_settings.groovy");
+                _setup_source = utility().readResource("scripting_setup.groovy");
+            }
+        new GroovyShell().evaluate(_settings_source);
+        new GroovyShell().evaluate(_setup_source);
+    }
+
+    private boolean _currentThreadIsAuthorized(){
+        return this.equals(_instances.get(Thread.currentThread()));
+    }
+
     public class Settings
     {
         private Debug _debug;
@@ -87,18 +94,18 @@ public class Neureka
 
         private boolean _isLocked = false;
 
-        private Settings(){
+        private Settings() {
             _debug = new Debug();
             _autoDiff = new AutoDiff();
             _indexing = new Indexing();
             _view = new View();
         }
 
-        public Debug debug(){
+        public Debug debug() {
             return _debug;
         }
 
-        public Debug debug(Closure c){
+        public Debug debug(Closure c) {
             c.setDelegate(_debug);
             c.call();
             return _debug;
@@ -108,7 +115,7 @@ public class Neureka
             return _autoDiff;
         }
 
-        public AutoDiff autoDiff(Closure c){
+        public AutoDiff autoDiff(Closure c) {
             c.setDelegate(_autoDiff);
             c.call();
             return _autoDiff;
@@ -118,7 +125,7 @@ public class Neureka
             return _indexing;
         }
 
-        public Indexing indexing(Closure c){
+        public Indexing indexing(Closure c) {
             c.setDelegate(_indexing);
             c.call();
             return _indexing;
@@ -128,7 +135,7 @@ public class Neureka
             return _view;
         }
 
-        public View view(Closure c){
+        public View view(Closure c) {
             c.setDelegate(_view);
             c.call();
             return _view;
@@ -138,15 +145,8 @@ public class Neureka
             return  _isLocked;
         }
 
-        public void setIsLocked(boolean locked){
+        public void setIsLocked(boolean locked) {
             _isLocked = locked;
-        }
-
-        public void reset(){
-            debug().reset();
-            autoDiff().reset();
-            indexing().reset();
-            view().reset();
         }
 
         public class Debug
@@ -168,20 +168,12 @@ public class Neureka
              */
             private boolean _keepDerivativeTargetPayloads;
 
-            Debug(){
-                reset();
-            }
-
-            public void reset(){
-                _keepDerivativeTargetPayloads = false;
-            }
-
             public boolean keepDerivativeTargetPayloads(){
                 return _keepDerivativeTargetPayloads;
             }
 
             public void setKeepDerivativeTargetPayloads(boolean keep){
-                if(_isLocked) return;
+                if(_isLocked || !_currentThreadIsAuthorized()) return;
                 _keepDerivativeTargetPayloads = keep;
             }
 
@@ -207,21 +199,12 @@ public class Neureka
              */
             private boolean _applyGradientWhenTensorIsUsed;
 
-            AutoDiff(){
-                reset();
-            }
-
-            public void reset(){
-                _retainPendingErrorForJITProp = true;
-                _applyGradientWhenTensorIsUsed = false;
-            }
-
             public boolean retainPendingErrorForJITProp(){
                 return _retainPendingErrorForJITProp;
             }
 
             public void setRetainPendingErrorForJITProp(boolean retain){
-                if(_isLocked) return;
+                if(_isLocked || !_currentThreadIsAuthorized()) return;
                 _retainPendingErrorForJITProp = retain;
             }
 
@@ -230,7 +213,7 @@ public class Neureka
             }
 
             public void setApplyGradientWhenTensorIsUsed(boolean apply){
-                if(_isLocked) return;
+                if(_isLocked || !_currentThreadIsAuthorized()) return;
                 _applyGradientWhenTensorIsUsed = apply;
             }
 
@@ -240,21 +223,24 @@ public class Neureka
         {
             private boolean _legacyIndexing;
 
-            Indexing(){
-                reset();
-            }
-
-            public void reset(){
-                _legacyIndexing = false;
-            }
+            private boolean _thoroughIndexing;
 
             public boolean legacy(){
                 return _legacyIndexing;
             }
 
             public void setLegacy(boolean enabled){
-                if(_isLocked) return;
+                if(_isLocked || !_currentThreadIsAuthorized()) return;
                 _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (in OpenCLPlatform)
+            }
+
+            public boolean thorough(){
+                return _thoroughIndexing;
+            }
+
+            public void setThorough(boolean thorough){
+                if(_isLocked || !_currentThreadIsAuthorized()) return;
+                _thoroughIndexing = thorough;
             }
 
         }
@@ -264,20 +250,12 @@ public class Neureka
 
             private boolean _legacyView;
 
-            View() {
-                reset();
-            }
-
-            public void reset(){
-                _legacyView = false;
-            }
-
             public boolean legacy(){
                 return _legacyView;
             }
 
             public void setLegacy(boolean enabled){
-                if(_isLocked) return;
+                if(_isLocked || !_currentThreadIsAuthorized()) return;
                 _legacyView = enabled;
             }
 

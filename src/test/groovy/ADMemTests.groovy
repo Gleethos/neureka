@@ -9,7 +9,7 @@ class ADMemTests {
     @Test
     void test_reverse_reshape() {
 
-        Neureka.instance().settings().reset()
+        Neureka.instance().reset()
         Neureka.instance().settings().view().setLegacy(true)
 
         Tsr a = new Tsr([2, 3], [
@@ -54,7 +54,7 @@ class ADMemTests {
     @Test
     void test_payloads_and_derivatives_are_null() {
 
-        Neureka.instance().settings().reset()
+        Neureka.instance().reset()
 
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = a * 3 / 5

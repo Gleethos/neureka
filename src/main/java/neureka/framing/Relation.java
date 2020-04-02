@@ -27,9 +27,7 @@ public class Relation implements Component<Tsr> {
                 Tsr t = c.get();
                 if(t!=null){
                     Relation cr = (Relation) t.find(Relation.class);
-                    if(cr!=null){
-                        cr._parent = newOwner;
-                    }
+                    if(cr!=null) cr._parent = newOwner;
                 }
             }
         }

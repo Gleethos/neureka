@@ -5,7 +5,7 @@ import neureka.calculus.environment.OperationType;
 public class Power extends OperationType
 {
 
-<span class="fc" id="L8">    private final static OperationCreator _creator = (inputs, d)-&gt;{</span>
+<span class="fc" id="L8">    private final static OperatorCreator _creator = (inputs, d)-&gt;{</span>
 <span class="fc" id="L9">        double[] t1_val = inputs[1].value64();</span>
 <span class="fc" id="L10">        double[] t2_val = inputs[2].value64();</span>
 <span class="fc bfc" id="L11" title="All 2 branches covered.">        if (d &lt; 0) {</span>

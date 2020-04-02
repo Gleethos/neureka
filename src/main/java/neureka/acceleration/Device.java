@@ -12,14 +12,11 @@ public interface Device
         //TODO: Device plugin finding!
         Device[] result = {null};
         String search = name.toLowerCase();
-        OpenCLPlatform.PLATFORMS().forEach((p)-> {
-            p.getDevices().forEach((d)->{
+        OpenCLPlatform.PLATFORMS().forEach( p ->
+            p.getDevices().forEach( d ->{
                 String str = (d.name()+" | "+d.vendor()+" | "+d.type()).toLowerCase();
-                if(str.contains(search)){
-                    result[0] = d;
-                }
-            });
-        });
+                if(str.contains(search)) result[0] = d;
+            }));
         return result[0];
     }
 

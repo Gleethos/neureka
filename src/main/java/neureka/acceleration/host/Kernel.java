@@ -10,7 +10,7 @@ public class Kernel
     public static void convolve(
             Tsr t0_drn, Tsr t1_src, Tsr t2_src,
             int d, int i, int end,
-            Type.Operator operation
+            Type.DefaultOperator operation
     ) {
         int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
         int[] t1Shp = t1_src.shape();
@@ -153,7 +153,7 @@ public class Kernel
     public static void broadcast(
             Tsr t0_drn, Tsr t1_src, Tsr t2_src,
             int d, int i, int end,
-            Type.Operator operation
+            Type.DefaultOperator operation
     ) {
         int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
         int[] t1Shp = t1_src.shape();
@@ -243,7 +243,7 @@ public class Kernel
     static void activate(
             Tsr t0_drn,
             int i, int end,
-            Type.Operator operation
+            Type.DefaultOperator operation
     ) {
         int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
         int rank = t0Shp.length;

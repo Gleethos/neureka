@@ -1,6 +1,8 @@
 package neureka.abstraction;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -17,7 +19,7 @@ public abstract class AbstractComponentOwner {
     /**
      *  (Tensor) components
      */
-    protected ArrayList<Object> _components = new ArrayList<Object>();
+    protected List<Object> _components = Collections.synchronizedList(new ArrayList<Object>());//new ArrayList<Object>();
 
     /**
      * @param componentClass The type/class of the component which shall be found and returned.
@@ -43,7 +45,7 @@ public abstract class AbstractComponentOwner {
         Object oldComponent = find(componentClass);
         if (oldComponent != null) {
             _components.remove(oldComponent);
-            _components.trimToSize();
+            //_components.trimToSize();
         }
         if (_components != null && _components.size() == 0) {
             _components = null;
@@ -72,7 +74,7 @@ public abstract class AbstractComponentOwner {
             oldCompartment = find(newComponent.getClass());
             if (oldCompartment != null) {
                 _components.remove(oldCompartment);
-                _components.trimToSize();
+                //_components.trimToSize();
             }
         } else {
             _components = new ArrayList<>();

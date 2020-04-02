@@ -1,15 +1,11 @@
 package neureka.calculus.environment.implementations.operator;
 
-import neureka.Tsr;
-import neureka.autograd.ADAgent;
-import neureka.calculus.Function;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.factory.assembly.FunctionBuilder;
 
 public class Multiplication extends OperationType {
 
 
-    private static final OperationCreator _creator =
+    private static final OperatorCreator _creator =
             (inputs, d) -> {
                 double[] t1_val = inputs[1].value64();
                 double[] t2_val = inputs[2].value64();
@@ -52,7 +48,7 @@ public class Multiplication extends OperationType {
                         _creator
                 )
         );
-        OperationCreator creator =
+        OperatorCreator creator =
                 (inputs, d) -> {
                     double[] t1_val = inputs[1].value64();
                     double[] t2_val = inputs[2].value64();

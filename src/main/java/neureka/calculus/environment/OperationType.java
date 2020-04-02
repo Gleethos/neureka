@@ -32,14 +32,14 @@ public class OperationType implements Type
 
     private static int _ID = 0;
 
-    protected int _id = -1;
-    protected String _name = "";
-    protected String  _identifier = "";
-    protected boolean _isOperation = false;
-    protected boolean _isIndexer = false;
-    protected boolean _isConvection = false;
-    protected boolean _isCommutative = false;
-    protected boolean _isAssociative = false;
+    protected int _id;
+    protected String _name;
+    protected String  _identifier;
+    protected boolean _isOperation;
+    protected boolean _isIndexer;
+    protected boolean _isConvection;
+    protected boolean _isCommutative;
+    protected boolean _isAssociative;
 
     protected Activation _activation;
     protected Convolution _convolution;

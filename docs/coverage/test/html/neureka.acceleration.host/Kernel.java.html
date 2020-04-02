@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Contract;
     public static void convolve(
             Tsr t0_drn, Tsr t1_src, Tsr t2_src,
             int d, int i, int end,
-            Type.Operator operation
+            Type.DefaultOperator operation
     ) {
 <span class="fc" id="L15">        int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
 <span class="fc" id="L16">        int[] t1Shp = t1_src.shape();</span>
@@ -153,7 +153,7 @@ import org.jetbrains.annotations.Contract;
     public static void broadcast(
             Tsr t0_drn, Tsr t1_src, Tsr t2_src,
             int d, int i, int end,
-            Type.Operator operation
+            Type.DefaultOperator operation
     ) {
 <span class="fc" id="L158">        int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
 <span class="fc" id="L159">        int[] t1Shp = t1_src.shape();</span>
@@ -243,7 +243,7 @@ import org.jetbrains.annotations.Contract;
     static void activate(
             Tsr t0_drn,
             int i, int end,
-            Type.Operator operation
+            Type.DefaultOperator operation
     ) {
 <span class="fc" id="L248">        int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
 <span class="fc" id="L249">        int rank = t0Shp.length;</span>

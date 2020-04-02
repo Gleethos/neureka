@@ -15,17 +15,18 @@ class IndexAliasTests
     @Test
     void test_slicing()
     {
-        Neureka.instance().settings().reset()
+        Neureka.instance().reset()
+        Neureka.instance().settings().autoDiff().applyGradientWhenTensorIsUsed = false
         Neureka.instance().settings().view().setLegacy(true)
 
         NTester_Tensor tester = new NTester_Tensor("IndexAlias-Testing: slices/subset creation and calculation")
         Device device = new DummyDevice()
 
         Neureka.instance().settings().indexing().setLegacy(true)
-        _testReadmeExamples(device, tester, true)
+        _slice_test_template(device, tester, true)
 
         Neureka.instance().settings().indexing().setLegacy(false)
-        _testReadmeExamples(device, tester, false)
+        _slice_test_template(device, tester, false)
 
         //=========================================================================
         if(!System.getProperty("os.name").toLowerCase().contains("windows")) return
@@ -34,11 +35,11 @@ class IndexAliasTests
 
         Neureka.instance().settings().indexing().setLegacy(true)
         OpenCLPlatform.PLATFORMS().get(0).recompile()
-        _testReadmeExamples(gpu, tester, true)
+        _slice_test_template(gpu, tester, true)
 
         Neureka.instance().settings().indexing().setLegacy(false)
         OpenCLPlatform.PLATFORMS().get(0).recompile()
-        _testReadmeExamples(gpu, tester, false)
+        _slice_test_template(gpu, tester, false)
 
         String query = DeviceQuery.query()
         assert query.contains("DEVICE_NAME")
@@ -63,7 +64,7 @@ class IndexAliasTests
         tester.close()
     }
 
-    void _testReadmeExamples(Device device, NTester tester, boolean legacyIndexing)
+    void _slice_test_template(Device device, NTester tester, boolean legacyIndexing)
     {
         Tsr x = new Tsr([1], 3).setRqsGradient(true)
         Tsr b = new Tsr([1], -4)

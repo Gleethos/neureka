@@ -27,58 +27,56 @@ import java.util.function.Consumer;
 <span class="nc" id="L27">                Tsr t = c.get();</span>
 <span class="nc bnc" id="L28" title="All 2 branches missed.">                if(t!=null){</span>
 <span class="nc" id="L29">                    Relation cr = (Relation) t.find(Relation.class);</span>
-<span class="nc bnc" id="L30" title="All 2 branches missed.">                    if(cr!=null){</span>
-<span class="nc" id="L31">                        cr._parent = newOwner;</span>
-                    }
+<span class="nc bnc" id="L30" title="All 2 branches missed.">                    if(cr!=null) cr._parent = newOwner; </span>
                 }
             }
         }
-<span class="nc" id="L36">    }</span>
+<span class="nc" id="L34">    }</span>
 
 
     public Relation addParent(Tsr parent){
-<span class="fc" id="L40">        _parent = parent;</span>
-<span class="fc" id="L41">        return this;</span>
+<span class="fc" id="L38">        _parent = parent;</span>
+<span class="fc" id="L39">        return this;</span>
     }
 
     public Relation addChild(Tsr child){
-<span class="fc bfc" id="L45" title="All 2 branches covered.">        if(_children==null){</span>
-<span class="fc" id="L46">            _children = new WeakReference[]{new WeakReference(child)};</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        if(_children==null){</span>
+<span class="fc" id="L44">            _children = new WeakReference[]{new WeakReference(child)};</span>
         } else {
-<span class="fc" id="L48">            WeakReference&lt;Tsr&gt;[] newChildren = new WeakReference[_children.length+1];</span>
-<span class="fc bfc" id="L49" title="All 2 branches covered.">            for(int i=0; i&lt;_children.length; i++){</span>
-<span class="fc" id="L50">                newChildren[i] = _children[i];</span>
+<span class="fc" id="L46">            WeakReference&lt;Tsr&gt;[] newChildren = new WeakReference[_children.length+1];</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">            for(int i=0; i&lt;_children.length; i++){</span>
+<span class="fc" id="L48">                newChildren[i] = _children[i];</span>
             }
-<span class="fc" id="L52">            newChildren[_children.length] = new WeakReference(child);</span>
-<span class="fc" id="L53">            _children = newChildren;</span>
+<span class="fc" id="L50">            newChildren[_children.length] = new WeakReference(child);</span>
+<span class="fc" id="L51">            _children = newChildren;</span>
         }
-<span class="fc" id="L55">        return this;</span>
+<span class="fc" id="L53">        return this;</span>
     }
 
     public Relation foreachChild(Consumer&lt;Tsr&gt; action){
-<span class="nc bnc" id="L59" title="All 2 branches missed.">        if(_children!=null){</span>
-<span class="nc bnc" id="L60" title="All 2 branches missed.">            for(WeakReference&lt;Tsr&gt; r : _children){</span>
-<span class="nc" id="L61">                Tsr c = r.get();</span>
-<span class="nc bnc" id="L62" title="All 2 branches missed.">                if(c!=null){</span>
-<span class="nc" id="L63">                    action.accept(c);</span>
-<span class="nc" id="L64">                    Relation parent = (Relation) c.find(Relation.class);</span>
-<span class="nc bnc" id="L65" title="All 2 branches missed.">                    if(parent!=null) parent.foreachChild(action);</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        if(_children!=null){</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">            for(WeakReference&lt;Tsr&gt; r : _children){</span>
+<span class="nc" id="L59">                Tsr c = r.get();</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">                if(c!=null){</span>
+<span class="nc" id="L61">                    action.accept(c);</span>
+<span class="nc" id="L62">                    Relation parent = (Relation) c.find(Relation.class);</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">                    if(parent!=null) parent.foreachChild(action);</span>
                 }
             }
         }
-<span class="nc" id="L69">        return this;</span>
+<span class="nc" id="L67">        return this;</span>
     }
 
     public boolean hasParent(){
-<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        return _parent!=null;</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        return _parent!=null;</span>
     }
 
     public boolean hasChildren(){
-<span class="pc bpc" id="L77" title="1 of 2 branches missed.">        return _children!=null;</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">        return _children!=null;</span>
     }
 
     public int childCount(){
-<span class="pc bpc" id="L81" title="1 of 2 branches missed.">        return (_children==null)?0:_children.length;</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        return (_children==null)?0:_children.length;</span>
     }
 
 }

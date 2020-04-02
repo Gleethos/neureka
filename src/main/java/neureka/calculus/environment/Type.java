@@ -6,15 +6,15 @@ import neureka.calculus.Function;
 
 public interface Type
 {
-    interface Operator {
+    interface DefaultOperator {
         double execute(int[] t0Idx, int[] t1Idx, int[] t2Idx);
     }
 
-    interface OperationCreator{
-        Operator create(Tsr[] inputs, int d);
+    interface OperatorCreator {
+        DefaultOperator create(Tsr[] inputs, int d);
     }
-    interface ScalarOperationCreator {
-        Operator create(Tsr[] inputs, double scalar, int d);
+    interface ScalarOperatorCreator {
+        DefaultOperator create(Tsr[] inputs, double scalar, int d);
     }
 
     abstract class TypeComponent<CreatorType>
@@ -41,37 +41,37 @@ public interface Type
 
     //==================================================================================================================
 
-    class Activation extends TypeComponent<OperationType.OperationCreator>
+    class Activation extends TypeComponent<OperatorCreator>
     {
-        public Activation(String strActivation, String strDeriviation, OperationType.OperationCreator creator){
+        public Activation(String strActivation, String strDeriviation, OperatorCreator creator){
             super(strActivation, strDeriviation, creator);
         }
     }
 
-    class Convolution extends TypeComponent<OperationType.OperationCreator>
+    class Convolution extends TypeComponent<OperatorCreator>
     {
-        public Convolution(String strConvolution, String strDeriviation, OperationType.OperationCreator creator){
+        public Convolution(String strConvolution, String strDeriviation, OperatorCreator creator){
             super(strConvolution, strDeriviation, creator);
         }
     }
 
-    class Broadcast extends TypeComponent<OperationType.OperationCreator>
+    class Broadcast extends TypeComponent<OperatorCreator>
     {
-        public Broadcast(String strBroadcast, String strDeriviation, OperationType.OperationCreator creator){
+        public Broadcast(String strBroadcast, String strDeriviation, OperatorCreator creator){
             super(strBroadcast, strDeriviation, creator);
         }
     }
 
-    class Scalarization extends TypeComponent<OperationType.ScalarOperationCreator>
+    class Scalarization extends TypeComponent<ScalarOperatorCreator>
     {
-        public Scalarization(String strScalarized, String strDeriviation, OperationType.ScalarOperationCreator creator){
+        public Scalarization(String strScalarized, String strDeriviation, ScalarOperatorCreator creator){
             super(strScalarized, strDeriviation, creator);
         }
     }
 
-    class Operation extends TypeComponent<OperationType.OperationCreator>
+    class Operation extends TypeComponent<OperatorCreator>
     {
-        public Operation(String strOperation, String strDeriviation, OperationType.OperationCreator creator){
+        public Operation(String strOperation, String strDeriviation, OperatorCreator creator){
             super(strOperation, strDeriviation, creator);
         }
     }

@@ -11,7 +11,7 @@ public class BroadJavaTests {
     @Test
     public void test_autograd()
     {
-        Neureka.instance().settings().reset();
+        Neureka.instance().reset();
         Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(false);
         Neureka.instance().settings().view().setLegacy(true);
 
@@ -155,7 +155,7 @@ public class BroadJavaTests {
 
     @Test
     public void test_tensor_operations_and_autograd() {
-        Neureka.instance().settings().reset();
+        Neureka.instance().reset();
         Neureka.instance().settings().indexing().setLegacy(true);
         Neureka.instance().settings().view().setLegacy(true);
 

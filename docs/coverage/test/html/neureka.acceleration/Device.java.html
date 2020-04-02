@@ -12,15 +12,12 @@ public interface Device
         //TODO: Device plugin finding!
 <span class="fc" id="L13">        Device[] result = {null};</span>
 <span class="fc" id="L14">        String search = name.toLowerCase();</span>
-<span class="fc" id="L15">        OpenCLPlatform.PLATFORMS().forEach((p)-&gt; {</span>
-<span class="fc" id="L16">            p.getDevices().forEach((d)-&gt;{</span>
+<span class="fc" id="L15">        OpenCLPlatform.PLATFORMS().forEach( p -&gt;</span>
+<span class="fc" id="L16">            p.getDevices().forEach( d -&gt;{</span>
 <span class="fc" id="L17">                String str = (d.name()+&quot; | &quot;+d.vendor()+&quot; | &quot;+d.type()).toLowerCase();</span>
-<span class="fc bfc" id="L18" title="All 2 branches covered.">                if(str.contains(search)){</span>
-<span class="fc" id="L19">                    result[0] = d;</span>
-                }
-<span class="fc" id="L21">            });</span>
-<span class="fc" id="L22">        });</span>
-<span class="fc" id="L23">        return result[0];</span>
+<span class="fc bfc" id="L18" title="All 2 branches covered.">                if(str.contains(search)) result[0] = d;</span>
+<span class="fc" id="L19">            }));</span>
+<span class="fc" id="L20">        return result[0];</span>
     }
 
     void dispose();

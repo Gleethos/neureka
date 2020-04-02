@@ -4,7 +4,7 @@ import neureka.calculus.environment.OperationType;
 
 public class Division extends OperationType {
 
-    private static final OperationCreator _creator =
+    private static final OperatorCreator _creator =
     (inputs, d) -> {
         double[] t1_val = inputs[1].value64();
         double[] t2_val = inputs[2].value64();

@@ -32,9 +32,9 @@ public class Tsr extends AbstractNDArray
      */
     private int _flags = 0;//Default
 
-    private final static int RQS_GRADIENT_MASK = 1;
-    private final static int IS_OUTSOURCED_MASK = 2;
-    private final static int IS_VIRTUAL_MASK = 4;
+    private static final int RQS_GRADIENT_MASK = 1;
+    private static final int IS_OUTSOURCED_MASK = 2;
+    private static final int IS_VIRTUAL_MASK = 4;
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -55,8 +55,6 @@ public class Tsr extends AbstractNDArray
             else _flags -= RQS_GRADIENT_MASK;
         }
     }
-
-    //>>>
 
     public Tsr setIsOutsourced(boolean isOutsourced) {
         _setIsOutsourced(isOutsourced);
@@ -89,8 +87,6 @@ public class Tsr extends AbstractNDArray
             else _flags -= IS_OUTSOURCED_MASK;
         }
     }
-
-    //>>>
 
     public Tsr setIsVirtual(boolean isVirtual) {
         if (isVirtual() != isVirtual) {
@@ -130,7 +126,6 @@ public class Tsr extends AbstractNDArray
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //
 
     /**
      * This method is executed when a new Component is added to the tensor.
@@ -228,12 +223,14 @@ public class Tsr extends AbstractNDArray
         _translation = tensor._translation;
         _spread = tensor._spread;
         _offset = tensor._offset;
-        _components = tensor._components;
+        _components = Collections.synchronizedList(new ArrayList<Object>());//tensor._components
         _flags = tensor._flags;
-        if (_components!=null) {//Inform components about their new owner:
-            _components.forEach((c) -> {
-                if(c instanceof Component) ((Component)c).update(tensor, this);
-            });
+        if (tensor._components!=null) {//Inform components about their new owner:
+            _components.addAll(tensor._components);
+            List<Object> snapshot = new ArrayList<>(tensor._components);
+            for (Object o : snapshot) {
+                if (o instanceof Component) ((Component<Tsr>) o).update(tensor, this);
+            }
         }
         tensor._value = null;
         tensor._shape = null;
@@ -289,6 +286,9 @@ public class Tsr extends AbstractNDArray
 
     //CONSTRUCTION :
     //=========================
+
+    public Tsr(){}
+
     //Generic construction: (Groovy, Scala, ...)
     public Tsr(Object arg){
         _construct(new Object[]{arg});
@@ -448,8 +448,6 @@ public class Tsr extends AbstractNDArray
         _construct(tsrs, f.toString(), doAD);
     }
 
-    public Tsr() {}// creates empty tensor;
-
     public Tsr(double value){
         _construct(new int[]{1}, value);
     }
@@ -490,7 +488,6 @@ public class Tsr extends AbstractNDArray
     public Tsr(Tsr tensor, boolean cpy) {
         _value = (tensor.is64())?new double[tensor.size()]:new float[tensor.size()];
         _components = null;
-        //_setFlags(0);
         int length = (tensor.is64())?((double[])_value).length:((float[])_value).length;
         if(cpy) {
             if (tensor.is64()) {
@@ -502,8 +499,6 @@ public class Tsr extends AbstractNDArray
             }
         }
         _configureFromNewShape(tensor.shape());
-        //_offset = tensor._offset;
-        //_spread = tensor._spread;
     }
 
 
@@ -555,9 +550,9 @@ public class Tsr extends AbstractNDArray
     }
 
     public void applyGradient() {
-        forComponent(JITProp.class, (jit)->((JITProp)jit).execute());
-        forComponent(Tsr.class, (g)->{
-            forComponent(Optimizer.class, (o)->((Optimizer)o).optimize((Tsr)g));
+        forComponent(JITProp.class, jit->((JITProp)jit).execute());
+        forComponent(Tsr.class, g->{
+            forComponent(Optimizer.class, o->((Optimizer)o).optimize((Tsr)g));
             remove(Tsr.class);
             FunctionBuilder.build("I[0]<-(I[0]+I[1])", false).activate(new Tsr[]{this, (Tsr)g});
         });
@@ -566,7 +561,7 @@ public class Tsr extends AbstractNDArray
     //TENSOR OPERATION (OVERLOADABLE):
     //=================================
     public Tsr T() {//Transposed!
-        StringBuilder operation = new StringBuilder();//TODO: make a static version of this which is always available
+        StringBuilder operation = new StringBuilder();
         for (int i=rank()-1; i>=0; i--) operation.append(i).append((i == 0) ? "" : ", ");
         operation = new StringBuilder("[" + operation + "]:(I[0])");
         return new Tsr(this, operation.toString());
@@ -718,6 +713,7 @@ public class Tsr extends AbstractNDArray
         if (this.isOutsourced()){
             Device device = (Device) this.find(Device.class);
             device.add(subset, this);
+            subset.setIsOutsourced(true);
         }
         if (this.isVirtual()) subset.setIsVirtual(true);
         subset.add(new Relation().addParent(this));
@@ -879,7 +875,7 @@ public class Tsr extends AbstractNDArray
     public static class Exec
     {
         public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr) {
-            tensor = (newTsr) ? new Tsr(tensor, true) : tensor;//TODO: use getAT(key)
+            tensor = (newTsr) ? new Tsr(tensor, true) : tensor;
             tensor._shape = _cached(Utility.Indexing.shpCheck(Utility.Indexing.rearrange(tensor._shape, newForm), tensor));
             tensor._translation = _cached(Utility.Indexing.rearrange(tensor._translation, tensor._shape, newForm));
             tensor._idxmap =  _cached(Utility.Indexing.newTlnOf(tensor._shape));
@@ -951,10 +947,10 @@ public class Tsr extends AbstractNDArray
     }
 
     public Tsr addToGradient(Tsr error) {
-        if(!forComponent(Tsr.class, (g)->{
-            this.add(FunctionBuilder.build("I[0]<-(I[0]+I[1])", false).activate(new Tsr[]{(Tsr)g, error}));
-        })){
-            this.add(error).forComponent(Device.class, (d)->((Device)d).add(error));
+        if(!forComponent(Tsr.class,  g ->
+            this.add(FunctionBuilder.build("I[0]<-(I[0]+I[1])", false).activate(new Tsr[]{(Tsr)g, error}))
+        )){
+            this.add(error).forComponent(Device.class, d ->((Device)d).add(error));
         }
         return this;
     }
@@ -1103,7 +1099,7 @@ public class Tsr extends AbstractNDArray
         if (mode.contains("d")) {
             if (this.has(GraphNode.class) && ((GraphNode) this.find(GraphNode.class)).size() > 0) {
                 GraphNode node = (GraphNode) this.find(GraphNode.class);
-                if (node.mode() != 0) {//node.getMap().values().stream().coll
+                if (node.mode() != 0) {
                     AtomicReference<String> enclosed = new AtomicReference<>("; ");
                     node.forEachDerivative((t, d) -> {
                         if (d.derivative()==null){
@@ -1139,8 +1135,6 @@ public class Tsr extends AbstractNDArray
         return toString("dgc");
     }
 
-
-    // STATIC:
 
     public static void makeFit(Tsr[] tsrs){
         int largest = 0;

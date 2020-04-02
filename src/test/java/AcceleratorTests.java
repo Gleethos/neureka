@@ -16,7 +16,7 @@ public class AcceleratorTests
     @Test
     public void test_openCL_device_if_present()
     {
-        Neureka.instance().settings().reset();
+        Neureka.instance().reset();
         Neureka.instance().settings().view().setLegacy(true);
         if(!System.getProperty("os.name").toLowerCase().contains("windows")){
             return;
@@ -264,7 +264,7 @@ public class AcceleratorTests
     @Test
     public void test_gpu_IO(){
 
-        Neureka.instance().settings().reset();
+        Neureka.instance().reset();
         if(!System.getProperty("os.name").toLowerCase().contains("windows")){
             return;
         }

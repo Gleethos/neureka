@@ -11,6 +11,7 @@ Neureka.instance {
 
         indexing {
             delegate.legacy = false
+            delegate.thorough = true
         }
 
         debug {

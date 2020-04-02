@@ -100,7 +100,7 @@
       for(i in conf["difficulty"]..conf["difficulty"]+conf["sample_size"]){
          result = benchmark(
                  conf["iterations"],
-                 i+(i-conf["difficulty"])*conf["intensifier"]
+                 conf["difficulty"]+(i-conf["difficulty"])*conf["intensifier"]
          )
          result.each(k, v)->{
             if (result_map[k]==null) result_map[k] = v
@@ -108,15 +108,20 @@
          }
       }
       File asCSV = new File("docs/benchmarks/"+filename)
+      def ci = 0
+      def rowSize = result_map.size()
       result_map.each(k, v)->{
          asCSV.append(k)
-         asCSV.append(",")
+         if(ci<rowSize-1) asCSV.append(",")
+         ci++
       }
       asCSV.append("\n")
       for(i in 1..conf["sample_size"]){
+         ci = 0
          result_map.each((k, v)->{
             asCSV.append(v[i-1])
-            asCSV.append(",")
+            if(ci<rowSize-1) asCSV.append(",")
+            ci++
          })
          asCSV.append("\n")
       }

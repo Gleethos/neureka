@@ -5,12 +5,10 @@ import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.Type;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.*;
-import java.util.function.Supplier;
 
 public class HostCPU extends AbstractDevice {
     private static final HostCPU _instance;

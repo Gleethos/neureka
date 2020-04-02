@@ -48,24 +48,19 @@ public interface Function
 
             GraphLock newLock = new GraphLock(function, inputs);
             for (Tsr t : inputs) {
-                if(t.has(GraphNode.class)){
-                    ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);
-                } else {
-                    new GraphNode(function, newLock, ()->t);
-                }
+                if(t.has(GraphNode.class)) ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);
+                else new GraphNode(function, newLock, ()-> t);
             }
             Tsr result = null;
-            if(activation==null){
-                result = function.activate(inputs);
-            } else {
-                result = activation.get();
-            }
+            if(activation==null) result = function.activate(inputs);
+            else result = activation.get();
+
             Function.CACHE.free(newLock);
             boolean resultIsUnique = true;
             if(drain!=null){
                 for(Tsr t : inputs){
                     Tsr g = (Tsr)t.find(Tsr.class);
-                    if(t == result || (g!=null && g==result)){
+                    if (t == result || (g!=null && g==result)) {
                         resultIsUnique = false;
                         break;
                     }
