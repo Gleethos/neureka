@@ -41,15 +41,15 @@ class ThoroughGroovyTests
         //        "neureka_bench_CPU_"+currentDate+".csv",
         //        HostCPU.instance()
         //)
-        session([
-                    "iterations":1,
-                    "sample_size":50,
-                    "difficulty":500,
-                    "intensifier":0
-                ],
-                "neureka_bench_GPU_200x_cd30_"+currentDate+".csv",
-                Device.find("nvidia")
-        )
+        //session([
+        //            "iterations":1,
+        //            "sample_size":50,
+        //            "difficulty":500,
+        //            "intensifier":0
+        //        ],
+        //        "neureka_bench_GPU_200x_cd30_"+currentDate+".csv",
+        //        Device.find("nvidia")
+        //)
     }
 
     @Test
