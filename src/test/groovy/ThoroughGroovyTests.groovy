@@ -11,8 +11,6 @@ import org.junit.Test
 import util.DummyDevice
 import util.Utility
 
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.text.SimpleDateFormat
 
 class ThoroughGroovyTests
@@ -43,12 +41,21 @@ class ThoroughGroovyTests
         //)
         //session([
         //            "iterations":1,
-        //            "sample_size":50,
+        //            "sample_size":100,
         //            "difficulty":500,
         //            "intensifier":0
         //        ],
-        //        "neureka_bench_GPU_200x_cd30_"+currentDate+".csv",
+        //        "neureka_bench_GPU_100x_cd100_"+currentDate+".csv",
         //        Device.find("nvidia")
+        //)
+        //session([
+        //            "iterations":1,
+        //            "sample_size":500,
+        //            "difficulty":5,
+        //            "intensifier":0
+        //        ],
+        //        "neureka_bench_CPU_500x_cd5_"+currentDate+".csv",
+        //        HostCPU.instance()
         //)
     }
 

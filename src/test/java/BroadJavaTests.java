@@ -464,7 +464,7 @@ public class BroadJavaTests {
                 "i0xi1",
                 new String[]{"[2x1x2]:(4.0, -13.0, 5.0, -4.0); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"},
                 new Tsr(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
-                new double[][]{{-1.0, -1.0, 5.0, 5.0}, null}
+                new double[][]{{-1.0, -1.0, 5.0, 5.0}, new double[0]}
         );
         Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false);
         //---

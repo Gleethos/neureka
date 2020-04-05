@@ -160,8 +160,8 @@ public class AcceleratorTests
                 },
                 new Tsr(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
                 (legacyIndexing)
-                        ?new double[][]{{-1.0, -1.0, 5.0, 5.0}, null}
-                        :new double[][]{{1.0, 3.0, 1.0, 3.0}, null}
+                        ?new double[][]{{-1.0, -1.0, 5.0, 5.0}, new double[0]}
+                        :new double[][]{{1.0, 3.0, 1.0, 3.0}, new double[0]}
         );
         //result = new Tsr(new Tsr[]{tensor1, tensor1}, "ig0<-i0");
         //tester.testContains(tensor1.toString("g"), new String[]{"test"}, "");
@@ -174,10 +174,10 @@ public class AcceleratorTests
         listOfTensors.add(x);
         listOfTensors.add(b);
         listOfTensors.add(w);
-        /**
+        /*
          *      ((3-4)*2)^2 = 4
          *  dx:   8*3 - 32  = -8
-         * */
+         */
         Tsr y = new Tsr(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
         tester.testTensor(y, new String[]{"[1]:(4.0); ->d[1]:(-8.0), "});
         y.backward(new Tsr(2));
