@@ -4,7 +4,7 @@ import neureka.Tsr;
 
 public interface Optimizer {
 
-    void optimize(Tsr t);
+    void optimize();
 
 
 }

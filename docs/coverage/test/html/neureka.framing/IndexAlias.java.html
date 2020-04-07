@@ -9,7 +9,7 @@ public class IndexAlias
 
     private Map&lt;Object, Object&gt; _mapping;
 
-<span class="fc" id="L12">    public IndexAlias(List&lt;List&gt; labels){</span>
+<span class="fc" id="L12">    public IndexAlias(List&lt;List&lt;Object&gt;&gt; labels){</span>
 <span class="fc" id="L13">        _mapping = new LinkedHashMap&lt;&gt;(labels.size());</span>
 <span class="fc bfc" id="L14" title="All 2 branches covered.">        for(int i=0; i&lt;labels.size(); i++) _mapping.put(i, new LinkedHashMap&lt;&gt;());</span>
 <span class="fc bfc" id="L15" title="All 2 branches covered.">        for(int i=0; i&lt;labels.size(); i++){</span>

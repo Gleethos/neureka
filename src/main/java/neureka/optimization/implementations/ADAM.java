@@ -3,8 +3,9 @@ package neureka.optimization.implementations;
 import neureka.Tsr;
 import neureka.calculus.Function;
 import neureka.calculus.factory.assembly.FunctionBuilder;
+import neureka.optimization.Optimizer;
 
-public class ADAM {
+public class ADAM implements Optimizer {
 
     //VARIABLES...
     private Tsr a;
@@ -31,8 +32,8 @@ public class ADAM {
         Tsr g = new Tsr(w.shape());
         inject.activate(new Tsr[]{g, w});
 
-        m = new Tsr(b1, "*", m, "+(1-", b1, ")*", g);
-        v = new Tsr(b2, "*", v, "+(1-", b2, ")*", g);
+        m = new Tsr(b1, "*", m, " + ( 1-", b1, ") *", g);
+        v = new Tsr(b2, "*", v, " + ( 1-", b2, ") *", g);
 
         Tsr mh = null;
         Tsr vh = null;
@@ -41,10 +42,15 @@ public class ADAM {
         vh = new Tsr(v, "/(1-", b2, ")");
 
         Tsr newW = new Tsr(w,"-",a,"*(",mh,"/(",vh,"^-2+",e,"))");
-        Function f = FunctionBuilder.build("I[0]<<xI[1]", false);
-        Function r = FunctionBuilder.build("Ig[0]<<x0", false);
+        Function f = FunctionBuilder.build("I[0] <- I[1]", false);
+        Function r = FunctionBuilder.build("Ig[0] <- 0", false);
         f.activate(new Tsr[]{w, newW});
         r.activate(new Tsr[]{w});
+    }
+
+    @Override
+    public void optimize() {
+        _optimize();
     }
 
 }

@@ -91,6 +91,21 @@ public class NTester_Tensor extends NTester
         return (printSessionEnd()>0)?1:0;
     }
 
+    public int testTensorUtility_makeFit(int[] a, int[] b, int[][] expected){
+        int [][] result =  Tsr.Utility.Indexing.makeFit(a, b);
+        printSessionStart("Testing Tsr.indexing: dimension _translation!");
+        assertTrue("Invalid result!", result!=null && result.length==2);
+        assertIsEqual(
+                stringified(result[0]),
+                stringified(expected[0])
+        );
+        assertIsEqual(
+                stringified(result[1]),
+                stringified(expected[1])
+        );
+        return (printSessionEnd()>0)?1:0;
+    }
+
     public int testTensCon(int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd){
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfCon(frstShp, scndShp);

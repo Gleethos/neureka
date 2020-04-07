@@ -279,7 +279,7 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
             public static int[] shpCheck(int[] newShp, Tsr t) {
                 if (szeOfShp(newShp) != t.size()) {
                     throw new IllegalArgumentException(
-                            "[Tsr][shpCheck(int[] newShp, Tsr t)]: New shape does not match tensor size!" +
+                            "New shape does not match tensor size!" +
                                     " (" + Utility.Stringify.strConf(newShp) + ((szeOfShp(newShp) < t.size()) ? "<" : ">") + Utility.Stringify.strConf(t.shape()) + ")");
                 }
                 return newShp;
@@ -294,6 +294,32 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
                     else if (newForm[i] >= 0) newTln[i] = tln[newForm[i]];
                 }
                 return newTln;
+            }
+
+            @Contract(pure = true)
+            public static int[][] makeFit(int[] sA, int[] sB){
+                int lastIndexOfA = 0;
+                for (int i=sA.length-1; i>=0; i--) {
+                    if(sA[i]!=1){
+                        lastIndexOfA = i;
+                        break;
+                    }
+                }
+                int firstIndexOfB = 0;
+                for (int i=0; i<sB.length; i++){
+                    if(sB[i]!=1){
+                        firstIndexOfB = i;
+                        break;
+                    }
+                }
+                int newSize = lastIndexOfA + sB.length - firstIndexOfB;
+                int[] rsA = new int[newSize];
+                int[] rsB = new int[newSize];
+                for(int i=0; i<newSize; i++) {
+                    if(i<=lastIndexOfA) rsA[i] = i; else rsA[i] = -1;
+                    if(i>=lastIndexOfA) rsB[i] = i-lastIndexOfA+firstIndexOfB; else rsB[i] = -1;
+                }
+                return new int[][]{rsA, rsB};
             }
 
             @Contract(pure = true)

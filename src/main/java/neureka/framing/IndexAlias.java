@@ -9,7 +9,7 @@ public class IndexAlias
 
     private Map<Object, Object> _mapping;
 
-    public IndexAlias(List<List> labels){
+    public IndexAlias(List<List<Object>> labels){
         _mapping = new LinkedHashMap<>(labels.size());
         for(int i=0; i<labels.size(); i++) _mapping.put(i, new LinkedHashMap<>());
         for(int i=0; i<labels.size(); i++){

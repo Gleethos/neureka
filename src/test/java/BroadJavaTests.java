@@ -478,6 +478,17 @@ public class BroadJavaTests {
         expected = new int[]{1, 4, 4 * 2, 4 * 2 * 9, 4 * 2 * 9 * 5, 4 * 2 * 9 * 5 * 6};
         tester.testTensorUtility_translation(shape, expected);
         //---
+
+        tester.testTensorUtility_makeFit(
+                new int[]{1, 7, 9, 2, 1, 1},
+                new int[]{1, 1, 3, 2, 7, 5, 1},
+                new int[][]{
+                        new int[]{ 0,  1,  2, 3, -1, -1, -1, -1},
+                        new int[]{-1, -1, -1, 2,  3,  4,  5,  6}
+                }
+        );
+
+        //---
         int[] frstShape = {4, 1};
         double[] frstData = {
                 -2, -1, 4, 3,
@@ -608,9 +619,7 @@ public class BroadJavaTests {
         };
 
         scndShape = new int[]{2, 1};
-        scndData = new double[]{
-                4, -2,
-        };
+        scndData = new double[]{4, -2,};
         tester.testTensBroadcast(
                 frstShape, scndShape,
                 frstData, scndData,
