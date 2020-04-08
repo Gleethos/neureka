@@ -11,16 +11,43 @@ import org.junit.Test
 import util.DummyDevice
 import util.Utility
 
-import java.text.SimpleDateFormat
 
 class ThoroughGroovyTests
 {
 
     @Test
     void test_benchmark_script(){
+
+        Neureka.instance().reset()
+
+        Tsr t = new Tsr([1, 3, 6])
+        assert !t.toString().contains("empty")
+        assert t.toString().contains("(1x3x6)")
+        t = new Tsr([1, 3.0, 6])
+        assert !t.toString().contains("empty")
+        assert t.toString().contains("(1x3x6):[0.0, 0.0, 0.0")
+        t = new Tsr([1, 3.3, 6])
+        assert !t.toString().contains("empty")
+        assert t.toString().contains("(3):[1.0, 3.3, 6.0]")
+
         String benchmark = Utility.readResource("benchmark.groovy", this)
         def session = new GroovyShell().evaluate(benchmark)
-        String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date())
+        def hash = ""
+        session([
+                    "iterations":1,
+                    "sample_size":20,
+                    "difficulty":15,
+                    "intensifier":0
+                ],
+                null,
+                Device.find("nvidia"),
+                tsr->{
+                    hash = (hash+tsr.toString()).md5()
+                }
+        )
+        assert hash=="56b2eb74955e49cd777469c7dad0536e"
+
+        //String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date())
         //session([
         //            "iterations":1,
         //            "sample_size":20,
@@ -28,7 +55,8 @@ class ThoroughGroovyTests
         //            "intensifier":50
         //        ],
         //        "neureka_bench_GPU_"+currentDate+".csv",
-        //        Device.find("nvidia")
+        //        Device.find("nvidia"),
+        //        tsr->{}
         //)
         //session([
         //            "iterations":1,
@@ -37,7 +65,8 @@ class ThoroughGroovyTests
         //            "intensifier":50
         //        ],
         //        "neureka_bench_CPU_"+currentDate+".csv",
-        //        HostCPU.instance()
+        //        HostCPU.instance(),
+        //        tsr->{}
         //)
         //session([
         //            "iterations":1,
@@ -46,7 +75,8 @@ class ThoroughGroovyTests
         //            "intensifier":0
         //        ],
         //        "neureka_bench_GPU_100x_cd100_"+currentDate+".csv",
-        //        Device.find("nvidia")
+        //        Device.find("nvidia"),
+        //        tsr->{}
         //)
         //session([
         //            "iterations":1,
@@ -55,7 +85,8 @@ class ThoroughGroovyTests
         //            "intensifier":0
         //        ],
         //        "neureka_bench_CPU_500x_cd5_"+currentDate+".csv",
-        //        HostCPU.instance()
+        //        HostCPU.instance(),
+        //        tsr->{}
         //)
     }
 

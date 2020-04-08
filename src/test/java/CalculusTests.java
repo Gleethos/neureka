@@ -6,6 +6,19 @@ import util.NTester_Function;
 
 public class CalculusTests {
 
+    @Test
+    public void someFun(){
+
+        int i = 1;
+        i = i << 1;
+        i += 1;
+        i = i << 1;
+        i += 1;
+        i = i << 1;
+        i += 1;
+        System.out.println(i);
+        System.out.println(Integer.toBinaryString(i));
+    }
 
     @Test
     public void test_scalar_calculus(){

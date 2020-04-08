@@ -5,7 +5,7 @@
    import java.nio.file.Files
    import java.nio.file.Paths
 
-   return (Map<String, Integer> conf, String filename, Device device) ->
+   return (Map<String, Integer> conf, String filename, Device device, Closure tester) ->
    {
       // CORE BENCHMARK CODE START:
       def benchmark =  (int iterations, int difficulty) ->
@@ -30,7 +30,7 @@
             Tsr A = new Tsr([size, size, 1], "apple").add(device)
             Tsr B = new Tsr([1, size, size], "banana").add(device)
             measure "matrix_multiplication", {
-               for (int i; i < N; i++) "I[0]xI[1]" % [A, B]
+               for (int i=0; i < N; i++) tester("I[0]xI[1]" % [A, B])
             }
          }
          //==========================================================================#
@@ -43,7 +43,7 @@
             Tsr D = new Tsr([size], "grapefruit").add(device)
             time = System.nanoTime()
             measure "vector_multiplication", {
-               for (int i; i < N; i++) "I[0]xI[1]" % [C, D]
+               for (int i; i < N; i++) tester("I[0]xI[1]" % [C, D])
             }
          }
          //==========================================================================#
@@ -57,6 +57,7 @@
                for (int i; i < N; i++) {
                   Tsr rowconvol = a[1..-2, 0..-1] + a[0..-3, 0..-1] + a[2..-1, 0..-1]//(98, 100) (98, 100) (98, 100)
                   Tsr colconvol = rowconvol[0..-1, 1..-2] + rowconvol[0..-1, 0..-3] + rowconvol[0..-1, 2..-1] - 9 * a[1..-2, 1..-2]
+                  tester(colconvol)
                   //Example for size=100 : (98, 98)+(98, 98)+(98, 98)-9*(98, 98)
                }
             }
@@ -78,6 +79,7 @@
                   Tsr v = t1 * 10
                   v = v * t2 / t1
                   v = v ** 0.5
+                  tester(v)
                }
             }
          }
@@ -94,9 +96,6 @@
 
       def result_map = [:]
       def result
-      BufferedWriter writer = Files.newBufferedWriter(Paths.get("docs/benchmarks/"+filename));
-      writer.write("")
-      writer.flush()
       for(i in conf["difficulty"]..conf["difficulty"]+conf["sample_size"]){
          result = benchmark(
                  conf["iterations"],
@@ -107,23 +106,28 @@
             else result_map[k] += v
          }
       }
-      File asCSV = new File("docs/benchmarks/"+filename)
-      def ci = 0
-      def rowSize = result_map.size()
-      result_map.each(k, v)->{
-         asCSV.append(k)
-         if(ci<rowSize-1) asCSV.append(",")
-         ci++
-      }
-      asCSV.append("\n")
-      for(i in 1..conf["sample_size"]){
-         ci = 0
-         result_map.each((k, v)->{
-            asCSV.append(v[i-1])
+      if(filename!=null){
+         BufferedWriter writer = Files.newBufferedWriter(Paths.get("docs/benchmarks/"+filename));
+         writer.write("")
+         writer.flush()
+         File asCSV = new File("docs/benchmarks/"+filename)
+         def ci = 0
+         def rowSize = result_map.size()
+         result_map.each(k, v)->{
+            asCSV.append(k)
             if(ci<rowSize-1) asCSV.append(",")
             ci++
-         })
+         }
          asCSV.append("\n")
+         for(i in 1..conf["sample_size"]){
+            ci = 0
+            result_map.each((k, v)->{
+               asCSV.append(v[i-1])
+               if(ci<rowSize-1) asCSV.append(",")
+               ci++
+            })
+            asCSV.append("\n")
+         }
       }
    }
 

@@ -22,7 +22,7 @@ import java.util.WeakHashMap;
  *  are not extended more than once.
  *
  */
-public abstract class AbstractNDArray extends AbstractComponentOwner
+public abstract class AbstractNDArray<InstanceType> extends AbstractComponentOwner<InstanceType>
 {
     static
     {
@@ -47,7 +47,7 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
     /**
      *  The mapping of idx array.
      */
-    protected int[] _idxmap; // Used to avoid distorion when reshaping!
+    protected int[] _idxmap; // Used to avoid distortion when reshaping!
     /**
      *  Produces the strides of a tensor subset / slice
      */
@@ -70,7 +70,6 @@ public abstract class AbstractNDArray extends AbstractComponentOwner
     public  boolean is32(){
         return _value instanceof float[];
     }
-
 
     protected static int[] _cached(int[] data) {
         if(true) return data;

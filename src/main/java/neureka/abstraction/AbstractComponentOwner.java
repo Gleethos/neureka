@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  *  are not extended more than once.
  *
  */
-public abstract class AbstractComponentOwner {
+public abstract class AbstractComponentOwner<InstanceType> {
 
     /**
      *  (Tensor) components
@@ -41,7 +41,7 @@ public abstract class AbstractComponentOwner {
      * @param componentClass The type/class of a component which will be removed by this method.
      * @return This very class.
      */
-    public AbstractComponentOwner remove(Class componentClass) {
+    public InstanceType remove(Class componentClass) {
         Object oldComponent = find(componentClass);
         if (oldComponent != null) {
             _components.remove(oldComponent);
@@ -50,7 +50,7 @@ public abstract class AbstractComponentOwner {
         if (_components != null && _components.size() == 0) {
             _components = null;
         }
-        return  this;
+        return (InstanceType)this;
     }
 
     /**
@@ -67,8 +67,8 @@ public abstract class AbstractComponentOwner {
      * @param newComponent The new component which should be added to the components list.
      * @return This very class.
      */
-    public AbstractComponentOwner add(Object newComponent) {
-        if (newComponent == null) return this;
+    public InstanceType add(Object newComponent) {
+        if (newComponent == null) return (InstanceType)this;
         Object oldCompartment = null;
         if (_components != null) {
             oldCompartment = find(newComponent.getClass());
@@ -80,7 +80,7 @@ public abstract class AbstractComponentOwner {
             _components = new ArrayList<>();
         }
         _components.add(_addOrReject(newComponent));
-        return  this;
+        return (InstanceType)this;
     }
 
     /**

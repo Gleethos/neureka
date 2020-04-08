@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class Tsr extends AbstractNDArray
+public class Tsr extends AbstractNDArray<Tsr>
 {
     static{ _CPU = HostCPU.instance(); }
     
@@ -138,7 +138,6 @@ public class Tsr extends AbstractNDArray
      */
     @Override
     protected Object _addOrReject(Object newComponent){
-        newComponent = (newComponent instanceof int[]) ? _cached((int[]) newComponent) : newComponent;
         if (newComponent instanceof Device && !((Device)newComponent).has(this)){
             ((Device)newComponent).add(this);
         }
@@ -315,6 +314,37 @@ public class Tsr extends AbstractNDArray
             }
         }
         _construct(shp, value);
+    }
+
+    public Tsr(List conf){
+        boolean isNatural = !(conf.size() > 64);
+        for(Object e : conf){
+            if(!isNatural) break;
+            double asNum = (e instanceof BigDecimal)? ((BigDecimal)e).doubleValue() : (e instanceof Double) ?(Double)e : (Integer)e;
+            isNatural = asNum % 1 == 0;
+        }
+        if(isNatural){
+            int[] shape = new int[conf.size()];
+            for(int i=0; i<shape.length; i++) {
+                shape[i] = (conf.get(i) instanceof BigDecimal)
+                        ? ((BigDecimal)conf.get(i)).intValue() :
+                            (conf.get(i) instanceof Double)
+                                    ?((Double)conf.get(i)).intValue()
+                                    :((Integer)conf.get(i));
+            }
+            _construct(shape);
+        } else {
+            double[] value = new double[conf.size()];
+            for(int i=0; i<value.length; i++) {
+                value[i] = (conf.get(i) instanceof BigDecimal)
+                        ? ((BigDecimal)conf.get(i)).doubleValue() :
+                            (conf.get(i) instanceof Double)
+                                ?((Double)conf.get(i)).doubleValue()
+                                :((Integer)conf.get(i));
+            }
+            _construct(new int[]{conf.size()}, value);
+        }
+
     }
 
     public Tsr(Object arg1, Object arg2) {
