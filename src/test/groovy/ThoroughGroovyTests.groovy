@@ -16,7 +16,7 @@ class ThoroughGroovyTests
 {
 
     @Test
-    void test_benchmark_script(){
+    void test_benchmark_script_and_simple_tensor_constructor(){
 
         Neureka.instance().reset()
 
@@ -33,6 +33,7 @@ class ThoroughGroovyTests
         String benchmark = Utility.readResource("benchmark.groovy", this)
         def session = new GroovyShell().evaluate(benchmark)
         def hash = ""
+        String expected = "56b2eb74955e49cd777469c7dad0536e"
         session([
                     "iterations":1,
                     "sample_size":20,
@@ -45,7 +46,24 @@ class ThoroughGroovyTests
                     hash = (hash+tsr.toString()).md5()
                 }
         )
-        assert hash=="56b2eb74955e49cd777469c7dad0536e"
+        assert hash==expected
+
+        if(!System.getProperty("os.name").toLowerCase().contains("windows")) return
+
+        hash = ""
+        session([
+                "iterations":1,
+                "sample_size":20,
+                "difficulty":15,
+                "intensifier":0
+        ],
+                null,
+                Device.find("nvidia"),
+                tsr->{
+                    hash = (hash+tsr.toString()).md5()
+                }
+        )
+        assert hash==expected
 
         //String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date())
         //session([
