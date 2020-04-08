@@ -40,7 +40,7 @@ class ThoroughGroovyTests
                     "intensifier":0
                 ],
                 null,
-                Device.find("nvidia"),
+                HostCPU.instance(),
                 tsr->{
                     hash = (hash+tsr.toString()).md5()
                 }
