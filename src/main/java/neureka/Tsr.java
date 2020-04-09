@@ -484,12 +484,17 @@ public class Tsr extends AbstractNDArray<Tsr>
     }
 
     public Tsr(int[] shape, double[] value) {
-        _construct(shape, value);
+         _construct(shape, value);
     }
 
     private void _construct(int[] shape, double[] value) {
-        _value = value;
-        _configureFromNewShape(shape);
+        int size = Utility.Indexing.szeOfShp(shape);
+        if (size!=value.length) {
+            double[] newValue = new double[size];
+            for(int i=0; i<newValue.length; i++) newValue[i] = value[i%value.length];
+            _value = newValue;
+        } else _value = value;
+        this._configureFromNewShape(shape);
     }
 
     /**
@@ -508,7 +513,7 @@ public class Tsr extends AbstractNDArray<Tsr>
                 System.arraycopy(value, 0, _value, 0, length);
             }
         }
-        _configureFromNewShape(tensor.shape());
+        this._configureFromNewShape(tensor.shape());
     }
 
 

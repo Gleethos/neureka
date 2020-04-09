@@ -8,8 +8,8 @@ public class Division extends OperationType {
     (inputs, d) -&gt; {
 <span class="fc" id="L9">        double[] t1_val = inputs[1].value64();</span>
 <span class="fc" id="L10">        double[] t2_val = inputs[2].value64();</span>
-<span class="pc bpc" id="L11" title="1 of 2 branches missed.">        if (d &lt; 0) {</span>
-<span class="nc" id="L12">            return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] / t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="fc bfc" id="L11" title="All 2 branches covered.">        if (d &lt; 0) {</span>
+<span class="fc" id="L12">            return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] / t2_val[inputs[2].i_of_idx(t2Idx)];</span>
         } else {
 <span class="fc" id="L14">            return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
 <span class="fc bfc" id="L15" title="All 2 branches covered.">                if (d == 0) {</span>

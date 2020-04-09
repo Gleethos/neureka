@@ -11,6 +11,9 @@ import org.junit.Test
 import util.DummyDevice
 import util.Utility
 
+import java.lang.ref.Cleaner
+import java.lang.ref.WeakReference
+
 
 class ThoroughGroovyTests
 {
@@ -208,6 +211,18 @@ class ThoroughGroovyTests
         assert t.toString().contains("5.0")
         t = new Tsr("(", c, "*","3", ")+", "(","1+", a,")", "*", b)
         assert t.toString().contains("5.0")
+
+        t = new Tsr([2, 2], [2, 4, 4])
+        assert t.toString().contains("(2x2):[2.0, 4.0, 4.0, 2.0]")
+        t = new Tsr([2], [3, 5, 7])
+        assert t.toString().contains("(2):[3.0, 5.0]")
+        assert t.value64().length==2
+
+        t = new Tsr(new int[]{2, 2}, new double[]{2, 4, 4})
+        assert t.toString().contains("(2x2):[2.0, 4.0, 4.0, 2.0]")
+        t = new Tsr(new int[]{2}, new double[]{3, 5, 7})
+        assert t.toString().contains("(2):[3.0, 5.0]")
+        assert t.value64().length==2
     }
 
 
@@ -474,17 +489,17 @@ class ThoroughGroovyTests
 
     }
 
-    Tsr sigmoid(Tsr x) {
+    static Tsr sigmoid(Tsr x) {
         return new Tsr(x, "sig(I[0])")
         //return new Tsr(((Tsr.Create.E(x.shape())**(-x))+1), "1/I[0]")
         //return 1.0 / (1 + Tsr.Create.E(x.shape())**(-x))
     }
 
-    Tsr sigmoid_derivative(Tsr x) {
+    static Tsr sigmoid_derivative(Tsr x) {
         return x * (-x + 1)
     }
 
-    void feedforward(Tsr weights1, Tsr weights2, Tsr input, Tsr output, Tsr layer1) {
+    static void feedforward(Tsr weights1, Tsr weights2, Tsr input, Tsr output, Tsr layer1) {
         Tsr in0 = new Tsr([input, weights1], "i0xi1")
         layer1[] = sigmoid(in0)
         //println(layer1.toString("shp")+"=sig(  I"+input.toString("shp")+" X W"+weights1.toString("shp")+" )")
@@ -493,7 +508,7 @@ class ThoroughGroovyTests
         //println(output.toString("shp")+"=sig( L1"+layer1.toString("shp")+" X W"+weights2.toString("shp")+" )\n")
     }
 
-    void backprop(Tsr weights1, Tsr weights2, Tsr input, Tsr output, Tsr layer1, Tsr y) {
+    static void backprop(Tsr weights1, Tsr weights2, Tsr input, Tsr output, Tsr layer1, Tsr y) {
         // application of the chain rule to find derivative of the loss function with respect to weights2 and weights1
         Tsr delta = (y - output)*2
         Tsr derivative = delta*2*sigmoid_derivative(output)
@@ -713,7 +728,21 @@ class ThoroughGroovyTests
         assert t.isSliceParent()
         assert t.sliceCount()==4
 
-        //TODO: assert that slices are garbage collected...
+
+        //Cleaner cleaner = new Cleaner()
+        //def cleaned = [false]
+        //cleaner.register(x, ()->{
+        //    cleaned[0]=true
+        //})
+        WeakReference weak = new WeakReference(x)
+        x = null
+        System.gc()
+        for(int i : 1..100){
+            if(weak.get()==null) break
+            Thread.sleep(10)
+        }
+        assert weak.get()!=null
+
     }
 
     @Test
