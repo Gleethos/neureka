@@ -149,7 +149,7 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
                         b.delete();
                         break;
                     default:
-                        throw new IllegalStateException("[AbstractDevice]: Operation not found!");
+                        throw new IllegalStateException("Operation not found!");
                 }
             }
         } else {

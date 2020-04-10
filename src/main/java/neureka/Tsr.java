@@ -500,19 +500,19 @@ public class Tsr extends AbstractNDArray<Tsr>
     /**
      * @param tensor which acts as template for this new tensor.
      */
-    public Tsr(Tsr tensor, boolean cpy) {
-        _value = (tensor.is64()) ? new double[tensor.size()] : new float[tensor.size()];
+    public Tsr(Tsr tensor, boolean cpy) {//TODO: Remove this and make it be replaced by getAt([...])
+        _value = tensor._value;//(tensor.is64()) ? new double[tensor.size()] : new float[tensor.size()];
         _components = null;
-        int length = (tensor.is64()) ? ((double[])_value).length : ((float[])_value).length;
-        if(cpy) {
-            if (tensor.is64()) {
-                double[] value = tensor.value64();
-                System.arraycopy(value, 0, _value, 0, length);
-            } else {
-                float[] value = tensor.value32();
-                System.arraycopy(value, 0, _value, 0, length);
-            }
-        }
+        //int length = (tensor.is64()) ? ((double[])_value).length : ((float[])_value).length;
+        //if(cpy) {
+        //    if (tensor.is64()) {
+        //        double[] value = tensor.value64();
+        //        System.arraycopy(value, 0, _value, 0, length);
+        //    } else {
+        //        float[] value = tensor.value32();
+        //        System.arraycopy(value, 0, _value, 0, length);
+        //    }
+        //}
         this._configureFromNewShape(tensor.shape());
     }
 
@@ -621,8 +621,18 @@ public class Tsr extends AbstractNDArray<Tsr>
     public Tsr xor(Double value) {
         return xor(new Tsr(this.shape(), value));
     }
-    public Tsr dot(Tsr t){
-        return null;
+    public Tsr dot(Tsr b){
+        Tsr a = this;
+        int[][] fitter = AbstractNDArray.Utility.Indexing.makeFit(a.shape(), b.shape());
+        boolean doReshape = false;
+        for(int i=0; i<fitter[0].length && !doReshape; i++) if(fitter[0][i]!=i) doReshape = true;
+        for(int i=0; i<fitter[1].length && !doReshape; i++) if(fitter[1][i]!=i) doReshape = true;
+        if(doReshape){
+            a = Function.create(AbstractNDArray.Utility.Stringify.strConf(fitter[0])+":(I[0])").activate(a);
+            b = Function.create(AbstractNDArray.Utility.Stringify.strConf(fitter[0])+":(I[0])").activate(b);
+        }
+        Tsr result = Function.create("I[0]xI[1]").activate(new Tsr[]{a, b});
+        return result;
     }
 
     public Tsr label(String[][] labels) {
@@ -895,6 +905,7 @@ public class Tsr extends AbstractNDArray<Tsr>
 
         public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr) {
             tensor = (newTsr) ? new Tsr(tensor, true) : tensor;
+            //tensor = (newTsr) ? tensor.getAt(null) : tensor;
             tensor._shape = _cached(Utility.Indexing.shpCheck(Utility.Indexing.rearrange(tensor._shape, newForm), tensor));
             tensor._translation = _cached(Utility.Indexing.rearrange(tensor._translation, tensor._shape, newForm));
             tensor._idxmap =  _cached(Utility.Indexing.newTlnOf(tensor._shape));
