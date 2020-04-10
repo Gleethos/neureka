@@ -15,7 +15,7 @@ public interface Device
 <span class="fc" id="L15">        OpenCLPlatform.PLATFORMS().forEach( p -&gt;</span>
 <span class="fc" id="L16">            p.getDevices().forEach( d -&gt;{</span>
 <span class="fc" id="L17">                String str = (d.name()+&quot; | &quot;+d.vendor()+&quot; | &quot;+d.type()).toLowerCase();</span>
-<span class="fc bfc" id="L18" title="All 2 branches covered.">                if(str.contains(search)) result[0] = d;</span>
+<span class="pc bpc" id="L18" title="1 of 2 branches missed.">                if(str.contains(search)) result[0] = d;</span>
 <span class="fc" id="L19">            }));</span>
 <span class="fc" id="L20">        return result[0];</span>
     }

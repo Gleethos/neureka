@@ -14,15 +14,15 @@ import java.util.function.Consumer;
 
     @Override
     public void update(Tsr oldOwner, Tsr newOwner){
-<span class="nc bnc" id="L17" title="All 2 branches missed.">        if(_parent!=null){</span>
-<span class="nc" id="L18">            Relation pr = (Relation)_parent.find(Relation.class);</span>
-<span class="nc bnc" id="L19" title="All 2 branches missed.">            for(int i=0; i&lt;pr._children.length; i++){</span>
-<span class="nc bnc" id="L20" title="All 2 branches missed.">                if(pr._children[i].get()== oldOwner){</span>
-<span class="nc" id="L21">                    pr._children[i] = new WeakReference&lt;&gt;(newOwner);</span>
+<span class="pc bpc" id="L17" title="1 of 2 branches missed.">        if(_parent!=null){</span>
+<span class="fc" id="L18">            Relation pr = (Relation)_parent.find(Relation.class);</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">            for(int i=0; i&lt;pr._children.length; i++){</span>
+<span class="pc bpc" id="L20" title="1 of 2 branches missed.">                if(pr._children[i].get()== oldOwner){</span>
+<span class="fc" id="L21">                    pr._children[i] = new WeakReference&lt;&gt;(newOwner);</span>
                 }
             }
         }
-<span class="nc bnc" id="L25" title="All 2 branches missed.">        if(_children!=null){</span>
+<span class="pc bpc" id="L25" title="1 of 2 branches missed.">        if(_children!=null){</span>
 <span class="nc bnc" id="L26" title="All 2 branches missed.">            for(WeakReference&lt;Tsr&gt; c : _children){</span>
 <span class="nc" id="L27">                Tsr t = c.get();</span>
 <span class="nc bnc" id="L28" title="All 2 branches missed.">                if(t!=null){</span>
@@ -31,7 +31,7 @@ import java.util.function.Consumer;
                 }
             }
         }
-<span class="nc" id="L34">    }</span>
+<span class="fc" id="L34">    }</span>
 
 
     public Relation addParent(Tsr parent){

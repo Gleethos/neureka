@@ -1,5 +1,6 @@
 package neureka;
 
+import groovy.lang.Range;
 import neureka.abstraction.AbstractNDArray;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.Device;
@@ -11,6 +12,7 @@ import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.optimization.Optimizer;
 import neureka.utility.DataHelper;
+import org.apache.groovy.util.Maps;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -497,26 +499,6 @@ public class Tsr extends AbstractNDArray<Tsr>
         this._configureFromNewShape(shape);
     }
 
-    /**
-     * @param tensor which acts as template for this new tensor.
-     */
-    public Tsr(Tsr tensor, boolean cpy) {//TODO: Remove this and make it be replaced by getAt([...])
-        _value = tensor._value;//(tensor.is64()) ? new double[tensor.size()] : new float[tensor.size()];
-        _components = null;
-        //int length = (tensor.is64()) ? ((double[])_value).length : ((float[])_value).length;
-        //if(cpy) {
-        //    if (tensor.is64()) {
-        //        double[] value = tensor.value64();
-        //        System.arraycopy(value, 0, _value, 0, length);
-        //    } else {
-        //        float[] value = tensor.value32();
-        //        System.arraycopy(value, 0, _value, 0, length);
-        //    }
-        //}
-        this._configureFromNewShape(tensor.shape());
-    }
-
-
     //TRACKED COMPUTATION :
     //=========================
     public Tsr(Tsr tensor, String operation) {
@@ -683,7 +665,16 @@ public class Tsr extends AbstractNDArray<Tsr>
 
     public Object getAt(Object key) {
         if (key==null) return this;
-        if (key instanceof List) if (((List)key).isEmpty()) return this;
+        if (key instanceof List){
+            if (((List)key).isEmpty()){
+                if(this.isEmpty() || this.isUndefined()) return this;
+                for(int e : this.shape()) {
+                    List<Integer> rangeAsList = new ArrayList<>();
+                    for(int i=0; i<e; i++) rangeAsList.add(i);
+                    ((List<Object>)key).add(rangeAsList);
+                }
+            }
+        }
         int[] idxbase = null;
         int[] newShape = new int[this.rank()];
         if (key instanceof List) {
@@ -782,7 +773,7 @@ public class Tsr extends AbstractNDArray<Tsr>
                         first = position;
                         last = position;
                     } else {
-                        throw new IllegalStateException("[Tsr]: Given indexAlias key at axis "+i+offset+" not found!");
+                        throw new IllegalStateException("Given indexAlias key at axis "+(i+offset)+" not found!");
                     }
                 }
             }else{
@@ -904,8 +895,7 @@ public class Tsr extends AbstractNDArray<Tsr>
         private Exec(){}
 
         public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr) {
-            tensor = (newTsr) ? new Tsr(tensor, true) : tensor;
-            //tensor = (newTsr) ? tensor.getAt(null) : tensor;
+            tensor = (newTsr) ? (Tsr)tensor.getAt(new ArrayList<Object>()) : tensor;
             tensor._shape = _cached(Utility.Indexing.shpCheck(Utility.Indexing.rearrange(tensor._shape, newForm), tensor));
             tensor._translation = _cached(Utility.Indexing.rearrange(tensor._translation, tensor._shape, newForm));
             tensor._idxmap =  _cached(Utility.Indexing.newTlnOf(tensor._shape));

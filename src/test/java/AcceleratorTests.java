@@ -28,18 +28,18 @@ public class AcceleratorTests
 
         Neureka.instance().settings().indexing().setLegacy(true);
         OpenCLPlatform.PLATFORMS().get(0).recompile();
-        _test_autograd(gpu, tester, true);
+        _testing(gpu, tester, true);
 
         Neureka.instance().settings().indexing().setLegacy(false);
         OpenCLPlatform.PLATFORMS().get(0).recompile();
-        _test_autograd(gpu, tester, false);
+        _testing(gpu, tester, false);
 
         Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false);
         tester.close();
     }
-    private void _test_autograd(Device gpu, NTester_Tensor tester, boolean legacyIndexing)
+
+    private void _testing(Device gpu, NTester_Tensor tester, boolean legacyIndexing)
     {
-        //gpu.add(new Tsr(new int[]{1000000}, 3));
         List<Tsr> listOfTensors = new ArrayList<>();
         Tsr tensor1, tensor2;
         //=====================================================================
