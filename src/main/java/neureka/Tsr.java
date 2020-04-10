@@ -565,40 +565,40 @@ public class Tsr extends AbstractNDArray<Tsr>
     }
 
     public Tsr plus(Tsr other) {
-        return new Tsr(new Tsr[]{this, other}, "(I[0]+I[1])");
+        return Function.PLUS.activate(new Tsr[]{this, other});
     }
     public Tsr plus(Double value) {
         return plus(new Tsr(this.shape(), value));
     }
     public Tsr minus(Tsr other) {
-        return new Tsr(new Tsr[]{this, other}, "(I[0]-I[1])");
+        return Function.MINUS.activate(new Tsr[]{this, other});
     }
     public Tsr negative(){
-        return FunctionBuilder.build("(-1*I[0])", false).activate(new Tsr[]{this});
+        return Function.NEG.activate(new Tsr[]{this});
     }
     public Tsr multiply(Tsr other) {
-        return new Tsr(new Tsr[]{this, other}, "(I[0]*I[1])");
+        return Function.MUL.activate(new Tsr[]{this, other});
     }
     public Tsr multiply(Double value) {
         return multiply(new Tsr(this.shape(), value));
     }
     public Tsr div(Tsr other) {
-        return new Tsr(new Tsr[]{this, other}, "(I[0]/I[1])");
+        return Function.DIV.activate(new Tsr[]{this, other});
     }
     public Tsr div(Double value) {
         return div(new Tsr(this.shape(), value));
     }
     public Tsr mod(Tsr other) {
-        return new Tsr(new Tsr[]{this, other}, "(I[0]%I[1])");
+        return Function.MOD.activate(new Tsr[]{this, other});
     }
     public Tsr power(Tsr other) {
-        return new Tsr(new Tsr[]{this, other}, "(I[0]^I[1])");
+        return Function.POW.activate(new Tsr[]{this, other});
     }
     public Tsr power(Double value){
         return power(new Tsr(this.shape(), value));
     }
     public Tsr xor(Tsr other) {
-        return new Tsr(new Tsr[]{this, other}, "(I[0]^I[1])");
+        return Function.POW.activate(new Tsr[]{this, other});
     }
     public Tsr xor(Double value) {
         return xor(new Tsr(this.shape(), value));
@@ -613,7 +613,7 @@ public class Tsr extends AbstractNDArray<Tsr>
             a = Function.create(AbstractNDArray.Utility.Stringify.strConf(fitter[0])+":(I[0])").activate(a);
             b = Function.create(AbstractNDArray.Utility.Stringify.strConf(fitter[0])+":(I[0])").activate(b);
         }
-        Tsr result = Function.create("I[0]xI[1]").activate(new Tsr[]{a, b});
+        Tsr result = Function.X.activate(new Tsr[]{a, b});
         return result;
     }
 

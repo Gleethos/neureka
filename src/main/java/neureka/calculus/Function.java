@@ -16,6 +16,15 @@ public interface Function
     //Global context and cache:
     Cache CACHE = Cache.instance();
 
+    Function X = create("I[0]xI[1]");
+    Function PLUS = create("(I[0]+I[1])");
+    Function MINUS = create("(I[0]-I[1])");
+    Function DIV = create("(I[0]/I[1])");
+    Function POW = create("(I[0]^I[1])");
+    Function NEG = create("(-1*I[0])");
+    Function MUL = create("I[0]*I[1]");
+    Function MOD = create("(I[0]%I[1])");
+
     static Function create(String expression){
         return create(expression, true);
     }
