@@ -154,7 +154,7 @@
                                         <div class="contentBox">
                                             <p>
                                                 Popular deep learning libraries use python due to it's
-                                                elegant Syntax. </br>
+                                                elegant syntax. </br>
                                                 Java on the other hand is considered
                                                 verbose and bulky, so why would anybody ever build
                                                 a deep learning library for Java?
@@ -196,8 +196,8 @@ Tsr y = ((x+b)*w)**2
                                         <div class="contentBox">
                                             <p>
                                                 Groovy supports operator overloading.
-                                                Neureka implements certain methods which will be called when
-                                                corresponding operators are used.
+                                                Certain methods will be called when
+                                                corresponding operators are used ( + : plus(...), - : minus(...), ... ).
                                                 Such language features allow for elegant and short implementations.
                                                 For rapid prototyping and small scale projects groovy, scala or jython
                                                 might be the perfect choice.
@@ -213,14 +213,15 @@ Tsr b = new Tsr(-4);
 Tsr w = new Tsr(2);
 Tsr y = new Tsr(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
 
-// y: "[1]:(4.0); ->d[1]:(-8.0), "
+// y: "(1):[4.0]; ->d(1):[-8.0], "
                                                 </code></pre>
                                     </div>
                                     <div class="col-sm-12 col-md-4">
                                         <div class="contentBox">
                                             <p>
                                                 ...if however performance is of concern for
-                                                you and your team then Neureka can easily be integrated with Java or Kotlin
+                                                you and your team then Neureka can easily be
+                                                used with Java or Kotlin
                                                 to allow for more efficient runtime.
                                             </p>
                                         </div>
@@ -265,13 +266,23 @@ Tsr y = new Tsr(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
                                                 executed during JVM runtime (JIT - compilation).
                                                 <img src="https://img.icons8.com/metro/50/000000/speed.png">
                                                 Popular frameworks like PyTorch and Tensorflow
-                                                compensate this deficit by utilizing C++ and Cuda internally.
-                                                Neureka tries to achieve similar performance with a more balanced
+                                                compensate this deficit by utilizing C++ and Cuda internally.</br>
+                                                Neureka seeks to achieve similar performance with a more balanced
                                                 approach, where number crunching is offloaded to OpenCl whenever
                                                 possible or otherwise JVM's advanced concurrency and JIT
                                                 runtime optimizations come into play.
-                                                (Which should not be underestimated)
-
+                                                (Which should not be underestimated)</br></br>
+                                                Currently, Neureka is held as lightweight
+                                                as possible! Operations are therefore implemented as
+                                                generalized and concise as possible, meaning that
+                                                performance wise Neureka still needs to mature
+                                                and would greatly appreciate improvement
+                                                proposals.</br></br>
+                                                Besides that Neureka is also greatly held back
+                                                by JVM's lack of allowing for more memory localized types.
+                                                As soon as the upcoming Project-Valhalla is released
+                                                the introduction of inline/value types would allow
+                                                for type generification without performance costs.
                                             </p>
                                         </div>
                                     </div>
