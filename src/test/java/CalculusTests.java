@@ -7,20 +7,6 @@ import util.NTester_Function;
 public class CalculusTests {
 
     @Test
-    public void someFun(){
-
-        int i = 1;
-        i = i << 1;
-        i += 1;
-        i = i << 1;
-        i += 1;
-        i = i << 1;
-        i += 1;
-        System.out.println(i);
-        System.out.println(Integer.toBinaryString(i));
-    }
-
-    @Test
     public void test_scalar_calculus(){
 
         NTester_Function tester = new NTester_Function("Calculus-Testing: Scalar calculus");
@@ -59,7 +45,6 @@ public class CalculusTests {
         for(int i=0; i<expected.length; i++){
             tester.testScalarDerivative(f, inputs, i, expected[i],  "testing scalar derivative");
         }
-        tester.close();
     }
 
 
@@ -67,7 +52,6 @@ public class CalculusTests {
     @Test
     public void test_tensor_calculus()
     {
-
         NTester_Function tester = new NTester_Function("Calculus-Testing: Function parsing and tensor calculus");
         //EXPRESSION TESTING:
         tester.testExpression("ig0*(igj)xI[g1]", "((Ig[0]*Ig[j])xIg[1])", "");
@@ -181,7 +165,6 @@ public class CalculusTests {
         expected = new Tsr(new int[]{2}, new double[]{(-14)%3, -0.0});
         tester.testActivation("(prod(ij))%3", tsrs, expected, "");
 
-        tester.close();
     }
 
 

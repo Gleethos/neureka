@@ -35,7 +35,6 @@ public class AcceleratorTests
         _testing(gpu, tester, false);
 
         Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false);
-        tester.close();
     }
 
     private void _testing(Device gpu, NTester_Tensor tester, boolean legacyIndexing)

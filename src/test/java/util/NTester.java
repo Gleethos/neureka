@@ -7,21 +7,8 @@ import java.util.List;
 
 public class NTester extends Assert
 {
-    private static MessageFrame RESULT_FRAME;
-    private static MessageFrame ERROR_FRAME;
-
-    private static volatile int _global_tests;
-    static {
-        _global_tests = 0;
-        if(System.getProperty("os.name").toLowerCase().contains("windows")
-            && (RESULT_FRAME==null || ERROR_FRAME==null)
-        ){
-            //RESULT_FRAME = new MessageFrame("[NEUREKA UNIT TEST]: results");
-            //ERROR_FRAME =  new MessageFrame("[NEUREKA UNIT TEST]: fails");
-        }
-    }
-    protected static String BAR = "[|]";
-    protected static String LINE = "--------------------------------------------------------------------------------------------";
+    static String BAR = "[|]";
+    private static String LINE = "--------------------------------------------------------------------------------------------";
     private int _positive_assertions = 0;
     private int _assertion_count = 0;
 
@@ -31,31 +18,7 @@ public class NTester extends Assert
     private String _session = "";
 
     public NTester(String name) {
-        if(System.getProperty("os.name").toLowerCase().contains("windows")) {
-            printlnResult("\nT[ "+name+" ]:");
-        }
-        _global_tests++;
-    }
-
-    public NTester(String name, boolean liveLog){
-        if(liveLog && System.getProperty("os.name").toLowerCase().contains("windows")){
-            //_verbose_frame = new MessageFrame(name+" - TEST PROCESS");
-
-            printResult("\nT["+name+"]: ");
-        }
-        _global_tests++;
-    }
-
-    public void close(){
-        if(RESULT_FRAME !=null && _global_tests>3){
-            try {
-                Thread.sleep((int)Math.pow(_global_tests-3, 2)*1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-
+        println("Test-Session: "+name);
     }
 
     public int testContains(String result, List<String> expected, String description){
@@ -93,10 +56,7 @@ public class NTester extends Assert
         _success += (_positive_assertions == _assertion_count)?1:0;
         println(BAR +"  "+((_positive_assertions >0)?"test successful!"+" "+ _positive_assertions :"test failed!"+" "+(_assertion_count + _positive_assertions))+"/"+ _assertion_count);
         println("[O][=][=][=][=][=][=][=][=][=][=][=]|> "+ _success +"/"+ _tests);
-        printResult((_positive_assertions == _assertion_count)? "." :"E");
-        bottom();
         if(_positive_assertions != _assertion_count) failSession();
-        //assert _positive_assertions == _assertion_count;
         return _positive_assertions;
     }
 
@@ -179,7 +139,6 @@ public class NTester extends Assert
     }
 
     protected void failSession(){
-        if(ERROR_FRAME!=null) ERROR_FRAME.print(_session);
         fail(_session);
     }
 
@@ -231,24 +190,6 @@ public class NTester extends Assert
     }
     protected void println(String message){
         _session +=message+"\n";
-    }
-
-    protected void printResult(String message){
-        if(RESULT_FRAME !=null){
-            RESULT_FRAME.print(message);
-        }
-    }
-    protected void printlnResult(String message){
-        if(RESULT_FRAME !=null){
-            RESULT_FRAME.println(message);
-        }
-    }
-
-    protected void bottom(){
-        if(RESULT_FRAME !=null){//_verbose_frame !=null &&
-                //_verbose_frame.bottom();
-            RESULT_FRAME.bottom();
-        }
     }
 
 }

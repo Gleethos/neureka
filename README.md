@@ -1,3 +1,5 @@
+
+
 # [NEUREKA](https://gleethos.github.io/neureka/index.html) - [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6bfd22ba9b8c410285b19e3d37f4fbc6)](https://www.codacy.com/manual/Gleethos/neureka?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Gleethos/neureka&amp;utm_campaign=Badge_Grade) - [![Build Status](https://travis-ci.com/Gleethos/neureka.svg?branch=master)](https://travis-ci.org/gleethos/neureka) - [![Code Coverage](https://img.shields.io/codecov/c/github/gleethos/neureka)](https://codecov.io/github/gleethos/neureka) - [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  #
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-java.svg)](https://forthebadge.com) 
@@ -174,7 +176,7 @@ Neureka uses OpenCl (JOCL binding).
 
 ---
 
-## Development ##
+## Development - [![GitHub commit activity the past week, 4 weeks](https://img.shields.io/github/commit-activity/y/Gleethos/neureka.svg?style=flat)]() ##
 
 Want to contribute? Great!
 
@@ -186,7 +188,7 @@ Feedback is greatly appreciated!
 
 ---
 
-## Todos ##
+## Todos - [![Issues](https://img.shields.io/github/issues-raw/Gleethos/neureka.svg?maxAge=25000)](https://github.com/Gleethos/neureka/issues)  ##
 
   - Make a wish! :)
 

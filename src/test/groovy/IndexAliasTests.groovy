@@ -60,8 +60,6 @@ class IndexAliasTests
         assert !cld.toString().equals("")
         assert cld.maxConstantBufferSize()>1000
         assert cld.maxWriteImageArgs()>1
-
-        tester.close()
     }
 
     void _slice_test_template(Device device, NTester tester, boolean legacyIndexing)

@@ -149,7 +149,6 @@ public class BroadJavaTests {
         y = new Tsr(new Tsr[]{x, b, w}, "(2^i0^i1^i2^2");
         tester.testTensor(y, new String[]{"[1]:(4.0);", " ->d[1]:(1.38629E0), "});
         //===
-        tester.close();
         //TODO: add tests using more then 1 function and check if the graph is build correctly!
     }
 
@@ -658,10 +657,6 @@ public class BroadJavaTests {
                 },
                 true
         );
-        //---
-
-        //---
-        tester.close();
         //===========================================
     }
 

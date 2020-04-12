@@ -41,7 +41,7 @@ public class NTester_Function extends NTester {
 	
 	public int testExpression(String expression, String expected, String description) 
 	{
-		Function function;// = new FunctionBuilder();
+		Function function;
 		function = new FunctionBuilder().build(expression, true);
 		printSessionStart(description);
 		println(BAR +" Value toString: "+expression);
@@ -116,7 +116,6 @@ public class NTester_Function extends NTester {
 		assertIsEqual(activation.toString(), expected.toString());
 		return (printSessionEnd()>0)?1:0;
 	}
-
 
 	public int testDerivative(String expression, Tsr[] input, int d, Tsr expected, String description) {
 		Function function;// = new FunctionBuilder();
