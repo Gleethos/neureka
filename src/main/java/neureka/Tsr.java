@@ -1,6 +1,6 @@
 package neureka;
 
-import groovy.lang.Range;
+import groovy.lang.IntRange;
 import neureka.abstraction.AbstractNDArray;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.Device;
@@ -12,7 +12,6 @@ import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.optimization.Optimizer;
 import neureka.utility.DataHelper;
-import org.apache.groovy.util.Maps;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -308,10 +307,11 @@ public class Tsr extends AbstractNDArray<Tsr>
         int[] shp = new int[shape.size()];
         for(int i=0; i<shp.length; i++) shp[i] = shape.get(i);
         double[] value = new double[Utility.Indexing.szeOfShp(shp)];
+        if(range.size()==1 && range.get(0) instanceof IntRange) range = (List) range.get(0);
         for(int i=0; i<value.length; i++){
             if(range.get(i%range.size()) instanceof BigDecimal){
                 value[i] = ((BigDecimal)range.get(i%range.size())).doubleValue();
-            } else {
+            } else if (range.get(i%range.size()) instanceof Integer){
                 value[i] = (Integer)range.get(i%range.size());
             }
         }
@@ -611,10 +611,17 @@ public class Tsr extends AbstractNDArray<Tsr>
         for(int i=0; i<fitter[1].length && !doReshape; i++) if(fitter[1][i]!=i) doReshape = true;
         if(doReshape){
             a = Function.create(AbstractNDArray.Utility.Stringify.strConf(fitter[0])+":(I[0])").activate(a);
-            b = Function.create(AbstractNDArray.Utility.Stringify.strConf(fitter[0])+":(I[0])").activate(b);
+            b = Function.create(AbstractNDArray.Utility.Stringify.strConf(fitter[1])+":(I[0])").activate(b);
         }
         Tsr result = Function.X.activate(new Tsr[]{a, b});
         return result;
+    }
+    public boolean isCase(Tsr t){
+        boolean[] found = {false};
+        this.forComponent(Relation.class, (r)-> ((Relation)r).foreachChild((c)->{
+                if (c.equals(t)) found[0]=true;
+            }));
+        return found[0];
     }
 
     public Tsr label(String[][] labels) {

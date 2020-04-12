@@ -54,17 +54,17 @@ import java.util.function.Consumer;
     }
 
     public Relation foreachChild(Consumer&lt;Tsr&gt; action){
-<span class="nc bnc" id="L57" title="All 2 branches missed.">        if(_children!=null){</span>
-<span class="nc bnc" id="L58" title="All 2 branches missed.">            for(WeakReference&lt;Tsr&gt; r : _children){</span>
-<span class="nc" id="L59">                Tsr c = r.get();</span>
-<span class="nc bnc" id="L60" title="All 2 branches missed.">                if(c!=null){</span>
-<span class="nc" id="L61">                    action.accept(c);</span>
-<span class="nc" id="L62">                    Relation parent = (Relation) c.find(Relation.class);</span>
-<span class="nc bnc" id="L63" title="All 2 branches missed.">                    if(parent!=null) parent.foreachChild(action);</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if(_children!=null){</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">            for(WeakReference&lt;Tsr&gt; r : _children){</span>
+<span class="fc" id="L59">                Tsr c = r.get();</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">                if(c!=null){</span>
+<span class="fc" id="L61">                    action.accept(c);</span>
+<span class="fc" id="L62">                    Relation parent = (Relation) c.find(Relation.class);</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">                    if(parent!=null) parent.foreachChild(action);</span>
                 }
             }
         }
-<span class="nc" id="L67">        return this;</span>
+<span class="fc" id="L67">        return this;</span>
     }
 
     public boolean hasParent(){

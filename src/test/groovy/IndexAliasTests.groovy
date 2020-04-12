@@ -50,7 +50,7 @@ class IndexAliasTests
         assert query.contains("LOCAL_MEM_SIZE")
         assert query.contains("CL_DEVICE_TYPE")
 
-        OpenCLDevice cld = (OpenCLDevice)gpu;
+        OpenCLDevice cld = (OpenCLDevice) gpu
         assert cld.globalMemSize()>1000
         assert !cld.name().equals("")
         assert cld.image2DMaxHeight()>100

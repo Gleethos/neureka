@@ -11,12 +11,20 @@ import org.junit.Test
 import util.DummyDevice
 import util.Utility
 
-import java.lang.ref.Cleaner
 import java.lang.ref.WeakReference
 
 
 class ThoroughGroovyTests
 {
+
+    @Test
+    void dot_operation_reshapes_and_produces_valid_x_operation(){
+
+        Tsr a = new Tsr([1, 4, 4, 1], [4..12])
+        Tsr b = new Tsr([1, 3, 5, 2, 1], [-5..3])
+        Tsr c = a.dot(b)
+        assert c.toString().contains("(1x4x2x5x2x1)")
+    }
 
     @Test
     void test_benchmark_script_and_simple_tensor_constructor(){
@@ -675,10 +683,11 @@ class ThoroughGroovyTests
                 ["a", "b", "y", "z"]
         ])
         Tsr x = t["2", 1..2]
+        assert x in t
         assert x.toString().contains("[1x2]:(8.0, 6.0)")
 
         x = t["2".."3", "b".."y"]
-
+        assert x in t
         assert x.toString().contains("[2x2]:(8.0, 6.0, 5.0, 6.0)")
 
         t = new Tsr([2, 3, 4], 7)
@@ -689,14 +698,14 @@ class ThoroughGroovyTests
         ])
 
         x = t["2", "b".."y", [["tim","tanya"]:2]]
-
+        assert x in t
         assert x.toString().contains("[1x2x2]:(7.0, 7.0, 7.0, 7.0)")
         assert x.isVirtual()
         assert x.isSlice()
         assert t.isSliceParent()
 
         x = t["2", [["b".."y"]:1, ["tim","tanya"]:2]]
-
+        assert x in t
         assert x.toString().contains("[1x2x2]:(7.0, 7.0, 7.0, 7.0)")
         assert x.isVirtual()
         assert x.isSlice()
@@ -705,7 +714,7 @@ class ThoroughGroovyTests
         assert t.sliceCount()==2
 
         x = t[[["2"]:1, ["b".."y"]:1, ["tim","tanya"]:2]]
-
+        assert x in t
         assert x.toString().contains("[1x2x2]:(7.0, 7.0, 7.0, 7.0)")
         assert x.isVirtual()
         assert x.isSlice()
@@ -721,7 +730,7 @@ class ThoroughGroovyTests
         )
 
         x = t[["1","2"], "b".."y", [["tim","tanya"]:2]]
-
+        assert x in t
         assert x.toString().contains("[2x2x2]:(7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0)")
         assert x.isVirtual()
         assert x.isSlice()
