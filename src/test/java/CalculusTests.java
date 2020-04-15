@@ -87,16 +87,23 @@ public class CalculusTests {
         tester.testActivation("prod(Ij)", input1, 25, "");
         input1 = new double[]{0.5, 0.5, 10};
         tester.testActivation("prod(prod(Ij))", input1, (2.5 * 2.5 * 2.5), "");
-        input1 = new double[]{5, 4, 3, 12};//12/4-5+2+3
+        input1 = new double[]{5, 4, 3, 12};
         tester.testActivation("I3/i[1]-I0+2+i2", input1, (3), "");
-        input1 = new double[]{-4, -2, 6, -3, -8};//-3*-2/(-8--4-2)
+        input1 = new double[]{-4, -2, 6, -3, -8};
         tester.testActivation("i3*i1/(i4-i0-2)-sig(0)+tanh(0)", input1, (-1.5), "");
-        input1 = new double[]{2, 3, -2};//-3*-2/(-8--4-2)
+        input1 = new double[]{2, 3, -2};
         tester.testDeriviation("(i0*i1)*i2", input1, 0, (-6), "");
-        input1 = new double[]{2, 3, -2};//-3*-2/(-8--4-2)
         tester.testDeriviation("lig(i0*i1)*i2", input1, 0, (-5.985164261060192), "");
-        input1 = new double[]{2, 3, -2};//-3*-2/(-8--4-2)
         tester.testDeriviation("prod(ij)", input1, 1, (-4), "");
+        tester.testActivation("relu(prod(ij))", input1, (-0.12), "");
+        tester.testDeriviation("relu(prod(ij))", input1, 1, (-0.04), "");
+        tester.testActivation("quad(prod(ij)+6)", input1, (36), "");
+        tester.testDeriviation("quad(prod(ij)+6)", input1, 1, (-12*-4), "");
+        tester.testActivation("quad(abs(prod(ij))-6)", input1, (36), "");
+        tester.testDeriviation("quad(abs(prod(ij))-6)", input1, 1, (-12*-4), "");
+        tester.testActivation("sum(ij)", input1, (3), "");
+        tester.testDeriviation("sum(ij)", input1, 1, 1, "");
+        //Todo: pow inside indexer!
 
         Tsr[] tsrs = new Tsr[]{new Tsr(new int[]{2}, new double[]{1, 2}), new Tsr(new int[]{2},new double[]{3, -4})};
         Tsr expected = new Tsr(new int[]{2}, new double[]{0.9701425001453319, -0.8944271909999159});
