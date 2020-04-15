@@ -567,17 +567,26 @@ public class Tsr extends AbstractNDArray<Tsr>
     public Tsr plus(Tsr other) {
         return Function.PLUS.activate(new Tsr[]{this, other});
     }
+    public Tsr plusAssign(Tsr other){
+        return Function.PLUS_ASSIGN.activate(new Tsr[]{this, other});
+    }
     public Tsr plus(Double value) {
         return plus(new Tsr(this.shape(), value));
     }
     public Tsr minus(Tsr other) {
         return Function.MINUS.activate(new Tsr[]{this, other});
     }
+    public Tsr minusAssign(Tsr other){
+        return Function.MINUS_ASSIGN.activate(new Tsr[]{this, other});
+    }
     public Tsr negative(){
         return Function.NEG.activate(new Tsr[]{this});
     }
     public Tsr multiply(Tsr other) {
         return Function.MUL.activate(new Tsr[]{this, other});
+    }
+    public Tsr timesAssign(Tsr other){
+        return Function.MUL_ASSIGN.activate(new Tsr[]{this, other});
     }
     public Tsr multiply(Double value) {
         return multiply(new Tsr(this.shape(), value));
@@ -588,8 +597,14 @@ public class Tsr extends AbstractNDArray<Tsr>
     public Tsr div(Double value) {
         return div(new Tsr(this.shape(), value));
     }
+    public Tsr divAssign(Tsr other){
+        return Function.DIV_ASSIGN.activate(new Tsr[]{this, other});
+    }
     public Tsr mod(Tsr other) {
         return Function.MOD.activate(new Tsr[]{this, other});
+    }
+    public Tsr modAssign(Tsr other){
+        return Function.MOD_ASSIGN.activate(new Tsr[]{this, other});
     }
     public Tsr power(Tsr other) {
         return Function.POW.activate(new Tsr[]{this, other});
@@ -613,8 +628,7 @@ public class Tsr extends AbstractNDArray<Tsr>
             a = Function.create(AbstractNDArray.Utility.Stringify.strConf(fitter[0])+":(I[0])").activate(a);
             b = Function.create(AbstractNDArray.Utility.Stringify.strConf(fitter[1])+":(I[0])").activate(b);
         }
-        Tsr result = Function.X.activate(new Tsr[]{a, b});
-        return result;
+        return Function.X.activate(new Tsr[]{a, b});
     }
     public boolean isCase(Tsr t){
         boolean[] found = {false};
@@ -622,6 +636,9 @@ public class Tsr extends AbstractNDArray<Tsr>
                 if (c.equals(t)) found[0]=true;
             }));
         return found[0];
+    }
+    public boolean contains(Tsr t){
+        return isCase(t);
     }
 
     public Tsr label(String[][] labels) {

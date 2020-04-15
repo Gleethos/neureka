@@ -684,10 +684,12 @@ class ThoroughGroovyTests
         ])
         Tsr x = t["2", 1..2]
         assert x in t
+        assert t.contains(x)
         assert x.toString().contains("[1x2]:(8.0, 6.0)")
 
         x = t["2".."3", "b".."y"]
         assert x in t
+        assert t.contains(x)
         assert x.toString().contains("[2x2]:(8.0, 6.0, 5.0, 6.0)")
 
         t = new Tsr([2, 3, 4], 7)
@@ -699,6 +701,7 @@ class ThoroughGroovyTests
 
         x = t["2", "b".."y", [["tim","tanya"]:2]]
         assert x in t
+        assert t.contains(x)
         assert x.toString().contains("[1x2x2]:(7.0, 7.0, 7.0, 7.0)")
         assert x.isVirtual()
         assert x.isSlice()
@@ -706,6 +709,7 @@ class ThoroughGroovyTests
 
         x = t["2", [["b".."y"]:1, ["tim","tanya"]:2]]
         assert x in t
+        assert t.contains(x)
         assert x.toString().contains("[1x2x2]:(7.0, 7.0, 7.0, 7.0)")
         assert x.isVirtual()
         assert x.isSlice()
@@ -715,6 +719,7 @@ class ThoroughGroovyTests
 
         x = t[[["2"]:1, ["b".."y"]:1, ["tim","tanya"]:2]]
         assert x in t
+        assert t.contains(x)
         assert x.toString().contains("[1x2x2]:(7.0, 7.0, 7.0, 7.0)")
         assert x.isVirtual()
         assert x.isSlice()
@@ -731,18 +736,13 @@ class ThoroughGroovyTests
 
         x = t[["1","2"], "b".."y", [["tim","tanya"]:2]]
         assert x in t
+        assert t.contains(x)
         assert x.toString().contains("[2x2x2]:(7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0)")
         assert x.isVirtual()
         assert x.isSlice()
         assert t.isSliceParent()
         assert t.sliceCount()==4
 
-
-        //Cleaner cleaner = new Cleaner()
-        //def cleaned = [false]
-        //cleaner.register(x, ()->{
-        //    cleaned[0]=true
-        //})
         WeakReference weak = new WeakReference(x)
         x = null
         System.gc()
@@ -960,8 +960,10 @@ class ThoroughGroovyTests
     }
 
     @Test
-    void test_operator_overloading()
+    void test_operator_overloading_of_SDK_types()
     {
+        Neureka.instance().reset()
+        Neureka.instance().settings().view().setLegacy true
         {
             Tsr a = new Tsr(2).setRqsGradient(true)
             Tsr b = new Tsr(-4)
