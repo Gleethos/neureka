@@ -16,7 +16,6 @@ import java.util.function.Supplier;
 public abstract class AbstractFunction implements Function {
     
     private final OperationType _type;
-    //private int _ id;
     private final boolean _isFlat;
     private final boolean _doAD;
     private final ArrayList<Function> _src;
@@ -51,7 +50,7 @@ public abstract class AbstractFunction implements Function {
 
     @Override
     public int id() {
-        return _type.id();//_type.id();
+        return _type.id();
     }
 
     @Override
@@ -110,35 +109,11 @@ public abstract class AbstractFunction implements Function {
         return activate(new Tsr[]{input});
     }
 
-    @Override
-    public abstract Tsr activate(Tsr[] inputs, int j);
-
-    @Override
-    public abstract Tsr activate(Tsr[] inputs);
-
-    @Override
-    public abstract Tsr derive(Tsr[] inputs, int index, int j);
-
-    @Override
-    public abstract Tsr derive(Tsr[] inputs, int index);
-
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public double activate(double input){
         return activate(new double[]{input});
     }
-
-    @Override
-    public abstract double activate(final double[] inputs, int j);
-
-    @Override
-    public abstract double activate(final double[] inputs);
-
-    @Override
-    public abstract double derive(final double[] inputs, final int index, final int j);
-
-    @Override
-    public abstract double derive(final double[] inputs, final int index);
 
     //==================================================================================================================
 
@@ -157,7 +132,7 @@ public abstract class AbstractFunction implements Function {
      */
     protected Tsr _tensor_activation(Tsr[] inputs, int j, int d) {
         Device device = _device(inputs);
-        /**  The code below deals with deep functions (non flat):  * */
+        /* The code below deals with deep functions (non flat):  */
         if (!_isFlat) {
             return _apply(device, d, () -> _execution(inputs, d, j, device));
             /* only flat functions can be executed */
@@ -172,7 +147,7 @@ public abstract class AbstractFunction implements Function {
     }
 
     private Tsr _execute(Tsr[] inputs, int j, int d, Device myDevice) {
-        if (_type.identifier().equals("x")) {
+        if (_type.identifier().equals("x")) {//TODO: Move ALL of this into the operation types!!!!!
             Tsr tensor1 = _src.get(0).activate(inputs).setIsVirtual(false);
             Tsr tensor2 = _src.get(1).activate(inputs).setIsVirtual(false);
             Tsr newTensor = (d<0)?new Tsr(Tsr.Utility.Indexing.shpOfCon(tensor1.shape(), tensor2.shape())):null;
@@ -208,13 +183,13 @@ public abstract class AbstractFunction implements Function {
                     if (newForm[reshape_i] >= 0) {
                         reversed[newForm[reshape_i]] = reshape_i;
                         reverse_i++;
-                    }//TODO: also check < -1 reverse ...
+                    }
                     reshape_i++;
                 }
                 newForm = reversed;
             }
             Tsr t = inputs[inputs.length - 1];
-            return Tsr.Exec.reshaped(t, newForm, true);//t.reshape(newForm);
+            return Tsr.Exec.reshaped(t, newForm, true);
         } else {
             return _apply(myDevice, d, () -> _execution(inputs, d, j, myDevice));
         }
@@ -239,7 +214,7 @@ public abstract class AbstractFunction implements Function {
         else tsrs = new Tsr[1 + _src.size()];
         if (d >= 0) {
             //Chain-rule (forward AutoDiff):
-            //inner times out means:
+            //inner times outer means:
             //first derive source!
             //like so:
             if (_type.isIndexer()) {
@@ -278,7 +253,7 @@ public abstract class AbstractFunction implements Function {
                 }
             }
             //Use those tensors for the outer derivative:
-            device.execute(tsrs, _type, d); //(d>=0)
+            device.execute(tsrs, _type, d);
             //At the end:
             //multiply inner times outer:
             tsrs = new Tsr[]{null, inner, tsrs[0]};
@@ -290,7 +265,7 @@ public abstract class AbstractFunction implements Function {
                 for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).activate(inputs, i - 1);
                 device.execute(tsrs, _type, d);
             } else {
-                tsrs = _src_acti(inputs, j, d, 1);//new Tsr[1 + _src.size()];
+                tsrs = _src_acti(inputs, j, d, 1);
                 device.execute(tsrs, _type, d);
             }
         }
@@ -310,9 +285,7 @@ public abstract class AbstractFunction implements Function {
                     }
                 }
             }
-        } else {
-            out = actor.get();
-        }
+        } else out = actor.get();
         return out;
     }
 
