@@ -73,10 +73,10 @@ public class Neureka
     }
 
     public void reset(){
-            if( _settings_source==null || _setup_source==null ) {
-                _settings_source = utility().readResource("library_settings.groovy");
-                _setup_source = utility().readResource("scripting_setup.groovy");
-            }
+        if( _settings_source==null || _setup_source==null ) {
+            _settings_source = utility().readResource("library_settings.groovy");
+            _setup_source = utility().readResource("scripting_setup.groovy");
+        }
         new GroovyShell().evaluate(_settings_source);
         new GroovyShell().evaluate(_setup_source);
     }

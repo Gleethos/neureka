@@ -964,6 +964,7 @@ class ThoroughGroovyTests
     {
         Neureka.instance().reset()
         Neureka.instance().settings().view().setLegacy true
+        part_1 :
         {
             Tsr a = new Tsr(2).setRqsGradient(true)
             Tsr b = new Tsr(-4)
@@ -972,6 +973,7 @@ class ThoroughGroovyTests
             assert (c%a).toString().contains("[1]:(1.0)")
             assert (((b/b)^c%a)*3).toString().contains("[1]:(3.0)")
         }
+        part_2 :
         {
             Tsr a = new Tsr(5)
             Tsr b = new Tsr(3)
