@@ -413,7 +413,16 @@ public class Tsr extends AbstractNDArray<Tsr>
 
     private void _construct(Object[] args) {
         if (args==null || args.length==0) return;
-        if (args.length==1) return;
+        if (args.length==1){
+            if (args[0] instanceof Object[]){
+                _construct((Object[]) args[0]);
+                return;
+            } else {
+                throw new IllegalArgumentException(
+                        "Cannot create tensor from argument of type '"+args[0].getClass().getName()+"'!"
+                );
+            }
+        }
         args[0] = (args[0] instanceof ArrayList) ? ((ArrayList)args[0]).toArray() : args[0];
         args[1] = (args[1] instanceof ArrayList) ? ((ArrayList)args[1]).toArray() : args[1];
         if (args[0] instanceof Object[]){
@@ -632,7 +641,7 @@ public class Tsr extends AbstractNDArray<Tsr>
     }
     public boolean isCase(Tsr t){
         boolean[] found = {false};
-        this.forComponent(Relation.class, (r)-> ((Relation)r).foreachChild((c)->{
+        this.forComponent(Relation.class, r -> ((Relation)r).foreachChild((c)->{
                 if (c.equals(t)) found[0]=true;
             }));
         return found[0];

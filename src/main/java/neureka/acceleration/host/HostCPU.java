@@ -10,7 +10,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.*;
 
-public class HostCPU extends AbstractDevice {
+public class HostCPU extends AbstractDevice
+{
     private static final HostCPU _instance;
 
     static {

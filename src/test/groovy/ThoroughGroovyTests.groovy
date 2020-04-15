@@ -972,6 +972,11 @@ class ThoroughGroovyTests
             assert (a/a).toString().contains("[1]:(1.0)")
             assert (c%a).toString().contains("[1]:(1.0)")
             assert (((b/b)^c%a)*3).toString().contains("[1]:(3.0)")
+            assert (a *= b).toString().contains("(-8.0)")
+            assert (a += -c).toString().contains("(-11.0)")
+            assert (a -= c).toString().contains("(-14.0)")
+            assert (a /= new Tsr(2)).toString().contains("(-7.0)")
+            assert (a %= c).toString().contains("(-1.0)")
         }
         part_2 :
         {
