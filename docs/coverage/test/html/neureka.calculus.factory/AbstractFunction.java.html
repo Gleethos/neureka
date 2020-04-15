@@ -368,15 +368,15 @@ public abstract class AbstractFunction implements Function {
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     protected double _scalar_activation(double input, boolean derive) {
-<span class="pc bpc" id="L371" title="6 of 11 branches missed.">        switch (_type.identifier()) {</span>
+<span class="pc bpc" id="L371" title="3 of 11 branches missed.">        switch (_type.identifier()) {</span>
             case &quot;relu&quot;:
-<span class="nc" id="L373">                return Exec.reLu(input, derive);</span>
+<span class="fc" id="L373">                return Exec.reLu(input, derive);</span>
             case &quot;sig&quot;:
 <span class="fc" id="L375">                return Exec.sigmoid(input, derive);</span>
             case &quot;tanh&quot;:
 <span class="fc" id="L377">                return Exec.tanh(input, derive);</span>
             case &quot;quad&quot;:
-<span class="nc" id="L379">                return Exec.quadratic(input, derive);</span>
+<span class="fc" id="L379">                return Exec.quadratic(input, derive);</span>
             case &quot;lig&quot;:
 <span class="fc" id="L381">                return Exec.ligmoid(input, derive);</span>
             case &quot;lin&quot;:
@@ -384,7 +384,7 @@ public abstract class AbstractFunction implements Function {
             case &quot;gaus&quot;:
 <span class="nc" id="L385">                return Exec.gaussian(input, derive);</span>
             case &quot;abs&quot;:
-<span class="nc" id="L387">                return Exec.absolute(input, derive);</span>
+<span class="fc" id="L387">                return Exec.absolute(input, derive);</span>
             case &quot;sin&quot;:
 <span class="fc" id="L389">                return Exec.sinus(input, derive);</span>
             case &quot;cos&quot;:
@@ -426,14 +426,14 @@ public abstract class AbstractFunction implements Function {
         @Contract(pure = true)
         public static double reLu(double input, boolean derive) {
             double output;
-<span class="nc bnc" id="L429" title="All 2 branches missed.">            if (!derive) {</span>
-<span class="nc bnc" id="L430" title="All 2 branches missed.">                if (input &gt;= 0) output = (input);</span>
-<span class="nc" id="L431">                else output = (input) * 0.01;</span>
-<span class="nc" id="L432">                return output;</span>
+<span class="fc bfc" id="L429" title="All 2 branches covered.">            if (!derive) {</span>
+<span class="pc bpc" id="L430" title="1 of 2 branches missed.">                if (input &gt;= 0) output = (input);</span>
+<span class="fc" id="L431">                else output = (input) * 0.01;</span>
+<span class="fc" id="L432">                return output;</span>
             } else {
-<span class="nc bnc" id="L434" title="All 2 branches missed.">                if (input &gt;= 0) output = 1;</span>
-<span class="nc" id="L435">                else output = 0.01;</span>
-<span class="nc" id="L436">                return output;</span>
+<span class="pc bpc" id="L434" title="1 of 2 branches missed.">                if (input &gt;= 0) output = 1;</span>
+<span class="fc" id="L435">                else output = 0.01;</span>
+<span class="fc" id="L436">                return output;</span>
             }
         }
 
@@ -460,8 +460,8 @@ public abstract class AbstractFunction implements Function {
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double quadratic(double input, boolean derive) {
-<span class="nc bnc" id="L463" title="All 2 branches missed.">            if (!derive) return (input * input);</span>
-<span class="nc" id="L464">            else return 2 * input;</span>
+<span class="fc bfc" id="L463" title="All 2 branches covered.">            if (!derive) return (input * input);</span>
+<span class="fc" id="L464">            else return 2 * input;</span>
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -488,8 +488,8 @@ public abstract class AbstractFunction implements Function {
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double absolute(double input, boolean derive) {
-<span class="nc bnc" id="L491" title="All 2 branches missed.">            if (!derive) return Math.abs(input);</span>
-<span class="nc bnc" id="L492" title="All 2 branches missed.">            else return (input &lt; 0) ? -1 : 1;</span>
+<span class="fc bfc" id="L491" title="All 2 branches covered.">            if (!derive) return Math.abs(input);</span>
+<span class="pc bpc" id="L492" title="1 of 2 branches missed.">            else return (input &lt; 0) ? -1 : 1;</span>
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -834,7 +834,7 @@ public abstract class AbstractFunction implements Function {
 
         @Contract(pure = true)
         private static double subtraction(double[] inputs, int d, ArrayList&lt;Function&gt; src) {
-<span class="pc bpc" id="L837" title="1 of 2 branches missed.">            if (d &lt; 0) {</span>
+<span class="fc bfc" id="L837" title="All 2 branches covered.">            if (d &lt; 0) {</span>
 <span class="fc" id="L838">                double result = src.get(0).activate(inputs);</span>
 <span class="fc bfc" id="L839" title="All 2 branches covered.">                for (int i = 1; i &lt; src.size(); i++) {</span>
 <span class="fc" id="L840">                    final double current = src.get(i).activate(inputs);</span>
@@ -842,15 +842,15 @@ public abstract class AbstractFunction implements Function {
                 }
 <span class="fc" id="L843">                return result;</span>
             } else {
-<span class="nc" id="L845">                double derivative = 0;</span>
-<span class="nc bnc" id="L846" title="All 2 branches missed.">                for (int i = 0; i &lt; src.size(); ++i) {</span>
-<span class="nc bnc" id="L847" title="All 2 branches missed.">                    if (i == 0) {</span>
-<span class="nc" id="L848">                        derivative += src.get(i).derive(inputs, d);</span>
+<span class="fc" id="L845">                double derivative = 0;</span>
+<span class="fc bfc" id="L846" title="All 2 branches covered.">                for (int i = 0; i &lt; src.size(); ++i) {</span>
+<span class="fc bfc" id="L847" title="All 2 branches covered.">                    if (i == 0) {</span>
+<span class="fc" id="L848">                        derivative += src.get(i).derive(inputs, d);</span>
                     } else {
-<span class="nc" id="L850">                        derivative -= src.get(i).derive(inputs, d);</span>
+<span class="fc" id="L850">                        derivative -= src.get(i).derive(inputs, d);</span>
                     }
                 }
-<span class="nc" id="L853">                return derivative;</span>
+<span class="fc" id="L853">                return derivative;</span>
             }
         }
 
