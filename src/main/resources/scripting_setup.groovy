@@ -1,3 +1,4 @@
+Class.getResource("neureka")
 import neureka.Tsr
 import neureka.calculus.Function
 
