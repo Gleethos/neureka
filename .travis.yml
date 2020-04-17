@@ -21,3 +21,4 @@ script:
 after_success:
   - if [ -e ./gradlew ]; then ./gradlew jacocoTestReport;else gradle jacocoTestReport;fi
   - bash <(curl -s https://codecov.io/bash) -f docs/coverage/test/jacocoTestReport.xml
+  - if [ -e ./gradlew ]; then ./gradlew deploy;else gradle deploy;fi
