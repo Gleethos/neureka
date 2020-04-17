@@ -1,13 +1,10 @@
-import proguard.gradle.ProGuardTask
 
 buildscript {
     repositories {
         jcenter()
-        //flatDir dirs: '/libs/proguard6.2.2/lib'
     }
     dependencies {
         classpath 'net.sf.proguard:proguard-gradle:6.2.2'
-        //classpath ':proguard:'
     }
 }
 
@@ -85,7 +82,7 @@ test {
     //filter { includeTestsMatching "*" }
     minHeapSize = "1g"
     maxHeapSize = "5g"
-    maxParallelForks = Math.floor(1+(Runtime.runtime.availableProcessors().intdiv(2) ?: 1)/2)
+    maxParallelForks = (int) Math.floor(1+(Runtime.runtime.availableProcessors().intdiv(2) ?: 1)/2)
 }
 //-----------------------------------------------------------------
 
@@ -95,7 +92,7 @@ if (currentOS.isWindows()) platform = 'win'
 else if (currentOS.isLinux()) platform = 'linux'
 else if (currentOS.isMacOsX()) platform = 'mac'
 
-task ('proguard', type: ProGuardTask) {
+task ('proguard', type: proguard.gradle.ProGuardTask) {
 
     //Note: maybe consider configuration 'configuration.pro' as file
 
@@ -108,8 +105,6 @@ task ('proguard', type: ProGuardTask) {
 
     injars  'build/libs/neureka-'+version+'.jar'
     outjars 'production/min/neureka-min-'+version+'.jar'
-
-    print(System.getProperty('java.home'))//<java.home>
 
     // Automatically handle the Java version of this build.
     if (System.getProperty('java.version').startsWith('1.')) {// Before Java 9, the runtime classes were packaged in a single jar file.
@@ -198,7 +193,7 @@ task ('proguard', type: ProGuardTask) {
 
 
 task deploy() {
-    dependsOn 'assemble'
+    //dependsOn 'assemble'
     //dependsOn 'check'
     dependsOn 'jar'
     dependsOn 'proguard'
