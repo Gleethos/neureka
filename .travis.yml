@@ -15,8 +15,8 @@ before_install:
 
 script:
   - chmod +x gradlew
-  - ./gradlew test --info
-  - ./gradlew check
+  - if [ -e ./gradlew ]; then ./gradlew test --info;else gradle test --info;fi
+  - if [ -e ./gradlew ]; then ./gradlew check;else gradle check;fi
   
 after_success:
   - if [ -e ./gradlew ]; then ./gradlew jacocoTestReport;else gradle jacocoTestReport;fi
