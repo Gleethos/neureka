@@ -246,6 +246,9 @@ public class OperationType implements Type
         return true;
     }
 
+    //@Override
+    //public Tsr execute(Tsr[] inputs, )
+
     @Override
     public ADAgent getADAgentOf(Function f, Tsr[] inputs, int i, boolean forward)
     {

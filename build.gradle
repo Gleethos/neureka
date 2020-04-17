@@ -1,3 +1,4 @@
+import proguard.gradle.ProGuardTask
 
 buildscript {
     repositories {
@@ -84,7 +85,7 @@ test {
     //filter { includeTestsMatching "*" }
     minHeapSize = "1g"
     maxHeapSize = "5g"
-    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+    maxParallelForks = Math.floor(1+(Runtime.runtime.availableProcessors().intdiv(2) ?: 1)/2)
 }
 //-----------------------------------------------------------------
 
@@ -94,47 +95,40 @@ if (currentOS.isWindows()) platform = 'win'
 else if (currentOS.isLinux()) platform = 'linux'
 else if (currentOS.isMacOsX()) platform = 'mac'
 
-task ('proguard', type: proguard.gradle.ProGuardTask) {
+task ('proguard', type: ProGuardTask) {
 
-    // You should probably import a more compact ProGuard-style configuration
-    // file for all static settings, but we're specifying them all here, for
-    // the sake of the example.
-    //configuration 'configuration.pro'
+    //Note: maybe consider configuration 'configuration.pro' as file
 
     verbose
 
     //allowaccessmodification
 
     // Specify the input jars, output jars, and library jars.
-    // In this case, the input jar is the program library that we want to process.
-
-    //libraryjars files(configurations.compile.collect())
+    // library jars files(configurations.compile.collect())
 
     injars  'build/libs/neureka-'+version+'.jar'
     outjars 'production/min/neureka-min-'+version+'.jar'
 
+    print(System.getProperty('java.home'))//<java.home>
+
     // Automatically handle the Java version of this build.
-    if (System.getProperty('java.version').startsWith('1.')) {
-        // Before Java 9, the runtime classes were packaged in a single jar file.
+    if (System.getProperty('java.version').startsWith('1.')) {// Before Java 9, the runtime classes were packaged in a single jar file.
         libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
-    } else {
-        // As of Java 9, the runtime classes are packaged in modular jmod files.
+    } else {// As of Java 9, the runtime classes are packaged in modular jmod files.
         libraryjars "${System.getProperty('java.home')}/jmods/java.base.jmod", jarfilter: '!**.jar', filter: '!module-info.class'
-        //libraryjars "${System.getProperty('java.home')}/jmods/....."
     }
 
     // Save the obfuscation mapping to a file, so we can de-obfuscate any stack
-    // traces later on. Keep a fixed source file attribute and all line number
-    // tables to get line numbers in the stack traces.
-    // You can comment this out if you're not interested in stack traces.
+    // traces later on.
+    // Note: Keep a fixed source file attribute and all line number tables to get line numbers in the stack traces.
+    // Can be commented out if not interested in stack traces.
 
     printmapping 'production/min/neureka-min-'+version+'.map'
     keepparameternames
     renamesourcefileattribute 'SourceFile'
     keepattributes 'Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,EnclosingMethod'
 
-    // Preserve all annotations.
-    keepattributes '*Annotation*'
+    keepattributes '*Annotation*' // Preserve all annotations.
 
     // Preserve all public classes, and their public and protected fields and
     // methods.
@@ -142,18 +136,6 @@ task ('proguard', type: proguard.gradle.ProGuardTask) {
     keep 'public class * { \
         public protected *; \
     }'
-
-    keep 'class org.jocl.** { *; }'
-    keep 'interface org.jocl.** { *; }'
-    keep 'class org.jetbrains.** { *; }'
-    keep 'interface org.jetbrains.** { *; }'
-    keep 'class groovy.lang.** { *; }'
-    keep 'interface groovy.lang.** { *; }'
-
-    dontwarn 'org.jocl.**'
-    dontwarn 'org.codehaus.**'
-    dontwarn 'groovy.lang.**'
-    dontwarn 'org.jetbrains.**'
 
     // Preserve all .class method names.
 
@@ -168,8 +150,7 @@ task ('proguard', type: proguard.gradle.ProGuardTask) {
         native <methods>; \
     }'
 
-    // Preserve the special static methods that are required in all enumeration
-    // classes.
+    // Preserve the special static methods that are required in all enumeration classes.
 
     keepclassmembers allowoptimization: true, 'enum * { \
         public static **[] values(); \
@@ -178,9 +159,9 @@ task ('proguard', type: proguard.gradle.ProGuardTask) {
 
     // Explicitly preserve all serialization members. The Serializable interface
     // is only a marker interface, so it wouldn't save them.
-    // You can comment this out if your library doesn't use serialization.
-    // If your code contains serializable classes that have to be backward
-    // compatible, please refer to the manual.
+    // We could comment this out if neureka library doesn't use serialization.
+    // If the code contains serializable classes that have to be backward
+    // compatible -> refer to the manual.
 
     keepclassmembers 'class * implements java.io.Serializable { \
         static final long serialVersionUID; \
@@ -191,17 +172,34 @@ task ('proguard', type: proguard.gradle.ProGuardTask) {
         java.lang.Object readResolve(); \
     }'
 
-    // Your library may contain more items that need to be preserved;
+    // Note: library may contain more items that need to be preserved;
     // typically classes that are dynamically created using Class.forName:
 
     // keep 'public class com.example.MyClass'
     // keep 'public interface com.example.MyInterface'
     // keep 'public class * implements com.example.MyInterface'
+
+    keep 'class org.jocl.** { *; }'
+    keep 'interface org.jocl.** { *; }'
+    keep 'class org.jetbrains.** { *; }'
+    keep 'interface org.jetbrains.** { *; }'
+    keep 'class groovy.lang.** { *; }'
+    keep 'interface groovy.lang.** { *; }'
+
+    //keep 'class java.lang.** { *; }'
+
+    //dontwarn 'java.**'
+
+    dontwarn 'org.jocl.**'
+    dontwarn 'org.codehaus.**'
+    dontwarn 'groovy.lang.**'
+    dontwarn 'org.jetbrains.**'
 }
 
 
 task deploy() {
     dependsOn 'assemble'
+    //dependsOn 'check'
     dependsOn 'jar'
     dependsOn 'proguard'
 }

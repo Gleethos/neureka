@@ -11,6 +11,7 @@ import neureka.calculus.factory.components.FunctionConstant;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.function.Supplier;
 
 public abstract class AbstractFunction implements Function {
@@ -139,28 +140,24 @@ public abstract class AbstractFunction implements Function {
         } else {
             /* The following code is reached in flat functions only:  */
             if (d < 0 && _doAD) {/* Autograd-Graph will be generated below for the new GraphNode: */
-                return new GraphNode(this, inputs, ()->_execute(inputs, j, d, device)).getPayload();
+                return new GraphNode(this, inputs, ()-> _recursie_breakdown_execution(inputs, j, d, device)).getPayload();
             } else {
-                return _execute(inputs, j, d, device);
+                return _recursie_breakdown_execution(inputs, j, d, device);
             }
         }
     }
 
-    private Tsr _execute(Tsr[] inputs, int j, int d, Device myDevice) {
+    private Tsr _recursie_breakdown_execution(Tsr[] inputs, int j, int d, Device myDevice) {
         if (_type.identifier().equals("x")) {//TODO: Move ALL of this into the operation types!!!!!
-            Tsr tensor1 = _src.get(0).activate(inputs).setIsVirtual(false);
-            Tsr tensor2 = _src.get(1).activate(inputs).setIsVirtual(false);
-            Tsr newTensor = (d<0)?new Tsr(Tsr.Utility.Indexing.shpOfCon(tensor1.shape(), tensor2.shape())):null;
-            Tsr[] array = new Tsr[]{newTensor, tensor1, tensor2};
-            myDevice.execute(array, _type, d);
-            return array[0];
+            Tsr[] tsrs = _src_acti(inputs, j, -1, 1);
+            tsrs[0] = (d<0)?new Tsr(Tsr.Utility.Indexing.shpOfCon(tsrs[1].shape(), tsrs[2].shape())):null;
+            for (Tsr t : tsrs) if(t!=null) t.setIsVirtual(false);
+            myDevice.execute(tsrs, _type, d);
+            return tsrs[0];
         } else if (_type.id() == OperationType.instance("<<x").id() || _type.id() == OperationType.instance("x>>").id()) {
             if (d < 0) {
-                Tsr[] tsrs = new Tsr[]{
-                        _src.get(0).activate(inputs).setIsVirtual(false),
-                        _src.get(1).activate(inputs).setIsVirtual(false),
-                        _src.get(2).activate(inputs).setIsVirtual(false)
-                };
+                Tsr[] tsrs = _src_acti(inputs, j, -1, 0);
+                for (Tsr t : tsrs) t.setIsVirtual(false);
                 myDevice.execute(tsrs, _type, 0);
                 if (_type.id() == OperationType.instance("x>>").id()) return tsrs[2];
                 else return tsrs[0];
@@ -278,11 +275,8 @@ public abstract class AbstractFunction implements Function {
             for (int i = 0; i < _src.size(); i++) {//constants need to be figured out!
                 int di = (_src.get(i).dependsOn(d)) ? i : -1;
                 if (di >= 0) {
-                    if (out == null) {
-                        out = actor.get();
-                    } else {
-                        device.execute(new Tsr[]{null, actor.get(), out}, OperationType.instance("+"), -1);
-                    }
+                    if (out == null) out = actor.get();
+                    else device.execute(new Tsr[]{null, actor.get(), out}, OperationType.instance("+"), -1);
                 }
             }
         } else out = actor.get();
