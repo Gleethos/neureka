@@ -31,6 +31,23 @@ public interface Function
     Function MOD_ASSIGN = create("I[0]<-(I[0]%I[1])");
     Function NEG = create("(-1*I[0])");
 
+    class Detached{
+        public static Function X = create("I[0]xI[1]", false);
+        public static Function PLUS = create("(I[0]+I[1])", false);
+        public static Function PLUS_ASSIGN = create("I[0]<-(I[0]+I[1])", false);
+        public static Function MINUS = create("(I[0]-I[1])", false);
+        public static Function MINUS_ASSIGN = create("I[0]<-(I[0]-I[1])", false);
+        public static Function DIV = create("(I[0]/I[1])", false);
+        public static Function DIV_ASSIGN = create("I[0]<-(I[0]/I[1])", false);
+        public static Function POW = create("(I[0]^I[1])", false);
+        public static Function POW_ASSIGN = create("I[0]<-(I[0]^I[1])", false);
+        public static Function MUL = create("I[0]*I[1]", false);
+        public static Function MUL_ASSIGN = create("I[0]<-(I[0]*I[1])", false);
+        public static Function MOD = create("(I[0]%I[1])", false);
+        public static Function MOD_ASSIGN = create("I[0]<-(I[0]%I[1])", false);
+        public static Function NEG = create("(-1*I[0])", false);
+    }
+
     static Function create(String expression){
         return create(expression, true);
     }

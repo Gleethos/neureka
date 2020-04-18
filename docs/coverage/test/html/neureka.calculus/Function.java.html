@@ -31,58 +31,75 @@ public interface Function
 <span class="fc" id="L31">    Function MOD_ASSIGN = create(&quot;I[0]&lt;-(I[0]%I[1])&quot;);</span>
 <span class="fc" id="L32">    Function NEG = create(&quot;(-1*I[0])&quot;);</span>
 
+<span class="nc" id="L34">    class Detached{</span>
+<span class="fc" id="L35">        public static Function X = create(&quot;I[0]xI[1]&quot;, false);</span>
+<span class="fc" id="L36">        public static Function PLUS = create(&quot;(I[0]+I[1])&quot;, false);</span>
+<span class="fc" id="L37">        public static Function PLUS_ASSIGN = create(&quot;I[0]&lt;-(I[0]+I[1])&quot;, false);</span>
+<span class="fc" id="L38">        public static Function MINUS = create(&quot;(I[0]-I[1])&quot;, false);</span>
+<span class="fc" id="L39">        public static Function MINUS_ASSIGN = create(&quot;I[0]&lt;-(I[0]-I[1])&quot;, false);</span>
+<span class="fc" id="L40">        public static Function DIV = create(&quot;(I[0]/I[1])&quot;, false);</span>
+<span class="fc" id="L41">        public static Function DIV_ASSIGN = create(&quot;I[0]&lt;-(I[0]/I[1])&quot;, false);</span>
+<span class="fc" id="L42">        public static Function POW = create(&quot;(I[0]^I[1])&quot;, false);</span>
+<span class="fc" id="L43">        public static Function POW_ASSIGN = create(&quot;I[0]&lt;-(I[0]^I[1])&quot;, false);</span>
+<span class="fc" id="L44">        public static Function MUL = create(&quot;I[0]*I[1]&quot;, false);</span>
+<span class="fc" id="L45">        public static Function MUL_ASSIGN = create(&quot;I[0]&lt;-(I[0]*I[1])&quot;, false);</span>
+<span class="fc" id="L46">        public static Function MOD = create(&quot;(I[0]%I[1])&quot;, false);</span>
+<span class="fc" id="L47">        public static Function MOD_ASSIGN = create(&quot;I[0]&lt;-(I[0]%I[1])&quot;, false);</span>
+<span class="fc" id="L48">        public static Function NEG = create(&quot;(-1*I[0])&quot;, false);</span>
+    }
+
     static Function create(String expression){
-<span class="fc" id="L35">        return create(expression, true);</span>
+<span class="fc" id="L52">        return create(expression, true);</span>
     }
 
     static Function create(String expression, boolean doAD){
-<span class="fc" id="L39">        return FunctionBuilder.build(expression, doAD);</span>
+<span class="fc" id="L56">        return FunctionBuilder.build(expression, doAD);</span>
     }
 
-<span class="nc" id="L42">    class Setup</span>
+<span class="nc" id="L59">    class Setup</span>
     {
         public static Tsr commit(Tsr[] tensors, String operation, boolean doAD) {
-<span class="fc" id="L45">            return commit(null, tensors, FunctionBuilder.build(operation, doAD));</span>
+<span class="fc" id="L62">            return commit(null, tensors, FunctionBuilder.build(operation, doAD));</span>
         }
 
         public static Tsr commit(Tsr drain, Tsr[] tensors, String operation, boolean doAD) {
-<span class="fc" id="L49">            return commit(drain, tensors, FunctionBuilder.build(operation, doAD));</span>
+<span class="fc" id="L66">            return commit(drain, tensors, FunctionBuilder.build(operation, doAD));</span>
         }
 
         public static Tsr commit(Tsr[] inputs, Function function) {
-<span class="nc" id="L53">            return commit(null, inputs, function);</span>
+<span class="nc" id="L70">            return commit(null, inputs, function);</span>
         }
 
         public static Tsr commit(Tsr drain, Tsr[] inputs, Function function) {
-<span class="fc" id="L57">            return commit(drain, inputs, function, null);</span>
+<span class="fc" id="L74">            return commit(drain, inputs, function, null);</span>
         }
 
         public static Tsr commit(Tsr drain, Tsr[] inputs, Function function, Supplier&lt;Tsr&gt; activation){
 
-<span class="fc" id="L62">            Tsr.makeFit(inputs);// reshaping if needed</span>
+<span class="fc" id="L79">            Tsr.makeFit(inputs);// reshaping if needed</span>
 
-<span class="fc" id="L64">            GraphLock newLock = new GraphLock(function, inputs);</span>
-<span class="fc bfc" id="L65" title="All 2 branches covered.">            for (Tsr t : inputs) {</span>
-<span class="fc bfc" id="L66" title="All 2 branches covered.">                if(t.has(GraphNode.class)) ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);</span>
-<span class="fc" id="L67">                else new GraphNode(function, newLock, ()-&gt; t);</span>
+<span class="fc" id="L81">            GraphLock newLock = new GraphLock(function, inputs);</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">            for (Tsr t : inputs) {</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">                if(t.has(GraphNode.class)) ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);</span>
+<span class="fc" id="L84">                else new GraphNode(function, newLock, ()-&gt; t);</span>
             }
-<span class="fc" id="L69">            Tsr result = null;</span>
-<span class="fc bfc" id="L70" title="All 2 branches covered.">            if(activation==null) result = function.activate(inputs);</span>
-<span class="fc" id="L71">            else result = activation.get();</span>
+<span class="fc" id="L86">            Tsr result = null;</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">            if(activation==null) result = function.activate(inputs);</span>
+<span class="fc" id="L88">            else result = activation.get();</span>
 
-<span class="fc" id="L73">            Function.CACHE.free(newLock);</span>
-<span class="fc" id="L74">            boolean resultIsUnique = true;</span>
-<span class="fc bfc" id="L75" title="All 2 branches covered.">            if(drain!=null){</span>
-<span class="fc bfc" id="L76" title="All 2 branches covered.">                for(Tsr t : inputs){</span>
-<span class="fc" id="L77">                    Tsr g = (Tsr)t.find(Tsr.class);</span>
-<span class="fc bfc" id="L78" title="All 6 branches covered.">                    if (t == result || (g!=null &amp;&amp; g==result)) {</span>
-<span class="fc" id="L79">                        resultIsUnique = false;</span>
-<span class="fc" id="L80">                        break;</span>
+<span class="fc" id="L90">            Function.CACHE.free(newLock);</span>
+<span class="fc" id="L91">            boolean resultIsUnique = true;</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">            if(drain!=null){</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">                for(Tsr t : inputs){</span>
+<span class="fc" id="L94">                    Tsr g = (Tsr)t.find(Tsr.class);</span>
+<span class="fc bfc" id="L95" title="All 6 branches covered.">                    if (t == result || (g!=null &amp;&amp; g==result)) {</span>
+<span class="fc" id="L96">                        resultIsUnique = false;</span>
+<span class="fc" id="L97">                        break;</span>
                     }
                 }
             }
-<span class="fc bfc" id="L84" title="All 2 branches covered.">            if(resultIsUnique) return result;</span>
-<span class="fc" id="L85">            else return null;</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">            if(resultIsUnique) return result;</span>
+<span class="fc" id="L102">            else return null;</span>
         }
 
     }

@@ -40,199 +40,204 @@ import java.lang.ref.Cleaner;
     {
 <span class="fc bfc" id="L41" title="All 2 branches covered.">        if(type.identifier().equals(&quot;&lt;&quot;))</span>
         {
-<span class="pc bpc" id="L43" title="1 of 2 branches missed.">            int offset = (tsrs[0]==null)?1:0;</span>
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">            int offset = (tsrs[0] == null) ? 1 : 0;</span>
 <span class="fc" id="L44">            _execute_recursively(new Tsr[]{tsrs[offset], tsrs[1+offset]}, OperationType.instance(&quot;idy&quot;), -1);</span>
 <span class="fc" id="L45">        }</span>
 <span class="fc bfc" id="L46" title="All 2 branches covered.">        else if(type.identifier().equals(&quot;&gt;&quot;))</span>
         {
-<span class="pc bpc" id="L48" title="1 of 2 branches missed.">            int offset = (tsrs[0]==null)?1:0;</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">            int offset = (tsrs[0] == null) ? 1 : 0;</span>
 <span class="fc" id="L49">            _execute_recursively(new Tsr[]{tsrs[1+offset], tsrs[offset]}, OperationType.instance(&quot;idy&quot;), -1);</span>
 <span class="fc" id="L50">        }</span>
         else
         {
 <span class="fc" id="L53">            _createNewDrainTensorIn(this, tsrs, type);</span>
 <span class="fc bfc" id="L54" title="All 4 branches covered.">            if (</span>
-                    d&lt;0 &amp;&amp; tsrs.length == 3
-                            &amp;&amp;
+                    d&lt;0 &amp;&amp; tsrs.length == 3 &amp;&amp;
                             (
-<span class="fc bfc" id="L58" title="All 4 branches covered.">                                    (tsrs[1].isVirtual() || tsrs[2].isVirtual())</span>
-                                            ||
-<span class="fc bfc" id="L60" title="All 8 branches covered.">                                            (!tsrs[1].isOutsourced() &amp;&amp; tsrs[1].size() == 1 || !tsrs[2].isOutsourced() &amp;&amp; tsrs[2].size() == 1)</span>
+<span class="fc bfc" id="L57" title="All 4 branches covered.">                                    tsrs[1].isVirtual() || tsrs[2].isVirtual() ||</span>
+                                    (
+<span class="fc bfc" id="L59" title="All 4 branches covered.">                                            !tsrs[1].isOutsourced() &amp;&amp; tsrs[1].size() == 1</span>
+                                                    ||
+<span class="fc bfc" id="L61" title="All 4 branches covered.">                                            !tsrs[2].isOutsourced() &amp;&amp; tsrs[2].size() == 1</span>
+                                    )
                             )
             ) {
-<span class="fc bfc" id="L63" title="All 4 branches covered.">                if (tsrs[2].isVirtual() || tsrs[2].size() == 1) {</span>
-<span class="fc" id="L64">                    _execute_recursively(new Tsr[]{tsrs[0], tsrs[1]}, OperationType.instance(&quot;idy&quot;), -1);</span>
-<span class="fc" id="L65">                    _execute_tensor_scalar(tsrs[0], tsrs[2].value64()[0], type, d);</span>
+<span class="fc bfc" id="L65" title="All 4 branches covered.">                if (tsrs[2].isVirtual() || tsrs[2].size() == 1) {</span>
+<span class="fc" id="L66">                    _execute_recursively(new Tsr[]{tsrs[0], tsrs[1]}, OperationType.instance(&quot;idy&quot;), -1);</span>
+<span class="fc" id="L67">                    _execute_tensor_scalar(tsrs[0], tsrs[2].value64()[0], type, d);</span>
                 } else {
-<span class="fc" id="L67">                    _execute_recursively(new Tsr[]{tsrs[0], tsrs[2]}, OperationType.instance(&quot;idy&quot;), -1);</span>
-<span class="fc" id="L68">                    _execute_tensor_scalar(tsrs[0], tsrs[1].value64()[0], type, d);</span>
+<span class="fc" id="L69">                    _execute_recursively(new Tsr[]{tsrs[0], tsrs[2]}, OperationType.instance(&quot;idy&quot;), -1);</span>
+<span class="fc" id="L70">                    _execute_tensor_scalar(tsrs[0], tsrs[1].value64()[0], type, d);</span>
                 }
             } else {
-<span class="fc" id="L71">                _execute_recursively(tsrs, type, d);</span>
+<span class="fc" id="L73">                _execute_recursively(tsrs, type, d);</span>
             }
         }
-<span class="fc" id="L74">    }</span>
+<span class="fc" id="L76">    }</span>
 
     private Tsr _execute_recursively(Tsr[] tsrs, OperationType type, int d)
     {
-<span class="fc" id="L78">        boolean[] notNative = new boolean[tsrs.length];</span>
-<span class="fc bfc" id="L79" title="All 2 branches covered.">        for (int i=0; i&lt;tsrs.length; i++) {</span>
-<span class="pc bpc" id="L80" title="1 of 4 branches missed.">            if (tsrs[i]!=null &amp;&amp; !tsrs[i].isOutsourced()) {</span>
-<span class="fc" id="L81">                this.add(tsrs[i]);</span>
-<span class="fc" id="L82">                notNative[i] = true;</span>
+<span class="fc" id="L80">        boolean[] notNative = new boolean[tsrs.length];</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        for (int i=0; i&lt;tsrs.length; i++) {</span>
+<span class="pc bpc" id="L82" title="1 of 4 branches missed.">            if (tsrs[i] != null &amp;&amp; !tsrs[i].isOutsourced()) {</span>
+<span class="fc" id="L83">                this.add(tsrs[i]);</span>
+<span class="fc" id="L84">                notNative[i] = true;</span>
             } else {
-<span class="fc" id="L84">                notNative[i] = false;</span>
+<span class="fc" id="L86">                notNative[i] = false;</span>
             }
         }
-<span class="fc bfc" id="L87" title="All 2 branches covered.">        if(tsrs.length&gt;3) {</span>
-<span class="fc bfc" id="L88" title="All 2 branches covered.">            if(d&lt;0){</span>
-<span class="fc" id="L89">                _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], tsrs[2]}, type, d);</span>
-<span class="fc" id="L90">                Tsr[] newTsrs = Utility._offsetted(tsrs, 1);</span>
-<span class="fc" id="L91">                newTsrs[0] =  _execute_recursively(newTsrs, type, d);//This recursion should work!</span>
-<span class="fc" id="L92">                tsrs[0] = newTsrs[0];</span>
-<span class="fc" id="L93">            } else {</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        if (tsrs.length&gt;3) {</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">            if (d &lt; 0) {</span>
+<span class="fc" id="L91">                _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], tsrs[2]}, type, d);</span>
+<span class="fc" id="L92">                Tsr[] newTsrs = Utility._offsetted(tsrs, 1);</span>
+<span class="fc" id="L93">                newTsrs[0] =  _execute_recursively(newTsrs, type, d);//This recursion should work!</span>
+<span class="fc" id="L94">                tsrs[0] = newTsrs[0];</span>
+<span class="fc" id="L95">            } else {</span>
                 Tsr[] newTsrs;
-<span class="pc bpc" id="L95" title="2 of 6 branches missed.">                switch(type.identifier()){</span>
+<span class="pc bpc" id="L97" title="2 of 6 branches missed.">                switch( type.identifier() ) {</span>
                     case &quot;+&quot;:
                     case &quot;sum&quot;:
-<span class="fc" id="L98">                        tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue(1.0f);</span>
-<span class="fc" id="L99">                        break;</span>
-<span class="nc bnc" id="L100" title="All 2 branches missed.">                    case &quot;-&quot;: tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue((d==0)?1.0f:-1.0f);</span>
-<span class="nc" id="L101">                        break;</span>
+<span class="fc" id="L100">                        tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue(1.0f);</span>
+<span class="fc" id="L101">                        break;</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">                    case &quot;-&quot;: tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue((d==0)?1.0f:-1.0f);</span>
+<span class="nc" id="L103">                        break;</span>
                     case &quot;^&quot;:
-<span class="fc" id="L103">                        newTsrs = Utility._subset(tsrs, 1,  2, tsrs.length-2);</span>
-<span class="pc bpc" id="L104" title="1 of 2 branches missed.">                        if(d&gt;0){</span>
-<span class="fc" id="L105">                            newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);</span>
-<span class="fc" id="L106">                            Tsr inner = _execute_recursively(newTsrs, OperationType.instance(&quot;*&quot;), d-1);</span>
-<span class="fc" id="L107">                            Tsr exp = _execute_recursively(new Tsr[]{Tsr.Create.newTsrLike(tsrs[1]), inner, tsrs[d]}, OperationType.instance(&quot;*&quot;), -1);</span>
-<span class="fc" id="L108">                            tsrs[0] =  _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], exp}, type, 1);</span>
-<span class="fc" id="L109">                            inner.delete();</span>
-<span class="fc" id="L110">                            exp.delete();</span>
-<span class="fc" id="L111">                        } else {</span>
-<span class="nc" id="L112">                            newTsrs = Utility._subset(tsrs, 1,  2, tsrs.length-2);</span>
-<span class="nc" id="L113">                            newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);</span>
-<span class="nc" id="L114">                            Tsr exp = _execute_recursively(newTsrs, OperationType.instance(&quot;*&quot;), -1);</span>
-<span class="nc" id="L115">                            tsrs[0] = _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], exp}, type, 0);</span>
-<span class="nc" id="L116">                            exp.delete();</span>
+<span class="fc" id="L105">                        newTsrs = Utility._subset(tsrs, 1,  2, tsrs.length-2);</span>
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">                        if ( d&gt;0 ) {</span>
+<span class="fc" id="L107">                            newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);</span>
+<span class="fc" id="L108">                            Tsr inner = _execute_recursively(newTsrs, OperationType.instance(&quot;*&quot;), d-1);</span>
+<span class="fc" id="L109">                            Tsr exp = _execute_recursively(new Tsr[]{Tsr.Create.newTsrLike(tsrs[1]), inner, tsrs[d]}, OperationType.instance(&quot;*&quot;), -1);</span>
+<span class="fc" id="L110">                            tsrs[0] =  _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], exp}, type, 1);</span>
+<span class="fc" id="L111">                            inner.delete();</span>
+<span class="fc" id="L112">                            exp.delete();</span>
+<span class="fc" id="L113">                        } else {</span>
+<span class="nc" id="L114">                            newTsrs = Utility._subset(tsrs, 1,  2, tsrs.length-2);</span>
+<span class="nc" id="L115">                            newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);</span>
+<span class="nc" id="L116">                            Tsr exp = _execute_recursively(newTsrs, OperationType.instance(&quot;*&quot;), -1);</span>
+<span class="nc" id="L117">                            tsrs[0] = _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], exp}, type, 0);</span>
+<span class="nc" id="L118">                            exp.delete();</span>
                         }
-<span class="nc" id="L118">                        break;</span>
+<span class="nc" id="L120">                        break;</span>
                     case &quot;*&quot;:
                     case &quot;prod&quot;:
-<span class="fc" id="L121">                        newTsrs = Utility._without(tsrs, 1+d);</span>
-<span class="pc bpc" id="L122" title="1 of 2 branches missed.">                        if(newTsrs.length&gt;2){</span>
-<span class="pc bpc" id="L123" title="1 of 2 branches missed.">                            newTsrs[0] = (newTsrs[0]==null)? Tsr.Create.newTsrLike(tsrs[1]):newTsrs[0];</span>
-<span class="fc" id="L124">                            tsrs[0] = _execute_recursively(newTsrs, OperationType.instance(&quot;*&quot;), -1);</span>
+<span class="fc" id="L123">                        newTsrs = Utility._without(tsrs, 1+d);</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">                        if(newTsrs.length&gt;2){</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">                            newTsrs[0] = (newTsrs[0]==null)? Tsr.Create.newTsrLike(tsrs[1]):newTsrs[0];</span>
+<span class="fc" id="L126">                            tsrs[0] = _execute_recursively(newTsrs, OperationType.instance(&quot;*&quot;), -1);</span>
                         } else {
-<span class="nc" id="L126">                            tsrs[0] = newTsrs[1];</span>
+<span class="nc" id="L128">                            tsrs[0] = newTsrs[1];</span>
                         }
-<span class="nc" id="L128">                        break;</span>
+<span class="nc" id="L130">                        break;</span>
                     case &quot;/&quot;:
                         Tsr a;
-<span class="pc bpc" id="L131" title="1 of 2 branches missed.">                        if(d&gt;1){</span>
-<span class="nc" id="L132">                            newTsrs = Utility._subset(tsrs, 1, 1, d+1);</span>
-<span class="nc" id="L133">                            newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);</span>
-<span class="nc" id="L134">                            a = _execute_recursively(newTsrs, OperationType.instance(&quot;/&quot;), -1);</span>
-<span class="pc bpc" id="L135" title="1 of 2 branches missed.">                        } else if(d==1) a = tsrs[1];</span>
-<span class="nc" id="L136">                        else a = Tsr.Create.newTsrLike(tsrs[1], 1.0);</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">                        if(d&gt;1){</span>
+<span class="nc" id="L134">                            newTsrs = Utility._subset(tsrs, 1, 1, d+1);</span>
+<span class="nc" id="L135">                            newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);</span>
+<span class="nc" id="L136">                            a = _execute_recursively(newTsrs, OperationType.instance(&quot;/&quot;), -1);</span>
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">                        } else if(d==1) a = tsrs[1];</span>
+<span class="nc" id="L138">                        else a = Tsr.Create.newTsrLike(tsrs[1], 1.0);</span>
                         Tsr b;
-<span class="pc bpc" id="L138" title="1 of 2 branches missed.">                        if((tsrs.length-(d+2))&gt;1){//  12 / 3 / 0.5 / 4 / 2</span>
-<span class="fc" id="L139">                            newTsrs = Utility._subset(tsrs, 2, d+2, tsrs.length-(d+2));//or (d+2)</span>
-<span class="fc" id="L140">                            newTsrs[1] =  Tsr.Create.newTsrLike(tsrs[1], 1.0);</span>
-<span class="fc" id="L141">                            newTsrs[0] = newTsrs[1];</span>
-<span class="fc" id="L142">                            b = _execute_recursively(newTsrs, OperationType.instance(&quot;/&quot;), -1);</span>
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">                        if ( (tsrs.length-(d+2))&gt;1 ) {</span>
+<span class="fc" id="L141">                            newTsrs = Utility._subset(tsrs, 2, d+2, tsrs.length-(d+2));//or (d+2)</span>
+<span class="fc" id="L142">                            newTsrs[1] =  Tsr.Create.newTsrLike(tsrs[1], 1.0);</span>
+<span class="fc" id="L143">                            newTsrs[0] = newTsrs[1];</span>
+<span class="fc" id="L144">                            b = _execute_recursively(newTsrs, OperationType.instance(&quot;/&quot;), -1);</span>
                         } else {
-<span class="nc" id="L144">                            b = Tsr.Create.newTsrLike(tsrs[1], 1.0);</span>
+<span class="nc" id="L146">                            b = Tsr.Create.newTsrLike(tsrs[1], 1.0);</span>
                         }
-<span class="fc" id="L146">                        _execute_recursively(new Tsr[]{tsrs[0], a, b}, OperationType.instance(&quot;*&quot;), -1);</span>
-<span class="fc" id="L147">                        _execute_recursively(new Tsr[]{tsrs[0], tsrs[0], tsrs[d+1]}, OperationType.instance(&quot;/&quot;), 1);</span>
-<span class="pc bpc" id="L148" title="1 of 2 branches missed.">                        if ( d==0 ) a.delete();</span>
-<span class="fc" id="L149">                        b.delete();</span>
-<span class="fc" id="L150">                        break;</span>
+<span class="fc" id="L148">                        _execute_recursively(new Tsr[]{tsrs[0], a, b}, OperationType.instance(&quot;*&quot;), -1);</span>
+<span class="fc" id="L149">                        _execute_recursively(new Tsr[]{tsrs[0], tsrs[0], tsrs[d+1]}, OperationType.instance(&quot;/&quot;), 1);</span>
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">                        if ( d==0 ) a.delete();</span>
+<span class="fc" id="L151">                        b.delete();</span>
+<span class="fc" id="L152">                        break;</span>
                     default:
-<span class="pc" id="L152">                        throw new IllegalStateException(&quot;Operation not found!&quot;);</span>
+<span class="pc" id="L154">                        throw new IllegalStateException(&quot;Operation not found!&quot;);</span>
                 }
             }
         } else {
-<span class="fc" id="L156">            this._enqueue(tsrs, d, type);</span>
+<span class="fc" id="L158">            this._enqueue(tsrs, d, type);</span>
         }
-<span class="fc bfc" id="L158" title="All 2 branches covered.">        for (int i=0; i&lt;tsrs.length; i++) {</span>
-<span class="fc bfc" id="L159" title="All 6 branches covered.">            if (notNative[i] &amp;&amp; tsrs[i] != null &amp;&amp; !tsrs[i].isUndefined()){</span>
-<span class="fc" id="L160">                this.get(tsrs[i]);</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">        for (int i=0; i&lt;tsrs.length; i++) {</span>
+<span class="fc bfc" id="L161" title="All 6 branches covered.">            if (notNative[i] &amp;&amp; tsrs[i] != null &amp;&amp; !tsrs[i].isUndefined()){</span>
+<span class="fc" id="L162">                this.get(tsrs[i]);</span>
             }
         }
-<span class="fc" id="L163">        return tsrs[0];</span>
+<span class="fc" id="L165">        return tsrs[0];</span>
     }
 
 
 
     protected void _execute_tensor_scalar(Tsr t, double value, OperationType type, int d)
     {
-<span class="pc bpc" id="L170" title="1 of 2 branches missed.">        if(d&lt;0) {</span>
-<span class="fc" id="L171">            _enqueue(t, value, d, type);</span>
-        } else {
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">        if(d&lt;0) _enqueue(t, value, d, type);</span>
+        else
+        {
             /* Derivatives implementation: (values cannot be derived) */
-<span class="nc" id="L174">            if(</span>
-<span class="nc bnc" id="L175" title="All 2 branches missed.">                    type.identifier().equals(&quot;+&quot;)||</span>
-<span class="nc bnc" id="L176" title="All 2 branches missed.">                    type.identifier().equals(&quot;-&quot;)||</span>
-<span class="nc bnc" id="L177" title="All 2 branches missed.">                    type.identifier().equals(&quot;%&quot;)</span>
+<span class="nc" id="L176">            if(</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">                    type.identifier().equals(&quot;+&quot;)||</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">                    type.identifier().equals(&quot;-&quot;)||</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">                    type.identifier().equals(&quot;%&quot;)</span>
             ){
-<span class="nc" id="L179">                _execute_tensor_scalar(t, 0, OperationType.instance(&quot;*&quot;), -1);</span>
-<span class="nc" id="L180">                _execute_tensor_scalar(t, 1, OperationType.instance(&quot;+&quot;), -1);</span>
-<span class="nc bnc" id="L181" title="All 2 branches missed.">            } else if(type.identifier().equals(&quot;^&quot;)){</span>
-<span class="nc" id="L182">                _execute_tensor_scalar(t, value-1, OperationType.instance(&quot;^&quot;), -1);</span>
-<span class="nc" id="L183">                _execute_tensor_scalar(t, value, OperationType.instance(&quot;*&quot;), -1);</span>
-<span class="nc bnc" id="L184" title="All 4 branches missed.">            } else if(type.identifier().equals(&quot;*&quot;)||type.identifier().contains(&quot;x&quot;)){</span>
-<span class="nc" id="L185">                _execute_tensor_scalar(t, 0, OperationType.instance(&quot;*&quot;), -1);//???</span>
-<span class="nc" id="L186">                _execute_tensor_scalar(t, value, OperationType.instance(&quot;+&quot;), -1);</span>
-<span class="nc bnc" id="L187" title="All 2 branches missed.">            } else if(type.identifier().equals(&quot;/&quot;)){</span>
-<span class="nc" id="L188">                _execute_tensor_scalar(t, 0, OperationType.instance(&quot;*&quot;), -1);</span>
-<span class="nc" id="L189">                _execute_tensor_scalar(t, 1/value, OperationType.instance(&quot;+&quot;), -1);</span>
+<span class="nc" id="L181">                _execute_tensor_scalar(t, 0, OperationType.instance(&quot;*&quot;), -1);</span>
+<span class="nc" id="L182">                _execute_tensor_scalar(t, 1, OperationType.instance(&quot;+&quot;), -1);</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">            } else if(type.identifier().equals(&quot;^&quot;)){</span>
+<span class="nc" id="L184">                _execute_tensor_scalar(t, value-1, OperationType.instance(&quot;^&quot;), -1);</span>
+<span class="nc" id="L185">                _execute_tensor_scalar(t, value, OperationType.instance(&quot;*&quot;), -1);</span>
+<span class="nc bnc" id="L186" title="All 4 branches missed.">            } else if(type.identifier().equals(&quot;*&quot;)||type.identifier().contains(&quot;x&quot;)){</span>
+<span class="nc" id="L187">                _execute_tensor_scalar(t, 0, OperationType.instance(&quot;*&quot;), -1);//???</span>
+<span class="nc" id="L188">                _execute_tensor_scalar(t, value, OperationType.instance(&quot;+&quot;), -1);</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">            } else if(type.identifier().equals(&quot;/&quot;)){</span>
+<span class="nc" id="L190">                _execute_tensor_scalar(t, 0, OperationType.instance(&quot;*&quot;), -1);</span>
+<span class="nc" id="L191">                _execute_tensor_scalar(t, 1/value, OperationType.instance(&quot;+&quot;), -1);</span>
             }
         }
-<span class="fc" id="L192">    }</span>
+<span class="fc" id="L194">    }</span>
 
     private static void _createNewDrainTensorIn(Device device, Tsr[] tsrs, OperationType type) {
-<span class="fc bfc" id="L195" title="All 2 branches covered.">        if(tsrs[0]==null)//Creating a new tensor:</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">        if(tsrs[0]==null)//Creating a new tensor:</span>
         {
-<span class="fc bfc" id="L197" title="All 2 branches covered.">            int[] shp = (type.identifier().endsWith(&quot;x&quot;))</span>
-<span class="fc" id="L198">                    ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].shape(), tsrs[2].shape())</span>
-<span class="fc" id="L199">                    : tsrs[1].shape();</span>
-<span class="fc" id="L200">            Tsr output = new Tsr(shp, 0.0);</span>
-<span class="fc" id="L201">            device.add(output);</span>
-<span class="fc" id="L202">            tsrs[0] = output;</span>
+<span class="fc bfc" id="L199" title="All 2 branches covered.">            int[] shp = (type.identifier().endsWith(&quot;x&quot;))</span>
+<span class="fc" id="L200">                    ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].shape(), tsrs[2].shape())</span>
+<span class="fc" id="L201">                    : tsrs[1].shape();</span>
+<span class="fc" id="L202">            Tsr output = new Tsr(shp, 0.0);</span>
+<span class="fc" id="L203">            device.add(output);</span>
+<span class="fc" id="L204">            tsrs[0] = output;</span>
         }
-<span class="fc" id="L204">    }</span>
+<span class="fc" id="L206">    }</span>
 
-<span class="nc" id="L206">    protected static class Utility {</span>
-        public static Tsr[] _subset(Tsr[] tsrs, int padding, int index, int offset){
-<span class="pc bpc" id="L208" title="1 of 2 branches missed.">            if(offset&lt;0){</span>
-<span class="nc" id="L209">                index += offset;</span>
-<span class="nc" id="L210">                offset *= -1;</span>
+    protected static class Utility
+    {
+        private Utility(){}
+
+        public static Tsr[] _subset(Tsr[] tsrs, int padding, int index, int offset) {
+<span class="pc bpc" id="L213" title="1 of 2 branches missed.">            if(offset&lt;0){</span>
+<span class="nc" id="L214">                index += offset;</span>
+<span class="nc" id="L215">                offset *= -1;</span>
             }
-<span class="fc" id="L212">            Tsr[] newTsrs = new Tsr[offset+padding];</span>
-<span class="fc" id="L213">            System.arraycopy(tsrs, index, newTsrs, padding, offset);</span>
-<span class="fc" id="L214">            return newTsrs;</span>
+<span class="fc" id="L217">            Tsr[] newTsrs = new Tsr[offset+padding];</span>
+<span class="fc" id="L218">            System.arraycopy(tsrs, index, newTsrs, padding, offset);</span>
+<span class="fc" id="L219">            return newTsrs;</span>
         }
         public static Tsr[] _without(Tsr[] tsrs, int index){
-<span class="fc" id="L217">            Tsr[] newTsrs = new Tsr[tsrs.length-1];</span>
-<span class="fc bfc" id="L218" title="All 4 branches covered.">            for (int i=0; i&lt;newTsrs.length; i++) newTsrs[i] = tsrs[i+((i&lt;index)?0:1)];</span>
-<span class="fc" id="L219">            return newTsrs;</span>
+<span class="fc" id="L222">            Tsr[] newTsrs = new Tsr[tsrs.length-1];</span>
+<span class="fc bfc" id="L223" title="All 4 branches covered.">            for (int i=0; i&lt;newTsrs.length; i++) newTsrs[i] = tsrs[i+((i&lt;index)?0:1)];</span>
+<span class="fc" id="L224">            return newTsrs;</span>
         }
 
         public static Tsr[] _offsetted(Tsr[] tsrs, int offset){
-<span class="fc" id="L223">            Tsr[] newTsrs = new Tsr[tsrs.length-offset];</span>
-<span class="fc" id="L224">            newTsrs[0] = Tsr.Create.newTsrLike(tsrs[1]);</span>
-<span class="fc bfc" id="L225" title="All 4 branches covered.">            if(!tsrs[1].has(GraphNode.class)&amp;&amp;tsrs[1]!=tsrs[0]){//Deleting intermediate results!</span>
-<span class="fc" id="L226">                tsrs[1].delete();</span>
-<span class="fc" id="L227">                tsrs[1] = null;</span>
+<span class="fc" id="L228">            Tsr[] newTsrs = new Tsr[tsrs.length-offset];</span>
+<span class="fc" id="L229">            newTsrs[0] = Tsr.Create.newTsrLike(tsrs[1]);</span>
+<span class="fc bfc" id="L230" title="All 4 branches covered.">            if (!tsrs[1].has(GraphNode.class) &amp;&amp; tsrs[1]!=tsrs[0]) {//Deleting intermediate results!</span>
+<span class="fc" id="L231">                tsrs[1].delete();</span>
+<span class="fc" id="L232">                tsrs[1] = null;</span>
             }
-<span class="pc bpc" id="L229" title="1 of 4 branches missed.">            if(!tsrs[2].has(GraphNode.class)&amp;&amp;tsrs[2]!=tsrs[0]){//Deleting intermediate results!</span>
-<span class="fc" id="L230">                tsrs[2].delete();</span>
-<span class="fc" id="L231">                tsrs[2] = null;</span>
+<span class="pc bpc" id="L234" title="1 of 4 branches missed.">            if (!tsrs[2].has(GraphNode.class) &amp;&amp; tsrs[2]!=tsrs[0]) {//Deleting intermediate results!</span>
+<span class="fc" id="L235">                tsrs[2].delete();</span>
+<span class="fc" id="L236">                tsrs[2] = null;</span>
             }
-<span class="fc" id="L233">            System.arraycopy(tsrs, 1+offset, newTsrs, 1, tsrs.length-1-offset);</span>
-<span class="fc" id="L234">            newTsrs[1] = tsrs[0];</span>
-<span class="fc" id="L235">            return newTsrs;</span>
+<span class="fc" id="L238">            System.arraycopy(tsrs, 1+offset, newTsrs, 1, tsrs.length-1-offset);</span>
+<span class="fc" id="L239">            newTsrs[1] = tsrs[0];</span>
+<span class="fc" id="L240">            return newTsrs;</span>
         }
 
     }

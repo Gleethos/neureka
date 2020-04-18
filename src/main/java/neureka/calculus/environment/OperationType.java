@@ -108,16 +108,16 @@ public class OperationType implements Type
 
         _REGISTER.add(this);
         _LOOKUP.put(identifier, this);
-        if(
+        if (
             identifier
                 .replace((""+((char)171)), "")
                 .replace((""+((char)187)), "")
                 .matches("[a-z]")
-        ){
-            if(identifier.contains((""+((char)171)))) {
+        ) {
+            if (identifier.contains((""+((char)171)))) {
                 _LOOKUP.put(identifier.replace((""+((char)171)), "<<"), this);
             }
-            if(identifier.contains((""+((char)187)))) {
+            if (identifier.contains((""+((char)187)))) {
                 _LOOKUP.put(identifier.replace((""+((char)187)),">>"), this);
             }
         }
@@ -211,9 +211,8 @@ public class OperationType implements Type
     }
 
     @Override
-    public boolean isOperation(){
-        //if(_isOperation!=supportsOperation())System.out.println("OMG:  "+identifier());
-        return _isOperation;//supportsOperation();//_isOperation;
+    public boolean isOperation() {
+        return _isOperation;
     }
 
     @Override
@@ -238,27 +237,22 @@ public class OperationType implements Type
         if (this.identifier().equals(",")) return false; //Reshape
         Tsr last = null;
         for (Tsr t : inputs) {
-            if (last!=null) {
-                if (!last.shape().equals(t.shape())) return false;
-            }
-            last = t;
+            if (last!=null && !last.shape().equals(t.shape())) return false;
+            last = t; // Note: shapes are cached!
         }
         return true;
     }
 
-    //@Override
-    //public Tsr execute(Tsr[] inputs, )
-
     @Override
     public ADAgent getADAgentOf(Function f, Tsr[] inputs, int i, boolean forward)
     {
-        Function MUL = FunctionBuilder.build("(I[0]*I[1])", false);
+        Function mul = Function.Detached.MUL;
         if(forward)
         {
             Tsr d = f.derive(inputs, i);
             return new ADAgent(
                     ()->d,
-                    (t, derivative) -> MUL.activate(new Tsr[]{derivative, d}),
+                    (t, derivative) -> mul.activate(new Tsr[]{derivative, d}),
                     null
             );
         } else {
@@ -267,28 +261,26 @@ public class OperationType implements Type
                 Tsr d = f.derive(inputs, i);
                 return new ADAgent(
                         ()->d,
-                        (t, derivative) -> MUL.activate(new Tsr[]{derivative, d}),
-                        (t, error) -> MUL.activate(new Tsr[]{error, d})
+                        (t, derivative) -> mul.activate(new Tsr[]{derivative, d}),
+                        (t, error) -> mul.activate(new Tsr[]{error, d})
                 );
             }
             else if (this.isConvection())
             {
-                Function INV_X = FunctionBuilder.build(
+                Function invX = FunctionBuilder.build(
                         "I[0]" + identifier() + ">>I[1]" + identifier() + ">>I[2]",
                         false
                 );
                 Tsr d = f.derive(inputs, i);
                 return new ADAgent(
                         ()->d,
-                        (t, derivative) -> MUL.activate(new Tsr[]{derivative, d}),
-                        (t, error) -> INV_X.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})
+                        (t, derivative) -> mul.activate(new Tsr[]{derivative, d}),
+                        (t, error) -> invX.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})
                 );
             }
         }
         return new ADAgent(
-                ()->null,
-                (t, derivative) -> null,
-                (t, error) -> null
+                ()->null, (t, derivative) -> null, (t, error) -> null
         );
 
     }
