@@ -77,8 +77,8 @@ public class Neureka
 <span class="fc" id="L77">            _settings_source = utility().readResource(&quot;library_settings.groovy&quot;);</span>
 <span class="fc" id="L78">            _setup_source = utility().readResource(&quot;scripting_setup.groovy&quot;);</span>
         }
-<span class="fc" id="L80">        new GroovyShell().evaluate(_settings_source);</span>
-<span class="fc" id="L81">        new GroovyShell().evaluate(_setup_source);</span>
+<span class="fc" id="L80">        new GroovyShell(this.getClass().getClassLoader()).evaluate(_settings_source);</span>
+<span class="fc" id="L81">        new GroovyShell(this.getClass().getClassLoader()).evaluate(_setup_source);</span>
 <span class="fc" id="L82">    }</span>
 
     private boolean _currentThreadIsAuthorized(){

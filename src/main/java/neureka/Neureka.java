@@ -77,8 +77,8 @@ public class Neureka
             _settings_source = utility().readResource("library_settings.groovy");
             _setup_source = utility().readResource("scripting_setup.groovy");
         }
-        new GroovyShell().evaluate(_settings_source);
-        new GroovyShell().evaluate(_setup_source);
+        new GroovyShell(this.getClass().getClassLoader()).evaluate(_settings_source);
+        new GroovyShell(this.getClass().getClassLoader()).evaluate(_setup_source);
     }
 
     private boolean _currentThreadIsAuthorized(){
