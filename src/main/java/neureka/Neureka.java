@@ -2,6 +2,7 @@ package neureka;
 
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
+import groovy.lang.GroovySystem;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -72,13 +73,24 @@ public class Neureka
         return "1.0.0";
     }
 
-    public void reset(){
-        if( _settings_source==null || _setup_source==null ) {
+    public void reset() {
+        if (_settings_source == null || _setup_source == null) {
             _settings_source = utility().readResource("library_settings.groovy");
             _setup_source = utility().readResource("scripting_setup.groovy");
         }
-        new GroovyShell(this.getClass().getClassLoader()).evaluate(_settings_source);
-        new GroovyShell(this.getClass().getClassLoader()).evaluate(_setup_source);
+        try {
+            String version = GroovySystem.getVersion();
+            if(Integer.parseInt(version.split("\\.")[0]) < 3) {
+                throw new IllegalCallerException(
+                        "Wrong groovy version "+version+" found! Version 3.0.0 or greater required."
+                );
+            }
+            new GroovyShell(this.getClass().getClassLoader()).evaluate(_settings_source);
+            new GroovyShell(this.getClass().getClassLoader()).evaluate(_setup_source);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private boolean _currentThreadIsAuthorized(){

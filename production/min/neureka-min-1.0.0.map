@@ -6,18 +6,18 @@ neureka.Neureka -> neureka.Neureka:
     java.lang.String _setup_source -> c
     neureka.Neureka$Settings _settings -> d
     neureka.Neureka$Utility _utility -> e
-    26:29:void <init>() -> <init>
-    32:32:neureka.Neureka instance() -> instance
-    36:37:void setContext(java.lang.Thread,neureka.Neureka) -> setContext
-    40:47:neureka.Neureka instance(java.lang.Thread) -> instance
-    52:54:neureka.Neureka instance(groovy.lang.Closure) -> instance
-    58:58:neureka.Neureka$Settings settings() -> settings
-    62:64:neureka.Neureka$Settings settings(groovy.lang.Closure) -> settings
-    68:68:neureka.Neureka$Utility utility() -> utility
-    72:72:java.lang.String version() -> version
-    76:82:void reset() -> reset
-    85:85:boolean _currentThreadIsAuthorized() -> a
-    23:24:void <clinit>() -> <clinit>
+    27:30:void <init>() -> <init>
+    33:33:neureka.Neureka instance() -> instance
+    37:38:void setContext(java.lang.Thread,neureka.Neureka) -> setContext
+    41:48:neureka.Neureka instance(java.lang.Thread) -> instance
+    53:55:neureka.Neureka instance(groovy.lang.Closure) -> instance
+    59:59:neureka.Neureka$Settings settings() -> settings
+    63:65:neureka.Neureka$Settings settings(groovy.lang.Closure) -> settings
+    69:69:neureka.Neureka$Utility utility() -> utility
+    73:73:java.lang.String version() -> version
+    77:94:void reset() -> reset
+    97:97:boolean _currentThreadIsAuthorized() -> a
+    24:25:void <clinit>() -> <clinit>
 neureka.Neureka$Settings -> neureka.Neureka$Settings:
     neureka.Neureka$Settings$Debug _debug -> b
     neureka.Neureka$Settings$AutoDiff _autoDiff -> c
@@ -25,50 +25,50 @@ neureka.Neureka$Settings -> neureka.Neureka$Settings:
     neureka.Neureka$Settings$View _view -> e
     boolean _isLocked -> f
     neureka.Neureka this$0 -> a
-    95:102:void <init>(neureka.Neureka) -> <init>
-    105:105:neureka.Neureka$Settings$Debug debug() -> debug
-    109:111:neureka.Neureka$Settings$Debug debug(groovy.lang.Closure) -> debug
-    115:115:neureka.Neureka$Settings$AutoDiff autoDiff() -> autoDiff
-    119:121:neureka.Neureka$Settings$AutoDiff autoDiff(groovy.lang.Closure) -> autoDiff
-    125:125:neureka.Neureka$Settings$Indexing indexing() -> indexing
-    129:131:neureka.Neureka$Settings$Indexing indexing(groovy.lang.Closure) -> indexing
-    135:135:neureka.Neureka$Settings$View view() -> view
-    139:141:neureka.Neureka$Settings$View view(groovy.lang.Closure) -> view
-    145:145:boolean isLocked() -> isLocked
-    149:150:void setIsLocked(boolean) -> setIsLocked
+    107:114:void <init>(neureka.Neureka) -> <init>
+    117:117:neureka.Neureka$Settings$Debug debug() -> debug
+    121:123:neureka.Neureka$Settings$Debug debug(groovy.lang.Closure) -> debug
+    127:127:neureka.Neureka$Settings$AutoDiff autoDiff() -> autoDiff
+    131:133:neureka.Neureka$Settings$AutoDiff autoDiff(groovy.lang.Closure) -> autoDiff
+    137:137:neureka.Neureka$Settings$Indexing indexing() -> indexing
+    141:143:neureka.Neureka$Settings$Indexing indexing(groovy.lang.Closure) -> indexing
+    147:147:neureka.Neureka$Settings$View view() -> view
+    151:153:neureka.Neureka$Settings$View view(groovy.lang.Closure) -> view
+    157:157:boolean isLocked() -> isLocked
+    161:162:void setIsLocked(boolean) -> setIsLocked
 neureka.Neureka$Settings$AutoDiff -> neureka.Neureka$Settings$AutoDiff:
     boolean _retainPendingErrorForJITProp -> a
     boolean _applyGradientWhenTensorIsUsed -> b
     neureka.Neureka$Settings this$1 -> c
-    182:182:void <init>(neureka.Neureka$Settings) -> <init>
-    203:203:boolean retainPendingErrorForJITProp() -> retainPendingErrorForJITProp
-    207:209:void setRetainPendingErrorForJITProp(boolean) -> setRetainPendingErrorForJITProp
-    212:212:boolean applyGradientWhenTensorIsUsed() -> applyGradientWhenTensorIsUsed
-    216:218:void setApplyGradientWhenTensorIsUsed(boolean) -> setApplyGradientWhenTensorIsUsed
+    194:194:void <init>(neureka.Neureka$Settings) -> <init>
+    215:215:boolean retainPendingErrorForJITProp() -> retainPendingErrorForJITProp
+    219:221:void setRetainPendingErrorForJITProp(boolean) -> setRetainPendingErrorForJITProp
+    224:224:boolean applyGradientWhenTensorIsUsed() -> applyGradientWhenTensorIsUsed
+    228:230:void setApplyGradientWhenTensorIsUsed(boolean) -> setApplyGradientWhenTensorIsUsed
 neureka.Neureka$Settings$Debug -> neureka.Neureka$Settings$Debug:
     boolean _keepDerivativeTargetPayloads -> a
     neureka.Neureka$Settings this$1 -> b
-    152:152:void <init>(neureka.Neureka$Settings) -> <init>
-    172:172:boolean keepDerivativeTargetPayloads() -> keepDerivativeTargetPayloads
-    176:178:void setKeepDerivativeTargetPayloads(boolean) -> setKeepDerivativeTargetPayloads
+    164:164:void <init>(neureka.Neureka$Settings) -> <init>
+    184:184:boolean keepDerivativeTargetPayloads() -> keepDerivativeTargetPayloads
+    188:190:void setKeepDerivativeTargetPayloads(boolean) -> setKeepDerivativeTargetPayloads
 neureka.Neureka$Settings$Indexing -> neureka.Neureka$Settings$Indexing:
     boolean _legacyIndexing -> a
     boolean _thoroughIndexing -> b
     neureka.Neureka$Settings this$1 -> c
-    222:222:void <init>(neureka.Neureka$Settings) -> <init>
-    229:229:boolean legacy() -> legacy
-    233:235:void setLegacy(boolean) -> setLegacy
-    238:238:boolean thorough() -> thorough
-    242:244:void setThorough(boolean) -> setThorough
+    234:234:void <init>(neureka.Neureka$Settings) -> <init>
+    241:241:boolean legacy() -> legacy
+    245:247:void setLegacy(boolean) -> setLegacy
+    250:250:boolean thorough() -> thorough
+    254:256:void setThorough(boolean) -> setThorough
 neureka.Neureka$Settings$View -> neureka.Neureka$Settings$View:
     boolean _legacyView -> a
     neureka.Neureka$Settings this$1 -> b
-    248:248:void <init>(neureka.Neureka$Settings) -> <init>
-    254:254:boolean legacy() -> legacy
-    258:260:void setLegacy(boolean) -> setLegacy
+    260:260:void <init>(neureka.Neureka$Settings) -> <init>
+    266:266:boolean legacy() -> legacy
+    270:272:void setLegacy(boolean) -> setLegacy
 neureka.Neureka$Utility -> neureka.Neureka$Utility:
-    266:266:void <init>() -> <init>
-    276:289:java.lang.String readResource(java.lang.String) -> readResource
+    278:278:void <init>() -> <init>
+    288:301:java.lang.String readResource(java.lang.String) -> readResource
 neureka.Tsr -> neureka.Tsr:
     neureka.acceleration.Device _CPU -> a
     int _flags -> b
