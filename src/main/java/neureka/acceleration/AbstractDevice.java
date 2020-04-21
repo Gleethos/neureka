@@ -40,24 +40,26 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
     {
         if(type.identifier().equals("<"))
         {
-            int offset = (tsrs[0]==null)?1:0;
+            int offset = (tsrs[0] == null) ? 1 : 0;
             _execute_recursively(new Tsr[]{tsrs[offset], tsrs[1+offset]}, OperationType.instance("idy"), -1);
         }
         else if(type.identifier().equals(">"))
         {
-            int offset = (tsrs[0]==null)?1:0;
+            int offset = (tsrs[0] == null) ? 1 : 0;
             _execute_recursively(new Tsr[]{tsrs[1+offset], tsrs[offset]}, OperationType.instance("idy"), -1);
         }
         else
         {
             _createNewDrainTensorIn(this, tsrs, type);
             if (
-                    d<0 && tsrs.length == 3
-                            &&
+                    d<0 && tsrs.length == 3 &&
                             (
-                                    (tsrs[1].isVirtual() || tsrs[2].isVirtual())
-                                            ||
-                                            (!tsrs[1].isOutsourced() && tsrs[1].size() == 1 || !tsrs[2].isOutsourced() && tsrs[2].size() == 1)
+                                    tsrs[1].isVirtual() || tsrs[2].isVirtual() ||
+                                    (
+                                            !tsrs[1].isOutsourced() && tsrs[1].size() == 1
+                                                    ||
+                                            !tsrs[2].isOutsourced() && tsrs[2].size() == 1
+                                    )
                             )
             ) {
                 if (tsrs[2].isVirtual() || tsrs[2].size() == 1) {
@@ -77,22 +79,22 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
     {
         boolean[] notNative = new boolean[tsrs.length];
         for (int i=0; i<tsrs.length; i++) {
-            if (tsrs[i]!=null && !tsrs[i].isOutsourced()) {
+            if ( tsrs[i] != null && !tsrs[i].isOutsourced() ) {
                 this.add(tsrs[i]);
                 notNative[i] = true;
             } else {
                 notNative[i] = false;
             }
         }
-        if(tsrs.length>3) {
-            if(d<0){
+        if (tsrs.length>3) {
+            if (d < 0) {
                 _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], tsrs[2]}, type, d);
                 Tsr[] newTsrs = Utility._offsetted(tsrs, 1);
                 newTsrs[0] =  _execute_recursively(newTsrs, type, d);//This recursion should work!
                 tsrs[0] = newTsrs[0];
             } else {
                 Tsr[] newTsrs;
-                switch(type.identifier()){
+                switch( type.identifier() ) {
                     case "+":
                     case "sum":
                         tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue(1.0f);
@@ -101,7 +103,7 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
                         break;
                     case "^":
                         newTsrs = Utility._subset(tsrs, 1,  2, tsrs.length-2);
-                        if(d>0){
+                        if ( d>0 ) {
                             newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);
                             Tsr inner = _execute_recursively(newTsrs, OperationType.instance("*"), d-1);
                             Tsr exp = _execute_recursively(new Tsr[]{Tsr.Create.newTsrLike(tsrs[1]), inner, tsrs[d]}, OperationType.instance("*"), -1);
@@ -119,8 +121,8 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
                     case "*":
                     case "prod":
                         newTsrs = Utility._without(tsrs, 1+d);
-                        if(newTsrs.length>2){
-                            newTsrs[0] = (newTsrs[0]==null)? Tsr.Create.newTsrLike(tsrs[1]):newTsrs[0];
+                        if ( newTsrs.length > 2 ) {
+                            newTsrs[0] = ( newTsrs[0] == null ) ? Tsr.Create.newTsrLike(tsrs[1]) : newTsrs[0];
                             tsrs[0] = _execute_recursively(newTsrs, OperationType.instance("*"), -1);
                         } else {
                             tsrs[0] = newTsrs[1];
@@ -135,7 +137,7 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
                         } else if(d==1) a = tsrs[1];
                         else a = Tsr.Create.newTsrLike(tsrs[1], 1.0);
                         Tsr b;
-                        if((tsrs.length-(d+2))>1){//  12 / 3 / 0.5 / 4 / 2
+                        if ( tsrs.length -  d - 2  > 1 ) {
                             newTsrs = Utility._subset(tsrs, 2, d+2, tsrs.length-(d+2));//or (d+2)
                             newTsrs[1] =  Tsr.Create.newTsrLike(tsrs[1], 1.0);
                             newTsrs[0] = newTsrs[1];
@@ -155,10 +157,8 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
         } else {
             this._enqueue(tsrs, d, type);
         }
-        for (int i=0; i<tsrs.length; i++) {
-            if (notNative[i] && tsrs[i] != null && !tsrs[i].isUndefined()){
-                this.get(tsrs[i]);
-            }
+        for ( int i = 0; i < tsrs.length; i++ ) {
+            if ( notNative[i] && tsrs[i] != null && !tsrs[i].isUndefined() ) this.get(tsrs[i]);
         }
         return tsrs[0];
     }
@@ -167,9 +167,9 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
 
     protected void _execute_tensor_scalar(Tsr t, double value, OperationType type, int d)
     {
-        if(d<0) {
-            _enqueue(t, value, d, type);
-        } else {
+        if ( d<0 ) _enqueue(t, value, d, type);
+        else
+        {
             /* Derivatives implementation: (values cannot be derived) */
             if(
                     type.identifier().equals("+")||
@@ -203,9 +203,12 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
         }
     }
 
-    protected static class Utility {
-        public static Tsr[] _subset(Tsr[] tsrs, int padding, int index, int offset){
-            if(offset<0){
+    protected static class Utility
+    {
+        private Utility(){}
+
+        public static Tsr[] _subset(Tsr[] tsrs, int padding, int index, int offset) {
+            if ( offset < 0 ) {
                 index += offset;
                 offset *= -1;
             }
@@ -222,11 +225,11 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
         public static Tsr[] _offsetted(Tsr[] tsrs, int offset){
             Tsr[] newTsrs = new Tsr[tsrs.length-offset];
             newTsrs[0] = Tsr.Create.newTsrLike(tsrs[1]);
-            if(!tsrs[1].has(GraphNode.class)&&tsrs[1]!=tsrs[0]){//Deleting intermediate results!
+            if (!tsrs[1].has(GraphNode.class) && tsrs[1]!=tsrs[0]) {//Deleting intermediate results!
                 tsrs[1].delete();
                 tsrs[1] = null;
             }
-            if(!tsrs[2].has(GraphNode.class)&&tsrs[2]!=tsrs[0]){//Deleting intermediate results!
+            if ( !tsrs[2].has(GraphNode.class) && tsrs[2] != tsrs[0] ) {//Deleting intermediate results!
                 tsrs[2].delete();
                 tsrs[2] = null;
             }
