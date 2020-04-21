@@ -1,13 +1,11 @@
-import proguard.gradle.ProGuardTask
+
 
 buildscript {
     repositories {
         jcenter()
-        //flatDir dirs: '/libs/proguard6.2.2/lib'
     }
     dependencies {
         classpath 'net.sf.proguard:proguard-gradle:6.2.2'
-        //classpath ':proguard:'
     }
 }
 
@@ -18,11 +16,33 @@ plugins {
     id 'jacoco'
     id 'idea'
     id 'groovy'
+    //Public deployment:
     id 'maven-publish'
+    id 'signing'
 }
 
-group 'org.gleethos'
-version '1.0.0'
+String PROJECT = "neureka"
+String VERSION = "0.0.0"
+String GROUPID = "org.gleethos."+PROJECT
+
+def change = { c -> new Object() {
+            def between = { String a, String b -> new Object() {
+                    def inFile = { String p ->
+                        File file = new File("$rootDir" + p)
+                        String[] parts = file.text.split(a)//[1]
+                        file.write(parts[0] + a.replace("\\", "") + c(parts[0]) + b.replace("\\", "") + parts[1].split(b)[1])
+                    }
+                }
+            }
+        }
+    }
+
+change({VERSION}).between("production/neureka-", "\\.jar\\)").inFile("/README.md")
+change({VERSION}).between("return \"", "\"").inFile("/src/main/resources/library_settings.groovy")
+
+
+group GROUPID
+version VERSION
 
 //-----------------------------------------------------------------
 
@@ -32,17 +52,6 @@ targetCompatibility = JavaVersion.VERSION_11
 repositories {
     mavenCentral()
     jcenter { url "http://jcenter.bintray.com/" }
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId 'org.gleethos.neureka'
-            artifactId 'neureka'
-            version '1.0.0'
-            from components.java
-        }
-    }
 }
 
 //-----------------------------------------------------------------
@@ -70,35 +79,22 @@ jacocoTestReport {
 check.dependsOn jacocoTestReport
 
 //-----------------------------------------------------------------
+//LOCAL DEPLOYMENT:
 jar {
     //destinationDirectory = file("$rootDir/build/libs")
     //from configurations.compile.collect{ zipTree it }
     //destinationDirectory = file("$rootDir/production")
     //from configurations.compile.collect{ zipTree it }
     copy {
-        from "$rootDir/build/libs/neureka-"+version+".jar"
-        into "$rootDir/production"
+        from "$rootDir/build/libs/neureka-"+VERSION+".jar"
+        into "$rootDir/production/lib"
     }
 }
-//-----------------------------------------------------------------
-test {
-    //filter { includeTestsMatching "*" }
-    minHeapSize = "1g"
-    maxHeapSize = "5g"
-    maxParallelForks = Math.floor(1+(Runtime.runtime.availableProcessors().intdiv(2) ?: 1)/2)
-}
-//-----------------------------------------------------------------
 
-def currentOS = org.gradle.internal.os.OperatingSystem.current()
-def platform
-if (currentOS.isWindows()) platform = 'win'
-else if (currentOS.isLinux()) platform = 'linux'
-else if (currentOS.isMacOsX()) platform = 'mac'
 
-task ('proguard', type: ProGuardTask) {
+task ('proguard', type: proguard.gradle.ProGuardTask) {
 
     //Note: maybe consider configuration 'configuration.pro' as file
-
     verbose
 
     //allowaccessmodification
@@ -106,10 +102,8 @@ task ('proguard', type: ProGuardTask) {
     // Specify the input jars, output jars, and library jars.
     // library jars files(configurations.compile.collect())
 
-    injars  'build/libs/neureka-'+version+'.jar'
-    outjars 'production/min/neureka-min-'+version+'.jar'
-
-    print(System.getProperty('java.home'))//<java.home>
+    injars  'build/libs/'+PROJECT+'-'+VERSION+'.jar'
+    outjars 'production/min-lib/'+PROJECT+'-min-'+VERSION+'.jar'
 
     // Automatically handle the Java version of this build.
     if (System.getProperty('java.version').startsWith('1.')) {// Before Java 9, the runtime classes were packaged in a single jar file.
@@ -123,7 +117,7 @@ task ('proguard', type: ProGuardTask) {
     // Note: Keep a fixed source file attribute and all line number tables to get line numbers in the stack traces.
     // Can be commented out if not interested in stack traces.
 
-    printmapping 'production/min/neureka-min-'+version+'.map'
+    printmapping 'production/min/'+PROJECT+'-min-'+VERSION+'.map'
     keepparameternames
     renamesourcefileattribute 'SourceFile'
     keepattributes 'Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,EnclosingMethod'
@@ -196,10 +190,75 @@ task ('proguard', type: ProGuardTask) {
     dontwarn 'org.jetbrains.**'
 }
 
-
 task deploy() {
     dependsOn 'assemble'
     //dependsOn 'check'
     dependsOn 'jar'
     dependsOn 'proguard'
+}
+
+//-----------------------------------------------------------------
+//MAVEN DEPLOYMENT:
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId GROUPID
+            artifactId PROJECT
+            version VERSION
+            from components.java
+            pom {
+                name = PROJECT
+                description = "A platform independent tensor library written in Java."
+                url = "https://gleethos.github.io/neureka/index.html"
+                licenses {
+                    license {
+                        name = "MIT License"
+                        url = "https://raw.githubusercontent.com/Gleethos/neureka/master/LICENSE"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "Gleethos"
+                        name = "Daniel Nepp"
+                        email = "Gleethos@gmx.at"
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            def releasesRepoUrl = "$projectDir/production/lib"
+            def snapshotsRepoUrl = "$projectDir/production/lib"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            if (version.contains("min")) url = "$projectDir/production/min-lib"
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+javadoc {
+    destinationDir = new File("$projectDir/docs/jdocs")
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
+
+//-----------------------------------------------------------------
+test {
+    //filter { includeTestsMatching "*" }
+    minHeapSize = "1g"
+    maxHeapSize = "5g"
+    maxParallelForks = Math.floor(1+(Runtime.runtime.availableProcessors().intdiv(2) ?: 1)/2)
+}
+//-----------------------------------------------------------------
+
+task createJDocs(type: Javadoc){
+    destinationDir = new File("$projectDir/docs/jdocs")
+    source = "$projectDir/src/main"
+    //sourceSets.main.allJava
 }

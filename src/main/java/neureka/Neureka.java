@@ -15,6 +15,7 @@ public class Neureka
     private static final Map<Thread, Neureka> _instances;
     private static String _settings_source;
     private static String _setup_source;
+    private static String _version;
 
     private Settings _settings;
     private Utility _utility;
@@ -48,9 +49,9 @@ public class Neureka
         }
     }
 
-    public static Neureka instance(Closure c) {
+    public static Neureka instance(Closure<String> c) {
         c.setDelegate(Neureka.instance());
-        c.call();
+        _version = c.call();
         return Neureka.instance();
     }
 
