@@ -82,9 +82,6 @@ check.dependsOn jacocoTestReport
 //LOCAL DEPLOYMENT:
 jar {
     //destinationDirectory = file("$rootDir/build/libs")
-    //from configurations.compile.collect{ zipTree it }
-    //destinationDirectory = file("$rootDir/production")
-    //from configurations.compile.collect{ zipTree it }
     copy {
         from "$rootDir/build/libs/neureka-"+VERSION+".jar"
         into "$rootDir/production/lib"
