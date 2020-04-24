@@ -52,13 +52,13 @@ import java.util.function.Consumer;
     }
 
     public Relation foreachChild(Consumer&lt;Tsr&gt; action){
-<span class="fc bfc" id="L55" title="All 2 branches covered.">        if(_children!=null){</span>
-<span class="fc bfc" id="L56" title="All 2 branches covered.">            for(WeakReference&lt;Tsr&gt; r : _children){</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if ( _children != null ) {</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">            for ( WeakReference&lt;Tsr&gt; r : _children ) {</span>
 <span class="fc" id="L57">                Tsr c = r.get();</span>
-<span class="pc bpc" id="L58" title="1 of 2 branches missed.">                if(c!=null){</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">                if ( c != null ) {</span>
 <span class="fc" id="L59">                    action.accept(c);</span>
 <span class="fc" id="L60">                    Relation parent = (Relation) c.find(Relation.class);</span>
-<span class="pc bpc" id="L61" title="1 of 2 branches missed.">                    if(parent!=null) parent.foreachChild(action);</span>
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">                    if ( parent != null ) parent.foreachChild(action);</span>
                 }
             }
         }
@@ -74,7 +74,7 @@ import java.util.function.Consumer;
     }
 
     public int childCount(){
-<span class="pc bpc" id="L77" title="1 of 2 branches missed.">        return (_children==null)?0:_children.length;</span>
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">        return (_children==null) ? 0 : _children.length;</span>
     }
 
 }

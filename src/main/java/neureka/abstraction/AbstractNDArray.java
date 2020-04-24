@@ -34,7 +34,7 @@ public abstract class AbstractNDArray<InstanceType> extends AbstractComponentOwn
     /**
      *  Cached configuration
      */
-    private final static Map<Long, int[]> _CONFIGS;
+    private static final Map<Long, int[]> _CONFIGS;
 
     /**
      *  The shape of the NDArray.
@@ -72,7 +72,6 @@ public abstract class AbstractNDArray<InstanceType> extends AbstractComponentOwn
     }
 
     protected static int[] _cached(int[] data) {
-        if(true) return data;
         long key = 0;
         for (int e : data) {
             if (e <= 10) key *= 10;
@@ -93,21 +92,14 @@ public abstract class AbstractNDArray<InstanceType> extends AbstractComponentOwn
         }
         key += data.length;
         int[] found = _CONFIGS.get(key);
-        if (found != null) {
-            return found;
-        } else {
+        if (found != null) return found;
+        else {
             _CONFIGS.put(key, data);
             return data;
         }
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    public int i_of_idx(int[] idx) {
-        int i = 0;
-        for (int ii=0; ii<_shape.length; ii++) i += (idx[ii] * _spread[ii] + _offset[ii]) * _translation[ii];
-        return i;
-    }
 
     public int i_of_i(int i){
         return i_of_idx(idx_of_i(i));
@@ -127,6 +119,12 @@ public abstract class AbstractNDArray<InstanceType> extends AbstractComponentOwn
             }
         }
         return idx;
+    }
+
+    public int i_of_idx(int[] idx) {
+        int i = 0;
+        for (int ii=0; ii<_shape.length; ii++) i += (idx[ii] * _spread[ii] + _offset[ii]) * _translation[ii];
+        return i;
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -12,13 +12,13 @@
 
 Neureka is a platform independent deep-learning library written in Java. 
 
-  - Java, Kotlin, Groovy, Jython, Scala...
+  - Java, Kotlin, Groovy, Scala, Jython, JRuby...
  
   - OpenCL accelerated.
 
-  - N-Dimensional Tensors.
+  - nd-arrays / tensors.
 
-  - Flexible Tensor indexing and slicing.
+  - flexible Tensor indexing and slicing.
   
 Visit [Neurekas homepage](https://gleethos.github.io/neureka/index.html) for more information!
   
@@ -31,15 +31,21 @@ Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/ra
 
 ## Features ##
 
-  - Dynamic computation graph.
+  - dynamic computation graph
 
-  - Auto differentiation (forwards/backwards).
+  - auto differentiation (forwards/backwards)
 
-  - N-dimensional tensor convolution.
+  - nd-convolution
+  
+  - nd-broadcasting
 
-  - slicing.
+  - slicing
+  
+  - seeding
+  
+  - labeling
 
-Take a look:
+Take a quick look:
 ```
     Tsr x = new Tsr(3).setRqsGradient(true);
     Tsr b = new Tsr(-4);
@@ -134,16 +140,16 @@ GPU execution:
 
 ## Tech ##
 
-This library is heavily inspired by [PyTorch](https://github.com/pytorch/pytorch).
+This library is being heavily inspired by [PyTorch](https://github.com/pytorch/pytorch).
 A powerful deep learning framework that combines
 [dynamic computation](https://medium.com/@omaraymanomar/dynamic-vs-static-computation-graph-2579d1934ecf), performance and debugging freedom!
 
-PyTorch however does not carry with it the benefit of *'write once run everywhere'* on every Hardware! 
+PyTorch however does not carry with it the benefit of *'write once run everywhere'* on <b>every Hardware</b>! 
 
 [On the state of Deep Learning outside of CUDA’s walled garden.](https://towardsdatascience.com/on-the-state-of-deep-learning-outside-of-cudas-walled-garden-d88c8bbb4342)
 
 This is due to the fact that internally PyTorch is written
-in C++ and it's GPU acceleration is written in nvidia's cuda. 
+in C++, and it's GPU acceleration is written in nvidia's cuda. 
 Which means that even developers willing to compile for all platforms
 would still be locked out of AMD and Intel Systems when it comes to performance.
 
