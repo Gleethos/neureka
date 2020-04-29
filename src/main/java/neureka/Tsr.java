@@ -263,7 +263,6 @@ public class Tsr extends AbstractNDArray<Tsr>
 
     /**
      * @param newShape
-     * @return
      */
     protected void _configureFromNewShape(int[] newShape) {
         int size = Utility.Indexing.szeOfShp(newShape);

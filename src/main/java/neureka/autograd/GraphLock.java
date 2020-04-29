@@ -23,7 +23,7 @@ public class GraphLock
 
     /**
      * CONSTRUCTOR
-     * @param owner => The function which currently processes the graph of nodes of which this lock is referenced by.
+     * @param owner The function which currently processes the graph of nodes of which this lock is referenced by.
      * @param sources
      */
     public GraphLock(Function owner, Tsr[] sources){
@@ -31,7 +31,7 @@ public class GraphLock
     }
 
     /**
-     * @return => Returns true if the graph is locked
+     * @return Returns true if the graph is locked
      */
     public boolean isLocked(){
         return _is_locked;

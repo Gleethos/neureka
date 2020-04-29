@@ -610,8 +610,7 @@ public class GraphNode implements Component<Tsr> {
     }
 
     /**
-     * @param action
-     * @return void
+     * @param action A lambda action providing derivative and target node as parameter.
      */
     public void forEachBackward(Tsr error, BiConsumer<GraphNode, Tsr> action) {
         if (_targets_derivatives == null) return;
@@ -622,7 +621,6 @@ public class GraphNode implements Component<Tsr> {
 
     /**
      * @param action
-     * @return void
      */
     public void forEachForward(Tsr error, BiConsumer<GraphNode, Tsr> action) {
         if (_targets_derivatives == null) return;
@@ -633,7 +631,6 @@ public class GraphNode implements Component<Tsr> {
 
     /**
      * @param action
-     * @return void
      */
     public void forEachDerivative(BiConsumer<GraphNode, ADAgent> action) {
         if (_targets_derivatives == null) return;
@@ -642,7 +639,6 @@ public class GraphNode implements Component<Tsr> {
 
     /**
      * @param action
-     * @return void
      */
     public void forEachTarget(Consumer<GraphNode> action) {
         if (_targets_derivatives == null) return;
