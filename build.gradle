@@ -17,34 +17,49 @@ plugins {
     id 'idea'
     id 'groovy'
     //Public deployment:
+    id 'java-library'
     id 'maven-publish'
     id 'signing'
 }
 
 String PROJECT = "neureka"
 String VERSION = "0.0.0"
-String GROUPID = "org.gleethos."+PROJECT
+String GROUPID = "com.github.gleethos"
 
+//----------------------------------------------------------------------------------------------------------------------
+// UTILITY LAMBDAS:
 def change = { c -> new Object() {
             def between = { String a, String b -> new Object() {
                     def inFile = { String p ->
                         File file = new File("$rootDir" + p)
-                        String[] parts = file.text.split(a)//[1]
-                        file.write(parts[0] + a.replace("\\", "") + c(parts[0]) + b.replace("\\", "") + parts[1].split(b)[1])
+                        String[] parts = file.text.split(a)
+                        String[] tails = parts[1].split(b)
+                        file.write(parts[0] + a.replace("\\", "") + c(tails[0]) + b.replace("\\", "") + ((tails.length>1)?tails[1]:""))
                     }
                 }
             }
         }
     }
+def getBetween = {String a, String b -> new Object(){
+        def inFile = { String p ->
+            def result = ['']
+            change({s->result[0] = s}).between(a, b).inFile(p)
+            return result[0]
+        }
+    }
+}
+//----------------------------------------------------------------------------------------------------------------------
+// SETTING VERSION IN SRC AND PRODUCTION:
 
 change({VERSION}).between("production/neureka-", "\\.jar\\)").inFile("/README.md")
 change({VERSION}).between("return \"", "\"").inFile("/src/main/resources/library_settings.groovy")
 
-
 group GROUPID
 version VERSION
 
-//-----------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------------------------------------
+// SETTING JAVA VERSION AND DEPENDENCY SRC:
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
@@ -54,16 +69,21 @@ repositories {
     jcenter { url "http://jcenter.bintray.com/" }
 }
 
-//-----------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
+// LISTING DEPENDENCIES AND CONFIGURE LIBRARY-PLUGIN:
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile 'org.jetbrains:annotations:16.0.2'
     compile group: 'org.jocl', name: 'jocl', version: '2.0.2'
     compile group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.0-rc-3'
+
+    api 'org.codehaus.groovy:groovy:3.0.0-rc-3'
+    implementation 'org.jocl:jocl:2.0.2'
 }
 
-//-----------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
+// CONFIGURING TEST REPORTING:
 
 jacoco {
     toolVersion = "0.8.5"
@@ -78,8 +98,8 @@ jacocoTestReport {
 }
 check.dependsOn jacocoTestReport
 
-//-----------------------------------------------------------------
-//LOCAL DEPLOYMENT:
+//----------------------------------------------------------------------------------------------------------------------
+// DEFINE LOCAL DEPLOYMENT TASKS:
 jar {
     //destinationDirectory = file("$rootDir/build/libs")
     copy {
@@ -90,18 +110,10 @@ jar {
 
 
 task ('proguard', type: proguard.gradle.ProGuardTask) {
-
-    //Note: maybe consider configuration 'configuration.pro' as file
     verbose
-
     //allowaccessmodification
-
-    // Specify the input jars, output jars, and library jars.
-    // library jars files(configurations.compile.collect())
-
     injars  'build/libs/'+PROJECT+'-'+VERSION+'.jar'
     outjars 'production/min-lib/'+PROJECT+'-min-'+VERSION+'.jar'
-
     // Automatically handle the Java version of this build.
     if (System.getProperty('java.version').startsWith('1.')) {// Before Java 9, the runtime classes were packaged in a single jar file.
         libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
@@ -111,14 +123,10 @@ task ('proguard', type: proguard.gradle.ProGuardTask) {
 
     // Save the obfuscation mapping to a file, so we can de-obfuscate any stack
     // traces later on.
-    // Note: Keep a fixed source file attribute and all line number tables to get line numbers in the stack traces.
-    // Can be commented out if not interested in stack traces.
-
     printmapping 'production/min/'+PROJECT+'-min-'+VERSION+'.map'
     keepparameternames
     renamesourcefileattribute 'SourceFile'
     keepattributes 'Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,EnclosingMethod'
-
     keepattributes '*Annotation*' // Preserve all annotations.
 
     // Preserve all public classes, and their public and protected fields and
@@ -178,7 +186,6 @@ task ('proguard', type: proguard.gradle.ProGuardTask) {
     keep 'interface groovy.lang.** { *; }'
 
     //keep 'class java.lang.** { *; }'
-
     //dontwarn 'java.**'
 
     dontwarn 'org.jocl.**'
@@ -194,34 +201,96 @@ task deploy() {
     dependsOn 'proguard'
 }
 
-//-----------------------------------------------------------------
-//MAVEN DEPLOYMENT:
+//----------------------------------------------------------------------------------------------------------------------
+// CONFIGURING MAVEN DEPLOYMENT:
+
+artifacts {
+    archives jar
+}
+
+signing {
+    sign configurations.archives
+}//sign publishing.publications.mavenJava
+
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId GROUPID
-            artifactId PROJECT
-            version VERSION
-            from components.java
-            pom {
-                name = PROJECT
-                description = "A platform independent tensor library written in Java."
-                url = "https://gleethos.github.io/neureka/index.html"
-                licenses {
-                    license {
-                        name = "MIT License"
-                        url = "https://raw.githubusercontent.com/Gleethos/neureka/master/LICENSE"
-                    }
+            pom.withXml {
+                def root = asNode()
+                root.dependencies.removeAll { dep ->
+                    dep.scope == "test"
                 }
-                developers {
-                    developer {
-                        id = "Gleethos"
-                        name = "Daniel Nepp"
-                        email = "Gleethos@gmx.at"
+                root.children().last() + {
+                    resolveStrategy = Closure.DELEGATE_FIRST
+                    name PROJECT
+                    description = "A platform independent tensor library written in Java."
+                    url "https://gleethos.github.io/"+PROJECT+"/index.html"
+                    organization {
+                        name 'com.github.gleethos'
+                        url 'https://github.com/Gleethos'
+                    }
+                    issueManagement {
+                        system 'Github'
+                        url 'https://github.com/Gleethos/'+PROJECT+'/issues'
+                    }
+                    licenses {
+                        license {
+                            name "MIT License"
+                            url "https://raw.githubusercontent.com/Gleethos/"+PROJECT+"/master/LICENSE"
+                        }
+                    }
+                    developers {
+                        developer {
+                            id "Gleethos"
+                            name "Daniel Nepp"
+                            email "Gleethos@gmx.at"
+                        }
+                    }
+                    scm {
+                        url 'https://github.com/Gleethos/'+PROJECT+''
+                        connection 'scm:git:git://github.com/Gleethos/'+PROJECT+'.git'
+                        developerConnection 'scm:git:ssh://git@github.com:Gleethos/'+PROJECT+'.git'
                     }
                 }
             }
+
+            groupId GROUPID
+            artifactId PROJECT
+            version VERSION
+
+            from components.java
+
+            // create the sign pom artifact
+            //This will create the previously configured pom file on the disk, sign it and create the signed artifact.
+            pom.withXml {
+                def pomFile = file("${project.buildDir}/generated-pom.xml")
+                writeTo(pomFile)
+                def pomAscFile = signing.sign(pomFile).signatureFiles[0]
+                artifact(pomAscFile) {
+                    classifier = null
+                    extension = 'pom.asc'
+                }
+            }// create the signed artifacts
+
+            //artifact
+            artifact(jar){
+                classifier = 'sources'
+            }
+
+            //This will iterate through the signed files generated by the signing plugin and provide the artifacts for publishing.
+            project.tasks.signArchives.signatureFiles.each {
+                artifact(it) {
+                    def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
+                    if (matcher.find()) {
+                        classifier = matcher.group(1)
+                    } else {
+                        classifier = null
+                    }
+                    extension = 'jar.asc'
+                }
+            }
+
         }
     }
     repositories {
@@ -230,12 +299,28 @@ publishing {
             def snapshotsRepoUrl = "$projectDir/production/lib"
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
             if (version.contains("min")) url = "$projectDir/production/min-lib"
+            credentials {
+                username getBetween("sonatypeUsername=", "\n").inFile("/.gradle/gradle.properties")
+                password getBetween("sonatypePassword=", "\n").inFile("/.gradle/gradle.properties")
+            }
         }
     }
 }
 
-signing {
-    sign publishing.publications.mavenJava
+
+// Adding the dependency to the signArchives task for the publication tasks
+// -> The tasks are called publishMavenJavaPublicationToMavenLocal and publishMavenJavaPublicationToMavenRepository
+// as our Maven Publication is called MavenJava.
+model {
+    tasks.generatePomFileForMavenJavaPublication {
+        destination = file("$buildDir/generated-pom.xml")
+    }
+    tasks.publishMavenJavaPublicationToMavenLocal {
+        dependsOn project.tasks.signArchives
+    }
+    tasks.publishMavenJavaPublicationToMavenRepository {
+        dependsOn project.tasks.signArchives
+    }
 }
 
 javadoc {
@@ -245,14 +330,16 @@ javadoc {
     }
 }
 
-//-----------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
+// CONFIGURING TEST EXECUTION:
 test {
     //filter { includeTestsMatching "*" }
     minHeapSize = "1g"
     maxHeapSize = "5g"
     maxParallelForks = Math.floor(1+(Runtime.runtime.availableProcessors().intdiv(2) ?: 1)/2)
 }
-//-----------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
+// CONFIGURING JDOC GENERATION:
 
 task createJDocs(type: Javadoc){
     destinationDir = new File("$projectDir/docs/jdocs")

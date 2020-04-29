@@ -1,8 +1,20 @@
 
-build/
-
+# IDE files:
 .idea/
-
-.gradle/
-
 neureka.iml
+
+# virtual machine crash logs:
+hs_err_pid*
+
+### Gradle ###
+.gradle
+/build/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+# Cache of project
+.gradletasknamecache
