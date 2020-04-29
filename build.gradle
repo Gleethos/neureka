@@ -290,7 +290,7 @@ publishing {
                     classifier = null
                     extension = 'pom.asc'
                 }
-            }*/ create the signed artifacts
+            }*/ //create the signed artifacts
 
             //artifact
             artifact(sourceJar) {
