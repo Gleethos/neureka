@@ -32,7 +32,7 @@ def change = { c -> new Object() {
             def between = { String a, String b -> new Object() {
                     def inFile = { String p ->
                         File file = new File("$rootDir" + p)
-                        if(file.text==null) return
+                        if(!file.exists()) return
                         String[] parts = file.text.split(a)
                         String[] tails = parts[1].split(b)
                         file.write(parts[0] + a.replace("\\", "") + c(tails[0]) + b.replace("\\", "") + ((tails.length>1)?tails[1]:""))
