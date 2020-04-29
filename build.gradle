@@ -219,15 +219,9 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }*/
 
 signing {//372447547E38B0A909776E4DD830DAE574A07986
-    //def signingKey = findProperty("signingKey")
-    //def signingPassword = findProperty("signingPassword")
-    //useInMemoryPgpKeys(signingKey, signingPassword)
-    //useGpgCmd()
     //sign publishing.publications.mavenJava
-    println "signing..."
     sign configurations.archives
     //sign publishing.publications
-    println "done!"
 
 }
 
@@ -322,8 +316,6 @@ publishing {
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
             if (version.contains("min")) url = "$projectDir/production/min-lib"
             credentials {
-                println getBetween("sonatypeUsername=", "\n").inFile("/.gradle/gradle.properties")
-                println getBetween("sonatypePassword=", "\n").inFile("/.gradle/gradle.properties")
                 username getBetween("sonatypeUsername=", "\n").inFile("/.gradle/gradle.properties")
                 password getBetween("sonatypePassword=", "\n").inFile("/.gradle/gradle.properties")
             }
