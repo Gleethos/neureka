@@ -68,7 +68,7 @@ public class CalculusTests {
         tester.testExpression("I[0]<-I[1]->I[2]", "((I[0]<-I[1])->I[2])", "");
         tester.testExpression("quadratic(I[0]) -> I[1] -> I[2]", "((quad(I[0])->I[1])->I[2])", "");
         tester.testExpression("((tanh(i0)", "tanh(I[0])", "");
-        tester.testExpression("($$(gaus(i0*()", "gaus(I[0])", "");
+        tester.testExpression("($$(gaus(i0*()", "gaus(I[0]*0.0)", "");
         tester.testExpression("rrlu(i0)", "relu(I[0])", "");
         tester.testExpression("th(i0)*gzs(i0+I1)", "(tanh(I[0])*gaus(I[0]+I[1]))", "");
 

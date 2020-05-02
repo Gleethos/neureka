@@ -141,6 +141,9 @@ public class Tsr extends AbstractNDArray<Tsr>
     protected Object _addOrReject(Object newComponent){
         if (newComponent instanceof Device && !((Device)newComponent).has(this)){
             ((Device)newComponent).add(this);
+        } else if (newComponent instanceof Tsr) {
+            if(((Tsr)newComponent).shape().hashCode()!=this.shape().hashCode()) newComponent = null;
+            else setRqsGradient(true);
         }
         return newComponent;
     }
@@ -277,7 +280,7 @@ public class Tsr extends AbstractNDArray<Tsr>
         _offset = _cached(new int[newShape.length]);
         _spread = new int[newShape.length];
         Arrays.fill(_spread, 1);
-        _cached(_spread);
+        _spread = _cached(_spread);
     }
 
 
@@ -416,6 +419,9 @@ public class Tsr extends AbstractNDArray<Tsr>
             if (args[0] instanceof Object[]){
                 _construct((Object[]) args[0]);
                 return;
+            } else if (args[0] instanceof BigDecimal) {
+                _construct(new int[]{1}, ((BigDecimal)args[0]).doubleValue());
+                return;
             } else {
                 throw new IllegalArgumentException(
                         "Cannot create tensor from argument of type '"+args[0].getClass().getName()+"'!"
@@ -445,11 +451,11 @@ public class Tsr extends AbstractNDArray<Tsr>
         //EQUATION:
         boolean containsString = false;
         int numberOfTensors = 0;
-        ArrayList<Tsr> list = new ArrayList<>();
+        ArrayList<Tsr> tsrList = new ArrayList<>();
         for (Object o : args) {
             containsString = (o instanceof String) || containsString;
-            if (o instanceof Tsr && !list.contains(o)) {
-                list.add( (Tsr)o );
+            if (o instanceof Tsr) {
+                tsrList.add( (Tsr)o );
                 numberOfTensors++;
             }
         }
@@ -458,7 +464,7 @@ public class Tsr extends AbstractNDArray<Tsr>
         StringBuilder f = new StringBuilder();
         int ti=0;
         for (Object o : args) {
-            if (list.contains(o)){
+            if (tsrList.contains(o)){
                 tsrs[ti] = ((Tsr)o);
                 f.append("I[").append(ti).append("]");
                 ti++;
@@ -557,7 +563,7 @@ public class Tsr extends AbstractNDArray<Tsr>
     public void applyGradient() {
         forComponent(JITProp.class, jit->((JITProp)jit).execute());
         forComponent(Tsr.class, g->{
-            forComponent(Optimizer.class, o->((Optimizer)o).optimize());
+            forComponent(Optimizer.class, o->((Optimizer)o).optimize(this));
             remove(Tsr.class);
             FunctionBuilder.build("I[0]<-(I[0]+I[1])", false).activate(new Tsr[]{this, (Tsr)g});
         });

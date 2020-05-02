@@ -2,6 +2,7 @@
 
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
+import groovy.lang.GroovySystem;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,69 +22,80 @@ public class Neureka
     private Utility _utility;
 
     static {
-<span class="fc" id="L24">        _instances = new ConcurrentHashMap&lt;&gt;();</span>
-<span class="fc" id="L25">    }</span>
+<span class="fc" id="L25">        _instances = new ConcurrentHashMap&lt;&gt;();</span>
+<span class="fc" id="L26">    }</span>
 
-<span class="fc" id="L27">    private Neureka(){</span>
-<span class="fc" id="L28">        _settings = new Settings();</span>
-<span class="fc" id="L29">        _utility = new Utility();</span>
-<span class="fc" id="L30">    }</span>
+<span class="fc" id="L28">    private Neureka(){</span>
+<span class="fc" id="L29">        _settings = new Settings();</span>
+<span class="fc" id="L30">        _utility = new Utility();</span>
+<span class="fc" id="L31">    }</span>
 
     public static Neureka instance(){
-<span class="fc" id="L33">        return instance(Thread.currentThread());</span>
+<span class="fc" id="L34">        return instance(Thread.currentThread());</span>
     }
 
     public static void setContext(Thread thread, Neureka instance){
-<span class="fc" id="L37">        _instances.put(thread, instance);</span>
-<span class="fc" id="L38">    }</span>
+<span class="fc" id="L38">        _instances.put(thread, instance);</span>
+<span class="fc" id="L39">    }</span>
 
     public static Neureka instance(Thread thread){
-<span class="fc bfc" id="L41" title="All 2 branches covered.">        if(_instances.containsKey(thread)) return _instances.get(thread);</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        if(_instances.containsKey(thread)) return _instances.get(thread);</span>
         else {
-<span class="fc" id="L43">            Neureka instance = new Neureka();</span>
-<span class="fc" id="L44">            setContext(thread, instance);</span>
-<span class="fc" id="L45">            synchronized (Neureka.class) {</span>
-<span class="fc" id="L46">                instance.reset();</span>
-<span class="fc" id="L47">            }</span>
-<span class="fc" id="L48">            return instance;</span>
+<span class="fc" id="L44">            Neureka instance = new Neureka();</span>
+<span class="fc" id="L45">            setContext(thread, instance);</span>
+<span class="fc" id="L46">            synchronized (Neureka.class) {</span>
+<span class="fc" id="L47">                instance.reset();</span>
+<span class="fc" id="L48">            }</span>
+<span class="fc" id="L49">            return instance;</span>
         }
     }
 
     public static Neureka instance(Closure&lt;String&gt; c) {
-<span class="fc" id="L53">        c.setDelegate(Neureka.instance());</span>
-<span class="fc" id="L54">        _version = c.call();</span>
-<span class="fc" id="L55">        return Neureka.instance();</span>
+<span class="fc" id="L54">        c.setDelegate(Neureka.instance());</span>
+<span class="fc" id="L55">        _version = c.call();</span>
+<span class="fc" id="L56">        return Neureka.instance();</span>
     }
 
     public Settings settings(){
-<span class="fc" id="L59">        return _settings;</span>
+<span class="fc" id="L60">        return _settings;</span>
     }
 
     public Settings settings(Closure c){
-<span class="fc" id="L63">        c.setDelegate(_settings);</span>
-<span class="fc" id="L64">        c.call();</span>
-<span class="fc" id="L65">        return _settings;</span>
+<span class="fc" id="L64">        c.setDelegate(_settings);</span>
+<span class="fc" id="L65">        c.call();</span>
+<span class="fc" id="L66">        return _settings;</span>
     }
 
     public Utility utility(){
-<span class="fc" id="L69">        return _utility;</span>
+<span class="fc" id="L70">        return _utility;</span>
     }
 
     public static String version(){
-<span class="fc" id="L73">        return &quot;1.0.0&quot;;</span>
+<span class="fc" id="L74">        return &quot;1.0.0&quot;;</span>
     }
 
-    public void reset(){
-<span class="pc bpc" id="L77" title="1 of 4 branches missed.">        if( _settings_source==null || _setup_source==null ) {</span>
-<span class="fc" id="L78">            _settings_source = utility().readResource(&quot;library_settings.groovy&quot;);</span>
-<span class="fc" id="L79">            _setup_source = utility().readResource(&quot;scripting_setup.groovy&quot;);</span>
+    public void reset() {
+<span class="pc bpc" id="L78" title="1 of 4 branches missed.">        if (_settings_source == null || _setup_source == null) {</span>
+<span class="fc" id="L79">            _settings_source = utility().readResource(&quot;library_settings.groovy&quot;);</span>
+<span class="fc" id="L80">            _setup_source = utility().readResource(&quot;scripting_setup.groovy&quot;);</span>
         }
-<span class="fc" id="L81">        new GroovyShell().evaluate(_settings_source);</span>
-<span class="fc" id="L82">        new GroovyShell().evaluate(_setup_source);</span>
-<span class="fc" id="L83">    }</span>
+        try {
+<span class="fc" id="L83">            String version = GroovySystem.getVersion();</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">            if(Integer.parseInt(version.split(&quot;\\.&quot;)[0]) &lt; 3) {</span>
+<span class="nc" id="L85">                throw new IllegalCallerException(</span>
+                        &quot;Wrong groovy version &quot;+version+&quot; found! Version 3.0.0 or greater required.&quot;
+                );
+            }
+<span class="fc" id="L89">            new GroovyShell(this.getClass().getClassLoader()).evaluate(_settings_source);</span>
+<span class="fc" id="L90">            new GroovyShell(this.getClass().getClassLoader()).evaluate(_setup_source);</span>
+<span class="nc" id="L91">        } catch (Exception e) {</span>
+<span class="nc" id="L92">            e.printStackTrace();</span>
+<span class="fc" id="L93">        }</span>
+
+<span class="fc" id="L95">    }</span>
 
     private boolean _currentThreadIsAuthorized(){
-<span class="fc" id="L86">        return this.equals(_instances.get(Thread.currentThread()));</span>
+<span class="fc" id="L98">        return this.equals(_instances.get(Thread.currentThread()));</span>
     }
 
     public class Settings
@@ -93,64 +105,64 @@ public class Neureka
         private Indexing _indexing;
         private View _view;
 
-<span class="fc" id="L96">        private boolean _isLocked = false;</span>
+<span class="fc" id="L108">        private boolean _isLocked = false;</span>
 
-<span class="fc" id="L98">        private Settings() {</span>
-<span class="fc" id="L99">            _debug = new Debug();</span>
-<span class="fc" id="L100">            _autoDiff = new AutoDiff();</span>
-<span class="fc" id="L101">            _indexing = new Indexing();</span>
-<span class="fc" id="L102">            _view = new View();</span>
-<span class="fc" id="L103">        }</span>
+<span class="fc" id="L110">        private Settings() {</span>
+<span class="fc" id="L111">            _debug = new Debug();</span>
+<span class="fc" id="L112">            _autoDiff = new AutoDiff();</span>
+<span class="fc" id="L113">            _indexing = new Indexing();</span>
+<span class="fc" id="L114">            _view = new View();</span>
+<span class="fc" id="L115">        }</span>
 
         public Debug debug() {
-<span class="fc" id="L106">            return _debug;</span>
+<span class="fc" id="L118">            return _debug;</span>
         }
 
         public Debug debug(Closure c) {
-<span class="fc" id="L110">            c.setDelegate(_debug);</span>
-<span class="fc" id="L111">            c.call();</span>
-<span class="fc" id="L112">            return _debug;</span>
+<span class="fc" id="L122">            c.setDelegate(_debug);</span>
+<span class="fc" id="L123">            c.call();</span>
+<span class="fc" id="L124">            return _debug;</span>
         }
 
         public AutoDiff autoDiff(){
-<span class="fc" id="L116">            return _autoDiff;</span>
+<span class="fc" id="L128">            return _autoDiff;</span>
         }
 
         public AutoDiff autoDiff(Closure c) {
-<span class="fc" id="L120">            c.setDelegate(_autoDiff);</span>
-<span class="fc" id="L121">            c.call();</span>
-<span class="fc" id="L122">            return _autoDiff;</span>
+<span class="fc" id="L132">            c.setDelegate(_autoDiff);</span>
+<span class="fc" id="L133">            c.call();</span>
+<span class="fc" id="L134">            return _autoDiff;</span>
         }
 
         public Indexing indexing(){
-<span class="fc" id="L126">            return _indexing;</span>
+<span class="fc" id="L138">            return _indexing;</span>
         }
 
         public Indexing indexing(Closure c) {
-<span class="fc" id="L130">            c.setDelegate(_indexing);</span>
-<span class="fc" id="L131">            c.call();</span>
-<span class="fc" id="L132">            return _indexing;</span>
+<span class="fc" id="L142">            c.setDelegate(_indexing);</span>
+<span class="fc" id="L143">            c.call();</span>
+<span class="fc" id="L144">            return _indexing;</span>
         }
 
         public View view(){
-<span class="fc" id="L136">            return _view;</span>
+<span class="fc" id="L148">            return _view;</span>
         }
 
         public View view(Closure c) {
-<span class="fc" id="L140">            c.setDelegate(_view);</span>
-<span class="fc" id="L141">            c.call();</span>
-<span class="fc" id="L142">            return _view;</span>
+<span class="fc" id="L152">            c.setDelegate(_view);</span>
+<span class="fc" id="L153">            c.call();</span>
+<span class="fc" id="L154">            return _view;</span>
         }
 
         public boolean isLocked(){
-<span class="fc" id="L146">            return  _isLocked;</span>
+<span class="fc" id="L158">            return  _isLocked;</span>
         }
 
         public void setIsLocked(boolean locked) {
-<span class="nc" id="L150">            _isLocked = locked;</span>
-<span class="nc" id="L151">        }</span>
+<span class="nc" id="L162">            _isLocked = locked;</span>
+<span class="nc" id="L163">        }</span>
 
-<span class="fc" id="L153">        public class Debug</span>
+<span class="fc" id="L165">        public class Debug</span>
         {
             /**
              * Every derivative is calculated with respect to some graph node.
@@ -170,17 +182,17 @@ public class Neureka
             private boolean _keepDerivativeTargetPayloads;
 
             public boolean keepDerivativeTargetPayloads(){
-<span class="fc" id="L173">                return _keepDerivativeTargetPayloads;</span>
+<span class="fc" id="L185">                return _keepDerivativeTargetPayloads;</span>
             }
 
             public void setKeepDerivativeTargetPayloads(boolean keep){
-<span class="pc bpc" id="L177" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L178">                _keepDerivativeTargetPayloads = keep;</span>
-<span class="fc" id="L179">            }</span>
+<span class="pc bpc" id="L189" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L190">                _keepDerivativeTargetPayloads = keep;</span>
+<span class="fc" id="L191">            }</span>
 
         }
 
-<span class="fc" id="L183">        public class AutoDiff // Auto-Differentiation</span>
+<span class="fc" id="L195">        public class AutoDiff // Auto-Differentiation</span>
         {
             /**
              * This flag enables an optimization technique which only applies
@@ -201,70 +213,70 @@ public class Neureka
             private boolean _applyGradientWhenTensorIsUsed;
 
             public boolean retainPendingErrorForJITProp(){
-<span class="fc" id="L204">                return _retainPendingErrorForJITProp;</span>
+<span class="fc" id="L216">                return _retainPendingErrorForJITProp;</span>
             }
 
             public void setRetainPendingErrorForJITProp(boolean retain){
-<span class="pc bpc" id="L208" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L209">                _retainPendingErrorForJITProp = retain;</span>
-<span class="fc" id="L210">            }</span>
+<span class="pc bpc" id="L220" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L221">                _retainPendingErrorForJITProp = retain;</span>
+<span class="fc" id="L222">            }</span>
 
             public boolean applyGradientWhenTensorIsUsed(){
-<span class="fc" id="L213">                return _applyGradientWhenTensorIsUsed;</span>
+<span class="fc" id="L225">                return _applyGradientWhenTensorIsUsed;</span>
             }
 
             public void setApplyGradientWhenTensorIsUsed(boolean apply){
-<span class="pc bpc" id="L217" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L218">                _applyGradientWhenTensorIsUsed = apply;</span>
-<span class="fc" id="L219">            }</span>
+<span class="pc bpc" id="L229" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L230">                _applyGradientWhenTensorIsUsed = apply;</span>
+<span class="fc" id="L231">            }</span>
 
         }
 
-<span class="fc" id="L223">        public class Indexing</span>
+<span class="fc" id="L235">        public class Indexing</span>
         {
             private boolean _legacyIndexing;
 
             private boolean _thoroughIndexing;
 
             public boolean legacy(){
-<span class="fc" id="L230">                return _legacyIndexing;</span>
+<span class="fc" id="L242">                return _legacyIndexing;</span>
             }
 
             public void setLegacy(boolean enabled){
-<span class="pc bpc" id="L234" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L235">                _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (in OpenCLPlatform)</span>
-<span class="fc" id="L236">            }</span>
+<span class="pc bpc" id="L246" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L247">                _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (in OpenCLPlatform)</span>
+<span class="fc" id="L248">            }</span>
 
             public boolean thorough(){
-<span class="nc" id="L239">                return _thoroughIndexing;</span>
+<span class="nc" id="L251">                return _thoroughIndexing;</span>
             }
 
             public void setThorough(boolean thorough){
-<span class="pc bpc" id="L243" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L244">                _thoroughIndexing = thorough;</span>
-<span class="fc" id="L245">            }</span>
+<span class="pc bpc" id="L255" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L256">                _thoroughIndexing = thorough;</span>
+<span class="fc" id="L257">            }</span>
 
         }
 
-<span class="fc" id="L249">        public class View</span>
+<span class="fc" id="L261">        public class View</span>
         {
 
             private boolean _legacyView;
 
             public boolean legacy(){
-<span class="fc" id="L255">                return _legacyView;</span>
+<span class="fc" id="L267">                return _legacyView;</span>
             }
 
             public void setLegacy(boolean enabled){
-<span class="pc bpc" id="L259" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L260">                _legacyView = enabled;</span>
-<span class="fc" id="L261">            }</span>
+<span class="pc bpc" id="L271" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L272">                _legacyView = enabled;</span>
+<span class="fc" id="L273">            }</span>
 
         }
 
     }
 
-<span class="fc" id="L267">    public static class Utility {</span>
+<span class="fc" id="L279">    public static class Utility {</span>
         /**
          * Helper method which reads the file with the given name and returns
          * the contents of this file as a String. Will exit the application
@@ -274,20 +286,20 @@ public class Neureka
          * @return The contents of the file
          */
         public String readResource(String path){
-<span class="fc" id="L277">            InputStream stream = getClass().getClassLoader().getResourceAsStream(path);</span>
+<span class="fc" id="L289">            InputStream stream = getClass().getClassLoader().getResourceAsStream(path);</span>
             try {
-<span class="fc" id="L279">                BufferedReader br = new BufferedReader(new InputStreamReader(stream));//new FileInputStream(fileName)));</span>
-<span class="fc" id="L280">                StringBuffer sb = new StringBuffer();</span>
-<span class="fc" id="L281">                String line = &quot;&quot;;</span>
-<span class="fc bfc" id="L282" title="All 2 branches covered.">                while (line!=null) {</span>
-<span class="fc" id="L283">                    line = br.readLine();</span>
-<span class="fc bfc" id="L284" title="All 2 branches covered.">                    if (line != null) sb.append(line).append(&quot;\n&quot;);</span>
+<span class="fc" id="L291">                BufferedReader br = new BufferedReader(new InputStreamReader(stream));//new FileInputStream(fileName)));</span>
+<span class="fc" id="L292">                StringBuffer sb = new StringBuffer();</span>
+<span class="fc" id="L293">                String line = &quot;&quot;;</span>
+<span class="fc bfc" id="L294" title="All 2 branches covered.">                while (line!=null) {</span>
+<span class="fc" id="L295">                    line = br.readLine();</span>
+<span class="fc bfc" id="L296" title="All 2 branches covered.">                    if (line != null) sb.append(line).append(&quot;\n&quot;);</span>
                 }
-<span class="fc" id="L286">                return sb.toString();</span>
-<span class="nc" id="L287">            } catch (IOException e) {</span>
-<span class="nc" id="L288">                e.printStackTrace();</span>
-<span class="nc" id="L289">                System.exit(1);</span>
-<span class="nc" id="L290">                return null;</span>
+<span class="fc" id="L298">                return sb.toString();</span>
+<span class="nc" id="L299">            } catch (IOException e) {</span>
+<span class="nc" id="L300">                e.printStackTrace();</span>
+<span class="nc" id="L301">                System.exit(1);</span>
+<span class="nc" id="L302">                return null;</span>
             }
         }
 

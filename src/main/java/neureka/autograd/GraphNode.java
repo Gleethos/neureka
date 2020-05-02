@@ -272,16 +272,20 @@ public class GraphNode implements Component<Tsr> {
             Tsr[] inputs = (Tsr[]) context;
             /* Applying JITProp and gradients */
             if (Neureka.instance().settings().autoDiff().applyGradientWhenTensorIsUsed()) {
-                for (Tsr t : inputs) t.forComponent(JITProp.class, (jit)->((JITProp)jit).execute());
-                for (Tsr t : inputs) t.remove(JITProp.class);
-                for (Tsr t : inputs) t.applyGradient();
+                for (Tsr t : inputs){
+                    t.forComponent(JITProp.class, (jit) -> ((JITProp) jit).execute());
+                    t.remove(JITProp.class);
+                    t.applyGradient();
+                }
+
+
             }
             _construct(payloadSupplier.get(), function, inputs, ((GraphNode) inputs[0].find(GraphNode.class)).lock());
         }
     }
 
     private void _construct(Tsr output, Function function, Tsr[] inputs, GraphLock lock) {
-        if (output == null) throw new RuntimeException("[GraphNode]:(_construct): Payload must no be null!");
+        if (output == null) throw new RuntimeException("Payload must no be null!");
         if (!function.doesAD()) return;//Only functions with AutoDiff enabled create computation graph!
         _lock = lock;
         _setPayload(output);

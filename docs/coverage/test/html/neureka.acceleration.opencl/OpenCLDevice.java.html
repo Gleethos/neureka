@@ -570,17 +570,17 @@ public class OpenCLDevice extends AbstractDevice
     public long maxConstantBufferSizeKB() {
 <span class="nc" id="L571">        return (int) (DeviceQuery.getLong(_did, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE) / 1024);</span>
     }
-
+    /*
     public boolean queueExecIsOrdered() {
-<span class="nc" id="L575">        long queueProperties = DeviceQuery.getLong(_did, CL_DEVICE_QUEUE_PROPERTIES);</span>
-<span class="nc bnc" id="L576" title="All 2 branches missed.">        return ((queueProperties &amp; CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE) != 0);</span>
+        long queueProperties = DeviceQuery.getLong(_did, CL_DEVICE_QUEUE_PROPERTIES);//Deprecation!
+        return ((queueProperties &amp; CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE) != 0);
     }
 
     public boolean queueProfilingIsEnabled() {
-<span class="nc" id="L580">        long queueProperties = DeviceQuery.getLong(_did, CL_DEVICE_QUEUE_PROPERTIES);</span>
-<span class="nc bnc" id="L581" title="All 2 branches missed.">        return ((queueProperties &amp; CL_QUEUE_PROFILING_ENABLE) != 0);</span>
+        long queueProperties = DeviceQuery.getLong(_did, CL_DEVICE_QUEUE_PROPERTIES);
+        return ((queueProperties &amp; CL_QUEUE_PROFILING_ENABLE) != 0);
     }
-
+    */
     public int imageSupport() {
 <span class="nc" id="L585">        return DeviceQuery.getInt(_did, CL_DEVICE_IMAGE_SUPPORT);</span>
     }

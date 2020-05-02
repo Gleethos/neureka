@@ -5,6 +5,7 @@ import neureka.calculus.environment.OperationType;
 import neureka.calculus.factory.components.FunctionConstant;
 import neureka.calculus.factory.components.FunctionInput;
 
+import java.lang.reflect.Parameter;
 import java.util.*;
 
 public class FunctionBuilder {
@@ -51,7 +52,8 @@ public class FunctionBuilder {
         if (Function.CACHE.FUNCTIONS().containsKey(k)) {
             return Function.CACHE.FUNCTIONS().get(k);
         }
-        Function built = _build(expression, doAD);//, tipReached);
+        expression = FunctionParser.unpackAndCorrect(expression);
+        Function built = _build(expression, doAD);
         if (built != null) {
             Function.CACHE.FUNCTIONS().put(((doAD) ? "d" : "") + "(" + built.toString() + ")", built);
         }
@@ -92,9 +94,7 @@ public class FunctionBuilder {
                     if (newOperation.length() <= 0) continue;
                     Operations.add(newOperation);
                 }
-            } else {
-                ++i;
-            }
+            } else ++i;
         }
         //---
         int Count = OperationType.COUNT();

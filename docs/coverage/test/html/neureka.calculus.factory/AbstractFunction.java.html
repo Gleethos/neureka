@@ -62,7 +62,7 @@ public abstract class AbstractFunction implements Function {
     @Override
     public String toString() {
 <span class="fc" id="L64">        StringBuilder reconstructed = new StringBuilder();</span>
-<span class="fc bfc" id="L65" title="All 4 branches covered.">        if (_src.size() == 1 &amp;&amp; _type.identifier().length() &gt; 1) {</span>
+<span class="pc bpc" id="L65" title="1 of 4 branches missed.">        if (_src.size() == 1 &amp;&amp; _type.identifier().length() &gt; 1) {</span>
 <span class="fc" id="L66">            String expression = _src.get(0).toString();</span>
 <span class="pc bpc" id="L67" title="1 of 4 branches missed.">            if (expression.charAt(0) == '(' &amp;&amp; expression.charAt(expression.length() - 1) == ')') {</span>
 <span class="fc" id="L68">                return _type.identifier() + expression;</span>

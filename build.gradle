@@ -23,7 +23,7 @@ plugins {
 }
 
 String PROJECT = "neureka"
-String VERSION = "0.0.0"
+String VERSION = "0.0.1"
 String GROUPID = "com.github.gleethos"
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -124,7 +124,7 @@ task ('proguard', type: proguard.gradle.ProGuardTask) {
 
     // Save the obfuscation mapping to a file, so we can de-obfuscate any stack
     // traces later on.
-    printmapping 'production/min/'+PROJECT+'-min-'+VERSION+'.map'
+    printmapping 'production/min-lib/'+PROJECT+'-min-'+VERSION+'.map'
     keepparameternames
     renamesourcefileattribute 'SourceFile'
     keepattributes 'Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,EnclosingMethod'
@@ -201,13 +201,11 @@ task deploy() {
 // CONFIGURING MAVEN DEPLOYMENT:
 
 task sourceJar(type: Jar) {
-    println "sorcejar"
     classifier "sources"
     from sourceSets.main.allJava
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    println "javadoc..."
     classifier "javadoc"
     from javadoc.destinationDir
 }
@@ -311,16 +309,18 @@ publishing {
     }
     repositories {
         maven {
-            def releasesRepoUrl = "$projectDir/production/lib"
-            def snapshotsRepoUrl = "$projectDir/production/lib"
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-            if (version.contains("min")) url = "$projectDir/production/min-lib"
+            //def releasesRepoUrl = "$projectDir/production/lib"
+            //def snapshotsRepoUrl = "$projectDir/production/lib"
+            //url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            //if (version.contains("min")) url = "$projectDir/production/min-lib"
+            url " https://oss.sonatype.org/service/local/staging/deploy/maven2"
             credentials {
-                username getBetween("sonatypeUsername=", "\n").inFile("/.gradle/gradle.properties")
-                password getBetween("sonatypePassword=", "\n").inFile("/.gradle/gradle.properties")
+                username = getBetween("sonatypeUsername=", "\n").inFile("/.gradle/gradle.properties")
+                password = getBetween("sonatypePassword=", "\n").inFile("/.gradle/gradle.properties")
             }
         }
     }
+
 }
 
 
@@ -340,12 +340,12 @@ model {
    }
 }*/
 
-javadoc {
-    destinationDir = new File("$projectDir/docs/jdocs")
-    if(JavaVersion.current().isJava9Compatible()) {
-        options.addBooleanOption('html5', true)
-    }
-}
+//javadoc {
+//    //destinationDir = new File("$projectDir/docs/jdocs")
+//    if(JavaVersion.current().isJava9Compatible()) {
+//        options.addBooleanOption('html5', true)
+//    }
+//}
 
 //----------------------------------------------------------------------------------------------------------------------
 // CONFIGURING TEST EXECUTION:
@@ -360,6 +360,7 @@ test {
 
 task createJDocs(type: Javadoc){
     destinationDir = new File("$projectDir/docs/jdocs")
-    source = "$projectDir/src/main"
-    //sourceSets.main.allJava
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
 }

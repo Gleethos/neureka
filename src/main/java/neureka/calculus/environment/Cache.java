@@ -64,7 +64,7 @@ public class Cache
         GraphNode node = (GraphNode) inputs[0].find(GraphNode.class);
         Tsr result = null;
         if (function != null && function.id() != OperationType.instance("<").id()&&function.id()!=OperationType.instance(">").id()){
-            result = _get(node, d, j);
+            result = _get(inputs, d, j);
         }
         if(result == null){
             result = activation.get();
@@ -74,12 +74,19 @@ public class Cache
         return result;
     }
 
-    private synchronized Tsr _get(GraphNode node, int d, int j)
+    private synchronized Tsr _get(Tsr[] tsrs, int d, int j)
     {
-        long key = node.nid()+_keyed(d)*31+_keyed(j);
-        if (PROCESSING.containsKey(node.lock())){
-            if (PROCESSING.get(node.lock()).containsKey(key)) {
-                return PROCESSING.get(node.lock()).get(key);
+        GraphLock lock = null;
+        long key = 0;
+        for(int i=0; i<tsrs.length; i++){
+            GraphNode node = ((GraphNode)tsrs[i].find(GraphNode.class));
+            lock = node.lock();
+            key += ((i+1)*node.nid())+_keyed(d)*31+_keyed(j);
+        }
+
+        if (PROCESSING.containsKey(lock)){
+            if (PROCESSING.get(lock).containsKey(key)) {
+                return PROCESSING.get(lock).get(key);
             }
         }
         return null;

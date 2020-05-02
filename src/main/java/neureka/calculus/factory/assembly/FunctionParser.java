@@ -157,7 +157,8 @@ public class FunctionParser {
         if ( exp == null ) return null;
         if ( exp.length() == 0 ) return "";
         if ( exp.equals("()") ) return "";
-
+        exp = exp.trim();
+        //System.out.println(exp);
         exp = exp.replace("sigmoid", "sig");//Function.TYPES.REGISTER(1));
         exp = exp.replace("quadratic", "quad");//Function.TYPES.REGISTER(3));
         exp = exp.replace("quadr", "quad");//Function.TYPES.REGISTER(3));
@@ -177,9 +178,20 @@ public class FunctionParser {
         exp = exp.replace("product", "prod");//Function.TYPES.REGISTER(11));
 
         int bracketDepth = 0;
+        //int first_i = -1;
+        //int first_depth = -1;
+        //int last_i = -1;
         for (int Ei = 0; Ei < exp.length(); ++Ei) {
-            if (exp.charAt(Ei) == ')') --bracketDepth;
-            else if (exp.charAt(Ei) == '(') ++bracketDepth;
+            if (exp.charAt(Ei) == '(') {
+                //if(first_i<0){
+                //    first_i = Ei;
+                //    first_depth = bracketDepth;
+                //}
+                ++bracketDepth;
+            } else if (exp.charAt(Ei) == ')'){
+                --bracketDepth;
+                //if(first_depth==bracketDepth) last_i = Ei;
+            }
         }
         if (bracketDepth != 0) {
             if (bracketDepth < 0) {
@@ -204,6 +216,8 @@ public class FunctionParser {
             if (needsStitching) exp = FunctionParser.removeHeadAndTail(exp);
             else parsing = false;
         }
+        exp = exp.trim();
+        //if(exp.charAt(0)=='(' && exp.charAt(exp.length()-1)==')') return unpackAndCorrect(exp);
         return exp;
     }
 

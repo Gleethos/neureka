@@ -16,6 +16,8 @@ public interface Function
     //Global context and cache:
     Cache CACHE = Cache.instance();
 
+    Function IDY = create("I[0]<-Ii[1]");
+
     Function X = create("I[0]xI[1]");
     Function PLUS = create("(I[0]+I[1])");
     Function PLUS_ASSIGN = create("I[0]<-(I[0]+I[1])");
@@ -32,6 +34,8 @@ public interface Function
     Function NEG = create("(-1*I[0])");
 
     class Detached{
+        public static  Function IDY = create("I[0]<-I[1]", false);
+
         public static Function X = create("I[0]xI[1]", false);
         public static Function PLUS = create("(I[0]+I[1])", false);
         public static Function PLUS_ASSIGN = create("I[0]<-(I[0]+I[1])", false);

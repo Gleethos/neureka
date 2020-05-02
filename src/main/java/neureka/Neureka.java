@@ -71,7 +71,7 @@ public class Neureka
     }
 
     public static String version(){
-        return "1.0.0";
+        return _version;
     }
 
     public void reset() {

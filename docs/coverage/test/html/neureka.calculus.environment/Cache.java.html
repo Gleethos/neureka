@@ -64,7 +64,7 @@ public class Cache
 <span class="fc" id="L64">        GraphNode node = (GraphNode) inputs[0].find(GraphNode.class);</span>
 <span class="fc" id="L65">        Tsr result = null;</span>
 <span class="pc bpc" id="L66" title="1 of 6 branches missed.">        if (function != null &amp;&amp; function.id() != OperationType.instance(&quot;&lt;&quot;).id()&amp;&amp;function.id()!=OperationType.instance(&quot;&gt;&quot;).id()){</span>
-<span class="fc" id="L67">            result = _get(node, d, j);</span>
+<span class="fc" id="L67">            result = _get(inputs, d, j);</span>
         }
 <span class="pc bpc" id="L69" title="1 of 2 branches missed.">        if(result == null){</span>
 <span class="fc" id="L70">            result = activation.get();</span>
@@ -74,34 +74,41 @@ public class Cache
 <span class="fc" id="L74">        return result;</span>
     }
 
-    private synchronized Tsr _get(GraphNode node, int d, int j)
+    private synchronized Tsr _get(Tsr[] tsrs, int d, int j)
     {
-<span class="fc" id="L79">        long key = node.nid()+_keyed(d)*31+_keyed(j);</span>
-<span class="fc bfc" id="L80" title="All 2 branches covered.">        if (PROCESSING.containsKey(node.lock())){</span>
-<span class="pc bpc" id="L81" title="1 of 2 branches missed.">            if (PROCESSING.get(node.lock()).containsKey(key)) {</span>
-<span class="nc" id="L82">                return PROCESSING.get(node.lock()).get(key);</span>
+<span class="fc" id="L79">        GraphLock lock = null;</span>
+<span class="fc" id="L80">        long key = 0;</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        for(int i=0; i&lt;tsrs.length; i++){</span>
+<span class="fc" id="L82">            GraphNode node = ((GraphNode)tsrs[i].find(GraphNode.class));</span>
+<span class="fc" id="L83">            lock = node.lock();</span>
+<span class="fc" id="L84">            key += ((i+1)*node.nid())+_keyed(d)*31+_keyed(j);</span>
+        }
+
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if (PROCESSING.containsKey(lock)){</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">            if (PROCESSING.get(lock).containsKey(key)) {</span>
+<span class="nc" id="L89">                return PROCESSING.get(lock).get(key);</span>
             }
         }
-<span class="fc" id="L85">        return null;</span>
+<span class="fc" id="L92">        return null;</span>
     }
 
     private synchronized void _put(Tsr t, GraphNode node, int d, int j)
     {
-<span class="fc" id="L90">        long key = node.nid()+_keyed(d)*31+_keyed(j);</span>
-<span class="fc bfc" id="L91" title="All 2 branches covered.">        if (node.isCachable()) {</span>
+<span class="fc" id="L97">        long key = node.nid()+_keyed(d)*31+_keyed(j);</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        if (node.isCachable()) {</span>
             TreeMap&lt;Long, Tsr&gt; variables;
-<span class="fc bfc" id="L93" title="All 2 branches covered.">            if (!PROCESSING.containsKey(node.lock())) {</span>
-<span class="fc" id="L94">                variables = new TreeMap&lt;&gt;((a, b) -&gt; (a.hashCode() - b.hashCode()));</span>
-<span class="fc" id="L95">                PROCESSING.put(node.lock(), variables);</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">            if (!PROCESSING.containsKey(node.lock())) {</span>
+<span class="fc" id="L101">                variables = new TreeMap&lt;&gt;((a, b) -&gt; (a.hashCode() - b.hashCode()));</span>
+<span class="fc" id="L102">                PROCESSING.put(node.lock(), variables);</span>
             } else {
-<span class="fc" id="L97">                variables = PROCESSING.get(node.lock());</span>
+<span class="fc" id="L104">                variables = PROCESSING.get(node.lock());</span>
             }
-<span class="fc" id="L99">            variables.put(key, t);</span>
+<span class="fc" id="L106">            variables.put(key, t);</span>
         }
-<span class="fc" id="L101">    }</span>
+<span class="fc" id="L108">    }</span>
 
     private int _keyed(int number){
-<span class="fc bfc" id="L104" title="All 2 branches covered.">        return (number&gt;=0)?number+1:number;</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        return (number&gt;=0)?number+1:number;</span>
     }
 
 }

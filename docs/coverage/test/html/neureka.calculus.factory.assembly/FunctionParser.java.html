@@ -34,7 +34,7 @@ import java.util.List;
 
     public static String parsedComponent(String exp, final int i) {
 <span class="fc" id="L36">        exp = exp.trim();</span>
-<span class="fc bfc" id="L37" title="All 2 branches covered.">        if (exp.length() &lt;= i) return null;</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">        if (exp.length() &lt;= i) return null;</span>
 <span class="fc" id="L38">        StringBuilder component = new StringBuilder();</span>
 <span class="fc" id="L39">        int bracketDepth = 0;</span>
 <span class="fc" id="L40">        component = new StringBuilder();</span>
@@ -157,88 +157,102 @@ import java.util.List;
 <span class="pc bpc" id="L157" title="1 of 2 branches missed.">        if ( exp == null ) return null;</span>
 <span class="pc bpc" id="L158" title="1 of 2 branches missed.">        if ( exp.length() == 0 ) return &quot;&quot;;</span>
 <span class="fc bfc" id="L159" title="All 2 branches covered.">        if ( exp.equals(&quot;()&quot;) ) return &quot;&quot;;</span>
+<span class="fc" id="L160">        exp = exp.trim();</span>
+        //System.out.println(exp);
+<span class="fc" id="L162">        exp = exp.replace(&quot;sigmoid&quot;, &quot;sig&quot;);//Function.TYPES.REGISTER(1));</span>
+<span class="fc" id="L163">        exp = exp.replace(&quot;quadratic&quot;, &quot;quad&quot;);//Function.TYPES.REGISTER(3));</span>
+<span class="fc" id="L164">        exp = exp.replace(&quot;quadr&quot;, &quot;quad&quot;);//Function.TYPES.REGISTER(3));</span>
+<span class="fc" id="L165">        exp = exp.replace(&quot;lig&quot;, &quot;lig&quot;);//Function.TYPES.REGISTER(4));</span>
+<span class="fc" id="L166">        exp = exp.replace(&quot;ligmoid&quot;, &quot;lig&quot;);//Function.TYPES.REGISTER(4));</span>
+<span class="fc" id="L167">        exp = exp.replace(&quot;softplus&quot;, &quot;lig&quot;);//Function.TYPES.REGISTER(4));</span>
+<span class="fc" id="L168">        exp = exp.replace(&quot;spls&quot;, &quot;lig&quot;);//Function.TYPES.REGISTER(4));</span>
+<span class="fc" id="L169">        exp = exp.replace(&quot;ligm&quot;, &quot;lig&quot;);//Function.TYPES.REGISTER(4));</span>
+<span class="fc" id="L170">        exp = exp.replace(&quot;identity&quot;, &quot;idy&quot;);//Function.TYPES.REGISTER(5));</span>
+<span class="fc" id="L171">        exp = exp.replace(&quot;ident&quot;, &quot;idy&quot;);//Function.TYPES.REGISTER(5));</span>
+<span class="fc" id="L172">        exp = exp.replace(&quot;self&quot;, &quot;idy&quot;);//Function.TYPES.REGISTER(5));</span>
+<span class="fc" id="L173">        exp = exp.replace(&quot;copy&quot;, &quot;idy&quot;);//Function.TYPES.REGISTER(5));</span>
+<span class="fc" id="L174">        exp = exp.replace(&quot;gaussian&quot;, &quot;gaus&quot;);//Function.TYPES.REGISTER(6));</span>
+<span class="fc" id="L175">        exp = exp.replace(&quot;gauss&quot;, &quot;gaus&quot;);//Function.TYPES.REGISTER(6));</span>
+<span class="fc" id="L176">        exp = exp.replace(&quot;absolute&quot;, &quot;abs&quot;);//Function.TYPES.REGISTER(7));</span>
+<span class="fc" id="L177">        exp = exp.replace(&quot;summation&quot;, &quot;sum&quot;);//Function.TYPES.REGISTER(10));</span>
+<span class="fc" id="L178">        exp = exp.replace(&quot;product&quot;, &quot;prod&quot;);//Function.TYPES.REGISTER(11));</span>
 
-<span class="fc" id="L161">        exp = exp.replace(&quot;sigmoid&quot;, &quot;sig&quot;);//Function.TYPES.REGISTER(1));</span>
-<span class="fc" id="L162">        exp = exp.replace(&quot;quadratic&quot;, &quot;quad&quot;);//Function.TYPES.REGISTER(3));</span>
-<span class="fc" id="L163">        exp = exp.replace(&quot;quadr&quot;, &quot;quad&quot;);//Function.TYPES.REGISTER(3));</span>
-<span class="fc" id="L164">        exp = exp.replace(&quot;lig&quot;, &quot;lig&quot;);//Function.TYPES.REGISTER(4));</span>
-<span class="fc" id="L165">        exp = exp.replace(&quot;ligmoid&quot;, &quot;lig&quot;);//Function.TYPES.REGISTER(4));</span>
-<span class="fc" id="L166">        exp = exp.replace(&quot;softplus&quot;, &quot;lig&quot;);//Function.TYPES.REGISTER(4));</span>
-<span class="fc" id="L167">        exp = exp.replace(&quot;spls&quot;, &quot;lig&quot;);//Function.TYPES.REGISTER(4));</span>
-<span class="fc" id="L168">        exp = exp.replace(&quot;ligm&quot;, &quot;lig&quot;);//Function.TYPES.REGISTER(4));</span>
-<span class="fc" id="L169">        exp = exp.replace(&quot;identity&quot;, &quot;idy&quot;);//Function.TYPES.REGISTER(5));</span>
-<span class="fc" id="L170">        exp = exp.replace(&quot;ident&quot;, &quot;idy&quot;);//Function.TYPES.REGISTER(5));</span>
-<span class="fc" id="L171">        exp = exp.replace(&quot;self&quot;, &quot;idy&quot;);//Function.TYPES.REGISTER(5));</span>
-<span class="fc" id="L172">        exp = exp.replace(&quot;copy&quot;, &quot;idy&quot;);//Function.TYPES.REGISTER(5));</span>
-<span class="fc" id="L173">        exp = exp.replace(&quot;gaussian&quot;, &quot;gaus&quot;);//Function.TYPES.REGISTER(6));</span>
-<span class="fc" id="L174">        exp = exp.replace(&quot;gauss&quot;, &quot;gaus&quot;);//Function.TYPES.REGISTER(6));</span>
-<span class="fc" id="L175">        exp = exp.replace(&quot;absolute&quot;, &quot;abs&quot;);//Function.TYPES.REGISTER(7));</span>
-<span class="fc" id="L176">        exp = exp.replace(&quot;summation&quot;, &quot;sum&quot;);//Function.TYPES.REGISTER(10));</span>
-<span class="fc" id="L177">        exp = exp.replace(&quot;product&quot;, &quot;prod&quot;);//Function.TYPES.REGISTER(11));</span>
-
-<span class="fc" id="L179">        int bracketDepth = 0;</span>
-<span class="fc bfc" id="L180" title="All 2 branches covered.">        for (int Ei = 0; Ei &lt; exp.length(); ++Ei) {</span>
-<span class="fc bfc" id="L181" title="All 2 branches covered.">            if (exp.charAt(Ei) == ')') --bracketDepth;</span>
-<span class="fc bfc" id="L182" title="All 2 branches covered.">            else if (exp.charAt(Ei) == '(') ++bracketDepth;</span>
-        }
-<span class="fc bfc" id="L184" title="All 2 branches covered.">        if (bracketDepth != 0) {</span>
-<span class="pc bpc" id="L185" title="1 of 2 branches missed.">            if (bracketDepth &lt; 0) {</span>
-<span class="nc" id="L186">                StringBuilder expBuilder = new StringBuilder(exp);</span>
-<span class="nc bnc" id="L187" title="All 2 branches missed.">                for (int Bi = 0; Bi &lt; -bracketDepth; ++Bi) {</span>
-<span class="nc" id="L188">                    expBuilder.insert(0, &quot;(&quot;);</span>
-                }
-<span class="nc" id="L190">                exp = expBuilder.toString();</span>
-<span class="pc" id="L191">            } else exp = new StringBuilder(exp).append(&quot;)&quot;.repeat(bracketDepth)).toString();</span>
-        }
-
-<span class="fc" id="L194">        boolean parsing = true;</span>
-<span class="fc" id="L195">        boolean needsStitching = false;</span>
-<span class="fc bfc" id="L196" title="All 6 branches covered.">        while (parsing &amp;&amp; (exp.charAt(0) == '(') &amp;&amp; (exp.charAt(exp.length() - 1) == ')')) {</span>
-<span class="fc" id="L197">            bracketDepth = 0;</span>
-<span class="fc" id="L198">            needsStitching = true;</span>
-<span class="fc bfc" id="L199" title="All 2 branches covered.">            for (int i = 0; i &lt; exp.length(); ++i) {</span>
-<span class="fc bfc" id="L200" title="All 2 branches covered.">                if (exp.charAt(i) == ')') --bracketDepth;</span>
-<span class="fc bfc" id="L201" title="All 2 branches covered.">                else if (exp.charAt(i) == '(') ++bracketDepth;</span>
-<span class="fc bfc" id="L202" title="All 4 branches covered.">                if (bracketDepth == 0 &amp;&amp; i != exp.length() - 1) needsStitching = false;</span>
+<span class="fc" id="L180">        int bracketDepth = 0;</span>
+        //int first_i = -1;
+        //int first_depth = -1;
+        //int last_i = -1;
+<span class="fc bfc" id="L184" title="All 2 branches covered.">        for (int Ei = 0; Ei &lt; exp.length(); ++Ei) {</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">            if (exp.charAt(Ei) == '(') {</span>
+                //if(first_i&lt;0){
+                //    first_i = Ei;
+                //    first_depth = bracketDepth;
+                //}
+<span class="fc" id="L190">                ++bracketDepth;</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">            } else if (exp.charAt(Ei) == ')'){</span>
+<span class="fc" id="L192">                --bracketDepth;</span>
+                //if(first_depth==bracketDepth) last_i = Ei;
             }
-<span class="fc bfc" id="L204" title="All 2 branches covered.">            if (needsStitching) exp = FunctionParser.removeHeadAndTail(exp);</span>
-<span class="fc" id="L205">            else parsing = false;</span>
         }
-<span class="fc" id="L207">        return exp;</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        if (bracketDepth != 0) {</span>
+<span class="pc bpc" id="L197" title="1 of 2 branches missed.">            if (bracketDepth &lt; 0) {</span>
+<span class="nc" id="L198">                StringBuilder expBuilder = new StringBuilder(exp);</span>
+<span class="nc bnc" id="L199" title="All 2 branches missed.">                for (int Bi = 0; Bi &lt; -bracketDepth; ++Bi) {</span>
+<span class="nc" id="L200">                    expBuilder.insert(0, &quot;(&quot;);</span>
+                }
+<span class="nc" id="L202">                exp = expBuilder.toString();</span>
+<span class="pc" id="L203">            } else exp = new StringBuilder(exp).append(&quot;)&quot;.repeat(bracketDepth)).toString();</span>
+        }
+
+<span class="fc" id="L206">        boolean parsing = true;</span>
+<span class="fc" id="L207">        boolean needsStitching = false;</span>
+<span class="fc bfc" id="L208" title="All 6 branches covered.">        while (parsing &amp;&amp; (exp.charAt(0) == '(') &amp;&amp; (exp.charAt(exp.length() - 1) == ')')) {</span>
+<span class="fc" id="L209">            bracketDepth = 0;</span>
+<span class="fc" id="L210">            needsStitching = true;</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">            for (int i = 0; i &lt; exp.length(); ++i) {</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">                if (exp.charAt(i) == ')') --bracketDepth;</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">                else if (exp.charAt(i) == '(') ++bracketDepth;</span>
+<span class="fc bfc" id="L214" title="All 4 branches covered.">                if (bracketDepth == 0 &amp;&amp; i != exp.length() - 1) needsStitching = false;</span>
+            }
+<span class="fc bfc" id="L216" title="All 2 branches covered.">            if (needsStitching) exp = FunctionParser.removeHeadAndTail(exp);</span>
+<span class="fc" id="L217">            else parsing = false;</span>
+        }
+<span class="fc" id="L219">        exp = exp.trim();</span>
+        //if(exp.charAt(0)=='(' &amp;&amp; exp.charAt(exp.length()-1)==')') return unpackAndCorrect(exp);
+<span class="fc" id="L221">        return exp;</span>
     }
 
     public static String assumptionBasedOn(String expression){
-<span class="fc" id="L211">        double largest = -1;</span>
-<span class="fc" id="L212">        int best = 0;</span>
-<span class="fc bfc" id="L213" title="All 2 branches covered.">        for (int i=0; i&lt;OperationType.COUNT(); i++){</span>
-<span class="fc" id="L214">            double s = similarity(expression, OperationType.instance(i).identifier());</span>
-<span class="fc bfc" id="L215" title="All 2 branches covered.">            if (largest==-1) {</span>
-<span class="fc" id="L216">                largest = s;</span>
-<span class="fc bfc" id="L217" title="All 2 branches covered.">            } else if (s &gt; largest) {</span>
-<span class="fc" id="L218">                best = i;</span>
-<span class="fc" id="L219">                largest = s;</span>
+<span class="fc" id="L225">        double largest = -1;</span>
+<span class="fc" id="L226">        int best = 0;</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">        for (int i=0; i&lt;OperationType.COUNT(); i++){</span>
+<span class="fc" id="L228">            double s = similarity(expression, OperationType.instance(i).identifier());</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">            if (largest==-1) {</span>
+<span class="fc" id="L230">                largest = s;</span>
+<span class="fc bfc" id="L231" title="All 2 branches covered.">            } else if (s &gt; largest) {</span>
+<span class="fc" id="L232">                best = i;</span>
+<span class="fc" id="L233">                largest = s;</span>
             }
         }
-<span class="fc bfc" id="L222" title="All 2 branches covered.">        return ( largest &gt; 0.1 ) ? OperationType.instance(best).identifier() : null;</span>
+<span class="fc bfc" id="L236" title="All 2 branches covered.">        return ( largest &gt; 0.1 ) ? OperationType.instance(best).identifier() : null;</span>
     }
 
     public static double similarity(String s1, String s2) {
-<span class="fc bfc" id="L226" title="All 4 branches covered.">        String longer = (s1.length() &gt; s2.length()) ?s1 : s2, shorter = (s1.length() &gt; s2.length()) ? s2 : s1;</span>
-<span class="fc bfc" id="L227" title="All 2 branches covered.">        if (s1.length() &lt; s2.length()) { // longer should always have greater length</span>
-<span class="fc" id="L228">            longer = s2; shorter = s1;</span>
+<span class="fc bfc" id="L240" title="All 4 branches covered.">        String longer = (s1.length() &gt; s2.length()) ?s1 : s2, shorter = (s1.length() &gt; s2.length()) ? s2 : s1;</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">        if (s1.length() &lt; s2.length()) { // longer should always have greater length</span>
+<span class="fc" id="L242">            longer = s2; shorter = s1;</span>
         }
-<span class="fc" id="L230">        int longerLength = longer.length();</span>
-<span class="pc bpc" id="L231" title="1 of 2 branches missed.">        if (longerLength == 0) return 1.0; /* both strings are zero length */</span>
-<span class="fc" id="L232">        double d = 0;</span>
-<span class="fc" id="L233">        int delta = (longer.length()-shorter.length());</span>
-<span class="fc bfc" id="L234" title="All 2 branches covered.">        for (int i=0; i&lt;(delta+1); i++){</span>
-<span class="fc bfc" id="L235" title="All 2 branches covered.">            for (int si=0; si&lt;shorter.length(); si++){</span>
-<span class="fc bfc" id="L236" title="All 2 branches covered.">                if (longer.charAt(i+si)==shorter.charAt(si)){</span>
-<span class="fc" id="L237">                    d++;</span>
+<span class="fc" id="L244">        int longerLength = longer.length();</span>
+<span class="pc bpc" id="L245" title="1 of 2 branches missed.">        if (longerLength == 0) return 1.0; /* both strings are zero length */</span>
+<span class="fc" id="L246">        double d = 0;</span>
+<span class="fc" id="L247">        int delta = (longer.length()-shorter.length());</span>
+<span class="fc bfc" id="L248" title="All 2 branches covered.">        for (int i=0; i&lt;(delta+1); i++){</span>
+<span class="fc bfc" id="L249" title="All 2 branches covered.">            for (int si=0; si&lt;shorter.length(); si++){</span>
+<span class="fc bfc" id="L250" title="All 2 branches covered.">                if (longer.charAt(i+si)==shorter.charAt(si)){</span>
+<span class="fc" id="L251">                    d++;</span>
                 }
             }
         }
-<span class="fc" id="L241">        return d/(longer.length()+delta+1);</span>
+<span class="fc" id="L255">        return d/(longer.length()+delta+1);</span>
     }
 
 
