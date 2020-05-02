@@ -22,6 +22,10 @@ public class OperationType implements Type
 
     private static final ArrayList<OperationType> _REGISTER = new ArrayList<>();
 
+    public static ArrayList<OperationType> instances(){
+        return _REGISTER;
+    }
+
     public static OperationType instance(int index){
         return _REGISTER.get(index);
     }

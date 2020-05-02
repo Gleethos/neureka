@@ -9,13 +9,11 @@ import java.util.List;
  * */
 public class FunctionParser {
     public static int numberOfOperationsWithin(final List<String> operations) {
-        int Count = 0;
-        for (int i = 0; i < OperationType.COUNT(); ++i) {
-            if (FunctionParser.containsOperation(OperationType.instance(i).identifier(), operations)) {
-                ++Count;
-            }
+        int counter = 0;
+        for(OperationType ot : OperationType.instances()){
+            if (FunctionParser.containsOperation(ot.identifier(), operations)) ++counter;
         }
-        return Count;
+        return counter;
     }
 
     public static String parsedOperation(final String exp, final int i) {
@@ -24,7 +22,7 @@ public class FunctionParser {
         }
         String operation = "";
         for (int Si = exp.length()-1; Si >= i; Si--) {
-            operation = exp.substring(i, Si);//operation) + exp.charAt(Si);
+            operation = exp.substring(i, Si);
             if (FunctionParser.isBasicOperation(operation)) {
                 return operation;
             }
@@ -35,20 +33,15 @@ public class FunctionParser {
     public static String parsedComponent(String exp, final int i) {
         exp = exp.trim();
         if (exp.length() <= i) return null;
-        StringBuilder component = new StringBuilder();
         int bracketDepth = 0;
-        component = new StringBuilder();
+        StringBuilder component = new StringBuilder();
         for (int Ei = i; Ei < exp.length(); ++Ei) {
-            if (exp.charAt(Ei) == ')') {
-                --bracketDepth;
-            } else if (exp.charAt(Ei) == '(') {
-                ++bracketDepth;
-            }
+            if (exp.charAt(Ei) == ')') --bracketDepth;
+            else if (exp.charAt(Ei) == '(') ++bracketDepth;
             if (bracketDepth == 0) {
                 String possibleOperation = "";
                 for (int Sii = exp.length()-1; Sii >= Ei+1; Sii--) {
-
-                    possibleOperation = exp.substring(Ei+1, Sii);//possibleOperation + exp.charAt(Sii);
+                    possibleOperation = exp.substring(Ei+1, Sii);
                     if (FunctionParser.isBasicOperation(possibleOperation)) {
                         if (exp.charAt(Ei)=='j' || !Character.isLetter(exp.charAt(Ei))) {
                             component.append(exp.charAt(Ei));
@@ -79,13 +72,9 @@ public class FunctionParser {
         if (currentOperation != null) {
             if (currentOperation.equals(operation)) {
                 group = currentComponent + currentOperation;
-                if (currentChain != null) {
-                    group = currentChain + group;
-                }
+                if (currentChain != null) group = currentChain + group;
             }
-        } else if (currentChain != null) {
-            group = currentChain + currentComponent;
-        }
+        } else if (currentChain != null) group = currentChain + currentComponent;
         return group;
     }
 
@@ -96,50 +85,40 @@ public class FunctionParser {
 
     public static String removeHeadAndTail(final String exp) {
         StringBuilder corrected = new StringBuilder();
-        for (int i = 1; i < exp.length() - 1; ++i) {
-            corrected.append(exp.charAt(i));
-        }
+        for (int i = 1; i < exp.length() - 1; ++i) corrected.append(exp.charAt(i));
         return corrected.toString();
     }
 
     public static String cleanedHeadAndTail(String exp) {
         exp = exp.trim();
-        int Ci = 0;
-        StringBuilder Updated = new StringBuilder();
+        int ci = 0;
+        StringBuilder updated = new StringBuilder();
         boolean condition = true;
         while (condition) {
-            if (FunctionParser.isWeired(exp.charAt(Ci)) || (exp.charAt(Ci) >= 'A' && exp.charAt(Ci) <= 'Z') || (exp.charAt(Ci) >= 'a' && exp.charAt(Ci) <= 'z')) {
-                Ci++;
-            } else {
-                condition = false;
-            }
-            if (Ci == exp.length()) {
-                condition = false;
-            }
+            if (FunctionParser.isWeired(exp.charAt(ci)) || (exp.charAt(ci) >= 'A' && exp.charAt(ci) <= 'Z') || (exp.charAt(ci) >= 'a' && exp.charAt(ci) <= 'z')) {
+                ci++;
+            } else condition = false;
+            if (ci == exp.length()) condition = false;
         }
-        for (int Gi = Ci; Gi < exp.length(); Gi++) {
-            Updated.append(exp.charAt(Gi));
-        }
-        exp = Updated.toString();
-        Updated = new StringBuilder();
+        for (int gi = ci; gi < exp.length(); gi++) updated.append(exp.charAt(gi));
+        exp = updated.toString();
+        updated = new StringBuilder();
         if (exp.length() > 0) {
-            Ci = 0;
+            ci = 0;
             condition = true;
             int l = exp.length() - 1;
             while (condition) {
-                if (FunctionParser.isWeired(exp.charAt(Ci)) || (exp.charAt(l - Ci) >= 'A' && exp.charAt(l - Ci) <= 'Z') || (exp.charAt(l - Ci) >= 'a' && exp.charAt(l - Ci) <= 'z')) {
-                    Ci++;
+                if (FunctionParser.isWeired(exp.charAt(ci)) || (exp.charAt(l - ci) >= 'A' && exp.charAt(l - ci) <= 'Z') || (exp.charAt(l - ci) >= 'a' && exp.charAt(l - ci) <= 'z')) {
+                    ci++;
                 } else {
                     condition = false;
                 }
-                if (l - Ci < 0) {
+                if (l - ci < 0) {
                     condition = false;
                 }
             }
-            for (int Gi = 0; Gi <= l - Ci; Gi++) {
-                Updated.append(exp.charAt(Gi));
-            }
-            exp = Updated.toString();
+            for (int gi = 0; gi <= l - ci; gi++) updated.append(exp.charAt(gi));
+            exp = updated.toString();
         }
         if (exp.length() > 0) {
             if (exp.charAt(0) == '(' && exp.charAt(exp.length() - 1) != ')') {
@@ -158,7 +137,6 @@ public class FunctionParser {
         if ( exp.length() == 0 ) return "";
         if ( exp.equals("()") ) return "";
         exp = exp.trim();
-        //System.out.println(exp);
         exp = exp.replace("sigmoid", "sig");//Function.TYPES.REGISTER(1));
         exp = exp.replace("quadratic", "quad");//Function.TYPES.REGISTER(3));
         exp = exp.replace("quadr", "quad");//Function.TYPES.REGISTER(3));
@@ -178,20 +156,9 @@ public class FunctionParser {
         exp = exp.replace("product", "prod");//Function.TYPES.REGISTER(11));
 
         int bracketDepth = 0;
-        //int first_i = -1;
-        //int first_depth = -1;
-        //int last_i = -1;
         for (int Ei = 0; Ei < exp.length(); ++Ei) {
-            if (exp.charAt(Ei) == '(') {
-                //if(first_i<0){
-                //    first_i = Ei;
-                //    first_depth = bracketDepth;
-                //}
-                ++bracketDepth;
-            } else if (exp.charAt(Ei) == ')'){
-                --bracketDepth;
-                //if(first_depth==bracketDepth) last_i = Ei;
-            }
+            if (exp.charAt(Ei) == '(') ++bracketDepth;
+            else if (exp.charAt(Ei) == ')') --bracketDepth;
         }
         if (bracketDepth != 0) {
             if (bracketDepth < 0) {
@@ -202,7 +169,6 @@ public class FunctionParser {
                 exp = expBuilder.toString();
             } else exp = new StringBuilder(exp).append(")".repeat(bracketDepth)).toString();
         }
-
         boolean parsing = true;
         boolean needsStitching = false;
         while (parsing && (exp.charAt(0) == '(') && (exp.charAt(exp.length() - 1) == ')')) {
@@ -216,9 +182,7 @@ public class FunctionParser {
             if (needsStitching) exp = FunctionParser.removeHeadAndTail(exp);
             else parsing = false;
         }
-        exp = exp.trim();
-        //if(exp.charAt(0)=='(' && exp.charAt(exp.length()-1)==')') return unpackAndCorrect(exp);
-        return exp;
+        return exp.trim();
     }
 
     public static String assumptionBasedOn(String expression){
@@ -226,9 +190,8 @@ public class FunctionParser {
         int best = 0;
         for (int i=0; i<OperationType.COUNT(); i++){
             double s = similarity(expression, OperationType.instance(i).identifier());
-            if (largest==-1) {
-                largest = s;
-            } else if (s > largest) {
+            if (largest==-1) largest = s;
+            else if (s > largest) {
                 best = i;
                 largest = s;
             }
@@ -247,9 +210,7 @@ public class FunctionParser {
         int delta = (longer.length()-shorter.length());
         for (int i=0; i<(delta+1); i++){
             for (int si=0; si<shorter.length(); si++){
-                if (longer.charAt(i+si)==shorter.charAt(si)){
-                    d++;
-                }
+                if (longer.charAt(i+si)==shorter.charAt(si)) d++;
             }
         }
         return d/(longer.length()+delta+1);
