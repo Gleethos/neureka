@@ -2,7 +2,6 @@ package neureka.optimization.implementations;
 
 import neureka.Tsr;
 import neureka.calculus.Function;
-import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.optimization.Optimizer;
 
 public class ADAM implements Optimizer {

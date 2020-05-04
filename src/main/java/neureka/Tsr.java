@@ -793,17 +793,20 @@ public class Tsr extends AbstractNDArray<Tsr>
         for (int i=0; i<ranges.length; i++) {
             int first = 0;
             int last = 0;
-            if (!(ranges[i] instanceof  List)){
-                if (ranges[i] instanceof Map){
-                    Object[] ks = ((Map)ranges[i]).keySet().toArray();
-                    Object[] steps = ((Map)ranges[i]).values().toArray();
-                    int newI = _configureSubsetFromRanges(ks, idxbase, newShape, i+offset);
-                    for (int ii=rank(); ii<(rank()+steps.length); ii++) {
-                        idxbase[ii+i+offset] = (Integer)steps[ii-rank()];
-                        newShape[ii+i+offset-rank()] /= idxbase[ii+i+offset];
+            if (!(ranges[i] instanceof  List)) {
+                if (ranges[i] instanceof Map) {
+                    Object[] ks = ((Map) ranges[i]).keySet().toArray();
+                    Object[] steps = ((Map) ranges[i]).values().toArray();
+                    int newI = _configureSubsetFromRanges(ks, idxbase, newShape, i + offset);
+                    for (int ii = rank(); ii < (rank() + steps.length); ii++) {
+                        idxbase[ii + i + offset] = (Integer) steps[ii - rank()];
+                        newShape[ii + i + offset - rank()] /= idxbase[ii + i + offset];
                     }
                     i = newI;
                     continue;
+                } else if(ranges[i] instanceof Integer) {
+                    first = (Integer) ranges[i];
+                    last = (Integer) ranges[i];
                 } else {
                     IndexAlias indexAlias = (IndexAlias)find(IndexAlias.class);
                     if (indexAlias !=null){
