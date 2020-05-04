@@ -159,32 +159,32 @@ neureka.Tsr -> neureka.Tsr:
     686:697:neureka.Tsr putAt(java.lang.Object,neureka.Tsr) -> putAt
     701:701:double getAt(int[]) -> getAt
     705:778:java.lang.Object getAt(java.lang.Object) -> getAt
-    793:851:int _configureSubsetFromRanges(java.lang.Object[],int[],int[],int) -> a
-    961:963:neureka.Tsr setValue64(double[]) -> setValue64
-    967:969:neureka.Tsr setValue32(float[]) -> setValue32
-    973:984:neureka.Tsr setValue(java.lang.Object) -> setValue
-    988:992:java.lang.Object getValue() -> getValue
-    996:998:double[] gradient64() -> gradient64
-    1002:1004:float[] gradient32() -> gradient32
-    1008:1013:neureka.Tsr addToGradient(neureka.Tsr) -> addToGradient
-    1017:1024:neureka.Tsr to32() -> to32
-    1028:1035:neureka.Tsr to64() -> to64
-    1039:1044:double value64(int) -> value64
-    1049:1058:double[] value64() -> value64
-    1062:1067:float value32(int) -> value32
-    1072:1080:float[] value32() -> value32
-    1084:1086:neureka.Tsr setValue(double[]) -> setValue
-    1096:1096:java.lang.String toString(java.lang.String) -> toString
-    1100:1162:java.lang.String _toString(java.lang.String,java.lang.String) -> _toString
-    1166:1178:java.lang.String _stringified(double[],boolean,int) -> a
-    1182:1182:java.lang.String toString() -> toString
-    1187:1203:void makeFit(neureka.Tsr[]) -> makeFit
-    1156:1158:void lambda$_toString$18(java.util.concurrent.atomic.AtomicReference,java.lang.String,java.lang.String,neureka.autograd.GraphNode,neureka.autograd.ADAgent) -> a
-    1138:1148:void lambda$_toString$17(java.util.concurrent.atomic.AtomicReference,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,neureka.autograd.GraphNode,neureka.autograd.ADAgent) -> a
-    1032:1032:void lambda$to64$16(java.lang.Object) -> a
-    1021:1021:void lambda$to32$15(java.lang.Object) -> b
-    1011:1011:void lambda$addToGradient$14(neureka.Tsr,java.lang.Object) -> a
-    1009:1009:void lambda$addToGradient$13(neureka.Tsr,java.lang.Object) -> b
+    793:854:int _configureSubsetFromRanges(java.lang.Object[],int[],int[],int) -> a
+    964:966:neureka.Tsr setValue64(double[]) -> setValue64
+    970:972:neureka.Tsr setValue32(float[]) -> setValue32
+    976:987:neureka.Tsr setValue(java.lang.Object) -> setValue
+    991:995:java.lang.Object getValue() -> getValue
+    999:1001:double[] gradient64() -> gradient64
+    1005:1007:float[] gradient32() -> gradient32
+    1011:1016:neureka.Tsr addToGradient(neureka.Tsr) -> addToGradient
+    1020:1027:neureka.Tsr to32() -> to32
+    1031:1038:neureka.Tsr to64() -> to64
+    1042:1047:double value64(int) -> value64
+    1052:1061:double[] value64() -> value64
+    1065:1070:float value32(int) -> value32
+    1075:1083:float[] value32() -> value32
+    1087:1089:neureka.Tsr setValue(double[]) -> setValue
+    1099:1099:java.lang.String toString(java.lang.String) -> toString
+    1103:1165:java.lang.String _toString(java.lang.String,java.lang.String) -> _toString
+    1169:1181:java.lang.String _stringified(double[],boolean,int) -> a
+    1185:1185:java.lang.String toString() -> toString
+    1190:1206:void makeFit(neureka.Tsr[]) -> makeFit
+    1159:1161:void lambda$_toString$18(java.util.concurrent.atomic.AtomicReference,java.lang.String,java.lang.String,neureka.autograd.GraphNode,neureka.autograd.ADAgent) -> a
+    1141:1151:void lambda$_toString$17(java.util.concurrent.atomic.AtomicReference,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,neureka.autograd.GraphNode,neureka.autograd.ADAgent) -> a
+    1035:1035:void lambda$to64$16(java.lang.Object) -> a
+    1024:1024:void lambda$to32$15(java.lang.Object) -> b
+    1014:1014:void lambda$addToGradient$14(neureka.Tsr,java.lang.Object) -> a
+    1012:1012:void lambda$addToGradient$13(neureka.Tsr,java.lang.Object) -> b
     649:649:void lambda$isCase$12(neureka.Tsr,boolean[],java.lang.Object) -> a
     650:651:void lambda$isCase$11(neureka.Tsr,boolean[],neureka.Tsr) -> a
     566:569:void lambda$applyGradient$10(java.lang.Object) -> c
@@ -223,30 +223,30 @@ neureka.Tsr -> neureka.Tsr:
     20:20:int[] access$2202(neureka.Tsr,int[]) -> j
     22:22:void <clinit>() -> <clinit>
 neureka.Tsr$Create -> neureka.Tsr$Create:
-    1207:1207:void <init>() -> <init>
-    1210:1210:neureka.Tsr E(int[]) -> E
-    1214:1214:neureka.Tsr newRandom(int[]) -> newRandom
-    1218:1219:neureka.Tsr newRandom(int[],long) -> newRandom
-    1223:1227:neureka.Tsr newTsrLike(neureka.Tsr,double) -> newTsrLike
-    1231:1235:neureka.Tsr newTsrLike(neureka.Tsr) -> newTsrLike
-    1239:1245:neureka.Tsr _newEmptyLike(neureka.Tsr) -> a
+    1210:1210:void <init>() -> <init>
+    1213:1213:neureka.Tsr E(int[]) -> E
+    1217:1217:neureka.Tsr newRandom(int[]) -> newRandom
+    1221:1222:neureka.Tsr newRandom(int[],long) -> newRandom
+    1226:1230:neureka.Tsr newTsrLike(neureka.Tsr,double) -> newTsrLike
+    1234:1238:neureka.Tsr newTsrLike(neureka.Tsr) -> newTsrLike
+    1242:1248:neureka.Tsr _newEmptyLike(neureka.Tsr) -> a
 neureka.Tsr$Exec -> neureka.Tsr$Exec:
-    933:933:void <init>() -> <init>
-    936:952:neureka.Tsr reshaped(neureka.Tsr,int[],boolean) -> reshaped
+    936:936:void <init>() -> <init>
+    939:955:neureka.Tsr reshaped(neureka.Tsr,int[],boolean) -> reshaped
 neureka.Tsr$IO -> neureka.Tsr$IO:
-    856:856:void <init>() -> <init>
-    859:861:double getFrom(neureka.Tsr,int) -> getFrom
-    865:866:double getFrom(neureka.Tsr,int[]) -> getFrom
-    870:872:void setInto(neureka.Tsr,int,double) -> setInto
-    875:877:void setInto(neureka.Tsr,int[],double) -> setInto
-    880:882:void addInto(neureka.Tsr,int,double) -> addInto
-    885:887:void addInto(neureka.Tsr,int[],double) -> addInto
-    890:892:neureka.Tsr addInto(neureka.Tsr,neureka.Tsr) -> addInto
-    896:898:void subInto(neureka.Tsr,int,double) -> subInto
-    901:903:void subInto(neureka.Tsr,int[],double) -> subInto
-    906:917:void subInto(neureka.Tsr,neureka.Tsr) -> subInto
-    920:922:void mulInto(neureka.Tsr,int,double) -> mulInto
-    925:927:void mulInto(neureka.Tsr,int[],double) -> mulInto
+    859:859:void <init>() -> <init>
+    862:864:double getFrom(neureka.Tsr,int) -> getFrom
+    868:869:double getFrom(neureka.Tsr,int[]) -> getFrom
+    873:875:void setInto(neureka.Tsr,int,double) -> setInto
+    878:880:void setInto(neureka.Tsr,int[],double) -> setInto
+    883:885:void addInto(neureka.Tsr,int,double) -> addInto
+    888:890:void addInto(neureka.Tsr,int[],double) -> addInto
+    893:895:neureka.Tsr addInto(neureka.Tsr,neureka.Tsr) -> addInto
+    899:901:void subInto(neureka.Tsr,int,double) -> subInto
+    904:906:void subInto(neureka.Tsr,int[],double) -> subInto
+    909:920:void subInto(neureka.Tsr,neureka.Tsr) -> subInto
+    923:925:void mulInto(neureka.Tsr,int,double) -> mulInto
+    928:930:void mulInto(neureka.Tsr,int[],double) -> mulInto
 neureka.abstraction.AbstractComponentOwner -> neureka.abstraction.AbstractComponentOwner:
     java.util.List _components -> _components
     17:22:void <init>() -> <init>
@@ -647,8 +647,8 @@ neureka.calculus.Function -> neureka.calculus.Function:
     neureka.calculus.Function MOD -> MOD
     neureka.calculus.Function MOD_ASSIGN -> MOD_ASSIGN
     neureka.calculus.Function NEG -> NEG
-    56:56:neureka.calculus.Function create(java.lang.String) -> create
-    60:60:neureka.calculus.Function create(java.lang.String,boolean) -> create
+    57:57:neureka.calculus.Function create(java.lang.String) -> create
+    61:61:neureka.calculus.Function create(java.lang.String,boolean) -> create
     neureka.calculus.Function newBuild(java.lang.String) -> newBuild
     boolean doesAD() -> doesAD
     boolean isFlat() -> isFlat
@@ -660,8 +660,11 @@ neureka.calculus.Function -> neureka.calculus.Function:
     double activate(double[]) -> activate
     double derive(double[],int,int) -> derive
     double derive(double[],int) -> derive
+    neureka.Tsr call(neureka.Tsr) -> call
     neureka.Tsr activate(neureka.Tsr) -> activate
+    neureka.Tsr call(neureka.Tsr[],int) -> call
     neureka.Tsr activate(neureka.Tsr[],int) -> activate
+    neureka.Tsr call(neureka.Tsr[]) -> call
     neureka.Tsr activate(neureka.Tsr[]) -> activate
     neureka.Tsr derive(neureka.Tsr[],int,int) -> derive
     neureka.Tsr derive(neureka.Tsr[],int) -> derive
@@ -685,15 +688,15 @@ neureka.calculus.Function$Detached -> neureka.calculus.Function$Detached:
     neureka.calculus.Function MOD_ASSIGN -> MOD_ASSIGN
     neureka.calculus.Function NEG -> NEG
     36:36:void <init>() -> <init>
-    37:52:void <clinit>() -> <clinit>
+    38:53:void <clinit>() -> <clinit>
 neureka.calculus.Function$Setup -> neureka.calculus.Function$Setup:
-    63:63:void <init>() -> <init>
-    66:66:neureka.Tsr commit(neureka.Tsr[],java.lang.String,boolean) -> commit
-    70:70:neureka.Tsr commit(neureka.Tsr,neureka.Tsr[],java.lang.String,boolean) -> commit
-    74:74:neureka.Tsr commit(neureka.Tsr[],neureka.calculus.Function) -> commit
-    78:78:neureka.Tsr commit(neureka.Tsr,neureka.Tsr[],neureka.calculus.Function) -> commit
-    83:106:neureka.Tsr commit(neureka.Tsr,neureka.Tsr[],neureka.calculus.Function,java.util.function.Supplier) -> commit
-    88:88:neureka.Tsr lambda$commit$0(neureka.Tsr) -> a
+    64:64:void <init>() -> <init>
+    67:67:neureka.Tsr commit(neureka.Tsr[],java.lang.String,boolean) -> commit
+    71:71:neureka.Tsr commit(neureka.Tsr,neureka.Tsr[],java.lang.String,boolean) -> commit
+    75:75:neureka.Tsr commit(neureka.Tsr[],neureka.calculus.Function) -> commit
+    79:79:neureka.Tsr commit(neureka.Tsr,neureka.Tsr[],neureka.calculus.Function) -> commit
+    84:107:neureka.Tsr commit(neureka.Tsr,neureka.Tsr[],neureka.calculus.Function,java.util.function.Supplier) -> commit
+    89:89:neureka.Tsr lambda$commit$0(neureka.Tsr) -> a
 neureka.calculus.environment.Cache -> neureka.calculus.environment.Cache:
     neureka.calculus.environment.Cache _cache -> a
     java.util.Map FUNCTIONS -> b
@@ -727,42 +730,43 @@ neureka.calculus.environment.OperationType -> neureka.calculus.environment.Opera
     neureka.calculus.environment.Type$Broadcast _broadcast -> _broadcast
     neureka.calculus.environment.Type$Scalarization _scalarization -> _scalarization
     neureka.calculus.environment.Type$Operation _operation -> _operation
-    26:26:neureka.calculus.environment.OperationType instance(int) -> instance
-    30:30:neureka.calculus.environment.OperationType instance(java.lang.String) -> instance
-    92:124:void <init>(java.lang.String,java.lang.String,boolean,boolean,boolean,boolean,boolean,neureka.calculus.environment.Type$Activation,neureka.calculus.environment.Type$Scalarization,neureka.calculus.environment.Type$Convolution,neureka.calculus.environment.Type$Broadcast,neureka.calculus.environment.Type$Operation) -> <init>
-    127:127:neureka.calculus.environment.OperationType[] ALL() -> ALL
-    131:131:int COUNT() -> COUNT
-    138:138:java.lang.String getName() -> getName
-    145:145:neureka.calculus.environment.Type$Activation getActivation() -> getActivation
-    150:150:boolean supportsActivation() -> supportsActivation
-    157:157:neureka.calculus.environment.Type$Scalarization getScalarization() -> getScalarization
-    162:162:boolean supportsScalar() -> supportsScalar
-    169:169:neureka.calculus.environment.Type$Convolution getConvolution() -> getConvolution
-    174:174:boolean supportsConvolution() -> supportsConvolution
-    181:181:neureka.calculus.environment.Type$Broadcast getBroadcast() -> getBroadcast
-    186:186:boolean supportsBroadcast() -> supportsBroadcast
-    193:193:neureka.calculus.environment.Type$Operation getOperation() -> getOperation
-    198:198:boolean supportsOperation() -> supportsOperation
-    205:205:int id() -> id
-    210:210:java.lang.String identifier() -> identifier
-    215:215:boolean isOperation() -> isOperation
-    220:220:boolean isIndexer() -> isIndexer
-    225:225:boolean isConvection() -> isConvection
-    230:230:boolean isCommutative() -> isCommutative
-    236:243:boolean allowsForward(neureka.Tsr[]) -> allowsForward
-    249:282:neureka.autograd.ADAgent getADAgentOf(neureka.calculus.Function,neureka.Tsr[],int,boolean) -> getADAgentOf
-    283:283:neureka.Tsr lambda$getADAgentOf$10(neureka.autograd.GraphNode,neureka.Tsr) -> a
-    283:283:neureka.Tsr lambda$getADAgentOf$9(neureka.autograd.GraphNode,neureka.Tsr) -> b
-    283:283:neureka.Tsr lambda$getADAgentOf$8() -> a
-    278:278:neureka.Tsr lambda$getADAgentOf$7(neureka.calculus.Function,neureka.Tsr,neureka.autograd.GraphNode,neureka.Tsr) -> a
-    277:277:neureka.Tsr lambda$getADAgentOf$6(neureka.calculus.Function,neureka.Tsr,neureka.autograd.GraphNode,neureka.Tsr) -> b
-    276:276:neureka.Tsr lambda$getADAgentOf$5(neureka.Tsr) -> a
-    265:265:neureka.Tsr lambda$getADAgentOf$4(neureka.calculus.Function,neureka.Tsr,neureka.autograd.GraphNode,neureka.Tsr) -> c
-    264:264:neureka.Tsr lambda$getADAgentOf$3(neureka.calculus.Function,neureka.Tsr,neureka.autograd.GraphNode,neureka.Tsr) -> d
-    263:263:neureka.Tsr lambda$getADAgentOf$2(neureka.Tsr) -> b
-    255:255:neureka.Tsr lambda$getADAgentOf$1(neureka.calculus.Function,neureka.Tsr,neureka.autograd.GraphNode,neureka.Tsr) -> e
-    254:254:neureka.Tsr lambda$getADAgentOf$0(neureka.Tsr) -> c
-    21:76:void <clinit>() -> <clinit>
+    26:26:java.util.ArrayList instances() -> instances
+    30:30:neureka.calculus.environment.OperationType instance(int) -> instance
+    34:34:neureka.calculus.environment.OperationType instance(java.lang.String) -> instance
+    96:128:void <init>(java.lang.String,java.lang.String,boolean,boolean,boolean,boolean,boolean,neureka.calculus.environment.Type$Activation,neureka.calculus.environment.Type$Scalarization,neureka.calculus.environment.Type$Convolution,neureka.calculus.environment.Type$Broadcast,neureka.calculus.environment.Type$Operation) -> <init>
+    131:131:neureka.calculus.environment.OperationType[] ALL() -> ALL
+    135:135:int COUNT() -> COUNT
+    142:142:java.lang.String getName() -> getName
+    149:149:neureka.calculus.environment.Type$Activation getActivation() -> getActivation
+    154:154:boolean supportsActivation() -> supportsActivation
+    161:161:neureka.calculus.environment.Type$Scalarization getScalarization() -> getScalarization
+    166:166:boolean supportsScalar() -> supportsScalar
+    173:173:neureka.calculus.environment.Type$Convolution getConvolution() -> getConvolution
+    178:178:boolean supportsConvolution() -> supportsConvolution
+    185:185:neureka.calculus.environment.Type$Broadcast getBroadcast() -> getBroadcast
+    190:190:boolean supportsBroadcast() -> supportsBroadcast
+    197:197:neureka.calculus.environment.Type$Operation getOperation() -> getOperation
+    202:202:boolean supportsOperation() -> supportsOperation
+    209:209:int id() -> id
+    214:214:java.lang.String identifier() -> identifier
+    219:219:boolean isOperation() -> isOperation
+    224:224:boolean isIndexer() -> isIndexer
+    229:229:boolean isConvection() -> isConvection
+    234:234:boolean isCommutative() -> isCommutative
+    240:247:boolean allowsForward(neureka.Tsr[]) -> allowsForward
+    253:286:neureka.autograd.ADAgent getADAgentOf(neureka.calculus.Function,neureka.Tsr[],int,boolean) -> getADAgentOf
+    287:287:neureka.Tsr lambda$getADAgentOf$10(neureka.autograd.GraphNode,neureka.Tsr) -> a
+    287:287:neureka.Tsr lambda$getADAgentOf$9(neureka.autograd.GraphNode,neureka.Tsr) -> b
+    287:287:neureka.Tsr lambda$getADAgentOf$8() -> a
+    282:282:neureka.Tsr lambda$getADAgentOf$7(neureka.calculus.Function,neureka.Tsr,neureka.autograd.GraphNode,neureka.Tsr) -> a
+    281:281:neureka.Tsr lambda$getADAgentOf$6(neureka.calculus.Function,neureka.Tsr,neureka.autograd.GraphNode,neureka.Tsr) -> b
+    280:280:neureka.Tsr lambda$getADAgentOf$5(neureka.Tsr) -> a
+    269:269:neureka.Tsr lambda$getADAgentOf$4(neureka.calculus.Function,neureka.Tsr,neureka.autograd.GraphNode,neureka.Tsr) -> c
+    268:268:neureka.Tsr lambda$getADAgentOf$3(neureka.calculus.Function,neureka.Tsr,neureka.autograd.GraphNode,neureka.Tsr) -> d
+    267:267:neureka.Tsr lambda$getADAgentOf$2(neureka.Tsr) -> b
+    259:259:neureka.Tsr lambda$getADAgentOf$1(neureka.calculus.Function,neureka.Tsr,neureka.autograd.GraphNode,neureka.Tsr) -> e
+    258:258:neureka.Tsr lambda$getADAgentOf$0(neureka.Tsr) -> c
+    21:80:void <clinit>() -> <clinit>
 neureka.calculus.environment.Type -> neureka.calculus.environment.Type:
     neureka.calculus.environment.Type$Activation getActivation() -> getActivation
     boolean supportsActivation() -> supportsActivation
@@ -951,60 +955,63 @@ neureka.calculus.factory.AbstractFunction -> neureka.calculus.factory.AbstractFu
     boolean _isFlat -> b
     boolean _doAD -> c
     java.util.ArrayList _src -> d
-    30:35:void <init>(int,boolean,java.util.ArrayList,boolean) -> <init>
-    39:39:neureka.calculus.Function newBuild(java.lang.String) -> newBuild
-    44:44:boolean isFlat() -> isFlat
-    49:49:boolean doesAD() -> doesAD
-    54:54:int id() -> id
-    59:59:neureka.calculus.environment.OperationType type() -> type
-    64:96:java.lang.String toString() -> toString
-    101:104:boolean dependsOn(int) -> dependsOn
-    110:110:neureka.Tsr activate(neureka.Tsr) -> activate
-    116:116:double activate(double) -> activate
-    123:123:neureka.autograd.ADAgent getADAgent(neureka.Tsr[],int,boolean) -> getADAgent
-    135:145:neureka.Tsr _tensor_activation(neureka.Tsr[],int,int) -> _tensor_activation
-    1287:1290:neureka.acceleration.Device _device(neureka.Tsr[]):287:290 -> _tensor_activation
-    1287:1290:neureka.Tsr _tensor_activation(neureka.Tsr[],int,int):135 -> _tensor_activation
-    1318:1333:boolean _shareGuestDevice(neureka.Tsr[]):318:333 -> _tensor_activation
-    1318:1333:neureka.acceleration.Device _device(neureka.Tsr[]):288 -> _tensor_activation
-    1318:1333:neureka.Tsr _tensor_activation(neureka.Tsr[],int,int):135 -> _tensor_activation
-    151:191:neureka.Tsr _recursie_breakdown_execution(neureka.Tsr[],int,int,neureka.acceleration.Device) -> a
-    196:269:neureka.Tsr _execution(neureka.Tsr[],int,int,neureka.acceleration.Device) -> b
-    273:283:neureka.Tsr _apply(neureka.acceleration.Device,int,java.util.function.Supplier) -> a
-    294:314:neureka.Tsr[] _src_acti(neureka.Tsr[],int,int,int) -> a
-    338:360:double _scalar_activation(double,boolean) -> _scalar_activation
-    366:386:double _scalar_activation(double[],int,int) -> _scalar_activation
-    191:191:neureka.Tsr lambda$_recursie_breakdown_execution$2(neureka.Tsr[],int,int,neureka.acceleration.Device) -> c
-    143:143:neureka.Tsr lambda$_tensor_activation$1(neureka.Tsr[],int,int,neureka.acceleration.Device) -> d
-    138:138:neureka.Tsr lambda$_tensor_activation$0(neureka.Tsr[],int,int,neureka.acceleration.Device) -> e
+    29:34:void <init>(int,boolean,java.util.ArrayList,boolean) -> <init>
+    38:38:neureka.calculus.Function newBuild(java.lang.String) -> newBuild
+    43:43:boolean isFlat() -> isFlat
+    48:48:boolean doesAD() -> doesAD
+    53:53:int id() -> id
+    58:58:neureka.calculus.environment.OperationType type() -> type
+    63:63:neureka.Tsr call(neureka.Tsr) -> call
+    68:68:neureka.Tsr call(neureka.Tsr[],int) -> call
+    73:73:neureka.Tsr call(neureka.Tsr[]) -> call
+    79:111:java.lang.String toString() -> toString
+    116:119:boolean dependsOn(int) -> dependsOn
+    125:125:neureka.Tsr activate(neureka.Tsr) -> activate
+    131:131:double activate(double) -> activate
+    138:138:neureka.autograd.ADAgent getADAgent(neureka.Tsr[],int,boolean) -> getADAgent
+    150:160:neureka.Tsr _tensor_activation(neureka.Tsr[],int,int) -> _tensor_activation
+    1302:1305:neureka.acceleration.Device _device(neureka.Tsr[]):302:305 -> _tensor_activation
+    1302:1305:neureka.Tsr _tensor_activation(neureka.Tsr[],int,int):150 -> _tensor_activation
+    1333:1348:boolean _shareGuestDevice(neureka.Tsr[]):333:348 -> _tensor_activation
+    1333:1348:neureka.acceleration.Device _device(neureka.Tsr[]):303 -> _tensor_activation
+    1333:1348:neureka.Tsr _tensor_activation(neureka.Tsr[],int,int):150 -> _tensor_activation
+    166:206:neureka.Tsr _recursie_breakdown_execution(neureka.Tsr[],int,int,neureka.acceleration.Device) -> a
+    211:284:neureka.Tsr _execution(neureka.Tsr[],int,int,neureka.acceleration.Device) -> b
+    288:298:neureka.Tsr _apply(neureka.acceleration.Device,int,java.util.function.Supplier) -> a
+    309:329:neureka.Tsr[] _src_acti(neureka.Tsr[],int,int,int) -> a
+    353:375:double _scalar_activation(double,boolean) -> _scalar_activation
+    381:401:double _scalar_activation(double[],int,int) -> _scalar_activation
+    206:206:neureka.Tsr lambda$_recursie_breakdown_execution$2(neureka.Tsr[],int,int,neureka.acceleration.Device) -> c
+    158:158:neureka.Tsr lambda$_tensor_activation$1(neureka.Tsr[],int,int,neureka.acceleration.Device) -> d
+    153:153:neureka.Tsr lambda$_tensor_activation$0(neureka.Tsr[],int,int,neureka.acceleration.Device) -> e
 neureka.calculus.factory.AbstractFunction$Exec -> neureka.calculus.factory.AbstractFunction$Exec:
-    390:390:void <init>() -> <init>
-    396:403:double reLu(double,boolean) -> reLu
-    410:413:double sigmoid(double,boolean) -> sigmoid
-    420:423:double tanh(double,boolean) -> tanh
-    430:431:double quadratic(double,boolean) -> quadratic
-    437:438:double ligmoid(double,boolean) -> ligmoid
-    444:445:double linear(double,boolean) -> linear
-    451:452:double gaussian(double,boolean) -> gaussian
-    458:459:double absolute(double,boolean) -> absolute
-    465:466:double sinus(double,boolean) -> sinus
-    472:473:double cosinus(double,boolean) -> cosinus
-    479:491:double summation(double[],int,int,java.util.ArrayList) -> a
-    496:518:double summation(double[],int,java.util.ArrayList) -> a
-    526:545:double PI(double[],int,int,java.util.ArrayList) -> b
-    551:572:double PI(double[],int,java.util.ArrayList) -> b
-    582:603:double power(double[],int,int,java.util.ArrayList) -> c
-    609:634:double power(double[],int,java.util.ArrayList) -> c
-    641:658:double division(double[],int,int,java.util.ArrayList) -> d
-    664:685:double division(double[],int,java.util.ArrayList) -> d
-    692:710:double multiplication(double[],int,int,java.util.ArrayList) -> e
-    716:734:double multiplication(double[],int,java.util.ArrayList) -> e
-    753:761:double modulo(double[],int,int,java.util.ArrayList) -> f
-    767:775:double modulo(double[],int,java.util.ArrayList) -> f
-    782:798:double subtraction(double[],int,int,java.util.ArrayList) -> g
-    804:820:double subtraction(double[],int,java.util.ArrayList) -> g
-    827:839:double addition(double[],int,int,java.util.ArrayList) -> h
-    845:857:double addition(double[],int,java.util.ArrayList) -> h
+    405:405:void <init>() -> <init>
+    411:418:double reLu(double,boolean) -> reLu
+    425:428:double sigmoid(double,boolean) -> sigmoid
+    435:438:double tanh(double,boolean) -> tanh
+    445:446:double quadratic(double,boolean) -> quadratic
+    452:453:double ligmoid(double,boolean) -> ligmoid
+    459:460:double linear(double,boolean) -> linear
+    466:467:double gaussian(double,boolean) -> gaussian
+    473:474:double absolute(double,boolean) -> absolute
+    480:481:double sinus(double,boolean) -> sinus
+    487:488:double cosinus(double,boolean) -> cosinus
+    494:506:double summation(double[],int,int,java.util.ArrayList) -> a
+    511:533:double summation(double[],int,java.util.ArrayList) -> a
+    541:560:double PI(double[],int,int,java.util.ArrayList) -> b
+    566:587:double PI(double[],int,java.util.ArrayList) -> b
+    597:618:double power(double[],int,int,java.util.ArrayList) -> c
+    624:649:double power(double[],int,java.util.ArrayList) -> c
+    656:673:double division(double[],int,int,java.util.ArrayList) -> d
+    679:700:double division(double[],int,java.util.ArrayList) -> d
+    707:725:double multiplication(double[],int,int,java.util.ArrayList) -> e
+    731:749:double multiplication(double[],int,java.util.ArrayList) -> e
+    768:776:double modulo(double[],int,int,java.util.ArrayList) -> f
+    782:790:double modulo(double[],int,java.util.ArrayList) -> f
+    797:813:double subtraction(double[],int,int,java.util.ArrayList) -> g
+    819:835:double subtraction(double[],int,java.util.ArrayList) -> g
+    842:854:double addition(double[],int,int,java.util.ArrayList) -> h
+    860:872:double addition(double[],int,java.util.ArrayList) -> h
 neureka.calculus.factory.assembly.FunctionBuilder -> neureka.calculus.factory.assembly.FunctionBuilder:
     11:11:void <init>() -> <init>
     20:36:neureka.calculus.Function build(neureka.calculus.environment.OperationType,int,boolean) -> build
@@ -1044,18 +1051,18 @@ neureka.calculus.factory.assembly.FunctionConstructor$2 -> neureka.calculus.fact
     62:62:neureka.Tsr lambda$activate$0(neureka.Tsr[],int) -> b
 neureka.calculus.factory.assembly.FunctionParser -> neureka.calculus.factory.assembly.FunctionParser:
     10:10:void <init>() -> <init>
-    12:18:int numberOfOperationsWithin(java.util.List) -> numberOfOperationsWithin
-    22:32:java.lang.String parsedOperation(java.lang.String,int) -> parsedOperation
-    36:62:java.lang.String parsedComponent(java.lang.String,int) -> parsedComponent
-    66:69:boolean containsOperation(java.lang.String,java.util.List) -> containsOperation
-    73:74:boolean isBasicOperation(java.lang.String) -> isBasicOperation
-    78:89:java.lang.String groupBy(java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> groupBy
-    93:93:boolean isWeired(char) -> a
-    98:102:java.lang.String removeHeadAndTail(java.lang.String) -> removeHeadAndTail
-    106:153:java.lang.String cleanedHeadAndTail(java.lang.String) -> cleanedHeadAndTail
-    157:221:java.lang.String unpackAndCorrect(java.lang.String) -> unpackAndCorrect
-    225:236:java.lang.String assumptionBasedOn(java.lang.String) -> assumptionBasedOn
-    240:255:double similarity(java.lang.String,java.lang.String) -> similarity
+    12:16:int numberOfOperationsWithin(java.util.List) -> numberOfOperationsWithin
+    20:30:java.lang.String parsedOperation(java.lang.String,int) -> parsedOperation
+    34:55:java.lang.String parsedComponent(java.lang.String,int) -> parsedComponent
+    59:62:boolean containsOperation(java.lang.String,java.util.List) -> containsOperation
+    66:67:boolean isBasicOperation(java.lang.String) -> isBasicOperation
+    71:78:java.lang.String groupBy(java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> groupBy
+    82:82:boolean isWeired(char) -> a
+    87:89:java.lang.String removeHeadAndTail(java.lang.String) -> removeHeadAndTail
+    93:132:java.lang.String cleanedHeadAndTail(java.lang.String) -> cleanedHeadAndTail
+    136:185:java.lang.String unpackAndCorrect(java.lang.String) -> unpackAndCorrect
+    189:199:java.lang.String assumptionBasedOn(java.lang.String) -> assumptionBasedOn
+    203:216:double similarity(java.lang.String,java.lang.String) -> similarity
 neureka.calculus.factory.components.FunctionConstant -> neureka.calculus.factory.components.FunctionConstant:
     double _value -> a
     8:8:void <init>() -> <init>
@@ -1066,18 +1073,21 @@ neureka.calculus.factory.components.FunctionConstant -> neureka.calculus.factory
     32:32:neureka.calculus.environment.OperationType type() -> type
     37:37:boolean dependsOn(int) -> dependsOn
     43:56:neureka.calculus.Function newBuild(java.lang.String) -> newBuild
-    62:62:double activate(double) -> activate
-    67:67:double activate(double[],int) -> activate
-    72:72:double activate(double[]) -> activate
-    77:77:double derive(double[],int) -> derive
-    82:82:double derive(double[],int,int) -> derive
-    89:89:neureka.Tsr activate(neureka.Tsr) -> activate
-    94:94:neureka.Tsr activate(neureka.Tsr[],int) -> activate
-    99:99:neureka.Tsr activate(neureka.Tsr[]) -> activate
-    104:104:neureka.Tsr derive(neureka.Tsr[],int,int) -> derive
-    109:109:neureka.Tsr derive(neureka.Tsr[],int) -> derive
-    115:115:java.lang.String toString() -> toString
-    121:121:neureka.autograd.ADAgent getADAgent(neureka.Tsr[],int,boolean) -> getADAgent
+    62:62:neureka.Tsr call(neureka.Tsr) -> call
+    67:67:neureka.Tsr call(neureka.Tsr[],int) -> call
+    72:72:neureka.Tsr call(neureka.Tsr[]) -> call
+    77:77:double activate(double) -> activate
+    82:82:double activate(double[],int) -> activate
+    87:87:double activate(double[]) -> activate
+    92:92:double derive(double[],int) -> derive
+    97:97:double derive(double[],int,int) -> derive
+    104:104:neureka.Tsr activate(neureka.Tsr) -> activate
+    109:109:neureka.Tsr activate(neureka.Tsr[],int) -> activate
+    114:114:neureka.Tsr activate(neureka.Tsr[]) -> activate
+    119:119:neureka.Tsr derive(neureka.Tsr[],int,int) -> derive
+    124:124:neureka.Tsr derive(neureka.Tsr[],int) -> derive
+    130:130:java.lang.String toString() -> toString
+    136:136:neureka.autograd.ADAgent getADAgent(neureka.Tsr[],int,boolean) -> getADAgent
 neureka.calculus.factory.components.FunctionInput -> neureka.calculus.factory.components.FunctionInput:
     int _index -> a
     10:10:void <init>() -> <init>
@@ -1089,19 +1099,22 @@ neureka.calculus.factory.components.FunctionInput -> neureka.calculus.factory.co
     40:40:boolean dependsOn(int) -> dependsOn
     47:67:neureka.calculus.Function newBuild(java.lang.String) -> newBuild
     72:82:neureka.Tsr _extract(neureka.Tsr) -> a
-    89:89:double activate(double) -> activate
-    94:94:double activate(double[],int) -> activate
-    99:99:double activate(double[]) -> activate
-    104:104:double derive(double[],int) -> derive
-    109:109:double derive(double[],int,int) -> derive
-    116:116:neureka.Tsr activate(neureka.Tsr) -> activate
-    121:121:neureka.Tsr activate(neureka.Tsr[],int) -> activate
-    126:126:neureka.Tsr activate(neureka.Tsr[]) -> activate
-    131:131:neureka.Tsr derive(neureka.Tsr[],int,int) -> derive
-    136:138:neureka.Tsr derive(neureka.Tsr[],int) -> derive
-    145:145:java.lang.String toString() -> toString
-    149:149:int index() -> index
-    154:154:neureka.autograd.ADAgent getADAgent(neureka.Tsr[],int,boolean) -> getADAgent
+    89:89:neureka.Tsr call(neureka.Tsr) -> call
+    94:94:neureka.Tsr call(neureka.Tsr[],int) -> call
+    99:99:neureka.Tsr call(neureka.Tsr[]) -> call
+    104:104:double activate(double) -> activate
+    109:109:double activate(double[],int) -> activate
+    114:114:double activate(double[]) -> activate
+    119:119:double derive(double[],int) -> derive
+    124:124:double derive(double[],int,int) -> derive
+    131:131:neureka.Tsr activate(neureka.Tsr) -> activate
+    136:136:neureka.Tsr activate(neureka.Tsr[],int) -> activate
+    141:141:neureka.Tsr activate(neureka.Tsr[]) -> activate
+    146:146:neureka.Tsr derive(neureka.Tsr[],int,int) -> derive
+    151:153:neureka.Tsr derive(neureka.Tsr[],int) -> derive
+    160:160:java.lang.String toString() -> toString
+    164:164:int index() -> index
+    169:169:neureka.autograd.ADAgent getADAgent(neureka.Tsr[],int,boolean) -> getADAgent
 neureka.calculus.factory.components.FunctionVariable -> neureka.calculus.factory.components.FunctionVariable:
     boolean _providesGradient -> a
     9:11:void <init>() -> <init>
@@ -1117,13 +1130,16 @@ neureka.calculus.factory.components.FunctionVariable -> neureka.calculus.factory
     63:65:double activate(double[]) -> activate
     70:70:double derive(double[],int) -> derive
     75:76:double derive(double[],int,int) -> derive
-    82:82:neureka.Tsr activate(neureka.Tsr) -> activate
-    87:87:neureka.Tsr activate(neureka.Tsr[],int) -> activate
-    92:94:neureka.Tsr activate(neureka.Tsr[]) -> activate
-    99:99:neureka.Tsr derive(neureka.Tsr[],int,int) -> derive
-    104:104:neureka.Tsr derive(neureka.Tsr[],int) -> derive
-    111:111:java.lang.String toString() -> toString
-    116:116:neureka.autograd.ADAgent getADAgent(neureka.Tsr[],int,boolean) -> getADAgent
+    82:82:neureka.Tsr call(neureka.Tsr) -> call
+    87:87:neureka.Tsr call(neureka.Tsr[],int) -> call
+    92:92:neureka.Tsr call(neureka.Tsr[]) -> call
+    97:97:neureka.Tsr activate(neureka.Tsr) -> activate
+    102:102:neureka.Tsr activate(neureka.Tsr[],int) -> activate
+    107:109:neureka.Tsr activate(neureka.Tsr[]) -> activate
+    114:114:neureka.Tsr derive(neureka.Tsr[],int,int) -> derive
+    119:119:neureka.Tsr derive(neureka.Tsr[],int) -> derive
+    126:126:java.lang.String toString() -> toString
+    131:131:neureka.autograd.ADAgent getADAgent(neureka.Tsr[],int,boolean) -> getADAgent
 neureka.calculus.factory.components.GradientProvider -> neureka.calculus.factory.components.GradientProvider:
     boolean providesGradient() -> providesGradient
 neureka.framing.IndexAlias -> neureka.framing.IndexAlias:
@@ -1165,9 +1181,9 @@ neureka.optimization.Optimizer -> neureka.optimization.Optimizer:
 neureka.optimization.implementations.ADAM -> neureka.optimization.implementations.ADAM:
     neureka.Tsr m -> a
     neureka.Tsr v -> b
-    41:42:void optimize(neureka.Tsr) -> optimize
-    1030:1037:void _optimize(neureka.Tsr):30:37 -> optimize
-    1030:1037:void optimize(neureka.Tsr):41 -> optimize
+    40:41:void optimize(neureka.Tsr) -> optimize
+    1029:1036:void _optimize(neureka.Tsr):29:36 -> optimize
+    1029:1036:void optimize(neureka.Tsr):40 -> optimize
 neureka.optimization.implementations.Template -> neureka.optimization.implementations.Template:
     6:6:void <init>() -> <init>
 neureka.utility.DataHelper -> neureka.utility.DataHelper:
