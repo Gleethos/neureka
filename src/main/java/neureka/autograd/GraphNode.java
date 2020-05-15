@@ -337,7 +337,7 @@ public class GraphNode implements Component<Tsr> {
                             src_node.forEach(
                             function.derive(inputs, i),
                             (t, td) -> {
-                                if (this.has(t)) this.put(t, ADD.activate(new Tsr[]{td, (Tsr) this.get(t)}));
+                                if (this.has(t)) this.put(t, ADD.call(new Tsr[]{td, (Tsr) this.get(t)}));
                                 else this.put(t, td);
                                 //TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
                             });
@@ -398,11 +398,11 @@ public class GraphNode implements Component<Tsr> {
         Set<GraphNode> pendingNodes = new HashSet<>();
         _backward(error, pendingNodes, false);// Entry-point to private recursive back-propagation!
         if (Neureka.instance().settings().autoDiff().retainPendingErrorForJITProp()) {
-            pendingNodes.forEach((n) -> n._carryPendingBackPropToGradients(pendingNodes));
+            pendingNodes.forEach( n -> n._carryPendingBackPropToGradients(pendingNodes));
         } else {
-            pendingNodes.forEach((n) -> {
+            pendingNodes.forEach( n -> {
                 if (!n._pending_error.isFullyAccumulated())
-                    throw new IllegalStateException("[GraphNode][backward]: Pending error has not received expected accumulation.");
+                    throw new IllegalStateException("Pending error has not received expected accumulation.");
                 n.backward(n._pending_error.getAccumulatedError());//Continue back-propagation recursively!
             });
         }
@@ -462,7 +462,7 @@ public class GraphNode implements Component<Tsr> {
      */
     private void _carryPendingBackPropToGradients(Set<GraphNode> pendingBackProp) {//Map<GraphNode, PendingError> pendingBackProp){
         _relies_on_JIPProp = true;
-        this.forEachTarget((t) -> t._carryPendingBackPropToGradients(pendingBackProp));
+        this.forEachTarget( t -> t._carryPendingBackPropToGradients(pendingBackProp));
         if (this.isLeave() && getPayload().rqsGradient()) {
             JITProp jit = (JITProp) getPayload().find(JITProp.class);
             if (jit == null) jit = new JITProp(pendingBackProp);
@@ -629,7 +629,7 @@ public class GraphNode implements Component<Tsr> {
     public void forEachForward(Tsr error, BiConsumer<GraphNode, Tsr> action) {
         if (_targets_derivatives == null) return;
         _targets_derivatives.forEach((t, o) -> {
-            if (o.isForward()) action.accept(t, MUL.activate(new Tsr[]{error, o.derivative()}));
+            if (o.isForward()) action.accept(t, MUL.call(new Tsr[]{error, o.derivative()}));
         });
     }
 
@@ -655,7 +655,7 @@ public class GraphNode implements Component<Tsr> {
      */
     public void forEach(Tsr derivative, BiConsumer<GraphNode, Tsr> action) {
         if (_targets_derivatives == null) return;
-        _targets_derivatives.forEach((t, o) -> action.accept(t, MUL.activate(new Tsr[]{derivative, o.derivative()})));
+        _targets_derivatives.forEach((t, o) -> action.accept(t, MUL.call(new Tsr[]{derivative, o.derivative()})));
     }
 
 

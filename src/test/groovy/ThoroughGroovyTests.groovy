@@ -125,7 +125,7 @@ class ThoroughGroovyTests
         Neureka.instance().reset()
         Tsr a = new Tsr([1,2], [3, 2])
         Tsr b = new Tsr([2,1], [-1, 4])
-        Tsr c = "I[0]xI[1]".asFunction().activate(new Tsr[]{a, b})
+        Tsr c = "I[0]xI[1]".asFunction()(new Tsr[]{a, b})
         assert c.toString().contains("(2x2):[-3.0, -2.0, 12.0, 8.0]")
         c = "I[0]xI[1]"[a, b]
         assert c.toString().contains("(2x2):[-3.0, -2.0, 12.0, 8.0]")
@@ -269,7 +269,7 @@ class ThoroughGroovyTests
         assert t1.i_of_idx(new int[]{1, 2})==5
         assert t1.idx_of_i(5)[0]==1
         assert t1.idx_of_i(5)[1]==2
-        Tsr t2 = Function.create("[1, 0]:(I[0])").activate(t1)
+        Tsr t2 = Function.create("[1, 0]:(I[0])")(t1)
         assert t2.i_of_idx(new int[]{1, 2})==7
         assert t2.idx_of_i(7)[0]==1
         assert t2.idx_of_i(7)[1]==3
@@ -288,7 +288,7 @@ class ThoroughGroovyTests
         Function f = Function.create("[2, 0, 1]:(I[0])")
         Tsr t = new Tsr([3, 4, 2], 1..5)
         assert t.toString().contains("[3x4x2]:(1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0)")
-        Tsr r = f.activate(t)
+        Tsr r = f(t)
         assert r.toString().contains("[2x3x4]")
         assert r.toString().contains("[2x3x4]:(1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0)")
     }
@@ -563,13 +563,13 @@ class ThoroughGroovyTests
         Tsr[] inputs = new Tsr[2];
         inputs[0] = c
         inputs[1] = a
-        Tsr result = f.activate(inputs)
+        Tsr result = f(inputs)
         assert a.toString().contains("g:(0.75)")
         assert c.toString().contains("g:(null)")
         assert x.toString().contains("(-4.5)")
 
         f = FunctionBuilder.build("I[0]*I[1]", true)
-        result = f.activate(inputs)
+        result = f(inputs)
         assert a.toString().contains("g:(null)")
         assert c.toString().contains("g:(null)")
         assert x.toString().contains("(-4.5)")
@@ -913,9 +913,9 @@ class ThoroughGroovyTests
         assert new Tsr([x], "Ig[0]").toString().equals("empty")
         Tsr[] trs = new Tsr[1]
         trs[0] = x
-        assert FunctionBuilder.build("Ig[0]", false).activate(trs).toString().equals("[1]:(-8.0)")
+        assert FunctionBuilder.build("Ig[0]", false)(trs).toString().equals("[1]:(-8.0)")
         trs[0] = y
-        assert FunctionBuilder.build("Ig[0]", false).activate(trs).toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
+        assert FunctionBuilder.build("Ig[0]", false)(trs).toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
     }
 
     @Test

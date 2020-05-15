@@ -12,7 +12,7 @@ public class NTester_Function extends NTester {
 	}
 
 	public int testScalarActivation(Function f, double[] inputs, double expected, String description){
-		double actual = f.activate(inputs);
+		double actual = f.call(inputs);
 		printSessionStart(description);
 		println(BAR +" inputs : "+stringified(inputs));
 		println(BAR +" Expected: "+expected);
@@ -72,7 +72,7 @@ public class NTester_Function extends NTester {
 		println(BAR +" function:"+function.toString());
 		println(BAR +"----------------------------------------------------");
 		println(BAR +" Result:");
-		double activation = function.activate(input);
+		double activation = function.call(input);
 		assertIsEqual(activation, expected);
 		return (printSessionEnd()>0)?1:0;
 	}
@@ -112,7 +112,7 @@ public class NTester_Function extends NTester {
 		println(BAR +" function:"+function.toString());
 		println(BAR +"----------------------------------------------------");
 		println(BAR +" Result:");
-		Tsr activation = function.activate(input);
+		Tsr activation = function.call(input);
 		assertIsEqual(activation.toString(), expected.toString());
 		return (printSessionEnd()>0)?1:0;
 	}

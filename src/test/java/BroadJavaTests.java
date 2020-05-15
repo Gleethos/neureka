@@ -176,7 +176,7 @@ public class BroadJavaTests {
         x = new Tsr(new int[]{1}, 0.1).setRqsGradient(true);
         Function tanh = FunctionBuilder.build("tanh(i0)", true);
         Function tenxx = FunctionBuilder.build("i0*100", true);
-        z = tenxx.activate(new Tsr[]{tanh.activate(new Tsr[]{x})});
+        z = tenxx.call(new Tsr[]{tanh.call(new Tsr[]{x})});
         tester.testTensor(z, new String[]{"[1]:(9.95037E0)"});
         Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(true);
         z.backward(new Tsr(new int[]{1}, 1));

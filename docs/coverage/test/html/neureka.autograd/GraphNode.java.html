@@ -337,7 +337,7 @@ public class GraphNode implements Component&lt;Tsr&gt; {
 <span class="fc" id="L337">                            src_node.forEach(</span>
 <span class="fc" id="L338">                            function.derive(inputs, i),</span>
                             (t, td) -&gt; {
-<span class="pc bpc" id="L340" title="1 of 2 branches missed.">                                if (this.has(t)) this.put(t, ADD.activate(new Tsr[]{td, (Tsr) this.get(t)}));</span>
+<span class="pc bpc" id="L340" title="1 of 2 branches missed.">                                if (this.has(t)) this.put(t, ADD.call(new Tsr[]{td, (Tsr) this.get(t)}));</span>
 <span class="fc" id="L341">                                else this.put(t, td);</span>
                                 //TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
 <span class="fc" id="L343">                            });</span>
@@ -398,11 +398,11 @@ public class GraphNode implements Component&lt;Tsr&gt; {
 <span class="fc" id="L398">        Set&lt;GraphNode&gt; pendingNodes = new HashSet&lt;&gt;();</span>
 <span class="fc" id="L399">        _backward(error, pendingNodes, false);// Entry-point to private recursive back-propagation!</span>
 <span class="fc bfc" id="L400" title="All 2 branches covered.">        if (Neureka.instance().settings().autoDiff().retainPendingErrorForJITProp()) {</span>
-<span class="fc" id="L401">            pendingNodes.forEach((n) -&gt; n._carryPendingBackPropToGradients(pendingNodes));</span>
+<span class="fc" id="L401">            pendingNodes.forEach( n -&gt; n._carryPendingBackPropToGradients(pendingNodes));</span>
         } else {
-<span class="fc" id="L403">            pendingNodes.forEach((n) -&gt; {</span>
+<span class="fc" id="L403">            pendingNodes.forEach( n -&gt; {</span>
 <span class="pc bpc" id="L404" title="1 of 2 branches missed.">                if (!n._pending_error.isFullyAccumulated())</span>
-<span class="nc" id="L405">                    throw new IllegalStateException(&quot;[GraphNode][backward]: Pending error has not received expected accumulation.&quot;);</span>
+<span class="nc" id="L405">                    throw new IllegalStateException(&quot;Pending error has not received expected accumulation.&quot;);</span>
 <span class="fc" id="L406">                n.backward(n._pending_error.getAccumulatedError());//Continue back-propagation recursively!</span>
 <span class="fc" id="L407">            });</span>
         }
@@ -462,7 +462,7 @@ public class GraphNode implements Component&lt;Tsr&gt; {
      */
     private void _carryPendingBackPropToGradients(Set&lt;GraphNode&gt; pendingBackProp) {//Map&lt;GraphNode, PendingError&gt; pendingBackProp){
 <span class="fc" id="L464">        _relies_on_JIPProp = true;</span>
-<span class="fc" id="L465">        this.forEachTarget((t) -&gt; t._carryPendingBackPropToGradients(pendingBackProp));</span>
+<span class="fc" id="L465">        this.forEachTarget( t -&gt; t._carryPendingBackPropToGradients(pendingBackProp));</span>
 <span class="pc bpc" id="L466" title="1 of 4 branches missed.">        if (this.isLeave() &amp;&amp; getPayload().rqsGradient()) {</span>
 <span class="fc" id="L467">            JITProp jit = (JITProp) getPayload().find(JITProp.class);</span>
 <span class="pc bpc" id="L468" title="1 of 2 branches missed.">            if (jit == null) jit = new JITProp(pendingBackProp);</span>
@@ -629,7 +629,7 @@ public class GraphNode implements Component&lt;Tsr&gt; {
     public void forEachForward(Tsr error, BiConsumer&lt;GraphNode, Tsr&gt; action) {
 <span class="fc bfc" id="L630" title="All 2 branches covered.">        if (_targets_derivatives == null) return;</span>
 <span class="fc" id="L631">        _targets_derivatives.forEach((t, o) -&gt; {</span>
-<span class="pc bpc" id="L632" title="1 of 2 branches missed.">            if (o.isForward()) action.accept(t, MUL.activate(new Tsr[]{error, o.derivative()}));</span>
+<span class="pc bpc" id="L632" title="1 of 2 branches missed.">            if (o.isForward()) action.accept(t, MUL.call(new Tsr[]{error, o.derivative()}));</span>
 <span class="fc" id="L633">        });</span>
 <span class="fc" id="L634">    }</span>
 
@@ -655,7 +655,7 @@ public class GraphNode implements Component&lt;Tsr&gt; {
      */
     public void forEach(Tsr derivative, BiConsumer&lt;GraphNode, Tsr&gt; action) {
 <span class="pc bpc" id="L657" title="1 of 2 branches missed.">        if (_targets_derivatives == null) return;</span>
-<span class="fc" id="L658">        _targets_derivatives.forEach((t, o) -&gt; action.accept(t, MUL.activate(new Tsr[]{derivative, o.derivative()})));</span>
+<span class="fc" id="L658">        _targets_derivatives.forEach((t, o) -&gt; action.accept(t, MUL.call(new Tsr[]{derivative, o.derivative()})));</span>
 <span class="fc" id="L659">    }</span>
 
 
