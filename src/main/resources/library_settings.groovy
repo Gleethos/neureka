@@ -23,6 +23,6 @@ Neureka.instance {
         }
     }
 
-    return "0.0.2"
+    return "0.1.0"
 
 }

@@ -58,6 +58,34 @@ public class FunctionConstant implements Function
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	@Override
+	public double call(double input){
+		return activate(input);
+	}
+	@Override
+	public double call(double[] inputs, int j){
+		return inputs[j];
+	}
+	@Override
+	public double call(double[] inputs){
+		return activate(inputs);
+	}
+
+	@Override
+	public Tsr call(Tsr input){
+		return activate(input);
+	}
+
+	@Override
+	public Tsr call(Tsr[] inputs, int j){
+		return activate(inputs, j);
+	}
+
+	@Override
+	public Tsr call(Tsr[] inputs) {
+		return activate(inputs);
+	}
+
+	@Override
 	public double activate(double input){
 		return activate(new double[]{input});
 	}

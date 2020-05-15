@@ -11,7 +11,6 @@ import neureka.calculus.factory.components.FunctionConstant;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.function.Supplier;
 
 public abstract class AbstractFunction implements Function {
@@ -58,6 +57,38 @@ public abstract class AbstractFunction implements Function {
     public OperationType type() {
         return _type;
     }
+
+    @Override
+    public Tsr call(Tsr input){
+        return activate(input);
+    }
+
+    @Override
+    public Tsr call(Tsr[] inputs, int j){
+        return activate(inputs, j);
+    }
+
+    @Override
+    public Tsr call(Tsr[] inputs) {
+        return activate(inputs);
+    }
+
+    //---
+    @Override
+    public double call(double input){
+        return activate(input);
+    }
+    @Override
+    public double call(double[] inputs, int j){
+        return activate(inputs, j);
+    }
+    @Override
+    public double call(double[] inputs){
+        return activate(inputs);
+    }
+
+
+    //---
 
     @Override
     public String toString() {
@@ -110,7 +141,6 @@ public abstract class AbstractFunction implements Function {
         return activate(new Tsr[]{input});
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public double activate(double input){
         return activate(new double[]{input});

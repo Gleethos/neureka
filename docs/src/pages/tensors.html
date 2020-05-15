@@ -1,0 +1,126 @@
+
+<div class="col-sm 12 col-md-12">
+    <div class="contentBox">
+        <h3>
+            Tensor instantiation:
+        </h3>
+        <p>
+            At the core of Neureka lies the 'Tsr' class,<br>
+            which is a three-letter abbreviation of the word <b>t</b>en<b>s</b>o<b>r</b>!<br>
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-6">
+    <div class="tabWrapper">
+        <div class="tabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="tabBody">
+            <div class="groovyTab">
+
+                                                <pre><code class="hljs java">
+
+    Tsr t = new Tsr([2, 4],[
+            1, 2, 3, 4,
+            9, 8, 6, 5
+    ])
+                                                </code></pre>
+            </div>
+        </div>
+        <div class="javaTab" style="display:none">
+            <div class="col-sm-12 col-md-12">
+                                                <pre><code class="hljs java">
+
+    Tsr t = new Tsr( new int[]{2, 4}, new double[]{
+                1, 2, 3, 4,
+                9, 8, 6, 5,
+    });
+                                                </code></pre>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm 12 col-md-6">
+    <div class="contentBox">
+        <p>
+            In this example the first argument represents the
+            shape of the data and the second argument the data itself.
+            Both arguments can be either a List or an Array.
+        </p>
+    </div>
+</div>
+
+<div class="col-sm-12 col-md-6">
+    <div class="tabWrapper">
+        <div class="tabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="tabBody">
+            <div class="groovyTab">
+                                                <pre><code class="hljs java">
+
+    Tsr t = new Tsr([2, 4], -5)
+                                                </code></pre>
+            </div>
+        </div>
+        <div class="javaTab" style="display:none">
+            <div class="col-sm-12 col-md-12">
+                                                <pre><code class="hljs java">
+
+    Tsr t = new Tsr( new int[]{2, 4}, -5);
+                                                </code></pre>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm 12 col-md-12">
+    <div class="contentBox">
+        <p>
+            If you want to instantiate a tensor filled homogeneously with a given value,
+            simply replace the latter argument with a double, float, int or any other numeric type.
+        </p>
+    </div>
+</div>
+
+
+<div class="col-sm-12 col-md-6">
+    <div class="tabWrapper">
+        <div class="tabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="tabBody">
+            <div class="groovyTab">
+                                                <pre><code class="hljs java">
+
+    Tsr t = new Tsr(-5)
+
+                                                </code></pre>
+            </div>
+        </div>
+        <div class="javaTab" style="display:none">
+            <div class="col-sm-12 col-md-12">
+                                                <pre><code class="hljs java">
+
+    Tsr t = new Tsr(-5);
+
+                                                </code></pre>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm 12 col-md-6">
+    <div class="contentBox">
+        <p>
+            Not passing any shape information to the costructor will simply lead to the creation
+            of a scalar tensor.
+        </p>
+    </div>
+</div>
+
+

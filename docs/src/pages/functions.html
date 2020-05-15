@@ -1,0 +1,131 @@
+
+<div class="col-sm 12 col-md-12">
+    <div class="contentBox">
+        <h3>
+            Function instantiation:
+        </h3>
+        <p>
+            The calculus package contains a class of major importance in Neureka.
+            Namely the Function interface.
+            Instances implementing this interface are the responsible for scheduling
+            the execution of operations on tensors.
+            A Function is created by calling the static factory method on the interface.
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-6">
+    <div class="tabWrapper">
+        <div class="tabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="tabBody">
+            <div class="groovyTab">
+
+                                                <pre><code class="hljs java">
+
+    def f = Function.create("I[0] * (I[1] + I[2])")
+
+                                                </code></pre>
+            </div>
+        </div>
+        <div class="javaTab" style="display:none">
+            <div class="col-sm-12 col-md-12">
+                                                <pre><code class="hljs java">
+
+    Function f = Function.create("I[0] * (I[1] + I[2])");
+
+                                                </code></pre>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm 12 col-md-6">
+    <div class="contentBox">
+        <p>
+            Internally a Function is really a graph of nodes that represent a given equation.
+            Inputs are recognized by 'I[j]', 'Ij' or 'ij', where j is the input index.
+            Functions accept arrays which is why variables must be targeted in such a way.
+
+        </p>
+    </div>
+</div>
+
+<div class="col-sm-12 col-md-6">
+    <div class="tabWrapper">
+        <div class="tabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="tabBody">
+            <div class="groovyTab">
+                                                <pre><code class="hljs java">
+
+    Function.SIG(4)
+
+                                                </code></pre>
+            </div>
+        </div>
+        <div class="javaTab" style="display:none">
+            <div class="col-sm-12 col-md-12">
+                                                <pre><code class="hljs java">
+
+    Function.SIG(4);
+
+                                                </code></pre>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm 12 col-md-12">
+    <div class="contentBox">
+        <p>
+            There are plenty of pre-instantiated and optimized Functions
+            to pick from in the Function interface.
+        </p>
+    </div>
+</div>
+
+
+<div class="col-sm-12 col-md-6">
+    <div class="tabWrapper">
+        <div class="tabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="tabBody">
+            <div class="groovyTab">
+                                                <pre><code class="hljs java">
+
+    Function.Detached.SIG(4)
+
+                                                </code></pre>
+            </div>
+        </div>
+        <div class="javaTab" style="display:none">
+            <div class="col-sm-12 col-md-12">
+                                                <pre><code class="hljs java">
+
+    Function.Detached.SIG(4)
+
+                                                </code></pre>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm 12 col-md-6">
+    <div class="contentBox">
+        <p>
+            Usually a Function creates a dynamic computation grapgh responsible for
+            enabling Neurekas autograd system.
+            If you have tensors attached to a graph requiring autograd, but
+            you do not want there to be derivatives created simply
+            use the Functions within the 'Detached' subclass of the Function interface.
+        </p>
+    </div>
+</div>
+
+

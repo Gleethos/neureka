@@ -85,73 +85,101 @@ import neureka.calculus.factory.assembly.FunctionBuilder;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
+    public double call(double input){
+<span class="nc" id="L89">        return activate(input);</span>
+    }
+    @Override
+    public double call(double[] inputs, int j){
+<span class="nc" id="L93">        return inputs[j];</span>
+    }
+    @Override
+    public double call(double[] inputs){
+<span class="nc" id="L97">        return activate(inputs);</span>
+    }
+
+    @Override
+    public Tsr call(Tsr input){
+<span class="nc" id="L102">        return activate(input);</span>
+    }
+
+    @Override
+    public Tsr call(Tsr[] inputs, int j){
+<span class="nc" id="L107">        return activate(inputs, j);</span>
+    }
+
+    @Override
+    public Tsr call(Tsr[] inputs) {
+<span class="nc" id="L112">        return activate(inputs);</span>
+    }
+
+    @Override
     public double activate(double input){
-<span class="nc" id="L89">        return activate(new double[]{input});</span>
+<span class="nc" id="L117">        return activate(new double[]{input});</span>
     }
 
     @Override
     public double activate(final double[] inputs, int j) {
-<span class="nc" id="L94">        return inputs[index()];</span>
+<span class="nc" id="L122">        return inputs[index()];</span>
     }
 
     @Override
     public double activate(final double[] inputs) {
-<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        return inputs[(_index&gt;=0)?_index:(Math.abs(_index)-1)];</span>
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">        return inputs[(_index&gt;=0)?_index:(Math.abs(_index)-1)];</span>
     }
 
     @Override
     public double derive(final double[] inputs, final int index) {
-<span class="fc bfc" id="L104" title="All 2 branches covered.">        return (index == index()) ? 1 : 0;</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        return (index == index()) ? 1 : 0;</span>
     }
 
     @Override
     public double derive(double[] inputs, int index, int j) {
-<span class="nc" id="L109">        return derive(inputs, index);</span>
+<span class="nc" id="L137">        return derive(inputs, index);</span>
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
     public Tsr activate(Tsr input){
-<span class="fc" id="L116">        return activate(new Tsr[]{input});</span>
+<span class="fc" id="L144">        return activate(new Tsr[]{input});</span>
     }
 
     @Override
     public Tsr activate(Tsr[] inputs, int j) {
-<span class="nc" id="L121">        return _extract(inputs[index()]);</span>
+<span class="nc" id="L149">        return _extract(inputs[index()]);</span>
     }
 
     @Override
     public Tsr activate(Tsr[] inputs) {
-<span class="fc" id="L126">        return _extract(inputs[index()]);</span>
+<span class="fc" id="L154">        return _extract(inputs[index()]);</span>
     }
 
     @Override
     public Tsr derive(Tsr[] inputs, int index, int j) {
-<span class="nc" id="L131">        return derive(inputs, index);</span>
+<span class="nc" id="L159">        return derive(inputs, index);</span>
     }
 
     @Override
     public Tsr derive(Tsr[] inputs, int index) {
-<span class="fc bfc" id="L136" title="All 2 branches covered.">        return (index == index())</span>
-<span class="fc" id="L137">                ? new Tsr(inputs[0].shape(), 1.0)</span>
-<span class="fc" id="L138">                : new Tsr(inputs[0].shape(), 0.0);</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">        return (index == index())</span>
+<span class="fc" id="L165">                ? new Tsr(inputs[0].shape(), 1.0)</span>
+<span class="fc" id="L166">                : new Tsr(inputs[0].shape(), 0.0);</span>
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
     public String toString() {
-<span class="fc bfc" id="L145" title="All 2 branches covered.">        return &quot;I&quot;+((this.providesGradient())?&quot;g&quot;:&quot;&quot;)+&quot;[&quot; + index() + &quot;]&quot;;</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">        return &quot;I&quot;+((this.providesGradient())?&quot;g&quot;:&quot;&quot;)+&quot;[&quot; + index() + &quot;]&quot;;</span>
     }
 
     public int index(){
-<span class="fc bfc" id="L149" title="All 2 branches covered.">        return ((this.providesGradient())?(Math.abs(_index)-1):_index);</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">        return ((this.providesGradient())?(Math.abs(_index)-1):_index);</span>
     }
 
     @Override
     public ADAgent getADAgent(Tsr[] inputs, int i, boolean forward){
-<span class="nc" id="L154">        return null;</span>
+<span class="nc" id="L182">        return null;</span>
     }
 
 

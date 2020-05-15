@@ -245,7 +245,7 @@ class ThoroughGroovyTests
         Neureka.instance().settings().autoDiff().applyGradientWhenTensorIsUsed = false
         assert !Neureka.instance().settings().autoDiff().applyGradientWhenTensorIsUsed()
         assert Neureka.instance().settings().autoDiff().retainPendingErrorForJITProp()
-        assert Neureka.version()=="0.0.2"//version
+        assert Neureka.version()=="0.1.0"//version
     }
 
     @Test
@@ -684,7 +684,17 @@ class ThoroughGroovyTests
         assert t.contains(x)
         assert x.toString().contains("[1x2]:(8.0, 6.0)")
 
+        x = t.getAt("2", new int[]{1,2}) // x.toString(): "(1x2):[8.0, 6.0]"
+        assert x in t
+        assert t.contains(x)
+        assert x.toString().contains("[1x2]:(8.0, 6.0)")
+
         x = t["2".."3", "b".."y"]
+        assert x in t
+        assert t.contains(x)
+        assert x.toString().contains("[2x2]:(8.0, 6.0, 5.0, 6.0)")
+
+        x = t.getAt(new String[]{"2","3"}, new String[]{"b","y"}) // x.toString(): "(2x2):[8.0, 6.0, 5.0, 6.0]"
         assert x in t
         assert t.contains(x)
         assert x.toString().contains("[2x2]:(8.0, 6.0, 5.0, 6.0)")

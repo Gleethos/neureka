@@ -22,15 +22,19 @@ public class OperationType implements Type
 
 <span class="fc" id="L23">    private static final ArrayList&lt;OperationType&gt; _REGISTER = new ArrayList&lt;&gt;();</span>
 
+    public static ArrayList&lt;OperationType&gt; instances(){
+<span class="fc" id="L26">        return _REGISTER;</span>
+    }
+
     public static OperationType instance(int index){
-<span class="fc" id="L26">        return _REGISTER.get(index);</span>
+<span class="fc" id="L30">        return _REGISTER.get(index);</span>
     }
 
     public static OperationType instance(String identifier){
-<span class="fc" id="L30">        return _LOOKUP.getOrDefault(identifier, null);</span>
+<span class="fc" id="L34">        return _LOOKUP.getOrDefault(identifier, null);</span>
     }
 
-<span class="fc" id="L33">    private static int _ID = 0;</span>
+<span class="fc" id="L37">    private static int _ID = 0;</span>
 
     protected int _id;
     protected String _name;
@@ -49,31 +53,31 @@ public class OperationType implements Type
 
     static
     {
-<span class="fc" id="L52">        new ReLU();</span>
-<span class="fc" id="L53">        new Sigmoid();</span>
-<span class="fc" id="L54">        new Tanh();</span>
-<span class="fc" id="L55">        new Quadratic();</span>
-<span class="fc" id="L56">        new Ligmoid();</span>
-<span class="fc" id="L57">        new Identity();</span>
-<span class="fc" id="L58">        new Gaussian();</span>
-<span class="fc" id="L59">        new Absolute();</span>
-<span class="fc" id="L60">        new Sinus();</span>
-<span class="fc" id="L61">        new Cosinus();</span>
+<span class="fc" id="L56">        new ReLU();</span>
+<span class="fc" id="L57">        new Sigmoid();</span>
+<span class="fc" id="L58">        new Tanh();</span>
+<span class="fc" id="L59">        new Quadratic();</span>
+<span class="fc" id="L60">        new Ligmoid();</span>
+<span class="fc" id="L61">        new Identity();</span>
+<span class="fc" id="L62">        new Gaussian();</span>
+<span class="fc" id="L63">        new Absolute();</span>
+<span class="fc" id="L64">        new Sinus();</span>
+<span class="fc" id="L65">        new Cosinus();</span>
 
-<span class="fc" id="L63">        new Summation();</span>
-<span class="fc" id="L64">        new Product();</span>
+<span class="fc" id="L67">        new Summation();</span>
+<span class="fc" id="L68">        new Product();</span>
 
-<span class="fc" id="L66">        new Power();</span>
-<span class="fc" id="L67">        new Division();</span>
-<span class="fc" id="L68">        new Multiplication();</span>
-<span class="fc" id="L69">        new Modulo();</span>
-<span class="fc" id="L70">        new Subtraction();</span>
-<span class="fc" id="L71">        new Addition();</span>
+<span class="fc" id="L70">        new Power();</span>
+<span class="fc" id="L71">        new Division();</span>
+<span class="fc" id="L72">        new Multiplication();</span>
+<span class="fc" id="L73">        new Modulo();</span>
+<span class="fc" id="L74">        new Subtraction();</span>
+<span class="fc" id="L75">        new Addition();</span>
 
-<span class="fc" id="L73">        new Reshape();</span>
-<span class="fc" id="L74">        new CopyLeft();</span>
-<span class="fc" id="L75">        new CopyRight();</span>
-<span class="fc" id="L76">    }</span>
+<span class="fc" id="L77">        new Reshape();</span>
+<span class="fc" id="L78">        new CopyLeft();</span>
+<span class="fc" id="L79">        new CopyRight();</span>
+<span class="fc" id="L80">    }</span>
 
     public OperationType(
             String name,
@@ -89,198 +93,198 @@ public class OperationType implements Type
             Convolution convolution,
             Broadcast broadcast,
             Operation operation
-<span class="fc" id="L92">    ) {</span>
-<span class="fc" id="L93">        _name = name;</span>
-<span class="fc" id="L94">        _id = _ID;</span>
-<span class="fc" id="L95">        _ID++;</span>
-<span class="fc" id="L96">        _identifier = identifier;</span>
-<span class="fc" id="L97">        _isOperation = isOperation;</span>
-<span class="fc" id="L98">        _isIndexer = isIndexer;</span>
-<span class="fc" id="L99">        _isConvection = isConvection;</span>
-<span class="fc" id="L100">        _isCommutative = isCommutative;</span>
-<span class="fc" id="L101">        _isAssociative = isAssociative;</span>
+<span class="fc" id="L96">    ) {</span>
+<span class="fc" id="L97">        _name = name;</span>
+<span class="fc" id="L98">        _id = _ID;</span>
+<span class="fc" id="L99">        _ID++;</span>
+<span class="fc" id="L100">        _identifier = identifier;</span>
+<span class="fc" id="L101">        _isOperation = isOperation;</span>
+<span class="fc" id="L102">        _isIndexer = isIndexer;</span>
+<span class="fc" id="L103">        _isConvection = isConvection;</span>
+<span class="fc" id="L104">        _isCommutative = isCommutative;</span>
+<span class="fc" id="L105">        _isAssociative = isAssociative;</span>
 
-<span class="fc" id="L103">        _activation = activation;</span>
-<span class="fc" id="L104">        _scalarization = scalarization;</span>
-<span class="fc" id="L105">        _convolution = convolution;</span>
-<span class="fc" id="L106">        _broadcast = broadcast;</span>
-<span class="fc" id="L107">        _operation = operation;</span>
+<span class="fc" id="L107">        _activation = activation;</span>
+<span class="fc" id="L108">        _scalarization = scalarization;</span>
+<span class="fc" id="L109">        _convolution = convolution;</span>
+<span class="fc" id="L110">        _broadcast = broadcast;</span>
+<span class="fc" id="L111">        _operation = operation;</span>
 
-<span class="fc" id="L109">        _REGISTER.add(this);</span>
-<span class="fc" id="L110">        _LOOKUP.put(identifier, this);</span>
-<span class="fc" id="L111">        if (</span>
+<span class="fc" id="L113">        _REGISTER.add(this);</span>
+<span class="fc" id="L114">        _LOOKUP.put(identifier, this);</span>
+<span class="fc" id="L115">        if (</span>
             identifier
-<span class="fc" id="L113">                .replace((&quot;&quot;+((char)171)), &quot;&quot;)</span>
-<span class="fc" id="L114">                .replace((&quot;&quot;+((char)187)), &quot;&quot;)</span>
-<span class="fc bfc" id="L115" title="All 2 branches covered.">                .matches(&quot;[a-z]&quot;)</span>
+<span class="fc" id="L117">                .replace((&quot;&quot;+((char)171)), &quot;&quot;)</span>
+<span class="fc" id="L118">                .replace((&quot;&quot;+((char)187)), &quot;&quot;)</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">                .matches(&quot;[a-z]&quot;)</span>
         ) {
-<span class="fc bfc" id="L117" title="All 2 branches covered.">            if (identifier.contains((&quot;&quot;+((char)171)))) {</span>
-<span class="fc" id="L118">                _LOOKUP.put(identifier.replace((&quot;&quot;+((char)171)), &quot;&lt;&lt;&quot;), this);</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">            if (identifier.contains((&quot;&quot;+((char)171)))) {</span>
+<span class="fc" id="L122">                _LOOKUP.put(identifier.replace((&quot;&quot;+((char)171)), &quot;&lt;&lt;&quot;), this);</span>
             }
-<span class="fc bfc" id="L120" title="All 2 branches covered.">            if (identifier.contains((&quot;&quot;+((char)187)))) {</span>
-<span class="fc" id="L121">                _LOOKUP.put(identifier.replace((&quot;&quot;+((char)187)),&quot;&gt;&gt;&quot;), this);</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">            if (identifier.contains((&quot;&quot;+((char)187)))) {</span>
+<span class="fc" id="L125">                _LOOKUP.put(identifier.replace((&quot;&quot;+((char)187)),&quot;&gt;&gt;&quot;), this);</span>
             }
         }
-<span class="fc" id="L124">    }</span>
+<span class="fc" id="L128">    }</span>
 
     public static OperationType[] ALL(){
-<span class="fc" id="L127">        return _REGISTER.toArray(new OperationType[0]);</span>
+<span class="fc" id="L131">        return _REGISTER.toArray(new OperationType[0]);</span>
     }
 
     public static int COUNT(){
-<span class="fc" id="L131">        return _ID;</span>
+<span class="fc" id="L135">        return _ID;</span>
     }
 
     //==================================================================================================================
 
     @Override
     public String getName(){
-<span class="fc" id="L138">        return _name;</span>
+<span class="fc" id="L142">        return _name;</span>
     }
 
     //-----------------
 
     @Override
     public Activation getActivation(){
-<span class="fc" id="L145">        return _activation;</span>
+<span class="fc" id="L149">        return _activation;</span>
     }
 
     @Override
     public boolean supportsActivation(){
-<span class="fc bfc" id="L150" title="All 2 branches covered.">        return _activation!=null;</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">        return _activation!=null;</span>
     }
 
     //-----------------
 
     @Override
     public Scalarization getScalarization(){
-<span class="fc" id="L157">        return _scalarization;</span>
+<span class="fc" id="L161">        return _scalarization;</span>
     }
 
     @Override
     public boolean supportsScalar(){
-<span class="fc bfc" id="L162" title="All 2 branches covered.">        return _scalarization != null;</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        return _scalarization != null;</span>
     }
 
     //-----------------
 
     @Override
     public Convolution getConvolution(){
-<span class="fc" id="L169">        return _convolution;</span>
+<span class="fc" id="L173">        return _convolution;</span>
     }
 
     @Override
     public boolean supportsConvolution(){
-<span class="fc bfc" id="L174" title="All 2 branches covered.">        return _convolution!=null;</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        return _convolution!=null;</span>
     }
 
     //-----------------
 
     @Override
     public Broadcast getBroadcast(){
-<span class="fc" id="L181">        return _broadcast;</span>
+<span class="fc" id="L185">        return _broadcast;</span>
     }
 
     @Override
     public boolean supportsBroadcast(){
-<span class="fc bfc" id="L186" title="All 2 branches covered.">        return _broadcast!=null;</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">        return _broadcast!=null;</span>
     }
 
     //-----------------
 
     @Override
     public Operation getOperation(){
-<span class="fc" id="L193">        return _operation;</span>
+<span class="fc" id="L197">        return _operation;</span>
     }
 
     @Override
     public boolean supportsOperation(){
-<span class="fc bfc" id="L198" title="All 2 branches covered.">        return _operation!=null;</span>
+<span class="fc bfc" id="L202" title="All 2 branches covered.">        return _operation!=null;</span>
     }
 
     //==================================================================================================================
 
     @Override
     public int id(){
-<span class="fc" id="L205">        return _id;</span>
+<span class="fc" id="L209">        return _id;</span>
     }
 
     @Override
     public String identifier(){
-<span class="fc" id="L210">        return _identifier;</span>
+<span class="fc" id="L214">        return _identifier;</span>
     }
 
     @Override
     public boolean isOperation() {
-<span class="fc" id="L215">        return _isOperation;</span>
+<span class="fc" id="L219">        return _isOperation;</span>
     }
 
     @Override
     public boolean isIndexer(){
-<span class="fc" id="L220">        return _isIndexer;</span>
+<span class="fc" id="L224">        return _isIndexer;</span>
     }
 
     @Override
     public boolean isConvection(){
-<span class="fc" id="L225">        return _isConvection;</span>
+<span class="fc" id="L229">        return _isConvection;</span>
     }
 
     @Override
     public boolean isCommutative(){
-<span class="nc" id="L230">        return  _isCommutative;</span>
+<span class="nc" id="L234">        return  _isCommutative;</span>
     }
 
     @Override
     public boolean allowsForward(Tsr[] inputs)
     {
-<span class="fc bfc" id="L236" title="All 2 branches covered.">        if (this.isConvection()) return false;</span>
-<span class="fc bfc" id="L237" title="All 2 branches covered.">        if (this.identifier().equals(&quot;,&quot;)) return false; //Reshape</span>
-<span class="fc" id="L238">        Tsr last = null;</span>
-<span class="fc bfc" id="L239" title="All 2 branches covered.">        for (Tsr t : inputs) {</span>
-<span class="fc bfc" id="L240" title="All 4 branches covered.">            if (last!=null &amp;&amp; !last.shape().equals(t.shape())) return false;</span>
-<span class="fc" id="L241">            last = t; // Note: shapes are cached!</span>
+<span class="fc bfc" id="L240" title="All 2 branches covered.">        if (this.isConvection()) return false;</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">        if (this.identifier().equals(&quot;,&quot;)) return false; //Reshape</span>
+<span class="fc" id="L242">        Tsr last = null;</span>
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        for (Tsr t : inputs) {</span>
+<span class="fc bfc" id="L244" title="All 4 branches covered.">            if (last!=null &amp;&amp; !last.shape().equals(t.shape())) return false;</span>
+<span class="fc" id="L245">            last = t; // Note: shapes are cached!</span>
         }
-<span class="fc" id="L243">        return true;</span>
+<span class="fc" id="L247">        return true;</span>
     }
 
     @Override
     public ADAgent getADAgentOf(Function f, Tsr[] inputs, int i, boolean forward)
     {
-<span class="fc" id="L249">        Function mul = Function.Detached.MUL;</span>
-<span class="fc bfc" id="L250" title="All 2 branches covered.">        if(forward)</span>
+<span class="fc" id="L253">        Function mul = Function.Detached.MUL;</span>
+<span class="fc bfc" id="L254" title="All 2 branches covered.">        if(forward)</span>
         {
-<span class="fc" id="L252">            Tsr d = f.derive(inputs, i);</span>
-<span class="fc" id="L253">            return new ADAgent(</span>
-<span class="fc" id="L254">                    ()-&gt;d,</span>
-<span class="nc" id="L255">                    (t, derivative) -&gt; mul.activate(new Tsr[]{derivative, d}),</span>
+<span class="fc" id="L256">            Tsr d = f.derive(inputs, i);</span>
+<span class="fc" id="L257">            return new ADAgent(</span>
+<span class="fc" id="L258">                    ()-&gt;d,</span>
+<span class="nc" id="L259">                    (t, derivative) -&gt; mul.activate(new Tsr[]{derivative, d}),</span>
                     null
             );
         } else {
-<span class="pc bpc" id="L259" title="1 of 4 branches missed.">            if (this.isOperation() &amp;&amp; !this.isConvection())</span>
+<span class="pc bpc" id="L263" title="1 of 4 branches missed.">            if (this.isOperation() &amp;&amp; !this.isConvection())</span>
             {
-<span class="fc" id="L261">                Tsr d = f.derive(inputs, i);</span>
-<span class="fc" id="L262">                return new ADAgent(</span>
-<span class="fc" id="L263">                        ()-&gt;d,</span>
-<span class="nc" id="L264">                        (t, derivative) -&gt; mul.activate(new Tsr[]{derivative, d}),</span>
-<span class="fc" id="L265">                        (t, error) -&gt; mul.activate(new Tsr[]{error, d})</span>
+<span class="fc" id="L265">                Tsr d = f.derive(inputs, i);</span>
+<span class="fc" id="L266">                return new ADAgent(</span>
+<span class="fc" id="L267">                        ()-&gt;d,</span>
+<span class="nc" id="L268">                        (t, derivative) -&gt; mul.activate(new Tsr[]{derivative, d}),</span>
+<span class="fc" id="L269">                        (t, error) -&gt; mul.activate(new Tsr[]{error, d})</span>
                 );
             }
-<span class="pc bpc" id="L268" title="1 of 2 branches missed.">            else if (this.isConvection())</span>
+<span class="pc bpc" id="L272" title="1 of 2 branches missed.">            else if (this.isConvection())</span>
             {
-<span class="fc" id="L270">                Function invX = FunctionBuilder.build(</span>
-<span class="fc" id="L271">                        &quot;I[0]&quot; + identifier() + &quot;&gt;&gt;I[1]&quot; + identifier() + &quot;&gt;&gt;I[2]&quot;,</span>
+<span class="fc" id="L274">                Function invX = FunctionBuilder.build(</span>
+<span class="fc" id="L275">                        &quot;I[0]&quot; + identifier() + &quot;&gt;&gt;I[1]&quot; + identifier() + &quot;&gt;&gt;I[2]&quot;,</span>
                         false
                 );
-<span class="fc" id="L274">                Tsr d = f.derive(inputs, i);</span>
-<span class="fc" id="L275">                return new ADAgent(</span>
-<span class="fc" id="L276">                        ()-&gt;d,</span>
-<span class="nc" id="L277">                        (t, derivative) -&gt; mul.activate(new Tsr[]{derivative, d}),</span>
-<span class="fc" id="L278">                        (t, error) -&gt; invX.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})</span>
+<span class="fc" id="L278">                Tsr d = f.derive(inputs, i);</span>
+<span class="fc" id="L279">                return new ADAgent(</span>
+<span class="fc" id="L280">                        ()-&gt;d,</span>
+<span class="nc" id="L281">                        (t, derivative) -&gt; mul.activate(new Tsr[]{derivative, d}),</span>
+<span class="fc" id="L282">                        (t, error) -&gt; invX.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})</span>
                 );
             }
         }
-<span class="nc" id="L282">        return new ADAgent(</span>
-<span class="nc" id="L283">                ()-&gt;null, (t, derivative) -&gt; null, (t, error) -&gt; null</span>
+<span class="nc" id="L286">        return new ADAgent(</span>
+<span class="nc" id="L287">                ()-&gt;null, (t, derivative) -&gt; null, (t, error) -&gt; null</span>
         );
 
     }

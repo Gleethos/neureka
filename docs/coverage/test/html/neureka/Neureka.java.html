@@ -71,7 +71,7 @@ public class Neureka
     }
 
     public static String version(){
-<span class="fc" id="L74">        return &quot;1.0.0&quot;;</span>
+<span class="fc" id="L74">        return _version;</span>
     }
 
     public void reset() {
@@ -242,7 +242,7 @@ public class Neureka
 <span class="fc" id="L242">                return _legacyIndexing;</span>
             }
 
-            public void setLegacy(boolean enabled){
+            public void setLegacy(boolean enabled) {
 <span class="pc bpc" id="L246" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
 <span class="fc" id="L247">                _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (in OpenCLPlatform)</span>
 <span class="fc" id="L248">            }</span>
@@ -288,7 +288,7 @@ public class Neureka
         public String readResource(String path){
 <span class="fc" id="L289">            InputStream stream = getClass().getClassLoader().getResourceAsStream(path);</span>
             try {
-<span class="fc" id="L291">                BufferedReader br = new BufferedReader(new InputStreamReader(stream));//new FileInputStream(fileName)));</span>
+<span class="fc" id="L291">                BufferedReader br = new BufferedReader(new InputStreamReader(stream));</span>
 <span class="fc" id="L292">                StringBuffer sb = new StringBuffer();</span>
 <span class="fc" id="L293">                String line = &quot;&quot;;</span>
 <span class="fc bfc" id="L294" title="All 2 branches covered.">                while (line!=null) {</span>
@@ -302,10 +302,6 @@ public class Neureka
 <span class="nc" id="L302">                return null;</span>
             }
         }
-
-
-
-
 
     }
 

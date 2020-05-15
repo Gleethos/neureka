@@ -47,7 +47,6 @@ public class FunctionVariable implements Function, GradientProvider {
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     @Override
     public double activate(double input){
         return activate(new double[]{input});
@@ -57,12 +56,24 @@ public class FunctionVariable implements Function, GradientProvider {
     public double activate(final double[] inputs, int j) {
         return inputs[j];
     }
-
     @Override
     public double activate(final double[] inputs) {
         double sum = 0;
         for (int Ii = 0; Ii < inputs.length; Ii++) sum += activate(inputs, Ii);
         return sum;
+    }
+
+    @Override
+    public double call(double input){
+        return activate(input);
+    }
+    @Override
+    public double call(double[] inputs, int j){
+        return inputs[j];
+    }
+    @Override
+    public double call(double[] inputs){
+        return activate(inputs);
     }
 
     @Override
@@ -76,6 +87,21 @@ public class FunctionVariable implements Function, GradientProvider {
         return derive(inputs, index);
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    @Override
+    public Tsr call(Tsr input){
+        return activate(input);
+    }
+
+    @Override
+    public Tsr call(Tsr[] inputs, int j){
+        return activate(inputs, j);
+    }
+
+    @Override
+    public Tsr call(Tsr[] inputs) {
+        return activate(inputs);
+    }
 
     @Override
     public Tsr activate(Tsr input){

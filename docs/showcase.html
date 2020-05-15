@@ -142,7 +142,17 @@
                                                 $("#ArrowIcon").attr("src", "src/img/icons/return-arrow.png")
                                                 loadContent('../TOC');
                                             });
+                                            function switchTab(src, target) {
+                                                var tabBody = $(src.target).parent().parent().find('.tabBody');
+                                                console.log(tabBody.html());
+                                                tabBody.children().css("display", "none");
+                                                $(src.target).siblings().removeClass("selected");
+                                                $(src.target).parent().parent().find(target).css("display","block");
+                                                $(src.target).addClass("selected");
+                                                console.log($(src.target).html());
+                                            }
                                         </script>
+
                                         <div id="DynamicContent" class = "row">
 
                                         </div>

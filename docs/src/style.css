@@ -339,6 +339,50 @@ header p {
     background: rgba(255, 255, 255, 0.3);
 }
 
+/*--Tab-classes--*/
+
+.tabWrapper {
+}
+
+.tabWrapper .tabHead{
+    overflow: hidden;
+    margin: 0;
+    font-size: 80%;
+    border-bottom: 0.2em solid #00e6ff;
+}
+
+.tabWrapper .tabHead button{
+    background-color: rgba(0, 255, 255, 0.2);
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0.3em 0.25em 0.3em 0.25em;
+    margin: 0.35em 0.25em 0.35em 0.25em;
+    transition: 0.3s;
+    border-radius: 0.5555em;
+}
+
+.tabWrapper .tabHead .selected{
+    background-color: #00e6ff;
+    transition: 0.3s;
+    border-radius: 0.33em 0.33em 0 0;
+    padding: 0.35em 0.55em 0.7em 0.55em;
+    margin: 0.35em 0.15em 0 0.15em;
+;
+}
+
+
+.tabWrapper .tabHead button:hover{
+    background-color: #00ff7b;
+}
+
+.tabWrapper .tabBody div{
+    padding: 6px 12px;
+}
+
+/*---*/
+
 /*Bootstrap correction:*/
 .container {
     width: 100%;
@@ -398,7 +442,7 @@ header p {
     color: black;
 }
 
-.mainContentWrapper div {
+.mainContentWrapper section {
     margin-top: 0.33em;
     margin-bottom: 0.33em;
 }
@@ -426,16 +470,14 @@ code {
     background-color: rgb(217, 253, 255);
     font-size: 1em;
     padding: 0.5em;
-    margin-left: 0.175em;
-    margin-right: 0.174em;
-    margin-top: 0.175em;
-    margin-bottom: 1em;
+    margin: 0.55em 0.175em 0.33em;
 
     border: 0.02em solid black;
     box-shadow: inset 0 0 3px 1px black;
     border-radius: 0.2em;
     color: black;
-    height: 100%
+    display: inline-block;
+    width: 100%;
 }
 
 .contentBox img {

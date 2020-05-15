@@ -242,7 +242,7 @@ public class Neureka
                 return _legacyIndexing;
             }
 
-            public void setLegacy(boolean enabled){
+            public void setLegacy(boolean enabled) {
                 if(_isLocked || !_currentThreadIsAuthorized()) return;
                 _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (in OpenCLPlatform)
             }
@@ -288,7 +288,7 @@ public class Neureka
         public String readResource(String path){
             InputStream stream = getClass().getClassLoader().getResourceAsStream(path);
             try {
-                BufferedReader br = new BufferedReader(new InputStreamReader(stream));//new FileInputStream(fileName)));
+                BufferedReader br = new BufferedReader(new InputStreamReader(stream));
                 StringBuffer sb = new StringBuffer();
                 String line = "";
                 while (line!=null) {
@@ -302,10 +302,6 @@ public class Neureka
                 return null;
             }
         }
-
-
-
-
 
     }
 

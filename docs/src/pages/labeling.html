@@ -6,7 +6,7 @@
         </h3>
         <p>
             Labeling makes it more
-            intuitive to work with big data.
+            intuitive to work with data.
             By calling the 'label' method
             it's possible to add a custom
             set of Strings as indexAlias aliases for any dimension
@@ -15,26 +15,62 @@
     </div>
 </div>
 <div class="col-sm-12 col-md-12">
-                                                <pre><code class="hljs java">
-        // Example I:
+    <div class="tabWrapper">
+        <div class="tabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="tabBody">
+            <div class="groovyTab">
 
-        Tsr t = new Tsr([3, 4],[
+                                                <pre><code class="hljs java">
+    // Example I:
+
+    Tsr t = new Tsr([3, 4],[
+            1, 2, 3, 4,
+            9, 8, 6, 5,
+            4, 5, 6, 7
+    ])
+    t.label([
+            ["1", "2", "3"],     // axis 0
+            ["a", "b", "y", "z"] // axis 1
+    ])
+
+    // Accessing data via labels:
+
+    Tsr x = t["2", 1..2] // x.toString(): "(1x2):[8.0, 6.0]"
+
+    x = t["2".."3", "b".."y"] // x.toString(): "(2x2):[8.0, 6.0, 5.0, 6.0]"
+
+                                                </code></pre>
+            </div>
+        </div>
+        <div class="javaTab" style="display:none">
+            <div class="col-sm-12 col-md-12">
+                                                <pre><code class="hljs java">
+    // Example I:
+
+    Tsr t = new Tsr( new int[]{3, 4}, new double[]{
                 1, 2, 3, 4,
                 9, 8, 6, 5,
                 4, 5, 6, 7
-        ])
-        t.label([
-                ["1", "2", "3"],     // axis 0
-                ["a", "b", "y", "z"] // axis 1
-        ])
+    });
+    t.label(String[][]{
+        new String[]{"1", "2", "3"]},     // axis 0
+        new String[]{"a", "b", "y", "z"}  // axis 1
+    });
 
-        // Accessing data via labels:
+    // Accessing data via labels:
 
-        Tsr x = t["2", 1..2] // x.toString(): "(1x2):[8.0, 6.0]"
+    Tsr x = t.getAt("2", new int[]{1, 2}); // x.toString(): "(1x2):[8.0, 6.0]"
 
-        x = t["2".."3", "b".."y"] // x.toString(): "(2x2):[8.0, 6.0, 5.0, 6.0]"
+    x = t.getAt(new String[]{"2","3"}, new String[]{"b","y"}); // x.toString(): "(2x2):[8.0, 6.0, 5.0, 6.0]"
 
                                                 </code></pre>
+
+            </div>
+        </div>
+    </div>
 </div>
 <div class="col-sm-12 col-md-12">
                                                 <pre><code class="hljs java">

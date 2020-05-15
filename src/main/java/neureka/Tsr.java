@@ -701,22 +701,26 @@ public class Tsr extends AbstractNDArray<Tsr>
         return value64()[i_of_idx(idx)];
     }
 
+    public Object getAt(Object i1, Object i2) {
+        List<Object> args = Arrays.asList(i1, i2);
+        return getAt(args);
+    }
+
     public Object getAt(Object key) {
         if (key==null) return this;
-        if (key instanceof List){
-            if (((List)key).isEmpty()){
-                if(this.isEmpty() || this.isUndefined()) return this;
-                for(int e : this.shape()) {
-                    List<Integer> rangeAsList = new ArrayList<>();
-                    for(int i=0; i<e; i++) rangeAsList.add(i);
-                    ((List<Object>)key).add(rangeAsList);
-                }
+        if(key instanceof Object[] && ((Object[])key).length==0) key = new ArrayList();
+        if (key instanceof List && ((List)key).isEmpty()){
+            if(this.isEmpty() || this.isUndefined()) return this;
+            for(int e : this.shape()) {
+                List<Integer> rangeAsList = new ArrayList<>();
+                for(int i=0; i<e; i++) rangeAsList.add(i);
+                ((List<Object>)key).add(rangeAsList);
             }
         }
         int[] idxbase = null;
         int[] newShape = new int[this.rank()];
-        if (key instanceof List) {
-            key = ((List)key).toArray();
+        if (key instanceof List || key instanceof Object[]) {
+            if (key instanceof  List) key = ((List)key).toArray();
             boolean allInt = true;
             for(Object o : (Object[])key) allInt = allInt && o instanceof Integer;
             if (allInt) {
@@ -793,6 +797,19 @@ public class Tsr extends AbstractNDArray<Tsr>
         for (int i=0; i<ranges.length; i++) {
             int first = 0;
             int last = 0;
+            if(ranges[i] instanceof int[]){
+                if(ranges[i] instanceof int[]){
+                    List<Integer> intList = new ArrayList<Integer>(((int[])ranges[i]).length);
+                    for (int ii : (int[])ranges[i]) intList.add(ii);
+                    ranges[i] = intList;
+                }
+            } else if (ranges[i] instanceof String[]){
+                if(ranges[i] instanceof String[]){
+                    List<String> strList = new ArrayList<String>(((String[])ranges[i]).length);
+                    for (String ii : (String[])ranges[i]) strList.add(ii);
+                    ranges[i] = strList;
+                }
+            }
             if (!(ranges[i] instanceof  List)) {
                 if (ranges[i] instanceof Map) {
                     Object[] ks = ((Map) ranges[i]).keySet().toArray();
@@ -817,7 +834,7 @@ public class Tsr extends AbstractNDArray<Tsr>
                         throw new IllegalStateException("Given indexAlias key at axis "+(i+offset)+" not found!");
                     }
                 }
-            }else{
+            } else {
                 ranges[i] = ((List)ranges[i]).toArray();
                 ranges[i] = (((Object[])ranges[i])[0] instanceof List)?((List)((Object[])ranges[i])[0]).toArray():((Object[])ranges[i]);
                 if (!(((Object[])(ranges[i]))[0] instanceof Integer) || !(((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1] instanceof Integer)){

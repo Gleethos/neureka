@@ -33,8 +33,10 @@ public interface Function
     Function MOD_ASSIGN = create("I[0]<-(I[0]%I[1])");
     Function NEG = create("(-1*I[0])");
 
-    class Detached{
-        public static  Function IDY = create("I[0]<-I[1]", false);
+
+    class Detached
+    {
+        public static Function IDY = create("I[0]<-I[1]", false);
 
         public static Function X = create("I[0]xI[1]", false);
         public static Function PLUS = create("(I[0]+I[1])", false);
@@ -105,10 +107,10 @@ public interface Function
             if(resultIsUnique) return result;
             else return null;
         }
-
     }
 
     //------------------------------------------------------------------------------------------------------------------
+
     Function newBuild(String expression);
 
     boolean doesAD();//Note: only branch nodes can 'do Auto-Differentiation'
@@ -120,29 +122,44 @@ public interface Function
     OperationType type();
 
     boolean dependsOn(int index);
+
     //------------------------------------------------------------------------------------------------------------------
-    double activate(double input);
+    double call(double input);
 
-    double activate(double[] inputs, int j);// Iteration over input via j !
+    @Deprecated double activate(double input);
 
-    double activate(double[] inputs);
+    double call(double[] inputs, int j);
+
+    @Deprecated double activate(double[] inputs, int j);// Iteration over input via j !
+
+    double call(double[] inputs);
+
+    @Deprecated double activate(double[] inputs);
 
     double derive(double[] inputs, int index, int j);
 
     double derive(double[] inputs, int index);
 
     //------------------------------------------------------------------------------------------------------------------
-    Tsr activate(Tsr input);
 
-    Tsr activate(Tsr[] inputs, int j);// Iteration over input via j !
+    Tsr call(Tsr input);
 
-    Tsr activate(Tsr[] inputs);
+    @Deprecated Tsr activate(Tsr input);
+
+    Tsr call(Tsr[] inputs, int j);
+
+    @Deprecated Tsr activate(Tsr[] inputs, int j);// Iteration over input via j !
+
+    Tsr call(Tsr[] inputs);
+
+    @Deprecated Tsr activate(Tsr[] inputs);
 
     Tsr derive(Tsr[] inputs, int index, int j);
 
     Tsr derive(Tsr[] inputs, int index);
 
     //---
+
     String toString();
 
     ADAgent getADAgent(Tsr[] inputs, int i, boolean forward);

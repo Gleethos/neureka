@@ -2,7 +2,6 @@
 
 import neureka.Tsr;
 import neureka.calculus.Function;
-import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.optimization.Optimizer;
 
 public class ADAM implements Optimizer {
@@ -12,34 +11,34 @@ public class ADAM implements Optimizer {
     private Tsr b1;
     private Tsr b2;
     private Tsr e;
-<span class="fc" id="L15">    Tsr m = null;</span>
-<span class="fc" id="L16">    Tsr v = null;</span>
+<span class="fc" id="L14">    Tsr m = null;</span>
+<span class="fc" id="L15">    Tsr v = null;</span>
     //Tsr w = null;
 
-<span class="fc" id="L19">    ADAM(Tsr target){</span>
-<span class="fc" id="L20">        int[] shape = target.shape();</span>
-<span class="fc" id="L21">        m = new Tsr(shape, 0);</span>
-<span class="fc" id="L22">        v = new Tsr(shape, 0);</span>
-<span class="fc" id="L23">        a = new Tsr(shape, 0.01); // Step size!</span>
-<span class="fc" id="L24">        b1 = new Tsr(shape, 0.9);</span>
-<span class="fc" id="L25">        b2 = new Tsr(shape, 0.999);</span>
-<span class="fc" id="L26">        e = new Tsr(shape, 1e-7);</span>
-<span class="fc" id="L27">    }</span>
+<span class="fc" id="L18">    ADAM(Tsr target){</span>
+<span class="fc" id="L19">        int[] shape = target.shape();</span>
+<span class="fc" id="L20">        m = new Tsr(shape, 0);</span>
+<span class="fc" id="L21">        v = new Tsr(shape, 0);</span>
+<span class="fc" id="L22">        a = new Tsr(shape, 0.01); // Step size!</span>
+<span class="fc" id="L23">        b1 = new Tsr(shape, 0.9);</span>
+<span class="fc" id="L24">        b2 = new Tsr(shape, 0.999);</span>
+<span class="fc" id="L25">        e = new Tsr(shape, 1e-7);</span>
+<span class="fc" id="L26">    }</span>
 
     private void _optimize(Tsr w){
-<span class="fc" id="L30">        Tsr g = (Tsr)w.find(Tsr.class);</span>
-<span class="fc" id="L31">        m = new Tsr(b1, &quot;*&quot;, m, &quot; + ( 1-&quot;, b1, &quot;) *&quot;, g);</span>
-<span class="fc" id="L32">        v = new Tsr(b2, &quot;*&quot;, v, &quot; + ( 1-&quot;, b2, &quot;) * (&quot;, g,&quot;^2 )&quot;);</span>
-<span class="fc" id="L33">        Tsr mh = new Tsr(m, &quot;/(1-&quot;, b1, &quot;)&quot;);</span>
-<span class="fc" id="L34">        Tsr vh = new Tsr(v, &quot;/(1-&quot;, b2, &quot;)&quot;);</span>
-<span class="fc" id="L35">        Tsr newg = new Tsr(&quot;-&quot;,a,&quot;*&quot;,mh,&quot;/(&quot;,vh,&quot;^0.5+&quot;,e,&quot;)&quot;);</span>
-<span class="fc" id="L36">        Function.Detached.IDY.activate(new Tsr[]{g, newg});</span>
-<span class="fc" id="L37">    }</span>
+<span class="fc" id="L29">        Tsr g = (Tsr)w.find(Tsr.class);</span>
+<span class="fc" id="L30">        m = new Tsr(b1, &quot;*&quot;, m, &quot; + ( 1-&quot;, b1, &quot;) *&quot;, g);</span>
+<span class="fc" id="L31">        v = new Tsr(b2, &quot;*&quot;, v, &quot; + ( 1-&quot;, b2, &quot;) * (&quot;, g,&quot;^2 )&quot;);</span>
+<span class="fc" id="L32">        Tsr mh = new Tsr(m, &quot;/(1-&quot;, b1, &quot;)&quot;);</span>
+<span class="fc" id="L33">        Tsr vh = new Tsr(v, &quot;/(1-&quot;, b2, &quot;)&quot;);</span>
+<span class="fc" id="L34">        Tsr newg = new Tsr(&quot;-&quot;,a,&quot;*&quot;,mh,&quot;/(&quot;,vh,&quot;^0.5+&quot;,e,&quot;)&quot;);</span>
+<span class="fc" id="L35">        Function.Detached.IDY.activate(new Tsr[]{g, newg});</span>
+<span class="fc" id="L36">    }</span>
 
     @Override
     public void optimize(Tsr t) {
-<span class="fc" id="L41">        _optimize(t);</span>
-<span class="fc" id="L42">    }</span>
+<span class="fc" id="L40">        _optimize(t);</span>
+<span class="fc" id="L41">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
