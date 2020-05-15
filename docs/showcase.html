@@ -144,7 +144,6 @@
                                             });
                                             function switchTab(src, target) {
                                                 var tabBody = $(src.target).parent().parent().find('.tabBody');
-                                                console.log(tabBody.html());
                                                 tabBody.children().css("display", "none");
                                                 $(src.target).siblings().removeClass("selected");
                                                 $(src.target).parent().parent().find(target).css("display","block");
