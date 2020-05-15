@@ -22,8 +22,7 @@
         </div>
         <div class="tabBody">
             <div class="groovyTab">
-
-                                                <pre><code class="hljs java">
+                <pre><code class="hljs java">
     // Example I:
 
     Tsr t = new Tsr([3, 4],[
@@ -42,12 +41,11 @@
 
     x = t["2".."3", "b".."y"] // x.toString(): "(2x2):[8.0, 6.0, 5.0, 6.0]"
 
-                                                </code></pre>
+                </code></pre>
             </div>
         </div>
         <div class="javaTab" style="display:none">
-            <div class="col-sm-12 col-md-12">
-                                                <pre><code class="hljs java">
+            <pre><code class="hljs java">
     // Example I:
 
     Tsr t = new Tsr( new int[]{3, 4}, new double[]{
@@ -66,14 +64,12 @@
 
     x = t.getAt(new String[]{"2","3"}, new String[]{"b","y"}); // x.toString(): "(2x2):[8.0, 6.0, 5.0, 6.0]"
 
-                                                </code></pre>
-
-            </div>
+            </code></pre>
         </div>
     </div>
 </div>
 <div class="col-sm-12 col-md-12">
-                                                <pre><code class="hljs java">
+    <pre><code class="hljs java">
 
         // Example II:
 
@@ -89,5 +85,5 @@
         x = t["2", [["b".."y"]:1, ["tim","tanya"]:2]] // x.toString(): "(1x2x2):[7.0, 7.0, 7.0, 7.0]"
         x = t[[["2"]:1, ["b".."y"]:1, ["tim","tanya"]:2]] // x.toString(): "(1x2x2):[7.0, 7.0, 7.0, 7.0]"
 
-                                                </code></pre>
+    </code></pre>
 </div>
