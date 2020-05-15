@@ -346,7 +346,7 @@ header p {
 
 .tabWrapper .tabHead{
     overflow: hidden;
-    margin: 0;
+    margin: 0 0.33em;
     font-size: 80%;
     border-bottom: 0.2em solid #00e6ff;
 }
@@ -369,7 +369,6 @@ header p {
     border-radius: 0.33em 0.33em 0 0;
     padding: 0.35em 0.55em 0.7em 0.55em;
     margin: 0.35em 0.15em 0 0.15em;
-;
 }
 
 
@@ -378,7 +377,6 @@ header p {
 }
 
 .tabWrapper .tabBody div{
-    padding: 6px 12px;
 }
 
 /*---*/
@@ -478,6 +476,7 @@ code {
     color: black;
     display: inline-block;
     width: 100%;
+    min-height: 85%;
 }
 
 .contentBox img {
