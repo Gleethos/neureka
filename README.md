@@ -159,8 +159,8 @@ by this choice, uncomplicated cross platform deployment and ease of use are the 
 Additionally, the use of OpenCl theoretically should allow for
 FPGA utilization. This however has not been tested.
 
-In general, Java currently plays an underwhelming role in the Deep-Learning community despite
-the fact that Java itself is among the most dominant platforms.
+In general, the JVM ecosystem currently plays an underwhelming role in the Deep-Learning community despite
+the fact that it is among the most dominant platforms.
 
 [What Java needs for true Machine / Deep Learning support.](https://medium.com/@hsheil/what-java-needs-for-true-machine-deep-learning-support-1571ffdbb594)
 
@@ -173,16 +173,28 @@ Execute the following:
 $ gradlew build
 ```
 
+Tests:
+```sh
+$ gradlew check
+```
+
 Jar file:
 ```sh
 $ gradlew jar
+```
+
+Min-jar file:
+```sh
+$ gradlew proguard
 ```
 
 ---
 
 ## Dependencies ##
 
-Neureka uses OpenCl (JOCL binding).
+- OpenCL (JOCL binding)
+
+- Groovy 
 
 ---
 
@@ -190,11 +202,11 @@ Neureka uses OpenCl (JOCL binding).
 
 Want to contribute? Great!
 
-There is currently a lack of sufficient documentation on this repository.
-If you have questions simply contact me or read through the test suite 
+Although present, the documentation on this project still needs to mature.
+So if you have questions simply contact me or read through the test suite 
 of this project to understand what Neureka is supposed to be!
 
-Feedback is greatly appreciated!
+Feedback is being greatly appreciated!
 
 ---
 
