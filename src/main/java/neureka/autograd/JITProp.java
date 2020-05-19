@@ -45,7 +45,7 @@ public class JITProp
         _pending.forEach((n)->{
             if(_finished==null || !_finished.contains(n)){
                 PendingError pe = n.getAndRemovePendingError();
-                if(!pe.isFullyAccumulated()) throw new IllegalStateException("[JITProp][execute]: Pending error has not received expected accumulation.");
+                if(!pe.isFullyAccumulated()) throw new IllegalStateException("Pending error has not received expected accumulation.");
                 n.backwardJIT(pe.getAccumulatedError());//Continue backprop recursively!
             }
         });

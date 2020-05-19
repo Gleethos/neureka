@@ -15,9 +15,17 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- *
+ *  Instances of this class are components of tensors.
+ *  GraphNodes form a computation graph during runtime which is traversed during backpropagation.
+ *  Both parent and child references are use.
+ *  Parents are the GraphNodes of the tensors from which the tensor of the current node was formed,
+ *  whereas children are the nodes (also) produced by said current node.
+ *  Children are weakly referenced so that abandoned / detached
+ *  graph branches (child nodes) can be garbage collected...
+ *  ...whereas parents are strongly referenced in order to enable traversal.
  */
-public class GraphNode implements Component<Tsr> {
+public class GraphNode implements Component<Tsr>
+{
     private final static Function MUL = FunctionBuilder.build("(I[0]*I[1])", false);
     private final static Function ADD = FunctionBuilder.build("(I[0]+I[1])", false);
     private final static Function INV_X = FunctionBuilder.build("I[0]x>>I[1]x>>I[2]", false);
@@ -81,7 +89,11 @@ public class GraphNode implements Component<Tsr> {
 
 
     /**
-     *
+     * This method is called by the JITProp component.
+     * A pending should only ever be retrieved from a GraphNode once because
+     * afterwards the accumulated error is about to be backpropagated.
+     * Therefore this method nulls the reference when returning the PendingError instance.
+     * @return Returns an instance of the PendingError class containing a error accumulation.
      */
     public PendingError getAndRemovePendingError() {
         PendingError pe = _pending_error;
@@ -89,6 +101,9 @@ public class GraphNode implements Component<Tsr> {
         return pe;
     }
 
+    /**
+     * Used by the Just-In-Time backprop component.
+     */
     private PendingError _pending_error = null;
 
 
@@ -107,7 +122,7 @@ public class GraphNode implements Component<Tsr> {
 
 
     /**
-     * Recorded AbstractFunction.
+     * Recorded Function which produced this GrphNode.
      */
     public Function getFunction() {
         return _function;
@@ -116,7 +131,9 @@ public class GraphNode implements Component<Tsr> {
     private Function _function;
 
     /**
-     * Input tensors. ('Parents' of the tensor of this node)
+     * The GraphNodes of the input tensors. ('Parents' of the tensor of this node)
+     * These are always the GraphNodes of the tensors from which the tensor payload of this
+     * GraphNode has been formed.
      */
     public GraphNode[] getParents() {
         return _parents;
@@ -162,6 +179,11 @@ public class GraphNode implements Component<Tsr> {
         }
     }
 
+    /**
+     * This is the tensor owning this GraphNode component.
+     * It is referenced weakly because it might not be needed anymore (Not referenced inside AD-Agent for example)
+     * and can therefore be garbage collected.
+     */
     private WeakReference<Tsr> _payload;
 
     @Override
@@ -209,7 +231,7 @@ public class GraphNode implements Component<Tsr> {
     //==================================================================================================================
 
     /**
-     * @param newLock
+     * @param newLock The new lock of this GraphNode.
      */
     public synchronized void obtainLocking(GraphLock newLock) {
         _lock = newLock;
@@ -265,20 +287,18 @@ public class GraphNode implements Component<Tsr> {
      */
     public GraphNode(Function function, Object context, Supplier<Tsr> payloadSupplier) {
         if (function == null)
-            throw new IllegalArgumentException("[GraphNode](Constructor): Function must not be null!");
-        if (context instanceof GraphLock) {//Note function always null in this case:
+            throw new IllegalArgumentException("Function must not be null!");
+        if (context instanceof GraphLock) { // Note function always null in this case:
             _construct(payloadSupplier.get(), function, null, (GraphLock) context);
         } else if (context instanceof Tsr[]) {
             Tsr[] inputs = (Tsr[]) context;
             /* Applying JITProp and gradients */
             if (Neureka.instance().settings().autoDiff().applyGradientWhenTensorIsUsed()) {
                 for (Tsr t : inputs){
-                    t.forComponent(JITProp.class, (jit) -> ((JITProp) jit).execute());
+                    t.forComponent(JITProp.class, jit -> ((JITProp) jit).execute());
                     t.remove(JITProp.class);
                     t.applyGradient();
                 }
-
-
             }
             _construct(payloadSupplier.get(), function, inputs, ((GraphNode) inputs[0].find(GraphNode.class)).lock());
         }
@@ -301,10 +321,8 @@ public class GraphNode implements Component<Tsr> {
             for (int i = 0; i < inputs.length; i++) {
                 _parents[i] = (GraphNode) inputs[i].find(GraphNode.class);
                 if (_parents[i] == null) {
-                    throw new IllegalStateException("[GraphNode]:(constructor): Input tensors of a new graph-node must contain leave graph-nodes!");
-                } else {
-                    _parents[i]._attachChild(this);
-                }
+                    throw new IllegalStateException("Input tensors of a new graph-node must contain leave graph-nodes!");
+                } else _parents[i]._attachChild(this);
             }
         }
         if (_nid == -1) {
@@ -328,7 +346,7 @@ public class GraphNode implements Component<Tsr> {
                     if (src_node.usesAD()) {
                         if (
                                 src_node.size() == 0 && this.size() == 0
-                                    ||// Sources created by x-mul are reverse-mode cases!
+                                    ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
                                 !src_node.isLeave() && !src_node.function().type().allowsForward(inputs)
                         ) {
                             this.put(src_node, function.getADAgent(inputs, i, true));
@@ -357,10 +375,14 @@ public class GraphNode implements Component<Tsr> {
 
     /**
      * Evaluate auto-grad/auto-differentiation mode:
+     * A positive value means that the AD-procedure will be forward mode AD,
+     * whereas a negative value is backward mode AD.
+     * If the resulting mode equals 0 then this means that
+     * no auto differentiation is needed.
      *
-     * @param inputs
-     * @param function
-     * @return int
+     * @param inputs The tensors used as input for the function which created the payload tensor of this GraphNode.
+     * @param function The function which produced the payload tensor of this GraphNode.
+     * @return int The mode of this GraphNode!
      */
     private static int _modeOf(Tsr[] inputs, Function function) {
         int result_mode = 0;
@@ -369,7 +391,7 @@ public class GraphNode implements Component<Tsr> {
         for (int Ii = 0; Ii < inputs.length; Ii++) {
             GraphNode node = (GraphNode) inputs[Ii].find(GraphNode.class);
             if (node == null) {
-                throw new IllegalStateException("[GraphNode]:(constructor): Input tensors of a new graph-node must contain graph-nodes!");
+                throw new IllegalStateException("Input tensors of a new graph-node must contain graph-nodes!");
             }
             modes[Ii] = (inputs[Ii].rqsGradient()) ? 1 : node.mode();
             input_mode += (modes[Ii] != 0) ? 1 : 0;
@@ -423,11 +445,10 @@ public class GraphNode implements Component<Tsr> {
      *
      * @param error A tensor which traverses the computation graph according to the rules of reverse mode AutoDiff.
      */
-    private void _backward(Tsr error, Set<GraphNode> pendingNodes, boolean allowPendingError)//Map<GraphNode, PendingError> pendingBackProp, boolean allowPendingError)
+    private void _backward(Tsr error, Set<GraphNode> pendingNodes, boolean allowPendingError)
     {
         if (getPayload().isOutsourced()) getPayload().device().add(error);
         if (getPayload().rqsGradient()) getPayload().addToGradient(error);
-
         if (this.usesAD()) {
             /* Checking JIT-Prop conditions and create Pending error if possible */
             if (allowPendingError && !this.isLeave()) {//==> We are NOT inside a 'Just-In-Time-Backprop' process (new pending error can be created)
@@ -444,10 +465,10 @@ public class GraphNode implements Component<Tsr> {
                     */
                 }
             }
-            //Using forward-AutoDiff size for reverse-mode AutoDiff!
+            // Using forward-AutoDiff size for reverse-mode AutoDiff!
             if (this.usesForwardAD()) this.forEachForward(error, (t, d) -> t._backward(d, pendingNodes, true));
             else if (this.usesReverseAD()) this.forEachBackward(error, (t, e) -> t._backward(e, pendingNodes, true));
-            //Standard reverse mode-AutoDiff!
+            // Standard reverse mode-AutoDiff!
         }
     }
 
@@ -460,7 +481,7 @@ public class GraphNode implements Component<Tsr> {
      *
      * @param pendingBackProp
      */
-    private void _carryPendingBackPropToGradients(Set<GraphNode> pendingBackProp) {//Map<GraphNode, PendingError> pendingBackProp){
+    private void _carryPendingBackPropToGradients(Set<GraphNode> pendingBackProp) {
         _relies_on_JIPProp = true;
         this.forEachTarget( t -> t._carryPendingBackPropToGradients(pendingBackProp));
         if (this.isLeave() && getPayload().rqsGradient()) {
@@ -486,7 +507,7 @@ public class GraphNode implements Component<Tsr> {
      */
     public void backwardJIT(Tsr error) {
         _backwardJIT(error, this);
-        _deleteDerivativesRecursively();//Cleanup after back-propagation!
+        _deleteDerivativesRecursively();// Cleanup after back-propagation!
     }
 
     private void _backwardJIT(Tsr error, GraphNode source) {
@@ -504,13 +525,13 @@ public class GraphNode implements Component<Tsr> {
               be continued to be propagated.
               Otherwise it makes sense to accumulate errors further and wait for JIT-Prop traversing!
              */
-            return;//This node will continue its propagation via a JIT-Prop component later!
+            return;// This node will continue its propagation via a JIT-Prop component later!
         }
         if (this.usesAD()) {
-            //Using forward-AutoDiff size for reverse-mode AutoDiff!
+            // Using forward-AutoDiff size for reverse-mode AutoDiff!
             if (this.usesForwardAD()) this.forEachForward(error, (t, e) -> t._backwardJIT(e, source));
             else if (this.usesReverseAD()) this.forEachBackward(error, (t, e) -> t._backwardJIT(e, source));
-            //Standard reverse mode-AutoDiff!
+            // Standard reverse mode-AutoDiff!
         }
     }
 
@@ -524,7 +545,7 @@ public class GraphNode implements Component<Tsr> {
      * deviate from its default state, namely: true!
      */
     private void _deleteDerivativesRecursively() {
-        if (!Neureka.instance().settings().debug().keepDerivativeTargetPayloads()) {
+        if (!Neureka.instance().settings().debug().keepDerivativeTargetPayloads()) {//<=- This flag is almost always false. (Used for testing)
             if (!this.reliesOnJustInTimeProp()) _targets_derivatives = null;
             if (!this.isGraphLeave()) forEachTarget(GraphNode::_deleteDerivativesRecursively);
         }
@@ -540,7 +561,7 @@ public class GraphNode implements Component<Tsr> {
         if (_children != null) {
             for (WeakReference<GraphNode> weak : _children) {
                 if (weak != null && weak.get() != null) {
-                    GraphNode child = weak.get();
+                    GraphNode child = weak.get(); //TODO: make test which asserts that Detached Function does not trigger this!
                     if (child!=null && child.usesReverseAD()) count++;
                 }
             }
@@ -583,6 +604,8 @@ public class GraphNode implements Component<Tsr> {
     }
 
     /**
+     * This method returns what is needed for AD, usually a derivative of AD-Agent.
+     *
      * @param target
      * @return Tsr
      */
@@ -593,7 +616,7 @@ public class GraphNode implements Component<Tsr> {
 
     /**
      * This method checks if a given graph node is an AD target of this node.
-     * This would mean that this node contains an AD-action for the given one.
+     * This would mean that this node contains an AD-action for the given GraphNode (target).
      *
      * @param target
      * @return boolean
@@ -694,7 +717,6 @@ public class GraphNode implements Component<Tsr> {
         if (m.contains("v")) {
             return "(" + this.type() + "): [NID:" + Long.toHexString(nid()) + "]:<(  "
                     + "f" + ((_function == null) ? "(NONE)" : _function) + " => " + ((getPayload() == null) ? "NULL" : getPayload().toString("cs")) + "  )>";
-
         } else {
             return "[NID:" + Long.toHexString(nid()) + "]:( " + ((getPayload() == null) ? "NULL" : getPayload().toString("cs")) + " )";
         }
@@ -714,8 +736,7 @@ public class GraphNode implements Component<Tsr> {
     private String _toString(String deep, boolean isLast) {
         String delimiter = ((isLast) ? ("    ") : ("|   "));
         String arrow = ((char) 187) + "" + ((_parents != null) ? (String.valueOf(_parents.length)) : "0") + ((char) 187);
-        StringBuilder asString = new StringBuilder(deep +
-                arrow + toString("v"));
+        StringBuilder asString = new StringBuilder(deep + arrow + toString("v"));
         deep = deep.substring(0, deep.length() - 1);
         if (_parents != null) {
             asString.append("\n").append(deep).append((isLast) ? "   \\\n" : "|  \\\n");

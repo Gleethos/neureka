@@ -45,7 +45,7 @@ public class JITProp
 <span class="fc" id="L45">        _pending.forEach((n)-&gt;{</span>
 <span class="pc bpc" id="L46" title="1 of 4 branches missed.">            if(_finished==null || !_finished.contains(n)){</span>
 <span class="fc" id="L47">                PendingError pe = n.getAndRemovePendingError();</span>
-<span class="pc bpc" id="L48" title="1 of 2 branches missed.">                if(!pe.isFullyAccumulated()) throw new IllegalStateException(&quot;[JITProp][execute]: Pending error has not received expected accumulation.&quot;);</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">                if(!pe.isFullyAccumulated()) throw new IllegalStateException(&quot;Pending error has not received expected accumulation.&quot;);</span>
 <span class="fc" id="L49">                n.backwardJIT(pe.getAccumulatedError());//Continue backprop recursively!</span>
             }
 <span class="fc" id="L51">        });</span>
