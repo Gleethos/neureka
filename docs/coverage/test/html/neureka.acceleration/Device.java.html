@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Device.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.acceleration</a> &gt; <span class="el_source">Device.java</span></div><h1>Device.java</h1><pre class="source lang-java linenums">package neureka.acceleration;
 
+import neureka.Component;
 import neureka.Tsr;
 import neureka.acceleration.opencl.OpenCLPlatform;
 import neureka.calculus.environment.OperationType;
 
 import java.util.Collection;
 
-public interface Device
+public interface Device extends Component&lt;Tsr&gt;
 {
     static Device find(String name){
         //TODO: Device plugin finding!
-<span class="fc" id="L13">        Device[] result = {null};</span>
-<span class="fc" id="L14">        String search = name.toLowerCase();</span>
-<span class="fc" id="L15">        OpenCLPlatform.PLATFORMS().forEach( p -&gt;</span>
-<span class="fc" id="L16">            p.getDevices().forEach( d -&gt;{</span>
-<span class="fc" id="L17">                String str = (d.name()+&quot; | &quot;+d.vendor()+&quot; | &quot;+d.type()).toLowerCase();</span>
-<span class="fc bfc" id="L18" title="All 2 branches covered.">                if(str.contains(search)) result[0] = d;</span>
-<span class="fc" id="L19">            }));</span>
-<span class="fc" id="L20">        return result[0];</span>
+<span class="fc" id="L14">        Device[] result = {null};</span>
+<span class="fc" id="L15">        String search = name.toLowerCase();</span>
+<span class="fc" id="L16">        OpenCLPlatform.PLATFORMS().forEach( p -&gt;</span>
+<span class="fc" id="L17">            p.getDevices().forEach( d -&gt;{</span>
+<span class="fc" id="L18">                String str = (d.name()+&quot; | &quot;+d.vendor()+&quot; | &quot;+d.type()).toLowerCase();</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">                if(str.contains(search)) result[0] = d;</span>
+<span class="fc" id="L20">            }));</span>
+<span class="fc" id="L21">        return result[0];</span>
     }
 
     void dispose();

@@ -5,6 +5,7 @@ import static org.jocl.CL.*;
 import java.nio.*;
 import java.util.*;
 
+import neureka.Component;
 import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
@@ -24,10 +25,15 @@ public class OpenCLDevice extends AbstractDevice
         public cl_mem data;
     }
 
-    static class cl_tsr {
+    static class cl_tsr implements Component<Tsr> {
         public int fp = 1;
         public cl_config config = new cl_config();// Tensor configurations are always unique!
         public cl_value value;
+
+        @Override
+        public void update(Tsr oldOwner, Tsr newOwner) {
+            // Update not needed....
+        }
     }
 
     private final Set<Tsr> _tensors = Collections.newSetFromMap(new WeakHashMap<Tsr, Boolean>());

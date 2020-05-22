@@ -5,7 +5,6 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.acceleration.opencl.utility.WeakTensorReference;
 import neureka.calculus.Function;
-import neureka.calculus.factory.assembly.FunctionBuilder;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -26,9 +25,8 @@ import java.util.function.Supplier;
  */
 public class GraphNode implements Component<Tsr>
 {
-    private final static Function MUL = FunctionBuilder.build("(I[0]*I[1])", false);
-    private final static Function ADD = FunctionBuilder.build("(I[0]+I[1])", false);
-    private final static Function INV_X = FunctionBuilder.build("I[0]x>>I[1]x>>I[2]", false);
+    private final static Function MUL =  Function.Detached.MUL;
+    private final static Function ADD = Function.Detached.ADD;
 
     /**
      * This gradient node is involved in auto-differentiation.
@@ -71,7 +69,7 @@ public class GraphNode implements Component<Tsr>
 
     /**
      * This flag is used for a performance optimization feature namely 'Just In Time Propagation'.
-     * This feature accumulated errors and continues propagation
+     * This feature accumulates errors and continues propagation
      * as soon as they are needed. (At the end of 'backward()' or when the tensor is used again).
      * If the flag Neureka.instance().settings().AutoDiff()._retainPendingErrorForJITProp is set to true
      * then error values will accumulate whenever it makes sense.
@@ -293,11 +291,15 @@ public class GraphNode implements Component<Tsr>
         } else if (context instanceof Tsr[]) {
             Tsr[] inputs = (Tsr[]) context;
             /* Applying JITProp and gradients */
-            if (Neureka.instance().settings().autoDiff().applyGradientWhenTensorIsUsed()) {
+            Neureka.Settings.AutoDiff adSetting = Neureka.instance().settings().autoDiff();
+            if (adSetting.applyGradientWhenTensorIsUsed()) {
                 for (Tsr t : inputs){
-                    t.forComponent(JITProp.class, jit -> ((JITProp) jit).execute());
-                    t.remove(JITProp.class);
-                    t.applyGradient();
+                    if(!adSetting.applyGradientWhenRequested() || t.gradientApplyRqd()) {
+                        t.forComponent(JITProp.class, jit -> ((JITProp) jit).execute());
+                        t.remove(JITProp.class);
+                        t.applyGradient();
+                        t.setGradientApplyRqd(false);
+                    }
                 }
             }
             _construct(payloadSupplier.get(), function, inputs, ((GraphNode) inputs[0].find(GraphNode.class)).lock());
@@ -408,6 +410,22 @@ public class GraphNode implements Component<Tsr>
     }
 
     /**
+     * This short method simply migrates the error to the device of
+     * the payload tensor and possibly also applies the error to
+     * the payload if its 'requires gradient' flag is set to true.
+     *
+     * @param e This is an error value passed to this method ba a backward traversal.
+     */
+    private void _migrateAndOrApplyError(Tsr e, Consumer<Tsr> also){
+        Tsr payload = getPayload();
+        if (payload == null) return; // Garbage collected!
+        if (payload.isOutsourced()) payload.device().add(e);
+        if (payload.rqsGradient()) payload.addToGradient(e);
+        if (also!=null) also.accept(payload);
+    }
+
+
+    /**
      * This method is the entry-point for the back-propagation process.
      * It sets up a key/value map which stores nodes and their intermediate error accumulations.
      * Accumulations occurs inside the private '_backward' method which traverses the computation graph
@@ -447,8 +465,7 @@ public class GraphNode implements Component<Tsr>
      */
     private void _backward(Tsr error, Set<GraphNode> pendingNodes, boolean allowPendingError)
     {
-        if (getPayload().isOutsourced()) getPayload().device().add(error);
-        if (getPayload().rqsGradient()) getPayload().addToGradient(error);
+        _migrateAndOrApplyError(error, null);
         if (this.usesAD()) {
             /* Checking JIT-Prop conditions and create Pending error if possible */
             if (allowPendingError && !this.isLeave()) {//==> We are NOT inside a 'Just-In-Time-Backprop' process (new pending error can be created)
@@ -482,9 +499,9 @@ public class GraphNode implements Component<Tsr>
      * @param pendingBackProp
      */
     private void _carryPendingBackPropToGradients(Set<GraphNode> pendingBackProp) {
-        _relies_on_JIPProp = true;
+        _relies_on_JIPProp = true; //:=> Shall be traversed at a later point in time...
         this.forEachTarget( t -> t._carryPendingBackPropToGradients(pendingBackProp));
-        if (this.isLeave() && getPayload().rqsGradient()) {
+        if ( this.isLeave() && getPayload().rqsGradient() ) {
             JITProp jit = (JITProp) getPayload().find(JITProp.class);
             if (jit == null) jit = new JITProp(pendingBackProp);
             else jit.addPending(pendingBackProp);
@@ -511,10 +528,14 @@ public class GraphNode implements Component<Tsr>
     }
 
     private void _backwardJIT(Tsr error, GraphNode source) {
-        if (getPayload().isOutsourced()) getPayload().device().add(error);
-        if (getPayload().rqsGradient()) getPayload().addToGradient(error);
-        JITProp jit = (JITProp) getPayload().find(JITProp.class);//Get JIT-Prop node.
-        if (jit != null) jit.noteFinished(source);//note pending errors and store them as 'done'
+        _relies_on_JIPProp = false; // JITProp is currently being handled in this method. Afterwards it is not relying on it anymore!
+        _migrateAndOrApplyError(error, payload->{
+            JITProp jit = (JITProp) payload.find(JITProp.class);//Get JIT-Prop node.
+            if (jit != null) {
+                jit.noteFinished(source);//note pending errors and store them as 'done'
+                if (jit.isDone()) payload.remove(JITProp.class);
+            }
+        });
         if (_pending_error != null && source != this) {
             _pending_error.accumulate(error);
             /*

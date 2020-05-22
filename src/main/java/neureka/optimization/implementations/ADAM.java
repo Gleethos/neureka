@@ -40,4 +40,8 @@ public class ADAM implements Optimizer {
         _optimize(t);
     }
 
+    @Override
+    public void update(Tsr oldOwner, Tsr newOwner) {
+        
+    }
 }

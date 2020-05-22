@@ -1,7 +1,7 @@
 import neureka.Tsr
 import org.junit.Test
 
-class ExceptionTesting
+class ExceptionTests
 {
     @Test
     void setting_empty_subset_raises_proper_exception(){

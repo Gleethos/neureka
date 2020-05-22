@@ -207,10 +207,19 @@ public class Neureka
 
             /**
              * Gradients will automatically be applied to tensors as soon as
-             * they are being used for calculation.
+             * they are being used for calculation (GraphNode instantiation).
              * This feature works well with JIT-Propagation.
              */
             private boolean _applyGradientWhenTensorIsUsed;
+
+            /**
+             * Gradients will only be applied if requested.
+             * Usually this happens immediately, however
+             * if the flag 'applyGradientWhenTensorIsUsed' is set
+             * to true, then the tensor will only be updated by its
+             * gradient if requested AND tensor is used! (GraphNode instantiation).
+             */
+            private boolean _applyGradientWhenRequested;
 
             public boolean retainPendingErrorForJITProp(){
                 return _retainPendingErrorForJITProp;
@@ -228,6 +237,15 @@ public class Neureka
             public void setApplyGradientWhenTensorIsUsed(boolean apply){
                 if(_isLocked || !_currentThreadIsAuthorized()) return;
                 _applyGradientWhenTensorIsUsed = apply;
+            }
+
+            public boolean applyGradientWhenRequested(){
+                return _applyGradientWhenRequested;
+            }
+
+            public void setApplyGradientWhenRequested(boolean apply) {
+                if(_isLocked || !_currentThreadIsAuthorized()) return;
+                _applyGradientWhenRequested = apply;
             }
 
         }
@@ -302,7 +320,6 @@ public class Neureka
                 return null;
             }
         }
-
     }
 
 

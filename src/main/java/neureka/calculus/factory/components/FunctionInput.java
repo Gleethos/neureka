@@ -1,6 +1,7 @@
 package neureka.calculus.factory.components;
 
 
+import neureka.Component;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
@@ -70,7 +71,7 @@ public class FunctionInput implements Function, GradientProvider
     private Tsr _extract(Tsr t)
     {
         if (this.providesGradient() && t.rqsGradient()) {
-            Tsr gradient = (Tsr)t.find(Tsr.class);
+            Tsr gradient = t.find(Tsr.class);
             if (t.rqsGradient()) {
                 if (gradient==null) {
                     gradient = new Tsr(t.shape(), 0);
@@ -181,6 +182,5 @@ public class FunctionInput implements Function, GradientProvider
     public ADAgent getADAgent(Tsr[] inputs, int i, boolean forward){
         return null;
     }
-
 
 }

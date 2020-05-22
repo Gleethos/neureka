@@ -1,12 +1,13 @@
 package neureka.acceleration;
 
+import neureka.Component;
 import neureka.Tsr;
 import neureka.acceleration.opencl.OpenCLPlatform;
 import neureka.calculus.environment.OperationType;
 
 import java.util.Collection;
 
-public interface Device
+public interface Device extends Component<Tsr>
 {
     static Device find(String name){
         //TODO: Device plugin finding!

@@ -9,7 +9,7 @@ import util.DummyDevice
 import util.NTester
 import util.NTester_Tensor
 
-class IndexAliasTests
+class SlicedTensorTests
 {
 
     @Test

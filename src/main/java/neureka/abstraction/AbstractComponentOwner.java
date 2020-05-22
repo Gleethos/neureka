@@ -1,5 +1,7 @@
 package neureka.abstraction;
 
+import neureka.Component;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,18 +21,16 @@ public abstract class AbstractComponentOwner<InstanceType> {
     /**
      *  (Tensor) components
      */
-    protected List<Object> _components = Collections.synchronizedList(new ArrayList<Object>());//new ArrayList<Object>();
+    protected List<Component<InstanceType>> _components = Collections.synchronizedList(new ArrayList<>());
 
     /**
      * @param componentClass The type/class of the component which shall be found and returned.
      * @return The correct component or null if nothing has been found.
      */
-    public Object find(Class componentClass) {
+    public <T> T find(Class<T> componentClass) {
         if (_components != null) {
-            for (Object component : _components) {
-                if (componentClass.isInstance(component)) {
-                    return component;
-                }
+            for (Component<InstanceType> component : _components) {
+                if (componentClass.isInstance(component)) return (T)component;
             }
         }
         return null;
@@ -67,11 +67,11 @@ public abstract class AbstractComponentOwner<InstanceType> {
      * @param newComponent The new component which should be added to the components list.
      * @return This very class.
      */
-    public InstanceType add(Object newComponent) {
+    public <T extends Component<InstanceType>> InstanceType add(T newComponent) {
         if (newComponent == null) return (InstanceType)this;
-        Object oldCompartment = null;
+        T oldCompartment = null;
         if (_components != null) {
-            oldCompartment = find(newComponent.getClass());
+            oldCompartment = (T) find(newComponent.getClass());
             if (oldCompartment != null) {
                 _components.remove(oldCompartment);
                 //_components.trimToSize();
@@ -87,7 +87,7 @@ public abstract class AbstractComponentOwner<InstanceType> {
      * @param newComponent The component which should be added to the components list.
      * @return The same component or null if it has been rejected.
      */
-    protected abstract Object _addOrReject(Object newComponent);
+    protected abstract <T extends Component<InstanceType>> T _addOrReject(T newComponent);
 
     /**
      *
@@ -95,8 +95,8 @@ public abstract class AbstractComponentOwner<InstanceType> {
      * @param action An action applied on the requested component if found.
      * @return True if a component could be found, false otherwise.
      */
-    public boolean forComponent(Class cc, Consumer<Object> action) {
-        Object component = this.find(cc);
+    public <T extends Component<InstanceType>> boolean forComponent(Class<T> cc, Consumer<T> action) {
+        T component = this.find(cc);
         if (component!=null) {
             action.accept(component);
             return true;

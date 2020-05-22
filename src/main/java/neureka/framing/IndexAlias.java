@@ -1,10 +1,11 @@
 package neureka.framing;
 
+import neureka.Component;
 import neureka.Tsr;
 import java.util.*;
 import java.util.function.Function;
 
-public class IndexAlias
+public class IndexAlias implements Component<Tsr>
 {
 
     private Map<Object, Object> _mapping;
@@ -188,6 +189,8 @@ public class IndexAlias
     }
 
 
-
-
+    @Override
+    public void update(Tsr oldOwner, Tsr newOwner) {
+        
+    }
 }

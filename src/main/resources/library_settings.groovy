@@ -7,6 +7,7 @@ Neureka.instance {
         autoDiff {
             delegate.retainPendingErrorForJITProp = true
             delegate.applyGradientWhenTensorIsUsed = true
+            delegate.applyGradientWhenRequested = true
         }
 
         indexing {
@@ -23,6 +24,6 @@ Neureka.instance {
         }
     }
 
-    return "0.1.0"
+    return "0.1.1"
 
 }

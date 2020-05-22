@@ -49,6 +49,8 @@ public interface Function
         public static Function POW_ASSIGN = create("I[0]<-(I[0]^I[1])", false);
         public static Function MUL = create("I[0]*I[1]", false);
         public static Function MUL_ASSIGN = create("I[0]<-(I[0]*I[1])", false);
+        public static Function ADD = create("I[0]+I[1]", false);
+        public static Function ADD_ASSIGN = create("I[0]<-(I[0]+I[1])", false);
         public static Function MOD = create("(I[0]%I[1])", false);
         public static Function MOD_ASSIGN = create("I[0]<-(I[0]%I[1])", false);
         public static Function NEG = create("(-1*I[0])", false);

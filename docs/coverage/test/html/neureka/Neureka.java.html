@@ -207,76 +207,94 @@ public class Neureka
 
             /**
              * Gradients will automatically be applied to tensors as soon as
-             * they are being used for calculation.
+             * they are being used for calculation (GraphNode instantiation).
              * This feature works well with JIT-Propagation.
              */
             private boolean _applyGradientWhenTensorIsUsed;
 
+            /**
+             * Gradients will only be applied if requested.
+             * Usually this happens immediately, however
+             * if the flag 'applyGradientWhenTensorIsUsed' is set
+             * to true, then the tensor will only be updated by its
+             * gradient if requested AND tensor is used! (GraphNode instantiation).
+             */
+            private boolean _applyGradientWhenRequested;
+
             public boolean retainPendingErrorForJITProp(){
-<span class="fc" id="L216">                return _retainPendingErrorForJITProp;</span>
+<span class="fc" id="L225">                return _retainPendingErrorForJITProp;</span>
             }
 
             public void setRetainPendingErrorForJITProp(boolean retain){
-<span class="pc bpc" id="L220" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L221">                _retainPendingErrorForJITProp = retain;</span>
-<span class="fc" id="L222">            }</span>
+<span class="pc bpc" id="L229" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L230">                _retainPendingErrorForJITProp = retain;</span>
+<span class="fc" id="L231">            }</span>
 
             public boolean applyGradientWhenTensorIsUsed(){
-<span class="fc" id="L225">                return _applyGradientWhenTensorIsUsed;</span>
+<span class="fc" id="L234">                return _applyGradientWhenTensorIsUsed;</span>
             }
 
             public void setApplyGradientWhenTensorIsUsed(boolean apply){
-<span class="pc bpc" id="L229" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L230">                _applyGradientWhenTensorIsUsed = apply;</span>
-<span class="fc" id="L231">            }</span>
+<span class="pc bpc" id="L238" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L239">                _applyGradientWhenTensorIsUsed = apply;</span>
+<span class="fc" id="L240">            }</span>
+
+            public boolean applyGradientWhenRequested(){
+<span class="fc" id="L243">                return _applyGradientWhenRequested;</span>
+            }
+
+            public void setApplyGradientWhenRequested(boolean apply) {
+<span class="pc bpc" id="L247" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L248">                _applyGradientWhenRequested = apply;</span>
+<span class="fc" id="L249">            }</span>
 
         }
 
-<span class="fc" id="L235">        public class Indexing</span>
+<span class="fc" id="L253">        public class Indexing</span>
         {
             private boolean _legacyIndexing;
 
             private boolean _thoroughIndexing;
 
             public boolean legacy(){
-<span class="fc" id="L242">                return _legacyIndexing;</span>
+<span class="fc" id="L260">                return _legacyIndexing;</span>
             }
 
             public void setLegacy(boolean enabled) {
-<span class="pc bpc" id="L246" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L247">                _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (in OpenCLPlatform)</span>
-<span class="fc" id="L248">            }</span>
+<span class="pc bpc" id="L264" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L265">                _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (in OpenCLPlatform)</span>
+<span class="fc" id="L266">            }</span>
 
             public boolean thorough(){
-<span class="nc" id="L251">                return _thoroughIndexing;</span>
+<span class="nc" id="L269">                return _thoroughIndexing;</span>
             }
 
             public void setThorough(boolean thorough){
-<span class="pc bpc" id="L255" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L256">                _thoroughIndexing = thorough;</span>
-<span class="fc" id="L257">            }</span>
+<span class="pc bpc" id="L273" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L274">                _thoroughIndexing = thorough;</span>
+<span class="fc" id="L275">            }</span>
 
         }
 
-<span class="fc" id="L261">        public class View</span>
+<span class="fc" id="L279">        public class View</span>
         {
 
             private boolean _legacyView;
 
             public boolean legacy(){
-<span class="fc" id="L267">                return _legacyView;</span>
+<span class="fc" id="L285">                return _legacyView;</span>
             }
 
             public void setLegacy(boolean enabled){
-<span class="pc bpc" id="L271" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L272">                _legacyView = enabled;</span>
-<span class="fc" id="L273">            }</span>
+<span class="pc bpc" id="L289" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L290">                _legacyView = enabled;</span>
+<span class="fc" id="L291">            }</span>
 
         }
 
     }
 
-<span class="fc" id="L279">    public static class Utility {</span>
+<span class="fc" id="L297">    public static class Utility {</span>
         /**
          * Helper method which reads the file with the given name and returns
          * the contents of this file as a String. Will exit the application
@@ -286,23 +304,22 @@ public class Neureka
          * @return The contents of the file
          */
         public String readResource(String path){
-<span class="fc" id="L289">            InputStream stream = getClass().getClassLoader().getResourceAsStream(path);</span>
+<span class="fc" id="L307">            InputStream stream = getClass().getClassLoader().getResourceAsStream(path);</span>
             try {
-<span class="fc" id="L291">                BufferedReader br = new BufferedReader(new InputStreamReader(stream));</span>
-<span class="fc" id="L292">                StringBuffer sb = new StringBuffer();</span>
-<span class="fc" id="L293">                String line = &quot;&quot;;</span>
-<span class="fc bfc" id="L294" title="All 2 branches covered.">                while (line!=null) {</span>
-<span class="fc" id="L295">                    line = br.readLine();</span>
-<span class="fc bfc" id="L296" title="All 2 branches covered.">                    if (line != null) sb.append(line).append(&quot;\n&quot;);</span>
+<span class="fc" id="L309">                BufferedReader br = new BufferedReader(new InputStreamReader(stream));</span>
+<span class="fc" id="L310">                StringBuffer sb = new StringBuffer();</span>
+<span class="fc" id="L311">                String line = &quot;&quot;;</span>
+<span class="fc bfc" id="L312" title="All 2 branches covered.">                while (line!=null) {</span>
+<span class="fc" id="L313">                    line = br.readLine();</span>
+<span class="fc bfc" id="L314" title="All 2 branches covered.">                    if (line != null) sb.append(line).append(&quot;\n&quot;);</span>
                 }
-<span class="fc" id="L298">                return sb.toString();</span>
-<span class="nc" id="L299">            } catch (IOException e) {</span>
-<span class="nc" id="L300">                e.printStackTrace();</span>
-<span class="nc" id="L301">                System.exit(1);</span>
-<span class="nc" id="L302">                return null;</span>
+<span class="fc" id="L316">                return sb.toString();</span>
+<span class="nc" id="L317">            } catch (IOException e) {</span>
+<span class="nc" id="L318">                e.printStackTrace();</span>
+<span class="nc" id="L319">                System.exit(1);</span>
+<span class="nc" id="L320">                return null;</span>
             }
         }
-
     }
 
 

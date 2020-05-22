@@ -5,7 +5,7 @@ import neureka.optimization.Optimizer
 import neureka.optimization.implementations.ADAM
 import org.junit.Test
 
-class TestOptimizer {
+class OptimizerTests {
 
 
     @Test

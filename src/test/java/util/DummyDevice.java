@@ -77,4 +77,9 @@ public class DummyDevice implements Device
     public Collection<Tsr> tensors() {
         return null;
     }
+
+    @Override
+    public void update(Tsr oldOwner, Tsr newOwner) {
+
+    }
 }
