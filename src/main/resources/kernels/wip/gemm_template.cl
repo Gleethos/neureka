@@ -1,12 +1,11 @@
 
-
     
-    // Use 2D register blocking (further increase in work per thread)
-    __kernel void gemm_template
+
+    __kernel void gemm_template // ~-=>  2D register blocking ! :
     (
-        __global float* drain     , __global int *drn_conf,
-        const __global float* src1, __global int *src1_conf,
-        const __global float* src2, __global int *src2_conf,
+              __global float* drain, __global int *drn_conf,
+        const __global float* src1,  __global int *src1_conf,
+        const __global float* src2,  __global int *src2_conf,
 
         //int rank, == 2
         const int d,
@@ -17,9 +16,11 @@
         const uint max_wpt_row = 8, //wpt = work per thread
         const uint max_wpt_col = 8
     ) {
-
         const uint max_rts_row = (max_ts_row/max_wpt_row); //rts = reduced tile size
         const uint max_rts_col = (max_ts_col/max_wpt_col)
+
+        // lpt := loads per thread:
+        int max_lpt_src1 = ((max_ts_com*max_wpt_row*max_wpt_col)/(max_ts_col));
 
         // [m, n] = [m, k] x [k, n]
         int prv_drn_cfg[ 2*5]; _cfg_of_cfg(drn_conf, prv_drn_cfg, rank);
@@ -27,19 +28,19 @@
         int prv_src2_cfg[2*5]; _cfg_of_cfg(src2_conf, prv_src2_cfg, rank);
 
         const int max_row= prv_drn_cfg[0];
-        const int max_col= prv_drn_cfg[1]; //== prv_src1_cfg[0]
-        const int max_com = prv_src1_cfg[1]; //== prv_src2_cfg[0]
+        const int max_col= prv_drn_cfg[1];    //:= prv_src1_cfg[0]
+        const int max_com = prv_src1_cfg[1];  //:= prv_src2_cfg[0]
 
         // Thread identifiers
-        const int tid_row = get_local_id(0);        // Local row ID (max: max_ts_row/max_wpt_row)
-        const int tid_col = get_local_id(1);        // Local col ID (max: max_ts_col/max_wpt_col)
-        const int offset_max_row= max_ts_row*get_group_id(0); // Work-group offset
-        const int offset_max_col= max_ts_col*get_group_id(1); // Work-group offset
+        const int tid_row = get_local_id(0);        //:= Local row ID (max: max_ts_row/max_wpt_row)
+        const int tid_col = get_local_id(1);        //:= Local col ID (max: max_ts_col/max_wpt_col)
+        const int offset_max_row = max_ts_row*get_group_id(0); // Work-group offset
+        const int offset_max_col = max_ts_col*get_group_id(1); // Work-group offset
      
         // Local memory to fit a tile of src1 and src2
         __local float loc_tile_src1[max_ts_com][max_ts_row];
         __local float loc_tile_src2[max_ts_col][max_ts_com+2];
-     
+
         // Allocate register space
         float reg_tile_src1;
         float reg_tile_src2[max_wpt_col];
@@ -57,7 +58,7 @@
         for (int t=0; t<numTiles; t++) {
      
             // Load one tile of src1 and src2 into local memory
-            for (int la=0; la<LPTA; la++) {
+            for (int la=0; la<max_lpt_src1; la++) {
                 int tid = tid_col*max_rts_row + tid_row;
                 int id = la*max_rts_col*max_rts_row + tid;
                 int row = id % max_ts_row;
