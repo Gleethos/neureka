@@ -12,19 +12,19 @@ class ShallowTensorComponentTests {
         Tsr t = new Tsr([2, 3], [-4, 7, -1, 2, 3, 8])
 
         Function f = Function.create("relu(I[0])")
-        Tsr o = f.activate(t)
+        Tsr o = f(t)
         assert o.toString().contains("(2x3):[-0.04, 7.0, -0.01, 2.0, 3.0, 8.0]")
         o = f.derive(new Tsr[]{t}, 0)
         assert o.toString().contains("(2x3):[0.01, 1.0, 0.01, 1.0, 1.0, 1.0]")
 
         f = Function.create("quad(I[0])")
-        o = f.activate(t)
+        o = f(t)
         assert o.toString().contains("(2x3):[16.0, 49.0, 1.0, 4.0, 9.0, 64.0]")
         o = f.derive(new Tsr[]{t}, 0)
         assert o.toString().contains("(2x3):[-8.0, 14.0, -2.0, 4.0, 6.0, 16.0]")
 
         f = Function.create("abs(I[0])")
-        o = f.activate(t)
+        o = f(t)
         assert o.toString().contains("(2x3):[4.0, 7.0, 1.0, 2.0, 3.0, 8.0]")
         o = f.derive(new Tsr[]{t}, 0)
         assert o.toString().contains("(2x3):[-1.0, 1.0, -1.0, 1.0, 1.0, 1.0]")

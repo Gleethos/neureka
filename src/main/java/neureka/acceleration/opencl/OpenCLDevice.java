@@ -106,7 +106,7 @@ public class OpenCLDevice extends AbstractDevice
     public Device get(Tsr tensor) {
         double[] value = value64Of(tensor);
         rmv(tensor);
-        tensor.forComponent(Tsr.class, gradient -> this.get((Tsr) gradient));
+        tensor.forComponent(Tsr.class, gradient -> this.get(gradient));
         tensor.setValue(value);
         return this;
     }
@@ -120,7 +120,7 @@ public class OpenCLDevice extends AbstractDevice
     @Override
     public Device add(Tsr tensor, Tsr parent) {
         if (!parent.isOutsourced()) throw new IllegalStateException("Data parent is not outsourced!");
-        _add(tensor, (cl_tsr) parent.find(cl_tsr.class));
+        _add(tensor, parent.find(cl_tsr.class));
         _tensors.add(tensor);
         tensor.add(this);
         return this;
@@ -137,7 +137,7 @@ public class OpenCLDevice extends AbstractDevice
             newClt.value = new cl_value();
             _store(tensor, newClt, 1);
             if (tensor.rqsGradient() && tensor.has(Tsr.class)) {
-                this.add(((Tsr) tensor.find(Tsr.class)));
+                this.add(tensor.find(Tsr.class));
             }
             {
                 final cl_mem clValMem = newClt.value.data;
@@ -202,7 +202,7 @@ public class OpenCLDevice extends AbstractDevice
 
     @Override
     public boolean has(Tsr tensor) {
-        return _tensors.contains(tensor);//_mapping.containsKey(tensor);
+        return _tensors.contains(tensor);
     }
 
     private void _store(Tsr tensor, cl_tsr newClTsr, int fp) {
@@ -249,7 +249,7 @@ public class OpenCLDevice extends AbstractDevice
 
     @Override
     public Device rmv(Tsr tensor) {
-        cl_tsr clt = ((cl_tsr)tensor.find(cl_tsr.class));
+        cl_tsr clt = tensor.find(cl_tsr.class);
         if (clt == null) return this;
         _tensors.remove(tensor);
         tensor.setIsOutsourced(false);
@@ -442,11 +442,11 @@ public class OpenCLDevice extends AbstractDevice
             //TODO: Function.TYPES.rqsAdditionalArgument(f_id)
             cl_mem src2 = ((cl_tsr)tsrs[offset + 2].find(cl_tsr.class)).value.data;
             clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
-            clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(((cl_tsr)tsrs[offset].find(cl_tsr.class)).config.data));
+            clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to((tsrs[offset].find(cl_tsr.class)).config.data));
             clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=>src1
-            clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(((cl_tsr)tsrs[offset + 1].find(cl_tsr.class)).config.data));
+            clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to((tsrs[offset + 1].find(cl_tsr.class)).config.data));
             clSetKernelArg(kernel, 4, Sizeof.cl_mem, Pointer.to(src2));//=>src2
-            clSetKernelArg(kernel, 5, Sizeof.cl_mem, Pointer.to(((cl_tsr)tsrs[offset + 2].find(cl_tsr.class)).config.data));
+            clSetKernelArg(kernel, 5, Sizeof.cl_mem, Pointer.to((tsrs[offset + 2].find(cl_tsr.class)).config.data));
             clSetKernelArg(kernel, 6, Sizeof.cl_int, Pointer.to(new int[]{tsrs[0].rank()}));
             clSetKernelArg(kernel, 7, Sizeof.cl_int, Pointer.to(new int[]{d}));
         }

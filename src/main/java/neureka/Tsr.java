@@ -65,14 +65,14 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
                 !forComponent(
                     Device.class,
                     d ->{
-                        if (((Device)d).has(this)) ((Device)d).get(this);
+                        if (d.has(this)) d.get(this);
                         this.remove(Device.class);
                         forComponent(
                             Tsr.class,
                             gradient ->
-                            ((Tsr) gradient).forComponent(Device.class, gd ->{
-                                if (((Device)gd).has((Tsr)gradient)) ((Device)gd).get((Tsr)gradient);
-                                ((Tsr) gradient).remove(Device.class);
+                            gradient.forComponent(Device.class, gd ->{
+                                if (gd.has(gradient)) gd.get(gradient);
+                                gradient.remove(Device.class);
                             })
                         );
                     }
@@ -243,14 +243,12 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         _translation = tensor._translation;
         _spread = tensor._spread;
         _offset = tensor._offset;
-        _components = Collections.synchronizedList(new ArrayList<>());//tensor._components
+        _components = Collections.synchronizedList(new ArrayList<>());
         _flags = tensor._flags;
         if (tensor._components!=null) {//Inform components about their new owner:
             _components.addAll(tensor._components);
-            List<Object> snapshot = new ArrayList<>(tensor._components);
-            for (Object o : snapshot) {
-                if (o instanceof Component) ((Component<Tsr>) o).update(tensor, this);
-            }
+            List<Component<Tsr>> snapshot = new ArrayList<>(tensor._components);
+            for (Component<Tsr> o : snapshot) o.update(tensor, this);
         }
         tensor._value = null;
         tensor._shape = null;
@@ -264,9 +262,9 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     }
 
     public Tsr delete() {
-        forComponent(Device.class, d ->((Device)d).rmv(this));
-        forComponent(GraphNode.class, n ->{
-            if (((GraphNode)n).isUsedAsDerivative()) {
+        forComponent(Device.class, d -> d.rmv(this));
+        forComponent(GraphNode.class, n -> {
+            if (n.isUsedAsDerivative()) {
                 throw new IllegalStateException("Trying to delete a tensor which is part of a function graph and used as derivative!");
             }
         });
@@ -275,7 +273,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         _shape = null;
         _translation = null;
         _idxmap = null;
-        forComponent(Tsr.class, g ->((Tsr)g).delete());
+        forComponent(Tsr.class, g -> g.delete());
         _components = null;
         return this;
     }
@@ -563,7 +561,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
      * @return The tensor on which this method was called.
      */
     public Tsr backward(Tsr error) {
-        if (!forComponent(GraphNode.class, node->((GraphNode)node).backward(error)) && this.rqsGradient()) {
+        if (!forComponent(GraphNode.class, node -> node.backward(error)) && this.rqsGradient()) {
             addToGradient(error);
         }
         return this;
@@ -580,11 +578,11 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     }
 
     public void applyGradient() {
-        forComponent(JITProp.class, jit->((JITProp)jit).execute());
-        forComponent(Tsr.class, g->{
-            forComponent(Optimizer.class, o->o.optimize(this));
+        forComponent(JITProp.class, jit -> jit.execute());
+        forComponent(Tsr.class, g -> {
+            forComponent(Optimizer.class, o -> o.optimize(this));
             remove(Tsr.class);
-            Function.Detached.PLUS_ASSIGN.call(new Tsr[]{this, (Tsr)g});
+            Function.Detached.PLUS_ASSIGN.call(new Tsr[]{this, g});
         });
     }
 
@@ -665,7 +663,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     }
     public boolean isCase(Tsr t){
         boolean[] found = {false};
-        this.forComponent(Relation.class, r -> ((Relation)r).foreachChild( c -> {
+        this.forComponent(Relation.class, r -> r.foreachChild( c -> {
                 if (c.equals(t)) found[0]=true;
             }));
         return found[0];
@@ -1032,7 +1030,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     }
 
     public double[] gradient64() {
-        Tsr gradient = (Tsr)this.find(Tsr.class);
+        Tsr gradient = this.find(Tsr.class);
         if(gradient==null) return new double[0];
         return (this.is32())? DataHelper.floatToDouble(gradient.value32()):gradient.value64();
     }
@@ -1047,7 +1045,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         if(!forComponent(Tsr.class,  g ->
             this.add(Function.Detached.PLUS_ASSIGN.call(new Tsr[]{g, error}))
         )){
-            this.add(error).forComponent(Device.class, d ->((Device)d).add(error));
+            this.add(error).forComponent(Device.class, d -> d.add(error));
         }
         return this;
     }
@@ -1057,7 +1055,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
             Device device = this.find(Device.class);
             if (device!=null) device.get(this);
             _value = DataHelper.doubleToFloat((double[])_value);
-            forComponent(Tsr.class, g ->((Tsr)g).to32());
+            forComponent(Tsr.class, g -> g.to32());
             if (device!=null) device.add(this);
         }
         return this;
@@ -1068,7 +1066,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
             Device device = this.find(Device.class);
             if (device!=null) device.get(this);
             _value = DataHelper.floatToDouble((float[])_value);
-            forComponent(Tsr.class, g ->((Tsr)g).to64());
+            forComponent(Tsr.class, g -> g.to64());
             if (device!=null) device.add(this);
         }
         return this;

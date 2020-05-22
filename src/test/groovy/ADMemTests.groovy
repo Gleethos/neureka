@@ -58,9 +58,12 @@ class ADMemTests {
 
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = a * 3 / 5
-        Tsr c = b ^ new Tsr(3)
-        Tsr d = c / 100
-        GraphNode n = d.find(GraphNode.class)
+        Tsr c = new Tsr(3)
+        Tsr d = b ^ c
+        Tsr e = d * c
+        GraphNode n = e.find(GraphNode.class)
+
+        System.gc()
 
         assert n.parents[0].isCachable()
         assert !n.parents[0].isLeave()
@@ -77,11 +80,12 @@ class ADMemTests {
         a = null
         b = null
         c = null
+        d = null
+        e = null
+        System.gc()
+        Thread.sleep(100)
         System.gc()
         Thread.sleep(200)
-        System.gc()
-        Thread.sleep(200)
-        System.gc()
 
         for (int i = 0; i < n.parents.length; i++) {
             assert n.parents[i].payload == null
