@@ -239,11 +239,6 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     protected Tsr _become(Tsr tensor) {
         if (tensor==null) return this;
         _value = tensor._value;
-        //_conf.shape() = tensor._conf.shape();
-        //_conf.idxmap() = tensor._conf.idxmap();
-        //_conf.translation() = tensor._conf.translation();
-        //_conf.spread() = tensor._conf.spread();
-        //_conf.offset() = tensor._conf.offset();
         _conf = tensor._conf;
         _components = Collections.synchronizedList(new ArrayList<>());
         _flags = tensor._flags;
@@ -254,11 +249,6 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         }
         tensor._value = null;
         tensor._conf = null;
-        //tensor._conf.shape() = null;
-        //tensor._conf.idxmap() = null;
-        //tensor._conf.translation() = null;
-        //tensor._conf.spread() = null;
-        //tensor._conf.offset() = null;
         tensor._components = null;
         tensor._flags = -1;
         return this;
@@ -273,9 +263,6 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         });
         _flags = -1;
         _value = null;
-        //_conf.shape() = null;
-        //_conf.translation() = null;
-        //_conf.idxmap() = null;
         _conf = null;
         forComponent(Tsr.class, g -> g.delete());
         _components = null;
