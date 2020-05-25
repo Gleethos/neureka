@@ -106,7 +106,7 @@ public class OpenCLDevice extends AbstractDevice
     public Device get(Tsr tensor) {
 <span class="fc" id="L107">        double[] value = value64Of(tensor);</span>
 <span class="fc" id="L108">        rmv(tensor);</span>
-<span class="pc" id="L109">        tensor.forComponent(Tsr.class, gradient -&gt; this.get((Tsr) gradient));</span>
+<span class="fc" id="L109">        tensor.forComponent(Tsr.class, this::get);</span>
 <span class="fc" id="L110">        tensor.setValue(value);</span>
 <span class="fc" id="L111">        return this;</span>
     }
@@ -120,7 +120,7 @@ public class OpenCLDevice extends AbstractDevice
     @Override
     public Device add(Tsr tensor, Tsr parent) {
 <span class="pc bpc" id="L122" title="1 of 2 branches missed.">        if (!parent.isOutsourced()) throw new IllegalStateException(&quot;Data parent is not outsourced!&quot;);</span>
-<span class="fc" id="L123">        _add(tensor, (cl_tsr) parent.find(cl_tsr.class));</span>
+<span class="fc" id="L123">        _add(tensor, parent.find(cl_tsr.class));</span>
 <span class="fc" id="L124">        _tensors.add(tensor);</span>
 <span class="fc" id="L125">        tensor.add(this);</span>
 <span class="fc" id="L126">        return this;</span>
@@ -137,7 +137,7 @@ public class OpenCLDevice extends AbstractDevice
 <span class="fc" id="L137">            newClt.value = new cl_value();</span>
 <span class="fc" id="L138">            _store(tensor, newClt, 1);</span>
 <span class="pc bpc" id="L139" title="1 of 4 branches missed.">            if (tensor.rqsGradient() &amp;&amp; tensor.has(Tsr.class)) {</span>
-<span class="nc" id="L140">                this.add(((Tsr) tensor.find(Tsr.class)));</span>
+<span class="nc" id="L140">                this.add(tensor.find(Tsr.class));</span>
             }
             {
 <span class="fc" id="L143">                final cl_mem clValMem = newClt.value.data;</span>
@@ -202,7 +202,7 @@ public class OpenCLDevice extends AbstractDevice
 
     @Override
     public boolean has(Tsr tensor) {
-<span class="fc" id="L205">        return _tensors.contains(tensor);//_mapping.containsKey(tensor);</span>
+<span class="fc" id="L205">        return _tensors.contains(tensor);</span>
     }
 
     private void _store(Tsr tensor, cl_tsr newClTsr, int fp) {
@@ -249,7 +249,7 @@ public class OpenCLDevice extends AbstractDevice
 
     @Override
     public Device rmv(Tsr tensor) {
-<span class="fc" id="L252">        cl_tsr clt = ((cl_tsr)tensor.find(cl_tsr.class));</span>
+<span class="fc" id="L252">        cl_tsr clt = tensor.find(cl_tsr.class);</span>
 <span class="pc bpc" id="L253" title="1 of 2 branches missed.">        if (clt == null) return this;</span>
 <span class="fc" id="L254">        _tensors.remove(tensor);</span>
 <span class="fc" id="L255">        tensor.setIsOutsourced(false);</span>
@@ -268,7 +268,7 @@ public class OpenCLDevice extends AbstractDevice
 
     @Override
     public Device overwrite64(Tsr tensor, double[] value) {
-<span class="fc" id="L271">        cl_tsr clt = ((cl_tsr)tensor.find(cl_tsr.class));</span>
+<span class="fc" id="L271">        cl_tsr clt = tensor.find(cl_tsr.class);</span>
 <span class="pc bpc" id="L272" title="1 of 2 branches missed.">        if (clt.fp == 1) {</span>
 <span class="fc" id="L273">            overwrite32(tensor, DataHelper.doubleToFloat(value));</span>
         } else {
@@ -291,9 +291,9 @@ public class OpenCLDevice extends AbstractDevice
 
     private void _releaseEvents(Tsr[] tsrs){
 <span class="fc bfc" id="L293" title="All 2 branches covered.">        for(Tsr t : tsrs){</span>
-<span class="pc bpc" id="L294" title="1 of 2 branches missed.">            if(((cl_tsr)t.find(cl_tsr.class)).value.event!=null){</span>
-<span class="nc" id="L295">                clReleaseEvent(((cl_tsr)t.find(cl_tsr.class)).value.event);</span>
-<span class="nc" id="L296">                ((cl_tsr)t.find(cl_tsr.class)).value.event = null;</span>
+<span class="pc bpc" id="L294" title="1 of 2 branches missed.">            if( t.find(cl_tsr.class).value.event != null ){</span>
+<span class="nc" id="L295">                clReleaseEvent(t.find(cl_tsr.class).value.event);</span>
+<span class="nc" id="L296">                t.find(cl_tsr.class).value.event = null;</span>
             }
         }
 <span class="fc" id="L299">    }</span>
@@ -301,7 +301,7 @@ public class OpenCLDevice extends AbstractDevice
     private cl_event[] _getWaitList(Tsr[] tsrs){
 <span class="fc" id="L302">        List&lt;cl_event&gt; list = new ArrayList&lt;&gt;();</span>
 <span class="fc bfc" id="L303" title="All 2 branches covered.">        for (Tsr t : tsrs) {</span>
-<span class="fc" id="L304">            cl_event event = ((cl_tsr)t.find(cl_tsr.class)).value.event;</span>
+<span class="fc" id="L304">            cl_event event = t.find(cl_tsr.class).value.event;</span>
 <span class="pc bpc" id="L305" title="3 of 4 branches missed.">            if (event != null &amp;&amp; !list.contains(event)) {</span>
 <span class="nc" id="L306">                list.add(event);</span>
             }
@@ -311,7 +311,7 @@ public class OpenCLDevice extends AbstractDevice
 
     @Override
     public Device overwrite32(Tsr tensor, float[] value) {
-<span class="fc" id="L314">        cl_tsr clt = (cl_tsr)tensor.find(cl_tsr.class);</span>
+<span class="fc" id="L314">        cl_tsr clt = tensor.find(cl_tsr.class);</span>
 <span class="pc bpc" id="L315" title="1 of 2 branches missed.">        if (clt.fp == 1) {</span>
 <span class="fc bfc" id="L316" title="All 2 branches covered.">            if(clt.value.event!=null){</span>
 <span class="fc" id="L317">                clWaitForEvents(1, new cl_event[]{clt.value.event});</span>
@@ -336,7 +336,7 @@ public class OpenCLDevice extends AbstractDevice
 
     @Override
     public Device swap(Tsr former, Tsr replacement) {
-<span class="fc" id="L339">        cl_tsr clTsr = (cl_tsr) former.find(cl_tsr.class);</span>
+<span class="fc" id="L339">        cl_tsr clTsr = former.find(cl_tsr.class);</span>
 <span class="fc" id="L340">        former.remove(cl_tsr.class);</span>
 <span class="fc" id="L341">        replacement.add(clTsr);</span>
 <span class="fc" id="L342">        _tensors.remove(former);</span>
@@ -346,7 +346,7 @@ public class OpenCLDevice extends AbstractDevice
 
     @Override
     public double[] value64Of(Tsr tensor) {
-<span class="fc" id="L349">        cl_tsr clt = (cl_tsr)tensor.find(cl_tsr.class);</span>
+<span class="fc" id="L349">        cl_tsr clt = tensor.find(cl_tsr.class);</span>
 <span class="pc bpc" id="L350" title="1 of 2 branches missed.">        if (clt.fp == 1) {</span>
 <span class="fc" id="L351">            return DataHelper.floatToDouble(value32Of(tensor));</span>
         } else {
@@ -368,7 +368,7 @@ public class OpenCLDevice extends AbstractDevice
 
     @Override
     public float[] value32Of(Tsr tensor) {
-<span class="fc" id="L371">        cl_tsr clt = (cl_tsr)tensor.find(cl_tsr.class);</span>
+<span class="fc" id="L371">        cl_tsr clt = tensor.find(cl_tsr.class);</span>
 <span class="pc bpc" id="L372" title="1 of 2 branches missed.">        if (clt.fp == 1) {</span>
 <span class="fc" id="L373">            float[] data = new float[clt.value.size];</span>
 <span class="fc" id="L374">            clEnqueueReadBuffer(</span>
@@ -429,24 +429,24 @@ public class OpenCLDevice extends AbstractDevice
 <span class="fc" id="L429">        String chosen = _platform.kernelNameOf(type);</span>
 <span class="fc" id="L430">        cl_kernel kernel = _platform.getKernels().get(chosen);</span>
 
-<span class="fc" id="L432">        cl_mem drn = ((cl_tsr)tsrs[offset].find(cl_tsr.class)).value.data;</span>
-<span class="fc" id="L433">        cl_mem src1 = ((cl_tsr)tsrs[offset + 1].find(cl_tsr.class)).value.data;</span>
+<span class="fc" id="L432">        cl_mem drn = tsrs[offset].find(cl_tsr.class).value.data;</span>
+<span class="fc" id="L433">        cl_mem src1 = tsrs[offset + 1].find(cl_tsr.class).value.data;</span>
 <span class="pc bpc" id="L434" title="1 of 4 branches missed.">        if (type.supportsActivation() &amp;&amp; !type.isIndexer()) {</span>
 <span class="fc" id="L435">            clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=&gt; drain</span>
-<span class="fc" id="L436">            clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(((cl_tsr)tsrs[offset].find(cl_tsr.class)).config.data));</span>
+<span class="fc" id="L436">            clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(tsrs[offset].find(cl_tsr.class).config.data));</span>
 <span class="fc" id="L437">            clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=&gt;src1</span>
-<span class="fc" id="L438">            clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(((cl_tsr)tsrs[offset + 1].find(cl_tsr.class)).config.data));</span>
+<span class="fc" id="L438">            clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(tsrs[offset + 1].find(cl_tsr.class).config.data));</span>
 <span class="fc" id="L439">            clSetKernelArg(kernel, 4, Sizeof.cl_int, Pointer.to(new int[]{tsrs[0].rank()}));</span>
 <span class="fc" id="L440">            clSetKernelArg(kernel, 5, Sizeof.cl_int, Pointer.to(new int[]{d}));</span>
         } else {
             //TODO: Function.TYPES.rqsAdditionalArgument(f_id)
-<span class="fc" id="L443">            cl_mem src2 = ((cl_tsr)tsrs[offset + 2].find(cl_tsr.class)).value.data;</span>
+<span class="fc" id="L443">            cl_mem src2 = tsrs[offset + 2].find(cl_tsr.class).value.data;</span>
 <span class="fc" id="L444">            clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=&gt; drain</span>
-<span class="fc" id="L445">            clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(((cl_tsr)tsrs[offset].find(cl_tsr.class)).config.data));</span>
+<span class="fc" id="L445">            clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(tsrs[offset].find(cl_tsr.class).config.data));</span>
 <span class="fc" id="L446">            clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=&gt;src1</span>
-<span class="fc" id="L447">            clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(((cl_tsr)tsrs[offset + 1].find(cl_tsr.class)).config.data));</span>
+<span class="fc" id="L447">            clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(tsrs[offset + 1].find(cl_tsr.class).config.data));</span>
 <span class="fc" id="L448">            clSetKernelArg(kernel, 4, Sizeof.cl_mem, Pointer.to(src2));//=&gt;src2</span>
-<span class="fc" id="L449">            clSetKernelArg(kernel, 5, Sizeof.cl_mem, Pointer.to(((cl_tsr)tsrs[offset + 2].find(cl_tsr.class)).config.data));</span>
+<span class="fc" id="L449">            clSetKernelArg(kernel, 5, Sizeof.cl_mem, Pointer.to(tsrs[offset + 2].find(cl_tsr.class).config.data));</span>
 <span class="fc" id="L450">            clSetKernelArg(kernel, 6, Sizeof.cl_int, Pointer.to(new int[]{tsrs[0].rank()}));</span>
 <span class="fc" id="L451">            clSetKernelArg(kernel, 7, Sizeof.cl_int, Pointer.to(new int[]{d}));</span>
         }
@@ -464,7 +464,7 @@ public class OpenCLDevice extends AbstractDevice
                 null,
                 0,
                 null,
-                null//event
+                null
         );
 
 <span class="fc" id="L470">    }</span>

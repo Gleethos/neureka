@@ -7,10 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Collections;
 import java.util.Locale;
-import java.util.Map;
-import java.util.WeakHashMap;
 
 
 /**
@@ -24,41 +21,8 @@ import java.util.WeakHashMap;
  */
 public abstract class AbstractNDArray<InstanceType> extends AbstractComponentOwner<InstanceType>
 {
-    static
-    {
-        _CONFIGS = Collections.synchronizedMap(new WeakHashMap<>()) ;
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
-     *  Cached configuration
-     */
-    private static final Map<Long, int[]> _CONFIGS;
-
-    /**
-     *  The shape of the NDArray.
-     */
-    protected int[] _shape;
-    /**
-     *  The translation from a shape index (idx) to the index of the underlying data array.
-     */
-    protected int[] _translation;
-    /**
-     *  The mapping of idx array.
-     */
-    protected int[] _idxmap; // Used to avoid distortion when reshaping!
-    /**
-     *  Produces the strides of a tensor subset / slice
-     */
-    protected int[] _spread;
-    /**
-     *  Defines the position of a subset / slice tensor within its parent!
-     */
-    protected int[] _offset;
-    /**
-     *  The value of this tensor. Usually a array of type double[] or float[].
-     */
+    protected NDConfiguration _conf;
+    
     protected Object _value;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -71,90 +35,48 @@ public abstract class AbstractNDArray<InstanceType> extends AbstractComponentOwn
         return _value instanceof float[];
     }
 
-    protected static int[] _cached(int[] data) {
-        long key = 0;
-        for (int e : data) {
-            if (e <= 10) key *= 10;
-            else if (e <= 100) key *= 100;
-            else if (e <= 1000) key *= 1000;
-            else if (e <= 10000) key *= 10000;
-            else if (e <= 100000) key *= 100000;
-            else if (e <= 1000000) key *= 1000000;
-            else if (e <= 10000000) key *= 10000000;
-            else if (e <= 100000000) key *= 100000000;
-            else if (e <= 1000000000) key *= 1000000000;
-            key += Math.abs(e) + 1;
-        }
-        int rank = data.length;
-        while(rank != 0) {
-            rank /= 10;
-            key*=10;
-        }
-        key += data.length;
-        int[] found = _CONFIGS.get(key);
-        if (found != null) return found;
-        else {
-            _CONFIGS.put(key, data);
-            return data;
-        }
-    }
-
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     public int i_of_i(int i){
-        return i_of_idx(idx_of_i(i));
+        return _conf.i_of_i(i);
     }
 
     public int[] idx_of_i(int i) {
-        int[] idx = new int[_shape.length];
-        if (Neureka.instance().settings().indexing().legacy()){
-            for (int ii=rank()-1; ii>=0; ii--){
-                idx[ii] += i / _idxmap[ii];
-                i %= _idxmap[ii];
-            }
-        } else {
-            for (int ii=0; ii<rank(); ii++) {
-                idx[ii] += i / _idxmap[ii];
-                i %= _idxmap[ii];
-            }
-        }
-        return idx;
+        return _conf.idx_of_i(i);
     }
 
     public int i_of_idx(int[] idx) {
-        int i = 0;
-        for (int ii=0; ii<_shape.length; ii++) i += (idx[ii] * _spread[ii] + _offset[ii]) * _translation[ii];
-        return i;
+        return _conf.i_of_idx(idx);
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     public int[] shape() {
-        return _shape;
+        return _conf.shape();
     }
 
     public int shape(int i){
-        return _shape[i];
+        return _conf.shape()[i];
     }
 
     public int rank(){
-        return _shape.length;
+        return _conf.shape().length;
     }
 
     public int[] idxmap(){
-        return _idxmap;
+        return _conf.idxmap();
     }
 
     public int[] translation() {
-        return _translation;
+        return _conf.translation();
     }
 
     public int[] spread(){
-        return _spread;
+        return _conf.spread();
     }
 
     public int[] offset(){
-        return _offset;
+        return _conf.offset();
     }
 
     public int size() {
