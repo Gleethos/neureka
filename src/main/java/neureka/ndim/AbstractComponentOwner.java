@@ -1,4 +1,4 @@
-package neureka.abstraction;
+package neureka.ndim;
 
 import neureka.Component;
 

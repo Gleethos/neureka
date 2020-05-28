@@ -122,7 +122,7 @@ public class OpenCLPlatform {
 <span class="fc" id="L122">            String kernelSource = templateSources.get(i);</span>
 <span class="fc" id="L123">            kernelSource = kernelSource.replace(</span>
                     &quot;Neureka.instance().settings().indexing().REVERSE_INDEX_TRANSLATION&quot;,
-<span class="fc bfc" id="L125" title="All 2 branches covered.">                    (Neureka.instance().settings().indexing().legacy()) ? &quot;true&quot; : &quot;false&quot;</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">                    (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) ? &quot;true&quot; : &quot;false&quot;</span>
             );
 <span class="fc" id="L127">            boolean templateFound = false;</span>
 <span class="fc bfc" id="L128" title="All 2 branches covered.">            if (kernelSource.contains(&quot;__kernel&quot;)) {</span>

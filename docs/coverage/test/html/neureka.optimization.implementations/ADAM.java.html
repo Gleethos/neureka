@@ -16,7 +16,7 @@ public class ADAM implements Optimizer {
     //Tsr w = null;
 
 <span class="fc" id="L18">    ADAM(Tsr target){</span>
-<span class="fc" id="L19">        int[] shape = target.shape();</span>
+<span class="fc" id="L19">        int[] shape = target.getNDConf().shape();</span>
 <span class="fc" id="L20">        m = new Tsr(shape, 0);</span>
 <span class="fc" id="L21">        v = new Tsr(shape, 0);</span>
 <span class="fc" id="L22">        a = new Tsr(shape, 0.01); // Step size!</span>
@@ -32,7 +32,7 @@ public class ADAM implements Optimizer {
 <span class="fc" id="L32">        Tsr mh = new Tsr(m, &quot;/(1-&quot;, b1, &quot;)&quot;);</span>
 <span class="fc" id="L33">        Tsr vh = new Tsr(v, &quot;/(1-&quot;, b2, &quot;)&quot;);</span>
 <span class="fc" id="L34">        Tsr newg = new Tsr(&quot;-&quot;,a,&quot;*&quot;,mh,&quot;/(&quot;,vh,&quot;^0.5+&quot;,e,&quot;)&quot;);</span>
-<span class="fc" id="L35">        Function.Detached.IDY.activate(new Tsr[]{g, newg});</span>
+<span class="fc" id="L35">        Function.Detached.IDY.call(new Tsr[]{g, newg});</span>
 <span class="fc" id="L36">    }</span>
 
     @Override

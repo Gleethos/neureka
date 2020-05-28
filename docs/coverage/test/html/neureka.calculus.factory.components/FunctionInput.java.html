@@ -6,181 +6,149 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.factory.BaseFunction;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
-<span class="fc" id="L11">public class FunctionInput implements Function, GradientProvider</span>
+<span class="fc" id="L12">public class FunctionInput extends BaseFunction implements GradientProvider</span>
 {
     private int _index;
 
+    //------------------------------------------------------------------------------------------------------------------
+
     public boolean providesGradient(){
-<span class="fc bfc" id="L16" title="All 2 branches covered.">        return (_index&lt;0);</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">        return (_index&lt;0);</span>
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //------------------------------------------------------------------------------------------------------------------
+
     @Override
     public boolean isFlat() {
-<span class="nc" id="L21">        return true;</span>
+<span class="nc" id="L26">        return true;</span>
     }
 
     @Override
     public boolean doesAD(){
-<span class="nc" id="L26">        return false;</span>
+<span class="nc" id="L31">        return false;</span>
     }
 
     @Override
     public int id() {
-<span class="nc" id="L31">        return -1;</span>
+<span class="nc" id="L36">        return -1;</span>
     }
 
     @Override
     public OperationType type() {
-<span class="nc" id="L36">        return null;</span>
+<span class="nc" id="L41">        return null;</span>
     }
 
     @Override
     public boolean dependsOn(int index){
-<span class="fc bfc" id="L41" title="All 2 branches covered.">        return index() == index;</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        return index() == index;</span>
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //------------------------------------------------------------------------------------------------------------------
+
     @Override
     public Function newBuild(final String equation) {
 
-<span class="fc bfc" id="L48" title="All 2 branches covered.">        if(equation.charAt(0)=='-'){</span>
-<span class="fc" id="L49">            return FunctionBuilder.build(equation.substring(1)+&quot;*-1&quot;, true);</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if(equation.charAt(0)=='-'){</span>
+<span class="fc" id="L55">            return FunctionBuilder.build(equation.substring(1)+&quot;*-1&quot;, true);</span>
         }
-<span class="fc" id="L51">        int number = 0;</span>
-<span class="fc bfc" id="L52" title="All 2 branches covered.">        for (int i = 0; i &lt; equation.length(); ++i) {</span>
-<span class="fc bfc" id="L53" title="All 2 branches covered.">            if (equation.charAt(i) == 'j') {</span>
-<span class="fc" id="L54">                Function newCore = new FunctionVariable();</span>
-<span class="fc" id="L55">                newCore = newCore.newBuild(equation);</span>
-<span class="fc" id="L56">                return newCore;</span>
+<span class="fc" id="L57">        int number = 0;</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        for (int i = 0; i &lt; equation.length(); ++i) {</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">            if (equation.charAt(i) == 'j') {</span>
+<span class="fc" id="L60">                Function newCore = new FunctionVariable();</span>
+<span class="fc" id="L61">                newCore = newCore.newBuild(equation);</span>
+<span class="fc" id="L62">                return newCore;</span>
             }
-<span class="pc bpc" id="L58" title="1 of 4 branches missed.">            if (equation.charAt(i) &lt;= '9' &amp;&amp; equation.charAt(i) &gt;= '0') {</span>
-<span class="fc" id="L59">                number *= 10;</span>
-<span class="fc" id="L60">                number += Integer.parseInt(equation.charAt(i) + &quot;&quot;);</span>
+<span class="pc bpc" id="L64" title="1 of 4 branches missed.">            if (equation.charAt(i) &lt;= '9' &amp;&amp; equation.charAt(i) &gt;= '0') {</span>
+<span class="fc" id="L65">                number *= 10;</span>
+<span class="fc" id="L66">                number += Integer.parseInt(equation.charAt(i) + &quot;&quot;);</span>
             }
         }
-<span class="fc" id="L63">        _index = number;</span>
-<span class="fc bfc" id="L64" title="All 2 branches covered.">        if(equation.contains(&quot;g&quot;)){</span>
-<span class="fc" id="L65">            _index = -(_index+1);</span>
+<span class="fc" id="L69">        _index = number;</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if(equation.contains(&quot;g&quot;)){</span>
+<span class="fc" id="L71">            _index = -(_index+1);</span>
         }
 
-<span class="fc" id="L68">        return this;</span>
+<span class="fc" id="L74">        return this;</span>
     }
 
     private Tsr _extract(Tsr t)
     {
-<span class="fc bfc" id="L73" title="All 4 branches covered.">        if (this.providesGradient() &amp;&amp; t.rqsGradient()) {</span>
-<span class="fc" id="L74">            Tsr gradient = t.find(Tsr.class);</span>
-<span class="pc bpc" id="L75" title="1 of 2 branches missed.">            if (t.rqsGradient()) {</span>
-<span class="fc bfc" id="L76" title="All 2 branches covered.">                if (gradient==null) {</span>
-<span class="fc" id="L77">                    gradient = new Tsr(t.shape(), 0);</span>
-<span class="fc" id="L78">                    t.add(gradient);</span>
+<span class="fc bfc" id="L79" title="All 4 branches covered.">        if (this.providesGradient() &amp;&amp; t.rqsGradient()) {</span>
+<span class="fc" id="L80">            Tsr gradient = t.find(Tsr.class);</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">            if (t.rqsGradient()) {</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">                if (gradient==null) {</span>
+<span class="fc" id="L83">                    gradient = new Tsr(t.shape(), 0);</span>
+<span class="fc" id="L84">                    t.add(gradient);</span>
                 }
-<span class="fc" id="L80">                return gradient;</span>
+<span class="fc" id="L86">                return gradient;</span>
             }
         }
-<span class="fc" id="L83">        return t;</span>
+<span class="fc" id="L89">        return t;</span>
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public double call(double input){
-<span class="nc" id="L90">        return activate(input);</span>
-    }
-    @Override
-    public double call(double[] inputs, int j){
-<span class="nc" id="L94">        return inputs[j];</span>
-    }
-    @Override
-    public double call(double[] inputs){
-<span class="nc" id="L98">        return activate(inputs);</span>
+    public double call(final double[] inputs, int j) {
+<span class="nc" id="L96">        return inputs[index()];</span>
     }
 
     @Override
-    public Tsr call(Tsr input){
-<span class="nc" id="L103">        return activate(input);</span>
-    }
-
-    @Override
-    public Tsr call(Tsr[] inputs, int j){
-<span class="nc" id="L108">        return activate(inputs, j);</span>
-    }
-
-    @Override
-    public Tsr call(Tsr[] inputs) {
-<span class="fc" id="L113">        return activate(inputs);</span>
-    }
-
-    @Override
-    public double activate(double input){
-<span class="nc" id="L118">        return activate(new double[]{input});</span>
-    }
-
-    @Override
-    public double activate(final double[] inputs, int j) {
-<span class="nc" id="L123">        return inputs[index()];</span>
-    }
-
-    @Override
-    public double activate(final double[] inputs) {
-<span class="pc bpc" id="L128" title="1 of 2 branches missed.">        return inputs[(_index&gt;=0)?_index:(Math.abs(_index)-1)];</span>
+    public double call(final double[] inputs) {
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        return inputs[(_index&gt;=0)?_index:(Math.abs(_index)-1)];</span>
     }
 
     @Override
     public double derive(final double[] inputs, final int index) {
-<span class="fc bfc" id="L133" title="All 2 branches covered.">        return (index == index()) ? 1 : 0;</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        return (index == index()) ? 1 : 0;</span>
     }
 
     @Override
     public double derive(double[] inputs, int index, int j) {
-<span class="nc" id="L138">        return derive(inputs, index);</span>
+<span class="nc" id="L111">        return derive(inputs, index);</span>
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public Tsr activate(Tsr input){
-<span class="fc" id="L145">        return activate(new Tsr[]{input});</span>
-    }
-
-    @Override
-    public Tsr activate(Tsr[] inputs, int j) {
-<span class="nc" id="L150">        return _extract(inputs[index()]);</span>
+    public Tsr call(Tsr[] inputs, int j) {
+<span class="nc" id="L118">        return _extract(inputs[index()]);</span>
     }
 
     @Override
-    public Tsr activate(Tsr[] inputs) {
-<span class="fc" id="L155">        return _extract(inputs[index()]);</span>
+    public Tsr call(Tsr[] inputs) {
+<span class="fc" id="L123">        return _extract(inputs[index()]);</span>
     }
 
     @Override
     public Tsr derive(Tsr[] inputs, int index, int j) {
-<span class="nc" id="L160">        return derive(inputs, index);</span>
+<span class="nc" id="L128">        return derive(inputs, index);</span>
     }
 
     @Override
     public Tsr derive(Tsr[] inputs, int index) {
-<span class="fc bfc" id="L165" title="All 2 branches covered.">        return (index == index())</span>
-<span class="fc" id="L166">                ? new Tsr(inputs[0].shape(), 1.0)</span>
-<span class="fc" id="L167">                : new Tsr(inputs[0].shape(), 0.0);</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        return (index == index())</span>
+<span class="fc" id="L134">                ? new Tsr(inputs[0].shape(), 1.0)</span>
+<span class="fc" id="L135">                : new Tsr(inputs[0].shape(), 0.0);</span>
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //------------------------------------------------------------------------------------------------------------------
 
     @Override
     public String toString() {
-<span class="fc bfc" id="L174" title="All 2 branches covered.">        return &quot;I&quot;+((this.providesGradient())?&quot;g&quot;:&quot;&quot;)+&quot;[&quot; + index() + &quot;]&quot;;</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        return &quot;I&quot;+((this.providesGradient())?&quot;g&quot;:&quot;&quot;)+&quot;[&quot; + index() + &quot;]&quot;;</span>
     }
 
     public int index(){
-<span class="fc bfc" id="L178" title="All 2 branches covered.">        return ((this.providesGradient())?(Math.abs(_index)-1):_index);</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">        return ((this.providesGradient())?(Math.abs(_index)-1):_index);</span>
     }
 
     @Override
     public ADAgent getADAgent(Tsr[] inputs, int i, boolean forward){
-<span class="nc" id="L183">        return null;</span>
+<span class="nc" id="L151">        return null;</span>
     }
 
 }

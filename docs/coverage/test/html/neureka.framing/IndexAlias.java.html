@@ -36,7 +36,7 @@ public class IndexAlias implements Component&lt;Tsr&gt;
 <span class="fc bfc" id="L36" title="All 2 branches covered.">                for(int i=0; i&lt;v.size(); i++) idxmap.put(v.get(i), i);</span>
 <span class="fc" id="L37">                _mapping.put(k, idxmap);</span>
 <span class="fc" id="L38">            } else {</span>
-<span class="fc" id="L39">                _mapping.put(k, host.shape()[index[0]]);</span>
+<span class="fc" id="L39">                _mapping.put(k, host.getNDConf().shape()[index[0]]);</span>
             }
 <span class="fc" id="L41">            index[0]++;</span>
 <span class="fc" id="L42">        });</span>

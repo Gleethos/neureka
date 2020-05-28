@@ -18,11 +18,14 @@ public class Neureka
     private static String _setup_source;
     private static String _version;
 
+    private static boolean _groovyAvailable;
+
     private Settings _settings;
     private Utility _utility;
 
     static {
         _instances = new ConcurrentHashMap<>();
+        _groovyAvailable = Utility.isPresent("groovy.lang.GroovySystem");
     }
 
     private Neureka(){
@@ -50,9 +53,9 @@ public class Neureka
         }
     }
 
-    public static Neureka instance(Closure<String> c) {
-        c.setDelegate(Neureka.instance());
-        _version = c.call();
+    public static Neureka instance(Object closure) {
+        Object o = Utility.tryGroovyClosureOn(closure, Neureka.instance());
+        if (o instanceof String) _version = (String) o;
         return Neureka.instance();
     }
 
@@ -60,9 +63,8 @@ public class Neureka
         return _settings;
     }
 
-    public Settings settings(Closure c){
-        c.setDelegate(_settings);
-        c.call();
+    public Settings settings(Object closure){
+        Utility.tryGroovyClosureOn(closure, _settings);
         return _settings;
     }
 
@@ -75,23 +77,25 @@ public class Neureka
     }
 
     public void reset() {
-        if (_settings_source == null || _setup_source == null) {
-            _settings_source = utility().readResource("library_settings.groovy");
-            _setup_source = utility().readResource("scripting_setup.groovy");
-        }
-        try {
-            String version = GroovySystem.getVersion();
-            if(Integer.parseInt(version.split("\\.")[0]) < 3) {
-                throw new IllegalCallerException(
-                        "Wrong groovy version "+version+" found! Version 3.0.0 or greater required."
-                );
+        if (_groovyAvailable) {
+            if (_settings_source == null || _setup_source == null) {
+                _settings_source = utility().readResource("library_settings.groovy");
+                _setup_source = utility().readResource("scripting_setup.groovy");
             }
-            new GroovyShell(this.getClass().getClassLoader()).evaluate(_settings_source);
-            new GroovyShell(this.getClass().getClassLoader()).evaluate(_setup_source);
-        } catch (Exception e) {
-            e.printStackTrace();
+            try {
+                Utility.tryGroovyScriptsOn(this);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            settings().autoDiff().setIsRetainingPendingErrorForJITProp(true);
+            settings().autoDiff().setIsApplyingGradientWhenTensorIsUsed(true);
+            settings().autoDiff().setIsApplyingGradientWhenRequested(true);
+            settings().indexing().setIsUsingLegacyIndexing(false);
+            settings().indexing().setIsUsingThoroughIndexing(true);
+            settings().debug().setIsKeepingDerivativeTargetPayloads(false);
+            settings().view().setIsUsingLegacyView(false);
         }
-
     }
 
     private boolean _currentThreadIsAuthorized(){
@@ -104,6 +108,7 @@ public class Neureka
         private AutoDiff _autoDiff;
         private Indexing _indexing;
         private View _view;
+        private NDim _ndim;
 
         private boolean _isLocked = false;
 
@@ -112,15 +117,15 @@ public class Neureka
             _autoDiff = new AutoDiff();
             _indexing = new Indexing();
             _view = new View();
+            _ndim = new NDim();
         }
 
         public Debug debug() {
             return _debug;
         }
 
-        public Debug debug(Closure c) {
-            c.setDelegate(_debug);
-            c.call();
+        public Debug debug(Object closure) {
+            Utility.tryGroovyClosureOn(closure, _debug);
             return _debug;
         }
 
@@ -128,9 +133,8 @@ public class Neureka
             return _autoDiff;
         }
 
-        public AutoDiff autoDiff(Closure c) {
-            c.setDelegate(_autoDiff);
-            c.call();
+        public AutoDiff autoDiff(Object closure) {
+            Utility.tryGroovyClosureOn(closure, _autoDiff);
             return _autoDiff;
         }
 
@@ -138,9 +142,8 @@ public class Neureka
             return _indexing;
         }
 
-        public Indexing indexing(Closure c) {
-            c.setDelegate(_indexing);
-            c.call();
+        public Indexing indexing(Object closure) {
+            Utility.tryGroovyClosureOn(closure, _indexing);
             return _indexing;
         }
 
@@ -148,10 +151,18 @@ public class Neureka
             return _view;
         }
 
-        public View view(Closure c) {
-            c.setDelegate(_view);
-            c.call();
+        public View view(Object closure) {
+            Utility.tryGroovyClosureOn(closure, _view);
             return _view;
+        }
+
+        public NDim ndim(){
+            return _ndim;
+        }
+
+        public NDim ndim(Object closure) {
+            Utility.tryGroovyClosureOn(closure, _ndim);
+            return _ndim;
         }
 
         public boolean isLocked(){
@@ -179,15 +190,15 @@ public class Neureka
              * It is used in the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
              */
-            private boolean _keepDerivativeTargetPayloads;
+            private boolean _isKeepingDerivativeTargetPayloads;
 
-            public boolean keepDerivativeTargetPayloads(){
-                return _keepDerivativeTargetPayloads;
+            public boolean isKeepingDerivativeTargetPayloads(){
+                return _isKeepingDerivativeTargetPayloads;
             }
 
-            public void setKeepDerivativeTargetPayloads(boolean keep){
+            public void setIsKeepingDerivativeTargetPayloads(boolean keep){
                 if(_isLocked || !_currentThreadIsAuthorized()) return;
-                _keepDerivativeTargetPayloads = keep;
+                _isKeepingDerivativeTargetPayloads = keep;
             }
 
         }
@@ -203,14 +214,14 @@ public class Neureka
              * improve performance for some networks substantially.
              * The technique is termed JIT-Propagation.
              */
-            private boolean _retainPendingErrorForJITProp;
+            private boolean _isRetainingPendingErrorForJITProp;
 
             /**
              * Gradients will automatically be applied to tensors as soon as
              * they are being used for calculation (GraphNode instantiation).
              * This feature works well with JIT-Propagation.
              */
-            private boolean _applyGradientWhenTensorIsUsed;
+            private boolean _isApplyingGradientWhenTensorIsUsed;
 
             /**
              * Gradients will only be applied if requested.
@@ -219,75 +230,94 @@ public class Neureka
              * to true, then the tensor will only be updated by its
              * gradient if requested AND tensor is used! (GraphNode instantiation).
              */
-            private boolean _applyGradientWhenRequested;
+            private boolean _isApplyingGradientWhenRequested;
 
-            public boolean retainPendingErrorForJITProp(){
-                return _retainPendingErrorForJITProp;
+            public boolean isRetainingPendingErrorForJITProp(){
+                return _isRetainingPendingErrorForJITProp;
             }
 
-            public void setRetainPendingErrorForJITProp(boolean retain){
+            public void setIsRetainingPendingErrorForJITProp(boolean retain){
                 if(_isLocked || !_currentThreadIsAuthorized()) return;
-                _retainPendingErrorForJITProp = retain;
+                _isRetainingPendingErrorForJITProp = retain;
             }
 
-            public boolean applyGradientWhenTensorIsUsed(){
-                return _applyGradientWhenTensorIsUsed;
+            public boolean isApplyingGradientWhenTensorIsUsed(){
+                return _isApplyingGradientWhenTensorIsUsed;
             }
 
-            public void setApplyGradientWhenTensorIsUsed(boolean apply){
+            public void setIsApplyingGradientWhenTensorIsUsed(boolean apply){
                 if(_isLocked || !_currentThreadIsAuthorized()) return;
-                _applyGradientWhenTensorIsUsed = apply;
+                _isApplyingGradientWhenTensorIsUsed = apply;
             }
 
-            public boolean applyGradientWhenRequested(){
-                return _applyGradientWhenRequested;
+            public boolean isApplyingGradientWhenRequested(){
+                return _isApplyingGradientWhenRequested;
             }
 
-            public void setApplyGradientWhenRequested(boolean apply) {
+            public void setIsApplyingGradientWhenRequested(boolean apply) {
                 if(_isLocked || !_currentThreadIsAuthorized()) return;
-                _applyGradientWhenRequested = apply;
+                _isApplyingGradientWhenRequested = apply;
             }
 
         }
 
         public class Indexing
         {
-            private boolean _legacyIndexing;
+            private boolean _isUsingLegacyIndexing;
 
-            private boolean _thoroughIndexing;
+            private boolean _isUsingThoroughIndexing;
 
-            public boolean legacy(){
-                return _legacyIndexing;
+            public boolean isUsingLegacyIndexing(){
+                return _isUsingLegacyIndexing;
             }
 
-            public void setLegacy(boolean enabled) {
+            public void setIsUsingLegacyIndexing(boolean enabled) {
                 if(_isLocked || !_currentThreadIsAuthorized()) return;
-                _legacyIndexing = enabled;//NOTE: gpu code must recompiled! (in OpenCLPlatform)
+                _isUsingLegacyIndexing = enabled;//NOTE: gpu code must recompiled! (in OpenCLPlatform)
             }
 
-            public boolean thorough(){
-                return _thoroughIndexing;
+            public boolean isUsingThoroughIndexing(){
+                return _isUsingThoroughIndexing;
             }
 
-            public void setThorough(boolean thorough){
+            public void setIsUsingThoroughIndexing(boolean thorough){
                 if(_isLocked || !_currentThreadIsAuthorized()) return;
-                _thoroughIndexing = thorough;
+                _isUsingThoroughIndexing = thorough;
             }
 
         }
 
         public class View
         {
+            private boolean _isUsingLegacyView;
 
-            private boolean _legacyView;
-
-            public boolean legacy(){
-                return _legacyView;
+            public boolean isUsingLegacyView(){
+                return _isUsingLegacyView;
             }
 
-            public void setLegacy(boolean enabled){
+            public void setIsUsingLegacyView(boolean enabled){
                 if(_isLocked || !_currentThreadIsAuthorized()) return;
-                _legacyView = enabled;
+                _isUsingLegacyView = enabled;
+            }
+
+        }
+
+        public class NDim
+        {
+            /**
+             *  The DefaultNDConfiguration class stores shape, translation...
+             *  as cached int arrays.
+             *  Disabling this flag allows for custom 1D, 2D, 3D classes to be loaded. (Improves memory locality)
+             */
+            private boolean _isOnlyUsingDefaultNDConfiguration;
+
+            public boolean isOnlyUsingDefaultNDConfiguration(){
+                return _isOnlyUsingDefaultNDConfiguration;
+            }
+
+            public void setIsOnlyUsingDefaultNDConfiguration(boolean enabled){
+                if(_isLocked || !_currentThreadIsAuthorized()) return;
+                _isOnlyUsingDefaultNDConfiguration = enabled;
             }
 
         }
@@ -320,6 +350,42 @@ public class Neureka
                 return null;
             }
         }
+
+        public static Object tryGroovyClosureOn(Object closure, Object delegate) {
+            if (_groovyAvailable) {
+                ((Closure) closure).setDelegate(delegate);
+                return ((Closure) closure).call(delegate);
+            }
+            return null;
+        }
+
+        public static void tryGroovyScriptsOn(Neureka instance) {
+            if(_groovyAvailable) {
+                String version = GroovySystem.getVersion();
+                if(Integer.parseInt(version.split("\\.")[0]) < 3) {
+                    throw new IllegalCallerException(
+                            "Wrong groovy version "+version+" found! Version 3.0.0 or greater required."
+                    );
+                }
+                new GroovyShell(instance.getClass().getClassLoader()).evaluate(_settings_source);
+                new GroovyShell(instance.getClass().getClassLoader()).evaluate(_setup_source);
+            }
+        }
+
+        public static boolean isPresent(String className){
+            boolean found = false;
+            try {
+                Class.forName(className);
+                found = true;
+            } catch (Throwable ex) {// Class or one of its dependencies is not present...
+                System.out.println("[Info]: Groovy dependencies not found! Neureka settings uninitialized!\n[Cause]: "+ex.getMessage());
+                return found;
+            } finally {
+                if(!found) System.out.println("[Info]: Groovy dependencies not found! Neureka settings uninitialized!");
+                return found;
+            }
+        }
+
     }
 
 

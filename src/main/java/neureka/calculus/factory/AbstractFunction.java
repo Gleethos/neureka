@@ -13,12 +13,14 @@ import org.jetbrains.annotations.Contract;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
-public abstract class AbstractFunction implements Function {
+public abstract class AbstractFunction extends BaseFunction {
     
     private final OperationType _type;
     private final boolean _isFlat;
     private final boolean _doAD;
     private final ArrayList<Function> _src;
+
+    //------------------------------------------------------------------------------------------------------------------
 
     /**
      * @param f_id
@@ -32,6 +34,8 @@ public abstract class AbstractFunction implements Function {
         _src = source;
         _doAD = doAD;
     }
+
+    //------------------------------------------------------------------------------------------------------------------
 
     @Override
     public Function newBuild(String expression) {
@@ -57,36 +61,6 @@ public abstract class AbstractFunction implements Function {
     public OperationType type() {
         return _type;
     }
-
-    @Override
-    public Tsr call(Tsr input){
-        return activate(input);
-    }
-
-    @Override
-    public Tsr call(Tsr[] inputs, int j){
-        return activate(inputs, j);
-    }
-
-    @Override
-    public Tsr call(Tsr[] inputs) {
-        return activate(inputs);
-    }
-
-    //---
-    @Override
-    public double call(double input){
-        return activate(input);
-    }
-    @Override
-    public double call(double[] inputs, int j){
-        return activate(inputs, j);
-    }
-    @Override
-    public double call(double[] inputs){
-        return activate(inputs);
-    }
-
 
     //---
 
@@ -135,18 +109,7 @@ public abstract class AbstractFunction implements Function {
         return false;
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    @Override
-    public Tsr activate(Tsr input){
-        return activate(new Tsr[]{input});
-    }
-
-    @Override
-    public double activate(double input){
-        return activate(new double[]{input});
-    }
-
-    //==================================================================================================================
+    //------------------------------------------------------------------------------------------------------------------
 
     @Override
     public ADAgent getADAgent(Tsr[] inputs, int i, boolean forward){
@@ -180,7 +143,7 @@ public abstract class AbstractFunction implements Function {
     private Tsr _recursie_breakdown_execution(Tsr[] inputs, int j, int d, Device myDevice) {
         if (_type.identifier().equals("x")) {//TODO: Move ALL of this into the operation types!!!!!
             Tsr[] tsrs = _src_acti(inputs, j, -1, 1);
-            tsrs[0] = (d<0)?new Tsr(Tsr.Utility.Indexing.shpOfCon(tsrs[1].shape(), tsrs[2].shape())):null;
+            tsrs[0] = (d<0)?new Tsr(Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())):null;
             for (Tsr t : tsrs) if(t!=null) t.setIsVirtual(false);
             myDevice.execute(tsrs, _type, d);
             return tsrs[0];
@@ -196,7 +159,7 @@ public abstract class AbstractFunction implements Function {
         } else if (_type.identifier().equals(",")) {
             int[] newForm = new int[_src.size() - 1];
             for (int i = 0; i < _src.size() - 1; i++) {
-                newForm[i] = (int) Tsr.IO.getFrom(_src.get(i).activate(inputs), 0);
+                newForm[i] = (int) Tsr.IO.getFrom(_src.get(i).call(inputs), 0);
             }
             if (d >= 0) {//reverse reshape:
                 int reverseLength = 0;
@@ -230,9 +193,9 @@ public abstract class AbstractFunction implements Function {
                 for (int i = 0; i < tsrs.length; i++) {
                     operation.append("I[").append(i).append("]").append((i == tsrs.length - 1) ? "" : _type.identifier());
                 }
-                return (FunctionBuilder.build(operation.toString(), _doAD).activate(tsrs));
+                return (FunctionBuilder.build(operation.toString(), _doAD).call(tsrs));
             } else if (_type.supportsActivation() && !_type.isIndexer()) {
-                return (FunctionBuilder.build(_type.identifier() + "(I[0])", true).activate(inputs));
+                return (FunctionBuilder.build(_type.identifier() + "(I[0])", true).call(inputs));
             }
         }
 
@@ -265,11 +228,11 @@ public abstract class AbstractFunction implements Function {
             //then activate the source like so:
             if (_type.isIndexer()) {
                 for (int i = 1; i < tsrs.length; i++) {
-                    tsrs[i] = _src.get(0).activate(inputs, i - 1);
+                    tsrs[i] = _src.get(0).call(inputs, i - 1);
                 }
             } else {
                 for (int i = 1; i < tsrs.length; i++) {
-                    tsrs[i] = (j >= 0) ? _src.get(i - 1).activate(inputs, j) : _src.get(i - 1).activate(inputs);
+                    tsrs[i] = (j >= 0) ? _src.get(i - 1).call(inputs, j) : _src.get(i - 1).call(inputs);
                 }
             }
             //get derivative index within src list:
@@ -285,11 +248,11 @@ public abstract class AbstractFunction implements Function {
             //multiply inner times outer:
             tsrs = new Tsr[]{null, inner, tsrs[0]};
             device.execute(tsrs, OperationType.instance("*"), -1);
-            return tsrs[0];
+            return tsrs[0]; // done!
         } else {
             if (_type.isIndexer()) {
                 tsrs = new Tsr[1 + inputs.length];
-                for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).activate(inputs, i - 1);
+                for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).call(inputs, i - 1);
                 device.execute(tsrs, _type, d);
             } else {
                 tsrs = _src_acti(inputs, j, d, 1);
@@ -326,11 +289,11 @@ public abstract class AbstractFunction implements Function {
         for (int i = offset; i < tsrs.length; i++) {//constants need to be figured out!
             if (!(_src.get(i - offset) instanceof FunctionConstant)) {
                 if (d < 0) {
-                    tsrs[i] = (j >= 0) ? _src.get(i - offset).activate(inputs, j) : _src.get(i - offset).activate(inputs);
+                    tsrs[i] = (j >= 0) ? _src.get(i - offset).call(inputs, j) : _src.get(i - offset).call(inputs);
                 } else {
                     tsrs[i] = (j >= 0) ? _src.get(i - offset).derive(inputs, d, j) : _src.get(i - offset).derive(inputs, d);
                 }
-                tempShape = (tempShape == null) ? tsrs[i].shape() : tempShape;
+                tempShape = (tempShape == null) ? tsrs[i].getNDConf().shape() : tempShape;
             }
         }
         for (int i = offset; i < tsrs.length; i++) {
@@ -338,7 +301,7 @@ public abstract class AbstractFunction implements Function {
                 tsrs[i] =
                         (j < 0)
                                 ? new Tsr(tempShape, ((FunctionConstant) _src.get(i - offset)).value())
-                                : new Tsr(tempShape, _src.get(i - offset).activate(new double[]{}, j));
+                                : new Tsr(tempShape, _src.get(i - offset).call(new double[]{}, j));
             }
         }
         return tsrs;
@@ -363,7 +326,8 @@ public abstract class AbstractFunction implements Function {
         return onSameGuestDevice;
     }
 
-    //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+
     protected double _scalar_activation(double input, boolean derive) {
         switch (_type.identifier()) {
             case "relu":
@@ -392,6 +356,7 @@ public abstract class AbstractFunction implements Function {
     }
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
     protected double _scalar_activation(double[] input, int j, int d) {
         switch (_type.identifier()) {
             case "sum":
@@ -417,9 +382,8 @@ public abstract class AbstractFunction implements Function {
         }
     }
 
-    public static class Exec {
-
-        //--------------------------------------------------------------------------------------------------------------
+    public static class Exec
+    {
         @Contract(pure = true)
         public static double reLu(double input, boolean derive) {
             double output;
@@ -434,7 +398,6 @@ public abstract class AbstractFunction implements Function {
             }
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double sigmoid(double input, boolean derive) {
             if (!derive) {
@@ -444,77 +407,67 @@ public abstract class AbstractFunction implements Function {
             }
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double tanh(double input, boolean derive) {
             if (!derive) {
-                return ((input)) / Math.pow((1 + Math.pow(((input)), 2)), 0.5);
+                return input / Math.pow((1 + Math.pow(input, 2)), 0.5);
             } else {
-                return (1 - Math.pow(((input) / Math.pow((1 + Math.pow((input), 2)), 0.5)), 2));
+                return (1 - Math.pow((input / Math.pow((1 + Math.pow((input), 2)), 0.5)), 2));
             }
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double quadratic(double input, boolean derive) {
             if (!derive) return (input * input);
             else return 2 * input;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double ligmoid(double input, boolean derive) {
             if (!derive) return (Math.log(1 + Math.pow(Math.E, input)));
             else return sigmoid(input, false);
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double linear(double input, boolean derive) {
             if (!derive) return (input);
             else return 1;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double gaussian(double input, boolean derive) {
             if (!derive) return Math.pow(Math.E, -Math.pow((input), 2));
             else return -2 * ((input)) * Math.pow(Math.E, -Math.pow((input), 2));
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double absolute(double input, boolean derive) {
             if (!derive) return Math.abs(input);
             else return (input < 0) ? -1 : 1;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double sinus(double input, boolean derive) {
             if (!derive) return Math.sin(input);
             else return Math.cos(input);
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         public static double cosinus(double input, boolean derive) {
             if (!derive) return Math.cos(input);
             else return -Math.sin(input);
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
         private static double summation(double[] inputs, int j, int d, ArrayList<Function> src) {
             if (d < 0) {
                 double sum = 0;
                 boolean nothingDone = true;
                 for (int i = 0; i < inputs.length; i++) {
-                    sum += src.get(0).activate(inputs, i);
+                    sum += src.get(0).call(inputs, i);
                     nothingDone = false;
                 }
                 if (nothingDone) {
-                    return src.get(0).activate(inputs);
+                    return src.get(0).call(inputs);
                 }
                 return sum;
             } else {
@@ -527,11 +480,11 @@ public abstract class AbstractFunction implements Function {
                 double sum = 0;
                 boolean nothingDone = true;
                 for (int i = 0; i < inputs.length; i++) {
-                    sum += src.get(0).activate(inputs, i);
+                    sum += src.get(0).call(inputs, i);
                     nothingDone = false;
                 }
                 if (nothingDone) {
-                    return src.get(0).activate(inputs);
+                    return src.get(0).call(inputs);
                 }
                 return sum;
             } else {
@@ -543,31 +496,30 @@ public abstract class AbstractFunction implements Function {
                     nothingDone = false;
                 }
                 if (nothingDone) {
-                    return src.get(0).activate(inputs);
+                    return src.get(0).call(inputs);
                 }
                 return sum;
             }
 
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         private static double PI(double[] inputs, int j, int d, ArrayList<Function> src) {
             if (d < 0) {
                 double prod = 1;
                 boolean nothingDone = true;
                 for (int Ii = 0; Ii < inputs.length; Ii++) {
-                    prod *= src.get(0).activate(inputs, Ii);
+                    prod *= src.get(0).call(inputs, Ii);
                     nothingDone = false;
                 }
-                if (nothingDone) return src.get(0).activate(inputs, j);
+                if (nothingDone) return src.get(0).call(inputs, j);
                 return prod;
             } else {
                 double u, ud, v, vd;
-                u = src.get(0).activate(inputs, 0);
+                u = src.get(0).call(inputs, 0);
                 ud = src.get(0).derive(inputs, d, 0);
                 for (int ji = 1; ji < inputs.length; ji++) {
-                    v = src.get(0).activate(inputs, ji);
+                    v = src.get(0).call(inputs, ji);
                     vd = src.get(0).derive(inputs, d, ji);
                     ud = u * vd + v * ud;
                     u *= v;
@@ -582,19 +534,17 @@ public abstract class AbstractFunction implements Function {
                 double prod = 1;
                 boolean nothingDone = true;
                 for (int i = 0; i < inputs.length; i++) {
-                    //if (sources.get(0).dependsOn(Ii)) {
-                    prod *= src.get(0).activate(inputs, i);
+                    prod *= src.get(0).call(inputs, i);
                     nothingDone = false;
-                    //}
                 }
-                if (nothingDone) return src.get(0).activate(inputs);
+                if (nothingDone) return src.get(0).call(inputs);
                 return prod;
             } else {
                 double u, ud, v, vd;
-                u = src.get(0).activate(inputs, 0);
+                u = src.get(0).call(inputs, 0);
                 ud = src.get(0).derive(inputs, d, 0);
                 for (int j = 1; j < inputs.length; j++) {
-                    v = src.get(0).activate(inputs, j);
+                    v = src.get(0).call(inputs, j);
                     vd = src.get(0).derive(inputs, d, j);
                     ud = u * vd + v * ud;
                     u *= v;
@@ -602,7 +552,6 @@ public abstract class AbstractFunction implements Function {
                 return ud;
             }
         }
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         // d/dx(f(x)^g(x))=
         // f(x)^g(x) * d/dx(g(x)) * ln(f(x))
@@ -610,9 +559,9 @@ public abstract class AbstractFunction implements Function {
         @Contract(pure = true)
         private static double power(double[] inputs, int j, int d, ArrayList<Function> src) {
             if (d < 0) {
-                double result = src.get(0).activate(inputs, j);
+                double result = src.get(0).call(inputs, j);
                 for (int i = 1; i < src.size(); i++) {
-                    final double current = src.get(i).activate(inputs, j);
+                    final double current = src.get(i).call(inputs, j);
                     result = Math.pow(result, current);
                 }
                 return result;
@@ -621,12 +570,12 @@ public abstract class AbstractFunction implements Function {
                 for (int si = 0; si < src.size(); si++) {
                     double b = 1;
                     for (int i = 1; i < src.size(); i++) {
-                        b *= src.get(i).activate(inputs, j);
+                        b *= src.get(i).call(inputs, j);
                     }
                     if (si == 0) {
-                        out += src.get(0).derive(inputs, d, j) * b * Math.pow(src.get(0).activate(inputs, j), b - 1);
+                        out += src.get(0).derive(inputs, d, j) * b * Math.pow(src.get(0).call(inputs, j), b - 1);
                     } else {
-                        double a = src.get(0).activate(inputs, j);
+                        double a = src.get(0).call(inputs, j);
                         out += (a >= 0) ? src.get(si).derive(inputs, d, j) * b * Math.log(a) : 0;
                     }
                 }
@@ -637,9 +586,9 @@ public abstract class AbstractFunction implements Function {
         @Contract(pure = true)
         private static double power(double[] inputs, int d, ArrayList<Function> src) {
             if (d < 0) {
-                double result = src.get(0).activate(inputs);
+                double result = src.get(0).call(inputs);
                 for (int i = 1; i < src.size(); i++) {
-                    final double current = src.get(i).activate(inputs);
+                    final double current = src.get(i).call(inputs);
                     result = Math.pow(result, current);
                 }
                 return result;
@@ -649,7 +598,7 @@ public abstract class AbstractFunction implements Function {
                 double a = 0;
                 for (int i = 1; i < src.size(); i++) {
                     double dd = 1;
-                    a = src.get(i).activate(inputs);
+                    a = src.get(i).call(inputs);
                     for (int di = 1; di < src.size(); di++) {
                         if (di != i) dd *= a;
                         else dd *= src.get(di).derive(inputs, d);
@@ -658,29 +607,28 @@ public abstract class AbstractFunction implements Function {
                     b *= a;
                 }
                 double out = 0;
-                a = src.get(0).activate(inputs);
+                a = src.get(0).call(inputs);
                 out += src.get(0).derive(inputs, d) * b * Math.pow(a, b - 1);
                 out += (a >= 0) ? bd *  Math.pow(a, b) * Math.log(a) : 0;
                 return out;
             }
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         private static double division(double[] inputs, int j, int d, ArrayList<Function> src) {
             if (d < 0) {
-                double result = src.get(0).activate(inputs, j);
+                double result = src.get(0).call(inputs, j);
                 for (int Vi = 1; Vi < src.size(); Vi++) {
-                    final double current = src.get(Vi).activate(inputs, j);
+                    final double current = src.get(Vi).call(inputs, j);
                     result /= current;
                 }
                 return result;
             } else {
                 double u, ud, v, vd;
-                u = src.get(0).activate(inputs, j);
+                u = src.get(0).call(inputs, j);
                 ud = src.get(0).derive(inputs, d, j);
                 for (int i = 0; i < src.size() - 1; i++) {
-                    v = src.get(i + 1).activate(inputs, j);
+                    v = src.get(i + 1).call(inputs, j);
                     vd = src.get(i + 1).derive(inputs, d, j);
                     ud = (ud * v - u * vd) / Math.pow(v, 2);
                     u /= v;
@@ -692,20 +640,20 @@ public abstract class AbstractFunction implements Function {
         @Contract(pure = true)
         private static double division(double[] inputs, int d, ArrayList<Function> src) {
             if (d < 0) {
-                double result = src.get(0).activate(inputs);
+                double result = src.get(0).call(inputs);
                 for (int i = 1; i < src.size(); i++) {
-                    final double current = src.get(i).activate(inputs);
+                    final double current = src.get(i).call(inputs);
                     result /= current;
                 }
                 return result;
             } else {
                 double derivative = 0;
-                double tempVar = src.get(0).activate(inputs);
+                double tempVar = src.get(0).call(inputs);
                 derivative = src.get(0).derive(inputs, d);
 
                 for (int i = 0; i < src.size() - 1; i++) {
                     double u, ud, v, vd;
-                    v = src.get(i + 1).activate(inputs);
+                    v = src.get(i + 1).call(inputs);
                     vd = src.get(i + 1).derive(inputs, d);
                     u = tempVar;
                     ud = derivative;
@@ -716,23 +664,22 @@ public abstract class AbstractFunction implements Function {
             }
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         private static double multiplication(double[] inputs, int j, int d, ArrayList<Function> src) {
             if (d < 0) {
-                double result = src.get(0).activate(inputs, j);
+                double result = src.get(0).call(inputs, j);
                 for (int i = 1; i < src.size(); i++) {
-                    final double current = src.get(i).activate(inputs, j);
+                    final double current = src.get(i).call(inputs, j);
                     result *= current;
                 }
                 return result;
             } else {
                 double u, ud, v, vd;
-                u = src.get(0).activate(inputs, j);
+                u = src.get(0).call(inputs, j);
                 ud = src.get(0).derive(inputs, d, j);
 
                 for (int ji = 1; ji < src.size(); ji++) {
-                    v = src.get(ji).activate(inputs, j);
+                    v = src.get(ji).call(inputs, j);
                     vd = src.get(ji).derive(inputs, d, j);
                     ud = u * vd + v * ud;
                     u *= v;
@@ -744,29 +691,26 @@ public abstract class AbstractFunction implements Function {
         @Contract(pure = true)
         private static double multiplication(double[] inputs, int d, ArrayList<Function> src) {
             if (d < 0) {
-                double result = src.get(0).activate(inputs);
+                double result = src.get(0).call(inputs);
                 for (int i = 1; i < src.size(); i++) {
-                    final double current = src.get(i).activate(inputs);
+                    final double current = src.get(i).call(inputs);
                     result *= current;
                 }
                 return result;
             } else {
                 double u, ud, v, vd;
-                u = src.get(0).activate(inputs);
+                u = src.get(0).call(inputs);
                 ud = src.get(0).derive(inputs, d);
                 for (int j = 1; j < src.size(); j++) {
-                    v = src.get(j).activate(inputs);
+                    v = src.get(j).call(inputs);
                     vd = src.get(j).derive(inputs, d);
 
                     ud = u * vd + v * ud;
-                    u *= v;//this step can be avoided (TODO optimize)
+                    u *= v; // ...this step can be avoided (TODO optimize)
                 }
                 return ud;
             }
         }
-
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 
         @Contract(pure = true)
         private static double idy(double[] inputs, int d, ArrayList<Function> src) {
@@ -777,13 +721,12 @@ public abstract class AbstractFunction implements Function {
             return 0;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         private static double modulo(double[] inputs, int j, int d, ArrayList<Function> src) {
             if (d < 0) {
-                double result = src.get(0).activate(inputs, j);
+                double result = src.get(0).call(inputs, j);
                 for (int i = 1; i < src.size(); i++) {
-                    final double current = src.get(i).activate(inputs, j);
+                    final double current = src.get(i).call(inputs, j);
                     result %= current;
                 }
                 return result;
@@ -795,9 +738,9 @@ public abstract class AbstractFunction implements Function {
         @Contract(pure = true)
         private static double modulo(double[] inputs, int d, ArrayList<Function> src) {
             if (d < 0) {
-                double result = src.get(0).activate(inputs);
+                double result = src.get(0).call(inputs);
                 for (int i = 1; i < src.size(); i++) {
-                    final double current = src.get(i).activate(inputs);
+                    final double current = src.get(i).call(inputs);
                     result %= current;
                 }
                 return result;
@@ -806,13 +749,12 @@ public abstract class AbstractFunction implements Function {
             }
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         private static double subtraction(double[] inputs, int j, int d, ArrayList<Function> src) {
             if (d < 0) {
-                double result = src.get(0).activate(inputs, j);
+                double result = src.get(0).call(inputs, j);
                 for (int Vi = 1; Vi < src.size(); Vi++) {
-                    final double current = src.get(Vi).activate(inputs, j);
+                    final double current = src.get(Vi).call(inputs, j);
                     result -= current;
                 }
                 return result;
@@ -832,9 +774,9 @@ public abstract class AbstractFunction implements Function {
         @Contract(pure = true)
         private static double subtraction(double[] inputs, int d, ArrayList<Function> src) {
             if (d < 0) {
-                double result = src.get(0).activate(inputs);
+                double result = src.get(0).call(inputs);
                 for (int i = 1; i < src.size(); i++) {
-                    final double current = src.get(i).activate(inputs);
+                    final double current = src.get(i).call(inputs);
                     result -= current;
                 }
                 return result;
@@ -851,13 +793,12 @@ public abstract class AbstractFunction implements Function {
             }
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         @Contract(pure = true)
         private static double addition(double[] inputs, int j, int d, ArrayList<Function> src) {
             if (d < 0) {
-                double result = src.get(0).activate(inputs, j);
+                double result = src.get(0).call(inputs, j);
                 for (int i = 1; i < src.size(); i++) {
-                    final double current = src.get(i).activate(inputs, j);
+                    final double current = src.get(i).call(inputs, j);
                     result += current;
                 }
                 return result;
@@ -873,9 +814,9 @@ public abstract class AbstractFunction implements Function {
         @Contract(pure = true)
         private static double addition(double[] inputs, int d, ArrayList<Function> src) {
             if (d < 0) {
-                double result = src.get(0).activate(inputs);
+                double result = src.get(0).call(inputs);
                 for (int Vi = 1; Vi < src.size(); Vi++) {
-                    final double current = src.get(Vi).activate(inputs);
+                    final double current = src.get(Vi).call(inputs);
                     result += current;
                 }
                 return result;
@@ -887,7 +828,6 @@ public abstract class AbstractFunction implements Function {
                 return derivative;
             }
         }
-
 
     }
 

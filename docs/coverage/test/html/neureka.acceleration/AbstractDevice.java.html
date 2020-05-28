@@ -195,8 +195,8 @@ import java.lang.ref.Cleaner;
 <span class="fc bfc" id="L195" title="All 2 branches covered.">        if(tsrs[0]==null)//Creating a new tensor:</span>
         {
 <span class="fc bfc" id="L197" title="All 2 branches covered.">            int[] shp = (type.identifier().endsWith(&quot;x&quot;))</span>
-<span class="fc" id="L198">                    ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].shape(), tsrs[2].shape())</span>
-<span class="fc" id="L199">                    : tsrs[1].shape();</span>
+<span class="fc" id="L198">                    ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())</span>
+<span class="fc" id="L199">                    : tsrs[1].getNDConf().shape();</span>
 <span class="fc" id="L200">            Tsr output = new Tsr(shp, 0.0);</span>
 <span class="fc" id="L201">            device.add(output);</span>
 <span class="fc" id="L202">            tsrs[0] = output;</span>

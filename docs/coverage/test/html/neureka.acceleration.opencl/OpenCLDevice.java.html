@@ -152,13 +152,13 @@ public class OpenCLDevice extends AbstractDevice
 <span class="fc" id="L152">            newClt.value = parent.value;</span>
         }
         //CONFIG TRANSFER: &lt;[ shape | translation | idxmap | idx | scale ]&gt;
-<span class="fc" id="L155">        int rank = tensor.shape().length;</span>
+<span class="fc" id="L155">        int rank = tensor.rank();</span>
 <span class="fc" id="L156">        int[] config = new int[rank * 5];</span>
-<span class="fc" id="L157">        System.arraycopy(tensor.shape(), 0, config, 0, rank);// -=&gt; SHAPE COPY</span>
-<span class="fc" id="L158">        System.arraycopy(tensor.translation(), 0, config, rank * 1, rank);// -=&gt; TRANSLATION COPY</span>
-<span class="fc" id="L159">        System.arraycopy(tensor.idxmap(), 0, config, rank * 2, rank);// -=&gt; IDXMAP COPY (translates scalar to dimension index)</span>
-<span class="fc" id="L160">        System.arraycopy(tensor.offset(), 0, config, rank * 3, rank);// -=&gt; SPREAD</span>
-<span class="fc" id="L161">        System.arraycopy(tensor.spread(), 0, config, rank * 4, rank);</span>
+<span class="fc" id="L157">        System.arraycopy(tensor.getNDConf().shape(), 0, config, 0, rank);// -=&gt; SHAPE COPY</span>
+<span class="fc" id="L158">        System.arraycopy(tensor.getNDConf().translation(), 0, config, rank * 1, rank);// -=&gt; TRANSLATION COPY</span>
+<span class="fc" id="L159">        System.arraycopy(tensor.getNDConf().idxmap(), 0, config, rank * 2, rank);// -=&gt; IDXMAP COPY (translates scalar to dimension index)</span>
+<span class="fc" id="L160">        System.arraycopy(tensor.getNDConf().offset(), 0, config, rank * 3, rank);// -=&gt; SPREAD</span>
+<span class="fc" id="L161">        System.arraycopy(tensor.getNDConf().spread(), 0, config, rank * 4, rank);</span>
 
         //SHAPE/TRANSLATION/IDXMAP/OFFSET/SPREAD TRANSFER:
 <span class="fc" id="L164">        newClt.config.data = clCreateBuffer(</span>

@@ -195,8 +195,8 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
         if(tsrs[0]==null)//Creating a new tensor:
         {
             int[] shp = (type.identifier().endsWith("x"))
-                    ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].shape(), tsrs[2].shape())
-                    : tsrs[1].shape();
+                    ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
+                    : tsrs[1].getNDConf().shape();
             Tsr output = new Tsr(shp, 0.0);
             device.add(output);
             tsrs[0] = output;

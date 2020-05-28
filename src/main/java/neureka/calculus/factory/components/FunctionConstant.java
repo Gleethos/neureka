@@ -4,14 +4,17 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.factory.BaseFunction;
 
-public class FunctionConstant implements Function
+public class FunctionConstant extends BaseFunction
 {
 	private double _value;
 	public double value(){
 		return this._value;
 	}
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	//------------------------------------------------------------------------------------------------------------------
+
 	@Override
 	public boolean isFlat(){
 		return  false;
@@ -55,48 +58,16 @@ public class FunctionConstant implements Function
 		_value = Double.parseDouble(number);
 		return this;
 	}
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
-	public double call(double input){
-		return activate(input);
-	}
-	@Override
-	public double call(double[] inputs, int j){
-		return inputs[j];
-	}
-	@Override
-	public double call(double[] inputs){
-		return activate(inputs);
-	}
-
-	@Override
-	public Tsr call(Tsr input){
-		return activate(input);
-	}
-
-	@Override
-	public Tsr call(Tsr[] inputs, int j){
-		return activate(inputs, j);
-	}
-
-	@Override
-	public Tsr call(Tsr[] inputs) {
-		return activate(inputs);
-	}
-
-	@Override
-	public double activate(double input){
-		return activate(new double[]{input});
-	}
-
-	@Override
-    public double activate(final double[] inputs, int j) {
+    public double call(final double[] inputs, int j) {
     	return _value;
     }
 
 	@Override
-	public double activate(double[] inputs) {
+	public double call(double[] inputs) {
 		return _value;
 	}
 
@@ -110,20 +81,15 @@ public class FunctionConstant implements Function
 		return 0;
 	}
 
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
-	public Tsr activate(Tsr input){
-		return activate(new Tsr[]{input});
-	}
-
-	@Override
-	public Tsr activate(Tsr[] inputs, int j) {
+	public Tsr call(Tsr[] inputs, int j) {
 		return new Tsr(inputs[0].shape(), this._value);
 	}
 
 	@Override
-	public Tsr activate(Tsr[] inputs) {
+	public Tsr call(Tsr[] inputs) {
 		return new Tsr(inputs[0].shape(), this._value);
 	}
 
@@ -136,13 +102,13 @@ public class FunctionConstant implements Function
 	public Tsr derive(Tsr[] inputs, int index) {
 		return new Tsr(inputs[0].shape(), 0.0);
 	}
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
 	public String toString() {
 		return _value +"";
 	}
-
 
 	@Override
 	public ADAgent getADAgent(Tsr[] inputs, int i, boolean forward){

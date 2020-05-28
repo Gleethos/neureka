@@ -16,16 +16,16 @@ class SlicedTensorTests
     void test_slicing()
     {
         Neureka.instance().reset()
-        Neureka.instance().settings().autoDiff().applyGradientWhenTensorIsUsed = false
-        Neureka.instance().settings().view().setLegacy(true)
+        Neureka.instance().settings().autoDiff().isApplyingGradientWhenTensorIsUsed = false
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
 
         NTester_Tensor tester = new NTester_Tensor("IndexAlias-Testing: slices/subset creation and calculation")
         Device device = new DummyDevice()
 
-        Neureka.instance().settings().indexing().setLegacy(true)
+        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
         _slice_test_template(device, tester, true)
 
-        Neureka.instance().settings().indexing().setLegacy(false)
+        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
         _slice_test_template(device, tester, false)
 
         //=========================================================================
@@ -33,11 +33,11 @@ class SlicedTensorTests
         //=========================================================================
         Device gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0)
 
-        Neureka.instance().settings().indexing().setLegacy(true)
+        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
         OpenCLPlatform.PLATFORMS().get(0).recompile()
         _slice_test_template(gpu, tester, true)
 
-        Neureka.instance().settings().indexing().setLegacy(false)
+        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
         OpenCLPlatform.PLATFORMS().get(0).recompile()
         _slice_test_template(gpu, tester, false)
 

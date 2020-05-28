@@ -152,13 +152,13 @@ public class OpenCLDevice extends AbstractDevice
             newClt.value = parent.value;
         }
         //CONFIG TRANSFER: <[ shape | translation | idxmap | idx | scale ]>
-        int rank = tensor.shape().length;
+        int rank = tensor.rank();
         int[] config = new int[rank * 5];
-        System.arraycopy(tensor.shape(), 0, config, 0, rank);// -=> SHAPE COPY
-        System.arraycopy(tensor.translation(), 0, config, rank * 1, rank);// -=> TRANSLATION COPY
-        System.arraycopy(tensor.idxmap(), 0, config, rank * 2, rank);// -=> IDXMAP COPY (translates scalar to dimension index)
-        System.arraycopy(tensor.offset(), 0, config, rank * 3, rank);// -=> SPREAD
-        System.arraycopy(tensor.spread(), 0, config, rank * 4, rank);
+        System.arraycopy(tensor.getNDConf().shape(), 0, config, 0, rank);// -=> SHAPE COPY
+        System.arraycopy(tensor.getNDConf().translation(), 0, config, rank * 1, rank);// -=> TRANSLATION COPY
+        System.arraycopy(tensor.getNDConf().idxmap(), 0, config, rank * 2, rank);// -=> IDXMAP COPY (translates scalar to dimension index)
+        System.arraycopy(tensor.getNDConf().offset(), 0, config, rank * 3, rank);// -=> SPREAD
+        System.arraycopy(tensor.getNDConf().spread(), 0, config, rank * 4, rank);
 
         //SHAPE/TRANSLATION/IDXMAP/OFFSET/SPREAD TRANSFER:
         newClt.config.data = clCreateBuffer(

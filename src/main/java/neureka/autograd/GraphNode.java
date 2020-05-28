@@ -292,9 +292,9 @@ public class GraphNode implements Component<Tsr>
             Tsr[] inputs = (Tsr[]) context;
             /* Applying JITProp and gradients */
             Neureka.Settings.AutoDiff adSetting = Neureka.instance().settings().autoDiff();
-            if (adSetting.applyGradientWhenTensorIsUsed()) {
+            if (adSetting.isApplyingGradientWhenTensorIsUsed()) {
                 for (Tsr t : inputs){
-                    if(!adSetting.applyGradientWhenRequested() || t.gradientApplyRqd()) {
+                    if(!adSetting.isApplyingGradientWhenRequested() || t.gradientApplyRqd()) {
                         t.forComponent(JITProp.class, jit -> ((JITProp) jit).execute());
                         t.remove(JITProp.class);
                         t.applyGradient();
@@ -437,7 +437,7 @@ public class GraphNode implements Component<Tsr>
     public void backward(Tsr error) {
         Set<GraphNode> pendingNodes = new HashSet<>();
         _backward(error, pendingNodes, false);// Entry-point to private recursive back-propagation!
-        if (Neureka.instance().settings().autoDiff().retainPendingErrorForJITProp()) {
+        if (Neureka.instance().settings().autoDiff().isRetainingPendingErrorForJITProp()) {
             pendingNodes.forEach( n -> n._carryPendingBackPropToGradients(pendingNodes));
         } else {
             pendingNodes.forEach( n -> {
@@ -566,7 +566,7 @@ public class GraphNode implements Component<Tsr>
      * deviate from its default state, namely: true!
      */
     private void _deleteDerivativesRecursively() {
-        if (!Neureka.instance().settings().debug().keepDerivativeTargetPayloads()) {//<=- This flag is almost always false. (Used for testing)
+        if (!Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads()) {//<=- This flag is almost always false. (Used for testing)
             if (!this.reliesOnJustInTimeProp()) _targets_derivatives = null;
             if (!this.isGraphLeave()) forEachTarget(GraphNode::_deleteDerivativesRecursively);
         }

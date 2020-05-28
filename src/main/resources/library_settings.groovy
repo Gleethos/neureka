@@ -5,25 +5,30 @@ Neureka.instance {
     settings {
 
         autoDiff {
-            delegate.retainPendingErrorForJITProp = true
-            delegate.applyGradientWhenTensorIsUsed = true
-            delegate.applyGradientWhenRequested = true
+            it.isRetainingPendingErrorForJITProp = true
+            it.isApplyingGradientWhenTensorIsUsed = true
+            it.isApplyingGradientWhenRequested = true
         }
 
         indexing {
-            delegate.legacy = false
-            delegate.thorough = true
+            it.isUsingLegacyIndexing = false
+            it.isUsingThoroughIndexing = true
         }
 
         debug {
-            delegate.keepDerivativeTargetPayloads = false
+            it.isKeepingDerivativeTargetPayloads = false
         }
 
         view {
-            delegate.legacy = false
+            it.isUsingLegacyView = false
         }
+
+        ndim {
+            it.isOnlyUsingDefaultNDConfiguration = false
+        }
+
     }
 
-    return "0.1.2"
+    return "0.2.0"
 
 }

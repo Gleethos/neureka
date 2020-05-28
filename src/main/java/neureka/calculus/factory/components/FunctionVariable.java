@@ -4,9 +4,10 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.factory.BaseFunction;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
-public class FunctionVariable implements Function, GradientProvider {
+public class FunctionVariable extends BaseFunction implements GradientProvider {
 
     private boolean _providesGradient = false;
 
@@ -47,33 +48,17 @@ public class FunctionVariable implements Function, GradientProvider {
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     @Override
-    public double activate(double input){
-        return activate(new double[]{input});
+    public double call(final double[] inputs, int j) {
+        return inputs[j];
     }
 
     @Override
-    public double activate(final double[] inputs, int j) {
-        return inputs[j];
-    }
-    @Override
-    public double activate(final double[] inputs) {
+    public double call(final double[] inputs) {
         double sum = 0;
-        for (int Ii = 0; Ii < inputs.length; Ii++) sum += activate(inputs, Ii);
+        for (int Ii = 0; Ii < inputs.length; Ii++) sum += call(inputs, Ii);
         return sum;
-    }
-
-    @Override
-    public double call(double input){
-        return activate(input);
-    }
-    @Override
-    public double call(double[] inputs, int j){
-        return inputs[j];
-    }
-    @Override
-    public double call(double[] inputs){
-        return activate(inputs);
     }
 
     @Override
@@ -89,35 +74,15 @@ public class FunctionVariable implements Function, GradientProvider {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public Tsr call(Tsr input){
-        return activate(input);
-    }
-
-    @Override
-    public Tsr call(Tsr[] inputs, int j){
-        return activate(inputs, j);
-    }
-
-    @Override
-    public Tsr call(Tsr[] inputs) {
-        return activate(inputs);
-    }
-
-    @Override
-    public Tsr activate(Tsr input){
-        return activate(new Tsr[]{input});
-    }
-
-    @Override
-    public Tsr activate(Tsr[] inputs, int j) {
+    public Tsr call(Tsr[] inputs, int j) {
         return inputs[j];
     }
 
     @Override
-    public Tsr activate(Tsr[] inputs) {
+    public Tsr call(Tsr[] inputs) {
         String exp = "I[0]";
         for(int i=1; i<inputs.length; i++)exp += "+I["+i+"]";
-        return FunctionBuilder.build(exp, false).activate(inputs);
+        return FunctionBuilder.build(exp, false).call(inputs);
     }
 
     @Override

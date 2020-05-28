@@ -256,7 +256,7 @@ public class OperationType implements Type
 <span class="fc" id="L256">            Tsr d = f.derive(inputs, i);</span>
 <span class="fc" id="L257">            return new ADAgent(</span>
 <span class="fc" id="L258">                    ()-&gt;d,</span>
-<span class="nc" id="L259">                    (t, derivative) -&gt; mul.activate(new Tsr[]{derivative, d}),</span>
+<span class="nc" id="L259">                    (t, derivative) -&gt; mul.call(new Tsr[]{derivative, d}),</span>
                     null
             );
         } else {
@@ -265,8 +265,8 @@ public class OperationType implements Type
 <span class="fc" id="L265">                Tsr d = f.derive(inputs, i);</span>
 <span class="fc" id="L266">                return new ADAgent(</span>
 <span class="fc" id="L267">                        ()-&gt;d,</span>
-<span class="nc" id="L268">                        (t, derivative) -&gt; mul.activate(new Tsr[]{derivative, d}),</span>
-<span class="fc" id="L269">                        (t, error) -&gt; mul.activate(new Tsr[]{error, d})</span>
+<span class="nc" id="L268">                        (t, derivative) -&gt; mul.call(new Tsr[]{derivative, d}),</span>
+<span class="fc" id="L269">                        (t, error) -&gt; mul.call(new Tsr[]{error, d})</span>
                 );
             }
 <span class="pc bpc" id="L272" title="1 of 2 branches missed.">            else if (this.isConvection())</span>
@@ -278,8 +278,8 @@ public class OperationType implements Type
 <span class="fc" id="L278">                Tsr d = f.derive(inputs, i);</span>
 <span class="fc" id="L279">                return new ADAgent(</span>
 <span class="fc" id="L280">                        ()-&gt;d,</span>
-<span class="nc" id="L281">                        (t, derivative) -&gt; mul.activate(new Tsr[]{derivative, d}),</span>
-<span class="fc" id="L282">                        (t, error) -&gt; invX.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})</span>
+<span class="nc" id="L281">                        (t, derivative) -&gt; mul.call(new Tsr[]{derivative, d}),</span>
+<span class="fc" id="L282">                        (t, error) -&gt; invX.call(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})</span>
                 );
             }
         }

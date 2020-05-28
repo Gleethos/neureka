@@ -292,9 +292,9 @@ public class GraphNode implements Component&lt;Tsr&gt;
 <span class="fc" id="L292">            Tsr[] inputs = (Tsr[]) context;</span>
             /* Applying JITProp and gradients */
 <span class="fc" id="L294">            Neureka.Settings.AutoDiff adSetting = Neureka.instance().settings().autoDiff();</span>
-<span class="fc bfc" id="L295" title="All 2 branches covered.">            if (adSetting.applyGradientWhenTensorIsUsed()) {</span>
+<span class="fc bfc" id="L295" title="All 2 branches covered.">            if (adSetting.isApplyingGradientWhenTensorIsUsed()) {</span>
 <span class="fc bfc" id="L296" title="All 2 branches covered.">                for (Tsr t : inputs){</span>
-<span class="fc bfc" id="L297" title="All 4 branches covered.">                    if(!adSetting.applyGradientWhenRequested() || t.gradientApplyRqd()) {</span>
+<span class="fc bfc" id="L297" title="All 4 branches covered.">                    if(!adSetting.isApplyingGradientWhenRequested() || t.gradientApplyRqd()) {</span>
 <span class="fc" id="L298">                        t.forComponent(JITProp.class, jit -&gt; ((JITProp) jit).execute());</span>
 <span class="fc" id="L299">                        t.remove(JITProp.class);</span>
 <span class="fc" id="L300">                        t.applyGradient();</span>
@@ -437,7 +437,7 @@ public class GraphNode implements Component&lt;Tsr&gt;
     public void backward(Tsr error) {
 <span class="fc" id="L438">        Set&lt;GraphNode&gt; pendingNodes = new HashSet&lt;&gt;();</span>
 <span class="fc" id="L439">        _backward(error, pendingNodes, false);// Entry-point to private recursive back-propagation!</span>
-<span class="fc bfc" id="L440" title="All 2 branches covered.">        if (Neureka.instance().settings().autoDiff().retainPendingErrorForJITProp()) {</span>
+<span class="fc bfc" id="L440" title="All 2 branches covered.">        if (Neureka.instance().settings().autoDiff().isRetainingPendingErrorForJITProp()) {</span>
 <span class="fc" id="L441">            pendingNodes.forEach( n -&gt; n._carryPendingBackPropToGradients(pendingNodes));</span>
         } else {
 <span class="fc" id="L443">            pendingNodes.forEach( n -&gt; {</span>
@@ -566,7 +566,7 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * deviate from its default state, namely: true!
      */
     private void _deleteDerivativesRecursively() {
-<span class="fc bfc" id="L569" title="All 2 branches covered.">        if (!Neureka.instance().settings().debug().keepDerivativeTargetPayloads()) {//&lt;=- This flag is almost always false. (Used for testing)</span>
+<span class="fc bfc" id="L569" title="All 2 branches covered.">        if (!Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads()) {//&lt;=- This flag is almost always false. (Used for testing)</span>
 <span class="pc bpc" id="L570" title="1 of 2 branches missed.">            if (!this.reliesOnJustInTimeProp()) _targets_derivatives = null;</span>
 <span class="fc bfc" id="L571" title="All 2 branches covered.">            if (!this.isGraphLeave()) forEachTarget(GraphNode::_deleteDerivativesRecursively);</span>
         }

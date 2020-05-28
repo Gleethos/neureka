@@ -9,105 +9,106 @@ import neureka.calculus.environment.OperationType;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.calculus.environment.Cache;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public interface Function
 {
     //Global context and cache:
-<span class="fc" id="L17">    Cache CACHE = Cache.instance();</span>
+<span class="fc" id="L18">    Cache CACHE = Cache.instance();</span>
 
-<span class="fc" id="L19">    Function IDY = create(&quot;I[0]&lt;-Ii[1]&quot;);</span>
+<span class="fc" id="L20">    Function IDY = create(&quot;I[0]&lt;-Ii[1]&quot;);</span>
 
-<span class="fc" id="L21">    Function X = create(&quot;I[0]xI[1]&quot;);</span>
-<span class="fc" id="L22">    Function PLUS = create(&quot;(I[0]+I[1])&quot;);</span>
-<span class="fc" id="L23">    Function PLUS_ASSIGN = create(&quot;I[0]&lt;-(I[0]+I[1])&quot;);</span>
-<span class="fc" id="L24">    Function MINUS = create(&quot;(I[0]-I[1])&quot;);</span>
-<span class="fc" id="L25">    Function MINUS_ASSIGN = create(&quot;I[0]&lt;-(I[0]-I[1])&quot;);</span>
-<span class="fc" id="L26">    Function DIV = create(&quot;(I[0]/I[1])&quot;);</span>
-<span class="fc" id="L27">    Function DIV_ASSIGN = create(&quot;I[0]&lt;-(I[0]/I[1])&quot;);</span>
-<span class="fc" id="L28">    Function POW = create(&quot;(I[0]^I[1])&quot;);</span>
-<span class="fc" id="L29">    Function POW_ASSIGN = create(&quot;I[0]&lt;-(I[0]^I[1])&quot;);</span>
-<span class="fc" id="L30">    Function MUL = create(&quot;I[0]*I[1]&quot;);</span>
-<span class="fc" id="L31">    Function MUL_ASSIGN = create(&quot;I[0]&lt;-(I[0]*I[1])&quot;);</span>
-<span class="fc" id="L32">    Function MOD = create(&quot;(I[0]%I[1])&quot;);</span>
-<span class="fc" id="L33">    Function MOD_ASSIGN = create(&quot;I[0]&lt;-(I[0]%I[1])&quot;);</span>
-<span class="fc" id="L34">    Function NEG = create(&quot;(-1*I[0])&quot;);</span>
+<span class="fc" id="L22">    Function X = create(&quot;I[0]xI[1]&quot;);</span>
+<span class="fc" id="L23">    Function PLUS = create(&quot;(I[0]+I[1])&quot;);</span>
+<span class="fc" id="L24">    Function PLUS_ASSIGN = create(&quot;I[0]&lt;-(I[0]+I[1])&quot;);</span>
+<span class="fc" id="L25">    Function MINUS = create(&quot;(I[0]-I[1])&quot;);</span>
+<span class="fc" id="L26">    Function MINUS_ASSIGN = create(&quot;I[0]&lt;-(I[0]-I[1])&quot;);</span>
+<span class="fc" id="L27">    Function DIV = create(&quot;(I[0]/I[1])&quot;);</span>
+<span class="fc" id="L28">    Function DIV_ASSIGN = create(&quot;I[0]&lt;-(I[0]/I[1])&quot;);</span>
+<span class="fc" id="L29">    Function POW = create(&quot;(I[0]^I[1])&quot;);</span>
+<span class="fc" id="L30">    Function POW_ASSIGN = create(&quot;I[0]&lt;-(I[0]^I[1])&quot;);</span>
+<span class="fc" id="L31">    Function MUL = create(&quot;I[0]*I[1]&quot;);</span>
+<span class="fc" id="L32">    Function MUL_ASSIGN = create(&quot;I[0]&lt;-(I[0]*I[1])&quot;);</span>
+<span class="fc" id="L33">    Function MOD = create(&quot;(I[0]%I[1])&quot;);</span>
+<span class="fc" id="L34">    Function MOD_ASSIGN = create(&quot;I[0]&lt;-(I[0]%I[1])&quot;);</span>
+<span class="fc" id="L35">    Function NEG = create(&quot;(-1*I[0])&quot;);</span>
 
 
-<span class="nc" id="L37">    class Detached</span>
+<span class="nc" id="L38">    class Detached</span>
     {
-<span class="fc" id="L39">        public static Function IDY = create(&quot;I[0]&lt;-I[1]&quot;, false);</span>
+<span class="fc" id="L40">        public static Function IDY = create(&quot;I[0]&lt;-I[1]&quot;, false);</span>
 
-<span class="fc" id="L41">        public static Function X = create(&quot;I[0]xI[1]&quot;, false);</span>
-<span class="fc" id="L42">        public static Function PLUS = create(&quot;(I[0]+I[1])&quot;, false);</span>
-<span class="fc" id="L43">        public static Function PLUS_ASSIGN = create(&quot;I[0]&lt;-(I[0]+I[1])&quot;, false);</span>
-<span class="fc" id="L44">        public static Function MINUS = create(&quot;(I[0]-I[1])&quot;, false);</span>
-<span class="fc" id="L45">        public static Function MINUS_ASSIGN = create(&quot;I[0]&lt;-(I[0]-I[1])&quot;, false);</span>
-<span class="fc" id="L46">        public static Function DIV = create(&quot;(I[0]/I[1])&quot;, false);</span>
-<span class="fc" id="L47">        public static Function DIV_ASSIGN = create(&quot;I[0]&lt;-(I[0]/I[1])&quot;, false);</span>
-<span class="fc" id="L48">        public static Function POW = create(&quot;(I[0]^I[1])&quot;, false);</span>
-<span class="fc" id="L49">        public static Function POW_ASSIGN = create(&quot;I[0]&lt;-(I[0]^I[1])&quot;, false);</span>
-<span class="fc" id="L50">        public static Function MUL = create(&quot;I[0]*I[1]&quot;, false);</span>
-<span class="fc" id="L51">        public static Function MUL_ASSIGN = create(&quot;I[0]&lt;-(I[0]*I[1])&quot;, false);</span>
-<span class="fc" id="L52">        public static Function ADD = create(&quot;I[0]+I[1]&quot;, false);</span>
-<span class="fc" id="L53">        public static Function ADD_ASSIGN = create(&quot;I[0]&lt;-(I[0]+I[1])&quot;, false);</span>
-<span class="fc" id="L54">        public static Function MOD = create(&quot;(I[0]%I[1])&quot;, false);</span>
-<span class="fc" id="L55">        public static Function MOD_ASSIGN = create(&quot;I[0]&lt;-(I[0]%I[1])&quot;, false);</span>
-<span class="fc" id="L56">        public static Function NEG = create(&quot;(-1*I[0])&quot;, false);</span>
+<span class="fc" id="L42">        public static Function X = create(&quot;I[0]xI[1]&quot;, false);</span>
+<span class="fc" id="L43">        public static Function PLUS = create(&quot;(I[0]+I[1])&quot;, false);</span>
+<span class="fc" id="L44">        public static Function PLUS_ASSIGN = create(&quot;I[0]&lt;-(I[0]+I[1])&quot;, false);</span>
+<span class="fc" id="L45">        public static Function MINUS = create(&quot;(I[0]-I[1])&quot;, false);</span>
+<span class="fc" id="L46">        public static Function MINUS_ASSIGN = create(&quot;I[0]&lt;-(I[0]-I[1])&quot;, false);</span>
+<span class="fc" id="L47">        public static Function DIV = create(&quot;(I[0]/I[1])&quot;, false);</span>
+<span class="fc" id="L48">        public static Function DIV_ASSIGN = create(&quot;I[0]&lt;-(I[0]/I[1])&quot;, false);</span>
+<span class="fc" id="L49">        public static Function POW = create(&quot;(I[0]^I[1])&quot;, false);</span>
+<span class="fc" id="L50">        public static Function POW_ASSIGN = create(&quot;I[0]&lt;-(I[0]^I[1])&quot;, false);</span>
+<span class="fc" id="L51">        public static Function MUL = create(&quot;I[0]*I[1]&quot;, false);</span>
+<span class="fc" id="L52">        public static Function MUL_ASSIGN = create(&quot;I[0]&lt;-(I[0]*I[1])&quot;, false);</span>
+<span class="fc" id="L53">        public static Function ADD = create(&quot;I[0]+I[1]&quot;, false);</span>
+<span class="fc" id="L54">        public static Function ADD_ASSIGN = create(&quot;I[0]&lt;-(I[0]+I[1])&quot;, false);</span>
+<span class="fc" id="L55">        public static Function MOD = create(&quot;(I[0]%I[1])&quot;, false);</span>
+<span class="fc" id="L56">        public static Function MOD_ASSIGN = create(&quot;I[0]&lt;-(I[0]%I[1])&quot;, false);</span>
+<span class="fc" id="L57">        public static Function NEG = create(&quot;(-1*I[0])&quot;, false);</span>
     }
 
     static Function create(String expression){
-<span class="fc" id="L60">        return create(expression, true);</span>
+<span class="fc" id="L61">        return create(expression, true);</span>
     }
 
     static Function create(String expression, boolean doAD){
-<span class="fc" id="L64">        return FunctionBuilder.build(expression, doAD);</span>
+<span class="fc" id="L65">        return FunctionBuilder.build(expression, doAD);</span>
     }
 
-<span class="nc" id="L67">    class Setup</span>
+<span class="nc" id="L68">    class Setup</span>
     {
         public static Tsr commit(Tsr[] tensors, String operation, boolean doAD) {
-<span class="fc" id="L70">            return commit(null, tensors, FunctionBuilder.build(operation, doAD));</span>
+<span class="fc" id="L71">            return commit(null, tensors, FunctionBuilder.build(operation, doAD));</span>
         }
 
         public static Tsr commit(Tsr drain, Tsr[] tensors, String operation, boolean doAD) {
-<span class="fc" id="L74">            return commit(drain, tensors, FunctionBuilder.build(operation, doAD));</span>
+<span class="fc" id="L75">            return commit(drain, tensors, FunctionBuilder.build(operation, doAD));</span>
         }
 
         public static Tsr commit(Tsr[] inputs, Function function) {
-<span class="nc" id="L78">            return commit(null, inputs, function);</span>
+<span class="nc" id="L79">            return commit(null, inputs, function);</span>
         }
 
         public static Tsr commit(Tsr drain, Tsr[] inputs, Function function) {
-<span class="fc" id="L82">            return commit(drain, inputs, function, null);</span>
+<span class="fc" id="L83">            return commit(drain, inputs, function, null);</span>
         }
 
         public static Tsr commit(Tsr drain, Tsr[] inputs, Function function, Supplier&lt;Tsr&gt; activation){
 
-<span class="fc" id="L87">            Tsr.makeFit(inputs);// reshaping if needed</span>
+<span class="fc" id="L88">            Tsr.makeFit(inputs);// reshaping if needed</span>
 
-<span class="fc" id="L89">            GraphLock newLock = new GraphLock(function, inputs);</span>
-<span class="fc bfc" id="L90" title="All 2 branches covered.">            for (Tsr t : inputs) {</span>
-<span class="fc bfc" id="L91" title="All 2 branches covered.">                if(t.has(GraphNode.class)) ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);</span>
-<span class="fc" id="L92">                else new GraphNode(function, newLock, ()-&gt; t);</span>
+<span class="fc" id="L90">            GraphLock newLock = new GraphLock(function, inputs);</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">            for (Tsr t : inputs) {</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">                if(t.has(GraphNode.class)) t.find(GraphNode.class).obtainLocking(newLock);</span>
+<span class="fc" id="L93">                else new GraphNode(function, newLock, ()-&gt; t);</span>
             }
-<span class="fc" id="L94">            Tsr result = null;</span>
-<span class="fc bfc" id="L95" title="All 2 branches covered.">            if(activation==null) result = function.activate(inputs);</span>
-<span class="fc" id="L96">            else result = activation.get();</span>
+<span class="fc" id="L95">            Tsr result = null;</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">            if(activation==null) result = function.call(inputs);</span>
+<span class="fc" id="L97">            else result = activation.get();</span>
 
-<span class="fc" id="L98">            Function.CACHE.free(newLock);</span>
-<span class="fc" id="L99">            boolean resultIsUnique = true;</span>
-<span class="fc bfc" id="L100" title="All 2 branches covered.">            if(drain!=null){</span>
-<span class="fc bfc" id="L101" title="All 2 branches covered.">                for(Tsr t : inputs){</span>
-<span class="fc" id="L102">                    Tsr g = (Tsr)t.find(Tsr.class);</span>
-<span class="fc bfc" id="L103" title="All 6 branches covered.">                    if (t == result || (g!=null &amp;&amp; g==result)) {</span>
-<span class="fc" id="L104">                        resultIsUnique = false;</span>
-<span class="fc" id="L105">                        break;</span>
+<span class="fc" id="L99">            Function.CACHE.free(newLock);</span>
+<span class="fc" id="L100">            boolean resultIsUnique = true;</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">            if(drain!=null){</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">                for(Tsr t : inputs){</span>
+<span class="fc" id="L103">                    Tsr g = (Tsr)t.find(Tsr.class);</span>
+<span class="fc bfc" id="L104" title="All 6 branches covered.">                    if (t == result || (g!=null &amp;&amp; g==result)) {</span>
+<span class="fc" id="L105">                        resultIsUnique = false;</span>
+<span class="fc" id="L106">                        break;</span>
                     }
                 }
             }
-<span class="fc bfc" id="L109" title="All 2 branches covered.">            if(resultIsUnique) return result;</span>
-<span class="fc" id="L110">            else return null;</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">            if(resultIsUnique) return result;</span>
+<span class="fc" id="L111">            else return null;</span>
         }
     }
 
@@ -126,17 +127,19 @@ public interface Function
     boolean dependsOn(int index);
 
     //------------------------------------------------------------------------------------------------------------------
-    double call(double input);
 
-    @Deprecated double activate(double input);
+    double call(double input);
+    double invoke(double input);
+
+    //------------------------------------------------------------------------------------------------------------------
 
     double call(double[] inputs, int j);
+    double invoke(double[] inputs, int j);
 
-    @Deprecated double activate(double[] inputs, int j);// Iteration over input via j !
 
     double call(double[] inputs);
+    double invoke(double[] inputs);
 
-    @Deprecated double activate(double[] inputs);
 
     double derive(double[] inputs, int index, int j);
 
@@ -145,16 +148,19 @@ public interface Function
     //------------------------------------------------------------------------------------------------------------------
 
     Tsr call(Tsr input);
+    Tsr invoke(Tsr input);
 
-    @Deprecated Tsr activate(Tsr input);
+    Tsr call(List&lt;Tsr&gt; input);
+    Tsr invoke(List&lt;Tsr&gt; input);
+
+    //------------------------------------------------------------------------------------------------------------------
 
     Tsr call(Tsr[] inputs, int j);
-
-    @Deprecated Tsr activate(Tsr[] inputs, int j);// Iteration over input via j !
+    Tsr invoke(Tsr[] inputs, int j);
 
     Tsr call(Tsr[] inputs);
+    Tsr invoke(Tsr[] inputs);
 
-    @Deprecated Tsr activate(Tsr[] inputs);
 
     Tsr derive(Tsr[] inputs, int index, int j);
 

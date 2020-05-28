@@ -12,8 +12,8 @@ class OptimizerTests {
     void test_ADAM()
     {
         Neureka.instance().reset()
-        assert Function.create("I[0]*I[1]+(1-I[2])*I[3]").activate(new double[]{0.9, 0.0, 0.9, -3.0})==-0.29999999999999993
-        assert Function.create("(1-I[0])*I[1]").activate(new double[]{0.9, -3.0})==-0.29999999999999993
+        assert Function.create("I[0]*I[1]+(1-I[2])*I[3]")(new double[]{0.9, 0.0, 0.9, -3.0})==-0.29999999999999993
+        assert Function.create("(1-I[0])*I[1]")(new double[]{0.9, -3.0})==-0.29999999999999993
 
         def t = new Tsr("( 1 - ", new Tsr(0.9), ") * ", new Tsr(-3))
         assert t.toString().equals("(1):[-0.29999E0]")

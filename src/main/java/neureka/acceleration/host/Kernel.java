@@ -12,9 +12,9 @@ public class Kernel
             int d, int i, int end,
             Type.DefaultOperator operation
     ) {
-        int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
-        int[] t1Shp = t1_src.shape();
-        int[] t2Shp = t2_src.shape();
+        int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
+        int[] t1Shp = t1_src.getNDConf().shape();
+        int[] t2Shp = t2_src.getNDConf().shape();
         int rank = t0Shp.length;
         int[] t0Idx = t0_drn.idx_of_i(i);
         int[] t1Idx = new int[rank];
@@ -155,9 +155,9 @@ public class Kernel
             int d, int i, int end,
             Type.DefaultOperator operation
     ) {
-        int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
-        int[] t1Shp = t1_src.shape();
-        int[] t2Shp = (t2_src != null) ? t2_src.shape() : t1Shp;
+        int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
+        int[] t1Shp = t1_src.getNDConf().shape();
+        int[] t2Shp = (t2_src != null) ? t2_src.getNDConf().shape() : t1Shp;
         int rank = t0Shp.length;
         int[] t0Idx = t0_drn.idx_of_i(i);
         int[] t1Idx = new int[rank];
@@ -245,9 +245,9 @@ public class Kernel
             int i, int end,
             Type.DefaultOperator operation
     ) {
-        int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
+        int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
         int rank = t0Shp.length;
-        int[] t0Idx = t0_drn.idx_of_i(i);//new int[rank];
+        int[] t0Idx = t0_drn.idx_of_i(i);
         int[] t1Idx = new int[rank];
         double[] t0_value = t0_drn.value64();
         while (i < end) {//increment on drain accordingly:

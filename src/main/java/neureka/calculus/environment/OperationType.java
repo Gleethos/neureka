@@ -256,7 +256,7 @@ public class OperationType implements Type
             Tsr d = f.derive(inputs, i);
             return new ADAgent(
                     ()->d,
-                    (t, derivative) -> mul.activate(new Tsr[]{derivative, d}),
+                    (t, derivative) -> mul.call(new Tsr[]{derivative, d}),
                     null
             );
         } else {
@@ -265,8 +265,8 @@ public class OperationType implements Type
                 Tsr d = f.derive(inputs, i);
                 return new ADAgent(
                         ()->d,
-                        (t, derivative) -> mul.activate(new Tsr[]{derivative, d}),
-                        (t, error) -> mul.activate(new Tsr[]{error, d})
+                        (t, derivative) -> mul.call(new Tsr[]{derivative, d}),
+                        (t, error) -> mul.call(new Tsr[]{error, d})
                 );
             }
             else if (this.isConvection())
@@ -278,8 +278,8 @@ public class OperationType implements Type
                 Tsr d = f.derive(inputs, i);
                 return new ADAgent(
                         ()->d,
-                        (t, derivative) -> mul.activate(new Tsr[]{derivative, d}),
-                        (t, error) -> invX.activate(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})
+                        (t, derivative) -> mul.call(new Tsr[]{derivative, d}),
+                        (t, error) -> invX.call(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})
                 );
             }
         }

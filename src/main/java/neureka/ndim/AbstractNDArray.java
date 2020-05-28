@@ -1,4 +1,4 @@
-package neureka.abstraction;
+package neureka.ndim;
 
 import neureka.Neureka;
 import neureka.Tsr;
@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -51,38 +53,49 @@ public abstract class AbstractNDArray<InstanceType> extends AbstractComponentOwn
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    public int[] shape() {
-        return _conf.shape();
+    public NDConfiguration getNDConf(){
+        return _conf;
+    }
+
+    //---
+
+    public int rank(){
+        return _conf.shape().length;
+    }
+
+    public List<Integer> shape() {
+        return _asList(_conf.shape());
     }
 
     public int shape(int i){
         return _conf.shape()[i];
     }
 
-    public int rank(){
-        return _conf.shape().length;
+    public List<Integer> idxmap(){
+        return _asList(_conf.idxmap());
     }
 
-    public int[] idxmap(){
-        return _conf.idxmap();
+    public List<Integer> translation() {
+        return _asList(_conf.translation());
     }
 
-    public int[] translation() {
-        return _conf.translation();
+    public List<Integer> spread(){
+        return _asList(_conf.spread());
     }
 
-    public int[] spread(){
-        return _conf.spread();
-    }
-
-    public int[] offset(){
-        return _conf.offset();
+    public List<Integer> offset(){
+        return _asList(_conf.offset());
     }
 
     public int size() {
-        return Utility.Indexing.szeOfShp(this.shape());
+        return Utility.Indexing.szeOfShp(_conf.shape());
     }
 
+    protected static List<Integer> _asList(int[] array){
+        List<Integer> intList = new ArrayList<>(array.length);
+        for (int i : array) intList.add(i);
+        return intList;
+    }
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -130,14 +143,14 @@ public abstract class AbstractNDArray<InstanceType> extends AbstractComponentOwn
             @Contract(pure = true)
             public static void increment(@NotNull int[] shpIdx, @NotNull int[] shape) {
                 int i;
-                if (Neureka.instance().settings().indexing().legacy()) i = 0;
+                if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) i = 0;
                 else i = shape.length-1;
                 while (i >= 0 && i < shape.length) i = _incrementAt(i, shpIdx, shape);
             }
 
             @Contract(pure = true)
             private static int _incrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
-                if (Neureka.instance().settings().indexing().legacy()) {
+                if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
                     if (shpIdx[i] < (shape[i])) {
                         shpIdx[i]++;
                         if (shpIdx[i] == (shape[i])) {
@@ -170,7 +183,7 @@ public abstract class AbstractNDArray<InstanceType> extends AbstractComponentOwn
             public static int[] newTlnOf(int[] shape) {
                 int[] tln = new int[shape.length];
                 int prod = 1;
-                if (Neureka.instance().settings().indexing().legacy()) {
+                if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
                     for (int i = 0; i < tln.length; i++) {
                         tln[i] = prod;
                         prod *= shape[i];
@@ -199,7 +212,7 @@ public abstract class AbstractNDArray<InstanceType> extends AbstractComponentOwn
                 if (szeOfShp(newShp) != t.size()) {
                     throw new IllegalArgumentException(
                             "New shape does not match tensor size!" +
-                                    " (" + Utility.Stringify.strConf(newShp) + ((szeOfShp(newShp) < t.size()) ? "<" : ">") + Utility.Stringify.strConf(t.shape()) + ")");
+                                    " (" + Utility.Stringify.strConf(newShp) + ((szeOfShp(newShp) < t.size()) ? "<" : ">") + Utility.Stringify.strConf(t._conf.shape()) + ")");
                 }
                 return newShp;
             }

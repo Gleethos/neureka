@@ -4,7 +4,6 @@ import neureka.Tsr
 import neureka.acceleration.host.HostCPU
 import neureka.acceleration.Device
 import neureka.acceleration.opencl.OpenCLPlatform
-import neureka.autograd.JITProp
 import neureka.calculus.Function
 import neureka.calculus.factory.assembly.FunctionBuilder
 import org.junit.Test
@@ -139,7 +138,7 @@ class ThoroughGroovyTests
     void test_manual_convolution()
     {
         Neureka.instance().reset()
-        Neureka.instance().settings().view().setLegacy(false)
+        Neureka.instance().settings().view().setIsUsingLegacyView(false)
         Tsr a = new Tsr([100, 100], 3..19)
         Tsr x = a[1..-2,0..-1]
         Tsr y = a[0..-3,0..-1]
@@ -186,7 +185,7 @@ class ThoroughGroovyTests
     void test_auto_reshape_and_broadcast()
     {
         Neureka.instance().reset()
-        Neureka.instance().settings().view().setLegacy(true)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
         Tsr a = new Tsr([2,2], 1..5)
         Tsr b = new Tsr([2,1], 3..4)
         Tsr c = new Tsr([2], 8..9).setRqsGradient(true)
@@ -195,7 +194,7 @@ class ThoroughGroovyTests
         assert t.toString().contains("(9.0, 11.0, 11.0, 13.0)")
         //t.backward(new Tsr([2, 2], [5, -2, 7, 3]))
         assert c.toString().contains("")
-        Neureka.instance().settings().view().setLegacy(false)
+        Neureka.instance().settings().view().setIsUsingLegacyView(false)
         assert t.toString().contains("):[9.0, 11.0, 11.0, 13.0]")
     }
 
@@ -239,13 +238,13 @@ class ThoroughGroovyTests
     {
         Neureka.instance().reset()
         assert !Neureka.instance().settings().isLocked()
-        assert !Neureka.instance().settings().indexing().legacy()
-        assert !Neureka.instance().settings().debug().keepDerivativeTargetPayloads()
-        assert Neureka.instance().settings().autoDiff().applyGradientWhenTensorIsUsed()
-        Neureka.instance().settings().autoDiff().applyGradientWhenTensorIsUsed = false
-        assert !Neureka.instance().settings().autoDiff().applyGradientWhenTensorIsUsed()
-        assert Neureka.instance().settings().autoDiff().retainPendingErrorForJITProp()
-        assert Neureka.version()=="0.1.2"//version
+        assert !Neureka.instance().settings().indexing().isUsingLegacyIndexing()
+        assert !Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads()
+        assert Neureka.instance().settings().autoDiff().isApplyingGradientWhenTensorIsUsed()
+        Neureka.instance().settings().autoDiff().isApplyingGradientWhenTensorIsUsed = false
+        assert !Neureka.instance().settings().autoDiff().isApplyingGradientWhenTensorIsUsed()
+        assert Neureka.instance().settings().autoDiff().isRetainingPendingErrorForJITProp()
+        assert Neureka.version()=="0.2.0"//version
     }
 
     @Test
@@ -263,7 +262,7 @@ class ThoroughGroovyTests
     void test_indexing_after_reshaping()
     {
         Neureka.instance().reset()
-        Neureka.instance().settings().view().setLegacy(true)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
         Tsr t1 = new Tsr([4, 3], 1..12)
         assert t1.i_of_idx(new int[]{2, 1})==7
         assert t1.i_of_idx(new int[]{1, 2})==5
@@ -283,7 +282,7 @@ class ThoroughGroovyTests
     void test_reshaping()
     {
         Neureka.instance().reset()
-        Neureka.instance().settings().view().setLegacy(true)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
 
         Function f = Function.create("[2, 0, 1]:(I[0])")
         Tsr t = new Tsr([3, 4, 2], 1..5)
@@ -296,9 +295,9 @@ class ThoroughGroovyTests
     @Test
     void test_network_legacy_indexing()
     {
-        Neureka.instance().settings().indexing().setLegacy(true)
-        Neureka.instance().settings().view().setLegacy(true)
-        Neureka.instance().settings().autoDiff().setApplyGradientWhenRequested(false)
+        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
+        Neureka.instance().settings().autoDiff().setIsApplyingGradientWhenRequested(false)
 
         Tsr i_a = new Tsr([2, 1], [1, 2])
         Tsr w_a = new Tsr([2, 2], [1, 3, 4, -1]).setRqsGradient(true)
@@ -327,9 +326,9 @@ class ThoroughGroovyTests
 
         assert w_a.toString().contains("g:(null)")
         assert !w_b.toString().contains("g:(null)")
-        Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(true)
+        Neureka.instance().settings().autoDiff().setIsApplyingGradientWhenTensorIsUsed(true)
         w_a * 3
-        Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(false)
+        Neureka.instance().settings().autoDiff().setIsApplyingGradientWhenTensorIsUsed(false)
         assert w_a.toString().contains("g:(null)")
         assert !w_a.toString().contains("1.0, 3.0, 4.0, -1.0")
         assert !w_b.toString().contains("g:(null)")
@@ -340,9 +339,9 @@ class ThoroughGroovyTests
     void test_network()
     {
         Neureka.instance().reset()
-        Neureka.instance().settings().view().setLegacy(true)
-        Neureka.instance().settings().indexing().setLegacy(false)
-        Neureka.instance().settings().autoDiff().setApplyGradientWhenRequested(false)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
+        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
+        Neureka.instance().settings().autoDiff().setIsApplyingGradientWhenRequested(false)
 
         Tsr i_a = new Tsr([2, 1], [1, 2])
         Tsr w_a = new Tsr([2, 2], [1, 3, 4, -1]).setRqsGradient(true)
@@ -371,9 +370,9 @@ class ThoroughGroovyTests
 
         assert w_a.toString().contains("g:(null)")
         assert !w_b.toString().contains("g:(null)")
-        Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(true)
+        Neureka.instance().settings().autoDiff().setIsApplyingGradientWhenTensorIsUsed(true)
         w_a * 3
-        Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(false)
+        Neureka.instance().settings().autoDiff().setIsApplyingGradientWhenTensorIsUsed(false)
         assert w_a.toString().contains("g:(null)")
         assert !w_a.toString().contains("1.0, 3.0, 4.0, -1.0")
         assert !w_b.toString().contains("g:(null)")
@@ -385,7 +384,7 @@ class ThoroughGroovyTests
     void test_NN_with_manual_backprop()
     {
         Neureka.instance().reset()
-        Neureka.instance().settings().view().setLegacy(true)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
         Device device = new DummyDevice()
         _testNN(device)
 
@@ -412,7 +411,7 @@ class ThoroughGroovyTests
 
     void _testNN(Device device)
     {
-        Neureka.instance().settings().indexing().setLegacy(false)
+        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
         Tsr X = new Tsr(// input data: 5 vectors in binary form
                 [5, 3, 1],
                 [
@@ -536,8 +535,8 @@ class ThoroughGroovyTests
     @Test
     void test_index_mapping(){
 
-        Neureka.instance().settings().indexing().setLegacy(false)
-        Neureka.instance().settings().view().setLegacy(true)
+        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
         Tsr t = new Tsr([3, 4],[
                 1, 2, 3, 4,
                 9, 8, 6, 5,
@@ -631,7 +630,7 @@ class ThoroughGroovyTests
 
     @Test
     void test_indexing_modes(){
-        Neureka.instance().settings().indexing().setLegacy(false)
+        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
         Tsr t0 = new Tsr([3, 2, 1], [
                 1, 2,
                 3, 4,
@@ -651,7 +650,7 @@ class ThoroughGroovyTests
         //println(t0)
         //println(t0.value64(4))
 
-        Neureka.instance().settings().indexing().setLegacy(true)
+        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
         Tsr t1 = new Tsr([3, 2, 1], [
                 1, 2, 3,
                 4, 5, 6
@@ -685,8 +684,8 @@ class ThoroughGroovyTests
     void test_tensor_transpose()
     {
         Neureka.instance().reset()
-        Neureka.instance().settings().view().setLegacy(true)
-        Neureka.instance().settings().indexing().setLegacy(true)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
+        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
         Tsr t = new Tsr([2, 3], [
                 1, 2,
                 3, 4,
@@ -694,7 +693,7 @@ class ThoroughGroovyTests
         ])
         t = t.T()
         assert t.toString().contains("[3x2]:(1.0, 3.0, 5.0, 2.0, 4.0, 6.0)")
-        Neureka.instance().settings().indexing().setLegacy(false)
+        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
         t = new Tsr([2, 3], [
                 1, 2, 3,
                 4, 5, 6
@@ -708,7 +707,7 @@ class ThoroughGroovyTests
     void test_data_types()
     {
         Neureka.instance().reset()
-        Neureka.instance().settings().view().setLegacy(true)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
 
         Tsr x = new Tsr(3)
         x.to32()
@@ -767,16 +766,16 @@ class ThoroughGroovyTests
     void test_power_overloaded_aAnd_input_functions()
     {
         Tsr x = new Tsr(3).setRqsGradient(true)
-        Neureka.instance().settings().view().setLegacy(true)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
         Tsr b = new Tsr(-4)
         Tsr w = new Tsr(2)
         Tsr y = ((x+b)*w)**2
         assert y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
         y = ((x+b)*w)^2
         assert y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
-        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(true);
+        Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
         y.backward(new Tsr(1))
-        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false);
+        Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false);
         assert new Tsr([y], "Ig[0]").toString().equals("empty")
         assert new Tsr([x], "Ig[0]").toString().equals("empty")
         Tsr[] trs = new Tsr[1]
@@ -789,9 +788,9 @@ class ThoroughGroovyTests
     @Test
     void test_tensor_manipulation_and_IO()
     {
-        Neureka.instance().settings().indexing().setLegacy(true)//TODO: repeat tests with default indexing
-        Neureka.instance().settings().autoDiff().setApplyGradientWhenRequested(false)
-        Neureka.instance().settings().view().setLegacy(true)
+        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)//TODO: repeat tests with default indexing
+        Neureka.instance().settings().autoDiff().setIsApplyingGradientWhenRequested(false)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
 
         Tsr t = new Tsr([2, 2], [
                 1.0, 4.0,
@@ -832,7 +831,7 @@ class ThoroughGroovyTests
         Tsr.IO.subInto(t, new Tsr([2, 2], [1, 2, 3, 4]))
         assert t.toString().contains("[2x2]:(1.0, 1.0, 6.0, -4.0)")
 
-        Neureka.instance().settings().indexing().setLegacy(false)
+        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
 
     }
 
@@ -840,7 +839,7 @@ class ThoroughGroovyTests
     void test_operator_overloading_of_SDK_types()
     {
         Neureka.instance().reset()
-        Neureka.instance().settings().view().setLegacy true
+        Neureka.instance().settings().view().setIsUsingLegacyView true
         part_1 :
         {
             Tsr a = new Tsr(2).setRqsGradient(true)
@@ -880,7 +879,7 @@ class ThoroughGroovyTests
     void test_pending_error_optimization()
     {
         Neureka.instance().reset()
-        Neureka.instance().settings().view().legacy = true
+        Neureka.instance().settings().view().isUsingLegacyView = true
 
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = new Tsr(-4)
@@ -889,15 +888,15 @@ class ThoroughGroovyTests
         Tsr s =  (a*b) + 2
         Tsr x = s * (s+c)
 
-        Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(false)
+        Neureka.instance().settings().autoDiff().setIsRetainingPendingErrorForJITProp(false)
         x.backward(new Tsr(1))
-        Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(true)
+        Neureka.instance().settings().autoDiff().setIsRetainingPendingErrorForJITProp(true)
         assert c.toString().contains("(3.0):g:(-6.0)")
         assert a.toString().contains("(2.0):g:(36.0)")
 
-        Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(false)
+        Neureka.instance().settings().autoDiff().setIsRetainingPendingErrorForJITProp(false)
         x.backward(4)
-        Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(true)
+        Neureka.instance().settings().autoDiff().setIsRetainingPendingErrorForJITProp(true)
         assert c.toString().contains("(3.0):g:(-6.0)")
         assert a.toString().contains("(2.0):g:(36.0)")
     }
@@ -906,7 +905,7 @@ class ThoroughGroovyTests
     void test_pending_error_optimization_2()
     {
         Neureka.instance().reset()
-        Neureka.instance().settings().view().setLegacy(true)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
 
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = new Tsr(-4)
@@ -915,15 +914,15 @@ class ThoroughGroovyTests
         Tsr s =  (a*b) + 2
         Tsr x = s * (s+c)
 
-        Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(false)
+        Neureka.instance().settings().autoDiff().setIsRetainingPendingErrorForJITProp(false)
         x.backward(1)
-        Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(true)
+        Neureka.instance().settings().autoDiff().setIsRetainingPendingErrorForJITProp(true)
         assert c.toString().contains("(3.0):g:(-6.0)")
         assert a.toString().contains("(2.0):g:(36.0)")
 
-        Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(true)
+        Neureka.instance().settings().autoDiff().setIsRetainingPendingErrorForJITProp(true)
         x.backward(new Tsr(4))
-        Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(true)
+        Neureka.instance().settings().autoDiff().setIsRetainingPendingErrorForJITProp(true)
         assert c.toString().contains("(3.0):g:(-6.0)")
         assert a.toString().contains("(2.0):g:(36.0)")
     }
@@ -933,7 +932,7 @@ class ThoroughGroovyTests
     void test_JIT_propagation_variant_one()
     {
         Neureka.instance().reset()
-        Neureka.instance().settings().view().setLegacy(true)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = new Tsr(-4)
         Tsr c = new Tsr(3).setRqsGradient(true)
@@ -954,8 +953,8 @@ class ThoroughGroovyTests
     void test_JIT_propagation_variant_two()
     {
         Neureka.instance().reset()
-        Neureka.instance().settings().view().setLegacy(true)
-        Neureka.instance().settings().autoDiff().setApplyGradientWhenRequested(false)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
+        Neureka.instance().settings().autoDiff().setIsApplyingGradientWhenRequested(false)
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = new Tsr(-4)
         Tsr c = new Tsr(3).setRqsGradient(true)
@@ -967,9 +966,9 @@ class ThoroughGroovyTests
 
         assert c.toString().contains("g:(-6.0)")
         assert a.toString().contains("g:(null)")
-        Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(true)
+        Neureka.instance().settings().autoDiff().setIsApplyingGradientWhenTensorIsUsed(true)
         Tsr y = a+3 //JIT-prop will be activated here...
-        Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(false)
+        Neureka.instance().settings().autoDiff().setIsApplyingGradientWhenTensorIsUsed(false)
         assert y.toString().contains("(41.0)")
         assert c.toString().contains("g:(-6.0)")
         assert a.toString().contains("(38.0):g:(null)")

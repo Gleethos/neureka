@@ -1,7 +1,6 @@
 package util;
 
 import neureka.Tsr;
-import neureka.abstraction.AbstractNDArray;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.Device;
 import neureka.calculus.environment.OperationType;

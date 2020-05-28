@@ -16,7 +16,7 @@ public class PendingError {
     public void accumulate(Tsr error){
 <span class="fc" id="L17">        FunctionBuilder.build(</span>
                 &quot;I[0]&lt;-(I[0]+I[1])&quot;, false
-<span class="fc" id="L19">        ).activate(new Tsr[]{_error, error});</span>
+<span class="fc" id="L19">        ).call(new Tsr[]{_error, error});</span>
 <span class="fc" id="L20">        _toBeReceived--;</span>
 <span class="fc" id="L21">    }</span>
 

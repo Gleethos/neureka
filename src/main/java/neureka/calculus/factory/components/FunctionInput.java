@@ -6,16 +6,21 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.factory.BaseFunction;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
-public class FunctionInput implements Function, GradientProvider
+public class FunctionInput extends BaseFunction implements GradientProvider
 {
     private int _index;
+
+    //------------------------------------------------------------------------------------------------------------------
 
     public boolean providesGradient(){
         return (_index<0);
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //------------------------------------------------------------------------------------------------------------------
+
     @Override
     public boolean isFlat() {
         return true;
@@ -41,7 +46,8 @@ public class FunctionInput implements Function, GradientProvider
         return index() == index;
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //------------------------------------------------------------------------------------------------------------------
+
     @Override
     public Function newBuild(final String equation) {
 
@@ -86,45 +92,12 @@ public class FunctionInput implements Function, GradientProvider
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public double call(double input){
-        return activate(input);
-    }
-    @Override
-    public double call(double[] inputs, int j){
-        return inputs[j];
-    }
-    @Override
-    public double call(double[] inputs){
-        return activate(inputs);
-    }
-
-    @Override
-    public Tsr call(Tsr input){
-        return activate(input);
-    }
-
-    @Override
-    public Tsr call(Tsr[] inputs, int j){
-        return activate(inputs, j);
-    }
-
-    @Override
-    public Tsr call(Tsr[] inputs) {
-        return activate(inputs);
-    }
-
-    @Override
-    public double activate(double input){
-        return activate(new double[]{input});
-    }
-
-    @Override
-    public double activate(final double[] inputs, int j) {
+    public double call(final double[] inputs, int j) {
         return inputs[index()];
     }
 
     @Override
-    public double activate(final double[] inputs) {
+    public double call(final double[] inputs) {
         return inputs[(_index>=0)?_index:(Math.abs(_index)-1)];
     }
 
@@ -138,20 +111,15 @@ public class FunctionInput implements Function, GradientProvider
         return derive(inputs, index);
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public Tsr activate(Tsr input){
-        return activate(new Tsr[]{input});
-    }
-
-    @Override
-    public Tsr activate(Tsr[] inputs, int j) {
+    public Tsr call(Tsr[] inputs, int j) {
         return _extract(inputs[index()]);
     }
 
     @Override
-    public Tsr activate(Tsr[] inputs) {
+    public Tsr call(Tsr[] inputs) {
         return _extract(inputs[index()]);
     }
 
@@ -167,7 +135,7 @@ public class FunctionInput implements Function, GradientProvider
                 : new Tsr(inputs[0].shape(), 0.0);
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //------------------------------------------------------------------------------------------------------------------
 
     @Override
     public String toString() {

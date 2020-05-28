@@ -20,12 +20,12 @@ import java.util.ArrayList;
 <span class="fc bfc" id="L20" title="All 2 branches covered.">        if ( f_id &lt;= 9 ) {// FUNCTIONS:</span>
 <span class="fc" id="L21">            return new AbstractFunction(f_id, isFlat, sources, doAD){</span>
                 @Override
-                public Tsr activate(Tsr[] inputs, int j) {
-<span class="nc" id="L24">                    return CACHE.preprocess(inputs, this,()-&gt; _tensor_activation(new Tsr[]{sources.get(0).activate(inputs, j)}, j, -1), -1, j);</span>
+                public Tsr call(Tsr[] inputs, int j) {
+<span class="nc" id="L24">                    return CACHE.preprocess(inputs, this,()-&gt; _tensor_activation(new Tsr[]{sources.get(0).call(inputs, j)}, j, -1), -1, j);</span>
                 }
                 @Override
-                public Tsr activate(Tsr[] inputs) {
-<span class="fc" id="L28">                    return CACHE.preprocess(inputs, this,()-&gt; _tensor_activation(new Tsr[]{sources.get(0).activate(inputs)}, -1, -1), -1, -1);</span>
+                public Tsr call(Tsr[] inputs) {
+<span class="fc" id="L28">                    return CACHE.preprocess(inputs, this,()-&gt; _tensor_activation(new Tsr[]{sources.get(0).call(inputs)}, -1, -1), -1, -1);</span>
                 }
                 @Override
                 public Tsr derive(Tsr[] inputs, int d, int j) {
@@ -37,32 +37,32 @@ import java.util.ArrayList;
                 }
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 @Override
-                public double activate(final double[] inputs, int j) {
-<span class="fc" id="L41">                    return _scalar_activation(sources.get(0).activate(inputs, j), false);</span>
+                public double call(final double[] inputs, int j) {
+<span class="fc" id="L41">                    return _scalar_activation(sources.get(0).call(inputs, j), false);</span>
                 }
                 @Override
-                public double activate(final double[] inputs) {
-<span class="fc" id="L45">                    return _scalar_activation(sources.get(0).activate(inputs), false);</span>
+                public double call(final double[] inputs) {
+<span class="fc" id="L45">                    return _scalar_activation(sources.get(0).call(inputs), false);</span>
                 }
                 @Override
                 public double derive(final double[] inputs, final int index, final int j) {
-<span class="fc" id="L49">                    return _scalar_activation(sources.get(0).activate(inputs, j), true)</span>
+<span class="fc" id="L49">                    return _scalar_activation(sources.get(0).call(inputs, j), true)</span>
 <span class="fc" id="L50">                            * sources.get(0).derive(inputs, index, j);</span>
                 }
                 @Override
                 public double derive(final double[] inputs, final int index) {
-<span class="fc" id="L54">                    return _scalar_activation(sources.get(0).activate(inputs), true)</span>
+<span class="fc" id="L54">                    return _scalar_activation(sources.get(0).call(inputs), true)</span>
 <span class="fc" id="L55">                            * sources.get(0).derive(inputs, index);</span>
                 }
             };
         } else {
 <span class="fc" id="L59">            return new AbstractFunction(f_id, isFlat, sources, doAD) {</span>
                 @Override
-                public Tsr activate(Tsr[] inputs, int j) {
+                public Tsr call(Tsr[] inputs, int j) {
 <span class="fc" id="L62">                    return CACHE.preprocess(inputs, this, ()-&gt; _tensor_activation(inputs, j, -1), -1, j);</span>
                 }
                 @Override
-                public Tsr activate(Tsr[] inputs) {
+                public Tsr call(Tsr[] inputs) {
 <span class="fc" id="L66">                    return CACHE.preprocess(inputs, this, ()-&gt; _tensor_activation(inputs, -1, -1), -1, -1);</span>
                 }
                 @Override
@@ -75,11 +75,11 @@ import java.util.ArrayList;
                 }
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 @Override
-                public double activate(final double[] inputs, int j) {
+                public double call(final double[] inputs, int j) {
 <span class="fc" id="L79">                    return _scalar_activation(inputs, j, -1);</span>
                 }
                 @Override
-                public double activate(final double[] inputs) {
+                public double call(final double[] inputs) {
 <span class="fc" id="L83">                    return _scalar_activation(inputs, -1, -1);</span>
                 }
                 @Override

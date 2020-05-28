@@ -9,6 +9,7 @@ import neureka.calculus.environment.OperationType;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.calculus.environment.Cache;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public interface Function
@@ -88,11 +89,11 @@ public interface Function
 
             GraphLock newLock = new GraphLock(function, inputs);
             for (Tsr t : inputs) {
-                if(t.has(GraphNode.class)) ((GraphNode)t.find(GraphNode.class)).obtainLocking(newLock);
+                if(t.has(GraphNode.class)) t.find(GraphNode.class).obtainLocking(newLock);
                 else new GraphNode(function, newLock, ()-> t);
             }
             Tsr result = null;
-            if(activation==null) result = function.activate(inputs);
+            if(activation==null) result = function.call(inputs);
             else result = activation.get();
 
             Function.CACHE.free(newLock);
@@ -126,17 +127,19 @@ public interface Function
     boolean dependsOn(int index);
 
     //------------------------------------------------------------------------------------------------------------------
-    double call(double input);
 
-    @Deprecated double activate(double input);
+    double call(double input);
+    double invoke(double input);
+
+    //------------------------------------------------------------------------------------------------------------------
 
     double call(double[] inputs, int j);
+    double invoke(double[] inputs, int j);
 
-    @Deprecated double activate(double[] inputs, int j);// Iteration over input via j !
 
     double call(double[] inputs);
+    double invoke(double[] inputs);
 
-    @Deprecated double activate(double[] inputs);
 
     double derive(double[] inputs, int index, int j);
 
@@ -145,16 +148,19 @@ public interface Function
     //------------------------------------------------------------------------------------------------------------------
 
     Tsr call(Tsr input);
+    Tsr invoke(Tsr input);
 
-    @Deprecated Tsr activate(Tsr input);
+    Tsr call(List<Tsr> input);
+    Tsr invoke(List<Tsr> input);
+
+    //------------------------------------------------------------------------------------------------------------------
 
     Tsr call(Tsr[] inputs, int j);
-
-    @Deprecated Tsr activate(Tsr[] inputs, int j);// Iteration over input via j !
+    Tsr invoke(Tsr[] inputs, int j);
 
     Tsr call(Tsr[] inputs);
+    Tsr invoke(Tsr[] inputs);
 
-    @Deprecated Tsr activate(Tsr[] inputs);
 
     Tsr derive(Tsr[] inputs, int index, int j);
 

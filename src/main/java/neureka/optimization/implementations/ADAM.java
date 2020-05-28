@@ -16,7 +16,7 @@ public class ADAM implements Optimizer {
     //Tsr w = null;
 
     ADAM(Tsr target){
-        int[] shape = target.shape();
+        int[] shape = target.getNDConf().shape();
         m = new Tsr(shape, 0);
         v = new Tsr(shape, 0);
         a = new Tsr(shape, 0.01); // Step size!
@@ -32,7 +32,7 @@ public class ADAM implements Optimizer {
         Tsr mh = new Tsr(m, "/(1-", b1, ")");
         Tsr vh = new Tsr(v, "/(1-", b2, ")");
         Tsr newg = new Tsr("-",a,"*",mh,"/(",vh,"^0.5+",e,")");
-        Function.Detached.IDY.activate(new Tsr[]{g, newg});
+        Function.Detached.IDY.call(new Tsr[]{g, newg});
     }
 
     @Override

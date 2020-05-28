@@ -10,11 +10,11 @@ class JITPropTests {
     void test_auto_apply_when_used_on_AD_function_an_JIT_prop()
     {
         Neureka.instance().reset()
-        Neureka.instance().settings().view().setLegacy(true)
-        Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(true)
-        Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(true)
-        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false)
-        Neureka.instance().settings().autoDiff().setApplyGradientWhenRequested(false)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
+        Neureka.instance().settings().autoDiff().setIsRetainingPendingErrorForJITProp(true)
+        Neureka.instance().settings().autoDiff().setIsApplyingGradientWhenTensorIsUsed(true)
+        Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
+        Neureka.instance().settings().autoDiff().setIsApplyingGradientWhenRequested(false)
 
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = new Tsr(-3)
@@ -80,11 +80,11 @@ class JITPropTests {
     void test_no_preemptive_apply_when_not_requested_and_auto_apply_and_JIT_prop() // Checked
     {
         Neureka.instance().reset()
-        Neureka.instance().settings().view().setLegacy(true)
-        Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(true)
-        Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(true)
-        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false)
-        Neureka.instance().settings().autoDiff().setApplyGradientWhenRequested(true)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
+        Neureka.instance().settings().autoDiff().setIsRetainingPendingErrorForJITProp(true)
+        Neureka.instance().settings().autoDiff().setIsApplyingGradientWhenTensorIsUsed(true)
+        Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
+        Neureka.instance().settings().autoDiff().setIsApplyingGradientWhenRequested(true)
 
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = new Tsr(-3)
@@ -163,10 +163,10 @@ class JITPropTests {
     @Test
     void test_autograd_without_JIT_and_auto_apply()
     {
-        Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(false)
-        Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(false)
-        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false)
-        Neureka.instance().settings().view().setLegacy(true);
+        Neureka.instance().settings().autoDiff().setIsRetainingPendingErrorForJITProp(false)
+        Neureka.instance().settings().autoDiff().setIsApplyingGradientWhenTensorIsUsed(false)
+        Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true);
 
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = new Tsr(-3)
@@ -197,10 +197,10 @@ class JITPropTests {
     void test_indifferential_and_JIT_with_auto_apply()
     {
         Neureka.instance().reset()
-        Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(true)
-        Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(true)
-        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false)
-        Neureka.instance().settings().view().setLegacy(true)
+        Neureka.instance().settings().autoDiff().setIsRetainingPendingErrorForJITProp(true)
+        Neureka.instance().settings().autoDiff().setIsApplyingGradientWhenTensorIsUsed(true)
+        Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
 
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = new Tsr(-3)
@@ -223,10 +223,10 @@ class JITPropTests {
 
     @Test
     void test_no_JIT_prop_when_forward_AD(){
-        Neureka.instance().settings().autoDiff().setRetainPendingErrorForJITProp(true)
-        Neureka.instance().settings().autoDiff().setApplyGradientWhenTensorIsUsed(true)
-        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false)
-        Neureka.instance().settings().view().setLegacy(true)
+        Neureka.instance().settings().autoDiff().setIsRetainingPendingErrorForJITProp(true)
+        Neureka.instance().settings().autoDiff().setIsApplyingGradientWhenTensorIsUsed(true)
+        Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
 
         Tsr a = new Tsr(2).setRqsGradient(true)
         Tsr b = new Tsr(-4)

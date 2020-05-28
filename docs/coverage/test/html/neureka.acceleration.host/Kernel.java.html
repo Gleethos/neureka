@@ -12,9 +12,9 @@ import org.jetbrains.annotations.Contract;
             int d, int i, int end,
             Type.DefaultOperator operation
     ) {
-<span class="fc" id="L15">        int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
-<span class="fc" id="L16">        int[] t1Shp = t1_src.shape();</span>
-<span class="fc" id="L17">        int[] t2Shp = t2_src.shape();</span>
+<span class="fc" id="L15">        int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
+<span class="fc" id="L16">        int[] t1Shp = t1_src.getNDConf().shape();</span>
+<span class="fc" id="L17">        int[] t2Shp = t2_src.getNDConf().shape();</span>
 <span class="fc" id="L18">        int rank = t0Shp.length;</span>
 <span class="fc" id="L19">        int[] t0Idx = t0_drn.idx_of_i(i);</span>
 <span class="fc" id="L20">        int[] t1Idx = new int[rank];</span>
@@ -155,9 +155,9 @@ import org.jetbrains.annotations.Contract;
             int d, int i, int end,
             Type.DefaultOperator operation
     ) {
-<span class="fc" id="L158">        int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
-<span class="fc" id="L159">        int[] t1Shp = t1_src.shape();</span>
-<span class="pc bpc" id="L160" title="1 of 2 branches missed.">        int[] t2Shp = (t2_src != null) ? t2_src.shape() : t1Shp;</span>
+<span class="fc" id="L158">        int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
+<span class="fc" id="L159">        int[] t1Shp = t1_src.getNDConf().shape();</span>
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">        int[] t2Shp = (t2_src != null) ? t2_src.getNDConf().shape() : t1Shp;</span>
 <span class="fc" id="L161">        int rank = t0Shp.length;</span>
 <span class="fc" id="L162">        int[] t0Idx = t0_drn.idx_of_i(i);</span>
 <span class="fc" id="L163">        int[] t1Idx = new int[rank];</span>
@@ -245,9 +245,9 @@ import org.jetbrains.annotations.Contract;
             int i, int end,
             Type.DefaultOperator operation
     ) {
-<span class="fc" id="L248">        int[] t0Shp = t0_drn.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
+<span class="fc" id="L248">        int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
 <span class="fc" id="L249">        int rank = t0Shp.length;</span>
-<span class="fc" id="L250">        int[] t0Idx = t0_drn.idx_of_i(i);//new int[rank];</span>
+<span class="fc" id="L250">        int[] t0Idx = t0_drn.idx_of_i(i);</span>
 <span class="fc" id="L251">        int[] t1Idx = new int[rank];</span>
 <span class="fc" id="L252">        double[] t0_value = t0_drn.value64();</span>
 <span class="fc bfc" id="L253" title="All 2 branches covered.">        while (i &lt; end) {//increment on drain accordingly:</span>

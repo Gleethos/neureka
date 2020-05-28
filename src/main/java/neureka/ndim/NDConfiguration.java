@@ -1,4 +1,7 @@
-package neureka.abstraction;
+package neureka.ndim;
+
+import neureka.ndim.config.D1Configuration;
+import neureka.ndim.config.DefaultNDConfiguration;
 
 public interface NDConfiguration
 {
@@ -41,7 +44,8 @@ public interface NDConfiguration
             int[] spread,
             int[] offset
     ){
-        return NDConfiguration.construct(shape, translation, idxmap, spread, offset);
+        if(shape.length==1) return D1Configuration.construct(shape, translation, idxmap, spread, offset);
+        return DefaultNDConfiguration.construct(shape, translation, idxmap, spread, offset);
     }
 
 

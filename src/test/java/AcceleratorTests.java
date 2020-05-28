@@ -17,24 +17,24 @@ public class AcceleratorTests
     public void test_openCL_device_if_present()
     {
         Neureka.instance().reset();
-        Neureka.instance().settings().view().setLegacy(true);
+        Neureka.instance().settings().view().setIsUsingLegacyView(true);
         if(!System.getProperty("os.name").toLowerCase().contains("windows")){
             return;
         }
         NTester_Tensor tester = new NTester_Tensor("Testing autograd on GPU");
 
         Device gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
-        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(true);
+        Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
 
-        Neureka.instance().settings().indexing().setLegacy(true);
+        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true);
         OpenCLPlatform.PLATFORMS().get(0).recompile();
         _testing(gpu, tester, true);
 
-        Neureka.instance().settings().indexing().setLegacy(false);
+        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false);
         OpenCLPlatform.PLATFORMS().get(0).recompile();
         _testing(gpu, tester, false);
 
-        Neureka.instance().settings().debug().setKeepDerivativeTargetPayloads(false);
+        Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false);
     }
 
     private void _testing(Device gpu, NTester_Tensor tester, boolean legacyIndexing)

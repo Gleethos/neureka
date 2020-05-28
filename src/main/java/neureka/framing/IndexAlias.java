@@ -36,7 +36,7 @@ public class IndexAlias implements Component<Tsr>
                 for(int i=0; i<v.size(); i++) idxmap.put(v.get(i), i);
                 _mapping.put(k, idxmap);
             } else {
-                _mapping.put(k, host.shape()[index[0]]);
+                _mapping.put(k, host.getNDConf().shape()[index[0]]);
             }
             index[0]++;
         });

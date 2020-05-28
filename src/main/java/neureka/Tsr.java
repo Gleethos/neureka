@@ -1,8 +1,8 @@
 package neureka;
 
 import groovy.lang.IntRange;
-import neureka.abstraction.AbstractNDArray;
-import neureka.abstraction.DefaultNDConfiguration;
+import neureka.ndim.AbstractNDArray;
+import neureka.ndim.NDConfiguration;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.Device;
 import neureka.framing.IndexAlias;
@@ -162,7 +162,10 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         if (newComponent instanceof Device && !((Device)newComponent).has(this)){
             ((Device)newComponent).add(this);
         } else if (newComponent instanceof Tsr) {
-            if(((Tsr)newComponent).shape().hashCode()!=this.shape().hashCode()) newComponent = null;
+            if(
+                    ((Tsr)newComponent).shape().hashCode()!=this.shape().hashCode() ||
+                    Arrays.hashCode(((Tsr)newComponent).getNDConf().shape()) != Arrays.hashCode(_conf.shape())
+            ) newComponent = null;
             else setRqsGradient(true);
         }
         return newComponent;
@@ -282,20 +285,12 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         if (size != length && !this.isVirtual()) {
             throw new IllegalArgumentException("Size of shape does not match stored value64!");
         }
-        //_conf.shape() = _cached(newShape);
-        //_conf.translation() = _cached(Utility.Indexing.newTlnOf(newShape));
-        //_conf.idxmap() = _conf.translation();
-        //_conf.offset() = _cached(new int[newShape.length]);
-        //_conf.spread() = new int[newShape.length];
-        //Arrays.fill(_conf.spread(), 1);
-        //_conf.spread() = _cached(_conf.spread());
-
         int[] newTranslation = Utility.Indexing.newTlnOf(newShape);
         int[] newIdxmap = newTranslation;
         int[] newSpread = new int[newShape.length];
         Arrays.fill(newSpread, 1);
         int[] newOffset = new int[newShape.length];
-        _conf = DefaultNDConfiguration.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);
+        _conf = NDConfiguration.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);
     }
 
 
@@ -649,7 +644,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     }
     public Tsr dot(Tsr b){
         Tsr a = this;
-        int[][] fitter = AbstractNDArray.Utility.Indexing.makeFit(a.shape(), b.shape());
+        int[][] fitter = AbstractNDArray.Utility.Indexing.makeFit(a.getNDConf().shape(), b.getNDConf().shape());
         boolean doReshape = false;
         for(int i=0; i<fitter[0].length && !doReshape; i++) if(fitter[0][i]!=i) doReshape = true;
         for(int i=0; i<fitter[1].length && !doReshape; i++) if(fitter[1][i]!=i) doReshape = true;
@@ -778,7 +773,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
             if(i>=rank()) newSpread[i-rank()] = idxbase[i];
             else newOffset[i] = idxbase[i];
         }
-        subset._conf = DefaultNDConfiguration.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);
+        subset._conf = NDConfiguration.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);
 
         if (this.isOutsourced()){
             Device device = this.find(Device.class);
@@ -939,11 +934,11 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
                 t.value64()[0] -= source.value64()[0];
             } else {
                 if (t.isVirtual()) t.setIsVirtual(false);
-                int[] index = new int[t.shape().length];
+                int[] index = new int[t.getNDConf().shape().length];
                 int size = t.size();
                 for (int i = 0; i < size; i++) {
                     IO.subInto(t, index, IO.getFrom(source, index));
-                    Utility.Indexing.increment(index, t.shape());
+                    Utility.Indexing.increment(index, t.getNDConf().shape());
                 }
             }
         }
@@ -979,7 +974,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
                 if (newForm[i] < 0) newOffset[i] = 0;
                 else if (newForm[i] >= 0) newOffset[i] = tensor._conf.offset()[newForm[i]];
             }
-            tensor._conf = DefaultNDConfiguration.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);
+            tensor._conf = NDConfiguration.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);
             return tensor;
         }
 
@@ -1136,14 +1131,14 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         if (this.isEmpty()) return "empty";
         else if (this.isUndefined()) return "undefined";
         StringBuilder strShape = new StringBuilder();
-        int[] shape = shape();
-        for (int i = 0; i < _conf.shape().length; i++) {
+        int[] shape = _conf.shape();
+        for (int i = 0; i < shape.length; i++) {
             strShape.append(shape[i]);
             if (i < shape.length - 1) strShape.append("x");
         }
         boolean compact = mode.contains("c");
         strShape = new StringBuilder(
-                (Neureka.instance().settings().view().legacy())
+                (Neureka.instance().settings().view().isUsingLegacyView())
                         ? "[" + strShape + "]"
                         : "(" + strShape + ")"
         );
@@ -1152,7 +1147,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         asString += _stringified((value64()), compact, max);
         asString = strShape +
                 (
-                        (Neureka.instance().settings().view().legacy())
+                        (Neureka.instance().settings().view().isUsingLegacyView())
                                 ? ":(" + asString + ")"
                                 : ":[" + asString + "]"
                 );
@@ -1219,7 +1214,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         for (Tsr t : tsrs) if (t.rank()>largest) largest = t.rank();
         for (int i=0; i<tsrs.length; i++) {
             if (tsrs[i].rank()!=largest) {
-                int[] oldShape = tsrs[i].shape();
+                int[] oldShape = tsrs[i].getNDConf().shape();
                 int[] newReshape = new int[largest];
                 int padding = largest-oldShape.length;
                 for (int ii=0; ii<padding; ii++) newReshape[ii] = -1;
@@ -1268,11 +1263,6 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 
         private static Tsr _newEmptyLike(Tsr template) {
             Tsr t = new Tsr();
-            //t._conf.shape() = template._conf.shape();
-            //t._conf.idxmap() = template._conf.idxmap();
-            //t._conf.translation() = template.translation();
-            //t._conf.spread() = template.spread();
-            //t._conf.offset() = template.offset();
             t._conf = template._conf;
             return t;
         }

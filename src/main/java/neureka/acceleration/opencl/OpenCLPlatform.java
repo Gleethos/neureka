@@ -122,7 +122,7 @@ public class OpenCLPlatform {
             String kernelSource = templateSources.get(i);
             kernelSource = kernelSource.replace(
                     "Neureka.instance().settings().indexing().REVERSE_INDEX_TRANSLATION",
-                    (Neureka.instance().settings().indexing().legacy()) ? "true" : "false"
+                    (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) ? "true" : "false"
             );
             boolean templateFound = false;
             if (kernelSource.contains("__kernel")) {

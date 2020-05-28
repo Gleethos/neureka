@@ -10,7 +10,7 @@ class ADMemTests {
     void test_reverse_reshape() {
 
         Neureka.instance().reset()
-        Neureka.instance().settings().view().setLegacy(true)
+        Neureka.instance().settings().view().setIsUsingLegacyView(true)
 
         Tsr a = new Tsr([2, 3], [
                 1, 2, 3,
@@ -19,7 +19,7 @@ class ADMemTests {
 
         Function rs = Function.create("[1, 0]:(I[0])")
 
-        Tsr b = rs.activate(a)
+        Tsr b = rs(a)
         GraphNode n = a.find(GraphNode.class)
         assert n.getChildren().size()==1
 
