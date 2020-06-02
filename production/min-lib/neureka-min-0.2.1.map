@@ -17,66 +17,75 @@ neureka.Neureka -> neureka.Neureka:
     67:68:neureka.Neureka$Settings settings(java.lang.Object) -> settings
     72:72:neureka.Neureka$Utility utility() -> utility
     76:76:java.lang.String version() -> version
-    80:91:void reset() -> reset
-    94:94:boolean _currentThreadIsAuthorized() -> a
+    80:99:void reset() -> reset
+    102:102:boolean _currentThreadIsAuthorized() -> a
     27:29:void <clinit>() -> <clinit>
 neureka.Neureka$Settings -> neureka.Neureka$Settings:
     neureka.Neureka$Settings$Debug _debug -> b
     neureka.Neureka$Settings$AutoDiff _autoDiff -> c
     neureka.Neureka$Settings$Indexing _indexing -> d
     neureka.Neureka$Settings$View _view -> e
-    boolean _isLocked -> f
+    neureka.Neureka$Settings$NDim _ndim -> f
+    boolean _isLocked -> g
     neureka.Neureka this$0 -> a
-    104:111:void <init>(neureka.Neureka) -> <init>
-    114:114:neureka.Neureka$Settings$Debug debug() -> debug
-    118:119:neureka.Neureka$Settings$Debug debug(java.lang.Object) -> debug
-    123:123:neureka.Neureka$Settings$AutoDiff autoDiff() -> autoDiff
-    127:128:neureka.Neureka$Settings$AutoDiff autoDiff(java.lang.Object) -> autoDiff
-    132:132:neureka.Neureka$Settings$Indexing indexing() -> indexing
-    136:137:neureka.Neureka$Settings$Indexing indexing(java.lang.Object) -> indexing
-    141:141:neureka.Neureka$Settings$View view() -> view
-    145:146:neureka.Neureka$Settings$View view(java.lang.Object) -> view
-    150:150:boolean isLocked() -> isLocked
-    154:155:void setIsLocked(boolean) -> setIsLocked
+    113:121:void <init>(neureka.Neureka) -> <init>
+    124:124:neureka.Neureka$Settings$Debug debug() -> debug
+    128:129:neureka.Neureka$Settings$Debug debug(java.lang.Object) -> debug
+    133:133:neureka.Neureka$Settings$AutoDiff autoDiff() -> autoDiff
+    137:138:neureka.Neureka$Settings$AutoDiff autoDiff(java.lang.Object) -> autoDiff
+    142:142:neureka.Neureka$Settings$Indexing indexing() -> indexing
+    146:147:neureka.Neureka$Settings$Indexing indexing(java.lang.Object) -> indexing
+    151:151:neureka.Neureka$Settings$View view() -> view
+    155:156:neureka.Neureka$Settings$View view(java.lang.Object) -> view
+    160:160:neureka.Neureka$Settings$NDim ndim() -> ndim
+    164:165:neureka.Neureka$Settings$NDim ndim(java.lang.Object) -> ndim
+    169:169:boolean isLocked() -> isLocked
+    173:174:void setIsLocked(boolean) -> setIsLocked
 neureka.Neureka$Settings$AutoDiff -> neureka.Neureka$Settings$AutoDiff:
-    boolean _retainPendingErrorForJITProp -> a
-    boolean _applyGradientWhenTensorIsUsed -> b
-    boolean _applyGradientWhenRequested -> c
+    boolean _isRetainingPendingErrorForJITProp -> a
+    boolean _isApplyingGradientWhenTensorIsUsed -> b
+    boolean _isApplyingGradientWhenRequested -> c
     neureka.Neureka$Settings this$1 -> d
-    187:187:void <init>(neureka.Neureka$Settings) -> <init>
-    217:217:boolean retainPendingErrorForJITProp() -> retainPendingErrorForJITProp
-    221:223:void setRetainPendingErrorForJITProp(boolean) -> setRetainPendingErrorForJITProp
-    226:226:boolean applyGradientWhenTensorIsUsed() -> applyGradientWhenTensorIsUsed
-    230:232:void setApplyGradientWhenTensorIsUsed(boolean) -> setApplyGradientWhenTensorIsUsed
-    235:235:boolean applyGradientWhenRequested() -> applyGradientWhenRequested
-    239:241:void setApplyGradientWhenRequested(boolean) -> setApplyGradientWhenRequested
+    206:206:void <init>(neureka.Neureka$Settings) -> <init>
+    236:236:boolean isRetainingPendingErrorForJITProp() -> isRetainingPendingErrorForJITProp
+    240:242:void setIsRetainingPendingErrorForJITProp(boolean) -> setIsRetainingPendingErrorForJITProp
+    245:245:boolean isApplyingGradientWhenTensorIsUsed() -> isApplyingGradientWhenTensorIsUsed
+    249:251:void setIsApplyingGradientWhenTensorIsUsed(boolean) -> setIsApplyingGradientWhenTensorIsUsed
+    254:254:boolean isApplyingGradientWhenRequested() -> isApplyingGradientWhenRequested
+    258:260:void setIsApplyingGradientWhenRequested(boolean) -> setIsApplyingGradientWhenRequested
 neureka.Neureka$Settings$Debug -> neureka.Neureka$Settings$Debug:
-    boolean _keepDerivativeTargetPayloads -> a
+    boolean _isKeepingDerivativeTargetPayloads -> a
     neureka.Neureka$Settings this$1 -> b
-    157:157:void <init>(neureka.Neureka$Settings) -> <init>
-    177:177:boolean keepDerivativeTargetPayloads() -> keepDerivativeTargetPayloads
-    181:183:void setKeepDerivativeTargetPayloads(boolean) -> setKeepDerivativeTargetPayloads
+    176:176:void <init>(neureka.Neureka$Settings) -> <init>
+    196:196:boolean isKeepingDerivativeTargetPayloads() -> isKeepingDerivativeTargetPayloads
+    200:202:void setIsKeepingDerivativeTargetPayloads(boolean) -> setIsKeepingDerivativeTargetPayloads
 neureka.Neureka$Settings$Indexing -> neureka.Neureka$Settings$Indexing:
-    boolean _legacyIndexing -> a
-    boolean _thoroughIndexing -> b
+    boolean _isUsingLegacyIndexing -> a
+    boolean _isUsingThoroughIndexing -> b
     neureka.Neureka$Settings this$1 -> c
-    245:245:void <init>(neureka.Neureka$Settings) -> <init>
-    252:252:boolean legacy() -> legacy
-    256:258:void setLegacy(boolean) -> setLegacy
-    261:261:boolean thorough() -> thorough
-    265:267:void setThorough(boolean) -> setThorough
-neureka.Neureka$Settings$View -> neureka.Neureka$Settings$View:
-    boolean _legacyView -> a
+    264:264:void <init>(neureka.Neureka$Settings) -> <init>
+    271:271:boolean isUsingLegacyIndexing() -> isUsingLegacyIndexing
+    275:277:void setIsUsingLegacyIndexing(boolean) -> setIsUsingLegacyIndexing
+    280:280:boolean isUsingThoroughIndexing() -> isUsingThoroughIndexing
+    284:286:void setIsUsingThoroughIndexing(boolean) -> setIsUsingThoroughIndexing
+neureka.Neureka$Settings$NDim -> neureka.Neureka$Settings$NDim:
+    boolean _isOnlyUsingDefaultNDConfiguration -> a
     neureka.Neureka$Settings this$1 -> b
-    271:271:void <init>(neureka.Neureka$Settings) -> <init>
-    277:277:boolean legacy() -> legacy
-    281:283:void setLegacy(boolean) -> setLegacy
+    305:305:void <init>(neureka.Neureka$Settings) -> <init>
+    315:315:boolean isOnlyUsingDefaultNDConfiguration() -> isOnlyUsingDefaultNDConfiguration
+    319:321:void setIsOnlyUsingDefaultNDConfiguration(boolean) -> setIsOnlyUsingDefaultNDConfiguration
+neureka.Neureka$Settings$View -> neureka.Neureka$Settings$View:
+    boolean _isUsingLegacyView -> a
+    neureka.Neureka$Settings this$1 -> b
+    290:290:void <init>(neureka.Neureka$Settings) -> <init>
+    295:295:boolean isUsingLegacyView() -> isUsingLegacyView
+    299:301:void setIsUsingLegacyView(boolean) -> setIsUsingLegacyView
 neureka.Neureka$Utility -> neureka.Neureka$Utility:
-    289:289:void <init>() -> <init>
-    299:312:java.lang.String readResource(java.lang.String) -> readResource
-    317:321:java.lang.Object tryGroovyClosureOn(java.lang.Object,java.lang.Object) -> tryGroovyClosureOn
-    325:335:void tryGroovyScriptsOn(neureka.Neureka) -> tryGroovyScriptsOn
-    338:347:boolean isPresent(java.lang.String) -> isPresent
+    327:327:void <init>() -> <init>
+    337:350:java.lang.String readResource(java.lang.String) -> readResource
+    355:359:java.lang.Object tryGroovyClosureOn(java.lang.Object,java.lang.Object) -> tryGroovyClosureOn
+    363:373:void tryGroovyScriptsOn(neureka.Neureka) -> tryGroovyScriptsOn
+    376:385:boolean isPresent(java.lang.String) -> isPresent
 neureka.Tsr -> neureka.Tsr:
     neureka.acceleration.Device _CPU -> a
     int _flags -> b
@@ -210,13 +219,13 @@ neureka.Tsr -> neureka.Tsr:
     69:79:void lambda$setIsOutsourced$2(neureka.acceleration.Device) -> b
     74:74:void lambda$setIsOutsourced$1(neureka.Tsr) -> k
     75:77:void lambda$setIsOutsourced$0(neureka.Tsr,neureka.acceleration.Device) -> b
-    21:21:neureka.ndim.NDConfiguration access$000(neureka.Tsr) -> a
-    21:21:neureka.ndim.NDConfiguration access$100(neureka.Tsr) -> b
-    21:21:neureka.ndim.NDConfiguration access$200(neureka.Tsr) -> c
-    21:21:neureka.ndim.NDConfiguration access$300(neureka.Tsr) -> d
-    21:21:neureka.ndim.NDConfiguration access$402(neureka.Tsr,neureka.ndim.NDConfiguration) -> a
-    21:21:neureka.ndim.NDConfiguration access$502(neureka.Tsr,neureka.ndim.NDConfiguration) -> b
-    21:21:neureka.ndim.NDConfiguration access$600(neureka.Tsr) -> e
+    21:21:neureka.ndim.config.NDConfiguration access$000(neureka.Tsr) -> a
+    21:21:neureka.ndim.config.NDConfiguration access$100(neureka.Tsr) -> b
+    21:21:neureka.ndim.config.NDConfiguration access$200(neureka.Tsr) -> c
+    21:21:neureka.ndim.config.NDConfiguration access$300(neureka.Tsr) -> d
+    21:21:neureka.ndim.config.NDConfiguration access$402(neureka.Tsr,neureka.ndim.config.NDConfiguration) -> a
+    21:21:neureka.ndim.config.NDConfiguration access$502(neureka.Tsr,neureka.ndim.config.NDConfiguration) -> b
+    21:21:neureka.ndim.config.NDConfiguration access$600(neureka.Tsr) -> e
     23:23:void <clinit>() -> <clinit>
 neureka.Tsr$Create -> neureka.Tsr$Create:
     1233:1233:void <init>() -> <init>
@@ -1137,7 +1146,7 @@ neureka.ndim.AbstractComponentOwner -> neureka.ndim.AbstractComponentOwner:
     neureka.Component _addOrReject(neureka.Component) -> _addOrReject
     99:104:boolean forComponent(java.lang.Class,java.util.function.Consumer) -> forComponent
 neureka.ndim.AbstractNDArray -> neureka.ndim.AbstractNDArray:
-    neureka.ndim.NDConfiguration _conf -> _conf
+    neureka.ndim.config.NDConfiguration _conf -> _conf
     java.lang.Object _value -> _value
     25:25:void <init>() -> <init>
     34:34:boolean is64() -> is64
@@ -1145,7 +1154,7 @@ neureka.ndim.AbstractNDArray -> neureka.ndim.AbstractNDArray:
     44:44:int i_of_i(int) -> i_of_i
     48:48:int[] idx_of_i(int) -> idx_of_i
     52:52:int i_of_idx(int[]) -> i_of_idx
-    58:58:neureka.ndim.NDConfiguration getNDConf() -> getNDConf
+    58:58:neureka.ndim.config.NDConfiguration getNDConf() -> getNDConf
     64:64:int rank() -> rank
     68:68:java.util.List shape() -> shape
     72:72:int shape(int) -> shape
@@ -1174,7 +1183,23 @@ neureka.ndim.AbstractNDArray$Utility$Stringify -> neureka.ndim.AbstractNDArray$U
     110:110:void <init>() -> <init>
     114:128:java.lang.String formatFP(double) -> formatFP
     133:135:java.lang.String strConf(int[]) -> strConf
-neureka.ndim.NDConfiguration -> neureka.ndim.NDConfiguration:
+neureka.ndim.config.AbstractArrayBasedNDC -> neureka.ndim.config.AbstractArrayBasedNDC:
+    java.util.Map _CACHED_INT_ARRAYS -> a
+    7:7:void <init>() -> <init>
+    21:44:int[] _cached(int[]) -> _cached
+    16:17:void <clinit>() -> <clinit>
+neureka.ndim.config.AbstractNDC -> neureka.ndim.config.AbstractNDC:
+    java.util.Map _CONFS -> a
+    16:16:void <init>() -> <init>
+    32:36:long keyCode() -> keyCode
+    42:46:boolean equals(neureka.ndim.config.NDConfiguration) -> equals
+    58:71:neureka.ndim.config.NDConfiguration construct(int[],int[],int[],int[],int[]) -> construct
+    1095:1101:boolean _isSimpleConfiguration(int[],int[],int[],int[],int[]):95:101 -> construct
+    1095:1101:neureka.ndim.config.NDConfiguration construct(int[],int[],int[],int[],int[]):58 -> construct
+    76:84:neureka.ndim.config.NDConfiguration _cached(neureka.ndim.config.NDConfiguration) -> _cached
+    108:113:java.lang.String toString() -> toString
+    24:25:void <clinit>() -> <clinit>
+neureka.ndim.config.NDConfiguration -> neureka.ndim.config.NDConfiguration:
     int rank() -> rank
     int[] shape() -> shape
     int shape(int) -> shape
@@ -1189,57 +1214,127 @@ neureka.ndim.NDConfiguration -> neureka.ndim.NDConfiguration:
     int i_of_i(int) -> i_of_i
     int[] idx_of_i(int) -> idx_of_i
     int i_of_idx(int[]) -> i_of_idx
-    47:48:neureka.ndim.NDConfiguration construct(int[],int[],int[],int[],int[]) -> construct
-neureka.ndim.config.D1Configuration -> neureka.ndim.config.D1Configuration:
+    long keyCode() -> keyCode
+    boolean equals(neureka.ndim.config.NDConfiguration) -> equals
+neureka.ndim.config.complex.D1Configuration -> neureka.ndim.config.complex.D1Configuration:
     int _shape -> a
     int _translation -> b
     int _idxmap -> c
     int _spread -> d
     int _offset -> e
-    38:38:neureka.ndim.config.D1Configuration construct(int[],int[],int[],int[],int[]) -> construct
-    47:53:void <init>(int,int,int,int,int) -> <init>
-    57:57:int rank() -> rank
-    62:62:int[] shape() -> shape
-    67:67:int shape(int) -> shape
-    72:72:int[] idxmap() -> idxmap
-    77:77:int idxmap(int) -> idxmap
-    82:82:int[] translation() -> translation
-    87:87:int translation(int) -> translation
-    92:92:int[] spread() -> spread
-    97:97:int spread(int) -> spread
-    102:102:int[] offset() -> offset
-    107:107:int offset(int) -> offset
-    113:113:int i_of_i(int) -> i_of_i
-    118:118:int[] idx_of_i(int) -> idx_of_i
-    122:122:int i_of_idx(int[]) -> i_of_idx
-neureka.ndim.config.DefaultNDConfiguration -> neureka.ndim.config.DefaultNDConfiguration:
-    java.util.Map _CONFIGS -> a
-    java.util.Map _CONFS -> b
-    int[] _shape -> c
-    int[] _translation -> d
-    int[] _idxmap -> e
-    int[] _spread -> f
-    int[] _offset -> g
-    30:36:void <init>(int[],int[],int[],int[],int[]) -> <init>
-    45:59:neureka.ndim.config.DefaultNDConfiguration construct(int[],int[],int[],int[],int[]) -> construct
-    1204:1204:long _key():204:204 -> construct
-    1204:1204:neureka.ndim.config.DefaultNDConfiguration construct(int[],int[],int[],int[],int[]):46 -> construct
-    89:89:int rank() -> rank
-    94:94:int[] shape() -> shape
-    99:99:int shape(int) -> shape
-    104:104:int[] idxmap() -> idxmap
-    109:109:int idxmap(int) -> idxmap
-    114:114:int[] translation() -> translation
-    119:119:int translation(int) -> translation
-    124:124:int[] spread() -> spread
-    129:129:int spread(int) -> spread
-    134:134:int[] offset() -> offset
-    139:139:int offset(int) -> offset
-    147:147:int i_of_i(int) -> i_of_i
-    152:164:int[] idx_of_i(int) -> idx_of_i
-    168:170:int i_of_idx(int[]) -> i_of_idx
-    176:199:int[] _cached(int[]) -> a
-    20:22:void <clinit>() -> <clinit>
+    39:39:neureka.ndim.config.NDConfiguration construct(int[],int[],int[],int[],int[]) -> construct
+    48:54:void <init>(int,int,int,int,int) -> <init>
+    58:58:int rank() -> rank
+    63:63:int[] shape() -> shape
+    68:68:int shape(int) -> shape
+    73:73:int[] idxmap() -> idxmap
+    78:78:int idxmap(int) -> idxmap
+    83:83:int[] translation() -> translation
+    88:88:int translation(int) -> translation
+    93:93:int[] spread() -> spread
+    98:98:int spread(int) -> spread
+    103:103:int[] offset() -> offset
+    108:108:int offset(int) -> offset
+    114:114:int i_of_i(int) -> i_of_i
+    119:119:int[] idx_of_i(int) -> idx_of_i
+    123:123:int i_of_idx(int[]) -> i_of_idx
+neureka.ndim.config.complex.DefaultNDConfiguration -> neureka.ndim.config.complex.DefaultNDConfiguration:
+    int[] _shape -> a
+    int[] _translation -> b
+    int[] _idxmap -> c
+    int[] _spread -> d
+    int[] _offset -> e
+    28:34:void <init>(int[],int[],int[],int[],int[]) -> <init>
+    43:43:neureka.ndim.config.NDConfiguration construct(int[],int[],int[],int[],int[]) -> construct
+    72:72:int rank() -> rank
+    77:77:int[] shape() -> shape
+    82:82:int shape(int) -> shape
+    87:87:int[] idxmap() -> idxmap
+    92:92:int idxmap(int) -> idxmap
+    97:97:int[] translation() -> translation
+    102:102:int translation(int) -> translation
+    107:107:int[] spread() -> spread
+    112:112:int spread(int) -> spread
+    117:117:int[] offset() -> offset
+    122:122:int offset(int) -> offset
+    130:130:int i_of_i(int) -> i_of_i
+    135:147:int[] idx_of_i(int) -> idx_of_i
+    152:154:int i_of_idx(int[]) -> i_of_idx
+    19:20:void <clinit>() -> <clinit>
+neureka.ndim.config.complex.ScalarConfiguration -> neureka.ndim.config.complex.ScalarConfiguration:
+    int _shape -> a
+    int _offset -> b
+    27:27:neureka.ndim.config.NDConfiguration construct(int[],int[]) -> construct
+    33:36:void <init>(int,int) -> <init>
+    40:40:int rank() -> rank
+    45:45:int[] shape() -> shape
+    50:50:int shape(int) -> shape
+    55:55:int[] idxmap() -> idxmap
+    60:60:int idxmap(int) -> idxmap
+    65:65:int[] translation() -> translation
+    70:70:int translation(int) -> translation
+    75:75:int[] spread() -> spread
+    80:80:int spread(int) -> spread
+    85:85:int[] offset() -> offset
+    90:90:int offset(int) -> offset
+    96:96:int i_of_i(int) -> i_of_i
+    101:101:int[] idx_of_i(int) -> idx_of_i
+    106:106:int i_of_idx(int[]) -> i_of_idx
+neureka.ndim.config.simple.SimpleD1Configuration -> neureka.ndim.config.simple.SimpleD1Configuration:
+    int _shape -> a
+    int _translation_and_idxmap -> b
+    23:23:neureka.ndim.config.NDConfiguration construct(int[],int[]) -> construct
+    29:32:void <init>(int,int) -> <init>
+    36:36:int rank() -> rank
+    41:41:int[] shape() -> shape
+    46:46:int shape(int) -> shape
+    51:51:int[] idxmap() -> idxmap
+    56:56:int idxmap(int) -> idxmap
+    61:61:int[] translation() -> translation
+    66:66:int translation(int) -> translation
+    71:71:int[] spread() -> spread
+    76:76:int spread(int) -> spread
+    81:81:int[] offset() -> offset
+    86:86:int offset(int) -> offset
+    92:92:int i_of_i(int) -> i_of_i
+    97:97:int[] idx_of_i(int) -> idx_of_i
+    101:101:int i_of_idx(int[]) -> i_of_idx
+neureka.ndim.config.simple.SimpleDefaultNDConfiguration -> neureka.ndim.config.simple.SimpleDefaultNDConfiguration:
+    int[] _shape -> a
+    int[] _translation_and_idxmap -> b
+    14:17:void <init>(int[],int[]) -> <init>
+    23:23:neureka.ndim.config.NDConfiguration construct(int[],int[]) -> construct
+    38:38:int rank() -> rank
+    43:43:int[] shape() -> shape
+    48:48:int shape(int) -> shape
+    53:53:int[] idxmap() -> idxmap
+    58:58:int idxmap(int) -> idxmap
+    63:63:int[] translation() -> translation
+    68:68:int translation(int) -> translation
+    73:75:int[] spread() -> spread
+    80:80:int spread(int) -> spread
+    85:85:int[] offset() -> offset
+    90:90:int offset(int) -> offset
+    98:98:int i_of_i(int) -> i_of_i
+    103:115:int[] idx_of_i(int) -> idx_of_i
+    120:122:int i_of_idx(int[]) -> i_of_idx
+neureka.ndim.config.simple.SimpleScalarConfiguration -> neureka.ndim.config.simple.SimpleScalarConfiguration:
+    9:9:neureka.ndim.config.NDConfiguration construct() -> construct
+    12:12:void <init>() -> <init>
+    16:16:int rank() -> rank
+    21:21:int[] shape() -> shape
+    26:26:int shape(int) -> shape
+    31:31:int[] idxmap() -> idxmap
+    36:36:int idxmap(int) -> idxmap
+    41:41:int[] translation() -> translation
+    46:46:int translation(int) -> translation
+    51:51:int[] spread() -> spread
+    56:56:int spread(int) -> spread
+    61:61:int[] offset() -> offset
+    66:66:int offset(int) -> offset
+    71:71:int i_of_i(int) -> i_of_i
+    76:76:int[] idx_of_i(int) -> idx_of_i
+    81:81:int i_of_idx(int[]) -> i_of_idx
 neureka.optimization.Optimizer -> neureka.optimization.Optimizer:
     void optimize(neureka.Tsr) -> optimize
 neureka.optimization.implementations.ADAM -> neureka.optimization.implementations.ADAM:

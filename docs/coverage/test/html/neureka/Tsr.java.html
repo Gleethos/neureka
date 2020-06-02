@@ -2,7 +2,6 @@
 
 import groovy.lang.IntRange;
 import neureka.ndim.AbstractNDArray;
-import neureka.ndim.NDConfiguration;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.Device;
 import neureka.framing.IndexAlias;
@@ -11,6 +10,7 @@ import neureka.calculus.Function;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
+import neureka.ndim.config.AbstractNDC;
 import neureka.optimization.Optimizer;
 import neureka.utility.DataHelper;
 
@@ -290,7 +290,7 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
 <span class="fc" id="L290">        int[] newSpread = new int[newShape.length];</span>
 <span class="fc" id="L291">        Arrays.fill(newSpread, 1);</span>
 <span class="fc" id="L292">        int[] newOffset = new int[newShape.length];</span>
-<span class="fc" id="L293">        _conf = NDConfiguration.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);</span>
+<span class="fc" id="L293">        _conf = AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);</span>
 <span class="fc" id="L294">    }</span>
 
 
@@ -766,14 +766,14 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
 <span class="fc" id="L766">        int[] newSpread = new int[rank()];</span>
 <span class="fc" id="L767">        int[] newOffset = new int[rank()];</span>
 <span class="fc" id="L768">        Arrays.fill(newSpread, 1);</span>
-<span class="fc bfc" id="L769" title="All 2 branches covered.">        if (idxbase.length==2*rank()){</span>
+<span class="fc bfc" id="L769" title="All 2 branches covered.">        if ( idxbase.length == 2 * rank() ){</span>
 <span class="fc bfc" id="L770" title="All 4 branches covered.">            for(int i=rank(); i&lt;idxbase.length; i++) idxbase[i] = (idxbase[i]==0)?1:idxbase[i];</span>
         }
 <span class="fc bfc" id="L772" title="All 2 branches covered.">        for(int i=0; i&lt;idxbase.length; i++){</span>
 <span class="fc bfc" id="L773" title="All 2 branches covered.">            if(i&gt;=rank()) newSpread[i-rank()] = idxbase[i];</span>
 <span class="fc" id="L774">            else newOffset[i] = idxbase[i];</span>
         }
-<span class="fc" id="L776">        subset._conf = NDConfiguration.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);</span>
+<span class="fc" id="L776">        subset._conf = AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);</span>
 
 <span class="fc bfc" id="L778" title="All 2 branches covered.">        if (this.isOutsourced()){</span>
 <span class="fc" id="L779">            Device device = this.find(Device.class);</span>
@@ -974,7 +974,7 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
 <span class="fc bfc" id="L974" title="All 2 branches covered.">                if (newForm[i] &lt; 0) newOffset[i] = 0;</span>
 <span class="pc bpc" id="L975" title="1 of 2 branches missed.">                else if (newForm[i] &gt;= 0) newOffset[i] = tensor._conf.offset()[newForm[i]];</span>
             }
-<span class="fc" id="L977">            tensor._conf = NDConfiguration.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);</span>
+<span class="fc" id="L977">            tensor._conf = AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);</span>
 <span class="fc" id="L978">            return tensor;</span>
         }
 

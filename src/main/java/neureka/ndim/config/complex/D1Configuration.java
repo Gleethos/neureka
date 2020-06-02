@@ -1,41 +1,42 @@
-package neureka.ndim.config;
+package neureka.ndim.config.complex;
 
-import neureka.ndim.NDConfiguration;
+import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.config.AbstractNDC;
 
-public class D1Configuration implements NDConfiguration
+public class D1Configuration extends AbstractNDC
 {
     /**
      *  The shape of the NDArray.
      */
-    private int _shape;
+    private final int _shape;
     /**
      *  The translation from a shape index (idx) to the index of the underlying data array.
      */
-    private int _translation;
+    private final int _translation;
     /**
      *  The mapping of idx array.
      */
-    private int _idxmap; // Used to avoid distortion when reshaping!
+    private final int _idxmap; // Used to avoid distortion when reshaping!
     /**
      *  Produces the strides of a tensor subset / slice
      */
-    private int _spread;
+    private final int _spread;
     /**
      *  Defines the position of a subset / slice tensor within its parent!
      */
-    private int _offset;
+    private final int _offset;
     /**
      *  The value of this tensor. Usually a array of type double[] or float[].
      */
 
-    public static D1Configuration construct(
+    public static NDConfiguration construct(
             int[] shape,
             int[] translation,
             int[] idxmap,
             int[] spread,
             int[] offset
     ){
-        return new D1Configuration(shape[0], translation[0],  idxmap[0], spread[0], offset[0]);
+        return _cached(new D1Configuration(shape[0], translation[0],  idxmap[0], spread[0], offset[0]));
     }
 
     private D1Configuration(

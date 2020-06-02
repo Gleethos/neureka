@@ -1,10 +1,9 @@
-package neureka.ndim;
-
-import neureka.ndim.config.D1Configuration;
-import neureka.ndim.config.DefaultNDConfiguration;
+package neureka.ndim.config;
 
 public interface NDConfiguration
 {
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     int rank();
 
     int[] shape();
@@ -36,17 +35,14 @@ public interface NDConfiguration
     int i_of_idx(int[] idx);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-    static NDConfiguration construct(
-            int[] shape,
-            int[] translation,
-            int[] idxmap,
-            int[] spread,
-            int[] offset
-    ){
-        if(shape.length==1) return D1Configuration.construct(shape, translation, idxmap, spread, offset);
-        return DefaultNDConfiguration.construct(shape, translation, idxmap, spread, offset);
-    }
+
+    long keyCode();
+
+    boolean equals(NDConfiguration ndc);
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 
 
 }

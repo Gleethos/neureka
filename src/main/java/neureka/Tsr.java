@@ -2,7 +2,6 @@ package neureka;
 
 import groovy.lang.IntRange;
 import neureka.ndim.AbstractNDArray;
-import neureka.ndim.NDConfiguration;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.Device;
 import neureka.framing.IndexAlias;
@@ -11,6 +10,7 @@ import neureka.calculus.Function;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
+import neureka.ndim.config.AbstractNDC;
 import neureka.optimization.Optimizer;
 import neureka.utility.DataHelper;
 
@@ -290,7 +290,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         int[] newSpread = new int[newShape.length];
         Arrays.fill(newSpread, 1);
         int[] newOffset = new int[newShape.length];
-        _conf = NDConfiguration.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);
+        _conf = AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);
     }
 
 
@@ -766,14 +766,14 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         int[] newSpread = new int[rank()];
         int[] newOffset = new int[rank()];
         Arrays.fill(newSpread, 1);
-        if (idxbase.length==2*rank()){
+        if ( idxbase.length == 2 * rank() ){
             for(int i=rank(); i<idxbase.length; i++) idxbase[i] = (idxbase[i]==0)?1:idxbase[i];
         }
         for(int i=0; i<idxbase.length; i++){
             if(i>=rank()) newSpread[i-rank()] = idxbase[i];
             else newOffset[i] = idxbase[i];
         }
-        subset._conf = NDConfiguration.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);
+        subset._conf = AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);
 
         if (this.isOutsourced()){
             Device device = this.find(Device.class);
@@ -974,7 +974,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
                 if (newForm[i] < 0) newOffset[i] = 0;
                 else if (newForm[i] >= 0) newOffset[i] = tensor._conf.offset()[newForm[i]];
             }
-            tensor._conf = NDConfiguration.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);
+            tensor._conf = AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);
             return tensor;
         }
 

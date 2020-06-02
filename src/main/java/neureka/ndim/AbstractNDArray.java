@@ -2,6 +2,7 @@ package neureka.ndim;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

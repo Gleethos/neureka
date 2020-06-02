@@ -1,9 +1,24 @@
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
+//import neureka.ndim.config.simple.SimpleD1Configuration
 import org.junit.Test
 
 class ShallowTensorComponentTests {
+
+    @Test void test_NDC(){
+
+        Neureka.instance().reset()
+
+        //Tsr a = new Tsr(1)
+        //Tsr b = new Tsr(2)
+        //assert a.NDConf == b.NDConf
+        //assert a.NDConf instanceof SimpleD1Configuration
+
+        //Tsr t = new Tsr([1.0, 2.0, 3.0])[2]
+
+
+    }
 
     @Test
     void test_all_operations(){
