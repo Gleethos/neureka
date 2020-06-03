@@ -726,6 +726,12 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
                 for(int i=0; i<e; i++) rangeAsList.add(i);
                 ((List<Object>)key).add(rangeAsList);
             }
+        } else if (key instanceof Integer) {
+            key = Arrays.asList(_conf.idx_of_i((Integer)key));
+        } else if (key instanceof Double) {
+            key = Arrays.asList(_conf.idx_of_i((int)Math.floor((Double)key)));
+        } else if (key instanceof BigDecimal) {
+            key = Arrays.asList(_conf.idx_of_i(((BigDecimal)key).intValue()));
         }
         int[] idxbase = null;
         int[] newShape = new int[this.rank()];
@@ -733,19 +739,23 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
             if (key instanceof  List) key = ((List)key).toArray();
             boolean allInt = true;
             for(Object o : (Object[])key) allInt = allInt && o instanceof Integer;
-            if (allInt) {
+            if (allInt && ((Object[])key).length==rank()) {
                 key = _intArray((Object[]) key);
                 idxbase = (int[])key;
                 if(key != null) {
-                    for(int i=0; i<this.rank(); i++) idxbase[i] = (idxbase[i]<0)?_conf.shape()[i]+idxbase[i]:idxbase[i];
+                    for(int i=0; i<this.rank(); i++) idxbase[i] = (idxbase[i]<0)?_conf.shape(i)+idxbase[i]:idxbase[i];
                     return IO.getFrom(this, idxbase);
                 }
             } else {
                 boolean hasScale = false;
                 for (Object o : (Object[])key) hasScale = hasScale || o instanceof Map;
                 idxbase = new int[((hasScale)?2:1)*this.rank()];
-                Object[] ranges = (Object[])key;
-                _configureSubsetFromRanges(ranges, idxbase, newShape, 0);
+                if (allInt) {
+                    _configureSubsetFromRanges(new Object[]{_intArray((Object[]) key)}, idxbase, newShape, 0);
+                } else {
+                    _configureSubsetFromRanges((Object[])key, idxbase, newShape, 0);
+                }
+
             }
         }//...not simple slice... Advanced:
         else if (key instanceof Map)// ==> i, j, k slicing!
@@ -870,8 +880,8 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
                 first = last;
                 last = temp;
             }
-            first = (first < 0) ? _conf.shape()[i]+first : first;
-            last = (last < 0) ? _conf.shape()[i]+last : last;
+            first = (first < 0) ? _conf.shape(i)+first : first;
+            last = (last < 0) ? _conf.shape(i)+last : last;
             newShape[i+offset] = (last - first) + 1;
             idxbase[i+offset] = first;
         }

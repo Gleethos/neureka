@@ -1,22 +1,59 @@
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
-//import neureka.ndim.config.simple.SimpleD1Configuration
+import neureka.ndim.config.complex.D1Configuration
+import neureka.ndim.config.complex.ScalarConfiguration
+import neureka.ndim.config.simple.SimpleD1Configuration
+import neureka.ndim.config.simple.SimpleScalarConfiguration
 import org.junit.Test
 
 class ShallowTensorComponentTests {
 
-    @Test void test_NDC(){
-
+    @Test void test_NDC()
+    {
         Neureka.instance().reset()
 
-        //Tsr a = new Tsr(1)
-        //Tsr b = new Tsr(2)
-        //assert a.NDConf == b.NDConf
-        //assert a.NDConf instanceof SimpleD1Configuration
+        Tsr a = new Tsr(1)
+        Tsr b = new Tsr(2)
+        assert a.NDConf instanceof SimpleScalarConfiguration
+        assert a.NDConf == b.NDConf
+        assert a.NDConf.shape(0) == 1
+        assert a.NDConf.translation(0) == 1
+        assert a.NDConf.idxmap(0) == 1
+        assert a.NDConf.offset(0) == 0
+        assert a.NDConf.spread(0) == 1
 
-        //Tsr t = new Tsr([1.0, 2.0, 3.0])[2]
-
+        Tsr x = new Tsr([1.0, 2.0, 3.1])
+        Tsr y = new Tsr([3, 4.5, 2])
+        Tsr z = new Tsr([1.4, 2, 4])
+        assert x.NDConf instanceof SimpleD1Configuration
+        assert y.NDConf instanceof SimpleD1Configuration
+        assert z.NDConf instanceof SimpleD1Configuration
+        assert x.NDConf == y.NDConf
+        assert y.NDConf == z.NDConf
+        assert x.NDConf.shape(0) == 3
+        assert x.NDConf.translation(0) == 1
+        assert x.NDConf.idxmap(0) == 1
+        assert x.NDConf.offset(0) == 0
+        assert x.NDConf.spread(0) == 1
+        assert x[2].NDConf instanceof ScalarConfiguration
+        assert y[1.1].NDConf instanceof ScalarConfiguration
+        assert y[1.1].NDConf != x[2].NDConf
+        assert y[1.1].NDConf == z[1].NDConf
+        x = x[new BigDecimal(2)]
+        assert x.NDConf.shape(0) == 1
+        assert x.NDConf.translation(0) == 1
+        assert x.NDConf.idxmap(0) == 1
+        assert x.NDConf.offset(0) == 2
+        assert x.NDConf.spread(0) == 1
+        y = y[1..2]
+        assert y.toString().contains("(2):[4.5, 2.0]")
+        assert y.NDConf instanceof D1Configuration
+        assert y.NDConf.shape(0) == 2
+        assert y.NDConf.translation(0) == 1
+        assert y.NDConf.idxmap(0) == 1
+        assert y.NDConf.offset(0) == 1
+        assert y.NDConf.spread(0) == 1
 
     }
 
