@@ -1,14 +1,8 @@
 package neureka.ndim.config;
 
 import neureka.ndim.AbstractNDArray;
-import neureka.ndim.config.complex.D1Configuration;
-import neureka.ndim.config.complex.D2Configuration;
-import neureka.ndim.config.complex.DefaultNDConfiguration;
-import neureka.ndim.config.complex.ScalarConfiguration;
-import neureka.ndim.config.simple.SimpleD1Configuration;
-import neureka.ndim.config.simple.SimpleD2Configuration;
-import neureka.ndim.config.simple.SimpleScalarConfiguration;
-import neureka.ndim.config.simple.SimpleDefaultNDConfiguration;
+import neureka.ndim.config.complex.*;
+import neureka.ndim.config.simple.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -65,6 +59,8 @@ public abstract class AbstractNDC implements NDConfiguration
                 else ndc = SimpleD1Configuration.construct(shape, translation);
             } else if (shape.length == 2) {
                 ndc = SimpleD2Configuration.construct(shape, translation);
+            } else if(shape.length == 3) {
+                ndc = SimpleD3Configuration.construct(shape, translation);
             } else ndc = SimpleDefaultNDConfiguration.construct(shape, translation);
         } else {
             if (shape.length == 1) {
@@ -72,6 +68,8 @@ public abstract class AbstractNDC implements NDConfiguration
                 else ndc = D1Configuration.construct(shape, translation, idxmap, spread, offset);
             } else if (shape.length == 2) {
                 ndc = D2Configuration.construct(shape, translation, idxmap, spread, offset);
+            } else if(shape.length == 3) {
+                ndc = D3Configuration.construct(shape, translation, idxmap, spread, offset);
             } else ndc = DefaultNDConfiguration.construct(shape, translation, idxmap, spread, offset);
         }
         return ndc;
