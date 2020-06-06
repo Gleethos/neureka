@@ -4,6 +4,10 @@ Neureka.instance {
 
     settings {
 
+        debug {
+            it.isKeepingDerivativeTargetPayloads = false
+        }
+
         autoDiff {
             it.isRetainingPendingErrorForJITProp = true
             it.isApplyingGradientWhenTensorIsUsed = true
@@ -13,10 +17,6 @@ Neureka.instance {
         indexing {
             it.isUsingLegacyIndexing = false
             it.isUsingThoroughIndexing = true
-        }
-
-        debug {
-            it.isKeepingDerivativeTargetPayloads = false
         }
 
         view {

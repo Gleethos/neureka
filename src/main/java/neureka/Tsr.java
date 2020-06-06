@@ -977,12 +977,12 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
             int[] newSpread = new int[newForm.length];
             for (int i = 0; i < newForm.length; i++) {
                 if (newForm[i] < 0) newSpread[i] = 1;
-                else if (newForm[i] >= 0) newSpread[i] = tensor._conf.spread()[newForm[i]];
+                else if (newForm[i] >= 0) newSpread[i] = tensor._conf.spread(newForm[i]);
             }
             int[] newOffset = new int[newForm.length];
             for (int i = 0; i < newForm.length; i++) {
                 if (newForm[i] < 0) newOffset[i] = 0;
-                else if (newForm[i] >= 0) newOffset[i] = tensor._conf.offset()[newForm[i]];
+                else if (newForm[i] >= 0) newOffset[i] = tensor._conf.offset(newForm[i]);
             }
             tensor._conf = AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);
             return tensor;

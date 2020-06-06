@@ -54,7 +54,7 @@ public class Kernel
                             t1Idx[ri]++;
                             t2Idx[ri]++;
                             if (t1Idx[ri] == t1Shp[ri] || t2Idx[ri] == t2Shp[ri]) {
-                                running = !(ri == rank - 1);
+                                running = (ri != rank - 1);
                                 if (t1Shp[ri] == t2Shp[ri]) {
                                     t1Idx[ri] = t0Idx[ri];
                                     t2Idx[ri] = t0Idx[ri];
@@ -101,7 +101,7 @@ public class Kernel
                 while (ri < rank) {
                     if (t2Idx[ri] == t2Shp[ri]) {//setting 0
                         t1Idx[ri] = t0Idx[ri];
-                        t2Idx[ri] = 0;//mtch[mi];
+                        t2Idx[ri] = 0;
                     } else {
                         t1Idx[ri] = (t0Shp[ri] > t1Shp[ri])
                                 ? (t0Idx[ri] - t2Idx[ri])
@@ -127,7 +127,7 @@ public class Kernel
                         if (t2Idx[ri] < t2Shp[ri]) {
                             t2Idx[ri]++;
                             if (t2Idx[ri] == t2Shp[ri]) {
-                                running = !(ri == rank - 1);
+                                running = (ri != rank - 1);
                                 t1Idx[ri] = t0Idx[ri];
                                 t2Idx[ri] = 0;
                                 ri++;
@@ -219,13 +219,13 @@ public class Kernel
                             if (t1Idx[ri] == t1Shp[ri]) {
                                 t1Idx[ri] = 0;
                                 t2Idx[ri] = 0;
-                                running = !(ri == rank - 1);
+                                running = (ri != rank - 1);
                                 ri++;
                             } else {
                                 incrementing = false;//return to calculation!
                             }
                         } else {
-                            running = !(ri == rank - 1);
+                            running = (ri != rank - 1);
                             ri++;
                         }
                     }

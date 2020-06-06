@@ -1,5 +1,6 @@
 package neureka.ndim.config;
 
+import neureka.Neureka;
 import neureka.ndim.AbstractNDArray;
 import neureka.ndim.config.complex.*;
 import neureka.ndim.config.simple.*;
@@ -51,6 +52,9 @@ public abstract class AbstractNDC implements NDConfiguration
             int[] spread,
             int[] offset
     ) {
+        if(Neureka.instance().settings().ndim().isOnlyUsingDefaultNDConfiguration()){
+            return DefaultNDConfiguration.construct(shape, translation, idxmap, spread, offset);
+        }
         boolean isSimple = _isSimpleConfiguration(shape, translation, idxmap, spread, offset);
         NDConfiguration ndc = null;
         if ( isSimple ) {

@@ -11,6 +11,7 @@ import util.DummyDevice
 import util.Utility
 
 import java.lang.ref.WeakReference
+import java.text.SimpleDateFormat
 
 
 class ThoroughGroovyTests

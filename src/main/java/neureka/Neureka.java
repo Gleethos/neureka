@@ -190,7 +190,7 @@ public class Neureka
              * It is used in the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
              */
-            private boolean _isKeepingDerivativeTargetPayloads;
+            private boolean _isKeepingDerivativeTargetPayloads = false;
 
             public boolean isKeepingDerivativeTargetPayloads(){
                 return _isKeepingDerivativeTargetPayloads;
@@ -214,14 +214,14 @@ public class Neureka
              * improve performance for some networks substantially.
              * The technique is termed JIT-Propagation.
              */
-            private boolean _isRetainingPendingErrorForJITProp;
+            private boolean _isRetainingPendingErrorForJITProp = true;
 
             /**
              * Gradients will automatically be applied to tensors as soon as
              * they are being used for calculation (GraphNode instantiation).
              * This feature works well with JIT-Propagation.
              */
-            private boolean _isApplyingGradientWhenTensorIsUsed;
+            private boolean _isApplyingGradientWhenTensorIsUsed = true;
 
             /**
              * Gradients will only be applied if requested.
@@ -230,7 +230,7 @@ public class Neureka
              * to true, then the tensor will only be updated by its
              * gradient if requested AND tensor is used! (GraphNode instantiation).
              */
-            private boolean _isApplyingGradientWhenRequested;
+            private boolean _isApplyingGradientWhenRequested = true;
 
             public boolean isRetainingPendingErrorForJITProp(){
                 return _isRetainingPendingErrorForJITProp;
@@ -263,7 +263,7 @@ public class Neureka
 
         public class Indexing
         {
-            private boolean _isUsingLegacyIndexing;
+            private boolean _isUsingLegacyIndexing = false;
 
             private boolean _isUsingThoroughIndexing;
 
@@ -289,7 +289,7 @@ public class Neureka
 
         public class View
         {
-            private boolean _isUsingLegacyView;
+            private boolean _isUsingLegacyView = false;
 
             public boolean isUsingLegacyView(){
                 return _isUsingLegacyView;
@@ -309,7 +309,7 @@ public class Neureka
              *  as cached int arrays.
              *  Disabling this flag allows for custom 1D, 2D, 3D classes to be loaded. (Improves memory locality)
              */
-            private boolean _isOnlyUsingDefaultNDConfiguration;
+            private boolean _isOnlyUsingDefaultNDConfiguration = false;
 
             public boolean isOnlyUsingDefaultNDConfiguration(){
                 return _isOnlyUsingDefaultNDConfiguration;
