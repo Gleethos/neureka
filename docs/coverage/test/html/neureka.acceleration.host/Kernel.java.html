@@ -54,7 +54,7 @@ import org.jetbrains.annotations.Contract;
 <span class="fc" id="L54">                            t1Idx[ri]++;</span>
 <span class="fc" id="L55">                            t2Idx[ri]++;</span>
 <span class="fc bfc" id="L56" title="All 4 branches covered.">                            if (t1Idx[ri] == t1Shp[ri] || t2Idx[ri] == t2Shp[ri]) {</span>
-<span class="fc bfc" id="L57" title="All 2 branches covered.">                                running = !(ri == rank - 1);</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">                                running = (ri != rank - 1);</span>
 <span class="fc bfc" id="L58" title="All 2 branches covered.">                                if (t1Shp[ri] == t2Shp[ri]) {</span>
 <span class="fc" id="L59">                                    t1Idx[ri] = t0Idx[ri];</span>
 <span class="fc" id="L60">                                    t2Idx[ri] = t0Idx[ri];</span>
@@ -101,7 +101,7 @@ import org.jetbrains.annotations.Contract;
 <span class="fc bfc" id="L101" title="All 2 branches covered.">                while (ri &lt; rank) {</span>
 <span class="pc bpc" id="L102" title="1 of 2 branches missed.">                    if (t2Idx[ri] == t2Shp[ri]) {//setting 0</span>
 <span class="nc" id="L103">                        t1Idx[ri] = t0Idx[ri];</span>
-<span class="nc" id="L104">                        t2Idx[ri] = 0;//mtch[mi];</span>
+<span class="nc" id="L104">                        t2Idx[ri] = 0;</span>
                     } else {
 <span class="fc bfc" id="L106" title="All 2 branches covered.">                        t1Idx[ri] = (t0Shp[ri] &gt; t1Shp[ri])</span>
 <span class="fc" id="L107">                                ? (t0Idx[ri] - t2Idx[ri])</span>
@@ -127,7 +127,7 @@ import org.jetbrains.annotations.Contract;
 <span class="pc bpc" id="L127" title="1 of 2 branches missed.">                        if (t2Idx[ri] &lt; t2Shp[ri]) {</span>
 <span class="fc" id="L128">                            t2Idx[ri]++;</span>
 <span class="fc bfc" id="L129" title="All 2 branches covered.">                            if (t2Idx[ri] == t2Shp[ri]) {</span>
-<span class="fc bfc" id="L130" title="All 2 branches covered.">                                running = !(ri == rank - 1);</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">                                running = (ri != rank - 1);</span>
 <span class="fc" id="L131">                                t1Idx[ri] = t0Idx[ri];</span>
 <span class="fc" id="L132">                                t2Idx[ri] = 0;</span>
 <span class="fc" id="L133">                                ri++;</span>
@@ -219,13 +219,13 @@ import org.jetbrains.annotations.Contract;
 <span class="fc bfc" id="L219" title="All 2 branches covered.">                            if (t1Idx[ri] == t1Shp[ri]) {</span>
 <span class="fc" id="L220">                                t1Idx[ri] = 0;</span>
 <span class="fc" id="L221">                                t2Idx[ri] = 0;</span>
-<span class="pc bpc" id="L222" title="1 of 2 branches missed.">                                running = !(ri == rank - 1);</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">                                running = (ri != rank - 1);</span>
 <span class="fc" id="L223">                                ri++;</span>
                             } else {
 <span class="fc" id="L225">                                incrementing = false;//return to calculation!</span>
                             }
                         } else {
-<span class="fc bfc" id="L228" title="All 2 branches covered.">                            running = !(ri == rank - 1);</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">                            running = (ri != rank - 1);</span>
 <span class="fc" id="L229">                            ri++;</span>
                         }
                     }

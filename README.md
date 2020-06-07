@@ -192,9 +192,17 @@ $ gradlew proguard
 
 ## Dependencies ##
 
-- OpenCL (JOCL binding)
+- OpenCL - 2.^ (JOCL binding)
 
-- Groovy 
+- Groovy - 3.^ (optional)
+
+---
+
+## Documentation ###
+
+- [By example](https://gleethos.github.io/neureka/showcase.html) 
+
+- [Java-Docs](https://gleethos.github.io/neureka/jdocs/index.html)
 
 ---
 

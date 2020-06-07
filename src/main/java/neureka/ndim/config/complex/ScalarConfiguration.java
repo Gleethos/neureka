@@ -3,7 +3,7 @@ package neureka.ndim.config.complex;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 
-public class ScalarConfiguration extends AbstractNDC
+public final class ScalarConfiguration extends AbstractNDC //:= IMMUTABLE
 {
     /**
      *  The shape of the NDArray.
@@ -19,9 +19,9 @@ public class ScalarConfiguration extends AbstractNDC
 
     public static NDConfiguration construct(
             int[] shape,
-            //int[] translation, will always be 1
-            //int[] idxmap, will also always be 1
-            //int[] spread, does not matter!
+            // translation, will always be 1
+            // idxmap, will also always be 1
+            // spread, does not matter!
             int[] offset
     ) {
         return _cached(new ScalarConfiguration(shape[0], offset[0]));

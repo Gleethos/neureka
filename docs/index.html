@@ -1,362 +1,361 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title> NEUREKA </title>
-    <link rel="icon" href="/src/favicon/favicon.ico">
-    <meta name="description" content="a Java tensor library">
-    <meta name="author" content="Daniel Nepp">
-    <meta name="keywords" content=" AI, Deep Learning, Neuron, OpenCl, PyTorch, Java, Tensorflow, Machine Learning">
-    <!-----------------------------------ROBOTS---------------------------------------------->
-    <meta name="robots" content="all">
-    <meta name="revisit-after" content="30 days">
-    <!-----------------------------------JQUERY---------------------------------------------->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <!-----------------------------------BOOTSTRAP------------------------------------------>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <!-----------------------------------CUSTOM CSS------------------------------------------>
-    <link rel="stylesheet" href="src/style.css">
-
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/sunburst.min.css">
-
-    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
-</head>
-<body>
-<div id="header" class="">
-    <div id="BirdBox" class="mainframe"
-         style="background-image: url('https://images.pexels.com/photos/1287142/pexels-photo-1287142.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260');">
-        <nav class="floatsUp" id="navTile">
-            <div id="navContainer" class="">
-                <div style="" class="topEarthGradient dynamicSideMargin">
-                    <h1>NEUREKA</h1>
-                </div>
-                <div class="pull-right nightBox" id="NavbarMenu">
-                    <ul class="nav navbar-right" id="NavbarList">
-                        <li>
-                            <a href="showcase.html">
-                                <img src="src/img/icons/graph-nodes.png">
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://github.com/Gleethos/neureka">
-                                <img src="src/img/icons/github-logo.png">
-                            </a>
-                        </li>
-                        <li>
-                            <a href="jdocs/index.html">
-                                <img src="src/img/icons/cogwheel.png">
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div id="navi">
-                <input type="checkbox" name="mobile-nav" id="mobile-nav" class="gaadiexp-check" onchange="this.blur()">
-                <label for="mobile-nav" class="gaadiexp white" tabindex="0"
-                       style="margin-left: 0;"><span></span></label>
-                <div role="navigation" class="header-nav">
-                    <div class="fixed-nav">
-                        <div class="menu">
-                            <ul class="side-nav">
-                                <li><a target="_blank" href="showcase.html">Examples</a></li>
-                                <li><a target="_blank" href="jdocs/index.html">Documentation</a></li>
-                                <li><a target="_blank" href="https://github.com/Gleethos/neureka">Github</a></li>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title> NEUREKA </title>
+        <link rel="icon" href="/src/favicon/favicon.ico">
+        <meta name="description" content="a Java tensor library">
+        <meta name="author" content="Daniel Nepp">
+        <meta name="keywords" content=" AI, Deep Learning, Neuron, OpenCl, PyTorch, Java, Tensorflow, Machine Learning">
+        <!-----------------------------------ROBOTS---------------------------------------------->
+        <meta name="robots" content="all">
+        <meta name="revisit-after" content="30 days">
+        <!-----------------------------------JQUERY---------------------------------------------->
+        <script src="src/js/jquery.min.js"></script>
+        <!-----------------------------------BOOTSTRAP------------------------------------------>
+        <link rel="stylesheet" href="src/css/bootstrap.min.css">
+        <script src="src/js/bootstrap.min.js"></script>
+        <script src="src/js/popper.min.js"></script>
+        <!-----------------------------------CUSTOM CSS------------------------------------------>
+        <link rel="stylesheet" href="src/style.css">
+        <!-----------------------------------HIGHLIGHT CSS------------------------------------------>
+        <link rel="stylesheet" href="src/css/sunburst.min.css">
+        <script src="src/js/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+    </head>
+    <body>
+        <div id="header" class="">
+            <div id="BirdBox" class="mainframe"
+                 style="background-image: url('https://images.pexels.com/photos/1287142/pexels-photo-1287142.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260');">
+                <nav class="floatsUp" id="navTile">
+                    <div id="navContainer" class="">
+                        <div style="" class="topEarthGradient dynamicSideMargin">
+                            <h1>NEUREKA</h1>
+                        </div>
+                        <div class="pull-right nightBox" id="NavbarMenu">
+                            <ul class="nav navbar-right" id="NavbarList">
+                                <li>
+                                    <a href="showcase.html">
+                                        <img src="src/img/icons/graph-nodes.png">
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://github.com/Gleethos/neureka">
+                                        <img src="src/img/icons/github-logo.png">
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="jdocs/index.html">
+                                        <img src="src/img/icons/cogwheel.png">
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>
+                    <div id="navi">
+                        <input type="checkbox" name="mobile-nav" id="mobile-nav" class="gaadiexp-check" onchange="this.blur()">
+                        <label for="mobile-nav" class="gaadiexp white" tabindex="0"
+                               style="margin-left: 0;"><span></span></label>
+                        <div role="navigation" class="header-nav">
+                            <div class="fixed-nav">
+                                <div class="menu">
+                                    <ul class="side-nav">
+                                        <li><a target="_blank" href="showcase.html">Examples</a></li>
+                                        <li><a target="_blank" href="jdocs/index.html">Documentation</a></li>
+                                        <li><a target="_blank" href="https://github.com/Gleethos/neureka">Github</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <div class="">
+                    <!----------------------------------LAYOUT------------------------------------------------->
+                    <main class="parallax">
+                        <div style="left:-10px;" class="parallax__layer parallax__layer--back ">
+                            <div>
+                                <img src="src/img/parallax/woods.png">
+                            </div>
+                        </div>
+                        <div class="parallax__layer parallax__layer--base">
+                            <div id="mainTile" class="cardBox dynamicSideMargin">
+
+                                <div class="mainContentWrapper">
+
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-6">
+                                                <h1>I have found it!</h1>
+                                            </div>
+                                            <div class="col-sm-12 col-md-5">
+                                                <p>
+                                                    <b>
+                                                        A lightweight open source platform independent
+                                                        machine learning library written in Java.
+                                                    </b>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="mainContentWrapper">
+                                    <div class="container-fluid">
+                                        <div class="row">
+
+                                            <div class="col-sm-12 col-md-4">
+                                                <img src="src/img/icons/oil-offshore-rig.png">
+                                                <p>
+                                                    <b>
+                                                        Written in Java and compatible with any JVM language,
+                                                        such as Groovy, Scala, Clojure or Kotlin.
+                                                        100% Platform independent!
+                                                    </b>
+                                                </p>
+                                            </div>
+                                            <div class="col-sm-12 col-md-4">
+                                                <img src="src/img/icons/open-source.png">
+                                                <p>
+                                                    <b>
+                                                        The library is completely open-source </br> and free to use, </br>MIT-Licenced.
+                                                    </b>
+                                                </p>
+                                            </div>
+                                            <div class="col-sm-12 col-md-4">
+                                                <img src="src/img/icons/video-card.png">
+                                                <p>
+                                                    <b>
+                                                        Features GPU acceleration via OpenCl.
+                                                        Therefore not tied to any hardware vendor!
+                                                    </b>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mainContentWrapper">
+
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-12">
+                                                <h2>But why? Isn't Java verbose?</h2>
+                                            </div>
+                                            <div class="col-sm-12 col-md-3">
+                                                <img style="width:100%;" src="src/img/archimedes.jpg">
+                                            </div>
+                                            <div class="col-sm-12 col-md-9">
+                                                <div class="contentBox">
+                                                    <p>
+                                                        Popular deep learning libraries use python due to it's
+                                                        elegant syntax. </br>
+                                                        Java on the other hand is considered
+                                                        verbose and bulky, so why would anybody ever build
+                                                        a deep learning library for Java?
+                                                        The answer is simple:</br></br>
+                                                        Nobody did!</br>
+                                                        This library is written for every JVM-language, namely:
+                                                        Groovy, Kotlin, Scala, and Jython just to name a few.
+                                                        Neureka can be integrated by any language which compiles to
+                                                        JVM bytecode!</br>
+                                                        Take a look at some Groovy and Java side by side:
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-0 col-md-2">
+                                            </div>
+                                            <div class="col-sm-12 col-md-8">
+                                                <div class="contentBox">
+                                                    <p style="text-align: center; width:100%">
+                                                        Both code snippets below express the following equations:</br>
+                                                        f(x) = ((x-4)*2)^2; :=>  f(3) = 4</br>
+                                                        f(x)' = 8*x - 32 ;  :=>  f(3)' = -8</br>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-0 col-md-2">
+                                            </div>
+                                            <div class="col-sm-12 col-md-6">
+                                                       <pre><code class="hljs java">
+    //Groovy:
+    Tsr x = new Tsr(3).setRqsGradient(true)
+    Tsr b = new Tsr(-4)
+    Tsr w = new Tsr(2)
+
+    Tsr y = ((x+b)*w)**2
+    // y: "[1]:(4.0); ->d[1]:(-8.0), "
+                                                        </code></pre>
+                                            </div>
+                                            <div class="col-sm-12 col-md-6">
+                                                <div class="contentBox">
+                                                    <p>
+                                                        Groovy supports operator overloading.
+                                                        Certain methods will be called when
+                                                        corresponding operators are used ( + : plus(...), - : minus(...), ... ).
+                                                        Such language features allow for elegant and short implementations.
+                                                        For rapid prototyping and small scale projects groovy, scala or jython
+                                                        might be the perfect choice.
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-12 col-md-8">
+                                                       <pre><code class="hljs java">
+    //Java:
+    Tsr x = new Tsr(3).setRqsGradient(true);
+    Tsr b = new Tsr(-4);
+    Tsr w = new Tsr(2);
+    Tsr y = new Tsr(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
+
+    // y: "(1):[4.0]; ->d(1):[-8.0], "
+                                                        </code></pre>
+                                            </div>
+                                            <div class="col-sm-12 col-md-4">
+                                                <div class="contentBox">
+                                                    <p>
+                                                        ...if however performance is of concern for
+                                                        you and your team then Neureka can easily be
+                                                        used with Java or Kotlin
+                                                        to allow for more efficient runtime.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-12">
+                                                <div class="contentBox">
+                                                    <p>
+                                                        If you prefer fast prototyping
+                                                        with Jupyter then Neureka can be used there too.
+                                                        <a href="http://beakerx.com/">BeakerX</a>
+                                                        is a jupyter Kernel that supports many JVM
+                                                        languages like Groovy, Scala, Clojure, Kotlin and Java.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-4">
+
+                                            </div>
+                                            <div class="col-sm 12 col-md-6">
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                                <div class="mainContentWrapper">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-12">
+                                                <h2>But isn't Java slow?</h2>
+                                            </div>
+                                            <div class="col-sm-12 col-md-12">
+                                                <div class="contentBox">
+                                                    <p>
+                                                        Python currently provides the most advanced
+                                                        environments and ecosystems for machine learning and
+                                                        data science. This is despite the fact that it is
+                                                        an interpreted language and thereby substantially slower than
+                                                        statically compiled languages and also allot
+                                                        slower than dynamically compiled and optimized bytecode
+                                                        executed during JVM runtime (JIT - compilation).
+                                                        <img src="https://img.icons8.com/metro/50/000000/speed.png">
+                                                        Popular frameworks like PyTorch and Tensorflow
+                                                        compensate this deficit by utilizing C++ and Cuda internally.</br>
+                                                        Neureka seeks to achieve similar performance with a more balanced
+                                                        approach, where number crunching is offloaded to OpenCl whenever
+                                                        possible or otherwise JVM's advanced concurrency and JIT
+                                                        runtime optimizations come into play.
+                                                        (Which should not be underestimated)</br></br>
+                                                        Currently, Neureka is held as lightweight
+                                                        as possible! Operations are therefore implemented as
+                                                        generalized and concise as possible, meaning that
+                                                        performance wise Neureka still needs to mature
+                                                        and would greatly appreciate improvement
+                                                        proposals.</br></br>
+                                                        Besides that Neureka is also greatly held back
+                                                        by JVM's lack of allowing for more memory localized types.
+                                                        As soon as the upcoming Project-Valhalla is released
+                                                        the introduction of inline/value types would allow
+                                                        for type generification without performance costs.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-12">
+
+                                            </div>
+                                            <div class="col-sm-12 col-md-8">
+
+                                            </div>
+                                            <div class="col-sm-12 col-md-8">
+
+                                            </div>
+                                            <div class="col-sm-12 col-md-4">
+
+                                            </div>
+                                            <div class="col-sm 12 col-md-6">
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
                 </div>
+                <footer>
+                    <section>
+                        <ul>
+                            <h4>
+                                Contact:
+                            </h4>
+                            <li>
+                                <a>
+                                    gleethos@gmx.at
+                                </a>
+                            </li>
+                        </ul>
+                    </section>
+                </footer>
             </div>
-        </nav>
-
-        <div class="">
-            <!----------------------------------LAYOUT------------------------------------------------->
-            <main class="parallax">
-                <div style="left:-10px;" class="parallax__layer parallax__layer--back ">
-                    <div>
-                        <img src="src/img/parallax/woods.png">
-                    </div>
-                </div>
-                <div class="parallax__layer parallax__layer--base">
-                    <div id="mainTile" class="cardBox dynamicSideMargin">
-
-                        <div class="mainContentWrapper">
-
-                            <div class="container-fluid">
-                                <div class="row">
-                                    <div class="col-sm-12 col-md-6">
-                                        <h1>I have found it!</h1>
-                                    </div>
-                                    <div class="col-sm-12 col-md-5">
-                                        <p>
-                                            <b>
-                                                A lightweight open source platform independent
-                                                machine learning library written in Java.
-                                            </b>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div class="mainContentWrapper">
-                            <div class="container-fluid">
-                                <div class="row">
-
-                                    <div class="col-sm-12 col-md-4">
-                                        <img src="src/img/icons/oil-offshore-rig.png">
-                                        <p>
-                                            <b>
-                                                Written in Java and compatible with any JVM language,
-                                                such as Groovy, Scala, Clojure or Kotlin.
-                                                100% Platform independent!
-                                            </b>
-                                        </p>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <img src="src/img/icons/open-source.png">
-                                        <p>
-                                            <b>
-                                                The library is completely open-source </br> and free to use, </br>MIT-Licenced.
-                                            </b>
-                                        </p>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <img src="src/img/icons/video-card.png">
-                                        <p>
-                                            <b>
-                                                Features GPU acceleration via OpenCl.
-                                                Therefore not tied to any hardware vendor!
-                                            </b>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mainContentWrapper">
-
-                            <div class="container-fluid">
-                                <div class="row">
-                                    <div class="col-sm-12 col-md-12">
-                                        <h2>But why? Isn't Java verbose?</h2>
-                                    </div>
-                                    <div class="col-sm-12 col-md-3">
-                                        <img style="width:100%;" src="src/img/archimedes.jpg">
-                                    </div>
-                                    <div class="col-sm-12 col-md-9">
-                                        <div class="contentBox">
-                                            <p>
-                                                Popular deep learning libraries use python due to it's
-                                                elegant syntax. </br>
-                                                Java on the other hand is considered
-                                                verbose and bulky, so why would anybody ever build
-                                                a deep learning library for Java?
-                                                The answer is simple:</br></br>
-                                                Nobody did!</br>
-                                                This library is written for every JVM-language, namely:
-                                                Groovy, Kotlin, Scala, and Jython just to name a few.
-                                                Neureka can be integrated by any language which compiles to
-                                                JVM bytecode!</br>
-                                                Take a look at some Groovy and Java side by side:
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-0 col-md-2">
-                                    </div>
-                                    <div class="col-sm-12 col-md-8">
-                                        <div class="contentBox">
-                                            <p style="text-align: center; width:100%">
-                                                Both code snippets below express the following equations:</br>
-                                                f(x) = ((x-4)*2)^2; :=>  f(3) = 4</br>
-                                                f(x)' = 8*x - 32 ;  :=>  f(3)' = -8</br>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-0 col-md-2">
-                                    </div>
-                                    <div class="col-sm-12 col-md-6">
-                                               <pre><code class="hljs java">
-//Groovy:
-Tsr x = new Tsr(3).setRqsGradient(true)
-Tsr b = new Tsr(-4)
-Tsr w = new Tsr(2)
-
-Tsr y = ((x+b)*w)**2
-// y: "[1]:(4.0); ->d[1]:(-8.0), "
-                                                </code></pre>
-                                    </div>
-                                    <div class="col-sm-12 col-md-6">
-                                        <div class="contentBox">
-                                            <p>
-                                                Groovy supports operator overloading.
-                                                Certain methods will be called when
-                                                corresponding operators are used ( + : plus(...), - : minus(...), ... ).
-                                                Such language features allow for elegant and short implementations.
-                                                For rapid prototyping and small scale projects groovy, scala or jython
-                                                might be the perfect choice.
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-12 col-md-8">
-                                               <pre><code class="hljs java">
-//Java:
-Tsr x = new Tsr(3).setRqsGradient(true);
-Tsr b = new Tsr(-4);
-Tsr w = new Tsr(2);
-Tsr y = new Tsr(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
-
-// y: "(1):[4.0]; ->d(1):[-8.0], "
-                                                </code></pre>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <div class="contentBox">
-                                            <p>
-                                                ...if however performance is of concern for
-                                                you and your team then Neureka can easily be
-                                                used with Java or Kotlin
-                                                to allow for more efficient runtime.
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 col-md-12">
-                                        <div class="contentBox">
-                                            <p>
-                                                If you prefer fast prototyping
-                                                with Jupyter then Neureka can be used there too.
-                                                <a href="http://beakerx.com/">BeakerX</a>
-                                                is a jupyter Kernel that supports many JVM
-                                                languages like Groovy, Scala, Clojure, Kotlin and Java.
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-
-                                    </div>
-                                    <div class="col-sm 12 col-md-6">
-
-                                    </div>
-                                </div>
-
-
-                            </div>
-                        </div>
-                        <div class="mainContentWrapper">
-                            <div class="container-fluid">
-                                <div class="row">
-                                    <div class="col-sm-12 col-md-12">
-                                        <h2>But isn't Java slow?</h2>
-                                    </div>
-                                    <div class="col-sm-12 col-md-12">
-                                        <div class="contentBox">
-                                            <p>
-                                                Python currently provides the most advanced
-                                                environments and ecosystems for machine learning and
-                                                data science. This is despite the fact that it is
-                                                an interpreted language and thereby substantially slower than
-                                                statically compiled languages and also allot
-                                                slower than dynamically compiled and optimized bytecode
-                                                executed during JVM runtime (JIT - compilation).
-                                                <img src="https://img.icons8.com/metro/50/000000/speed.png">
-                                                Popular frameworks like PyTorch and Tensorflow
-                                                compensate this deficit by utilizing C++ and Cuda internally.</br>
-                                                Neureka seeks to achieve similar performance with a more balanced
-                                                approach, where number crunching is offloaded to OpenCl whenever
-                                                possible or otherwise JVM's advanced concurrency and JIT
-                                                runtime optimizations come into play.
-                                                (Which should not be underestimated)</br></br>
-                                                Currently, Neureka is held as lightweight
-                                                as possible! Operations are therefore implemented as
-                                                generalized and concise as possible, meaning that
-                                                performance wise Neureka still needs to mature
-                                                and would greatly appreciate improvement
-                                                proposals.</br></br>
-                                                Besides that Neureka is also greatly held back
-                                                by JVM's lack of allowing for more memory localized types.
-                                                As soon as the upcoming Project-Valhalla is released
-                                                the introduction of inline/value types would allow
-                                                for type generification without performance costs.
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 col-md-12">
-
-                                    </div>
-                                    <div class="col-sm-12 col-md-8">
-
-                                    </div>
-                                    <div class="col-sm-12 col-md-8">
-
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-
-                                    </div>
-                                    <div class="col-sm 12 col-md-6">
-
-                                    </div>
-                                </div>
-
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
         </div>
-        <footer>
-            <section>
-                <ul>
-                    <h4>
-                        Contact:
-                    </h4>
-                    <li>
-                        <a>
-                            gleethos@gmx.at
-                        </a>
-                    </li>
-                </ul>
-            </section>
-        </footer>
-    </div>
-</div>
 
-<script src="src/js/three.min.js"></script>
-<script src="src/js/vanta.birds.min.js"></script>
+        <!-----------------------------------VANTA JS------------------------------------------>
+        <script src="src/js/three.min.js"></script>
+        <script src="src/js/vanta.birds.min.js"></script>
 
-<script>
-    //VANTA.BIRDS({
-    //    el: "#BirdBox",
-    //    color1: 0xd00ff,
-    //    colorMode: "lerp",
-    //    birdSize: 0.70,
-    //    wingSpan: 17.00,
-    //    speedLimit: 4.00,
-    //    separation: 21.00,
-    //    alignment: 16.00,
-    //    cohesion: 25.00,
-    //    backgroundAlpha: 0.00
-    //})
-    VANTA.BIRDS({
-        el: "#BirdBox",
-        backgroundColor: 0x0,
-        color1: 0x59cc65,
-        color2: 0xa6fc,
-        colorMode: "lerp",
-        birdSize: 0.70,
-        wingSpan: 17.00,
-        speedLimit: 4.00,
-        separation: 21.00,
-        alignment: 16.00,
-        cohesion: 25.00,
-        backgroundAlpha: 0.00
-    })
-</script>
-</body>
+        <script>
+            //VANTA.BIRDS({
+            //    el: "#BirdBox",
+            //    color1: 0xd00ff,
+            //    colorMode: "lerp",
+            //    birdSize: 0.70,
+            //    wingSpan: 17.00,
+            //    speedLimit: 4.00,
+            //    separation: 21.00,
+            //    alignment: 16.00,
+            //    cohesion: 25.00,
+            //    backgroundAlpha: 0.00
+            //})
+            VANTA.BIRDS({
+                el: "#BirdBox",
+                backgroundColor: 0x0,
+                color1: 0x59cc65,
+                color2: 0xa6fc,
+                colorMode: "lerp",
+                birdSize: 0.70,
+                wingSpan: 17.00,
+                speedLimit: 4.00,
+                separation: 21.00,
+                alignment: 16.00,
+                cohesion: 25.00,
+                backgroundAlpha: 0.00
+            })
+        </script>
+    </body>
 </html>

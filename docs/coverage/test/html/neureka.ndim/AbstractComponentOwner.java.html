@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractComponentOwner.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim</a> &gt; <span class="el_source">AbstractComponentOwner.java</span></div><h1>AbstractComponentOwner.java</h1><pre class="source lang-java linenums">package neureka.ndim;
+
+import neureka.Component;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
+
+/**
+ *  This is the root precursor class to the final Tsr class from which
+ *  tensor instances can be created.
+ *  The inheritance model of a tensor is structured as follows:
+ *  Tsr inherits from AbstractNDArray which inherits from AbstractComponentOwner
+ *  The inheritance model is linear, meaning that all classes involved
+ *  are not extended more than once.
+ *
+ */
+<span class="fc" id="L19">public abstract class AbstractComponentOwner&lt;InstanceType&gt; {</span>
+
+    /**
+     *  (Tensor) components
+     */
+<span class="fc" id="L24">    protected List&lt;Component&lt;InstanceType&gt;&gt; _components = Collections.synchronizedList(new ArrayList&lt;&gt;());</span>
+
+    /**
+     * @param componentClass The type/class of the component which shall be found and returned.
+     * @return The correct component or null if nothing has been found.
+     */
+    public &lt;T&gt; T find(Class&lt;T&gt; componentClass) {
+<span class="fc bfc" id="L31" title="All 2 branches covered.">        if (_components != null) {</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">            for (Component&lt;InstanceType&gt; component : _components) {</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">                if (componentClass.isInstance(component)) return (T)component;</span>
+<span class="fc" id="L34">            }</span>
+        }
+<span class="fc" id="L36">        return null;</span>
+    }
+
+    /**
+     *
+     * @param componentClass The type/class of a component which will be removed by this method.
+     * @return This very class.
+     */
+    public InstanceType remove(Class componentClass) {
+<span class="fc" id="L45">        Object oldComponent = find(componentClass);</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        if (oldComponent != null) {</span>
+<span class="fc" id="L47">            _components.remove(oldComponent);</span>
+            //_components.trimToSize();
+        }
+<span class="pc bpc" id="L50" title="1 of 4 branches missed.">        if (_components != null &amp;&amp; _components.size() == 0) {</span>
+<span class="fc" id="L51">            _components = null;</span>
+        }
+<span class="fc" id="L53">        return (InstanceType)this;</span>
+    }
+
+    /**
+     *
+     * @param componentClass The class/type of a component that might exist in components.
+     * @return True if the component of the given type/class has been found.
+     */
+    public boolean has(Class componentClass) {
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        return find(componentClass) != null;</span>
+    }
+
+    /**
+     *
+     * @param newComponent The new component which should be added to the components list.
+     * @return This very class.
+     */
+    public &lt;T extends Component&lt;InstanceType&gt;&gt; InstanceType add(T newComponent) {
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (newComponent == null) return (InstanceType)this;</span>
+<span class="fc" id="L72">        T oldCompartment = null;</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if (_components != null) {</span>
+<span class="fc" id="L74">            oldCompartment = (T) find(newComponent.getClass());</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">            if (oldCompartment != null) {</span>
+<span class="fc" id="L76">                _components.remove(oldCompartment);</span>
+                //_components.trimToSize();
+            }
+        } else {
+<span class="fc" id="L80">            _components = new ArrayList&lt;&gt;();</span>
+        }
+<span class="fc" id="L82">        _components.add(_addOrReject(newComponent));</span>
+<span class="fc" id="L83">        return (InstanceType)this;</span>
+    }
+
+    /**
+     * @param newComponent The component which should be added to the components list.
+     * @return The same component or null if it has been rejected.
+     */
+    protected abstract &lt;T extends Component&lt;InstanceType&gt;&gt; T _addOrReject(T newComponent);
+
+    /**
+     *
+     * @param cc Component class of whose type the requested component is.
+     * @param action An action applied on the requested component if found.
+     * @return True if a component could be found, false otherwise.
+     */
+    public &lt;T extends Component&lt;InstanceType&gt;&gt; boolean forComponent(Class&lt;T&gt; cc, Consumer&lt;T&gt; action) {
+<span class="fc" id="L99">        T component = this.find(cc);</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        if (component!=null) {</span>
+<span class="fc" id="L101">            action.accept(component);</span>
+<span class="fc" id="L102">            return true;</span>
+        } else {
+<span class="fc" id="L104">            return false;</span>
+        }
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

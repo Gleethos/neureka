@@ -977,12 +977,12 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
 <span class="fc" id="L977">            int[] newSpread = new int[newForm.length];</span>
 <span class="fc bfc" id="L978" title="All 2 branches covered.">            for (int i = 0; i &lt; newForm.length; i++) {</span>
 <span class="fc bfc" id="L979" title="All 2 branches covered.">                if (newForm[i] &lt; 0) newSpread[i] = 1;</span>
-<span class="pc bpc" id="L980" title="1 of 2 branches missed.">                else if (newForm[i] &gt;= 0) newSpread[i] = tensor._conf.spread()[newForm[i]];</span>
+<span class="pc bpc" id="L980" title="1 of 2 branches missed.">                else if (newForm[i] &gt;= 0) newSpread[i] = tensor._conf.spread(newForm[i]);</span>
             }
 <span class="fc" id="L982">            int[] newOffset = new int[newForm.length];</span>
 <span class="fc bfc" id="L983" title="All 2 branches covered.">            for (int i = 0; i &lt; newForm.length; i++) {</span>
 <span class="fc bfc" id="L984" title="All 2 branches covered.">                if (newForm[i] &lt; 0) newOffset[i] = 0;</span>
-<span class="pc bpc" id="L985" title="1 of 2 branches missed.">                else if (newForm[i] &gt;= 0) newOffset[i] = tensor._conf.offset()[newForm[i]];</span>
+<span class="pc bpc" id="L985" title="1 of 2 branches missed.">                else if (newForm[i] &gt;= 0) newOffset[i] = tensor._conf.offset(newForm[i]);</span>
             }
 <span class="fc" id="L987">            tensor._conf = AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);</span>
 <span class="fc" id="L988">            return tensor;</span>

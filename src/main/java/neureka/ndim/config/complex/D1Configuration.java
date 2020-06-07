@@ -3,7 +3,7 @@ package neureka.ndim.config.complex;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.AbstractNDC;
 
-public class D1Configuration extends AbstractNDC
+public final class D1Configuration extends AbstractNDC //:= IMMUTABLE
 {
     /**
      *  The shape of the NDArray.

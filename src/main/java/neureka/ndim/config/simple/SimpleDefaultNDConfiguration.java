@@ -6,7 +6,7 @@ import neureka.ndim.config.AbstractArrayBasedNDC;
 
 import java.util.Arrays;
 
-public class SimpleDefaultNDConfiguration extends AbstractArrayBasedNDC
+public final class SimpleDefaultNDConfiguration extends AbstractArrayBasedNDC //:= IMMUTABLE
 {
 
     private SimpleDefaultNDConfiguration(
@@ -26,11 +26,11 @@ public class SimpleDefaultNDConfiguration extends AbstractArrayBasedNDC
     /**
      *  The shape of the NDArray.
      */
-    private int[] _shape;
+    private final int[] _shape;
     /**
      *  The translation from a shape index (idx) to the index of the underlying data array.
      */
-    private int[] _translation_and_idxmap;
+    private final int[] _translation_and_idxmap;
 
 
     @Override

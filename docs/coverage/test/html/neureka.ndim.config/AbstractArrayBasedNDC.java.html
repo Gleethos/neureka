@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractArrayBasedNDC.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.config</a> &gt; <span class="el_source">AbstractArrayBasedNDC.java</span></div><h1>AbstractArrayBasedNDC.java</h1><pre class="source lang-java linenums">package neureka.ndim.config;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.WeakHashMap;
+
+<span class="fc" id="L7">public abstract class AbstractArrayBasedNDC extends AbstractNDC</span>
+{
+    /**
+     *  Cached configuration
+     */
+    private static final Map&lt;Long, int[]&gt; _CACHED_INT_ARRAYS;
+
+    static
+    {
+<span class="fc" id="L16">        _CACHED_INT_ARRAYS = Collections.synchronizedMap(new WeakHashMap&lt;&gt;()) ;</span>
+<span class="fc" id="L17">    }</span>
+
+    protected static int[] _cached(int[] data)
+    {
+<span class="fc" id="L21">        long key = 0;</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">        for ( int e : data ) {</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">            if ( e &lt;= 10 ) key *= 10;</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">            else if ( e &lt;= 100 ) key *= 100;</span>
+<span class="pc bpc" id="L25" title="1 of 2 branches missed.">            else if ( e &lt;= 1000 ) key *= 1000;</span>
+<span class="nc bnc" id="L26" title="All 2 branches missed.">            else if ( e &lt;= 10000 ) key *= 10000;</span>
+<span class="nc bnc" id="L27" title="All 2 branches missed.">            else if ( e &lt;= 100000 ) key *= 100000;</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">            else if ( e &lt;= 1000000 ) key *= 1000000;</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">            else if ( e &lt;= 10000000 ) key *= 10000000;</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">            else if ( e &lt;= 100000000 ) key *= 100000000;</span>
+<span class="nc bnc" id="L31" title="All 2 branches missed.">            else if ( e &lt;= 1000000000 ) key *= 1000000000;</span>
+<span class="fc" id="L32">            key += Math.abs(e) + 1;</span>
+        }
+<span class="fc" id="L34">        int rank = data.length;</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        while ( rank != 0 ) {</span>
+<span class="fc" id="L36">            rank /= 10;</span>
+<span class="fc" id="L37">            key *= 10;</span>
+        }
+<span class="fc" id="L39">        key += data.length;</span>
+<span class="fc" id="L40">        int[] found = _CACHED_INT_ARRAYS.get(key);</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if ( found != null ) return found;</span>
+        else {
+<span class="fc" id="L43">            _CACHED_INT_ARRAYS.put(key, data);</span>
+<span class="fc" id="L44">            return data;</span>
+        }
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

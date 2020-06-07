@@ -58,7 +58,7 @@
                   Tsr rowconvol = a[1..-2, 0..-1] + a[0..-3, 0..-1] + a[2..-1, 0..-1]//(98, 100) (98, 100) (98, 100)
                   Tsr colconvol = rowconvol[0..-1, 1..-2] + rowconvol[0..-1, 0..-3] + rowconvol[0..-1, 2..-1] - 9 * a[1..-2, 1..-2]
                   tester(colconvol)
-                  //Example for size=100 : (98, 98)+(98, 98)+(98, 98)-9*(98, 98)
+                  // Example for size = 100 : (98, 98)+(98, 98)+(98, 98)-9*(98, 98)
                }
             }
          }

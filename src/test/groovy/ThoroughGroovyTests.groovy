@@ -76,7 +76,7 @@ class ThoroughGroovyTests
         )
         assert hash==expected
 
-        //String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date())
+        String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date())
         //session([
         //            "iterations":1,
         //            "sample_size":20,
@@ -114,6 +114,30 @@ class ThoroughGroovyTests
         //            "intensifier":0
         //        ],
         //        "neureka_bench_CPU_500x_cd5_"+currentDate+".csv",
+        //        HostCPU.instance(),
+        //        tsr->{}
+        //)
+
+        // NDIM - BENCHMARK :
+        //Neureka.instance().settings().ndim().setIsOnlyUsingDefaultNDConfiguration(true)
+        //session([
+        //            "iterations":1,
+        //            "sample_size":250,
+        //            "difficulty":10,
+        //            "intensifier":0
+        //        ],
+        //        "ndim_default_bench_CPU_250x_cd10_"+currentDate+".csv",
+        //        HostCPU.instance(),
+        //        tsr->{}
+        //)
+        //Neureka.instance().settings().ndim().setIsOnlyUsingDefaultNDConfiguration(false)
+        //session([
+        //        "iterations":1,
+        //        "sample_size":250,
+        //        "difficulty":10,
+        //        "intensifier":0
+        //],
+        //        "ndim_optimized_bench_CPU_250x_cd10_"+currentDate+".csv",
         //        HostCPU.instance(),
         //        tsr->{}
         //)

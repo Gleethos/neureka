@@ -4,7 +4,7 @@ import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 
 
-public class SimpleD1Configuration extends AbstractNDC
+public final class SimpleD1Configuration extends AbstractNDC //:= IMMUTABLE
 {
     /**
      *  The shape of the NDArray.
