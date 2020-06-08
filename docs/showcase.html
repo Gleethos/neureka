@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta name="theme-color" content="#212529">
+        <meta name="theme-color" content="#000000">
         <meta charset="utf-8">
         <meta http-equiv="content-type" content="text/html; charset=UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -184,7 +184,16 @@
         <script src="src/js/three.min.js"></script>
         <script src="src/js/vanta.net.min.js"></script>
         <script>
-            VANTA.NET({el: "#NetBox"})
+            VANTA.NET({el: "#NetBox"});
+
+        </script>
+        <!-----------------------------------CORRECT VIEWPORT FOR MOBILE------------------------------------------>
+        <script>
+            $.fn.isInViewport = function() {
+                var viewportBottom = $(window).scrollTop() + $(window).height();
+                return (($(this).offset().top < viewportBottom)?viewportBottom-$(this).offset().top:0);
+            };
+            window.addEventListener("load",function() {while(1>$('#Foot').isInViewport() && offset<1000) {window.scrollBy(0, 1);}});
         </script>
     </body>
 </html>
