@@ -18,10 +18,10 @@ public class Neureka
     private static String _setup_source;
     private static String _version;
 
-    private static boolean _groovyAvailable;
+    private static final boolean _groovyAvailable;
 
-    private Settings _settings;
-    private Utility _utility;
+    private final Settings _settings;
+    private final Utility _utility;
 
     static {
 <span class="fc" id="L27">        _instances = new ConcurrentHashMap&lt;&gt;();</span>
@@ -88,9 +88,9 @@ public class Neureka
 <span class="nc" id="L88">                e.printStackTrace();</span>
 <span class="pc" id="L89">            }</span>
         } else {
-<span class="nc" id="L91">            settings().autoDiff().setIsRetainingPendingErrorForJITProp(true);</span>
-<span class="nc" id="L92">            settings().autoDiff().setIsApplyingGradientWhenTensorIsUsed(true);</span>
-<span class="nc" id="L93">            settings().autoDiff().setIsApplyingGradientWhenRequested(true);</span>
+<span class="nc" id="L91">            settings().autograd().setIsRetainingPendingErrorForJITProp(true);</span>
+<span class="nc" id="L92">            settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true);</span>
+<span class="nc" id="L93">            settings().autograd().setIsApplyingGradientWhenRequested(true);</span>
 <span class="nc" id="L94">            settings().indexing().setIsUsingLegacyIndexing(false);</span>
 <span class="nc" id="L95">            settings().indexing().setIsUsingThoroughIndexing(true);</span>
 <span class="nc" id="L96">            settings().debug().setIsKeepingDerivativeTargetPayloads(false);</span>
@@ -104,17 +104,17 @@ public class Neureka
 
     public class Settings
     {
-        private Debug _debug;
-        private AutoDiff _autoDiff;
-        private Indexing _indexing;
-        private View _view;
-        private NDim _ndim;
+        private final Debug _debug;
+        private final AutoGrad _autograd;
+        private final Indexing _indexing;
+        private final View _view;
+        private final NDim _ndim;
 
 <span class="fc" id="L113">        private boolean _isLocked = false;</span>
 
 <span class="fc" id="L115">        private Settings() {</span>
 <span class="fc" id="L116">            _debug = new Debug();</span>
-<span class="fc" id="L117">            _autoDiff = new AutoDiff();</span>
+<span class="fc" id="L117">            _autograd = new AutoGrad();</span>
 <span class="fc" id="L118">            _indexing = new Indexing();</span>
 <span class="fc" id="L119">            _view = new View();</span>
 <span class="fc" id="L120">            _ndim = new NDim();</span>
@@ -129,13 +129,13 @@ public class Neureka
 <span class="fc" id="L129">            return _debug;</span>
         }
 
-        public AutoDiff autoDiff(){
-<span class="fc" id="L133">            return _autoDiff;</span>
+        public AutoGrad autograd(){
+<span class="fc" id="L133">            return _autograd;</span>
         }
 
-        public AutoDiff autoDiff(Object closure) {
-<span class="fc" id="L137">            Utility.tryGroovyClosureOn(closure, _autoDiff);</span>
-<span class="fc" id="L138">            return _autoDiff;</span>
+        public AutoGrad autograd(Object closure) {
+<span class="fc" id="L137">            Utility.tryGroovyClosureOn(closure, _autograd);</span>
+<span class="fc" id="L138">            return _autograd;</span>
         }
 
         public Indexing indexing(){
@@ -203,7 +203,7 @@ public class Neureka
 
         }
 
-<span class="fc" id="L206">        public class AutoDiff // Auto-Differentiation</span>
+<span class="fc" id="L206">        public class AutoGrad // Auto-Grad/Differentiation</span>
         {
             /**
              * This flag enables an optimization technique which only applies
@@ -228,7 +228,7 @@ public class Neureka
              * Usually this happens immediately, however
              * if the flag 'applyGradientWhenTensorIsUsed' is set
              * to true, then the tensor will only be updated by its
-             * gradient if requested AND tensor is used! (GraphNode instantiation).
+             * gradient if requested AND the tensor is used fo calculation! (GraphNode instantiation).
              */
 <span class="fc" id="L233">            private boolean _isApplyingGradientWhenRequested = true;</span>
 

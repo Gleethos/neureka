@@ -1,0 +1,106 @@
+<div class="col-sm-12 col-md-12">
+    <div class="contentBox">
+        <h3>What?</h3>
+        <p>
+            Neureka's auto-differentiation and gradient accumulation algorithm is
+            highly configurable. <br>
+            Different architectures have different requirements for training and optimal performance. <br>
+            Simpler feed-forward networks might be covered by a conventional implementation, however in
+            networks relying on more complex and dynamic structures, there are many
+            techniques available to significantly improve training! <br>
+            <br>
+            The Neureka class offers many configurable nested classes used to tune the library to your needs.<br>
+            Among those classes is of course one named according to the package it governs: AutoDiff
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-6">
+    <div class="tabWrapper">
+        <div class="tabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="tabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+    def ag = Neureka.instance().settings().autograd()
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+    AutoGrad ag = Neureka.instance().settings().autograd();
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm-12 col-md-6">
+    <div class="contentBox">
+        <h3>Overview</h3>
+        <p>
+            "is retaining pending error for JIT-Prop"<br>
+            "is applying gradient when tensor is used"<br>
+            "is applying gradient when requested"<br>
+        </p>
+    </div>
+</div>
+
+
+<div class="col-sm-12 col-md-5">
+    <pre><code class="hljs java">
+    ag.isRetainingPendingErrorForJITProp()
+
+    ag.setIsRetainingPendingErrorForJITProp(true)
+    </code></pre>
+</div>
+<div class="col-sm 12 col-md-7">
+    <div class="contentBox">
+        <p>
+            This flag enables an optimization technique which only applies
+            gradients as soon as they are needed by a tensor (the tensor is used again).<br>
+            If the flag is set to true <br>
+            then error values will accumulate whenever it makes sense.
+            This technique however uses more memory but will
+            improve performance for some networks substantially.
+            The technique is termed JIT-Propagation.
+        </p>
+    </div>
+</div>
+
+
+<div class="col-sm-12 col-md-5">
+    <pre><code class="hljs java">
+    ag.isApplyingGradientWhenTensorIsUsed()
+
+    ag.setIsApplyingGradientWhenTensorIsUsed(true)
+    </code></pre>
+</div>
+<div class="col-sm 12 col-md-7">
+    <div class="contentBox">
+        <p>
+            Gradients will automatically be applied to tensors as soon as
+            they are being used for calculation (GraphNode instantiation).
+            This feature works well with JIT-Propagation.
+        </p>
+    </div>
+</div>
+
+
+<div class="col-sm-12 col-md-5">
+    <pre><code class="hljs java">
+    ag.isApplyingGradientWhenRequested()
+
+    ag.setIsApplyingGradientWhenRequested(true)
+    </code></pre>
+</div>
+<div class="col-sm 12 col-md-7">
+    <div class="contentBox">
+        <p>
+            Gradients will only be applied if requested.
+            Usually this happens immediately, however
+            if the flag 'applyGradientWhenTensorIsUsed' is set
+            to true, then the tensor will only be updated by its
+            gradient if requested AND the tensor is used for calculation! (GraphNode instantiation).
+        </p>
+    </div>
+</div>

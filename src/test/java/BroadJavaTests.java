@@ -12,7 +12,7 @@ public class BroadJavaTests {
     public void test_autograd()
     {
         Neureka.instance().reset();
-        Neureka.instance().settings().autoDiff().setIsApplyingGradientWhenTensorIsUsed(false);
+        Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false);
         Neureka.instance().settings().view().setIsUsingLegacyView(true);
 
         NTester_Tensor tester = new NTester_Tensor("Tensor tester (only cpu)");

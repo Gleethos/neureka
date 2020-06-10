@@ -16,7 +16,7 @@ class SlicedTensorTests
     void test_slicing()
     {
         Neureka.instance().reset()
-        Neureka.instance().settings().autoDiff().isApplyingGradientWhenTensorIsUsed = false
+        Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
         Neureka.instance().settings().view().setIsUsingLegacyView(true)
 
         NTester_Tensor tester = new NTester_Tensor("IndexAlias-Testing: slices/subset creation and calculation")

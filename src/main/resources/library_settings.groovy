@@ -8,7 +8,7 @@ Neureka.instance {
             it.isKeepingDerivativeTargetPayloads = false
         }
 
-        autoDiff {
+        autograd {
             it.isRetainingPendingErrorForJITProp = true
             it.isApplyingGradientWhenTensorIsUsed = true
             it.isApplyingGradientWhenRequested = true

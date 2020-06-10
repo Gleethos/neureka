@@ -291,7 +291,7 @@ public class GraphNode implements Component&lt;Tsr&gt;
 <span class="pc bpc" id="L291" title="1 of 2 branches missed.">        } else if (context instanceof Tsr[]) {</span>
 <span class="fc" id="L292">            Tsr[] inputs = (Tsr[]) context;</span>
             /* Applying JITProp and gradients */
-<span class="fc" id="L294">            Neureka.Settings.AutoDiff adSetting = Neureka.instance().settings().autoDiff();</span>
+<span class="fc" id="L294">            Neureka.Settings.AutoGrad adSetting = Neureka.instance().settings().autograd();</span>
 <span class="fc bfc" id="L295" title="All 2 branches covered.">            if (adSetting.isApplyingGradientWhenTensorIsUsed()) {</span>
 <span class="fc bfc" id="L296" title="All 2 branches covered.">                for (Tsr t : inputs){</span>
 <span class="fc bfc" id="L297" title="All 4 branches covered.">                    if(!adSetting.isApplyingGradientWhenRequested() || t.gradientApplyRqd()) {</span>
@@ -437,7 +437,7 @@ public class GraphNode implements Component&lt;Tsr&gt;
     public void backward(Tsr error) {
 <span class="fc" id="L438">        Set&lt;GraphNode&gt; pendingNodes = new HashSet&lt;&gt;();</span>
 <span class="fc" id="L439">        _backward(error, pendingNodes, false);// Entry-point to private recursive back-propagation!</span>
-<span class="fc bfc" id="L440" title="All 2 branches covered.">        if (Neureka.instance().settings().autoDiff().isRetainingPendingErrorForJITProp()) {</span>
+<span class="fc bfc" id="L440" title="All 2 branches covered.">        if (Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp()) {</span>
 <span class="fc" id="L441">            pendingNodes.forEach( n -&gt; n._carryPendingBackPropToGradients(pendingNodes));</span>
         } else {
 <span class="fc" id="L443">            pendingNodes.forEach( n -&gt; {</span>
