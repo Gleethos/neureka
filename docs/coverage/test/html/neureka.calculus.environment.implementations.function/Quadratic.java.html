@@ -13,26 +13,24 @@ public class Quadratic extends OperationType {
                 false,
                 false,
                 true,
-                true,
+                true
+        );
+<span class="fc" id="L18">        set(</span>
+                Activation.class,
                 new Activation(
                         &quot;output = input*input;\n&quot;,
                         &quot;output = 2*input;\n&quot;,
                         (inputs, d)-&gt;{
-<span class="fc" id="L21">                            double[] t1_val = inputs[1].value64();</span>
-<span class="fc bfc" id="L22" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L23">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc" id="L24">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="fc" id="L25">                                    return input * input;</span>
+<span class="fc" id="L24">                            double[] t1_val = inputs[1].value64();</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L26">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L27">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="fc" id="L28">                                    return input * input;</span>
                                 };
-<span class="fc" id="L27">                            } else return (t0Idx, t1Idx, t2Idx) -&gt; 2 * t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-                        }),
-                null,
-                null,
-                null,
-                null
+<span class="fc" id="L30">                            } else return (t0Idx, t1Idx, t2Idx) -&gt; 2 * t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+                        })
         );
-
-<span class="fc" id="L35">    }</span>
+<span class="fc" id="L33">    }</span>
 
 
 }

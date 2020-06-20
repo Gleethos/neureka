@@ -22,32 +22,32 @@ public class Multiplication extends OperationType {
     public Multiplication()
     {
 <span class="fc" id="L24">        super(</span>
-                &quot;multiply&quot;, &quot;*&quot;, true, false, false, true, false,
-                null,
-                new Scalarization(
-                        &quot;output = input1 * value;\n&quot;,
-                        &quot;if(d==0){output = value;}else{output = input1;}\n&quot;,
-                        (inputs, value, d) -&gt; {
-<span class="fc" id="L31">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L32" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L33">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * value;</span>
-                            } else {
-<span class="nc bnc" id="L35" title="All 2 branches missed.">                                if (d == 0) return (t0Idx, t1Idx, t2Idx) -&gt; value;</span>
-<span class="nc" id="L36">                                else return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-                            }
-                        }),
-                null,
+                &quot;multiply&quot;, &quot;*&quot;, true, false, false, true, false
+        );
+<span class="fc" id="L27">        set(Scalarization.class,new Scalarization(</span>
+                &quot;output = input1 * value;\n&quot;,
+                &quot;if(d==0){output = value;}else{output = input1;}\n&quot;,
+                (inputs, value, d) -&gt; {
+<span class="fc" id="L31">                    double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">                    if (d &lt; 0) {</span>
+<span class="fc" id="L33">                        return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * value;</span>
+                    } else {
+<span class="nc bnc" id="L35" title="All 2 branches missed.">                        if (d == 0) return (t0Idx, t1Idx, t2Idx) -&gt; value;</span>
+<span class="nc" id="L36">                        else return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+                    }
+                })
+<span class="fc" id="L39">        ).set(Broadcast.class,</span>
                 new Broadcast(
                         &quot;value = src1 * src2;\n&quot;,
                         &quot;value += handle * drain;\n&quot;,
                         _creator
-                ),
-                new Operation(
-                        &quot;output = input1 * input2;\n&quot;,
-                        &quot;if(d==0){output = input2;}else{output = input1;}\n&quot;,
-                        _creator
                 )
-        );
+<span class="fc" id="L45">        ).set(Operation.class,</span>
+                new Operation(
+                &quot;output = input1 * input2;\n&quot;,
+                &quot;if(d==0){output = input2;}else{output = input1;}\n&quot;,
+                _creator
+        ));
 <span class="fc" id="L51">        OperatorCreator creator =</span>
                 (inputs, d) -&gt; {
 <span class="fc" id="L53">                    double[] t1_val = inputs[1].value64();</span>
@@ -55,78 +55,53 @@ public class Multiplication extends OperationType {
 <span class="fc" id="L55">                    return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];</span>
                 };
 <span class="fc" id="L57">        new OperationType(</span>
-                &quot;&quot;, ((char) 171) + &quot;*&quot;, true, false, false, false, false,
-                null,
-                null,
-                null,
-                new Broadcast(
-                        &quot;value = src1 * src2;\n&quot;,
-                        &quot;value += handle * drain;\n&quot;,
-                        creator
-                ),
-                null
-        );
-<span class="fc" id="L69">        new OperationType(</span>
-                &quot;&quot;, &quot;*&quot; + ((char) 187), true, false, false, false, false,
-                null,
-                null,
-                null,
-                new Broadcast(
-                        &quot;value = src1 * src2;\n&quot;,
-                        &quot;value += handle * drain;\n&quot;,
-                        creator
-                ),
-                null
-        );
+                &quot;&quot;, ((char) 171) + &quot;*&quot;, true, false, false, false, false
+<span class="fc" id="L59">        ).set(Broadcast.class, new Broadcast(</span>
+                &quot;value = src1 * src2;\n&quot;,
+                &quot;value += handle * drain;\n&quot;,
+                creator
+        ));
+<span class="fc" id="L64">        new OperationType(</span>
+                &quot;&quot;, &quot;*&quot; + ((char) 187), true, false, false, false, false
+<span class="fc" id="L66">        ).set(Broadcast.class, new Broadcast(</span>
+                &quot;value = src1 * src2;\n&quot;,
+                &quot;value += handle * drain;\n&quot;,
+                creator
+        ));
 
         // Convolution:
 
-<span class="fc" id="L84">        Convolution convolution =</span>
+<span class="fc" id="L74">        Convolution convolution =</span>
                 new Convolution(
                         &quot;value = src1 * src2;\n&quot;,
                         &quot;value += handle * drain;\n&quot;,
                         (inputs, d) -&gt; {
-<span class="fc" id="L89">                            double[] t1_val = inputs[1].value64();</span>
-<span class="fc" id="L90">                            double[] t2_val = inputs[2].value64();</span>
-<span class="pc bpc" id="L91" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L92">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="fc" id="L79">                            double[] t1_val = inputs[1].value64();</span>
+<span class="fc" id="L80">                            double[] t2_val = inputs[2].value64();</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L82">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];</span>
                             } else {
-<span class="nc" id="L94">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc bnc" id="L95" title="All 2 branches missed.">                                    if (d == 0) return t2_val[inputs[2].i_of_idx(t2Idx)];</span>
-<span class="nc" id="L96">                                    else return t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="nc" id="L84">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">                                    if (d == 0) return t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="nc" id="L86">                                    else return t1_val[inputs[1].i_of_idx(t1Idx)];</span>
                                 };
                             }
                         }
                 );
 
-<span class="fc" id="L102">        new OperationType(</span>
-                &quot;multiply&quot;, &quot;x&quot;, true, false, true, false, false,
-                null,
-                null,
-                convolution,
-                null,
-                null
-        );
-<span class="fc" id="L110">        new OperationType(</span>
-                &quot;inv_convolve_mul_left&quot;, ((char) 171) + &quot;x&quot;, true, false, true, false, false,
-                null,
-                null,
-                convolution,
-                null,
-                null
-        );
-<span class="fc" id="L118">        new OperationType(</span>
-                &quot;inv_convolve_mul_right&quot;, &quot;x&quot; + ((char) 187), true, false, true, false, false,
-                null,
-                null,
-                convolution,
-                null,
-                null
-        );
+<span class="fc" id="L92">        new OperationType(</span>
+                &quot;multiply&quot;, &quot;x&quot;, true, false, true, false, false
+<span class="fc" id="L94">        ).set(Convolution.class, convolution);</span>
+<span class="fc" id="L95">        new OperationType(</span>
+                &quot;inv_convolve_mul_left&quot;, ((char) 171) + &quot;x&quot;, true, false, true, false, false
+<span class="fc" id="L97">        ).set(Convolution.class, convolution);</span>
+<span class="fc" id="L98">        new OperationType(</span>
+                &quot;inv_convolve_mul_right&quot;, &quot;x&quot; + ((char) 187), true, false, true, false, false
+<span class="fc" id="L100">        ).set(Convolution.class, convolution);</span>
 
 
 
-<span class="fc" id="L129">    }</span>
+<span class="fc" id="L104">    }</span>
 
 
 

@@ -6,7 +6,8 @@ import neureka.calculus.environment.OperationType;
 public class Ligmoid extends OperationType {
 
     public Ligmoid(){
-<span class="fc" id="L9">        super(&quot;ligmoid&quot;, &quot;lig&quot; , false, false, false, true, true,</span>
+<span class="fc" id="L9">        super(&quot;ligmoid&quot;, &quot;lig&quot; , false, false, false, true, true);</span>
+<span class="fc" id="L10">        set(Activation.class,</span>
                 new Activation(
                         &quot;output = \n&quot; +
                                 &quot;(\n&quot; +
@@ -27,17 +28,13 @@ public class Ligmoid extends OperationType {
                                 &quot;            )\n&quot; +
                                 &quot;        );\n&quot;,
                         (inputs, d)-&gt;{
-<span class="fc" id="L30">                            double[] t1_val = inputs[1].value64();</span>
-<span class="fc bfc" id="L31" title="All 2 branches covered.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; Math.log(1 + Math.pow(Math.E, t1_val[inputs[1].i_of_idx(t1Idx)]));</span>
-<span class="fc" id="L32">                            else return (t0Idx, t1Idx, t2Idx) -&gt; 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));</span>
+<span class="fc" id="L31">                            double[] t1_val = inputs[1].value64();</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; Math.log(1 + Math.pow(Math.E, t1_val[inputs[1].i_of_idx(t1Idx)]));</span>
+<span class="fc" id="L33">                            else return (t0Idx, t1Idx, t2Idx) -&gt; 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));</span>
                         }
-                ),
-                null,
-                null,
-                null,
-                null
+                )
         );
-<span class="fc" id="L40">    }</span>
+<span class="fc" id="L37">    }</span>
 
 
 }

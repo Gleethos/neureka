@@ -6,7 +6,8 @@ import neureka.calculus.environment.OperationType;
 public class Ligmoid extends OperationType {
 
     public Ligmoid(){
-        super("ligmoid", "lig" , false, false, false, true, true,
+        super("ligmoid", "lig" , false, false, false, true, true);
+        set(Activation.class,
                 new Activation(
                         "output = \n" +
                                 "(\n" +
@@ -31,11 +32,7 @@ public class Ligmoid extends OperationType {
                             if (d < 0) return (t0Idx, t1Idx, t2Idx) -> Math.log(1 + Math.pow(Math.E, t1_val[inputs[1].i_of_idx(t1Idx)]));
                             else return (t0Idx, t1Idx, t2Idx) -> 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));
                         }
-                ),
-                null,
-                null,
-                null,
-                null
+                )
         );
     }
 

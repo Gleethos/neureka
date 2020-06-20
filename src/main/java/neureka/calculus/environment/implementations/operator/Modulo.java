@@ -7,10 +7,10 @@ public class Modulo extends OperationType {
     public Modulo(){
 
         super(
-                "modulo", "%", true, false, false, false, false,
-                null,
-                null,
-                null,
+                "modulo", "%", true, false, false, false, false
+        );
+        set(
+                Broadcast.class,
                 new Broadcast(
                         "",
                         "",
@@ -31,17 +31,13 @@ public class Modulo extends OperationType {
                                     }
                                 };
                             }
-                        }),
-                null
-
+                        })
         );
         new OperationType(
-                "", ((char) 171) + "%", true, false, false, false, false,
-                null, null, null, null, null
+                "", ((char) 171) + "%", true, false, false, false, false
         );
         new OperationType(
-                "", "%" + ((char) 187), true, false, false, false, false,
-                null, null, null, null, null
+                "", "%" + ((char) 187), true, false, false, false, false
         );
     }
 

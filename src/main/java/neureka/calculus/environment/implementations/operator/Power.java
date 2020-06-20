@@ -30,8 +30,9 @@ public class Power extends OperationType
 
     public Power()
     {
-        super("power", "^", true, false, false, false, false,
-                null,
+        super("power", "^", true, false, false, false, false);
+
+        set(Scalarization.class,
                 new Scalarization("output = pow(input1, value);",
                         "if(d==0){\n" +
                                 "    output = value * pow(input1, value-(float)1 );\n" +
@@ -49,8 +50,9 @@ public class Power extends OperationType
                                     return (t0Idx, t1Idx, t2Idx) -> Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value)*Math.log(value);
                                 }
                             }
-                        }),
-                null,
+                        })
+        );
+        set(Broadcast.class,
                 new Broadcast(
                         "value += pow(src1, src2);",
                         "if(d==0){\n" +
@@ -59,7 +61,9 @@ public class Power extends OperationType
                                 "    value += (pow(target, handle) * log(handle)) * drain;\n" +
                                 "}",
                         _creator
-                ),
+                )
+        );
+        set(Operation.class,
                 new Operation(
                         "output = pow(input1, input2);",
                         "if(d==0){\n" +
@@ -72,43 +76,26 @@ public class Power extends OperationType
         );
 
 
-        new OperationType(
-                "inv_power_left", ((char)171)+"^", true, false, false, false, false,
-                null, null, null, null, null
-        );
-
-
-        new OperationType("inv_power_right", "^" + ((char) 187), true, false, false, false, false,
-                null, null, null, null, null
-        );
+        new OperationType("inv_power_left", ((char)171)+"^", true, false, false, false, false);
+        new OperationType("inv_power_right", "^" + ((char) 187), true, false, false, false, false);
 
         // Convolution:
 
-
         new OperationType(
-                "power", "p", true, false, true, false, false,
-                null,
-                null,
+                "power", "p", true, false, true, false, false
+        ).set(Convolution.class,
                 new Convolution(
                         "value += pow(src1, src2);",
                         "if(d==0){\n" +
-                                        "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
-                                        "} else {\n" +
-                                        "    value += (pow(target, handle) * log(handle)) * drain;\n" +
-                                        "}",
+                                "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
+                                "} else {\n" +
+                                "    value += (pow(target, handle) * log(handle)) * drain;\n" +
+                                "}",
                         null
-                ),
-                null,
-                null
+                )
         );
-        new OperationType(
-                "", ((char) 171) + "p", true, false, true, false, false,
-                null, null, null, null, null
-        );
-        new OperationType(
-                "", "p" + ((char) 187), true, false, true, false, false,
-                null, null, null, null, null
-        );
+        new OperationType("", ((char) 171) + "p", true, false, true, false, false);
+        new OperationType("", "p" + ((char) 187), true, false, true, false, false);
 
 
 

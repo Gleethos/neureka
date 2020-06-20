@@ -5,6 +5,7 @@ import neureka.acceleration.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.Type;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 import neureka.calculus.factory.components.FunctionConstant;
@@ -194,7 +195,7 @@ public abstract class AbstractFunction extends BaseFunction {
                     operation.append("I[").append(i).append("]").append((i == tsrs.length - 1) ? "" : _type.identifier());
                 }
                 return (FunctionBuilder.build(operation.toString(), _doAD).call(tsrs));
-            } else if (_type.supportsActivation() && !_type.isIndexer()) {
+            } else if (_type.supports(Type.Activation.class) && !_type.isIndexer()) {
                 return (FunctionBuilder.build(_type.identifier() + "(I[0])", true).call(inputs));
             }
         }

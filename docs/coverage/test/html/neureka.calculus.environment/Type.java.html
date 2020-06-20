@@ -78,33 +78,9 @@ public interface Type
 
     //==================================================================================================================
 
-    Activation getActivation();
-
-    boolean supportsActivation();
-
-    //-----------------
-
-    Scalarization getScalarization();
-
-    boolean supportsScalar();
-
-    //-----------------
-
-    Convolution getConvolution();
-
-    boolean supportsConvolution();
-
-    //-----------------
-
-    Broadcast getBroadcast();
-
-    boolean supportsBroadcast();
-
-    //-----------------
-
-    Operation getOperation();
-
-    boolean supportsOperation();
+    &lt;T&gt; T get(Class&lt;T&gt; type);
+    &lt;T&gt; boolean supports(Class&lt;T&gt; type);
+    &lt;T&gt; Type set(Class&lt;T&gt; type, T instance);
 
     //==================================================================================================================
 

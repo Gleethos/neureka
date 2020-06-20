@@ -5,13 +5,14 @@ import neureka.calculus.environment.OperationType;
 public class Product extends OperationType {
 
     public Product(){
-        super("product", "prod", false,  true, false, true, true,
+        super("product", "prod", false,  true, false, true, true);
+        set(Activation.class,
                 new Activation("output = input;",
                         "output = 1;",
                         null
-                ),
-                null,
-                null,
+                )
+        );
+        set(Broadcast.class,
                 new Broadcast(
                         "",
                         "",
@@ -26,9 +27,7 @@ public class Product extends OperationType {
                                     else return t1_val[inputs[1].i_of_idx(t1Idx)];
                                 };
                             }
-                        }),
-                null
-
+                        })
         );
 
 

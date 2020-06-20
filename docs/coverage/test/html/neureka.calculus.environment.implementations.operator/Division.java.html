@@ -24,8 +24,9 @@ public class Division extends OperationType {
     public Division() {
 
 <span class="fc" id="L26">        super(</span>
-                &quot;divide&quot;, &quot;/&quot;, true, false, false, false, false,
-                null,
+                &quot;divide&quot;, &quot;/&quot;, true, false, false, false, false
+        );
+<span class="fc" id="L29">        set(Scalarization.class,</span>
                 new Scalarization(
                         &quot;output = input1 / value;\n&quot;,
                         &quot;if(d==0){\n&quot; +
@@ -34,25 +35,29 @@ public class Division extends OperationType {
                                 &quot;    output = -value /(float)pow(input1, 2.0f);\n&quot; +
                                 &quot;}&quot;,
                         (inputs, value, d) -&gt; {
-<span class="fc" id="L37">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L38" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L39">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] / value;</span>
+<span class="fc" id="L38">                            double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L40">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] / value;</span>
                             } else {
-<span class="nc bnc" id="L41" title="All 2 branches missed.">                                if (d == 0) return (t0Idx, t1Idx, t2Idx) -&gt; 1 / value;</span>
-<span class="nc" id="L42">                                else return (t0Idx, t1Idx, t2Idx) -&gt; -value / Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], 2);</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">                                if (d == 0) return (t0Idx, t1Idx, t2Idx) -&gt; 1 / value;</span>
+<span class="nc" id="L43">                                else return (t0Idx, t1Idx, t2Idx) -&gt; -value / Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], 2);</span>
                             }
                         }
-                ),
-                null,
+                )
+        );
+<span class="fc" id="L48">        set(</span>
+                Broadcast.class,
                 new Broadcast(
                         &quot;value = src1 / src2;\n&quot;,
                         &quot;if(d==0){\n&quot; +
-                                   &quot;    value += (1/handle) * drain;\n&quot; +
-                                   &quot;} else {\n&quot; +
-                                   &quot;    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n&quot; +
-                                   &quot;}&quot;,
-                            _creator
-                        ),
+                                &quot;    value += (1/handle) * drain;\n&quot; +
+                                &quot;} else {\n&quot; +
+                                &quot;    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n&quot; +
+                                &quot;}&quot;,
+                        _creator
+                )
+        );
+<span class="fc" id="L60">        set(Operation.class,</span>
                 new Operation(
                         &quot;output = input1 / input2;\n&quot;,
                         &quot;if(d==0){\n&quot; +
@@ -62,45 +67,39 @@ public class Division extends OperationType {
                                 &quot;}&quot;,
                         _creator
                 )
-
-        );
-<span class="fc" id="L67">        new OperationType(</span>
-                &quot;inv_division_left&quot;, ((char) 171) + &quot;/&quot;, true, false, false, false, false,
-                null, null, null, null, null
         );
 <span class="fc" id="L71">        new OperationType(</span>
-                &quot;inv_division_right&quot;, &quot;/&quot; + ((char) 187), true, false, false, false, false,
-                null, null, null, null, null
+                &quot;inv_division_left&quot;, ((char) 171) + &quot;/&quot;, true, false, false, false, false
+        );
+<span class="fc" id="L74">        new OperationType(</span>
+                &quot;inv_division_right&quot;, &quot;/&quot; + ((char) 187), true, false, false, false, false
         );
 
         // Convolution:
 
-<span class="fc" id="L78">        new OperationType(</span>
-                &quot;divide&quot;, &quot;d&quot;, true, false, true, false, false,
-                null,
-                null,
+<span class="fc" id="L80">        new OperationType(</span>
+                &quot;divide&quot;, &quot;d&quot;, true, false, true, false, false
+<span class="fc" id="L82">        ).set(</span>
+                Convolution.class,
                 new Convolution(
                         &quot;value = src1 / src2;\n&quot;,
                         &quot;if(d==0) {\n&quot; +
-                                   &quot;    value += (1/handle) * drain;\n&quot; +
-                                   &quot;} else {\n&quot; +
-                                   &quot;    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n&quot; +
-                                   &quot;}&quot;,
+                                &quot;    value += (1/handle) * drain;\n&quot; +
+                                &quot;} else {\n&quot; +
+                                &quot;    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n&quot; +
+                                &quot;}&quot;,
                         null
-                ),
-                null,
-                null
-        );
-<span class="fc" id="L94">        new OperationType(</span>
-                &quot;&quot;, ((char) 171) + &quot;d&quot;, true, false, true, false, false,
-                null, null, null, null, null
-        );
-<span class="fc" id="L98">        new OperationType(</span>
-                &quot;&quot;, &quot;d&quot; + ((char) 187), true, false, true, false, false,
-                null, null, null, null, null
+                )
         );
 
-<span class="fc" id="L103">    }</span>
+<span class="fc" id="L95">        new OperationType(</span>
+                &quot;&quot;, ((char) 171) + &quot;d&quot;, true, false, true, false, false
+        );
+<span class="fc" id="L98">        new OperationType(</span>
+                &quot;&quot;, &quot;d&quot; + ((char) 187), true, false, true, false, false
+        );
+
+<span class="fc" id="L102">    }</span>
 
 
 

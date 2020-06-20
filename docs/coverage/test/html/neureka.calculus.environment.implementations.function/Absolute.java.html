@@ -4,10 +4,10 @@ import neureka.calculus.environment.OperationType;
 
 public class Absolute extends OperationType {
 
-    public Absolute(){
-
-<span class="fc" id="L9">        super(</span>
-                &quot;absolute&quot;, &quot;abs&quot; , false, false, false, true, true,
+    public Absolute()
+    {
+<span class="fc" id="L9">        super(&quot;absolute&quot;, &quot;abs&quot; , false, false, false, true, true);</span>
+<span class="fc" id="L10">        set(Activation.class,</span>
                 new Activation(&quot;output = fabs(input);\n&quot;,
                         &quot;output = (input &lt; 0) ? -1 : 1;\n&quot;,
                         (inputs, d)-&gt;{
@@ -17,14 +17,9 @@ public class Absolute extends OperationType {
                             } else {
 <span class="fc bfc" id="L18" title="All 2 branches covered.">                                return (t0Idx, t1Idx, t2Idx) -&gt; (t1_val[inputs[1].i_of_idx(t1Idx)] &lt; 0) ? -1 : 1;</span>
                             }
-                        }),
-                null,
-                null,
-                null,
-                null
+                        })
         );
-
-<span class="fc" id="L27">    }</span>
+<span class="fc" id="L22">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -7,8 +7,7 @@ public class CopyLeft extends OperationType {
     public CopyLeft(){
 
         super(
-                "", "<", true, false, false, false, false,
-                null, null, null, null, null
+                "", "<", true, false, false, false, false
         );
 
     }

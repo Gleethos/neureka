@@ -23,77 +23,55 @@ public class Addition extends OperationType {
 
     public Addition(){
 
-<span class="fc" id="L26">        super(</span>
-                &quot;add&quot;,
-                &quot;+&quot;,
-                true, false, false, true, false,
-                null,
-                new Scalarization(
-                        &quot;output = input1 + value;\n&quot;,
-                        &quot;output = 1;\n&quot;,
-                        (inputs, value, d) -&gt; {
-<span class="fc" id="L35">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L36" title="1 of 2 branches missed.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + value;</span>
-<span class="nc" id="L37">                            else return (t0Idx, t1Idx, t2Idx) -&gt; 1;</span>
-                        }),
-                null,
-                _broadcast,
+<span class="fc" id="L26">        super(&quot;add&quot;, &quot;+&quot;, true, false, false, true, false);</span>
+<span class="fc" id="L27">        set(Broadcast.class,</span>
+                _broadcast
+        );
+<span class="fc" id="L30">        set(Operation.class,</span>
                 new Operation(
                         &quot;output = input1 + input2;\n&quot;,
                         &quot;output = 1;\n&quot;,
                         _creator
                 )
         );
+<span class="fc" id="L37">        set(Scalarization.class,</span>
+                new Scalarization(
+                        &quot;output = input1 + value;\n&quot;,
+                        &quot;output = 1;\n&quot;,
+                        (inputs, value, d) -&gt; {
+<span class="fc" id="L42">                            double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + value;</span>
+<span class="nc" id="L44">                            else return (t0Idx, t1Idx, t2Idx) -&gt; 1;</span>
+                        })
+        );
 <span class="fc" id="L47">        new OperationType(</span>
-                &quot;&quot;, ((char) 171) + &quot;+&quot;, true, false, false, false, false,
-                null,
-                null,
-                null,
-                _broadcast,
-                null
-        );
-<span class="fc" id="L55">        new OperationType(</span>
-                &quot;&quot;, &quot;+&quot; + ((char) 187), true, false, false, false, false,
-                null,
-                null,
-                null,
-                _broadcast,
-                null
-        );
+                &quot;&quot;, ((char) 171) + &quot;+&quot;, true, false, false, false, false
+<span class="fc" id="L49">        ).set(Broadcast.class, _broadcast);</span>
+<span class="fc" id="L50">        new OperationType(</span>
+                &quot;&quot;, &quot;+&quot; + ((char) 187), true, false, false, false, false
+<span class="fc" id="L52">        ).set(Broadcast.class, _broadcast);</span>
 
         // Convolutoion:
 
-<span class="fc" id="L66">        new OperationType(</span>
-                &quot;add&quot;, &quot;a&quot;, true, false, true, false, false,
-                null,
-                null,
+<span class="fc" id="L56">        new OperationType(</span>
+                &quot;add&quot;, &quot;a&quot;, true, false, true, false, false
+<span class="fc" id="L58">        ).set(Convolution.class,</span>
                 new Convolution(
                         &quot;value = src1 + src2;\n&quot;,
                         &quot;value += 1 * drain;\n&quot;,
                         null
-                ),
-                null,//_broadcast,
-                null
+                )
         );
-<span class="fc" id="L78">        new OperationType(</span>
-                &quot;&quot;, ((char) 171) + &quot;a&quot;, true, false, true, false, false,
-                null,
-                null,
-                null,
-                null,//_broadcast,
-                null
+
+<span class="fc" id="L66">        new OperationType(</span>
+                &quot;&quot;, ((char) 171) + &quot;a&quot;, true, false, true, false, false
         );
-<span class="fc" id="L86">        new OperationType(</span>
-                &quot;&quot;, &quot;a&quot; + ((char) 187), true, false, true, false, false,
-                null,
-                null,
-                null,
-                null,//_broadcast,
-                null
+<span class="fc" id="L69">        new OperationType(</span>
+                &quot;&quot;, &quot;a&quot; + ((char) 187), true, false, true, false, false
         );
 
 
-<span class="fc" id="L96">    }</span>
+<span class="fc" id="L74">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

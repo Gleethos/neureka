@@ -22,35 +22,37 @@ public class Subtraction extends OperationType {
     public Subtraction(){
 
         super(
-                "subtract", "-", true, false, false, false, false,
+                "subtract", "-", true, false, false, false, false
+        );
+        set(Scalarization.class,
+        new Scalarization("output = input1 - value;\n",
+                "if(d==0){\n" +//drn and src2 switch:
+                        "    output = 1;\n" +
+                        "} else {\n" +
+                        "    output = -1;" +
+                        "}",
+                (inputs, value, d) -> {
+                    double[] t1_val = inputs[1].value64();
+                    if (d < 0) {
+                        return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] - value;
+                    } else {
+                        if (d == 0) return (t0Idx, t1Idx, t2Idx) -> 1;
+                        else return (t0Idx, t1Idx, t2Idx) -> -1;
+                    }
+        }));
 
-                null,
-                new Scalarization("output = input1 - value;\n",
-                        "if(d==0){\n" +//drn and src2 switch:
-                                "    output = 1;\n" +
-                                "} else {\n" +
-                                "    output = -1;" +
-                                "}",
-                        (inputs, value, d) -> {
-                            double[] t1_val = inputs[1].value64();
-                            if (d < 0) {
-                                return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] - value;
-                            } else {
-                                if (d == 0) return (t0Idx, t1Idx, t2Idx) -> 1;
-                                else return (t0Idx, t1Idx, t2Idx) -> -1;
-                            }
-                        })
-                ,
-                null,
+        set(Broadcast.class,
                 new Broadcast(
                         "value = src1 - src2;\n",
                         "if(d==0){\n" +//drn and src2 switch:
-                                   "    value += 1 * drain;\n" +
-                                   "} else {\n" +
-                                   "    value += -1 * drain;" +
-                                   "}",
+                                "    value += 1 * drain;\n" +
+                                "} else {\n" +
+                                "    value += -1 * drain;" +
+                                "}",
                         _creator
-                ),
+                )
+        );
+        set(Operation.class,
                 new Operation(
                         "output = input1 - input2;\n",
                         "if(d==0){\n" +//drn and src2 switch:
@@ -60,31 +62,26 @@ public class Subtraction extends OperationType {
                                 "}",
                         _creator
                 )
+        );
 
+        new OperationType(
+                "", ((char) 171) + "-", true, false, false, false, false
         );
         new OperationType(
-                "", ((char) 171) + "-", true, false, false, false, false,
-                null, null, null, null, null
-        );
-        new OperationType(
-                "", "-" + ((char) 187), true, false, false, false, false,
-                null, null, null, null, null
+                "", "-" + ((char) 187), true, false, false, false, false
         );
 
         // Convolution:
 
 
         new OperationType(
-                "", "s", true, false, true, false, false,
-                null, null, null, null, null
+                "", "s", true, false, true, false, false
         );
         new OperationType(
-                "", ((char) 171) + "s", true, false, true, false, false,
-                null, null, null, null, null
+                "", ((char) 171) + "s", true, false, true, false, false
         );
         new OperationType(
-                "", "s" + ((char) 187), true, false, true, false, false,
-                null, null, null, null, null
+                "", "s" + ((char) 187), true, false, true, false, false
         );
 
 

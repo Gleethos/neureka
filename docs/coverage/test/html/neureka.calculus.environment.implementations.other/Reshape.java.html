@@ -11,21 +11,20 @@ public class Reshape extends OperationType {
     public Reshape(){
 
 <span class="fc" id="L13">        super(</span>
-                &quot;&quot;, &quot;,&quot;, true, false, false, false, false,
-                null, null, null, null, null
+                &quot;&quot;, &quot;,&quot;, true, false, false, false, false
         );
 
-<span class="fc" id="L18">    }</span>
+<span class="fc" id="L17">    }</span>
 
     @Override
     public ADAgent getADAgentOf(Function f, Tsr[] inputs, int i, boolean forward){
-<span class="pc bpc" id="L22" title="1 of 2 branches missed.">        if(forward){</span>
-<span class="nc" id="L23">            throw new IllegalArgumentException(&quot;Reshape operation does not support forward-AD!&quot;);</span>
+<span class="pc bpc" id="L21" title="1 of 2 branches missed.">        if(forward){</span>
+<span class="nc" id="L22">            throw new IllegalArgumentException(&quot;Reshape operation does not support forward-AD!&quot;);</span>
         }
-<span class="fc" id="L25">        return new ADAgent(</span>
-<span class="fc" id="L26">                ()-&gt;null,</span>
-<span class="nc" id="L27">                (t, derivative) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0),</span>
-<span class="fc" id="L28">                (t, error) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0)</span>
+<span class="fc" id="L24">        return new ADAgent(</span>
+<span class="fc" id="L25">                ()-&gt;null,</span>
+<span class="nc" id="L26">                (t, derivative) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0),</span>
+<span class="fc" id="L27">                (t, error) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0)</span>
         );
     }
 

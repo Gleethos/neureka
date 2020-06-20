@@ -4,10 +4,10 @@ import neureka.calculus.environment.OperationType;
 
 public class Absolute extends OperationType {
 
-    public Absolute(){
-
-        super(
-                "absolute", "abs" , false, false, false, true, true,
+    public Absolute()
+    {
+        super("absolute", "abs" , false, false, false, true, true);
+        set(Activation.class,
                 new Activation("output = fabs(input);\n",
                         "output = (input < 0) ? -1 : 1;\n",
                         (inputs, d)->{
@@ -17,13 +17,8 @@ public class Absolute extends OperationType {
                             } else {
                                 return (t0Idx, t1Idx, t2Idx) -> (t1_val[inputs[1].i_of_idx(t1Idx)] < 0) ? -1 : 1;
                             }
-                        }),
-                null,
-                null,
-                null,
-                null
+                        })
         );
-
     }
 
 }

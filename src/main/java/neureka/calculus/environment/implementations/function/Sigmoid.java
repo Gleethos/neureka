@@ -13,7 +13,9 @@ public class Sigmoid extends OperationType {
                 false,
                 false,
                 true,
-                true,
+                true
+        );
+        set(Activation.class,
                 new Activation(
                         "output = 1 / (1 + (float)pow((float)M_E, -input));\n",
                         "output = input * (1 - input);\n",
@@ -28,13 +30,8 @@ public class Sigmoid extends OperationType {
                                 };
                             }
                         }
-                ),
-                null,
-                null,
-                null,
-                null
+                )
         );
-
     }
 
 

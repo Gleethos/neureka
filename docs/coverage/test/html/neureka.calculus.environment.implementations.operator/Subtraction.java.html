@@ -22,35 +22,37 @@ public class Subtraction extends OperationType {
     public Subtraction(){
 
 <span class="fc" id="L24">        super(</span>
-                &quot;subtract&quot;, &quot;-&quot;, true, false, false, false, false,
+                &quot;subtract&quot;, &quot;-&quot;, true, false, false, false, false
+        );
+<span class="fc" id="L27">        set(Scalarization.class,</span>
+        new Scalarization(&quot;output = input1 - value;\n&quot;,
+                &quot;if(d==0){\n&quot; +//drn and src2 switch:
+                        &quot;    output = 1;\n&quot; +
+                        &quot;} else {\n&quot; +
+                        &quot;    output = -1;&quot; +
+                        &quot;}&quot;,
+                (inputs, value, d) -&gt; {
+<span class="fc" id="L35">                    double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">                    if (d &lt; 0) {</span>
+<span class="fc" id="L37">                        return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] - value;</span>
+                    } else {
+<span class="nc bnc" id="L39" title="All 2 branches missed.">                        if (d == 0) return (t0Idx, t1Idx, t2Idx) -&gt; 1;</span>
+<span class="nc" id="L40">                        else return (t0Idx, t1Idx, t2Idx) -&gt; -1;</span>
+                    }
+        }));
 
-                null,
-                new Scalarization(&quot;output = input1 - value;\n&quot;,
-                        &quot;if(d==0){\n&quot; +//drn and src2 switch:
-                                &quot;    output = 1;\n&quot; +
-                                &quot;} else {\n&quot; +
-                                &quot;    output = -1;&quot; +
-                                &quot;}&quot;,
-                        (inputs, value, d) -&gt; {
-<span class="fc" id="L35">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L36" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L37">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] - value;</span>
-                            } else {
-<span class="nc bnc" id="L39" title="All 2 branches missed.">                                if (d == 0) return (t0Idx, t1Idx, t2Idx) -&gt; 1;</span>
-<span class="nc" id="L40">                                else return (t0Idx, t1Idx, t2Idx) -&gt; -1;</span>
-                            }
-                        })
-                ,
-                null,
+<span class="fc" id="L44">        set(Broadcast.class,</span>
                 new Broadcast(
                         &quot;value = src1 - src2;\n&quot;,
                         &quot;if(d==0){\n&quot; +//drn and src2 switch:
-                                   &quot;    value += 1 * drain;\n&quot; +
-                                   &quot;} else {\n&quot; +
-                                   &quot;    value += -1 * drain;&quot; +
-                                   &quot;}&quot;,
+                                &quot;    value += 1 * drain;\n&quot; +
+                                &quot;} else {\n&quot; +
+                                &quot;    value += -1 * drain;&quot; +
+                                &quot;}&quot;,
                         _creator
-                ),
+                )
+        );
+<span class="fc" id="L55">        set(Operation.class,</span>
                 new Operation(
                         &quot;output = input1 - input2;\n&quot;,
                         &quot;if(d==0){\n&quot; +//drn and src2 switch:
@@ -60,35 +62,30 @@ public class Subtraction extends OperationType {
                                 &quot;}&quot;,
                         _creator
                 )
+        );
 
+<span class="fc" id="L67">        new OperationType(</span>
+                &quot;&quot;, ((char) 171) + &quot;-&quot;, true, false, false, false, false
         );
-<span class="fc" id="L65">        new OperationType(</span>
-                &quot;&quot;, ((char) 171) + &quot;-&quot;, true, false, false, false, false,
-                null, null, null, null, null
-        );
-<span class="fc" id="L69">        new OperationType(</span>
-                &quot;&quot;, &quot;-&quot; + ((char) 187), true, false, false, false, false,
-                null, null, null, null, null
+<span class="fc" id="L70">        new OperationType(</span>
+                &quot;&quot;, &quot;-&quot; + ((char) 187), true, false, false, false, false
         );
 
         // Convolution:
 
 
 <span class="fc" id="L77">        new OperationType(</span>
-                &quot;&quot;, &quot;s&quot;, true, false, true, false, false,
-                null, null, null, null, null
+                &quot;&quot;, &quot;s&quot;, true, false, true, false, false
         );
-<span class="fc" id="L81">        new OperationType(</span>
-                &quot;&quot;, ((char) 171) + &quot;s&quot;, true, false, true, false, false,
-                null, null, null, null, null
+<span class="fc" id="L80">        new OperationType(</span>
+                &quot;&quot;, ((char) 171) + &quot;s&quot;, true, false, true, false, false
         );
-<span class="fc" id="L85">        new OperationType(</span>
-                &quot;&quot;, &quot;s&quot; + ((char) 187), true, false, true, false, false,
-                null, null, null, null, null
+<span class="fc" id="L83">        new OperationType(</span>
+                &quot;&quot;, &quot;s&quot; + ((char) 187), true, false, true, false, false
         );
 
 
-<span class="fc" id="L91">    }</span>
+<span class="fc" id="L88">    }</span>
 
 
 }

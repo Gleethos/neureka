@@ -11,8 +11,7 @@ public class Reshape extends OperationType {
     public Reshape(){
 
         super(
-                "", ",", true, false, false, false, false,
-                null, null, null, null, null
+                "", ",", true, false, false, false, false
         );
 
     }

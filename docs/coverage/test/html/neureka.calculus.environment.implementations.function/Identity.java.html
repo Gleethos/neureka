@@ -6,23 +6,25 @@ public class Identity extends OperationType {
 
     public Identity(){
 
-<span class="fc" id="L9">        super(&quot;identity&quot;, &quot;idy&quot; , false, false, false, true, true,</span>
+<span class="fc" id="L9">        super(&quot;identity&quot;, &quot;idy&quot; , false, false, false, true, true);</span>
+
+<span class="fc" id="L11">        set(Activation.class,</span>
                 new Activation(&quot;output = input;\n&quot;,
                         &quot;output = input;\n&quot;,
                         (inputs, d)-&gt;{
-<span class="fc" id="L13">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L14" title="1 of 2 branches missed.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="nc" id="L15">                            else return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-                        }),
+<span class="fc" id="L15">                            double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L16" title="1 of 2 branches missed.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="nc" id="L17">                            else return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+                        })
+        );
+<span class="fc" id="L20">        set(Scalarization.class,</span>
                 new Scalarization(&quot;output = value;\n&quot;,
                         &quot;output = value;\n&quot;,
-                        null),
-                null,
-                null,
-                null
+                        null
+                )
         );
 
-<span class="fc" id="L25">    }</span>
+<span class="fc" id="L27">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

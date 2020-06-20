@@ -6,7 +6,8 @@ public class Gaussian extends OperationType {
 
     public Gaussian(){
 
-        super("gaussian", "gaus", false, false, false, true, true,
+        super("gaussian", "gaus", false, false, false, true, true);
+        set(Activation.class,
                 new Activation("output =\n" +
                         "    (float)pow(\n" +
                         "        (float)M_E,\n" +
@@ -27,13 +28,8 @@ public class Gaussian extends OperationType {
                                 };
 
                             }
-                        }),
-                null,
-                null,
-                null,
-                null
+                        })
         );
-
     }
 
 }

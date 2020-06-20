@@ -12,8 +12,9 @@ public class ReLU extends OperationType {
                 false,
                 false,
                 true,
-                true,
-
+                true
+        );
+        set(Activation.class,
                 new Activation(
                         "if (input >= 0) {  output = input; } else { output = input * (float)0.01; }\n",
                         "if (input >= 0) { output = (float)1; } else { output = (float)0.01; }\n",
@@ -30,11 +31,7 @@ public class ReLU extends OperationType {
                                     else return 0.01;
                                 };
                             }
-                        }),
-                null,
-                null,
-                null,
-                null
+                        })
         );
 
 

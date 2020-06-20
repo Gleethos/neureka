@@ -1054,7 +1054,7 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
 <span class="fc" id="L1054">            Device device = this.find(Device.class);</span>
 <span class="pc bpc" id="L1055" title="1 of 2 branches missed.">            if (device!=null) device.get(this);</span>
 <span class="fc" id="L1056">            _value = DataHelper.doubleToFloat((double[])_value);</span>
-<span class="pc" id="L1057">            forComponent(Tsr.class, g -&gt; g.to32());</span>
+<span class="fc" id="L1057">            forComponent(Tsr.class, Tsr::to32);</span>
 <span class="pc bpc" id="L1058" title="1 of 2 branches missed.">            if (device!=null) device.add(this);</span>
         }
 <span class="fc" id="L1060">        return this;</span>
@@ -1065,7 +1065,7 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
 <span class="fc" id="L1065">            Device device = this.find(Device.class);</span>
 <span class="pc bpc" id="L1066" title="1 of 2 branches missed.">            if (device!=null) device.get(this);</span>
 <span class="fc" id="L1067">            _value = DataHelper.floatToDouble((float[])_value);</span>
-<span class="pc" id="L1068">            forComponent(Tsr.class, g -&gt; g.to64());</span>
+<span class="fc" id="L1068">            forComponent(Tsr.class, Tsr::to64);</span>
 <span class="pc bpc" id="L1069" title="1 of 2 branches missed.">            if (device!=null) device.add(this);</span>
         }
 <span class="fc" id="L1071">        return this;</span>

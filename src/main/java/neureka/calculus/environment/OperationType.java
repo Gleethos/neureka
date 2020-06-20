@@ -45,11 +45,7 @@ public class OperationType implements Type
     protected boolean _isCommutative;
     protected boolean _isAssociative;
 
-    protected Activation _activation;
-    protected Convolution _convolution;
-    protected Broadcast _broadcast;
-    protected Scalarization _scalarization;
-    protected Operation _operation;
+    private Map<Class, Object> _modules = new HashMap<>();
 
     static
     {
@@ -86,13 +82,13 @@ public class OperationType implements Type
             boolean isIndexer,
             boolean isConvection,
             boolean isCommutative,
-            boolean isAssociative,
+            boolean isAssociative
 
-            Activation activation,
-            Scalarization scalarization,
-            Convolution convolution,
-            Broadcast broadcast,
-            Operation operation
+            //Activation activation,
+            //Scalarization scalarization,
+            //Convolution convolution,
+            //Broadcast broadcast,
+            //Operation operation
     ) {
         _name = name;
         _id = _ID;
@@ -104,11 +100,11 @@ public class OperationType implements Type
         _isCommutative = isCommutative;
         _isAssociative = isAssociative;
 
-        _activation = activation;
-        _scalarization = scalarization;
-        _convolution = convolution;
-        _broadcast = broadcast;
-        _operation = operation;
+        //if ( activation!=null ) _modules.put(Activation.class, activation);
+        //if ( scalarization!=null ) _modules.put(Scalarization.class, scalarization);
+        //if ( convolution!=null ) _modules.put(Convolution.class, convolution);
+        //if ( broadcast!=null ) _modules.put(Broadcast.class, broadcast);
+        //if ( operation!=null ) _modules.put(Operation.class, operation);
 
         _REGISTER.add(this);
         _LOOKUP.put(identifier, this);
@@ -145,61 +141,17 @@ public class OperationType implements Type
     //-----------------
 
     @Override
-    public Activation getActivation(){
-        return _activation;
+    public <T> T get(Class<T> type){
+        return (T) _modules.get(type);
     }
-
     @Override
-    public boolean supportsActivation(){
-        return _activation!=null;
+    public <T> boolean supports(Class<T> type){
+        return _modules.containsKey(type);
     }
-
-    //-----------------
-
     @Override
-    public Scalarization getScalarization(){
-        return _scalarization;
-    }
-
-    @Override
-    public boolean supportsScalar(){
-        return _scalarization != null;
-    }
-
-    //-----------------
-
-    @Override
-    public Convolution getConvolution(){
-        return _convolution;
-    }
-
-    @Override
-    public boolean supportsConvolution(){
-        return _convolution!=null;
-    }
-
-    //-----------------
-
-    @Override
-    public Broadcast getBroadcast(){
-        return _broadcast;
-    }
-
-    @Override
-    public boolean supportsBroadcast(){
-        return _broadcast!=null;
-    }
-
-    //-----------------
-
-    @Override
-    public Operation getOperation(){
-        return _operation;
-    }
-
-    @Override
-    public boolean supportsOperation(){
-        return _operation!=null;
+    public <T> Type set(Class<T> type, T instance){
+        _modules.put(type, instance);
+        return this;
     }
 
     //==================================================================================================================

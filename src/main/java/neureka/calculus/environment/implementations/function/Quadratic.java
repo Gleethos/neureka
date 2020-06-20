@@ -13,7 +13,10 @@ public class Quadratic extends OperationType {
                 false,
                 false,
                 true,
-                true,
+                true
+        );
+        set(
+                Activation.class,
                 new Activation(
                         "output = input*input;\n",
                         "output = 2*input;\n",
@@ -25,13 +28,8 @@ public class Quadratic extends OperationType {
                                     return input * input;
                                 };
                             } else return (t0Idx, t1Idx, t2Idx) -> 2 * t1_val[inputs[1].i_of_idx(t1Idx)];
-                        }),
-                null,
-                null,
-                null,
-                null
+                        })
         );
-
     }
 
 

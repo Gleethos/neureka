@@ -13,29 +13,26 @@ public class Sigmoid extends OperationType {
                 false,
                 false,
                 true,
-                true,
+                true
+        );
+<span class="fc" id="L18">        set(Activation.class,</span>
                 new Activation(
                         &quot;output = 1 / (1 + (float)pow((float)M_E, -input));\n&quot;,
                         &quot;output = input * (1 - input);\n&quot;,
                         (inputs, d)-&gt;{
-<span class="fc" id="L21">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L22" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L23">                                return (t0Idx, t1Idx, t2Idx) -&gt; 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));</span>
+<span class="fc" id="L23">                            double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L24" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L25">                                return (t0Idx, t1Idx, t2Idx) -&gt; 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));</span>
                             } else {
-<span class="nc" id="L25">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc" id="L26">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="nc" id="L27">                                    return (1 - Math.pow(((input) / Math.pow((1 + Math.pow((input), 2)), 0.5)), 2));</span>
+<span class="nc" id="L27">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="nc" id="L28">                                    double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="nc" id="L29">                                    return (1 - Math.pow(((input) / Math.pow((1 + Math.pow((input), 2)), 0.5)), 2));</span>
                                 };
                             }
                         }
-                ),
-                null,
-                null,
-                null,
-                null
+                )
         );
-
-<span class="fc" id="L38">    }</span>
+<span class="fc" id="L35">    }</span>
 
 
 

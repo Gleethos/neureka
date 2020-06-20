@@ -10,27 +10,23 @@ public class Randomization extends OperationType{
 
         // Operations (auto broadcast):
 <span class="nc" id="L12">        super(</span>
-                &quot;random&quot;, &quot;rand&quot;, true, false, false, false, false,
-                null,
-                new Scalarization(&quot;output = pow(input1, value);&quot;,
-                        &quot;if(d==0){\n&quot; +
-                                &quot;    output = value * pow(input1, value-(float)1 );\n&quot; +
-                                &quot;} else {\n&quot; +
-                                &quot;    output = pow(input1, value) * log(value);\n&quot; +
-                                &quot;}&quot;,
-                        (inputs, value, d)-&gt;{
-<span class="nc" id="L22">                            Random dice = new Random();</span>
-<span class="nc" id="L23">                            dice.setSeed(Double.doubleToLongBits(value));</span>
-<span class="nc" id="L24">                            double[] t1_val = inputs[1].value64();</span>
-<span class="nc" id="L25">                            return (t0Idx, t1Idx, t2Idx) -&gt; dice.nextGaussian();</span>
-                            //Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);
-                        }),
-                null,
-                null,
-                null
+                &quot;random&quot;, &quot;rand&quot;, true, false, false, false, false
         );
+<span class="nc" id="L15">        set(Scalarization.class, new Scalarization(&quot;output = pow(input1, value);&quot;,</span>
+                &quot;if(d==0){\n&quot; +
+                        &quot;    output = value * pow(input1, value-(float)1 );\n&quot; +
+                        &quot;} else {\n&quot; +
+                        &quot;    output = pow(input1, value) * log(value);\n&quot; +
+                        &quot;}&quot;,
+                (inputs, value, d)-&gt;{
+<span class="nc" id="L22">                    Random dice = new Random();</span>
+<span class="nc" id="L23">                    dice.setSeed(Double.doubleToLongBits(value));</span>
+<span class="nc" id="L24">                    double[] t1_val = inputs[1].value64();</span>
+<span class="nc" id="L25">                    return (t0Idx, t1Idx, t2Idx) -&gt; dice.nextGaussian();</span>
+                    //Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);
+                }));
 
-<span class="nc" id="L33">    }</span>
+<span class="nc" id="L29">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

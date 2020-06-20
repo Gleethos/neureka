@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.Type;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,7 +36,7 @@ public class HostCPU extends AbstractDevice
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, OperationType type) {
         for (Tsr t : tsrs) t.setIsVirtual(false);
-        if (type.supportsActivation() && !type.isIndexer()) _executor.activate(tsrs, d, type);
+        if (type.supports(Type.Activation.class) && !type.isIndexer()) _executor.activate(tsrs, d, type);
         else if (type.isOperation() && !type.isConvection()) _executor.broadcast(tsrs, d, type);
         else if (type.isConvection()) {
             if (type.identifier().contains(((char) 187) + "")) {
@@ -55,7 +56,7 @@ public class HostCPU extends AbstractDevice
 
     @Override
     protected void _enqueue(Tsr t, double value, int d, OperationType type) {
-        if (type.supportsScalar()) _executor.scalar(new Tsr[]{t, t}, value, d, type);
+        if (type.supports(Type.Scalarization.class)) _executor.scalar(new Tsr[]{t, t}, value, d, type);
         else {
             int[] shape = new int[t.rank()];
             Arrays.fill(shape, 1);
@@ -141,7 +142,7 @@ public class HostCPU extends AbstractDevice
                     (start, end) ->
                             Kernel.activate(
                                     tsrs[0], start, end,
-                                    type.getActivation().getCreator().create(tsrs, d)
+                                    type.get(Type.Activation.class).getCreator().create(tsrs, d)
                             )
             );
         }
@@ -153,7 +154,7 @@ public class HostCPU extends AbstractDevice
                             Kernel.broadcast(
                                     tsrs[0], tsrs[1], tsrs[2], d,
                                     start, end,
-                                    type.getBroadcast().getCreator().create(tsrs, d)
+                                    type.get(Type.Broadcast.class).getCreator().create(tsrs, d)
                             )
             );
         }
@@ -165,7 +166,7 @@ public class HostCPU extends AbstractDevice
                             Kernel.convolve(
                                     tsrs[0], tsrs[1], tsrs[2], d,
                                     start, end,
-                                    type.getConvolution().getCreator().create(tsrs, -1)
+                                    type.get(Type.Convolution.class).getCreator().create(tsrs, -1)
                             )
             );
         }
@@ -176,7 +177,7 @@ public class HostCPU extends AbstractDevice
                     (start, end) ->
                             Kernel.activate(
                                     tsrs[0], start, end,
-                                    type.getScalarization().getCreator().create(tsrs, scalar, d)
+                                    type.get(Type.Scalarization.class).getCreator().create(tsrs, scalar, d)
                             )
             );
         }

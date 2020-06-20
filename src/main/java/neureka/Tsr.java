@@ -1054,7 +1054,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
             Device device = this.find(Device.class);
             if (device!=null) device.get(this);
             _value = DataHelper.doubleToFloat((double[])_value);
-            forComponent(Tsr.class, g -> g.to32());
+            forComponent(Tsr.class, Tsr::to32);
             if (device!=null) device.add(this);
         }
         return this;
@@ -1065,7 +1065,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
             Device device = this.find(Device.class);
             if (device!=null) device.get(this);
             _value = DataHelper.floatToDouble((float[])_value);
-            forComponent(Tsr.class, g -> g.to64());
+            forComponent(Tsr.class, Tsr::to64);
             if (device!=null) device.add(this);
         }
         return this;
