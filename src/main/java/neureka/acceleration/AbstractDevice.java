@@ -4,7 +4,7 @@ import neureka.Component;
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.Type;
+import neureka.calculus.environment.subtypes.Activation;
 
 import java.lang.ref.Cleaner;
 import java.util.function.Consumer;
@@ -33,28 +33,23 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
     }
 
     @Override
-    public Device execute(Tsr[] tsrs, OperationType type, int d) {
-        _execute(tsrs, type, d);
-        return this;
-    }
-
-    protected void _execute(Tsr[] tsrs, OperationType type, int d)
+    public Device execute(Tsr[] tsrs, OperationType type, int d)
     {
-        if(type.identifier().equals("<"))
+        if ( type.identifier().equals("<") )
         {
-            int offset = (tsrs[0] == null) ? 1 : 0;
-            _execute_recursively(new Tsr[]{tsrs[offset], tsrs[1+offset]}, OperationType.instance("idy"), -1);
+            int offset = ( tsrs[0] == null ) ? 1 : 0;
+            _execute_recursively( new Tsr[]{tsrs[offset], tsrs[1+offset]}, OperationType.instance("idy"), -1 );
         }
-        else if(type.identifier().equals(">"))
+        else if ( type.identifier().equals(">") )
         {
-            int offset = (tsrs[0] == null) ? 1 : 0;
-            _execute_recursively(new Tsr[]{tsrs[1+offset], tsrs[offset]}, OperationType.instance("idy"), -1);
+            int offset = ( tsrs[0] == null ) ? 1 : 0;
+            _execute_recursively( new Tsr[]{tsrs[1+offset], tsrs[offset]}, OperationType.instance("idy"), -1 );
         }
         else
         {
             _createNewDrainTensorIn(this, tsrs, type);
             if (
-                    d<0 && tsrs.length == 3 &&
+                    tsrs.length == 3 && d<0 && // TODO: refactor so that 'd<0 && '
                             (
                                     tsrs[1].isVirtual() || tsrs[2].isVirtual() ||
                                     (
@@ -66,18 +61,17 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
             ) {
                 if (tsrs[2].isVirtual() || tsrs[2].size() == 1) {
                     _execute_recursively(new Tsr[]{tsrs[0], tsrs[1]}, OperationType.instance("idy"), -1);
-                    _execute_tensor_scalar(tsrs[0], tsrs[2].value64()[0], type, d);
+                    _enqueue(tsrs[0], tsrs[2].value64()[0], d, type);
                 } else {
                     _execute_recursively(new Tsr[]{tsrs[0], tsrs[2]}, OperationType.instance("idy"), -1);
-                    _execute_tensor_scalar(tsrs[0], tsrs[1].value64()[0], type, d);
+                    _enqueue(tsrs[0], tsrs[1].value64()[0], d, type);
                 }
-            } else {
-                _execute_recursively(tsrs, type, d);
-            }
+            } else _execute_recursively(tsrs, type, d);
         }
+        return this;
     }
 
-    private Tsr _execute_recursively(Tsr[] tsrs, OperationType type, int d)
+    private Tsr _execute_recursively( Tsr[] tsrs, OperationType type, int d )
     {
         Consumer<Tsr>[] rollbacks = new Consumer[tsrs.length];
         for (int i=0; i<tsrs.length; i++) {
@@ -88,35 +82,39 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
                 rollbacks[i] = t->{};
             }
         }
-        if (tsrs.length>3) {
-            if (d < 0) {
+        if ( tsrs.length > 3 )
+        {
+            if ( d < 0 ) {
                 _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], tsrs[2]}, type, d);
                 Tsr[] newTsrs = Utility._offsetted(tsrs, 1);
                 newTsrs[0] =  _execute_recursively(newTsrs, type, d);//This recursion should work!
                 tsrs[0] = newTsrs[0];
             } else {
                 Tsr[] newTsrs;
-                switch( type.identifier() ) {
+                switch ( type.identifier() )
+                {
                     case "+":
                     case "sum":
                         tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue(1.0f);
                         break;
+
                     case "-": tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue((d==0)?1.0f:-1.0f);
                         break;
+
                     case "^":
                         newTsrs = Utility._subset(tsrs, 1,  2, tsrs.length-2);
-                        if ( d>0 ) {
+                        if ( d==0 ) {
+                            newTsrs = Utility._subset(tsrs, 1,  2, tsrs.length-2);
+                            newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);
+                            Tsr exp = _execute_recursively(newTsrs, OperationType.instance("*"), -1);
+                            tsrs[0] = _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], exp}, type, 0);
+                            exp.delete();
+                        } else {
                             newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);
                             Tsr inner = _execute_recursively(newTsrs, OperationType.instance("*"), d-1);
                             Tsr exp = _execute_recursively(new Tsr[]{Tsr.Create.newTsrLike(tsrs[1]), inner, tsrs[d]}, OperationType.instance("*"), -1);
                             tsrs[0] =  _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], exp}, type, 1);
                             inner.delete();
-                            exp.delete();
-                        } else {
-                            newTsrs = Utility._subset(tsrs, 1,  2, tsrs.length-2);
-                            newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);
-                            Tsr exp = _execute_recursively(newTsrs, OperationType.instance("*"), -1);
-                            tsrs[0] = _execute_recursively(new Tsr[]{tsrs[0], tsrs[1], exp}, type, 0);
                             exp.delete();
                         }
                         break;
@@ -130,13 +128,14 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
                             tsrs[0] = newTsrs[1];
                         }
                         break;
+
                     case "/":
                         Tsr a;
-                        if(d>1){
+                        if ( d > 1 ) {
                             newTsrs = Utility._subset(tsrs, 1, 1, d+1);
                             newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);
                             a = _execute_recursively(newTsrs, OperationType.instance("/"), -1);
-                        } else if(d==1) a = tsrs[1];
+                        } else if ( d == 1 ) a = tsrs[1];
                         else a = Tsr.Create.newTsrLike(tsrs[1], 1.0);
                         Tsr b;
                         if ( tsrs.length -  d - 2  > 1 ) {
@@ -149,16 +148,14 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
                         }
                         _execute_recursively(new Tsr[]{tsrs[0], a, b}, OperationType.instance("*"), -1);
                         _execute_recursively(new Tsr[]{tsrs[0], tsrs[0], tsrs[d+1]}, OperationType.instance("/"), 1);
-                        if ( d==0 ) a.delete();
+                        if ( d == 0 ) a.delete();
                         b.delete();
                         break;
-                    default:
-                        throw new IllegalStateException("Operation not found!");
+                    default: throw new IllegalStateException("Operation not found!");
                 }
             }
-        } else {
-            this._enqueue(tsrs, d, type);
-        }
+        } else this._enqueue(tsrs, d, type);
+
         for ( int i = 0; i < tsrs.length; i++ ) {
             if ( tsrs[i] != null && !tsrs[i].isUndefined() ) rollbacks[i].accept(tsrs[i]);
         }
@@ -166,36 +163,9 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
     }
 
 
-
-    protected void _execute_tensor_scalar(Tsr t, double value, OperationType type, int d)
-    {
-        if ( d<0 ) _enqueue(t, value, d, type);
-        else
-        {
-            /* Derivatives implementation: (values cannot be derived) */
-            if(
-                    type.identifier().equals("+")||
-                    type.identifier().equals("-")||
-                    type.identifier().equals("%")
-            ){
-                _execute_tensor_scalar(t, 0, OperationType.instance("*"), -1);
-                _execute_tensor_scalar(t, 1, OperationType.instance("+"), -1);
-            } else if(type.identifier().equals("^")){
-                _execute_tensor_scalar(t, value-1, OperationType.instance("^"), -1);
-                _execute_tensor_scalar(t, value, OperationType.instance("*"), -1);
-            } else if(type.identifier().equals("*")||type.identifier().contains("x")){
-                _execute_tensor_scalar(t, 0, OperationType.instance("*"), -1);//???
-                _execute_tensor_scalar(t, value, OperationType.instance("+"), -1);
-            } else if(type.identifier().equals("/")){
-                _execute_tensor_scalar(t, 0, OperationType.instance("*"), -1);
-                _execute_tensor_scalar(t, 1/value, OperationType.instance("+"), -1);
-            }
-        }
-    }
-
     private static void _createNewDrainTensorIn(Device device, Tsr[] tsrs, OperationType type)
     {
-        if(tsrs[0]==null)// Creating a new tensor:
+        if ( tsrs[0] == null )// Creating a new tensor:
         {
             int[] shp = (type.identifier().endsWith("x"))
                     ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
@@ -221,14 +191,14 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
         }
         public static Tsr[] _without(Tsr[] tsrs, int index){
             Tsr[] newTsrs = new Tsr[tsrs.length-1];
-            for (int i=0; i<newTsrs.length; i++) newTsrs[i] = tsrs[i+((i<index)?0:1)];
+            for ( int i = 0; i < newTsrs.length; i++ ) newTsrs[i] = tsrs[i+( ( i < index )? 0 : 1 )];
             return newTsrs;
         }
 
         public static Tsr[] _offsetted(Tsr[] tsrs, int offset){
             Tsr[] newTsrs = new Tsr[tsrs.length-offset];
             newTsrs[0] = Tsr.Create.newTsrLike(tsrs[1]);
-            if (!tsrs[1].has(GraphNode.class) && tsrs[1]!=tsrs[0]) {//Deleting intermediate results!
+            if ( !tsrs[1].has(GraphNode.class ) && tsrs[1] != tsrs[0] ) {//Deleting intermediate results!
                 tsrs[1].delete();
                 tsrs[1] = null;
             }

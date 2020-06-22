@@ -493,30 +493,27 @@ class ThoroughGroovyTests
                [1, 1, 1]]
          */
 
-        // iterate 1500 times
-        for( i in 0..1500){
+        // iterate 500 times
+        for( i in 0..500){
             feedforward(weights1, weights2, input, output, layer1)
             backprop(weights1, weights2, input, output, layer1, y)
         }
-        //println('Input:'+ X)
-        //println('Expected output:'+ y)
-        //println('Predicted output:'+ output)
 
-        assert output.value64()[0]>=0.0&&output.value64()[0]<=1.0
-        assert output.value64()[1]>=0.0&&output.value64()[1]<=1.0
-        assert output.value64()[2]>=0.0&&output.value64()[2]<=1.0
+        assert output.value64()[0] >= 0.0 && output.value64()[0] <= 1.0
+        assert output.value64()[1] >= 0.0 && output.value64()[1] <= 1.0
+        assert output.value64()[2] >= 0.0 && output.value64()[2] <= 1.0
 
-        assert output.value64()[0]>=0.0&&output.value64()[0]<=0.1
-        assert output.value64()[1]>=0.95&&output.value64()[1]<=1.0
-        assert output.value64()[2]>=0.95&&output.value64()[2]<=1.0
-        assert output.value64()[3]>=0.95&&output.value64()[3]<=1.0
-        assert output.value64()[4]>=0.0&&output.value64()[4]<=0.1
+        assert output.value64()[0] >= 0.0 &&output.value64()[0] <= 0.1
+        assert output.value64()[1] >= 0.95 &&output.value64()[1] <= 1.0
+        assert output.value64()[2] >= 0.95 &&output.value64()[2] <= 1.0
+        assert output.value64()[3] >= 0.95 &&output.value64()[3] <= 1.0
+        assert output.value64()[4] >= 0.0 &&output.value64()[4] <= 0.1
 
-        assert output.value64()[0]>=0.0&&output.value64()[0]<=0.0022
-        assert output.value64()[1]>=0.98&&output.value64()[1]<=1.0
-        assert output.value64()[2]>=0.98&&output.value64()[2]<=1.0
-        assert output.value64()[3]>=0.98&&output.value64()[3]<=1.0
-        assert output.value64()[4]>=0.0&&output.value64()[4]<=0.026
+        assert output.value64()[0] >= 0.0 && output.value64()[0] <= 0.0055
+        assert output.value64()[1] >= 0.95 && output.value64()[1] <= 1.0
+        assert output.value64()[2] >= 0.95 && output.value64()[2]<= 1.0
+        assert output.value64()[3] >= 0.95 && output.value64()[3] <= 1.0
+        assert output.value64()[4] >= 0.05 && output.value64()[4] <= 0.06
 
     }
 

@@ -196,7 +196,7 @@ public class OpenCLDevice extends AbstractDevice
 
 <span class="fc" id="L197">        tensor.add(newClt);</span>
 <span class="fc" id="L198">        tensor.add(this);</span>
-<span class="fc bfc" id="L199" title="All 2 branches covered.">        if (tensor.isVirtual()) _execute_tensor_scalar(tensor, tensor.value64(0), OperationType.instance(&quot;&lt;&quot;), -1);</span>
+<span class="fc bfc" id="L199" title="All 2 branches covered.">        if (tensor.isVirtual()) _enqueue(tensor, tensor.value64(0), -1, OperationType.instance(&quot;&lt;&quot;));</span>
 <span class="fc" id="L200">        tensor.setIsOutsourced(true);</span>
 <span class="fc" id="L201">        tensor.setIsVirtual(false);</span>
 <span class="fc" id="L202">    }</span>

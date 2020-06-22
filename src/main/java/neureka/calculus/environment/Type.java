@@ -18,18 +18,26 @@ public interface Type
         DefaultOperator create(Tsr[] inputs, double scalar, int d);
     }
 
-    
     //==================================================================================================================
 
-    <T> T get(Class<T> type);
-    <T> boolean supports(Class<T> type);
-    <T> Type set(Class<T> type, T instance);
+    interface OperationPreprocessor
+    {
+
+    }
 
     //==================================================================================================================
 
     String getName();
 
-    //-----------------
+    //==================================================================================================================
+
+    <T> T get( Class<T> type );
+    <T> boolean supports( Class<T> type );
+    <T> Type set( Class<T> type, T instance );
+
+
+
+    //==================================================================================================================
 
     int id();
     

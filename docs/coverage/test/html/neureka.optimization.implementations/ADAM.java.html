@@ -26,7 +26,7 @@ public class ADAM implements Optimizer {
 <span class="fc" id="L26">    }</span>
 
     private void _optimize(Tsr w){
-<span class="fc" id="L29">        Tsr g = (Tsr)w.find(Tsr.class);</span>
+<span class="fc" id="L29">        Tsr g = w.find(Tsr.class);</span>
 <span class="fc" id="L30">        m = new Tsr(b1, &quot;*&quot;, m, &quot; + ( 1-&quot;, b1, &quot;) *&quot;, g);</span>
 <span class="fc" id="L31">        v = new Tsr(b2, &quot;*&quot;, v, &quot; + ( 1-&quot;, b2, &quot;) * (&quot;, g,&quot;^2 )&quot;);</span>
 <span class="fc" id="L32">        Tsr mh = new Tsr(m, &quot;/(1-&quot;, b1, &quot;)&quot;);</span>

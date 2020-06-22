@@ -5,7 +5,6 @@ import neureka.acceleration.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.Type;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 import neureka.calculus.factory.components.FunctionConstant;
@@ -121,9 +120,7 @@ public abstract class AbstractFunction extends BaseFunction {
 
     @Override
     public boolean dependsOn(int index) {
-        for (Function f : _src) {
-            if (f.dependsOn(index)) return true;
-        }
+        for (Function f : _src) if (f.dependsOn(index)) return true;
         return false;
     }
 
@@ -319,7 +316,7 @@ public abstract class AbstractFunction extends BaseFunction {
     }
 
     private Device _device(Tsr[] inputs) {
-        Device device = (Device) inputs[0].find(Device.class);
+        Device device = inputs[0].find(Device.class);
         boolean onSameDevice = _shareGuestDevice(inputs);
         boolean doAccel = (!_type.identifier().equals(",") && onSameDevice);
         return (doAccel && device != null) ? device : inputs[0].device();
@@ -329,7 +326,7 @@ public abstract class AbstractFunction extends BaseFunction {
         boolean onSameGuestDevice = true;
         Device device = null;
         for (Tsr tsr : tsrs) {
-            device = (tsr.isOutsourced()) ? (Device) tsr.find(Device.class) : device;
+            device = (tsr.isOutsourced()) ? tsr.find(Device.class) : device;
         }
         if (device != null) {
             for (Tsr tsr : tsrs) {
@@ -840,8 +837,8 @@ public abstract class AbstractFunction extends BaseFunction {
                 return result;
             } else {
                 double derivative = 0;
-                for (int i = 0; i < src.size(); ++i) {
-                    derivative += src.get(i).derive(inputs, d);
+                for (Function function : src) {
+                    derivative += function.derive(inputs, d);
                 }
                 return derivative;
             }
