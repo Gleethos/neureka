@@ -22,29 +22,29 @@ public class DeviceQuery
     {
         String result = "[DEVICE QUERY]:\n========================================================\n";
         // Obtain the number of platforms
-        int numPlatforms[] = new int[1];
+        int[] numPlatforms = new int[1];
         clGetPlatformIDs(0, null, numPlatforms);
 
         result+=("Number of platforms: "+numPlatforms[0]+"\n");
 
         // Obtain the platform IDs
-        cl_platform_id platforms[] = new cl_platform_id[numPlatforms[0]];
+        cl_platform_id[] platforms = new cl_platform_id[numPlatforms[0]];
         clGetPlatformIDs(platforms.length, platforms, null);
 
         // Collect all devices of all platforms
         List<cl_device_id> devices = new ArrayList<cl_device_id>();
-        for (int i=0; i<platforms.length; i++)
+        for (cl_platform_id platform : platforms)
         {
-            String platformName = getString(platforms[i], CL_PLATFORM_NAME);
+            String platformName = getString(platform, CL_PLATFORM_NAME);
 
             // Obtain the number of devices for the current platform
-            int numDevices[] = new int[1];
-            clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, 0, null, numDevices);
+            int[] numDevices = new int[1];
+            clGetDeviceIDs(platform, CL_DEVICE_TYPE_ALL, 0, null, numDevices);
 
-            result+=("Number of devices in platform "+platformName+": "+numDevices[0]+"\n");
+            result += ("Number of devices in platform " + platformName + ": " + numDevices[0] + "\n");
 
-            cl_device_id devicesArray[] = new cl_device_id[numDevices[0]];
-            clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, numDevices[0], devicesArray, null);
+            cl_device_id[] devicesArray = new cl_device_id[numDevices[0]];
+            clGetDeviceIDs(platform, CL_DEVICE_TYPE_ALL, numDevices[0], devicesArray, null);
 
             devices.addAll(Arrays.asList(devicesArray));
         }
@@ -82,7 +82,7 @@ public class DeviceQuery
             result += ("CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS: "+ maxWorkItemDimensions+"\n");
 
             // CL_DEVICE_MAX_WORK_ITEM_SIZES
-            long maxWorkItemSizes[] = getSizes(device, CL_DEVICE_MAX_WORK_ITEM_SIZES, 3);
+            long[] maxWorkItemSizes = getSizes(device, CL_DEVICE_MAX_WORK_ITEM_SIZES, 3);
             result += ("CL_DEVICE_MAX_WORK_ITEM_SIZES: "+maxWorkItemSizes[0]+", "+ maxWorkItemSizes[1]+", "+maxWorkItemSizes[2]+"\n");
 
             // CL_DEVICE_MAX_WORK_GROUP_SIZE
@@ -200,7 +200,7 @@ public class DeviceQuery
      * @param device The device
      * @param paramName The parameter name
      * @param numValues The number of values
-     * @return The value64
+     * @return The value
      */
     private static int[] getInts(cl_device_id device, int paramName, int numValues)
     {
@@ -214,7 +214,7 @@ public class DeviceQuery
      *
      * @param device The device
      * @param paramName The parameter name
-     * @return The value64
+     * @return The value
      */
     private static long getLong(cl_device_id device, int paramName)
     {
@@ -227,7 +227,7 @@ public class DeviceQuery
      * @param device The device
      * @param paramName The parameter name
      * @param numValues The number of values
-     * @return The value64
+     * @return The value
      */
     private static long[] getLongs(cl_device_id device, int paramName, int numValues)
     {
@@ -241,7 +241,7 @@ public class DeviceQuery
      *
      * @param device The device
      * @param paramName The parameter name
-     * @return The value64
+     * @return The value
      */
     private static String getString(cl_device_id device, int paramName)
     {
@@ -258,11 +258,11 @@ public class DeviceQuery
     }
 
     /**
-     * Returns the value64 of the platform info parameter with the given name
+     * Returns the value of the platform info parameter with the given name
      *
      * @param platform The platform
      * @param paramName The parameter name
-     * @return The value64
+     * @return The value
      */
     private static String getString(cl_platform_id platform, int paramName)
     {
@@ -279,11 +279,11 @@ public class DeviceQuery
     }
 
     /**
-     * Returns the value64 of the device info parameter with the given name
+     * Returns the value of the device info parameter with the given name
      *
      * @param device The device
      * @param paramName The parameter name
-     * @return The value64
+     * @return The value
      */
     private static long getSize(cl_device_id device, int paramName)
     {
@@ -296,7 +296,7 @@ public class DeviceQuery
      * @param device The device
      * @param paramName The parameter name
      * @param numValues The number of values
-     * @return The value64
+     * @return The value
      */
     static long[] getSizes(cl_device_id device, int paramName, int numValues)
     {

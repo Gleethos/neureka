@@ -22,7 +22,7 @@ neureka.Neureka -> neureka.Neureka:
     27:29:void <clinit>() -> <clinit>
 neureka.Neureka$Settings -> neureka.Neureka$Settings:
     neureka.Neureka$Settings$Debug _debug -> b
-    neureka.Neureka$Settings$AutoDiff _autoDiff -> c
+    neureka.Neureka$Settings$AutoGrad _autoDiff -> c
     neureka.Neureka$Settings$Indexing _indexing -> d
     neureka.Neureka$Settings$View _view -> e
     neureka.Neureka$Settings$NDim _ndim -> f
@@ -31,8 +31,8 @@ neureka.Neureka$Settings -> neureka.Neureka$Settings:
     113:121:void <init>(neureka.Neureka) -> <init>
     124:124:neureka.Neureka$Settings$Debug debug() -> debug
     128:129:neureka.Neureka$Settings$Debug debug(java.lang.Object) -> debug
-    133:133:neureka.Neureka$Settings$AutoDiff autoDiff() -> autoDiff
-    137:138:neureka.Neureka$Settings$AutoDiff autoDiff(java.lang.Object) -> autoDiff
+    133:133:neureka.Neureka$Settings$AutoGrad autoDiff() -> autoDiff
+    137:138:neureka.Neureka$Settings$AutoGrad autoDiff(java.lang.Object) -> autoDiff
     142:142:neureka.Neureka$Settings$Indexing indexing() -> indexing
     146:147:neureka.Neureka$Settings$Indexing indexing(java.lang.Object) -> indexing
     151:151:neureka.Neureka$Settings$View view() -> view
@@ -41,7 +41,7 @@ neureka.Neureka$Settings -> neureka.Neureka$Settings:
     164:165:neureka.Neureka$Settings$NDim ndim(java.lang.Object) -> ndim
     169:169:boolean isLocked() -> isLocked
     173:174:void setIsLocked(boolean) -> setIsLocked
-neureka.Neureka$Settings$AutoDiff -> neureka.Neureka$Settings$AutoDiff:
+neureka.Neureka$Settings$AutoGrad -> neureka.Neureka$Settings$AutoGrad:
     boolean _isRetainingPendingErrorForJITProp -> a
     boolean _isApplyingGradientWhenTensorIsUsed -> b
     boolean _isApplyingGradientWhenRequested -> c

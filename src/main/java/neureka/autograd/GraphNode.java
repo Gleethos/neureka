@@ -291,7 +291,7 @@ public class GraphNode implements Component<Tsr>
         } else if (context instanceof Tsr[]) {
             Tsr[] inputs = (Tsr[]) context;
             /* Applying JITProp and gradients */
-            Neureka.Settings.AutoDiff adSetting = Neureka.instance().settings().autoDiff();
+            Neureka.Settings.AutoGrad adSetting = Neureka.instance().settings().autograd();
             if (adSetting.isApplyingGradientWhenTensorIsUsed()) {
                 for (Tsr t : inputs){
                     if(!adSetting.isApplyingGradientWhenRequested() || t.gradientApplyRqd()) {
@@ -437,7 +437,7 @@ public class GraphNode implements Component<Tsr>
     public void backward(Tsr error) {
         Set<GraphNode> pendingNodes = new HashSet<>();
         _backward(error, pendingNodes, false);// Entry-point to private recursive back-propagation!
-        if (Neureka.instance().settings().autoDiff().isRetainingPendingErrorForJITProp()) {
+        if (Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp()) {
             pendingNodes.forEach( n -> n._carryPendingBackPropToGradients(pendingNodes));
         } else {
             pendingNodes.forEach( n -> {

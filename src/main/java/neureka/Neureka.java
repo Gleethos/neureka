@@ -18,10 +18,10 @@ public class Neureka
     private static String _setup_source;
     private static String _version;
 
-    private static boolean _groovyAvailable;
+    private static final boolean _groovyAvailable;
 
-    private Settings _settings;
-    private Utility _utility;
+    private final Settings _settings;
+    private final Utility _utility;
 
     static {
         _instances = new ConcurrentHashMap<>();
@@ -88,9 +88,9 @@ public class Neureka
                 e.printStackTrace();
             }
         } else {
-            settings().autoDiff().setIsRetainingPendingErrorForJITProp(true);
-            settings().autoDiff().setIsApplyingGradientWhenTensorIsUsed(true);
-            settings().autoDiff().setIsApplyingGradientWhenRequested(true);
+            settings().autograd().setIsRetainingPendingErrorForJITProp(true);
+            settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true);
+            settings().autograd().setIsApplyingGradientWhenRequested(true);
             settings().indexing().setIsUsingLegacyIndexing(false);
             settings().indexing().setIsUsingThoroughIndexing(true);
             settings().debug().setIsKeepingDerivativeTargetPayloads(false);
@@ -104,17 +104,17 @@ public class Neureka
 
     public class Settings
     {
-        private Debug _debug;
-        private AutoDiff _autoDiff;
-        private Indexing _indexing;
-        private View _view;
-        private NDim _ndim;
+        private final Debug _debug;
+        private final AutoGrad _autograd;
+        private final Indexing _indexing;
+        private final View _view;
+        private final NDim _ndim;
 
         private boolean _isLocked = false;
 
         private Settings() {
             _debug = new Debug();
-            _autoDiff = new AutoDiff();
+            _autograd = new AutoGrad();
             _indexing = new Indexing();
             _view = new View();
             _ndim = new NDim();
@@ -129,13 +129,13 @@ public class Neureka
             return _debug;
         }
 
-        public AutoDiff autoDiff(){
-            return _autoDiff;
+        public AutoGrad autograd(){
+            return _autograd;
         }
 
-        public AutoDiff autoDiff(Object closure) {
-            Utility.tryGroovyClosureOn(closure, _autoDiff);
-            return _autoDiff;
+        public AutoGrad autograd(Object closure) {
+            Utility.tryGroovyClosureOn(closure, _autograd);
+            return _autograd;
         }
 
         public Indexing indexing(){
@@ -203,7 +203,7 @@ public class Neureka
 
         }
 
-        public class AutoDiff // Auto-Differentiation
+        public class AutoGrad // Auto-Grad/Differentiation
         {
             /**
              * This flag enables an optimization technique which only applies
@@ -228,7 +228,7 @@ public class Neureka
              * Usually this happens immediately, however
              * if the flag 'applyGradientWhenTensorIsUsed' is set
              * to true, then the tensor will only be updated by its
-             * gradient if requested AND tensor is used! (GraphNode instantiation).
+             * gradient if requested AND the tensor is used fo calculation! (GraphNode instantiation).
              */
             private boolean _isApplyingGradientWhenRequested = true;
 
