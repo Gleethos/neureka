@@ -1,6 +1,7 @@
 package neureka.calculus.environment.implementations.indexer;
 
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.subtypes.*;
 
 public class Summation extends OperationType {
 

@@ -1,45 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Modulo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.environment.implementations.operator</a> &gt; <span class="el_source">Modulo.java</span></div><h1>Modulo.java</h1><pre class="source lang-java linenums">package neureka.calculus.environment.implementations.operator;
 
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.subtypes.*;
 
 public class Modulo extends OperationType {
 
     public Modulo(){
 
-<span class="fc" id="L9">        super(</span>
+<span class="fc" id="L10">        super(</span>
                 &quot;modulo&quot;, &quot;%&quot;, -1, true, false, false, false, false
         );
-<span class="fc" id="L12">        set(</span>
+<span class="fc" id="L13">        set(</span>
                 Broadcast.class,
                 new Broadcast(
                         &quot;&quot;,
                         &quot;&quot;,
                         (inputs, d) -&gt; {
-<span class="fc" id="L18">                            double[] t1_val = inputs[1].value64();</span>
-<span class="fc" id="L19">                            double[] t2_val = inputs[2].value64();</span>
-<span class="fc bfc" id="L20" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L21">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] % t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="fc" id="L19">                            double[] t1_val = inputs[1].value64();</span>
+<span class="fc" id="L20">                            double[] t2_val = inputs[2].value64();</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L22">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] % t2_val[inputs[2].i_of_idx(t2Idx)];</span>
                             } else {
-<span class="fc" id="L23">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc bfc" id="L24" title="All 2 branches covered.">                                    if (d == 0) {</span>
-<span class="fc" id="L25">                                        return 1 / t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="fc" id="L24">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">                                    if (d == 0) {</span>
+<span class="fc" id="L26">                                        return 1 / t2_val[inputs[2].i_of_idx(t2Idx)];</span>
                                     } else {
-<span class="fc" id="L27">                                        return</span>
-<span class="fc" id="L28">                                                -(t1_val[inputs[1].i_of_idx(t1Idx)]</span>
+<span class="fc" id="L28">                                        return</span>
+<span class="fc" id="L29">                                                -(t1_val[inputs[1].i_of_idx(t1Idx)]</span>
                                                         /
-<span class="fc" id="L30">                                                        Math.pow(t2_val[inputs[2].i_of_idx(t2Idx)], 2));</span>
+<span class="fc" id="L31">                                                        Math.pow(t2_val[inputs[2].i_of_idx(t2Idx)], 2));</span>
                                     }
                                 };
                             }
                         })
         );
-<span class="fc" id="L36">        new OperationType(</span>
+<span class="fc" id="L37">        new OperationType(</span>
                 &quot;&quot;, ((char) 171) + &quot;%&quot;, 3, true, false, false, false, false
         );
-<span class="fc" id="L39">        new OperationType(</span>
+<span class="fc" id="L40">        new OperationType(</span>
                 &quot;&quot;, &quot;%&quot; + ((char) 187), 3, true, false, false, false, false
         );
-<span class="fc" id="L42">    }</span>
+<span class="fc" id="L43">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

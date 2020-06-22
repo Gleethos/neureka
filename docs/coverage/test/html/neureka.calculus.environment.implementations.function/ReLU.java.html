@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReLU.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.environment.implementations.function</a> &gt; <span class="el_source">ReLU.java</span></div><h1>ReLU.java</h1><pre class="source lang-java linenums">package neureka.calculus.environment.implementations.function;
 
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.subtypes.*;
 
 public class ReLU extends OperationType {
 
     public ReLU(){
-<span class="fc" id="L8">        super(</span>
+<span class="fc" id="L9">        super(</span>
                 &quot;relu&quot;,
                 &quot;relu&quot;,
                 1,
@@ -15,28 +16,28 @@ public class ReLU extends OperationType {
                 true,
                 true
         );
-<span class="fc" id="L18">        set(Activation.class,</span>
+<span class="fc" id="L19">        set(Activation.class,</span>
                 new Activation(
                         &quot;if (input &gt;= 0) {  output = input; } else { output = input * (float)0.01; }\n&quot;,
                         &quot;if (input &gt;= 0) { output = (float)1; } else { output = (float)0.01; }\n&quot;,
                         (inputs, d) -&gt; {
-<span class="fc" id="L23">                            double[] t1_val = inputs[1].value64();</span>
-<span class="fc bfc" id="L24" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L25">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc bfc" id="L26" title="All 2 branches covered.">                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="fc" id="L27">                                    else return t1_val[inputs[1].i_of_idx(t1Idx)]*0.01;</span>
+<span class="fc" id="L24">                            double[] t1_val = inputs[1].value64();</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L26">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="fc" id="L28">                                    else return t1_val[inputs[1].i_of_idx(t1Idx)]*0.01;</span>
                                 };
                             } else {
-<span class="fc" id="L30">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc bfc" id="L31" title="All 2 branches covered.">                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return 1;</span>
-<span class="fc" id="L32">                                    else return 0.01;</span>
+<span class="fc" id="L31">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return 1;</span>
+<span class="fc" id="L33">                                    else return 0.01;</span>
                                 };
                             }
                         })
         );
 
 
-<span class="fc" id="L39">    }</span>
+<span class="fc" id="L40">    }</span>
 
 
 }

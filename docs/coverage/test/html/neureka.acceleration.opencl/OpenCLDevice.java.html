@@ -10,7 +10,7 @@ import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.Type;
+import neureka.calculus.environment.subtypes.*;
 import neureka.utility.DataHelper;
 import org.jocl.*;
 
@@ -430,7 +430,7 @@ public class OpenCLDevice extends AbstractDevice
 
 <span class="fc" id="L431">        cl_mem drn = tsrs[offset].find(cl_tsr.class).value.data;</span>
 <span class="fc" id="L432">        cl_mem src1 = tsrs[offset + 1].find(cl_tsr.class).value.data;</span>
-<span class="pc bpc" id="L433" title="1 of 4 branches missed.">        if (type.supports(Type.Activation.class) &amp;&amp; !type.isIndexer()) {</span>
+<span class="pc bpc" id="L433" title="1 of 4 branches missed.">        if (type.supports(Activation.class) &amp;&amp; !type.isIndexer()) {</span>
 <span class="fc" id="L434">            clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=&gt; drain</span>
 <span class="fc" id="L435">            clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(tsrs[offset].find(cl_tsr.class).config.data));</span>
 <span class="fc" id="L436">            clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=&gt;src1</span>

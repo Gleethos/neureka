@@ -1,69 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Multiplication.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.environment.implementations.operator</a> &gt; <span class="el_source">Multiplication.java</span></div><h1>Multiplication.java</h1><pre class="source lang-java linenums">package neureka.calculus.environment.implementations.operator;
 
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.subtypes.*;
 
 public class Multiplication extends OperationType {
 
 
-<span class="fc" id="L8">    private static final OperatorCreator _creator =</span>
+<span class="fc" id="L9">    private static final OperatorCreator _creator =</span>
             (inputs, d) -&gt; {
-<span class="fc" id="L10">                double[] t1_val = inputs[1].value64();</span>
-<span class="fc" id="L11">                double[] t2_val = inputs[2].value64();</span>
-<span class="fc bfc" id="L12" title="All 2 branches covered.">                if (d &lt; 0) {</span>
-<span class="fc" id="L13">                    return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="fc" id="L11">                double[] t1_val = inputs[1].value64();</span>
+<span class="fc" id="L12">                double[] t2_val = inputs[2].value64();</span>
+<span class="fc bfc" id="L13" title="All 2 branches covered.">                if (d &lt; 0) {</span>
+<span class="fc" id="L14">                    return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];</span>
                 } else {
-<span class="fc" id="L15">                    return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc bfc" id="L16" title="All 2 branches covered.">                        if (d == 0) return t2_val[inputs[2].i_of_idx(t2Idx)];</span>
-<span class="fc" id="L17">                        else return t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="fc" id="L16">                    return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc bfc" id="L17" title="All 2 branches covered.">                        if (d == 0) return t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="fc" id="L18">                        else return t1_val[inputs[1].i_of_idx(t1Idx)];</span>
                     };
                 }
             };
 
     public Multiplication()
     {
-<span class="fc" id="L24">        super(</span>
+<span class="fc" id="L25">        super(</span>
                 &quot;multiply&quot;, &quot;*&quot;, -1, true, false, false, true, false
         );
-<span class="fc" id="L27">        set(Scalarization.class,new Scalarization(</span>
+<span class="fc" id="L28">        set(Scalarization.class,new Scalarization(</span>
                 &quot;output = input1 * value;\n&quot;,
                 &quot;if(d==0){output = value;}else{output = input1;}\n&quot;,
                 (inputs, value, d) -&gt; {
-<span class="fc" id="L31">                    double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L32" title="1 of 2 branches missed.">                    if (d &lt; 0) {</span>
-<span class="fc" id="L33">                        return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * value;</span>
+<span class="fc" id="L32">                    double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">                    if (d &lt; 0) {</span>
+<span class="fc" id="L34">                        return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * value;</span>
                     } else {
-<span class="nc bnc" id="L35" title="All 2 branches missed.">                        if (d == 0) return (t0Idx, t1Idx, t2Idx) -&gt; value;</span>
-<span class="nc" id="L36">                        else return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">                        if (d == 0) return (t0Idx, t1Idx, t2Idx) -&gt; value;</span>
+<span class="nc" id="L37">                        else return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
                     }
                 })
-<span class="fc" id="L39">        ).set(Broadcast.class,</span>
+<span class="fc" id="L40">        ).set(Broadcast.class,</span>
                 new Broadcast(
                         &quot;value = src1 * src2;\n&quot;,
                         &quot;value += handle * drain;\n&quot;,
                         _creator
                 )
-<span class="fc" id="L45">        ).set(Operation.class,</span>
+<span class="fc" id="L46">        ).set(Operation.class,</span>
                 new Operation(
                 &quot;output = input1 * input2;\n&quot;,
                 &quot;if(d==0){output = input2;}else{output = input1;}\n&quot;,
                 _creator
         ));
-<span class="fc" id="L51">        OperatorCreator creator =</span>
+<span class="fc" id="L52">        OperatorCreator creator =</span>
                 (inputs, d) -&gt; {
-<span class="fc" id="L53">                    double[] t1_val = inputs[1].value64();</span>
-<span class="fc" id="L54">                    double[] t2_val = inputs[2].value64();</span>
-<span class="fc" id="L55">                    return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="fc" id="L54">                    double[] t1_val = inputs[1].value64();</span>
+<span class="fc" id="L55">                    double[] t2_val = inputs[2].value64();</span>
+<span class="fc" id="L56">                    return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];</span>
                 };
-<span class="fc" id="L57">        new OperationType(</span>
+<span class="fc" id="L58">        new OperationType(</span>
                 &quot;&quot;, ((char) 171) + &quot;*&quot;, 3, true, false, false, false, false
-<span class="fc" id="L59">        ).set(Broadcast.class, new Broadcast(</span>
+<span class="fc" id="L60">        ).set(Broadcast.class, new Broadcast(</span>
                 &quot;value = src1 * src2;\n&quot;,
                 &quot;value += handle * drain;\n&quot;,
                 creator
         ));
-<span class="fc" id="L64">        new OperationType(</span>
+<span class="fc" id="L65">        new OperationType(</span>
                 &quot;&quot;, &quot;*&quot; + ((char) 187), 3, true, false, false, false, false
-<span class="fc" id="L66">        ).set(Broadcast.class, new Broadcast(</span>
+<span class="fc" id="L67">        ).set(Broadcast.class, new Broadcast(</span>
                 &quot;value = src1 * src2;\n&quot;,
                 &quot;value += handle * drain;\n&quot;,
                 creator
@@ -71,37 +72,37 @@ public class Multiplication extends OperationType {
 
         // Convolution:
 
-<span class="fc" id="L74">        Convolution convolution =</span>
+<span class="fc" id="L75">        Convolution convolution =</span>
                 new Convolution(
                         &quot;value = src1 * src2;\n&quot;,
                         &quot;value += handle * drain;\n&quot;,
                         (inputs, d) -&gt; {
-<span class="fc" id="L79">                            double[] t1_val = inputs[1].value64();</span>
-<span class="fc" id="L80">                            double[] t2_val = inputs[2].value64();</span>
-<span class="pc bpc" id="L81" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L82">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="fc" id="L80">                            double[] t1_val = inputs[1].value64();</span>
+<span class="fc" id="L81">                            double[] t2_val = inputs[2].value64();</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L83">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];</span>
                             } else {
-<span class="nc" id="L84">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc bnc" id="L85" title="All 2 branches missed.">                                    if (d == 0) return t2_val[inputs[2].i_of_idx(t2Idx)];</span>
-<span class="nc" id="L86">                                    else return t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="nc" id="L85">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">                                    if (d == 0) return t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="nc" id="L87">                                    else return t1_val[inputs[1].i_of_idx(t1Idx)];</span>
                                 };
                             }
                         }
                 );
 
-<span class="fc" id="L92">        new OperationType(</span>
+<span class="fc" id="L93">        new OperationType(</span>
                 &quot;multiply&quot;, &quot;x&quot;, 2, true, false, true, false, false
-<span class="fc" id="L94">        ).set(Convolution.class, convolution);</span>
-<span class="fc" id="L95">        new OperationType(</span>
+<span class="fc" id="L95">        ).set(Convolution.class, convolution);</span>
+<span class="fc" id="L96">        new OperationType(</span>
                 &quot;inv_convolve_mul_left&quot;, ((char) 171) + &quot;x&quot;, 3, true, false, true, false, false
-<span class="fc" id="L97">        ).set(Convolution.class, convolution);</span>
-<span class="fc" id="L98">        new OperationType(</span>
+<span class="fc" id="L98">        ).set(Convolution.class, convolution);</span>
+<span class="fc" id="L99">        new OperationType(</span>
                 &quot;inv_convolve_mul_right&quot;, &quot;x&quot; + ((char) 187), 3, true, false, true, false, false
-<span class="fc" id="L100">        ).set(Convolution.class, convolution);</span>
+<span class="fc" id="L101">        ).set(Convolution.class, convolution);</span>
 
 
 
-<span class="fc" id="L104">    }</span>
+<span class="fc" id="L105">    }</span>
 
 
 

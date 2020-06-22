@@ -6,6 +6,7 @@ import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.Type;
+import neureka.calculus.environment.subtypes.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,7 +37,7 @@ public class HostCPU extends AbstractDevice
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, OperationType type) {
         for (Tsr t : tsrs) t.setIsVirtual(false);
-        if (type.supports(Type.Activation.class) && !type.isIndexer()) _executor.activate(tsrs, d, type);
+        if (type.supports(Activation.class) && !type.isIndexer()) _executor.activate(tsrs, d, type);
         else if (type.isOperation() && !type.isConvection()) _executor.broadcast(tsrs, d, type);
         else if (type.isConvection()) {
             if (type.identifier().contains(((char) 187) + "")) {
@@ -56,7 +57,7 @@ public class HostCPU extends AbstractDevice
 
     @Override
     protected void _enqueue(Tsr t, double value, int d, OperationType type) {
-        if (type.supports(Type.Scalarization.class)) _executor.scalar(new Tsr[]{t, t}, value, d, type);
+        if (type.supports(Scalarization.class)) _executor.scalar(new Tsr[]{t, t}, value, d, type);
         else {
             int[] shape = new int[t.rank()];
             Arrays.fill(shape, 1);
@@ -128,7 +129,8 @@ public class HostCPU extends AbstractDevice
         void execute(int start, int end);
     }
 
-    public class NativeExecutor {
+    public class NativeExecutor
+    {
         private final ThreadPoolExecutor _pool =
                 (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
@@ -136,55 +138,60 @@ public class HostCPU extends AbstractDevice
             return _pool;
         }
 
-        public void activate(Tsr[] tsrs, int d, OperationType type) {
+        public void activate(Tsr[] tsrs, int d, OperationType type)
+        {
             _threaded(
                     tsrs[0].size(),
                     (start, end) ->
                             Kernel.activate(
                                     tsrs[0], start, end,
-                                    type.get(Type.Activation.class).getCreator().create(tsrs, d)
+                                    type.get(Activation.class).getCreator().create(tsrs, d)
                             )
             );
         }
 
-        public void broadcast(Tsr[] tsrs, int d, OperationType type) {
+        public void broadcast(Tsr[] tsrs, int d, OperationType type)
+        {
             _threaded(
                     tsrs[0].size(),
                     (start, end) ->
                             Kernel.broadcast(
                                     tsrs[0], tsrs[1], tsrs[2], d,
                                     start, end,
-                                    type.get(Type.Broadcast.class).getCreator().create(tsrs, d)
+                                    type.get(Broadcast.class).getCreator().create(tsrs, d)
                             )
             );
         }
 
-        public void convolve(Tsr[] tsrs, int d, OperationType type) {
+        public void convolve(Tsr[] tsrs, int d, OperationType type)
+        {
             _threaded(
                     tsrs[0].size(),
                     (start, end) ->
                             Kernel.convolve(
                                     tsrs[0], tsrs[1], tsrs[2], d,
                                     start, end,
-                                    type.get(Type.Convolution.class).getCreator().create(tsrs, -1)
+                                    type.get(Convolution.class).getCreator().create(tsrs, -1)
                             )
             );
         }
 
-        public void scalar(Tsr[] tsrs, double scalar, int d, OperationType type) {
+        public void scalar(Tsr[] tsrs, double scalar, int d, OperationType type)
+        {
             _threaded(
                     tsrs[0].size(),
                     (start, end) ->
                             Kernel.activate(
                                     tsrs[0], start, end,
-                                    type.get(Type.Scalarization.class).getCreator().create(tsrs, scalar, d)
+                                    type.get(Scalarization.class).getCreator().create(tsrs, scalar, d)
                             )
             );
         }
 
         //==============================================================================================================
 
-        private void _threaded(int sze, Range range) {
+        private void _threaded(int sze, Range range)
+        {
             int cores = _pool.getCorePoolSize() - _pool.getActiveCount();
             cores = (cores == 0) ? 1 : cores;
             if (sze >= 32 && ((sze / cores) >= 8)) {

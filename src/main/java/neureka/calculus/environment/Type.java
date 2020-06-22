@@ -3,6 +3,7 @@ package neureka.calculus.environment;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
+import neureka.calculus.environment.subtypes.AbstractTypeComponent;
 
 public interface Type
 {
@@ -17,65 +18,7 @@ public interface Type
         DefaultOperator create(Tsr[] inputs, double scalar, int d);
     }
 
-    abstract class TypeComponent<CreatorType>
-    {
-        protected String _operation;
-        protected String _deriviation;
-        protected CreatorType _creator;
-
-        TypeComponent(String operation, String deriviation, CreatorType creator){
-            _operation = operation;
-            _deriviation = deriviation;
-            _creator = creator;
-        }
-        public String getAsString(){
-            return _operation;
-        }
-        public String getDeriviationAsString(){
-            return _deriviation;
-        }
-        public CreatorType getCreator(){
-            return _creator;
-        }
-    }
-
-    //==================================================================================================================
-
-    class Activation extends TypeComponent<OperatorCreator>
-    {
-        public Activation(String strActivation, String strDeriviation, OperatorCreator creator){
-            super(strActivation, strDeriviation, creator);
-        }
-    }
-
-    class Convolution extends TypeComponent<OperatorCreator>
-    {
-        public Convolution(String strConvolution, String strDeriviation, OperatorCreator creator){
-            super(strConvolution, strDeriviation, creator);
-        }
-    }
-
-    class Broadcast extends TypeComponent<OperatorCreator>
-    {
-        public Broadcast(String strBroadcast, String strDeriviation, OperatorCreator creator){
-            super(strBroadcast, strDeriviation, creator);
-        }
-    }
-
-    class Scalarization extends TypeComponent<ScalarOperatorCreator>
-    {
-        public Scalarization(String strScalarized, String strDeriviation, ScalarOperatorCreator creator){
-            super(strScalarized, strDeriviation, creator);
-        }
-    }
-
-    class Operation extends TypeComponent<OperatorCreator>
-    {
-        public Operation(String strOperation, String strDeriviation, OperatorCreator creator){
-            super(strOperation, strDeriviation, creator);
-        }
-    }
-
+    
     //==================================================================================================================
 
     <T> T get(Class<T> type);

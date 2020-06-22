@@ -1,6 +1,7 @@
 package neureka.calculus.environment.implementations.operator;
 
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.subtypes.*;
 
 public class Power extends OperationType
 {

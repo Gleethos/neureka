@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import neureka.calculus.environment.subtypes.*;
 
 public abstract class AbstractFunction extends BaseFunction {
     
@@ -211,7 +212,7 @@ public abstract class AbstractFunction extends BaseFunction {
                     operation.append("I[").append(i).append("]").append((i == tsrs.length - 1) ? "" : _type.identifier());
                 }
                 return (FunctionBuilder.build(operation.toString(), _doAD).call(tsrs));
-            } else if (_type.supports(Type.Activation.class) && !_type.isIndexer()) {
+            } else if (_type.supports(Activation.class) && !_type.isIndexer()) {
                 return (FunctionBuilder.build(_type.identifier() + "(I[0])", true).call(inputs));
             }
         }
@@ -293,13 +294,6 @@ public abstract class AbstractFunction extends BaseFunction {
         return out;
     }
 
-    private Device _device(Tsr[] inputs) {
-        Device device = (Device) inputs[0].find(Device.class);
-        boolean onSameDevice = _shareGuestDevice(inputs);
-        boolean doAccel = (!_type.identifier().equals(",") && onSameDevice);
-        return (doAccel && device != null) ? device : inputs[0].device();
-    }
-
     private Tsr[] _src_acti(Tsr[] inputs, int j, int d, int offset) {
         int[] tempShape = null;
         Tsr[] tsrs = new Tsr[_src.size() + offset];
@@ -322,6 +316,13 @@ public abstract class AbstractFunction extends BaseFunction {
             }
         }
         return tsrs;
+    }
+
+    private Device _device(Tsr[] inputs) {
+        Device device = (Device) inputs[0].find(Device.class);
+        boolean onSameDevice = _shareGuestDevice(inputs);
+        boolean doAccel = (!_type.identifier().equals(",") && onSameDevice);
+        return (doAccel && device != null) ? device : inputs[0].device();
     }
 
     private static boolean _shareGuestDevice(Tsr[] tsrs) {

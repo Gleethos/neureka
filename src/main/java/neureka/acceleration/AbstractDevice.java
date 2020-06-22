@@ -4,8 +4,10 @@ import neureka.Component;
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.Type;
 
 import java.lang.ref.Cleaner;
+import java.util.function.Consumer;
 
 public abstract class AbstractDevice implements  Device, Component<Tsr>
 {
@@ -77,13 +79,13 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
 
     private Tsr _execute_recursively(Tsr[] tsrs, OperationType type, int d)
     {
-        boolean[] notNative = new boolean[tsrs.length];
+        Consumer<Tsr>[] rollbacks = new Consumer[tsrs.length];
         for (int i=0; i<tsrs.length; i++) {
             if ( tsrs[i] != null && !tsrs[i].isOutsourced() ) {
                 this.add(tsrs[i]);
-                notNative[i] = true;
+                rollbacks[i] = this::get;
             } else {
-                notNative[i] = false;
+                rollbacks[i] = t->{};
             }
         }
         if (tsrs.length>3) {
@@ -158,7 +160,7 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
             this._enqueue(tsrs, d, type);
         }
         for ( int i = 0; i < tsrs.length; i++ ) {
-            if ( notNative[i] && tsrs[i] != null && !tsrs[i].isUndefined() ) this.get(tsrs[i]);
+            if ( tsrs[i] != null && !tsrs[i].isUndefined() ) rollbacks[i].accept(tsrs[i]);
         }
         return tsrs[0];
     }
@@ -191,8 +193,9 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
         }
     }
 
-    private static void _createNewDrainTensorIn(Device device, Tsr[] tsrs, OperationType type) {
-        if(tsrs[0]==null)//Creating a new tensor:
+    private static void _createNewDrainTensorIn(Device device, Tsr[] tsrs, OperationType type)
+    {
+        if(tsrs[0]==null)// Creating a new tensor:
         {
             int[] shp = (type.identifier().endsWith("x"))
                     ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())

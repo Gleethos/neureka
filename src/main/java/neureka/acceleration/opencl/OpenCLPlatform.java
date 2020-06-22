@@ -5,6 +5,7 @@ import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.Type;
 import org.jocl.*;
 import java.util.*;
+import neureka.calculus.environment.subtypes.*;
 
 import static org.jocl.CL.*;
 import static org.jocl.CL.CL_DEVICE_TYPE_ALL;
@@ -220,35 +221,35 @@ public class OpenCLPlatform {
         //inverse:  src1/fdrn <-src2 <- drain
         //===========================================================================
         for(OperationType type : OperationType.ALL()) {
-            if (preName.contains("activate") && type.supports(Type.Activation.class)) {
+            if (preName.contains("activate") && type.supports(Activation.class)) {
                 parser.apply(
                             type.getName(),
-                            type.get(Type.Activation.class).getAsString(),
-                            type.get(Type.Activation.class).getDeriviationAsString()
+                            type.get(Activation.class).getAsString(),
+                            type.get(Activation.class).getDeriviationAsString()
                     );
-            } else if (preName.contains("operate") && type.supports(Type.Operation.class)) {
+            } else if (preName.contains("operate") && type.supports(Operation.class)) {
                 parser.apply(
                             type.getName(),
-                            type.get(Type.Operation.class).getAsString(),
-                            type.get(Type.Operation.class).getDeriviationAsString()
+                            type.get(Operation.class).getAsString(),
+                            type.get(Operation.class).getDeriviationAsString()
                     );
-            } else if (preName.contains("scalar") && type.supports(Type.Scalarization.class)) {
+            } else if (preName.contains("scalar") && type.supports(Scalarization.class)) {
                 parser.apply(
                             type.getName(),
-                            type.get(Type.Scalarization.class).getAsString(),
-                            type.get(Type.Scalarization.class).getDeriviationAsString()
+                            type.get(Scalarization.class).getAsString(),
+                            type.get(Scalarization.class).getDeriviationAsString()
                     );
-            } else if(preName.contains("broadcast") && type.supports(Type.Broadcast.class)){//broadcast
+            } else if(preName.contains("broadcast") && type.supports(Broadcast.class)){//broadcast
                 parser.apply(
                             type.getName(),
-                            type.get(Type.Broadcast.class).getAsString(),
-                            type.get(Type.Broadcast.class).getDeriviationAsString()
+                            type.get(Broadcast.class).getAsString(),
+                            type.get(Broadcast.class).getDeriviationAsString()
                     );
-            } else if(preName.contains("convolve") && type.supports(Type.Convolution.class)) {
+            } else if(preName.contains("convolve") && type.supports(Convolution.class)) {
                 parser.apply(
                             type.getName(),
-                            type.get(Type.Convolution.class).getAsString(),
-                            type.get(Type.Convolution.class).getDeriviationAsString()
+                            type.get(Convolution.class).getAsString(),
+                            type.get(Convolution.class).getDeriviationAsString()
                     );
             }
         }

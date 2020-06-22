@@ -10,7 +10,7 @@ import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.Type;
+import neureka.calculus.environment.subtypes.*;
 import neureka.utility.DataHelper;
 import org.jocl.*;
 
@@ -430,7 +430,7 @@ public class OpenCLDevice extends AbstractDevice
 
         cl_mem drn = tsrs[offset].find(cl_tsr.class).value.data;
         cl_mem src1 = tsrs[offset + 1].find(cl_tsr.class).value.data;
-        if (type.supports(Type.Activation.class) && !type.isIndexer()) {
+        if (type.supports(Activation.class) && !type.isIndexer()) {
             clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
             clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(tsrs[offset].find(cl_tsr.class).config.data));
             clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=>src1

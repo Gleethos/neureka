@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Division.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.environment.implementations.operator</a> &gt; <span class="el_source">Division.java</span></div><h1>Division.java</h1><pre class="source lang-java linenums">package neureka.calculus.environment.implementations.operator;
 
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.subtypes.*;
+
 
 public class Division extends OperationType {
 
-<span class="fc" id="L7">    private static final OperatorCreator _creator =</span>
+<span class="fc" id="L9">    private static final OperatorCreator _creator =</span>
     (inputs, d) -&gt; {
-<span class="fc" id="L9">        double[] t1_val = inputs[1].value64();</span>
-<span class="fc" id="L10">        double[] t2_val = inputs[2].value64();</span>
-<span class="fc bfc" id="L11" title="All 2 branches covered.">        if (d &lt; 0) {</span>
-<span class="fc" id="L12">            return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] / t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="fc" id="L11">        double[] t1_val = inputs[1].value64();</span>
+<span class="fc" id="L12">        double[] t2_val = inputs[2].value64();</span>
+<span class="fc bfc" id="L13" title="All 2 branches covered.">        if (d &lt; 0) {</span>
+<span class="fc" id="L14">            return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] / t2_val[inputs[2].i_of_idx(t2Idx)];</span>
         } else {
-<span class="fc" id="L14">            return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc bfc" id="L15" title="All 2 branches covered.">                if (d == 0) {</span>
-<span class="fc" id="L16">                    return 1 / t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="fc" id="L16">            return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc bfc" id="L17" title="All 2 branches covered.">                if (d == 0) {</span>
+<span class="fc" id="L18">                    return 1 / t2_val[inputs[2].i_of_idx(t2Idx)];</span>
                 } else {
-<span class="fc" id="L18">                    return -(t1_val[inputs[1].i_of_idx(t1Idx)] / Math.pow(t2_val[inputs[2].i_of_idx(t2Idx)], 2));</span>
+<span class="fc" id="L20">                    return -(t1_val[inputs[1].i_of_idx(t1Idx)] / Math.pow(t2_val[inputs[2].i_of_idx(t2Idx)], 2));</span>
                 }
             };
         }
@@ -23,10 +25,10 @@ public class Division extends OperationType {
 
     public Division() {
 
-<span class="fc" id="L26">        super(</span>
+<span class="fc" id="L28">        super(</span>
                 &quot;divide&quot;, &quot;/&quot;, -1, true, false, false, false, false
         );
-<span class="fc" id="L29">        set(Scalarization.class,</span>
+<span class="fc" id="L31">        set(Scalarization.class,</span>
                 new Scalarization(
                         &quot;output = input1 / value;\n&quot;,
                         &quot;if(d==0){\n&quot; +
@@ -35,17 +37,17 @@ public class Division extends OperationType {
                                 &quot;    output = -value /(float)pow(input1, 2.0f);\n&quot; +
                                 &quot;}&quot;,
                         (inputs, value, d) -&gt; {
-<span class="fc" id="L38">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L39" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L40">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] / value;</span>
+<span class="fc" id="L40">                            double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L42">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] / value;</span>
                             } else {
-<span class="nc bnc" id="L42" title="All 2 branches missed.">                                if (d == 0) return (t0Idx, t1Idx, t2Idx) -&gt; 1 / value;</span>
-<span class="nc" id="L43">                                else return (t0Idx, t1Idx, t2Idx) -&gt; -value / Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], 2);</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">                                if (d == 0) return (t0Idx, t1Idx, t2Idx) -&gt; 1 / value;</span>
+<span class="nc" id="L45">                                else return (t0Idx, t1Idx, t2Idx) -&gt; -value / Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], 2);</span>
                             }
                         }
                 )
         );
-<span class="fc" id="L48">        set(</span>
+<span class="fc" id="L50">        set(</span>
                 Broadcast.class,
                 new Broadcast(
                         &quot;value = src1 / src2;\n&quot;,
@@ -57,7 +59,7 @@ public class Division extends OperationType {
                         _creator
                 )
         );
-<span class="fc" id="L60">        set(Operation.class,</span>
+<span class="fc" id="L62">        set(Operation.class,</span>
                 new Operation(
                         &quot;output = input1 / input2;\n&quot;,
                         &quot;if(d==0){\n&quot; +
@@ -68,18 +70,18 @@ public class Division extends OperationType {
                         _creator
                 )
         );
-<span class="fc" id="L71">        new OperationType(</span>
+<span class="fc" id="L73">        new OperationType(</span>
                 &quot;inv_division_left&quot;, ((char) 171) + &quot;/&quot;, 3, true, false, false, false, false
         );
-<span class="fc" id="L74">        new OperationType(</span>
+<span class="fc" id="L76">        new OperationType(</span>
                 &quot;inv_division_right&quot;, &quot;/&quot; + ((char) 187), 3, true, false, false, false, false
         );
 
         // Convolution:
 
-<span class="fc" id="L80">        new OperationType(</span>
+<span class="fc" id="L82">        new OperationType(</span>
                 &quot;divide&quot;, &quot;d&quot;, 2, true, false, true, false, false
-<span class="fc" id="L82">        ).set(</span>
+<span class="fc" id="L84">        ).set(</span>
                 Convolution.class,
                 new Convolution(
                         &quot;value = src1 / src2;\n&quot;,
@@ -92,14 +94,14 @@ public class Division extends OperationType {
                 )
         );
 
-<span class="fc" id="L95">        new OperationType(</span>
+<span class="fc" id="L97">        new OperationType(</span>
                 &quot;&quot;, ((char) 171) + &quot;d&quot;, 3, true, false, true, false, false
         );
-<span class="fc" id="L98">        new OperationType(</span>
+<span class="fc" id="L100">        new OperationType(</span>
                 &quot;&quot;, &quot;d&quot; + ((char) 187), 3, true, false, true, false, false
         );
 
-<span class="fc" id="L102">    }</span>
+<span class="fc" id="L104">    }</span>
 
 
 
