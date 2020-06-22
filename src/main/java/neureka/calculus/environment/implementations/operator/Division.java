@@ -24,7 +24,7 @@ public class Division extends OperationType {
     public Division() {
 
         super(
-                "divide", "/", true, false, false, false, false
+                "divide", "/", -1, true, false, false, false, false
         );
         set(Scalarization.class,
                 new Scalarization(
@@ -69,16 +69,16 @@ public class Division extends OperationType {
                 )
         );
         new OperationType(
-                "inv_division_left", ((char) 171) + "/", true, false, false, false, false
+                "inv_division_left", ((char) 171) + "/", 3, true, false, false, false, false
         );
         new OperationType(
-                "inv_division_right", "/" + ((char) 187), true, false, false, false, false
+                "inv_division_right", "/" + ((char) 187), 3, true, false, false, false, false
         );
 
         // Convolution:
 
         new OperationType(
-                "divide", "d", true, false, true, false, false
+                "divide", "d", 2, true, false, true, false, false
         ).set(
                 Convolution.class,
                 new Convolution(
@@ -93,10 +93,10 @@ public class Division extends OperationType {
         );
 
         new OperationType(
-                "", ((char) 171) + "d", true, false, true, false, false
+                "", ((char) 171) + "d", 3, true, false, true, false, false
         );
         new OperationType(
-                "", "d" + ((char) 187), true, false, true, false, false
+                "", "d" + ((char) 187), 3, true, false, true, false, false
         );
 
     }

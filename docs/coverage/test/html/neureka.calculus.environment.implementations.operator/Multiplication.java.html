@@ -22,7 +22,7 @@ public class Multiplication extends OperationType {
     public Multiplication()
     {
 <span class="fc" id="L24">        super(</span>
-                &quot;multiply&quot;, &quot;*&quot;, true, false, false, true, false
+                &quot;multiply&quot;, &quot;*&quot;, -1, true, false, false, true, false
         );
 <span class="fc" id="L27">        set(Scalarization.class,new Scalarization(</span>
                 &quot;output = input1 * value;\n&quot;,
@@ -55,14 +55,14 @@ public class Multiplication extends OperationType {
 <span class="fc" id="L55">                    return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];</span>
                 };
 <span class="fc" id="L57">        new OperationType(</span>
-                &quot;&quot;, ((char) 171) + &quot;*&quot;, true, false, false, false, false
+                &quot;&quot;, ((char) 171) + &quot;*&quot;, 3, true, false, false, false, false
 <span class="fc" id="L59">        ).set(Broadcast.class, new Broadcast(</span>
                 &quot;value = src1 * src2;\n&quot;,
                 &quot;value += handle * drain;\n&quot;,
                 creator
         ));
 <span class="fc" id="L64">        new OperationType(</span>
-                &quot;&quot;, &quot;*&quot; + ((char) 187), true, false, false, false, false
+                &quot;&quot;, &quot;*&quot; + ((char) 187), 3, true, false, false, false, false
 <span class="fc" id="L66">        ).set(Broadcast.class, new Broadcast(</span>
                 &quot;value = src1 * src2;\n&quot;,
                 &quot;value += handle * drain;\n&quot;,
@@ -90,13 +90,13 @@ public class Multiplication extends OperationType {
                 );
 
 <span class="fc" id="L92">        new OperationType(</span>
-                &quot;multiply&quot;, &quot;x&quot;, true, false, true, false, false
+                &quot;multiply&quot;, &quot;x&quot;, 2, true, false, true, false, false
 <span class="fc" id="L94">        ).set(Convolution.class, convolution);</span>
 <span class="fc" id="L95">        new OperationType(</span>
-                &quot;inv_convolve_mul_left&quot;, ((char) 171) + &quot;x&quot;, true, false, true, false, false
+                &quot;inv_convolve_mul_left&quot;, ((char) 171) + &quot;x&quot;, 3, true, false, true, false, false
 <span class="fc" id="L97">        ).set(Convolution.class, convolution);</span>
 <span class="fc" id="L98">        new OperationType(</span>
-                &quot;inv_convolve_mul_right&quot;, &quot;x&quot; + ((char) 187), true, false, true, false, false
+                &quot;inv_convolve_mul_right&quot;, &quot;x&quot; + ((char) 187), 3, true, false, true, false, false
 <span class="fc" id="L100">        ).set(Convolution.class, convolution);</span>
 
 

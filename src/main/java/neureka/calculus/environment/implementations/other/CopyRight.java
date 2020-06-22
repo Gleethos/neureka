@@ -5,7 +5,7 @@ import neureka.calculus.environment.OperationType;
 public class CopyRight extends OperationType {
 
     public CopyRight(){
-        super("", ">", true, false, false, false, false);
+        super("", ">", 2,true, false, false, false, false);
     }
 
 }

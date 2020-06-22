@@ -7,7 +7,7 @@ public class Modulo extends OperationType {
     public Modulo(){
 
 <span class="fc" id="L9">        super(</span>
-                &quot;modulo&quot;, &quot;%&quot;, true, false, false, false, false
+                &quot;modulo&quot;, &quot;%&quot;, -1, true, false, false, false, false
         );
 <span class="fc" id="L12">        set(</span>
                 Broadcast.class,
@@ -34,10 +34,10 @@ public class Modulo extends OperationType {
                         })
         );
 <span class="fc" id="L36">        new OperationType(</span>
-                &quot;&quot;, ((char) 171) + &quot;%&quot;, true, false, false, false, false
+                &quot;&quot;, ((char) 171) + &quot;%&quot;, 3, true, false, false, false, false
         );
 <span class="fc" id="L39">        new OperationType(</span>
-                &quot;&quot;, &quot;%&quot; + ((char) 187), true, false, false, false, false
+                &quot;&quot;, &quot;%&quot; + ((char) 187), 3, true, false, false, false, false
         );
 <span class="fc" id="L42">    }</span>
 

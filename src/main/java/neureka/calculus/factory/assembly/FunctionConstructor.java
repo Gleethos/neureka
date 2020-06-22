@@ -2,6 +2,8 @@ package neureka.calculus.factory.assembly;
 
 import neureka.Tsr;
 import neureka.calculus.*;
+import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.Type;
 import neureka.calculus.factory.AbstractFunction;
 import neureka.calculus.factory.components.FunctionConstant;
 import neureka.calculus.factory.components.FunctionInput;
@@ -13,6 +15,16 @@ public class FunctionConstructor
 {
     public static Function construct(int f_id, ArrayList<Function> sources, boolean doAD)
     {
+        Type type = OperationType.instance(f_id);
+        if(type.numberOfParameters() >= 0 && sources.size() != type.numberOfParameters()) {
+            String tip = (type.isIndexer())?
+            "\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration.":"";
+            throw new IllegalArgumentException(
+                    "The function/operation '"+type.identifier()+"' expects "+type.numberOfParameters()+" parameters, "+
+                    "however "+sources.size()+" where given!"+tip
+            );
+
+        }
         boolean isFlat = true;
         for (Function f : sources) {// AbstractFunction does only reference tip nodes of the function graph:
             isFlat = ((f instanceof FunctionInput) || (f instanceof FunctionVariable) || (f instanceof FunctionConstant)) && isFlat;

@@ -5,33 +5,42 @@ import neureka.calculus.environment.OperationType;
 public class Product extends OperationType {
 
     public Product(){
-<span class="fc" id="L8">        super(&quot;product&quot;, &quot;prod&quot;, false,  true, false, true, true);</span>
-<span class="fc" id="L9">        set(Activation.class,</span>
+<span class="fc" id="L8">        super (</span>
+                &quot;product&quot;,
+                &quot;prod&quot;,
+                1,
+                false,
+                true,
+                false,
+                true,
+                true
+        );
+<span class="fc" id="L18">        set(Activation.class,</span>
                 new Activation(&quot;output = input;&quot;,
                         &quot;output = 1;&quot;,
                         null
                 )
         );
-<span class="fc" id="L15">        set(Broadcast.class,</span>
+<span class="fc" id="L24">        set(Broadcast.class,</span>
                 new Broadcast(
                         &quot;&quot;,
                         &quot;&quot;,
                         (inputs, d)-&gt;{
-<span class="fc" id="L20">                            double[] t1_val = inputs[1].value64();</span>
-<span class="fc" id="L21">                            double[] t2_val = inputs[2].value64();</span>
-<span class="pc bpc" id="L22" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L23">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="fc" id="L29">                            double[] t1_val = inputs[1].value64();</span>
+<span class="fc" id="L30">                            double[] t2_val = inputs[2].value64();</span>
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L32">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];</span>
                             } else {
-<span class="nc" id="L25">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="nc bnc" id="L26" title="All 2 branches missed.">                                    if (d == 0) return t2_val[inputs[2].i_of_idx(t2Idx)];</span>
-<span class="nc" id="L27">                                    else return t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="nc" id="L34">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">                                    if (d == 0) return t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="nc" id="L36">                                    else return t1_val[inputs[1].i_of_idx(t1Idx)];</span>
                                 };
                             }
                         })
         );
 
 
-<span class="fc" id="L34">    }</span>
+<span class="fc" id="L43">    }</span>
 
 
 

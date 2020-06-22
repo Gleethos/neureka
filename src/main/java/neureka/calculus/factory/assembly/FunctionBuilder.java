@@ -5,7 +5,6 @@ import neureka.calculus.environment.OperationType;
 import neureka.calculus.factory.components.FunctionConstant;
 import neureka.calculus.factory.components.FunctionInput;
 
-import java.lang.reflect.Parameter;
 import java.util.*;
 
 public class FunctionBuilder {
@@ -80,48 +79,48 @@ public class FunctionBuilder {
             return newCore;
         }
         expression = FunctionParser.unpackAndCorrect(expression);
-        List<String> Operations = new ArrayList<>();
-        List<String> Components = new ArrayList<>();
+        List<String> foundJunctors = new ArrayList<>();
+        List<String> foundComponents = new ArrayList<>();
         int i = 0;
         while (i < expression.length()) {
-            final String newComponent = FunctionParser.parsedComponent(expression, i);
+            final String newComponent = FunctionParser.findComponentIn(expression, i);
             if (newComponent != null) {
-                if (Components.size() <= Operations.size()) Components.add(newComponent);
+                if (foundComponents.size() <= foundJunctors.size()) foundComponents.add(newComponent);
                 i += newComponent.length();
                 final String newOperation = FunctionParser.parsedOperation(expression, i);
                 if (newOperation != null) {
                     i += newOperation.length();
                     if (newOperation.length() <= 0) continue;
-                    Operations.add(newOperation);
+                    foundJunctors.add(newOperation);
                 }
             } else ++i;
         }
         //---
-        int Count = OperationType.COUNT();
+        int counter = OperationType.COUNT();
         for (int j = OperationType.COUNT(); j > 0; --j) {
-            if (!FunctionParser.containsOperation(OperationType.instance(j - 1).identifier(), Operations)) {
-                --Count;
+            if (!foundJunctors.contains(OperationType.instance(j - 1).identifier())) {
+                --counter;
             } else {
                 j = 0;
             }
         }
         int ID = 0;
-        while (ID < Count) {
-            final List<String> newOperations = new ArrayList<>();
+        while (ID < counter) {
+            final List<String> newJunctors = new ArrayList<>();
             final List<String> newComponents = new ArrayList<>();
-            if (FunctionParser.containsOperation(OperationType.instance(ID).identifier(), Operations)) {
+            if (foundJunctors.contains(OperationType.instance(ID).identifier())) {
                 String currentChain = null;
                 boolean groupingOccured = false;
-                boolean enoughtPresent = FunctionParser.numberOfOperationsWithin(Operations) > 1;// Otherwise: I[j]^4 goes nuts!
+                boolean enoughtPresent = FunctionParser.numberOfOperationsWithin(foundJunctors) > 1;// Otherwise: I[j]^4 goes nuts!
                 if (enoughtPresent) {
-                    String[] ComponentsArray = Components.toArray(new String[0]);
+                    String[] ComponentsArray = foundComponents.toArray(new String[0]);
                     int length = ComponentsArray.length;
                     for (int Ci = 0; Ci < length; Ci++) {
                         String currentComponent;
                         currentComponent = ComponentsArray[Ci];
                         String currentOperation = null;
-                        if (Operations.size() > Ci) {
-                            currentOperation = Operations.get(Ci);
+                        if (foundJunctors.size() > Ci) {
+                            currentOperation = foundJunctors.get(Ci);
                         }
                         if (currentOperation != null) {
                             if (currentOperation.equals(OperationType.instance(ID).identifier())) {
@@ -134,7 +133,7 @@ public class FunctionBuilder {
                             } else {
                                 if (currentChain == null) newComponents.add(currentComponent);
                                 else newComponents.add(currentChain + currentComponent); //= String.value64Of(currentChain) + currentComponent
-                                newOperations.add(currentOperation);
+                                newJunctors.add(currentOperation);
                                 groupingOccured = true;
                                 currentChain = null;
                             }
@@ -150,45 +149,44 @@ public class FunctionBuilder {
                     }
                 }
                 if (groupingOccured) {
-                    Operations = newOperations;
-                    Components = newComponents;
+                    foundJunctors = newJunctors;
+                    foundComponents = newComponents;
                 }
             }
             ++ID;
-        }//closed while(ID < Count)
+        }
 
         // identifying function id:
-        int f_id = 0;
-        if (Operations.size() >= 1) {
-            for (int k = 0; k < OperationType.COUNT(); ++k) {
-                if (OperationType.instance(k).identifier().equals(Operations.get(0))) {
-                    f_id = k;
+        int typeId = 0;
+        if (foundJunctors.size() >= 1) {
+            for (int id = 0; id < OperationType.COUNT(); ++id) {
+                if (OperationType.instance(id).identifier().equals(foundJunctors.get(0))) {
+                    typeId = id;
                 }
             }
         }
         // building sources and function:
-        if (Components.size() == 1) {
-            String possibleFunction = FunctionParser.parsedOperation(Components.get(0).toLowerCase(), 0);
+        if (foundComponents.size() == 1) {
+            String possibleFunction = FunctionParser.parsedOperation(foundComponents.get(0).toLowerCase(), 0);
             if (possibleFunction != null && possibleFunction.length() > 1) {
 
-                for (int Oi = 0; Oi < OperationType.COUNT(); Oi++) {
-                    if (OperationType.instance(Oi).identifier().equals(possibleFunction)) {
-                        f_id = Oi;
-                        Function newCore = FunctionBuilder.build(
-                            FunctionParser.parsedComponent(
-                                    Components.get(0),
-                                    possibleFunction.length()
-                            ),
-                            doAD
+                for (int oi = 0; oi < OperationType.COUNT(); oi++) {
+                    if (OperationType.instance(oi).identifier().equals(possibleFunction)) {
+                        typeId = oi;
+                        List<String> parameters = FunctionParser.findParametersIn(
+                                foundComponents.get(0),
+                                possibleFunction.length()
                         );
-                        sources.add(newCore);
-                        function = FunctionConstructor.construct(f_id, sources, doAD);
+                        for (String p : parameters) {
+                            sources.add(FunctionBuilder.build(p, doAD));
+                        }
+                        function = FunctionConstructor.construct(typeId, sources, doAD);
                         return function;
                     }
                 }
             }
             //---
-            String component = FunctionParser.unpackAndCorrect(Components.get(0));
+            String component = FunctionParser.unpackAndCorrect(foundComponents.get(0));
             boolean possiblyInverseInput = (component.length()>1 && component.toLowerCase().substring(0,2).equals("-i"));
             if (!possiblyInverseInput &&
                     (
@@ -221,28 +219,28 @@ public class FunctionBuilder {
 
             return FunctionBuilder.build(component, doAD);
         } else {// More than one component left:
-            if (OperationType.instance(f_id).identifier().equals("x") || OperationType.instance(f_id).identifier().equals("<") || OperationType.instance(f_id).identifier().equals(">")) {
-                Components = _rebindPairwise(Components, f_id);
-            } else if (OperationType.instance(f_id).identifier().equals(",") && Components.get(0).startsWith("[")) {
+            if (OperationType.instance(typeId).identifier().equals("x") || OperationType.instance(typeId).identifier().equals("<") || OperationType.instance(typeId).identifier().equals(">")) {
+                foundComponents = _rebindPairwise(foundComponents, typeId);
+            } else if (OperationType.instance(typeId).identifier().equals(",") && foundComponents.get(0).startsWith("[")) {
 
-                Components.set(0, Components.get(0).substring(1));
+                foundComponents.set(0, foundComponents.get(0).substring(1));
                 String[] splitted;
-                if (Components.get(Components.size() - 1).contains("]")) {
+                if (foundComponents.get(foundComponents.size() - 1).contains("]")) {
                     int offset = 1;
-                    if (Components.get(Components.size() - 1).contains("]:")) {
+                    if (foundComponents.get(foundComponents.size() - 1).contains("]:")) {
                         offset = 2;
-                        splitted = Components.get(Components.size() - 1).split("]:");
+                        splitted = foundComponents.get(foundComponents.size() - 1).split("]:");
                     } else {
-                        splitted = Components.get(Components.size() - 1).split("]");
+                        splitted = foundComponents.get(foundComponents.size() - 1).split("]");
                     }
                     if (splitted.length > 1) {
-                        splitted = new String[]{splitted[0], Components.get(Components.size() - 1).substring(splitted[0].length() + offset)};
-                        Components.remove(Components.size() - 1);
-                        Components.addAll(Arrays.asList(splitted));
+                        splitted = new String[]{splitted[0], foundComponents.get(foundComponents.size() - 1).substring(splitted[0].length() + offset)};
+                        foundComponents.remove(foundComponents.size() - 1);
+                        foundComponents.addAll(Arrays.asList(splitted));
                     }
                 }
             }
-            for (String currentComponent2 : Components) {
+            for (String currentComponent2 : foundComponents) {
                 Function newCore2 = FunctionBuilder.build(currentComponent2, doAD);//Dangerous recursion lives here!
                 sources.add(newCore2);
             }
@@ -254,7 +252,7 @@ public class FunctionBuilder {
                 if (source != null) newVariable.add(source);
             }
             sources = newVariable;
-            function = FunctionConstructor.construct(f_id, sources, doAD);
+            function = FunctionConstructor.construct(typeId, sources, doAD);
             return function;
         }
     }

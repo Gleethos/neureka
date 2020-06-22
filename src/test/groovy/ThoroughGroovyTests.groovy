@@ -269,7 +269,7 @@ class ThoroughGroovyTests
         Neureka.instance().settings().autoDiff().isApplyingGradientWhenTensorIsUsed = false
         assert !Neureka.instance().settings().autoDiff().isApplyingGradientWhenTensorIsUsed()
         assert Neureka.instance().settings().autoDiff().isRetainingPendingErrorForJITProp()
-        assert Neureka.version()=="0.2.3"//version
+        assert Neureka.version()=="0.2.4-pre"//version
     }
 
     @Test

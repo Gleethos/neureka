@@ -398,9 +398,7 @@ public class OpenCLDevice extends AbstractDevice
                     if (d == 0) tsrs[0] = tsrs[2];
                     else tsrs[0] = tsrs[1];
                     return;
-                } else {
-                    tsrs = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
-                }
+                } else tsrs = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
                 break;
             case ("x" + ((char) 187)):
                 tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};

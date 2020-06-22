@@ -5,27 +5,36 @@ import neureka.calculus.environment.OperationType;
 public class Tanh extends OperationType {
 
     public Tanh(){
-<span class="fc" id="L8">        super(&quot;tanh&quot;, &quot;tanh&quot;, false, false, false, true, true);</span>
-<span class="fc" id="L9">        set(Activation.class,</span>
+<span class="fc" id="L8">        super (</span>
+                &quot;tanh&quot;,
+                &quot;tanh&quot;,
+                1,
+                false,
+                false,
+                false,
+                true,
+                true
+        );
+<span class="fc" id="L18">        set(Activation.class,</span>
                 new Activation(
                 &quot;output = input/pow(1+pow(input, 2.0f), 0.5f);\n&quot;,
                 &quot;output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n&quot;,
                 (inputs, d)-&gt;{
-<span class="fc" id="L14">                    double[] t1_val = inputs[1].value64();</span>
-<span class="fc bfc" id="L15" title="All 2 branches covered.">                    if (d &lt; 0) {</span>
-<span class="fc" id="L16">                        return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc" id="L17">                            double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="fc" id="L18">                            return input / Math.pow(1 + Math.pow(input, 2), 0.5);</span>
+<span class="fc" id="L23">                    double[] t1_val = inputs[1].value64();</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">                    if (d &lt; 0) {</span>
+<span class="fc" id="L25">                        return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L26">                            double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="fc" id="L27">                            return input / Math.pow(1 + Math.pow(input, 2), 0.5);</span>
                         };
                     } else {
-<span class="fc" id="L21">                        return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc" id="L22">                            double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="fc" id="L23">                            return 1 - Math.pow(input / Math.pow(1 + Math.pow(input, 2), 0.5), 2);</span>
+<span class="fc" id="L30">                        return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L31">                            double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="fc" id="L32">                            return 1 - Math.pow(input / Math.pow(1 + Math.pow(input, 2), 0.5), 2);</span>
                         };
                     }
                 })
         );
-<span class="fc" id="L28">    }</span>
+<span class="fc" id="L37">    }</span>
 
 
 

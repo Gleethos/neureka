@@ -6,12 +6,12 @@ public class Sinus extends OperationType {
 
     public Sinus()
     {
-<span class="fc" id="L9">        super(&quot;sinus&quot;, &quot;sin&quot; , false, false, false, true, true);</span>
+<span class="fc" id="L9">        super(&quot;sinus&quot;, &quot;sin&quot; , 1, false, false, false, true, true);</span>
 <span class="fc" id="L10">        set(Activation.class,</span>
                 new Activation(
                         &quot;output = sin(input);\n&quot;,
                         &quot;output = cos(input);\n&quot;,
-                        (inputs, d)-&gt;{
+                        (inputs, d) -&gt; {
 <span class="nc" id="L15">                            double[] t1_val = inputs[1].value64();</span>
 <span class="nc bnc" id="L16" title="All 2 branches missed.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; Math.sin(t1_val[inputs[1].i_of_idx(t1Idx)]);</span>
 <span class="nc" id="L17">                            else return (t0Idx, t1Idx, t2Idx) -&gt; Math.cos(t1_val[inputs[1].i_of_idx(t1Idx)]);</span>

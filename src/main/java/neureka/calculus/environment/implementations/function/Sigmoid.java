@@ -9,6 +9,7 @@ public class Sigmoid extends OperationType {
         super(
                 "sigmoid",
                 "sig" ,
+                1,
                 false,
                 false,
                 false,

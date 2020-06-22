@@ -91,7 +91,9 @@ public interface Type
     int id();
     
     String identifier();
-    
+
+    int numberOfParameters();
+
     boolean isOperation();
 
     boolean isIndexer();

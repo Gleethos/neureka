@@ -39,6 +39,7 @@ public class OperationType implements Type
     protected int _id;
     protected String _name;
     protected String  _identifier;
+    protected int _numberOfParameters;
     protected boolean _isOperation;
     protected boolean _isIndexer;
     protected boolean _isConvection;
@@ -78,19 +79,15 @@ public class OperationType implements Type
     public OperationType(
             String name,
             String identifier,
+            int numberOfParameters,
             boolean isOperation,
             boolean isIndexer,
             boolean isConvection,
             boolean isCommutative,
             boolean isAssociative
-
-            //Activation activation,
-            //Scalarization scalarization,
-            //Convolution convolution,
-            //Broadcast broadcast,
-            //Operation operation
     ) {
         _name = name;
+        _numberOfParameters = numberOfParameters;
         _id = _ID;
         _ID++;
         _identifier = identifier;
@@ -99,12 +96,6 @@ public class OperationType implements Type
         _isConvection = isConvection;
         _isCommutative = isCommutative;
         _isAssociative = isAssociative;
-
-        //if ( activation!=null ) _modules.put(Activation.class, activation);
-        //if ( scalarization!=null ) _modules.put(Scalarization.class, scalarization);
-        //if ( convolution!=null ) _modules.put(Convolution.class, convolution);
-        //if ( broadcast!=null ) _modules.put(Broadcast.class, broadcast);
-        //if ( operation!=null ) _modules.put(Operation.class, operation);
 
         _REGISTER.add(this);
         _LOOKUP.put(identifier, this);
@@ -164,6 +155,11 @@ public class OperationType implements Type
     @Override
     public String identifier(){
         return _identifier;
+    }
+
+    @Override
+    public int numberOfParameters(){
+        return _numberOfParameters;
     }
 
     @Override

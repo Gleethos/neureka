@@ -402,9 +402,9 @@ public class BroadJavaTests {
                         "[1]:(12.0)",
                         "[1]:(2.0)",
                         "f(NONE) => [1]:(-3.0)",
-                        "(-1.0*I[0])",
-                        "(I[0]*-1.0)",
-                        "f(I[0]*I[1])",
+                        "(-1.0 * I[0])",
+                        "(I[0] * -1.0)",
+                        "f(I[0] * I[1])",
                         "LEAVE RQS GRADIENT"
                 },
                 "Testing 'toString' of GraphNode");

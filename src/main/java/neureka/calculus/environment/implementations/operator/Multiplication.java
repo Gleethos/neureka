@@ -22,7 +22,7 @@ public class Multiplication extends OperationType {
     public Multiplication()
     {
         super(
-                "multiply", "*", true, false, false, true, false
+                "multiply", "*", -1, true, false, false, true, false
         );
         set(Scalarization.class,new Scalarization(
                 "output = input1 * value;\n",
@@ -55,14 +55,14 @@ public class Multiplication extends OperationType {
                     return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];
                 };
         new OperationType(
-                "", ((char) 171) + "*", true, false, false, false, false
+                "", ((char) 171) + "*", 3, true, false, false, false, false
         ).set(Broadcast.class, new Broadcast(
                 "value = src1 * src2;\n",
                 "value += handle * drain;\n",
                 creator
         ));
         new OperationType(
-                "", "*" + ((char) 187), true, false, false, false, false
+                "", "*" + ((char) 187), 3, true, false, false, false, false
         ).set(Broadcast.class, new Broadcast(
                 "value = src1 * src2;\n",
                 "value += handle * drain;\n",
@@ -90,13 +90,13 @@ public class Multiplication extends OperationType {
                 );
 
         new OperationType(
-                "multiply", "x", true, false, true, false, false
+                "multiply", "x", 2, true, false, true, false, false
         ).set(Convolution.class, convolution);
         new OperationType(
-                "inv_convolve_mul_left", ((char) 171) + "x", true, false, true, false, false
+                "inv_convolve_mul_left", ((char) 171) + "x", 3, true, false, true, false, false
         ).set(Convolution.class, convolution);
         new OperationType(
-                "inv_convolve_mul_right", "x" + ((char) 187), true, false, true, false, false
+                "inv_convolve_mul_right", "x" + ((char) 187), 3, true, false, true, false, false
         ).set(Convolution.class, convolution);
 
 

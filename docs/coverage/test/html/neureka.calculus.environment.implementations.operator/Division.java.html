@@ -24,7 +24,7 @@ public class Division extends OperationType {
     public Division() {
 
 <span class="fc" id="L26">        super(</span>
-                &quot;divide&quot;, &quot;/&quot;, true, false, false, false, false
+                &quot;divide&quot;, &quot;/&quot;, -1, true, false, false, false, false
         );
 <span class="fc" id="L29">        set(Scalarization.class,</span>
                 new Scalarization(
@@ -69,16 +69,16 @@ public class Division extends OperationType {
                 )
         );
 <span class="fc" id="L71">        new OperationType(</span>
-                &quot;inv_division_left&quot;, ((char) 171) + &quot;/&quot;, true, false, false, false, false
+                &quot;inv_division_left&quot;, ((char) 171) + &quot;/&quot;, 3, true, false, false, false, false
         );
 <span class="fc" id="L74">        new OperationType(</span>
-                &quot;inv_division_right&quot;, &quot;/&quot; + ((char) 187), true, false, false, false, false
+                &quot;inv_division_right&quot;, &quot;/&quot; + ((char) 187), 3, true, false, false, false, false
         );
 
         // Convolution:
 
 <span class="fc" id="L80">        new OperationType(</span>
-                &quot;divide&quot;, &quot;d&quot;, true, false, true, false, false
+                &quot;divide&quot;, &quot;d&quot;, 2, true, false, true, false, false
 <span class="fc" id="L82">        ).set(</span>
                 Convolution.class,
                 new Convolution(
@@ -93,10 +93,10 @@ public class Division extends OperationType {
         );
 
 <span class="fc" id="L95">        new OperationType(</span>
-                &quot;&quot;, ((char) 171) + &quot;d&quot;, true, false, true, false, false
+                &quot;&quot;, ((char) 171) + &quot;d&quot;, 3, true, false, true, false, false
         );
 <span class="fc" id="L98">        new OperationType(</span>
-                &quot;&quot;, &quot;d&quot; + ((char) 187), true, false, true, false, false
+                &quot;&quot;, &quot;d&quot; + ((char) 187), 3, true, false, true, false, false
         );
 
 <span class="fc" id="L102">    }</span>

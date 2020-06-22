@@ -8,6 +8,7 @@ public class ReLU extends OperationType {
         super(
                 "relu",
                 "relu",
+                1,
                 false,
                 false,
                 false,
@@ -18,7 +19,7 @@ public class ReLU extends OperationType {
                 new Activation(
                         "if (input >= 0) {  output = input; } else { output = input * (float)0.01; }\n",
                         "if (input >= 0) { output = (float)1; } else { output = (float)0.01; }\n",
-                        (inputs, d)->{
+                        (inputs, d) -> {
                             double[] t1_val = inputs[1].value64();
                             if (d < 0) {
                                 return (t0Idx, t1Idx, t2Idx) -> {

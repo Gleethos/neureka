@@ -5,7 +5,16 @@ import neureka.calculus.environment.OperationType;
 public class Product extends OperationType {
 
     public Product(){
-        super("product", "prod", false,  true, false, true, true);
+        super (
+                "product",
+                "prod",
+                1,
+                false,
+                true,
+                false,
+                true,
+                true
+        );
         set(Activation.class,
                 new Activation("output = input;",
                         "output = 1;",

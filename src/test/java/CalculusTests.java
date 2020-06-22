@@ -54,29 +54,71 @@ public class CalculusTests {
     {
         NTester_Function tester = new NTester_Function("Calculus-Testing: Function parsing and tensor calculus");
         //EXPRESSION TESTING:
-        tester.testExpression("ig0*(igj)xI[g1]", "((Ig[0]*Ig[j])xIg[1])", "");
+        tester.testExpression("ig0*(igj)xI[g1]", "((Ig[0] * Ig[j]) x Ig[1])", "");
         tester.testExpression("sum(ij)", "sum(I[j])", "");
-        tester.testExpression("sum(1*(4-2/ij))", "sum(1.0*(4.0-(2.0/I[j])))", "");
+        tester.testExpression("sum(1*(4-2/ij))", "sum(1.0 * (4.0 - (2.0 / I[j])))", "");
         tester.testExpression("quadratic(ligmoid(Ij))", "quad(lig(I[j]))", "");
-        tester.testExpression("softplus(I[3]^(3/i1)/sum(Ij^2)-23+I0/i1)", "lig((((I[3]^(3.0/I[1]))/sum(I[j]^2.0))-23.0)+(I[0]/I[1]))", "");
-        tester.testExpression("1+3+5-23+I0*45/(345-651^I3-6)", "(1.0+3.0+(5.0-23.0)+(I[0]*(45.0/(345.0-(651.0^I[3])-6.0))))", "");
-        tester.testExpression("sin(23*i1)-cos(i0^0.3)+tanh(23)", "((sin(23.0*I[1])-cos(I[0]^0.3))+tanh(23.0))", "");
-        tester.testExpression("2*3/2-1", "((2.0*(3.0/2.0))-1.0)", "");
-        tester.testExpression("3x5xI[4]xI[3]", "(((3.0x5.0)xI[4])xI[3])", "");
-        tester.testExpression("[1,0, 5,3, 4]:(tanh(i0xi1))", "([1,0,5,3,4]:(tanh(I[0]xI[1])))", "");
+        tester.testExpression("softplus(I[3]^(3/i1)/sum(Ij^2)-23+I0/i1)", "lig((((I[3] ^ (3.0 / I[1])) / sum(I[j] ^ 2.0)) - 23.0) + (I[0] / I[1]))", "");
+        tester.testExpression("1+3+5-23+I0*45/(345-651^I3-6)", "(1.0 + 3.0 + (5.0 - 23.0) + (I[0] * (45.0 / (345.0 - (651.0 ^ I[3]) - 6.0))))", "");
+        tester.testExpression("sin(23*i1)-cos(i0^0.3)+tanh(23)", "((sin(23.0 * I[1]) - cos(I[0] ^ 0.3)) + tanh(23.0))", "");
+        tester.testExpression("2*3/2-1", "((2.0 * (3.0 / 2.0)) - 1.0)", "");
+        tester.testExpression("3x5xI[4]xI[3]", "(((3.0 x 5.0) x I[4]) x I[3])", "");
+        tester.testExpression("[1,0, 5,3, 4]:(tanh(i0xi1))", "([1,0,5,3,4]:(tanh(I[0] x I[1])))", "");
         tester.testExpression("[0,2, 1,3, -1](sig(I0))", "([0,2,1,3,-1]:(sig(I[0])))", "");
-        tester.testExpression("I[0]<-I[1]->I[2]", "((I[0]<-I[1])->I[2])", "");
-        tester.testExpression("quadratic(I[0]) -> I[1] -> I[2]", "((quad(I[0])->I[1])->I[2])", "");
+        tester.testExpression("I[0]<-I[1]->I[2]", "((I[0] <- I[1]) -> I[2])", "");
+        tester.testExpression("quadratic(I[0]) -> I[1] -> I[2]", "((quad(I[0]) -> I[1]) -> I[2])", "");
         tester.testExpression("((tanh(i0)", "tanh(I[0])", "");
-        tester.testExpression("($$(gaus(i0*()", "gaus(I[0]*0.0)", "");
+        tester.testExpression("($$(gaus(i0*()", "gaus(I[0] * 0.0)", "");
         tester.testExpression("rrlu(i0)", "relu(I[0])", "");
-        tester.testExpression("th(i0)*gzs(i0+I1)", "(tanh(I[0])*gaus(I[0]+I[1]))", "");
+        tester.testExpression("th(i0)*gzs(i0+I1)", "(tanh(I[0]) * gaus(I[0] + I[1]))", "");
 
-        tester.testExpression("th(i0)dgzs(i0+I1)", "(tanh(I[0])dgaus(I[0]+I[1]))", "");
-        tester.testExpression("ijdgzs(i0+I1)", "(I[j]dgaus(I[0]+I[1]))", "");
-        tester.testExpression("ijssum(i0+Ij)", "(I[j]ssum(I[0]+I[j]))", "");
+        tester.testExpression("th(i0)dgzs(i0+I1)", "(tanh(I[0]) d gaus(I[0] + I[1]))", "");
+        tester.testExpression("ijdgzs(i0+I1)", "(I[j] d gaus(I[0] + I[1]))", "");
+        tester.testExpression("ijssum(i0+Ij)", "(I[j] s sum(I[0] + I[j]))", "");
 
-        tester.testExpression("i[0] d>> i[1]", "(I[0]d"+((char)187)+"I[1])", "");
+        tester.testExpression("i[0] d>> i[1] d>> I[2]", "(I[0] d"+((char)187)+" I[1] d"+((char)187)+" I[2])", "");
+        try {
+            Function.create("i[0] d>> i[1]");
+            assert false;
+        } catch (Exception e) {
+            assert e.getMessage().equals("The function/operation 'd"+((char)187)+"' expects 3 parameters, however 2 where given!");
+            assert true;
+        }
+        try {
+            Function.create("lig(I[0],I[1],I[2])");
+            assert false;
+        } catch (Exception e) {
+            assert e.getMessage().equals("The function/operation 'lig' expects 1 parameters, however 3 where given!");
+            assert true;
+        }
+        try {
+            Function.create("sig(I[0],I[1],I[2])");
+            assert false;
+        } catch (Exception e) {
+            assert e.getMessage().equals("The function/operation 'sig' expects 1 parameters, however 3 where given!");
+            assert true;
+        }
+        try {
+            Function.create("sum(I[0],I[1],I[2])");
+            assert false;
+        } catch (Exception e) {
+            System.out.print(e.getMessage());
+            assert e.getMessage().equals(
+                    "The function/operation 'sum' expects 1 parameters, however 3 where given!\n"+
+                    "Note: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration."
+            );
+            assert true;
+        }
+        try {
+            Function.create("prod(I[0],I[1],I[2])");
+            assert false;
+        } catch (Exception e) {
+            assert e.getMessage().equals(
+                    "The function/operation 'prod' expects 1 parameters, however 3 where given!\n"+
+                    "Note: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration."
+            );
+            assert true;
+        }
 
         //ACTIVATION TESTING:
         double[] input1 = {};

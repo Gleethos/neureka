@@ -8,34 +8,35 @@ public class ReLU extends OperationType {
 <span class="fc" id="L8">        super(</span>
                 &quot;relu&quot;,
                 &quot;relu&quot;,
+                1,
                 false,
                 false,
                 false,
                 true,
                 true
         );
-<span class="fc" id="L17">        set(Activation.class,</span>
+<span class="fc" id="L18">        set(Activation.class,</span>
                 new Activation(
                         &quot;if (input &gt;= 0) {  output = input; } else { output = input * (float)0.01; }\n&quot;,
                         &quot;if (input &gt;= 0) { output = (float)1; } else { output = (float)0.01; }\n&quot;,
-                        (inputs, d)-&gt;{
-<span class="fc" id="L22">                            double[] t1_val = inputs[1].value64();</span>
-<span class="fc bfc" id="L23" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L24">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc bfc" id="L25" title="All 2 branches covered.">                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="fc" id="L26">                                    else return t1_val[inputs[1].i_of_idx(t1Idx)]*0.01;</span>
+                        (inputs, d) -&gt; {
+<span class="fc" id="L23">                            double[] t1_val = inputs[1].value64();</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L25">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="fc" id="L27">                                    else return t1_val[inputs[1].i_of_idx(t1Idx)]*0.01;</span>
                                 };
                             } else {
-<span class="fc" id="L29">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc bfc" id="L30" title="All 2 branches covered.">                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return 1;</span>
-<span class="fc" id="L31">                                    else return 0.01;</span>
+<span class="fc" id="L30">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">                                    if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return 1;</span>
+<span class="fc" id="L32">                                    else return 0.01;</span>
                                 };
                             }
                         })
         );
 
 
-<span class="fc" id="L38">    }</span>
+<span class="fc" id="L39">    }</span>
 
 
 }

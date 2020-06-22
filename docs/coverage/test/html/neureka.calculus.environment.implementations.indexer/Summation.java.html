@@ -5,30 +5,37 @@ import neureka.calculus.environment.OperationType;
 public class Summation extends OperationType {
 
     public Summation(){
-<span class="fc" id="L8">        super(&quot;summation&quot;, &quot;sum&quot; , false, true, false, true, true);</span>
-<span class="fc" id="L9">        set(Activation.class,</span>
-                new Activation(&quot;output = input;&quot;,
+<span class="fc" id="L8">        super (</span>
+                &quot;summation&quot;,
+                &quot;sum&quot; ,
+                1,
+                false,
+                true,
+                false,
+                true,
+                true
+        );
+<span class="fc" id="L18">        set(Activation.class,</span>
+                new Activation(
+                        &quot;output = input;&quot;,
                         &quot;output = 1;&quot;,
                         null
                 )
         );
-<span class="fc" id="L15">        set(Broadcast.class,</span>
+<span class="fc" id="L25">        set(Broadcast.class,</span>
                 new Broadcast(
                         &quot;&quot;,
                         &quot;&quot;,
-                        (inputs, d)-&gt;{
-<span class="fc" id="L20">                            double[] t1_val = inputs[1].value64();</span>
-<span class="fc" id="L21">                            double[] t2_val = inputs[2].value64();</span>
-<span class="pc bpc" id="L22" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L23">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + t2_val[inputs[2].i_of_idx(t2Idx)];</span>
-                            } else {
-<span class="nc" id="L25">                                return (t0Idx, t1Idx, t2Idx) -&gt; 1.0;</span>
-                            }
+                        (inputs, d) -&gt; {
+<span class="fc" id="L30">                            double[] t1_val = inputs[1].value64();</span>
+<span class="fc" id="L31">                            double[] t2_val = inputs[2].value64();</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">                            if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="nc" id="L33">                            else return (t0Idx, t1Idx, t2Idx) -&gt; 1.0;</span>
                         })
         );
 
 
-<span class="fc" id="L31">    }</span>
+<span class="fc" id="L38">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

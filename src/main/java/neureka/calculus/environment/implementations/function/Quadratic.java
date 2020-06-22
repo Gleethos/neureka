@@ -9,6 +9,7 @@ public class Quadratic extends OperationType {
         super(
                 "quadratic",
                 "quad",
+                1,
                 false,
                 false,
                 false,

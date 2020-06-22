@@ -619,7 +619,7 @@ public class GraphNode implements Component<Tsr>
         if (agent.isForward()) {
             Tsr d = agent.derivative();
             if (d != null && d.has(GraphNode.class))
-                ((GraphNode) d.find(GraphNode.class))._is_used_as_derivative = true;
+                (d.find(GraphNode.class))._is_used_as_derivative = true;
         }
 
     }

@@ -22,7 +22,7 @@ public class Subtraction extends OperationType {
     public Subtraction(){
 
         super(
-                "subtract", "-", true, false, false, false, false
+                "subtract", "-", -1, true, false, false, false, false
         );
         set(Scalarization.class,
         new Scalarization("output = input1 - value;\n",
@@ -65,23 +65,23 @@ public class Subtraction extends OperationType {
         );
 
         new OperationType(
-                "", ((char) 171) + "-", true, false, false, false, false
+                "", ((char) 171) + "-", 3, true, false, false, false, false
         );
         new OperationType(
-                "", "-" + ((char) 187), true, false, false, false, false
+                "", "-" + ((char) 187), 3, true, false, false, false, false
         );
 
         // Convolution:
 
 
         new OperationType(
-                "", "s", true, false, true, false, false
+                "", "s", 2, true, false, true, false, false
         );
         new OperationType(
-                "", ((char) 171) + "s", true, false, true, false, false
+                "", ((char) 171) + "s", 3, true, false, true, false, false
         );
         new OperationType(
-                "", "s" + ((char) 187), true, false, true, false, false
+                "", "s" + ((char) 187), 3, true, false, true, false, false
         );
 
 

@@ -619,7 +619,7 @@ public class GraphNode implements Component&lt;Tsr&gt;
 <span class="fc bfc" id="L619" title="All 2 branches covered.">        if (agent.isForward()) {</span>
 <span class="fc" id="L620">            Tsr d = agent.derivative();</span>
 <span class="pc bpc" id="L621" title="2 of 4 branches missed.">            if (d != null &amp;&amp; d.has(GraphNode.class))</span>
-<span class="nc" id="L622">                ((GraphNode) d.find(GraphNode.class))._is_used_as_derivative = true;</span>
+<span class="nc" id="L622">                (d.find(GraphNode.class))._is_used_as_derivative = true;</span>
         }
 
 <span class="fc" id="L625">    }</span>

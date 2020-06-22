@@ -12,7 +12,9 @@ import neureka.calculus.factory.components.FunctionConstant;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public abstract class AbstractFunction extends BaseFunction {
     
@@ -66,38 +68,52 @@ public abstract class AbstractFunction extends BaseFunction {
     //---
 
     @Override
-    public String toString() {
+    public String toString()
+    {
+        List<String> stringedSource = _src.stream().map(e->((e==null)?"(null)":e.toString())).collect(Collectors.toList());
         StringBuilder reconstructed = new StringBuilder();
-        if (_src.size() == 1 && _type.identifier().length() > 1) {
-            String expression = _src.get(0).toString();
+
+        if (_src.size() == 1 && _type.identifier().length() > 1 || !_type.isOperation()) {
+            String expression = String.join(", ", stringedSource);
             if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
                 return _type.identifier() + expression;
             }
             return _type.identifier() + "(" + expression + ")";
         } else {
-            reconstructed.insert(0, ((_type.identifier().equals(",")) ? "[" : ""));
-            for (int i = 0; i < _src.size(); ++i) {
-                if (_src.get(i) != null) {
-                    if ((_type.identifier().equals(","))) {
-                        if (i == _src.size() - 1) {
-                            reconstructed.append("]:(").append((_src.get(i) instanceof FunctionConstant)
-                                    ? _src.get(i).toString().split("\\.")[0]
-                                    : _src.get(i).toString()).append(")");
-                        } else {
-                            reconstructed.append((_src.get(i) instanceof FunctionConstant)
-                                    ? _src.get(i).toString().split("\\.")[0]
-                                    : _src.get(i).toString());
-                        }
+            if(_type.identifier().equals(",")) {
+                reconstructed.insert(0, "[");
+                for (int i = 0; i < _src.size(); ++i) {
+                    if (i == _src.size() - 1) {
+                        reconstructed.append("]:(").append(
+                                (_src.get(i) instanceof FunctionConstant)
+                                        ? stringedSource.get(i).split("\\.")[0]
+                                        : stringedSource.get(i)
+                        ).append(")");
                     } else {
-                        reconstructed.append(_src.get(i).toString());
+                        reconstructed.append(
+                                (_src.get(i) instanceof FunctionConstant)
+                                        ? stringedSource.get(i).split("\\.")[0]
+                                        : stringedSource.get(i));
                     }
-                } else {
-                    reconstructed.append("(null)");
+                    if (i < _src.size() - 2) {
+                        reconstructed.append(_type.identifier());
+                    }
                 }
-                if (i < _src.size() - ((_type.identifier().equals(",")) ? 2 : 1)) {
-                    reconstructed.append((_type.identifier().equals(">")) ? "-" : "").append(_type.identifier()).append((_type.identifier().equals("<")) ? "-" : "");
+            } else {
+                for (int i = 0; i < _src.size(); ++i) {
+                    reconstructed.append(stringedSource.get(i));
+                    if (i < _src.size() - ((_type.identifier().equals(",")) ? 2 : 1)) {
+                        reconstructed.append(" ").append(
+                                (_type.identifier().equals(">")) ? "-" : ""
+                        ).append(
+                                _type.identifier()
+                        ).append(
+                                (_type.identifier().equals("<")) ? "-" : ""
+                        ).append(" ");
+                    }
                 }
             }
+
         }
         return "(" + reconstructed + ")";
     }

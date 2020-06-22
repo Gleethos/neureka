@@ -5,7 +5,16 @@ import neureka.calculus.environment.OperationType;
 public class Tanh extends OperationType {
 
     public Tanh(){
-        super("tanh", "tanh", false, false, false, true, true);
+        super (
+                "tanh",
+                "tanh",
+                1,
+                false,
+                false,
+                false,
+                true,
+                true
+        );
         set(Activation.class,
                 new Activation(
                 "output = input/pow(1+pow(input, 2.0f), 0.5f);\n",
