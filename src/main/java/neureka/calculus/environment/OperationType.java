@@ -3,6 +3,9 @@ package neureka.calculus.environment;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
+import neureka.calculus.environment.executors.AbstractTypeExecutor;
+import neureka.calculus.environment.executors.Execution;
+import neureka.calculus.environment.executors.TypeExecutor;
 import neureka.calculus.environment.implementations.function.*;
 import neureka.calculus.environment.implementations.indexer.Product;
 import neureka.calculus.environment.implementations.indexer.Summation;
@@ -39,14 +42,18 @@ public class OperationType implements Type
     protected int _id;
     protected String _name;
     protected String  _identifier;
-    protected int _numberOfParameters;
+    /**
+     * Arity is the number of arguments or operands
+     * that this function or operation takes.
+     */
+    protected int _arity;
     protected boolean _isOperation;
     protected boolean _isIndexer;
     protected boolean _isConvection;
     protected boolean _isCommutative;
     protected boolean _isAssociative;
 
-    private Map<Class, Object> _modules = new HashMap<>();
+    private Map<Class, AbstractTypeExecutor> _modules = new HashMap<>();
 
     static
     {
@@ -79,7 +86,7 @@ public class OperationType implements Type
     public OperationType(
             String name,
             String identifier,
-            int numberOfParameters,
+            int arity,
             boolean isOperation,
             boolean isIndexer,
             boolean isConvection,
@@ -87,7 +94,7 @@ public class OperationType implements Type
             boolean isAssociative
     ) {
         _name = name;
-        _numberOfParameters = numberOfParameters;
+        _arity = arity;
         _id = _ID;
         _ID++;
         _identifier = identifier;
@@ -124,6 +131,17 @@ public class OperationType implements Type
 
     //==================================================================================================================
 
+    //private OperationPreprocessor _preprocessor;
+    //
+    //@Override
+    //public OperationPreprocessor getPreprocessor(){
+    //    return null;
+    //}
+    //
+    //public void setPre
+
+    //==================================================================================================================
+
     @Override
     public String getName(){
         return _name;
@@ -132,22 +150,34 @@ public class OperationType implements Type
     //==================================================================================================================
 
     @Override
-    public <T> T get(Class<T> type){
+    public <T extends AbstractTypeExecutor> T get(Class<T> type){
         return (T) _modules.get(type);
     }
     @Override
-    public <T> boolean supports(Class<T> type){
+    public <T extends AbstractTypeExecutor> boolean supports(Class<T> type){
         return _modules.containsKey(type);
     }
     @Override
-    public <T> Type set(Class<T> type, T instance){
+    public <T extends AbstractTypeExecutor> Type set(Class<T> type, T instance) {
         _modules.put(type, instance);
         return this;
     }
 
     //==================================================================================================================
 
+    @Override
+    public Execution generateExecutionFrom(TypeExecutor.ExecutionCall call) {
 
+        for(TypeExecutor te : _modules.values()){
+            if ( te.canHandle(call) ) {
+                //te.handle(
+                //
+                //);
+                //return ;
+            }
+        }
+        return null;
+    }
 
     //==================================================================================================================
 
@@ -162,8 +192,8 @@ public class OperationType implements Type
     }
 
     @Override
-    public int numberOfParameters(){
-        return _numberOfParameters;
+    public int arity(){
+        return _arity;
     }
 
     @Override

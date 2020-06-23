@@ -1,7 +1,7 @@
 package neureka.calculus.environment.implementations.other;
 
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.subtypes.*;
+import neureka.calculus.environment.executors.*;
 
 import java.util.Random;
 

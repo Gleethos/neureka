@@ -10,7 +10,7 @@ import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.subtypes.*;
+import neureka.calculus.environment.executors.*;
 import neureka.utility.DataHelper;
 import org.jocl.*;
 
@@ -291,23 +291,23 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     private void _releaseEvents(Tsr[] tsrs){
-<span class="fc bfc" id="L294" title="All 2 branches covered.">        for(Tsr t : tsrs){</span>
-<span class="pc bpc" id="L295" title="1 of 2 branches missed.">            if( t.find(cl_tsr.class).value.event != null ){</span>
+<span class="nc bnc" id="L294" title="All 2 branches missed.">        for(Tsr t : tsrs){</span>
+<span class="nc bnc" id="L295" title="All 2 branches missed.">            if( t.find(cl_tsr.class).value.event != null ){</span>
 <span class="nc" id="L296">                clReleaseEvent(t.find(cl_tsr.class).value.event);</span>
 <span class="nc" id="L297">                t.find(cl_tsr.class).value.event = null;</span>
             }
         }
-<span class="fc" id="L300">    }</span>
+<span class="nc" id="L300">    }</span>
 
     private cl_event[] _getWaitList(Tsr[] tsrs){
-<span class="fc" id="L303">        List&lt;cl_event&gt; list = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L304" title="All 2 branches covered.">        for (Tsr t : tsrs) {</span>
-<span class="fc" id="L305">            cl_event event = t.find(cl_tsr.class).value.event;</span>
-<span class="pc bpc" id="L306" title="3 of 4 branches missed.">            if (event != null &amp;&amp; !list.contains(event)) {</span>
+<span class="nc" id="L303">        List&lt;cl_event&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L304" title="All 2 branches missed.">        for (Tsr t : tsrs) {</span>
+<span class="nc" id="L305">            cl_event event = t.find(cl_tsr.class).value.event;</span>
+<span class="nc bnc" id="L306" title="All 4 branches missed.">            if (event != null &amp;&amp; !list.contains(event)) {</span>
 <span class="nc" id="L307">                list.add(event);</span>
             }
         }
-<span class="fc" id="L310">        return list.toArray(new cl_event[0]);</span>
+<span class="nc" id="L310">        return list.toArray(new cl_event[0]);</span>
     }
 
     @Override
@@ -392,188 +392,120 @@ public class OpenCLDevice extends AbstractDevice
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, OperationType type)
     {
-<span class="pc bpc" id="L395" title="7 of 9 branches missed.">        switch (type.identifier()) {</span>
-            case &quot;x&quot;:
-<span class="fc bfc" id="L397" title="All 2 branches covered.">                if (d &gt;= 0) {</span>
-<span class="pc bpc" id="L398" title="1 of 2 branches missed.">                    if (d == 0) tsrs[0] = tsrs[2];</span>
-<span class="nc" id="L399">                    else tsrs[0] = tsrs[1];</span>
-<span class="fc" id="L400">                    return;</span>
-<span class="fc" id="L401">                } else tsrs = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};</span>
-<span class="fc" id="L402">                break;</span>
-            case (&quot;x&quot; + ((char) 187)):
-<span class="nc" id="L404">                tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};</span>
-<span class="nc" id="L405">                break;</span>
-            case (&quot;a&quot; + ((char) 187)):
-<span class="nc" id="L407">                tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};</span>
-<span class="nc" id="L408">                break;</span>
-            case (&quot;s&quot; + ((char) 187)):
-<span class="nc" id="L410">                tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};</span>
-<span class="nc" id="L411">                break;</span>
-            case (&quot;d&quot; + ((char) 187)):
-<span class="nc" id="L413">                tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};</span>
-<span class="nc" id="L414">                break;</span>
-            case (&quot;p&quot; + ((char) 187)):
-<span class="nc" id="L416">                tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};</span>
-<span class="nc" id="L417">                break;</span>
-            case (&quot;m&quot; + ((char) 187)):
-<span class="nc" id="L419">                tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};</span>
-<span class="nc" id="L420">                break;</span>
-            case &quot;&gt;&quot;:
-<span class="nc" id="L422">                tsrs = new Tsr[]{tsrs[1], tsrs[0]};</span>
-                break;
-        }
+<span class="pc bpc" id="L395" title="1 of 2 branches missed.">        int offset = (tsrs[0] != null) ? 0 : 1;</span>
+<span class="pc bpc" id="L396" title="1 of 2 branches missed.">        int gwz = (tsrs[0] != null) ? tsrs[0].size() : tsrs[1].size();</span>
+<span class="fc" id="L397">        String chosen = _platform.kernelNameOf(type);</span>
+<span class="fc" id="L398">        cl_kernel kernel = _platform.getKernels().get(chosen);</span>
 
-<span class="pc bpc" id="L426" title="1 of 2 branches missed.">        int gwz = (tsrs[0] != null) ? tsrs[0].size() : tsrs[1].size();</span>
-<span class="pc bpc" id="L427" title="1 of 2 branches missed.">        int offset = (tsrs[0] != null) ? 0 : 1;</span>
-<span class="fc" id="L428">        String chosen = _platform.kernelNameOf(type);</span>
-<span class="fc" id="L429">        cl_kernel kernel = _platform.getKernels().get(chosen);</span>
-
-<span class="fc" id="L431">        cl_mem drn = tsrs[offset].find(cl_tsr.class).value.data;</span>
-<span class="fc" id="L432">        cl_mem src1 = tsrs[offset + 1].find(cl_tsr.class).value.data;</span>
-<span class="pc bpc" id="L433" title="1 of 4 branches missed.">        if (type.supports(Activation.class) &amp;&amp; !type.isIndexer()) {</span>
-<span class="fc" id="L434">            clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=&gt; drain</span>
-<span class="fc" id="L435">            clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(tsrs[offset].find(cl_tsr.class).config.data));</span>
-<span class="fc" id="L436">            clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=&gt;src1</span>
-<span class="fc" id="L437">            clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(tsrs[offset + 1].find(cl_tsr.class).config.data));</span>
-<span class="fc" id="L438">            clSetKernelArg(kernel, 4, Sizeof.cl_int, Pointer.to(new int[]{tsrs[0].rank()}));</span>
-<span class="fc" id="L439">            clSetKernelArg(kernel, 5, Sizeof.cl_int, Pointer.to(new int[]{d}));</span>
+<span class="pc bpc" id="L400" title="1 of 4 branches missed.">        if (type.supports(Activation.class) &amp;&amp; !type.isIndexer()) {</span>
+<span class="fc" id="L401">            new KernelBuilder(kernel, _queue)</span>
+<span class="fc" id="L402">                    .pass(tsrs[offset])</span>
+<span class="fc" id="L403">                    .pass(tsrs[offset + 1])</span>
+<span class="fc" id="L404">                    .pass(tsrs[0].rank())</span>
+<span class="fc" id="L405">                    .pass(d)</span>
+<span class="fc" id="L406">                    .call(gwz);</span>
         } else {
-            //TODO: Function.TYPES.rqsAdditionalArgument(f_id)
-<span class="fc" id="L442">            cl_mem src2 = tsrs[offset + 2].find(cl_tsr.class).value.data;</span>
-<span class="fc" id="L443">            clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=&gt; drain</span>
-<span class="fc" id="L444">            clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(tsrs[offset].find(cl_tsr.class).config.data));</span>
-<span class="fc" id="L445">            clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=&gt;src1</span>
-<span class="fc" id="L446">            clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(tsrs[offset + 1].find(cl_tsr.class).config.data));</span>
-<span class="fc" id="L447">            clSetKernelArg(kernel, 4, Sizeof.cl_mem, Pointer.to(src2));//=&gt;src2</span>
-<span class="fc" id="L448">            clSetKernelArg(kernel, 5, Sizeof.cl_mem, Pointer.to(tsrs[offset + 2].find(cl_tsr.class).config.data));</span>
-<span class="fc" id="L449">            clSetKernelArg(kernel, 6, Sizeof.cl_int, Pointer.to(new int[]{tsrs[0].rank()}));</span>
-<span class="fc" id="L450">            clSetKernelArg(kernel, 7, Sizeof.cl_int, Pointer.to(new int[]{d}));</span>
+<span class="fc" id="L408">            new KernelBuilder(kernel, _queue)</span>
+<span class="fc" id="L409">                    .pass(tsrs[offset])</span>
+<span class="fc" id="L410">                    .pass(tsrs[offset + 1])</span>
+<span class="fc" id="L411">                    .pass(tsrs[offset + 2])</span>
+<span class="fc" id="L412">                    .pass(tsrs[0].rank())</span>
+<span class="fc" id="L413">                    .pass(d)</span>
+<span class="fc" id="L414">                    .call(gwz);</span>
         }
+<span class="fc" id="L416">    }</span>
 
-<span class="fc" id="L453">        cl_event[] events = _getWaitList(tsrs);</span>
-<span class="pc bpc" id="L454" title="1 of 2 branches missed.">        if(events.length&gt;0){</span>
-<span class="nc" id="L455">            clWaitForEvents(events.length, events);</span>
-<span class="nc" id="L456">            _releaseEvents(tsrs);</span>
-        }
-<span class="fc" id="L458">        clEnqueueNDRangeKernel(</span>
-                _queue, kernel,
-                1,
-                null,
-                new long[]{gwz},
-                null,
-                0,
-                null,
-                null
-        );
-
-<span class="fc" id="L469">    }</span>
 
     @Override
     protected void _enqueue(Tsr t, double value, int d, OperationType type) {
-<span class="fc" id="L473">        int gwz = t.size();</span>
-<span class="fc" id="L474">        String chosen = &quot;scalar_&quot; + _platform.kernelNameOf(type).replace(&quot;operate_&quot;, &quot;&quot;);</span>
-<span class="fc" id="L475">        cl_kernel kernel = _platform.getKernels().get(chosen);</span>
-<span class="fc" id="L476">        cl_tsr clTsr = (cl_tsr) t.find(cl_tsr.class); //= _mapping.get(t)</span>
-<span class="fc" id="L477">        cl_mem drn = clTsr.value.data;</span>
-<span class="fc" id="L478">        cl_mem src1 = clTsr.value.data;</span>
-<span class="fc" id="L479">        clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=&gt; drain</span>
-<span class="fc" id="L480">        clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(clTsr.config.data));</span>
-<span class="fc" id="L481">        clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=&gt;src1</span>
-<span class="fc" id="L482">        clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(clTsr.config.data));</span>
-<span class="fc" id="L483">        clSetKernelArg(kernel, 4, Sizeof.cl_float, Pointer.to(new float[]{(float) value}));</span>
-<span class="fc" id="L484">        clSetKernelArg(kernel, 5, Sizeof.cl_int, Pointer.to(new int[]{t.rank()}));</span>
-<span class="fc" id="L485">        clSetKernelArg(kernel, 6, Sizeof.cl_int, Pointer.to(new int[]{d}));</span>
-
-<span class="fc" id="L487">        cl_event[] events = _getWaitList(new Tsr[]{t});</span>
-<span class="fc" id="L488">        clEnqueueNDRangeKernel(</span>
-                _queue, kernel,
-                1,
-                null,
-                new long[]{gwz},
-                null,
-                events.length,
-<span class="pc bpc" id="L495" title="1 of 2 branches missed.">                (events.length==0)?null:events,</span>
-                null
-        );
-<span class="fc" id="L498">        _releaseEvents(new Tsr[]{t});</span>
-<span class="fc" id="L499">    }</span>
+<span class="fc" id="L421">        int gwz = t.size();</span>
+<span class="fc" id="L422">        String chosen = &quot;scalar_&quot; + _platform.kernelNameOf(type).replace(&quot;operate_&quot;, &quot;&quot;);</span>
+<span class="fc" id="L423">        cl_kernel kernel = _platform.getKernels().get(chosen);</span>
+<span class="fc" id="L424">        new KernelBuilder(kernel, _queue)</span>
+<span class="fc" id="L425">                .pass(t)</span>
+<span class="fc" id="L426">                .pass(t)</span>
+<span class="fc" id="L427">                .pass((float)value)</span>
+<span class="fc" id="L428">                .pass(t.rank())</span>
+<span class="fc" id="L429">                .pass(d)</span>
+<span class="fc" id="L430">                .call(gwz);</span>
+<span class="fc" id="L431">    }</span>
 
 
     public String name() {
-<span class="fc" id="L503">        return DeviceQuery.getString(_did, CL_DEVICE_NAME);</span>
+<span class="fc" id="L435">        return DeviceQuery.getString(_did, CL_DEVICE_NAME);</span>
     }
 
     public String vendor() {
-<span class="fc" id="L507">        return DeviceQuery.getString(_did, CL_DEVICE_VENDOR);</span>
+<span class="fc" id="L439">        return DeviceQuery.getString(_did, CL_DEVICE_VENDOR);</span>
     }
 
     public String version() {
-<span class="nc" id="L511">        return DeviceQuery.getString(_did, CL_DRIVER_VERSION);</span>
+<span class="nc" id="L443">        return DeviceQuery.getString(_did, CL_DRIVER_VERSION);</span>
     }
 
     public String type() {
-<span class="fc" id="L515">        long deviceType = DeviceQuery.getLong(_did, CL_DEVICE_TYPE);</span>
-<span class="pc bpc" id="L516" title="1 of 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_CPU) != 0)</span>
-<span class="nc" id="L517">            return &quot;CPU&quot;;</span>
-<span class="pc bpc" id="L518" title="1 of 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_GPU) != 0)</span>
-<span class="fc" id="L519">            return &quot;GPU&quot;;</span>
-<span class="nc bnc" id="L520" title="All 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_ACCELERATOR) != 0)</span>
-<span class="nc" id="L521">            return &quot;ACCELERATOR&quot;;</span>
-<span class="nc bnc" id="L522" title="All 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_DEFAULT) != 0)</span>
-<span class="nc" id="L523">            return &quot;DEFAULT&quot;;</span>
-<span class="nc" id="L524">        return &quot;UNKNOWN&quot;;</span>
+<span class="fc" id="L447">        long deviceType = DeviceQuery.getLong(_did, CL_DEVICE_TYPE);</span>
+<span class="pc bpc" id="L448" title="1 of 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_CPU) != 0)</span>
+<span class="nc" id="L449">            return &quot;CPU&quot;;</span>
+<span class="pc bpc" id="L450" title="1 of 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_GPU) != 0)</span>
+<span class="fc" id="L451">            return &quot;GPU&quot;;</span>
+<span class="nc bnc" id="L452" title="All 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_ACCELERATOR) != 0)</span>
+<span class="nc" id="L453">            return &quot;ACCELERATOR&quot;;</span>
+<span class="nc bnc" id="L454" title="All 2 branches missed.">        if ((deviceType &amp; CL_DEVICE_TYPE_DEFAULT) != 0)</span>
+<span class="nc" id="L455">            return &quot;DEFAULT&quot;;</span>
+<span class="nc" id="L456">        return &quot;UNKNOWN&quot;;</span>
     }
 
     public int maxComputeUnits() {
-<span class="nc" id="L528">        return DeviceQuery.getInt(_did, CL_DEVICE_MAX_COMPUTE_UNITS);</span>
+<span class="nc" id="L460">        return DeviceQuery.getInt(_did, CL_DEVICE_MAX_COMPUTE_UNITS);</span>
     }
 
     public long maxWorkItemSimensions() {
-<span class="nc" id="L532">        return DeviceQuery.getLong(_did, CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS);</span>
+<span class="nc" id="L464">        return DeviceQuery.getLong(_did, CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS);</span>
     }
 
     public long[] maxWorkItemSizes() {
-<span class="nc" id="L536">        return DeviceQuery.getSizes(_did, CL_DEVICE_MAX_WORK_ITEM_SIZES, 3);</span>
+<span class="nc" id="L468">        return DeviceQuery.getSizes(_did, CL_DEVICE_MAX_WORK_ITEM_SIZES, 3);</span>
     }
 
     public long maxWorkGroupSize() {
-<span class="nc" id="L540">        return DeviceQuery.getSize(_did, CL_DEVICE_MAX_WORK_GROUP_SIZE);</span>
+<span class="nc" id="L472">        return DeviceQuery.getSize(_did, CL_DEVICE_MAX_WORK_GROUP_SIZE);</span>
     }
 
     public long maxClockFrequenzy() {
-<span class="fc" id="L544">        return DeviceQuery.getLong(_did, CL_DEVICE_MAX_CLOCK_FREQUENCY);</span>
+<span class="fc" id="L476">        return DeviceQuery.getLong(_did, CL_DEVICE_MAX_CLOCK_FREQUENCY);</span>
     }
 
     public int maxAddressBits() {
-<span class="nc" id="L548">        return DeviceQuery.getInt(_did, CL_DEVICE_ADDRESS_BITS);</span>
+<span class="nc" id="L480">        return DeviceQuery.getInt(_did, CL_DEVICE_ADDRESS_BITS);</span>
     }
 
     public long maxMemAllocSize() {
-<span class="nc" id="L552">        return DeviceQuery.getLong(_did, CL_DEVICE_MAX_MEM_ALLOC_SIZE);</span>
+<span class="nc" id="L484">        return DeviceQuery.getLong(_did, CL_DEVICE_MAX_MEM_ALLOC_SIZE);</span>
     }
 
     public long globalMemSize() {
-<span class="fc" id="L556">        return DeviceQuery.getLong(_did, CL_DEVICE_GLOBAL_MEM_SIZE);</span>
+<span class="fc" id="L488">        return DeviceQuery.getLong(_did, CL_DEVICE_GLOBAL_MEM_SIZE);</span>
     }
 
     public int errorCorrectionSupport() {
-<span class="nc" id="L560">        return DeviceQuery.getInt(_did, CL_DEVICE_ERROR_CORRECTION_SUPPORT);</span>
+<span class="nc" id="L492">        return DeviceQuery.getInt(_did, CL_DEVICE_ERROR_CORRECTION_SUPPORT);</span>
     }
 
     public int localMemType() {
-<span class="nc" id="L564">        return DeviceQuery.getInt(_did, CL_DEVICE_LOCAL_MEM_TYPE);</span>
+<span class="nc" id="L496">        return DeviceQuery.getInt(_did, CL_DEVICE_LOCAL_MEM_TYPE);</span>
     }
 
     public long localMemSize() {
-<span class="nc" id="L568">        return DeviceQuery.getLong(_did, CL_DEVICE_LOCAL_MEM_SIZE);</span>
+<span class="nc" id="L500">        return DeviceQuery.getLong(_did, CL_DEVICE_LOCAL_MEM_SIZE);</span>
     }
 
     public long maxConstantBufferSize() {
-<span class="fc" id="L572">        return DeviceQuery.getLong(_did, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE);</span>
+<span class="fc" id="L504">        return DeviceQuery.getLong(_did, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE);</span>
     }
 
     public long maxConstantBufferSizeKB() {
-<span class="nc" id="L576">        return (int) (DeviceQuery.getLong(_did, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE) / 1024);</span>
+<span class="nc" id="L508">        return (int) (DeviceQuery.getLong(_did, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE) / 1024);</span>
     }
     /*
     public boolean queueExecIsOrdered() {
@@ -587,66 +519,66 @@ public class OpenCLDevice extends AbstractDevice
     }
     */
     public int imageSupport() {
-<span class="nc" id="L590">        return DeviceQuery.getInt(_did, CL_DEVICE_IMAGE_SUPPORT);</span>
+<span class="nc" id="L522">        return DeviceQuery.getInt(_did, CL_DEVICE_IMAGE_SUPPORT);</span>
     }
 
     public int maxReadImageArgs() {
-<span class="nc" id="L594">        return DeviceQuery.getInt(_did, CL_DEVICE_MAX_READ_IMAGE_ARGS);</span>
+<span class="nc" id="L526">        return DeviceQuery.getInt(_did, CL_DEVICE_MAX_READ_IMAGE_ARGS);</span>
     }
 
     public int maxWriteImageArgs() {
-<span class="fc" id="L598">        return DeviceQuery.getInt(_did, CL_DEVICE_MAX_WRITE_IMAGE_ARGS);</span>
+<span class="fc" id="L530">        return DeviceQuery.getInt(_did, CL_DEVICE_MAX_WRITE_IMAGE_ARGS);</span>
     }
 
     public long singleFPConfig() {
-<span class="nc" id="L602">        return DeviceQuery.getLong(_did, CL_DEVICE_SINGLE_FP_CONFIG);</span>
+<span class="nc" id="L534">        return DeviceQuery.getLong(_did, CL_DEVICE_SINGLE_FP_CONFIG);</span>
     }
 
     public long image2DMaxWidth() {
-<span class="nc" id="L606">        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE2D_MAX_WIDTH);</span>
+<span class="nc" id="L538">        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE2D_MAX_WIDTH);</span>
     }
 
     public long image2DMaxHeight() {
-<span class="fc" id="L610">        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE2D_MAX_HEIGHT);</span>
+<span class="fc" id="L542">        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE2D_MAX_HEIGHT);</span>
     }
 
     public long image3DMaxWidth() {
-<span class="nc" id="L614">        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE3D_MAX_WIDTH);</span>
+<span class="nc" id="L546">        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE3D_MAX_WIDTH);</span>
     }
 
     public long image3DMaxHeight() {
-<span class="fc" id="L618">        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE3D_MAX_HEIGHT);</span>
+<span class="fc" id="L550">        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE3D_MAX_HEIGHT);</span>
     }
 
     public long image3DMaxDepth() {
-<span class="nc" id="L622">        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE3D_MAX_DEPTH);</span>
+<span class="nc" id="L554">        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE3D_MAX_DEPTH);</span>
     }
 
     public int prefVecWidthChar() {
-<span class="nc" id="L626">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR);</span>
+<span class="nc" id="L558">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR);</span>
     }
 
     public int prefVecWidthShort() {
-<span class="nc" id="L630">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT);</span>
+<span class="nc" id="L562">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT);</span>
     }
 
     public int prefVecWidthInt() {
-<span class="nc" id="L634">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT);</span>
+<span class="nc" id="L566">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT);</span>
     }
 
     public int prefVecWidthLong() {
-<span class="nc" id="L638">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG);</span>
+<span class="nc" id="L570">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG);</span>
     }
 
     public int prefVecWidthFloat() {
-<span class="nc" id="L642">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT);</span>
+<span class="nc" id="L574">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT);</span>
     }
 
     public int prefVecWidthDouble() {
-<span class="nc" id="L646">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE);</span>
+<span class="nc" id="L578">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE);</span>
     }
 
-<span class="nc" id="L649">    public static class DeviceQuery {</span>
+<span class="nc" id="L581">    public static class DeviceQuery {</span>
         /**
          * Returns the value64 of the device info parameter with the given name
          *
@@ -655,7 +587,7 @@ public class OpenCLDevice extends AbstractDevice
          * @return The value64
          */
         public static int getInt(cl_device_id device, int paramName) {
-<span class="fc" id="L658">            return getInts(device, paramName, 1)[0];</span>
+<span class="fc" id="L590">            return getInts(device, paramName, 1)[0];</span>
         }
 
         /**
@@ -667,9 +599,9 @@ public class OpenCLDevice extends AbstractDevice
          * @return The value64
          */
         public static int[] getInts(cl_device_id device, int paramName, int numValues) {
-<span class="fc" id="L670">            int[] values = new int[numValues];</span>
-<span class="fc" id="L671">            clGetDeviceInfo(device, paramName, (long)Sizeof.cl_int * numValues, Pointer.to(values), null);</span>
-<span class="fc" id="L672">            return values;</span>
+<span class="fc" id="L602">            int[] values = new int[numValues];</span>
+<span class="fc" id="L603">            clGetDeviceInfo(device, paramName, (long)Sizeof.cl_int * numValues, Pointer.to(values), null);</span>
+<span class="fc" id="L604">            return values;</span>
         }
 
         /**
@@ -680,7 +612,7 @@ public class OpenCLDevice extends AbstractDevice
          * @return The value64
          */
         public static long getLong(cl_device_id device, int paramName) {
-<span class="fc" id="L683">            return getLongs(device, paramName, 1)[0];</span>
+<span class="fc" id="L615">            return getLongs(device, paramName, 1)[0];</span>
         }
 
         /**
@@ -692,9 +624,9 @@ public class OpenCLDevice extends AbstractDevice
          * @return The value64
          */
         public static long[] getLongs(cl_device_id device, int paramName, int numValues) {
-<span class="fc" id="L695">            long[] values = new long[numValues];</span>
-<span class="fc" id="L696">            clGetDeviceInfo(device, paramName, (long)Sizeof.cl_long * numValues, Pointer.to(values), null);</span>
-<span class="fc" id="L697">            return values;</span>
+<span class="fc" id="L627">            long[] values = new long[numValues];</span>
+<span class="fc" id="L628">            clGetDeviceInfo(device, paramName, (long)Sizeof.cl_long * numValues, Pointer.to(values), null);</span>
+<span class="fc" id="L629">            return values;</span>
         }
 
         /**
@@ -706,15 +638,15 @@ public class OpenCLDevice extends AbstractDevice
          */
         public static String getString(cl_device_id device, int paramName) {
             // Obtain the length of the string that will be queried
-<span class="fc" id="L709">            long[] size = new long[1];</span>
-<span class="fc" id="L710">            clGetDeviceInfo(device, paramName, 0, null, size);</span>
+<span class="fc" id="L641">            long[] size = new long[1];</span>
+<span class="fc" id="L642">            clGetDeviceInfo(device, paramName, 0, null, size);</span>
 
             // Create a buffer of the appropriate size and fill it with the info
-<span class="fc" id="L713">            byte[] buffer = new byte[(int) size[0]];</span>
-<span class="fc" id="L714">            clGetDeviceInfo(device, paramName, buffer.length, Pointer.to(buffer), null);</span>
+<span class="fc" id="L645">            byte[] buffer = new byte[(int) size[0]];</span>
+<span class="fc" id="L646">            clGetDeviceInfo(device, paramName, buffer.length, Pointer.to(buffer), null);</span>
 
             // Create a string from the buffer (excluding the trailing \0 byte)
-<span class="fc" id="L717">            return new String(buffer, 0, buffer.length - 1);</span>
+<span class="fc" id="L649">            return new String(buffer, 0, buffer.length - 1);</span>
         }
 
         /**
@@ -726,15 +658,15 @@ public class OpenCLDevice extends AbstractDevice
          */
         public static String getString(cl_platform_id platform, int paramName) {
             // Obtain the length of the string that will be queried
-<span class="nc" id="L729">            long[] size = new long[1];</span>
-<span class="nc" id="L730">            clGetPlatformInfo(platform, paramName, 0, null, size);</span>
+<span class="nc" id="L661">            long[] size = new long[1];</span>
+<span class="nc" id="L662">            clGetPlatformInfo(platform, paramName, 0, null, size);</span>
 
             // Create a buffer of the appropriate size and fill it with the info
-<span class="nc" id="L733">            byte[] buffer = new byte[(int) size[0]];</span>
-<span class="nc" id="L734">            clGetPlatformInfo(platform, paramName, buffer.length, Pointer.to(buffer), null);</span>
+<span class="nc" id="L665">            byte[] buffer = new byte[(int) size[0]];</span>
+<span class="nc" id="L666">            clGetPlatformInfo(platform, paramName, buffer.length, Pointer.to(buffer), null);</span>
 
             // Create a string from the buffer (excluding the trailing \0 byte)
-<span class="nc" id="L737">            return new String(buffer, 0, buffer.length - 1);</span>
+<span class="nc" id="L669">            return new String(buffer, 0, buffer.length - 1);</span>
         }
 
         /**
@@ -745,7 +677,7 @@ public class OpenCLDevice extends AbstractDevice
          * @return The value64
          */
         public static long getSize(cl_device_id device, int paramName) {
-<span class="fc" id="L748">            return getSizes(device, paramName, 1)[0];</span>
+<span class="fc" id="L680">            return getSizes(device, paramName, 1)[0];</span>
         }
 
         /**
@@ -759,21 +691,21 @@ public class OpenCLDevice extends AbstractDevice
         public static long[] getSizes(cl_device_id device, int paramName, int numValues) {
             // The size of the returned data has to depend on
             // the size of a size_t, which is handled here
-<span class="fc" id="L762">            ByteBuffer buffer = ByteBuffer.allocate(</span>
-<span class="fc" id="L763">                    numValues * Sizeof.size_t).order(ByteOrder.nativeOrder());</span>
-<span class="fc" id="L764">            clGetDeviceInfo(device, paramName, (long)Sizeof.size_t * numValues,</span>
-<span class="fc" id="L765">                    Pointer.to(buffer), null);</span>
-<span class="fc" id="L766">            long[] values = new long[numValues];</span>
-<span class="pc bpc" id="L767" title="1 of 2 branches missed.">            if (Sizeof.size_t == 4) {</span>
-<span class="nc bnc" id="L768" title="All 2 branches missed.">                for (int i = 0; i &lt; numValues; i++) {</span>
-<span class="nc" id="L769">                    values[i] = buffer.getInt(i * Sizeof.size_t);</span>
+<span class="fc" id="L694">            ByteBuffer buffer = ByteBuffer.allocate(</span>
+<span class="fc" id="L695">                    numValues * Sizeof.size_t).order(ByteOrder.nativeOrder());</span>
+<span class="fc" id="L696">            clGetDeviceInfo(device, paramName, (long)Sizeof.size_t * numValues,</span>
+<span class="fc" id="L697">                    Pointer.to(buffer), null);</span>
+<span class="fc" id="L698">            long[] values = new long[numValues];</span>
+<span class="pc bpc" id="L699" title="1 of 2 branches missed.">            if (Sizeof.size_t == 4) {</span>
+<span class="nc bnc" id="L700" title="All 2 branches missed.">                for (int i = 0; i &lt; numValues; i++) {</span>
+<span class="nc" id="L701">                    values[i] = buffer.getInt(i * Sizeof.size_t);</span>
                 }
             } else {
-<span class="fc bfc" id="L772" title="All 2 branches covered.">                for (int i = 0; i &lt; numValues; i++) {</span>
-<span class="fc" id="L773">                    values[i] = buffer.getLong(i * Sizeof.size_t);</span>
+<span class="fc bfc" id="L704" title="All 2 branches covered.">                for (int i = 0; i &lt; numValues; i++) {</span>
+<span class="fc" id="L705">                    values[i] = buffer.getLong(i * Sizeof.size_t);</span>
                 }
             }
-<span class="fc" id="L776">            return values;</span>
+<span class="fc" id="L708">            return values;</span>
         }
 
     }

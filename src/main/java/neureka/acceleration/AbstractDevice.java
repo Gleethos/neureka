@@ -4,7 +4,6 @@ import neureka.Component;
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.subtypes.Activation;
 
 import java.lang.ref.Cleaner;
 import java.util.function.Consumer;
@@ -154,7 +153,39 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
                     default: throw new IllegalStateException("Operation not found!");
                 }
             }
-        } else this._enqueue(tsrs, d, type);
+        } else {
+            switch (type.identifier()) {
+                case "x":
+                    if (d >= 0) {
+                        if (d == 0) tsrs[0] = tsrs[2];
+                        else tsrs[0] = tsrs[1];
+                        return tsrs[0];
+                    } else tsrs = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
+                    break;
+                case ("x" + ((char) 187)):
+                    tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
+                    break;
+                case ("a" + ((char) 187)):
+                    tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
+                    break;
+                case ("s" + ((char) 187)):
+                    tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
+                    break;
+                case ("d" + ((char) 187)):
+                    tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
+                    break;
+                case ("p" + ((char) 187)):
+                    tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
+                    break;
+                case ("m" + ((char) 187)):
+                    tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
+                    break;
+                case ">":
+                    tsrs = new Tsr[]{tsrs[1], tsrs[0]};
+                    break;
+            }
+            this._enqueue(tsrs, d, type);
+        }
 
         for ( int i = 0; i < tsrs.length; i++ ) {
             if ( tsrs[i] != null && !tsrs[i].isUndefined() ) rollbacks[i].accept(tsrs[i]);

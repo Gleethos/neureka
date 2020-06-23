@@ -16,11 +16,11 @@ import java.util.ArrayList;
     public static Function construct(int f_id, ArrayList&lt;Function&gt; sources, boolean doAD)
     {
 <span class="fc" id="L18">        Type type = OperationType.instance(f_id);</span>
-<span class="fc bfc" id="L19" title="All 4 branches covered.">        if(type.numberOfParameters() &gt;= 0 &amp;&amp; sources.size() != type.numberOfParameters()) {</span>
+<span class="fc bfc" id="L19" title="All 4 branches covered.">        if(type.arity() &gt;= 0 &amp;&amp; sources.size() != type.arity()) {</span>
 <span class="fc bfc" id="L20" title="All 2 branches covered.">            String tip = (type.isIndexer())?</span>
 <span class="fc" id="L21">            &quot;\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration.&quot;:&quot;&quot;;</span>
 <span class="fc" id="L22">            throw new IllegalArgumentException(</span>
-<span class="fc" id="L23">                    &quot;The function/operation '&quot;+type.identifier()+&quot;' expects &quot;+type.numberOfParameters()+&quot; parameters, &quot;+</span>
+<span class="fc" id="L23">                    &quot;The function/operation '&quot;+type.identifier()+&quot;' expects &quot;+type.arity()+&quot; parameters, &quot;+</span>
 <span class="fc" id="L24">                    &quot;however &quot;+sources.size()+&quot; where given!&quot;+tip</span>
             );
 

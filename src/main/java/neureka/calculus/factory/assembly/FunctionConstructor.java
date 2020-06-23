@@ -16,11 +16,11 @@ public class FunctionConstructor
     public static Function construct(int f_id, ArrayList<Function> sources, boolean doAD)
     {
         Type type = OperationType.instance(f_id);
-        if(type.numberOfParameters() >= 0 && sources.size() != type.numberOfParameters()) {
+        if(type.arity() >= 0 && sources.size() != type.arity()) {
             String tip = (type.isIndexer())?
             "\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration.":"";
             throw new IllegalArgumentException(
-                    "The function/operation '"+type.identifier()+"' expects "+type.numberOfParameters()+" parameters, "+
+                    "The function/operation '"+type.identifier()+"' expects "+type.arity()+" parameters, "+
                     "however "+sources.size()+" where given!"+tip
             );
 

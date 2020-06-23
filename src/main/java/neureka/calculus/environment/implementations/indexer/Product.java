@@ -1,7 +1,7 @@
 package neureka.calculus.environment.implementations.indexer;
 
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.subtypes.*;
+import neureka.calculus.environment.executors.*;
 
 public class Product extends OperationType {
 

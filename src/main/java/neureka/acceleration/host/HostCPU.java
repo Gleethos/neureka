@@ -5,8 +5,7 @@ import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.Type;
-import neureka.calculus.environment.subtypes.*;
+import neureka.calculus.environment.executors.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,20 +38,8 @@ public class HostCPU extends AbstractDevice
         for (Tsr t : tsrs) t.setIsVirtual(false);
         if (type.supports(Activation.class) && !type.isIndexer()) _executor.activate(tsrs, d, type);
         else if (type.isOperation() && !type.isConvection()) _executor.broadcast(tsrs, d, type);
-        else if (type.isConvection()) {
-            if (type.identifier().contains(((char) 187) + "")) {
-                _executor.convolve(new Tsr[]{tsrs[2], tsrs[1], tsrs[0]}, d, type);
-            } else if (type.identifier().contains(((char) 171) + "")) {
-                _executor.convolve(new Tsr[]{tsrs[0], tsrs[1], tsrs[2]}, d, type);
-            } else {
-                if (d >= 0) {
-                    if (d == 0) tsrs[0] = tsrs[2];
-                    else tsrs[0] = tsrs[1];
-                } else {
-                    _executor.convolve(tsrs, -1, type);
-                }
-            }
-        } else if (type.isIndexer()) _executor.broadcast(tsrs, d, type);
+        else if (type.isConvection()) _executor.convolve(tsrs, d, type);
+        else if (type.isIndexer()) _executor.broadcast(tsrs, d, type);
     }
 
     @Override

@@ -10,7 +10,7 @@ import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.subtypes.*;
+import neureka.calculus.environment.executors.*;
 import neureka.utility.DataHelper;
 import org.jocl.*;
 
@@ -392,110 +392,42 @@ public class OpenCLDevice extends AbstractDevice
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, OperationType type)
     {
-        switch (type.identifier()) {
-            case "x":
-                if (d >= 0) {
-                    if (d == 0) tsrs[0] = tsrs[2];
-                    else tsrs[0] = tsrs[1];
-                    return;
-                } else tsrs = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
-                break;
-            case ("x" + ((char) 187)):
-                tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
-                break;
-            case ("a" + ((char) 187)):
-                tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
-                break;
-            case ("s" + ((char) 187)):
-                tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
-                break;
-            case ("d" + ((char) 187)):
-                tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
-                break;
-            case ("p" + ((char) 187)):
-                tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
-                break;
-            case ("m" + ((char) 187)):
-                tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
-                break;
-            case ">":
-                tsrs = new Tsr[]{tsrs[1], tsrs[0]};
-                break;
-        }
-
-        int gwz = (tsrs[0] != null) ? tsrs[0].size() : tsrs[1].size();
         int offset = (tsrs[0] != null) ? 0 : 1;
+        int gwz = (tsrs[0] != null) ? tsrs[0].size() : tsrs[1].size();
         String chosen = _platform.kernelNameOf(type);
         cl_kernel kernel = _platform.getKernels().get(chosen);
 
-        cl_mem drn = tsrs[offset].find(cl_tsr.class).value.data;
-        cl_mem src1 = tsrs[offset + 1].find(cl_tsr.class).value.data;
         if (type.supports(Activation.class) && !type.isIndexer()) {
-            clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
-            clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(tsrs[offset].find(cl_tsr.class).config.data));
-            clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=>src1
-            clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(tsrs[offset + 1].find(cl_tsr.class).config.data));
-            clSetKernelArg(kernel, 4, Sizeof.cl_int, Pointer.to(new int[]{tsrs[0].rank()}));
-            clSetKernelArg(kernel, 5, Sizeof.cl_int, Pointer.to(new int[]{d}));
+            new KernelBuilder(kernel, _queue)
+                    .pass(tsrs[offset])
+                    .pass(tsrs[offset + 1])
+                    .pass(tsrs[0].rank())
+                    .pass(d)
+                    .call(gwz);
         } else {
-            //TODO: Function.TYPES.rqsAdditionalArgument(f_id)
-            cl_mem src2 = tsrs[offset + 2].find(cl_tsr.class).value.data;
-            clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
-            clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(tsrs[offset].find(cl_tsr.class).config.data));
-            clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=>src1
-            clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(tsrs[offset + 1].find(cl_tsr.class).config.data));
-            clSetKernelArg(kernel, 4, Sizeof.cl_mem, Pointer.to(src2));//=>src2
-            clSetKernelArg(kernel, 5, Sizeof.cl_mem, Pointer.to(tsrs[offset + 2].find(cl_tsr.class).config.data));
-            clSetKernelArg(kernel, 6, Sizeof.cl_int, Pointer.to(new int[]{tsrs[0].rank()}));
-            clSetKernelArg(kernel, 7, Sizeof.cl_int, Pointer.to(new int[]{d}));
+            new KernelBuilder(kernel, _queue)
+                    .pass(tsrs[offset])
+                    .pass(tsrs[offset + 1])
+                    .pass(tsrs[offset + 2])
+                    .pass(tsrs[0].rank())
+                    .pass(d)
+                    .call(gwz);
         }
-
-        cl_event[] events = _getWaitList(tsrs);
-        if(events.length>0){
-            clWaitForEvents(events.length, events);
-            _releaseEvents(tsrs);
-        }
-        clEnqueueNDRangeKernel(
-                _queue, kernel,
-                1,
-                null,
-                new long[]{gwz},
-                null,
-                0,
-                null,
-                null
-        );
-
     }
+
 
     @Override
     protected void _enqueue(Tsr t, double value, int d, OperationType type) {
         int gwz = t.size();
         String chosen = "scalar_" + _platform.kernelNameOf(type).replace("operate_", "");
         cl_kernel kernel = _platform.getKernels().get(chosen);
-        cl_tsr clTsr = (cl_tsr) t.find(cl_tsr.class); //= _mapping.get(t)
-        cl_mem drn = clTsr.value.data;
-        cl_mem src1 = clTsr.value.data;
-        clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(drn));//=> drain
-        clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(clTsr.config.data));
-        clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(src1));//=>src1
-        clSetKernelArg(kernel, 3, Sizeof.cl_mem, Pointer.to(clTsr.config.data));
-        clSetKernelArg(kernel, 4, Sizeof.cl_float, Pointer.to(new float[]{(float) value}));
-        clSetKernelArg(kernel, 5, Sizeof.cl_int, Pointer.to(new int[]{t.rank()}));
-        clSetKernelArg(kernel, 6, Sizeof.cl_int, Pointer.to(new int[]{d}));
-
-        cl_event[] events = _getWaitList(new Tsr[]{t});
-        clEnqueueNDRangeKernel(
-                _queue, kernel,
-                1,
-                null,
-                new long[]{gwz},
-                null,
-                events.length,
-                (events.length==0)?null:events,
-                null
-        );
-        _releaseEvents(new Tsr[]{t});
+        new KernelBuilder(kernel, _queue)
+                .pass(t)
+                .pass(t)
+                .pass((float)value)
+                .pass(t.rank())
+                .pass(d)
+                .call(gwz);
     }
 
 

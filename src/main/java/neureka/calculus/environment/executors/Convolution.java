@@ -1,8 +1,8 @@
-package neureka.calculus.environment.subtypes;
+package neureka.calculus.environment.executors;
 
 import neureka.calculus.environment.Type;
 
-public class Convolution extends AbstractTypeComponent<Type.OperatorCreator>
+public class Convolution extends AbstractTypeExecutor<Type.OperatorCreator>
 {
     public Convolution(String strConvolution, String strDeriviation, Type.OperatorCreator creator){
         super(strConvolution, strDeriviation, creator);
