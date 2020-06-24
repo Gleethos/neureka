@@ -22,7 +22,7 @@ public class Identity extends OperationType {
 
         super("identity", "idy" , 1, false, false, false, true, true);
 
-        Activation typeExecutor =
+        Activation typeImplementation =
                 new Activation(
                         "output = input;\n",
                         "output = input;\n",
@@ -30,7 +30,7 @@ public class Identity extends OperationType {
                         );
         setImplementation(
                 Activation.class,
-                typeExecutor.setExecution (
+                typeImplementation.setExecution (
                         HostCPU.class,
                         new HostExecution(
                                 ( device, call ) ->
@@ -60,7 +60,7 @@ public class Identity extends OperationType {
                                             .call(gwz);
                                 },
                                 3,
-                                typeExecutor.getKernelSource(), // kernelSource
+                                typeImplementation.getKernelSource(), // kernelSource
                                 "output = input;\n", // activationSource
                                 "output = input;\n", //differentiationSource
                                 this // OperationType
@@ -108,7 +108,7 @@ public class Identity extends OperationType {
                                             .call(gwz);
                                 },
                                 3,
-                                typeExecutor.getKernelSource(), // kernelSource
+                                typeImplementation.getKernelSource(), // kernelSource
                                 "output = input;\n", // activationSource
                                 "output = input;\n", //differentiationSource
                                 this // OperationType

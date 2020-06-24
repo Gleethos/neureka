@@ -28,7 +28,7 @@ public class Gaussian extends OperationType {
 
 <span class="fc" id="L29">        super(&quot;gaussian&quot;, &quot;gaus&quot;, 1, false, false, false, true, true);</span>
 
-<span class="fc" id="L31">        Activation typeExecutor =</span>
+<span class="fc" id="L31">        Activation typeImplementation =</span>
                 new Activation(
                         &quot;output =\n&quot; +
                                 &quot;    (float)pow(\n&quot; +
@@ -44,7 +44,7 @@ public class Gaussian extends OperationType {
 
 <span class="fc" id="L45">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L47">                typeExecutor.setExecution (</span>
+<span class="fc" id="L47">                typeImplementation.setExecution (</span>
                         HostCPU.class,
                         new HostExecution(
                                 ( device, call ) -&gt;
@@ -74,7 +74,7 @@ public class Gaussian extends OperationType {
 <span class="nc" id="L74">                                            .call(gwz);</span>
 <span class="nc" id="L75">                                },</span>
                                 3,
-<span class="fc" id="L77">                                typeExecutor.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L77">                                typeImplementation.getKernelSource(), // kernelSource</span>
                                 &quot;output =\n&quot; +
                                         &quot;    (float)pow(\n&quot; +
                                         &quot;        (float)M_E,\n&quot; +

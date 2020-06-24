@@ -30,7 +30,7 @@ public class Cosinus extends OperationType {
                 true
         );
 
-        Activation typeExecutor =
+        Activation typeImplementation =
                 new Activation(
                         "output = cos(input);\n",
                         "output = -sin(input);\n",
@@ -38,7 +38,7 @@ public class Cosinus extends OperationType {
                 );
         setImplementation(
                 Activation.class,
-                typeExecutor.setExecution (
+                typeImplementation.setExecution (
                         HostCPU.class,
                         new HostExecution (
                             ( device, call ) ->
@@ -68,7 +68,7 @@ public class Cosinus extends OperationType {
                                             .call(gwz);
                                 },
                                 3,
-                                typeExecutor.getKernelSource(), // kernelSource
+                                typeImplementation.getKernelSource(), // kernelSource
                                 "output = cos(input);\n", // activationSource
                                 "output = -sin(input);\n", //differentiationSource
                                 this // OperationType

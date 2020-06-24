@@ -20,14 +20,14 @@ public class Absolute extends OperationType {
     public Absolute()
     {
 <span class="fc" id="L22">        super(&quot;absolute&quot;, &quot;abs&quot; , 1, false, false, false, true, true);</span>
-<span class="fc" id="L23">        Activation typeExecutor = new Activation(</span>
+<span class="fc" id="L23">        Activation typeImplementation = new Activation(</span>
                 &quot;output = fabs(input);\n&quot;,
                 &quot;output = (input &lt; 0) ? -1 : 1;\n&quot;,
                 _creator
         );
 <span class="fc" id="L28">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L30">                typeExecutor.setExecution(</span>
+<span class="fc" id="L30">                typeImplementation.setExecution(</span>
                         HostCPU.class,
                         new HostExecution(
                                 ( device, call ) -&gt;
@@ -57,7 +57,7 @@ public class Absolute extends OperationType {
 <span class="nc" id="L57">                                            .call( gwz );</span>
 <span class="nc" id="L58">                                },</span>
                                 3,
-<span class="fc" id="L60">                                typeExecutor.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L60">                                typeImplementation.getKernelSource(), // kernelSource</span>
                                 &quot;output = fabs(input);\n&quot;, // activationSource
                                 &quot;output = (input &lt; 0) ? -1 : 1;\n&quot;, //differentiationSource
                                 this // OperationType

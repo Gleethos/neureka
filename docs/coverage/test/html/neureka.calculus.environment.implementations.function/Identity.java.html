@@ -22,7 +22,7 @@ public class Identity extends OperationType {
 
 <span class="fc" id="L23">        super(&quot;identity&quot;, &quot;idy&quot; , 1, false, false, false, true, true);</span>
 
-<span class="fc" id="L25">        Activation typeExecutor =</span>
+<span class="fc" id="L25">        Activation typeImplementation =</span>
                 new Activation(
                         &quot;output = input;\n&quot;,
                         &quot;output = input;\n&quot;,
@@ -30,7 +30,7 @@ public class Identity extends OperationType {
                         );
 <span class="fc" id="L31">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L33">                typeExecutor.setExecution (</span>
+<span class="fc" id="L33">                typeImplementation.setExecution (</span>
                         HostCPU.class,
                         new HostExecution(
                                 ( device, call ) -&gt;
@@ -60,7 +60,7 @@ public class Identity extends OperationType {
 <span class="nc" id="L60">                                            .call(gwz);</span>
 <span class="nc" id="L61">                                },</span>
                                 3,
-<span class="fc" id="L63">                                typeExecutor.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L63">                                typeImplementation.getKernelSource(), // kernelSource</span>
                                 &quot;output = input;\n&quot;, // activationSource
                                 &quot;output = input;\n&quot;, //differentiationSource
                                 this // OperationType
@@ -108,7 +108,7 @@ public class Identity extends OperationType {
 <span class="nc" id="L108">                                            .call(gwz);</span>
 <span class="nc" id="L109">                                },</span>
                                 3,
-<span class="fc" id="L111">                                typeExecutor.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L111">                                typeImplementation.getKernelSource(), // kernelSource</span>
                                 &quot;output = input;\n&quot;, // activationSource
                                 &quot;output = input;\n&quot;, //differentiationSource
                                 this // OperationType

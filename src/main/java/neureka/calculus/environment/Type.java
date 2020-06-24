@@ -32,8 +32,6 @@ public interface Type
     <T extends AbstractOperationTypeImplementation> boolean supportsImplementation(Class<T> type );
     <T extends AbstractOperationTypeImplementation> Type setImplementation(Class<T> type, T instance );
 
-
-
     //==================================================================================================================
 
     int id();
