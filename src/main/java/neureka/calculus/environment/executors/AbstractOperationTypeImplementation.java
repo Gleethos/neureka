@@ -57,18 +57,21 @@ public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType
             Consumer<OperationTypeImplementation.ExecutionCall> finalExecution
     ) {
         return reduce (
-                device,
-                new ExecutionCall( tsrs, d, type ), finalExecution
+                new ExecutionCall( device, tsrs, d, type ), finalExecution
         );
     }
 
     @Override
+    public < T extends Device > void callImplementationFor(ExecutionCall<T> call) {
+
+    }
+
+    @Override
     public Tsr reduce (
-            Device device,
             OperationTypeImplementation.ExecutionCall call,
             Consumer<OperationTypeImplementation.ExecutionCall> finalExecution
     ) {
-        //Device device = call.getDevice();
+        Device device = call.getDevice();
         Execution execution = call.getExecutor().getExecution((Class<Device>) device.getClass());
 
         //assert execution!=null;
@@ -191,7 +194,7 @@ public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType
             }
             //this._enqueue(tsrs, d, type);
             finalExecution.accept(
-                    new ExecutionCall( tsrs, d, type)
+                    new ExecutionCall( device, tsrs, d, type)
             );
         }
 

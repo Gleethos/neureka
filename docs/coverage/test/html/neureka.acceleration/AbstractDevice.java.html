@@ -71,12 +71,12 @@ import java.lang.ref.Cleaner;
 
     private Tsr _execute_recursively( Tsr[] tsrs, OperationType type, int d )
     {
-<span class="fc" id="L74">        OperationTypeImplementation.ExecutionCall call = new OperationTypeImplementation.ExecutionCall(tsrs, d, type);</span>
+<span class="fc" id="L74">        OperationTypeImplementation.ExecutionCall call = new OperationTypeImplementation.ExecutionCall(this, tsrs, d, type);</span>
 <span class="fc" id="L75">        OperationTypeImplementation&lt;Object&gt; executor = call.getExecutor();</span>
 <span class="pc bpc" id="L76" title="2 of 4 branches missed.">        assert executor != null;</span>
-<span class="fc" id="L77">        Tsr[] enclosed = new Tsr[1];</span>
-<span class="fc" id="L78">        executor.reduce(</span>
-                this,
+
+<span class="fc" id="L78">        Tsr[] enclosed = new Tsr[1];</span>
+<span class="fc" id="L79">        executor.reduce (</span>
                 call,
                 c -&gt; {
 <span class="fc" id="L82">                    _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType());</span>

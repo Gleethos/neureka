@@ -17,13 +17,12 @@ public class Convolution extends AbstractOperationTypeImplementation<Convolution
     }
 
 
-
     public String getKernelSource() {
         return Neureka.instance().utility().readResource("kernels/convolve_template.cl");
     }
 
     @Contract(pure = true)
-    public static void convolve(
+    public static void convolve (
             Tsr t0_drn, Tsr t1_src, Tsr t2_src,
             int d, int i, int end,
             Type.DefaultOperator operation
