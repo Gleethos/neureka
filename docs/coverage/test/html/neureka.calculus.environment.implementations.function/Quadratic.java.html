@@ -47,8 +47,8 @@ public class Quadratic extends OperationType
 <span class="fc" id="L47">                typeImplementation.setExecution (</span>
                         HostCPU.class,
                         new HostExecution(
-                                ( device, call ) -&gt;
-<span class="nc" id="L51">                                        device.getExecutor()</span>
+                                call  -&gt;
+<span class="nc" id="L51">                                        call.getDevice().getExecutor()</span>
 <span class="nc" id="L52">                                                .threaded (</span>
 <span class="nc" id="L53">                                                        call.getTensor(0).size(),</span>
                                                         ( start, end ) -&gt;
@@ -63,10 +63,10 @@ public class Quadratic extends OperationType
 <span class="fc" id="L63">                ).setExecution(</span>
                         OpenCLDevice.class,
                         new CLExecution(
-                                ( device, call ) -&gt; {
+                                call -&gt; {
 <span class="nc bnc" id="L67" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
 <span class="nc bnc" id="L68" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
-<span class="nc" id="L69">                                    device.getKernel(call)</span>
+<span class="nc" id="L69">                                    call.getDevice().getKernel(call)</span>
 <span class="nc" id="L70">                                            .pass(call.getTensor(offset))</span>
 <span class="nc" id="L71">                                            .pass(call.getTensor(offset + 1))</span>
 <span class="nc" id="L72">                                            .pass(call.getTensor(0).rank())</span>

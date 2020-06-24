@@ -52,8 +52,8 @@ public class Ligmoid extends OperationType {
 <span class="fc" id="L52">                typeImplementation.setExecution (</span>
                         HostCPU.class,
                         new HostExecution(
-                                ( device, call ) -&gt;
-<span class="nc" id="L56">                                        device.getExecutor()</span>
+                                call  -&gt;
+<span class="nc" id="L56">                                        call.getDevice().getExecutor()</span>
 <span class="nc" id="L57">                                                .threaded (</span>
 <span class="nc" id="L58">                                                        call.getTensor(0).size(),</span>
                                                         ( start, end ) -&gt;
@@ -68,10 +68,10 @@ public class Ligmoid extends OperationType {
 <span class="fc" id="L68">                ).setExecution(</span>
                         OpenCLDevice.class,
                         new CLExecution(
-                                ( device, call ) -&gt; {
+                                call -&gt; {
 <span class="nc bnc" id="L72" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
 <span class="nc bnc" id="L73" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
-<span class="nc" id="L74">                                    device.getKernel(call)</span>
+<span class="nc" id="L74">                                    call.getDevice().getKernel(call)</span>
 <span class="nc" id="L75">                                            .pass(call.getTensor(offset))</span>
 <span class="nc" id="L76">                                            .pass(call.getTensor(offset + 1))</span>
 <span class="nc" id="L77">                                            .pass(call.getTensor(0).rank())</span>

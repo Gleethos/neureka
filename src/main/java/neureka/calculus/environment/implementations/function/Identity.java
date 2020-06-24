@@ -33,8 +33,8 @@ public class Identity extends OperationType {
                 typeImplementation.setExecution (
                         HostCPU.class,
                         new HostExecution(
-                                ( device, call ) ->
-                                        device.getExecutor()
+                                call  ->
+                                        call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTensor(0).size(),
                                                         ( start, end ) ->
@@ -49,10 +49,10 @@ public class Identity extends OperationType {
                 ).setExecution(
                         OpenCLDevice.class,
                         new CLExecution(
-                                ( device, call ) -> {
+                                call -> {
                                     int offset = (call.getTensor(0) != null) ? 0 : 1;
                                     int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
-                                    device.getKernel(call)
+                                    call.getDevice().getKernel(call)
                                             .pass(call.getTensor(offset))
                                             .pass(call.getTensor(offset + 1))
                                             .pass(call.getTensor(0).rank())
@@ -78,8 +78,8 @@ public class Identity extends OperationType {
                 scalarization.setExecution (
                         HostCPU.class,
                         new HostExecution(
-                                ( device, call ) ->
-                                        device.getExecutor()
+                                call  ->
+                                        call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTensor(0).size(),
                                                         (start, end) ->
@@ -96,10 +96,10 @@ public class Identity extends OperationType {
                 ).setExecution(
                         OpenCLDevice.class,
                         new CLExecution(
-                                ( device, call ) -> {
+                                call -> {
                                     Tsr t = call.getTensor(0);
                                     int gwz = t.size();
-                                    device.getKernel(call)
+                                    call.getDevice().getKernel(call)
                                             .pass(t)
                                             .pass(t)
                                             .pass((float)call.getTensor(1).value64(0))

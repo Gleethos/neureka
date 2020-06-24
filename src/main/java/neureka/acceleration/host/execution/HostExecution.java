@@ -1,7 +1,6 @@
 package neureka.acceleration.host.execution;
 
 import neureka.acceleration.host.HostCPU;
-import neureka.calculus.environment.Type;
 import neureka.calculus.environment.Execution;
 
 public class HostExecution implements Execution

@@ -36,10 +36,10 @@ public class Power extends OperationType
         setImplementation(Scalarization.class,
                 new Scalarization(
                         "output = pow(input1, value);",
-                        "if(d==0){\n" +
-                                "    output = value * pow(input1, value-(float)1 );\n" +
-                                "} else {\n" +
-                                "    output = pow(input1, value) * log(value);\n" +
+                        "if ( d==0 ) {                                     \n" +
+                                "    output = value * pow(input1, value-(float)1 );   \n" +
+                                "} else {                                             \n" +
+                                "    output = pow(input1, value) * log(value);        \n" +
                                 "}",
                         (inputs, value, d)->{
                             double[] t1_val = inputs[1].value64();

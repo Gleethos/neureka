@@ -2,14 +2,14 @@ package neureka.calculus.environment;
 
 import neureka.acceleration.Device;
 
-public interface Execution
+public interface Execution<TargetDevice extends Device>
 {
     interface ExecutionLambda<TargetDevice extends Device>
     {
-        void call (TargetDevice device, OperationTypeImplementation.ExecutionCall call);
+        void call (OperationTypeImplementation.ExecutionCall<TargetDevice> call);
     }
 
-    ExecutionLambda getLambda();
+    ExecutionLambda<TargetDevice> getLambda();
 
     int arity();
 

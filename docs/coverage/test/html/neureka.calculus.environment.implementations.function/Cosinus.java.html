@@ -41,8 +41,8 @@ public class Cosinus extends OperationType {
 <span class="fc" id="L41">                typeImplementation.setExecution (</span>
                         HostCPU.class,
                         new HostExecution (
-                            ( device, call ) -&gt;
-<span class="nc" id="L45">                                device.getExecutor()</span>
+                            call  -&gt;
+<span class="nc" id="L45">                                        call.getDevice().getExecutor()</span>
 <span class="nc" id="L46">                                    .threaded (</span>
 <span class="nc" id="L47">                                        call.getTensor(0).size(),</span>
                                         ( start, end ) -&gt;
@@ -57,10 +57,10 @@ public class Cosinus extends OperationType {
 <span class="fc" id="L57">                ).setExecution(</span>
                         OpenCLDevice.class,
                         new CLExecution(
-                                ( device, call ) -&gt; {
+                                call -&gt; {
 <span class="nc bnc" id="L61" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
 <span class="nc bnc" id="L62" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
-<span class="nc" id="L63">                                    device.getKernel(call)</span>
+<span class="nc" id="L63">                                    call.getDevice().getKernel(call)</span>
 <span class="nc" id="L64">                                            .pass(call.getTensor(offset))</span>
 <span class="nc" id="L65">                                            .pass(call.getTensor(offset + 1))</span>
 <span class="nc" id="L66">                                            .pass(call.getTensor(0).rank())</span>
