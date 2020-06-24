@@ -71,11 +71,12 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
 
     private Tsr _execute_recursively( Tsr[] tsrs, OperationType type, int d )
     {
-        OperationTypeImplementation.ExecutionCall call = new OperationTypeImplementation.ExecutionCall(this, tsrs, d, type);
+        OperationTypeImplementation.ExecutionCall call = new OperationTypeImplementation.ExecutionCall(tsrs, d, type);
         OperationTypeImplementation<Object> executor = call.getExecutor();
         assert executor != null;
         Tsr[] enclosed = new Tsr[1];
-        executor.reduce(
+        executor.reduce (
+                this,
                 call,
                 c -> {
                     _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType());

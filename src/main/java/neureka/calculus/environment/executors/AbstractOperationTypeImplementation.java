@@ -49,23 +49,33 @@ public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType
         return _executions.get(deviceClass); // assert that result is of type T...
     }
     
-    private Tsr reduce( Device device, Tsr[] tsrs, OperationType type, int d,  Consumer<OperationTypeImplementation.ExecutionCall> finalExecution ){
-        return reduce(
-                new ExecutionCall( device, tsrs, d, type ), finalExecution
+    private Tsr reduce(
+            Device device,
+            Tsr[] tsrs,
+            OperationType type,
+            int d,
+            Consumer<OperationTypeImplementation.ExecutionCall> finalExecution
+    ) {
+        return reduce (
+                device,
+                new ExecutionCall( tsrs, d, type ), finalExecution
         );
     }
 
     @Override
-    public Tsr reduce(OperationTypeImplementation.ExecutionCall call, Consumer<OperationTypeImplementation.ExecutionCall> finalExecution)
-    {
-        Execution execution = call.getExecutor().getExecution((Class<Device>) call.getDevice().getClass());
+    public Tsr reduce (
+            Device device,
+            OperationTypeImplementation.ExecutionCall call,
+            Consumer<OperationTypeImplementation.ExecutionCall> finalExecution
+    ) {
+        //Device device = call.getDevice();
+        Execution execution = call.getExecutor().getExecution((Class<Device>) device.getClass());
 
         //assert execution!=null;
 
         Tsr[] tsrs = call.getTensors();
         int d = call.getDerivativeIndex();
         OperationType type = call.getType();
-        Device device = call.getDevice();
 
         Consumer<Tsr>[] rollbacks = new Consumer[tsrs.length];
         for (int i=0; i<tsrs.length; i++) {
@@ -181,7 +191,7 @@ public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType
             }
             //this._enqueue(tsrs, d, type);
             finalExecution.accept(
-                    new ExecutionCall(device, tsrs, d, type)
+                    new ExecutionCall( tsrs, d, type)
             );
         }
 

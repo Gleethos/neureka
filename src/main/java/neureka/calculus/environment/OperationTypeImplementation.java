@@ -20,21 +20,25 @@ public interface OperationTypeImplementation<FinalType>
 {
     class ExecutionCall
     {
-        private final Device _device;
+        //private final Device _device;
         private final Tsr[] _tsrs;
         private final int _d;
         private final OperationType _type;
         private final OperationTypeImplementation _executor;
 
-        public ExecutionCall(Device device, Tsr[] tsrs, int d, OperationType type)
-        {
-            _device = device;
+        public ExecutionCall(
+                //Device device,
+                Tsr[] tsrs,
+                int d,
+                OperationType type
+        ) {
+            //_device = device;
             _tsrs = tsrs;
             _d = d;
             _type = type;
             _executor = _type.executorOf(this);
         }
-        public Device getDevice() {return _device;}
+        //public Device getDevice() {return _device;}
         public Tsr[] getTensors() {return _tsrs;}
         public Tsr getTensor(int i) {return _tsrs[i];}
         public int getDerivativeIndex() {return _d;}
@@ -48,7 +52,7 @@ public interface OperationTypeImplementation<FinalType>
 
     boolean canHandle(OperationTypeImplementation.ExecutionCall call);
 
-    Tsr reduce(OperationTypeImplementation.ExecutionCall call, Consumer<ExecutionCall> finalExecution);
+    Tsr reduce(Device device, OperationTypeImplementation.ExecutionCall call, Consumer<ExecutionCall> finalExecution);
 
 
 }
