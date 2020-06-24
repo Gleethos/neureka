@@ -1,26 +1,22 @@
-package neureka.calculus.environment.executors;
+package neureka.calculus.environment;
 
 import neureka.Tsr;
 import neureka.acceleration.Device;
-import neureka.calculus.environment.OperationType;
 
 import java.util.function.Consumer;
 
 /**
- * TODO:
+ * This class is the abstract representation of an algorithm storing
+ * source code for specific device types and device specific instances
+ * of the Execution interface which are responsible for calling
+ * the device and executing it!
+ * Hens the name: Execution
  *
- * This class is the representation a kernel implementation
- * of a device!
- * Instances of this class provide the source for
- * for devices to use!
  * The OpenCLDevice class for example takes the kernel
  * provided by an instance of this class in order to compile it...
  *
- * Calls to the device are implemented via implementations of Execution interface!
- *
  */
-
-public interface TypeExecutor
+public interface TypeExecutor<FinalType>
 {
     class ExecutionCall
     {
@@ -40,18 +36,19 @@ public interface TypeExecutor
         }
         public Device getDevice() {return _device;}
         public Tsr[] getTensors() {return _tsrs;}
+        public Tsr getTensor(int i) {return _tsrs[i];}
         public int getDerivativeIndex() {return _d;}
         public OperationType getType() {return _type;}
         public TypeExecutor getExecutor() { return _executor; }
     }
 
-    <T extends Execution> TypeExecutor setExecution(Device device, T execution);
+    <T> FinalType setExecution(Class<T> deviceClass, Execution execution);
 
-    <T extends Execution> T getExecution(Device device);
+    <T> Execution getExecution(Class<T> deviceClass);
 
     boolean canHandle(TypeExecutor.ExecutionCall call);
 
-    public Tsr reduce(TypeExecutor.ExecutionCall call, Consumer<ExecutionCall> finalExecution);
+    Tsr reduce(TypeExecutor.ExecutionCall call, Consumer<ExecutionCall> finalExecution);
 
 
 }

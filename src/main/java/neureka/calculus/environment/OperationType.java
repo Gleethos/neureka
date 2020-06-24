@@ -4,8 +4,6 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.environment.executors.AbstractTypeExecutor;
-import neureka.calculus.environment.executors.Execution;
-import neureka.calculus.environment.executors.TypeExecutor;
 import neureka.calculus.environment.implementations.function.*;
 import neureka.calculus.environment.implementations.indexer.Product;
 import neureka.calculus.environment.implementations.indexer.Summation;

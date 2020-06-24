@@ -3,7 +3,7 @@ package neureka.acceleration;
 import neureka.Component;
 import neureka.Tsr;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.executors.TypeExecutor;
+import neureka.calculus.environment.TypeExecutor;
 import java.lang.ref.Cleaner;
 
 public abstract class AbstractDevice implements  Device, Component<Tsr>
@@ -46,7 +46,7 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
         {
             _createNewDrainTensorIn(this, tsrs, type);
             if (
-                    tsrs.length == 3 && d<0 && // TODO: refactor so that 'd<0 && ' is not included
+                    tsrs.length == 3 && d<0 && // TODO: make a TypeExecutor for this!!!!
                             (
                                     tsrs[1].isVirtual() || tsrs[2].isVirtual() ||
                                     (
@@ -71,12 +71,15 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
     private Tsr _execute_recursively( Tsr[] tsrs, OperationType type, int d )
     {
         TypeExecutor.ExecutionCall call = new TypeExecutor.ExecutionCall(this, tsrs, d, type);
-        TypeExecutor executor = call.getExecutor();
+        TypeExecutor<Object> executor = call.getExecutor();
         assert executor != null;
         Tsr[] enclosed = new Tsr[1];
-        executor.reduce(call, c -> {
-                this._enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType());
-        });
+        executor.reduce(
+                call,
+                c -> {
+                    _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType());
+                }
+        );
         return call.getTensors()[0];
     }
 

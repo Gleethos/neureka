@@ -112,7 +112,7 @@ public class HostCPU extends AbstractDevice
 <span class="nc" id="L112">        return null;</span>
     }
 
-    interface Range {
+    public interface Range {
         void execute(int start, int end);
     }
 
@@ -127,7 +127,7 @@ public class HostCPU extends AbstractDevice
 
         public void activate(Tsr[] tsrs, int d, OperationType type)
         {
-<span class="fc" id="L130">            _threaded(</span>
+<span class="fc" id="L130">            threaded(</span>
 <span class="fc" id="L131">                    tsrs[0].size(),</span>
                     (start, end) -&gt;
 <span class="fc" id="L133">                            Activation.activate(</span>
@@ -139,7 +139,7 @@ public class HostCPU extends AbstractDevice
 
         public void broadcast(Tsr[] tsrs, int d, OperationType type)
         {
-<span class="fc" id="L142">            _threaded(</span>
+<span class="fc" id="L142">            threaded(</span>
 <span class="fc" id="L143">                    tsrs[0].size(),</span>
                     (start, end) -&gt;
 <span class="fc" id="L145">                            Broadcast.broadcast(</span>
@@ -152,7 +152,7 @@ public class HostCPU extends AbstractDevice
 
         public void convolve(Tsr[] tsrs, int d, OperationType type)
         {
-<span class="fc" id="L155">            _threaded(</span>
+<span class="fc" id="L155">            threaded(</span>
 <span class="fc" id="L156">                    tsrs[0].size(),</span>
                     (start, end) -&gt;
 <span class="fc" id="L158">                            Convolution.convolve(</span>
@@ -165,7 +165,7 @@ public class HostCPU extends AbstractDevice
 
         public void scalar(Tsr[] tsrs, double scalar, int d, OperationType type)
         {
-<span class="fc" id="L168">            _threaded(</span>
+<span class="fc" id="L168">            threaded(</span>
 <span class="fc" id="L169">                    tsrs[0].size(),</span>
                     (start, end) -&gt;
 <span class="fc" id="L171">                            Activation.activate(</span>
@@ -177,7 +177,7 @@ public class HostCPU extends AbstractDevice
 
         //==============================================================================================================
 
-        private void _threaded(int sze, Range range)
+        public void threaded(int sze, Range range)
         {
 <span class="fc" id="L182">            int cores = _pool.getCorePoolSize() - _pool.getActiveCount();</span>
 <span class="pc bpc" id="L183" title="1 of 2 branches missed.">            cores = (cores == 0) ? 1 : cores;</span>

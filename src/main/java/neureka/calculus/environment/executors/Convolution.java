@@ -1,10 +1,11 @@
 package neureka.calculus.environment.executors;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
 
-public class Convolution extends AbstractTypeExecutor<Type.OperatorCreator>
+public class Convolution extends AbstractTypeExecutor<Convolution, Type.OperatorCreator>
 {
     public Convolution(String strConvolution, String strDeriviation, Type.OperatorCreator creator){
         super(strConvolution, strDeriviation, creator);
@@ -16,6 +17,10 @@ public class Convolution extends AbstractTypeExecutor<Type.OperatorCreator>
     }
 
 
+
+    public String getKernelSource() {
+        return Neureka.instance().utility().readResource("kernels/convolve_template.cl");
+    }
 
     @Contract(pure = true)
     public static void convolve(

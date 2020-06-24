@@ -10,6 +10,7 @@ import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.TypeExecutor;
 import neureka.calculus.environment.executors.*;
 import neureka.utility.DataHelper;
 import org.jocl.*;
@@ -387,6 +388,12 @@ public class OpenCLDevice extends AbstractDevice
         } else {
             return DataHelper.doubleToFloat(value64Of(tensor));
         }
+    }
+
+    public KernelBuilder getKernel(TypeExecutor.ExecutionCall call){
+        String chosen = _platform.kernelNameOf(call.getType());
+        cl_kernel kernel = _platform.getKernels().get(chosen);
+        return new KernelBuilder(kernel, _queue);
     }
 
     @Override

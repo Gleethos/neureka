@@ -1,10 +1,11 @@
 package neureka.calculus.environment.executors;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
 
-public class Activation extends AbstractTypeExecutor<Type.OperatorCreator>
+public class Activation extends AbstractTypeExecutor<Activation, Type.OperatorCreator>
 {
     public Activation(String strActivation, String strDeriviation, Type.OperatorCreator creator){
         super(strActivation, strDeriviation, creator);
@@ -16,6 +17,10 @@ public class Activation extends AbstractTypeExecutor<Type.OperatorCreator>
     }
 
 
+
+    public String getKernelSource(){
+        return Neureka.instance().utility().readResource("kernels/activate_template.cl");
+    }
 
     @Contract(pure = true)
     public static void activate(

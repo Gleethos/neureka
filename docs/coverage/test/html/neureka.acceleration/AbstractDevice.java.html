@@ -3,7 +3,7 @@
 import neureka.Component;
 import neureka.Tsr;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.executors.TypeExecutor;
+import neureka.calculus.environment.TypeExecutor;
 import java.lang.ref.Cleaner;
 
 <span class="pc bpc" id="L9" title="1 of 2 branches missed.">public abstract class AbstractDevice implements  Device, Component&lt;Tsr&gt;</span>
@@ -46,7 +46,7 @@ import java.lang.ref.Cleaner;
         {
 <span class="fc" id="L47">            _createNewDrainTensorIn(this, tsrs, type);</span>
 <span class="fc bfc" id="L48" title="All 4 branches covered.">            if (</span>
-                    tsrs.length == 3 &amp;&amp; d&lt;0 &amp;&amp; // TODO: refactor so that 'd&lt;0 &amp;&amp; ' is not included
+                    tsrs.length == 3 &amp;&amp; d&lt;0 &amp;&amp; // TODO: make a TypeExecutor for this!!!!
                             (
 <span class="fc bfc" id="L51" title="All 4 branches covered.">                                    tsrs[1].isVirtual() || tsrs[2].isVirtual() ||</span>
                                     (
@@ -71,28 +71,31 @@ import java.lang.ref.Cleaner;
     private Tsr _execute_recursively( Tsr[] tsrs, OperationType type, int d )
     {
 <span class="fc" id="L73">        TypeExecutor.ExecutionCall call = new TypeExecutor.ExecutionCall(this, tsrs, d, type);</span>
-<span class="fc" id="L74">        TypeExecutor executor = call.getExecutor();</span>
+<span class="fc" id="L74">        TypeExecutor&lt;Object&gt; executor = call.getExecutor();</span>
 <span class="pc bpc" id="L75" title="2 of 4 branches missed.">        assert executor != null;</span>
 <span class="fc" id="L76">        Tsr[] enclosed = new Tsr[1];</span>
-<span class="fc" id="L77">        executor.reduce(call, c -&gt; {</span>
-<span class="fc" id="L78">                this._enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType());</span>
-<span class="fc" id="L79">        });</span>
-<span class="fc" id="L80">        return call.getTensors()[0];</span>
+<span class="fc" id="L77">        executor.reduce(</span>
+                call,
+                c -&gt; {
+<span class="fc" id="L80">                    _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType());</span>
+<span class="fc" id="L81">                }</span>
+        );
+<span class="fc" id="L83">        return call.getTensors()[0];</span>
     }
 
 
     private static void _createNewDrainTensorIn(Device device, Tsr[] tsrs, OperationType type)
     {
-<span class="fc bfc" id="L86" title="All 2 branches covered.">        if ( tsrs[0] == null )// Creating a new tensor:</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        if ( tsrs[0] == null )// Creating a new tensor:</span>
         {
-<span class="fc bfc" id="L88" title="All 2 branches covered.">            int[] shp = (type.identifier().endsWith(&quot;x&quot;))</span>
-<span class="fc" id="L89">                    ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())</span>
-<span class="fc" id="L90">                    : tsrs[1].getNDConf().shape();</span>
-<span class="fc" id="L91">            Tsr output = new Tsr(shp, 0.0);</span>
-<span class="fc" id="L92">            device.add(output);</span>
-<span class="fc" id="L93">            tsrs[0] = output;</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">            int[] shp = (type.identifier().endsWith(&quot;x&quot;))</span>
+<span class="fc" id="L92">                    ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())</span>
+<span class="fc" id="L93">                    : tsrs[1].getNDConf().shape();</span>
+<span class="fc" id="L94">            Tsr output = new Tsr(shp, 0.0);</span>
+<span class="fc" id="L95">            device.add(output);</span>
+<span class="fc" id="L96">            tsrs[0] = output;</span>
         }
-<span class="fc" id="L95">    }</span>
+<span class="fc" id="L98">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

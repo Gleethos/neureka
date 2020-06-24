@@ -14,12 +14,12 @@ public class Cache
 
 <span class="fc" id="L15">    private Cache(){ }</span>
 
-    public static Cache instance(){
-<span class="fc" id="L18">        Cache c = _cache;</span>
-<span class="fc" id="L19">        _cache = null;</span>
-<span class="fc" id="L20">        return c;</span>
+    public static Cache instance()
+    {
+<span class="fc" id="L19">        Cache c = _cache;</span>
+<span class="fc" id="L20">        _cache = null;</span>
+<span class="fc" id="L21">        return c;</span>
     }
-
 
 <span class="fc" id="L24">    private final Map&lt;String, Function&gt; FUNCTIONS = Collections.synchronizedMap(new WeakHashMap&lt;&gt;());</span>
 

@@ -2,22 +2,24 @@ package neureka.calculus.environment.executors;
 
 
 import neureka.Tsr;
-import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
+import neureka.acceleration.host.HostCPU;
 import neureka.autograd.GraphNode;
+import neureka.calculus.environment.Execution;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.TypeExecutor;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class AbstractTypeExecutor<CreatorType> implements TypeExecutor
+public abstract class AbstractTypeExecutor<FinalType, CreatorType> implements TypeExecutor<FinalType>
 {
     protected String _operation;
     protected String _deriviation;
     protected CreatorType _creator;
 
-    private Map<Device, Execution> _executions;
+    private Map<Class<Device>, Execution> _executions;
 
     public AbstractTypeExecutor(String operation, String deriviation, CreatorType creator)
     {
@@ -38,14 +40,14 @@ public abstract class AbstractTypeExecutor<CreatorType> implements TypeExecutor
     }
 
     @Override
-    public <T extends Execution> TypeExecutor setExecution(Device device, T execution){
-        _executions.put(device, execution);
-        return this;
+    public FinalType setExecution(Class deviceClass, Execution execution){
+        _executions.put(deviceClass, execution);
+        return (FinalType) this;
     }
 
     @Override
-    public <T extends Execution> T getExecution(Device device){
-        return (T) _executions.get(device); // assert that result is of type T...
+    public Execution getExecution(Class deviceClass){
+        return _executions.get(deviceClass); // assert that result is of type T...
     }
     
     private Tsr reduce( Device device, Tsr[] tsrs, OperationType type, int d,  Consumer<TypeExecutor.ExecutionCall> finalExecution ){
@@ -57,7 +59,7 @@ public abstract class AbstractTypeExecutor<CreatorType> implements TypeExecutor
     @Override
     public Tsr reduce(TypeExecutor.ExecutionCall call, Consumer<TypeExecutor.ExecutionCall> finalExecution)
     {
-        Execution execution = call.getExecutor().getExecution(call.getDevice());
+        Execution execution = call.getExecutor().getExecution((Class<Device>) call.getDevice().getClass());
 
         //assert execution!=null;
 

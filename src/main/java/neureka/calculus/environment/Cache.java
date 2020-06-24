@@ -14,12 +14,12 @@ public class Cache
 
     private Cache(){ }
 
-    public static Cache instance(){
+    public static Cache instance()
+    {
         Cache c = _cache;
         _cache = null;
         return c;
     }
-
 
     private final Map<String, Function> FUNCTIONS = Collections.synchronizedMap(new WeakHashMap<>());
 

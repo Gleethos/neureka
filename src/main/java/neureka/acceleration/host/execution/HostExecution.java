@@ -1,20 +1,21 @@
 package neureka.acceleration.host.execution;
 
+import neureka.acceleration.host.HostCPU;
 import neureka.calculus.environment.Type;
-import neureka.calculus.environment.executors.Execution;
+import neureka.calculus.environment.Execution;
 
-public class HostExecution implements Execution<Type.OperatorCreator>
+public class HostExecution implements Execution
 {
-    private Type.OperatorCreator _creator;
+    private ExecutionLambda<HostCPU> _creator;
     private int _arity;
 
-    public HostExecution(Type.OperatorCreator creator, int arity){
+    public HostExecution(ExecutionLambda<HostCPU> creator, int arity){
         _creator = creator;
         _arity = arity;
     }
 
     @Override
-    public Type.OperatorCreator getLambda() {
+    public ExecutionLambda<HostCPU> getLambda() {
         return _creator;
     }
 

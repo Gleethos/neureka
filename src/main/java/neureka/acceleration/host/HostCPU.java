@@ -112,7 +112,7 @@ public class HostCPU extends AbstractDevice
         return null;
     }
 
-    interface Range {
+    public interface Range {
         void execute(int start, int end);
     }
 
@@ -127,7 +127,7 @@ public class HostCPU extends AbstractDevice
 
         public void activate(Tsr[] tsrs, int d, OperationType type)
         {
-            _threaded(
+            threaded(
                     tsrs[0].size(),
                     (start, end) ->
                             Activation.activate(
@@ -139,7 +139,7 @@ public class HostCPU extends AbstractDevice
 
         public void broadcast(Tsr[] tsrs, int d, OperationType type)
         {
-            _threaded(
+            threaded(
                     tsrs[0].size(),
                     (start, end) ->
                             Broadcast.broadcast(
@@ -152,7 +152,7 @@ public class HostCPU extends AbstractDevice
 
         public void convolve(Tsr[] tsrs, int d, OperationType type)
         {
-            _threaded(
+            threaded(
                     tsrs[0].size(),
                     (start, end) ->
                             Convolution.convolve(
@@ -165,7 +165,7 @@ public class HostCPU extends AbstractDevice
 
         public void scalar(Tsr[] tsrs, double scalar, int d, OperationType type)
         {
-            _threaded(
+            threaded(
                     tsrs[0].size(),
                     (start, end) ->
                             Activation.activate(
@@ -177,7 +177,7 @@ public class HostCPU extends AbstractDevice
 
         //==============================================================================================================
 
-        private void _threaded(int sze, Range range)
+        public void threaded(int sze, Range range)
         {
             int cores = _pool.getCorePoolSize() - _pool.getActiveCount();
             cores = (cores == 0) ? 1 : cores;

@@ -1,10 +1,11 @@
 package neureka.calculus.environment.executors;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
 
-public class Broadcast extends AbstractTypeExecutor<Type.OperatorCreator>
+public class Broadcast extends AbstractTypeExecutor<Broadcast, Type.OperatorCreator>
 {
     public Broadcast(String strBroadcast, String strDeriviation, Type.OperatorCreator creator){
         super(strBroadcast, strDeriviation, creator);
@@ -30,6 +31,9 @@ public class Broadcast extends AbstractTypeExecutor<Type.OperatorCreator>
         return true;
     }
 
+    public String getKernelSource(){
+        return Neureka.instance().utility().readResource("kernels/broadcast_template.cl");
+    }
 
     @Contract(pure = true)
     public static void broadcast(

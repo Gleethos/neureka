@@ -62,6 +62,7 @@ public class OpenCLPlatform {
         return OPERATION_TO_KERNEL_MAPPING.get(type.identifier());
     }
 
+
     private OpenCLPlatform(cl_platform_id pid)
     {
         _id_device = new TreeMap<>(Comparator.comparingInt(NativePointerObject::hashCode));
