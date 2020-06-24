@@ -17,7 +17,7 @@ public class Sigmoid extends OperationType {
                 true,
                 true
         );
-        set(Activation.class,
+        setImplementation(Activation.class,
                 new Activation(
                         "output = 1 / (1 + (float)pow((float)M_E, -input));\n",
                         "output = input * (1 - input);\n",

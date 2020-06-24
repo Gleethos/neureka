@@ -17,7 +17,7 @@ public class Quadratic extends OperationType {
                 true,
                 true
         );
-        set(
+        setImplementation(
                 Activation.class,
                 new Activation(
                         "output = input*input;\n",

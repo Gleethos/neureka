@@ -5,7 +5,7 @@ import neureka.Tsr;
 import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
 
-public class Convolution extends AbstractTypeExecutor<Convolution, Type.OperatorCreator>
+public class Convolution extends AbstractOperationTypeImplementation<Convolution, Type.OperatorCreator>
 {
     public Convolution(String strConvolution, String strDeriviation, Type.OperatorCreator creator){
         super(strConvolution, strDeriviation, creator);

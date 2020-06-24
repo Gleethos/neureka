@@ -7,7 +7,7 @@ public class CopyRight extends OperationType {
 
     public CopyRight(){
         super("", ">", 2,true, false, false, false, false);
-        set(Activation.class,
+        setImplementation(Activation.class,
                 new Activation("output = input;\n",
                         "output = input;\n",
                         (inputs, d) -> {

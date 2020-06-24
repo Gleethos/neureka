@@ -221,35 +221,35 @@ public class OpenCLPlatform {
         //inverse:  src1/fdrn &lt;-src2 &lt;- drain
         //===========================================================================
 <span class="fc bfc" id="L223" title="All 2 branches covered.">        for(OperationType type : OperationType.ALL()) {</span>
-<span class="fc bfc" id="L224" title="All 4 branches covered.">            if (preName.contains(&quot;activate&quot;) &amp;&amp; type.supports(Activation.class)) {</span>
+<span class="fc bfc" id="L224" title="All 4 branches covered.">            if (preName.contains(&quot;activate&quot;) &amp;&amp; type.supportsImplementation(Activation.class)) {</span>
 <span class="fc" id="L225">                parser.apply(</span>
 <span class="fc" id="L226">                            type.getName(),</span>
-<span class="fc" id="L227">                            type.get(Activation.class).getAsString(),</span>
-<span class="fc" id="L228">                            type.get(Activation.class).getDeriviationAsString()</span>
+<span class="fc" id="L227">                            type.getImplementation(Activation.class).getAsString(),</span>
+<span class="fc" id="L228">                            type.getImplementation(Activation.class).getDeriviationAsString()</span>
                     );
-<span class="fc bfc" id="L230" title="All 4 branches covered.">            } else if (preName.contains(&quot;operate&quot;) &amp;&amp; type.supports(Operation.class)) {</span>
+<span class="fc bfc" id="L230" title="All 4 branches covered.">            } else if (preName.contains(&quot;operate&quot;) &amp;&amp; type.supportsImplementation(Operation.class)) {</span>
 <span class="fc" id="L231">                parser.apply(</span>
 <span class="fc" id="L232">                            type.getName(),</span>
-<span class="fc" id="L233">                            type.get(Operation.class).getAsString(),</span>
-<span class="fc" id="L234">                            type.get(Operation.class).getDeriviationAsString()</span>
+<span class="fc" id="L233">                            type.getImplementation(Operation.class).getAsString(),</span>
+<span class="fc" id="L234">                            type.getImplementation(Operation.class).getDeriviationAsString()</span>
                     );
-<span class="fc bfc" id="L236" title="All 4 branches covered.">            } else if (preName.contains(&quot;scalar&quot;) &amp;&amp; type.supports(Scalarization.class)) {</span>
+<span class="fc bfc" id="L236" title="All 4 branches covered.">            } else if (preName.contains(&quot;scalar&quot;) &amp;&amp; type.supportsImplementation(Scalarization.class)) {</span>
 <span class="fc" id="L237">                parser.apply(</span>
 <span class="fc" id="L238">                            type.getName(),</span>
-<span class="fc" id="L239">                            type.get(Scalarization.class).getAsString(),</span>
-<span class="fc" id="L240">                            type.get(Scalarization.class).getDeriviationAsString()</span>
+<span class="fc" id="L239">                            type.getImplementation(Scalarization.class).getAsString(),</span>
+<span class="fc" id="L240">                            type.getImplementation(Scalarization.class).getDeriviationAsString()</span>
                     );
-<span class="fc bfc" id="L242" title="All 4 branches covered.">            } else if(preName.contains(&quot;broadcast&quot;) &amp;&amp; type.supports(Broadcast.class)){//broadcast</span>
+<span class="fc bfc" id="L242" title="All 4 branches covered.">            } else if(preName.contains(&quot;broadcast&quot;) &amp;&amp; type.supportsImplementation(Broadcast.class)){//broadcast</span>
 <span class="fc" id="L243">                parser.apply(</span>
 <span class="fc" id="L244">                            type.getName(),</span>
-<span class="fc" id="L245">                            type.get(Broadcast.class).getAsString(),</span>
-<span class="fc" id="L246">                            type.get(Broadcast.class).getDeriviationAsString()</span>
+<span class="fc" id="L245">                            type.getImplementation(Broadcast.class).getAsString(),</span>
+<span class="fc" id="L246">                            type.getImplementation(Broadcast.class).getDeriviationAsString()</span>
                     );
-<span class="fc bfc" id="L248" title="All 4 branches covered.">            } else if(preName.contains(&quot;convolve&quot;) &amp;&amp; type.supports(Convolution.class)) {</span>
+<span class="fc bfc" id="L248" title="All 4 branches covered.">            } else if(preName.contains(&quot;convolve&quot;) &amp;&amp; type.supportsImplementation(Convolution.class)) {</span>
 <span class="fc" id="L249">                parser.apply(</span>
 <span class="fc" id="L250">                            type.getName(),</span>
-<span class="fc" id="L251">                            type.get(Convolution.class).getAsString(),</span>
-<span class="fc" id="L252">                            type.get(Convolution.class).getDeriviationAsString()</span>
+<span class="fc" id="L251">                            type.getImplementation(Convolution.class).getAsString(),</span>
+<span class="fc" id="L252">                            type.getImplementation(Convolution.class).getDeriviationAsString()</span>
                     );
             }
         }

@@ -10,7 +10,7 @@ import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.TypeExecutor;
+import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.executors.*;
 import neureka.utility.DataHelper;
 import org.jocl.*;
@@ -390,7 +390,7 @@ public class OpenCLDevice extends AbstractDevice
         }
     }
 
-    public KernelBuilder getKernel(TypeExecutor.ExecutionCall call){
+    public KernelBuilder getKernel(OperationTypeImplementation.ExecutionCall call){
         String chosen = _platform.kernelNameOf(call.getType());
         cl_kernel kernel = _platform.getKernels().get(chosen);
         return new KernelBuilder(kernel, _queue);
@@ -404,7 +404,7 @@ public class OpenCLDevice extends AbstractDevice
         String chosen = _platform.kernelNameOf(type);
         cl_kernel kernel = _platform.getKernels().get(chosen);
 
-        if (type.supports(Activation.class) && !type.isIndexer()) {
+        if (type.supportsImplementation(Activation.class) && !type.isIndexer()) {
             new KernelBuilder(kernel, _queue)
                     .pass(tsrs[offset])
                     .pass(tsrs[offset + 1])

@@ -3,12 +3,13 @@
 import neureka.Component;
 import neureka.Tsr;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.TypeExecutor;
+import neureka.calculus.environment.OperationTypeImplementation;
+
 import java.lang.ref.Cleaner;
 
-<span class="pc bpc" id="L9" title="1 of 2 branches missed.">public abstract class AbstractDevice implements  Device, Component&lt;Tsr&gt;</span>
+<span class="pc bpc" id="L10" title="1 of 2 branches missed.">public abstract class AbstractDevice implements  Device, Component&lt;Tsr&gt;</span>
 {
-<span class="fc" id="L11">    private static final Cleaner CLEANER = Cleaner.create();</span>
+<span class="fc" id="L12">    private static final Cleaner CLEANER = Cleaner.create();</span>
 
     protected abstract void _enqueue(Tsr[] tsrs, int d, OperationType type);
 
@@ -16,86 +17,86 @@ import java.lang.ref.Cleaner;
 
     @Override
     public void update(Tsr oldOwner, Tsr newOwner){
-<span class="fc" id="L19">        swap(oldOwner, newOwner);</span>
-<span class="fc" id="L20">    }</span>
+<span class="fc" id="L20">        swap(oldOwner, newOwner);</span>
+<span class="fc" id="L21">    }</span>
 
     @Override
     public Device cleaning(Tsr tensor, Runnable action){
-<span class="fc" id="L24">        CLEANER.register(tensor, action);</span>
-<span class="fc" id="L25">        return this;</span>
+<span class="fc" id="L25">        CLEANER.register(tensor, action);</span>
+<span class="fc" id="L26">        return this;</span>
     }
 
     protected void _cleaning(Object o, Runnable action){
-<span class="fc" id="L29">        CLEANER.register(o, action);</span>
-<span class="fc" id="L30">    }</span>
+<span class="fc" id="L30">        CLEANER.register(o, action);</span>
+<span class="fc" id="L31">    }</span>
 
     @Override
     public Device execute(Tsr[] tsrs, OperationType type, int d)
     {
-<span class="fc bfc" id="L35" title="All 2 branches covered.">        if ( type.identifier().equals(&quot;&lt;&quot;) )</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        if ( type.identifier().equals(&quot;&lt;&quot;) )</span>
         {
-<span class="pc bpc" id="L37" title="1 of 2 branches missed.">            int offset = ( tsrs[0] == null ) ? 1 : 0;</span>
-<span class="fc" id="L38">            _execute_recursively( new Tsr[]{tsrs[offset], tsrs[1+offset]}, OperationType.instance(&quot;idy&quot;), -1 );</span>
-<span class="fc" id="L39">        }</span>
-<span class="fc bfc" id="L40" title="All 2 branches covered.">        else if ( type.identifier().equals(&quot;&gt;&quot;) )</span>
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">            int offset = ( tsrs[0] == null ) ? 1 : 0;</span>
+<span class="fc" id="L39">            _execute_recursively( new Tsr[]{tsrs[offset], tsrs[1+offset]}, OperationType.instance(&quot;idy&quot;), -1 );</span>
+<span class="fc" id="L40">        }</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        else if ( type.identifier().equals(&quot;&gt;&quot;) )</span>
         {
-<span class="pc bpc" id="L42" title="1 of 2 branches missed.">            int offset = ( tsrs[0] == null ) ? 1 : 0;</span>
-<span class="fc" id="L43">            _execute_recursively( new Tsr[]{tsrs[1+offset], tsrs[offset]}, OperationType.instance(&quot;idy&quot;), -1 );</span>
-<span class="fc" id="L44">        }</span>
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">            int offset = ( tsrs[0] == null ) ? 1 : 0;</span>
+<span class="fc" id="L44">            _execute_recursively( new Tsr[]{tsrs[1+offset], tsrs[offset]}, OperationType.instance(&quot;idy&quot;), -1 );</span>
+<span class="fc" id="L45">        }</span>
         else
         {
-<span class="fc" id="L47">            _createNewDrainTensorIn(this, tsrs, type);</span>
-<span class="fc bfc" id="L48" title="All 4 branches covered.">            if (</span>
+<span class="fc" id="L48">            _createNewDrainTensorIn(this, tsrs, type);</span>
+<span class="fc bfc" id="L49" title="All 4 branches covered.">            if (</span>
                     tsrs.length == 3 &amp;&amp; d&lt;0 &amp;&amp; // TODO: make a TypeExecutor for this!!!!
                             (
-<span class="fc bfc" id="L51" title="All 4 branches covered.">                                    tsrs[1].isVirtual() || tsrs[2].isVirtual() ||</span>
+<span class="fc bfc" id="L52" title="All 4 branches covered.">                                    tsrs[1].isVirtual() || tsrs[2].isVirtual() ||</span>
                                     (
-<span class="fc bfc" id="L53" title="All 4 branches covered.">                                            !tsrs[1].isOutsourced() &amp;&amp; tsrs[1].size() == 1</span>
+<span class="fc bfc" id="L54" title="All 4 branches covered.">                                            !tsrs[1].isOutsourced() &amp;&amp; tsrs[1].size() == 1</span>
                                                     ||
-<span class="fc bfc" id="L55" title="All 4 branches covered.">                                            !tsrs[2].isOutsourced() &amp;&amp; tsrs[2].size() == 1</span>
+<span class="fc bfc" id="L56" title="All 4 branches covered.">                                            !tsrs[2].isOutsourced() &amp;&amp; tsrs[2].size() == 1</span>
                                     )
                             )
             ) {
-<span class="fc bfc" id="L59" title="All 4 branches covered.">                if (tsrs[2].isVirtual() || tsrs[2].size() == 1) {</span>
-<span class="fc" id="L60">                    _execute_recursively(new Tsr[]{tsrs[0], tsrs[1]}, OperationType.instance(&quot;idy&quot;), -1);</span>
-<span class="fc" id="L61">                    _enqueue(tsrs[0], tsrs[2].value64()[0], d, type);</span>
+<span class="fc bfc" id="L60" title="All 4 branches covered.">                if (tsrs[2].isVirtual() || tsrs[2].size() == 1) {</span>
+<span class="fc" id="L61">                    _execute_recursively(new Tsr[]{tsrs[0], tsrs[1]}, OperationType.instance(&quot;idy&quot;), -1);</span>
+<span class="fc" id="L62">                    _enqueue(tsrs[0], tsrs[2].value64()[0], d, type);</span>
                 } else {
-<span class="fc" id="L63">                    _execute_recursively(new Tsr[]{tsrs[0], tsrs[2]}, OperationType.instance(&quot;idy&quot;), -1);</span>
-<span class="fc" id="L64">                    _enqueue(tsrs[0], tsrs[1].value64()[0], d, type);</span>
+<span class="fc" id="L64">                    _execute_recursively(new Tsr[]{tsrs[0], tsrs[2]}, OperationType.instance(&quot;idy&quot;), -1);</span>
+<span class="fc" id="L65">                    _enqueue(tsrs[0], tsrs[1].value64()[0], d, type);</span>
                 }
-<span class="fc" id="L66">            } else _execute_recursively(tsrs, type, d);</span>
+<span class="fc" id="L67">            } else _execute_recursively(tsrs, type, d);</span>
         }
-<span class="fc" id="L68">        return this;</span>
+<span class="fc" id="L69">        return this;</span>
     }
 
     private Tsr _execute_recursively( Tsr[] tsrs, OperationType type, int d )
     {
-<span class="fc" id="L73">        TypeExecutor.ExecutionCall call = new TypeExecutor.ExecutionCall(this, tsrs, d, type);</span>
-<span class="fc" id="L74">        TypeExecutor&lt;Object&gt; executor = call.getExecutor();</span>
-<span class="pc bpc" id="L75" title="2 of 4 branches missed.">        assert executor != null;</span>
-<span class="fc" id="L76">        Tsr[] enclosed = new Tsr[1];</span>
-<span class="fc" id="L77">        executor.reduce(</span>
+<span class="fc" id="L74">        OperationTypeImplementation.ExecutionCall call = new OperationTypeImplementation.ExecutionCall(this, tsrs, d, type);</span>
+<span class="fc" id="L75">        OperationTypeImplementation&lt;Object&gt; executor = call.getExecutor();</span>
+<span class="pc bpc" id="L76" title="2 of 4 branches missed.">        assert executor != null;</span>
+<span class="fc" id="L77">        Tsr[] enclosed = new Tsr[1];</span>
+<span class="fc" id="L78">        executor.reduce(</span>
                 call,
                 c -&gt; {
-<span class="fc" id="L80">                    _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType());</span>
-<span class="fc" id="L81">                }</span>
+<span class="fc" id="L81">                    _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType());</span>
+<span class="fc" id="L82">                }</span>
         );
-<span class="fc" id="L83">        return call.getTensors()[0];</span>
+<span class="fc" id="L84">        return call.getTensors()[0];</span>
     }
 
 
     private static void _createNewDrainTensorIn(Device device, Tsr[] tsrs, OperationType type)
     {
-<span class="fc bfc" id="L89" title="All 2 branches covered.">        if ( tsrs[0] == null )// Creating a new tensor:</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        if ( tsrs[0] == null )// Creating a new tensor:</span>
         {
-<span class="fc bfc" id="L91" title="All 2 branches covered.">            int[] shp = (type.identifier().endsWith(&quot;x&quot;))</span>
-<span class="fc" id="L92">                    ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())</span>
-<span class="fc" id="L93">                    : tsrs[1].getNDConf().shape();</span>
-<span class="fc" id="L94">            Tsr output = new Tsr(shp, 0.0);</span>
-<span class="fc" id="L95">            device.add(output);</span>
-<span class="fc" id="L96">            tsrs[0] = output;</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">            int[] shp = (type.identifier().endsWith(&quot;x&quot;))</span>
+<span class="fc" id="L93">                    ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())</span>
+<span class="fc" id="L94">                    : tsrs[1].getNDConf().shape();</span>
+<span class="fc" id="L95">            Tsr output = new Tsr(shp, 0.0);</span>
+<span class="fc" id="L96">            device.add(output);</span>
+<span class="fc" id="L97">            tsrs[0] = output;</span>
         }
-<span class="fc" id="L98">    }</span>
+<span class="fc" id="L99">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

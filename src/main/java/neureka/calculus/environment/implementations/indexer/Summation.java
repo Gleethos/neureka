@@ -16,14 +16,14 @@ public class Summation extends OperationType {
                 true,
                 true
         );
-        set(Activation.class,
+        setImplementation(Activation.class,
                 new Activation(
                         "output = input;",
                         "output = 1;",
                         null
                 )
         );
-        set(Broadcast.class,
+        setImplementation(Broadcast.class,
                 new Broadcast(
                         "",
                         "",

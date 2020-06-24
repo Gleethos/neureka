@@ -25,7 +25,7 @@ public class Multiplication extends OperationType {
         super(
                 "multiply", "*", -1, true, false, false, true, false
         );
-        set(Scalarization.class,new Scalarization(
+        setImplementation(Scalarization.class,new Scalarization(
                 "output = input1 * value;\n",
                 "if(d==0){output = value;}else{output = input1;}\n",
                 (inputs, value, d) -> {
@@ -37,13 +37,13 @@ public class Multiplication extends OperationType {
                         else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
                     }
                 })
-        ).set(Broadcast.class,
+        ).setImplementation(Broadcast.class,
                 new Broadcast(
                         "value = src1 * src2;\n",
                         "value += handle * drain;\n",
                         _creator
                 )
-        ).set(Operation.class,
+        ).setImplementation(Operation.class,
                 new Operation(
                 "output = input1 * input2;\n",
                 "if(d==0){output = input2;}else{output = input1;}\n",
@@ -57,14 +57,14 @@ public class Multiplication extends OperationType {
                 };
         new OperationType(
                 "", ((char) 171) + "*", 3, true, false, false, false, false
-        ).set(Broadcast.class, new Broadcast(
+        ).setImplementation(Broadcast.class, new Broadcast(
                 "value = src1 * src2;\n",
                 "value += handle * drain;\n",
                 creator
         ));
         new OperationType(
                 "", "*" + ((char) 187), 3, true, false, false, false, false
-        ).set(Broadcast.class, new Broadcast(
+        ).setImplementation(Broadcast.class, new Broadcast(
                 "value = src1 * src2;\n",
                 "value += handle * drain;\n",
                 creator
@@ -92,13 +92,13 @@ public class Multiplication extends OperationType {
 
         new OperationType(
                 "multiply", "x", 2, true, false, true, false, false
-        ).set(Convolution.class, convolution);
+        ).setImplementation(Convolution.class, convolution);
         new OperationType(
                 "inv_convolve_mul_left", ((char) 171) + "x", 3, true, false, true, false, false
-        ).set(Convolution.class, convolution);
+        ).setImplementation(Convolution.class, convolution);
         new OperationType(
                 "inv_convolve_mul_right", "x" + ((char) 187), 3, true, false, true, false, false
-        ).set(Convolution.class, convolution);
+        ).setImplementation(Convolution.class, convolution);
 
 
 

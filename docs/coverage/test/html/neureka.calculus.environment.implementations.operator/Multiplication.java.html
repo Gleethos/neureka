@@ -25,7 +25,7 @@ public class Multiplication extends OperationType {
 <span class="fc" id="L25">        super(</span>
                 &quot;multiply&quot;, &quot;*&quot;, -1, true, false, false, true, false
         );
-<span class="fc" id="L28">        set(Scalarization.class,new Scalarization(</span>
+<span class="fc" id="L28">        setImplementation(Scalarization.class,new Scalarization(</span>
                 &quot;output = input1 * value;\n&quot;,
                 &quot;if(d==0){output = value;}else{output = input1;}\n&quot;,
                 (inputs, value, d) -&gt; {
@@ -37,13 +37,13 @@ public class Multiplication extends OperationType {
 <span class="nc" id="L37">                        else return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
                     }
                 })
-<span class="fc" id="L40">        ).set(Broadcast.class,</span>
+<span class="fc" id="L40">        ).setImplementation(Broadcast.class,</span>
                 new Broadcast(
                         &quot;value = src1 * src2;\n&quot;,
                         &quot;value += handle * drain;\n&quot;,
                         _creator
                 )
-<span class="fc" id="L46">        ).set(Operation.class,</span>
+<span class="fc" id="L46">        ).setImplementation(Operation.class,</span>
                 new Operation(
                 &quot;output = input1 * input2;\n&quot;,
                 &quot;if(d==0){output = input2;}else{output = input1;}\n&quot;,
@@ -57,14 +57,14 @@ public class Multiplication extends OperationType {
                 };
 <span class="fc" id="L58">        new OperationType(</span>
                 &quot;&quot;, ((char) 171) + &quot;*&quot;, 3, true, false, false, false, false
-<span class="fc" id="L60">        ).set(Broadcast.class, new Broadcast(</span>
+<span class="fc" id="L60">        ).setImplementation(Broadcast.class, new Broadcast(</span>
                 &quot;value = src1 * src2;\n&quot;,
                 &quot;value += handle * drain;\n&quot;,
                 creator
         ));
 <span class="fc" id="L65">        new OperationType(</span>
                 &quot;&quot;, &quot;*&quot; + ((char) 187), 3, true, false, false, false, false
-<span class="fc" id="L67">        ).set(Broadcast.class, new Broadcast(</span>
+<span class="fc" id="L67">        ).setImplementation(Broadcast.class, new Broadcast(</span>
                 &quot;value = src1 * src2;\n&quot;,
                 &quot;value += handle * drain;\n&quot;,
                 creator
@@ -92,13 +92,13 @@ public class Multiplication extends OperationType {
 
 <span class="fc" id="L93">        new OperationType(</span>
                 &quot;multiply&quot;, &quot;x&quot;, 2, true, false, true, false, false
-<span class="fc" id="L95">        ).set(Convolution.class, convolution);</span>
+<span class="fc" id="L95">        ).setImplementation(Convolution.class, convolution);</span>
 <span class="fc" id="L96">        new OperationType(</span>
                 &quot;inv_convolve_mul_left&quot;, ((char) 171) + &quot;x&quot;, 3, true, false, true, false, false
-<span class="fc" id="L98">        ).set(Convolution.class, convolution);</span>
+<span class="fc" id="L98">        ).setImplementation(Convolution.class, convolution);</span>
 <span class="fc" id="L99">        new OperationType(</span>
                 &quot;inv_convolve_mul_right&quot;, &quot;x&quot; + ((char) 187), 3, true, false, true, false, false
-<span class="fc" id="L101">        ).set(Convolution.class, convolution);</span>
+<span class="fc" id="L101">        ).setImplementation(Convolution.class, convolution);</span>
 
 
 

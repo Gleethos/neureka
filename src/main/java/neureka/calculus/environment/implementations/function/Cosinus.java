@@ -36,7 +36,7 @@ public class Cosinus extends OperationType {
                         "output = -sin(input);\n",
                         _creator
                 );
-        set(
+        setImplementation(
                 Activation.class,
                 typeExecutor.setExecution (
                         HostCPU.class,

@@ -6,7 +6,7 @@ public interface Execution
 {
     interface ExecutionLambda<TargetDevice extends Device>
     {
-        void call (TargetDevice device, TypeExecutor.ExecutionCall call);
+        void call (TargetDevice device, OperationTypeImplementation.ExecutionCall call);
     }
 
     ExecutionLambda getLambda();

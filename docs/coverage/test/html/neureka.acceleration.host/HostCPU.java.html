@@ -36,7 +36,7 @@ public class HostCPU extends AbstractDevice
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, OperationType type) {
 <span class="fc bfc" id="L38" title="All 2 branches covered.">        for (Tsr t : tsrs) t.setIsVirtual(false);</span>
-<span class="fc bfc" id="L39" title="All 4 branches covered.">        if (type.supports(Activation.class) &amp;&amp; !type.isIndexer()) _executor.activate(tsrs, d, type);</span>
+<span class="fc bfc" id="L39" title="All 4 branches covered.">        if (type.supportsImplementation(Activation.class) &amp;&amp; !type.isIndexer()) _executor.activate(tsrs, d, type);</span>
 <span class="fc bfc" id="L40" title="All 4 branches covered.">        else if (type.isOperation() &amp;&amp; !type.isConvection()) _executor.broadcast(tsrs, d, type);</span>
 <span class="fc bfc" id="L41" title="All 2 branches covered.">        else if (type.isConvection()) _executor.convolve(tsrs, d, type);</span>
 <span class="pc bpc" id="L42" title="1 of 2 branches missed.">        else if (type.isIndexer()) _executor.broadcast(tsrs, d, type);</span>
@@ -44,7 +44,7 @@ public class HostCPU extends AbstractDevice
 
     @Override
     protected void _enqueue(Tsr t, double value, int d, OperationType type) {
-<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (type.supports(Scalarization.class)) _executor.scalar(new Tsr[]{t, t}, value, d, type);</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (type.supportsImplementation(Scalarization.class)) _executor.scalar(new Tsr[]{t, t}, value, d, type);</span>
         else {
 <span class="fc" id="L49">            int[] shape = new int[t.rank()];</span>
 <span class="fc" id="L50">            Arrays.fill(shape, 1);</span>
@@ -132,7 +132,7 @@ public class HostCPU extends AbstractDevice
                     (start, end) -&gt;
 <span class="fc" id="L133">                            Activation.activate(</span>
                                     tsrs[0], start, end,
-<span class="fc" id="L135">                                    type.get(Activation.class).getCreator().create(tsrs, d)</span>
+<span class="fc" id="L135">                                    type.getImplementation(Activation.class).getCreator().create(tsrs, d)</span>
                             )
             );
 <span class="fc" id="L138">        }</span>
@@ -145,7 +145,7 @@ public class HostCPU extends AbstractDevice
 <span class="fc" id="L145">                            Broadcast.broadcast(</span>
                                     tsrs[0], tsrs[1], tsrs[2], d,
                                     start, end,
-<span class="fc" id="L148">                                    type.get(Broadcast.class).getCreator().create(tsrs, d)</span>
+<span class="fc" id="L148">                                    type.getImplementation(Broadcast.class).getCreator().create(tsrs, d)</span>
                             )
             );
 <span class="fc" id="L151">        }</span>
@@ -158,7 +158,7 @@ public class HostCPU extends AbstractDevice
 <span class="fc" id="L158">                            Convolution.convolve(</span>
                                     tsrs[0], tsrs[1], tsrs[2], d,
                                     start, end,
-<span class="fc" id="L161">                                    type.get(Convolution.class).getCreator().create(tsrs, -1)</span>
+<span class="fc" id="L161">                                    type.getImplementation(Convolution.class).getCreator().create(tsrs, -1)</span>
                             )
             );
 <span class="fc" id="L164">        }</span>
@@ -170,7 +170,7 @@ public class HostCPU extends AbstractDevice
                     (start, end) -&gt;
 <span class="fc" id="L171">                            Activation.activate(</span>
                                     tsrs[0], start, end,
-<span class="fc" id="L173">                                    type.get(Scalarization.class).getCreator().create(tsrs, scalar, d)</span>
+<span class="fc" id="L173">                                    type.getImplementation(Scalarization.class).getCreator().create(tsrs, scalar, d)</span>
                             )
             );
 <span class="fc" id="L176">        }</span>

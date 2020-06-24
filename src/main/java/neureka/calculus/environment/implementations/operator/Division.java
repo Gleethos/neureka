@@ -28,7 +28,7 @@ public class Division extends OperationType {
         super(
                 "divide", "/", -1, true, false, false, false, false
         );
-        set(Scalarization.class,
+        setImplementation(Scalarization.class,
                 new Scalarization(
                         "output = input1 / value;\n",
                         "if(d==0){\n" +
@@ -47,7 +47,7 @@ public class Division extends OperationType {
                         }
                 )
         );
-        set(
+        setImplementation(
                 Broadcast.class,
                 new Broadcast(
                         "value = src1 / src2;\n",
@@ -59,7 +59,7 @@ public class Division extends OperationType {
                         _creator
                 )
         );
-        set(Operation.class,
+        setImplementation(Operation.class,
                 new Operation(
                         "output = input1 / input2;\n",
                         "if(d==0){\n" +
@@ -81,7 +81,7 @@ public class Division extends OperationType {
 
         new OperationType(
                 "divide", "d", 2, true, false, true, false, false
-        ).set(
+        ).setImplementation(
                 Convolution.class,
                 new Convolution(
                         "value = src1 / src2;\n",

@@ -16,7 +16,7 @@ public class Tanh extends OperationType {
                 true,
                 true
         );
-        set(Activation.class,
+        setImplementation(Activation.class,
                 new Activation(
                 "output = input/pow(1+pow(input, 2.0f), 0.5f);\n",
                 "output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n",

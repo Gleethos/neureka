@@ -5,7 +5,7 @@ import neureka.Tsr;
 import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
 
-public class Broadcast extends AbstractTypeExecutor<Broadcast, Type.OperatorCreator>
+public class Broadcast extends AbstractOperationTypeImplementation<Broadcast, Type.OperatorCreator>
 {
     public Broadcast(String strBroadcast, String strDeriviation, Type.OperatorCreator creator){
         super(strBroadcast, strDeriviation, creator);

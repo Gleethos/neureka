@@ -13,7 +13,7 @@ public class Randomization extends OperationType{
         super(
                 "random", "rand", 1, true, false, false, false, false
         );
-        set(Scalarization.class, new Scalarization("output = pow(input1, value);",
+        setImplementation(Scalarization.class, new Scalarization("output = pow(input1, value);",
                 "if(d==0){\n" +
                         "    output = value * pow(input1, value-(float)1 );\n" +
                         "} else {\n" +

@@ -31,17 +31,17 @@ public class Addition extends OperationType {
                 true,
                 false
         );
-        set(Broadcast.class,
+        setImplementation(Broadcast.class,
                 _broadcast
         );
-        set(Operation.class,
+        setImplementation(Operation.class,
                 new Operation(
                         "output = input1 + input2;\n",
                         "output = 1;\n",
                         _creator
                 )
         );
-        set(Scalarization.class,
+        setImplementation(Scalarization.class,
                 new Scalarization(
                         "output = input1 + value;\n",
                         "output = 1;\n",
@@ -54,17 +54,17 @@ public class Addition extends OperationType {
 
         new OperationType(
                 "", ((char) 171) + "+", 3, true, false, false, false, false
-        ).set(Broadcast.class, _broadcast);
+        ).setImplementation(Broadcast.class, _broadcast);
 
         new OperationType(
                 "", "+" + ((char) 187), 3, true, false, false, false, false
-        ).set(Broadcast.class, _broadcast);
+        ).setImplementation(Broadcast.class, _broadcast);
 
         // Convolutoion:
 
         new OperationType(
                 "add", "a", 2, true, false, true, false, false
-        ).set(Convolution.class,
+        ).setImplementation(Convolution.class,
                 new Convolution(
                         "value = src1 + src2;\n",
                         "value += 1 * drain;\n",

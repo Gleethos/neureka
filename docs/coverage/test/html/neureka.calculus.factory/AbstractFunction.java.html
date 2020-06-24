@@ -209,7 +209,7 @@ public abstract class AbstractFunction extends BaseFunction {
 <span class="fc bfc" id="L209" title="All 2 branches covered.">                    operation.append(&quot;I[&quot;).append(i).append(&quot;]&quot;).append((i == tsrs.length - 1) ? &quot;&quot; : _type.identifier());</span>
                 }
 <span class="fc" id="L211">                return (FunctionBuilder.build(operation.toString(), _doAD).call(tsrs));</span>
-<span class="pc bpc" id="L212" title="1 of 4 branches missed.">            } else if (_type.supports(Activation.class) &amp;&amp; !_type.isIndexer()) {</span>
+<span class="pc bpc" id="L212" title="1 of 4 branches missed.">            } else if (_type.supportsImplementation(Activation.class) &amp;&amp; !_type.isIndexer()) {</span>
 <span class="fc" id="L213">                return (FunctionBuilder.build(_type.identifier() + &quot;(I[0])&quot;, true).call(inputs));</span>
             }
         }

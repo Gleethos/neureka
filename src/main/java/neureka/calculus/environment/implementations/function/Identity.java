@@ -3,13 +3,11 @@ package neureka.calculus.environment.implementations.function;
 import neureka.Tsr;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.host.execution.HostExecution;
-import neureka.acceleration.opencl.KernelBuilder;
 import neureka.acceleration.opencl.OpenCLDevice;
 import neureka.acceleration.opencl.execution.CLExecution;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.Type;
 import neureka.calculus.environment.executors.*;
-import org.jocl.cl_kernel;
 
 public class Identity extends OperationType {
 
@@ -30,7 +28,7 @@ public class Identity extends OperationType {
                         "output = input;\n",
                         _creator
                         );
-        set(
+        setImplementation(
                 Activation.class,
                 typeExecutor.setExecution (
                         HostCPU.class,
@@ -76,7 +74,7 @@ public class Identity extends OperationType {
                         "output = value;\n",
                         null
                 );
-        set(Scalarization.class,
+        setImplementation(Scalarization.class,
                 scalarization.setExecution (
                         HostCPU.class,
                         new HostExecution(

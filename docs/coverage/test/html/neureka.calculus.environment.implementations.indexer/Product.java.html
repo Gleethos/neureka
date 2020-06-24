@@ -16,13 +16,13 @@ public class Product extends OperationType {
                 true,
                 true
         );
-<span class="fc" id="L19">        set(Activation.class,</span>
+<span class="fc" id="L19">        setImplementation(Activation.class,</span>
                 new Activation(&quot;output = input;&quot;,
                         &quot;output = 1;&quot;,
                         null
                 )
         );
-<span class="fc" id="L25">        set(Broadcast.class,</span>
+<span class="fc" id="L25">        setImplementation(Broadcast.class,</span>
                 new Broadcast(
                         &quot;&quot;,
                         &quot;&quot;,

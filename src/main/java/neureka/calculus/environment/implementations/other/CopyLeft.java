@@ -10,7 +10,7 @@ public class CopyLeft extends OperationType {
         super(
                 "", "<", 2,true, false, false, false, false
         );
-        set(Activation.class,
+        setImplementation(Activation.class,
                 new Activation("output = input;\n",
                         "output = input;\n",
                         (inputs, d) -> {

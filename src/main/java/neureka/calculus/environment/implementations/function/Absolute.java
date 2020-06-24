@@ -2,7 +2,6 @@ package neureka.calculus.environment.implementations.function;
 
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.host.execution.HostExecution;
-import neureka.acceleration.opencl.KernelBuilder;
 import neureka.acceleration.opencl.OpenCLDevice;
 import neureka.acceleration.opencl.execution.CLExecution;
 import neureka.calculus.environment.OperationType;
@@ -26,7 +25,7 @@ public class Absolute extends OperationType {
                 "output = (input < 0) ? -1 : 1;\n",
                 _creator
         );
-        set(
+        setImplementation(
                 Activation.class,
                 typeExecutor.setExecution(
                         HostCPU.class,

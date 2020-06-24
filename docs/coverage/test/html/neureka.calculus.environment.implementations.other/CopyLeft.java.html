@@ -10,7 +10,7 @@ public class CopyLeft extends OperationType {
 <span class="fc" id="L10">        super(</span>
                 &quot;&quot;, &quot;&lt;&quot;, 2,true, false, false, false, false
         );
-<span class="fc" id="L13">        set(Activation.class,</span>
+<span class="fc" id="L13">        setImplementation(Activation.class,</span>
                 new Activation(&quot;output = input;\n&quot;,
                         &quot;output = input;\n&quot;,
                         (inputs, d) -&gt; {

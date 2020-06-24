@@ -42,7 +42,7 @@ public class Gaussian extends OperationType {
                         _creator
                 );
 
-        set(
+        setImplementation(
                 Activation.class,
                 typeExecutor.setExecution (
                         HostCPU.class,

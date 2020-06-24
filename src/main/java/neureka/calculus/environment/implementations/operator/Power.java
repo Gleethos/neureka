@@ -33,7 +33,7 @@ public class Power extends OperationType
     {
         super("power", "^", -1, true, false, false, false, false);
 
-        set(Scalarization.class,
+        setImplementation(Scalarization.class,
                 new Scalarization("output = pow(input1, value);",
                         "if(d==0){\n" +
                                 "    output = value * pow(input1, value-(float)1 );\n" +
@@ -53,7 +53,7 @@ public class Power extends OperationType
                             }
                         })
         );
-        set(Broadcast.class,
+        setImplementation(Broadcast.class,
                 new Broadcast(
                         "value += pow(src1, src2);",
                         "if(d==0){\n" +
@@ -64,7 +64,7 @@ public class Power extends OperationType
                         _creator
                 )
         );
-        set(Operation.class,
+        setImplementation(Operation.class,
                 new Operation(
                         "output = pow(input1, input2);",
                         "if(d==0){\n" +
@@ -84,7 +84,7 @@ public class Power extends OperationType
 
         new OperationType(
                 "power", "p", 2, true, false, true, false, false
-        ).set(Convolution.class,
+        ).setImplementation(Convolution.class,
                 new Convolution(
                         "value += pow(src1, src2);",
                         "if(d==0){\n" +

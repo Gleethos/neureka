@@ -3,7 +3,7 @@ package neureka.calculus.environment;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
-import neureka.calculus.environment.executors.AbstractTypeExecutor;
+import neureka.calculus.environment.executors.AbstractOperationTypeImplementation;
 import neureka.calculus.environment.implementations.function.*;
 import neureka.calculus.environment.implementations.indexer.Product;
 import neureka.calculus.environment.implementations.indexer.Summation;
@@ -51,7 +51,7 @@ public class OperationType implements Type
     protected boolean _isCommutative;
     protected boolean _isAssociative;
 
-    private Map<Class, AbstractTypeExecutor> _modules = new HashMap<>();
+    private Map<Class, AbstractOperationTypeImplementation> _modules = new HashMap<>();
 
     static
     {
@@ -137,15 +137,15 @@ public class OperationType implements Type
     //==================================================================================================================
 
     @Override
-    public <T extends AbstractTypeExecutor> T get(Class<T> type){
+    public <T extends AbstractOperationTypeImplementation> T getImplementation(Class<T> type){
         return (T) _modules.get(type);
     }
     @Override
-    public <T extends AbstractTypeExecutor> boolean supports(Class<T> type){
+    public <T extends AbstractOperationTypeImplementation> boolean supportsImplementation(Class<T> type){
         return _modules.containsKey(type);
     }
     @Override
-    public <T extends AbstractTypeExecutor> Type set(Class<T> type, T instance) {
+    public <T extends AbstractOperationTypeImplementation> Type setImplementation(Class<T> type, T instance) {
         _modules.put(type, instance);
         return this;
     }
@@ -153,8 +153,8 @@ public class OperationType implements Type
     //==================================================================================================================
 
     @Override
-    public TypeExecutor executorOf(TypeExecutor.ExecutionCall call) {
-        for(TypeExecutor te : _modules.values()){
+    public OperationTypeImplementation executorOf(OperationTypeImplementation.ExecutionCall call) {
+        for(OperationTypeImplementation te : _modules.values()){
             if ( te.canHandle(call) ) return te;
         }
         return null;

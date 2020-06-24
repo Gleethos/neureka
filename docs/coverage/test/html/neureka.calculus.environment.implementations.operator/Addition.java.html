@@ -31,17 +31,17 @@ public class Addition extends OperationType {
                 true,
                 false
         );
-<span class="fc" id="L34">        set(Broadcast.class,</span>
+<span class="fc" id="L34">        setImplementation(Broadcast.class,</span>
                 _broadcast
         );
-<span class="fc" id="L37">        set(Operation.class,</span>
+<span class="fc" id="L37">        setImplementation(Operation.class,</span>
                 new Operation(
                         &quot;output = input1 + input2;\n&quot;,
                         &quot;output = 1;\n&quot;,
                         _creator
                 )
         );
-<span class="fc" id="L44">        set(Scalarization.class,</span>
+<span class="fc" id="L44">        setImplementation(Scalarization.class,</span>
                 new Scalarization(
                         &quot;output = input1 + value;\n&quot;,
                         &quot;output = 1;\n&quot;,
@@ -54,17 +54,17 @@ public class Addition extends OperationType {
 
 <span class="fc" id="L55">        new OperationType(</span>
                 &quot;&quot;, ((char) 171) + &quot;+&quot;, 3, true, false, false, false, false
-<span class="fc" id="L57">        ).set(Broadcast.class, _broadcast);</span>
+<span class="fc" id="L57">        ).setImplementation(Broadcast.class, _broadcast);</span>
 
 <span class="fc" id="L59">        new OperationType(</span>
                 &quot;&quot;, &quot;+&quot; + ((char) 187), 3, true, false, false, false, false
-<span class="fc" id="L61">        ).set(Broadcast.class, _broadcast);</span>
+<span class="fc" id="L61">        ).setImplementation(Broadcast.class, _broadcast);</span>
 
         // Convolutoion:
 
 <span class="fc" id="L65">        new OperationType(</span>
                 &quot;add&quot;, &quot;a&quot;, 2, true, false, true, false, false
-<span class="fc" id="L67">        ).set(Convolution.class,</span>
+<span class="fc" id="L67">        ).setImplementation(Convolution.class,</span>
                 new Convolution(
                         &quot;value = src1 + src2;\n&quot;,
                         &quot;value += 1 * drain;\n&quot;,

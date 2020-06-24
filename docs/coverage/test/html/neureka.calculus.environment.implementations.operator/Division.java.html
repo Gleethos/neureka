@@ -28,7 +28,7 @@ public class Division extends OperationType {
 <span class="fc" id="L28">        super(</span>
                 &quot;divide&quot;, &quot;/&quot;, -1, true, false, false, false, false
         );
-<span class="fc" id="L31">        set(Scalarization.class,</span>
+<span class="fc" id="L31">        setImplementation(Scalarization.class,</span>
                 new Scalarization(
                         &quot;output = input1 / value;\n&quot;,
                         &quot;if(d==0){\n&quot; +
@@ -47,7 +47,7 @@ public class Division extends OperationType {
                         }
                 )
         );
-<span class="fc" id="L50">        set(</span>
+<span class="fc" id="L50">        setImplementation(</span>
                 Broadcast.class,
                 new Broadcast(
                         &quot;value = src1 / src2;\n&quot;,
@@ -59,7 +59,7 @@ public class Division extends OperationType {
                         _creator
                 )
         );
-<span class="fc" id="L62">        set(Operation.class,</span>
+<span class="fc" id="L62">        setImplementation(Operation.class,</span>
                 new Operation(
                         &quot;output = input1 / input2;\n&quot;,
                         &quot;if(d==0){\n&quot; +
@@ -81,7 +81,7 @@ public class Division extends OperationType {
 
 <span class="fc" id="L82">        new OperationType(</span>
                 &quot;divide&quot;, &quot;d&quot;, 2, true, false, true, false, false
-<span class="fc" id="L84">        ).set(</span>
+<span class="fc" id="L84">        ).setImplementation(</span>
                 Convolution.class,
                 new Convolution(
                         &quot;value = src1 / src2;\n&quot;,

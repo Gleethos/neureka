@@ -8,7 +8,7 @@ public class Ligmoid extends OperationType {
 
     public Ligmoid(){
         super("ligmoid", "lig" , 1, false, false, false, true, true);
-        set(Activation.class,
+        setImplementation(Activation.class,
                 new Activation(
                         "output = \n" +
                                 "(\n" +

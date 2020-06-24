@@ -3,7 +3,7 @@
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
-import neureka.calculus.environment.executors.AbstractTypeExecutor;
+import neureka.calculus.environment.executors.AbstractOperationTypeImplementation;
 import neureka.calculus.environment.implementations.function.*;
 import neureka.calculus.environment.implementations.indexer.Product;
 import neureka.calculus.environment.implementations.indexer.Summation;
@@ -51,7 +51,7 @@ public class OperationType implements Type
     protected boolean _isCommutative;
     protected boolean _isAssociative;
 
-<span class="fc" id="L54">    private Map&lt;Class, AbstractTypeExecutor&gt; _modules = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L54">    private Map&lt;Class, AbstractOperationTypeImplementation&gt; _modules = new HashMap&lt;&gt;();</span>
 
     static
     {
@@ -137,15 +137,15 @@ public class OperationType implements Type
     //==================================================================================================================
 
     @Override
-    public &lt;T extends AbstractTypeExecutor&gt; T get(Class&lt;T&gt; type){
+    public &lt;T extends AbstractOperationTypeImplementation&gt; T getImplementation(Class&lt;T&gt; type){
 <span class="fc" id="L141">        return (T) _modules.get(type);</span>
     }
     @Override
-    public &lt;T extends AbstractTypeExecutor&gt; boolean supports(Class&lt;T&gt; type){
+    public &lt;T extends AbstractOperationTypeImplementation&gt; boolean supportsImplementation(Class&lt;T&gt; type){
 <span class="fc" id="L145">        return _modules.containsKey(type);</span>
     }
     @Override
-    public &lt;T extends AbstractTypeExecutor&gt; Type set(Class&lt;T&gt; type, T instance) {
+    public &lt;T extends AbstractOperationTypeImplementation&gt; Type setImplementation(Class&lt;T&gt; type, T instance) {
 <span class="fc" id="L149">        _modules.put(type, instance);</span>
 <span class="fc" id="L150">        return this;</span>
     }
@@ -153,10 +153,10 @@ public class OperationType implements Type
     //==================================================================================================================
 
     @Override
-    public TypeExecutor executorOf(TypeExecutor.ExecutionCall call) {
-<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        for(TypeExecutor te : _modules.values()){</span>
-<span class="pc bpc" id="L158" title="1 of 2 branches missed.">            if ( te.canHandle(call) ) return te;</span>
-<span class="nc" id="L159">        }</span>
+    public OperationTypeImplementation executorOf(OperationTypeImplementation.ExecutionCall call) {
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        for(OperationTypeImplementation te : _modules.values()){</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">            if ( te.canHandle(call) ) return te;</span>
+<span class="fc" id="L159">        }</span>
 <span class="nc" id="L160">        return null;</span>
     }
 

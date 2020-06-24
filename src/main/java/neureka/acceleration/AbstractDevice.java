@@ -3,7 +3,8 @@ package neureka.acceleration;
 import neureka.Component;
 import neureka.Tsr;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.TypeExecutor;
+import neureka.calculus.environment.OperationTypeImplementation;
+
 import java.lang.ref.Cleaner;
 
 public abstract class AbstractDevice implements  Device, Component<Tsr>
@@ -70,8 +71,8 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
 
     private Tsr _execute_recursively( Tsr[] tsrs, OperationType type, int d )
     {
-        TypeExecutor.ExecutionCall call = new TypeExecutor.ExecutionCall(this, tsrs, d, type);
-        TypeExecutor<Object> executor = call.getExecutor();
+        OperationTypeImplementation.ExecutionCall call = new OperationTypeImplementation.ExecutionCall(this, tsrs, d, type);
+        OperationTypeImplementation<Object> executor = call.getExecutor();
         assert executor != null;
         Tsr[] enclosed = new Tsr[1];
         executor.reduce(

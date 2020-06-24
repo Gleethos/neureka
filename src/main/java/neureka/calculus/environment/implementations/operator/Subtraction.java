@@ -25,7 +25,7 @@ public class Subtraction extends OperationType {
         super(
                 "subtract", "-", -1, true, false, false, false, false
         );
-        set(Scalarization.class,
+        setImplementation(Scalarization.class,
         new Scalarization("output = input1 - value;\n",
                 "if(d==0){\n" +//drn and src2 switch:
                         "    output = 1;\n" +
@@ -42,7 +42,7 @@ public class Subtraction extends OperationType {
                     }
         }));
 
-        set(Broadcast.class,
+        setImplementation(Broadcast.class,
                 new Broadcast(
                         "value = src1 - src2;\n",
                         "if(d==0){\n" +//drn and src2 switch:
@@ -53,7 +53,7 @@ public class Subtraction extends OperationType {
                         _creator
                 )
         );
-        set(Operation.class,
+        setImplementation(Operation.class,
                 new Operation(
                         "output = input1 - input2;\n",
                         "if(d==0){\n" +//drn and src2 switch:

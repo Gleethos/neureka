@@ -3,7 +3,7 @@ package neureka.calculus.environment;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
-import neureka.calculus.environment.executors.AbstractTypeExecutor;
+import neureka.calculus.environment.executors.AbstractOperationTypeImplementation;
 
 public interface Type
 {
@@ -20,7 +20,7 @@ public interface Type
 
     //==================================================================================================================
 
-    TypeExecutor executorOf(TypeExecutor.ExecutionCall call);
+    OperationTypeImplementation executorOf(OperationTypeImplementation.ExecutionCall call);
 
     //==================================================================================================================
 
@@ -28,9 +28,9 @@ public interface Type
 
     //==================================================================================================================
 
-    <T extends AbstractTypeExecutor> T get(Class<T> type );
-    <T extends AbstractTypeExecutor> boolean supports(Class<T> type );
-    <T extends AbstractTypeExecutor> Type set(Class<T> type, T instance );
+    <T extends AbstractOperationTypeImplementation> T getImplementation(Class<T> type );
+    <T extends AbstractOperationTypeImplementation> boolean supportsImplementation(Class<T> type );
+    <T extends AbstractOperationTypeImplementation> Type setImplementation(Class<T> type, T instance );
 
 
 

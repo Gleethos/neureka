@@ -3,17 +3,16 @@ package neureka.calculus.environment.executors;
 
 import neureka.Tsr;
 import neureka.acceleration.Device;
-import neureka.acceleration.host.HostCPU;
 import neureka.autograd.GraphNode;
 import neureka.calculus.environment.Execution;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.TypeExecutor;
+import neureka.calculus.environment.OperationTypeImplementation;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class AbstractTypeExecutor<FinalType, CreatorType> implements TypeExecutor<FinalType>
+public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType> implements OperationTypeImplementation<FinalType>
 {
     protected String _operation;
     protected String _deriviation;
@@ -21,7 +20,7 @@ public abstract class AbstractTypeExecutor<FinalType, CreatorType> implements Ty
 
     private Map<Class<Device>, Execution> _executions;
 
-    public AbstractTypeExecutor(String operation, String deriviation, CreatorType creator)
+    public AbstractOperationTypeImplementation(String operation, String deriviation, CreatorType creator)
     {
         _operation = operation;
         _deriviation = deriviation;
@@ -50,14 +49,14 @@ public abstract class AbstractTypeExecutor<FinalType, CreatorType> implements Ty
         return _executions.get(deviceClass); // assert that result is of type T...
     }
     
-    private Tsr reduce( Device device, Tsr[] tsrs, OperationType type, int d,  Consumer<TypeExecutor.ExecutionCall> finalExecution ){
+    private Tsr reduce( Device device, Tsr[] tsrs, OperationType type, int d,  Consumer<OperationTypeImplementation.ExecutionCall> finalExecution ){
         return reduce(
                 new ExecutionCall( device, tsrs, d, type ), finalExecution
         );
     }
 
     @Override
-    public Tsr reduce(TypeExecutor.ExecutionCall call, Consumer<TypeExecutor.ExecutionCall> finalExecution)
+    public Tsr reduce(OperationTypeImplementation.ExecutionCall call, Consumer<OperationTypeImplementation.ExecutionCall> finalExecution)
     {
         Execution execution = call.getExecutor().getExecution((Class<Device>) call.getDevice().getClass());
 

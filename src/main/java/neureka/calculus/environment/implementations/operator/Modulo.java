@@ -10,7 +10,7 @@ public class Modulo extends OperationType {
         super(
                 "modulo", "%", -1, true, false, false, false, false
         );
-        set(
+        setImplementation(
                 Broadcast.class,
                 new Broadcast(
                         "",

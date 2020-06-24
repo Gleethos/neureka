@@ -8,7 +8,7 @@ public class Sinus extends OperationType {
     public Sinus()
     {
 <span class="fc" id="L10">        super(&quot;sinus&quot;, &quot;sin&quot; , 1, false, false, false, true, true);</span>
-<span class="fc" id="L11">        set(Activation.class,</span>
+<span class="fc" id="L11">        setImplementation(Activation.class,</span>
                 new Activation(
                         &quot;output = sin(input);\n&quot;,
                         &quot;output = cos(input);\n&quot;,

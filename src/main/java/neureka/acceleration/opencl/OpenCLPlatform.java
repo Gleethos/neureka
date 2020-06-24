@@ -221,35 +221,35 @@ public class OpenCLPlatform {
         //inverse:  src1/fdrn <-src2 <- drain
         //===========================================================================
         for(OperationType type : OperationType.ALL()) {
-            if (preName.contains("activate") && type.supports(Activation.class)) {
+            if (preName.contains("activate") && type.supportsImplementation(Activation.class)) {
                 parser.apply(
                             type.getName(),
-                            type.get(Activation.class).getAsString(),
-                            type.get(Activation.class).getDeriviationAsString()
+                            type.getImplementation(Activation.class).getAsString(),
+                            type.getImplementation(Activation.class).getDeriviationAsString()
                     );
-            } else if (preName.contains("operate") && type.supports(Operation.class)) {
+            } else if (preName.contains("operate") && type.supportsImplementation(Operation.class)) {
                 parser.apply(
                             type.getName(),
-                            type.get(Operation.class).getAsString(),
-                            type.get(Operation.class).getDeriviationAsString()
+                            type.getImplementation(Operation.class).getAsString(),
+                            type.getImplementation(Operation.class).getDeriviationAsString()
                     );
-            } else if (preName.contains("scalar") && type.supports(Scalarization.class)) {
+            } else if (preName.contains("scalar") && type.supportsImplementation(Scalarization.class)) {
                 parser.apply(
                             type.getName(),
-                            type.get(Scalarization.class).getAsString(),
-                            type.get(Scalarization.class).getDeriviationAsString()
+                            type.getImplementation(Scalarization.class).getAsString(),
+                            type.getImplementation(Scalarization.class).getDeriviationAsString()
                     );
-            } else if(preName.contains("broadcast") && type.supports(Broadcast.class)){//broadcast
+            } else if(preName.contains("broadcast") && type.supportsImplementation(Broadcast.class)){//broadcast
                 parser.apply(
                             type.getName(),
-                            type.get(Broadcast.class).getAsString(),
-                            type.get(Broadcast.class).getDeriviationAsString()
+                            type.getImplementation(Broadcast.class).getAsString(),
+                            type.getImplementation(Broadcast.class).getDeriviationAsString()
                     );
-            } else if(preName.contains("convolve") && type.supports(Convolution.class)) {
+            } else if(preName.contains("convolve") && type.supportsImplementation(Convolution.class)) {
                 parser.apply(
                             type.getName(),
-                            type.get(Convolution.class).getAsString(),
-                            type.get(Convolution.class).getDeriviationAsString()
+                            type.getImplementation(Convolution.class).getAsString(),
+                            type.getImplementation(Convolution.class).getDeriviationAsString()
                     );
             }
         }

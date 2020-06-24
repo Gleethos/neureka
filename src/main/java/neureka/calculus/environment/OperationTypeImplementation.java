@@ -16,7 +16,7 @@ import java.util.function.Consumer;
  * provided by an instance of this class in order to compile it...
  *
  */
-public interface TypeExecutor<FinalType>
+public interface OperationTypeImplementation<FinalType>
 {
     class ExecutionCall
     {
@@ -24,7 +24,7 @@ public interface TypeExecutor<FinalType>
         private final Tsr[] _tsrs;
         private final int _d;
         private final OperationType _type;
-        private final TypeExecutor _executor;
+        private final OperationTypeImplementation _executor;
 
         public ExecutionCall(Device device, Tsr[] tsrs, int d, OperationType type)
         {
@@ -39,16 +39,16 @@ public interface TypeExecutor<FinalType>
         public Tsr getTensor(int i) {return _tsrs[i];}
         public int getDerivativeIndex() {return _d;}
         public OperationType getType() {return _type;}
-        public TypeExecutor getExecutor() { return _executor; }
+        public OperationTypeImplementation getExecutor() { return _executor; }
     }
 
     <T> FinalType setExecution(Class<T> deviceClass, Execution execution);
 
     <T> Execution getExecution(Class<T> deviceClass);
 
-    boolean canHandle(TypeExecutor.ExecutionCall call);
+    boolean canHandle(OperationTypeImplementation.ExecutionCall call);
 
-    Tsr reduce(TypeExecutor.ExecutionCall call, Consumer<ExecutionCall> finalExecution);
+    Tsr reduce(OperationTypeImplementation.ExecutionCall call, Consumer<ExecutionCall> finalExecution);
 
 
 }

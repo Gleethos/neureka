@@ -16,7 +16,7 @@ public class ReLU extends OperationType {
                 true,
                 true
         );
-<span class="fc" id="L19">        set(Activation.class,</span>
+<span class="fc" id="L19">        setImplementation(Activation.class,</span>
                 new Activation(
                         &quot;if (input &gt;= 0) {  output = input; } else { output = input * (float)0.01; }\n&quot;,
                         &quot;if (input &gt;= 0) { output = (float)1; } else { output = (float)0.01; }\n&quot;,

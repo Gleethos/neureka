@@ -8,7 +8,7 @@ public class Sinus extends OperationType {
     public Sinus()
     {
         super("sinus", "sin" , 1, false, false, false, true, true);
-        set(Activation.class,
+        setImplementation(Activation.class,
                 new Activation(
                         "output = sin(input);\n",
                         "output = cos(input);\n",

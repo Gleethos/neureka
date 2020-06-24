@@ -209,7 +209,7 @@ public abstract class AbstractFunction extends BaseFunction {
                     operation.append("I[").append(i).append("]").append((i == tsrs.length - 1) ? "" : _type.identifier());
                 }
                 return (FunctionBuilder.build(operation.toString(), _doAD).call(tsrs));
-            } else if (_type.supports(Activation.class) && !_type.isIndexer()) {
+            } else if (_type.supportsImplementation(Activation.class) && !_type.isIndexer()) {
                 return (FunctionBuilder.build(_type.identifier() + "(I[0])", true).call(inputs));
             }
         }

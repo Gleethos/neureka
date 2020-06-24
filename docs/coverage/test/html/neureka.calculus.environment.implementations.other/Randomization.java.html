@@ -13,7 +13,7 @@ public class Randomization extends OperationType{
 <span class="nc" id="L13">        super(</span>
                 &quot;random&quot;, &quot;rand&quot;, 1, true, false, false, false, false
         );
-<span class="nc" id="L16">        set(Scalarization.class, new Scalarization(&quot;output = pow(input1, value);&quot;,</span>
+<span class="nc" id="L16">        setImplementation(Scalarization.class, new Scalarization(&quot;output = pow(input1, value);&quot;,</span>
                 &quot;if(d==0){\n&quot; +
                         &quot;    output = value * pow(input1, value-(float)1 );\n&quot; +
                         &quot;} else {\n&quot; +
