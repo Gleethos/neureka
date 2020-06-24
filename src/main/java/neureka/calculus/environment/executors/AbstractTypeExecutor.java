@@ -27,7 +27,6 @@ public abstract class AbstractTypeExecutor<CreatorType> implements TypeExecutor
         _executions = new HashMap<>();
     }
 
-
     public String getAsString(){
         return _operation;
     }
@@ -54,11 +53,14 @@ public abstract class AbstractTypeExecutor<CreatorType> implements TypeExecutor
                 new ExecutionCall( device, tsrs, d, type ), finalExecution
         );
     }
-    
 
     @Override
     public Tsr reduce(TypeExecutor.ExecutionCall call, Consumer<TypeExecutor.ExecutionCall> finalExecution)
     {
+        Execution execution = call.getExecutor().getExecution(call.getDevice());
+
+        //assert execution!=null;
+
         Tsr[] tsrs = call.getTensors();
         int d = call.getDerivativeIndex();
         OperationType type = call.getType();
@@ -70,7 +72,7 @@ public abstract class AbstractTypeExecutor<CreatorType> implements TypeExecutor
                 device.add(tsrs[i]);
                 rollbacks[i] = device::get;
             } else {
-                rollbacks[i] = t->{};
+                rollbacks[i] = t -> {};
             }
         }
         if ( tsrs.length > 3 )

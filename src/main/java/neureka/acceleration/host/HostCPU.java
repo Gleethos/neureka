@@ -130,7 +130,7 @@ public class HostCPU extends AbstractDevice
             _threaded(
                     tsrs[0].size(),
                     (start, end) ->
-                            Kernel.activate(
+                            Activation.activate(
                                     tsrs[0], start, end,
                                     type.get(Activation.class).getCreator().create(tsrs, d)
                             )
@@ -142,7 +142,7 @@ public class HostCPU extends AbstractDevice
             _threaded(
                     tsrs[0].size(),
                     (start, end) ->
-                            Kernel.broadcast(
+                            Broadcast.broadcast(
                                     tsrs[0], tsrs[1], tsrs[2], d,
                                     start, end,
                                     type.get(Broadcast.class).getCreator().create(tsrs, d)
@@ -155,7 +155,7 @@ public class HostCPU extends AbstractDevice
             _threaded(
                     tsrs[0].size(),
                     (start, end) ->
-                            Kernel.convolve(
+                            Convolution.convolve(
                                     tsrs[0], tsrs[1], tsrs[2], d,
                                     start, end,
                                     type.get(Convolution.class).getCreator().create(tsrs, -1)
@@ -168,7 +168,7 @@ public class HostCPU extends AbstractDevice
             _threaded(
                     tsrs[0].size(),
                     (start, end) ->
-                            Kernel.activate(
+                            Activation.activate(
                                     tsrs[0], start, end,
                                     type.get(Scalarization.class).getCreator().create(tsrs, scalar, d)
                             )

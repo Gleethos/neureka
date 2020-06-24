@@ -130,7 +130,7 @@ public class HostCPU extends AbstractDevice
 <span class="fc" id="L130">            _threaded(</span>
 <span class="fc" id="L131">                    tsrs[0].size(),</span>
                     (start, end) -&gt;
-<span class="fc" id="L133">                            Kernel.activate(</span>
+<span class="fc" id="L133">                            Activation.activate(</span>
                                     tsrs[0], start, end,
 <span class="fc" id="L135">                                    type.get(Activation.class).getCreator().create(tsrs, d)</span>
                             )
@@ -142,7 +142,7 @@ public class HostCPU extends AbstractDevice
 <span class="fc" id="L142">            _threaded(</span>
 <span class="fc" id="L143">                    tsrs[0].size(),</span>
                     (start, end) -&gt;
-<span class="fc" id="L145">                            Kernel.broadcast(</span>
+<span class="fc" id="L145">                            Broadcast.broadcast(</span>
                                     tsrs[0], tsrs[1], tsrs[2], d,
                                     start, end,
 <span class="fc" id="L148">                                    type.get(Broadcast.class).getCreator().create(tsrs, d)</span>
@@ -155,7 +155,7 @@ public class HostCPU extends AbstractDevice
 <span class="fc" id="L155">            _threaded(</span>
 <span class="fc" id="L156">                    tsrs[0].size(),</span>
                     (start, end) -&gt;
-<span class="fc" id="L158">                            Kernel.convolve(</span>
+<span class="fc" id="L158">                            Convolution.convolve(</span>
                                     tsrs[0], tsrs[1], tsrs[2], d,
                                     start, end,
 <span class="fc" id="L161">                                    type.get(Convolution.class).getCreator().create(tsrs, -1)</span>
@@ -168,7 +168,7 @@ public class HostCPU extends AbstractDevice
 <span class="fc" id="L168">            _threaded(</span>
 <span class="fc" id="L169">                    tsrs[0].size(),</span>
                     (start, end) -&gt;
-<span class="fc" id="L171">                            Kernel.activate(</span>
+<span class="fc" id="L171">                            Activation.activate(</span>
                                     tsrs[0], start, end,
 <span class="fc" id="L173">                                    type.get(Scalarization.class).getCreator().create(tsrs, scalar, d)</span>
                             )

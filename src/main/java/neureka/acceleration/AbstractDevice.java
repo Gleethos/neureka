@@ -32,7 +32,6 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
     @Override
     public Device execute(Tsr[] tsrs, OperationType type, int d)
     {
-
         if ( type.identifier().equals("<") )
         {
             int offset = ( tsrs[0] == null ) ? 1 : 0;
@@ -47,7 +46,7 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
         {
             _createNewDrainTensorIn(this, tsrs, type);
             if (
-                    tsrs.length == 3 && d<0 && // TODO: refactor so that 'd<0 && '
+                    tsrs.length == 3 && d<0 && // TODO: refactor so that 'd<0 && ' is not included
                             (
                                     tsrs[1].isVirtual() || tsrs[2].isVirtual() ||
                                     (
@@ -73,9 +72,9 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
     {
         TypeExecutor.ExecutionCall call = new TypeExecutor.ExecutionCall(this, tsrs, d, type);
         TypeExecutor executor = call.getExecutor();
-        assert executor!=null;
+        assert executor != null;
         Tsr[] enclosed = new Tsr[1];
-        executor.reduce(call, (c)->{
+        executor.reduce(call, c -> {
                 this._enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType());
         });
         return call.getTensors()[0];

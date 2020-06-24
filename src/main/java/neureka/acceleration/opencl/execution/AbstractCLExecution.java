@@ -1,9 +1,10 @@
-package neureka.calculus.environment.executors;
+package neureka.acceleration.opencl.execution;
 
 import neureka.Neureka;
 import neureka.acceleration.Device;
 import neureka.acceleration.opencl.OpenCLPlatform;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.executors.Execution;
 import org.jocl.cl_device_id;
 import org.jocl.cl_program;
 

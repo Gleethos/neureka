@@ -5,4 +5,6 @@ public interface Execution<ExecutionLambda>
 
     ExecutionLambda getLambda();
 
+    int arity();
+
 }
