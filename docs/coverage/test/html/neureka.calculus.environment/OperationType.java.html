@@ -131,142 +131,125 @@ public class OperationType implements Type
 
     //==================================================================================================================
 
-    //private OperationPreprocessor _preprocessor;
-    //
-    //@Override
-    //public OperationPreprocessor getPreprocessor(){
-    //    return null;
-    //}
-    //
-    //public void setPre
-
-    //==================================================================================================================
-
     @Override
     public String getName(){
-<span class="fc" id="L147">        return _name;</span>
+<span class="fc" id="L136">        return _name;</span>
     }
 
     //==================================================================================================================
 
     @Override
     public &lt;T extends AbstractTypeExecutor&gt; T get(Class&lt;T&gt; type){
-<span class="fc" id="L154">        return (T) _modules.get(type);</span>
+<span class="fc" id="L143">        return (T) _modules.get(type);</span>
     }
     @Override
     public &lt;T extends AbstractTypeExecutor&gt; boolean supports(Class&lt;T&gt; type){
-<span class="fc" id="L158">        return _modules.containsKey(type);</span>
+<span class="fc" id="L147">        return _modules.containsKey(type);</span>
     }
     @Override
     public &lt;T extends AbstractTypeExecutor&gt; Type set(Class&lt;T&gt; type, T instance) {
-<span class="fc" id="L162">        _modules.put(type, instance);</span>
-<span class="fc" id="L163">        return this;</span>
+<span class="fc" id="L151">        _modules.put(type, instance);</span>
+<span class="fc" id="L152">        return this;</span>
     }
 
     //==================================================================================================================
 
     @Override
-    public Execution generateExecutionFrom(TypeExecutor.ExecutionCall call) {
-
-<span class="nc bnc" id="L171" title="All 2 branches missed.">        for(TypeExecutor te : _modules.values()){</span>
-<span class="nc bnc" id="L172" title="All 2 branches missed.">            if ( te.canHandle(call) ) {</span>
-                //te.handle(
-                //
-                //);
-                //return ;
-            }
-<span class="nc" id="L178">        }</span>
-<span class="nc" id="L179">        return null;</span>
+    public TypeExecutor executorOf(TypeExecutor.ExecutionCall call) {
+<span class="nc bnc" id="L159" title="All 2 branches missed.">        for(TypeExecutor te : _modules.values()){</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">            if ( te.canHandle(call) ) return te;</span>
+<span class="nc" id="L161">        }</span>
+<span class="nc" id="L162">        return null;</span>
     }
 
     //==================================================================================================================
 
     @Override
     public int id(){
-<span class="fc" id="L186">        return _id;</span>
+<span class="fc" id="L169">        return _id;</span>
     }
 
     @Override
     public String identifier(){
-<span class="fc" id="L191">        return _identifier;</span>
+<span class="fc" id="L174">        return _identifier;</span>
     }
 
     @Override
     public int arity(){
-<span class="fc" id="L196">        return _arity;</span>
+<span class="fc" id="L179">        return _arity;</span>
     }
 
     @Override
     public boolean isOperation() {
-<span class="fc" id="L201">        return _isOperation;</span>
+<span class="fc" id="L184">        return _isOperation;</span>
     }
 
     @Override
     public boolean isIndexer(){
-<span class="fc" id="L206">        return _isIndexer;</span>
+<span class="fc" id="L189">        return _isIndexer;</span>
     }
 
     @Override
     public boolean isConvection(){
-<span class="fc" id="L211">        return _isConvection;</span>
+<span class="fc" id="L194">        return _isConvection;</span>
     }
 
     @Override
     public boolean isCommutative(){
-<span class="nc" id="L216">        return  _isCommutative;</span>
+<span class="nc" id="L199">        return  _isCommutative;</span>
     }
 
     @Override
     public boolean allowsForward(Tsr[] inputs)
     {
-<span class="fc bfc" id="L222" title="All 2 branches covered.">        if (this.isConvection()) return false;</span>
-<span class="fc bfc" id="L223" title="All 2 branches covered.">        if (this.identifier().equals(&quot;,&quot;)) return false; //Reshape</span>
-<span class="fc" id="L224">        Tsr last = null;</span>
-<span class="fc bfc" id="L225" title="All 2 branches covered.">        for (Tsr t : inputs) {</span>
-<span class="fc bfc" id="L226" title="All 4 branches covered.">            if (last!=null &amp;&amp; !last.shape().equals(t.shape())) return false;</span>
-<span class="fc" id="L227">            last = t; // Note: shapes are cached!</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">        if (this.isConvection()) return false;</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">        if (this.identifier().equals(&quot;,&quot;)) return false; //Reshape</span>
+<span class="fc" id="L207">        Tsr last = null;</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">        for (Tsr t : inputs) {</span>
+<span class="fc bfc" id="L209" title="All 4 branches covered.">            if (last!=null &amp;&amp; !last.shape().equals(t.shape())) return false;</span>
+<span class="fc" id="L210">            last = t; // Note: shapes are cached!</span>
         }
-<span class="fc" id="L229">        return true;</span>
+<span class="fc" id="L212">        return true;</span>
     }
 
     @Override
     public ADAgent getADAgentOf(Function f, Tsr[] inputs, int i, boolean forward)
     {
-<span class="fc" id="L235">        Function mul = Function.Detached.MUL;</span>
-<span class="fc bfc" id="L236" title="All 2 branches covered.">        if(forward)</span>
+<span class="fc" id="L218">        Function mul = Function.Detached.MUL;</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">        if(forward)</span>
         {
-<span class="fc" id="L238">            Tsr d = f.derive(inputs, i);</span>
-<span class="fc" id="L239">            return new ADAgent(</span>
-<span class="fc" id="L240">                    ()-&gt;d,</span>
-<span class="nc" id="L241">                    (t, derivative) -&gt; mul.call(new Tsr[]{derivative, d}),</span>
+<span class="fc" id="L221">            Tsr d = f.derive(inputs, i);</span>
+<span class="fc" id="L222">            return new ADAgent(</span>
+<span class="fc" id="L223">                    ()-&gt;d,</span>
+<span class="nc" id="L224">                    (t, derivative) -&gt; mul.call(new Tsr[]{derivative, d}),</span>
                     null
             );
         } else {
-<span class="pc bpc" id="L245" title="1 of 4 branches missed.">            if (this.isOperation() &amp;&amp; !this.isConvection())</span>
+<span class="pc bpc" id="L228" title="1 of 4 branches missed.">            if (this.isOperation() &amp;&amp; !this.isConvection())</span>
             {
-<span class="fc" id="L247">                Tsr d = f.derive(inputs, i);</span>
-<span class="fc" id="L248">                return new ADAgent(</span>
-<span class="fc" id="L249">                        ()-&gt;d,</span>
-<span class="nc" id="L250">                        (t, derivative) -&gt; mul.call(new Tsr[]{derivative, d}),</span>
-<span class="fc" id="L251">                        (t, error) -&gt; mul.call(new Tsr[]{error, d})</span>
+<span class="fc" id="L230">                Tsr d = f.derive(inputs, i);</span>
+<span class="fc" id="L231">                return new ADAgent(</span>
+<span class="fc" id="L232">                        ()-&gt;d,</span>
+<span class="nc" id="L233">                        (t, derivative) -&gt; mul.call(new Tsr[]{derivative, d}),</span>
+<span class="fc" id="L234">                        (t, error) -&gt; mul.call(new Tsr[]{error, d})</span>
                 );
             }
-<span class="pc bpc" id="L254" title="1 of 2 branches missed.">            else if (this.isConvection())</span>
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">            else if (this.isConvection())</span>
             {
-<span class="fc" id="L256">                Function invX = FunctionBuilder.build(</span>
-<span class="fc" id="L257">                        &quot;I[0]&quot; + identifier() + &quot;&gt;&gt;I[1]&quot; + identifier() + &quot;&gt;&gt;I[2]&quot;,</span>
+<span class="fc" id="L239">                Function invX = FunctionBuilder.build(</span>
+<span class="fc" id="L240">                        &quot;I[0]&quot; + identifier() + &quot;&gt;&gt;I[1]&quot; + identifier() + &quot;&gt;&gt;I[2]&quot;,</span>
                         false
                 );
-<span class="fc" id="L260">                Tsr d = f.derive(inputs, i);</span>
-<span class="fc" id="L261">                return new ADAgent(</span>
-<span class="fc" id="L262">                        ()-&gt;d,</span>
-<span class="nc" id="L263">                        (t, derivative) -&gt; mul.call(new Tsr[]{derivative, d}),</span>
-<span class="fc" id="L264">                        (t, error) -&gt; invX.call(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})</span>
+<span class="fc" id="L243">                Tsr d = f.derive(inputs, i);</span>
+<span class="fc" id="L244">                return new ADAgent(</span>
+<span class="fc" id="L245">                        ()-&gt;d,</span>
+<span class="nc" id="L246">                        (t, derivative) -&gt; mul.call(new Tsr[]{derivative, d}),</span>
+<span class="fc" id="L247">                        (t, error) -&gt; invX.call(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})</span>
                 );
             }
         }
-<span class="nc" id="L268">        return new ADAgent(</span>
-<span class="nc" id="L269">                ()-&gt;null, (t, derivative) -&gt; null, (t, error) -&gt; null</span>
+<span class="nc" id="L251">        return new ADAgent(</span>
+<span class="nc" id="L252">                ()-&gt;null, (t, derivative) -&gt; null, (t, error) -&gt; null</span>
         );
 
     }

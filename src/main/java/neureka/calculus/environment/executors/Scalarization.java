@@ -7,4 +7,9 @@ public class Scalarization extends AbstractTypeExecutor<Type.ScalarOperatorCreat
     public Scalarization(String strScalarized, String strDeriviation, Type.ScalarOperatorCreator creator){
         super(strScalarized, strDeriviation, creator);
     }
+
+    @Override
+    public boolean canHandle(ExecutionCall call) {
+        return true;
+    }
 }

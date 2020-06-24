@@ -8,4 +8,8 @@ public class Activation extends AbstractTypeExecutor<Type.OperatorCreator>
         super(strActivation, strDeriviation, creator);
     }
 
+    @Override
+    public boolean canHandle(ExecutionCall call) {
+        return true;
+    }
 }

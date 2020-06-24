@@ -22,7 +22,7 @@ public class Quadratic extends OperationType {
                 new Activation(
                         "output = input*input;\n",
                         "output = 2*input;\n",
-                        (inputs, d)->{
+                        (inputs, d) -> {
                             double[] t1_val = inputs[1].value64();
                             if (d < 0) {
                                 return (t0Idx, t1Idx, t2Idx) -> {

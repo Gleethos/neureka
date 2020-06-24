@@ -22,7 +22,7 @@ public interface Type
 
     //==================================================================================================================
 
-    Execution generateExecutionFrom(TypeExecutor.ExecutionCall call);
+    TypeExecutor executorOf(TypeExecutor.ExecutionCall call);
 
     //==================================================================================================================
 

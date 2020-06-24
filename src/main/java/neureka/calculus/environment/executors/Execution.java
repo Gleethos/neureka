@@ -1,10 +1,8 @@
 package neureka.calculus.environment.executors;
 
-public interface Execution
+public interface Execution<ExecutionLambda>
 {
 
-    boolean canExecute(TypeExecutor.ExecutionCall call);
-
-    void execute(TypeExecutor.ExecutionCall call);
+    ExecutionLambda getLambda();
 
 }

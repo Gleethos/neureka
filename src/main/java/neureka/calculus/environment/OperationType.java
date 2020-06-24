@@ -131,17 +131,6 @@ public class OperationType implements Type
 
     //==================================================================================================================
 
-    //private OperationPreprocessor _preprocessor;
-    //
-    //@Override
-    //public OperationPreprocessor getPreprocessor(){
-    //    return null;
-    //}
-    //
-    //public void setPre
-
-    //==================================================================================================================
-
     @Override
     public String getName(){
         return _name;
@@ -166,15 +155,9 @@ public class OperationType implements Type
     //==================================================================================================================
 
     @Override
-    public Execution generateExecutionFrom(TypeExecutor.ExecutionCall call) {
-
+    public TypeExecutor executorOf(TypeExecutor.ExecutionCall call) {
         for(TypeExecutor te : _modules.values()){
-            if ( te.canHandle(call) ) {
-                //te.handle(
-                //
-                //);
-                //return ;
-            }
+            if ( te.canHandle(call) ) return te;
         }
         return null;
     }
