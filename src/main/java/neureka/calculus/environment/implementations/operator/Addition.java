@@ -1,5 +1,9 @@
 package neureka.calculus.environment.implementations.operator;
 
+import neureka.acceleration.host.HostCPU;
+import neureka.acceleration.host.execution.HostExecution;
+import neureka.acceleration.opencl.OpenCLDevice;
+import neureka.acceleration.opencl.execution.CLExecution;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.executors.*;
 
@@ -33,14 +37,99 @@ public class Addition extends OperationType {
         );
         setImplementation(Broadcast.class,
                 _broadcast
-        );
-        setImplementation(Operation.class,
-                new Operation(
-                        "output = input1 + input2;\n",
-                        "output = 1;\n",
-                        _creator
+                .setExecution (
+                        HostCPU.class,
+                        new HostExecution(
+                                ( device, call ) ->
+                                        device.getExecutor()
+                                                .threaded (
+                                                        call.getTensor(0).size(),
+                                                        ( start, end ) ->
+                                                                Activation.activate (
+                                                                        call.getTensor(0),
+                                                                        start, end,
+                                                                        _creator.create(call.getTensors(), -1)
+                                                                )
+                                                ),
+                                3
+                        )
+                ).setExecution(
+                        OpenCLDevice.class,
+                        new CLExecution(
+                                ( device, call ) -> {
+                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    device.getKernel(call)
+                                            .pass(call.getTensor(offset))
+                                            .pass(call.getTensor(offset + 1))
+                                            .pass(call.getTensor(offset + 2))
+                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getDerivativeIndex())
+                                            .call(gwz);
+                                },
+                                3,
+                                _broadcast.getKernelSource(), // kernelSource
+                                "value = src1 + src2;\n",
+                                "value += 1 * drain;\n",
+                                this // OperationType
+                        )
                 )
         );
+
+        //__________________
+        // IMPLEMENTATION :
+
+        Operation _operation = new Operation(
+                "output = input1 + input2;\n",
+                "output = 1;\n",
+                _creator
+        );
+
+        setImplementation(Operation.class,
+                _operation
+                        .setExecution (
+                                HostCPU.class,
+                                new HostExecution(
+                                        ( device, call ) ->
+                                                device.getExecutor()
+                                                        .threaded (
+                                                                call.getTensor(0).size(),
+                                                                ( start, end ) ->
+                                                                        Broadcast.broadcast (
+                                                                                call.getTensor(0),
+                                                                                call.getTensor(1),
+                                                                                call.getTensor(2),
+                                                                                call.getDerivativeIndex(),
+                                                                                start, end,
+                                                                                _creator.create(call.getTensors(), -1)
+                                                                        )
+                                                        ),
+                                        3
+                                )
+                        ).setExecution(
+                        OpenCLDevice.class,
+                        new CLExecution(
+                                ( device, call ) -> {
+                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    device.getKernel(call)
+                                            .pass(call.getTensor(offset))
+                                            .pass(call.getTensor(offset + 1))
+                                            .pass(call.getTensor(offset + 2))
+                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getDerivativeIndex())
+                                            .call(gwz);
+                                },
+                                3,
+                                _broadcast.getKernelSource(), // kernelSource
+                                "value = src1 + src2;\n",
+                                "value += 1 * drain;\n",
+                                this // OperationType
+                        )
+                )
+        );
+
+
         setImplementation(Scalarization.class,
                 new Scalarization(
                         "output = input1 + value;\n",

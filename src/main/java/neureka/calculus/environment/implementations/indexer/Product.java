@@ -62,8 +62,11 @@ public class Product extends OperationType {
                                                 .threaded (
                                                         call.getTensor(0).size(),
                                                         ( start, end ) ->
-                                                                Activation.activate (
+                                                                Broadcast.broadcast (
                                                                         call.getTensor(0),
+                                                                        call.getTensor(1),
+                                                                        call.getTensor(2),
+                                                                        call.getDerivativeIndex(),
                                                                         start, end,
                                                                         _creator.create(call.getTensors(), -1)
                                                                 )
@@ -86,8 +89,8 @@ public class Product extends OperationType {
                                 },
                                 3,
                                 typeImplementation.getKernelSource(), // kernelSource
-                                "output = input/pow(1+pow(input, 2.0f), 0.5f);\n",
-                                "output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n",
+                                "value = src1 * src2;\n",
+                                "value += handle * drain;\n",
                                 this // OperationType
                         )
                 )
