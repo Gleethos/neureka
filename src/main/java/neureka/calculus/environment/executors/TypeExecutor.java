@@ -4,6 +4,8 @@ import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.calculus.environment.OperationType;
 
+import java.util.function.Consumer;
+
 /**
  * TODO:
  *
@@ -49,7 +51,7 @@ public interface TypeExecutor
 
     boolean canHandle(TypeExecutor.ExecutionCall call);
 
-
+    public Tsr reduce(TypeExecutor.ExecutionCall call, Consumer<ExecutionCall> finalExecution);
 
 
 }

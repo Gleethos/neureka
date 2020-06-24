@@ -2,6 +2,7 @@ package neureka.calculus.environment.executors;
 
 
 import neureka.Tsr;
+import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
 import neureka.autograd.GraphNode;
 import neureka.calculus.environment.OperationType;
@@ -47,127 +48,73 @@ public abstract class AbstractTypeExecutor<CreatorType> implements TypeExecutor
     public <T extends Execution> T getExecution(Device device){
         return (T) _executions.get(device); // assert that result is of type T...
     }
+    
+    private Tsr reduce( Device device, Tsr[] tsrs, OperationType type, int d,  Consumer<TypeExecutor.ExecutionCall> finalExecution ){
+        return reduce(
+                new ExecutionCall( device, tsrs, d, type ), finalExecution
+        );
+    }
+    
 
+    @Override
     public Tsr reduce(TypeExecutor.ExecutionCall call, Consumer<TypeExecutor.ExecutionCall> finalExecution)
     {
         Tsr[] tsrs = call.getTensors();
+        int d = call.getDerivativeIndex();
+        OperationType type = call.getType();
+        Device device = call.getDevice();
 
         Consumer<Tsr>[] rollbacks = new Consumer[tsrs.length];
         for (int i=0; i<tsrs.length; i++) {
             if ( tsrs[i] != null && !tsrs[i].isOutsourced() ) {
-                call.getDevice().add(tsrs[i]);
-                rollbacks[i] = call.getDevice()::get;
+                device.add(tsrs[i]);
+                rollbacks[i] = device::get;
             } else {
                 rollbacks[i] = t->{};
             }
         }
         if ( tsrs.length > 3 )
         {
-            if ( call.getDerivativeIndex() < 0 ) {
-                reduce(
-                        new TypeExecutor.ExecutionCall(
-                                call.getDevice(),
-                                new Tsr[]{tsrs[0], tsrs[1], tsrs[2]},
-                                call.getDerivativeIndex(),
-                                call.getType()
-                        ),
-                        finalExecution
-                );
+            if ( d < 0 ) {
+                reduce(device, new Tsr[]{tsrs[0], tsrs[1], tsrs[2]}, type, d, finalExecution);
                 Tsr[] newTsrs = Utility._offsetted(tsrs, 1);
-                newTsrs[0] =  reduce(
-                        new TypeExecutor.ExecutionCall(
-                                call.getDevice(),
-                                newTsrs,
-                                call.getDerivativeIndex(),
-                                call.getType()
-                        ),
-                        finalExecution
-                );//This recursion should work!
+                newTsrs[0] =  reduce(device, newTsrs, type, d, finalExecution);//This recursion should work!
                 tsrs[0] = newTsrs[0];
             } else {
                 Tsr[] newTsrs;
-                switch ( call.getType().identifier() )
+                switch ( type.identifier() )
                 {
                     case "+":
                     case "sum":
                         tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue(1.0f);
                         break;
 
-                    case "-": tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue((call.getDerivativeIndex()==0)?1.0f:-1.0f);
+                    case "-": tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue((d==0)?1.0f:-1.0f);
                         break;
 
                     case "^":
                         newTsrs = Utility._subset(tsrs, 1,  2, tsrs.length-2);
-                        if ( call.getDerivativeIndex()==0 ) {
+                        if ( d==0 ) {
                             newTsrs = Utility._subset(tsrs, 1,  2, tsrs.length-2);
                             newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);
-                            Tsr exp = reduce(
-                                    new TypeExecutor.ExecutionCall(
-                                            call.getDevice(),
-                                            newTsrs,
-                                            -1,
-                                            OperationType.instance("*")
-                                    ),
-                                    finalExecution
-                            );
-                            tsrs[0] = reduce(
-                                    new TypeExecutor.ExecutionCall(
-                                            call.getDevice(),
-                                            new Tsr[]{tsrs[0], tsrs[1], exp},
-                                            0,
-                                            call.getType()
-                                    ),
-                                    finalExecution
-                            );
+                            Tsr exp = reduce(device, newTsrs, OperationType.instance("*"), -1, finalExecution);
+                            tsrs[0] = reduce(device, new Tsr[]{tsrs[0], tsrs[1], exp}, type, 0, finalExecution);
                             exp.delete();
                         } else {
                             newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);
-                            Tsr inner = reduce(
-                                    new TypeExecutor.ExecutionCall(
-                                            call.getDevice(),
-                                            newTsrs,
-                                            call.getDerivativeIndex()-1,
-                                            OperationType.instance("*")
-                                    ),
-                                    finalExecution
-                            );
-                            Tsr exp = reduce(
-                                    new TypeExecutor.ExecutionCall(
-                                            call.getDevice(),
-                                            new Tsr[]{Tsr.Create.newTsrLike(tsrs[1]), inner, tsrs[call.getDerivativeIndex()]},
-                                            -1,
-                                            OperationType.instance("*")
-                                    ),
-                                    finalExecution
-                            );
-                            tsrs[0] =  reduce(
-                                    new TypeExecutor.ExecutionCall(
-                                            call.getDevice(),
-                                            new Tsr[]{tsrs[0], tsrs[1], exp},
-                                            1,
-                                            call.getType()
-                                    ),
-                                    finalExecution
-                            );
+                            Tsr inner = reduce(device, newTsrs, OperationType.instance("*"), d-1, finalExecution);
+                            Tsr exp = reduce(device, new Tsr[]{Tsr.Create.newTsrLike(tsrs[1]), inner, tsrs[d]}, OperationType.instance("*"), -1, finalExecution);
+                            tsrs[0] =  reduce(device, new Tsr[]{tsrs[0], tsrs[1], exp}, type, 1, finalExecution);
                             inner.delete();
                             exp.delete();
                         }
                         break;
                     case "*":
                     case "prod":
-                        newTsrs = Utility._without(tsrs, 1+ call.getDerivativeIndex());
+                        newTsrs = Utility._without(tsrs, 1+d);
                         if ( newTsrs.length > 2 ) {
                             newTsrs[0] = ( newTsrs[0] == null ) ? Tsr.Create.newTsrLike(tsrs[1]) : newTsrs[0];
-                            tsrs[0] = reduce(
-                                    new TypeExecutor.ExecutionCall(
-                                            call.getDevice(),
-                                            newTsrs,
-                                            -1,
-                                            OperationType.instance("*")
-                                    ),
-                                    finalExecution
-
-                            );
+                            tsrs[0] = reduce(device, newTsrs, OperationType.instance("*"), -1, finalExecution);
                         } else {
                             tsrs[0] = newTsrs[1];
                         }
@@ -175,66 +122,34 @@ public abstract class AbstractTypeExecutor<CreatorType> implements TypeExecutor
 
                     case "/":
                         Tsr a;
-                        if ( call.getDerivativeIndex() > 1 ) {
-                            newTsrs = Utility._subset(tsrs, 1, 1, call.getDerivativeIndex()+1);
+                        if ( d > 1 ) {
+                            newTsrs = Utility._subset(tsrs, 1, 1, d+1);
                             newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);
-                            a = reduce(
-                                    new TypeExecutor.ExecutionCall(
-                                            call.getDevice(),
-                                            newTsrs,
-                                            -1,
-                                            OperationType.instance("/")
-                                    ),
-                                    finalExecution
-                            );
-                        } else if ( call.getDerivativeIndex() == 1 ) a = tsrs[1];
+                            a = reduce(device, newTsrs, OperationType.instance("/"), -1, finalExecution);
+                        } else if ( d == 1 ) a = tsrs[1];
                         else a = Tsr.Create.newTsrLike(tsrs[1], 1.0);
                         Tsr b;
-                        if ( tsrs.length -  call.getDerivativeIndex() - 2  > 1 ) {
-                            newTsrs = Utility._subset(tsrs, 2, call.getDerivativeIndex()+2, tsrs.length-(call.getDerivativeIndex()+2));//or (d+2)
+                        if ( tsrs.length -  d - 2  > 1 ) {
+                            newTsrs = Utility._subset(tsrs, 2, d+2, tsrs.length-(d+2));//or (d+2)
                             newTsrs[1] =  Tsr.Create.newTsrLike(tsrs[1], 1.0);
                             newTsrs[0] = newTsrs[1];
-                            b = reduce(
-                                    new TypeExecutor.ExecutionCall(
-                                            call.getDevice(),
-                                            newTsrs,
-                                            -1,
-                                            OperationType.instance("/")
-                                    ),
-                                    finalExecution
-                            );
+                            b = reduce(device, newTsrs, OperationType.instance("/"), -1, finalExecution);
                         } else {
                             b = Tsr.Create.newTsrLike(tsrs[1], 1.0);
                         }
-                        reduce(
-                                new TypeExecutor.ExecutionCall(
-                                        call.getDevice(),
-                                        new Tsr[]{tsrs[0], a, b},
-                                        -1,
-                                        OperationType.instance("*")
-                                ),
-                                finalExecution
-                        );
-                        reduce(
-                                new TypeExecutor.ExecutionCall(
-                                        call.getDevice(),
-                                        new Tsr[]{tsrs[0], tsrs[0], tsrs[call.getDerivativeIndex()+1]},
-                                        1,
-                                        OperationType.instance("/")
-                                ),
-                                finalExecution
-                        );
-                        if ( call.getDerivativeIndex()== 0 ) a.delete();
+                        reduce(device, new Tsr[]{tsrs[0], a, b}, OperationType.instance("*"), -1, finalExecution);
+                        reduce(device, new Tsr[]{tsrs[0], tsrs[0], tsrs[d+1]}, OperationType.instance("/"), 1, finalExecution);
+                        if ( d == 0 ) a.delete();
                         b.delete();
                         break;
                     default: throw new IllegalStateException("Operation not found!");
                 }
             }
         } else {
-            switch (call.getType().identifier()) {
+            switch (type.identifier()) {
                 case "x":
-                    if (call.getDerivativeIndex() >= 0) {
-                        if (call.getDerivativeIndex() == 0) tsrs[0] = tsrs[2];
+                    if (d >= 0) {
+                        if (d == 0) tsrs[0] = tsrs[2];
                         else tsrs[0] = tsrs[1];
                         return tsrs[0];
                     } else tsrs = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
@@ -262,21 +177,16 @@ public abstract class AbstractTypeExecutor<CreatorType> implements TypeExecutor
                     break;
             }
             //this._enqueue(tsrs, d, type);
-            finalExecution.accept(call);
-            //call.getDevice().execute(tsrs, call.getType(), call.getDerivativeIndex());
+            finalExecution.accept(
+                    new ExecutionCall(device, tsrs, d, type)
+            );
         }
 
         for ( int i = 0; i < tsrs.length; i++ ) {
             if ( tsrs[i] != null && !tsrs[i].isUndefined() ) rollbacks[i].accept(tsrs[i]);
         }
         return tsrs[0];
-
-
-
     }
-
-
-
 
     protected static class Utility
     {

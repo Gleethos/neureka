@@ -11,8 +11,8 @@ public class Operation  extends AbstractTypeExecutor<Type.OperatorCreator>
 
     @Override
     public boolean canHandle(ExecutionCall call) {
-        int size = call.getTensors()[0].size();
-        for ( Tsr t : call.getTensors() ) if ( t.size() != size ) return false;
+        int size = (call.getTensors()[0]==null)?call.getTensors()[1].size():call.getTensors()[0].size();
+        for ( Tsr t : call.getTensors() ) if ( t!=null && t.size() != size ) return false;
         return true;
     }
 }
