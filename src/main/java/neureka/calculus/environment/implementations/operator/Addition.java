@@ -5,6 +5,7 @@ import neureka.acceleration.host.execution.HostExecution;
 import neureka.acceleration.opencl.OpenCLDevice;
 import neureka.acceleration.opencl.execution.CLExecution;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.Type;
 import neureka.calculus.environment.executors.*;
 
 public class Addition extends OperationType {
@@ -79,18 +80,18 @@ public class Addition extends OperationType {
         //__________________
         // IMPLEMENTATION :
 
-        Operation _operation = new Operation(
+        Operation operation = new Operation(
                 "output = input1 + input2;\n",
                 "output = 1;\n",
                 _creator
         );
 
         setImplementation(Operation.class,
-                _operation
+                operation
                         .setExecution (
                                 HostCPU.class,
                                 new HostExecution(
-                                        ( call ) ->
+                                        call ->
                                                 call.getDevice().getExecutor()
                                                         .threaded (
                                                                 call.getTensor(0).size(),
@@ -109,7 +110,7 @@ public class Addition extends OperationType {
                         ).setExecution(
                         OpenCLDevice.class,
                         new CLExecution(
-                                ( call ) -> {
+                                call -> {
                                     int offset = (call.getTensor(0) != null) ? 0 : 1;
                                     int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
@@ -121,7 +122,7 @@ public class Addition extends OperationType {
                                             .call(gwz);
                                 },
                                 3,
-                                _broadcast.getKernelSource(), // kernelSource
+                                operation.getKernelSource(), // kernelSource
                                 "value = src1 + src2;\n",
                                 "value += 1 * drain;\n",
                                 this // OperationType
@@ -129,17 +130,71 @@ public class Addition extends OperationType {
                 )
         );
 
-
-        setImplementation(Scalarization.class,
+        Scalarization scalarization =
                 new Scalarization(
                         "output = input1 + value;\n",
                         "output = 1;\n",
                         (inputs, value, d) -> {
                             double[] t1_val = inputs[1].value64();
-                            if (d < 0) return ( t1Idx ) -> t1_val[inputs[1].i_of_idx(t1Idx)] + value;
-                            else return ( t1Idx ) -> 1;
-                        })
+                            if (d < 0) return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] + value;
+                            else return t1Idx -> 1;
+                        });
+
+        Type.ScalarOperatorCreator scalarCreator =
+                (inputs, value, d) -> {
+                    double[] t1_val = inputs[1].value64();
+                    if (d < 0) return ( t1Idx ) -> t1_val[inputs[1].i_of_idx(t1Idx)] + value;
+                    else {
+                        if (d == 0) return ( t1Idx ) -> 1;
+                        else return ( t1Idx ) -> 1;
+                    }
+                };
+
+        setImplementation(
+                Scalarization.class,
+                scalarization.setExecution (
+                                HostCPU.class,
+                                new HostExecution(
+                                        call -> {
+                                            double value = call.getTensor(0).value64(2);
+                                            call.getDevice().getExecutor()
+                                                    .threaded (
+                                                            call.getTensor(0).size(),
+                                                            ( start, end ) ->
+                                                                    Scalarization.scalarize (
+                                                                            call.getTensor(0),
+                                                                            start, end,
+                                                                            scalarCreator.create(call.getTensors(), value, -1)
+                                                                    )
+                                                    );
+                                            },
+                                        3
+                                )
+                ).setExecution(
+                        OpenCLDevice.class,
+                        new CLExecution(
+                                call -> {
+                                    int offset = (call.getTensor(2).isVirtual() || call.getTensor(2).size() == 1)?1:0;
+                                    int gwz = call.getTensor(0).size();
+                                    call.getDevice().getKernel(call)
+                                            .pass(call.getTensor(0))
+                                            .pass(call.getTensor(0))
+                                            .pass((float)call.getTensor(1+offset).value64(0))
+                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getDerivativeIndex())
+                                            .call(gwz);
+                                },
+                                3,
+                                scalarization.getKernelSource(), // kernelSource
+                                "value = src1 + src2;\n",
+                                "value += 1 * drain;\n",
+                                this // OperationType
+                        )
+                )
         );
+
+        //__________________________
+        // RELATED IMPLEMENTATIONS :
 
         new OperationType(
                 "", ((char) 171) + "+", 3, true, false, false, false, false

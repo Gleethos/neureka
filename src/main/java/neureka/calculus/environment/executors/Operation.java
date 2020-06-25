@@ -1,5 +1,6 @@
 package neureka.calculus.environment.executors;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
@@ -16,6 +17,11 @@ public class Operation  extends AbstractOperationTypeImplementation<Operation, T
         for ( Tsr t : call.getTensors() ) if ( t!=null && t.size() != size ) return false;
         return true;
     }
+
+    public String getKernelSource(){
+        return Neureka.instance().utility().readResource("kernels/operate_template.cl");
+    }
+
 
 
     @Contract(pure = true)

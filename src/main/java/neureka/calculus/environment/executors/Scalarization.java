@@ -1,5 +1,6 @@
 package neureka.calculus.environment.executors;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
@@ -15,6 +16,11 @@ public class Scalarization extends AbstractOperationTypeImplementation<Scalariza
     public boolean canHandle(ExecutionCall call)
     {
         return true;
+    }
+
+
+    public String getKernelSource(){
+        return Neureka.instance().utility().readResource("kernels/scalar_template.cl");
     }
 
 

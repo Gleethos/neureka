@@ -77,8 +77,8 @@ public class Product extends OperationType {
                         OpenCLDevice.class,
                         new CLExecution(
                                 call -&gt; {
-<span class="nc bnc" id="L80" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
-<span class="nc bnc" id="L81" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">                                    int offset = ( call.getTensor(0) != null ) ? 0 : 1;</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">                                    int gwz = ( call.getTensor(0) != null ) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
 <span class="nc" id="L82">                                    call.getDevice().getKernel(call)</span>
 <span class="nc" id="L83">                                            .pass(call.getTensor(offset))</span>
 <span class="nc" id="L84">                                            .pass(call.getTensor(offset + 1))</span>
