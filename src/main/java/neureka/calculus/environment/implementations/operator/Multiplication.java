@@ -31,10 +31,10 @@ public class Multiplication extends OperationType {
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[1].value64();
                     if (d < 0) {
-                        return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * value;
+                        return ( t1Idx ) -> t1_val[inputs[1].i_of_idx(t1Idx)] * value;
                     } else {
-                        if (d == 0) return (t0Idx, t1Idx, t2Idx) -> value;
-                        else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
+                        if (d == 0) return ( t1Idx ) -> value;
+                        else return ( t1Idx ) -> t1_val[inputs[1].i_of_idx(t1Idx)];
                     }
                 })
         ).setImplementation(Broadcast.class,

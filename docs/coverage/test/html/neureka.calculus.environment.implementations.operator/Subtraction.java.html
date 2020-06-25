@@ -35,10 +35,10 @@ public class Subtraction extends OperationType {
                 (inputs, value, d) -&gt; {
 <span class="fc" id="L36">                    double[] t1_val = inputs[1].value64();</span>
 <span class="pc bpc" id="L37" title="1 of 2 branches missed.">                    if (d &lt; 0) {</span>
-<span class="fc" id="L38">                        return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] - value;</span>
+<span class="fc" id="L38">                        return ( t1Idx ) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] - value;</span>
                     } else {
-<span class="nc bnc" id="L40" title="All 2 branches missed.">                        if (d == 0) return (t0Idx, t1Idx, t2Idx) -&gt; 1;</span>
-<span class="nc" id="L41">                        else return (t0Idx, t1Idx, t2Idx) -&gt; -1;</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">                        if (d == 0) return ( t1Idx ) -&gt; 1;</span>
+<span class="nc" id="L41">                        else return ( t1Idx ) -&gt; -1;</span>
                     }
         }));
 

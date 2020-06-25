@@ -168,7 +168,7 @@ public class HostCPU extends AbstractDevice
             threaded(
                     tsrs[0].size(),
                     (start, end) ->
-                            Activation.activate(
+                            Scalarization.scalarize(
                                     tsrs[0], start, end,
                                     type.getImplementation(Scalarization.class).getCreator().create(tsrs, scalar, d)
                             )

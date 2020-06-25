@@ -39,10 +39,10 @@ public class Division extends OperationType {
                         (inputs, value, d) -&gt; {
 <span class="fc" id="L40">                            double[] t1_val = inputs[1].value64();</span>
 <span class="pc bpc" id="L41" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L42">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] / value;</span>
+<span class="fc" id="L42">                                return ( t1Idx ) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] / value;</span>
                             } else {
-<span class="nc bnc" id="L44" title="All 2 branches missed.">                                if (d == 0) return (t0Idx, t1Idx, t2Idx) -&gt; 1 / value;</span>
-<span class="nc" id="L45">                                else return (t0Idx, t1Idx, t2Idx) -&gt; -value / Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], 2);</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">                                if (d == 0) return ( t1Idx ) -&gt; 1 / value;</span>
+<span class="nc" id="L45">                                else return ( t1Idx ) -&gt; -value / Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], 2);</span>
                             }
                         }
                 )

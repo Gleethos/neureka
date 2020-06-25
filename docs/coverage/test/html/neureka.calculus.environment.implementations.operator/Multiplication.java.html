@@ -31,10 +31,10 @@ public class Multiplication extends OperationType {
                 (inputs, value, d) -&gt; {
 <span class="fc" id="L32">                    double[] t1_val = inputs[1].value64();</span>
 <span class="pc bpc" id="L33" title="1 of 2 branches missed.">                    if (d &lt; 0) {</span>
-<span class="fc" id="L34">                        return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * value;</span>
+<span class="fc" id="L34">                        return ( t1Idx ) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * value;</span>
                     } else {
-<span class="nc bnc" id="L36" title="All 2 branches missed.">                        if (d == 0) return (t0Idx, t1Idx, t2Idx) -&gt; value;</span>
-<span class="nc" id="L37">                        else return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">                        if (d == 0) return ( t1Idx ) -&gt; value;</span>
+<span class="nc" id="L37">                        else return ( t1Idx ) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
                     }
                 })
 <span class="fc" id="L40">        ).setImplementation(Broadcast.class,</span>

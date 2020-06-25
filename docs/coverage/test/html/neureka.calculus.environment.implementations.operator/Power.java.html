@@ -36,20 +36,20 @@ public class Power extends OperationType
 <span class="fc" id="L36">        setImplementation(Scalarization.class,</span>
                 new Scalarization(
                         &quot;output = pow(input1, value);&quot;,
-                        &quot;if(d==0){\n&quot; +
-                                &quot;    output = value * pow(input1, value-(float)1 );\n&quot; +
-                                &quot;} else {\n&quot; +
-                                &quot;    output = pow(input1, value) * log(value);\n&quot; +
+                        &quot;if ( d==0 ) {                                     \n&quot; +
+                                &quot;    output = value * pow(input1, value-(float)1 );   \n&quot; +
+                                &quot;} else {                                             \n&quot; +
+                                &quot;    output = pow(input1, value) * log(value);        \n&quot; +
                                 &quot;}&quot;,
-                        (inputs, value, d)-&gt;{
+                        ( inputs, value, d )-&gt;{
 <span class="fc" id="L45">                            double[] t1_val = inputs[1].value64();</span>
 <span class="pc bpc" id="L46" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L47">                                return (t0Idx, t1Idx, t2Idx) -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);</span>
+<span class="fc" id="L47">                                return ( t1Idx ) -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);</span>
                             } else {
 <span class="nc bnc" id="L49" title="All 2 branches missed.">                                if(d==0){</span>
-<span class="nc" id="L50">                                    return (t0Idx, t1Idx, t2Idx) -&gt; value*Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value-1);</span>
+<span class="nc" id="L50">                                    return ( t1Idx ) -&gt; value*Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value-1);</span>
                                 } else {
-<span class="nc" id="L52">                                    return (t0Idx, t1Idx, t2Idx) -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value)*Math.log(value);</span>
+<span class="nc" id="L52">                                    return ( t1Idx ) -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value)*Math.log(value);</span>
                                 }
                             }
                         })

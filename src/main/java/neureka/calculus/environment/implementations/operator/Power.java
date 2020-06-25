@@ -41,15 +41,15 @@ public class Power extends OperationType
                                 "} else {                                             \n" +
                                 "    output = pow(input1, value) * log(value);        \n" +
                                 "}",
-                        (inputs, value, d)->{
+                        ( inputs, value, d )->{
                             double[] t1_val = inputs[1].value64();
                             if (d < 0) {
-                                return (t0Idx, t1Idx, t2Idx) -> Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);
+                                return ( t1Idx ) -> Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);
                             } else {
                                 if(d==0){
-                                    return (t0Idx, t1Idx, t2Idx) -> value*Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value-1);
+                                    return ( t1Idx ) -> value*Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value-1);
                                 } else {
-                                    return (t0Idx, t1Idx, t2Idx) -> Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value)*Math.log(value);
+                                    return ( t1Idx ) -> Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value)*Math.log(value);
                                 }
                             }
                         })

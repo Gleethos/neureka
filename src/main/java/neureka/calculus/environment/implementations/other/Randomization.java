@@ -23,7 +23,7 @@ public class Randomization extends OperationType{
                     Random dice = new Random();
                     dice.setSeed(Double.doubleToLongBits(value));
                     double[] t1_val = inputs[1].value64();
-                    return (t0Idx, t1Idx, t2Idx) -> dice.nextGaussian();
+                    return ( t1Idx ) -> dice.nextGaussian();
                     //Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);
                 }));
 
