@@ -48,7 +48,8 @@ public class Modulo extends OperationType {
                 );
 
         setImplementation(
-                Operation.class, operation.setExecution (
+                Operation.class,
+                operation.setExecution (
                         HostCPU.class,
                         new HostExecution(
                                 call ->
