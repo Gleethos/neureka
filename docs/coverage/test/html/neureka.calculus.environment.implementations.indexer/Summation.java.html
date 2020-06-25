@@ -60,7 +60,7 @@ public class Summation extends OperationType {
 <span class="nc" id="L60">                                                                        call.getTensor(2),</span>
 <span class="nc" id="L61">                                                                        call.getDerivativeIndex(),</span>
                                                                         start, end,
-<span class="nc" id="L63">                                                                        _creator.create(call.getTensors(), -1)</span>
+<span class="nc" id="L63">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                                 )
                                                 ),
                                 3

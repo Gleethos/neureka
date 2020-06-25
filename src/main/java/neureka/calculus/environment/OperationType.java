@@ -15,6 +15,7 @@ import neureka.calculus.factory.assembly.FunctionBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class OperationType implements Type
@@ -51,7 +52,7 @@ public class OperationType implements Type
     protected boolean _isCommutative;
     protected boolean _isAssociative;
 
-    private Map<Class, AbstractOperationTypeImplementation> _modules = new HashMap<>();
+    private Map<Class, AbstractOperationTypeImplementation> _modules = new LinkedHashMap<>();
 
     static
     {

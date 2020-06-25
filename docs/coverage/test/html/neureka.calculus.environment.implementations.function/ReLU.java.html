@@ -58,7 +58,7 @@ public class ReLU extends OperationType
 <span class="nc" id="L58">                                                                Activation.activate (</span>
 <span class="nc" id="L59">                                                                        call.getTensor(0),</span>
                                                                         start, end,
-<span class="nc" id="L61">                                                                        _creator.create(call.getTensors(), -1)</span>
+<span class="nc" id="L61">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                                 )
                                                 ),
                                 3

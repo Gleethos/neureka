@@ -62,7 +62,7 @@ public class Subtraction extends OperationType {
                                                                         call.getTensor(2),
                                                                         call.getDerivativeIndex(),
                                                                         start, end,
-                                                                        operationCreator.create(call.getTensors(), -1)
+                                                                        operationCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                 ),
                                 3

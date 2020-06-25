@@ -59,7 +59,7 @@ public class Sigmoid extends OperationType
 <span class="nc" id="L59">                                                                Activation.activate (</span>
 <span class="nc" id="L60">                                                                        call.getTensor(0),</span>
                                                                         start, end,
-<span class="nc" id="L62">                                                                        _creator.create(call.getTensors(), -1)</span>
+<span class="nc" id="L62">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                                 )
                                                 ),
                                 3

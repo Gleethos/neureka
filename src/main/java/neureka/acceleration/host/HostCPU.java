@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.executors.*;
 
 import java.util.Arrays;
@@ -35,11 +36,37 @@ public class HostCPU extends AbstractDevice
 
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, OperationType type) {
-        for (Tsr t : tsrs) t.setIsVirtual(false);
-        if (type.supportsImplementation(Activation.class) && !type.isIndexer()) _executor.activate(tsrs, d, type);
-        else if (type.isOperation() && !type.isConvection()) _executor.broadcast(tsrs, d, type);
-        else if (type.isConvection()) _executor.convolve(tsrs, d, type);
-        else if (type.isIndexer()) _executor.broadcast(tsrs, d, type);
+        for ( Tsr t : tsrs ) t.setIsVirtual(false);
+
+        OperationTypeImplementation.ExecutionCall<HostCPU> call =
+                new OperationTypeImplementation.ExecutionCall<>(
+                        this,
+                        tsrs,
+                        d,
+                        type
+                );
+        OperationTypeImplementation impl = call.getExecutor();
+
+        if ( type.supportsImplementation(Activation.class) && !type.isIndexer() ) {
+            if(!(impl instanceof Activation)){
+                impl = call.getExecutor();
+            }
+            _executor.activate(tsrs, d, type);
+        } else if (type.isOperation() && !type.isConvection()) {
+                impl.callImplementationFor(call);
+        } else if (type.isConvection()) {
+            if(!(impl instanceof Convolution)){
+                impl = call.getExecutor();
+            }
+            //impl.callImplementationFor(call);
+            _executor.convolve(tsrs, d, type);
+            return;
+        } else if (type.isIndexer()) {
+            if(!(impl instanceof Broadcast)){
+                impl = call.getExecutor();
+            }
+            _executor.broadcast(tsrs, d, type);
+        }
     }
 
     @Override

@@ -69,7 +69,7 @@ public class Division extends OperationType
                                                                         call.getTensor(2),
                                                                         call.getDerivativeIndex(),
                                                                         start, end,
-                                                                        _creator.create(call.getTensors(), -1)
+                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                 ),
                                 3
@@ -128,7 +128,7 @@ public class Division extends OperationType
                                                                 Broadcast.broadcast (
                                                                         call.getTensor(0), call.getTensor(1), call.getTensor(2),
                                                                         call.getDerivativeIndex(), start, end,
-                                                                        _creator.create(call.getTensors(), -1)
+                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                 ),
                                 3
@@ -199,7 +199,7 @@ public class Division extends OperationType
                                                             Scalarization.scalarize (
                                                                     call.getTensor(0),
                                                                     start, end,
-                                                                    scalarCreator.create(call.getTensors(), value, -1)
+                                                                    scalarCreator.create(call.getTensors(), value, call.getDerivativeIndex())
                                                             )
                                             );
                                 },

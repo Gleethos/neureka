@@ -63,7 +63,7 @@ public class Modulo extends OperationType {
                                                                         call.getTensor(2),
                                                                         call.getDerivativeIndex(),
                                                                         start, end,
-                                                                        operationCreator.create(call.getTensors(), -1)
+                                                                        operationCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                 ),
                                 3
@@ -144,7 +144,7 @@ public class Modulo extends OperationType {
                                                                 Broadcast.broadcast (
                                                                         call.getTensor(0), call.getTensor(1), call.getTensor(2),
                                                                         call.getDerivativeIndex(), start, end,
-                                                                        creator.create(call.getTensors(), -1)
+                                                                        creator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                 ),
                                 3

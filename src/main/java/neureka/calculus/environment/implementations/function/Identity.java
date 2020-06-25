@@ -40,7 +40,7 @@ public class Identity extends OperationType {
                                                                 Activation.activate (
                                                                         call.getTensor(0),
                                                                         start, end,
-                                                                        _creator.create(call.getTensors(), -1)
+                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                 ),
                                 3
@@ -67,6 +67,12 @@ public class Identity extends OperationType {
                 )
         );
 
+        ScalarOperatorCreator<PrimaryNDXConsumer> scalarizationCreator =
+                (inputs, value, d) -> {
+                    if (d < 0) return t1Idx -> value;
+                    else return t1Idx -> value;
+                };
+
         Scalarization scalarization =
                 new Scalarization(
                         "output = value;\n",
@@ -77,19 +83,20 @@ public class Identity extends OperationType {
                 scalarization.setExecution (
                         HostCPU.class,
                         new HostExecution(
-                                call  ->
+                                call  -> {
+                                    double value = call.getTensor(0).value64(2);
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTensor(0).size(),
                                                         (start, end) ->
-                                                                Activation.activate(
+                                                                Scalarization.scalarize(
                                                                         call.getTensor(0), start, end,
-                                                                        null
-                                                                        //_creator.create(
-                                                                        //        tsrs, scalar, d
-                                                                        //)
+                                                                        scalarizationCreator.create(
+                                                                                call.getTensors(), value, call.getDerivativeIndex()
+                                                                        )
                                                                 )
-                                                ),
+                                                );
+                                },
                                 3
                         )
                 ).setExecution(

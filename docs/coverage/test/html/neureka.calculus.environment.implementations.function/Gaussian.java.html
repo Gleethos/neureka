@@ -54,7 +54,7 @@ public class Gaussian extends OperationType {
 <span class="nc" id="L54">                                                                Activation.activate (</span>
 <span class="nc" id="L55">                                                                        call.getTensor(0),</span>
                                                                         start, end,
-<span class="nc" id="L57">                                                                        _creator.create(call.getTensors(), -1)</span>
+<span class="nc" id="L57">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                                 )
                                                 ),
                                 3

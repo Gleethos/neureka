@@ -67,7 +67,7 @@ public class Product extends OperationType {
 <span class="nc" id="L67">                                                                        call.getTensor(2),</span>
 <span class="nc" id="L68">                                                                        call.getDerivativeIndex(),</span>
                                                                         start, end,
-<span class="nc" id="L70">                                                                        _creator.create(call.getTensors(), -1)</span>
+<span class="nc" id="L70">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                                 )
                                                 ),
                                 3

@@ -24,7 +24,6 @@ public interface OperationTypeImplementation<FinalType>
         private final Tsr[] _tsrs;
         private final int _d;
         private final OperationType _type;
-        private final OperationTypeImplementation _executor;
 
         public ExecutionCall(
                 DeviceType device,
@@ -36,14 +35,17 @@ public interface OperationTypeImplementation<FinalType>
             _tsrs = tsrs;
             _d = d;
             _type = type;
-            _executor = _type.executorOf(this);
         }
         public DeviceType getDevice() {return _device;}
         public Tsr[] getTensors() {return _tsrs;}
         public Tsr getTensor(int i) {return _tsrs[i];}
         public int getDerivativeIndex() {return _d;}
         public OperationType getType() {return _type;}
-        public OperationTypeImplementation getExecutor() { return _executor; }
+        public OperationTypeImplementation getExecutor() { return _type.executorOf(this); }
+        public void callImplementation(){
+            OperationTypeImplementation impl = getExecutor();
+            impl.callImplementationFor(this);
+        }
     }
 
     <T> FinalType setExecution(Class<T> deviceClass, Execution execution);

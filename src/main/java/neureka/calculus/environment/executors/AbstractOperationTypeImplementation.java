@@ -63,7 +63,8 @@ public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType
 
     @Override
     public < T extends Device > void callImplementationFor(ExecutionCall<T> call) {
-
+            Execution<T> execution = getExecution(call.getDevice().getClass());
+            execution.getLambda().call(call);
     }
 
     @Override

@@ -27,7 +27,8 @@ public class Multiplication extends OperationType {
     public Multiplication()
     {
         super(
-                "multiply", "*", -1, true, false, false, true, false
+                "multiply", "*", -1,
+                true, false, false, true, false
         );
 
 
@@ -38,11 +39,11 @@ public class Multiplication extends OperationType {
                 (inputs, d) -> {
                     double[] t1_val = inputs[1].value64();
                     double[] t2_val = inputs[2].value64();
-                    if (d < 0) {
+                    if ( d < 0 ) {
                         return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t1Idx)];
                     } else {
                         return t1Idx -> {
-                            if (d == 0) return t2_val[inputs[2].i_of_idx(t1Idx)];
+                            if ( d == 0 ) return t2_val[inputs[2].i_of_idx(t1Idx)];
                             else return t1_val[inputs[1].i_of_idx(t1Idx)];
                         };
                     }
@@ -70,7 +71,7 @@ public class Multiplication extends OperationType {
                                                                         call.getTensor(2),
                                                                         call.getDerivativeIndex(),
                                                                         start, end,
-                                                                        defaultOperatorcreator.create(call.getTensors(), -1)
+                                                                        defaultOperatorcreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                 ),
                                 3
@@ -121,7 +122,7 @@ public class Multiplication extends OperationType {
                                                             Broadcast.broadcast (
                                                                     call.getTensor(0), call.getTensor(1), call.getTensor(2),
                                                                     call.getDerivativeIndex(), start, end,
-                                                                    _creator.create(call.getTensors(), -1)
+                                                                    _creator.create(call.getTensors(), call.getDerivativeIndex())
                                                             )
                                             ),
                             3
@@ -267,7 +268,50 @@ public class Multiplication extends OperationType {
 
         new OperationType(
                 "multiply", "x", 2, true, false, true, false, false
-        ).setImplementation(Convolution.class, convolution);
+        ).setImplementation(
+                Convolution.class,
+                convolution
+                        .setExecution (
+                                HostCPU.class,
+                                new HostExecution(
+                                        call ->
+                                                call.getDevice().getExecutor()
+                                                        .threaded (
+                                                                call.getTensor(0).size(),
+                                                                ( start, end ) ->
+                                                                        Convolution.convolve (
+                                                                                call.getTensor(0), call.getTensor(1), call.getTensor(2),
+                                                                                call.getDerivativeIndex(), start, end,
+                                                                                _creator.create(
+                                                                                        call.getTensors(),
+                                                                                        call.getDerivativeIndex()
+                                                                                )
+                                                                        )
+                                                        ),
+                                        3
+                                )
+                        ).setExecution(
+                        OpenCLDevice.class,
+                        new CLExecution(
+                                call -> {
+                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    call.getDevice().getKernel(call)
+                                            .pass(call.getTensor(offset))
+                                            .pass(call.getTensor(offset + 1))
+                                            .pass(call.getTensor(offset + 2))
+                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getDerivativeIndex())//call.getDerivativeIndex()
+                                            .call(gwz);
+                                },
+                                3,
+                                convolution.getKernelSource(), // kernelSource
+                                "value = src1 * src2;\n",
+                                "value += handle * drain;\n",
+                                this // OperationType
+                        )
+                )
+        );
         new OperationType(
                 "inv_convolve_mul_left", ((char) 171) + "x", 3, true, false, true, false, false
         ).setImplementation(Convolution.class, convolution);

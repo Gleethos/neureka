@@ -21,16 +21,16 @@ public class Modulo extends OperationType {
 
 <span class="fc" id="L22">        DefaultOperatorCreator&lt;PrimaryNDXConsumer&gt; operationCreator =</span>
                 (inputs, d) -&gt; {
-<span class="nc" id="L24">                    double[] t1_val = inputs[1].value64();</span>
-<span class="nc" id="L25">                    double[] t2_val = inputs[2].value64();</span>
-<span class="nc bnc" id="L26" title="All 2 branches missed.">                    if (d &lt; 0) {</span>
+<span class="fc" id="L24">                    double[] t1_val = inputs[1].value64();</span>
+<span class="fc" id="L25">                    double[] t2_val = inputs[2].value64();</span>
+<span class="pc bpc" id="L26" title="1 of 2 branches missed.">                    if (d &lt; 0) {</span>
 <span class="nc" id="L27">                        return t1Idx -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] % t2_val[inputs[2].i_of_idx(t1Idx)];</span>
                     } else {
-<span class="nc" id="L29">                        return t1Idx -&gt; {</span>
-<span class="nc bnc" id="L30" title="All 2 branches missed.">                            if (d == 0) {</span>
-<span class="nc" id="L31">                                return 1 / t2_val[inputs[2].i_of_idx(t1Idx)];</span>
+<span class="fc" id="L29">                        return t1Idx -&gt; {</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">                            if (d == 0) {</span>
+<span class="fc" id="L31">                                return 1 / t2_val[inputs[2].i_of_idx(t1Idx)];</span>
                             } else {
-<span class="nc" id="L33">                                return -(t1_val[inputs[1].i_of_idx(t1Idx)] / Math.pow(t2_val[inputs[2].i_of_idx(t1Idx)], 2));</span>
+<span class="fc" id="L33">                                return -(t1_val[inputs[1].i_of_idx(t1Idx)] / Math.pow(t2_val[inputs[2].i_of_idx(t1Idx)], 2));</span>
                             }
                         };
                     }
@@ -53,17 +53,17 @@ public class Modulo extends OperationType {
                         HostCPU.class,
                         new HostExecution(
                                 call -&gt;
-<span class="nc" id="L56">                                        call.getDevice().getExecutor()</span>
-<span class="nc" id="L57">                                                .threaded (</span>
-<span class="nc" id="L58">                                                        call.getTensor(0).size(),</span>
+<span class="fc" id="L56">                                        call.getDevice().getExecutor()</span>
+<span class="fc" id="L57">                                                .threaded (</span>
+<span class="fc" id="L58">                                                        call.getTensor(0).size(),</span>
                                                         ( start, end ) -&gt;
-<span class="nc" id="L60">                                                                Operation.operate (</span>
-<span class="nc" id="L61">                                                                        call.getTensor(0),</span>
-<span class="nc" id="L62">                                                                        call.getTensor(1),</span>
-<span class="nc" id="L63">                                                                        call.getTensor(2),</span>
-<span class="nc" id="L64">                                                                        call.getDerivativeIndex(),</span>
+<span class="fc" id="L60">                                                                Operation.operate (</span>
+<span class="fc" id="L61">                                                                        call.getTensor(0),</span>
+<span class="fc" id="L62">                                                                        call.getTensor(1),</span>
+<span class="fc" id="L63">                                                                        call.getTensor(2),</span>
+<span class="fc" id="L64">                                                                        call.getDerivativeIndex(),</span>
                                                                         start, end,
-<span class="nc" id="L66">                                                                        operationCreator.create(call.getTensors(), -1)</span>
+<span class="fc" id="L66">                                                                        operationCreator.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                                 )
                                                 ),
                                 3
@@ -102,19 +102,19 @@ public class Modulo extends OperationType {
 
 <span class="fc" id="L103">        DefaultOperatorCreator&lt;TertiaryNDXConsumer&gt; creator =</span>
                 (inputs, d) -&gt; {
-<span class="fc" id="L105">                    double[] t1_val = inputs[1].value64();</span>
-<span class="fc" id="L106">                    double[] t2_val = inputs[2].value64();</span>
-<span class="pc bpc" id="L107" title="1 of 2 branches missed.">                    if (d &lt; 0) {</span>
+<span class="nc" id="L105">                    double[] t1_val = inputs[1].value64();</span>
+<span class="nc" id="L106">                    double[] t2_val = inputs[2].value64();</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">                    if (d &lt; 0) {</span>
 <span class="nc" id="L108">                        return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] % t2_val[inputs[2].i_of_idx(t2Idx)];</span>
                     } else {
-<span class="fc" id="L110">                        return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc bfc" id="L111" title="All 2 branches covered.">                            if (d == 0) {</span>
-<span class="fc" id="L112">                                return 1 / t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="nc" id="L110">                        return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">                            if (d == 0) {</span>
+<span class="nc" id="L112">                                return 1 / t2_val[inputs[2].i_of_idx(t2Idx)];</span>
                             } else {
-<span class="fc" id="L114">                                return</span>
-<span class="fc" id="L115">                                        -(t1_val[inputs[1].i_of_idx(t1Idx)]</span>
+<span class="nc" id="L114">                                return</span>
+<span class="nc" id="L115">                                        -(t1_val[inputs[1].i_of_idx(t1Idx)]</span>
                                                 /
-<span class="fc" id="L117">                                                Math.pow(t2_val[inputs[2].i_of_idx(t2Idx)], 2));</span>
+<span class="nc" id="L117">                                                Math.pow(t2_val[inputs[2].i_of_idx(t2Idx)], 2));</span>
                             }
                         };
                     }
@@ -144,7 +144,7 @@ public class Modulo extends OperationType {
 <span class="nc" id="L144">                                                                Broadcast.broadcast (</span>
 <span class="nc" id="L145">                                                                        call.getTensor(0), call.getTensor(1), call.getTensor(2),</span>
 <span class="nc" id="L146">                                                                        call.getDerivativeIndex(), start, end,</span>
-<span class="nc" id="L147">                                                                        creator.create(call.getTensors(), -1)</span>
+<span class="nc" id="L147">                                                                        creator.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                                 )
                                                 ),
                                 3
