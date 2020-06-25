@@ -10,6 +10,10 @@ public class Modulo extends OperationType {
         super(
                 "modulo", "%", -1, true, false, false, false, false
         );
+
+        //________________
+        // BROADCASTING :
+
         setImplementation(
                 Broadcast.class,
                 new Broadcast(
@@ -34,6 +38,11 @@ public class Modulo extends OperationType {
                             }
                         })
         );
+
+
+        //__________________________
+        // RELATED OPERATION TYPES :
+
         new OperationType(
                 "", ((char) 171) + "%", 3, true, false, false, false, false
         );

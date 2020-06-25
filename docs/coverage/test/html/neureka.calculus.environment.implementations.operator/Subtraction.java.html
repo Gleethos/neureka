@@ -19,34 +19,11 @@ public class Subtraction extends OperationType {
 <span class="fc" id="L19">        super(</span>
                 &quot;subtract&quot;, &quot;-&quot;, -1, true, false, false, false, false
         );
-<span class="fc" id="L22">        setImplementation(Scalarization.class,</span>
-        new Scalarization(
-                &quot;output = input1 - value;\n&quot;,
-                &quot;if(d==0){     \n&quot; +//drn and src2 switch:
-                        &quot;    output = 1;  \n&quot; +
-                        &quot;} else {         \n&quot; +
-                        &quot;    output = -1;   &quot; +
-                        &quot;}&quot;,
-                (inputs, value, d) -&gt; {
-<span class="fc" id="L31">                    double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L32" title="1 of 2 branches missed.">                    if (d &lt; 0) return t1Idx -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] - value;</span>
-                    else {
-<span class="nc bnc" id="L34" title="All 2 branches missed.">                        if (d == 0) return t1Idx -&gt; 1; else return t1Idx -&gt; -1;</span>
-                    }
-        }));
 
-<span class="fc" id="L38">        setImplementation(Broadcast.class,</span>
-                new Broadcast(
-                        &quot;value = src1 - src2;   \n&quot;,
-                        &quot;if(d==0){              \n&quot; +//drn and src2 switch:
-                                &quot;    value += 1 * drain;   \n&quot; +
-                                &quot;} else {                  \n&quot; +
-                                &quot;    value += -1 * drain;    &quot; +
-                                &quot;}&quot;,
-                        _creator
-                )
-        );
-<span class="fc" id="L49">        setImplementation(Operation.class,</span>
+        //_____________________
+        // DEFAULT OPERATION :
+
+<span class="fc" id="L26">        setImplementation(Operation.class,</span>
                 new Operation(
                         &quot;output = input1 - input2;  \n&quot;,
                         &quot;if(d==0){                 \n&quot; +//drn and src2 switch:
@@ -58,31 +35,65 @@ public class Subtraction extends OperationType {
                 )
         );
 
+        //___________________________
+        // TENSOR SCALAR OPERATION :
+
+<span class="fc" id="L41">        setImplementation(Scalarization.class,</span>
+        new Scalarization(
+                &quot;output = input1 - value;\n&quot;,
+                &quot;if(d==0){     \n&quot; +//drn and src2 switch:
+                        &quot;    output = 1;  \n&quot; +
+                        &quot;} else {         \n&quot; +
+                        &quot;    output = -1;   &quot; +
+                        &quot;}&quot;,
+                (inputs, value, d) -&gt; {
+<span class="fc" id="L50">                    double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">                    if (d &lt; 0) return t1Idx -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] - value;</span>
+                    else {
+<span class="nc bnc" id="L53" title="All 2 branches missed.">                        if (d == 0) return t1Idx -&gt; 1; else return t1Idx -&gt; -1;</span>
+                    }
+        }));
+
+        //________________
+        // BROADCASTING :
+
+<span class="fc" id="L60">        setImplementation(Broadcast.class,</span>
+                new Broadcast(
+                        &quot;value = src1 - src2;   \n&quot;,
+                        &quot;if(d==0){              \n&quot; +//drn and src2 switch:
+                                &quot;    value += 1 * drain;   \n&quot; +
+                                &quot;} else {                  \n&quot; +
+                                &quot;    value += -1 * drain;    &quot; +
+                                &quot;}&quot;,
+                        _creator
+                )
+        );
+
         //______________________
         // RELATED OPERATIONS :
 
-<span class="fc" id="L64">        new OperationType(</span>
+<span class="fc" id="L75">        new OperationType(</span>
                 &quot;&quot;, ((char) 171) + &quot;-&quot;, 3, true, false, false, false, false
         );
-<span class="fc" id="L67">        new OperationType(</span>
+<span class="fc" id="L78">        new OperationType(</span>
                 &quot;&quot;, &quot;-&quot; + ((char) 187), 3, true, false, false, false, false
         );
 
         // Convolution:
 
 
-<span class="fc" id="L74">        new OperationType(</span>
+<span class="fc" id="L85">        new OperationType(</span>
                 &quot;&quot;, &quot;s&quot;, 2, true, false, true, false, false
         );
-<span class="fc" id="L77">        new OperationType(</span>
+<span class="fc" id="L88">        new OperationType(</span>
                 &quot;&quot;, ((char) 171) + &quot;s&quot;, 3, true, false, true, false, false
         );
-<span class="fc" id="L80">        new OperationType(</span>
+<span class="fc" id="L91">        new OperationType(</span>
                 &quot;&quot;, &quot;s&quot; + ((char) 187), 3, true, false, true, false, false
         );
 
 
-<span class="fc" id="L85">    }</span>
+<span class="fc" id="L96">    }</span>
 
 
 }

@@ -19,6 +19,25 @@ public class Subtraction extends OperationType {
         super(
                 "subtract", "-", -1, true, false, false, false, false
         );
+
+        //_____________________
+        // DEFAULT OPERATION :
+
+        setImplementation(Operation.class,
+                new Operation(
+                        "output = input1 - input2;  \n",
+                        "if(d==0){                 \n" +//drn and src2 switch:
+                                "    output = 1;              \n" +
+                                "} else {                     \n" +
+                                "    output = -1;               " +
+                                "}",
+                        _creator
+                )
+        );
+
+        //___________________________
+        // TENSOR SCALAR OPERATION :
+
         setImplementation(Scalarization.class,
         new Scalarization(
                 "output = input1 - value;\n",
@@ -35,6 +54,9 @@ public class Subtraction extends OperationType {
                     }
         }));
 
+        //________________
+        // BROADCASTING :
+
         setImplementation(Broadcast.class,
                 new Broadcast(
                         "value = src1 - src2;   \n",
@@ -42,17 +64,6 @@ public class Subtraction extends OperationType {
                                 "    value += 1 * drain;   \n" +
                                 "} else {                  \n" +
                                 "    value += -1 * drain;    " +
-                                "}",
-                        _creator
-                )
-        );
-        setImplementation(Operation.class,
-                new Operation(
-                        "output = input1 - input2;  \n",
-                        "if(d==0){                 \n" +//drn and src2 switch:
-                                "    output = 1;              \n" +
-                                "} else {                     \n" +
-                                "    output = -1;               " +
                                 "}",
                         _creator
                 )

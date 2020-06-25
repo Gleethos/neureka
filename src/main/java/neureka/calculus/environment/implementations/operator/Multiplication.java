@@ -25,6 +25,42 @@ public class Multiplication extends OperationType {
         super(
                 "multiply", "*", -1, true, false, false, true, false
         );
+
+
+        //_____________________
+        // DEFAULT OPERATION :
+
+        setImplementation(Operation.class,
+                new Operation(
+                        "output = input1 * input2;\n",
+                        "if(d==0){output = input2;}else{output = input1;}\n",
+                        _creator
+                ));
+        OperatorCreator creator =
+                (inputs, d) -> {
+                    double[] t1_val = inputs[1].value64();
+                    double[] t2_val = inputs[2].value64();
+                    return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];
+                };
+
+
+        //________________
+        // BROADCASTING :
+
+        setImplementation(Broadcast.class,
+                new Broadcast(
+                        "value = src1 * src2;\n",
+                        "value += handle * drain;\n",
+                        _creator
+                )
+        );
+
+
+
+
+        //___________________________
+        // TENSOR SCALAR OPERATION :
+
         setImplementation(Scalarization.class,new Scalarization(
                 "output = input1 * value;\n",
                 "if(d==0){output = value;}else{output = input1;}\n",
@@ -37,34 +73,29 @@ public class Multiplication extends OperationType {
                         else return ( t1Idx ) -> t1_val[inputs[1].i_of_idx(t1Idx)];
                     }
                 })
-        ).setImplementation(Broadcast.class,
-                new Broadcast(
-                        "value = src1 * src2;\n",
-                        "value += handle * drain;\n",
-                        _creator
-                )
-        ).setImplementation(Operation.class,
-                new Operation(
-                "output = input1 * input2;\n",
-                "if(d==0){output = input2;}else{output = input1;}\n",
-                _creator
-        ));
-        OperatorCreator creator =
-                (inputs, d) -> {
-                    double[] t1_val = inputs[1].value64();
-                    double[] t2_val = inputs[2].value64();
-                    return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];
-                };
+        );
+
+
+
+
+
+
+
+        //__________________________
+        // RELATED OPERATION TYPES :
+
         new OperationType(
                 "", ((char) 171) + "*", 3, true, false, false, false, false
-        ).setImplementation(Broadcast.class, new Broadcast(
+        ).setImplementation(Broadcast.class,
+                new Broadcast(
                 "value = src1 * src2;\n",
                 "value += handle * drain;\n",
                 creator
         ));
         new OperationType(
                 "", "*" + ((char) 187), 3, true, false, false, false, false
-        ).setImplementation(Broadcast.class, new Broadcast(
+        ).setImplementation(Broadcast.class,
+                new Broadcast(
                 "value = src1 * src2;\n",
                 "value += handle * drain;\n",
                 creator

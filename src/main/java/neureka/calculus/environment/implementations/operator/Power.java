@@ -33,6 +33,39 @@ public class Power extends OperationType
     {
         super("power", "^", -1, true, false, false, false, false);
 
+        //_____________________
+        // DEFAULT OPERATION :
+
+        setImplementation(Operation.class,
+                new Operation(
+                        "output = pow(input1, input2);",
+                        "if(d==0){\n" +
+                                "    output = input2 * pow(input1, input2-1.0f);\n" +
+                                "} else {\n" +
+                                "    output = pow(input1, input2) * log(input1);\n" +
+                                "}",
+                        _creator
+                )
+        );
+
+        //________________
+        // BROADCASTING :
+
+        setImplementation(Broadcast.class,
+                new Broadcast(
+                        "value += pow(src1, src2);",
+                        "if(d==0){\n" +
+                                "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
+                                "} else {\n" +
+                                "    value += (pow(target, handle) * log(handle)) * drain;\n" +
+                                "}",
+                        _creator
+                )
+        );
+
+        //___________________________
+        // TENSOR SCALAR OPERATION :
+
         setImplementation(Scalarization.class,
                 new Scalarization(
                         "output = pow(input1, value);",
@@ -54,29 +87,10 @@ public class Power extends OperationType
                             }
                         })
         );
-        setImplementation(Broadcast.class,
-                new Broadcast(
-                        "value += pow(src1, src2);",
-                        "if(d==0){\n" +
-                                "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
-                                "} else {\n" +
-                                "    value += (pow(target, handle) * log(handle)) * drain;\n" +
-                                "}",
-                        _creator
-                )
-        );
-        setImplementation(Operation.class,
-                new Operation(
-                        "output = pow(input1, input2);",
-                        "if(d==0){\n" +
-                                "    output = input2 * pow(input1, input2-1.0f);\n" +
-                                "} else {\n" +
-                                "    output = pow(input1, input2) * log(input1);\n" +
-                                "}",
-                        _creator
-                )
-        );
 
+
+        //__________________________
+        // RELATED OPERATION TYPES :
 
         new OperationType("inv_power_left", ((char)171)+"^", 3, true, false, false, false, false);
         new OperationType("inv_power_right", "^" + ((char) 187), 3, true, false, false, false, false);

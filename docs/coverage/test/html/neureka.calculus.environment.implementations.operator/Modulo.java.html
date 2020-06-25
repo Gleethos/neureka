@@ -10,37 +10,46 @@ public class Modulo extends OperationType {
 <span class="fc" id="L10">        super(</span>
                 &quot;modulo&quot;, &quot;%&quot;, -1, true, false, false, false, false
         );
-<span class="fc" id="L13">        setImplementation(</span>
+
+        //________________
+        // BROADCASTING :
+
+<span class="fc" id="L17">        setImplementation(</span>
                 Broadcast.class,
                 new Broadcast(
                         &quot;&quot;,
                         &quot;&quot;,
                         (inputs, d) -&gt; {
-<span class="fc" id="L19">                            double[] t1_val = inputs[1].value64();</span>
-<span class="fc" id="L20">                            double[] t2_val = inputs[2].value64();</span>
-<span class="fc bfc" id="L21" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L22">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] % t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="fc" id="L23">                            double[] t1_val = inputs[1].value64();</span>
+<span class="fc" id="L24">                            double[] t2_val = inputs[2].value64();</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L26">                                return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] % t2_val[inputs[2].i_of_idx(t2Idx)];</span>
                             } else {
-<span class="fc" id="L24">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc bfc" id="L25" title="All 2 branches covered.">                                    if (d == 0) {</span>
-<span class="fc" id="L26">                                        return 1 / t2_val[inputs[2].i_of_idx(t2Idx)];</span>
+<span class="fc" id="L28">                                return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">                                    if (d == 0) {</span>
+<span class="fc" id="L30">                                        return 1 / t2_val[inputs[2].i_of_idx(t2Idx)];</span>
                                     } else {
-<span class="fc" id="L28">                                        return</span>
-<span class="fc" id="L29">                                                -(t1_val[inputs[1].i_of_idx(t1Idx)]</span>
+<span class="fc" id="L32">                                        return</span>
+<span class="fc" id="L33">                                                -(t1_val[inputs[1].i_of_idx(t1Idx)]</span>
                                                         /
-<span class="fc" id="L31">                                                        Math.pow(t2_val[inputs[2].i_of_idx(t2Idx)], 2));</span>
+<span class="fc" id="L35">                                                        Math.pow(t2_val[inputs[2].i_of_idx(t2Idx)], 2));</span>
                                     }
                                 };
                             }
                         })
         );
-<span class="fc" id="L37">        new OperationType(</span>
+
+
+        //__________________________
+        // RELATED OPERATION TYPES :
+
+<span class="fc" id="L46">        new OperationType(</span>
                 &quot;&quot;, ((char) 171) + &quot;%&quot;, 3, true, false, false, false, false
         );
-<span class="fc" id="L40">        new OperationType(</span>
+<span class="fc" id="L49">        new OperationType(</span>
                 &quot;&quot;, &quot;%&quot; + ((char) 187), 3, true, false, false, false, false
         );
-<span class="fc" id="L43">    }</span>
+<span class="fc" id="L52">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

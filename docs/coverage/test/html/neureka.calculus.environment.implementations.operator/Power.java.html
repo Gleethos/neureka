@@ -33,39 +33,10 @@ public class Power extends OperationType
     {
 <span class="fc" id="L34">        super(&quot;power&quot;, &quot;^&quot;, -1, true, false, false, false, false);</span>
 
-<span class="fc" id="L36">        setImplementation(Scalarization.class,</span>
-                new Scalarization(
-                        &quot;output = pow(input1, value);&quot;,
-                        &quot;if ( d==0 ) {                                     \n&quot; +
-                                &quot;    output = value * pow(input1, value-(float)1 );   \n&quot; +
-                                &quot;} else {                                             \n&quot; +
-                                &quot;    output = pow(input1, value) * log(value);        \n&quot; +
-                                &quot;}&quot;,
-                        ( inputs, value, d )-&gt;{
-<span class="fc" id="L45">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L46" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
-<span class="fc" id="L47">                                return ( t1Idx ) -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);</span>
-                            } else {
-<span class="nc bnc" id="L49" title="All 2 branches missed.">                                if(d==0){</span>
-<span class="nc" id="L50">                                    return ( t1Idx ) -&gt; value*Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value-1);</span>
-                                } else {
-<span class="nc" id="L52">                                    return ( t1Idx ) -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value)*Math.log(value);</span>
-                                }
-                            }
-                        })
-        );
-<span class="fc" id="L57">        setImplementation(Broadcast.class,</span>
-                new Broadcast(
-                        &quot;value += pow(src1, src2);&quot;,
-                        &quot;if(d==0){\n&quot; +
-                                &quot;    value = (handle * pow(target, handle-(float)1 )) * drain;\n&quot; +
-                                &quot;} else {\n&quot; +
-                                &quot;    value += (pow(target, handle) * log(handle)) * drain;\n&quot; +
-                                &quot;}&quot;,
-                        _creator
-                )
-        );
-<span class="fc" id="L68">        setImplementation(Operation.class,</span>
+        //_____________________
+        // DEFAULT OPERATION :
+
+<span class="fc" id="L39">        setImplementation(Operation.class,</span>
                 new Operation(
                         &quot;output = pow(input1, input2);&quot;,
                         &quot;if(d==0){\n&quot; +
@@ -77,15 +48,58 @@ public class Power extends OperationType
                 )
         );
 
+        //________________
+        // BROADCASTING :
 
-<span class="fc" id="L81">        new OperationType(&quot;inv_power_left&quot;, ((char)171)+&quot;^&quot;, 3, true, false, false, false, false);</span>
-<span class="fc" id="L82">        new OperationType(&quot;inv_power_right&quot;, &quot;^&quot; + ((char) 187), 3, true, false, false, false, false);</span>
+<span class="fc" id="L54">        setImplementation(Broadcast.class,</span>
+                new Broadcast(
+                        &quot;value += pow(src1, src2);&quot;,
+                        &quot;if(d==0){\n&quot; +
+                                &quot;    value = (handle * pow(target, handle-(float)1 )) * drain;\n&quot; +
+                                &quot;} else {\n&quot; +
+                                &quot;    value += (pow(target, handle) * log(handle)) * drain;\n&quot; +
+                                &quot;}&quot;,
+                        _creator
+                )
+        );
+
+        //___________________________
+        // TENSOR SCALAR OPERATION :
+
+<span class="fc" id="L69">        setImplementation(Scalarization.class,</span>
+                new Scalarization(
+                        &quot;output = pow(input1, value);&quot;,
+                        &quot;if ( d==0 ) {                                     \n&quot; +
+                                &quot;    output = value * pow(input1, value-(float)1 );   \n&quot; +
+                                &quot;} else {                                             \n&quot; +
+                                &quot;    output = pow(input1, value) * log(value);        \n&quot; +
+                                &quot;}&quot;,
+                        ( inputs, value, d )-&gt;{
+<span class="fc" id="L78">                            double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">                            if (d &lt; 0) {</span>
+<span class="fc" id="L80">                                return ( t1Idx ) -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);</span>
+                            } else {
+<span class="nc bnc" id="L82" title="All 2 branches missed.">                                if(d==0){</span>
+<span class="nc" id="L83">                                    return ( t1Idx ) -&gt; value*Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value-1);</span>
+                                } else {
+<span class="nc" id="L85">                                    return ( t1Idx ) -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value)*Math.log(value);</span>
+                                }
+                            }
+                        })
+        );
+
+
+        //__________________________
+        // RELATED OPERATION TYPES :
+
+<span class="fc" id="L95">        new OperationType(&quot;inv_power_left&quot;, ((char)171)+&quot;^&quot;, 3, true, false, false, false, false);</span>
+<span class="fc" id="L96">        new OperationType(&quot;inv_power_right&quot;, &quot;^&quot; + ((char) 187), 3, true, false, false, false, false);</span>
 
         // Convolution:
 
-<span class="fc" id="L86">        new OperationType(</span>
+<span class="fc" id="L100">        new OperationType(</span>
                 &quot;power&quot;, &quot;p&quot;, 2, true, false, true, false, false
-<span class="fc" id="L88">        ).setImplementation(Convolution.class,</span>
+<span class="fc" id="L102">        ).setImplementation(Convolution.class,</span>
                 new Convolution(
                         &quot;value += pow(src1, src2);&quot;,
                         &quot;if(d==0){\n&quot; +
@@ -96,13 +110,13 @@ public class Power extends OperationType
                         null
                 )
         );
-<span class="fc" id="L99">        new OperationType(&quot;&quot;, ((char) 171) + &quot;p&quot;, 3, true, false, true, false, false);</span>
-<span class="fc" id="L100">        new OperationType(&quot;&quot;, &quot;p&quot; + ((char) 187), 3, true, false, true, false, false);</span>
+<span class="fc" id="L113">        new OperationType(&quot;&quot;, ((char) 171) + &quot;p&quot;, 3, true, false, true, false, false);</span>
+<span class="fc" id="L114">        new OperationType(&quot;&quot;, &quot;p&quot; + ((char) 187), 3, true, false, true, false, false);</span>
 
 
 
 
-<span class="fc" id="L105">    }</span>
+<span class="fc" id="L119">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

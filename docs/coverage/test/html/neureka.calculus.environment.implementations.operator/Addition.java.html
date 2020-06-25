@@ -36,93 +36,54 @@ public class Addition extends OperationType {
                 true,
                 false
         );
-<span class="fc" id="L39">        setImplementation(Broadcast.class,</span>
-                _broadcast
-<span class="fc" id="L41">                .setExecution (</span>
-                        HostCPU.class,
-                        new HostExecution(
-                                call -&gt;
-<span class="nc" id="L45">                                        call.getDevice().getExecutor()</span>
-<span class="nc" id="L46">                                                .threaded (</span>
-<span class="nc" id="L47">                                                        call.getTensor(0).size(),</span>
-                                                        ( start, end ) -&gt;
-<span class="nc" id="L49">                                                                Activation.activate (</span>
-<span class="nc" id="L50">                                                                        call.getTensor(0),</span>
-                                                                        start, end,
-<span class="nc" id="L52">                                                                        _creator.create(call.getTensors(), -1)</span>
-                                                                )
-                                                ),
-                                3
-                        )
-<span class="fc" id="L57">                ).setExecution(</span>
-                        OpenCLDevice.class,
-                        new CLExecution(
-                                call -&gt; {
-<span class="nc bnc" id="L61" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
-<span class="nc bnc" id="L62" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
-<span class="nc" id="L63">                                    call.getDevice().getKernel(call)</span>
-<span class="nc" id="L64">                                            .pass(call.getTensor(offset))</span>
-<span class="nc" id="L65">                                            .pass(call.getTensor(offset + 1))</span>
-<span class="nc" id="L66">                                            .pass(call.getTensor(offset + 2))</span>
-<span class="nc" id="L67">                                            .pass(call.getTensor(0).rank())</span>
-<span class="nc" id="L68">                                            .pass(call.getDerivativeIndex())</span>
-<span class="nc" id="L69">                                            .call(gwz);</span>
-<span class="nc" id="L70">                                },</span>
-                                3,
-<span class="fc" id="L72">                                _broadcast.getKernelSource(), // kernelSource</span>
-                                &quot;value = src1 + src2;\n&quot;,
-                                &quot;value += 1 * drain;\n&quot;,
-                                this // OperationType
-                        )
-                )
-        );
 
-        //__________________
-        // IMPLEMENTATION :
 
-<span class="fc" id="L83">        Operation operation = new Operation(</span>
+        //_____________________
+        // DEFAULT OPERATION :
+
+<span class="fc" id="L44">        Operation operation = new Operation(</span>
                 &quot;output = input1 + input2;\n&quot;,
                 &quot;output = 1;\n&quot;,
                 _creator
         );
 
-<span class="fc" id="L89">        setImplementation(Operation.class,</span>
+<span class="fc" id="L50">        setImplementation(Operation.class,</span>
                 operation
-<span class="fc" id="L91">                        .setExecution (</span>
+<span class="fc" id="L52">                        .setExecution (</span>
                                 HostCPU.class,
                                 new HostExecution(
                                         call -&gt;
-<span class="nc" id="L95">                                                call.getDevice().getExecutor()</span>
-<span class="nc" id="L96">                                                        .threaded (</span>
-<span class="nc" id="L97">                                                                call.getTensor(0).size(),</span>
+<span class="nc" id="L56">                                                call.getDevice().getExecutor()</span>
+<span class="nc" id="L57">                                                        .threaded (</span>
+<span class="nc" id="L58">                                                                call.getTensor(0).size(),</span>
                                                                 ( start, end ) -&gt;
-<span class="nc" id="L99">                                                                        Broadcast.broadcast (</span>
-<span class="nc" id="L100">                                                                                call.getTensor(0),</span>
-<span class="nc" id="L101">                                                                                call.getTensor(1),</span>
-<span class="nc" id="L102">                                                                                call.getTensor(2),</span>
-<span class="nc" id="L103">                                                                                call.getDerivativeIndex(),</span>
+<span class="nc" id="L60">                                                                        Broadcast.broadcast (</span>
+<span class="nc" id="L61">                                                                                call.getTensor(0),</span>
+<span class="nc" id="L62">                                                                                call.getTensor(1),</span>
+<span class="nc" id="L63">                                                                                call.getTensor(2),</span>
+<span class="nc" id="L64">                                                                                call.getDerivativeIndex(),</span>
                                                                                 start, end,
-<span class="nc" id="L105">                                                                                _creator.create(call.getTensors(), -1)</span>
+<span class="nc" id="L66">                                                                                _creator.create(call.getTensors(), -1)</span>
                                                                         )
                                                         ),
                                         3
                                 )
-<span class="fc" id="L110">                        ).setExecution(</span>
+<span class="fc" id="L71">                        ).setExecution(</span>
                         OpenCLDevice.class,
                         new CLExecution(
                                 call -&gt; {
-<span class="nc bnc" id="L114" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
-<span class="nc bnc" id="L115" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
-<span class="nc" id="L116">                                    call.getDevice().getKernel(call)</span>
-<span class="nc" id="L117">                                            .pass(call.getTensor(offset))</span>
-<span class="nc" id="L118">                                            .pass(call.getTensor(offset + 1))</span>
-<span class="nc" id="L119">                                            .pass(call.getTensor(offset + 2))</span>
-<span class="nc" id="L120">                                            .pass(call.getTensor(0).rank())</span>
-<span class="nc" id="L121">                                            .pass(call.getDerivativeIndex())</span>
-<span class="nc" id="L122">                                            .call(gwz);</span>
-<span class="nc" id="L123">                                },</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
+<span class="nc" id="L77">                                    call.getDevice().getKernel(call)</span>
+<span class="nc" id="L78">                                            .pass(call.getTensor(offset))</span>
+<span class="nc" id="L79">                                            .pass(call.getTensor(offset + 1))</span>
+<span class="nc" id="L80">                                            .pass(call.getTensor(offset + 2))</span>
+<span class="nc" id="L81">                                            .pass(call.getTensor(0).rank())</span>
+<span class="nc" id="L82">                                            .pass(call.getDerivativeIndex())</span>
+<span class="nc" id="L83">                                            .call(gwz);</span>
+<span class="nc" id="L84">                                },</span>
                                 3,
-<span class="fc" id="L125">                                operation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L86">                                operation.getKernelSource(), // kernelSource</span>
                                 &quot;value = src1 + src2;\n&quot;,
                                 &quot;value += 1 * drain;\n&quot;,
                                 this // OperationType
@@ -130,62 +91,109 @@ public class Addition extends OperationType {
                 )
         );
 
-<span class="fc" id="L133">        Scalarization scalarization =</span>
+        //________________
+        // BROADCASTING :
+
+<span class="fc" id="L97">        setImplementation(Broadcast.class,</span>
+                _broadcast
+<span class="fc" id="L99">                .setExecution (</span>
+                        HostCPU.class,
+                        new HostExecution(
+                                call -&gt;
+<span class="nc" id="L103">                                        call.getDevice().getExecutor()</span>
+<span class="nc" id="L104">                                                .threaded (</span>
+<span class="nc" id="L105">                                                        call.getTensor(0).size(),</span>
+                                                        ( start, end ) -&gt;
+<span class="nc" id="L107">                                                                Activation.activate (</span>
+<span class="nc" id="L108">                                                                        call.getTensor(0),</span>
+                                                                        start, end,
+<span class="nc" id="L110">                                                                        _creator.create(call.getTensors(), -1)</span>
+                                                                )
+                                                ),
+                                3
+                        )
+<span class="fc" id="L115">                ).setExecution(</span>
+                        OpenCLDevice.class,
+                        new CLExecution(
+                                call -&gt; {
+<span class="nc bnc" id="L119" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
+<span class="nc" id="L121">                                    call.getDevice().getKernel(call)</span>
+<span class="nc" id="L122">                                            .pass(call.getTensor(offset))</span>
+<span class="nc" id="L123">                                            .pass(call.getTensor(offset + 1))</span>
+<span class="nc" id="L124">                                            .pass(call.getTensor(offset + 2))</span>
+<span class="nc" id="L125">                                            .pass(call.getTensor(0).rank())</span>
+<span class="nc" id="L126">                                            .pass(call.getDerivativeIndex())</span>
+<span class="nc" id="L127">                                            .call(gwz);</span>
+<span class="nc" id="L128">                                },</span>
+                                3,
+<span class="fc" id="L130">                                _broadcast.getKernelSource(), // kernelSource</span>
+                                &quot;value = src1 + src2;\n&quot;,
+                                &quot;value += 1 * drain;\n&quot;,
+                                this // OperationType
+                        )
+                )
+        );
+
+        //___________________________
+        // TENSOR SCALAR OPERATION :
+
+<span class="fc" id="L141">        Scalarization scalarization =</span>
                 new Scalarization(
                         &quot;output = input1 + value;\n&quot;,
                         &quot;output = 1;\n&quot;,
                         (inputs, value, d) -&gt; {
-<span class="fc" id="L138">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L139" title="1 of 2 branches missed.">                            if (d &lt; 0) return t1Idx -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + value;</span>
-<span class="nc" id="L140">                            else return t1Idx -&gt; 1;</span>
+<span class="fc" id="L146">                            double[] t1_val = inputs[1].value64();</span>
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">                            if (d &lt; 0) return t1Idx -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + value;</span>
+<span class="nc" id="L148">                            else return t1Idx -&gt; 1;</span>
                         });
 
-<span class="fc" id="L143">        Type.ScalarOperatorCreator scalarCreator =</span>
+<span class="fc" id="L151">        Type.ScalarOperatorCreator scalarCreator =</span>
                 (inputs, value, d) -&gt; {
-<span class="nc" id="L145">                    double[] t1_val = inputs[1].value64();</span>
-<span class="nc bnc" id="L146" title="All 2 branches missed.">                    if (d &lt; 0) return ( t1Idx ) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + value;</span>
+<span class="nc" id="L153">                    double[] t1_val = inputs[1].value64();</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">                    if (d &lt; 0) return ( t1Idx ) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + value;</span>
                     else {
-<span class="nc bnc" id="L148" title="All 2 branches missed.">                        if (d == 0) return ( t1Idx ) -&gt; 1;</span>
-<span class="nc" id="L149">                        else return ( t1Idx ) -&gt; 1;</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">                        if (d == 0) return ( t1Idx ) -&gt; 1;</span>
+<span class="nc" id="L157">                        else return ( t1Idx ) -&gt; 1;</span>
                     }
                 };
 
-<span class="fc" id="L153">        setImplementation(</span>
+<span class="fc" id="L161">        setImplementation(</span>
                 Scalarization.class,
-<span class="fc" id="L155">                scalarization.setExecution (</span>
+<span class="fc" id="L163">                scalarization.setExecution (</span>
                                 HostCPU.class,
                                 new HostExecution(
                                         call -&gt; {
-<span class="nc" id="L159">                                            double value = call.getTensor(0).value64(2);</span>
-<span class="nc" id="L160">                                            call.getDevice().getExecutor()</span>
-<span class="nc" id="L161">                                                    .threaded (</span>
-<span class="nc" id="L162">                                                            call.getTensor(0).size(),</span>
+<span class="nc" id="L167">                                            double value = call.getTensor(0).value64(2);</span>
+<span class="nc" id="L168">                                            call.getDevice().getExecutor()</span>
+<span class="nc" id="L169">                                                    .threaded (</span>
+<span class="nc" id="L170">                                                            call.getTensor(0).size(),</span>
                                                             ( start, end ) -&gt;
-<span class="nc" id="L164">                                                                    Scalarization.scalarize (</span>
-<span class="nc" id="L165">                                                                            call.getTensor(0),</span>
+<span class="nc" id="L172">                                                                    Scalarization.scalarize (</span>
+<span class="nc" id="L173">                                                                            call.getTensor(0),</span>
                                                                             start, end,
-<span class="nc" id="L167">                                                                            scalarCreator.create(call.getTensors(), value, -1)</span>
+<span class="nc" id="L175">                                                                            scalarCreator.create(call.getTensors(), value, -1)</span>
                                                                     )
                                                     );
-<span class="nc" id="L170">                                            },</span>
+<span class="nc" id="L178">                                            },</span>
                                         3
                                 )
-<span class="fc" id="L173">                ).setExecution(</span>
+<span class="fc" id="L181">                ).setExecution(</span>
                         OpenCLDevice.class,
                         new CLExecution(
                                 call -&gt; {
-<span class="nc bnc" id="L177" title="All 4 branches missed.">                                    int offset = (call.getTensor(2).isVirtual() || call.getTensor(2).size() == 1)?1:0;</span>
-<span class="nc" id="L178">                                    int gwz = call.getTensor(0).size();</span>
-<span class="nc" id="L179">                                    call.getDevice().getKernel(call)</span>
-<span class="nc" id="L180">                                            .pass(call.getTensor(0))</span>
-<span class="nc" id="L181">                                            .pass(call.getTensor(0))</span>
-<span class="nc" id="L182">                                            .pass((float)call.getTensor(1+offset).value64(0))</span>
-<span class="nc" id="L183">                                            .pass(call.getTensor(0).rank())</span>
-<span class="nc" id="L184">                                            .pass(call.getDerivativeIndex())</span>
-<span class="nc" id="L185">                                            .call(gwz);</span>
-<span class="nc" id="L186">                                },</span>
+<span class="nc bnc" id="L185" title="All 4 branches missed.">                                    int offset = (call.getTensor(2).isVirtual() || call.getTensor(2).size() == 1)?1:0;</span>
+<span class="nc" id="L186">                                    int gwz = call.getTensor(0).size();</span>
+<span class="nc" id="L187">                                    call.getDevice().getKernel(call)</span>
+<span class="nc" id="L188">                                            .pass(call.getTensor(0))</span>
+<span class="nc" id="L189">                                            .pass(call.getTensor(0))</span>
+<span class="nc" id="L190">                                            .pass((float)call.getTensor(1+offset).value64(0))</span>
+<span class="nc" id="L191">                                            .pass(call.getTensor(0).rank())</span>
+<span class="nc" id="L192">                                            .pass(call.getDerivativeIndex())</span>
+<span class="nc" id="L193">                                            .call(gwz);</span>
+<span class="nc" id="L194">                                },</span>
                                 3,
-<span class="fc" id="L188">                                scalarization.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L196">                                scalarization.getKernelSource(), // kernelSource</span>
                                 &quot;value = src1 + src2;\n&quot;,
                                 &quot;value += 1 * drain;\n&quot;,
                                 this // OperationType
@@ -194,21 +202,21 @@ public class Addition extends OperationType {
         );
 
         //__________________________
-        // RELATED IMPLEMENTATIONS :
+        // RELATED OPERATION TYPES :
 
-<span class="fc" id="L199">        new OperationType(</span>
+<span class="fc" id="L207">        new OperationType(</span>
                 &quot;&quot;, ((char) 171) + &quot;+&quot;, 3, true, false, false, false, false
-<span class="fc" id="L201">        ).setImplementation(Broadcast.class, _broadcast);</span>
+<span class="fc" id="L209">        ).setImplementation(Broadcast.class, _broadcast);</span>
 
-<span class="fc" id="L203">        new OperationType(</span>
+<span class="fc" id="L211">        new OperationType(</span>
                 &quot;&quot;, &quot;+&quot; + ((char) 187), 3, true, false, false, false, false
-<span class="fc" id="L205">        ).setImplementation(Broadcast.class, _broadcast);</span>
+<span class="fc" id="L213">        ).setImplementation(Broadcast.class, _broadcast);</span>
 
         // Convolutoion:
 
-<span class="fc" id="L209">        new OperationType(</span>
+<span class="fc" id="L217">        new OperationType(</span>
                 &quot;add&quot;, &quot;a&quot;, 2, true, false, true, false, false
-<span class="fc" id="L211">        ).setImplementation(Convolution.class,</span>
+<span class="fc" id="L219">        ).setImplementation(Convolution.class,</span>
                 new Convolution(
                         &quot;value = src1 + src2;\n&quot;,
                         &quot;value += 1 * drain;\n&quot;,
@@ -216,15 +224,15 @@ public class Addition extends OperationType {
                 )
         );
 
-<span class="fc" id="L219">        new OperationType(</span>
+<span class="fc" id="L227">        new OperationType(</span>
                 &quot;&quot;, ((char) 171) + &quot;a&quot;, 3, true, false, true, false, false
         );
-<span class="fc" id="L222">        new OperationType(</span>
+<span class="fc" id="L230">        new OperationType(</span>
                 &quot;&quot;, &quot;a&quot; + ((char) 187), 3, true, false, true, false, false
         );
 
 
-<span class="fc" id="L227">    }</span>
+<span class="fc" id="L235">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

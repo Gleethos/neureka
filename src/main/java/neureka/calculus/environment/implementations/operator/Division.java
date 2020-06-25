@@ -9,8 +9,8 @@ import neureka.calculus.environment.Type;
 import neureka.calculus.environment.executors.*;
 
 
-public class Division extends OperationType {
-
+public class Division extends OperationType
+{
     private static final OperatorCreator _creator =
     (inputs, d) -> {
         double[] t1_val = inputs[1].value64();
@@ -32,8 +32,78 @@ public class Division extends OperationType {
     {
 
         super(
-                "divide", "/", -1, true, false, false, false, false
+                "divide", "/", -1,
+                true,
+                false,
+                false,
+                false,
+                false
         );
+
+
+        //_____________________
+        // DEFAULT OPERATION :
+
+        Operation operation =
+                new Operation(
+                        "output = input1 / input2;\n",
+                        "if(d==0){\n" +
+                                "    output = 1/input2;\n" +
+                                "} else {\n" +
+                                "    output = -input2 /(float)pow(input1, 2.0f);\n" +
+                                "}",
+                        _creator
+                );
+
+        setImplementation(
+                Operation.class, operation.setExecution (
+                        HostCPU.class,
+                        new HostExecution(
+                                call ->
+                                        call.getDevice().getExecutor()
+                                                .threaded (
+                                                        call.getTensor(0).size(),
+                                                        ( start, end ) ->
+                                                                Broadcast.broadcast (
+                                                                        call.getTensor(0),
+                                                                        call.getTensor(1),
+                                                                        call.getTensor(2),
+                                                                        call.getDerivativeIndex(),
+                                                                        start, end,
+                                                                        _creator.create(call.getTensors(), -1)
+                                                                )
+                                                ),
+                                3
+                        )
+                ).setExecution(
+                        OpenCLDevice.class,
+                        new CLExecution(
+                                call -> {
+                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    call.getDevice().getKernel(call)
+                                            .pass(call.getTensor(offset))
+                                            .pass(call.getTensor(offset + 1))
+                                            .pass(call.getTensor(offset + 2))
+                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getDerivativeIndex())
+                                            .call(gwz);
+                                },
+                                3,
+                                operation.getKernelSource(), // kernelSource
+                                "output = input1 / input2;\n",
+                                "if(d==0){\n" +
+                                        "    output = 1/input2;\n" +
+                                        "} else {\n" +
+                                        "    output = -input2 /(float)pow(input1, 2.0f);\n" +
+                                        "}",
+                                this // OperationType
+                        )
+                )
+        );
+
+        //___________________________
+        // TENSOR SCALAR OPERATION :
 
         Type.ScalarOperatorCreator scalarCreator =
                 (inputs, value, d) -> {
@@ -104,6 +174,8 @@ public class Division extends OperationType {
                 )
         );
 
+        //________________
+        // BROADCASTING :
 
         Broadcast broadcast =
                 new Broadcast(
@@ -160,67 +232,9 @@ public class Division extends OperationType {
                 )
         );
 
-        Operation operation =
-                new Operation(
-                        "output = input1 / input2;\n",
-                        "if(d==0){\n" +
-                                "    output = 1/input2;\n" +
-                                "} else {\n" +
-                                "    output = -input2 /(float)pow(input1, 2.0f);\n" +
-                                "}",
-                        _creator
-                );
-
-        setImplementation(
-                Operation.class, operation.setExecution (
-                       HostCPU.class,
-                       new HostExecution(
-                               call ->
-                                       call.getDevice().getExecutor()
-                                               .threaded (
-                                                       call.getTensor(0).size(),
-                                                       ( start, end ) ->
-                                                               Broadcast.broadcast (
-                                                                       call.getTensor(0),
-                                                                       call.getTensor(1),
-                                                                       call.getTensor(2),
-                                                                       call.getDerivativeIndex(),
-                                                                       start, end,
-                                                                       _creator.create(call.getTensors(), -1)
-                                                               )
-                                               ),
-                               3
-                       )
-               ).setExecution(
-                       OpenCLDevice.class,
-                       new CLExecution(
-                               call -> {
-                                   int offset = (call.getTensor(0) != null) ? 0 : 1;
-                                   int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
-                                   call.getDevice().getKernel(call)
-                                           .pass(call.getTensor(offset))
-                                           .pass(call.getTensor(offset + 1))
-                                           .pass(call.getTensor(offset + 2))
-                                           .pass(call.getTensor(0).rank())
-                                           .pass(call.getDerivativeIndex())
-                                           .call(gwz);
-                               },
-                               3,
-                               operation.getKernelSource(), // kernelSource
-                               "output = input1 / input2;\n",
-                               "if(d==0){\n" +
-                                       "    output = 1/input2;\n" +
-                                       "} else {\n" +
-                                       "    output = -input2 /(float)pow(input1, 2.0f);\n" +
-                                       "}",
-                               this // OperationType
-                       )
-               )
-        );
-
 
         //__________________________
-        // RELATED IMPLEMENTATIONS :
+        // RELATED OPERATION TYPES :
 
 
         new OperationType(

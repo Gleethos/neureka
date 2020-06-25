@@ -36,49 +36,10 @@ public class Addition extends OperationType {
                 true,
                 false
         );
-        setImplementation(Broadcast.class,
-                _broadcast
-                .setExecution (
-                        HostCPU.class,
-                        new HostExecution(
-                                call ->
-                                        call.getDevice().getExecutor()
-                                                .threaded (
-                                                        call.getTensor(0).size(),
-                                                        ( start, end ) ->
-                                                                Activation.activate (
-                                                                        call.getTensor(0),
-                                                                        start, end,
-                                                                        _creator.create(call.getTensors(), -1)
-                                                                )
-                                                ),
-                                3
-                        )
-                ).setExecution(
-                        OpenCLDevice.class,
-                        new CLExecution(
-                                call -> {
-                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
-                                    call.getDevice().getKernel(call)
-                                            .pass(call.getTensor(offset))
-                                            .pass(call.getTensor(offset + 1))
-                                            .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor(0).rank())
-                                            .pass(call.getDerivativeIndex())
-                                            .call(gwz);
-                                },
-                                3,
-                                _broadcast.getKernelSource(), // kernelSource
-                                "value = src1 + src2;\n",
-                                "value += 1 * drain;\n",
-                                this // OperationType
-                        )
-                )
-        );
 
-        //__________________
-        // IMPLEMENTATION :
+
+        //_____________________
+        // DEFAULT OPERATION :
 
         Operation operation = new Operation(
                 "output = input1 + input2;\n",
@@ -129,6 +90,53 @@ public class Addition extends OperationType {
                         )
                 )
         );
+
+        //________________
+        // BROADCASTING :
+
+        setImplementation(Broadcast.class,
+                _broadcast
+                .setExecution (
+                        HostCPU.class,
+                        new HostExecution(
+                                call ->
+                                        call.getDevice().getExecutor()
+                                                .threaded (
+                                                        call.getTensor(0).size(),
+                                                        ( start, end ) ->
+                                                                Activation.activate (
+                                                                        call.getTensor(0),
+                                                                        start, end,
+                                                                        _creator.create(call.getTensors(), -1)
+                                                                )
+                                                ),
+                                3
+                        )
+                ).setExecution(
+                        OpenCLDevice.class,
+                        new CLExecution(
+                                call -> {
+                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    call.getDevice().getKernel(call)
+                                            .pass(call.getTensor(offset))
+                                            .pass(call.getTensor(offset + 1))
+                                            .pass(call.getTensor(offset + 2))
+                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getDerivativeIndex())
+                                            .call(gwz);
+                                },
+                                3,
+                                _broadcast.getKernelSource(), // kernelSource
+                                "value = src1 + src2;\n",
+                                "value += 1 * drain;\n",
+                                this // OperationType
+                        )
+                )
+        );
+
+        //___________________________
+        // TENSOR SCALAR OPERATION :
 
         Scalarization scalarization =
                 new Scalarization(
@@ -194,7 +202,7 @@ public class Addition extends OperationType {
         );
 
         //__________________________
-        // RELATED IMPLEMENTATIONS :
+        // RELATED OPERATION TYPES :
 
         new OperationType(
                 "", ((char) 171) + "+", 3, true, false, false, false, false
