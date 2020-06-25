@@ -36,12 +36,6 @@ public class Multiplication extends OperationType {
                         "if(d==0){output = input2;}else{output = input1;}\n",
                         _creator
                 ));
-        DefaultOperatorCreator<TertiaryNDXConsumer> creator =
-                (inputs, d) -> {
-                    double[] t1_val = inputs[1].value64();
-                    double[] t2_val = inputs[2].value64();
-                    return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];
-                };
 
 
         //________________
@@ -84,13 +78,21 @@ public class Multiplication extends OperationType {
         //__________________________
         // RELATED OPERATION TYPES :
 
+        DefaultOperatorCreator<TertiaryNDXConsumer> xCreator =
+                (inputs, d) -> {
+                    double[] t1_val = inputs[1].value64();
+                    double[] t2_val = inputs[2].value64();
+                    return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];
+                };
+
+
         new OperationType(
                 "", ((char) 171) + "*", 3, true, false, false, false, false
         ).setImplementation(Broadcast.class,
                 new Broadcast(
                 "value = src1 * src2;\n",
                 "value += handle * drain;\n",
-                creator
+                xCreator
         ));
         new OperationType(
                 "", "*" + ((char) 187), 3, true, false, false, false, false
@@ -98,7 +100,7 @@ public class Multiplication extends OperationType {
                 new Broadcast(
                 "value = src1 * src2;\n",
                 "value += handle * drain;\n",
-                creator
+                xCreator
         ));
 
         // Convolution:

@@ -9,7 +9,8 @@ import neureka.calculus.environment.executors.*;
 
 public class Modulo extends OperationType {
 
-    public Modulo(){
+    public Modulo()
+    {
 
         super(
                 "modulo", "%", -1, true, false, false, false, false

@@ -155,8 +155,8 @@ public class OperationType implements Type
     @Override
     public OperationTypeImplementation executorOf(OperationTypeImplementation.ExecutionCall call) {
 <span class="pc bpc" id="L157" title="1 of 2 branches missed.">        for(OperationTypeImplementation te : _modules.values()){</span>
-<span class="fc bfc" id="L158" title="All 2 branches covered.">            if ( te.canHandle(call) ) return te;</span>
-<span class="fc" id="L159">        }</span>
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">            if ( te.canHandle(call) ) return te;</span>
+<span class="nc" id="L159">        }</span>
 <span class="nc" id="L160">        return null;</span>
     }
 
