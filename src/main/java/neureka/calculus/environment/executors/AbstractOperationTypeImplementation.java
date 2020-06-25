@@ -18,7 +18,7 @@ public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType
     protected String _deriviation;
     protected CreatorType _creator;
 
-    private Map<Class<Device>, Execution> _executions;
+    protected Map<Class<Device>, Execution> _executions;
 
     public AbstractOperationTypeImplementation(String operation, String deriviation, CreatorType creator)
     {

@@ -55,182 +55,179 @@ public class HostCPU extends AbstractDevice
 <span class="fc bfc" id="L55" title="All 4 branches covered.">        } else if (type.isOperation() &amp;&amp; !type.isConvection()) {</span>
 <span class="fc" id="L56">                impl.callImplementationFor(call);</span>
 <span class="fc bfc" id="L57" title="All 2 branches covered.">        } else if (type.isConvection()) {</span>
-<span class="pc bpc" id="L58" title="1 of 2 branches missed.">            if(!(impl instanceof Convolution)){</span>
-<span class="nc" id="L59">                impl = call.getExecutor();</span>
+<span class="fc" id="L58">            impl.callImplementationFor(call);</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        } else if (type.isIndexer()) {</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">            if(!(impl instanceof Broadcast)){</span>
+<span class="nc" id="L61">                impl = call.getExecutor();</span>
             }
-            //impl.callImplementationFor(call);
-<span class="fc" id="L62">            _executor.convolve(tsrs, d, type);</span>
-<span class="fc" id="L63">            return;</span>
-<span class="pc bpc" id="L64" title="1 of 2 branches missed.">        } else if (type.isIndexer()) {</span>
-<span class="pc bpc" id="L65" title="1 of 2 branches missed.">            if(!(impl instanceof Broadcast)){</span>
-<span class="fc" id="L66">                impl = call.getExecutor();</span>
-            }
-<span class="fc" id="L68">            _executor.broadcast(tsrs, d, type);</span>
+<span class="fc" id="L63">            impl.callImplementationFor(call);</span>
+<span class="fc" id="L64">            System.out.println(tsrs[0]+&quot; | &quot;+tsrs[1]+&quot; | &quot;+tsrs[2]);</span>
+            //_executor.broadcast(tsrs, d, type);
         }
-<span class="fc" id="L70">    }</span>
+<span class="fc" id="L67">    }</span>
 
     @Override
     protected void _enqueue(Tsr t, double value, int d, OperationType type) {
-<span class="fc bfc" id="L74" title="All 2 branches covered.">        if (type.supportsImplementation(Scalarization.class)) _executor.scalar(new Tsr[]{t, t}, value, d, type);</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (type.supportsImplementation(Scalarization.class)) _executor.scalar(new Tsr[]{t, t}, value, d, type);</span>
         else {
-<span class="fc" id="L76">            int[] shape = new int[t.rank()];</span>
-<span class="fc" id="L77">            Arrays.fill(shape, 1);</span>
-<span class="fc" id="L78">            _enqueue(new Tsr[]{t, t, new Tsr(shape, value)}, d, type);</span>
+<span class="fc" id="L73">            int[] shape = new int[t.rank()];</span>
+<span class="fc" id="L74">            Arrays.fill(shape, 1);</span>
+<span class="fc" id="L75">            _enqueue(new Tsr[]{t, t, new Tsr(shape, value)}, d, type);</span>
         }
-<span class="fc" id="L80">    }</span>
+<span class="fc" id="L77">    }</span>
 
     @Override
     public void dispose() {
-<span class="nc" id="L84">        _executor.getPool().shutdown();</span>
-<span class="nc" id="L85">    }</span>
+<span class="nc" id="L81">        _executor.getPool().shutdown();</span>
+<span class="nc" id="L82">    }</span>
 
     @Override
     public Device get(Tsr tensor) {
-<span class="fc" id="L89">        return this;</span>
+<span class="fc" id="L86">        return this;</span>
     }
 
     @Override
     public Device add(Tsr tensor) {
-<span class="fc" id="L94">        return this;</span>
+<span class="fc" id="L91">        return this;</span>
     }
 
     @Override
     public Device add(Tsr tensor, Tsr parent) {
-<span class="nc" id="L99">        return this;</span>
+<span class="nc" id="L96">        return this;</span>
     }
 
     @Override
     public boolean has(Tsr tensor) {
-<span class="fc" id="L104">        return false;</span>
+<span class="fc" id="L101">        return false;</span>
     }
 
     @Override
     public Device rmv(Tsr tensor) {
-<span class="nc" id="L109">        return this;</span>
+<span class="nc" id="L106">        return this;</span>
     }
 
     @Override
     public Device overwrite64(Tsr tensor, double[] value) {
-<span class="nc" id="L114">        return this;</span>
+<span class="nc" id="L111">        return this;</span>
     }
 
     @Override
     public Device overwrite32(Tsr tensor, float[] value) {
-<span class="nc" id="L119">        return this;</span>
+<span class="nc" id="L116">        return this;</span>
     }
 
     @Override
     public Device swap(Tsr former, Tsr replacement) {
-<span class="nc" id="L124">        return this;</span>
+<span class="nc" id="L121">        return this;</span>
     }
 
     @Override
     public double[] value64Of(Tsr tensor) {
-<span class="nc" id="L129">        return tensor.value64();</span>
+<span class="nc" id="L126">        return tensor.value64();</span>
     }
 
     @Override
     public float[] value32Of(Tsr tensor) {
-<span class="nc" id="L134">        return tensor.value32();</span>
+<span class="nc" id="L131">        return tensor.value32();</span>
     }
 
     @Override
     public Collection&lt;Tsr&gt; tensors() {
-<span class="nc" id="L139">        return null;</span>
+<span class="nc" id="L136">        return null;</span>
     }
 
     public interface Range {
         void execute(int start, int end);
     }
 
-<span class="fc" id="L146">    public class NativeExecutor</span>
+<span class="fc" id="L143">    public class NativeExecutor</span>
     {
-<span class="fc" id="L148">        private final ThreadPoolExecutor _pool =</span>
-<span class="fc" id="L149">                (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());</span>
+<span class="fc" id="L145">        private final ThreadPoolExecutor _pool =</span>
+<span class="fc" id="L146">                (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());</span>
 
         public ThreadPoolExecutor getPool() {
-<span class="fc" id="L152">            return _pool;</span>
+<span class="fc" id="L149">            return _pool;</span>
         }
 
         public void activate(Tsr[] tsrs, int d, OperationType type)
         {
-<span class="fc" id="L157">            threaded(</span>
-<span class="fc" id="L158">                    tsrs[0].size(),</span>
+<span class="fc" id="L154">            threaded(</span>
+<span class="fc" id="L155">                    tsrs[0].size(),</span>
                     (start, end) -&gt;
-<span class="fc" id="L160">                            Activation.activate(</span>
+<span class="fc" id="L157">                            Activation.activate(</span>
                                     tsrs[0], start, end,
-<span class="fc" id="L162">                                    type.getImplementation(Activation.class).getCreator().create(tsrs, d)</span>
+<span class="fc" id="L159">                                    type.getImplementation(Activation.class).getCreator().create(tsrs, d)</span>
                             )
             );
-<span class="fc" id="L165">        }</span>
+<span class="fc" id="L162">        }</span>
 
         public void broadcast(Tsr[] tsrs, int d, OperationType type)
         {
-<span class="fc" id="L169">            threaded(</span>
-<span class="fc" id="L170">                    tsrs[0].size(),</span>
+<span class="fc" id="L166">            threaded(</span>
+<span class="fc" id="L167">                    tsrs[0].size(),</span>
                     (start, end) -&gt;
-<span class="fc" id="L172">                            Broadcast.broadcast(</span>
+<span class="fc" id="L169">                            Broadcast.broadcast(</span>
                                     tsrs[0], tsrs[1], tsrs[2], d,
                                     start, end,
-<span class="fc" id="L175">                                    type.getImplementation(Broadcast.class).getCreator().create(tsrs, d)</span>
+<span class="fc" id="L172">                                    type.getImplementation(Broadcast.class).getCreator().create(tsrs, d)</span>
                             )
             );
-<span class="fc" id="L178">        }</span>
+<span class="fc" id="L175">        }</span>
 
         public void convolve(Tsr[] tsrs, int d, OperationType type)
         {
-<span class="fc" id="L182">            threaded(</span>
-<span class="fc" id="L183">                    tsrs[0].size(),</span>
+<span class="fc" id="L179">            threaded(</span>
+<span class="fc" id="L180">                    tsrs[0].size(),</span>
                     (start, end) -&gt;
-<span class="fc" id="L185">                            Convolution.convolve(</span>
+<span class="fc" id="L182">                            Convolution.convolve(</span>
                                     tsrs[0], tsrs[1], tsrs[2], d,
                                     start, end,
-<span class="fc" id="L188">                                    type.getImplementation(Convolution.class).getCreator().create(tsrs, -1)</span>
+<span class="fc" id="L185">                                    type.getImplementation(Convolution.class).getCreator().create(tsrs, -1)</span>
                             )
             );
-<span class="fc" id="L191">        }</span>
+<span class="fc" id="L188">        }</span>
 
         public void scalar(Tsr[] tsrs, double scalar, int d, OperationType type)
         {
-<span class="fc" id="L195">            threaded(</span>
-<span class="fc" id="L196">                    tsrs[0].size(),</span>
+<span class="fc" id="L192">            threaded(</span>
+<span class="fc" id="L193">                    tsrs[0].size(),</span>
                     (start, end) -&gt;
-<span class="fc" id="L198">                            Scalarization.scalarize(</span>
+<span class="fc" id="L195">                            Scalarization.scalarize(</span>
                                     tsrs[0], start, end,
-<span class="fc" id="L200">                                    type.getImplementation(Scalarization.class).getCreator().create(tsrs, scalar, d)</span>
+<span class="fc" id="L197">                                    type.getImplementation(Scalarization.class).getCreator().create(tsrs, scalar, d)</span>
                             )
             );
-<span class="fc" id="L203">        }</span>
+<span class="fc" id="L200">        }</span>
 
         //==============================================================================================================
 
         public void threaded(int sze, Range range)
         {
-<span class="fc" id="L209">            int cores = _pool.getCorePoolSize() - _pool.getActiveCount();</span>
-<span class="pc bpc" id="L210" title="1 of 2 branches missed.">            cores = (cores == 0) ? 1 : cores;</span>
-<span class="fc bfc" id="L211" title="All 4 branches covered.">            if (sze &gt;= 32 &amp;&amp; ((sze / cores) &gt;= 8)) {</span>
-<span class="fc" id="L212">                final int chunk = sze / cores;</span>
-<span class="fc" id="L213">                Future[] futures = new Future[cores];</span>
-<span class="fc bfc" id="L214" title="All 2 branches covered.">                for (int i = 0; i &lt; cores; i++) {</span>
-<span class="fc" id="L215">                    final int start = i * chunk;</span>
-<span class="fc bfc" id="L216" title="All 2 branches covered.">                    final int end = (i == cores - 1) ? sze : ((i + 1) * chunk);</span>
-<span class="fc" id="L217">                    Neureka neureka = Neureka.instance();</span>
-<span class="fc" id="L218">                    futures[i] = _pool.submit(() -&gt; {</span>
-<span class="fc" id="L219">                        Neureka.setContext(Thread.currentThread(), neureka);</span>
-<span class="fc" id="L220">                        range.execute(start, end);</span>
-<span class="fc" id="L221">                    });</span>
+<span class="fc" id="L206">            int cores = _pool.getCorePoolSize() - _pool.getActiveCount();</span>
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">            cores = (cores == 0) ? 1 : cores;</span>
+<span class="fc bfc" id="L208" title="All 4 branches covered.">            if (sze &gt;= 32 &amp;&amp; ((sze / cores) &gt;= 8)) {</span>
+<span class="fc" id="L209">                final int chunk = sze / cores;</span>
+<span class="fc" id="L210">                Future[] futures = new Future[cores];</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">                for (int i = 0; i &lt; cores; i++) {</span>
+<span class="fc" id="L212">                    final int start = i * chunk;</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">                    final int end = (i == cores - 1) ? sze : ((i + 1) * chunk);</span>
+<span class="fc" id="L214">                    Neureka neureka = Neureka.instance();</span>
+<span class="fc" id="L215">                    futures[i] = _pool.submit(() -&gt; {</span>
+<span class="fc" id="L216">                        Neureka.setContext(Thread.currentThread(), neureka);</span>
+<span class="fc" id="L217">                        range.execute(start, end);</span>
+<span class="fc" id="L218">                    });</span>
                 }
-<span class="fc bfc" id="L223" title="All 2 branches covered.">                for (Future f : futures) {</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">                for (Future f : futures) {</span>
                     try {
-<span class="fc" id="L225">                        f.get();</span>
-<span class="nc" id="L226">                    } catch (InterruptedException e) {</span>
-<span class="nc" id="L227">                        e.printStackTrace();</span>
-<span class="nc" id="L228">                    } catch (ExecutionException e) {</span>
-<span class="nc" id="L229">                        e.printStackTrace();</span>
-<span class="pc" id="L230">                    }</span>
+<span class="fc" id="L222">                        f.get();</span>
+<span class="nc" id="L223">                    } catch (InterruptedException e) {</span>
+<span class="nc" id="L224">                        e.printStackTrace();</span>
+<span class="nc" id="L225">                    } catch (ExecutionException e) {</span>
+<span class="nc" id="L226">                        e.printStackTrace();</span>
+<span class="pc" id="L227">                    }</span>
                 }
-<span class="fc" id="L232">            } else range.execute(0, sze);</span>
-<span class="fc" id="L233">        }</span>
+<span class="fc" id="L229">            } else range.execute(0, sze);</span>
+<span class="fc" id="L230">        }</span>
 
 
     }

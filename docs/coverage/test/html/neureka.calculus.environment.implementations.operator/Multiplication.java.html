@@ -275,16 +275,16 @@ public class Multiplication extends OperationType {
                                 HostCPU.class,
                                 new HostExecution(
                                         call -&gt;
-<span class="nc" id="L278">                                                call.getDevice().getExecutor()</span>
-<span class="nc" id="L279">                                                        .threaded (</span>
-<span class="nc" id="L280">                                                                call.getTensor(0).size(),</span>
+<span class="fc" id="L278">                                                call.getDevice().getExecutor()</span>
+<span class="fc" id="L279">                                                        .threaded (</span>
+<span class="fc" id="L280">                                                                call.getTensor(0).size(),</span>
                                                                 ( start, end ) -&gt;
-<span class="nc" id="L282">                                                                        Convolution.convolve (</span>
-<span class="nc" id="L283">                                                                                call.getTensor(0), call.getTensor(1), call.getTensor(2),</span>
-<span class="nc" id="L284">                                                                                call.getDerivativeIndex(), start, end,</span>
-<span class="nc" id="L285">                                                                                _creator.create(</span>
-<span class="nc" id="L286">                                                                                        call.getTensors(),</span>
-<span class="nc" id="L287">                                                                                        call.getDerivativeIndex()</span>
+<span class="fc" id="L282">                                                                        Convolution.convolve (</span>
+<span class="fc" id="L283">                                                                                call.getTensor(0), call.getTensor(1), call.getTensor(2),</span>
+<span class="fc" id="L284">                                                                                call.getDerivativeIndex(), start, end,</span>
+<span class="fc" id="L285">                                                                                _creator.create(</span>
+<span class="fc" id="L286">                                                                                        call.getTensors(),</span>
+                                                                                        -1//call.getDerivativeIndex()
                                                                                 )
                                                                         )
                                                         ),

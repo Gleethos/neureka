@@ -13,6 +13,7 @@ public class Activation extends AbstractOperationTypeImplementation<Activation, 
 
     @Override
     public boolean canHandle(ExecutionCall call) {
+        if ( _executions.isEmpty() ) return false;
         return true;
     }
 

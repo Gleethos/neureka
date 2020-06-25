@@ -55,17 +55,14 @@ public class HostCPU extends AbstractDevice
         } else if (type.isOperation() && !type.isConvection()) {
                 impl.callImplementationFor(call);
         } else if (type.isConvection()) {
-            if(!(impl instanceof Convolution)){
-                impl = call.getExecutor();
-            }
-            //impl.callImplementationFor(call);
-            _executor.convolve(tsrs, d, type);
-            return;
+            impl.callImplementationFor(call);
         } else if (type.isIndexer()) {
             if(!(impl instanceof Broadcast)){
                 impl = call.getExecutor();
             }
-            _executor.broadcast(tsrs, d, type);
+            impl.callImplementationFor(call);
+            System.out.println(tsrs[0]+" | "+tsrs[1]+" | "+tsrs[2]);
+            //_executor.broadcast(tsrs, d, type);
         }
     }
 

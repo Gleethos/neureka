@@ -284,7 +284,7 @@ public class Multiplication extends OperationType {
                                                                                 call.getDerivativeIndex(), start, end,
                                                                                 _creator.create(
                                                                                         call.getTensors(),
-                                                                                        call.getDerivativeIndex()
+                                                                                        -1//call.getDerivativeIndex()
                                                                                 )
                                                                         )
                                                         ),
