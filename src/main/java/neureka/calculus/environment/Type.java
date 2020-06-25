@@ -7,20 +7,24 @@ import neureka.calculus.environment.executors.AbstractOperationTypeImplementatio
 
 public interface Type
 {
-    interface DefaultOperator {
+    interface TertiaryNDXConsumer {
         double execute( int[] t0Idx, int[] t1Idx, int[] t2Idx );
     }
 
-    interface ScalarOperator {
+    interface SecondaryNDXConsumer {
+        double execute( int[] t0Idx, int[] t1Idx );
+    }
+
+    interface PrimaryNDXConsumer {
         double execute( int[] t0Idx );
     }
 
     interface OperatorCreator {
-        DefaultOperator create(Tsr[] inputs, int d);
+        TertiaryNDXConsumer create(Tsr[] inputs, int d);
     }
 
     interface ScalarOperatorCreator {
-        ScalarOperator create(Tsr[] inputs, double scalar, int d);
+        PrimaryNDXConsumer create(Tsr[] inputs, double scalar, int d);
     }
 
     //==================================================================================================================

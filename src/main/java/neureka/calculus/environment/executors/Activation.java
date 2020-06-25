@@ -26,7 +26,7 @@ public class Activation extends AbstractOperationTypeImplementation<Activation, 
     public static void activate(
             Tsr t0_drn,
             int i, int end,
-            Type.DefaultOperator operation
+            Type.TertiaryNDXConsumer operation
     ) {
         int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
         int rank = t0Shp.length;

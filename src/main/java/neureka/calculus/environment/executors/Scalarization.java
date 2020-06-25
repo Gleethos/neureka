@@ -22,7 +22,7 @@ public class Scalarization extends AbstractOperationTypeImplementation<Scalariza
     public static void scalarize (
             Tsr t0_drn,
             int i, int end,
-            Type.ScalarOperator operation
+            Type.PrimaryNDXConsumer operation
     ) {
         int[] t0Shp = t0_drn.getNDConf().shape();
         int[] t0Idx = t0_drn.idx_of_i(i);

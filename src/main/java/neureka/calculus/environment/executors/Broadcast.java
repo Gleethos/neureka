@@ -39,7 +39,7 @@ public class Broadcast extends AbstractOperationTypeImplementation<Broadcast, Ty
     public static void broadcast(
             Tsr t0_drn, Tsr t1_src, Tsr t2_src,
             int d, int i, int end,
-            Type.DefaultOperator operation
+            Type.TertiaryNDXConsumer operation
     ) {
         int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
         int[] t1Shp = t1_src.getNDConf().shape();
