@@ -96,7 +96,7 @@ public class Multiplication extends OperationType {
                                 this // OperationType
                         )
                 )
-                );
+        );
 
 
         //________________

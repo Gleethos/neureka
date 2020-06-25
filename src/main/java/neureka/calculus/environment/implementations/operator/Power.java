@@ -41,7 +41,31 @@ public class Power extends OperationType
         //_____________________
         // DEFAULT OPERATION :
 
-        setImplementation(Operation.class,
+        DefaultOperatorCreator<PrimaryNDXConsumer> operationCreator = (inputs, d)->
+        {
+            double[] t1_val = inputs[1].value64();
+            double[] t2_val = inputs[2].value64();
+            if (d < 0) {
+                return t1Idx -> Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], t2_val[inputs[2].i_of_idx(t1Idx)]);
+            } else {
+                return t1Idx -> {
+                    if (d == 0) {
+                        return t2_val[inputs[2].i_of_idx(t1Idx)]
+                                * Math.pow(
+                                t1_val[inputs[1].i_of_idx(t1Idx)],
+                                t2_val[inputs[2].i_of_idx(t1Idx)] - 1
+                        );
+                    } else {
+                        return Math.pow(
+                                t1_val[inputs[1].i_of_idx(t1Idx)],
+                                t2_val[inputs[2].i_of_idx(t1Idx)]
+                        ) * Math.log(t1_val[inputs[1].i_of_idx(t1Idx)]);
+                    }
+                };
+            }
+        };
+
+        Operation operation =
                 new Operation(
                         "output = pow(input1, input2);",
                         "if(d==0) {                                    \n" +
@@ -50,6 +74,52 @@ public class Power extends OperationType
                                 "    output = pow(input1, input2) * log(input1);  \n" +
                                 "}",
                         _creator
+                );
+
+        setImplementation(Operation.class,
+                operation.setExecution (
+                        HostCPU.class,
+                        new HostExecution(
+                                call ->
+                                        call.getDevice().getExecutor()
+                                                .threaded (
+                                                        call.getTensor(0).size(),
+                                                        ( start, end ) ->
+                                                                Operation.operate (
+                                                                        call.getTensor(0),
+                                                                        call.getTensor(1),
+                                                                        call.getTensor(2),
+                                                                        call.getDerivativeIndex(),
+                                                                        start, end,
+                                                                        operationCreator.create(call.getTensors(), -1)
+                                                                )
+                                                ),
+                                3
+                        )
+                ).setExecution(
+                        OpenCLDevice.class,
+                        new CLExecution(
+                                call -> {
+                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    call.getDevice().getKernel(call)
+                                            .pass(call.getTensor(offset))
+                                            .pass(call.getTensor(offset + 1))
+                                            .pass(call.getTensor(offset + 2))
+                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getDerivativeIndex())
+                                            .call(gwz);
+                                },
+                                3,
+                                operation.getKernelSource(), // kernelSource
+                                "output = pow(input1, input2);",
+                                "if(d==0) {                                    \n" +
+                                        "    output = input2 * pow(input1, input2-1.0f);  \n" +
+                                        "} else {                                         \n" +
+                                        "    output = pow(input1, input2) * log(input1);  \n" +
+                                        "}",
+                                this // OperationType
+                        )
                 )
         );
 

@@ -40,6 +40,14 @@ public class Addition extends OperationType {
         //_____________________
         // DEFAULT OPERATION :
 
+        DefaultOperatorCreator<PrimaryNDXConsumer> operationCreator =
+                (inputs, d) -> {
+                    double[] t1_val = inputs[1].value64();
+                    double[] t2_val = inputs[2].value64();
+                    if (d < 0) return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] + t2_val[inputs[2].i_of_idx(t1Idx)];
+                    else return t1Idx -> 1.0;
+                };
+
         Operation operation = new Operation(
                 "output = input1 + input2;\n",
                 "output = 1;\n",
@@ -56,13 +64,13 @@ public class Addition extends OperationType {
                                                         .threaded (
                                                                 call.getTensor(0).size(),
                                                                 ( start, end ) ->
-                                                                        Broadcast.broadcast (
+                                                                        Operation.operate (
                                                                                 call.getTensor(0),
                                                                                 call.getTensor(1),
                                                                                 call.getTensor(2),
                                                                                 call.getDerivativeIndex(),
                                                                                 start, end,
-                                                                                _creator.create(call.getTensors(), -1)
+                                                                                operationCreator.create(call.getTensors(), -1)
                                                                         )
                                                         ),
                                         3
