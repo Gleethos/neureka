@@ -5,9 +5,9 @@ import neureka.Tsr;
 import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
 
-public class Operation  extends AbstractOperationTypeImplementation<Operation, Type.OperatorCreator>
+public class Operation  extends AbstractOperationTypeImplementation<Operation, Type.DefaultOperatorCreator>
 {
-    public Operation(String strOperation, String strDeriviation, Type.OperatorCreator creator){
+    public Operation(String strOperation, String strDeriviation, Type.DefaultOperatorCreator creator){
         super(strOperation, strDeriviation, creator);
     }
 

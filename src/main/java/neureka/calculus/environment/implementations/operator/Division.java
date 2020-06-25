@@ -5,13 +5,12 @@ import neureka.acceleration.host.execution.HostExecution;
 import neureka.acceleration.opencl.OpenCLDevice;
 import neureka.acceleration.opencl.execution.CLExecution;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.Type;
 import neureka.calculus.environment.executors.*;
 
 
 public class Division extends OperationType
 {
-    private static final OperatorCreator _creator =
+    private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
     (inputs, d) -> {
         double[] t1_val = inputs[1].value64();
         double[] t2_val = inputs[2].value64();
@@ -102,29 +101,88 @@ public class Division extends OperationType
                 )
         );
 
+
+        //________________
+        // BROADCASTING :
+
+        Broadcast broadcast =
+                new Broadcast(
+                        "value = src1 / src2;\n",
+                        "if(d==0){\n" +
+                                "    value += (1/handle) * drain;\n" +
+                                "} else {\n" +
+                                "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
+                                "}",
+                        _creator
+                );
+        setImplementation(
+                Broadcast.class,
+                broadcast.setExecution (
+                        HostCPU.class,
+                        new HostExecution(
+                                call ->
+                                        call.getDevice().getExecutor()
+                                                .threaded (
+                                                        call.getTensor(0).size(),
+                                                        ( start, end ) ->
+                                                                Broadcast.broadcast (
+                                                                        call.getTensor(0), call.getTensor(1), call.getTensor(2),
+                                                                        call.getDerivativeIndex(), start, end,
+                                                                        _creator.create(call.getTensors(), -1)
+                                                                )
+                                                ),
+                                3
+                        )
+                ).setExecution(
+                        OpenCLDevice.class,
+                        new CLExecution(
+                                call -> {
+                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    call.getDevice().getKernel(call)
+                                            .pass(call.getTensor(offset))
+                                            .pass(call.getTensor(offset + 1))
+                                            .pass(call.getTensor(offset + 2))
+                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getDerivativeIndex())
+                                            .call(gwz);
+                                },
+                                3,
+                                broadcast.getKernelSource(), // kernelSource
+                                "value = src1 / src2;\n",
+                                "if(d==0){\n" +
+                                        "    value += (1/handle) * drain;\n" +
+                                        "} else {\n" +
+                                        "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
+                                        "}",
+                                this // OperationType
+                        )
+                )
+        );
+
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        Type.ScalarOperatorCreator scalarCreator =
+        ScalarOperatorCreator<PrimaryNDXConsumer> scalarCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[1].value64();
                     if (d < 0) {
-                        return ( t1Idx ) -> t1_val[inputs[1].i_of_idx(t1Idx)] / value;
+                        return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] / value;
                     } else {
-                        if (d == 0) return ( t1Idx ) -> 1 / value;
-                        else return ( t1Idx ) -> -value / Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], 2);
+                        if (d == 0) return t1Idx -> 1 / value;
+                        else return t1Idx -> -value / Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], 2);
                     }
                 };
 
         Scalarization scalarization = new Scalarization(
-                        "output = input1 / value;\n",
-                        "if(d==0){\n" +
-                                "    output = 1/value;\n" +
-                                "} else {\n" +
-                                "    output = -value /(float)pow(input1, 2.0f);\n" +
-                                "}",
-                        scalarCreator
-                );
+                "output = input1 / value;\n",
+                "if(d==0){\n" +
+                        "    output = 1/value;\n" +
+                        "} else {\n" +
+                        "    output = -value /(float)pow(input1, 2.0f);\n" +
+                        "}",
+                scalarCreator
+        );
 
 
         setImplementation(
@@ -173,65 +231,6 @@ public class Division extends OperationType
                         )
                 )
         );
-
-        //________________
-        // BROADCASTING :
-
-        Broadcast broadcast =
-                new Broadcast(
-                        "value = src1 / src2;\n",
-                        "if(d==0){\n" +
-                                "    value += (1/handle) * drain;\n" +
-                                "} else {\n" +
-                                "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
-                                "}",
-                        _creator
-                );
-        setImplementation(
-                Broadcast.class,
-                broadcast.setExecution (
-                        HostCPU.class,
-                        new HostExecution(
-                                call ->
-                                        call.getDevice().getExecutor()
-                                                .threaded (
-                                                        call.getTensor(0).size(),
-                                                        ( start, end ) ->
-                                                                Activation.activate (
-                                                                        call.getTensor(0),
-                                                                        start, end,
-                                                                        _creator.create(call.getTensors(), -1)
-                                                                )
-                                                ),
-                                3
-                        )
-                ).setExecution(
-                        OpenCLDevice.class,
-                        new CLExecution(
-                                call -> {
-                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
-                                    call.getDevice().getKernel(call)
-                                            .pass(call.getTensor(offset))
-                                            .pass(call.getTensor(offset + 1))
-                                            .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor(0).rank())
-                                            .pass(call.getDerivativeIndex())
-                                            .call(gwz);
-                                },
-                                3,
-                                broadcast.getKernelSource(), // kernelSource
-                                "value = src1 / src2;\n",
-                                "if(d==0){\n" +
-                                        "    value += (1/handle) * drain;\n" +
-                                        "} else {\n" +
-                                        "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
-                                        "}",
-                                this // OperationType
-                        )
-                )
-        );
-
 
         //__________________________
         // RELATED OPERATION TYPES :

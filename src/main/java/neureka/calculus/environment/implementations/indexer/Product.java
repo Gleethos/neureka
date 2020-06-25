@@ -5,7 +5,6 @@ import neureka.acceleration.host.execution.HostExecution;
 import neureka.acceleration.opencl.OpenCLDevice;
 import neureka.acceleration.opencl.execution.CLExecution;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.Type;
 import neureka.calculus.environment.executors.*;
 
 public class Product extends OperationType {
@@ -29,7 +28,7 @@ public class Product extends OperationType {
                         null
                 )
         );
-        Type.OperatorCreator _creator =
+        DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
                 (inputs, d) ->
                 {
                     double[] t1_val = inputs[1].value64();

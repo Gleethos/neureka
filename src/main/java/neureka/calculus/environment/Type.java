@@ -19,12 +19,14 @@ public interface Type
         double execute( int[] t0Idx );
     }
 
-    interface OperatorCreator {
-        TertiaryNDXConsumer create(Tsr[] inputs, int d);
+    //---
+
+    interface DefaultOperatorCreator<T> {
+        T create(Tsr[] inputs, int d);
     }
 
-    interface ScalarOperatorCreator {
-        PrimaryNDXConsumer create(Tsr[] inputs, double scalar, int d);
+    interface ScalarOperatorCreator<T> {
+        T create(Tsr[] inputs, double scalar, int d);
     }
 
     //==================================================================================================================

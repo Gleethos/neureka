@@ -754,16 +754,16 @@ neureka.calculus.environment.Type -> neureka.calculus.environment.Type:
     boolean allowsForward(neureka.Tsr[]) -> allowsForward
     neureka.autograd.ADAgent getADAgentOf(neureka.calculus.Function,neureka.Tsr[],int,boolean) -> getADAgentOf
 neureka.calculus.environment.Type$Activation -> neureka.calculus.environment.Type$Activation:
-    47:48:void <init>(java.lang.String,java.lang.String,neureka.calculus.environment.Type$OperatorCreator) -> <init>
+    47:48:void <init>(java.lang.String,java.lang.String,neureka.calculus.environment.Type$DefaultOperatorCreator) -> <init>
 neureka.calculus.environment.Type$Broadcast -> neureka.calculus.environment.Type$Broadcast:
-    61:62:void <init>(java.lang.String,java.lang.String,neureka.calculus.environment.Type$OperatorCreator) -> <init>
+    61:62:void <init>(java.lang.String,java.lang.String,neureka.calculus.environment.Type$DefaultOperatorCreator) -> <init>
 neureka.calculus.environment.Type$Convolution -> neureka.calculus.environment.Type$Convolution:
-    54:55:void <init>(java.lang.String,java.lang.String,neureka.calculus.environment.Type$OperatorCreator) -> <init>
+    54:55:void <init>(java.lang.String,java.lang.String,neureka.calculus.environment.Type$DefaultOperatorCreator) -> <init>
 neureka.calculus.environment.Type$TertiaryNDXConsumer -> neureka.calculus.environment.Type$TertiaryNDXConsumer:
     double execute(int[],int[],int[]) -> execute
 neureka.calculus.environment.Type$Operation -> neureka.calculus.environment.Type$Operation:
-    75:76:void <init>(java.lang.String,java.lang.String,neureka.calculus.environment.Type$OperatorCreator) -> <init>
-neureka.calculus.environment.Type$OperatorCreator -> neureka.calculus.environment.Type$OperatorCreator:
+    75:76:void <init>(java.lang.String,java.lang.String,neureka.calculus.environment.Type$DefaultOperatorCreator) -> <init>
+neureka.calculus.environment.Type$DefaultOperatorCreator -> neureka.calculus.environment.Type$DefaultOperatorCreator:
     neureka.calculus.environment.Type$TertiaryNDXConsumer create(neureka.Tsr[],int) -> create
 neureka.calculus.environment.Type$ScalarOperatorCreator -> neureka.calculus.environment.Type$ScalarOperatorCreator:
     neureka.calculus.environment.Type$TertiaryNDXConsumer create(neureka.Tsr[],double,int) -> create
@@ -838,7 +838,7 @@ neureka.calculus.environment.implementations.indexer.Summation -> neureka.calcul
     24:24:double lambda$new$1(int[],int[],int[]) -> a
     22:22:double lambda$new$0(double[],neureka.Tsr[],double[],int[],int[],int[]) -> a
 neureka.calculus.environment.implementations.operator.Addition -> neureka.calculus.environment.implementations.operator.Addition:
-    neureka.calculus.environment.Type$OperatorCreator _creator -> a
+    neureka.calculus.environment.Type$DefaultOperatorCreator _creator -> a
     neureka.calculus.environment.Type$Broadcast _broadcast -> b
     26:96:void <init>() -> <init>
     35:37:neureka.calculus.environment.Type$TertiaryNDXConsumer lambda$new$5(neureka.Tsr[],double,int) -> a
@@ -849,7 +849,7 @@ neureka.calculus.environment.implementations.operator.Addition -> neureka.calcul
     12:12:double lambda$static$0(double[],neureka.Tsr[],double[],int[],int[],int[]) -> a
     7:18:void <clinit>() -> <clinit>
 neureka.calculus.environment.implementations.operator.Division -> neureka.calculus.environment.implementations.operator.Division:
-    neureka.calculus.environment.Type$OperatorCreator _creator -> a
+    neureka.calculus.environment.Type$DefaultOperatorCreator _creator -> a
     26:103:void <init>() -> <init>
     37:42:neureka.calculus.environment.Type$TertiaryNDXConsumer lambda$new$6(neureka.Tsr[],double,int) -> a
     42:42:double lambda$new$5(double,double[],neureka.Tsr[],int[],int[],int[]) -> a
@@ -865,7 +865,7 @@ neureka.calculus.environment.implementations.operator.Modulo -> neureka.calculus
     24:30:double lambda$new$1(int,double[],neureka.Tsr[],double[],int[],int[],int[]) -> a
     21:21:double lambda$new$0(double[],neureka.Tsr[],double[],int[],int[],int[]) -> a
 neureka.calculus.environment.implementations.operator.Multiplication -> neureka.calculus.environment.implementations.operator.Multiplication:
-    neureka.calculus.environment.Type$OperatorCreator _creator -> a
+    neureka.calculus.environment.Type$DefaultOperatorCreator _creator -> a
     24:129:void <init>() -> <init>
     89:94:neureka.calculus.environment.Type$TertiaryNDXConsumer lambda$new$11(neureka.Tsr[],int) -> a
     95:96:double lambda$new$10(int,double[],neureka.Tsr[],double[],int[],int[],int[]) -> a
@@ -881,7 +881,7 @@ neureka.calculus.environment.implementations.operator.Multiplication -> neureka.
     13:13:double lambda$static$0(double[],neureka.Tsr[],double[],int[],int[],int[]) -> c
     8:8:void <clinit>() -> <clinit>
 neureka.calculus.environment.implementations.operator.Power -> neureka.calculus.environment.implementations.operator.Power:
-    neureka.calculus.environment.Type$OperatorCreator _creator -> a
+    neureka.calculus.environment.Type$DefaultOperatorCreator _creator -> a
     33:116:void <init>() -> <init>
     42:49:neureka.calculus.environment.Type$TertiaryNDXConsumer lambda$new$6(neureka.Tsr[],double,int) -> a
     49:49:double lambda$new$5(double[],neureka.Tsr[],double,int[],int[],int[]) -> a
@@ -892,7 +892,7 @@ neureka.calculus.environment.implementations.operator.Power -> neureka.calculus.
     12:12:double lambda$static$0(double[],neureka.Tsr[],double[],int[],int[],int[]) -> a
     8:8:void <clinit>() -> <clinit>
 neureka.calculus.environment.implementations.operator.Subtraction -> neureka.calculus.environment.implementations.operator.Subtraction:
-    neureka.calculus.environment.Type$OperatorCreator _creator -> a
+    neureka.calculus.environment.Type$DefaultOperatorCreator _creator -> a
     24:91:void <init>() -> <init>
     35:40:neureka.calculus.environment.Type$TertiaryNDXConsumer lambda$new$6(neureka.Tsr[],double,int) -> a
     40:40:double lambda$new$5(int[],int[],int[]) -> a

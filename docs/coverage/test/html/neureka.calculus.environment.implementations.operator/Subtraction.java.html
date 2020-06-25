@@ -5,7 +5,7 @@ import neureka.calculus.environment.executors.*;
 
 public class Subtraction extends OperationType {
 
-<span class="fc" id="L8">    private static final OperatorCreator _creator =</span>
+<span class="fc" id="L8">    private static final DefaultOperatorCreator&lt;TertiaryNDXConsumer&gt; _creator =</span>
             (inputs, d) -&gt; {
 <span class="fc" id="L10">                double[] t1_val = inputs[1].value64();</span>
 <span class="fc" id="L11">                double[] t2_val = inputs[2].value64();</span>

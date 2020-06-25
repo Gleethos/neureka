@@ -5,12 +5,11 @@ import neureka.acceleration.host.execution.HostExecution;
 import neureka.acceleration.opencl.OpenCLDevice;
 import neureka.acceleration.opencl.execution.CLExecution;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.Type;
 import neureka.calculus.environment.executors.*;
 
 public class Addition extends OperationType {
 
-    private static final OperatorCreator _creator =
+    private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
             (inputs, d) -> {
                 double[] t1_val = inputs[1].value64();
                 double[] t2_val = inputs[2].value64();
@@ -104,9 +103,9 @@ public class Addition extends OperationType {
                                                 .threaded (
                                                         call.getTensor(0).size(),
                                                         ( start, end ) ->
-                                                                Activation.activate (
-                                                                        call.getTensor(0),
-                                                                        start, end,
+                                                                Broadcast.broadcast (
+                                                                        call.getTensor(0), call.getTensor(1), call.getTensor(2),
+                                                                        call.getDerivativeIndex(), start, end,
                                                                         _creator.create(call.getTensors(), -1)
                                                                 )
                                                 ),
@@ -148,13 +147,13 @@ public class Addition extends OperationType {
                             else return t1Idx -> 1;
                         });
 
-        Type.ScalarOperatorCreator scalarCreator =
+        ScalarOperatorCreator<PrimaryNDXConsumer> scalarCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[1].value64();
-                    if (d < 0) return ( t1Idx ) -> t1_val[inputs[1].i_of_idx(t1Idx)] + value;
+                    if (d < 0) return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] + value;
                     else {
-                        if (d == 0) return ( t1Idx ) -> 1;
-                        else return ( t1Idx ) -> 1;
+                        if (d == 0) return t1Idx -> 1;
+                        else return t1Idx -> 1;
                     }
                 };
 

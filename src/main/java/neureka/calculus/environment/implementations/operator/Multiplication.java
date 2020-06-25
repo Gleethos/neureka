@@ -6,7 +6,7 @@ import neureka.calculus.environment.executors.*;
 public class Multiplication extends OperationType {
 
 
-    private static final OperatorCreator _creator =
+    private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
             (inputs, d) -> {
                 double[] t1_val = inputs[1].value64();
                 double[] t2_val = inputs[2].value64();
@@ -36,7 +36,7 @@ public class Multiplication extends OperationType {
                         "if(d==0){output = input2;}else{output = input1;}\n",
                         _creator
                 ));
-        OperatorCreator creator =
+        DefaultOperatorCreator<TertiaryNDXConsumer> creator =
                 (inputs, d) -> {
                     double[] t1_val = inputs[1].value64();
                     double[] t2_val = inputs[2].value64();
@@ -67,10 +67,10 @@ public class Multiplication extends OperationType {
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[1].value64();
                     if (d < 0) {
-                        return ( t1Idx ) -> t1_val[inputs[1].i_of_idx(t1Idx)] * value;
+                        return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] * value;
                     } else {
-                        if (d == 0) return ( t1Idx ) -> value;
-                        else return ( t1Idx ) -> t1_val[inputs[1].i_of_idx(t1Idx)];
+                        if (d == 0) return t1Idx -> value;
+                        else return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)];
                     }
                 })
         );

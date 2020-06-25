@@ -5,9 +5,9 @@ import neureka.Tsr;
 import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
 
-public class Scalarization extends AbstractOperationTypeImplementation<Scalarization, Type.ScalarOperatorCreator>
+public class Scalarization extends AbstractOperationTypeImplementation<Scalarization, Type.ScalarOperatorCreator<Type.PrimaryNDXConsumer>>
 {
-    public Scalarization(String strScalarized, String strDeriviation, Type.ScalarOperatorCreator creator)
+    public Scalarization(String strScalarized, String strDeriviation, Type.ScalarOperatorCreator<Type.PrimaryNDXConsumer> creator)
     {
         super(strScalarized, strDeriviation, creator);
     }

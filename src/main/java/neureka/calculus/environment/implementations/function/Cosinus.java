@@ -5,12 +5,11 @@ import neureka.acceleration.host.execution.HostExecution;
 import neureka.acceleration.opencl.OpenCLDevice;
 import neureka.acceleration.opencl.execution.CLExecution;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.Type;
 import neureka.calculus.environment.executors.*;
 
 public class Cosinus extends OperationType {
 
-    private Type.OperatorCreator _creator =
+    private DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
             (inputs, d)->{
                 double[] t1_val = inputs[1].value64();
                 if (d < 0) return (t0Idx, t1Idx, t2Idx) -> Math.cos(t1_val[inputs[1].i_of_idx(t1Idx)]);

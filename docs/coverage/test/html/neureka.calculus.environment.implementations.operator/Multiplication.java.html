@@ -6,7 +6,7 @@ import neureka.calculus.environment.executors.*;
 public class Multiplication extends OperationType {
 
 
-<span class="fc" id="L9">    private static final OperatorCreator _creator =</span>
+<span class="fc" id="L9">    private static final DefaultOperatorCreator&lt;TertiaryNDXConsumer&gt; _creator =</span>
             (inputs, d) -&gt; {
 <span class="fc" id="L11">                double[] t1_val = inputs[1].value64();</span>
 <span class="fc" id="L12">                double[] t2_val = inputs[2].value64();</span>
@@ -36,7 +36,7 @@ public class Multiplication extends OperationType {
                         &quot;if(d==0){output = input2;}else{output = input1;}\n&quot;,
                         _creator
                 ));
-<span class="fc" id="L39">        OperatorCreator creator =</span>
+<span class="fc" id="L39">        DefaultOperatorCreator&lt;TertiaryNDXConsumer&gt; creator =</span>
                 (inputs, d) -&gt; {
 <span class="fc" id="L41">                    double[] t1_val = inputs[1].value64();</span>
 <span class="fc" id="L42">                    double[] t2_val = inputs[2].value64();</span>
@@ -67,10 +67,10 @@ public class Multiplication extends OperationType {
                 (inputs, value, d) -&gt; {
 <span class="fc" id="L68">                    double[] t1_val = inputs[1].value64();</span>
 <span class="pc bpc" id="L69" title="1 of 2 branches missed.">                    if (d &lt; 0) {</span>
-<span class="fc" id="L70">                        return ( t1Idx ) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * value;</span>
+<span class="fc" id="L70">                        return t1Idx -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] * value;</span>
                     } else {
-<span class="nc bnc" id="L72" title="All 2 branches missed.">                        if (d == 0) return ( t1Idx ) -&gt; value;</span>
-<span class="nc" id="L73">                        else return ( t1Idx ) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">                        if (d == 0) return t1Idx -&gt; value;</span>
+<span class="nc" id="L73">                        else return t1Idx -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
                     }
                 })
         );

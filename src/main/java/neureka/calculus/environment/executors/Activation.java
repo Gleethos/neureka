@@ -5,9 +5,9 @@ import neureka.Tsr;
 import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
 
-public class Activation extends AbstractOperationTypeImplementation<Activation, Type.OperatorCreator>
+public class Activation extends AbstractOperationTypeImplementation<Activation, Type.DefaultOperatorCreator<Type.TertiaryNDXConsumer>>
 {
-    public Activation(String strActivation, String strDeriviation, Type.OperatorCreator creator){
+    public Activation(String strActivation, String strDeriviation, Type.DefaultOperatorCreator<Type.TertiaryNDXConsumer> creator){
         super(strActivation, strDeriviation, creator);
     }
 
