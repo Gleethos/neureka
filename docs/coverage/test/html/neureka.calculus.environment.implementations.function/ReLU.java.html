@@ -51,14 +51,14 @@ public class ReLU extends OperationType
                         HostCPU.class,
                         new HostExecution(
                                 call  -&gt;
-<span class="nc" id="L54">                                        call.getDevice().getExecutor()</span>
-<span class="nc" id="L55">                                                .threaded (</span>
-<span class="nc" id="L56">                                                        call.getTensor(0).size(),</span>
+<span class="fc" id="L54">                                        call.getDevice().getExecutor()</span>
+<span class="fc" id="L55">                                                .threaded (</span>
+<span class="fc" id="L56">                                                        call.getTensor(0).size(),</span>
                                                         ( start, end ) -&gt;
-<span class="nc" id="L58">                                                                Activation.activate (</span>
-<span class="nc" id="L59">                                                                        call.getTensor(0),</span>
+<span class="fc" id="L58">                                                                Activation.activate (</span>
+<span class="fc" id="L59">                                                                        call.getTensor(0),</span>
                                                                         start, end,
-<span class="nc" id="L61">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
+<span class="fc" id="L61">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                                 )
                                                 ),
                                 3

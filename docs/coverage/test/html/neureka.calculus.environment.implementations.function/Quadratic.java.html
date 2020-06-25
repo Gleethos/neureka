@@ -47,14 +47,14 @@ public class Quadratic extends OperationType
                         HostCPU.class,
                         new HostExecution(
                                 call  -&gt;
-<span class="nc" id="L50">                                        call.getDevice().getExecutor()</span>
-<span class="nc" id="L51">                                                .threaded (</span>
-<span class="nc" id="L52">                                                        call.getTensor(0).size(),</span>
+<span class="fc" id="L50">                                        call.getDevice().getExecutor()</span>
+<span class="fc" id="L51">                                                .threaded (</span>
+<span class="fc" id="L52">                                                        call.getTensor(0).size(),</span>
                                                         ( start, end ) -&gt;
-<span class="nc" id="L54">                                                                Activation.activate (</span>
-<span class="nc" id="L55">                                                                        call.getTensor(0),</span>
+<span class="fc" id="L54">                                                                Activation.activate (</span>
+<span class="fc" id="L55">                                                                        call.getTensor(0),</span>
                                                                         start, end,
-<span class="nc" id="L57">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
+<span class="fc" id="L57">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                                 )
                                                 ),
                                 3

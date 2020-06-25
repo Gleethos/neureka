@@ -150,8 +150,8 @@ public class Addition extends OperationType {
                         &quot;output = input1 + value;\n&quot;,
                         &quot;output = 1;\n&quot;,
                         (inputs, value, d) -&gt; {
-<span class="fc" id="L153">                            double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L154" title="1 of 2 branches missed.">                            if (d &lt; 0) return t1Idx -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + value;</span>
+<span class="nc" id="L153">                            double[] t1_val = inputs[1].value64();</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">                            if (d &lt; 0) return t1Idx -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] + value;</span>
 <span class="nc" id="L155">                            else return t1Idx -&gt; 1;</span>
                         });
 

@@ -97,21 +97,72 @@ public class Subtraction extends OperationType {
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        setImplementation(Scalarization.class,
-        new Scalarization(
-                "output = input1 - value;\n",
-                "if(d==0){     \n" +//drn and src2 switch:
-                        "    output = 1;  \n" +
-                        "} else {         \n" +
-                        "    output = -1;   " +
-                        "}",
+        ScalarOperatorCreator<PrimaryNDXConsumer> scalarOperatorCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[1].value64();
                     if (d < 0) return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] - value;
                     else {
                         if (d == 0) return t1Idx -> 1; else return t1Idx -> -1;
                     }
-        }));
+                };
+
+        Scalarization scalarization =
+                new Scalarization(
+                        "output = input1 - value;\n",
+                        "if(d==0){     \n" +//drn and src2 switch:
+                                "    output = 1;  \n" +
+                                "} else {         \n" +
+                                "    output = -1;   " +
+                                "}",
+                            scalarOperatorCreator
+                        );
+
+        setImplementation(Scalarization.class,
+                scalarization.setExecution (
+                        HostCPU.class,
+                        new HostExecution(
+                                call -> {
+                                    int offset = (call.getTensor(2).isVirtual() || call.getTensor(2).size() == 1) ? 1 : 0;
+                                    double value = call.getTensor(1+offset).value64(0);
+                                    call.getDevice().getExecutor()
+                                            .threaded (
+                                                    call.getTensor(0).size(),
+                                                    ( start, end ) ->
+                                                            Scalarization.scalarize (
+                                                                    call.getTensor(0),
+                                                                    start, end,
+                                                                    scalarOperatorCreator.create(call.getTensors(), value, -1)
+                                                            )
+                                            );
+                                },
+                                3
+                        )
+                ).setExecution(
+                        OpenCLDevice.class,
+                        new CLExecution(
+                                call -> {
+                                    int offset = (call.getTensor(2).isVirtual() || call.getTensor(2).size() == 1)?1:0;
+                                    int gwz = call.getTensor(0).size();
+                                    call.getDevice().getKernel(call)
+                                            .pass(call.getTensor(0))
+                                            .pass(call.getTensor(0))
+                                            .pass((float)call.getTensor(1+offset).value64(0))
+                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getDerivativeIndex())
+                                            .call(gwz);
+                                },
+                                3,
+                                scalarization.getKernelSource(), // kernelSource
+                                "output = input1 - value;\n",
+                                "if(d==0){     \n" +//drn and src2 switch:
+                                        "    output = 1;  \n" +
+                                        "} else {         \n" +
+                                        "    output = -1;   " +
+                                        "}",
+                                this // OperationType
+                        )
+                )
+        );
 
         //________________
         // BROADCASTING :

@@ -35,7 +35,8 @@ public class HostCPU extends AbstractDevice
     }
 
     @Override
-    protected void _enqueue(Tsr[] tsrs, int d, OperationType type) {
+    protected void _enqueue(Tsr[] tsrs, int d, OperationType type)
+    {
         for ( Tsr t : tsrs ) t.setIsVirtual(false);
 
         OperationTypeImplementation.ExecutionCall<HostCPU> call =
@@ -45,35 +46,28 @@ public class HostCPU extends AbstractDevice
                         d,
                         type
                 );
-        OperationTypeImplementation impl = call.getExecutor();
+        call.getExecutor().callImplementationFor(call);
 
-        if ( type.supportsImplementation(Activation.class) && !type.isIndexer() ) {
-            if(!(impl instanceof Activation)){
-                impl = call.getExecutor();
-            }
-            _executor.activate(tsrs, d, type);
-        } else if (type.isOperation() && !type.isConvection()) {
-                impl.callImplementationFor(call);
-        } else if (type.isConvection()) {
-            impl.callImplementationFor(call);
-        } else if (type.isIndexer()) {
-            if(!(impl instanceof Broadcast)){
-                impl = call.getExecutor();
-            }
-            impl.callImplementationFor(call);
-            System.out.println(tsrs[0]+" | "+tsrs[1]+" | "+tsrs[2]);
-            //_executor.broadcast(tsrs, d, type);
-        }
     }
 
     @Override
     protected void _enqueue(Tsr t, double value, int d, OperationType type) {
-        if (type.supportsImplementation(Scalarization.class)) _executor.scalar(new Tsr[]{t, t}, value, d, type);
-        else {
+        //if (type.supportsImplementation(Scalarization.class)) {
+        //    OperationTypeImplementation.ExecutionCall<HostCPU> call =
+        //            new OperationTypeImplementation.ExecutionCall<>(
+        //                    this,
+        //                    new Tsr[]{t, t},
+        //                    d,
+        //                    type
+        //            );
+        //    call.getExecutor().callImplementationFor(call);
+        //    _executor.scalar(new Tsr[]{t, t}, value, d, type);
+        //}
+        //else {
             int[] shape = new int[t.rank()];
             Arrays.fill(shape, 1);
             _enqueue(new Tsr[]{t, t, new Tsr(shape, value)}, d, type);
-        }
+        //}
     }
 
     @Override

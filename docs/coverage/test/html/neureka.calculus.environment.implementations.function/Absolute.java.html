@@ -30,14 +30,14 @@ public class Absolute extends OperationType {
                         HostCPU.class,
                         new HostExecution(
                                 call  -&gt;
-<span class="nc" id="L33">                                        call.getDevice().getExecutor()</span>
-<span class="nc" id="L34">                                        .threaded(</span>
-<span class="nc" id="L35">                                            call.getTensor(0).size(),</span>
+<span class="fc" id="L33">                                        call.getDevice().getExecutor()</span>
+<span class="fc" id="L34">                                        .threaded(</span>
+<span class="fc" id="L35">                                            call.getTensor(0).size(),</span>
                                             ( start, end ) -&gt;
-<span class="nc" id="L37">                                                    Activation.activate(</span>
-<span class="nc" id="L38">                                                            call.getTensor(0),</span>
+<span class="fc" id="L37">                                                    Activation.activate(</span>
+<span class="fc" id="L38">                                                            call.getTensor(0),</span>
                                                             start, end,
-<span class="nc" id="L40">                                                            _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
+<span class="fc" id="L40">                                                            _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                     )
                                     ),
                                 3

@@ -12,10 +12,10 @@ public class Power extends OperationType
 
 <span class="fc" id="L13">    private final static DefaultOperatorCreator&lt;TertiaryNDXConsumer&gt; _creator = (inputs, d)-&gt;</span>
     {
-<span class="nc" id="L15">        double[] t1_val = inputs[1].value64();</span>
-<span class="nc" id="L16">        double[] t2_val = inputs[2].value64();</span>
-<span class="nc bnc" id="L17" title="All 2 branches missed.">        if (d &lt; 0) {</span>
-<span class="nc" id="L18">            return (t0Idx, t1Idx, t2Idx) -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], t2_val[inputs[2].i_of_idx(t2Idx)]);</span>
+<span class="fc" id="L15">        double[] t1_val = inputs[1].value64();</span>
+<span class="fc" id="L16">        double[] t2_val = inputs[2].value64();</span>
+<span class="pc bpc" id="L17" title="1 of 2 branches missed.">        if (d &lt; 0) {</span>
+<span class="fc" id="L18">            return (t0Idx, t1Idx, t2Idx) -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], t2_val[inputs[2].i_of_idx(t2Idx)]);</span>
         } else {
 <span class="nc" id="L20">            return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
 <span class="nc bnc" id="L21" title="All 2 branches missed.">                if (d == 0) {</span>
@@ -142,14 +142,14 @@ public class Power extends OperationType
                         HostCPU.class,
                         new HostExecution(
                                 call -&gt;
-<span class="nc" id="L145">                                        call.getDevice().getExecutor()</span>
-<span class="nc" id="L146">                                                .threaded (</span>
-<span class="nc" id="L147">                                                        call.getTensor(0).size(),</span>
+<span class="fc" id="L145">                                        call.getDevice().getExecutor()</span>
+<span class="fc" id="L146">                                                .threaded (</span>
+<span class="fc" id="L147">                                                        call.getTensor(0).size(),</span>
                                                         ( start, end ) -&gt;
-<span class="nc" id="L149">                                                                Broadcast.broadcast (</span>
-<span class="nc" id="L150">                                                                        call.getTensor(0), call.getTensor(1), call.getTensor(2),</span>
-<span class="nc" id="L151">                                                                        call.getDerivativeIndex(), start, end,</span>
-<span class="nc" id="L152">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
+<span class="fc" id="L149">                                                                Broadcast.broadcast (</span>
+<span class="fc" id="L150">                                                                        call.getTensor(0), call.getTensor(1), call.getTensor(2),</span>
+<span class="fc" id="L151">                                                                        call.getDerivativeIndex(), start, end,</span>
+<span class="fc" id="L152">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                                 )
                                                 ),
                                 3
@@ -186,9 +186,9 @@ public class Power extends OperationType
 
 <span class="fc" id="L187">        ScalarOperatorCreator&lt;PrimaryNDXConsumer&gt; scalarCreator =</span>
                 ( inputs, value, d )-&gt;{
-<span class="fc" id="L189">                    double[] t1_val = inputs[1].value64();</span>
-<span class="pc bpc" id="L190" title="1 of 2 branches missed.">                    if (d &lt; 0) {</span>
-<span class="fc" id="L191">                        return t1Idx -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);</span>
+<span class="nc" id="L189">                    double[] t1_val = inputs[1].value64();</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">                    if (d &lt; 0) {</span>
+<span class="nc" id="L191">                        return t1Idx -&gt; Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);</span>
                     } else {
 <span class="nc bnc" id="L193" title="All 2 branches missed.">                        if(d==0){</span>
 <span class="nc" id="L194">                            return t1Idx -&gt; value*Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value-1);</span>

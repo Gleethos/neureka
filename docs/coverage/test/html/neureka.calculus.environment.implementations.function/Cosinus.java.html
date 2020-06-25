@@ -41,14 +41,14 @@ public class Cosinus extends OperationType {
                         HostCPU.class,
                         new HostExecution (
                             call  -&gt;
-<span class="nc" id="L44">                                        call.getDevice().getExecutor()</span>
-<span class="nc" id="L45">                                    .threaded (</span>
-<span class="nc" id="L46">                                        call.getTensor(0).size(),</span>
+<span class="fc" id="L44">                                        call.getDevice().getExecutor()</span>
+<span class="fc" id="L45">                                    .threaded (</span>
+<span class="fc" id="L46">                                        call.getTensor(0).size(),</span>
                                         ( start, end ) -&gt;
-<span class="nc" id="L48">                                                Activation.activate (</span>
-<span class="nc" id="L49">                                                        call.getTensor(0),</span>
+<span class="fc" id="L48">                                                Activation.activate (</span>
+<span class="fc" id="L49">                                                        call.getTensor(0),</span>
                                                         start, end,
-<span class="nc" id="L51">                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
+<span class="fc" id="L51">                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                 )
                                 ),
                             3
