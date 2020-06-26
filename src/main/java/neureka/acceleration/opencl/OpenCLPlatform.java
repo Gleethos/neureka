@@ -214,7 +214,7 @@ public class OpenCLPlatform {
                     || s.contains("input1")&&s.contains("input2")&&s.contains("input3");
             convcode = (isAdvanced) ? asAdvanced.apply(convcode) : convcode;
             code.put(preName + n, convcode);
-            return convcode;
+            return (preName + n)+"\n-----\n"+convcode;
         };
         //Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
         //Tsr t0_drain,  Tsr t1_src1,   Tsr t2_src2
@@ -224,29 +224,14 @@ public class OpenCLPlatform {
         //===========================================================================
         for(OperationType type : OperationType.ALL()) {
             if (preName.contains("activate") && type.supportsImplementation(Activation.class)) {
-                String banana = parser.apply(
-                            type.getName(),
-                            type.getImplementation(Activation.class).getAsString(),
-                            type.getImplementation(Activation.class).getDeriviationAsString()
-                    );
-                //String bunu =
-                //CLExecution exec = type.getImplementation(Activation.class).getExecution(CLExecution.class);
-
-
-                //System.out.println(banana+" \n\n "+bunu);
-                //assert banana.equals(bunu);
+                CLExecution exec = type.getImplementation(Activation.class).getExecution(CLExecution.class);
+                if(exec!=null) code.put(exec.getName(), exec.getSource());
             } else if (preName.contains("operate") && type.supportsImplementation(Operation.class)) {
-                parser.apply(
-                            type.getName(),
-                            type.getImplementation(Operation.class).getAsString(),
-                            type.getImplementation(Operation.class).getDeriviationAsString()
-                    );
+                CLExecution exec = type.getImplementation(Operation.class).getExecution(CLExecution.class);
+                if(exec!=null) code.put(exec.getName(), exec.getSource());
             } else if (preName.contains("scalar") && type.supportsImplementation(Scalarization.class)) {
-                parser.apply(
-                            type.getName(),
-                            type.getImplementation(Scalarization.class).getAsString(),
-                            type.getImplementation(Scalarization.class).getDeriviationAsString()
-                    );
+                CLExecution exec = type.getImplementation(Scalarization.class).getExecution(CLExecution.class);
+                if(exec!=null) code.put(exec.getName(), exec.getSource());
             } else if(preName.contains("broadcast") && type.supportsImplementation(Broadcast.class)){//broadcast
                 parser.apply(
                             type.getName(),
@@ -263,6 +248,9 @@ public class OpenCLPlatform {
         }
         return code;
     }
+
+
+
 
     public cl_platform_id getID() {
         return _pid;

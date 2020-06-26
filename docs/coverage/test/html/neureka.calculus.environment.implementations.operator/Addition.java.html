@@ -91,8 +91,8 @@ public class Addition extends OperationType {
 <span class="nc" id="L91">                                },</span>
                                 3,
 <span class="fc" id="L93">                                operation.getKernelSource(), // kernelSource</span>
-                                &quot;value = src1 + src2;\n&quot;,
-                                &quot;value += 1 * drain;\n&quot;,
+                                &quot;output = input1 + input2;\n&quot;,
+                                &quot;output = 1;\n&quot;,
                                 this // OperationType
                         )
                 )
@@ -201,8 +201,8 @@ public class Addition extends OperationType {
 <span class="nc" id="L201">                                },</span>
                                 3,
 <span class="fc" id="L203">                                scalarization.getKernelSource(), // kernelSource</span>
-                                &quot;value = src1 + src2;\n&quot;,
-                                &quot;value += 1 * drain;\n&quot;,
+                                &quot;output = input1 + value;\n&quot;,
+                                &quot;output = 1;\n&quot;,
                                 this // OperationType
                         )
                 )

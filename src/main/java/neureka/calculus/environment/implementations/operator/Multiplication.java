@@ -174,7 +174,8 @@ public class Multiplication extends OperationType {
                         scalarOperatorCreator
                         );
 
-        setImplementation(Scalarization.class,
+        setImplementation(
+                Scalarization.class,
                 scalarization.setExecution (
                         HostExecution.class,
                         new HostExecution(

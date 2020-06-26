@@ -72,7 +72,6 @@ public class Identity extends OperationType {
                     if (d < 0) return t1Idx -> value;
                     else return t1Idx -> value;
                 };
-
         Scalarization scalarization =
                 new Scalarization(
                         "output = value;\n",
@@ -114,9 +113,9 @@ public class Identity extends OperationType {
                                             .call(gwz);
                                 },
                                 3,
-                                typeImplementation.getKernelSource(), // kernelSource
-                                "output = input;\n", // activationSource
-                                "output = input;\n", //differentiationSource
+                                scalarization.getKernelSource(), // kernelSource
+                                "output = value;\n",
+                                "output = value;\n",
                                 this // OperationType
                         )
                 )

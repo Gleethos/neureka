@@ -91,8 +91,8 @@ public class Addition extends OperationType {
                                 },
                                 3,
                                 operation.getKernelSource(), // kernelSource
-                                "value = src1 + src2;\n",
-                                "value += 1 * drain;\n",
+                                "output = input1 + input2;\n",
+                                "output = 1;\n",
                                 this // OperationType
                         )
                 )
@@ -201,8 +201,8 @@ public class Addition extends OperationType {
                                 },
                                 3,
                                 scalarization.getKernelSource(), // kernelSource
-                                "value = src1 + src2;\n",
-                                "value += 1 * drain;\n",
+                                "output = input1 + value;\n",
+                                "output = 1;\n",
                                 this // OperationType
                         )
                 )

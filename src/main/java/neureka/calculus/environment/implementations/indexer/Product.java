@@ -9,6 +9,7 @@ import neureka.calculus.environment.executors.*;
 
 public class Product extends OperationType {
 
+
     public Product()
     {
         super (
@@ -21,13 +22,11 @@ public class Product extends OperationType {
                 true,
                 true
         );
-        setImplementation(Activation.class,
-                new Activation(
-                        "output = input;",
-                        "output = 1;",
-                        null
-                )
-        );
+
+
+        //________________
+        // BROADCASTING :
+
         DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
                 (inputs, d) ->
                 {
@@ -94,6 +93,65 @@ public class Product extends OperationType {
                         )
                 )
         );
+
+        //______________
+        // ACTIVATION :
+
+        DefaultOperatorCreator<TertiaryNDXConsumer> activationCreator =
+                (inputs, d) -> {
+                    double[] t1_val = inputs[1].value64();
+                    if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
+                    else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
+                };
+
+        Activation activation =
+                new Activation(
+                        "output = input;",
+                        "output = 1;",
+                        null
+                );
+
+        setImplementation(Activation.class,
+                activation.setExecution (
+                        HostExecution.class,
+                        new HostExecution(
+                                call  ->
+                                        call.getDevice().getExecutor()
+                                                .threaded (
+                                                        call.getTensor(0).size(),
+                                                        ( start, end ) ->
+                                                                Activation.activate (
+                                                                        call.getTensor(0),
+                                                                        start, end,
+                                                                        activationCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                )
+                                                ),
+                                3
+                        )
+                ).setExecution(
+                        CLExecution.class,
+                        new CLExecution(
+                                call -> {
+                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    call.getDevice().getKernel(call)
+                                            .pass(call.getTensor(offset))
+                                            .pass(call.getTensor(offset + 1))
+                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getDerivativeIndex())
+                                            .call(gwz);
+                                },
+                                3,
+                                activation.getKernelSource(), // kernelSource
+                                "output = input;",
+                                "output = 1;",
+                                this // OperationType
+                        )
+                )
+        );
+
+
+
 
     }
 
