@@ -178,50 +178,15 @@ public class OpenCLPlatform {
 
     private Map<String, String> _getParsedKernelsFromTemplate(String templateName, String kernelSource)
     {
-        Map<String, String> code = new HashMap<>();
         String preName = templateName.replace("template", "");
-        String source = kernelSource.replace("template", "");
-        String[] parts = source.split("//-=<OPERATION>=-//");
 
-        java.util.function.Function<String, String> correct = (s) ->
-                "//-=<PARSED>=-//\n" +
-                        s.replace("src1", "src1[_i_of_idx_on_tln(prv_src1_cfg, rank)]")
-                                .replace("src2", "src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]")
-                                .replace("input1", "src1[_i_of_i(i, prv_src1_cfg, rank)]")
-                                .replace("input2", "src2[_i_of_i(i, prv_src2_cfg, rank)]")
-                                .replace("input", "src1[_i_of_i(i, prv_src1_cfg, rank)]")
-                                .replace("output", "drn[_i_of_i(i, prv_drn_cfg, rank)]")
-                                .replace("handle", "src1[_i_of_idx_on_tln(prv_src1_cfg, rank)]")
-                                .replace("drain", "src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]")
-                                .replace("origin", "drn[di]")
-                                .replace("target", "frn[_i_of_idx_on_tln(prv_frn_cfg, rank)]") +
-                        "\n//-=<PARSED>=-//";
-
-        java.util.function.Function<String, String> asAdvanced = (s) ->
-                s.replace("target", "frn[_i_of_idx_on_tln(prv_frn2_cfg, rank)]")
-                .replace("input3","frn[_i_of_idx_on_tln(prv_frn2_cfg, rank)]")
-                        .replace("//-=<ARGUMENT>=-//", "")
-                        .replace("//-=<CONFIGURATION>=-//", "");
-
-        Parser parser = (n, f, s) -> {
-            String convcode =
-                    parts[0].replace(preName, preName + n) +
-                            correct.apply(f) +
-                            parts[2] +
-                            correct.apply(s) +
-                            parts[4];
-            boolean isAdvanced = s.contains("target")&&s.contains("drain")&&s.contains("handle")
-                    || s.contains("input1")&&s.contains("input2")&&s.contains("input3");
-            convcode = (isAdvanced) ? asAdvanced.apply(convcode) : convcode;
-            code.put(preName + n, convcode);
-            return (preName + n)+"\n-----\n"+convcode;
-        };
         //Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
         //Tsr t0_drain,  Tsr t1_src1,   Tsr t2_src2
         //drn[di], src1[_i_of_idx_on_tln(prv_src1_cfg, rank)], src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]
         //default:  src1 o src2 -> drain
         //inverse:  src1/fdrn <-src2 <- drain
         //===========================================================================
+        Map<String, String> code = new HashMap<>();
         for(OperationType type : OperationType.ALL()) {
             if (preName.contains("activate") && type.supportsImplementation(Activation.class)) {
                 CLExecution exec = type.getImplementation(Activation.class).getExecution(CLExecution.class);
@@ -233,17 +198,11 @@ public class OpenCLPlatform {
                 CLExecution exec = type.getImplementation(Scalarization.class).getExecution(CLExecution.class);
                 if(exec!=null) code.put(exec.getName(), exec.getSource());
             } else if(preName.contains("broadcast") && type.supportsImplementation(Broadcast.class)){//broadcast
-                parser.apply(
-                            type.getName(),
-                            type.getImplementation(Broadcast.class).getAsString(),
-                            type.getImplementation(Broadcast.class).getDeriviationAsString()
-                    );
+                CLExecution exec = type.getImplementation(Broadcast.class).getExecution(CLExecution.class);
+                if(exec!=null) code.put(exec.getName(), exec.getSource());
             } else if(preName.contains("convolve") && type.supportsImplementation(Convolution.class)) {
-                parser.apply(
-                            type.getName(),
-                            type.getImplementation(Convolution.class).getAsString(),
-                            type.getImplementation(Convolution.class).getDeriviationAsString()
-                    );
+                CLExecution exec = type.getImplementation(Convolution.class).getExecution(CLExecution.class);
+                if(exec!=null) code.put(exec.getName(), exec.getSource());
             }
         }
         return code;
