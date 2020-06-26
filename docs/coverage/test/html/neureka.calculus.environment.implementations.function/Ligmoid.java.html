@@ -68,15 +68,15 @@ public class Ligmoid extends OperationType {
                         CLExecution.class,
                         new CLExecution(
                                 call -&gt; {
-<span class="nc bnc" id="L71" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
-<span class="nc bnc" id="L72" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
-<span class="nc" id="L73">                                    call.getDevice().getKernel(call)</span>
-<span class="nc" id="L74">                                            .pass(call.getTensor(offset))</span>
-<span class="nc" id="L75">                                            .pass(call.getTensor(offset + 1))</span>
-<span class="nc" id="L76">                                            .pass(call.getTensor(0).rank())</span>
-<span class="nc" id="L77">                                            .pass(call.getDerivativeIndex())</span>
-<span class="nc" id="L78">                                            .call(gwz);</span>
-<span class="nc" id="L79">                                },</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
+<span class="fc" id="L73">                                    call.getDevice().getKernel(call)</span>
+<span class="fc" id="L74">                                            .pass(call.getTensor(offset))</span>
+<span class="fc" id="L75">                                            .pass(call.getTensor(offset + 1))</span>
+<span class="fc" id="L76">                                            .pass(call.getTensor(0).rank())</span>
+<span class="fc" id="L77">                                            .pass(call.getDerivativeIndex())</span>
+<span class="fc" id="L78">                                            .call(gwz);</span>
+<span class="fc" id="L79">                                },</span>
                                 3,
 <span class="fc" id="L81">                                typeImplementation.getKernelSource(), // kernelSource</span>
                                 &quot;output = \n&quot; +

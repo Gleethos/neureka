@@ -9,6 +9,9 @@ import neureka.Component;
 import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
+import neureka.acceleration.host.HostCPU;
+import neureka.acceleration.host.execution.HostExecution;
+import neureka.acceleration.opencl.execution.CLExecution;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.executors.*;
@@ -399,27 +402,14 @@ public class OpenCLDevice extends AbstractDevice
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, OperationType type)
     {
-        int offset = (tsrs[0] != null) ? 0 : 1;
-        int gwz = (tsrs[0] != null) ? tsrs[0].size() : tsrs[1].size();
-        String chosen = _platform.kernelNameOf(type);
-        cl_kernel kernel = _platform.getKernels().get(chosen);
-
-        if (type.supportsImplementation(Activation.class) && !type.isIndexer()) {
-            new KernelBuilder(kernel, _queue)
-                    .pass(tsrs[offset])
-                    .pass(tsrs[offset + 1])
-                    .pass(tsrs[0].rank())
-                    .pass(d)
-                    .call(gwz);
-        } else {
-            new KernelBuilder(kernel, _queue)
-                    .pass(tsrs[offset])
-                    .pass(tsrs[offset + 1])
-                    .pass(tsrs[offset + 2])
-                    .pass(tsrs[0].rank())
-                    .pass(d)
-                    .call(gwz);
-        }
+        OperationTypeImplementation.ExecutionCall<OpenCLDevice> call =
+                new OperationTypeImplementation.ExecutionCall<>(
+                        this,
+                        tsrs,
+                        d,
+                        type
+                );
+        call.getExecutor().getExecution(CLExecution.class).getLambda().call(call);
     }
 
 

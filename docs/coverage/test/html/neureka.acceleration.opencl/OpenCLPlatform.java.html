@@ -121,42 +121,70 @@ public class OpenCLPlatform {
         }
 <span class="fc" id="L122">        ArrayList&lt;String&gt; names = new ArrayList&lt;&gt;();</span>
 <span class="fc" id="L123">        ArrayList&lt;String&gt; sources = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L124" title="All 2 branches covered.">        for (int i = 0; i &lt; fileNames.length; i++) {</span>
-<span class="fc" id="L125">            String kernelSource = templateSources.get(i);</span>
-<span class="fc" id="L126">            kernelSource = kernelSource.replace(</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        for (int i = 0; i &lt; fileNames.length; i++)</span>
+        {
+<span class="fc" id="L126">            String kernelSource = templateSources.get(i);</span>
+<span class="fc" id="L127">            kernelSource = kernelSource.replace(</span>
                     &quot;Neureka.instance().settings().indexing().REVERSE_INDEX_TRANSLATION&quot;,
-<span class="fc bfc" id="L128" title="All 2 branches covered.">                    (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) ? &quot;true&quot; : &quot;false&quot;</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">                    (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) ? &quot;true&quot; : &quot;false&quot;</span>
             );
-<span class="fc" id="L130">            boolean templateFound = false;</span>
-<span class="fc bfc" id="L131" title="All 2 branches covered.">            if (kernelSource.contains(&quot;__kernel&quot;)) {</span>
-<span class="fc" id="L132">                String[] parts = kernelSource.split(&quot;__kernel&quot;)[1].split(&quot;\\(&quot;)[0].split(&quot; &quot;);</span>
+<span class="fc" id="L131">            boolean templateFound = false;</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">            if (kernelSource.contains(&quot;__kernel&quot;)) {</span>
+<span class="fc" id="L133">                String[] parts = kernelSource.split(&quot;__kernel&quot;)[1].split(&quot;\\(&quot;)[0].split(&quot; &quot;);</span>
 
-<span class="fc" id="L134">                templateFound = parts[parts.length - 1].contains(&quot;template&quot;);</span>
-<span class="pc bpc" id="L135" title="1 of 2 branches missed.">                if (!templateFound) {</span>
-<span class="nc" id="L136">                    names.add(parts[parts.length - 1]);</span>
+<span class="fc" id="L135">                templateFound = parts[parts.length - 1].contains(&quot;template&quot;);</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">                if (!templateFound) {</span>
+<span class="nc" id="L137">                    names.add(parts[parts.length - 1]);</span>
                 } else {
-<span class="fc" id="L138">                    _getParsedKernelsFromTemplate(parts[parts.length - 1], kernelSource)</span>
-<span class="fc" id="L139">                            .forEach((n, s) -&gt; {</span>
-<span class="fc" id="L140">                                names.add(n);</span>
-<span class="fc" id="L141">                                sources.add(s);</span>
-<span class="fc" id="L142">                            }</span>
+
+<span class="fc" id="L140">                    String preName = parts[parts.length - 1].replace(&quot;template&quot;, &quot;&quot;);</span>
+
+                    // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0
+                    // Tsr t0_drain,  Tsr t1_src1,   Tsr t2_src2
+                    // drn[di], src1[_i_of_idx_on_tln(prv_src1_cfg, rank)], src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]
+                    // default:  src1 o src2 -&gt; drain
+                    // inverse:  src1/fdrn &lt;- src2 &lt;- drain
+                    //===========================================================================
+<span class="fc" id="L148">                    Map&lt;String, String&gt; code = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">                    for(OperationType type : OperationType.ALL()) {</span>
+<span class="fc bfc" id="L150" title="All 4 branches covered.">                        if (preName.contains(&quot;activate&quot;) &amp;&amp; type.supportsImplementation(Activation.class)) {</span>
+<span class="fc" id="L151">                            CLExecution exec = type.getImplementation(Activation.class).getExecution(CLExecution.class);</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">                            if(exec!=null) code.put(exec.getName(), exec.getSource());</span>
+<span class="fc bfc" id="L153" title="All 4 branches covered.">                        } else if (preName.contains(&quot;operate&quot;) &amp;&amp; type.supportsImplementation(Operation.class)) {</span>
+<span class="fc" id="L154">                            CLExecution exec = type.getImplementation(Operation.class).getExecution(CLExecution.class);</span>
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">                            if(exec!=null) code.put(exec.getName(), exec.getSource());</span>
+<span class="fc bfc" id="L156" title="All 4 branches covered.">                        } else if (preName.contains(&quot;scalar&quot;) &amp;&amp; type.supportsImplementation(Scalarization.class)) {</span>
+<span class="fc" id="L157">                            CLExecution exec = type.getImplementation(Scalarization.class).getExecution(CLExecution.class);</span>
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">                            if(exec!=null) code.put(exec.getName(), exec.getSource());</span>
+<span class="fc bfc" id="L159" title="All 4 branches covered.">                        } else if(preName.contains(&quot;broadcast&quot;) &amp;&amp; type.supportsImplementation(Broadcast.class)){//broadcast</span>
+<span class="fc" id="L160">                            CLExecution exec = type.getImplementation(Broadcast.class).getExecution(CLExecution.class);</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">                            if(exec!=null) code.put(exec.getName(), exec.getSource());</span>
+<span class="fc bfc" id="L162" title="All 4 branches covered.">                        } else if(preName.contains(&quot;convolve&quot;) &amp;&amp; type.supportsImplementation(Convolution.class)) {</span>
+<span class="fc" id="L163">                            CLExecution exec = type.getImplementation(Convolution.class).getExecution(CLExecution.class);</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">                            if(exec!=null) code.put(exec.getName(), exec.getSource());</span>
+                        }
+                    }
+<span class="fc" id="L167">                    code.forEach((n, s) -&gt; {</span>
+<span class="fc" id="L168">                                names.add(n);</span>
+<span class="fc" id="L169">                                sources.add(s);</span>
+<span class="fc" id="L170">                            }</span>
                     );
                 }
             }
-<span class="fc bfc" id="L146" title="All 2 branches covered.">            if (!templateFound) sources.add(kernelSource);</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">            if (!templateFound) sources.add(kernelSource);</span>
         }
 
         // Create the program
-<span class="fc" id="L150">        cl_program cpProgram = clCreateProgramWithSource(</span>
+<span class="fc" id="L178">        cl_program cpProgram = clCreateProgramWithSource(</span>
                 _context,
-<span class="fc" id="L152">                sources.size(),</span>
-<span class="fc" id="L153">                sources.toArray(new String[0]),</span>
+<span class="fc" id="L180">                sources.size(),</span>
+<span class="fc" id="L181">                sources.toArray(new String[0]),</span>
                 null,
                 null
         );
 
         // Build the program
-<span class="fc" id="L159">        int err = clBuildProgram(</span>
+<span class="fc" id="L187">        int err = clBuildProgram(</span>
                 cpProgram,
                 devicesArray.length,
                 devicesArray,
@@ -167,102 +195,66 @@ public class OpenCLPlatform {
         //TODO: check compilation errors!
 
         // Create the kernels
-<span class="fc bfc" id="L170" title="All 2 branches covered.">        for (String name : names) {</span>
-<span class="pc bpc" id="L171" title="1 of 2 branches missed.">            if (name != null) _kernels.put(name, clCreateKernel(cpProgram, name, null));</span>
-<span class="fc" id="L172">        }</span>
-<span class="fc" id="L173">    }</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">        for (String name : names) {</span>
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">            if (name != null) _kernels.put(name, clCreateKernel(cpProgram, name, null));</span>
+<span class="fc" id="L200">        }</span>
+<span class="fc" id="L201">    }</span>
 
     private interface Parser {
         String apply(String name, String first, String second);
     }
 
-    private Map&lt;String, String&gt; _getParsedKernelsFromTemplate(String templateName, String kernelSource)
-    {
-<span class="fc" id="L181">        Map&lt;String, String&gt; code = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L182">        String preName = templateName.replace(&quot;template&quot;, &quot;&quot;);</span>
-
-        //Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0
-        //Tsr t0_drain,  Tsr t1_src1,   Tsr t2_src2
-        //drn[di], src1[_i_of_idx_on_tln(prv_src1_cfg, rank)], src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]
-        //default:  src1 o src2 -&gt; drain
-        //inverse:  src1/fdrn &lt;-src2 &lt;- drain
-        //===========================================================================
-<span class="fc bfc" id="L190" title="All 2 branches covered.">        for(OperationType type : OperationType.ALL()) {</span>
-<span class="fc bfc" id="L191" title="All 4 branches covered.">            if (preName.contains(&quot;activate&quot;) &amp;&amp; type.supportsImplementation(Activation.class)) {</span>
-<span class="fc" id="L192">                CLExecution exec = type.getImplementation(Activation.class).getExecution(CLExecution.class);</span>
-<span class="fc bfc" id="L193" title="All 2 branches covered.">                if(exec!=null) code.put(exec.getName(), exec.getSource());</span>
-<span class="fc bfc" id="L194" title="All 4 branches covered.">            } else if (preName.contains(&quot;operate&quot;) &amp;&amp; type.supportsImplementation(Operation.class)) {</span>
-<span class="fc" id="L195">                CLExecution exec = type.getImplementation(Operation.class).getExecution(CLExecution.class);</span>
-<span class="pc bpc" id="L196" title="1 of 2 branches missed.">                if(exec!=null) code.put(exec.getName(), exec.getSource());</span>
-<span class="fc bfc" id="L197" title="All 4 branches covered.">            } else if (preName.contains(&quot;scalar&quot;) &amp;&amp; type.supportsImplementation(Scalarization.class)) {</span>
-<span class="fc" id="L198">                CLExecution exec = type.getImplementation(Scalarization.class).getExecution(CLExecution.class);</span>
-<span class="pc bpc" id="L199" title="1 of 2 branches missed.">                if(exec!=null) code.put(exec.getName(), exec.getSource());</span>
-<span class="fc bfc" id="L200" title="All 4 branches covered.">            } else if(preName.contains(&quot;broadcast&quot;) &amp;&amp; type.supportsImplementation(Broadcast.class)){//broadcast</span>
-<span class="fc" id="L201">                CLExecution exec = type.getImplementation(Broadcast.class).getExecution(CLExecution.class);</span>
-<span class="fc bfc" id="L202" title="All 2 branches covered.">                if(exec!=null) code.put(exec.getName(), exec.getSource());</span>
-<span class="fc bfc" id="L203" title="All 4 branches covered.">            } else if(preName.contains(&quot;convolve&quot;) &amp;&amp; type.supportsImplementation(Convolution.class)) {</span>
-<span class="fc" id="L204">                CLExecution exec = type.getImplementation(Convolution.class).getExecution(CLExecution.class);</span>
-<span class="fc bfc" id="L205" title="All 2 branches covered.">                if(exec!=null) code.put(exec.getName(), exec.getSource());</span>
-            }
-        }
-<span class="fc" id="L208">        return code;</span>
-    }
-
-
-
-
     public cl_platform_id getID() {
-<span class="nc" id="L215">        return _pid;</span>
+<span class="nc" id="L208">        return _pid;</span>
     }
 
     public List&lt;OpenCLDevice&gt; getDevices() {
-<span class="fc" id="L219">        List&lt;OpenCLDevice&gt; devices = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L220">        _id_device.forEach((k, v)-&gt; devices.add(v));</span>
-<span class="fc" id="L221">        return devices;</span>
-        //return _devices;
+<span class="fc" id="L212">        List&lt;OpenCLDevice&gt; devices = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L213">        _id_device.forEach((k, v)-&gt; devices.add(v));</span>
+<span class="fc" id="L214">        return devices;</span>
     }
 
     public boolean has(cl_device_id did){
-<span class="fc" id="L226">        return _id_device.containsKey(did);</span>
+<span class="fc" id="L218">        return _id_device.containsKey(did);</span>
     }
     public OpenCLDevice get(cl_device_id did){
-<span class="fc" id="L229">        return _id_device.get(did);</span>
+<span class="fc" id="L221">        return _id_device.get(did);</span>
     }
     public void put(cl_device_id did, OpenCLDevice device){
-<span class="fc" id="L232">       _id_device.put(did, device);</span>
-<span class="fc" id="L233">    }</span>
+<span class="fc" id="L224">       _id_device.put(did, device);</span>
+<span class="fc" id="L225">    }</span>
 
 
     public Map&lt;String, cl_kernel&gt; getKernels() {
-<span class="fc" id="L237">        return _kernels;</span>
+<span class="fc" id="L229">        return _kernels;</span>
     }
 
     public cl_context getContext() {
-<span class="fc" id="L241">        return _context;</span>
+<span class="fc" id="L233">        return _context;</span>
     }
 
     public static List&lt;OpenCLPlatform&gt; PLATFORMS() {
-<span class="fc" id="L245">        return _setup.PLATFORMS;</span>
+<span class="fc" id="L237">        return _setup.PLATFORMS;</span>
     }
 
     private static class _setup
     {
-<span class="fc" id="L250">        public static List&lt;OpenCLPlatform&gt; PLATFORMS = findAllPlatforms();</span>
+<span class="fc" id="L242">        public static List&lt;OpenCLPlatform&gt; PLATFORMS = findAllPlatforms();</span>
 
         public static List&lt;OpenCLPlatform&gt; findAllPlatforms() {
             // Obtain the number of platforms
-<span class="fc" id="L254">            int[] numPlatforms = new int[1];</span>
-<span class="fc" id="L255">            clGetPlatformIDs(0, null, numPlatforms);</span>
+<span class="fc" id="L246">            int[] numPlatforms = new int[1];</span>
+<span class="fc" id="L247">            clGetPlatformIDs(0, null, numPlatforms);</span>
 
             // Obtain the platform IDs
-<span class="fc" id="L258">            cl_platform_id[] platforms = new cl_platform_id[numPlatforms[0]];</span>
-<span class="fc" id="L259">            clGetPlatformIDs(platforms.length, platforms, null);</span>
+<span class="fc" id="L250">            cl_platform_id[] platforms = new cl_platform_id[numPlatforms[0]];</span>
+<span class="fc" id="L251">            clGetPlatformIDs(platforms.length, platforms, null);</span>
 
-<span class="fc" id="L261">            List&lt;OpenCLPlatform&gt; list = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L262" title="All 2 branches covered.">            for (cl_platform_id id : platforms) {</span>
-<span class="fc" id="L263">                list.add(new OpenCLPlatform(id));</span>
+<span class="fc" id="L253">            List&lt;OpenCLPlatform&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L254" title="All 2 branches covered.">            for (cl_platform_id id : platforms) {</span>
+<span class="fc" id="L255">                list.add(new OpenCLPlatform(id));</span>
             }
-<span class="fc" id="L265">            return list;</span>
+<span class="fc" id="L257">            return list;</span>
         }
 
     }

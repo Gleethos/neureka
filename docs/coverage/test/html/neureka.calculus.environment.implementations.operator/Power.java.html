@@ -100,16 +100,16 @@ public class Power extends OperationType
                         CLExecution.class,
                         new CLExecution(
                                 call -&gt; {
-<span class="nc bnc" id="L103" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
-<span class="nc bnc" id="L104" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
-<span class="nc" id="L105">                                    call.getDevice().getKernel(call)</span>
-<span class="nc" id="L106">                                            .pass(call.getTensor(offset))</span>
-<span class="nc" id="L107">                                            .pass(call.getTensor(offset + 1))</span>
-<span class="nc" id="L108">                                            .pass(call.getTensor(offset + 2))</span>
-<span class="nc" id="L109">                                            .pass(call.getTensor(0).rank())</span>
-<span class="nc" id="L110">                                            .pass(call.getDerivativeIndex())</span>
-<span class="nc" id="L111">                                            .call(gwz);</span>
-<span class="nc" id="L112">                                },</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
+<span class="fc" id="L105">                                    call.getDevice().getKernel(call)</span>
+<span class="fc" id="L106">                                            .pass(call.getTensor(offset))</span>
+<span class="fc" id="L107">                                            .pass(call.getTensor(offset + 1))</span>
+<span class="fc" id="L108">                                            .pass(call.getTensor(offset + 2))</span>
+<span class="fc" id="L109">                                            .pass(call.getTensor(0).rank())</span>
+<span class="fc" id="L110">                                            .pass(call.getDerivativeIndex())</span>
+<span class="fc" id="L111">                                            .call(gwz);</span>
+<span class="fc" id="L112">                                },</span>
                                 3,
 <span class="fc" id="L114">                                operation.getKernelSource(), // kernelSource</span>
                                 &quot;output = pow(input1, input2);&quot;,

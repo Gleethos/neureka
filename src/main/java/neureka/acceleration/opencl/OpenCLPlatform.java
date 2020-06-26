@@ -121,7 +121,8 @@ public class OpenCLPlatform {
         }
         ArrayList<String> names = new ArrayList<>();
         ArrayList<String> sources = new ArrayList<>();
-        for (int i = 0; i < fileNames.length; i++) {
+        for (int i = 0; i < fileNames.length; i++)
+        {
             String kernelSource = templateSources.get(i);
             kernelSource = kernelSource.replace(
                     "Neureka.instance().settings().indexing().REVERSE_INDEX_TRANSLATION",
@@ -135,8 +136,35 @@ public class OpenCLPlatform {
                 if (!templateFound) {
                     names.add(parts[parts.length - 1]);
                 } else {
-                    _getParsedKernelsFromTemplate(parts[parts.length - 1], kernelSource)
-                            .forEach((n, s) -> {
+
+                    String preName = parts[parts.length - 1].replace("template", "");
+
+                    // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
+                    // Tsr t0_drain,  Tsr t1_src1,   Tsr t2_src2
+                    // drn[di], src1[_i_of_idx_on_tln(prv_src1_cfg, rank)], src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]
+                    // default:  src1 o src2 -> drain
+                    // inverse:  src1/fdrn <- src2 <- drain
+                    //===========================================================================
+                    Map<String, String> code = new HashMap<>();
+                    for(OperationType type : OperationType.ALL()) {
+                        if (preName.contains("activate") && type.supportsImplementation(Activation.class)) {
+                            CLExecution exec = type.getImplementation(Activation.class).getExecution(CLExecution.class);
+                            if(exec!=null) code.put(exec.getName(), exec.getSource());
+                        } else if (preName.contains("operate") && type.supportsImplementation(Operation.class)) {
+                            CLExecution exec = type.getImplementation(Operation.class).getExecution(CLExecution.class);
+                            if(exec!=null) code.put(exec.getName(), exec.getSource());
+                        } else if (preName.contains("scalar") && type.supportsImplementation(Scalarization.class)) {
+                            CLExecution exec = type.getImplementation(Scalarization.class).getExecution(CLExecution.class);
+                            if(exec!=null) code.put(exec.getName(), exec.getSource());
+                        } else if(preName.contains("broadcast") && type.supportsImplementation(Broadcast.class)){//broadcast
+                            CLExecution exec = type.getImplementation(Broadcast.class).getExecution(CLExecution.class);
+                            if(exec!=null) code.put(exec.getName(), exec.getSource());
+                        } else if(preName.contains("convolve") && type.supportsImplementation(Convolution.class)) {
+                            CLExecution exec = type.getImplementation(Convolution.class).getExecution(CLExecution.class);
+                            if(exec!=null) code.put(exec.getName(), exec.getSource());
+                        }
+                    }
+                    code.forEach((n, s) -> {
                                 names.add(n);
                                 sources.add(s);
                             }
@@ -176,41 +204,6 @@ public class OpenCLPlatform {
         String apply(String name, String first, String second);
     }
 
-    private Map<String, String> _getParsedKernelsFromTemplate(String templateName, String kernelSource)
-    {
-        String preName = templateName.replace("template", "");
-
-        //Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
-        //Tsr t0_drain,  Tsr t1_src1,   Tsr t2_src2
-        //drn[di], src1[_i_of_idx_on_tln(prv_src1_cfg, rank)], src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]
-        //default:  src1 o src2 -> drain
-        //inverse:  src1/fdrn <-src2 <- drain
-        //===========================================================================
-        Map<String, String> code = new HashMap<>();
-        for(OperationType type : OperationType.ALL()) {
-            if (preName.contains("activate") && type.supportsImplementation(Activation.class)) {
-                CLExecution exec = type.getImplementation(Activation.class).getExecution(CLExecution.class);
-                if(exec!=null) code.put(exec.getName(), exec.getSource());
-            } else if (preName.contains("operate") && type.supportsImplementation(Operation.class)) {
-                CLExecution exec = type.getImplementation(Operation.class).getExecution(CLExecution.class);
-                if(exec!=null) code.put(exec.getName(), exec.getSource());
-            } else if (preName.contains("scalar") && type.supportsImplementation(Scalarization.class)) {
-                CLExecution exec = type.getImplementation(Scalarization.class).getExecution(CLExecution.class);
-                if(exec!=null) code.put(exec.getName(), exec.getSource());
-            } else if(preName.contains("broadcast") && type.supportsImplementation(Broadcast.class)){//broadcast
-                CLExecution exec = type.getImplementation(Broadcast.class).getExecution(CLExecution.class);
-                if(exec!=null) code.put(exec.getName(), exec.getSource());
-            } else if(preName.contains("convolve") && type.supportsImplementation(Convolution.class)) {
-                CLExecution exec = type.getImplementation(Convolution.class).getExecution(CLExecution.class);
-                if(exec!=null) code.put(exec.getName(), exec.getSource());
-            }
-        }
-        return code;
-    }
-
-
-
-
     public cl_platform_id getID() {
         return _pid;
     }
@@ -219,7 +212,6 @@ public class OpenCLPlatform {
         List<OpenCLDevice> devices = new ArrayList<>();
         _id_device.forEach((k, v)-> devices.add(v));
         return devices;
-        //return _devices;
     }
 
     public boolean has(cl_device_id did){
