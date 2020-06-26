@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OpenCLPlatform.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.acceleration.opencl</a> &gt; <span class="el_source">OpenCLPlatform.java</span></div><h1>OpenCLPlatform.java</h1><pre class="source lang-java linenums">package neureka.acceleration.opencl;
 
 import neureka.Neureka;
-import neureka.acceleration.opencl.execution.CLExecution;
+import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.calculus.environment.OperationType;
 import org.jocl.*;
 import java.util.*;
@@ -148,20 +148,20 @@ public class OpenCLPlatform {
 <span class="fc" id="L148">                    Map&lt;String, String&gt; code = new HashMap&lt;&gt;();</span>
 <span class="fc bfc" id="L149" title="All 2 branches covered.">                    for(OperationType type : OperationType.ALL()) {</span>
 <span class="fc bfc" id="L150" title="All 4 branches covered.">                        if (preName.contains(&quot;activate&quot;) &amp;&amp; type.supportsImplementation(Activation.class)) {</span>
-<span class="fc" id="L151">                            CLExecution exec = type.getImplementation(Activation.class).getExecution(CLExecution.class);</span>
-<span class="fc bfc" id="L152" title="All 2 branches covered.">                            if(exec!=null) code.put(exec.getName(), exec.getSource());</span>
+<span class="fc" id="L151">                            CLExecutor exec = type.getImplementation(Activation.class).getExecution(CLExecutor.class);</span>
+<span class="pc bpc" id="L152" title="1 of 4 branches missed.">                            if(exec!=null &amp;&amp; exec.getSource()!=null) code.put(exec.getName(), exec.getSource());</span>
 <span class="fc bfc" id="L153" title="All 4 branches covered.">                        } else if (preName.contains(&quot;operate&quot;) &amp;&amp; type.supportsImplementation(Operation.class)) {</span>
-<span class="fc" id="L154">                            CLExecution exec = type.getImplementation(Operation.class).getExecution(CLExecution.class);</span>
-<span class="pc bpc" id="L155" title="1 of 2 branches missed.">                            if(exec!=null) code.put(exec.getName(), exec.getSource());</span>
+<span class="fc" id="L154">                            CLExecutor exec = type.getImplementation(Operation.class).getExecution(CLExecutor.class);</span>
+<span class="pc bpc" id="L155" title="2 of 4 branches missed.">                            if(exec!=null &amp;&amp; exec.getSource()!=null) code.put(exec.getName(), exec.getSource());</span>
 <span class="fc bfc" id="L156" title="All 4 branches covered.">                        } else if (preName.contains(&quot;scalar&quot;) &amp;&amp; type.supportsImplementation(Scalarization.class)) {</span>
-<span class="fc" id="L157">                            CLExecution exec = type.getImplementation(Scalarization.class).getExecution(CLExecution.class);</span>
-<span class="pc bpc" id="L158" title="1 of 2 branches missed.">                            if(exec!=null) code.put(exec.getName(), exec.getSource());</span>
+<span class="fc" id="L157">                            CLExecutor exec = type.getImplementation(Scalarization.class).getExecution(CLExecutor.class);</span>
+<span class="pc bpc" id="L158" title="2 of 4 branches missed.">                            if(exec!=null &amp;&amp; exec.getSource()!=null) code.put(exec.getName(), exec.getSource());</span>
 <span class="fc bfc" id="L159" title="All 4 branches covered.">                        } else if(preName.contains(&quot;broadcast&quot;) &amp;&amp; type.supportsImplementation(Broadcast.class)){//broadcast</span>
-<span class="fc" id="L160">                            CLExecution exec = type.getImplementation(Broadcast.class).getExecution(CLExecution.class);</span>
-<span class="fc bfc" id="L161" title="All 2 branches covered.">                            if(exec!=null) code.put(exec.getName(), exec.getSource());</span>
+<span class="fc" id="L160">                            CLExecutor exec = type.getImplementation(Broadcast.class).getExecution(CLExecutor.class);</span>
+<span class="pc bpc" id="L161" title="1 of 4 branches missed.">                            if(exec!=null &amp;&amp; exec.getSource()!=null) code.put(exec.getName(), exec.getSource());</span>
 <span class="fc bfc" id="L162" title="All 4 branches covered.">                        } else if(preName.contains(&quot;convolve&quot;) &amp;&amp; type.supportsImplementation(Convolution.class)) {</span>
-<span class="fc" id="L163">                            CLExecution exec = type.getImplementation(Convolution.class).getExecution(CLExecution.class);</span>
-<span class="fc bfc" id="L164" title="All 2 branches covered.">                            if(exec!=null) code.put(exec.getName(), exec.getSource());</span>
+<span class="fc" id="L163">                            CLExecutor exec = type.getImplementation(Convolution.class).getExecution(CLExecutor.class);</span>
+<span class="pc bpc" id="L164" title="1 of 4 branches missed.">                            if(exec!=null &amp;&amp; exec.getSource()!=null) code.put(exec.getName(), exec.getSource());</span>
                         }
                     }
 <span class="fc" id="L167">                    code.forEach((n, s) -&gt; {</span>

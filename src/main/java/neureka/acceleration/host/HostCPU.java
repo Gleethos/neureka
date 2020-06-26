@@ -4,7 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
-import neureka.acceleration.host.execution.HostExecution;
+import neureka.acceleration.host.execution.HostExecutor;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.executors.*;
@@ -47,7 +47,7 @@ public class HostCPU extends AbstractDevice
                         d,
                         type
                 );
-        call.getExecutor().getExecution(HostExecution.class).getLambda().call(call);
+        call.getExecutor().getExecution(HostExecutor.class).getExecution().call(call);
     }
 
     @Override

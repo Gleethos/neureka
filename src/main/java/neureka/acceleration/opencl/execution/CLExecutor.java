@@ -2,15 +2,15 @@ package neureka.acceleration.opencl.execution;
 
 import neureka.Neureka;
 import neureka.acceleration.opencl.OpenCLDevice;
+import neureka.calculus.environment.ExecutorFor;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.Execution;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class CLExecution implements Execution<OpenCLDevice>
+public class CLExecutor implements ExecutorFor<OpenCLDevice>
 {
-    private final java.util.function.Function<String, String> correct =
+    private final java.util.function.Function<String, String> _aliasSwapper =
             s ->
             "//-=<PARSED>=-//\n" +
                     s.replace("src1", "src1[_i_of_idx_on_tln(prv_src1_cfg, rank)]")
@@ -32,11 +32,11 @@ public class CLExecution implements Execution<OpenCLDevice>
                     .replace("//-=<ARGUMENT>=-//", "")
                     .replace("//-=<CONFIGURATION>=-//", "");
 
-    String _source;
-    String _name;
+    private String _source;
+    private String _name;
 
-    private ExecutionLambda _lambda;
-    private int _arity;
+    private final ExecutionOn<OpenCLDevice> _lambda;
+    private final int _arity;
 
     public String getSource(){
         return _source;
@@ -46,7 +46,7 @@ public class CLExecution implements Execution<OpenCLDevice>
     }
 
     @Override
-    public ExecutionLambda<OpenCLDevice> getLambda() {
+    public ExecutionOn<OpenCLDevice> getExecution() {
         return _lambda;
     }
 
@@ -55,10 +55,17 @@ public class CLExecution implements Execution<OpenCLDevice>
         return _arity;
     }
 
-    public CLExecution(
-            ExecutionLambda<OpenCLDevice> lambda,
+    public CLExecutor(
+            ExecutionOn<OpenCLDevice> lambda,
+            int arity
+    ) {
+        _lambda = lambda;
+        _arity = arity;
+    }
+
+    public CLExecutor(
+            ExecutionOn<OpenCLDevice> lambda,
             int arity,
-            //String templateName,
             String kernelSource,
             String activationSource,
             String differentiationSource,
@@ -89,8 +96,6 @@ public class CLExecution implements Execution<OpenCLDevice>
                 _source = map.values().toArray(new String[0])[0];
             }
         }
-        //if (!templateFound) sources.add(kernelSource);
-        //assert _name.equals(templateName);
     }
 
     private interface Parser {
@@ -112,9 +117,9 @@ public class CLExecution implements Execution<OpenCLDevice>
         Parser parser = (n, f, s) -> {
             String convcode =
                     parts[0].replace(preName, preName + n) +
-                            correct.apply(f) +
+                            _aliasSwapper.apply(f) +
                             parts[2] +
-                            correct.apply(s) +
+                            _aliasSwapper.apply(s) +
                             parts[4];
             boolean isAdvanced = s.contains("target")&&s.contains("drain")&&s.contains("handle")
                     || s.contains("input1")&&s.contains("input2")&&s.contains("input3");

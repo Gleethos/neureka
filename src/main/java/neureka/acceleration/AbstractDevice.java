@@ -73,14 +73,9 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
     {
         OperationTypeImplementation.ExecutionCall call = new OperationTypeImplementation.ExecutionCall(this, tsrs, d, type);
         OperationTypeImplementation<Object> executor = call.getExecutor();
-        assert executor != null;
-
-        Tsr[] enclosed = new Tsr[1];
         executor.reduce (
                 call,
-                c -> {
-                    _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType());
-                }
+                c -> _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType())
         );
         return call.getTensors()[0];
     }

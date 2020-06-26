@@ -1,35 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Tanh.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.environment.implementations.function</a> &gt; <span class="el_source">Tanh.java</span></div><h1>Tanh.java</h1><pre class="source lang-java linenums">package neureka.calculus.environment.implementations.function;
 
-import neureka.acceleration.host.HostCPU;
-import neureka.acceleration.host.execution.HostExecution;
-import neureka.acceleration.opencl.OpenCLDevice;
-import neureka.acceleration.opencl.execution.CLExecution;
+import neureka.acceleration.host.execution.HostExecutor;
+import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.executors.*;
 
 public class Tanh extends OperationType
 {
 
-<span class="fc" id="L13">    private DefaultOperatorCreator&lt;TertiaryNDXConsumer&gt; _creator =</span>
+<span class="fc" id="L11">    private DefaultOperatorCreator&lt;TertiaryNDXConsumer&gt; _creator =</span>
             ( inputs, d ) -&gt;
             {
-<span class="fc" id="L16">                double[] t1_val = inputs[1].value64();</span>
-<span class="fc bfc" id="L17" title="All 2 branches covered.">                if (d &lt; 0) {</span>
-<span class="fc" id="L18">                    return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc" id="L19">                        double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="fc" id="L20">                        return input / Math.pow(1 + Math.pow(input, 2), 0.5);</span>
+<span class="fc" id="L14">                double[] t1_val = inputs[1].value64();</span>
+<span class="fc bfc" id="L15" title="All 2 branches covered.">                if (d &lt; 0) {</span>
+<span class="fc" id="L16">                    return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L17">                        double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="fc" id="L18">                        return input / Math.pow(1 + Math.pow(input, 2), 0.5);</span>
                     };
                 } else {
-<span class="fc" id="L23">                    return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc" id="L24">                        double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="fc" id="L25">                        return 1 - Math.pow(input / Math.pow(1 + Math.pow(input, 2), 0.5), 2);</span>
+<span class="fc" id="L21">                    return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc" id="L22">                        double input = t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="fc" id="L23">                        return 1 - Math.pow(input / Math.pow(1 + Math.pow(input, 2), 0.5), 2);</span>
                     };
                 }
             };
 
     public Tanh()
     {
-<span class="fc" id="L32">        super (</span>
+<span class="fc" id="L30">        super (</span>
                 &quot;tanh&quot;,
                 &quot;tanh&quot;,
                 1,
@@ -39,46 +37,46 @@ public class Tanh extends OperationType
                 true,
                 true
         );
-<span class="fc" id="L42">        Activation typeImplementation =</span>
+<span class="fc" id="L40">        Activation typeImplementation =</span>
             new Activation (
                 &quot;output = input/pow(1+pow(input, 2.0f), 0.5f);\n&quot;,
                 &quot;output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n&quot;,
                 _creator
             );
 
-<span class="fc" id="L49">        setImplementation(</span>
+<span class="fc" id="L47">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L51">                typeImplementation.setExecution (</span>
-                        HostExecution.class,
-                        new HostExecution(
+<span class="fc" id="L49">                typeImplementation.setExecution (</span>
+                        HostExecutor.class,
+                        new HostExecutor(
                                 call  -&gt;
-<span class="fc" id="L55">                                        call.getDevice().getExecutor()</span>
-<span class="fc" id="L56">                                                .threaded (</span>
-<span class="fc" id="L57">                                                        call.getTensor(0).size(),</span>
+<span class="fc" id="L53">                                        call.getDevice().getExecutor()</span>
+<span class="fc" id="L54">                                                .threaded (</span>
+<span class="fc" id="L55">                                                        call.getTensor(0).size(),</span>
                                                         ( start, end ) -&gt;
-<span class="fc" id="L59">                                                                Activation.activate (</span>
-<span class="fc" id="L60">                                                                        call.getTensor(0),</span>
+<span class="fc" id="L57">                                                                Activation.activate (</span>
+<span class="fc" id="L58">                                                                        call.getTensor(0),</span>
                                                                         start, end,
-<span class="fc" id="L62">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
+<span class="fc" id="L60">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                                 )
                                                 ),
                                 3
                         )
-<span class="fc" id="L67">                ).setExecution(</span>
-                        CLExecution.class,
-                        new CLExecution(
+<span class="fc" id="L65">                ).setExecution(</span>
+                        CLExecutor.class,
+                        new CLExecutor(
                                 call -&gt; {
-<span class="nc bnc" id="L71" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
-<span class="nc bnc" id="L72" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
-<span class="nc" id="L73">                                    call.getDevice().getKernel(call)</span>
-<span class="nc" id="L74">                                            .pass(call.getTensor(offset))</span>
-<span class="nc" id="L75">                                            .pass(call.getTensor(offset + 1))</span>
-<span class="nc" id="L76">                                            .pass(call.getTensor(0).rank())</span>
-<span class="nc" id="L77">                                            .pass(call.getDerivativeIndex())</span>
-<span class="nc" id="L78">                                            .call(gwz);</span>
-<span class="nc" id="L79">                                },</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
+<span class="nc" id="L71">                                    call.getDevice().getKernel(call)</span>
+<span class="nc" id="L72">                                            .pass(call.getTensor(offset))</span>
+<span class="nc" id="L73">                                            .pass(call.getTensor(offset + 1))</span>
+<span class="nc" id="L74">                                            .pass(call.getTensor(0).rank())</span>
+<span class="nc" id="L75">                                            .pass(call.getDerivativeIndex())</span>
+<span class="nc" id="L76">                                            .call(gwz);</span>
+<span class="nc" id="L77">                                },</span>
                                 3,
-<span class="fc" id="L81">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L79">                                typeImplementation.getKernelSource(), // kernelSource</span>
                                 &quot;output = input/pow(1+pow(input, 2.0f), 0.5f);\n&quot;,
                                 &quot;output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n&quot;,
                                 this // OperationType
@@ -89,7 +87,7 @@ public class Tanh extends OperationType
 
 
 
-<span class="fc" id="L92">    }</span>
+<span class="fc" id="L90">    }</span>
 
 
 

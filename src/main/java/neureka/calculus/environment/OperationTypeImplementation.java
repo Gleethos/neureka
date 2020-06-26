@@ -42,15 +42,11 @@ public interface OperationTypeImplementation<FinalType>
         public int getDerivativeIndex() {return _d;}
         public OperationType getType() {return _type;}
         public OperationTypeImplementation getExecutor() { return _type.executorOf(this); }
-        //public void callImplementation(){
-        //    OperationTypeImplementation impl = getExecutor();
-        //    impl.callImplementationFor(this);
-        //}
     }
 
-    <D extends Device, E extends Execution<D>> FinalType setExecution(Class<E> deviceClass, E execution);
+    <D extends Device, E extends ExecutorFor<D>> FinalType setExecution(Class<E> deviceClass, E execution);
 
-    <D extends Device, E extends Execution<D>> Execution getExecution(Class<E> deviceClass);
+    <D extends Device, E extends ExecutorFor<D>> ExecutorFor getExecution(Class<E> deviceClass);
 
     boolean canHandle(OperationTypeImplementation.ExecutionCall<Device> call);
 

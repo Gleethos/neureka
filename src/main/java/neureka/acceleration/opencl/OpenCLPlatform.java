@@ -1,7 +1,7 @@
 package neureka.acceleration.opencl;
 
 import neureka.Neureka;
-import neureka.acceleration.opencl.execution.CLExecution;
+import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.calculus.environment.OperationType;
 import org.jocl.*;
 import java.util.*;
@@ -148,20 +148,20 @@ public class OpenCLPlatform {
                     Map<String, String> code = new HashMap<>();
                     for(OperationType type : OperationType.ALL()) {
                         if (preName.contains("activate") && type.supportsImplementation(Activation.class)) {
-                            CLExecution exec = type.getImplementation(Activation.class).getExecution(CLExecution.class);
-                            if(exec!=null) code.put(exec.getName(), exec.getSource());
+                            CLExecutor exec = type.getImplementation(Activation.class).getExecution(CLExecutor.class);
+                            if(exec!=null && exec.getSource()!=null) code.put(exec.getName(), exec.getSource());
                         } else if (preName.contains("operate") && type.supportsImplementation(Operation.class)) {
-                            CLExecution exec = type.getImplementation(Operation.class).getExecution(CLExecution.class);
-                            if(exec!=null) code.put(exec.getName(), exec.getSource());
+                            CLExecutor exec = type.getImplementation(Operation.class).getExecution(CLExecutor.class);
+                            if(exec!=null && exec.getSource()!=null) code.put(exec.getName(), exec.getSource());
                         } else if (preName.contains("scalar") && type.supportsImplementation(Scalarization.class)) {
-                            CLExecution exec = type.getImplementation(Scalarization.class).getExecution(CLExecution.class);
-                            if(exec!=null) code.put(exec.getName(), exec.getSource());
+                            CLExecutor exec = type.getImplementation(Scalarization.class).getExecution(CLExecutor.class);
+                            if(exec!=null && exec.getSource()!=null) code.put(exec.getName(), exec.getSource());
                         } else if(preName.contains("broadcast") && type.supportsImplementation(Broadcast.class)){//broadcast
-                            CLExecution exec = type.getImplementation(Broadcast.class).getExecution(CLExecution.class);
-                            if(exec!=null) code.put(exec.getName(), exec.getSource());
+                            CLExecutor exec = type.getImplementation(Broadcast.class).getExecution(CLExecutor.class);
+                            if(exec!=null && exec.getSource()!=null) code.put(exec.getName(), exec.getSource());
                         } else if(preName.contains("convolve") && type.supportsImplementation(Convolution.class)) {
-                            CLExecution exec = type.getImplementation(Convolution.class).getExecution(CLExecution.class);
-                            if(exec!=null) code.put(exec.getName(), exec.getSource());
+                            CLExecutor exec = type.getImplementation(Convolution.class).getExecution(CLExecutor.class);
+                            if(exec!=null && exec.getSource()!=null) code.put(exec.getName(), exec.getSource());
                         }
                     }
                     code.forEach((n, s) -> {

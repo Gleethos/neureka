@@ -9,12 +9,9 @@ import neureka.Component;
 import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
-import neureka.acceleration.host.HostCPU;
-import neureka.acceleration.host.execution.HostExecution;
-import neureka.acceleration.opencl.execution.CLExecution;
+import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
-import neureka.calculus.environment.executors.*;
 import neureka.utility.DataHelper;
 import org.jocl.*;
 
@@ -409,7 +406,7 @@ public class OpenCLDevice extends AbstractDevice
                         d,
                         type
                 );
-        call.getExecutor().getExecution(CLExecution.class).getLambda().call(call);
+        call.getExecutor().getExecution(CLExecutor.class).getExecution().call(call);
     }
 
 

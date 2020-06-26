@@ -1,34 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReLU.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.environment.implementations.function</a> &gt; <span class="el_source">ReLU.java</span></div><h1>ReLU.java</h1><pre class="source lang-java linenums">package neureka.calculus.environment.implementations.function;
 
-import neureka.acceleration.host.HostCPU;
-import neureka.acceleration.host.execution.HostExecution;
-import neureka.acceleration.opencl.OpenCLDevice;
-import neureka.acceleration.opencl.execution.CLExecution;
+import neureka.acceleration.host.execution.HostExecutor;
+import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.executors.*;
 
 public class ReLU extends OperationType
 {
 
-<span class="fc" id="L13">    private DefaultOperatorCreator&lt;TertiaryNDXConsumer&gt; _creator =</span>
+<span class="fc" id="L11">    private DefaultOperatorCreator&lt;TertiaryNDXConsumer&gt; _creator =</span>
             (inputs, d) -&gt; {
-<span class="fc" id="L15">                double[] t1_val = inputs[1].value64();</span>
-<span class="fc bfc" id="L16" title="All 2 branches covered.">                if (d &lt; 0) {</span>
-<span class="fc" id="L17">                    return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc bfc" id="L18" title="All 2 branches covered.">                        if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="fc" id="L19">                        else return t1_val[inputs[1].i_of_idx(t1Idx)]*0.01;</span>
+<span class="fc" id="L13">                double[] t1_val = inputs[1].value64();</span>
+<span class="fc bfc" id="L14" title="All 2 branches covered.">                if (d &lt; 0) {</span>
+<span class="fc" id="L15">                    return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc bfc" id="L16" title="All 2 branches covered.">                        if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="fc" id="L17">                        else return t1_val[inputs[1].i_of_idx(t1Idx)]*0.01;</span>
                     };
                 } else {
-<span class="fc" id="L22">                    return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc bfc" id="L23" title="All 2 branches covered.">                        if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return 1;</span>
-<span class="fc" id="L24">                        else return 0.01;</span>
+<span class="fc" id="L20">                    return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">                        if(t1_val[inputs[1].i_of_idx(t1Idx)]&gt;=0) return 1;</span>
+<span class="fc" id="L22">                        else return 0.01;</span>
                     };
                 }
             };
 
     public ReLU()
     {
-<span class="fc" id="L31">        super(</span>
+<span class="fc" id="L29">        super(</span>
                 &quot;relu&quot;,
                 &quot;relu&quot;,
                 1,
@@ -38,46 +36,46 @@ public class ReLU extends OperationType
                 true,
                 true
         );
-<span class="fc" id="L41">        Activation typeImplementation =</span>
+<span class="fc" id="L39">        Activation typeImplementation =</span>
                 new Activation(
                         &quot;if (input &gt;= 0) {  output = input; } else { output = input * (float)0.01; }\n&quot;,
                         &quot;if (input &gt;= 0) { output = (float)1; } else { output = (float)0.01; }\n&quot;,
                             _creator
                         );
 
-<span class="fc" id="L48">        setImplementation(</span>
+<span class="fc" id="L46">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L50">                typeImplementation.setExecution (</span>
-                        HostExecution.class,
-                        new HostExecution(
+<span class="fc" id="L48">                typeImplementation.setExecution (</span>
+                        HostExecutor.class,
+                        new HostExecutor(
                                 call  -&gt;
-<span class="fc" id="L54">                                        call.getDevice().getExecutor()</span>
-<span class="fc" id="L55">                                                .threaded (</span>
-<span class="fc" id="L56">                                                        call.getTensor(0).size(),</span>
+<span class="fc" id="L52">                                        call.getDevice().getExecutor()</span>
+<span class="fc" id="L53">                                                .threaded (</span>
+<span class="fc" id="L54">                                                        call.getTensor(0).size(),</span>
                                                         ( start, end ) -&gt;
-<span class="fc" id="L58">                                                                Activation.activate (</span>
-<span class="fc" id="L59">                                                                        call.getTensor(0),</span>
+<span class="fc" id="L56">                                                                Activation.activate (</span>
+<span class="fc" id="L57">                                                                        call.getTensor(0),</span>
                                                                         start, end,
-<span class="fc" id="L61">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
+<span class="fc" id="L59">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                                 )
                                                 ),
                                 3
                         )
-<span class="fc" id="L66">                ).setExecution(</span>
-                        CLExecution.class,
-                        new CLExecution(
+<span class="fc" id="L64">                ).setExecution(</span>
+                        CLExecutor.class,
+                        new CLExecutor(
                                 call -&gt; {
-<span class="nc bnc" id="L70" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
-<span class="nc bnc" id="L71" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
-<span class="nc" id="L72">                                    call.getDevice().getKernel(call)</span>
-<span class="nc" id="L73">                                            .pass(call.getTensor(offset))</span>
-<span class="nc" id="L74">                                            .pass(call.getTensor(offset + 1))</span>
-<span class="nc" id="L75">                                            .pass(call.getTensor(0).rank())</span>
-<span class="nc" id="L76">                                            .pass(call.getDerivativeIndex())</span>
-<span class="nc" id="L77">                                            .call(gwz);</span>
-<span class="nc" id="L78">                                },</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
+<span class="nc" id="L70">                                    call.getDevice().getKernel(call)</span>
+<span class="nc" id="L71">                                            .pass(call.getTensor(offset))</span>
+<span class="nc" id="L72">                                            .pass(call.getTensor(offset + 1))</span>
+<span class="nc" id="L73">                                            .pass(call.getTensor(0).rank())</span>
+<span class="nc" id="L74">                                            .pass(call.getDerivativeIndex())</span>
+<span class="nc" id="L75">                                            .call(gwz);</span>
+<span class="nc" id="L76">                                },</span>
                                 3,
-<span class="fc" id="L80">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L78">                                typeImplementation.getKernelSource(), // kernelSource</span>
                                 &quot;if (input &gt;= 0) {  output = input; } else { output = input * (float)0.01; }\n&quot;,
                                 &quot;if (input &gt;= 0) { output = (float)1; } else { output = (float)0.01; }\n&quot;,
                                 this // OperationType
@@ -86,7 +84,7 @@ public class ReLU extends OperationType
         );
 
 
-<span class="fc" id="L89">    }</span>
+<span class="fc" id="L87">    }</span>
 
 
 }

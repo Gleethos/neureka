@@ -1,9 +1,7 @@
 package neureka.calculus.environment.implementations.indexer;
 
-import neureka.acceleration.host.HostCPU;
-import neureka.acceleration.host.execution.HostExecution;
-import neureka.acceleration.opencl.OpenCLDevice;
-import neureka.acceleration.opencl.execution.CLExecution;
+import neureka.acceleration.host.execution.HostExecutor;
+import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.executors.*;
 
@@ -43,8 +41,8 @@ public class Summation extends OperationType {
         setImplementation (
                 Broadcast.class,
                 typeImplementation.setExecution (
-                        HostExecution.class,
-                        new HostExecution(
+                        HostExecutor.class,
+                        new HostExecutor(
                                 call  ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -62,8 +60,8 @@ public class Summation extends OperationType {
                                 3
                         )
                 ).setExecution(
-                        CLExecution.class,
-                        new CLExecution(
+                        CLExecutor.class,
+                        new CLExecutor(
                                 call -> {
                                     int offset = (call.getTensor(0) != null) ? 0 : 1;
                                     int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
@@ -104,8 +102,8 @@ public class Summation extends OperationType {
 
         setImplementation(Activation.class,
                 activation.setExecution (
-                        HostExecution.class,
-                        new HostExecution(
+                        HostExecutor.class,
+                        new HostExecutor(
                                 call  ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -120,8 +118,8 @@ public class Summation extends OperationType {
                                 3
                         )
                 ).setExecution(
-                        CLExecution.class,
-                        new CLExecution(
+                        CLExecutor.class,
+                        new CLExecutor(
                                 call -> {
                                     int offset = (call.getTensor(0) != null) ? 0 : 1;
                                     int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
