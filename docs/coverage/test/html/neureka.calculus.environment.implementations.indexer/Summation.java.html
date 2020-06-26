@@ -47,7 +47,7 @@ public class Summation extends OperationType {
 <span class="fc" id="L47">        setImplementation (</span>
                 Broadcast.class,
 <span class="fc" id="L49">                typeImplementation.setExecution (</span>
-                        HostCPU.class,
+                        HostExecution.class,
                         new HostExecution(
                                 call  -&gt;
 <span class="fc" id="L53">                                        call.getDevice().getExecutor()</span>
@@ -66,7 +66,7 @@ public class Summation extends OperationType {
                                 3
                         )
 <span class="fc" id="L68">                ).setExecution(</span>
-                        OpenCLDevice.class,
+                        CLExecution.class,
                         new CLExecution(
                                 call -&gt; {
 <span class="nc bnc" id="L72" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>

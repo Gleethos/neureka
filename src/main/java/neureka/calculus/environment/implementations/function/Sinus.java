@@ -31,7 +31,7 @@ public class Sinus extends OperationType
         setImplementation(
                 Activation.class,
                 typeImplementation.setExecution (
-                        HostCPU.class,
+                        HostExecution.class,
                         new HostExecution(
                                 call  ->
                                         call.getDevice().getExecutor()
@@ -47,7 +47,7 @@ public class Sinus extends OperationType
                                 3
                         )
                 ).setExecution(
-                        OpenCLDevice.class,
+                        CLExecution.class,
                         new CLExecution(
                                 call -> {
                                     int offset = (call.getTensor(0) != null) ? 0 : 1;

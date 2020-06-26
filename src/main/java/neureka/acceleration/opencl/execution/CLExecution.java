@@ -8,7 +8,7 @@ import neureka.calculus.environment.Execution;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CLExecution implements Execution
+public class CLExecution implements Execution<OpenCLDevice>
 {
     private final java.util.function.Function<String, String> correct =
             s ->
@@ -38,9 +38,15 @@ public class CLExecution implements Execution
     private ExecutionLambda _lambda;
     private int _arity;
 
+    public String getSource(){
+        return _source;
+    }
+    public String getName(){
+        return _name;
+    }
 
     @Override
-    public ExecutionLambda getLambda() {
+    public ExecutionLambda<OpenCLDevice> getLambda() {
         return _lambda;
     }
 

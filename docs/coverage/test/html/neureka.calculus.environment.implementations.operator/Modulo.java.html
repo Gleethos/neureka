@@ -50,7 +50,7 @@ public class Modulo extends OperationType {
 <span class="fc" id="L50">        setImplementation(</span>
                 Operation.class,
 <span class="fc" id="L52">                operation.setExecution (</span>
-                        HostCPU.class,
+                        HostExecution.class,
                         new HostExecution(
                                 call -&gt;
 <span class="fc" id="L56">                                        call.getDevice().getExecutor()</span>
@@ -69,7 +69,7 @@ public class Modulo extends OperationType {
                                 3
                         )
 <span class="fc" id="L71">                ).setExecution(</span>
-                        OpenCLDevice.class,
+                        CLExecution.class,
                         new CLExecution(
                                 call -&gt; {
 <span class="nc bnc" id="L75" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
@@ -134,7 +134,7 @@ public class Modulo extends OperationType {
 <span class="fc" id="L134">        setImplementation(</span>
                 Broadcast.class,
 <span class="fc" id="L136">                broadcast.setExecution (</span>
-                        HostCPU.class,
+                        HostExecution.class,
                         new HostExecution(
                                 call -&gt;
 <span class="fc" id="L140">                                        call.getDevice().getExecutor()</span>
@@ -150,7 +150,7 @@ public class Modulo extends OperationType {
                                 3
                         )
 <span class="fc" id="L152">                ).setExecution(</span>
-                        OpenCLDevice.class,
+                        CLExecution.class,
                         new CLExecution(
                                 call -&gt; {
 <span class="nc bnc" id="L156" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
@@ -203,7 +203,7 @@ public class Modulo extends OperationType {
 <span class="fc" id="L203">        setImplementation(</span>
                 Scalarization.class,
 <span class="fc" id="L205">                scalarization.setExecution (</span>
-                        HostCPU.class,
+                        HostExecution.class,
                         new HostExecution(
                                 call -&gt; {
 <span class="nc" id="L209">                                    double value = call.getTensor(0).value64(2);</span>
@@ -221,7 +221,7 @@ public class Modulo extends OperationType {
                                 3
                         )
 <span class="fc" id="L223">                ).setExecution(</span>
-                        OpenCLDevice.class,
+                        CLExecution.class,
                         new CLExecution(
                                 call -&gt; {
 <span class="nc bnc" id="L227" title="All 4 branches missed.">                                    int offset = (call.getTensor(2).isVirtual() || call.getTensor(2).size() == 1)?1:0;</span>

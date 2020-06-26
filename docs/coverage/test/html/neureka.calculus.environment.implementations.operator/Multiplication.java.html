@@ -58,7 +58,7 @@ public class Multiplication extends OperationType {
 
 <span class="fc" id="L59">        setImplementation(Operation.class,</span>
 <span class="fc" id="L60">                operation.setExecution (</span>
-                        HostCPU.class,
+                        HostExecution.class,
                         new HostExecution(
                                 call -&gt;
 <span class="fc" id="L64">                                        call.getDevice().getExecutor()</span>
@@ -77,7 +77,7 @@ public class Multiplication extends OperationType {
                                 3
                         )
 <span class="fc" id="L79">                ).setExecution(</span>
-                        OpenCLDevice.class,
+                        CLExecution.class,
                         new CLExecution(
                                 call -&gt; {
 <span class="nc bnc" id="L83" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
@@ -112,7 +112,7 @@ public class Multiplication extends OperationType {
 
 <span class="fc" id="L113">        setImplementation(Broadcast.class,</span>
 <span class="fc" id="L114">            broadcast.setExecution (</span>
-                    HostCPU.class,
+                        HostExecution.class,
                     new HostExecution(
                             call -&gt;
 <span class="fc" id="L118">                                    call.getDevice().getExecutor()</span>
@@ -128,7 +128,7 @@ public class Multiplication extends OperationType {
                             3
                     )
 <span class="fc" id="L130">            ).setExecution(</span>
-                    OpenCLDevice.class,
+                    CLExecution.class,
                     new CLExecution(
                             call -&gt; {
 <span class="nc bnc" id="L134" title="All 2 branches missed.">                                int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
@@ -176,7 +176,7 @@ public class Multiplication extends OperationType {
 
 <span class="fc" id="L177">        setImplementation(Scalarization.class,</span>
 <span class="fc" id="L178">                scalarization.setExecution (</span>
-                        HostCPU.class,
+                        HostExecution.class,
                         new HostExecution(
                                 call -&gt; {
 <span class="nc" id="L182">                                    double value = call.getTensor(0).value64(2);</span>
@@ -194,7 +194,7 @@ public class Multiplication extends OperationType {
                                 3
                         )
 <span class="fc" id="L196">                ).setExecution(</span>
-                        OpenCLDevice.class,
+                        CLExecution.class,
                         new CLExecution(
                                 call -&gt; {
 <span class="nc bnc" id="L200" title="All 4 branches missed.">                                    int offset = (call.getTensor(2).isVirtual() || call.getTensor(2).size() == 1)?1:0;</span>
@@ -272,7 +272,7 @@ public class Multiplication extends OperationType {
                 Convolution.class,
                 convolution
 <span class="fc" id="L274">                        .setExecution (</span>
-                                HostCPU.class,
+                        HostExecution.class,
                                 new HostExecution(
                                         call -&gt;
 <span class="fc" id="L278">                                                call.getDevice().getExecutor()</span>
@@ -291,7 +291,7 @@ public class Multiplication extends OperationType {
                                         3
                                 )
 <span class="fc" id="L293">                        ).setExecution(</span>
-                        OpenCLDevice.class,
+                        CLExecution.class,
                         new CLExecution(
                                 call -&gt; {
 <span class="nc bnc" id="L297" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>

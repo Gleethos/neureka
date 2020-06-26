@@ -1,6 +1,7 @@
 package neureka.acceleration.opencl;
 
 import neureka.Neureka;
+import neureka.acceleration.opencl.execution.CLExecution;
 import neureka.calculus.environment.OperationType;
 import org.jocl.*;
 import java.util.*;
@@ -172,7 +173,7 @@ public class OpenCLPlatform {
     }
 
     private interface Parser {
-        void apply(String name, String first, String second);
+        String apply(String name, String first, String second);
     }
 
     private Map<String, String> _getParsedKernelsFromTemplate(String templateName, String kernelSource)
@@ -213,6 +214,7 @@ public class OpenCLPlatform {
                     || s.contains("input1")&&s.contains("input2")&&s.contains("input3");
             convcode = (isAdvanced) ? asAdvanced.apply(convcode) : convcode;
             code.put(preName + n, convcode);
+            return convcode;
         };
         //Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
         //Tsr t0_drain,  Tsr t1_src1,   Tsr t2_src2
@@ -222,11 +224,17 @@ public class OpenCLPlatform {
         //===========================================================================
         for(OperationType type : OperationType.ALL()) {
             if (preName.contains("activate") && type.supportsImplementation(Activation.class)) {
-                parser.apply(
+                String banana = parser.apply(
                             type.getName(),
                             type.getImplementation(Activation.class).getAsString(),
                             type.getImplementation(Activation.class).getDeriviationAsString()
                     );
+                //String bunu =
+                //CLExecution exec = type.getImplementation(Activation.class).getExecution(CLExecution.class);
+
+
+                //System.out.println(banana+" \n\n "+bunu);
+                //assert banana.equals(bunu);
             } else if (preName.contains("operate") && type.supportsImplementation(Operation.class)) {
                 parser.apply(
                             type.getName(),

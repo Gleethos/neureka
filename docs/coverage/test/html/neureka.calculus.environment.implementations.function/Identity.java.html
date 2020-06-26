@@ -30,7 +30,7 @@ public class Identity extends OperationType {
 <span class="fc" id="L30">        setImplementation(</span>
                 Activation.class,
 <span class="fc" id="L32">                typeImplementation.setExecution (</span>
-                        HostCPU.class,
+                        HostExecution.class,
                         new HostExecution(
                                 call  -&gt;
 <span class="fc" id="L36">                                        call.getDevice().getExecutor()</span>
@@ -46,7 +46,7 @@ public class Identity extends OperationType {
                                 3
                         )
 <span class="fc" id="L48">                ).setExecution(</span>
-                        OpenCLDevice.class,
+                        CLExecution.class,
                         new CLExecution(
                                 call -&gt; {
 <span class="nc bnc" id="L52" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
@@ -81,7 +81,7 @@ public class Identity extends OperationType {
                 );
 <span class="fc" id="L82">        setImplementation(Scalarization.class,</span>
 <span class="fc" id="L83">                scalarization.setExecution (</span>
-                        HostCPU.class,
+                        HostExecution.class,
                         new HostExecution(
                                 call  -&gt; {
 <span class="nc" id="L87">                                    double value = call.getTensor(0).value64(2);</span>
@@ -100,7 +100,7 @@ public class Identity extends OperationType {
                                 3
                         )
 <span class="fc" id="L102">                ).setExecution(</span>
-                        OpenCLDevice.class,
+                        CLExecution.class,
                         new CLExecution(
                                 call -&gt; {
 <span class="nc" id="L106">                                    Tsr t = call.getTensor(0);</span>

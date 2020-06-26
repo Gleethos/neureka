@@ -57,7 +57,7 @@ public class Addition extends OperationType {
 <span class="fc" id="L57">        setImplementation(Operation.class,</span>
                 operation
 <span class="fc" id="L59">                        .setExecution (</span>
-                                HostCPU.class,
+                        HostExecution.class,
                                 new HostExecution(
                                         call -&gt;
 <span class="fc" id="L63">                                                call.getDevice().getExecutor()</span>
@@ -76,7 +76,7 @@ public class Addition extends OperationType {
                                         3
                                 )
 <span class="fc" id="L78">                        ).setExecution(</span>
-                        OpenCLDevice.class,
+                        CLExecution.class,
                         new CLExecution(
                                 call -&gt; {
 <span class="nc bnc" id="L82" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
@@ -104,7 +104,7 @@ public class Addition extends OperationType {
 <span class="fc" id="L104">        setImplementation(Broadcast.class,</span>
                 _broadcast
 <span class="fc" id="L106">                .setExecution (</span>
-                        HostCPU.class,
+                        HostExecution.class,
                         new HostExecution(
                                 call -&gt;
 <span class="fc" id="L110">                                        call.getDevice().getExecutor()</span>
@@ -120,7 +120,7 @@ public class Addition extends OperationType {
                                 3
                         )
 <span class="fc" id="L122">                ).setExecution(</span>
-                        OpenCLDevice.class,
+                        CLExecution.class,
                         new CLExecution(
                                 call -&gt; {
 <span class="nc bnc" id="L126" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
@@ -168,7 +168,7 @@ public class Addition extends OperationType {
 <span class="fc" id="L168">        setImplementation(</span>
                 Scalarization.class,
 <span class="fc" id="L170">                scalarization.setExecution (</span>
-                                HostCPU.class,
+                        HostExecution.class,
                                 new HostExecution(
                                         call -&gt; {
 <span class="nc" id="L174">                                            double value = call.getTensor(0).value64(2);</span>
@@ -186,7 +186,7 @@ public class Addition extends OperationType {
                                         3
                                 )
 <span class="fc" id="L188">                ).setExecution(</span>
-                        OpenCLDevice.class,
+                        CLExecution.class,
                         new CLExecution(
                                 call -&gt; {
 <span class="nc bnc" id="L192" title="All 4 branches missed.">                                    int offset = (call.getTensor(2).isVirtual() || call.getTensor(2).size() == 1)?1:0;</span>

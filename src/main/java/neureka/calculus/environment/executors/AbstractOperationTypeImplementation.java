@@ -3,6 +3,7 @@ package neureka.calculus.environment.executors;
 
 import neureka.Tsr;
 import neureka.acceleration.Device;
+import neureka.acceleration.opencl.execution.CLExecution;
 import neureka.autograd.GraphNode;
 import neureka.calculus.environment.Execution;
 import neureka.calculus.environment.OperationType;
@@ -18,7 +19,7 @@ public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType
     protected String _deriviation;
     protected CreatorType _creator;
 
-    protected Map<Class<Device>, Execution> _executions;
+    protected Map<Class<Execution<Device>>, Execution<Device>> _executions;
 
     public AbstractOperationTypeImplementation(String operation, String deriviation, CreatorType creator)
     {
@@ -39,14 +40,14 @@ public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType
     }
 
     @Override
-    public FinalType setExecution(Class deviceClass, Execution execution){
-        _executions.put(deviceClass, execution);
+    public <D extends Device, E extends Execution<D>> FinalType setExecution(Class<E> deviceClass, E execution){
+        _executions.put((Class<Execution<Device>>) deviceClass, (Execution<Device>) execution);
         return (FinalType) this;
     }
 
     @Override
-    public Execution getExecution(Class deviceClass){
-        return _executions.get(deviceClass); // assert that result is of type T...
+    public <D extends Device, E extends Execution<D>> E getExecution(Class<E> deviceClass){
+        return (E) _executions.get(deviceClass); // assert that result is of type T...
     }
     
     private Tsr reduce(
@@ -54,26 +55,20 @@ public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType
             Tsr[] tsrs,
             OperationType type,
             int d,
-            Consumer<OperationTypeImplementation.ExecutionCall> finalExecution
+            Consumer<OperationTypeImplementation.ExecutionCall<Device>> finalExecution
     ) {
         return reduce (
-                new ExecutionCall( device, tsrs, d, type ), finalExecution
+                new ExecutionCall<Device>( device, tsrs, d, type ), finalExecution
         );
     }
 
     @Override
-    public < T extends Device > void callImplementationFor(ExecutionCall<T> call) {
-            Execution<T> execution = getExecution(call.getDevice().getClass());
-            execution.getLambda().call(call);
-    }
-
-    @Override
     public Tsr reduce (
-            OperationTypeImplementation.ExecutionCall call,
-            Consumer<OperationTypeImplementation.ExecutionCall> finalExecution
+            OperationTypeImplementation.ExecutionCall<Device> call,
+            Consumer<OperationTypeImplementation.ExecutionCall<Device>> finalExecution
     ) {
         Device device = call.getDevice();
-        Execution execution = call.getExecutor().getExecution((Class<Device>) device.getClass());
+        Execution<Device> execution = call.getExecutor().getExecution((Class<Device>) device.getClass());
 
         //assert execution!=null;
 

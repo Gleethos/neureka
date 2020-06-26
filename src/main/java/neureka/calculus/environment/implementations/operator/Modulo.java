@@ -50,7 +50,7 @@ public class Modulo extends OperationType {
         setImplementation(
                 Operation.class,
                 operation.setExecution (
-                        HostCPU.class,
+                        HostExecution.class,
                         new HostExecution(
                                 call ->
                                         call.getDevice().getExecutor()
@@ -69,7 +69,7 @@ public class Modulo extends OperationType {
                                 3
                         )
                 ).setExecution(
-                        OpenCLDevice.class,
+                        CLExecution.class,
                         new CLExecution(
                                 call -> {
                                     int offset = (call.getTensor(0) != null) ? 0 : 1;
@@ -134,7 +134,7 @@ public class Modulo extends OperationType {
         setImplementation(
                 Broadcast.class,
                 broadcast.setExecution (
-                        HostCPU.class,
+                        HostExecution.class,
                         new HostExecution(
                                 call ->
                                         call.getDevice().getExecutor()
@@ -150,7 +150,7 @@ public class Modulo extends OperationType {
                                 3
                         )
                 ).setExecution(
-                        OpenCLDevice.class,
+                        CLExecution.class,
                         new CLExecution(
                                 call -> {
                                     int offset = (call.getTensor(0) != null) ? 0 : 1;
@@ -203,7 +203,7 @@ public class Modulo extends OperationType {
         setImplementation(
                 Scalarization.class,
                 scalarization.setExecution (
-                        HostCPU.class,
+                        HostExecution.class,
                         new HostExecution(
                                 call -> {
                                     double value = call.getTensor(0).value64(2);
@@ -221,7 +221,7 @@ public class Modulo extends OperationType {
                                 3
                         )
                 ).setExecution(
-                        OpenCLDevice.class,
+                        CLExecution.class,
                         new CLExecution(
                                 call -> {
                                     int offset = (call.getTensor(2).isVirtual() || call.getTensor(2).size() == 1)?1:0;
