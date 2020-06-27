@@ -15,9 +15,7 @@ public class Addition extends OperationType {
                 else return (t0Idx, t1Idx, t2Idx) -> 1.0;
             };
 
-    private static final Broadcast _broadcast = new Broadcast(
-            _creator
-    );
+    private static final Broadcast _broadcast = new Broadcast();
 
     public Addition()
     {
@@ -44,9 +42,7 @@ public class Addition extends OperationType {
                     else return t1Idx -> 1.0;
                 };
 
-        Operation operation = new Operation(
-                _creator
-        );
+        Operation operation = new Operation();
 
         setImplementation(Operation.class,
                 operation
@@ -139,13 +135,7 @@ public class Addition extends OperationType {
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        Scalarization scalarization =
-                new Scalarization(
-                        (inputs, value, d) -> {
-                            double[] t1_val = inputs[1].value64();
-                            if (d < 0) return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] + value;
-                            else return t1Idx -> 1;
-                        });
+        Scalarization scalarization = new Scalarization();
 
         ScalarOperatorCreator<PrimaryNDXConsumer> scalarCreator =
                 (inputs, value, d) -> {
@@ -216,9 +206,7 @@ public class Addition extends OperationType {
         new OperationType(
                 "add", "a", 2, true, false, true, false, false
         ).setImplementation(Convolution.class,
-                new Convolution(
-                        null
-                )
+                new Convolution()
         );
 
         new OperationType(

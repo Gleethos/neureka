@@ -14,18 +14,11 @@ import java.util.function.Consumer;
 
 public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType> implements OperationTypeImplementation<FinalType>
 {
-    protected CreatorType _creator;
-
     protected Map<Class<ExecutorFor<Device>>, ExecutorFor<Device>> _executions;
 
-    public AbstractOperationTypeImplementation(CreatorType creator)
+    public AbstractOperationTypeImplementation()
     {
-        _creator = creator;
         _executions = new HashMap<>();
-    }
-
-    public CreatorType getCreator(){
-        return _creator;
     }
 
     @Override

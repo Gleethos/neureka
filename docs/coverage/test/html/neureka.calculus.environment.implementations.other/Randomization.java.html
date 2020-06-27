@@ -13,16 +13,19 @@ public class Randomization extends OperationType{
 <span class="nc" id="L13">        super(</span>
                 &quot;random&quot;, &quot;rand&quot;, 1, true, false, false, false, false
         );
-<span class="nc" id="L16">        setImplementation(Scalarization.class, new Scalarization(</span>
-                (inputs, value, d)-&gt;{
-<span class="nc" id="L18">                    Random dice = new Random();</span>
-<span class="nc" id="L19">                    dice.setSeed(Double.doubleToLongBits(value));</span>
-<span class="nc" id="L20">                    double[] t1_val = inputs[1].value64();</span>
-<span class="nc" id="L21">                    return ( t1Idx ) -&gt; dice.nextGaussian();</span>
-                    //Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);
-                }));
 
-<span class="nc" id="L25">    }</span>
+<span class="nc" id="L17">        ScalarOperatorCreator&lt;PrimaryNDXConsumer&gt; creator =</span>
+                (inputs, value, d)-&gt;{
+<span class="nc" id="L19">                    Random dice = new Random();</span>
+<span class="nc" id="L20">                    dice.setSeed(Double.doubleToLongBits(value));</span>
+<span class="nc" id="L21">                    double[] t1_val = inputs[1].value64();</span>
+<span class="nc" id="L22">                    return ( t1Idx ) -&gt; dice.nextGaussian();</span>
+                    //Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);
+                };
+
+<span class="nc" id="L26">        setImplementation(Scalarization.class, new Scalarization());</span>
+
+<span class="nc" id="L28">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

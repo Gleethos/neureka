@@ -41,10 +41,7 @@ public class Division extends OperationType
         //_____________________
         // DEFAULT OPERATION :
 
-        Operation operation =
-                new Operation(
-                        _creator
-                );
+        Operation operation = new Operation();
 
         setImplementation(
                 Operation.class, operation.setExecution (
@@ -97,10 +94,8 @@ public class Division extends OperationType
         //________________
         // BROADCASTING :
 
-        Broadcast broadcast =
-                new Broadcast(
-                        _creator
-                );
+        Broadcast broadcast = new Broadcast();
+
         setImplementation(
                 Broadcast.class,
                 broadcast.setExecution (
@@ -160,10 +155,7 @@ public class Division extends OperationType
                     }
                 };
 
-        Scalarization scalarization = new Scalarization(
-                scalarCreator
-        );
-
+        Scalarization scalarization = new Scalarization();
 
         setImplementation(
                 Scalarization.class,
@@ -229,9 +221,7 @@ public class Division extends OperationType
                 "divide", "d", 2, true, false, true, false, false
         ).setImplementation(
                 Convolution.class,
-                new Convolution(
-                        null
-                )
+                new Convolution()
         );
 
         new OperationType(

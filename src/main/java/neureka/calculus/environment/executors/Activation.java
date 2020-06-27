@@ -7,9 +7,7 @@ import org.jetbrains.annotations.Contract;
 
 public class Activation extends AbstractOperationTypeImplementation<Activation, Type.DefaultOperatorCreator<Type.TertiaryNDXConsumer>>
 {
-    public Activation(Type.DefaultOperatorCreator<Type.TertiaryNDXConsumer> creator){
-        super(creator);
-    }
+    public Activation() {  super(); }
 
     @Override
     public boolean canHandle(ExecutionCall call) {

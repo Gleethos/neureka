@@ -7,10 +7,7 @@ import org.jetbrains.annotations.Contract;
 
 public class Scalarization extends AbstractOperationTypeImplementation<Scalarization, Type.ScalarOperatorCreator<Type.PrimaryNDXConsumer>>
 {
-    public Scalarization(Type.ScalarOperatorCreator<Type.PrimaryNDXConsumer> creator)
-    {
-        super(creator);
-    }
+    public Scalarization() {  super();  }
 
     @Override
     public boolean canHandle(ExecutionCall call)

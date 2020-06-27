@@ -34,10 +34,7 @@ public class Subtraction extends OperationType {
                     } else return t1Idx -> (d == 0) ? 1.0 : -1.0;
                 };
 
-        Operation operation =
-                new Operation(
-                        _creator
-                );
+        Operation operation = new Operation();
 
         setImplementation(Operation.class,
                 operation.setExecution (
@@ -98,10 +95,7 @@ public class Subtraction extends OperationType {
                     }
                 };
 
-        Scalarization scalarization =
-                new Scalarization(
-                            scalarOperatorCreator
-                        );
+        Scalarization scalarization = new Scalarization();
 
         setImplementation(Scalarization.class,
                 scalarization.setExecution (
@@ -154,9 +148,7 @@ public class Subtraction extends OperationType {
         // BROADCASTING :
 
         setImplementation(Broadcast.class,
-                new Broadcast(
-                        _creator
-                )
+                new Broadcast() // add _creator
         );
 
         //______________________

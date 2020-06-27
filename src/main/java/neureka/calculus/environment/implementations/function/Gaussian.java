@@ -25,10 +25,7 @@ public class Gaussian extends OperationType {
 
         super("gaussian", "gaus", 1, false, false, false, true, true);
 
-        Activation typeImplementation =
-                new Activation(
-                        _creator
-                );
+        Activation typeImplementation = new Activation();
 
         setImplementation(
                 Activation.class,

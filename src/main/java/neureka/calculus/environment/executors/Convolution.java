@@ -7,9 +7,7 @@ import org.jetbrains.annotations.Contract;
 
 public class Convolution extends AbstractOperationTypeImplementation<Convolution, Type.DefaultOperatorCreator<Type.TertiaryNDXConsumer>>
 {
-    public Convolution(Type.DefaultOperatorCreator<Type.TertiaryNDXConsumer> creator){
-        super(creator);
-    }
+    public Convolution(){  super();  }
 
     @Override
     public boolean canHandle(ExecutionCall call) {

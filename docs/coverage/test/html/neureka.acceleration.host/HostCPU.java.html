@@ -137,45 +137,45 @@ public class HostCPU extends AbstractDevice
 <span class="fc" id="L137">    public class NativeExecutor</span>
     {
 <span class="fc" id="L139">        private final ThreadPoolExecutor _pool =</span>
-<span class="fc" id="L140">                (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());</span>
+<span class="fc" id="L140">                (ThreadPoolExecutor) Executors.newFixedThreadPool(</span>
+<span class="fc" id="L141">                        Runtime.getRuntime().availableProcessors()</span>
+                );
 
         public ThreadPoolExecutor getPool() {
-<span class="fc" id="L143">            return _pool;</span>
+<span class="fc" id="L145">            return _pool;</span>
         }
-        
 
         //==============================================================================================================
-<span class="nc" id="L148"></span>
-<span class="nc" id="L149">        public void threaded(int sze, Range range)</span>
+
+        public void threaded(int sze, Range range)
         {
-<span class="nc" id="L151">            int cores = _pool.getCorePoolSize() - _pool.getActiveCount();</span>
-            cores = (cores == 0) ? 1 : cores;
-            if (sze &gt;= 32 &amp;&amp; ((sze / cores) &gt;= 8)) {
-<span class="nc" id="L154">                final int chunk = sze / cores;</span>
-                Future[] futures = new Future[cores];
-                for (int i = 0; i &lt; cores; i++) {
-<span class="nc" id="L157">                    final int start = i * chunk;</span>
-                    final int end = (i == cores - 1) ? sze : ((i + 1) * chunk);
-                    Neureka neureka = Neureka.instance();
-                    futures[i] = _pool.submit(() -&gt; {
-<span class="nc" id="L161">                        Neureka.setContext(Thread.currentThread(), neureka);</span>
-<span class="nc" id="L162">                        range.execute(start, end);</span>
-                    });
-<span class="nc" id="L164">                }</span>
-                for (Future f : futures) {
-<span class="nc" id="L166">                    try {</span>
-                        f.get();
-                    } catch (InterruptedException e) {
-<span class="nc" id="L169">                        e.printStackTrace();</span>
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
+<span class="fc" id="L152">            int cores = _pool.getCorePoolSize() - _pool.getActiveCount();</span>
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">            cores = (cores == 0) ? 1 : cores;</span>
+<span class="fc bfc" id="L154" title="All 4 branches covered.">            if (sze &gt;= 32 &amp;&amp; ((sze / cores) &gt;= 8)) {</span>
+<span class="fc" id="L155">                final int chunk = sze / cores;</span>
+<span class="fc" id="L156">                Future[] futures = new Future[cores];</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">                for (int i = 0; i &lt; cores; i++) {</span>
+<span class="fc" id="L158">                    final int start = i * chunk;</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">                    final int end = (i == cores - 1) ? sze : ((i + 1) * chunk);</span>
+<span class="fc" id="L160">                    Neureka neureka = Neureka.instance();</span>
+<span class="fc" id="L161">                    futures[i] = _pool.submit(() -&gt; {</span>
+<span class="fc" id="L162">                        Neureka.setContext(Thread.currentThread(), neureka);</span>
+<span class="fc" id="L163">                        range.execute(start, end);</span>
+<span class="fc" id="L164">                    });</span>
                 }
-            } else range.execute(0, sze);
-<span class="fc" id="L175">        }</span>
-<span class="pc bpc" id="L176" title="1 of 2 branches missed."></span>
-<span class="fc bfc" id="L177" title="All 4 branches covered."></span>
-<span class="fc" id="L178">    }</span>
-<span class="fc" id="L179"></span>
-<span class="fc bfc" id="L180" title="All 2 branches covered.">}</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">                for (Future f : futures) {</span>
+                    try {
+<span class="fc" id="L168">                        f.get();</span>
+<span class="nc" id="L169">                    } catch (InterruptedException e) {</span>
+<span class="nc" id="L170">                        e.printStackTrace();</span>
+<span class="nc" id="L171">                    } catch (ExecutionException e) {</span>
+<span class="nc" id="L172">                        e.printStackTrace();</span>
+<span class="pc" id="L173">                    }</span>
+                }
+<span class="fc" id="L175">            } else range.execute(0, sze);</span>
+<span class="fc" id="L176">        }</span>
+
+    }
+
+}
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

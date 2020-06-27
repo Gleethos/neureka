@@ -19,10 +19,7 @@ public class Ligmoid extends OperationType {
         super("ligmoid", "lig" , 1, false, false, false, true, true);
 
 
-        Activation typeImplementation =
-                new Activation(
-                        _creator
-                );
+        Activation typeImplementation = new Activation();
 
 
 

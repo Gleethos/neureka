@@ -63,10 +63,7 @@ public class Power extends OperationType
             }
         };
 
-        Operation operation =
-                new Operation(
-                        _creator
-                );
+        Operation operation = new Operation();
 
         setImplementation(Operation.class,
                 operation.setExecution (
@@ -118,10 +115,7 @@ public class Power extends OperationType
         //________________
         // BROADCASTING :
 
-        Broadcast broadcast =
-                new Broadcast(
-                        _creator
-                );
+        Broadcast broadcast = new Broadcast();
 
         setImplementation(Broadcast.class,
                 broadcast.setExecution (
@@ -185,10 +179,7 @@ public class Power extends OperationType
                 };
 
 
-        Scalarization scalarization =
-                new Scalarization(
-                            scalarCreator
-                        );
+        Scalarization scalarization = new Scalarization();
 
         setImplementation(
                 Scalarization.class,
@@ -251,9 +242,7 @@ public class Power extends OperationType
         new OperationType(
                 "power", "p", 2, true, false, true, false, false
         ).setImplementation(Convolution.class,
-                new Convolution(
-                        null
-                )
+                new Convolution()
         );
         new OperationType("", ((char) 171) + "p", 3, true, false, true, false, false);
         new OperationType("", "p" + ((char) 187), 3, true, false, true, false, false);

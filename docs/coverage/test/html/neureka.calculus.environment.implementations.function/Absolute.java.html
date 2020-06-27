@@ -17,9 +17,9 @@ public class Absolute extends OperationType {
     public Absolute()
     {
 <span class="fc" id="L19">        super(&quot;absolute&quot;, &quot;abs&quot; , 1, false, false, false, true, true);</span>
-<span class="fc" id="L20">        Activation typeImplementation = new Activation(</span>
-                _activationCreator
-        );
+
+<span class="fc" id="L21">        Activation typeImplementation = new Activation();</span>
+
 <span class="fc" id="L23">        setImplementation(</span>
                 Activation.class,
 <span class="fc" id="L25">                typeImplementation.setExecution(</span>

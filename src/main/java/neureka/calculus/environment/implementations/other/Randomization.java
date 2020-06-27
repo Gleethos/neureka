@@ -13,14 +13,17 @@ public class Randomization extends OperationType{
         super(
                 "random", "rand", 1, true, false, false, false, false
         );
-        setImplementation(Scalarization.class, new Scalarization(
+
+        ScalarOperatorCreator<PrimaryNDXConsumer> creator =
                 (inputs, value, d)->{
                     Random dice = new Random();
                     dice.setSeed(Double.doubleToLongBits(value));
                     double[] t1_val = inputs[1].value64();
                     return ( t1Idx ) -> dice.nextGaussian();
                     //Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);
-                }));
+                };
+
+        setImplementation(Scalarization.class, new Scalarization());
 
     }
 

@@ -36,10 +36,7 @@ public class ReLU extends OperationType
                 true,
                 true
         );
-        Activation typeImplementation =
-                new Activation(
-                            _creator
-                        );
+        Activation typeImplementation = new Activation();
 
         setImplementation(
                 Activation.class,

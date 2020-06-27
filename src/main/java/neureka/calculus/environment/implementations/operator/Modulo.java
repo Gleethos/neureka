@@ -34,10 +34,7 @@ public class Modulo extends OperationType {
                     }
                 };
 
-        Operation operation =
-                new Operation(
-                        operationCreator
-                );
+        Operation operation = new Operation();
 
         setImplementation(
                 Operation.class,
@@ -112,10 +109,7 @@ public class Modulo extends OperationType {
                     }
                 };
 
-        Broadcast broadcast =
-                new Broadcast(
-                        creator
-                        );
+        Broadcast broadcast = new Broadcast();
 
         setImplementation(
                 Broadcast.class,
@@ -176,9 +170,7 @@ public class Modulo extends OperationType {
                     }
                 };
 
-        Scalarization scalarization = new Scalarization(
-                scalarCreator
-        );
+        Scalarization scalarization = new Scalarization();
 
         setImplementation(
                 Scalarization.class,

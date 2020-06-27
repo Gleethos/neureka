@@ -30,49 +30,46 @@ public class Summation extends OperationType {
 <span class="nc" id="L30">                    else return (t0Idx, t1Idx, t2Idx) -&gt; 1.0;</span>
                 };
 
-<span class="fc" id="L33">        Broadcast typeImplementation =</span>
-                new Broadcast(
-                        _creator
-                );
+<span class="fc" id="L33">        Broadcast typeImplementation = new Broadcast();</span>
 
 
-<span class="fc" id="L39">        setImplementation (</span>
+<span class="fc" id="L36">        setImplementation (</span>
                 Broadcast.class,
-<span class="fc" id="L41">                typeImplementation.setExecution (</span>
+<span class="fc" id="L38">                typeImplementation.setExecution (</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
-<span class="fc" id="L45">                                        call.getDevice().getExecutor()</span>
-<span class="fc" id="L46">                                                .threaded (</span>
-<span class="fc" id="L47">                                                        call.getTensor(0).size(),</span>
+<span class="fc" id="L42">                                        call.getDevice().getExecutor()</span>
+<span class="fc" id="L43">                                                .threaded (</span>
+<span class="fc" id="L44">                                                        call.getTensor(0).size(),</span>
                                                         ( start, end ) -&gt;
-<span class="fc" id="L49">                                                                Broadcast.broadcast (</span>
-<span class="fc" id="L50">                                                                        call.getTensor(0),</span>
-<span class="fc" id="L51">                                                                        call.getTensor(1),</span>
-<span class="fc" id="L52">                                                                        call.getTensor(2),</span>
-<span class="fc" id="L53">                                                                        call.getDerivativeIndex(),</span>
+<span class="fc" id="L46">                                                                Broadcast.broadcast (</span>
+<span class="fc" id="L47">                                                                        call.getTensor(0),</span>
+<span class="fc" id="L48">                                                                        call.getTensor(1),</span>
+<span class="fc" id="L49">                                                                        call.getTensor(2),</span>
+<span class="fc" id="L50">                                                                        call.getDerivativeIndex(),</span>
                                                                         start, end,
-<span class="fc" id="L55">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
+<span class="fc" id="L52">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                                 )
                                                 ),
                                 3
                         )
-<span class="fc" id="L60">                ).setExecution(</span>
+<span class="fc" id="L57">                ).setExecution(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {
-<span class="nc bnc" id="L64" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
-<span class="nc bnc" id="L65" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
-<span class="nc" id="L66">                                    call.getDevice().getKernel(call)</span>
-<span class="nc" id="L67">                                            .pass(call.getTensor(offset))</span>
-<span class="nc" id="L68">                                            .pass(call.getTensor(offset + 1))</span>
-<span class="nc" id="L69">                                            .pass(call.getTensor(offset + 2))</span>
-<span class="nc" id="L70">                                            .pass(call.getTensor(0).rank())</span>
-<span class="nc" id="L71">                                            .pass(call.getDerivativeIndex())</span>
-<span class="nc" id="L72">                                            .call(gwz);</span>
-<span class="nc" id="L73">                                },</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
+<span class="nc" id="L63">                                    call.getDevice().getKernel(call)</span>
+<span class="nc" id="L64">                                            .pass(call.getTensor(offset))</span>
+<span class="nc" id="L65">                                            .pass(call.getTensor(offset + 1))</span>
+<span class="nc" id="L66">                                            .pass(call.getTensor(offset + 2))</span>
+<span class="nc" id="L67">                                            .pass(call.getTensor(0).rank())</span>
+<span class="nc" id="L68">                                            .pass(call.getDerivativeIndex())</span>
+<span class="nc" id="L69">                                            .call(gwz);</span>
+<span class="nc" id="L70">                                },</span>
                                 3,
-<span class="fc" id="L75">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L72">                                typeImplementation.getKernelSource(), // kernelSource</span>
                                 &quot;value = src1 + src2;\n&quot;,
                                 &quot;value += 1 * drain;\n&quot;,
                                 this // OperationType
@@ -84,50 +81,47 @@ public class Summation extends OperationType {
         //______________
         // ACTIVATION :
 
-<span class="fc" id="L87">        DefaultOperatorCreator&lt;TertiaryNDXConsumer&gt; activationCreator =</span>
+<span class="fc" id="L84">        DefaultOperatorCreator&lt;TertiaryNDXConsumer&gt; activationCreator =</span>
                 (inputs, d) -&gt; {
-<span class="nc" id="L89">                    double[] t1_val = inputs[1].value64();</span>
-<span class="nc bnc" id="L90" title="All 2 branches missed.">                    if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
-<span class="nc" id="L91">                    else return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="nc" id="L86">                    double[] t1_val = inputs[1].value64();</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">                    if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="nc" id="L88">                    else return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
                 };
 
-<span class="fc" id="L94">        Activation activation =</span>
-                new Activation(
-                        null
-                );
+<span class="fc" id="L91">        Activation activation = new Activation();</span>
 
-<span class="fc" id="L99">        setImplementation(Activation.class,</span>
-<span class="fc" id="L100">                activation.setExecution (</span>
+<span class="fc" id="L93">        setImplementation(Activation.class,</span>
+<span class="fc" id="L94">                activation.setExecution (</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
-<span class="nc" id="L104">                                        call.getDevice().getExecutor()</span>
-<span class="nc" id="L105">                                                .threaded (</span>
-<span class="nc" id="L106">                                                        call.getTensor(0).size(),</span>
+<span class="nc" id="L98">                                        call.getDevice().getExecutor()</span>
+<span class="nc" id="L99">                                                .threaded (</span>
+<span class="nc" id="L100">                                                        call.getTensor(0).size(),</span>
                                                         ( start, end ) -&gt;
-<span class="nc" id="L108">                                                                Activation.activate (</span>
-<span class="nc" id="L109">                                                                        call.getTensor(0),</span>
+<span class="nc" id="L102">                                                                Activation.activate (</span>
+<span class="nc" id="L103">                                                                        call.getTensor(0),</span>
                                                                         start, end,
-<span class="nc" id="L111">                                                                        activationCreator.create(call.getTensors(), call.getDerivativeIndex())</span>
+<span class="nc" id="L105">                                                                        activationCreator.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                                 )
                                                 ),
                                 3
                         )
-<span class="fc" id="L116">                ).setExecution(</span>
+<span class="fc" id="L110">                ).setExecution(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {
-<span class="nc bnc" id="L120" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
-<span class="nc bnc" id="L121" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
-<span class="nc" id="L122">                                    call.getDevice().getKernel(call)</span>
-<span class="nc" id="L123">                                            .pass(call.getTensor(offset))</span>
-<span class="nc" id="L124">                                            .pass(call.getTensor(offset + 1))</span>
-<span class="nc" id="L125">                                            .pass(call.getTensor(0).rank())</span>
-<span class="nc" id="L126">                                            .pass(call.getDerivativeIndex())</span>
-<span class="nc" id="L127">                                            .call(gwz);</span>
-<span class="nc" id="L128">                                },</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
+<span class="nc" id="L116">                                    call.getDevice().getKernel(call)</span>
+<span class="nc" id="L117">                                            .pass(call.getTensor(offset))</span>
+<span class="nc" id="L118">                                            .pass(call.getTensor(offset + 1))</span>
+<span class="nc" id="L119">                                            .pass(call.getTensor(0).rank())</span>
+<span class="nc" id="L120">                                            .pass(call.getDerivativeIndex())</span>
+<span class="nc" id="L121">                                            .call(gwz);</span>
+<span class="nc" id="L122">                                },</span>
                                 3,
-<span class="fc" id="L130">                                activation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L124">                                activation.getKernelSource(), // kernelSource</span>
                                 &quot;output = input;&quot;,
                                 &quot;output = 1;&quot;,
                                 this // OperationType
@@ -135,7 +129,7 @@ public class Summation extends OperationType {
                 )
         );
 
-<span class="fc" id="L138">    }</span>
+<span class="fc" id="L132">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

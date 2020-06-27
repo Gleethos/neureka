@@ -7,9 +7,7 @@ import org.jetbrains.annotations.Contract;
 
 public class Broadcast extends AbstractOperationTypeImplementation<Broadcast, Type.DefaultOperatorCreator<Type.TertiaryNDXConsumer>>
 {
-    public Broadcast(Type.DefaultOperatorCreator creator){
-        super(creator);
-    }
+    public Broadcast() {  super();  }
 
     @Override
     public boolean canHandle(ExecutionCall call)

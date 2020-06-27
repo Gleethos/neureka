@@ -19,10 +19,7 @@ public class Identity extends OperationType {
 
         super("identity", "idy" , 1, false, false, false, true, true);
 
-        Activation typeImplementation =
-                new Activation(
-                        _creator
-                        );
+        Activation typeImplementation = new Activation();
         setImplementation(
                 Activation.class,
                 typeImplementation.setExecution (
@@ -68,10 +65,7 @@ public class Identity extends OperationType {
                     if (d < 0) return t1Idx -> value;
                     else return t1Idx -> value;
                 };
-        Scalarization scalarization =
-                new Scalarization(
-                        null
-                );
+        Scalarization scalarization = new Scalarization();
         setImplementation(Scalarization.class,
                 scalarization.setExecution (
                         HostExecutor.class,

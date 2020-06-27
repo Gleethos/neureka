@@ -30,10 +30,7 @@ public class Summation extends OperationType {
                     else return (t0Idx, t1Idx, t2Idx) -> 1.0;
                 };
 
-        Broadcast typeImplementation =
-                new Broadcast(
-                        _creator
-                );
+        Broadcast typeImplementation = new Broadcast();
 
 
         setImplementation (
@@ -91,10 +88,7 @@ public class Summation extends OperationType {
                     else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
                 };
 
-        Activation activation =
-                new Activation(
-                        null
-                );
+        Activation activation = new Activation();
 
         setImplementation(Activation.class,
                 activation.setExecution (

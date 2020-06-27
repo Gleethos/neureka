@@ -46,10 +46,7 @@ public class Multiplication extends OperationType {
                     }
                 };
 
-        Operation operation =
-                new Operation(
-                        _creator
-                );
+        Operation operation = new Operation();
 
         setImplementation(Operation.class,
                 operation.setExecution (
@@ -98,10 +95,7 @@ public class Multiplication extends OperationType {
         //________________
         // BROADCASTING :
 
-        Broadcast broadcast =
-                new Broadcast(
-                        _creator
-                );
+        Broadcast broadcast = new Broadcast();
 
         setImplementation(Broadcast.class,
             broadcast.setExecution (
@@ -159,10 +153,7 @@ public class Multiplication extends OperationType {
                     }
                 };
 
-        Scalarization scalarization =
-                new Scalarization(
-                        scalarOperatorCreator
-                        );
+        Scalarization scalarization = new Scalarization();
 
         setImplementation(
                 Scalarization.class,
@@ -220,10 +211,7 @@ public class Multiplication extends OperationType {
                     return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];
                 };
 
-        Broadcast xBroadcast =
-                new Broadcast(
-                        xCreator
-                );
+        Broadcast xBroadcast = new Broadcast();
 
         new OperationType(
                 "", ((char) 171) + "*", 3, true, false, false, false, false
@@ -268,10 +256,7 @@ public class Multiplication extends OperationType {
                 )
         );
 
-        xBroadcast =
-                new Broadcast(
-                        xCreator
-                );
+        xBroadcast = new Broadcast();
 
         new OperationType(
                 "", "*" + ((char) 187), 3, true, false, false, false, false
@@ -322,21 +307,21 @@ public class Multiplication extends OperationType {
 
         // Convolution:
 
-        Convolution convolution =
-                new Convolution(
-                        (inputs, d) -> {
-                            double[] t1_val = inputs[1].value64();
-                            double[] t2_val = inputs[2].value64();
-                            if (d < 0) {
-                                return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];
-                            } else {
-                                return (t0Idx, t1Idx, t2Idx) -> {
-                                    if (d == 0) return t2_val[inputs[2].i_of_idx(t2Idx)];
-                                    else return t1_val[inputs[1].i_of_idx(t1Idx)];
-                                };
-                            }
-                        }
-                );
+        DefaultOperatorCreator<TertiaryNDXConsumer> convolutionCreator =
+                (inputs, d) -> {
+                    double[] t1_val = inputs[1].value64();
+                    double[] t2_val = inputs[2].value64();
+                    if (d < 0) {
+                        return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];
+                    } else {
+                        return (t0Idx, t1Idx, t2Idx) -> {
+                            if (d == 0) return t2_val[inputs[2].i_of_idx(t2Idx)];
+                            else return t1_val[inputs[1].i_of_idx(t1Idx)];
+                        };
+                    }
+                };
+
+        Convolution convolution = new Convolution();
 
         new OperationType(
                 "multiply", "x", 2, true, false, true, false, false

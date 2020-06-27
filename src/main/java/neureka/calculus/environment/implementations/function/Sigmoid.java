@@ -36,10 +36,7 @@ public class Sigmoid extends OperationType
                 true
         );
 
-        Activation typeImplementation =
-                new Activation(
-                        _creator
-                );
+        Activation typeImplementation = new Activation();
 
 
         setImplementation(

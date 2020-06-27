@@ -137,12 +137,13 @@ public class HostCPU extends AbstractDevice
     public class NativeExecutor
     {
         private final ThreadPoolExecutor _pool =
-                (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+                (ThreadPoolExecutor) Executors.newFixedThreadPool(
+                        Runtime.getRuntime().availableProcessors()
+                );
 
         public ThreadPoolExecutor getPool() {
             return _pool;
         }
-
 
         //==============================================================================================================
 
@@ -173,7 +174,6 @@ public class HostCPU extends AbstractDevice
                 }
             } else range.execute(0, sze);
         }
-
 
     }
 

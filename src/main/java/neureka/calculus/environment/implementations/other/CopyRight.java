@@ -22,10 +22,7 @@ public class CopyRight extends OperationType {
                     else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
                 };
 
-        Activation activation =
-                new Activation(
-                        activationCreator
-                );
+        Activation activation = new Activation();
 
         setImplementation(Activation.class,
                 activation.setExecution (

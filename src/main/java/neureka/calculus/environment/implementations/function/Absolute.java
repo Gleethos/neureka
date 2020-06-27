@@ -17,9 +17,9 @@ public class Absolute extends OperationType {
     public Absolute()
     {
         super("absolute", "abs" , 1, false, false, false, true, true);
-        Activation typeImplementation = new Activation(
-                _activationCreator
-        );
+
+        Activation typeImplementation = new Activation();
+
         setImplementation(
                 Activation.class,
                 typeImplementation.setExecution(
