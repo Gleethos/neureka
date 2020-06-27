@@ -11,6 +11,7 @@ import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.ndim.config.AbstractNDC;
+import neureka.ndim.config.virtual.VirtualNDConfiguration;
 import neureka.optimization.Optimizer;
 import neureka.utility.DataHelper;
 
@@ -99,9 +100,10 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 
     public Tsr setIsVirtual(boolean isVirtual) {
         if (isVirtual() != isVirtual) {
-            if (this.isOutsourced()) {
-                if (!isVirtual) _setIsVirtual(false);
-            } else {
+            Device device = this.find(Device.class);
+            if ( device!=null ) device.get(this);
+
+
                 double v = (_value==null) ? 0 : ((this.is64())?((double[])_value)[0]:((float[])_value)[0]);
                 if (isVirtual) {
                     _value = new double[]{v};
@@ -116,7 +118,10 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
                     }
                 }
                 _setIsVirtual(isVirtual);
-            }
+                if(_conf!=null) _configureFromNewShape(_conf.shape(), isVirtual);
+
+
+            if( device!=null ) device.add(this);
         } else if (isVirtual && _value==null) _value = new double[]{0};
         return this;
     }
@@ -278,19 +283,23 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     /**
      * @param newShape
      */
-    protected void _configureFromNewShape(int[] newShape) {
+    protected void _configureFromNewShape(int[] newShape, boolean makeVirtual) {
         int size = Utility.Indexing.szeOfShp(newShape);
         _value = (_value==null) ? new double[size] : _value;
         int length = (this.is64())?((double[])_value).length:((float[])_value).length;
-        if (size != length && !this.isVirtual()) {
+        if (size != length && (!this.isVirtual() || !makeVirtual)) {
             throw new IllegalArgumentException("Size of shape does not match stored value64!");
         }
-        int[] newTranslation = Utility.Indexing.newTlnOf(newShape);
-        int[] newIdxmap = newTranslation;
-        int[] newSpread = new int[newShape.length];
-        Arrays.fill(newSpread, 1);
-        int[] newOffset = new int[newShape.length];
-        _conf = AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);
+        if(makeVirtual) {
+            _conf = VirtualNDConfiguration.construct(newShape);
+        } else {
+            int[] newTranslation = Utility.Indexing.newTlnOf(newShape);
+            int[] newIdxmap = newTranslation;
+            int[] newSpread = new int[newShape.length];
+            Arrays.fill(newSpread, 1);
+            int[] newOffset = new int[newShape.length];
+            _conf = AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);
+        }
     }
 
 
@@ -494,7 +503,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 
     private void _construct(int[] shape){
         _value = new double[Utility.Indexing.szeOfShp(shape)];
-        this._configureFromNewShape(shape);
+        this._configureFromNewShape(shape, false);
     }
 
     public Tsr(int[] shape, double value) {
@@ -505,7 +514,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         int size = Utility.Indexing.szeOfShp(shape);
         _value = new double[1];
         this.setIsVirtual( size > 1 );
-        this._configureFromNewShape(shape);
+        this._configureFromNewShape(shape, size > 1);
         ((double[])_value)[0] = value;
     }
 
@@ -520,7 +529,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
             for(int i=0; i<newValue.length; i++) newValue[i] = value[i%value.length];
             _value = newValue;
         } else _value = value;
-        this._configureFromNewShape(shape);
+        this._configureFromNewShape(shape, false);
     }
 
     //TRACKED COMPUTATION :
@@ -694,7 +703,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 
     public Tsr putAt(Object key, Tsr value) {
         if (value.isEmpty()) throw new IllegalArgumentException("Provided tensor is empty!");
-        Tsr slice = (key==null) ? this : (Tsr)getAt(key);
+        Tsr slice = ( key==null ) ? this : (Tsr)getAt(key);
         boolean valueIsDeviceVisitor = false;
         if (slice.isOutsourced() && !value.isOutsourced()){
             Device device = slice.find(Device.class);

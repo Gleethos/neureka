@@ -91,6 +91,7 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
                     ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
                     : tsrs[1].getNDConf().shape();
             Tsr output = new Tsr(shp, 0.0);
+            output.setIsVirtual(false); // This tensor will be 'filled'! Therefore : needs to be 'whole!
             device.add(output);
             tsrs[0] = output;
         }

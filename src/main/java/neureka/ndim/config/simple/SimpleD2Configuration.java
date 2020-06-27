@@ -1,11 +1,11 @@
 package neureka.ndim.config.simple;
 
 import neureka.Neureka;
-import neureka.ndim.config.AbstractArrayBasedNDC;
+import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 
 
-public final class SimpleD2Configuration extends AbstractArrayBasedNDC //:= IMMUTABLE
+public final class SimpleD2Configuration extends AbstractNDC //:= IMMUTABLE
 {
     private SimpleD2Configuration(
             int[] shape,

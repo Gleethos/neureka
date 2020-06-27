@@ -91,10 +91,11 @@ import java.lang.ref.Cleaner;
 <span class="fc" id="L91">                    ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())</span>
 <span class="fc" id="L92">                    : tsrs[1].getNDConf().shape();</span>
 <span class="fc" id="L93">            Tsr output = new Tsr(shp, 0.0);</span>
-<span class="fc" id="L94">            device.add(output);</span>
-<span class="fc" id="L95">            tsrs[0] = output;</span>
+<span class="fc" id="L94">            output.setIsVirtual(false); // This tensor will be 'filled'! Therefore : needs to be 'whole!</span>
+<span class="fc" id="L95">            device.add(output);</span>
+<span class="fc" id="L96">            tsrs[0] = output;</span>
         }
-<span class="fc" id="L97">    }</span>
+<span class="fc" id="L98">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

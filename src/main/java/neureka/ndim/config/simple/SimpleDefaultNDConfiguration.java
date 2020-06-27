@@ -2,18 +2,18 @@ package neureka.ndim.config.simple;
 
 import neureka.Neureka;
 import neureka.ndim.config.NDConfiguration;
-import neureka.ndim.config.AbstractArrayBasedNDC;
+import neureka.ndim.config.AbstractNDC;
 
 import java.util.Arrays;
 
-public final class SimpleDefaultNDConfiguration extends AbstractArrayBasedNDC //:= IMMUTABLE
+public final class SimpleDefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
 {
 
     private SimpleDefaultNDConfiguration(
             int[] shape, int[] translation
     ) {
-        _shape = _cached(shape);
-        _translation_and_idxmap = _cached(translation);
+        _shape = _cacheArray(shape);
+        _translation_and_idxmap = _cacheArray(translation);
     }
 
     public static NDConfiguration construct(

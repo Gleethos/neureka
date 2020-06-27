@@ -2,13 +2,9 @@ package neureka.ndim.config.complex;
 
 import neureka.Neureka;
 import neureka.ndim.config.NDConfiguration;
-import neureka.ndim.config.AbstractArrayBasedNDC;
+import neureka.ndim.config.AbstractNDC;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.WeakHashMap;
-
-public final class DefaultNDConfiguration extends AbstractArrayBasedNDC //:= IMMUTABLE
+public final class DefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
 {
 
     private DefaultNDConfiguration(
@@ -18,11 +14,11 @@ public final class DefaultNDConfiguration extends AbstractArrayBasedNDC //:= IMM
             int[] spread,
             int[] offset
     ) {
-        _shape = _cached(shape);
-        _translation = _cached(translation);
-        _idxmap = _cached(idxmap);
-        _spread = _cached(spread);
-        _offset = _cached(offset);
+        _shape = _cacheArray(shape);
+        _translation = _cacheArray(translation);
+        _idxmap = _cacheArray(idxmap);
+        _spread = _cacheArray(spread);
+        _offset = _cacheArray(offset);
     }
 
     public static NDConfiguration construct(

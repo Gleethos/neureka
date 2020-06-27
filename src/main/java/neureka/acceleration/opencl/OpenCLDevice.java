@@ -130,6 +130,7 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     private void _add(Tsr tensor, cl_tsr parent) {
+        //tensor.setIsVirtual(false); // TODO: remove this without errors! Hint: Virtual tensors should be stored too!
         cl_tsr newClt = new cl_tsr();
         {
             final cl_mem clConfMem = newClt.config.data;
@@ -200,7 +201,7 @@ public class OpenCLDevice extends AbstractDevice
         tensor.add(this);
         if (tensor.isVirtual()) _enqueue(tensor, tensor.value64(0), -1, OperationType.instance("<"));
         tensor.setIsOutsourced(true);
-        tensor.setIsVirtual(false);
+        //tensor.setIsVirtual(false);
     }
 
     @Override
@@ -211,19 +212,19 @@ public class OpenCLDevice extends AbstractDevice
     private void _store(Tsr tensor, cl_tsr newClTsr, int fp) {
         Pointer p = null;
         int size = tensor.size();
-        if (!tensor.isVirtual()) {
-            if (fp == 1) {
+        //if ( !tensor.isVirtual() ) {
+            if ( fp == 1 ) {
                 float[] data = tensor.value32();
-                data = (data == null) ? new float[tensor.size()] : data;
+                data = ( data == null ) ? new float[tensor.size()] : data;
                 p = Pointer.to(data);
                 size = data.length;
             } else {
                 double[] data = tensor.value64();
-                data = (data == null) ? new double[tensor.size()] : data;
+                data = ( data == null ) ? new double[tensor.size()] : data;
                 p = Pointer.to(data);
                 size = data.length;
             }
-        }
+        //}
         newClTsr.value.size = size;
         //VALUE TRANSFER:
         cl_mem mem = clCreateBuffer(

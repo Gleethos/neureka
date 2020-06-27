@@ -1,10 +1,10 @@
 package neureka.ndim.config.complex;
 
 import neureka.Neureka;
-import neureka.ndim.config.AbstractArrayBasedNDC;
+import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 
-public final class D3Configuration extends AbstractArrayBasedNDC //:= IMMUTABLE
+public final class D3Configuration extends AbstractNDC //:= IMMUTABLE
 {
     private D3Configuration(
             int[] shape,
