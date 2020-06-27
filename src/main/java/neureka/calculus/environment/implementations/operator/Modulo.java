@@ -36,12 +36,6 @@ public class Modulo extends OperationType {
 
         Operation operation =
                 new Operation(
-                        "output = ((int)input1) % ((int)input2);\n",
-                        "if(d==0){\n" +
-                                "    output = 1/input2;\n" +
-                                "} else {\n" +
-                                "    output = -input2 /(float)pow(input1, 2.0f);\n" +
-                                "}",
                         operationCreator
                 );
 
@@ -120,12 +114,6 @@ public class Modulo extends OperationType {
 
         Broadcast broadcast =
                 new Broadcast(
-                        "value = ((int)src1) % ((int)src2);\n", //...this is correct
-                        "if(d==0){\n" +
-                                "    value += (1/handle) * drain;\n" +//TODO: this probably is wrong!
-                                "} else {\n" +
-                                "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
-                                "}",
                         creator
                         );
 
@@ -189,12 +177,6 @@ public class Modulo extends OperationType {
                 };
 
         Scalarization scalarization = new Scalarization(
-                "output = ((int)input1) % ((int)value);\n",
-                "if(d==0){\n" +
-                        "    output = 1/value;\n" +
-                        "} else {\n" +
-                        "    output = -value /(float)pow(input1, 2.0f);\n" +
-                        "}",
                 scalarCreator
         );
 

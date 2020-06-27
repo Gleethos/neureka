@@ -34,8 +34,6 @@ public class Quadratic extends OperationType
 
         Activation typeImplementation =
                 new Activation(
-                        "output = input*input;\n",
-                        "output = 2*input;\n",
                         _creator
                         );
 

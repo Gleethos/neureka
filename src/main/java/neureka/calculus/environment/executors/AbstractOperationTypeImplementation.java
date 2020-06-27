@@ -14,26 +14,16 @@ import java.util.function.Consumer;
 
 public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType> implements OperationTypeImplementation<FinalType>
 {
-    protected String _operation;
-    protected String _deriviation;
     protected CreatorType _creator;
 
     protected Map<Class<ExecutorFor<Device>>, ExecutorFor<Device>> _executions;
 
-    public AbstractOperationTypeImplementation(String operation, String deriviation, CreatorType creator)
+    public AbstractOperationTypeImplementation(CreatorType creator)
     {
-        _operation = operation;
-        _deriviation = deriviation;
         _creator = creator;
         _executions = new HashMap<>();
     }
 
-    public String getAsString(){
-        return _operation;
-    }
-    public String getDeriviationAsString(){
-        return _deriviation;
-    }
     public CreatorType getCreator(){
         return _creator;
     }
@@ -48,6 +38,12 @@ public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType
     public <D extends Device, E extends ExecutorFor<D>> E getExecution(Class<E> deviceClass){
         return (E) _executions.get(deviceClass); // assert that result is of type T...
     }
+
+    //@Override
+    //ExecutionCall<Device> fitArguments(ExecutionCall<Device> call)
+    //{
+    //    return null;
+    //}
     
     private Tsr reduce(
             Device device,

@@ -38,8 +38,6 @@ public class Sigmoid extends OperationType
 
         Activation typeImplementation =
                 new Activation(
-                        "output = 1 / (1 + (float)pow((float)M_E, -input));\n",
-                        "output = input * (1 - input);\n",
                         _creator
                 );
 

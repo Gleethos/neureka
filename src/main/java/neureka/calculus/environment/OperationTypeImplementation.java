@@ -52,4 +52,7 @@ public interface OperationTypeImplementation<FinalType>
 
     Tsr reduce( OperationTypeImplementation.ExecutionCall<Device> call, Consumer<ExecutionCall<Device>> finalExecution );
 
+    //ExecutionCall<Device> fitArguments(ExecutionCall<Device> call);
+
+
 }

@@ -21,24 +21,6 @@ public class Ligmoid extends OperationType {
 
         Activation typeImplementation =
                 new Activation(
-                        "output = \n" +
-                                "(\n" +
-                                "        (float) log(\n" +
-                                "            1+pow(\n" +
-                                "                (float)\n" +
-                                "                M_E,\n" +
-                                "                (float)\n" +
-                                "                input\n" +
-                                "            )\n" +
-                                "        )\n" +
-                                "    );",
-                        "output =\n" +
-                                "    1 /\n" +
-                                "        (1 + (float) pow(\n" +
-                                "                (float)M_E,\n" +
-                                "                (float)input\n" +
-                                "            )\n" +
-                                "        );\n",
                         _creator
                 );
 

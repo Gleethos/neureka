@@ -43,12 +43,6 @@ public class Division extends OperationType
 
         Operation operation =
                 new Operation(
-                        "output = input1 / input2;\n",
-                        "if(d==0){\n" +
-                                "    output = 1/input2;\n" +
-                                "} else {\n" +
-                                "    output = -input2 /(float)pow(input1, 2.0f);\n" +
-                                "}",
                         _creator
                 );
 
@@ -105,12 +99,6 @@ public class Division extends OperationType
 
         Broadcast broadcast =
                 new Broadcast(
-                        "value = src1 / src2;\n",
-                        "if(d==0){\n" +
-                                "    value += (1/handle) * drain;\n" +
-                                "} else {\n" +
-                                "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
-                                "}",
                         _creator
                 );
         setImplementation(
@@ -173,12 +161,6 @@ public class Division extends OperationType
                 };
 
         Scalarization scalarization = new Scalarization(
-                "output = input1 / value;\n",
-                "if(d==0){\n" +
-                        "    output = 1/value;\n" +
-                        "} else {\n" +
-                        "    output = -value /(float)pow(input1, 2.0f);\n" +
-                        "}",
                 scalarCreator
         );
 
@@ -248,12 +230,6 @@ public class Division extends OperationType
         ).setImplementation(
                 Convolution.class,
                 new Convolution(
-                        "value = src1 / src2;\n",
-                        "if(d==0) {\n" +
-                                "    value += (1/handle) * drain;\n" +
-                                "} else {\n" +
-                                "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
-                                "}",
                         null
                 )
         );

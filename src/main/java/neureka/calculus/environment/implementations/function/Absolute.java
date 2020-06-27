@@ -7,7 +7,7 @@ import neureka.calculus.environment.executors.*;
 
 public class Absolute extends OperationType {
 
-    private DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
+    private DefaultOperatorCreator<TertiaryNDXConsumer> _activationCreator =
     (inputs, d)->{
         double[] t1_val = inputs[1].value64();
         if (d < 0) return (t0Idx, t1Idx, t2Idx) -> Math.abs(t1_val[inputs[1].i_of_idx(t1Idx)]);
@@ -18,9 +18,7 @@ public class Absolute extends OperationType {
     {
         super("absolute", "abs" , 1, false, false, false, true, true);
         Activation typeImplementation = new Activation(
-                "output = fabs(input);\n",
-                "output = (input < 0) ? -1 : 1;\n",
-                _creator
+                _activationCreator
         );
         setImplementation(
                 Activation.class,
@@ -35,7 +33,7 @@ public class Absolute extends OperationType {
                                                     Activation.activate(
                                                             call.getTensor(0),
                                                             start, end,
-                                                            _creator.create(call.getTensors(), call.getDerivativeIndex())
+                                                            _activationCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                     )
                                     ),
                                 3

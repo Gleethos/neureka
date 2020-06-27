@@ -38,8 +38,6 @@ public class ReLU extends OperationType
         );
         Activation typeImplementation =
                 new Activation(
-                        "if (input >= 0) {  output = input; } else { output = input * (float)0.01; }\n",
-                        "if (input >= 0) { output = (float)1; } else { output = (float)0.01; }\n",
                             _creator
                         );
 

@@ -36,12 +36,6 @@ public class Subtraction extends OperationType {
 
         Operation operation =
                 new Operation(
-                        "output = input1 - input2;  \n",
-                        "if(d==0){                 \n" +//drn and src2 switch:
-                                "    output = 1;              \n" +
-                                "} else {                     \n" +
-                                "    output = -1;               " +
-                                "}",
                         _creator
                 );
 
@@ -106,12 +100,6 @@ public class Subtraction extends OperationType {
 
         Scalarization scalarization =
                 new Scalarization(
-                        "output = input1 - value;\n",
-                        "if(d==0){     \n" +//drn and src2 switch:
-                                "    output = 1;  \n" +
-                                "} else {         \n" +
-                                "    output = -1;   " +
-                                "}",
                             scalarOperatorCreator
                         );
 
@@ -167,12 +155,6 @@ public class Subtraction extends OperationType {
 
         setImplementation(Broadcast.class,
                 new Broadcast(
-                        "value = src1 - src2;   \n",
-                        "if(d==0){              \n" +//drn and src2 switch:
-                                "    value += 1 * drain;   \n" +
-                                "} else {                  \n" +
-                                "    value += -1 * drain;    " +
-                                "}",
                         _creator
                 )
         );

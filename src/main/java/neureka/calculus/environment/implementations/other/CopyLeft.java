@@ -26,8 +26,6 @@ public class CopyLeft extends OperationType {
 
         Activation activation =
                 new Activation(
-                        "output = input;\n",
-                        "output = input;\n",
                         activationCreator
                 );
 

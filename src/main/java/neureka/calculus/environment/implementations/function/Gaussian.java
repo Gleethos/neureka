@@ -27,15 +27,6 @@ public class Gaussian extends OperationType {
 
         Activation typeImplementation =
                 new Activation(
-                        "output =\n" +
-                                "    (float)pow(\n" +
-                                "        (float)M_E,\n" +
-                                "        -(float)pow(\n" +
-                                "            (float)input,\n" +
-                                "            (float)2\n" +
-                                "        )\n" +
-                                "    );\n",
-                        "output = 1 / (1 + (float)pow((float)M_E, -input));\n",
                         _creator
                 );
 

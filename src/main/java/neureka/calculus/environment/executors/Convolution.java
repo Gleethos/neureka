@@ -7,8 +7,8 @@ import org.jetbrains.annotations.Contract;
 
 public class Convolution extends AbstractOperationTypeImplementation<Convolution, Type.DefaultOperatorCreator<Type.TertiaryNDXConsumer>>
 {
-    public Convolution(String strConvolution, String strDeriviation, Type.DefaultOperatorCreator<Type.TertiaryNDXConsumer> creator){
-        super(strConvolution, strDeriviation, creator);
+    public Convolution(Type.DefaultOperatorCreator<Type.TertiaryNDXConsumer> creator){
+        super(creator);
     }
 
     @Override

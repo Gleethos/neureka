@@ -21,8 +21,6 @@ public class Identity extends OperationType {
 
         Activation typeImplementation =
                 new Activation(
-                        "output = input;\n",
-                        "output = input;\n",
                         _creator
                         );
         setImplementation(
@@ -72,8 +70,6 @@ public class Identity extends OperationType {
                 };
         Scalarization scalarization =
                 new Scalarization(
-                        "output = value;\n",
-                        "output = value;\n",
                         null
                 );
         setImplementation(Scalarization.class,

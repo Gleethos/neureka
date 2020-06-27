@@ -34,44 +34,42 @@ public class Quadratic extends OperationType
 
 <span class="fc" id="L35">        Activation typeImplementation =</span>
                 new Activation(
-                        &quot;output = input*input;\n&quot;,
-                        &quot;output = 2*input;\n&quot;,
                         _creator
                         );
 
-<span class="fc" id="L42">        setImplementation(</span>
+<span class="fc" id="L40">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L44">                typeImplementation.setExecution (</span>
+<span class="fc" id="L42">                typeImplementation.setExecution (</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
-<span class="fc" id="L48">                                        call.getDevice().getExecutor()</span>
-<span class="fc" id="L49">                                                .threaded (</span>
-<span class="fc" id="L50">                                                        call.getTensor(0).size(),</span>
+<span class="fc" id="L46">                                        call.getDevice().getExecutor()</span>
+<span class="fc" id="L47">                                                .threaded (</span>
+<span class="fc" id="L48">                                                        call.getTensor(0).size(),</span>
                                                         ( start, end ) -&gt;
-<span class="fc" id="L52">                                                                Activation.activate (</span>
-<span class="fc" id="L53">                                                                        call.getTensor(0),</span>
+<span class="fc" id="L50">                                                                Activation.activate (</span>
+<span class="fc" id="L51">                                                                        call.getTensor(0),</span>
                                                                         start, end,
-<span class="fc" id="L55">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
+<span class="fc" id="L53">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                                 )
                                                 ),
                                 3
                         )
-<span class="fc" id="L60">                ).setExecution(</span>
+<span class="fc" id="L58">                ).setExecution(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {
-<span class="nc bnc" id="L64" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
-<span class="nc bnc" id="L65" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
-<span class="nc" id="L66">                                    call.getDevice().getKernel(call)</span>
-<span class="nc" id="L67">                                            .pass(call.getTensor(offset))</span>
-<span class="nc" id="L68">                                            .pass(call.getTensor(offset + 1))</span>
-<span class="nc" id="L69">                                            .pass(call.getTensor(0).rank())</span>
-<span class="nc" id="L70">                                            .pass(call.getDerivativeIndex())</span>
-<span class="nc" id="L71">                                            .call(gwz);</span>
-<span class="nc" id="L72">                                },</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
+<span class="nc" id="L64">                                    call.getDevice().getKernel(call)</span>
+<span class="nc" id="L65">                                            .pass(call.getTensor(offset))</span>
+<span class="nc" id="L66">                                            .pass(call.getTensor(offset + 1))</span>
+<span class="nc" id="L67">                                            .pass(call.getTensor(0).rank())</span>
+<span class="nc" id="L68">                                            .pass(call.getDerivativeIndex())</span>
+<span class="nc" id="L69">                                            .call(gwz);</span>
+<span class="nc" id="L70">                                },</span>
                                 3,
-<span class="fc" id="L74">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L72">                                typeImplementation.getKernelSource(), // kernelSource</span>
                                 &quot;output = input*input;\n&quot;,
                                 &quot;output = 2*input;\n&quot;,
                                 this // OperationType
@@ -80,7 +78,7 @@ public class Quadratic extends OperationType
         );
 
 
-<span class="fc" id="L83">    }</span>
+<span class="fc" id="L81">    }</span>
 
 
 }

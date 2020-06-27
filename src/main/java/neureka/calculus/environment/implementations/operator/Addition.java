@@ -16,8 +16,6 @@ public class Addition extends OperationType {
             };
 
     private static final Broadcast _broadcast = new Broadcast(
-            "value = src1 + src2;\n",
-            "value += 1 * drain;\n",
             _creator
     );
 
@@ -47,8 +45,6 @@ public class Addition extends OperationType {
                 };
 
         Operation operation = new Operation(
-                "output = input1 + input2;\n",
-                "output = 1;\n",
                 _creator
         );
 
@@ -145,8 +141,6 @@ public class Addition extends OperationType {
 
         Scalarization scalarization =
                 new Scalarization(
-                        "output = input1 + value;\n",
-                        "output = 1;\n",
                         (inputs, value, d) -> {
                             double[] t1_val = inputs[1].value64();
                             if (d < 0) return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] + value;
@@ -223,8 +217,6 @@ public class Addition extends OperationType {
                 "add", "a", 2, true, false, true, false, false
         ).setImplementation(Convolution.class,
                 new Convolution(
-                        "value = src1 + src2;\n",
-                        "value += 1 * drain;\n",
                         null
                 )
         );

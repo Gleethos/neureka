@@ -21,8 +21,6 @@ public class Sinus extends OperationType
 
         Activation typeImplementation =
                 new Activation(
-                        "output = sin(input);\n",
-                        "output = cos(input);\n",
                         _creator
                 );
 

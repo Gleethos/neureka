@@ -13,12 +13,7 @@ public class Randomization extends OperationType{
         super(
                 "random", "rand", 1, true, false, false, false, false
         );
-        setImplementation(Scalarization.class, new Scalarization("output = pow(input1, value);",
-                "if(d==0){\n" +
-                        "    output = value * pow(input1, value-(float)1 );\n" +
-                        "} else {\n" +
-                        "    output = pow(input1, value) * log(value);\n" +
-                        "}",
+        setImplementation(Scalarization.class, new Scalarization(
                 (inputs, value, d)->{
                     Random dice = new Random();
                     dice.setSeed(Double.doubleToLongBits(value));

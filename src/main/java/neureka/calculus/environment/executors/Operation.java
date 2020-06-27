@@ -7,8 +7,8 @@ import org.jetbrains.annotations.Contract;
 
 public class Operation  extends AbstractOperationTypeImplementation<Operation, Type.DefaultOperatorCreator>
 {
-    public Operation(String strOperation, String strDeriviation, Type.DefaultOperatorCreator creator){
-        super(strOperation, strDeriviation, creator);
+    public Operation(Type.DefaultOperatorCreator creator){
+        super(creator);
     }
 
     @Override

@@ -29,8 +29,6 @@ public class Cosinus extends OperationType {
 
         Activation typeImplementation =
                 new Activation(
-                        "output = cos(input);\n",
-                        "output = -sin(input);\n",
                         _creator
                 );
         setImplementation(

@@ -49,8 +49,6 @@ public class Multiplication extends OperationType {
 
         Operation operation =
                 new Operation(
-                        "output = input1 * input2;\n",
-                        "if(d==0){output = input2;}else{output = input1;}\n",
                         _creator
                 );
 
@@ -103,8 +101,6 @@ public class Multiplication extends OperationType {
 
         Broadcast broadcast =
                 new Broadcast(
-                        "value = src1 * src2;\n",
-                        "value += handle * drain;\n",
                         _creator
                 );
 
@@ -166,8 +162,6 @@ public class Multiplication extends OperationType {
 
         Scalarization scalarization =
                 new Scalarization(
-                        "output = input1 * value;\n",
-                        "if(d==0){output = value;}else{output = input1;}\n",
                         scalarOperatorCreator
                         );
 
@@ -231,16 +225,12 @@ public class Multiplication extends OperationType {
                 "", ((char) 171) + "*", 3, true, false, false, false, false
         ).setImplementation(Broadcast.class,
                 new Broadcast(
-                "value = src1 * src2;\n",
-                "value += handle * drain;\n",
                 xCreator
         ));
         new OperationType(
                 "", "*" + ((char) 187), 3, true, false, false, false, false
         ).setImplementation(Broadcast.class,
                 new Broadcast(
-                "value = src1 * src2;\n",
-                "value += handle * drain;\n",
                 xCreator
         ));
 
@@ -248,8 +238,6 @@ public class Multiplication extends OperationType {
 
         Convolution convolution =
                 new Convolution(
-                        "value = src1 * src2;\n",
-                        "value += handle * drain;\n",
                         (inputs, d) -> {
                             double[] t1_val = inputs[1].value64();
                             double[] t2_val = inputs[2].value64();

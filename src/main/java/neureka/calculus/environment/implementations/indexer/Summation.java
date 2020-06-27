@@ -32,8 +32,6 @@ public class Summation extends OperationType {
 
         Broadcast typeImplementation =
                 new Broadcast(
-                        "value = src1 + src2;\n",
-                        "value += handle + drain;\n",
                         _creator
                 );
 
@@ -95,8 +93,6 @@ public class Summation extends OperationType {
 
         Activation activation =
                 new Activation(
-                        "output = input;",
-                        "output = 1;",
                         null
                 );
 

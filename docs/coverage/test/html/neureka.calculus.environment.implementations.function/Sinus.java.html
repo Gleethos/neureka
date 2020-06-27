@@ -21,44 +21,42 @@ public class Sinus extends OperationType
 
 <span class="fc" id="L22">        Activation typeImplementation =</span>
                 new Activation(
-                        &quot;output = sin(input);\n&quot;,
-                        &quot;output = cos(input);\n&quot;,
                         _creator
                 );
 
-<span class="fc" id="L29">        setImplementation(</span>
+<span class="fc" id="L27">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L31">                typeImplementation.setExecution (</span>
+<span class="fc" id="L29">                typeImplementation.setExecution (</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
-<span class="nc" id="L35">                                        call.getDevice().getExecutor()</span>
-<span class="nc" id="L36">                                                .threaded (</span>
-<span class="nc" id="L37">                                                        call.getTensor(0).size(),</span>
+<span class="nc" id="L33">                                        call.getDevice().getExecutor()</span>
+<span class="nc" id="L34">                                                .threaded (</span>
+<span class="nc" id="L35">                                                        call.getTensor(0).size(),</span>
                                                         ( start, end ) -&gt;
-<span class="nc" id="L39">                                                                Activation.activate (</span>
-<span class="nc" id="L40">                                                                        call.getTensor(0),</span>
+<span class="nc" id="L37">                                                                Activation.activate (</span>
+<span class="nc" id="L38">                                                                        call.getTensor(0),</span>
                                                                         start, end,
-<span class="nc" id="L42">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
+<span class="nc" id="L40">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                                 )
                                                 ),
                                 3
                         )
-<span class="fc" id="L47">                ).setExecution(</span>
+<span class="fc" id="L45">                ).setExecution(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {
-<span class="nc bnc" id="L51" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
-<span class="nc bnc" id="L52" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
-<span class="nc" id="L53">                                    call.getDevice().getKernel(call)</span>
-<span class="nc" id="L54">                                            .pass(call.getTensor(offset))</span>
-<span class="nc" id="L55">                                            .pass(call.getTensor(offset + 1))</span>
-<span class="nc" id="L56">                                            .pass(call.getTensor(0).rank())</span>
-<span class="nc" id="L57">                                            .pass(call.getDerivativeIndex())</span>
-<span class="nc" id="L58">                                            .call(gwz);</span>
-<span class="nc" id="L59">                                },</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
+<span class="nc" id="L51">                                    call.getDevice().getKernel(call)</span>
+<span class="nc" id="L52">                                            .pass(call.getTensor(offset))</span>
+<span class="nc" id="L53">                                            .pass(call.getTensor(offset + 1))</span>
+<span class="nc" id="L54">                                            .pass(call.getTensor(0).rank())</span>
+<span class="nc" id="L55">                                            .pass(call.getDerivativeIndex())</span>
+<span class="nc" id="L56">                                            .call(gwz);</span>
+<span class="nc" id="L57">                                },</span>
                                 3,
-<span class="fc" id="L61">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L59">                                typeImplementation.getKernelSource(), // kernelSource</span>
                                 &quot;output = sin(input);\n&quot;,
                                 &quot;output = cos(input);\n&quot;,
                                 this // OperationType
@@ -69,7 +67,7 @@ public class Sinus extends OperationType
 
 
 
-<span class="fc" id="L72">    }</span>
+<span class="fc" id="L70">    }</span>
 
 
 }

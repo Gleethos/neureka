@@ -38,7 +38,8 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
             int offset = ( tsrs[0] == null ) ? 1 : 0;
             _execute_recursively( new Tsr[]{tsrs[offset], tsrs[1+offset]}, OperationType.instance("idy"), -1 );
         }
-        else if ( type.identifier().equals(">") )
+        else
+        if ( type.identifier().equals(">") )
         {
             int offset = ( tsrs[0] == null ) ? 1 : 0;
             _execute_recursively( new Tsr[]{tsrs[1+offset], tsrs[offset]}, OperationType.instance("idy"), -1 );

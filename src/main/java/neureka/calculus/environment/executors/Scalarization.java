@@ -7,9 +7,9 @@ import org.jetbrains.annotations.Contract;
 
 public class Scalarization extends AbstractOperationTypeImplementation<Scalarization, Type.ScalarOperatorCreator<Type.PrimaryNDXConsumer>>
 {
-    public Scalarization(String strScalarized, String strDeriviation, Type.ScalarOperatorCreator<Type.PrimaryNDXConsumer> creator)
+    public Scalarization(Type.ScalarOperatorCreator<Type.PrimaryNDXConsumer> creator)
     {
-        super(strScalarized, strDeriviation, creator);
+        super(creator);
     }
 
     @Override

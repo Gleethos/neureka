@@ -65,12 +65,6 @@ public class Power extends OperationType
 
         Operation operation =
                 new Operation(
-                        "output = pow(input1, input2);",
-                        "if(d==0) {                                    \n" +
-                                "    output = input2 * pow(input1, input2-1.0f);  \n" +
-                                "} else {                                         \n" +
-                                "    output = pow(input1, input2) * log(input1);  \n" +
-                                "}",
                         _creator
                 );
 
@@ -126,12 +120,6 @@ public class Power extends OperationType
 
         Broadcast broadcast =
                 new Broadcast(
-                        "value += pow(src1, src2);",
-                        "if(d==0){\n" +
-                                "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
-                                "} else {\n" +
-                                "    value += (pow(target, handle) * log(handle)) * drain;\n" +
-                                "}",
                         _creator
                 );
 
@@ -199,12 +187,6 @@ public class Power extends OperationType
 
         Scalarization scalarization =
                 new Scalarization(
-                        "output = pow(input1, value);",
-                        "if ( d==0 ) {                                     \n" +
-                                "    output = value * pow(input1, value-(float)1 );   \n" +
-                                "} else {                                             \n" +
-                                "    output = pow(input1, value) * log(value);        \n" +
-                                "}",
                             scalarCreator
                         );
 
@@ -270,12 +252,6 @@ public class Power extends OperationType
                 "power", "p", 2, true, false, true, false, false
         ).setImplementation(Convolution.class,
                 new Convolution(
-                        "value += pow(src1, src2);",
-                        "if(d==0){\n" +
-                                "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
-                                "} else {\n" +
-                                "    value += (pow(target, handle) * log(handle)) * drain;\n" +
-                                "}",
                         null
                 )
         );
