@@ -143,43 +143,6 @@ public class HostCPU extends AbstractDevice
             return _pool;
         }
 
-        public void broadcast(Tsr[] tsrs, int d, OperationType type)
-        {
-            threaded(
-                    tsrs[0].size(),
-                    (start, end) ->
-                            Broadcast.broadcast(
-                                    tsrs[0], tsrs[1], tsrs[2], d,
-                                    start, end,
-                                    type.getImplementation(Broadcast.class).getCreator().create(tsrs, d)
-                            )
-            );
-        }
-
-        public void convolve(Tsr[] tsrs, int d, OperationType type)
-        {
-            threaded(
-                    tsrs[0].size(),
-                    (start, end) ->
-                            Convolution.convolve(
-                                    tsrs[0], tsrs[1], tsrs[2], d,
-                                    start, end,
-                                    type.getImplementation(Convolution.class).getCreator().create(tsrs, -1)
-                            )
-            );
-        }
-
-        public void scalar(Tsr[] tsrs, double scalar, int d, OperationType type)
-        {
-            threaded(
-                    tsrs[0].size(),
-                    (start, end) ->
-                            Scalarization.scalarize(
-                                    tsrs[0], start, end,
-                                    type.getImplementation(Scalarization.class).getCreator().create(tsrs, scalar, d)
-                            )
-            );
-        }
 
         //==============================================================================================================
 

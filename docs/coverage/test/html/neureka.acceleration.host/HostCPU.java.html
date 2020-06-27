@@ -142,77 +142,40 @@ public class HostCPU extends AbstractDevice
         public ThreadPoolExecutor getPool() {
 <span class="fc" id="L143">            return _pool;</span>
         }
-
-        public void broadcast(Tsr[] tsrs, int d, OperationType type)
-        {
-<span class="fc" id="L148">            threaded(</span>
-<span class="fc" id="L149">                    tsrs[0].size(),</span>
-                    (start, end) -&gt;
-<span class="fc" id="L151">                            Broadcast.broadcast(</span>
-                                    tsrs[0], tsrs[1], tsrs[2], d,
-                                    start, end,
-<span class="fc" id="L154">                                    type.getImplementation(Broadcast.class).getCreator().create(tsrs, d)</span>
-                            )
-            );
-<span class="fc" id="L157">        }</span>
-
-        public void convolve(Tsr[] tsrs, int d, OperationType type)
-        {
-<span class="fc" id="L161">            threaded(</span>
-<span class="fc" id="L162">                    tsrs[0].size(),</span>
-                    (start, end) -&gt;
-<span class="fc" id="L164">                            Convolution.convolve(</span>
-                                    tsrs[0], tsrs[1], tsrs[2], d,
-                                    start, end,
-<span class="fc" id="L167">                                    type.getImplementation(Convolution.class).getCreator().create(tsrs, -1)</span>
-                            )
-            );
-<span class="fc" id="L170">        }</span>
-
-        public void scalar(Tsr[] tsrs, double scalar, int d, OperationType type)
-        {
-<span class="nc" id="L174">            threaded(</span>
-<span class="nc" id="L175">                    tsrs[0].size(),</span>
-                    (start, end) -&gt;
-<span class="nc" id="L177">                            Scalarization.scalarize(</span>
-                                    tsrs[0], start, end,
-<span class="nc" id="L179">                                    type.getImplementation(Scalarization.class).getCreator().create(tsrs, scalar, d)</span>
-                            )
-            );
-<span class="nc" id="L182">        }</span>
+        
 
         //==============================================================================================================
-
-        public void threaded(int sze, Range range)
+<span class="nc" id="L148"></span>
+<span class="nc" id="L149">        public void threaded(int sze, Range range)</span>
         {
-<span class="fc" id="L188">            int cores = _pool.getCorePoolSize() - _pool.getActiveCount();</span>
-<span class="pc bpc" id="L189" title="1 of 2 branches missed.">            cores = (cores == 0) ? 1 : cores;</span>
-<span class="fc bfc" id="L190" title="All 4 branches covered.">            if (sze &gt;= 32 &amp;&amp; ((sze / cores) &gt;= 8)) {</span>
-<span class="fc" id="L191">                final int chunk = sze / cores;</span>
-<span class="fc" id="L192">                Future[] futures = new Future[cores];</span>
-<span class="fc bfc" id="L193" title="All 2 branches covered.">                for (int i = 0; i &lt; cores; i++) {</span>
-<span class="fc" id="L194">                    final int start = i * chunk;</span>
-<span class="fc bfc" id="L195" title="All 2 branches covered.">                    final int end = (i == cores - 1) ? sze : ((i + 1) * chunk);</span>
-<span class="fc" id="L196">                    Neureka neureka = Neureka.instance();</span>
-<span class="fc" id="L197">                    futures[i] = _pool.submit(() -&gt; {</span>
-<span class="fc" id="L198">                        Neureka.setContext(Thread.currentThread(), neureka);</span>
-<span class="fc" id="L199">                        range.execute(start, end);</span>
-<span class="fc" id="L200">                    });</span>
+<span class="nc" id="L151">            int cores = _pool.getCorePoolSize() - _pool.getActiveCount();</span>
+            cores = (cores == 0) ? 1 : cores;
+            if (sze &gt;= 32 &amp;&amp; ((sze / cores) &gt;= 8)) {
+<span class="nc" id="L154">                final int chunk = sze / cores;</span>
+                Future[] futures = new Future[cores];
+                for (int i = 0; i &lt; cores; i++) {
+<span class="nc" id="L157">                    final int start = i * chunk;</span>
+                    final int end = (i == cores - 1) ? sze : ((i + 1) * chunk);
+                    Neureka neureka = Neureka.instance();
+                    futures[i] = _pool.submit(() -&gt; {
+<span class="nc" id="L161">                        Neureka.setContext(Thread.currentThread(), neureka);</span>
+<span class="nc" id="L162">                        range.execute(start, end);</span>
+                    });
+<span class="nc" id="L164">                }</span>
+                for (Future f : futures) {
+<span class="nc" id="L166">                    try {</span>
+                        f.get();
+                    } catch (InterruptedException e) {
+<span class="nc" id="L169">                        e.printStackTrace();</span>
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
                 }
-<span class="fc bfc" id="L202" title="All 2 branches covered.">                for (Future f : futures) {</span>
-                    try {
-<span class="fc" id="L204">                        f.get();</span>
-<span class="nc" id="L205">                    } catch (InterruptedException e) {</span>
-<span class="nc" id="L206">                        e.printStackTrace();</span>
-<span class="nc" id="L207">                    } catch (ExecutionException e) {</span>
-<span class="nc" id="L208">                        e.printStackTrace();</span>
-<span class="pc" id="L209">                    }</span>
-                }
-<span class="fc" id="L211">            } else range.execute(0, sze);</span>
-<span class="fc" id="L212">        }</span>
-
-
-    }
-
-}
+            } else range.execute(0, sze);
+<span class="fc" id="L175">        }</span>
+<span class="pc bpc" id="L176" title="1 of 2 branches missed."></span>
+<span class="fc bfc" id="L177" title="All 4 branches covered."></span>
+<span class="fc" id="L178">    }</span>
+<span class="fc" id="L179"></span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

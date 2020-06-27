@@ -29,7 +29,6 @@ public class Multiplication extends OperationType {
                 true, false, false, true, false
         );
 
-
         //_____________________
         // DEFAULT OPERATION :
 
@@ -221,18 +220,105 @@ public class Multiplication extends OperationType {
                     return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];
                 };
 
+        Broadcast xBroadcast =
+                new Broadcast(
+                        xCreator
+                );
+
         new OperationType(
                 "", ((char) 171) + "*", 3, true, false, false, false, false
-        ).setImplementation(Broadcast.class,
+        ).setImplementation(
+                Broadcast.class,
+                xBroadcast.setExecution (
+                        HostExecutor.class,
+                        new HostExecutor(
+                                call ->
+                                        call.getDevice().getExecutor()
+                                                .threaded (
+                                                        call.getTensor(0).size(),
+                                                        ( start, end ) ->
+                                                                Broadcast.broadcast (
+                                                                        call.getTensor(0), call.getTensor(1), call.getTensor(2),
+                                                                        call.getDerivativeIndex(), start, end,
+                                                                        xCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                )
+                                                ),
+                                3
+                        )
+                ).setExecution(
+                        CLExecutor.class,
+                        new CLExecutor(
+                                call -> {
+                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    call.getDevice().getKernel(call)
+                                            .pass(call.getTensor(offset))
+                                            .pass(call.getTensor(offset + 1))
+                                            .pass(call.getTensor(offset + 2))
+                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getDerivativeIndex())
+                                            .call(gwz);
+                                },
+                                3,
+                                xBroadcast.getKernelSource(), // kernelSource
+                                "value = src1 * src2;\n",
+                                "value += handle * drain;\n",
+                                this // OperationType
+                        )
+                )
+        );
+
+        xBroadcast =
                 new Broadcast(
-                xCreator
-        ));
+                        xCreator
+                );
+
         new OperationType(
                 "", "*" + ((char) 187), 3, true, false, false, false, false
-        ).setImplementation(Broadcast.class,
-                new Broadcast(
-                xCreator
-        ));
+        ).setImplementation(
+                Broadcast.class,
+                xBroadcast.setExecution (
+                        HostExecutor.class,
+                        new HostExecutor(
+                                call ->
+                                        call.getDevice().getExecutor()
+                                                .threaded (
+                                                        call.getTensor(0).size(),
+                                                        ( start, end ) ->
+                                                                Broadcast.broadcast (
+                                                                        call.getTensor(0), call.getTensor(1), call.getTensor(2),
+                                                                        call.getDerivativeIndex(), start, end,
+                                                                        xCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                )
+                                                ),
+                                3
+                        )
+                ).setExecution(
+                        CLExecutor.class,
+                        new CLExecutor(
+                                call -> {
+                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    call.getDevice().getKernel(call)
+                                            .pass(call.getTensor(offset))
+                                            .pass(call.getTensor(offset + 1))
+                                            .pass(call.getTensor(offset + 2))
+                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getDerivativeIndex())
+                                            .call(gwz);
+                                },
+                                3,
+                                xBroadcast.getKernelSource(), // kernelSource
+                                "value = src1 * src2;\n",
+                                "value += handle * drain;\n",
+                                this // OperationType
+                        )
+                )
+        );
+
+
+
+
 
         // Convolution:
 

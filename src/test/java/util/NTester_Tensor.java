@@ -7,6 +7,7 @@ import neureka.acceleration.host.execution.HostExecutor;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.executors.Broadcast;
+import neureka.calculus.environment.executors.Convolution;
 
 import java.util.List;
 
@@ -112,11 +113,19 @@ public class NTester_Tensor extends NTester
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfCon(frstShp, scndShp);
         double[] rsltData = new double[Tsr.Utility.Indexing.szeOfShp(drnMxd)];
-        HostCPU.instance().getExecutor().convolve(new Tsr[]{
-                new Tsr(drnMxd, rsltData),
-                new Tsr(frstShp, frstData),
-                new Tsr(scndShp, scondData)
-            }, -1, OperationType.instance("x")
+        OperationType.instance("x")
+                .getImplementation(Convolution.class)
+                .getExecution(HostExecutor.class)
+                .getExecution().call(
+                new OperationTypeImplementation.ExecutionCall<>(
+                        HostCPU.instance(),
+                        new Tsr[]{
+                                new Tsr(drnMxd, rsltData),
+                                new Tsr(frstShp, frstData),
+                                new Tsr(scndShp, scondData)
+                        }, -1,
+                        OperationType.instance("x")
+                )
         );
         assertIsEqual(stringified(rsltData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;
@@ -129,19 +138,20 @@ public class NTester_Tensor extends NTester
     ){
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfCon(frstShp, scndShp);
-        //CPU.exec.convolve_multiply_inverse(//inv
-        //        new Tsr(frstShp, frstData),
-        //        (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
-        //        (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
-        //);
-        HostCPU.instance().getExecutor().convolve(
-                new Tsr[]{
-                        new Tsr(frstShp, frstData),
-                        (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
-                        (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
-                },
-                0,
-                OperationType.instance(((char) 171)+"x")
+        OperationType.instance(((char) 171)+"x")
+                .getImplementation(Convolution.class)
+                .getExecution(HostExecutor.class)
+                .getExecution().call(
+                new OperationTypeImplementation.ExecutionCall<>(
+                        HostCPU.instance(),
+                        new Tsr[]{
+                                new Tsr(frstShp, frstData),
+                                (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
+                                (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
+                        },
+                        0,
+                        OperationType.instance(((char) 171)+"x")
+                )
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;
@@ -178,24 +188,36 @@ public class NTester_Tensor extends NTester
     ){
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
-        HostCPU.instance().getExecutor().broadcast(
-                new Tsr[]{
-                        new Tsr(frstShp, frstData),
-                        (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
-                        (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
-                },
-                0,
-                OperationType.instance(((char) 171) + "*")
+        OperationType.instance(((char) 171) + "*")
+                .getImplementation(Broadcast.class)
+                .getExecution(HostExecutor.class)
+                .getExecution().call(
+                new OperationTypeImplementation.ExecutionCall<>(
+                        HostCPU.instance(),
+                        new Tsr[]{
+                                new Tsr(frstShp, frstData),
+                                (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
+                                (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
+                        },
+                        0,
+                        OperationType.instance(((char) 171) + "*")
+                )
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
-        HostCPU.instance().getExecutor().broadcast(
-                new Tsr[]{
-                        new Tsr(frstShp, frstData),
-                        (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
-                        (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData),
-                },
-                0,
-                OperationType.instance("*" + ((char) 187))
+        OperationType.instance("*" + ((char) 187))
+                .getImplementation(Broadcast.class)
+                .getExecution(HostExecutor.class)
+                .getExecution().call(
+                new OperationTypeImplementation.ExecutionCall<>(
+                        HostCPU.instance(),
+                        new Tsr[]{
+                                new Tsr(frstShp, frstData),
+                                (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
+                                (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData),
+                        },
+                        0,
+                        OperationType.instance("*" + ((char) 187))
+                )
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
 
