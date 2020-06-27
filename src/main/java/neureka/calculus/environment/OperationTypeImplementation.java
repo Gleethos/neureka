@@ -18,39 +18,14 @@ import java.util.function.Consumer;
  */
 public interface OperationTypeImplementation<FinalType>
 {
-    class ExecutionCall<DeviceType extends Device>
-    {
-        private final DeviceType _device;
-        private final Tsr[] _tsrs;
-        private final int _d;
-        private final OperationType _type;
-
-        public ExecutionCall(
-                DeviceType device,
-                Tsr[] tsrs,
-                int d,
-                OperationType type
-        ) {
-            _device = device;
-            _tsrs = tsrs;
-            _d = d;
-            _type = type;
-        }
-        public DeviceType getDevice() {return _device;}
-        public Tsr[] getTensors() {return _tsrs;}
-        public Tsr getTensor(int i) {return _tsrs[i];}
-        public int getDerivativeIndex() {return _d;}
-        public OperationType getType() {return _type;}
-        public OperationTypeImplementation getExecutor() { return _type.executorOf(this); }
-    }
 
     <D extends Device, E extends ExecutorFor<D>> FinalType setExecution(Class<E> deviceClass, E execution);
 
     <D extends Device, E extends ExecutorFor<D>> ExecutorFor getExecution(Class<E> deviceClass);
 
-    boolean canHandle(OperationTypeImplementation.ExecutionCall<Device> call);
+    boolean canHandle(ExecutionCall<Device> call);
 
-    Tsr reduce( OperationTypeImplementation.ExecutionCall<Device> call, Consumer<ExecutionCall<Device>> finalExecution );
+    Tsr reduce( ExecutionCall<Device> call, Consumer<ExecutionCall<Device>> finalExecution );
 
     //ExecutionCall<Device> fitArguments(ExecutionCall<Device> call);
 

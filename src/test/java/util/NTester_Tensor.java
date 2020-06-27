@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.Device;
 import neureka.acceleration.host.execution.HostExecutor;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.executors.Broadcast;
@@ -117,7 +118,7 @@ public class NTester_Tensor extends NTester
                 .getImplementation(Convolution.class)
                 .getExecution(HostExecutor.class)
                 .getExecution().call(
-                new OperationTypeImplementation.ExecutionCall<>(
+                new ExecutionCall<>(
                         HostCPU.instance(),
                         new Tsr[]{
                                 new Tsr(drnMxd, rsltData),
@@ -142,7 +143,7 @@ public class NTester_Tensor extends NTester
                 .getImplementation(Convolution.class)
                 .getExecution(HostExecutor.class)
                 .getExecution().call(
-                new OperationTypeImplementation.ExecutionCall<>(
+                new ExecutionCall<>(
                         HostCPU.instance(),
                         new Tsr[]{
                                 new Tsr(frstShp, frstData),
@@ -166,7 +167,7 @@ public class NTester_Tensor extends NTester
                 .getImplementation(Broadcast.class)
                 .getExecution(HostExecutor.class)
                 .getExecution().call(
-                        new OperationTypeImplementation.ExecutionCall<>(
+                        new ExecutionCall<>(
                                 HostCPU.instance(),
                                 new Tsr[]{
                                         new Tsr(drnMxd, rsltData),
@@ -192,7 +193,7 @@ public class NTester_Tensor extends NTester
                 .getImplementation(Broadcast.class)
                 .getExecution(HostExecutor.class)
                 .getExecution().call(
-                new OperationTypeImplementation.ExecutionCall<>(
+                new ExecutionCall<>(
                         HostCPU.instance(),
                         new Tsr[]{
                                 new Tsr(frstShp, frstData),
@@ -208,7 +209,7 @@ public class NTester_Tensor extends NTester
                 .getImplementation(Broadcast.class)
                 .getExecution(HostExecutor.class)
                 .getExecution().call(
-                new OperationTypeImplementation.ExecutionCall<>(
+                new ExecutionCall<>(
                         HostCPU.instance(),
                         new Tsr[]{
                                 new Tsr(frstShp, frstData),

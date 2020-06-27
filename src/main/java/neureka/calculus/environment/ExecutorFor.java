@@ -6,7 +6,7 @@ public interface ExecutorFor<TargetDevice extends Device>
 {
     interface ExecutionOn<TargetDevice extends Device>
     {
-        void call (OperationTypeImplementation.ExecutionCall<TargetDevice> call);
+        void call (ExecutionCall<TargetDevice> call);
     }
 
     ExecutionOn<TargetDevice> getExecution();

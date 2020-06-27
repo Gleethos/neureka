@@ -5,6 +5,7 @@ import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.host.execution.HostExecutor;
 import neureka.acceleration.opencl.OpenCLDevice;
 import neureka.acceleration.opencl.execution.CLExecutor;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.executors.Activation;
@@ -32,7 +33,7 @@ public class CopyLeft extends OperationType {
                         new HostExecutor(
                                 call -> {
                                     int offset = ( call.getTensor(0) == null ) ? 1 : 0;
-                                    OperationTypeImplementation.ExecutionCall<HostCPU> newCall = new OperationTypeImplementation.ExecutionCall<>(
+                                    ExecutionCall<HostCPU> newCall = new ExecutionCall<>(
                                             call.getDevice(),
                                             new Tsr[]{call.getTensor(offset), call.getTensor(1+offset)},
                                             -1,
@@ -50,7 +51,7 @@ public class CopyLeft extends OperationType {
                         new CLExecutor(
                                 call -> {
                                     int offset = ( call.getTensor(0) == null ) ? 1 : 0;
-                                    OperationTypeImplementation.ExecutionCall<OpenCLDevice> newCall = new OperationTypeImplementation.ExecutionCall<>(
+                                    ExecutionCall<OpenCLDevice> newCall = new ExecutionCall<>(
                                             call.getDevice(),
                                             new Tsr[]{call.getTensor(offset), call.getTensor(1+offset)},
                                             -1,

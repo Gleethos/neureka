@@ -10,6 +10,7 @@ import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
 import neureka.acceleration.opencl.execution.CLExecutor;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.utility.DataHelper;
@@ -390,7 +391,7 @@ public class OpenCLDevice extends AbstractDevice
         }
     }
 
-    public KernelBuilder getKernel(OperationTypeImplementation.ExecutionCall call){
+    public KernelBuilder getKernel(ExecutionCall call){
         String chosen = _platform.kernelNameOf(call.getType());
         cl_kernel kernel = _platform.getKernels().get(chosen);
         return new KernelBuilder(kernel, _queue);
@@ -399,8 +400,8 @@ public class OpenCLDevice extends AbstractDevice
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, OperationType type)
     {
-        OperationTypeImplementation.ExecutionCall<OpenCLDevice> call =
-                new OperationTypeImplementation.ExecutionCall<>(
+        ExecutionCall<OpenCLDevice> call =
+                new ExecutionCall<>(
                         this,
                         tsrs,
                         d,

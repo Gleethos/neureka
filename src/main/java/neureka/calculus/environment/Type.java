@@ -31,7 +31,7 @@ public interface Type
 
     //==================================================================================================================
 
-    OperationTypeImplementation executorOf(OperationTypeImplementation.ExecutionCall call);
+    OperationTypeImplementation executorOf(ExecutionCall call);
 
     //==================================================================================================================
 

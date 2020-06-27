@@ -5,9 +5,8 @@ import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
 import neureka.acceleration.host.execution.HostExecutor;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.OperationTypeImplementation;
-import neureka.calculus.environment.executors.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,8 +39,8 @@ public class HostCPU extends AbstractDevice
     {
         for ( Tsr t : tsrs ) t.setIsVirtual(false);
 
-        OperationTypeImplementation.ExecutionCall<HostCPU> call =
-                new OperationTypeImplementation.ExecutionCall<>(
+        ExecutionCall<HostCPU> call =
+                new ExecutionCall<>(
                         this,
                         tsrs,
                         d,

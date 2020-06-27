@@ -21,9 +21,8 @@ public class Modulo extends OperationType {
                 (inputs, d) -> {
                     double[] t1_val = inputs[1].value64();
                     double[] t2_val = inputs[2].value64();
-                    if (d < 0) {
-                        return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] % t2_val[inputs[2].i_of_idx(t1Idx)];
-                    } else {
+                    if (d < 0) return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] % t2_val[inputs[2].i_of_idx(t1Idx)];
+                    else {
                         return t1Idx -> {
                             if (d == 0) {
                                 return 1 / t2_val[inputs[2].i_of_idx(t1Idx)];
@@ -74,10 +73,10 @@ public class Modulo extends OperationType {
                                 3,
                                 operation.getKernelSource(), // kernelSource
                                 "output = ((int)input1) % ((int)input2);\n",
-                                "if(d==0){\n" +
+                                "if ( d==0 ) {\n" +
                                         "    output = 1/input2;\n" +
                                         "} else {\n" +
-                                        "    output = -input2 /(float)pow(input1, 2.0f);\n" +
+                                        "    output = -input2 / (float) pow(input1, 2.0f);\n" +
                                         "}",
                                 this // OperationType
                         )

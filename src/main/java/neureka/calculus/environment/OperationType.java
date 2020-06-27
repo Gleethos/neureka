@@ -154,7 +154,7 @@ public class OperationType implements Type
     //==================================================================================================================
 
     @Override
-    public OperationTypeImplementation executorOf(OperationTypeImplementation.ExecutionCall call) {
+    public OperationTypeImplementation executorOf(ExecutionCall call) {
         for(OperationTypeImplementation te : _modules.values()){
             if ( te.canHandle(call) ) return te;
         }

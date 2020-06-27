@@ -4,6 +4,7 @@ package neureka.calculus.environment.executors;
 import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.autograd.GraphNode;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.ExecutorFor;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
@@ -43,7 +44,7 @@ public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType
             Tsr[] tsrs,
             OperationType type,
             int d,
-            Consumer<OperationTypeImplementation.ExecutionCall<Device>> finalExecution
+            Consumer<ExecutionCall<Device>> finalExecution
     ) {
         return reduce (
                 new ExecutionCall<Device>( device, tsrs, d, type ), finalExecution
@@ -52,8 +53,8 @@ public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType
 
     @Override
     public Tsr reduce (
-            OperationTypeImplementation.ExecutionCall<Device> call,
-            Consumer<OperationTypeImplementation.ExecutionCall<Device>> finalExecution
+            ExecutionCall<Device> call,
+            Consumer<ExecutionCall<Device>> finalExecution
     ) {
         Device device = call.getDevice();
         ExecutorFor<Device> executorFor = call.getExecutor().getExecution((Class<Device>) device.getClass());
@@ -178,7 +179,7 @@ public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType
             }
             //this._enqueue(tsrs, d, type);
             finalExecution.accept(
-                    new ExecutionCall( device, tsrs, d, type)
+                    new ExecutionCall<>( device, tsrs, d, type)
             );
         }
 

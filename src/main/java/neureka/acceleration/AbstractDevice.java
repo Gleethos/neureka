@@ -2,6 +2,7 @@ package neureka.acceleration;
 
 import neureka.Component;
 import neureka.Tsr;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 
@@ -72,7 +73,7 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
 
     private Tsr _execute_recursively( Tsr[] tsrs, OperationType type, int d )
     {
-        OperationTypeImplementation.ExecutionCall call = new OperationTypeImplementation.ExecutionCall(this, tsrs, d, type);
+        ExecutionCall call = new ExecutionCall(this, tsrs, d, type);
         OperationTypeImplementation<Object> executor = call.getExecutor();
         executor.reduce (
                 call,
