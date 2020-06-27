@@ -3,7 +3,10 @@ package util;
 import neureka.Tsr;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.Device;
+import neureka.acceleration.host.execution.HostExecutor;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.OperationTypeImplementation;
+import neureka.calculus.environment.executors.Broadcast;
 
 import java.util.List;
 
@@ -149,12 +152,20 @@ public class NTester_Tensor extends NTester
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
         double[] rsltData = new double[Tsr.Utility.Indexing.szeOfShp(drnMxd)];
 
-        HostCPU.instance().getExecutor().broadcast(new Tsr[]{
-                new Tsr(drnMxd, rsltData),
-                new Tsr(frstShp, frstData),
-                new Tsr(scndShp, scondData)},
-                -1,
-                OperationType.instance("*")
+        OperationType.instance("*")
+                .getImplementation(Broadcast.class)
+                .getExecution(HostExecutor.class)
+                .getExecution().call(
+                        new OperationTypeImplementation.ExecutionCall<>(
+                                HostCPU.instance(),
+                                new Tsr[]{
+                                        new Tsr(drnMxd, rsltData),
+                                        new Tsr(frstShp, frstData),
+                                        new Tsr(scndShp, scondData)
+                                },
+                                -1,
+                                OperationType.instance("*")
+                        )
         );
         assertIsEqual(stringified(rsltData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;

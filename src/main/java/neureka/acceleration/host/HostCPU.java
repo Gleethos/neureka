@@ -143,18 +143,6 @@ public class HostCPU extends AbstractDevice
             return _pool;
         }
 
-        public void activate(Tsr[] tsrs, int d, OperationType type)
-        {
-            threaded(
-                    tsrs[0].size(),
-                    (start, end) ->
-                            Activation.activate(
-                                    tsrs[0], start, end,
-                                    type.getImplementation(Activation.class).getCreator().create(tsrs, d)
-                            )
-            );
-        }
-
         public void broadcast(Tsr[] tsrs, int d, OperationType type)
         {
             threaded(
