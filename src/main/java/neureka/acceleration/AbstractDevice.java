@@ -48,25 +48,7 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
         else
         {
             _createNewDrainTensorIn(this, tsrs, type);
-            if (
-                    tsrs.length == 3 && d<0 && // TODO: make a TypeExecutor for this!!!!
-                            (
-                                    tsrs[1].isVirtual() || tsrs[2].isVirtual() ||
-                                    (
-                                            !tsrs[1].isOutsourced() && tsrs[1].size() == 1
-                                                    ||
-                                            !tsrs[2].isOutsourced() && tsrs[2].size() == 1
-                                    )
-                            )
-            ) {
-                if (tsrs[2].isVirtual() || tsrs[2].size() == 1) {
-                    _execute_recursively(new Tsr[]{tsrs[0], tsrs[1]}, OperationType.instance("idy"), -1);
-                    _enqueue(tsrs[0], tsrs[2].value64()[0], d, type);
-                } else {
-                    _execute_recursively(new Tsr[]{tsrs[0], tsrs[2]}, OperationType.instance("idy"), -1);
-                    _enqueue(tsrs[0], tsrs[1].value64()[0], d, type);
-                }
-            } else _execute_recursively(tsrs, type, d);
+            _execute_recursively(tsrs, type, d);
         }
         return this;
     }
@@ -90,7 +72,7 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
             int[] shp = (type.identifier().endsWith("x"))
                     ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
                     : tsrs[1].getNDConf().shape();
-            Tsr output = new Tsr(shp, 0.0);
+            Tsr output = new Tsr( shp, 0.0 );
             output.setIsVirtual(false); // This tensor will be 'filled'! Therefore : needs to be 'whole!
             device.add(output);
             tsrs[0] = output;

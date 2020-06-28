@@ -200,7 +200,8 @@ public abstract class AbstractFunction extends BaseFunction {
         }
     }
 
-    private Tsr _execution(Tsr[] inputs, int d, int j, Device device) {
+    private Tsr _execution(Tsr[] inputs, int d, int j, Device device)
+    {
         if (!_isFlat && j < 0 && d < 0) {
             if (_type.isOperation()) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
                 StringBuilder operation = new StringBuilder();
@@ -215,9 +216,10 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         Tsr[] tsrs;
-        if (_type.isIndexer()) tsrs = new Tsr[1 + inputs.length];
+        if ( _type.isIndexer() ) tsrs = new Tsr[ 1 + inputs.length ];
         else tsrs = new Tsr[1 + _src.size()];
-        if (d >= 0) {
+
+        if ( d >= 0 ) {
             //Chain-rule (forward AutoDiff):
             //inner times outer means:
             //first derive source!
@@ -266,13 +268,11 @@ public abstract class AbstractFunction extends BaseFunction {
             return tsrs[0]; // done!
         } else {
             if (_type.isIndexer()) {
-                tsrs = new Tsr[1 + inputs.length];
                 for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).call(inputs, i - 1);
-                device.execute(tsrs, _type, d);
             } else {
                 tsrs = _src_acti(inputs, j, d, 1);
-                device.execute(tsrs, _type, d);
             }
+            device.execute(tsrs, _type, d);
         }
         return (tsrs[0] == null) ? tsrs[1] : tsrs[0];
     }
