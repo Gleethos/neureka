@@ -7,7 +7,6 @@ import neureka.acceleration.opencl.OpenCLDevice;
 import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.executors.Activation;
 
 public class CopyLeft extends OperationType {
@@ -28,7 +27,7 @@ public class CopyLeft extends OperationType {
         Activation activation = new Activation();
 
         setImplementation(Activation.class,
-                activation.setExecution (
+                activation.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call -> {
@@ -41,12 +40,12 @@ public class CopyLeft extends OperationType {
                                     );
                                     OperationType.instance("idy")
                                             .getImplementation(Activation.class)
-                                            .getExecution(HostExecutor.class)
+                                            .getExecutor(HostExecutor.class)
                                             .getExecution().call(call);
                                 },
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
@@ -59,7 +58,7 @@ public class CopyLeft extends OperationType {
                                     );
                                     OperationType.instance("idy")
                                             .getImplementation(Activation.class)
-                                            .getExecution(CLExecutor.class)
+                                            .getExecutor(CLExecutor.class)
                                             .getExecution().call(call);
                                 },
                                 3

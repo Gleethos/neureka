@@ -37,7 +37,7 @@ public class Modulo extends OperationType {
 
         setImplementation(
                 Operation.class,
-                operation.setExecution (
+                operation.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call ->
@@ -56,7 +56,7 @@ public class Modulo extends OperationType {
                                                 ),
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
@@ -112,7 +112,7 @@ public class Modulo extends OperationType {
 
         setImplementation(
                 Broadcast.class,
-                broadcast.setExecution (
+                broadcast.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call ->
@@ -128,7 +128,7 @@ public class Modulo extends OperationType {
                                                 ),
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
@@ -173,7 +173,7 @@ public class Modulo extends OperationType {
 
         setImplementation(
                 Scalarization.class,
-                scalarization.setExecution (
+                scalarization.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call -> {
@@ -191,7 +191,7 @@ public class Modulo extends OperationType {
                                 },
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {

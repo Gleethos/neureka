@@ -6,23 +6,24 @@ import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.executors.*;
 
-public class Identity extends OperationType {
+public class Identity extends OperationType
+{
 
-    private DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
-            (inputs, d) -> {
-                double[] t1_val = inputs[1].value64();
-                if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
-                else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
-            };
-
-    public Identity(){
-
+    public Identity()
+    {
         super("identity", "idy" , 1, false, false, false, true, true);
+
+        DefaultOperatorCreator<TertiaryNDXConsumer> activationCreator =
+                (inputs, d) -> {
+                    double[] t1_val = inputs[1].value64();
+                    if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
+                    else return (t0Idx, t1Idx, t2Idx) -> 1;
+                };
 
         Activation typeImplementation = new Activation();
         setImplementation(
                 Activation.class,
-                typeImplementation.setExecution (
+                typeImplementation.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call  ->
@@ -33,12 +34,12 @@ public class Identity extends OperationType {
                                                                 Activation.activate (
                                                                         call.getTensor(0),
                                                                         start, end,
-                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        activationCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                 ),
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
@@ -69,7 +70,7 @@ public class Identity extends OperationType {
                 };
         Scalarization scalarization = new Scalarization();
         setImplementation(Scalarization.class,
-                scalarization.setExecution (
+                scalarization.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -> {
@@ -88,7 +89,7 @@ public class Identity extends OperationType {
                                 },
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {

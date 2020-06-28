@@ -23,13 +23,13 @@ public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType
     }
 
     @Override
-    public <D extends Device, E extends ExecutorFor<D>> FinalType setExecution(Class<E> deviceClass, E execution){
+    public <D extends Device, E extends ExecutorFor<D>> FinalType setExecutor(Class<E> deviceClass, E execution){
         _executions.put((Class<ExecutorFor<Device>>) deviceClass, (ExecutorFor<Device>) execution);
         return (FinalType) this;
     }
 
     @Override
-    public <D extends Device, E extends ExecutorFor<D>> E getExecution(Class<E> deviceClass){
+    public <D extends Device, E extends ExecutorFor<D>> E getExecutor(Class<E> deviceClass){
         return (E) _executions.get(deviceClass); // assert that result is of type T...
     }
 
@@ -57,7 +57,7 @@ public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType
             Consumer<ExecutionCall<Device>> finalExecution
     ) {
         Device device = call.getDevice();
-        ExecutorFor<Device> executorFor = call.getExecutor().getExecution((Class<Device>) device.getClass());
+        ExecutorFor<Device> executorFor = call.getExecutor().getExecutor((Class<Device>) device.getClass());
 
         //assert execution!=null;
 

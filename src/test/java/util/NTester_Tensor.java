@@ -6,7 +6,6 @@ import neureka.acceleration.Device;
 import neureka.acceleration.host.execution.HostExecutor;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.executors.Broadcast;
 import neureka.calculus.environment.executors.Convolution;
 
@@ -116,7 +115,7 @@ public class NTester_Tensor extends NTester
         double[] rsltData = new double[Tsr.Utility.Indexing.szeOfShp(drnMxd)];
         OperationType.instance("x")
                 .getImplementation(Convolution.class)
-                .getExecution(HostExecutor.class)
+                .getExecutor(HostExecutor.class)
                 .getExecution().call(
                 new ExecutionCall<>(
                         HostCPU.instance(),
@@ -141,7 +140,7 @@ public class NTester_Tensor extends NTester
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfCon(frstShp, scndShp);
         OperationType.instance(((char) 171)+"x")
                 .getImplementation(Convolution.class)
-                .getExecution(HostExecutor.class)
+                .getExecutor(HostExecutor.class)
                 .getExecution().call(
                 new ExecutionCall<>(
                         HostCPU.instance(),
@@ -165,7 +164,7 @@ public class NTester_Tensor extends NTester
 
         OperationType.instance("*")
                 .getImplementation(Broadcast.class)
-                .getExecution(HostExecutor.class)
+                .getExecutor(HostExecutor.class)
                 .getExecution().call(
                         new ExecutionCall<>(
                                 HostCPU.instance(),
@@ -191,7 +190,7 @@ public class NTester_Tensor extends NTester
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
         OperationType.instance(((char) 171) + "*")
                 .getImplementation(Broadcast.class)
-                .getExecution(HostExecutor.class)
+                .getExecutor(HostExecutor.class)
                 .getExecution().call(
                 new ExecutionCall<>(
                         HostCPU.instance(),
@@ -207,7 +206,7 @@ public class NTester_Tensor extends NTester
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
         OperationType.instance("*" + ((char) 187))
                 .getImplementation(Broadcast.class)
-                .getExecution(HostExecutor.class)
+                .getExecutor(HostExecutor.class)
                 .getExecution().call(
                 new ExecutionCall<>(
                         HostCPU.instance(),

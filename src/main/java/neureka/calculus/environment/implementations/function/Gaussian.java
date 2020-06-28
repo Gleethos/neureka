@@ -5,31 +5,34 @@ import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.executors.*;
 
-public class Gaussian extends OperationType {
-
-    private DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
-            (inputs, d)->{
-                double[] t1_val = inputs[1].value64();
-                if (d < 0) {
-                    return (t0Idx, t1Idx, t2Idx) -> Math.pow(Math.E, -Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], 2));
-                } else {
-                    return (t0Idx, t1Idx, t2Idx) -> {
-                        double input = t1_val[inputs[1].i_of_idx(t1Idx)];
-                        return -2 * input * Math.pow(Math.E, -Math.pow(input, 2));
-                    };
-
-                }
-            };
+public class Gaussian extends OperationType
+{
 
     public Gaussian(){
 
         super("gaussian", "gaus", 1, false, false, false, true, true);
 
+
+        DefaultOperatorCreator<TertiaryNDXConsumer> activationCreator =
+                ( inputs, d ) ->
+                {
+                    double[] t1_val = inputs[1].value64();
+                    if (d < 0) {
+                        return (t0Idx, t1Idx, t2Idx) -> Math.pow(Math.E, -Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], 2));
+                    } else {
+                        return (t0Idx, t1Idx, t2Idx) -> {
+                            double input = t1_val[inputs[1].i_of_idx(t1Idx)];
+                            return -2 * input * Math.pow(Math.E, -Math.pow(input, 2));
+                        };
+
+                    }
+                };
+
         Activation typeImplementation = new Activation();
 
         setImplementation(
                 Activation.class,
-                typeImplementation.setExecution (
+                typeImplementation.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call  ->
@@ -40,12 +43,12 @@ public class Gaussian extends OperationType {
                                                                 Activation.activate (
                                                                         call.getTensor(0),
                                                                         start, end,
-                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        activationCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                 ),
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {

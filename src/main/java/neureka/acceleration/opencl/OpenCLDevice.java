@@ -12,7 +12,6 @@ import neureka.acceleration.Device;
 import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.utility.DataHelper;
 import org.jocl.*;
 
@@ -408,7 +407,7 @@ public class OpenCLDevice extends AbstractDevice
                         d,
                         type
                 );
-        call.getExecutor().getExecution(CLExecutor.class).getExecution().call(call);
+        call.getExecutor().getExecutor(CLExecutor.class).getExecution().call(call);
     }
 
 

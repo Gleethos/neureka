@@ -44,7 +44,7 @@ public class Division extends OperationType
         Operation operation = new Operation();
 
         setImplementation(
-                Operation.class, operation.setExecution (
+                Operation.class, operation.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call ->
@@ -63,7 +63,7 @@ public class Division extends OperationType
                                                 ),
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
@@ -98,7 +98,7 @@ public class Division extends OperationType
 
         setImplementation(
                 Broadcast.class,
-                broadcast.setExecution (
+                broadcast.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call ->
@@ -114,7 +114,7 @@ public class Division extends OperationType
                                                 ),
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
@@ -159,7 +159,7 @@ public class Division extends OperationType
 
         setImplementation(
                 Scalarization.class,
-                scalarization.setExecution (
+                scalarization.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call -> {
@@ -177,7 +177,7 @@ public class Division extends OperationType
                                 },
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {

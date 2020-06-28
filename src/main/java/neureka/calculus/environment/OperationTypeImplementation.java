@@ -19,15 +19,14 @@ import java.util.function.Consumer;
 public interface OperationTypeImplementation<FinalType>
 {
 
-    <D extends Device, E extends ExecutorFor<D>> FinalType setExecution(Class<E> deviceClass, E execution);
+    <D extends Device, E extends ExecutorFor<D>> FinalType setExecutor(Class<E> deviceClass, E execution);
 
-    <D extends Device, E extends ExecutorFor<D>> ExecutorFor getExecution(Class<E> deviceClass);
+    <D extends Device, E extends ExecutorFor<D>> ExecutorFor getExecutor(Class<E> deviceClass);
 
     boolean canHandle(ExecutionCall<Device> call);
 
     Tsr reduce( ExecutionCall<Device> call, Consumer<ExecutionCall<Device>> finalExecution );
 
     //ExecutionCall<Device> fitArguments(ExecutionCall<Device> call);
-
 
 }

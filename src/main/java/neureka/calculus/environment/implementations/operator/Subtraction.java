@@ -37,7 +37,7 @@ public class Subtraction extends OperationType {
         Operation operation = new Operation();
 
         setImplementation(Operation.class,
-                operation.setExecution (
+                operation.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call ->
@@ -56,7 +56,7 @@ public class Subtraction extends OperationType {
                                                 ),
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
@@ -98,7 +98,7 @@ public class Subtraction extends OperationType {
         Scalarization scalarization = new Scalarization();
 
         setImplementation(Scalarization.class,
-                scalarization.setExecution (
+                scalarization.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call -> {
@@ -117,7 +117,7 @@ public class Subtraction extends OperationType {
                                 },
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {

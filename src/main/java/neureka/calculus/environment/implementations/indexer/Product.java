@@ -44,7 +44,7 @@ public class Product extends OperationType {
 
         setImplementation (
                 Broadcast.class,
-                typeImplementation.setExecution (
+                typeImplementation.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call  ->
@@ -63,7 +63,7 @@ public class Product extends OperationType {
                                                 ),
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
@@ -99,7 +99,7 @@ public class Product extends OperationType {
         Activation activation = new Activation();
 
         setImplementation(Activation.class,
-                activation.setExecution (
+                activation.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call  ->
@@ -115,7 +115,7 @@ public class Product extends OperationType {
                                                 ),
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {

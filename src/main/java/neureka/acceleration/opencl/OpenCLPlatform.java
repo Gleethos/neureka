@@ -148,19 +148,19 @@ public class OpenCLPlatform {
                     Map<String, String> code = new HashMap<>();
                     for(OperationType type : OperationType.ALL()) {
                         if (preName.contains("activate") && type.supportsImplementation(Activation.class)) {
-                            CLExecutor exec = type.getImplementation(Activation.class).getExecution(CLExecutor.class);
+                            CLExecutor exec = type.getImplementation(Activation.class).getExecutor(CLExecutor.class);
                             if(exec!=null && exec.getSource()!=null) code.put(exec.getName(), exec.getSource());
                         } else if (preName.contains("operate") && type.supportsImplementation(Operation.class)) {
-                            CLExecutor exec = type.getImplementation(Operation.class).getExecution(CLExecutor.class);
+                            CLExecutor exec = type.getImplementation(Operation.class).getExecutor(CLExecutor.class);
                             if(exec!=null && exec.getSource()!=null) code.put(exec.getName(), exec.getSource());
                         } else if (preName.contains("scalar") && type.supportsImplementation(Scalarization.class)) {
-                            CLExecutor exec = type.getImplementation(Scalarization.class).getExecution(CLExecutor.class);
+                            CLExecutor exec = type.getImplementation(Scalarization.class).getExecutor(CLExecutor.class);
                             if(exec!=null && exec.getSource()!=null) code.put(exec.getName(), exec.getSource());
                         } else if(preName.contains("broadcast") && type.supportsImplementation(Broadcast.class)){//broadcast
-                            CLExecutor exec = type.getImplementation(Broadcast.class).getExecution(CLExecutor.class);
+                            CLExecutor exec = type.getImplementation(Broadcast.class).getExecutor(CLExecutor.class);
                             if(exec!=null && exec.getSource()!=null) code.put(exec.getName(), exec.getSource());
                         } else if(preName.contains("convolve") && type.supportsImplementation(Convolution.class)) {
-                            CLExecutor exec = type.getImplementation(Convolution.class).getExecution(CLExecutor.class);
+                            CLExecutor exec = type.getImplementation(Convolution.class).getExecutor(CLExecutor.class);
                             if(exec!=null && exec.getSource()!=null) code.put(exec.getName(), exec.getSource());
                         }
                     }

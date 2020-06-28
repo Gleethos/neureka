@@ -40,7 +40,7 @@ public class ReLU extends OperationType
 
         setImplementation(
                 Activation.class,
-                typeImplementation.setExecution (
+                typeImplementation.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call  ->
@@ -56,7 +56,7 @@ public class ReLU extends OperationType
                                                 ),
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {

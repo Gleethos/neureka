@@ -46,7 +46,7 @@ public class Addition extends OperationType {
 
         setImplementation(Operation.class,
                 operation
-                        .setExecution (
+                        .setExecutor(
                         HostExecutor.class,
                                 new HostExecutor(
                                         call ->
@@ -65,7 +65,7 @@ public class Addition extends OperationType {
                                                         ),
                                         3
                                 )
-                        ).setExecution(
+                        ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
@@ -93,7 +93,7 @@ public class Addition extends OperationType {
 
         setImplementation(Broadcast.class,
                 _broadcast
-                .setExecution (
+                .setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call ->
@@ -109,7 +109,7 @@ public class Addition extends OperationType {
                                                 ),
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
@@ -149,7 +149,7 @@ public class Addition extends OperationType {
 
         setImplementation(
                 Scalarization.class,
-                scalarization.setExecution (
+                scalarization.setExecutor(
                         HostExecutor.class,
                                 new HostExecutor(
                                         call -> {
@@ -167,7 +167,7 @@ public class Addition extends OperationType {
                                             },
                                         3
                                 )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {

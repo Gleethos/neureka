@@ -49,7 +49,7 @@ public class Multiplication extends OperationType {
         Operation operation = new Operation();
 
         setImplementation(Operation.class,
-                operation.setExecution (
+                operation.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call ->
@@ -68,7 +68,7 @@ public class Multiplication extends OperationType {
                                                 ),
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
@@ -98,7 +98,7 @@ public class Multiplication extends OperationType {
         Broadcast broadcast = new Broadcast();
 
         setImplementation(Broadcast.class,
-            broadcast.setExecution (
+            broadcast.setExecutor(
                         HostExecutor.class,
                     new HostExecutor(
                             call ->
@@ -114,7 +114,7 @@ public class Multiplication extends OperationType {
                                             ),
                             3
                     )
-            ).setExecution(
+            ).setExecutor(
                     CLExecutor.class,
                     new CLExecutor(
                             call -> {
@@ -157,7 +157,7 @@ public class Multiplication extends OperationType {
 
         setImplementation(
                 Scalarization.class,
-                scalarization.setExecution (
+                scalarization.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call -> {
@@ -175,7 +175,7 @@ public class Multiplication extends OperationType {
                                 },
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
@@ -217,7 +217,7 @@ public class Multiplication extends OperationType {
                 "", ((char) 171) + "*", 3, true, false, false, false, false
         ).setImplementation(
                 Broadcast.class,
-                xBroadcast.setExecution (
+                xBroadcast.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call ->
@@ -233,7 +233,7 @@ public class Multiplication extends OperationType {
                                                 ),
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
@@ -262,7 +262,7 @@ public class Multiplication extends OperationType {
                 "", "*" + ((char) 187), 3, true, false, false, false, false
         ).setImplementation(
                 Broadcast.class,
-                xBroadcast.setExecution (
+                xBroadcast.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call ->
@@ -278,7 +278,7 @@ public class Multiplication extends OperationType {
                                                 ),
                                 3
                         )
-                ).setExecution(
+                ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
@@ -328,7 +328,7 @@ public class Multiplication extends OperationType {
         ).setImplementation(
                 Convolution.class,
                 convolution
-                        .setExecution (
+                        .setExecutor(
                         HostExecutor.class,
                                 new HostExecutor(
                                         call ->
@@ -347,7 +347,7 @@ public class Multiplication extends OperationType {
                                                         ),
                                         3
                                 )
-                        ).setExecution(
+                        ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
