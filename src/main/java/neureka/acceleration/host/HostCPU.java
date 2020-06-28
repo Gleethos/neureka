@@ -37,8 +37,6 @@ public class HostCPU extends AbstractDevice
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, OperationType type)
     {
-        for ( Tsr t : tsrs ) t.setIsVirtual(false);
-
         ExecutionCall<HostCPU> call =
                 new ExecutionCall<>(
                         this,

@@ -102,25 +102,21 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         if (isVirtual() != isVirtual) {
             Device device = this.find(Device.class);
             if ( device!=null ) device.get(this);
-
-
-                double v = (_value==null) ? 0 : ((this.is64())?((double[])_value)[0]:((float[])_value)[0]);
-                if (isVirtual) {
-                    _value = new double[]{v};
-                    Relation parent = find(Relation.class);
-                    if (parent!=null) parent.foreachChild( c -> c._value=_value);
-                } else {
-                    _value = (this.is64())?new double[this.size()]:new float[this.size()];
-                    int length = (this.is64())?((double[])_value).length:((float[])_value).length;
-                    for (int i = 0; i < length; i++) {
-                        if (this.is64()) ((double[])_value)[i] = v;
-                        else ((float[])_value)[i] = (float)v;
-                    }
+            double v = (_value==null) ? 0 : ((this.is64())?((double[])_value)[0]:((float[])_value)[0]);
+            if (isVirtual) {
+                _value = new double[]{v};
+                Relation parent = find(Relation.class);
+                if (parent!=null) parent.foreachChild( c -> c._value=_value);
+            } else {
+                _value = (this.is64())?new double[this.size()]:new float[this.size()];
+                int length = (this.is64())?((double[])_value).length:((float[])_value).length;
+                for (int i = 0; i < length; i++) {
+                    if (this.is64()) ((double[])_value)[i] = v;
+                    else ((float[])_value)[i] = (float)v;
                 }
-                _setIsVirtual(isVirtual);
-                if(_conf!=null) _configureFromNewShape(_conf.shape(), isVirtual);
-
-
+            }
+            _setIsVirtual(isVirtual);
+            if(_conf!=null) _configureFromNewShape(_conf.shape(), isVirtual);
             if( device!=null ) device.add(this);
         } else if (isVirtual && _value==null) _value = new double[]{0};
         return this;
