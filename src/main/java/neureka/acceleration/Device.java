@@ -20,7 +20,7 @@ public interface Device extends Component<Tsr>
      * This method return OpenCLDevices matching
      * the given search parameter.
      * @param name The search parameter and name of the requested Device instance.
-     * @return The found Device instance.
+     * @return The found Device instance or simply the HostCPU instance by default.
      */
     static Device find(String name)
     {
