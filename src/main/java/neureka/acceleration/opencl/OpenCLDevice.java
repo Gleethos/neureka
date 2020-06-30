@@ -128,8 +128,8 @@ public class OpenCLDevice extends AbstractDevice
         return this;
     }
 
-    private void _add(Tsr tensor, cl_tsr parent) {
-        //tensor.setIsVirtual(false); // TODO: remove this without errors! Hint: Virtual tensors should be stored too!
+    private void _add(Tsr tensor, cl_tsr parent)
+    {
         cl_tsr newClt = new cl_tsr();
         {
             final cl_mem clConfMem = newClt.config.data;

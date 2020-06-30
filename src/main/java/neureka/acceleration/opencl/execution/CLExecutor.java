@@ -8,6 +8,12 @@ import neureka.calculus.environment.OperationType;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class is the ExecutorFor<OpenCLDevice> implementation
+ * used to properly call an OpenCLDevice instance via the
+ * ExecutionOn<OpenCLDevice> lambda implementation
+ * receiving an instance of the ExecutionCall class.
+ */
 public class CLExecutor implements ExecutorFor<OpenCLDevice>
 {
     private final java.util.function.Function<String, String> _aliasSwapper =

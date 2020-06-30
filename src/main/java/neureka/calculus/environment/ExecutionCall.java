@@ -3,6 +3,13 @@ package neureka.calculus.environment;
 import neureka.Tsr;
 import neureka.acceleration.Device;
 
+/**
+ * This class is a simple container holding relevant
+ * arguments needed to execute on a targeted Device which
+ * is specified by the type parameter below.
+ *
+ * @param <DeviceType> The Device implementation targeted by an instance of this ExecutionCall!
+ */
 public class ExecutionCall<DeviceType extends Device>
 {
     private final DeviceType _device;

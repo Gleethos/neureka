@@ -2,16 +2,30 @@ package neureka.acceleration;
 
 import neureka.Component;
 import neureka.Tsr;
+import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.opencl.OpenCLPlatform;
 import neureka.calculus.environment.OperationType;
 
 import java.util.Collection;
 
+/**
+ * This is the interface for implementations representing
+ * devices capable of executing operations on tensors, namely the Tsr class.
+ * Such instances are also components of tensors, which is why
+ * the it extends the Component<Tsr> interface.
+ */
 public interface Device extends Component<Tsr>
 {
-    static Device find(String name){
+    /**
+     * This method return OpenCLDevices matching
+     * the given search parameter.
+     * @param name The search parameter and name of the requested Device instance.
+     * @return The found Device instance.
+     */
+    static Device find(String name)
+    {
         //TODO: Device plugin finding!
-        Device[] result = {null};
+        Device[] result = {HostCPU.instance()};
         String search = name.toLowerCase();
         OpenCLPlatform.PLATFORMS().forEach( p ->
             p.getDevices().forEach( d ->{

@@ -202,16 +202,16 @@ public abstract class AbstractFunction extends BaseFunction {
 
     private Tsr _execution(Tsr[] inputs, int d, int j, Device device)
     {
-        if (!_isFlat && j < 0 && d < 0) {
+        if ( !_isFlat && j < 0 && d < 0 ) {
             if (_type.isOperation()) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
                 StringBuilder operation = new StringBuilder();
                 Tsr[] tsrs = _src_acti(inputs, j, d, 0);
-                for (int i = 0; i < tsrs.length; i++) {
+                for ( int i = 0; i < tsrs.length; i++ ) {
                     operation.append("I[").append(i).append("]").append((i == tsrs.length - 1) ? "" : _type.identifier());
                 }
-                return (FunctionBuilder.build(operation.toString(), _doAD).call(tsrs));
-            } else if (_type.supportsImplementation(Activation.class) && !_type.isIndexer()) {
-                return (FunctionBuilder.build(_type.identifier() + "(I[0])", true).call(inputs));
+                return FunctionBuilder.build(operation.toString(), _doAD).call(tsrs);
+            } else if ( _type.supportsImplementation(Activation.class) && !_type.isIndexer() ) {
+                return FunctionBuilder.build(_type.identifier() + "(I[0])", true).call(inputs);
             }
         }
 
@@ -224,18 +224,18 @@ public abstract class AbstractFunction extends BaseFunction {
             //inner times outer means:
             //first derive source!
             //like so:
-            if (_type.isIndexer()) {
+            if ( _type.isIndexer() ) {
                 for (int i = 1; i < tsrs.length; i++) {
                     tsrs[i] = _src.get(0).derive(inputs, d, i - 1);
                 }
             } else {
-                for (int i = 1; i < tsrs.length; i++) {
-                    tsrs[i] = (j >= 0) ? _src.get(i - 1).derive(inputs, d, j) : _src.get(i - 1).derive(inputs, d);
+                for ( int i = 1; i < tsrs.length; i++ ) {
+                    tsrs[i] = ( j >= 0 ) ? _src.get(i - 1).derive(inputs, d, j) : _src.get(i - 1).derive(inputs, d);
                 }
             }
             //then add them all together! (is possible because of linearity...)
             Tsr inner;
-            if (tsrs.length > 2) {
+            if ( tsrs.length > 2 ) {
                 device.execute(tsrs, OperationType.instance("+"), -1);
                 inner = tsrs[0];//this is now the inner derivative!
             } else {
@@ -243,18 +243,18 @@ public abstract class AbstractFunction extends BaseFunction {
             }
             tsrs[0] = null;
             //then activate the source like so:
-            if (_type.isIndexer()) {
-                for (int i = 1; i < tsrs.length; i++) {
+            if ( _type.isIndexer() ) {
+                for ( int i = 1; i < tsrs.length; i++ ) {
                     tsrs[i] = _src.get(0).call(inputs, i - 1);
                 }
             } else {
-                for (int i = 1; i < tsrs.length; i++) {
+                for ( int i = 1; i < tsrs.length; i++ ) {
                     tsrs[i] = (j >= 0) ? _src.get(i - 1).call(inputs, j) : _src.get(i - 1).call(inputs);
                 }
             }
             //get derivative index within src list:
-            for (int i = 0; i < _src.size(); i++) {
-                if (_src.get(i).dependsOn(d) && !_type.isIndexer()) {
+            for ( int i = 0; i < _src.size(); i++ ) {
+                if ( _src.get(i).dependsOn(d) && !_type.isIndexer() ) {
                     d = i;
                     break;
                 }
