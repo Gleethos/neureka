@@ -9,36 +9,50 @@ import neureka.calculus.environment.ExecutorFor;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType> implements OperationTypeImplementation<FinalType>
+/**
+ * This is the base class for implementations of the OperationTypeImplementation interface.
+ * The class implements the component logic required by the said interface.
+ * Additionally it contains useful methods used to process passed arguments of execution calls.
+ *
+ * @param <FinalType> The final type extending this class.
+ */
+public abstract class AbstractOperationTypeImplementation< FinalType > implements OperationTypeImplementation< FinalType >
 {
-    protected Map<Class<ExecutorFor<Device>>, ExecutorFor<Device>> _executions;
+    protected final Map< Class< ExecutorFor< Device > >, ExecutorFor< Device > > _executions;
+    protected final List< CallPipe > _callPipe;
 
     public AbstractOperationTypeImplementation()
     {
         _executions = new HashMap<>();
+        _callPipe = new ArrayList<>();
+        _callPipe.add(call->call);
     }
 
     @Override
     public <D extends Device, E extends ExecutorFor<D>> FinalType setExecutor(Class<E> deviceClass, E execution){
-        _executions.put((Class<ExecutorFor<Device>>) deviceClass, (ExecutorFor<Device>) execution);
+        _executions.put(
+                (Class<ExecutorFor<Device>>) deviceClass,
+                (ExecutorFor<Device>) execution
+        );
         return (FinalType) this;
     }
 
     @Override
     public <D extends Device, E extends ExecutorFor<D>> E getExecutor(Class<E> deviceClass){
-        return (E) _executions.get(deviceClass); // assert that result is of type T...
+        return (E) _executions.get(deviceClass);
     }
 
-    //@Override
-    //ExecutionCall<Device> fitArguments(ExecutionCall<Device> call)
-    //{
-    //    return null;
-    //}
-    
+    @Override
+    public List<CallPipe> getCallPipeline(){
+        return _callPipe;
+    }
+
     private Tsr reduce(
             Device device,
             Tsr[] tsrs,
@@ -57,9 +71,7 @@ public abstract class AbstractOperationTypeImplementation<FinalType, CreatorType
             Consumer<ExecutionCall<Device>> finalExecution
     ) {
         Device device = call.getDevice();
-        ExecutorFor<Device> executorFor = call.getExecutor().getExecutor((Class<Device>) device.getClass());
-
-        //assert execution!=null;
+        ExecutorFor<Device> executorFor = call.getImplementation().getExecutor(device.getClass());
 
         Tsr[] tsrs = call.getTensors();
         int d = call.getDerivativeIndex();

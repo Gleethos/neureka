@@ -23,7 +23,7 @@ public class Sinus extends OperationType
 
 <span class="fc" id="L24">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L26">                typeImplementation.setExecution (</span>
+<span class="fc" id="L26">                typeImplementation.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -39,7 +39,7 @@ public class Sinus extends OperationType
                                                 ),
                                 3
                         )
-<span class="fc" id="L42">                ).setExecution(</span>
+<span class="fc" id="L42">                ).setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {

@@ -37,65 +37,47 @@ import java.lang.ref.Cleaner;
 <span class="fc bfc" id="L37" title="All 2 branches covered.">        if ( type.identifier().equals(&quot;&lt;&quot;) )</span>
         {
 <span class="pc bpc" id="L39" title="1 of 2 branches missed.">            int offset = ( tsrs[0] == null ) ? 1 : 0;</span>
-<span class="fc" id="L40">            _execute_recursively( new Tsr[]{tsrs[offset], tsrs[1+offset]}, OperationType.instance(&quot;idy&quot;), -1 );</span>
+<span class="fc" id="L40">            _execute( new Tsr[]{tsrs[offset], tsrs[1+offset]}, OperationType.instance(&quot;idy&quot;), -1 );</span>
 <span class="fc" id="L41">        }</span>
         else
 <span class="fc bfc" id="L43" title="All 2 branches covered.">        if ( type.identifier().equals(&quot;&gt;&quot;) )</span>
         {
 <span class="pc bpc" id="L45" title="1 of 2 branches missed.">            int offset = ( tsrs[0] == null ) ? 1 : 0;</span>
-<span class="fc" id="L46">            _execute_recursively( new Tsr[]{tsrs[1+offset], tsrs[offset]}, OperationType.instance(&quot;idy&quot;), -1 );</span>
+<span class="fc" id="L46">            _execute( new Tsr[]{tsrs[1+offset], tsrs[offset]}, OperationType.instance(&quot;idy&quot;), -1 );</span>
 <span class="fc" id="L47">        }</span>
         else
         {
 <span class="fc" id="L50">            _createNewDrainTensorIn(this, tsrs, type);</span>
-<span class="fc bfc" id="L51" title="All 4 branches covered.">            if (</span>
-                    tsrs.length == 3 &amp;&amp; d&lt;0 &amp;&amp; // TODO: make a TypeExecutor for this!!!!
-                            (
-<span class="fc bfc" id="L54" title="All 4 branches covered.">                                    tsrs[1].isVirtual() || tsrs[2].isVirtual() ||</span>
-                                    (
-<span class="fc bfc" id="L56" title="All 4 branches covered.">                                            !tsrs[1].isOutsourced() &amp;&amp; tsrs[1].size() == 1</span>
-                                                    ||
-<span class="fc bfc" id="L58" title="All 4 branches covered.">                                            !tsrs[2].isOutsourced() &amp;&amp; tsrs[2].size() == 1</span>
-                                    )
-                            )
-            ) {
-<span class="fc bfc" id="L62" title="All 4 branches covered.">                if (tsrs[2].isVirtual() || tsrs[2].size() == 1) {</span>
-<span class="fc" id="L63">                    _execute_recursively(new Tsr[]{tsrs[0], tsrs[1]}, OperationType.instance(&quot;idy&quot;), -1);</span>
-<span class="fc" id="L64">                    _enqueue(tsrs[0], tsrs[2].value64()[0], d, type);</span>
-                } else {
-<span class="fc" id="L66">                    _execute_recursively(new Tsr[]{tsrs[0], tsrs[2]}, OperationType.instance(&quot;idy&quot;), -1);</span>
-<span class="fc" id="L67">                    _enqueue(tsrs[0], tsrs[1].value64()[0], d, type);</span>
-                }
-<span class="fc" id="L69">            } else _execute_recursively(tsrs, type, d);</span>
+<span class="fc" id="L51">            _execute(tsrs, type, d);</span>
         }
-<span class="fc" id="L71">        return this;</span>
+<span class="fc" id="L53">        return this;</span>
     }
 
-    private Tsr _execute_recursively( Tsr[] tsrs, OperationType type, int d )
+    private Tsr _execute(Tsr[] tsrs, OperationType type, int d )
     {
-<span class="fc" id="L76">        ExecutionCall call = new ExecutionCall(this, tsrs, d, type);</span>
-<span class="fc" id="L77">        OperationTypeImplementation&lt;Object&gt; executor = call.getExecutor();</span>
-<span class="fc" id="L78">        executor.reduce (</span>
+<span class="fc" id="L58">        ExecutionCall call = new ExecutionCall(this, tsrs, d, type);</span>
+<span class="fc" id="L59">        OperationTypeImplementation&lt;Object&gt; executor = call.getImplementation();</span>
+<span class="fc" id="L60">        executor.reduce (</span>
                 call,
-<span class="fc" id="L80">                c -&gt; _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType())</span>
+<span class="fc" id="L62">                c -&gt; _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType())</span>
         );
-<span class="fc" id="L82">        return call.getTensors()[0];</span>
+<span class="fc" id="L64">        return call.getTensors()[0];</span>
     }
 
 
     private static void _createNewDrainTensorIn(Device device, Tsr[] tsrs, OperationType type)
     {
-<span class="fc bfc" id="L88" title="All 2 branches covered.">        if ( tsrs[0] == null )// Creating a new tensor:</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if ( tsrs[0] == null )// Creating a new tensor:</span>
         {
-<span class="fc bfc" id="L90" title="All 2 branches covered.">            int[] shp = (type.identifier().endsWith(&quot;x&quot;))</span>
-<span class="fc" id="L91">                    ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())</span>
-<span class="fc" id="L92">                    : tsrs[1].getNDConf().shape();</span>
-<span class="fc" id="L93">            Tsr output = new Tsr(shp, 0.0);</span>
-<span class="fc" id="L94">            output.setIsVirtual(false); // This tensor will be 'filled'! Therefore : needs to be 'whole!</span>
-<span class="fc" id="L95">            device.add(output);</span>
-<span class="fc" id="L96">            tsrs[0] = output;</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">            int[] shp = (type.identifier().endsWith(&quot;x&quot;))</span>
+<span class="fc" id="L73">                    ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())</span>
+<span class="fc" id="L74">                    : tsrs[1].getNDConf().shape();</span>
+<span class="fc" id="L75">            Tsr output = new Tsr( shp, 0.0 );</span>
+<span class="fc" id="L76">            output.setIsVirtual(false); // This tensor will be 'filled'! Therefore : needs to be 'whole!</span>
+<span class="fc" id="L77">            device.add(output);</span>
+<span class="fc" id="L78">            tsrs[0] = output;</span>
         }
-<span class="fc" id="L98">    }</span>
+<span class="fc" id="L80">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

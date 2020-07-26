@@ -6,7 +6,7 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
 
-public class Scalarization extends AbstractOperationTypeImplementation<Scalarization, Type.ScalarOperatorCreator<Type.PrimaryNDXConsumer>>
+public class Scalarization extends AbstractOperationTypeImplementation< Scalarization >
 {
     public Scalarization() {  super();  }
 

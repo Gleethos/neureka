@@ -37,17 +37,15 @@ public class HostCPU extends AbstractDevice
     @Override
     protected void _enqueue(Tsr[] tsrs, int d, OperationType type)
     {
-<span class="fc bfc" id="L40" title="All 2 branches covered.">        for ( Tsr t : tsrs ) t.setIsVirtual(false);</span>
-
-<span class="fc" id="L42">        ExecutionCall&lt;HostCPU&gt; call =</span>
+<span class="fc" id="L40">        ExecutionCall&lt;HostCPU&gt; call =</span>
                 new ExecutionCall&lt;&gt;(
                         this,
                         tsrs,
                         d,
                         type
                 );
-<span class="fc" id="L49">        call.getExecutor().getExecution(HostExecutor.class).getExecution().call(call);</span>
-<span class="fc" id="L50">    }</span>
+<span class="fc" id="L47">        call.getImplementation().getExecutor(HostExecutor.class).getExecution().call(call);</span>
+<span class="fc" id="L48">    }</span>
 
     @Override
     protected void _enqueue(Tsr t, double value, int d, OperationType type) {
@@ -63,116 +61,116 @@ public class HostCPU extends AbstractDevice
         //    _executor.scalar(new Tsr[]{t, t}, value, d, type);
         //}
         //else {
-<span class="fc" id="L66">            int[] shape = new int[t.rank()];</span>
-<span class="fc" id="L67">            Arrays.fill(shape, 1);</span>
-<span class="fc" id="L68">            _enqueue(new Tsr[]{t, t, new Tsr(shape, value)}, d, type);</span>
+<span class="nc" id="L64">            int[] shape = new int[t.rank()];</span>
+<span class="nc" id="L65">            Arrays.fill(shape, 1);</span>
+<span class="nc" id="L66">            _enqueue(new Tsr[]{t, t, new Tsr(shape, value)}, d, type);</span>
         //}
-<span class="fc" id="L70">    }</span>
+<span class="nc" id="L68">    }</span>
 
     @Override
     public void dispose() {
-<span class="nc" id="L74">        _executor.getPool().shutdown();</span>
-<span class="nc" id="L75">    }</span>
+<span class="nc" id="L72">        _executor.getPool().shutdown();</span>
+<span class="nc" id="L73">    }</span>
 
     @Override
     public Device get(Tsr tensor) {
-<span class="fc" id="L79">        return this;</span>
+<span class="fc" id="L77">        return this;</span>
     }
 
     @Override
     public Device add(Tsr tensor) {
-<span class="fc" id="L84">        return this;</span>
+<span class="fc" id="L82">        return this;</span>
     }
 
     @Override
     public Device add(Tsr tensor, Tsr parent) {
-<span class="nc" id="L89">        return this;</span>
+<span class="nc" id="L87">        return this;</span>
     }
 
     @Override
     public boolean has(Tsr tensor) {
-<span class="fc" id="L94">        return false;</span>
+<span class="fc" id="L92">        return false;</span>
     }
 
     @Override
     public Device rmv(Tsr tensor) {
-<span class="nc" id="L99">        return this;</span>
+<span class="nc" id="L97">        return this;</span>
     }
 
     @Override
     public Device overwrite64(Tsr tensor, double[] value) {
-<span class="nc" id="L104">        return this;</span>
+<span class="nc" id="L102">        return this;</span>
     }
 
     @Override
     public Device overwrite32(Tsr tensor, float[] value) {
-<span class="nc" id="L109">        return this;</span>
+<span class="nc" id="L107">        return this;</span>
     }
 
     @Override
     public Device swap(Tsr former, Tsr replacement) {
-<span class="nc" id="L114">        return this;</span>
+<span class="nc" id="L112">        return this;</span>
     }
 
     @Override
     public double[] value64Of(Tsr tensor) {
-<span class="nc" id="L119">        return tensor.value64();</span>
+<span class="nc" id="L117">        return tensor.value64();</span>
     }
 
     @Override
     public float[] value32Of(Tsr tensor) {
-<span class="nc" id="L124">        return tensor.value32();</span>
+<span class="nc" id="L122">        return tensor.value32();</span>
     }
 
     @Override
     public Collection&lt;Tsr&gt; tensors() {
-<span class="nc" id="L129">        return null;</span>
+<span class="nc" id="L127">        return null;</span>
     }
 
     public interface Range {
         void execute(int start, int end);
     }
 
-<span class="fc" id="L136">    public class NativeExecutor</span>
+<span class="fc" id="L134">    public class NativeExecutor</span>
     {
-<span class="fc" id="L138">        private final ThreadPoolExecutor _pool =</span>
-<span class="fc" id="L139">                (ThreadPoolExecutor) Executors.newFixedThreadPool(</span>
-<span class="fc" id="L140">                        Runtime.getRuntime().availableProcessors()</span>
+<span class="fc" id="L136">        private final ThreadPoolExecutor _pool =</span>
+<span class="fc" id="L137">                (ThreadPoolExecutor) Executors.newFixedThreadPool(</span>
+<span class="fc" id="L138">                        Runtime.getRuntime().availableProcessors()</span>
                 );
 
         public ThreadPoolExecutor getPool() {
-<span class="fc" id="L144">            return _pool;</span>
+<span class="fc" id="L142">            return _pool;</span>
         }
 
         //==============================================================================================================
 
         public void threaded(int sze, Range range)
         {
-<span class="fc" id="L151">            int cores = _pool.getCorePoolSize() - _pool.getActiveCount();</span>
-<span class="pc bpc" id="L152" title="1 of 2 branches missed.">            cores = (cores == 0) ? 1 : cores;</span>
-<span class="fc bfc" id="L153" title="All 4 branches covered.">            if (sze &gt;= 32 &amp;&amp; ((sze / cores) &gt;= 8)) {</span>
-<span class="fc" id="L154">                final int chunk = sze / cores;</span>
-<span class="fc" id="L155">                Future[] futures = new Future[cores];</span>
-<span class="fc bfc" id="L156" title="All 2 branches covered.">                for (int i = 0; i &lt; cores; i++) {</span>
-<span class="fc" id="L157">                    final int start = i * chunk;</span>
-<span class="fc bfc" id="L158" title="All 2 branches covered.">                    final int end = (i == cores - 1) ? sze : ((i + 1) * chunk);</span>
-<span class="fc" id="L159">                    Neureka neureka = Neureka.instance();</span>
-<span class="fc" id="L160">                    futures[i] = _pool.submit(() -&gt; {</span>
-<span class="fc" id="L161">                        Neureka.setContext(Thread.currentThread(), neureka);</span>
-<span class="fc" id="L162">                        range.execute(start, end);</span>
-<span class="fc" id="L163">                    });</span>
+<span class="fc" id="L149">            int cores = _pool.getCorePoolSize() - _pool.getActiveCount();</span>
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">            cores = (cores == 0) ? 1 : cores;</span>
+<span class="fc bfc" id="L151" title="All 4 branches covered.">            if (sze &gt;= 32 &amp;&amp; ((sze / cores) &gt;= 8)) {</span>
+<span class="fc" id="L152">                final int chunk = sze / cores;</span>
+<span class="fc" id="L153">                Future[] futures = new Future[cores];</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">                for (int i = 0; i &lt; cores; i++) {</span>
+<span class="fc" id="L155">                    final int start = i * chunk;</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">                    final int end = (i == cores - 1) ? sze : ((i + 1) * chunk);</span>
+<span class="fc" id="L157">                    Neureka neureka = Neureka.instance();</span>
+<span class="fc" id="L158">                    futures[i] = _pool.submit(() -&gt; {</span>
+<span class="fc" id="L159">                        Neureka.setContext(Thread.currentThread(), neureka);</span>
+<span class="fc" id="L160">                        range.execute(start, end);</span>
+<span class="fc" id="L161">                    });</span>
                 }
-<span class="fc bfc" id="L165" title="All 2 branches covered.">                for (Future f : futures) {</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">                for (Future f : futures) {</span>
                     try {
-<span class="fc" id="L167">                        f.get();</span>
-<span class="nc" id="L168">                    } catch (InterruptedException e) {</span>
+<span class="fc" id="L165">                        f.get();</span>
+<span class="nc" id="L166">                    } catch (InterruptedException e) {</span>
+<span class="nc" id="L167">                        e.printStackTrace();</span>
+<span class="nc" id="L168">                    } catch (ExecutionException e) {</span>
 <span class="nc" id="L169">                        e.printStackTrace();</span>
-<span class="nc" id="L170">                    } catch (ExecutionException e) {</span>
-<span class="nc" id="L171">                        e.printStackTrace();</span>
-<span class="pc" id="L172">                    }</span>
+<span class="pc" id="L170">                    }</span>
                 }
-<span class="fc" id="L174">            } else range.execute(0, sze);</span>
-<span class="fc" id="L175">        }</span>
+<span class="fc" id="L172">            } else range.execute(0, sze);</span>
+<span class="fc" id="L173">        }</span>
 
     }
 

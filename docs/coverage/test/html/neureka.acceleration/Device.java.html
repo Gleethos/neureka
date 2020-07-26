@@ -2,23 +2,37 @@
 
 import neureka.Component;
 import neureka.Tsr;
+import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.opencl.OpenCLPlatform;
 import neureka.calculus.environment.OperationType;
 
 import java.util.Collection;
 
+/**
+ * This is the interface for implementations representing
+ * devices capable of executing operations on tensors, namely the Tsr class.
+ * Such instances are also components of tensors, which is why
+ * the it extends the Component&lt;Tsr&gt; interface.
+ */
 public interface Device extends Component&lt;Tsr&gt;
 {
-    static Device find(String name){
+    /**
+     * This method return OpenCLDevices matching
+     * the given search parameter.
+     * @param name The search parameter and name of the requested Device instance.
+     * @return The found Device instance or simply the HostCPU instance by default.
+     */
+    static Device find(String name)
+    {
         //TODO: Device plugin finding!
-<span class="fc" id="L14">        Device[] result = {null};</span>
-<span class="fc" id="L15">        String search = name.toLowerCase();</span>
-<span class="fc" id="L16">        OpenCLPlatform.PLATFORMS().forEach( p -&gt;</span>
-<span class="fc" id="L17">            p.getDevices().forEach( d -&gt;{</span>
-<span class="fc" id="L18">                String str = (d.name()+&quot; | &quot;+d.vendor()+&quot; | &quot;+d.type()).toLowerCase();</span>
-<span class="fc bfc" id="L19" title="All 2 branches covered.">                if(str.contains(search)) result[0] = d;</span>
-<span class="fc" id="L20">            }));</span>
-<span class="fc" id="L21">        return result[0];</span>
+<span class="fc" id="L28">        Device[] result = {HostCPU.instance()};</span>
+<span class="fc" id="L29">        String search = name.toLowerCase();</span>
+<span class="fc" id="L30">        OpenCLPlatform.PLATFORMS().forEach( p -&gt;</span>
+<span class="fc" id="L31">            p.getDevices().forEach( d -&gt;{</span>
+<span class="fc" id="L32">                String str = (d.name()+&quot; | &quot;+d.vendor()+&quot; | &quot;+d.type()).toLowerCase();</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">                if(str.contains(search)) result[0] = d;</span>
+<span class="fc" id="L34">            }));</span>
+<span class="fc" id="L35">        return result[0];</span>
     }
 
     void dispose();

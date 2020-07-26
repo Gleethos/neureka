@@ -36,7 +36,7 @@ public class Quadratic extends OperationType
 
 <span class="fc" id="L37">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L39">                typeImplementation.setExecution (</span>
+<span class="fc" id="L39">                typeImplementation.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -52,7 +52,7 @@ public class Quadratic extends OperationType
                                                 ),
                                 3
                         )
-<span class="fc" id="L55">                ).setExecution(</span>
+<span class="fc" id="L55">                ).setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {

@@ -329,7 +329,7 @@ public class Multiplication extends OperationType {
                 Convolution.class,
                 convolution
                         .setExecutor(
-                        HostExecutor.class,
+                                HostExecutor.class,
                                 new HostExecutor(
                                         call ->
                                                 call.getDevice().getExecutor()

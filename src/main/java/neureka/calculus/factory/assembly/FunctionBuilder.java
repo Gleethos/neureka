@@ -214,7 +214,8 @@ public class FunctionBuilder {
             String cleaned = FunctionParser.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =>Cleaning!
             String raw = component.replace(cleaned, "");
             String assumed = FunctionParser.assumptionBasedOn(raw);
-            if (assumed == null) component = cleaned;
+            System.out.println("assumed: "+assumed+"; ");
+            if ( assumed.isBlank() ) component = cleaned;
             else component = assumed + cleaned;
 
             return FunctionBuilder.build(component, doAD);

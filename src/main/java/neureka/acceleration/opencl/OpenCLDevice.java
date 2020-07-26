@@ -407,7 +407,7 @@ public class OpenCLDevice extends AbstractDevice
                         d,
                         type
                 );
-        call.getExecutor().getExecutor(CLExecutor.class).getExecution().call(call);
+        call.getImplementation().getExecutor(CLExecutor.class).getExecution().call(call);
     }
 
 

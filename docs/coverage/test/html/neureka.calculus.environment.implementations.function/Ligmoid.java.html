@@ -25,7 +25,7 @@ public class Ligmoid extends OperationType {
 
 <span class="fc" id="L26">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L28">                typeImplementation.setExecution (</span>
+<span class="fc" id="L28">                typeImplementation.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -41,7 +41,7 @@ public class Ligmoid extends OperationType {
                                                 ),
                                 3
                         )
-<span class="fc" id="L44">                ).setExecution(</span>
+<span class="fc" id="L44">                ).setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {

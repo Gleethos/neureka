@@ -1,194 +1,202 @@
-
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta name="theme-color" content="#000000">
-        <meta charset="utf-8">
-        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title> NEUREKA </title>
-        <link rel="icon" href="/src/favicon/favicon.ico" >
-        <meta name="description" content="a Java tensor library">
-        <meta name="author" content="Daniel Nepp">
-        <meta name="keywords" content=" AI, Deep Learning, Neuron, OpenCl, PyTorch, Java, Tensorflow, Machine Learning">
-        <!-----------------------------------ROBOTS---------------------------------------------->
-        <meta name="robots" content="all">
-        <meta name="revisit-after" content="30 days">
-        <!-----------------------------------JQUERY---------------------------------------------->
-        <script src="src/js/jquery.min.js"></script>
-        <!-----------------------------------BOOTSTRAP------------------------------------------>
-        <link rel="stylesheet" href="src/css/bootstrap.min.css">
-        <script src="src/js/bootstrap.min.js"></script>
-        <script src="src/js/popper.min.js"></script>
-        <!-----------------------------------CUSTOM CSS------------------------------------------>
-        <link rel="stylesheet" href="src/style.css">
-        <!-----------------------------------HIGHLIGHT CSS------------------------------------------>
-        <link rel="stylesheet" href="src/css/sunburst.min.css">
-        <script src="src/js/highlight.min.js"></script>
-        <script>window.addEventListener("load",function() {setTimeout(function(){window.scrollTo(0, 1);}, 0);});</script>
-    </head>
-    <body>
-        <div id="header">
-            <div id="NetBox" class = "mainframe">
-                <nav class="" id="navTile">
-                    <div id="navContainer" class="">
-                        <div style = "" class = "topEarthGradient dynamicSideMargin">
-                            <h1>NEUREKA</h1>
-                        </div>
-                        <div class="pull-right nightBox" id="NavbarMenu" >
-                            <ul class="nav navbar-right" id="NavbarList">
-                                <li>
-                                    <a href="index.html">
-                                        <img src="src/img/icons/house.png">
-                                    </a>
+<head>
+    <meta name="theme-color" content="#000000">
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title> NEUREKA </title>
+    <link rel="icon" href="/src/favicon/favicon.ico">
+    <meta name="description" content="a Java tensor library">
+    <meta name="author" content="Daniel Nepp">
+    <meta name="keywords" content=" AI, Deep Learning, Neuron, OpenCl, PyTorch, Java, Tensorflow, Machine Learning">
+    <!-----------------------------------ROBOTS---------------------------------------------->
+    <meta name="robots" content="all">
+    <meta name="revisit-after" content="30 days">
+    <!-----------------------------------JQUERY---------------------------------------------->
+    <script src="src/js/jquery.min.js"></script>
+    <!-----------------------------------BOOTSTRAP------------------------------------------>
+    <link rel="stylesheet" href="src/css/bootstrap.min.css">
+    <script src="src/js/bootstrap.min.js"></script>
+    <script src="src/js/popper.min.js"></script>
+    <!-----------------------------------CUSTOM CSS------------------------------------------>
+    <link rel="stylesheet" href="src/style.css">
+    <!-----------------------------------HIGHLIGHT CSS------------------------------------------>
+    <link rel="stylesheet" href="src/css/sunburst.min.css">
+    <script src="src/js/highlight.min.js"></script>
+    <script>window.addEventListener("load", function () {
+        setTimeout(function () {
+            window.scrollTo(0, 1);
+        }, 0);
+    });</script>
+</head>
+<body>
+<div id="header">
+    <div id="NetBox" class="mainframe">
+        <nav class="" id="navTile">
+            <div id="navContainer" class="">
+                <div style="" class="topEarthGradient dynamicSideMargin">
+                    <h1>NEUREKA</h1>
+                </div>
+                <div class="pull-right nightBox" id="NavbarMenu">
+                    <ul class="nav navbar-right" id="NavbarList">
+                        <li>
+                            <a href="index.html">
+                                <img src="src/img/icons/house.png">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/Gleethos/neureka">
+                                <img src="src/img/icons/github-logo.png">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="jdocs/index.html">
+                                <img src="src/img/icons/cogwheel.png">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div id="navi">
+                <input type="checkbox" name="mobile-nav" id="mobile-nav" class="gaadiexp-check" onchange="this.blur()">
+                <label for="mobile-nav" class="gaadiexp white" tabindex="0"
+                       style="margin-left: 0;"><span></span></label>
+                <div role="navigation" class="header-nav">
+                    <div class="fixed-nav">
+                        <div class="menu">
+                            <ul class="side-nav">
+                                <li></li>
+                                <li></li>
+                                <li><a target="_blank" Style="cursor: pointer; color: cyan;"
+                                       onclick="loadContent('../TOC')">Table Of Content</a></li>
+                                <li><a target="_blank" href="index.html">Home</a></li>
+                                <li><a target="_blank" href="jdocs/index.html">Documentation</a></li>
+                                <li><a target="_blank" href="https://github.com/Gleethos/neureka">Github</a></li>
+                                <li><a target="" href="coverage/test/html/index.html">Code Coverage</a>
+                                <li><a target="" href="coverage/test/html/jacoco-sessions.html">Last Test Session</a>
                                 </li>
-                                <li>
-                                    <a href="https://github.com/Gleethos/neureka">
-                                        <img src="src/img/icons/github-logo.png">
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="jdocs/index.html">
-                                        <img src="src/img/icons/cogwheel.png">
-                                    </a>
-                                </li>
+                                <li><a target="_blank" Style="cursor: pointer; color: cyan;"
+                                       onclick="loadContent('dependencies')">Dependencies</a></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
                             </ul>
                         </div>
                     </div>
-                    <div id="navi">
-                        <input type="checkbox" name="mobile-nav" id="mobile-nav" class="gaadiexp-check" onchange="this.blur()">
-                        <label for="mobile-nav" class="gaadiexp white" tabindex="0" style="margin-left: 0;"><span></span></label>
-                        <div role="navigation" class="header-nav">
-                            <div class="fixed-nav">
-                                <div class="menu">
-                                    <ul class="side-nav">
-                                        <li></li>
-                                        <li></li>
-                                        <li><a target="_blank" Style="cursor: pointer; color: cyan;" onclick="loadContent('../TOC')">Table Of Content</a></li>
-                                        <li><a target="_blank" href="index.html">Home</a></li>
-                                        <li><a target="_blank" href="jdocs/index.html">Documentation</a></li>
-                                        <li><a target="_blank" href="https://github.com/Gleethos/neureka">Github</a></li>
-                                        <li><a target="" href="coverage/test/html/index.html">Code Coverage</a>
-                                        <li><a target="" href="coverage/test/html/jacoco-sessions.html">Last Test Session</a></li>
-                                        <li><a target="_blank" Style="cursor: pointer; color: cyan;" onclick="loadContent('dependencies')">Dependencies</a></li>
-                                        <li></li>
-                                        <li></li>
-                                        <li></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </nav>
+                </div>
+            </div>
+        </nav>
 
-                <div class="">
-                    <!----------------------------------LAYOUT------------------------------------------------->
-                    <main class="parallax">
-                        <div style="left:-10px;" class="parallax__layer parallax__layer--back ">
-                            <div>
-                                <img src="src/img/parallax/woods.png">
-                            </div>
-                        </div>
-                        <div class="parallax__layer parallax__layer--base">
-                            <div id="mainTile" class="cardBox dynamicSideMargin">
-                                <div id="ReturnArrow" onclick="loadContent('../TOC');" style="
+        <!----------------------------------LAYOUT------------------------------------------------->
+        <main class="parallax">
+            <div style="left:-10px;" class="parallax__layer parallax__layer--back ">
+                <div>
+                    <img src="src/img/parallax/woods.png">
+                </div>
+            </div>
+            <div class="parallax__layer">
+                <div id="mainTile" class="cardBox dynamicSideMargin">
+                    <div id="ReturnArrow" onclick="loadContent('../TOC');" style="
                                                 position:relative;
                                                 float:right;
                                                 right:3.25em;
                                                 top:-0em;
                                                 margin:-3em;
                                                 ">
-                                    <img id="ArrowIcon">
-                                </div>
+                        <img id="ArrowIcon">
+                    </div>
 
-                                <div class = "mainContentWrapper">
-                                    <div class = container-fluid>
+                    <div class="mainContentWrapper">
+                        <div class=container-fluid>
 
-                                        <h1 id ="ContentTitle"></h1>
+                            <h1 id="ContentTitle"></h1>
 
-                                        <script>
-                                            function loadContent(target){
-                                                $('#DynamicContent').hide("fast", function() {
-                                                    $('#ContentTitle').hide("fast", function(){
-                                                        var split = target.split("/");
-                                                        split = split[split.length-1];console.log(split);
-                                                        if(split.indexOf("TOC")!==-1){
-                                                            $('#ReturnArrow').hide("fast");
-                                                        } else {
-                                                            $('#ReturnArrow').show("fast");
-                                                        }
-                                                        split = split.replace("TOC", "Table of Content");
-                                                        $('#ContentTitle').html(
-                                                            split.charAt(0).toUpperCase() + split.substring(1)
-                                                        ).show("fast");
-                                                    });
-                                                    $('#DynamicContent').html("").load('src/pages/'+target+'.html');
-                                                });
-                                                setTimeout(function() {
-                                                        hljs.initHighlighting.called = false;
-                                                        hljs.initHighlighting();
-                                                        $('#DynamicContent').show("fast");
-                                                    },
-                                                    500
-                                                );
+                            <script>
+                                function loadContent(target) {
+                                    $('#DynamicContent').hide("fast", function () {
+                                        $('#ContentTitle').hide("fast", function () {
+                                            var split = target.split("/");
+                                            split = split[split.length - 1];
+                                            console.log(split);
+                                            if (split.indexOf("TOC") !== -1) {
+                                                $('#ReturnArrow').hide("fast");
+                                            } else {
+                                                $('#ReturnArrow').show("fast");
                                             }
-                                            $(document).ready(function(){
-                                                $("#ReturnArrow").hide().mouseover(function(){
-                                                    $(this).animate({right:"4.5em"}, 100);
-                                                }).mouseout(function(){
-                                                    $(this).animate({right:"3.25em",}, 400);
-                                                });
-                                                $("#ArrowIcon").attr("src", "src/img/icons/return-arrow.png")
-                                                loadContent('../TOC');
-                                            });
-                                            function switchTab(src, target) {
-                                                var tabBody = $(src.target).parent().parent().find('.tabBody');
-                                                tabBody.children().css("display", "none");
-                                                $(src.target).siblings().removeClass("selected");
-                                                $(src.target).parent().parent().find(target).css("display","block");
-                                                $(src.target).addClass("selected");
-                                                console.log($(src.target).html());
-                                            }
-                                        </script>
+                                            split = split.replace("TOC", "Table of Content");
+                                            $('#ContentTitle').html(
+                                                split.charAt(0).toUpperCase() + split.substring(1)
+                                            ).show("fast");
+                                        });
+                                        $('#DynamicContent').html("").load('src/pages/' + target + '.html');
+                                    });
+                                    setTimeout(function () {
+                                            hljs.initHighlighting.called = false;
+                                            hljs.initHighlighting();
+                                            $('#DynamicContent').show("fast");
+                                        },
+                                        500
+                                    );
+                                }
 
-                                        <div id="DynamicContent" class = "row">
+                                $(document).ready(function () {
+                                    $("#ReturnArrow").hide().mouseover(function () {
+                                        $(this).animate({right: "4.5em"}, 100);
+                                    }).mouseout(function () {
+                                        $(this).animate({right: "3.25em",}, 400);
+                                    });
+                                    $("#ArrowIcon").attr("src", "src/img/icons/return-arrow.png")
+                                    loadContent('../TOC');
+                                });
 
-                                        </div>
+                                function switchTab(src, target) {
+                                    var tabBody = $(src.target).parent().parent().find('.tabBody');
+                                    tabBody.children().css("display", "none");
+                                    $(src.target).siblings().removeClass("selected");
+                                    $(src.target).parent().parent().find(target).css("display", "block");
+                                    $(src.target).addClass("selected");
+                                    console.log($(src.target).html());
+                                }
+                            </script>
 
-                                    </div>
+                            <div id="DynamicContent" class="row">
 
-                                </div>
                             </div>
+
                         </div>
-                    </main>
+
+                    </div>
                 </div>
-                <footer>
-                    <section>
-                        <ul>
-                            <h4>
-                                Contact:
-                            </h4>
-                            <li>
-                                <a>
-                                    gleethos@gmx.at
-                                </a>
-                            </li>
-                        </ul>
-                    </section>
-                </footer>
             </div>
-        </div>
+        </main>
+        <footer>
+            <section>
+                <ul>
+                    <h4>
+                        Contact:
+                    </h4>
+                    <li>
+                        <a>
+                            gleethos@gmx.at
+                        </a>
+                    </li>
+                </ul>
+            </section>
+        </footer>
+    </div>
+</div>
 
-        <!-----------------------------------VANTA JS------------------------------------------>
-        <script src="src/js/three.min.js"></script>
-        <script src="src/js/vanta.net.min.js"></script>
-        <script>
-            VANTA.NET({el: "#NetBox"});
+<!-----------------------------------VANTA JS------------------------------------------>
+<script src="src/js/three.min.js"></script>
+<script src="src/js/vanta.net.min.js"></script>
+<script>
+    VANTA.NET({el: "#NetBox"});
 
-        </script>
-        <!-----------------------------------CORRECT VIEWPORT FOR MOBILE------------------------------------------>
-        <script>
-        </script>
-    </body>
+</script>
+<!-----------------------------------CORRECT VIEWPORT FOR MOBILE------------------------------------------>
+<script>
+</script>
+</body>
 </html>

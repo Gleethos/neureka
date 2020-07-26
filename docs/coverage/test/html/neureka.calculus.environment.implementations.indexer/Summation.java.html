@@ -35,7 +35,7 @@ public class Summation extends OperationType {
 
 <span class="fc" id="L36">        setImplementation (</span>
                 Broadcast.class,
-<span class="fc" id="L38">                typeImplementation.setExecution (</span>
+<span class="fc" id="L38">                typeImplementation.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -54,7 +54,7 @@ public class Summation extends OperationType {
                                                 ),
                                 3
                         )
-<span class="fc" id="L57">                ).setExecution(</span>
+<span class="fc" id="L57">                ).setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {
@@ -84,14 +84,14 @@ public class Summation extends OperationType {
 <span class="fc" id="L84">        DefaultOperatorCreator&lt;TertiaryNDXConsumer&gt; activationCreator =</span>
                 (inputs, d) -&gt; {
 <span class="nc" id="L86">                    double[] t1_val = inputs[1].value64();</span>
-<span class="nc bnc" id="L87" title="All 2 branches missed.">                    if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">                    if ( d &lt; 0 ) return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
 <span class="nc" id="L88">                    else return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)];</span>
                 };
 
 <span class="fc" id="L91">        Activation activation = new Activation();</span>
 
 <span class="fc" id="L93">        setImplementation(Activation.class,</span>
-<span class="fc" id="L94">                activation.setExecution (</span>
+<span class="fc" id="L94">                activation.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -107,12 +107,12 @@ public class Summation extends OperationType {
                                                 ),
                                 3
                         )
-<span class="fc" id="L110">                ).setExecution(</span>
+<span class="fc" id="L110">                ).setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {
-<span class="nc bnc" id="L114" title="All 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
-<span class="nc bnc" id="L115" title="All 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">                                    int offset = ( call.getTensor(0) != null ) ? 0 : 1;</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">                                    int gwz = ( call.getTensor(0) != null ) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
 <span class="nc" id="L116">                                    call.getDevice().getKernel(call)</span>
 <span class="nc" id="L117">                                            .pass(call.getTensor(offset))</span>
 <span class="nc" id="L118">                                            .pass(call.getTensor(offset + 1))</span>

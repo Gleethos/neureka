@@ -6,7 +6,7 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
 
-public class Operation  extends AbstractOperationTypeImplementation<Operation, Type.DefaultOperatorCreator>
+public class Operation  extends AbstractOperationTypeImplementation< Operation >
 {
     public Operation(){  super();  }
 

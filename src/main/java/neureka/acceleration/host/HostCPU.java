@@ -44,7 +44,7 @@ public class HostCPU extends AbstractDevice
                         d,
                         type
                 );
-        call.getExecutor().getExecutor(HostExecutor.class).getExecution().call(call);
+        call.getImplementation().getExecutor(HostExecutor.class).getExecution().call(call);
     }
 
     @Override

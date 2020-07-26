@@ -200,79 +200,79 @@ public abstract class AbstractFunction extends BaseFunction {
         }
     }
 
-    private Tsr _execution(Tsr[] inputs, int d, int j, Device device) {
-<span class="pc bpc" id="L204" title="1 of 6 branches missed.">        if (!_isFlat &amp;&amp; j &lt; 0 &amp;&amp; d &lt; 0) {</span>
-<span class="fc bfc" id="L205" title="All 2 branches covered.">            if (_type.isOperation()) {/*  '+', '-', 'x', '*', '%', 'Â«', 'Â»', ',', ...  */</span>
-<span class="fc" id="L206">                StringBuilder operation = new StringBuilder();</span>
-<span class="fc" id="L207">                Tsr[] tsrs = _src_acti(inputs, j, d, 0);</span>
-<span class="fc bfc" id="L208" title="All 2 branches covered.">                for (int i = 0; i &lt; tsrs.length; i++) {</span>
-<span class="fc bfc" id="L209" title="All 2 branches covered.">                    operation.append(&quot;I[&quot;).append(i).append(&quot;]&quot;).append((i == tsrs.length - 1) ? &quot;&quot; : _type.identifier());</span>
+    private Tsr _execution(Tsr[] inputs, int d, int j, Device device)
+    {
+<span class="pc bpc" id="L205" title="1 of 6 branches missed.">        if ( !_isFlat &amp;&amp; j &lt; 0 &amp;&amp; d &lt; 0 ) {</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">            if (_type.isOperation()) {/*  '+', '-', 'x', '*', '%', 'Â«', 'Â»', ',', ...  */</span>
+<span class="fc" id="L207">                StringBuilder operation = new StringBuilder();</span>
+<span class="fc" id="L208">                Tsr[] tsrs = _src_acti(inputs, j, d, 0);</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">                for ( int i = 0; i &lt; tsrs.length; i++ ) {</span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">                    operation.append(&quot;I[&quot;).append(i).append(&quot;]&quot;).append((i == tsrs.length - 1) ? &quot;&quot; : _type.identifier());</span>
                 }
-<span class="fc" id="L211">                return (FunctionBuilder.build(operation.toString(), _doAD).call(tsrs));</span>
-<span class="pc bpc" id="L212" title="1 of 4 branches missed.">            } else if (_type.supportsImplementation(Activation.class) &amp;&amp; !_type.isIndexer()) {</span>
-<span class="fc" id="L213">                return (FunctionBuilder.build(_type.identifier() + &quot;(I[0])&quot;, true).call(inputs));</span>
+<span class="fc" id="L212">                return FunctionBuilder.build(operation.toString(), _doAD).call(tsrs);</span>
+<span class="pc bpc" id="L213" title="1 of 4 branches missed.">            } else if ( _type.supportsImplementation(Activation.class) &amp;&amp; !_type.isIndexer() ) {</span>
+<span class="fc" id="L214">                return FunctionBuilder.build(_type.identifier() + &quot;(I[0])&quot;, true).call(inputs);</span>
             }
         }
 
         Tsr[] tsrs;
-<span class="fc bfc" id="L218" title="All 2 branches covered.">        if (_type.isIndexer()) tsrs = new Tsr[1 + inputs.length];</span>
-<span class="fc" id="L219">        else tsrs = new Tsr[1 + _src.size()];</span>
-<span class="fc bfc" id="L220" title="All 2 branches covered.">        if (d &gt;= 0) {</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">        if ( _type.isIndexer() ) tsrs = new Tsr[ 1 + inputs.length ];</span>
+<span class="fc" id="L220">        else tsrs = new Tsr[1 + _src.size()];</span>
+
+<span class="fc bfc" id="L222" title="All 2 branches covered.">        if ( d &gt;= 0 ) {</span>
             //Chain-rule (forward AutoDiff):
             //inner times outer means:
             //first derive source!
             //like so:
-<span class="fc bfc" id="L225" title="All 2 branches covered.">            if (_type.isIndexer()) {</span>
-<span class="fc bfc" id="L226" title="All 2 branches covered.">                for (int i = 1; i &lt; tsrs.length; i++) {</span>
-<span class="fc" id="L227">                    tsrs[i] = _src.get(0).derive(inputs, d, i - 1);</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">            if ( _type.isIndexer() ) {</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">                for (int i = 1; i &lt; tsrs.length; i++) {</span>
+<span class="fc" id="L229">                    tsrs[i] = _src.get(0).derive(inputs, d, i - 1);</span>
                 }
             } else {
-<span class="fc bfc" id="L230" title="All 2 branches covered.">                for (int i = 1; i &lt; tsrs.length; i++) {</span>
-<span class="fc bfc" id="L231" title="All 2 branches covered.">                    tsrs[i] = (j &gt;= 0) ? _src.get(i - 1).derive(inputs, d, j) : _src.get(i - 1).derive(inputs, d);</span>
+<span class="fc bfc" id="L232" title="All 2 branches covered.">                for ( int i = 1; i &lt; tsrs.length; i++ ) {</span>
+<span class="fc bfc" id="L233" title="All 2 branches covered.">                    tsrs[i] = ( j &gt;= 0 ) ? _src.get(i - 1).derive(inputs, d, j) : _src.get(i - 1).derive(inputs, d);</span>
                 }
             }
             //then add them all together! (is possible because of linearity...)
             Tsr inner;
-<span class="fc bfc" id="L236" title="All 2 branches covered.">            if (tsrs.length &gt; 2) {</span>
-<span class="fc" id="L237">                device.execute(tsrs, OperationType.instance(&quot;+&quot;), -1);</span>
-<span class="fc" id="L238">                inner = tsrs[0];//this is now the inner derivative!</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">            if ( tsrs.length &gt; 2 ) {</span>
+<span class="fc" id="L239">                device.execute(tsrs, OperationType.instance(&quot;+&quot;), -1);</span>
+<span class="fc" id="L240">                inner = tsrs[0];//this is now the inner derivative!</span>
             } else {
-<span class="fc" id="L240">                inner = tsrs[1];</span>
+<span class="fc" id="L242">                inner = tsrs[1];</span>
             }
-<span class="fc" id="L242">            tsrs[0] = null;</span>
+<span class="fc" id="L244">            tsrs[0] = null;</span>
             //then activate the source like so:
-<span class="fc bfc" id="L244" title="All 2 branches covered.">            if (_type.isIndexer()) {</span>
-<span class="fc bfc" id="L245" title="All 2 branches covered.">                for (int i = 1; i &lt; tsrs.length; i++) {</span>
-<span class="fc" id="L246">                    tsrs[i] = _src.get(0).call(inputs, i - 1);</span>
+<span class="fc bfc" id="L246" title="All 2 branches covered.">            if ( _type.isIndexer() ) {</span>
+<span class="fc bfc" id="L247" title="All 2 branches covered.">                for ( int i = 1; i &lt; tsrs.length; i++ ) {</span>
+<span class="fc" id="L248">                    tsrs[i] = _src.get(0).call(inputs, i - 1);</span>
                 }
             } else {
-<span class="fc bfc" id="L249" title="All 2 branches covered.">                for (int i = 1; i &lt; tsrs.length; i++) {</span>
-<span class="fc bfc" id="L250" title="All 2 branches covered.">                    tsrs[i] = (j &gt;= 0) ? _src.get(i - 1).call(inputs, j) : _src.get(i - 1).call(inputs);</span>
+<span class="fc bfc" id="L251" title="All 2 branches covered.">                for ( int i = 1; i &lt; tsrs.length; i++ ) {</span>
+<span class="fc bfc" id="L252" title="All 2 branches covered.">                    tsrs[i] = (j &gt;= 0) ? _src.get(i - 1).call(inputs, j) : _src.get(i - 1).call(inputs);</span>
                 }
             }
             //get derivative index within src list:
-<span class="fc bfc" id="L254" title="All 2 branches covered.">            for (int i = 0; i &lt; _src.size(); i++) {</span>
-<span class="fc bfc" id="L255" title="All 4 branches covered.">                if (_src.get(i).dependsOn(d) &amp;&amp; !_type.isIndexer()) {</span>
-<span class="fc" id="L256">                    d = i;</span>
-<span class="fc" id="L257">                    break;</span>
+<span class="fc bfc" id="L256" title="All 2 branches covered.">            for ( int i = 0; i &lt; _src.size(); i++ ) {</span>
+<span class="fc bfc" id="L257" title="All 4 branches covered.">                if ( _src.get(i).dependsOn(d) &amp;&amp; !_type.isIndexer() ) {</span>
+<span class="fc" id="L258">                    d = i;</span>
+<span class="fc" id="L259">                    break;</span>
                 }
             }
             //Use those tensors for the outer derivative:
-<span class="fc" id="L261">            device.execute(tsrs, _type, d);</span>
+<span class="fc" id="L263">            device.execute(tsrs, _type, d);</span>
             //At the end:
             //multiply inner times outer:
-<span class="fc" id="L264">            tsrs = new Tsr[]{null, inner, tsrs[0]};</span>
-<span class="fc" id="L265">            device.execute(tsrs, OperationType.instance(&quot;*&quot;), -1);</span>
-<span class="fc" id="L266">            return tsrs[0]; // done!</span>
+<span class="fc" id="L266">            tsrs = new Tsr[]{null, inner, tsrs[0]};</span>
+<span class="fc" id="L267">            device.execute(tsrs, OperationType.instance(&quot;*&quot;), -1);</span>
+<span class="fc" id="L268">            return tsrs[0]; // done!</span>
         } else {
-<span class="fc bfc" id="L268" title="All 2 branches covered.">            if (_type.isIndexer()) {</span>
-<span class="fc" id="L269">                tsrs = new Tsr[1 + inputs.length];</span>
-<span class="fc bfc" id="L270" title="All 2 branches covered.">                for (int i = 1; i &lt; tsrs.length; i++) tsrs[i] = _src.get(0).call(inputs, i - 1);</span>
-<span class="fc" id="L271">                device.execute(tsrs, _type, d);</span>
+<span class="fc bfc" id="L270" title="All 2 branches covered.">            if (_type.isIndexer()) {</span>
+<span class="fc bfc" id="L271" title="All 2 branches covered.">                for (int i = 1; i &lt; tsrs.length; i++) tsrs[i] = _src.get(0).call(inputs, i - 1);</span>
             } else {
 <span class="fc" id="L273">                tsrs = _src_acti(inputs, j, d, 1);</span>
-<span class="fc" id="L274">                device.execute(tsrs, _type, d);</span>
             }
+<span class="fc" id="L275">            device.execute(tsrs, _type, d);</span>
         }
 <span class="fc bfc" id="L277" title="All 2 branches covered.">        return (tsrs[0] == null) ? tsrs[1] : tsrs[0];</span>
     }

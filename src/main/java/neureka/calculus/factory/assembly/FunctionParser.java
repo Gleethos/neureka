@@ -3,6 +3,7 @@ package neureka.calculus.factory.assembly;
 import neureka.calculus.environment.OperationType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -207,24 +208,46 @@ public class FunctionParser
                 largest = s;
             }
         }
-        return ( largest > 0.1 ) ? OperationType.instance(best).identifier() : null;
+        return ( largest > 0.1 ) ? OperationType.instance(best).identifier() : "";
     }
 
     public static double similarity(String s1, String s2) {
-        String longer = (s1.length() > s2.length()) ?s1 : s2, shorter = (s1.length() > s2.length()) ? s2 : s1;
-        if (s1.length() < s2.length()) { // longer should always have greater length
-            longer = s2; shorter = s1;
-        }
-        int longerLength = longer.length();
-        if (longerLength == 0) return 1.0; /* both strings are zero length */
-        double d = 0;
-        int delta = (longer.length()-shorter.length());
-        for (int i=0; i<(delta+1); i++){
-            for (int si=0; si<shorter.length(); si++){
-                if (longer.charAt(i+si)==shorter.charAt(si)) d++;
+            String longer = (s1.length() > s2.length()) ?s1 : s2;
+            String shorter = (s1.length() > s2.length()) ? s2 : s1;
+            // longer should always have greater length
+            if (longer.length() == 0) return 1.0; /* both strings are zero length */
+
+            int delta = (longer.length()-shorter.length());
+            double[] alignment = new double[delta+1];
+            double[] weights = new double[delta+1];
+            double currentWeight = longer.length();
+            double weightSum = 0;
+            double modifier = delta / (double)longer.length();
+            for ( int i=0; i<(delta+1); i++ ){
+                weights[i] = currentWeight;
+                weightSum += currentWeight;
+                currentWeight *= modifier;
+                for (int si=0; si<shorter.length(); si++) {
+                    if (longer.charAt(i+si)==shorter.charAt(si)) alignment[i] ++;
+                    else if (
+                            Character.toLowerCase(longer.charAt(i+si)) == Character.toLowerCase(shorter.charAt(si))
+                    ) alignment[i] += 0.5;
+                    else if (
+                            Character.isAlphabetic(longer.charAt(i+si)) != Character.isAlphabetic(shorter.charAt(si))
+                    ) alignment[i] -= 0.13571113;
+                }
+                alignment[i] /= longer.length();
+                alignment[i] = Math.min(Math.max(alignment[i], 0.0), 1.0);
             }
-        }
-        return d/(longer.length()+delta+1);
+            Arrays.sort(alignment);
+            Arrays.sort(weights);
+            double similarity = 0;
+            for (int i=0; i<(delta+1); i++) similarity += alignment[i] * (weights[i]/weightSum);
+            System.out.println(longer+" ~?~ "+shorter+" : "+similarity);
+            assert similarity <= 1.0;
+
+            return similarity;
+
     }
 
 

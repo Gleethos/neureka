@@ -37,26 +37,26 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
         if ( type.identifier().equals("<") )
         {
             int offset = ( tsrs[0] == null ) ? 1 : 0;
-            _execute_recursively( new Tsr[]{tsrs[offset], tsrs[1+offset]}, OperationType.instance("idy"), -1 );
+            _execute( new Tsr[]{tsrs[offset], tsrs[1+offset]}, OperationType.instance("idy"), -1 );
         }
         else
         if ( type.identifier().equals(">") )
         {
             int offset = ( tsrs[0] == null ) ? 1 : 0;
-            _execute_recursively( new Tsr[]{tsrs[1+offset], tsrs[offset]}, OperationType.instance("idy"), -1 );
+            _execute( new Tsr[]{tsrs[1+offset], tsrs[offset]}, OperationType.instance("idy"), -1 );
         }
         else
         {
             _createNewDrainTensorIn(this, tsrs, type);
-            _execute_recursively(tsrs, type, d);
+            _execute(tsrs, type, d);
         }
         return this;
     }
 
-    private Tsr _execute_recursively( Tsr[] tsrs, OperationType type, int d )
+    private Tsr _execute(Tsr[] tsrs, OperationType type, int d )
     {
         ExecutionCall call = new ExecutionCall(this, tsrs, d, type);
-        OperationTypeImplementation<Object> executor = call.getExecutor();
+        OperationTypeImplementation<Object> executor = call.getImplementation();
         executor.reduce (
                 call,
                 c -> _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType())

@@ -41,7 +41,7 @@ public class Tanh extends OperationType
 
 <span class="fc" id="L42">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L44">                typeImplementation.setExecution (</span>
+<span class="fc" id="L44">                typeImplementation.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -57,7 +57,7 @@ public class Tanh extends OperationType
                                                 ),
                                 3
                         )
-<span class="fc" id="L60">                ).setExecution(</span>
+<span class="fc" id="L60">                ).setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {

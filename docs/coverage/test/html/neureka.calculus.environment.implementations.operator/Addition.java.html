@@ -46,7 +46,7 @@ public class Addition extends OperationType {
 
 <span class="fc" id="L47">        setImplementation(Operation.class,</span>
                 operation
-<span class="fc" id="L49">                        .setExecution (</span>
+<span class="fc" id="L49">                        .setExecutor(</span>
                         HostExecutor.class,
                                 new HostExecutor(
                                         call -&gt;
@@ -65,7 +65,7 @@ public class Addition extends OperationType {
                                                         ),
                                         3
                                 )
-<span class="fc" id="L68">                        ).setExecution(</span>
+<span class="fc" id="L68">                        ).setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {
@@ -93,7 +93,7 @@ public class Addition extends OperationType {
 
 <span class="fc" id="L94">        setImplementation(Broadcast.class,</span>
                 _broadcast
-<span class="fc" id="L96">                .setExecution (</span>
+<span class="fc" id="L96">                .setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call -&gt;
@@ -109,7 +109,7 @@ public class Addition extends OperationType {
                                                 ),
                                 3
                         )
-<span class="fc" id="L112">                ).setExecution(</span>
+<span class="fc" id="L112">                ).setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {
@@ -149,7 +149,7 @@ public class Addition extends OperationType {
 
 <span class="fc" id="L150">        setImplementation(</span>
                 Scalarization.class,
-<span class="fc" id="L152">                scalarization.setExecution (</span>
+<span class="fc" id="L152">                scalarization.setExecutor(</span>
                         HostExecutor.class,
                                 new HostExecutor(
                                         call -&gt; {
@@ -167,7 +167,7 @@ public class Addition extends OperationType {
 <span class="nc" id="L167">                                            },</span>
                                         3
                                 )
-<span class="fc" id="L170">                ).setExecution(</span>
+<span class="fc" id="L170">                ).setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {

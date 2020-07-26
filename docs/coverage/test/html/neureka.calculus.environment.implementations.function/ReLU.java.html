@@ -40,7 +40,7 @@ public class ReLU extends OperationType
 
 <span class="fc" id="L41">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L43">                typeImplementation.setExecution (</span>
+<span class="fc" id="L43">                typeImplementation.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -56,7 +56,7 @@ public class ReLU extends OperationType
                                                 ),
                                 3
                         )
-<span class="fc" id="L59">                ).setExecution(</span>
+<span class="fc" id="L59">                ).setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {

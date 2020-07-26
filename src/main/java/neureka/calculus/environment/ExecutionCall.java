@@ -33,5 +33,5 @@ public class ExecutionCall<DeviceType extends Device>
     public Tsr getTensor(int i) {return _tsrs[i];}
     public int getDerivativeIndex() {return _d;}
     public OperationType getType() {return _type;}
-    public OperationTypeImplementation getExecutor() { return _type.executorOf(this); }
+    public OperationTypeImplementation getImplementation() { return _type.implementationOf(this); }
 }

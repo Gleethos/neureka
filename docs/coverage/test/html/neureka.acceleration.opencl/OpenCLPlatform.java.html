@@ -148,19 +148,19 @@ public class OpenCLPlatform {
 <span class="fc" id="L148">                    Map&lt;String, String&gt; code = new HashMap&lt;&gt;();</span>
 <span class="fc bfc" id="L149" title="All 2 branches covered.">                    for(OperationType type : OperationType.ALL()) {</span>
 <span class="fc bfc" id="L150" title="All 4 branches covered.">                        if (preName.contains(&quot;activate&quot;) &amp;&amp; type.supportsImplementation(Activation.class)) {</span>
-<span class="fc" id="L151">                            CLExecutor exec = type.getImplementation(Activation.class).getExecution(CLExecutor.class);</span>
+<span class="fc" id="L151">                            CLExecutor exec = type.getImplementation(Activation.class).getExecutor(CLExecutor.class);</span>
 <span class="pc bpc" id="L152" title="1 of 4 branches missed.">                            if(exec!=null &amp;&amp; exec.getSource()!=null) code.put(exec.getName(), exec.getSource());</span>
 <span class="fc bfc" id="L153" title="All 4 branches covered.">                        } else if (preName.contains(&quot;operate&quot;) &amp;&amp; type.supportsImplementation(Operation.class)) {</span>
-<span class="fc" id="L154">                            CLExecutor exec = type.getImplementation(Operation.class).getExecution(CLExecutor.class);</span>
+<span class="fc" id="L154">                            CLExecutor exec = type.getImplementation(Operation.class).getExecutor(CLExecutor.class);</span>
 <span class="pc bpc" id="L155" title="2 of 4 branches missed.">                            if(exec!=null &amp;&amp; exec.getSource()!=null) code.put(exec.getName(), exec.getSource());</span>
 <span class="fc bfc" id="L156" title="All 4 branches covered.">                        } else if (preName.contains(&quot;scalar&quot;) &amp;&amp; type.supportsImplementation(Scalarization.class)) {</span>
-<span class="fc" id="L157">                            CLExecutor exec = type.getImplementation(Scalarization.class).getExecution(CLExecutor.class);</span>
+<span class="fc" id="L157">                            CLExecutor exec = type.getImplementation(Scalarization.class).getExecutor(CLExecutor.class);</span>
 <span class="pc bpc" id="L158" title="2 of 4 branches missed.">                            if(exec!=null &amp;&amp; exec.getSource()!=null) code.put(exec.getName(), exec.getSource());</span>
 <span class="fc bfc" id="L159" title="All 4 branches covered.">                        } else if(preName.contains(&quot;broadcast&quot;) &amp;&amp; type.supportsImplementation(Broadcast.class)){//broadcast</span>
-<span class="fc" id="L160">                            CLExecutor exec = type.getImplementation(Broadcast.class).getExecution(CLExecutor.class);</span>
+<span class="fc" id="L160">                            CLExecutor exec = type.getImplementation(Broadcast.class).getExecutor(CLExecutor.class);</span>
 <span class="pc bpc" id="L161" title="1 of 4 branches missed.">                            if(exec!=null &amp;&amp; exec.getSource()!=null) code.put(exec.getName(), exec.getSource());</span>
 <span class="fc bfc" id="L162" title="All 4 branches covered.">                        } else if(preName.contains(&quot;convolve&quot;) &amp;&amp; type.supportsImplementation(Convolution.class)) {</span>
-<span class="fc" id="L163">                            CLExecutor exec = type.getImplementation(Convolution.class).getExecution(CLExecutor.class);</span>
+<span class="fc" id="L163">                            CLExecutor exec = type.getImplementation(Convolution.class).getExecutor(CLExecutor.class);</span>
 <span class="pc bpc" id="L164" title="1 of 4 branches missed.">                            if(exec!=null &amp;&amp; exec.getSource()!=null) code.put(exec.getName(), exec.getSource());</span>
                         }
                     }

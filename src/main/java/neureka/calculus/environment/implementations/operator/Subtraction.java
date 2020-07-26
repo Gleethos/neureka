@@ -5,19 +5,11 @@ import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.executors.*;
 
-public class Subtraction extends OperationType {
+public class Subtraction extends OperationType
+{
 
-    private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
-            (inputs, d) -> {
-                double[] t1_val = inputs[1].value64();
-                double[] t2_val = inputs[2].value64();
-                if (d < 0) {
-                    return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] - t2_val[inputs[2].i_of_idx(t2Idx)];
-                } else return (t0Idx, t1Idx, t2Idx) -> (d == 0) ? 1.0 : -1.0;
-            };
-
-    public Subtraction(){
-
+    public Subtraction()
+    {
         super(
                 "subtract", "-", -1, true, false, false, false, false
         );
@@ -29,14 +21,15 @@ public class Subtraction extends OperationType {
                 (inputs, d) -> {
                     double[] t1_val = inputs[1].value64();
                     double[] t2_val = inputs[2].value64();
-                    if (d < 0) {
+                    if ( d < 0 ) {
                         return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] - t2_val[inputs[2].i_of_idx(t1Idx)];
-                    } else return t1Idx -> (d == 0) ? 1.0 : -1.0;
+                    } else return t1Idx -> ( d == 0 ) ? 1.0 : -1.0;
                 };
 
         Operation operation = new Operation();
 
-        setImplementation(Operation.class,
+        setImplementation(
+                Operation.class,
                 operation.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
@@ -89,18 +82,19 @@ public class Subtraction extends OperationType {
         ScalarOperatorCreator<PrimaryNDXConsumer> scalarOperatorCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[1].value64();
-                    if (d < 0) return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] - value;
+                    if ( d < 0 ) return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] - value;
                     else {
-                        if (d == 0) return t1Idx -> 1; else return t1Idx -> -1;
+                        if ( d == 0 ) return t1Idx -> 1; else return t1Idx -> -1;
                     }
                 };
 
         Scalarization scalarization = new Scalarization();
 
-        setImplementation(Scalarization.class,
-                scalarization.setExecutor(
+        setImplementation(
+                Scalarization.class,
+                scalarization.setExecutor (
                         HostExecutor.class,
-                        new HostExecutor(
+                        new HostExecutor (
                                 call -> {
                                     int offset = (call.getTensor(2).isVirtual() || call.getTensor(2).size() == 1) ? 1 : 0;
                                     double value = call.getTensor(1+offset).value64(0);
@@ -147,7 +141,8 @@ public class Subtraction extends OperationType {
         //________________
         // BROADCASTING :
 
-        setImplementation(Broadcast.class,
+        setImplementation (
+                Broadcast.class,
                 new Broadcast() // add _creator
         );
 

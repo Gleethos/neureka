@@ -4,62 +4,75 @@ import neureka.Tsr;
 import neureka.calculus.Function;
 import java.util.List;
 
-<span class="fc" id="L7">public abstract class BaseFunction implements Function {</span>
+/**
+ * This class implements certain methods by simply calling
+ * other methods which are responsible for executing
+ * the important logic implemented in sub classes.
+ *
+ * The reason for this is simply that otherwise there
+ * would be many redundantly implemented methods.
+ * The 'call' and 'invoke' methods with the same arguments
+ * are supposed to do the same thing, however
+ * they are both part of the Function interface in order to
+ * allow for overloading the '()' operator in different
+ * JVM languages...
+ */
+<span class="fc" id="L20">public abstract class BaseFunction implements Function {</span>
 
     @Override
     public double call(double input){
-<span class="nc" id="L11">        return call(new double[]{input});</span>
+<span class="nc" id="L24">        return call(new double[]{input});</span>
     }
 
     @Override
     public Tsr call(Tsr input){
-<span class="fc" id="L16">        return call(new Tsr[]{input});</span>
+<span class="fc" id="L29">        return call(new Tsr[]{input});</span>
     }
 
     //------------------------------------------------------------------------------------------------------------------
 
     @Override
     public Tsr call(List&lt;Tsr&gt; inputs) {
-<span class="nc" id="L23">        return call(inputs.toArray(new Tsr[0]));</span>
+<span class="nc" id="L36">        return call(inputs.toArray(new Tsr[0]));</span>
     }
 
     @Override
     public Tsr invoke(List&lt;Tsr&gt; inputs) {
-<span class="nc" id="L28">        return call(inputs);</span>
+<span class="nc" id="L41">        return call(inputs);</span>
     }
 
     //------------------------------------------------------------------------------------------------------------------
 
     @Override
     public double invoke(double input){
-<span class="nc" id="L35">        return call(input);</span>
+<span class="nc" id="L48">        return call(input);</span>
     }
 
     @Override
     public double invoke(double[] inputs, int j){
-<span class="nc" id="L40">        return call(inputs, j);</span>
+<span class="nc" id="L53">        return call(inputs, j);</span>
     }
 
     @Override
     public double invoke(double[] inputs){
-<span class="nc" id="L45">        return call(inputs);</span>
+<span class="nc" id="L58">        return call(inputs);</span>
     }
 
     //------------------------------------------------------------------------------------------------------------------
 
     @Override
     public Tsr invoke(Tsr input){
-<span class="nc" id="L52">        return call(input);</span>
+<span class="nc" id="L65">        return call(input);</span>
     }
 
     @Override
     public Tsr invoke(Tsr[] inputs, int j){
-<span class="nc" id="L57">        return call(inputs, j);</span>
+<span class="nc" id="L70">        return call(inputs, j);</span>
     }
 
     @Override
     public Tsr invoke(Tsr[] inputs){
-<span class="nc" id="L62">        return call(inputs);</span>
+<span class="nc" id="L75">        return call(inputs);</span>
     }
 
 

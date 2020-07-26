@@ -44,7 +44,7 @@ public class Product extends OperationType {
 
 <span class="fc" id="L45">        setImplementation (</span>
                 Broadcast.class,
-<span class="fc" id="L47">                typeImplementation.setExecution (</span>
+<span class="fc" id="L47">                typeImplementation.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -63,7 +63,7 @@ public class Product extends OperationType {
                                                 ),
                                 3
                         )
-<span class="fc" id="L66">                ).setExecution(</span>
+<span class="fc" id="L66">                ).setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {
@@ -99,7 +99,7 @@ public class Product extends OperationType {
 <span class="fc" id="L99">        Activation activation = new Activation();</span>
 
 <span class="fc" id="L101">        setImplementation(Activation.class,</span>
-<span class="fc" id="L102">                activation.setExecution (</span>
+<span class="fc" id="L102">                activation.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -115,7 +115,7 @@ public class Product extends OperationType {
                                                 ),
                                 3
                         )
-<span class="fc" id="L118">                ).setExecution(</span>
+<span class="fc" id="L118">                ).setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {

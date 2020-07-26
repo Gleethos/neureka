@@ -30,7 +30,7 @@ public class Cosinus extends OperationType {
 <span class="fc" id="L30">        Activation typeImplementation = new Activation();</span>
 <span class="fc" id="L31">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L33">                typeImplementation.setExecution (</span>
+<span class="fc" id="L33">                typeImplementation.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                             call  -&gt;
@@ -46,7 +46,7 @@ public class Cosinus extends OperationType {
                                 ),
                             3
                         )
-<span class="fc" id="L49">                ).setExecution(</span>
+<span class="fc" id="L49">                ).setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {

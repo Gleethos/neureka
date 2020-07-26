@@ -49,7 +49,7 @@ public class Multiplication extends OperationType {
 <span class="fc" id="L49">        Operation operation = new Operation();</span>
 
 <span class="fc" id="L51">        setImplementation(Operation.class,</span>
-<span class="fc" id="L52">                operation.setExecution (</span>
+<span class="fc" id="L52">                operation.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call -&gt;
@@ -68,7 +68,7 @@ public class Multiplication extends OperationType {
                                                 ),
                                 3
                         )
-<span class="fc" id="L71">                ).setExecution(</span>
+<span class="fc" id="L71">                ).setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {
@@ -98,7 +98,7 @@ public class Multiplication extends OperationType {
 <span class="fc" id="L98">        Broadcast broadcast = new Broadcast();</span>
 
 <span class="fc" id="L100">        setImplementation(Broadcast.class,</span>
-<span class="fc" id="L101">            broadcast.setExecution (</span>
+<span class="fc" id="L101">            broadcast.setExecutor(</span>
                         HostExecutor.class,
                     new HostExecutor(
                             call -&gt;
@@ -114,7 +114,7 @@ public class Multiplication extends OperationType {
                                             ),
                             3
                     )
-<span class="fc" id="L117">            ).setExecution(</span>
+<span class="fc" id="L117">            ).setExecutor(</span>
                     CLExecutor.class,
                     new CLExecutor(
                             call -&gt; {
@@ -157,7 +157,7 @@ public class Multiplication extends OperationType {
 
 <span class="fc" id="L158">        setImplementation(</span>
                 Scalarization.class,
-<span class="fc" id="L160">                scalarization.setExecution (</span>
+<span class="fc" id="L160">                scalarization.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call -&gt; {
@@ -175,7 +175,7 @@ public class Multiplication extends OperationType {
 <span class="nc" id="L175">                                },</span>
                                 3
                         )
-<span class="fc" id="L178">                ).setExecution(</span>
+<span class="fc" id="L178">                ).setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {
@@ -217,7 +217,7 @@ public class Multiplication extends OperationType {
                 &quot;&quot;, ((char) 171) + &quot;*&quot;, 3, true, false, false, false, false
 <span class="fc" id="L218">        ).setImplementation(</span>
                 Broadcast.class,
-<span class="fc" id="L220">                xBroadcast.setExecution (</span>
+<span class="fc" id="L220">                xBroadcast.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call -&gt;
@@ -233,7 +233,7 @@ public class Multiplication extends OperationType {
                                                 ),
                                 3
                         )
-<span class="fc" id="L236">                ).setExecution(</span>
+<span class="fc" id="L236">                ).setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {
@@ -262,7 +262,7 @@ public class Multiplication extends OperationType {
                 &quot;&quot;, &quot;*&quot; + ((char) 187), 3, true, false, false, false, false
 <span class="fc" id="L263">        ).setImplementation(</span>
                 Broadcast.class,
-<span class="fc" id="L265">                xBroadcast.setExecution (</span>
+<span class="fc" id="L265">                xBroadcast.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call -&gt;
@@ -278,7 +278,7 @@ public class Multiplication extends OperationType {
                                                 ),
                                 3
                         )
-<span class="fc" id="L281">                ).setExecution(</span>
+<span class="fc" id="L281">                ).setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {
@@ -328,8 +328,8 @@ public class Multiplication extends OperationType {
 <span class="fc" id="L328">        ).setImplementation(</span>
                 Convolution.class,
                 convolution
-<span class="fc" id="L331">                        .setExecution (</span>
-                        HostExecutor.class,
+<span class="fc" id="L331">                        .setExecutor(</span>
+                                HostExecutor.class,
                                 new HostExecutor(
                                         call -&gt;
 <span class="fc" id="L335">                                                call.getDevice().getExecutor()</span>
@@ -347,7 +347,7 @@ public class Multiplication extends OperationType {
                                                         ),
                                         3
                                 )
-<span class="fc" id="L350">                        ).setExecution(</span>
+<span class="fc" id="L350">                        ).setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {

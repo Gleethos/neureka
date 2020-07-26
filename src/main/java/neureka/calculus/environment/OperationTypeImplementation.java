@@ -3,6 +3,7 @@ package neureka.calculus.environment;
 import neureka.Tsr;
 import neureka.acceleration.Device;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -18,6 +19,10 @@ import java.util.function.Consumer;
  */
 public interface OperationTypeImplementation<FinalType>
 {
+    interface CallPipe
+    {
+        ExecutionCall<Device> run(ExecutionCall<Device> call);
+    }
 
     <D extends Device, E extends ExecutorFor<D>> FinalType setExecutor(Class<E> deviceClass, E execution);
 
@@ -27,6 +32,5 @@ public interface OperationTypeImplementation<FinalType>
 
     Tsr reduce( ExecutionCall<Device> call, Consumer<ExecutionCall<Device>> finalExecution );
 
-    //ExecutionCall<Device> fitArguments(ExecutionCall<Device> call);
-
+    List< CallPipe > getCallPipeline();
 }

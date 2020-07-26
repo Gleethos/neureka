@@ -6,7 +6,7 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
 
-public class Activation extends AbstractOperationTypeImplementation<Activation, Type.DefaultOperatorCreator<Type.TertiaryNDXConsumer>>
+public class Activation extends AbstractOperationTypeImplementation< Activation >
 {
     public Activation() {  super(); }
 

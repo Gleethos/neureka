@@ -1,6 +1,7 @@
 import neureka.Tsr;
 import neureka.calculus.Function;
 import neureka.calculus.factory.assembly.FunctionBuilder;
+import neureka.calculus.factory.assembly.FunctionParser;
 import org.junit.Test;
 import util.NTester_Function;
 
@@ -70,10 +71,10 @@ public class CalculusTests {
         tester.testExpression("((tanh(i0)", "tanh(I[0])", "");
         tester.testExpression("($$(gaus(i0*()", "gaus(I[0] * 0.0)", "");
         tester.testExpression("rrlu(i0)", "relu(I[0])", "");
-        tester.testExpression("th(i0)*gzs(i0+I1)", "(tanh(I[0]) * gaus(I[0] + I[1]))", "");
+        tester.testExpression("th(i0)*gas(i0+I1)", "(tanh(I[0]) * gaus(I[0] + I[1]))", "");
 
-        tester.testExpression("th(i0)dgzs(i0+I1)", "(tanh(I[0]) d gaus(I[0] + I[1]))", "");
-        tester.testExpression("ijdgzs(i0+I1)", "(I[j] d gaus(I[0] + I[1]))", "");
+        tester.testExpression("th(i0)dgus(i0+I1)", "(tanh(I[0]) d gaus(I[0] + I[1]))", "");
+        tester.testExpression("ijdguus(i0+I1)", "(I[j] d gaus(I[0] + I[1]))", "");
         tester.testExpression("ijssum(i0+Ij)", "(I[j] s sum(I[0] + I[j]))", "");
 
         tester.testExpression("i[0] d>> i[1] d>> I[2]", "(I[0] d"+((char)187)+" I[1] d"+((char)187)+" I[2])", "");

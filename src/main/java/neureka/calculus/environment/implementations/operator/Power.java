@@ -117,7 +117,8 @@ public class Power extends OperationType
 
         Broadcast broadcast = new Broadcast();
 
-        setImplementation(Broadcast.class,
+        setImplementation(
+                Broadcast.class,
                 broadcast.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(

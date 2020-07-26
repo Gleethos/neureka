@@ -52,7 +52,7 @@ public class OperationType implements Type
     protected boolean _isCommutative;
     protected boolean _isAssociative;
 
-<span class="fc" id="L55">    private Map&lt;Class, AbstractOperationTypeImplementation&gt; _modules = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L55">    private Map&lt;Class, AbstractOperationTypeImplementation&gt; _implementations = new LinkedHashMap&lt;&gt;();</span>
 
     static
     {
@@ -139,23 +139,23 @@ public class OperationType implements Type
 
     @Override
     public &lt;T extends AbstractOperationTypeImplementation&gt; T getImplementation(Class&lt;T&gt; type){
-<span class="fc" id="L142">        return (T) _modules.get(type);</span>
+<span class="fc" id="L142">        return (T) _implementations.get(type);</span>
     }
     @Override
     public &lt;T extends AbstractOperationTypeImplementation&gt; boolean supportsImplementation(Class&lt;T&gt; type){
-<span class="fc" id="L146">        return _modules.containsKey(type);</span>
+<span class="fc" id="L146">        return _implementations.containsKey(type);</span>
     }
     @Override
     public &lt;T extends AbstractOperationTypeImplementation&gt; Type setImplementation(Class&lt;T&gt; type, T instance) {
-<span class="fc" id="L150">        _modules.put(type, instance);</span>
+<span class="fc" id="L150">        _implementations.put(type, instance);</span>
 <span class="fc" id="L151">        return this;</span>
     }
 
     //==================================================================================================================
 
     @Override
-    public OperationTypeImplementation executorOf(ExecutionCall call) {
-<span class="pc bpc" id="L158" title="1 of 2 branches missed.">        for(OperationTypeImplementation te : _modules.values()){</span>
+    public OperationTypeImplementation implementationOf(ExecutionCall call) {
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">        for(OperationTypeImplementation te : _implementations.values()){</span>
 <span class="fc bfc" id="L159" title="All 2 branches covered.">            if ( te.canHandle(call) ) return te;</span>
 <span class="fc" id="L160">        }</span>
 <span class="nc" id="L161">        return null;</span>

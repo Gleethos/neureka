@@ -52,7 +52,7 @@ public class OperationType implements Type
     protected boolean _isCommutative;
     protected boolean _isAssociative;
 
-    private Map<Class, AbstractOperationTypeImplementation> _modules = new LinkedHashMap<>();
+    private Map<Class, AbstractOperationTypeImplementation> _implementations = new LinkedHashMap<>();
 
     static
     {
@@ -139,23 +139,23 @@ public class OperationType implements Type
 
     @Override
     public <T extends AbstractOperationTypeImplementation> T getImplementation(Class<T> type){
-        return (T) _modules.get(type);
+        return (T) _implementations.get(type);
     }
     @Override
     public <T extends AbstractOperationTypeImplementation> boolean supportsImplementation(Class<T> type){
-        return _modules.containsKey(type);
+        return _implementations.containsKey(type);
     }
     @Override
     public <T extends AbstractOperationTypeImplementation> Type setImplementation(Class<T> type, T instance) {
-        _modules.put(type, instance);
+        _implementations.put(type, instance);
         return this;
     }
 
     //==================================================================================================================
 
     @Override
-    public OperationTypeImplementation executorOf(ExecutionCall call) {
-        for(OperationTypeImplementation te : _modules.values()){
+    public OperationTypeImplementation implementationOf(ExecutionCall call) {
+        for(OperationTypeImplementation te : _implementations.values()){
             if ( te.canHandle(call) ) return te;
         }
         return null;

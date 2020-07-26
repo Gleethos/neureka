@@ -22,7 +22,7 @@ public class Absolute extends OperationType {
 
 <span class="fc" id="L23">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L25">                typeImplementation.setExecution(</span>
+<span class="fc" id="L25">                typeImplementation.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -38,7 +38,7 @@ public class Absolute extends OperationType {
                                     ),
                                 3
                         )
-<span class="fc" id="L41">                ).setExecution(</span>
+<span class="fc" id="L41">                ).setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {

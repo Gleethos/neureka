@@ -6,7 +6,7 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
 
-public class Convolution extends AbstractOperationTypeImplementation<Convolution, Type.DefaultOperatorCreator<Type.TertiaryNDXConsumer>>
+public class Convolution extends AbstractOperationTypeImplementation< Convolution >
 {
     public Convolution(){  super();  }
 
