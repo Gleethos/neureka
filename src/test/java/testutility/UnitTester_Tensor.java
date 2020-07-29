@@ -1,4 +1,4 @@
-package util;
+package testutility;
 
 import neureka.Tsr;
 import neureka.acceleration.host.HostCPU;
@@ -11,9 +11,9 @@ import neureka.calculus.environment.executors.Convolution;
 
 import java.util.List;
 
-public class NTester_Tensor extends NTester 
+public class UnitTester_Tensor extends UnitTester
 {
-    public NTester_Tensor(String name)
+    public UnitTester_Tensor(String name)
     {
         super(name);
     }
@@ -23,7 +23,7 @@ public class NTester_Tensor extends NTester
         println(BAR +"  Device: "+device.toString());
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         for(Tsr t : tsrs){
-            Device found = ((Device)t.find(Device.class));
+            Device found = t.device();//((Device)t.find(Device.class));
             this.assertStringContains("result", (found==null)?"null":found.toString(), device.toString());
         }
         return (printSessionEnd()>0)?1:0;

@@ -4,7 +4,7 @@ import neureka.calculus.Function;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 import org.junit.Test;
-import util.NTester_Tensor;
+import testutility.UnitTester_Tensor;
 
 public class BroadJavaTests {
 
@@ -15,7 +15,7 @@ public class BroadJavaTests {
         Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false);
         Neureka.instance().settings().view().setIsUsingLegacyView(true);
 
-        NTester_Tensor tester = new NTester_Tensor("Tensor tester (only cpu)");
+        UnitTester_Tensor tester = new UnitTester_Tensor("Tensor tester (only cpu)");
         Tsr x = new Tsr(new int[]{1}, 3).setRqsGradient(true);
         Tsr b = new Tsr(new int[]{1}, -4);
         Tsr w = new Tsr(new int[]{1}, 2);
@@ -158,7 +158,7 @@ public class BroadJavaTests {
         Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true);
         Neureka.instance().settings().view().setIsUsingLegacyView(true);
 
-        NTester_Tensor tester = new NTester_Tensor("Testing core tensor functionality");
+        UnitTester_Tensor tester = new UnitTester_Tensor("Testing core tensor functionality");
 
         Tsr x = new Tsr(
                 new int[]{2, 2},

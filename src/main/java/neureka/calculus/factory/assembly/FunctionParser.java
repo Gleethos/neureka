@@ -243,11 +243,8 @@ public class FunctionParser
             Arrays.sort(weights);
             double similarity = 0;
             for (int i=0; i<(delta+1); i++) similarity += alignment[i] * (weights[i]/weightSum);
-            System.out.println(longer+" ~?~ "+shorter+" : "+similarity);
             assert similarity <= 1.0;
-
             return similarity;
-
     }
 
 

@@ -89,7 +89,7 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
         if ( tsrs.length > 3 )
         {
             if ( d < 0 ) {
-                reduce(device, new Tsr[]{tsrs[0], tsrs[1], tsrs[2]}, type, d, finalExecution);
+                tsrs[0] = reduce(device, new Tsr[]{tsrs[0], tsrs[1], tsrs[2]}, type, d, finalExecution);
                 Tsr[] newTsrs = Utility._offsetted(tsrs, 1);
                 newTsrs[0] =  reduce(device, newTsrs, type, d, finalExecution);//This recursion should work!
                 tsrs[0] = newTsrs[0];
@@ -189,7 +189,6 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
                     tsrs = new Tsr[]{tsrs[1], tsrs[0]};
                     break;
             }
-            //this._enqueue(tsrs, d, type);
             finalExecution.accept(
                     new ExecutionCall<>( device, tsrs, d, type)
             );

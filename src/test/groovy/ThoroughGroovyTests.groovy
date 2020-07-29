@@ -7,8 +7,8 @@ import neureka.acceleration.opencl.OpenCLPlatform
 import neureka.calculus.Function
 import neureka.calculus.factory.assembly.FunctionBuilder
 import org.junit.Test
-import util.DummyDevice
-import util.Utility
+import testutility.mock.DummyDevice
+import testutility.Utility
 
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat

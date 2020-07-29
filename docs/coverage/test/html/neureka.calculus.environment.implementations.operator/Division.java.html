@@ -16,11 +16,11 @@ public class Division extends OperationType
 <span class="fc" id="L16">            return (t0Idx, t1Idx, t2Idx) -&gt; t1_val[inputs[1].i_of_idx(t1Idx)] / t2_val[inputs[2].i_of_idx(t2Idx)];</span>
         } else {
 <span class="fc" id="L18">            return (t0Idx, t1Idx, t2Idx) -&gt; {</span>
-<span class="fc bfc" id="L19" title="All 2 branches covered.">                if (d == 0) {</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">                if (d == 0) {//&quot;    output = 1/input2;\n&quot; +</span>
 <span class="fc" id="L20">                    return 1 / t2_val[inputs[2].i_of_idx(t2Idx)];</span>
                 } else {
-<span class="fc" id="L22">                    return -(t1_val[inputs[1].i_of_idx(t1Idx)] / Math.pow(t2_val[inputs[2].i_of_idx(t2Idx)], 2));</span>
-                }
+<span class="fc" id="L22">                    return -(t1_val[inputs[2].i_of_idx(t2Idx)] / Math.pow(t2_val[inputs[1].i_of_idx(t1Idx)], 2));</span>
+                }//&quot;    output = -input2 /(float)pow(input1, 2.0f);\n&quot; +
             };
         }
     };

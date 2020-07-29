@@ -243,11 +243,8 @@ import java.util.List;
 <span class="fc" id="L243">            Arrays.sort(weights);</span>
 <span class="fc" id="L244">            double similarity = 0;</span>
 <span class="fc bfc" id="L245" title="All 2 branches covered.">            for (int i=0; i&lt;(delta+1); i++) similarity += alignment[i] * (weights[i]/weightSum);</span>
-<span class="fc" id="L246">            System.out.println(longer+&quot; ~?~ &quot;+shorter+&quot; : &quot;+similarity);</span>
-<span class="pc bpc" id="L247" title="2 of 4 branches missed.">            assert similarity &lt;= 1.0;</span>
-
-<span class="fc" id="L249">            return similarity;</span>
-
+<span class="pc bpc" id="L246" title="2 of 4 branches missed.">            assert similarity &lt;= 1.0;</span>
+<span class="fc" id="L247">            return similarity;</span>
     }
 
 

@@ -1091,7 +1091,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
             return this.find(Device.class).value64Of(this);
         }
         double[] newValue = (this.is64())?(double[])_value: DataHelper.floatToDouble((float[])_value);
-        if (this.isVirtual() && newValue!=null) {
+        if (this.isVirtual() && newValue!=null && this.size()>1) {
             newValue = new double[this.size()];
             double[] value = (this.is64())?(double[])_value:DataHelper.floatToDouble((float[])_value);
             Arrays.fill(newValue, value[0]);

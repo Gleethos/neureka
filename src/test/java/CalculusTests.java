@@ -1,16 +1,15 @@
 import neureka.Tsr;
 import neureka.calculus.Function;
 import neureka.calculus.factory.assembly.FunctionBuilder;
-import neureka.calculus.factory.assembly.FunctionParser;
 import org.junit.Test;
-import util.NTester_Function;
+import testutility.UnitTester_Function;
 
 public class CalculusTests {
 
     @Test
     public void test_scalar_calculus(){
 
-        NTester_Function tester = new NTester_Function("Calculus-Testing: Scalar calculus");
+        UnitTester_Function tester = new UnitTester_Function("Calculus-Testing: Scalar calculus");
 
         Function f = FunctionBuilder.build("1/I[0]", false);
         tester.testScalarDerivative(f, new double[]{2}, 0, -0.25,  "testing scalar derivative");
@@ -53,7 +52,7 @@ public class CalculusTests {
     @Test
     public void test_tensor_calculus()
     {
-        NTester_Function tester = new NTester_Function("Calculus-Testing: Function parsing and tensor calculus");
+        UnitTester_Function tester = new UnitTester_Function("Calculus-Testing: Function parsing and tensor calculus");
         //EXPRESSION TESTING:
         tester.testExpression("ig0*(igj)xI[g1]", "((Ig[0] * Ig[j]) x Ig[1])", "");
         tester.testExpression("sum(ij)", "sum(I[j])", "");

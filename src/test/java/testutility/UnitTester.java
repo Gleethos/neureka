@@ -1,11 +1,10 @@
-package util;
+package testutility;
 import neureka.Tsr;
-import util.gui.MessageFrame;
 import org.junit.Assert;
 
 import java.util.List;
 
-public class NTester extends Assert
+public class UnitTester extends Assert
 {
     static String BAR = "[|]";
     private static String LINE = "--------------------------------------------------------------------------------------------";
@@ -17,7 +16,7 @@ public class NTester extends Assert
 
     private String _session = "";
 
-    public NTester(String name) {
+    public UnitTester(String name) {
         println("Test-Session: "+name);
     }
 

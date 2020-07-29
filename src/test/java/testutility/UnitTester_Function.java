@@ -1,12 +1,12 @@
-package util;
+package testutility;
 
 import neureka.Tsr;
 import neureka.calculus.Function;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
-public class NTester_Function extends NTester {
+public class UnitTester_Function extends UnitTester {
 
-	public NTester_Function(String name)
+	public UnitTester_Function(String name)
 	{
 		super(name);
 	}

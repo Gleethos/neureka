@@ -1,4 +1,4 @@
-package util;
+package testutility.mock;
 
 import neureka.Tsr;
 import neureka.acceleration.Device;

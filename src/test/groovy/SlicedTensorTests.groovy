@@ -5,9 +5,9 @@ import neureka.acceleration.opencl.OpenCLDevice
 import neureka.acceleration.opencl.OpenCLPlatform
 import neureka.acceleration.opencl.utility.DeviceQuery
 import org.junit.Test
-import util.DummyDevice
-import util.NTester
-import util.NTester_Tensor
+import testutility.mock.DummyDevice
+import testutility.UnitTester
+import testutility.UnitTester_Tensor
 
 class SlicedTensorTests
 {
@@ -19,7 +19,7 @@ class SlicedTensorTests
         Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
         Neureka.instance().settings().view().setIsUsingLegacyView(true)
 
-        NTester_Tensor tester = new NTester_Tensor("IndexAlias-Testing: slices/subset creation and calculation")
+        UnitTester_Tensor tester = new UnitTester_Tensor("IndexAlias-Testing: slices/subset creation and calculation")
         Device device = new DummyDevice()
 
         Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
@@ -62,7 +62,7 @@ class SlicedTensorTests
         assert cld.maxWriteImageArgs()>1
     }
 
-    void _slice_test_template(Device device, NTester tester, boolean legacyIndexing)
+    void _slice_test_template(Device device, UnitTester tester, boolean legacyIndexing)
     {
         Tsr x = new Tsr([1], 3).setRqsGradient(true)
         Tsr b = new Tsr([1], -4)

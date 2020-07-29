@@ -16,11 +16,11 @@ public class Division extends OperationType
             return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] / t2_val[inputs[2].i_of_idx(t2Idx)];
         } else {
             return (t0Idx, t1Idx, t2Idx) -> {
-                if (d == 0) {
+                if (d == 0) {//"    output = 1/input2;\n" +
                     return 1 / t2_val[inputs[2].i_of_idx(t2Idx)];
                 } else {
-                    return -(t1_val[inputs[1].i_of_idx(t1Idx)] / Math.pow(t2_val[inputs[2].i_of_idx(t2Idx)], 2));
-                }
+                    return -(t1_val[inputs[2].i_of_idx(t2Idx)] / Math.pow(t2_val[inputs[1].i_of_idx(t1Idx)], 2));
+                }//"    output = -input2 /(float)pow(input1, 2.0f);\n" +
             };
         }
     };

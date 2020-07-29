@@ -1091,7 +1091,7 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
 <span class="fc" id="L1091">            return this.find(Device.class).value64Of(this);</span>
         }
 <span class="fc bfc" id="L1093" title="All 2 branches covered.">        double[] newValue = (this.is64())?(double[])_value: DataHelper.floatToDouble((float[])_value);</span>
-<span class="fc bfc" id="L1094" title="All 4 branches covered.">        if (this.isVirtual() &amp;&amp; newValue!=null) {</span>
+<span class="fc bfc" id="L1094" title="All 6 branches covered.">        if (this.isVirtual() &amp;&amp; newValue!=null &amp;&amp; this.size()&gt;1) {</span>
 <span class="fc" id="L1095">            newValue = new double[this.size()];</span>
 <span class="pc bpc" id="L1096" title="1 of 2 branches missed.">            double[] value = (this.is64())?(double[])_value:DataHelper.floatToDouble((float[])_value);</span>
 <span class="fc" id="L1097">            Arrays.fill(newValue, value[0]);</span>
@@ -1264,7 +1264,7 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
 <span class="fc" id="L1264">            Tsr t = _newEmptyLike(template);</span>
 <span class="pc bpc" id="L1265" title="1 of 2 branches missed.">            if (template.is32()) t.setValue((float)value);</span>
 <span class="fc" id="L1266">            else t.setValue(value);</span>
-<span class="pc bpc" id="L1267" title="1 of 2 branches missed.">            if (template.isOutsourced()) template.find(Device.class).add(t);</span>
+<span class="fc bfc" id="L1267" title="All 2 branches covered.">            if (template.isOutsourced()) template.find(Device.class).add(t);</span>
 <span class="fc" id="L1268">            return t;</span>
         }
 
