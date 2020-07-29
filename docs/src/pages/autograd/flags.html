@@ -1,5 +1,5 @@
 <div class="col-sm-12 col-md-12">
-    <div class="contentBox">
+    <div class="ContentBox">
         <h3>What?</h3>
         <p>
             Neureka's auto-differentiation and gradient accumulation algorithm is
@@ -15,12 +15,12 @@
     </div>
 </div>
 <div class="col-sm-12 col-md-6">
-    <div class="tabWrapper">
-        <div class="tabHead">
+    <div class="TabWrapper">
+        <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
         </div>
-        <div class="tabBody">
+        <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs java">
     def ag = Neureka.instance().settings().autograd()
@@ -35,7 +35,7 @@
     </div>
 </div>
 <div class="col-sm-12 col-md-6">
-    <div class="contentBox">
+    <div class="ContentBox">
         <h3>Overview</h3>
         <p>
             "is retaining pending error for JIT-Prop"<br>
@@ -54,7 +54,7 @@
     </code></pre>
 </div>
 <div class="col-sm 12 col-md-7">
-    <div class="contentBox">
+    <div class="ContentBox">
         <p>
             This flag enables an optimization technique which only applies
             gradients as soon as they are needed by a tensor (the tensor is used again).<br>
@@ -76,7 +76,7 @@
     </code></pre>
 </div>
 <div class="col-sm 12 col-md-7">
-    <div class="contentBox">
+    <div class="ContentBox">
         <p>
             Gradients will automatically be applied to tensors as soon as
             they are being used for calculation (GraphNode instantiation).
@@ -94,7 +94,7 @@
     </code></pre>
 </div>
 <div class="col-sm 12 col-md-7">
-    <div class="contentBox">
+    <div class="ContentBox">
         <p>
             Gradients will only be applied if requested.
             Usually this happens immediately, however

@@ -21,23 +21,40 @@
     <script src="src/js/bootstrap.min.js"></script>
     <script src="src/js/popper.min.js"></script>
     <!-----------------------------------CUSTOM CSS------------------------------------------>
-    <link rel="stylesheet" href="src/style.css">
+    <link rel="stylesheet" href="src/css/style.css">
     <!-----------------------------------HIGHLIGHT CSS------------------------------------------>
     <link rel="stylesheet" href="src/css/sunburst.min.css">
     <script src="src/js/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
+    <script>
+        function updateTopBar( event ) {
+            let top = $('#main_with_parallax').scrollTop();
+            if( top > 25 && top < 2750 ) {
+                let tippingPoint = 200;
+                let smoothness = 25;
+                let sig = 1-sigmoid((top-tippingPoint)/smoothness);
+                let newTop = sig*65+5;
+                $('.gaadiexp').css({top:(newTop/2)-5});
+                $('.side-nav').css({top:37+(newTop/2)});
+                $('#top_most_nav_bar').css({height: newTop});
+                $('#navbar_menu').css({top:newTop/2});
+                $('#neureka_title').css({'font-size':(2+sig/2)+"rem"});
+            }
+        }
+        function sigmoid(t) {return 1/(1+Math.pow(Math.E, -t));}
+    </script>
 </head>
 <body>
 <div id="header" class="">
-    <div id="BirdBox" class="mainframe"
+    <div id="BirdBox" class="MainFrame"
          style="background-image: url('https://images.pexels.com/photos/1287142/pexels-photo-1287142.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260');">
-        <nav class="floatsUp" id="navTile">
-            <div id="navContainer" class="">
-                <div style="" class="topEarthGradient dynamicSideMargin">
-                    <h1>NEUREKA</h1>
+        <nav class="FloatsUp" id="top_most_nav_bar">
+            <div id="navigation_container" class="">
+                <div style="" class="TopBarGradient DynamicSideMargin">
+                    <h1 id="neureka_title">NEUREKA</h1>
                 </div>
-                <div class="pull-right nightBox" id="NavbarMenu">
-                    <ul class="nav navbar-right" id="NavbarList">
+                <div class="pull-right NightBox" id="navbar_menu">
+                    <ul class="nav navbar-right" id="navbar_list">
                         <li>
                             <a href="showcase.html">
                                 <img src="src/img/icons/graph-nodes.png">
@@ -75,15 +92,15 @@
         </nav>
 
         <!----------------------------------LAYOUT------------------------------------------------->
-        <main class="parallax">
-            <div style="left:-10px;" class="parallax__layer parallax__layer--back ">
+        <main id="main_with_parallax" class="Parallax" onscroll="updateTopBar(event);">
+            <div style="left:-10px;" class="ParallaxLayer ParallaxLayer--back ">
                 <div>
                     <img src="src/img/parallax/woods.png">
                 </div>
             </div>
-            <div class="parallax__layer">
-                <div id="mainTile" class="cardBox dynamicSideMargin">
-                    <div class="mainContentWrapper">
+            <div class="ParallaxLayer">
+                <div id="main_content_tile" class="BrightCardBox DynamicSideMargin">
+                    <div class="MainContentWrapper">
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-sm-12 col-md-6">
@@ -100,7 +117,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mainContentWrapper">
+                    <div class="MainContentWrapper">
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-sm-12 col-md-4">
@@ -134,7 +151,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mainContentWrapper">
+                    <div class="MainContentWrapper">
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-sm-12 col-md-12">
@@ -144,7 +161,7 @@
                                     <img style="width:100%;" src="src/img/archimedes.jpg">
                                 </div>
                                 <div class="col-sm-12 col-md-9">
-                                    <div class="contentBox">
+                                    <div class="ContentBox">
                                         <p>
                                             Popular deep learning libraries use python due to it's
                                             elegant syntax. </br>
@@ -164,7 +181,7 @@
                                 <div class="col-sm-0 col-md-2">
                                 </div>
                                 <div class="col-sm-12 col-md-8">
-                                    <div class="contentBox">
+                                    <div class="ContentBox">
                                         <p style="text-align: center; width:100%">
                                             Both code snippets below express the following equations:</br>
                                             f(x) = ((x-4)*2)^2; :=> f(3) = 4</br>
@@ -186,7 +203,7 @@
                                                         </code></pre>
                                 </div>
                                 <div class="col-sm-12 col-md-6">
-                                    <div class="contentBox">
+                                    <div class="ContentBox">
                                         <p>
                                             Groovy supports operator overloading.
                                             Certain methods will be called when
@@ -209,7 +226,7 @@
                                                         </code></pre>
                                 </div>
                                 <div class="col-sm-12 col-md-4">
-                                    <div class="contentBox">
+                                    <div class="ContentBox">
                                         <p>
                                             ...if however performance is of concern for
                                             you and your team then Neureka can easily be
@@ -219,7 +236,7 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-12 col-md-12">
-                                    <div class="contentBox">
+                                    <div class="ContentBox">
                                         <p>
                                             If you prefer fast prototyping
                                             with Jupyter then Neureka can be used there too.
@@ -236,14 +253,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mainContentWrapper">
+                    <div class="MainContentWrapper">
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-sm-12 col-md-12">
                                     <h2>But isn't Java slow?</h2>
                                 </div>
                                 <div class="col-sm-12 col-md-12">
-                                    <div class="contentBox">
+                                    <div class="ContentBox">
                                         <p>
                                             Python currently provides the most advanced
                                             environments and ecosystems for machine learning and

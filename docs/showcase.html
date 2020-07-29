@@ -21,26 +21,38 @@
     <script src="src/js/bootstrap.min.js"></script>
     <script src="src/js/popper.min.js"></script>
     <!-----------------------------------CUSTOM CSS------------------------------------------>
-    <link rel="stylesheet" href="src/style.css">
+    <link rel="stylesheet" href="src/css/style.css">
     <!-----------------------------------HIGHLIGHT CSS------------------------------------------>
     <link rel="stylesheet" href="src/css/sunburst.min.css">
     <script src="src/js/highlight.min.js"></script>
-    <script>window.addEventListener("load", function () {
-        setTimeout(function () {
-            window.scrollTo(0, 1);
-        }, 0);
-    });</script>
+    <script>
+        function updateTopBar( event ) {
+            let top = $('#main_with_parallax').scrollTop();
+            if( top > 25 && top < 2750 ) {
+                let tippingPoint = 200;
+                let smoothness = 25;
+                let sig = 1-sigmoid((top-tippingPoint)/smoothness);
+                let newTop = sig*65+5;
+                $('.gaadiexp').css({top:(newTop/2)-5});
+                $('.side-nav').css({top:37+(newTop/2)});
+                $('#top_most_nav_bar').css({height: newTop});
+                $('#navbar_menu').css({top:newTop/2});
+                $('#neureka_title').css({'font-size':(2+sig/2)+"rem"});
+            }
+        }
+        function sigmoid(t) {return 1/(1+Math.pow(Math.E, -t));}
+    </script>
 </head>
 <body>
 <div id="header">
-    <div id="NetBox" class="mainframe">
-        <nav class="" id="navTile">
-            <div id="navContainer" class="">
-                <div style="" class="topEarthGradient dynamicSideMargin">
-                    <h1>NEUREKA</h1>
+    <div id="NetBox" class="MainFrame">
+        <nav class="" id="top_most_nav_bar">
+            <div id="navigation_container" class="">
+                <div style="" class="TopBarGradient DynamicSideMargin">
+                    <h1 id="neureka_title">NEUREKA</h1>
                 </div>
-                <div class="pull-right nightBox" id="NavbarMenu">
-                    <ul class="nav navbar-right" id="NavbarList">
+                <div class="pull-right NightBox" id="navbar_menu">
+                    <ul class="nav navbar-right" id="navbar_list">
                         <li>
                             <a href="index.html">
                                 <img src="src/img/icons/house.png">
@@ -90,14 +102,14 @@
         </nav>
 
         <!----------------------------------LAYOUT------------------------------------------------->
-        <main class="parallax">
-            <div style="left:-10px;" class="parallax__layer parallax__layer--back ">
+        <main id="main_with_parallax" class="Parallax" onscroll="updateTopBar(event);">
+            <div style="left:-10px;" class="ParallaxLayer ParallaxLayer--back ">
                 <div>
                     <img src="src/img/parallax/woods.png">
                 </div>
             </div>
-            <div class="parallax__layer">
-                <div id="mainTile" class="cardBox dynamicSideMargin">
+            <div class="ParallaxLayer">
+                <div id="main_content_tile" class="BrightCardBox DynamicSideMargin">
                     <div id="ReturnArrow" onclick="loadContent('../TOC');" style="
                                                 position:relative;
                                                 float:right;
@@ -108,7 +120,7 @@
                         <img id="ArrowIcon">
                     </div>
 
-                    <div class="mainContentWrapper">
+                    <div class="MainContentWrapper">
                         <div class=container-fluid>
 
                             <h1 id="ContentTitle"></h1>
@@ -152,8 +164,8 @@
                                 });
 
                                 function switchTab(src, target) {
-                                    var tabBody = $(src.target).parent().parent().find('.tabBody');
-                                    tabBody.children().css("display", "none");
+                                    var TabBody = $(src.target).parent().parent().find('.TabBody');
+                                    TabBody.children().css("display", "none");
                                     $(src.target).siblings().removeClass("selected");
                                     $(src.target).parent().parent().find(target).css("display", "block");
                                     $(src.target).addClass("selected");
