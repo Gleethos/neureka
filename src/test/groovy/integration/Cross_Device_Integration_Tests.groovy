@@ -21,7 +21,7 @@ class Cross_Device_Integration_Tests extends Specification
     ) {
         given :
             if (
-                deviceType == "CPU" && // OpenCL cannot run inside TravisCI ! :/
+                deviceType == "GPU" && // OpenCL cannot run inside TravisCI ! :/
                 !System.getProperty("os.name").toLowerCase().contains("windows")
             ) return
             Device device = ( deviceType == "CPU" )?HostCPU.instance():Device.find('first')
