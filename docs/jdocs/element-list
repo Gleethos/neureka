@@ -1,9 +1,9 @@
 neureka
 neureka.abstraction
-neureka.acceleration
-neureka.acceleration.host
-neureka.acceleration.opencl
-neureka.acceleration.opencl.utility
+neureka.unit.acceleration
+neureka.unit.acceleration.host
+neureka.unit.acceleration.opencl
+neureka.unit.acceleration.opencl.utility
 neureka.autograd
 neureka.calculus
 neureka.calculus.environment

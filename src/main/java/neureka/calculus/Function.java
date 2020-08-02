@@ -168,6 +168,12 @@ public interface Function
 
     //---
 
+    Tsr derive(List<Tsr> inputs, int index, int j);
+
+    Tsr derive(List<Tsr> inputs, int index);
+
+    //---
+
     String toString();
 
     ADAgent getADAgent(Tsr[] inputs, int i, boolean forward);

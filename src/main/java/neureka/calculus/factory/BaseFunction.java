@@ -75,5 +75,17 @@ public abstract class BaseFunction implements Function {
         return call(inputs);
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public Tsr derive(List<Tsr> inputs, int index, int j){
+        return derive(inputs.toArray(new Tsr[0]), index, j);
+    }
+
+    @Override
+    public Tsr derive(List<Tsr> inputs, int index){
+        return derive(inputs.toArray(new Tsr[0]), index);
+    }
+
 
 }

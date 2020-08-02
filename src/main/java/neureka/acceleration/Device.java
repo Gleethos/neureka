@@ -32,6 +32,10 @@ public interface Device extends Component<Tsr>
                 String str = (d.name()+" | "+d.vendor()+" | "+d.type()).toLowerCase();
                 if(str.contains(search)) result[0] = d;
             }));
+        if ( result[0]==HostCPU.instance() && name.equals("first") ) {
+            Device first = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
+            if( first!=null ) result[0] = first;
+        }
         return result[0];
     }
 

@@ -98,7 +98,7 @@ public class UnitTester_Function extends UnitTester {
 	}
 
 	public int testActivation(String expression, Tsr[] input, Tsr expected, String description) {
-		Function function;// = new FunctionBuilder();
+		Function function;
 		function = new FunctionBuilder().build(expression, true);
 		printSessionStart(description);
 		println(BAR +" Function: "+expression);

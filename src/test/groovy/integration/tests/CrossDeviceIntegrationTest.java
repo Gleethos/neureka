@@ -1,56 +1,21 @@
-package acceleration;
+package integration.tests;
 
-import neureka.Neureka;
 import neureka.Tsr;
 import neureka.acceleration.Device;
-import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.opencl.OpenCLDevice;
-import neureka.acceleration.opencl.OpenCLPlatform;
-import org.junit.Test;
 import testutility.UnitTester_Tensor;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class Cross_Device_Stress_Test
+public class CrossDeviceIntegrationTest
 {
 
-    @Test
-    public void test_openCL_device_if_present()
+    public static boolean on( Device gpu, boolean legacyIndexing )
     {
-        Neureka.instance().reset();
-        Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
-        Neureka.instance().settings().view().setIsUsingLegacyView(true);
-        CPU : {
-            UnitTester_Tensor tester = new UnitTester_Tensor("Testing CPU");
-            Device cpu = HostCPU.instance();
-            Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true);
-            _testing(cpu, tester, true);
-            Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false);
-            _testing(cpu, tester, false);
-        }
-        GPU : {
-            if(!System.getProperty("os.name").toLowerCase().contains("windows")){
-                break GPU;
-            }
-            UnitTester_Tensor tester = new UnitTester_Tensor("Testing GPU");
+        UnitTester_Tensor tester = new UnitTester_Tensor("");
 
-            Device gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
-
-            Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true);
-            OpenCLPlatform.PLATFORMS().get(0).recompile();
-            _testing(gpu, tester, true);
-
-            Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false);
-            OpenCLPlatform.PLATFORMS().get(0).recompile();
-            _testing(gpu, tester, false);
-        }
-        Neureka.instance().reset();
-    }
-
-    private void _testing(Device gpu, UnitTester_Tensor tester, boolean legacyIndexing)
-    {
         List<Tsr> listOfTensors = new ArrayList<>();
         Tsr tensor1, tensor2;
         //=====================================================================
@@ -161,14 +126,14 @@ public class Cross_Device_Stress_Test
                 new Tsr[]{tensor1, tensor2},
                 "i0xi1",
                 new String[]{
-                        "[2x1x2]:("
-                                +((legacyIndexing)?"4.0, -13.0, 5.0, -4.0":"0.0, 7.0, -7.0, 0.0")+
+                        "[2x1x2]:(" +
+                                ((legacyIndexing)?"4.0, -13.0, 5.0, -4.0":"0.0, 7.0, -7.0, 0.0")+
                                 "); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"
                 },
                 new Tsr(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
                 (legacyIndexing)
-                        ?new double[][]{{-1.0, -1.0, 5.0, 5.0}, new double[0]}
-                        :new double[][]{{1.0, 3.0, 1.0, 3.0}, new double[0]}
+                        ?new double[][]{new double[]{-1.0, -1.0, 5.0, 5.0}, new double[0]}
+                        :new double[][]{new double[]{1.0, 3.0, 1.0, 3.0}, new double[0]}
         );
 
         // ---
@@ -250,7 +215,7 @@ public class Cross_Device_Stress_Test
                     "Testing for memory leaks!"
             );
             //---
-            boolean[] stillOnDevice = {true};
+            boolean[] stillOnDevice = new boolean[]{true};
             listOfTensors.forEach((t)->stillOnDevice[0] = outsourced.contains(t)&&stillOnDevice[0]);
             sentence = "Used tensors still on device: ";
             tester.testContains(
@@ -268,7 +233,8 @@ public class Cross_Device_Stress_Test
             );
             //---
         }
-
+        return true;
     }
+
 
 }

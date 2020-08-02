@@ -190,13 +190,23 @@ public class FunctionBuilder {
             boolean possiblyInverseInput = (component.length()>1 && component.toLowerCase().substring(0,2).equals("-i"));
             if (!possiblyInverseInput &&
                     (
-                            ((component.charAt(0) <= '9') && (component.charAt(0) >= '0'))
-                                    || (component.charAt(0) == '-') || (component.charAt(0) == '+')
+                            ((component.charAt(0) <= '9') && (component.charAt(0) >= '0')) ||
+                                    (component.charAt(0) == '-') ||
+                                    (component.charAt(0) == '+')
                     )
                 ) {
-                Function newFunction = new FunctionConstant();
-                newFunction = newFunction.newBuild(component);
-                return newFunction;
+                if (
+                        component.startsWith("-") &&
+                                component.length()>2 &&
+                                !component.substring(1, 2).matches("[0-9]+")
+                ) {
+                    component = "-1 * "+component.substring(1);
+                    return _build(component, doAD);
+                } else {
+                    Function newFunction = new FunctionConstant();
+                    newFunction = newFunction.newBuild(component);
+                    return newFunction;
+                }
             }
             if (
                     possiblyInverseInput ||

@@ -18,10 +18,11 @@ import neureka.utility.DataHelper;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&gt;
 {
-<span class="fc" id="L24">    static{ _CPU = HostCPU.instance(); }</span>
+<span class="fc" id="L25">    static{ _CPU = HostCPU.instance(); }</span>
 
     /**
      *  Default device (host cpu)
@@ -31,7 +32,7 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
     /**
      *  Flag Fields
      */
-<span class="fc" id="L34">    private int _flags = 0;</span>
+<span class="fc" id="L35">    private int _flags = 0;</span>
 
     private static final int RQS_GRADIENT_MASK = 1;
     private static final int IS_OUTSOURCED_MASK = 2;
@@ -41,110 +42,110 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     public Tsr setRqsGradient(boolean rqsGradient) {
-<span class="fc bfc" id="L44" title="All 4 branches covered.">        if (rqsGradient() != rqsGradient &amp;&amp; !rqsGradient) this.remove(Tsr.class);</span>
-<span class="fc" id="L45">        _setRqsGradient(rqsGradient);</span>
-<span class="fc" id="L46">        return this;</span>
+<span class="fc bfc" id="L45" title="All 4 branches covered.">        if (rqsGradient() != rqsGradient &amp;&amp; !rqsGradient) this.remove(Tsr.class);</span>
+<span class="fc" id="L46">        _setRqsGradient(rqsGradient);</span>
+<span class="fc" id="L47">        return this;</span>
     }
 
     public boolean rqsGradient() {
-<span class="fc bfc" id="L50" title="All 2 branches covered.">        return (_flags &amp; RQS_GRADIENT_MASK) == RQS_GRADIENT_MASK;</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        return (_flags &amp; RQS_GRADIENT_MASK) == RQS_GRADIENT_MASK;</span>
     }
 
     protected void _setRqsGradient(boolean rqsGradient) {
-<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (rqsGradient() != rqsGradient) {</span>
-<span class="fc bfc" id="L55" title="All 2 branches covered.">            if (rqsGradient) _flags += RQS_GRADIENT_MASK;</span>
-<span class="fc" id="L56">            else _flags -= RQS_GRADIENT_MASK;</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (rqsGradient() != rqsGradient) {</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">            if (rqsGradient) _flags += RQS_GRADIENT_MASK;</span>
+<span class="fc" id="L57">            else _flags -= RQS_GRADIENT_MASK;</span>
         }
-<span class="fc" id="L58">    }</span>
+<span class="fc" id="L59">    }</span>
 
     //------------------------------------------------------------------------------------------------------------------
 
     public Tsr setIsOutsourced(boolean isOutsourced) {
-<span class="fc" id="L63">        _setIsOutsourced(isOutsourced);</span>
-<span class="fc bfc" id="L64" title="All 2 branches covered.">        if (isOutsourced) {</span>
-<span class="fc" id="L65">            _value = null;</span>
-<span class="fc" id="L66">        } else if (</span>
-<span class="pc bpc" id="L67" title="1 of 4 branches missed.">                !forComponent(</span>
+<span class="fc" id="L64">        _setIsOutsourced(isOutsourced);</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (isOutsourced) {</span>
+<span class="fc" id="L66">            _value = null;</span>
+<span class="fc" id="L67">        } else if (</span>
+<span class="pc bpc" id="L68" title="1 of 4 branches missed.">                !forComponent(</span>
                     Device.class,
                     d -&gt;{
-<span class="pc bpc" id="L70" title="1 of 2 branches missed.">                        if (d.has(this)) d.get(this);</span>
-<span class="fc" id="L71">                        this.remove(Device.class);</span>
-<span class="fc" id="L72">                        forComponent(</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">                        if (d.has(this)) d.get(this);</span>
+<span class="fc" id="L72">                        this.remove(Device.class);</span>
+<span class="fc" id="L73">                        forComponent(</span>
                             Tsr.class,
                             gradient -&gt;
-<span class="nc" id="L75">                            gradient.forComponent(Device.class, gd -&gt;{</span>
-<span class="nc bnc" id="L76" title="All 2 branches missed.">                                if (gd.has(gradient)) gd.get(gradient);</span>
-<span class="nc" id="L77">                                gradient.remove(Device.class);</span>
-<span class="nc" id="L78">                            })</span>
+<span class="nc" id="L76">                            gradient.forComponent(Device.class, gd -&gt;{</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">                                if (gd.has(gradient)) gd.get(gradient);</span>
+<span class="nc" id="L78">                                gradient.remove(Device.class);</span>
+<span class="nc" id="L79">                            })</span>
                         );
-<span class="fc" id="L80">                    }</span>
+<span class="fc" id="L81">                    }</span>
                 ) &amp;&amp; _value==null
         ){
-<span class="fc" id="L83">            setIsVirtual(true);</span>
+<span class="fc" id="L84">            setIsVirtual(true);</span>
         }
-<span class="fc" id="L85">        return this;</span>
+<span class="fc" id="L86">        return this;</span>
     }
 
     public boolean isOutsourced() {
-<span class="fc bfc" id="L89" title="All 2 branches covered.">        return (_flags &amp; IS_OUTSOURCED_MASK) == IS_OUTSOURCED_MASK;</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        return (_flags &amp; IS_OUTSOURCED_MASK) == IS_OUTSOURCED_MASK;</span>
     }
 
     protected void _setIsOutsourced(boolean isOutsourced) {
-<span class="fc bfc" id="L93" title="All 2 branches covered.">        if (isOutsourced() != isOutsourced) {</span>
-<span class="fc bfc" id="L94" title="All 2 branches covered.">            if (isOutsourced) _flags += IS_OUTSOURCED_MASK;</span>
-<span class="fc" id="L95">            else _flags -= IS_OUTSOURCED_MASK;</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        if (isOutsourced() != isOutsourced) {</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">            if (isOutsourced) _flags += IS_OUTSOURCED_MASK;</span>
+<span class="fc" id="L96">            else _flags -= IS_OUTSOURCED_MASK;</span>
         }
-<span class="fc" id="L97">    }</span>
+<span class="fc" id="L98">    }</span>
 
     //------------------------------------------------------------------------------------------------------------------
 
     public Tsr setIsVirtual(boolean isVirtual) {
-<span class="fc bfc" id="L102" title="All 2 branches covered.">        if (isVirtual() != isVirtual) {</span>
-<span class="fc" id="L103">            Device device = this.find(Device.class);</span>
-<span class="fc bfc" id="L104" title="All 2 branches covered.">            if ( device!=null ) device.get(this);</span>
-<span class="pc bpc" id="L105" title="1 of 4 branches missed.">            double v = (_value==null) ? 0 : ((this.is64())?((double[])_value)[0]:((float[])_value)[0]);</span>
-<span class="fc bfc" id="L106" title="All 2 branches covered.">            if (isVirtual) {</span>
-<span class="fc" id="L107">                _value = new double[]{v};</span>
-<span class="fc" id="L108">                Relation parent = find(Relation.class);</span>
-<span class="pc bpc" id="L109" title="1 of 2 branches missed.">                if (parent!=null) parent.foreachChild( c -&gt; c._value=_value);</span>
-<span class="fc" id="L110">            } else {</span>
-<span class="pc bpc" id="L111" title="1 of 2 branches missed.">                _value = (this.is64())?new double[this.size()]:new float[this.size()];</span>
-<span class="pc bpc" id="L112" title="1 of 2 branches missed.">                int length = (this.is64())?((double[])_value).length:((float[])_value).length;</span>
-<span class="fc bfc" id="L113" title="All 2 branches covered.">                for (int i = 0; i &lt; length; i++) {</span>
-<span class="pc bpc" id="L114" title="1 of 2 branches missed.">                    if (this.is64()) ((double[])_value)[i] = v;</span>
-<span class="nc" id="L115">                    else ((float[])_value)[i] = (float)v;</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        if (isVirtual() != isVirtual) {</span>
+<span class="fc" id="L104">            Device device = this.find(Device.class);</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">            if ( device!=null ) device.get(this);</span>
+<span class="pc bpc" id="L106" title="1 of 4 branches missed.">            double v = (_value==null) ? 0 : ((this.is64())?((double[])_value)[0]:((float[])_value)[0]);</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">            if (isVirtual) {</span>
+<span class="fc" id="L108">                _value = new double[]{v};</span>
+<span class="fc" id="L109">                Relation parent = find(Relation.class);</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">                if (parent!=null) parent.foreachChild( c -&gt; c._value=_value);</span>
+<span class="fc" id="L111">            } else {</span>
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">                _value = (this.is64())?new double[this.size()]:new float[this.size()];</span>
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">                int length = (this.is64())?((double[])_value).length:((float[])_value).length;</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">                for (int i = 0; i &lt; length; i++) {</span>
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">                    if (this.is64()) ((double[])_value)[i] = v;</span>
+<span class="nc" id="L116">                    else ((float[])_value)[i] = (float)v;</span>
                 }
             }
-<span class="fc" id="L118">            _setIsVirtual(isVirtual);</span>
-<span class="fc bfc" id="L119" title="All 2 branches covered.">            if(_conf!=null) _configureFromNewShape(_conf.shape(), isVirtual);</span>
-<span class="fc bfc" id="L120" title="All 2 branches covered.">            if( device!=null ) device.add(this);</span>
-<span class="pc bpc" id="L121" title="1 of 4 branches missed.">        } else if (isVirtual &amp;&amp; _value==null) _value = new double[]{0};</span>
-<span class="fc" id="L122">        return this;</span>
+<span class="fc" id="L119">            _setIsVirtual(isVirtual);</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">            if(_conf!=null) _configureFromNewShape(_conf.shape(), isVirtual);</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">            if( device!=null ) device.add(this);</span>
+<span class="pc bpc" id="L122" title="1 of 4 branches missed.">        } else if (isVirtual &amp;&amp; _value==null) _value = new double[]{0};</span>
+<span class="fc" id="L123">        return this;</span>
     }
 
     public boolean isVirtual() {
-<span class="fc bfc" id="L126" title="All 2 branches covered.">        return (_flags &amp; IS_VIRTUAL_MASK) == IS_VIRTUAL_MASK;</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">        return (_flags &amp; IS_VIRTUAL_MASK) == IS_VIRTUAL_MASK;</span>
     }
 
     protected void _setIsVirtual(boolean isVirtual) {
-<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        if (isVirtual() != isVirtual) {</span>
-<span class="fc bfc" id="L131" title="All 2 branches covered.">            if (isVirtual) _flags += IS_VIRTUAL_MASK;</span>
-<span class="fc" id="L132">            else _flags -= IS_VIRTUAL_MASK;</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">        if (isVirtual() != isVirtual) {</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">            if (isVirtual) _flags += IS_VIRTUAL_MASK;</span>
+<span class="fc" id="L133">            else _flags -= IS_VIRTUAL_MASK;</span>
         }
-<span class="fc" id="L134">    }</span>
+<span class="fc" id="L135">    }</span>
 
     //------------------------------------------------------------------------------------------------------------------
 
     public Tsr setGradientApplyRqd(boolean applyRequested) {
-<span class="fc bfc" id="L139" title="All 2 branches covered.">        if (gradientApplyRqd() != applyRequested) {</span>
-<span class="fc bfc" id="L140" title="All 2 branches covered.">            if (applyRequested) _flags += GRADIENT_APPLY_RQD_MASK;</span>
-<span class="fc" id="L141">            else _flags -= GRADIENT_APPLY_RQD_MASK;</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        if (gradientApplyRqd() != applyRequested) {</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">            if (applyRequested) _flags += GRADIENT_APPLY_RQD_MASK;</span>
+<span class="fc" id="L142">            else _flags -= GRADIENT_APPLY_RQD_MASK;</span>
         }
-<span class="fc" id="L143">        return this;</span>
+<span class="fc" id="L144">        return this;</span>
     }
 
     public boolean gradientApplyRqd() {
-<span class="fc bfc" id="L147" title="All 2 branches covered.">        return (_flags &amp; GRADIENT_APPLY_RQD_MASK) == GRADIENT_APPLY_RQD_MASK;</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        return (_flags &amp; GRADIENT_APPLY_RQD_MASK) == GRADIENT_APPLY_RQD_MASK;</span>
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -160,54 +161,54 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
      */
     @Override
     protected &lt;T extends Component&lt;Tsr&gt;&gt; T _addOrReject(T newComponent){
-<span class="fc bfc" id="L163" title="All 4 branches covered.">        if (newComponent instanceof Device &amp;&amp; !((Device)newComponent).has(this)){</span>
-<span class="fc" id="L164">            ((Device)newComponent).add(this);</span>
-<span class="fc bfc" id="L165" title="All 2 branches covered.">        } else if (newComponent instanceof Tsr) {</span>
-<span class="fc" id="L166">            if(</span>
-<span class="pc bpc" id="L167" title="1 of 2 branches missed.">                    ((Tsr)newComponent).shape().hashCode()!=this.shape().hashCode() ||</span>
-<span class="pc bpc" id="L168" title="1 of 2 branches missed.">                    Arrays.hashCode(((Tsr)newComponent).getNDConf().shape()) != Arrays.hashCode(_conf.shape())</span>
-<span class="nc" id="L169">            ) newComponent = null;</span>
-<span class="fc" id="L170">            else setRqsGradient(true);</span>
+<span class="fc bfc" id="L164" title="All 4 branches covered.">        if (newComponent instanceof Device &amp;&amp; !((Device)newComponent).has(this)){</span>
+<span class="fc" id="L165">            ((Device)newComponent).add(this);</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        } else if (newComponent instanceof Tsr) {</span>
+<span class="fc" id="L167">            if(</span>
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">                    ((Tsr)newComponent).shape().hashCode()!=this.shape().hashCode() ||</span>
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">                    Arrays.hashCode(((Tsr)newComponent).getNDConf().shape()) != Arrays.hashCode(_conf.shape())</span>
+<span class="nc" id="L170">            ) newComponent = null;</span>
+<span class="fc" id="L171">            else setRqsGradient(true);</span>
         }
-<span class="fc" id="L172">        return newComponent;</span>
+<span class="fc" id="L173">        return newComponent;</span>
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // HIGH LEVEL PROPERTIES :
 
     public boolean isEmpty() {
-<span class="fc bfc" id="L179" title="All 4 branches covered.">        return _value == null &amp;&amp; !this.isOutsourced();</span>
+<span class="fc bfc" id="L180" title="All 4 branches covered.">        return _value == null &amp;&amp; !this.isOutsourced();</span>
     }
 
     public boolean isUndefined() {
-<span class="pc bpc" id="L183" title="1 of 4 branches missed.">        return _conf==null || _conf.shape() == null;</span>
+<span class="pc bpc" id="L184" title="1 of 4 branches missed.">        return _conf==null || _conf.shape() == null;</span>
     }
 
     public boolean isSlice(){
-<span class="fc" id="L187">        Relation child = find(Relation.class);</span>
-<span class="pc bpc" id="L188" title="1 of 4 branches missed.">        return (child != null &amp;&amp; child.hasParent());</span>
+<span class="fc" id="L188">        Relation child = find(Relation.class);</span>
+<span class="pc bpc" id="L189" title="1 of 4 branches missed.">        return (child != null &amp;&amp; child.hasParent());</span>
     }
 
     public int sliceCount(){
-<span class="fc" id="L192">        Relation child = find(Relation.class);</span>
-<span class="pc bpc" id="L193" title="1 of 2 branches missed.">        return (child!=null) ? child.childCount() : 0;</span>
+<span class="fc" id="L193">        Relation child = find(Relation.class);</span>
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">        return (child!=null) ? child.childCount() : 0;</span>
     }
 
     public boolean isSliceParent(){
-<span class="fc" id="L197">        Relation parent = find(Relation.class);</span>
-<span class="pc bpc" id="L198" title="1 of 4 branches missed.">        return (parent!=null &amp;&amp; parent.hasChildren());</span>
+<span class="fc" id="L198">        Relation parent = find(Relation.class);</span>
+<span class="pc bpc" id="L199" title="1 of 4 branches missed.">        return (parent!=null &amp;&amp; parent.hasChildren());</span>
     }
 
     public boolean belongsToGraph() {
-<span class="fc" id="L202">        return this.has(GraphNode.class);</span>
+<span class="fc" id="L203">        return this.has(GraphNode.class);</span>
     }
 
     public boolean isLeave() {
-<span class="pc bpc" id="L206" title="1 of 4 branches missed.">        return (!this.has(GraphNode.class)) || this.find(GraphNode.class).isLeave();</span>
+<span class="pc bpc" id="L207" title="1 of 4 branches missed.">        return (!this.has(GraphNode.class)) || this.find(GraphNode.class).isLeave();</span>
     }
 
     public boolean isBranch() {
-<span class="fc bfc" id="L210" title="All 2 branches covered.">        return !this.isLeave();</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">        return !this.isLeave();</span>
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -217,8 +218,8 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
      * @return The device on which this tensor is stored or 'CPU' if it is not outsourced.
      */
     public Device device() {
-<span class="fc bfc" id="L220" title="All 2 branches covered.">        if (this.isOutsourced()) return this.find(Device.class);</span>
-<span class="fc" id="L221">        return _CPU;</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        if (this.isOutsourced()) return this.find(Device.class);</span>
+<span class="fc" id="L222">        return _CPU;</span>
     }
 
     /**
@@ -226,7 +227,7 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
      * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
      */
     public GraphNode graphNode(){
-<span class="fc" id="L229">        return find(GraphNode.class);</span>
+<span class="fc" id="L230">        return find(GraphNode.class);</span>
     }
 
     /**
@@ -234,43 +235,43 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
      * @return Custom IndexAlias object.
      */
     public IndexAlias index(){
-<span class="fc" id="L237">        return find(IndexAlias.class);</span>
+<span class="fc" id="L238">        return find(IndexAlias.class);</span>
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
     protected Tsr _become(Tsr tensor) {
-<span class="fc bfc" id="L244" title="All 2 branches covered.">        if (tensor==null) return this;</span>
-<span class="fc" id="L245">        _value = tensor._value;</span>
-<span class="fc" id="L246">        _conf = tensor._conf;</span>
-<span class="fc" id="L247">        _components = Collections.synchronizedList(new ArrayList&lt;&gt;());</span>
-<span class="fc" id="L248">        _flags = tensor._flags;</span>
-<span class="pc bpc" id="L249" title="1 of 2 branches missed.">        if (tensor._components!=null) {//Inform components about their new owner:</span>
-<span class="fc" id="L250">            _components.addAll(tensor._components);</span>
-<span class="fc" id="L251">            List&lt;Component&lt;Tsr&gt;&gt; snapshot = new ArrayList&lt;&gt;(tensor._components);</span>
-<span class="fc bfc" id="L252" title="All 2 branches covered.">            for (Component&lt;Tsr&gt; o : snapshot) o.update(tensor, this);</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">        if (tensor==null) return this;</span>
+<span class="fc" id="L246">        _value = tensor._value;</span>
+<span class="fc" id="L247">        _conf = tensor._conf;</span>
+<span class="fc" id="L248">        _components = Collections.synchronizedList(new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L249">        _flags = tensor._flags;</span>
+<span class="pc bpc" id="L250" title="1 of 2 branches missed.">        if (tensor._components!=null) {//Inform components about their new owner:</span>
+<span class="fc" id="L251">            _components.addAll(tensor._components);</span>
+<span class="fc" id="L252">            List&lt;Component&lt;Tsr&gt;&gt; snapshot = new ArrayList&lt;&gt;(tensor._components);</span>
+<span class="fc bfc" id="L253" title="All 2 branches covered.">            for (Component&lt;Tsr&gt; o : snapshot) o.update(tensor, this);</span>
         }
-<span class="fc" id="L254">        tensor._value = null;</span>
-<span class="fc" id="L255">        tensor._conf = null;</span>
-<span class="fc" id="L256">        tensor._components = null;</span>
-<span class="fc" id="L257">        tensor._flags = -1;</span>
-<span class="fc" id="L258">        return this;</span>
+<span class="fc" id="L255">        tensor._value = null;</span>
+<span class="fc" id="L256">        tensor._conf = null;</span>
+<span class="fc" id="L257">        tensor._components = null;</span>
+<span class="fc" id="L258">        tensor._flags = -1;</span>
+<span class="fc" id="L259">        return this;</span>
     }
 
     public Tsr delete() {
-<span class="fc" id="L262">        forComponent(Device.class, d -&gt; d.rmv(this));</span>
-<span class="fc" id="L263">        forComponent(GraphNode.class, n -&gt; {</span>
-<span class="pc bpc" id="L264" title="1 of 2 branches missed.">            if (n.isUsedAsDerivative()) {</span>
-<span class="nc" id="L265">                throw new IllegalStateException(&quot;Trying to delete a tensor which is part of a function graph and used as derivative!&quot;);</span>
+<span class="fc" id="L263">        forComponent(Device.class, d -&gt; d.rmv(this));</span>
+<span class="fc" id="L264">        forComponent(GraphNode.class, n -&gt; {</span>
+<span class="pc bpc" id="L265" title="1 of 2 branches missed.">            if (n.isUsedAsDerivative()) {</span>
+<span class="nc" id="L266">                throw new IllegalStateException(&quot;Trying to delete a tensor which is part of a function graph and used as derivative!&quot;);</span>
             }
-<span class="fc" id="L267">        });</span>
-<span class="fc" id="L268">        _flags = -1;</span>
-<span class="fc" id="L269">        _value = null;</span>
-<span class="fc" id="L270">        _conf = null;</span>
-<span class="pc" id="L271">        forComponent(Tsr.class, g -&gt; g.delete());</span>
-<span class="fc" id="L272">        _components = null;</span>
-<span class="fc" id="L273">        return this;</span>
+<span class="fc" id="L268">        });</span>
+<span class="fc" id="L269">        _flags = -1;</span>
+<span class="fc" id="L270">        _value = null;</span>
+<span class="fc" id="L271">        _conf = null;</span>
+<span class="pc" id="L272">        forComponent(Tsr.class, g -&gt; g.delete());</span>
+<span class="fc" id="L273">        _components = null;</span>
+<span class="fc" id="L274">        return this;</span>
     }
 
 
@@ -280,274 +281,291 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
      * @param newShape
      */
     protected void _configureFromNewShape(int[] newShape, boolean makeVirtual) {
-<span class="fc" id="L283">        int size = Utility.Indexing.szeOfShp(newShape);</span>
-<span class="pc bpc" id="L284" title="1 of 2 branches missed.">        _value = (_value==null) ? new double[size] : _value;</span>
-<span class="pc bpc" id="L285" title="1 of 2 branches missed.">        int length = (this.is64())?((double[])_value).length:((float[])_value).length;</span>
-<span class="pc bpc" id="L286" title="2 of 6 branches missed.">        if (size != length &amp;&amp; (!this.isVirtual() || !makeVirtual)) {</span>
-<span class="nc" id="L287">            throw new IllegalArgumentException(&quot;Size of shape does not match stored value64!&quot;);</span>
+<span class="fc" id="L284">        int size = Utility.Indexing.szeOfShp(newShape);</span>
+<span class="pc bpc" id="L285" title="1 of 2 branches missed.">        _value = (_value==null) ? new double[size] : _value;</span>
+<span class="pc bpc" id="L286" title="1 of 2 branches missed.">        int length = (this.is64())?((double[])_value).length:((float[])_value).length;</span>
+<span class="pc bpc" id="L287" title="2 of 6 branches missed.">        if (size != length &amp;&amp; (!this.isVirtual() || !makeVirtual)) {</span>
+<span class="nc" id="L288">            throw new IllegalArgumentException(&quot;Size of shape does not match stored value64!&quot;);</span>
         }
-<span class="fc bfc" id="L289" title="All 2 branches covered.">        if(makeVirtual) {</span>
-<span class="fc" id="L290">            _conf = VirtualNDConfiguration.construct(newShape);</span>
+<span class="fc bfc" id="L290" title="All 2 branches covered.">        if(makeVirtual) {</span>
+<span class="fc" id="L291">            _conf = VirtualNDConfiguration.construct(newShape);</span>
         } else {
-<span class="fc" id="L292">            int[] newTranslation = Utility.Indexing.newTlnOf(newShape);</span>
-<span class="fc" id="L293">            int[] newIdxmap = newTranslation;</span>
-<span class="fc" id="L294">            int[] newSpread = new int[newShape.length];</span>
-<span class="fc" id="L295">            Arrays.fill(newSpread, 1);</span>
-<span class="fc" id="L296">            int[] newOffset = new int[newShape.length];</span>
-<span class="fc" id="L297">            _conf = AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);</span>
+<span class="fc" id="L293">            int[] newTranslation = Utility.Indexing.newTlnOf(newShape);</span>
+<span class="fc" id="L294">            int[] newIdxmap = newTranslation;</span>
+<span class="fc" id="L295">            int[] newSpread = new int[newShape.length];</span>
+<span class="fc" id="L296">            Arrays.fill(newSpread, 1);</span>
+<span class="fc" id="L297">            int[] newOffset = new int[newShape.length];</span>
+<span class="fc" id="L298">            _conf = AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);</span>
         }
-<span class="fc" id="L299">    }</span>
+<span class="fc" id="L300">    }</span>
 
 
     //CONSTRUCTION :
     //=========================
 
-<span class="fc" id="L305">    public Tsr(){}</span>
+<span class="fc" id="L306">    public Tsr(){}</span>
 
     //Generic construction: (Groovy, Scala, ...)
-<span class="fc" id="L308">    public Tsr(Object arg){</span>
-<span class="fc" id="L309">        _construct(new Object[]{arg});</span>
-<span class="fc" id="L310">    }</span>
+<span class="fc" id="L309">    public Tsr(Object arg){</span>
+<span class="fc" id="L310">        _construct(new Object[]{arg});</span>
+<span class="fc" id="L311">    }</span>
 
-<span class="fc" id="L312">    public Tsr(List arg1, String arg2){</span>
-<span class="fc bfc" id="L313" title="All 2 branches covered.">        if ((arg1).get(0) instanceof Integer) {</span>
-<span class="fc" id="L314">            List&lt;Integer&gt; shape = arg1;</span>
-<span class="fc" id="L315">            int[] shp = new int[shape.size()];</span>
-<span class="fc bfc" id="L316" title="All 2 branches covered.">            for (int i=0; i&lt;shp.length; i++) shp[i] = shape.get(i);</span>
-<span class="fc" id="L317">            _construct(shp, arg2);</span>
-<span class="pc bpc" id="L318" title="1 of 2 branches missed.">        } else if ((arg1).get(0) instanceof Tsr) {</span>
-<span class="fc" id="L319">            _construct(((List&lt;Tsr&gt;)arg1).toArray(new Tsr[0]), arg2, true);</span>
-        }
-<span class="fc" id="L321">    }</span>
+<span class="fc" id="L313">    public Tsr(String equation, List&lt;Object&gt; inputs){</span>
+<span class="fc" id="L314">        _construct(</span>
+<span class="fc" id="L315">                ((List&lt;Object&gt;)inputs).stream().map(Tsr::new).toArray(Tsr[]::new),</span>
+                equation,
+                true
+        );
+<span class="fc" id="L319">    }</span>
 
-<span class="fc" id="L323">    public Tsr(List&lt;Integer&gt; shape, List range){</span>
-<span class="fc" id="L324">        int[] shp = new int[shape.size()];</span>
-<span class="fc bfc" id="L325" title="All 2 branches covered.">        for(int i=0; i&lt;shp.length; i++) shp[i] = shape.get(i);</span>
-<span class="fc" id="L326">        double[] value = new double[Utility.Indexing.szeOfShp(shp)];</span>
-<span class="pc bpc" id="L327" title="1 of 4 branches missed.">        if(range.size()==1 &amp;&amp; range.get(0) instanceof IntRange) range = (List) range.get(0);</span>
-<span class="fc bfc" id="L328" title="All 2 branches covered.">        for(int i=0; i&lt;value.length; i++){</span>
-<span class="fc bfc" id="L329" title="All 2 branches covered.">            if(range.get(i%range.size()) instanceof BigDecimal){</span>
-<span class="fc" id="L330">                value[i] = ((BigDecimal)range.get(i%range.size())).doubleValue();</span>
-<span class="pc bpc" id="L331" title="1 of 2 branches missed.">            } else if (range.get(i%range.size()) instanceof Integer){</span>
-<span class="fc" id="L332">                value[i] = (Integer)range.get(i%range.size());</span>
-            }
+<span class="fc" id="L321">    public Tsr(List arg1, String arg2) {</span>
+<span class="fc bfc" id="L322" title="All 2 branches covered.">        if ((arg1).get(0) instanceof Integer) {</span>
+<span class="fc" id="L323">            List&lt;Integer&gt; shape = arg1;</span>
+<span class="fc" id="L324">            int[] shp = new int[shape.size()];</span>
+<span class="fc bfc" id="L325" title="All 2 branches covered.">            for (int i=0; i&lt;shp.length; i++) shp[i] = shape.get(i);</span>
+<span class="fc" id="L326">            _construct(shp, arg2);</span>
+<span class="pc bpc" id="L327" title="1 of 2 branches missed.">        } else if ((arg1).get(0) instanceof Tsr) {</span>
+<span class="fc" id="L328">            _construct(((List&lt;Tsr&gt;)arg1).toArray(new Tsr[0]), arg2, true);</span>
+        } else {
+<span class="nc" id="L330">            _construct(</span>
+<span class="nc" id="L331">                    ((List&lt;Object&gt;)arg1).stream().map(Tsr::new).toArray(Tsr[]::new),</span>
+                    arg2,
+                    true
+            );
         }
-<span class="fc" id="L335">        _construct(shp, value);</span>
 <span class="fc" id="L336">    }</span>
 
-<span class="fc" id="L338">    public Tsr(List conf){</span>
-<span class="pc bpc" id="L339" title="1 of 2 branches missed.">        boolean isNatural = !(conf.size() &gt; 64);</span>
-<span class="fc bfc" id="L340" title="All 2 branches covered.">        for(Object e : conf){</span>
-<span class="fc bfc" id="L341" title="All 2 branches covered.">            if(!isNatural) break;</span>
-<span class="fc bfc" id="L342" title="All 4 branches covered.">            double asNum = (e instanceof BigDecimal)? ((BigDecimal)e).doubleValue() : (e instanceof Double) ?(Double)e : (Integer)e;</span>
-<span class="fc bfc" id="L343" title="All 2 branches covered.">            isNatural = asNum % 1 == 0;</span>
-<span class="fc" id="L344">        }</span>
-<span class="fc bfc" id="L345" title="All 2 branches covered.">        if(isNatural){</span>
-<span class="fc" id="L346">            int[] shape = new int[conf.size()];</span>
-<span class="fc bfc" id="L347" title="All 2 branches covered.">            for(int i=0; i&lt;shape.length; i++) {</span>
-<span class="fc bfc" id="L348" title="All 2 branches covered.">                shape[i] = (conf.get(i) instanceof BigDecimal)</span>
-<span class="fc" id="L349">                        ? ((BigDecimal)conf.get(i)).intValue() :</span>
-<span class="fc bfc" id="L350" title="All 2 branches covered.">                            (conf.get(i) instanceof Double)</span>
-<span class="fc" id="L351">                                    ?((Double)conf.get(i)).intValue()</span>
-<span class="fc" id="L352">                                    :((Integer)conf.get(i));</span>
+<span class="fc" id="L338">    public Tsr(List&lt;Integer&gt; shape, List range){</span>
+<span class="fc" id="L339">        int[] shp = new int[shape.size()];</span>
+<span class="fc bfc" id="L340" title="All 2 branches covered.">        for(int i=0; i&lt;shp.length; i++) shp[i] = shape.get(i);</span>
+<span class="fc" id="L341">        double[] value = new double[Utility.Indexing.szeOfShp(shp)];</span>
+<span class="pc bpc" id="L342" title="1 of 4 branches missed.">        if(range.size()==1 &amp;&amp; range.get(0) instanceof IntRange) range = (List) range.get(0);</span>
+<span class="fc bfc" id="L343" title="All 2 branches covered.">        for(int i=0; i&lt;value.length; i++){</span>
+<span class="fc bfc" id="L344" title="All 2 branches covered.">            if(range.get(i%range.size()) instanceof BigDecimal){</span>
+<span class="fc" id="L345">                value[i] = ((BigDecimal)range.get(i%range.size())).doubleValue();</span>
+<span class="pc bpc" id="L346" title="1 of 2 branches missed.">            } else if (range.get(i%range.size()) instanceof Integer){</span>
+<span class="fc" id="L347">                value[i] = (Integer)range.get(i%range.size());</span>
             }
-<span class="fc" id="L354">            _construct(shape);</span>
-<span class="fc" id="L355">        } else {</span>
-<span class="fc" id="L356">            double[] value = new double[conf.size()];</span>
-<span class="fc bfc" id="L357" title="All 2 branches covered.">            for(int i=0; i&lt;value.length; i++) {</span>
-<span class="fc bfc" id="L358" title="All 2 branches covered.">                value[i] = (conf.get(i) instanceof BigDecimal)</span>
-<span class="fc" id="L359">                        ? ((BigDecimal)conf.get(i)).doubleValue() :</span>
-<span class="pc bpc" id="L360" title="1 of 2 branches missed.">                            (conf.get(i) instanceof Double)</span>
-<span class="nc" id="L361">                                ?((Double)conf.get(i)).doubleValue()</span>
-<span class="fc" id="L362">                                :((Integer)conf.get(i));</span>
+        }
+<span class="fc" id="L350">        _construct(shp, value);</span>
+<span class="fc" id="L351">    }</span>
+
+<span class="fc" id="L353">    public Tsr(List conf){</span>
+<span class="pc bpc" id="L354" title="1 of 2 branches missed.">        boolean isNatural = !(conf.size() &gt; 64);</span>
+<span class="fc bfc" id="L355" title="All 2 branches covered.">        for(Object e : conf){</span>
+<span class="fc bfc" id="L356" title="All 2 branches covered.">            if(!isNatural) break;</span>
+<span class="fc bfc" id="L357" title="All 4 branches covered.">            double asNum = (e instanceof BigDecimal)? ((BigDecimal)e).doubleValue() : (e instanceof Double) ?(Double)e : (Integer)e;</span>
+<span class="fc bfc" id="L358" title="All 2 branches covered.">            isNatural = asNum % 1 == 0;</span>
+<span class="fc" id="L359">        }</span>
+<span class="fc bfc" id="L360" title="All 2 branches covered.">        if(isNatural){</span>
+<span class="fc" id="L361">            int[] shape = new int[conf.size()];</span>
+<span class="fc bfc" id="L362" title="All 2 branches covered.">            for(int i=0; i&lt;shape.length; i++) {</span>
+<span class="fc bfc" id="L363" title="All 2 branches covered.">                shape[i] = (conf.get(i) instanceof BigDecimal)</span>
+<span class="fc" id="L364">                        ? ((BigDecimal)conf.get(i)).intValue() :</span>
+<span class="fc bfc" id="L365" title="All 2 branches covered.">                            (conf.get(i) instanceof Double)</span>
+<span class="fc" id="L366">                                    ?((Double)conf.get(i)).intValue()</span>
+<span class="fc" id="L367">                                    :((Integer)conf.get(i));</span>
             }
-<span class="fc" id="L364">            _construct(new int[]{conf.size()}, value);</span>
+<span class="fc" id="L369">            _construct(shape);</span>
+<span class="fc" id="L370">        } else {</span>
+<span class="fc" id="L371">            double[] value = new double[conf.size()];</span>
+<span class="fc bfc" id="L372" title="All 2 branches covered.">            for(int i=0; i&lt;value.length; i++) {</span>
+<span class="fc bfc" id="L373" title="All 2 branches covered.">                value[i] = (conf.get(i) instanceof BigDecimal)</span>
+<span class="fc" id="L374">                        ? ((BigDecimal)conf.get(i)).doubleValue() :</span>
+<span class="pc bpc" id="L375" title="1 of 2 branches missed.">                            (conf.get(i) instanceof Double)</span>
+<span class="nc" id="L376">                                ?((Double)conf.get(i)).doubleValue()</span>
+<span class="fc" id="L377">                                :((Integer)conf.get(i));</span>
+            }
+<span class="fc" id="L379">            _construct(new int[]{conf.size()}, value);</span>
         }
 
-<span class="fc" id="L367">    }</span>
+<span class="fc" id="L382">    }</span>
 
-<span class="fc" id="L369">    public Tsr(Object arg1, Object arg2) {</span>
-<span class="fc" id="L370">        _construct(new Object[]{arg1, arg2});</span>
-<span class="fc" id="L371">    }</span>
-<span class="fc" id="L372">    public Tsr(Object arg1, Object arg2, Object arg3){</span>
-<span class="fc" id="L373">        _construct(new Object[]{arg1, arg2, arg3});</span>
-<span class="fc" id="L374">    }</span>
-<span class="fc" id="L375">    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4){</span>
-<span class="fc" id="L376">        _construct(new Object[]{arg1, arg2, arg3, arg4});</span>
-<span class="fc" id="L377">    }</span>
-<span class="fc" id="L378">    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5){</span>
-<span class="fc" id="L379">        _construct(new Object[]{arg1, arg2, arg3, arg4, arg5});</span>
-<span class="fc" id="L380">    }</span>
-<span class="fc" id="L381">    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6){</span>
-<span class="fc" id="L382">        _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6});</span>
-<span class="fc" id="L383">    }</span>
-<span class="fc" id="L384">    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7){</span>
-<span class="fc" id="L385">        _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7});</span>
+<span class="fc" id="L384">    public Tsr(Object arg1, Object arg2) {</span>
+<span class="fc" id="L385">        _construct(new Object[]{arg1, arg2});</span>
 <span class="fc" id="L386">    }</span>
-<span class="fc" id="L387">    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8){</span>
-<span class="fc" id="L388">        _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8});</span>
+<span class="fc" id="L387">    public Tsr(Object arg1, Object arg2, Object arg3){</span>
+<span class="fc" id="L388">        _construct(new Object[]{arg1, arg2, arg3});</span>
 <span class="fc" id="L389">    }</span>
-<span class="fc" id="L390">    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8, Object arg9){</span>
-<span class="fc" id="L391">        _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9});</span>
+<span class="fc" id="L390">    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4){</span>
+<span class="fc" id="L391">        _construct(new Object[]{arg1, arg2, arg3, arg4});</span>
 <span class="fc" id="L392">    }</span>
-<span class="fc" id="L393">    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8, Object arg9, Object arg10){</span>
-<span class="fc" id="L394">        _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10});</span>
+<span class="fc" id="L393">    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5){</span>
+<span class="fc" id="L394">        _construct(new Object[]{arg1, arg2, arg3, arg4, arg5});</span>
 <span class="fc" id="L395">    }</span>
+<span class="fc" id="L396">    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6){</span>
+<span class="fc" id="L397">        _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6});</span>
+<span class="fc" id="L398">    }</span>
+<span class="fc" id="L399">    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7){</span>
+<span class="fc" id="L400">        _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7});</span>
+<span class="fc" id="L401">    }</span>
+<span class="fc" id="L402">    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8){</span>
+<span class="fc" id="L403">        _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8});</span>
+<span class="fc" id="L404">    }</span>
+<span class="fc" id="L405">    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8, Object arg9){</span>
+<span class="fc" id="L406">        _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9});</span>
+<span class="fc" id="L407">    }</span>
+<span class="fc" id="L408">    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8, Object arg9, Object arg10){</span>
+<span class="fc" id="L409">        _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10});</span>
+<span class="fc" id="L410">    }</span>
 
-<span class="fc" id="L397">    public Tsr(int[] shape, String seed){</span>
-<span class="fc" id="L398">        _construct(shape, seed);</span>
-<span class="fc" id="L399">    }</span>
+<span class="fc" id="L412">    public Tsr(int[] shape, String seed){</span>
+<span class="fc" id="L413">        _construct(shape, seed);</span>
+<span class="fc" id="L414">    }</span>
 
     private void _construct(int[] shape, String seed) {
-<span class="fc" id="L402">        _construct(shape);</span>
-<span class="fc" id="L403">        _value = DataHelper.seededDoubleArray((double[])_value, seed);</span>
-<span class="fc" id="L404">    }</span>
+<span class="fc" id="L417">        _construct(shape);</span>
+<span class="fc" id="L418">        _value = DataHelper.seededDoubleArray((double[])_value, seed);</span>
+<span class="fc" id="L419">    }</span>
 
     private int[] _intArray(Object[] arg) {
-<span class="fc" id="L407">        int length = arg.length;</span>
-<span class="fc" id="L408">        int[] array = new int[length];</span>
-<span class="fc bfc" id="L409" title="All 2 branches covered.">        for (int i=0; i&lt;length; i++){</span>
-<span class="pc bpc" id="L410" title="1 of 2 branches missed.">            if(arg[i] instanceof Double) array[i] = ((Double) arg[i]).intValue();</span>
-<span class="fc" id="L411">            else array[i] = (Integer) arg[i];</span>
+<span class="fc" id="L422">        int length = arg.length;</span>
+<span class="fc" id="L423">        int[] array = new int[length];</span>
+<span class="fc bfc" id="L424" title="All 2 branches covered.">        for (int i=0; i&lt;length; i++){</span>
+<span class="pc bpc" id="L425" title="1 of 2 branches missed.">            if(arg[i] instanceof Double) array[i] = ((Double) arg[i]).intValue();</span>
+<span class="fc" id="L426">            else array[i] = (Integer) arg[i];</span>
         }
-<span class="fc" id="L413">        return array;</span>
+<span class="fc" id="L428">        return array;</span>
     }
 
     private double[] _doubleArray(Object[] arg) {
-<span class="nc" id="L417">        int length = arg.length;</span>
-<span class="nc" id="L418">        double[] array = new double[length];</span>
-<span class="nc bnc" id="L419" title="All 2 branches missed.">        for (int i=0; i&lt;length; i++){</span>
-<span class="nc bnc" id="L420" title="All 2 branches missed.">            if (arg[i] instanceof Integer) array[i] = (Integer) arg[i];</span>
-<span class="nc bnc" id="L421" title="All 2 branches missed.">            else if (arg[i] instanceof Double) array[i] = (Double) arg[i];</span>
-<span class="nc bnc" id="L422" title="All 2 branches missed.">            else if (arg[i] instanceof BigDecimal) array[i] = ((BigDecimal)arg[i]).doubleValue();</span>
+<span class="nc" id="L432">        int length = arg.length;</span>
+<span class="nc" id="L433">        double[] array = new double[length];</span>
+<span class="nc bnc" id="L434" title="All 2 branches missed.">        for (int i=0; i&lt;length; i++){</span>
+<span class="nc bnc" id="L435" title="All 2 branches missed.">            if (arg[i] instanceof Integer) array[i] = (Integer) arg[i];</span>
+<span class="nc bnc" id="L436" title="All 2 branches missed.">            else if (arg[i] instanceof Double) array[i] = (Double) arg[i];</span>
+<span class="nc bnc" id="L437" title="All 2 branches missed.">            else if (arg[i] instanceof BigDecimal) array[i] = ((BigDecimal)arg[i]).doubleValue();</span>
         }
-<span class="nc" id="L424">        return array;</span>
+<span class="nc" id="L439">        return array;</span>
     }
 
-<span class="fc" id="L427">    public Tsr(Object[] args){</span>
-<span class="fc" id="L428">        _construct(args);</span>
-<span class="fc" id="L429">    }</span>
+<span class="fc" id="L442">    public Tsr(Object[] args){</span>
+<span class="fc" id="L443">        _construct(args);</span>
+<span class="fc" id="L444">    }</span>
 
     private void _construct(Object[] args) {
-<span class="pc bpc" id="L432" title="2 of 4 branches missed.">        if (args==null || args.length==0) return;</span>
-<span class="fc bfc" id="L433" title="All 2 branches covered.">        if (args.length==1){</span>
-<span class="pc bpc" id="L434" title="1 of 2 branches missed.">            if (args[0] instanceof Object[]){</span>
-<span class="nc" id="L435">                _construct((Object[]) args[0]);</span>
-<span class="nc" id="L436">                return;</span>
-<span class="fc bfc" id="L437" title="All 2 branches covered.">            } else if (args[0] instanceof BigDecimal) {</span>
-<span class="fc" id="L438">                _construct(new int[]{1}, ((BigDecimal)args[0]).doubleValue());</span>
-<span class="fc" id="L439">                return;</span>
+<span class="pc bpc" id="L447" title="2 of 4 branches missed.">        if (args==null || args.length==0) return;</span>
+<span class="fc bfc" id="L448" title="All 2 branches covered.">        if (args.length==1){</span>
+<span class="pc bpc" id="L449" title="1 of 2 branches missed.">            if (args[0] instanceof Object[]){</span>
+<span class="nc" id="L450">                _construct((Object[]) args[0]);</span>
+<span class="nc" id="L451">                return;</span>
+<span class="fc bfc" id="L452" title="All 2 branches covered.">            } else if (args[0] instanceof BigDecimal) {</span>
+<span class="fc" id="L453">                _construct(new int[]{1}, ((BigDecimal)args[0]).doubleValue());</span>
+<span class="fc" id="L454">                return;</span>
+<span class="fc bfc" id="L455" title="All 2 branches covered.">            } else if(args[0] instanceof Integer) {</span>
+<span class="fc" id="L456">                _construct(new int[]{1}, ((Integer)args[0]).doubleValue());</span>
+<span class="fc" id="L457">                return;</span>
             } else {
-<span class="fc" id="L441">                throw new IllegalArgumentException(</span>
-<span class="fc" id="L442">                        &quot;Cannot create tensor from argument of type '&quot;+args[0].getClass().getName()+&quot;'!&quot;</span>
+<span class="fc" id="L459">                throw new IllegalArgumentException(</span>
+<span class="fc" id="L460">                        &quot;Cannot create tensor from argument of type '&quot;+args[0].getClass().getName()+&quot;'!&quot;</span>
                 );
             }
         }
-<span class="fc bfc" id="L446" title="All 2 branches covered.">        args[0] = (args[0] instanceof ArrayList) ? ((ArrayList)args[0]).toArray() : args[0];</span>
-<span class="pc bpc" id="L447" title="1 of 2 branches missed.">        args[1] = (args[1] instanceof ArrayList) ? ((ArrayList)args[1]).toArray() : args[1];</span>
-<span class="fc bfc" id="L448" title="All 2 branches covered.">        if (args[0] instanceof Object[]){</span>
-<span class="pc bpc" id="L449" title="3 of 4 branches missed.">            if (((Object[])args[0])[0] instanceof Integer || ((Object[])args[0])[0] instanceof Double) {</span>
-<span class="fc" id="L450">                args[0] = _intArray((Object[])args[0]);</span>
+<span class="fc bfc" id="L464" title="All 2 branches covered.">        args[0] = (args[0] instanceof ArrayList) ? ((ArrayList)args[0]).toArray() : args[0];</span>
+<span class="pc bpc" id="L465" title="1 of 2 branches missed.">        args[1] = (args[1] instanceof ArrayList) ? ((ArrayList)args[1]).toArray() : args[1];</span>
+<span class="fc bfc" id="L466" title="All 2 branches covered.">        if (args[0] instanceof Object[]){</span>
+<span class="pc bpc" id="L467" title="3 of 4 branches missed.">            if (((Object[])args[0])[0] instanceof Integer || ((Object[])args[0])[0] instanceof Double) {</span>
+<span class="fc" id="L468">                args[0] = _intArray((Object[])args[0]);</span>
             }
         }
-<span class="pc bpc" id="L453" title="1 of 2 branches missed.">        if (args[1] instanceof Object[]) {</span>
-<span class="nc bnc" id="L454" title="All 2 branches missed.">            if (((Object[])args[1])[0] instanceof Integer) args[1] = _doubleArray((Object[]) args[1]);</span>
-<span class="nc bnc" id="L455" title="All 2 branches missed.">            else if (((Object[])args[1])[0] instanceof BigDecimal) args[1] = _doubleArray((Object[]) args[1]);</span>
+<span class="pc bpc" id="L471" title="1 of 2 branches missed.">        if (args[1] instanceof Object[]) {</span>
+<span class="nc bnc" id="L472" title="All 2 branches missed.">            if (((Object[])args[1])[0] instanceof Integer) args[1] = _doubleArray((Object[]) args[1]);</span>
+<span class="nc bnc" id="L473" title="All 2 branches missed.">            else if (((Object[])args[1])[0] instanceof BigDecimal) args[1] = _doubleArray((Object[]) args[1]);</span>
         }
         //CASES:
-<span class="pc bpc" id="L458" title="1 of 6 branches missed.">        if (args[0] instanceof int[] &amp;&amp; (args[1] instanceof Double || args[1] instanceof Integer)) {</span>
-<span class="fc bfc" id="L459" title="All 2 branches covered.">            args[1] = (args[1] instanceof Integer)?((Integer)args[1]).doubleValue():args[1];</span>
-<span class="fc" id="L460">            _construct((int[])args[0], (Double) args[1]);</span>
-<span class="fc" id="L461">            return;</span>
-<span class="pc bpc" id="L462" title="3 of 4 branches missed.">        } else if (args[0] instanceof int[] &amp;&amp; args[1] instanceof double[]) {</span>
-<span class="nc" id="L463">            _construct((int[])args[0], (double[])args[1]);</span>
-<span class="nc" id="L464">            return;</span>
+<span class="pc bpc" id="L476" title="1 of 6 branches missed.">        if (args[0] instanceof int[] &amp;&amp; (args[1] instanceof Double || args[1] instanceof Integer)) {</span>
+<span class="fc bfc" id="L477" title="All 2 branches covered.">            args[1] = (args[1] instanceof Integer)?((Integer)args[1]).doubleValue():args[1];</span>
+<span class="fc" id="L478">            _construct((int[])args[0], (Double) args[1]);</span>
+<span class="fc" id="L479">            return;</span>
+<span class="pc bpc" id="L480" title="3 of 4 branches missed.">        } else if (args[0] instanceof int[] &amp;&amp; args[1] instanceof double[]) {</span>
+<span class="nc" id="L481">            _construct((int[])args[0], (double[])args[1]);</span>
+<span class="nc" id="L482">            return;</span>
         }
         //EQUATION:
-<span class="fc" id="L467">        boolean containsString = false;</span>
-<span class="fc" id="L468">        int numberOfTensors = 0;</span>
-<span class="fc" id="L469">        ArrayList&lt;Tsr&gt; tsrList = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L470" title="All 2 branches covered.">        for (Object o : args) {</span>
-<span class="fc bfc" id="L471" title="All 4 branches covered.">            containsString = (o instanceof String) || containsString;</span>
-<span class="fc bfc" id="L472" title="All 2 branches covered.">            if (o instanceof Tsr) {</span>
-<span class="fc" id="L473">                tsrList.add( (Tsr)o );</span>
-<span class="fc" id="L474">                numberOfTensors++;</span>
+<span class="fc" id="L485">        boolean containsString = false;</span>
+<span class="fc" id="L486">        int numberOfTensors = 0;</span>
+<span class="fc" id="L487">        ArrayList&lt;Tsr&gt; tsrList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L488" title="All 2 branches covered.">        for (Object o : args) {</span>
+<span class="fc bfc" id="L489" title="All 4 branches covered.">            containsString = (o instanceof String) || containsString;</span>
+<span class="fc bfc" id="L490" title="All 2 branches covered.">            if (o instanceof Tsr) {</span>
+<span class="fc" id="L491">                tsrList.add( (Tsr)o );</span>
+<span class="fc" id="L492">                numberOfTensors++;</span>
             }
         }
-<span class="fc" id="L477">        boolean doAD = true;</span>
-<span class="fc" id="L478">        Tsr[] tsrs = new Tsr[numberOfTensors];</span>
-<span class="fc" id="L479">        StringBuilder f = new StringBuilder();</span>
-<span class="fc" id="L480">        int ti=0;</span>
-<span class="fc bfc" id="L481" title="All 2 branches covered.">        for (Object o : args) {</span>
-<span class="fc bfc" id="L482" title="All 2 branches covered.">            if (tsrList.contains(o)){</span>
-<span class="fc" id="L483">                tsrs[ti] = ((Tsr)o);</span>
-<span class="fc" id="L484">                f.append(&quot;I[&quot;).append(ti).append(&quot;]&quot;);</span>
-<span class="fc" id="L485">                ti++;</span>
-<span class="pc bpc" id="L486" title="1 of 2 branches missed.">            } else if (o instanceof  String) f.append((String) o);</span>
-<span class="nc bnc" id="L487" title="All 2 branches missed.">            else if (o instanceof  Boolean) doAD = (Boolean)o;</span>
+<span class="fc" id="L495">        boolean doAD = true;</span>
+<span class="fc" id="L496">        Tsr[] tsrs = new Tsr[numberOfTensors];</span>
+<span class="fc" id="L497">        StringBuilder f = new StringBuilder();</span>
+<span class="fc" id="L498">        int ti=0;</span>
+<span class="fc bfc" id="L499" title="All 2 branches covered.">        for (Object o : args) {</span>
+<span class="fc bfc" id="L500" title="All 2 branches covered.">            if (tsrList.contains(o)){</span>
+<span class="fc" id="L501">                tsrs[ti] = ((Tsr)o);</span>
+<span class="fc" id="L502">                f.append(&quot;I[&quot;).append(ti).append(&quot;]&quot;);</span>
+<span class="fc" id="L503">                ti++;</span>
+<span class="pc bpc" id="L504" title="1 of 2 branches missed.">            } else if (o instanceof  String) f.append((String) o);</span>
+<span class="nc bnc" id="L505" title="All 2 branches missed.">            else if (o instanceof  Boolean) doAD = (Boolean)o;</span>
         }
-<span class="fc" id="L489">        _construct(tsrs, f.toString(), doAD);</span>
-<span class="fc" id="L490">    }</span>
+<span class="fc" id="L507">        _construct(tsrs, f.toString(), doAD);</span>
+<span class="fc" id="L508">    }</span>
 
-<span class="fc" id="L492">    public Tsr(double value){</span>
-<span class="fc" id="L493">        _construct(new int[]{1}, value);</span>
-<span class="fc" id="L494">    }</span>
+<span class="fc" id="L510">    public Tsr(double value){</span>
+<span class="fc" id="L511">        _construct(new int[]{1}, value);</span>
+<span class="fc" id="L512">    }</span>
 
-<span class="fc" id="L496">    public Tsr(int[] shape) {</span>
-<span class="fc" id="L497">        _construct(shape);</span>
-<span class="fc" id="L498">    }</span>
+<span class="fc" id="L514">    public Tsr(int[] shape) {</span>
+<span class="fc" id="L515">        _construct(shape);</span>
+<span class="fc" id="L516">    }</span>
 
     private void _construct(int[] shape){
-<span class="fc" id="L501">        _value = new double[Utility.Indexing.szeOfShp(shape)];</span>
-<span class="fc" id="L502">        this._configureFromNewShape(shape, false);</span>
-<span class="fc" id="L503">    }</span>
+<span class="fc" id="L519">        _value = new double[Utility.Indexing.szeOfShp(shape)];</span>
+<span class="fc" id="L520">        this._configureFromNewShape(shape, false);</span>
+<span class="fc" id="L521">    }</span>
 
-<span class="fc" id="L505">    public Tsr(int[] shape, double value) {</span>
-<span class="fc" id="L506">        _construct(shape, value);</span>
-<span class="fc" id="L507">    }</span>
+<span class="fc" id="L523">    public Tsr(int[] shape, double value) {</span>
+<span class="fc" id="L524">        _construct(shape, value);</span>
+<span class="fc" id="L525">    }</span>
 
     private void _construct(int[] shape, double value){
-<span class="fc" id="L510">        int size = Utility.Indexing.szeOfShp(shape);</span>
-<span class="fc" id="L511">        _value = new double[1];</span>
-<span class="fc bfc" id="L512" title="All 2 branches covered.">        this.setIsVirtual( size &gt; 1 );</span>
-<span class="fc bfc" id="L513" title="All 2 branches covered.">        this._configureFromNewShape(shape, size &gt; 1);</span>
-<span class="fc" id="L514">        ((double[])_value)[0] = value;</span>
-<span class="fc" id="L515">    }</span>
+<span class="fc" id="L528">        int size = Utility.Indexing.szeOfShp(shape);</span>
+<span class="fc" id="L529">        _value = new double[1];</span>
+<span class="fc bfc" id="L530" title="All 2 branches covered.">        this.setIsVirtual( size &gt; 1 );</span>
+<span class="fc bfc" id="L531" title="All 2 branches covered.">        this._configureFromNewShape(shape, size &gt; 1);</span>
+<span class="fc" id="L532">        ((double[])_value)[0] = value;</span>
+<span class="fc" id="L533">    }</span>
 
-<span class="fc" id="L517">    public Tsr(int[] shape, double[] value) {</span>
-<span class="fc" id="L518">         _construct(shape, value);</span>
-<span class="fc" id="L519">    }</span>
+<span class="fc" id="L535">    public Tsr(int[] shape, double[] value) {</span>
+<span class="fc" id="L536">         _construct(shape, value);</span>
+<span class="fc" id="L537">    }</span>
 
     private void _construct(int[] shape, double[] value) {
-<span class="fc" id="L522">        int size = Utility.Indexing.szeOfShp(shape);</span>
-<span class="fc bfc" id="L523" title="All 2 branches covered.">        if (size!=value.length) {</span>
-<span class="fc" id="L524">            double[] newValue = new double[size];</span>
-<span class="fc bfc" id="L525" title="All 2 branches covered.">            for(int i=0; i&lt;newValue.length; i++) newValue[i] = value[i%value.length];</span>
-<span class="fc" id="L526">            _value = newValue;</span>
-<span class="fc" id="L527">        } else _value = value;</span>
-<span class="fc" id="L528">        this._configureFromNewShape(shape, false);</span>
-<span class="fc" id="L529">    }</span>
+<span class="fc" id="L540">        int size = Utility.Indexing.szeOfShp(shape);</span>
+<span class="fc bfc" id="L541" title="All 2 branches covered.">        if (size!=value.length) {</span>
+<span class="fc" id="L542">            double[] newValue = new double[size];</span>
+<span class="fc bfc" id="L543" title="All 2 branches covered.">            for(int i=0; i&lt;newValue.length; i++) newValue[i] = value[i%value.length];</span>
+<span class="fc" id="L544">            _value = newValue;</span>
+<span class="fc" id="L545">        } else _value = value;</span>
+<span class="fc" id="L546">        this._configureFromNewShape(shape, false);</span>
+<span class="fc" id="L547">    }</span>
 
     //TRACKED COMPUTATION :
     //=========================
-<span class="fc" id="L533">    public Tsr(Tsr tensor, String operation) {</span>
-<span class="pc bpc" id="L534" title="1 of 2 branches missed.">        if (tensor == null) return;</span>
-<span class="fc" id="L535">        _construct(new Tsr[]{tensor}, operation, true);</span>
-<span class="fc" id="L536">    }</span>
+<span class="fc" id="L551">    public Tsr(Tsr tensor, String operation) {</span>
+<span class="pc bpc" id="L552" title="1 of 2 branches missed.">        if (tensor == null) return;</span>
+<span class="fc" id="L553">        _construct(new Tsr[]{tensor}, operation, true);</span>
+<span class="fc" id="L554">    }</span>
 
-<span class="fc" id="L538">    public Tsr(Tsr[] tensors, String operation) {</span>
-<span class="fc" id="L539">        _construct(tensors, operation, true);</span>
-<span class="fc" id="L540">    }</span>
+<span class="fc" id="L556">    public Tsr(Tsr[] tensors, String operation) {</span>
+<span class="fc" id="L557">        _construct(tensors, operation, true);</span>
+<span class="fc" id="L558">    }</span>
 
-<span class="fc" id="L542">    public Tsr(Tsr[] tensors, String operation, boolean doAD) {</span>
-<span class="fc" id="L543">        _construct(tensors, operation, doAD);</span>
-<span class="fc" id="L544">    }</span>
+<span class="fc" id="L560">    public Tsr(Tsr[] tensors, String operation, boolean doAD) {</span>
+<span class="fc" id="L561">        _construct(tensors, operation, doAD);</span>
+<span class="fc" id="L562">    }</span>
 
     private void _construct(Tsr[] tensors, String operation, boolean doAD) {
-<span class="pc bpc" id="L547" title="3 of 6 branches missed.">        if (tensors == null || tensors.length == 0 || tensors[0] == null) return;</span>
-<span class="fc" id="L548">        Tsr result = Function.Setup.commit(this, tensors, operation, doAD);</span>
-<span class="fc" id="L549">        this._become(result);</span>
-<span class="fc" id="L550">    }</span>
+<span class="pc bpc" id="L565" title="3 of 6 branches missed.">        if (tensors == null || tensors.length == 0 || tensors[0] == null) return;</span>
+<span class="fc" id="L566">        Tsr result = Function.Setup.commit(this, tensors, operation, doAD);</span>
+<span class="fc" id="L567">        this._become(result);</span>
+<span class="fc" id="L568">    }</span>
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     //MODIFICATION :
@@ -559,10 +577,10 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
      * @return The tensor on which this method was called.
      */
     public Tsr backward(Tsr error) {
-<span class="pc bpc" id="L562" title="1 of 4 branches missed.">        if (!forComponent(GraphNode.class, node -&gt; node.backward(error)) &amp;&amp; this.rqsGradient()) {</span>
-<span class="fc" id="L563">            addToGradient(error);</span>
+<span class="pc bpc" id="L580" title="1 of 4 branches missed.">        if (!forComponent(GraphNode.class, node -&gt; node.backward(error)) &amp;&amp; this.rqsGradient()) {</span>
+<span class="fc" id="L581">            addToGradient(error);</span>
         }
-<span class="fc" id="L565">        return this;</span>
+<span class="fc" id="L583">        return this;</span>
     }
 
     /**
@@ -571,237 +589,237 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
      * @return
      */
     public Tsr backward(double value) {
-<span class="fc" id="L574">        backward(new Tsr(_conf.shape(), value));</span>
-<span class="fc" id="L575">        return this;</span>
+<span class="fc" id="L592">        backward(new Tsr(_conf.shape(), value));</span>
+<span class="fc" id="L593">        return this;</span>
     }
 
     public void applyGradient() {
-<span class="fc" id="L579">        forComponent(JITProp.class, jit -&gt; jit.execute());</span>
-<span class="fc" id="L580">        forComponent(Tsr.class, g -&gt; {</span>
-<span class="fc" id="L581">            forComponent(Optimizer.class, o -&gt; o.optimize(this));</span>
-<span class="fc" id="L582">            remove(Tsr.class);</span>
-<span class="fc" id="L583">            Function.Detached.PLUS_ASSIGN.call(new Tsr[]{this, g});</span>
-<span class="fc" id="L584">        });</span>
-<span class="fc" id="L585">    }</span>
+<span class="fc" id="L597">        forComponent(JITProp.class, jit -&gt; jit.execute());</span>
+<span class="fc" id="L598">        forComponent(Tsr.class, g -&gt; {</span>
+<span class="fc" id="L599">            forComponent(Optimizer.class, o -&gt; o.optimize(this));</span>
+<span class="fc" id="L600">            remove(Tsr.class);</span>
+<span class="fc" id="L601">            Function.Detached.PLUS_ASSIGN.call(new Tsr[]{this, g});</span>
+<span class="fc" id="L602">        });</span>
+<span class="fc" id="L603">    }</span>
 
     //TENSOR OPERATION (OVERLOADABLE):
     //=================================
     public Tsr T() {//Transposed!
-<span class="fc" id="L590">        StringBuilder operation = new StringBuilder();</span>
-<span class="fc bfc" id="L591" title="All 4 branches covered.">        for (int i=rank()-1; i&gt;=0; i--) operation.append(i).append((i == 0) ? &quot;&quot; : &quot;, &quot;);</span>
-<span class="fc" id="L592">        operation = new StringBuilder(&quot;[&quot; + operation + &quot;]:(I[0])&quot;);</span>
-<span class="fc" id="L593">        return new Tsr(this, operation.toString());</span>
+<span class="fc" id="L608">        StringBuilder operation = new StringBuilder();</span>
+<span class="fc bfc" id="L609" title="All 4 branches covered.">        for (int i=rank()-1; i&gt;=0; i--) operation.append(i).append((i == 0) ? &quot;&quot; : &quot;, &quot;);</span>
+<span class="fc" id="L610">        operation = new StringBuilder(&quot;[&quot; + operation + &quot;]:(I[0])&quot;);</span>
+<span class="fc" id="L611">        return new Tsr(this, operation.toString());</span>
     }
 
     public Tsr plus(Tsr other) {
-<span class="fc" id="L597">        return Function.PLUS.call(new Tsr[]{this, other});</span>
+<span class="fc" id="L615">        return Function.PLUS.call(new Tsr[]{this, other});</span>
     }
     public Tsr plusAssign(Tsr other){
-<span class="nc" id="L600">        return Function.PLUS_ASSIGN.call(new Tsr[]{this, other});</span>
+<span class="nc" id="L618">        return Function.PLUS_ASSIGN.call(new Tsr[]{this, other});</span>
     }
     public Tsr plus(Double value) {
-<span class="fc" id="L603">        return plus(new Tsr(this.shape(), value));</span>
+<span class="fc" id="L621">        return plus(new Tsr(this.shape(), value));</span>
     }
     public Tsr minus(Tsr other) {
-<span class="fc" id="L606">        return Function.MINUS.call(new Tsr[]{this, other});</span>
+<span class="fc" id="L624">        return Function.MINUS.call(new Tsr[]{this, other});</span>
     }
     public Tsr minusAssign(Tsr other){
-<span class="nc" id="L609">        return Function.MINUS_ASSIGN.call(new Tsr[]{this, other});</span>
+<span class="nc" id="L627">        return Function.MINUS_ASSIGN.call(new Tsr[]{this, other});</span>
     }
     public Tsr negative(){
-<span class="fc" id="L612">        return Function.NEG.call(new Tsr[]{this});</span>
+<span class="fc" id="L630">        return Function.NEG.call(new Tsr[]{this});</span>
     }
     public Tsr multiply(Tsr other) {
-<span class="fc" id="L615">        return Function.MUL.call(new Tsr[]{this, other});</span>
+<span class="fc" id="L633">        return Function.MUL.call(new Tsr[]{this, other});</span>
     }
     public Tsr timesAssign(Tsr other){
-<span class="nc" id="L618">        return Function.MUL_ASSIGN.call(new Tsr[]{this, other});</span>
+<span class="nc" id="L636">        return Function.MUL_ASSIGN.call(new Tsr[]{this, other});</span>
     }
     public Tsr multiply(Double value) {
-<span class="fc" id="L621">        return multiply(new Tsr(this.shape(), value));</span>
+<span class="fc" id="L639">        return multiply(new Tsr(this.shape(), value));</span>
     }
     public Tsr div(Tsr other) {
-<span class="fc" id="L624">        return Function.DIV.call(new Tsr[]{this, other});</span>
+<span class="fc" id="L642">        return Function.DIV.call(new Tsr[]{this, other});</span>
     }
     public Tsr div(Double value) {
-<span class="fc" id="L627">        return div(new Tsr(this.shape(), value));</span>
+<span class="fc" id="L645">        return div(new Tsr(this.shape(), value));</span>
     }
     public Tsr divAssign(Tsr other){
-<span class="nc" id="L630">        return Function.DIV_ASSIGN.call(new Tsr[]{this, other});</span>
+<span class="nc" id="L648">        return Function.DIV_ASSIGN.call(new Tsr[]{this, other});</span>
     }
     public Tsr mod(Tsr other) {
-<span class="fc" id="L633">        return Function.MOD.call(new Tsr[]{this, other});</span>
+<span class="fc" id="L651">        return Function.MOD.call(new Tsr[]{this, other});</span>
     }
     public Tsr modAssign(Tsr other){
-<span class="nc" id="L636">        return Function.MOD_ASSIGN.call(new Tsr[]{this, other});</span>
+<span class="nc" id="L654">        return Function.MOD_ASSIGN.call(new Tsr[]{this, other});</span>
     }
     public Tsr power(Tsr other) {
-<span class="fc" id="L639">        return Function.POW.call(new Tsr[]{this, other});</span>
+<span class="fc" id="L657">        return Function.POW.call(new Tsr[]{this, other});</span>
     }
     public Tsr power(Double value){
-<span class="fc" id="L642">        return power(new Tsr(this.shape(), value));</span>
+<span class="fc" id="L660">        return power(new Tsr(this.shape(), value));</span>
     }
     public Tsr xor(Tsr other) {
-<span class="fc" id="L645">        return Function.POW.call(new Tsr[]{this, other});</span>
+<span class="fc" id="L663">        return Function.POW.call(new Tsr[]{this, other});</span>
     }
     public Tsr xor(Double value) {
-<span class="fc" id="L648">        return xor(new Tsr(this.shape(), value));</span>
+<span class="fc" id="L666">        return xor(new Tsr(this.shape(), value));</span>
     }
     public Tsr dot(Tsr b){
-<span class="fc" id="L651">        Tsr a = this;</span>
-<span class="fc" id="L652">        int[][] fitter = AbstractNDArray.Utility.Indexing.makeFit(a.getNDConf().shape(), b.getNDConf().shape());</span>
-<span class="fc" id="L653">        boolean doReshape = false;</span>
-<span class="fc bfc" id="L654" title="All 6 branches covered.">        for(int i=0; i&lt;fitter[0].length &amp;&amp; !doReshape; i++) if(fitter[0][i]!=i) doReshape = true;</span>
-<span class="pc bpc" id="L655" title="4 of 6 branches missed.">        for(int i=0; i&lt;fitter[1].length &amp;&amp; !doReshape; i++) if(fitter[1][i]!=i) doReshape = true;</span>
-<span class="pc bpc" id="L656" title="1 of 2 branches missed.">        if(doReshape){</span>
-<span class="fc" id="L657">            a = Function.create(AbstractNDArray.Utility.Stringify.strConf(fitter[0])+&quot;:(I[0])&quot;).call(a);</span>
-<span class="fc" id="L658">            b = Function.create(AbstractNDArray.Utility.Stringify.strConf(fitter[1])+&quot;:(I[0])&quot;).call(b);</span>
+<span class="fc" id="L669">        Tsr a = this;</span>
+<span class="fc" id="L670">        int[][] fitter = AbstractNDArray.Utility.Indexing.makeFit(a.getNDConf().shape(), b.getNDConf().shape());</span>
+<span class="fc" id="L671">        boolean doReshape = false;</span>
+<span class="fc bfc" id="L672" title="All 6 branches covered.">        for(int i=0; i&lt;fitter[0].length &amp;&amp; !doReshape; i++) if(fitter[0][i]!=i) doReshape = true;</span>
+<span class="pc bpc" id="L673" title="4 of 6 branches missed.">        for(int i=0; i&lt;fitter[1].length &amp;&amp; !doReshape; i++) if(fitter[1][i]!=i) doReshape = true;</span>
+<span class="pc bpc" id="L674" title="1 of 2 branches missed.">        if(doReshape){</span>
+<span class="fc" id="L675">            a = Function.create(AbstractNDArray.Utility.Stringify.strConf(fitter[0])+&quot;:(I[0])&quot;).call(a);</span>
+<span class="fc" id="L676">            b = Function.create(AbstractNDArray.Utility.Stringify.strConf(fitter[1])+&quot;:(I[0])&quot;).call(b);</span>
         }
-<span class="fc" id="L660">        return Function.X.call(new Tsr[]{a, b});</span>
+<span class="fc" id="L678">        return Function.X.call(new Tsr[]{a, b});</span>
     }
     public boolean isCase(Tsr t){
-<span class="fc" id="L663">        boolean[] found = {false};</span>
-<span class="fc" id="L664">        this.forComponent(Relation.class, r -&gt; r.foreachChild( c -&gt; {</span>
-<span class="fc bfc" id="L665" title="All 2 branches covered.">                if (c.equals(t)) found[0]=true;</span>
-<span class="fc" id="L666">            }));</span>
-<span class="fc" id="L667">        return found[0];</span>
+<span class="fc" id="L681">        boolean[] found = {false};</span>
+<span class="fc" id="L682">        this.forComponent(Relation.class, r -&gt; r.foreachChild( c -&gt; {</span>
+<span class="fc bfc" id="L683" title="All 2 branches covered.">                if (c.equals(t)) found[0]=true;</span>
+<span class="fc" id="L684">            }));</span>
+<span class="fc" id="L685">        return found[0];</span>
     }
     public boolean contains(Tsr t){
-<span class="fc" id="L670">        return isCase(t);</span>
+<span class="fc" id="L688">        return isCase(t);</span>
     }
 
     public Tsr label(String[][] labels) {
-<span class="fc" id="L674">        IndexAlias indexAlias = find(IndexAlias.class);</span>
-<span class="pc bpc" id="L675" title="1 of 2 branches missed.">        if (indexAlias ==null) {</span>
-<span class="nc" id="L676">            indexAlias = new IndexAlias(this.rank());</span>
-<span class="nc" id="L677">            add(indexAlias);</span>
+<span class="fc" id="L692">        IndexAlias indexAlias = find(IndexAlias.class);</span>
+<span class="pc bpc" id="L693" title="1 of 2 branches missed.">        if (indexAlias ==null) {</span>
+<span class="nc" id="L694">            indexAlias = new IndexAlias(this.rank());</span>
+<span class="nc" id="L695">            add(indexAlias);</span>
         }
-<span class="fc bfc" id="L679" title="All 2 branches covered.">        for(int i=0; i&lt;labels.length; i++) {</span>
-<span class="pc bpc" id="L680" title="1 of 2 branches missed.">            if (labels[i]!=null) {</span>
-<span class="fc bfc" id="L681" title="All 2 branches covered.">                for (int ii=0; ii&lt;labels[i].length; ii++) {</span>
-<span class="pc bpc" id="L682" title="1 of 2 branches missed.">                    if (labels[i][ii]!=null) indexAlias.set(i, labels[i][ii], ii);</span>
+<span class="fc bfc" id="L697" title="All 2 branches covered.">        for(int i=0; i&lt;labels.length; i++) {</span>
+<span class="pc bpc" id="L698" title="1 of 2 branches missed.">            if (labels[i]!=null) {</span>
+<span class="fc bfc" id="L699" title="All 2 branches covered.">                for (int ii=0; ii&lt;labels[i].length; ii++) {</span>
+<span class="pc bpc" id="L700" title="1 of 2 branches missed.">                    if (labels[i][ii]!=null) indexAlias.set(i, labels[i][ii], ii);</span>
                 }
             }
         }
-<span class="fc" id="L686">        return this;</span>
+<span class="fc" id="L704">        return this;</span>
     }
 
     public Tsr label(List&lt;List&lt;Object&gt;&gt; labels) {
-<span class="fc" id="L690">        IndexAlias indexAlias = find(IndexAlias.class);</span>
-<span class="pc bpc" id="L691" title="1 of 2 branches missed.">        if (indexAlias ==null) add(new IndexAlias(labels));</span>
-<span class="fc" id="L692">        return this;</span>
+<span class="fc" id="L708">        IndexAlias indexAlias = find(IndexAlias.class);</span>
+<span class="pc bpc" id="L709" title="1 of 2 branches missed.">        if (indexAlias ==null) add(new IndexAlias(labels));</span>
+<span class="fc" id="L710">        return this;</span>
     }
 
     public Tsr label(Map&lt;Object, List&lt;Object&gt;&gt; labels) {
-<span class="fc" id="L696">        this.add(new IndexAlias(labels, this));</span>
-<span class="fc" id="L697">        return this;</span>
+<span class="fc" id="L714">        this.add(new IndexAlias(labels, this));</span>
+<span class="fc" id="L715">        return this;</span>
     }
 
     public Tsr putAt(Object key, Tsr value) {
-<span class="fc bfc" id="L701" title="All 2 branches covered.">        if (value.isEmpty()) throw new IllegalArgumentException(&quot;Provided tensor is empty!&quot;);</span>
-<span class="pc bpc" id="L702" title="1 of 2 branches missed.">        Tsr slice = ( key==null ) ? this : (Tsr)getAt(key);</span>
-<span class="fc" id="L703">        boolean valueIsDeviceVisitor = false;</span>
-<span class="fc bfc" id="L704" title="All 4 branches covered.">        if (slice.isOutsourced() &amp;&amp; !value.isOutsourced()){</span>
-<span class="fc" id="L705">            Device device = slice.find(Device.class);</span>
-<span class="fc" id="L706">            device.add(value);</span>
-<span class="fc" id="L707">            valueIsDeviceVisitor = true;</span>
+<span class="fc bfc" id="L719" title="All 2 branches covered.">        if (value.isEmpty()) throw new IllegalArgumentException(&quot;Provided tensor is empty!&quot;);</span>
+<span class="pc bpc" id="L720" title="1 of 2 branches missed.">        Tsr slice = ( key==null ) ? this : (Tsr)getAt(key);</span>
+<span class="fc" id="L721">        boolean valueIsDeviceVisitor = false;</span>
+<span class="fc bfc" id="L722" title="All 4 branches covered.">        if (slice.isOutsourced() &amp;&amp; !value.isOutsourced()){</span>
+<span class="fc" id="L723">            Device device = slice.find(Device.class);</span>
+<span class="fc" id="L724">            device.add(value);</span>
+<span class="fc" id="L725">            valueIsDeviceVisitor = true;</span>
         }
-<span class="pc bpc" id="L709" title="2 of 6 branches missed.">        if (this.isEmpty() &amp;&amp; slice.isEmpty() || slice.size()!=value.size()) _become(value);//Rethink this a little</span>
-<span class="fc" id="L710">        else new Tsr(new Tsr[]{slice, value}, &quot;I[0]&lt;-I[1]&quot;, false);</span>
-<span class="fc bfc" id="L711" title="All 2 branches covered.">        if (valueIsDeviceVisitor) value.find(Device.class).get(value);</span>
-<span class="fc" id="L712">        return this;</span>
+<span class="pc bpc" id="L727" title="2 of 6 branches missed.">        if (this.isEmpty() &amp;&amp; slice.isEmpty() || slice.size()!=value.size()) _become(value);//Rethink this a little</span>
+<span class="fc" id="L728">        else new Tsr(new Tsr[]{slice, value}, &quot;I[0]&lt;-I[1]&quot;, false);</span>
+<span class="fc bfc" id="L729" title="All 2 branches covered.">        if (valueIsDeviceVisitor) value.find(Device.class).get(value);</span>
+<span class="fc" id="L730">        return this;</span>
     }
 
     public double getAt(int[] idx){
-<span class="nc" id="L716">        return value64()[i_of_idx(idx)];</span>
+<span class="nc" id="L734">        return value64()[i_of_idx(idx)];</span>
     }
 
     public Object getAt(Object i1, Object i2) {
-<span class="fc" id="L720">        List&lt;Object&gt; args = Arrays.asList(i1, i2);</span>
-<span class="fc" id="L721">        return getAt(args);</span>
+<span class="fc" id="L738">        List&lt;Object&gt; args = Arrays.asList(i1, i2);</span>
+<span class="fc" id="L739">        return getAt(args);</span>
     }
 
     public Object getAt(Object key) {
-<span class="pc bpc" id="L725" title="1 of 2 branches missed.">        if (key==null) return this;</span>
-<span class="pc bpc" id="L726" title="3 of 4 branches missed.">        if(key instanceof Object[] &amp;&amp; ((Object[])key).length==0) key = new ArrayList();</span>
-<span class="fc bfc" id="L727" title="All 4 branches covered.">        if (key instanceof List &amp;&amp; ((List)key).isEmpty()){</span>
-<span class="pc bpc" id="L728" title="1 of 4 branches missed.">            if(this.isEmpty() || this.isUndefined()) return this;</span>
-<span class="fc bfc" id="L729" title="All 2 branches covered.">            for(int e : this.shape()) {</span>
-<span class="fc" id="L730">                List&lt;Integer&gt; rangeAsList = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L731" title="All 2 branches covered.">                for(int i=0; i&lt;e; i++) rangeAsList.add(i);</span>
-<span class="fc" id="L732">                ((List&lt;Object&gt;)key).add(rangeAsList);</span>
-<span class="fc" id="L733">            }</span>
-<span class="fc bfc" id="L734" title="All 2 branches covered.">        } else if (key instanceof Integer) {</span>
-<span class="fc" id="L735">            key = Arrays.asList(_conf.idx_of_i((Integer)key));</span>
-<span class="pc bpc" id="L736" title="1 of 2 branches missed.">        } else if (key instanceof Double) {</span>
-<span class="nc" id="L737">            key = Arrays.asList(_conf.idx_of_i((int)Math.floor((Double)key)));</span>
-<span class="fc bfc" id="L738" title="All 2 branches covered.">        } else if (key instanceof BigDecimal) {</span>
-<span class="fc" id="L739">            key = Arrays.asList(_conf.idx_of_i(((BigDecimal)key).intValue()));</span>
+<span class="pc bpc" id="L743" title="1 of 2 branches missed.">        if (key==null) return this;</span>
+<span class="pc bpc" id="L744" title="3 of 4 branches missed.">        if(key instanceof Object[] &amp;&amp; ((Object[])key).length==0) key = new ArrayList();</span>
+<span class="fc bfc" id="L745" title="All 4 branches covered.">        if (key instanceof List &amp;&amp; ((List)key).isEmpty()){</span>
+<span class="pc bpc" id="L746" title="1 of 4 branches missed.">            if(this.isEmpty() || this.isUndefined()) return this;</span>
+<span class="fc bfc" id="L747" title="All 2 branches covered.">            for(int e : this.shape()) {</span>
+<span class="fc" id="L748">                List&lt;Integer&gt; rangeAsList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L749" title="All 2 branches covered.">                for(int i=0; i&lt;e; i++) rangeAsList.add(i);</span>
+<span class="fc" id="L750">                ((List&lt;Object&gt;)key).add(rangeAsList);</span>
+<span class="fc" id="L751">            }</span>
+<span class="fc bfc" id="L752" title="All 2 branches covered.">        } else if (key instanceof Integer) {</span>
+<span class="fc" id="L753">            key = Arrays.asList(_conf.idx_of_i((Integer)key));</span>
+<span class="pc bpc" id="L754" title="1 of 2 branches missed.">        } else if (key instanceof Double) {</span>
+<span class="nc" id="L755">            key = Arrays.asList(_conf.idx_of_i((int)Math.floor((Double)key)));</span>
+<span class="fc bfc" id="L756" title="All 2 branches covered.">        } else if (key instanceof BigDecimal) {</span>
+<span class="fc" id="L757">            key = Arrays.asList(_conf.idx_of_i(((BigDecimal)key).intValue()));</span>
         }
-<span class="fc" id="L741">        int[] idxbase = null;</span>
-<span class="fc" id="L742">        int[] newShape = new int[this.rank()];</span>
-<span class="pc bpc" id="L743" title="1 of 4 branches missed.">        if (key instanceof List || key instanceof Object[]) {</span>
-<span class="pc bpc" id="L744" title="1 of 2 branches missed.">            if (key instanceof  List) key = ((List)key).toArray();</span>
-<span class="fc" id="L745">            boolean allInt = true;</span>
-<span class="fc bfc" id="L746" title="All 6 branches covered.">            for(Object o : (Object[])key) allInt = allInt &amp;&amp; o instanceof Integer;</span>
-<span class="fc bfc" id="L747" title="All 4 branches covered.">            if (allInt &amp;&amp; ((Object[])key).length==rank()) {</span>
-<span class="fc" id="L748">                key = _intArray((Object[]) key);</span>
-<span class="fc" id="L749">                idxbase = (int[])key;</span>
-<span class="pc bpc" id="L750" title="1 of 2 branches missed.">                if(key != null) {</span>
-<span class="fc bfc" id="L751" title="All 4 branches covered.">                    for(int i=0; i&lt;this.rank(); i++) idxbase[i] = (idxbase[i]&lt;0)?_conf.shape(i)+idxbase[i]:idxbase[i];</span>
-<span class="fc" id="L752">                    return IO.getFrom(this, idxbase);</span>
+<span class="fc" id="L759">        int[] idxbase = null;</span>
+<span class="fc" id="L760">        int[] newShape = new int[this.rank()];</span>
+<span class="pc bpc" id="L761" title="1 of 4 branches missed.">        if (key instanceof List || key instanceof Object[]) {</span>
+<span class="pc bpc" id="L762" title="1 of 2 branches missed.">            if (key instanceof  List) key = ((List)key).toArray();</span>
+<span class="fc" id="L763">            boolean allInt = true;</span>
+<span class="fc bfc" id="L764" title="All 6 branches covered.">            for(Object o : (Object[])key) allInt = allInt &amp;&amp; o instanceof Integer;</span>
+<span class="fc bfc" id="L765" title="All 4 branches covered.">            if (allInt &amp;&amp; ((Object[])key).length==rank()) {</span>
+<span class="fc" id="L766">                key = _intArray((Object[]) key);</span>
+<span class="fc" id="L767">                idxbase = (int[])key;</span>
+<span class="pc bpc" id="L768" title="1 of 2 branches missed.">                if(key != null) {</span>
+<span class="fc bfc" id="L769" title="All 4 branches covered.">                    for(int i=0; i&lt;this.rank(); i++) idxbase[i] = (idxbase[i]&lt;0)?_conf.shape(i)+idxbase[i]:idxbase[i];</span>
+<span class="fc" id="L770">                    return IO.getFrom(this, idxbase);</span>
                 }
             } else {
-<span class="fc" id="L755">                boolean hasScale = false;</span>
-<span class="pc bpc" id="L756" title="1 of 6 branches missed.">                for (Object o : (Object[])key) hasScale = hasScale || o instanceof Map;</span>
-<span class="fc bfc" id="L757" title="All 2 branches covered.">                idxbase = new int[((hasScale)?2:1)*this.rank()];</span>
-<span class="fc bfc" id="L758" title="All 2 branches covered.">                if (allInt) {</span>
-<span class="fc" id="L759">                    _configureSubsetFromRanges(new Object[]{_intArray((Object[]) key)}, idxbase, newShape, 0);</span>
+<span class="fc" id="L773">                boolean hasScale = false;</span>
+<span class="pc bpc" id="L774" title="1 of 6 branches missed.">                for (Object o : (Object[])key) hasScale = hasScale || o instanceof Map;</span>
+<span class="fc bfc" id="L775" title="All 2 branches covered.">                idxbase = new int[((hasScale)?2:1)*this.rank()];</span>
+<span class="fc bfc" id="L776" title="All 2 branches covered.">                if (allInt) {</span>
+<span class="fc" id="L777">                    _configureSubsetFromRanges(new Object[]{_intArray((Object[]) key)}, idxbase, newShape, 0);</span>
                 } else {
-<span class="fc" id="L761">                    _configureSubsetFromRanges((Object[])key, idxbase, newShape, 0);</span>
+<span class="fc" id="L779">                    _configureSubsetFromRanges((Object[])key, idxbase, newShape, 0);</span>
                 }
 
             }
-<span class="fc" id="L765">        }//...not simple slice... Advanced:</span>
-<span class="pc bpc" id="L766" title="1 of 2 branches missed.">        else if (key instanceof Map)// ==&gt; i, j, k slicing!</span>
+<span class="fc" id="L783">        }//...not simple slice... Advanced:</span>
+<span class="pc bpc" id="L784" title="1 of 2 branches missed.">        else if (key instanceof Map)// ==&gt; i, j, k slicing!</span>
         {
-<span class="fc" id="L768">            idxbase = new int[this.rank()*2];</span>
-<span class="fc" id="L769">            Object[] ranges = ((Map)key).keySet().toArray();</span>
-<span class="fc" id="L770">            _configureSubsetFromRanges(ranges, idxbase, newShape, 0);</span>
-<span class="fc" id="L771">            Object[] steps = ((Map)key).values().toArray();</span>
-<span class="fc bfc" id="L772" title="All 2 branches covered.">            for (int i=rank(); i&lt;2*this.rank(); i++){</span>
-<span class="fc" id="L773">                idxbase[i] = (Integer)steps[i-rank()];</span>
-<span class="fc" id="L774">                newShape[i-rank()] /= (Integer)steps[i-rank()];</span>
+<span class="fc" id="L786">            idxbase = new int[this.rank()*2];</span>
+<span class="fc" id="L787">            Object[] ranges = ((Map)key).keySet().toArray();</span>
+<span class="fc" id="L788">            _configureSubsetFromRanges(ranges, idxbase, newShape, 0);</span>
+<span class="fc" id="L789">            Object[] steps = ((Map)key).values().toArray();</span>
+<span class="fc bfc" id="L790" title="All 2 branches covered.">            for (int i=rank(); i&lt;2*this.rank(); i++){</span>
+<span class="fc" id="L791">                idxbase[i] = (Integer)steps[i-rank()];</span>
+<span class="fc" id="L792">                newShape[i-rank()] /= (Integer)steps[i-rank()];</span>
             }
         }
-<span class="fc" id="L777">        Tsr subset = new Tsr();</span>
-<span class="fc" id="L778">        subset._value = this._value;</span>
-<span class="fc" id="L779">        int[] newTranslation = this._conf.translation();</span>
-<span class="fc" id="L780">        int[] newIdxmap = Utility.Indexing.newTlnOf(newShape);</span>
-<span class="fc" id="L781">        int[] newSpread = new int[rank()];</span>
-<span class="fc" id="L782">        int[] newOffset = new int[rank()];</span>
-<span class="fc" id="L783">        Arrays.fill(newSpread, 1);</span>
-<span class="fc bfc" id="L784" title="All 2 branches covered.">        if ( idxbase.length == 2 * rank() ){</span>
-<span class="fc bfc" id="L785" title="All 4 branches covered.">            for(int i=rank(); i&lt;idxbase.length; i++) idxbase[i] = (idxbase[i]==0)?1:idxbase[i];</span>
+<span class="fc" id="L795">        Tsr subset = new Tsr();</span>
+<span class="fc" id="L796">        subset._value = this._value;</span>
+<span class="fc" id="L797">        int[] newTranslation = this._conf.translation();</span>
+<span class="fc" id="L798">        int[] newIdxmap = Utility.Indexing.newTlnOf(newShape);</span>
+<span class="fc" id="L799">        int[] newSpread = new int[rank()];</span>
+<span class="fc" id="L800">        int[] newOffset = new int[rank()];</span>
+<span class="fc" id="L801">        Arrays.fill(newSpread, 1);</span>
+<span class="fc bfc" id="L802" title="All 2 branches covered.">        if ( idxbase.length == 2 * rank() ){</span>
+<span class="fc bfc" id="L803" title="All 4 branches covered.">            for(int i=rank(); i&lt;idxbase.length; i++) idxbase[i] = (idxbase[i]==0)?1:idxbase[i];</span>
         }
-<span class="fc bfc" id="L787" title="All 2 branches covered.">        for(int i=0; i&lt;idxbase.length; i++){</span>
-<span class="fc bfc" id="L788" title="All 2 branches covered.">            if(i&gt;=rank()) newSpread[i-rank()] = idxbase[i];</span>
-<span class="fc" id="L789">            else newOffset[i] = idxbase[i];</span>
+<span class="fc bfc" id="L805" title="All 2 branches covered.">        for(int i=0; i&lt;idxbase.length; i++){</span>
+<span class="fc bfc" id="L806" title="All 2 branches covered.">            if(i&gt;=rank()) newSpread[i-rank()] = idxbase[i];</span>
+<span class="fc" id="L807">            else newOffset[i] = idxbase[i];</span>
         }
-<span class="fc" id="L791">        subset._conf = AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);</span>
+<span class="fc" id="L809">        subset._conf = AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);</span>
 
-<span class="fc bfc" id="L793" title="All 2 branches covered.">        if (this.isOutsourced()){</span>
-<span class="fc" id="L794">            Device device = this.find(Device.class);</span>
-<span class="fc" id="L795">            device.add(subset, this);</span>
-<span class="fc" id="L796">            subset.setIsOutsourced(true);</span>
+<span class="fc bfc" id="L811" title="All 2 branches covered.">        if (this.isOutsourced()){</span>
+<span class="fc" id="L812">            Device device = this.find(Device.class);</span>
+<span class="fc" id="L813">            device.add(subset, this);</span>
+<span class="fc" id="L814">            subset.setIsOutsourced(true);</span>
         }
-<span class="fc bfc" id="L798" title="All 2 branches covered.">        if (this.isVirtual()) subset.setIsVirtual(true);</span>
-<span class="fc" id="L799">        subset.add(new Relation().addParent(this));</span>
-<span class="fc" id="L800">        Relation parent = find(Relation.class);</span>
-<span class="fc bfc" id="L801" title="All 2 branches covered.">        parent = (parent!=null) ? parent : new Relation();</span>
-<span class="fc" id="L802">        parent.addChild(subset);</span>
-<span class="fc" id="L803">        this.add(parent);</span>
-<span class="fc" id="L804">        return subset;</span>
+<span class="fc bfc" id="L816" title="All 2 branches covered.">        if (this.isVirtual()) subset.setIsVirtual(true);</span>
+<span class="fc" id="L817">        subset.add(new Relation().addParent(this));</span>
+<span class="fc" id="L818">        Relation parent = find(Relation.class);</span>
+<span class="fc bfc" id="L819" title="All 2 branches covered.">        parent = (parent!=null) ? parent : new Relation();</span>
+<span class="fc" id="L820">        parent.addChild(subset);</span>
+<span class="fc" id="L821">        this.add(parent);</span>
+<span class="fc" id="L822">        return subset;</span>
     }
 
     /**
@@ -816,81 +834,81 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
      * @return A new rank index.
      */
     private int _configureSubsetFromRanges(Object[] ranges, int[] idxbase, int[] newShape, int offset){
-<span class="fc bfc" id="L819" title="All 2 branches covered.">        for (int i=0; i&lt;ranges.length; i++) {</span>
-<span class="fc" id="L820">            int first = 0;</span>
-<span class="fc" id="L821">            int last = 0;</span>
-<span class="fc bfc" id="L822" title="All 2 branches covered.">            if(ranges[i] instanceof int[]){</span>
-<span class="pc bpc" id="L823" title="1 of 2 branches missed.">                if(ranges[i] instanceof int[]){</span>
-<span class="fc" id="L824">                    List&lt;Integer&gt; intList = new ArrayList&lt;&gt;(((int[])ranges[i]).length);</span>
-<span class="fc bfc" id="L825" title="All 2 branches covered.">                    for (int ii : (int[])ranges[i]) intList.add(ii);</span>
-<span class="fc" id="L826">                    ranges[i] = intList;</span>
-<span class="fc" id="L827">                }</span>
-<span class="fc bfc" id="L828" title="All 2 branches covered.">            } else if (ranges[i] instanceof String[]){</span>
-<span class="pc bpc" id="L829" title="1 of 2 branches missed.">                if (ranges[i] instanceof String[]){</span>
-<span class="fc" id="L830">                    List&lt;String&gt; strList = new ArrayList&lt;&gt;(((String[])ranges[i]).length);</span>
-<span class="fc bfc" id="L831" title="All 2 branches covered.">                    for (String ii : (String[])ranges[i]) strList.add(ii);</span>
-<span class="fc" id="L832">                    ranges[i] = strList;</span>
+<span class="fc bfc" id="L837" title="All 2 branches covered.">        for (int i=0; i&lt;ranges.length; i++) {</span>
+<span class="fc" id="L838">            int first = 0;</span>
+<span class="fc" id="L839">            int last = 0;</span>
+<span class="fc bfc" id="L840" title="All 2 branches covered.">            if(ranges[i] instanceof int[]){</span>
+<span class="pc bpc" id="L841" title="1 of 2 branches missed.">                if(ranges[i] instanceof int[]){</span>
+<span class="fc" id="L842">                    List&lt;Integer&gt; intList = new ArrayList&lt;&gt;(((int[])ranges[i]).length);</span>
+<span class="fc bfc" id="L843" title="All 2 branches covered.">                    for (int ii : (int[])ranges[i]) intList.add(ii);</span>
+<span class="fc" id="L844">                    ranges[i] = intList;</span>
+<span class="fc" id="L845">                }</span>
+<span class="fc bfc" id="L846" title="All 2 branches covered.">            } else if (ranges[i] instanceof String[]){</span>
+<span class="pc bpc" id="L847" title="1 of 2 branches missed.">                if (ranges[i] instanceof String[]){</span>
+<span class="fc" id="L848">                    List&lt;String&gt; strList = new ArrayList&lt;&gt;(((String[])ranges[i]).length);</span>
+<span class="fc bfc" id="L849" title="All 2 branches covered.">                    for (String ii : (String[])ranges[i]) strList.add(ii);</span>
+<span class="fc" id="L850">                    ranges[i] = strList;</span>
                 }
             }
-<span class="fc bfc" id="L835" title="All 2 branches covered.">            if (!(ranges[i] instanceof  List)) {</span>
-<span class="fc bfc" id="L836" title="All 2 branches covered.">                if (ranges[i] instanceof Map) {</span>
-<span class="fc" id="L837">                    Object[] ks = ((Map) ranges[i]).keySet().toArray();</span>
-<span class="fc" id="L838">                    Object[] steps = ((Map) ranges[i]).values().toArray();</span>
-<span class="fc" id="L839">                    int newI = _configureSubsetFromRanges(ks, idxbase, newShape, i + offset);</span>
-<span class="fc bfc" id="L840" title="All 2 branches covered.">                    for (int ii = rank(); ii &lt; (rank() + steps.length); ii++) {</span>
-<span class="fc" id="L841">                        idxbase[ii + i + offset] = (Integer) steps[ii - rank()];</span>
-<span class="fc" id="L842">                        newShape[ii + i + offset - rank()] /= idxbase[ii + i + offset];</span>
+<span class="fc bfc" id="L853" title="All 2 branches covered.">            if (!(ranges[i] instanceof  List)) {</span>
+<span class="fc bfc" id="L854" title="All 2 branches covered.">                if (ranges[i] instanceof Map) {</span>
+<span class="fc" id="L855">                    Object[] ks = ((Map) ranges[i]).keySet().toArray();</span>
+<span class="fc" id="L856">                    Object[] steps = ((Map) ranges[i]).values().toArray();</span>
+<span class="fc" id="L857">                    int newI = _configureSubsetFromRanges(ks, idxbase, newShape, i + offset);</span>
+<span class="fc bfc" id="L858" title="All 2 branches covered.">                    for (int ii = rank(); ii &lt; (rank() + steps.length); ii++) {</span>
+<span class="fc" id="L859">                        idxbase[ii + i + offset] = (Integer) steps[ii - rank()];</span>
+<span class="fc" id="L860">                        newShape[ii + i + offset - rank()] /= idxbase[ii + i + offset];</span>
                     }
-<span class="fc" id="L844">                    i = newI;</span>
-<span class="fc" id="L845">                    continue;</span>
-<span class="fc bfc" id="L846" title="All 2 branches covered.">                } else if(ranges[i] instanceof Integer) {</span>
-<span class="fc" id="L847">                    first = (Integer) ranges[i];</span>
-<span class="fc" id="L848">                    last = (Integer) ranges[i];</span>
+<span class="fc" id="L862">                    i = newI;</span>
+<span class="fc" id="L863">                    continue;</span>
+<span class="pc bpc" id="L864" title="1 of 2 branches missed.">                } else if(ranges[i] instanceof Integer) {</span>
+<span class="nc" id="L865">                    first = (Integer) ranges[i];</span>
+<span class="nc" id="L866">                    last = (Integer) ranges[i];</span>
                 } else {
-<span class="fc" id="L850">                    IndexAlias indexAlias = find(IndexAlias.class);</span>
-<span class="pc bpc" id="L851" title="1 of 2 branches missed.">                    if (indexAlias !=null){</span>
-<span class="fc" id="L852">                        int position = indexAlias.get(ranges[i], i+offset);</span>
-<span class="fc" id="L853">                        first = position;</span>
-<span class="fc" id="L854">                        last = position;</span>
-<span class="fc" id="L855">                    } else {</span>
-<span class="nc" id="L856">                        throw new IllegalStateException(&quot;Given indexAlias key at axis &quot;+(i+offset)+&quot; not found!&quot;);</span>
+<span class="fc" id="L868">                    IndexAlias indexAlias = find(IndexAlias.class);</span>
+<span class="pc bpc" id="L869" title="1 of 2 branches missed.">                    if (indexAlias !=null){</span>
+<span class="fc" id="L870">                        int position = indexAlias.get(ranges[i], i+offset);</span>
+<span class="fc" id="L871">                        first = position;</span>
+<span class="fc" id="L872">                        last = position;</span>
+<span class="fc" id="L873">                    } else {</span>
+<span class="nc" id="L874">                        throw new IllegalStateException(&quot;Given indexAlias key at axis &quot;+(i+offset)+&quot; not found!&quot;);</span>
                     }
-<span class="fc" id="L858">                }</span>
+<span class="fc" id="L876">                }</span>
             } else {
-<span class="fc" id="L860">                ranges[i] = ((List)ranges[i]).toArray();</span>
-<span class="fc bfc" id="L861" title="All 2 branches covered.">                ranges[i] = (((Object[])ranges[i])[0] instanceof List)?((List)((Object[])ranges[i])[0]).toArray():((Object[])ranges[i]);</span>
-<span class="pc bpc" id="L862" title="1 of 4 branches missed.">                if (!(((Object[])(ranges[i]))[0] instanceof Integer) || !(((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1] instanceof Integer)){</span>
-<span class="fc" id="L863">                    IndexAlias indexAlias = find(IndexAlias.class);</span>
-<span class="pc bpc" id="L864" title="1 of 2 branches missed.">                    if (!(((Object[])(ranges[i]))[0] instanceof Integer)){</span>
-<span class="pc bpc" id="L865" title="1 of 2 branches missed.">                        if (indexAlias !=null){</span>
-<span class="fc" id="L866">                            first = indexAlias.get(((Object[])(ranges[i]))[0], i+offset);</span>
+<span class="fc" id="L878">                ranges[i] = ((List)ranges[i]).toArray();</span>
+<span class="fc bfc" id="L879" title="All 2 branches covered.">                ranges[i] = (((Object[])ranges[i])[0] instanceof List)?((List)((Object[])ranges[i])[0]).toArray():((Object[])ranges[i]);</span>
+<span class="pc bpc" id="L880" title="1 of 4 branches missed.">                if (!(((Object[])(ranges[i]))[0] instanceof Integer) || !(((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1] instanceof Integer)){</span>
+<span class="fc" id="L881">                    IndexAlias indexAlias = find(IndexAlias.class);</span>
+<span class="pc bpc" id="L882" title="1 of 2 branches missed.">                    if (!(((Object[])(ranges[i]))[0] instanceof Integer)){</span>
+<span class="pc bpc" id="L883" title="1 of 2 branches missed.">                        if (indexAlias !=null){</span>
+<span class="fc" id="L884">                            first = indexAlias.get(((Object[])(ranges[i]))[0], i+offset);</span>
                         }
                     }  else {
-<span class="nc" id="L869">                        first = (Integer) ((Object[])(ranges[i]))[0];</span>
+<span class="nc" id="L887">                        first = (Integer) ((Object[])(ranges[i]))[0];</span>
                     }
-<span class="pc bpc" id="L871" title="1 of 2 branches missed.">                    if (!(((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1] instanceof Integer)){</span>
-<span class="pc bpc" id="L872" title="1 of 2 branches missed.">                        if (indexAlias !=null){</span>
-<span class="fc" id="L873">                            last = indexAlias.get(((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1], i+offset);</span>
+<span class="pc bpc" id="L889" title="1 of 2 branches missed.">                    if (!(((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1] instanceof Integer)){</span>
+<span class="pc bpc" id="L890" title="1 of 2 branches missed.">                        if (indexAlias !=null){</span>
+<span class="fc" id="L891">                            last = indexAlias.get(((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1], i+offset);</span>
                         }
                     } else {
-<span class="nc" id="L876">                        last = (Integer) ((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1];</span>
+<span class="nc" id="L894">                        last = (Integer) ((Object[])(ranges[i]))[((Object[])(ranges[i])).length-1];</span>
                     }
-<span class="fc" id="L878">                } else {</span>
-<span class="fc" id="L879">                    first = ((Integer)((Object[])ranges[i])[0]);</span>
-<span class="fc" id="L880">                    last = ((Integer)((Object[])ranges[i])[((Object[])ranges[i]).length-1]);</span>
+<span class="fc" id="L896">                } else {</span>
+<span class="fc" id="L897">                    first = ((Integer)((Object[])ranges[i])[0]);</span>
+<span class="fc" id="L898">                    last = ((Integer)((Object[])ranges[i])[((Object[])ranges[i]).length-1]);</span>
                 }
             }
-<span class="pc bpc" id="L883" title="1 of 6 branches missed.">            if (first&lt;0 &amp;&amp; last&lt;0 &amp;&amp; first&gt;last){</span>
-<span class="fc" id="L884">                int temp = first;</span>
-<span class="fc" id="L885">                first = last;</span>
-<span class="fc" id="L886">                last = temp;</span>
+<span class="pc bpc" id="L901" title="1 of 6 branches missed.">            if (first&lt;0 &amp;&amp; last&lt;0 &amp;&amp; first&gt;last){</span>
+<span class="fc" id="L902">                int temp = first;</span>
+<span class="fc" id="L903">                first = last;</span>
+<span class="fc" id="L904">                last = temp;</span>
             }
-<span class="fc bfc" id="L888" title="All 2 branches covered.">            first = (first &lt; 0) ? _conf.shape(i)+first : first;</span>
-<span class="fc bfc" id="L889" title="All 2 branches covered.">            last = (last &lt; 0) ? _conf.shape(i)+last : last;</span>
-<span class="fc" id="L890">            newShape[i+offset] = (last - first) + 1;</span>
-<span class="fc" id="L891">            idxbase[i+offset] = first;</span>
+<span class="fc bfc" id="L906" title="All 2 branches covered.">            first = (first &lt; 0) ? _conf.shape(i)+first : first;</span>
+<span class="fc bfc" id="L907" title="All 2 branches covered.">            last = (last &lt; 0) ? _conf.shape(i)+last : last;</span>
+<span class="fc" id="L908">            newShape[i+offset] = (last - first) + 1;</span>
+<span class="fc" id="L909">            idxbase[i+offset] = first;</span>
         }
-<span class="fc" id="L893">        return ranges.length+offset-1;</span>
+<span class="fc" id="L911">        return ranges.length+offset-1;</span>
     }
 
     public static class IO
@@ -898,75 +916,75 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
         private IO(){}
 
         public static double getFrom(Tsr t, int i) {
-<span class="pc bpc" id="L901" title="2 of 4 branches missed.">            if (t.isEmpty() || t.isUndefined()) return 0;</span>
-<span class="pc bpc" id="L902" title="1 of 2 branches missed.">            else if (t.isVirtual()) return t.value64()[0];</span>
-<span class="nc" id="L903">            return t.value64()[t.i_of_i(i)];</span>
+<span class="pc bpc" id="L919" title="2 of 4 branches missed.">            if (t.isEmpty() || t.isUndefined()) return 0;</span>
+<span class="pc bpc" id="L920" title="1 of 2 branches missed.">            else if (t.isVirtual()) return t.value64()[0];</span>
+<span class="nc" id="L921">            return t.value64()[t.i_of_i(i)];</span>
         }
 
         public static double getFrom(Tsr t, int[] idx) {
-<span class="fc" id="L907">            t.setIsVirtual(false);</span>
-<span class="fc" id="L908">            return t.value64()[t.i_of_idx(idx)];</span>
+<span class="fc" id="L925">            t.setIsVirtual(false);</span>
+<span class="fc" id="L926">            return t.value64()[t.i_of_idx(idx)];</span>
         }
 
         public static void setInto(Tsr t, int i, double value) {
-<span class="fc" id="L912">            t.setIsVirtual(false);</span>
-<span class="fc" id="L913">            t.value64()[t.i_of_i(i)] = value;</span>
-<span class="fc" id="L914">        }</span>
+<span class="fc" id="L930">            t.setIsVirtual(false);</span>
+<span class="fc" id="L931">            t.value64()[t.i_of_i(i)] = value;</span>
+<span class="fc" id="L932">        }</span>
 
         public static void setInto(Tsr t, int[] idx, double value) {
-<span class="fc" id="L917">            t.setIsVirtual(false);</span>
-<span class="fc" id="L918">            t.value64()[t.i_of_idx(idx)] = value;</span>
-<span class="fc" id="L919">        }</span>
+<span class="fc" id="L935">            t.setIsVirtual(false);</span>
+<span class="fc" id="L936">            t.value64()[t.i_of_idx(idx)] = value;</span>
+<span class="fc" id="L937">        }</span>
 
         public static void addInto(Tsr t, int i, double value) {
-<span class="fc" id="L922">            t.setIsVirtual(false);</span>
-<span class="fc" id="L923">            t.value64()[t.i_of_i(i)] += value;</span>
-<span class="fc" id="L924">        }</span>
+<span class="fc" id="L940">            t.setIsVirtual(false);</span>
+<span class="fc" id="L941">            t.value64()[t.i_of_i(i)] += value;</span>
+<span class="fc" id="L942">        }</span>
 
         public static void addInto(Tsr t, int[] idx, double value) {
-<span class="fc" id="L927">            t.setIsVirtual(false);</span>
-<span class="fc" id="L928">            t.value64()[t.i_of_idx(idx)] += value;</span>
-<span class="fc" id="L929">        }</span>
+<span class="fc" id="L945">            t.setIsVirtual(false);</span>
+<span class="fc" id="L946">            t.value64()[t.i_of_idx(idx)] += value;</span>
+<span class="fc" id="L947">        }</span>
 
         public static Tsr addInto(Tsr t, Tsr source) {
-<span class="pc bpc" id="L932" title="3 of 4 branches missed.">            if (t.isVirtual() &amp;&amp; source.isVirtual()) t.value64()[0] += source.value64()[0];</span>
-<span class="fc" id="L933">            else FunctionBuilder.build(&quot;I[0]&lt;-(I[0]+I[1])&quot;, false).call(new Tsr[]{t, source});</span>
-<span class="fc" id="L934">            return source;</span>
+<span class="pc bpc" id="L950" title="3 of 4 branches missed.">            if (t.isVirtual() &amp;&amp; source.isVirtual()) t.value64()[0] += source.value64()[0];</span>
+<span class="fc" id="L951">            else FunctionBuilder.build(&quot;I[0]&lt;-(I[0]+I[1])&quot;, false).call(new Tsr[]{t, source});</span>
+<span class="fc" id="L952">            return source;</span>
         }
 
         public static void subInto(Tsr t, int i, double value) {
-<span class="fc" id="L938">            t.setIsVirtual(false);</span>
-<span class="fc" id="L939">            t.value64()[t.i_of_i(i)] -= value;</span>
-<span class="fc" id="L940">        }</span>
+<span class="fc" id="L956">            t.setIsVirtual(false);</span>
+<span class="fc" id="L957">            t.value64()[t.i_of_i(i)] -= value;</span>
+<span class="fc" id="L958">        }</span>
 
         public static void subInto(Tsr t, int[] idx, double value) {
-<span class="fc" id="L943">            t.setIsVirtual(false);</span>
-<span class="fc" id="L944">            t.value64()[t.i_of_idx(idx)] -= value;</span>
-<span class="fc" id="L945">        }</span>
+<span class="fc" id="L961">            t.setIsVirtual(false);</span>
+<span class="fc" id="L962">            t.value64()[t.i_of_idx(idx)] -= value;</span>
+<span class="fc" id="L963">        }</span>
 
         public static void subInto(Tsr t, Tsr source) {
-<span class="pc bpc" id="L948" title="3 of 4 branches missed.">            if (t.isVirtual() &amp;&amp; source.isVirtual()) {</span>
-<span class="nc" id="L949">                t.value64()[0] -= source.value64()[0];</span>
+<span class="pc bpc" id="L966" title="3 of 4 branches missed.">            if (t.isVirtual() &amp;&amp; source.isVirtual()) {</span>
+<span class="nc" id="L967">                t.value64()[0] -= source.value64()[0];</span>
             } else {
-<span class="pc bpc" id="L951" title="1 of 2 branches missed.">                if (t.isVirtual()) t.setIsVirtual(false);</span>
-<span class="fc" id="L952">                int[] index = new int[t.getNDConf().shape().length];</span>
-<span class="fc" id="L953">                int size = t.size();</span>
-<span class="fc bfc" id="L954" title="All 2 branches covered.">                for (int i = 0; i &lt; size; i++) {</span>
-<span class="fc" id="L955">                    IO.subInto(t, index, IO.getFrom(source, index));</span>
-<span class="fc" id="L956">                    Utility.Indexing.increment(index, t.getNDConf().shape());</span>
+<span class="pc bpc" id="L969" title="1 of 2 branches missed.">                if (t.isVirtual()) t.setIsVirtual(false);</span>
+<span class="fc" id="L970">                int[] index = new int[t.getNDConf().shape().length];</span>
+<span class="fc" id="L971">                int size = t.size();</span>
+<span class="fc bfc" id="L972" title="All 2 branches covered.">                for (int i = 0; i &lt; size; i++) {</span>
+<span class="fc" id="L973">                    IO.subInto(t, index, IO.getFrom(source, index));</span>
+<span class="fc" id="L974">                    Utility.Indexing.increment(index, t.getNDConf().shape());</span>
                 }
             }
-<span class="fc" id="L959">        }</span>
+<span class="fc" id="L977">        }</span>
 
         public static void mulInto(Tsr t, int i, double value) {
-<span class="fc" id="L962">            t.setIsVirtual(false);</span>
-<span class="fc" id="L963">            t.value64()[t.i_of_i(i)] *= value;</span>
-<span class="fc" id="L964">        }</span>
+<span class="fc" id="L980">            t.setIsVirtual(false);</span>
+<span class="fc" id="L981">            t.value64()[t.i_of_i(i)] *= value;</span>
+<span class="fc" id="L982">        }</span>
 
         public static void mulInto(Tsr t, int[] idx, double value) {
-<span class="fc" id="L967">            t.setIsVirtual(false);</span>
-<span class="fc" id="L968">            t.value64()[t.i_of_idx(idx)] *= value;</span>
-<span class="fc" id="L969">        }</span>
+<span class="fc" id="L985">            t.setIsVirtual(false);</span>
+<span class="fc" id="L986">            t.value64()[t.i_of_idx(idx)] *= value;</span>
+<span class="fc" id="L987">        }</span>
 
     }
 
@@ -975,22 +993,22 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
         private Exec(){}
 
         public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr) {
-<span class="pc bpc" id="L978" title="1 of 2 branches missed.">            tensor = (newTsr) ? (Tsr)tensor.getAt(new ArrayList&lt;&gt;()) : tensor;</span>
-<span class="fc" id="L979">            int[] newShape = Utility.Indexing.shpCheck(Utility.Indexing.rearrange(tensor._conf.shape(), newForm), tensor);</span>
-<span class="fc" id="L980">            int[] newTranslation = Utility.Indexing.rearrange(tensor._conf.translation(), newShape, newForm);</span>
-<span class="fc" id="L981">            int[] newIdxmap = Utility.Indexing.newTlnOf(newShape);</span>
-<span class="fc" id="L982">            int[] newSpread = new int[newForm.length];</span>
-<span class="fc bfc" id="L983" title="All 2 branches covered.">            for (int i = 0; i &lt; newForm.length; i++) {</span>
-<span class="fc bfc" id="L984" title="All 2 branches covered.">                if (newForm[i] &lt; 0) newSpread[i] = 1;</span>
-<span class="pc bpc" id="L985" title="1 of 2 branches missed.">                else if (newForm[i] &gt;= 0) newSpread[i] = tensor._conf.spread(newForm[i]);</span>
+<span class="pc bpc" id="L996" title="1 of 2 branches missed.">            tensor = (newTsr) ? (Tsr)tensor.getAt(new ArrayList&lt;&gt;()) : tensor;</span>
+<span class="fc" id="L997">            int[] newShape = Utility.Indexing.shpCheck(Utility.Indexing.rearrange(tensor._conf.shape(), newForm), tensor);</span>
+<span class="fc" id="L998">            int[] newTranslation = Utility.Indexing.rearrange(tensor._conf.translation(), newShape, newForm);</span>
+<span class="fc" id="L999">            int[] newIdxmap = Utility.Indexing.newTlnOf(newShape);</span>
+<span class="fc" id="L1000">            int[] newSpread = new int[newForm.length];</span>
+<span class="fc bfc" id="L1001" title="All 2 branches covered.">            for (int i = 0; i &lt; newForm.length; i++) {</span>
+<span class="fc bfc" id="L1002" title="All 2 branches covered.">                if (newForm[i] &lt; 0) newSpread[i] = 1;</span>
+<span class="pc bpc" id="L1003" title="1 of 2 branches missed.">                else if (newForm[i] &gt;= 0) newSpread[i] = tensor._conf.spread(newForm[i]);</span>
             }
-<span class="fc" id="L987">            int[] newOffset = new int[newForm.length];</span>
-<span class="fc bfc" id="L988" title="All 2 branches covered.">            for (int i = 0; i &lt; newForm.length; i++) {</span>
-<span class="fc bfc" id="L989" title="All 2 branches covered.">                if (newForm[i] &lt; 0) newOffset[i] = 0;</span>
-<span class="pc bpc" id="L990" title="1 of 2 branches missed.">                else if (newForm[i] &gt;= 0) newOffset[i] = tensor._conf.offset(newForm[i]);</span>
+<span class="fc" id="L1005">            int[] newOffset = new int[newForm.length];</span>
+<span class="fc bfc" id="L1006" title="All 2 branches covered.">            for (int i = 0; i &lt; newForm.length; i++) {</span>
+<span class="fc bfc" id="L1007" title="All 2 branches covered.">                if (newForm[i] &lt; 0) newOffset[i] = 0;</span>
+<span class="pc bpc" id="L1008" title="1 of 2 branches missed.">                else if (newForm[i] &gt;= 0) newOffset[i] = tensor._conf.offset(newForm[i]);</span>
             }
-<span class="fc" id="L992">            tensor._conf = AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);</span>
-<span class="fc" id="L993">            return tensor;</span>
+<span class="fc" id="L1010">            tensor._conf = AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);</span>
+<span class="fc" id="L1011">            return tensor;</span>
         }
 
     }
@@ -999,287 +1017,283 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
 
 
     public Tsr setValue64(double[] value) {
-<span class="fc bfc" id="L1002" title="All 2 branches covered.">        if (this.isOutsourced()) this.find(Device.class).overwrite64(this, value);</span>
-<span class="fc" id="L1003">        else _value = value;</span>
-<span class="fc" id="L1004">        return this;</span>
+<span class="pc bpc" id="L1020" title="1 of 2 branches missed.">        if (this.isOutsourced()) this.find(Device.class).overwrite64(this, value);</span>
+<span class="fc bfc" id="L1021" title="All 2 branches covered.">        else if ( _value==null ) _value = value;</span>
+<span class="fc bfc" id="L1022" title="All 4 branches covered.">        else if ( _value instanceof float[] ) for ( int i=0; i&lt;value.length; i++ ) ((float[])_value)[i] = (float) value[i];</span>
+<span class="pc bpc" id="L1023" title="1 of 4 branches missed.">        else if ( _value instanceof double[] ) for ( int i=0; i&lt;value.length; i++ ) ((double[])_value)[i] = value[i];</span>
+<span class="fc" id="L1024">        return this;</span>
     }
 
     public Tsr setValue32(float[] value) {
-<span class="fc bfc" id="L1008" title="All 2 branches covered.">        if (this.isOutsourced()) this.find(Device.class).overwrite32(this, value);</span>
-<span class="fc" id="L1009">        else _value = value;</span>
-<span class="fc" id="L1010">        return this;</span>
+<span class="pc bpc" id="L1028" title="1 of 2 branches missed.">        if (this.isOutsourced()) this.find(Device.class).overwrite32(this, value);</span>
+<span class="pc bpc" id="L1029" title="1 of 2 branches missed.">        else if ( _value==null ) _value = value;</span>
+<span class="pc bpc" id="L1030" title="3 of 4 branches missed.">        else if ( _value instanceof float[] ) for ( int i=0; i&lt;value.length; i++ ) ((float[])_value)[i] = value[i];</span>
+<span class="pc bpc" id="L1031" title="1 of 4 branches missed.">        else if ( _value instanceof double[] ) for ( int i=0; i&lt;value.length; i++ ) ((double[])_value)[i] = value[i];</span>
+<span class="fc" id="L1032">        return this;</span>
     }
 
     public Tsr setValue(Object value) {
-<span class="fc bfc" id="L1014" title="All 2 branches covered.">        if (value instanceof float[]) this.setValue32((float[])value);</span>
-<span class="pc bpc" id="L1015" title="1 of 2 branches missed.">        else if(value instanceof  double[]) this.setValue64((double[])value);</span>
-<span class="fc bfc" id="L1016" title="All 2 branches covered.">        else if(value instanceof Float) {</span>
-<span class="fc" id="L1017">            this.setIsVirtual(true);</span>
-<span class="pc bpc" id="L1018" title="1 of 2 branches missed.">            if(this.is32()) ((float[])_value)[0] = (Float) value;</span>
-<span class="fc" id="L1019">            else ((double[])_value)[0] = ((Float)value).doubleValue();</span>
-<span class="pc bpc" id="L1020" title="1 of 2 branches missed.">        } else if (value instanceof Double) {</span>
-<span class="fc" id="L1021">            this.setIsVirtual(true);</span>
-<span class="pc bpc" id="L1022" title="1 of 2 branches missed.">            if(this.is64()) ((double[])_value)[0] = (Double) value;</span>
-<span class="nc" id="L1023">            else ((float[])_value)[0] = ((Double)value).floatValue();</span>
+<span class="fc bfc" id="L1036" title="All 2 branches covered.">        if (value instanceof float[]) this.setValue32((float[])value);</span>
+<span class="fc bfc" id="L1037" title="All 2 branches covered.">        else if(value instanceof  double[]) this.setValue64((double[])value);</span>
+<span class="fc bfc" id="L1038" title="All 2 branches covered.">        else if(value instanceof Float) {</span>
+<span class="fc" id="L1039">            this.setIsVirtual(true);</span>
+<span class="pc bpc" id="L1040" title="1 of 2 branches missed.">            if(this.is32()) ((float[])_value)[0] = (Float) value;</span>
+<span class="fc" id="L1041">            else ((double[])_value)[0] = ((Float)value).doubleValue();</span>
+<span class="pc bpc" id="L1042" title="1 of 2 branches missed.">        } else if (value instanceof Double) {</span>
+<span class="fc" id="L1043">            this.setIsVirtual(true);</span>
+<span class="pc bpc" id="L1044" title="1 of 2 branches missed.">            if(this.is64()) ((double[])_value)[0] = (Double) value;</span>
+<span class="nc" id="L1045">            else ((float[])_value)[0] = ((Double)value).floatValue();</span>
         }
-<span class="fc" id="L1025">        return this;</span>
+<span class="fc" id="L1047">        return this;</span>
     }
 
     public Object getValue(){
-<span class="pc bpc" id="L1029" title="1 of 2 branches missed.">        if(this.isOutsourced()){</span>
-<span class="nc" id="L1030">            Device device = find(Device.class);</span>
-<span class="nc bnc" id="L1031" title="All 2 branches missed.">            return (this.is32())?device.value32Of(this):device.value64Of(this);</span>
+<span class="pc bpc" id="L1051" title="1 of 2 branches missed.">        if(this.isOutsourced()){</span>
+<span class="nc" id="L1052">            Device device = find(Device.class);</span>
+<span class="nc bnc" id="L1053" title="All 2 branches missed.">            return (this.is32())?device.value32Of(this):device.value64Of(this);</span>
         }
-<span class="fc" id="L1033">        return _value;</span>
+<span class="fc" id="L1055">        return _value;</span>
     }
 
     public double[] gradient64() {
-<span class="fc" id="L1037">        Tsr gradient = this.find(Tsr.class);</span>
-<span class="fc bfc" id="L1038" title="All 2 branches covered.">        if(gradient==null) return new double[0];</span>
-<span class="pc bpc" id="L1039" title="1 of 2 branches missed.">        return (this.is32())? DataHelper.floatToDouble(gradient.value32()):gradient.value64();</span>
+<span class="fc" id="L1059">        Tsr gradient = this.find(Tsr.class);</span>
+<span class="fc bfc" id="L1060" title="All 2 branches covered.">        if(gradient==null) return new double[0];</span>
+<span class="pc bpc" id="L1061" title="1 of 2 branches missed.">        return (this.is32())? DataHelper.floatToDouble(gradient.value32()):gradient.value64();</span>
     }
 
     public float[] gradient32(){
-<span class="nc" id="L1043">        Tsr gradient = this.find(Tsr.class);</span>
-<span class="nc bnc" id="L1044" title="All 2 branches missed.">        if(gradient==null) return new float[0];</span>
-<span class="nc bnc" id="L1045" title="All 2 branches missed.">        return (this.is64())?DataHelper.doubleToFloat(gradient.value64()): gradient.value32();</span>
+<span class="nc" id="L1065">        Tsr gradient = this.find(Tsr.class);</span>
+<span class="nc bnc" id="L1066" title="All 2 branches missed.">        if(gradient==null) return new float[0];</span>
+<span class="nc bnc" id="L1067" title="All 2 branches missed.">        return (this.is64())?DataHelper.doubleToFloat(gradient.value64()): gradient.value32();</span>
     }
 
     public Tsr addToGradient(Tsr error) {
-<span class="fc bfc" id="L1049" title="All 2 branches covered.">        if(!forComponent(Tsr.class,  g -&gt;</span>
-<span class="fc" id="L1050">            this.add(Function.Detached.PLUS_ASSIGN.call(new Tsr[]{g, error}))</span>
+<span class="fc bfc" id="L1071" title="All 2 branches covered.">        if(!forComponent(Tsr.class,  g -&gt;</span>
+<span class="fc" id="L1072">            this.add(Function.Detached.PLUS_ASSIGN.call(new Tsr[]{g, error}))</span>
         )){
-<span class="fc" id="L1052">            this.add(error).forComponent(Device.class, d -&gt; d.add(error));</span>
-        }
-<span class="fc" id="L1054">        return this;</span>
-    }
-
-    public Tsr to32() {
-<span class="pc bpc" id="L1058" title="1 of 2 branches missed.">        if (this.is64()){</span>
-<span class="fc" id="L1059">            Device device = this.find(Device.class);</span>
-<span class="pc bpc" id="L1060" title="1 of 2 branches missed.">            if (device!=null) device.get(this);</span>
-<span class="fc" id="L1061">            _value = DataHelper.doubleToFloat((double[])_value);</span>
-<span class="fc" id="L1062">            forComponent(Tsr.class, Tsr::to32);</span>
-<span class="pc bpc" id="L1063" title="1 of 2 branches missed.">            if (device!=null) device.add(this);</span>
-        }
-<span class="fc" id="L1065">        return this;</span>
-    }
-
-    public Tsr to64() {
-<span class="pc bpc" id="L1069" title="1 of 2 branches missed.">        if (this.is32()) {</span>
-<span class="fc" id="L1070">            Device device = this.find(Device.class);</span>
-<span class="pc bpc" id="L1071" title="1 of 2 branches missed.">            if (device!=null) device.get(this);</span>
-<span class="fc" id="L1072">            _value = DataHelper.floatToDouble((float[])_value);</span>
-<span class="fc" id="L1073">            forComponent(Tsr.class, Tsr::to64);</span>
-<span class="pc bpc" id="L1074" title="1 of 2 branches missed.">            if (device!=null) device.add(this);</span>
+<span class="fc" id="L1074">            this.add(error).forComponent(Device.class, d -&gt; d.add(error));</span>
         }
 <span class="fc" id="L1076">        return this;</span>
     }
 
+    public Tsr to32() {
+<span class="pc bpc" id="L1080" title="1 of 2 branches missed.">        if (this.is64()){</span>
+<span class="fc" id="L1081">            Device device = this.find(Device.class);</span>
+<span class="pc bpc" id="L1082" title="1 of 2 branches missed.">            if (device!=null) device.get(this);</span>
+<span class="fc" id="L1083">            _value = DataHelper.doubleToFloat((double[])_value);</span>
+<span class="fc" id="L1084">            forComponent(Tsr.class, Tsr::to32);</span>
+<span class="pc bpc" id="L1085" title="1 of 2 branches missed.">            if (device!=null) device.add(this);</span>
+        }
+<span class="fc" id="L1087">        return this;</span>
+    }
+
+    public Tsr to64() {
+<span class="pc bpc" id="L1091" title="1 of 2 branches missed.">        if (this.is32()) {</span>
+<span class="fc" id="L1092">            Device device = this.find(Device.class);</span>
+<span class="pc bpc" id="L1093" title="1 of 2 branches missed.">            if (device!=null) device.get(this);</span>
+<span class="fc" id="L1094">            _value = DataHelper.floatToDouble((float[])_value);</span>
+<span class="fc" id="L1095">            forComponent(Tsr.class, Tsr::to64);</span>
+<span class="pc bpc" id="L1096" title="1 of 2 branches missed.">            if (device!=null) device.add(this);</span>
+        }
+<span class="fc" id="L1098">        return this;</span>
+    }
+
     public double value64(int i) {
-<span class="pc bpc" id="L1080" title="1 of 2 branches missed.">        if (this.isVirtual()){</span>
-<span class="pc bpc" id="L1081" title="1 of 2 branches missed.">            if (this.is64()) return ((double[])_value)[0];</span>
-<span class="nc" id="L1082">            else return ((float[])_value)[0];</span>
+<span class="fc bfc" id="L1102" title="All 2 branches covered.">        if (this.isVirtual()){</span>
+<span class="pc bpc" id="L1103" title="1 of 2 branches missed.">            if (this.is64()) return ((double[])_value)[0];</span>
+<span class="nc" id="L1104">            else return ((float[])_value)[0];</span>
         } else {
-<span class="nc bnc" id="L1084" title="All 2 branches missed.">            if (this.is64()) return ((double[])_value)[i];</span>
-<span class="nc" id="L1085">            else return ((float[])_value)[i];</span>
+<span class="fc bfc" id="L1106" title="All 2 branches covered.">            if (this.is64()) return ((double[])_value)[i];</span>
+<span class="fc" id="L1107">            else return ((float[])_value)[i];</span>
         }
     }
 
     public double[] value64() {
-<span class="pc bpc" id="L1090" title="1 of 6 branches missed.">        if (_value == null &amp;&amp; this.isOutsourced() &amp;&amp; this.has(Device.class)) {</span>
-<span class="fc" id="L1091">            return this.find(Device.class).value64Of(this);</span>
+<span class="pc bpc" id="L1112" title="1 of 6 branches missed.">        if (_value == null &amp;&amp; this.isOutsourced() &amp;&amp; this.has(Device.class)) {</span>
+<span class="fc" id="L1113">            return this.find(Device.class).value64Of(this);</span>
         }
-<span class="fc bfc" id="L1093" title="All 2 branches covered.">        double[] newValue = (this.is64())?(double[])_value: DataHelper.floatToDouble((float[])_value);</span>
-<span class="fc bfc" id="L1094" title="All 6 branches covered.">        if (this.isVirtual() &amp;&amp; newValue!=null &amp;&amp; this.size()&gt;1) {</span>
-<span class="fc" id="L1095">            newValue = new double[this.size()];</span>
-<span class="pc bpc" id="L1096" title="1 of 2 branches missed.">            double[] value = (this.is64())?(double[])_value:DataHelper.floatToDouble((float[])_value);</span>
-<span class="fc" id="L1097">            Arrays.fill(newValue, value[0]);</span>
-        }
-<span class="fc" id="L1099">        return newValue;</span>
-    }
-
-    public float value32(int i) {
-<span class="pc bpc" id="L1103" title="1 of 2 branches missed.">        if (this.isVirtual()){</span>
-<span class="nc bnc" id="L1104" title="All 2 branches missed.">            if (this.is64()) return (float) ((double[])_value)[0];</span>
-<span class="nc" id="L1105">            else return ((float[])_value)[0];</span>
-        } else {
-<span class="fc bfc" id="L1107" title="All 2 branches covered.">            if (this.is64()) return (float) ((double[])_value)[i];</span>
-<span class="fc" id="L1108">            else return ((float[])_value)[i];</span>
-        }
-    }
-
-    public float[] value32() {
-<span class="pc bpc" id="L1113" title="1 of 6 branches missed.">        if (_value == null &amp;&amp; this.isOutsourced() &amp;&amp; this.has(Device.class)) {</span>
-<span class="fc" id="L1114">            return this.find(Device.class).value32Of(this);</span>
-        }
-<span class="fc bfc" id="L1116" title="All 2 branches covered.">        float[] newValue = (this.is64())?DataHelper.doubleToFloat((double[])_value):(float[])_value;</span>
-<span class="fc bfc" id="L1117" title="All 4 branches covered.">        if (this.isVirtual() &amp;&amp; newValue!=null) {</span>
-<span class="fc" id="L1118">            newValue = new float[this.size()];</span>
-<span class="fc" id="L1119">            Arrays.fill(newValue, newValue[0]);</span>
+<span class="fc bfc" id="L1115" title="All 2 branches covered.">        double[] newValue = (this.is64())?(double[])_value: DataHelper.floatToDouble((float[])_value);</span>
+<span class="fc bfc" id="L1116" title="All 6 branches covered.">        if (this.isVirtual() &amp;&amp; newValue!=null &amp;&amp; this.size()&gt;1) {</span>
+<span class="fc" id="L1117">            newValue = new double[this.size()];</span>
+<span class="pc bpc" id="L1118" title="1 of 2 branches missed.">            double[] value = (this.is64())?(double[])_value:DataHelper.floatToDouble((float[])_value);</span>
+<span class="fc" id="L1119">            Arrays.fill(newValue, value[0]);</span>
         }
 <span class="fc" id="L1121">        return newValue;</span>
     }
 
-    public Tsr setValue(double[] newValue) {
-<span class="fc" id="L1125">        _value = newValue;</span>
-<span class="pc bpc" id="L1126" title="3 of 4 branches missed.">        if (this.isOutsourced() &amp;&amp; newValue != null) this.find(Device.class).add(this);</span>
-<span class="fc" id="L1127">        return this;</span>
+    public float value32(int i) {
+<span class="pc bpc" id="L1125" title="1 of 2 branches missed.">        if (this.isVirtual()){</span>
+<span class="nc bnc" id="L1126" title="All 2 branches missed.">            if (this.is64()) return (float) ((double[])_value)[0];</span>
+<span class="nc" id="L1127">            else return ((float[])_value)[0];</span>
+        } else {
+<span class="fc bfc" id="L1129" title="All 2 branches covered.">            if (this.is64()) return (float) ((double[])_value)[i];</span>
+<span class="fc" id="L1130">            else return ((float[])_value)[i];</span>
+        }
     }
 
-
+    public float[] value32() {
+<span class="pc bpc" id="L1135" title="1 of 6 branches missed.">        if (_value == null &amp;&amp; this.isOutsourced() &amp;&amp; this.has(Device.class)) {</span>
+<span class="fc" id="L1136">            return this.find(Device.class).value32Of(this);</span>
+        }
+<span class="fc bfc" id="L1138" title="All 2 branches covered.">        float[] newValue = (this.is64())?DataHelper.doubleToFloat((double[])_value):(float[])_value;</span>
+<span class="fc bfc" id="L1139" title="All 4 branches covered.">        if (this.isVirtual() &amp;&amp; newValue!=null) {</span>
+<span class="fc" id="L1140">            newValue = new float[this.size()];</span>
+<span class="fc" id="L1141">            Arrays.fill(newValue, newValue[0]);</span>
+        }
+<span class="fc" id="L1143">        return newValue;</span>
+    }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     //DISPLAY :
     //=========================
     public String toString(String mode){
-<span class="pc bpc" id="L1137" title="1 of 2 branches missed.">        return _toString(mode, (mode.contains(&quot;f&quot;))?&quot;    &quot;:null);</span>
+<span class="pc bpc" id="L1151" title="1 of 2 branches missed.">        return _toString(mode, (mode.contains(&quot;f&quot;))?&quot;    &quot;:null);</span>
     }
 
     protected String _toString(String mode, String deep) {
-<span class="pc bpc" id="L1141" title="1 of 2 branches missed.">        String base = (deep==null)?&quot;&quot;:&quot;\n&quot;+deep;</span>
-<span class="pc bpc" id="L1142" title="1 of 2 branches missed.">        String delimiter = (deep==null)?&quot;&quot;:&quot;    &quot;;</span>
-<span class="pc bpc" id="L1143" title="1 of 2 branches missed.">        String half = (deep==null)?&quot;&quot;:&quot;  &quot;;</span>
-<span class="pc bpc" id="L1144" title="1 of 2 branches missed.">        String deeper = (deep==null)?deep:deep+delimiter;</span>
-<span class="fc bfc" id="L1145" title="All 2 branches covered.">        int max = (mode.contains(&quot;s&quot;))?3:50;</span>
-<span class="fc bfc" id="L1146" title="All 2 branches covered.">        if (this.isEmpty()) return &quot;empty&quot;;</span>
-<span class="pc bpc" id="L1147" title="1 of 2 branches missed.">        else if (this.isUndefined()) return &quot;undefined&quot;;</span>
-<span class="fc" id="L1148">        StringBuilder strShape = new StringBuilder();</span>
-<span class="fc" id="L1149">        int[] shape = _conf.shape();</span>
-<span class="fc bfc" id="L1150" title="All 2 branches covered.">        for (int i = 0; i &lt; shape.length; i++) {</span>
-<span class="fc" id="L1151">            strShape.append(shape[i]);</span>
-<span class="fc bfc" id="L1152" title="All 2 branches covered.">            if (i &lt; shape.length - 1) strShape.append(&quot;x&quot;);</span>
+<span class="pc bpc" id="L1155" title="1 of 2 branches missed.">        String base = (deep==null)?&quot;&quot;:&quot;\n&quot;+deep;</span>
+<span class="pc bpc" id="L1156" title="1 of 2 branches missed.">        String delimiter = (deep==null)?&quot;&quot;:&quot;    &quot;;</span>
+<span class="pc bpc" id="L1157" title="1 of 2 branches missed.">        String half = (deep==null)?&quot;&quot;:&quot;  &quot;;</span>
+<span class="pc bpc" id="L1158" title="1 of 2 branches missed.">        String deeper = (deep==null)?deep:deep+delimiter;</span>
+<span class="fc bfc" id="L1159" title="All 2 branches covered.">        int max = (mode.contains(&quot;s&quot;))?3:50;</span>
+<span class="fc bfc" id="L1160" title="All 2 branches covered.">        if (this.isEmpty()) return &quot;empty&quot;;</span>
+<span class="pc bpc" id="L1161" title="1 of 2 branches missed.">        else if (this.isUndefined()) return &quot;undefined&quot;;</span>
+<span class="fc" id="L1162">        StringBuilder strShape = new StringBuilder();</span>
+<span class="fc" id="L1163">        int[] shape = _conf.shape();</span>
+<span class="fc bfc" id="L1164" title="All 2 branches covered.">        for (int i = 0; i &lt; shape.length; i++) {</span>
+<span class="fc" id="L1165">            strShape.append(shape[i]);</span>
+<span class="fc bfc" id="L1166" title="All 2 branches covered.">            if (i &lt; shape.length - 1) strShape.append(&quot;x&quot;);</span>
         }
-<span class="fc" id="L1154">        boolean compact = mode.contains(&quot;c&quot;);</span>
-<span class="fc" id="L1155">        strShape = new StringBuilder(</span>
-<span class="fc bfc" id="L1156" title="All 2 branches covered.">                (Neureka.instance().settings().view().isUsingLegacyView())</span>
-<span class="fc" id="L1157">                        ? &quot;[&quot; + strShape + &quot;]&quot;</span>
-<span class="fc" id="L1158">                        : &quot;(&quot; + strShape + &quot;)&quot;</span>
+<span class="fc" id="L1168">        boolean compact = mode.contains(&quot;c&quot;);</span>
+<span class="fc" id="L1169">        strShape = new StringBuilder(</span>
+<span class="fc bfc" id="L1170" title="All 2 branches covered.">                (Neureka.instance().settings().view().isUsingLegacyView())</span>
+<span class="fc" id="L1171">                        ? &quot;[&quot; + strShape + &quot;]&quot;</span>
+<span class="fc" id="L1172">                        : &quot;(&quot; + strShape + &quot;)&quot;</span>
         );
-<span class="pc bpc" id="L1160" title="2 of 4 branches missed.">        if (mode.contains(&quot;shape&quot;) || mode.contains(&quot;shp&quot;)) return strShape.toString();</span>
-<span class="fc" id="L1161">        String asString = &quot;&quot;;</span>
-<span class="fc" id="L1162">        asString += _stringified((value64()), compact, max);</span>
-<span class="fc" id="L1163">        asString = strShape +</span>
+<span class="pc bpc" id="L1174" title="2 of 4 branches missed.">        if (mode.contains(&quot;shape&quot;) || mode.contains(&quot;shp&quot;)) return strShape.toString();</span>
+<span class="fc" id="L1175">        String asString = &quot;&quot;;</span>
+<span class="fc" id="L1176">        asString += _stringified((value64()), compact, max);</span>
+<span class="fc" id="L1177">        asString = strShape +</span>
                 (
-<span class="fc bfc" id="L1165" title="All 2 branches covered.">                        (Neureka.instance().settings().view().isUsingLegacyView())</span>
-<span class="fc" id="L1166">                                ? &quot;:(&quot; + asString + &quot;)&quot;</span>
-<span class="fc" id="L1167">                                : &quot;:[&quot; + asString + &quot;]&quot;</span>
+<span class="fc bfc" id="L1179" title="All 2 branches covered.">                        (Neureka.instance().settings().view().isUsingLegacyView())</span>
+<span class="fc" id="L1180">                                ? &quot;:(&quot; + asString + &quot;)&quot;</span>
+<span class="fc" id="L1181">                                : &quot;:[&quot; + asString + &quot;]&quot;</span>
                 );
-<span class="fc bfc" id="L1169" title="All 4 branches covered.">        if (mode.contains(&quot;g&quot;) &amp;&amp; this.rqsGradient()) {</span>
-<span class="fc" id="L1170">            asString += &quot;:g:&quot;;</span>
-<span class="fc" id="L1171">            Tsr gradient = this.find(Tsr.class);</span>
-<span class="fc bfc" id="L1172" title="All 2 branches covered.">            if (gradient!=null) asString += gradient.toString(&quot;c&quot;).replace(strShape+&quot;:&quot;,&quot;&quot;);</span>
-<span class="fc" id="L1173">            else asString+=&quot;(null)&quot;;</span>
+<span class="fc bfc" id="L1183" title="All 4 branches covered.">        if (mode.contains(&quot;g&quot;) &amp;&amp; this.rqsGradient()) {</span>
+<span class="fc" id="L1184">            asString += &quot;:g:&quot;;</span>
+<span class="fc" id="L1185">            Tsr gradient = this.find(Tsr.class);</span>
+<span class="fc bfc" id="L1186" title="All 2 branches covered.">            if (gradient!=null) asString += gradient.toString(&quot;c&quot;).replace(strShape+&quot;:&quot;,&quot;&quot;);</span>
+<span class="fc" id="L1187">            else asString+=&quot;(null)&quot;;</span>
         }
-<span class="fc bfc" id="L1175" title="All 6 branches covered.">        if (mode.contains(&quot;r&quot;) &amp;&amp; this.has(GraphNode.class) &amp;&amp; this.find(GraphNode.class).size() &gt; 0) {</span>
-<span class="fc" id="L1176">            GraphNode node = this.find(GraphNode.class);</span>
-<span class="fc" id="L1177">            AtomicReference&lt;String&gt; enclosed = new AtomicReference&lt;&gt;(&quot;; &quot;);</span>
-<span class="fc" id="L1178">            node.forEachDerivative((t, d) -&gt; {</span>
-<span class="pc bpc" id="L1179" title="1 of 2 branches missed.">                if (d.derivative()==null){</span>
-<span class="nc" id="L1180">                    enclosed.set(enclosed.get() + &quot;-&gt;d(null), &quot;);</span>
+<span class="fc bfc" id="L1189" title="All 6 branches covered.">        if (mode.contains(&quot;r&quot;) &amp;&amp; this.has(GraphNode.class) &amp;&amp; this.find(GraphNode.class).size() &gt; 0) {</span>
+<span class="fc" id="L1190">            GraphNode node = this.find(GraphNode.class);</span>
+<span class="fc" id="L1191">            AtomicReference&lt;String&gt; enclosed = new AtomicReference&lt;&gt;(&quot;; &quot;);</span>
+<span class="fc" id="L1192">            node.forEachDerivative((t, d) -&gt; {</span>
+<span class="pc bpc" id="L1193" title="1 of 2 branches missed.">                if (d.derivative()==null){</span>
+<span class="nc" id="L1194">                    enclosed.set(enclosed.get() + &quot;-&gt;d(null), &quot;);</span>
                 } else {
-<span class="fc" id="L1182">                    enclosed.set(enclosed.get() +</span>
+<span class="fc" id="L1196">                    enclosed.set(enclosed.get() +</span>
                             base+&quot;=&gt;d|[ &quot; +
-<span class="fc" id="L1184">                            base+delimiter+    d.derivative()._toString(mode, deeper) + &quot; &quot; +</span>
+<span class="fc" id="L1198">                            base+delimiter+    d.derivative()._toString(mode, deeper) + &quot; &quot; +</span>
                             base+half+&quot;]|:t{ &quot; +
-<span class="pc bpc" id="L1186" title="1 of 2 branches missed.">                            base+delimiter+    ((t.getPayload()!=null)?t.getPayload()._toString(mode, deeper):t.toString(&quot;&quot;)) + &quot; &quot; +</span>
+<span class="pc bpc" id="L1200" title="1 of 2 branches missed.">                            base+delimiter+    ((t.getPayload()!=null)?t.getPayload()._toString(mode, deeper):t.toString(&quot;&quot;)) + &quot; &quot; +</span>
                             base+half+&quot;}, &quot;);
                 }
-<span class="fc" id="L1189">            });</span>
-<span class="fc" id="L1190">            asString += enclosed.get();</span>
+<span class="fc" id="L1203">            });</span>
+<span class="fc" id="L1204">            asString += enclosed.get();</span>
         }
-<span class="fc bfc" id="L1192" title="All 6 branches covered.">        if (mode.contains(&quot;d&quot;) &amp;&amp; this.has(GraphNode.class) &amp;&amp; this.find(GraphNode.class).size() &gt; 0) {</span>
-<span class="fc" id="L1193">            GraphNode node = this.find(GraphNode.class);</span>
-<span class="pc bpc" id="L1194" title="1 of 2 branches missed.">            if (node.mode() != 0) {</span>
-<span class="fc" id="L1195">                AtomicReference&lt;String&gt; asAR = new AtomicReference&lt;&gt;(&quot;; &quot;);</span>
-<span class="fc" id="L1196">                node.forEachDerivative((t, d) -&gt; {</span>
-<span class="fc bfc" id="L1197" title="All 2 branches covered.">                    if (d.derivative()==null) asAR.set(asAR.get() + &quot;-&gt;d(null), &quot;);</span>
-<span class="fc" id="L1198">                    else asAR.set(asAR.get() + &quot;-&gt;d&quot; + d.derivative()._toString(mode, deeper) + &quot;, &quot;);</span>
-<span class="fc" id="L1199">                });</span>
-<span class="fc" id="L1200">                asString += asAR.get();</span>
+<span class="fc bfc" id="L1206" title="All 6 branches covered.">        if (mode.contains(&quot;d&quot;) &amp;&amp; this.has(GraphNode.class) &amp;&amp; this.find(GraphNode.class).size() &gt; 0) {</span>
+<span class="fc" id="L1207">            GraphNode node = this.find(GraphNode.class);</span>
+<span class="pc bpc" id="L1208" title="1 of 2 branches missed.">            if (node.mode() != 0) {</span>
+<span class="fc" id="L1209">                AtomicReference&lt;String&gt; asAR = new AtomicReference&lt;&gt;(&quot;; &quot;);</span>
+<span class="fc" id="L1210">                node.forEachDerivative((t, d) -&gt; {</span>
+<span class="fc bfc" id="L1211" title="All 2 branches covered.">                    if (d.derivative()==null) asAR.set(asAR.get() + &quot;-&gt;d(null), &quot;);</span>
+<span class="fc" id="L1212">                    else asAR.set(asAR.get() + &quot;-&gt;d&quot; + d.derivative()._toString(mode, deeper) + &quot;, &quot;);</span>
+<span class="fc" id="L1213">                });</span>
+<span class="fc" id="L1214">                asString += asAR.get();</span>
             }
         }
-<span class="fc" id="L1203">        return asString;</span>
+<span class="fc" id="L1217">        return asString;</span>
     }
 
     private String _stringified(double[] v, boolean format, int max){
-<span class="fc" id="L1207">        StringBuilder asString = new StringBuilder();</span>
-<span class="fc" id="L1208">        int size = this.size();</span>
-<span class="fc" id="L1209">        int trim = (size-max);</span>
-<span class="fc bfc" id="L1210" title="All 2 branches covered.">        size = (trim &gt; 0) ? max : size;</span>
-<span class="fc bfc" id="L1211" title="All 2 branches covered.">        for (int i = 0; i &lt; size; i++) {</span>
+<span class="fc" id="L1221">        StringBuilder asString = new StringBuilder();</span>
+<span class="fc" id="L1222">        int size = this.size();</span>
+<span class="fc" id="L1223">        int trim = (size-max);</span>
+<span class="fc bfc" id="L1224" title="All 2 branches covered.">        size = (trim &gt; 0) ? max : size;</span>
+<span class="fc bfc" id="L1225" title="All 2 branches covered.">        for (int i = 0; i &lt; size; i++) {</span>
             String vStr;
-<span class="pc bpc" id="L1213" title="1 of 4 branches missed.">            if (format) vStr = Utility.Stringify.formatFP(v[(this.isVirtual()) ? 0 : i_of_i(i)]);</span>
-<span class="nc bnc" id="L1214" title="All 2 branches missed.">            else vStr = String.valueOf(v[(this.isVirtual()) ? 0 : i_of_i(i)]);</span>
-<span class="fc" id="L1215">            asString.append(vStr);</span>
-<span class="fc bfc" id="L1216" title="All 2 branches covered.">            if (i &lt; size - 1) asString.append(&quot;, &quot;);</span>
-<span class="fc bfc" id="L1217" title="All 2 branches covered.">            else if (trim &gt; 0) asString.append(&quot;, ... + &quot;).append(trim).append(&quot; more&quot;);</span>
+<span class="pc bpc" id="L1227" title="1 of 4 branches missed.">            if (format) vStr = Utility.Stringify.formatFP(v[(this.isVirtual()) ? 0 : i_of_i(i)]);</span>
+<span class="nc bnc" id="L1228" title="All 2 branches missed.">            else vStr = String.valueOf(v[(this.isVirtual()) ? 0 : i_of_i(i)]);</span>
+<span class="fc" id="L1229">            asString.append(vStr);</span>
+<span class="fc bfc" id="L1230" title="All 2 branches covered.">            if (i &lt; size - 1) asString.append(&quot;, &quot;);</span>
+<span class="fc bfc" id="L1231" title="All 2 branches covered.">            else if (trim &gt; 0) asString.append(&quot;, ... + &quot;).append(trim).append(&quot; more&quot;);</span>
         }
-<span class="fc" id="L1219">        return asString.toString();</span>
+<span class="fc" id="L1233">        return asString.toString();</span>
     }
 
     public String toString() {
-<span class="fc" id="L1223">        return toString(&quot;dgc&quot;);</span>
+<span class="fc" id="L1237">        return toString(&quot;dgc&quot;);</span>
     }
 
 
     public static void makeFit(Tsr[] tsrs){
-<span class="fc" id="L1228">        int largest = 0;</span>
-<span class="fc bfc" id="L1229" title="All 4 branches covered.">        for (Tsr t : tsrs) if (t.rank()&gt;largest) largest = t.rank();</span>
-<span class="fc bfc" id="L1230" title="All 2 branches covered.">        for (int i=0; i&lt;tsrs.length; i++) {</span>
-<span class="fc bfc" id="L1231" title="All 2 branches covered.">            if (tsrs[i].rank()!=largest) {</span>
-<span class="fc" id="L1232">                int[] oldShape = tsrs[i].getNDConf().shape();</span>
-<span class="fc" id="L1233">                int[] newReshape = new int[largest];</span>
-<span class="fc" id="L1234">                int padding = largest-oldShape.length;</span>
-<span class="fc bfc" id="L1235" title="All 2 branches covered.">                for (int ii=0; ii&lt;padding; ii++) newReshape[ii] = -1;</span>
-<span class="fc bfc" id="L1236" title="All 2 branches covered.">                for (int ii=padding; ii&lt;largest; ii++) newReshape[ii] = i-padding;</span>
-<span class="fc" id="L1237">                Function f = Function.create(</span>
-<span class="fc" id="L1238">                    AbstractNDArray.Utility.Stringify.strConf(newReshape) +&quot;:(I[0])&quot;</span>
+<span class="fc" id="L1242">        int largest = 0;</span>
+<span class="fc bfc" id="L1243" title="All 4 branches covered.">        for (Tsr t : tsrs) if (t.rank()&gt;largest) largest = t.rank();</span>
+<span class="fc bfc" id="L1244" title="All 2 branches covered.">        for (int i=0; i&lt;tsrs.length; i++) {</span>
+<span class="fc bfc" id="L1245" title="All 2 branches covered.">            if (tsrs[i].rank()!=largest) {</span>
+<span class="fc" id="L1246">                int[] oldShape = tsrs[i].getNDConf().shape();</span>
+<span class="fc" id="L1247">                int[] newReshape = new int[largest];</span>
+<span class="fc" id="L1248">                int padding = largest-oldShape.length;</span>
+<span class="fc bfc" id="L1249" title="All 2 branches covered.">                for (int ii=0; ii&lt;padding; ii++) newReshape[ii] = -1;</span>
+<span class="fc bfc" id="L1250" title="All 2 branches covered.">                for (int ii=padding; ii&lt;largest; ii++) newReshape[ii] = i-padding;</span>
+<span class="fc" id="L1251">                Function f = Function.create(</span>
+<span class="fc" id="L1252">                    AbstractNDArray.Utility.Stringify.strConf(newReshape) +&quot;:(I[0])&quot;</span>
                 );
-<span class="fc" id="L1240">                tsrs[i] = f.call(tsrs[i]);</span>
+<span class="fc" id="L1254">                tsrs[i] = f.call(tsrs[i]);</span>
             }
         }
 
-<span class="fc" id="L1244">    }</span>
+<span class="fc" id="L1258">    }</span>
 
     public static class Create
     {
         private Create(){}
 
         public  static Tsr E(int[] shape){
-<span class="nc" id="L1251">            return new Tsr(shape, 2.7182818284590452353602874713527);</span>
+<span class="nc" id="L1265">            return new Tsr(shape, 2.7182818284590452353602874713527);</span>
         }
 
         public static Tsr newRandom(int[] shape){
-<span class="fc" id="L1255">            return newRandom(shape, 8701252152903546L);</span>
+<span class="fc" id="L1269">            return newRandom(shape, 8701252152903546L);</span>
         }
 
         public static Tsr newRandom(int[] shape, long seed){
-<span class="fc" id="L1259">            int size = Utility.Indexing.szeOfShp(shape);</span>
-<span class="fc" id="L1260">            return new Tsr(shape, DataHelper.newSeededDoubleArray(seed, size));</span>
+<span class="fc" id="L1273">            int size = Utility.Indexing.szeOfShp(shape);</span>
+<span class="fc" id="L1274">            return new Tsr(shape, DataHelper.newSeededDoubleArray(seed, size));</span>
         }
 
         public static Tsr newTsrLike(Tsr template, double value) {
-<span class="fc" id="L1264">            Tsr t = _newEmptyLike(template);</span>
-<span class="pc bpc" id="L1265" title="1 of 2 branches missed.">            if (template.is32()) t.setValue((float)value);</span>
-<span class="fc" id="L1266">            else t.setValue(value);</span>
-<span class="fc bfc" id="L1267" title="All 2 branches covered.">            if (template.isOutsourced()) template.find(Device.class).add(t);</span>
-<span class="fc" id="L1268">            return t;</span>
+<span class="fc" id="L1278">            Tsr t = _newEmptyLike(template);</span>
+<span class="pc bpc" id="L1279" title="1 of 2 branches missed.">            if (template.is32()) t.setValue((float)value);</span>
+<span class="fc" id="L1280">            else t.setValue(value);</span>
+<span class="fc bfc" id="L1281" title="All 2 branches covered.">            if (template.isOutsourced()) template.find(Device.class).add(t);</span>
+<span class="fc" id="L1282">            return t;</span>
         }
 
         public static Tsr newTsrLike(Tsr template) {//The output tensor will not have gradients!
-<span class="fc" id="L1272">            Tsr t = _newEmptyLike(template);</span>
-<span class="pc bpc" id="L1273" title="1 of 2 branches missed.">            if (template.is32()) t.setValue32(new float[template.size()]);</span>
-<span class="fc" id="L1274">            else t.setValue64(new double[template.size()]);</span>
-<span class="fc bfc" id="L1275" title="All 2 branches covered.">            if (template.isOutsourced()) template.find(Device.class).add(t);</span>
-<span class="fc" id="L1276">            return t;</span>
+<span class="fc" id="L1286">            Tsr t = _newEmptyLike(template);</span>
+<span class="pc bpc" id="L1287" title="1 of 2 branches missed.">            if (template.is32()) t.setValue32(new float[template.size()]);</span>
+<span class="fc" id="L1288">            else t.setValue64(new double[template.size()]);</span>
+<span class="fc bfc" id="L1289" title="All 2 branches covered.">            if (template.isOutsourced()) template.find(Device.class).add(t);</span>
+<span class="fc" id="L1290">            return t;</span>
         }
 
         private static Tsr _newEmptyLike(Tsr template) {
-<span class="fc" id="L1280">            Tsr t = new Tsr();</span>
-<span class="fc" id="L1281">            t._conf = template._conf;</span>
-<span class="fc" id="L1282">            return t;</span>
+<span class="fc" id="L1294">            Tsr t = new Tsr();</span>
+<span class="fc" id="L1295">            t._conf = template._conf;</span>
+<span class="fc" id="L1296">            return t;</span>
         }
 
     }
@@ -1289,7 +1303,7 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
     @Override
     public void update(Tsr oldOwner, Tsr newOwner) {
 
-<span class="nc" id="L1292">    }</span>
+<span class="nc" id="L1306">    }</span>
 
 
 }

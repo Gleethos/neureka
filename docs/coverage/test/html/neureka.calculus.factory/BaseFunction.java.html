@@ -33,7 +33,7 @@ import java.util.List;
 
     @Override
     public Tsr call(List&lt;Tsr&gt; inputs) {
-<span class="nc" id="L36">        return call(inputs.toArray(new Tsr[0]));</span>
+<span class="fc" id="L36">        return call(inputs.toArray(new Tsr[0]));</span>
     }
 
     @Override
@@ -73,6 +73,18 @@ import java.util.List;
     @Override
     public Tsr invoke(Tsr[] inputs){
 <span class="nc" id="L75">        return call(inputs);</span>
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public Tsr derive(List&lt;Tsr&gt; inputs, int index, int j){
+<span class="nc" id="L82">        return derive(inputs.toArray(new Tsr[0]), index, j);</span>
+    }
+
+    @Override
+    public Tsr derive(List&lt;Tsr&gt; inputs, int index){
+<span class="fc" id="L87">        return derive(inputs.toArray(new Tsr[0]), index);</span>
     }
 
 

@@ -7,7 +7,7 @@ import neureka.calculus.factory.components.FunctionInput;
 
 import java.util.*;
 
-<span class="fc" id="L10">public class FunctionBuilder {</span>
+<span class="nc" id="L10">public class FunctionBuilder {</span>
 
     /**
      * @param type
@@ -190,71 +190,81 @@ import java.util.*;
 <span class="fc bfc" id="L190" title="All 4 branches covered.">            boolean possiblyInverseInput = (component.length()&gt;1 &amp;&amp; component.toLowerCase().substring(0,2).equals(&quot;-i&quot;));</span>
 <span class="fc bfc" id="L191" title="All 2 branches covered.">            if (!possiblyInverseInput &amp;&amp;</span>
                     (
-<span class="fc bfc" id="L193" title="All 4 branches covered.">                            ((component.charAt(0) &lt;= '9') &amp;&amp; (component.charAt(0) &gt;= '0'))</span>
-<span class="pc bpc" id="L194" title="1 of 4 branches missed.">                                    || (component.charAt(0) == '-') || (component.charAt(0) == '+')</span>
+<span class="fc bfc" id="L193" title="All 4 branches covered.">                            ((component.charAt(0) &lt;= '9') &amp;&amp; (component.charAt(0) &gt;= '0')) ||</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">                                    (component.charAt(0) == '-') ||</span>
+<span class="pc bpc" id="L195" title="1 of 2 branches missed.">                                    (component.charAt(0) == '+')</span>
                     )
                 ) {
-<span class="fc" id="L197">                Function newFunction = new FunctionConstant();</span>
-<span class="fc" id="L198">                newFunction = newFunction.newBuild(component);</span>
-<span class="fc" id="L199">                return newFunction;</span>
+<span class="fc" id="L198">                if (</span>
+<span class="fc bfc" id="L199" title="All 2 branches covered.">                        component.startsWith(&quot;-&quot;) &amp;&amp;</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">                                component.length()&gt;2 &amp;&amp;</span>
+<span class="fc bfc" id="L201" title="All 2 branches covered.">                                !component.substring(1, 2).matches(&quot;[0-9]+&quot;)</span>
+                ) {
+<span class="fc" id="L203">                    component = &quot;-1 * &quot;+component.substring(1);</span>
+<span class="fc" id="L204">                    return _build(component, doAD);</span>
+                } else {
+<span class="fc" id="L206">                    Function newFunction = new FunctionConstant();</span>
+<span class="fc" id="L207">                    newFunction = newFunction.newBuild(component);</span>
+<span class="fc" id="L208">                    return newFunction;</span>
+                }
             }
-<span class="fc bfc" id="L201" title="All 2 branches covered.">            if (</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">            if (</span>
                     possiblyInverseInput ||
-<span class="fc bfc" id="L203" title="All 2 branches covered.">                            (component.charAt(0) == 'i') ||</span>
-<span class="fc bfc" id="L204" title="All 2 branches covered.">                            (component.charAt(0) == 'I') ||</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">                            (component.charAt(0) == 'i') ||</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">                            (component.charAt(0) == 'I') ||</span>
                             (
-<span class="pc bpc" id="L206" title="1 of 4 branches missed.">                                    component.contains(&quot;[&quot;) &amp;&amp; component.contains(&quot;]&quot;)</span>
-<span class="pc bpc" id="L207" title="1 of 2 branches missed.">                                            &amp;&amp; component.matches(&quot;.[0-9]+.&quot;)</span>
+<span class="pc bpc" id="L216" title="1 of 4 branches missed.">                                    component.contains(&quot;[&quot;) &amp;&amp; component.contains(&quot;]&quot;)</span>
+<span class="pc bpc" id="L217" title="1 of 2 branches missed.">                                            &amp;&amp; component.matches(&quot;.[0-9]+.&quot;)</span>
                             )
             ) {//TODO: Make this regex better!!
-<span class="fc" id="L210">                Function newFunction = new FunctionInput();</span>
-<span class="fc" id="L211">                newFunction = newFunction.newBuild(component);</span>
-<span class="fc" id="L212">                return newFunction;</span>
+<span class="fc" id="L220">                Function newFunction = new FunctionInput();</span>
+<span class="fc" id="L221">                newFunction = newFunction.newBuild(component);</span>
+<span class="fc" id="L222">                return newFunction;</span>
             }
-<span class="fc" id="L214">            String cleaned = FunctionParser.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =&gt;Cleaning!</span>
-<span class="fc" id="L215">            String raw = component.replace(cleaned, &quot;&quot;);</span>
-<span class="fc" id="L216">            String assumed = FunctionParser.assumptionBasedOn(raw);</span>
-<span class="fc" id="L217">            System.out.println(&quot;assumed: &quot;+assumed+&quot;; &quot;);</span>
-<span class="fc bfc" id="L218" title="All 2 branches covered.">            if ( assumed.isBlank() ) component = cleaned;</span>
-<span class="fc" id="L219">            else component = assumed + cleaned;</span>
+<span class="fc" id="L224">            String cleaned = FunctionParser.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =&gt;Cleaning!</span>
+<span class="fc" id="L225">            String raw = component.replace(cleaned, &quot;&quot;);</span>
+<span class="fc" id="L226">            String assumed = FunctionParser.assumptionBasedOn(raw);</span>
+<span class="fc" id="L227">            System.out.println(&quot;assumed: &quot;+assumed+&quot;; &quot;);</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">            if ( assumed.isBlank() ) component = cleaned;</span>
+<span class="fc" id="L229">            else component = assumed + cleaned;</span>
 
-<span class="fc" id="L221">            return FunctionBuilder.build(component, doAD);</span>
+<span class="fc" id="L231">            return FunctionBuilder.build(component, doAD);</span>
         } else {// More than one component left:
-<span class="fc bfc" id="L223" title="All 6 branches covered.">            if (OperationType.instance(typeId).identifier().equals(&quot;x&quot;) || OperationType.instance(typeId).identifier().equals(&quot;&lt;&quot;) || OperationType.instance(typeId).identifier().equals(&quot;&gt;&quot;)) {</span>
-<span class="fc" id="L224">                foundComponents = _rebindPairwise(foundComponents, typeId);</span>
-<span class="fc bfc" id="L225" title="All 4 branches covered.">            } else if (OperationType.instance(typeId).identifier().equals(&quot;,&quot;) &amp;&amp; foundComponents.get(0).startsWith(&quot;[&quot;)) {</span>
+<span class="fc bfc" id="L233" title="All 6 branches covered.">            if (OperationType.instance(typeId).identifier().equals(&quot;x&quot;) || OperationType.instance(typeId).identifier().equals(&quot;&lt;&quot;) || OperationType.instance(typeId).identifier().equals(&quot;&gt;&quot;)) {</span>
+<span class="fc" id="L234">                foundComponents = _rebindPairwise(foundComponents, typeId);</span>
+<span class="fc bfc" id="L235" title="All 4 branches covered.">            } else if (OperationType.instance(typeId).identifier().equals(&quot;,&quot;) &amp;&amp; foundComponents.get(0).startsWith(&quot;[&quot;)) {</span>
 
-<span class="fc" id="L227">                foundComponents.set(0, foundComponents.get(0).substring(1));</span>
+<span class="fc" id="L237">                foundComponents.set(0, foundComponents.get(0).substring(1));</span>
                 String[] splitted;
-<span class="pc bpc" id="L229" title="1 of 2 branches missed.">                if (foundComponents.get(foundComponents.size() - 1).contains(&quot;]&quot;)) {</span>
-<span class="fc" id="L230">                    int offset = 1;</span>
-<span class="fc bfc" id="L231" title="All 2 branches covered.">                    if (foundComponents.get(foundComponents.size() - 1).contains(&quot;]:&quot;)) {</span>
-<span class="fc" id="L232">                        offset = 2;</span>
-<span class="fc" id="L233">                        splitted = foundComponents.get(foundComponents.size() - 1).split(&quot;]:&quot;);</span>
+<span class="pc bpc" id="L239" title="1 of 2 branches missed.">                if (foundComponents.get(foundComponents.size() - 1).contains(&quot;]&quot;)) {</span>
+<span class="fc" id="L240">                    int offset = 1;</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">                    if (foundComponents.get(foundComponents.size() - 1).contains(&quot;]:&quot;)) {</span>
+<span class="fc" id="L242">                        offset = 2;</span>
+<span class="fc" id="L243">                        splitted = foundComponents.get(foundComponents.size() - 1).split(&quot;]:&quot;);</span>
                     } else {
-<span class="fc" id="L235">                        splitted = foundComponents.get(foundComponents.size() - 1).split(&quot;]&quot;);</span>
+<span class="fc" id="L245">                        splitted = foundComponents.get(foundComponents.size() - 1).split(&quot;]&quot;);</span>
                     }
-<span class="pc bpc" id="L237" title="1 of 2 branches missed.">                    if (splitted.length &gt; 1) {</span>
-<span class="fc" id="L238">                        splitted = new String[]{splitted[0], foundComponents.get(foundComponents.size() - 1).substring(splitted[0].length() + offset)};</span>
-<span class="fc" id="L239">                        foundComponents.remove(foundComponents.size() - 1);</span>
-<span class="fc" id="L240">                        foundComponents.addAll(Arrays.asList(splitted));</span>
+<span class="pc bpc" id="L247" title="1 of 2 branches missed.">                    if (splitted.length &gt; 1) {</span>
+<span class="fc" id="L248">                        splitted = new String[]{splitted[0], foundComponents.get(foundComponents.size() - 1).substring(splitted[0].length() + offset)};</span>
+<span class="fc" id="L249">                        foundComponents.remove(foundComponents.size() - 1);</span>
+<span class="fc" id="L250">                        foundComponents.addAll(Arrays.asList(splitted));</span>
                     }
                 }
             }
-<span class="fc bfc" id="L244" title="All 2 branches covered.">            for (String currentComponent2 : foundComponents) {</span>
-<span class="fc" id="L245">                Function newCore2 = FunctionBuilder.build(currentComponent2, doAD);//Dangerous recursion lives here!</span>
-<span class="fc" id="L246">                sources.add(newCore2);</span>
-<span class="fc" id="L247">            }</span>
-<span class="fc" id="L248">            sources.trimToSize();</span>
-<span class="pc bpc" id="L249" title="1 of 2 branches missed.">            if (sources.size() == 1) return sources.get(0);</span>
-<span class="pc bpc" id="L250" title="1 of 2 branches missed.">            if (sources.size() == 0) return null;</span>
-<span class="fc" id="L251">            ArrayList&lt;Function&gt; newVariable = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L252" title="All 2 branches covered.">            for (Function source : sources) {</span>
-<span class="pc bpc" id="L253" title="1 of 2 branches missed.">                if (source != null) newVariable.add(source);</span>
-<span class="fc" id="L254">            }</span>
-<span class="fc" id="L255">            sources = newVariable;</span>
-<span class="fc" id="L256">            function = FunctionConstructor.construct(typeId, sources, doAD);</span>
-<span class="fc" id="L257">            return function;</span>
+<span class="fc bfc" id="L254" title="All 2 branches covered.">            for (String currentComponent2 : foundComponents) {</span>
+<span class="fc" id="L255">                Function newCore2 = FunctionBuilder.build(currentComponent2, doAD);//Dangerous recursion lives here!</span>
+<span class="fc" id="L256">                sources.add(newCore2);</span>
+<span class="fc" id="L257">            }</span>
+<span class="fc" id="L258">            sources.trimToSize();</span>
+<span class="pc bpc" id="L259" title="1 of 2 branches missed.">            if (sources.size() == 1) return sources.get(0);</span>
+<span class="pc bpc" id="L260" title="1 of 2 branches missed.">            if (sources.size() == 0) return null;</span>
+<span class="fc" id="L261">            ArrayList&lt;Function&gt; newVariable = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L262" title="All 2 branches covered.">            for (Function source : sources) {</span>
+<span class="pc bpc" id="L263" title="1 of 2 branches missed.">                if (source != null) newVariable.add(source);</span>
+<span class="fc" id="L264">            }</span>
+<span class="fc" id="L265">            sources = newVariable;</span>
+<span class="fc" id="L266">            function = FunctionConstructor.construct(typeId, sources, doAD);</span>
+<span class="fc" id="L267">            return function;</span>
         }
     }
 
@@ -264,14 +274,14 @@ import java.util.*;
      * @return
      */
     private static List&lt;String&gt; _rebindPairwise(List&lt;String&gt; components, int f_id) {
-<span class="fc bfc" id="L267" title="All 2 branches covered.">        if (components.size() &gt; 2) {</span>
-<span class="fc" id="L268">            String newComponent = &quot;(&quot; + components.get(0) + OperationType.instance(f_id).identifier() + components.get(1) + &quot;)&quot;;</span>
-<span class="fc" id="L269">            components.remove(components.get(0));</span>
-<span class="fc" id="L270">            components.remove(components.get(0));</span>
-<span class="fc" id="L271">            components.add(0, newComponent);</span>
-<span class="fc" id="L272">            components = _rebindPairwise(components, f_id);</span>
+<span class="fc bfc" id="L277" title="All 2 branches covered.">        if (components.size() &gt; 2) {</span>
+<span class="fc" id="L278">            String newComponent = &quot;(&quot; + components.get(0) + OperationType.instance(f_id).identifier() + components.get(1) + &quot;)&quot;;</span>
+<span class="fc" id="L279">            components.remove(components.get(0));</span>
+<span class="fc" id="L280">            components.remove(components.get(0));</span>
+<span class="fc" id="L281">            components.add(0, newComponent);</span>
+<span class="fc" id="L282">            components = _rebindPairwise(components, f_id);</span>
         }
-<span class="fc" id="L274">        return components;</span>
+<span class="fc" id="L284">        return components;</span>
     }
 
 }

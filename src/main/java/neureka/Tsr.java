@@ -18,6 +18,7 @@ import neureka.utility.DataHelper;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 {
@@ -309,7 +310,15 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         _construct(new Object[]{arg});
     }
 
-    public Tsr(List arg1, String arg2){
+    public Tsr(String equation, List<Object> inputs){
+        _construct(
+                ((List<Object>)inputs).stream().map(Tsr::new).toArray(Tsr[]::new),
+                equation,
+                true
+        );
+    }
+
+    public Tsr(List arg1, String arg2) {
         if ((arg1).get(0) instanceof Integer) {
             List<Integer> shape = arg1;
             int[] shp = new int[shape.size()];
@@ -317,6 +326,12 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
             _construct(shp, arg2);
         } else if ((arg1).get(0) instanceof Tsr) {
             _construct(((List<Tsr>)arg1).toArray(new Tsr[0]), arg2, true);
+        } else {
+            _construct(
+                    ((List<Object>)arg1).stream().map(Tsr::new).toArray(Tsr[]::new),
+                    arg2,
+                    true
+            );
         }
     }
 
@@ -436,6 +451,9 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
                 return;
             } else if (args[0] instanceof BigDecimal) {
                 _construct(new int[]{1}, ((BigDecimal)args[0]).doubleValue());
+                return;
+            } else if(args[0] instanceof Integer) {
+                _construct(new int[]{1}, ((Integer)args[0]).doubleValue());
                 return;
             } else {
                 throw new IllegalArgumentException(
@@ -1000,13 +1018,17 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 
     public Tsr setValue64(double[] value) {
         if (this.isOutsourced()) this.find(Device.class).overwrite64(this, value);
-        else _value = value;
+        else if ( _value==null ) _value = value;
+        else if ( _value instanceof float[] ) for ( int i=0; i<value.length; i++ ) ((float[])_value)[i] = (float) value[i];
+        else if ( _value instanceof double[] ) for ( int i=0; i<value.length; i++ ) ((double[])_value)[i] = value[i];
         return this;
     }
 
     public Tsr setValue32(float[] value) {
         if (this.isOutsourced()) this.find(Device.class).overwrite32(this, value);
-        else _value = value;
+        else if ( _value==null ) _value = value;
+        else if ( _value instanceof float[] ) for ( int i=0; i<value.length; i++ ) ((float[])_value)[i] = value[i];
+        else if ( _value instanceof double[] ) for ( int i=0; i<value.length; i++ ) ((double[])_value)[i] = value[i];
         return this;
     }
 
@@ -1120,14 +1142,6 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         }
         return newValue;
     }
-
-    public Tsr setValue(double[] newValue) {
-        _value = newValue;
-        if (this.isOutsourced() && newValue != null) this.find(Device.class).add(this);
-        return this;
-    }
-
-
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

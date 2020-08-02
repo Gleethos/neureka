@@ -1,69 +1,16 @@
-import neureka.Neureka
+package integration.tests
+
 import neureka.Tsr
 import neureka.acceleration.Device
-import neureka.acceleration.opencl.OpenCLDevice
-import neureka.acceleration.opencl.OpenCLPlatform
-import neureka.acceleration.opencl.utility.DeviceQuery
-import org.junit.Test
-import testutility.mock.DummyDevice
-import testutility.UnitTester
 import testutility.UnitTester_Tensor
+import testutility.mock.DummyDevice
 
-class SlicedTensorTests
+class CrossDeviceSlicedTensorIntegrationTest
 {
-
-    @Test
-    void test_slicing()
+    static void on(Device device, boolean legacyIndexing)
     {
-        Neureka.instance().reset()
-        Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
-        Neureka.instance().settings().view().setIsUsingLegacyView(true)
+        UnitTester_Tensor tester = new UnitTester_Tensor("Cross-Device sliced tensor integration test!")
 
-        UnitTester_Tensor tester = new UnitTester_Tensor("IndexAlias-Testing: slices/subset creation and calculation")
-        Device device = new DummyDevice()
-
-        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
-        _slice_test_template(device, tester, true)
-
-        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
-        _slice_test_template(device, tester, false)
-
-        //=========================================================================
-        if(!System.getProperty("os.name").toLowerCase().contains("windows")) return
-        //=========================================================================
-        Device gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0)
-
-        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
-        OpenCLPlatform.PLATFORMS().get(0).recompile()
-        _slice_test_template(gpu, tester, true)
-
-        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
-        OpenCLPlatform.PLATFORMS().get(0).recompile()
-        _slice_test_template(gpu, tester, false)
-
-        String query = DeviceQuery.query()
-        assert query.contains("DEVICE_NAME")
-        assert query.contains("MAX_MEM_ALLOC_SIZE")
-        assert query.contains("VENDOR")
-        assert query.contains("CL_DEVICE_PREFERRED_VECTOR_WIDTH")
-        assert query.contains("Info for device")
-        assert query.contains("LOCAL_MEM_SIZE")
-        assert query.contains("CL_DEVICE_TYPE")
-
-        OpenCLDevice cld = (OpenCLDevice) gpu
-        assert cld.globalMemSize()>1000
-        assert !cld.name().equals("")
-        assert cld.image2DMaxHeight()>100
-        assert cld.image3DMaxHeight()>100
-        assert cld.maxClockFrequenzy()>100
-        assert !cld.vendor().equals("")
-        assert !cld.toString().equals("")
-        assert cld.maxConstantBufferSize()>1000
-        assert cld.maxWriteImageArgs()>1
-    }
-
-    void _slice_test_template(Device device, UnitTester tester, boolean legacyIndexing)
-    {
         Tsr x = new Tsr([1], 3).setRqsGradient(true)
         Tsr b = new Tsr([1], -4)
         Tsr w = new Tsr([1], 2)
@@ -109,8 +56,8 @@ class SlicedTensorTests
         tester.testContains(b.toString(),
                 [
                         (legacyIndexing)
-                        ?"2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"
-                        :"7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
+                                ?"2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"
+                                :"7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
                 ], "Testing slicing")
         tester.testContains(((b.spread()!=null)?"Has index component":"Doesn't have it! :/"), ["Has index component"], "Check if index component is present!")
         b = a[-3..-1, 0..3]
@@ -119,8 +66,8 @@ class SlicedTensorTests
         tester.testContains(b.toString(),
                 [
                         (legacyIndexing)
-                        ?"2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"
-                        :"7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
+                                ?"2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"
+                                :"7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
                 ], "Testing slicing")
         tester.testContains(((b.spread()!=null)?"Has index component":"Doesn't have it! :/"), ["Has index component"], "Check if index component is present!")
         /**
@@ -147,8 +94,8 @@ class SlicedTensorTests
         }
         tester.testContains(b.toString(), [
                 (legacyIndexing)
-                ?"12.0, 3.0, 4.0, 6.0, 7.0, 16.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"
-                :"7.0, 16.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
+                        ?"12.0, 3.0, 4.0, 6.0, 7.0, 16.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"
+                        :"7.0, 16.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
         ], "Testing slicing")
         //tester.testTensor(x, ["-16.0"])
         //---
@@ -177,13 +124,13 @@ class SlicedTensorTests
         tester.testContains(d.toString(),
                 [
                         (legacyIndexing)?
-                        "9.0, 5.0, 7.0, " +
-                         "11.0, 13.0, 18.0, " +
-                         "0.0, 3.0, 5.0, " +
-                         "8.0, 10.0, 9.0"
-                        :"4.0, 18.0, 12.0, 6.0, "+
-                         "10.0, 7.0, 5.0, 8.0, "+
-                         "3.0, 5.0, 7.0, 6.0"
+                                "9.0, 5.0, 7.0, " +
+                                        "11.0, 13.0, 18.0, " +
+                                        "0.0, 3.0, 5.0, " +
+                                        "8.0, 10.0, 9.0"
+                                :"4.0, 18.0, 12.0, 6.0, "+
+                                "10.0, 7.0, 5.0, 8.0, "+
+                                "3.0, 5.0, 7.0, 6.0"
                 ],
                 "Testing slicing"
         )
@@ -191,9 +138,9 @@ class SlicedTensorTests
         b = a[1..3, 2..4]
         tester.testContains(b.toString(),
                 [
-                    (legacyIndexing)
-                        ?"1.0, 2.0, 3.0, 5.0, 6.0, 7.0, 9.0, 1.0, 2.0"
-                        :"9.0, 1.0, 2.0, 6.0, 7.0, 8.0, 3.0, 4.0, 5.0"
+                        (legacyIndexing)
+                                ?"1.0, 2.0, 3.0, 5.0, 6.0, 7.0, 9.0, 1.0, 2.0"
+                                :"9.0, 1.0, 2.0, 6.0, 7.0, 8.0, 3.0, 4.0, 5.0"
                 ],
                 "Testing slicing"
         )
@@ -217,8 +164,8 @@ class SlicedTensorTests
         tester.testContains(b.toString(),
                 [
                         (legacyIndexing)
-                        ?"5.0, 7.0, 4.0, 6.0"
-                        :"12.0, 4.0, 5.0, 7.0"
+                                ?"5.0, 7.0, 4.0, 6.0"
+                                :"12.0, 4.0, 5.0, 7.0"
                 ], "Testing slicing")
         tester.testContains(((b.spread()!=null)?"Has index component":"Doesn't have it! :/"), ["Has index component"], "Check if index component is present!")
         /**
@@ -250,51 +197,51 @@ class SlicedTensorTests
                 a.toString(),
                 [
                         (legacyIndexing)
-                        ?"1.0, 12.0, 3.0, 4.0, " +
-                        "1.0, 6.0, 2.0, 16.0, " +
-                        "9.0, 1.0, 2.0, 3.0, " +
-                        "3.0, 5.0, 4.0, 7.0, " +
-                        "8.0, 9.0, 1.0, 2.0, " +
-                        "3.0, 4.0, 5.0, 6.0"
-                        :"1.0, 1.0, 3.0, 2.0, 5.0, 6.0, " +
-                         "7.0, 16.0, 9.0, 1.0, 2.0, 3.0, " +
-                         "4.0, 3.0, 6.0, 4.0, 8.0, 9.0, " +
-                         "1.0, 2.0, 3.0, 4.0, 5.0, 6.0"
+                                ?"1.0, 12.0, 3.0, 4.0, " +
+                                "1.0, 6.0, 2.0, 16.0, " +
+                                "9.0, 1.0, 2.0, 3.0, " +
+                                "3.0, 5.0, 4.0, 7.0, " +
+                                "8.0, 9.0, 1.0, 2.0, " +
+                                "3.0, 4.0, 5.0, 6.0"
+                                :"1.0, 1.0, 3.0, 2.0, 5.0, 6.0, " +
+                                "7.0, 16.0, 9.0, 1.0, 2.0, 3.0, " +
+                                "4.0, 3.0, 6.0, 4.0, 8.0, 9.0, " +
+                                "1.0, 2.0, 3.0, 4.0, 5.0, 6.0"
                 ],
                 "Testing slicing"
         )
         /**a:>>
-             1, 12, 3, 4,
-             1, 6, 2, 16,
-             9, 1, 2, 3,
-             3, 5, 4, 7,
-             8, 9, 1, 2,
-             3, 4, 5, 6
+         1, 12, 3, 4,
+         1, 6, 2, 16,
+         9, 1, 2, 3,
+         3, 5, 4, 7,
+         8, 9, 1, 2,
+         3, 4, 5, 6
          */
         //---
 
         a[1..2, 1..2] = new Tsr([2, 2], [8, 8, 8, 8])
         tester.testContains(b.toString(),
-        [
-                (legacyIndexing)?
-                 "1.0, 8.0, " +
-                 "3.0, 4.0"
-                :"1.0, 2.0, "+
-                 "8.0, 4.0"
-        ], "Testing slicing")
+                [
+                        (legacyIndexing)?
+                                "1.0, 8.0, " +
+                                        "3.0, 4.0"
+                                :"1.0, 2.0, "+
+                                "8.0, 4.0"
+                ], "Testing slicing")
         tester.testContains(
                 a.toString(), [
                 (legacyIndexing)?
-                "1.0, 12.0, 3.0, 4.0, " +
-                "1.0, 8.0, 8.0, 16.0, " +
-                "9.0, 8.0, 8.0, 3.0, " +
-                "3.0, 5.0, 4.0, 7.0, " +
-                "8.0, 9.0, 1.0, 2.0, " +
-                "3.0, 4.0, 5.0, 6.0"
-                :"1.0, 1.0, 3.0, 2.0, 5.0, 6.0, " +
-                 "7.0, 8.0, 8.0, 1.0, 2.0, 3.0, " +
-                 "4.0, 8.0, 8.0, 4.0, 8.0, 9.0, " +
-                 "1.0, 2.0, 3.0, 4.0, 5.0, 6.0"
+                        "1.0, 12.0, 3.0, 4.0, " +
+                                "1.0, 8.0, 8.0, 16.0, " +
+                                "9.0, 8.0, 8.0, 3.0, " +
+                                "3.0, 5.0, 4.0, 7.0, " +
+                                "8.0, 9.0, 1.0, 2.0, " +
+                                "3.0, 4.0, 5.0, 6.0"
+                        :"1.0, 1.0, 3.0, 2.0, 5.0, 6.0, " +
+                        "7.0, 8.0, 8.0, 1.0, 2.0, 3.0, " +
+                        "4.0, 8.0, 8.0, 4.0, 8.0, 9.0, " +
+                        "1.0, 2.0, 3.0, 4.0, 5.0, 6.0"
         ],
                 "Testing slicing"
         )
@@ -327,16 +274,11 @@ class SlicedTensorTests
         tester.testContains(x.toString(),
                 [
                         (legacyIndexing)?
-                        "[1x1]:(33.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)"
-                        :"[1x1]:(20.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)"
+                                "[1x1]:(33.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)"
+                                :"[1x1]:(20.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)"
 
                 ], "")
 
     }
-
-
-
-
-
 
 }

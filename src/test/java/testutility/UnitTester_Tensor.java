@@ -40,9 +40,9 @@ public class UnitTester_Tensor extends UnitTester
 
     public int testTensor(Tsr tensor, String[] expected){
         printSessionStart("Testing Tensor!");
-        println(BAR +"  Tensor: "+tensor.toString());
-        println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         String result = tensor.toString();
+        println(BAR +"  Tensor: "+result);
+        println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         for(String element : expected){
             this.assertStringContains("result", result, element);
         }

@@ -99,10 +99,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <ul class="horizontal">
 <li><a href="neureka/package-tree.html">neureka</a>, </li>
 <li><a href="neureka/abstraction/package-tree.html">neureka.ndim</a>, </li>
-<li><a href="neureka/acceleration/package-tree.html">neureka.acceleration</a>, </li>
-<li><a href="neureka/acceleration/host/package-tree.html">neureka.acceleration.host</a>, </li>
-<li><a href="neureka/acceleration/opencl/package-tree.html">neureka.acceleration.opencl</a>, </li>
-<li><a href="neureka/acceleration/opencl/utility/package-tree.html">neureka.acceleration.opencl.utility</a>, </li>
+<li><a href="neureka/unit.acceleration/package-tree.html">neureka.unit.acceleration</a>, </li>
+<li><a href="neureka/unit.acceleration/host/package-tree.html">neureka.unit.acceleration.host</a>, </li>
+<li><a href="neureka/unit.acceleration/opencl/package-tree.html">neureka.unit.acceleration.opencl</a>, </li>
+<li><a href="neureka/unit.acceleration/opencl/utility/package-tree.html">neureka.unit.acceleration.opencl.utility</a>, </li>
 <li><a href="neureka/autograd/package-tree.html">neureka.autograd</a>, </li>
 <li><a href="neureka/calculus/package-tree.html">neureka.calculus</a>, </li>
 <li><a href="neureka/calculus/environment/package-tree.html">neureka.calculus.environment</a>, </li>
@@ -134,13 +134,13 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </li>
 </ul>
 </li>
-<li class="circle">neureka.acceleration.<a href="neureka/acceleration/AbstractDevice.html" title="class in neureka.acceleration"><span class="typeNameLink">AbstractDevice</span></a> (implements neureka.<a href="neureka/Component.html" title="interface in neureka">Component</a>&lt;OwnerType&gt;, neureka.acceleration.<a href="neureka/acceleration/Device.html" title="interface in neureka.acceleration">Device</a>)
+<li class="circle">neureka.unit.acceleration.<a href="neureka/unit.acceleration/AbstractDevice.html" title="class in neureka.unit.acceleration"><span class="typeNameLink">AbstractDevice</span></a> (implements neureka.<a href="neureka/Component.html" title="interface in neureka">Component</a>&lt;OwnerType&gt;, neureka.unit.acceleration.<a href="neureka/unit.acceleration/Device.html" title="interface in neureka.unit.acceleration">Device</a>)
 <ul>
-<li class="circle">neureka.acceleration.host.<a href="neureka/acceleration/host/HostCPU.html" title="class in neureka.acceleration.host"><span class="typeNameLink">HostCPU</span></a></li>
-<li class="circle">neureka.acceleration.opencl.<a href="neureka/acceleration/opencl/OpenCLDevice.html" title="class in neureka.acceleration.opencl"><span class="typeNameLink">OpenCLDevice</span></a></li>
+<li class="circle">neureka.unit.acceleration.host.<a href="neureka/unit.acceleration/host/HostCPU.html" title="class in neureka.unit.acceleration.host"><span class="typeNameLink">HostCPU</span></a></li>
+<li class="circle">neureka.unit.acceleration.opencl.<a href="neureka/unit.acceleration/opencl/OpenCLDevice.html" title="class in neureka.unit.acceleration.opencl"><span class="typeNameLink">OpenCLDevice</span></a></li>
 </ul>
 </li>
-<li class="circle">neureka.acceleration.<a href="neureka/acceleration/AbstractDevice.Utility.html" title="class in neureka.acceleration"><span class="typeNameLink">AbstractDevice.Utility</span></a></li>
+<li class="circle">neureka.unit.acceleration.<a href="neureka/unit.acceleration/AbstractDevice.Utility.html" title="class in neureka.unit.acceleration"><span class="typeNameLink">AbstractDevice.Utility</span></a></li>
 <li class="circle">neureka.calculus.factory.<a href="neureka/calculus/factory/AbstractFunction.html" title="class in neureka.calculus.factory"><span class="typeNameLink">AbstractFunction</span></a> (implements neureka.calculus.<a href="neureka/calculus/Function.html" title="interface in neureka.calculus">Function</a>)</li>
 <li class="circle">neureka.calculus.factory.<a href="neureka/calculus/factory/AbstractFunction.Exec.html" title="class in neureka.calculus.factory"><span class="typeNameLink">AbstractFunction.Exec</span></a></li>
 <li class="circle">neureka.abstraction.<a href="neureka/abstraction/AbstractNDArray.Utility.html" title="class in neureka.ndim"><span class="typeNameLink">AbstractNDArray.Utility</span></a></li>
@@ -150,7 +150,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="circle">neureka.optimization.implementations.<a href="neureka/optimization/implementations/ADAM.html" title="class in neureka.optimization.implementations"><span class="typeNameLink">ADAM</span></a> (implements neureka.optimization.<a href="neureka/optimization/Optimizer.html" title="interface in neureka.optimization">Optimizer</a>)</li>
 <li class="circle">neureka.calculus.environment.<a href="neureka/calculus/environment/Cache.html" title="class in neureka.calculus.environment"><span class="typeNameLink">Cache</span></a></li>
 <li class="circle">neureka.utility.<a href="neureka/utility/DataHelper.html" title="class in neureka.utility"><span class="typeNameLink">DataHelper</span></a></li>
-<li class="circle">neureka.acceleration.opencl.utility.<a href="neureka/acceleration/opencl/utility/DeviceQuery.html" title="class in neureka.acceleration.opencl.utility"><span class="typeNameLink">DeviceQuery</span></a></li>
+<li class="circle">neureka.unit.acceleration.opencl.utility.<a href="neureka/unit.acceleration/opencl/utility/DeviceQuery.html" title="class in neureka.unit.acceleration.opencl.utility"><span class="typeNameLink">DeviceQuery</span></a></li>
 <li class="circle">neureka.calculus.<a href="neureka/calculus/Function.Detached.html" title="class in neureka.calculus"><span class="typeNameLink">Function.Detached</span></a></li>
 <li class="circle">neureka.calculus.<a href="neureka/calculus/Function.Setup.html" title="class in neureka.calculus"><span class="typeNameLink">Function.Setup</span></a></li>
 <li class="circle">neureka.calculus.factory.assembly.<a href="neureka/calculus/factory/assembly/FunctionBuilder.html" title="class in neureka.calculus.factory.assembly"><span class="typeNameLink">FunctionBuilder</span></a></li>
@@ -161,10 +161,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="circle">neureka.calculus.factory.components.<a href="neureka/calculus/factory/components/FunctionVariable.html" title="class in neureka.calculus.factory.components"><span class="typeNameLink">FunctionVariable</span></a> (implements neureka.calculus.<a href="neureka/calculus/Function.html" title="interface in neureka.calculus">Function</a>, neureka.calculus.factory.components.<a href="neureka/calculus/factory/components/GradientProvider.html" title="interface in neureka.calculus.factory.components">GradientProvider</a>)</li>
 <li class="circle">neureka.autograd.<a href="neureka/autograd/GraphLock.html" title="class in neureka.autograd"><span class="typeNameLink">GraphLock</span></a></li>
 <li class="circle">neureka.autograd.<a href="neureka/autograd/GraphNode.html" title="class in neureka.autograd"><span class="typeNameLink">GraphNode</span></a> (implements neureka.<a href="neureka/Component.html" title="interface in neureka">Component</a>&lt;OwnerType&gt;)</li>
-<li class="circle">neureka.acceleration.host.<a href="neureka/acceleration/host/HostCPU.NativeExecutor.html" title="class in neureka.acceleration.host"><span class="typeNameLink">HostCPU.NativeExecutor</span></a></li>
+<li class="circle">neureka.unit.acceleration.host.<a href="neureka/unit.acceleration/host/HostCPU.NativeExecutor.html" title="class in neureka.unit.acceleration.host"><span class="typeNameLink">HostCPU.NativeExecutor</span></a></li>
 <li class="circle">neureka.framing.<a href="neureka/framing/IndexAlias.html" title="class in neureka.framing"><span class="typeNameLink">IndexAlias</span></a> (implements neureka.<a href="neureka/Component.html" title="interface in neureka">Component</a>&lt;OwnerType&gt;)</li>
 <li class="circle">neureka.autograd.<a href="neureka/autograd/JITProp.html" title="class in neureka.autograd"><span class="typeNameLink">JITProp</span></a> (implements neureka.<a href="neureka/Component.html" title="interface in neureka">Component</a>&lt;OwnerType&gt;)</li>
-<li class="circle">neureka.acceleration.host.<a href="neureka/acceleration/host/Kernel.html" title="class in neureka.acceleration.host"><span class="typeNameLink">Kernel</span></a></li>
+<li class="circle">neureka.unit.acceleration.host.<a href="neureka/unit.acceleration/host/Kernel.html" title="class in neureka.unit.acceleration.host"><span class="typeNameLink">Kernel</span></a></li>
 <li class="circle">neureka.<a href="neureka/Neureka.html" title="class in neureka"><span class="typeNameLink">Neureka</span></a></li>
 <li class="circle">neureka.<a href="neureka/Neureka.Settings.html" title="class in neureka"><span class="typeNameLink">Neureka.Settings</span></a></li>
 <li class="circle">neureka.<a href="neureka/Neureka.Settings.AutoDiff.html" title="class in neureka"><span class="typeNameLink">Neureka.Settings.AutoDiff</span></a></li>
@@ -172,8 +172,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="circle">neureka.<a href="neureka/Neureka.Settings.Indexing.html" title="class in neureka"><span class="typeNameLink">Neureka.Settings.Indexing</span></a></li>
 <li class="circle">neureka.<a href="neureka/Neureka.Settings.View.html" title="class in neureka"><span class="typeNameLink">Neureka.Settings.View</span></a></li>
 <li class="circle">neureka.<a href="neureka/Neureka.Utility.html" title="class in neureka"><span class="typeNameLink">Neureka.Utility</span></a></li>
-<li class="circle">neureka.acceleration.opencl.<a href="neureka/acceleration/opencl/OpenCLDevice.DeviceQuery.html" title="class in neureka.acceleration.opencl"><span class="typeNameLink">OpenCLDevice.DeviceQuery</span></a></li>
-<li class="circle">neureka.acceleration.opencl.<a href="neureka/acceleration/opencl/OpenCLPlatform.html" title="class in neureka.acceleration.opencl"><span class="typeNameLink">OpenCLPlatform</span></a></li>
+<li class="circle">neureka.unit.acceleration.opencl.<a href="neureka/unit.acceleration/opencl/OpenCLDevice.DeviceQuery.html" title="class in neureka.unit.acceleration.opencl"><span class="typeNameLink">OpenCLDevice.DeviceQuery</span></a></li>
+<li class="circle">neureka.unit.acceleration.opencl.<a href="neureka/unit.acceleration/opencl/OpenCLPlatform.html" title="class in neureka.unit.acceleration.opencl"><span class="typeNameLink">OpenCLPlatform</span></a></li>
 <li class="circle">neureka.calculus.environment.<a href="neureka/calculus/environment/OperationType.html" title="class in neureka.calculus.environment"><span class="typeNameLink">OperationType</span></a> (implements neureka.calculus.environment.<a href="neureka/calculus/environment/Type.html" title="interface in neureka.calculus.environment">Type</a>)
 <ul>
 <li class="circle">neureka.calculus.environment.implementations.function.<a href="neureka/calculus/environment/implementations/function/Absolute.html" title="class in neureka.calculus.environment.implementations.function"><span class="typeNameLink">Absolute</span></a></li>
@@ -205,7 +205,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <ul>
 <li class="circle">java.lang.ref.WeakReference&lt;T&gt;
 <ul>
-<li class="circle">neureka.acceleration.opencl.utility.<a href="neureka/acceleration/opencl/utility/WeakTensorReference.html" title="class in neureka.acceleration.opencl.utility"><span class="typeNameLink">WeakTensorReference</span></a>&lt;T&gt;</li>
+<li class="circle">neureka.unit.acceleration.opencl.utility.<a href="neureka/unit.acceleration/opencl/utility/WeakTensorReference.html" title="class in neureka.unit.acceleration.opencl.utility"><span class="typeNameLink">WeakTensorReference</span></a>&lt;T&gt;</li>
 </ul>
 </li>
 </ul>
@@ -234,7 +234,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="circle">neureka.autograd.<a href="neureka/autograd/ADAgent.ADAction.html" title="interface in neureka.autograd"><span class="typeNameLink">ADAgent.ADAction</span></a></li>
 <li class="circle">neureka.<a href="neureka/Component.html" title="interface in neureka"><span class="typeNameLink">Component</span></a>&lt;OwnerType&gt;
 <ul>
-<li class="circle">neureka.acceleration.<a href="neureka/acceleration/Device.html" title="interface in neureka.acceleration"><span class="typeNameLink">Device</span></a></li>
+<li class="circle">neureka.unit.acceleration.<a href="neureka/unit.acceleration/Device.html" title="interface in neureka.unit.acceleration"><span class="typeNameLink">Device</span></a></li>
 <li class="circle">neureka.optimization.<a href="neureka/optimization/Optimizer.html" title="interface in neureka.optimization"><span class="typeNameLink">Optimizer</span></a></li>
 </ul>
 </li>

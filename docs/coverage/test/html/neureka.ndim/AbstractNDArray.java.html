@@ -122,7 +122,7 @@ import java.util.Locale;
                     } else {
 <span class="fc" id="L123">                        vStr = Formatter.format(v);</span>
 <span class="fc bfc" id="L124" title="All 2 branches covered.">                        vStr = (!vStr.contains(&quot;.0E0&quot;))?vStr:vStr.replace(&quot;.0E0&quot;,&quot;.0&quot;);</span>
-<span class="fc bfc" id="L125" title="All 2 branches covered.">                        vStr = (vStr.contains(&quot;.&quot;))?vStr:vStr.replace(&quot;E0&quot;,&quot;.0&quot;);</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">                        vStr = (vStr.contains(&quot;.&quot;))?vStr:vStr.replace(&quot;E0&quot;,&quot;.0&quot;);</span>
                     }
                 }
 <span class="fc" id="L128">                return vStr;</span>

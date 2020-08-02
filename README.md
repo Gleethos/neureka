@@ -149,7 +149,7 @@ PyTorch however does not carry with it the benefit of *'write once run everywher
 [On the state of Deep Learning outside of CUDA’s walled garden.](https://towardsdatascience.com/on-the-state-of-deep-learning-outside-of-cudas-walled-garden-d88c8bbb4342)
 
 This is due to the fact that internally PyTorch is written
-in C++, and it's GPU acceleration is written in nvidia's cuda. 
+in C++, and it's GPU unit.acceleration is written in nvidia's cuda. 
 Which means that even developers willing to compile for all platforms
 would still be locked out of AMD and Intel Systems when it comes to performance.
 

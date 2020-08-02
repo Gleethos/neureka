@@ -80,6 +80,12 @@ dependencies {
     compile group: 'org.jocl', name: 'jocl', version: '2.0.2'
     compile group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.0-rc-3'
 
+    //testCompile platform("org.spockframework:spock-bom:2.0-M1-groovy-3.0.0-rc-3")
+    //testCompile "org.spockframework:spock-core:spock-2.0"
+    testCompile group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.0-rc-3'
+    testCompile group: 'org.spockframework', name: 'spock-core', version: '2.0-M2-groovy-3.0'
+    testCompile group: 'org.spockframework', name: 'spock-bom', version: '2.0-M2-groovy-3.0'
+
     api 'org.codehaus.groovy:groovy:3.0.0-rc-3'
     implementation 'org.jocl:jocl:2.0.2'
 }
@@ -351,6 +357,7 @@ model {
 //----------------------------------------------------------------------------------------------------------------------
 // CONFIGURING TEST EXECUTION:
 test {
+    useJUnitPlatform()
     //filter { includeTestsMatching "*" }
     minHeapSize = "1g"
     maxHeapSize = "5g"

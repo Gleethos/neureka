@@ -87,7 +87,7 @@ neureka.Neureka$Utility -> neureka.Neureka$Utility:
     363:373:void tryGroovyScriptsOn(neureka.Neureka) -> tryGroovyScriptsOn
     376:385:boolean isPresent(java.lang.String) -> isPresent
 neureka.Tsr -> neureka.Tsr:
-    neureka.acceleration.Device _CPU -> a
+    neureka.unit.acceleration.Device _CPU -> a
     int _flags -> b
     43:45:neureka.Tsr setRqsGradient(boolean) -> setRqsGradient
     49:49:boolean rqsGradient() -> rqsGradient
@@ -109,7 +109,7 @@ neureka.Tsr -> neureka.Tsr:
     201:201:boolean belongsToGraph() -> belongsToGraph
     205:205:boolean isLeave() -> isLeave
     209:209:boolean isBranch() -> isBranch
-    219:220:neureka.acceleration.Device device() -> device
+    219:220:neureka.unit.acceleration.Device device() -> device
     228:228:neureka.autograd.GraphNode graphNode() -> graphNode
     236:236:neureka.framing.IndexAlias index() -> index
     243:257:neureka.Tsr _become(neureka.Tsr) -> _become
@@ -204,7 +204,7 @@ neureka.Tsr -> neureka.Tsr:
     1164:1174:void lambda$_toString$17(java.util.concurrent.atomic.AtomicReference,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,neureka.autograd.GraphNode,neureka.autograd.ADAgent) -> a
     1058:1058:void lambda$to64$16(neureka.Tsr) -> f
     1047:1047:void lambda$to32$15(neureka.Tsr) -> g
-    1037:1037:void lambda$addToGradient$14(neureka.Tsr,neureka.acceleration.Device) -> a
+    1037:1037:void lambda$addToGradient$14(neureka.Tsr,neureka.unit.acceleration.Device) -> a
     1035:1035:void lambda$addToGradient$13(neureka.Tsr,neureka.Tsr) -> a
     659:659:void lambda$isCase$12(neureka.Tsr,boolean[],neureka.framing.Relation) -> a
     660:661:void lambda$isCase$11(neureka.Tsr,boolean[],neureka.Tsr) -> a
@@ -214,11 +214,11 @@ neureka.Tsr -> neureka.Tsr:
     557:557:void lambda$backward$7(neureka.Tsr,neureka.autograd.GraphNode) -> a
     270:270:void lambda$delete$6(neureka.Tsr) -> i
     263:266:void lambda$delete$5(neureka.autograd.GraphNode) -> a
-    261:261:void lambda$delete$4(neureka.acceleration.Device) -> a
+    261:261:void lambda$delete$4(neureka.unit.acceleration.Device) -> a
     109:109:void lambda$setIsVirtual$3(neureka.Tsr) -> j
-    69:79:void lambda$setIsOutsourced$2(neureka.acceleration.Device) -> b
+    69:79:void lambda$setIsOutsourced$2(neureka.unit.acceleration.Device) -> b
     74:74:void lambda$setIsOutsourced$1(neureka.Tsr) -> k
-    75:77:void lambda$setIsOutsourced$0(neureka.Tsr,neureka.acceleration.Device) -> b
+    75:77:void lambda$setIsOutsourced$0(neureka.Tsr,neureka.unit.acceleration.Device) -> b
     21:21:neureka.ndim.config.NDConfiguration access$000(neureka.Tsr) -> a
     21:21:neureka.ndim.config.NDConfiguration access$100(neureka.Tsr) -> b
     21:21:neureka.ndim.config.NDConfiguration access$200(neureka.Tsr) -> c
@@ -252,109 +252,109 @@ neureka.Tsr$IO -> neureka.Tsr$IO:
     933:944:void subInto(neureka.Tsr,neureka.Tsr) -> subInto
     947:949:void mulInto(neureka.Tsr,int,double) -> mulInto
     952:954:void mulInto(neureka.Tsr,int[],double) -> mulInto
-neureka.acceleration.AbstractDevice -> neureka.acceleration.AbstractDevice:
+neureka.unit.acceleration.AbstractDevice -> neureka.unit.acceleration.AbstractDevice:
     java.lang.ref.Cleaner CLEANER -> a
     10:10:void <init>() -> <init>
     void _enqueue(neureka.Tsr[],int,neureka.calculus.environment.OperationType) -> _enqueue
     void _enqueue(neureka.Tsr,double,int,neureka.calculus.environment.OperationType) -> _enqueue
     20:21:void update(neureka.Tsr,neureka.Tsr) -> update
-    25:26:neureka.acceleration.Device cleaning(neureka.Tsr,java.lang.Runnable) -> cleaning
+    25:26:neureka.unit.acceleration.Device cleaning(neureka.Tsr,java.lang.Runnable) -> cleaning
     30:31:void _cleaning(java.lang.Object,java.lang.Runnable) -> _cleaning
-    35:36:neureka.acceleration.Device execute(neureka.Tsr[],neureka.calculus.environment.OperationType,int) -> execute
+    35:36:neureka.unit.acceleration.Device execute(neureka.Tsr[],neureka.calculus.environment.OperationType,int) -> execute
     41:76:void _execute(neureka.Tsr[],neureka.calculus.environment.OperationType,int) -> _execute
-    1195:1204:void _createNewDrainTensorIn(neureka.acceleration.Device,neureka.Tsr[],neureka.calculus.environment.OperationType):195:204 -> _execute
+    1195:1204:void _createNewDrainTensorIn(neureka.unit.acceleration.Device,neureka.Tsr[],neureka.calculus.environment.OperationType):195:204 -> _execute
     1195:1204:void _execute(neureka.Tsr[],neureka.calculus.environment.OperationType,int):53 -> _execute
     80:163:neureka.Tsr _execute_recursively(neureka.Tsr[],neureka.calculus.environment.OperationType,int) -> a
     170:192:void _execute_tensor_scalar(neureka.Tsr,double,neureka.calculus.environment.OperationType,int) -> _execute_tensor_scalar
     10:10:void update(java.lang.Object,java.lang.Object) -> update
     12:12:void <clinit>() -> <clinit>
-neureka.acceleration.AbstractDevice$Utility -> neureka.acceleration.AbstractDevice$Utility:
+neureka.unit.acceleration.AbstractDevice$Utility -> neureka.unit.acceleration.AbstractDevice$Utility:
     208:208:void <init>() -> <init>
     211:217:neureka.Tsr[] _subset(neureka.Tsr[],int,int,int) -> _subset
     220:222:neureka.Tsr[] _without(neureka.Tsr[],int) -> _without
     226:238:neureka.Tsr[] _offsetted(neureka.Tsr[],int) -> _offsetted
-neureka.acceleration.Device -> neureka.acceleration.Device:
-    14:21:neureka.acceleration.Device find(java.lang.String) -> find
+neureka.unit.acceleration.Device -> neureka.unit.acceleration.Device:
+    14:21:neureka.unit.acceleration.Device find(java.lang.String) -> find
     void dispose() -> dispose
-    neureka.acceleration.Device get(neureka.Tsr) -> get
-    neureka.acceleration.Device add(neureka.Tsr) -> add
-    neureka.acceleration.Device add(neureka.Tsr,neureka.Tsr) -> add
+    neureka.unit.acceleration.Device get(neureka.Tsr) -> get
+    neureka.unit.acceleration.Device add(neureka.Tsr) -> add
+    neureka.unit.acceleration.Device add(neureka.Tsr,neureka.Tsr) -> add
     boolean has(neureka.Tsr) -> has
-    neureka.acceleration.Device rmv(neureka.Tsr) -> rmv
-    neureka.acceleration.Device cleaning(neureka.Tsr,java.lang.Runnable) -> cleaning
-    neureka.acceleration.Device overwrite64(neureka.Tsr,double[]) -> overwrite64
-    neureka.acceleration.Device overwrite32(neureka.Tsr,float[]) -> overwrite32
-    neureka.acceleration.Device swap(neureka.Tsr,neureka.Tsr) -> swap
-    neureka.acceleration.Device execute(neureka.Tsr[],neureka.calculus.environment.OperationType,int) -> execute
+    neureka.unit.acceleration.Device rmv(neureka.Tsr) -> rmv
+    neureka.unit.acceleration.Device cleaning(neureka.Tsr,java.lang.Runnable) -> cleaning
+    neureka.unit.acceleration.Device overwrite64(neureka.Tsr,double[]) -> overwrite64
+    neureka.unit.acceleration.Device overwrite32(neureka.Tsr,float[]) -> overwrite32
+    neureka.unit.acceleration.Device swap(neureka.Tsr,neureka.Tsr) -> swap
+    neureka.unit.acceleration.Device execute(neureka.Tsr[],neureka.calculus.environment.OperationType,int) -> execute
     double[] value64Of(neureka.Tsr) -> value64Of
     float[] value32Of(neureka.Tsr) -> value32Of
     java.util.Collection tensors() -> tensors
-    17:17:void lambda$find$1(java.lang.String,neureka.acceleration.Device[],neureka.acceleration.opencl.OpenCLPlatform) -> a
-    18:20:void lambda$find$0(java.lang.String,neureka.acceleration.Device[],neureka.acceleration.opencl.OpenCLDevice) -> a
-neureka.acceleration.host.HostCPU -> neureka.acceleration.host.HostCPU:
-    neureka.acceleration.host.HostCPU _instance -> a
-    neureka.acceleration.host.HostCPU$NativeExecutor _executor -> b
+    17:17:void lambda$find$1(java.lang.String,neureka.unit.acceleration.Device[],neureka.unit.acceleration.opencl.OpenCLPlatform) -> a
+    18:20:void lambda$find$0(java.lang.String,neureka.unit.acceleration.Device[],neureka.unit.acceleration.opencl.OpenCLDevice) -> a
+neureka.unit.acceleration.host.HostCPU -> neureka.unit.acceleration.host.HostCPU:
+    neureka.unit.acceleration.host.HostCPU _instance -> a
+    neureka.unit.acceleration.host.HostCPU$NativeExecutor _executor -> b
     23:25:void <init>() -> <init>
-    28:28:neureka.acceleration.host.HostCPU instance() -> instance
-    32:32:neureka.acceleration.host.HostCPU$NativeExecutor getExecutor() -> getExecutor
+    28:28:neureka.unit.acceleration.host.HostCPU instance() -> instance
+    32:32:neureka.unit.acceleration.host.HostCPU$NativeExecutor getExecutor() -> getExecutor
     37:54:void _enqueue(neureka.Tsr[],int,neureka.calculus.environment.OperationType) -> _enqueue
     58:64:void _enqueue(neureka.Tsr,double,int,neureka.calculus.environment.OperationType) -> _enqueue
     68:69:void dispose() -> dispose
-    73:73:neureka.acceleration.Device get(neureka.Tsr) -> get
-    78:78:neureka.acceleration.Device add(neureka.Tsr) -> add
-    83:83:neureka.acceleration.Device add(neureka.Tsr,neureka.Tsr) -> add
+    73:73:neureka.unit.acceleration.Device get(neureka.Tsr) -> get
+    78:78:neureka.unit.acceleration.Device add(neureka.Tsr) -> add
+    83:83:neureka.unit.acceleration.Device add(neureka.Tsr,neureka.Tsr) -> add
     88:88:boolean has(neureka.Tsr) -> has
-    93:93:neureka.acceleration.Device rmv(neureka.Tsr) -> rmv
-    98:98:neureka.acceleration.Device overwrite64(neureka.Tsr,double[]) -> overwrite64
-    103:103:neureka.acceleration.Device overwrite32(neureka.Tsr,float[]) -> overwrite32
-    108:108:neureka.acceleration.Device swap(neureka.Tsr,neureka.Tsr) -> swap
+    93:93:neureka.unit.acceleration.Device rmv(neureka.Tsr) -> rmv
+    98:98:neureka.unit.acceleration.Device overwrite64(neureka.Tsr,double[]) -> overwrite64
+    103:103:neureka.unit.acceleration.Device overwrite32(neureka.Tsr,float[]) -> overwrite32
+    108:108:neureka.unit.acceleration.Device swap(neureka.Tsr,neureka.Tsr) -> swap
     113:113:double[] value64Of(neureka.Tsr) -> value64Of
     118:118:float[] value32Of(neureka.Tsr) -> value32Of
     123:123:java.util.Collection tensors() -> tensors
     18:19:void <clinit>() -> <clinit>
-neureka.acceleration.host.HostCPU$NativeExecutor -> neureka.acceleration.host.HostCPU$NativeExecutor:
+neureka.unit.acceleration.host.HostCPU$NativeExecutor -> neureka.unit.acceleration.host.HostCPU$NativeExecutor:
     java.util.concurrent.ThreadPoolExecutor _pool -> a
-    130:132:void <init>(neureka.acceleration.host.HostCPU) -> <init>
+    130:132:void <init>(neureka.unit.acceleration.host.HostCPU) -> <init>
     135:135:java.util.concurrent.ThreadPoolExecutor getPool() -> getPool
     139:147:void activate(neureka.Tsr[],int,neureka.calculus.environment.OperationType) -> activate
     150:159:void broadcast(neureka.Tsr[],int,neureka.calculus.environment.OperationType) -> broadcast
     162:171:void convolve(neureka.Tsr[],int,neureka.calculus.environment.OperationType) -> convolve
     174:182:void scalar(neureka.Tsr[],double,int,neureka.calculus.environment.OperationType) -> scalar
-    187:211:void _threaded(int,neureka.acceleration.host.HostCPU$Range) -> a
-    197:199:void lambda$_threaded$4(neureka.Neureka,neureka.acceleration.host.HostCPU$Range,int,int) -> a
+    187:211:void _threaded(int,neureka.unit.acceleration.host.HostCPU$Range) -> a
+    197:199:void lambda$_threaded$4(neureka.Neureka,neureka.unit.acceleration.host.HostCPU$Range,int,int) -> a
     177:179:void lambda$scalar$3(neureka.Tsr[],neureka.calculus.environment.OperationType,double,int,int,int) -> a
     165:168:void lambda$convolve$2(neureka.Tsr[],int,neureka.calculus.environment.OperationType,int,int) -> a
     153:156:void lambda$broadcast$1(neureka.Tsr[],int,neureka.calculus.environment.OperationType,int,int) -> b
     142:144:void lambda$activate$0(neureka.Tsr[],neureka.calculus.environment.OperationType,int,int,int) -> a
-neureka.acceleration.host.HostCPU$Range -> neureka.acceleration.host.HostCPU$a:
+neureka.unit.acceleration.host.HostCPU$Range -> neureka.unit.acceleration.host.HostCPU$a:
     void execute(int,int) -> execute
-neureka.acceleration.host.Kernel -> neureka.acceleration.host.Kernel:
+neureka.unit.acceleration.host.Kernel -> neureka.unit.acceleration.host.Kernel:
     7:7:void <init>() -> <init>
     15:150:void convolve(neureka.Tsr,neureka.Tsr,neureka.Tsr,int,int,int,neureka.calculus.environment.Type$TertiaryNDXConsumer) -> convolve
     158:240:void broadcast(neureka.Tsr,neureka.Tsr,neureka.Tsr,int,int,int,neureka.calculus.environment.Type$TertiaryNDXConsumer) -> broadcast
     248:261:void activate(neureka.Tsr,int,int,neureka.calculus.environment.Type$TertiaryNDXConsumer) -> a
-neureka.acceleration.opencl.OpenCLDevice -> neureka.acceleration.opencl.OpenCLDevice:
+neureka.unit.acceleration.opencl.OpenCLDevice -> neureka.unit.acceleration.opencl.OpenCLDevice:
     java.util.Set _tensors -> a
     org.jocl.cl_device_id _did -> b
-    neureka.acceleration.opencl.OpenCLPlatform _platform -> c
+    neureka.unit.acceleration.opencl.OpenCLPlatform _platform -> c
     org.jocl.cl_command_queue _queue -> d
     44:44:org.jocl.cl_device_id CLDeviceID() -> CLDeviceID
-    39:81:void <init>(neureka.acceleration.opencl.OpenCLPlatform,org.jocl.cl_device_id) -> <init>
-    84:85:neureka.acceleration.opencl.OpenCLDevice instance(neureka.acceleration.opencl.OpenCLPlatform,org.jocl.cl_device_id) -> instance
+    39:81:void <init>(neureka.unit.acceleration.opencl.OpenCLPlatform,org.jocl.cl_device_id) -> <init>
+    84:85:neureka.unit.acceleration.opencl.OpenCLDevice instance(neureka.unit.acceleration.opencl.OpenCLPlatform,org.jocl.cl_device_id) -> instance
     93:96:java.util.Collection tensors() -> tensors
     101:103:void dispose() -> dispose
-    107:111:neureka.acceleration.Device get(neureka.Tsr) -> get
-    116:117:neureka.acceleration.Device add(neureka.Tsr) -> add
-    122:126:neureka.acceleration.Device add(neureka.Tsr,neureka.Tsr) -> add
-    130:201:void _add(neureka.Tsr,neureka.acceleration.opencl.OpenCLDevice$cl_tsr) -> a
+    107:111:neureka.unit.acceleration.Device get(neureka.Tsr) -> get
+    116:117:neureka.unit.acceleration.Device add(neureka.Tsr) -> add
+    122:126:neureka.unit.acceleration.Device add(neureka.Tsr,neureka.Tsr) -> add
+    130:201:void _add(neureka.Tsr,neureka.unit.acceleration.opencl.OpenCLDevice$cl_tsr) -> a
     205:205:boolean has(neureka.Tsr) -> has
-    209:247:void _store(neureka.Tsr,neureka.acceleration.opencl.OpenCLDevice$cl_tsr,int) -> a
-    252:257:neureka.acceleration.Device rmv(neureka.Tsr) -> rmv
-    271:289:neureka.acceleration.Device overwrite64(neureka.Tsr,double[]) -> overwrite64
+    209:247:void _store(neureka.Tsr,neureka.unit.acceleration.opencl.OpenCLDevice$cl_tsr,int) -> a
+    252:257:neureka.unit.acceleration.Device rmv(neureka.Tsr) -> rmv
+    271:289:neureka.unit.acceleration.Device overwrite64(neureka.Tsr,double[]) -> overwrite64
     293:299:void _releaseEvents(neureka.Tsr[]) -> a
     302:309:org.jocl.cl_event[] _getWaitList(neureka.Tsr[]) -> b
-    314:334:neureka.acceleration.Device overwrite32(neureka.Tsr,float[]) -> overwrite32
-    339:344:neureka.acceleration.Device swap(neureka.Tsr,neureka.Tsr) -> swap
+    314:334:neureka.unit.acceleration.Device overwrite32(neureka.Tsr,float[]) -> overwrite32
+    339:344:neureka.unit.acceleration.Device swap(neureka.Tsr,neureka.Tsr) -> swap
     349:365:double[] value64Of(neureka.Tsr) -> value64Of
     371:387:float[] value32Of(neureka.Tsr) -> value32Of
     394:470:void _enqueue(neureka.Tsr[],int,neureka.calculus.environment.OperationType) -> _enqueue
@@ -395,7 +395,7 @@ neureka.acceleration.opencl.OpenCLDevice -> neureka.acceleration.opencl.OpenCLDe
     133:133:void lambda$_add$2(org.jocl.cl_mem) -> a
     95:95:void lambda$tensors$1(java.util.Collection,java.util.Collection) -> a
     95:95:void lambda$tensors$0(java.util.Collection,neureka.Tsr) -> a
-neureka.acceleration.opencl.OpenCLDevice$DeviceQuery -> neureka.acceleration.opencl.OpenCLDevice$DeviceQuery:
+neureka.unit.acceleration.opencl.OpenCLDevice$DeviceQuery -> neureka.unit.acceleration.opencl.OpenCLDevice$DeviceQuery:
     650:650:void <init>() -> <init>
     659:659:int getInt(org.jocl.cl_device_id,int) -> getInt
     671:673:int[] getInts(org.jocl.cl_device_id,int,int) -> getInts
@@ -405,21 +405,21 @@ neureka.acceleration.opencl.OpenCLDevice$DeviceQuery -> neureka.acceleration.ope
     730:738:java.lang.String getString(org.jocl.cl_platform_id,int) -> getString
     749:749:long getSize(org.jocl.cl_device_id,int) -> getSize
     763:777:long[] getSizes(org.jocl.cl_device_id,int,int) -> getSizes
-neureka.acceleration.opencl.OpenCLDevice$cl_config -> neureka.acceleration.opencl.OpenCLDevice$a:
+neureka.unit.acceleration.opencl.OpenCLDevice$cl_config -> neureka.unit.acceleration.opencl.OpenCLDevice$a:
     org.jocl.cl_mem data -> a
     24:24:void <init>() -> <init>
-neureka.acceleration.opencl.OpenCLDevice$cl_tsr -> neureka.acceleration.opencl.OpenCLDevice$b:
+neureka.unit.acceleration.opencl.OpenCLDevice$cl_tsr -> neureka.unit.acceleration.opencl.OpenCLDevice$b:
     int fp -> a
-    neureka.acceleration.opencl.OpenCLDevice$cl_config config -> b
-    neureka.acceleration.opencl.OpenCLDevice$cl_value value -> c
+    neureka.unit.acceleration.opencl.OpenCLDevice$cl_config config -> b
+    neureka.unit.acceleration.opencl.OpenCLDevice$cl_value value -> c
     28:30:void <init>() -> <init>
     28:28:void update(java.lang.Object,java.lang.Object) -> update
-neureka.acceleration.opencl.OpenCLDevice$cl_value -> neureka.acceleration.opencl.OpenCLDevice$c:
+neureka.unit.acceleration.opencl.OpenCLDevice$cl_value -> neureka.unit.acceleration.opencl.OpenCLDevice$c:
     org.jocl.cl_mem data -> a
     int size -> b
     org.jocl.cl_event event -> c
     18:20:void <init>() -> <init>
-neureka.acceleration.opencl.OpenCLPlatform -> neureka.acceleration.opencl.OpenCLPlatform:
+neureka.unit.acceleration.opencl.OpenCLPlatform -> neureka.unit.acceleration.opencl.OpenCLPlatform:
     org.jocl.cl_platform_id _pid -> a
     java.util.Map _id_device -> b
     org.jocl.cl_context _context -> c
@@ -433,25 +433,25 @@ neureka.acceleration.opencl.OpenCLPlatform -> neureka.acceleration.opencl.OpenCL
     258:258:org.jocl.cl_platform_id getID() -> getID
     262:264:java.util.List getDevices() -> getDevices
     269:269:boolean has(org.jocl.cl_device_id) -> has
-    272:272:neureka.acceleration.opencl.OpenCLDevice get(org.jocl.cl_device_id) -> get
-    275:276:void put(org.jocl.cl_device_id,neureka.acceleration.opencl.OpenCLDevice) -> put
+    272:272:neureka.unit.acceleration.opencl.OpenCLDevice get(org.jocl.cl_device_id) -> get
+    275:276:void put(org.jocl.cl_device_id,neureka.unit.acceleration.opencl.OpenCLDevice) -> put
     280:280:java.util.Map getKernels() -> getKernels
     284:284:org.jocl.cl_context getContext() -> getContext
     288:288:java.util.List PLATFORMS() -> PLATFORMS
-    263:263:void lambda$getDevices$4(java.util.List,org.jocl.cl_device_id,neureka.acceleration.opencl.OpenCLDevice) -> a
+    263:263:void lambda$getDevices$4(java.util.List,org.jocl.cl_device_id,neureka.unit.acceleration.opencl.OpenCLDevice) -> a
     204:214:void lambda$_getParsedKernelsFromTemplate$3(java.lang.String[],java.lang.String,java.util.function.Function,java.util.function.Function,java.util.Map,java.lang.String,java.lang.String,java.lang.String) -> a
     198:201:java.lang.String lambda$_getParsedKernelsFromTemplate$2(java.lang.String) -> a
     184:194:java.lang.String lambda$_getParsedKernelsFromTemplate$1(java.lang.String) -> b
     137:139:void lambda$_compile$0(java.util.ArrayList,java.util.ArrayList,java.lang.String,java.lang.String) -> a
     18:58:void <clinit>() -> <clinit>
-neureka.acceleration.opencl.OpenCLPlatform$Parser -> neureka.acceleration.opencl.OpenCLPlatform$a:
+neureka.unit.acceleration.opencl.OpenCLPlatform$Parser -> neureka.unit.acceleration.opencl.OpenCLPlatform$a:
     void apply(java.lang.String,java.lang.String,java.lang.String) -> apply
-neureka.acceleration.opencl.OpenCLPlatform$_setup -> neureka.acceleration.opencl.OpenCLPlatform$b:
+neureka.unit.acceleration.opencl.OpenCLPlatform$_setup -> neureka.unit.acceleration.opencl.OpenCLPlatform$b:
     java.util.List PLATFORMS -> a
     293:293:void <clinit>() -> <clinit>
     1297:1308:java.util.List findAllPlatforms():297:308 -> <clinit>
     1297:1308:void <clinit>():293 -> <clinit>
-neureka.acceleration.opencl.utility.DeviceQuery -> neureka.acceleration.opencl.utility.DeviceQuery:
+neureka.unit.acceleration.opencl.utility.DeviceQuery -> neureka.unit.acceleration.opencl.utility.DeviceQuery:
     14:14:void <init>() -> <init>
     23:182:java.lang.String query() -> query
     1270:1278:java.lang.String getString(org.jocl.cl_platform_id,int):270:278 -> query
@@ -463,7 +463,7 @@ neureka.acceleration.opencl.utility.DeviceQuery -> neureka.acceleration.opencl.u
     249:257:java.lang.String getString(org.jocl.cl_device_id,int) -> c
     290:290:long getSize(org.jocl.cl_device_id,int) -> d
     305:324:long[] getSizes(org.jocl.cl_device_id,int,int) -> c
-neureka.acceleration.opencl.utility.WeakTensorReference -> neureka.acceleration.opencl.utility.WeakTensorReference:
+neureka.unit.acceleration.opencl.utility.WeakTensorReference -> neureka.unit.acceleration.opencl.utility.WeakTensorReference:
     int _hash -> a
     24:26:void <init>(java.lang.Object,java.lang.ref.ReferenceQueue) -> <init>
     30:30:int hashCode() -> hashCode
@@ -931,20 +931,20 @@ neureka.calculus.factory.AbstractFunction -> neureka.calculus.factory.AbstractFu
     106:109:boolean dependsOn(int) -> dependsOn
     116:116:neureka.autograd.ADAgent getADAgent(neureka.Tsr[],int,boolean) -> getADAgent
     128:138:neureka.Tsr _tensor_activation(neureka.Tsr[],int,int) -> _tensor_activation
-    1280:1283:neureka.acceleration.Device _device(neureka.Tsr[]):280:283 -> _tensor_activation
+    1280:1283:neureka.unit.acceleration.Device _device(neureka.Tsr[]):280:283 -> _tensor_activation
     1280:1283:neureka.Tsr _tensor_activation(neureka.Tsr[],int,int):128 -> _tensor_activation
     1311:1326:boolean _shareGuestDevice(neureka.Tsr[]):311:326 -> _tensor_activation
-    1311:1326:neureka.acceleration.Device _device(neureka.Tsr[]):281 -> _tensor_activation
+    1311:1326:neureka.unit.acceleration.Device _device(neureka.Tsr[]):281 -> _tensor_activation
     1311:1326:neureka.Tsr _tensor_activation(neureka.Tsr[],int,int):128 -> _tensor_activation
-    144:184:neureka.Tsr _recursie_breakdown_execution(neureka.Tsr[],int,int,neureka.acceleration.Device) -> a
-    189:262:neureka.Tsr _execution(neureka.Tsr[],int,int,neureka.acceleration.Device) -> b
-    266:276:neureka.Tsr _apply(neureka.acceleration.Device,int,java.util.function.Supplier) -> a
+    144:184:neureka.Tsr _recursie_breakdown_execution(neureka.Tsr[],int,int,neureka.unit.acceleration.Device) -> a
+    189:262:neureka.Tsr _execution(neureka.Tsr[],int,int,neureka.unit.acceleration.Device) -> b
+    266:276:neureka.Tsr _apply(neureka.unit.acceleration.Device,int,java.util.function.Supplier) -> a
     287:307:neureka.Tsr[] _src_acti(neureka.Tsr[],int,int,int) -> a
     332:354:double _scalar_activation(double,boolean) -> _scalar_activation
     361:381:double _scalar_activation(double[],int,int) -> _scalar_activation
-    184:184:neureka.Tsr lambda$_recursie_breakdown_execution$2(neureka.Tsr[],int,int,neureka.acceleration.Device) -> c
-    136:136:neureka.Tsr lambda$_tensor_activation$1(neureka.Tsr[],int,int,neureka.acceleration.Device) -> d
-    131:131:neureka.Tsr lambda$_tensor_activation$0(neureka.Tsr[],int,int,neureka.acceleration.Device) -> e
+    184:184:neureka.Tsr lambda$_recursie_breakdown_execution$2(neureka.Tsr[],int,int,neureka.unit.acceleration.Device) -> c
+    136:136:neureka.Tsr lambda$_tensor_activation$1(neureka.Tsr[],int,int,neureka.unit.acceleration.Device) -> d
+    131:131:neureka.Tsr lambda$_tensor_activation$0(neureka.Tsr[],int,int,neureka.unit.acceleration.Device) -> e
 neureka.calculus.factory.AbstractFunction$Exec -> neureka.calculus.factory.AbstractFunction$Exec:
     385:385:void <init>() -> <init>
     390:397:double reLu(double,boolean) -> reLu
