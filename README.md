@@ -206,6 +206,12 @@ $ gradlew proguard
 
 ---
 
+## Testing & Specification ###
+
+- Spock! 
+
+---
+
 ## Development - [![Commit activity 1 year](https://img.shields.io/github/commit-activity/y/Gleethos/neureka.svg?style=flat)]() ##
 
 Want to contribute? Great!

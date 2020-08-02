@@ -17,13 +17,14 @@ class Cross_Device_Integration_Tests extends Specification
 {
 
     def "Test cross device integration with default and legacy indexing."(
-            Device device, boolean legacyIndexing
+            String deviceType, boolean legacyIndexing
     ) {
         given :
             if (
-                device instanceof OpenCLDevice && // OpenCL cannot run inside TravisCI ! :/
+                deviceType == "CPU" && // OpenCL cannot run inside TravisCI ! :/
                 !System.getProperty("os.name").toLowerCase().contains("windows")
             ) return
+            Device device = ( deviceType == "CPU" )?HostCPU.instance():Device.find('first')
             Neureka.instance().reset()
             Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads = true
             Neureka.instance().settings().view().isUsingLegacyView = true
@@ -35,11 +36,11 @@ class Cross_Device_Integration_Tests extends Specification
         expect : CrossDeviceIntegrationTest.on(device, legacyIndexing)
 
         where :
-            device               || legacyIndexing
-            HostCPU.instance()   ||    false
-            HostCPU.instance()   ||    true
-            Device.find('first') ||    true
-            Device.find('first') ||    false
+            deviceType  || legacyIndexing
+              'CPU'     ||    false
+              'CPU'     ||    true
+              'GPU'     ||    true
+              'GPU'     ||    false
     }
 
 
