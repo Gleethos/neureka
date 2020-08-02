@@ -246,4 +246,4 @@ Help me out for a couple of :beers:!
 
 ---
 
-![Tweeting](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)
+[![Tweet](https://img.shields.io/twitter/url/https/github.com/Gleethos/neureka.svg?style=social)](https://twitter.com/intent/tweet?text=Check%20out%20Neureka!%20https://github.com/Gleethos/neureka)
