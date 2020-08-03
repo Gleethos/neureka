@@ -1,22 +1,45 @@
+/*
 
+    Content :
+
+        1. BUILD DEPENDENCIES
+        2. BUILD PLUGINS
+        3. UTILITY LAMBDAS FOR AUTOMATIC VERSION MIGRATION
+        4. VERSION MIGRATION
+        5. SETTING JAVA VERSION AND DEPENDENCY SRC
+        6. LOADING AND COMPILING DEPENDENCIES
+        7. CONFIGURING TEST EXECUTION
+        8. CONFIGURING TEST REPORTING
+        9. CUSTOM DEPLOYMENT TASKS
+        10. JAR CREATION AND MINIFICATION
+        11. MAVEN DEPLOYMENT CONFIGURATION: (! WIP ! WIP ! WIP !)
+
+*/
+//______________________________________________________________________________________________________________________
+//----------------------------------------------------------------------------------------------------------------------
+// 1. BUILD DEPENDENCIES :
 
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
-        classpath 'net.sf.proguard:proguard-gradle:6.2.2'
+        classpath 'net.sf.proguard:proguard-gradle:6.2.2' // Used to create minified jar file of Neureka!
     }
 }
 
-//-----------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
+// 2. BUILD PLUGINS :
 
 plugins {
     id 'java'
-    id 'jacoco'
-    id 'idea'
     id 'groovy'
-    //Public deployment:
+    id 'idea'
+
+    // Test reporting :
+    id 'jacoco'
+
+    // Public deployment :
     id 'java-library'
     id 'maven-publish'
     id 'signing'
@@ -27,7 +50,8 @@ String VERSION = "0.2.4-pre"
 String GROUPID = "com.github.gleethos"
 
 //----------------------------------------------------------------------------------------------------------------------
-// UTILITY LAMBDAS:
+// 3. UTILITY LAMBDAS FOR AUTOMATIC VERSION MIGRATION :
+
 def change = { c -> new Object() {
             def between = { String a, String b -> new Object() {
                     def inFile = { String p, boolean unchanged=false ->
@@ -51,17 +75,29 @@ def getBetween = {String a, String b -> new Object(){
     }
 }
 //----------------------------------------------------------------------------------------------------------------------
-// SETTING VERSION IN SRC AND PRODUCTION:
+// 4. VERSION MIGRATION : SETTING VERSION IN SRC AND PRODUCTION :
 
 change({VERSION}).between("production/lib/neureka-", "\\.jar\\)").inFile("/README.md")
 change({VERSION}).between("return \"", "\"").inFile("/src/main/resources/library_settings.groovy")
 change({VERSION}).between("assert Neureka.version\\(\\)==\"", "\"//version").inFile("/src/test/groovy/ThoroughGroovyTests.groovy")
 
+// SETTING CUSTOM SPOCK REPORT STYLE :
+
+def spockDir = "$rootDir" + "/docs/spock/reports"
+new File(spockDir).eachFile {
+    if ( it.name.endsWith('.html') && it.text.contains('</style>') ){
+        change({'###'}).between('<style>', '</style>').inFile("/docs/spock/reports/"+it.name)
+        it.text = it.text.replace('<style>###</style>', '<link rel="stylesheet" href="../css/custom.css">')
+    }
+}
+
+// SETTING VERSION AND GROUP-ID FOR BUILDING :
+
 group GROUPID
 version VERSION
 
 //----------------------------------------------------------------------------------------------------------------------
-// SETTING JAVA VERSION AND DEPENDENCY SRC:
+// 5. SETTING JAVA VERSION AND DEPENDENCY SRC:
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
@@ -72,7 +108,7 @@ repositories {
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// LISTING DEPENDENCIES AND CONFIGURE LIBRARY-PLUGIN:
+// 6. LOADING AND COMPILING DEPENDENCIES :
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
@@ -80,18 +116,36 @@ dependencies {
     compile group: 'org.jocl', name: 'jocl', version: '2.0.2'
     compile group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.0-rc-3'
 
-    //testCompile platform("org.spockframework:spock-bom:2.0-M1-groovy-3.0.0-rc-3")
-    //testCompile "org.spockframework:spock-core:spock-2.0"
+    // Test suite : Groovy, Spock (+ sl4j, + Spock-Reports)
     testCompile group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.0-rc-3'
-    testCompile group: 'org.spockframework', name: 'spock-core', version: '2.0-M3-groovy-3.0'
-    testCompile group: 'org.spockframework', name: 'spock-bom', version: '2.0-M3-groovy-3.0'
+    testCompile group: 'org.spockframework', name: 'spock-core', version: '2.0-M2-groovy-3.0'
+    testCompile group: 'org.spockframework', name: 'spock-bom', version: '2.0-M2-groovy-3.0'
+    testCompile 'com.athaydes:spock-reports:2.0-RC2', { transitive = false }
+    testImplementation 'org.slf4j:slf4j-api:1.7.30'
+    testRuntimeClasspath 'org.slf4j:slf4j-simple:1.7.30'
 
+    // Library information :
     api 'org.codehaus.groovy:groovy:3.0.0-rc-3'
-    implementation 'org.jocl:jocl:2.0.2'
+    implementation 'org.jocl:jocl:2.0.2' //-> Internal dependency!
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// CONFIGURING TEST REPORTING:
+// 7. CONFIGURING TEST EXECUTION :
+
+test {
+    // Spock-Reports configuration :
+    systemProperty 'com.athaydes.spockframework.report.outputDir', 'docs/spock/reports'
+    //systemProperty 'com.athaydes.spockframework.report.internal.HtmlReportCreator.featureReportCss', "$rootDir"+'/docs/spock/css/custom.css'
+    //systemProperty 'com.athaydes.spockframework.report.internal.HtmlReportCreator.summaryReportCss', "$rootDir"+'/docs/spock/css/spock-summary-report.css'
+    useJUnitPlatform()
+    //filter { includeTestsMatching "*" }
+    minHeapSize = "1g"
+    maxHeapSize = "5g"
+    maxParallelForks = (int) Math.floor(1+(Runtime.runtime.availableProcessors().intdiv(2) ?: 1)/2)
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+// 8. CONFIGURING TEST REPORTING :
 
 jacoco {
     toolVersion = "0.8.5"
@@ -106,8 +160,21 @@ jacocoTestReport {
 }
 check.dependsOn jacocoTestReport
 
+
 //----------------------------------------------------------------------------------------------------------------------
-// DEFINE LOCAL DEPLOYMENT TASKS:
+// 9. CUSTOM DEPLOYMENT TASKS :
+
+task deploy() {
+    dependsOn 'assemble'
+    //dependsOn 'check'
+    dependsOn 'jar'
+    dependsOn 'proguard'
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+// 10. JAR CREATION AND MINIFICATION :
+
+
 jar {
     //destinationDirectory = file("$rootDir/build/libs")
     copy {
@@ -129,8 +196,7 @@ task ('proguard', type: proguard.gradle.ProGuardTask) {
         libraryjars "${System.getProperty('java.home')}/jmods/java.base.jmod", jarfilter: '!**.jar', filter: '!module-info.class'
     }
 
-    // Save the obfuscation mapping to a file, so we can de-obfuscate any stack
-    // traces later on.
+    // Save the obfuscation mapping to a file, so we can de-obfuscate any stack traces later on.
     printmapping 'production/min-lib/'+PROJECT+'-min-'+VERSION+'.map'
     keepparameternames
     renamesourcefileattribute 'SourceFile'
@@ -190,22 +256,24 @@ task ('proguard', type: proguard.gradle.ProGuardTask) {
 
     //keep 'class java.lang.** { *; }'
     //dontwarn 'java.**'
-
     dontwarn 'org.jocl.**'
     dontwarn 'org.codehaus.**'
     dontwarn 'groovy.lang.**'
     dontwarn 'org.jetbrains.**'
 }
 
-task deploy() {
-    dependsOn 'assemble'
-    //dependsOn 'check'
-    dependsOn 'jar'
-    dependsOn 'proguard'
+//----------------------------------------------------------------------------------------------------------------------
+// CONFIGURING JDOC GENERATION:
+
+task createJDocs(type: Javadoc){
+    destinationDir = new File("$projectDir/docs/jdocs")
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// CONFIGURING MAVEN DEPLOYMENT:
+// 11. MAVEN DEPLOYMENT CONFIGURATION: (! WIP !)
 
 task sourceJar(type: Jar) {
     classifier "sources"
@@ -227,7 +295,6 @@ signing {//372447547E38B0A909776E4DD830DAE574A07986
     //sign publishing.publications.mavenJava
     sign configurations.archives
     //sign publishing.publications
-
 }
 
 publishing {
@@ -354,21 +421,3 @@ model {
 //    }
 //}
 
-//----------------------------------------------------------------------------------------------------------------------
-// CONFIGURING TEST EXECUTION:
-test {
-    useJUnitPlatform()
-    //filter { includeTestsMatching "*" }
-    minHeapSize = "1g"
-    maxHeapSize = "5g"
-    maxParallelForks = Math.floor(1+(Runtime.runtime.availableProcessors().intdiv(2) ?: 1)/2)
-}
-//----------------------------------------------------------------------------------------------------------------------
-// CONFIGURING JDOC GENERATION:
-
-task createJDocs(type: Javadoc){
-    destinationDir = new File("$projectDir/docs/jdocs")
-    if(JavaVersion.current().isJava9Compatible()) {
-        options.addBooleanOption('html5', true)
-    }
-}

@@ -9,18 +9,18 @@ import spock.lang.Specification
 class Calculus_Component_Tests extends Specification
 {
 
-    def "Tensor results of various Function instances return expected results."(
+    def 'Tensor results of various Function instances return expected results.'(
             String equation, List<Tsr> inputs, Integer index, List<Double> expected
     ) {
-        given :
+        given : "A new Function instance created from ${equation}."
         Function f = FunctionBuilder.build(equation, true) // TODO : test with 'doAD' : false!
 
-        and :
+        and : 'The result is being calculated by invoking the Function instance.'
         def result = (index!=null)
                 ? (f.derive( inputs, index ).value64() as List<Double>)
                 : (f.call(   inputs        ).value64() as List<Double>)
 
-        expect :
+        expect : "The calculated result ${result} should be equal to expected ${expected}."
         result==expected
 
         where :

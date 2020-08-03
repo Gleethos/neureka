@@ -109,7 +109,7 @@ Convolution:
          */
 ```
 
-GPU executorFor:
+GPU execution:
 ```
         Device gpu = Device.find("nvidia");
         x = new Tsr(
