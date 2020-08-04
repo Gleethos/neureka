@@ -27,7 +27,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
         expect :
             t.toString().contains(expected)
             if( Neureka.instance().canAccessOpenCL() ){
-                t.add(Device.find("nvidia"))
+                t.add(Device.find("first"))
                 t.toString().contains(expected)
             }
 
