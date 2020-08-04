@@ -46,7 +46,7 @@ plugins {
 }
 
 String PROJECT = "neureka"
-String VERSION = "0.2.4-pre"
+String VERSION = "0.2.4"
 String GROUPID = "com.github.gleethos"
 
 //----------------------------------------------------------------------------------------------------------------------

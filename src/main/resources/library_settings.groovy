@@ -29,6 +29,6 @@ Neureka.instance {
 
     }
 
-    return "0.2.4-pre"
+    return "0.2.4"
 
 }
