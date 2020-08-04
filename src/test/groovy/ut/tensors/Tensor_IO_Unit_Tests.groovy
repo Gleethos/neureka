@@ -1,4 +1,4 @@
-package unit.tensors
+package ut.tensors
 
 import neureka.Neureka
 import neureka.Tsr

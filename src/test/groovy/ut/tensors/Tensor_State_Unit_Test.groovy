@@ -1,4 +1,4 @@
-package unit.tensors
+package ut.tensors
 
 import neureka.Tsr
 import spock.lang.Specification

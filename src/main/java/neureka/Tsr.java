@@ -160,15 +160,51 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
      * @return The unchanged object or maybe in future versions: null (component rejected)
      */
     @Override
-    protected <T extends Component<Tsr>> T _addOrReject(T newComponent){
-        if (newComponent instanceof Device && !((Device)newComponent).has(this)){
-            ((Device)newComponent).add(this);
+    protected <T extends Component<Tsr>> T _addOrReject(T newComponent)
+    {
+        if (newComponent instanceof Device && !((Device)newComponent).has(this))
+        {
+            if ( this.has(Relation.class) ) {
+                Relation relation = find(Relation.class);
+                if ( relation.hasParent() ) { // Root needs to be found ! :
+                    Tsr root = relation.findRootTensor();
+                    ((Device)newComponent).add(root);
+                    //root.setIsOutsourced(true);
+                    root.find(Relation.class).foreachChild(c -> c.setIsOutsourced(true));
+                } else { // This is root ! :
+                    relation.foreachChild(c -> c.setIsOutsourced(true));
+                    ((Device)newComponent).add(this);
+                    //setIsOutsourced(true);
+                }
+            } else {
+                ((Device)newComponent).add(this);
+                //setIsOutsourced(true);
+            }
+            if ( ((Device)newComponent).has(this) ) setIsOutsourced(true);
         } else if (newComponent instanceof Tsr) {
             if(
                     ((Tsr)newComponent).shape().hashCode()!=this.shape().hashCode() ||
                     Arrays.hashCode(((Tsr)newComponent).getNDConf().shape()) != Arrays.hashCode(_conf.shape())
             ) newComponent = null;
             else setRqsGradient(true);
+        }
+        return newComponent;
+    }
+
+    /**
+     * This method is executed when a is being removed from the tensor.
+     * The public remove method is implemented in the super class
+     * 'AbstractComponentOwner' from which this class inherits.
+     * In this super class the component logic is implemented.
+     *
+     * @param newComponent A component used to access features. (GraphNode, IndexAlias, Relation, int[], ...)
+     * @return The unchanged object or when rejected: null (component rejected)
+     */
+    @Override
+    protected <T extends Component<Tsr>> T _removeOrReject(T newComponent)
+    {
+        if ( newComponent instanceof Device ) {
+
         }
         return newComponent;
     }

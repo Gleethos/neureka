@@ -1,4 +1,4 @@
-package unit.neureka
+package ut.neureka
 
 import neureka.Neureka
 import spock.lang.Specification

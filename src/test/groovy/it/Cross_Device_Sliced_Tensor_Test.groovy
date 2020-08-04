@@ -1,6 +1,6 @@
-package integration
+package it
 
-import integration.tests.CrossDeviceSlicedTensorIntegrationTest
+import it.tests.CrossDeviceSlicedTensorIntegrationTest
 import neureka.Neureka
 import neureka.acceleration.Device
 import neureka.acceleration.opencl.OpenCLPlatform

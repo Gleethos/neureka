@@ -1,4 +1,4 @@
-package unit.acceleration
+package ut.acceleration
 
 import neureka.Neureka
 import neureka.Tsr
@@ -12,7 +12,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
      * The data of a tensor located on an Device should
      * be update when passing a float or double array!
      */
-    def "passing_a_numeric_array_to_a_tensor_should_modify_its_content!"(
+    def 'Passing a numeric array to a tensor should modify its content!'(
             Object data1, Object data2, String expected
     ) {
         given :

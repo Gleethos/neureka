@@ -15,7 +15,7 @@ public class Relation implements Component<Tsr> {
     @Override
     public void update(Tsr oldOwner, Tsr newOwner){
         if (_parent != null) {
-            Relation pr = (Relation) _parent.find(Relation.class);
+            Relation pr = _parent.find(Relation.class);
             for (int i=0; i < pr._children.length; i++) {
                 if (pr._children[i].get() == oldOwner) {
                     pr._children[i] = new WeakReference<>(newOwner);
@@ -26,7 +26,7 @@ public class Relation implements Component<Tsr> {
             for (WeakReference<Tsr> c : _children) {
                 Tsr t = c.get();
                 if ( t != null ) {
-                    Relation cr = (Relation) t.find(Relation.class);
+                    Relation cr = t.find(Relation.class);
                     if ( cr != null ) cr._parent = newOwner;
                 }
             }
@@ -38,6 +38,7 @@ public class Relation implements Component<Tsr> {
         _parent = parent;
         return this;
     }
+
 
     public Relation addChild(Tsr child){
         if ( _children == null ) {
@@ -51,18 +52,28 @@ public class Relation implements Component<Tsr> {
         return this;
     }
 
+
     public Relation foreachChild(Consumer<Tsr> action){
         if ( _children != null ) {
             for ( WeakReference<Tsr> r : _children ) {
                 Tsr c = r.get();
                 if ( c != null ) {
                     action.accept(c);
-                    Relation parent = (Relation) c.find(Relation.class);
-                    if ( parent != null ) parent.foreachChild(action);
+                    Relation relation = (Relation) c.find(Relation.class);
+                    if ( relation != null ) relation.foreachChild(action);
                 }
             }
         }
         return this;
+    }
+
+    public Tsr findRootTensor() {
+        if ( _parent==null ) return null;
+        else if ( !_parent.has(Relation.class) ) return null;
+        else if ( !_parent.find(Relation.class).hasParent() ) return _parent;
+        else {
+            return _parent.find(Relation.class).findRootTensor();
+        }
     }
 
     public boolean hasParent(){

@@ -1,10 +1,9 @@
-package unit.optimization
+package ut.optimization
 
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
-import neureka.optimization.Optimizer
-import neureka.optimization.implementations.ADAM
+
 //import org.junit.Test
 import spock.lang.Specification
 

@@ -1,4 +1,4 @@
-package integration
+package it
 
 import neureka.Neureka
 import neureka.Tsr
@@ -6,8 +6,6 @@ import neureka.acceleration.Device
 import neureka.acceleration.host.HostCPU
 import spock.lang.Specification
 import testutility.Utility
-
-import java.text.SimpleDateFormat
 
 class Benchmark_Integration_Test extends Specification
 {

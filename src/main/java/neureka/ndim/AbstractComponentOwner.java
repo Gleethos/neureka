@@ -41,10 +41,10 @@ public abstract class AbstractComponentOwner<InstanceType> {
      * @param componentClass The type/class of a component which will be removed by this method.
      * @return This very class.
      */
-    public InstanceType remove(Class componentClass) {
-        Object oldComponent = find(componentClass);
+    public <T extends Component<InstanceType>>  InstanceType remove(Class<T> componentClass) {
+        T oldComponent = find(componentClass);
         if (oldComponent != null) {
-            _components.remove(oldComponent);
+            _components.remove(_removeOrReject(oldComponent));
             //_components.trimToSize();
         }
         if (_components != null && _components.size() == 0) {
@@ -67,7 +67,8 @@ public abstract class AbstractComponentOwner<InstanceType> {
      * @param newComponent The new component which should be added to the components list.
      * @return This very class.
      */
-    public <T extends Component<InstanceType>> InstanceType add(T newComponent) {
+    public <T extends Component<InstanceType>> InstanceType add(T newComponent)
+    {
         if (newComponent == null) return (InstanceType)this;
         T oldCompartment = null;
         if (_components != null) {
@@ -76,9 +77,8 @@ public abstract class AbstractComponentOwner<InstanceType> {
                 _components.remove(oldCompartment);
                 //_components.trimToSize();
             }
-        } else {
-            _components = new ArrayList<>();
-        }
+        } else _components = new ArrayList<>();
+
         _components.add(_addOrReject(newComponent));
         return (InstanceType)this;
     }
@@ -88,6 +88,13 @@ public abstract class AbstractComponentOwner<InstanceType> {
      * @return The same component or null if it has been rejected.
      */
     protected abstract <T extends Component<InstanceType>> T _addOrReject(T newComponent);
+
+
+    /**
+     * @param newComponent The component which should be removed from the components list.
+     * @return The same component or null if its removal has been rejected.
+     */
+    protected abstract <T extends Component<InstanceType>> T _removeOrReject(T newComponent);
 
     /**
      *
@@ -100,9 +107,7 @@ public abstract class AbstractComponentOwner<InstanceType> {
         if (component!=null) {
             action.accept(component);
             return true;
-        } else {
-            return false;
-        }
+        } else return false;
     }
 
 

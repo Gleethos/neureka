@@ -1,8 +1,8 @@
-package integration
+package it
 
 import groovy.transform.CompileDynamic
-import integration.tests.CrossDeviceIntegrationTest
-import integration.tests.SimpleNNIntegrationTest
+import it.tests.CrossDeviceIntegrationTest
+import it.tests.SimpleNNIntegrationTest
 import neureka.Neureka
 import neureka.Tsr
 import neureka.acceleration.Device
@@ -16,10 +16,10 @@ import testutility.mock.DummyDevice
 class Cross_Device_Integration_Tests extends Specification
 {
 
-    def "Test cross device integration with default and legacy indexing."(
+    def 'Test cross device integration with default and legacy indexing.' (
             String deviceType, boolean legacyIndexing
     ) {
-        given :
+        given : 'A given device of any type and the settings configured for testing.'
             if (
                 deviceType == "GPU" && // OpenCL cannot run inside TravisCI ! :/
                 !System.getProperty("os.name").toLowerCase().contains("windows")
@@ -29,13 +29,14 @@ class Cross_Device_Integration_Tests extends Specification
             Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads = true
             Neureka.instance().settings().view().isUsingLegacyView = true
 
-        and :
+        and : 'The indexing mode set to "legacy"!'
             Neureka.instance().settings().indexing().isUsingLegacyIndexing = legacyIndexing
             if ( device instanceof OpenCLDevice ) OpenCLPlatform.PLATFORMS().get(0).recompile()
 
-        expect : CrossDeviceIntegrationTest.on(device, legacyIndexing)
+        expect : 'The integration test runs successful.'
+            CrossDeviceIntegrationTest.on(device, legacyIndexing)
 
-        where :
+        where : 'The following settings are being used: '
             deviceType  || legacyIndexing
               'CPU'     ||    false
               'CPU'     ||    true

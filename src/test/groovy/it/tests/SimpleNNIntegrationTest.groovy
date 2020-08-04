@@ -1,4 +1,4 @@
-package integration.tests
+package it.tests
 
 import neureka.Neureka
 import neureka.Tsr

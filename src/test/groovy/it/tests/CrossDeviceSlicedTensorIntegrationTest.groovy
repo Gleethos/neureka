@@ -1,4 +1,4 @@
-package integration.tests
+package it.tests
 
 import neureka.Tsr
 import neureka.acceleration.Device
@@ -125,9 +125,9 @@ class CrossDeviceSlicedTensorIntegrationTest
                 [
                         (legacyIndexing)?
                                 "9.0, 5.0, 7.0, " +
-                                        "11.0, 13.0, 18.0, " +
-                                        "0.0, 3.0, 5.0, " +
-                                        "8.0, 10.0, 9.0"
+                                "11.0, 13.0, 18.0, " +
+                                "0.0, 3.0, 5.0, " +
+                                "8.0, 10.0, 9.0"
                                 :"4.0, 18.0, 12.0, 6.0, "+
                                 "10.0, 7.0, 5.0, 8.0, "+
                                 "3.0, 5.0, 7.0, 6.0"
@@ -176,7 +176,7 @@ class CrossDeviceSlicedTensorIntegrationTest
          8, 9, 1, 2,
          3, 4, 5, 6
 
-         NON LEGACY INDEXING:
+         NON LEGACY INDEXING :
          1, 12, 3, 4, 5, 6, => 12, 4,
          7, 16, 9, 1, 2, 3,
          4, 5, 6, 7, 8, 9,  => 5,  7,
@@ -253,7 +253,7 @@ class CrossDeviceSlicedTensorIntegrationTest
          8, 9, 1, 2,
          3, 4, 5, 6
 
-         NON LEGACY INDEXING
+         NON LEGACY INDEXING :
          1.0, 1.0, 3.0, 2.0, 5.0, 6.0,
          7.0, 8.0, 8.0, 1.0, 2.0, 3.0,
          4.0, 8.0, 8.0, 4.0, 8.0, 9.0,

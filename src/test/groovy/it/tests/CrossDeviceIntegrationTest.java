@@ -1,4 +1,4 @@
-package integration.tests;
+package it.tests;
 
 import neureka.Tsr;
 import neureka.acceleration.Device;

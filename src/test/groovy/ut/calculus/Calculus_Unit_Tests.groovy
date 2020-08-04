@@ -1,4 +1,4 @@
-package unit.calculus
+package ut.calculus
 
 import neureka.calculus.Function
 import neureka.calculus.factory.assembly.FunctionBuilder

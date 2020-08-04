@@ -1,4 +1,4 @@
-package unit.optimization
+package ut.optimization
 
 import neureka.Neureka
 import neureka.Tsr

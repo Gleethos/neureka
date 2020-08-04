@@ -1,4 +1,4 @@
-package integration.tests;
+package it.tests;
 
 import neureka.Neureka;
 import neureka.Tsr;
@@ -268,7 +268,7 @@ public class BroadIntegrationTest
                 "Testing 'toString' of GraphNode");
         //---
         //======================
-        //TESTING INVERS:
+        //TESTING INVERSE:
         ///=================
         //---
         tensor1 = new Tsr(new int[]{2, 3}, new double[]{

@@ -12,6 +12,7 @@ import neureka.acceleration.Device;
 import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
+import neureka.framing.Relation;
 import neureka.utility.DataHelper;
 import org.jocl.*;
 
@@ -115,7 +116,10 @@ public class OpenCLDevice extends AbstractDevice
 
     @Override
     public Device add(Tsr tensor) {
-        _add(tensor, null);
+        Tsr root = null;
+        if ( tensor.has( Relation.class ) ) root = tensor.find( Relation.class ).findRootTensor();
+        if ( root != null ) add( tensor, root );
+        else _add(tensor, null);
         return this;
     }
 
@@ -253,7 +257,7 @@ public class OpenCLDevice extends AbstractDevice
     @Override
     public Device rmv(Tsr tensor) {
         cl_tsr clt = tensor.find(cl_tsr.class);
-        if (clt == null) return this;
+        if ( clt == null ) return this;
         _tensors.remove(tensor);
         tensor.setIsOutsourced(false);
         tensor.remove(cl_tsr.class);

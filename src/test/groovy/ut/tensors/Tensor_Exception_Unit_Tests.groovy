@@ -1,7 +1,6 @@
-package unit.tensors
+package ut.tensors
 
 import neureka.Tsr
-import org.junit.Test
 import spock.lang.Specification
 
 class Tensor_Exception_Unit_Tests extends Specification

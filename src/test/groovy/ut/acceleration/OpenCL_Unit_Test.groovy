@@ -1,4 +1,4 @@
-package unit.acceleration
+package ut.acceleration
 
 import neureka.acceleration.Device
 import neureka.acceleration.opencl.OpenCLDevice
