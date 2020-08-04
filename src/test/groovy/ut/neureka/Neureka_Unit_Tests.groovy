@@ -3,7 +3,7 @@ package ut.neureka
 import neureka.Neureka
 import spock.lang.Specification
 
-class Neureka_Unit_Testing extends Specification
+class Neureka_Unit_Tests extends Specification
 {
     void 'Neureka class instance has expected behaviour.'()
     {
@@ -18,7 +18,7 @@ class Neureka_Unit_Testing extends Specification
         then :
             assert !Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed()
             assert Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp()
-            assert Neureka.version()=="0.2.4-pre"//version
+            assert Neureka.version()=="0.2.4"//version
     }
 
 
