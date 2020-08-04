@@ -22,7 +22,7 @@ class Cross_Device_Integration_Tests extends Specification
         given : 'A given device of any type and the settings configured for testing.'
             if (
                 deviceType == "GPU" && // OpenCL cannot run inside TravisCI ! :/
-                !System.getProperty("os.name").toLowerCase().contains("windows")
+                !Neureka.instance().canAccessOpenCL()
             ) return
             Device device = ( deviceType == "CPU" )?HostCPU.instance():Device.find('first')
             Neureka.instance().reset()
@@ -56,9 +56,7 @@ class Cross_Device_Integration_Tests extends Specification
         then : SimpleNNIntegrationTest.on(device)
 
         and :
-        //=========================================================================
-        if(!System.getProperty("os.name").toLowerCase().contains("windows")) return
-        //=========================================================================
+        if ( !Neureka.instance().canAccessOpenCL() ) return
 
         when : Device gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0)
         then : SimpleNNIntegrationTest.on(gpu)

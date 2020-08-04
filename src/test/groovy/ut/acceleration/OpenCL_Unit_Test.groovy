@@ -12,10 +12,7 @@ class OpenCL_Unit_Test extends Specification
     def 'First found OpenCLDevice will have realistic properties.'()
     {
         given : 'This system supports OpenCL.'
-        //=========================================================================
-        if ( !Neureka.instance().canAccessOpenCL() ) return
-        //if(!System.getProperty("os.name").toLowerCase().contains("windows")) return
-        //=========================================================================
+            if ( !Neureka.instance().canAccessOpenCL() ) return
 
         when : 'Information about all existing OpenCL devices is being queried.'
             String query = DeviceQuery.query()

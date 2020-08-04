@@ -52,7 +52,7 @@ class Benchmark_Integration_Test extends Specification
             )
         then : hash==expected
 
-        and : if(!System.getProperty("os.name").toLowerCase().contains("windows")) return
+        and : if ( !Neureka.instance().canAccessOpenCL() ) return
 
         when :
         hash = ""

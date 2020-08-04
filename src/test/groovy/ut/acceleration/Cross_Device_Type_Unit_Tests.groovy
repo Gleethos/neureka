@@ -26,7 +26,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
 
         expect :
             t.toString().contains(expected)
-            if(System.getProperty("os.name").toLowerCase().contains("windows")){
+            if( Neureka.instance().canAccessOpenCL() ){
                 t.add(Device.find("nvidia"))
                 t.toString().contains(expected)
             }

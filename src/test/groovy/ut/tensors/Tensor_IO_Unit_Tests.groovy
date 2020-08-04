@@ -280,7 +280,7 @@ class Tensor_IO_Unit_Tests extends  Specification
     def 'Adding OpenCL device to tensor makes tensor be "outsourced" and contain the Device instance as component.'()
     {
         given :
-            if(!System.getProperty("os.name").toLowerCase().contains("windows")) return
+            if ( !Neureka.instance().canAccessOpenCL() ) return
             Neureka.instance().reset()
             Device gpu = Device.find("nvidia")
             Tsr t = new Tsr([3, 4, 1], 3)

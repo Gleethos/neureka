@@ -27,9 +27,7 @@ class Cross_Device_Sliced_Tensor_Test extends Specification
         then : CrossDeviceSlicedTensorIntegrationTest.on(device, false)
 
         when :
-            //=========================================================================
-            if(!System.getProperty("os.name").toLowerCase().contains("windows")) return
-            //=========================================================================
+            if ( !Neureka.instance().canAccessOpenCL() ) return
             Device gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0)
 
             Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
