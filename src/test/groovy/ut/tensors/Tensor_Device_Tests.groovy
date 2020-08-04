@@ -79,7 +79,6 @@ class Tensor_Device_Tests extends Specification
 
         and: 'Internally the Tsr "asked" if it belongs to the Device twice. (before and after migration attempt)'
             2 * device.has(t)
-
     }
 
 

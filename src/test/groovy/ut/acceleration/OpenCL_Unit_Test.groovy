@@ -1,5 +1,6 @@
 package ut.acceleration
 
+import neureka.Neureka
 import neureka.acceleration.Device
 import neureka.acceleration.opencl.OpenCLDevice
 import neureka.acceleration.opencl.utility.DeviceQuery
@@ -10,14 +11,16 @@ class OpenCL_Unit_Test extends Specification
 
     def 'First found OpenCLDevice will have realistic properties.'()
     {
-        given :
+        given : 'This system supports OpenCL.'
         //=========================================================================
-        if(!System.getProperty("os.name").toLowerCase().contains("windows")) return
+        if ( !Neureka.instance().canAccessOpenCL() ) return
+        //if(!System.getProperty("os.name").toLowerCase().contains("windows")) return
         //=========================================================================
-        Device gpu = Device.find('first')
 
-        when : String query = DeviceQuery.query()
-        then :
+        when : 'Information about all existing OpenCL devices is being queried.'
+            String query = DeviceQuery.query()
+
+        then : 'The query string contains expected properties.'
         query.contains("DEVICE_NAME")
         query.contains("MAX_MEM_ALLOC_SIZE")
         query.contains("VENDOR")
@@ -26,8 +29,10 @@ class OpenCL_Unit_Test extends Specification
         query.contains("LOCAL_MEM_SIZE")
         query.contains("CL_DEVICE_TYPE")
 
-        when : OpenCLDevice cld = (OpenCLDevice) gpu
-        then :
+        when : 'The first found Device instance is used.'
+            OpenCLDevice cld = Device.find('first') as OpenCLDevice
+
+        then : 'The device has realistic properties.'
         cld.globalMemSize()>1000
         !cld.name().equals("")
         cld.image2DMaxHeight()>100

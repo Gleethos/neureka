@@ -169,16 +169,13 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
                 if ( relation.hasParent() ) { // Root needs to be found ! :
                     Tsr root = relation.findRootTensor();
                     ((Device)newComponent).add(root);
-                    //root.setIsOutsourced(true);
-                    root.find(Relation.class).foreachChild(c -> c.setIsOutsourced(true));
+                    root.find(Relation.class).foreachChild( c -> c.setIsOutsourced(true) );
                 } else { // This is root ! :
-                    relation.foreachChild(c -> c.setIsOutsourced(true));
+                    relation.foreachChild( c -> c.setIsOutsourced(true) );
                     ((Device)newComponent).add(this);
-                    //setIsOutsourced(true);
                 }
             } else {
                 ((Device)newComponent).add(this);
-                //setIsOutsourced(true);
             }
             if ( ((Device)newComponent).has(this) ) setIsOutsourced(true);
         } else if (newComponent instanceof Tsr) {

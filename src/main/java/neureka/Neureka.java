@@ -19,6 +19,7 @@ public class Neureka
     private static String _version;
 
     private static final boolean _groovyAvailable;
+    private static final boolean _openCLAvailable;
 
     private final Settings _settings;
     private final Utility _utility;
@@ -26,6 +27,7 @@ public class Neureka
     static {
         _instances = new ConcurrentHashMap<>();
         _groovyAvailable = Utility.isPresent("groovy.lang.GroovySystem");
+        _openCLAvailable = Utility.isPresent("org.jocl.CL");
     }
 
     private Neureka(){
@@ -57,6 +59,14 @@ public class Neureka
         Object o = Utility.tryGroovyClosureOn(closure, Neureka.instance());
         if (o instanceof String) _version = (String) o;
         return Neureka.instance();
+    }
+
+    public boolean canAccessGroovy(){
+        return _groovyAvailable;
+    }
+
+    public boolean canAccessOpenCL(){
+        return _openCLAvailable;
     }
 
     public Settings settings(){
@@ -374,14 +384,17 @@ public class Neureka
 
         public static boolean isPresent(String className){
             boolean found = false;
+            String groovyInfo = ((className.toLowerCase().contains("groovy"))?" Neureka settings uninitialized!":"");
             try {
                 Class.forName(className);
                 found = true;
             } catch (Throwable ex) {// Class or one of its dependencies is not present...
-                System.out.println("[Info]: Groovy dependencies not found! Neureka settings uninitialized!\n[Cause]: "+ex.getMessage());
+                System.out.println(
+                        "[Info]: '"+className+"' dependencies not found!"+groovyInfo+"\n[Cause]: "+ex.getMessage()
+                );
                 return found;
             } finally {
-                if(!found) System.out.println("[Info]: Groovy dependencies not found! Neureka settings uninitialized!");
+                if(!found) System.out.println("[Info]: '"+className+"' dependencies not found!"+groovyInfo);
                 return found;
             }
         }
