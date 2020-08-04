@@ -111,7 +111,6 @@ repositories {
 // 6. LOADING AND COMPILING DEPENDENCIES :
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
     compile 'org.jetbrains:annotations:16.0.2'
     compile group: 'org.jocl', name: 'jocl', version: '2.0.2'
     compile group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.0-rc-3'
@@ -123,6 +122,8 @@ dependencies {
     testCompile 'com.athaydes:spock-reports:2.0-RC2', { transitive = false }
     testImplementation 'org.slf4j:slf4j-api:1.7.30'
     testRuntimeClasspath 'org.slf4j:slf4j-simple:1.7.30'
+    testRuntime "net.bytebuddy:byte-buddy:1.9.3" // allows mocking of classes (in addition to interfaces)
+    testRuntime "org.objenesis:objenesis:2.6"    // allows mocking of classes without default constructor (together with CGLIB)
 
     // Library information :
     api 'org.codehaus.groovy:groovy:3.0.0-rc-3'
@@ -133,14 +134,18 @@ dependencies {
 // 7. CONFIGURING TEST EXECUTION :
 
 test {
+    //filter { includeTestsMatching "*" } // Filter for tests scenarios!
+
     // Spock-Reports configuration :
     systemProperty 'com.athaydes.spockframework.report.outputDir', 'docs/spock/reports'
-    //systemProperty 'com.athaydes.spockframework.report.internal.HtmlReportCreator.featureReportCss', "$rootDir"+'/docs/spock/css/custom.css'
-    //systemProperty 'com.athaydes.spockframework.report.internal.HtmlReportCreator.summaryReportCss', "$rootDir"+'/docs/spock/css/spock-summary-report.css'
-    useJUnitPlatform()
-    //filter { includeTestsMatching "*" }
+
+    useJUnitPlatform() // ...otherwise tests will not be received by gradle...
+
+    // Memory :
     minHeapSize = "1g"
     maxHeapSize = "5g"
+
+    // Number of threads used for testing :
     maxParallelForks = (int) Math.floor(1+(Runtime.runtime.availableProcessors().intdiv(2) ?: 1)/2)
 }
 

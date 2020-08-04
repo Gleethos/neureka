@@ -9,7 +9,17 @@ import spock.lang.Specification
 
 class Tensor_IO_Unit_Tests extends  Specification
 {
-
+    def 'Tensors can be instantiated with String seed.'()
+    {
+        given :
+            Neureka.instance().reset()
+            Tsr t1 = new Tsr([2, 3], "I am a seed! :)")
+            Tsr t2 = new Tsr(new int[]{2, 3}, "I am a seed! :)")
+            Tsr t3 = new Tsr(new int[]{2, 3}, "I am also a seed! But different. :)")
+        expect :
+            assert t1.toString()==t2.toString()
+            assert t1.toString()!=t3.toString()
+    }
 
     def 'Smart tensor constructors yield expected results.'()
     {
@@ -50,17 +60,6 @@ class Tensor_IO_Unit_Tests extends  Specification
 
     }
 
-    def 'Tensors can be instantiated with String seed.'()
-    {
-        given :
-            Neureka.instance().reset()
-            Tsr t1 = new Tsr([2, 3], "I am a seed! :)")
-            Tsr t2 = new Tsr(new int[]{2, 3}, "I am a seed! :)")
-            Tsr t3 = new Tsr(new int[]{2, 3}, "I am also a seed! But different. :)")
-        expect :
-            assert t1.toString()==t2.toString()
-            assert t1.toString()!=t3.toString()
-    }
 
     def 'Indexing after reshaping works as expected.'()
     {

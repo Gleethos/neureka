@@ -251,7 +251,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Tue Aug 04 19:39:04 CEST 2020 by Daglemino</div>
+<div class='date-test-ran'>Created on Wed Aug 05 00:52:17 CEST 2020 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -263,12 +263,12 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>1</td>
+<td>2</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>0,055 seconds</td>
+<td>0,810 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -283,6 +283,9 @@ div.footer {
 <ul id='toc'>
 <li>
 <a href='#-1377577810' class='feature-toc-pass'>First found OpenCLDevice will have realistic properties.</a>
+</li>
+<li>
+<a href='#-262914125' class='feature-toc-pass'>An OpenCLDevice will throw an exception when trying to add a tensor whose "data parent" is not outsourced.</a>
 </li>
 </ul>
 <tr>
@@ -333,6 +336,80 @@ div.footer {
 </td>
 <td>
 <div class='block-text'>The device has realistic properties.</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-262914125'>
+<span>An OpenCLDevice will throw an exception when trying to add a tensor whose "data parent" is not outsourced.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>This system supports OpenCL.</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The first found OpenCLDevice instance.</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A mocked tensor that is not outsourced.</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Another mocked tensor that represents a slice of the prior one.</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A mocked relation between both tensors returned by the slice as component.</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We try to add the slice to the device.</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>An exception is being thrown.</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>It explains what went wrong.</div>
 </td>
 </tr>
 </tbody>

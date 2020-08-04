@@ -125,7 +125,7 @@ public class OpenCLDevice extends AbstractDevice
 
     @Override
     public Device add(Tsr tensor, Tsr parent) {
-<span class="pc bpc" id="L128" title="1 of 2 branches missed.">        if (!parent.isOutsourced()) throw new IllegalStateException(&quot;Data parent is not outsourced!&quot;);</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">        if (!parent.isOutsourced()) throw new IllegalStateException(&quot;Data parent is not outsourced!&quot;);</span>
 <span class="fc" id="L129">        _add(tensor, parent.find(cl_tsr.class));</span>
 <span class="fc" id="L130">        _tensors.add(tensor);</span>
 <span class="fc" id="L131">        tensor.add(this);</span>

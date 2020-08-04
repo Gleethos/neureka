@@ -1,0 +1,78 @@
+package it.ndim
+
+import neureka.Neureka
+import neureka.Tsr
+import neureka.ndim.config.complex.D1Configuration
+import neureka.ndim.config.complex.ScalarConfiguration
+import neureka.ndim.config.simple.SimpleD1Configuration
+import neureka.ndim.config.simple.SimpleScalarConfiguration
+import spock.lang.Specification
+
+class Tensor_NDConfiguration_Integration_Tests extends Specification
+{
+    def 'NDConfiguration instances of tensors have expected state.'()
+    {
+        given:
+        Neureka.instance().reset()
+
+        Tsr a = new Tsr(1)
+        Tsr b = new Tsr(2)
+
+        expect:
+        a.NDConf instanceof SimpleScalarConfiguration
+        a.NDConf == b.NDConf
+        a.NDConf.shape(0) == 1
+        a.NDConf.translation(0) == 1
+        a.NDConf.idxmap(0) == 1
+        a.NDConf.offset(0) == 0
+        a.NDConf.spread(0) == 1
+    }
+
+
+    def 'NDConfiguration instances of tensors have expected state and behaviour.'()
+    {
+        given:
+        Neureka.instance().reset()
+        Tsr x = new Tsr([1.0, 2.0, 3.1])
+        Tsr y = new Tsr([3, 4.5, 2])
+        Tsr z = new Tsr([1.4, 2, 4])
+
+        expect :
+        x.NDConf instanceof SimpleD1Configuration
+        y.NDConf instanceof SimpleD1Configuration
+        z.NDConf instanceof SimpleD1Configuration
+        x.NDConf == y.NDConf
+        y.NDConf == z.NDConf
+        x.NDConf.shape(0) == 3
+        x.NDConf.translation(0) == 1
+        x.NDConf.idxmap(0) == 1
+        x.NDConf.offset(0) == 0
+        x.NDConf.spread(0) == 1
+        x[2].NDConf instanceof ScalarConfiguration
+        y[1.1].NDConf instanceof ScalarConfiguration
+        y[1.1].NDConf != x[2].NDConf
+        y[1.1].NDConf == z[1].NDConf
+
+
+        when : x = x[new BigDecimal(2)]
+        then :
+        x.NDConf.shape(0) == 1
+        x.NDConf.translation(0) == 1
+        x.NDConf.idxmap(0) == 1
+        x.NDConf.offset(0) == 2
+        x.NDConf.spread(0) == 1
+
+        when : y = y[1..2]
+        then :
+        y.toString().contains("(2):[4.5, 2.0]")
+        y.NDConf instanceof D1Configuration
+        y.NDConf.shape(0) == 2
+        y.NDConf.translation(0) == 1
+        y.NDConf.idxmap(0) == 1
+        y.NDConf.offset(0) == 1
+        y.NDConf.spread(0) == 1
+
+    }
+
+
+}
