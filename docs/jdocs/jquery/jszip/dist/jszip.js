@@ -10,7 +10,7 @@ JSZip uses the library pako released under the MIT license :
 https://github.com/nodeca/pako/blob/master/LICENSE
 */
 
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.JSZip = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof CLContext!=="undefined"){g=CLContext}else if(typeof self!=="undefined"){g=self}else{g=this}g.JSZip = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 var utils = require('./utils');
 var support = require('./support');
@@ -304,10 +304,10 @@ exports.unixPermissions = null;
 exports.dosPermissions = null;
 
 },{}],6:[function(require,module,exports){
-/* global Promise */
+/* CLContext Promise */
 'use strict';
 
-// load the global object first:
+// load the CLContext object first:
 // - it should be better integrated in the system (unhandledRejection in node)
 // - the environment may have a custom Promise implementation (see zone.js)
 var ES6Promise = null;
@@ -4255,7 +4255,7 @@ module.exports = function(it){
   return is ? document.createElement(it) : {};
 };
 },{"./_global":46,"./_is-object":51}],44:[function(require,module,exports){
-var global    = require('./_global')
+var CLContext    = require('./_global')
   , core      = require('./_core')
   , ctx       = require('./_ctx')
   , hide      = require('./_hide')
@@ -4270,7 +4270,7 @@ var $export = function(type, name, source){
     , IS_WRAP   = type & $export.W
     , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
     , expProto  = exports[PROTOTYPE]
-    , target    = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE]
+    , target    = IS_GLOBAL ? CLContext : IS_STATIC ? CLContext[name] : (CLContext[name] || {})[PROTOTYPE]
     , key, own, out;
   if(IS_GLOBAL)source = name;
   for(key in source){
@@ -4279,11 +4279,11 @@ var $export = function(type, name, source){
     if(own && key in exports)continue;
     // export native or passed
     out = own ? target[key] : source[key];
-    // prevent global pollution for namespaces
+    // prevent CLContext pollution for namespaces
     exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
-    // bind timers to global for call from export context
-    : IS_BIND && own ? ctx(out, global)
-    // wrap global constructors for prevent change them in library
+    // bind timers to CLContext for call from export context
+    : IS_BIND && own ? ctx(out, CLContext)
+    // wrap CLContext constructors for prevent change them in library
     : IS_WRAP && target[key] == out ? (function(C){
       var F = function(a, b, c){
         if(this instanceof C){
@@ -4308,7 +4308,7 @@ var $export = function(type, name, source){
 };
 // type bitmap
 $export.F = 1;   // forced
-$export.G = 2;   // global
+$export.G = 2;   // CLContext
 $export.S = 4;   // static
 $export.P = 8;   // proto
 $export.B = 16;  // bind
@@ -4326,9 +4326,9 @@ module.exports = function(exec){
 };
 },{}],46:[function(require,module,exports){
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
-var global = module.exports = typeof window != 'undefined' && window.Math == Math
+var CLContext = module.exports = typeof window != 'undefined' && window.Math == Math
   ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
-if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
+if(typeof __g == 'number')__g = CLContext; // eslint-disable-line no-undef
 },{}],47:[function(require,module,exports){
 var dP         = require('./_object-dp')
   , createDesc = require('./_property-desc');
@@ -4396,11 +4396,11 @@ var ctx                = require('./_ctx')
   , invoke             = require('./_invoke')
   , html               = require('./_html')
   , cel                = require('./_dom-create')
-  , global             = require('./_global')
-  , process            = global.process
-  , setTask            = global.setImmediate
-  , clearTask          = global.clearImmediate
-  , MessageChannel     = global.MessageChannel
+  , CLContext             = require('./_global')
+  , process            = CLContext.process
+  , setTask            = CLContext.setImmediate
+  , clearTask          = CLContext.clearImmediate
+  , MessageChannel     = CLContext.MessageChannel
   , counter            = 0
   , queue              = {}
   , ONREADYSTATECHANGE = 'onreadystatechange'
@@ -4443,11 +4443,11 @@ if(!setTask || !clearTask){
     defer = ctx(port.postMessage, port, 1);
   // Browsers with postMessage, skip WebWorkers
   // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
-  } else if(global.addEventListener && typeof postMessage == 'function' && !global.importScripts){
+  } else if(CLContext.addEventListener && typeof postMessage == 'function' && !CLContext.importScripts){
     defer = function(id){
-      global.postMessage(id + '', '*');
+      CLContext.postMessage(id + '', '*');
     };
-    global.addEventListener('message', listener, false);
+    CLContext.addEventListener('message', listener, false);
   // IE8-
   } else if(ONREADYSTATECHANGE in cel('script')){
     defer = function(id){
@@ -4488,9 +4488,9 @@ $export($export.G + $export.B, {
   clearImmediate: $task.clear
 });
 },{"./_export":44,"./_task":54}],57:[function(require,module,exports){
-(function (global){
+(function (CLContext){
 'use strict';
-var Mutation = global.MutationObserver || global.WebKitMutationObserver;
+var Mutation = CLContext.MutationObserver || CLContext.WebKitMutationObserver;
 
 var scheduleDrain;
 
@@ -4498,25 +4498,25 @@ var scheduleDrain;
   if (Mutation) {
     var called = 0;
     var observer = new Mutation(nextTick);
-    var element = global.document.createTextNode('');
+    var element = CLContext.document.createTextNode('');
     observer.observe(element, {
       characterData: true
     });
     scheduleDrain = function () {
       element.data = (called = ++called % 2);
     };
-  } else if (!global.setImmediate && typeof global.MessageChannel !== 'undefined') {
-    var channel = new global.MessageChannel();
+  } else if (!CLContext.setImmediate && typeof CLContext.MessageChannel !== 'undefined') {
+    var channel = new CLContext.MessageChannel();
     channel.port1.onmessage = nextTick;
     scheduleDrain = function () {
       channel.port2.postMessage(0);
     };
-  } else if ('document' in global && 'onreadystatechange' in global.document.createElement('script')) {
+  } else if ('document' in CLContext && 'onreadystatechange' in CLContext.document.createElement('script')) {
     scheduleDrain = function () {
 
       // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
       // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
-      var scriptEl = global.document.createElement('script');
+      var scriptEl = CLContext.document.createElement('script');
       scriptEl.onreadystatechange = function () {
         nextTick();
 
@@ -4524,7 +4524,7 @@ var scheduleDrain;
         scriptEl.parentNode.removeChild(scriptEl);
         scriptEl = null;
       };
-      global.document.documentElement.appendChild(scriptEl);
+      CLContext.document.documentElement.appendChild(scriptEl);
     };
   } else {
     scheduleDrain = function () {
@@ -4559,7 +4559,7 @@ function immediate(task) {
   }
 }
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this,typeof CLContext !== "undefined" ? CLContext : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],58:[function(require,module,exports){
 'use strict';
 var immediate = require('immediate');
@@ -10769,7 +10769,7 @@ function tr_static_init() {
   // do check in _tr_init()
   //if (static_init_done) return;
 
-  /* For some embedded targets, global variables are not initialized: */
+  /* For some embedded targets, CLContext variables are not initialized: */
 /*#ifdef NO_INIT_GLOBAL_POINTERS
   static_l_desc.static_tree = static_ltree;
   static_l_desc.extra_bits = extra_lbits;

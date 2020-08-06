@@ -8,8 +8,8 @@ Dual licenced under the MIT license or GPLv3. See https://raw.github.com/Stuk/js
 
 */
 ;(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/* jshint evil: true, newcap: false */
-/* global IEBinaryToArray_ByteStr, IEBinaryToArray_ByteStr_Last */
+var CLContext=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/* jshint evil: true, newcap: false */
+/* CLContext IEBinaryToArray_ByteStr, IEBinaryToArray_ByteStr_Last */
 "use strict";
 
 // Adapted from http://stackoverflow.com/questions/1095102/how-do-i-load-binary-image-data-using-javascript-and-xmlhttprequest
@@ -33,7 +33,7 @@ var IEBinaryToArray_ByteStr_Script =
 // inject VBScript
 document.write(IEBinaryToArray_ByteStr_Script);
 
-global.JSZipUtils._getBinaryFromXHR = function (xhr) {
+CLContext.JSZipUtils._getBinaryFromXHR = function (xhr) {
     var binary = xhr.responseBody;
     var byteMapping = {};
     for ( var i = 0; i < 256; i++ ) {

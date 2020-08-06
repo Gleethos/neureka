@@ -11,7 +11,7 @@
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Wed Aug 05 00:52:01 CEST 2020 by Daglemino</div>
+<div class='date-test-ran'>Created on Thu Aug 06 19:00:23 CEST 2020 by Daniel</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -28,7 +28,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>1,677 seconds</td>
+<td>1,818 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -63,7 +63,15 @@
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<div class='block-text'>----</div>
+<div class='block-text'>Neureka instance settings are being reset.</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Two scalar tensors "a" and "b" storing values "1" and "2".</div>
 </td>
 </tr>
 <tr>
@@ -71,7 +79,23 @@
 <div class='block-kind'>Expect:</div>
 </td>
 <td>
-<div class='block-text'>----</div>
+<div class='block-text'>Tensor "a" contains an instance of the "SimpleScalarConfiguration".</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Both tensors "a" and "b" share the same (cached) "NDConfiguration" instance because they are both scalars.</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>This ND-Configuration behaves as expected.</div>
 </td>
 </tr>
 <tr>
@@ -89,7 +113,15 @@
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<div class='block-text'>----</div>
+<div class='block-text'>Neureka instance settings are being reset.</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Three vector tensors containing different numeric values.</div>
 </td>
 </tr>
 <tr>
@@ -97,7 +129,23 @@
 <div class='block-kind'>Expect:</div>
 </td>
 <td>
-<div class='block-text'>----</div>
+<div class='block-text'>All of them possess "SimpleD1Configuration" NDConfiguration implementations.</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>They all share the same (cached) SimpleD1Configuration instance because they do not require otherwise.</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The configuration behaves as expected.</div>
 </td>
 </tr>
 <tr>
