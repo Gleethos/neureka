@@ -8,12 +8,19 @@ h2 {
     font-weight: 400;
 }
 
+hr {
+    padding: 3px;
+}
+
 h3 {
     font-weight: 200;
 }
 
 table {
-    margin: 5px;
+    margin: 7px;
+    -webkit-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
 }
 
 .ignored {
@@ -62,11 +69,9 @@ div.footer {
 
 .back-link {
     font-size: small;
+    font-weight: bold;
 }
 
-table {
-    margin: 5px;
-}
 
 div.date-test-ran {
     font-size: small;
@@ -74,7 +79,7 @@ div.date-test-ran {
 }
 
 table.features-table {
-    width: 800px;
+    width: 100%;
 }
 
 table.summary-table {
@@ -196,6 +201,10 @@ div.problem-header {
 
 div.problem-list {
 
+}
+
+table.ex-table{
+    width: 100%;
 }
 
 table.ex-table th {
