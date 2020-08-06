@@ -24,7 +24,7 @@ class Cross_Device_System_Tests extends Specification
                 deviceType == "GPU" && // OpenCL cannot run inside TravisCI ! :/
                 !Neureka.instance().canAccessOpenCL()
             ) return
-            Device device = ( deviceType == "CPU" )?HostCPU.instance():Device.find('first')
+            Device device = ( deviceType == "CPU" ) ? HostCPU.instance() : Device.find('first')
             Neureka.instance().reset()
             Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads = true
             Neureka.instance().settings().view().isUsingLegacyView = true
@@ -37,11 +37,11 @@ class Cross_Device_System_Tests extends Specification
             CrossDeviceSystemTest.on(device, legacyIndexing)
 
         where : 'The following settings are being used: '
-            deviceType  || legacyIndexing
-              'CPU'     ||    false
-              'CPU'     ||    true
-              'GPU'     ||    true
-              'GPU'     ||    false
+            deviceType  ||  legacyIndexing
+              'CPU'     ||     false
+              'CPU'     ||     true
+              'GPU'     ||     true
+              'GPU'     ||     false
     }
 
 
