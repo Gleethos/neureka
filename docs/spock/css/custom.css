@@ -9,7 +9,7 @@ h2 {
 }
 
 hr {
-    padding: 3px;
+    margin-bottom: 1.5em;
 }
 
 h3 {
@@ -79,11 +79,11 @@ div.date-test-ran {
 }
 
 table.features-table {
-    width: 100%;
+    width: 99%;
 }
 
 table.summary-table {
-    width: 100%;
+    width: 99%;
     text-align: left;
     font-weight: bold;
     font-size: small;
@@ -204,7 +204,7 @@ div.problem-list {
 }
 
 table.ex-table{
-    width: 100%;
+    width: 98%;
 }
 
 table.ex-table th {
