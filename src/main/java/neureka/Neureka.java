@@ -8,10 +8,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Neureka
 {
-    private static final ThreadLocal<Neureka> _instances;
+    private static final Map<Thread, Neureka> _instances;
     private static String _settings_source;
     private static String _setup_source;
     private static String _version;
@@ -22,9 +24,8 @@ public class Neureka
     private final Settings _settings;
     private final Utility _utility;
 
-    static
-    {
-        _instances = new ThreadLocal<>();
+    static {
+        _instances = new ConcurrentHashMap<>();
         _groovyAvailable = Utility.isPresent("groovy.lang.GroovySystem");
         _openCLAvailable = Utility.isPresent("org.jocl.CL");
     }
@@ -35,19 +36,23 @@ public class Neureka
     }
 
     public static Neureka instance(){
-        Neureka n = _instances.get();
-        if( n == null ) {
-            n = new Neureka();
-            setContext( n );
-            synchronized (Neureka.class) {
-                n.reset(); // Initial reset must be synchronized because of dependency issues!
-            }
-        }
-        return n;
+        return instance(Thread.currentThread());
     }
 
-    public static void setContext( Neureka instance ) {
-        _instances.set(instance);
+    public static void setContext(Thread thread, Neureka instance){
+        _instances.put(thread, instance);
+    }
+
+    public static Neureka instance(Thread thread){
+        if(_instances.containsKey(thread)) return _instances.get(thread);
+        else {
+            Neureka instance = new Neureka();
+            setContext(thread, instance);
+            synchronized (Neureka.class) {
+                instance.reset();
+            }
+            return instance;
+        }
     }
 
     public static Neureka instance(Object closure) {
@@ -104,8 +109,7 @@ public class Neureka
     }
 
     private boolean _currentThreadIsAuthorized(){
-        return this.equals( _instances.get() );
-        //return this.equals(_instances.get(Thread.currentThread()));
+        return this.equals(_instances.get(Thread.currentThread()));
     }
 
     public class Settings
