@@ -39,6 +39,9 @@ public class Neureka
         if( n == null ) {
             n = new Neureka();
             setContext( n );
+            synchronized (Neureka.class) {
+                n.reset(); // Initial reset must be synchronized because of dependency issues!
+            }
         }
         return n;
     }
