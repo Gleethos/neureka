@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 class Neureka_Unit_Tests extends Specification
 {
-    void 'Neureka class instance has expected behaviour.'()
+    def 'Neureka class instance has expected behaviour.'()
     {
         when : 'Neureka instance settings are being reset.'
             Neureka.instance().reset()
@@ -23,5 +23,32 @@ class Neureka_Unit_Tests extends Specification
         and : 'The version number is as expected!'
             assert Neureka.version()=="0.2.4"//version
     }
+
+
+    def 'Every Thread instance has their own Neureka instance.'()
+    {
+        given : 'A map containing entries for Neureka instances.'
+            def map = ['instance 1':null, 'instance 2':null]
+
+        when : 'Two newly instantiated tensors store their Neureka instances in the map.'
+            def t1 = new Thread({ map['instance 1'] = Neureka.instance() })
+            def t2 = new Thread({ map['instance 2'] = Neureka.instance() })
+
+        and : 'The tensors are being started and joined.'
+            t1.start()
+            t2.start()
+            t1.join()
+            t2.join()
+
+        then : 'The map entries will no longer be filled with null.'
+            map['instance 1'] != null
+            map['instance 2'] != null
+
+        and : 'The Neureka instances stored in the map will be different objects.'
+            map['instance 1'] != map['instance 2']
+
+    }
+
+
     
 }

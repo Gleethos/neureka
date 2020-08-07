@@ -19,7 +19,7 @@ Neureka is a platform independent deep-learning library written in Java.
 
   - nd-arrays / tensors.
 
-  - flexible Tensor indexing and slicing.
+  - flexible tensor indexing and slicing.
   
 Visit [Neurekas homepage](https://gleethos.github.io/neureka/index.html) for more information!
   

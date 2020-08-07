@@ -16,7 +16,7 @@ Neureka's testsuite is divided into the following 3 packages : <br>
 Package divisions within those test packages mirror those found in the <br>
 main code base, namely : <br>
  ``acceleration``, ``autograd``, ``calculus``, ``framing``, ``ndim``, ``optimization``, ...<br>
-Any of these package names might present in the three test packages, <br>
+Any of these package names might be present in the three test packages, <br>
 however they don't have to be either if a related specification has not yet been implemented <br>
 or simply does not make sense for a given reason. <br>
 
@@ -29,7 +29,7 @@ If specifications and tests shall be added or changed then one should <br>
 keep this in mind and write them as if they are being read as such. <br>
 
 Unfortunately Neureka has not enjoyed this development philosophy from the beginning on.
-Therefor many test cases are merely quick imports of former JUnit tests from <br>
+Therefore, many test cases are merely quick imports of former JUnit tests from <br>
 before the migration to the Spock-Framework. <br>
 
 Nevertheless, many Specifications can be read and understood very well. <br>
