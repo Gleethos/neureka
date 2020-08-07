@@ -4,7 +4,6 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.environment.executors.AbstractOperationTypeImplementation;
-import neureka.calculus.environment.implementations.OperationContext;
 import neureka.calculus.environment.implementations.function.*;
 import neureka.calculus.environment.implementations.indexer.Product;
 import neureka.calculus.environment.implementations.indexer.Summation;
@@ -21,23 +20,27 @@ import java.util.Map;
 
 public class OperationType implements Type
 {
-    private static OperationContext _CONTEXT = new OperationContext();
+    private static final Map<String, OperationType> _LOOKUP = new HashMap<>();
+
+    private static final ArrayList<OperationType> _REGISTER = new ArrayList<>();
 
     public static ArrayList<OperationType> instances(){
-        return _CONTEXT.getRegister();
+        return _REGISTER;
     }
 
     public static OperationType instance(int index){
-        return _CONTEXT.getRegister().get(index);
+        return _REGISTER.get(index);
     }
 
     public static OperationType instance(String identifier){
-        return _CONTEXT.getLookup().getOrDefault(identifier, null);
+        return _LOOKUP.getOrDefault(identifier, null);
     }
+
+    private static int _ID = 0;
 
     protected int _id;
     protected String _name;
-    protected String _identifier;
+    protected String  _identifier;
     /**
      * Arity is the number of arguments or operands
      * that this function or operation takes.
@@ -91,8 +94,8 @@ public class OperationType implements Type
     ) {
         _name = name;
         _arity = arity;
-        _id = _CONTEXT.getID();
-        _CONTEXT.incrementID();
+        _id = _ID;
+        _ID++;
         _identifier = identifier;
         _isOperation = isOperation;
         _isIndexer = isIndexer;
@@ -100,29 +103,29 @@ public class OperationType implements Type
         _isCommutative = isCommutative;
         _isAssociative = isAssociative;
 
-        _CONTEXT.getRegister().add(this);
-        _CONTEXT.getLookup().put(identifier, this);
+        _REGISTER.add(this);
+        _LOOKUP.put(identifier, this);
         if (
-            identifier
-                .replace((""+((char)171)), "")
-                .replace((""+((char)187)), "")
-                .matches("[a-z]")
+                identifier
+                        .replace((""+((char)171)), "")
+                        .replace((""+((char)187)), "")
+                        .matches("[a-z]")
         ) {
             if (identifier.contains((""+((char)171)))) {
-                _CONTEXT.getLookup().put(identifier.replace((""+((char)171)), "<<"), this);
+                _LOOKUP.put(identifier.replace((""+((char)171)), "<<"), this);
             }
             if (identifier.contains((""+((char)187)))) {
-                _CONTEXT.getLookup().put(identifier.replace((""+((char)187)),">>"), this);
+                _LOOKUP.put(identifier.replace((""+((char)187)),">>"), this);
             }
         }
     }
 
     public static OperationType[] ALL(){
-        return _CONTEXT.getRegister().toArray(new OperationType[0]);
+        return _REGISTER.toArray(new OperationType[0]);
     }
 
     public static int COUNT(){
-        return _CONTEXT.getID();
+        return _ID;
     }
 
     //==================================================================================================================
