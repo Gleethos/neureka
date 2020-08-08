@@ -124,7 +124,7 @@ dependencies {
     testRuntime "net.bytebuddy:byte-buddy:1.9.3" // allows mocking of classes (in addition to interfaces)
     testRuntime "org.objenesis:objenesis:2.6"    // allows mocking of classes without default constructor (together with CGLIB)
 
-    // Library information :
+    // Library dependencies :
     api 'org.codehaus.groovy:groovy:3.0.0-rc-3'
     implementation 'org.jocl:jocl:2.0.2' //-> Internal dependency!
 }
