@@ -18,24 +18,27 @@ import neureka.calculus.environment.implementations.other.Reshape;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class OperationType implements Type
 {
-    private static OperationContext _CONTEXT = new OperationContext();
+    private static ThreadLocal<OperationContext> _CONTEXTS;
+
+    static {
+        _CONTEXTS = ThreadLocal.withInitial(() -> OperationContext.instance());
+    }
 
     public static ArrayList<OperationType> instances(){
-        return _CONTEXT.getRegister();
+        return _CONTEXTS.get().getRegister();
     }
 
     public static OperationType instance(int index){
-        return _CONTEXT.getRegister().get(index);
+        return _CONTEXTS.get().getRegister().get(index);
     }
 
     public static OperationType instance(String identifier){
-        return _CONTEXT.getLookup().getOrDefault(identifier, null);
+        return _CONTEXTS.get().getLookup().getOrDefault(identifier, null);
     }
 
     protected int _id;
@@ -94,8 +97,8 @@ public class OperationType implements Type
     ) {
         _name = name;
         _arity = arity;
-        _id = _CONTEXT.getID();
-        _CONTEXT.incrementID();
+        _id = _CONTEXTS.get().getID();
+        _CONTEXTS.get().incrementID();
         _identifier = identifier;
         _isOperation = isOperation;
         _isIndexer = isIndexer;
@@ -103,8 +106,8 @@ public class OperationType implements Type
         _isCommutative = isCommutative;
         _isAssociative = isAssociative;
 
-        _CONTEXT.getRegister().add(this);
-        _CONTEXT.getLookup().put(identifier, this);
+        _CONTEXTS.get().getRegister().add(this);
+        _CONTEXTS.get().getLookup().put(identifier, this);
         if (
                 identifier
                         .replace((""+((char)171)), "")
@@ -112,20 +115,20 @@ public class OperationType implements Type
                         .matches("[a-z]")
         ) {
             if (identifier.contains((""+((char)171)))) {
-                _CONTEXT.getLookup().put(identifier.replace((""+((char)171)), "<<"), this);
+                _CONTEXTS.get().getLookup().put(identifier.replace((""+((char)171)), "<<"), this);
             }
             if (identifier.contains((""+((char)187)))) {
-                _CONTEXT.getLookup().put(identifier.replace((""+((char)187)),">>"), this);
+                _CONTEXTS.get().getLookup().put(identifier.replace((""+((char)187)),">>"), this);
             }
         }
     }
 
     public static OperationType[] ALL(){
-        return _CONTEXT.getRegister().toArray(new OperationType[0]);
+        return _CONTEXTS.get().getRegister().toArray(new OperationType[0]);
     }
 
     public static int COUNT(){
-        return _CONTEXT.getID();
+        return _CONTEXTS.get().getID();
     }
 
     //==================================================================================================================

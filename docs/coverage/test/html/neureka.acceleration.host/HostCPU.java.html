@@ -156,7 +156,7 @@ public class HostCPU extends AbstractDevice
 <span class="fc bfc" id="L156" title="All 2 branches covered.">                    final int end = (i == cores - 1) ? sze : ((i + 1) * chunk);</span>
 <span class="fc" id="L157">                    Neureka neureka = Neureka.instance();</span>
 <span class="fc" id="L158">                    futures[i] = _pool.submit(() -&gt; {</span>
-<span class="fc" id="L159">                        Neureka.setContext(Thread.currentThread(), neureka);</span>
+<span class="fc" id="L159">                        Neureka.setContext( neureka );</span>
 <span class="fc" id="L160">                        range.execute(start, end);</span>
 <span class="fc" id="L161">                    });</span>
                 }

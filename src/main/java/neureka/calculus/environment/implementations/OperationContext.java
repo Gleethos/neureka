@@ -6,14 +6,27 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class OperationContext
+public class OperationContext implements Cloneable
 {
+    private static final OperationContext _INSTANCE;
+    static {
+        _INSTANCE = new OperationContext();
+    }
 
-    private final Map<String, OperationType> _LOOKUP = new HashMap<>();
+    public static OperationContext instance(){
+        return _INSTANCE;
+    }
 
-    private final ArrayList<OperationType> _REGISTER = new ArrayList<>();
+    private final Map<String, OperationType> _LOOKUP;
+    private final ArrayList<OperationType> _REGISTER;
+    private int _ID;
 
-    private int _ID = 0;
+    private OperationContext(){
+        _LOOKUP = new HashMap<>();
+        _REGISTER = new ArrayList<>();
+        _ID = 0;
+    }
+
 
     public Map<String, OperationType> getLookup(){
         return _LOOKUP;
@@ -41,6 +54,16 @@ public class OperationContext
 
     public OperationType instance(String identifier){
         return getLookup().getOrDefault(identifier, null);
+    }
+
+    @Override
+    public OperationContext clone()
+    {
+        OperationContext clone = new OperationContext();
+        clone._ID = _ID;
+        clone._LOOKUP.putAll(_LOOKUP);
+        clone._REGISTER.addAll(_REGISTER);
+        return clone;
     }
 
 }

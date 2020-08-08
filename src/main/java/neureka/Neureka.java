@@ -9,18 +9,18 @@ import java.io.InputStreamReader;
 
 public class Neureka
 {
-    private static final ThreadLocal<Neureka> _instances;
+    private static final ThreadLocal<Neureka> _INSTANCES;
 
-    private static String _version;
+    private static String _VERSION;
 
-    private static final boolean _groovyAvailable;
-    private static final boolean _openCLAvailable;
+    private static final boolean _GROOVY_AVAILABLE;
+    private static final boolean _OPENCL_AVAILABLE;
 
     static
     {
-        _instances = new ThreadLocal<>();
-        _groovyAvailable = Utility.isPresent( "groovy.lang.GroovySystem" );
-        _openCLAvailable = Utility.isPresent( "org.jocl.CL" );
+        _INSTANCES = new ThreadLocal<>();
+        _GROOVY_AVAILABLE = Utility.isPresent( "groovy.lang.GroovySystem" );
+        _OPENCL_AVAILABLE = Utility.isPresent( "org.jocl.CL" );
     }
 
     private final Settings _settings;
@@ -32,7 +32,7 @@ public class Neureka
     }
 
     public static Neureka instance(){
-        Neureka n = _instances.get();
+        Neureka n = _INSTANCES.get();
         if( n == null ) {
             n = new Neureka();
             synchronized ( Neureka.class ) {
@@ -44,23 +44,23 @@ public class Neureka
     }
 
     public static void setContext( Neureka instance ) {
-        _instances.set(instance);
+        _INSTANCES.set(instance);
     }
 
     public static Neureka instance(Object closure) {
-        if( _groovyAvailable ) {
+        if(_GROOVY_AVAILABLE) {
             Object o = SettingsLoader.tryGroovyClosureOn(closure, Neureka.instance());
-            if (o instanceof String) _version = (String) o;
+            if (o instanceof String) _VERSION = (String) o;
         }
         return Neureka.instance();
     }
 
     public boolean canAccessGroovy(){
-        return _groovyAvailable;
+        return _GROOVY_AVAILABLE;
     }
 
     public boolean canAccessOpenCL(){
-        return _openCLAvailable;
+        return _OPENCL_AVAILABLE;
     }
 
     public Settings settings(){
@@ -68,7 +68,7 @@ public class Neureka
     }
 
     public Settings settings(Object closure){
-        if( _groovyAvailable ) SettingsLoader.tryGroovyClosureOn(closure, _settings);
+        if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _settings);
         return _settings;
     }
 
@@ -77,11 +77,11 @@ public class Neureka
     }
 
     public static String version(){
-        return _version;
+        return _VERSION;
     }
 
     public void reset() {
-        if (_groovyAvailable) {
+        if (_GROOVY_AVAILABLE) {
             SettingsLoader.tryGroovyScriptsOn(this);
         } else {
             settings().autograd().setIsRetainingPendingErrorForJITProp(true);
@@ -95,7 +95,7 @@ public class Neureka
     }
 
     private boolean _currentThreadIsAuthorized(){
-        return this.equals( _instances.get() );
+        return this.equals( _INSTANCES.get() );
         //return this.equals(_instances.get(Thread.currentThread()));
     }
 
@@ -122,7 +122,7 @@ public class Neureka
         }
 
         public Debug debug(Object closure) {
-            if( _groovyAvailable ) SettingsLoader.tryGroovyClosureOn(closure, _debug);
+            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _debug);
             return _debug;
         }
 
@@ -131,7 +131,7 @@ public class Neureka
         }
 
         public AutoGrad autograd(Object closure) {
-            if( _groovyAvailable ) SettingsLoader.tryGroovyClosureOn(closure, _autograd);
+            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _autograd);
             return _autograd;
         }
 
@@ -140,7 +140,7 @@ public class Neureka
         }
 
         public Indexing indexing(Object closure) {
-            if( _groovyAvailable ) SettingsLoader.tryGroovyClosureOn(closure, _indexing);
+            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _indexing);
             return _indexing;
         }
 
@@ -149,7 +149,7 @@ public class Neureka
         }
 
         public View view(Object closure) {
-            if( _groovyAvailable ) SettingsLoader.tryGroovyClosureOn(closure, _view);
+            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _view);
             return _view;
         }
 
@@ -158,7 +158,7 @@ public class Neureka
         }
 
         public NDim ndim(Object closure) {
-            if( _groovyAvailable ) SettingsLoader.tryGroovyClosureOn(closure, _ndim);
+            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _ndim);
             return _ndim;
         }
 

@@ -439,7 +439,7 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     public String version() {
-<span class="nc" id="L442">        return DeviceQuery.getString(_did, CL_DRIVER_VERSION);</span>
+<span class="fc" id="L442">        return DeviceQuery.getString(_did, CL_DRIVER_VERSION);</span>
     }
 
     public String type() {
@@ -468,7 +468,7 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     public long maxWorkGroupSize() {
-<span class="nc" id="L471">        return DeviceQuery.getSize(_did, CL_DEVICE_MAX_WORK_GROUP_SIZE);</span>
+<span class="fc" id="L471">        return DeviceQuery.getSize(_did, CL_DEVICE_MAX_WORK_GROUP_SIZE);</span>
     }
 
     public long maxClockFrequenzy() {
@@ -534,7 +534,7 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     public long image2DMaxWidth() {
-<span class="nc" id="L537">        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE2D_MAX_WIDTH);</span>
+<span class="fc" id="L537">        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE2D_MAX_WIDTH);</span>
     }
 
     public long image2DMaxHeight() {
@@ -542,7 +542,7 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     public long image3DMaxWidth() {
-<span class="nc" id="L545">        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE3D_MAX_WIDTH);</span>
+<span class="fc" id="L545">        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE3D_MAX_WIDTH);</span>
     }
 
     public long image3DMaxHeight() {
@@ -550,31 +550,31 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     public long image3DMaxDepth() {
-<span class="nc" id="L553">        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE3D_MAX_DEPTH);</span>
+<span class="fc" id="L553">        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE3D_MAX_DEPTH);</span>
     }
 
     public int prefVecWidthChar() {
-<span class="nc" id="L557">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR);</span>
+<span class="fc" id="L557">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR);</span>
     }
 
     public int prefVecWidthShort() {
-<span class="nc" id="L561">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT);</span>
+<span class="fc" id="L561">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT);</span>
     }
 
     public int prefVecWidthInt() {
-<span class="nc" id="L565">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT);</span>
+<span class="fc" id="L565">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT);</span>
     }
 
     public int prefVecWidthLong() {
-<span class="nc" id="L569">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG);</span>
+<span class="fc" id="L569">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG);</span>
     }
 
     public int prefVecWidthFloat() {
-<span class="nc" id="L573">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT);</span>
+<span class="fc" id="L573">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT);</span>
     }
 
     public int prefVecWidthDouble() {
-<span class="nc" id="L577">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE);</span>
+<span class="fc" id="L577">        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE);</span>
     }
 
 <span class="nc" id="L580">    public static class DeviceQuery {</span>
