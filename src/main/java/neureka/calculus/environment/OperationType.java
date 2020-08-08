@@ -8,17 +8,10 @@ import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.environment.executors.AbstractOperationTypeImplementation;
 import neureka.calculus.environment.implementations.OperationContext;
-import neureka.calculus.environment.implementations.function.*;
-import neureka.calculus.environment.implementations.indexer.Product;
-import neureka.calculus.environment.implementations.indexer.Summation;
-import neureka.calculus.environment.implementations.operator.*;
-import neureka.calculus.environment.implementations.other.CopyLeft;
-import neureka.calculus.environment.implementations.other.CopyRight;
-import neureka.calculus.environment.implementations.other.Reshape;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class OperationType implements Type
@@ -26,10 +19,10 @@ public class OperationType implements Type
     private static ThreadLocal<OperationContext> _CONTEXTS;
 
     static {
-        _CONTEXTS = ThreadLocal.withInitial(() -> OperationContext.instance());
+        _CONTEXTS = ThreadLocal.withInitial( OperationContext::instance );
     }
 
-    public static ArrayList<OperationType> instances(){
+    public static List<OperationType> instances(){
         return _CONTEXTS.get().getRegister();
     }
 
@@ -38,7 +31,7 @@ public class OperationType implements Type
     }
 
     public static OperationType instance(String identifier){
-        return _CONTEXTS.get().getLookup().getOrDefault(identifier, null);
+        return _CONTEXTS.get().getLookup().getOrDefault( identifier, null );
     }
 
     protected int _id;
@@ -55,35 +48,7 @@ public class OperationType implements Type
     protected boolean _isCommutative;
     protected boolean _isAssociative;
 
-    private Map<Class, AbstractOperationTypeImplementation> _implementations = new LinkedHashMap<>();
-
-    static
-    {
-        new ReLU();
-        new Sigmoid();
-        new Tanh();
-        new Quadratic();
-        new Ligmoid();
-        new Identity();
-        new Gaussian();
-        new Absolute();
-        new Sinus();
-        new Cosinus();
-
-        new Summation();
-        new Product();
-
-        new Power();
-        new Division();
-        new Multiplication();
-        new Modulo();
-        new Subtraction();
-        new Addition();
-
-        new Reshape();
-        new CopyLeft();
-        new CopyRight();
-    }
+    private final Map<Class, AbstractOperationTypeImplementation> _implementations = new LinkedHashMap<>();
 
     public OperationType(
             String name,
