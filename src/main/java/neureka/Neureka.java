@@ -38,8 +38,8 @@ public class Neureka
         Neureka n = _instances.get();
         if( n == null ) {
             n = new Neureka();
-            setContext( n );
-            synchronized (Neureka.class) {
+            synchronized ( Neureka.class ) {
+                setContext( n );
                 n.reset(); // Initial reset must be synchronized because of dependency issues!
             }
         }
