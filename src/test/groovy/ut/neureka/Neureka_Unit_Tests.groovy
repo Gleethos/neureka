@@ -24,7 +24,7 @@ class Neureka_Unit_Tests extends Specification
             assert Neureka.version()=="0.2.4"//version
     }
 
-
+    /*
     def 'Every Thread instance has their own Neureka instance.'()
     {
         given : 'A map containing entries for Neureka instances.'
@@ -48,7 +48,7 @@ class Neureka_Unit_Tests extends Specification
             map['instance 1'] != map['instance 2']
 
     }
-
+    */
 
     
 }
