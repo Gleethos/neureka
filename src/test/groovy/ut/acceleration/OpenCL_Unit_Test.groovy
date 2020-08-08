@@ -11,7 +11,8 @@ import spock.lang.Specification
 class OpenCL_Unit_Test extends Specification
 {
 
-    def 'First found OpenCLDevice will have realistic properties inside summary query.'() {
+    def 'First found OpenCLDevice will have realistic properties inside summary query.'()
+    {
         given: 'This system supports OpenCL.'
             if (!Neureka.instance().canAccessOpenCL()) return
 

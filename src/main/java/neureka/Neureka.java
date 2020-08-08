@@ -1,8 +1,6 @@
 package neureka;
 
-import groovy.lang.Closure;
-import groovy.lang.GroovyShell;
-import groovy.lang.GroovySystem;
+import neureka.utility.SettingsLoader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,22 +10,21 @@ import java.io.InputStreamReader;
 public class Neureka
 {
     private static final ThreadLocal<Neureka> _instances;
-    private static String _settings_source;
-    private static String _setup_source;
+
     private static String _version;
 
     private static final boolean _groovyAvailable;
     private static final boolean _openCLAvailable;
 
-    private final Settings _settings;
-    private final Utility _utility;
-
     static
     {
         _instances = new ThreadLocal<>();
-        _groovyAvailable = Utility.isPresent("groovy.lang.GroovySystem");
-        _openCLAvailable = Utility.isPresent("org.jocl.CL");
+        _groovyAvailable = Utility.isPresent( "groovy.lang.GroovySystem" );
+        _openCLAvailable = Utility.isPresent( "org.jocl.CL" );
     }
+
+    private final Settings _settings;
+    private final Utility _utility;
 
     private Neureka(){
         _settings = new Settings();
@@ -51,8 +48,10 @@ public class Neureka
     }
 
     public static Neureka instance(Object closure) {
-        Object o = Utility.tryGroovyClosureOn(closure, Neureka.instance());
-        if (o instanceof String) _version = (String) o;
+        if( _groovyAvailable ) {
+            Object o = SettingsLoader.tryGroovyClosureOn(closure, Neureka.instance());
+            if (o instanceof String) _version = (String) o;
+        }
         return Neureka.instance();
     }
 
@@ -69,7 +68,7 @@ public class Neureka
     }
 
     public Settings settings(Object closure){
-        Utility.tryGroovyClosureOn(closure, _settings);
+        if( _groovyAvailable ) SettingsLoader.tryGroovyClosureOn(closure, _settings);
         return _settings;
     }
 
@@ -83,15 +82,7 @@ public class Neureka
 
     public void reset() {
         if (_groovyAvailable) {
-            if (_settings_source == null || _setup_source == null) {
-                _settings_source = utility().readResource("library_settings.groovy");
-                _setup_source = utility().readResource("scripting_setup.groovy");
-            }
-            try {
-                Utility.tryGroovyScriptsOn(this);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            SettingsLoader.tryGroovyScriptsOn(this);
         } else {
             settings().autograd().setIsRetainingPendingErrorForJITProp(true);
             settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true);
@@ -131,7 +122,7 @@ public class Neureka
         }
 
         public Debug debug(Object closure) {
-            Utility.tryGroovyClosureOn(closure, _debug);
+            if( _groovyAvailable ) SettingsLoader.tryGroovyClosureOn(closure, _debug);
             return _debug;
         }
 
@@ -140,7 +131,7 @@ public class Neureka
         }
 
         public AutoGrad autograd(Object closure) {
-            Utility.tryGroovyClosureOn(closure, _autograd);
+            if( _groovyAvailable ) SettingsLoader.tryGroovyClosureOn(closure, _autograd);
             return _autograd;
         }
 
@@ -149,7 +140,7 @@ public class Neureka
         }
 
         public Indexing indexing(Object closure) {
-            Utility.tryGroovyClosureOn(closure, _indexing);
+            if( _groovyAvailable ) SettingsLoader.tryGroovyClosureOn(closure, _indexing);
             return _indexing;
         }
 
@@ -158,7 +149,7 @@ public class Neureka
         }
 
         public View view(Object closure) {
-            Utility.tryGroovyClosureOn(closure, _view);
+            if( _groovyAvailable ) SettingsLoader.tryGroovyClosureOn(closure, _view);
             return _view;
         }
 
@@ -167,7 +158,7 @@ public class Neureka
         }
 
         public NDim ndim(Object closure) {
-            Utility.tryGroovyClosureOn(closure, _ndim);
+            if( _groovyAvailable ) SettingsLoader.tryGroovyClosureOn(closure, _ndim);
             return _ndim;
         }
 
@@ -357,40 +348,21 @@ public class Neureka
             }
         }
 
-        public static Object tryGroovyClosureOn(Object closure, Object delegate) {
-            if (_groovyAvailable) {
-                ((Closure) closure).setDelegate(delegate);
-                return ((Closure) closure).call(delegate);
-            }
-            return null;
-        }
-
-        public static void tryGroovyScriptsOn(Neureka instance) {
-            if(_groovyAvailable) {
-                String version = GroovySystem.getVersion();
-                if(Integer.parseInt(version.split("\\.")[0]) < 3) {
-                    throw new IllegalCallerException(
-                            "Wrong groovy version "+version+" found! Version 3.0.0 or greater required."
-                    );
-                }
-                new GroovyShell(instance.getClass().getClassLoader()).evaluate(_settings_source);
-                new GroovyShell(instance.getClass().getClassLoader()).evaluate(_setup_source);
-            }
-        }
-
         public static boolean isPresent(String className){
             boolean found = false;
             String groovyInfo = ((className.toLowerCase().contains("groovy"))?" Neureka settings uninitialized!":"");
+            String cause = " unknown ";
             try {
                 Class.forName(className);
                 found = true;
             } catch (Throwable ex) {// Class or one of its dependencies is not present...
-                System.out.println(
-                        "[Info]: '"+className+"' dependencies not found!"+groovyInfo+"\n[Cause]: "+ex.getMessage()
-                );
-                return found;
+                cause = ex.getMessage();
             } finally {
-                if(!found) System.out.println("[Info]: '"+className+"' dependencies not found!"+groovyInfo);
+                if(!found){
+                    System.out.println(
+                            "[Info]: '"+className+"' dependencies not found!"+groovyInfo+"\n[Cause]: "+cause
+                    );
+                }
                 return found;
             }
         }

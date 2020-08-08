@@ -112,7 +112,10 @@ repositories {
 // 6. LOADING AND COMPILING DEPENDENCIES :
 
 dependencies {
-    compile 'org.jetbrains:annotations:16.0.2'
+    // Library dependencies :
+    api 'org.codehaus.groovy:groovy:3.0.0-rc-3'
+    implementation 'org.jocl:jocl:2.0.2' //-> Internal dependency!
+    implementation 'org.jetbrains:annotations:16.0.2'
 
     // Test suite : Groovy, Spock (+ sl4j, + Spock-Reports)
     testCompile group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.0-rc-3'
@@ -123,10 +126,6 @@ dependencies {
     testRuntimeClasspath 'org.slf4j:slf4j-simple:1.7.30'
     testRuntime "net.bytebuddy:byte-buddy:1.9.3" // allows mocking of classes (in addition to interfaces)
     testRuntime "org.objenesis:objenesis:2.6"    // allows mocking of classes without default constructor (together with CGLIB)
-
-    // Library dependencies :
-    api 'org.codehaus.groovy:groovy:3.0.0-rc-3'
-    implementation 'org.jocl:jocl:2.0.2' //-> Internal dependency!
 }
 
 //----------------------------------------------------------------------------------------------------------------------
