@@ -616,12 +616,8 @@ public class GraphNode implements Component<Tsr>
 
         _targets_derivatives.put(target, agent);
 
-        if (agent.isForward()) {
-            Tsr d = agent.derivative();
-            if (d != null && d.has(GraphNode.class))
-                (d.find(GraphNode.class))._is_used_as_derivative = true;
-        }
-
+        Tsr d = agent.derivative();
+        if (d != null && d.has(GraphNode.class)) (d.find(GraphNode.class))._is_used_as_derivative = true;
     }
 
     /**

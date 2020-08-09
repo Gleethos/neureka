@@ -293,12 +293,12 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     }
 
     public Tsr delete() {
-        forComponent(Device.class, d -> d.rmv(this));
         forComponent(GraphNode.class, n -> {
             if (n.isUsedAsDerivative()) {
-                throw new IllegalStateException("Trying to delete a tensor which is part of a function graph and used as derivative!");
+                throw new IllegalStateException("Cannot delete a tensor which used as derivative by the AD computation graph!");
             }
         });
+        forComponent(Device.class, d -> d.rmv(this));
         _flags = -1;
         _value = null;
         _conf = null;

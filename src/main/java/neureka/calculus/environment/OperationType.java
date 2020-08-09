@@ -5,6 +5,7 @@ package neureka.calculus.environment;
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
+import neureka.autograd.GraphNode;
 import neureka.calculus.Function;
 import neureka.calculus.environment.executors.AbstractOperationTypeImplementation;
 import neureka.calculus.environment.implementations.OperationContext;

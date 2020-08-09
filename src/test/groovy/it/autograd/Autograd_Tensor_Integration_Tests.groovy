@@ -162,5 +162,26 @@ class Autograd_Tensor_Integration_Tests extends Specification
         //TODO: add tests using more then 1 function and check if the graph is build correctly!
     }
 
+    def 'A tensor used as derivative within a computation graph will throw exception when trying to deleting it.'()
+    {
+        given : 'A tensor "a" requiring autograd.'
+            Tsr a = new Tsr(2).setRqsGradient(true)
+
+        and : 'A second tensor "b".'
+            Tsr b = new Tsr(2)
+
+        when : 'Both tensors are being multiplied.'
+            Tsr c = a.dot(b)
+
+        and : 'One tries to delete tensor "b"...'
+            b.delete()
+
+        then : 'An exception is being thrown.'
+            def exception = thrown(IllegalStateException)
+            exception.message == "Cannot delete a tensor which used as derivative by the AD computation graph!"
+
+
+    }
+
 
 }
