@@ -59,11 +59,11 @@ public interface Type
 
     boolean isIndexer();
     
-    boolean isConvection();
-    
     boolean isCommutative();
 
     boolean allowsForward(Tsr[] inputs);
+
+    boolean supports(Class implementation);
 
     ADAgent getADAgentOf(Function f, Tsr[] inputs, int i, boolean forward);
 

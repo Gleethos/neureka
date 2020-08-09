@@ -5,9 +5,9 @@ package neureka.calculus.environment;
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.autograd.GraphNode;
 import neureka.calculus.Function;
 import neureka.calculus.environment.executors.AbstractOperationTypeImplementation;
+import neureka.calculus.environment.executors.Convolution;
 import neureka.calculus.environment.implementations.OperationContext;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
@@ -158,11 +158,6 @@ public class OperationType implements Type
     }
 
     @Override
-    public boolean isConvection(){
-        return _isConvection;
-    }
-
-    @Override
     public boolean isCommutative(){
         return  _isCommutative;
     }
@@ -170,7 +165,7 @@ public class OperationType implements Type
     @Override
     public boolean allowsForward(Tsr[] inputs)
     {
-        if (this.isConvection()) return false;
+        if (this.supports(Convolution.class)) return false;
         if (this.identifier().equals(",")) return false; //Reshape
         Tsr last = null;
         for (Tsr t : inputs) {
@@ -178,6 +173,11 @@ public class OperationType implements Type
             last = t; // Note: shapes are cached!
         }
         return true;
+    }
+
+    @Override
+    public boolean supports(Class implementation) {
+        return _implementations.containsKey(implementation);
     }
 
     @Override
@@ -193,16 +193,7 @@ public class OperationType implements Type
                     null
             );
         } else {
-            if (this.isOperation() && !this.isConvection())
-            {
-                Tsr d = f.derive(inputs, i);
-                return new ADAgent(
-                        ()->d,
-                        (t, derivative) -> mul.call(new Tsr[]{derivative, d}),
-                        (t, error) -> mul.call(new Tsr[]{error, d})
-                );
-            }
-            else if (this.isConvection())
+            if (this.supports(Convolution.class))
             {
                 Function invX = FunctionBuilder.build(
                         "I[0]" + identifier() + ">>I[1]" + identifier() + ">>I[2]",
@@ -215,11 +206,19 @@ public class OperationType implements Type
                         (t, error) -> invX.call(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})
                 );
             }
+            else
+            {
+                Tsr d = f.derive(inputs, i);
+                return new ADAgent(
+                        ()->d,
+                        (t, derivative) -> mul.call(new Tsr[]{derivative, d}),
+                        (t, error) -> mul.call(new Tsr[]{error, d})
+                );
+            }
         }
-        return new ADAgent(
-                ()->null, (t, derivative) -> null, (t, error) -> null
-        );
-
+        //return new ADAgent(
+        //        ()->null, (t, derivative) -> null, (t, error) -> null
+        //);
     }
 
 

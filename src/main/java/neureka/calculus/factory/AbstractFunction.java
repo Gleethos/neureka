@@ -73,7 +73,7 @@ public abstract class AbstractFunction extends BaseFunction {
         List<String> stringedSource = _src.stream().map(e->((e==null)?"(null)":e.toString())).collect(Collectors.toList());
         StringBuilder reconstructed = new StringBuilder();
 
-        if (_src.size() == 1 && _type.identifier().length() > 1 || !_type.isOperation()) {
+        if ( !_type.isOperation() ) {
             String expression = String.join(", ", stringedSource);
             if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
                 return _type.identifier() + expression;

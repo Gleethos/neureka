@@ -24,6 +24,10 @@ import java.util.function.Consumer;
  */
 public abstract class AbstractOperationTypeImplementation< FinalType > implements OperationTypeImplementation< FinalType >
 {
+    interface ADAnalyzer {
+        boolean allowsForward(Tsr[] inputs);
+    }
+
     protected final Map< Class< ExecutorFor< Device > >, ExecutorFor< Device > > _executions;
     protected final List< CallPipe > _callPipe;
 
