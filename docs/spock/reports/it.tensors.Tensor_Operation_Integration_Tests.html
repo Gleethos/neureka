@@ -11,7 +11,7 @@
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Mon Aug 10 18:28:08 CEST 2020 by Daglemino</div>
+<div class='date-test-ran'>Created on Tue Aug 11 00:37:05 CEST 2020 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -23,12 +23,12 @@
 </thead>
 <tbody>
 <tr>
-<td>8</td>
+<td>9</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>13,531 seconds</td>
+<td>15,159 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -41,6 +41,9 @@
 </colgroup>
 <tbody>
 <ul id='toc'>
+<li>
+<a href='#-1985424227' class='feature-toc-pass'>Test "x-mul" operator produces expected results. (Not on device)</a>
+</li>
 <li>
 <a href='#-2074180502' class='feature-toc-pass'>The "dot" operation reshapes and produces valid "x" operation result.</a>
 </li>
@@ -68,6 +71,190 @@
 </ul>
 <tr>
 <td colspan='10'>
+<div class='feature-description' id='-1985424227'>
+<span>Test "x-mul" operator produces expected results. (Not on device)</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>The Neurka instance is being reset.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Gradient auto apply for tensors in ue is set to false.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Tensor legacy view is set to true.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The Neureka instance is set to legacy indexing.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().settings().indexing().setIsUsingLegacyIndexing( legacy )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Two new 3D tensor instances with the shapes: [2x3x1] &amp; [1x3x2].</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def x = new Tsr(
+        new int[]{2, 3, 1},
+        new double[]{
+                3,  2, -1, //&lt;=- Format of legacy : false
+                -2,  2,  4
+                /* Format otherwise :
+                     3,  2,
+                    -1, -2,
+                     2,  4
+                 */
+        }
+)
+def y = new Tsr(
+new int[]{1, 3, 2},
+new double[]{
+        4, -1,
+        3,  2,
+        3, -1
+})</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The x-mul result is being instantiated by passing a simple equation to the tensor constructor.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def z = new Tsr(new Tsr[]{x, y}, "I0xi1")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The result contains the expected String.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>z.toString().contains(expected)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The x-mul result is being instantiated by passing a object array containing equation parameters and syntax.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>z = new Tsr(new Object[]{x, "x", y})</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The result contains the expected String.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>z.toString().contains(expected)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<th class='ex-header'>legacy</th>
+<th class='ex-header'>expected</th>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>false</td>
+<td class='ex-value'>[2x1x2]:(15.0, 2.0, 10.0, 2.0)</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>true</td>
+<td class='ex-value'>[2x1x2]:(19.0, 22.0, 1.0, -6.0)</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
 <div class='feature-description' id='-2074180502'>
 <span>The "dot" operation reshapes and produces valid "x" operation result.</span>
 <span style='float: right; font-size: 60%;'>
@@ -81,8 +268,27 @@
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().reset()
-Tsr a = new Tsr([1, 4, 4, 1], [4..12])
+<div class='block-text'>The Neureka instance is being reset.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Two multi-dimensional tensors.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr a = new Tsr([1, 4, 4, 1], [4..12])
 Tsr b = new Tsr([1, 3, 5, 2, 1], [-5..3])</pre>
 </td>
 </tr>
@@ -91,6 +297,12 @@ Tsr b = new Tsr([1, 3, 5, 2, 1], [-5..3])</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
+<div class='block-text'>The "dot" method is being called on "a" receiving "b"...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
 <pre class='block-source'>Tsr c = a.dot(b)</pre>
 </td>
 </tr>
@@ -98,6 +310,12 @@ Tsr b = new Tsr([1, 3, 5, 2, 1], [-5..3])</pre>
 <td>
 <div class='block-kind'>Then:</div>
 </td>
+<td>
+<div class='block-text'>The result tensor contains the expected shape.</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>c.toString().contains("(1x4x2x5x2x1)")</pre>
 </td>
@@ -131,6 +349,12 @@ binding.setVariable('b', b)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
+<div class='block-text'>The groovy code is being evaluated.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
 <pre class='block-source'>Tsr c = new GroovyShell(binding).evaluate((code))</pre>
 </td>
 </tr>
@@ -138,6 +362,12 @@ binding.setVariable('b', b)</pre>
 <td>
 <div class='block-kind'>Then:</div>
 </td>
+<td>
+<div class='block-text'>The resulting tensor (toString) will contain the expected String.</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>c.toString().contains(expected)</pre>
 </td>
@@ -224,6 +454,12 @@ binding.setVariable('b', b)</pre>
 <td>
 <div class='block-kind'>Then:</div>
 </td>
+<td>
+<div class='block-text'>The resulting tensor (toString) will contain the expected String.</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>c.toString().contains(expected)</pre>
 </td>

@@ -5,18 +5,75 @@ import neureka.Tsr
 import neureka.calculus.factory.assembly.FunctionBuilder
 import spock.lang.Specification
 
-class Tensor_Operation_Integration_Tests extends Specification{
+class Tensor_Operation_Integration_Tests extends Specification
+{
+
+    def 'Test "x-mul" operator produces expected results. (Not on device)'(
+            boolean legacy, String expected
+    ) {
+        given: 'The Neurka instance is being reset.'
+        Neureka.instance().reset();
+        and: 'Gradient auto apply for tensors in ue is set to false.'
+        Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false);
+        and: 'Tensor legacy view is set to true.'
+        Neureka.instance().settings().view().setIsUsingLegacyView(true);
+        and: 'The Neureka instance is set to legacy indexing.'
+        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing( legacy );
+        and: 'Two new 3D tensor instances with the shapes: [2x3x1] & [1x3x2].'
+        //Same test again but this time with reversed indexing:
+        def x = new Tsr(
+                new int[]{2, 3, 1},
+                new double[]{
+                        3,  2, -1, //<=- Format of legacy : false
+                        -2,  2,  4
+                        /* Format otherwise :
+                             3,  2,
+                            -1, -2,
+                             2,  4
+                         */
+                }
+        );
+        def y = new Tsr(
+                new int[]{1, 3, 2},
+                new double[]{
+                        4, -1,
+                        3,  2,
+                        3, -1
+                });
+        /*
+                15, 2,
+                10, 2
+         */
+        when : 'The x-mul result is being instantiated by passing a simple equation to the tensor constructor.'
+        def z = new Tsr(new Tsr[]{x, y}, "I0xi1");
+        then: 'The result contains the expected String.'
+        z.toString().contains(expected);
+
+        when: 'The x-mul result is being instantiated by passing a object array containing equation parameters and syntax.'
+        z = new Tsr(new Object[]{x, "x", y});
+        then: 'The result contains the expected String.'
+        z.toString().contains(expected);
+
+        where :
+        legacy || expected
+        false  || "[2x1x2]:(15.0, 2.0, 10.0, 2.0)"
+        true   || "[2x1x2]:(19.0, 22.0, 1.0, -6.0)"
+    }
+
 
     def 'The "dot" operation reshapes and produces valid "x" operation result.'()
     {
-        given :
+        given : 'The Neureka instance is being reset.'
             Neureka.instance().reset()
+        and : 'Two multi-dimensional tensors.'
             Tsr a = new Tsr([1, 4, 4, 1], [4..12])
             Tsr b = new Tsr([1, 3, 5, 2, 1], [-5..3])
 
-        when : Tsr c = a.dot(b)
+        when : 'The "dot" method is being called on "a" receiving "b"...'
+            Tsr c = a.dot(b)
 
-        then : c.toString().contains("(1x4x2x5x2x1)")
+        then : 'The result tensor contains the expected shape.'
+            c.toString().contains("(1x4x2x5x2x1)")
     }
 
     def 'New method "asFunction" of String added at runtime is callable by groovy and also works.'(
@@ -31,17 +88,18 @@ class Tensor_Operation_Integration_Tests extends Specification{
             binding.setVariable('a', a)
             binding.setVariable('b', b)
 
-        when :
+        when : 'The groovy code is being evaluated.'
             Tsr c = new GroovyShell(binding).evaluate((code))
 
-        then : c.toString().contains(expected)
+        then : 'The resulting tensor (toString) will contain the expected String.'
+            c.toString().contains(expected)
 
         where :
             code                                       || expected
-            '"I[0]xI[1]".asFunction()([a, b])'           || "(2x2):[-3.0, -2.0, 12.0, 8.0]"
-            '"I[0]xI[1]"[a, b]'                          || "(2x2):[-3.0, -2.0, 12.0, 8.0]"
-            '"i0 x i1"%[a, b]'                           || "(2x2):[-3.0, -2.0, 12.0, 8.0]"
-            '"i0"%a'                                     || "(1x2):[3.0, 2.0]"
+            '"I[0]xI[1]".asFunction()([a, b])'         || "(2x2):[-3.0, -2.0, 12.0, 8.0]"
+            '"I[0]xI[1]"[a, b]'                        || "(2x2):[-3.0, -2.0, 12.0, 8.0]"
+            '"i0 x i1"%[a, b]'                         || "(2x2):[-3.0, -2.0, 12.0, 8.0]"
+            '"i0"%a'                                   || "(1x2):[3.0, 2.0]"
     }
 
     def 'New operator methods added to "SDK-types" at runtime are callable by groovy and also work.'(
@@ -59,22 +117,23 @@ class Tensor_Operation_Integration_Tests extends Specification{
         when : '...calling methods on types like Double and Integer that receive Tsr instances...'
             Tsr c = new GroovyShell(binding).evaluate((code))
 
-        then : c.toString().contains(expected)
+        then : 'The resulting tensor (toString) will contain the expected String.'
+            c.toString().contains(expected)
 
         where :
-            code               || expected
-            '(2+a)'            || "7.0"
-            '(2*b)'            || "6.0"
-            '(6/b)'            || "2.0"
-            '(2^b)'            || "8.0"
-            '(2**b)'           || "8.0"
-            '(4-a)'            || "-1.0"
-            '(2.0+a)'          || "7.0"
-            '(2.0*b)'          || "6.0"
-            '(6.0/b)'          || "2.0"
-            '(2.0^b)'          || "8.0"
-            '(2.0**b)'         || "8.0"
-            '(4.0-a)'          || "-1.0"
+            code       || expected
+            '(2+a)'    || "7.0"
+            '(2*b)'    || "6.0"
+            '(6/b)'    || "2.0"
+            '(2^b)'    || "8.0"
+            '(2**b)'   || "8.0"
+            '(4-a)'    || "-1.0"
+            '(2.0+a)'  || "7.0"
+            '(2.0*b)'  || "6.0"
+            '(6.0/b)'  || "2.0"
+            '(2.0^b)'  || "8.0"
+            '(2.0**b)' || "8.0"
+            '(4.0-a)'  || "-1.0"
 
     }
 

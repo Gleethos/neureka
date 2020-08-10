@@ -139,24 +139,25 @@ public abstract class AbstractFunction extends BaseFunction {
      * @param d
      * @return
      */
-    protected Tsr _tensor_activation(Tsr[] inputs, int j, int d) {
-        Device device = _device(inputs);
+    protected Tsr _tensor_activation( Tsr[] inputs, int j, int d ) {
+        Device device = _device( inputs );
         /* The code below deals with deep functions (non flat):  */
-        if (!_isFlat) {
-            return _apply(device, d, () -> _execution(inputs, d, j, device));
-            /* only flat functions can be executed */
-        } else {
+        if ( _isFlat ) {
             /* The following code is reached in flat functions only:  */
-            if (d < 0 && _doAD) {/* Autograd-Graph will be generated below for the new GraphNode: */
-                return new GraphNode(this, inputs, ()-> _recursie_breakdown_execution(inputs, j, d, device)).getPayload();
-            } else {
-                return _recursie_breakdown_execution(inputs, j, d, device);
-            }
-        }
+            /* Autograd-Graph will be generated below for the new GraphNode: */
+            /* only flat functions can be executed directly*/
+            if ( d < 0 && _doAD )
+                return new GraphNode(this, inputs, ()-> __flat_execution(inputs, j, d, device)).getPayload();
+            else
+                return __flat_execution( inputs, j, d, device );
+
+        } else return _apply(device, d, () -> __deep_execution(inputs, d, j, device));
     }
 
-    private Tsr _recursie_breakdown_execution(Tsr[] inputs, int j, int d, Device myDevice)  {
-        if (_type.identifier().equals("x")) {//TODO: Move ALL of this into the operation types!!!!!
+    private Tsr __flat_execution( Tsr[] inputs, int j, int d, Device myDevice )  {
+        if (_type.identifier().equals("x"))
+        {
+            //TODO: Move ALL of this into the operation types!!!!!
             //Tsr[] tsrs = inputs;//new Tsr[]{null, inputs[0], inputs[1]};// _src_acti(inputs, j, -1, 1);
             //tsrs[0] = (d<0)?new Tsr(Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())):null;
             //for (Tsr t : tsrs) if(t!=null) t.setIsVirtual(false);
@@ -164,14 +165,12 @@ public abstract class AbstractFunction extends BaseFunction {
             //return tsrs[0];
             //inputs = tsrs;
 
-            Tsr[] tsrs = new Tsr[]{null, inputs[0], inputs[1]};// _src_acti(inputs, j, -1, 1);
+            Tsr[] tsrs = new Tsr[]{null, inputs[0], inputs[1]};
             tsrs[0] = (d<0)?new Tsr(Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())):null;
             for (Tsr t : tsrs) if(t!=null) t.setIsVirtual(false);
             myDevice.execute(tsrs, _type, d);
             return tsrs[0];
-        } else
-
-        if (_type.id() == OperationType.instance("<<x").id() || _type.id() == OperationType.instance("x>>").id()) {
+        } else if (_type.id() == OperationType.instance("<<x").id() || _type.id() == OperationType.instance("x>>").id()) {
             if (d < 0) {
                 //inputs = _src_acti(inputs, j, -1, 0);
                 Tsr[] tsrs = _src_acti(inputs, j, -1, 0);
@@ -195,9 +194,9 @@ public abstract class AbstractFunction extends BaseFunction {
                 int[] reversed = new int[reverseLength];
                 int reshape_i = 0;
                 int reverse_i = 0;
-                while (reverse_i < reverseLength) {
-                    if (newForm[reshape_i] >= 0) {
-                        reversed[newForm[reshape_i]] = reshape_i;
+                while ( reverse_i < reverseLength ) {
+                    if ( newForm[ reshape_i ] >= 0 ) {
+                        reversed[ newForm[reshape_i] ] = reshape_i;
                         reverse_i++;
                     }
                     reshape_i++;
@@ -208,10 +207,20 @@ public abstract class AbstractFunction extends BaseFunction {
             return Tsr.Exec.reshaped(t, newForm, true);
         } else {
             Tsr[] tsrs = inputs;
-            return _apply(myDevice, d, () -> _execution(tsrs, d, j, myDevice));
+            return _apply(myDevice, d, () -> __deep_execution(tsrs, d, j, myDevice));
         }
     }
 
+    /**
+     *  This method return the index of the tensor
+     *  in the given tensor array which is virtual and contains "1.0".
+     *  However if not all tensors are virtual or their values are not all "0.0" except one
+     *  whose value is "1.0" then it return -1, because the optimization cannot
+     *  be made...
+     *
+     * @param tsrs An array of tensors which ought to be analyzed.
+     * @return The index of the tensor whose value is "1.0" (if all other are "0.0"), otherwise : -1
+     */
     private int _indexOfFoundDerivative(Tsr[] tsrs ) {
         boolean allVirtual = true;
         for ( Tsr t : tsrs ) if ( t != null && !t.isVirtual() ) allVirtual = false;
@@ -229,7 +238,7 @@ public abstract class AbstractFunction extends BaseFunction {
         return -1;
     }
 
-    private Tsr _execution( Tsr[] inputs, int d, int j, Device device )
+    private Tsr __deep_execution(Tsr[] inputs, int d, int j, Device device )
     {
         if ( !_isFlat && j < 0 && d < 0 ) {
             if (_type.isOperation()) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
@@ -259,7 +268,7 @@ public abstract class AbstractFunction extends BaseFunction {
                 }
             } else {
                 for ( int i = 1; i < tsrs.length; i++ ) {
-                    tsrs[i] = ( j >= 0 ) ? _src.get(i - 1).derive(inputs, d, j) : _src.get(i - 1).derive(inputs, d);
+                    tsrs[i] = ( j >= 0 ) ? _src.get( i - 1 ).derive( inputs, d, j ) : _src.get( i - 1 ).derive(inputs, d);
                 }
             }
             //then add them all together! (is possible because of linearity...)
@@ -268,14 +277,14 @@ public abstract class AbstractFunction extends BaseFunction {
                 int index = _indexOfFoundDerivative(tsrs);
                 if ( index >= 0 ) inner = tsrs[index];
                 else {
+                    // Optimization above did not apply, so we accumulate all the derivatives!
                     device.execute(tsrs, OperationType.instance("+"), -1);
                     inner = tsrs[0];//this is now the inner derivative!
                 }
-            } else {
-                inner = tsrs[1];
-            }
+            } else inner = tsrs[1];
+
             tsrs[0] = null;
-            //then activate the source like so:
+            //then activate (No differentiation!) the source like so:
             if ( _type.isIndexer() ) {
                 for ( int i = 1; i < tsrs.length; i++ ) {
                     tsrs[i] = _src.get(0).call(inputs, i - 1);
@@ -409,26 +418,16 @@ public abstract class AbstractFunction extends BaseFunction {
 
     protected double _scalar_activation(double[] input, int j, int d) {
         switch (_type.identifier()) {
-            case "sum":
-                return (j < 0) ? Exec.summation(input, d, _src) : Exec.summation(input, j, d, _src);
-            case "prod":
-                return (j < 0) ? Exec.PI(input, d, _src) : Exec.PI(input, j, d, _src);
-            case "^":
-                return (j < 0) ? Exec.power(input, d, _src) : Exec.power(input, j, d, _src);
-            case "/":
-                return (j < 0) ? Exec.division(input, d, _src) : Exec.division(input, j, d, _src);
-            case "*":
-                return (j < 0) ? Exec.multiplication(input, d, _src) : Exec.multiplication(input, j, d, _src);
-            case "%":
-                return (j < 0) ? Exec.modulo(input, d, _src) : Exec.modulo(input, j, d, _src);
-            case "-":
-                return (j < 0) ? Exec.subtraction(input, d, _src) : Exec.subtraction(input, j, d, _src);
-            case "+":
-                return (j < 0) ? Exec.addition(input, d, _src) : Exec.addition(input, j, d, _src);
-            case "x"://convolve
-                return (j < 0) ? Exec.multiplication(input, d, _src) : Exec.multiplication(input, j, d, _src);
-            default:
-                return _scalar_activation(input[0], d >= 0);
+            case "sum": return (j < 0) ? Exec.summation(input, d, _src) : Exec.summation(input, j, d, _src);
+            case "prod": return (j < 0) ? Exec.PI(input, d, _src) : Exec.PI(input, j, d, _src);
+            case "^": return (j < 0) ? Exec.power(input, d, _src) : Exec.power(input, j, d, _src);
+            case "/": return (j < 0) ? Exec.division(input, d, _src) : Exec.division(input, j, d, _src);
+            case "*": return (j < 0) ? Exec.multiplication(input, d, _src) : Exec.multiplication(input, j, d, _src);
+            case "%": return (j < 0) ? Exec.modulo(input, d, _src) : Exec.modulo(input, j, d, _src);
+            case "-": return (j < 0) ? Exec.subtraction(input, d, _src) : Exec.subtraction(input, j, d, _src);
+            case "+": return (j < 0) ? Exec.addition(input, d, _src) : Exec.addition(input, j, d, _src);
+            case "x": return (j < 0) ? Exec.multiplication(input, d, _src) : Exec.multiplication(input, j, d, _src);
+            default: return _scalar_activation(input[0], d >= 0);
         }
     }
 
@@ -437,12 +436,12 @@ public abstract class AbstractFunction extends BaseFunction {
         @Contract(pure = true)
         public static double reLu(double input, boolean derive) {
             double output;
-            if (!derive) {
-                if (input >= 0) output = (input);
-                else output = (input) * 0.01;
+            if ( !derive ) {
+                if ( input >= 0 ) output = (input);
+                else output = input * 0.01;
                 return output;
             } else {
-                if (input >= 0) output = 1;
+                if ( input >= 0 ) output = 1;
                 else output = 0.01;
                 return output;
             }
@@ -450,19 +449,19 @@ public abstract class AbstractFunction extends BaseFunction {
 
         @Contract(pure = true)
         public static double sigmoid(double input, boolean derive) {
-            if (!derive) {
-                return 1 / (1 + Math.pow(Math.E, (-input)));
+            if ( !derive ) {
+                return 1 / (1 + Math.pow(Math.E, -input));
             } else {
-                return (Math.pow(Math.E, -(input))) / (Math.pow((1 + Math.pow(Math.E, -(input))), 2) + 2 * Math.pow(Math.E, -(input)));
+                return (Math.pow(Math.E, -input)) / (Math.pow((1 + Math.pow(Math.E, -input)), 2) + 2 * Math.pow(Math.E, -input));
             }
         }
 
         @Contract(pure = true)
         public static double tanh(double input, boolean derive) {
-            if (!derive) {
+            if ( !derive ) {
                 return input / Math.pow((1 + Math.pow(input, 2)), 0.5);
             } else {
-                return (1 - Math.pow((input / Math.pow((1 + Math.pow((input), 2)), 0.5)), 2));
+                return (1 - Math.pow((input / Math.pow((1 + Math.pow( input, 2)), 0.5)), 2));
             }
         }
 
@@ -474,78 +473,78 @@ public abstract class AbstractFunction extends BaseFunction {
 
         @Contract(pure = true)
         public static double ligmoid(double input, boolean derive) {
-            if (!derive) return (Math.log(1 + Math.pow(Math.E, input)));
+            if ( !derive ) return Math.log(1 + Math.pow(Math.E, input));
             else return sigmoid(input, false);
         }
 
         @Contract(pure = true)
         public static double linear(double input, boolean derive) {
-            if (!derive) return (input);
+            if ( !derive ) return input;
             else return 1;
         }
 
         @Contract(pure = true)
         public static double gaussian(double input, boolean derive) {
-            if (!derive) return Math.pow(Math.E, -Math.pow((input), 2));
-            else return -2 * ((input)) * Math.pow(Math.E, -Math.pow((input), 2));
+            if ( !derive ) return Math.pow(Math.E, -Math.pow(input, 2));
+            else return -2 * input * Math.pow(Math.E, -Math.pow(input, 2));
         }
 
         @Contract(pure = true)
         public static double absolute(double input, boolean derive) {
-            if (!derive) return Math.abs(input);
-            else return (input < 0) ? -1 : 1;
+            if ( !derive ) return Math.abs( input );
+            else return ( input < 0 ) ? -1 : 1;
         }
 
         @Contract(pure = true)
         public static double sinus(double input, boolean derive) {
-            if (!derive) return Math.sin(input);
-            else return Math.cos(input);
+            if ( !derive ) return Math.sin( input );
+            else return Math.cos( input );
         }
 
         @Contract(pure = true)
         public static double cosinus(double input, boolean derive) {
-            if (!derive) return Math.cos(input);
-            else return -Math.sin(input);
+            if ( !derive ) return Math.cos( input );
+            else return -Math.sin( input );
         }
 
         private static double summation(double[] inputs, int j, int d, ArrayList<Function> src) {
-            if (d < 0) {
+            if ( d < 0 ) {
                 double sum = 0;
                 boolean nothingDone = true;
-                for (int i = 0; i < inputs.length; i++) {
-                    sum += src.get(0).call(inputs, i);
+                for ( int i = 0; i < inputs.length; i++ ) {
+                    sum += src.get(0).call( inputs, i );
                     nothingDone = false;
                 }
-                if (nothingDone) {
-                    return src.get(0).call(inputs);
+                if ( nothingDone ) {
+                    return src.get(0).call( inputs );
                 }
                 return sum;
             } else {
-                return src.get(0).derive(inputs, d, j);
+                return src.get(0).derive( inputs, d, j );
             }
         }
 
         private static double summation(double[] inputs, int d, ArrayList<Function> src) {
-            if (d < 0) {
+            if ( d < 0 ) {
                 double sum = 0;
                 boolean nothingDone = true;
                 for (int i = 0; i < inputs.length; i++) {
-                    sum += src.get(0).call(inputs, i);
+                    sum += src.get(0).call( inputs, i );
                     nothingDone = false;
                 }
-                if (nothingDone) {
-                    return src.get(0).call(inputs);
+                if ( nothingDone ) {
+                    return src.get(0).call( inputs );
                 }
                 return sum;
             } else {
                 double sum = 0;
                 boolean nothingDone = true;
                 for (int i = 0; i < inputs.length; i++) {
-                    double r = src.get(0).derive(inputs, d, i);
+                    double r = src.get(0).derive( inputs, d, i );
                     sum += r;
                     nothingDone = false;
                 }
-                if (nothingDone) {
+                if ( nothingDone ) {
                     return src.get(0).call(inputs);
                 }
                 return sum;
@@ -554,23 +553,23 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        private static double PI(double[] inputs, int j, int d, ArrayList<Function> src) {
-            if (d < 0) {
+        private static double PI( double[] inputs, int j, int d, ArrayList<Function> src ) {
+            if ( d < 0 ) {
                 double prod = 1;
                 boolean nothingDone = true;
                 for (int Ii = 0; Ii < inputs.length; Ii++) {
-                    prod *= src.get(0).call(inputs, Ii);
+                    prod *= src.get(0).call( inputs, Ii );
                     nothingDone = false;
                 }
-                if (nothingDone) return src.get(0).call(inputs, j);
+                if ( nothingDone ) return src.get(0).call(inputs, j);
                 return prod;
             } else {
                 double u, ud, v, vd;
-                u = src.get(0).call(inputs, 0);
+                u = src.get(0).call( inputs, 0 );
                 ud = src.get(0).derive(inputs, d, 0);
                 for (int ji = 1; ji < inputs.length; ji++) {
-                    v = src.get(0).call(inputs, ji);
-                    vd = src.get(0).derive(inputs, d, ji);
+                    v = src.get(0).call( inputs, ji );
+                    vd = src.get(0).derive( inputs, d, ji );
                     ud = u * vd + v * ud;
                     u *= v;
                 }
@@ -579,11 +578,11 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        private static double PI(double[] inputs, int d, ArrayList<Function> src) {
+        private static double PI( double[] inputs, int d, ArrayList<Function> src ) {
             if (d < 0) {
                 double prod = 1;
                 boolean nothingDone = true;
-                for (int i = 0; i < inputs.length; i++) {
+                for ( int i = 0; i < inputs.length; i++ ) {
                     prod *= src.get(0).call(inputs, i);
                     nothingDone = false;
                 }
@@ -593,7 +592,7 @@ public abstract class AbstractFunction extends BaseFunction {
                 double u, ud, v, vd;
                 u = src.get(0).call(inputs, 0);
                 ud = src.get(0).derive(inputs, d, 0);
-                for (int j = 1; j < inputs.length; j++) {
+                for ( int j = 1; j < inputs.length; j++ ) {
                     v = src.get(0).call(inputs, j);
                     vd = src.get(0).derive(inputs, d, j);
                     ud = u * vd + v * ud;
@@ -610,23 +609,23 @@ public abstract class AbstractFunction extends BaseFunction {
         private static double power(double[] inputs, int j, int d, ArrayList<Function> src) {
             if (d < 0) {
                 double result = src.get(0).call(inputs, j);
-                for (int i = 1; i < src.size(); i++) {
+                for ( int i = 1; i < src.size(); i++ ) {
                     final double current = src.get(i).call(inputs, j);
                     result = Math.pow(result, current);
                 }
                 return result;
             } else {
                 double out = 0;
-                for (int si = 0; si < src.size(); si++) {
+                for ( int si = 0; si < src.size(); si++ ) {
                     double b = 1;
-                    for (int i = 1; i < src.size(); i++) {
+                    for ( int i = 1; i < src.size(); i++ ) {
                         b *= src.get(i).call(inputs, j);
                     }
-                    if (si == 0) {
+                    if ( si == 0 ) {
                         out += src.get(0).derive(inputs, d, j) * b * Math.pow(src.get(0).call(inputs, j), b - 1);
                     } else {
                         double a = src.get(0).call(inputs, j);
-                        out += (a >= 0) ? src.get(si).derive(inputs, d, j) * b * Math.log(a) : 0;
+                        out += ( a >= 0 ) ? src.get(si).derive(inputs, d, j) * b * Math.log(a) : 0;
                     }
                 }
                 return out;
