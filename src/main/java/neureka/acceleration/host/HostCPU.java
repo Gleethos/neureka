@@ -113,13 +113,23 @@ public class HostCPU extends AbstractDevice
     }
 
     @Override
-    public double[] value64Of(Tsr tensor) {
+    public double[] value64f( Tsr tensor ) {
         return tensor.value64();
     }
 
     @Override
-    public float[] value32Of(Tsr tensor) {
+    public float[] value32f( Tsr tensor ) {
         return tensor.value32();
+    }
+
+    @Override
+    public double value64f(Tsr tensor, int index) {
+        return 0;
+    }
+
+    @Override
+    public float value32f(Tsr tensor, int index) {
+        return 0;
     }
 
     @Override

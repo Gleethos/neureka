@@ -18,7 +18,6 @@ import neureka.utility.DataHelper;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 {
@@ -295,7 +294,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     public Tsr delete() {
         forComponent(GraphNode.class, n -> {
             if (n.isUsedAsDerivative()) {
-                throw new IllegalStateException("Cannot delete a tensor which used as derivative by the AD computation graph!");
+                throw new IllegalStateException("Cannot delete a tensor which is used as derivative by the AD computation graph!");
             }
         });
         forComponent(Device.class, d -> d.rmv(this));
@@ -1083,7 +1082,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     public Object getValue(){
         if(this.isOutsourced()){
             Device device = find(Device.class);
-            return (this.is32())?device.value32Of(this):device.value64Of(this);
+            return (this.is32())?device.value32f(this):device.value64f(this);
         }
         return _value;
     }
@@ -1131,19 +1130,30 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         return this;
     }
 
+    // TODO: WRITE A UNIT TEST ABOUT THIS!!!
     public double value64(int i) {
         if (this.isVirtual()){
-            if (this.is64()) return ((double[])_value)[0];
-            else return ((float[])_value)[0];
+            if ( this.isOutsourced() ) {
+                Device device = find(Device.class);
+                return device.value64f(this, i);
+            } else {
+                if (this.is64()) return ((double[]) _value)[0];
+                else return ((float[]) _value)[0];
+            }
         } else {
-            if (this.is64()) return ((double[])_value)[i];
-            else return ((float[])_value)[i];
+            if ( this.isOutsourced() ) {
+                Device device = find(Device.class);
+                return device.value64f(this, i);
+            } else {
+                if (this.is64()) return ((double[])_value)[i];
+                else return ((float[])_value)[i];
+            }
         }
     }
 
     public double[] value64() {
         if (_value == null && this.isOutsourced() && this.has(Device.class)) {
-            return this.find(Device.class).value64Of(this);
+            return this.find(Device.class).value64f(this);
         }
         double[] newValue = (this.is64())?(double[])_value: DataHelper.floatToDouble((float[])_value);
         if (this.isVirtual() && newValue!=null && this.size()>1) {
@@ -1166,7 +1176,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 
     public float[] value32() {
         if (_value == null && this.isOutsourced() && this.has(Device.class)) {
-            return this.find(Device.class).value32Of(this);
+            return this.find(Device.class).value32f(this);
         }
         float[] newValue = (this.is64())?DataHelper.doubleToFloat((double[])_value):(float[])_value;
         if (this.isVirtual() && newValue!=null) {

@@ -73,11 +73,14 @@ import java.lang.ref.Cleaner;
 <span class="fc" id="L73">                    ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())</span>
 <span class="fc" id="L74">                    : tsrs[1].getNDConf().shape();</span>
 <span class="fc" id="L75">            Tsr output = new Tsr( shp, 0.0 );</span>
-<span class="fc" id="L76">            output.setIsVirtual(false); // This tensor will be 'filled'! Therefore : needs to be 'whole!</span>
-<span class="fc" id="L77">            device.add(output);</span>
-<span class="fc" id="L78">            tsrs[0] = output;</span>
+            //boolean allVirtual = true;
+            //for ( Tsr t : tsrs ) if( t!=null &amp;&amp; !t.isVirtual() ) allVirtual = false;
+            //if ( !allVirtual ) output.setIsVirtual(false); // This tensor will be 'filled'! Therefore : needs to be 'whole!
+<span class="fc" id="L79">            output.setIsVirtual(false);</span>
+<span class="fc" id="L80">            device.add(output);</span>
+<span class="fc" id="L81">            tsrs[0] = output;</span>
         }
-<span class="fc" id="L80">    }</span>
+<span class="fc" id="L83">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

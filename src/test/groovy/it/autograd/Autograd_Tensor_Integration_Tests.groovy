@@ -165,7 +165,7 @@ class Autograd_Tensor_Integration_Tests extends Specification
     def 'A tensor used as derivative within a computation graph will throw exception when trying to deleting it.'()
     {
         given : 'A tensor "a" requiring autograd.'
-            Tsr a = new Tsr(2).setRqsGradient(true)
+            Tsr a = new Tsr(1).setRqsGradient(true)
 
         and : 'A second tensor "b".'
             Tsr b = new Tsr(2)
@@ -178,7 +178,7 @@ class Autograd_Tensor_Integration_Tests extends Specification
 
         then : 'An exception is being thrown.'
             def exception = thrown(IllegalStateException)
-            exception.message == "Cannot delete a tensor which used as derivative by the AD computation graph!"
+            exception.message == "Cannot delete a tensor which is used as derivative by the AD computation graph!"
 
 
     }

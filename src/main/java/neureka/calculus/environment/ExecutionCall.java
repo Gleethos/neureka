@@ -16,6 +16,7 @@ public class ExecutionCall<DeviceType extends Device>
     private final Tsr[] _tsrs;
     private final int _d;
     private final OperationType _type;
+    private OperationTypeImplementation _implementation;
 
     public ExecutionCall(
             DeviceType device,
@@ -27,11 +28,16 @@ public class ExecutionCall<DeviceType extends Device>
         _tsrs = tsrs;
         _d = d;
         _type = type;
+        _implementation = null;
     }
     public DeviceType getDevice() {return _device;}
     public Tsr[] getTensors() {return _tsrs;}
     public Tsr getTensor(int i) {return _tsrs[i];}
     public int getDerivativeIndex() {return _d;}
     public OperationType getType() {return _type;}
-    public OperationTypeImplementation getImplementation() { return _type.implementationOf(this); }
+    public OperationTypeImplementation getImplementation() {
+        if ( _implementation != null ) return _implementation;
+        else _implementation = _type.implementationOf(this);
+        return _implementation;
+    }
 }

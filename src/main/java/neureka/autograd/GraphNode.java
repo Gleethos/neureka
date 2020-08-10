@@ -284,8 +284,7 @@ public class GraphNode implements Component<Tsr>
      * @param payloadSupplier Provides the payload of this node.
      */
     public GraphNode(Function function, Object context, Supplier<Tsr> payloadSupplier) {
-        if (function == null)
-            throw new IllegalArgumentException("Function must not be null!");
+        if (function == null) throw new IllegalArgumentException("Function must not be null!");
         if (context instanceof GraphLock) { // Note function always null in this case:
             _construct(payloadSupplier.get(), function, null, (GraphLock) context);
         } else if (context instanceof Tsr[]) {

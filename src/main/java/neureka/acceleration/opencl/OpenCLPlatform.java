@@ -5,7 +5,7 @@ import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.calculus.environment.OperationType;
 import org.jocl.*;
 import java.util.*;
-import neureka.calculus.environment.executors.*;
+import neureka.calculus.environment.implementations.*;
 
 import static org.jocl.CL.*;
 import static org.jocl.CL.CL_DEVICE_TYPE_ALL;

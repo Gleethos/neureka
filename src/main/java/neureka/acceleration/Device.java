@@ -41,31 +41,35 @@ public interface Device extends Component<Tsr>
 
     void dispose();
 
-    Device get(Tsr tensor);
+    Device get( Tsr tensor );
 
-    Device add(Tsr tensor);
+    Device add( Tsr tensor );
 
-    Device add(Tsr tensor, Tsr parent);
+    Device add( Tsr tensor, Tsr parent );
 
-    boolean has(Tsr tensor);
+    boolean has( Tsr tensor );
 
-    Device rmv(Tsr tensor);
+    Device rmv( Tsr tensor );
 
-    Device cleaning(Tsr tensor, Runnable action);
+    Device cleaning( Tsr tensor, Runnable action );
 
-    Device overwrite64(Tsr tensor, double[] value);
+    Device overwrite64( Tsr tensor, double[] value );
 
-    Device overwrite32(Tsr tensor, float[] value);
+    Device overwrite32( Tsr tensor, float[] value );
 
-    Device swap(Tsr former, Tsr replacement);
+    Device swap( Tsr former, Tsr replacement );
 
-    Device execute(Tsr[] Tsrs, OperationType type, int d);
+    Device execute( Tsr[] Tsrs, OperationType type, int d );
 
-    double[] value64Of(Tsr tensor);
+    double[] value64f( Tsr tensor );
 
-    float[] value32Of(Tsr tensor);
+    float[] value32f( Tsr tensor );
 
-    Collection<Tsr> tensors();
+    double value64f( Tsr tensor, int index );
+
+    float value32f( Tsr tensor, int index );
+
+    Collection< Tsr > tensors();
 
 
 

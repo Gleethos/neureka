@@ -29,15 +29,19 @@ class Benchmark_System_Test extends Specification
             assert t.toString().contains("(3):[1.0, 3.3, 6.0]")
     }
 
-    def 'test_benchmark_script_and_simple_tensor_constructor'()
+    def 'Test benchmark script and simple tensor constructor.'()
     {
-        given :
+        given : 'Neureka instance is being reset.'
             Neureka.instance().reset()
-            def session = new GroovyShell().evaluate(Utility.readResource("benchmark.groovy", this))
-            String expected = "56b2eb74955e49cd777469c7dad0536e"
-            def hash = ""
 
-        when :
+        and : 'The benchmark script is being loaded into a GroovyShell instance.'
+            def session = new GroovyShell().evaluate(Utility.readResource("benchmark.groovy", this))
+
+        and : 'A String instance for the result hash is being instantiated and the expected hash.'
+            String hash = ""
+            String expected = "56b2eb74955e49cd777469c7dad0536e"
+
+        when : 'The benchmark script is being called...'
             session([
                     "iterations":1,
                     "sample_size":20,
@@ -50,11 +54,14 @@ class Benchmark_System_Test extends Specification
                         hash = (hash+tsr.toString()).md5()
                     }
             )
-        then : hash==expected
 
-        and : if ( !Neureka.instance().canAccessOpenCL() ) return
+        then : 'The hash is as expected.'
+            hash == expected
 
-        when :
+        and : 'If system supports OpenCL.'
+            if ( !Neureka.instance().canAccessOpenCL() ) return
+
+        when : 'The benchmark is now being executed with the first found OpenCLDevice instance...'
         hash = ""
         session([
                 "iterations":1,
@@ -63,12 +70,14 @@ class Benchmark_System_Test extends Specification
                 "intensifier":0
         ],
                 null,
-                Device.find("nvidia"),
+                Device.find("first"),
                 tsr->{
                     hash = (hash+tsr.toString()).md5()
                 }
         )
-        then : hash==expected
+
+        then : 'The calculated hash is as expected.'
+            hash==expected
 
         //String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date())
         //session([

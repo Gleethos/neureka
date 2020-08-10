@@ -232,14 +232,14 @@ import java.util.Locale;
             @Contract(pure = true)
             public static int[][] makeFit(int[] sA, int[] sB){
 <span class="fc" id="L234">                int lastIndexOfA = 0;</span>
-<span class="pc bpc" id="L235" title="1 of 2 branches missed.">                for (int i=sA.length-1; i&gt;=0; i--) {</span>
+<span class="fc bfc" id="L235" title="All 2 branches covered.">                for (int i=sA.length-1; i&gt;=0; i--) {</span>
 <span class="fc bfc" id="L236" title="All 2 branches covered.">                    if(sA[i]!=1){</span>
 <span class="fc" id="L237">                        lastIndexOfA = i;</span>
 <span class="fc" id="L238">                        break;</span>
                     }
                 }
 <span class="fc" id="L241">                int firstIndexOfB = 0;</span>
-<span class="pc bpc" id="L242" title="1 of 2 branches missed.">                for (int i=0; i&lt;sB.length; i++){</span>
+<span class="fc bfc" id="L242" title="All 2 branches covered.">                for (int i=0; i&lt;sB.length; i++){</span>
 <span class="fc bfc" id="L243" title="All 2 branches covered.">                    if(sB[i]!=1){</span>
 <span class="fc" id="L244">                        firstIndexOfB = i;</span>
 <span class="fc" id="L245">                        break;</span>

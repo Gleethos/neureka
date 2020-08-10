@@ -10,6 +10,7 @@ class Tensor_Indexing_Integration_Tests extends Specification
     void 'Test convolution with legacy indexing.'()
     {
         given :
+            Neureka.instance().reset()
             Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
             Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)

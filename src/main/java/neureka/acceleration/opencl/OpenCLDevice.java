@@ -106,8 +106,8 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     @Override
-    public Device get(Tsr tensor) {
-        double[] value = value64Of(tensor);
+    public Device get( Tsr tensor ) {
+        double[] value = ( tensor.isVirtual() ) ? _value64f(tensor.find(cl_tsr.class), 1, 0) : value64f(tensor);
         rmv(tensor);
         tensor.forComponent(Tsr.class, this::get);
         tensor.setValue(value);
@@ -352,17 +352,21 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     @Override
-    public double[] value64Of(Tsr tensor) {
+    public double[] value64f(Tsr tensor) {
         cl_tsr clt = tensor.find(cl_tsr.class);
+        return _value64f(clt, clt.value.size, 0);
+    }
+
+    private double[] _value64f(cl_tsr clt , int size, int offset) {
         if (clt.fp == 1) {
-            return DataHelper.floatToDouble(value32Of(tensor));
+            return DataHelper.floatToDouble(_value32f(clt, clt.value.size, 0));
         } else {
-            double[] data = new double[clt.value.size];
+            double[] data = new double[size];//clt.value.size];
             clEnqueueReadBuffer(
                     _queue,
                     clt.value.data,
                     CL_TRUE,
-                    0,
+                    offset,
                     Sizeof.cl_double * data.length,
                     Pointer.to(data),
                     0,
@@ -374,15 +378,20 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     @Override
-    public float[] value32Of(Tsr tensor) {
+    public float[] value32f(Tsr tensor) {
         cl_tsr clt = tensor.find(cl_tsr.class);
+        return _value32f(clt, clt.value.size, 0);
+    }
+
+    private float[] _value32f(cl_tsr clt, int size, int offset) {
+        //cl_tsr clt = tensor.find(cl_tsr.class);
         if (clt.fp == 1) {
-            float[] data = new float[clt.value.size];
+            float[] data = new float[size];//clt.value.size];
             clEnqueueReadBuffer(
                     _queue,
                     clt.value.data,
                     CL_TRUE,
-                    0,
+                    offset,
                     (long)Sizeof.cl_float * data.length,
                     Pointer.to(data),
                     0,
@@ -391,12 +400,25 @@ public class OpenCLDevice extends AbstractDevice
             );
             return data;
         } else {
-            return DataHelper.doubleToFloat(value64Of(tensor));
+            return DataHelper.doubleToFloat(_value64f(clt, clt.value.size, 0));
         }
+    }
+
+    @Override
+    public double value64f(Tsr tensor, int index){
+        cl_tsr clt = tensor.find(cl_tsr.class);
+        return _value64f(clt, 1, index)[0];
+    }
+
+    @Override
+    public float value32f(Tsr tensor, int index){
+        cl_tsr clt = tensor.find(cl_tsr.class);
+        return _value32f(clt, 1, index)[0];
     }
 
     public KernelBuilder getKernel(ExecutionCall call){
         String chosen = _platform.kernelNameOf(call.getType());
+        System.out.println("Kernel: "+chosen);
         cl_kernel kernel = _platform.getKernels().get(chosen);
         return new KernelBuilder(kernel, _queue);
     }
@@ -411,6 +433,7 @@ public class OpenCLDevice extends AbstractDevice
                         d,
                         type
                 );
+        tsrs[0].setIsVirtual(false);
         call.getImplementation().getExecutor(CLExecutor.class).getExecution().call(call);
     }
 

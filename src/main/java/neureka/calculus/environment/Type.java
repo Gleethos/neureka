@@ -3,7 +3,7 @@ package neureka.calculus.environment;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
-import neureka.calculus.environment.executors.AbstractOperationTypeImplementation;
+import neureka.calculus.environment.implementations.AbstractOperationTypeImplementation;
 
 public interface Type
 {

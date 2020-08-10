@@ -1,7 +1,7 @@
 package ut.calculus
 
 import neureka.calculus.environment.OperationType
-import neureka.calculus.environment.implementations.OperationContext
+import neureka.calculus.environment.operations.OperationContext
 import spock.lang.Specification
 
 class OperationContext_Unit_Tests extends Specification

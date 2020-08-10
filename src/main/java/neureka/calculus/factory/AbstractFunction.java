@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import neureka.calculus.environment.executors.*;
+import neureka.calculus.environment.implementations.*;
 
 public abstract class AbstractFunction extends BaseFunction {
     
@@ -155,15 +155,25 @@ public abstract class AbstractFunction extends BaseFunction {
         }
     }
 
-    private Tsr _recursie_breakdown_execution(Tsr[] inputs, int j, int d, Device myDevice) {
+    private Tsr _recursie_breakdown_execution(Tsr[] inputs, int j, int d, Device myDevice)  {
         if (_type.identifier().equals("x")) {//TODO: Move ALL of this into the operation types!!!!!
-            Tsr[] tsrs = _src_acti(inputs, j, -1, 1);
+            //Tsr[] tsrs = inputs;//new Tsr[]{null, inputs[0], inputs[1]};// _src_acti(inputs, j, -1, 1);
+            //tsrs[0] = (d<0)?new Tsr(Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())):null;
+            //for (Tsr t : tsrs) if(t!=null) t.setIsVirtual(false);
+            //myDevice.execute(tsrs, _type, d);
+            //return tsrs[0];
+            //inputs = tsrs;
+
+            Tsr[] tsrs = new Tsr[]{null, inputs[0], inputs[1]};// _src_acti(inputs, j, -1, 1);
             tsrs[0] = (d<0)?new Tsr(Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())):null;
             for (Tsr t : tsrs) if(t!=null) t.setIsVirtual(false);
             myDevice.execute(tsrs, _type, d);
             return tsrs[0];
-        } else if (_type.id() == OperationType.instance("<<x").id() || _type.id() == OperationType.instance("x>>").id()) {
+        } else
+
+        if (_type.id() == OperationType.instance("<<x").id() || _type.id() == OperationType.instance("x>>").id()) {
             if (d < 0) {
+                //inputs = _src_acti(inputs, j, -1, 0);
                 Tsr[] tsrs = _src_acti(inputs, j, -1, 0);
                 for (Tsr t : tsrs) t.setIsVirtual(false);
                 myDevice.execute(tsrs, _type, 0);
@@ -172,9 +182,10 @@ public abstract class AbstractFunction extends BaseFunction {
             }
             return null;
         } else if (_type.identifier().equals(",")) {
+            inputs = _src_acti(inputs, j, -1, 0);
             int[] newForm = new int[_src.size() - 1];
             for (int i = 0; i < _src.size() - 1; i++) {
-                newForm[i] = (int) Tsr.IO.getFrom(_src.get(i).call(inputs), 0);
+                newForm[i] = (int) Tsr.IO.getFrom(inputs[i], 0);//_src.get(i).call(inputs)
             }
             if (d >= 0) {//reverse reshape:
                 int reverseLength = 0;
@@ -196,11 +207,29 @@ public abstract class AbstractFunction extends BaseFunction {
             Tsr t = inputs[inputs.length - 1];
             return Tsr.Exec.reshaped(t, newForm, true);
         } else {
-            return _apply(myDevice, d, () -> _execution(inputs, d, j, myDevice));
+            Tsr[] tsrs = inputs;
+            return _apply(myDevice, d, () -> _execution(tsrs, d, j, myDevice));
         }
     }
 
-    private Tsr _execution(Tsr[] inputs, int d, int j, Device device)
+    private int _indexOfFoundDerivative(Tsr[] tsrs ) {
+        boolean allVirtual = true;
+        for ( Tsr t : tsrs ) if ( t != null && !t.isVirtual() ) allVirtual = false;
+        if ( allVirtual ) {
+            int index = -1;
+            for ( int i=0; i < tsrs.length; i++ ) {
+                double value = ( tsrs[i] == null ) ? 0.0 : tsrs[i].value64(0);
+                if ( value == 1.0) {
+                    if ( index >= 0 ) return -1;
+                    index = i;
+                } else if ( value != 0.0 ) return -1;
+            }
+            return index;
+        }
+        return -1;
+    }
+
+    private Tsr _execution( Tsr[] inputs, int d, int j, Device device )
     {
         if ( !_isFlat && j < 0 && d < 0 ) {
             if (_type.isOperation()) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
@@ -235,9 +264,13 @@ public abstract class AbstractFunction extends BaseFunction {
             }
             //then add them all together! (is possible because of linearity...)
             Tsr inner;
-            if ( tsrs.length > 2 ) {
-                device.execute(tsrs, OperationType.instance("+"), -1);
-                inner = tsrs[0];//this is now the inner derivative!
+            if ( tsrs.length > 2 ) {// Optimization: Finds index of "1.0" among otherwise all "0.0" virtual tensors!
+                int index = _indexOfFoundDerivative(tsrs);
+                if ( index >= 0 ) inner = tsrs[index];
+                else {
+                    device.execute(tsrs, OperationType.instance("+"), -1);
+                    inner = tsrs[0];//this is now the inner derivative!
+                }
             } else {
                 inner = tsrs[1];
             }
@@ -262,10 +295,12 @@ public abstract class AbstractFunction extends BaseFunction {
             //Use those tensors for the outer derivative:
             device.execute(tsrs, _type, d);
             //At the end:
-            //multiply inner times outer:
-            tsrs = new Tsr[]{null, inner, tsrs[0]};
-            device.execute(tsrs, OperationType.instance("*"), -1);
-            return tsrs[0]; // done!
+            //multiply inner times outer: ( if inner is not 1 entirely... )
+            if ( !( ( inner.isVirtual() || inner.size()==1 ) && inner.value64(0)==1.0) ) {
+                tsrs = new Tsr[]{null, inner, tsrs[0]};
+                device.execute(tsrs, OperationType.instance("*"), -1);
+            } // done!
+            return tsrs[0];
         } else {
             if (_type.isIndexer()) {
                 for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).call(inputs, i - 1);
@@ -293,7 +328,7 @@ public abstract class AbstractFunction extends BaseFunction {
 
     private Tsr[] _src_acti(Tsr[] inputs, int j, int d, int offset) {
         int[] tempShape = null;
-        Tsr[] tsrs = new Tsr[_src.size() + offset];
+        Tsr[] tsrs = new Tsr[ _src.size() + offset ];
         for (int i = offset; i < tsrs.length; i++) {//constants need to be figured out!
             if (!(_src.get(i - offset) instanceof FunctionConstant)) {
                 if (d < 0) {

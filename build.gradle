@@ -128,7 +128,7 @@ dependencies {
     testRuntime "org.objenesis:objenesis:2.6"    // allows mocking of classes without default constructor (together with CGLIB)
 }
 
-//----------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------systemProperty 'com.athaydes.spockframework.report.showCodeBlocks', true---------------------------------------------------------------------
 // 7. CONFIGURING TEST EXECUTION :
 
 test {
@@ -136,6 +136,7 @@ test {
 
     // Spock-Reports configuration :
     systemProperty 'com.athaydes.spockframework.report.outputDir', 'docs/spock/reports'
+    systemProperty 'com.athaydes.spockframework.report.showCodeBlocks', true
 
     useJUnitPlatform() // ...otherwise tests will not be received by gradle...
 

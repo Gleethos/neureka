@@ -1,14 +1,12 @@
 
-
-
 package neureka.calculus.environment;
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
-import neureka.calculus.environment.executors.AbstractOperationTypeImplementation;
-import neureka.calculus.environment.executors.Convolution;
-import neureka.calculus.environment.implementations.OperationContext;
+import neureka.calculus.environment.implementations.AbstractOperationTypeImplementation;
+import neureka.calculus.environment.implementations.Convolution;
+import neureka.calculus.environment.operations.OperationContext;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
 import java.util.LinkedHashMap;
@@ -27,7 +25,7 @@ public class OperationType implements Type
         return _CONTEXTS.get().getRegister();
     }
 
-    public static OperationType instance(int index){
+    public static OperationType instance( int index ) {
         return _CONTEXTS.get().getRegister().get(index);
     }
 
@@ -45,7 +43,6 @@ public class OperationType implements Type
     protected int _arity;
     protected boolean _isOperation;
     protected boolean _isIndexer;
-    protected boolean _isConvection;
     protected boolean _isCommutative;
     protected boolean _isAssociative;
 
@@ -68,7 +65,6 @@ public class OperationType implements Type
         _identifier = identifier;
         _isOperation = isOperation;
         _isIndexer = isIndexer;
-        _isConvection = isConvection;
         _isCommutative = isCommutative;
         _isAssociative = isAssociative;
 

@@ -113,64 +113,74 @@ public class HostCPU extends AbstractDevice
     }
 
     @Override
-    public double[] value64Of(Tsr tensor) {
+    public double[] value64f( Tsr tensor ) {
 <span class="nc" id="L117">        return tensor.value64();</span>
     }
 
     @Override
-    public float[] value32Of(Tsr tensor) {
+    public float[] value32f( Tsr tensor ) {
 <span class="nc" id="L122">        return tensor.value32();</span>
     }
 
     @Override
+    public double value64f(Tsr tensor, int index) {
+<span class="nc" id="L127">        return 0;</span>
+    }
+
+    @Override
+    public float value32f(Tsr tensor, int index) {
+<span class="nc" id="L132">        return 0;</span>
+    }
+
+    @Override
     public Collection&lt;Tsr&gt; tensors() {
-<span class="nc" id="L127">        return null;</span>
+<span class="nc" id="L137">        return null;</span>
     }
 
     public interface Range {
         void execute(int start, int end);
     }
 
-<span class="fc" id="L134">    public class NativeExecutor</span>
+<span class="fc" id="L144">    public class NativeExecutor</span>
     {
-<span class="fc" id="L136">        private final ThreadPoolExecutor _pool =</span>
-<span class="fc" id="L137">                (ThreadPoolExecutor) Executors.newFixedThreadPool(</span>
-<span class="fc" id="L138">                        Runtime.getRuntime().availableProcessors()</span>
+<span class="fc" id="L146">        private final ThreadPoolExecutor _pool =</span>
+<span class="fc" id="L147">                (ThreadPoolExecutor) Executors.newFixedThreadPool(</span>
+<span class="fc" id="L148">                        Runtime.getRuntime().availableProcessors()</span>
                 );
 
         public ThreadPoolExecutor getPool() {
-<span class="fc" id="L142">            return _pool;</span>
+<span class="fc" id="L152">            return _pool;</span>
         }
 
         //==============================================================================================================
 
         public void threaded(int sze, Range range)
         {
-<span class="fc" id="L149">            int cores = _pool.getCorePoolSize() - _pool.getActiveCount();</span>
-<span class="pc bpc" id="L150" title="1 of 2 branches missed.">            cores = (cores == 0) ? 1 : cores;</span>
-<span class="fc bfc" id="L151" title="All 4 branches covered.">            if (sze &gt;= 32 &amp;&amp; ((sze / cores) &gt;= 8)) {</span>
-<span class="fc" id="L152">                final int chunk = sze / cores;</span>
-<span class="fc" id="L153">                Future[] futures = new Future[cores];</span>
-<span class="fc bfc" id="L154" title="All 2 branches covered.">                for (int i = 0; i &lt; cores; i++) {</span>
-<span class="fc" id="L155">                    final int start = i * chunk;</span>
-<span class="fc bfc" id="L156" title="All 2 branches covered.">                    final int end = (i == cores - 1) ? sze : ((i + 1) * chunk);</span>
-<span class="fc" id="L157">                    Neureka neureka = Neureka.instance();</span>
-<span class="fc" id="L158">                    futures[i] = _pool.submit(() -&gt; {</span>
-<span class="fc" id="L159">                        Neureka.setContext( neureka );</span>
-<span class="fc" id="L160">                        range.execute(start, end);</span>
-<span class="fc" id="L161">                    });</span>
+<span class="fc" id="L159">            int cores = _pool.getCorePoolSize() - _pool.getActiveCount();</span>
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">            cores = (cores == 0) ? 1 : cores;</span>
+<span class="fc bfc" id="L161" title="All 4 branches covered.">            if (sze &gt;= 32 &amp;&amp; ((sze / cores) &gt;= 8)) {</span>
+<span class="fc" id="L162">                final int chunk = sze / cores;</span>
+<span class="fc" id="L163">                Future[] futures = new Future[cores];</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">                for (int i = 0; i &lt; cores; i++) {</span>
+<span class="fc" id="L165">                    final int start = i * chunk;</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">                    final int end = (i == cores - 1) ? sze : ((i + 1) * chunk);</span>
+<span class="fc" id="L167">                    Neureka neureka = Neureka.instance();</span>
+<span class="fc" id="L168">                    futures[i] = _pool.submit(() -&gt; {</span>
+<span class="fc" id="L169">                        Neureka.setContext( neureka );</span>
+<span class="fc" id="L170">                        range.execute(start, end);</span>
+<span class="fc" id="L171">                    });</span>
                 }
-<span class="fc bfc" id="L163" title="All 2 branches covered.">                for (Future f : futures) {</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">                for (Future f : futures) {</span>
                     try {
-<span class="fc" id="L165">                        f.get();</span>
-<span class="nc" id="L166">                    } catch (InterruptedException e) {</span>
-<span class="nc" id="L167">                        e.printStackTrace();</span>
-<span class="nc" id="L168">                    } catch (ExecutionException e) {</span>
-<span class="nc" id="L169">                        e.printStackTrace();</span>
-<span class="pc" id="L170">                    }</span>
+<span class="fc" id="L175">                        f.get();</span>
+<span class="nc" id="L176">                    } catch (InterruptedException e) {</span>
+<span class="nc" id="L177">                        e.printStackTrace();</span>
+<span class="nc" id="L178">                    } catch (ExecutionException e) {</span>
+<span class="nc" id="L179">                        e.printStackTrace();</span>
+<span class="pc" id="L180">                    }</span>
                 }
-<span class="fc" id="L172">            } else range.execute(0, sze);</span>
-<span class="fc" id="L173">        }</span>
+<span class="fc" id="L182">            } else range.execute(0, sze);</span>
+<span class="fc" id="L183">        }</span>
 
     }
 
