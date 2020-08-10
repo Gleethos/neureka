@@ -1,0 +1,1143 @@
+<!DOCTYPE html><html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
+<style>body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 300;
+}
+
+h2 {
+  font-weight: 400;
+}
+
+h3 {
+  font-weight: 200;
+}
+
+.back-link {
+  font-size: small;
+}
+
+table {
+  margin: 5px;
+}
+
+div.date-test-ran {
+  font-size: small;
+  font-style: italic;
+}
+
+table.features-table {
+  width: 800px;
+}
+
+table.summary-table {
+  width: 800px;
+  text-align: left;
+  font-weight: bold;
+  font-size: small;
+}
+
+table.summary-table th {
+  background: lightblue;
+  padding: 6px;
+}
+
+table.summary-table td {
+  background: #E0E0E0;
+  padding: 6px;
+}
+
+pre.title {
+  font-family: inherit;
+  font-size: 24px;
+  line-height: 28px;
+  letter-spacing: -1px;
+  color: #333;
+}
+
+pre.narrative {
+  font-family: inherit;
+  font-size: 18px;
+  font-style: italic;
+  line-height: 23px;
+  letter-spacing: -1px;
+  color: #333;
+}
+
+.feature-description {
+  font-size: large;
+  background: lightblue;
+  padding: 12px;
+}
+
+.feature-toc-error {
+  color: #F89A4F;
+}
+
+.feature-toc-failure {
+  color: #FF8080;
+}
+
+.feature-toc-ignored {
+  color: lightgray;
+}
+
+.feature-toc-pass {
+  color: green;
+}
+
+.feature-description.error {
+  background: #F89A4F;
+}
+
+.feature-description.failure {
+  background: #FF8080;
+}
+
+.feature-description.ignored {
+  background: lightgray;
+}
+
+.feature-description.ignored .reason {
+  color: black;
+  font-style: italic;
+  font-size: small;
+}
+
+div.extra-info {
+  font-size: small;
+}
+
+div.spec-headers {
+  margin: 4px;
+  font-style: italic;
+}
+
+div.spec-header {
+}
+
+div.issues {
+  margin-top: 6px;
+  padding: 10px 5px 5px 5px;
+  background-color: lemonchiffon;
+  color: black;
+  font-weight: 500;
+  font-size: small;
+  max-width: 50%;
+}
+
+div.pending-feature {
+  background-color: dodgerblue;
+  color: white;
+  margin-top: 6px;
+  padding: 5px;
+  text-align: center;
+  font-size: small;
+  max-width: 120px;
+}
+
+div.problem-description {
+  padding: 10px;
+  background: pink;
+  border-radius: 10px;
+}
+
+div.problem-header {
+  font-weight: bold;
+  color: red;
+}
+
+div.problem-list {
+
+}
+
+table.ex-table th {
+  background: lightblue;
+  padding: 5px;
+}
+
+table.ex-table td {
+  background: #E0E0E0;
+  padding: 2px 5px 2px 5px;
+}
+
+table td {
+  min-width: 50px;
+}
+
+col.block-kind-col {
+  width: 70px;
+}
+
+span.spec-header {
+  font-weight: bold;
+}
+
+div.spec-text {
+  /*color: green;*/
+}
+
+div.spec-status {
+  font-style: italic;
+}
+
+.ignored {
+  color: gray;
+}
+
+td.ex-result {
+  text-align: center;
+  background: white !important;
+}
+
+.ex-pass {
+  color: darkgreen;
+}
+
+.ex-fail {
+  color: red;
+  font-weight: bold;
+}
+
+div.block-kind {
+  margin: 2px;
+  font-style: italic;
+}
+
+div.block-text {
+
+}
+
+pre.block-source {
+  background-color: whitesmoke;
+  padding: 10px;
+}
+
+pre.block-source.error {
+  background-color: pink;
+  color: red;
+  font-weight: bold;
+}
+
+pre.block-source.pre-error {
+
+}
+
+pre.block-source.before-error {
+  margin-bottom: -14px;
+}
+
+pre.block-source.after-error {
+  color: gray;
+  margin-top: -14px;
+}
+
+pre.block-source.post-error {
+  color: gray;
+}
+
+div.footer {
+  text-align: center;
+  font-size: small;
+}
+</style>
+</head>
+<body>
+<h2>Report for ut.tensors.Tensor_IO_Unit_Tests</h2>
+<hr></hr>
+<div class='back-link'>
+<a href='index.html'>&lt;&lt; Back</a>
+</div>
+<div class='summary-report'>
+<h3>Summary:</h3>
+<div class='date-test-ran'>Created on Mon Aug 10 18:28:17 CEST 2020 by Daglemino</div>
+<table class='summary-table'>
+<thead>
+<th>Executed features</th>
+<th>Failures</th>
+<th>Errors</th>
+<th>Skipped</th>
+<th>Success rate</th>
+<th>Time</th>
+</thead>
+<tbody>
+<tr>
+<td>10</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100,0%</td>
+<td>2,911 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>Features:</h3>
+<table class='features-table'>
+<colgroup>
+<col class='block-kind-col'></col>
+<col class='block-text-col'></col>
+</colgroup>
+<tbody>
+<ul id='toc'>
+<li>
+<a href='#-23914743' class='feature-toc-pass'>Tensors can be instantiated with String seed.</a>
+</li>
+<li>
+<a href='#-856932970' class='feature-toc-pass'>Smart tensor constructors yield expected results.</a>
+</li>
+<li>
+<a href='#-1672288881' class='feature-toc-pass'>Indexing after reshaping works as expected.</a>
+</li>
+<li>
+<a href='#-1191863392' class='feature-toc-pass'>Passing String seed to tensor produces expected values.</a>
+</li>
+<li>
+<a href='#-910161422' class='feature-toc-pass'>Tensor value type can not be changed by passing float or double arrays to it.</a>
+</li>
+<li>
+<a href='#-760097501' class='feature-toc-pass'>Tensors value type can be changed by calling "to64()" and "to32()".</a>
+</li>
+<li>
+<a href='#-394051891' class='feature-toc-pass'>A tensor produced by a function has expected properties.</a>
+</li>
+<li>
+<a href='#-1387689204' class='feature-toc-pass'>A tensor produced by the static "Tsr.Create.newRandom(shape)" has expected "random" value.</a>
+</li>
+<li>
+<a href='#643822857' class='feature-toc-pass'>Tensor values can be manipulated via static method calls within the "Tsr.IO" class.</a>
+</li>
+<li>
+<a href='#1787019054' class='feature-toc-pass'>Adding OpenCL device to tensor makes tensor be "outsourced" and contain the Device instance as component.</a>
+</li>
+</ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-23914743'>
+<span>Tensors can be instantiated with String seed.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()
+Tsr t1 = new Tsr([2, 3], "I am a seed! :)")
+Tsr t2 = new Tsr(new int[]{2, 3}, "I am a seed! :)")
+Tsr t3 = new Tsr(new int[]{2, 3}, "I am also a seed! But different. :)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<pre class='block-source'>assert t1.toString()==t2.toString()
+assert t1.toString()!=t3.toString()</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-856932970'>
+<span>Smart tensor constructors yield expected results.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr a = new Tsr(3)
+Tsr b = new Tsr(2)
+Tsr c = new Tsr(-1)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr t = new Tsr("1+", a, "*", b)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert t.toString().contains("7.0")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>t = new Tsr("1", "+", a, "*", b)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert t.toString().contains("7.0")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>t = new Tsr("(","1+", a,")", "*", b)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert t.toString().contains("8.0")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>t = new Tsr("(","1", "+", a,")", "*", b)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert t.toString().contains("8.0")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>t = new Tsr("(", c, "*3)+", "(","1+", a,")", "*", b)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert t.toString().contains("5.0")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>t = new Tsr("(", c, "*","3)+", "(","1+", a,")", "*", b)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert t.toString().contains("5.0")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>t = new Tsr("(", c, "*","3", ")+", "(","1+", a,")", "*", b)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert t.toString().contains("5.0")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>t = new Tsr([2, 2], [2, 4, 4])</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert t.toString().contains("(2x2):[2.0, 4.0, 4.0, 2.0]")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>t = new Tsr([2], [3, 5, 7])</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert t.toString().contains("(2):[3.0, 5.0]")
+assert t.value64().length==2</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>t = new Tsr(new int[]{2, 2}, new double[]{2, 4, 4})</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert t.toString().contains("(2x2):[2.0, 4.0, 4.0, 2.0]")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>t = new Tsr(new int[]{2}, new double[]{3, 5, 7})</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert t.toString().contains("(2):[3.0, 5.0]")
+assert t.value64().length==2</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1672288881'>
+<span>Indexing after reshaping works as expected.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()
+Neureka.instance().settings().view().isUsingLegacyView = true
+Tsr t1 = new Tsr([4, 3], 1..12)
+Tsr t2 = Function.create("[1, 0]:(I[0])")(t1)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>def t1_ioi_1 = t1.i_of_idx(new int[]{2, 1})
+def t1_ioi_2 = t1.i_of_idx(new int[]{1, 2})
+def t1_idx   = t1.idx_of_i(5)
+def t2_ioi_1 = t2.i_of_idx(new int[]{1, 2})
+def t2_idx = t2.idx_of_i(7)
+def t1_ioi_3 = t1.i_of_idx(t1.idx_of_i(7))
+def t2_ioi_2 =  t2.i_of_idx(t2.idx_of_i(7))</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t1_ioi_1 == 7
+t1_ioi_2 == 5
+t1_idx[0] == 1
+t1_idx[1] == 2
+t2_ioi_1 == 7
+t2_idx[0] == 1
+t2_idx[1] == 3
+t1_ioi_3 == 7
+t2_ioi_2 == 10
+t1.toString().contains("[4x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0)")
+t2.toString().contains("[3x4]:(1.0, 4.0, 7.0, 10.0, 2.0, 5.0, 8.0, 11.0, 3.0, 6.0, 9.0, 12.0)")</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1191863392'>
+<span>Passing String seed to tensor produces expected values.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr r = new Tsr([2, 2], "jnrejn")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>r.toString().contains("0.02600E0, -2.06129E0, -0.48373E0, 0.94884E0")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>r = new Tsr([2, 2], "jnrejn2")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>!r.toString().contains("0.02600E0, -2.06129E0, -0.48373E0, 0.94884E0")</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-910161422'>
+<span>Tensor value type can not be changed by passing float or double arrays to it.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()
+Neureka.instance().settings().view().setIsUsingLegacyView(true)
+Tsr x = new Tsr(3)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>float[] value32 = new float[1]
+value32[0] = 5
+x.setValue(value32)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>!(x.getValue() instanceof float[])
+!x.is32()
+x.value32(0)==5.0f
+x.value64(0)==5.0d</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>double[] value64 = new double[1]
+value64[0] = 4.0
+x.setValue(value64)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>x.getValue() instanceof double[]
+x.is64()
+x.value32(0)==4.0f
+x.value64(0)==4.0d
+x.isLeave()
+!x.isBranch()
+!x.isOutsourced()
+!x.isVirtual()
+!x.isSlice()
+!x.isSliceParent()
+!x.belongsToGraph()
+x.device() !=null
+x.device() instanceof HostCPU
+x.rank()==1
+!x.rqsGradient()
+x.size()==1</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>x.to32()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>x.value instanceof float[]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>value64 = new double[1]
+value64[0] = 7.0
+x.setValue(value64)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>!(x.getValue() instanceof double[])
+!x.is64()
+x.value32(0)==7.0f
+x.value64(0)==7.0d</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-760097501'>
+<span>Tensors value type can be changed by calling "to64()" and "to32()".</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()
+Neureka.instance().settings().view().setIsUsingLegacyView(true)
+Tsr x = new Tsr(3)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>x.to32()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert x.getValue() instanceof float[]
+assert x.is32()
+assert x.value32(0)==3.0f</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>x.to64()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert x.getValue() instanceof double[]
+assert x.is64()
+assert x.value32(0)==3.0f</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-394051891'>
+<span>A tensor produced by a function has expected properties.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()
+Neureka.instance().settings().view().setIsUsingLegacyView(true)
+Tsr x = new Tsr(4)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr y = new Tsr(x, "th(I[0])")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>y.isBranch()
+!y.isLeave()
+y.belongsToGraph()
+x.belongsToGraph()
+y.toString().contains("[1]:(0.97014E0)")</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1387689204'>
+<span>A tensor produced by the static "Tsr.Create.newRandom(shape)" has expected "random" value.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()
+Neureka.instance().settings().view().isUsingLegacyView = true</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>int[] shape = new int[1]
+shape[0] = 4
+Tsr x = Tsr.Create.newRandom(shape)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert  x.toString().contains("[4]:(-0.14690E0, -0.13858E0, -2.30775E0, 0.67281E0)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>x = Tsr.Create.newRandom(shape, 106605040595L)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert x.toString().contains("[4]:(-0.36765E0, -0.45818E0, -1.6556E0, 0.73242E0)")</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='643822857'>
+<span>Tensor values can be manipulated via static method calls within the "Tsr.IO" class.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()
+Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
+Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)
+Neureka.instance().settings().view().setIsUsingLegacyView(true)
+Tsr t = new Tsr([2, 2], [
+        1.0, 4.0,
+        2.0, 7.0,
+])
+Tsr v = new Tsr([2, 2], [1.0, -1.0, 1.0, -1.0])</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr.IO.addInto(t, v)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t.toString().contains("[2x2]:(2.0, 3.0, 3.0, 6.0)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr.IO.addInto(t, 2, 3.0)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t.toString().contains("[2x2]:(2.0, 3.0, 6.0, 6.0)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>int[] idx = new int[2]
+idx[1] = 1
+Tsr.IO.addInto(t, idx, -9.0)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t.toString().contains("[2x2]:(2.0, 3.0, -3.0, 6.0)")
+Tsr.IO.getFrom(t, idx)==-3.0d</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>idx[0] = 1
+Tsr.IO.mulInto(t, idx, -1)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t.toString().contains("[2x2]:(2.0, 3.0, -3.0, -6.0)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr.IO.mulInto(t, 3, -2)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t.toString().contains("[2x2]:(2.0, 3.0, -3.0, 12.0)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr.IO.setInto(t, idx, 0.0)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t.toString().contains("[2x2]:(2.0, 3.0, -3.0, 0.0)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr.IO.setInto(t, 2, 99.0)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t.toString().contains("[2x2]:(2.0, 3.0, 99.0, 0.0)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr.IO.subInto(t, 2, 99.0)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t.toString().contains("[2x2]:(2.0, 3.0, 0.0, 0.0)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>idx[0] = 0
+Tsr.IO.subInto(t, idx, -9.0)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t.toString().contains("[2x2]:(2.0, 3.0, 9.0, 0.0)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr.IO.subInto(t, new Tsr([2, 2], [1, 2, 3, 4]))</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t.toString().contains("[2x2]:(1.0, 1.0, 6.0, -4.0)")</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1787019054'>
+<span>Adding OpenCL device to tensor makes tensor be "outsourced" and contain the Device instance as component.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>if ( !Neureka.instance().canAccessOpenCL() ) return
+Neureka.instance().reset()
+Device gpu = Device.find("nvidia")
+Tsr t = new Tsr([3, 4, 1], 3)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<pre class='block-source'>!t.has(Device.class)
+!t.isOutsourced()
+!gpu.has(t)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>t.add(gpu)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t.has(Device.class)
+t.isOutsourced()
+gpu.has(t)</pre>
+</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<div class='footer'>Generated by <a href='https://github.com/renatoathaydes/spock-reports'>Athaydes Spock Reports</a></div>
+</body>
+</html>
