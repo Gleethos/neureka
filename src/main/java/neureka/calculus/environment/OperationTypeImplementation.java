@@ -7,15 +7,16 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * This class is the abstract representation of an algorithm storing
- * source code for specific device types and device specific instances
- * of the Execution interface which are responsible for calling
- * the device and executing it!
- * Hens the name: Execution
+ *   This class is the middle layer of the 3 tier abstraction architecture
+ *   of Neureka's operation implementations.
  *
- * The OpenCLDevice class for example takes the kernel
- * provided by an instance of this class in order to compile it...
- *
+ *   Conceptually an implementation of this interface represents "a way of execution" for
+ *   the OperationType to which an instance of said implementation would belong.
+ *   The "+" operator for example has different OperationTypeImplementation instances
+ *   for different ExecutionCall instances.
+ *   Tensors within an execution call having the same shape would
+ *   trigger the Operation instance of the OperationType, whereas otherwise
+ *   the Convolution or Broadcast implementation might be called.
  */
 public interface OperationTypeImplementation<FinalType>
 {

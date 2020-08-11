@@ -139,7 +139,8 @@ public abstract class AbstractFunction extends BaseFunction {
      * @param d
      * @return
      */
-    protected Tsr _tensor_activation( Tsr[] inputs, int j, int d ) {
+    protected Tsr _tensor_activation( Tsr[] inputs, int j, int d )
+    {
         Device device = _device( inputs );
         /* The code below deals with deep functions (non flat):  */
         if ( _isFlat ) {
@@ -154,7 +155,8 @@ public abstract class AbstractFunction extends BaseFunction {
         } else return _apply(device, d, () -> __deep_execution(inputs, d, j, device));
     }
 
-    private Tsr __flat_execution( Tsr[] inputs, int j, int d, Device myDevice )  {
+    private Tsr __flat_execution( Tsr[] inputs, int j, int d, Device myDevice )
+    {
         if (_type.identifier().equals("x"))
         {
             //TODO: Move ALL of this into the operation types!!!!!
@@ -211,33 +213,6 @@ public abstract class AbstractFunction extends BaseFunction {
         }
     }
 
-    /**
-     *  This method return the index of the tensor
-     *  in the given tensor array which is virtual and contains "1.0".
-     *  However if not all tensors are virtual or their values are not all "0.0" except one
-     *  whose value is "1.0" then it return -1, because the optimization cannot
-     *  be made...
-     *
-     * @param tsrs An array of tensors which ought to be analyzed.
-     * @return The index of the tensor whose value is "1.0" (if all other are "0.0"), otherwise : -1
-     */
-    private int _indexOfFoundDerivative(Tsr[] tsrs ) {
-        boolean allVirtual = true;
-        for ( Tsr t : tsrs ) if ( t != null && !t.isVirtual() ) allVirtual = false;
-        if ( allVirtual ) {
-            int index = -1;
-            for ( int i=0; i < tsrs.length; i++ ) {
-                double value = ( tsrs[i] == null ) ? 0.0 : tsrs[i].value64(0);
-                if ( value == 1.0) {
-                    if ( index >= 0 ) return -1;
-                    index = i;
-                } else if ( value != 0.0 ) return -1;
-            }
-            return index;
-        }
-        return -1;
-    }
-
     private Tsr __deep_execution(Tsr[] inputs, int d, int j, Device device )
     {
         if ( !_isFlat && j < 0 && d < 0 ) {
@@ -274,7 +249,7 @@ public abstract class AbstractFunction extends BaseFunction {
             //then add them all together! (is possible because of linearity...)
             Tsr inner;
             if ( tsrs.length > 2 ) {// Optimization: Finds index of "1.0" among otherwise all "0.0" virtual tensors!
-                int index = _indexOfFoundDerivative(tsrs);
+                int index = ___indexOfFoundDerivative(tsrs);
                 if ( index >= 0 ) inner = tsrs[index];
                 else {
                     // Optimization above did not apply, so we accumulate all the derivatives!
@@ -319,6 +294,33 @@ public abstract class AbstractFunction extends BaseFunction {
             device.execute(tsrs, _type, d);
         }
         return (tsrs[0] == null) ? tsrs[1] : tsrs[0];
+    }
+
+    /**
+     *  This method return the index of the tensor
+     *  in the given tensor array which is virtual and contains "1.0".
+     *  However if not all tensors are virtual or their values are not all "0.0" except one
+     *  whose value is "1.0" then it return -1, because the optimization cannot
+     *  be made...
+     *
+     * @param tsrs An array of tensors which ought to be analyzed.
+     * @return The index of the tensor whose value is "1.0" (if all other are "0.0"), otherwise : -1
+     */
+    private int ___indexOfFoundDerivative(Tsr[] tsrs ) {
+        boolean allVirtual = true;
+        for ( Tsr t : tsrs ) if ( t != null && !t.isVirtual() ) allVirtual = false;
+        if ( allVirtual ) {
+            int index = -1;
+            for ( int i=0; i < tsrs.length; i++ ) {
+                double value = ( tsrs[i] == null ) ? 0.0 : tsrs[i].value64(0);
+                if ( value == 1.0) {
+                    if ( index >= 0 ) return -1;
+                    index = i;
+                } else if ( value != 0.0 ) return -1;
+            }
+            return index;
+        }
+        return -1;
     }
 
     private Tsr _apply(Device device, int d, Supplier<Tsr> actor) {

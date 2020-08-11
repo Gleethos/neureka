@@ -20,6 +20,14 @@ import java.util.function.Consumer;
  * The class implements the component logic required by the said interface.
  * Additionally it contains useful methods used to process passed arguments of execution calls.
  *
+ * Conceptually this class represents "a way of execution" for
+ * the OperationType to which an instance of this class would belong.
+ * The "+" operator for example has different OperationTypeImplementation instances
+ * for different ExecutionCall instances.
+ * Tensors within an execution call having the same shape would
+ * trigger the Operation instance of the OperationType, whereas otherwise
+ * the Convolution or Broadcast implementation might be called.
+ *
  * @param <FinalType> The final type extending this class.
  */
 public abstract class AbstractOperationTypeImplementation< FinalType > implements OperationTypeImplementation< FinalType >
@@ -75,7 +83,7 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
             Consumer<ExecutionCall<Device>> finalExecution
     ) {
         Device device = call.getDevice();
-        ExecutorFor<Device> executorFor = call.getImplementation().getExecutor(device.getClass());
+        //ExecutorFor<Device> executorFor = call.getImplementation().getExecutor(device.getClass());
 
         Tsr[] tsrs = call.getTensors();
         int d = call.getDerivativeIndex();

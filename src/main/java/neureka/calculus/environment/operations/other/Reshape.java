@@ -6,12 +6,18 @@ import neureka.calculus.Function;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
-public class Reshape extends OperationType {
+public class Reshape extends OperationType
+{
 
     public Reshape(){
 
         super(
-                "", ",", -1, true, false, false, false, false
+                "", ",", -1,
+                true,
+                false,
+                false,
+                false,
+                false
         );
 
     }
