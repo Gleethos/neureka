@@ -32,18 +32,13 @@ import java.util.function.Consumer;
  */
 public abstract class AbstractOperationTypeImplementation< FinalType > implements OperationTypeImplementation< FinalType >
 {
-    interface ADAnalyzer {
-        boolean allowsForward(Tsr[] inputs);
-    }
 
     protected final Map< Class< ExecutorFor< Device > >, ExecutorFor< Device > > _executions;
-    protected final List< CallPipe > _callPipe;
 
-    public AbstractOperationTypeImplementation()
-    {
+    public AbstractOperationTypeImplementation(
+
+    ) {
         _executions = new HashMap<>();
-        _callPipe = new ArrayList<>();
-        _callPipe.add(call->call);
     }
 
     @Override
@@ -61,33 +56,15 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
     }
 
     @Override
-    public List<CallPipe> getCallPipeline(){
-        return _callPipe;
-    }
-
-    private Tsr reduce(
-            Device device,
-            Tsr[] tsrs,
-            OperationType type,
-            int d,
-            Consumer<ExecutionCall<Device>> finalExecution
-    ) {
-        return reduce (
-                new ExecutionCall<Device>( device, tsrs, d, type ), finalExecution
-        );
-    }
-
-    @Override
     public Tsr reduce (
             ExecutionCall<Device> call,
             Consumer<ExecutionCall<Device>> finalExecution
     ) {
         Device device = call.getDevice();
-        //ExecutorFor<Device> executorFor = call.getImplementation().getExecutor(device.getClass());
-
         Tsr[] tsrs = call.getTensors();
         int d = call.getDerivativeIndex();
         OperationType type = call.getType();
+
 
         Consumer<Tsr>[] rollbacks = new Consumer[tsrs.length];
         for (int i=0; i<tsrs.length; i++) {
@@ -101,9 +78,15 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
         if ( tsrs.length > 3 )
         {
             if ( d < 0 ) {
-                tsrs[0] = reduce(device, new Tsr[]{tsrs[0], tsrs[1], tsrs[2]}, type, d, finalExecution);
+                tsrs[0] = reduce(
+                        new ExecutionCall<>( device, new Tsr[]{tsrs[0], tsrs[1], tsrs[2]}, d, type ),
+                        finalExecution
+                );
                 Tsr[] newTsrs = Utility._offsetted(tsrs, 1);
-                newTsrs[0] =  reduce(device, newTsrs, type, d, finalExecution);//This recursion should work!
+                newTsrs[0] =  reduce(
+                        new ExecutionCall<>( device, newTsrs, d, type ),
+                        finalExecution
+                );//This recursion should work!
                 tsrs[0] = newTsrs[0];
             } else {
                 Tsr[] newTsrs;
@@ -114,7 +97,8 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
                         tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue(1.0f);
                         break;
 
-                    case "-": tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue((d==0)?1.0f:-1.0f);
+                    case "-":
+                        tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue((d==0)?1.0f:-1.0f);
                         break;
 
                     case "^":
@@ -122,14 +106,31 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
                         if ( d==0 ) {
                             newTsrs = Utility._subset(tsrs, 1,  2, tsrs.length-2);
                             newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);
-                            Tsr exp = reduce(device, newTsrs, OperationType.instance("*"), -1, finalExecution);
-                            tsrs[0] = reduce(device, new Tsr[]{tsrs[0], tsrs[1], exp}, type, 0, finalExecution);
+                            Tsr exp = reduce(
+                                    new ExecutionCall<>( device, newTsrs, -1, OperationType.instance("*") ),
+                                    finalExecution
+                            );
+                            tsrs[0] = reduce(
+                                    new ExecutionCall<>( device, new Tsr[]{tsrs[0], tsrs[1], exp}, 0, type ),
+                                    finalExecution
+                            );
                             exp.delete();
                         } else {
                             newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);
-                            Tsr inner = reduce(device, newTsrs, OperationType.instance("*"), d-1, finalExecution);
-                            Tsr exp = reduce(device, new Tsr[]{Tsr.Create.newTsrLike(tsrs[1]), inner, tsrs[d]}, OperationType.instance("*"), -1, finalExecution);
-                            tsrs[0] =  reduce(device, new Tsr[]{tsrs[0], tsrs[1], exp}, type, 1, finalExecution);
+                            Tsr inner = reduce(
+                                    new ExecutionCall<>( device, newTsrs, d-1, OperationType.instance("*") ),
+                                    //device, newTsrs, OperationType.instance("*"), d-1,
+                                    finalExecution
+                            );
+                            Tsr exp = reduce(
+                                    new ExecutionCall<>( device, new Tsr[]{Tsr.Create.newTsrLike(tsrs[1]), inner, tsrs[d]}, -1, OperationType.instance("*") ),
+                                    //device, new Tsr[]{Tsr.Create.newTsrLike(tsrs[1]), inner, tsrs[d]}, OperationType.instance("*"), -1,
+                                    finalExecution
+                            );
+                            tsrs[0] =  reduce(
+                                    new ExecutionCall<>( device, new Tsr[]{tsrs[0], tsrs[1], exp}, 1, type ),
+                                    finalExecution
+                            );
                             inner.delete();
                             exp.delete();
                         }
@@ -139,10 +140,11 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
                         newTsrs = Utility._without(tsrs, 1+d);
                         if ( newTsrs.length > 2 ) {
                             newTsrs[0] = ( newTsrs[0] == null ) ? Tsr.Create.newTsrLike(tsrs[1]) : newTsrs[0];
-                            tsrs[0] = reduce(device, newTsrs, OperationType.instance("*"), -1, finalExecution);
-                        } else {
-                            tsrs[0] = newTsrs[1];
-                        }
+                            tsrs[0] = reduce(
+                                    new ExecutionCall<>( device, newTsrs, -1, OperationType.instance("*") ),
+                                    finalExecution
+                            );
+                        } else tsrs[0] = newTsrs[1];
                         break;
 
                     case "/":
@@ -150,7 +152,10 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
                         if ( d > 1 ) {
                             newTsrs = Utility._subset(tsrs, 1, 1, d+1);
                             newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);
-                            a = reduce(device, newTsrs, OperationType.instance("/"), -1, finalExecution);
+                            a = reduce(
+                                    new ExecutionCall<>( device, newTsrs, -1, OperationType.instance("/") ),
+                                    finalExecution
+                            );
                         } else if ( d == 1 ) a = tsrs[1];
                         else a = Tsr.Create.newTsrLike(tsrs[1], 1.0);
                         Tsr b;
@@ -158,12 +163,20 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
                             newTsrs = Utility._subset(tsrs, 2, d+2, tsrs.length-(d+2));//or (d+2)
                             newTsrs[1] =  Tsr.Create.newTsrLike(tsrs[1], 1.0);
                             newTsrs[0] = newTsrs[1];
-                            b = reduce(device, newTsrs, OperationType.instance("/"), -1, finalExecution);
-                        } else {
-                            b = Tsr.Create.newTsrLike(tsrs[1], 1.0);
-                        }
-                        reduce(device, new Tsr[]{tsrs[0], a, b}, OperationType.instance("*"), -1, finalExecution);
-                        reduce(device, new Tsr[]{tsrs[0], tsrs[0], tsrs[d+1]}, OperationType.instance("/"), 1, finalExecution);
+                            b = reduce(
+                                    new ExecutionCall<>( device, newTsrs, -1, OperationType.instance("/") ),
+                                    finalExecution
+                            );
+                        } else b = Tsr.Create.newTsrLike(tsrs[1], 1.0);
+
+                        reduce(
+                                new ExecutionCall<>( device, new Tsr[]{tsrs[0], a, b}, -1, OperationType.instance("*") ),
+                                finalExecution
+                        );
+                        reduce(
+                                new ExecutionCall<>( device, new Tsr[]{tsrs[0], tsrs[0], tsrs[d+1]}, 1, OperationType.instance("/") ),
+                                finalExecution
+                        );
                         if ( d == 0 ) a.delete();
                         b.delete();
                         break;
@@ -203,7 +216,7 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
             }
 
             finalExecution.accept(
-                    new ExecutionCall<>( device, tsrs, d, type)
+                    new ExecutionCall<>( device, tsrs, d, type )
             );
         }
 
