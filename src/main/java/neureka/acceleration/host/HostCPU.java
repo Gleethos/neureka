@@ -49,22 +49,9 @@ public class HostCPU extends AbstractDevice
 
     @Override
     protected void _enqueue(Tsr t, double value, int d, OperationType type) {
-        //if (type.supportsImplementation(Scalarization.class)) {
-        //    OperationTypeImplementation.ExecutionCall<HostCPU> call =
-        //            new OperationTypeImplementation.ExecutionCall<>(
-        //                    this,
-        //                    new Tsr[]{t, t},
-        //                    d,
-        //                    type
-        //            );
-        //    call.getExecutor().callImplementationFor(call);
-        //    _executor.scalar(new Tsr[]{t, t}, value, d, type);
-        //}
-        //else {
-            int[] shape = new int[t.rank()];
-            Arrays.fill(shape, 1);
-            _enqueue(new Tsr[]{t, t, new Tsr(shape, value)}, d, type);
-        //}
+        int[] shape = new int[t.rank()];
+        Arrays.fill(shape, 1);
+        _enqueue(new Tsr[]{t, t, new Tsr(shape, value)}, d, type);
     }
 
     @Override
@@ -154,16 +141,16 @@ public class HostCPU extends AbstractDevice
 
         //==============================================================================================================
 
-        public void threaded(int sze, Range range)
+        public void threaded( int sze, Range range )
         {
             int cores = _pool.getCorePoolSize() - _pool.getActiveCount();
-            cores = (cores == 0) ? 1 : cores;
-            if (sze >= 32 && ((sze / cores) >= 8)) {
+            cores = ( cores == 0 ) ? 1 : cores;
+            if ( sze >= 32 && ( ( sze / cores ) >= 8 ) ) {
                 final int chunk = sze / cores;
                 Future[] futures = new Future[cores];
                 for (int i = 0; i < cores; i++) {
                     final int start = i * chunk;
-                    final int end = (i == cores - 1) ? sze : ((i + 1) * chunk);
+                    final int end = ( i == cores - 1 ) ? sze : ( (i + 1) * chunk );
                     Neureka neureka = Neureka.instance();
                     futures[i] = _pool.submit(() -> {
                         Neureka.setContext( neureka );

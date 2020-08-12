@@ -55,7 +55,7 @@ public abstract class AbstractDevice implements  Device, Component<Tsr>
 
     private Tsr _execute(Tsr[] tsrs, OperationType type, int d )
     {
-        ExecutionCall call = new ExecutionCall(this, tsrs, d, type);
+        ExecutionCall call = new ExecutionCall<>( this, tsrs, d, type );
         OperationTypeImplementation<Object> executor = call.getImplementation();
         executor.recursiveReductionOf(
                 call,

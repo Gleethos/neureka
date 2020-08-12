@@ -1,6 +1,7 @@
 package neureka.calculus.environment.operations;
 
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.operations.convolution.XMultiplication;
 import neureka.calculus.environment.operations.function.*;
 import neureka.calculus.environment.operations.indexer.Product;
 import neureka.calculus.environment.operations.indexer.Summation;
@@ -52,6 +53,8 @@ public class OperationContext implements Cloneable
         new Modulo();
         new Subtraction();
         new Addition();
+
+        new XMultiplication();
 
         new Reshape();
         new CopyLeft();
