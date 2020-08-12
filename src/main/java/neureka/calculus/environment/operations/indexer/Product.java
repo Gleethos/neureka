@@ -1,8 +1,12 @@
 package neureka.calculus.environment.operations.indexer;
 
+import neureka.Tsr;
+import neureka.acceleration.Device;
 import neureka.acceleration.host.execution.HostExecutor;
 import neureka.acceleration.opencl.execution.CLExecutor;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.implementations.*;
 
 public class Product extends OperationType {
@@ -20,6 +24,44 @@ public class Product extends OperationType {
                 true,
                 true
         );
+
+
+        OperationTypeImplementation.RecursiveJunctionAgent rja = (call, goDeeperWith)->
+        {
+            Tsr[] tsrs = call.getTensors();
+            Device device = call.getDevice();
+            int d = call.getDerivativeIndex();
+            OperationType type = call.getType();
+
+            Tsr alternative = null;
+            if (tsrs.length > 3) {
+                if (d < 0) {
+                    Tsr[] reduction = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
+                    alternative = goDeeperWith.apply(
+                            new ExecutionCall<>(device, reduction, d, type)
+                    );
+                    tsrs[0] = reduction[0];
+
+                    reduction = AbstractOperationTypeImplementation.Utility._offsetted(tsrs, 1);
+                    alternative = goDeeperWith.apply(
+                            new ExecutionCall<>(device, reduction, d, type)
+                    );
+                    tsrs[0] = reduction[0];
+                } else {
+                    Tsr[] reduction = AbstractOperationTypeImplementation.Utility._without(tsrs, 1+d);
+                    if ( reduction.length > 2 ) {
+                        reduction[0] = ( reduction[0] == null ) ? Tsr.Create.newTsrLike(tsrs[1]) : reduction[0];
+                        alternative = goDeeperWith.apply(
+                                new ExecutionCall<>( device, reduction, -1, OperationType.instance("*") )
+                        );
+                        tsrs[0] = reduction[0];
+                    } else tsrs[0] = reduction[1];
+                }
+                return alternative;
+            } else {
+                return alternative;
+            }
+        };
 
 
         //________________
@@ -40,7 +82,10 @@ public class Product extends OperationType {
                     }
                 };
 
-        Broadcast typeImplementation = new Broadcast();
+        Broadcast typeImplementation = new Broadcast(
+                call -> true,
+                rja
+        );
 
         setImplementation (
                 Broadcast.class,
@@ -96,7 +141,10 @@ public class Product extends OperationType {
                     else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
                 };
 
-        Activation activation = new Activation();
+        Activation activation = new Activation(
+                call -> true,
+                rja
+        );
 
         setImplementation(Activation.class,
                 activation.setExecutor(

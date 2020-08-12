@@ -1,8 +1,12 @@
 package neureka.calculus.environment.operations.operator;
 
+import neureka.Tsr;
+import neureka.acceleration.Device;
 import neureka.acceleration.host.execution.HostExecutor;
 import neureka.acceleration.opencl.execution.CLExecutor;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.implementations.*;
 
 
@@ -37,11 +41,71 @@ public class Division extends OperationType
                 false
         );
 
+        OperationTypeImplementation.RecursiveJunctionAgent rja = (call, goDeeperWith)->
+        {
+            Tsr[] tsrs = call.getTensors();
+            Device device = call.getDevice();
+            int d = call.getDerivativeIndex();
+            OperationType type = call.getType();
+
+            Tsr alternative = null;
+            if (tsrs.length > 3) {
+                if (d < 0) {
+                    Tsr[] reduction = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
+                    alternative = goDeeperWith.apply(
+                            new ExecutionCall<>(device, reduction, d, type)
+                    );
+                    tsrs[0] = reduction[0];
+
+                    reduction = AbstractOperationTypeImplementation.Utility._offsetted(tsrs, 1);
+                    alternative = goDeeperWith.apply(
+                            new ExecutionCall<>(device, reduction, d, type)
+                    );
+                    tsrs[0] = reduction[0];
+                } else {
+                    Tsr a;
+                    if ( d > 1 ) {
+                        Tsr[] reduction = AbstractOperationTypeImplementation.Utility._subset(tsrs, 1, 1, d+1);
+                        reduction[0] =  Tsr.Create.newTsrLike(tsrs[1]);
+                        alternative = goDeeperWith.apply(
+                                new ExecutionCall<>( device, reduction, -1, OperationType.instance("/") )
+                        );
+                        a = reduction[0];
+                    } else if ( d == 1 ) a = tsrs[1];
+                    else a = Tsr.Create.newTsrLike(tsrs[1], 1.0);
+                    Tsr b;
+                    if ( tsrs.length -  d - 2  > 1 ) {
+                        Tsr[] reduction = AbstractOperationTypeImplementation.Utility._subset(tsrs, 2, d+2, tsrs.length-(d+2));
+                        reduction[1] =  Tsr.Create.newTsrLike(tsrs[1], 1.0);
+                        reduction[0] = reduction[1];
+                        alternative = goDeeperWith.apply(
+                                new ExecutionCall<>( device, reduction, -1, OperationType.instance("/") )
+                        );
+                        b = reduction[0];
+                    } else b = Tsr.Create.newTsrLike(tsrs[1], 1.0);
+
+                    alternative = goDeeperWith.apply(
+                            new ExecutionCall<>( device, new Tsr[]{tsrs[0], a, b}, -1, OperationType.instance("*") )
+                    );
+                    alternative = goDeeperWith.apply(
+                            new ExecutionCall<>( device, new Tsr[]{tsrs[0], tsrs[0], tsrs[d+1]}, 1, OperationType.instance("/") )
+                    );
+                    if ( d == 0 ) a.delete();
+                    b.delete();
+                }
+                return alternative;
+            } else {
+                return alternative;
+            }
+        };
 
         //_____________________
         // DEFAULT OPERATION :
 
-        Operation operation = new Operation();
+        Operation operation = new Operation(
+                call -> true,
+                rja
+        );
 
         setImplementation(
                 Operation.class, operation.setExecutor(
@@ -94,7 +158,10 @@ public class Division extends OperationType
         //________________
         // BROADCASTING :
 
-        Broadcast broadcast = new Broadcast();
+        Broadcast broadcast = new Broadcast(
+                call -> true,
+                rja
+        );
 
         setImplementation(
                 Broadcast.class,
@@ -155,7 +222,10 @@ public class Division extends OperationType
                     }
                 };
 
-        Scalarization scalarization = new Scalarization();
+        Scalarization scalarization = new Scalarization(
+                call -> true,
+                rja
+        );
 
         setImplementation(
                 Scalarization.class,
@@ -221,7 +291,10 @@ public class Division extends OperationType
                 "divide", "d", 2, true, false, true, false, false
         ).setImplementation(
                 Convolution.class,
-                new Convolution()
+                new Convolution(
+                call -> true,
+                ( call, goDeeperWith ) -> null
+        )
         );
 
         new OperationType(

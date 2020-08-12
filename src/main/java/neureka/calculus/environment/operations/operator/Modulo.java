@@ -33,7 +33,10 @@ public class Modulo extends OperationType {
                     }
                 };
 
-        Operation operation = new Operation();
+        Operation operation = new Operation(
+                call -> true,
+                ( call, goDeeperWith ) -> null
+        );
 
         setImplementation(
                 Operation.class,
@@ -108,7 +111,10 @@ public class Modulo extends OperationType {
                     }
                 };
 
-        Broadcast broadcast = new Broadcast();
+        Broadcast broadcast = new Broadcast(
+                call -> true,
+                ( call, goDeeperWith ) -> null
+        );
 
         setImplementation(
                 Broadcast.class,
@@ -169,7 +175,10 @@ public class Modulo extends OperationType {
                     }
                 };
 
-        Scalarization scalarization = new Scalarization();
+        Scalarization scalarization = new Scalarization(
+                call -> true,
+                ( call, goDeeperWith ) -> null
+        );
 
         setImplementation(
                 Scalarization.class,

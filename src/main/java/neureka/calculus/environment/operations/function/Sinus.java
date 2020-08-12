@@ -19,7 +19,10 @@ public class Sinus extends OperationType
     {
         super("sinus", "sin" , 1, false, false, false, true, true);
 
-        Activation typeImplementation = new Activation();
+        Activation typeImplementation = new Activation(
+                call -> true,
+                ( call, goDeeperWith ) -> null
+        );
 
         setImplementation(
                 Activation.class,

@@ -20,7 +20,10 @@ public class Identity extends OperationType
                     else return (t0Idx, t1Idx, t2Idx) -> 1;
                 };
 
-        Activation typeImplementation = new Activation();
+        Activation typeImplementation = new Activation(
+                call -> true,
+                ( call, goDeeperWith ) -> null
+        );
         setImplementation(
                 Activation.class,
                 typeImplementation.setExecutor(
@@ -68,7 +71,10 @@ public class Identity extends OperationType
                     if (d < 0) return t1Idx -> value;
                     else return t1Idx -> value;
                 };
-        Scalarization scalarization = new Scalarization();
+        Scalarization scalarization = new Scalarization(
+                call -> true,
+                ( call, goDeeperWith ) -> null
+        );
         setImplementation(Scalarization.class,
                 scalarization.setExecutor(
                         HostExecutor.class,

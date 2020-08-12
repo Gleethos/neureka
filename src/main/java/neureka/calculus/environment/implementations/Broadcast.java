@@ -8,7 +8,12 @@ import org.jetbrains.annotations.Contract;
 
 public class Broadcast extends AbstractOperationTypeImplementation< Broadcast >
 {
-    public Broadcast() {  super();  }
+    public Broadcast(
+            ADAnalyzer analyzer,
+            RecursiveJunctionAgent RJAgent
+    ) {  super(
+            analyzer, RJAgent
+    ); }
 
     @Override
     public boolean canHandle(ExecutionCall call)

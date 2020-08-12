@@ -28,7 +28,10 @@ public class Gaussian extends OperationType
                     }
                 };
 
-        Activation typeImplementation = new Activation();
+        Activation typeImplementation = new Activation(
+                call -> true,
+                ( call, goDeeperWith ) -> null
+        );
 
         setImplementation(
                 Activation.class,

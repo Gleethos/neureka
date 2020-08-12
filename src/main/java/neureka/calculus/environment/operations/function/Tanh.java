@@ -37,7 +37,10 @@ public class Tanh extends OperationType
                 true,
                 true
         );
-        Activation typeImplementation = new Activation();
+        Activation typeImplementation = new Activation(
+                call -> true,
+                ( call, goDeeperWith ) -> null
+        );
 
         setImplementation(
                 Activation.class,

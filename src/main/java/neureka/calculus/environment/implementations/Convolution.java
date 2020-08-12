@@ -8,7 +8,12 @@ import org.jetbrains.annotations.Contract;
 
 public class Convolution extends AbstractOperationTypeImplementation< Convolution >
 {
-    public Convolution(){  super();  }
+    public Convolution(
+            ADAnalyzer analyzer,
+            RecursiveJunctionAgent RJAgent
+    ) {  super(
+            analyzer, RJAgent
+    ); }
 
     @Override
     public boolean canHandle(ExecutionCall call) {

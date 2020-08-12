@@ -1,7 +1,9 @@
 package neureka.calculus.environment.operations.function;
 
+import neureka.Tsr;
 import neureka.acceleration.host.execution.HostExecutor;
 import neureka.acceleration.opencl.execution.CLExecutor;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.*;
 
@@ -18,7 +20,10 @@ public class Absolute extends OperationType {
     {
         super("absolute", "abs" , 1, false, false, false, true, true);
 
-        Activation typeImplementation = new Activation();
+        Activation typeImplementation = new Activation(
+                call -> true,
+                ( call, goDeeperWith ) -> null
+        );
 
         setImplementation(
                 Activation.class,

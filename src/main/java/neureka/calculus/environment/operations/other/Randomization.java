@@ -28,7 +28,10 @@ public class Randomization extends OperationType
                     };
                 };
 
-        Scalarization scalarization = new Scalarization();
+        Scalarization scalarization = new Scalarization(
+                call -> true,
+                ( call, goDeeperWith ) -> null
+        );
 
         setImplementation(
                 Scalarization.class,

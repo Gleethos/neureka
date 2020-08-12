@@ -8,7 +8,12 @@ import org.jetbrains.annotations.Contract;
 
 public class Scalarization extends AbstractOperationTypeImplementation< Scalarization >
 {
-    public Scalarization() {  super();  }
+    public Scalarization(
+            ADAnalyzer analyzer,
+            RecursiveJunctionAgent RJAgent
+    ) {  super(
+            analyzer, RJAgent
+    ); }
 
     @Override
     public boolean canHandle(ExecutionCall call)

@@ -1,9 +1,15 @@
 package neureka.calculus.environment.operations.operator;
 
+import neureka.Tsr;
+import neureka.acceleration.Device;
 import neureka.acceleration.host.execution.HostExecutor;
 import neureka.acceleration.opencl.execution.CLExecutor;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.implementations.*;
+
+import java.util.function.Function;
 
 public class Multiplication extends OperationType {
 
@@ -29,6 +35,43 @@ public class Multiplication extends OperationType {
                 true, false, false, true, false
         );
 
+        OperationTypeImplementation.RecursiveJunctionAgent rja = (call, goDeeperWith)->
+        {
+            Tsr[] tsrs = call.getTensors();
+            Device device = call.getDevice();
+            int d = call.getDerivativeIndex();
+            OperationType type = call.getType();
+
+            Tsr alternative = null;
+            if (tsrs.length > 3) {
+                if (d < 0) {
+                    Tsr[] reduction = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
+                    alternative = goDeeperWith.apply(
+                            new ExecutionCall<>(device, reduction, d, type)
+                    );
+                    tsrs[0] = reduction[0];
+
+                    reduction = AbstractOperationTypeImplementation.Utility._offsetted(tsrs, 1);
+                    alternative = goDeeperWith.apply(
+                            new ExecutionCall<>(device, reduction, d, type)
+                    );
+                    tsrs[0] = reduction[0];
+                } else {
+                    Tsr[] reduction = AbstractOperationTypeImplementation.Utility._without(tsrs, 1+d);
+                    if ( reduction.length > 2 ) {
+                        reduction[0] = ( reduction[0] == null ) ? Tsr.Create.newTsrLike(tsrs[1]) : reduction[0];
+                        alternative = goDeeperWith.apply(
+                                new ExecutionCall<>( device, reduction, -1, OperationType.instance("*") )
+                        );
+                        tsrs[0] = reduction[0];
+                    } else tsrs[0] = reduction[1];
+                }
+                return alternative;
+            } else {
+                return alternative;
+            }
+        };
+
         //_____________________
         // DEFAULT OPERATION :
 
@@ -48,7 +91,10 @@ public class Multiplication extends OperationType {
                     }
                 };
 
-        Operation operation = new Operation();
+        Operation operation = new Operation(
+                call -> true,
+                rja
+        );
 
         setImplementation(Operation.class,
                 operation.setExecutor(
@@ -97,7 +143,10 @@ public class Multiplication extends OperationType {
         //________________
         // BROADCASTING :
 
-        Broadcast broadcast = new Broadcast();
+        Broadcast broadcast = new Broadcast(
+                call -> true,
+                rja
+        );
 
         setImplementation(Broadcast.class,
             broadcast.setExecutor(
@@ -155,7 +204,10 @@ public class Multiplication extends OperationType {
                     }
                 };
 
-        Scalarization scalarization = new Scalarization();
+        Scalarization scalarization = new Scalarization(
+                call -> true,
+                rja
+        );
 
         setImplementation(
                 Scalarization.class,
@@ -206,6 +258,7 @@ public class Multiplication extends OperationType {
         //__________________________
         // RELATED OPERATION TYPES :
 
+
         DefaultOperatorCreator<TertiaryNDXConsumer> xCreator =
                 (inputs, d) -> {
                     double[] t1_val = inputs[1].value64();
@@ -213,7 +266,10 @@ public class Multiplication extends OperationType {
                     return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];
                 };
 
-        Broadcast xBroadcast = new Broadcast();
+        Broadcast xBroadcast = new Broadcast(
+                call -> true,
+                ( call, goDeeperWith ) -> null
+        );
 
         new OperationType(
                 "", ((char) 171) + "*", 3, true, false, false, false, false
@@ -258,7 +314,10 @@ public class Multiplication extends OperationType {
                 )
         );
 
-        xBroadcast = new Broadcast();
+        xBroadcast = new Broadcast(
+                call -> true,
+                ( call, goDeeperWith ) -> null
+        );
 
         new OperationType(
                 "", "*" + ((char) 187), 3, true, false, false, false, false
@@ -309,6 +368,45 @@ public class Multiplication extends OperationType {
 
         // Convolution:
 
+        OperationTypeImplementation.RecursiveJunctionAgent Xrja = (call, goDeeperWith)->
+        {
+            Tsr[] tsrs = call.getTensors();
+            Device device = call.getDevice();
+            int d = call.getDerivativeIndex();
+            OperationType type = call.getType();
+
+            Tsr alternative = null;
+            if (tsrs.length > 3) {
+                if (d < 0) {
+                    Tsr[] reduction = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
+                    alternative = goDeeperWith.apply(
+                            new ExecutionCall<>(device, reduction, d, type)
+                    );
+                    tsrs[0] = reduction[0];
+
+                    reduction = AbstractOperationTypeImplementation.Utility._offsetted(tsrs, 1);
+                    alternative = goDeeperWith.apply(
+                            new ExecutionCall<>(device, reduction, d, type)
+                    );
+                    tsrs[0] = reduction[0];
+                }
+                return alternative;
+            } else {
+                if ( call.getType().identifier().equals("x") ) {
+                    if (d >= 0) {
+                        if (d == 0) tsrs[0] = tsrs[2];
+                        else tsrs[0] = tsrs[1];
+                        return tsrs[0];
+                    } else {
+                        call.mutateArguments( t -> new Tsr[]{t[0], t[1], t[2]} );
+                    }
+                } else if ( call.getType().identifier().equals("x"+ ((char) 187)) ) {
+                    call.mutateArguments( t -> new Tsr[]{t[2], t[1], t[0]} );
+                }
+                return alternative;
+            }
+        };
+
         DefaultOperatorCreator<TertiaryNDXConsumer> convolutionCreator =
                 (inputs, d) -> {
                     double[] t1_val = inputs[1].value64();
@@ -323,7 +421,10 @@ public class Multiplication extends OperationType {
                     }
                 };
 
-        Convolution convolution = new Convolution();
+        Convolution convolution = new Convolution(
+                call -> true,
+                Xrja
+        );
 
         new OperationType(
                 "multiply", "x", 2, true, false, true, false, false

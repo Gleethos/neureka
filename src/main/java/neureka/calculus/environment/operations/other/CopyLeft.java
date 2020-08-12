@@ -24,7 +24,10 @@ public class CopyLeft extends OperationType {
                     else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
                 };
 
-        Activation activation = new Activation();
+        Activation activation = new Activation(
+                call -> true,
+                ( call, goDeeperWith ) -> null
+        );
 
         setImplementation(Activation.class,
                 activation.setExecutor(

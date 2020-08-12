@@ -9,9 +9,7 @@ import neureka.calculus.environment.ExecutorFor;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -32,13 +30,28 @@ import java.util.function.Consumer;
  */
 public abstract class AbstractOperationTypeImplementation< FinalType > implements OperationTypeImplementation< FinalType >
 {
-
     protected final Map< Class< ExecutorFor< Device > >, ExecutorFor< Device > > _executions;
 
-    public AbstractOperationTypeImplementation(
+    private final ADAnalyzer _analyzer;
+    private final RecursiveJunctionAgent _RJAgent;
 
+    public AbstractOperationTypeImplementation(
+            ADAnalyzer analyzer,
+            RecursiveJunctionAgent RJAgent
     ) {
         _executions = new HashMap<>();
+        _analyzer = analyzer;
+        _RJAgent = RJAgent;
+    }
+
+    @Override
+    public ADAnalyzer getADAnalyzer(){
+        return _analyzer;
+    }
+
+    @Override
+    public RecursiveJunctionAgent getRJAgent(){
+        return _RJAgent;
     }
 
     @Override
@@ -56,7 +69,7 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
     }
 
     @Override
-    public Tsr reduce (
+    public Tsr recursiveReductionOf(
             ExecutionCall<Device> call,
             Consumer<ExecutionCall<Device>> finalExecution
     ) {
@@ -64,7 +77,6 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
         Tsr[] tsrs = call.getTensors();
         int d = call.getDerivativeIndex();
         OperationType type = call.getType();
-
 
         Consumer<Tsr>[] rollbacks = new Consumer[tsrs.length];
         for (int i=0; i<tsrs.length; i++) {
@@ -75,150 +87,25 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
                 rollbacks[i] = t -> {};
             }
         }
-        if ( tsrs.length > 3 )
-        {
-            if ( d < 0 ) {
-                tsrs[0] = reduce(
-                        new ExecutionCall<>( device, new Tsr[]{tsrs[0], tsrs[1], tsrs[2]}, d, type ),
-                        finalExecution
-                );
-                Tsr[] newTsrs = Utility._offsetted(tsrs, 1);
-                newTsrs[0] =  reduce(
-                        new ExecutionCall<>( device, newTsrs, d, type ),
-                        finalExecution
-                );//This recursion should work!
-                tsrs[0] = newTsrs[0];
-            } else {
-                Tsr[] newTsrs;
-                switch ( type.identifier() )
-                {
-                    case "+":
-                    case "sum":
-                        tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue(1.0f);
-                        break;
 
-                    case "-":
-                        tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue((d==0)?1.0f:-1.0f);
-                        break;
-
-                    case "^":
-                        newTsrs = Utility._subset(tsrs, 1,  2, tsrs.length-2);
-                        if ( d==0 ) {
-                            newTsrs = Utility._subset(tsrs, 1,  2, tsrs.length-2);
-                            newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);
-                            Tsr exp = reduce(
-                                    new ExecutionCall<>( device, newTsrs, -1, OperationType.instance("*") ),
-                                    finalExecution
-                            );
-                            tsrs[0] = reduce(
-                                    new ExecutionCall<>( device, new Tsr[]{tsrs[0], tsrs[1], exp}, 0, type ),
-                                    finalExecution
-                            );
-                            exp.delete();
-                        } else {
-                            newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);
-                            Tsr inner = reduce(
-                                    new ExecutionCall<>( device, newTsrs, d-1, OperationType.instance("*") ),
-                                    //device, newTsrs, OperationType.instance("*"), d-1,
-                                    finalExecution
-                            );
-                            Tsr exp = reduce(
-                                    new ExecutionCall<>( device, new Tsr[]{Tsr.Create.newTsrLike(tsrs[1]), inner, tsrs[d]}, -1, OperationType.instance("*") ),
-                                    //device, new Tsr[]{Tsr.Create.newTsrLike(tsrs[1]), inner, tsrs[d]}, OperationType.instance("*"), -1,
-                                    finalExecution
-                            );
-                            tsrs[0] =  reduce(
-                                    new ExecutionCall<>( device, new Tsr[]{tsrs[0], tsrs[1], exp}, 1, type ),
-                                    finalExecution
-                            );
-                            inner.delete();
-                            exp.delete();
-                        }
-                        break;
-                    case "*":
-                    case "prod":
-                        newTsrs = Utility._without(tsrs, 1+d);
-                        if ( newTsrs.length > 2 ) {
-                            newTsrs[0] = ( newTsrs[0] == null ) ? Tsr.Create.newTsrLike(tsrs[1]) : newTsrs[0];
-                            tsrs[0] = reduce(
-                                    new ExecutionCall<>( device, newTsrs, -1, OperationType.instance("*") ),
-                                    finalExecution
-                            );
-                        } else tsrs[0] = newTsrs[1];
-                        break;
-
-                    case "/":
-                        Tsr a;
-                        if ( d > 1 ) {
-                            newTsrs = Utility._subset(tsrs, 1, 1, d+1);
-                            newTsrs[0] =  Tsr.Create.newTsrLike(tsrs[1]);
-                            a = reduce(
-                                    new ExecutionCall<>( device, newTsrs, -1, OperationType.instance("/") ),
-                                    finalExecution
-                            );
-                        } else if ( d == 1 ) a = tsrs[1];
-                        else a = Tsr.Create.newTsrLike(tsrs[1], 1.0);
-                        Tsr b;
-                        if ( tsrs.length -  d - 2  > 1 ) {
-                            newTsrs = Utility._subset(tsrs, 2, d+2, tsrs.length-(d+2));//or (d+2)
-                            newTsrs[1] =  Tsr.Create.newTsrLike(tsrs[1], 1.0);
-                            newTsrs[0] = newTsrs[1];
-                            b = reduce(
-                                    new ExecutionCall<>( device, newTsrs, -1, OperationType.instance("/") ),
-                                    finalExecution
-                            );
-                        } else b = Tsr.Create.newTsrLike(tsrs[1], 1.0);
-
-                        reduce(
-                                new ExecutionCall<>( device, new Tsr[]{tsrs[0], a, b}, -1, OperationType.instance("*") ),
-                                finalExecution
-                        );
-                        reduce(
-                                new ExecutionCall<>( device, new Tsr[]{tsrs[0], tsrs[0], tsrs[d+1]}, 1, OperationType.instance("/") ),
-                                finalExecution
-                        );
-                        if ( d == 0 ) a.delete();
-                        b.delete();
-                        break;
-                    default: throw new IllegalStateException("Operation not found!");
-                }
-            }
-        } else {
-            switch (type.identifier()) {
-                case "x":
-                    if (d >= 0) {
-                        if (d == 0) tsrs[0] = tsrs[2];
-                        else tsrs[0] = tsrs[1];
-                        return tsrs[0];
-                    } else tsrs = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
-                    break;
-                case ("x" + ((char) 187)):
-                    tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
-                    break;
-                case ("a" + ((char) 187)):
-                    tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
-                    break;
-                case ("s" + ((char) 187)):
-                    tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
-                    break;
-                case ("d" + ((char) 187)):
-                    tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
-                    break;
-                case ("p" + ((char) 187)):
-                    tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
-                    break;
-                case ("m" + ((char) 187)):
-                    tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
-                    break;
-                case ">":
-                    tsrs = new Tsr[]{tsrs[1], tsrs[0]};
-                    break;
-            }
-
+        /* For the following operations with the correct arity RJAgent should do: ...
+            case ("s" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
+            case ("d" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
+            case ("p" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
+            case ("m" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
+            case ">": tsrs = new Tsr[]{tsrs[1], tsrs[0]};
+         */
+        /*
+            Below is the core lambda of recursive preprocessing
+            which is defined for each OperationImplementation individually :
+         */
+        Tsr result = _RJAgent.handle(call, (c)-> recursiveReductionOf( c, finalExecution ));
+        if ( result==null ) {
             finalExecution.accept(
-                    new ExecutionCall<>( device, tsrs, d, type )
+                    new ExecutionCall<>( device, call.getTensors(), d, type )
             );
-        }
+        } else return result;
+
 
         for ( int i = 0; i < tsrs.length; i++ ) {
             if ( tsrs[i] != null && !tsrs[i].isUndefined() ) rollbacks[i].accept(tsrs[i]);
@@ -226,7 +113,7 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
         return tsrs[0];
     }
 
-    protected static class Utility
+    public static class Utility
     {
         public static Tsr[] _subset(Tsr[] tsrs, int padding, int index, int offset) {
             if ( offset < 0 ) {

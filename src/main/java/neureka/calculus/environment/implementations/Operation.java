@@ -8,7 +8,12 @@ import org.jetbrains.annotations.Contract;
 
 public class Operation extends AbstractOperationTypeImplementation< Operation >
 {
-    public Operation(){  super();  }
+    public Operation(
+            ADAnalyzer analyzer,
+            RecursiveJunctionAgent RJAgent
+    ) {  super(
+            analyzer, RJAgent
+    ); }
 
     @Override
     public boolean canHandle(ExecutionCall call) {

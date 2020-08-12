@@ -32,7 +32,10 @@ public class Quadratic extends OperationType
                 true
         );
 
-        Activation typeImplementation = new Activation();
+        Activation typeImplementation = new Activation(
+                call -> true,
+                ( call, goDeeperWith ) -> null
+        );
 
         setImplementation(
                 Activation.class,

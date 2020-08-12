@@ -1,8 +1,12 @@
 package neureka.calculus.environment.operations.operator;
 
+import neureka.Tsr;
+import neureka.acceleration.Device;
 import neureka.acceleration.host.execution.HostExecutor;
 import neureka.acceleration.opencl.execution.CLExecutor;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.implementations.*;
 
 public class Power extends OperationType
@@ -63,7 +67,80 @@ public class Power extends OperationType
             }
         };
 
-        Operation operation = new Operation();
+        OperationTypeImplementation.RecursiveJunctionAgent rja = (call, goDeeperWith)->
+        {
+            Tsr[] tsrs = call.getTensors();
+            Device device = call.getDevice();
+            int d = call.getDerivativeIndex();
+            OperationType type = call.getType();
+
+            Tsr alternative = null;
+            if ( tsrs.length > 3 )
+            {
+                if ( d < 0 ) {
+                    Tsr[] reduction = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
+                    alternative = goDeeperWith.apply(
+                            new ExecutionCall<>( device, reduction, d, type )
+                    );
+                    tsrs[0] = reduction[0];
+
+                    reduction = AbstractOperationTypeImplementation.Utility._offsetted(tsrs, 1);
+                    alternative = goDeeperWith.apply(
+                            new ExecutionCall<>( device, reduction, d, type )
+                            );
+                    tsrs[0] = reduction[0];
+                } else {
+
+                    if ( d==0 ) {
+                        Tsr[] reduction = AbstractOperationTypeImplementation.Utility._subset(tsrs, 1,  2, tsrs.length-2);
+                        reduction[0] =  Tsr.Create.newTsrLike(tsrs[1]);
+                        alternative = goDeeperWith.apply(
+                                new ExecutionCall<>( device, reduction, -1, OperationType.instance("*") )
+                        );
+                        Tsr exp = reduction[0];
+                        reduction = new Tsr[]{tsrs[0], tsrs[1], exp};
+                        alternative = goDeeperWith.apply(
+                                new ExecutionCall<>( device, reduction, 0, type )
+                        );
+                        tsrs[0] = reduction[0];
+                        exp.delete();
+                    } else {
+                        Tsr[] reduction = AbstractOperationTypeImplementation.Utility._subset(tsrs, 1,  2, tsrs.length-2);
+
+                        reduction[0] =  Tsr.Create.newTsrLike(tsrs[1]);
+                        alternative = goDeeperWith.apply(
+                                new ExecutionCall<>( device, reduction, d-1, OperationType.instance("*") )
+                        );
+                        Tsr inner = reduction[0];
+
+                        reduction = new Tsr[]{Tsr.Create.newTsrLike(tsrs[1]), inner, tsrs[d]};
+                        alternative = goDeeperWith.apply(
+                                new ExecutionCall<>( device, reduction, -1, OperationType.instance("*") )
+                        );
+                        Tsr exp = reduction[0];
+
+                        reduction = new Tsr[]{tsrs[0], tsrs[1], exp};
+                        alternative = goDeeperWith.apply(
+                                new ExecutionCall<>( device, reduction, 1, type )
+                        );
+                        tsrs[0] = reduction[0];
+
+                        inner.delete();
+                        exp.delete();
+                    }
+                }
+                return alternative;
+            } else {
+                return alternative;
+            }
+
+
+        };
+
+        Operation operation = new Operation(
+                call -> true,
+                rja
+        );
 
         setImplementation(Operation.class,
                 operation.setExecutor(
@@ -115,7 +192,10 @@ public class Power extends OperationType
         //________________
         // BROADCASTING :
 
-        Broadcast broadcast = new Broadcast();
+        Broadcast broadcast = new Broadcast(
+                call -> true,
+                rja
+        );
 
         setImplementation(
                 Broadcast.class,
@@ -180,7 +260,10 @@ public class Power extends OperationType
                 };
 
 
-        Scalarization scalarization = new Scalarization();
+        Scalarization scalarization = new Scalarization(
+                call -> true,
+                rja
+        );
 
         setImplementation(
                 Scalarization.class,
@@ -243,7 +326,10 @@ public class Power extends OperationType
         new OperationType(
                 "power", "p", 2, true, false, true, false, false
         ).setImplementation(Convolution.class,
-                new Convolution()
+                new Convolution(
+                call -> true,
+                ( call, goDeeperWith ) -> null
+        )
         );
         new OperationType("", ((char) 171) + "p", 3, true, false, true, false, false);
         new OperationType("", "p" + ((char) 187), 3, true, false, true, false, false);

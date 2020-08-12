@@ -27,7 +27,10 @@ public class Cosinus extends OperationType {
                 true
         );
 
-        Activation typeImplementation = new Activation();
+        Activation typeImplementation = new Activation(
+                call -> true,
+                ( call, goDeeperWith ) -> null
+        );
         setImplementation(
                 Activation.class,
                 typeImplementation.setExecutor(

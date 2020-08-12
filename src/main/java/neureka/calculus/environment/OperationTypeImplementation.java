@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.acceleration.Device;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  *   This class is the middle layer of the 3 tier abstraction architecture
@@ -24,8 +25,12 @@ public interface OperationTypeImplementation<FinalType>
     }
 
     interface RecursiveJunctionAgent {
-        Tsr handle( ExecutionCall call, Consumer<ExecutionCall> goDeeperWith );
+        Tsr handle( ExecutionCall call, Function<ExecutionCall, Tsr> goDeeperWith );
     }
+
+    ADAnalyzer getADAnalyzer();
+
+    RecursiveJunctionAgent getRJAgent();
 
     <D extends Device, E extends ExecutorFor<D>> FinalType setExecutor(Class<E> deviceClass, E execution);
 
@@ -33,6 +38,6 @@ public interface OperationTypeImplementation<FinalType>
 
     boolean canHandle(ExecutionCall<Device> call);
 
-    Tsr reduce( ExecutionCall<Device> call, Consumer<ExecutionCall<Device>> finalExecution );
+    Tsr recursiveReductionOf(ExecutionCall<Device> call, Consumer<ExecutionCall<Device>> finalExecution );
 
 }

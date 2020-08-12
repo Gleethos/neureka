@@ -167,12 +167,19 @@ public abstract class AbstractFunction extends BaseFunction {
             //return tsrs[0];
             //inputs = tsrs;
 
-            Tsr[] tsrs = new Tsr[]{null, inputs[0], inputs[1]};
-            tsrs[0] = (d<0)?new Tsr(Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())):null;
-            for (Tsr t : tsrs) if(t!=null) t.setIsVirtual(false);
+            Tsr[] tsrs = new Tsr[]{ null, inputs[0], inputs[1] };
+            tsrs[0] = ( d < 0 )
+                    ? new Tsr(Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape()))
+                    : null;
+
+            for ( Tsr t : tsrs ) if( t != null ) t.setIsVirtual(false);
             myDevice.execute(tsrs, _type, d);
             return tsrs[0];
-        } else if (_type.id() == OperationType.instance("<<x").id() || _type.id() == OperationType.instance("x>>").id()) {
+
+        } else if (
+                _type.id() == OperationType.instance("<<x").id() ||
+                        _type.id() == OperationType.instance("x>>").id()
+        ) {
             if (d < 0) {
                 //inputs = _src_acti(inputs, j, -1, 0);
                 Tsr[] tsrs = _src_acti(inputs, j, -1, 0);
@@ -509,7 +516,7 @@ public abstract class AbstractFunction extends BaseFunction {
             else return -Math.sin( input );
         }
 
-        private static double summation(double[] inputs, int j, int d, ArrayList<Function> src) {
+        private static double summation(double[] inputs, int j, int d, List<Function> src) {
             if ( d < 0 ) {
                 double sum = 0;
                 boolean nothingDone = true;
@@ -526,7 +533,7 @@ public abstract class AbstractFunction extends BaseFunction {
             }
         }
 
-        private static double summation(double[] inputs, int d, ArrayList<Function> src) {
+        private static double summation(double[] inputs, int d, List<Function> src) {
             if ( d < 0 ) {
                 double sum = 0;
                 boolean nothingDone = true;
@@ -555,7 +562,7 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        private static double PI( double[] inputs, int j, int d, ArrayList<Function> src ) {
+        private static double PI( double[] inputs, int j, int d, List<Function> src ) {
             if ( d < 0 ) {
                 double prod = 1;
                 boolean nothingDone = true;
@@ -580,7 +587,7 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        private static double PI( double[] inputs, int d, ArrayList<Function> src ) {
+        private static double PI( double[] inputs, int d, List<Function> src ) {
             if (d < 0) {
                 double prod = 1;
                 boolean nothingDone = true;
@@ -608,7 +615,7 @@ public abstract class AbstractFunction extends BaseFunction {
         // f(x)^g(x) * d/dx(g(x)) * ln(f(x))
         // + f(x)^(g(x)-1) * g(x) * d/dx(f(x))
         @Contract(pure = true)
-        private static double power(double[] inputs, int j, int d, ArrayList<Function> src) {
+        private static double power(double[] inputs, int j, int d, List<Function> src) {
             if (d < 0) {
                 double result = src.get(0).call(inputs, j);
                 for ( int i = 1; i < src.size(); i++ ) {
@@ -635,7 +642,7 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        private static double power(double[] inputs, int d, ArrayList<Function> src) {
+        private static double power(double[] inputs, int d, List<Function> src) {
             if (d < 0) {
                 double result = src.get(0).call(inputs);
                 for (int i = 1; i < src.size(); i++) {
@@ -666,7 +673,7 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        private static double division(double[] inputs, int j, int d, ArrayList<Function> src) {
+        private static double division(double[] inputs, int j, int d, List<Function> src) {
             if (d < 0) {
                 double result = src.get(0).call(inputs, j);
                 for (int Vi = 1; Vi < src.size(); Vi++) {
@@ -689,7 +696,7 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        private static double division(double[] inputs, int d, ArrayList<Function> src) {
+        private static double division(double[] inputs, int d, List<Function> src) {
             if (d < 0) {
                 double result = src.get(0).call(inputs);
                 for (int i = 1; i < src.size(); i++) {
@@ -716,7 +723,7 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        private static double multiplication(double[] inputs, int j, int d, ArrayList<Function> src) {
+        private static double multiplication(double[] inputs, int j, int d, List<Function> src) {
             if (d < 0) {
                 double result = src.get(0).call(inputs, j);
                 for (int i = 1; i < src.size(); i++) {
@@ -740,7 +747,7 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        private static double multiplication(double[] inputs, int d, ArrayList<Function> src) {
+        private static double multiplication(double[] inputs, int d, List<Function> src) {
             if (d < 0) {
                 double result = src.get(0).call(inputs);
                 for (int i = 1; i < src.size(); i++) {
@@ -764,7 +771,7 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        private static double idy(double[] inputs, int d, ArrayList<Function> src) {
+        private static double idy(double[] inputs, int d, List<Function> src) {
             if (d < 0) {
                 inputs[0] = inputs[1];
             } else {
@@ -773,7 +780,7 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        private static double modulo(double[] inputs, int j, int d, ArrayList<Function> src) {
+        private static double modulo(double[] inputs, int j, int d, List<Function> src) {
             if (d < 0) {
                 double result = src.get(0).call(inputs, j);
                 for (int i = 1; i < src.size(); i++) {
@@ -787,7 +794,7 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        private static double modulo(double[] inputs, int d, ArrayList<Function> src) {
+        private static double modulo(double[] inputs, int d, List<Function> src) {
             if (d < 0) {
                 double result = src.get(0).call(inputs);
                 for (int i = 1; i < src.size(); i++) {
@@ -801,7 +808,7 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        private static double subtraction(double[] inputs, int j, int d, ArrayList<Function> src) {
+        private static double subtraction(double[] inputs, int j, int d, List<Function> src) {
             if (d < 0) {
                 double result = src.get(0).call(inputs, j);
                 for (int Vi = 1; Vi < src.size(); Vi++) {
@@ -823,7 +830,7 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        private static double subtraction(double[] inputs, int d, ArrayList<Function> src) {
+        private static double subtraction(double[] inputs, int d, List<Function> src) {
             if (d < 0) {
                 double result = src.get(0).call(inputs);
                 for (int i = 1; i < src.size(); i++) {
@@ -845,7 +852,7 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        private static double addition(double[] inputs, int j, int d, ArrayList<Function> src) {
+        private static double addition(double[] inputs, int j, int d, List<Function> src) {
             if (d < 0) {
                 double result = src.get(0).call(inputs, j);
                 for (int i = 1; i < src.size(); i++) {
@@ -863,7 +870,7 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        private static double addition(double[] inputs, int d, ArrayList<Function> src) {
+        private static double addition(double[] inputs, int d, List<Function> src) {
             if (d < 0) {
                 double result = src.get(0).call(inputs);
                 for (int Vi = 1; Vi < src.size(); Vi++) {

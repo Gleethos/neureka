@@ -3,6 +3,8 @@ package neureka.calculus.environment;
 import neureka.Tsr;
 import neureka.acceleration.Device;
 
+import java.util.function.Function;
+
 /**
  * This class is a simple container holding relevant
  * arguments needed to execute on a targeted Device which
@@ -12,8 +14,12 @@ import neureka.acceleration.Device;
  */
 public class ExecutionCall<DeviceType extends Device>
 {
+    public interface Mutator {
+        Tsr[] mutate( Tsr[] tensors );
+    }
+
     private final DeviceType _device;
-    private final Tsr[] _tsrs;
+    private Tsr[] _tsrs;
     private final int _d;
     private final OperationType _type;
     private OperationTypeImplementation _implementation;
@@ -39,5 +45,8 @@ public class ExecutionCall<DeviceType extends Device>
         if ( _implementation != null ) return _implementation;
         else _implementation = _type.implementationOf(this);
         return _implementation;
+    }
+    public void mutateArguments(Mutator mutation){
+        _tsrs = mutation.mutate(_tsrs);
     }
 }
