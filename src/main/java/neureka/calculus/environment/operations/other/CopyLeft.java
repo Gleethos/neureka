@@ -8,6 +8,7 @@ import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.Activation;
+import neureka.calculus.environment.implementations.Convolution;
 
 public class CopyLeft extends OperationType {
 
@@ -25,7 +26,16 @@ public class CopyLeft extends OperationType {
                 };
 
         Activation activation = new Activation(
-                call -> true,
+                call -> {
+                    if ( call.getType().supports(Convolution.class) ) return false;
+                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
+                    Tsr last = null;
+                    for ( Tsr t : call.getTensors() ) {
+                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                        last = t; // Note: shapes are cached!
+                    }
+                    return true;
+                },
                 ( call, goDeeperWith ) -> null,
                 call -> {
                     Tsr[] tsrs = call.getTensors();

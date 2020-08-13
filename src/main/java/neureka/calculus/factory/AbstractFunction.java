@@ -189,7 +189,8 @@ public abstract class AbstractFunction extends BaseFunction {
                 else return tsrs[0];
             }
             return null;
-        } else if ( _type.identifier().equals(",") ) {
+        }
+        else if ( _type.identifier().equals(",") ) {
             inputs = _src_acti(inputs, j, -1, 0);
             int[] newForm = new int[_src.size() - 1];
             for ( int i = 0; i < _src.size() - 1; i++ ) {
@@ -214,7 +215,8 @@ public abstract class AbstractFunction extends BaseFunction {
             }
             Tsr t = inputs[inputs.length - 1];
             return Tsr.Exec.reshaped( t, newForm, true );
-        } else {
+        }
+        else {
             Tsr[] tsrs = inputs;
             return _apply(myDevice, d, () -> __deep_execution( new ExecutionCall( myDevice, tsrs, d, call.getType() ), j ));
         }
@@ -227,7 +229,7 @@ public abstract class AbstractFunction extends BaseFunction {
         Device device = call.getDevice();
 
         if ( !_isFlat && j < 0 && d < 0 ) {
-            if (_type.isOperation()) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
+            if (_type.isOperation() ) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
                 StringBuilder operation = new StringBuilder();
                 Tsr[] tsrs = _src_acti(inputs, j, d, 0);
                 for ( int i = 0; i < tsrs.length; i++ ) {

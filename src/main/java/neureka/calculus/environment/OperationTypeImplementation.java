@@ -20,8 +20,12 @@ import java.util.function.Function;
  */
 public interface OperationTypeImplementation<FinalType>
 {
+    interface HandleChecker {
+        boolean canHandle( ExecutionCall call );
+    }
+
     interface ADAnalyzer {
-        boolean allowsForward(Tsr[] inputs);
+        boolean allowsForward( ExecutionCall call );
     }
 
     interface RecursiveJunctionAgent {

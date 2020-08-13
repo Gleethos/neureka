@@ -20,7 +20,16 @@ public class Addition extends OperationType {
             };
 
     private static final Broadcast _broadcast = new Broadcast(
-                call -> true,
+                call -> {
+                    if ( call.getType().supports(Convolution.class) ) return false;
+                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
+                    Tsr last = null;
+                    for ( Tsr t : call.getTensors() ) {
+                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                        last = t; // Note: shapes are cached!
+                    }
+                    return true;
+                },
                 ( call, goDeeperWith ) -> null,
                 call -> {
                     Tsr[] tsrs = call.getTensors();
@@ -294,7 +303,16 @@ public class Addition extends OperationType {
                 "add", "a", 2, true, false, true, false, false
         ).setImplementation(Convolution.class,
                 new Convolution(
-                call -> true,
+                                call -> {
+                    if ( call.getType().supports(Convolution.class) ) return false;
+                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
+                    Tsr last = null;
+                    for ( Tsr t : call.getTensors() ) {
+                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                        last = t; // Note: shapes are cached!
+                    }
+                    return true;
+                },
                 ( call, goDeeperWith ) -> null,
                 call -> {
                     Tsr[] tsrs = call.getTensors();

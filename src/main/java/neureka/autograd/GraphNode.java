@@ -69,6 +69,21 @@ public class GraphNode implements Component<Tsr>
     private int _mode;
 
     /**
+     *  This flag records the support evaluation of the forward-AD availability analysis
+     *  done in the corresponding OperationTypeImplementation lambda
+     *  for a given ExecutionCall instance.
+     *
+     *  The difference between this flag and the "usesForwardAD()" truth value
+     *  is that the latter one can be false while the prior is true!
+     *  ( However the reverse is not possible! )
+     *  The reason is as follows:
+     *  If a GraphNode has multiple parent nodes which require auto-differentiation,
+     *  then said node will not be able to perform forward-AD even though it might very well
+     *  be possible given an ExecutionCall whose state allows for such...
+     */
+    private boolean _allows_forward;
+
+    /**
      * This flag is used for a performance optimization feature namely 'Just In Time Propagation'.
      * This feature accumulates errors and continues propagation
      * as soon as they are needed. (At the end of 'backward()' or when the tensor is used again).
@@ -284,7 +299,8 @@ public class GraphNode implements Component<Tsr>
      * @param context         Can be either an array of tensors or a new lock (for leave node or fresh function locking)
      * @param payloadSupplier Provides the payload of this node.
      */
-    public GraphNode(Function function, Object context, Supplier<Tsr> payloadSupplier) {
+    public GraphNode( Function function, Object context, Supplier<Tsr> payloadSupplier )
+    {
         if ( function == null ) throw new IllegalArgumentException("Function must not be null!");
         if ( context instanceof GraphLock ) { // Note function always null in this case:
             _construct( payloadSupplier.get(), function, null, (GraphLock) context );
@@ -319,7 +335,7 @@ public class GraphNode implements Component<Tsr>
             _function = null;
             _parents = null;
         } else {
-            _mode = _modeOf( inputs, function );
+            _mode = _modeOf( call, function );
             _function = function;
             _parents = new GraphNode[inputs.length];
             for ( int i = 0; i < inputs.length; i++ ) {
@@ -351,7 +367,7 @@ public class GraphNode implements Component<Tsr>
                         if (
                                 src_node.size() == 0 && this.size() == 0
                                     ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
-                                !src_node.isLeave() && !src_node.function().type().allowsForward( inputs )
+                                !src_node.isLeave() && !src_node._allows_forward//Was : src_node.function().type().allowsForward( inputs )
                         ) {
                             this.put( src_node, function.getADAgent( inputs, i, true ) );
                         } else {
@@ -384,11 +400,13 @@ public class GraphNode implements Component<Tsr>
      * If the resulting mode equals 0 then this means that
      * no auto differentiation is needed.
      *
-     * @param inputs The tensors used as input for the function which created the payload tensor of this GraphNode.
+     * @param call The call containing inputs for the function which created the payload tensor of this GraphNode.
      * @param function The function which produced the payload tensor of this GraphNode.
      * @return int The mode of this GraphNode!
      */
-    private static int _modeOf( Tsr[] inputs, Function function ) {
+    private int _modeOf( ExecutionCall call, Function function )
+    {
+        Tsr[] inputs = call.getTensors();
         int result_mode = 0;
         int[] modes = new int[inputs.length];
         int input_mode = 0;
@@ -397,14 +415,21 @@ public class GraphNode implements Component<Tsr>
             if ( node == null ) {
                 throw new IllegalStateException("Input tensors of a new graph-node must contain graph-nodes!");
             }
-            modes[Ii] = (inputs[Ii].rqsGradient()) ? 1 : node.mode();
-            input_mode += (modes[Ii] != 0) ? 1 : 0;
+            modes[Ii] = ( inputs[Ii].rqsGradient() ) ? 1 : node.mode();
+            input_mode += ( modes[Ii] != 0) ? 1 : 0;
         }
-        if ( input_mode == 1 && function.type().allowsForward(inputs) ) {//Convolution and reshaping prohibit forward AutoDiff
+        _allows_forward = function.type().allowsForward(inputs);
+        boolean banana = call.allowsForward();
+        if ( banana != _allows_forward ) {
+            boolean hhh = call.allowsForward();
+            System.out.println("Huii");
+        }
+
+        if ( input_mode == 1 && _allows_forward ) { // Convolution and reshaping prohibit forward AutoDiff
             for ( int Ii = 0; Ii < inputs.length; Ii++ ) {
                 result_mode += ( modes[Ii] == 0 ) ? 0 : ( modes[Ii] < 0 ) ? 1 : modes[Ii] + 1;
             }
-        } else {
+        } else { // Reverse mode auto-differentiation :
             result_mode = -input_mode;
         }
         result_mode = ("<>".replace(function.type().identifier(), "").equals("<>")) ? result_mode : 0;

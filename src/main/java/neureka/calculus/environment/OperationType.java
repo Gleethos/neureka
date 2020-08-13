@@ -161,11 +161,11 @@ public class OperationType implements Type
     @Override
     public boolean allowsForward(Tsr[] inputs)
     {
-        if (this.supports(Convolution.class)) return false;
-        if (this.identifier().equals(",")) return false; //Reshape
+        if ( this.supports(Convolution.class) ) return false;
+        if ( this.identifier().equals(",") ) return false; // Reshape
         Tsr last = null;
-        for (Tsr t : inputs) {
-            if (last!=null && !last.shape().equals(t.shape())) return false;
+        for ( Tsr t : inputs ) {
+            if ( last != null && !last.shape().equals(t.shape()) ) return false;
             last = t; // Note: shapes are cached!
         }
         return true;

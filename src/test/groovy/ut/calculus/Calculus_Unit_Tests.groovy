@@ -148,7 +148,7 @@ class Calculus_Unit_Tests extends Specification
         given :
             Function f = FunctionBuilder.build(equation, false)
         expect :
-            if (index!=null) assert f.derive( inputs, index )==expected
+            if ( index!=null ) assert f.derive( inputs, index ) == expected
             else assert f.call( inputs )==expected
         where :
             equation                         | inputs                           | index || expected

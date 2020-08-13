@@ -22,7 +22,16 @@ public class Identity extends OperationType
                 };
 
         Activation typeImplementation = new Activation(
-                call -> true,
+                                call -> {
+                    if ( call.getType().supports(Convolution.class) ) return false;
+                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
+                    Tsr last = null;
+                    for ( Tsr t : call.getTensors() ) {
+                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                        last = t; // Note: shapes are cached!
+                    }
+                    return true;
+                },
                 ( call, goDeeperWith ) -> null,
                 call -> {
                     Tsr[] tsrs = call.getTensors();
@@ -86,7 +95,16 @@ public class Identity extends OperationType
                     else return t1Idx -> value;
                 };
         Scalarization scalarization = new Scalarization(
-                call -> true,
+                                call -> {
+                    if ( call.getType().supports(Convolution.class) ) return false;
+                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
+                    Tsr last = null;
+                    for ( Tsr t : call.getTensors() ) {
+                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                        last = t; // Note: shapes are cached!
+                    }
+                    return true;
+                },
                 ( call, goDeeperWith ) -> null,
                 call -> {
                     Tsr[] tsrs = call.getTensors();

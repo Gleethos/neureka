@@ -77,10 +77,10 @@ class CrossDeviceSlicedTensorSystemTest
          * 5, 6, 7,
          */
         //---
-        if(device instanceof DummyDevice){
+        if( device instanceof DummyDevice ){
             a.value64()[1] = a.value64()[1] * 6
             a.value64()[7] = a.value64()[7] * 2
-        }else{
+        } else {
             Tsr k = new Tsr([4, 6], [
                     1, 6, 1, 1,
                     1, 1, 1, 2,

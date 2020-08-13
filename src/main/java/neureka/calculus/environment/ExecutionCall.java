@@ -46,6 +46,9 @@ public class ExecutionCall<DeviceType extends Device>
         else _implementation = _type.implementationOf(this);
         return _implementation;
     }
+    public boolean allowsForward(){
+        return getImplementation().getADAnalyzer().allowsForward(this);
+    }
     public void mutateArguments(Mutator mutation){
         _tsrs = mutation.mutate(_tsrs);
     }

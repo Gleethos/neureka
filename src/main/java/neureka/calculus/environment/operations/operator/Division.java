@@ -103,7 +103,16 @@ public class Division extends OperationType
         // DEFAULT OPERATION :
 
         Operation operation = new Operation(
-                call -> true,
+                call -> {
+                    if ( call.getType().supports(Convolution.class) ) return false;
+                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
+                    Tsr last = null;
+                    for ( Tsr t : call.getTensors() ) {
+                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                        last = t; // Note: shapes are cached!
+                    }
+                    return true;
+                },
                 rja,
                 call -> {
                     Tsr[] tsrs = call.getTensors();
@@ -111,9 +120,6 @@ public class Division extends OperationType
                     if ( tsrs[0] == null ) // Creating a new tensor:
                     {
                         int[] shp = tsrs[1].getNDConf().shape();
-                        //int[] shp = (type.identifier().endsWith("x"))
-                        //        ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
-                        //        : tsrs[1].getNDConf().shape();
                         Tsr output = new Tsr( shp, 0.0 );
                         output.setIsVirtual(false);
                         device.add(output);
@@ -121,7 +127,7 @@ public class Division extends OperationType
                     }
                     return call;
                 }
-        )    ;
+        );
 
         setImplementation(
                 Operation.class, operation.setExecutor(
@@ -340,7 +346,16 @@ public class Division extends OperationType
         ).setImplementation(
                 Convolution.class,
                 new Convolution(
-                call -> true,
+                                call -> {
+                    if ( call.getType().supports(Convolution.class) ) return false;
+                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
+                    Tsr last = null;
+                    for ( Tsr t : call.getTensors() ) {
+                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                        last = t; // Note: shapes are cached!
+                    }
+                    return true;
+                },
                 ( call, goDeeperWith ) -> null,
                 call -> {
                     Tsr[] tsrs = call.getTensors();
