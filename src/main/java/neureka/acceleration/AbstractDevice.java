@@ -10,7 +10,7 @@ import java.lang.ref.Cleaner;
 
 public abstract class AbstractDevice implements Device, Component<Tsr>
 {
-    private static final Cleaner CLEANER = Cleaner.create();
+    private static final Cleaner _CLEANER = Cleaner.create();
 
     protected abstract void _enqueue(Tsr[] tsrs, int d, OperationType type);
 
@@ -23,12 +23,12 @@ public abstract class AbstractDevice implements Device, Component<Tsr>
 
     @Override
     public Device cleaning(Tsr tensor, Runnable action){
-        CLEANER.register(tensor, action);
+        _CLEANER.register(tensor, action);
         return this;
     }
 
     protected void _cleaning(Object o, Runnable action){
-        CLEANER.register(o, action);
+        _CLEANER.register(o, action);
     }
 
     @Override
