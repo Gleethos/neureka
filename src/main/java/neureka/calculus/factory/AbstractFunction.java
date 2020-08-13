@@ -151,7 +151,7 @@ public abstract class AbstractFunction extends BaseFunction {
             /* Autograd-Graph will be generated below for the new GraphNode: */
             /* only flat functions can be executed directly*/
             if ( d < 0 && _doAD )
-                return new GraphNode(this, inputs, ()-> __flat_execution( call, j )).getPayload();
+                return new GraphNode(this, call, ()-> __flat_execution( call, j )).getPayload();
             else
                 return __flat_execution( call, j );
 
@@ -220,7 +220,7 @@ public abstract class AbstractFunction extends BaseFunction {
         }
     }
 
-    private Tsr __deep_execution( ExecutionCall call, int j ) // Tsr[] inputs, int d, int j, Device device
+    private Tsr __deep_execution( ExecutionCall call, int j )
     {
         Tsr[] inputs = call.getTensors();
         int d = call.getDerivativeIndex();

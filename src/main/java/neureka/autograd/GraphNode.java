@@ -5,6 +5,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.acceleration.opencl.utility.WeakTensorReference;
 import neureka.calculus.Function;
+import neureka.calculus.environment.ExecutionCall;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -147,26 +148,26 @@ public class GraphNode implements Component<Tsr>
      * in this method will be executed.
      * It is stored inside the Cleaner within the device of the payload.
      * Cleaning means to null the targets_derivatives map.
-     * Leaning however only occures if the payload reference is still null.
+     * Leaning however only occurs if the payload reference is still null.
      * If it is not null then this means that the payload
      * changed (happens during injection)
      *
-     * @return the playload of this graph-node.
+     * @return the payload of this graph-node.
      */
     public Tsr getPayload() {
         return (_payload == null) ? null : _payload.get();
     }
 
-    private void _setPayload(Tsr p) {
-        if (p == null) {
+    private void _setPayload( Tsr p ) {
+        if ( p == null ) {
             _payload = null;
         } else {
             _payload = new WeakReference<>(p);
             p.device().cleaning(p, () -> {
                 if (this.getPayload() == null) {
                     boolean allChildrenUseForwardAD = true;
-                    if (_children != null) {
-                        for (WeakReference<GraphNode> childRef : _children) {
+                    if ( _children != null ) {
+                        for ( WeakReference<GraphNode> childRef : _children ) {
                             GraphNode childNode = childRef.get();
                             if (childNode != null && childNode.usesReverseAD()) allChildrenUseForwardAD = false;
                         }
@@ -239,9 +240,9 @@ public class GraphNode implements Component<Tsr>
      * @param newChild which references it's input namely the parent (this) has...
      */
     private synchronized void _attachChild(GraphNode newChild) {
-        if (_children == null) _children = new ArrayList<>();
-        WeakReference<GraphNode> ref = new WeakTensorReference<>(newChild, null);
-        _children.add(ref);
+        if ( _children == null ) _children = new ArrayList<>();
+        WeakReference<GraphNode> ref = new WeakTensorReference<>( newChild, null );
+        _children.add( ref );
     }
 
     /**
@@ -251,7 +252,7 @@ public class GraphNode implements Component<Tsr>
      * @return boolean
      */
     public boolean isCachable() {
-        return (this.nid() != 1);
+        return ( this.nid() != 1 );
     }
 
     /**
@@ -260,13 +261,13 @@ public class GraphNode implements Component<Tsr>
      * @return boolean
      */
     public boolean isLeave() {
-        return (_parents == null && _function == null);
+        return ( _parents == null && _function == null );
     }
 
     public boolean isGraphLeave() {
-        if (isLeave()) return true;
-        for (GraphNode p : _parents) {
-            if (p.lock() != this.lock()) return true;
+        if ( this.isLeave() ) return true;
+        for ( GraphNode p : _parents ) {
+            if ( p.lock() != this.lock() ) return true;
         }
         return false;
     }
@@ -287,85 +288,87 @@ public class GraphNode implements Component<Tsr>
         if (function == null) throw new IllegalArgumentException("Function must not be null!");
         if (context instanceof GraphLock) { // Note function always null in this case:
             _construct(payloadSupplier.get(), function, null, (GraphLock) context);
-        } else if (context instanceof Tsr[]) {
-            Tsr[] inputs = (Tsr[]) context;
+        } else if ( context instanceof ExecutionCall ) {
+            ExecutionCall call = (ExecutionCall) context;
+            Tsr[] inputs = call.getTensors();
             /* Applying JITProp and gradients */
             Neureka.Settings.AutoGrad adSetting = Neureka.instance().settings().autograd();
             if (adSetting.isApplyingGradientWhenTensorIsUsed()) {
                 for (Tsr t : inputs){
                     if(!adSetting.isApplyingGradientWhenRequested() || t.gradientApplyRqd()) {
-                        t.forComponent(JITProp.class, jit -> ((JITProp) jit).execute());
+                        t.forComponent(JITProp.class, JITProp::execute);
                         t.remove(JITProp.class);
                         t.applyGradient();
                         t.setGradientApplyRqd(false);
                     }
                 }
             }
-            _construct(payloadSupplier.get(), function, inputs, ((GraphNode) inputs[0].find(GraphNode.class)).lock());
+            _construct(payloadSupplier.get(), function, call, inputs[0].find(GraphNode.class).lock());
         }
     }
 
-    private void _construct(Tsr output, Function function, Tsr[] inputs, GraphLock lock) {
-        if (output == null) throw new RuntimeException("Payload must no be null!");
-        if (!function.doesAD()) return;//Only functions with AutoDiff enabled create computation graph!
+    private void _construct(Tsr output, Function function, ExecutionCall call, GraphLock lock) {
+        Tsr[] inputs = ( call == null ) ? null : call.getTensors();
+        if ( output == null ) throw new RuntimeException("Payload must no be null!");
+        if ( !function.doesAD() ) return;//Only functions with AutoDiff enabled create computation graph!
         _lock = lock;
-        _setPayload(output);
-        output.add(this);
-        if (inputs == null) {
-            _mode = (output.rqsGradient()) ? 1 : 0;
+        _setPayload( output );
+        output.add( this );
+        if ( inputs == null ) {
+            _mode = ( output.rqsGradient() ) ? 1 : 0;
             _function = null;
             _parents = null;
         } else {
-            _mode = _modeOf(inputs, function);
+            _mode = _modeOf( inputs, function );
             _function = function;
             _parents = new GraphNode[inputs.length];
-            for (int i = 0; i < inputs.length; i++) {
-                _parents[i] = (GraphNode) inputs[i].find(GraphNode.class);
-                if (_parents[i] == null) {
+            for ( int i = 0; i < inputs.length; i++ ) {
+                _parents[i] = inputs[i].find(GraphNode.class);
+                if ( _parents[i] == null ) {
                     throw new IllegalStateException("Input tensors of a new graph-node must contain leave graph-nodes!");
                 } else _parents[i]._attachChild(this);
             }
         }
-        if (_nid == -1) {
+        if ( _nid == -1 ) {
             long nid = 1;
-            if (_parents != null) {
-                for (GraphNode n : _parents)
+            if ( _parents != null ) {
+                for ( GraphNode n : _parents )
                     nid *= n.getPayload().hashCode(); //payload might be 0! Why? -> garbage collected!
             }
-            if (_function != null) nid += _function.hashCode();
+            if ( _function != null ) nid += _function.hashCode();
             _nid = nid;
         }
         /* Returning if the above cannot form an AutoDiff computation graph! : */
-        if (inputs == null || !function.isFlat()) return; // Leave nodes have!
-        for (Tsr t : inputs) if (t.equals(output)) return; // Output must be a unique tensor for AD!
+        if ( inputs == null || !function.isFlat() ) return; // Leave nodes have!
+        for ( Tsr t : inputs ) if ( t.equals(output) ) return; // Output must be a unique tensor for AD!
 
-        if (this.usesAD() && function.isFlat()) {
+        if ( this.usesAD() && function.isFlat() ) {
             /* Preparing for back propagation: */
-            if (this.usesForwardAD()) {
-                for (int i = 0; i < inputs.length; i++) {
-                    GraphNode src_node = ((GraphNode) inputs[i].find(GraphNode.class));
-                    if (src_node.usesAD()) {
+            if ( this.usesForwardAD() ) {
+                for ( int i = 0; i < inputs.length; i++ ) {
+                    GraphNode src_node = inputs[ i ].find( GraphNode.class );
+                    if ( src_node.usesAD() ) {
                         if (
                                 src_node.size() == 0 && this.size() == 0
                                     ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
                                 !src_node.isLeave() && !src_node.function().type().allowsForward(inputs)
                         ) {
-                            this.put(src_node, function.getADAgent(inputs, i, true));
+                            this.put( src_node, function.getADAgent( inputs, i, true ) );
                         } else {
                             /*  Chain rule (forward) for every derivative w.r.t. leaves (reverseAD or user leaves): */
                             src_node.forEach(
-                            function.derive(inputs, i),
-                            (t, td) -> {
-                                if (this.has(t)) this.put(t, ADD.call(new Tsr[]{td, (Tsr) this.get(t)}));
-                                else this.put(t, td);
+                            function.derive( inputs, i ),
+                            ( t, td ) -> {
+                                if ( this.has( t ) ) this.put( t, ADD.call(new Tsr[]{td, (Tsr) this.get(t)}) );
+                                else this.put( t, td );
                                 //TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
                             });
                         }
                     }
                 }
-            } else if (this.usesReverseAD()) {
+            } else if ( this.usesReverseAD() ) {
                 for (int i = 0; i < inputs.length; i++) {
-                    GraphNode src_node = ((GraphNode) inputs[i].find(GraphNode.class));
+                    GraphNode src_node = inputs[i].find(GraphNode.class);
                     if (src_node.usesAD() || inputs[i].rqsGradient()) {
                         this.put(src_node, function.getADAgent(inputs, i, false));
                     }
