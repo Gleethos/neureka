@@ -17,7 +17,7 @@ public interface Function
     //Global context and cache:
     Cache CACHE = Cache.instance();
 
-    Function IDY = create("I[0]<-Ii[1]");
+    Function IDY = create("I[0]<-I[1]");
 
     Function X = create("I[0]xI[1]");
     Function PLUS = create("(I[0]+I[1])");

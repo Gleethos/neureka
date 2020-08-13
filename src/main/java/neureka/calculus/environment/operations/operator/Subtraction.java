@@ -18,6 +18,19 @@ public class Subtraction extends OperationType
                 "subtract", "-", -1, true, false, false, false, false
         );
 
+        setStringifier(
+                children -> {
+                    StringBuilder reconstructed = new StringBuilder();
+                    for ( int i = 0; i < children.size(); ++i ) {
+                        reconstructed.append( children.get(i) );
+                        if ( i < children.size() - 1 ) {
+                            reconstructed.append(" - ");
+                        }
+                    }
+                    return "(" + reconstructed + ")";
+                }
+        );
+
         OperationTypeImplementation.RecursiveJunctionAgent rja = (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();
@@ -252,7 +265,19 @@ public class Subtraction extends OperationType
 
         new OperationType(
                 "", "s", 2, true, false, true, false, false
+        ).setStringifier(
+                children -> {
+                    StringBuilder reconstructed = new StringBuilder();
+                    for ( int i = 0; i < children.size(); ++i ) {
+                        reconstructed.append( children.get(i) );
+                        if ( i < children.size() - 1 ) {
+                            reconstructed.append(" s ");
+                        }
+                    }
+                    return "(" + reconstructed + ")";
+                }
         );
+
         new OperationType(
                 "", ((char) 171) + "s", 3, true, false, true, false, false
         );

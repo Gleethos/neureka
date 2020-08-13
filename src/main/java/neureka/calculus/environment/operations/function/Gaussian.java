@@ -14,6 +14,15 @@ public class Gaussian extends OperationType
 
         super("gaussian", "gaus", 1, false, false, false, true, true);
 
+        setStringifier(
+                children -> {
+                    String expression = String.join( ", ", children );
+                    if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
+                        return "gaus" + expression;
+                    }
+                    return "gaus" + "(" + expression + ")";
+                }
+        );
 
         DefaultOperatorCreator<TertiaryNDXConsumer> activationCreator =
                 ( inputs, d ) ->

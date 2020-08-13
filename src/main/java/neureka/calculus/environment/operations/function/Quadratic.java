@@ -34,6 +34,16 @@ public class Quadratic extends OperationType
                 true
         );
 
+        setStringifier(
+                children -> {
+                    String expression = String.join( ", ", children );
+                    if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
+                        return "quad" + expression;
+                    }
+                    return "quad" + "(" + expression + ")";
+                }
+        );
+
         Activation typeImplementation = new Activation(
                 call -> true,
                 ( call, goDeeperWith ) -> null,

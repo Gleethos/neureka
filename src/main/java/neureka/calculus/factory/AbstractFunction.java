@@ -72,51 +72,8 @@ public abstract class AbstractFunction extends BaseFunction {
     public String toString()
     {
         List<String> stringedSource = _src.stream().map(e->((e==null)?"(null)":e.toString())).collect(Collectors.toList());
-        StringBuilder reconstructed = new StringBuilder();
-
-        if ( !_type.isOperation() ) {
-            String expression = String.join(", ", stringedSource);
-            if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
-                return _type.identifier() + expression;
-            }
-            return _type.identifier() + "(" + expression + ")";
-        } else {
-            if(_type.identifier().equals(",")) {
-                reconstructed.insert(0, "[");
-                for (int i = 0; i < _src.size(); ++i) {
-                    if (i == _src.size() - 1) {
-                        reconstructed.append("]:(").append(
-                                (_src.get(i) instanceof FunctionConstant)
-                                        ? stringedSource.get(i).split("\\.")[0]
-                                        : stringedSource.get(i)
-                        ).append(")");
-                    } else {
-                        reconstructed.append(
-                                (_src.get(i) instanceof FunctionConstant)
-                                        ? stringedSource.get(i).split("\\.")[0]
-                                        : stringedSource.get(i));
-                    }
-                    if (i < _src.size() - 2) {
-                        reconstructed.append(_type.identifier());
-                    }
-                }
-            } else {
-                for (int i = 0; i < _src.size(); ++i) {
-                    reconstructed.append(stringedSource.get(i));
-                    if (i < _src.size() - ((_type.identifier().equals(",")) ? 2 : 1)) {
-                        reconstructed.append(" ").append(
-                                (_type.identifier().equals(">")) ? "-" : ""
-                        ).append(
-                                _type.identifier()
-                        ).append(
-                                (_type.identifier().equals("<")) ? "-" : ""
-                        ).append(" ");
-                    }
-                }
-            }
-
-        }
-        return "(" + reconstructed + ")";
+        String asStr = _type.getStringifier().asString(stringedSource);
+        return asStr;
     }
 
     @Override

@@ -38,6 +38,17 @@ public class ReLU extends OperationType
                 true,
                 true
         );
+
+        setStringifier(
+                children -> {
+                    String expression = String.join( ", ", children );
+                    if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
+                        return "relu" + expression;
+                    }
+                    return "relu" + "(" + expression + ")";
+                }
+        );
+
         Activation typeImplementation = new Activation(
                 call -> true,
                 ( call, goDeeperWith ) -> null,

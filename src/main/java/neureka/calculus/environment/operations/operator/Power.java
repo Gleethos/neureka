@@ -40,6 +40,19 @@ public class Power extends OperationType
     {
         super("power", "^", -1, true, false, false, false, false);
 
+        setStringifier(
+                children -> {
+                    StringBuilder reconstructed = new StringBuilder();
+                    for ( int i = 0; i < children.size(); ++i ) {
+                        reconstructed.append( children.get(i) );
+                        if ( i < children.size() - 1 ) {
+                            reconstructed.append(" ^ ");
+                        }
+                    }
+                    return "(" + reconstructed + ")";
+                }
+        );
+
         //_____________________
         // DEFAULT OPERATION :
 
@@ -390,8 +403,20 @@ public class Power extends OperationType
                     }
                     return call;
                 }
-        )
+            )
+        ).setStringifier(
+                children -> {
+                    StringBuilder reconstructed = new StringBuilder();
+                    for ( int i = 0; i < children.size(); ++i ) {
+                        reconstructed.append( children.get(i) );
+                        if ( i < children.size() - 1 ) {
+                            reconstructed.append(" p ");
+                        }
+                    }
+                    return "(" + reconstructed + ")";
+                }
         );
+
         new OperationType("", ((char) 171) + "p", 3, true, false, true, false, false);
         new OperationType("", "p" + ((char) 187), 3, true, false, true, false, false);
 

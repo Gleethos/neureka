@@ -23,6 +23,16 @@ public class Summation extends OperationType {
                 true
         );
 
+        setStringifier(
+                children -> {
+                    String expression = String.join( ", ", children );
+                    if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
+                        return "sum" + expression;
+                    }
+                    return "sum" + "(" + expression + ")";
+                }
+        );
+
         OperationTypeImplementation.RecursiveJunctionAgent rja = (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();

@@ -5,6 +5,7 @@ import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.factory.assembly.FunctionBuilder;
+import neureka.calculus.factory.components.FunctionConstant;
 
 public class Reshape extends OperationType
 {
@@ -18,6 +19,37 @@ public class Reshape extends OperationType
                 false,
                 false,
                 false
+        );
+
+        setStringifier(
+            children -> {
+                java.util.function.Function<String, Boolean> isConstantNumeric = (s)->{
+                    try {
+                        Double.parseDouble(s);
+                        return true;
+                    } catch (Exception e) { return false; }
+                };
+                StringBuilder reconstructed = new StringBuilder();
+                reconstructed.insert(0, "[");
+                for ( int i = 0; i < children.size(); ++i ) {
+                    if ( i == children.size() - 1 ) {
+                        reconstructed.append("]:(").append(
+                                ( isConstantNumeric.apply(children.get(i)) )
+                                        ? children.get(i).split("\\.")[0]
+                                        : children.get(i)
+                        ).append(")");
+                    } else {
+                        reconstructed.append(
+                                ( isConstantNumeric.apply(children.get(i)) )
+                                        ? children.get(i).split("\\.")[0]
+                                        : children.get(i));
+                    }
+                    if ( i < children.size() - 2 ) {
+                        reconstructed.append(",");
+                    }
+                }
+                return "(" + reconstructed + ")";
+            }
         );
 
     }

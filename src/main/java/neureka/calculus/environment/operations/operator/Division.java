@@ -41,6 +41,19 @@ public class Division extends OperationType
                 false
         );
 
+        setStringifier(
+                children -> {
+                    StringBuilder reconstructed = new StringBuilder();
+                    for ( int i = 0; i < children.size(); ++i ) {
+                        reconstructed.append( children.get(i) );
+                        if ( i < children.size() - 1 ) {
+                            reconstructed.append(" / ");
+                        }
+                    }
+                    return "(" + reconstructed + ")";
+                }
+        );
+
         OperationTypeImplementation.RecursiveJunctionAgent rja = (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();
@@ -355,14 +368,47 @@ public class Division extends OperationType
                     }
                     return call;
                 }
-        )
+            )
+        ).setStringifier(
+                children -> {
+                    StringBuilder reconstructed = new StringBuilder();
+                    for ( int i = 0; i < children.size(); ++i ) {
+                        reconstructed.append( children.get(i) );
+                        if ( i < children.size() - 1 ) {
+                            reconstructed.append(" d ");
+                        }
+                    }
+                    return "(" + reconstructed + ")";
+                }
         );
 
         new OperationType(
                 "", ((char) 171) + "d", 3, true, false, true, false, false
+        ).setStringifier(
+                children -> {
+                    StringBuilder reconstructed = new StringBuilder();
+                    for ( int i = 0; i < children.size(); ++i ) {
+                        reconstructed.append( children.get(i) );
+                        if ( i < children.size() - 1 ) {
+                            reconstructed.append(" "+((char) 171) + "d ");
+                        }
+                    }
+                    return "(" + reconstructed + ")";
+                }
         );
         new OperationType(
                 "", "d" + ((char) 187), 3, true, false, true, false, false
+        ).setStringifier(
+                children -> {
+                    StringBuilder reconstructed = new StringBuilder();
+                    for ( int i = 0; i < children.size(); ++i ) {
+                        reconstructed.append( children.get(i) );
+                        if ( i < children.size() - 1 ) {
+                            reconstructed.append(" d" + ((char) 187)+" ");
+                        }
+                    }
+                    return "(" + reconstructed + ")";
+                }
         );
 
     }

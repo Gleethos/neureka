@@ -21,6 +21,16 @@ public class Absolute extends OperationType {
     {
         super("absolute", "abs" , 1, false, false, false, true, true);
 
+        setStringifier(
+            children -> {
+                String expression = String.join( ", ", children );
+                if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
+                    return "abs" + expression;
+                }
+                return "abs" + "(" + expression + ")";
+            }
+        );
+
         Activation typeImplementation = new Activation(
                 call -> true,
                 ( call, goDeeperWith ) -> null,
