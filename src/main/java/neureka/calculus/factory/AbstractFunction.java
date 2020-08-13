@@ -76,15 +76,15 @@ public abstract class AbstractFunction extends BaseFunction {
 
         if ( !_type.isOperation() ) {
             String expression = String.join(", ", stringedSource);
-            if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
+            if ( expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')' ) {
                 return _type.identifier() + expression;
             }
             return _type.identifier() + "(" + expression + ")";
         } else {
-            if(_type.identifier().equals(",")) {
+            if ( _type.identifier().equals(",") ) {
                 reconstructed.insert(0, "[");
-                for (int i = 0; i < _src.size(); ++i) {
-                    if (i == _src.size() - 1) {
+                for ( int i = 0; i < _src.size(); ++i ) {
+                    if ( i == _src.size() - 1 ) {
                         reconstructed.append("]:(").append(
                                 (_src.get(i) instanceof FunctionConstant)
                                         ? stringedSource.get(i).split("\\.")[0]
@@ -92,24 +92,24 @@ public abstract class AbstractFunction extends BaseFunction {
                         ).append(")");
                     } else {
                         reconstructed.append(
-                                (_src.get(i) instanceof FunctionConstant)
+                                ( _src.get(i) instanceof FunctionConstant )
                                         ? stringedSource.get(i).split("\\.")[0]
                                         : stringedSource.get(i));
                     }
-                    if (i < _src.size() - 2) {
+                    if ( i < _src.size() - 2 ) {
                         reconstructed.append(_type.identifier());
                     }
                 }
             } else {
-                for (int i = 0; i < _src.size(); ++i) {
-                    reconstructed.append(stringedSource.get(i));
-                    if (i < _src.size() - ((_type.identifier().equals(",")) ? 2 : 1)) {
+                for ( int i = 0; i < _src.size(); ++i ) {
+                    reconstructed.append( stringedSource.get(i) );
+                    if ( i < _src.size() - ( (_type.identifier().equals(",") ) ? 2 : 1) ) {
                         reconstructed.append(" ").append(
-                                (_type.identifier().equals(">")) ? "-" : ""
+                                ( _type.identifier().equals(">") ) ? "-" : ""
                         ).append(
                                 _type.identifier()
                         ).append(
-                                (_type.identifier().equals("<")) ? "-" : ""
+                                ( _type.identifier().equals("<") ) ? "-" : ""
                         ).append(" ");
                     }
                 }
@@ -121,15 +121,15 @@ public abstract class AbstractFunction extends BaseFunction {
 
     @Override
     public boolean dependsOn(int index) {
-        for (Function f : _src) if (f.dependsOn(index)) return true;
+        for ( Function f : _src ) if ( f.dependsOn(index) ) return true;
         return false;
     }
 
     //------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public ADAgent getADAgent(Tsr[] inputs, int i, boolean forward){
-        return _type.getADAgentOf(this, inputs, i, forward);
+    public ADAgent getADAgent( Tsr[] inputs, int i, boolean forward ) {
+        return _type.getADAgentOf( this, inputs, i, forward );
     }
 
     /**
@@ -151,11 +151,11 @@ public abstract class AbstractFunction extends BaseFunction {
             /* Autograd-Graph will be generated below for the new GraphNode: */
             /* only flat functions can be executed directly*/
             if ( d < 0 && _doAD )
-                return new GraphNode(this, call, ()-> __flat_execution( call, j )).getPayload();
+                return new GraphNode( this, call, ()-> __flat_execution( call, j ) ).getPayload();
             else
                 return __flat_execution( call, j );
 
-        } else return _apply(device, d, () -> __deep_execution( call, j ));
+        } else return _apply( device, d, () -> __deep_execution( call, j ) );
     }
 
     private Tsr __flat_execution( ExecutionCall call, int j )
@@ -180,25 +180,25 @@ public abstract class AbstractFunction extends BaseFunction {
                 _type.id() == OperationType.instance("<<x").id() ||
                         _type.id() == OperationType.instance("x>>").id()
         ) {
-            if (d < 0) {
+            if ( d < 0 ) {
                 //inputs = _src_acti(inputs, j, -1, 0);
-                Tsr[] tsrs = _src_acti(inputs, j, -1, 0);
+                Tsr[] tsrs = _src_acti( inputs, j, -1, 0 );
                 for ( Tsr t : tsrs ) t.setIsVirtual(false);
                 myDevice.execute( new ExecutionCall( myDevice, tsrs, 0, _type ) );
-                if (_type.id() == OperationType.instance("x>>").id()) return tsrs[2];
+                if ( _type.id() == OperationType.instance("x>>").id() ) return tsrs[2];
                 else return tsrs[0];
             }
             return null;
-        } else if (_type.identifier().equals(",")) {
+        } else if ( _type.identifier().equals(",") ) {
             inputs = _src_acti(inputs, j, -1, 0);
             int[] newForm = new int[_src.size() - 1];
-            for (int i = 0; i < _src.size() - 1; i++) {
+            for ( int i = 0; i < _src.size() - 1; i++ ) {
                 newForm[i] = (int) Tsr.IO.getFrom(inputs[i], 0);//_src.get(i).call(inputs)
             }
-            if (d >= 0) {//reverse reshape:
+            if ( d >= 0 ) {//reverse reshape:
                 int reverseLength = 0;
-                for (int e : newForm) {
-                    if (e>=0) reverseLength++;
+                for ( int e : newForm ) {
+                    if ( e >= 0 ) reverseLength++;
                 }
                 int[] reversed = new int[reverseLength];
                 int reshape_i = 0;
@@ -213,7 +213,7 @@ public abstract class AbstractFunction extends BaseFunction {
                 newForm = reversed;
             }
             Tsr t = inputs[inputs.length - 1];
-            return Tsr.Exec.reshaped(t, newForm, true);
+            return Tsr.Exec.reshaped( t, newForm, true );
         } else {
             Tsr[] tsrs = inputs;
             return _apply(myDevice, d, () -> __deep_execution( new ExecutionCall( myDevice, tsrs, d, call.getType() ), j ));
@@ -249,7 +249,7 @@ public abstract class AbstractFunction extends BaseFunction {
             //first derive source!
             //like so:
             if ( _type.isIndexer() ) {
-                for (int i = 1; i < tsrs.length; i++) {
+                for ( int i = 1; i < tsrs.length; i++ ) {
                     tsrs[i] = _src.get(0).derive(inputs, d, i - 1);
                 }
             } else {
@@ -297,14 +297,14 @@ public abstract class AbstractFunction extends BaseFunction {
             } // done!
             return tsrs[0];
         } else {
-            if (_type.isIndexer()) {
-                for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).call(inputs, i - 1);
+            if ( _type.isIndexer() ) {
+                for ( int i = 1; i < tsrs.length; i++ ) tsrs[i] = _src.get(0).call(inputs, i - 1);
             } else {
-                tsrs = _src_acti(inputs, j, d, 1);
+                tsrs = _src_acti( inputs, j, d, 1 );
             }
             device.execute( new ExecutionCall( device, tsrs, d, _type ) );
         }
-        return (tsrs[0] == null) ? tsrs[1] : tsrs[0];
+        return ( tsrs[0] == null ) ? tsrs[1] : tsrs[0];
     }
 
     /**
@@ -324,7 +324,7 @@ public abstract class AbstractFunction extends BaseFunction {
             int index = -1;
             for ( int i=0; i < tsrs.length; i++ ) {
                 double value = ( tsrs[i] == null ) ? 0.0 : tsrs[i].value64(0);
-                if ( value == 1.0) {
+                if ( value == 1.0 ) {
                     if ( index >= 0 ) return -1;
                     index = i;
                 } else if ( value != 0.0 ) return -1;
@@ -334,13 +334,13 @@ public abstract class AbstractFunction extends BaseFunction {
         return -1;
     }
 
-    private Tsr _apply(Device device, int d, Supplier<Tsr> actor) {
+    private Tsr _apply( Device device, int d, Supplier<Tsr> actor ) {
         Tsr out = null;
-        if (d >= 0) {
-            for (int i = 0; i < _src.size(); i++) {//constants need to be figured out!
-                int di = (_src.get(i).dependsOn(d)) ? i : -1;
-                if (di >= 0) {
-                    if (out == null) out = actor.get();
+        if ( d >= 0 ) {
+            for ( int i = 0; i < _src.size(); i++ ) {//constants need to be figured out!
+                int di = ( _src.get(i).dependsOn(d) ) ? i : -1;
+                if ( di >= 0 ) {
+                    if ( out == null ) out = actor.get();
                     else device.execute(
                             new ExecutionCall( device, new Tsr[]{null, actor.get(), out}, -1, OperationType.instance("+") )
                     );
@@ -350,23 +350,23 @@ public abstract class AbstractFunction extends BaseFunction {
         return out;
     }
 
-    private Tsr[] _src_acti(Tsr[] inputs, int j, int d, int offset) {
+    private Tsr[] _src_acti( Tsr[] inputs, int j, int d, int offset ) {
         int[] tempShape = null;
         Tsr[] tsrs = new Tsr[ _src.size() + offset ];
-        for (int i = offset; i < tsrs.length; i++) {//constants need to be figured out!
-            if (!(_src.get(i - offset) instanceof FunctionConstant)) {
-                if (d < 0) {
-                    tsrs[i] = (j >= 0) ? _src.get(i - offset).call(inputs, j) : _src.get(i - offset).call(inputs);
+        for ( int i = offset; i < tsrs.length; i++ ) {//constants need to be figured out!
+            if ( !(_src.get(i - offset) instanceof FunctionConstant) ) {
+                if ( d < 0 ) {
+                    tsrs[i] = ( j >= 0 ) ? _src.get(i - offset).call(inputs, j) : _src.get(i - offset).call(inputs);
                 } else {
-                    tsrs[i] = (j >= 0) ? _src.get(i - offset).derive(inputs, d, j) : _src.get(i - offset).derive(inputs, d);
+                    tsrs[i] = ( j >= 0 ) ? _src.get(i - offset).derive(inputs, d, j) : _src.get(i - offset).derive(inputs, d);
                 }
-                tempShape = (tempShape == null) ? tsrs[i].getNDConf().shape() : tempShape;
+                tempShape = ( tempShape == null ) ? tsrs[i].getNDConf().shape() : tempShape;
             }
         }
-        for (int i = offset; i < tsrs.length; i++) {
-            if (tsrs[i] == null) {
+        for ( int i = offset; i < tsrs.length; i++ ) {
+            if ( tsrs[i] == null ) {
                 tsrs[i] =
-                        (j < 0)
+                        ( j < 0 )
                                 ? new Tsr(tempShape, ((FunctionConstant) _src.get(i - offset)).value())
                                 : new Tsr(tempShape, _src.get(i - offset).call(new double[]{}, j));
             }
@@ -374,27 +374,27 @@ public abstract class AbstractFunction extends BaseFunction {
         return tsrs;
     }
 
-    private Device _device(Tsr[] inputs) {
+    private Device _device( Tsr[] inputs ) {
         Device device = inputs[0].find(Device.class);
         boolean onSameDevice = _shareGuestDevice(inputs);
         boolean doAccel = (!_type.identifier().equals(",") && onSameDevice);
-        return (doAccel && device != null) ? device : inputs[0].device();
+        return ( doAccel && device != null ) ? device : inputs[0].device();
     }
 
-    private static boolean _shareGuestDevice(Tsr[] tsrs) {
+    private static boolean _shareGuestDevice( Tsr[] tsrs ) {
         boolean onSameGuestDevice = true;
         Device device = null;
-        for (Tsr tsr : tsrs) {
-            device = (tsr.isOutsourced()) ? tsr.find(Device.class) : device;
+        for ( Tsr tsr : tsrs ) {
+            device = ( tsr.isOutsourced() ) ? tsr.find( Device.class ) : device;
         }
-        if (device != null) {
-            for (Tsr tsr : tsrs) {
+        if ( device != null ) {
+            for ( Tsr tsr : tsrs ) {
                 onSameGuestDevice = (!tsr.isVirtual() && device == tsr.find(Device.class)) && onSameGuestDevice;
             }
         } else {
             onSameGuestDevice = false;
         }
-        if (device != null && tsrs.length == 2 && tsrs[1].size() == 1) {
+        if ( device != null && tsrs.length == 2 && tsrs[1].size() == 1 ) {
             onSameGuestDevice = true;
         }
         return onSameGuestDevice;
@@ -403,7 +403,7 @@ public abstract class AbstractFunction extends BaseFunction {
     //------------------------------------------------------------------------------------------------------------------
 
     protected double _scalar_activation(double input, boolean derive) {
-        switch (_type.identifier()) {
+        switch ( _type.identifier() ) {
             case "relu":
                 return Exec.reLu(input, derive);
             case "sig":
