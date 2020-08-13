@@ -139,8 +139,24 @@ public class Power extends OperationType
 
         Operation operation = new Operation(
                 call -> true,
-                rja
-        );
+                rja,
+                call -> {
+                    Tsr[] tsrs = call.getTensors();
+                    Device device = call.getDevice();
+                    if ( tsrs[0] == null ) // Creating a new tensor:
+                    {
+                        int[] shp = tsrs[1].getNDConf().shape();
+                        //int[] shp = (type.identifier().endsWith("x"))
+                        //        ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
+                        //        : tsrs[1].getNDConf().shape();
+                        Tsr output = new Tsr( shp, 0.0 );
+                        output.setIsVirtual(false);
+                        device.add(output);
+                        tsrs[0] = output;
+                    }
+                    return call;
+                }
+        )    ;
 
         setImplementation(Operation.class,
                 operation.setExecutor(
@@ -194,8 +210,24 @@ public class Power extends OperationType
 
         Broadcast broadcast = new Broadcast(
                 call -> true,
-                rja
-        );
+                rja,
+                call -> {
+                    Tsr[] tsrs = call.getTensors();
+                    Device device = call.getDevice();
+                    if ( tsrs[0] == null ) // Creating a new tensor:
+                    {
+                        int[] shp = tsrs[1].getNDConf().shape();
+                        //int[] shp = (type.identifier().endsWith("x"))
+                        //        ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
+                        //        : tsrs[1].getNDConf().shape();
+                        Tsr output = new Tsr( shp, 0.0 );
+                        output.setIsVirtual(false);
+                        device.add(output);
+                        tsrs[0] = output;
+                    }
+                    return call;
+                }
+        )    ;
 
         setImplementation(
                 Broadcast.class,
@@ -262,8 +294,24 @@ public class Power extends OperationType
 
         Scalarization scalarization = new Scalarization(
                 call -> true,
-                rja
-        );
+                rja,
+                call -> {
+                    Tsr[] tsrs = call.getTensors();
+                    Device device = call.getDevice();
+                    if ( tsrs[0] == null ) // Creating a new tensor:
+                    {
+                        int[] shp = tsrs[1].getNDConf().shape();
+                        //int[] shp = (type.identifier().endsWith("x"))
+                        //        ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
+                        //        : tsrs[1].getNDConf().shape();
+                        Tsr output = new Tsr( shp, 0.0 );
+                        output.setIsVirtual(false);
+                        device.add(output);
+                        tsrs[0] = output;
+                    }
+                    return call;
+                }
+        )    ;
 
         setImplementation(
                 Scalarization.class,
@@ -328,7 +376,20 @@ public class Power extends OperationType
         ).setImplementation(Convolution.class,
                 new Convolution(
                 call -> true,
-                ( call, goDeeperWith ) -> null
+                ( call, goDeeperWith ) -> null,
+                call -> {
+                    Tsr[] tsrs = call.getTensors();
+                    Device device = call.getDevice();
+                    if ( tsrs[0] == null ) // Creating a new tensor:
+                    {
+                        int[] shp = tsrs[1].getNDConf().shape();
+                        Tsr output = new Tsr( shp, 0.0 );
+                        output.setIsVirtual(false);
+                        device.add(output);
+                        tsrs[0] = output;
+                    }
+                    return call;
+                }
         )
         );
         new OperationType("", ((char) 171) + "p", 3, true, false, true, false, false);

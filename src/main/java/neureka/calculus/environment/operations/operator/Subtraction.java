@@ -62,8 +62,24 @@ public class Subtraction extends OperationType
 
         Operation operation = new Operation(
                 call -> true,
-                rja
-        );
+                rja,
+                call -> {
+                    Tsr[] tsrs = call.getTensors();
+                    Device device = call.getDevice();
+                    if ( tsrs[0] == null ) // Creating a new tensor:
+                    {
+                        int[] shp = tsrs[1].getNDConf().shape();
+                        //int[] shp = (type.identifier().endsWith("x"))
+                        //        ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
+                        //        : tsrs[1].getNDConf().shape();
+                        Tsr output = new Tsr( shp, 0.0 );
+                        output.setIsVirtual(false);
+                        device.add(output);
+                        tsrs[0] = output;
+                    }
+                    return call;
+                }
+        )    ;
 
         setImplementation(
                 Operation.class,
@@ -127,7 +143,23 @@ public class Subtraction extends OperationType
 
         Scalarization scalarization = new Scalarization(
                 call -> true,
-                rja
+                rja,
+                call -> {
+                    Tsr[] tsrs = call.getTensors();
+                    Device device = call.getDevice();
+                    if ( tsrs[0] == null ) // Creating a new tensor:
+                    {
+                        int[] shp = tsrs[1].getNDConf().shape();
+                        //int[] shp = (type.identifier().endsWith("x"))
+                        //        ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
+                        //        : tsrs[1].getNDConf().shape();
+                        Tsr output = new Tsr( shp, 0.0 );
+                        output.setIsVirtual(false);
+                        device.add(output);
+                        tsrs[0] = output;
+                    }
+                    return call;
+                }
         );
 
         setImplementation(
@@ -185,8 +217,24 @@ public class Subtraction extends OperationType
                 Broadcast.class,
                 new Broadcast(
                 call -> true,
-                rja
-        ) // add _creator
+                rja,
+                call -> {
+                    Tsr[] tsrs = call.getTensors();
+                    Device device = call.getDevice();
+                    if ( tsrs[0] == null ) // Creating a new tensor:
+                    {
+                        int[] shp = tsrs[1].getNDConf().shape();
+                        //int[] shp = (type.identifier().endsWith("x"))
+                        //        ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
+                        //        : tsrs[1].getNDConf().shape();
+                        Tsr output = new Tsr( shp, 0.0 );
+                        output.setIsVirtual(false);
+                        device.add(output);
+                        tsrs[0] = output;
+                    }
+                    return call;
+                }
+        )     // add _creator
         );
 
         //______________________

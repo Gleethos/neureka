@@ -26,7 +26,12 @@ public class CopyLeft extends OperationType {
 
         Activation activation = new Activation(
                 call -> true,
-                ( call, goDeeperWith ) -> null
+                ( call, goDeeperWith ) -> null,
+                call -> {
+                    Tsr[] tsrs = call.getTensors();
+                    int offset = ( tsrs[0] == null ) ? 1 : 0;
+                    return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
+                }
         );
 
         setImplementation(Activation.class,
@@ -55,7 +60,7 @@ public class CopyLeft extends OperationType {
                                     int offset = ( call.getTensor(0) == null ) ? 1 : 0;
                                     ExecutionCall<OpenCLDevice> newCall = new ExecutionCall<>(
                                             call.getDevice(),
-                                            new Tsr[]{call.getTensor(offset), call.getTensor(1+offset)},
+                                            new Tsr[]{ call.getTensor(offset), call.getTensor(1+offset) },
                                             -1,
                                             call.getType()
                                     );

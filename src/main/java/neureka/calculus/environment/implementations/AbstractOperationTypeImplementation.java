@@ -34,14 +34,17 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
 
     private final ADAnalyzer _analyzer;
     private final RecursiveJunctionAgent _RJAgent;
+    private final DrainInstantiation _instantiation;
 
     public AbstractOperationTypeImplementation(
             ADAnalyzer analyzer,
-            RecursiveJunctionAgent RJAgent
+            RecursiveJunctionAgent RJAgent,
+            DrainInstantiation instantiation
     ) {
         _executions = new HashMap<>();
         _analyzer = analyzer;
         _RJAgent = RJAgent;
+        _instantiation = instantiation;
     }
 
     @Override
@@ -52,6 +55,11 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
     @Override
     public RecursiveJunctionAgent getRJAgent(){
         return _RJAgent;
+    }
+
+    @Override
+    public DrainInstantiation getDrainInstantiation(){
+        return _instantiation;
     }
 
     @Override

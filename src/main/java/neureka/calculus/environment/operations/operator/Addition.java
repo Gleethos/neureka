@@ -21,7 +21,20 @@ public class Addition extends OperationType {
 
     private static final Broadcast _broadcast = new Broadcast(
                 call -> true,
-                ( call, goDeeperWith ) -> null
+                ( call, goDeeperWith ) -> null,
+                call -> {
+                    Tsr[] tsrs = call.getTensors();
+                    Device device = call.getDevice();
+                    if ( tsrs[0] == null ) // Creating a new tensor:
+                    {
+                        int[] shp = tsrs[1].getNDConf().shape();
+                        Tsr output = new Tsr( shp, 0.0 );
+                        output.setIsVirtual(false);
+                        device.add(output);
+                        tsrs[0] = output;
+                    }
+                    return call;
+                }
         );
 
     public Addition()
@@ -80,8 +93,24 @@ public class Addition extends OperationType {
 
         Operation operation = new Operation(
                 call -> true,
-                rja
-        );
+                rja,
+                call -> {
+                    Tsr[] tsrs = call.getTensors();
+                    Device device = call.getDevice();
+                    if ( tsrs[0] == null ) // Creating a new tensor:
+                    {
+                        int[] shp = tsrs[1].getNDConf().shape();
+                        //int[] shp = (type.identifier().endsWith("x"))
+                        //        ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
+                        //        : tsrs[1].getNDConf().shape();
+                        Tsr output = new Tsr( shp, 0.0 );
+                        output.setIsVirtual(false);
+                        device.add(output);
+                        tsrs[0] = output;
+                    }
+                    return call;
+                }
+        )    ;
 
         setImplementation(Operation.class,
                 operation
@@ -176,8 +205,24 @@ public class Addition extends OperationType {
 
         Scalarization scalarization = new Scalarization(
                 call -> true,
-                rja
-        );
+                rja,
+                call -> {
+                    Tsr[] tsrs = call.getTensors();
+                    Device device = call.getDevice();
+                    if ( tsrs[0] == null ) // Creating a new tensor:
+                    {
+                        int[] shp = tsrs[1].getNDConf().shape();
+                        //int[] shp = (type.identifier().endsWith("x"))
+                        //        ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
+                        //        : tsrs[1].getNDConf().shape();
+                        Tsr output = new Tsr( shp, 0.0 );
+                        output.setIsVirtual(false);
+                        device.add(output);
+                        tsrs[0] = output;
+                    }
+                    return call;
+                }
+        )    ;
 
         ScalarOperatorCreator<PrimaryNDXConsumer> scalarCreator =
                 (inputs, value, d) -> {
@@ -250,7 +295,20 @@ public class Addition extends OperationType {
         ).setImplementation(Convolution.class,
                 new Convolution(
                 call -> true,
-                ( call, goDeeperWith ) -> null
+                ( call, goDeeperWith ) -> null,
+                call -> {
+                    Tsr[] tsrs = call.getTensors();
+                    Device device = call.getDevice();
+                    if ( tsrs[0] == null ) // Creating a new tensor:
+                    {
+                        int[] shp = tsrs[1].getNDConf().shape();
+                        Tsr output = new Tsr( shp, 0.0 );
+                        output.setIsVirtual(false);
+                        device.add(output);
+                        tsrs[0] = output;
+                    }
+                    return call;
+                }
         )
         );
 

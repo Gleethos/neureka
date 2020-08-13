@@ -10,9 +10,10 @@ public class Operation extends AbstractOperationTypeImplementation< Operation >
 {
     public Operation(
             ADAnalyzer analyzer,
-            RecursiveJunctionAgent RJAgent
+            RecursiveJunctionAgent RJAgent,
+            DrainInstantiation instantiation
     ) {  super(
-            analyzer, RJAgent
+            analyzer, RJAgent, instantiation
     ); }
 
     @Override

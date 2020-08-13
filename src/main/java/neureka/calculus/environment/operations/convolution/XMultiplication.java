@@ -81,8 +81,21 @@ public class XMultiplication extends OperationType
 
         Convolution convolution = new Convolution(
                 call -> true,
-                rja
-        );
+                rja,
+                call -> {
+                    Tsr[] tsrs = call.getTensors();
+                    Device device = call.getDevice();
+                    if ( tsrs[0] == null ) // Creating a new tensor:
+                    {
+                        int[] shp = Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape());
+                        Tsr output = new Tsr( shp, 0.0 );
+                        output.setIsVirtual(false);
+                        device.add(output);
+                        tsrs[0] = output;
+                    }
+                    return call;
+                }
+        )    ;
 
         setImplementation(
                 Convolution.class,
@@ -131,6 +144,7 @@ public class XMultiplication extends OperationType
         new OperationType(
                 "inv_convolve_mul_left", ((char) 171) + "x", 3, true, false, true, false, false
         ).setImplementation(Convolution.class, convolution);
+
         new OperationType(
                 "inv_convolve_mul_right", "x" + ((char) 187), 3, true, false, true, false, false
         ).setImplementation(Convolution.class, convolution);

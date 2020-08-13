@@ -28,9 +28,15 @@ public interface OperationTypeImplementation<FinalType>
         Tsr handle( ExecutionCall call, Function<ExecutionCall, Tsr> goDeeperWith );
     }
 
+    interface DrainInstantiation {
+        ExecutionCall handle( ExecutionCall call );
+    }
+
     ADAnalyzer getADAnalyzer();
 
     RecursiveJunctionAgent getRJAgent();
+
+    DrainInstantiation getDrainInstantiation();
 
     <D extends Device, E extends ExecutorFor<D>> FinalType setExecutor(Class<E> deviceClass, E execution);
 

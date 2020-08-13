@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
@@ -142,38 +143,37 @@ public abstract class AbstractFunction extends BaseFunction {
     protected Tsr _tensor_activation( Tsr[] inputs, int j, int d )
     {
         Device device = _device( inputs );
+        ExecutionCall call = new ExecutionCall( device, inputs, d, _type );
+
         /* The code below deals with deep functions (non flat):  */
         if ( _isFlat ) {
             /* The following code is reached in flat functions only:  */
             /* Autograd-Graph will be generated below for the new GraphNode: */
             /* only flat functions can be executed directly*/
             if ( d < 0 && _doAD )
-                return new GraphNode(this, inputs, ()-> __flat_execution(inputs, j, d, device)).getPayload();
+                return new GraphNode(this, inputs, ()-> __flat_execution( call, j )).getPayload();
             else
-                return __flat_execution( inputs, j, d, device );
+                return __flat_execution( call, j );
 
-        } else return _apply(device, d, () -> __deep_execution(inputs, d, j, device));
+        } else return _apply(device, d, () -> __deep_execution( call, j ));
     }
 
-    private Tsr __flat_execution( Tsr[] inputs, int j, int d, Device myDevice )
+    private Tsr __flat_execution( ExecutionCall call, int j )
     {
-        if (_type.identifier().equals("x"))
+        Device myDevice = call.getDevice();
+        int d = call.getDerivativeIndex();
+        Tsr[] inputs = call.getTensors();
+
+        if (call.getType().identifier().equals("x"))
         {
             //TODO: Move ALL of this into the operation types!!!!!
-            //Tsr[] tsrs = inputs;//new Tsr[]{null, inputs[0], inputs[1]};// _src_acti(inputs, j, -1, 1);
-            //tsrs[0] = (d<0)?new Tsr(Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())):null;
-            //for (Tsr t : tsrs) if(t!=null) t.setIsVirtual(false);
-            //myDevice.execute(tsrs, _type, d);
-            //return tsrs[0];
-            //inputs = tsrs;
-
-            Tsr[] tsrs = new Tsr[]{ null, inputs[0], inputs[1] };
+            Tsr[] tsrs = new Tsr[]{ null, inputs[0], inputs[1] };// _src_acti(inputs, j, -1, 1);
             tsrs[0] = ( d < 0 )
                     ? new Tsr(Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape()))
                     : null;
 
             for ( Tsr t : tsrs ) if( t != null ) t.setIsVirtual(false);
-            myDevice.execute(tsrs, _type, d);
+            myDevice.execute( new ExecutionCall( myDevice, tsrs, d, _type ) );
             return tsrs[0];
 
         } else if (
@@ -183,8 +183,8 @@ public abstract class AbstractFunction extends BaseFunction {
             if (d < 0) {
                 //inputs = _src_acti(inputs, j, -1, 0);
                 Tsr[] tsrs = _src_acti(inputs, j, -1, 0);
-                for (Tsr t : tsrs) t.setIsVirtual(false);
-                myDevice.execute(tsrs, _type, 0);
+                for ( Tsr t : tsrs ) t.setIsVirtual(false);
+                myDevice.execute( new ExecutionCall( myDevice, tsrs, 0, _type ) );
                 if (_type.id() == OperationType.instance("x>>").id()) return tsrs[2];
                 else return tsrs[0];
             }
@@ -216,12 +216,16 @@ public abstract class AbstractFunction extends BaseFunction {
             return Tsr.Exec.reshaped(t, newForm, true);
         } else {
             Tsr[] tsrs = inputs;
-            return _apply(myDevice, d, () -> __deep_execution(tsrs, d, j, myDevice));
+            return _apply(myDevice, d, () -> __deep_execution( new ExecutionCall( myDevice, tsrs, d, call.getType() ), j ));
         }
     }
 
-    private Tsr __deep_execution(Tsr[] inputs, int d, int j, Device device )
+    private Tsr __deep_execution( ExecutionCall call, int j ) // Tsr[] inputs, int d, int j, Device device
     {
+        Tsr[] inputs = call.getTensors();
+        int d = call.getDerivativeIndex();
+        Device device = call.getDevice();
+
         if ( !_isFlat && j < 0 && d < 0 ) {
             if (_type.isOperation()) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
                 StringBuilder operation = new StringBuilder();
@@ -260,7 +264,7 @@ public abstract class AbstractFunction extends BaseFunction {
                 if ( index >= 0 ) inner = tsrs[index];
                 else {
                     // Optimization above did not apply, so we accumulate all the derivatives!
-                    device.execute(tsrs, OperationType.instance("+"), -1);
+                    device.execute( new ExecutionCall( device, tsrs, -1, OperationType.instance("+") ) );
                     inner = tsrs[0];//this is now the inner derivative!
                 }
             } else inner = tsrs[1];
@@ -284,12 +288,12 @@ public abstract class AbstractFunction extends BaseFunction {
                 }
             }
             //Use those tensors for the outer derivative:
-            device.execute(tsrs, _type, d);
+            device.execute( new ExecutionCall( device, tsrs, d, _type ) );
             //At the end:
             //multiply inner times outer: ( if inner is not 1 entirely... )
             if ( !( ( inner.isVirtual() || inner.size()==1 ) && inner.value64(0)==1.0) ) {
                 tsrs = new Tsr[]{null, inner, tsrs[0]};
-                device.execute(tsrs, OperationType.instance("*"), -1);
+                device.execute( new ExecutionCall( device, tsrs, -1, OperationType.instance("*") ) );
             } // done!
             return tsrs[0];
         } else {
@@ -298,7 +302,7 @@ public abstract class AbstractFunction extends BaseFunction {
             } else {
                 tsrs = _src_acti(inputs, j, d, 1);
             }
-            device.execute(tsrs, _type, d);
+            device.execute( new ExecutionCall( device, tsrs, d, _type ) );
         }
         return (tsrs[0] == null) ? tsrs[1] : tsrs[0];
     }
@@ -337,7 +341,9 @@ public abstract class AbstractFunction extends BaseFunction {
                 int di = (_src.get(i).dependsOn(d)) ? i : -1;
                 if (di >= 0) {
                     if (out == null) out = actor.get();
-                    else device.execute(new Tsr[]{null, actor.get(), out}, OperationType.instance("+"), -1);
+                    else device.execute(
+                            new ExecutionCall( device, new Tsr[]{null, actor.get(), out}, -1, OperationType.instance("+") )
+                    );
                 }
             }
         } else out = actor.get();

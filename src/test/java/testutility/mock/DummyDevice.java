@@ -2,6 +2,7 @@ package testutility.mock;
 
 import neureka.Tsr;
 import neureka.acceleration.Device;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 
 import java.util.Collection;
@@ -59,7 +60,7 @@ public class DummyDevice implements Device
     }
 
     @Override
-    public Device execute(Tsr[] tsrs, OperationType type, int d) {
+    public Device execute(ExecutionCall call) {
         return this;
     }
 

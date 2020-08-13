@@ -4,6 +4,7 @@ import neureka.Component;
 import neureka.Tsr;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.opencl.OpenCLPlatform;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 
 import java.util.Collection;
@@ -59,7 +60,8 @@ public interface Device extends Component<Tsr>
 
     Device swap( Tsr former, Tsr replacement );
 
-    Device execute( Tsr[] Tsrs, OperationType type, int d );
+    //Device execute( Tsr[] Tsrs, OperationType type, int d );
+    Device execute( ExecutionCall call );
 
     double[] value64f( Tsr tensor );
 

@@ -24,7 +24,12 @@ public class CopyRight extends OperationType {
 
         Activation activation = new Activation(
                 call -> true,
-                ( call, goDeeperWith ) -> null
+                ( call, goDeeperWith ) -> null,
+                call -> {
+                    Tsr[] tsrs = call.getTensors();
+                    int offset = ( tsrs[0] == null ) ? 1 : 0;
+                    return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[1+offset], tsrs[offset]}, -1, OperationType.instance("idy") );
+                }
         );
 
         setImplementation(Activation.class,

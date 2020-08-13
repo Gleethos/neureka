@@ -1,5 +1,7 @@
 package neureka.calculus.environment.operations.function;
 
+import neureka.Tsr;
+import neureka.acceleration.Device;
 import neureka.acceleration.host.execution.HostExecutor;
 import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.calculus.environment.OperationType;
@@ -34,7 +36,20 @@ public class Quadratic extends OperationType
 
         Activation typeImplementation = new Activation(
                 call -> true,
-                ( call, goDeeperWith ) -> null
+                ( call, goDeeperWith ) -> null,
+                call -> {
+                    Tsr[] tsrs = call.getTensors();
+                    Device device = call.getDevice();
+                    if ( tsrs[0] == null ) // Creating a new tensor:
+                    {
+                        int[] shp = tsrs[1].getNDConf().shape();
+                        Tsr output = new Tsr( shp, 0.0 );
+                        output.setIsVirtual(false);
+                        device.add(output);
+                        tsrs[0] = output;
+                    }
+                    return call;
+                }
         );
 
         setImplementation(
