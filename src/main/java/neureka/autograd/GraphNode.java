@@ -285,25 +285,25 @@ public class GraphNode implements Component<Tsr>
      * @param payloadSupplier Provides the payload of this node.
      */
     public GraphNode(Function function, Object context, Supplier<Tsr> payloadSupplier) {
-        if (function == null) throw new IllegalArgumentException("Function must not be null!");
-        if (context instanceof GraphLock) { // Note function always null in this case:
-            _construct(payloadSupplier.get(), function, null, (GraphLock) context);
+        if ( function == null ) throw new IllegalArgumentException("Function must not be null!");
+        if ( context instanceof GraphLock ) { // Note function always null in this case:
+            _construct( payloadSupplier.get(), function, null, (GraphLock) context );
         } else if ( context instanceof ExecutionCall ) {
             ExecutionCall call = (ExecutionCall) context;
             Tsr[] inputs = call.getTensors();
             /* Applying JITProp and gradients */
             Neureka.Settings.AutoGrad adSetting = Neureka.instance().settings().autograd();
-            if (adSetting.isApplyingGradientWhenTensorIsUsed()) {
-                for (Tsr t : inputs){
-                    if(!adSetting.isApplyingGradientWhenRequested() || t.gradientApplyRqd()) {
-                        t.forComponent(JITProp.class, JITProp::execute);
-                        t.remove(JITProp.class);
+            if ( adSetting.isApplyingGradientWhenTensorIsUsed() ) {
+                for ( Tsr t : inputs ) {
+                    if( !adSetting.isApplyingGradientWhenRequested() || t.gradientApplyRqd() ) {
+                        t.forComponent( JITProp.class, JITProp::execute );
+                        t.remove( JITProp.class );
                         t.applyGradient();
-                        t.setGradientApplyRqd(false);
+                        t.setGradientApplyRqd( false );
                     }
                 }
             }
-            _construct(payloadSupplier.get(), function, call, inputs[0].find(GraphNode.class).lock());
+            _construct( payloadSupplier.get(), function, call, inputs[0].find(GraphNode.class).lock() );
         }
     }
 
@@ -346,12 +346,12 @@ public class GraphNode implements Component<Tsr>
             /* Preparing for back propagation: */
             if ( this.usesForwardAD() ) {
                 for ( int i = 0; i < inputs.length; i++ ) {
-                    GraphNode src_node = inputs[ i ].find( GraphNode.class );
+                    GraphNode src_node = inputs[i].find( GraphNode.class );
                     if ( src_node.usesAD() ) {
                         if (
                                 src_node.size() == 0 && this.size() == 0
                                     ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
-                                !src_node.isLeave() && !src_node.function().type().allowsForward(inputs)
+                                !src_node.isLeave() && !src_node.function().type().allowsForward( inputs )
                         ) {
                             this.put( src_node, function.getADAgent( inputs, i, true ) );
                         } else {
@@ -367,10 +367,10 @@ public class GraphNode implements Component<Tsr>
                     }
                 }
             } else if ( this.usesReverseAD() ) {
-                for (int i = 0; i < inputs.length; i++) {
+                for ( int i = 0; i < inputs.length; i++ ) {
                     GraphNode src_node = inputs[i].find(GraphNode.class);
-                    if (src_node.usesAD() || inputs[i].rqsGradient()) {
-                        this.put(src_node, function.getADAgent(inputs, i, false));
+                    if ( src_node.usesAD() || inputs[i].rqsGradient() ) {
+                        this.put( src_node, function.getADAgent( inputs, i, false ) );
                     }
                 }
             }
@@ -388,21 +388,21 @@ public class GraphNode implements Component<Tsr>
      * @param function The function which produced the payload tensor of this GraphNode.
      * @return int The mode of this GraphNode!
      */
-    private static int _modeOf(Tsr[] inputs, Function function) {
+    private static int _modeOf( Tsr[] inputs, Function function ) {
         int result_mode = 0;
         int[] modes = new int[inputs.length];
         int input_mode = 0;
-        for (int Ii = 0; Ii < inputs.length; Ii++) {
-            GraphNode node = (GraphNode) inputs[Ii].find(GraphNode.class);
-            if (node == null) {
+        for ( int Ii = 0; Ii < inputs.length; Ii++ ) {
+            GraphNode node = inputs[Ii].find( GraphNode.class );
+            if ( node == null ) {
                 throw new IllegalStateException("Input tensors of a new graph-node must contain graph-nodes!");
             }
             modes[Ii] = (inputs[Ii].rqsGradient()) ? 1 : node.mode();
             input_mode += (modes[Ii] != 0) ? 1 : 0;
         }
-        if (input_mode == 1 && function.type().allowsForward(inputs)) {//Convolution and reshaping prohibit forward AutoDiff
-            for (int Ii = 0; Ii < inputs.length; Ii++) {
-                result_mode += (modes[Ii] == 0) ? 0 : (modes[Ii] < 0) ? 1 : modes[Ii] + 1;
+        if ( input_mode == 1 && function.type().allowsForward(inputs) ) {//Convolution and reshaping prohibit forward AutoDiff
+            for ( int Ii = 0; Ii < inputs.length; Ii++ ) {
+                result_mode += ( modes[Ii] == 0 ) ? 0 : ( modes[Ii] < 0 ) ? 1 : modes[Ii] + 1;
             }
         } else {
             result_mode = -input_mode;
@@ -420,10 +420,10 @@ public class GraphNode implements Component<Tsr>
      */
     private void _migrateAndOrApplyError(Tsr e, Consumer<Tsr> also){
         Tsr payload = getPayload();
-        if (payload == null) return; // Garbage collected!
-        if (payload.isOutsourced()) payload.device().add(e);
-        if (payload.rqsGradient()) payload.addToGradient(e);
-        if (also!=null) also.accept(payload);
+        if ( payload == null ) return; // Garbage collected!
+        if ( payload.isOutsourced() ) payload.device().add(e);
+        if ( payload.rqsGradient() ) payload.addToGradient(e);
+        if ( also!=null ) also.accept(payload);
     }
 
 
@@ -436,16 +436,16 @@ public class GraphNode implements Component<Tsr>
      *
      * @param error The current error which is created by multiplying it with current size and traversing it.
      */
-    public void backward(Tsr error) {
+    public void backward( Tsr error ) {
         Set<GraphNode> pendingNodes = new HashSet<>();
-        _backward(error, pendingNodes, false);// Entry-point to private recursive back-propagation!
-        if (Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp()) {
-            pendingNodes.forEach( n -> n._carryPendingBackPropToGradients(pendingNodes));
+        _backward( error, pendingNodes, false );// Entry-point to private recursive back-propagation!
+        if ( Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp() ) {
+            pendingNodes.forEach( n -> n._carryPendingBackPropToGradients( pendingNodes ) );
         } else {
             pendingNodes.forEach( n -> {
-                if (!n._pending_error.isFullyAccumulated())
+                if ( !n._pending_error.isFullyAccumulated() )
                     throw new IllegalStateException("Pending error has not received expected accumulation.");
-                n.backward(n._pending_error.getAccumulatedError());//Continue back-propagation recursively!
+                n.backward( n._pending_error.getAccumulatedError() );//Continue back-propagation recursively!
             });
         }
         _deleteDerivativesRecursively();//Cleanup after back-propagation!
@@ -465,18 +465,18 @@ public class GraphNode implements Component<Tsr>
      *
      * @param error A tensor which traverses the computation graph according to the rules of reverse mode AutoDiff.
      */
-    private void _backward(Tsr error, Set<GraphNode> pendingNodes, boolean allowPendingError)
+    private void _backward( Tsr error, Set<GraphNode> pendingNodes, boolean allowPendingError )
     {
-        _migrateAndOrApplyError(error, null);
-        if (this.usesAD()) {
+        _migrateAndOrApplyError( error, null );
+        if ( this.usesAD() ) {
             /* Checking JIT-Prop conditions and create Pending error if possible */
-            if (allowPendingError && !this.isLeave()) {//==> We are NOT inside a 'Just-In-Time-Backprop' process (new pending error can be created)
+            if ( allowPendingError && !this.isLeave() ) {//==> We are NOT inside a 'Just-In-Time-Backprop' process (new pending error can be created)
                 int ADPaths = _numberOfReverseModeADChildren();// Multiple children triggers creation of a pending error
-                if (ADPaths > 1) {
-                    if (_pending_error == null) {
-                        _pending_error = new PendingError(error, ADPaths - 1);
-                        pendingNodes.add(this);
-                    } else _pending_error.accumulate(error);
+                if ( ADPaths > 1 ) {
+                    if ( _pending_error == null ) {
+                        _pending_error = new PendingError( error, ADPaths - 1 );
+                        pendingNodes.add( this );
+                    } else _pending_error.accumulate( error );
                     return;
                     /* Backprop will be continued later! This node is being remembered in 'PendingError'
                        NOTE: Multiple AutoDiff paths leading to one node in history will be accumulated first! (performance)
@@ -485,8 +485,8 @@ public class GraphNode implements Component<Tsr>
                 }
             }
             // Using forward-AutoDiff size for reverse-mode AutoDiff!
-            if (this.usesForwardAD()) this.forEachForward(error, (t, d) -> t._backward(d, pendingNodes, true));
-            else if (this.usesReverseAD()) this.forEachBackward(error, (t, e) -> t._backward(e, pendingNodes, true));
+            if ( this.usesForwardAD() ) this.forEachForward( error, ( t, d ) -> t._backward(d, pendingNodes, true) );
+            else if ( this.usesReverseAD() ) this.forEachBackward( error, ( t, e ) -> t._backward(e, pendingNodes, true) );
             // Standard reverse mode-AutoDiff!
         }
     }
@@ -500,14 +500,14 @@ public class GraphNode implements Component<Tsr>
      *
      * @param pendingBackProp
      */
-    private void _carryPendingBackPropToGradients(Set<GraphNode> pendingBackProp) {
+    private void _carryPendingBackPropToGradients( Set<GraphNode> pendingBackProp ) {
         _relies_on_JIPProp = true; //:=> Shall be traversed at a later point in time...
-        this.forEachTarget( t -> t._carryPendingBackPropToGradients(pendingBackProp));
+        this.forEachTarget( t -> t._carryPendingBackPropToGradients( pendingBackProp ) );
         if ( this.isLeave() && getPayload().rqsGradient() ) {
-            JITProp jit = (JITProp) getPayload().find(JITProp.class);
-            if (jit == null) jit = new JITProp(pendingBackProp);
-            else jit.addPending(pendingBackProp);
-            getPayload().add(jit);
+            JITProp jit = getPayload().find(JITProp.class);
+            if ( jit == null ) jit = new JITProp( pendingBackProp );
+            else jit.addPending( pendingBackProp );
+            getPayload().add( jit );
         }
     }
 
@@ -525,21 +525,21 @@ public class GraphNode implements Component<Tsr>
      * @param error
      */
     public void backwardJIT(Tsr error) {
-        _backwardJIT(error, this);
+        _backwardJIT( error, this );
         _deleteDerivativesRecursively();// Cleanup after back-propagation!
     }
 
     private void _backwardJIT(Tsr error, GraphNode source) {
         _relies_on_JIPProp = false; // JITProp is currently being handled in this method. Afterwards it is not relying on it anymore!
-        _migrateAndOrApplyError(error, payload->{
-            JITProp jit = (JITProp) payload.find(JITProp.class);//Get JIT-Prop node.
-            if (jit != null) {
-                jit.noteFinished(source);//note pending errors and store them as 'done'
-                if (jit.isDone()) payload.remove(JITProp.class);
+        _migrateAndOrApplyError( error, payload -> {
+            JITProp jit = payload.find( JITProp.class );//Get JIT-Prop node.
+            if ( jit != null ) {
+                jit.noteFinished( source );//note pending errors and store them as 'done'
+                if ( jit.isDone() ) payload.remove( JITProp.class );
             }
         });
-        if (_pending_error != null && source != this) {
-            _pending_error.accumulate(error);
+        if ( _pending_error != null && source != this ) {
+            _pending_error.accumulate( error );
             /*
               A pending error has been found, so this means that this node
               is referenced by one or more JIT-Prop components.
@@ -550,10 +550,10 @@ public class GraphNode implements Component<Tsr>
              */
             return;// This node will continue its propagation via a JIT-Prop component later!
         }
-        if (this.usesAD()) {
+        if ( this.usesAD() ) {
             // Using forward-AutoDiff size for reverse-mode AutoDiff!
-            if (this.usesForwardAD()) this.forEachForward(error, (t, e) -> t._backwardJIT(e, source));
-            else if (this.usesReverseAD()) this.forEachBackward(error, (t, e) -> t._backwardJIT(e, source));
+            if ( this.usesForwardAD() ) this.forEachForward( error, ( t, e ) -> t._backwardJIT( e, source ) );
+            else if ( this.usesReverseAD() ) this.forEachBackward( error, ( t, e ) -> t._backwardJIT( e, source ) );
             // Standard reverse mode-AutoDiff!
         }
     }
@@ -568,9 +568,9 @@ public class GraphNode implements Component<Tsr>
      * deviate from its default state, namely: true!
      */
     private void _deleteDerivativesRecursively() {
-        if (!Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads()) {//<=- This flag is almost always false. (Used for testing)
-            if (!this.reliesOnJustInTimeProp()) _targets_derivatives = null;
-            if (!this.isGraphLeave()) forEachTarget(GraphNode::_deleteDerivativesRecursively);
+        if ( !Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads() ) {//<=- This flag is almost always false. (Used for testing)
+            if ( !this.reliesOnJustInTimeProp() ) _targets_derivatives = null;
+            if ( !this.isGraphLeave() ) forEachTarget( GraphNode::_deleteDerivativesRecursively );
         }
     }
 
@@ -581,11 +581,11 @@ public class GraphNode implements Component<Tsr>
      */
     private int _numberOfReverseModeADChildren() {
         int count = 0;
-        if (_children != null) {
-            for (WeakReference<GraphNode> weak : _children) {
-                if (weak != null && weak.get() != null) {
+        if ( _children != null ) {
+            for ( WeakReference<GraphNode> weak : _children ) {
+                if ( weak != null && weak.get() != null ) {
                     GraphNode child = weak.get(); //TODO: make test which asserts that Detached Function does not trigger this!
-                    if (child!=null && child.usesReverseAD()) count++;
+                    if ( child!=null && child.usesReverseAD() ) count++;
                 }
             }
         }
@@ -611,15 +611,15 @@ public class GraphNode implements Component<Tsr>
      * @param o      tensors are used during back-propagation in order to distribute an error throughout the graph.
      */
     public void put(GraphNode target, Object o) {
-        if (_targets_derivatives == null) _targets_derivatives = new TreeMap<>((a, b) -> a.hashCode() - b.hashCode());
+        if ( _targets_derivatives == null ) _targets_derivatives = new TreeMap<>((a, b) -> a.hashCode() - b.hashCode());
         ADAgent agent;
-        if (o instanceof Tsr) agent = new ADAgent((Tsr) o);
+        if ( o instanceof Tsr ) agent = new ADAgent( (Tsr) o );
         else agent = (ADAgent) o;
 
-        _targets_derivatives.put(target, agent);
+        _targets_derivatives.put( target, agent );
 
         Tsr d = agent.derivative();
-        if (d != null && d.has(GraphNode.class)) (d.find(GraphNode.class))._is_used_as_derivative = true;
+        if ( d != null && d.has(GraphNode.class) ) d.find(GraphNode.class)._is_used_as_derivative = true;
     }
 
     /**
@@ -628,9 +628,9 @@ public class GraphNode implements Component<Tsr>
      * @param target
      * @return Tsr
      */
-    public Object get(GraphNode target) {
-        if (_targets_derivatives == null) return null;
-        return _targets_derivatives.get(target);
+    public Object get( GraphNode target ) {
+        if ( _targets_derivatives == null ) return null;
+        return _targets_derivatives.get( target );
     }
 
     /**
@@ -640,9 +640,9 @@ public class GraphNode implements Component<Tsr>
      * @param target
      * @return boolean
      */
-    public boolean has(GraphNode target) {
-        if (_targets_derivatives == null) return false;
-        return _targets_derivatives.containsKey(target);
+    public boolean has( GraphNode target ) {
+        if ( _targets_derivatives == null ) return false;
+        return _targets_derivatives.containsKey( target );
     }
 
     /**
@@ -652,26 +652,26 @@ public class GraphNode implements Component<Tsr>
      * @return int
      */
     public int size() {
-        return (_targets_derivatives != null) ? this._targets_derivatives.size() : 0;
+        return ( _targets_derivatives != null ) ? this._targets_derivatives.size() : 0;
     }
 
     /**
      * @param action A lambda action providing derivative and target node as parameter.
      */
-    public void forEachBackward(Tsr error, BiConsumer<GraphNode, Tsr> action) {
-        if (_targets_derivatives == null) return;
-        _targets_derivatives.forEach((t, o) -> {
-            if (!o.isForward()) action.accept(t, o.backward(t, error));
+    public void forEachBackward( Tsr error, BiConsumer<GraphNode, Tsr> action ) {
+        if ( _targets_derivatives == null ) return;
+        _targets_derivatives.forEach( ( t, o ) -> {
+            if ( !o.isForward() ) action.accept( t, o.backward( t, error ) );
         });
     }
 
     /**
      * @param action
      */
-    public void forEachForward(Tsr error, BiConsumer<GraphNode, Tsr> action) {
-        if (_targets_derivatives == null) return;
-        _targets_derivatives.forEach((t, o) -> {
-            if (o.isForward()) action.accept(t, MUL.call(new Tsr[]{error, o.derivative()}));
+    public void forEachForward( Tsr error, BiConsumer<GraphNode, Tsr> action ) {
+        if ( _targets_derivatives == null ) return;
+        _targets_derivatives.forEach( ( t, o ) -> {
+            if ( o.isForward() ) action.accept( t, MUL.call( new Tsr[]{error, o.derivative()} ) );
         });
     }
 
@@ -679,25 +679,25 @@ public class GraphNode implements Component<Tsr>
      * @param action
      */
     public void forEachDerivative(BiConsumer<GraphNode, ADAgent> action) {
-        if (_targets_derivatives == null) return;
-        _targets_derivatives.forEach(action);
+        if ( _targets_derivatives == null ) return;
+        _targets_derivatives.forEach( action );
     }
 
     /**
      * @param action
      */
     public void forEachTarget(Consumer<GraphNode> action) {
-        if (_targets_derivatives == null) return;
-        _targets_derivatives.forEach((t, o) -> action.accept(t));
+        if ( _targets_derivatives == null ) return;
+        _targets_derivatives.forEach( ( t, o ) -> action.accept( t ) );
     }
 
     /**
      * @param derivative
      * @param action
      */
-    public void forEach(Tsr derivative, BiConsumer<GraphNode, Tsr> action) {
-        if (_targets_derivatives == null) return;
-        _targets_derivatives.forEach((t, o) -> action.accept(t, MUL.call(new Tsr[]{derivative, o.derivative()})));
+    public void forEach( Tsr derivative, BiConsumer<GraphNode, Tsr> action ) {
+        if ( _targets_derivatives == null ) return;
+        _targets_derivatives.forEach( ( t, o ) -> action.accept( t, MUL.call( new Tsr[]{derivative, o.derivative()} ) ) );
     }
 
 
@@ -705,7 +705,7 @@ public class GraphNode implements Component<Tsr>
      * @return Checks if this node stores target / AD-action (usually derivatives) pairs.
      */
     public boolean hasDerivatives() {
-        return (_targets_derivatives != null) && _targets_derivatives.size() > 0;
+        return ( _targets_derivatives != null ) && _targets_derivatives.size() > 0;
     }
 
     /**
@@ -713,10 +713,10 @@ public class GraphNode implements Component<Tsr>
      */
     public String type() {
         String type = "";
-        if (this.isLeave()) type += "LEAVE";
+        if ( this.isLeave() ) type += "LEAVE";
         else type += "BRANCH";
-        if (getPayload() == null) type = type + " DELETED";
-        else if (getPayload().rqsGradient()) type += " RQS GRADIENT";
+        if ( getPayload() == null ) type = type + " DELETED";
+        else if ( getPayload().rqsGradient() ) type += " RQS GRADIENT";
         return type;
     }
 
@@ -729,11 +729,11 @@ public class GraphNode implements Component<Tsr>
      * @param m Stands for 'mode' and is expected to contain certain letters which are used as settings.
      * @return Returns a String representation of this node.
      */
-    public String toString(String m) {
-        if (m.contains("g")) {
+    public String toString( String m ) {
+        if ( m.contains("g") ) {
             return "]> LOCK: " + lock() + " |> GRAPH:\n]\n" + _toString("]    0", true) + "\n]\n]|END|>";
         }
-        if (m.contains("v")) {
+        if ( m.contains("v") ) {
             return "(" + this.type() + "): [NID:" + Long.toHexString(nid()) + "]:<(  "
                     + "f" + ((_function == null) ? "(NONE)" : _function) + " => " + ((getPayload() == null) ? "NULL" : getPayload().toString("cs")) + "  )>";
         } else {
@@ -752,19 +752,19 @@ public class GraphNode implements Component<Tsr>
      * @param isLast Tells if this is the last parent node of this child.
      * @return A indented multi-line tree-like String representation of the computation graph.
      */
-    private String _toString(String deep, boolean isLast) {
+    private String _toString( String deep, boolean isLast ) {
         String delimiter = ((isLast) ? ("    ") : ("|   "));
         String arrow = ((char) 187) + "" + ((_parents != null) ? (String.valueOf(_parents.length)) : "0") + ((char) 187);
         StringBuilder asString = new StringBuilder(deep + arrow + toString("v"));
         deep = deep.substring(0, deep.length() - 1);
-        if (_parents != null) {
-            asString.append("\n").append(deep).append((isLast) ? "   \\\n" : "|  \\\n");
-            for (int i = 0; i < _parents.length; i++) {
+        if ( _parents != null ) {
+            asString.append("\n").append( deep ).append( (isLast) ? "   \\\n" : "|  \\\n" );
+            for ( int i = 0; i < _parents.length; i++ ) {
                 boolean last = (i == _parents.length - 1);
-                asString.append((i != 0) ? deep + delimiter + "|\n" : "");
-                asString.append(_parents[i]._toString(deep + delimiter + i, last)).append("\n");
+                asString.append( ( i != 0 ) ? deep + delimiter + "|\n" : "" );
+                asString.append( _parents[i]._toString(deep + delimiter + i, last) ).append("\n");
             }
-            asString = new StringBuilder(asString.substring(0, asString.length() - 1));
+            asString = new StringBuilder( asString.substring(0, asString.length() - 1) );
         }
         return asString.toString();
     }
