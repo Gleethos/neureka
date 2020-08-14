@@ -4,6 +4,7 @@ import neureka.Component;
 import neureka.Tsr;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.opencl.OpenCLPlatform;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 
 import java.util.Collection;
@@ -25,18 +26,18 @@ public interface Device extends Component&lt;Tsr&gt;
     static Device find(String name)
     {
         //TODO: Device plugin finding!
-<span class="fc" id="L28">        Device[] result = {HostCPU.instance()};</span>
-<span class="fc" id="L29">        String search = name.toLowerCase();</span>
-<span class="fc" id="L30">        OpenCLPlatform.PLATFORMS().forEach( p -&gt;</span>
-<span class="fc" id="L31">            p.getDevices().forEach( d -&gt;{</span>
-<span class="fc" id="L32">                String str = (d.name()+&quot; | &quot;+d.vendor()+&quot; | &quot;+d.type()).toLowerCase();</span>
-<span class="fc bfc" id="L33" title="All 2 branches covered.">                if(str.contains(search)) result[0] = d;</span>
-<span class="fc" id="L34">            }));</span>
-<span class="pc bpc" id="L35" title="1 of 4 branches missed.">        if ( result[0]==HostCPU.instance() &amp;&amp; name.equals(&quot;first&quot;) ) {</span>
-<span class="fc" id="L36">            Device first = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);</span>
-<span class="pc bpc" id="L37" title="1 of 2 branches missed.">            if( first!=null ) result[0] = first;</span>
+<span class="fc" id="L29">        Device[] result = {HostCPU.instance()};</span>
+<span class="fc" id="L30">        String search = name.toLowerCase();</span>
+<span class="fc" id="L31">        OpenCLPlatform.PLATFORMS().forEach( p -&gt;</span>
+<span class="fc" id="L32">            p.getDevices().forEach( d -&gt;{</span>
+<span class="fc" id="L33">                String str = (d.name()+&quot; | &quot;+d.vendor()+&quot; | &quot;+d.type()).toLowerCase();</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">                if(str.contains(search)) result[0] = d;</span>
+<span class="fc" id="L35">            }));</span>
+<span class="pc bpc" id="L36" title="1 of 4 branches missed.">        if ( result[0]==HostCPU.instance() &amp;&amp; name.equals(&quot;first&quot;) ) {</span>
+<span class="fc" id="L37">            Device first = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);</span>
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">            if( first!=null ) result[0] = first;</span>
         }
-<span class="fc" id="L39">        return result[0];</span>
+<span class="fc" id="L40">        return result[0];</span>
     }
 
     void dispose();
@@ -59,7 +60,8 @@ public interface Device extends Component&lt;Tsr&gt;
 
     Device swap( Tsr former, Tsr replacement );
 
-    Device execute( Tsr[] Tsrs, OperationType type, int d );
+    //Device execute( Tsr[] Tsrs, OperationType type, int d );
+    Device execute( ExecutionCall call );
 
     double[] value64f( Tsr tensor );
 

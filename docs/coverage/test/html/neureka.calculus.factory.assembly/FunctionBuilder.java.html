@@ -231,7 +231,7 @@ import java.util.*;
         } else {// More than one component left:
 <span class="fc bfc" id="L232" title="All 6 branches covered.">            if (OperationType.instance(typeId).identifier().equals(&quot;x&quot;) || OperationType.instance(typeId).identifier().equals(&quot;&lt;&quot;) || OperationType.instance(typeId).identifier().equals(&quot;&gt;&quot;)) {</span>
 <span class="fc" id="L233">                foundComponents = _rebindPairwise(foundComponents, typeId);</span>
-<span class="fc bfc" id="L234" title="All 4 branches covered.">            } else if (OperationType.instance(typeId).identifier().equals(&quot;,&quot;) &amp;&amp; foundComponents.get(0).startsWith(&quot;[&quot;)) {</span>
+<span class="pc bpc" id="L234" title="1 of 4 branches missed.">            } else if (OperationType.instance(typeId).identifier().equals(&quot;,&quot;) &amp;&amp; foundComponents.get(0).startsWith(&quot;[&quot;)) {</span>
 
 <span class="fc" id="L236">                foundComponents.set(0, foundComponents.get(0).substring(1));</span>
                 String[] splitted;

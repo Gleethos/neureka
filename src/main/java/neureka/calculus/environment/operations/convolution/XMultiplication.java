@@ -103,6 +103,7 @@ public class XMultiplication extends OperationType
                     }
                     return true;
                 },
+                call -> null,
                 rja,
                 call -> {
                     Tsr[] tsrs = call.getTensors();

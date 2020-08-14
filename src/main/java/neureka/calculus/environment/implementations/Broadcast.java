@@ -10,10 +10,11 @@ public class Broadcast extends AbstractOperationTypeImplementation< Broadcast >
 {
     public Broadcast(
             ADAnalyzer analyzer,
+            InitialCallHook hook,
             RecursiveJunctionAgent RJAgent,
             DrainInstantiation instantiation
     ) {  super(
-            analyzer, RJAgent, instantiation
+            analyzer, hook, RJAgent, instantiation
     ); }
 
     @Override

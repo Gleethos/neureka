@@ -33,16 +33,19 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
     protected final Map< Class< ExecutorFor< Device > >, ExecutorFor< Device > > _executions;
 
     private final ADAnalyzer _analyzer;
+    private final InitialCallHook _hook;
     private final RecursiveJunctionAgent _RJAgent;
     private final DrainInstantiation _instantiation;
 
     public AbstractOperationTypeImplementation(
             ADAnalyzer analyzer,
+            InitialCallHook hook,
             RecursiveJunctionAgent RJAgent,
             DrainInstantiation instantiation
     ) {
         _executions = new HashMap<>();
         _analyzer = analyzer;
+        _hook = hook;
         _RJAgent = RJAgent;
         _instantiation = instantiation;
     }
@@ -50,6 +53,11 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
     @Override
     public ADAnalyzer getADAnalyzer(){
         return _analyzer;
+    }
+
+    @Override
+    public InitialCallHook getCallHook(){
+        return _hook;
     }
 
     @Override

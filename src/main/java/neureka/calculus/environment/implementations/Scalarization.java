@@ -10,10 +10,11 @@ public class Scalarization extends AbstractOperationTypeImplementation< Scalariz
 {
     public Scalarization(
             ADAnalyzer analyzer,
+            InitialCallHook hook,
             RecursiveJunctionAgent RJAgent,
             DrainInstantiation instantiation
     ) {  super(
-            analyzer, RJAgent, instantiation
+            analyzer, hook, RJAgent, instantiation
     ); }
 
     @Override

@@ -56,6 +56,7 @@ public class Reshape extends OperationType
 
         GenericImplementation implementation = new GenericImplementation(
                 call -> true,
+                call -> null,
                 call -> false,
                 (call, goDeeperWith)->
                 {

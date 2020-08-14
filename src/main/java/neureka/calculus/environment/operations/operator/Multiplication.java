@@ -105,6 +105,7 @@ public class Multiplication extends OperationType {
 
         Operation operation = new Operation(
                 call -> true,
+                call -> null,
                 rja,
                 call -> {
                     Tsr[] tsrs = call.getTensors();
@@ -170,6 +171,7 @@ public class Multiplication extends OperationType {
 
         Broadcast broadcast = new Broadcast(
                 call -> true,
+                call -> null,
                 rja,
                 call -> {
                     Tsr[] tsrs = call.getTensors();
@@ -247,6 +249,7 @@ public class Multiplication extends OperationType {
 
         Scalarization scalarization = new Scalarization(
                 call -> true,
+                call -> null,
                 rja,
                 call -> {
                     Tsr[] tsrs = call.getTensors();
@@ -334,6 +337,7 @@ public class Multiplication extends OperationType {
                     }
                     return true;
                 },
+                call -> null,
                 ( call, goDeeperWith ) -> null,
                 call -> {
                     Tsr[] tsrs = call.getTensors();
@@ -404,6 +408,7 @@ public class Multiplication extends OperationType {
                     }
                     return true;
                 },
+                call -> null,
                 ( call, goDeeperWith ) -> null,
                 call -> {
                     Tsr[] tsrs = call.getTensors();

@@ -28,6 +28,10 @@ public interface OperationTypeImplementation<FinalType>
         boolean allowsForward( ExecutionCall call );
     }
 
+    interface InitialCallHook {
+        Tsr handle( ExecutionCall call );
+    }
+
     interface RecursiveJunctionAgent {
         Tsr handle( ExecutionCall call, Function<ExecutionCall, Tsr> goDeeperWith );
     }
@@ -37,6 +41,8 @@ public interface OperationTypeImplementation<FinalType>
     }
 
     ADAnalyzer getADAnalyzer();
+
+    InitialCallHook getCallHook();
 
     RecursiveJunctionAgent getRJAgent();
 

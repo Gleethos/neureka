@@ -5,6 +5,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.acceleration.opencl.utility.WeakTensorReference;
 import neureka.calculus.Function;
+import neureka.calculus.environment.ExecutionCall;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -25,8 +26,8 @@ import java.util.function.Supplier;
  */
 public class GraphNode implements Component&lt;Tsr&gt;
 {
-<span class="fc" id="L28">    private final static Function MUL =  Function.Detached.MUL;</span>
-<span class="fc" id="L29">    private final static Function ADD = Function.Detached.ADD;</span>
+<span class="fc" id="L29">    private final static Function MUL =  Function.Detached.MUL;</span>
+<span class="fc" id="L30">    private final static Function ADD = Function.Detached.ADD;</span>
 
     /**
      * This gradient node is involved in auto-differentiation.
@@ -34,7 +35,7 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * @return boolean
      */
     public boolean usesAD() {
-<span class="fc bfc" id="L37" title="All 2 branches covered.">        return (_mode != 0);</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        return (_mode != 0);</span>
     }
 
     /**
@@ -43,7 +44,7 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * @return boolean
      */
     public boolean usesForwardAD() {
-<span class="fc bfc" id="L46" title="All 2 branches covered.">        return (_mode &gt; 0);</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        return (_mode &gt; 0);</span>
     }
 
     /**
@@ -52,7 +53,7 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * @return boolean
      */
     public boolean usesReverseAD() {
-<span class="fc bfc" id="L55" title="All 2 branches covered.">        return (_mode &lt; 0);</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        return (_mode &lt; 0);</span>
     }
 
     /**
@@ -68,6 +69,21 @@ public class GraphNode implements Component&lt;Tsr&gt;
     private int _mode;
 
     /**
+     *  This flag records the support evaluation of the forward-AD availability analysis
+     *  done in the corresponding OperationTypeImplementation lambda
+     *  for a given ExecutionCall instance.
+     *
+     *  The difference between this flag and the &quot;usesForwardAD()&quot; truth value
+     *  is that the latter one can be false while the prior is true!
+     *  ( However the reverse is not possible! )
+     *  The reason is as follows:
+     *  If a GraphNode has multiple parent nodes which require auto-differentiation,
+     *  then said node will not be able to perform forward-AD even though it might very well
+     *  be possible given an ExecutionCall whose state allows for such...
+     */
+    private boolean _allows_forward;
+
+    /**
      * This flag is used for a performance optimization feature namely 'Just In Time Propagation'.
      * This feature accumulates errors and continues propagation
      * as soon as they are needed. (At the end of 'backward()' or when the tensor is used again).
@@ -80,10 +96,10 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * be marked with '_relies_on_JIPProp=true'!
      */
     public boolean reliesOnJustInTimeProp() {
-<span class="fc" id="L83">        return _relies_on_JIPProp;</span>
+<span class="fc" id="L99">        return _relies_on_JIPProp;</span>
     }
 
-<span class="fc" id="L86">    private boolean _relies_on_JIPProp = false;</span>
+<span class="fc" id="L102">    private boolean _relies_on_JIPProp = false;</span>
 
 
     /**
@@ -94,15 +110,15 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * @return Returns an instance of the PendingError class containing a error accumulation.
      */
     public PendingError getAndRemovePendingError() {
-<span class="fc" id="L97">        PendingError pe = _pending_error;</span>
-<span class="fc" id="L98">        _pending_error = null;</span>
-<span class="fc" id="L99">        return pe;</span>
+<span class="fc" id="L113">        PendingError pe = _pending_error;</span>
+<span class="fc" id="L114">        _pending_error = null;</span>
+<span class="fc" id="L115">        return pe;</span>
     }
 
     /**
      * Used by the Just-In-Time backprop component.
      */
-<span class="fc" id="L105">    private PendingError _pending_error = null;</span>
+<span class="fc" id="L121">    private PendingError _pending_error = null;</span>
 
 
     /**
@@ -113,17 +129,17 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * The values z,y or z*y must not be deleted as they are needed for back-propagation!
      */
     public boolean isUsedAsDerivative() {
-<span class="fc" id="L116">        return _is_used_as_derivative;</span>
+<span class="fc" id="L132">        return _is_used_as_derivative;</span>
     }
 
-<span class="fc" id="L119">    private boolean _is_used_as_derivative = false;</span>
+<span class="fc" id="L135">    private boolean _is_used_as_derivative = false;</span>
 
 
     /**
      * Recorded Function which produced this GrphNode.
      */
     public Function getFunction() {
-<span class="nc" id="L126">        return _function;</span>
+<span class="nc" id="L142">        return _function;</span>
     }
 
     private Function _function;
@@ -134,7 +150,7 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * GraphNode has been formed.
      */
     public GraphNode[] getParents() {
-<span class="fc" id="L137">        return _parents;</span>
+<span class="fc" id="L153">        return _parents;</span>
     }
 
     private GraphNode[] _parents;
@@ -147,35 +163,35 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * in this method will be executed.
      * It is stored inside the Cleaner within the device of the payload.
      * Cleaning means to null the targets_derivatives map.
-     * Leaning however only occures if the payload reference is still null.
+     * Leaning however only occurs if the payload reference is still null.
      * If it is not null then this means that the payload
      * changed (happens during injection)
      *
-     * @return the playload of this graph-node.
+     * @return the payload of this graph-node.
      */
     public Tsr getPayload() {
-<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        return (_payload == null) ? null : _payload.get();</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">        return (_payload == null) ? null : _payload.get();</span>
     }
 
-    private void _setPayload(Tsr p) {
-<span class="pc bpc" id="L161" title="1 of 2 branches missed.">        if (p == null) {</span>
-<span class="nc" id="L162">            _payload = null;</span>
+    private void _setPayload( Tsr p ) {
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">        if ( p == null ) {</span>
+<span class="nc" id="L178">            _payload = null;</span>
         } else {
-<span class="fc" id="L164">            _payload = new WeakReference&lt;&gt;(p);</span>
-<span class="fc" id="L165">            p.device().cleaning(p, () -&gt; {</span>
-<span class="fc bfc" id="L166" title="All 2 branches covered.">                if (this.getPayload() == null) {</span>
-<span class="fc" id="L167">                    boolean allChildrenUseForwardAD = true;</span>
-<span class="fc bfc" id="L168" title="All 2 branches covered.">                    if (_children != null) {</span>
-<span class="fc bfc" id="L169" title="All 2 branches covered.">                        for (WeakReference&lt;GraphNode&gt; childRef : _children) {</span>
-<span class="fc" id="L170">                            GraphNode childNode = childRef.get();</span>
-<span class="fc bfc" id="L171" title="All 4 branches covered.">                            if (childNode != null &amp;&amp; childNode.usesReverseAD()) allChildrenUseForwardAD = false;</span>
-<span class="fc" id="L172">                        }</span>
+<span class="fc" id="L180">            _payload = new WeakReference&lt;&gt;(p);</span>
+<span class="fc" id="L181">            p.device().cleaning(p, () -&gt; {</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">                if (this.getPayload() == null) {</span>
+<span class="fc" id="L183">                    boolean allChildrenUseForwardAD = true;</span>
+<span class="fc bfc" id="L184" title="All 2 branches covered.">                    if ( _children != null ) {</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">                        for ( WeakReference&lt;GraphNode&gt; childRef : _children ) {</span>
+<span class="fc" id="L186">                            GraphNode childNode = childRef.get();</span>
+<span class="fc bfc" id="L187" title="All 4 branches covered.">                            if (childNode != null &amp;&amp; childNode.usesReverseAD()) allChildrenUseForwardAD = false;</span>
+<span class="fc" id="L188">                        }</span>
                     }
-<span class="fc bfc" id="L174" title="All 2 branches covered.">                    if (allChildrenUseForwardAD) _targets_derivatives = null;</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">                    if (allChildrenUseForwardAD) _targets_derivatives = null;</span>
                 }
-<span class="fc" id="L176">            });</span>
+<span class="fc" id="L192">            });</span>
         }
-<span class="fc" id="L178">    }</span>
+<span class="fc" id="L194">    }</span>
 
     /**
      * This is the tensor owning this GraphNode component.
@@ -186,8 +202,8 @@ public class GraphNode implements Component&lt;Tsr&gt;
 
     @Override
     public void update(Tsr oldOwner, Tsr newOwner) {
-<span class="fc" id="L189">        _setPayload(newOwner);</span>
-<span class="fc" id="L190">    }</span>
+<span class="fc" id="L205">        _setPayload(newOwner);</span>
+<span class="fc" id="L206">    }</span>
 
     /**
      * Keys are targets and values are gradients with respect to that target
@@ -203,7 +219,7 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * @return GraphLock
      */
     public GraphLock lock() {
-<span class="fc" id="L206">        return _lock;</span>
+<span class="fc" id="L222">        return _lock;</span>
     }
 
     private GraphLock _lock;
@@ -212,7 +228,7 @@ public class GraphNode implements Component&lt;Tsr&gt;
      *
      */
     public List&lt;WeakReference&lt;GraphNode&gt;&gt; getChildren() {
-<span class="fc" id="L215">        return _children;</span>
+<span class="fc" id="L231">        return _children;</span>
     }
 
     private List&lt;WeakReference&lt;GraphNode&gt;&gt; _children;
@@ -221,10 +237,10 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * @return long AbstractSurfaceNode-ID (Used for caching to avoid redundant computation within one computation graph)
      */
     public long nid() {
-<span class="fc" id="L224">        return _nid;</span>
+<span class="fc" id="L240">        return _nid;</span>
     }
 
-<span class="fc" id="L227">    private long _nid = -1;</span>
+<span class="fc" id="L243">    private long _nid = -1;</span>
 
     //==================================================================================================================
 
@@ -232,17 +248,17 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * @param newLock The new lock of this GraphNode.
      */
     public synchronized void obtainLocking(GraphLock newLock) {
-<span class="fc" id="L235">        _lock = newLock;</span>
-<span class="fc" id="L236">    }</span>
+<span class="fc" id="L251">        _lock = newLock;</span>
+<span class="fc" id="L252">    }</span>
 
     /**
      * @param newChild which references it's input namely the parent (this) has...
      */
     private synchronized void _attachChild(GraphNode newChild) {
-<span class="fc bfc" id="L242" title="All 2 branches covered.">        if (_children == null) _children = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L243">        WeakReference&lt;GraphNode&gt; ref = new WeakTensorReference&lt;&gt;(newChild, null);</span>
-<span class="fc" id="L244">        _children.add(ref);</span>
-<span class="fc" id="L245">    }</span>
+<span class="fc bfc" id="L258" title="All 2 branches covered.">        if ( _children == null ) _children = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L259">        WeakReference&lt;GraphNode&gt; ref = new WeakTensorReference&lt;&gt;( newChild, null );</span>
+<span class="fc" id="L260">        _children.add( ref );</span>
+<span class="fc" id="L261">    }</span>
 
     /**
      * Some nodes are not cachable! Namely: leave tensors! They are not results of
@@ -251,7 +267,7 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * @return boolean
      */
     public boolean isCachable() {
-<span class="fc bfc" id="L254" title="All 2 branches covered.">        return (this.nid() != 1);</span>
+<span class="fc bfc" id="L270" title="All 2 branches covered.">        return ( this.nid() != 1 );</span>
     }
 
     /**
@@ -260,22 +276,22 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * @return boolean
      */
     public boolean isLeave() {
-<span class="pc bpc" id="L263" title="1 of 4 branches missed.">        return (_parents == null &amp;&amp; _function == null);</span>
+<span class="pc bpc" id="L279" title="1 of 4 branches missed.">        return ( _parents == null &amp;&amp; _function == null );</span>
     }
 
     public boolean isGraphLeave() {
-<span class="fc bfc" id="L267" title="All 2 branches covered.">        if (isLeave()) return true;</span>
-<span class="fc bfc" id="L268" title="All 2 branches covered.">        for (GraphNode p : _parents) {</span>
-<span class="fc bfc" id="L269" title="All 2 branches covered.">            if (p.lock() != this.lock()) return true;</span>
+<span class="fc bfc" id="L283" title="All 2 branches covered.">        if ( this.isLeave() ) return true;</span>
+<span class="fc bfc" id="L284" title="All 2 branches covered.">        for ( GraphNode p : _parents ) {</span>
+<span class="fc bfc" id="L285" title="All 2 branches covered.">            if ( p.lock() != this.lock() ) return true;</span>
         }
-<span class="fc" id="L271">        return false;</span>
+<span class="fc" id="L287">        return false;</span>
     }
 
     /**
      * @return if the tensor to which this graph node is attached has been deleted!
      */
     public boolean isVirtual() {
-<span class="nc bnc" id="L278" title="All 2 branches missed.">        return getPayload() == null;</span>
+<span class="nc bnc" id="L294" title="All 2 branches missed.">        return getPayload() == null;</span>
     }
 
     /**
@@ -283,96 +299,101 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * @param context         Can be either an array of tensors or a new lock (for leave node or fresh function locking)
      * @param payloadSupplier Provides the payload of this node.
      */
-<span class="fc" id="L286">    public GraphNode(Function function, Object context, Supplier&lt;Tsr&gt; payloadSupplier) {</span>
-<span class="pc bpc" id="L287" title="1 of 2 branches missed.">        if (function == null) throw new IllegalArgumentException(&quot;Function must not be null!&quot;);</span>
-<span class="fc bfc" id="L288" title="All 2 branches covered.">        if (context instanceof GraphLock) { // Note function always null in this case:</span>
-<span class="fc" id="L289">            _construct(payloadSupplier.get(), function, null, (GraphLock) context);</span>
-<span class="pc bpc" id="L290" title="1 of 2 branches missed.">        } else if (context instanceof Tsr[]) {</span>
-<span class="fc" id="L291">            Tsr[] inputs = (Tsr[]) context;</span>
+    public GraphNode( Function function, Object context, Supplier&lt;Tsr&gt; payloadSupplier )
+<span class="fc" id="L303">    {</span>
+<span class="pc bpc" id="L304" title="1 of 2 branches missed.">        if ( function == null ) throw new IllegalArgumentException(&quot;Function must not be null!&quot;);</span>
+<span class="fc bfc" id="L305" title="All 2 branches covered.">        if ( context instanceof GraphLock ) { // Note function always null in this case:</span>
+<span class="fc" id="L306">            _construct( payloadSupplier.get(), function, null, (GraphLock) context );</span>
+<span class="pc bpc" id="L307" title="1 of 2 branches missed.">        } else if ( context instanceof ExecutionCall ) {</span>
+<span class="fc" id="L308">            ExecutionCall call = (ExecutionCall) context;</span>
+<span class="fc" id="L309">            Tsr[] inputs = call.getTensors();</span>
             /* Applying JITProp and gradients */
-<span class="fc" id="L293">            Neureka.Settings.AutoGrad adSetting = Neureka.instance().settings().autograd();</span>
-<span class="fc bfc" id="L294" title="All 2 branches covered.">            if (adSetting.isApplyingGradientWhenTensorIsUsed()) {</span>
-<span class="fc bfc" id="L295" title="All 2 branches covered.">                for (Tsr t : inputs){</span>
-<span class="fc bfc" id="L296" title="All 4 branches covered.">                    if(!adSetting.isApplyingGradientWhenRequested() || t.gradientApplyRqd()) {</span>
-<span class="fc" id="L297">                        t.forComponent(JITProp.class, jit -&gt; ((JITProp) jit).execute());</span>
-<span class="fc" id="L298">                        t.remove(JITProp.class);</span>
-<span class="fc" id="L299">                        t.applyGradient();</span>
-<span class="fc" id="L300">                        t.setGradientApplyRqd(false);</span>
+<span class="fc" id="L311">            Neureka.Settings.AutoGrad adSetting = Neureka.instance().settings().autograd();</span>
+<span class="fc bfc" id="L312" title="All 2 branches covered.">            if ( adSetting.isApplyingGradientWhenTensorIsUsed() ) {</span>
+<span class="fc bfc" id="L313" title="All 2 branches covered.">                for ( Tsr t : inputs ) {</span>
+<span class="fc bfc" id="L314" title="All 4 branches covered.">                    if( !adSetting.isApplyingGradientWhenRequested() || t.gradientApplyRqd() ) {</span>
+<span class="fc" id="L315">                        t.forComponent( JITProp.class, JITProp::execute );</span>
+<span class="fc" id="L316">                        t.remove( JITProp.class );</span>
+<span class="fc" id="L317">                        t.applyGradient();</span>
+<span class="fc" id="L318">                        t.setGradientApplyRqd( false );</span>
                     }
                 }
             }
-<span class="fc" id="L304">            _construct(payloadSupplier.get(), function, inputs, ((GraphNode) inputs[0].find(GraphNode.class)).lock());</span>
+<span class="fc" id="L322">            _construct( payloadSupplier.get(), function, call, inputs[0].find(GraphNode.class).lock() );</span>
+<span class="fc" id="L323">        } else {// TODO: Write a unit test for this!</span>
+<span class="nc" id="L324">            throw new IllegalStateException(&quot;A given context must either be a GraphLock instance or an ExecutionCall.&quot;);</span>
         }
-<span class="fc" id="L306">    }</span>
+<span class="fc" id="L326">    }</span>
 
-    private void _construct(Tsr output, Function function, Tsr[] inputs, GraphLock lock) {
-<span class="pc bpc" id="L309" title="1 of 2 branches missed.">        if (output == null) throw new RuntimeException(&quot;Payload must no be null!&quot;);</span>
-<span class="fc bfc" id="L310" title="All 2 branches covered.">        if (!function.doesAD()) return;//Only functions with AutoDiff enabled create computation graph!</span>
-<span class="fc" id="L311">        _lock = lock;</span>
-<span class="fc" id="L312">        _setPayload(output);</span>
-<span class="fc" id="L313">        output.add(this);</span>
-<span class="fc bfc" id="L314" title="All 2 branches covered.">        if (inputs == null) {</span>
-<span class="fc bfc" id="L315" title="All 2 branches covered.">            _mode = (output.rqsGradient()) ? 1 : 0;</span>
-<span class="fc" id="L316">            _function = null;</span>
-<span class="fc" id="L317">            _parents = null;</span>
+    private void _construct(Tsr output, Function function, ExecutionCall call, GraphLock lock) {
+<span class="fc bfc" id="L329" title="All 2 branches covered.">        Tsr[] inputs = ( call == null ) ? null : call.getTensors();</span>
+<span class="pc bpc" id="L330" title="1 of 2 branches missed.">        if ( output == null ) throw new RuntimeException(&quot;Payload must no be null!&quot;);</span>
+<span class="fc bfc" id="L331" title="All 2 branches covered.">        if ( !function.doesAD() ) return;//Only functions with AutoDiff enabled create computation graph!</span>
+<span class="fc" id="L332">        _lock = lock;</span>
+<span class="fc" id="L333">        _setPayload( output );</span>
+<span class="fc" id="L334">        output.add( this );</span>
+<span class="fc bfc" id="L335" title="All 2 branches covered.">        if ( inputs == null ) {</span>
+<span class="fc bfc" id="L336" title="All 2 branches covered.">            _mode = ( output.rqsGradient() ) ? 1 : 0;</span>
+<span class="fc" id="L337">            _function = null;</span>
+<span class="fc" id="L338">            _parents = null;</span>
         } else {
-<span class="fc" id="L319">            _mode = _modeOf(inputs, function);</span>
-<span class="fc" id="L320">            _function = function;</span>
-<span class="fc" id="L321">            _parents = new GraphNode[inputs.length];</span>
-<span class="fc bfc" id="L322" title="All 2 branches covered.">            for (int i = 0; i &lt; inputs.length; i++) {</span>
-<span class="fc" id="L323">                _parents[i] = (GraphNode) inputs[i].find(GraphNode.class);</span>
-<span class="pc bpc" id="L324" title="1 of 2 branches missed.">                if (_parents[i] == null) {</span>
-<span class="nc" id="L325">                    throw new IllegalStateException(&quot;Input tensors of a new graph-node must contain leave graph-nodes!&quot;);</span>
-<span class="fc" id="L326">                } else _parents[i]._attachChild(this);</span>
+<span class="fc" id="L340">            _mode = _modeOf( call, function );</span>
+<span class="fc" id="L341">            _function = function;</span>
+<span class="fc" id="L342">            _parents = new GraphNode[inputs.length];</span>
+<span class="fc bfc" id="L343" title="All 2 branches covered.">            for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
+<span class="fc" id="L344">                _parents[i] = inputs[i].find(GraphNode.class);</span>
+<span class="pc bpc" id="L345" title="1 of 2 branches missed.">                if ( _parents[i] == null ) {</span>
+<span class="nc" id="L346">                    throw new IllegalStateException(&quot;Input tensors of a new graph-node must contain leave graph-nodes!&quot;);</span>
+<span class="fc" id="L347">                } else _parents[i]._attachChild(this);</span>
             }
         }
-<span class="pc bpc" id="L329" title="1 of 2 branches missed.">        if (_nid == -1) {</span>
-<span class="fc" id="L330">            long nid = 1;</span>
-<span class="fc bfc" id="L331" title="All 2 branches covered.">            if (_parents != null) {</span>
-<span class="fc bfc" id="L332" title="All 2 branches covered.">                for (GraphNode n : _parents)</span>
-<span class="fc" id="L333">                    nid *= n.getPayload().hashCode(); //payload might be 0! Why? -&gt; garbage collected!</span>
+<span class="pc bpc" id="L350" title="1 of 2 branches missed.">        if ( _nid == -1 ) {</span>
+<span class="fc" id="L351">            long nid = 1;</span>
+<span class="fc bfc" id="L352" title="All 2 branches covered.">            if ( _parents != null ) {</span>
+<span class="fc bfc" id="L353" title="All 2 branches covered.">                for ( GraphNode n : _parents )</span>
+<span class="fc" id="L354">                    nid *= n.getPayload().hashCode(); //payload might be 0! Why? -&gt; garbage collected!</span>
             }
-<span class="fc bfc" id="L335" title="All 2 branches covered.">            if (_function != null) nid += _function.hashCode();</span>
-<span class="fc" id="L336">            _nid = nid;</span>
+<span class="fc bfc" id="L356" title="All 2 branches covered.">            if ( _function != null ) nid += _function.hashCode();</span>
+<span class="fc" id="L357">            _nid = nid;</span>
         }
         /* Returning if the above cannot form an AutoDiff computation graph! : */
-<span class="pc bpc" id="L339" title="1 of 4 branches missed.">        if (inputs == null || !function.isFlat()) return; // Leave nodes have!</span>
-<span class="fc bfc" id="L340" title="All 4 branches covered.">        for (Tsr t : inputs) if (t.equals(output)) return; // Output must be a unique tensor for AD!</span>
+<span class="pc bpc" id="L360" title="1 of 4 branches missed.">        if ( inputs == null || !function.isFlat() ) return; // Leave nodes have!</span>
+<span class="fc bfc" id="L361" title="All 4 branches covered.">        for ( Tsr t : inputs ) if ( t.equals(output) ) return; // Output must be a unique tensor for AD!</span>
 
-<span class="pc bpc" id="L342" title="1 of 4 branches missed.">        if (this.usesAD() &amp;&amp; function.isFlat()) {</span>
+<span class="pc bpc" id="L363" title="1 of 4 branches missed.">        if ( this.usesAD() &amp;&amp; function.isFlat() ) {</span>
             /* Preparing for back propagation: */
-<span class="fc bfc" id="L344" title="All 2 branches covered.">            if (this.usesForwardAD()) {</span>
-<span class="fc bfc" id="L345" title="All 2 branches covered.">                for (int i = 0; i &lt; inputs.length; i++) {</span>
-<span class="fc" id="L346">                    GraphNode src_node = ((GraphNode) inputs[i].find(GraphNode.class));</span>
-<span class="fc bfc" id="L347" title="All 2 branches covered.">                    if (src_node.usesAD()) {</span>
-<span class="fc" id="L348">                        if (</span>
-<span class="pc bpc" id="L349" title="1 of 4 branches missed.">                                src_node.size() == 0 &amp;&amp; this.size() == 0</span>
+<span class="fc bfc" id="L365" title="All 2 branches covered.">            if ( this.usesForwardAD() ) {</span>
+<span class="fc bfc" id="L366" title="All 2 branches covered.">                for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
+<span class="fc" id="L367">                    GraphNode src_node = inputs[i].find( GraphNode.class );</span>
+<span class="fc bfc" id="L368" title="All 2 branches covered.">                    if ( src_node.usesAD() ) {</span>
+<span class="fc" id="L369">                        if (</span>
+<span class="pc bpc" id="L370" title="1 of 4 branches missed.">                                src_node.size() == 0 &amp;&amp; this.size() == 0</span>
                                     ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
-<span class="pc bpc" id="L351" title="1 of 4 branches missed.">                                !src_node.isLeave() &amp;&amp; !src_node.function().type().allowsForward(inputs)</span>
+<span class="pc bpc" id="L372" title="1 of 4 branches missed.">                                !src_node.isLeave() &amp;&amp; !src_node._allows_forward//Was : src_node.function().type().allowsForward( inputs )</span>
                         ) {
-<span class="fc" id="L353">                            this.put(src_node, function.getADAgent(inputs, i, true));</span>
+<span class="fc" id="L374">                            this.put( src_node, function.getADAgent( inputs, i, true ) );</span>
                         } else {
                             /*  Chain rule (forward) for every derivative w.r.t. leaves (reverseAD or user leaves): */
-<span class="fc" id="L356">                            src_node.forEach(</span>
-<span class="fc" id="L357">                            function.derive(inputs, i),</span>
-                            (t, td) -&gt; {
-<span class="pc bpc" id="L359" title="1 of 2 branches missed.">                                if (this.has(t)) this.put(t, ADD.call(new Tsr[]{td, (Tsr) this.get(t)}));</span>
-<span class="fc" id="L360">                                else this.put(t, td);</span>
+<span class="fc" id="L377">                            src_node.forEach(</span>
+<span class="fc" id="L378">                            function.derive( inputs, i ),</span>
+                            ( t, td ) -&gt; {
+<span class="pc bpc" id="L380" title="1 of 2 branches missed.">                                if ( this.has( t ) ) this.put( t, ADD.call(new Tsr[]{td, (Tsr) this.get(t)}) );</span>
+<span class="fc" id="L381">                                else this.put( t, td );</span>
                                 //TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
-<span class="fc" id="L362">                            });</span>
+<span class="fc" id="L383">                            });</span>
                         }
                     }
                 }
-<span class="pc bpc" id="L366" title="1 of 2 branches missed.">            } else if (this.usesReverseAD()) {</span>
-<span class="fc bfc" id="L367" title="All 2 branches covered.">                for (int i = 0; i &lt; inputs.length; i++) {</span>
-<span class="fc" id="L368">                    GraphNode src_node = ((GraphNode) inputs[i].find(GraphNode.class));</span>
-<span class="pc bpc" id="L369" title="1 of 4 branches missed.">                    if (src_node.usesAD() || inputs[i].rqsGradient()) {</span>
-<span class="fc" id="L370">                        this.put(src_node, function.getADAgent(inputs, i, false));</span>
+<span class="pc bpc" id="L387" title="1 of 2 branches missed.">            } else if ( this.usesReverseAD() ) {</span>
+<span class="fc bfc" id="L388" title="All 2 branches covered.">                for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
+<span class="fc" id="L389">                    GraphNode src_node = inputs[i].find(GraphNode.class);</span>
+<span class="pc bpc" id="L390" title="1 of 4 branches missed.">                    if ( src_node.usesAD() || inputs[i].rqsGradient() ) {</span>
+<span class="fc" id="L391">                        this.put( src_node, function.getADAgent( inputs, i, false ) );</span>
                     }
                 }
             }
         }
-<span class="fc" id="L375">    }</span>
+<span class="fc" id="L396">    }</span>
 
     /**
      * Evaluate auto-grad/auto-differentiation mode:
@@ -381,31 +402,34 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * If the resulting mode equals 0 then this means that
      * no auto differentiation is needed.
      *
-     * @param inputs The tensors used as input for the function which created the payload tensor of this GraphNode.
+     * @param call The call containing inputs for the function which created the payload tensor of this GraphNode.
      * @param function The function which produced the payload tensor of this GraphNode.
      * @return int The mode of this GraphNode!
      */
-    private static int _modeOf(Tsr[] inputs, Function function) {
-<span class="fc" id="L389">        int result_mode = 0;</span>
-<span class="fc" id="L390">        int[] modes = new int[inputs.length];</span>
-<span class="fc" id="L391">        int input_mode = 0;</span>
-<span class="fc bfc" id="L392" title="All 2 branches covered.">        for (int Ii = 0; Ii &lt; inputs.length; Ii++) {</span>
-<span class="fc" id="L393">            GraphNode node = (GraphNode) inputs[Ii].find(GraphNode.class);</span>
-<span class="pc bpc" id="L394" title="1 of 2 branches missed.">            if (node == null) {</span>
-<span class="nc" id="L395">                throw new IllegalStateException(&quot;Input tensors of a new graph-node must contain graph-nodes!&quot;);</span>
+    private int _modeOf( ExecutionCall call, Function function )
+    {
+<span class="fc" id="L411">        Tsr[] inputs = call.getTensors();</span>
+<span class="fc" id="L412">        int result_mode = 0;</span>
+<span class="fc" id="L413">        int[] modes = new int[inputs.length];</span>
+<span class="fc" id="L414">        int input_mode = 0;</span>
+<span class="fc bfc" id="L415" title="All 2 branches covered.">        for ( int Ii = 0; Ii &lt; inputs.length; Ii++ ) {</span>
+<span class="fc" id="L416">            GraphNode node = inputs[Ii].find( GraphNode.class );</span>
+<span class="pc bpc" id="L417" title="1 of 2 branches missed.">            if ( node == null ) {</span>
+<span class="nc" id="L418">                throw new IllegalStateException(&quot;Input tensors of a new graph-node must contain graph-nodes!&quot;);</span>
             }
-<span class="fc bfc" id="L397" title="All 2 branches covered.">            modes[Ii] = (inputs[Ii].rqsGradient()) ? 1 : node.mode();</span>
-<span class="fc bfc" id="L398" title="All 2 branches covered.">            input_mode += (modes[Ii] != 0) ? 1 : 0;</span>
+<span class="fc bfc" id="L420" title="All 2 branches covered.">            modes[Ii] = ( inputs[Ii].rqsGradient() ) ? 1 : node.mode();</span>
+<span class="fc bfc" id="L421" title="All 2 branches covered.">            input_mode += ( modes[Ii] != 0) ? 1 : 0;</span>
         }
-<span class="fc bfc" id="L400" title="All 4 branches covered.">        if (input_mode == 1 &amp;&amp; function.type().allowsForward(inputs)) {//Convolution and reshaping prohibit forward AutoDiff</span>
-<span class="fc bfc" id="L401" title="All 2 branches covered.">            for (int Ii = 0; Ii &lt; inputs.length; Ii++) {</span>
-<span class="fc bfc" id="L402" title="All 4 branches covered.">                result_mode += (modes[Ii] == 0) ? 0 : (modes[Ii] &lt; 0) ? 1 : modes[Ii] + 1;</span>
+<span class="fc" id="L423">        _allows_forward = call.allowsForward();</span>
+<span class="fc bfc" id="L424" title="All 4 branches covered.">        if ( input_mode == 1 &amp;&amp; _allows_forward ) { // Convolution and reshaping prohibit forward AutoDiff</span>
+<span class="fc bfc" id="L425" title="All 2 branches covered.">            for ( int Ii = 0; Ii &lt; inputs.length; Ii++ ) {</span>
+<span class="fc bfc" id="L426" title="All 4 branches covered.">                result_mode += ( modes[Ii] == 0 ) ? 0 : ( modes[Ii] &lt; 0 ) ? 1 : modes[Ii] + 1;</span>
             }
-        } else {
-<span class="fc" id="L405">            result_mode = -input_mode;</span>
+        } else { // Reverse mode auto-differentiation :
+<span class="fc" id="L429">            result_mode = -input_mode;</span>
         }
-<span class="fc bfc" id="L407" title="All 2 branches covered.">        result_mode = (&quot;&lt;&gt;&quot;.replace(function.type().identifier(), &quot;&quot;).equals(&quot;&lt;&gt;&quot;)) ? result_mode : 0;</span>
-<span class="fc" id="L408">        return result_mode;</span>
+<span class="fc bfc" id="L431" title="All 2 branches covered.">        result_mode = (&quot;&lt;&gt;&quot;.replace(function.type().identifier(), &quot;&quot;).equals(&quot;&lt;&gt;&quot;)) ? result_mode : 0;</span>
+<span class="fc" id="L432">        return result_mode;</span>
     }
 
     /**
@@ -416,12 +440,12 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * @param e This is an error value passed to this method ba a backward traversal.
      */
     private void _migrateAndOrApplyError(Tsr e, Consumer&lt;Tsr&gt; also){
-<span class="fc" id="L419">        Tsr payload = getPayload();</span>
-<span class="fc bfc" id="L420" title="All 2 branches covered.">        if (payload == null) return; // Garbage collected!</span>
-<span class="fc bfc" id="L421" title="All 2 branches covered.">        if (payload.isOutsourced()) payload.device().add(e);</span>
-<span class="fc bfc" id="L422" title="All 2 branches covered.">        if (payload.rqsGradient()) payload.addToGradient(e);</span>
-<span class="fc bfc" id="L423" title="All 2 branches covered.">        if (also!=null) also.accept(payload);</span>
-<span class="fc" id="L424">    }</span>
+<span class="fc" id="L443">        Tsr payload = getPayload();</span>
+<span class="fc bfc" id="L444" title="All 2 branches covered.">        if ( payload == null ) return; // Garbage collected!</span>
+<span class="fc bfc" id="L445" title="All 2 branches covered.">        if ( payload.isOutsourced() ) payload.device().add(e);</span>
+<span class="fc bfc" id="L446" title="All 2 branches covered.">        if ( payload.rqsGradient() ) payload.addToGradient(e);</span>
+<span class="fc bfc" id="L447" title="All 2 branches covered.">        if ( also!=null ) also.accept(payload);</span>
+<span class="fc" id="L448">    }</span>
 
 
     /**
@@ -433,20 +457,20 @@ public class GraphNode implements Component&lt;Tsr&gt;
      *
      * @param error The current error which is created by multiplying it with current size and traversing it.
      */
-    public void backward(Tsr error) {
-<span class="fc" id="L437">        Set&lt;GraphNode&gt; pendingNodes = new HashSet&lt;&gt;();</span>
-<span class="fc" id="L438">        _backward(error, pendingNodes, false);// Entry-point to private recursive back-propagation!</span>
-<span class="fc bfc" id="L439" title="All 2 branches covered.">        if (Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp()) {</span>
-<span class="fc" id="L440">            pendingNodes.forEach( n -&gt; n._carryPendingBackPropToGradients(pendingNodes));</span>
+    public void backward( Tsr error ) {
+<span class="fc" id="L461">        Set&lt;GraphNode&gt; pendingNodes = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L462">        _backward( error, pendingNodes, false );// Entry-point to private recursive back-propagation!</span>
+<span class="fc bfc" id="L463" title="All 2 branches covered.">        if ( Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp() ) {</span>
+<span class="fc" id="L464">            pendingNodes.forEach( n -&gt; n._carryPendingBackPropToGradients( pendingNodes ) );</span>
         } else {
-<span class="fc" id="L442">            pendingNodes.forEach( n -&gt; {</span>
-<span class="pc bpc" id="L443" title="1 of 2 branches missed.">                if (!n._pending_error.isFullyAccumulated())</span>
-<span class="nc" id="L444">                    throw new IllegalStateException(&quot;Pending error has not received expected accumulation.&quot;);</span>
-<span class="fc" id="L445">                n.backward(n._pending_error.getAccumulatedError());//Continue back-propagation recursively!</span>
-<span class="fc" id="L446">            });</span>
+<span class="fc" id="L466">            pendingNodes.forEach( n -&gt; {</span>
+<span class="pc bpc" id="L467" title="1 of 2 branches missed.">                if ( !n._pending_error.isFullyAccumulated() )</span>
+<span class="nc" id="L468">                    throw new IllegalStateException(&quot;Pending error has not received expected accumulation.&quot;);</span>
+<span class="fc" id="L469">                n.backward( n._pending_error.getAccumulatedError() );//Continue back-propagation recursively!</span>
+<span class="fc" id="L470">            });</span>
         }
-<span class="fc" id="L448">        _deleteDerivativesRecursively();//Cleanup after back-propagation!</span>
-<span class="fc" id="L449">    }</span>
+<span class="fc" id="L472">        _deleteDerivativesRecursively();//Cleanup after back-propagation!</span>
+<span class="fc" id="L473">    }</span>
 
     /**
      * This method traverses the computation graph and applies errors to gradients.
@@ -462,19 +486,19 @@ public class GraphNode implements Component&lt;Tsr&gt;
      *
      * @param error A tensor which traverses the computation graph according to the rules of reverse mode AutoDiff.
      */
-    private void _backward(Tsr error, Set&lt;GraphNode&gt; pendingNodes, boolean allowPendingError)
+    private void _backward( Tsr error, Set&lt;GraphNode&gt; pendingNodes, boolean allowPendingError )
     {
-<span class="fc" id="L467">        _migrateAndOrApplyError(error, null);</span>
-<span class="pc bpc" id="L468" title="1 of 2 branches missed.">        if (this.usesAD()) {</span>
+<span class="fc" id="L491">        _migrateAndOrApplyError( error, null );</span>
+<span class="pc bpc" id="L492" title="1 of 2 branches missed.">        if ( this.usesAD() ) {</span>
             /* Checking JIT-Prop conditions and create Pending error if possible */
-<span class="fc bfc" id="L470" title="All 4 branches covered.">            if (allowPendingError &amp;&amp; !this.isLeave()) {//==&gt; We are NOT inside a 'Just-In-Time-Backprop' process (new pending error can be created)</span>
-<span class="fc" id="L471">                int ADPaths = _numberOfReverseModeADChildren();// Multiple children triggers creation of a pending error</span>
-<span class="fc bfc" id="L472" title="All 2 branches covered.">                if (ADPaths &gt; 1) {</span>
-<span class="fc bfc" id="L473" title="All 2 branches covered.">                    if (_pending_error == null) {</span>
-<span class="fc" id="L474">                        _pending_error = new PendingError(error, ADPaths - 1);</span>
-<span class="fc" id="L475">                        pendingNodes.add(this);</span>
-<span class="fc" id="L476">                    } else _pending_error.accumulate(error);</span>
-<span class="fc" id="L477">                    return;</span>
+<span class="fc bfc" id="L494" title="All 4 branches covered.">            if ( allowPendingError &amp;&amp; !this.isLeave() ) {//==&gt; We are NOT inside a 'Just-In-Time-Backprop' process (new pending error can be created)</span>
+<span class="fc" id="L495">                int ADPaths = _numberOfReverseModeADChildren();// Multiple children triggers creation of a pending error</span>
+<span class="fc bfc" id="L496" title="All 2 branches covered.">                if ( ADPaths &gt; 1 ) {</span>
+<span class="fc bfc" id="L497" title="All 2 branches covered.">                    if ( _pending_error == null ) {</span>
+<span class="fc" id="L498">                        _pending_error = new PendingError( error, ADPaths - 1 );</span>
+<span class="fc" id="L499">                        pendingNodes.add( this );</span>
+<span class="fc" id="L500">                    } else _pending_error.accumulate( error );</span>
+<span class="fc" id="L501">                    return;</span>
                     /* Backprop will be continued later! This node is being remembered in 'PendingError'
                        NOTE: Multiple AutoDiff paths leading to one node in history will be accumulated first! (performance)
                              This optimization is a light version of JITProp. JITProp builds on this!
@@ -482,11 +506,11 @@ public class GraphNode implements Component&lt;Tsr&gt;
                 }
             }
             // Using forward-AutoDiff size for reverse-mode AutoDiff!
-<span class="fc bfc" id="L485" title="All 2 branches covered.">            if (this.usesForwardAD()) this.forEachForward(error, (t, d) -&gt; t._backward(d, pendingNodes, true));</span>
-<span class="pc bpc" id="L486" title="1 of 2 branches missed.">            else if (this.usesReverseAD()) this.forEachBackward(error, (t, e) -&gt; t._backward(e, pendingNodes, true));</span>
+<span class="fc bfc" id="L509" title="All 2 branches covered.">            if ( this.usesForwardAD() ) this.forEachForward( error, ( t, d ) -&gt; t._backward(d, pendingNodes, true) );</span>
+<span class="pc bpc" id="L510" title="1 of 2 branches missed.">            else if ( this.usesReverseAD() ) this.forEachBackward( error, ( t, e ) -&gt; t._backward(e, pendingNodes, true) );</span>
             // Standard reverse mode-AutoDiff!
         }
-<span class="fc" id="L489">    }</span>
+<span class="fc" id="L513">    }</span>
 
     /**
      * This method is called only if JIT-propagation is enabled.
@@ -497,16 +521,16 @@ public class GraphNode implements Component&lt;Tsr&gt;
      *
      * @param pendingBackProp
      */
-    private void _carryPendingBackPropToGradients(Set&lt;GraphNode&gt; pendingBackProp) {
-<span class="fc" id="L501">        _relies_on_JIPProp = true; //:=&gt; Shall be traversed at a later point in time...</span>
-<span class="fc" id="L502">        this.forEachTarget( t -&gt; t._carryPendingBackPropToGradients(pendingBackProp));</span>
-<span class="pc bpc" id="L503" title="1 of 4 branches missed.">        if ( this.isLeave() &amp;&amp; getPayload().rqsGradient() ) {</span>
-<span class="fc" id="L504">            JITProp jit = (JITProp) getPayload().find(JITProp.class);</span>
-<span class="pc bpc" id="L505" title="1 of 2 branches missed.">            if (jit == null) jit = new JITProp(pendingBackProp);</span>
-<span class="nc" id="L506">            else jit.addPending(pendingBackProp);</span>
-<span class="fc" id="L507">            getPayload().add(jit);</span>
+    private void _carryPendingBackPropToGradients( Set&lt;GraphNode&gt; pendingBackProp ) {
+<span class="fc" id="L525">        _relies_on_JIPProp = true; //:=&gt; Shall be traversed at a later point in time...</span>
+<span class="fc" id="L526">        this.forEachTarget( t -&gt; t._carryPendingBackPropToGradients( pendingBackProp ) );</span>
+<span class="pc bpc" id="L527" title="1 of 4 branches missed.">        if ( this.isLeave() &amp;&amp; getPayload().rqsGradient() ) {</span>
+<span class="fc" id="L528">            JITProp jit = getPayload().find(JITProp.class);</span>
+<span class="pc bpc" id="L529" title="1 of 2 branches missed.">            if ( jit == null ) jit = new JITProp( pendingBackProp );</span>
+<span class="nc" id="L530">            else jit.addPending( pendingBackProp );</span>
+<span class="fc" id="L531">            getPayload().add( jit );</span>
         }
-<span class="fc" id="L509">    }</span>
+<span class="fc" id="L533">    }</span>
 
     /**
      * This method is called only when JITProp is active.
@@ -522,21 +546,21 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * @param error
      */
     public void backwardJIT(Tsr error) {
-<span class="fc" id="L525">        _backwardJIT(error, this);</span>
-<span class="fc" id="L526">        _deleteDerivativesRecursively();// Cleanup after back-propagation!</span>
-<span class="fc" id="L527">    }</span>
+<span class="fc" id="L549">        _backwardJIT( error, this );</span>
+<span class="fc" id="L550">        _deleteDerivativesRecursively();// Cleanup after back-propagation!</span>
+<span class="fc" id="L551">    }</span>
 
     private void _backwardJIT(Tsr error, GraphNode source) {
-<span class="fc" id="L530">        _relies_on_JIPProp = false; // JITProp is currently being handled in this method. Afterwards it is not relying on it anymore!</span>
-<span class="fc" id="L531">        _migrateAndOrApplyError(error, payload-&gt;{</span>
-<span class="fc" id="L532">            JITProp jit = (JITProp) payload.find(JITProp.class);//Get JIT-Prop node.</span>
-<span class="fc bfc" id="L533" title="All 2 branches covered.">            if (jit != null) {</span>
-<span class="fc" id="L534">                jit.noteFinished(source);//note pending errors and store them as 'done'</span>
-<span class="pc bpc" id="L535" title="1 of 2 branches missed.">                if (jit.isDone()) payload.remove(JITProp.class);</span>
+<span class="fc" id="L554">        _relies_on_JIPProp = false; // JITProp is currently being handled in this method. Afterwards it is not relying on it anymore!</span>
+<span class="fc" id="L555">        _migrateAndOrApplyError( error, payload -&gt; {</span>
+<span class="fc" id="L556">            JITProp jit = payload.find( JITProp.class );//Get JIT-Prop node.</span>
+<span class="fc bfc" id="L557" title="All 2 branches covered.">            if ( jit != null ) {</span>
+<span class="fc" id="L558">                jit.noteFinished( source );//note pending errors and store them as 'done'</span>
+<span class="pc bpc" id="L559" title="1 of 2 branches missed.">                if ( jit.isDone() ) payload.remove( JITProp.class );</span>
             }
-<span class="fc" id="L537">        });</span>
-<span class="pc bpc" id="L538" title="3 of 4 branches missed.">        if (_pending_error != null &amp;&amp; source != this) {</span>
-<span class="nc" id="L539">            _pending_error.accumulate(error);</span>
+<span class="fc" id="L561">        });</span>
+<span class="pc bpc" id="L562" title="3 of 4 branches missed.">        if ( _pending_error != null &amp;&amp; source != this ) {</span>
+<span class="nc" id="L563">            _pending_error.accumulate( error );</span>
             /*
               A pending error has been found, so this means that this node
               is referenced by one or more JIT-Prop components.
@@ -545,15 +569,15 @@ public class GraphNode implements Component&lt;Tsr&gt;
               be continued to be propagated.
               Otherwise it makes sense to accumulate errors further and wait for JIT-Prop traversing!
              */
-<span class="nc" id="L548">            return;// This node will continue its propagation via a JIT-Prop component later!</span>
+<span class="nc" id="L572">            return;// This node will continue its propagation via a JIT-Prop component later!</span>
         }
-<span class="pc bpc" id="L550" title="1 of 2 branches missed.">        if (this.usesAD()) {</span>
+<span class="pc bpc" id="L574" title="1 of 2 branches missed.">        if ( this.usesAD() ) {</span>
             // Using forward-AutoDiff size for reverse-mode AutoDiff!
-<span class="fc bfc" id="L552" title="All 2 branches covered.">            if (this.usesForwardAD()) this.forEachForward(error, (t, e) -&gt; t._backwardJIT(e, source));</span>
-<span class="pc bpc" id="L553" title="1 of 2 branches missed.">            else if (this.usesReverseAD()) this.forEachBackward(error, (t, e) -&gt; t._backwardJIT(e, source));</span>
+<span class="fc bfc" id="L576" title="All 2 branches covered.">            if ( this.usesForwardAD() ) this.forEachForward( error, ( t, e ) -&gt; t._backwardJIT( e, source ) );</span>
+<span class="pc bpc" id="L577" title="1 of 2 branches missed.">            else if ( this.usesReverseAD() ) this.forEachBackward( error, ( t, e ) -&gt; t._backwardJIT( e, source ) );</span>
             // Standard reverse mode-AutoDiff!
         }
-<span class="fc" id="L556">    }</span>
+<span class="fc" id="L580">    }</span>
 
     /**
      * This method is called after the backward call has been executed fully.
@@ -565,11 +589,11 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * deviate from its default state, namely: true!
      */
     private void _deleteDerivativesRecursively() {
-<span class="fc bfc" id="L568" title="All 2 branches covered.">        if (!Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads()) {//&lt;=- This flag is almost always false. (Used for testing)</span>
-<span class="pc bpc" id="L569" title="1 of 2 branches missed.">            if (!this.reliesOnJustInTimeProp()) _targets_derivatives = null;</span>
-<span class="fc bfc" id="L570" title="All 2 branches covered.">            if (!this.isGraphLeave()) forEachTarget(GraphNode::_deleteDerivativesRecursively);</span>
+<span class="fc bfc" id="L592" title="All 2 branches covered.">        if ( !Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads() ) {//&lt;=- This flag is almost always false. (Used for testing)</span>
+<span class="pc bpc" id="L593" title="1 of 2 branches missed.">            if ( !this.reliesOnJustInTimeProp() ) _targets_derivatives = null;</span>
+<span class="fc bfc" id="L594" title="All 2 branches covered.">            if ( !this.isGraphLeave() ) forEachTarget( GraphNode::_deleteDerivativesRecursively );</span>
         }
-<span class="fc" id="L572">    }</span>
+<span class="fc" id="L596">    }</span>
 
     /**
      * Counts how many child nodes will later on provide error values for back-propagation!
@@ -577,30 +601,30 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * @return The number of child nodes using reverse-mode auto-differentiation.
      */
     private int _numberOfReverseModeADChildren() {
-<span class="fc" id="L580">        int count = 0;</span>
-<span class="pc bpc" id="L581" title="1 of 2 branches missed.">        if (_children != null) {</span>
-<span class="fc bfc" id="L582" title="All 2 branches covered.">            for (WeakReference&lt;GraphNode&gt; weak : _children) {</span>
-<span class="pc bpc" id="L583" title="2 of 4 branches missed.">                if (weak != null &amp;&amp; weak.get() != null) {</span>
-<span class="fc" id="L584">                    GraphNode child = weak.get(); //TODO: make test which asserts that Detached Function does not trigger this!</span>
-<span class="pc bpc" id="L585" title="1 of 4 branches missed.">                    if (child!=null &amp;&amp; child.usesReverseAD()) count++;</span>
+<span class="fc" id="L604">        int count = 0;</span>
+<span class="pc bpc" id="L605" title="1 of 2 branches missed.">        if ( _children != null ) {</span>
+<span class="fc bfc" id="L606" title="All 2 branches covered.">            for ( WeakReference&lt;GraphNode&gt; weak : _children ) {</span>
+<span class="pc bpc" id="L607" title="2 of 4 branches missed.">                if ( weak != null &amp;&amp; weak.get() != null ) {</span>
+<span class="fc" id="L608">                    GraphNode child = weak.get(); //TODO: make test which asserts that Detached Function does not trigger this!</span>
+<span class="pc bpc" id="L609" title="1 of 4 branches missed.">                    if ( child!=null &amp;&amp; child.usesReverseAD() ) count++;</span>
                 }
-<span class="fc" id="L587">            }</span>
+<span class="fc" id="L611">            }</span>
         }
-<span class="fc" id="L589">        return count;</span>
+<span class="fc" id="L613">        return count;</span>
     }
 
     /**
      * @return int
      */
     public int mode() {
-<span class="fc" id="L596">        return _mode;</span>
+<span class="fc" id="L620">        return _mode;</span>
     }
 
     /**
      * @return Function
      */
     public Function function() {
-<span class="fc" id="L603">        return _function;</span>
+<span class="fc" id="L627">        return _function;</span>
     }
 
     /**
@@ -608,16 +632,16 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * @param o      tensors are used during back-propagation in order to distribute an error throughout the graph.
      */
     public void put(GraphNode target, Object o) {
-<span class="fc bfc" id="L611" title="All 2 branches covered.">        if (_targets_derivatives == null) _targets_derivatives = new TreeMap&lt;&gt;((a, b) -&gt; a.hashCode() - b.hashCode());</span>
+<span class="fc bfc" id="L635" title="All 2 branches covered.">        if ( _targets_derivatives == null ) _targets_derivatives = new TreeMap&lt;&gt;((a, b) -&gt; a.hashCode() - b.hashCode());</span>
         ADAgent agent;
-<span class="fc bfc" id="L613" title="All 2 branches covered.">        if (o instanceof Tsr) agent = new ADAgent((Tsr) o);</span>
-<span class="fc" id="L614">        else agent = (ADAgent) o;</span>
+<span class="fc bfc" id="L637" title="All 2 branches covered.">        if ( o instanceof Tsr ) agent = new ADAgent( (Tsr) o );</span>
+<span class="fc" id="L638">        else agent = (ADAgent) o;</span>
 
-<span class="fc" id="L616">        _targets_derivatives.put(target, agent);</span>
+<span class="fc" id="L640">        _targets_derivatives.put( target, agent );</span>
 
-<span class="fc" id="L618">        Tsr d = agent.derivative();</span>
-<span class="fc bfc" id="L619" title="All 4 branches covered.">        if (d != null &amp;&amp; d.has(GraphNode.class)) (d.find(GraphNode.class))._is_used_as_derivative = true;</span>
-<span class="fc" id="L620">    }</span>
+<span class="fc" id="L642">        Tsr d = agent.derivative();</span>
+<span class="fc bfc" id="L643" title="All 4 branches covered.">        if ( d != null &amp;&amp; d.has(GraphNode.class) ) d.find(GraphNode.class)._is_used_as_derivative = true;</span>
+<span class="fc" id="L644">    }</span>
 
     /**
      * This method returns what is needed for AD, usually a derivative of AD-Agent.
@@ -625,9 +649,9 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * @param target
      * @return Tsr
      */
-    public Object get(GraphNode target) {
-<span class="nc bnc" id="L629" title="All 2 branches missed.">        if (_targets_derivatives == null) return null;</span>
-<span class="nc" id="L630">        return _targets_derivatives.get(target);</span>
+    public Object get( GraphNode target ) {
+<span class="nc bnc" id="L653" title="All 2 branches missed.">        if ( _targets_derivatives == null ) return null;</span>
+<span class="nc" id="L654">        return _targets_derivatives.get( target );</span>
     }
 
     /**
@@ -637,9 +661,9 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * @param target
      * @return boolean
      */
-    public boolean has(GraphNode target) {
-<span class="fc bfc" id="L641" title="All 2 branches covered.">        if (_targets_derivatives == null) return false;</span>
-<span class="fc" id="L642">        return _targets_derivatives.containsKey(target);</span>
+    public boolean has( GraphNode target ) {
+<span class="fc bfc" id="L665" title="All 2 branches covered.">        if ( _targets_derivatives == null ) return false;</span>
+<span class="fc" id="L666">        return _targets_derivatives.containsKey( target );</span>
     }
 
     /**
@@ -649,92 +673,92 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * @return int
      */
     public int size() {
-<span class="fc bfc" id="L652" title="All 2 branches covered.">        return (_targets_derivatives != null) ? this._targets_derivatives.size() : 0;</span>
+<span class="fc bfc" id="L676" title="All 2 branches covered.">        return ( _targets_derivatives != null ) ? this._targets_derivatives.size() : 0;</span>
     }
 
     /**
      * @param action A lambda action providing derivative and target node as parameter.
      */
-    public void forEachBackward(Tsr error, BiConsumer&lt;GraphNode, Tsr&gt; action) {
-<span class="fc bfc" id="L659" title="All 2 branches covered.">        if (_targets_derivatives == null) return;</span>
-<span class="fc" id="L660">        _targets_derivatives.forEach((t, o) -&gt; {</span>
-<span class="pc bpc" id="L661" title="1 of 2 branches missed.">            if (!o.isForward()) action.accept(t, o.backward(t, error));</span>
-<span class="fc" id="L662">        });</span>
-<span class="fc" id="L663">    }</span>
+    public void forEachBackward( Tsr error, BiConsumer&lt;GraphNode, Tsr&gt; action ) {
+<span class="fc bfc" id="L683" title="All 2 branches covered.">        if ( _targets_derivatives == null ) return;</span>
+<span class="fc" id="L684">        _targets_derivatives.forEach( ( t, o ) -&gt; {</span>
+<span class="pc bpc" id="L685" title="1 of 2 branches missed.">            if ( !o.isForward() ) action.accept( t, o.backward( t, error ) );</span>
+<span class="fc" id="L686">        });</span>
+<span class="fc" id="L687">    }</span>
 
     /**
      * @param action
      */
-    public void forEachForward(Tsr error, BiConsumer&lt;GraphNode, Tsr&gt; action) {
-<span class="fc bfc" id="L669" title="All 2 branches covered.">        if (_targets_derivatives == null) return;</span>
-<span class="fc" id="L670">        _targets_derivatives.forEach((t, o) -&gt; {</span>
-<span class="pc bpc" id="L671" title="1 of 2 branches missed.">            if (o.isForward()) action.accept(t, MUL.call(new Tsr[]{error, o.derivative()}));</span>
-<span class="fc" id="L672">        });</span>
-<span class="fc" id="L673">    }</span>
+    public void forEachForward( Tsr error, BiConsumer&lt;GraphNode, Tsr&gt; action ) {
+<span class="fc bfc" id="L693" title="All 2 branches covered.">        if ( _targets_derivatives == null ) return;</span>
+<span class="fc" id="L694">        _targets_derivatives.forEach( ( t, o ) -&gt; {</span>
+<span class="pc bpc" id="L695" title="1 of 2 branches missed.">            if ( o.isForward() ) action.accept( t, MUL.call( new Tsr[]{error, o.derivative()} ) );</span>
+<span class="fc" id="L696">        });</span>
+<span class="fc" id="L697">    }</span>
 
     /**
      * @param action
      */
     public void forEachDerivative(BiConsumer&lt;GraphNode, ADAgent&gt; action) {
-<span class="pc bpc" id="L679" title="1 of 2 branches missed.">        if (_targets_derivatives == null) return;</span>
-<span class="fc" id="L680">        _targets_derivatives.forEach(action);</span>
-<span class="fc" id="L681">    }</span>
+<span class="pc bpc" id="L703" title="1 of 2 branches missed.">        if ( _targets_derivatives == null ) return;</span>
+<span class="fc" id="L704">        _targets_derivatives.forEach( action );</span>
+<span class="fc" id="L705">    }</span>
 
     /**
      * @param action
      */
     public void forEachTarget(Consumer&lt;GraphNode&gt; action) {
-<span class="fc bfc" id="L687" title="All 2 branches covered.">        if (_targets_derivatives == null) return;</span>
-<span class="fc" id="L688">        _targets_derivatives.forEach((t, o) -&gt; action.accept(t));</span>
-<span class="fc" id="L689">    }</span>
+<span class="fc bfc" id="L711" title="All 2 branches covered.">        if ( _targets_derivatives == null ) return;</span>
+<span class="fc" id="L712">        _targets_derivatives.forEach( ( t, o ) -&gt; action.accept( t ) );</span>
+<span class="fc" id="L713">    }</span>
 
     /**
      * @param derivative
      * @param action
      */
-    public void forEach(Tsr derivative, BiConsumer&lt;GraphNode, Tsr&gt; action) {
-<span class="pc bpc" id="L696" title="1 of 2 branches missed.">        if (_targets_derivatives == null) return;</span>
-<span class="fc" id="L697">        _targets_derivatives.forEach((t, o) -&gt; action.accept(t, MUL.call(new Tsr[]{derivative, o.derivative()})));</span>
-<span class="fc" id="L698">    }</span>
+    public void forEach( Tsr derivative, BiConsumer&lt;GraphNode, Tsr&gt; action ) {
+<span class="pc bpc" id="L720" title="1 of 2 branches missed.">        if ( _targets_derivatives == null ) return;</span>
+<span class="fc" id="L721">        _targets_derivatives.forEach( ( t, o ) -&gt; action.accept( t, MUL.call( new Tsr[]{derivative, o.derivative()} ) ) );</span>
+<span class="fc" id="L722">    }</span>
 
 
     /**
      * @return Checks if this node stores target / AD-action (usually derivatives) pairs.
      */
     public boolean hasDerivatives() {
-<span class="pc bpc" id="L705" title="3 of 4 branches missed.">        return (_targets_derivatives != null) &amp;&amp; _targets_derivatives.size() &gt; 0;</span>
+<span class="pc bpc" id="L729" title="3 of 4 branches missed.">        return ( _targets_derivatives != null ) &amp;&amp; _targets_derivatives.size() &gt; 0;</span>
     }
 
     /**
      * @return Returns the type of the node as descriptive String in capital letters.
      */
     public String type() {
-<span class="fc" id="L712">        String type = &quot;&quot;;</span>
-<span class="fc bfc" id="L713" title="All 2 branches covered.">        if (this.isLeave()) type += &quot;LEAVE&quot;;</span>
-<span class="fc" id="L714">        else type += &quot;BRANCH&quot;;</span>
-<span class="pc bpc" id="L715" title="1 of 2 branches missed.">        if (getPayload() == null) type = type + &quot; DELETED&quot;;</span>
-<span class="fc bfc" id="L716" title="All 2 branches covered.">        else if (getPayload().rqsGradient()) type += &quot; RQS GRADIENT&quot;;</span>
-<span class="fc" id="L717">        return type;</span>
+<span class="fc" id="L736">        String type = &quot;&quot;;</span>
+<span class="fc bfc" id="L737" title="All 2 branches covered.">        if ( this.isLeave() ) type += &quot;LEAVE&quot;;</span>
+<span class="fc" id="L738">        else type += &quot;BRANCH&quot;;</span>
+<span class="pc bpc" id="L739" title="1 of 2 branches missed.">        if ( getPayload() == null ) type = type + &quot; DELETED&quot;;</span>
+<span class="fc bfc" id="L740" title="All 2 branches covered.">        else if ( getPayload().rqsGradient() ) type += &quot; RQS GRADIENT&quot;;</span>
+<span class="fc" id="L741">        return type;</span>
     }
 
     @Override
     public String toString() {
-<span class="nc" id="L722">        return toString(&quot;&quot;);</span>
+<span class="nc" id="L746">        return toString(&quot;&quot;);</span>
     }
 
     /**
      * @param m Stands for 'mode' and is expected to contain certain letters which are used as settings.
      * @return Returns a String representation of this node.
      */
-    public String toString(String m) {
-<span class="fc bfc" id="L730" title="All 2 branches covered.">        if (m.contains(&quot;g&quot;)) {</span>
-<span class="fc" id="L731">            return &quot;]&gt; LOCK: &quot; + lock() + &quot; |&gt; GRAPH:\n]\n&quot; + _toString(&quot;]    0&quot;, true) + &quot;\n]\n]|END|&gt;&quot;;</span>
+    public String toString( String m ) {
+<span class="fc bfc" id="L754" title="All 2 branches covered.">        if ( m.contains(&quot;g&quot;) ) {</span>
+<span class="fc" id="L755">            return &quot;]&gt; LOCK: &quot; + lock() + &quot; |&gt; GRAPH:\n]\n&quot; + _toString(&quot;]    0&quot;, true) + &quot;\n]\n]|END|&gt;&quot;;</span>
         }
-<span class="pc bpc" id="L733" title="1 of 2 branches missed.">        if (m.contains(&quot;v&quot;)) {</span>
-<span class="fc" id="L734">            return &quot;(&quot; + this.type() + &quot;): [NID:&quot; + Long.toHexString(nid()) + &quot;]:&lt;(  &quot;</span>
-<span class="pc bpc" id="L735" title="1 of 4 branches missed.">                    + &quot;f&quot; + ((_function == null) ? &quot;(NONE)&quot; : _function) + &quot; =&gt; &quot; + ((getPayload() == null) ? &quot;NULL&quot; : getPayload().toString(&quot;cs&quot;)) + &quot;  )&gt;&quot;;</span>
+<span class="pc bpc" id="L757" title="1 of 2 branches missed.">        if ( m.contains(&quot;v&quot;) ) {</span>
+<span class="fc" id="L758">            return &quot;(&quot; + this.type() + &quot;): [NID:&quot; + Long.toHexString(nid()) + &quot;]:&lt;(  &quot;</span>
+<span class="pc bpc" id="L759" title="1 of 4 branches missed.">                    + &quot;f&quot; + ((_function == null) ? &quot;(NONE)&quot; : _function) + &quot; =&gt; &quot; + ((getPayload() == null) ? &quot;NULL&quot; : getPayload().toString(&quot;cs&quot;)) + &quot;  )&gt;&quot;;</span>
         } else {
-<span class="nc bnc" id="L737" title="All 2 branches missed.">            return &quot;[NID:&quot; + Long.toHexString(nid()) + &quot;]:( &quot; + ((getPayload() == null) ? &quot;NULL&quot; : getPayload().toString(&quot;cs&quot;)) + &quot; )&quot;;</span>
+<span class="nc bnc" id="L761" title="All 2 branches missed.">            return &quot;[NID:&quot; + Long.toHexString(nid()) + &quot;]:( &quot; + ((getPayload() == null) ? &quot;NULL&quot; : getPayload().toString(&quot;cs&quot;)) + &quot; )&quot;;</span>
         }
 
     }
@@ -749,21 +773,21 @@ public class GraphNode implements Component&lt;Tsr&gt;
      * @param isLast Tells if this is the last parent node of this child.
      * @return A indented multi-line tree-like String representation of the computation graph.
      */
-    private String _toString(String deep, boolean isLast) {
-<span class="fc bfc" id="L753" title="All 2 branches covered.">        String delimiter = ((isLast) ? (&quot;    &quot;) : (&quot;|   &quot;));</span>
-<span class="fc bfc" id="L754" title="All 2 branches covered.">        String arrow = ((char) 187) + &quot;&quot; + ((_parents != null) ? (String.valueOf(_parents.length)) : &quot;0&quot;) + ((char) 187);</span>
-<span class="fc" id="L755">        StringBuilder asString = new StringBuilder(deep + arrow + toString(&quot;v&quot;));</span>
-<span class="fc" id="L756">        deep = deep.substring(0, deep.length() - 1);</span>
-<span class="fc bfc" id="L757" title="All 2 branches covered.">        if (_parents != null) {</span>
-<span class="fc bfc" id="L758" title="All 2 branches covered.">            asString.append(&quot;\n&quot;).append(deep).append((isLast) ? &quot;   \\\n&quot; : &quot;|  \\\n&quot;);</span>
-<span class="fc bfc" id="L759" title="All 2 branches covered.">            for (int i = 0; i &lt; _parents.length; i++) {</span>
-<span class="fc bfc" id="L760" title="All 2 branches covered.">                boolean last = (i == _parents.length - 1);</span>
-<span class="fc bfc" id="L761" title="All 2 branches covered.">                asString.append((i != 0) ? deep + delimiter + &quot;|\n&quot; : &quot;&quot;);</span>
-<span class="fc" id="L762">                asString.append(_parents[i]._toString(deep + delimiter + i, last)).append(&quot;\n&quot;);</span>
+    private String _toString( String deep, boolean isLast ) {
+<span class="fc bfc" id="L777" title="All 2 branches covered.">        String delimiter = ((isLast) ? (&quot;    &quot;) : (&quot;|   &quot;));</span>
+<span class="fc bfc" id="L778" title="All 2 branches covered.">        String arrow = ((char) 187) + &quot;&quot; + ((_parents != null) ? (String.valueOf(_parents.length)) : &quot;0&quot;) + ((char) 187);</span>
+<span class="fc" id="L779">        StringBuilder asString = new StringBuilder(deep + arrow + toString(&quot;v&quot;));</span>
+<span class="fc" id="L780">        deep = deep.substring(0, deep.length() - 1);</span>
+<span class="fc bfc" id="L781" title="All 2 branches covered.">        if ( _parents != null ) {</span>
+<span class="fc bfc" id="L782" title="All 2 branches covered.">            asString.append(&quot;\n&quot;).append( deep ).append( (isLast) ? &quot;   \\\n&quot; : &quot;|  \\\n&quot; );</span>
+<span class="fc bfc" id="L783" title="All 2 branches covered.">            for ( int i = 0; i &lt; _parents.length; i++ ) {</span>
+<span class="fc bfc" id="L784" title="All 2 branches covered.">                boolean last = (i == _parents.length - 1);</span>
+<span class="fc bfc" id="L785" title="All 2 branches covered.">                asString.append( ( i != 0 ) ? deep + delimiter + &quot;|\n&quot; : &quot;&quot; );</span>
+<span class="fc" id="L786">                asString.append( _parents[i]._toString(deep + delimiter + i, last) ).append(&quot;\n&quot;);</span>
             }
-<span class="fc" id="L764">            asString = new StringBuilder(asString.substring(0, asString.length() - 1));</span>
+<span class="fc" id="L788">            asString = new StringBuilder( asString.substring(0, asString.length() - 1) );</span>
         }
-<span class="fc" id="L766">        return asString.toString();</span>
+<span class="fc" id="L790">        return asString.toString();</span>
     }
 
 

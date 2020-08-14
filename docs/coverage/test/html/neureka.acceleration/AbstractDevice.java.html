@@ -8,9 +8,9 @@ import neureka.calculus.environment.OperationTypeImplementation;
 
 import java.lang.ref.Cleaner;
 
-<span class="fc" id="L11">public abstract class AbstractDevice implements  Device, Component&lt;Tsr&gt;</span>
+<span class="fc" id="L11">public abstract class AbstractDevice implements Device, Component&lt;Tsr&gt;</span>
 {
-<span class="fc" id="L13">    private static final Cleaner CLEANER = Cleaner.create();</span>
+<span class="fc" id="L13">    private static final Cleaner _CLEANER = Cleaner.create();</span>
 
     protected abstract void _enqueue(Tsr[] tsrs, int d, OperationType type);
 
@@ -23,64 +23,25 @@ import java.lang.ref.Cleaner;
 
     @Override
     public Device cleaning(Tsr tensor, Runnable action){
-<span class="fc" id="L26">        CLEANER.register(tensor, action);</span>
+<span class="fc" id="L26">        _CLEANER.register(tensor, action);</span>
 <span class="fc" id="L27">        return this;</span>
     }
 
     protected void _cleaning(Object o, Runnable action){
-<span class="fc" id="L31">        CLEANER.register(o, action);</span>
+<span class="fc" id="L31">        _CLEANER.register(o, action);</span>
 <span class="fc" id="L32">    }</span>
 
     @Override
-    public Device execute(Tsr[] tsrs, OperationType type, int d)
+    public Device execute( ExecutionCall call )
     {
-<span class="fc bfc" id="L37" title="All 2 branches covered.">        if ( type.identifier().equals(&quot;&lt;&quot;) )</span>
-        {
-<span class="pc bpc" id="L39" title="1 of 2 branches missed.">            int offset = ( tsrs[0] == null ) ? 1 : 0;</span>
-<span class="fc" id="L40">            _execute( new Tsr[]{tsrs[offset], tsrs[1+offset]}, OperationType.instance(&quot;idy&quot;), -1 );</span>
-<span class="fc" id="L41">        }</span>
-        else
-<span class="fc bfc" id="L43" title="All 2 branches covered.">        if ( type.identifier().equals(&quot;&gt;&quot;) )</span>
-        {
-<span class="pc bpc" id="L45" title="1 of 2 branches missed.">            int offset = ( tsrs[0] == null ) ? 1 : 0;</span>
-<span class="fc" id="L46">            _execute( new Tsr[]{tsrs[1+offset], tsrs[offset]}, OperationType.instance(&quot;idy&quot;), -1 );</span>
-<span class="fc" id="L47">        }</span>
-        else
-        {
-<span class="fc" id="L50">            _createNewDrainTensorIn(this, tsrs, type);</span>
-<span class="fc" id="L51">            _execute(tsrs, type, d);</span>
-        }
-<span class="fc" id="L53">        return this;</span>
-    }
-
-    private Tsr _execute(Tsr[] tsrs, OperationType type, int d )
-    {
-<span class="fc" id="L58">        ExecutionCall call = new ExecutionCall(this, tsrs, d, type);</span>
-<span class="fc" id="L59">        OperationTypeImplementation&lt;Object&gt; executor = call.getImplementation();</span>
-<span class="fc" id="L60">        executor.reduce (</span>
+<span class="fc" id="L37">        call = call.getImplementation().getDrainInstantiation().handle(call);</span>
+<span class="fc" id="L38">        OperationTypeImplementation&lt;Object&gt; executor = call.getImplementation();</span>
+<span class="fc" id="L39">        executor.recursiveReductionOf(</span>
                 call,
-<span class="fc" id="L62">                c -&gt; _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType())</span>
+<span class="fc" id="L41">                c -&gt; _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType())</span>
         );
-<span class="fc" id="L64">        return call.getTensors()[0];</span>
+<span class="fc" id="L43">        return this;</span>
     }
-
-
-    private static void _createNewDrainTensorIn(Device device, Tsr[] tsrs, OperationType type)
-    {
-<span class="fc bfc" id="L70" title="All 2 branches covered.">        if ( tsrs[0] == null )// Creating a new tensor:</span>
-        {
-<span class="fc bfc" id="L72" title="All 2 branches covered.">            int[] shp = (type.identifier().endsWith(&quot;x&quot;))</span>
-<span class="fc" id="L73">                    ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())</span>
-<span class="fc" id="L74">                    : tsrs[1].getNDConf().shape();</span>
-<span class="fc" id="L75">            Tsr output = new Tsr( shp, 0.0 );</span>
-            //boolean allVirtual = true;
-            //for ( Tsr t : tsrs ) if( t!=null &amp;&amp; !t.isVirtual() ) allVirtual = false;
-            //if ( !allVirtual ) output.setIsVirtual(false); // This tensor will be 'filled'! Therefore : needs to be 'whole!
-<span class="fc" id="L79">            output.setIsVirtual(false);</span>
-<span class="fc" id="L80">            device.add(output);</span>
-<span class="fc" id="L81">            tsrs[0] = output;</span>
-        }
-<span class="fc" id="L83">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

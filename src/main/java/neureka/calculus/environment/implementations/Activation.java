@@ -10,10 +10,11 @@ public class Activation extends AbstractOperationTypeImplementation< Activation 
 {
     public Activation(
             ADAnalyzer analyzer,
+            InitialCallHook hook,
             RecursiveJunctionAgent RJAgent,
             DrainInstantiation instantiation
     ) {  super(
-            analyzer, RJAgent, instantiation
+            analyzer, hook, RJAgent, instantiation
     ); }
 
     @Override
