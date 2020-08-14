@@ -12,9 +12,12 @@ import neureka.calculus.factory.components.FunctionConstant;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import neureka.calculus.environment.implementations.*;
 
 public abstract class AbstractFunction extends BaseFunction {
@@ -183,16 +186,18 @@ public abstract class AbstractFunction extends BaseFunction {
         int d = call.getDerivativeIndex();
         Device device = call.getDevice();
 
-        if ( !_isFlat && j < 0 && d < 0 ) {
-            if (_type.isOperation()) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
-                StringBuilder operation = new StringBuilder();
+
+        if ( !_isFlat && j < 0 && d < 0 )
+        {
+            if (
+                    _type.isOperation()
+                            ||
+                    (_type.supportsImplementation(Activation.class) && !_type.isIndexer())
+            ) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
                 Tsr[] tsrs = _src_acti(inputs, j, d, 0);
-                for ( int i = 0; i < tsrs.length; i++ ) {
-                    operation.append("I[").append(i).append("]").append((i == tsrs.length - 1) ? "" : _type.identifier());
-                }
-                return FunctionBuilder.build(operation.toString(), _doAD).call(tsrs);
-            } else if ( _type.supportsImplementation(Activation.class) && !_type.isIndexer() ) {
-                return FunctionBuilder.build(_type.identifier() + "(I[0])", true).call(inputs);
+                List<String> stringedSource = IntStream.range( 0, _src.size() ).mapToObj(i->"I["+i+"]").collect(Collectors.toList());
+                String asStr = _type.getStringifier().asString(stringedSource);
+                return FunctionBuilder.build(asStr, _doAD).call(tsrs);
             }
         }
 
