@@ -180,32 +180,18 @@ public abstract class AbstractFunction extends BaseFunction {
         }
     }
 
-    private Tsr __deep_execution( ExecutionCall call, int j ) // Tsr[] inputs, int d, int j, Device device
+    private Tsr __deep_execution( ExecutionCall call, int j )
     {
         Tsr[] inputs = call.getTensors();
         int d = call.getDerivativeIndex();
         Device device = call.getDevice();
 
-
-        if ( !_isFlat && j < 0 && d < 0 )
-        {
-            if (
-                    _type.isOperation()
-                            ||
-                    (_type.supportsImplementation(Activation.class) && !_type.isIndexer())
-            ) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
-                Tsr[] tsrs = _src_acti(inputs, j, d, 0);
-                List<String> stringedSource = IntStream.range( 0, _src.size() ).mapToObj(i->"I["+i+"]").collect(Collectors.toList());
-                String asStr = _type.getStringifier().asString(stringedSource);
-                return FunctionBuilder.build(asStr, _doAD).call(tsrs);
-            }
-        }
-
         Tsr[] tsrs;
         if ( _type.isIndexer() ) tsrs = new Tsr[ 1 + inputs.length ];
         else tsrs = new Tsr[1 + _src.size()];
 
-        if ( d >= 0 ) {
+        if ( d >= 0 ) // Differentiation
+        {
             //Chain-rule (forward AutoDiff):
             //inner times outer means:
             //first derive source!
@@ -232,10 +218,10 @@ public abstract class AbstractFunction extends BaseFunction {
             } else inner = tsrs[1];
 
             tsrs[0] = null;
-            //then activate (No differentiation!) the source like so:
-            if ( _type.isIndexer() ) {
+            //...then activate (No differentiation!) the source like so:
+            if ( _type.isIndexer() ) { // Indexer pass an index j of course!
                 for ( int i = 1; i < tsrs.length; i++ ) {
-                    tsrs[i] = _src.get(0).call(inputs, i - 1);
+                    tsrs[i] = _src.get(0).call(inputs, i - 1); // i - 1 := j
                 }
             } else {
                 for ( int i = 1; i < tsrs.length; i++ ) {
@@ -258,9 +244,20 @@ public abstract class AbstractFunction extends BaseFunction {
                 device.execute( new ExecutionCall( device, tsrs, -1, OperationType.instance("*") ) );
             } // done!
             return tsrs[0];
-        } else {
+        }
+        else // No differentiation :
+        {
             if (_type.isIndexer()) {
                 for (int i = 1; i < tsrs.length; i++) tsrs[i] = _src.get(0).call(inputs, i - 1);
+            } else if (
+                    !_isFlat && j < 0 && (
+                            _type.isOperation() || _type.supportsImplementation(Activation.class)
+                    )
+            ) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
+                tsrs = _src_acti(inputs, j, d, 0);
+                List<String> stringedSource = IntStream.range(0, _src.size()).mapToObj(i -> "I[" + i + "]").collect(Collectors.toList());
+                String asStr = _type.getStringifier().asString(stringedSource);
+                return FunctionBuilder.build(asStr, _doAD).call(tsrs);
             } else {
                 tsrs = _src_acti(inputs, j, d, 1);
             }
