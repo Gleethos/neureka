@@ -93,7 +93,7 @@ public class Product extends OperationType {
 
         Broadcast typeImplementation = new Broadcast(
                 call -> true,
-                call -> null,
+                (caller, call) -> null,
                 rja,
                 call -> {
                     Tsr[] tsrs = call.getTensors();
@@ -169,7 +169,7 @@ public class Product extends OperationType {
 
         Activation activation = new Activation(
                 call -> true,
-                call -> null,
+                (caller, call) -> null,
                 rja,
                 call -> {
                     Tsr[] tsrs = call.getTensors();

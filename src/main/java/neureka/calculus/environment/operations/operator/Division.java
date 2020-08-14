@@ -126,7 +126,7 @@ public class Division extends OperationType
                     }
                     return true;
                 },
-                call -> null,
+                (caller, call) -> null,
                 rja,
                 call -> {
                     Tsr[] tsrs = call.getTensors();
@@ -196,7 +196,7 @@ public class Division extends OperationType
 
         Broadcast broadcast = new Broadcast(
                 call -> true,
-                call -> null,
+                (caller, call) -> null,
                 rja,
                 call -> {
                     Tsr[] tsrs = call.getTensors();
@@ -277,7 +277,7 @@ public class Division extends OperationType
 
         Scalarization scalarization = new Scalarization(
                 call -> true,
-                call -> null,
+                (caller, call) -> null,
                 rja,
                 call -> {
                     Tsr[] tsrs = call.getTensors();
@@ -372,7 +372,7 @@ public class Division extends OperationType
                     }
                     return true;
                 },
-                call -> null,
+                (caller, call) -> null,
                 ( call, goDeeperWith ) -> null,
                 call -> {
                     Tsr[] tsrs = call.getTensors();

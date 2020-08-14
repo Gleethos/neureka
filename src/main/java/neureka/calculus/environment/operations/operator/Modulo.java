@@ -59,7 +59,7 @@ public class Modulo extends OperationType {
                     }
                     return true;
                 },
-                call -> null,
+                (caller, call) -> null,
                 ( call, goDeeperWith ) -> null,
                 call -> {
                     Tsr[] tsrs = call.getTensors();
@@ -160,7 +160,7 @@ public class Modulo extends OperationType {
                     }
                     return true;
                 },
-                call -> null,
+                (caller, call) -> null,
                 ( call, goDeeperWith ) -> null,
                 call -> {
                     Tsr[] tsrs = call.getTensors();
@@ -247,7 +247,7 @@ public class Modulo extends OperationType {
                     }
                     return true;
                 },
-                call -> null,
+                (caller, call) -> null,
                 ( call, goDeeperWith ) -> null,
                 call -> {
                     Tsr[] tsrs = call.getTensors();

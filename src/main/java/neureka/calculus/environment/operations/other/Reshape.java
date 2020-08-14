@@ -56,7 +56,10 @@ public class Reshape extends OperationType
 
         GenericImplementation implementation = new GenericImplementation(
                 call -> true,
-                call -> null,
+                (caller, call) -> {
+                    return null;
+                    //Tsr[] inputs = _src_acti(call.getTensors(), j, -1, 0);
+                },
                 call -> false,
                 (call, goDeeperWith)->
                 {

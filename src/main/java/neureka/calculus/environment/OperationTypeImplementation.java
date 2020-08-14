@@ -2,6 +2,7 @@ package neureka.calculus.environment;
 
 import neureka.Tsr;
 import neureka.acceleration.Device;
+import neureka.calculus.factory.AbstractFunction;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -29,7 +30,7 @@ public interface OperationTypeImplementation<FinalType>
     }
 
     interface InitialCallHook {
-        Tsr handle( ExecutionCall call );
+        Tsr handle( AbstractFunction caller,  ExecutionCall call );
     }
 
     interface RecursiveJunctionAgent {

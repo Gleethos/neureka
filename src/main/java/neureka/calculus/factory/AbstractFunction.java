@@ -120,6 +120,9 @@ public abstract class AbstractFunction extends BaseFunction {
 
     private Tsr __flat_execution( ExecutionCall call, int j )
     {
+        Tsr alternative = call.getImplementation().getCallHook().handle( this, call );
+        if ( alternative != null ) return alternative;
+
         Device myDevice = call.getDevice();
         int d = call.getDerivativeIndex();
         Tsr[] inputs = call.getTensors();
@@ -309,7 +312,7 @@ public abstract class AbstractFunction extends BaseFunction {
         return out;
     }
 
-    private Tsr[] _src_acti(Tsr[] inputs, int j, int d, int offset) {
+    public Tsr[] _src_acti(Tsr[] inputs, int j, int d, int offset) {
         int[] tempShape = null;
         Tsr[] tsrs = new Tsr[ _src.size() + offset ];
         for (int i = offset; i < tsrs.length; i++) {//constants need to be figured out!
