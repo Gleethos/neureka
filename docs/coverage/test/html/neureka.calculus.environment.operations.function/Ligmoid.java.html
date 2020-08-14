@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Ligmoid.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.environment.operations.function</a> &gt; <span class="el_source">Ligmoid.java</span></div><h1>Ligmoid.java</h1><pre class="source lang-java linenums">package neureka.calculus.environment.operations.function;
+
+import neureka.Tsr;
+import neureka.acceleration.Device;
+import neureka.acceleration.host.execution.HostExecutor;
+import neureka.acceleration.opencl.execution.CLExecutor;
+import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.implementations.*;
+
+
+public class Ligmoid extends OperationType
+{
+
+<span class="fc" id="L14">    private DefaultOperatorCreator&lt;TertiaryNDXConsumer&gt; _creator =</span>
+            (inputs, d)-&gt;{
+<span class="fc" id="L16">                double[] t1_val = inputs[1].value64();</span>
+<span class="fc bfc" id="L17" title="All 2 branches covered.">                if (d &lt; 0) return (t0Idx, t1Idx, t2Idx) -&gt; Math.log(1 + Math.pow(Math.E, t1_val[inputs[1].i_of_idx(t1Idx)]));</span>
+<span class="fc" id="L18">                else return (t0Idx, t1Idx, t2Idx) -&gt; 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));</span>
+            };
+
+    public Ligmoid()
+    {
+<span class="fc" id="L23">        super(&quot;ligmoid&quot;, &quot;lig&quot; , 1, false, false, false, true, true);</span>
+
+<span class="fc" id="L25">        setStringifier(</span>
+                children -&gt; {
+<span class="fc" id="L27">                    String expression = String.join( &quot;, &quot;, children );</span>
+<span class="pc bpc" id="L28" title="1 of 4 branches missed.">                    if (expression.charAt(0) == '(' &amp;&amp; expression.charAt(expression.length() - 1) == ')') {</span>
+<span class="fc" id="L29">                        return &quot;lig&quot; + expression;</span>
+                    }
+<span class="fc" id="L31">                    return &quot;lig&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
+                }
+        );
+
+<span class="fc" id="L35">        Activation typeImplementation = new Activation(</span>
+                call -&gt; {
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">                    if ( call.getType().supports(Convolution.class) ) return false;</span>
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">                    if ( call.getType().identifier().equals(&quot;,&quot;) ) return false; //Reshape</span>
+<span class="fc" id="L39">                    Tsr last = null;</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">                    for ( Tsr t : call.getTensors() ) {</span>
+<span class="pc bpc" id="L41" title="3 of 4 branches missed.">                        if ( last != null &amp;&amp; !last.shape().equals(t.shape()) ) return false;</span>
+<span class="fc" id="L42">                        last = t; // Note: shapes are cached!</span>
+                    }
+<span class="fc" id="L44">                    return true;</span>
+                },
+<span class="nc" id="L46">                call -&gt; null,</span>
+<span class="fc" id="L47">                ( call, goDeeperWith ) -&gt; null,</span>
+                call -&gt; {
+<span class="fc" id="L49">                    Tsr[] tsrs = call.getTensors();</span>
+<span class="fc" id="L50">                    Device device = call.getDevice();</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">                    if ( tsrs[0] == null ) // Creating a new tensor:</span>
+                    {
+<span class="fc" id="L53">                        int[] shp = tsrs[1].getNDConf().shape();</span>
+<span class="fc" id="L54">                        Tsr output = new Tsr( shp, 0.0 );</span>
+<span class="fc" id="L55">                        output.setIsVirtual(false);</span>
+<span class="fc" id="L56">                        device.add(output);</span>
+<span class="fc" id="L57">                        tsrs[0] = output;</span>
+                    }
+<span class="fc" id="L59">                    return call;</span>
+                }
+        );
+
+
+
+<span class="fc" id="L65">        setImplementation(</span>
+                Activation.class,
+<span class="fc" id="L67">                typeImplementation.setExecutor(</span>
+                        HostExecutor.class,
+                        new HostExecutor(
+                                call  -&gt;
+<span class="fc" id="L71">                                        call.getDevice().getExecutor()</span>
+<span class="fc" id="L72">                                                .threaded (</span>
+<span class="fc" id="L73">                                                        call.getTensor(0).size(),</span>
+                                                        ( start, end ) -&gt;
+<span class="fc" id="L75">                                                                Activation.activate (</span>
+<span class="fc" id="L76">                                                                        call.getTensor(0),</span>
+                                                                        start, end,
+<span class="fc" id="L78">                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
+                                                                )
+                                                ),
+                                3
+                        )
+<span class="fc" id="L83">                ).setExecutor(</span>
+                        CLExecutor.class,
+                        new CLExecutor(
+                                call -&gt; {
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">                                    int offset = (call.getTensor(0) != null) ? 0 : 1;</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();</span>
+<span class="fc" id="L89">                                    call.getDevice().getKernel(call)</span>
+<span class="fc" id="L90">                                            .pass(call.getTensor(offset))</span>
+<span class="fc" id="L91">                                            .pass(call.getTensor(offset + 1))</span>
+<span class="fc" id="L92">                                            .pass(call.getTensor(0).rank())</span>
+<span class="fc" id="L93">                                            .pass(call.getDerivativeIndex())</span>
+<span class="fc" id="L94">                                            .call(gwz);</span>
+<span class="fc" id="L95">                                },</span>
+                                3,
+<span class="fc" id="L97">                                typeImplementation.getKernelSource(), // kernelSource</span>
+                                &quot;output = \n&quot; +
+                                        &quot;   (\n&quot; +
+                                        &quot;        (float) log(\n&quot; +
+                                        &quot;            1+pow(\n&quot; +
+                                        &quot;                (float)\n&quot; +
+                                        &quot;                M_E,\n&quot; +
+                                        &quot;                (float)\n&quot; +
+                                        &quot;                input\n&quot; +
+                                        &quot;            )\n&quot; +
+                                        &quot;        )\n&quot; +
+                                        &quot;    );&quot;,
+                                &quot;output =\n&quot; +
+                                        &quot;    1 /\n&quot; +
+                                        &quot;        (1 + (float) pow(\n&quot; +
+                                        &quot;                (float)M_E,\n&quot; +
+                                        &quot;                (float)input\n&quot; +
+                                        &quot;            )\n&quot; +
+                                        &quot;        );\n&quot;,
+                                this // OperationType
+                        )
+                )
+        );
+
+
+
+<span class="fc" id="L123">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

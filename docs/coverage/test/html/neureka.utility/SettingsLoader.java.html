@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SettingsLoader.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.utility</a> &gt; <span class="el_source">SettingsLoader.java</span></div><h1>SettingsLoader.java</h1><pre class="source lang-java linenums">package neureka.utility;
+
+import groovy.lang.Closure;
+import groovy.lang.GroovyShell;
+import groovy.lang.GroovySystem;
+import neureka.Neureka;
+
+/**
+ *  This class is a helper class for Neureka instances.
+ *  It tries to execute groovy scripts used as
+ *  settings for said instances.
+ *
+ *  This logic is not included inside the Neureka class
+ *  itself because otherwise there would be an obligate dependency
+ *  on groovy.
+ *  If groovy lang dependencies are however not found, then
+ *  this very class will not be used, initialized and therefore
+ *  neureka will continue to work without groovy.
+ */
+<span class="nc" id="L20">public class SettingsLoader</span>
+{
+    private static String _settings_source;
+    private static String _setup_source;
+
+    public static Object tryGroovyClosureOn(Object closure, Object delegate) {
+<span class="fc" id="L26">            ( (Closure) closure ).setDelegate(delegate);</span>
+<span class="fc" id="L27">            return ( (Closure) closure ).call(delegate);</span>
+    }
+
+    public static void tryGroovyScriptsOn(Neureka instance)
+    {
+<span class="pc bpc" id="L32" title="1 of 4 branches missed.">        if (_settings_source == null || _setup_source == null) {</span>
+<span class="fc" id="L33">            _settings_source = instance.utility().readResource(&quot;library_settings.groovy&quot;);</span>
+<span class="fc" id="L34">            _setup_source = instance.utility().readResource(&quot;scripting_setup.groovy&quot;);</span>
+        }
+        try {
+
+<span class="fc" id="L38">            String version = GroovySystem.getVersion();</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">            if(Integer.parseInt(version.split(&quot;\\.&quot;)[0]) &lt; 3) {</span>
+<span class="nc" id="L40">                throw new IllegalCallerException(</span>
+                        &quot;Wrong groovy version &quot;+version+&quot; found! Version 3.0.0 or greater required.&quot;
+                );
+            }
+<span class="fc" id="L44">            new GroovyShell(instance.getClass().getClassLoader()).evaluate(_settings_source);</span>
+<span class="fc" id="L45">            new GroovyShell(instance.getClass().getClassLoader()).evaluate(_setup_source);</span>
+
+<span class="nc" id="L47">        } catch (Exception e) {</span>
+<span class="nc" id="L48">            e.printStackTrace();</span>
+<span class="fc" id="L49">        }</span>
+
+<span class="fc" id="L51">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

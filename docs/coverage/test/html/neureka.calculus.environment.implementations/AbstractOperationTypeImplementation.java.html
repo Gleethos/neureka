@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractOperationTypeImplementation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.environment.implementations</a> &gt; <span class="el_source">AbstractOperationTypeImplementation.java</span></div><h1>AbstractOperationTypeImplementation.java</h1><pre class="source lang-java linenums">package neureka.calculus.environment.implementations;
+
+
+import neureka.Tsr;
+import neureka.acceleration.Device;
+import neureka.autograd.GraphNode;
+import neureka.calculus.environment.ExecutionCall;
+import neureka.calculus.environment.ExecutorFor;
+import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.OperationTypeImplementation;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
+
+/**
+ * This is the base class for implementations of the OperationTypeImplementation interface.
+ * The class implements the component logic required by the said interface.
+ * Additionally it contains useful methods used to process passed arguments of execution calls.
+ *
+ * Conceptually this class represents &quot;a way of execution&quot; for
+ * the OperationType to which an instance of this class would belong.
+ * The &quot;+&quot; operator for example has different OperationTypeImplementation instances
+ * for different ExecutionCall instances.
+ * Tensors within an execution call having the same shape would
+ * trigger the Operation instance of the OperationType, whereas otherwise
+ * the Convolution or Broadcast implementation might be called.
+ *
+ * @param &lt;FinalType&gt; The final type extending this class.
+ */
+public abstract class AbstractOperationTypeImplementation&lt; FinalType &gt; implements OperationTypeImplementation&lt; FinalType &gt;
+{
+    protected final Map&lt; Class&lt; ExecutorFor&lt; Device &gt; &gt;, ExecutorFor&lt; Device &gt; &gt; _executions;
+
+    private final ADAnalyzer _analyzer;
+    private final InitialCallHook _hook;
+    private final RecursiveJunctionAgent _RJAgent;
+    private final DrainInstantiation _instantiation;
+
+    public AbstractOperationTypeImplementation(
+            ADAnalyzer analyzer,
+            InitialCallHook hook,
+            RecursiveJunctionAgent RJAgent,
+            DrainInstantiation instantiation
+<span class="fc" id="L45">    ) {</span>
+<span class="fc" id="L46">        _executions = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L47">        _analyzer = analyzer;</span>
+<span class="fc" id="L48">        _hook = hook;</span>
+<span class="fc" id="L49">        _RJAgent = RJAgent;</span>
+<span class="fc" id="L50">        _instantiation = instantiation;</span>
+<span class="fc" id="L51">    }</span>
+
+    @Override
+    public ADAnalyzer getADAnalyzer(){
+<span class="fc" id="L55">        return _analyzer;</span>
+    }
+
+    @Override
+    public InitialCallHook getCallHook(){
+<span class="nc" id="L60">        return _hook;</span>
+    }
+
+    @Override
+    public RecursiveJunctionAgent getRJAgent(){
+<span class="nc" id="L65">        return _RJAgent;</span>
+    }
+
+    @Override
+    public DrainInstantiation getDrainInstantiation(){
+<span class="fc" id="L70">        return _instantiation;</span>
+    }
+
+    @Override
+    public &lt;D extends Device, E extends ExecutorFor&lt;D&gt;&gt; FinalType setExecutor(Class&lt;E&gt; deviceClass, E execution){
+<span class="fc" id="L75">        _executions.put(</span>
+                (Class&lt;ExecutorFor&lt;Device&gt;&gt;) deviceClass,
+                (ExecutorFor&lt;Device&gt;) execution
+        );
+<span class="fc" id="L79">        return (FinalType) this;</span>
+    }
+
+    @Override
+    public &lt;D extends Device, E extends ExecutorFor&lt;D&gt;&gt; E getExecutor(Class&lt;E&gt; deviceClass){
+<span class="fc" id="L84">        return (E) _executions.get(deviceClass);</span>
+    }
+
+    @Override
+    public Tsr recursiveReductionOf(
+            ExecutionCall&lt;Device&gt; call,
+            Consumer&lt;ExecutionCall&lt;Device&gt;&gt; finalExecution
+    ) {
+<span class="fc" id="L92">        Device device = call.getDevice();</span>
+<span class="fc" id="L93">        Tsr[] tsrs = call.getTensors();</span>
+<span class="fc" id="L94">        int d = call.getDerivativeIndex();</span>
+<span class="fc" id="L95">        OperationType type = call.getType();</span>
+
+<span class="fc" id="L97">        Consumer&lt;Tsr&gt;[] rollbacks = new Consumer[tsrs.length];</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        for (int i=0; i&lt;tsrs.length; i++) {</span>
+<span class="pc bpc" id="L99" title="1 of 4 branches missed.">            if ( tsrs[i] != null &amp;&amp; !tsrs[i].isOutsourced() ) {</span>
+<span class="fc" id="L100">                device.add(tsrs[i]);</span>
+<span class="fc" id="L101">                rollbacks[i] = device::get;</span>
+            } else {
+<span class="fc" id="L103">                rollbacks[i] = t -&gt; {};</span>
+            }
+        }
+
+        /* For the following operations with the correct arity RJAgent should do: ...
+            case (&quot;s&quot; + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
+            case (&quot;d&quot; + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
+            case (&quot;p&quot; + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
+            case (&quot;m&quot; + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
+            case &quot;&gt;&quot;: tsrs = new Tsr[]{tsrs[1], tsrs[0]};
+         */
+        /*
+            Below is the core lambda of recursive preprocessing
+            which is defined for each OperationImplementation individually :
+         */
+<span class="fc" id="L118">        Tsr result = _RJAgent.handle(call, (c)-&gt; recursiveReductionOf( c, finalExecution ));</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        if ( result==null ) {</span>
+<span class="fc" id="L120">            finalExecution.accept(</span>
+<span class="fc" id="L121">                    new ExecutionCall&lt;&gt;( device, call.getTensors(), d, type )</span>
+            );
+<span class="fc" id="L123">        } else return result;</span>
+
+
+<span class="fc bfc" id="L126" title="All 2 branches covered.">        for ( int i = 0; i &lt; tsrs.length; i++ ) {</span>
+<span class="pc bpc" id="L127" title="2 of 4 branches missed.">            if ( tsrs[i] != null &amp;&amp; !tsrs[i].isUndefined() ) rollbacks[i].accept(tsrs[i]);</span>
+        }
+<span class="fc" id="L129">        return tsrs[0];</span>
+    }
+
+<span class="nc" id="L132">    public static class Utility</span>
+    {
+        public static Tsr[] _subset(Tsr[] tsrs, int padding, int index, int offset) {
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">            if ( offset &lt; 0 ) {</span>
+<span class="nc" id="L136">                index += offset;</span>
+<span class="nc" id="L137">                offset *= -1;</span>
+            }
+<span class="fc" id="L139">            Tsr[] newTsrs = new Tsr[offset+padding];</span>
+<span class="fc" id="L140">            System.arraycopy(tsrs, index, newTsrs, padding, offset);</span>
+<span class="fc" id="L141">            return newTsrs;</span>
+        }
+        public static Tsr[] _without(Tsr[] tsrs, int index){
+<span class="fc" id="L144">            Tsr[] newTsrs = new Tsr[tsrs.length-1];</span>
+<span class="fc bfc" id="L145" title="All 4 branches covered.">            for ( int i = 0; i &lt; newTsrs.length; i++ ) newTsrs[i] = tsrs[i+( ( i &lt; index )? 0 : 1 )];</span>
+<span class="fc" id="L146">            return newTsrs;</span>
+        }
+
+        public static Tsr[] _offsetted(Tsr[] tsrs, int offset){
+<span class="fc" id="L150">            Tsr[] newTsrs = new Tsr[tsrs.length-offset];</span>
+<span class="fc" id="L151">            newTsrs[0] = Tsr.Create.newTsrLike(tsrs[1]);</span>
+<span class="fc bfc" id="L152" title="All 4 branches covered.">            if ( !tsrs[1].has(GraphNode.class ) &amp;&amp; tsrs[1] != tsrs[0] ) {//Deleting intermediate results!</span>
+<span class="fc" id="L153">                tsrs[1].delete();</span>
+<span class="fc" id="L154">                tsrs[1] = null;</span>
+            }
+<span class="pc bpc" id="L156" title="1 of 4 branches missed.">            if ( !tsrs[2].has(GraphNode.class) &amp;&amp; tsrs[2] != tsrs[0] ) {//Deleting intermediate results!</span>
+<span class="fc" id="L157">                tsrs[2].delete();</span>
+<span class="fc" id="L158">                tsrs[2] = null;</span>
+            }
+<span class="fc" id="L160">            System.arraycopy(tsrs, 1+offset, newTsrs, 1, tsrs.length-1-offset);</span>
+<span class="fc" id="L161">            newTsrs[1] = tsrs[0];</span>
+<span class="fc" id="L162">            return newTsrs;</span>
+        }
+
+    }
+
+
+
+
+
+
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

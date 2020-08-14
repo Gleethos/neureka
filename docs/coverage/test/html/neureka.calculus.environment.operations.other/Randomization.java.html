@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Randomization.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.environment.operations.other</a> &gt; <span class="el_source">Randomization.java</span></div><h1>Randomization.java</h1><pre class="source lang-java linenums">package neureka.calculus.environment.operations.other;
+
+import neureka.Tsr;
+import neureka.acceleration.Device;
+import neureka.acceleration.host.execution.HostExecutor;
+import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.implementations.*;
+
+import java.util.Random;
+
+public class Randomization extends OperationType
+{
+
+    public Randomization()
+    {
+<span class="nc" id="L16">        super(</span>
+                &quot;random&quot;, &quot;rand&quot;, 1,
+                true, false, false, false, false
+        );
+
+<span class="nc" id="L21">        ScalarOperatorCreator&lt; PrimaryNDXConsumer &gt; creator =</span>
+                ( inputs, value, d ) -&gt; {
+                    //double[] t1_val = inputs[1].value64();
+<span class="nc" id="L24">                    return t1Idx -&gt; {</span>
+<span class="nc" id="L25">                        int sum = 0;</span>
+<span class="nc bnc" id="L26" title="All 2 branches missed.">                        for (int idx : t1Idx) sum += idx;</span>
+<span class="nc" id="L27">                        Random dice = new Random();</span>
+<span class="nc" id="L28">                        dice.setSeed(Double.doubleToLongBits(value+sum));</span>
+<span class="nc" id="L29">                        return dice.nextGaussian();</span>
+                    };
+                };
+
+<span class="nc" id="L33">        Scalarization scalarization = new Scalarization(</span>
+                                call -&gt; {
+<span class="nc bnc" id="L35" title="All 2 branches missed.">                    if ( call.getType().supports(Convolution.class) ) return false;</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">                    if ( call.getType().identifier().equals(&quot;,&quot;) ) return false; //Reshape</span>
+<span class="nc" id="L37">                    Tsr last = null;</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">                    for ( Tsr t : call.getTensors() ) {</span>
+<span class="nc bnc" id="L39" title="All 4 branches missed.">                        if ( last != null &amp;&amp; !last.shape().equals(t.shape()) ) return false;</span>
+<span class="nc" id="L40">                        last = t; // Note: shapes are cached!</span>
+                    }
+<span class="nc" id="L42">                    return true;</span>
+                },
+<span class="nc" id="L44">                call -&gt; null,</span>
+<span class="nc" id="L45">                ( call, goDeeperWith ) -&gt; null,</span>
+                call -&gt; {
+<span class="nc" id="L47">                    Tsr[] tsrs = call.getTensors();</span>
+<span class="nc" id="L48">                    Device device = call.getDevice();</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">                    if ( tsrs[0] == null ) // Creating a new tensor:</span>
+                    {
+<span class="nc" id="L51">                        int[] shp = tsrs[1].getNDConf().shape();</span>
+<span class="nc" id="L52">                        Tsr output = new Tsr( shp, 0.0 );</span>
+<span class="nc" id="L53">                        output.setIsVirtual(false);</span>
+<span class="nc" id="L54">                        device.add(output);</span>
+<span class="nc" id="L55">                        tsrs[0] = output;</span>
+                    }
+<span class="nc" id="L57">                    return call;</span>
+                }
+        );
+
+<span class="nc" id="L61">        setImplementation(</span>
+                Scalarization.class,
+<span class="nc" id="L63">                scalarization.setExecutor(</span>
+                        HostExecutor.class,
+                        new HostExecutor (
+<span class="nc" id="L66">                                call -&gt; call.getDevice().getExecutor()</span>
+<span class="nc" id="L67">                                        .threaded (</span>
+<span class="nc" id="L68">                                                call.getTensor(0).size(),</span>
+                                                ( start, end ) -&gt;
+<span class="nc" id="L70">                                                        Scalarization.scalarize (</span>
+<span class="nc" id="L71">                                                                call.getTensor(0),</span>
+                                                                start, end,
+<span class="nc" id="L73">                                                                creator.create(</span>
+<span class="nc" id="L74">                                                                        call.getTensors(),</span>
+<span class="nc" id="L75">                                                                        call.getTensor(1).value64(0),</span>
+<span class="nc" id="L76">                                                                        call.getDerivativeIndex()</span>
+                                                                )
+                                                        )
+                                        ),
+                                3
+                        )
+                )
+        );
+
+<span class="nc" id="L85">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
