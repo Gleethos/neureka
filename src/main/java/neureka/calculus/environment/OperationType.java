@@ -33,6 +33,8 @@ public class OperationType implements Type
         return _CONTEXTS.get().getLookup().getOrDefault( identifier, null );
     }
 
+    private Stringifier _stringifier;
+
     protected int _id;
     protected String _name;
     protected String _identifier;
@@ -119,8 +121,21 @@ public class OperationType implements Type
     //==================================================================================================================
 
     @Override
+    public Type setStringifier(Stringifier stringifier) {
+        _stringifier = stringifier;
+        return this;
+    }
+
+    @Override
+    public Stringifier getStringifier() {
+        return _stringifier;
+    }
+
+    //==================================================================================================================
+
+    @Override
     public OperationTypeImplementation implementationOf(ExecutionCall call) {
-        for(OperationTypeImplementation te : _implementations.values()){
+        for( OperationTypeImplementation te : _implementations.values() ) {
             if ( te.canHandle(call) ) return te;
         }
         return null;

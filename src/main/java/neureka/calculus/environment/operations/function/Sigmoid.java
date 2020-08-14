@@ -38,6 +38,16 @@ public class Sigmoid extends OperationType
                 true
         );
 
+        setStringifier(
+                children -> {
+                    String expression = String.join( ", ", children );
+                    if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
+                        return "sig" + expression;
+                    }
+                    return "sig" + "(" + expression + ")";
+                }
+        );
+
         Activation typeImplementation = new Activation(
                                 call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;

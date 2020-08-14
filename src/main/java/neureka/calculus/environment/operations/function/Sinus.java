@@ -21,6 +21,16 @@ public class Sinus extends OperationType
     {
         super("sinus", "sin" , 1, false, false, false, true, true);
 
+        setStringifier(
+                children -> {
+                    String expression = String.join( ", ", children );
+                    if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
+                        return "sin" + expression;
+                    }
+                    return "sin" + "(" + expression + ")";
+                }
+        );
+
         Activation typeImplementation = new Activation(
                                 call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;

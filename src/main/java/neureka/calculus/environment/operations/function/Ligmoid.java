@@ -8,7 +8,8 @@ import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.*;
 
 
-public class Ligmoid extends OperationType {
+public class Ligmoid extends OperationType
+{
 
     private DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
             (inputs, d)->{
@@ -17,9 +18,19 @@ public class Ligmoid extends OperationType {
                 else return (t0Idx, t1Idx, t2Idx) -> 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));
             };
 
-    public Ligmoid(){
+    public Ligmoid()
+    {
         super("ligmoid", "lig" , 1, false, false, false, true, true);
 
+        setStringifier(
+                children -> {
+                    String expression = String.join( ", ", children );
+                    if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
+                        return "lig" + expression;
+                    }
+                    return "lig" + "(" + expression + ")";
+                }
+        );
 
         Activation typeImplementation = new Activation(
                 call -> {

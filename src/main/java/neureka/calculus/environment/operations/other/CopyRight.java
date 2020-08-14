@@ -16,6 +16,19 @@ public class CopyRight extends OperationType {
     {
         super("", ">", 2,true, false, false, false, false);
 
+        setStringifier(
+                children -> {
+                    StringBuilder reconstructed = new StringBuilder();
+                    for ( int i = 0; i < children.size(); ++i ) {
+                        reconstructed.append( children.get(i) );
+                        if ( i < children.size() - 1 ) {
+                            reconstructed.append(" -> ");
+                        }
+                    }
+                    return "(" + reconstructed + ")";
+                }
+        );
+
         DefaultOperatorCreator<TertiaryNDXConsumer> activationCreator =
                 (inputs, d) -> {
                     double[] t1_val = inputs[1].value64();

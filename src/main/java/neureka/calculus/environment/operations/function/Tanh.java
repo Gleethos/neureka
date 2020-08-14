@@ -39,6 +39,17 @@ public class Tanh extends OperationType
                 true,
                 true
         );
+
+        setStringifier(
+                children -> {
+                    String expression = String.join( ", ", children );
+                    if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
+                        return "tanh" + expression;
+                    }
+                    return "tanh" + "(" + expression + ")";
+                }
+        );
+
         Activation typeImplementation = new Activation(
                                 call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;

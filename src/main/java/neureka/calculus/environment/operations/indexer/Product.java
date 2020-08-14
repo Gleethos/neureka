@@ -25,6 +25,15 @@ public class Product extends OperationType {
                 true
         );
 
+        setStringifier(
+                children -> {
+                    String expression = String.join( ", ", children );
+                    if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
+                        return "prod" + expression;
+                    }
+                    return "prod" + "(" + expression + ")";
+                }
+        );
 
         OperationTypeImplementation.RecursiveJunctionAgent rja = (call, goDeeperWith)->
         {

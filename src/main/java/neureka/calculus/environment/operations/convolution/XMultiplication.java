@@ -26,6 +26,19 @@ public class XMultiplication extends OperationType
                 false
         );
 
+        setStringifier(
+                children -> {
+                    StringBuilder reconstructed = new StringBuilder();
+                    for ( int i = 0; i < children.size(); ++i ) {
+                        reconstructed.append( children.get(i) );
+                        if ( i < children.size() - 1 ) {
+                            reconstructed.append(" x ");
+                        }
+                    }
+                    return "(" + reconstructed + ")";
+                }
+        );
+
         OperationTypeImplementation.RecursiveJunctionAgent rja = (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();
@@ -152,11 +165,37 @@ public class XMultiplication extends OperationType
         );
         new OperationType(
                 "inv_convolve_mul_left", ((char) 171) + "x", 3, true, false, true, false, false
-        ).setImplementation(Convolution.class, convolution);
+        )
+                .setImplementation(Convolution.class, convolution)
+                .setStringifier(
+                    children -> {
+                        StringBuilder reconstructed = new StringBuilder();
+                        for ( int i = 0; i < children.size(); ++i ) {
+                            reconstructed.append( children.get(i) );
+                            if ( i < children.size() - 1 ) {
+                                reconstructed.append(" "+((char) 171) + "x ");
+                            }
+                        }
+                        return "(" + reconstructed + ")";
+                    }
+                );
 
         new OperationType(
                 "inv_convolve_mul_right", "x" + ((char) 187), 3, true, false, true, false, false
-        ).setImplementation(Convolution.class, convolution);
+        )
+                .setImplementation(Convolution.class, convolution)
+                .setStringifier(
+                        children -> {
+                            StringBuilder reconstructed = new StringBuilder();
+                            for ( int i = 0; i < children.size(); ++i ) {
+                                reconstructed.append( children.get(i) );
+                                if ( i < children.size() - 1 ) {
+                                    reconstructed.append(" x" + ((char) 187)+" ");
+                                }
+                            }
+                            return "(" + reconstructed + ")";
+                        }
+                );
 
 
     }

@@ -59,6 +59,19 @@ public class Addition extends OperationType {
                 false
         );
 
+        setStringifier(
+            children -> {
+                StringBuilder reconstructed = new StringBuilder();
+                for ( int i = 0; i < children.size(); ++i ) {
+                    reconstructed.append( children.get(i) );
+                    if ( i < children.size() - 1 ) {
+                        reconstructed.append(" + ");
+                    }
+                }
+                return "(" + reconstructed + ")";
+            }
+        );
+
         OperationTypeImplementation.RecursiveJunctionAgent rja = (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();
@@ -327,7 +340,18 @@ public class Addition extends OperationType {
                     }
                     return call;
                 }
-        )
+            )
+        ).setStringifier(
+            children -> {
+                StringBuilder reconstructed = new StringBuilder();
+                for ( int i = 0; i < children.size(); ++i ) {
+                    reconstructed.append( children.get(i) );
+                    if ( i < children.size() - 1 ) {
+                        reconstructed.append(" a ");
+                    }
+                }
+                return "(" + reconstructed + ")";
+            }
         );
 
         new OperationType(

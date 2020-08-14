@@ -29,6 +29,16 @@ public class Cosinus extends OperationType {
                 true
         );
 
+        setStringifier(
+                children -> {
+                    String expression = String.join( ", ", children );
+                    if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
+                        return "cos" + expression;
+                    }
+                    return "cos" + "(" + expression + ")";
+                }
+        );
+
         Activation typeImplementation = new Activation(
                                 call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;

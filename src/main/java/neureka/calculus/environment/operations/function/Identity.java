@@ -14,6 +14,16 @@ public class Identity extends OperationType
     {
         super("identity", "idy" , 1, false, false, false, true, true);
 
+        setStringifier(
+                children -> {
+                    String expression = String.join( ", ", children );
+                    if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
+                        return "idy" + expression;
+                    }
+                    return "idy" + "(" + expression + ")";
+                }
+        );
+
         DefaultOperatorCreator<TertiaryNDXConsumer> activationCreator =
                 (inputs, d) -> {
                     double[] t1_val = inputs[1].value64();

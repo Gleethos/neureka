@@ -33,11 +33,13 @@ public class FunctionConstructor
             return new AbstractFunction(f_id, isFlat, sources, doAD){
                 @Override
                 public Tsr call(Tsr[] inputs, int j) {
-                    return CACHE.preprocess(inputs, this,()-> _tensor_activation(new Tsr[]{sources.get(0).call(inputs, j)}, j, -1), -1, j);
+                    //return CACHE.preprocess(inputs, this,()-> _tensor_activation(new Tsr[]{sources.get(0).call(inputs, j)}, j, -1), -1, j);
+                    return CACHE.preprocess(inputs, this,()-> _tensor_activation(inputs, j, -1), -1, j);
                 }
                 @Override
                 public Tsr call(Tsr[] inputs) {
-                    return CACHE.preprocess(inputs, this,()-> _tensor_activation(new Tsr[]{sources.get(0).call(inputs)}, -1, -1), -1, -1);
+                    //return CACHE.preprocess(inputs, this,()-> _tensor_activation(new Tsr[]{sources.get(0).call(inputs)}, -1, -1), -1, -1);
+                    return CACHE.preprocess(inputs, this,()-> _tensor_activation(inputs, -1, -1), -1, -1);
                 }
                 @Override
                 public Tsr derive(Tsr[] inputs, int d, int j) {
