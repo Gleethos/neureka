@@ -320,6 +320,8 @@ public class GraphNode implements Component<Tsr>
                 }
             }
             _construct( payloadSupplier.get(), function, call, inputs[0].find(GraphNode.class).lock() );
+        } else {// TODO: Write a unit test for this!
+            throw new IllegalStateException("A given context must either be a GraphLock instance or an ExecutionCall.");
         }
     }
 
@@ -418,13 +420,7 @@ public class GraphNode implements Component<Tsr>
             modes[Ii] = ( inputs[Ii].rqsGradient() ) ? 1 : node.mode();
             input_mode += ( modes[Ii] != 0) ? 1 : 0;
         }
-        _allows_forward = function.type().allowsForward(inputs);
-        boolean banana = call.allowsForward();
-        if ( banana != _allows_forward ) {
-            boolean hhh = call.allowsForward();
-            System.out.println("Huii");
-        }
-
+        _allows_forward = call.allowsForward();
         if ( input_mode == 1 && _allows_forward ) { // Convolution and reshaping prohibit forward AutoDiff
             for ( int Ii = 0; Ii < inputs.length; Ii++ ) {
                 result_mode += ( modes[Ii] == 0 ) ? 0 : ( modes[Ii] < 0 ) ? 1 : modes[Ii] + 1;
