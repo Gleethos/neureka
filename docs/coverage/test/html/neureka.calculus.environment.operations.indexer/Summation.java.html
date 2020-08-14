@@ -76,7 +76,7 @@ public class Summation extends OperationType {
 
 <span class="fc" id="L77">        Broadcast typeImplementation = new Broadcast(</span>
 <span class="fc" id="L78">                call -&gt; true,</span>
-<span class="nc" id="L79">                call -&gt; null,</span>
+<span class="fc" id="L79">                (caller, call) -&gt; null,</span>
                 rja,
                 call -&gt; {
 <span class="fc" id="L82">                    Tsr[] tsrs = call.getTensors();</span>
@@ -154,7 +154,7 @@ public class Summation extends OperationType {
 
 <span class="fc" id="L155">        Activation activation = new Activation(</span>
 <span class="nc" id="L156">                call -&gt; true,</span>
-<span class="nc" id="L157">                call -&gt; null,</span>
+<span class="nc" id="L157">                (caller, call) -&gt; null,</span>
                 rja,
                 call -&gt; {
 <span class="nc" id="L160">                    Tsr[] tsrs = call.getTensors();</span>

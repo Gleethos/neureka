@@ -93,7 +93,7 @@ public class Product extends OperationType {
 
 <span class="fc" id="L94">        Broadcast typeImplementation = new Broadcast(</span>
 <span class="fc" id="L95">                call -&gt; true,</span>
-<span class="nc" id="L96">                call -&gt; null,</span>
+<span class="fc" id="L96">                (caller, call) -&gt; null,</span>
                 rja,
                 call -&gt; {
 <span class="fc" id="L99">                    Tsr[] tsrs = call.getTensors();</span>
@@ -169,7 +169,7 @@ public class Product extends OperationType {
 
 <span class="fc" id="L170">        Activation activation = new Activation(</span>
 <span class="nc" id="L171">                call -&gt; true,</span>
-<span class="nc" id="L172">                call -&gt; null,</span>
+<span class="nc" id="L172">                (caller, call) -&gt; null,</span>
                 rja,
                 call -&gt; {
 <span class="nc" id="L175">                    Tsr[] tsrs = call.getTensors();</span>

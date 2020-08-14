@@ -126,7 +126,7 @@ public class Division extends OperationType
                     }
 <span class="fc" id="L127">                    return true;</span>
                 },
-<span class="nc" id="L129">                call -&gt; null,</span>
+<span class="fc" id="L129">                (caller, call) -&gt; null,</span>
                 rja,
                 call -&gt; {
 <span class="fc" id="L132">                    Tsr[] tsrs = call.getTensors();</span>
@@ -196,7 +196,7 @@ public class Division extends OperationType
 
 <span class="fc" id="L197">        Broadcast broadcast = new Broadcast(</span>
 <span class="nc" id="L198">                call -&gt; true,</span>
-<span class="nc" id="L199">                call -&gt; null,</span>
+<span class="nc" id="L199">                (caller, call) -&gt; null,</span>
                 rja,
                 call -&gt; {
 <span class="nc" id="L202">                    Tsr[] tsrs = call.getTensors();</span>
@@ -277,7 +277,7 @@ public class Division extends OperationType
 
 <span class="fc" id="L278">        Scalarization scalarization = new Scalarization(</span>
 <span class="nc" id="L279">                call -&gt; true,</span>
-<span class="nc" id="L280">                call -&gt; null,</span>
+<span class="nc" id="L280">                (caller, call) -&gt; null,</span>
                 rja,
                 call -&gt; {
 <span class="nc" id="L283">                    Tsr[] tsrs = call.getTensors();</span>
@@ -372,7 +372,7 @@ public class Division extends OperationType
                     }
 <span class="nc" id="L373">                    return true;</span>
                 },
-<span class="nc" id="L375">                call -&gt; null,</span>
+<span class="nc" id="L375">                (caller, call) -&gt; null,</span>
 <span class="nc" id="L376">                ( call, goDeeperWith ) -&gt; null,</span>
                 call -&gt; {
 <span class="nc" id="L378">                    Tsr[] tsrs = call.getTensors();</span>

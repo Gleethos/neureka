@@ -75,7 +75,7 @@ public class Subtraction extends OperationType
 
 <span class="fc" id="L76">        Operation operation = new Operation(</span>
 <span class="fc" id="L77">                call -&gt; true,</span>
-<span class="nc" id="L78">                call -&gt; null,</span>
+<span class="fc" id="L78">                (caller, call) -&gt; null,</span>
                 rja,
                 call -&gt; {
 <span class="fc" id="L81">                    Tsr[] tsrs = call.getTensors();</span>
@@ -157,7 +157,7 @@ public class Subtraction extends OperationType
 
 <span class="fc" id="L158">        Scalarization scalarization = new Scalarization(</span>
 <span class="nc" id="L159">                call -&gt; true,</span>
-<span class="nc" id="L160">                call -&gt; null,</span>
+<span class="nc" id="L160">                (caller, call) -&gt; null,</span>
                 rja,
                 call -&gt; {
 <span class="nc" id="L163">                    Tsr[] tsrs = call.getTensors();</span>
@@ -232,7 +232,7 @@ public class Subtraction extends OperationType
                 Broadcast.class,
                 new Broadcast(
 <span class="nc" id="L234">                call -&gt; true,</span>
-<span class="nc" id="L235">                call -&gt; null,</span>
+<span class="nc" id="L235">                (caller, call) -&gt; null,</span>
                 rja,
                 call -&gt; {
 <span class="nc" id="L238">                    Tsr[] tsrs = call.getTensors();</span>

@@ -42,7 +42,7 @@ public class Identity extends OperationType
                     }
 <span class="nc" id="L43">                    return true;</span>
                 },
-<span class="nc" id="L45">                call -&gt; null,</span>
+<span class="nc" id="L45">                (caller, call) -&gt; null,</span>
 <span class="fc" id="L46">                ( call, goDeeperWith ) -&gt; null,</span>
                 call -&gt; {
 <span class="nc" id="L48">                    Tsr[] tsrs = call.getTensors();</span>
@@ -116,7 +116,7 @@ public class Identity extends OperationType
                     }
 <span class="nc" id="L117">                    return true;</span>
                 },
-<span class="nc" id="L119">                call -&gt; null,</span>
+<span class="nc" id="L119">                (caller, call) -&gt; null,</span>
 <span class="nc" id="L120">                ( call, goDeeperWith ) -&gt; null,</span>
                 call -&gt; {
 <span class="nc" id="L122">                    Tsr[] tsrs = call.getTensors();</span>

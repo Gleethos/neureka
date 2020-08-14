@@ -105,7 +105,7 @@ public class Multiplication extends OperationType {
 
 <span class="fc" id="L106">        Operation operation = new Operation(</span>
 <span class="fc" id="L107">                call -&gt; true,</span>
-<span class="nc" id="L108">                call -&gt; null,</span>
+<span class="fc" id="L108">                (caller, call) -&gt; null,</span>
                 rja,
                 call -&gt; {
 <span class="fc" id="L111">                    Tsr[] tsrs = call.getTensors();</span>
@@ -171,7 +171,7 @@ public class Multiplication extends OperationType {
 
 <span class="fc" id="L172">        Broadcast broadcast = new Broadcast(</span>
 <span class="nc" id="L173">                call -&gt; true,</span>
-<span class="nc" id="L174">                call -&gt; null,</span>
+<span class="nc" id="L174">                (caller, call) -&gt; null,</span>
                 rja,
                 call -&gt; {
 <span class="nc" id="L177">                    Tsr[] tsrs = call.getTensors();</span>
@@ -249,7 +249,7 @@ public class Multiplication extends OperationType {
 
 <span class="fc" id="L250">        Scalarization scalarization = new Scalarization(</span>
 <span class="nc" id="L251">                call -&gt; true,</span>
-<span class="nc" id="L252">                call -&gt; null,</span>
+<span class="nc" id="L252">                (caller, call) -&gt; null,</span>
                 rja,
                 call -&gt; {
 <span class="nc" id="L255">                    Tsr[] tsrs = call.getTensors();</span>
@@ -337,7 +337,7 @@ public class Multiplication extends OperationType {
                     }
 <span class="nc" id="L338">                    return true;</span>
                 },
-<span class="nc" id="L340">                call -&gt; null,</span>
+<span class="nc" id="L340">                (caller, call) -&gt; null,</span>
 <span class="nc" id="L341">                ( call, goDeeperWith ) -&gt; null,</span>
                 call -&gt; {
 <span class="nc" id="L343">                    Tsr[] tsrs = call.getTensors();</span>
@@ -408,7 +408,7 @@ public class Multiplication extends OperationType {
                     }
 <span class="nc" id="L409">                    return true;</span>
                 },
-<span class="nc" id="L411">                call -&gt; null,</span>
+<span class="nc" id="L411">                (caller, call) -&gt; null,</span>
 <span class="nc" id="L412">                ( call, goDeeperWith ) -&gt; null,</span>
                 call -&gt; {
 <span class="nc" id="L414">                    Tsr[] tsrs = call.getTensors();</span>

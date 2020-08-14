@@ -301,7 +301,7 @@ public class GraphNode implements Component<Tsr>
      */
     public GraphNode( Function function, Object context, Supplier<Tsr> payloadSupplier )
     {
-        if ( function == null ) throw new IllegalArgumentException("Function must not be null!");
+        if ( function == null ) throw new IllegalArgumentException("Passed constructor argument of type Function must not be null!");
         if ( context instanceof GraphLock ) { // Note function always null in this case:
             _construct( payloadSupplier.get(), function, null, (GraphLock) context );
         } else if ( context instanceof ExecutionCall ) {
@@ -320,15 +320,18 @@ public class GraphNode implements Component<Tsr>
                 }
             }
             _construct( payloadSupplier.get(), function, call, inputs[0].find(GraphNode.class).lock() );
-        } else {// TODO: Write a unit test for this!
-            throw new IllegalStateException("A given context must either be a GraphLock instance or an ExecutionCall.");
+        } else {
+            throw new IllegalArgumentException(
+                    "The passed context object for the GraphNode constructor is of type '"+context.getClass().getName()+"'.\n" +
+                            "A given context must either be a GraphLock instance or an ExecutionCall."
+            );
         }
     }
 
     private void _construct(Tsr output, Function function, ExecutionCall call, GraphLock lock) {
         Tsr[] inputs = ( call == null ) ? null : call.getTensors();
-        if ( output == null ) throw new RuntimeException("Payload must no be null!");
-        if ( !function.doesAD() ) return;//Only functions with AutoDiff enabled create computation graph!
+        if ( output == null ) throw new NullPointerException("The supplied payload Tsr must no be null!");
+        if ( !function.doesAD() ) return; // Only functions with AutoDiff enabled create computation graph!
         _lock = lock;
         _setPayload( output );
         output.add( this );

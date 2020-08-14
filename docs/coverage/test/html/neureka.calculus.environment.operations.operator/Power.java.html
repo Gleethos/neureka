@@ -152,7 +152,7 @@ public class Power extends OperationType
 
 <span class="fc" id="L153">        Operation operation = new Operation(</span>
 <span class="fc" id="L154">                call -&gt; true,</span>
-<span class="nc" id="L155">                call -&gt; null,</span>
+<span class="fc" id="L155">                (caller, call) -&gt; null,</span>
                 rja,
                 call -&gt; {
 <span class="fc" id="L158">                    Tsr[] tsrs = call.getTensors();</span>
@@ -224,7 +224,7 @@ public class Power extends OperationType
 
 <span class="fc" id="L225">        Broadcast broadcast = new Broadcast(</span>
 <span class="nc" id="L226">                call -&gt; true,</span>
-<span class="nc" id="L227">                call -&gt; null,</span>
+<span class="nc" id="L227">                (caller, call) -&gt; null,</span>
                 rja,
                 call -&gt; {
 <span class="nc" id="L230">                    Tsr[] tsrs = call.getTensors();</span>
@@ -309,7 +309,7 @@ public class Power extends OperationType
 
 <span class="fc" id="L310">        Scalarization scalarization = new Scalarization(</span>
 <span class="nc" id="L311">                call -&gt; true,</span>
-<span class="nc" id="L312">                call -&gt; null,</span>
+<span class="nc" id="L312">                (caller, call) -&gt; null,</span>
                 rja,
                 call -&gt; {
 <span class="nc" id="L315">                    Tsr[] tsrs = call.getTensors();</span>
@@ -401,7 +401,7 @@ public class Power extends OperationType
                     }
 <span class="nc" id="L402">                    return true;</span>
                 },
-<span class="nc" id="L404">                call -&gt; null,</span>
+<span class="nc" id="L404">                (caller, call) -&gt; null,</span>
 <span class="nc" id="L405">                ( call, goDeeperWith ) -&gt; null,</span>
                 call -&gt; {
 <span class="nc" id="L407">                    Tsr[] tsrs = call.getTensors();</span>

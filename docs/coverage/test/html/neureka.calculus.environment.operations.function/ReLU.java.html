@@ -60,7 +60,7 @@ public class ReLU extends OperationType
                     }
 <span class="fc" id="L61">                    return true;</span>
                 },
-<span class="nc" id="L63">                call -&gt; null,</span>
+<span class="fc" id="L63">                (caller, call) -&gt; null,</span>
 <span class="fc" id="L64">                ( call, goDeeperWith ) -&gt; null,</span>
                 call -&gt; {
 <span class="fc" id="L66">                    Tsr[] tsrs = call.getTensors();</span>

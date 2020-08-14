@@ -30,7 +30,7 @@ public class Addition extends OperationType {
                     }
 <span class="nc" id="L31">                    return true;</span>
                 },
-<span class="nc" id="L33">                call -&gt; null,</span>
+<span class="fc" id="L33">                (caller, call) -&gt; null,</span>
 <span class="fc" id="L34">                ( call, goDeeperWith ) -&gt; null,</span>
                 call -&gt; {
 <span class="fc" id="L36">                    Tsr[] tsrs = call.getTensors();</span>
@@ -116,7 +116,7 @@ public class Addition extends OperationType {
 
 <span class="fc" id="L117">        Operation operation = new Operation(</span>
 <span class="fc" id="L118">                call -&gt; true,</span>
-<span class="nc" id="L119">                call -&gt; null,</span>
+<span class="fc" id="L119">                (caller, call) -&gt; null,</span>
                 rja,
                 call -&gt; {
 <span class="fc" id="L122">                    Tsr[] tsrs = call.getTensors();</span>
@@ -229,7 +229,7 @@ public class Addition extends OperationType {
 
 <span class="fc" id="L230">        Scalarization scalarization = new Scalarization(</span>
 <span class="nc" id="L231">                call -&gt; true,</span>
-<span class="nc" id="L232">                call -&gt; null,</span>
+<span class="nc" id="L232">                (caller, call) -&gt; null,</span>
                 rja,
                 call -&gt; {
 <span class="nc" id="L235">                    Tsr[] tsrs = call.getTensors();</span>
@@ -329,7 +329,7 @@ public class Addition extends OperationType {
                     }
 <span class="nc" id="L330">                    return true;</span>
                 },
-<span class="nc" id="L332">                call -&gt; null,</span>
+<span class="nc" id="L332">                (caller, call) -&gt; null,</span>
 <span class="nc" id="L333">                ( call, goDeeperWith ) -&gt; null,</span>
                 call -&gt; {
 <span class="nc" id="L335">                    Tsr[] tsrs = call.getTensors();</span>
