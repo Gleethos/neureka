@@ -118,7 +118,7 @@ public class XMultiplication extends OperationType
                         return tsrs[0];
                     } else {
                         if (call.getDerivativeIndex() < 0) {
-                            Tsr[] tsrs = caller._src_acti(call.getTensors(), call.getJ(), -1, 0);
+                            Tsr[] tsrs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
                             for ( Tsr t : tsrs ) t.setIsVirtual(false);
                             call.getDevice().execute( new ExecutionCall( call.getDevice(), tsrs, 0, call.getType() ) );
                             if ( call.getType().id() == OperationType.instance("x>>").id()) return tsrs[2];

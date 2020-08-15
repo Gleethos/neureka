@@ -7,7 +7,6 @@ import neureka.calculus.Function;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.GenericImplementation;
 import neureka.calculus.factory.assembly.FunctionBuilder;
-import neureka.calculus.factory.components.FunctionConstant;
 
 public class Reshape extends OperationType
 {
@@ -57,7 +56,7 @@ public class Reshape extends OperationType
         GenericImplementation implementation = new GenericImplementation(
                 call -> true,
                 ( caller, call ) -> {
-                    Tsr[] inputs = caller._src_acti(call.getTensors(), call.getJ(), -1, 0);
+                    Tsr[] inputs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
                     int[] newForm = new int[inputs.length - 1];
                     for (int i = 0; i < inputs.length - 1; i++) {
                         newForm[i] = (int) Tsr.IO.getFrom(inputs[i], 0);//_src.get(i).call(inputs)
