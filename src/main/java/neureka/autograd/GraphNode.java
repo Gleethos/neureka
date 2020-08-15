@@ -319,6 +319,21 @@ public class GraphNode implements Component<Tsr>
                     }
                 }
             }
+            GraphLock foundLock = null;
+            for ( int i=0; i< inputs.length; i++ ) {
+                GraphNode child = inputs[i].find( GraphNode.class );
+                if ( child == null ) throw new IllegalStateException(
+                        "Input tensor at index '"+i+"' did not return a GraphNode instance." +
+                                "Input tensors of a new GraphNode must be part of the computation graph!"
+                );
+                if ( foundLock == null ) foundLock = child.lock();
+                if ( foundLock != child.lock() ) {
+                    throw new IllegalStateException(
+                            "GraphNode instances found in input tensors do not share the same GraphLock instance.\n" +
+                                    "The given input tensors of a new node must be part of the same locked computation graph!"
+                    );
+                }
+            }
             _construct( payloadSupplier.get(), function, call, inputs[0].find(GraphNode.class).lock() );
         } else {
             throw new IllegalArgumentException(
@@ -416,10 +431,7 @@ public class GraphNode implements Component<Tsr>
         int[] modes = new int[inputs.length];
         int input_mode = 0;
         for ( int Ii = 0; Ii < inputs.length; Ii++ ) {
-            GraphNode node = inputs[Ii].find( GraphNode.class );
-            if ( node == null ) {
-                throw new IllegalStateException("Input tensors of a new graph-node must contain graph-nodes!");
-            }
+            GraphNode node = inputs[Ii].find( GraphNode.class ); // Not null checked in constructor!
             modes[Ii] = ( inputs[Ii].rqsGradient() ) ? 1 : node.mode();
             input_mode += ( modes[Ii] != 0) ? 1 : 0;
         }
