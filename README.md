@@ -8,6 +8,11 @@
 [![forthebadge](https://forthebadge.com/images/badges/certified-elijah-wood.svg)](https://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/check-it-out.svg)](https://forthebadge.com)
 
+<a href="https://scan.coverity.com/projects/gleethos-neureka">
+  <img alt="Coverity Scan Build Status"
+       src="https://img.shields.io/coverity/scan/21605.svg"/>
+</a>
+
 [![HitCount](http://hits.dwyl.com/Gleethos/neureka.svg)](http://hits.dwyl.com/Gleethos/neureka)
 ---
 

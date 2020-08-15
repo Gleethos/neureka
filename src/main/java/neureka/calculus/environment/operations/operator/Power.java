@@ -93,13 +93,13 @@ public class Power extends OperationType
                 if ( d < 0 ) {
                     Tsr[] reduction = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
                     alternative = goDeeperWith.apply(
-                            new ExecutionCall<>( device, reduction, d, type )
+                            call.withNew( reduction )
                     );
                     tsrs[0] = reduction[0];
 
                     reduction = AbstractOperationTypeImplementation.Utility._offsetted(tsrs, 1);
                     alternative = goDeeperWith.apply(
-                            new ExecutionCall<>( device, reduction, d, type )
+                            call.withNew( reduction )
                             );
                     tsrs[0] = reduction[0];
                 } else {

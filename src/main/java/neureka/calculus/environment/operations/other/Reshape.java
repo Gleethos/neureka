@@ -56,9 +56,31 @@ public class Reshape extends OperationType
 
         GenericImplementation implementation = new GenericImplementation(
                 call -> true,
-                (caller, call) -> {
-                    return null;
-                    //Tsr[] inputs = _src_acti(call.getTensors(), j, -1, 0);
+                ( caller, call ) -> {
+                    Tsr[] inputs = caller._src_acti(call.getTensors(), call.getJ(), -1, 0);
+                    int[] newForm = new int[inputs.length - 1];
+                    for (int i = 0; i < inputs.length - 1; i++) {
+                        newForm[i] = (int) Tsr.IO.getFrom(inputs[i], 0);//_src.get(i).call(inputs)
+                    }
+                    if (call.getDerivativeIndex() >= 0) {//reverse reshape:
+                        int reverseLength = 0;
+                        for (int e : newForm) {
+                            if (e>=0) reverseLength++;
+                        }
+                        int[] reversed = new int[reverseLength];
+                        int reshape_i = 0;
+                        int reverse_i = 0;
+                        while ( reverse_i < reverseLength ) {
+                            if ( newForm[ reshape_i ] >= 0 ) {
+                                reversed[ newForm[reshape_i] ] = reshape_i;
+                                reverse_i++;
+                            }
+                            reshape_i++;
+                        }
+                        newForm = reversed;
+                    }
+                    Tsr t = inputs[inputs.length - 1];
+                    return Tsr.Exec.reshaped(t, newForm, true);
                 },
                 call -> false,
                 (call, goDeeperWith)->

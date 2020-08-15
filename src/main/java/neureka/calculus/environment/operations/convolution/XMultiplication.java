@@ -103,7 +103,30 @@ public class XMultiplication extends OperationType
                     }
                     return true;
                 },
-                (caller, call) -> null,
+                (caller, call) -> {
+                    if ( !caller.isFlat() ) return null;
+                    if ( call.getType().identifier().equals("x") ) {
+
+                        Tsr[] inputs = call.getTensors();
+                        Tsr[] tsrs = new Tsr[]{null, inputs[0], inputs[1]};// _src_acti(inputs, j, -1, 1);
+                        tsrs[0] = (call.getDerivativeIndex() < 0)
+                                ? new Tsr(Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape()))
+                                : null;
+
+                        for (Tsr t : tsrs) if (t != null) t.setIsVirtual(false);
+                        call.getDevice().execute(call.withNew(tsrs));
+                        return tsrs[0];
+                    } else {
+                        if (call.getDerivativeIndex() < 0) {
+                            Tsr[] tsrs = caller._src_acti(call.getTensors(), call.getJ(), -1, 0);
+                            for ( Tsr t : tsrs ) t.setIsVirtual(false);
+                            call.getDevice().execute( new ExecutionCall( call.getDevice(), tsrs, 0, call.getType() ) );
+                            if ( call.getType().id() == OperationType.instance("x>>").id()) return tsrs[2];
+                            else return tsrs[0];
+                        }
+                    }
+                    return null;
+                },
                 rja,
                 call -> {
                     Tsr[] tsrs = call.getTensors();

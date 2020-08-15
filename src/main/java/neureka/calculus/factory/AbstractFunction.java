@@ -75,8 +75,7 @@ public abstract class AbstractFunction extends BaseFunction {
     public String toString()
     {
         List<String> stringedSource = _src.stream().map(e->((e==null)?"(null)":e.toString())).collect(Collectors.toList());
-        String asStr = _type.getStringifier().asString(stringedSource);
-        return asStr;
+        return _type.getStringifier().asString(stringedSource);
     }
 
     @Override
@@ -103,7 +102,7 @@ public abstract class AbstractFunction extends BaseFunction {
     protected Tsr _tensor_activation( Tsr[] inputs, int j, int d )
     {
         Device device = _device( inputs );
-        ExecutionCall call = new ExecutionCall( device, inputs, d, _type );
+        ExecutionCall<Device> call = new ExecutionCall<>( device, inputs, d, j, _type );
 
         /* The code below deals with deep functions (non flat):  */
         if ( _isFlat ) {
@@ -111,83 +110,33 @@ public abstract class AbstractFunction extends BaseFunction {
             /* Autograd-Graph will be generated below for the new GraphNode: */
             /* only flat functions can be executed directly*/
             if ( d < 0 && _doAD )
-                return new GraphNode(this, call, ()-> __flat_execution( call, j )).getPayload();
+                return new GraphNode(this, call, ()-> __flat_execution( call )).getPayload();
             else
-                return __flat_execution( call, j );
+                return __flat_execution( call );
 
-        } else return _apply(device, d, () -> __deep_execution( call, j ));
+        } else return _apply(
+                call,
+                () -> __deep_execution( call )
+        );
     }
 
-    private Tsr __flat_execution( ExecutionCall call, int j )
+    private Tsr __flat_execution( ExecutionCall<Device> call )
     {
         Tsr alternative = call.getImplementation().getCallHook().handle( this, call );
         if ( alternative != null ) return alternative;
 
-        Device myDevice = call.getDevice();
-        int d = call.getDerivativeIndex();
-        Tsr[] inputs = call.getTensors();
-
-        if (call.getType().identifier().equals("x"))
-        {
-            //TODO: Move ALL of this into the operation types!!!!!
-            Tsr[] tsrs = new Tsr[]{ null, inputs[0], inputs[1] };// _src_acti(inputs, j, -1, 1);
-            tsrs[0] = ( d < 0 )
-                    ? new Tsr(Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape()))
-                    : null;
-
-            for ( Tsr t : tsrs ) if( t != null ) t.setIsVirtual(false);
-            myDevice.execute( new ExecutionCall( myDevice, tsrs, d, _type ) );
-            return tsrs[0];
-
-        } else if (
-                _type.id() == OperationType.instance("<<x").id() ||
-                        _type.id() == OperationType.instance("x>>").id()
-        ) {
-            if (d < 0) {
-                //inputs = _src_acti(inputs, j, -1, 0);
-                Tsr[] tsrs = _src_acti(inputs, j, -1, 0);
-                for ( Tsr t : tsrs ) t.setIsVirtual(false);
-                myDevice.execute( new ExecutionCall( myDevice, tsrs, 0, _type ) );
-                if (_type.id() == OperationType.instance("x>>").id()) return tsrs[2];
-                else return tsrs[0];
-            }
-            return null;
-        } else if (_type.identifier().equals(",")) {
-            inputs = _src_acti(inputs, j, -1, 0);
-            int[] newForm = new int[_src.size() - 1];
-            for (int i = 0; i < _src.size() - 1; i++) {
-                newForm[i] = (int) Tsr.IO.getFrom(inputs[i], 0);//_src.get(i).call(inputs)
-            }
-            if (d >= 0) {//reverse reshape:
-                int reverseLength = 0;
-                for (int e : newForm) {
-                    if (e>=0) reverseLength++;
-                }
-                int[] reversed = new int[reverseLength];
-                int reshape_i = 0;
-                int reverse_i = 0;
-                while ( reverse_i < reverseLength ) {
-                    if ( newForm[ reshape_i ] >= 0 ) {
-                        reversed[ newForm[reshape_i] ] = reshape_i;
-                        reverse_i++;
-                    }
-                    reshape_i++;
-                }
-                newForm = reversed;
-            }
-            Tsr t = inputs[inputs.length - 1];
-            return Tsr.Exec.reshaped(t, newForm, true);
-        } else {
-            Tsr[] tsrs = inputs;
-            return _apply(myDevice, d, () -> __deep_execution( new ExecutionCall( myDevice, tsrs, d, call.getType() ), j ));
-        }
+        return _apply(
+                call,
+                () -> __deep_execution( call )
+        );
     }
 
-    private Tsr __deep_execution( ExecutionCall call, int j )
+    private Tsr __deep_execution( ExecutionCall call )
     {
         Tsr[] inputs = call.getTensors();
         int d = call.getDerivativeIndex();
         Device device = call.getDevice();
+        int j = call.getJ();
 
         Tsr[] tsrs;
         if ( _type.isIndexer() ) tsrs = new Tsr[ 1 + inputs.length ];
@@ -296,15 +245,19 @@ public abstract class AbstractFunction extends BaseFunction {
         return -1;
     }
 
-    private Tsr _apply(Device device, int d, Supplier<Tsr> actor) {
+    private Tsr _apply( ExecutionCall<Device> call, Supplier<Tsr> actor) {
+        Device device = call.getDevice();
+        int d = call.getDerivativeIndex();
         Tsr out = null;
         if (d >= 0) {
             for (int i = 0; i < _src.size(); i++) {//constants need to be figured out!
                 int di = (_src.get(i).dependsOn(d)) ? i : -1;
-                if (di >= 0) {
+                if ( di >= 0 ) {
                     if (out == null) out = actor.get();
                     else device.execute(
-                            new ExecutionCall( device, new Tsr[]{null, actor.get(), out}, -1, OperationType.instance("+") )
+                            new ExecutionCall(
+                                    device, new Tsr[]{null, actor.get(), out}, -1, OperationType.instance("+")
+                            )
                     );
                 }
             }
