@@ -48,7 +48,7 @@ public class HostCPU extends AbstractDevice
     }
 
     @Override
-    protected void _enqueue(Tsr t, double value, int d, OperationType type) {
+    protected void _enqueue( Tsr t, double value, int d, OperationType type ) {
         int[] shape = new int[t.rank()];
         Arrays.fill(shape, 1);
         _enqueue(new Tsr[]{t, t, new Tsr(shape, value)}, d, type);

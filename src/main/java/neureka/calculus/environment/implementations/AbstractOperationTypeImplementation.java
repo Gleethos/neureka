@@ -115,8 +115,8 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
             Below is the core lambda of recursive preprocessing
             which is defined for each OperationImplementation individually :
          */
-        Tsr result = _RJAgent.handle(call, (c)-> recursiveReductionOf( c, finalExecution ));
-        if ( result==null ) {
+        Tsr result = _RJAgent.handle(call, c -> recursiveReductionOf( c, finalExecution ));
+        if ( result == null ) {
             finalExecution.accept(
                     new ExecutionCall<>( device, call.getTensors(), d, type )
             );

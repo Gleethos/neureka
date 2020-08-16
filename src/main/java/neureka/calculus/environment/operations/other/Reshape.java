@@ -58,13 +58,13 @@ public class Reshape extends OperationType
                 ( caller, call ) -> {
                     Tsr[] inputs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
                     int[] newForm = new int[inputs.length - 1];
-                    for (int i = 0; i < inputs.length - 1; i++) {
+                    for ( int i = 0; i < inputs.length - 1; i++ ) {
                         newForm[i] = (int) Tsr.IO.getFrom(inputs[i], 0);//_src.get(i).call(inputs)
                     }
-                    if (call.getDerivativeIndex() >= 0) {//reverse reshape:
+                    if ( call.getDerivativeIndex() >= 0 ) {//reverse reshape:
                         int reverseLength = 0;
-                        for (int e : newForm) {
-                            if (e>=0) reverseLength++;
+                        for ( int e : newForm ) {
+                            if ( e >= 0 ) reverseLength++;
                         }
                         int[] reversed = new int[reverseLength];
                         int reshape_i = 0;
@@ -82,7 +82,7 @@ public class Reshape extends OperationType
                     return Tsr.Exec.reshaped(t, newForm, true);
                 },
                 call -> false,
-                (call, goDeeperWith)->
+                ( call, goDeeperWith ) ->
                 {
                     Tsr[] inputs = call.getTensors();
                     Device device = call.getDevice();
