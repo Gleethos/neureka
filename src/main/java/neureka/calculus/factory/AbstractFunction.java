@@ -6,12 +6,14 @@ import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.Type;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 import neureka.calculus.factory.components.FunctionConstant;
+import neureka.calculus.factory.components.FunctionInput;
+import neureka.calculus.factory.components.FunctionVariable;
 import org.jetbrains.annotations.Contract;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -19,25 +21,41 @@ import java.util.stream.IntStream;
 
 import neureka.calculus.environment.implementations.*;
 
-public abstract class AbstractFunction extends BaseFunction {
-    
+public abstract class AbstractFunction extends BaseFunction
+{
     private final OperationType _type;
     private final boolean _isFlat;
     private final boolean _doAD;
-    private final ArrayList<Function> _src;
+    private final List<Function> _src;
 
     //------------------------------------------------------------------------------------------------------------------
 
     /**
+     *
      * @param f_id
-     * @param isFlat
-     * @param source
+     * @param sources
      * @param doAD
      */
-    protected AbstractFunction(int f_id, boolean isFlat, ArrayList<Function> source, boolean doAD) {
+    protected AbstractFunction( int f_id, List<Function> sources, boolean doAD )
+    {
+        Type type = OperationType.instance(f_id);
+        if( type.arity() >= 0 && sources.size() != type.arity() ) {
+            String tip = ( type.isIndexer() )
+                    ? "\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration."
+                    : "";
+            throw new IllegalArgumentException(
+                    "The function/operation '"+type.identifier()+"' expects "+type.arity()+" parameters, "+
+                            "however "+sources.size()+" where given!"+tip
+            );
+        }
+        boolean isFlat = true;
+        for ( Function f : sources ) { // AbstractFunction does only reference tip nodes of the function graph:
+            isFlat = ((f instanceof FunctionInput) || (f instanceof FunctionVariable) || (f instanceof FunctionConstant)) && isFlat;
+        }
+
         _type = OperationType.instance(f_id);
         _isFlat = isFlat;
-        _src = source;
+        _src = sources;
         _doAD = doAD;
     }
 
@@ -87,7 +105,7 @@ public abstract class AbstractFunction extends BaseFunction {
 
     @Override
     public ADAgent getADAgent( Tsr[] inputs, int i, boolean forward ) {
-        return _type.getADAgentOf(this, inputs, i, forward);
+        return _type.getADAgentOf( this, inputs, i, forward );
     }
 
     /**
@@ -109,7 +127,7 @@ public abstract class AbstractFunction extends BaseFunction {
             /* Autograd-Graph will be generated below for the new GraphNode: */
             /* only flat functions can be executed directly*/
             if ( d < 0 && _doAD )
-                return new GraphNode(this, call, ()-> __flat_execution( call )).getPayload();
+                return new GraphNode( this, call, ()-> __flat_execution( call ) ).getPayload();
             else
                 return __flat_execution( call );
 
@@ -133,13 +151,13 @@ public abstract class AbstractFunction extends BaseFunction {
     private Tsr __deep_execution( ExecutionCall<Device> call )
     {
         Tsr[] inputs = call.getTensors();
-        int d = call.getDerivativeIndex();
         Device device = call.getDevice();
+        int d = call.getDerivativeIndex();
         int j = call.getJ();
 
         Tsr[] tsrs;
         if ( _type.isIndexer() ) tsrs = new Tsr[ 1 + inputs.length ];
-        else tsrs = new Tsr[1 + _src.size()];
+        else tsrs = new Tsr[ 1 + _src.size() ];
 
         if ( d >= 0 ) // Differentiation
         {
@@ -159,7 +177,7 @@ public abstract class AbstractFunction extends BaseFunction {
             //then add them all together! (is possible because of linearity...)
             Tsr inner;
             if ( tsrs.length > 2 ) {// Optimization: Finds index of "1.0" among otherwise all "0.0" virtual tensors!
-                int index = ___indexOfFoundDerivative(tsrs);
+                int index = ___indexOfFoundDerivative( tsrs );
                 if ( index >= 0 ) inner = tsrs[index];
                 else {
                     // Optimization above did not apply, so we accumulate all the derivatives!
@@ -172,11 +190,11 @@ public abstract class AbstractFunction extends BaseFunction {
             //...then activate (No differentiation!) the source like so:
             if ( _type.isIndexer() ) { // Indexer pass an index j of course!
                 for ( int i = 1; i < tsrs.length; i++ ) {
-                    tsrs[i] = _src.get(0).call(inputs, i - 1); // i - 1 := j
+                    tsrs[i] = _src.get(0).call( inputs, i - 1 ); // i - 1 := j
                 }
             } else {
                 for ( int i = 1; i < tsrs.length; i++ ) {
-                    tsrs[i] = (j >= 0) ? _src.get(i - 1).call(inputs, j) : _src.get(i - 1).call(inputs);
+                    tsrs[i] = ( j >= 0 ) ? _src.get(i - 1).call(inputs, j) : _src.get(i - 1).call(inputs);
                 }
             }
             //get derivative index within src list:
@@ -227,7 +245,8 @@ public abstract class AbstractFunction extends BaseFunction {
      * @param tsrs An array of tensors which ought to be analyzed.
      * @return The index of the tensor whose value is "1.0" (if all other are "0.0"), otherwise : -1
      */
-    private int ___indexOfFoundDerivative( Tsr[] tsrs ) {
+    private int ___indexOfFoundDerivative( Tsr[] tsrs )
+    {
         boolean allVirtual = true;
         for ( Tsr t : tsrs ) if ( t != null && !t.isVirtual() ) allVirtual = false;
         if ( allVirtual ) {
@@ -290,22 +309,23 @@ public abstract class AbstractFunction extends BaseFunction {
         return tsrs;
     }
 
-    private Device _device(Tsr[] inputs) {
-        Device device = inputs[0].find(Device.class);
-        boolean onSameDevice = _shareGuestDevice(inputs);
-        boolean doAccel = (!_type.identifier().equals(",") && onSameDevice);
-        return (doAccel && device != null) ? device : inputs[0].device();
+    private Device _device( Tsr[] inputs )
+    {
+        Device device = inputs[0].find( Device.class );
+        boolean onSameDevice = _shareGuestDevice( inputs );
+        boolean doAccel = !_type.identifier().equals(",") && onSameDevice;
+        return ( doAccel && device != null ) ? device : inputs[0].device();
     }
 
-    private static boolean _shareGuestDevice(Tsr[] tsrs)
+    private static boolean _shareGuestDevice( Tsr[] tsrs )
     {
         boolean onSameGuestDevice = true;
         Device device = null;
-        for ( Tsr tsr : tsrs ) device = (tsr.isOutsourced()) ? tsr.find(Device.class) : device;
+        for ( Tsr tsr : tsrs ) device = ( tsr.isOutsourced() ) ? tsr.find( Device.class ) : device;
 
         if ( device != null ) {
             for ( Tsr tsr : tsrs ) {
-                onSameGuestDevice = (!tsr.isVirtual() && device == tsr.find(Device.class)) && onSameGuestDevice;
+                onSameGuestDevice = ( !tsr.isVirtual() && device == tsr.find(Device.class) ) && onSameGuestDevice;
             }
         } else onSameGuestDevice = false;
 
@@ -317,8 +337,8 @@ public abstract class AbstractFunction extends BaseFunction {
 
     //------------------------------------------------------------------------------------------------------------------
 
-    protected double _scalar_activation(double input, boolean derive) {
-        switch (_type.identifier()) {
+    protected double _scalar_activation( double input, boolean derive ) {
+        switch ( _type.identifier() ) {
             case "relu":
                 return Exec.reLu(input, derive);
             case "sig":
@@ -346,29 +366,29 @@ public abstract class AbstractFunction extends BaseFunction {
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    protected double _scalar_activation(double[] input, int j, int d) {
+    protected double _scalar_activation( double[] input, int j, int d ) {
         switch (_type.identifier()) {
-            case "sum": return (j < 0) ? Exec.summation(input, d, _src) : Exec.summation(input, j, d, _src);
-            case "prod": return (j < 0) ? Exec.PI(input, d, _src) : Exec.PI(input, j, d, _src);
-            case "^": return (j < 0) ? Exec.power(input, d, _src) : Exec.power(input, j, d, _src);
-            case "/": return (j < 0) ? Exec.division(input, d, _src) : Exec.division(input, j, d, _src);
-            case "*": return (j < 0) ? Exec.multiplication(input, d, _src) : Exec.multiplication(input, j, d, _src);
-            case "%": return (j < 0) ? Exec.modulo(input, d, _src) : Exec.modulo(input, j, d, _src);
-            case "-": return (j < 0) ? Exec.subtraction(input, d, _src) : Exec.subtraction(input, j, d, _src);
-            case "+": return (j < 0) ? Exec.addition(input, d, _src) : Exec.addition(input, j, d, _src);
-            case "x": return (j < 0) ? Exec.multiplication(input, d, _src) : Exec.multiplication(input, j, d, _src);
+            case "sum": return ( j < 0 ) ? Exec.summation(input, d, _src) : Exec.summation(input, j, d, _src);
+            case "prod": return ( j < 0 ) ? Exec.PI(input, d, _src) : Exec.PI(input, j, d, _src);
+            case "^": return ( j < 0 ) ? Exec.power(input, d, _src) : Exec.power(input, j, d, _src);
+            case "/": return ( j < 0 ) ? Exec.division(input, d, _src) : Exec.division(input, j, d, _src);
+            case "*": return ( j < 0 ) ? Exec.multiplication(input, d, _src) : Exec.multiplication(input, j, d, _src);
+            case "%": return ( j < 0 ) ? Exec.modulo(input, d, _src) : Exec.modulo(input, j, d, _src);
+            case "-": return ( j < 0 ) ? Exec.subtraction(input, d, _src) : Exec.subtraction(input, j, d, _src);
+            case "+": return ( j < 0 ) ? Exec.addition(input, d, _src) : Exec.addition(input, j, d, _src);
+            case "x": return ( j < 0 ) ? Exec.multiplication(input, d, _src) : Exec.multiplication(input, j, d, _src);
             default: return
                     _scalar_activation(
-                        _src.get(0).call(input, j),
+                        _src.get(0).call( input, j ),
                         d >= 0
-                    ) * ( ( d < 0 ) ? 1 : _src.get(0).derive(input, d, j) );
+                    ) * ( ( d < 0 ) ? 1 : _src.get(0).derive( input, d, j ) );
         }
     }
 
     public static class Exec
     {
         @Contract(pure = true)
-        public static double reLu(double input, boolean derive) {
+        public static double reLu( double input, boolean derive ) {
             double output;
             if ( !derive ) {
                 if ( input >= 0 ) output = (input);
@@ -382,7 +402,7 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        public static double sigmoid(double input, boolean derive) {
+        public static double sigmoid( double input, boolean derive ) {
             if ( !derive ) {
                 return 1 / (1 + Math.pow(Math.E, -input));
             } else {
@@ -391,7 +411,7 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        public static double tanh(double input, boolean derive) {
+        public static double tanh( double input, boolean derive ) {
             if ( !derive ) {
                 return input / Math.pow((1 + Math.pow(input, 2)), 0.5);
             } else {
@@ -400,13 +420,13 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        public static double quadratic(double input, boolean derive) {
+        public static double quadratic( double input, boolean derive ) {
             if (!derive) return (input * input);
             else return 2 * input;
         }
 
         @Contract(pure = true)
-        public static double ligmoid(double input, boolean derive) {
+        public static double ligmoid( double input, boolean derive ) {
             if ( !derive ) return Math.log(1 + Math.pow(Math.E, input));
             else return sigmoid(input, false);
         }
@@ -418,30 +438,30 @@ public abstract class AbstractFunction extends BaseFunction {
         }
 
         @Contract(pure = true)
-        public static double gaussian(double input, boolean derive) {
+        public static double gaussian( double input, boolean derive ) {
             if ( !derive ) return Math.pow(Math.E, -Math.pow(input, 2));
             else return -2 * input * Math.pow(Math.E, -Math.pow(input, 2));
         }
 
         @Contract(pure = true)
-        public static double absolute(double input, boolean derive) {
+        public static double absolute( double input, boolean derive ) {
             if ( !derive ) return Math.abs( input );
             else return ( input < 0 ) ? -1 : 1;
         }
 
         @Contract(pure = true)
-        public static double sinus(double input, boolean derive) {
+        public static double sinus( double input, boolean derive ) {
             if ( !derive ) return Math.sin( input );
             else return Math.cos( input );
         }
 
         @Contract(pure = true)
-        public static double cosinus(double input, boolean derive) {
+        public static double cosinus( double input, boolean derive ) {
             if ( !derive ) return Math.cos( input );
             else return -Math.sin( input );
         }
 
-        private static double summation(double[] inputs, int j, int d, List<Function> src) {
+        private static double summation( double[] inputs, int j, int d, List<Function> src ) {
             if ( d < 0 ) {
                 double sum = 0;
                 boolean nothingDone = true;
