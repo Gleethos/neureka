@@ -174,33 +174,22 @@ public class OperationType implements Type
     }
 
     @Override
-    public boolean allowsForward(Tsr[] inputs)
-    {
-        if ( this.supports(Convolution.class) ) return false;
-        if ( this.identifier().equals(",") ) return false; // Reshape
-        Tsr last = null;
-        for ( Tsr t : inputs ) {
-            if ( last != null && !last.shape().equals(t.shape()) ) return false;
-            last = t; // Note: shapes are cached!
-        }
-        return true;
-    }
-
-    @Override
     public boolean supports(Class implementation) {
         return _implementations.containsKey(implementation);
     }
 
     @Override
-    public ADAgent getADAgentOf(Function f, Tsr[] inputs, int i, boolean forward)
+    public ADAgent getADAgentOf( Function f, ExecutionCall call, boolean forward )
     {
+        Tsr[] inputs = call.getTensors();
+        int d = call.getDerivativeIndex();
         Function mul = Function.Detached.MUL;
         if(forward)
         {
-            Tsr d = f.derive(inputs, i);
+            Tsr deriv = f.derive(inputs, d);
             return new ADAgent(
-                    ()->d,
-                    (t, derivative) -> mul.call(new Tsr[]{derivative, d}),
+                    () -> deriv,
+                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}),
                     null
             );
         } else {
@@ -210,20 +199,20 @@ public class OperationType implements Type
                         "I[0]" + identifier() + ">>I[1]" + identifier() + ">>I[2]",
                         false
                 );
-                Tsr d = f.derive(inputs, i);
+                Tsr deriv = f.derive(inputs, d);
                 return new ADAgent(
-                        ()->d,
-                        (t, derivative) -> mul.call(new Tsr[]{derivative, d}),
-                        (t, error) -> invX.call(new Tsr[]{error, d, new Tsr(t.getPayload().shape(), 0)})
+                        ()->deriv,
+                        (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
+                        (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)})
                 );
             }
             else
             {
-                Tsr d = f.derive(inputs, i);
+                Tsr deriv = f.derive(inputs, d);
                 return new ADAgent(
-                        ()->d,
-                        (t, derivative) -> mul.call(new Tsr[]{derivative, d}),
-                        (t, error) -> mul.call(new Tsr[]{error, d})
+                        ()->deriv,
+                        (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
+                        (t, error) -> mul.call(new Tsr[]{error, deriv})
                 );
             }
         }

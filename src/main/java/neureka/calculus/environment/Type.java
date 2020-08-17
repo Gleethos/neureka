@@ -1,6 +1,7 @@
 package neureka.calculus.environment;
 
 import neureka.Tsr;
+import neureka.acceleration.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.environment.implementations.AbstractOperationTypeImplementation;
@@ -76,15 +77,8 @@ public interface Type
     
     boolean isCommutative();
 
-    boolean allowsForward(Tsr[] inputs);
-
     boolean supports(Class implementation);
 
-    ADAgent getADAgentOf(Function f, Tsr[] inputs, int i, boolean forward);
-
-
-
-
-
+    ADAgent getADAgentOf(Function f, ExecutionCall<Device> call, boolean forward);
 
 }

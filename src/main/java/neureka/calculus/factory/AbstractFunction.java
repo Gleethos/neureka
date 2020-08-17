@@ -104,8 +104,8 @@ public abstract class AbstractFunction extends BaseFunction
     //------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public ADAgent getADAgent( Tsr[] inputs, int i, boolean forward ) {
-        return _type.getADAgentOf( this, inputs, i, forward );
+    public ADAgent getADAgent( ExecutionCall<Device> call, boolean forward ) {
+        return _type.getADAgentOf( this, call, forward );
     }
 
     /**

@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.GenericImplementation;
 import neureka.calculus.factory.assembly.FunctionBuilder;
@@ -142,7 +143,10 @@ public class Reshape extends OperationType
     }
 
     @Override
-    public ADAgent getADAgentOf(Function f, Tsr[] inputs, int i, boolean forward){
+    public ADAgent getADAgentOf(Function f, ExecutionCall call, boolean forward)
+    {
+        Tsr[] inputs = call.getTensors();
+        int i = call.getDerivativeIndex();
         if(forward){
             throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
         }

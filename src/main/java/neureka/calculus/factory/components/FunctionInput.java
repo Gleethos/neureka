@@ -3,8 +3,10 @@ package neureka.calculus.factory.components;
 
 import neureka.Component;
 import neureka.Tsr;
+import neureka.acceleration.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.factory.BaseFunction;
 import neureka.calculus.factory.assembly.FunctionBuilder;
@@ -147,7 +149,7 @@ public class FunctionInput extends BaseFunction implements GradientProvider
     }
 
     @Override
-    public ADAgent getADAgent(Tsr[] inputs, int i, boolean forward){
+    public ADAgent getADAgent( ExecutionCall<Device> call, boolean forward ){
         return null;
     }
 

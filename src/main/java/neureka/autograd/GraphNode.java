@@ -3,6 +3,7 @@ package neureka.autograd;
 import neureka.Component;
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.acceleration.Device;
 import neureka.acceleration.opencl.utility.WeakTensorReference;
 import neureka.calculus.Function;
 import neureka.calculus.environment.ExecutionCall;
@@ -389,7 +390,19 @@ public class GraphNode implements Component<Tsr>
                                     ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
                                 !src_node.isLeave() && !src_node._allows_forward//Was : src_node.function().type().allowsForward( inputs )
                         ) {
-                            this.put( src_node, function.getADAgent( inputs, i, true ) );
+                            this.put(
+                                    src_node,
+                                    function.getADAgent(
+                                            new ExecutionCall<Device>(
+                                                    call.getDevice(),
+                                                    call.getTensors(),
+                                                    i,
+                                                    call.getJ(),
+                                                    call.getType()
+                                            ),
+                                            true
+                                    )
+                            );
                         } else {
                             /*  Chain rule (forward) for every derivative w.r.t. leaves (reverseAD or user leaves): */
                             src_node.forEach(
@@ -406,7 +419,19 @@ public class GraphNode implements Component<Tsr>
                 for ( int i = 0; i < inputs.length; i++ ) {
                     GraphNode src_node = inputs[i].find(GraphNode.class);
                     if ( src_node.usesAD() || inputs[i].rqsGradient() ) {
-                        this.put( src_node, function.getADAgent( inputs, i, false ) );
+                        this.put(
+                                src_node,
+                                function.getADAgent(
+                                        new ExecutionCall<Device>(
+                                                call.getDevice(),
+                                                call.getTensors(),
+                                                i,
+                                                call.getJ(),
+                                                call.getType()
+                                        ),
+                                        false
+                                )
+                        );
                     }
                 }
             }
