@@ -41,7 +41,8 @@ public class Power extends OperationType
         super("power", "^", -1, true, false, false, false, false);
 
         setStringifier(
-                children -> {
+                children ->
+                {
                     StringBuilder reconstructed = new StringBuilder();
                     for ( int i = 0; i < children.size(); ++i ) {
                         reconstructed.append( children.get(i) );
@@ -63,8 +64,9 @@ public class Power extends OperationType
             if (d < 0) {
                 return t1Idx -> Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], t2_val[inputs[2].i_of_idx(t1Idx)]);
             } else {
-                return t1Idx -> {
-                    if (d == 0) {
+                return t1Idx ->
+                {
+                    if ( d == 0 ) {
                         return t2_val[inputs[2].i_of_idx(t1Idx)]
                                 * Math.pow(
                                 t1_val[inputs[1].i_of_idx(t1Idx)],
@@ -158,7 +160,8 @@ public class Power extends OperationType
         ).setRJAgent(
                 rja
         ).setDrainInstantiation(
-                call -> {
+                call ->
+                {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();
                     if ( tsrs[0] == null ) // Creating a new tensor:
@@ -196,7 +199,8 @@ public class Power extends OperationType
                 ).setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
-                                call -> {
+                                call ->
+                                {
                                     int offset = (call.getTensor(0) != null) ? 0 : 1;
                                     int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
@@ -237,9 +241,6 @@ public class Power extends OperationType
                     if ( tsrs[0] == null ) // Creating a new tensor:
                     {
                         int[] shp = tsrs[1].getNDConf().shape();
-                        //int[] shp = (type.identifier().endsWith("x"))
-                        //        ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
-                        //        : tsrs[1].getNDConf().shape();
                         Tsr output = new Tsr( shp, 0.0 );
                         output.setIsVirtual(false);
                         device.add(output);

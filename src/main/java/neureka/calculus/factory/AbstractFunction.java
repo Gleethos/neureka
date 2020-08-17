@@ -269,7 +269,7 @@ public abstract class AbstractFunction extends BaseFunction
         int d = call.getDerivativeIndex();
         Tsr out = null;
         if ( d >= 0 ) {
-            for ( int i = 0; i < _src.size(); i++ ) {//constants need to be figured out!
+            for ( int i = 0; i < _src.size(); i++ ) { // constants need to be figured out!
                 int di = ( _src.get(i).dependsOn(d) ) ? i : -1;
                 if ( di >= 0 ) {
                     if ( out == null ) out = actor.get();
@@ -391,14 +391,13 @@ public abstract class AbstractFunction extends BaseFunction
         public static double reLu( double input, boolean derive ) {
             double output;
             if ( !derive ) {
-                if ( input >= 0 ) output = (input);
+                if ( input >= 0 ) output = input;
                 else output = input * 0.01;
-                return output;
             } else {
                 if ( input >= 0 ) output = 1;
                 else output = 0.01;
-                return output;
             }
+            return output;
         }
 
         @Contract(pure = true)
@@ -412,10 +411,11 @@ public abstract class AbstractFunction extends BaseFunction
 
         @Contract(pure = true)
         public static double tanh( double input, boolean derive ) {
+            final double pow = Math.pow((1 + Math.pow(input, 2)), 0.5);
             if ( !derive ) {
-                return input / Math.pow((1 + Math.pow(input, 2)), 0.5);
+                return input / pow;
             } else {
-                return (1 - Math.pow((input / Math.pow((1 + Math.pow( input, 2)), 0.5)), 2));
+                return (1 - Math.pow((input / pow), 2));
             }
         }
 
@@ -493,7 +493,7 @@ public abstract class AbstractFunction extends BaseFunction
             } else {
                 double sum = 0;
                 boolean nothingDone = true;
-                for (int i = 0; i < inputs.length; i++) {
+                for ( int i = 0; i < inputs.length; i++ ) {
                     double r = src.get(0).derive( inputs, d, i );
                     sum += r;
                     nothingDone = false;
@@ -511,7 +511,7 @@ public abstract class AbstractFunction extends BaseFunction
             if ( d < 0 ) {
                 double prod = 1;
                 boolean nothingDone = true;
-                for (int Ii = 0; Ii < inputs.length; Ii++) {
+                for ( int Ii = 0; Ii < inputs.length; Ii++ ) {
                     prod *= src.get(0).call( inputs, Ii );
                     nothingDone = false;
                 }
@@ -533,14 +533,14 @@ public abstract class AbstractFunction extends BaseFunction
 
         @Contract(pure = true)
         private static double PI( double[] inputs, int d, List<Function> src ) {
-            if (d < 0) {
+            if ( d < 0 ) {
                 double prod = 1;
                 boolean nothingDone = true;
                 for ( int i = 0; i < inputs.length; i++ ) {
                     prod *= src.get(0).call(inputs, i);
                     nothingDone = false;
                 }
-                if (nothingDone) return src.get(0).call(inputs);
+                if ( nothingDone ) return src.get(0).call(inputs);
                 return prod;
             } else {
                 double u, ud, v, vd;
@@ -561,7 +561,7 @@ public abstract class AbstractFunction extends BaseFunction
         // + f(x)^(g(x)-1) * g(x) * d/dx(f(x))
         @Contract(pure = true)
         private static double power(double[] inputs, int j, int d, List<Function> src) {
-            if (d < 0) {
+            if ( d < 0 ) {
                 double result = src.get(0).call(inputs, j);
                 for ( int i = 1; i < src.size(); i++ ) {
                     final double current = src.get(i).call(inputs, j);
@@ -588,9 +588,9 @@ public abstract class AbstractFunction extends BaseFunction
 
         @Contract(pure = true)
         private static double power(double[] inputs, int d, List<Function> src) {
-            if (d < 0) {
+            if ( d < 0 ) {
                 double result = src.get(0).call(inputs);
-                for (int i = 1; i < src.size(); i++) {
+                for ( int i = 1; i < src.size(); i++ ) {
                     final double current = src.get(i).call(inputs);
                     result = Math.pow(result, current);
                 }
@@ -599,11 +599,11 @@ public abstract class AbstractFunction extends BaseFunction
                 double b = 1;
                 double bd = 0;
                 double a = 0;
-                for (int i = 1; i < src.size(); i++) {
+                for ( int i = 1; i < src.size(); i++ ) {
                     double dd = 1;
                     a = src.get(i).call(inputs);
-                    for (int di = 1; di < src.size(); di++) {
-                        if (di != i) dd *= a;
+                    for ( int di = 1; di < src.size(); di++ ) {
+                        if ( di != i ) dd *= a;
                         else dd *= src.get(di).derive(inputs, d);
                     }
                     bd += dd;
@@ -619,7 +619,7 @@ public abstract class AbstractFunction extends BaseFunction
 
         @Contract(pure = true)
         private static double division(double[] inputs, int j, int d, List<Function> src) {
-            if (d < 0) {
+            if ( d < 0 ) {
                 double result = src.get(0).call(inputs, j);
                 for (int Vi = 1; Vi < src.size(); Vi++) {
                     final double current = src.get(Vi).call(inputs, j);
@@ -642,9 +642,9 @@ public abstract class AbstractFunction extends BaseFunction
 
         @Contract(pure = true)
         private static double division(double[] inputs, int d, List<Function> src) {
-            if (d < 0) {
+            if ( d < 0 ) {
                 double result = src.get(0).call(inputs);
-                for (int i = 1; i < src.size(); i++) {
+                for ( int i = 1; i < src.size(); i++ ) {
                     final double current = src.get(i).call(inputs);
                     result /= current;
                 }
@@ -654,13 +654,13 @@ public abstract class AbstractFunction extends BaseFunction
                 double tempVar = src.get(0).call(inputs);
                 derivative = src.get(0).derive(inputs, d);
 
-                for (int i = 0; i < src.size() - 1; i++) {
+                for ( int i = 0; i < src.size() - 1; i++ ) {
                     double u, ud, v, vd;
                     v = src.get(i + 1).call(inputs);
                     vd = src.get(i + 1).derive(inputs, d);
                     u = tempVar;
                     ud = derivative;
-                    derivative = (ud * v - u * vd) / Math.pow(v, 2);
+                    derivative = ( ud * v - u * vd ) / Math.pow(v, 2);
                     tempVar /= v;
                 }
                 return derivative;
@@ -669,9 +669,9 @@ public abstract class AbstractFunction extends BaseFunction
 
         @Contract(pure = true)
         private static double multiplication(double[] inputs, int j, int d, List<Function> src) {
-            if (d < 0) {
+            if ( d < 0 ) {
                 double result = src.get(0).call(inputs, j);
-                for (int i = 1; i < src.size(); i++) {
+                for ( int i = 1; i < src.size(); i++ ) {
                     final double current = src.get(i).call(inputs, j);
                     result *= current;
                 }
@@ -681,7 +681,7 @@ public abstract class AbstractFunction extends BaseFunction
                 u = src.get(0).call(inputs, j);
                 ud = src.get(0).derive(inputs, d, j);
 
-                for (int ji = 1; ji < src.size(); ji++) {
+                for ( int ji = 1; ji < src.size(); ji++ ) {
                     v = src.get(ji).call(inputs, j);
                     vd = src.get(ji).derive(inputs, d, j);
                     ud = u * vd + v * ud;
@@ -693,9 +693,9 @@ public abstract class AbstractFunction extends BaseFunction
 
         @Contract(pure = true)
         private static double multiplication(double[] inputs, int d, List<Function> src) {
-            if (d < 0) {
+            if ( d < 0 ) {
                 double result = src.get(0).call(inputs);
-                for (int i = 1; i < src.size(); i++) {
+                for ( int i = 1; i < src.size(); i++ ) {
                     final double current = src.get(i).call(inputs);
                     result *= current;
                 }
@@ -704,7 +704,7 @@ public abstract class AbstractFunction extends BaseFunction
                 double u, ud, v, vd;
                 u = src.get(0).call(inputs);
                 ud = src.get(0).derive(inputs, d);
-                for (int j = 1; j < src.size(); j++) {
+                for ( int j = 1; j < src.size(); j++ ) {
                     v = src.get(j).call(inputs);
                     vd = src.get(j).derive(inputs, d);
 
@@ -719,16 +719,15 @@ public abstract class AbstractFunction extends BaseFunction
         private static double idy(double[] inputs, int d, List<Function> src) {
             if (d < 0) {
                 inputs[0] = inputs[1];
-            } else {
             }
             return 0;
         }
 
         @Contract(pure = true)
         private static double modulo(double[] inputs, int j, int d, List<Function> src) {
-            if (d < 0) {
+            if ( d < 0 ) {
                 double result = src.get(0).call(inputs, j);
-                for (int i = 1; i < src.size(); i++) {
+                for ( int i = 1; i < src.size(); i++ ) {
                     final double current = src.get(i).call(inputs, j);
                     result %= current;
                 }
@@ -740,9 +739,9 @@ public abstract class AbstractFunction extends BaseFunction
 
         @Contract(pure = true)
         private static double modulo(double[] inputs, int d, List<Function> src) {
-            if (d < 0) {
+            if ( d < 0 ) {
                 double result = src.get(0).call(inputs);
-                for (int i = 1; i < src.size(); i++) {
+                for ( int i = 1; i < src.size(); i++ ) {
                     final double current = src.get(i).call(inputs);
                     result %= current;
                 }
@@ -754,16 +753,16 @@ public abstract class AbstractFunction extends BaseFunction
 
         @Contract(pure = true)
         private static double subtraction(double[] inputs, int j, int d, List<Function> src) {
-            if (d < 0) {
+            if ( d < 0 ) {
                 double result = src.get(0).call(inputs, j);
-                for (int Vi = 1; Vi < src.size(); Vi++) {
+                for ( int Vi = 1; Vi < src.size(); Vi++ ) {
                     final double current = src.get(Vi).call(inputs, j);
                     result -= current;
                 }
                 return result;
             } else {
                 double derivative = 0;
-                for (int i = 0; i < src.size(); ++i) {
+                for ( int i = 0; i < src.size(); ++i ) {
                     if (i == 0) {
                         derivative += src.get(i).derive(inputs, d, j);
                     } else {
@@ -776,17 +775,17 @@ public abstract class AbstractFunction extends BaseFunction
 
         @Contract(pure = true)
         private static double subtraction(double[] inputs, int d, List<Function> src) {
-            if (d < 0) {
+            if ( d < 0 ) {
                 double result = src.get(0).call(inputs);
-                for (int i = 1; i < src.size(); i++) {
+                for ( int i = 1; i < src.size(); i++ ) {
                     final double current = src.get(i).call(inputs);
                     result -= current;
                 }
                 return result;
             } else {
                 double derivative = 0;
-                for (int i = 0; i < src.size(); ++i) {
-                    if (i == 0) {
+                for ( int i = 0; i < src.size(); ++i ) {
+                    if ( i == 0 ) {
                         derivative += src.get(i).derive(inputs, d);
                     } else {
                         derivative -= src.get(i).derive(inputs, d);
@@ -798,16 +797,16 @@ public abstract class AbstractFunction extends BaseFunction
 
         @Contract(pure = true)
         private static double addition(double[] inputs, int j, int d, List<Function> src) {
-            if (d < 0) {
+            if ( d < 0 ) {
                 double result = src.get(0).call(inputs, j);
-                for (int i = 1; i < src.size(); i++) {
+                for ( int i = 1; i < src.size(); i++ ) {
                     final double current = src.get(i).call(inputs, j);
                     result += current;
                 }
                 return result;
             } else {
                 double derivative = 0;
-                for (int i = 0; i < src.size(); ++i) {
+                for ( int i = 0; i < src.size(); ++i ) {
                     derivative += src.get(i).derive(inputs, d, j);
                 }
                 return derivative;
@@ -816,17 +815,17 @@ public abstract class AbstractFunction extends BaseFunction
 
         @Contract(pure = true)
         private static double addition(double[] inputs, int d, List<Function> src) {
-            if (d < 0) {
+            if ( d < 0 ) {
                 double result = src.get(0).call(inputs);
-                for (int Vi = 1; Vi < src.size(); Vi++) {
+                for ( int Vi = 1; Vi < src.size(); Vi++ ) {
                     final double current = src.get(Vi).call(inputs);
                     result += current;
                 }
                 return result;
             } else {
                 double derivative = 0;
-                for (Function function : src) {
-                    derivative += function.derive(inputs, d);
+                for ( Function function : src ) {
+                    derivative += function.derive( inputs, d );
                 }
                 return derivative;
             }
