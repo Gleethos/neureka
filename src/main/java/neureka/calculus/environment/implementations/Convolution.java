@@ -19,6 +19,10 @@ public class Convolution extends AbstractOperationTypeImplementation< Convolutio
         setHandleChecker(call->true);
     }
 
+    public Convolution() {
+        setHandleChecker(call->true);
+    }
+
 
     public String getKernelSource() {
         return Neureka.instance().utility().readResource("kernels/convolve_template.cl");

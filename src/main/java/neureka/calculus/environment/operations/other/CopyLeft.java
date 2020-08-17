@@ -39,7 +39,7 @@ public class CopyLeft extends OperationType {
                 };
 
         Activation activation = new Activation()
-                .setADAnalyzer(
+        .setADAnalyzer(
                 call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;
                     if ( call.getType().identifier().equals(",") ) return false; //Reshape

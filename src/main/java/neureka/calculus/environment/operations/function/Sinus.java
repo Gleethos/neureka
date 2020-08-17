@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.acceleration.host.execution.HostExecutor;
 import neureka.acceleration.opencl.execution.CLExecutor;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.*;
 
@@ -31,8 +32,9 @@ public class Sinus extends OperationType
                 }
         );
 
-        Activation typeImplementation = new Activation(
-                                call -> {
+        Activation typeImplementation = new Activation()
+        .setADAnalyzer(
+                call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;
                     if ( call.getType().identifier().equals(",") ) return false; //Reshape
                     Tsr last = null;
@@ -41,22 +43,25 @@ public class Sinus extends OperationType
                         last = t; // Note: shapes are cached!
                     }
                     return true;
-                },
-                (caller, call) -> null,
-                ( call, goDeeperWith ) -> null,
-                call -> {
-                    Tsr[] tsrs = call.getTensors();
-                    Device device = call.getDevice();
-                    if ( tsrs[0] == null ) // Creating a new tensor:
-                    {
-                        int[] shp = tsrs[1].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
-                        device.add(output);
-                        tsrs[0] = output;
-                    }
-                    return call;
                 }
+        ).setCallHock(
+                ( caller, call ) -> null
+        ).setRJAgent(
+                ( call, goDeeperWith ) -> null
+        ).setDrainInstantiation(
+                        call -> {
+                            Tsr[] tsrs = call.getTensors();
+                            Device device = call.getDevice();
+                            if ( tsrs[0] == null ) // Creating a new tensor:
+                            {
+                                int[] shp = tsrs[1].getNDConf().shape();
+                                Tsr output = new Tsr( shp, 0.0 );
+                                output.setIsVirtual(false);
+                                device.add(output);
+                                tsrs[0] = output;
+                            }
+                            return call;
+                        }
         );
 
         setImplementation(

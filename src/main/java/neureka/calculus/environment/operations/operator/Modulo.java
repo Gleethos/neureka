@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.acceleration.host.execution.HostExecutor;
 import neureka.acceleration.opencl.execution.CLExecutor;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.*;
 
@@ -48,33 +49,37 @@ public class Modulo extends OperationType {
                     }
                 };
 
-        Operation operation = new Operation(
-                                call -> {
-                    if ( call.getType().supports(Convolution.class) ) return false;
-                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
-                    Tsr last = null;
-                    for ( Tsr t : call.getTensors() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                        last = t; // Note: shapes are cached!
+        Operation operation = new Operation()
+            .setADAnalyzer(
+                    call -> {
+                        if ( call.getType().supports(Convolution.class) ) return false;
+                        if ( call.getType().identifier().equals(",") ) return false; //Reshape
+                        Tsr last = null;
+                        for ( Tsr t : call.getTensors() ) {
+                            if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                            last = t; // Note: shapes are cached!
+                        }
+                        return true;
                     }
-                    return true;
-                },
-                (caller, call) -> null,
-                ( call, goDeeperWith ) -> null,
-                call -> {
-                    Tsr[] tsrs = call.getTensors();
-                    Device device = call.getDevice();
-                    if ( tsrs[0] == null ) // Creating a new tensor:
-                    {
-                        int[] shp = tsrs[1].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
-                        device.add(output);
-                        tsrs[0] = output;
-                    }
-                    return call;
-                }
-        );
+            ).setCallHock(
+                    ( caller, call ) -> null
+            ).setRJAgent(
+                    ( call, goDeeperWith ) -> null
+            ).setDrainInstantiation(
+                        call -> {
+                            Tsr[] tsrs = call.getTensors();
+                            Device device = call.getDevice();
+                            if ( tsrs[0] == null ) // Creating a new tensor:
+                            {
+                                int[] shp = tsrs[1].getNDConf().shape();
+                                Tsr output = new Tsr( shp, 0.0 );
+                                output.setIsVirtual(false);
+                                device.add(output);
+                                tsrs[0] = output;
+                            }
+                            return call;
+                        }
+            );
 
         setImplementation(
                 Operation.class,
@@ -149,33 +154,37 @@ public class Modulo extends OperationType {
                     }
                 };
 
-        Broadcast broadcast = new Broadcast(
-                                call -> {
-                    if ( call.getType().supports(Convolution.class) ) return false;
-                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
-                    Tsr last = null;
-                    for ( Tsr t : call.getTensors() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                        last = t; // Note: shapes are cached!
+        Broadcast broadcast = new Broadcast()
+            .setADAnalyzer(
+                    call -> {
+                        if ( call.getType().supports(Convolution.class) ) return false;
+                        if ( call.getType().identifier().equals(",") ) return false; //Reshape
+                        Tsr last = null;
+                        for ( Tsr t : call.getTensors() ) {
+                            if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                            last = t; // Note: shapes are cached!
+                        }
+                        return true;
                     }
-                    return true;
-                },
-                (caller, call) -> null,
-                ( call, goDeeperWith ) -> null,
-                call -> {
-                    Tsr[] tsrs = call.getTensors();
-                    Device device = call.getDevice();
-                    if ( tsrs[0] == null ) // Creating a new tensor:
-                    {
-                        int[] shp = tsrs[1].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
-                        device.add(output);
-                        tsrs[0] = output;
-                    }
-                    return call;
-                }
-        );
+            ).setCallHock(
+                    ( caller, call ) -> null
+            ).setRJAgent(
+                    ( call, goDeeperWith ) -> null
+            ).setDrainInstantiation(
+                        call -> {
+                            Tsr[] tsrs = call.getTensors();
+                            Device device = call.getDevice();
+                            if ( tsrs[0] == null ) // Creating a new tensor:
+                            {
+                                int[] shp = tsrs[1].getNDConf().shape();
+                                Tsr output = new Tsr( shp, 0.0 );
+                                output.setIsVirtual(false);
+                                device.add(output);
+                                tsrs[0] = output;
+                            }
+                            return call;
+                        }
+            );
 
         setImplementation(
                 Broadcast.class,
@@ -236,33 +245,29 @@ public class Modulo extends OperationType {
                     }
                 };
 
-        Scalarization scalarization = new Scalarization(
-                                call -> {
-                    if ( call.getType().supports(Convolution.class) ) return false;
-                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
-                    Tsr last = null;
-                    for ( Tsr t : call.getTensors() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                        last = t; // Note: shapes are cached!
+        Scalarization scalarization = new Scalarization()
+            .setADAnalyzer(
+                    call -> {
+                        if ( call.getType().supports(Convolution.class) ) return false;
+                        if ( call.getType().identifier().equals(",") ) return false; //Reshape
+                        Tsr last = null;
+                        for ( Tsr t : call.getTensors() ) {
+                            if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                            last = t; // Note: shapes are cached!
+                        }
+                        return true;
                     }
-                    return true;
-                },
-                (caller, call) -> null,
-                ( call, goDeeperWith ) -> null,
-                call -> {
-                    Tsr[] tsrs = call.getTensors();
-                    Device device = call.getDevice();
-                    if ( tsrs[0] == null ) // Creating a new tensor:
-                    {
-                        int[] shp = tsrs[1].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
-                        device.add(output);
-                        tsrs[0] = output;
+            ).setCallHock(
+                    ( caller, call ) -> null
+            ).setRJAgent(
+                    ( call, goDeeperWith ) -> null
+            ).setDrainInstantiation(
+                    call -> {
+                        Tsr[] tsrs = call.getTensors();
+                        int offset = ( tsrs[0] == null ) ? 1 : 0;
+                        return new ExecutionCall<>(call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1 + offset]}, -1, OperationType.instance("idy"));
                     }
-                    return call;
-                }
-        );
+            );
 
         setImplementation(
                 Scalarization.class,

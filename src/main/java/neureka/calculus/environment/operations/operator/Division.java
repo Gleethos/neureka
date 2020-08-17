@@ -361,33 +361,29 @@ public class Division extends OperationType
                 "divide", "d", 2, true, false, true, false, false
         ).setImplementation(
                 Convolution.class,
-                new Convolution(
-                                call -> {
-                    if ( call.getType().supports(Convolution.class) ) return false;
-                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
-                    Tsr last = null;
-                    for ( Tsr t : call.getTensors() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                        last = t; // Note: shapes are cached!
-                    }
-                    return true;
-                },
-                (caller, call) -> null,
-                ( call, goDeeperWith ) -> null,
-                call -> {
-                    Tsr[] tsrs = call.getTensors();
-                    Device device = call.getDevice();
-                    if ( tsrs[0] == null ) // Creating a new tensor:
-                    {
-                        int[] shp = tsrs[1].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
-                        device.add(output);
-                        tsrs[0] = output;
-                    }
-                    return call;
-                }
-            )
+                new Convolution()
+                    .setADAnalyzer(
+                            call -> {
+                                if ( call.getType().supports(Convolution.class) ) return false;
+                                if ( call.getType().identifier().equals(",") ) return false; //Reshape
+                                Tsr last = null;
+                                for ( Tsr t : call.getTensors() ) {
+                                    if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                                    last = t; // Note: shapes are cached!
+                                }
+                                return true;
+                            }
+                    ).setCallHock(
+                            ( caller, call ) -> null
+                    ).setRJAgent(
+                            ( call, goDeeperWith ) -> null
+                    ).setDrainInstantiation(
+                            call -> {
+                                Tsr[] tsrs = call.getTensors();
+                                int offset = ( tsrs[0] == null ) ? 1 : 0;
+                                return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
+                            }
+                    )
         ).setStringifier(
                 children -> {
                     StringBuilder reconstructed = new StringBuilder();

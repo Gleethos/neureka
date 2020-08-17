@@ -326,8 +326,9 @@ public class Multiplication extends OperationType {
                     return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];
                 };
 
-        Broadcast xBroadcast = new Broadcast(
-                                call -> {
+        Broadcast xBroadcast = new Broadcast()
+        .setADAnalyzer(
+                call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;
                     if ( call.getType().identifier().equals(",") ) return false; //Reshape
                     Tsr last = null;
@@ -336,21 +337,16 @@ public class Multiplication extends OperationType {
                         last = t; // Note: shapes are cached!
                     }
                     return true;
-                },
-                (caller, call) -> null,
-                ( call, goDeeperWith ) -> null,
+                }
+        ).setCallHock(
+                ( caller, call ) -> null
+        ).setRJAgent(
+                ( call, goDeeperWith ) -> null
+        ).setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
-                    Device device = call.getDevice();
-                    if ( tsrs[0] == null ) // Creating a new tensor:
-                    {
-                        int[] shp = tsrs[1].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
-                        device.add(output);
-                        tsrs[0] = output;
-                    }
-                    return call;
+                    int offset = ( tsrs[0] == null ) ? 1 : 0;
+                    return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
                 }
         );
 
@@ -397,33 +393,29 @@ public class Multiplication extends OperationType {
                 )
         );
 
-        xBroadcast = new Broadcast(
-                                call -> {
-                    if ( call.getType().supports(Convolution.class) ) return false;
-                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
-                    Tsr last = null;
-                    for ( Tsr t : call.getTensors() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                        last = t; // Note: shapes are cached!
+        xBroadcast = new Broadcast()
+            .setADAnalyzer(
+                    call -> {
+                        if ( call.getType().supports(Convolution.class) ) return false;
+                        if ( call.getType().identifier().equals(",") ) return false; //Reshape
+                        Tsr last = null;
+                        for ( Tsr t : call.getTensors() ) {
+                            if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                            last = t; // Note: shapes are cached!
+                        }
+                        return true;
                     }
-                    return true;
-                },
-                (caller, call) -> null,
-                ( call, goDeeperWith ) -> null,
-                call -> {
-                    Tsr[] tsrs = call.getTensors();
-                    Device device = call.getDevice();
-                    if ( tsrs[0] == null ) // Creating a new tensor:
-                    {
-                        int[] shp = tsrs[1].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
-                        device.add(output);
-                        tsrs[0] = output;
+            ).setCallHock(
+                    ( caller, call ) -> null
+            ).setRJAgent(
+                    ( call, goDeeperWith ) -> null
+            ).setDrainInstantiation(
+                    call -> {
+                        Tsr[] tsrs = call.getTensors();
+                        int offset = ( tsrs[0] == null ) ? 1 : 0;
+                        return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
                     }
-                    return call;
-                }
-        );
+            );
 
         new OperationType(
                 "", "*" + ((char) 187), 3, true, false, false, false, false

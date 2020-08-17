@@ -13,10 +13,11 @@ public class Activation extends AbstractOperationTypeImplementation< Activation 
             InitialCallHook hook,
             RecursiveJunctionAgent RJAgent,
             DrainInstantiation instantiation
-    ) {  super(
+    ) {
+        super(
             analyzer, hook, RJAgent, instantiation
-    );
-    setHandleChecker(call->true);
+        );
+        setHandleChecker(call->true);
 }
 
     public Activation() {

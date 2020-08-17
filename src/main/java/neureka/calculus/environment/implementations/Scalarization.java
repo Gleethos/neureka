@@ -13,11 +13,16 @@ public class Scalarization extends AbstractOperationTypeImplementation< Scalariz
             InitialCallHook hook,
             RecursiveJunctionAgent RJAgent,
             DrainInstantiation instantiation
-    ) {  super(
+    ) {
+        super(
             analyzer, hook, RJAgent, instantiation
-    );
-    setHandleChecker(call->true);
-}
+        );
+        setHandleChecker(call->true);
+    }
+
+    public Scalarization(){
+        setHandleChecker(call->true);
+    }
 
 
     public String getKernelSource(){
