@@ -344,7 +344,7 @@ public class GraphNode implements Component<Tsr>
         }
     }
 
-    private void _construct(Tsr output, Function function, ExecutionCall call, GraphLock lock) {
+    private void _construct(Tsr output, Function function, ExecutionCall<Device> call, GraphLock lock) {
         Tsr[] inputs = ( call == null ) ? null : call.getTensors();
         if ( output == null ) throw new NullPointerException("The supplied payload Tsr must no be null!");
         if ( !function.doesAD() ) return; // Only functions with AutoDiff enabled create computation graph!
@@ -449,21 +449,21 @@ public class GraphNode implements Component<Tsr>
      * @param function The function which produced the payload tensor of this GraphNode.
      * @return int The mode of this GraphNode!
      */
-    private int _modeOf( ExecutionCall call, Function function )
+    private int _modeOf( ExecutionCall<Device> call, Function function )
     {
         Tsr[] inputs = call.getTensors();
         int result_mode = 0;
         int[] modes = new int[inputs.length];
         int input_mode = 0;
-        for ( int Ii = 0; Ii < inputs.length; Ii++ ) {
-            GraphNode node = inputs[Ii].find( GraphNode.class ); // Not null checked in constructor!
-            modes[Ii] = ( inputs[Ii].rqsGradient() ) ? 1 : node.mode();
-            input_mode += ( modes[Ii] != 0) ? 1 : 0;
+        for ( int i = 0; i < inputs.length; i++ ) {
+            GraphNode node = inputs[i].find( GraphNode.class ); // Not null checked in constructor!
+            modes[i] = ( inputs[i].rqsGradient() ) ? 1 : node.mode();
+            input_mode += ( modes[i] != 0) ? 1 : 0;
         }
         _allows_forward = call.allowsForward();
         if ( input_mode == 1 && _allows_forward ) { // Convolution and reshaping prohibit forward AutoDiff
-            for ( int Ii = 0; Ii < inputs.length; Ii++ ) {
-                result_mode += ( modes[Ii] == 0 ) ? 0 : ( modes[Ii] < 0 ) ? 1 : modes[Ii] + 1;
+            for ( int i = 0; i < inputs.length; i++ ) {
+                result_mode += ( modes[i] == 0 ) ? 0 : ( modes[i] < 0 ) ? 1 : modes[i] + 1;
             }
         } else { // Reverse mode auto-differentiation :
             result_mode = -input_mode;
@@ -479,7 +479,7 @@ public class GraphNode implements Component<Tsr>
      *
      * @param e This is an error value passed to this method ba a backward traversal.
      */
-    private void _migrateAndOrApplyError(Tsr e, Consumer<Tsr> also){
+    private void _migrateAndOrApplyError( Tsr e, Consumer<Tsr> also ) {
         Tsr payload = getPayload();
         if ( payload == null ) return; // Garbage collected!
         if ( payload.isOutsourced() ) payload.device().add(e);
@@ -532,10 +532,10 @@ public class GraphNode implements Component<Tsr>
         if ( this.usesAD() ) {
             /* Checking JIT-Prop conditions and create Pending error if possible */
             if ( allowPendingError && !this.isLeave() ) {//==> We are NOT inside a 'Just-In-Time-Backprop' process (new pending error can be created)
-                int ADPaths = _numberOfReverseModeADChildren();// Multiple children triggers creation of a pending error
-                if ( ADPaths > 1 ) {
+                int numOfADPaths = _numberOfReverseModeADChildren();// Multiple children triggers creation of a pending error
+                if ( numOfADPaths > 1 ) {
                     if ( _pending_error == null ) {
-                        _pending_error = new PendingError( error, ADPaths - 1 );
+                        _pending_error = new PendingError( error, numOfADPaths - 1 );
                         pendingNodes.add( this );
                     } else _pending_error.accumulate( error );
                     return;

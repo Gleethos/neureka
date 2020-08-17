@@ -161,10 +161,10 @@ public abstract class AbstractFunction extends BaseFunction
 
         if ( d >= 0 ) // Differentiation
         {
-            //Chain-rule (forward AutoDiff):
-            //inner times outer means:
-            //first derive source!
-            //like so:
+            // Chain-rule (forward AutoDiff):
+            // inner times outer means:
+            // first derive source!
+            // like so:
             if ( _type.isIndexer() ) {
                 for ( int i = 1; i < tsrs.length; i++ ) {
                     tsrs[i] = _src.get(0).derive(inputs, d, i - 1);
@@ -174,7 +174,7 @@ public abstract class AbstractFunction extends BaseFunction
                     tsrs[i] = ( j >= 0 ) ? _src.get( i - 1 ).derive( inputs, d, j ) : _src.get( i - 1 ).derive(inputs, d);
                 }
             }
-            //then add them all together! (is possible because of linearity...)
+            //...then add them all together! (is possible because of linearity...)
             Tsr inner;
             if ( tsrs.length > 2 ) {// Optimization: Finds index of "1.0" among otherwise all "0.0" virtual tensors!
                 int index = ___indexOfFoundDerivative( tsrs );
@@ -197,17 +197,17 @@ public abstract class AbstractFunction extends BaseFunction
                     tsrs[i] = ( j >= 0 ) ? _src.get(i - 1).call(inputs, j) : _src.get(i - 1).call(inputs);
                 }
             }
-            //get derivative index within src list:
+            //...get derivative index within src list:
             for ( int i = 0; i < _src.size(); i++ ) {
                 if ( _src.get(i).dependsOn(d) && !_type.isIndexer() ) {
                     d = i;
                     break;
                 }
             }
-            //Use those tensors for the outer derivative:
+            // Use those tensors for the outer derivative:
             device.execute( new ExecutionCall<>( device, tsrs, d, _type ) );
-            //At the end:
-            //multiply inner times outer: ( if inner is not 1 entirely... )
+            // At the end:
+            //...multiply inner times outer: ( if inner is not 1 entirely... )
             if ( !( ( inner.isVirtual() || inner.size()==1 ) && inner.value64(0)==1.0) ) {
                 tsrs = new Tsr[]{null, inner, tsrs[0]};
                 device.execute( new ExecutionCall<>( device, tsrs, -1, OperationType.instance("*") ) );
@@ -222,7 +222,7 @@ public abstract class AbstractFunction extends BaseFunction
                     !_isFlat && j < 0 && (
                             _type.isOperation() || _type.supportsImplementation(Activation.class)
                     )
-            ) {/*  '+', '-', 'x', '*', '%', '«', '»', ',', ...  */
+            ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
                 tsrs = srcActivation(inputs, j, d, 0);
                 List<String> stringedSource = IntStream.range(0, _src.size()).mapToObj(i -> "I[" + i + "]").collect(Collectors.toList());
                 String asStr = _type.getStringifier().asString(stringedSource);
