@@ -13,16 +13,15 @@ public class Broadcast extends AbstractOperationTypeImplementation< Broadcast >
         setHandleChecker(
                 call-> {
                     int maxRank = 0;
-                    for ( Tsr t : call.getTensors() ) if( t!=null && t.rank()>maxRank) maxRank = t.rank();
-
+                    for ( Tsr t : call.getTensors() ) if( t!=null && t.rank() > maxRank ) maxRank = t.rank();
                     for ( int i = 0; i < maxRank; i++ )
                     {
                         int currentDim = -1;
                         for( Tsr t : call.getTensors() )
                         {
-                            if( t!=null && i<t.rank() ) {
+                            if( t!=null && i < t.rank() ) {
                                 if ( currentDim == -1 ) currentDim = t.shape(i);
-                                else if ( currentDim!=t.shape(i) && currentDim!=1 && t.shape(i)!=1 ) return false;
+                                else if ( currentDim != t.shape(i) && currentDim != 1 && t.shape(i) != 1 ) return false;
                             }
                         }
                     }
@@ -49,17 +48,17 @@ public class Broadcast extends AbstractOperationTypeImplementation< Broadcast >
         int[] t1Idx = new int[rank];
         int[] t2Idx = new int[rank];
         double[] t0_value = t0_drn.value64();
-        if (d < 0) {
-            while (i < end) {//increment on drain accordingly:
+        if ( d < 0 ) {
+            while ( i < end ) {//increment on drain accordingly:
                 int ri = 0;
-                while (ri < rank) {
-                    if (t1Shp[ri] == t2Shp[ri]) {//Equal shapes -> out index is t1 & t2 index!for this ri
+                while ( ri < rank ) {
+                    if ( t1Shp[ri] == t2Shp[ri] ) {//Equal shapes -> out index is t1 & t2 index!for this ri
                         t1Idx[ri] = t0Idx[ri];
                         t2Idx[ri] = t0Idx[ri];
-                    } else if (t1Shp[ri] > t2Shp[ri]) {//Current shape axis of t2 must be 1 !
+                    } else if ( t1Shp[ri] > t2Shp[ri] ) {//Current shape axis of t2 must be 1 !
                         t1Idx[ri] = t0Idx[ri];
                         t2Idx[ri] = 0;//...therefore it can be set to 0!
-                    } else if (t1Shp[ri] < t2Shp[ri]) {//same principle:
+                    } else if ( t1Shp[ri] < t2Shp[ri] ) {//same principle:
                         t1Idx[ri] = 0;
                         t2Idx[ri] = t0Idx[ri];
                     }
@@ -75,9 +74,9 @@ public class Broadcast extends AbstractOperationTypeImplementation< Broadcast >
         }
         else//---//Note: src2 is now former drain!
         {
-            while (i < end) {//increment on drain accordingly:
+            while ( i < end ) {//increment on drain accordingly:
                 int ri = 0;
-                while (ri < rank) {
+                while ( ri < rank ) {
                     if (t0Shp[ri] == t1Shp[ri]) {
                         t1Idx[ri] = t0Idx[ri];//all shapes are equal -> shape index can be inherited from origin!
                         t2Idx[ri] = t0Idx[ri];
@@ -92,14 +91,14 @@ public class Broadcast extends AbstractOperationTypeImplementation< Broadcast >
                 double value = 0;
                 boolean running = true;
                 boolean incrementing = false;
-                while (running) {
-                    ri = (ri == rank) ? 0 : ri;
-                    if (!incrementing) {
+                while ( running ) {
+                    ri = ( ri == rank ) ? 0 : ri;
+                    if ( !incrementing ) {
                         value += operation.execute(t0Idx, t1Idx, t2Idx);
                         incrementing = true;
                         ri = 0;
                     } else {//incrementing:
-                        if (t0Shp[ri] < t1Shp[ri]) {//Only if origin shape is smaller than handle and drain!
+                        if ( t0Shp[ri] < t1Shp[ri] ) {//Only if origin shape is smaller than handle and drain!
                             t1Idx[ri]++;
                             t2Idx[ri]++;
                             if (t1Idx[ri] == t1Shp[ri]) {

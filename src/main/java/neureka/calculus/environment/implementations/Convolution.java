@@ -8,16 +8,6 @@ import org.jetbrains.annotations.Contract;
 
 public class Convolution extends AbstractOperationTypeImplementation< Convolution >
 {
-    public Convolution(
-            ADAnalyzer analyzer,
-            InitialCallHook hook,
-            RecursiveJunctionAgent RJAgent,
-            DrainInstantiation instantiation
-    ) {  super(
-            analyzer, hook, RJAgent, instantiation
-    );
-        setHandleChecker(call->true);
-    }
 
     public Convolution() {
         setHandleChecker(call->true);

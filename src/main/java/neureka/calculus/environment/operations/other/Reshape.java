@@ -54,7 +54,11 @@ public class Reshape extends OperationType
         );
 
         GenericImplementation implementation = new GenericImplementation(
-                call -> true,
+        ).setHandleChecker(
+                call -> true
+        ).setADAnalyzer(
+                call -> false
+        ).setCallHock(
                 ( caller, call ) -> {
                     Tsr[] inputs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
                     int[] newForm = new int[inputs.length - 1];
@@ -80,8 +84,8 @@ public class Reshape extends OperationType
                     }
                     Tsr t = inputs[inputs.length - 1];
                     return Tsr.Exec.reshaped(t, newForm, true);
-                },
-                call -> false,
+                }
+        ).setRJAgent(
                 ( call, goDeeperWith ) ->
                 {
                     Tsr[] inputs = call.getTensors();
@@ -113,7 +117,8 @@ public class Reshape extends OperationType
                     }
                     Tsr t = inputs[inputs.length - 1];
                     return Tsr.Exec.reshaped( t, newForm, true );
-                },
+                }
+        ).setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();
@@ -128,6 +133,7 @@ public class Reshape extends OperationType
                     return call;
                 }
         );
+
         setImplementation(
                 GenericImplementation.class,
                 implementation

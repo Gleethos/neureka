@@ -116,6 +116,7 @@ public class Division extends OperationType
         // DEFAULT OPERATION :
 
         Operation operation = new Operation(
+        ).setADAnalyzer(
                 call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;
                     if ( call.getType().identifier().equals(",") ) return false; //Reshape
@@ -125,9 +126,12 @@ public class Division extends OperationType
                         last = t; // Note: shapes are cached!
                     }
                     return true;
-                },
-                (caller, call) -> null,
-                rja,
+                }
+        ).setCallHock(
+                (caller, call) -> null
+        ).setRJAgent(
+                rja
+        ).setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();

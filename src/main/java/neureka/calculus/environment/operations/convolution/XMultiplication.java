@@ -93,6 +93,7 @@ public class XMultiplication extends OperationType
                 };
 
         Convolution convolution = new Convolution(
+        ).setADAnalyzer(
                 call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;
                     if ( call.getType().identifier().equals(",") ) return false; //Reshape
@@ -102,7 +103,8 @@ public class XMultiplication extends OperationType
                         last = t; // Note: shapes are cached!
                     }
                     return true;
-                },
+                }
+        ).setCallHock(
                 (caller, call) -> {
                     if ( !caller.isFlat() ) return null;
                     if ( call.getType().identifier().equals("x") ) {
@@ -126,8 +128,10 @@ public class XMultiplication extends OperationType
                         }
                     }
                     return null;
-                },
-                rja,
+                }
+        ).setRJAgent(
+               rja
+        ).setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();
@@ -141,7 +145,7 @@ public class XMultiplication extends OperationType
                     }
                     return call;
                 }
-        )    ;
+        );
 
         setImplementation(
                 Convolution.class,

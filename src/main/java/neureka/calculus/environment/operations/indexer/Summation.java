@@ -9,9 +9,11 @@ import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.implementations.*;
 
-public class Summation extends OperationType {
+public class Summation extends OperationType
+{
 
-    public Summation(){
+    public Summation()
+    {
         super (
                 "summation",
                 "sum",
@@ -24,7 +26,8 @@ public class Summation extends OperationType {
         );
 
         setStringifier(
-                children -> {
+                children ->
+                {
                     String expression = String.join( ", ", children );
                     if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
                         return "sum" + expression;
@@ -67,7 +70,8 @@ public class Summation extends OperationType {
         // BROADCASTING :
 
         DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
-                (inputs, d) -> {
+                (inputs, d) ->
+                {
                     double[] t1_val = inputs[1].value64();
                     double[] t2_val = inputs[2].value64();
                     if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] + t2_val[inputs[2].i_of_idx(t2Idx)];
@@ -88,9 +92,6 @@ public class Summation extends OperationType {
                     if ( tsrs[0] == null ) // Creating a new tensor:
                     {
                         int[] shp = tsrs[1].getNDConf().shape();
-                        //int[] shp = (type.identifier().endsWith("x"))
-                        //        ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
-                        //        : tsrs[1].getNDConf().shape();
                         Tsr output = new Tsr( shp, 0.0 );
                         output.setIsVirtual(false);
                         device.add(output);
@@ -170,9 +171,6 @@ public class Summation extends OperationType {
                     if ( tsrs[0] == null ) // Creating a new tensor:
                     {
                         int[] shp = tsrs[1].getNDConf().shape();
-                        //int[] shp = (type.identifier().endsWith("x"))
-                        //        ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
-                        //        : tsrs[1].getNDConf().shape();
                         Tsr output = new Tsr( shp, 0.0 );
                         output.setIsVirtual(false);
                         device.add(output);
@@ -204,7 +202,10 @@ public class Summation extends OperationType {
                         new CLExecutor(
                                 call -> {
                                     int offset = ( call.getTensor(0) != null ) ? 0 : 1;
-                                    int gwz = ( call.getTensor(0) != null ) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    int gwz =
+                                            ( call.getTensor(0) != null )
+                                                    ? call.getTensor(0).size()
+                                                    : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
                                             .pass(call.getTensor(offset))
                                             .pass(call.getTensor(offset + 1))

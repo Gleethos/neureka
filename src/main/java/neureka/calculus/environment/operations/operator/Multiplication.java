@@ -104,9 +104,13 @@ public class Multiplication extends OperationType {
                 };
 
         Operation operation = new Operation(
-                call -> true,
-                (caller, call) -> null,
-                rja,
+        ).setADAnalyzer(
+                call -> true
+        ).setCallHock(
+                (caller, call) -> null
+        ).setRJAgent(
+                rja
+        ).setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();
@@ -120,7 +124,7 @@ public class Multiplication extends OperationType {
                     }
                     return call;
                 }
-        )    ;
+        );
 
         setImplementation(Operation.class,
                 operation.setExecutor(
