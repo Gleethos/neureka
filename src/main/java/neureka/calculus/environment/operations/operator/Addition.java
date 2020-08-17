@@ -233,9 +233,13 @@ public class Addition extends OperationType {
         // TENSOR SCALAR OPERATION :
 
         Scalarization scalarization = new Scalarization(
-                call -> true,
-                (caller, call) -> null,
-                rja,
+        ).setADAnalyzer(
+                call -> true
+        ).setCallHock(
+                (caller, call) -> null
+        ).setRJAgent(
+                rja
+        ).setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();
@@ -252,7 +256,7 @@ public class Addition extends OperationType {
                     }
                     return call;
                 }
-        )    ;
+        );
 
         ScalarOperatorCreator<PrimaryNDXConsumer> scalarCreator =
                 (inputs, value, d) -> {

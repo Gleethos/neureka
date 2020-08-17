@@ -38,21 +38,7 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
     private RecursiveJunctionAgent _RJAgent;
     private DrainInstantiation _instantiation;
 
-    public AbstractOperationTypeImplementation(
-            ADAnalyzer analyzer,
-            InitialCallHook hook,
-            RecursiveJunctionAgent RJAgent,
-            DrainInstantiation instantiation
-    ) {
-        _analyzer = analyzer;
-        _hook = hook;
-        _RJAgent = RJAgent;
-        _instantiation = instantiation;
-    }
-
-    public AbstractOperationTypeImplementation() {
-
-    }
+    public AbstractOperationTypeImplementation() { }
 
     @Override
     public HandleChecker getHandleChecker() {

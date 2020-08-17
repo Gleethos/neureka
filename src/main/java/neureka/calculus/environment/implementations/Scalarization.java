@@ -8,17 +8,6 @@ import org.jetbrains.annotations.Contract;
 
 public class Scalarization extends AbstractOperationTypeImplementation< Scalarization >
 {
-    public Scalarization(
-            ADAnalyzer analyzer,
-            InitialCallHook hook,
-            RecursiveJunctionAgent RJAgent,
-            DrainInstantiation instantiation
-    ) {
-        super(
-            analyzer, hook, RJAgent, instantiation
-        );
-        setHandleChecker(call->true);
-    }
 
     public Scalarization(){
         setHandleChecker(call->true);
