@@ -92,9 +92,13 @@ public class Product extends OperationType {
                 };
 
         Broadcast typeImplementation = new Broadcast(
-                call -> true,
-                (caller, call) -> null,
-                rja,
+        ).setADAnalyzer(
+                call -> true
+        ).setCallHock(
+                (caller, call) -> null
+        ).setRJAgent(
+                rja
+        ).setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();
@@ -111,7 +115,7 @@ public class Product extends OperationType {
                     }
                     return call;
                 }
-        )    ;
+        );
 
         setImplementation (
                 Broadcast.class,
@@ -167,10 +171,14 @@ public class Product extends OperationType {
                     else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
                 };
 
-        Activation activation = new Activation(
-                call -> true,
-                (caller, call) -> null,
-                rja,
+        Activation activation = new Activation()
+        .setADAnalyzer(
+                call -> true
+        ).setCallHock(
+                (caller, call) -> null
+        ).setRJAgent(
+                rja
+        ).setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();
@@ -187,7 +195,7 @@ public class Product extends OperationType {
                     }
                     return call;
                 }
-        )    ;
+        );
 
         setImplementation(Activation.class,
                 activation.setExecutor(

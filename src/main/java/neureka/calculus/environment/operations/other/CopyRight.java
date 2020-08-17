@@ -36,8 +36,9 @@ public class CopyRight extends OperationType {
                     else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
                 };
 
-        Activation activation = new Activation(
-                                call -> {
+        Activation activation = new Activation()
+        .setADAnalyzer(
+                call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;
                     if ( call.getType().identifier().equals(",") ) return false; //Reshape
                     Tsr last = null;
@@ -46,9 +47,12 @@ public class CopyRight extends OperationType {
                         last = t; // Note: shapes are cached!
                     }
                     return true;
-                },
-                (caller, call) -> null,
-                ( call, goDeeperWith ) -> null,
+                }
+        ).setCallHock(
+                (caller, call) -> null
+        ).setRJAgent(
+                ( call, goDeeperWith ) -> null
+        ).setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[0] == null ) ? 1 : 0;

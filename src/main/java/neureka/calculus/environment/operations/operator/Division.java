@@ -195,9 +195,13 @@ public class Division extends OperationType
         // BROADCASTING :
 
         Broadcast broadcast = new Broadcast(
-                call -> true,
-                (caller, call) -> null,
-                rja,
+        ).setADAnalyzer(
+                call -> true
+        ).setCallHock(
+                (caller, call) -> null
+        ).setRJAgent(
+            rja
+        ).setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();
@@ -214,7 +218,7 @@ public class Division extends OperationType
                     }
                     return call;
                 }
-        )    ;
+        );
 
         setImplementation(
                 Broadcast.class,

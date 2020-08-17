@@ -2,23 +2,11 @@ package neureka.calculus.environment.implementations;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
 
 public class Activation extends AbstractOperationTypeImplementation< Activation >
 {
-    public Activation(
-            ADAnalyzer analyzer,
-            InitialCallHook hook,
-            RecursiveJunctionAgent RJAgent,
-            DrainInstantiation instantiation
-    ) {
-        super(
-            analyzer, hook, RJAgent, instantiation
-        );
-        setHandleChecker(call->true);
-}
 
     public Activation() {
         super();
