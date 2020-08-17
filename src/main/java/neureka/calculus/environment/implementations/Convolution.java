@@ -15,11 +15,8 @@ public class Convolution extends AbstractOperationTypeImplementation< Convolutio
             DrainInstantiation instantiation
     ) {  super(
             analyzer, hook, RJAgent, instantiation
-    ); }
-
-    @Override
-    public boolean canHandle(ExecutionCall call) {
-        return true;
+    );
+        setHandleChecker(call->true);
     }
 
 

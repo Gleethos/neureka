@@ -136,7 +136,7 @@ public class OperationType implements Type
     @Override
     public OperationTypeImplementation implementationOf(ExecutionCall call) {
         for( OperationTypeImplementation te : _implementations.values() ) {
-            if ( te.canHandle(call) ) return te;
+            if ( te.getHandleChecker().canHandle(call) ) return te;
         }
         return null;
     }

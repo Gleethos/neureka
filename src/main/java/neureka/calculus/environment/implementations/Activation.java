@@ -15,15 +15,14 @@ public class Activation extends AbstractOperationTypeImplementation< Activation 
             DrainInstantiation instantiation
     ) {  super(
             analyzer, hook, RJAgent, instantiation
-    ); }
+    );
+    setHandleChecker(call->true);
+}
 
-    @Override
-    public boolean canHandle(ExecutionCall call) {
-        if ( _executions.isEmpty() ) return false;
-        return true;
+    public Activation() {
+        super();
+        setHandleChecker(call->true);
     }
-
-
 
     public String getKernelSource(){
         return Neureka.instance().utility().readResource("kernels/activate_template.cl");

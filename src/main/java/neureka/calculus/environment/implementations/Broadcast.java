@@ -13,29 +13,28 @@ public class Broadcast extends AbstractOperationTypeImplementation< Broadcast >
             InitialCallHook hook,
             RecursiveJunctionAgent RJAgent,
             DrainInstantiation instantiation
-    ) {  super(
+    ) {
+        super(
             analyzer, hook, RJAgent, instantiation
-    ); }
+        );
+        setHandleChecker(call-> {
+            int maxRank = 0;
+            for ( Tsr t : call.getTensors() ) if( t!=null && t.rank()>maxRank) maxRank = t.rank();
 
-    @Override
-    public boolean canHandle(ExecutionCall call)
-    {
-        int maxRank = 0;
-        for ( Tsr t : call.getTensors() ) if( t!=null && t.rank()>maxRank) maxRank = t.rank();
-
-        for ( int i = 0; i < maxRank; i++ )
-        {
-            int currentDim = -1;
-            for( Tsr t : call.getTensors() )
+            for ( int i = 0; i < maxRank; i++ )
             {
-                if( t!=null && i<t.rank() ) {
-                    if ( currentDim == -1 ) currentDim = t.shape(i);
-                    else if ( currentDim!=t.shape(i) && currentDim!=1 && t.shape(i)!=1 ) return false;
+                int currentDim = -1;
+                for( Tsr t : call.getTensors() )
+                {
+                    if( t!=null && i<t.rank() ) {
+                        if ( currentDim == -1 ) currentDim = t.shape(i);
+                        else if ( currentDim!=t.shape(i) && currentDim!=1 && t.shape(i)!=1 ) return false;
+                    }
                 }
             }
-        }
-        return true;
-    }
+            return true;
+        });
+}
 
     public String getKernelSource(){
         return Neureka.instance().utility().readResource("kernels/broadcast_template.cl");

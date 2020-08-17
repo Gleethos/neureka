@@ -290,7 +290,7 @@ public abstract class AbstractFunction extends BaseFunction
         Tsr[] tsrs = new Tsr[ _src.size() + offset ];
         for ( int i = offset; i < tsrs.length; i++ ) {//constants need to be figured out!
             if ( !(_src.get(i - offset) instanceof FunctionConstant) ) {
-                if (d < 0) {
+                if ( d < 0 ) {
                     tsrs[i] = ( j >= 0 ) ? _src.get(i - offset).call(inputs, j) : _src.get(i - offset).call(inputs);
                 } else {
                     tsrs[i] = ( j >= 0 ) ? _src.get(i - offset).derive(inputs, d, j) : _src.get(i - offset).derive(inputs, d);

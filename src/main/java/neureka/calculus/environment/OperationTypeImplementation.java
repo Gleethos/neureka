@@ -41,19 +41,24 @@ public interface OperationTypeImplementation<FinalType>
         ExecutionCall handle( ExecutionCall call );
     }
 
+    HandleChecker getHandleChecker();
+    FinalType setHandleChecker( HandleChecker checker );
+
     ADAnalyzer getADAnalyzer();
+    FinalType setADAnalyzer( ADAnalyzer analyzer );
 
     InitialCallHook getCallHook();
+    FinalType setCallHock( InitialCallHook hook );
 
     RecursiveJunctionAgent getRJAgent();
+    FinalType setRJAgent( RecursiveJunctionAgent rja );
 
     DrainInstantiation getDrainInstantiation();
+    FinalType setDrainInstantiation( DrainInstantiation drainInstantiation );
 
     <D extends Device, E extends ExecutorFor<D>> FinalType setExecutor(Class<E> deviceClass, E execution);
 
     <D extends Device, E extends ExecutorFor<D>> ExecutorFor getExecutor(Class<E> deviceClass);
-
-    boolean canHandle(ExecutionCall<Device> call);
 
     Tsr recursiveReductionOf(ExecutionCall<Device> call, Consumer<ExecutionCall<Device>> finalExecution );
 

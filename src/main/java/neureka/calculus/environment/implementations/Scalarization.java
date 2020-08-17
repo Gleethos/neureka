@@ -15,13 +15,9 @@ public class Scalarization extends AbstractOperationTypeImplementation< Scalariz
             DrainInstantiation instantiation
     ) {  super(
             analyzer, hook, RJAgent, instantiation
-    ); }
-
-    @Override
-    public boolean canHandle(ExecutionCall call)
-    {
-        return true;
-    }
+    );
+    setHandleChecker(call->true);
+}
 
 
     public String getKernelSource(){

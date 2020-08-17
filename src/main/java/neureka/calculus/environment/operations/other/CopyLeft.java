@@ -32,13 +32,14 @@ public class CopyLeft extends OperationType {
         );
 
         DefaultOperatorCreator<TertiaryNDXConsumer> activationCreator =
-                (inputs, d) -> {
+                ( inputs, d ) -> {
                     double[] t1_val = inputs[1].value64();
                     if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
                     else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
                 };
 
-        Activation activation = new Activation(
+        Activation activation = new Activation()
+                .setADAnalyzer(
                 call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;
                     if ( call.getType().identifier().equals(",") ) return false; //Reshape
@@ -48,9 +49,12 @@ public class CopyLeft extends OperationType {
                         last = t; // Note: shapes are cached!
                     }
                     return true;
-                },
-                (caller, call) -> null,
-                ( call, goDeeperWith ) -> null,
+                }
+        ).setCallHock(
+                ( caller, call ) -> null
+        ).setRJAgent(
+                ( call, goDeeperWith ) -> null
+        ).setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[0] == null ) ? 1 : 0;
@@ -63,13 +67,6 @@ public class CopyLeft extends OperationType {
                         HostExecutor.class,
                         new HostExecutor(
                                 call -> {
-                                    int offset = ( call.getTensor(0) == null ) ? 1 : 0;
-                                    ExecutionCall<HostCPU> newCall = new ExecutionCall<>(
-                                            call.getDevice(),
-                                            new Tsr[]{call.getTensor(offset), call.getTensor(1+offset)},
-                                            -1,
-                                            call.getType()
-                                    );
                                     OperationType.instance("idy")
                                             .getImplementation(Activation.class)
                                             .getExecutor(HostExecutor.class)
@@ -81,13 +78,6 @@ public class CopyLeft extends OperationType {
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    int offset = ( call.getTensor(0) == null ) ? 1 : 0;
-                                    ExecutionCall<OpenCLDevice> newCall = new ExecutionCall<>(
-                                            call.getDevice(),
-                                            new Tsr[]{ call.getTensor(offset), call.getTensor(1+offset) },
-                                            -1,
-                                            call.getType()
-                                    );
                                     OperationType.instance("idy")
                                             .getImplementation(Activation.class)
                                             .getExecutor(CLExecutor.class)

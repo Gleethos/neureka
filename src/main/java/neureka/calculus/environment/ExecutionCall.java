@@ -11,7 +11,7 @@ import neureka.calculus.environment.implementations.AbstractOperationTypeImpleme
  *
  * @param <DeviceType> The Device implementation targeted by an instance of this ExecutionCall!
  */
-public class ExecutionCall<DeviceType extends Device>
+public class ExecutionCall< DeviceType extends Device >
 {
     public interface Mutator {
         Tsr[] mutate( Tsr[] tensors );

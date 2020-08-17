@@ -30,12 +30,13 @@ import java.util.function.Consumer;
  */
 public abstract class AbstractOperationTypeImplementation< FinalType > implements OperationTypeImplementation< FinalType >
 {
-    protected final Map< Class< ExecutorFor< Device > >, ExecutorFor< Device > > _executions;
+    protected final Map< Class< ExecutorFor< Device > >, ExecutorFor< Device > > _executions = new HashMap<>();
 
-    private final ADAnalyzer _analyzer;
-    private final InitialCallHook _hook;
-    private final RecursiveJunctionAgent _RJAgent;
-    private final DrainInstantiation _instantiation;
+    private HandleChecker _canHandle;
+    private ADAnalyzer _analyzer;
+    private InitialCallHook _hook;
+    private RecursiveJunctionAgent _RJAgent;
+    private DrainInstantiation _instantiation;
 
     public AbstractOperationTypeImplementation(
             ADAnalyzer analyzer,
@@ -43,11 +44,25 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
             RecursiveJunctionAgent RJAgent,
             DrainInstantiation instantiation
     ) {
-        _executions = new HashMap<>();
         _analyzer = analyzer;
         _hook = hook;
         _RJAgent = RJAgent;
         _instantiation = instantiation;
+    }
+
+    public AbstractOperationTypeImplementation() {
+
+    }
+
+    @Override
+    public HandleChecker getHandleChecker() {
+        return _canHandle;
+    }
+
+    @Override
+    public FinalType setHandleChecker(HandleChecker checker) {
+        _canHandle = checker;
+        return (FinalType) this;
     }
 
     @Override
@@ -56,8 +71,20 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
     }
 
     @Override
+    public FinalType setADAnalyzer(ADAnalyzer analyzer) {
+        _analyzer = analyzer;
+        return (FinalType) this;
+    }
+
+    @Override
     public InitialCallHook getCallHook(){
         return _hook;
+    }
+
+    @Override
+    public FinalType setCallHock(InitialCallHook hook) {
+        _hook = hook;
+        return (FinalType) this;
     }
 
     @Override
@@ -66,8 +93,20 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
     }
 
     @Override
+    public FinalType setRJAgent(RecursiveJunctionAgent rja) {
+        _RJAgent = rja;
+        return (FinalType) this;
+    }
+
+    @Override
     public DrainInstantiation getDrainInstantiation(){
         return _instantiation;
+    }
+
+    @Override
+    public FinalType setDrainInstantiation(DrainInstantiation drainInstantiation) {
+        _instantiation = drainInstantiation;
+        return (FinalType) this;
     }
 
     @Override
