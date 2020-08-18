@@ -61,7 +61,9 @@ public class Modulo extends OperationType {
                         }
                         return true;
                     }
-            ).setCallHock(
+            ).setADAgentCreator(
+             null
+        ).setCallHock(
                     ( caller, call ) -> null
             ).setRJAgent(
                     ( call, goDeeperWith ) -> null
@@ -166,7 +168,9 @@ public class Modulo extends OperationType {
                         }
                         return true;
                     }
-            ).setCallHock(
+            ).setADAgentCreator(
+             null
+        ).setCallHock(
                     ( caller, call ) -> null
             ).setRJAgent(
                     ( call, goDeeperWith ) -> null
@@ -257,7 +261,9 @@ public class Modulo extends OperationType {
                         }
                         return true;
                     }
-            ).setCallHock(
+            ).setADAgentCreator(
+             null
+        ).setCallHock(
                     ( caller, call ) -> null
             ).setRJAgent(
                     ( call, goDeeperWith ) -> null

@@ -44,6 +44,8 @@ public class Identity extends OperationType
                     }
                     return true;
                 }
+        ).setADAgentCreator(
+             null
         ).setCallHock(
                 ( caller, call ) -> null
         ).setRJAgent(
@@ -114,7 +116,9 @@ public class Identity extends OperationType
                         }
                         return true;
                     }
-            ).setCallHock(
+            ).setADAgentCreator(
+             null
+        ).setCallHock(
                     ( caller, call ) -> null
             ).setRJAgent(
                     ( call, goDeeperWith ) -> null

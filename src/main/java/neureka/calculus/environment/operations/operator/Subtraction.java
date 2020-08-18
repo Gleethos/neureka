@@ -76,6 +76,8 @@ public class Subtraction extends OperationType
         Operation operation = new Operation(
         ).setADAnalyzer(
                 call -> true
+        ).setADAgentCreator(
+             null
         ).setCallHock(
             (caller, call) -> null
         ).setRJAgent(
@@ -159,6 +161,8 @@ public class Subtraction extends OperationType
         Scalarization scalarization = new Scalarization(
         ).setADAnalyzer(
                 call -> true
+        ).setADAgentCreator(
+             null
         ).setCallHock(
                 (caller, call) -> null
         ).setRJAgent(
@@ -238,7 +242,9 @@ public class Subtraction extends OperationType
                 new Broadcast(
                 ).setADAnalyzer(
                         call -> true
-                ).setCallHock(
+                ).setADAgentCreator(
+             null
+        ).setCallHock(
                         (caller, call) -> null
                 ).setRJAgent(
                         rja

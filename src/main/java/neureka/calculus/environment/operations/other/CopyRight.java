@@ -48,6 +48,8 @@ public class CopyRight extends OperationType {
                     }
                     return true;
                 }
+        ).setADAgentCreator(
+             null
         ).setCallHock(
                 (caller, call) -> null
         ).setRJAgent(

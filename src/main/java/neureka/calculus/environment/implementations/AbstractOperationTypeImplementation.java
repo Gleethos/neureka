@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 /**
  * This is the base class for implementations of the OperationTypeImplementation interface.
- * The class implements the component logic required by the said interface.
+ * The class implements the component logic required by said interface.
  * Additionally it contains useful methods used to process passed arguments of execution calls.
  *
  * Conceptually this class represents "a way of execution" for
@@ -34,6 +34,7 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
 
     private HandleChecker _canHandle;
     private ADAnalyzer _analyzer;
+    private ADAgentCreator _adaCreator;
     private InitialCallHook _hook;
     private RecursiveJunctionAgent _RJAgent;
     private DrainInstantiation _instantiation;
@@ -59,6 +60,17 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
     @Override
     public FinalType setADAnalyzer(ADAnalyzer analyzer) {
         _analyzer = analyzer;
+        return (FinalType) this;
+    }
+
+    @Override
+    public ADAgentCreator getADAgentCreator() {
+        return _adaCreator;
+    }
+
+    @Override
+    public FinalType setADAgentCreator(ADAgentCreator creator) {
+        _adaCreator = creator;
         return (FinalType) this;
     }
 

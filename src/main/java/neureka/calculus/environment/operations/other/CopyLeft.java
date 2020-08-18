@@ -50,6 +50,8 @@ public class CopyLeft extends OperationType {
                     }
                     return true;
                 }
+        ).setADAgentCreator(
+             null
         ).setCallHock(
                 ( caller, call ) -> null
         ).setRJAgent(

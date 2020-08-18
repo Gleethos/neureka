@@ -45,6 +45,8 @@ public class Ligmoid extends OperationType
                     }
                     return true;
                 }
+        ).setADAgentCreator(
+             null
         ).setCallHock(
                 ( caller, call ) -> null
         ).setRJAgent(

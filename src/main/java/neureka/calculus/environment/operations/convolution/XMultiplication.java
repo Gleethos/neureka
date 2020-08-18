@@ -104,6 +104,8 @@ public class XMultiplication extends OperationType
                     }
                     return true;
                 }
+        ).setADAgentCreator(
+             null
         ).setCallHock(
                 (caller, call) -> {
                     if ( !caller.isFlat() ) return null;

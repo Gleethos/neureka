@@ -127,6 +127,8 @@ public class Division extends OperationType
                     }
                     return true;
                 }
+        ).setADAgentCreator(
+             null
         ).setCallHock(
                 (caller, call) -> null
         ).setRJAgent(
@@ -201,6 +203,8 @@ public class Division extends OperationType
         Broadcast broadcast = new Broadcast(
         ).setADAnalyzer(
                 call -> true
+        ).setADAgentCreator(
+                     null
         ).setCallHock(
                 (caller, call) -> null
         ).setRJAgent(
@@ -286,6 +290,8 @@ public class Division extends OperationType
         Scalarization scalarization = new Scalarization(
         ).setADAnalyzer(
                 call -> true
+        ).setADAgentCreator(
+             null
         ).setCallHock(
                 (caller, call) -> null
         ).setRJAgent(
@@ -385,7 +391,9 @@ public class Division extends OperationType
                                 }
                                 return true;
                             }
-                    ).setCallHock(
+                    ).setADAgentCreator(
+             null
+        ).setCallHock(
                             ( caller, call ) -> null
                     ).setRJAgent(
                             ( call, goDeeperWith ) -> null

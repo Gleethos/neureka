@@ -44,6 +44,8 @@ public class Sinus extends OperationType
                     }
                     return true;
                 }
+        ).setADAgentCreator(
+             null
         ).setCallHock(
                 ( caller, call ) -> null
         ).setRJAgent(

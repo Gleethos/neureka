@@ -61,6 +61,8 @@ public class Sigmoid extends OperationType
                     }
                     return true;
                 }
+        ).setADAgentCreator(
+             null
         ).setCallHock(
                 ( caller, call ) -> null
         ).setRJAgent(

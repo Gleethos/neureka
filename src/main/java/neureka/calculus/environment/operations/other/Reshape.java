@@ -59,6 +59,8 @@ public class Reshape extends OperationType
                 call -> true
         ).setADAnalyzer(
                 call -> false
+        ).setADAgentCreator(
+                        null
         ).setCallHock(
                 ( caller, call ) -> {
                     Tsr[] inputs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);

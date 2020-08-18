@@ -52,7 +52,9 @@ public class Gaussian extends OperationType
                         }
                         return true;
                     }
-            ).setCallHock(
+            ).setADAgentCreator(
+             null
+        ).setCallHock(
                     ( caller, call ) -> null
             ).setRJAgent(
                     ( call, goDeeperWith ) -> null

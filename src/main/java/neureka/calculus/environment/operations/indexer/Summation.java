@@ -81,6 +81,8 @@ public class Summation extends OperationType
         Broadcast typeImplementation = new Broadcast(
         ).setADAnalyzer(
                 call -> true
+        ).setADAgentCreator(
+             null
         ).setCallHock(
                 (caller, call) -> null
         ).setRJAgent(
@@ -160,6 +162,8 @@ public class Summation extends OperationType
         Activation activation = new Activation()
         .setADAnalyzer(
                 call -> true
+        ).setADAgentCreator(
+             null
         ).setCallHock(
                 (caller, call) -> null
         ).setRJAgent(

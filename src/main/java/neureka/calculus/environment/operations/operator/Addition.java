@@ -31,6 +31,8 @@ public class Addition extends OperationType {
                     }
                     return true;
                 }
+        ).setADAgentCreator(
+             null
         ).setCallHock(
                 ( caller, call ) -> null
         ).setRJAgent(
@@ -121,6 +123,8 @@ public class Addition extends OperationType {
         Operation operation = new Operation(
         ).setADAnalyzer(
                 call -> true
+        ).setADAgentCreator(
+             null
         ).setCallHock(
                 (caller, call) -> null
         ).setRJAgent(
@@ -235,6 +239,8 @@ public class Addition extends OperationType {
         Scalarization scalarization = new Scalarization(
         ).setADAnalyzer(
                 call -> true
+        ).setADAgentCreator(
+             null
         ).setCallHock(
                 (caller, call) -> null
         ).setRJAgent(
@@ -339,6 +345,8 @@ public class Addition extends OperationType {
                     }
                     return true;
                 }
+        ).setADAgentCreator(
+             null
         ).setCallHock(
                 ( caller, call ) -> null
         ).setRJAgent(

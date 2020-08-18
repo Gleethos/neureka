@@ -155,6 +155,8 @@ public class Power extends OperationType
         Operation operation = new Operation(
         ).setADAnalyzer(
                 call -> true
+        ).setADAgentCreator(
+             null
         ).setCallHock(
                 (caller, call) -> null
         ).setRJAgent(
@@ -230,6 +232,8 @@ public class Power extends OperationType
         Broadcast broadcast = new Broadcast(
         ).setADAnalyzer(
                 call -> true
+        ).setADAgentCreator(
+             null
         ).setCallHock(
                 (caller, call) -> null
         ).setRJAgent(
@@ -316,6 +320,8 @@ public class Power extends OperationType
         Scalarization scalarization = new Scalarization(
         ).setADAnalyzer(
             call -> true
+        ).setADAgentCreator(
+             null
         ).setCallHock(
                 (caller, call) -> null
         ).setRJAgent(
@@ -410,7 +416,9 @@ public class Power extends OperationType
                                 }
                                 return true;
                             }
-                    ).setCallHock(
+                    ).setADAgentCreator(
+             null
+        ).setCallHock(
                             ( caller, call ) -> null
                     ).setRJAgent(
                             ( call, goDeeperWith ) -> null

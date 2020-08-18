@@ -2,6 +2,7 @@ package neureka.calculus.environment;
 
 import neureka.Tsr;
 import neureka.acceleration.Device;
+import neureka.autograd.ADAgent;
 import neureka.calculus.factory.AbstractFunction;
 
 import java.util.function.Consumer;
@@ -25,33 +26,40 @@ public interface OperationTypeImplementation<FinalType>
         boolean canHandle( ExecutionCall call );
     }
 
+    HandleChecker getHandleChecker();
+    FinalType setHandleChecker( HandleChecker checker );
+
     interface ADAnalyzer {
         boolean allowsForward( ExecutionCall call );
     }
+
+    ADAnalyzer getADAnalyzer();
+    FinalType setADAnalyzer( ADAnalyzer analyzer );
+
+    interface ADAgentCreator {
+        ADAgent getADAgentOf(neureka.calculus.Function f, ExecutionCall<Device> call, boolean forward);
+    }
+
+    ADAgentCreator getADAgentCreator();
+    FinalType setADAgentCreator( ADAgentCreator creator );
 
     interface InitialCallHook {
         Tsr handle( AbstractFunction caller,  ExecutionCall call );
     }
 
+    InitialCallHook getCallHook();
+    FinalType setCallHock( InitialCallHook hook );
+
     interface RecursiveJunctionAgent {
         Tsr handle( ExecutionCall call, Function<ExecutionCall, Tsr> goDeeperWith );
     }
 
+    RecursiveJunctionAgent getRJAgent();
+    FinalType setRJAgent( RecursiveJunctionAgent rja );
+
     interface DrainInstantiation {
         ExecutionCall handle( ExecutionCall call );
     }
-
-    HandleChecker getHandleChecker();
-    FinalType setHandleChecker( HandleChecker checker );
-
-    ADAnalyzer getADAnalyzer();
-    FinalType setADAnalyzer( ADAnalyzer analyzer );
-
-    InitialCallHook getCallHook();
-    FinalType setCallHock( InitialCallHook hook );
-
-    RecursiveJunctionAgent getRJAgent();
-    FinalType setRJAgent( RecursiveJunctionAgent rja );
 
     DrainInstantiation getDrainInstantiation();
     FinalType setDrainInstantiation( DrainInstantiation drainInstantiation );
