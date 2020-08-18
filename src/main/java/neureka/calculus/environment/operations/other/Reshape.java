@@ -24,8 +24,11 @@ public class Reshape extends OperationType
         );
 
         setStringifier(
-            children -> {
-                java.util.function.Function<String, Boolean> isConstantNumeric = (s)->{
+            children ->
+            {
+                java.util.function.Function<String, Boolean> isConstantNumeric =
+                s ->
+                {
                     try {
                         Double.parseDouble(s);
                         return true;
@@ -44,7 +47,8 @@ public class Reshape extends OperationType
                         reconstructed.append(
                                 ( isConstantNumeric.apply(children.get(i)) )
                                         ? children.get(i).split("\\.")[0]
-                                        : children.get(i));
+                                        : children.get(i)
+                        );
                     }
                     if ( i < children.size() - 2 ) {
                         reconstructed.append(",");
@@ -62,7 +66,8 @@ public class Reshape extends OperationType
         ).setADAgentCreator(
                         null
         ).setCallHock(
-                ( caller, call ) -> {
+                ( caller, call ) ->
+                {
                     Tsr[] inputs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
                     int[] newForm = new int[inputs.length - 1];
                     for ( int i = 0; i < inputs.length - 1; i++ ) {

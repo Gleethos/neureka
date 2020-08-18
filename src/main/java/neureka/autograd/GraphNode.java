@@ -406,12 +406,23 @@ public class GraphNode implements Component<Tsr>
                         } else {
                             /*  Chain rule (forward) for every derivative w.r.t. leaves (reverseAD or user leaves): */
                             src_node.forEach(
-                            function.derive( inputs, i ),
-                            ( t, td ) -> {
-                                if ( this.has( t ) ) this.put( t, ADD.call(new Tsr[]{td, (Tsr) this.get(t)}) );
-                                else this.put( t, td );
-                                //TODO: flag within src tsrs that grant that the tensor has been created by function constructor!
-                            });
+                                function.derive( inputs, i ),
+                                ( node, td ) -> {
+                                    if ( this.has( node ) ) {
+                                        this.put(
+                                                node,
+                                                new ADAgent( ADD.call(new Tsr[]{td, (Tsr) this.get(node)}) )
+                                        );
+                                    } else {
+                                        this.put(
+                                                node,
+                                                new ADAgent( td )
+                                        );
+                                    }
+                                    // TODO: flag within src tsrs that grant that the tensor
+                                    // has been created by function constructor!
+                                }
+                            );
                         }
                     }
                 }
@@ -669,18 +680,15 @@ public class GraphNode implements Component<Tsr>
 
     /**
      * @param target nodes are graph nodes which contain either tensors requiring errors for accumulation and/or more targets.
-     * @param o      tensors are used during back-propagation in order to distribute an error throughout the graph.
+     * @param agent ADAgent's are used during back-propagation in order to distribute an error throughout the graph.
      */
-    public void put(GraphNode target, Object o) {
+    public void put(GraphNode target, ADAgent agent) {
         if ( _targets_derivatives == null ) _targets_derivatives = new TreeMap<>((a, b) -> a.hashCode() - b.hashCode());
-        ADAgent agent;
-        if ( o instanceof Tsr ) agent = new ADAgent( (Tsr) o );
-        else agent = (ADAgent) o;
 
         _targets_derivatives.put( target, agent );
 
         Tsr d = agent.derivative();
-        if ( d != null && d.has(GraphNode.class) ) d.find(GraphNode.class)._is_used_as_derivative = true;
+        if ( d != null && d.has(GraphNode.class) ) d.find( GraphNode.class )._is_used_as_derivative = true;
     }
 
     /**
@@ -717,6 +725,14 @@ public class GraphNode implements Component<Tsr>
     }
 
     /**
+     * @param action
+     */
+    public void forEachDerivative(BiConsumer<GraphNode, ADAgent> action) {
+        if ( _targets_derivatives == null ) return;
+        _targets_derivatives.forEach( action );
+    }
+
+    /**
      * @param action A lambda action providing derivative and target node as parameter.
      */
     public void forEachBackward( Tsr error, BiConsumer<GraphNode, Tsr> action ) {
@@ -732,16 +748,9 @@ public class GraphNode implements Component<Tsr>
     public void forEachForward( Tsr error, BiConsumer<GraphNode, Tsr> action ) {
         if ( _targets_derivatives == null ) return;
         _targets_derivatives.forEach( ( t, o ) -> {
-            if ( o.isForward() ) action.accept( t, MUL.call( new Tsr[]{error, o.derivative()} ) );
+            //if ( o.isForward() ) action.accept( t, MUL.call( new Tsr[]{error, o.derivative()} ) );
+            if ( o.isForward() ) action.accept( t, o.forward(t, error) );
         });
-    }
-
-    /**
-     * @param action
-     */
-    public void forEachDerivative(BiConsumer<GraphNode, ADAgent> action) {
-        if ( _targets_derivatives == null ) return;
-        _targets_derivatives.forEach( action );
     }
 
     /**

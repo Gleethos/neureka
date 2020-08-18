@@ -132,7 +132,7 @@ public class FunctionInput extends BaseFunction implements GradientProvider
 
     @Override
     public Tsr derive(Tsr[] inputs, int index) {
-        return (index == index())
+        return ( index == index() )
                 ? new Tsr(inputs[0].shape(), 1.0)
                 : new Tsr(inputs[0].shape(), 0.0);
     }

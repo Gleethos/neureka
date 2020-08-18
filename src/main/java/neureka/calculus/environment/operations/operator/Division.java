@@ -216,9 +216,6 @@ public class Division extends OperationType
                     if ( tsrs[0] == null ) // Creating a new tensor:
                     {
                         int[] shp = tsrs[1].getNDConf().shape();
-                        //int[] shp = (type.identifier().endsWith("x"))
-                        //        ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
-                        //        : tsrs[1].getNDConf().shape();
                         Tsr output = new Tsr( shp, 0.0 );
                         output.setIsVirtual(false);
                         device.add(output);
@@ -303,9 +300,6 @@ public class Division extends OperationType
                     if ( tsrs[0] == null ) // Creating a new tensor:
                     {
                         int[] shp = tsrs[1].getNDConf().shape();
-                        //int[] shp = (type.identifier().endsWith("x"))
-                        //        ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
-                        //        : tsrs[1].getNDConf().shape();
                         Tsr output = new Tsr( shp, 0.0 );
                         output.setIsVirtual(false);
                         device.add(output);

@@ -1232,13 +1232,13 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         if (mode.contains("r") && this.has(GraphNode.class) && this.find(GraphNode.class).size() > 0) {
             GraphNode node = this.find(GraphNode.class);
             AtomicReference<String> enclosed = new AtomicReference<>("; ");
-            node.forEachDerivative((t, d) -> {
-                if (d.derivative()==null){
+            node.forEachDerivative((t, agent) -> {
+                if (agent.derivative()==null){
                     enclosed.set(enclosed.get() + "->d(null), ");
                 } else {
                     enclosed.set(enclosed.get() +
                             base+"=>d|[ " +
-                            base+delimiter+    d.derivative()._toString(mode, deeper) + " " +
+                            base+delimiter+    agent.derivative()._toString(mode, deeper) + " " +
                             base+half+"]|:t{ " +
                             base+delimiter+    ((t.getPayload()!=null)?t.getPayload()._toString(mode, deeper):t.toString("")) + " " +
                             base+half+"}, ");
@@ -1250,9 +1250,9 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
             GraphNode node = this.find(GraphNode.class);
             if (node.mode() != 0) {
                 AtomicReference<String> asAR = new AtomicReference<>("; ");
-                node.forEachDerivative((t, d) -> {
-                    if (d.derivative()==null) asAR.set(asAR.get() + "->d(null), ");
-                    else asAR.set(asAR.get() + "->d" + d.derivative()._toString(mode, deeper) + ", ");
+                node.forEachDerivative((t, agent) -> {
+                    if (agent.derivative()==null) asAR.set(asAR.get() + "->d(null), ");
+                    else asAR.set(asAR.get() + "->d" + agent.derivative()._toString(mode, deeper) + ", ");
                 });
                 asString += asAR.get();
             }

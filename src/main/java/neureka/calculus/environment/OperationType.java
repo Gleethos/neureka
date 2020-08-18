@@ -184,7 +184,7 @@ public class OperationType implements Type
         Tsr[] inputs = call.getTensors();
         int d = call.getDerivativeIndex();
         Function mul = Function.Detached.MUL;
-        if(forward)
+        if( forward )
         {
             Tsr deriv = f.derive(inputs, d);
             return new ADAgent(
@@ -193,7 +193,7 @@ public class OperationType implements Type
                     null
             );
         } else {
-            if (this.supports(Convolution.class))
+            if ( this.supports(Convolution.class) )
             {
                 Function invX = FunctionBuilder.build(
                         "I[0]" + identifier() + ">>I[1]" + identifier() + ">>I[2]",

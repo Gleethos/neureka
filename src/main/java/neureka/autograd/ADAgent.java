@@ -1,12 +1,14 @@
 package neureka.autograd;
 
 import neureka.Tsr;
+import neureka.calculus.Function;
 
 import java.util.function.Supplier;
 
 public class ADAgent {
 
-    public interface ADAction {
+    public interface ADAction
+    {
         Tsr execute(GraphNode t, Tsr error);
     }
 
@@ -25,7 +27,7 @@ public class ADAgent {
             Tsr derivative
     ){
         _derivative = ()->derivative;
-        _fad = null;
+        _fad = (t, d) -> Function.MUL.call(new Tsr[]{d, derivative});
         _bad = null;
     }
 

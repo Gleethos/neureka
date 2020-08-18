@@ -11,7 +11,8 @@ public class Broadcast extends AbstractOperationTypeImplementation< Broadcast >
 
     public Broadcast() {
         setHandleChecker(
-                call-> {
+                call->
+                {
                     int maxRank = 0;
                     for ( Tsr t : call.getTensors() ) if( t!=null && t.rank() > maxRank ) maxRank = t.rank();
                     for ( int i = 0; i < maxRank; i++ )
