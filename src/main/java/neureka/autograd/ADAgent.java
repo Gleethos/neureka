@@ -5,8 +5,8 @@ import neureka.calculus.Function;
 
 import java.util.function.Supplier;
 
-public class ADAgent {
-
+public class ADAgent
+{
     public interface ADAction
     {
         Tsr execute(GraphNode t, Tsr error);
@@ -23,17 +23,9 @@ public class ADAgent {
         _fad = fad;
         _bad = bad;
     }
-    public ADAgent(
-            Tsr derivative
-    ){
-        _derivative = ()->derivative;
-        _fad = (t, d) -> Function.MUL.call(new Tsr[]{d, derivative});
-        _bad = null;
-    }
 
     public Tsr forward(GraphNode t, Tsr error){
         return _fad.execute(t, error);
-        //return _fad.execute(derivative);
     }
 
     public Tsr backward(GraphNode t, Tsr error){

@@ -79,6 +79,6 @@ public interface Type
 
     boolean supports(Class implementation);
 
-    ADAgent getADAgentOf(Function f, ExecutionCall<Device> call, boolean forward);
+    ADAgent getADAgentOf(Function f, Tsr derivative, ExecutionCall<Device> call, boolean forward);
 
 }

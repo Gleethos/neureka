@@ -113,7 +113,7 @@ public class FunctionConstant extends BaseFunction
 	}
 
 	@Override
-	public ADAgent getADAgent( ExecutionCall<Device> call, boolean forward ){
+	public ADAgent getADAgent( Tsr derivative, ExecutionCall<Device> call, boolean forward ){
 		return null;
 	}
 

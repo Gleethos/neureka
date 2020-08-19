@@ -178,7 +178,7 @@ public interface Function
 
     String toString();
 
-    ADAgent getADAgent( ExecutionCall<Device> call, boolean forward );
+    ADAgent getADAgent( Tsr derivative, ExecutionCall<Device> call, boolean forward );
 
     //------------------------------------------------------------------------------------------------------------------
 

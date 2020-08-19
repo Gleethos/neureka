@@ -344,7 +344,8 @@ public class GraphNode implements Component<Tsr>
         }
     }
 
-    private void _construct(Tsr output, Function function, ExecutionCall<Device> call, GraphLock lock) {
+    private void _construct(Tsr output, Function function, ExecutionCall<Device> call, GraphLock lock)
+    {
         Tsr[] inputs = ( call == null ) ? null : call.getTensors();
         if ( output == null ) throw new NullPointerException("The supplied payload Tsr must no be null!");
         if ( !function.doesAD() ) return; // Only functions with AutoDiff enabled create computation graph!
@@ -383,17 +384,18 @@ public class GraphNode implements Component<Tsr>
             /* Preparing for back propagation: */
             if ( this.usesForwardAD() ) {
                 for ( int i = 0; i < inputs.length; i++ ) {
-                    GraphNode src_node = inputs[i].find( GraphNode.class );
-                    if ( src_node.usesAD() ) {
+                    GraphNode srcNode = inputs[i].find( GraphNode.class );
+                    if ( srcNode.usesAD() ) {
                         if (
-                                src_node.size() == 0 && this.size() == 0
+                                srcNode.size() == 0 && this.size() == 0
                                     ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
-                                !src_node.isLeave() && !src_node._allows_forward//Was : src_node.function().type().allowsForward( inputs )
+                                !srcNode.isLeave() && !srcNode._allows_forward//Was : src_node.function().type().allowsForward( inputs )
                         ) {
                             this.put(
-                                    src_node,
+                                    srcNode,
                                     function.getADAgent(
-                                            new ExecutionCall<Device>(
+                                            null,
+                                            new ExecutionCall<>(
                                                     call.getDevice(),
                                                     call.getTensors(),
                                                     i,
@@ -405,18 +407,40 @@ public class GraphNode implements Component<Tsr>
                             );
                         } else {
                             /*  Chain rule (forward) for every derivative w.r.t. leaves (reverseAD or user leaves): */
-                            src_node.forEach(
+                            int finalI = i;
+                            srcNode.forEach(
                                 function.derive( inputs, i ),
                                 ( node, td ) -> {
                                     if ( this.has( node ) ) {
+                                        Tsr derivative = ADD.call(new Tsr[]{td, (Tsr) this.get(node)});
                                         this.put(
                                                 node,
-                                                new ADAgent( ADD.call(new Tsr[]{td, (Tsr) this.get(node)}) )
+                                                function.getADAgent(
+                                                        derivative,
+                                                        new ExecutionCall<>(
+                                                                call.getDevice(),
+                                                                call.getTensors(),
+                                                                finalI,
+                                                                call.getJ(),
+                                                                call.getType()
+                                                        ),
+                                                        true
+                                                )
                                         );
                                     } else {
                                         this.put(
                                                 node,
-                                                new ADAgent( td )
+                                                function.getADAgent(
+                                                        td,
+                                                        new ExecutionCall<>(
+                                                                call.getDevice(),
+                                                                call.getTensors(),
+                                                                finalI,
+                                                                call.getJ(),
+                                                                call.getType()
+                                                        ),
+                                                        true
+                                                )
                                         );
                                     }
                                     // TODO: flag within src tsrs that grant that the tensor
@@ -433,6 +457,7 @@ public class GraphNode implements Component<Tsr>
                         this.put(
                                 src_node,
                                 function.getADAgent(
+                                        null,
                                         new ExecutionCall<Device>(
                                                 call.getDevice(),
                                                 call.getTensors(),

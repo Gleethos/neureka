@@ -12,7 +12,8 @@ import neureka.calculus.factory.assembly.FunctionBuilder;
 public class Reshape extends OperationType
 {
 
-    public Reshape(){
+    public Reshape()
+    {
 
         super(
                 "", ",", -1,
@@ -150,7 +151,7 @@ public class Reshape extends OperationType
     }
 
     @Override
-    public ADAgent getADAgentOf(Function f, ExecutionCall call, boolean forward)
+    public ADAgent getADAgentOf(Function f, Tsr deriv, ExecutionCall call, boolean forward)
     {
         Tsr[] inputs = call.getTensors();
         int i = call.getDerivativeIndex();

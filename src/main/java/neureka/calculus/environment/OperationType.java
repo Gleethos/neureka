@@ -179,11 +179,22 @@ public class OperationType implements Type
     }
 
     @Override
-    public ADAgent getADAgentOf( Function f, ExecutionCall call, boolean forward )
+    public ADAgent getADAgentOf( Function f, Tsr derivv, ExecutionCall call, boolean forward )
     {
+        Function mul = Function.Detached.MUL;
+        if (
+            derivv != null
+        ) {
+            return new ADAgent(
+                    () -> derivv,
+                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, derivv}),
+                    null
+            );
+        }
+
+
         Tsr[] inputs = call.getTensors();
         int d = call.getDerivativeIndex();
-        Function mul = Function.Detached.MUL;
         if( forward )
         {
             Tsr deriv = f.derive(inputs, d);
@@ -192,7 +203,9 @@ public class OperationType implements Type
                     ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}),
                     null
             );
-        } else {
+        }
+        else
+        {
             if ( this.supports(Convolution.class) )
             {
                 Function invX = FunctionBuilder.build(

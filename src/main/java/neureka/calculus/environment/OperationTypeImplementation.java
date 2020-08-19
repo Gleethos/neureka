@@ -37,7 +37,12 @@ public interface OperationTypeImplementation<FinalType>
     FinalType setADAnalyzer( ADAnalyzer analyzer );
 
     interface ADAgentCreator {
-        ADAgent getADAgentOf(neureka.calculus.Function f, ExecutionCall<Device> call, boolean forward);
+        ADAgent getADAgentOf(
+                neureka.calculus.Function f,
+                Tsr derivative,
+                ExecutionCall<Device> call,
+                boolean forward
+        );
     }
 
     ADAgentCreator getADAgentCreator();
