@@ -393,7 +393,9 @@ public class GraphNode implements Component<Tsr>
                         ) {
                             this.put(
                                     srcNode,
-                                    function.getADAgent(
+                                    call.getADAgentFrom(
+                                            function,
+                                            //function.getADAgent(
                                             null,
                                             new ExecutionCall<>(
                                                     call.getDevice(),
@@ -410,12 +412,14 @@ public class GraphNode implements Component<Tsr>
                             int finalI = i;
                             srcNode.forEach(
                                 function.derive( inputs, i ),
-                                ( node, td ) -> {
+                                ( node, targetDerivative ) -> {
                                     if ( this.has( node ) ) {
-                                        Tsr derivative = ADD.call(new Tsr[]{td, (Tsr) this.get(node)});
+                                        Tsr derivative = ADD.call(new Tsr[]{targetDerivative, (Tsr) this.get(node)});
                                         this.put(
                                                 node,
-                                                function.getADAgent(
+                                                call.getADAgentFrom(
+                                                        function,
+                                                //function.getADAgent(
                                                         derivative,
                                                         new ExecutionCall<>(
                                                                 call.getDevice(),
@@ -430,8 +434,10 @@ public class GraphNode implements Component<Tsr>
                                     } else {
                                         this.put(
                                                 node,
-                                                function.getADAgent(
-                                                        td,
+                                                call.getADAgentFrom(
+                                                        function,
+                                                        //function.getADAgent(
+                                                        targetDerivative,
                                                         new ExecutionCall<>(
                                                                 call.getDevice(),
                                                                 call.getTensors(),
@@ -452,11 +458,13 @@ public class GraphNode implements Component<Tsr>
                 }
             } else if ( this.usesReverseAD() ) {
                 for ( int i = 0; i < inputs.length; i++ ) {
-                    GraphNode src_node = inputs[i].find(GraphNode.class);
-                    if ( src_node.usesAD() || inputs[i].rqsGradient() ) {
+                    GraphNode srcNode = inputs[i].find(GraphNode.class);
+                    if ( srcNode.usesAD() || inputs[i].rqsGradient() ) {
                         this.put(
-                                src_node,
-                                function.getADAgent(
+                                srcNode,
+                                call.getADAgentFrom(
+                                        function,
+                                        //function.getADAgent(
                                         null,
                                         new ExecutionCall<Device>(
                                                 call.getDevice(),

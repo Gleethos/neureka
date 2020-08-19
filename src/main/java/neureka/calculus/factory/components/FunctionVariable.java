@@ -104,10 +104,5 @@ public class FunctionVariable extends BaseFunction implements GradientProvider {
         return "I"+((this.providesGradient())?"g":"")+"[j]";
     }
 
-    @Override
-    public ADAgent getADAgent(Tsr derivative, ExecutionCall<Device> call, boolean forward){
-        return null;
-    }
-
 
 }

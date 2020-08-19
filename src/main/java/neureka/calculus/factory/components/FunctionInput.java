@@ -148,9 +148,4 @@ public class FunctionInput extends BaseFunction implements GradientProvider
         return ((this.providesGradient())?(Math.abs(_index)-1):_index);
     }
 
-    @Override
-    public ADAgent getADAgent( Tsr derivative, ExecutionCall<Device> call, boolean forward ){
-        return null;
-    }
-
 }

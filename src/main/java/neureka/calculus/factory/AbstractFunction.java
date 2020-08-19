@@ -103,11 +103,6 @@ public abstract class AbstractFunction extends BaseFunction
 
     //------------------------------------------------------------------------------------------------------------------
 
-    @Override
-    public ADAgent getADAgent( Tsr derivative, ExecutionCall<Device> call, boolean forward ) {
-        return _type.getADAgentOf( this, derivative, call, forward );
-    }
-
     /**
      * Responsible for handling functions with multiple inputs!
      *

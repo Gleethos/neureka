@@ -4,11 +4,14 @@ import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.acceleration.host.execution.HostExecutor;
 import neureka.acceleration.opencl.execution.CLExecutor;
+import neureka.autograd.ADAgent;
+import neureka.calculus.Function;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.implementations.AbstractOperationTypeImplementation;
 import neureka.calculus.environment.implementations.Convolution;
+import neureka.calculus.factory.assembly.FunctionBuilder;
 
 public class XMultiplication extends OperationType
 {
@@ -105,7 +108,23 @@ public class XMultiplication extends OperationType
                     return true;
                 }
         ).setADAgentCreator(
-             null
+            ( Function f, Tsr derivv, ExecutionCall<Device> call, boolean forward ) ->
+            {
+                Function mul = Function.Detached.MUL;
+                Tsr[] inputs = call.getTensors();
+                int d = call.getDerivativeIndex();
+
+                Function invX = FunctionBuilder.build(
+                        "I[0]" + identifier() + ">>I[1]" + identifier() + ">>I[2]",
+                        false
+                );
+                Tsr deriv = f.derive(inputs, d);
+                return new ADAgent(
+                        ()->deriv,
+                        (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
+                        (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)})
+                );
+            }
         ).setCallHock(
                 (caller, call) -> {
                     if ( !caller.isFlat() ) return null;

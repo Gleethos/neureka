@@ -6,6 +6,7 @@ import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.implementations.Convolution;
 import neureka.calculus.environment.implementations.GenericImplementation;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
@@ -65,7 +66,19 @@ public class Reshape extends OperationType
         ).setADAnalyzer(
                 call -> false
         ).setADAgentCreator(
-                        null
+            ( Function f, Tsr derivv, ExecutionCall<Device> call, boolean forward ) ->
+            {
+                Tsr[] inputs = call.getTensors();
+                int i = call.getDerivativeIndex();
+                if(forward){
+                    throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
+                }
+                return new ADAgent(
+                        ()->null,
+                        (t, derivative) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0),
+                        (t, error) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0)
+                );
+            }
         ).setCallHock(
                 ( caller, call ) ->
                 {
@@ -149,22 +162,6 @@ public class Reshape extends OperationType
         );
 
     }
-
-    @Override
-    public ADAgent getADAgentOf(Function f, Tsr deriv, ExecutionCall call, boolean forward)
-    {
-        Tsr[] inputs = call.getTensors();
-        int i = call.getDerivativeIndex();
-        if(forward){
-            throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
-        }
-        return new ADAgent(
-                ()->null,
-                (t, derivative) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0),
-                (t, error) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0)
-        );
-    }
-
 
 
 }

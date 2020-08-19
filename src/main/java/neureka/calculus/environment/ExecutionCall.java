@@ -2,6 +2,8 @@ package neureka.calculus.environment;
 
 import neureka.Tsr;
 import neureka.acceleration.Device;
+import neureka.autograd.ADAgent;
+import neureka.calculus.Function;
 import neureka.calculus.environment.implementations.AbstractOperationTypeImplementation;
 
 /**
@@ -65,6 +67,9 @@ public class ExecutionCall< DeviceType extends Device >
     }
     public boolean allowsForward(){
         return getImplementation().getADAnalyzer().allowsForward(this);
+    }
+    public ADAgent getADAgentFrom( Function function, Tsr derivative, ExecutionCall call, boolean forward ){
+        return getImplementation().getADAgentCreator().getADAgentOf(function, derivative, call, forward);
     }
     public void mutateArguments(Mutator mutation){
         _tsrs = mutation.mutate(_tsrs);

@@ -4,10 +4,13 @@ import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.acceleration.host.execution.HostExecutor;
 import neureka.acceleration.opencl.execution.CLExecutor;
+import neureka.autograd.ADAgent;
+import neureka.calculus.Function;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.implementations.*;
+import neureka.calculus.factory.assembly.FunctionBuilder;
 
 public class Summation extends OperationType
 {
@@ -82,7 +85,55 @@ public class Summation extends OperationType
         ).setADAnalyzer(
                 call -> true
         ).setADAgentCreator(
-             null
+    ( Function f, Tsr derivv, ExecutionCall<Device> call, boolean forward ) ->
+    {
+        Function mul = Function.Detached.MUL;
+        if (
+            derivv != null
+        ) {
+            return new ADAgent(
+                    () -> derivv,
+                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, derivv}),
+                    null
+            );
+        }
+        Tsr[] inputs = call.getTensors();
+        int d = call.getDerivativeIndex();
+        if( forward )
+        {
+            Tsr deriv = f.derive(inputs, d);
+            return new ADAgent(
+                    () -> deriv,
+                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}),
+                    null
+            );
+        }
+        else
+        {
+            if ( this.supports(Convolution.class) )
+            {
+                Function invX = FunctionBuilder.build(
+                        "I[0]" + identifier() + ">>I[1]" + identifier() + ">>I[2]",
+                        false
+                );
+                Tsr deriv = f.derive(inputs, d);
+                return new ADAgent(
+                        ()->deriv,
+                        (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
+                        (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)})
+                );
+            }
+            else
+            {
+                Tsr deriv = f.derive(inputs, d);
+                return new ADAgent(
+                        ()->deriv,
+                        (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
+                        (t, error) -> mul.call(new Tsr[]{error, deriv})
+                );
+            }
+        }
+    }
         ).setCallHock(
                 (caller, call) -> null
         ).setRJAgent(
@@ -163,7 +214,55 @@ public class Summation extends OperationType
         .setADAnalyzer(
                 call -> true
         ).setADAgentCreator(
-             null
+    ( Function f, Tsr derivv, ExecutionCall<Device> call, boolean forward ) ->
+    {
+        Function mul = Function.Detached.MUL;
+        if (
+            derivv != null
+        ) {
+            return new ADAgent(
+                    () -> derivv,
+                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, derivv}),
+                    null
+            );
+        }
+        Tsr[] inputs = call.getTensors();
+        int d = call.getDerivativeIndex();
+        if( forward )
+        {
+            Tsr deriv = f.derive(inputs, d);
+            return new ADAgent(
+                    () -> deriv,
+                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}),
+                    null
+            );
+        }
+        else
+        {
+            if ( this.supports(Convolution.class) )
+            {
+                Function invX = FunctionBuilder.build(
+                        "I[0]" + identifier() + ">>I[1]" + identifier() + ">>I[2]",
+                        false
+                );
+                Tsr deriv = f.derive(inputs, d);
+                return new ADAgent(
+                        ()->deriv,
+                        (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
+                        (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)})
+                );
+            }
+            else
+            {
+                Tsr deriv = f.derive(inputs, d);
+                return new ADAgent(
+                        ()->deriv,
+                        (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
+                        (t, error) -> mul.call(new Tsr[]{error, deriv})
+                );
+            }
+        }
+    }
         ).setCallHock(
                 (caller, call) -> null
         ).setRJAgent(

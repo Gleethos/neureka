@@ -178,8 +178,6 @@ public interface Function
 
     String toString();
 
-    ADAgent getADAgent( Tsr derivative, ExecutionCall<Device> call, boolean forward );
-
     //------------------------------------------------------------------------------------------------------------------
 
 }
