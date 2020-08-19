@@ -68,8 +68,6 @@ public class Reshape extends OperationType
         ).setADAgentCreator(
             ( Function f, Tsr derivv, ExecutionCall<Device> call, boolean forward ) ->
             {
-                Tsr[] inputs = call.getTensors();
-                int i = call.getDerivativeIndex();
                 if(forward){
                     throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                 }

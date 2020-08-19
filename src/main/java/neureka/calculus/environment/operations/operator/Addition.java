@@ -60,14 +60,13 @@ public class Addition extends OperationType {
         }
         else
         {
-            {
-                Tsr deriv = f.derive(inputs, d);
-                return new ADAgent(
-                        ()->deriv,
-                        (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
-                        (t, error) -> mul.call(new Tsr[]{error, deriv})
-                );
-            }
+            Tsr deriv = f.derive(inputs, d);
+            return new ADAgent(
+                    ()->deriv,
+                    (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
+                    (t, error) -> mul.call(new Tsr[]{error, deriv})
+            );
+
         }
     }
         ).setCallHock(

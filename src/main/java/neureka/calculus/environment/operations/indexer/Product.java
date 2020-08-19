@@ -123,28 +123,12 @@ public class Product extends OperationType {
         }
         else
         {
-            if ( this.supports(Convolution.class) )
-            {
-                Function invX = FunctionBuilder.build(
-                        "I[0]" + identifier() + ">>I[1]" + identifier() + ">>I[2]",
-                        false
-                );
-                Tsr deriv = f.derive(inputs, d);
-                return new ADAgent(
-                        ()->deriv,
-                        (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
-                        (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)})
-                );
-            }
-            else
-            {
-                Tsr deriv = f.derive(inputs, d);
-                return new ADAgent(
-                        ()->deriv,
-                        (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
-                        (t, error) -> mul.call(new Tsr[]{error, deriv})
-                );
-            }
+            Tsr deriv = f.derive(inputs, d);
+            return new ADAgent(
+                    ()->deriv,
+                    (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
+                    (t, error) -> mul.call(new Tsr[]{error, deriv})
+            );
         }
     }
         ).setCallHock(
