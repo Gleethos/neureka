@@ -150,8 +150,8 @@ public class OpenCLPlatform {
                         if (preName.contains("activate") && type.supportsImplementation(Activation.class)) {
                             CLExecutor exec = type.getImplementation(Activation.class).getExecutor(CLExecutor.class);
                             if(exec!=null && exec.getSource()!=null) code.put(exec.getName(), exec.getSource());
-                        } else if (preName.contains("operate") && type.supportsImplementation(Operation.class)) {
-                            CLExecutor exec = type.getImplementation(Operation.class).getExecutor(CLExecutor.class);
+                        } else if (preName.contains("operate") && type.supportsImplementation(Operator.class)) {
+                            CLExecutor exec = type.getImplementation(Operator.class).getExecutor(CLExecutor.class);
                             if(exec!=null && exec.getSource()!=null) code.put(exec.getName(), exec.getSource());
                         } else if (preName.contains("scalar") && type.supportsImplementation(Scalarization.class)) {
                             CLExecutor exec = type.getImplementation(Scalarization.class).getExecutor(CLExecutor.class);

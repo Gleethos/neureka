@@ -51,7 +51,7 @@ public class Modulo extends OperationType {
                     }
                 };
 
-        Operation operation = new Operation()
+        Operator operator = new Operator()
             .setADAnalyzer(
                     call -> {
                         if ( call.getType().supports(Convolution.class) ) return false;
@@ -121,8 +121,8 @@ public class Modulo extends OperationType {
             );
 
         setImplementation(
-                Operation.class,
-                operation.setExecutor(
+                Operator.class,
+                operator.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call ->
@@ -130,7 +130,7 @@ public class Modulo extends OperationType {
                                                 .threaded (
                                                         call.getTensor(0).size(),
                                                         ( start, end ) ->
-                                                                Operation.operate (
+                                                                Operator.operate (
                                                                         call.getTensor(0),
                                                                         call.getTensor(1),
                                                                         call.getTensor(2),
@@ -156,7 +156,7 @@ public class Modulo extends OperationType {
                                             .call(gwz);
                                 },
                                 3,
-                                operation.getKernelSource(), // kernelSource
+                                operator.getKernelSource(), // kernelSource
                                 "output = ((int)input1) % ((int)input2);\n",
                                 "if ( d==0 ) {\n" +
                                         "    output = 1/input2;\n" +

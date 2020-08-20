@@ -2,7 +2,6 @@ package neureka.calculus.factory;
 
 import neureka.Tsr;
 import neureka.acceleration.Device;
-import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
@@ -215,7 +214,7 @@ public abstract class AbstractFunction extends BaseFunction
                 for ( int i = 1; i < tsrs.length; i++ ) tsrs[i] = _src.get(0).call(inputs, i - 1);
             } else if (
                     !_isFlat && j < 0 && (
-                            _type.isOperation() || _type.supportsImplementation(Activation.class)
+                            _type.isOperator() || _type.supportsImplementation(Activation.class)
                     )
             ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
                 tsrs = srcActivation(inputs, j, d, 0);

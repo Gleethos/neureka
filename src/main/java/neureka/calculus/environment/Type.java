@@ -71,7 +71,7 @@ public interface Type
      */
     int arity();
 
-    boolean isOperation();
+    boolean isOperator();
 
     boolean isIndexer();
     

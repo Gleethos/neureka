@@ -10,7 +10,6 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.implementations.*;
-import neureka.calculus.factory.assembly.FunctionBuilder;
 
 public class Addition extends OperationType {
 
@@ -156,7 +155,7 @@ public class Addition extends OperationType {
                     else return t1Idx -> 1.0;
                 };
 
-        Operation operation = new Operation(
+        Operator operator = new Operator(
         ).setADAnalyzer(
                 call -> true
         ).setADAgentCreator(
@@ -216,8 +215,8 @@ public class Addition extends OperationType {
                 }
         );
 
-        setImplementation(Operation.class,
-                operation
+        setImplementation(Operator.class,
+                operator
                         .setExecutor(
                         HostExecutor.class,
                                 new HostExecutor(
@@ -226,7 +225,7 @@ public class Addition extends OperationType {
                                                         .threaded (
                                                                 call.getTensor(0).size(),
                                                                 ( start, end ) ->
-                                                                        Operation.operate (
+                                                                        Operator.operate (
                                                                                 call.getTensor(0),
                                                                                 call.getTensor(1),
                                                                                 call.getTensor(2),
@@ -252,7 +251,7 @@ public class Addition extends OperationType {
                                             .call(gwz);
                                 },
                                 3,
-                                operation.getKernelSource(), // kernelSource
+                                operator.getKernelSource(), // kernelSource
                                 "output = input1 + input2;\n",
                                 "output = 1;\n",
                                 this // OperationType

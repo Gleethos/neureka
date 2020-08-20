@@ -10,7 +10,6 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.implementations.*;
-import neureka.calculus.factory.assembly.FunctionBuilder;
 
 
 public class Division extends OperationType
@@ -118,7 +117,7 @@ public class Division extends OperationType
         //_____________________
         // DEFAULT OPERATION :
 
-        Operation operation = new Operation(
+        Operator operator = new Operator(
         ).setADAnalyzer(
                 call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;
@@ -188,7 +187,7 @@ public class Division extends OperationType
         );
 
         setImplementation(
-                Operation.class, operation.setExecutor(
+                Operator.class, operator.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call ->
@@ -222,7 +221,7 @@ public class Division extends OperationType
                                             .call(gwz);
                                 },
                                 3,
-                                operation.getKernelSource(), // kernelSource
+                                operator.getKernelSource(), // kernelSource
                                 "output = input1 / input2;\n",
                                 "if(d==0){\n" +
                                         "    output = 1/input2;\n" +

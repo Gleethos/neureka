@@ -105,7 +105,7 @@ public class Multiplication extends OperationType {
                     }
                 };
 
-        Operation operation = new Operation(
+        Operator operator = new Operator(
         ).setADAnalyzer(
                 call -> true
         ).setADAgentCreator(
@@ -165,8 +165,8 @@ public class Multiplication extends OperationType {
                 }
         );
 
-        setImplementation(Operation.class,
-                operation.setExecutor(
+        setImplementation(Operator.class,
+                operator.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call ->
@@ -174,7 +174,7 @@ public class Multiplication extends OperationType {
                                                 .threaded (
                                                         call.getTensor(0).size(),
                                                         ( start, end ) ->
-                                                                Operation.operate (
+                                                                Operator.operate (
                                                                         call.getTensor(0),
                                                                         call.getTensor(1),
                                                                         call.getTensor(2),
@@ -200,7 +200,7 @@ public class Multiplication extends OperationType {
                                             .call(gwz);
                                 },
                                 3,
-                                operation.getKernelSource(), // kernelSource
+                                operator.getKernelSource(), // kernelSource
                                 "output = input1 * input2;\n",
                                 "if(d==0){output = input2;}else{output = input1;}\n",
                                 this // OperationType

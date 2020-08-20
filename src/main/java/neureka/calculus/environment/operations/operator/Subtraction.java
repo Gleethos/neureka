@@ -75,7 +75,7 @@ public class Subtraction extends OperationType
                     } else return t1Idx -> ( d == 0 ) ? 1.0 : -1.0;
                 };
 
-        Operation operation = new Operation(
+        Operator operator = new Operator(
         ).setADAnalyzer(
                 call -> true
         ).setADAgentCreator(
@@ -136,8 +136,8 @@ public class Subtraction extends OperationType
         );
 
         setImplementation(
-                Operation.class,
-                operation.setExecutor(
+                Operator.class,
+                operator.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call ->
@@ -145,7 +145,7 @@ public class Subtraction extends OperationType
                                                 .threaded (
                                                         call.getTensor(0).size(),
                                                         ( start, end ) ->
-                                                                Operation.operate (
+                                                                Operator.operate (
                                                                         call.getTensor(0),
                                                                         call.getTensor(1),
                                                                         call.getTensor(2),
@@ -171,7 +171,7 @@ public class Subtraction extends OperationType
                                             .call(gwz);
                                 },
                                 3,
-                                operation.getKernelSource(), // kernelSource
+                                operator.getKernelSource(), // kernelSource
                                 "output = input1 - input2;  \n",
                                 "if(d==0){                 \n" +//drn and src2 switch:
                                         "    output = 1;              \n" +

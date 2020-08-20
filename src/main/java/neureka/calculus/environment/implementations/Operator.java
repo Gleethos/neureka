@@ -2,13 +2,12 @@ package neureka.calculus.environment.implementations;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
 
-public class Operation extends AbstractOperationTypeImplementation< Operation >
+public class Operator extends AbstractOperationTypeImplementation<Operator>
 {
-    public Operation() {
+    public Operator() {
         setHandleChecker(
                 call -> {
                     int size = ( call.getTensors()[0] == null ) ? call.getTensors()[1].size() : call.getTensors()[0].size();

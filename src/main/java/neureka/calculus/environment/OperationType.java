@@ -1,13 +1,8 @@
 
 package neureka.calculus.environment;
 
-import neureka.Tsr;
-import neureka.autograd.ADAgent;
-import neureka.calculus.Function;
 import neureka.calculus.environment.implementations.AbstractOperationTypeImplementation;
-import neureka.calculus.environment.implementations.Convolution;
 import neureka.calculus.environment.operations.OperationContext;
-import neureka.calculus.factory.assembly.FunctionBuilder;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,7 +38,7 @@ public class OperationType implements Type
      * that this function or operation takes.
      */
     protected int _arity;
-    protected boolean _isOperation;
+    protected boolean _isOperator;
     protected boolean _isIndexer;
     protected boolean _isCommutative;
     protected boolean _isAssociative;
@@ -54,7 +49,7 @@ public class OperationType implements Type
             String name,
             String identifier,
             int arity,
-            boolean isOperation,
+            boolean isOperator,
             boolean isIndexer,
             boolean isConvection,
             boolean isCommutative,
@@ -65,7 +60,7 @@ public class OperationType implements Type
         _id = _CONTEXTS.get().getID();
         _CONTEXTS.get().incrementID();
         _identifier = identifier;
-        _isOperation = isOperation;
+        _isOperator = isOperator;
         _isIndexer = isIndexer;
         _isCommutative = isCommutative;
         _isAssociative = isAssociative;
@@ -159,8 +154,8 @@ public class OperationType implements Type
     }
 
     @Override
-    public boolean isOperation() {
-        return _isOperation;
+    public boolean isOperator() {
+        return _isOperator;
     }
 
     @Override
