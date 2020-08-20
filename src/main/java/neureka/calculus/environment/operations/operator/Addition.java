@@ -467,24 +467,16 @@ public class Addition extends OperationType {
         int d = call.getDerivativeIndex();
         if( forward )
         {
-            Tsr deriv = f.derive(inputs, d);
-            return new ADAgent(
-                    () -> deriv,
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}),
-                    null
-            );
+            throw new IllegalArgumentException("Convolution of does not support forward-AD!");
         }
         else
         {
-
-            {
-                Tsr deriv = f.derive(inputs, d);
-                return new ADAgent(
-                        ()->deriv,
-                        (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
-                        (t, error) -> mul.call(new Tsr[]{error, deriv})
-                );
-            }
+            Tsr deriv = f.derive(inputs, d);
+            return new ADAgent(
+                    ()->deriv,
+                    (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
+                    (t, error) -> mul.call(new Tsr[]{error, deriv})
+            );
         }
     }
         ).setCallHock(

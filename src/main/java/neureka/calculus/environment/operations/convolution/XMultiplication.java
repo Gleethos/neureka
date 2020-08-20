@@ -110,6 +110,8 @@ public class XMultiplication extends OperationType
         ).setADAgentCreator(
             ( Function f, Tsr derivv, ExecutionCall<Device> call, boolean forward ) ->
             {
+                if ( forward ) throw new IllegalArgumentException("Convolution of does not support forward-AD!");
+
                 Function mul = Function.Detached.MUL;
                 Tsr[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();

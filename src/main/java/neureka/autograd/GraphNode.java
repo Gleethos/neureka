@@ -395,7 +395,6 @@ public class GraphNode implements Component<Tsr>
                                     srcNode,
                                     call.getADAgentFrom(
                                             function,
-                                            //function.getADAgent(
                                             null,
                                             new ExecutionCall<>(
                                                     call.getDevice(),
@@ -419,7 +418,6 @@ public class GraphNode implements Component<Tsr>
                                                 node,
                                                 call.getADAgentFrom(
                                                         function,
-                                                //function.getADAgent(
                                                         derivative,
                                                         new ExecutionCall<>(
                                                                 call.getDevice(),
@@ -436,7 +434,6 @@ public class GraphNode implements Component<Tsr>
                                                 node,
                                                 call.getADAgentFrom(
                                                         function,
-                                                        //function.getADAgent(
                                                         targetDerivative,
                                                         new ExecutionCall<>(
                                                                 call.getDevice(),

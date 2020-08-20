@@ -11,19 +11,20 @@ class Tensor_IO_Unit_Tests extends  Specification
 {
     def 'Tensors can be instantiated with String seed.'()
     {
-        given :
+        given : 'The current Neureka instance configuration is being reset.'
             Neureka.instance().reset()
+        and : 'Three seeded 2D tensors are being instantiated.'
             Tsr t1 = new Tsr([2, 3], "I am a seed! :)")
             Tsr t2 = new Tsr(new int[]{2, 3}, "I am a seed! :)")
             Tsr t3 = new Tsr(new int[]{2, 3}, "I am also a seed! But different. :)")
-        expect :
+        expect : 'Equal seeds produce equal values.'
             assert t1.toString()==t2.toString()
             assert t1.toString()!=t3.toString()
     }
 
     def 'Smart tensor constructors yield expected results.'()
     {
-        given :
+        given : 'Three scalar tensors.'
             Tsr a = new Tsr(3)
             Tsr b = new Tsr(2)
             Tsr c = new Tsr(-1)
@@ -66,14 +67,17 @@ class Tensor_IO_Unit_Tests extends  Specification
         given :
             Neureka.instance().reset()
             Neureka.instance().settings().view().isUsingLegacyView = true
+
+        and :
             Tsr t1 = new Tsr([4, 3], 1..12)
-            Tsr t2 = Function.create("[1, 0]:(I[0])")(t1)
 
         when :
+
             def t1_ioi_1 = t1.i_of_idx(new int[]{2, 1})
             def t1_ioi_2 = t1.i_of_idx(new int[]{1, 2})
             def t1_idx   = t1.idx_of_i(5)
 
+            Tsr t2 = Function.create(" [ 1, 0 ]:( I[0] ) ")(t1)
             def t2_ioi_1 = t2.i_of_idx(new int[]{1, 2})
             def t2_idx = t2.idx_of_i(7)
 

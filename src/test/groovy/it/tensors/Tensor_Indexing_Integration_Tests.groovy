@@ -9,13 +9,14 @@ class Tensor_Indexing_Integration_Tests extends Specification
 
     void 'Test convolution with legacy indexing.'()
     {
-        given :
+        given : 'The current Neureka instance is being reset.'
             Neureka.instance().reset()
+        and : 'The following library configuration (legacy) is being used.'
             Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
             Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)
 
-        when :
+        when : 'The following calculations are being executed...'
             Tsr i_a = new Tsr([2, 1], [1, 2])
             Tsr w_a = new Tsr([2, 2], [1, 3, 4, -1]).setRqsGradient(true)
             Tsr o_a = new Tsr(i_a, "x", w_a)
@@ -31,7 +32,7 @@ class Tensor_Indexing_Integration_Tests extends Specification
             //---
             Tsr out = o_b * o_c
 
-        then :
+        then : 'The results are as expected.'
             assert o_a.toString().contains("(7.0, 2.0)")
             assert out.toString().contains("(5.0, 100.0)")
             assert o_b.toString().contains("(-10.0, 5.0)")
@@ -40,18 +41,19 @@ class Tensor_Indexing_Integration_Tests extends Specification
             assert w_a.toString().contains("g:(null)")
             assert w_b.toString().contains("g:(null)")
 
-        when : out.backward(new Tsr([2, 1], 1))
+        when : 'The "backward" method is being called on the "out" tensor...'
+            out.backward(new Tsr([2, 1], 1))
 
-        then :
+        then : 'The autograd system produces the expected results.'
             assert w_a.toString().contains("g:(null)")
             assert !w_b.toString().contains("g:(null)")
 
-        when :
+        when : 'Neureka is being configured to apply tensors when host tensor is being used...'
             Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
             w_a * 3
             Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
 
-        then :
+        then : 'The tensors change their states as expected.'
             assert w_a.toString().contains("g:(null)")
             assert !w_a.toString().contains("1.0, 3.0, 4.0, -1.0")
             assert !w_b.toString().contains("g:(null)")
