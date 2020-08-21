@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HostCPU.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.acceleration.host</a> &gt; <span class="el_source">HostCPU.java</span></div><h1>HostCPU.java</h1><pre class="source lang-java linenums">package neureka.acceleration.host;
+
+import neureka.Neureka;
+import neureka.Tsr;
+import neureka.acceleration.AbstractDevice;
+import neureka.acceleration.Device;
+import neureka.acceleration.host.execution.HostExecutor;
+import neureka.calculus.environment.ExecutionCall;
+import neureka.calculus.environment.OperationType;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.concurrent.*;
+
+public class HostCPU extends AbstractDevice
+{
+    private static final HostCPU _instance;
+
+    static {
+<span class="fc" id="L20">        _instance = new HostCPU();</span>
+<span class="fc" id="L21">    }</span>
+
+    private final NativeExecutor _executor;
+
+<span class="fc" id="L25">    private HostCPU() {</span>
+<span class="fc" id="L26">        _executor = new NativeExecutor();</span>
+<span class="fc" id="L27">    }</span>
+
+    public static HostCPU instance() {
+<span class="fc" id="L30">        return _instance;</span>
+    }
+
+    public NativeExecutor getExecutor() {
+<span class="fc" id="L34">        return _executor;</span>
+    }
+
+    @Override
+    protected void _enqueue(Tsr[] tsrs, int d, OperationType type)
+    {
+<span class="fc" id="L40">        ExecutionCall&lt;HostCPU&gt; call =</span>
+                new ExecutionCall&lt;&gt;(
+                        this,
+                        tsrs,
+                        d,
+                        type
+                );
+<span class="fc" id="L47">        call.getImplementation().getExecutor(HostExecutor.class).getExecution().call(call);</span>
+<span class="fc" id="L48">    }</span>
+
+    @Override
+    protected void _enqueue( Tsr t, double value, int d, OperationType type ) {
+<span class="nc" id="L52">        int[] shape = new int[t.rank()];</span>
+<span class="nc" id="L53">        Arrays.fill(shape, 1);</span>
+<span class="nc" id="L54">        _enqueue(new Tsr[]{t, t, new Tsr(shape, value)}, d, type);</span>
+<span class="nc" id="L55">    }</span>
+
+    @Override
+    public void dispose() {
+<span class="nc" id="L59">        _executor.getPool().shutdown();</span>
+<span class="nc" id="L60">    }</span>
+
+    @Override
+    public Device get(Tsr tensor) {
+<span class="fc" id="L64">        return this;</span>
+    }
+
+    @Override
+    public Device add(Tsr tensor) {
+<span class="fc" id="L69">        return this;</span>
+    }
+
+    @Override
+    public Device add(Tsr tensor, Tsr parent) {
+<span class="nc" id="L74">        return this;</span>
+    }
+
+    @Override
+    public boolean has(Tsr tensor) {
+<span class="fc" id="L79">        return false;</span>
+    }
+
+    @Override
+    public Device rmv(Tsr tensor) {
+<span class="nc" id="L84">        return this;</span>
+    }
+
+    @Override
+    public Device overwrite64(Tsr tensor, double[] value) {
+<span class="nc" id="L89">        return this;</span>
+    }
+
+    @Override
+    public Device overwrite32(Tsr tensor, float[] value) {
+<span class="nc" id="L94">        return this;</span>
+    }
+
+    @Override
+    public Device swap(Tsr former, Tsr replacement) {
+<span class="nc" id="L99">        return this;</span>
+    }
+
+    @Override
+    public double[] value64f( Tsr tensor ) {
+<span class="nc" id="L104">        return tensor.value64();</span>
+    }
+
+    @Override
+    public float[] value32f( Tsr tensor ) {
+<span class="nc" id="L109">        return tensor.value32();</span>
+    }
+
+    @Override
+    public double value64f(Tsr tensor, int index) {
+<span class="nc" id="L114">        return 0;</span>
+    }
+
+    @Override
+    public float value32f(Tsr tensor, int index) {
+<span class="nc" id="L119">        return 0;</span>
+    }
+
+    @Override
+    public Collection&lt;Tsr&gt; tensors() {
+<span class="nc" id="L124">        return null;</span>
+    }
+
+    public interface Range {
+        void execute(int start, int end);
+    }
+
+<span class="fc" id="L131">    public class NativeExecutor</span>
+    {
+<span class="fc" id="L133">        private final ThreadPoolExecutor _pool =</span>
+<span class="fc" id="L134">                (ThreadPoolExecutor) Executors.newFixedThreadPool(</span>
+<span class="fc" id="L135">                        Runtime.getRuntime().availableProcessors()</span>
+                );
+
+        public ThreadPoolExecutor getPool() {
+<span class="fc" id="L139">            return _pool;</span>
+        }
+
+        //==============================================================================================================
+
+        public void threaded( int sze, Range range )
+        {
+<span class="fc" id="L146">            int cores = _pool.getCorePoolSize() - _pool.getActiveCount();</span>
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">            cores = ( cores == 0 ) ? 1 : cores;</span>
+<span class="fc bfc" id="L148" title="All 4 branches covered.">            if ( sze &gt;= 32 &amp;&amp; ( ( sze / cores ) &gt;= 8 ) ) {</span>
+<span class="fc" id="L149">                final int chunk = sze / cores;</span>
+<span class="fc" id="L150">                Future[] futures = new Future[cores];</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">                for (int i = 0; i &lt; cores; i++) {</span>
+<span class="fc" id="L152">                    final int start = i * chunk;</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">                    final int end = ( i == cores - 1 ) ? sze : ( (i + 1) * chunk );</span>
+<span class="fc" id="L154">                    Neureka neureka = Neureka.instance();</span>
+<span class="fc" id="L155">                    futures[i] = _pool.submit(() -&gt; {</span>
+<span class="fc" id="L156">                        Neureka.setContext( neureka );</span>
+<span class="fc" id="L157">                        range.execute(start, end);</span>
+<span class="fc" id="L158">                    });</span>
+                }
+<span class="fc bfc" id="L160" title="All 2 branches covered.">                for (Future f : futures) {</span>
+                    try {
+<span class="fc" id="L162">                        f.get();</span>
+<span class="nc" id="L163">                    } catch (InterruptedException e) {</span>
+<span class="nc" id="L164">                        e.printStackTrace();</span>
+<span class="nc" id="L165">                    } catch (ExecutionException e) {</span>
+<span class="nc" id="L166">                        e.printStackTrace();</span>
+<span class="pc" id="L167">                    }</span>
+                }
+<span class="fc" id="L169">            } else range.execute(0, sze);</span>
+<span class="fc" id="L170">        }</span>
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

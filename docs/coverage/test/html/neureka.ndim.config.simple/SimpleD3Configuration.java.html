@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SimpleD3Configuration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.config.simple</a> &gt; <span class="el_source">SimpleD3Configuration.java</span></div><h1>SimpleD3Configuration.java</h1><pre class="source lang-java linenums">package neureka.ndim.config.simple;
+
+import neureka.Neureka;
+import neureka.ndim.config.AbstractNDC;
+import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.config.complex.D3Configuration;
+
+public final class SimpleD3Configuration extends AbstractNDC //:= IMMUTABLE
+{
+    private SimpleD3Configuration(
+            int[] shape,
+            int[] translation
+<span class="fc" id="L13">    ) {</span>
+<span class="fc" id="L14">        _shape1 = shape[0];</span>
+<span class="fc" id="L15">        _shape2 = shape[1];</span>
+<span class="fc" id="L16">        _shape3 = shape[2];</span>
+<span class="fc" id="L17">        _translation1 = translation[0];</span>
+<span class="fc" id="L18">        _translation2 = translation[1];</span>
+<span class="fc" id="L19">        _translation3 = translation[2];</span>
+<span class="fc" id="L20">    }</span>
+
+    public static NDConfiguration construct(
+            int[] shape,
+            int[] translation
+    ){
+<span class="fc" id="L26">        return _cached(new SimpleD3Configuration(shape, translation));</span>
+    }
+
+    /**
+     *  The shape of the NDArray.
+     */
+    private final int _shape1;
+    private final int _shape2;
+    private final int _shape3;
+    /**
+     *  The translation from a shape index (idx) to the index of the underlying data array.
+     */
+    private final int _translation1;
+    private final int _translation2;
+    private final int _translation3;
+
+    @Override
+    public int rank() {
+<span class="nc" id="L44">        return 3;</span>
+    }
+
+    @Override
+    public int[] shape() {
+<span class="fc" id="L49">        return new int[]{_shape1, _shape2, _shape3};</span>
+    }
+
+    @Override
+    public int shape(int i) {
+<span class="nc bnc" id="L54" title="All 4 branches missed.">        return (i==0)?_shape1:(i==1)?_shape2:_shape3;</span>
+    }
+
+    @Override
+    public int[] idxmap() {
+<span class="fc" id="L59">        return new int[]{_translation1, _translation2, _translation3};</span>
+    }
+
+    @Override
+    public int idxmap(int i) {
+<span class="nc bnc" id="L64" title="All 4 branches missed.">        return (i==0)?_translation1:(i==1)?_translation2:_translation3;</span>
+    }
+
+    @Override
+    public int[] translation() {
+<span class="fc" id="L69">        return new int[]{_translation1, _translation2, _translation3};</span>
+    }
+
+    @Override
+    public int translation(int i) {
+<span class="nc bnc" id="L74" title="All 4 branches missed.">        return (i==0)?_translation1:(i==1)?_translation2:_translation3;</span>
+    }
+
+    @Override
+    public int[] spread() {
+<span class="fc" id="L79">        return new int[]{1, 1, 1};</span>
+    }
+
+    @Override
+    public int spread(int i) {
+<span class="fc" id="L84">        return 1;</span>
+    }
+
+    @Override
+    public int[] offset() {
+<span class="fc" id="L89">        return new int[]{0, 0, 0};</span>
+    }
+
+    @Override
+    public int offset(int i) {
+<span class="fc" id="L94">        return 0;</span>
+    }
+
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    @Override
+    public int i_of_i(int i){
+        int idx1, idx2, idx3;
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()){</span>
+<span class="fc" id="L104">            idx3 = i / _translation3;</span>
+<span class="fc" id="L105">            i %= _translation3;</span>
+<span class="fc" id="L106">            idx2 = i / _translation2;</span>
+<span class="fc" id="L107">            i %= _translation2;</span>
+<span class="fc" id="L108">            idx1 = i / _translation1;</span>
+        } else {
+<span class="fc" id="L110">            idx1 = i / _translation1;</span>
+<span class="fc" id="L111">            i %= _translation1;</span>
+<span class="fc" id="L112">            idx2 = i / _translation2;</span>
+<span class="fc" id="L113">            i %= _translation2;</span>
+<span class="fc" id="L114">            idx3 = i / _translation3;</span>
+        }
+<span class="fc" id="L116">        return idx1 * _translation1 +</span>
+                idx2 * _translation2 +
+                idx3 * _translation3;
+    }
+
+    @Override
+    public int[] idx_of_i(int i) {
+        int idx1, idx2, idx3;
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()){</span>
+<span class="fc" id="L125">            idx3 = i / _translation3;</span>
+<span class="fc" id="L126">            i %= _translation3;</span>
+<span class="fc" id="L127">            idx2 = i / _translation2;</span>
+<span class="fc" id="L128">            i %= _translation2;</span>
+<span class="fc" id="L129">            idx1 = i / _translation1;</span>
+        } else {
+<span class="fc" id="L131">            idx1 = i / _translation1;</span>
+<span class="fc" id="L132">            i %= _translation1;</span>
+<span class="fc" id="L133">            idx2 = i / _translation2;</span>
+<span class="fc" id="L134">            i %= _translation2;</span>
+<span class="fc" id="L135">            idx3 = i / _translation3;</span>
+        }
+<span class="fc" id="L137">        return new int[]{idx1, idx2, idx3};</span>
+    }
+
+    @Override
+    public int i_of_idx(int[] idx) {
+<span class="fc" id="L142">        return idx[0] * _translation1 +</span>
+                idx[1] * _translation2 +
+                idx[2] * _translation3;
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

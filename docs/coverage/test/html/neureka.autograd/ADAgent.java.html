@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ADAgent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.autograd</a> &gt; <span class="el_source">ADAgent.java</span></div><h1>ADAgent.java</h1><pre class="source lang-java linenums">package neureka.autograd;
+
+import neureka.Tsr;
+import neureka.calculus.Function;
+
+import java.util.function.Supplier;
+
+public class ADAgent
+{
+    public interface ADAction
+    {
+        Tsr execute(GraphNode t, Tsr error);
+    }
+
+    private ADAction _fad;
+    private ADAction _bad;
+    private Supplier&lt;Tsr&gt; _derivative;
+
+    public ADAgent(
+            Supplier&lt;Tsr&gt; derivative, ADAction fad, ADAction bad
+<span class="fc" id="L21">    ){</span>
+<span class="fc" id="L22">        _derivative = derivative;</span>
+<span class="fc" id="L23">        _fad = fad;</span>
+<span class="fc" id="L24">        _bad = bad;</span>
+<span class="fc" id="L25">    }</span>
+
+    public Tsr forward(GraphNode t, Tsr error){
+<span class="fc" id="L28">        return _fad.execute(t, error);</span>
+    }
+
+    public Tsr backward(GraphNode t, Tsr error){
+<span class="fc" id="L32">        return _bad.execute(t, error);</span>
+    }
+
+    public Tsr derivative(){
+<span class="fc" id="L36">        return _derivative.get();</span>
+    }
+
+    public boolean isForward(){
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        return (_bad==null);</span>
+    }
+
+    @Override
+    public String toString(){
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        if(this.derivative()!=null){</span>
+<span class="nc" id="L46">            return derivative().toString();</span>
+        }
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        if(this.isForward()){</span>
+
+        }
+<span class="nc" id="L51">        return &quot;null&quot;;</span>
+    }
+
+
+
+
+
+
+
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
