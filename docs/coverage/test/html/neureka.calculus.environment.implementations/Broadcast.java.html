@@ -8,37 +8,31 @@ import org.jetbrains.annotations.Contract;
 
 public class Broadcast extends AbstractOperationTypeImplementation&lt; Broadcast &gt;
 {
-    public Broadcast(
-            ADAnalyzer analyzer,
-            InitialCallHook hook,
-            RecursiveJunctionAgent RJAgent,
-            DrainInstantiation instantiation
-<span class="fc" id="L16">    ) {  super(</span>
-            analyzer, hook, RJAgent, instantiation
-<span class="fc" id="L18">    ); }</span>
 
-    @Override
-    public boolean canHandle(ExecutionCall call)
-    {
-<span class="fc" id="L23">        int maxRank = 0;</span>
-<span class="fc bfc" id="L24" title="All 6 branches covered.">        for ( Tsr t : call.getTensors() ) if( t!=null &amp;&amp; t.rank()&gt;maxRank) maxRank = t.rank();</span>
-
-<span class="fc bfc" id="L26" title="All 2 branches covered.">        for ( int i = 0; i &lt; maxRank; i++ )</span>
-        {
-<span class="fc" id="L28">            int currentDim = -1;</span>
-<span class="fc bfc" id="L29" title="All 2 branches covered.">            for( Tsr t : call.getTensors() )</span>
-            {
-<span class="pc bpc" id="L31" title="1 of 4 branches missed.">                if( t!=null &amp;&amp; i&lt;t.rank() ) {</span>
-<span class="fc bfc" id="L32" title="All 2 branches covered.">                    if ( currentDim == -1 ) currentDim = t.shape(i);</span>
-<span class="pc bpc" id="L33" title="2 of 6 branches missed.">                    else if ( currentDim!=t.shape(i) &amp;&amp; currentDim!=1 &amp;&amp; t.shape(i)!=1 ) return false;</span>
+<span class="fc" id="L12">    public Broadcast() {</span>
+<span class="fc" id="L13">        setHandleChecker(</span>
+                call-&gt;
+                {
+<span class="fc" id="L16">                    int maxRank = 0;</span>
+<span class="fc bfc" id="L17" title="All 6 branches covered.">                    for ( Tsr t : call.getTensors() ) if( t!=null &amp;&amp; t.rank() &gt; maxRank ) maxRank = t.rank();</span>
+<span class="fc bfc" id="L18" title="All 2 branches covered.">                    for ( int i = 0; i &lt; maxRank; i++ )</span>
+                    {
+<span class="fc" id="L20">                        int currentDim = -1;</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">                        for( Tsr t : call.getTensors() )</span>
+                        {
+<span class="pc bpc" id="L23" title="1 of 4 branches missed.">                            if( t!=null &amp;&amp; i &lt; t.rank() ) {</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">                                if ( currentDim == -1 ) currentDim = t.shape(i);</span>
+<span class="pc bpc" id="L25" title="2 of 6 branches missed.">                                else if ( currentDim != t.shape(i) &amp;&amp; currentDim != 1 &amp;&amp; t.shape(i) != 1 ) return false;</span>
+                            }
+                        }
+                    }
+<span class="fc" id="L29">                    return true;</span>
                 }
-            }
-        }
-<span class="fc" id="L37">        return true;</span>
-    }
+        );
+<span class="fc" id="L32">    }</span>
 
     public String getKernelSource(){
-<span class="fc" id="L41">        return Neureka.instance().utility().readResource(&quot;kernels/broadcast_template.cl&quot;);</span>
+<span class="fc" id="L35">        return Neureka.instance().utility().readResource(&quot;kernels/broadcast_template.cl&quot;);</span>
     }
 
     @Contract(pure = true)
@@ -47,89 +41,89 @@ public class Broadcast extends AbstractOperationTypeImplementation&lt; Broadcast
             int d, int i, int end,
             Type.TertiaryNDXConsumer operation
     ) {
-<span class="fc" id="L50">        int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
-<span class="fc" id="L51">        int[] t1Shp = t1_src.getNDConf().shape();</span>
-<span class="pc bpc" id="L52" title="1 of 2 branches missed.">        int[] t2Shp = (t2_src != null) ? t2_src.getNDConf().shape() : t1Shp;</span>
-<span class="fc" id="L53">        int rank = t0Shp.length;</span>
-<span class="fc" id="L54">        int[] t0Idx = t0_drn.idx_of_i(i);</span>
-<span class="fc" id="L55">        int[] t1Idx = new int[rank];</span>
-<span class="fc" id="L56">        int[] t2Idx = new int[rank];</span>
-<span class="fc" id="L57">        double[] t0_value = t0_drn.value64();</span>
-<span class="fc bfc" id="L58" title="All 2 branches covered.">        if (d &lt; 0) {</span>
-<span class="fc bfc" id="L59" title="All 2 branches covered.">            while (i &lt; end) {//increment on drain accordingly:</span>
-<span class="fc" id="L60">                int ri = 0;</span>
-<span class="fc bfc" id="L61" title="All 2 branches covered.">                while (ri &lt; rank) {</span>
-<span class="fc bfc" id="L62" title="All 2 branches covered.">                    if (t1Shp[ri] == t2Shp[ri]) {//Equal shapes -&gt; out index is t1 &amp; t2 index!for this ri</span>
-<span class="fc" id="L63">                        t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L44">        int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
+<span class="fc" id="L45">        int[] t1Shp = t1_src.getNDConf().shape();</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        int[] t2Shp = (t2_src != null) ? t2_src.getNDConf().shape() : t1Shp;</span>
+<span class="fc" id="L47">        int rank = t0Shp.length;</span>
+<span class="fc" id="L48">        int[] t0Idx = t0_drn.idx_of_i(i);</span>
+<span class="fc" id="L49">        int[] t1Idx = new int[rank];</span>
+<span class="fc" id="L50">        int[] t2Idx = new int[rank];</span>
+<span class="fc" id="L51">        double[] t0_value = t0_drn.value64();</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if ( d &lt; 0 ) {</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">            while ( i &lt; end ) {//increment on drain accordingly:</span>
+<span class="fc" id="L54">                int ri = 0;</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">                while ( ri &lt; rank ) {</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">                    if ( t1Shp[ri] == t2Shp[ri] ) {//Equal shapes -&gt; out index is t1 &amp; t2 index!for this ri</span>
+<span class="fc" id="L57">                        t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L58">                        t2Idx[ri] = t0Idx[ri];</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">                    } else if ( t1Shp[ri] &gt; t2Shp[ri] ) {//Current shape axis of t2 must be 1 !</span>
+<span class="fc" id="L60">                        t1Idx[ri] = t0Idx[ri];</span>
+<span class="fc" id="L61">                        t2Idx[ri] = 0;//...therefore it can be set to 0!</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">                    } else if ( t1Shp[ri] &lt; t2Shp[ri] ) {//same principle:</span>
+<span class="fc" id="L63">                        t1Idx[ri] = 0;</span>
 <span class="fc" id="L64">                        t2Idx[ri] = t0Idx[ri];</span>
-<span class="fc bfc" id="L65" title="All 2 branches covered.">                    } else if (t1Shp[ri] &gt; t2Shp[ri]) {//Current shape axis of t2 must be 1 !</span>
-<span class="fc" id="L66">                        t1Idx[ri] = t0Idx[ri];</span>
-<span class="fc" id="L67">                        t2Idx[ri] = 0;//...therefore it can be set to 0!</span>
-<span class="pc bpc" id="L68" title="1 of 2 branches missed.">                    } else if (t1Shp[ri] &lt; t2Shp[ri]) {//same principle:</span>
-<span class="fc" id="L69">                        t1Idx[ri] = 0;</span>
-<span class="fc" id="L70">                        t2Idx[ri] = t0Idx[ri];</span>
                     }
-<span class="fc" id="L72">                    ri++;</span>
+<span class="fc" id="L66">                    ri++;</span>
                 }
                 //----------
                 //setInto _value in drn:
-<span class="fc" id="L76">                t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, t2Idx);</span>
+<span class="fc" id="L70">                t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, t2Idx);</span>
                 //increment on drain:
-<span class="fc" id="L78">                Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
-<span class="fc" id="L79">                i++;</span>
-<span class="fc" id="L80">            }</span>
+<span class="fc" id="L72">                Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L73">                i++;</span>
+<span class="fc" id="L74">            }</span>
         }
         else//---//Note: src2 is now former drain!
         {
-<span class="fc bfc" id="L84" title="All 2 branches covered.">            while (i &lt; end) {//increment on drain accordingly:</span>
-<span class="fc" id="L85">                int ri = 0;</span>
-<span class="fc bfc" id="L86" title="All 2 branches covered.">                while (ri &lt; rank) {</span>
-<span class="fc bfc" id="L87" title="All 2 branches covered.">                    if (t0Shp[ri] == t1Shp[ri]) {</span>
-<span class="fc" id="L88">                        t1Idx[ri] = t0Idx[ri];//all shapes are equal -&gt; shape index can be inherited from origin!</span>
-<span class="fc" id="L89">                        t2Idx[ri] = t0Idx[ri];</span>
-<span class="fc bfc" id="L90" title="All 2 branches covered.">                    } else if (t0Shp[ri] &gt; t1Shp[ri]) {</span>
-<span class="fc" id="L91">                        t1Idx[ri] = 0;//Current origin index is larger: index can be inherited!</span>
-<span class="fc" id="L92">                        t2Idx[ri] = t0Idx[ri];</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">            while ( i &lt; end ) {//increment on drain accordingly:</span>
+<span class="fc" id="L79">                int ri = 0;</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">                while ( ri &lt; rank ) {</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">                    if (t0Shp[ri] == t1Shp[ri]) {</span>
+<span class="fc" id="L82">                        t1Idx[ri] = t0Idx[ri];//all shapes are equal -&gt; shape index can be inherited from origin!</span>
+<span class="fc" id="L83">                        t2Idx[ri] = t0Idx[ri];</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">                    } else if (t0Shp[ri] &gt; t1Shp[ri]) {</span>
+<span class="fc" id="L85">                        t1Idx[ri] = 0;//Current origin index is larger: index can be inherited!</span>
+<span class="fc" id="L86">                        t2Idx[ri] = t0Idx[ri];</span>
                     }
-<span class="fc" id="L94">                    ri++;</span>
+<span class="fc" id="L88">                    ri++;</span>
                 }
                 //----------
                 // multiplication:
-<span class="fc" id="L98">                double value = 0;</span>
-<span class="fc" id="L99">                boolean running = true;</span>
-<span class="fc" id="L100">                boolean incrementing = false;</span>
-<span class="fc bfc" id="L101" title="All 2 branches covered.">                while (running) {</span>
-<span class="fc bfc" id="L102" title="All 2 branches covered.">                    ri = (ri == rank) ? 0 : ri;</span>
-<span class="fc bfc" id="L103" title="All 2 branches covered.">                    if (!incrementing) {</span>
-<span class="fc" id="L104">                        value += operation.execute(t0Idx, t1Idx, t2Idx);</span>
-<span class="fc" id="L105">                        incrementing = true;</span>
-<span class="fc" id="L106">                        ri = 0;</span>
+<span class="fc" id="L92">                double value = 0;</span>
+<span class="fc" id="L93">                boolean running = true;</span>
+<span class="fc" id="L94">                boolean incrementing = false;</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">                while ( running ) {</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">                    ri = ( ri == rank ) ? 0 : ri;</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">                    if ( !incrementing ) {</span>
+<span class="fc" id="L98">                        value += operation.execute(t0Idx, t1Idx, t2Idx);</span>
+<span class="fc" id="L99">                        incrementing = true;</span>
+<span class="fc" id="L100">                        ri = 0;</span>
                     } else {//incrementing:
-<span class="fc bfc" id="L108" title="All 2 branches covered.">                        if (t0Shp[ri] &lt; t1Shp[ri]) {//Only if origin shape is smaller than handle and drain!</span>
-<span class="fc" id="L109">                            t1Idx[ri]++;</span>
-<span class="fc" id="L110">                            t2Idx[ri]++;</span>
-<span class="fc bfc" id="L111" title="All 2 branches covered.">                            if (t1Idx[ri] == t1Shp[ri]) {</span>
-<span class="fc" id="L112">                                t1Idx[ri] = 0;</span>
-<span class="fc" id="L113">                                t2Idx[ri] = 0;</span>
-<span class="pc bpc" id="L114" title="1 of 2 branches missed.">                                running = (ri != rank - 1);</span>
-<span class="fc" id="L115">                                ri++;</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">                        if ( t0Shp[ri] &lt; t1Shp[ri] ) {//Only if origin shape is smaller than handle and drain!</span>
+<span class="fc" id="L103">                            t1Idx[ri]++;</span>
+<span class="fc" id="L104">                            t2Idx[ri]++;</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">                            if (t1Idx[ri] == t1Shp[ri]) {</span>
+<span class="fc" id="L106">                                t1Idx[ri] = 0;</span>
+<span class="fc" id="L107">                                t2Idx[ri] = 0;</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">                                running = (ri != rank - 1);</span>
+<span class="fc" id="L109">                                ri++;</span>
                             } else {
-<span class="fc" id="L117">                                incrementing = false;//return to calculation!</span>
+<span class="fc" id="L111">                                incrementing = false;//return to calculation!</span>
                             }
                         } else {
-<span class="fc bfc" id="L120" title="All 2 branches covered.">                            running = (ri != rank - 1);</span>
-<span class="fc" id="L121">                            ri++;</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">                            running = (ri != rank - 1);</span>
+<span class="fc" id="L115">                            ri++;</span>
                         }
                     }
                 }
                 //set value in drn:
-<span class="fc" id="L126">                t0_value[t0_drn.i_of_idx(t0Idx)] = value;</span>
+<span class="fc" id="L120">                t0_value[t0_drn.i_of_idx(t0Idx)] = value;</span>
                 //increment on drain:
-<span class="fc" id="L128">                Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
-<span class="fc" id="L129">                i++;</span>
-<span class="fc" id="L130">            }</span>
+<span class="fc" id="L122">                Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L123">                i++;</span>
+<span class="fc" id="L124">            }</span>
         }
-<span class="fc" id="L132">    }</span>
+<span class="fc" id="L126">    }</span>
 
 
 }

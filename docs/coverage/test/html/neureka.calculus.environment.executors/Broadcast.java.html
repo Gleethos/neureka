@@ -38,7 +38,7 @@ public class Broadcast extends AbstractOperationTypeImplementation&lt; Broadcast
     public static void broadcast(
             Tsr t0_drn, Tsr t1_src, Tsr t2_src,
             int d, int i, int end,
-            Type.TertiaryNDXConsumer operation
+            Type.TertiaryNDXConsumer operator
     ) {
 <span class="fc" id="L43">        int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
 <span class="fc" id="L44">        int[] t1Shp = t1_src.getNDConf().shape();</span>
@@ -66,7 +66,7 @@ public class Broadcast extends AbstractOperationTypeImplementation&lt; Broadcast
                 }
                 //----------
                 //setInto _value in drn:
-<span class="fc" id="L69">                t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, t2Idx);</span>
+<span class="fc" id="L69">                t0_value[t0_drn.i_of_idx(t0Idx)] = operator.execute(t0Idx, t1Idx, t2Idx);</span>
                 //increment on drain:
 <span class="fc" id="L71">                Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
 <span class="fc" id="L72">                i++;</span>
@@ -94,7 +94,7 @@ public class Broadcast extends AbstractOperationTypeImplementation&lt; Broadcast
 <span class="fc bfc" id="L94" title="All 2 branches covered.">                while (running) {</span>
 <span class="fc bfc" id="L95" title="All 2 branches covered.">                    ri = (ri == rank) ? 0 : ri;</span>
 <span class="fc bfc" id="L96" title="All 2 branches covered.">                    if (!incrementing) {</span>
-<span class="fc" id="L97">                        value += operation.execute(t0Idx, t1Idx, t2Idx);</span>
+<span class="fc" id="L97">                        value += operator.execute(t0Idx, t1Idx, t2Idx);</span>
 <span class="fc" id="L98">                        incrementing = true;</span>
 <span class="fc" id="L99">                        ri = 0;</span>
                     } else {//incrementing:

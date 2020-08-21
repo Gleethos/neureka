@@ -2,31 +2,19 @@
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
 
 public class Activation extends AbstractOperationTypeImplementation&lt; Activation &gt;
 {
-    public Activation(
-            ADAnalyzer analyzer,
-            InitialCallHook hook,
-            RecursiveJunctionAgent RJAgent,
-            DrainInstantiation instantiation
-<span class="fc" id="L16">    ) {  super(</span>
-            analyzer, hook, RJAgent, instantiation
-<span class="fc" id="L18">    ); }</span>
 
-    @Override
-    public boolean canHandle(ExecutionCall call) {
-<span class="pc bpc" id="L22" title="1 of 2 branches missed.">        if ( _executions.isEmpty() ) return false;</span>
-<span class="fc" id="L23">        return true;</span>
-    }
-
-
+    public Activation() {
+<span class="fc" id="L12">        super();</span>
+<span class="fc" id="L13">        setHandleChecker(call-&gt;true);</span>
+<span class="fc" id="L14">    }</span>
 
     public String getKernelSource(){
-<span class="fc" id="L29">        return Neureka.instance().utility().readResource(&quot;kernels/activate_template.cl&quot;);</span>
+<span class="fc" id="L17">        return Neureka.instance().utility().readResource(&quot;kernels/activate_template.cl&quot;);</span>
     }
 
     @Contract(pure = true)
@@ -35,20 +23,20 @@ public class Activation extends AbstractOperationTypeImplementation&lt; Activati
             int i, int end,
             Type.TertiaryNDXConsumer operation
     ) {
-<span class="fc" id="L38">        int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
-<span class="fc" id="L39">        int rank = t0Shp.length;</span>
-<span class="fc" id="L40">        int[] t0Idx = t0_drn.idx_of_i(i);</span>
-<span class="fc" id="L41">        int[] t1Idx = new int[rank];</span>
-<span class="fc" id="L42">        double[] t0_value = t0_drn.value64();</span>
-<span class="fc bfc" id="L43" title="All 2 branches covered.">        while ( i &lt; end ) {//increment on drain accordingly:</span>
-<span class="fc" id="L44">            System.arraycopy(t0Idx, 0, t1Idx, 0, rank);</span>
+<span class="fc" id="L26">        int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
+<span class="fc" id="L27">        int rank = t0Shp.length;</span>
+<span class="fc" id="L28">        int[] t0Idx = t0_drn.idx_of_i(i);</span>
+<span class="fc" id="L29">        int[] t1Idx = new int[rank];</span>
+<span class="fc" id="L30">        double[] t0_value = t0_drn.value64();</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">        while ( i &lt; end ) {//increment on drain accordingly:</span>
+<span class="fc" id="L32">            System.arraycopy(t0Idx, 0, t1Idx, 0, rank);</span>
             //setInto _value in drn:
-<span class="fc" id="L46">            t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, null);</span>
+<span class="fc" id="L34">            t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, null);</span>
             //increment on drain:
-<span class="fc" id="L48">            Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
-<span class="fc" id="L49">            i++;</span>
+<span class="fc" id="L36">            Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L37">            i++;</span>
         }
-<span class="fc" id="L51">    }</span>
+<span class="fc" id="L39">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

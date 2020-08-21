@@ -8,24 +8,14 @@ import org.jetbrains.annotations.Contract;
 
 public class Scalarization extends AbstractOperationTypeImplementation&lt; Scalarization &gt;
 {
-    public Scalarization(
-            ADAnalyzer analyzer,
-            InitialCallHook hook,
-            RecursiveJunctionAgent RJAgent,
-            DrainInstantiation instantiation
-<span class="fc" id="L16">    ) {  super(</span>
-            analyzer, hook, RJAgent, instantiation
-<span class="fc" id="L18">    ); }</span>
 
-    @Override
-    public boolean canHandle(ExecutionCall call)
-    {
-<span class="nc" id="L23">        return true;</span>
-    }
+<span class="fc" id="L12">    public Scalarization(){</span>
+<span class="pc" id="L13">        setHandleChecker(call-&gt;true);</span>
+<span class="fc" id="L14">    }</span>
 
 
     public String getKernelSource(){
-<span class="fc" id="L28">        return Neureka.instance().utility().readResource(&quot;kernels/scalar_template.cl&quot;);</span>
+<span class="fc" id="L18">        return Neureka.instance().utility().readResource(&quot;kernels/scalar_template.cl&quot;);</span>
     }
 
 
@@ -35,18 +25,18 @@ public class Scalarization extends AbstractOperationTypeImplementation&lt; Scala
             int i, int end,
             Type.PrimaryNDXConsumer operation
     ) {
-<span class="nc" id="L38">        int[] t0Shp = t0_drn.getNDConf().shape();</span>
-<span class="nc" id="L39">        int[] t0Idx = t0_drn.idx_of_i(i);</span>
-<span class="nc" id="L40">        double[] t0_value = t0_drn.value64();</span>
-<span class="nc bnc" id="L41" title="All 2 branches missed.">        while (i &lt; end) // increment on drain accordingly:</span>
+<span class="nc" id="L28">        int[] t0Shp = t0_drn.getNDConf().shape();</span>
+<span class="nc" id="L29">        int[] t0Idx = t0_drn.idx_of_i(i);</span>
+<span class="nc" id="L30">        double[] t0_value = t0_drn.value64();</span>
+<span class="nc bnc" id="L31" title="All 2 branches missed.">        while (i &lt; end) // increment on drain accordingly:</span>
         {
             // setInto _value in drn:
-<span class="nc" id="L44">            t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute( t0Idx );</span>
+<span class="nc" id="L34">            t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute( t0Idx );</span>
             // increment on drain:
-<span class="nc" id="L46">            Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
-<span class="nc" id="L47">            i++;</span>
+<span class="nc" id="L36">            Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
+<span class="nc" id="L37">            i++;</span>
         }
-<span class="nc" id="L49">    }</span>
+<span class="nc" id="L39">    }</span>
 
 
 

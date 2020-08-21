@@ -2,8 +2,9 @@
 
 import neureka.Tsr;
 import neureka.acceleration.Device;
-
-import java.util.function.Function;
+import neureka.autograd.ADAgent;
+import neureka.calculus.Function;
+import neureka.calculus.environment.implementations.AbstractOperationTypeImplementation;
 
 /**
  * This class is a simple container holding relevant
@@ -12,7 +13,7 @@ import java.util.function.Function;
  *
  * @param &lt;DeviceType&gt; The Device implementation targeted by an instance of this ExecutionCall!
  */
-public class ExecutionCall&lt;DeviceType extends Device&gt;
+public class ExecutionCall&lt; DeviceType extends Device &gt;
 {
     public interface Mutator {
         Tsr[] mutate( Tsr[] tensors );
@@ -21,36 +22,60 @@ public class ExecutionCall&lt;DeviceType extends Device&gt;
     private final DeviceType _device;
     private Tsr[] _tsrs;
     private final int _d;
+<span class="fc" id="L25">    private int _j = -1;</span>
     private final OperationType _type;
-    private OperationTypeImplementation _implementation;
+    private OperationTypeImplementation&lt;AbstractOperationTypeImplementation&gt; _implementation;
 
     public ExecutionCall(
             DeviceType device,
             Tsr[] tsrs,
             int d,
             OperationType type
-<span class="fc" id="L32">    ) {</span>
-<span class="fc" id="L33">        _device = device;</span>
-<span class="fc" id="L34">        _tsrs = tsrs;</span>
-<span class="fc" id="L35">        _d = d;</span>
-<span class="fc" id="L36">        _type = type;</span>
-<span class="fc" id="L37">        _implementation = null;</span>
-<span class="fc" id="L38">    }</span>
-<span class="fc" id="L39">    public DeviceType getDevice() {return _device;}</span>
-<span class="fc" id="L40">    public Tsr[] getTensors() {return _tsrs;}</span>
-<span class="fc" id="L41">    public Tsr getTensor(int i) {return _tsrs[i];}</span>
-<span class="fc" id="L42">    public int getDerivativeIndex() {return _d;}</span>
-<span class="fc" id="L43">    public OperationType getType() {return _type;}</span>
+<span class="fc" id="L34">    ) {</span>
+<span class="fc" id="L35">        _device = device;</span>
+<span class="fc" id="L36">        _tsrs = tsrs;</span>
+<span class="fc" id="L37">        _d = d;</span>
+<span class="fc" id="L38">        _type = type;</span>
+<span class="fc" id="L39">        _implementation = null;</span>
+<span class="fc" id="L40">    }</span>
+    public ExecutionCall(
+            DeviceType device,
+            Tsr[] tsrs,
+            int d,
+            int j,
+            OperationType type
+<span class="fc" id="L47">    ) {</span>
+<span class="fc" id="L48">        _device = device;</span>
+<span class="fc" id="L49">        _tsrs = tsrs;</span>
+<span class="fc" id="L50">        _d = d;</span>
+<span class="fc" id="L51">        _j = j;</span>
+<span class="fc" id="L52">        _type = type;</span>
+<span class="fc" id="L53">        _implementation = null;</span>
+<span class="fc" id="L54">    }</span>
+    public int getJ() {
+<span class="fc" id="L56">        return _j;</span>
+    }
+<span class="fc" id="L58">    public DeviceType getDevice() {return _device;}</span>
+<span class="fc" id="L59">    public Tsr[] getTensors() {return _tsrs;}</span>
+<span class="fc" id="L60">    public Tsr getTensor(int i) {return _tsrs[i];}</span>
+<span class="fc" id="L61">    public int getDerivativeIndex() {return _d;}</span>
+<span class="fc" id="L62">    public OperationType getType() {return _type;}</span>
     public OperationTypeImplementation getImplementation() {
-<span class="fc bfc" id="L45" title="All 2 branches covered.">        if ( _implementation != null ) return _implementation;</span>
-<span class="fc" id="L46">        else _implementation = _type.implementationOf(this);</span>
-<span class="fc" id="L47">        return _implementation;</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if ( _implementation != null ) return _implementation;</span>
+<span class="fc" id="L65">        else _implementation = _type.implementationOf(this);</span>
+<span class="fc" id="L66">        return _implementation;</span>
     }
     public boolean allowsForward(){
-<span class="fc" id="L50">        return getImplementation().getADAnalyzer().allowsForward(this);</span>
+<span class="fc" id="L69">        return getImplementation().getADAnalyzer().allowsForward(this);</span>
+    }
+    public ADAgent getADAgentFrom( Function function, Tsr derivative, ExecutionCall call, boolean forward ){
+<span class="fc" id="L72">        return getImplementation().getADAgentCreator().getADAgentOf(function, derivative, call, forward);</span>
     }
     public void mutateArguments(Mutator mutation){
-<span class="fc" id="L53">        _tsrs = mutation.mutate(_tsrs);</span>
-<span class="fc" id="L54">    }</span>
+<span class="fc" id="L75">        _tsrs = mutation.mutate(_tsrs);</span>
+<span class="fc" id="L76">    }</span>
+    public ExecutionCall&lt;DeviceType&gt; withNew(Tsr[] tensors){
+<span class="fc" id="L78">        return new ExecutionCall&lt;&gt;(_device, tensors, _d, _j, _type);</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

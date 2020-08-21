@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 /**
  * This is the base class for implementations of the OperationTypeImplementation interface.
- * The class implements the component logic required by the said interface.
+ * The class implements the component logic required by said interface.
  * Additionally it contains useful methods used to process passed arguments of execution calls.
  *
  * Conceptually this class represents &quot;a way of execution&quot; for
@@ -30,58 +30,95 @@ import java.util.function.Consumer;
  */
 public abstract class AbstractOperationTypeImplementation&lt; FinalType &gt; implements OperationTypeImplementation&lt; FinalType &gt;
 {
-    protected final Map&lt; Class&lt; ExecutorFor&lt; Device &gt; &gt;, ExecutorFor&lt; Device &gt; &gt; _executions;
+<span class="fc" id="L33">    protected final Map&lt; Class&lt; ExecutorFor&lt; Device &gt; &gt;, ExecutorFor&lt; Device &gt; &gt; _executions = new HashMap&lt;&gt;();</span>
 
-    private final ADAnalyzer _analyzer;
-    private final InitialCallHook _hook;
-    private final RecursiveJunctionAgent _RJAgent;
-    private final DrainInstantiation _instantiation;
+    private HandleChecker _canHandle;
+    private ADAnalyzer _analyzer;
+    private ADAgentCreator _adaCreator;
+    private InitialCallHook _hook;
+    private RecursiveJunctionAgent _RJAgent;
+    private DrainInstantiation _instantiation;
 
-    public AbstractOperationTypeImplementation(
-            ADAnalyzer analyzer,
-            InitialCallHook hook,
-            RecursiveJunctionAgent RJAgent,
-            DrainInstantiation instantiation
-<span class="fc" id="L45">    ) {</span>
-<span class="fc" id="L46">        _executions = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L47">        _analyzer = analyzer;</span>
-<span class="fc" id="L48">        _hook = hook;</span>
-<span class="fc" id="L49">        _RJAgent = RJAgent;</span>
-<span class="fc" id="L50">        _instantiation = instantiation;</span>
-<span class="fc" id="L51">    }</span>
+<span class="fc" id="L42">    public AbstractOperationTypeImplementation() { }</span>
+
+    @Override
+    public HandleChecker getHandleChecker() {
+<span class="fc" id="L46">        return _canHandle;</span>
+    }
+
+    @Override
+    public FinalType setHandleChecker(HandleChecker checker) {
+<span class="fc" id="L51">        _canHandle = checker;</span>
+<span class="fc" id="L52">        return (FinalType) this;</span>
+    }
 
     @Override
     public ADAnalyzer getADAnalyzer(){
-<span class="fc" id="L55">        return _analyzer;</span>
+<span class="fc" id="L57">        return _analyzer;</span>
+    }
+
+    @Override
+    public FinalType setADAnalyzer(ADAnalyzer analyzer) {
+<span class="fc" id="L62">        _analyzer = analyzer;</span>
+<span class="fc" id="L63">        return (FinalType) this;</span>
+    }
+
+    @Override
+    public ADAgentCreator getADAgentCreator() {
+<span class="fc" id="L68">        return _adaCreator;</span>
+    }
+
+    @Override
+    public FinalType setADAgentCreator(ADAgentCreator creator) {
+<span class="fc" id="L73">        _adaCreator = creator;</span>
+<span class="fc" id="L74">        return (FinalType) this;</span>
     }
 
     @Override
     public InitialCallHook getCallHook(){
-<span class="fc" id="L60">        return _hook;</span>
+<span class="fc" id="L79">        return _hook;</span>
+    }
+
+    @Override
+    public FinalType setCallHock(InitialCallHook hook) {
+<span class="fc" id="L84">        _hook = hook;</span>
+<span class="fc" id="L85">        return (FinalType) this;</span>
     }
 
     @Override
     public RecursiveJunctionAgent getRJAgent(){
-<span class="nc" id="L65">        return _RJAgent;</span>
+<span class="nc" id="L90">        return _RJAgent;</span>
+    }
+
+    @Override
+    public FinalType setRJAgent(RecursiveJunctionAgent rja) {
+<span class="fc" id="L95">        _RJAgent = rja;</span>
+<span class="fc" id="L96">        return (FinalType) this;</span>
     }
 
     @Override
     public DrainInstantiation getDrainInstantiation(){
-<span class="fc" id="L70">        return _instantiation;</span>
+<span class="fc" id="L101">        return _instantiation;</span>
+    }
+
+    @Override
+    public FinalType setDrainInstantiation(DrainInstantiation drainInstantiation) {
+<span class="fc" id="L106">        _instantiation = drainInstantiation;</span>
+<span class="fc" id="L107">        return (FinalType) this;</span>
     }
 
     @Override
     public &lt;D extends Device, E extends ExecutorFor&lt;D&gt;&gt; FinalType setExecutor(Class&lt;E&gt; deviceClass, E execution){
-<span class="fc" id="L75">        _executions.put(</span>
+<span class="fc" id="L112">        _executions.put(</span>
                 (Class&lt;ExecutorFor&lt;Device&gt;&gt;) deviceClass,
                 (ExecutorFor&lt;Device&gt;) execution
         );
-<span class="fc" id="L79">        return (FinalType) this;</span>
+<span class="fc" id="L116">        return (FinalType) this;</span>
     }
 
     @Override
     public &lt;D extends Device, E extends ExecutorFor&lt;D&gt;&gt; E getExecutor(Class&lt;E&gt; deviceClass){
-<span class="fc" id="L84">        return (E) _executions.get(deviceClass);</span>
+<span class="fc" id="L121">        return (E) _executions.get(deviceClass);</span>
     }
 
     @Override
@@ -89,18 +126,18 @@ public abstract class AbstractOperationTypeImplementation&lt; FinalType &gt; imp
             ExecutionCall&lt;Device&gt; call,
             Consumer&lt;ExecutionCall&lt;Device&gt;&gt; finalExecution
     ) {
-<span class="fc" id="L92">        Device device = call.getDevice();</span>
-<span class="fc" id="L93">        Tsr[] tsrs = call.getTensors();</span>
-<span class="fc" id="L94">        int d = call.getDerivativeIndex();</span>
-<span class="fc" id="L95">        OperationType type = call.getType();</span>
+<span class="fc" id="L129">        Device device = call.getDevice();</span>
+<span class="fc" id="L130">        Tsr[] tsrs = call.getTensors();</span>
+<span class="fc" id="L131">        int d = call.getDerivativeIndex();</span>
+<span class="fc" id="L132">        OperationType type = call.getType();</span>
 
-<span class="fc" id="L97">        Consumer&lt;Tsr&gt;[] rollbacks = new Consumer[tsrs.length];</span>
-<span class="fc bfc" id="L98" title="All 2 branches covered.">        for (int i=0; i&lt;tsrs.length; i++) {</span>
-<span class="pc bpc" id="L99" title="1 of 4 branches missed.">            if ( tsrs[i] != null &amp;&amp; !tsrs[i].isOutsourced() ) {</span>
-<span class="fc" id="L100">                device.add(tsrs[i]);</span>
-<span class="fc" id="L101">                rollbacks[i] = device::get;</span>
+<span class="fc" id="L134">        Consumer&lt;Tsr&gt;[] rollbacks = new Consumer[tsrs.length];</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        for (int i=0; i&lt;tsrs.length; i++) {</span>
+<span class="pc bpc" id="L136" title="1 of 4 branches missed.">            if ( tsrs[i] != null &amp;&amp; !tsrs[i].isOutsourced() ) {</span>
+<span class="fc" id="L137">                device.add(tsrs[i]);</span>
+<span class="fc" id="L138">                rollbacks[i] = device::get;</span>
             } else {
-<span class="fc" id="L103">                rollbacks[i] = t -&gt; {};</span>
+<span class="fc" id="L140">                rollbacks[i] = t -&gt; {};</span>
             }
         }
 
@@ -115,51 +152,51 @@ public abstract class AbstractOperationTypeImplementation&lt; FinalType &gt; imp
             Below is the core lambda of recursive preprocessing
             which is defined for each OperationImplementation individually :
          */
-<span class="fc" id="L118">        Tsr result = _RJAgent.handle(call, (c)-&gt; recursiveReductionOf( c, finalExecution ));</span>
-<span class="fc bfc" id="L119" title="All 2 branches covered.">        if ( result==null ) {</span>
-<span class="fc" id="L120">            finalExecution.accept(</span>
-<span class="fc" id="L121">                    new ExecutionCall&lt;&gt;( device, call.getTensors(), d, type )</span>
+<span class="fc" id="L155">        Tsr result = _RJAgent.handle(call, c -&gt; recursiveReductionOf( c, finalExecution ));</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">        if ( result == null ) {</span>
+<span class="fc" id="L157">            finalExecution.accept(</span>
+<span class="fc" id="L158">                    new ExecutionCall&lt;&gt;( device, call.getTensors(), d, type )</span>
             );
-<span class="fc" id="L123">        } else return result;</span>
+<span class="fc" id="L160">        } else return result;</span>
 
 
-<span class="fc bfc" id="L126" title="All 2 branches covered.">        for ( int i = 0; i &lt; tsrs.length; i++ ) {</span>
-<span class="pc bpc" id="L127" title="2 of 4 branches missed.">            if ( tsrs[i] != null &amp;&amp; !tsrs[i].isUndefined() ) rollbacks[i].accept(tsrs[i]);</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">        for ( int i = 0; i &lt; tsrs.length; i++ ) {</span>
+<span class="pc bpc" id="L164" title="2 of 4 branches missed.">            if ( tsrs[i] != null &amp;&amp; !tsrs[i].isUndefined() ) rollbacks[i].accept(tsrs[i]);</span>
         }
-<span class="fc" id="L129">        return tsrs[0];</span>
+<span class="fc" id="L166">        return tsrs[0];</span>
     }
 
-<span class="nc" id="L132">    public static class Utility</span>
+<span class="nc" id="L169">    public static class Utility</span>
     {
         public static Tsr[] _subset(Tsr[] tsrs, int padding, int index, int offset) {
-<span class="pc bpc" id="L135" title="1 of 2 branches missed.">            if ( offset &lt; 0 ) {</span>
-<span class="nc" id="L136">                index += offset;</span>
-<span class="nc" id="L137">                offset *= -1;</span>
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">            if ( offset &lt; 0 ) {</span>
+<span class="nc" id="L173">                index += offset;</span>
+<span class="nc" id="L174">                offset *= -1;</span>
             }
-<span class="fc" id="L139">            Tsr[] newTsrs = new Tsr[offset+padding];</span>
-<span class="fc" id="L140">            System.arraycopy(tsrs, index, newTsrs, padding, offset);</span>
-<span class="fc" id="L141">            return newTsrs;</span>
+<span class="fc" id="L176">            Tsr[] newTsrs = new Tsr[offset+padding];</span>
+<span class="fc" id="L177">            System.arraycopy(tsrs, index, newTsrs, padding, offset);</span>
+<span class="fc" id="L178">            return newTsrs;</span>
         }
         public static Tsr[] _without(Tsr[] tsrs, int index){
-<span class="fc" id="L144">            Tsr[] newTsrs = new Tsr[tsrs.length-1];</span>
-<span class="fc bfc" id="L145" title="All 4 branches covered.">            for ( int i = 0; i &lt; newTsrs.length; i++ ) newTsrs[i] = tsrs[i+( ( i &lt; index )? 0 : 1 )];</span>
-<span class="fc" id="L146">            return newTsrs;</span>
+<span class="fc" id="L181">            Tsr[] newTsrs = new Tsr[tsrs.length-1];</span>
+<span class="fc bfc" id="L182" title="All 4 branches covered.">            for ( int i = 0; i &lt; newTsrs.length; i++ ) newTsrs[i] = tsrs[i+( ( i &lt; index )? 0 : 1 )];</span>
+<span class="fc" id="L183">            return newTsrs;</span>
         }
 
         public static Tsr[] _offsetted(Tsr[] tsrs, int offset){
-<span class="fc" id="L150">            Tsr[] newTsrs = new Tsr[tsrs.length-offset];</span>
-<span class="fc" id="L151">            newTsrs[0] = Tsr.Create.newTsrLike(tsrs[1]);</span>
-<span class="fc bfc" id="L152" title="All 4 branches covered.">            if ( !tsrs[1].has(GraphNode.class ) &amp;&amp; tsrs[1] != tsrs[0] ) {//Deleting intermediate results!</span>
-<span class="fc" id="L153">                tsrs[1].delete();</span>
-<span class="fc" id="L154">                tsrs[1] = null;</span>
+<span class="fc" id="L187">            Tsr[] newTsrs = new Tsr[tsrs.length-offset];</span>
+<span class="fc" id="L188">            newTsrs[0] = Tsr.Create.newTsrLike(tsrs[1]);</span>
+<span class="fc bfc" id="L189" title="All 4 branches covered.">            if ( !tsrs[1].has(GraphNode.class ) &amp;&amp; tsrs[1] != tsrs[0] ) {//Deleting intermediate results!</span>
+<span class="fc" id="L190">                tsrs[1].delete();</span>
+<span class="fc" id="L191">                tsrs[1] = null;</span>
             }
-<span class="pc bpc" id="L156" title="1 of 4 branches missed.">            if ( !tsrs[2].has(GraphNode.class) &amp;&amp; tsrs[2] != tsrs[0] ) {//Deleting intermediate results!</span>
-<span class="fc" id="L157">                tsrs[2].delete();</span>
-<span class="fc" id="L158">                tsrs[2] = null;</span>
+<span class="pc bpc" id="L193" title="1 of 4 branches missed.">            if ( !tsrs[2].has(GraphNode.class) &amp;&amp; tsrs[2] != tsrs[0] ) {//Deleting intermediate results!</span>
+<span class="fc" id="L194">                tsrs[2].delete();</span>
+<span class="fc" id="L195">                tsrs[2] = null;</span>
             }
-<span class="fc" id="L160">            System.arraycopy(tsrs, 1+offset, newTsrs, 1, tsrs.length-1-offset);</span>
-<span class="fc" id="L161">            newTsrs[1] = tsrs[0];</span>
-<span class="fc" id="L162">            return newTsrs;</span>
+<span class="fc" id="L197">            System.arraycopy(tsrs, 1+offset, newTsrs, 1, tsrs.length-1-offset);</span>
+<span class="fc" id="L198">            newTsrs[1] = tsrs[0];</span>
+<span class="fc" id="L199">            return newTsrs;</span>
         }
 
     }

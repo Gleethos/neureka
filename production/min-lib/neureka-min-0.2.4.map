@@ -1205,10 +1205,10 @@ neureka.calculus.factory.assembly.FunctionBuilder -> neureka.calculus.factory.as
     46:59:neureka.calculus.Function build(java.lang.String,boolean) -> build
     68:266:neureka.calculus.Function _build(java.lang.String,boolean) -> a
     276:283:java.util.List _rebindPairwise(java.util.List,int) -> a
-neureka.calculus.factory.assembly.FunctionConstructor -> neureka.calculus.factory.assembly.FunctionConstructor:
+neureka.calculus.factory.assembly.FunctionNode -> neureka.calculus.factory.assembly.FunctionNode:
     14:14:void <init>() -> <init>
     18:71:neureka.calculus.Function construct(int,java.util.ArrayList,boolean) -> construct
-neureka.calculus.factory.assembly.FunctionConstructor$1 -> neureka.calculus.factory.assembly.FunctionConstructor$1:
+neureka.calculus.factory.assembly.FunctionNode$1 -> neureka.calculus.factory.assembly.FunctionNode$1:
     java.util.ArrayList val$sources -> a
     33:33:void <init>(int,boolean,java.util.ArrayList,boolean,java.util.ArrayList) -> <init>
     36:36:neureka.Tsr call(neureka.Tsr[],int) -> call
@@ -1221,7 +1221,7 @@ neureka.calculus.factory.assembly.FunctionConstructor$1 -> neureka.calculus.fact
     66:67:double derive(double[],int) -> derive
     40:40:neureka.Tsr lambda$call$1(java.util.ArrayList,neureka.Tsr[]) -> a
     36:36:neureka.Tsr lambda$call$0(java.util.ArrayList,neureka.Tsr[],int) -> a
-neureka.calculus.factory.assembly.FunctionConstructor$2 -> neureka.calculus.factory.assembly.FunctionConstructor$2:
+neureka.calculus.factory.assembly.FunctionNode$2 -> neureka.calculus.factory.assembly.FunctionNode$2:
     71:71:void <init>(int,boolean,java.util.ArrayList,boolean) -> <init>
     74:74:neureka.Tsr call(neureka.Tsr[],int) -> call
     78:78:neureka.Tsr call(neureka.Tsr[]) -> call

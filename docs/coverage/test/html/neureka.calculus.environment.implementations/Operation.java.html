@@ -8,49 +8,42 @@ import org.jetbrains.annotations.Contract;
 
 public class Operation extends AbstractOperationTypeImplementation&lt; Operation &gt;
 {
-    public Operation(
-            ADAnalyzer analyzer,
-            InitialCallHook hook,
-            RecursiveJunctionAgent RJAgent,
-            DrainInstantiation instantiation
-<span class="fc" id="L16">    ) {  super(</span>
-            analyzer, hook, RJAgent, instantiation
-<span class="fc" id="L18">    ); }</span>
-
-    @Override
-    public boolean canHandle( ExecutionCall call ) {
-<span class="fc bfc" id="L22" title="All 2 branches covered.">        int size = ( call.getTensors()[0] == null ) ? call.getTensors()[1].size() : call.getTensors()[0].size();</span>
-<span class="fc bfc" id="L23" title="All 6 branches covered.">        for ( Tsr t : call.getTensors() ) if ( t!=null &amp;&amp; t.size() != size ) return false;</span>
-<span class="fc" id="L24">        return true;</span>
-    }
+<span class="fc" id="L11">    public Operation() {</span>
+<span class="fc" id="L12">        setHandleChecker(</span>
+                call -&gt; {
+<span class="fc bfc" id="L14" title="All 2 branches covered.">                    int size = ( call.getTensors()[0] == null ) ? call.getTensors()[1].size() : call.getTensors()[0].size();</span>
+<span class="fc bfc" id="L15" title="All 6 branches covered.">                    for ( Tsr t : call.getTensors() ) if ( t!=null &amp;&amp; t.size() != size ) return false;</span>
+<span class="fc" id="L16">                    return true;</span>
+                }
+        );
+<span class="fc" id="L19">    }</span>
 
     public String getKernelSource(){
-<span class="fc" id="L28">        return Neureka.instance().utility().readResource(&quot;kernels/operate_template.cl&quot;);</span>
+<span class="fc" id="L22">        return Neureka.instance().utility().readResource(&quot;kernels/operate_template.cl&quot;);</span>
     }
-
 
 
     @Contract(pure = true)
     public static void operate(
             Tsr t0_drn, Tsr t1_src, Tsr t2_src,
             int d, int i, int end,
-            Type.PrimaryNDXConsumer operation
+            Type.PrimaryNDXConsumer operator
     ) {
-<span class="pc bpc" id="L39" title="5 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() ) {</span>
-<span class="nc" id="L40">            ((double[])t0_drn.getValue())[0] = operation.execute( new int[t0_drn.rank()] );</span>
+<span class="pc bpc" id="L32" title="5 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() ) {</span>
+<span class="nc" id="L33">            ((double[])t0_drn.getValue())[0] = operator.execute( new int[t0_drn.rank()] );</span>
         } else {
-<span class="fc" id="L42">            int[] t0Shp = t0_drn.getNDConf().shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
-<span class="fc" id="L43">            int[] t0Idx = t0_drn.idx_of_i(i);</span>
-<span class="fc" id="L44">            double[] t0_value = t0_drn.value64();</span>
-<span class="fc bfc" id="L45" title="All 2 branches covered.">            while (i &lt; end) {//increment on drain accordingly:</span>
+<span class="fc" id="L35">            int[] t0Shp = t0_drn.getNDConf().shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
+<span class="fc" id="L36">            int[] t0Idx = t0_drn.idx_of_i(i);</span>
+<span class="fc" id="L37">            double[] t0_value = t0_drn.value64();</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">            while (i &lt; end) {//increment on drain accordingly:</span>
                 //setInto _value in drn:
-<span class="fc" id="L47">                t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute( t0Idx );</span>
+<span class="fc" id="L40">                t0_value[t0_drn.i_of_idx(t0Idx)] = operator.execute( t0Idx );</span>
                 //increment on drain:
-<span class="fc" id="L49">                Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
-<span class="fc" id="L50">                i++;</span>
+<span class="fc" id="L42">                Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L43">                i++;</span>
             }
         }
-<span class="fc" id="L53">    }</span>
+<span class="fc" id="L46">    }</span>
 
 
 }
