@@ -12,7 +12,7 @@ import neureka.calculus.environment.implementations.Operator
 import neureka.calculus.environment.operations.OperationContext
 import spock.lang.Specification
 
-class Calculus_Implementation_Unit_Tests extends Specification
+class Calculus_Implementation_AD_Unit_Tests extends Specification
 {
 
     def 'Operator implementations behave as expected.'(
