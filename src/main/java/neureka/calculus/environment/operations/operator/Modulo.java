@@ -206,42 +206,37 @@ public class Modulo extends OperationType {
                         return true;
                     }
             ).setADAgentCreator(
-    ( Function f, Tsr derivv, ExecutionCall<Device> call, boolean forward ) ->
-    {
-        Function mul = Function.Detached.MUL;
-        if (
-            derivv != null
-        ) {
-            return new ADAgent(
-                    () -> derivv,
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, derivv}),
-                    null
-            );
-        }
-        Tsr[] inputs = call.getTensors();
-        int d = call.getDerivativeIndex();
-        if( forward )
-        {
-            Tsr deriv = f.derive(inputs, d);
-            return new ADAgent(
-                    () -> deriv,
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}),
-                    null
-            );
-        }
-        else
-        {
+                ( Function f, Tsr derivv, ExecutionCall<Device> call, boolean forward ) ->
+                {
+                    Function mul = Function.Detached.MUL;
+                    if (
+                        derivv != null
+                    ) {
+                        return new ADAgent(
+                                () -> derivv,
+                                ( t, derivative ) -> mul.call(new Tsr[]{derivative, derivv}),
+                                null
+                        );
+                    }
+                    Tsr[] inputs = call.getTensors();
+                    int d = call.getDerivativeIndex();
+                    if( forward )
+                    {
+                        throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                    }
+                    else
+                    {
 
-            {
-                Tsr deriv = f.derive(inputs, d);
-                return new ADAgent(
-                        ()->deriv,
-                        (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
-                        (t, error) -> mul.call(new Tsr[]{error, deriv})
-                );
-            }
-        }
-    }
+                        {
+                            Tsr deriv = f.derive(inputs, d);
+                            return new ADAgent(
+                                    ()->deriv,
+                                    (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
+                                    (t, error) -> mul.call(new Tsr[]{error, deriv})
+                            );
+                        }
+                    }
+                }
         ).setCallHock(
                     ( caller, call ) -> null
             ).setRJAgent(

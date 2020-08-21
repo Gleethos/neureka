@@ -7,6 +7,7 @@ import neureka.calculus.Function
 import neureka.calculus.environment.ExecutionCall
 import neureka.calculus.environment.OperationTypeImplementation
 import neureka.calculus.environment.implementations.Activation
+import neureka.calculus.environment.implementations.Broadcast
 import neureka.calculus.environment.implementations.Convolution
 import neureka.calculus.environment.implementations.Operator
 import neureka.calculus.environment.operations.OperationContext
@@ -168,6 +169,57 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
                 ).map( e -> e.getImplementation( Convolution.class ) )
     }
 
+
+
+    def 'Broadcast implementations behave as expected.'(
+            OperationTypeImplementation imp
+    ){
+
+        given : 'The current Neureka instance is being reset.'
+            Neureka.instance().reset()
+
+        and : 'A mock Function.'
+            def function = Mock( Function )
+            def derivative = Mock( Tsr )
+            function.derive(*_) >> derivative
+
+        and : 'A mock ExecutionCall.'
+            def call = Mock( ExecutionCall )
+
+        when : 'A new ADAgent is being instantiated by calling the given implementation with these arguments...'
+            ADAgent agent = imp.ADAgentCreator.getADAgentOf(
+                function,
+                null,
+                call,
+                true
+            )
+
+        then : 'An exception is being thrown because implementations of type "Broadcast" can only perform reverse mode AD!'
+            def exception = thrown( IllegalArgumentException )
+            exception.message == "Broadcast implementation does not support forward-AD!"
+
+        when : 'The agent generator is called once more with the forward flag set to false...'
+            agent = imp.ADAgentCreator.getADAgentOf(
+                function,
+                null,
+                call,
+                false
+            )
+
+        then : 'No exception is being thrown and the agent is configured to perform backward-AD.'
+            !agent.isForward()
+            agent.derivative() == derivative
+
+        where : 'The variable "imp" is from a List of OperationType implementations of type "Convolution".'
+            imp << OperationContext.instance()
+                .instances()
+                .stream()
+                .filter(
+                        e ->
+                                e.isOperator() &&
+                                        e.supports( Broadcast.class )
+                ).map( e -> e.getImplementation( Broadcast.class ) )
+    }
 
 
 
