@@ -130,7 +130,7 @@ dependencies {
     testRuntime "org.objenesis:objenesis:2.6"    // allows mocking of classes without default constructor (together with CGLIB)
 }
 
-//-------------------------------------------------systemProperty 'com.athaydes.spockframework.report.showCodeBlocks', true---------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 // 7. CONFIGURING TEST EXECUTION :
 
 test {
@@ -302,12 +302,14 @@ uploadArchives {
         mavenDeployer {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
+            if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword'))
+            {
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
             }
 
             pom.project {
