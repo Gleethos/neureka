@@ -115,20 +115,19 @@ public abstract class AbstractFunction extends BaseFunction
         Device device = _device( inputs );
         ExecutionCall<Device> call = new ExecutionCall<>( device, inputs, d, j, _type );
 
-        /* The code below deals with deep functions (non flat):  */
+        /* The code below deals with deep functions (non flat) :  */
         if ( _isFlat ) {
             /* The following code is reached in flat functions only:  */
             /* Autograd-Graph will be generated below for the new GraphNode: */
-            /* only flat functions can be executed directly*/
+            /* only flat functions can be executed directly */
             if ( d < 0 && _doAD )
                 return new GraphNode( this, call, ()-> __flat_execution( call ) ).getPayload();
             else
                 return __flat_execution( call );
+        }
+        else if ( d < 0 ) return __deep_activation( call );
+        else return _deep_derivative( call );
 
-        } else return _apply(
-                call,
-                () -> __deep_execution( call )
-        );
     }
 
     private Tsr __flat_execution( ExecutionCall<Device> call )
@@ -136,13 +135,15 @@ public abstract class AbstractFunction extends BaseFunction
         Tsr alternative = call.getImplementation().getCallHook().handle( this, call );
         if ( alternative != null ) return alternative;
 
-        return _apply(
-                call,
-                () -> __deep_execution( call )
-        );
+        if ( call.getDerivativeIndex() < 0 ) return __deep_activation( call );
+        else return _deep_derivative( call  );
     }
 
-    private Tsr __deep_execution( ExecutionCall<Device> call )
+    public List<Function> getChildren() {
+        return _src;
+    }
+
+    private Tsr __deep_activation(ExecutionCall<Device> call )
     {
         Tsr[] inputs = call.getTensors();
         Device device = call.getDevice();
@@ -153,8 +154,67 @@ public abstract class AbstractFunction extends BaseFunction
         if ( _type.isIndexer() ) tsrs = new Tsr[ 1 + inputs.length ];
         else tsrs = new Tsr[ 1 + _src.size() ];
 
-        if ( d >= 0 ) // Differentiation
+        if ( _type.isIndexer() ) {
+            for ( int i = 1; i < tsrs.length; i++ ) tsrs[i] = _src.get(0).call(inputs, i - 1);
+        } else if (
+                !_isFlat && j < 0 && (
+                        _type.isOperator() || _type.supportsImplementation(Activation.class)
+                )
+        ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
+            tsrs = srcActivation(inputs, j, d, 0);
+            List<String> stringedSource = IntStream.range(0, _src.size()).mapToObj(i -> "I[" + i + "]").collect(Collectors.toList());
+            String asStr = _type.getStringifier().asString(stringedSource);
+            return FunctionBuilder.build(asStr, _doAD).call(tsrs);
+        } else {
+            tsrs = srcActivation(inputs, j, d, 1);
+        }
+        device.execute( new ExecutionCall<>( device, tsrs, d, _type ) );
+
+        return ( tsrs[0] == null ) ? tsrs[1] : tsrs[0];
+    }
+
+    /**
+     *  This method return the index of the tensor
+     *  in the given tensor array which is virtual and contains "1.0".
+     *  However if not all tensors are virtual or their values are not all "0.0" except one
+     *  whose value is "1.0" then it return -1, because the optimization cannot
+     *  be made...
+     *
+     * @param tsrs An array of tensors which ought to be analyzed.
+     * @return The index of the tensor whose value is "1.0" (if all other are "0.0"), otherwise : -1
+     */
+    private int ___indexOfFoundDerivative( Tsr[] tsrs )
+    {
+        boolean allVirtual = true;
+        for ( Tsr t : tsrs ) if ( t != null && !t.isVirtual() ) allVirtual = false;
+        if ( allVirtual ) {
+            int index = -1;
+            for ( int i=0; i < tsrs.length; i++ ) {
+                double value = ( tsrs[i] == null ) ? 0.0 : tsrs[i].value64(0);
+                if ( value == 1.0 ) {
+                    if ( index >= 0 ) return -1;
+                    index = i;
+                } else if ( value != 0.0 ) return -1;
+            }
+            return index;
+        }
+        return -1;
+    }
+
+    private Tsr _deep_derivative( ExecutionCall<Device> call )
+    {
+        Supplier<Tsr> actor =
+        () ->
         {
+            Tsr[] inputs = call.getTensors();
+            Device device = call.getDevice();
+            int d = call.getDerivativeIndex();
+            int j = call.getJ();
+
+            Tsr[] tsrs;
+            if ( _type.isIndexer() ) tsrs = new Tsr[ 1 + inputs.length ];
+            else tsrs = new Tsr[ 1 + _src.size() ];
+
             // Chain-rule (forward AutoDiff):
             // inner times outer means:
             // first derive source!
@@ -207,74 +267,22 @@ public abstract class AbstractFunction extends BaseFunction
                 device.execute( new ExecutionCall<>( device, tsrs, -1, OperationType.instance("*") ) );
             } // done!
             return tsrs[0];
-        }
-        else // No differentiation :
-        {
-            if ( _type.isIndexer() ) {
-                for ( int i = 1; i < tsrs.length; i++ ) tsrs[i] = _src.get(0).call(inputs, i - 1);
-            } else if (
-                    !_isFlat && j < 0 && (
-                            _type.isOperator() || _type.supportsImplementation(Activation.class)
-                    )
-            ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
-                tsrs = srcActivation(inputs, j, d, 0);
-                List<String> stringedSource = IntStream.range(0, _src.size()).mapToObj(i -> "I[" + i + "]").collect(Collectors.toList());
-                String asStr = _type.getStringifier().asString(stringedSource);
-                return FunctionBuilder.build(asStr, _doAD).call(tsrs);
-            } else {
-                tsrs = srcActivation(inputs, j, d, 1);
-            }
-            device.execute( new ExecutionCall<>( device, tsrs, d, _type ) );
-        }
-        return ( tsrs[0] == null ) ? tsrs[1] : tsrs[0];
-    }
 
-    /**
-     *  This method return the index of the tensor
-     *  in the given tensor array which is virtual and contains "1.0".
-     *  However if not all tensors are virtual or their values are not all "0.0" except one
-     *  whose value is "1.0" then it return -1, because the optimization cannot
-     *  be made...
-     *
-     * @param tsrs An array of tensors which ought to be analyzed.
-     * @return The index of the tensor whose value is "1.0" (if all other are "0.0"), otherwise : -1
-     */
-    private int ___indexOfFoundDerivative( Tsr[] tsrs )
-    {
-        boolean allVirtual = true;
-        for ( Tsr t : tsrs ) if ( t != null && !t.isVirtual() ) allVirtual = false;
-        if ( allVirtual ) {
-            int index = -1;
-            for ( int i=0; i < tsrs.length; i++ ) {
-                double value = ( tsrs[i] == null ) ? 0.0 : tsrs[i].value64(0);
-                if ( value == 1.0 ) {
-                    if ( index >= 0 ) return -1;
-                    index = i;
-                } else if ( value != 0.0 ) return -1;
-            }
-            return index;
-        }
-        return -1;
-    }
-
-    private Tsr _apply( ExecutionCall<Device> call, Supplier<Tsr> actor)
-    {
+        };
         Device device = call.getDevice();
         int d = call.getDerivativeIndex();
         Tsr out = null;
-        if ( d >= 0 ) {
-            for ( int i = 0; i < _src.size(); i++ ) { // constants need to be figured out!
-                int di = ( _src.get(i).dependsOn(d) ) ? i : -1;
-                if ( di >= 0 ) {
-                    if ( out == null ) out = actor.get();
-                    else device.execute(
-                            new ExecutionCall<>(
-                                    device, new Tsr[]{null, actor.get(), out}, -1, OperationType.instance("+")
-                            )
-                    );
-                }
+        for ( int i = 0; i < _src.size(); i++ ) { // constants need to be figured out!
+            int di = ( _src.get(i).dependsOn(d) ) ? i : -1;
+            if ( di >= 0 ) {
+                if ( out == null ) out = actor.get();
+                else device.execute(
+                        new ExecutionCall<>(
+                                device, new Tsr[]{null, actor.get(), out}, -1, OperationType.instance("+")
+                        )
+                );
             }
-        } else out = actor.get();
+        }
         return out;
     }
 
