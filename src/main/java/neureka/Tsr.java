@@ -630,7 +630,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     }
 
     public void applyGradient() {
-        forComponent(JITProp.class, jit -> jit.execute());
+        forComponent(JITProp.class, JITProp::execute);
         forComponent(Tsr.class, g -> {
             forComponent(Optimizer.class, o -> o.optimize(this));
             remove(Tsr.class);

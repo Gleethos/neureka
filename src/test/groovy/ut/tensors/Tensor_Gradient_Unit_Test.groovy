@@ -54,4 +54,32 @@ class Tensor_Gradient_Unit_Test extends Specification
     }
 
 
+    def 'Gradient of tensor is being applies regardless of the tensor requiring gradient or not'(
+        boolean requiresGradient, String expected
+    ) {
+        given : 'The Neureka instance is being reset.'
+            Neureka.instance().reset()
+
+        and : 'A new simple tensor.'
+            Tsr t = new Tsr(-3)
+
+        and : 'A second tensor viewed as gradient.'
+            Tsr g = new Tsr(9)
+
+        and : 'The gradient tensor is added to the prior tensor as component.'
+            t.add( g )
+
+        when : 'The request to apply the gradient is being made.'
+            t.applyGradient()
+
+        then : 'The tensor changed as expected.'
+            t.toString().contains(expected)
+
+        where :
+            requiresGradient || expected
+            true             || "(1):[6.0]"
+            false            || "(1):[6.0]"
+    }
+
+
 }
