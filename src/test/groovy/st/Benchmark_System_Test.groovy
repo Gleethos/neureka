@@ -12,7 +12,8 @@ class Benchmark_System_Test extends Specification
 
     def 'Tensor can be constructed by passing List instances.'()
     {
-        given : Neureka.instance().reset()
+        given : 'Neureka instance is being reset.'
+            Neureka.instance().reset()
 
         when : Tsr t = new Tsr([1, 3, 6])
         then :

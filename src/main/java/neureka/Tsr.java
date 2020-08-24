@@ -182,7 +182,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
                     ((Tsr)newComponent).shape().hashCode()!=this.shape().hashCode() ||
                     Arrays.hashCode(((Tsr)newComponent).getNDConf().shape()) != Arrays.hashCode(_conf.shape())
             ) newComponent = null;
-            else setRqsGradient(true);
+            //else setRqsGradient(true);
         }
         return newComponent;
     }
@@ -241,6 +241,10 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 
     public boolean isBranch() {
         return !this.isLeave();
+    }
+
+    public boolean hasGradient() {
+        return this.has(Tsr.class);
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1223,11 +1227,11 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
                                 ? ":(" + asString + ")"
                                 : ":[" + asString + "]"
                 );
-        if (mode.contains("g") && this.rqsGradient()) {
+        if ( mode.contains("g") && (this.rqsGradient() || this.hasGradient()) ) {
             asString += ":g:";
             Tsr gradient = this.find(Tsr.class);
             if (gradient!=null) asString += gradient.toString("c").replace(strShape+":","");
-            else asString+="(null)";
+            else asString+= ((Neureka.instance().settings().view().isUsingLegacyView())?"(null)":"[null]");
         }
         if (mode.contains("r") && this.has(GraphNode.class) && this.find(GraphNode.class).size() > 0) {
             GraphNode node = this.find(GraphNode.class);
