@@ -58,6 +58,11 @@ public abstract class AbstractNDArray<InstanceType> extends AbstractComponentOwn
         return _conf;
     }
 
+    public InstanceType setNDConf(NDConfiguration ndConfiguration){
+        _conf = ndConfiguration;
+        return (InstanceType) this;
+    }
+
     //---
 
     public int rank(){
@@ -135,6 +140,7 @@ public abstract class AbstractNDArray<InstanceType> extends AbstractComponentOwn
                 return "[" + str + "]";
             }
         }
+
 
         /**
          * Indexing methods.

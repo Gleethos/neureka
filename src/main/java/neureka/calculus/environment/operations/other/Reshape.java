@@ -9,6 +9,10 @@ import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.Convolution;
 import neureka.calculus.environment.implementations.GenericImplementation;
 import neureka.calculus.factory.assembly.FunctionBuilder;
+import neureka.ndim.AbstractNDArray;
+import neureka.ndim.config.AbstractNDC;
+
+import java.util.ArrayList;
 
 public class Reshape extends OperationType
 {
@@ -103,7 +107,7 @@ public class Reshape extends OperationType
                         newForm = reversed;
                     }
                     Tsr t = inputs[inputs.length - 1];
-                    return Tsr.Exec.reshaped(t, newForm, true);
+                    return reshaped(t, newForm, true);
                 }
         ).setRJAgent(
                 ( call, goDeeperWith ) ->
@@ -136,7 +140,7 @@ public class Reshape extends OperationType
                         newForm = reversed;
                     }
                     Tsr t = inputs[inputs.length - 1];
-                    return Tsr.Exec.reshaped( t, newForm, true );
+                    return reshaped( t, newForm, true );
                 }
         ).setDrainInstantiation(
                 call -> {
@@ -160,6 +164,30 @@ public class Reshape extends OperationType
         );
 
     }
+
+
+
+
+    public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr) {
+        tensor = (newTsr) ? (Tsr)tensor.getAt(new ArrayList<>()) : tensor;
+        int[] newShape = AbstractNDArray.Utility.Indexing.shpCheck(AbstractNDArray.Utility.Indexing.rearrange(tensor.getNDConf().shape(), newForm), tensor);
+        int[] newTranslation = AbstractNDArray.Utility.Indexing.rearrange(tensor.getNDConf().translation(), newShape, newForm);
+        int[] newIdxmap = AbstractNDArray.Utility.Indexing.newTlnOf(newShape);
+        int[] newSpread = new int[newForm.length];
+        for (int i = 0; i < newForm.length; i++) {
+            if (newForm[i] < 0) newSpread[i] = 1;
+            else if (newForm[i] >= 0) newSpread[i] = tensor.getNDConf().spread(newForm[i]);
+        }
+        int[] newOffset = new int[newForm.length];
+        for (int i = 0; i < newForm.length; i++) {
+            if (newForm[i] < 0) newOffset[i] = 0;
+            else if (newForm[i] >= 0) newOffset[i] = tensor.getNDConf().offset(newForm[i]);
+        }
+        tensor.setNDConf( AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset) );
+        return tensor;
+    }
+
+
 
 
 }
