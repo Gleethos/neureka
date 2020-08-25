@@ -57,8 +57,6 @@ public class Tanh extends OperationType
         Activation typeImplementation = new Activation()
         .setADAnalyzer(
                 call -> {
-                    if ( call.getType().supports(Convolution.class) ) return false;
-                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
                     Tsr last = null;
                     for ( Tsr t : call.getTensors() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return false;

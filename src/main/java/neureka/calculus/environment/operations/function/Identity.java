@@ -38,8 +38,6 @@ public class Identity extends OperationType
         Activation typeImplementation = new Activation()
         .setADAnalyzer(
                 call -> {
-                    if ( call.getType().supports(Convolution.class) ) return false;
-                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
                     Tsr last = null;
                     for ( Tsr t : call.getTensors() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return false;
@@ -151,8 +149,6 @@ public class Identity extends OperationType
         Scalarization scalarization = new Scalarization()
             .setADAnalyzer(
                     call -> {
-                        if ( call.getType().supports(Convolution.class) ) return false;
-                        if ( call.getType().identifier().equals(",") ) return false; //Reshape
                         Tsr last = null;
                         for ( Tsr t : call.getTensors() ) {
                             if ( last != null && !last.shape().equals(t.shape()) ) return false;
@@ -180,24 +176,24 @@ public class Identity extends OperationType
         if( forward )
         {
             Tsr deriv = f.derive(inputs, d);
-            return new ADAgent(
-                    () -> deriv
-                ).withForward(
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                ).withBackward(
-                    null
-                );
+                return new ADAgent(
+                        () -> deriv
+                    ).withForward(
+                        ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
+                    ).withBackward(
+                        null
+                    );
         }
         else
         {
-                Tsr deriv = f.derive(inputs, d);
+            Tsr deriv = f.derive(inputs, d);
                 return new ADAgent(
-                            ()->deriv
-                        ).withForward(
-                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                        ).withBackward(
-                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-                        );
+                        ()->deriv
+                    ).withForward(
+                        (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                    ).withBackward(
+                        (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+                    );
         }
     }
         ).setCallHock(
