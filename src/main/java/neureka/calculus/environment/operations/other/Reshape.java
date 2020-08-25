@@ -76,8 +76,10 @@ public class Reshape extends OperationType
                     throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                 }
                 return new ADAgent(
-                        ()->null,
-                        (t, derivative) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0),
+                        ()->null
+                ).withForward(
+                        (t, derivative) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0)
+                ).withBackward(
                         (t, error) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0)
                 );
             }

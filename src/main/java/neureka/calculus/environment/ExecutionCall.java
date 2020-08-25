@@ -10,6 +10,7 @@ import neureka.calculus.factory.AbstractFunction;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -33,6 +34,8 @@ public class ExecutionCall< DeviceType extends Device >
     private final OperationType _type;
     private OperationTypeImplementation<AbstractOperationTypeImplementation> _implementation;
 
+    private Map<String, Object> _context;
+
     public ExecutionCall(
             DeviceType device,
             Tsr[] tsrs,
@@ -44,6 +47,7 @@ public class ExecutionCall< DeviceType extends Device >
         _d = d;
         _type = type;
         _implementation = null;
+        _context = null;
     }
     
     public ExecutionCall(
@@ -102,5 +106,12 @@ public class ExecutionCall< DeviceType extends Device >
         return null;
     }
     
-    
+    public <T> T getAt(Class<T> type){
+        return (T) _context.get(getClass().getName());
+    }
+
+    public Object getAt(String varName){
+        return _context.get(varName);
+    }
+
 }

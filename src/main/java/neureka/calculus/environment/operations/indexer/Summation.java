@@ -234,8 +234,10 @@ return new ADAgent(
                 );
                 Tsr deriv = f.derive(inputs, d);
                 return new ADAgent(
-                        ()->deriv,
-                        (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}),
+                        ()->deriv
+                ).withForward(
+                        (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                ).withBackward(
                         (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)})
                 );
             }

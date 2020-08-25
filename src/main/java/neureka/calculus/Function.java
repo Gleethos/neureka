@@ -92,7 +92,7 @@ public interface Function
             GraphLock newLock = new GraphLock(function, inputs);
             for (Tsr t : inputs) {
                 if(t.has(GraphNode.class)) t.find(GraphNode.class).obtainLocking(newLock);
-                else new GraphNode(function, newLock, ()-> t);
+                else new GraphNode( function, newLock, ()-> t );
             }
             Tsr result = null;
             if(activation==null) result = function.call(inputs);

@@ -581,7 +581,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         this._configureFromNewShape(shape, false);
     }
 
-    //TRACKED COMPUTATION :
+    // TRACKED COMPUTATION :
     //=========================
     public Tsr(Tsr tensor, String operation) {
         if (tensor == null) return;

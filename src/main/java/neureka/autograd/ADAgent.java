@@ -16,14 +16,6 @@ public class ADAgent
     private ADAction _bad;
     private Supplier<Tsr> _derivative;
 
-    public ADAgent(
-            Supplier<Tsr> derivative, ADAction fad, ADAction bad
-    ){
-        _derivative = derivative;
-        _fad = fad;
-        _bad = bad;
-    }
-
     public ADAgent(  Supplier<Tsr> derivative  ){
         _derivative = derivative;
     }

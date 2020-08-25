@@ -344,7 +344,7 @@ public class GraphNode implements Component<Tsr>
         }
     }
 
-    private void _construct(Tsr output, Function function, ExecutionCall<Device> call, GraphLock lock)
+    private void _construct(  Tsr output, Function function, ExecutionCall<Device> call, GraphLock lock )
     {
         Tsr[] inputs = ( call == null ) ? null : call.getTensors();
         if ( output == null ) throw new NullPointerException("The supplied payload Tsr must no be null!");
