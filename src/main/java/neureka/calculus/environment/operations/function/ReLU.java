@@ -73,10 +73,12 @@ public class ReLU extends OperationType
             derivv != null
         ) {
             return new ADAgent(
-                    () -> derivv,
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, derivv}),
+                    () -> derivv
+                ).withForward(
+                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                ).withBackward(
                     null
-            );
+                );
         }
         Tsr[] inputs = call.getTensors();
         int d = call.getDerivativeIndex();
@@ -84,10 +86,12 @@ public class ReLU extends OperationType
         {
             Tsr deriv = f.derive(inputs, d);
             return new ADAgent(
-                    () -> deriv,
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}),
+                    () -> deriv
+                ).withForward(
+                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
+                ).withBackward(
                     null
-            );
+                );
         }
         else
         {
@@ -95,10 +99,12 @@ public class ReLU extends OperationType
             {
                 Tsr deriv = f.derive(inputs, d);
                 return new ADAgent(
-                        ()->deriv,
-                        (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
-                        (t, error) -> mul.call(new Tsr[]{error, deriv})
-                );
+                            ()->deriv
+).withForward(
+                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+).withBackward(
+                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+);
             }
         }
     }

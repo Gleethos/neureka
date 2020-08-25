@@ -91,11 +91,13 @@ public class Summation extends OperationType
                 if (
                     derivv != null
                 ) {
-                    return new ADAgent(
-                            () -> derivv,
-                            ( t, derivative ) -> mul.call(new Tsr[]{derivative, derivv}),
-                            null
-                    );
+return new ADAgent(
+                            ()->derivv
+                   ).withForward(
+                            ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                   ).withBackward(
+                           null
+                   );
                 }
                 Tsr[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();
@@ -107,10 +109,12 @@ public class Summation extends OperationType
                 {
                     Tsr deriv = f.derive(inputs, d);
                     return new ADAgent(
-                            ()->deriv,
-                            (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
-                            (t, error) -> mul.call(new Tsr[]{error, deriv})
-                    );
+                            ()->deriv
+).withForward(
+                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+).withBackward(
+                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+);
                 }
             }
         ).setCallHock(
@@ -200,10 +204,12 @@ public class Summation extends OperationType
             derivv != null
         ) {
             return new ADAgent(
-                    () -> derivv,
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, derivv}),
+                    () -> derivv
+                ).withForward(
+                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                ).withBackward(
                     null
-            );
+                );
         }
         Tsr[] inputs = call.getTensors();
         int d = call.getDerivativeIndex();
@@ -211,10 +217,12 @@ public class Summation extends OperationType
         {
             Tsr deriv = f.derive(inputs, d);
             return new ADAgent(
-                    () -> deriv,
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}),
+                    () -> deriv
+                ).withForward(
+                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
+                ).withBackward(
                     null
-            );
+                );
         }
         else
         {
@@ -227,7 +235,7 @@ public class Summation extends OperationType
                 Tsr deriv = f.derive(inputs, d);
                 return new ADAgent(
                         ()->deriv,
-                        (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
+                        (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}),
                         (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)})
                 );
             }
@@ -235,10 +243,12 @@ public class Summation extends OperationType
             {
                 Tsr deriv = f.derive(inputs, d);
                 return new ADAgent(
-                        ()->deriv,
-                        (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
-                        (t, error) -> mul.call(new Tsr[]{error, deriv})
-                );
+                            ()->deriv
+).withForward(
+                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+).withBackward(
+                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+);
             }
         }
     }

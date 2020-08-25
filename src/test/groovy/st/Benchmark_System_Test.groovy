@@ -51,7 +51,7 @@ class Benchmark_System_Test extends Specification
             ],
                     null,
                     HostCPU.instance(),
-                    tsr->{
+                    tsr -> {
                         hash = (hash+tsr.toString()).md5()
                     }
             )
@@ -63,19 +63,19 @@ class Benchmark_System_Test extends Specification
             if ( !Neureka.instance().canAccessOpenCL() ) return
 
         when : 'The benchmark is now being executed with the first found OpenCLDevice instance...'
-        hash = ""
-        session([
-                "iterations":1,
-                "sample_size":20,
-                "difficulty":15,
-                "intensifier":0
-        ],
-                null,
-                Device.find("first"),
-                tsr->{
-                    hash = (hash+tsr.toString()).md5()
-                }
-        )
+            hash = ""
+            session([
+                    "iterations":1,
+                    "sample_size":20,
+                    "difficulty":15,
+                    "intensifier":0
+            ],
+                    null,
+                    Device.find("first"),
+                        tsr -> {
+                            hash = (hash+tsr.toString()).md5()
+                        }
+            )
 
         then : 'The calculated hash is as expected.'
             hash==expected

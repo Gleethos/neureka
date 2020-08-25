@@ -24,8 +24,6 @@ public class Addition extends OperationType {
     private static final Broadcast _broadcast = new Broadcast()
         .setADAnalyzer(
                 call -> {
-                    if ( call.getType().supports(Convolution.class) ) return false;
-                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
                     Tsr last = null;
                     for ( Tsr t : call.getTensors() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return false;
@@ -40,26 +38,27 @@ public class Addition extends OperationType {
                 if (
                     derivv != null
                 ) {
-                    return new ADAgent(
-                            () -> derivv,
-                            ( t, derivative ) -> mul.call(new Tsr[]{derivative, derivv}),
-                            null
-                    );
+return new ADAgent(
+                            ()->derivv
+                   ).withForward(
+                            ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                   ).withBackward(
+                           null
+                   );
                 }
                 Tsr[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();
-                if( forward )
-                {
-                    throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                }
+if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                 else
                 {
                     Tsr deriv = f.derive(inputs, d);
                     return new ADAgent(
-                            ()->deriv,
-                            (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
-                            (t, error) -> mul.call(new Tsr[]{error, deriv})
-                    );
+                            ()->deriv
+).withForward(
+                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+).withBackward(
+                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+);
 
                 }
             }
@@ -161,10 +160,12 @@ public class Addition extends OperationType {
             derivv != null
         ) {
             return new ADAgent(
-                    () -> derivv,
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, derivv}),
+                    () -> derivv
+                ).withForward(
+                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                ).withBackward(
                     null
-            );
+                );
         }
         Tsr[] inputs = call.getTensors();
         int d = call.getDerivativeIndex();
@@ -172,10 +173,12 @@ public class Addition extends OperationType {
         {
             Tsr deriv = f.derive(inputs, d);
             return new ADAgent(
-                    () -> deriv,
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}),
+                    () -> deriv
+                ).withForward(
+                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
+                ).withBackward(
                     null
-            );
+                );
         }
         else
         {
@@ -183,10 +186,12 @@ public class Addition extends OperationType {
             {
                 Tsr deriv = f.derive(inputs, d);
                 return new ADAgent(
-                        ()->deriv,
-                        (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
-                        (t, error) -> mul.call(new Tsr[]{error, deriv})
-                );
+                            ()->deriv
+).withForward(
+                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+).withBackward(
+                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+);
             }
         }
     }
@@ -311,11 +316,13 @@ public class Addition extends OperationType {
                 if (
                     derivv != null
                 ) {
-                    return new ADAgent(
-                            () -> derivv,
-                            ( t, derivative ) -> mul.call(new Tsr[]{derivative, derivv}),
-                            null
-                    );
+return new ADAgent(
+                            ()->derivv
+                   ).withForward(
+                            ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                   ).withBackward(
+                           null
+                   );
                 }
                 Tsr[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();
@@ -323,19 +330,23 @@ public class Addition extends OperationType {
                 {
                     Tsr deriv = f.derive(inputs, d);
                     return new ADAgent(
-                            () -> deriv,
-                            ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}),
-                            null
-                    );
+                    () -> deriv
+                ).withForward(
+                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
+                ).withBackward(
+                    null
+                );
                 }
                 else
                 {
                     Tsr deriv = f.derive(inputs, d);
                     return new ADAgent(
-                            ()->deriv,
-                            (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
-                            (t, error) -> mul.call(new Tsr[]{error, deriv})
-                    );
+                            ()->deriv
+).withForward(
+                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+).withBackward(
+                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+);
                 }
             }
         ).setCallHock(
@@ -430,8 +441,6 @@ public class Addition extends OperationType {
                 new Convolution()
         .setADAnalyzer(
                 call -> {
-                    if ( call.getType().supports(Convolution.class) ) return false;
-                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
                     Tsr last = null;
                     for ( Tsr t : call.getTensors() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return false;
@@ -447,10 +456,12 @@ public class Addition extends OperationType {
             derivv != null
         ) {
             return new ADAgent(
-                    () -> derivv,
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, derivv}),
+                    () -> derivv
+                ).withForward(
+                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                ).withBackward(
                     null
-            );
+                );
         }
         Tsr[] inputs = call.getTensors();
         int d = call.getDerivativeIndex();
@@ -462,10 +473,12 @@ public class Addition extends OperationType {
         {
             Tsr deriv = f.derive(inputs, d);
             return new ADAgent(
-                    ()->deriv,
-                    (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
-                    (t, error) -> mul.call(new Tsr[]{error, deriv})
-            );
+                            ()->deriv
+).withForward(
+                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+).withBackward(
+                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+);
         }
     }
         ).setCallHock(

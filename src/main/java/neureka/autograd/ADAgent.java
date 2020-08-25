@@ -24,6 +24,20 @@ public class ADAgent
         _bad = bad;
     }
 
+    public ADAgent(  Supplier<Tsr> derivative  ){
+        _derivative = derivative;
+    }
+
+    public ADAgent withForward(ADAction fad) {
+        _fad = fad;
+        return this;
+    }
+
+    public ADAgent withBackward(ADAction bad){
+        _bad = bad;
+        return this;
+    }
+
     public Tsr forward(GraphNode t, Tsr error){
         return _fad.execute(t, error);
     }

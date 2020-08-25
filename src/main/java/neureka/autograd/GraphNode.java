@@ -413,7 +413,7 @@ public class GraphNode implements Component<Tsr>
                                 function.derive( inputs, i ),
                                 ( node, targetDerivative ) -> {
                                     if ( this.has( node ) ) {
-                                        Tsr derivative = ADD.call(new Tsr[]{targetDerivative, (Tsr) this.get(node)});
+                                        Tsr derivative = ADD.call( new Tsr[]{targetDerivative, (Tsr) this.get(node)} );
                                         this.put(
                                                 node,
                                                 call.getADAgentFrom(
@@ -461,9 +461,8 @@ public class GraphNode implements Component<Tsr>
                                 srcNode,
                                 call.getADAgentFrom(
                                         function,
-                                        //function.getADAgent(
                                         null,
-                                        new ExecutionCall<Device>(
+                                        new ExecutionCall<>(
                                                 call.getDevice(),
                                                 call.getTensors(),
                                                 i,

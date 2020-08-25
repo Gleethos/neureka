@@ -123,7 +123,7 @@ public class XMultiplication extends OperationType
                 Tsr deriv = f.derive(inputs, d);
                 return new ADAgent(
                         ()->deriv,
-                        (t, derivative) -> mul.call(new Tsr[]{derivative, deriv}),
+                        (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}),
                         (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)})
                 );
             }
