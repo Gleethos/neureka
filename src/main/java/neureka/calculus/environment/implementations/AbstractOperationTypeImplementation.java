@@ -34,7 +34,7 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
 
     private HandleChecker _canHandle;
     private ADAnalyzer _analyzer;
-    private ADAgentCreator _adaCreator;
+    private ADAgentSupplier _adaCreator;
     private InitialCallHook _hook;
     private RecursiveJunctionAgent _RJAgent;
     private DrainInstantiation _instantiation;
@@ -64,12 +64,12 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
     }
 
     @Override
-    public ADAgentCreator getADAgentCreator() {
+    public ADAgentSupplier getADAgentCreator() {
         return _adaCreator;
     }
 
     @Override
-    public FinalType setADAgentCreator(ADAgentCreator creator) {
+    public FinalType setADAgentCreator( ADAgentSupplier creator ) {
         _adaCreator = creator;
         return (FinalType) this;
     }

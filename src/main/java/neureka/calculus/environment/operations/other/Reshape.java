@@ -70,8 +70,9 @@ public class Reshape extends OperationType
         ).setADAnalyzer(
                 call -> false
         ).setADAgentCreator(
-            ( Function f, Tsr derivv, ExecutionCall<Device> call, boolean forward ) ->
+            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
+                Tsr derivv = (Tsr)call.getAt("derivative");
                 if(forward){
                     throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                 }

@@ -425,7 +425,7 @@ public class GraphNode implements Component<Tsr>
                                                                 finalI,
                                                                 call.getJ(),
                                                                 call.getType()
-                                                        ),
+                                                        ).putAt("derivative",derivative),
                                                         true
                                                 )
                                         );
@@ -441,7 +441,7 @@ public class GraphNode implements Component<Tsr>
                                                                 finalI,
                                                                 call.getJ(),
                                                                 call.getType()
-                                                        ),
+                                                        ).putAt("derivative",targetDerivative),
                                                         true
                                                 )
                                         );

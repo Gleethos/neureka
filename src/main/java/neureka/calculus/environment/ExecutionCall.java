@@ -5,14 +5,9 @@ import neureka.acceleration.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.environment.implementations.AbstractOperationTypeImplementation;
-import neureka.calculus.environment.implementations.Activation;
-import neureka.calculus.factory.AbstractFunction;
-import neureka.calculus.factory.assembly.FunctionBuilder;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.TreeMap;
 
 /**
  * This class is a simple container holding relevant
@@ -89,8 +84,14 @@ public class ExecutionCall< DeviceType extends Device >
         return getImplementation().getADAnalyzer().allowsForward(this);
     }
     
-    public ADAgent getADAgentFrom( Function function, Tsr derivative, ExecutionCall call, boolean forward ) {
-        return getImplementation().getADAgentCreator().getADAgentOf(function, derivative, call, forward);
+    public ADAgent getADAgentFrom(Function function, Tsr derivative, ExecutionCall<Device> call, boolean forward ) {
+        if ( this._context != null ) {
+            if ( call._context ==null ) call._context = new TreeMap<>();
+            call._context.putAll(this._context);
+        }
+        if( derivative != null ) assert (call._context != null && call._context.containsKey("derivative"));
+        else assert call._context == null;
+        return getImplementation().getADAgentCreator().getADAgentOf(function, call, forward);
     }
     
     public void mutateArguments(Mutator mutation){
@@ -101,17 +102,29 @@ public class ExecutionCall< DeviceType extends Device >
         return new ExecutionCall<>(_device, tensors, _d, _j, _type);
     }
     
-    public ExecutionCall<Device> deepActivationCallBy( AbstractFunction function )
-    {
-        return null;
-    }
-    
     public <T> T getAt(Class<T> type){
+        if ( _context == null ) return null;
         return (T) _context.get(getClass().getName());
     }
 
     public Object getAt(String varName){
+        if ( _context == null ) return null;
         return _context.get(varName);
+    }
+
+    public ExecutionCall<DeviceType> putAt(String s, Tsr o){
+        if ( _context == null ) _context = new TreeMap<>();
+        _context.put(s,o);
+        return this;
+    }
+
+    public Map<String, Object> getContext(){
+        return _context;
+    }
+
+    public void takeContext( Map<String, Object>  context ){
+        if(_context==null && context!=null )_context = new TreeMap<>();
+        if(context!=null) _context.putAll(_context);
     }
 
 }

@@ -109,8 +109,9 @@ public class Multiplication extends OperationType {
         ).setADAnalyzer(
                 call -> true
         ).setADAgentCreator(
-            ( Function f, Tsr derivv, ExecutionCall<Device> call, boolean forward ) ->
+            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
+                Tsr derivv = (Tsr)call.getAt("derivative");
                 Function mul = Function.Detached.MUL;
                 if (
                     derivv != null
@@ -222,8 +223,9 @@ return new ADAgent(
         ).setADAnalyzer(
                 call -> true
         ).setADAgentCreator(
-            ( Function f, Tsr derivv, ExecutionCall<Device> call, boolean forward ) ->
+            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
+                Tsr derivv = (Tsr)call.getAt("derivative");
                 Function mul = Function.Detached.MUL;
                 if (
                     derivv != null
@@ -334,8 +336,9 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
         ).setADAnalyzer(
                 call -> true
         ).setADAgentCreator(
-    ( Function f, Tsr derivv, ExecutionCall<Device> call, boolean forward ) ->
-    {
+    ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+            {
+                Tsr derivv = (Tsr)call.getAt("derivative");
         Function mul = Function.Detached.MUL;
         if (
             derivv != null
@@ -464,19 +467,20 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
                     return true;
                 }
         ).setADAgentCreator(
-            ( Function f, Tsr derivv, ExecutionCall<Device> call, boolean forward ) ->
+            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
+                Tsr derivv = (Tsr)call.getAt("derivative");
                 Function mul = Function.Detached.MUL;
                 if (
                     derivv != null
                 ) {
-return new ADAgent(
-                            derivv
-                   ).withForward(
-                            ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
-                   ).withBackward(
-                           null
-                   );
+                    return new ADAgent(
+                                derivv
+                       ).withForward(
+                                ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                       ).withBackward(
+                               null
+                       );
                 }
                 Tsr[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();
@@ -559,8 +563,9 @@ return new ADAgent(
                         return true;
                     }
             ).setADAgentCreator(
-            ( Function f, Tsr derivv, ExecutionCall<Device> call, boolean forward ) ->
+            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
+                Tsr derivv = (Tsr)call.getAt("derivative");
                 Function mul = Function.Detached.MUL;
                 if (
                     derivv != null

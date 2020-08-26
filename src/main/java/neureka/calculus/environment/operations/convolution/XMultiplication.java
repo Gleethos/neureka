@@ -108,8 +108,9 @@ public class XMultiplication extends OperationType
                     return true;
                 }
         ).setADAgentCreator(
-            ( Function f, Tsr derivv, ExecutionCall<Device> call, boolean forward ) ->
+            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
+                Tsr derivv = (Tsr)call.getAt("derivative");
                 if ( forward ) throw new IllegalArgumentException("Convolution of does not support forward-AD!");
 
                 Function mul = Function.Detached.MUL;

@@ -158,8 +158,9 @@ public class Power extends OperationType
         ).setADAnalyzer(
                 call -> true
         ).setADAgentCreator(
-    ( Function f, Tsr derivv, ExecutionCall<Device> call, boolean forward ) ->
-    {
+    ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+            {
+                Tsr derivv = (Tsr)call.getAt("derivative");
         Function mul = Function.Detached.MUL;
         if (
             derivv != null
@@ -278,8 +279,9 @@ public class Power extends OperationType
         ).setADAnalyzer(
                 call -> true
         ).setADAgentCreator(
-            ( Function f, Tsr derivv, ExecutionCall<Device> call, boolean forward ) ->
+            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
+                Tsr derivv = (Tsr)call.getAt("derivative");
                 Function mul = Function.Detached.MUL;
                 if (
                     derivv != null
@@ -397,8 +399,9 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
         ).setADAnalyzer(
             call -> true
         ).setADAgentCreator(
-            ( Function f, Tsr derivv, ExecutionCall<Device> call, boolean forward ) ->
+            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
+                Tsr derivv = (Tsr)call.getAt("derivative");
                 Function mul = Function.Detached.MUL;
                 if (
                     derivv != null
@@ -529,8 +532,9 @@ return new ADAgent(
                                 return true;
                             }
                     ).setADAgentCreator(
-                        ( Function f, Tsr derivv, ExecutionCall<Device> call, boolean forward ) ->
-                        {
+                        ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+            {
+                Tsr derivv = (Tsr)call.getAt("derivative");
                             Function mul = Function.Detached.MUL;
                             if (
                                 derivv != null

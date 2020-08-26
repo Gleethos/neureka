@@ -34,7 +34,6 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
         when : 'A new ADAgent is being instantiated by calling the given implementation with these arguments...'
             ADAgent agent = imp.ADAgentCreator.getADAgentOf(
                     function,
-                    null,
                     call,
                     true
             )
@@ -46,7 +45,6 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
         when : 'The agent generator is called once more with the forward flag set to false...'
             agent = imp.ADAgentCreator.getADAgentOf(
                     function,
-                    null,
                     call,
                     false
             )
@@ -86,7 +84,6 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
         when : 'A new ADAgent is being instantiated by calling the given implementation with these arguments...'
             ADAgent agent = imp.ADAgentCreator.getADAgentOf(
                 function,
-                null,
                 call,
                 true
             )
@@ -98,7 +95,6 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
         when : 'The agent generator is called once more with the forward flag set to false...'
             agent = imp.ADAgentCreator.getADAgentOf(
                 function,
-                null,
                 call,
                 false
             )
@@ -136,7 +132,6 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
         when : 'A new ADAgent is being instantiated by calling the given implementation with these arguments...'
             ADAgent agent = imp.ADAgentCreator.getADAgentOf(
                     function,
-                    null,
                     call,
                     true
             )
@@ -148,7 +143,6 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
         when : 'The agent generator is called once more with the forward flag set to false...'
             agent = imp.ADAgentCreator.getADAgentOf(
                 function,
-                null,
                 call,
                 false
             )
@@ -189,7 +183,6 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
         when : 'A new ADAgent is being instantiated by calling the given implementation with these arguments...'
             ADAgent agent = imp.ADAgentCreator.getADAgentOf(
                 function,
-                null,
                 call,
                 true
             )
@@ -201,7 +194,6 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
         when : 'The agent generator is called once more with the forward flag set to false...'
             agent = imp.ADAgentCreator.getADAgentOf(
                 function,
-                null,
                 call,
                 false
             )

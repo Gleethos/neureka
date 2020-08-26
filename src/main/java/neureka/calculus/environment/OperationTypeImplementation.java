@@ -45,8 +45,17 @@ public interface OperationTypeImplementation<FinalType>
         );
     }
 
-    ADAgentCreator getADAgentCreator();
-    FinalType setADAgentCreator( ADAgentCreator creator );
+    interface ADAgentSupplier {
+        ADAgent getADAgentOf(
+                neureka.calculus.Function f,
+                ExecutionCall<Device> call,
+                boolean forward
+        );
+    }
+
+    ADAgentSupplier getADAgentCreator();
+
+    FinalType setADAgentCreator( ADAgentSupplier creator );
 
     interface InitialCallHook {
         Tsr handle( AbstractFunction caller,  ExecutionCall call );
