@@ -2,10 +2,10 @@ package neureka.calculus.factory;
 
 import neureka.Tsr;
 import neureka.acceleration.Device;
+import neureka.acceleration.host.HostCPU;
 import neureka.calculus.Function;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.Type;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 import neureka.calculus.factory.components.FunctionConstant;
@@ -312,6 +312,7 @@ public abstract class AbstractFunction extends BaseFunction
 
     private Device _device( Tsr[] inputs )
     {
+        if ( inputs.length == 0 ) return HostCPU.instance();
         Device device = inputs[0].find( Device.class );
         boolean onSameDevice = _shareGuestDevice( inputs );
         boolean doAccel = !_type.identifier().equals(",") && onSameDevice;
