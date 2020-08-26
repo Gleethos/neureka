@@ -21,7 +21,7 @@ import java.util.*;
 <span class="nc bnc" id="L21" title="All 2 branches missed.">        } else if (type.identifier().equals(&quot;,&quot;)) {</span>
 <span class="nc" id="L22">            ArrayList&lt;Function&gt; srcs = new ArrayList&lt;&gt;();</span>
 <span class="nc bnc" id="L23" title="All 2 branches missed.">            for (int i = 0; i &lt; size; i++) srcs.add(new FunctionInput().newBuild(&quot;&quot; + i));</span>
-<span class="nc" id="L24">            return new FunctionNode(type.id(), srcs, doAD);</span>
+<span class="nc" id="L24">            return new FunctionNode(type, srcs, doAD);</span>
         }
 <span class="nc bnc" id="L26" title="All 2 branches missed.">        if (type.id() &lt; 10) {</span>
 <span class="nc" id="L27">            return build(type.identifier() + &quot;(I[0])&quot;, doAD);</span>
@@ -180,7 +180,7 @@ import java.util.*;
 <span class="fc bfc" id="L180" title="All 2 branches covered.">                        for (String p : parameters) {</span>
 <span class="fc" id="L181">                            sources.add(FunctionBuilder.build(p, doAD));</span>
 <span class="fc" id="L182">                        }</span>
-<span class="fc" id="L183">                        function = new FunctionNode(typeId, sources, doAD);</span>
+<span class="fc" id="L183">                        function = new FunctionNode(OperationType.instance(typeId), sources, doAD);</span>
 <span class="fc" id="L184">                        return function;</span>
                     }
                 }
@@ -262,7 +262,7 @@ import java.util.*;
 <span class="pc bpc" id="L262" title="1 of 2 branches missed.">                if (source != null) newVariable.add(source);</span>
 <span class="fc" id="L263">            }</span>
 <span class="fc" id="L264">            sources = newVariable;</span>
-<span class="fc" id="L265">            function = new FunctionNode(typeId, sources, doAD);</span>
+<span class="fc" id="L265">            function = new FunctionNode(OperationType.instance(typeId), sources, doAD);</span>
 <span class="fc" id="L266">            return function;</span>
         }
     }

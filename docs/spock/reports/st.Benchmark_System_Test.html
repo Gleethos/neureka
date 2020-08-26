@@ -11,7 +11,7 @@
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Mon Aug 24 16:51:20 CEST 2020 by Daniel</div>
+<div class='date-test-ran'>Created on Wed Aug 26 23:12:40 CEST 2020 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -28,7 +28,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>5,040 seconds</td>
+<td>11,101 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -195,7 +195,7 @@ String expected = "56b2eb74955e49cd777469c7dad0536e"</pre>
 ],
         null,
         HostCPU.instance(),
-        tsr-&gt;{
+        tsr -&gt; {
             hash = (hash+tsr.toString()).md5()
         }
 )</pre>
@@ -249,9 +249,9 @@ session([
 ],
         null,
         Device.find("first"),
-        tsr-&gt;{
-            hash = (hash+tsr.toString()).md5()
-        }
+            tsr -&gt; {
+                hash = (hash+tsr.toString()).md5()
+            }
 )</pre>
 </td>
 </tr>

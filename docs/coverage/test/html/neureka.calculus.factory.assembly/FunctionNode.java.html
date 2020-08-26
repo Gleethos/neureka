@@ -2,58 +2,59 @@
 
 import neureka.Tsr;
 import neureka.calculus.*;
+import neureka.calculus.environment.OperationType;
 import neureka.calculus.factory.AbstractFunction;
 
 import java.util.List;
 
 public class FunctionNode extends AbstractFunction
 {
-    public FunctionNode( int f_id, List&lt;Function&gt; sources, boolean doAD ) {
-<span class="fc" id="L12">        super( f_id, sources, doAD );</span>
-<span class="fc" id="L13">    }</span>
+    public FunctionNode( OperationType type, List&lt;Function&gt; sources, boolean doAD ) {
+<span class="fc" id="L13">        super( type, sources, doAD );</span>
+<span class="fc" id="L14">    }</span>
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
     public Tsr call( Tsr[] inputs, int j ) {
-<span class="fc" id="L19">        return CACHE.preprocess( inputs, this, ()-&gt; _tensor_activation(inputs, j, -1), -1, j );</span>
+<span class="fc" id="L20">        return CACHE.preprocess( inputs, this, ()-&gt; _tensor_activation(inputs, j, -1), -1, j );</span>
     }
 
     @Override
     public Tsr call( Tsr[] inputs ) {
-<span class="fc" id="L24">        return CACHE.preprocess( inputs, this, ()-&gt; _tensor_activation(inputs, -1, -1), -1, -1 );</span>
+<span class="fc" id="L25">        return CACHE.preprocess( inputs, this, ()-&gt; _tensor_activation(inputs, -1, -1), -1, -1 );</span>
     }
 
     @Override
     public Tsr derive( Tsr[] inputs, int d, int j ) {
-<span class="fc" id="L29">        return CACHE.preprocess( inputs, this, ()-&gt; _tensor_activation(inputs, j, d), d, j );</span>
+<span class="fc" id="L30">        return CACHE.preprocess( inputs, this, ()-&gt; _tensor_activation(inputs, j, d), d, j );</span>
     }
 
     @Override
     public Tsr derive( Tsr[] inputs, int d ) {
-<span class="fc" id="L34">        return CACHE.preprocess( inputs, this, ()-&gt; _tensor_activation(inputs, -1, d), d, -1 );</span>
+<span class="fc" id="L35">        return CACHE.preprocess( inputs, this, ()-&gt; _tensor_activation(inputs, -1, d), d, -1 );</span>
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
     public double call( final double[] inputs, int j ) {
-<span class="fc" id="L41">        return _scalar_activation( inputs, j, -1 );</span>
+<span class="fc" id="L42">        return _scalar_activation( inputs, j, -1 );</span>
     }
 
     @Override
     public double call( final double[] inputs ) {
-<span class="fc" id="L46">        return _scalar_activation( inputs, -1, -1 );</span>
+<span class="fc" id="L47">        return _scalar_activation( inputs, -1, -1 );</span>
     }
 
     @Override
     public double derive( final double[] inputs, final int d, final int j ) {
-<span class="fc" id="L51">        return _scalar_activation( inputs, j, d );</span>
+<span class="fc" id="L52">        return _scalar_activation( inputs, j, d );</span>
     }
 
     @Override
     public double derive( final double[] inputs, final int d ) {
-<span class="fc" id="L56">        return _scalar_activation( inputs, -1, d );</span>
+<span class="fc" id="L57">        return _scalar_activation( inputs, -1, d );</span>
     }
 
 }

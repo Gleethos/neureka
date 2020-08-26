@@ -58,11 +58,12 @@ class Calculus_Extension_Unit_Tests extends Specification
         when : 'The function is being called with an empty tensor array...'
             def result = function.call(new Tsr[0])
 
-        then : 'The custom call hook is being accessed as outlined below.'
+        then : 'The custom call hook should being accessed as outlined below.'
             (1.._) * type.implementationOf(_) >> implementation
             (1.._) * implementation.getCallHook() >> customCallHook
             (1.._) * customCallHook.handle(_,_) >> output
-        and : 'The GraphNode instance which will be created as tensor component acts as follows.'
+
+        and : 'The mocked output tensor returns a mock device.'
             0 * output.device() >> Mock(Device)
 
         and : 'The ADAnalyzer of the mock implementation will not be called because "doAD" is set to "false".'
@@ -76,7 +77,7 @@ class Calculus_Extension_Unit_Tests extends Specification
 
     }
 
-    def 'Lambda properties of mock implementation interacts with FunctionNode (AbstractFunction) as expected.'()
+    def 'Lambda properties of mock implementation interact with FunctionNode (AbstractFunction) as expected.'()
     {
         given : 'Neureka is being reset.'
             Neureka.instance().reset()
@@ -91,7 +92,7 @@ class Calculus_Extension_Unit_Tests extends Specification
         and : 'A list of function source nodes.'
             def children = [Mock(FunctionInput), Mock(FunctionInput)]
 
-        and : 'A mock tensor which is the expected output'
+        and : 'A mock tensor which is the expected output, an input and a graph node.'
             Tsr output = Mock(Tsr)
             Tsr input = Mock(Tsr)
             GraphNode node = Mock(GraphNode)
@@ -117,14 +118,15 @@ class Calculus_Extension_Unit_Tests extends Specification
             (1.._) * type.implementationOf(_) >> implementation
             (1.._) * implementation.getCallHook() >> customCallHook
             (1.._) * customCallHook.handle(_,_) >> output
-        and : 'The GraphNode instance which will be created as tensor component acts as follows.'
+
+        and : 'The GraphNode instance which will be created as tensor component interacts as follows.'
             (1.._) * input.find(GraphNode.class) >> node
             (1.._) * node.lock() >> Mock(GraphLock)
             (1.._) * input.device() >> Mock(Device)
             _ * type.identifier() >> 'test_identifier'
             (1.._) * output.device() >> Mock(Device)
 
-        and : 'The given ADAnalyzer instance is being called.'
+        and : 'The given ADAnalyzer instance is being called because auto-differentiation is enabled.'
             (1.._) * input.rqsGradient() >> true
             (1.._) * implementation.getADAnalyzer() >> Mock(OperationTypeImplementation.ADAnalyzer)
             (1.._) * node.getPayload() >> input

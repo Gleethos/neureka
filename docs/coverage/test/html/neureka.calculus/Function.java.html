@@ -92,7 +92,7 @@ public interface Function
 <span class="fc" id="L92">            GraphLock newLock = new GraphLock(function, inputs);</span>
 <span class="fc bfc" id="L93" title="All 2 branches covered.">            for (Tsr t : inputs) {</span>
 <span class="fc bfc" id="L94" title="All 2 branches covered.">                if(t.has(GraphNode.class)) t.find(GraphNode.class).obtainLocking(newLock);</span>
-<span class="fc" id="L95">                else new GraphNode(function, newLock, ()-&gt; t);</span>
+<span class="fc" id="L95">                else new GraphNode( function, newLock, ()-&gt; t );</span>
             }
 <span class="fc" id="L97">            Tsr result = null;</span>
 <span class="fc bfc" id="L98" title="All 2 branches covered.">            if(activation==null) result = function.call(inputs);</span>

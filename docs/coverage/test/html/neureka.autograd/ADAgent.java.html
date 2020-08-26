@@ -3,6 +3,8 @@
 import neureka.Tsr;
 import neureka.calculus.Function;
 
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 
 public class ADAgent
@@ -14,41 +16,47 @@ public class ADAgent
 
     private ADAction _fad;
     private ADAction _bad;
-    private Supplier&lt;Tsr&gt; _derivative;
+<span class="fc" id="L19">    private Map&lt;String, Object&gt; _context = new TreeMap&lt;&gt;();</span>
 
-    public ADAgent(
-            Supplier&lt;Tsr&gt; derivative, ADAction fad, ADAction bad
-<span class="fc" id="L21">    ){</span>
-<span class="fc" id="L22">        _derivative = derivative;</span>
-<span class="fc" id="L23">        _fad = fad;</span>
-<span class="fc" id="L24">        _bad = bad;</span>
-<span class="fc" id="L25">    }</span>
+<span class="fc" id="L21">    public ADAgent(  Tsr derivative  ){</span>
+<span class="fc" id="L22">        _context.put( &quot;derivative&quot;, derivative );</span>
+<span class="fc" id="L23">    }</span>
+
+    public ADAgent withForward(ADAction fad) {
+<span class="fc" id="L26">        _fad = fad;</span>
+<span class="fc" id="L27">        return this;</span>
+    }
+
+    public ADAgent withBackward(ADAction bad){
+<span class="fc" id="L31">        _bad = bad;</span>
+<span class="fc" id="L32">        return this;</span>
+    }
 
     public Tsr forward(GraphNode t, Tsr error){
-<span class="fc" id="L28">        return _fad.execute(t, error);</span>
+<span class="fc" id="L36">        return _fad.execute(t, error);</span>
     }
 
     public Tsr backward(GraphNode t, Tsr error){
-<span class="fc" id="L32">        return _bad.execute(t, error);</span>
+<span class="fc" id="L40">        return _bad.execute(t, error);</span>
     }
 
     public Tsr derivative(){
-<span class="fc" id="L36">        return _derivative.get();</span>
+<span class="fc" id="L44">        return (Tsr) _context.get(&quot;derivative&quot;);</span>
     }
 
     public boolean isForward(){
-<span class="fc bfc" id="L40" title="All 2 branches covered.">        return (_bad==null);</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        return (_bad==null);</span>
     }
 
     @Override
     public String toString(){
-<span class="nc bnc" id="L45" title="All 2 branches missed.">        if(this.derivative()!=null){</span>
-<span class="nc" id="L46">            return derivative().toString();</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">        if(this.derivative()!=null){</span>
+<span class="nc" id="L54">            return derivative().toString();</span>
         }
-<span class="nc bnc" id="L48" title="All 2 branches missed.">        if(this.isForward()){</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">        if(this.isForward()){</span>
 
         }
-<span class="nc" id="L51">        return &quot;null&quot;;</span>
+<span class="nc" id="L59">        return &quot;null&quot;;</span>
     }
 
 

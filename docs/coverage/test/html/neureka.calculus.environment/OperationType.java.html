@@ -10,22 +10,22 @@ import java.util.Map;
 
 public class OperationType implements Type
 {
-    private static ThreadLocal&lt;OperationContext&gt; _CONTEXTS;
-
-    static {
-<span class="fc" id="L16">        _CONTEXTS = ThreadLocal.withInitial( OperationContext::instance );</span>
-<span class="fc" id="L17">    }</span>
+    //private static ThreadLocal&lt;OperationContext&gt; _CONTEXTS;
+    //static
+    //{
+    //    _CONTEXTS = ThreadLocal.withInitial( OperationContext::instance );
+    //}
 
     public static List&lt;OperationType&gt; instances(){
-<span class="fc" id="L20">        return _CONTEXTS.get().getRegister();</span>
+<span class="fc" id="L20">        return OperationContext.instance().getRegister();</span>
     }
 
     public static OperationType instance( int index ) {
-<span class="fc" id="L24">        return _CONTEXTS.get().getRegister().get(index);</span>
+<span class="fc" id="L24">        return OperationContext.instance().getRegister().get(index);</span>
     }
 
     public static OperationType instance(String identifier){
-<span class="fc" id="L28">        return _CONTEXTS.get().getLookup().getOrDefault( identifier, null );</span>
+<span class="fc" id="L28">        return OperationContext.instance().getLookup().getOrDefault( identifier, null );</span>
     }
 
     private Stringifier _stringifier;
@@ -57,16 +57,16 @@ public class OperationType implements Type
 <span class="fc" id="L57">    ) {</span>
 <span class="fc" id="L58">        _name = name;</span>
 <span class="fc" id="L59">        _arity = arity;</span>
-<span class="fc" id="L60">        _id = _CONTEXTS.get().getID();</span>
-<span class="fc" id="L61">        _CONTEXTS.get().incrementID();</span>
+<span class="fc" id="L60">        _id = OperationContext.instance().getID();</span>
+<span class="fc" id="L61">        OperationContext.instance().incrementID();</span>
 <span class="fc" id="L62">        _identifier = identifier;</span>
 <span class="fc" id="L63">        _isOperator = isOperator;</span>
 <span class="fc" id="L64">        _isIndexer = isIndexer;</span>
 <span class="fc" id="L65">        _isCommutative = isCommutative;</span>
 <span class="fc" id="L66">        _isAssociative = isAssociative;</span>
 
-<span class="fc" id="L68">        _CONTEXTS.get().getRegister().add(this);</span>
-<span class="fc" id="L69">        _CONTEXTS.get().getLookup().put(identifier, this);</span>
+<span class="fc" id="L68">        OperationContext.instance().getRegister().add(this);</span>
+<span class="fc" id="L69">        OperationContext.instance().getLookup().put(identifier, this);</span>
 <span class="fc" id="L70">        if (</span>
                 identifier
 <span class="fc" id="L72">                        .replace((&quot;&quot;+((char)171)), &quot;&quot;)</span>
@@ -74,20 +74,20 @@ public class OperationType implements Type
 <span class="fc bfc" id="L74" title="All 2 branches covered.">                        .matches(&quot;[a-z]&quot;)</span>
         ) {
 <span class="fc bfc" id="L76" title="All 2 branches covered.">            if (identifier.contains((&quot;&quot;+((char)171)))) {</span>
-<span class="fc" id="L77">                _CONTEXTS.get().getLookup().put(identifier.replace((&quot;&quot;+((char)171)), &quot;&lt;&lt;&quot;), this);</span>
+<span class="fc" id="L77">                OperationContext.instance().getLookup().put(identifier.replace((&quot;&quot;+((char)171)), &quot;&lt;&lt;&quot;), this);</span>
             }
 <span class="fc bfc" id="L79" title="All 2 branches covered.">            if (identifier.contains((&quot;&quot;+((char)187)))) {</span>
-<span class="fc" id="L80">                _CONTEXTS.get().getLookup().put(identifier.replace((&quot;&quot;+((char)187)),&quot;&gt;&gt;&quot;), this);</span>
+<span class="fc" id="L80">                OperationContext.instance().getLookup().put(identifier.replace((&quot;&quot;+((char)187)),&quot;&gt;&gt;&quot;), this);</span>
             }
         }
 <span class="fc" id="L83">    }</span>
 
     public static OperationType[] ALL(){
-<span class="fc" id="L86">        return _CONTEXTS.get().getRegister().toArray(new OperationType[0]);</span>
+<span class="fc" id="L86">        return OperationContext.instance().getRegister().toArray(new OperationType[0]);</span>
     }
 
     public static int COUNT(){
-<span class="fc" id="L90">        return _CONTEXTS.get().getID();</span>
+<span class="fc" id="L90">        return OperationContext.instance().getID();</span>
     }
 
     //==================================================================================================================
