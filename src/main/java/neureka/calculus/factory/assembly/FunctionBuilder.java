@@ -21,7 +21,7 @@ public class FunctionBuilder {
         } else if (type.identifier().equals(",")) {
             ArrayList<Function> srcs = new ArrayList<>();
             for (int i = 0; i < size; i++) srcs.add(new FunctionInput().newBuild("" + i));
-            return new FunctionNode(type.id(), srcs, doAD);
+            return new FunctionNode(type, srcs, doAD);
         }
         if (type.id() < 10) {
             return build(type.identifier() + "(I[0])", doAD);
@@ -180,7 +180,7 @@ public class FunctionBuilder {
                         for (String p : parameters) {
                             sources.add(FunctionBuilder.build(p, doAD));
                         }
-                        function = new FunctionNode(typeId, sources, doAD);
+                        function = new FunctionNode(OperationType.instance(typeId), sources, doAD);
                         return function;
                     }
                 }
@@ -262,7 +262,7 @@ public class FunctionBuilder {
                 if (source != null) newVariable.add(source);
             }
             sources = newVariable;
-            function = new FunctionNode(typeId, sources, doAD);
+            function = new FunctionNode(OperationType.instance(typeId), sources, doAD);
             return function;
         }
     }

@@ -30,9 +30,10 @@ import java.util.Map;
  */
 public class OperationContext implements Cloneable
 {
-    private static final OperationContext _INSTANCE;
-    static {
-        _INSTANCE = new OperationContext();
+    private static ThreadLocal<OperationContext> _INSTANCES = ThreadLocal.withInitial( ()->new OperationContext() );
+
+    static
+    {
         new ReLU();
         new Sigmoid();
         new Tanh();
@@ -65,7 +66,11 @@ public class OperationContext implements Cloneable
      * @return The OperationContext singleton instance!
      */
     public static OperationContext instance(){
-        return _INSTANCE;
+        return _INSTANCES.get();
+    }
+
+    public static void setInstance( OperationContext context ) {
+        _INSTANCES.set(context);
     }
 
     private final Map<String, OperationType> _LOOKUP;

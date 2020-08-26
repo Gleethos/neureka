@@ -2,14 +2,15 @@ package neureka.calculus.factory.assembly;
 
 import neureka.Tsr;
 import neureka.calculus.*;
+import neureka.calculus.environment.OperationType;
 import neureka.calculus.factory.AbstractFunction;
 
 import java.util.List;
 
 public class FunctionNode extends AbstractFunction
 {
-    public FunctionNode( int f_id, List<Function> sources, boolean doAD ) {
-        super( f_id, sources, doAD );
+    public FunctionNode( OperationType type, List<Function> sources, boolean doAD ) {
+        super( type, sources, doAD );
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

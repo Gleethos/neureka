@@ -10,22 +10,22 @@ import java.util.Map;
 
 public class OperationType implements Type
 {
-    private static ThreadLocal<OperationContext> _CONTEXTS;
-
-    static {
-        _CONTEXTS = ThreadLocal.withInitial( OperationContext::instance );
-    }
+    //private static ThreadLocal<OperationContext> _CONTEXTS;
+    //static
+    //{
+    //    _CONTEXTS = ThreadLocal.withInitial( OperationContext::instance );
+    //}
 
     public static List<OperationType> instances(){
-        return _CONTEXTS.get().getRegister();
+        return OperationContext.instance().getRegister();
     }
 
     public static OperationType instance( int index ) {
-        return _CONTEXTS.get().getRegister().get(index);
+        return OperationContext.instance().getRegister().get(index);
     }
 
     public static OperationType instance(String identifier){
-        return _CONTEXTS.get().getLookup().getOrDefault( identifier, null );
+        return OperationContext.instance().getLookup().getOrDefault( identifier, null );
     }
 
     private Stringifier _stringifier;
@@ -57,16 +57,16 @@ public class OperationType implements Type
     ) {
         _name = name;
         _arity = arity;
-        _id = _CONTEXTS.get().getID();
-        _CONTEXTS.get().incrementID();
+        _id = OperationContext.instance().getID();
+        OperationContext.instance().incrementID();
         _identifier = identifier;
         _isOperator = isOperator;
         _isIndexer = isIndexer;
         _isCommutative = isCommutative;
         _isAssociative = isAssociative;
 
-        _CONTEXTS.get().getRegister().add(this);
-        _CONTEXTS.get().getLookup().put(identifier, this);
+        OperationContext.instance().getRegister().add(this);
+        OperationContext.instance().getLookup().put(identifier, this);
         if (
                 identifier
                         .replace((""+((char)171)), "")
@@ -74,20 +74,20 @@ public class OperationType implements Type
                         .matches("[a-z]")
         ) {
             if (identifier.contains((""+((char)171)))) {
-                _CONTEXTS.get().getLookup().put(identifier.replace((""+((char)171)), "<<"), this);
+                OperationContext.instance().getLookup().put(identifier.replace((""+((char)171)), "<<"), this);
             }
             if (identifier.contains((""+((char)187)))) {
-                _CONTEXTS.get().getLookup().put(identifier.replace((""+((char)187)),">>"), this);
+                OperationContext.instance().getLookup().put(identifier.replace((""+((char)187)),">>"), this);
             }
         }
     }
 
     public static OperationType[] ALL(){
-        return _CONTEXTS.get().getRegister().toArray(new OperationType[0]);
+        return OperationContext.instance().getRegister().toArray(new OperationType[0]);
     }
 
     public static int COUNT(){
-        return _CONTEXTS.get().getID();
+        return OperationContext.instance().getID();
     }
 
     //==================================================================================================================

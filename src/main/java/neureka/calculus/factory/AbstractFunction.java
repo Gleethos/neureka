@@ -31,13 +31,12 @@ public abstract class AbstractFunction extends BaseFunction
 
     /**
      *
-     * @param f_id
+     * @param type
      * @param sources
      * @param doAD
      */
-    protected AbstractFunction( int f_id, List<Function> sources, boolean doAD )
+    protected AbstractFunction( OperationType type, List<Function> sources, boolean doAD )
     {
-        Type type = OperationType.instance(f_id);
         if( type.arity() >= 0 && sources.size() != type.arity() ) {
             String tip = ( type.isIndexer() )
                     ? "\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration."
@@ -52,7 +51,7 @@ public abstract class AbstractFunction extends BaseFunction
             isFlat = ((f instanceof FunctionInput) || (f instanceof FunctionVariable) || (f instanceof FunctionConstant)) && isFlat;
         }
 
-        _type = OperationType.instance(f_id);
+        _type = type;
         _isFlat = isFlat;
         _src = sources;
         _doAD = doAD;
