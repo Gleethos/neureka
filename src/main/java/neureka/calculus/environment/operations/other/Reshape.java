@@ -76,7 +76,7 @@ public class Reshape extends OperationType
                     throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                 }
                 return new ADAgent(
-                        ()->null
+                        null
                 ).withForward(
                         (t, derivative) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0)
                 ).withBackward(
@@ -168,9 +168,8 @@ public class Reshape extends OperationType
     }
 
 
-
-
-    public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr) {
+    public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr)
+    {
         tensor = (newTsr) ? (Tsr)tensor.getAt(new ArrayList<>()) : tensor;
         int[] newShape = AbstractNDArray.Utility.Indexing.shpCheck(AbstractNDArray.Utility.Indexing.rearrange(tensor.getNDConf().shape(), newForm), tensor);
         int[] newTranslation = AbstractNDArray.Utility.Indexing.rearrange(tensor.getNDConf().translation(), newShape, newForm);

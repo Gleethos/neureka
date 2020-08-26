@@ -3,6 +3,8 @@ package neureka.autograd;
 import neureka.Tsr;
 import neureka.calculus.Function;
 
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 
 public class ADAgent
@@ -14,10 +16,10 @@ public class ADAgent
 
     private ADAction _fad;
     private ADAction _bad;
-    private Supplier<Tsr> _derivative;
+    private Map<String, Object> _context = new TreeMap<>();
 
-    public ADAgent(  Supplier<Tsr> derivative  ){
-        _derivative = derivative;
+    public ADAgent(  Tsr derivative  ){
+        _context.put( "derivative", derivative );
     }
 
     public ADAgent withForward(ADAction fad) {
@@ -39,7 +41,7 @@ public class ADAgent
     }
 
     public Tsr derivative(){
-        return _derivative.get();
+        return (Tsr) _context.get("derivative");
     }
 
     public boolean isForward(){

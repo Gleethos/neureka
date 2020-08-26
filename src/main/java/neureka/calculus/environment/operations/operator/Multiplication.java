@@ -116,7 +116,7 @@ public class Multiplication extends OperationType {
                     derivv != null
                 ) {
 return new ADAgent(
-                            ()->derivv
+                            derivv
                    ).withForward(
                             ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
                    ).withBackward(
@@ -129,7 +129,7 @@ return new ADAgent(
                 {
                     Tsr deriv = f.derive(inputs, d);
                     return new ADAgent(
-                    () -> deriv
+                    deriv
                 ).withForward(
                     ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
                 ).withBackward(
@@ -142,7 +142,7 @@ return new ADAgent(
                     {
                         Tsr deriv = f.derive(inputs, d);
                         return new ADAgent(
-                            ()->deriv
+                            deriv
 ).withForward(
                             (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
 ).withBackward(
@@ -229,7 +229,7 @@ return new ADAgent(
                     derivv != null
                 ) {
 return new ADAgent(
-                            ()->derivv
+                            derivv
                    ).withForward(
                             ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
                    ).withBackward(
@@ -245,7 +245,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
                     {
                         Tsr deriv = f.derive(inputs, d);
                         return new ADAgent(
-                            ()->deriv
+                            deriv
 ).withForward(
                             (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
 ).withBackward(
@@ -341,7 +341,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
             derivv != null
         ) {
             return new ADAgent(
-                    () -> derivv
+                    derivv
                 ).withForward(
                     ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
                 ).withBackward(
@@ -354,7 +354,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
         {
             Tsr deriv = f.derive(inputs, d);
             return new ADAgent(
-                    () -> deriv
+                    deriv
                 ).withForward(
                     ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
                 ).withBackward(
@@ -367,7 +367,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
             {
                 Tsr deriv = f.derive(inputs, d);
                 return new ADAgent(
-                            ()->deriv
+                            deriv
 ).withForward(
                             (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
 ).withBackward(
@@ -471,7 +471,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
                     derivv != null
                 ) {
 return new ADAgent(
-                            ()->derivv
+                            derivv
                    ).withForward(
                             ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
                    ).withBackward(
@@ -480,20 +480,17 @@ return new ADAgent(
                 }
                 Tsr[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();
-if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                 else
                 {
-
-                    {
-                        Tsr deriv = f.derive(inputs, d);
-                        return new ADAgent(
-                            ()->deriv
-).withForward(
+                    Tsr deriv = f.derive(inputs, d);
+                    return new ADAgent(
+                            deriv
+                        ).withForward(
                             (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-).withBackward(
+                        ).withBackward(
                             (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-);
-                    }
+                        );
                 }
             }
         ).setCallHock(
@@ -568,30 +565,27 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
                 if (
                     derivv != null
                 ) {
-return new ADAgent(
-                            ()->derivv
-                   ).withForward(
-                            ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
-                   ).withBackward(
-                           null
-                   );
+                    return new ADAgent(
+                                derivv
+                       ).withForward(
+                                ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                       ).withBackward(
+                               null
+                       );
                 }
                 Tsr[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();
-if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                 else
                 {
-
-                    {
-                        Tsr deriv = f.derive(inputs, d);
-                        return new ADAgent(
-                            ()->deriv
-).withForward(
+                    Tsr deriv = f.derive(inputs, d);
+                    return new ADAgent(
+                            deriv
+                        ).withForward(
                             (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-).withBackward(
+                        ).withBackward(
                             (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-);
-                    }
+                        );
                 }
             }
         ).setCallHock(

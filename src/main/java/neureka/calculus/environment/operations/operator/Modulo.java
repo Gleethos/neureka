@@ -69,7 +69,7 @@ public class Modulo extends OperationType {
             derivv != null
         ) {
             return new ADAgent(
-                    () -> derivv
+                    derivv
                 ).withForward(
                     ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
                 ).withBackward(
@@ -82,7 +82,7 @@ public class Modulo extends OperationType {
         {
             Tsr deriv = f.derive(inputs, d);
             return new ADAgent(
-                    () -> deriv
+                    deriv
                 ).withForward(
                     ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
                 ).withBackward(
@@ -95,7 +95,7 @@ public class Modulo extends OperationType {
             {
                 Tsr deriv = f.derive(inputs, d);
                 return new ADAgent(
-                            ()->deriv
+                            deriv
 ).withForward(
                             (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
 ).withBackward(
@@ -215,7 +215,7 @@ public class Modulo extends OperationType {
                         derivv != null
                     ) {
     return new ADAgent(
-                            ()->derivv
+                            derivv
                    ).withForward(
                             ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
                    ).withBackward(
@@ -231,7 +231,7 @@ public class Modulo extends OperationType {
                         {
                             Tsr deriv = f.derive(inputs, d);
                             return new ADAgent(
-                            ()->deriv
+                            deriv
 ).withForward(
                             (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
 ).withBackward(
@@ -337,7 +337,7 @@ public class Modulo extends OperationType {
             derivv != null
         ) {
             return new ADAgent(
-                    () -> derivv
+                    derivv
                 ).withForward(
                     ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
                 ).withBackward(
@@ -350,7 +350,7 @@ public class Modulo extends OperationType {
         {
             Tsr deriv = f.derive(inputs, d);
             return new ADAgent(
-                    () -> deriv
+                    deriv
                 ).withForward(
                     ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
                 ).withBackward(
@@ -363,7 +363,7 @@ public class Modulo extends OperationType {
             {
                 Tsr deriv = f.derive(inputs, d);
                 return new ADAgent(
-                            ()->deriv
+                            deriv
 ).withForward(
                             (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
 ).withBackward(

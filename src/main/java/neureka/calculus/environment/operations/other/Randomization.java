@@ -54,7 +54,7 @@ public class Randomization extends OperationType
             derivv != null
         ) {
             return new ADAgent(
-                    () -> derivv
+                    derivv
                 ).withForward(
                     ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
                 ).withBackward(
@@ -67,7 +67,7 @@ public class Randomization extends OperationType
         {
             Tsr deriv = f.derive(inputs, d);
             return new ADAgent(
-                    () -> deriv
+                    deriv
                 ).withForward(
                     ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
                 ).withBackward(
@@ -76,16 +76,14 @@ public class Randomization extends OperationType
         }
         else
         {
-
             Tsr deriv = f.derive(inputs, d);
             return new ADAgent(
-                            ()->deriv
-).withForward(
-                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-).withBackward(
-                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-);
-
+                     deriv
+                ).withForward(
+                     (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                ).withBackward(
+                     (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+                );
         }
     }
         ).setCallHock(

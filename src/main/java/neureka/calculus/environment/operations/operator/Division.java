@@ -135,7 +135,7 @@ public class Division extends OperationType
             derivv != null
         ) {
             return new ADAgent(
-                    () -> derivv
+                    derivv
                 ).withForward(
                     ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
                 ).withBackward(
@@ -148,7 +148,7 @@ public class Division extends OperationType
         {
             Tsr deriv = f.derive(inputs, d);
             return new ADAgent(
-                    () -> deriv
+                    deriv
                 ).withForward(
                     ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
                 ).withBackward(
@@ -159,7 +159,7 @@ public class Division extends OperationType
         {
             Tsr deriv = f.derive(inputs, d);
             return new ADAgent(
-                            ()->deriv
+                            deriv
 ).withForward(
                             (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
 ).withBackward(
@@ -249,7 +249,7 @@ public class Division extends OperationType
                     derivv != null
                 ) {
                     return new ADAgent(
-                            ()->derivv
+                            derivv
                     ).withForward(
                             ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
                     ).withBackward(
@@ -263,7 +263,7 @@ public class Division extends OperationType
                 {
                     Tsr deriv = f.derive(inputs, d);
                     return new ADAgent(
-                            ()->deriv
+                            deriv
                     ).withForward(
                             (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
                     ).withBackward(
@@ -361,7 +361,7 @@ public class Division extends OperationType
                     derivv != null
                 ) {
 return new ADAgent(
-                            ()->derivv
+                            derivv
                    ).withForward(
                             ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
                    ).withBackward(
@@ -374,7 +374,7 @@ return new ADAgent(
                 {
                     Tsr deriv = f.derive(inputs, d);
                     return new ADAgent(
-                    () -> deriv
+                    deriv
                 ).withForward(
                     ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
                 ).withBackward(
@@ -387,7 +387,7 @@ return new ADAgent(
                     {
                         Tsr deriv = f.derive(inputs, d);
                         return new ADAgent(
-                            ()->deriv
+                            deriv
 ).withForward(
                             (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
 ).withBackward(
@@ -498,7 +498,7 @@ return new ADAgent(
             derivv != null
         ) {
             return new ADAgent(
-                    () -> derivv
+                    derivv
                 ).withForward(
                     ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
                 ).withBackward(
@@ -515,7 +515,7 @@ return new ADAgent(
         {
             Tsr deriv = f.derive(inputs, d);
             return new ADAgent(
-                            ()->deriv
+                            deriv
 ).withForward(
                             (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
 ).withBackward(

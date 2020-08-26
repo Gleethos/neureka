@@ -122,7 +122,7 @@ public class XMultiplication extends OperationType
                 );
                 Tsr deriv = f.derive(inputs, d);
                 return new ADAgent(
-                        ()->deriv
+                        deriv
                 ).withForward(
                         (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
                 ).withBackward(
