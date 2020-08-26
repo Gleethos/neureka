@@ -203,10 +203,11 @@ public class Neureka
         public class AutoGrad // Auto-Grad/Differentiation
         {
             /**
-             * This flag enables an optimization technique which only applies
-             * gradients as soon as they are needed by a tensor (the tensor is used again).
-             * If the flag is set to true
-             * then error values will accumulate whenever it makes sense.
+             * This flag enables an optimization technique which only propagates error values to
+             * gradients if needed by a tensor (the tensor is used again) and otherwise accumulate them
+             * at divergent differentiation paths within the computation graph.<br>
+             * If the flag is set to true <br>
+             * then error values will accumulate at such junction nodes.
              * This technique however uses more memory but will
              * improve performance for some networks substantially.
              * The technique is termed JIT-Propagation.

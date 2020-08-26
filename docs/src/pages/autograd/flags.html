@@ -48,18 +48,20 @@
 
 <div class="col-sm-12 col-md-5">
     <pre><code class="hljs java">
+    // getter :
     ag.isRetainingPendingErrorForJITProp()
-
+    // setter :
     ag.setIsRetainingPendingErrorForJITProp(true)
     </code></pre>
 </div>
 <div class="col-sm 12 col-md-7">
     <div class="ContentBox">
         <p>
-            This flag enables an optimization technique which only applies
-            gradients as soon as they are needed by a tensor (the tensor is used again).<br>
+            This flag enables an optimization technique which only propagates error values to
+            gradients if needed by a tensor (the tensor is used again) and otherwise accumulate them
+            at divergent differentiation paths within the computation graph.<br>
             If the flag is set to true <br>
-            then error values will accumulate whenever it makes sense.
+            then error values will accumulate at such junction nodes.
             This technique however uses more memory but will
             improve performance for some networks substantially.
             The technique is termed JIT-Propagation.
@@ -70,8 +72,9 @@
 
 <div class="col-sm-12 col-md-5">
     <pre><code class="hljs java">
+    // getter :
     ag.isApplyingGradientWhenTensorIsUsed()
-
+    // setter :
     ag.setIsApplyingGradientWhenTensorIsUsed(true)
     </code></pre>
 </div>
@@ -88,8 +91,9 @@
 
 <div class="col-sm-12 col-md-5">
     <pre><code class="hljs java">
+    // getter :
     ag.isApplyingGradientWhenRequested()
-
+    // setter :
     ag.setIsApplyingGradientWhenRequested(true)
     </code></pre>
 </div>
