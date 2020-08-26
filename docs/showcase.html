@@ -163,15 +163,19 @@
                                                 split.charAt(0).toUpperCase() + split.substring(1)
                                             ).show("fast");
                                         });
-                                        $('#DynamicContent').html("").load('src/pages/' + target + '.html');
+                                        $('#DynamicContent').html("").load(
+                                            'src/pages/' + target + '.html',
+                                            function(){
+                                                setTimeout(function () {
+                                                        hljs.initHighlighting.called = false;
+                                                        hljs.initHighlighting();
+                                                        $('#DynamicContent').show("fast");
+                                                    },
+                                                    100
+                                                );
+                                            }
+                                        );
                                     });
-                                    setTimeout(function () {
-                                            hljs.initHighlighting.called = false;
-                                            hljs.initHighlighting();
-                                            $('#DynamicContent').show("fast");
-                                        },
-                                        500
-                                    );
                                 }
 
                                 $(document).ready(function () {
