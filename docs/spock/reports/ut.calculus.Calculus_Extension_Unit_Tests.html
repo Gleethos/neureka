@@ -1,0 +1,502 @@
+<!DOCTYPE html><html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
+<link rel="stylesheet" href="../css/custom.css">
+</head>
+<body>
+<h2>Report for ut.calculus.Calculus_Extension_Unit_Tests</h2>
+<hr></hr>
+<div class='back-link'>
+<a href='index.html'>&lt;&lt; Back</a>
+</div>
+<div class='summary-report'>
+<h3>Summary:</h3>
+<div class='date-test-ran'>Created on Wed Aug 26 23:12:26 CEST 2020 by Daglemino</div>
+<table class='summary-table'>
+<thead>
+<th>Executed features</th>
+<th>Failures</th>
+<th>Errors</th>
+<th>Skipped</th>
+<th>Success rate</th>
+<th>Time</th>
+</thead>
+<tbody>
+<tr>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100,0%</td>
+<td>13,681 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>Features:</h3>
+<table class='features-table'>
+<colgroup>
+<col class='block-kind-col'></col>
+<col class='block-text-col'></col>
+</colgroup>
+<tbody>
+<ul id='toc'>
+<li>
+<a href='#1807119128' class='feature-toc-pass'>Mock operation interacts with FunctionNode (AbstractFunction) instance as expected.</a>
+</li>
+<li>
+<a href='#-1266088296' class='feature-toc-pass'>Lambda properties of mock implementation interact with FunctionNode (AbstractFunction) as expected.</a>
+</li>
+</ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1807119128'>
+<span>Mock operation interacts with FunctionNode (AbstractFunction) instance as expected.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Neureka is being reset.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A new operation type with a new implementation.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def type = Mock(OperationType)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A list of function source nodes.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def children = [Mock(FunctionInput), Mock(FunctionInput)]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A mock tensor which is the expected output</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr output = Mock(Tsr)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A mocked operation implementation.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def implementation = Mock(OperationTypeImplementation)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A custom call hook for said implementation.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def customCallHook = Mock(OperationTypeImplementation.InitialCallHook)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>A FunctionNode is being instantiated via the given mocks...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def function = new FunctionNode(type, children, false)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The mock type has been called as expected and the function has the following properties.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>(1.._) * type.arity() &gt;&gt; 2
+function.isFlat()
+!function.doesAD()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The function is being called with an empty tensor array...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def result = function.call(new Tsr[0])</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The custom call hook should being accessed as outlined below.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>(1.._) * type.implementationOf(_) &gt;&gt; implementation
+(1.._) * implementation.getCallHook() &gt;&gt; customCallHook
+(1.._) * customCallHook.handle(_,_) &gt;&gt; output</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The mocked output tensor returns a mock device.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>0 * output.device() &gt;&gt; Mock(Device)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The ADAnalyzer of the mock implementation will not be called because "doAD" is set to "false".</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>0 * implementation.getADAnalyzer() &gt;&gt; Mock(OperationTypeImplementation.ADAnalyzer)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The agent creator is never accessed because "doAD" is set to false.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>0 * implementation.getADAgentCreator()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The result is the same as the mock tensor returned by the custom call hook.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>result == output</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1266088296'>
+<span>Lambda properties of mock implementation interact with FunctionNode (AbstractFunction) as expected.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Neureka is being reset.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A mock agent.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def agentSupplier = Mock(OperationTypeImplementation.ADAgentSupplier)
+def agent = Mock(ADAgent)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A new operation type with a new implementation.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def type = Mock(OperationType)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A list of function source nodes.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def children = [Mock(FunctionInput), Mock(FunctionInput)]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A mock tensor which is the expected output, an input and a graph node.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr output = Mock(Tsr)
+Tsr input = Mock(Tsr)
+GraphNode node = Mock(GraphNode)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A mocked operation implementation.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def implementation = Mock(OperationTypeImplementation)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A custom call hook for said implementation.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def customCallHook = Mock(OperationTypeImplementation.InitialCallHook)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>A FunctionNode is being instantiated via the given mocks...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def function = new FunctionNode(type, children, true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The mock type has been called as expected and the function has the following properties.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>(1.._) * type.arity() &gt;&gt; 2
+function.isFlat()
+function.doesAD()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The function is being called with an empty tensor array...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def result = function.call([input])</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The custom call hook is being accessed as outlined below.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>(1.._) * type.implementationOf(_) &gt;&gt; implementation
+(1.._) * implementation.getCallHook() &gt;&gt; customCallHook
+(1.._) * customCallHook.handle(_,_) &gt;&gt; output</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The GraphNode instance which will be created as tensor component interacts as follows.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>(1.._) * input.find(GraphNode.class) &gt;&gt; node
+(1.._) * node.lock() &gt;&gt; Mock(GraphLock)
+(1.._) * input.device() &gt;&gt; Mock(Device)
+_ * type.identifier() &gt;&gt; 'test_identifier'
+(1.._) * output.device() &gt;&gt; Mock(Device)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The given ADAnalyzer instance is being called because auto-differentiation is enabled.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>(1.._) * input.rqsGradient() &gt;&gt; true
+(1.._) * implementation.getADAnalyzer() &gt;&gt; Mock(OperationTypeImplementation.ADAnalyzer)
+(1.._) * node.getPayload() &gt;&gt; input
+(1.._) * node.usesAD() &gt;&gt; true</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The agent creator is accessed because "doAD" is set to true and the input requires gradients.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>1 * implementation.getADAgentCreator() &gt;&gt; agentSupplier
+1 * agentSupplier.getADAgentOf(_,_,_) &gt;&gt; agent
+1 * agent.derivative() &gt;&gt; null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The result is the same as the mock tensor returned by the custom call hook.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>result == output</pre>
+</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<div class='footer'>Generated by <a href='https://github.com/renatoathaydes/spock-reports'>Athaydes Spock Reports</a></div>
+</body>
+</html>

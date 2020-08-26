@@ -1,0 +1,555 @@
+<!DOCTYPE html><html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
+<link rel="stylesheet" href="../css/custom.css">
+</head>
+<body>
+<h2>Report for ut.calculus.Calculus_Implementation_Executor_Tests</h2>
+<hr></hr>
+<div class='back-link'>
+<a href='index.html'>&lt;&lt; Back</a>
+</div>
+<div class='summary-report'>
+<h3>Summary:</h3>
+<div class='date-test-ran'>Created on Wed Aug 26 23:12:51 CEST 2020 by Daglemino</div>
+<table class='summary-table'>
+<thead>
+<th>Executed features</th>
+<th>Failures</th>
+<th>Errors</th>
+<th>Skipped</th>
+<th>Success rate</th>
+<th>Time</th>
+</thead>
+<tbody>
+<tr>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100,0%</td>
+<td>19,719 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>Features:</h3>
+<table class='features-table'>
+<colgroup>
+<col class='block-kind-col'></col>
+<col class='block-text-col'></col>
+</colgroup>
+<tbody>
+<ul id='toc'>
+<li>
+<a href='#-200778926' class='feature-toc-pass'>Operator implementations have expected Executor instances.</a>
+</li>
+<li>
+<a href='#1860135748' class='feature-toc-pass'>Activation implementations have expected Executor instances.</a>
+</li>
+<li>
+<a href='#1104138115' class='feature-toc-pass'>HostExecutors of Operator implementations behave as expected.</a>
+</li>
+<li>
+<a href='#234060802' class='feature-toc-pass'>CLExecutors of Operator implementations behave as expected.</a>
+</li>
+</ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-200778926'>
+<span>Operator implementations have expected Executor instances.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>The current Neureka instance is being reset.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>Host- and CL- executor instance are being fetched...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def hostExecutor = imp.getExecutor( HostExecutor.class )
+def clExecutor = imp.getExecutor( CLExecutor.class )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The variables containing the executor instances are not null.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>hostExecutor != null
+clExecutor != null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The variable "imp" is from a List of OperationType implementations of type "Operator".</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<th class='ex-header'>imp</th>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Operator@5e14a7bc</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Operator@671aaab1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Operator@1df67cf3</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Operator@66a401b6</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Operator@1d48b92a</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Operator@2fb5c710</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>6/6 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1860135748'>
+<span>Activation implementations have expected Executor instances.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>The current Neureka instance is being reset.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>Host- and CL- executor instance are being fetched...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def hostExecutor = imp.getExecutor( HostExecutor.class )
+def clExecutor = imp.getExecutor( CLExecutor.class )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The variables containing the executor instances are not null.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>hostExecutor != null
+clExecutor != null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The variable "imp" is from a List of OperationType implementations of type "Operator".</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<th class='ex-header'>imp</th>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Activation@2d2f2d7a</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Activation@34509374</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Activation@1bc79342</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Activation@3ca7e940</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Activation@68b75753</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Activation@58cca202</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Activation@7f3667da</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Activation@7cd86c95</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Activation@2e07a192</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Activation@742fbfda</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Activation@118d3aa4</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Activation@18d59620</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Activation@ab9a648</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Activation@4a1f47cd</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>14/14 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1104138115'>
+<span>HostExecutors of Operator implementations behave as expected.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>The current Neureka instance is being reset.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Mock instances to simulate an ExecutionCall instance.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def call = Mock( ExecutionCall )
+def device = Mock( HostCPU )
+def tensor = Mock( Tsr )
+def hostExecutor = imp.getExecutor( HostExecutor.class )
+def nativeExecutor = Mock( HostCPU.NativeExecutor )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>Host-executor instance is being called...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>hostExecutor.execution.call( call )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The mock objects are being called as expected.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>(1.._) * call.getDevice() &gt;&gt; device
+1 * device.getExecutor() &gt;&gt; nativeExecutor
+1 * nativeExecutor.threaded( _, _ )
+(1.._) * call.getTensor(0) &gt;&gt; tensor
+(1.._) * tensor.size() &gt;&gt; 0</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The variable "imp" is from a List of OperationType implementations of type "Operator".</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<th class='ex-header'>imp</th>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Operator@5e14a7bc</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Operator@671aaab1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Operator@1df67cf3</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Operator@66a401b6</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Operator@1d48b92a</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Operator@2fb5c710</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>6/6 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='234060802'>
+<span>CLExecutors of Operator implementations behave as expected.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>The current Neureka instance is being reset.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Mock instances to simulate an ExecutionCall instance.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def call = Mock( ExecutionCall )
+def device = Mock( OpenCLDevice )
+def tensor = Mock( Tsr )
+def clExecutor = imp.getExecutor( CLExecutor.class )
+def kernel = Mock( KernelBuilder )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>CL-executor instance is being called...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>clExecutor.execution.call( call )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The mock objects are being called as expected.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>(1.._) * call.getTensor(0) &gt;&gt; tensor
+(1.._) * tensor.size() &gt;&gt; 0
+(1.._) * call.getDevice() &gt;&gt; device
+1 * device.getKernel(call) &gt;&gt; kernel
+(1.._) * kernel.pass(_) &gt;&gt; kernel
+(1.._) * kernel.call(_)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The variable "imp" is from a List of OperationType implementations of type "Operator".</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<th class='ex-header'>imp</th>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Operator@5e14a7bc</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Operator@671aaab1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Operator@1df67cf3</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Operator@66a401b6</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Operator@1d48b92a</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.calculus.environment.implementations.Operator@2fb5c710</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>6/6 passed</div>
+</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<div class='footer'>Generated by <a href='https://github.com/renatoathaydes/spock-reports'>Athaydes Spock Reports</a></div>
+</body>
+</html>
