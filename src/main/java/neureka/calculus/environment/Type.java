@@ -39,7 +39,7 @@ public interface Type
 
     //==================================================================================================================
 
-    String getName();
+    String getFunction();
 
     //==================================================================================================================
 
@@ -61,15 +61,15 @@ public interface Type
 
     //==================================================================================================================
 
-    int id();
+    int getId();
     
-    String identifier();
+    String getOperator();
 
     /**
      * Arity is the number of arguments or operands
      * that this function or operation takes.
      */
-    int arity();
+    int getArity();
 
     boolean isOperator();
 

@@ -6,17 +6,10 @@ import neureka.acceleration.Device
 import neureka.autograd.ADAgent
 import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
-import neureka.calculus.Function
-import neureka.calculus.environment.ExecutionCall
 import neureka.calculus.environment.OperationType
 import neureka.calculus.environment.OperationTypeImplementation
-import neureka.calculus.environment.implementations.GenericImplementation
-import neureka.calculus.environment.implementations.Operator
-import neureka.calculus.environment.operations.OperationContext
-import neureka.calculus.factory.assembly.FunctionBuilder
 import neureka.calculus.factory.assembly.FunctionNode
 import neureka.calculus.factory.components.FunctionInput
-import org.junit.Ignore
 import spock.lang.Specification
 
 class Calculus_Extension_Unit_Tests extends Specification
@@ -51,7 +44,7 @@ class Calculus_Extension_Unit_Tests extends Specification
             def function = new FunctionNode(type, children, false)
 
         then : 'The mock type has been called as expected and the function has the following properties.'
-            (1.._) * type.arity() >> 2
+            (1.._) * type.getArity() >> 2
             function.isFlat()
             !function.doesAD()
 
@@ -107,7 +100,7 @@ class Calculus_Extension_Unit_Tests extends Specification
             def function = new FunctionNode(type, children, true)
 
         then : 'The mock type has been called as expected and the function has the following properties.'
-            (1.._) * type.arity() >> 2
+            (1.._) * type.getArity() >> 2
             function.isFlat()
             function.doesAD()
 
@@ -123,7 +116,7 @@ class Calculus_Extension_Unit_Tests extends Specification
             (1.._) * input.find(GraphNode.class) >> node
             (1.._) * node.lock() >> Mock(GraphLock)
             (1.._) * input.device() >> Mock(Device) // Device is being queried for execution...
-            _ * type.identifier() >> 'test_identifier'
+            _ * type.getOperator() >> 'test_identifier'
             (1.._) * output.device() >> Mock(Device)
 
         and : 'The given ADAnalyzer instance is being called because auto-differentiation is enabled.'

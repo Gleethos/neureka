@@ -442,6 +442,7 @@ public class OpenCLDevice extends AbstractDevice
         int gwz = t.size();
         String chosen = "scalar_" + _platform.kernelNameOf(type).replace("operate_", "");
         cl_kernel kernel = _platform.getKernels().get(chosen);
+        System.out.println(chosen);
         new KernelBuilder(kernel, _queue)
                 .pass(t)
                 .pass(t)

@@ -139,7 +139,7 @@ public class CLExecutor implements ExecutorFor&lt;OpenCLDevice&gt;
         //inverse:  src1/fdrn &lt;-src2 &lt;- drain
         //===========================================================================
 <span class="fc" id="L141">        parser.apply(</span>
-<span class="fc" id="L142">                type.getName(),</span>
+<span class="fc" id="L142">                type.getFunction(),</span>
                 activationSource,
                 differentiationSource
         );

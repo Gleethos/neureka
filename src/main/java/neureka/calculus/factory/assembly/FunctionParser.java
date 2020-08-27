@@ -14,7 +14,7 @@ public class FunctionParser
     public static int numberOfOperationsWithin(final List<String> operations) {
         int counter = 0;
         for(OperationType ot : OperationType.instances()){
-            if (operations.contains(ot.identifier())) ++counter;
+            if (operations.contains(ot.getOperator())) ++counter;
         }
         return counter;
     }
@@ -86,7 +86,7 @@ public class FunctionParser
 
     public static boolean isBasicOperation(final String operation) {
         if (operation.length() > 8) return false;
-        return (OperationType.instance(operation) != null) && OperationType.instance(operation).id() >= 0;
+        return (OperationType.instance(operation) != null) && OperationType.instance(operation).getId() >= 0;
     }
 
     public static String groupBy(final String operation, final String currentChain, final String currentComponent, final String currentOperation) {
@@ -201,14 +201,14 @@ public class FunctionParser
         double largest = -1;
         int best = 0;
         for (int i=0; i<OperationType.COUNT(); i++){
-            double s = similarity(expression, OperationType.instance(i).identifier());
+            double s = similarity(expression, OperationType.instance(i).getOperator());
             if (largest==-1) largest = s;
             else if (s > largest) {
                 best = i;
                 largest = s;
             }
         }
-        return ( largest > 0.1 ) ? OperationType.instance(best).identifier() : "";
+        return ( largest > 0.1 ) ? OperationType.instance(best).getOperator() : "";
     }
 
     public static double similarity(String s1, String s2) {

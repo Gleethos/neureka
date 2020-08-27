@@ -37,12 +37,12 @@ public abstract class AbstractFunction extends BaseFunction
      */
     protected AbstractFunction( OperationType type, List&lt;Function&gt; sources, boolean doAD )
 <span class="fc" id="L39">    {</span>
-<span class="fc bfc" id="L40" title="All 4 branches covered.">        if( type.arity() &gt;= 0 &amp;&amp; sources.size() != type.arity() ) {</span>
+<span class="fc bfc" id="L40" title="All 4 branches covered.">        if( type.getArity() &gt;= 0 &amp;&amp; sources.size() != type.getArity() ) {</span>
 <span class="fc bfc" id="L41" title="All 2 branches covered.">            String tip = ( type.isIndexer() )</span>
 <span class="fc" id="L42">                    ? &quot;\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration.&quot;</span>
 <span class="fc" id="L43">                    : &quot;&quot;;</span>
 <span class="fc" id="L44">            throw new IllegalArgumentException(</span>
-<span class="fc" id="L45">                    &quot;The function/operation '&quot;+type.identifier()+&quot;' expects &quot;+type.arity()+&quot; parameters, &quot;+</span>
+<span class="fc" id="L45">                    &quot;The function/operation '&quot;+type.getOperator()+&quot;' expects &quot;+type.getArity()+&quot; parameters, &quot;+</span>
 <span class="fc" id="L46">                            &quot;however &quot;+sources.size()+&quot; where given!&quot;+tip</span>
             );
         }
@@ -76,7 +76,7 @@ public abstract class AbstractFunction extends BaseFunction
 
     @Override
     public int id() {
-<span class="fc" id="L79">        return _type.id();</span>
+<span class="fc" id="L79">        return _type.getId();</span>
     }
 
     @Override
@@ -315,7 +315,7 @@ public abstract class AbstractFunction extends BaseFunction
 <span class="fc bfc" id="L315" title="All 2 branches covered.">        if ( inputs.length == 0 ) return HostCPU.instance();</span>
 <span class="fc" id="L316">        Device device = inputs[0].find( Device.class );</span>
 <span class="fc" id="L317">        boolean onSameDevice = _shareGuestDevice( inputs );</span>
-<span class="fc bfc" id="L318" title="All 4 branches covered.">        boolean doAccel = !_type.identifier().equals(&quot;,&quot;) &amp;&amp; onSameDevice;</span>
+<span class="fc bfc" id="L318" title="All 4 branches covered.">        boolean doAccel = !_type.getOperator().equals(&quot;,&quot;) &amp;&amp; onSameDevice;</span>
 <span class="pc bpc" id="L319" title="1 of 4 branches missed.">        return ( doAccel &amp;&amp; device != null ) ? device : inputs[0].device();</span>
     }
 
@@ -340,7 +340,7 @@ public abstract class AbstractFunction extends BaseFunction
     //------------------------------------------------------------------------------------------------------------------
 
     protected double _scalar_activation( double input, boolean derive ) {
-<span class="pc bpc" id="L343" title="3 of 11 branches missed.">        switch ( _type.identifier() ) {</span>
+<span class="pc bpc" id="L343" title="3 of 11 branches missed.">        switch ( _type.getOperator() ) {</span>
             case &quot;relu&quot;:
 <span class="fc" id="L345">                return Exec.reLu(input, derive);</span>
             case &quot;sig&quot;:
@@ -369,7 +369,7 @@ public abstract class AbstractFunction extends BaseFunction
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     protected double _scalar_activation( double[] input, int j, int d ) {
-<span class="pc bpc" id="L372" title="2 of 10 branches missed.">        switch (_type.identifier()) {</span>
+<span class="pc bpc" id="L372" title="2 of 10 branches missed.">        switch (_type.getOperator()) {</span>
 <span class="pc bpc" id="L373" title="1 of 2 branches missed.">            case &quot;sum&quot;: return ( j &lt; 0 ) ? Exec.summation(input, d, _src) : Exec.summation(input, j, d, _src);</span>
 <span class="fc bfc" id="L374" title="All 2 branches covered.">            case &quot;prod&quot;: return ( j &lt; 0 ) ? Exec.PI(input, d, _src) : Exec.PI(input, j, d, _src);</span>
 <span class="pc bpc" id="L375" title="1 of 2 branches missed.">            case &quot;^&quot;: return ( j &lt; 0 ) ? Exec.power(input, d, _src) : Exec.power(input, j, d, _src);</span>

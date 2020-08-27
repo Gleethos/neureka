@@ -23,7 +23,7 @@ public class Cosinus extends OperationType {
     public Cosinus()
     {
         super (
-                "cosinus",
+                "cos",
                 "cos" ,
                 1,
                 false,

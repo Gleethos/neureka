@@ -19,16 +19,16 @@ public class OpenCLPlatform {
 
     private static final Map<String, String> OPERATION_TO_KERNEL_MAPPING = new HashMap<String, String>();
 
-    static {
+    static { // TODO : Generate the following from source!
         OPERATION_TO_KERNEL_MAPPING.put("relu", "activate_relu");
-        OPERATION_TO_KERNEL_MAPPING.put("sig", "activate_sigmoid");
-        OPERATION_TO_KERNEL_MAPPING.put("quad", "activate_quadratic");
-        OPERATION_TO_KERNEL_MAPPING.put("lig", "activate_ligmoid");
-        OPERATION_TO_KERNEL_MAPPING.put("idy", "activate_identity");
-        OPERATION_TO_KERNEL_MAPPING.put("gaus", "activate_gaussian");
-        OPERATION_TO_KERNEL_MAPPING.put("abs", "activate_absolute");
-        OPERATION_TO_KERNEL_MAPPING.put("sin", "activate_sinus");
-        OPERATION_TO_KERNEL_MAPPING.put("cos", "activate_cosinus");
+        OPERATION_TO_KERNEL_MAPPING.put("sig", "activate_sig");
+        OPERATION_TO_KERNEL_MAPPING.put("quad", "activate_quad");
+        OPERATION_TO_KERNEL_MAPPING.put("lig", "activate_lig");
+        OPERATION_TO_KERNEL_MAPPING.put("idy", "activate_idy");
+        OPERATION_TO_KERNEL_MAPPING.put("gaus", "activate_gaus");
+        OPERATION_TO_KERNEL_MAPPING.put("abs", "activate_abs");
+        OPERATION_TO_KERNEL_MAPPING.put("sin", "activate_sin");
+        OPERATION_TO_KERNEL_MAPPING.put("cos", "activate_cos");
         //---
         OPERATION_TO_KERNEL_MAPPING.put("sum", "operate_add");
         OPERATION_TO_KERNEL_MAPPING.put("prod", "operate_multiply");
@@ -55,12 +55,13 @@ public class OpenCLPlatform {
         //OPERATION_TO_KERNEL_MAPPING.put((""+((char)187)), "inv_conv_right");
         OPERATION_TO_KERNEL_MAPPING.put(",", "reshape");
 
-        OPERATION_TO_KERNEL_MAPPING.put("<", "operate_identity");
+        OPERATION_TO_KERNEL_MAPPING.put("<", "operate_idy");
         OPERATION_TO_KERNEL_MAPPING.put(">", "inject_right");
     }
 
     public String kernelNameOf(OperationType type) {
-        return OPERATION_TO_KERNEL_MAPPING.get(type.identifier());
+        System.out.println(type.getOperator());
+        return OPERATION_TO_KERNEL_MAPPING.get(type.getOperator());
     }
 
 

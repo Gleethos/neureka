@@ -22,12 +22,12 @@ import java.util.function.Function;
  */
 public interface OperationTypeImplementation<FinalType>
 {
-    interface HandleChecker {
+    interface SuitabilityChecker {
         boolean canHandle( ExecutionCall call );
     }
 
-    HandleChecker getHandleChecker();
-    FinalType setHandleChecker( HandleChecker checker );
+    SuitabilityChecker getSuitabilityChecker();
+    FinalType setSuitabilityChecker(SuitabilityChecker checker );
 
     interface ADAnalyzer {
         boolean allowsForward( ExecutionCall call );

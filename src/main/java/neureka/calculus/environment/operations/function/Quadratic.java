@@ -28,7 +28,7 @@ public class Quadratic extends OperationType
     public Quadratic(){
 
         super(
-                "quadratic",
+                "quad",
                 "quad",
                 1,
                 false,

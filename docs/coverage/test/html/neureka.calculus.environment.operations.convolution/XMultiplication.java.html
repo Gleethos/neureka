@@ -65,7 +65,7 @@ public class XMultiplication extends OperationType
                 }
 <span class="nc" id="L66">                return alternative;</span>
             } else {
-<span class="fc bfc" id="L68" title="All 2 branches covered.">                if ( call.getType().identifier().equals(&quot;x&quot;) ) {</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">                if ( call.getType().getOperator().equals(&quot;x&quot;) ) {</span>
 <span class="fc bfc" id="L69" title="All 2 branches covered.">                    if (d &gt;= 0) {</span>
 <span class="fc bfc" id="L70" title="All 2 branches covered.">                        if (d == 0) tsrs[0] = tsrs[2];</span>
 <span class="fc" id="L71">                        else tsrs[0] = tsrs[1];</span>
@@ -73,7 +73,7 @@ public class XMultiplication extends OperationType
                     } else {
 <span class="fc" id="L74">                        call.mutateArguments( t -&gt; new Tsr[]{t[0], t[1], t[2]} );</span>
                     }
-<span class="fc bfc" id="L76" title="All 2 branches covered.">                } else if ( call.getType().identifier().equals(&quot;x&quot;+ ((char) 187)) ) {</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">                } else if ( call.getType().getOperator().equals(&quot;x&quot;+ ((char) 187)) ) {</span>
 <span class="fc" id="L77">                    call.mutateArguments( t -&gt; new Tsr[]{t[2], t[1], t[0]} );</span>
                 }
 <span class="fc" id="L79">                return alternative;</span>
@@ -98,7 +98,7 @@ public class XMultiplication extends OperationType
 <span class="fc" id="L98">        ).setADAnalyzer(</span>
                 call -&gt; {
 <span class="pc bpc" id="L100" title="1 of 2 branches missed.">                    if ( call.getType().supports(Convolution.class) ) return false;</span>
-<span class="nc bnc" id="L101" title="All 2 branches missed.">                    if ( call.getType().identifier().equals(&quot;,&quot;) ) return false; //Reshape</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">                    if ( call.getType().getOperator().equals(&quot;,&quot;) ) return false; //Reshape</span>
 <span class="nc" id="L102">                    Tsr last = null;</span>
 <span class="nc bnc" id="L103" title="All 2 branches missed.">                    for ( Tsr t : call.getTensors() ) {</span>
 <span class="nc bnc" id="L104" title="All 4 branches missed.">                        if ( last != null &amp;&amp; !last.shape().equals(t.shape()) ) return false;</span>
@@ -117,7 +117,7 @@ public class XMultiplication extends OperationType
 <span class="fc" id="L117">                int d = call.getDerivativeIndex();</span>
 
 <span class="fc" id="L119">                Function invX = FunctionBuilder.build(</span>
-<span class="fc" id="L120">                        &quot;I[0]&quot; + identifier() + &quot;&gt;&gt;I[1]&quot; + identifier() + &quot;&gt;&gt;I[2]&quot;,</span>
+<span class="fc" id="L120">                        &quot;I[0]&quot; + getOperator() + &quot;&gt;&gt;I[1]&quot; + getOperator() + &quot;&gt;&gt;I[2]&quot;,</span>
                         false
                 );
 <span class="fc" id="L123">                Tsr deriv = f.derive(inputs, d);</span>
@@ -132,7 +132,7 @@ public class XMultiplication extends OperationType
 <span class="fc" id="L132">        ).setCallHock(</span>
                 (caller, call) -&gt; {
 <span class="pc bpc" id="L134" title="1 of 2 branches missed.">                    if ( !caller.isFlat() ) return null;</span>
-<span class="fc bfc" id="L135" title="All 2 branches covered.">                    if ( call.getType().identifier().equals(&quot;x&quot;) ) {</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">                    if ( call.getType().getOperator().equals(&quot;x&quot;) ) {</span>
 
 <span class="fc" id="L137">                        Tsr[] inputs = call.getTensors();</span>
 <span class="fc" id="L138">                        Tsr[] tsrs = new Tsr[]{null, inputs[0], inputs[1]};// _src_acti(inputs, j, -1, 1);</span>
@@ -148,7 +148,7 @@ public class XMultiplication extends OperationType
 <span class="fc" id="L148">                            Tsr[] tsrs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);</span>
 <span class="fc bfc" id="L149" title="All 2 branches covered.">                            for ( Tsr t : tsrs ) t.setIsVirtual(false);</span>
 <span class="fc" id="L150">                            call.getDevice().execute( new ExecutionCall( call.getDevice(), tsrs, 0, call.getType() ) );</span>
-<span class="fc bfc" id="L151" title="All 2 branches covered.">                            if ( call.getType().id() == OperationType.instance(&quot;x&gt;&gt;&quot;).id()) return tsrs[2];</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">                            if ( call.getType().getId() == OperationType.instance(&quot;x&gt;&gt;&quot;).getId()) return tsrs[2];</span>
 <span class="fc" id="L152">                            else return tsrs[0];</span>
                         }
                     }

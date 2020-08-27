@@ -10,7 +10,7 @@ public class Activation extends AbstractOperationTypeImplementation< Activation 
 
     public Activation() {
         super();
-        setHandleChecker(call->true);
+        setSuitabilityChecker(call->true);
     }
 
     public String getKernelSource(){

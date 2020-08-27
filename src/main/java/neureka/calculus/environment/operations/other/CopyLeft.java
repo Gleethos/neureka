@@ -2,9 +2,7 @@ package neureka.calculus.environment.operations.other;
 
 import neureka.Tsr;
 import neureka.acceleration.Device;
-import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.host.execution.HostExecutor;
-import neureka.acceleration.opencl.OpenCLDevice;
 import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
@@ -12,7 +10,6 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.Activation;
 import neureka.calculus.environment.implementations.Convolution;
-import neureka.calculus.factory.assembly.FunctionBuilder;
 
 public class CopyLeft extends OperationType {
 
@@ -46,7 +43,7 @@ public class CopyLeft extends OperationType {
         .setADAnalyzer(
                 call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;
-                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
+                    if ( call.getType().getOperator().equals(",") ) return false; //Reshape
                     Tsr last = null;
                     for ( Tsr t : call.getTensors() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return false;

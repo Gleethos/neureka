@@ -2,7 +2,6 @@ package neureka.calculus.environment.implementations;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
 
@@ -10,7 +9,7 @@ public class Scalarization extends AbstractOperationTypeImplementation< Scalariz
 {
 
     public Scalarization(){
-        setHandleChecker(call->true);
+        setSuitabilityChecker(call->true);
     }
 
 

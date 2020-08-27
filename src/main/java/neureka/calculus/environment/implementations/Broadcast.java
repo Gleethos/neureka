@@ -2,7 +2,6 @@ package neureka.calculus.environment.implementations;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.Type;
 import org.jetbrains.annotations.Contract;
 
@@ -10,7 +9,7 @@ public class Broadcast extends AbstractOperationTypeImplementation< Broadcast >
 {
 
     public Broadcast() {
-        setHandleChecker(
+        setSuitabilityChecker(
                 call->
                 {
                     int maxRank = 0;

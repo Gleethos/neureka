@@ -16,21 +16,21 @@ import java.util.*;
      * @return
      */
     public static Function build(OperationType type, int size, boolean doAD) {
-<span class="nc bnc" id="L19" title="All 2 branches missed.">        if (type.id() == 18) {</span>
+<span class="nc bnc" id="L19" title="All 2 branches missed.">        if (type.getId() == 18) {</span>
 <span class="nc" id="L20">            size = 2;</span>
-<span class="nc bnc" id="L21" title="All 2 branches missed.">        } else if (type.identifier().equals(&quot;,&quot;)) {</span>
+<span class="nc bnc" id="L21" title="All 2 branches missed.">        } else if ( type.getOperator().equals(&quot;,&quot;) ) {</span>
 <span class="nc" id="L22">            ArrayList&lt;Function&gt; srcs = new ArrayList&lt;&gt;();</span>
 <span class="nc bnc" id="L23" title="All 2 branches missed.">            for (int i = 0; i &lt; size; i++) srcs.add(new FunctionInput().newBuild(&quot;&quot; + i));</span>
 <span class="nc" id="L24">            return new FunctionNode(type, srcs, doAD);</span>
         }
-<span class="nc bnc" id="L26" title="All 2 branches missed.">        if (type.id() &lt; 10) {</span>
-<span class="nc" id="L27">            return build(type.identifier() + &quot;(I[0])&quot;, doAD);</span>
-<span class="nc bnc" id="L28" title="All 2 branches missed.">        } else if (type.id() &lt; 12) {</span>
-<span class="nc" id="L29">            return build(type.identifier() + &quot;I[j]&quot;, doAD);</span>
+<span class="nc bnc" id="L26" title="All 2 branches missed.">        if ( type.getId() &lt; 10 ) {</span>
+<span class="nc" id="L27">            return build(type.getFunction() + &quot;(I[0])&quot;, doAD);</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">        } else if ( type.isIndexer() ) {</span>
+<span class="nc" id="L29">            return build(type.getFunction() + &quot;I[j]&quot;, doAD);</span>
         } else {
 <span class="nc" id="L31">            StringBuilder expression = new StringBuilder(&quot;I[0]&quot;);</span>
 <span class="nc bnc" id="L32" title="All 2 branches missed.">            for (int i = 0; i &lt; size - 1; i++) {</span>
-<span class="nc" id="L33">                expression.append(type.identifier()).append(&quot;I[&quot;).append(i + 1).append(&quot;]&quot;);</span>
+<span class="nc" id="L33">                expression.append(type.getOperator()).append(&quot;I[&quot;).append(i + 1).append(&quot;]&quot;);</span>
             }
 <span class="nc" id="L35">            return build(expression.toString(), doAD);</span>
         }
@@ -98,7 +98,7 @@ import java.util.*;
         //---
 <span class="fc" id="L99">        int counter = OperationType.COUNT();</span>
 <span class="fc bfc" id="L100" title="All 2 branches covered.">        for (int j = OperationType.COUNT(); j &gt; 0; --j) {</span>
-<span class="fc bfc" id="L101" title="All 2 branches covered.">            if (!foundJunctors.contains(OperationType.instance(j - 1).identifier())) {</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">            if (!foundJunctors.contains(OperationType.instance(j - 1).getOperator())) {</span>
 <span class="fc" id="L102">                --counter;</span>
             } else {
 <span class="fc" id="L104">                j = 0;</span>
@@ -108,7 +108,7 @@ import java.util.*;
 <span class="fc bfc" id="L108" title="All 2 branches covered.">        while (ID &lt; counter) {</span>
 <span class="fc" id="L109">            final List&lt;String&gt; newJunctors = new ArrayList&lt;&gt;();</span>
 <span class="fc" id="L110">            final List&lt;String&gt; newComponents = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L111" title="All 2 branches covered.">            if (foundJunctors.contains(OperationType.instance(ID).identifier())) {</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">            if (foundJunctors.contains(OperationType.instance(ID).getOperator())) {</span>
 <span class="fc" id="L112">                String currentChain = null;</span>
 <span class="fc" id="L113">                boolean groupingOccured = false;</span>
 <span class="fc bfc" id="L114" title="All 2 branches covered.">                boolean enoughtPresent = FunctionParser.numberOfOperationsWithin(foundJunctors) &gt; 1;// Otherwise: I[j]^4 goes nuts!</span>
@@ -123,9 +123,9 @@ import java.util.*;
 <span class="fc" id="L123">                            currentOperation = foundJunctors.get(Ci);</span>
                         }
 <span class="fc bfc" id="L125" title="All 2 branches covered.">                        if (currentOperation != null) {</span>
-<span class="fc bfc" id="L126" title="All 2 branches covered.">                            if (currentOperation.equals(OperationType.instance(ID).identifier())) {</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">                            if (currentOperation.equals(OperationType.instance(ID).getOperator())) {</span>
 <span class="fc" id="L127">                                final String newChain =</span>
-<span class="fc" id="L128">                                        FunctionParser.groupBy(OperationType.instance(ID).identifier(), currentChain, currentComponent, currentOperation);</span>
+<span class="fc" id="L128">                                        FunctionParser.groupBy(OperationType.instance(ID).getOperator(), currentChain, currentComponent, currentOperation);</span>
 <span class="pc bpc" id="L129" title="1 of 2 branches missed.">                                if (newChain != null) {</span>
 <span class="fc" id="L130">                                    currentChain = newChain;</span>
                                 }
@@ -160,7 +160,7 @@ import java.util.*;
 <span class="fc" id="L160">        int typeId = 0;</span>
 <span class="fc bfc" id="L161" title="All 2 branches covered.">        if (foundJunctors.size() &gt;= 1) {</span>
 <span class="fc bfc" id="L162" title="All 2 branches covered.">            for (int id = 0; id &lt; OperationType.COUNT(); ++id) {</span>
-<span class="fc bfc" id="L163" title="All 2 branches covered.">                if (OperationType.instance(id).identifier().equals(foundJunctors.get(0))) {</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">                if (OperationType.instance(id).getOperator().equals(foundJunctors.get(0))) {</span>
 <span class="fc" id="L164">                    typeId = id;</span>
                 }
             }
@@ -171,7 +171,7 @@ import java.util.*;
 <span class="fc bfc" id="L171" title="All 4 branches covered.">            if (possibleFunction != null &amp;&amp; possibleFunction.length() &gt; 1) {</span>
 
 <span class="pc bpc" id="L173" title="1 of 2 branches missed.">                for (int oi = 0; oi &lt; OperationType.COUNT(); oi++) {</span>
-<span class="fc bfc" id="L174" title="All 2 branches covered.">                    if (OperationType.instance(oi).identifier().equals(possibleFunction)) {</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">                    if (OperationType.instance(oi).getOperator().equals(possibleFunction)) {</span>
 <span class="fc" id="L175">                        typeId = oi;</span>
 <span class="fc" id="L176">                        List&lt;String&gt; parameters = FunctionParser.findParametersIn(</span>
 <span class="fc" id="L177">                                foundComponents.get(0),</span>
@@ -229,9 +229,9 @@ import java.util.*;
 
 <span class="fc" id="L230">            return FunctionBuilder.build(component, doAD);</span>
         } else {// More than one component left:
-<span class="fc bfc" id="L232" title="All 6 branches covered.">            if (OperationType.instance(typeId).identifier().equals(&quot;x&quot;) || OperationType.instance(typeId).identifier().equals(&quot;&lt;&quot;) || OperationType.instance(typeId).identifier().equals(&quot;&gt;&quot;)) {</span>
+<span class="fc bfc" id="L232" title="All 6 branches covered.">            if (OperationType.instance(typeId).getOperator().equals(&quot;x&quot;) || OperationType.instance(typeId).getOperator().equals(&quot;&lt;&quot;) || OperationType.instance(typeId).getOperator().equals(&quot;&gt;&quot;)) {</span>
 <span class="fc" id="L233">                foundComponents = _rebindPairwise(foundComponents, typeId);</span>
-<span class="pc bpc" id="L234" title="1 of 4 branches missed.">            } else if (OperationType.instance(typeId).identifier().equals(&quot;,&quot;) &amp;&amp; foundComponents.get(0).startsWith(&quot;[&quot;)) {</span>
+<span class="pc bpc" id="L234" title="1 of 4 branches missed.">            } else if (OperationType.instance(typeId).getOperator().equals(&quot;,&quot;) &amp;&amp; foundComponents.get(0).startsWith(&quot;[&quot;)) {</span>
 
 <span class="fc" id="L236">                foundComponents.set(0, foundComponents.get(0).substring(1));</span>
                 String[] splitted;
@@ -274,7 +274,7 @@ import java.util.*;
      */
     private static List&lt;String&gt; _rebindPairwise(List&lt;String&gt; components, int f_id) {
 <span class="fc bfc" id="L276" title="All 2 branches covered.">        if (components.size() &gt; 2) {</span>
-<span class="fc" id="L277">            String newComponent = &quot;(&quot; + components.get(0) + OperationType.instance(f_id).identifier() + components.get(1) + &quot;)&quot;;</span>
+<span class="fc" id="L277">            String newComponent = &quot;(&quot; + components.get(0) + OperationType.instance(f_id).getOperator() + components.get(1) + &quot;)&quot;;</span>
 <span class="fc" id="L278">            components.remove(components.get(0));</span>
 <span class="fc" id="L279">            components.remove(components.get(0));</span>
 <span class="fc" id="L280">            components.add(0, newComponent);</span>

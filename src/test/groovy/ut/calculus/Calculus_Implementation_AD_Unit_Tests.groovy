@@ -60,7 +60,7 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
                     .filter(
                             e ->
                                     e.isOperator() &&
-                                            e.identifier().length()==1 &&
+                                            e.getOperator().length()==1 &&
                                                 e.supports( Operator.class )
                     ).map( e -> e.getImplementation( Operator.class ) )
     }
@@ -158,7 +158,7 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
                 .filter(
                         e ->
                                 e.isOperator() &&
-                                        e.identifier().length()==1 &&
+                                        e.getOperator().length()==1 &&
                                         e.supports( Convolution.class )
                 ).map( e -> e.getImplementation( Convolution.class ) )
     }

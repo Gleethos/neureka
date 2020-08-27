@@ -8,7 +8,6 @@ import neureka.calculus.Function;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.*;
-import neureka.calculus.factory.assembly.FunctionBuilder;
 
 import java.util.Random;
 
@@ -38,7 +37,7 @@ public class Randomization extends OperationType
         .setADAnalyzer(
                 call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;
-                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
+                    if ( call.getType().getOperator().equals(",") ) return false; //Reshape
                     Tsr last = null;
                     for ( Tsr t : call.getTensors() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return false;

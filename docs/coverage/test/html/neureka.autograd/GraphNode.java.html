@@ -508,7 +508,7 @@ public class GraphNode implements Component&lt;Tsr&gt;
         } else { // Reverse mode auto-differentiation :
 <span class="fc" id="L509">            result_mode = -input_mode;</span>
         }
-<span class="fc bfc" id="L511" title="All 2 branches covered.">        result_mode = (&quot;&lt;&gt;&quot;.replace(function.type().identifier(), &quot;&quot;).equals(&quot;&lt;&gt;&quot;)) ? result_mode : 0;</span>
+<span class="fc bfc" id="L511" title="All 2 branches covered.">        result_mode = (&quot;&lt;&gt;&quot;.replace(function.type().getOperator(), &quot;&quot;).equals(&quot;&lt;&gt;&quot;)) ? result_mode : 0;</span>
 <span class="fc" id="L512">        return result_mode;</span>
     }
 

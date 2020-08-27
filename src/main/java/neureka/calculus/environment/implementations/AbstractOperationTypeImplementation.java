@@ -32,7 +32,7 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
 {
     protected final Map< Class< ExecutorFor< Device > >, ExecutorFor< Device > > _executions = new HashMap<>();
 
-    private HandleChecker _canHandle;
+    private SuitabilityChecker _suitabilityChecker;
     private ADAnalyzer _analyzer;
     private ADAgentSupplier _adaCreator;
     private InitialCallHook _hook;
@@ -42,13 +42,13 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
     public AbstractOperationTypeImplementation() { }
 
     @Override
-    public HandleChecker getHandleChecker() {
-        return _canHandle;
+    public SuitabilityChecker getSuitabilityChecker() {
+        return _suitabilityChecker;
     }
 
     @Override
-    public FinalType setHandleChecker(HandleChecker checker) {
-        _canHandle = checker;
+    public FinalType setSuitabilityChecker(SuitabilityChecker checker) {
+        _suitabilityChecker = checker;
         return (FinalType) this;
     }
 

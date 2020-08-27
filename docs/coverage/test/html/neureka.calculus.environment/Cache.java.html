@@ -59,7 +59,7 @@ public class Cache
         }
 <span class="fc" id="L60">        GraphNode node = inputs[0].find(GraphNode.class);</span>
 <span class="fc" id="L61">        Tsr result = null;</span>
-<span class="fc bfc" id="L62" title="All 4 branches covered.">        if (function.id() != OperationType.instance(&quot;&lt;&quot;).id() &amp;&amp; function.id() != OperationType.instance(&quot;&gt;&quot;).id()){</span>
+<span class="fc bfc" id="L62" title="All 4 branches covered.">        if (function.id() != OperationType.instance(&quot;&lt;&quot;).getId() &amp;&amp; function.id() != OperationType.instance(&quot;&gt;&quot;).getId()){</span>
 <span class="fc" id="L63">            result = _get(inputs, d, j);</span>
         }
 <span class="pc bpc" id="L65" title="1 of 2 branches missed.">        if( result == null ){</span>

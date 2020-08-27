@@ -32,7 +32,7 @@ public class Sigmoid extends OperationType
     {
 
         super(
-                "sigmoid",
+                "sig",
                 "sig" ,
                 1,
                 false,

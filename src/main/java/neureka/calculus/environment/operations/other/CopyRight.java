@@ -12,7 +12,6 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.Activation;
 import neureka.calculus.environment.implementations.Convolution;
-import neureka.calculus.factory.assembly.FunctionBuilder;
 
 public class CopyRight extends OperationType {
 
@@ -44,7 +43,7 @@ public class CopyRight extends OperationType {
         .setADAnalyzer(
                 call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;
-                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
+                    if ( call.getType().getOperator().equals(",") ) return false; //Reshape
                     Tsr last = null;
                     for ( Tsr t : call.getTensors() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return false;

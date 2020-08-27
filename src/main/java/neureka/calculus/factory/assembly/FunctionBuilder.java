@@ -16,21 +16,21 @@ public class FunctionBuilder {
      * @return
      */
     public static Function build(OperationType type, int size, boolean doAD) {
-        if (type.id() == 18) {
+        if (type.getId() == 18) {
             size = 2;
-        } else if (type.identifier().equals(",")) {
+        } else if ( type.getOperator().equals(",") ) {
             ArrayList<Function> srcs = new ArrayList<>();
             for (int i = 0; i < size; i++) srcs.add(new FunctionInput().newBuild("" + i));
             return new FunctionNode(type, srcs, doAD);
         }
-        if (type.id() < 10) {
-            return build(type.identifier() + "(I[0])", doAD);
-        } else if (type.id() < 12) {
-            return build(type.identifier() + "I[j]", doAD);
+        if ( type.getId() < 10 ) {
+            return build(type.getFunction() + "(I[0])", doAD);
+        } else if ( type.isIndexer() ) {
+            return build(type.getFunction() + "I[j]", doAD);
         } else {
             StringBuilder expression = new StringBuilder("I[0]");
             for (int i = 0; i < size - 1; i++) {
-                expression.append(type.identifier()).append("I[").append(i + 1).append("]");
+                expression.append(type.getOperator()).append("I[").append(i + 1).append("]");
             }
             return build(expression.toString(), doAD);
         }
@@ -98,7 +98,7 @@ public class FunctionBuilder {
         //---
         int counter = OperationType.COUNT();
         for (int j = OperationType.COUNT(); j > 0; --j) {
-            if (!foundJunctors.contains(OperationType.instance(j - 1).identifier())) {
+            if (!foundJunctors.contains(OperationType.instance(j - 1).getOperator())) {
                 --counter;
             } else {
                 j = 0;
@@ -108,7 +108,7 @@ public class FunctionBuilder {
         while (ID < counter) {
             final List<String> newJunctors = new ArrayList<>();
             final List<String> newComponents = new ArrayList<>();
-            if (foundJunctors.contains(OperationType.instance(ID).identifier())) {
+            if (foundJunctors.contains(OperationType.instance(ID).getOperator())) {
                 String currentChain = null;
                 boolean groupingOccured = false;
                 boolean enoughtPresent = FunctionParser.numberOfOperationsWithin(foundJunctors) > 1;// Otherwise: I[j]^4 goes nuts!
@@ -123,9 +123,9 @@ public class FunctionBuilder {
                             currentOperation = foundJunctors.get(Ci);
                         }
                         if (currentOperation != null) {
-                            if (currentOperation.equals(OperationType.instance(ID).identifier())) {
+                            if (currentOperation.equals(OperationType.instance(ID).getOperator())) {
                                 final String newChain =
-                                        FunctionParser.groupBy(OperationType.instance(ID).identifier(), currentChain, currentComponent, currentOperation);
+                                        FunctionParser.groupBy(OperationType.instance(ID).getOperator(), currentChain, currentComponent, currentOperation);
                                 if (newChain != null) {
                                     currentChain = newChain;
                                 }
@@ -160,7 +160,7 @@ public class FunctionBuilder {
         int typeId = 0;
         if (foundJunctors.size() >= 1) {
             for (int id = 0; id < OperationType.COUNT(); ++id) {
-                if (OperationType.instance(id).identifier().equals(foundJunctors.get(0))) {
+                if (OperationType.instance(id).getOperator().equals(foundJunctors.get(0))) {
                     typeId = id;
                 }
             }
@@ -171,7 +171,7 @@ public class FunctionBuilder {
             if (possibleFunction != null && possibleFunction.length() > 1) {
 
                 for (int oi = 0; oi < OperationType.COUNT(); oi++) {
-                    if (OperationType.instance(oi).identifier().equals(possibleFunction)) {
+                    if (OperationType.instance(oi).getOperator().equals(possibleFunction)) {
                         typeId = oi;
                         List<String> parameters = FunctionParser.findParametersIn(
                                 foundComponents.get(0),
@@ -229,9 +229,9 @@ public class FunctionBuilder {
 
             return FunctionBuilder.build(component, doAD);
         } else {// More than one component left:
-            if (OperationType.instance(typeId).identifier().equals("x") || OperationType.instance(typeId).identifier().equals("<") || OperationType.instance(typeId).identifier().equals(">")) {
+            if (OperationType.instance(typeId).getOperator().equals("x") || OperationType.instance(typeId).getOperator().equals("<") || OperationType.instance(typeId).getOperator().equals(">")) {
                 foundComponents = _rebindPairwise(foundComponents, typeId);
-            } else if (OperationType.instance(typeId).identifier().equals(",") && foundComponents.get(0).startsWith("[")) {
+            } else if (OperationType.instance(typeId).getOperator().equals(",") && foundComponents.get(0).startsWith("[")) {
 
                 foundComponents.set(0, foundComponents.get(0).substring(1));
                 String[] splitted;
@@ -274,7 +274,7 @@ public class FunctionBuilder {
      */
     private static List<String> _rebindPairwise(List<String> components, int f_id) {
         if (components.size() > 2) {
-            String newComponent = "(" + components.get(0) + OperationType.instance(f_id).identifier() + components.get(1) + ")";
+            String newComponent = "(" + components.get(0) + OperationType.instance(f_id).getOperator() + components.get(1) + ")";
             components.remove(components.get(0));
             components.remove(components.get(0));
             components.add(0, newComponent);

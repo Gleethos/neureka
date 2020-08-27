@@ -241,7 +241,7 @@ public class Product extends OperationType {
 <span class="pc bpc" id="L241" title="1 of 2 branches missed.">            if ( this.supports(Convolution.class) )</span>
             {
 <span class="nc" id="L243">                Function invX = FunctionBuilder.build(</span>
-<span class="nc" id="L244">                        &quot;I[0]&quot; + identifier() + &quot;&gt;&gt;I[1]&quot; + identifier() + &quot;&gt;&gt;I[2]&quot;,</span>
+<span class="nc" id="L244">                        &quot;I[0]&quot; + getOperator() + &quot;&gt;&gt;I[1]&quot; + getOperator() + &quot;&gt;&gt;I[2]&quot;,</span>
                         false
                 );
 <span class="nc" id="L247">                Tsr deriv = f.derive(inputs, d);</span>

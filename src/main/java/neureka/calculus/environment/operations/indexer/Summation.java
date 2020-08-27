@@ -230,7 +230,7 @@ return new ADAgent(
             if ( this.supports(Convolution.class) )
             {
                 Function invX = FunctionBuilder.build(
-                        "I[0]" + identifier() + ">>I[1]" + identifier() + ">>I[2]",
+                        "I[0]" + getOperator() + ">>I[1]" + getOperator() + ">>I[2]",
                         false
                 );
                 Tsr deriv = f.derive(inputs, d);

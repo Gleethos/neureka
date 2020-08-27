@@ -508,7 +508,7 @@ public class GraphNode implements Component<Tsr>
         } else { // Reverse mode auto-differentiation :
             result_mode = -input_mode;
         }
-        result_mode = ("<>".replace(function.type().identifier(), "").equals("<>")) ? result_mode : 0;
+        result_mode = ("<>".replace(function.type().getOperator(), "").equals("<>")) ? result_mode : 0;
         return result_mode;
     }
 

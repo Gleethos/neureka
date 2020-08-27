@@ -14,7 +14,7 @@ import java.util.List;
     public static int numberOfOperationsWithin(final List&lt;String&gt; operations) {
 <span class="fc" id="L15">        int counter = 0;</span>
 <span class="fc bfc" id="L16" title="All 2 branches covered.">        for(OperationType ot : OperationType.instances()){</span>
-<span class="fc bfc" id="L17" title="All 2 branches covered.">            if (operations.contains(ot.identifier())) ++counter;</span>
+<span class="fc bfc" id="L17" title="All 2 branches covered.">            if (operations.contains(ot.getOperator())) ++counter;</span>
 <span class="fc" id="L18">        }</span>
 <span class="fc" id="L19">        return counter;</span>
     }
@@ -86,7 +86,7 @@ import java.util.List;
 
     public static boolean isBasicOperation(final String operation) {
 <span class="fc bfc" id="L88" title="All 2 branches covered.">        if (operation.length() &gt; 8) return false;</span>
-<span class="pc bpc" id="L89" title="1 of 4 branches missed.">        return (OperationType.instance(operation) != null) &amp;&amp; OperationType.instance(operation).id() &gt;= 0;</span>
+<span class="pc bpc" id="L89" title="1 of 4 branches missed.">        return (OperationType.instance(operation) != null) &amp;&amp; OperationType.instance(operation).getId() &gt;= 0;</span>
     }
 
     public static String groupBy(final String operation, final String currentChain, final String currentComponent, final String currentOperation) {
@@ -201,14 +201,14 @@ import java.util.List;
 <span class="fc" id="L201">        double largest = -1;</span>
 <span class="fc" id="L202">        int best = 0;</span>
 <span class="fc bfc" id="L203" title="All 2 branches covered.">        for (int i=0; i&lt;OperationType.COUNT(); i++){</span>
-<span class="fc" id="L204">            double s = similarity(expression, OperationType.instance(i).identifier());</span>
+<span class="fc" id="L204">            double s = similarity(expression, OperationType.instance(i).getOperator());</span>
 <span class="fc bfc" id="L205" title="All 2 branches covered.">            if (largest==-1) largest = s;</span>
 <span class="fc bfc" id="L206" title="All 2 branches covered.">            else if (s &gt; largest) {</span>
 <span class="fc" id="L207">                best = i;</span>
 <span class="fc" id="L208">                largest = s;</span>
             }
         }
-<span class="fc bfc" id="L211" title="All 2 branches covered.">        return ( largest &gt; 0.1 ) ? OperationType.instance(best).identifier() : &quot;&quot;;</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">        return ( largest &gt; 0.1 ) ? OperationType.instance(best).getOperator() : &quot;&quot;;</span>
     }
 
     public static double similarity(String s1, String s2) {

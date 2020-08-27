@@ -31,8 +31,8 @@ public class OperationType implements Type
     private Stringifier _stringifier;
 
     protected int _id;
-    protected String _name;
-    protected String _identifier;
+    protected String _function;
+    protected String _operator;
     /**
      * Arity is the number of arguments or operands
      * that this function or operation takes.
@@ -46,37 +46,37 @@ public class OperationType implements Type
     private final Map<Class, AbstractOperationTypeImplementation> _implementations = new LinkedHashMap<>();
 
     public OperationType(
-            String name,
-            String identifier,
+            String function,
+            String operator,
             int arity,
             boolean isOperator,
             boolean isIndexer,
             boolean isCommutative,
             boolean isAssociative
     ) {
-        _name = name;
+        _function = function;
         _arity = arity;
         _id = OperationContext.instance().getID();
         OperationContext.instance().incrementID();
-        _identifier = identifier;
+        _operator = operator;
         _isOperator = isOperator;
         _isIndexer = isIndexer;
         _isCommutative = isCommutative;
         _isAssociative = isAssociative;
 
         OperationContext.instance().getRegister().add(this);
-        OperationContext.instance().getLookup().put(identifier, this);
+        OperationContext.instance().getLookup().put(operator, this);
         if (
-                identifier
+                operator
                         .replace((""+((char)171)), "")
                         .replace((""+((char)187)), "")
                         .matches("[a-z]")
         ) {
-            if (identifier.contains((""+((char)171)))) {
-                OperationContext.instance().getLookup().put(identifier.replace((""+((char)171)), "<<"), this);
+            if (operator.contains((""+((char)171)))) {
+                OperationContext.instance().getLookup().put(operator.replace((""+((char)171)), "<<"), this);
             }
-            if (identifier.contains((""+((char)187)))) {
-                OperationContext.instance().getLookup().put(identifier.replace((""+((char)187)),">>"), this);
+            if (operator.contains((""+((char)187)))) {
+                OperationContext.instance().getLookup().put(operator.replace((""+((char)187)),">>"), this);
             }
         }
     }
@@ -87,13 +87,6 @@ public class OperationType implements Type
 
     public static int COUNT(){
         return OperationContext.instance().getID();
-    }
-
-    //==================================================================================================================
-
-    @Override
-    public String getName(){
-        return _name;
     }
 
     //==================================================================================================================
@@ -130,7 +123,7 @@ public class OperationType implements Type
     @Override
     public OperationTypeImplementation implementationOf(ExecutionCall call) {
         for( OperationTypeImplementation te : _implementations.values() ) {
-            if ( te.getHandleChecker().canHandle(call) ) return te;
+            if ( te.getSuitabilityChecker().canHandle(call) ) return te;
         }
         return null;
     }
@@ -138,17 +131,22 @@ public class OperationType implements Type
     //==================================================================================================================
 
     @Override
-    public int id(){
+    public String getFunction(){
+        return _function;
+    }
+
+    @Override
+    public String getOperator(){
+        return _operator;
+    }
+
+    @Override
+    public int getId(){
         return _id;
     }
 
     @Override
-    public String identifier(){
-        return _identifier;
-    }
-
-    @Override
-    public int arity(){
+    public int getArity(){
         return _arity;
     }
 

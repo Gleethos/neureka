@@ -65,7 +65,7 @@ public class XMultiplication extends OperationType
                 }
                 return alternative;
             } else {
-                if ( call.getType().identifier().equals("x") ) {
+                if ( call.getType().getOperator().equals("x") ) {
                     if (d >= 0) {
                         if (d == 0) tsrs[0] = tsrs[2];
                         else tsrs[0] = tsrs[1];
@@ -73,7 +73,7 @@ public class XMultiplication extends OperationType
                     } else {
                         call.mutateArguments( t -> new Tsr[]{t[0], t[1], t[2]} );
                     }
-                } else if ( call.getType().identifier().equals("x"+ ((char) 187)) ) {
+                } else if ( call.getType().getOperator().equals("x"+ ((char) 187)) ) {
                     call.mutateArguments( t -> new Tsr[]{t[2], t[1], t[0]} );
                 }
                 return alternative;
@@ -98,7 +98,7 @@ public class XMultiplication extends OperationType
         ).setADAnalyzer(
                 call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;
-                    if ( call.getType().identifier().equals(",") ) return false; //Reshape
+                    if ( call.getType().getOperator().equals(",") ) return false; //Reshape
                     Tsr last = null;
                     for ( Tsr t : call.getTensors() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return false;
@@ -117,7 +117,7 @@ public class XMultiplication extends OperationType
                 int d = call.getDerivativeIndex();
 
                 Function invX = FunctionBuilder.build(
-                        "I[0]" + identifier() + ">>I[1]" + identifier() + ">>I[2]",
+                        "I[0]" + getOperator() + ">>I[1]" + getOperator() + ">>I[2]",
                         false
                 );
                 Tsr deriv = f.derive(inputs, d);
@@ -132,7 +132,7 @@ public class XMultiplication extends OperationType
         ).setCallHock(
                 (caller, call) -> {
                     if ( !caller.isFlat() ) return null;
-                    if ( call.getType().identifier().equals("x") ) {
+                    if ( call.getType().getOperator().equals("x") ) {
 
                         Tsr[] inputs = call.getTensors();
                         Tsr[] tsrs = new Tsr[]{null, inputs[0], inputs[1]};// _src_acti(inputs, j, -1, 1);
@@ -148,7 +148,7 @@ public class XMultiplication extends OperationType
                             Tsr[] tsrs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
                             for ( Tsr t : tsrs ) t.setIsVirtual(false);
                             call.getDevice().execute( new ExecutionCall( call.getDevice(), tsrs, 0, call.getType() ) );
-                            if ( call.getType().id() == OperationType.instance("x>>").id()) return tsrs[2];
+                            if ( call.getType().getId() == OperationType.instance("x>>").getId()) return tsrs[2];
                             else return tsrs[0];
                         }
                     }

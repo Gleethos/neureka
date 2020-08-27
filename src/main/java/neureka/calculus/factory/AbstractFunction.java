@@ -37,12 +37,12 @@ public abstract class AbstractFunction extends BaseFunction
      */
     protected AbstractFunction( OperationType type, List<Function> sources, boolean doAD )
     {
-        if( type.arity() >= 0 && sources.size() != type.arity() ) {
+        if( type.getArity() >= 0 && sources.size() != type.getArity() ) {
             String tip = ( type.isIndexer() )
                     ? "\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration."
                     : "";
             throw new IllegalArgumentException(
-                    "The function/operation '"+type.identifier()+"' expects "+type.arity()+" parameters, "+
+                    "The function/operation '"+type.getOperator()+"' expects "+type.getArity()+" parameters, "+
                             "however "+sources.size()+" where given!"+tip
             );
         }
@@ -76,7 +76,7 @@ public abstract class AbstractFunction extends BaseFunction
 
     @Override
     public int id() {
-        return _type.id();
+        return _type.getId();
     }
 
     @Override
@@ -315,7 +315,7 @@ public abstract class AbstractFunction extends BaseFunction
         if ( inputs.length == 0 ) return HostCPU.instance();
         Device device = inputs[0].find( Device.class );
         boolean onSameDevice = _shareGuestDevice( inputs );
-        boolean doAccel = !_type.identifier().equals(",") && onSameDevice;
+        boolean doAccel = !_type.getOperator().equals(",") && onSameDevice;
         return ( doAccel && device != null ) ? device : inputs[0].device();
     }
 
@@ -340,7 +340,7 @@ public abstract class AbstractFunction extends BaseFunction
     //------------------------------------------------------------------------------------------------------------------
 
     protected double _scalar_activation( double input, boolean derive ) {
-        switch ( _type.identifier() ) {
+        switch ( _type.getOperator() ) {
             case "relu":
                 return Exec.reLu(input, derive);
             case "sig":
@@ -369,7 +369,7 @@ public abstract class AbstractFunction extends BaseFunction
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     protected double _scalar_activation( double[] input, int j, int d ) {
-        switch (_type.identifier()) {
+        switch (_type.getOperator()) {
             case "sum": return ( j < 0 ) ? Exec.summation(input, d, _src) : Exec.summation(input, j, d, _src);
             case "prod": return ( j < 0 ) ? Exec.PI(input, d, _src) : Exec.PI(input, j, d, _src);
             case "^": return ( j < 0 ) ? Exec.power(input, d, _src) : Exec.power(input, j, d, _src);

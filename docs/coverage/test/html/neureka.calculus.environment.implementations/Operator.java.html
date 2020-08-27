@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Contract;
 public class Operator extends AbstractOperationTypeImplementation&lt;Operator&gt;
 {
 <span class="fc" id="L10">    public Operator() {</span>
-<span class="fc" id="L11">        setHandleChecker(</span>
+<span class="fc" id="L11">        setSuitabilityChecker(</span>
                 call -&gt; {
 <span class="fc bfc" id="L13" title="All 2 branches covered.">                    int size = ( call.getTensors()[0] == null ) ? call.getTensors()[1].size() : call.getTensors()[0].size();</span>
 <span class="fc bfc" id="L14" title="All 6 branches covered.">                    for ( Tsr t : call.getTensors() ) if ( t!=null &amp;&amp; t.size() != size ) return false;</span>

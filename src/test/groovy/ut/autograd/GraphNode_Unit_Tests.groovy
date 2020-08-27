@@ -76,7 +76,7 @@ class GraphNode_Unit_Tests extends Specification
             1 * inputs[2].rqsGradient() >> true
             1 * context.allowsForward() >> true
             1 * function.type() >> type
-            1 * type.identifier() >> "*"
+            1 * type.getOperator() >> "*"
             3 * inputsNodeMock.getPayload() >> payload
             3 * payload.hashCode() >> 3
 

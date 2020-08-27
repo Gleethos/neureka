@@ -16,7 +16,7 @@ public class Gaussian extends OperationType
 
     public Gaussian(){
 
-        super("gaussian", "gaus", 1, false, false, true, true);
+        super("gaus", "gaus", 1, false, false, true, true);
 
         setStringifier(
                 children -> {
