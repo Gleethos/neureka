@@ -22,7 +22,7 @@ public class Absolute extends OperationType {
 
     public Absolute()
     {
-        super("absolute", "abs" , 1, false, false, false, true, true);
+        super("absolute", "abs" , 1, false, false, true, true);
 
         setStringifier(
             children -> {

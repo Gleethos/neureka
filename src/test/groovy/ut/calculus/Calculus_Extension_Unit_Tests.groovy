@@ -32,10 +32,10 @@ class Calculus_Extension_Unit_Tests extends Specification
         given : 'Neureka is being reset.'
             Neureka.instance().reset()
 
-        and : 'A new operation type with a new implementation.'
+        and : 'A new mock operation type is being created.'
             def type = Mock(OperationType)
 
-        and : 'A list of function source nodes.'
+        and : 'A list of mocked function source nodes.'
             def children = [Mock(FunctionInput), Mock(FunctionInput)]
 
         and : 'A mock tensor which is the expected output'
@@ -58,12 +58,12 @@ class Calculus_Extension_Unit_Tests extends Specification
         when : 'The function is being called with an empty tensor array...'
             def result = function.call(new Tsr[0])
 
-        then : 'The custom call hook should being accessed as outlined below.'
+        then : 'The custom call hook should be accessed as outlined below.'
             (1.._) * type.implementationOf(_) >> implementation
             (1.._) * implementation.getCallHook() >> customCallHook
             (1.._) * customCallHook.handle(_,_) >> output
 
-        and : 'The mocked output tensor returns a mock device.'
+        and : 'The mocked output tensor never returns the mock device because our custom call hook replaces execution.'
             0 * output.device() >> Mock(Device)
 
         and : 'The ADAnalyzer of the mock implementation will not be called because "doAD" is set to "false".'
@@ -122,7 +122,7 @@ class Calculus_Extension_Unit_Tests extends Specification
         and : 'The GraphNode instance which will be created as tensor component interacts as follows.'
             (1.._) * input.find(GraphNode.class) >> node
             (1.._) * node.lock() >> Mock(GraphLock)
-            (1.._) * input.device() >> Mock(Device)
+            (1.._) * input.device() >> Mock(Device) // Device is being queried for execution...
             _ * type.identifier() >> 'test_identifier'
             (1.._) * output.device() >> Mock(Device)
 
@@ -132,7 +132,7 @@ class Calculus_Extension_Unit_Tests extends Specification
             (1.._) * node.getPayload() >> input
             (1.._) * node.usesAD() >> true
 
-        and : 'The agent creator is accessed because "doAD" is set to true and the input requires gradients.'
+        and : 'The agent creator is being accessed because "doAD" is set to true and the input requires gradients.'
             1 * implementation.getADAgentCreator() >> agentSupplier
             1 * agentSupplier.getADAgentOf(_,_,_) >> agent
             1 * agent.derivative() >> null
@@ -145,18 +145,14 @@ class Calculus_Extension_Unit_Tests extends Specification
 
     //@Ignore
     //def 'WIP - Custom call implementation is being called.'(){
-//
     //    given : 'Neureka is being reset.'
     //        Neureka.instance().reset()
-//
     //    and : 'A new OperationContext for testing.'
     //        OperationContext oldContext = OperationContext.instance()
     //        OperationContext context = OperationContext.instance().clone()
     //        OperationContext.setInstance(context)
-//
     //    and : 'A mock agent.'
     //        ADAgent agent = Mock()
-//
     //    and : 'A new operation type with a new implementation.'
     //        def type = new OperationType(
     //                "test_operation", "o", 2,
@@ -176,22 +172,15 @@ class Calculus_Extension_Unit_Tests extends Specification
     //                                call -> {return call;}
     //                        )
     //        )
-//
     //    and : 'A mock FunctionNode '
     //        def children = [Mock(FunctionInput), Mock(FunctionInput)]
     //        def function = new FunctionNode(type, children, false)
-//
-//
     //    when : ''
     //    function.call(new Tsr[0])
-//
     //    then : ''
     //    assert true
-//
-//
     //    cleanup :
     //    OperationContext.setInstance(oldContext)
-//
     //}
 
 

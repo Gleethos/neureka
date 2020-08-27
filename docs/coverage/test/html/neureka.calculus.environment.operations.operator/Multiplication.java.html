@@ -33,7 +33,7 @@ public class Multiplication extends OperationType {
     {
 <span class="fc" id="L34">        super(</span>
                 &quot;multiply&quot;, &quot;*&quot;, -1,
-                true, false, false, true, false
+                true, false, true, false
         );
 
 <span class="fc" id="L39">        setStringifier(</span>
@@ -510,7 +510,7 @@ public class Multiplication extends OperationType {
         );
 
 <span class="fc" id="L512">        new OperationType(</span>
-                &quot;&quot;, ((char) 171) + &quot;*&quot;, 3, true, false, false, false, false
+                &quot;&quot;, ((char) 171) + &quot;*&quot;, 3, true, false, false, false
 <span class="fc" id="L514">        ).setImplementation(</span>
                 Broadcast.class,
 <span class="fc" id="L516">                xBroadcast.setExecutor(</span>
@@ -606,7 +606,7 @@ public class Multiplication extends OperationType {
             );
 
 <span class="fc" id="L608">        new OperationType(</span>
-                &quot;&quot;, &quot;*&quot; + ((char) 187), 3, true, false, false, false, false
+                &quot;&quot;, &quot;*&quot; + ((char) 187), 3, true, false, false, false
 <span class="fc" id="L610">        ).setImplementation(</span>
                 Broadcast.class,
 <span class="fc" id="L612">                xBroadcast.setExecutor(</span>

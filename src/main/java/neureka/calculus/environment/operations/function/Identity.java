@@ -16,7 +16,7 @@ public class Identity extends OperationType
 
     public Identity()
     {
-        super("identity", "idy" , 1, false, false, false, true, true);
+        super("identity", "idy" , 1, false, false, true, true);
 
         setStringifier(
                 children -> {

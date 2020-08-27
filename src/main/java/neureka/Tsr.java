@@ -38,6 +38,21 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     private static final int IS_VIRTUAL_MASK = 4;
     private static final int GRADIENT_APPLY_RQD_MASK = 8;
 
+    /**
+     *  The version of the data stored value within this tensor.
+     *  Gets incremented every time an inline operation occurs!
+     */
+    private int _version = 0;
+
+    public int version() {
+        return _version;
+    }
+
+    public Tsr incrementVersion(){
+        _version ++;
+        return this;
+    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     public Tsr setRqsGradient( boolean rqsGradient ) {

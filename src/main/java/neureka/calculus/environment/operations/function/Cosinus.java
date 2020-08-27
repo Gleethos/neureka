@@ -28,7 +28,6 @@ public class Cosinus extends OperationType {
                 1,
                 false,
                 false,
-                false,
                 true,
                 true
         );

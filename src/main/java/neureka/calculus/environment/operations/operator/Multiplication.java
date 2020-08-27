@@ -33,7 +33,7 @@ public class Multiplication extends OperationType {
     {
         super(
                 "multiply", "*", -1,
-                true, false, false, true, false
+                true, false, true, false
         );
 
         setStringifier(
@@ -510,7 +510,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
         );
 
         new OperationType(
-                "", ((char) 171) + "*", 3, true, false, false, false, false
+                "", ((char) 171) + "*", 3, true, false, false, false
         ).setImplementation(
                 Broadcast.class,
                 xBroadcast.setExecutor(
@@ -606,7 +606,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
             );
 
         new OperationType(
-                "", "*" + ((char) 187), 3, true, false, false, false, false
+                "", "*" + ((char) 187), 3, true, false, false, false
         ).setImplementation(
                 Broadcast.class,
                 xBroadcast.setExecutor(

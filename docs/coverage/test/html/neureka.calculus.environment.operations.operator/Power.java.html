@@ -40,7 +40,7 @@ public class Power extends OperationType
 
     public Power()
     {
-<span class="fc" id="L43">        super(&quot;power&quot;, &quot;^&quot;, -1, true, false, false, false, false);</span>
+<span class="fc" id="L43">        super(&quot;power&quot;, &quot;^&quot;, -1, true, false, false, false);</span>
 
 <span class="fc" id="L45">        setStringifier(</span>
                 children -&gt;
@@ -512,13 +512,13 @@ public class Power extends OperationType
         //__________________________
         // RELATED OPERATION TYPES :
 
-<span class="fc" id="L515">        new OperationType(&quot;inv_power_left&quot;, ((char)171)+&quot;^&quot;, 3, true, false, false, false, false);</span>
-<span class="fc" id="L516">        new OperationType(&quot;inv_power_right&quot;, &quot;^&quot; + ((char) 187), 3, true, false, false, false, false);</span>
+<span class="fc" id="L515">        new OperationType(&quot;inv_power_left&quot;, ((char)171)+&quot;^&quot;, 3, true, false, false, false);</span>
+<span class="fc" id="L516">        new OperationType(&quot;inv_power_right&quot;, &quot;^&quot; + ((char) 187), 3, true, false, false, false);</span>
 
         // Convolution:
 
 <span class="fc" id="L520">        new OperationType(</span>
-                &quot;power&quot;, &quot;p&quot;, 2, true, false, true, false, false
+                &quot;power&quot;, &quot;p&quot;, 2, true, false, false, false
 <span class="fc" id="L522">        ).setImplementation(</span>
                 Convolution.class,
                 new Convolution()
@@ -589,8 +589,8 @@ public class Power extends OperationType
                 }
         );
 
-<span class="fc" id="L592">        new OperationType(&quot;&quot;, ((char) 171) + &quot;p&quot;, 3, true, false, true, false, false);</span>
-<span class="fc" id="L593">        new OperationType(&quot;&quot;, &quot;p&quot; + ((char) 187), 3, true, false, true, false, false);</span>
+<span class="fc" id="L592">        new OperationType(&quot;&quot;, ((char) 171) + &quot;p&quot;, 3, true, false, false, false);</span>
+<span class="fc" id="L593">        new OperationType(&quot;&quot;, &quot;p&quot; + ((char) 187), 3, true, false, false, false);</span>
 
 
 

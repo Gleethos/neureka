@@ -19,7 +19,7 @@ public class CopyLeft extends OperationType {
     public CopyLeft(){
 
         super(
-                "", "<", 2,true, false, false, false, false
+                "", "<", 2,true, false, false, false
         );
 
         setStringifier(

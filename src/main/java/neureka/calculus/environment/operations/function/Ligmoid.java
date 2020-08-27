@@ -24,7 +24,7 @@ public class Ligmoid extends OperationType
 
     public Ligmoid()
     {
-        super("ligmoid", "lig" , 1, false, false, false, true, true);
+        super("ligmoid", "lig" , 1, false, false, true, true);
 
         setStringifier(
                 children -> {

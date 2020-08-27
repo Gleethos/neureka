@@ -1,6 +1,5 @@
 package neureka.calculus.environment;
 
-import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +8,7 @@ public class OperationTypeFactory
     String  _name = null;
     String  _identifier = null;
     Integer _arity = null;
-    Boolean _isOperation = null;
+    Boolean _isOperator = null;
     Boolean _isIndexer = null;
     Boolean _isConvection = null;
     Boolean _isCommutative = null;
@@ -37,9 +36,8 @@ public class OperationTypeFactory
                     _name,
                     _identifier,
                     _arity,
-                    _isOperation,
+                    _isOperator,
                     _isIndexer,
-                    _isConvection,
                     _isCommutative,
                     _isAssociative
             );

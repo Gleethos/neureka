@@ -18,7 +18,7 @@ public class CopyRight extends OperationType {
 
     public CopyRight()
     {
-        super("", ">", 2,true, false, false, false, false);
+        super("", ">", 2,true, false, false, false);
 
         setStringifier(
                 children -> {

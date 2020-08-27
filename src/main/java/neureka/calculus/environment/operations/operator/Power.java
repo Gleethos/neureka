@@ -40,7 +40,7 @@ public class Power extends OperationType
 
     public Power()
     {
-        super("power", "^", -1, true, false, false, false, false);
+        super("power", "^", -1, true, false, false, false);
 
         setStringifier(
                 children ->
@@ -512,13 +512,13 @@ return new ADAgent(
         //__________________________
         // RELATED OPERATION TYPES :
 
-        new OperationType("inv_power_left", ((char)171)+"^", 3, true, false, false, false, false);
-        new OperationType("inv_power_right", "^" + ((char) 187), 3, true, false, false, false, false);
+        new OperationType("inv_power_left", ((char)171)+"^", 3, true, false, false, false);
+        new OperationType("inv_power_right", "^" + ((char) 187), 3, true, false, false, false);
 
         // Convolution:
 
         new OperationType(
-                "power", "p", 2, true, false, true, false, false
+                "power", "p", 2, true, false, false, false
         ).setImplementation(
                 Convolution.class,
                 new Convolution()
@@ -589,8 +589,8 @@ return new ADAgent(
                 }
         );
 
-        new OperationType("", ((char) 171) + "p", 3, true, false, true, false, false);
-        new OperationType("", "p" + ((char) 187), 3, true, false, true, false, false);
+        new OperationType("", ((char) 171) + "p", 3, true, false, false, false);
+        new OperationType("", "p" + ((char) 187), 3, true, false, false, false);
 
 
 

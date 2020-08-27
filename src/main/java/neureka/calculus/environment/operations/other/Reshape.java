@@ -21,9 +21,8 @@ public class Reshape extends OperationType
     {
 
         super(
-                "", ",", -1,
+                "reshape", ",", -1,
                 true,
-                false,
                 false,
                 false,
                 false

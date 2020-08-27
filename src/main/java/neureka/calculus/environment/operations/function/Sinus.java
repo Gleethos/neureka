@@ -23,7 +23,7 @@ public class Sinus extends OperationType
 
     public Sinus()
     {
-        super("sinus", "sin" , 1, false, false, false, true, true);
+        super("sinus", "sin" , 1, false, false, true, true);
 
         setStringifier(
                 children -> {

@@ -24,7 +24,6 @@ public class XMultiplication extends OperationType
                 2,
                 true,
                 false,
-                true,
                 false,
                 false
         );
@@ -218,7 +217,7 @@ public class XMultiplication extends OperationType
                 )
         );
         new OperationType(
-                "inv_convolve_mul_left", ((char) 171) + "x", 3, true, false, true, false, false
+                "inv_convolve_mul_left", ((char) 171) + "x", 3, true, false, false, false
         )
                 .setImplementation(Convolution.class, convolution)
                 .setStringifier(
@@ -235,7 +234,7 @@ public class XMultiplication extends OperationType
                 );
 
         new OperationType(
-                "inv_convolve_mul_right", "x" + ((char) 187), 3, true, false, true, false, false
+                "inv_convolve_mul_right", "x" + ((char) 187), 3, true, false, false, false
         )
                 .setImplementation(Convolution.class, convolution)
                 .setStringifier(

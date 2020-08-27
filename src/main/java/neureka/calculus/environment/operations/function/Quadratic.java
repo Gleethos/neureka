@@ -33,7 +33,6 @@ public class Quadratic extends OperationType
                 1,
                 false,
                 false,
-                false,
                 true,
                 true
         );

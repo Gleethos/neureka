@@ -16,7 +16,7 @@ public class Modulo extends OperationType {
     {
 
         super(
-                "modulo", "%", -1, true, false, false, false, false
+                "modulo", "%", -1, true, false, false, false
         );
 
         setStringifier(
@@ -440,10 +440,10 @@ public class Modulo extends OperationType {
         // RELATED OPERATION TYPES :
 
         new OperationType(
-                "", ((char) 171) + "%", 3, true, false, false, false, false
+                "", ((char) 171) + "%", 3, true, false, false, false
         );
         new OperationType(
-                "", "%" + ((char) 187), 3, true, false, false, false, false
+                "", "%" + ((char) 187), 3, true, false, false, false
         );
     }
 

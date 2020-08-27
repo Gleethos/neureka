@@ -17,7 +17,7 @@ public class Subtraction extends OperationType
     public Subtraction()
     {
 <span class="fc" id="L19">        super(</span>
-                &quot;subtract&quot;, &quot;-&quot;, -1, true, false, false, false, false
+                &quot;subtract&quot;, &quot;-&quot;, -1, true, false, false, false
         );
 
 <span class="fc" id="L23">        setStringifier(</span>
@@ -385,17 +385,17 @@ public class Subtraction extends OperationType
         // RELATED OPERATIONS :
 
 <span class="fc" id="L387">        new OperationType(</span>
-                &quot;&quot;, ((char) 171) + &quot;-&quot;, 3, true, false, false, false, false
+                &quot;&quot;, ((char) 171) + &quot;-&quot;, 3, true, false, false, false
         );
 <span class="fc" id="L390">        new OperationType(</span>
-                &quot;&quot;, &quot;-&quot; + ((char) 187), 3, true, false, false, false, false
+                &quot;&quot;, &quot;-&quot; + ((char) 187), 3, true, false, false, false
         );
 
         // Convolution:
 
 
 <span class="fc" id="L397">        new OperationType(</span>
-                &quot;&quot;, &quot;s&quot;, 2, true, false, true, false, false
+                &quot;&quot;, &quot;s&quot;, 2, true, false, false, false
 <span class="fc" id="L399">        ).setStringifier(</span>
                 children -&gt; {
 <span class="fc" id="L401">                    StringBuilder reconstructed = new StringBuilder();</span>
@@ -410,10 +410,10 @@ public class Subtraction extends OperationType
         );
 
 <span class="fc" id="L412">        new OperationType(</span>
-                &quot;&quot;, ((char) 171) + &quot;s&quot;, 3, true, false, true, false, false
+                &quot;&quot;, ((char) 171) + &quot;s&quot;, 3, true, false, false, false
         );
 <span class="fc" id="L415">        new OperationType(</span>
-                &quot;&quot;, &quot;s&quot; + ((char) 187), 3, true, false, true, false, false
+                &quot;&quot;, &quot;s&quot; + ((char) 187), 3, true, false, false, false
         );
 
 

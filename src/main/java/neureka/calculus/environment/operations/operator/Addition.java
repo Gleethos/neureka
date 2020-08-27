@@ -91,7 +91,6 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
                 -1,
                 true,
                 false,
-                false,
                 true,
                 false
         );
@@ -429,17 +428,17 @@ return new ADAgent(
         // RELATED OPERATION TYPES :
 
         new OperationType(
-                "", ((char) 171) + "+", 3, true, false, false, false, false
+                "", ((char) 171) + "+", 3, true, false, false, false
         ).setImplementation(Broadcast.class, _broadcast);
 
         new OperationType(
-                "", "+" + ((char) 187), 3, true, false, false, false, false
+                "", "+" + ((char) 187), 3, true, false, false, false
         ).setImplementation(Broadcast.class, _broadcast);
 
         // Convolutoion:
 
         new OperationType(
-                "add", "a", 2, true, false, true, false, false
+                "add", "a", 2, true, false, false, false
         ).setImplementation(Convolution.class,
                 new Convolution()
         .setADAnalyzer(
@@ -510,10 +509,10 @@ return new ADAgent(
         );
 
         new OperationType(
-                "", ((char) 171) + "a", 3, true, false, true, false, false
+                "", ((char) 171) + "a", 3, true, false, false, false
         );
         new OperationType(
-                "", "a" + ((char) 187), 3, true, false, true, false, false
+                "", "a" + ((char) 187), 3, true, false, false, false
         );
 
 

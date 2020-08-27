@@ -51,7 +51,6 @@ public class OperationType implements Type
             int arity,
             boolean isOperator,
             boolean isIndexer,
-            boolean isConvection,
             boolean isCommutative,
             boolean isAssociative
     ) {

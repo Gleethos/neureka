@@ -39,7 +39,6 @@ public class Division extends OperationType
                 true,
                 false,
                 false,
-                false,
                 false
         );
 
@@ -471,16 +470,16 @@ return new ADAgent(
 
 
         new OperationType(
-                "inv_division_left", ((char) 171) + "/", 3, true, false, false, false, false
+                "inv_division_left", ((char) 171) + "/", 3, true, false, false, false
         );
         new OperationType(
-                "inv_division_right", "/" + ((char) 187), 3, true, false, false, false, false
+                "inv_division_right", "/" + ((char) 187), 3, true, false, false, false
         );
 
         // Convolution:
 
         new OperationType(
-                "divide", "d", 2, true, false, true, false, false
+                "divide", "d", 2, true, false, false, false
         ).setImplementation(
                 Convolution.class,
                 new Convolution()
@@ -552,7 +551,7 @@ return new ADAgent(
         );
 
         new OperationType(
-                "", ((char) 171) + "d", 3, true, false, true, false, false
+                "", ((char) 171) + "d", 3, true, false, false, false
         ).setStringifier(
                 children -> {
                     StringBuilder reconstructed = new StringBuilder();
@@ -566,7 +565,7 @@ return new ADAgent(
                 }
         );
         new OperationType(
-                "", "d" + ((char) 187), 3, true, false, true, false, false
+                "", "d" + ((char) 187), 3, true, false, false, false
         ).setStringifier(
                 children -> {
                     StringBuilder reconstructed = new StringBuilder();

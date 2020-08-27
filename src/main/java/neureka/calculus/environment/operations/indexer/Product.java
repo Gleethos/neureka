@@ -23,7 +23,6 @@ public class Product extends OperationType {
                 1,
                 false,
                 true,
-                false,
                 true,
                 true
         );
