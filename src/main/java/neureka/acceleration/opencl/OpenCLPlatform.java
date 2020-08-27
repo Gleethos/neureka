@@ -56,7 +56,16 @@ public class OpenCLPlatform {
         OPERATION_TO_KERNEL_MAPPING.put(",", "reshape");
 
         OPERATION_TO_KERNEL_MAPPING.put("<", "operate_idy");
-        OPERATION_TO_KERNEL_MAPPING.put(">", "inject_right");
+        OPERATION_TO_KERNEL_MAPPING.put(">", "operate_right");
+
+        OperationType.instances().forEach(
+                type -> {
+                    if ( type.supports(Activation.class) ) {
+                        //OPERATION_TO_KERNEL_MAPPING.put(type.getOperator(), "activate_"+type.getFunction());
+                    }
+                }
+        );
+
     }
 
     public String kernelNameOf(OperationType type) {
@@ -201,9 +210,6 @@ public class OpenCLPlatform {
         }
     }
 
-    private interface Parser {
-        String apply(String name, String first, String second);
-    }
 
     public cl_platform_id getID() {
         return _pid;
