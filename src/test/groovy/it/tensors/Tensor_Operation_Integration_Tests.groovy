@@ -12,16 +12,16 @@ class Tensor_Operation_Integration_Tests extends Specification
             boolean legacy, String expected
     ) {
         given: 'The Neurka instance is being reset.'
-        Neureka.instance().reset();
+            Neureka.instance().reset();
         and: 'Gradient auto apply for tensors in ue is set to false.'
-        Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false);
+            Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false);
         and: 'Tensor legacy view is set to true.'
-        Neureka.instance().settings().view().setIsUsingLegacyView(true);
+            Neureka.instance().settings().view().setIsUsingLegacyView(true);
         and: 'The Neureka instance is set to legacy indexing.'
-        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing( legacy );
+            Neureka.instance().settings().indexing().setIsUsingLegacyIndexing( legacy );
         and: 'Two new 3D tensor instances with the shapes: [2x3x1] & [1x3x2].'
-        //Same test again but this time with reversed indexing:
-        def x = new Tsr(
+            //Same test again but this time with reversed indexing:
+            def x = new Tsr(
                 new int[]{2, 3, 1},
                 new double[]{
                         3,  2, -1, //<=- Format of legacy : false
@@ -32,32 +32,32 @@ class Tensor_Operation_Integration_Tests extends Specification
                              2,  4
                          */
                 }
-        );
-        def y = new Tsr(
+            );
+            def y = new Tsr(
                 new int[]{1, 3, 2},
                 new double[]{
                         4, -1,
                         3,  2,
                         3, -1
                 });
-        /*
+            /*
                 15, 2,
                 10, 2
-         */
+            */
         when : 'The x-mul result is being instantiated by passing a simple equation to the tensor constructor.'
-        def z = new Tsr(new Tsr[]{x, y}, "I0xi1");
+            def z = new Tsr(new Tsr[]{x, y}, "I0xi1");
         then: 'The result contains the expected String.'
-        z.toString().contains(expected);
+            z.toString().contains(expected);
 
         when: 'The x-mul result is being instantiated by passing a object array containing equation parameters and syntax.'
-        z = new Tsr(new Object[]{x, "x", y});
+            z = new Tsr(new Object[]{x, "x", y});
         then: 'The result contains the expected String.'
-        z.toString().contains(expected);
+            z.toString().contains(expected);
 
         where :
-        legacy || expected
-        false  || "[2x1x2]:(15.0, 2.0, 10.0, 2.0)"
-        true   || "[2x1x2]:(19.0, 22.0, 1.0, -6.0)"
+            legacy || expected
+            false  || "[2x1x2]:(15.0, 2.0, 10.0, 2.0)"
+            true   || "[2x1x2]:(19.0, 22.0, 1.0, -6.0)"
     }
 
 

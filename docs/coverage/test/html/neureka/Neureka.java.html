@@ -94,9 +94,8 @@ public class Neureka
         }
 <span class="fc" id="L95">    }</span>
 
-    private boolean _currentThreadIsAuthorized(){
+    private boolean _currentThreadIsAuthorized() {
 <span class="fc" id="L98">        return this.equals( _INSTANCES.get() );</span>
-        //return this.equals(_instances.get(Thread.currentThread()));
     }
 
     public class Settings
@@ -107,70 +106,70 @@ public class Neureka
         private final View _view;
         private final NDim _ndim;
 
-<span class="fc" id="L110">        private boolean _isLocked = false;</span>
+<span class="fc" id="L109">        private boolean _isLocked = false;</span>
 
-<span class="fc" id="L112">        private Settings() {</span>
-<span class="fc" id="L113">            _debug = new Debug();</span>
-<span class="fc" id="L114">            _autograd = new AutoGrad();</span>
-<span class="fc" id="L115">            _indexing = new Indexing();</span>
-<span class="fc" id="L116">            _view = new View();</span>
-<span class="fc" id="L117">            _ndim = new NDim();</span>
-<span class="fc" id="L118">        }</span>
+<span class="fc" id="L111">        private Settings() {</span>
+<span class="fc" id="L112">            _debug = new Debug();</span>
+<span class="fc" id="L113">            _autograd = new AutoGrad();</span>
+<span class="fc" id="L114">            _indexing = new Indexing();</span>
+<span class="fc" id="L115">            _view = new View();</span>
+<span class="fc" id="L116">            _ndim = new NDim();</span>
+<span class="fc" id="L117">        }</span>
 
         public Debug debug() {
-<span class="fc" id="L121">            return _debug;</span>
+<span class="fc" id="L120">            return _debug;</span>
         }
 
         public Debug debug(Object closure) {
-<span class="pc bpc" id="L125" title="1 of 2 branches missed.">            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _debug);</span>
-<span class="fc" id="L126">            return _debug;</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _debug);</span>
+<span class="fc" id="L125">            return _debug;</span>
         }
 
         public AutoGrad autograd(){
-<span class="fc" id="L130">            return _autograd;</span>
+<span class="fc" id="L129">            return _autograd;</span>
         }
 
         public AutoGrad autograd(Object closure) {
-<span class="pc bpc" id="L134" title="1 of 2 branches missed.">            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _autograd);</span>
-<span class="fc" id="L135">            return _autograd;</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _autograd);</span>
+<span class="fc" id="L134">            return _autograd;</span>
         }
 
         public Indexing indexing(){
-<span class="fc" id="L139">            return _indexing;</span>
+<span class="fc" id="L138">            return _indexing;</span>
         }
 
         public Indexing indexing(Object closure) {
-<span class="pc bpc" id="L143" title="1 of 2 branches missed.">            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _indexing);</span>
-<span class="fc" id="L144">            return _indexing;</span>
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _indexing);</span>
+<span class="fc" id="L143">            return _indexing;</span>
         }
 
         public View view(){
-<span class="fc" id="L148">            return _view;</span>
+<span class="fc" id="L147">            return _view;</span>
         }
 
         public View view(Object closure) {
-<span class="pc bpc" id="L152" title="1 of 2 branches missed.">            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _view);</span>
-<span class="fc" id="L153">            return _view;</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _view);</span>
+<span class="fc" id="L152">            return _view;</span>
         }
 
         public NDim ndim(){
-<span class="fc" id="L157">            return _ndim;</span>
+<span class="fc" id="L156">            return _ndim;</span>
         }
 
         public NDim ndim(Object closure) {
-<span class="pc bpc" id="L161" title="1 of 2 branches missed.">            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _ndim);</span>
-<span class="fc" id="L162">            return _ndim;</span>
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _ndim);</span>
+<span class="fc" id="L161">            return _ndim;</span>
         }
 
         public boolean isLocked(){
-<span class="fc" id="L166">            return  _isLocked;</span>
+<span class="fc" id="L165">            return  _isLocked;</span>
         }
 
         public void setIsLocked(boolean locked) {
-<span class="nc" id="L170">            _isLocked = locked;</span>
-<span class="nc" id="L171">        }</span>
+<span class="nc" id="L169">            _isLocked = locked;</span>
+<span class="nc" id="L170">        }</span>
 
-<span class="fc" id="L173">        public class Debug</span>
+<span class="fc" id="L172">        public class Debug</span>
         {
             /**
              * Every derivative is calculated with respect to some graph node.
@@ -187,21 +186,24 @@ public class Neureka
              * It is used in the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
              */
-<span class="fc" id="L190">            private boolean _isKeepingDerivativeTargetPayloads = false;</span>
+<span class="fc" id="L189">            private boolean _isKeepingDerivativeTargetPayloads = false;</span>
 
             public boolean isKeepingDerivativeTargetPayloads(){
-<span class="fc" id="L193">                return _isKeepingDerivativeTargetPayloads;</span>
+<span class="fc" id="L192">                return _isKeepingDerivativeTargetPayloads;</span>
             }
 
             public void setIsKeepingDerivativeTargetPayloads(boolean keep){
-<span class="pc bpc" id="L197" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L198">                _isKeepingDerivativeTargetPayloads = keep;</span>
-<span class="fc" id="L199">            }</span>
+<span class="pc bpc" id="L196" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L197">                _isKeepingDerivativeTargetPayloads = keep;</span>
+<span class="fc" id="L198">            }</span>
 
         }
 
-<span class="fc" id="L203">        public class AutoGrad // Auto-Grad/Differentiation</span>
+<span class="fc" id="L202">        public class AutoGrad // Auto-Grad/Differentiation</span>
         {
+
+<span class="fc" id="L205">            private boolean _isPreventingInlineOperations = true;</span>
+
             /**
              * This flag enables an optimization technique which only propagates error values to
              * gradients if needed by a tensor (the tensor is used again) and otherwise accumulate them
@@ -212,14 +214,14 @@ public class Neureka
              * improve performance for some networks substantially.
              * The technique is termed JIT-Propagation.
              */
-<span class="fc" id="L215">            private boolean _isRetainingPendingErrorForJITProp = true;</span>
+<span class="fc" id="L217">            private boolean _isRetainingPendingErrorForJITProp = true;</span>
 
             /**
              * Gradients will automatically be applied to tensors as soon as
              * they are being used for calculation (GraphNode instantiation).
              * This feature works well with JIT-Propagation.
              */
-<span class="fc" id="L222">            private boolean _isApplyingGradientWhenTensorIsUsed = true;</span>
+<span class="fc" id="L224">            private boolean _isApplyingGradientWhenTensorIsUsed = true;</span>
 
             /**
              * Gradients will only be applied if requested.
@@ -228,101 +230,110 @@ public class Neureka
              * to true, then the tensor will only be updated by its
              * gradient if requested AND the tensor is used fo calculation! (GraphNode instantiation).
              */
-<span class="fc" id="L231">            private boolean _isApplyingGradientWhenRequested = true;</span>
+<span class="fc" id="L233">            private boolean _isApplyingGradientWhenRequested = true;</span>
+
+            public boolean isPreventingInlineOperations(){
+<span class="fc" id="L236">                return _isPreventingInlineOperations;</span>
+            }
+
+            public void setIsPreventingInlineOperations(boolean prevent) {
+<span class="pc bpc" id="L240" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L241">                _isPreventingInlineOperations = prevent;</span>
+<span class="fc" id="L242">            }</span>
 
             public boolean isRetainingPendingErrorForJITProp(){
-<span class="fc" id="L234">                return _isRetainingPendingErrorForJITProp;</span>
+<span class="fc" id="L245">                return _isRetainingPendingErrorForJITProp;</span>
             }
 
             public void setIsRetainingPendingErrorForJITProp(boolean retain){
-<span class="pc bpc" id="L238" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L239">                _isRetainingPendingErrorForJITProp = retain;</span>
-<span class="fc" id="L240">            }</span>
+<span class="pc bpc" id="L249" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L250">                _isRetainingPendingErrorForJITProp = retain;</span>
+<span class="fc" id="L251">            }</span>
 
             public boolean isApplyingGradientWhenTensorIsUsed(){
-<span class="fc" id="L243">                return _isApplyingGradientWhenTensorIsUsed;</span>
+<span class="fc" id="L254">                return _isApplyingGradientWhenTensorIsUsed;</span>
             }
 
             public void setIsApplyingGradientWhenTensorIsUsed(boolean apply){
-<span class="pc bpc" id="L247" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L248">                _isApplyingGradientWhenTensorIsUsed = apply;</span>
-<span class="fc" id="L249">            }</span>
+<span class="pc bpc" id="L258" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L259">                _isApplyingGradientWhenTensorIsUsed = apply;</span>
+<span class="fc" id="L260">            }</span>
 
             public boolean isApplyingGradientWhenRequested(){
-<span class="fc" id="L252">                return _isApplyingGradientWhenRequested;</span>
+<span class="fc" id="L263">                return _isApplyingGradientWhenRequested;</span>
             }
 
             public void setIsApplyingGradientWhenRequested(boolean apply) {
-<span class="pc bpc" id="L256" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L257">                _isApplyingGradientWhenRequested = apply;</span>
-<span class="fc" id="L258">            }</span>
+<span class="pc bpc" id="L267" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L268">                _isApplyingGradientWhenRequested = apply;</span>
+<span class="fc" id="L269">            }</span>
 
         }
 
-<span class="fc" id="L262">        public class Indexing</span>
+<span class="fc" id="L273">        public class Indexing</span>
         {
-<span class="fc" id="L264">            private boolean _isUsingLegacyIndexing = false;</span>
+<span class="fc" id="L275">            private boolean _isUsingLegacyIndexing = false;</span>
 
             private boolean _isUsingThoroughIndexing;
 
             public boolean isUsingLegacyIndexing(){
-<span class="fc" id="L269">                return _isUsingLegacyIndexing;</span>
+<span class="fc" id="L280">                return _isUsingLegacyIndexing;</span>
             }
 
             public void setIsUsingLegacyIndexing(boolean enabled) {
-<span class="pc bpc" id="L273" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L274">                _isUsingLegacyIndexing = enabled;//NOTE: gpu code must recompiled! (in OpenCLPlatform)</span>
-<span class="fc" id="L275">            }</span>
+<span class="pc bpc" id="L284" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L285">                _isUsingLegacyIndexing = enabled;//NOTE: gpu code must recompiled! (in OpenCLPlatform)</span>
+<span class="fc" id="L286">            }</span>
 
             public boolean isUsingThoroughIndexing(){
-<span class="nc" id="L278">                return _isUsingThoroughIndexing;</span>
+<span class="nc" id="L289">                return _isUsingThoroughIndexing;</span>
             }
 
             public void setIsUsingThoroughIndexing(boolean thorough){
-<span class="pc bpc" id="L282" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L283">                _isUsingThoroughIndexing = thorough;</span>
-<span class="fc" id="L284">            }</span>
+<span class="pc bpc" id="L293" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L294">                _isUsingThoroughIndexing = thorough;</span>
+<span class="fc" id="L295">            }</span>
 
         }
 
-<span class="fc" id="L288">        public class View</span>
+<span class="fc" id="L299">        public class View</span>
         {
-<span class="fc" id="L290">            private boolean _isUsingLegacyView = false;</span>
+<span class="fc" id="L301">            private boolean _isUsingLegacyView = false;</span>
 
             public boolean isUsingLegacyView(){
-<span class="fc" id="L293">                return _isUsingLegacyView;</span>
+<span class="fc" id="L304">                return _isUsingLegacyView;</span>
             }
 
             public void setIsUsingLegacyView(boolean enabled){
-<span class="pc bpc" id="L297" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L298">                _isUsingLegacyView = enabled;</span>
-<span class="fc" id="L299">            }</span>
+<span class="pc bpc" id="L308" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L309">                _isUsingLegacyView = enabled;</span>
+<span class="fc" id="L310">            }</span>
 
         }
 
-<span class="fc" id="L303">        public class NDim</span>
+<span class="fc" id="L314">        public class NDim</span>
         {
             /**
              *  The DefaultNDConfiguration class stores shape, translation...
              *  as cached int arrays.
              *  Disabling this flag allows for custom 1D, 2D, 3D classes to be loaded. (Improves memory locality)
              */
-<span class="fc" id="L310">            private boolean _isOnlyUsingDefaultNDConfiguration = false;</span>
+<span class="fc" id="L321">            private boolean _isOnlyUsingDefaultNDConfiguration = false;</span>
 
             public boolean isOnlyUsingDefaultNDConfiguration(){
-<span class="fc" id="L313">                return _isOnlyUsingDefaultNDConfiguration;</span>
+<span class="fc" id="L324">                return _isOnlyUsingDefaultNDConfiguration;</span>
             }
 
             public void setIsOnlyUsingDefaultNDConfiguration(boolean enabled){
-<span class="pc bpc" id="L317" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L318">                _isOnlyUsingDefaultNDConfiguration = enabled;</span>
-<span class="fc" id="L319">            }</span>
+<span class="pc bpc" id="L328" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L329">                _isOnlyUsingDefaultNDConfiguration = enabled;</span>
+<span class="fc" id="L330">            }</span>
 
         }
 
     }
 
-<span class="fc" id="L325">    public static class Utility {</span>
+<span class="fc" id="L336">    public static class Utility {</span>
         /**
          * Helper method which reads the file with the given name and returns
          * the contents of this file as a String. Will exit the application
@@ -332,39 +343,39 @@ public class Neureka
          * @return The contents of the file
          */
         public String readResource(String path){
-<span class="fc" id="L335">            InputStream stream = getClass().getClassLoader().getResourceAsStream(path);</span>
+<span class="fc" id="L346">            InputStream stream = getClass().getClassLoader().getResourceAsStream(path);</span>
             try {
-<span class="fc" id="L337">                BufferedReader br = new BufferedReader(new InputStreamReader(stream));</span>
-<span class="fc" id="L338">                StringBuffer sb = new StringBuffer();</span>
-<span class="fc" id="L339">                String line = &quot;&quot;;</span>
-<span class="fc bfc" id="L340" title="All 2 branches covered.">                while (line!=null) {</span>
-<span class="fc" id="L341">                    line = br.readLine();</span>
-<span class="fc bfc" id="L342" title="All 2 branches covered.">                    if (line != null) sb.append(line).append(&quot;\n&quot;);</span>
+<span class="fc" id="L348">                BufferedReader br = new BufferedReader(new InputStreamReader(stream));</span>
+<span class="fc" id="L349">                StringBuffer sb = new StringBuffer();</span>
+<span class="fc" id="L350">                String line = &quot;&quot;;</span>
+<span class="fc bfc" id="L351" title="All 2 branches covered.">                while (line!=null) {</span>
+<span class="fc" id="L352">                    line = br.readLine();</span>
+<span class="fc bfc" id="L353" title="All 2 branches covered.">                    if (line != null) sb.append(line).append(&quot;\n&quot;);</span>
                 }
-<span class="fc" id="L344">                return sb.toString();</span>
-<span class="nc" id="L345">            } catch (IOException e) {</span>
-<span class="nc" id="L346">                e.printStackTrace();</span>
-<span class="nc" id="L347">                System.exit(1);</span>
-<span class="nc" id="L348">                return null;</span>
+<span class="fc" id="L355">                return sb.toString();</span>
+<span class="nc" id="L356">            } catch (IOException e) {</span>
+<span class="nc" id="L357">                e.printStackTrace();</span>
+<span class="nc" id="L358">                System.exit(1);</span>
+<span class="nc" id="L359">                return null;</span>
             }
         }
 
         public static boolean isPresent(String className){
-<span class="fc" id="L353">            boolean found = false;</span>
-<span class="fc bfc" id="L354" title="All 2 branches covered.">            String groovyInfo = ((className.toLowerCase().contains(&quot;groovy&quot;))?&quot; Neureka settings uninitialized!&quot;:&quot;&quot;);</span>
-<span class="fc" id="L355">            String cause = &quot; unknown &quot;;</span>
+<span class="fc" id="L364">            boolean found = false;</span>
+<span class="fc bfc" id="L365" title="All 2 branches covered.">            String groovyInfo = ((className.toLowerCase().contains(&quot;groovy&quot;))?&quot; Neureka settings uninitialized!&quot;:&quot;&quot;);</span>
+<span class="fc" id="L366">            String cause = &quot; unknown &quot;;</span>
             try {
-<span class="fc" id="L357">                Class.forName(className);</span>
-<span class="fc" id="L358">                found = true;</span>
-<span class="nc" id="L359">            } catch (Throwable ex) {// Class or one of its dependencies is not present...</span>
-<span class="nc" id="L360">                cause = ex.getMessage();</span>
+<span class="fc" id="L368">                Class.forName(className);</span>
+<span class="fc" id="L369">                found = true;</span>
+<span class="nc" id="L370">            } catch (Throwable ex) {// Class or one of its dependencies is not present...</span>
+<span class="nc" id="L371">                cause = ex.getMessage();</span>
             } finally {
-<span class="pc bpc" id="L362" title="5 of 6 branches missed.">                if(!found){</span>
-<span class="nc" id="L363">                    System.out.println(</span>
+<span class="pc bpc" id="L373" title="5 of 6 branches missed.">                if(!found){</span>
+<span class="nc" id="L374">                    System.out.println(</span>
                             &quot;[Info]: '&quot;+className+&quot;' dependencies not found!&quot;+groovyInfo+&quot;\n[Cause]: &quot;+cause
                     );
                 }
-<span class="pc" id="L367">                return found;</span>
+<span class="pc" id="L378">                return found;</span>
             }
         }
 

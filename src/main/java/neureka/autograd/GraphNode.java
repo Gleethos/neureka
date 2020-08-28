@@ -31,6 +31,18 @@ public class GraphNode implements Component<Tsr>
     private final static Function ADD = Function.Detached.ADD;
 
     /**
+     * mode state meaning:
+     * -----------+----------------------------------+-
+     * _mode == 0 |  no Auto-Differentiation         |
+     * -----------+----------------------------------+-
+     * _mode > 0  |  forward Auto-Differentiation    |
+     * -----------+----------------------------------+-
+     * _mode < 0  |  backward Auto-Differentiation   |
+     * -----------+----------------------------------+-
+     */
+    private int _mode;
+
+    /**
      * This gradient node is involved in auto-differentiation.
      *
      * @return boolean
@@ -57,17 +69,7 @@ public class GraphNode implements Component<Tsr>
         return (_mode < 0);
     }
 
-    /**
-     * mode state meaning:
-     * -----------+----------------------------------+-
-     * _mode == 0 |  no Auto-Differentiation         |
-     * -----------+----------------------------------+-
-     * _mode > 0  |  forward Auto-Differentiation    |
-     * -----------+----------------------------------+-
-     * _mode < 0  |  backward Auto-Differentiation   |
-     * -----------+----------------------------------+-
-     */
-    private int _mode;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      *  This flag records the support evaluation of the forward-AD availability analysis
@@ -83,6 +85,8 @@ public class GraphNode implements Component<Tsr>
      *  be possible given an ExecutionCall whose state allows for such...
      */
     private boolean _allows_forward;
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * This flag is used for a performance optimization feature namely 'Just In Time Propagation'.
@@ -102,6 +106,7 @@ public class GraphNode implements Component<Tsr>
 
     private boolean _relies_on_JIPProp = false;
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * This method is called by the JITProp component.
@@ -121,6 +126,7 @@ public class GraphNode implements Component<Tsr>
      */
     private PendingError _pending_error = null;
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * The chain-rule states that the derivative of f(x) = h(g(x)) with respect to x is: g'(x) * h'(g(x))
@@ -135,6 +141,7 @@ public class GraphNode implements Component<Tsr>
 
     private boolean _is_used_as_derivative = false;
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * Recorded Function which produced this GrphNode.
@@ -144,6 +151,8 @@ public class GraphNode implements Component<Tsr>
     }
 
     private Function _function;
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * The GraphNodes of the input tensors. ('Parents' of the tensor of this node)
@@ -155,6 +164,15 @@ public class GraphNode implements Component<Tsr>
     }
 
     private GraphNode[] _parents;
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    /**
+     * This is the tensor owning this GraphNode component.
+     * It is referenced weakly because it might not be needed anymore (Not referenced inside AD-Agent for example)
+     * and can therefore be garbage collected.
+     */
+    private WeakReference<Tsr> _payload;
 
     /**
      * The value of this graph node!
@@ -194,17 +212,27 @@ public class GraphNode implements Component<Tsr>
         }
     }
 
-    /**
-     * This is the tensor owning this GraphNode component.
-     * It is referenced weakly because it might not be needed anymore (Not referenced inside AD-Agent for example)
-     * and can therefore be garbage collected.
-     */
-    private WeakReference<Tsr> _payload;
-
     @Override
     public void update(Tsr oldOwner, Tsr newOwner) {
         _setPayload(newOwner);
     }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    /**
+     *  This variable holds a copy of the version of the payload tensor
+     *  recorded when this GraphNode instance is instantiated.
+     *  It must be treated as final and should never be modified.
+     *  However it can be read freely in order to
+     *  check that the version of the payload hasn't changed.
+     */
+    private int _reference_payload_version = -1;
+
+    public int referenceVersion(){
+        return _reference_payload_version;
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * Keys are targets and values are gradients with respect to that target
@@ -212,6 +240,8 @@ public class GraphNode implements Component<Tsr>
      * Why? => because reshape operation does not need variables for _backward pass!
      */
     private TreeMap<GraphNode, ADAgent> _targets_derivatives;
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * "Lock object" for graph identity. (result caching)
@@ -225,6 +255,8 @@ public class GraphNode implements Component<Tsr>
 
     private GraphLock _lock;
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     /**
      *
      */
@@ -235,24 +267,6 @@ public class GraphNode implements Component<Tsr>
     private List<WeakReference<GraphNode>> _children;
 
     /**
-     * @return long AbstractSurfaceNode-ID (Used for caching to avoid redundant computation within one computation graph)
-     */
-    public long nid() {
-        return _nid;
-    }
-
-    private long _nid = -1;
-
-    //==================================================================================================================
-
-    /**
-     * @param newLock The new lock of this GraphNode.
-     */
-    public synchronized void obtainLocking(GraphLock newLock) {
-        _lock = newLock;
-    }
-
-    /**
      * @param newChild which references it's input namely the parent (this) has...
      */
     private synchronized void _attachChild(GraphNode newChild) {
@@ -260,6 +274,17 @@ public class GraphNode implements Component<Tsr>
         WeakReference<GraphNode> ref = new WeakTensorReference<>( newChild, null );
         _children.add( ref );
     }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    /**
+     * @return long AbstractSurfaceNode-ID (Used for caching to avoid redundant computation within one computation graph)
+     */
+    public long nid() {
+        return _nid;
+    }
+
+    private long _nid = -1;
 
     /**
      * Some nodes are not cachable! Namely: leave tensors! They are not results of
@@ -269,6 +294,15 @@ public class GraphNode implements Component<Tsr>
      */
     public boolean isCachable() {
         return ( this.nid() != 1 );
+    }
+
+    //==================================================================================================================
+
+    /**
+     * @param newLock The new lock of this GraphNode.
+     */
+    public synchronized void obtainLocking(GraphLock newLock) {
+        _lock = newLock;
     }
 
     /**
@@ -294,6 +328,8 @@ public class GraphNode implements Component<Tsr>
     public boolean isVirtual() {
         return getPayload() == null;
     }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * @param function        Is the function that lead to the creation of this node.
@@ -348,6 +384,7 @@ public class GraphNode implements Component<Tsr>
     {
         Tsr[] inputs = ( call == null ) ? null : call.getTensors();
         if ( output == null ) throw new NullPointerException("The supplied payload Tsr must no be null!");
+        _reference_payload_version = output.version();
         if ( !function.doesAD() ) return; // Only functions with AutoDiff enabled create computation graph!
         _lock = lock;
         _setPayload( output );

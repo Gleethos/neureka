@@ -94,9 +94,8 @@ public class Neureka
         }
     }
 
-    private boolean _currentThreadIsAuthorized(){
+    private boolean _currentThreadIsAuthorized() {
         return this.equals( _INSTANCES.get() );
-        //return this.equals(_instances.get(Thread.currentThread()));
     }
 
     public class Settings
@@ -202,6 +201,9 @@ public class Neureka
 
         public class AutoGrad // Auto-Grad/Differentiation
         {
+
+            private boolean _isPreventingInlineOperations = true;
+
             /**
              * This flag enables an optimization technique which only propagates error values to
              * gradients if needed by a tensor (the tensor is used again) and otherwise accumulate them
@@ -229,6 +231,15 @@ public class Neureka
              * gradient if requested AND the tensor is used fo calculation! (GraphNode instantiation).
              */
             private boolean _isApplyingGradientWhenRequested = true;
+
+            public boolean isPreventingInlineOperations(){
+                return _isPreventingInlineOperations;
+            }
+
+            public void setIsPreventingInlineOperations(boolean prevent) {
+                if(_isLocked || !_currentThreadIsAuthorized()) return;
+                _isPreventingInlineOperations = prevent;
+            }
 
             public boolean isRetainingPendingErrorForJITProp(){
                 return _isRetainingPendingErrorForJITProp;

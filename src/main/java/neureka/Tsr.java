@@ -1,6 +1,7 @@
 package neureka;
 
 import groovy.lang.IntRange;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.ndim.AbstractNDArray;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.Device;
@@ -48,8 +49,19 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         return _version;
     }
 
-    public Tsr incrementVersion(){
-        _version ++;
+    public Tsr incrementVersionBecauseOf( ExecutionCall call ){
+        if ( Neureka.instance().settings().autograd().isPreventingInlineOperations() ) {
+            _version ++;
+            GraphNode node = find( GraphNode.class );
+            if ( node != null && node.referenceVersion() != this._version ) {
+                if ( node.usesAD() || node.isUsedAsDerivative() ) {
+                    throw new IllegalStateException(
+                            "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\n" +
+                            "The following OperationType caused an internal version mismatch: '"+call.getType().getFunction()+"'"
+                    );
+                }
+            }
+        }
         return this;
     }
 
@@ -648,7 +660,10 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         forComponent(Tsr.class, g -> {
             forComponent(Optimizer.class, o -> o.optimize(this));
             remove(Tsr.class);
+            boolean inlineSafety = Neureka.instance().settings().autograd().isPreventingInlineOperations();
+            if ( inlineSafety ) Neureka.instance().settings().autograd().setIsPreventingInlineOperations(false);
             Function.Detached.PLUS_ASSIGN.call(new Tsr[]{this, g});
+            if ( inlineSafety ) Neureka.instance().settings().autograd().setIsPreventingInlineOperations(true);
         });
     }
 
@@ -665,7 +680,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         return Function.PLUS.call(new Tsr[]{this, other});
     }
     public Tsr plusAssign(Tsr other){
-        return Function.PLUS_ASSIGN.call(new Tsr[]{this, other});
+        return Function.Detached.PLUS_ASSIGN.call(new Tsr[]{this, other});
     }
     public Tsr plus(Double value) {
         return plus(new Tsr(this.shape(), value));
@@ -674,7 +689,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         return Function.MINUS.call(new Tsr[]{this, other});
     }
     public Tsr minusAssign(Tsr other){
-        return Function.MINUS_ASSIGN.call(new Tsr[]{this, other});
+        return Function.Detached.MINUS_ASSIGN.call(new Tsr[]{this, other});
     }
     public Tsr negative(){
         return Function.NEG.call(new Tsr[]{this});
@@ -683,7 +698,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         return Function.MUL.call(new Tsr[]{this, other});
     }
     public Tsr timesAssign(Tsr other){
-        return Function.MUL_ASSIGN.call(new Tsr[]{this, other});
+        return Function.Detached.MUL_ASSIGN.call(new Tsr[]{this, other});
     }
     public Tsr multiply(Double value) {
         return multiply(new Tsr(this.shape(), value));
@@ -695,13 +710,13 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         return div(new Tsr(this.shape(), value));
     }
     public Tsr divAssign(Tsr other){
-        return Function.DIV_ASSIGN.call(new Tsr[]{this, other});
+        return Function.Detached.DIV_ASSIGN.call(new Tsr[]{this, other});
     }
     public Tsr mod(Tsr other) {
         return Function.MOD.call(new Tsr[]{this, other});
     }
     public Tsr modAssign(Tsr other){
-        return Function.MOD_ASSIGN.call(new Tsr[]{this, other});
+        return Function.Detached.MOD_ASSIGN.call(new Tsr[]{this, other});
     }
     public Tsr power(Tsr other) {
         return Function.POW.call(new Tsr[]{this, other});

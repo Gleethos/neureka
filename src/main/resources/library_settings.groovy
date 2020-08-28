@@ -9,6 +9,7 @@ Neureka.instance {
         }
 
         autograd {
+            it.isPreventingInlineOperations = true
             it.isRetainingPendingErrorForJITProp = true
             it.isApplyingGradientWhenTensorIsUsed = true
             it.isApplyingGradientWhenRequested = true
