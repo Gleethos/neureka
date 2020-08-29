@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Contract;
 public class Operator extends AbstractOperationTypeImplementation<Operator>
 {
     public Operator() {
+        super("operator");
         setSuitabilityChecker(
                 call -> {
                     int size = ( call.getTensors()[0] == null ) ? call.getTensors()[1].size() : call.getTensors()[0].size();

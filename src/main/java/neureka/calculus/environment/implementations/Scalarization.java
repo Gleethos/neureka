@@ -9,6 +9,7 @@ public class Scalarization extends AbstractOperationTypeImplementation< Scalariz
 {
 
     public Scalarization(){
+        super("scalarization");
         setSuitabilityChecker(call->true);
     }
 

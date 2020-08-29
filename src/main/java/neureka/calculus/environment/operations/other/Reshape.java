@@ -62,7 +62,7 @@ public class Reshape extends OperationType
             }
         );
 
-        GenericImplementation implementation = new GenericImplementation()
+        GenericImplementation implementation = new GenericImplementation("reshape")
                 .setSuitabilityChecker(call -> true )
                 .setADAnalyzer( call -> false )
                 .setADAgentCreator(

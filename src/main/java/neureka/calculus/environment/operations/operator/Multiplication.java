@@ -105,72 +105,69 @@ public class Multiplication extends OperationType {
                     }
                 };
 
-        Operator operator = new Operator(
-        ).setADAnalyzer(
-                call -> true
-        ).setADAgentCreator(
-            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-            {
-                Tsr derivv = (Tsr)call.getAt("derivative");
-                Function mul = Function.Detached.MUL;
-                if (
-                    derivv != null
-                ) {
-return new ADAgent(
-                            derivv
-                   ).withForward(
-                            ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
-                   ).withBackward(
-                           null
-                   );
-                }
-                Tsr[] inputs = call.getTensors();
-                int d = call.getDerivativeIndex();
-                if( forward )
-                {
-                    Tsr deriv = f.derive(inputs, d);
-                    return new ADAgent(
-                    deriv
-                ).withForward(
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                ).withBackward(
-                    null
+        Operator operator = new Operator()
+                .setADAnalyzer(
+                    call -> true
+                ).setADAgentCreator(
+                    ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                    {
+                        Tsr derivv = (Tsr)call.getAt("derivative");
+                        Function mul = Function.Detached.MUL;
+                        if (
+                            derivv != null
+                        ) {
+                            return new ADAgent(
+                                    derivv
+                            ).withForward(
+                                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                            ).withBackward(
+                                   null
+                            );
+                        }
+                        Tsr[] inputs = call.getTensors();
+                        int d = call.getDerivativeIndex();
+                        if( forward )
+                        {
+                            Tsr deriv = f.derive(inputs, d);
+                            return new ADAgent(
+                                deriv
+                            ).withForward(
+                                ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
+                            ).withBackward(
+                                null
+                            );
+                        }
+                        else
+                        {
+                            Tsr deriv = f.derive(inputs, d);
+                            return new ADAgent(
+                                deriv
+                            ).withForward(
+                                (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                            ).withBackward(
+                                (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+                            );
+                        }
+                    }
+                ).setCallHock(
+                    (caller, call) -> null
+                ).setRJAgent(
+                    rja
+                ).setDrainInstantiation(
+                    call -> {
+                        Tsr[] tsrs = call.getTensors();
+                        Device device = call.getDevice();
+                        if ( tsrs[0] == null ) // Creating a new tensor:
+                        {
+                            int[] shp = tsrs[1].getNDConf().shape();
+                            Tsr output = new Tsr( shp, 0.0 );
+                            output.setIsVirtual(false);
+                            device.add(output);
+                            tsrs[0] = output;
+                        }
+                        return call;
+                    }
                 );
-                }
-                else
-                {
-
-                    {
-                        Tsr deriv = f.derive(inputs, d);
-                        return new ADAgent(
-                            deriv
-).withForward(
-                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-).withBackward(
-                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-);
-                    }
-                }
-            }
-        ).setCallHock(
-                (caller, call) -> null
-        ).setRJAgent(
-                rja
-        ).setDrainInstantiation(
-                call -> {
-                    Tsr[] tsrs = call.getTensors();
-                    Device device = call.getDevice();
-                    if ( tsrs[0] == null ) // Creating a new tensor:
-                    {
-                        int[] shp = tsrs[1].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
-                        device.add(output);
-                        tsrs[0] = output;
-                    }
-                    return call;
-                }
-        );
 
         setImplementation(Operator.class,
                 operator.setExecutor(
@@ -219,62 +216,59 @@ return new ADAgent(
         //________________
         // BROADCASTING :
 
-        Broadcast broadcast = new Broadcast(
-        ).setADAnalyzer(
-                call -> true
-        ).setADAgentCreator(
-            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-            {
-                Tsr derivv = (Tsr)call.getAt("derivative");
-                Function mul = Function.Detached.MUL;
-                if (
-                    derivv != null
-                ) {
-return new ADAgent(
-                            derivv
-                   ).withForward(
-                            ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
-                   ).withBackward(
-                           null
-                   );
-                }
-                Tsr[] inputs = call.getTensors();
-                int d = call.getDerivativeIndex();
-if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                else
-                {
-
+        Broadcast broadcast = new Broadcast()
+                .setADAnalyzer(
+                    call -> true
+                ).setADAgentCreator(
+                    ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
-                        Tsr deriv = f.derive(inputs, d);
-                        return new ADAgent(
-                            deriv
-).withForward(
-                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-).withBackward(
-                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-);
+                        Tsr derivv = (Tsr)call.getAt("derivative");
+                        Function mul = Function.Detached.MUL;
+                        if (
+                            derivv != null
+                        ) {
+                                return new ADAgent(
+                                        derivv
+                                    ).withForward(
+                                        ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                                    ).withBackward(
+                                        null
+                            );
+                        }
+                        Tsr[] inputs = call.getTensors();
+                        int d = call.getDerivativeIndex();
+                        if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                        else
+                        {
+                            Tsr deriv = f.derive(inputs, d);
+                            return new ADAgent(
+                                    deriv
+                                ).withForward(
+                                    (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                                ).withBackward(
+                                    (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+                                );
+                        }
                     }
-                }
-            }
-        ).setCallHock(
-                (caller, call) -> null
-        ).setRJAgent(
-            rja
-        ).setDrainInstantiation(
-                call -> {
-                    Tsr[] tsrs = call.getTensors();
-                    Device device = call.getDevice();
-                    if ( tsrs[0] == null ) // Creating a new tensor:
-                    {
-                        int[] shp = tsrs[1].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
-                        device.add(output);
-                        tsrs[0] = output;
+                ).setCallHock(
+                    (caller, call) -> null
+                ).setRJAgent(
+                    rja
+                ).setDrainInstantiation(
+                    call -> {
+                        Tsr[] tsrs = call.getTensors();
+                        Device device = call.getDevice();
+                        if ( tsrs[0] == null ) // Creating a new tensor:
+                        {
+                            int[] shp = tsrs[1].getNDConf().shape();
+                            Tsr output = new Tsr( shp, 0.0 );
+                            output.setIsVirtual(false);
+                            device.add(output);
+                            tsrs[0] = output;
+                        }
+                        return call;
                     }
-                    return call;
-                }
-        );
+                );
 
         setImplementation(Broadcast.class,
             broadcast.setExecutor(
@@ -332,72 +326,72 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
                     }
                 };
 
-        Scalarization scalarization = new Scalarization(
-        ).setADAnalyzer(
-                call -> true
-        ).setADAgentCreator(
-    ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-            {
-                Tsr derivv = (Tsr)call.getAt("derivative");
-        Function mul = Function.Detached.MUL;
-        if (
-            derivv != null
-        ) {
-            return new ADAgent(
-                    derivv
-                ).withForward(
-                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
-                ).withBackward(
-                    null
-                );
-        }
-        Tsr[] inputs = call.getTensors();
-        int d = call.getDerivativeIndex();
-        if( forward )
-        {
-            Tsr deriv = f.derive(inputs, d);
-            return new ADAgent(
-                    deriv
-                ).withForward(
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                ).withBackward(
-                    null
-                );
-        }
-        else
-        {
+        Scalarization scalarization = new Scalarization()
+                .setADAnalyzer(
+                    call -> true
+                ).setADAgentCreator(
+                    ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                            {
+                                Tsr derivv = (Tsr)call.getAt("derivative");
+                        Function mul = Function.Detached.MUL;
+                        if (
+                            derivv != null
+                        ) {
+                            return new ADAgent(
+                                    derivv
+                                ).withForward(
+                                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                                ).withBackward(
+                                    null
+                                );
+                        }
+                        Tsr[] inputs = call.getTensors();
+                        int d = call.getDerivativeIndex();
+                        if( forward )
+                        {
+                            Tsr deriv = f.derive(inputs, d);
+                            return new ADAgent(
+                                    deriv
+                                ).withForward(
+                                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
+                                ).withBackward(
+                                    null
+                                );
+                        }
+                        else
+                        {
 
-            {
-                Tsr deriv = f.derive(inputs, d);
-                return new ADAgent(
-                            deriv
-).withForward(
-                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-).withBackward(
-                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-);
-            }
-        }
-    }
-        ).setCallHock(
-                (caller, call) -> null
-        ).setRJAgent(
-            rja
-        ).setDrainInstantiation(
-                call -> {
-                    Tsr[] tsrs = call.getTensors();
-                    Device device = call.getDevice();
-                    if ( tsrs[0] == null ) // Creating a new tensor:
-                    {
-                        int[] shp = tsrs[1].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
-                        device.add(output);
-                        tsrs[0] = output;
+                            {
+                                Tsr deriv = f.derive(inputs, d);
+                                return new ADAgent(
+                                            deriv
+                                    ).withForward(
+                                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                                    ).withBackward(
+                                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+                                    );
+                            }
+                        }
                     }
-                    return call;
-                }
-        );
+                ).setCallHock(
+                        (caller, call) -> null
+                ).setRJAgent(
+                    rja
+                ).setDrainInstantiation(
+                        call -> {
+                            Tsr[] tsrs = call.getTensors();
+                            Device device = call.getDevice();
+                            if ( tsrs[0] == null ) // Creating a new tensor:
+                            {
+                                int[] shp = tsrs[1].getNDConf().shape();
+                                Tsr output = new Tsr( shp, 0.0 );
+                                output.setIsVirtual(false);
+                                device.add(output);
+                                tsrs[0] = output;
+                            }
+                            return call;
+                        }
+                );
 
         setImplementation(
                 Scalarization.class,

@@ -94,18 +94,18 @@ public class XMultiplication extends OperationType
                     }
                 };
 
-        Convolution convolution = new Convolution(
-        ).setADAnalyzer(
-                call -> {
-                    if ( call.getType().supports(Convolution.class) ) return false;
-                    if ( call.getType().getOperator().equals(",") ) return false; //Reshape
-                    Tsr last = null;
-                    for ( Tsr t : call.getTensors() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                        last = t; // Note: shapes are cached!
+        Convolution convolution = new Convolution()
+                .setADAnalyzer(
+                    call -> {
+                        if ( call.getType().supports(Convolution.class) ) return false;
+                        if ( call.getType().getOperator().equals(",") ) return false; //Reshape
+                        Tsr last = null;
+                        for ( Tsr t : call.getTensors() ) {
+                            if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                            last = t; // Note: shapes are cached!
+                        }
+                        return true;
                     }
-                    return true;
-                }
         ).setADAgentCreator(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {

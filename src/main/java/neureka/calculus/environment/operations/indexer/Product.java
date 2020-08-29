@@ -93,62 +93,59 @@ public class Product extends OperationType {
                     }
                 };
 
-        Broadcast typeImplementation = new Broadcast(
-        ).setADAnalyzer(
-                call -> true
-        ).setADAgentCreator(
-            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-            {
-                Tsr derivv = (Tsr)call.getAt("derivative");
-                Function mul = Function.Detached.MUL;
-                if (
-                    derivv != null
-                ) {
-return new ADAgent(
-                            derivv
-                   ).withForward(
-                            ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
-                   ).withBackward(
-                           null
-                   );
-                }
-                Tsr[] inputs = call.getTensors();
-                int d = call.getDerivativeIndex();
-if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                else
-                {
-                    Tsr deriv = f.derive(inputs, d);
-                    return new ADAgent(
-                            deriv
-).withForward(
-                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-).withBackward(
-                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-);
-                }
-            }
-        ).setCallHock(
-                (caller, call) -> null
-        ).setRJAgent(
-                rja
-        ).setDrainInstantiation(
-                call -> {
-                    Tsr[] tsrs = call.getTensors();
-                    Device device = call.getDevice();
-                    if ( tsrs[0] == null ) // Creating a new tensor:
+        Broadcast typeImplementation = new Broadcast()
+                .setADAnalyzer(
+                    call -> true
+                ).setADAgentCreator(
+                    ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
-                        int[] shp = tsrs[1].getNDConf().shape();
-                        //int[] shp = (type.identifier().endsWith("x"))
-                        //        ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
-                        //        : tsrs[1].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
-                        device.add(output);
-                        tsrs[0] = output;
+                        Tsr derivv = (Tsr)call.getAt("derivative");
+                        Function mul = Function.Detached.MUL;
+                        if (
+                            derivv != null
+                        ) {
+                                return new ADAgent(
+                                    derivv
+                                ).withForward(
+                                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                                ).withBackward(
+                                   null
+                                );
+                        }
+                        Tsr[] inputs = call.getTensors();
+                        int d = call.getDerivativeIndex();
+                        if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                        else
+                        {
+                            Tsr deriv = f.derive(inputs, d);
+                            return new ADAgent(
+                                    deriv
+                                ).withForward(
+                                    (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                                ).withBackward(
+                                    (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+                                );
+                        }
                     }
-                    return call;
-                }
-        );
+                ).setCallHock(
+                        (caller, call) -> null
+                ).setRJAgent(
+                        rja
+                ).setDrainInstantiation(
+                        call -> {
+                            Tsr[] tsrs = call.getTensors();
+                            Device device = call.getDevice();
+                            if ( tsrs[0] == null ) // Creating a new tensor:
+                            {
+                                int[] shp = tsrs[1].getNDConf().shape();
+                                Tsr output = new Tsr( shp, 0.0 );
+                                output.setIsVirtual(false);
+                                device.add(output);
+                                tsrs[0] = output;
+                            }
+                            return call;
+                        }
+                );
 
         setImplementation (
                 Broadcast.class,
@@ -208,64 +205,64 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
         .setADAnalyzer(
                 call -> true
         ).setADAgentCreator(
-    ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-            {
-                Tsr derivv = (Tsr)call.getAt("derivative");
-        Function mul = Function.Detached.MUL;
-        if (
-            derivv != null
-        ) {
-            return new ADAgent(
-                    derivv
-                ).withForward(
-                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
-                ).withBackward(
-                    null
-                );
-        }
-        Tsr[] inputs = call.getTensors();
-        int d = call.getDerivativeIndex();
-        if( forward )
-        {
-            Tsr deriv = f.derive(inputs, d);
-            return new ADAgent(
-                    deriv
-                ).withForward(
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                ).withBackward(
-                    null
-                );
-        }
-        else
-        {
-            if ( this.supports(Convolution.class) )
-            {
-                Function invX = FunctionBuilder.build(
-                        "I[0]" + getOperator() + ">>I[1]" + getOperator() + ">>I[2]",
-                        false
-                );
-                Tsr deriv = f.derive(inputs, d);
-                return new ADAgent(
-                        deriv
-                ).withForward(
-                        (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                ).withBackward(
-                        (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)})
-                );
-            }
-            else
-            {
-                Tsr deriv = f.derive(inputs, d);
-                return new ADAgent(
+            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                    {
+                        Tsr derivv = (Tsr)call.getAt("derivative");
+                Function mul = Function.Detached.MUL;
+                if (
+                    derivv != null
+                ) {
+                    return new ADAgent(
+                            derivv
+                        ).withForward(
+                            ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                        ).withBackward(
+                            null
+                        );
+                }
+                Tsr[] inputs = call.getTensors();
+                int d = call.getDerivativeIndex();
+                if( forward )
+                {
+                    Tsr deriv = f.derive(inputs, d);
+                    return new ADAgent(
                             deriv
-).withForward(
-                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-).withBackward(
-                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-);
+                        ).withForward(
+                            ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
+                        ).withBackward(
+                            null
+                        );
+                }
+                else
+                {
+                    if ( this.supports(Convolution.class) )
+                    {
+                        Function invX = FunctionBuilder.build(
+                                "I[0]" + getOperator() + ">>I[1]" + getOperator() + ">>I[2]",
+                                false
+                        );
+                        Tsr deriv = f.derive(inputs, d);
+                        return new ADAgent(
+                                deriv
+                        ).withForward(
+                                (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                        ).withBackward(
+                                (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)})
+                        );
+                    }
+                    else
+                    {
+                        Tsr deriv = f.derive(inputs, d);
+                        return new ADAgent(
+                                    deriv
+                            ).withForward(
+                                    (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                            ).withBackward(
+                                    (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+                            );
+                    }
+                }
             }
-        }
-    }
         ).setCallHock(
                 (caller, call) -> null
         ).setRJAgent(
@@ -277,9 +274,6 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
                     if ( tsrs[0] == null ) // Creating a new tensor:
                     {
                         int[] shp = tsrs[1].getNDConf().shape();
-                        //int[] shp = (type.identifier().endsWith("x"))
-                        //        ? Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape())
-                        //        : tsrs[1].getNDConf().shape();
                         Tsr output = new Tsr( shp, 0.0 );
                         output.setIsVirtual(false);
                         device.add(output);

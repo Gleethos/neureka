@@ -9,6 +9,7 @@ public class Convolution extends AbstractOperationTypeImplementation< Convolutio
 {
 
     public Convolution() {
+        super("convolution");
         setSuitabilityChecker(call->true);
     }
 

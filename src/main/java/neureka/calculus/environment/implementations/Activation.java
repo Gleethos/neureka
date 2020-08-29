@@ -9,7 +9,7 @@ public class Activation extends AbstractOperationTypeImplementation< Activation 
 {
 
     public Activation() {
-        super();
+        super("activation");
         setSuitabilityChecker(call->true);
     }
 

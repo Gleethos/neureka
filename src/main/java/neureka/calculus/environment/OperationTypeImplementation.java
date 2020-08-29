@@ -53,6 +53,8 @@ public interface OperationTypeImplementation<FinalType>
         );
     }
 
+    String getName();
+
     ADAgentSupplier getADAgentCreator();
 
     FinalType setADAgentCreator( ADAgentSupplier creator );

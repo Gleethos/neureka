@@ -30,6 +30,8 @@ import java.util.function.Consumer;
  */
 public abstract class AbstractOperationTypeImplementation< FinalType > implements OperationTypeImplementation< FinalType >
 {
+    private final String _name;
+
     protected final Map< Class< ExecutorFor< Device > >, ExecutorFor< Device > > _executions = new HashMap<>();
 
     private SuitabilityChecker _suitabilityChecker;
@@ -39,7 +41,12 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
     private RecursiveJunctionAgent _RJAgent;
     private DrainInstantiation _instantiation;
 
-    public AbstractOperationTypeImplementation() { }
+    public AbstractOperationTypeImplementation(String name) { _name = name; }
+
+    @Override
+    public String getName(){
+        return _name;
+    }
 
     @Override
     public SuitabilityChecker getSuitabilityChecker() {

@@ -9,6 +9,7 @@ public class Broadcast extends AbstractOperationTypeImplementation< Broadcast >
 {
 
     public Broadcast() {
+        super("broadcast");
         setSuitabilityChecker(
                 call->
                 {

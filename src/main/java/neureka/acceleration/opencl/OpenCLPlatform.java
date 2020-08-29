@@ -3,6 +3,7 @@ package neureka.acceleration.opencl;
 import neureka.Neureka;
 import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.OperationTypeImplementation;
 import org.jocl.*;
 import java.util.*;
 import neureka.calculus.environment.implementations.*;
@@ -60,17 +61,18 @@ public class OpenCLPlatform {
 
         OperationType.instances().forEach(
                 type -> {
-                    if ( type.supports(Activation.class) ) {
-                        //OPERATION_TO_KERNEL_MAPPING.put(type.getOperator(), "activate_"+type.getFunction());
-                    }
+                    //OPERATION_TO_KERNEL_MAPPING.put(type.getOperator(), "_"+type.getFunction());
                 }
         );
 
     }
 
     public String kernelNameOf(OperationType type) {
-        System.out.println(type.getOperator());
         return OPERATION_TO_KERNEL_MAPPING.get(type.getOperator());
+    }
+
+    public String kernelNameOf(OperationType type, OperationTypeImplementation implementation) {
+        return OPERATION_TO_KERNEL_MAPPING.get(type.getFunction()+"_"+implementation);
     }
 
 
