@@ -19,78 +19,6 @@ public class OpenCLPlatform {
     private final cl_context _context;
     private final Map<String, cl_kernel> _kernels;
 
-    private static final Map<String, String> OPERATION_TO_KERNEL_MAPPING = new HashMap<String, String>();
-
-    static { // TODO : Generate the following from source!
-        OPERATION_TO_KERNEL_MAPPING.put("relu", "activation_relu");
-        OPERATION_TO_KERNEL_MAPPING.put("sig", "activation_sig");
-        OPERATION_TO_KERNEL_MAPPING.put("quad", "activation_quad");
-        OPERATION_TO_KERNEL_MAPPING.put("lig", "activation_lig");
-        OPERATION_TO_KERNEL_MAPPING.put("idy", "activation_idy");
-        OPERATION_TO_KERNEL_MAPPING.put("gaus", "activation_gaus");
-        OPERATION_TO_KERNEL_MAPPING.put("abs", "activation_abs");
-        OPERATION_TO_KERNEL_MAPPING.put("sin", "activation_sin");
-        OPERATION_TO_KERNEL_MAPPING.put("cos", "activation_cos");
-        //---
-        OPERATION_TO_KERNEL_MAPPING.put("sum", "operator_add");
-        OPERATION_TO_KERNEL_MAPPING.put("prod", "operator_multiply");
-        OPERATION_TO_KERNEL_MAPPING.put("^", "operator_power");
-        OPERATION_TO_KERNEL_MAPPING.put("/", "operator_divide");
-        OPERATION_TO_KERNEL_MAPPING.put("*", "operator_multiply");
-        OPERATION_TO_KERNEL_MAPPING.put("%", "operator_modulo");
-        OPERATION_TO_KERNEL_MAPPING.put("-", "operator_subtract");
-        OPERATION_TO_KERNEL_MAPPING.put("+", "operator_add");
-
-        OPERATION_TO_KERNEL_MAPPING.put("x", "convolution_multiply");
-        OPERATION_TO_KERNEL_MAPPING.put("d", "convolution_divide");
-        OPERATION_TO_KERNEL_MAPPING.put("p", "convolution_power");
-        OPERATION_TO_KERNEL_MAPPING.put("a", "convolution_add");
-        OPERATION_TO_KERNEL_MAPPING.put("s", "convolution_subtract");
-
-        //"x", ((char)171)+"x", "x"+((char)187),
-        //"d", ((char)171)+"d", "d"+((char)187),
-        //"p", ((char)171)+"p", "p"+((char)187),
-        //"a", ((char)171)+"a", "a"+((char)187),
-        //"s", ((char)171)+"s", "s"+((char)187),
-        //OPERATION_TO_KERNEL_MAPPING.put((""+((char)171)), "inv_conv_left");
-        //OPERATION_TO_KERNEL_MAPPING.put((""+((char)187)), "inv_conv_right");
-        OPERATION_TO_KERNEL_MAPPING.put(",", "reshape");
-
-        OPERATION_TO_KERNEL_MAPPING.put("<", "operator_idy");
-        OPERATION_TO_KERNEL_MAPPING.put(">", "operator_right");
-
-        OperationType.instances().forEach(
-                type -> {
-                    type.forEachImplementation(
-                            implementation -> {
-                                    System.out.println(
-                                            type.getFunction()+"_"+implementation.getName()+" -> "+
-                                                    implementation.getName()+"_"+type.getFunction()
-                                    );
-                                    OPERATION_TO_KERNEL_MAPPING.put(
-                                            type.getFunction()+"_"+implementation.getName(),
-                                            implementation.getName()+"_"+type.getFunction()
-                                    );
-                                //}
-                            }
-                    );
-                }
-        );
-
-    }
-
-    public String kernelNameOf(OperationType type) {
-        return OPERATION_TO_KERNEL_MAPPING.get(type.getOperator());
-    }
-
-    public String kernelNameOf(ExecutionCall call) {
-        return OPERATION_TO_KERNEL_MAPPING.get(
-                call.getType().getFunction()+"_"+
-                        call.getImplementation().getName()
-        );
-    }
-
-
     private OpenCLPlatform(cl_platform_id pid)
     {
         _id_device = new TreeMap<>(Comparator.comparingInt(NativePointerObject::hashCode));
@@ -179,7 +107,7 @@ public class OpenCLPlatform {
                             exec = type.getImplementation(Activation.class).getExecutor(CLExecutor.class);
                         } else if (preName.contains("operator") && type.supportsImplementation(Operator.class)) {
                             exec = type.getImplementation(Operator.class).getExecutor(CLExecutor.class);
-                        } else if (preName.contains("scalar") && type.supportsImplementation(Scalarization.class)) {
+                        } else if (preName.contains("scalarization") && type.supportsImplementation(Scalarization.class)) {
                             exec = type.getImplementation(Scalarization.class).getExecutor(CLExecutor.class);
                         } else if(preName.contains("broadcast") && type.supportsImplementation(Broadcast.class)){//broadcast
                             exec = type.getImplementation(Broadcast.class).getExecutor(CLExecutor.class);

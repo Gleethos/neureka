@@ -121,7 +121,7 @@ public class CopyRight extends OperationType {
                                     OperationType.instance("idy")
                                             .getImplementation(Activation.class)
                                             .getExecutor(HostExecutor.class)
-                                            .getExecution().call(call);
+                                            .getExecution().run(call);
                                 },
                                 3
                         )
@@ -139,7 +139,7 @@ public class CopyRight extends OperationType {
                                     OperationType.instance("idy")
                                             .getImplementation(Activation.class)
                                             .getExecutor(CLExecutor.class)
-                                            .getExecution().call(call);
+                                            .getExecution().run(call);
                                 },
                                 3
                         )

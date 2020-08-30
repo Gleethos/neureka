@@ -3,7 +3,6 @@ package neureka.calculus.environment.operations.other;
 import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.acceleration.host.execution.HostExecutor;
-import neureka.acceleration.opencl.KernelBuilder;
 import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
@@ -11,14 +10,13 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.Activation;
 import neureka.calculus.environment.implementations.Scalarization;
-import org.jocl.cl_kernel;
 
 public class CopyLeft extends OperationType {
 
     public CopyLeft(){
 
         super(
-                "idy", "<", 2,true, false, false, false
+                "left_inline", "<", 2,true, false, false, false
         );
 
         setStringifier(
@@ -144,10 +142,7 @@ public class CopyLeft extends OperationType {
                                 call -> {
                                     Tsr t = call.getTensor(0);
                                     int gwz = t.size();
-                                    //String chosen = "scalarization_" + _platform.kernelNameOf(type).replace("operator_", "");
-                                    //cl_kernel kernel = _platform.getKernels().get(chosen);
                                     call.getDevice().getKernel(call)
-                                    //new KernelBuilder(kernel, _queue)
                                             .pass(t)
                                             .pass(t)
                                             .pass(call.getTensor(1).value32(0))
@@ -155,7 +150,11 @@ public class CopyLeft extends OperationType {
                                             .pass(call.getDerivativeIndex())
                                             .call(gwz);
                                 },
-                                3
+                                3,
+                                scalarization.getKernelSource(), // kernelSource
+                                "output = value;\n",
+                                "output = value;\n",
+                                this // OperationType
                         )
                 )
         );
@@ -239,7 +238,7 @@ public class CopyLeft extends OperationType {
                                     OperationType.instance("idy")
                                             .getImplementation(Activation.class)
                                             .getExecutor(HostExecutor.class)
-                                            .getExecution().call(call);
+                                            .getExecution().run(call);
                                 },
                                 3
                         )
@@ -251,7 +250,7 @@ public class CopyLeft extends OperationType {
                                     OperationType.instance("idy")
                                             .getImplementation(Activation.class)
                                             .getExecutor(CLExecutor.class)
-                                            .getExecution().call(call);
+                                            .getExecution().run(call);
                                 },
                                 3
                         )

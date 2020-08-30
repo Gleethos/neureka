@@ -202,19 +202,19 @@ public class OpenCLDevice extends AbstractDevice
 
         tensor.add(newClt);
         tensor.add(this);
+
         if (tensor.isVirtual()) {
-            //execute(
-            //    new ExecutionCall(
-            //            this,
-            //            new Tsr[]{tensor, tensor},
-            //            -1,
-            //            OperationType.instance("<")
-            //    )
-            //);
-            _enqueue(tensor, tensor.value64(0), -1, OperationType.instance("<"));
-        }
-        tensor.setIsOutsourced(true);
-        //tensor.setIsVirtual(false);
+            double value = tensor.value64(0);
+            tensor.setIsOutsourced(true);
+            execute(
+                new ExecutionCall(
+                        this,
+                        new Tsr[]{tensor, new Tsr(value).add(this)},
+                        -1,
+                        OperationType.instance("<")
+                )
+            );
+        } else tensor.setIsOutsourced(true);
     }
 
     @Override
@@ -427,7 +427,7 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     public KernelBuilder getKernel(ExecutionCall call){
-        String chosen = _platform.kernelNameOf(call);
+        String chosen = call.getImplementation().getName()+"_"+call.getType().getFunction();
         cl_kernel kernel = _platform.getKernels().get(chosen);
         return new KernelBuilder(kernel, _queue);
     }
@@ -443,24 +443,8 @@ public class OpenCLDevice extends AbstractDevice
                         type
                 );
         tsrs[0].setIsVirtual(false);
-        call.getImplementation().getExecutor(CLExecutor.class).getExecution().call(call);
+        call.getImplementation().getExecutor(CLExecutor.class).getExecution().run(call);
     }
-
-
-    @Override
-    protected void _enqueue(Tsr t, double value, int d, OperationType type) {
-        int gwz = t.size();
-        String chosen = "scalarization_" + _platform.kernelNameOf(type).replace("operator_", "");
-        cl_kernel kernel = _platform.getKernels().get(chosen);
-        new KernelBuilder(kernel, _queue)
-                .pass(t)
-                .pass(t)
-                .pass((float)value)
-                .pass(t.rank())
-                .pass(d)
-                .call(gwz);
-    }
-
 
     public String name() {
         return DeviceQuery.getString(_did, CL_DEVICE_NAME);

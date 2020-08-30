@@ -14,8 +14,6 @@ public abstract class AbstractDevice implements Device, Component<Tsr>
 
     protected abstract void _enqueue(Tsr[] tsrs, int d, OperationType type);
 
-    protected abstract void _enqueue(Tsr t, double value, int d, OperationType type);
-
     @Override
     public void update(Tsr oldOwner, Tsr newOwner){
         swap(oldOwner, newOwner);

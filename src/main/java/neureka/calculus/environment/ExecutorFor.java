@@ -4,8 +4,8 @@ import neureka.acceleration.Device;
 
 /**
  * This interface describes the functionality of an implementation
- * of an execution procedure for a specific Device implementation
- * and OperationTypeImplementation implementation!
+ * of an execution procedure for a specific Device (interface) instance
+ * and OperationTypeImplementation (interface) instance!
  *
  * An instance of this interface is then a component of an OperationTypeImplementation instance
  * which is itself a component of the OperationType class.
@@ -19,14 +19,14 @@ public interface ExecutorFor< TargetDevice extends Device >
      * implement a lambda defined by the interface below.
      * The lambda shall take the call arguments and call
      * the specific methods of the Device type implementation
-     * in order to satisfy the the OperationTypeImplementation to which
+     * in order to satisfy the OperationTypeImplementation to which
      * this class belongs.
      *
      * @param <TargetDevice>
      */
     interface ExecutionOn< TargetDevice extends Device >
     {
-        void call ( ExecutionCall<TargetDevice> call );
+        void run(ExecutionCall<TargetDevice> call );
     }
 
     ExecutionOn< TargetDevice > getExecution();

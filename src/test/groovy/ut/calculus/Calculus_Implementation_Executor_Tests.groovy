@@ -89,7 +89,7 @@ class Calculus_Implementation_Executor_Tests extends Specification
             def nativeExecutor = Mock( HostCPU.NativeExecutor )
 
         when : 'Host-executor instance is being called...'
-            hostExecutor.execution.call( call )
+            hostExecutor.execution.run( call )
 
         then : 'The mock objects are being called as expected.'
             (1.._) * call.getDevice() >> device
@@ -128,7 +128,7 @@ class Calculus_Implementation_Executor_Tests extends Specification
             def kernel = Mock( KernelBuilder )
 
         when : 'CL-executor instance is being called...'
-            clExecutor.execution.call( call )
+            clExecutor.execution.run( call )
 
         then : 'The mock objects are being called as expected.'
             (1.._) * call.getTensor(0) >> tensor

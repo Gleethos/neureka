@@ -116,7 +116,7 @@ public class UnitTester_Tensor extends UnitTester
         OperationType.instance("x")
                 .getImplementation(Convolution.class)
                 .getExecutor(HostExecutor.class)
-                .getExecution().call(
+                .getExecution().run(
                 new ExecutionCall<>(
                         HostCPU.instance(),
                         new Tsr[]{
@@ -141,7 +141,7 @@ public class UnitTester_Tensor extends UnitTester
         OperationType.instance(((char) 171)+"x")
                 .getImplementation(Convolution.class)
                 .getExecutor(HostExecutor.class)
-                .getExecution().call(
+                .getExecution().run(
                 new ExecutionCall<>(
                         HostCPU.instance(),
                         new Tsr[]{
@@ -165,7 +165,7 @@ public class UnitTester_Tensor extends UnitTester
         OperationType.instance("*")
                 .getImplementation(Broadcast.class)
                 .getExecutor(HostExecutor.class)
-                .getExecution().call(
+                .getExecution().run(
                         new ExecutionCall<>(
                                 HostCPU.instance(),
                                 new Tsr[]{
@@ -191,7 +191,7 @@ public class UnitTester_Tensor extends UnitTester
         OperationType.instance(((char) 171) + "*")
                 .getImplementation(Broadcast.class)
                 .getExecutor(HostExecutor.class)
-                .getExecution().call(
+                .getExecution().run(
                 new ExecutionCall<>(
                         HostCPU.instance(),
                         new Tsr[]{
@@ -207,7 +207,7 @@ public class UnitTester_Tensor extends UnitTester
         OperationType.instance("*" + ((char) 187))
                 .getImplementation(Broadcast.class)
                 .getExecutor(HostExecutor.class)
-                .getExecution().call(
+                .getExecution().run(
                 new ExecutionCall<>(
                         HostCPU.instance(),
                         new Tsr[]{

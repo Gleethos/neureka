@@ -8,7 +8,6 @@ import neureka.acceleration.host.execution.HostExecutor;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.*;
 
@@ -44,14 +43,7 @@ public class HostCPU extends AbstractDevice
                         d,
                         type
                 );
-        call.getImplementation().getExecutor(HostExecutor.class).getExecution().call(call);
-    }
-
-    @Override
-    protected void _enqueue( Tsr t, double value, int d, OperationType type ) {
-        int[] shape = new int[t.rank()];
-        Arrays.fill(shape, 1);
-        _enqueue(new Tsr[]{t, t, new Tsr(shape, value)}, d, type);
+        call.getImplementation().getExecutor(HostExecutor.class).getExecution().run(call);
     }
 
     @Override
