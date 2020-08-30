@@ -15,7 +15,7 @@ public class Convolution extends AbstractOperationTypeImplementation< Convolutio
 
 
     public String getKernelSource() {
-        return Neureka.instance().utility().readResource("kernels/convolve_template.cl");
+        return Neureka.instance().utility().readResource("kernels/convolution_template.cl");
     }
 
     @Contract(pure = true)

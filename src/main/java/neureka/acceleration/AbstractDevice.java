@@ -35,7 +35,8 @@ public abstract class AbstractDevice implements Device, Component<Tsr>
     public Device execute( ExecutionCall call )
     {
         call = call.getImplementation().getDrainInstantiation().handle(call);
-        OperationTypeImplementation<Object> executor = call.getImplementation();
+        OperationTypeImplementation<Object> executor = call.getImplementation(); // TODO: test:
+        for ( Tsr t : call.getTensors() ) if ( t == null ) throw new IllegalStateException("Device arguments may not be null!");
         executor.recursiveReductionOf(
                 call,
                 c -> _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType())

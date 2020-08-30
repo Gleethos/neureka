@@ -7,6 +7,7 @@ import neureka.calculus.Function;
 import neureka.calculus.environment.implementations.AbstractOperationTypeImplementation;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public interface Type
@@ -46,6 +47,8 @@ public interface Type
     <T extends AbstractOperationTypeImplementation> T getImplementation(Class<T> type );
     <T extends AbstractOperationTypeImplementation> boolean supportsImplementation(Class<T> type );
     <T extends AbstractOperationTypeImplementation> Type setImplementation(Class<T> type, T instance );
+
+    Type forEachImplementation( Consumer<OperationTypeImplementation> action );
 
     //==================================================================================================================
 

@@ -7,6 +7,7 @@ import neureka.calculus.environment.operations.OperationContext;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class OperationType implements Type
 {
@@ -102,6 +103,12 @@ public class OperationType implements Type
     @Override
     public <T extends AbstractOperationTypeImplementation> Type setImplementation(Class<T> type, T instance) {
         _implementations.put(type, instance);
+        return this;
+    }
+
+    @Override
+    public Type forEachImplementation( Consumer<OperationTypeImplementation> action ){
+        _implementations.values().forEach(action);
         return this;
     }
 

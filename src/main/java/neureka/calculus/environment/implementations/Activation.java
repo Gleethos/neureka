@@ -14,7 +14,7 @@ public class Activation extends AbstractOperationTypeImplementation< Activation 
     }
 
     public String getKernelSource(){
-        return Neureka.instance().utility().readResource("kernels/activate_template.cl");
+        return Neureka.instance().utility().readResource("kernels/activation_template.cl");
     }
 
     @Contract(pure = true)

@@ -2,6 +2,7 @@ package neureka.acceleration.opencl;
 
 import neureka.Neureka;
 import neureka.acceleration.opencl.execution.CLExecutor;
+import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 import org.jocl.*;
@@ -21,31 +22,30 @@ public class OpenCLPlatform {
     private static final Map<String, String> OPERATION_TO_KERNEL_MAPPING = new HashMap<String, String>();
 
     static { // TODO : Generate the following from source!
-        OPERATION_TO_KERNEL_MAPPING.put("relu", "activate_relu");
-        OPERATION_TO_KERNEL_MAPPING.put("sig", "activate_sig");
-        OPERATION_TO_KERNEL_MAPPING.put("quad", "activate_quad");
-        OPERATION_TO_KERNEL_MAPPING.put("lig", "activate_lig");
-        OPERATION_TO_KERNEL_MAPPING.put("idy", "activate_idy");
-        OPERATION_TO_KERNEL_MAPPING.put("gaus", "activate_gaus");
-        OPERATION_TO_KERNEL_MAPPING.put("abs", "activate_abs");
-        OPERATION_TO_KERNEL_MAPPING.put("sin", "activate_sin");
-        OPERATION_TO_KERNEL_MAPPING.put("cos", "activate_cos");
+        OPERATION_TO_KERNEL_MAPPING.put("relu", "activation_relu");
+        OPERATION_TO_KERNEL_MAPPING.put("sig", "activation_sig");
+        OPERATION_TO_KERNEL_MAPPING.put("quad", "activation_quad");
+        OPERATION_TO_KERNEL_MAPPING.put("lig", "activation_lig");
+        OPERATION_TO_KERNEL_MAPPING.put("idy", "activation_idy");
+        OPERATION_TO_KERNEL_MAPPING.put("gaus", "activation_gaus");
+        OPERATION_TO_KERNEL_MAPPING.put("abs", "activation_abs");
+        OPERATION_TO_KERNEL_MAPPING.put("sin", "activation_sin");
+        OPERATION_TO_KERNEL_MAPPING.put("cos", "activation_cos");
         //---
-        OPERATION_TO_KERNEL_MAPPING.put("sum", "operate_add");
-        OPERATION_TO_KERNEL_MAPPING.put("prod", "operate_multiply");
-        OPERATION_TO_KERNEL_MAPPING.put("^", "operate_power");
-        OPERATION_TO_KERNEL_MAPPING.put("/", "operate_divide");
-        OPERATION_TO_KERNEL_MAPPING.put("*", "operate_multiply");
-        OPERATION_TO_KERNEL_MAPPING.put("%", "operate_modulo");
-        OPERATION_TO_KERNEL_MAPPING.put("-", "operate_subtract");
-        OPERATION_TO_KERNEL_MAPPING.put("+", "operate_add");
+        OPERATION_TO_KERNEL_MAPPING.put("sum", "operator_add");
+        OPERATION_TO_KERNEL_MAPPING.put("prod", "operator_multiply");
+        OPERATION_TO_KERNEL_MAPPING.put("^", "operator_power");
+        OPERATION_TO_KERNEL_MAPPING.put("/", "operator_divide");
+        OPERATION_TO_KERNEL_MAPPING.put("*", "operator_multiply");
+        OPERATION_TO_KERNEL_MAPPING.put("%", "operator_modulo");
+        OPERATION_TO_KERNEL_MAPPING.put("-", "operator_subtract");
+        OPERATION_TO_KERNEL_MAPPING.put("+", "operator_add");
 
-        OPERATION_TO_KERNEL_MAPPING.put("x", "convolve_multiply");
-        //OPERATION_TO_KERNEL_MAPPING.put("x", "convolve_convolve_mul");
-        OPERATION_TO_KERNEL_MAPPING.put("d", "convolve_divide");
-        OPERATION_TO_KERNEL_MAPPING.put("p", "convolve_power");
-        OPERATION_TO_KERNEL_MAPPING.put("a", "convolve_add");
-        OPERATION_TO_KERNEL_MAPPING.put("s", "convolve_subtract");
+        OPERATION_TO_KERNEL_MAPPING.put("x", "convolution_multiply");
+        OPERATION_TO_KERNEL_MAPPING.put("d", "convolution_divide");
+        OPERATION_TO_KERNEL_MAPPING.put("p", "convolution_power");
+        OPERATION_TO_KERNEL_MAPPING.put("a", "convolution_add");
+        OPERATION_TO_KERNEL_MAPPING.put("s", "convolution_subtract");
 
         //"x", ((char)171)+"x", "x"+((char)187),
         //"d", ((char)171)+"d", "d"+((char)187),
@@ -56,12 +56,24 @@ public class OpenCLPlatform {
         //OPERATION_TO_KERNEL_MAPPING.put((""+((char)187)), "inv_conv_right");
         OPERATION_TO_KERNEL_MAPPING.put(",", "reshape");
 
-        OPERATION_TO_KERNEL_MAPPING.put("<", "operate_idy");
-        OPERATION_TO_KERNEL_MAPPING.put(">", "operate_right");
+        OPERATION_TO_KERNEL_MAPPING.put("<", "operator_idy");
+        OPERATION_TO_KERNEL_MAPPING.put(">", "operator_right");
 
         OperationType.instances().forEach(
                 type -> {
-                    //OPERATION_TO_KERNEL_MAPPING.put(type.getOperator(), "_"+type.getFunction());
+                    type.forEachImplementation(
+                            implementation -> {
+                                    System.out.println(
+                                            type.getFunction()+"_"+implementation.getName()+" -> "+
+                                                    implementation.getName()+"_"+type.getFunction()
+                                    );
+                                    OPERATION_TO_KERNEL_MAPPING.put(
+                                            type.getFunction()+"_"+implementation.getName(),
+                                            implementation.getName()+"_"+type.getFunction()
+                                    );
+                                //}
+                            }
+                    );
                 }
         );
 
@@ -71,8 +83,11 @@ public class OpenCLPlatform {
         return OPERATION_TO_KERNEL_MAPPING.get(type.getOperator());
     }
 
-    public String kernelNameOf(OperationType type, OperationTypeImplementation implementation) {
-        return OPERATION_TO_KERNEL_MAPPING.get(type.getFunction()+"_"+implementation);
+    public String kernelNameOf(ExecutionCall call) {
+        return OPERATION_TO_KERNEL_MAPPING.get(
+                call.getType().getFunction()+"_"+
+                        call.getImplementation().getName()
+        );
     }
 
 
@@ -121,19 +136,19 @@ public class OpenCLPlatform {
         List<String> templateSources = new ArrayList<>();
 
         String[] fileNames = {
-                "activate_template.cl",
+                "activation_template.cl",
                 "broadcast_template.cl",
-                "convolve_template.cl",
-                "operate_template.cl",
-                "scalar_template.cl",
+                "convolution_template.cl",
+                "operator_template.cl",
+                "scalarization_template.cl",
                 "utility.cl"
         };
-        for(String name : fileNames) {
+        for ( String name : fileNames ) {
             templateSources.add(Neureka.instance().utility().readResource("kernels/"+name));
         }
         ArrayList<String> names = new ArrayList<>();
         ArrayList<String> sources = new ArrayList<>();
-        for (int i = 0; i < fileNames.length; i++)
+        for ( int i = 0; i < fileNames.length; i++ )
         {
             String kernelSource = templateSources.get(i);
             kernelSource = kernelSource.replace(
@@ -141,14 +156,14 @@ public class OpenCLPlatform {
                     (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) ? "true" : "false"
             );
             boolean templateFound = false;
-            if (kernelSource.contains("__kernel")) {
+            if ( kernelSource.contains("__kernel") )
+            {
                 String[] parts = kernelSource.split("__kernel")[1].split("\\(")[0].split(" ");
 
                 templateFound = parts[parts.length - 1].contains("template");
-                if (!templateFound) {
-                    names.add(parts[parts.length - 1]);
-                } else {
-
+                if ( !templateFound ) names.add(parts[parts.length - 1]);
+                else
+                {
                     String preName = parts[parts.length - 1].replace("template", "");
 
                     // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
@@ -158,23 +173,25 @@ public class OpenCLPlatform {
                     // inverse:  src1/fdrn <- src2 <- drain
                     //===========================================================================
                     Map<String, String> code = new HashMap<>();
-                    for(OperationType type : OperationType.ALL()) {
-                        if (preName.contains("activate") && type.supportsImplementation(Activation.class)) {
-                            CLExecutor exec = type.getImplementation(Activation.class).getExecutor(CLExecutor.class);
-                            if(exec!=null && exec.getSource()!=null) code.put(exec.getName(), exec.getSource());
-                        } else if (preName.contains("operate") && type.supportsImplementation(Operator.class)) {
-                            CLExecutor exec = type.getImplementation(Operator.class).getExecutor(CLExecutor.class);
-                            if(exec!=null && exec.getSource()!=null) code.put(exec.getName(), exec.getSource());
+                    CLExecutor exec = null;
+                    for ( OperationType type : OperationType.ALL() ) {
+                        if (preName.contains("activation") && type.supportsImplementation(Activation.class)) {
+                            exec = type.getImplementation(Activation.class).getExecutor(CLExecutor.class);
+                        } else if (preName.contains("operator") && type.supportsImplementation(Operator.class)) {
+                            exec = type.getImplementation(Operator.class).getExecutor(CLExecutor.class);
                         } else if (preName.contains("scalar") && type.supportsImplementation(Scalarization.class)) {
-                            CLExecutor exec = type.getImplementation(Scalarization.class).getExecutor(CLExecutor.class);
-                            if(exec!=null && exec.getSource()!=null) code.put(exec.getName(), exec.getSource());
+                            exec = type.getImplementation(Scalarization.class).getExecutor(CLExecutor.class);
                         } else if(preName.contains("broadcast") && type.supportsImplementation(Broadcast.class)){//broadcast
-                            CLExecutor exec = type.getImplementation(Broadcast.class).getExecutor(CLExecutor.class);
-                            if(exec!=null && exec.getSource()!=null) code.put(exec.getName(), exec.getSource());
-                        } else if(preName.contains("convolve") && type.supportsImplementation(Convolution.class)) {
-                            CLExecutor exec = type.getImplementation(Convolution.class).getExecutor(CLExecutor.class);
-                            if(exec!=null && exec.getSource()!=null) code.put(exec.getName(), exec.getSource());
+                            exec = type.getImplementation(Broadcast.class).getExecutor(CLExecutor.class);
+                        } else if(preName.contains("convolution") && type.supportsImplementation(Convolution.class)) {
+                            exec = type.getImplementation(Convolution.class).getExecutor(CLExecutor.class);
+                        } else if (
+                                type.supportsImplementation(GenericImplementation.class)
+                                && preName.contains(type.getImplementation(GenericImplementation.class).getName())
+                        ) { // TODO: cover!
+                            exec = type.getImplementation(GenericImplementation.class).getExecutor(CLExecutor.class);
                         }
+                        if(exec!=null && exec.getSource()!=null) code.put(exec.getName(), exec.getSource());
                     }
                     code.forEach((n, s) -> {
                                 names.add(n);
@@ -219,20 +236,21 @@ public class OpenCLPlatform {
 
     public List<OpenCLDevice> getDevices() {
         List<OpenCLDevice> devices = new ArrayList<>();
-        _id_device.forEach((k, v)-> devices.add(v));
+        _id_device.forEach( ( k, v ) -> devices.add(v) );
         return devices;
     }
 
     public boolean has(cl_device_id did){
         return _id_device.containsKey(did);
     }
+
     public OpenCLDevice get(cl_device_id did){
         return _id_device.get(did);
     }
+
     public void put(cl_device_id did, OpenCLDevice device){
        _id_device.put(did, device);
     }
-
 
     public Map<String, cl_kernel> getKernels() {
         return _kernels;
@@ -250,7 +268,8 @@ public class OpenCLPlatform {
     {
         public static List<OpenCLPlatform> PLATFORMS = findAllPlatforms();
 
-        public static List<OpenCLPlatform> findAllPlatforms() {
+        public static List<OpenCLPlatform> findAllPlatforms()
+        {
             // Obtain the number of platforms
             int[] numPlatforms = new int[1];
             clGetPlatformIDs(0, null, numPlatforms);
@@ -260,9 +279,7 @@ public class OpenCLPlatform {
             clGetPlatformIDs(platforms.length, platforms, null);
 
             List<OpenCLPlatform> list = new ArrayList<>();
-            for (cl_platform_id id : platforms) {
-                list.add(new OpenCLPlatform(id));
-            }
+            for (cl_platform_id id : platforms) list.add(new OpenCLPlatform(id));
             return list;
         }
 

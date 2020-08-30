@@ -2,7 +2,7 @@
     void _cfg_of_cfg(__global int* cfg, int* prv_cfg, int rank);
     int _i_of_i(int i, int* cfg, int rank);
 
-    __kernel void activate_template(
+    __kernel void activation_template(
         __global float *drn, __global int *drn_conf,
         __global float *src1, __global int *src1_conf,
         int rank,

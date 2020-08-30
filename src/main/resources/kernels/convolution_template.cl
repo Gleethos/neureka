@@ -3,7 +3,7 @@ void _cfg_of_cfg(__global int* cfg, int* prv_cfg, int rank);
 int  _i_of_i(int i, int* config, int rank);
 int  _i_of_idx_on_tln(int* conf, int rank);
 
-__kernel void convolve_template(
+__kernel void convolution_template(
     //-=<ARGUMENT>=-//__global float *frn, __global int *frn_conf,
     __global float *drn, __global int *drn_conf,
     __global float *src1, __global int *src1_conf,

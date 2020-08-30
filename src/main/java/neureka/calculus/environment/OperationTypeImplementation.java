@@ -80,10 +80,13 @@ public interface OperationTypeImplementation<FinalType>
     DrainInstantiation getDrainInstantiation();
     FinalType setDrainInstantiation( DrainInstantiation drainInstantiation );
 
+    Tsr recursiveReductionOf(ExecutionCall<Device> call, Consumer<ExecutionCall<Device>> finalExecution );
+
+
     <D extends Device, E extends ExecutorFor<D>> FinalType setExecutor(Class<E> deviceClass, E execution);
 
     <D extends Device, E extends ExecutorFor<D>> ExecutorFor getExecutor(Class<E> deviceClass);
 
-    Tsr recursiveReductionOf(ExecutionCall<Device> call, Consumer<ExecutionCall<Device>> finalExecution );
+
 
 }

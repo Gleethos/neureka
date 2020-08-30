@@ -15,7 +15,7 @@ public class Scalarization extends AbstractOperationTypeImplementation< Scalariz
 
 
     public String getKernelSource(){
-        return Neureka.instance().utility().readResource("kernels/scalar_template.cl");
+        return Neureka.instance().utility().readResource("kernels/scalarization_template.cl");
     }
 
 

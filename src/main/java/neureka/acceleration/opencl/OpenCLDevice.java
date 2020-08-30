@@ -163,7 +163,7 @@ public class OpenCLDevice extends AbstractDevice
         int[] config = new int[rank * 5];
         System.arraycopy(tensor.getNDConf().shape(), 0, config, 0, rank);// -=> SHAPE COPY
         System.arraycopy(tensor.getNDConf().translation(), 0, config, rank * 1, rank);// -=> TRANSLATION COPY
-        System.arraycopy(tensor.getNDConf().idxmap(), 0, config, rank * 2, rank);// -=> IDXMAP COPY (translates scalar to dimension index)
+        System.arraycopy(tensor.getNDConf().idxmap(), 0, config, rank * 2, rank);// -=> IDXMAP COPY (translates scalarization to dimension index)
         System.arraycopy(tensor.getNDConf().offset(), 0, config, rank * 3, rank);// -=> SPREAD
         System.arraycopy(tensor.getNDConf().spread(), 0, config, rank * 4, rank);
 
@@ -202,7 +202,17 @@ public class OpenCLDevice extends AbstractDevice
 
         tensor.add(newClt);
         tensor.add(this);
-        if (tensor.isVirtual()) _enqueue(tensor, tensor.value64(0), -1, OperationType.instance("<"));
+        if (tensor.isVirtual()) {
+            //execute(
+            //    new ExecutionCall(
+            //            this,
+            //            new Tsr[]{tensor, tensor},
+            //            -1,
+            //            OperationType.instance("<")
+            //    )
+            //);
+            _enqueue(tensor, tensor.value64(0), -1, OperationType.instance("<"));
+        }
         tensor.setIsOutsourced(true);
         //tensor.setIsVirtual(false);
     }
@@ -417,7 +427,7 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     public KernelBuilder getKernel(ExecutionCall call){
-        String chosen = _platform.kernelNameOf(call.getType());
+        String chosen = _platform.kernelNameOf(call);
         cl_kernel kernel = _platform.getKernels().get(chosen);
         return new KernelBuilder(kernel, _queue);
     }
@@ -440,9 +450,8 @@ public class OpenCLDevice extends AbstractDevice
     @Override
     protected void _enqueue(Tsr t, double value, int d, OperationType type) {
         int gwz = t.size();
-        String chosen = "scalar_" + _platform.kernelNameOf(type).replace("operate_", "");
+        String chosen = "scalarization_" + _platform.kernelNameOf(type).replace("operator_", "");
         cl_kernel kernel = _platform.getKernels().get(chosen);
-        System.out.println(chosen);
         new KernelBuilder(kernel, _queue)
                 .pass(t)
                 .pass(t)

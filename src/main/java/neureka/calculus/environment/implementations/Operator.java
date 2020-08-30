@@ -19,7 +19,7 @@ public class Operator extends AbstractOperationTypeImplementation<Operator>
     }
 
     public String getKernelSource(){
-        return Neureka.instance().utility().readResource("kernels/operate_template.cl");
+        return Neureka.instance().utility().readResource("kernels/operator_template.cl");
     }
 
 
