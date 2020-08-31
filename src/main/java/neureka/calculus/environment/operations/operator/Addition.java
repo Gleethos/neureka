@@ -10,6 +10,9 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.implementations.*;
+import org.jetbrains.annotations.Contract;
+
+import java.util.List;
 
 public class Addition extends OperationType {
 
@@ -518,5 +521,46 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
 
 
     }
+
+
+
+    @Contract(pure = true)
+    public static double addition(double[] inputs, int j, int d, List<Function> src) {
+        if ( d < 0 ) {
+            double result = src.get(0).call(inputs, j);
+            for ( int i = 1; i < src.size(); i++ ) {
+                final double current = src.get(i).call(inputs, j);
+                result += current;
+            }
+            return result;
+        } else {
+            double derivative = 0;
+            for ( int i = 0; i < src.size(); ++i ) {
+                derivative += src.get(i).derive(inputs, d, j);
+            }
+            return derivative;
+        }
+    }
+
+    @Contract(pure = true)
+    public static double addition(double[] inputs, int d, List<Function> src) {
+        if ( d < 0 ) {
+            double result = src.get(0).call(inputs);
+            for ( int Vi = 1; Vi < src.size(); Vi++ ) {
+                final double current = src.get(Vi).call(inputs);
+                result += current;
+            }
+            return result;
+        } else {
+            double derivative = 0;
+            for ( Function function : src ) {
+                derivative += function.derive( inputs, d );
+            }
+            return derivative;
+        }
+    }
+
+
+
 
 }

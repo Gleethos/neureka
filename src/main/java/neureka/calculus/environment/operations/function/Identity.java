@@ -10,6 +10,7 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.*;
 import neureka.calculus.factory.assembly.FunctionBuilder;
+import org.jetbrains.annotations.Contract;
 
 public class Identity extends OperationType
 {
@@ -260,5 +261,15 @@ public class Identity extends OperationType
 
 
     }
+
+
+
+    @Contract(pure = true)
+    public static double linear(double input, boolean derive) {
+        if ( !derive ) return input;
+        else return 1;
+    }
+
+
 
 }

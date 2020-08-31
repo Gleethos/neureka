@@ -10,6 +10,7 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.*;
 import neureka.calculus.factory.assembly.FunctionBuilder;
+import org.jetbrains.annotations.Contract;
 
 public class Sinus extends OperationType
 {
@@ -153,6 +154,17 @@ public class Sinus extends OperationType
 
 
     }
+
+
+
+
+    @Contract(pure = true)
+    public static double sinus( double input, boolean derive ) {
+        if ( !derive ) return Math.sin( input );
+        else return Math.cos( input );
+    }
+
+
 
 
 }

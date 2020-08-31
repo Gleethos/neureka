@@ -10,6 +10,9 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.implementations.*;
+import org.jetbrains.annotations.Contract;
+
+import java.util.List;
 
 
 public class Multiplication extends OperationType {
@@ -557,37 +560,37 @@ public class Multiplication extends OperationType {
                         return true;
                     }
             ).setADAgentCreator(
-            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-            {
-                Tsr derivv = (Tsr)call.getAt("derivative");
-                Function mul = Function.Detached.MUL;
-                if (
-                    derivv != null
-                ) {
-                    return new ADAgent(
-                                derivv
-                       ).withForward(
-                                ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
-                       ).withBackward(
-                               null
-                       );
-                }
-                Tsr[] inputs = call.getTensors();
-                int d = call.getDerivativeIndex();
-                if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                else
+                ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                 {
-                    Tsr deriv = f.derive(inputs, d);
-                    return new ADAgent(
-                            deriv
-                        ).withForward(
-                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                        ).withBackward(
-                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-                        );
+                    Tsr derivv = (Tsr)call.getAt("derivative");
+                    Function mul = Function.Detached.MUL;
+                    if (
+                        derivv != null
+                    ) {
+                        return new ADAgent(
+                                    derivv
+                           ).withForward(
+                                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                           ).withBackward(
+                                   null
+                           );
+                    }
+                    Tsr[] inputs = call.getTensors();
+                    int d = call.getDerivativeIndex();
+                    if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                    else
+                    {
+                        Tsr deriv = f.derive(inputs, d);
+                        return new ADAgent(
+                                deriv
+                            ).withForward(
+                                (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                            ).withBackward(
+                                (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+                            );
+                    }
                 }
-            }
-        ).setCallHock(
+            ).setCallHock(
                     ( caller, call ) -> null
             ).setRJAgent(
                     ( call, goDeeperWith ) -> null
@@ -648,6 +651,56 @@ public class Multiplication extends OperationType {
 
     }
 
+
+
+
+    @Contract(pure = true)
+    public static double multiplication(double[] inputs, int j, int d, List<Function> src) {
+        if ( d < 0 ) {
+            double result = src.get(0).call(inputs, j);
+            for ( int i = 1; i < src.size(); i++ ) {
+                final double current = src.get(i).call(inputs, j);
+                result *= current;
+            }
+            return result;
+        } else {
+            double u, ud, v, vd;
+            u = src.get(0).call(inputs, j);
+            ud = src.get(0).derive(inputs, d, j);
+
+            for ( int ji = 1; ji < src.size(); ji++ ) {
+                v = src.get(ji).call(inputs, j);
+                vd = src.get(ji).derive(inputs, d, j);
+                ud = u * vd + v * ud;
+                u *= v;
+            }
+            return ud;
+        }
+    }
+
+    @Contract(pure = true)
+    public static double multiplication(double[] inputs, int d, List<Function> src) {
+        if ( d < 0 ) {
+            double result = src.get(0).call(inputs);
+            for ( int i = 1; i < src.size(); i++ ) {
+                final double current = src.get(i).call(inputs);
+                result *= current;
+            }
+            return result;
+        } else {
+            double u, ud, v, vd;
+            u = src.get(0).call(inputs);
+            ud = src.get(0).derive(inputs, d);
+            for ( int j = 1; j < src.size(); j++ ) {
+                v = src.get(j).call(inputs);
+                vd = src.get(j).derive(inputs, d);
+
+                ud = u * vd + v * ud;
+                u *= v; // ...this step can be avoided (TODO optimize)
+            }
+            return ud;
+        }
+    }
 
 
 

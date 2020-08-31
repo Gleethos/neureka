@@ -11,6 +11,9 @@ import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.implementations.*;
 import neureka.calculus.factory.assembly.FunctionBuilder;
+import org.jetbrains.annotations.Contract;
+
+import java.util.List;
 
 public class Product extends OperationType {
 
@@ -328,6 +331,56 @@ public class Product extends OperationType {
     }
 
 
+
+    @Contract(pure = true)
+    public static double PI( double[] inputs, int j, int d, List<Function> src ) {
+        if ( d < 0 ) {
+            double prod = 1;
+            boolean nothingDone = true;
+            for ( int Ii = 0; Ii < inputs.length; Ii++ ) {
+                prod *= src.get(0).call( inputs, Ii );
+                nothingDone = false;
+            }
+            if ( nothingDone ) return src.get(0).call(inputs, j);
+            return prod;
+        } else {
+            double u, ud, v, vd;
+            u = src.get(0).call( inputs, 0 );
+            ud = src.get(0).derive(inputs, d, 0);
+            for (int ji = 1; ji < inputs.length; ji++) {
+                v = src.get(0).call( inputs, ji );
+                vd = src.get(0).derive( inputs, d, ji );
+                ud = u * vd + v * ud;
+                u *= v;
+            }
+            return ud;
+        }
+    }
+
+    @Contract(pure = true)
+    public static double PI( double[] inputs, int d, List<Function> src ) {
+        if ( d < 0 ) {
+            double prod = 1;
+            boolean nothingDone = true;
+            for ( int i = 0; i < inputs.length; i++ ) {
+                prod *= src.get(0).call(inputs, i);
+                nothingDone = false;
+            }
+            if ( nothingDone ) return src.get(0).call(inputs);
+            return prod;
+        } else {
+            double u, ud, v, vd;
+            u = src.get(0).call(inputs, 0);
+            ud = src.get(0).derive(inputs, d, 0);
+            for ( int j = 1; j < inputs.length; j++ ) {
+                v = src.get(0).call(inputs, j);
+                vd = src.get(0).derive(inputs, d, j);
+                ud = u * vd + v * ud;
+                u *= v;
+            }
+            return ud;
+        }
+    }
 
 
 }

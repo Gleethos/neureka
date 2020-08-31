@@ -10,6 +10,7 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.*;
 import neureka.calculus.factory.assembly.FunctionBuilder;
+import org.jetbrains.annotations.Contract;
 
 public class Quadratic extends OperationType
 {
@@ -162,6 +163,14 @@ public class Quadratic extends OperationType
         );
 
 
+    }
+
+
+
+    @Contract(pure = true)
+    public static double quadratic( double input, boolean derive ) {
+        if (!derive) return (input * input);
+        else return 2 * input;
     }
 
 

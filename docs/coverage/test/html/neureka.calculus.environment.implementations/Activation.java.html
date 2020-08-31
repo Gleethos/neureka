@@ -9,12 +9,12 @@ public class Activation extends AbstractOperationTypeImplementation&lt; Activati
 {
 
     public Activation() {
-<span class="fc" id="L12">        super();</span>
+<span class="fc" id="L12">        super(&quot;activation&quot;);</span>
 <span class="fc" id="L13">        setSuitabilityChecker(call-&gt;true);</span>
 <span class="fc" id="L14">    }</span>
 
     public String getKernelSource(){
-<span class="fc" id="L17">        return Neureka.instance().utility().readResource(&quot;kernels/activate_template.cl&quot;);</span>
+<span class="fc" id="L17">        return Neureka.instance().utility().readResource(&quot;kernels/activation_template.cl&quot;);</span>
     }
 
     @Contract(pure = true)

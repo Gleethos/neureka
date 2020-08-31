@@ -10,6 +10,7 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.*;
 import neureka.calculus.factory.assembly.FunctionBuilder;
+import org.jetbrains.annotations.Contract;
 
 public class Absolute extends OperationType {
 
@@ -147,5 +148,14 @@ public class Absolute extends OperationType {
                 )
         );
     }
+
+
+    @Contract(pure = true)
+    public static double absolute( double input, boolean derive ) {
+        if ( !derive ) return Math.abs( input );
+        else return ( input < 0 ) ? -1 : 1;
+    }
+
+
 
 }

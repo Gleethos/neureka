@@ -23,10 +23,10 @@ class Cross_Device_Type_Unit_Tests extends Specification
         and : 'Neureka is being reset.'
             Neureka.instance().reset()
 
-        when :
+        when : 'The query is being passed to the "find" method...'
             def device = Device.find(query)
 
-        then :
+        then : 'The resulting Device variable has the expected type.'
             device.class == type
 
         where :
@@ -53,16 +53,16 @@ class Cross_Device_Type_Unit_Tests extends Specification
         and : 'A 2D tensor is being instantiated..'
             Tsr t = new Tsr(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).add(device)
 
-        when : 'A numeric array is passed to said tensor.'
+        when : 'A numeric array is passed to said tensor...'
             if( data1 instanceof float[] ) t.setValue32(data1)
             else t.setValue64(data1 as double[])
             if( data2 instanceof float[] ) t.setValue32(data2)
             else t.setValue64(data2 as double[])
 
-        then :
+        then : 'The tensor (as String) contains the expected String.'
             t.toString().contains(expected)
 
-        where :
+        where : 'The following data is being used :'
             device                | data1                      | data2                      || expected
             Device.find("cpu")    | new float[0]               | new float[0]               || "(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]"
             Device.find("cpu")    | new float[]{2, 3, 4, 5, 6} | new float[]{1, 1, 1, 1, 1} || "(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]"

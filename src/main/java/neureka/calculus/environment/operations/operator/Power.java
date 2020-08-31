@@ -10,6 +10,9 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.implementations.*;
+import org.jetbrains.annotations.Contract;
+
+import java.util.List;
 
 public class Power extends OperationType
 {
@@ -590,5 +593,79 @@ public class Power extends OperationType
 
 
     }
+
+
+
+
+
+
+
+
+    // d/dx(f(x)^g(x))=
+    // f(x)^g(x) * d/dx(g(x)) * ln(f(x))
+    // + f(x)^(g(x)-1) * g(x) * d/dx(f(x))
+    @Contract(pure = true)
+    public static double power(double[] inputs, int j, int d, List<Function> src) {
+        if ( d < 0 ) {
+            double result = src.get(0).call(inputs, j);
+            for ( int i = 1; i < src.size(); i++ ) {
+                final double current = src.get(i).call(inputs, j);
+                result = Math.pow(result, current);
+            }
+            return result;
+        } else {
+            double out = 0;
+            for ( int si = 0; si < src.size(); si++ ) {
+                double b = 1;
+                for ( int i = 1; i < src.size(); i++ ) {
+                    b *= src.get(i).call(inputs, j);
+                }
+                if ( si == 0 ) {
+                    out += src.get(0).derive(inputs, d, j) * b * Math.pow(src.get(0).call(inputs, j), b - 1);
+                } else {
+                    double a = src.get(0).call(inputs, j);
+                    out += ( a >= 0 ) ? src.get(si).derive(inputs, d, j) * b * Math.log(a) : 0;
+                }
+            }
+            return out;
+        }
+    }
+
+    @Contract(pure = true)
+    public static double power(double[] inputs, int d, List<Function> src) {
+        if ( d < 0 ) {
+            double result = src.get(0).call(inputs);
+            for ( int i = 1; i < src.size(); i++ ) {
+                final double current = src.get(i).call(inputs);
+                result = Math.pow(result, current);
+            }
+            return result;
+        } else {
+            double b = 1;
+            double bd = 0;
+            double a = 0;
+            for ( int i = 1; i < src.size(); i++ ) {
+                double dd = 1;
+                a = src.get(i).call(inputs);
+                for ( int di = 1; di < src.size(); di++ ) {
+                    if ( di != i ) dd *= a;
+                    else dd *= src.get(di).derive(inputs, d);
+                }
+                bd += dd;
+                b *= a;
+            }
+            double out = 0;
+            a = src.get(0).call(inputs);
+            out += src.get(0).derive(inputs, d) * b * Math.pow(a, b - 1);
+            out += (a >= 0) ? bd *  Math.pow(a, b) * Math.log(a) : 0;
+            return out;
+        }
+    }
+
+
+
+
+
+
 
 }

@@ -10,6 +10,9 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.implementations.*;
+import org.jetbrains.annotations.Contract;
+
+import java.util.List;
 
 
 public class Division extends OperationType
@@ -490,40 +493,40 @@ public class Division extends OperationType
                                 return true;
                             }
                     ).setADAgentCreator(
-    ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-            {
-                Tsr derivv = (Tsr)call.getAt("derivative");
-        Function mul = Function.Detached.MUL;
-        if (
-            derivv != null
-        ) {
-            return new ADAgent(
-                    derivv
-                ).withForward(
-                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
-                ).withBackward(
-                    null
-                );
-        }
-        Tsr[] inputs = call.getTensors();
-        int d = call.getDerivativeIndex();
-        if( forward )
-        {
-            throw new IllegalArgumentException("Convolution of does not support forward-AD!");
-        }
-        else
-        {
-            Tsr deriv = f.derive(inputs, d);
-            return new ADAgent(
-                            deriv
-).withForward(
-                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-).withBackward(
-                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-);
-        }
-    }
-        ).setCallHock(
+                        ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                        {
+                            Tsr derivv = (Tsr)call.getAt("derivative");
+                            Function mul = Function.Detached.MUL;
+                            if (
+                                derivv != null
+                            ) {
+                                return new ADAgent(
+                                        derivv
+                                    ).withForward(
+                                        ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                                    ).withBackward(
+                                        null
+                                    );
+                            }
+                            Tsr[] inputs = call.getTensors();
+                            int d = call.getDerivativeIndex();
+                            if( forward )
+                            {
+                                throw new IllegalArgumentException("Convolution of does not support forward-AD!");
+                            }
+                            else
+                            {
+                                Tsr deriv = f.derive(inputs, d);
+                                return new ADAgent(
+                                                deriv
+                                            ).withForward(
+                                                (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                                            ).withBackward(
+                                                (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+                                            );
+                            }
+                        }
+                    ).setCallHock(
                             ( caller, call ) -> null
                     ).setRJAgent(
                             ( call, goDeeperWith ) -> null
@@ -534,18 +537,18 @@ public class Division extends OperationType
                                 return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
                             }
                     )
-        ).setStringifier(
-                children -> {
-                    StringBuilder reconstructed = new StringBuilder();
-                    for ( int i = 0; i < children.size(); ++i ) {
-                        reconstructed.append( children.get(i) );
-                        if ( i < children.size() - 1 ) {
-                            reconstructed.append(" d ");
+                ).setStringifier(
+                        children -> {
+                            StringBuilder reconstructed = new StringBuilder();
+                            for ( int i = 0; i < children.size(); ++i ) {
+                                reconstructed.append( children.get(i) );
+                                if ( i < children.size() - 1 ) {
+                                    reconstructed.append(" d ");
+                                }
+                            }
+                            return "(" + reconstructed + ")";
                         }
-                    }
-                    return "(" + reconstructed + ")";
-                }
-        );
+                );
 
         new OperationType(
                 "", ((char) 171) + "d", 3, true, false, false, false
@@ -577,6 +580,59 @@ public class Division extends OperationType
         );
 
     }
+
+
+
+    @Contract(pure = true)
+    public static double division(double[] inputs, int j, int d, List<Function> src) {
+        if ( d < 0 ) {
+            double result = src.get(0).call(inputs, j);
+            for (int Vi = 1; Vi < src.size(); Vi++) {
+                final double current = src.get(Vi).call(inputs, j);
+                result /= current;
+            }
+            return result;
+        } else {
+            double u, ud, v, vd;
+            u = src.get(0).call(inputs, j);
+            ud = src.get(0).derive(inputs, d, j);
+            for (int i = 0; i < src.size() - 1; i++) {
+                v = src.get(i + 1).call(inputs, j);
+                vd = src.get(i + 1).derive(inputs, d, j);
+                ud = (ud * v - u * vd) / Math.pow(v, 2);
+                u /= v;
+            }
+            return ud;
+        }
+    }
+
+    @Contract(pure = true)
+    public static double division(double[] inputs, int d, List<Function> src) {
+        if ( d < 0 ) {
+            double result = src.get(0).call(inputs);
+            for ( int i = 1; i < src.size(); i++ ) {
+                final double current = src.get(i).call(inputs);
+                result /= current;
+            }
+            return result;
+        } else {
+            double derivative = 0;
+            double tempVar = src.get(0).call(inputs);
+            derivative = src.get(0).derive(inputs, d);
+
+            for ( int i = 0; i < src.size() - 1; i++ ) {
+                double u, ud, v, vd;
+                v = src.get(i + 1).call(inputs);
+                vd = src.get(i + 1).derive(inputs, d);
+                u = tempVar;
+                ud = derivative;
+                derivative = ( ud * v - u * vd ) / Math.pow(v, 2);
+                tempVar /= v;
+            }
+            return derivative;
+        }
+    }
+
 
 
 

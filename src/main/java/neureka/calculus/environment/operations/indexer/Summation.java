@@ -12,6 +12,8 @@ import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.implementations.*;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
+import java.util.List;
+
 public class Summation extends OperationType
 {
 
@@ -197,64 +199,64 @@ public class Summation extends OperationType
         .setADAnalyzer(
                 call -> true
         ).setADAgentCreator(
-    ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
                 Tsr derivv = (Tsr)call.getAt("derivative");
-        Function mul = Function.Detached.MUL;
-        if (
-            derivv != null
-        ) {
-            return new ADAgent(
-                    derivv
-                ).withForward(
-                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
-                ).withBackward(
-                    null
-                );
-        }
-        Tsr[] inputs = call.getTensors();
-        int d = call.getDerivativeIndex();
-        if( forward )
-        {
-            Tsr deriv = f.derive(inputs, d);
-            return new ADAgent(
-                    deriv
-                ).withForward(
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                ).withBackward(
-                    null
-                );
-        }
-        else
-        {
-            if ( this.supports(Convolution.class) )
-            {
-                Function invX = FunctionBuilder.build(
-                        "I[0]" + getOperator() + ">>I[1]" + getOperator() + ">>I[2]",
-                        false
-                );
-                Tsr deriv = f.derive(inputs, d);
-                return new ADAgent(
-                        deriv
-                ).withForward(
-                        (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                ).withBackward(
-                        (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)})
-                );
-            }
-            else
-            {
-                Tsr deriv = f.derive(inputs, d);
-                return new ADAgent(
+                Function mul = Function.Detached.MUL;
+                if (
+                    derivv != null
+                ) {
+                    return new ADAgent(
+                            derivv
+                        ).withForward(
+                            ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                        ).withBackward(
+                            null
+                        );
+                }
+                Tsr[] inputs = call.getTensors();
+                int d = call.getDerivativeIndex();
+                if( forward )
+                {
+                    Tsr deriv = f.derive(inputs, d);
+                    return new ADAgent(
                             deriv
-).withForward(
-                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-).withBackward(
-                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-);
+                        ).withForward(
+                            ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
+                        ).withBackward(
+                            null
+                        );
+                }
+                else
+                {
+                    if ( this.supports(Convolution.class) )
+                    {
+                        Function invX = FunctionBuilder.build(
+                                "I[0]" + getOperator() + ">>I[1]" + getOperator() + ">>I[2]",
+                                false
+                        );
+                        Tsr deriv = f.derive(inputs, d);
+                        return new ADAgent(
+                                deriv
+                        ).withForward(
+                                (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                        ).withBackward(
+                                (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)})
+                        );
+                    }
+                    else
+                    {
+                        Tsr deriv = f.derive(inputs, d);
+                        return new ADAgent(
+                                    deriv
+                                ).withForward(
+                                    (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                                ).withBackward(
+                                    (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+                                );
+                    }
+                }
             }
-        }
-    }
         ).setCallHock(
                 (caller, call) -> null
         ).setRJAgent(
@@ -318,5 +320,52 @@ public class Summation extends OperationType
         );
 
     }
+
+
+    public static double summation( double[] inputs, int j, int d, List<Function> src ) {
+        if ( d < 0 ) {
+            double sum = 0;
+            boolean nothingDone = true;
+            for ( int i = 0; i < inputs.length; i++ ) {
+                sum += src.get(0).call( inputs, i );
+                nothingDone = false;
+            }
+            if ( nothingDone ) {
+                return src.get(0).call( inputs );
+            }
+            return sum;
+        } else {
+            return src.get(0).derive( inputs, d, j );
+        }
+    }
+
+    public static double summation(double[] inputs, int d, List<Function> src) {
+        if ( d < 0 ) {
+            double sum = 0;
+            boolean nothingDone = true;
+            for (int i = 0; i < inputs.length; i++) {
+                sum += src.get(0).call( inputs, i );
+                nothingDone = false;
+            }
+            if ( nothingDone ) {
+                return src.get(0).call( inputs );
+            }
+            return sum;
+        } else {
+            double sum = 0;
+            boolean nothingDone = true;
+            for ( int i = 0; i < inputs.length; i++ ) {
+                double r = src.get(0).derive( inputs, d, i );
+                sum += r;
+                nothingDone = false;
+            }
+            if ( nothingDone ) {
+                return src.get(0).call(inputs);
+            }
+            return sum;
+        }
+
+    }
+
 
 }

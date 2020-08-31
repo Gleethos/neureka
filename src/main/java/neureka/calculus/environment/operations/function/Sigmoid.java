@@ -10,6 +10,7 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.*;
 import neureka.calculus.factory.assembly.FunctionBuilder;
+import org.jetbrains.annotations.Contract;
 
 public class Sigmoid extends OperationType
 {
@@ -171,6 +172,16 @@ public class Sigmoid extends OperationType
 
     }
 
+
+
+    @Contract(pure = true)
+    public static double sigmoid( double input, boolean derive ) {
+        if ( !derive ) {
+            return 1 / (1 + Math.pow(Math.E, -input));
+        } else {
+            return (Math.pow(Math.E, -input)) / (Math.pow((1 + Math.pow(Math.E, -input)), 2) + 2 * Math.pow(Math.E, -input));
+        }
+    }
 
 
 }

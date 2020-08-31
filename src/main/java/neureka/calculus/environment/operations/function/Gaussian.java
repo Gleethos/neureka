@@ -10,6 +10,7 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.*;
 import neureka.calculus.factory.assembly.FunctionBuilder;
+import org.jetbrains.annotations.Contract;
 
 public class Gaussian extends OperationType
 {
@@ -84,17 +85,14 @@ public class Gaussian extends OperationType
         }
         else
         {
-
-            {
-                Tsr deriv = f.derive(inputs, d);
-                return new ADAgent(
-                            deriv
-).withForward(
-                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-).withBackward(
-                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-);
-            }
+            Tsr deriv = f.derive(inputs, d);
+            return new ADAgent(
+                        deriv
+                ).withForward(
+                        (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                ).withBackward(
+                        (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+                );
         }
     }
         ).setCallHock(
@@ -165,5 +163,17 @@ public class Gaussian extends OperationType
         );
 
     }
+
+
+
+
+
+    @Contract(pure = true)
+    public static double gaussian( double input, boolean derive ) {
+        if ( !derive ) return Math.pow(Math.E, -Math.pow(input, 2));
+        else return -2 * input * Math.pow(Math.E, -Math.pow(input, 2));
+    }
+
+
 
 }

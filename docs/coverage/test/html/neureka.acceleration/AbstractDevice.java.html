@@ -14,33 +14,37 @@ import java.lang.ref.Cleaner;
 
     protected abstract void _enqueue(Tsr[] tsrs, int d, OperationType type);
 
-    protected abstract void _enqueue(Tsr t, double value, int d, OperationType type);
-
     @Override
     public void update(Tsr oldOwner, Tsr newOwner){
-<span class="fc" id="L21">        swap(oldOwner, newOwner);</span>
-<span class="fc" id="L22">    }</span>
+<span class="fc" id="L19">        swap(oldOwner, newOwner);</span>
+<span class="fc" id="L20">    }</span>
 
     @Override
     public Device cleaning(Tsr tensor, Runnable action){
-<span class="fc" id="L26">        _CLEANER.register(tensor, action);</span>
-<span class="fc" id="L27">        return this;</span>
+<span class="fc" id="L24">        _CLEANER.register(tensor, action);</span>
+<span class="fc" id="L25">        return this;</span>
     }
 
     protected void _cleaning(Object o, Runnable action){
-<span class="fc" id="L31">        _CLEANER.register(o, action);</span>
-<span class="fc" id="L32">    }</span>
+<span class="fc" id="L29">        _CLEANER.register(o, action);</span>
+<span class="fc" id="L30">    }</span>
 
     @Override
     public Device execute( ExecutionCall call )
     {
-<span class="fc" id="L37">        call = call.getImplementation().getDrainInstantiation().handle(call);</span>
-<span class="fc" id="L38">        OperationTypeImplementation&lt;Object&gt; executor = call.getImplementation();</span>
-<span class="fc" id="L39">        executor.recursiveReductionOf(</span>
-                call,
-<span class="fc" id="L41">                c -&gt; _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType())</span>
-        );
-<span class="fc" id="L43">        return this;</span>
+<span class="fc" id="L35">        call = call.getImplementation().getDrainInstantiation().handle(call);</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        for ( Tsr t : call.getTensors() ) {</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">            if ( t == null ) throw new IllegalArgumentException(</span>
+                    &quot;Device arguments may not be null!\n&quot; +
+                            &quot;One or more tensor arguments within the given ExecutionCall instance is null.&quot;
+            );
+        }
+<span class="fc" id="L42">        ((OperationTypeImplementation&lt;Object&gt;)call.getImplementation())</span>
+<span class="fc" id="L43">                .recursiveReductionOf(</span>
+                    call,
+<span class="fc" id="L45">                    c -&gt; _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType())</span>
+                );
+<span class="fc" id="L47">        return this;</span>
     }
 
 }

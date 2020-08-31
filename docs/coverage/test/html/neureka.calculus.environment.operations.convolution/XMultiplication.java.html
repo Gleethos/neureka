@@ -94,18 +94,18 @@ public class XMultiplication extends OperationType
                     }
                 };
 
-<span class="fc" id="L97">        Convolution convolution = new Convolution(</span>
-<span class="fc" id="L98">        ).setADAnalyzer(</span>
-                call -&gt; {
-<span class="pc bpc" id="L100" title="1 of 2 branches missed.">                    if ( call.getType().supports(Convolution.class) ) return false;</span>
-<span class="nc bnc" id="L101" title="All 2 branches missed.">                    if ( call.getType().getOperator().equals(&quot;,&quot;) ) return false; //Reshape</span>
-<span class="nc" id="L102">                    Tsr last = null;</span>
-<span class="nc bnc" id="L103" title="All 2 branches missed.">                    for ( Tsr t : call.getTensors() ) {</span>
-<span class="nc bnc" id="L104" title="All 4 branches missed.">                        if ( last != null &amp;&amp; !last.shape().equals(t.shape()) ) return false;</span>
-<span class="nc" id="L105">                        last = t; // Note: shapes are cached!</span>
+<span class="fc" id="L97">        Convolution convolution = new Convolution()</span>
+<span class="fc" id="L98">                .setADAnalyzer(</span>
+                    call -&gt; {
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">                        if ( call.getType().supports(Convolution.class) ) return false;</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">                        if ( call.getType().getOperator().equals(&quot;,&quot;) ) return false; //Reshape</span>
+<span class="nc" id="L102">                        Tsr last = null;</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">                        for ( Tsr t : call.getTensors() ) {</span>
+<span class="nc bnc" id="L104" title="All 4 branches missed.">                            if ( last != null &amp;&amp; !last.shape().equals(t.shape()) ) return false;</span>
+<span class="nc" id="L105">                            last = t; // Note: shapes are cached!</span>
+                        }
+<span class="nc" id="L107">                        return true;</span>
                     }
-<span class="nc" id="L107">                    return true;</span>
-                }
 <span class="fc" id="L109">        ).setADAgentCreator(</span>
             ( Function f, ExecutionCall&lt;Device&gt; call, boolean forward ) -&gt;
             {

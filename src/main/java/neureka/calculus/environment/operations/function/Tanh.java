@@ -10,6 +10,7 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.*;
 import neureka.calculus.factory.assembly.FunctionBuilder;
+import org.jetbrains.annotations.Contract;
 
 public class Tanh extends OperationType
 {
@@ -175,6 +176,15 @@ public class Tanh extends OperationType
 
 
 
+    @Contract(pure = true)
+    public static double tanh( double input, boolean derive ) {
+        final double pow = Math.pow((1 + Math.pow(input, 2)), 0.5);
+        if ( !derive ) {
+            return input / pow;
+        } else {
+            return (1 - Math.pow((input / pow), 2));
+        }
+    }
 
 }
 

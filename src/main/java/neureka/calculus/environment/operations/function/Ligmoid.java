@@ -10,6 +10,7 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.*;
 import neureka.calculus.factory.assembly.FunctionBuilder;
+import org.jetbrains.annotations.Contract;
 
 
 public class Ligmoid extends OperationType
@@ -168,6 +169,15 @@ public class Ligmoid extends OperationType
 
 
     }
+
+
+
+    @Contract(pure = true)
+    public static double ligmoid( double input, boolean derive ) {
+        if ( !derive ) return Math.log(1 + Math.pow(Math.E, input));
+        else return Sigmoid.sigmoid(input, false);
+    }
+
 
 
 }

@@ -11,7 +11,7 @@
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Aug 28 11:55:24 CEST 2020 by Daglemino</div>
+<div class='date-test-ran'>Created on Mon Aug 31 20:59:59 CEST 2020 by Daniel</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -23,12 +23,12 @@
 </thead>
 <tbody>
 <tr>
-<td>1</td>
+<td>3</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>1,602 seconds</td>
+<td>8,012 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -42,9 +42,136 @@
 <tbody>
 <ul id='toc'>
 <li>
+<a href='#-1551662766' class='feature-toc-pass'>Querying for Device implementations works as expected.</a>
+</li>
+<li>
 <a href='#-716282076' class='feature-toc-pass'>Passing a numeric array to a tensor should modify its content!</a>
 </li>
+<li>
+<a href='#-846989796' class='feature-toc-pass'>Execution calls containing null arguments will cause an exception to be thrown in device instances.</a>
+</li>
 </ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1551662766'>
+<span>Querying for Device implementations works as expected.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>This system supports OpenCL.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>if ( !Neureka.instance().canAccessOpenCL() ) return</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Neureka is being reset.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The query is being passed to the "find" method...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def device = Device.find(query)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The resulting Device variable has the expected type.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>device.class == type</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<th class='ex-header'>query</th>
+<th class='ex-header'>type</th>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>cPu</td>
+<td class='ex-value'>class neureka.acceleration.host.HostCPU</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>jVm</td>
+<td class='ex-value'>class neureka.acceleration.host.HostCPU</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>natiVe</td>
+<td class='ex-value'>class neureka.acceleration.host.HostCPU</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Threaded</td>
+<td class='ex-value'>class neureka.acceleration.host.HostCPU</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>openCl</td>
+<td class='ex-value'>class neureka.acceleration.opencl.OpenCLDevice</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>nvidia or amd or intel</td>
+<td class='ex-value'>class neureka.acceleration.opencl.OpenCLDevice</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>first</td>
+<td class='ex-value'>class neureka.acceleration.opencl.OpenCLDevice</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>7/7 passed</div>
+</td>
+</tr>
 <tr>
 <td colspan='10'>
 <div class='feature-description' id='-716282076'>
@@ -60,14 +187,39 @@
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().reset()
-Tsr t = new Tsr(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2})</pre>
+<div class='block-text'>Neureka is being reset.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()</pre>
 </td>
 </tr>
 <tr>
 <td>
 <div class='block-kind'>And:</div>
 </td>
+<td>
+<div class='block-text'>A 2D tensor is being instantiated..</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr t = new Tsr(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).add(device)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>A numeric array is passed to said tensor...</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>if( data1 instanceof float[] ) t.setValue32(data1)
 else t.setValue64(data1 as double[])
@@ -77,14 +229,24 @@ else t.setValue64(data2 as double[])</pre>
 </tr>
 <tr>
 <td>
-<div class='block-kind'>Expect:</div>
+<div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>t.toString().contains(expected)
-if( Neureka.instance().canAccessOpenCL() ){
-    t.add(Device.find("first"))
-    t.toString().contains(expected)
-}</pre>
+<div class='block-text'>The tensor (as String) contains the expected String.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.toString().contains(expected)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following data is being used :</div>
 </td>
 </tr>
 <tr>
@@ -95,36 +257,77 @@ if( Neureka.instance().canAccessOpenCL() ){
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<th class='ex-header'>device</th>
 <th class='ex-header'>data1</th>
 <th class='ex-header'>data2</th>
 <th class='ex-header'>expected</th>
 </thead>
 <tbody>
 <tr class='ex-pass'>
+<td class='ex-value'>neureka.acceleration.host.HostCPU@1b59e850</td>
 <td class='ex-value'>[]</td>
 <td class='ex-value'>[]</td>
 <td class='ex-value'>(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
+<td class='ex-value'>neureka.acceleration.host.HostCPU@1b59e850</td>
 <td class='ex-value'>[2.0, 3.0, 4.0, 5.0, 6.0]</td>
 <td class='ex-value'>[1.0, 1.0, 1.0, 1.0, 1.0]</td>
 <td class='ex-value'>(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
+<td class='ex-value'>neureka.acceleration.host.HostCPU@1b59e850</td>
 <td class='ex-value'>[3.0, 5.0, 6.0]</td>
 <td class='ex-value'>[4.0, 2.0, 3.0]</td>
 <td class='ex-value'>(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
+<td class='ex-value'>neureka.acceleration.host.HostCPU@1b59e850</td>
 <td class='ex-value'>[9.0, 4.0, 7.0, -12.0]</td>
 <td class='ex-value'>[-5.0, -2.0, 1.0]</td>
 <td class='ex-value'>(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
+<td class='ex-value'>neureka.acceleration.host.HostCPU@1b59e850</td>
+<td class='ex-value'>[22.0, 24.0, 35.0, 80.0]</td>
+<td class='ex-value'>[-1.0, -1.0, -1.0]</td>
+<td class='ex-value'>(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.acceleration.opencl.OpenCLDevice@24ca23dd</td>
+<td class='ex-value'>[]</td>
+<td class='ex-value'>[]</td>
+<td class='ex-value'>(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.acceleration.opencl.OpenCLDevice@24ca23dd</td>
+<td class='ex-value'>[2.0, 3.0, 4.0, 5.0, 6.0]</td>
+<td class='ex-value'>[1.0, 1.0, 1.0, 1.0, 1.0]</td>
+<td class='ex-value'>(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.acceleration.opencl.OpenCLDevice@24ca23dd</td>
+<td class='ex-value'>[3.0, 5.0, 6.0]</td>
+<td class='ex-value'>[4.0, 2.0, 3.0]</td>
+<td class='ex-value'>(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.acceleration.opencl.OpenCLDevice@24ca23dd</td>
+<td class='ex-value'>[9.0, 4.0, 7.0, -12.0]</td>
+<td class='ex-value'>[-5.0, -2.0, 1.0]</td>
+<td class='ex-value'>(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.acceleration.opencl.OpenCLDevice@24ca23dd</td>
 <td class='ex-value'>[22.0, 24.0, 35.0, 80.0]</td>
 <td class='ex-value'>[-1.0, -1.0, -1.0]</td>
 <td class='ex-value'>(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]</td>
@@ -135,7 +338,143 @@ if( Neureka.instance().canAccessOpenCL() ){
 </div>
 </td>
 <td>
-<div class='spec-status'>5/5 passed</div>
+<div class='spec-status'>10/10 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-846989796'>
+<span>Execution calls containing null arguments will cause an exception to be thrown in device instances.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>The given device is available and Neureka is being reset.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>if ( device == null ) return
+Neureka.instance().reset()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A mocked ExecutionCall with mocked operation implementation and a mocked drain instantiator lambda...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def call = Mock(ExecutionCall)
+def implementation = Mock(OperationTypeImplementation)
+def instantiator = Mock(OperationTypeImplementation.DrainInstantiation)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The call is being passed to the device for execution...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>device.execute(call)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>...the implementation is being accessed in order to access the mocked lambda...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>1 * call.getImplementation() &gt;&gt; implementation
+1 * implementation.getDrainInstantiation() &gt;&gt; instantiator
+1 * instantiator.handle(call) &gt;&gt; call</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The tensor array is being accessed to check for null. (For exception throwing)</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>1 * call.getTensors() &gt;&gt; new Tsr[]{ Mock(Tsr), null }</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The expected exception is being thrown alongside a descriptive message.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def exception = thrown(IllegalArgumentException)
+exception.message == "Device arguments may not be null!\n" +
+"One or more tensor arguments within the given ExecutionCall instance is null."</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following Device instances are being tested :</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<th class='ex-header'>device</th>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.acceleration.host.HostCPU@1b59e850</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.acceleration.opencl.OpenCLDevice@24ca23dd</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
 </td>
 </tr>
 </tbody>

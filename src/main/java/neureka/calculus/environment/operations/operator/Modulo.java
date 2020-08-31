@@ -9,6 +9,9 @@ import neureka.calculus.Function;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.*;
+import org.jetbrains.annotations.Contract;
+
+import java.util.List;
 
 public class Modulo extends OperationType {
 
@@ -62,50 +65,47 @@ public class Modulo extends OperationType {
                         return true;
                     }
             ).setADAgentCreator(
-    ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-            {
-                Tsr derivv = (Tsr)call.getAt("derivative");
-        Function mul = Function.Detached.MUL;
-        if (
-            derivv != null
-        ) {
-            return new ADAgent(
-                    derivv
-                ).withForward(
-                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
-                ).withBackward(
-                    null
-                );
-        }
-        Tsr[] inputs = call.getTensors();
-        int d = call.getDerivativeIndex();
-        if( forward )
-        {
-            Tsr deriv = f.derive(inputs, d);
-            return new ADAgent(
-                    deriv
-                ).withForward(
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                ).withBackward(
-                    null
-                );
-        }
-        else
-        {
-
-            {
-                Tsr deriv = f.derive(inputs, d);
-                return new ADAgent(
-                            deriv
-).withForward(
-                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-).withBackward(
-                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-);
-            }
-        }
-    }
-        ).setCallHock(
+                ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                {
+                    Tsr derivv = (Tsr)call.getAt("derivative");
+                    Function mul = Function.Detached.MUL;
+                    if (
+                        derivv != null
+                    ) {
+                        return new ADAgent(
+                                derivv
+                            ).withForward(
+                                ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                            ).withBackward(
+                                null
+                            );
+                    }
+                    Tsr[] inputs = call.getTensors();
+                    int d = call.getDerivativeIndex();
+                    if( forward )
+                    {
+                        Tsr deriv = f.derive(inputs, d);
+                        return new ADAgent(
+                                deriv
+                            ).withForward(
+                                ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
+                            ).withBackward(
+                                null
+                            );
+                    }
+                    else
+                    {
+                        Tsr deriv = f.derive(inputs, d);
+                        return new ADAgent(
+                                    deriv
+                                ).withForward(
+                                    (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                                ).withBackward(
+                                    (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+                                );
+                    }
+                }
+            ).setCallHock(
                     ( caller, call ) -> null
             ).setRJAgent(
                     ( call, goDeeperWith ) -> null
@@ -210,39 +210,36 @@ public class Modulo extends OperationType {
                     }
             ).setADAgentCreator(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-            {
-                Tsr derivv = (Tsr)call.getAt("derivative");
-                    Function mul = Function.Detached.MUL;
-                    if (
-                        derivv != null
-                    ) {
-    return new ADAgent(
-                            derivv
-                   ).withForward(
-                            ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
-                   ).withBackward(
-                           null
-                   );
-                    }
-                    Tsr[] inputs = call.getTensors();
-                    int d = call.getDerivativeIndex();
-    if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                    else
-                    {
-
+                {
+                    Tsr derivv = (Tsr)call.getAt("derivative");
+                        Function mul = Function.Detached.MUL;
+                        if (
+                            derivv != null
+                        ) {
+                            return new ADAgent(
+                                derivv
+                            ).withForward(
+                                ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                            ).withBackward(
+                               null
+                            );
+                        }
+                        Tsr[] inputs = call.getTensors();
+                        int d = call.getDerivativeIndex();
+                        if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                        else
                         {
                             Tsr deriv = f.derive(inputs, d);
                             return new ADAgent(
-                            deriv
-).withForward(
-                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-).withBackward(
-                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-);
+                                deriv
+                            ).withForward(
+                                (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                            ).withBackward(
+                                (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+                            );
                         }
                     }
-                }
-        ).setCallHock(
+            ).setCallHock(
                     ( caller, call ) -> null
             ).setRJAgent(
                     ( call, goDeeperWith ) -> null
@@ -332,50 +329,47 @@ public class Modulo extends OperationType {
                         return true;
                     }
             ).setADAgentCreator(
-    ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-            {
-                Tsr derivv = (Tsr)call.getAt("derivative");
-        Function mul = Function.Detached.MUL;
-        if (
-            derivv != null
-        ) {
-            return new ADAgent(
-                    derivv
-                ).withForward(
-                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
-                ).withBackward(
-                    null
-                );
-        }
-        Tsr[] inputs = call.getTensors();
-        int d = call.getDerivativeIndex();
-        if( forward )
-        {
-            Tsr deriv = f.derive(inputs, d);
-            return new ADAgent(
-                    deriv
-                ).withForward(
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                ).withBackward(
-                    null
-                );
-        }
-        else
-        {
-
-            {
-                Tsr deriv = f.derive(inputs, d);
-                return new ADAgent(
-                            deriv
-).withForward(
-                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-).withBackward(
-                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-);
-            }
-        }
-    }
-        ).setCallHock(
+                ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                {
+                    Tsr derivv = (Tsr)call.getAt("derivative");
+                    Function mul = Function.Detached.MUL;
+                    if (
+                        derivv != null
+                    ) {
+                        return new ADAgent(
+                                derivv
+                            ).withForward(
+                                ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                            ).withBackward(
+                                null
+                            );
+                    }
+                    Tsr[] inputs = call.getTensors();
+                    int d = call.getDerivativeIndex();
+                    if( forward )
+                    {
+                        Tsr deriv = f.derive(inputs, d);
+                        return new ADAgent(
+                                deriv
+                            ).withForward(
+                                ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
+                            ).withBackward(
+                                null
+                            );
+                    }
+                    else
+                    {
+                        Tsr deriv = f.derive(inputs, d);
+                        return new ADAgent(
+                                    deriv
+                                ).withForward(
+                                    (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                                ).withBackward(
+                                    (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+                                );
+                    }
+                }
+            ).setCallHock(
                     ( caller, call ) -> null
             ).setRJAgent(
                     ( call, goDeeperWith ) -> null
@@ -446,5 +440,39 @@ public class Modulo extends OperationType {
                 "", "%" + ((char) 187), 3, true, false, false, false
         );
     }
+
+
+
+    @Contract(pure = true)
+    public static double modulo(double[] inputs, int d, List<Function> src) {
+        if ( d < 0 ) {
+            double result = src.get(0).call(inputs);
+            for ( int i = 1; i < src.size(); i++ ) {
+                final double current = src.get(i).call(inputs);
+                result %= current;
+            }
+            return result;
+        } else {
+            return src.get(0).derive(inputs, d);
+        }
+    }
+
+    @Contract(pure = true)
+    public static double modulo(double[] inputs, int j, int d, List<Function> src) {
+        if ( d < 0 ) {
+            double result = src.get(0).call(inputs, j);
+            for ( int i = 1; i < src.size(); i++ ) {
+                final double current = src.get(i).call(inputs, j);
+                result %= current;
+            }
+            return result;
+        } else {
+            return src.get(0).derive(inputs, d, j);// j ?
+        }
+    }
+
+
+
+
 
 }
