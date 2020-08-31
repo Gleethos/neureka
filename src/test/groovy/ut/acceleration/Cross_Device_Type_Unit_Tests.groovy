@@ -3,41 +3,115 @@ package ut.acceleration
 import neureka.Neureka
 import neureka.Tsr
 import neureka.acceleration.Device
+import neureka.acceleration.host.HostCPU
+import neureka.acceleration.opencl.OpenCLDevice
+import neureka.calculus.environment.ExecutionCall
+import neureka.calculus.environment.OperationType
+import neureka.calculus.environment.OperationTypeImplementation
 import spock.lang.Specification
 
 
 class Cross_Device_Type_Unit_Tests extends Specification
 {
+
+    def 'Querying for Device implementations works as expected.'(
+            String query, Class type
+    ) {
+        given : 'This system supports OpenCL.'
+            if ( !Neureka.instance().canAccessOpenCL() ) return
+
+        and : 'Neureka is being reset.'
+            Neureka.instance().reset()
+
+        when :
+            def device = Device.find(query)
+
+        then :
+            device.class == type
+
+        where :
+            query                       || type
+            "cPu"                       || HostCPU.class
+            "jVm"                       || HostCPU.class
+            "natiVe"                    || HostCPU.class
+            "Threaded"                  || HostCPU.class
+            "openCl"                    || OpenCLDevice.class
+            "nvidia or amd or intel"    || OpenCLDevice.class // This assumes that there is an amd/intel/nvidia gpu!
+            "first"                     || OpenCLDevice.class
+    }
+
+
     /**
      * The data of a tensor located on an Device should
      * be update when passing a float or double array!
      */
     def 'Passing a numeric array to a tensor should modify its content!'(
-            Object data1, Object data2, String expected
+            Device device, Object data1, Object data2, String expected
     ) {
-        given :
+        given : 'Neureka is being reset.'
             Neureka.instance().reset()
-            Tsr t = new Tsr(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2})
-        and :
+        and : 'A 2D tensor is being instantiated..'
+            Tsr t = new Tsr(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).add(device)
+
+        when : 'A numeric array is passed to said tensor.'
             if( data1 instanceof float[] ) t.setValue32(data1)
             else t.setValue64(data1 as double[])
             if( data2 instanceof float[] ) t.setValue32(data2)
             else t.setValue64(data2 as double[])
 
-        expect :
+        then :
             t.toString().contains(expected)
-            if( Neureka.instance().canAccessOpenCL() ){
-                t.add(Device.find("first"))
-                t.toString().contains(expected)
-            }
 
         where :
-            data1                      | data2                      || expected
-            new float[0]               | new float[0]               || "(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]"
-            new float[]{2, 3, 4, 5, 6} | new float[]{1, 1, 1, 1, 1} || "(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]"
-            new float[]{3, 5, 6}       | new float[]{4, 2, 3}       || "(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]"
-            new double[]{9, 4, 7, -12} | new double[]{-5, -2, 1}    || "(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]"
-            new float[]{22, 24, 35, 80}| new double[]{-1, -1, -1}   || "(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"
+            device                | data1                      | data2                      || expected
+            Device.find("cpu")    | new float[0]               | new float[0]               || "(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]"
+            Device.find("cpu")    | new float[]{2, 3, 4, 5, 6} | new float[]{1, 1, 1, 1, 1} || "(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]"
+            Device.find("cpu")    | new float[]{3, 5, 6}       | new float[]{4, 2, 3}       || "(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]"
+            Device.find("cpu")    | new double[]{9, 4, 7, -12} | new double[]{-5, -2, 1}    || "(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]"
+            Device.find("cpu")    | new float[]{22, 24, 35, 80}| new double[]{-1, -1, -1}   || "(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"
+
+            Device.find("openCL") | new float[0]               | new float[0]               || "(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]"
+            Device.find("openCL") | new float[]{2, 3, 4, 5, 6} | new float[]{1, 1, 1, 1, 1} || "(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]"
+            Device.find("openCL") | new float[]{3, 5, 6}       | new float[]{4, 2, 3}       || "(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]"
+            Device.find("openCL") | new double[]{9, 4, 7, -12} | new double[]{-5, -2, 1}    || "(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]"
+            Device.find("openCL") | new float[]{22, 24, 35, 80}| new double[]{-1, -1, -1}   || "(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"
+    }
+
+    /**
+     *  Every argument within an ExecutionCall instance has a purpose. Null is not permissible.
+     */
+    def 'Execution calls containing null arguments will cause an exception to be thrown in device instances.'(
+        Device device
+    ) {
+
+        given : 'The given device is available and Neureka is being reset.'
+            if ( device == null ) return
+            Neureka.instance().reset()
+        and : 'A mocked ExecutionCall with mocked operation implementation and a mocked drain instantiator lambda...'
+            def call = Mock(ExecutionCall)
+            def implementation = Mock(OperationTypeImplementation)
+            def instantiator = Mock(OperationTypeImplementation.DrainInstantiation)
+
+        when : 'The call is being passed to the device for execution...'
+            device.execute(call)
+
+        then : '...the implementation is being accessed in order to access the mocked lambda...'
+            1 * call.getImplementation() >> implementation
+            1 * implementation.getDrainInstantiation() >> instantiator
+            1 * instantiator.handle(call) >> call
+        and : 'The tensor array is being accessed to check for null. (For exception throwing)'
+            1 * call.getTensors() >> new Tsr[]{ Mock(Tsr), null }
+        and : 'The expected exception is being thrown alongside a descriptive message.'
+            def exception = thrown(IllegalArgumentException)
+            exception.message == "Device arguments may not be null!\n" +
+                    "One or more tensor arguments within the given ExecutionCall instance is null."
+
+        where : 'The following Device instances are being tested :'
+            device << [
+                    HostCPU.instance(),
+                    Device.find("openCL")
+            ]
+
     }
 
 

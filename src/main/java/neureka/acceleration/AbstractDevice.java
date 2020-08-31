@@ -33,12 +33,17 @@ public abstract class AbstractDevice implements Device, Component<Tsr>
     public Device execute( ExecutionCall call )
     {
         call = call.getImplementation().getDrainInstantiation().handle(call);
-        OperationTypeImplementation<Object> executor = call.getImplementation(); // TODO: test:
-        for ( Tsr t : call.getTensors() ) if ( t == null ) throw new IllegalStateException("Device arguments may not be null!");
-        executor.recursiveReductionOf(
-                call,
-                c -> _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType())
-        );
+        for ( Tsr t : call.getTensors() ) {
+            if ( t == null ) throw new IllegalArgumentException(
+                    "Device arguments may not be null!\n" +
+                            "One or more tensor arguments within the given ExecutionCall instance is null."
+            );
+        }
+        ((OperationTypeImplementation<Object>)call.getImplementation())
+                .recursiveReductionOf(
+                    call,
+                    c -> _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType())
+                );
         return this;
     }
 

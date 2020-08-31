@@ -1,12 +1,16 @@
 package neureka.acceleration;
 
 import neureka.Component;
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.acceleration.host.HostCPU;
+import neureka.acceleration.opencl.OpenCLDevice;
 import neureka.acceleration.opencl.OpenCLPlatform;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.factory.assembly.FunctionParser;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -18,26 +22,45 @@ import java.util.Collection;
 public interface Device extends Component<Tsr>
 {
     /**
-     * This method return OpenCLDevices matching
+     * This method return Device instances matching
      * the given search parameter.
      * @param name The search parameter and name of the requested Device instance.
      * @return The found Device instance or simply the HostCPU instance by default.
      */
     static Device find(String name)
     {
-        //TODO: Device plugin finding!
-        Device[] result = {HostCPU.instance()};
         String search = name.toLowerCase();
-        OpenCLPlatform.PLATFORMS().forEach( p ->
-            p.getDevices().forEach( d ->{
-                String str = (d.name()+" | "+d.vendor()+" | "+d.type()).toLowerCase();
-                if(str.contains(search)) result[0] = d;
-            }));
-        if ( result[0]==HostCPU.instance() && name.equals("first") ) {
-            Device first = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
-            if( first!=null ) result[0] = first;
+        boolean probablyWantsGPU = Arrays.stream(
+                new String[]{
+                        "gpu", "nvidia", "amd", "intel", "opencl", "fpga"
+                }
+        ).anyMatch(search::contains);
+
+        if ( !Neureka.instance().canAccessOpenCL() ) {
+            if ( probablyWantsGPU ) {
+                return null; // User wants OpenCL but cannot have it :/
+            } else return HostCPU.instance();
         }
-        return result[0];
+
+        Device result = HostCPU.instance();
+        double score = FunctionParser.similarity( "jvm native host cpu threaded", search );
+        if ( probablyWantsGPU ) score /= 10; // HostCPU instance is most likely not meant!
+
+        for ( OpenCLPlatform p : OpenCLPlatform.PLATFORMS() ) {
+            for ( OpenCLDevice d : p.getDevices() ) {
+                String str = ("opencl | "+d.type()+" | "+d.name()+" | "+d.vendor()).toLowerCase();
+                double similarity = FunctionParser.similarity( str, search );
+                if ( similarity > score || str.contains(search) ) {
+                    result = d;
+                    score = similarity;
+                }
+            }
+        }
+        if ( result == HostCPU.instance() && name.equals("first") ) {
+            Device first = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
+            if( first!=null ) result = first;
+        }
+        return result;
     }
 
     void dispose();
