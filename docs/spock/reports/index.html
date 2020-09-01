@@ -1,14 +1,317 @@
 <!DOCTYPE html><html>
 <head>
 <meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
-<link rel="stylesheet" href="../css/custom.css">
+<style>
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 300;
+}
+
+h2 {
+    font-weight: 400;
+}
+
+hr {
+    margin-bottom: 1.5em;
+}
+
+h3 {
+    font-weight: 200;
+}
+
+table {
+    margin: 7px;
+    -webkit-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+}
+
+.ignored {
+    color: gray;
+}
+
+div.project-header {
+    margin-bottom: 10px;
+    font-size: large;
+}
+
+div.project-header &gt; span.project-name {
+
+                        }
+
+div.project-header &gt; span.project-version {
+                            padding-left: 20px;
+                        }
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+div.spec-title {
+    padding: 10px 0px 5px 0px;
+}
+
+tr.error td, td.error {
+    background-color: #F89A4F !important;
+}
+
+tr.failure td, td.failure {
+    color: red;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}
+
+
+
+
+
+
+.back-link {
+    font-size: small;
+    font-weight: bold;
+}
+
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+table.features-table {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table {
+    width: 99%;
+
+    font-weight: bold;
+    font-size: small;
+}
+
+table.summary-table tbody {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table th {
+    background: lightblue;
+    padding: 6px;
+}
+
+table.summary-table td {
+    background: #E0E0E0;
+    padding: 6px;
+}
+
+pre.title {
+    font-family: inherit;
+    font-size: 24px;
+    line-height: 28px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+pre.narrative {
+    font-family: inherit;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 23px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+.feature-description {
+    font-size: large;
+    background: lightblue;
+    padding: 12px;
+}
+
+.feature-toc-error {
+    color: #F89A4F;
+}
+
+.feature-toc-failure {
+    color: #FF8080;
+}
+
+.feature-toc-ignored {
+    color: lightgray;
+}
+
+.feature-toc-pass {
+    color: green;
+}
+
+.feature-description.error {
+    background: #F89A4F;
+}
+
+.feature-description.failure {
+    background: #FF8080;
+}
+
+.feature-description.ignored {
+    background: lightgray;
+}
+
+.feature-description.ignored .reason {
+    color: black;
+    font-style: italic;
+    font-size: small;
+}
+
+div.extra-info {
+    font-size: small;
+}
+
+div.spec-headers {
+    margin: 4px;
+    font-style: italic;
+}
+
+div.spec-header {
+}
+
+div.issues {
+    margin-top: 6px;
+    padding: 10px 5px 5px 5px;
+    background-color: lemonchiffon;
+    color: black;
+    font-weight: 500;
+    font-size: small;
+    max-width: 50%;
+}
+
+div.pending-feature {
+    background-color: dodgerblue;
+    color: white;
+    margin-top: 6px;
+    padding: 5px;
+    text-align: center;
+    font-size: small;
+    max-width: 120px;
+}
+
+div.problem-description {
+    padding: 10px;
+    background: pink;
+    border-radius: 10px;
+}
+
+div.problem-header {
+    font-weight: bold;
+    color: red;
+}
+
+div.problem-list {
+
+}
+
+table.ex-table{
+    width: 98%;
+}
+
+table.ex-table th {
+    background: lightblue;
+    padding: 5px;
+}
+
+table.ex-table td {
+    background: #E0E0E0;
+    padding: 2px 5px 2px 5px;
+}
+
+table td {
+    min-width: 50px;
+}
+
+col.block-kind-col {
+    width: 70px;
+}
+
+span.spec-header {
+    font-weight: bold;
+}
+
+div.spec-text {
+    /*color: green;*/
+}
+
+div.spec-status {
+    font-style: italic;
+}
+
+.ignored {
+    color: gray;
+}
+
+td.ex-result {
+    text-align: center;
+    background: white !important;
+}
+
+.ex-pass {
+    color: darkgreen;
+}
+
+.ex-fail {
+    color: red;
+    font-weight: bold;
+}
+
+div.block-kind {
+    margin: 2px;
+    font-style: italic;
+}
+
+div.block-text {
+
+}
+
+pre.block-source {
+    background-color: whitesmoke;
+    padding: 10px;
+}
+
+pre.block-source.error {
+    background-color: pink;
+    color: red;
+    font-weight: bold;
+}
+
+pre.block-source.pre-error {
+
+}
+
+pre.block-source.before-error {
+    margin-bottom: -14px;
+}
+
+pre.block-source.after-error {
+    color: gray;
+    margin-top: -14px;
+}
+
+pre.block-source.post-error {
+    color: gray;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}</style>
 </head>
 <body>
 <h2>Specification run results</h2>
 <hr></hr>
 <div class='summary-report'>
 <h3>Specifications summary:</h3>
-<div class='date-test-ran'>Created on Tue Sep 01 20:55:05 CEST 2020 by Daniel</div>
+<div class='date-test-ran'>Created on Tue Sep 01 23:39:02 CEST 2020 by Daniel</div>
 <table class='summary-table'>
 <thead>
 <th>Total</th>
@@ -21,13 +324,13 @@
 </thead>
 <tbody>
 <tr>
-<td>34</td>
-<td>34</td>
+<td>33</td>
+<td>33</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>3 minutes, 0,252 seconds</td>
+<td>2 minutes, 48,438 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -46,17 +349,6 @@
 <tbody>
 <tr>
 <td>
-<a href='introduction.autograd.Autograd_Explained.html'>introduction.autograd.Autograd_Explained</a>
-</td>
-<td>2</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>100,0%</td>
-<td>17,451 seconds</td>
-</tr>
-<tr>
-<td>
 <a href='it.acceleration.OpenCLDevice_Integration_Testing.html'>it.acceleration.OpenCLDevice_Integration_Testing</a>
 </td>
 <td>2</td>
@@ -64,7 +356,18 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>13,979 seconds</td>
+<td>10,723 seconds</td>
+</tr>
+<tr>
+<td>
+<a href='it.autograd.Autograd_Explained.html'>it.autograd.Autograd_Explained</a>
+</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100,0%</td>
+<td>7,653 seconds</td>
 </tr>
 <tr>
 <td>
@@ -75,7 +378,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>9,766 seconds</td>
+<td>11,130 seconds</td>
 </tr>
 <tr>
 <td>
@@ -86,18 +389,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>13,201 seconds</td>
-</tr>
-<tr>
-<td>
-<a href='it.autograd.Simple_Autograd_Tensor_Integration_Test.html'>it.autograd.Simple_Autograd_Tensor_Integration_Test</a>
-</td>
-<td>1</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>100,0%</td>
-<td>3,335 seconds</td>
+<td>16,451 seconds</td>
 </tr>
 <tr>
 <td>
@@ -108,7 +400,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>2,508 seconds</td>
+<td>2,006 seconds</td>
 </tr>
 <tr>
 <td>
@@ -119,7 +411,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>0,920 seconds</td>
+<td>0,872 seconds</td>
 </tr>
 <tr>
 <td>
@@ -130,7 +422,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>1,237 seconds</td>
+<td>1,277 seconds</td>
 </tr>
 <tr>
 <td>
@@ -141,7 +433,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>2,027 seconds</td>
+<td>1,700 seconds</td>
 </tr>
 <tr>
 <td>
@@ -152,7 +444,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>2,473 seconds</td>
+<td>2,055 seconds</td>
 </tr>
 <tr>
 <td>
@@ -163,7 +455,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>13,735 seconds</td>
+<td>13,864 seconds</td>
 </tr>
 <tr>
 <td>
@@ -174,7 +466,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>11,128 seconds</td>
+<td>13,432 seconds</td>
 </tr>
 <tr>
 <td>
@@ -185,7 +477,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>4,726 seconds</td>
+<td>4,557 seconds</td>
 </tr>
 <tr>
 <td>
@@ -196,7 +488,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>0,683 seconds</td>
+<td>1,024 seconds</td>
 </tr>
 <tr>
 <td>
@@ -207,7 +499,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>2,060 seconds</td>
+<td>1,453 seconds</td>
 </tr>
 <tr>
 <td>
@@ -218,7 +510,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>22,898 seconds</td>
+<td>22,312 seconds</td>
 </tr>
 <tr>
 <td>
@@ -229,7 +521,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>8,790 seconds</td>
+<td>9,080 seconds</td>
 </tr>
 <tr>
 <td>
@@ -240,7 +532,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>0,825 seconds</td>
+<td>0,662 seconds</td>
 </tr>
 <tr>
 <td>
@@ -251,7 +543,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>1,359 seconds</td>
+<td>1,618 seconds</td>
 </tr>
 <tr>
 <td>
@@ -262,7 +554,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>1,645 seconds</td>
+<td>2,033 seconds</td>
 </tr>
 <tr>
 <td>
@@ -273,7 +565,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>0,203 seconds</td>
+<td>0,228 seconds</td>
 </tr>
 <tr>
 <td>
@@ -284,7 +576,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>1,088 seconds</td>
+<td>1,186 seconds</td>
 </tr>
 <tr>
 <td>
@@ -295,7 +587,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>20,158 seconds</td>
+<td>17,427 seconds</td>
 </tr>
 <tr>
 <td>
@@ -306,7 +598,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>12,621 seconds</td>
+<td>13,265 seconds</td>
 </tr>
 <tr>
 <td>
@@ -317,7 +609,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>0,094 seconds</td>
+<td>0,104 seconds</td>
 </tr>
 <tr>
 <td>
@@ -328,7 +620,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>0,049 seconds</td>
+<td>0,051 seconds</td>
 </tr>
 <tr>
 <td>
@@ -339,7 +631,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>1,287 seconds</td>
+<td>1,505 seconds</td>
 </tr>
 <tr>
 <td>
@@ -350,7 +642,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>5,214 seconds</td>
+<td>5,570 seconds</td>
 </tr>
 <tr>
 <td>
@@ -361,7 +653,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>0,455 seconds</td>
+<td>0,507 seconds</td>
 </tr>
 <tr>
 <td>
@@ -372,7 +664,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>0,016 seconds</td>
+<td>0,020 seconds</td>
 </tr>
 <tr>
 <td>
@@ -394,7 +686,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>1,409 seconds</td>
+<td>1,527 seconds</td>
 </tr>
 <tr>
 <td>
@@ -405,7 +697,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>2,890 seconds</td>
+<td>3,122 seconds</td>
 </tr>
 <tr>
 <td>
@@ -416,7 +708,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>0,008 seconds</td>
+<td>0,010 seconds</td>
 </tr>
 </tbody>
 </table>

@@ -1,6 +1,7 @@
 package neureka;
 
 import groovy.lang.IntRange;
+import neureka.autograd.GraphLock;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.ndim.AbstractNDArray;
 import neureka.acceleration.host.HostCPU;
@@ -278,6 +279,10 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 
     public boolean hasGradient() {
         return this.has( Tsr.class );
+    }
+
+    public Tsr getGradient() {
+        return this.find( Tsr.class );
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -697,6 +702,10 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
             Function.Detached.PLUS_ASSIGN.call(new Tsr[]{this, g});
             if ( inlineSafety ) Neureka.instance().settings().autograd().setIsPreventingInlineOperations(true);
         });
+    }
+
+    public void detach() {
+        this.remove(GraphNode.class);
     }
 
     //TENSOR OPERATION (OVERLOADABLE):

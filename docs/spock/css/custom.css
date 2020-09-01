@@ -80,13 +80,19 @@ div.date-test-ran {
 
 table.features-table {
     width: 99%;
+    text-align: left;
 }
 
 table.summary-table {
     width: 99%;
-    text-align: left;
+
     font-weight: bold;
     font-size: small;
+}
+
+table.summary-table tbody {
+    width: 99%;
+    text-align: left;
 }
 
 table.summary-table th {

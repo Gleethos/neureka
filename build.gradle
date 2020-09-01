@@ -67,14 +67,7 @@ def change = { c -> new Object() {
             }
         }
     }
-def getBetween = {String a, String b -> new Object(){
-        def inFile = { String p ->
-            def result = ['']
-            change({s->result[0] = s}).between(a, b).inFile(p, true)
-            return result[0]
-        }
-    }
-}
+
 //----------------------------------------------------------------------------------------------------------------------
 // 4. VERSION MIGRATION : SETTING VERSION IN SRC AND PRODUCTION :
 
@@ -89,7 +82,10 @@ def spockDir = "$rootDir" + "/docs/spock/reports"
 new File(spockDir).eachFile {
     if ( it.name.endsWith('.html') && it.text.contains('</style>') ){
         change({'###'}).between('<style>', '</style>').inFile("/docs/spock/reports/"+it.name)
-        it.text = it.text.replace('<style>###</style>', '<link rel="stylesheet" href="../css/custom.css">')
+        it.text = it.text.replace(
+                '<style>###</style>',//'<link rel="stylesheet" href="../css/custom.css">'
+                '<style>' + new File("$rootDir/docs/spock/css/custom.css").text + '</style>'
+        )
     }
 }
 

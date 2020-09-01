@@ -217,7 +217,7 @@ public class Neureka
             private boolean _isRetainingPendingErrorForJITProp = true;
 
             /**
-             * Gradients will automatically be applied to tensors as soon as
+             * Gradients will automatically be applied (or JITed) to tensors as soon as
              * they are being used for calculation (GraphNode instantiation).
              * This feature works well with JIT-Propagation.
              */

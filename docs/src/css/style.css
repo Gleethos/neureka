@@ -152,7 +152,7 @@ main {
 
 * {
     margin: 0;
-    padding: 0;
+    /*padding: 0;*/
     box-sizing: border-box;
     font-family: Arial;
 }
@@ -385,7 +385,6 @@ header p {
 }
 
 .MainContentWrapper h2 {
-    display: inline-block;
     text-align: center;
     font-family: "sans-serif", cursive, serif;
     border-bottom: 0.05em solid black;
@@ -444,7 +443,9 @@ code {
     display: inline-block;
     width: 100%;
     min-height: 85%;
+    text-align:left;
 }
+
 
 .ContentBox img {
     border: 0 solid white;
