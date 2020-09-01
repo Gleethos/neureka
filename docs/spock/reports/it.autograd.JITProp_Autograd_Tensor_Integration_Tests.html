@@ -11,7 +11,7 @@
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Mon Aug 31 20:59:30 CEST 2020 by Daniel</div>
+<div class='date-test-ran'>Created on Tue Sep 01 20:54:19 CEST 2020 by Daniel</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -28,7 +28,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>16,456 seconds</td>
+<td>13,201 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -291,10 +291,10 @@ Tsr x = (s/a)+s</pre>
 <pre class='block-source'>!a.has(JITProp.class)
 !b.has(JITProp.class)
 !c.has(JITProp.class)
-!s.graphNode().reliesOnJustInTimeProp()
-!a.graphNode().reliesOnJustInTimeProp()
-!b.graphNode().reliesOnJustInTimeProp()
-!c.graphNode().reliesOnJustInTimeProp()</pre>
+!s.getGraphNode().reliesOnJustInTimeProp()
+!a.getGraphNode().reliesOnJustInTimeProp()
+!b.getGraphNode().reliesOnJustInTimeProp()
+!c.getGraphNode().reliesOnJustInTimeProp()</pre>
 </td>
 </tr>
 <tr>
@@ -313,10 +313,10 @@ Tsr x = (s/a)+s</pre>
 <pre class='block-source'>a.has(JITProp.class)
 !b.has(JITProp.class)
 c.has(JITProp.class)
-s.graphNode().reliesOnJustInTimeProp()
-a.graphNode().reliesOnJustInTimeProp()
-!b.graphNode().reliesOnJustInTimeProp()
-c.graphNode().reliesOnJustInTimeProp()
+s.getGraphNode().reliesOnJustInTimeProp()
+a.getGraphNode().reliesOnJustInTimeProp()
+!b.getGraphNode().reliesOnJustInTimeProp()
+c.getGraphNode().reliesOnJustInTimeProp()
 a.toString().contains("g:(0.75)")
 c.toString().contains("g:(null)")
 x.toString().contains("(-4.5)")</pre>
@@ -337,10 +337,10 @@ Tsr result = f(inputs)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>s.graphNode().reliesOnJustInTimeProp()
-a.graphNode().reliesOnJustInTimeProp()
-!b.graphNode().reliesOnJustInTimeProp()
-c.graphNode().reliesOnJustInTimeProp()
+<pre class='block-source'>s.getGraphNode().reliesOnJustInTimeProp()
+a.getGraphNode().reliesOnJustInTimeProp()
+!b.getGraphNode().reliesOnJustInTimeProp()
+c.getGraphNode().reliesOnJustInTimeProp()
 ! result.toString().contains("d[1]:")
 ! result.toString().contains("d[1]:")
 a.toString().contains("(2.0):g:(0.75)")
@@ -369,10 +369,10 @@ c.toString().contains("(1.5):g:(null)")
 x.toString().contains("(-4.5)")
 !c.has(JITProp.class)
 !b.has(JITProp.class)
-!s.graphNode().reliesOnJustInTimeProp()
-!a.graphNode().reliesOnJustInTimeProp()
-!b.graphNode().reliesOnJustInTimeProp()
-!c.graphNode().reliesOnJustInTimeProp()</pre>
+!s.getGraphNode().reliesOnJustInTimeProp()
+!a.getGraphNode().reliesOnJustInTimeProp()
+!b.getGraphNode().reliesOnJustInTimeProp()
+!c.getGraphNode().reliesOnJustInTimeProp()</pre>
 </td>
 </tr>
 <tr>
@@ -421,10 +421,10 @@ Thread.sleep(50)</pre>
 !b.has(JITProp.class)
 !c.has(JITProp.class)
 !s.has(JITProp.class)
-!s.graphNode().reliesOnJustInTimeProp()
-!a.graphNode().reliesOnJustInTimeProp()
-!b.graphNode().reliesOnJustInTimeProp()
-!c.graphNode().reliesOnJustInTimeProp()</pre>
+!s.getGraphNode().reliesOnJustInTimeProp()
+!a.getGraphNode().reliesOnJustInTimeProp()
+!b.getGraphNode().reliesOnJustInTimeProp()
+!c.getGraphNode().reliesOnJustInTimeProp()</pre>
 </td>
 </tr>
 <tr>
@@ -440,10 +440,10 @@ Thread.sleep(50)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>s.graphNode().reliesOnJustInTimeProp()
-a.graphNode().reliesOnJustInTimeProp()
-!b.graphNode().reliesOnJustInTimeProp()
-c.graphNode().reliesOnJustInTimeProp()
+<pre class='block-source'>s.getGraphNode().reliesOnJustInTimeProp()
+a.getGraphNode().reliesOnJustInTimeProp()
+!b.getGraphNode().reliesOnJustInTimeProp()
+c.getGraphNode().reliesOnJustInTimeProp()
 a.has(JITProp.class)
 !b.has(JITProp.class)
 c.has(JITProp.class)
@@ -531,10 +531,10 @@ c.toString().contains("(3.0):g:(-1.5)")
 x.toString().contains("(-4.5)")
 !a.has(JITProp.class)
 !c.has(JITProp.class)
-!s.graphNode().reliesOnJustInTimeProp()
-!a.graphNode().reliesOnJustInTimeProp()
-!b.graphNode().reliesOnJustInTimeProp()
-!c.graphNode().reliesOnJustInTimeProp()</pre>
+!s.getGraphNode().reliesOnJustInTimeProp()
+!a.getGraphNode().reliesOnJustInTimeProp()
+!b.getGraphNode().reliesOnJustInTimeProp()
+!c.getGraphNode().reliesOnJustInTimeProp()</pre>
 </td>
 </tr>
 <tr>

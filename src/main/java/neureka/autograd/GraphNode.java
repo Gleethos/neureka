@@ -353,9 +353,7 @@ public class GraphNode implements Component<Tsr>
             if ( adSetting.isApplyingGradientWhenTensorIsUsed() ) {
                 for ( Tsr t : inputs ) {
                     if( !adSetting.isApplyingGradientWhenRequested() || t.gradientApplyRqd() ) {
-                        t.forComponent( JITProp.class, JITProp::execute );
-                        t.remove( JITProp.class );
-                        t.applyGradient();
+                        t.applyGradient(); // activates JITProp if present and removes it...
                         t.setGradientApplyRqd( false );
                     }
                 }

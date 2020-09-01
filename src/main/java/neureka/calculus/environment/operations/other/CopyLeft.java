@@ -235,6 +235,7 @@ public class CopyLeft extends OperationType {
                         new HostExecutor(
                                 call ->
                                 {
+                                    call.getTensor(0).setIsVirtual(false);
                                     OperationType.instance("idy")
                                             .getImplementation(Activation.class)
                                             .getExecutor(HostExecutor.class)
@@ -247,6 +248,7 @@ public class CopyLeft extends OperationType {
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
+                                    call.getTensor(0).setIsVirtual(false);
                                     OperationType.instance("idy")
                                             .getImplementation(Activation.class)
                                             .getExecutor(CLExecutor.class)

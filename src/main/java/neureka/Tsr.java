@@ -164,7 +164,14 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 
     public Tsr setGradientApplyRqd( boolean applyRequested ) {
         if ( gradientApplyRqd() != applyRequested ) {
-            if ( applyRequested ) _flags += GRADIENT_APPLY_RQD_MASK;
+            if ( applyRequested ) {
+                if (
+                        Neureka.instance().settings().autograd().isApplyingGradientWhenRequested() &&
+                        !Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed()
+                ) {
+                    this.applyGradient();
+                } else _flags += GRADIENT_APPLY_RQD_MASK;
+            }
             else _flags -= GRADIENT_APPLY_RQD_MASK;
         }
         return this;
@@ -681,6 +688,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 
     public void applyGradient() {
         forComponent(JITProp.class, JITProp::execute);
+        remove( JITProp.class );
         forComponent(Tsr.class, g -> {
             forComponent(Optimizer.class, o -> o.optimize(this));
             remove(Tsr.class);

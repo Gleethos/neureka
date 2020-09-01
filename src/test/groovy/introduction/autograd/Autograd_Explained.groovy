@@ -4,6 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class Autograd_Explained extends Specification
 {
@@ -140,21 +141,116 @@ class Autograd_Explained extends Specification
             x.toString().contains("(2x2):[1.0, 1.0, 1.0, 1.0]:g:[null]")
 
         when :
-            x.applyGradient()
+            x.setGradientApplyRqd( true )
 
         then :
-            x.toString().contains("(2x2):[5.5, 5.5, 5.5, 5.5]:g:[null]")//x.toString().contains("(2x2):[1.0, 1.0, 1.0, 1.0]:g:[null]")
+            x.toString().contains("(2x2):[1.0, 1.0, 1.0, 1.0]:g:[null]")
 
-        //when :
-        //    x * 2
-//
-        //then :
-            //x.toString().contains("(2x2):[1.0, 1.0, 1.0, 1.0]:g:[null]")
+        when :
+            x * 2
 
-        //then : 'The tensor which requires gradients, namely "x" now has them :'
-        //    x.toString().contains("[4.5]")
+        then :
+            x.toString().contains("(2x2):[5.5, 5.5, 5.5, 5.5]:g:[null]")
+
 
     }
+
+
+
+
+
+
+    @Unroll
+    def 'Test all AD-Modes'(
+            String code,
+            boolean whenRsd,
+            boolean whenUse,
+            boolean doJIT,
+            String afterBack,
+            String afterUse,
+            String afterRqd,
+            String afterAll
+    ) {
+        reportInfo """
+            How can I compute gradients with Neureka automatically?
+        """
+
+        given : 'Neureka is being reset in order to assure that configurations set to default.'
+            Neureka.instance().reset()
+        and :
+            Neureka.instance().settings().autograd().isApplyingGradientWhenRequested = whenRsd
+            Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
+            Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp = doJIT
+
+        and :
+            def x = new Tsr([2, 2], 1).setRqsGradient(true)
+            def y = x + 2
+            Binding binding = new Binding()
+            binding.setVariable('x', x)
+            binding.setVariable('y', y)
+
+        when : "The code snippet '${code}' is being execute..."
+            Tsr z = new GroovyShell(binding).evaluate((code))
+
+        then : 'As expected, this new tensor contains four times 27 :'
+            z.toString().contains("(2x2):[27.0, 27.0, 27.0, 27.0]")
+
+        when : """
+                We call the "mean()" method as a simple loss function!
+                This produces a scalar output tensor which is ideal as entrypoint
+                for the autograd algorithm.
+            """
+            def result = z.mean()
+
+        then : 'This "result" tensor will be the expected scalar :'
+            result.toString().contains("(1x1):[27.0]")
+
+        when : """
+                We now try to backpropagate! Because "result" contains a single scalar,
+                result.backward() is equivalent to out.backward(new Tsr(1)).
+            """
+            z.backward(0.25)
+            def xAsStr = x.toString()
+
+        then : 'The variable "x" contains every expected String :'
+            xAsStr.matches( afterBack )
+
+        when :
+            x * 2
+            xAsStr = x.toString()
+
+        then : 'The variable "x" contains every expected String :'
+            xAsStr.matches( afterUse )
+
+        when :
+            x.setGradientApplyRqd( true )
+            xAsStr = x.toString()
+
+        then : 'The variable "x" contains every expected String :'
+            xAsStr.matches( afterRqd )
+
+        when :
+            x * 2
+            xAsStr = x.toString()
+
+        then : 'The variable "x" contains every expected String :'
+            xAsStr.matches( afterAll )
+
+        where :
+            code   | whenRsd | whenUse | doJIT || afterBack     | afterUse        | afterRqd        | afterAll
+            'y*y*3'| false   | false   | false ||".*1.*4\\.5.*" |".*1.*4\\.5.*"   |".*1.*4\\.5.*"   |".*1.*4\\.5.*"
+            'y*y*3'| true    | false   | false ||".*1.*4\\.5.*" |".*1.*4\\.5.*"   |".*5\\.5.*null.*"|".*5\\.5.*null.*"
+            'y*y*3'| false   | true    | false ||".*1.*4\\.5.*" |".*5\\.5.*null.*"|".*5\\.5.*null.*"|".*5\\.5.*null.*"
+            'y*y*3'| true    | true    | false ||".*1.*4\\.5.*" |".*1.*4\\.5.*"   |".*1.*4\\.5.*"   |".*5\\.5.*null.*"
+            'y*y*3'| false   | false   | true  ||".*1.*null.*"  |".*1.*null.*"    |".*1.*null.*"    |".*1.*null.*"
+            'y*y*3'| true    | false   | true  ||".*1.*null.*"  |".*1.*null.*"    |".*5\\.5.*null.*"|".*5\\.5.*null.*"
+            'y*y*3'| false   | true    | true  ||".*1.*null.*"  |".*5\\.5.*null.*"|".*5\\.5.*null.*"|".*5\\.5.*null.*"
+            'y*y*3'| true    | true    | true  ||".*1.*null.*"  |".*1.*null.*"    |".*1.*null.*"    |".*5\\.5.*null.*"
+
+
+
+    }
+
 
 
 

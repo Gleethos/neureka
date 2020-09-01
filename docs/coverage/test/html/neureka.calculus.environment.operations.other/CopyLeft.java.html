@@ -36,7 +36,7 @@ public class CopyLeft extends OperationType {
 <span class="fc" id="L36">                .setSuitabilityChecker(</span>
                         call -&gt;
                         {
-<span class="pc bpc" id="L39" title="1 of 4 branches missed.">                            if ( call.getTensor(1).isVirtual() || call.getTensor(1).size() == 1 ) {</span>
+<span class="fc bfc" id="L39" title="All 4 branches covered.">                            if ( call.getTensor(1).isVirtual() || call.getTensor(1).size() == 1 ) {</span>
 <span class="fc" id="L40">                                return true;</span>
 <span class="fc" id="L41">                            } else return false;</span>
                         }
@@ -216,7 +216,7 @@ public class CopyLeft extends OperationType {
 <span class="fc" id="L216">        ).setCallHock(</span>
 <span class="fc" id="L217">                ( caller, call ) -&gt; null</span>
 <span class="fc" id="L218">        ).setRJAgent(</span>
-<span class="nc" id="L219">                ( call, goDeeperWith ) -&gt; null</span>
+<span class="fc" id="L219">                ( call, goDeeperWith ) -&gt; null</span>
 <span class="fc" id="L220">        ).setDrainInstantiation(</span>
                 call -&gt;
                 {
@@ -235,28 +235,30 @@ public class CopyLeft extends OperationType {
                         new HostExecutor(
                                 call -&gt;
                                 {
-<span class="nc" id="L238">                                    OperationType.instance(&quot;idy&quot;)</span>
-<span class="nc" id="L239">                                            .getImplementation(Activation.class)</span>
-<span class="nc" id="L240">                                            .getExecutor(HostExecutor.class)</span>
-<span class="nc" id="L241">                                            .getExecution().run(call);</span>
-<span class="nc" id="L242">                                },</span>
+<span class="fc" id="L238">                                    call.getTensor(0).setIsVirtual(false);</span>
+<span class="fc" id="L239">                                    OperationType.instance(&quot;idy&quot;)</span>
+<span class="fc" id="L240">                                            .getImplementation(Activation.class)</span>
+<span class="fc" id="L241">                                            .getExecutor(HostExecutor.class)</span>
+<span class="fc" id="L242">                                            .getExecution().run(call);</span>
+<span class="fc" id="L243">                                },</span>
                                 3
                         )
                     )
-<span class="fc" id="L246">                    .setExecutor(</span>
+<span class="fc" id="L247">                    .setExecutor(</span>
                         CLExecutor.class,
                         new CLExecutor(
                                 call -&gt; {
-<span class="nc" id="L250">                                    OperationType.instance(&quot;idy&quot;)</span>
-<span class="nc" id="L251">                                            .getImplementation(Activation.class)</span>
-<span class="nc" id="L252">                                            .getExecutor(CLExecutor.class)</span>
-<span class="nc" id="L253">                                            .getExecution().run(call);</span>
-<span class="nc" id="L254">                                },</span>
+<span class="nc" id="L251">                                    call.getTensor(0).setIsVirtual(false);</span>
+<span class="nc" id="L252">                                    OperationType.instance(&quot;idy&quot;)</span>
+<span class="nc" id="L253">                                            .getImplementation(Activation.class)</span>
+<span class="nc" id="L254">                                            .getExecutor(CLExecutor.class)</span>
+<span class="nc" id="L255">                                            .getExecution().run(call);</span>
+<span class="nc" id="L256">                                },</span>
                                 3
                         )
                 )
         );
-<span class="fc" id="L259">    }</span>
+<span class="fc" id="L261">    }</span>
 
 
 
