@@ -126,6 +126,10 @@ public class GraphNode implements Component<Tsr>
      */
     private PendingError _pending_error = null;
 
+    public PendingError getPendingError(){
+        return _pending_error;
+    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
@@ -239,7 +243,7 @@ public class GraphNode implements Component<Tsr>
      * Note: values can be null if the recorded function is of type 'reshape'!
      * Why? => because reshape operation does not need variables for _backward pass!
      */
-    private TreeMap<GraphNode, ADAgent> _targets_derivatives;
+    private TreeMap<GraphNode, List<ADAgent>> _targets_derivatives;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -446,29 +450,30 @@ public class GraphNode implements Component<Tsr>
                         } else {
                             /*  Chain rule (forward) for every derivative w.r.t. leaves (reverseAD or user leaves): */
                             int finalI = i;
-                            srcNode.forEach(
-                                function.derive( inputs, i ),
-                                ( node, targetDerivative ) -> {
-                                    if ( this.has( node ) ) {
-                                        Tsr derivative = ADD.call( new Tsr[]{targetDerivative, (Tsr) this.get(node)} );
-                                        this.put(
-                                                node,
-                                                call.getADAgentFrom(
-                                                        function,
-                                                        derivative,
-                                                        new ExecutionCall<>(
-                                                                call.getDevice(),
-                                                                call.getTensors(),
-                                                                finalI,
-                                                                call.getJ(),
-                                                                call.getType()
-                                                        ).putAt("derivative",derivative),
-                                                        true
-                                                )
-                                        );
+                            Tsr localDerivative = function.derive( inputs, i );
+                            srcNode.forEachTargetAgentPair(
+                                ( targetNode, localAgent ) -> {
+                                    Tsr targetDerivative = MUL.call( new Tsr[]{localDerivative, localAgent.derivative()});
+                                    if ( this.has( targetNode ) ) {
+                                            this.put(
+                                                    targetNode,
+                                                    call.getADAgentFrom(
+                                                            function,
+                                                            targetDerivative,
+                                                            new ExecutionCall<>(
+                                                                    call.getDevice(),
+                                                                    call.getTensors(),
+                                                                    finalI,
+                                                                    call.getJ(),
+                                                                    call.getType()
+                                                            ).putAt( "derivative",targetDerivative ),
+                                                            true
+                                                    )
+                                            );
+
                                     } else {
                                         this.put(
-                                                node,
+                                                targetNode,
                                                 call.getADAgentFrom(
                                                         function,
                                                         targetDerivative,
@@ -751,7 +756,9 @@ public class GraphNode implements Component<Tsr>
     public void put(GraphNode target, ADAgent agent) {
         if ( _targets_derivatives == null ) _targets_derivatives = new TreeMap<>((a, b) -> a.hashCode() - b.hashCode());
 
-        _targets_derivatives.put( target, agent );
+        if ( _targets_derivatives.containsKey(target) ) {
+            _targets_derivatives.get( target ).add( agent );
+        } else _targets_derivatives.put( target, new ArrayList<>(Arrays.asList(agent)) );
 
         Tsr d = agent.derivative();
         if ( d != null && d.has(GraphNode.class) ) d.find( GraphNode.class )._is_used_as_derivative = true;
@@ -763,7 +770,7 @@ public class GraphNode implements Component<Tsr>
      * @param target
      * @return Tsr
      */
-    public Object get( GraphNode target ) {
+    public List<ADAgent> get( GraphNode target ) {
         if ( _targets_derivatives == null ) return null;
         return _targets_derivatives.get( target );
     }
@@ -795,7 +802,9 @@ public class GraphNode implements Component<Tsr>
      */
     public void forEachDerivative(BiConsumer<GraphNode, ADAgent> action) {
         if ( _targets_derivatives == null ) return;
-        _targets_derivatives.forEach( action );
+        _targets_derivatives.forEach(
+                (t, agents)->agents.forEach( a -> action.accept(t,a) )
+        );
     }
 
     /**
@@ -803,8 +812,10 @@ public class GraphNode implements Component<Tsr>
      */
     public void forEachBackward( Tsr error, BiConsumer<GraphNode, Tsr> action ) {
         if ( _targets_derivatives == null ) return;
-        _targets_derivatives.forEach( ( t, o ) -> {
-            if ( !o.isForward() ) action.accept( t, o.backward( t, error ) );
+        _targets_derivatives.forEach( ( t, agents ) -> {
+            for ( ADAgent a : agents ) {
+                 if ( !a.isForward() ) action.accept( t, a.backward( t, error ) );
+            }
         });
     }
 
@@ -813,9 +824,11 @@ public class GraphNode implements Component<Tsr>
      */
     public void forEachForward( Tsr error, BiConsumer<GraphNode, Tsr> action ) {
         if ( _targets_derivatives == null ) return;
-        _targets_derivatives.forEach( ( t, o ) -> {
-            //if ( o.isForward() ) action.accept( t, MUL.call( new Tsr[]{error, o.derivative()} ) );
-            if ( o.isForward() ) action.accept( t, o.forward(t, error) );
+        _targets_derivatives.forEach( ( t, agents ) -> {
+            for ( ADAgent a : agents ) {
+                //if ( o.isForward() ) action.accept( t, MUL.call( new Tsr[]{error, o.derivative()} ) );
+                if ( a.isForward() ) action.accept( t, a.forward(t, error) );
+            }
         });
     }
 
@@ -828,12 +841,20 @@ public class GraphNode implements Component<Tsr>
     }
 
     /**
-     * @param derivative
      * @param action
      */
-    public void forEach( Tsr derivative, BiConsumer<GraphNode, Tsr> action ) {
+    public void forEachTargetAgentPair( BiConsumer<GraphNode, ADAgent> action ) {
         if ( _targets_derivatives == null ) return;
-        _targets_derivatives.forEach( ( t, o ) -> action.accept( t, MUL.call( new Tsr[]{derivative, o.derivative()} ) ) );
+        _targets_derivatives
+                .forEach(
+                    ( targetNode, agents ) ->
+                        agents.forEach(
+                            a -> action.accept(
+                                    targetNode,
+                                    a//MUL.call( new Tsr[]{localDerivative, a.derivative()})
+                            )
+                    )
+                );
     }
 
 

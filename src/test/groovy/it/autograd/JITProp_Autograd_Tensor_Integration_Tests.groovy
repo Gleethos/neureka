@@ -120,20 +120,20 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
             !a.has(JITProp.class)
             !b.has(JITProp.class)
             !c.has(JITProp.class)
-            !s.graphNode().reliesOnJustInTimeProp()
-            !a.graphNode().reliesOnJustInTimeProp()
-            !b.graphNode().reliesOnJustInTimeProp()
-            !c.graphNode().reliesOnJustInTimeProp()
+            !s.getGraphNode().reliesOnJustInTimeProp()
+            !a.getGraphNode().reliesOnJustInTimeProp()
+            !b.getGraphNode().reliesOnJustInTimeProp()
+            !c.getGraphNode().reliesOnJustInTimeProp()
 
         when : x.backward(1)
         then :
             a.has(JITProp.class)
             !b.has(JITProp.class)
             c.has(JITProp.class)
-            s.graphNode().reliesOnJustInTimeProp()
-            a.graphNode().reliesOnJustInTimeProp()
-            !b.graphNode().reliesOnJustInTimeProp()
-            c.graphNode().reliesOnJustInTimeProp()
+            s.getGraphNode().reliesOnJustInTimeProp()
+            a.getGraphNode().reliesOnJustInTimeProp()
+            !b.getGraphNode().reliesOnJustInTimeProp()
+            c.getGraphNode().reliesOnJustInTimeProp()
             a.toString().contains("g:(0.75)")
             c.toString().contains("g:(null)")
             x.toString().contains("(-4.5)")
@@ -144,10 +144,10 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
             Tsr result = f(inputs) // Should have no affect!
 
         then :
-            s.graphNode().reliesOnJustInTimeProp()
-            a.graphNode().reliesOnJustInTimeProp()
-            !b.graphNode().reliesOnJustInTimeProp()
-            c.graphNode().reliesOnJustInTimeProp()
+            s.getGraphNode().reliesOnJustInTimeProp()
+            a.getGraphNode().reliesOnJustInTimeProp()
+            !b.getGraphNode().reliesOnJustInTimeProp()
+            c.getGraphNode().reliesOnJustInTimeProp()
             ! result.toString().contains("d[1]:")
             ! result.toString().contains("d[1]:")
 
@@ -170,10 +170,10 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
             !c.has(JITProp.class)
             !b.has(JITProp.class)
 
-            !s.graphNode().reliesOnJustInTimeProp()
-            !a.graphNode().reliesOnJustInTimeProp()
-            !b.graphNode().reliesOnJustInTimeProp()
-            !c.graphNode().reliesOnJustInTimeProp()
+            !s.getGraphNode().reliesOnJustInTimeProp()
+            !a.getGraphNode().reliesOnJustInTimeProp()
+            !b.getGraphNode().reliesOnJustInTimeProp()
+            !c.getGraphNode().reliesOnJustInTimeProp()
     }
 
 
@@ -205,17 +205,17 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
             !b.has(JITProp.class)
             !c.has(JITProp.class)
             !s.has(JITProp.class)
-            !s.graphNode().reliesOnJustInTimeProp()
-            !a.graphNode().reliesOnJustInTimeProp()
-            !b.graphNode().reliesOnJustInTimeProp()
-            !c.graphNode().reliesOnJustInTimeProp()
+            !s.getGraphNode().reliesOnJustInTimeProp()
+            !a.getGraphNode().reliesOnJustInTimeProp()
+            !b.getGraphNode().reliesOnJustInTimeProp()
+            !c.getGraphNode().reliesOnJustInTimeProp()
 
         when : x.backward(1)
         then :
-            s.graphNode().reliesOnJustInTimeProp()
-            a.graphNode().reliesOnJustInTimeProp()
-            !b.graphNode().reliesOnJustInTimeProp()
-            c.graphNode().reliesOnJustInTimeProp()
+            s.getGraphNode().reliesOnJustInTimeProp()
+            a.getGraphNode().reliesOnJustInTimeProp()
+            !b.getGraphNode().reliesOnJustInTimeProp()
+            c.getGraphNode().reliesOnJustInTimeProp()
             a.has(JITProp.class)
             !b.has(JITProp.class)
             c.has(JITProp.class)
@@ -263,10 +263,10 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
             !a.has(JITProp.class)
             !c.has(JITProp.class)
 
-            !s.graphNode().reliesOnJustInTimeProp()
-            !a.graphNode().reliesOnJustInTimeProp()
-            !b.graphNode().reliesOnJustInTimeProp()
-            !c.graphNode().reliesOnJustInTimeProp()
+            !s.getGraphNode().reliesOnJustInTimeProp()
+            !a.getGraphNode().reliesOnJustInTimeProp()
+            !b.getGraphNode().reliesOnJustInTimeProp()
+            !c.getGraphNode().reliesOnJustInTimeProp()
     }
 
 

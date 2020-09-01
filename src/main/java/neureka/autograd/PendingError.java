@@ -24,8 +24,14 @@ public class PendingError {
         return _toBeReceived==0;
     }
 
+    public int getToBeReceived() {
+        return _toBeReceived;
+    }
+
     public Tsr getAccumulatedError(){
         return _error;
     }
+
+
 
 }

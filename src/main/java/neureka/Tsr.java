@@ -288,7 +288,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
      *
      * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
      */
-    public GraphNode graphNode(){
+    public GraphNode getGraphNode(){
         return find(GraphNode.class);
     }
 
@@ -630,13 +630,21 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    public Tsr mean() {
+        Tsr ones = new Tsr(this.getNDConf().shape(), 1);
+        Tsr sum = Function.X.call(new Tsr[]{this,ones});
+        return Function.DIV.call(new Tsr[]{sum, new Tsr(this.size())});
+        //TODO :Function.DIV.call(new Tsr[]{sum, new Tsr(this.size())});
+    }
+
+
     //MODIFICATION :
     //=========================
 
     /**
      *
      * @param error A tensor which is back-propagated to gradients. Must match the size og this tensor.
-     * @return The tensor on which this method was called.
+     * @return The tensor on which this method was called. (factory pattern)
      */
     public Tsr backward(Tsr error) {
         if (!forComponent(GraphNode.class, node -> node.backward(error)) && this.rqsGradient()) {
@@ -646,12 +654,28 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     }
 
     /**
+     *  This method turns the given scalar value and
+     *  turns it into a matching tensor (same shape)
+     *  which will be backpropagated through the
+     *  recorded computation graph.
      *
-     * @param value
-     * @return
+     * @param value A scalar which is back-propagated to gradients. Must match the size og this tensor.
+     * @return The tensor on which this method was called. (factory pattern)
      */
     public Tsr backward(double value) {
         backward(new Tsr(_conf.shape(), value));
+        return this;
+    }
+
+    /**
+     *  This method assumes that the user wants to backpropagate
+     *  an error of "1" having the same shape as
+     *  this tensor.
+     *
+     * @return The tensor on which this method was called. (factory pattern)
+     */
+    public Tsr backward() {
+        backward(1);
         return this;
     }
 

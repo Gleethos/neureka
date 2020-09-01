@@ -243,7 +243,7 @@ public class Division extends OperationType
 
         Broadcast broadcast = new Broadcast()
                 .setADAnalyzer(
-                    call -> true
+                    call -> false
                 ).setADAgentCreator(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
