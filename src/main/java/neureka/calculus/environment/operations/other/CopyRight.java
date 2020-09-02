@@ -13,6 +13,8 @@ import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.Activation;
 import neureka.calculus.environment.implementations.Convolution;
 
+import java.util.List;
+
 public class CopyRight extends OperationType {
 
     public CopyRight()
@@ -147,4 +149,8 @@ public class CopyRight extends OperationType {
         );
     }
 
+    @Override
+    public double calculate(double[] inputs, int j, int d, List<Function> src) {
+            return src.get(0).call( inputs, j );
+    }
 }

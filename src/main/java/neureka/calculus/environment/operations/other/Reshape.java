@@ -12,6 +12,7 @@ import neureka.ndim.AbstractNDArray;
 import neureka.ndim.config.AbstractNDC;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Reshape extends OperationType
 {
@@ -186,6 +187,8 @@ public class Reshape extends OperationType
     }
 
 
-
-
+    @Override
+    public double calculate(double[] inputs, int j, int d, List<Function> src) {
+            return src.get(0).call( inputs, j );
+    }
 }

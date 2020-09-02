@@ -9,6 +9,7 @@ import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.*;
 
+import java.util.List;
 import java.util.Random;
 
 public class Randomization extends OperationType
@@ -124,4 +125,8 @@ public class Randomization extends OperationType
 
     }
 
+    @Override
+    public double calculate(double[] inputs, int j, int d, List<Function> src) {
+            return src.get(0).call( inputs, j );
+    }
 }

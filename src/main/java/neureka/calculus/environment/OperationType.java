@@ -1,6 +1,7 @@
 
 package neureka.calculus.environment;
 
+import neureka.calculus.Function;
 import neureka.calculus.environment.implementations.AbstractOperationTypeImplementation;
 import neureka.calculus.environment.operations.OperationContext;
 
@@ -9,14 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class OperationType implements Type
+public abstract class OperationType implements Type
 {
-    //private static ThreadLocal<OperationContext> _CONTEXTS;
-    //static
-    //{
-    //    _CONTEXTS = ThreadLocal.withInitial( OperationContext::instance );
-    //}
-
     public static List<OperationType> instances(){
         return OperationContext.instance().getRegister();
     }
@@ -81,6 +76,8 @@ public class OperationType implements Type
             }
         }
     }
+
+    public abstract double calculate(double[] inputs, int j, int d, List<Function> src);
 
     public static OperationType[] ALL(){
         return OperationContext.instance().getRegister().toArray(new OperationType[0]);

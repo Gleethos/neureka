@@ -435,16 +435,26 @@ public class Modulo extends OperationType {
 
         new OperationType(
                 "", ((char) 171) + "%", 3, true, false, false, false
-        );
+        ) {
+            @Override
+            public double calculate(double[] inputs, int j, int d, List<Function> src) {
+            return src.get(0).call( inputs, j );
+            }
+        };
         new OperationType(
                 "", "%" + ((char) 187), 3, true, false, false, false
-        );
+        ) {
+            @Override
+            public double calculate(double[] inputs, int j, int d, List<Function> src) {
+            return src.get(0).call( inputs, j );
+            }
+        };
     }
 
 
 
     @Contract(pure = true)
-    public static double modulo(double[] inputs, int d, List<Function> src) {
+    public static double calculate(double[] inputs, int d, List<Function> src) {
         if ( d < 0 ) {
             double result = src.get(0).call(inputs);
             for ( int i = 1; i < src.size(); i++ ) {
@@ -458,7 +468,10 @@ public class Modulo extends OperationType {
     }
 
     @Contract(pure = true)
-    public static double modulo(double[] inputs, int j, int d, List<Function> src) {
+
+    @Override
+    public double calculate(double[] inputs, int j, int d, List<Function> src) {
+        if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
             double result = src.get(0).call(inputs, j);
             for ( int i = 1; i < src.size(); i++ ) {

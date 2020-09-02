@@ -15,7 +15,6 @@ import neureka.autograd.GraphNode;
 import neureka.calculus.factory.components.FunctionConstant;
 import neureka.calculus.factory.components.FunctionInput;
 import neureka.calculus.factory.components.FunctionVariable;
-import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -341,55 +340,10 @@ public abstract class AbstractFunction extends BaseFunction
         return onSameGuestDevice;
     }
 
-    //------------------------------------------------------------------------------------------------------------------
-
-    protected double _scalar_activation( double input, boolean derive ) {
-        switch ( _type.getOperator() ) {
-            case "relu":
-                return ReLU.reLu(input, derive);
-            case "sig":
-                return Sigmoid.sigmoid(input, derive);
-            case "tanh":
-                return Tanh.tanh(input, derive);
-            case "quad":
-                return Quadratic.quadratic(input, derive);
-            case "lig":
-                return Ligmoid.ligmoid(input, derive);
-            case "lin":
-            //case "idy":
-                return Identity.linear(input, derive);
-            case "gaus":
-                return Gaussian.gaussian(input, derive);
-            case "abs":
-                return Absolute.absolute(input, derive);
-            case "sin":
-                return Sinus.sinus(input, derive);
-            case "cos":
-                return Cosinus.cosinus(input, derive);
-            default:
-                return input;
-        }
-    }
-
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    protected double _scalar_activation( double[] input, int j, int d ) {
-        switch (_type.getOperator()) {
-            case "sum": return ( j < 0 ) ? Summation.summation(input, d, _src) : Summation.summation(input, j, d, _src);
-            case "prod": return ( j < 0 ) ? Product.PI(input, d, _src) : Product.PI(input, j, d, _src);
-            case "^": return ( j < 0 ) ? Power.power(input, d, _src) : Power.power(input, j, d, _src);
-            case "/": return ( j < 0 ) ? Division.division(input, d, _src) : Division.division(input, j, d, _src);
-            case "*": return ( j < 0 ) ? Multiplication.multiplication(input, d, _src) : Multiplication.multiplication(input, j, d, _src);
-            case "%": return ( j < 0 ) ? Modulo.modulo(input, d, _src) : Modulo.modulo(input, j, d, _src);
-            case "-": return ( j < 0 ) ? Subtraction.subtraction(input, d, _src) : Subtraction.subtraction(input, j, d, _src);
-            case "+": return ( j < 0 ) ? Addition.addition(input, d, _src) : Addition.addition(input, j, d, _src);
-            case "x": return ( j < 0 ) ? Multiplication.multiplication(input, d, _src) : Multiplication.multiplication(input, j, d, _src);
-            default: return
-                    _scalar_activation(
-                        _src.get(0).call( input, j ),
-                        d >= 0
-                    ) * ( ( d < 0 ) ? 1 : _src.get(0).derive( input, d, j ) );
-        }
+    protected double _scalar_activation( double[] inputs, int j, int d ) {
+        return _type.calculate(inputs, j, d, _src);
     }
 
 

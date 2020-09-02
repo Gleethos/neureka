@@ -12,6 +12,8 @@ import neureka.calculus.environment.implementations.*;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import org.jetbrains.annotations.Contract;
 
+import java.util.List;
+
 public class Cosinus extends OperationType {
 
     private DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
@@ -156,11 +158,16 @@ public class Cosinus extends OperationType {
 
     }
 
-
-
+    @Override
+    public double calculate(double[] inputs, int j, int d, List<Function> src) {
+        return calculate(
+                src.get(0).call( inputs, j ),
+                d >= 0
+        ) * ( ( d < 0 ) ? 1 : src.get(0).derive( inputs, d, j ) );
+    }
 
     @Contract(pure = true)
-    public static double cosinus( double input, boolean derive ) {
+    public static double calculate(double input, boolean derive ) {
         if ( !derive ) return Math.cos( input );
         else return -Math.sin( input );
     }

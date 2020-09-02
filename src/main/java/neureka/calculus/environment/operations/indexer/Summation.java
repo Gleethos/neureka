@@ -11,6 +11,7 @@ import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
 import neureka.calculus.environment.implementations.*;
 import neureka.calculus.factory.assembly.FunctionBuilder;
+import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
@@ -321,8 +322,9 @@ public class Summation extends OperationType
 
     }
 
-
-    public static double summation( double[] inputs, int j, int d, List<Function> src ) {
+    @Override
+    public double calculate(double[] inputs, int j, int d, List<Function> src ) {
+        if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
             double sum = 0;
             boolean nothingDone = true;
@@ -339,7 +341,8 @@ public class Summation extends OperationType
         }
     }
 
-    public static double summation(double[] inputs, int d, List<Function> src) {
+    @Contract(pure = true)
+    public static double calculate(double[] inputs, int d, List<Function> src) {
         if ( d < 0 ) {
             double sum = 0;
             boolean nothingDone = true;

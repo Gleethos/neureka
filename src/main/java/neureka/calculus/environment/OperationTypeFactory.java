@@ -1,5 +1,7 @@
 package neureka.calculus.environment;
 
+import neureka.calculus.Function;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +42,12 @@ public class OperationTypeFactory
                     _isIndexer,
                     _isCommutative,
                     _isAssociative
-            );
+            ) {
+                @Override
+                public double calculate(double[] inputs, int j, int d, List<Function> src) {
+                    return src.get(0).call( inputs, j );
+                }
+            };
         }
         return result;
     }

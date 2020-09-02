@@ -39,22 +39,22 @@ public class FunctionNode extends AbstractFunction
 
     @Override
     public double call( final double[] inputs, int j ) {
-        return _scalar_activation( inputs, j, -1 );
+        return this.type().calculate( inputs, j, -1, this.getChildren() );
     }
 
     @Override
     public double call( final double[] inputs ) {
-        return _scalar_activation( inputs, -1, -1 );
+        return this.type().calculate( inputs, -1, -1, this.getChildren() );
     }
 
     @Override
     public double derive( final double[] inputs, final int d, final int j ) {
-        return _scalar_activation( inputs, j, d );
+        return this.type().calculate( inputs, j, d, this.getChildren() );
     }
 
     @Override
     public double derive( final double[] inputs, final int d ) {
-        return _scalar_activation( inputs, -1, d );
+        return this.type().calculate( inputs, -1, d, this.getChildren() );
     }
 
 }

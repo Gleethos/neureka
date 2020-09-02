@@ -433,17 +433,32 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
 
         new OperationType(
                 "", ((char) 171) + "+", 3, true, false, false, false
-        ).setImplementation(Broadcast.class, _broadcast);
+){
+            @Override
+            public double calculate(double[] inputs, int j, int d, List<Function> src){
+                return 0;
+            }
+        }.setImplementation(Broadcast.class, _broadcast);
 
         new OperationType(
                 "", "+" + ((char) 187), 3, true, false, false, false
-        ).setImplementation(Broadcast.class, _broadcast);
+){
+            @Override
+            public double calculate(double[] inputs, int j, int d, List<Function> src){
+                return 0;
+            }
+        }.setImplementation(Broadcast.class, _broadcast);
 
         // Convolutoion:
 
         new OperationType(
                 "add", "a", 2, true, false, false, false
-        ).setImplementation(Convolution.class,
+){
+            @Override
+            public double calculate(double[] inputs, int j, int d, List<Function> src){
+                return 0;
+            }
+        }.setImplementation(Convolution.class,
                 new Convolution()
         .setADAnalyzer(
                 call -> {
@@ -514,10 +529,20 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
 
         new OperationType(
                 "", ((char) 171) + "a", 3, true, false, false, false
-        );
+        ) {
+            @Override
+            public double calculate(double[] inputs, int j, int d, List<Function> src) {
+            return src.get(0).call( inputs, j );
+            }
+        };
         new OperationType(
                 "", "a" + ((char) 187), 3, true, false, false, false
-        );
+        ) {
+            @Override
+            public double calculate(double[] inputs, int j, int d, List<Function> src) {
+            return src.get(0).call( inputs, j );
+            }
+        };
 
 
     }
@@ -525,7 +550,10 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
 
 
     @Contract(pure = true)
-    public static double addition(double[] inputs, int j, int d, List<Function> src) {
+
+    @Override
+    public double calculate(double[] inputs, int j, int d, List<Function> src) {
+        if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
             double result = src.get(0).call(inputs, j);
             for ( int i = 1; i < src.size(); i++ ) {
@@ -543,7 +571,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
     }
 
     @Contract(pure = true)
-    public static double addition(double[] inputs, int d, List<Function> src) {
+    public static double calculate(double[] inputs, int d, List<Function> src) {
         if ( d < 0 ) {
             double result = src.get(0).call(inputs);
             for ( int Vi = 1; Vi < src.size(); Vi++ ) {

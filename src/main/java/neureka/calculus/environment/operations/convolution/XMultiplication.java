@@ -13,6 +13,8 @@ import neureka.calculus.environment.implementations.AbstractOperationTypeImpleme
 import neureka.calculus.environment.implementations.Convolution;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
+import java.util.List;
+
 public class XMultiplication extends OperationType
 {
 
@@ -217,8 +219,19 @@ public class XMultiplication extends OperationType
                 )
         );
         new OperationType(
-                "inv_convolve_mul_left", ((char) 171) + "x", 3, true, false, false, false
-        )
+                "inv_convolve_mul_left", ((char) 171) + "x",
+                3,
+                true,
+                false,
+                false,
+                false
+        ){
+
+            @Override
+            public double calculate(double[] inputs, int j, int d, List<Function> src) {
+            return src.get(0).call( inputs, j );
+            }
+        }
                 .setImplementation(Convolution.class, convolution)
                 .setStringifier(
                     children -> {
@@ -234,9 +247,18 @@ public class XMultiplication extends OperationType
                 );
 
         new OperationType(
-                "inv_convolve_mul_right", "x" + ((char) 187), 3, true, false, false, false
-        )
-                .setImplementation(Convolution.class, convolution)
+                "inv_convolve_mul_right", "x" + ((char) 187),
+                3,
+                true,
+                false,
+                false,
+                false
+        ){
+            @Override
+            public double calculate(double[] inputs, int j, int d, List<Function> src){
+                return 0;
+            }
+        }.setImplementation(Convolution.class, convolution)
                 .setStringifier(
                         children -> {
                             StringBuilder reconstructed = new StringBuilder();
@@ -251,8 +273,13 @@ public class XMultiplication extends OperationType
                 );
 
 
+
+
     }
 
 
-
+    @Override
+    public double calculate(double[] inputs, int j, int d, List<Function> src) {
+            return src.get(0).call( inputs, j );
+    }
 }

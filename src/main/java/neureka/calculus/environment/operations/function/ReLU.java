@@ -12,6 +12,8 @@ import neureka.calculus.environment.implementations.*;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import org.jetbrains.annotations.Contract;
 
+import java.util.List;
+
 public class ReLU extends OperationType
 {
 
@@ -166,8 +168,16 @@ public class ReLU extends OperationType
 
     }
 
+    @Override
+    public double calculate(double[] inputs, int j, int d, List<Function> src) {
+        return calculate(
+                src.get(0).call( inputs, j ),
+                d >= 0
+        ) * ( ( d < 0 ) ? 1 : src.get(0).derive( inputs, d, j ) );
+    }
+
     @Contract(pure = true)
-    public static double reLu( double input, boolean derive ) {
+    public static double calculate(double input, boolean derive ) {
         double output;
         if ( !derive ) {
             if ( input >= 0 ) output = input;

@@ -11,6 +11,8 @@ import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.Activation;
 import neureka.calculus.environment.implementations.Scalarization;
 
+import java.util.List;
+
 public class CopyLeft extends OperationType {
 
     public CopyLeft(){
@@ -261,5 +263,8 @@ public class CopyLeft extends OperationType {
     }
 
 
-
+    @Override
+    public double calculate(double[] inputs, int j, int d, List<Function> src) {
+            return src.get(0).call( inputs, j );
+    }
 }

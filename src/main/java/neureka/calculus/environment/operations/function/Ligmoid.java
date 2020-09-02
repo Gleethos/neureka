@@ -9,8 +9,9 @@ import neureka.calculus.Function;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.*;
-import neureka.calculus.factory.assembly.FunctionBuilder;
 import org.jetbrains.annotations.Contract;
+
+import java.util.List;
 
 
 public class Ligmoid extends OperationType
@@ -170,12 +171,18 @@ public class Ligmoid extends OperationType
 
     }
 
-
+    @Override
+    public double calculate(double[] inputs, int j, int d, List<Function> src) {
+        return calculate(
+                src.get(0).call( inputs, j ),
+                d >= 0
+        ) * ( ( d < 0 ) ? 1 : src.get(0).derive( inputs, d, j ) );
+    }
 
     @Contract(pure = true)
-    public static double ligmoid( double input, boolean derive ) {
+    public static double calculate(double input, boolean derive ) {
         if ( !derive ) return Math.log(1 + Math.pow(Math.E, input));
-        else return Sigmoid.sigmoid(input, false);
+        else return Sigmoid.calculate(input, false);
     }
 
 

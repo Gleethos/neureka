@@ -332,8 +332,9 @@ public class Product extends OperationType {
 
 
 
-    @Contract(pure = true)
-    public static double PI( double[] inputs, int j, int d, List<Function> src ) {
+    @Override
+    public double calculate(double[] inputs, int j, int d, List<Function> src ) {
+        if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
             double prod = 1;
             boolean nothingDone = true;
@@ -358,7 +359,7 @@ public class Product extends OperationType {
     }
 
     @Contract(pure = true)
-    public static double PI( double[] inputs, int d, List<Function> src ) {
+    public static double calculate(double[] inputs, int d, List<Function> src ) {
         if ( d < 0 ) {
             double prod = 1;
             boolean nothingDone = true;
