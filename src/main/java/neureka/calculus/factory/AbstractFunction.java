@@ -340,11 +340,4 @@ public abstract class AbstractFunction extends BaseFunction
         return onSameGuestDevice;
     }
 
-    //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-    protected double _scalar_activation( double[] inputs, int j, int d ) {
-        return _type.calculate(inputs, j, d, _src);
-    }
-
-
 }
