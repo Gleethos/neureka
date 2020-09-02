@@ -21,7 +21,7 @@ public class Product extends OperationType {
     public Product()
     {
         super (
-                "product",
+                "prodJs",
                 "prodJs",
                 1,
                 false,

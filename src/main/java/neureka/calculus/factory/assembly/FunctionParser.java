@@ -161,11 +161,11 @@ public class FunctionParser
         exp = exp.replace("sigmoid", "sig");//Function.TYPES.REGISTER(1));
         exp = exp.replace("quadratic", "quad");//Function.TYPES.REGISTER(3));
         exp = exp.replace("quadr", "quad");//Function.TYPES.REGISTER(3));
-        exp = exp.replace("lig", "lig");//Function.TYPES.REGISTER(4));
-        exp = exp.replace("ligmoid", "lig");//Function.TYPES.REGISTER(4));
-        exp = exp.replace("softplus", "lig");//Function.TYPES.REGISTER(4));
-        exp = exp.replace("spls", "lig");//Function.TYPES.REGISTER(4));
-        exp = exp.replace("ligm", "lig");//Function.TYPES.REGISTER(4));
+        exp = exp.replace("lig", "softplus");//Function.TYPES.REGISTER(4));
+        exp = exp.replace("ligmoid", "softplus");//Function.TYPES.REGISTER(4));
+        exp = exp.replace("splus", "softplus");//Function.TYPES.REGISTER(4));
+        exp = exp.replace("spls", "softplus");//Function.TYPES.REGISTER(4));
+        exp = exp.replace("ligm", "softplusd");//Function.TYPES.REGISTER(4));
         exp = exp.replace("identity", "idy");//Function.TYPES.REGISTER(5));
         exp = exp.replace("ident", "idy");//Function.TYPES.REGISTER(5));
         exp = exp.replace("self", "idy");//Function.TYPES.REGISTER(5));

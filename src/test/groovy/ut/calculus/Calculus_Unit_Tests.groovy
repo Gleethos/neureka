@@ -101,8 +101,8 @@ class Calculus_Unit_Tests extends Specification
             "ig0*(igj)xI[g1]"                           || "((Ig[0] * Ig[j]) x Ig[1])"
             "sumJs(ij)"                                 || "sumJs(I[j])"
             "sumJs(1*(4-2/ij))"                         || "sumJs(1.0 * (4.0 - (2.0 / I[j])))"
-            "quadratic(ligmoid(Ij))"                    || "quad(lig(I[j]))"
-            "softplus(I[3]^(3/i1)/sumJs(Ij^2)-23+I0/i1)"|| "lig((((I[3] ^ (3.0 / I[1])) / sumJs(I[j] ^ 2.0)) - 23.0) + (I[0] / I[1]))"
+            "quadratic(sftpls(Ij))"                    || "quad(softplus(I[j]))"
+            "softplus(I[3]^(3/i1)/sumJs(Ij^2)-23+I0/i1)"|| "softplus((((I[3] ^ (3.0 / I[1])) / sumJs(I[j] ^ 2.0)) - 23.0) + (I[0] / I[1]))"
             "1+3+5-23+I0*45/(345-651^I3-6)"             || "(1.0 + 3.0 + (5.0 - 23.0) + (I[0] * (45.0 / (345.0 - (651.0 ^ I[3]) - 6.0))))"
             "sin(23*i1)-cos(i0^0.3)+tanh(23)"           || "((sin(23.0 * I[1]) - cos(I[0] ^ 0.3)) + tanh(23.0))"
             "2*3/2-1"                                   || "((2.0 * (3.0 / 2.0)) - 1.0)"
@@ -135,7 +135,7 @@ class Calculus_Unit_Tests extends Specification
         where :
             equation                || expected
             "i[0] d>> i[1]"         || "The function/operation 'd"+((char)187)+"' expects 3 parameters, however 2 where given!"
-            "lig(I[0],I[1],I[2])"   || "The function/operation 'lig' expects 1 parameters, however 3 where given!"
+            "softplus(I[0],I[1],I[2])"   || "The function/operation 'softplus' expects 1 parameters, however 3 where given!"
             "sig(I[0],I[1],I[2])"   || "The function/operation 'sig' expects 1 parameters, however 3 where given!"
             "sumjs(I[0],I[1],I[2])" || "The function/operation 'sumJs' expects 1 parameters, however 3 where given!\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration."
             "prodjs(I[0],I[1],I[2])"|| "The function/operation 'prodJs' expects 1 parameters, however 3 where given!\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration."
@@ -159,7 +159,7 @@ class Calculus_Unit_Tests extends Specification
             "I3/i[1]-I0+2+i2"                | new double[]{5, 4, 3, 12}        | null  ||   3
             "i3*i1/(i4-i0-2)-sig(0)+tanh(0)" | new double[]{-4, -2, 6, -3, -8}  | null  ||  -1.5
             "(i0*i1)*i2"                     | new double[]{2, 3, -2}           | 0     || -6
-            "lig(i0*i1)*i2"                  | new double[]{2, 3, -2}           | 0     || -5.985164261060192
+            "softplus(i0*i1)*i2"                  | new double[]{2, 3, -2}           | 0     || -5.985164261060192
             "prod(ij)"                       | new double[]{2, 3, -2}           | 1     || -4
             "relu(prod(ij))"                 | new double[]{2, 3, -2}           | null  || -0.12
             "relu(prod(ij))"                 | new double[]{2, 3, -2}           | 1     || -0.04

@@ -26,15 +26,15 @@ public class Ligmoid extends OperationType
 
     public Ligmoid()
     {
-        super("lig", "lig" , 1, false, false, true, true);
+        super("softplus", "softplus" , 1, false, false, true, true);
 
         setStringifier(
                 children -> {
                     String expression = String.join( ", ", children );
                     if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
-                        return "lig" + expression;
+                        return "softplus" + expression;
                     }
-                    return "lig" + "(" + expression + ")";
+                    return "softplus" + "(" + expression + ")";
                 }
         );
 

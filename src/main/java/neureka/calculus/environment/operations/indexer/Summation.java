@@ -21,7 +21,7 @@ public class Summation extends OperationType
     public Summation()
     {
         super (
-                "summation",
+                "sumJs",
                 "sumJs",
                 1,
                 false,
