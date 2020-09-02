@@ -214,7 +214,9 @@ $ gradlew proguard
 
 ## Testing & Specification ###
 
-- Spock! 
+- BDD & living documentation with Spock! 
+
+- Yes ! Readable html test reports. [Check it out!](https://gleethos.github.io/neureka/spock/reports/index.html)!
 
 ---
 
