@@ -22,7 +22,7 @@ public class Product extends OperationType {
     {
         super (
                 "product",
-                "prod",
+                "prodJs",
                 1,
                 false,
                 true,
@@ -34,9 +34,9 @@ public class Product extends OperationType {
                 children -> {
                     String expression = String.join( ", ", children );
                     if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
-                        return "prod" + expression;
+                        return "prodJs" + expression;
                     }
-                    return "prod" + "(" + expression + ")";
+                    return "prodJs" + "(" + expression + ")";
                 }
         );
 

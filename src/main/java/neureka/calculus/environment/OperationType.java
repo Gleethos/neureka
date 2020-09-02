@@ -62,6 +62,7 @@ public abstract class OperationType implements Type
 
         OperationContext.instance().getRegister().add(this);
         OperationContext.instance().getLookup().put(operator, this);
+        OperationContext.instance().getLookup().put(operator.toLowerCase(), this);
         if (
                 operator
                         .replace((""+((char)171)), "")

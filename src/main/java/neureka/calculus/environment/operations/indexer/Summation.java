@@ -22,7 +22,7 @@ public class Summation extends OperationType
     {
         super (
                 "summation",
-                "sum",
+                "sumJs",
                 1,
                 false,
                 true,
@@ -35,9 +35,9 @@ public class Summation extends OperationType
                 {
                     String expression = String.join( ", ", children );
                     if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
-                        return "sum" + expression;
+                        return "sumJs" + expression;
                     }
-                    return "sum" + "(" + expression + ")";
+                    return "sumJs" + "(" + expression + ")";
                 }
         );
 

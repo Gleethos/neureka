@@ -24,7 +24,7 @@ public class FunctionParser
         String operation = "";
         for (int i = exp.length()-1; i >= index; i--) {
             operation = exp.substring(index, i);
-            if (FunctionParser.isBasicOperation(operation)) {
+            if (FunctionParser.isBasicOperation(operation) || FunctionParser.isBasicOperation(operation.toLowerCase())) {
                 return operation;
             }
         }
@@ -43,11 +43,20 @@ public class FunctionParser
             if (bracketDepth == 0) {
                 String possibleOperation = "";
                 for (int ii = exp.length()-1; ii >= i+1; ii--) {
-                    possibleOperation = exp.substring(i+1, ii);
-                    if (FunctionParser.isBasicOperation(possibleOperation)) {
-                        if (exp.charAt(i)=='j' || !Character.isLetter(exp.charAt(i))) {
-                            component.append(exp.charAt(i));
-                            return component.toString();
+                    String found = FunctionParser.parsedOperation(exp.substring(i,ii), i);
+                    if (
+                         found != null && !OperationType.instance(found).isOperator()
+                    ) {
+                        ii = -1; // end inner loop
+                        component.append(found.substring(0,found.length()-1));
+                        i += found.length()-1;
+                    } else {
+                        possibleOperation = exp.substring(i+1, ii);
+                        if (FunctionParser.isBasicOperation(possibleOperation)) {
+                            if (exp.charAt(i)=='j' || !Character.isLetter(exp.charAt(i))) {
+                                component.append(exp.charAt(i));
+                                return component.toString();
+                            }
                         }
                     }
                 }

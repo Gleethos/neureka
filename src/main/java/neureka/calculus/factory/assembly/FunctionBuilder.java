@@ -167,11 +167,14 @@ public class FunctionBuilder {
         }
         // building sources and function:
         if (foundComponents.size() == 1) {
-            String possibleFunction = FunctionParser.parsedOperation(foundComponents.get(0).toLowerCase(), 0);
+            String possibleFunction = FunctionParser.parsedOperation(
+                    foundComponents.get(0),
+                    0
+            );
             if (possibleFunction != null && possibleFunction.length() > 1) {
 
                 for (int oi = 0; oi < OperationType.COUNT(); oi++) {
-                    if (OperationType.instance(oi).getOperator().equals(possibleFunction)) {
+                    if (OperationType.instance(oi).getOperator().toLowerCase().equals(possibleFunction.toLowerCase())) {
                         typeId = oi;
                         List<String> parameters = FunctionParser.findParametersIn(
                                 foundComponents.get(0),
