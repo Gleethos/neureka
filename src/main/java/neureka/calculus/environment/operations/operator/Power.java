@@ -105,7 +105,7 @@ public class Power extends AbstractOperationType
                     );
                     tsrs[0] = reduction[0];
 
-                    reduction = AbstractOperationTypeImplementation.Utility._offsetted(tsrs, 1);
+                    reduction = Utility._offsetted(tsrs, 1);
                     alternative = goDeeperWith.apply(
                             call.withNew( reduction )
                             );
@@ -113,7 +113,7 @@ public class Power extends AbstractOperationType
                 } else {
 
                     if ( d==0 ) {
-                        Tsr[] reduction = AbstractOperationTypeImplementation.Utility._subset(tsrs, 1,  2, tsrs.length-2);
+                        Tsr[] reduction = Utility._subset(tsrs, 1,  2, tsrs.length-2);
                         reduction[0] =  Tsr.Create.newTsrLike(tsrs[1]);
                         alternative = goDeeperWith.apply(
                                 new ExecutionCall<>( device, reduction, -1, OperationType.instance("*") )
@@ -126,7 +126,7 @@ public class Power extends AbstractOperationType
                         tsrs[0] = reduction[0];
                         exp.delete();
                     } else {
-                        Tsr[] reduction = AbstractOperationTypeImplementation.Utility._subset(tsrs, 1,  2, tsrs.length-2);
+                        Tsr[] reduction = Utility._subset(tsrs, 1,  2, tsrs.length-2);
 
                         reduction[0] =  Tsr.Create.newTsrLike(tsrs[1]);
                         alternative = goDeeperWith.apply(

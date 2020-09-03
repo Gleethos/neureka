@@ -57,13 +57,13 @@ public class Product extends AbstractOperationType {
                     );
                     tsrs[0] = reduction[0];
 
-                    reduction = AbstractOperationTypeImplementation.Utility._offsetted(tsrs, 1);
+                    reduction = Utility._offsetted(tsrs, 1);
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
                     );
                     tsrs[0] = reduction[0];
                 } else {
-                    Tsr[] reduction = AbstractOperationTypeImplementation.Utility._without(tsrs, 1+d);
+                    Tsr[] reduction = Utility._without(tsrs, 1+d);
                     if ( reduction.length > 2 ) {
                         reduction[0] = ( reduction[0] == null ) ? Tsr.Create.newTsrLike(tsrs[1]) : reduction[0];
                         alternative = goDeeperWith.apply(

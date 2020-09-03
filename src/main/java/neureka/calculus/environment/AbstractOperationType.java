@@ -134,7 +134,7 @@ public abstract class AbstractOperationType implements OperationType
                                     );
                                     tsrs[0] = reduction[0];
 
-                                    reduction = AbstractOperationTypeImplementation.Utility._offsetted(tsrs, 1);
+                                    reduction = Utility._offsetted(tsrs, 1);
                                     alternative = goDeeperWith.apply(
                                             new ExecutionCall<Device>(device, reduction, d, type)
                                     );

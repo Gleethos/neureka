@@ -170,44 +170,6 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
         return tsrs[0];
     }
 
-    public static class Utility
-    {
-        public static Tsr[] _subset(Tsr[] tsrs, int padding, int index, int offset) {
-            if ( offset < 0 ) {
-                index += offset;
-                offset *= -1;
-            }
-            Tsr[] newTsrs = new Tsr[offset+padding];
-            System.arraycopy(tsrs, index, newTsrs, padding, offset);
-            return newTsrs;
-        }
-        public static Tsr[] _without(Tsr[] tsrs, int index){
-            Tsr[] newTsrs = new Tsr[tsrs.length-1];
-            for ( int i = 0; i < newTsrs.length; i++ ) newTsrs[i] = tsrs[i+( ( i < index )? 0 : 1 )];
-            return newTsrs;
-        }
-
-        public static Tsr[] _offsetted(Tsr[] tsrs, int offset){
-            Tsr[] newTsrs = new Tsr[tsrs.length-offset];
-            newTsrs[0] = Tsr.Create.newTsrLike(tsrs[1]);
-            if ( !tsrs[1].has(GraphNode.class ) && tsrs[1] != tsrs[0] ) {//Deleting intermediate results!
-                tsrs[1].delete();
-                tsrs[1] = null;
-            }
-            if ( !tsrs[2].has(GraphNode.class) && tsrs[2] != tsrs[0] ) {//Deleting intermediate results!
-                tsrs[2].delete();
-                tsrs[2] = null;
-            }
-            System.arraycopy(tsrs, 1+offset, newTsrs, 1, tsrs.length-1-offset);
-            newTsrs[1] = tsrs[0];
-            return newTsrs;
-        }
-
-    }
-
-
-
-
 
 
 }

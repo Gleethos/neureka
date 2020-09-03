@@ -128,7 +128,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
                     );
                     tsrs[0] = reduction[0];
 
-                    reduction = AbstractOperationTypeImplementation.Utility._offsetted(tsrs, 1);
+                    reduction = Utility._offsetted(tsrs, 1);
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
                     );
