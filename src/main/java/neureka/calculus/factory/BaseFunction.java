@@ -17,7 +17,8 @@ import java.util.List;
  * allow for overloading the '()' operator in different
  * JVM languages...
  */
-public abstract class BaseFunction implements Function {
+public abstract class BaseFunction implements Function
+{
 
     @Override
     public double call(double input){

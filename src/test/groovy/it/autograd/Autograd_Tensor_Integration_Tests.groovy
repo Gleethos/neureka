@@ -144,13 +144,13 @@ class Autograd_Tensor_Integration_Tests extends Specification
 
     def 'A tensor used as derivative within a computation graph will throw exception when trying to deleting it.'()
     {
-        given : 'A tensor "a" requiring autograd.'
+        given : 'A new tensor "a" requiring autograd.'
             Tsr a = new Tsr(1).setRqsGradient(true)
 
         and : 'A second tensor "b".'
             Tsr b = new Tsr(2)
 
-        when : 'Both tensors are being multiplied.'
+        when : 'Both tensors are being multiplied via the "dot" method.'
             Tsr c = a.dot(b)
 
         and : 'One tries to delete tensor "b"...'
