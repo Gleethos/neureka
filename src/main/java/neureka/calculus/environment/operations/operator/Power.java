@@ -545,19 +545,19 @@ public class Power extends OperationType
                             }
                     ).setADAgentCreator(
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-            {
-                Tsr derivv = (Tsr)call.getAt("derivative");
+                        {
+                            Tsr derivv = (Tsr)call.getAt("derivative");
                             Function mul = Function.Detached.MUL;
                             if (
                                 derivv != null
                             ) {
-            return new ADAgent(
-                            derivv
-                   ).withForward(
-                            ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
-                   ).withBackward(
-                           null
-                   );
+                                return new ADAgent(
+                                        derivv
+                                    ).withForward(
+                                        ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                                    ).withBackward(
+                                        null
+                                    );
                             }
                             Tsr[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
@@ -569,15 +569,15 @@ public class Power extends OperationType
                             {
                                 Tsr deriv = f.derive(inputs, d);
                                 return new ADAgent(
-                            deriv
-).withForward(
-                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-).withBackward(
-                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-);
+                                        deriv
+                                    ).withForward(
+                                        (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                                    ).withBackward(
+                                        (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+                                    );
                             }
                         }
-        ).setCallHock(
+                    ).setCallHock(
                             ( caller, call ) -> null
                     ).setRJAgent(
                             ( call, goDeeperWith ) -> null
