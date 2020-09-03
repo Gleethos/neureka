@@ -37,7 +37,8 @@ public class Subtraction extends AbstractOperationType
                 }
         );
 
-        OperationTypeImplementation.RecursiveJunctionAgent rja = (call, goDeeperWith)->
+        OperationTypeImplementation.RecursiveJunctionAgent rja =
+        (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();
             Device device = call.getDevice();

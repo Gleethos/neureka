@@ -1,8 +1,12 @@
 
 package neureka.calculus.environment;
 
+import neureka.Tsr;
+import neureka.acceleration.Device;
+import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.environment.implementations.AbstractOperationTypeImplementation;
+import neureka.calculus.environment.implementations.GenericImplementation;
 import neureka.calculus.environment.operations.OperationContext;
 
 import java.util.LinkedHashMap;
@@ -28,7 +32,8 @@ public abstract class AbstractOperationType implements OperationType
     protected boolean _isCommutative;
     protected boolean _isAssociative;
 
-    private final Map<Class, AbstractOperationTypeImplementation> _implementations = new LinkedHashMap<>();
+    private final Map<Class, OperationTypeImplementation> _implementations = new LinkedHashMap<>();
+    private final OperationTypeImplementation _defaultImplementation;
 
     public AbstractOperationType(
             String function,
@@ -65,6 +70,99 @@ public abstract class AbstractOperationType implements OperationType
                 OperationContext.instance().getLookup().put(operator.replace((""+((char)187)),">>"), this);
             }
         }
+
+        _defaultImplementation = new GenericImplementation("default")
+                .setADAnalyzer(
+                        call -> true
+                ).setADAgentCreator(
+                        (Function f, ExecutionCall<Device> call, boolean forward ) ->
+                        {
+                            Tsr derivv = (Tsr)call.getAt("derivative");
+                            Function mul = Function.Detached.MUL;
+                            if (
+                                    derivv != null
+                            ) {
+                                return new ADAgent(
+                                        derivv
+                                ).withForward(
+                                        ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, derivv})
+                                ).withBackward(
+                                        null
+                                );
+                            }
+                            Tsr[] inputs = call.getTensors();
+                            int d = call.getDerivativeIndex();
+                            if( forward )
+                            {
+                                Tsr deriv = f.derive(inputs, d);
+                                return new ADAgent(
+                                        deriv
+                                ).withForward(
+                                        ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
+                                ).withBackward(
+                                        null
+                                );
+                            }
+                            else
+                            {
+                                Tsr deriv = f.derive(inputs, d);
+                                return new ADAgent(
+                                        deriv
+                                ).withForward(
+                                        (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                                ).withBackward(
+                                        (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+                                );
+                            }
+                        }
+                ).setCallHock(
+                        (caller, call) -> null
+                ).setRJAgent(
+                        (call, goDeeperWith)->
+                        {
+                            Tsr[] tsrs = call.getTensors();
+                            Device device = call.getDevice();
+                            int d = call.getDerivativeIndex();
+                            OperationType type = call.getType();
+
+                            Tsr alternative = null;
+                            if (tsrs.length > 3) {
+                                if (d < 0) {
+                                    Tsr[] reduction = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
+                                    alternative = goDeeperWith.apply(
+                                            new ExecutionCall<Device>(device, reduction, d, type)
+                                    );
+                                    tsrs[0] = reduction[0];
+
+                                    reduction = AbstractOperationTypeImplementation.Utility._offsetted(tsrs, 1);
+                                    alternative = goDeeperWith.apply(
+                                            new ExecutionCall<Device>(device, reduction, d, type)
+                                    );
+                                    tsrs[0] = reduction[0];
+                                } else {
+                                    tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue((d==0)?1.0f:-1.0f);
+                                }
+                                return alternative;
+                            } else {
+                                return alternative;
+                            }
+                        }
+                ).setDrainInstantiation(
+                        call -> {
+                            Tsr[] tsrs = call.getTensors();
+                            Device device = call.getDevice();
+                            if ( tsrs[0] == null ) // Creating a new tensor:
+                            {
+                                int[] shp = tsrs[1].getNDConf().shape();
+                                Tsr output = new Tsr( shp, 0.0 );
+                                output.setIsVirtual(false);
+                                device.add(output);
+                                tsrs[0] = output;
+                            }
+                            return call;
+                        }
+                );
+
     }
 
     public abstract double calculate(double[] inputs, int j, int d, List<Function> src);
