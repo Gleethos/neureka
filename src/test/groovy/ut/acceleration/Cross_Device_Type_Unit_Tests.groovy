@@ -6,7 +6,6 @@ import neureka.acceleration.Device
 import neureka.acceleration.host.HostCPU
 import neureka.acceleration.opencl.OpenCLDevice
 import neureka.calculus.environment.ExecutionCall
-import neureka.calculus.environment.OperationType
 import neureka.calculus.environment.OperationTypeImplementation
 import spock.lang.Specification
 

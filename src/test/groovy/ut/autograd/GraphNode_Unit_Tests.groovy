@@ -6,7 +6,7 @@ import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
 import neureka.calculus.Function
 import neureka.calculus.environment.ExecutionCall
-import neureka.calculus.environment.OperationType
+import neureka.calculus.environment.AbstractOperationType
 import spock.lang.Specification
 
 import java.util.function.Supplier
@@ -40,7 +40,7 @@ class GraphNode_Unit_Tests extends Specification
             Tsr payload = Mock( Tsr )
             Tsr[] inputs = new Tsr[]{ Mock(Tsr), Mock(Tsr), Mock(Tsr) }
             Supplier<Tsr> supplier = () -> payload
-            OperationType type = Mock( OperationType )
+            AbstractOperationType type = Mock( AbstractOperationType )
             Function function = Mock( Function )
             Object context = Mock( ExecutionCall )
             Device device = Mock( Device )

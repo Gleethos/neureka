@@ -6,6 +6,7 @@ import neureka.acceleration.host.execution.HostExecutor;
 import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
+import neureka.calculus.environment.AbstractOperationType;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Contract;
 import java.util.List;
 
 
-public class Multiplication extends OperationType {
+public class Multiplication extends AbstractOperationType {
 
 
     private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
@@ -506,7 +507,7 @@ public class Multiplication extends OperationType {
                 }
         );
 
-        new OperationType(
+        new AbstractOperationType(
                 "", ((char) 171) + "*", 3, true, false, false, false
 ){
             @Override
@@ -607,7 +608,7 @@ public class Multiplication extends OperationType {
                     }
             );
 
-        new OperationType(
+        new AbstractOperationType(
                 "", "*" + ((char) 187), 3, true, false, false, false
 ){
             @Override

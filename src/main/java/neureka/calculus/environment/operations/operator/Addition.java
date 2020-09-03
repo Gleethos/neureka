@@ -6,6 +6,7 @@ import neureka.acceleration.host.execution.HostExecutor;
 import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
+import neureka.calculus.environment.AbstractOperationType;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
-public class Addition extends OperationType {
+public class Addition extends AbstractOperationType {
 
     private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
             (inputs, d) -> {
@@ -431,7 +432,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
         //__________________________
         // RELATED OPERATION TYPES :
 
-        new OperationType(
+        new AbstractOperationType(
                 "", ((char) 171) + "+", 3, true, false, false, false
 ){
             @Override
@@ -440,7 +441,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
             }
         }.setImplementation(Broadcast.class, _broadcast);
 
-        new OperationType(
+        new AbstractOperationType(
                 "", "+" + ((char) 187), 3, true, false, false, false
 ){
             @Override
@@ -451,7 +452,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
 
         // Convolutoion:
 
-        new OperationType(
+        new AbstractOperationType(
                 "add", "a", 2, true, false, false, false
 ){
             @Override
@@ -527,7 +528,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
             }
         );
 
-        new OperationType(
+        new AbstractOperationType(
                 "", ((char) 171) + "a", 3, true, false, false, false
         ) {
             @Override
@@ -535,7 +536,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
             return src.get(0).call( inputs, j );
             }
         };
-        new OperationType(
+        new AbstractOperationType(
                 "", "a" + ((char) 187), 3, true, false, false, false
         ) {
             @Override

@@ -3,7 +3,7 @@ package neureka.acceleration.opencl.execution;
 import neureka.Neureka;
 import neureka.acceleration.opencl.OpenCLDevice;
 import neureka.calculus.environment.ExecutorFor;
-import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.AbstractOperationType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -75,7 +75,7 @@ public class CLExecutor implements ExecutorFor<OpenCLDevice>
             String kernelSource,
             String activationSource,
             String differentiationSource,
-            OperationType type
+            AbstractOperationType type
     ) {
         _lambda = lambda;
         _arity = arity;
@@ -113,7 +113,7 @@ public class CLExecutor implements ExecutorFor<OpenCLDevice>
             String kernelSource,
             String activationSource,
             String differentiationSource,
-            OperationType type
+            AbstractOperationType type
     ) {
         Map<String, String> code = new HashMap<>();
         String preName = templateName.replace("template", "");

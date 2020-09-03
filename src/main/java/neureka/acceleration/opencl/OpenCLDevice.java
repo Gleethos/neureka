@@ -436,7 +436,7 @@ public class OpenCLDevice extends AbstractDevice
     protected void _enqueue(Tsr[] tsrs, int d, OperationType type)
     {
         ExecutionCall<OpenCLDevice> call =
-                new ExecutionCall<>(
+                new ExecutionCall<OpenCLDevice>(
                         this,
                         tsrs,
                         d,

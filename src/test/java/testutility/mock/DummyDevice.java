@@ -3,7 +3,6 @@ package testutility.mock;
 import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.calculus.environment.ExecutionCall;
-import neureka.calculus.environment.OperationType;
 
 import java.util.Collection;
 

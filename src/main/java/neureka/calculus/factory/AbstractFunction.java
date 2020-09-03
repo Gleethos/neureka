@@ -4,12 +4,9 @@ import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.acceleration.host.HostCPU;
 import neureka.calculus.Function;
+import neureka.calculus.environment.AbstractOperationType;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.operations.function.*;
-import neureka.calculus.environment.operations.indexer.Product;
-import neureka.calculus.environment.operations.indexer.Summation;
-import neureka.calculus.environment.operations.operator.*;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 import neureka.calculus.factory.components.FunctionConstant;
@@ -25,7 +22,7 @@ import neureka.calculus.environment.implementations.*;
 
 public abstract class AbstractFunction extends BaseFunction
 {
-    private final OperationType _type;
+    private final AbstractOperationType _type;
     private final boolean _isFlat;
     private final boolean _doAD;
     private final List<Function> _src;
@@ -38,7 +35,7 @@ public abstract class AbstractFunction extends BaseFunction
      * @param sources
      * @param doAD
      */
-    protected AbstractFunction( OperationType type, List<Function> sources, boolean doAD )
+    protected AbstractFunction(AbstractOperationType type, List<Function> sources, boolean doAD )
     {
         if( type.getArity() >= 0 && sources.size() != type.getArity() ) {
             String tip = ( type.isIndexer() )
@@ -83,7 +80,7 @@ public abstract class AbstractFunction extends BaseFunction
     }
 
     @Override
-    public OperationType type() {
+    public AbstractOperationType type() {
         return _type;
     }
 

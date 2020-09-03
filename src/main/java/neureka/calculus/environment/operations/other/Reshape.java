@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
+import neureka.calculus.environment.AbstractOperationType;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.GenericImplementation;
@@ -14,7 +15,7 @@ import neureka.ndim.config.AbstractNDC;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Reshape extends OperationType
+public class Reshape extends AbstractOperationType
 {
 
     public Reshape()

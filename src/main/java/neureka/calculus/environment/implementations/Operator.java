@@ -2,7 +2,7 @@ package neureka.calculus.environment.implementations;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.calculus.environment.Type;
+import neureka.calculus.environment.OperationType;
 import org.jetbrains.annotations.Contract;
 
 public class Operator extends AbstractOperationTypeImplementation<Operator>
@@ -27,7 +27,7 @@ public class Operator extends AbstractOperationTypeImplementation<Operator>
     public static void operate(
             Tsr t0_drn, Tsr t1_src, Tsr t2_src,
             int d, int i, int end,
-            Type.PrimaryNDXConsumer operation
+            OperationType.PrimaryNDXConsumer operation
     ) {
         if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
             ((double[])t0_drn.getValue())[0] = operation.execute( new int[t0_drn.rank()] );

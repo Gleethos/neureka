@@ -1,6 +1,6 @@
 package ut.calculus
 
-import neureka.calculus.environment.OperationType
+import neureka.calculus.environment.AbstractOperationType
 import neureka.calculus.environment.operations.OperationContext
 import spock.lang.Specification
 
@@ -9,7 +9,7 @@ class OperationContext_Unit_Tests extends Specification
     def 'OperationContext instances can be created by cloning from Singleton instance.'() {
 
         given : 'The singleton OperationContext instance and a OperationType mock.'
-            def mockOperation = Mock(OperationType)
+            def mockOperation = Mock(AbstractOperationType)
             def context = OperationContext.instance()
 
         when : 'A clone is being created by calling "clone()" on the given context...'

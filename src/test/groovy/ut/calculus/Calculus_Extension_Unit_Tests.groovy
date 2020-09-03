@@ -6,7 +6,7 @@ import neureka.acceleration.Device
 import neureka.autograd.ADAgent
 import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
-import neureka.calculus.environment.OperationType
+import neureka.calculus.environment.AbstractOperationType
 import neureka.calculus.environment.OperationTypeImplementation
 import neureka.calculus.factory.assembly.FunctionNode
 import neureka.calculus.factory.components.FunctionInput
@@ -26,7 +26,7 @@ class Calculus_Extension_Unit_Tests extends Specification
             Neureka.instance().reset()
 
         and : 'A new mock operation type is being created.'
-            def type = Mock(OperationType)
+            def type = Mock(AbstractOperationType)
 
         and : 'A list of mocked function source nodes.'
             def children = [Mock(FunctionInput), Mock(FunctionInput)]
@@ -80,7 +80,7 @@ class Calculus_Extension_Unit_Tests extends Specification
             def agent = Mock(ADAgent)
 
         and : 'A new operation type with a new implementation.'
-            def type = Mock(OperationType)
+            def type = Mock(AbstractOperationType)
 
         and : 'A list of function source nodes.'
             def children = [Mock(FunctionInput), Mock(FunctionInput)]

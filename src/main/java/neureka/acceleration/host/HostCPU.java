@@ -5,8 +5,8 @@ import neureka.Tsr;
 import neureka.acceleration.AbstractDevice;
 import neureka.acceleration.Device;
 import neureka.acceleration.host.execution.HostExecutor;
-import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.ExecutionCall;
 
 import java.util.Collection;
 import java.util.concurrent.*;

@@ -1,6 +1,7 @@
 package neureka.calculus.factory.assembly;
 
 import neureka.calculus.Function;
+import neureka.calculus.environment.AbstractOperationType;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.factory.components.FunctionConstant;
 import neureka.calculus.factory.components.FunctionInput;
@@ -15,7 +16,7 @@ public class FunctionBuilder {
      * @param doAD
      * @return
      */
-    public static Function build(OperationType type, int size, boolean doAD) {
+    public static Function build(AbstractOperationType type, int size, boolean doAD) {
         if (type.getId() == 18) {
             size = 2;
         } else if ( type.getOperator().equals(",") ) {

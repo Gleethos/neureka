@@ -6,6 +6,7 @@ import neureka.acceleration.host.execution.HostExecutor;
 import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
+import neureka.calculus.environment.AbstractOperationType;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
-public class Power extends OperationType
+public class Power extends AbstractOperationType
 {
 
     private final static DefaultOperatorCreator<TertiaryNDXConsumer> _creator = (inputs, d)->
@@ -509,13 +510,13 @@ public class Power extends OperationType
         //__________________________
         // RELATED OPERATION TYPES :
 
-        new OperationType("inv_power_left", ((char) 171) + "^", 3, true, false, false, false) {
+        new AbstractOperationType("inv_power_left", ((char) 171) + "^", 3, true, false, false, false) {
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src) {
             return src.get(0).call( inputs, j );
             }
         };
-        new OperationType("inv_power_right", "^" + ((char) 187), 3, true, false, false, false) {
+        new AbstractOperationType("inv_power_right", "^" + ((char) 187), 3, true, false, false, false) {
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src) {
             return src.get(0).call( inputs, j );
@@ -524,7 +525,7 @@ public class Power extends OperationType
 
         // Convolution:
 
-        new OperationType(
+        new AbstractOperationType(
                 "power", "p", 2, true, false, false, false
 ){
             @Override
@@ -601,13 +602,13 @@ public class Power extends OperationType
                 }
         );
 
-        new OperationType("", ((char) 171) + "p", 3, true, false, false, false) {
+        new AbstractOperationType("", ((char) 171) + "p", 3, true, false, false, false) {
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src) {
             return src.get(0).call( inputs, j );
             }
         };
-        new OperationType("", "p" + ((char) 187), 3, true, false, false, false) {
+        new AbstractOperationType("", "p" + ((char) 187), 3, true, false, false, false) {
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src) {
             return src.get(0).call( inputs, j );

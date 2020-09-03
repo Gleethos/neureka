@@ -1,5 +1,6 @@
 package neureka.calculus.factory.assembly;
 
+import neureka.calculus.environment.AbstractOperationType;
 import neureka.calculus.environment.OperationType;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public class FunctionParser
 {
     public static int numberOfOperationsWithin(final List<String> operations) {
         int counter = 0;
-        for(OperationType ot : OperationType.instances()){
+        for(AbstractOperationType ot : OperationType.instances()){
             if (operations.contains(ot.getOperator())) ++counter;
         }
         return counter;
@@ -158,23 +159,23 @@ public class FunctionParser
         if ( exp.length() == 0 ) return "";
         if ( exp.equals("()") ) return "";
         exp = exp.trim();
-        exp = exp.replace("sigmoid", "sig");//Function.TYPES.REGISTER(1));
-        exp = exp.replace("quadratic", "quad");//Function.TYPES.REGISTER(3));
-        exp = exp.replace("quadr", "quad");//Function.TYPES.REGISTER(3));
-        exp = exp.replace("lig", "softplus");//Function.TYPES.REGISTER(4));
-        exp = exp.replace("ligmoid", "softplus");//Function.TYPES.REGISTER(4));
-        exp = exp.replace("splus", "softplus");//Function.TYPES.REGISTER(4));
-        exp = exp.replace("spls", "softplus");//Function.TYPES.REGISTER(4));
-        exp = exp.replace("ligm", "softplusd");//Function.TYPES.REGISTER(4));
-        exp = exp.replace("identity", "idy");//Function.TYPES.REGISTER(5));
-        exp = exp.replace("ident", "idy");//Function.TYPES.REGISTER(5));
-        exp = exp.replace("self", "idy");//Function.TYPES.REGISTER(5));
-        exp = exp.replace("copy", "idy");//Function.TYPES.REGISTER(5));
-        exp = exp.replace("gaussian", "gaus");//Function.TYPES.REGISTER(6));
-        exp = exp.replace("gauss", "gaus");//Function.TYPES.REGISTER(6));
-        exp = exp.replace("absolute", "abs");//Function.TYPES.REGISTER(7));
-        exp = exp.replace("summation", "sum");//Function.TYPES.REGISTER(10));
-        exp = exp.replace("product", "prod");//Function.TYPES.REGISTER(11));
+        exp = exp.replace("sigmoid", "sig");
+        exp = exp.replace("quadratic", "quad");
+        exp = exp.replace("quadr", "quad");
+        exp = exp.replace("lig", "softplus");
+        exp = exp.replace("ligmoid", "softplus");
+        exp = exp.replace("splus", "softplus");
+        exp = exp.replace("spls", "softplus");
+        exp = exp.replace("ligm", "softplusd");
+        exp = exp.replace("identity", "idy");
+        exp = exp.replace("ident", "idy");
+        exp = exp.replace("self", "idy");
+        exp = exp.replace("copy", "idy");
+        exp = exp.replace("gaussian", "gaus");
+        exp = exp.replace("gauss", "gaus");
+        exp = exp.replace("absolute", "abs");
+        exp = exp.replace("summation", "sum");
+        exp = exp.replace("product", "prod");
 
         int bracketDepth = 0;
         for (int Ei = 0; Ei < exp.length(); ++Ei) {
@@ -209,7 +210,7 @@ public class FunctionParser
     public static String assumptionBasedOn(String expression){
         double largest = -1;
         int best = 0;
-        for (int i=0; i<OperationType.COUNT(); i++){
+        for (int i = 0; i< OperationType.COUNT(); i++){
             double s = similarity(expression, OperationType.instance(i).getOperator());
             if (largest==-1) largest = s;
             else if (s > largest) {

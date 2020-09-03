@@ -4,7 +4,6 @@ import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
-import neureka.calculus.environment.implementations.AbstractOperationTypeImplementation;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -27,7 +26,7 @@ public class ExecutionCall< DeviceType extends Device >
     private final int _d;
     private int _j = -1;
     private final OperationType _type;
-    private OperationTypeImplementation<AbstractOperationTypeImplementation> _implementation;
+    private OperationTypeImplementation<OperationTypeImplementation> _implementation;
 
     private Map<String, Object> _context;
 
@@ -99,7 +98,7 @@ public class ExecutionCall< DeviceType extends Device >
     }
     
     public ExecutionCall<DeviceType> withNew(Tsr[] tensors) {
-        return new ExecutionCall<>(_device, tensors, _d, _j, _type);
+        return new ExecutionCall<DeviceType>(_device, tensors, _d, _j, _type);
     }
     
     public <T> T getAt(Class<T> type){

@@ -1,6 +1,6 @@
 package neureka.calculus.environment.operations;
 
-import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.AbstractOperationType;
 import neureka.calculus.environment.operations.convolution.XMultiplication;
 import neureka.calculus.environment.operations.function.*;
 import neureka.calculus.environment.operations.indexer.Product;
@@ -73,8 +73,8 @@ public class OperationContext implements Cloneable
         _INSTANCES.set(context);
     }
 
-    private final Map<String, OperationType> _LOOKUP;
-    private final ArrayList<OperationType> _REGISTER;
+    private final Map<String, AbstractOperationType> _LOOKUP;
+    private final ArrayList<AbstractOperationType> _REGISTER;
     private int _ID;
 
     private OperationContext(){
@@ -86,14 +86,14 @@ public class OperationContext implements Cloneable
     /**
      * @return A mapping between OperationType identifiers and their corresponding instances.
      */
-    public Map<String, OperationType> getLookup(){
+    public Map<String, AbstractOperationType> getLookup(){
         return _LOOKUP;
     }
 
     /**
      * @return A list of all OperationType instances.
      */
-    public List<OperationType> getRegister(){
+    public List<AbstractOperationType> getRegister(){
         return _REGISTER;
     }
 
@@ -108,15 +108,15 @@ public class OperationContext implements Cloneable
         _ID++;
     }
 
-    public List<OperationType> instances(){
+    public List<AbstractOperationType> instances(){
         return getRegister();
     }
 
-    public OperationType instance(int index){
+    public AbstractOperationType instance(int index){
         return getRegister().get(index);
     }
 
-    public OperationType instance(String identifier){
+    public AbstractOperationType instance(String identifier){
         return getLookup().getOrDefault(identifier, null);
     }
 

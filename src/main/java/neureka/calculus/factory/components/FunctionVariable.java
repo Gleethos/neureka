@@ -1,11 +1,8 @@
 package neureka.calculus.factory.components;
 
 import neureka.Tsr;
-import neureka.acceleration.Device;
-import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
-import neureka.calculus.environment.ExecutionCall;
-import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.AbstractOperationType;
 import neureka.calculus.factory.BaseFunction;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
@@ -33,7 +30,7 @@ public class FunctionVariable extends BaseFunction implements GradientProvider {
     }
 
     @Override
-    public OperationType type() {
+    public AbstractOperationType type() {
         return null;
     }
 

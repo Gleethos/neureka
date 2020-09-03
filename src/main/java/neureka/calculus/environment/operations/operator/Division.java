@@ -6,6 +6,7 @@ import neureka.acceleration.host.execution.HostExecutor;
 import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
+import neureka.calculus.environment.AbstractOperationType;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Contract;
 import java.util.List;
 
 
-public class Division extends OperationType
+public class Division extends AbstractOperationType
 {
     private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
     (inputs, d) -> {
@@ -469,7 +470,7 @@ public class Division extends OperationType
         // RELATED OPERATION TYPES :
 
 
-        new OperationType(
+        new AbstractOperationType(
                 "inv_division_left", ((char) 171) + "/", 3, true, false, false, false
         ) {
             @Override
@@ -477,7 +478,7 @@ public class Division extends OperationType
             return src.get(0).call( inputs, j );
             }
         };
-        new OperationType(
+        new AbstractOperationType(
                 "inv_division_right", "/" + ((char) 187), 3, true, false, false, false
         ) {
             @Override
@@ -488,7 +489,7 @@ public class Division extends OperationType
 
         // Convolution:
 
-        new OperationType(
+        new AbstractOperationType(
                 "divide", "d", 2, true, false, false, false
 ){
             @Override
@@ -565,7 +566,7 @@ public class Division extends OperationType
                         }
                 );
 
-        new OperationType(
+        new AbstractOperationType(
                 "", ((char) 171) + "d", 3, true, false, false, false
         ) {
             @Override
@@ -584,7 +585,7 @@ public class Division extends OperationType
                     return "(" + reconstructed + ")";
                 }
         );
-        new OperationType(
+        new AbstractOperationType(
                 "", "d" + ((char) 187), 3, true, false, false, false
         ) {
             @Override

@@ -9,13 +9,14 @@ import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.environment.ExecutionCall;
+import neureka.calculus.environment.AbstractOperationType;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.Activation;
 import neureka.calculus.environment.implementations.Convolution;
 
 import java.util.List;
 
-public class CopyRight extends OperationType {
+public class CopyRight extends AbstractOperationType {
 
     public CopyRight()
     {

@@ -6,6 +6,7 @@ import neureka.acceleration.host.execution.HostExecutor;
 import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
+import neureka.calculus.environment.AbstractOperationType;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.Activation;
@@ -13,7 +14,7 @@ import neureka.calculus.environment.implementations.Scalarization;
 
 import java.util.List;
 
-public class CopyLeft extends OperationType {
+public class CopyLeft extends AbstractOperationType {
 
     public CopyLeft(){
 

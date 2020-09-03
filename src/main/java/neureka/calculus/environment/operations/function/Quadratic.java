@@ -6,15 +6,14 @@ import neureka.acceleration.host.execution.HostExecutor;
 import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
+import neureka.calculus.environment.AbstractOperationType;
 import neureka.calculus.environment.ExecutionCall;
-import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.implementations.*;
-import neureka.calculus.factory.assembly.FunctionBuilder;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
-public class Quadratic extends OperationType
+public class Quadratic extends AbstractOperationType
 {
 
     private DefaultOperatorCreator<TertiaryNDXConsumer> _creator =

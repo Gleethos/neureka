@@ -6,6 +6,7 @@ import neureka.acceleration.host.execution.HostExecutor;
 import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
+import neureka.calculus.environment.AbstractOperationType;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
@@ -15,7 +16,7 @@ import neureka.calculus.factory.assembly.FunctionBuilder;
 
 import java.util.List;
 
-public class XMultiplication extends OperationType
+public class XMultiplication extends AbstractOperationType
 {
 
     public XMultiplication(){
@@ -218,7 +219,7 @@ public class XMultiplication extends OperationType
                         )
                 )
         );
-        new OperationType(
+        new AbstractOperationType(
                 "inv_convolve_mul_left", ((char) 171) + "x",
                 3,
                 true,
@@ -246,7 +247,7 @@ public class XMultiplication extends OperationType
                     }
                 );
 
-        new OperationType(
+        new AbstractOperationType(
                 "inv_convolve_mul_right", "x" + ((char) 187),
                 3,
                 true,

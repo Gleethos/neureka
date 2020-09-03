@@ -20,7 +20,7 @@ public class OperationTypeFactory
 
     }
 
-    public OperationType create(){
+    public AbstractOperationType create(){
         List<String> missing = new ArrayList<>();
         if( _name == null ) missing.add("name");
         if( _name == null ) missing.add("identifier");
@@ -30,11 +30,11 @@ public class OperationTypeFactory
         if( _name == null ) missing.add("isConvection");
         if( _name == null ) missing.add("isCommutative");
         if( _name == null ) missing.add("isAssociative");
-        OperationType result = null;
+        AbstractOperationType result = null;
         if( !missing.isEmpty() ) {
             throw new IllegalStateException("Factory not satisfied! The following properties are missing: '"+ String.join(", ", missing) +"'");
         } else {
-            result = new OperationType(
+            result = new AbstractOperationType(
                     _name,
                     _identifier,
                     _arity,

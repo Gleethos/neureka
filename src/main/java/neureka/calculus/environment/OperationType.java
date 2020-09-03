@@ -1,178 +1,103 @@
-
 package neureka.calculus.environment;
 
-import neureka.calculus.Function;
+import neureka.Tsr;
 import neureka.calculus.environment.implementations.AbstractOperationTypeImplementation;
 import neureka.calculus.environment.operations.OperationContext;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class OperationType implements Type
+public interface OperationType
 {
-    public static List<OperationType> instances(){
+    public static List<AbstractOperationType> instances(){
         return OperationContext.instance().getRegister();
     }
 
-    public static OperationType instance( int index ) {
+    public static AbstractOperationType instance(int index ) {
         return OperationContext.instance().getRegister().get(index);
     }
 
-    public static OperationType instance(String identifier){
-        return OperationContext.instance().getLookup().getOrDefault( identifier, null );
-    }
-
-    private Stringifier _stringifier;
-
-    protected int _id;
-    protected String _function;
-    protected String _operator;
-    /**
-     * Arity is the number of arguments or operands
-     * that this function or operation takes.
-     */
-    protected int _arity;
-    protected boolean _isOperator;
-    protected boolean _isIndexer;
-    protected boolean _isCommutative;
-    protected boolean _isAssociative;
-
-    private final Map<Class, AbstractOperationTypeImplementation> _implementations = new LinkedHashMap<>();
-
-    public OperationType(
-            String function,
-            String operator,
-            int arity,
-            boolean isOperator,
-            boolean isIndexer,
-            boolean isCommutative,
-            boolean isAssociative
-    ) {
-        _function = function;
-        _arity = arity;
-        _id = OperationContext.instance().getID();
-        OperationContext.instance().incrementID();
-        _operator = operator;
-        _isOperator = isOperator;
-        _isIndexer = isIndexer;
-        _isCommutative = isCommutative;
-        _isAssociative = isAssociative;
-
-        OperationContext.instance().getRegister().add(this);
-        OperationContext.instance().getLookup().put(operator, this);
-        OperationContext.instance().getLookup().put(operator.toLowerCase(), this);
-        if (
-                operator
-                        .replace((""+((char)171)), "")
-                        .replace((""+((char)187)), "")
-                        .matches("[a-z]")
-        ) {
-            if (operator.contains((""+((char)171)))) {
-                OperationContext.instance().getLookup().put(operator.replace((""+((char)171)), "<<"), this);
-            }
-            if (operator.contains((""+((char)187)))) {
-                OperationContext.instance().getLookup().put(operator.replace((""+((char)187)),">>"), this);
-            }
-        }
-    }
-
-    public abstract double calculate(double[] inputs, int j, int d, List<Function> src);
-
-    public static OperationType[] ALL(){
-        return OperationContext.instance().getRegister().toArray(new OperationType[0]);
+    public static AbstractOperationType[] ALL(){
+        return OperationContext.instance().getRegister().toArray(new AbstractOperationType[0]);
     }
 
     public static int COUNT(){
         return OperationContext.instance().getID();
     }
 
-    //==================================================================================================================
 
-    @Override
-    public <T extends AbstractOperationTypeImplementation> T getImplementation(Class<T> type){
-        return (T) _implementations.get(type);
-    }
-    @Override
-    public <T extends AbstractOperationTypeImplementation> boolean supportsImplementation(Class<T> type){
-        return _implementations.containsKey(type);
-    }
-    @Override
-    public <T extends AbstractOperationTypeImplementation> Type setImplementation(Class<T> type, T instance) {
-        _implementations.put(type, instance);
-        return this;
+    public static AbstractOperationType instance(String identifier){
+        return OperationContext.instance().getLookup().getOrDefault( identifier, null );
     }
 
-    @Override
-    public Type forEachImplementation( Consumer<OperationTypeImplementation> action ){
-        _implementations.values().forEach(action);
-        return this;
+    interface TertiaryNDXConsumer {
+        double execute( int[] t0Idx, int[] t1Idx, int[] t2Idx );
     }
 
-    //==================================================================================================================
-
-    @Override
-    public Type setStringifier(Stringifier stringifier) {
-        _stringifier = stringifier;
-        return this;
+    interface SecondaryNDXConsumer {
+        double execute( int[] t0Idx, int[] t1Idx );
     }
 
-    @Override
-    public Stringifier getStringifier() {
-        return _stringifier;
+    interface PrimaryNDXConsumer {
+        double execute( int[] t0Idx );
+    }
+
+    //---
+
+    interface DefaultOperatorCreator<T> {
+        T create(Tsr[] inputs, int d);
+    }
+
+    interface ScalarOperatorCreator<T> {
+        T create(Tsr[] inputs, double scalar, int d);
     }
 
     //==================================================================================================================
 
-    @Override
-    public OperationTypeImplementation implementationOf(ExecutionCall call) {
-        for( OperationTypeImplementation te : _implementations.values() ) {
-            if ( te.getSuitabilityChecker().canHandle(call) ) return te;
-        }
-        return null;
-    }
+    OperationTypeImplementation implementationOf(ExecutionCall call);
 
     //==================================================================================================================
 
-    @Override
-    public String getFunction(){
-        return _function;
+    String getFunction();
+
+    //==================================================================================================================
+
+    <T extends AbstractOperationTypeImplementation> T getImplementation(Class<T> type );
+    <T extends AbstractOperationTypeImplementation> boolean supportsImplementation(Class<T> type );
+    <T extends AbstractOperationTypeImplementation> OperationType setImplementation(Class<T> type, T instance );
+
+    OperationType forEachImplementation(Consumer<OperationTypeImplementation> action );
+
+    //==================================================================================================================
+
+    interface Stringifier{
+        String asString( List<String> children );
     }
 
-    @Override
-    public String getOperator(){
-        return _operator;
-    }
+    //---
 
-    @Override
-    public int getId(){
-        return _id;
-    }
+    OperationType setStringifier(Stringifier stringifier );
 
-    @Override
-    public int getArity(){
-        return _arity;
-    }
+    Stringifier getStringifier();
 
-    @Override
-    public boolean isOperator() {
-        return _isOperator;
-    }
+    //==================================================================================================================
 
-    @Override
-    public boolean isIndexer(){
-        return _isIndexer;
-    }
+    int getId();
+    
+    String getOperator();
 
-    @Override
-    public boolean isCommutative(){
-        return  _isCommutative;
-    }
+    /**
+     * Arity is the number of arguments or operands
+     * that this function or operation takes.
+     */
+    int getArity();
 
-    @Override
-    public boolean supports(Class implementation) {
-        return _implementations.containsKey(implementation);
-    }
+    boolean isOperator();
+
+    boolean isIndexer();
+    
+    boolean isCommutative();
+
+    boolean supports(Class implementation);
 
 }

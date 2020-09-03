@@ -7,7 +7,6 @@ import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.opencl.OpenCLDevice;
 import neureka.acceleration.opencl.OpenCLPlatform;
 import neureka.calculus.environment.ExecutionCall;
-import neureka.calculus.environment.OperationType;
 import neureka.calculus.factory.assembly.FunctionParser;
 
 import java.util.Arrays;

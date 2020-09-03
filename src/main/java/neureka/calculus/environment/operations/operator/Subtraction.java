@@ -6,6 +6,7 @@ import neureka.acceleration.host.execution.HostExecutor;
 import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
+import neureka.calculus.environment.AbstractOperationType;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
-public class Subtraction extends OperationType
+public class Subtraction extends AbstractOperationType
 {
 
     public Subtraction()
@@ -48,13 +49,13 @@ public class Subtraction extends OperationType
                 if (d < 0) {
                     Tsr[] reduction = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
                     alternative = goDeeperWith.apply(
-                            new ExecutionCall<>(device, reduction, d, type)
+                            new ExecutionCall<Device>(device, reduction, d, type)
                     );
                     tsrs[0] = reduction[0];
 
                     reduction = AbstractOperationTypeImplementation.Utility._offsetted(tsrs, 1);
                     alternative = goDeeperWith.apply(
-                            new ExecutionCall<>(device, reduction, d, type)
+                            new ExecutionCall<Device>(device, reduction, d, type)
                     );
                     tsrs[0] = reduction[0];
                 } else {
@@ -378,7 +379,7 @@ public class Subtraction extends OperationType
         //______________________
         // RELATED OPERATIONS :
 
-        new OperationType(
+        new AbstractOperationType(
                 "", ((char) 171) + "-", 3, true, false, false, false
         ) {
             @Override
@@ -386,7 +387,7 @@ public class Subtraction extends OperationType
             return src.get(0).call( inputs, j );
             }
         };
-        new OperationType(
+        new AbstractOperationType(
                 "", "-" + ((char) 187), 3, true, false, false, false
         ) {
             @Override
@@ -398,7 +399,7 @@ public class Subtraction extends OperationType
         // Convolution:
 
 
-        new OperationType(
+        new AbstractOperationType(
                 "", "s", 2, true, false, false, false
         ) {
             @Override
@@ -418,7 +419,7 @@ public class Subtraction extends OperationType
                 }
         );
 
-        new OperationType(
+        new AbstractOperationType(
                 "", ((char) 171) + "s", 3, true, false, false, false
         ) {
             @Override
@@ -426,7 +427,7 @@ public class Subtraction extends OperationType
             return src.get(0).call( inputs, j );
             }
         };
-        new OperationType(
+        new AbstractOperationType(
                 "", "s" + ((char) 187), 3, true, false, false, false
         ) {
             @Override

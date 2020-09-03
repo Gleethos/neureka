@@ -2,12 +2,9 @@
 package neureka.calculus;
 
 import neureka.Tsr;
-import neureka.acceleration.Device;
-import neureka.autograd.ADAgent;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
-import neureka.calculus.environment.ExecutionCall;
-import neureka.calculus.environment.OperationType;
+import neureka.calculus.environment.AbstractOperationType;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 import neureka.calculus.environment.Cache;
 
@@ -124,7 +121,7 @@ public interface Function
 
     int id();
 
-    OperationType type();
+    AbstractOperationType type();
 
     boolean dependsOn(int index);
 

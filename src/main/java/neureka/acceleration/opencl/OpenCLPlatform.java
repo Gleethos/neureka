@@ -2,9 +2,8 @@ package neureka.acceleration.opencl;
 
 import neureka.Neureka;
 import neureka.acceleration.opencl.execution.CLExecutor;
-import neureka.calculus.environment.ExecutionCall;
+import neureka.calculus.environment.AbstractOperationType;
 import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.OperationTypeImplementation;
 import org.jocl.*;
 import java.util.*;
 import neureka.calculus.environment.implementations.*;
@@ -102,7 +101,7 @@ public class OpenCLPlatform {
                     //===========================================================================
                     Map<String, String> code = new HashMap<>();
                     CLExecutor exec = null;
-                    for ( OperationType type : OperationType.ALL() ) {
+                    for ( AbstractOperationType type : OperationType.ALL() ) {
                         if (preName.contains("activation") && type.supportsImplementation(Activation.class)) {
                             exec = type.getImplementation(Activation.class).getExecutor(CLExecutor.class);
                         } else if (preName.contains("operator") && type.supportsImplementation(Operator.class)) {

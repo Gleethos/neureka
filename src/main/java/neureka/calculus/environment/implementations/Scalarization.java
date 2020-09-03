@@ -2,7 +2,7 @@ package neureka.calculus.environment.implementations;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.calculus.environment.Type;
+import neureka.calculus.environment.OperationType;
 import org.jetbrains.annotations.Contract;
 
 public class Scalarization extends AbstractOperationTypeImplementation< Scalarization >
@@ -23,7 +23,7 @@ public class Scalarization extends AbstractOperationTypeImplementation< Scalariz
     public static void scalarize (
             Tsr t0_drn,
             int i, int end,
-            Type.PrimaryNDXConsumer operation
+            OperationType.PrimaryNDXConsumer operation
     ) {
         int[] t0Shp = t0_drn.getNDConf().shape();
         int[] t0Idx = t0_drn.idx_of_i(i);
