@@ -32,7 +32,7 @@ public abstract class AbstractDevice implements Device, Component<Tsr>
     @Override
     public Device execute( ExecutionCall call )
     {
-        call = call.getImplementation().getDrainInstantiation().handle(call);
+        call = call.getImplementation().instantiateNewTensorsForExecutionIn(call);
         for ( Tsr t : call.getTensors() ) {
             if ( t == null ) throw new IllegalArgumentException(
                     "Device arguments may not be null!\n" +

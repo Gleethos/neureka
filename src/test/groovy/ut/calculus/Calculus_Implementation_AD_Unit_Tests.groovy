@@ -32,7 +32,7 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
             def call = Mock(ExecutionCall)
 
         when : 'A new ADAgent is being instantiated by calling the given implementation with these arguments...'
-            ADAgent agent = imp.ADAgentCreator.getADAgentOf(
+            ADAgent agent = imp.ADAgentSupplier.getADAgentOf(
                     function,
                     call,
                     true
@@ -43,7 +43,7 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         when : 'The agent generator is called once more with the forward flag set to false...'
-            agent = imp.ADAgentCreator.getADAgentOf(
+            agent = imp.ADAgentSupplier.getADAgentOf(
                     function,
                     call,
                     false
@@ -82,7 +82,7 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
             def call = Mock(ExecutionCall)
 
         when : 'A new ADAgent is being instantiated by calling the given implementation with these arguments...'
-            ADAgent agent = imp.ADAgentCreator.getADAgentOf(
+            ADAgent agent = imp.ADAgentSupplier.getADAgentOf(
                 function,
                 call,
                 true
@@ -93,7 +93,7 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         when : 'The agent generator is called once more with the forward flag set to false...'
-            agent = imp.ADAgentCreator.getADAgentOf(
+            agent = imp.ADAgentSupplier.getADAgentOf(
                 function,
                 call,
                 false
@@ -130,7 +130,7 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
             def call = Mock(ExecutionCall)
 
         when : 'A new ADAgent is being instantiated by calling the given implementation with these arguments...'
-            ADAgent agent = imp.ADAgentCreator.getADAgentOf(
+            ADAgent agent = imp.ADAgentSupplier.getADAgentOf(
                     function,
                     call,
                     true
@@ -141,7 +141,7 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
             exception.message == "Convolution of does not support forward-AD!"
 
         when : 'The agent generator is called once more with the forward flag set to false...'
-            agent = imp.ADAgentCreator.getADAgentOf(
+            agent = imp.ADAgentSupplier.getADAgentOf(
                 function,
                 call,
                 false
@@ -181,7 +181,7 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
             def call = Mock( ExecutionCall )
 
         when : 'A new ADAgent is being instantiated by calling the given implementation with these arguments...'
-            ADAgent agent = imp.ADAgentCreator.getADAgentOf(
+            ADAgent agent = imp.ADAgentSupplier.getADAgentOf(
                 function,
                 call,
                 true
@@ -192,7 +192,7 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
             exception.message == "Broadcast implementation does not support forward-AD!"
 
         when : 'The agent generator is called once more with the forward flag set to false...'
-            agent = imp.ADAgentCreator.getADAgentOf(
+            agent = imp.ADAgentSupplier.getADAgentOf(
                 function,
                 call,
                 false

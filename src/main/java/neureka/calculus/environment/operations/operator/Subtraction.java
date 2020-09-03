@@ -83,7 +83,7 @@ public class Subtraction extends AbstractOperationType
         Operator operator = new Operator()
                 .setADAnalyzer(
                         call -> true
-                ).setADAgentCreator(
+                ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
                         Tsr derivv = (Tsr)call.getAt("derivative");
@@ -207,7 +207,7 @@ public class Subtraction extends AbstractOperationType
         Scalarization scalarization = new Scalarization()
                 .setADAnalyzer(
                     call -> true
-                ).setADAgentCreator(
+                ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
                         Tsr derivv = (Tsr)call.getAt("derivative");
@@ -324,7 +324,7 @@ public class Subtraction extends AbstractOperationType
                 new Broadcast()
                         .setADAnalyzer(
                             call -> true
-                        ).setADAgentCreator(
+                        ).setADAgentSupplier(
                             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                             {
                                 Tsr derivv = (Tsr)call.getAt("derivative");

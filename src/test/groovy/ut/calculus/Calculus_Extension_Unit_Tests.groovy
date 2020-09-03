@@ -6,7 +6,7 @@ import neureka.acceleration.Device
 import neureka.autograd.ADAgent
 import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
-import neureka.calculus.environment.AbstractOperationType
+import neureka.calculus.environment.OperationType
 import neureka.calculus.environment.OperationTypeImplementation
 import neureka.calculus.factory.assembly.FunctionNode
 import neureka.calculus.factory.components.FunctionInput
@@ -26,7 +26,7 @@ class Calculus_Extension_Unit_Tests extends Specification
             Neureka.instance().reset()
 
         and : 'A new mock operation type is being created.'
-            def type = Mock(AbstractOperationType)
+            def type = Mock(OperationType)
 
         and : 'A list of mocked function source nodes.'
             def children = [Mock(FunctionInput), Mock(FunctionInput)]
@@ -36,9 +36,6 @@ class Calculus_Extension_Unit_Tests extends Specification
 
         and : 'A mocked operation implementation.'
             def implementation = Mock(OperationTypeImplementation)
-
-        and : 'A custom call hook for said implementation.'
-            def customCallHook = Mock(OperationTypeImplementation.InitialCallHook)
 
         when : 'A FunctionNode is being instantiated via the given mocks...'
             def function = new FunctionNode(type, children, false)
@@ -53,17 +50,16 @@ class Calculus_Extension_Unit_Tests extends Specification
 
         then : 'The custom call hook should be accessed as outlined below.'
             (1.._) * type.implementationOf(_) >> implementation
-            (1.._) * implementation.getCallHook() >> customCallHook
-            (1.._) * customCallHook.handle(_,_) >> output
+            (1.._) * implementation.handleInsteadOfDevice(_,_) >> output
 
         and : 'The mocked output tensor never returns the mock device because our custom call hook replaces execution.'
             0 * output.device() >> Mock(Device)
 
         and : 'The ADAnalyzer of the mock implementation will not be called because "doAD" is set to "false".'
-            0 * implementation.getADAnalyzer() >> Mock(OperationTypeImplementation.ADAnalyzer)
+            0 * implementation.isImplementationSuitableFor(_)
 
         and : 'The agent creator is never accessed because "doAD" is set to false.'
-            0 * implementation.getADAgentCreator()
+            0 * implementation.supplyADAgentFor(_,_,_)
 
         and : 'The result is the same as the mock tensor returned by the custom call hook.'
             result == output
@@ -76,11 +72,10 @@ class Calculus_Extension_Unit_Tests extends Specification
             Neureka.instance().reset()
 
         and : 'A mock agent.'
-            def agentSupplier = Mock(OperationTypeImplementation.ADAgentSupplier)
             def agent = Mock(ADAgent)
 
         and : 'A new operation type with a new implementation.'
-            def type = Mock(AbstractOperationType)
+            def type = Mock(OperationType)
 
         and : 'A list of function source nodes.'
             def children = [Mock(FunctionInput), Mock(FunctionInput)]
@@ -92,9 +87,6 @@ class Calculus_Extension_Unit_Tests extends Specification
 
         and : 'A mocked operation implementation.'
             def implementation = Mock(OperationTypeImplementation)
-
-        and : 'A custom call hook for said implementation.'
-            def customCallHook = Mock(OperationTypeImplementation.InitialCallHook)
 
         when : 'A FunctionNode is being instantiated via the given mocks...'
             def function = new FunctionNode(type, children, true)
@@ -109,8 +101,7 @@ class Calculus_Extension_Unit_Tests extends Specification
 
         then : 'The custom call hook is being accessed as outlined below.'
             (1.._) * type.implementationOf(_) >> implementation
-            (1.._) * implementation.getCallHook() >> customCallHook
-            (1.._) * customCallHook.handle(_,_) >> output
+            (1.._) * implementation.handleInsteadOfDevice(_,_) >> output
 
         and : 'The GraphNode instance which will be created as tensor component interacts as follows.'
             (1.._) * input.find(GraphNode.class) >> node
@@ -121,60 +112,18 @@ class Calculus_Extension_Unit_Tests extends Specification
 
         and : 'The given ADAnalyzer instance is being called because auto-differentiation is enabled.'
             (1.._) * input.rqsGradient() >> true
-            (1.._) * implementation.getADAnalyzer() >> Mock(OperationTypeImplementation.ADAnalyzer)
+            (1.._) * implementation.canImplementationPerformADFor(_) >> false
             (1.._) * node.getPayload() >> input
             (1.._) * node.usesAD() >> true
 
         and : 'The agent creator is being accessed because "doAD" is set to true and the input requires gradients.'
-            1 * implementation.getADAgentCreator() >> agentSupplier
-            1 * agentSupplier.getADAgentOf(_,_,_) >> agent
+            1 * implementation.supplyADAgentFor(_,_,_) >> agent
             1 * agent.derivative() >> null
 
         and : 'The result is the same as the mock tensor returned by the custom call hook.'
             result == output
 
     }
-
-
-    //@Ignore
-    //def 'WIP - Custom call implementation is being called.'(){
-    //    given : 'Neureka is being reset.'
-    //        Neureka.instance().reset()
-    //    and : 'A new OperationContext for testing.'
-    //        OperationContext oldContext = OperationContext.instance()
-    //        OperationContext context = OperationContext.instance().clone()
-    //        OperationContext.setInstance(context)
-    //    and : 'A mock agent.'
-    //        ADAgent agent = Mock()
-    //    and : 'A new operation type with a new implementation.'
-    //        def type = new OperationType(
-    //                "test_operation", "o", 2,
-    //                false, false, false, false, false
-    //        ).setImplementation(
-    //                GenericImplementation.class,
-    //                new GenericImplementation()
-    //                        .setHandleChecker(call -> true)
-    //                        .setADAnalyzer(call -> false)
-    //                        .setADAgentCreator(
-    //                                (Function f, ExecutionCall<Device> call, boolean forward ) ->  agent
-    //                        ).setCallHock(
-    //                            ( caller, call ) -> { return null; }
-    //                        ).setRJAgent(
-    //                                ( call, goDeeperWith ) -> { return null; }
-    //                        ).setDrainInstantiation(
-    //                                call -> {return call;}
-    //                        )
-    //        )
-    //    and : 'A mock FunctionNode '
-    //        def children = [Mock(FunctionInput), Mock(FunctionInput)]
-    //        def function = new FunctionNode(type, children, false)
-    //    when : ''
-    //    function.call(new Tsr[0])
-    //    then : ''
-    //    assert true
-    //    cleanup :
-    //    OperationContext.setInstance(oldContext)
-    //}
 
 
 

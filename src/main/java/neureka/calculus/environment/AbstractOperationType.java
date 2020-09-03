@@ -74,7 +74,7 @@ public abstract class AbstractOperationType implements OperationType
         _defaultImplementation = new GenericImplementation("default")
                 .setADAnalyzer(
                         call -> true
-                ).setADAgentCreator(
+                ).setADAgentSupplier(
                         (Function f, ExecutionCall<Device> call, boolean forward ) ->
                         {
                             Tsr derivv = (Tsr)call.getAt("derivative");
@@ -165,8 +165,6 @@ public abstract class AbstractOperationType implements OperationType
 
     }
 
-    public abstract double calculate(double[] inputs, int j, int d, List<Function> src);
-
     //==================================================================================================================
 
     @Override
@@ -207,7 +205,7 @@ public abstract class AbstractOperationType implements OperationType
     @Override
     public OperationTypeImplementation implementationOf(ExecutionCall call) {
         for( OperationTypeImplementation te : _implementations.values() ) {
-            if ( te.getSuitabilityChecker().canHandle(call) ) return te;
+            if ( te.isImplementationSuitableFor(call) ) return te;
         }
         return null;
     }

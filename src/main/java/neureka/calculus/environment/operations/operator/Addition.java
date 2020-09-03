@@ -35,7 +35,7 @@ public class Addition extends AbstractOperationType {
                     }
                     return true;
                 }
-        ).setADAgentCreator(
+        ).setADAgentSupplier(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
                 Tsr derivv = (Tsr)call.getAt("derivative");
@@ -155,7 +155,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
 
         Operator operator = new Operator()
                 .setADAnalyzer(call -> true)
-                .setADAgentCreator(
+                .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                             {
                                 Tsr derivv = (Tsr)call.getAt("derivative");
@@ -315,7 +315,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
                 .setADAnalyzer(
                     call -> true
                 )
-                .setADAgentCreator(
+                .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
                         Tsr derivv = (Tsr)call.getAt("derivative");
@@ -470,7 +470,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
                     }
                     return true;
                 }
-        ).setADAgentCreator(
+        ).setADAgentSupplier(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
                         Tsr derivv = (Tsr)call.getAt("derivative");

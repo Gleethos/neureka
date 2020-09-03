@@ -48,7 +48,7 @@ public class Ligmoid extends AbstractOperationType
                     }
                     return true;
                 }
-        ).setADAgentCreator(
+        ).setADAgentSupplier(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
                 Tsr derivv = (Tsr)call.getAt("derivative");

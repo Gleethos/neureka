@@ -80,7 +80,7 @@ public class ExecutionCall< DeviceType extends Device >
     }
     
     public boolean allowsForward(){
-        return getImplementation().getADAnalyzer().allowsForward(this);
+        return getImplementation().canImplementationPerformADFor(this);
     }
     
     public ADAgent getADAgentFrom(Function function, Tsr derivative, ExecutionCall<Device> call, boolean forward ) {
@@ -90,7 +90,7 @@ public class ExecutionCall< DeviceType extends Device >
         }
         if( derivative != null ) assert (call._context != null && call._context.containsKey("derivative"));
         else assert call._context == null;
-        return getImplementation().getADAgentCreator().getADAgentOf(function, call, forward);
+        return getImplementation().supplyADAgentFor(function, call, forward);
     }
     
     public void mutateArguments(Mutator mutation){

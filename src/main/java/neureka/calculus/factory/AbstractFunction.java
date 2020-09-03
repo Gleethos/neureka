@@ -4,7 +4,6 @@ import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.acceleration.host.HostCPU;
 import neureka.calculus.Function;
-import neureka.calculus.environment.AbstractOperationType;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.factory.assembly.FunctionBuilder;
@@ -22,7 +21,7 @@ import neureka.calculus.environment.implementations.*;
 
 public abstract class AbstractFunction extends BaseFunction
 {
-    private final AbstractOperationType _type;
+    private final OperationType _type;
     private final boolean _isFlat;
     private final boolean _doAD;
     private final List<Function> _src;
@@ -35,7 +34,7 @@ public abstract class AbstractFunction extends BaseFunction
      * @param sources
      * @param doAD
      */
-    protected AbstractFunction(AbstractOperationType type, List<Function> sources, boolean doAD )
+    protected AbstractFunction(OperationType type, List<Function> sources, boolean doAD )
     {
         if( type.getArity() >= 0 && sources.size() != type.getArity() ) {
             String tip = ( type.isIndexer() )
@@ -80,7 +79,7 @@ public abstract class AbstractFunction extends BaseFunction
     }
 
     @Override
-    public AbstractOperationType type() {
+    public OperationType type() {
         return _type;
     }
 
@@ -131,7 +130,7 @@ public abstract class AbstractFunction extends BaseFunction
 
     private Tsr __flat_execution( ExecutionCall<Device> call )
     {
-        Tsr alternative = call.getImplementation().getCallHook().handle( this, call );
+        Tsr alternative = call.getImplementation().handleInsteadOfDevice( this, call );
         if ( alternative != null ) return alternative;
 
         if ( call.getDerivativeIndex() < 0 ) return __deep_activation( call );

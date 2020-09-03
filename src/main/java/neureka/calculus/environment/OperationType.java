@@ -2,6 +2,7 @@ package neureka.calculus.environment;
 
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
+import neureka.calculus.Function;
 import neureka.calculus.environment.implementations.AbstractOperationTypeImplementation;
 import neureka.calculus.environment.operations.OperationContext;
 
@@ -100,6 +101,10 @@ public interface OperationType
     boolean isCommutative();
 
     boolean supports(Class implementation);
+
+
+    public abstract double calculate(double[] inputs, int j, int d, List<Function> src);
+
 
     public static class Utility
     {

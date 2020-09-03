@@ -87,7 +87,7 @@ public class Summation extends AbstractOperationType
         Broadcast typeImplementation = new Broadcast()
                 .setADAnalyzer(
                     call -> true
-                ).setADAgentCreator(
+                ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
                         Tsr derivv = (Tsr)call.getAt("derivative");
@@ -200,7 +200,7 @@ public class Summation extends AbstractOperationType
         Activation activation = new Activation()
         .setADAnalyzer(
                 call -> true
-        ).setADAgentCreator(
+        ).setADAgentSupplier(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
                 Tsr derivv = (Tsr)call.getAt("derivative");

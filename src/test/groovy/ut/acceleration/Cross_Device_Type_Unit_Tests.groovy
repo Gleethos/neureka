@@ -89,15 +89,13 @@ class Cross_Device_Type_Unit_Tests extends Specification
         and : 'A mocked ExecutionCall with mocked operation implementation and a mocked drain instantiator lambda...'
             def call = Mock(ExecutionCall)
             def implementation = Mock(OperationTypeImplementation)
-            def instantiator = Mock(OperationTypeImplementation.DrainInstantiation)
 
         when : 'The call is being passed to the device for execution...'
             device.execute(call)
 
         then : '...the implementation is being accessed in order to access the mocked lambda...'
             1 * call.getImplementation() >> implementation
-            1 * implementation.getDrainInstantiation() >> instantiator
-            1 * instantiator.handle(call) >> call
+            1 * implementation.instantiateNewTensorsForExecutionIn(call) >> call
         and : 'The tensor array is being accessed to check for null. (For exception throwing)'
             1 * call.getTensors() >> new Tsr[]{ Mock(Tsr), null }
         and : 'The expected exception is being thrown alongside a descriptive message.'

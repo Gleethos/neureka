@@ -130,7 +130,7 @@ public class Division extends AbstractOperationType
                         }
                         return true;
                     }
-                ).setADAgentCreator(
+                ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
                         Tsr derivv = (Tsr)call.getAt("derivative");
@@ -245,7 +245,7 @@ public class Division extends AbstractOperationType
         Broadcast broadcast = new Broadcast()
                 .setADAnalyzer(
                     call -> false
-                ).setADAgentCreator(
+                ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
                         Tsr derivv = (Tsr)call.getAt("derivative");
@@ -358,7 +358,7 @@ public class Division extends AbstractOperationType
         Scalarization scalarization = new Scalarization()
                 .setADAnalyzer(
                     call -> true
-                ).setADAgentCreator(
+                ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
                         Tsr derivv = (Tsr)call.getAt("derivative");
@@ -508,7 +508,7 @@ public class Division extends AbstractOperationType
                                 }
                                 return true;
                             }
-                    ).setADAgentCreator(
+                    ).setADAgentSupplier(
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                         {
                             Tsr derivv = (Tsr)call.getAt("derivative");

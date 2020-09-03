@@ -10,7 +10,6 @@ import neureka.calculus.environment.AbstractOperationType;
 import neureka.calculus.environment.ExecutionCall;
 import neureka.calculus.environment.OperationType;
 import neureka.calculus.environment.OperationTypeImplementation;
-import neureka.calculus.environment.implementations.AbstractOperationTypeImplementation;
 import neureka.calculus.environment.implementations.Convolution;
 import neureka.calculus.factory.assembly.FunctionBuilder;
 
@@ -109,7 +108,7 @@ public class XMultiplication extends AbstractOperationType
                         }
                         return true;
                     }
-        ).setADAgentCreator(
+        ).setADAgentSupplier(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
                 Tsr derivv = (Tsr)call.getAt("derivative");

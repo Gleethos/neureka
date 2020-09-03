@@ -3,8 +3,11 @@ package neureka.calculus.environment.implementations;
 
 import neureka.Tsr;
 import neureka.acceleration.Device;
+import neureka.autograd.ADAgent;
 import neureka.autograd.GraphNode;
+import neureka.calculus.Function;
 import neureka.calculus.environment.*;
+import neureka.calculus.factory.AbstractFunction;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,71 +48,101 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
         return _name;
     }
 
-    @Override
-    public SuitabilityChecker getSuitabilityChecker() {
-        return _suitabilityChecker;
-    }
+    //---
 
     @Override
+    public boolean isImplementationSuitableFor(ExecutionCall call) {
+        return _suitabilityChecker.canHandle(call);
+    }
+
     public FinalType setSuitabilityChecker(SuitabilityChecker checker) {
         _suitabilityChecker = checker;
         return (FinalType) this;
     }
 
+    //---
+
     @Override
+    public boolean canImplementationPerformADFor(ExecutionCall call) {
+        return _analyzer.allowsForward(call);
+    }
+
     public ADAnalyzer getADAnalyzer(){
         return _analyzer;
     }
 
-    @Override
     public FinalType setADAnalyzer(ADAnalyzer analyzer) {
         _analyzer = analyzer;
         return (FinalType) this;
     }
 
+    //---
+
     @Override
-    public ADAgentSupplier getADAgentCreator() {
+    public ADAgent supplyADAgentFor(Function f, ExecutionCall<Device> call, boolean forward) {
+        return _adaCreator.getADAgentOf(f, call, forward);
+    }
+
+    public ADAgentSupplier getADAgentSupplier() {
         return _adaCreator;
     }
 
-    @Override
-    public FinalType setADAgentCreator( ADAgentSupplier creator ) {
+    public FinalType setADAgentSupplier(ADAgentSupplier creator ) {
         _adaCreator = creator;
         return (FinalType) this;
     }
 
+
+    //---
+
     @Override
+    public Tsr handleInsteadOfDevice(AbstractFunction caller, ExecutionCall call) {
+        return _hook.handle(caller, call);
+    }
+
     public InitialCallHook getCallHook(){
         return _hook;
     }
 
-    @Override
     public FinalType setCallHock(InitialCallHook hook) {
         _hook = hook;
         return (FinalType) this;
     }
 
+
+    //---
+
     @Override
+    public Tsr handleRecursivelyAccordingToArity(ExecutionCall call, java.util.function.Function<ExecutionCall, Tsr> goDeeperWith) {
+        return _RJAgent.handle(call, goDeeperWith);
+    }
+
     public RecursiveJunctionAgent getRJAgent(){
         return _RJAgent;
     }
 
-    @Override
     public FinalType setRJAgent(RecursiveJunctionAgent rja) {
         _RJAgent = rja;
         return (FinalType) this;
     }
 
+    //---
+
     @Override
+    public ExecutionCall instantiateNewTensorsForExecutionIn(ExecutionCall call) {
+        return _instantiation.handle(call);
+    }
+
     public DrainInstantiation getDrainInstantiation(){
         return _instantiation;
     }
 
-    @Override
     public FinalType setDrainInstantiation(DrainInstantiation drainInstantiation) {
         _instantiation = drainInstantiation;
         return (FinalType) this;
     }
+
+    //---
 
     @Override
     public <D extends Device, E extends ExecutorFor<D>> FinalType setExecutor(Class<E> deviceClass, E execution){
@@ -140,9 +173,8 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
             if ( tsrs[i] != null && !tsrs[i].isOutsourced() ) {
                 device.add(tsrs[i]);
                 rollbacks[i] = device::get;
-            } else {
-                rollbacks[i] = t -> {};
             }
+            else rollbacks[i] = t -> {};
         }
 
         /* For the following operations with the correct arity RJAgent should do: ...
@@ -161,7 +193,8 @@ public abstract class AbstractOperationTypeImplementation< FinalType > implement
             finalExecution.accept(
                     new ExecutionCall<>( device, call.getTensors(), d, type )
             );
-        } else return result;
+        }
+        else return result;
 
 
         for ( int i = 0; i < tsrs.length; i++ ) {
