@@ -3,12 +3,27 @@ package neureka.calculus.backend.implementations;
 import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.calculus.backend.ExecutionCall;
+import neureka.calculus.backend.executions.ExecutorFor;
 import neureka.calculus.backend.operations.OperationType;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public abstract class AbstractBaseOperationTypeImplementation<FinalType> implements OperationTypeImplementation<FinalType>
 {
+    private final String _name;
+
+    protected final Map< Class<ExecutorFor< Device >>, ExecutorFor< Device > > _executions = new HashMap<>();
+
+    public AbstractBaseOperationTypeImplementation(String name) { _name = name; }
+
+
+    @Override
+    public String getName(){
+        return _name;
+    }
+
 
     @Override
     public Tsr recursiveReductionOf(
@@ -55,5 +70,21 @@ public abstract class AbstractBaseOperationTypeImplementation<FinalType> impleme
         return tsrs[0];
     }
 
+
+    //---
+
+    @Override
+    public <D extends Device, E extends ExecutorFor<D>> FinalType setExecutor(Class<E> deviceClass, E execution){
+        _executions.put(
+                (Class<ExecutorFor<Device>>) deviceClass,
+                (ExecutorFor<Device>) execution
+        );
+        return (FinalType) this;
+    }
+
+    @Override
+    public <D extends Device, E extends ExecutorFor<D>> E getExecutor(Class<E> deviceClass){
+        return (E) _executions.get(deviceClass);
+    }
 
 }

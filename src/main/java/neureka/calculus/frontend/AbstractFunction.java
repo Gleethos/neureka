@@ -110,8 +110,17 @@ public abstract class AbstractFunction extends AbstractBaseFunction
      */
     protected Tsr _tensor_activation( Tsr[] inputs, int j, int d )
     {
-        Device device = _device( inputs );
-        ExecutionCall<Device> call = new ExecutionCall<>( device, inputs, d, j, _type );
+        ExecutionCall<Device> call = new ExecutionCall<>(
+                _device( inputs ),
+                inputs,
+                d,
+                j,
+                _type
+        );
+        ExecutionCall<Device> finalCall;
+        Device possiblyNewDevice = call.getImplementation().findDeviceFor(call);
+        if ( possiblyNewDevice != null ) finalCall = call.withNew(possiblyNewDevice);
+        else finalCall = call;
 
         /* The code below deals with deep functions (non flat) :  */
         if ( _isFlat ) {
@@ -119,12 +128,12 @@ public abstract class AbstractFunction extends AbstractBaseFunction
             /* Autograd-Graph will be generated below for the new GraphNode: */
             /* only flat functions can be executed directly */
             if ( d < 0 && _doAD )
-                return new GraphNode( this, call, ()-> __flat_execution( call ) ).getPayload();
+                return new GraphNode( this, finalCall, ()-> __flat_execution( finalCall ) ).getPayload();
             else
-                return __flat_execution( call );
+                return __flat_execution( finalCall );
         }
-        else if ( d < 0 ) return __deep_activation( call );
-        else return _deep_derivative( call );
+        else if ( d < 0 ) return __deep_activation( finalCall );
+        else return _deep_derivative( finalCall );
 
     }
 

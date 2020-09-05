@@ -26,19 +26,28 @@ public interface OperationTypeImplementation<FinalType>
 {
     String getName();
 
+
     interface SuitabilityChecker {
         boolean canHandle( ExecutionCall call );
     }
-    //SuitabilityChecker getSuitabilityChecker();
-    //FinalType setSuitabilityChecker(SuitabilityChecker checker );
+
     boolean isImplementationSuitableFor( ExecutionCall call );
+
+
+    interface DeviceFinder {
+        Device findFor( ExecutionCall call );
+    }
+
+    Device findDeviceFor( ExecutionCall call );
+
+
 
     interface ADAnalyzer {
         boolean allowsForward( ExecutionCall call );
     }
-    //ADAnalyzer getADAnalyzer();
-    //FinalType setADAnalyzer( ADAnalyzer analyzer );
+
     boolean canImplementationPerformADFor( ExecutionCall call );
+
 
     interface ADAgentSupplier {
         ADAgent getADAgentOf(
@@ -47,8 +56,7 @@ public interface OperationTypeImplementation<FinalType>
                 boolean forward
         );
     }
-    //ADAgentSupplier getADAgentSupplier();
-    //FinalType setADAgentSupplier(ADAgentSupplier creator );
+
     ADAgent supplyADAgentFor(
             neureka.calculus.Function f,
             ExecutionCall<Device> call,
@@ -59,23 +67,20 @@ public interface OperationTypeImplementation<FinalType>
     interface InitialCallHook {
         Tsr handle( AbstractFunction caller,  ExecutionCall call );
     }
-    //InitialCallHook getCallHook();
-    //FinalType setCallHock( InitialCallHook hook );
+
     Tsr handleInsteadOfDevice(  AbstractFunction caller, ExecutionCall call );
 
     interface RecursiveJunctionAgent {
         Tsr handle( ExecutionCall call, Function<ExecutionCall, Tsr> goDeeperWith );
     }
-    //RecursiveJunctionAgent getRJAgent();
-    //FinalType setRJAgent( RecursiveJunctionAgent rja );
+
     Tsr handleRecursivelyAccordingToArity( ExecutionCall call, Function<ExecutionCall, Tsr> goDeeperWith );
 
 
     interface DrainInstantiation {
         ExecutionCall handle( ExecutionCall call );
     }
-    //DrainInstantiation getDrainInstantiation();
-    //FinalType setDrainInstantiation( DrainInstantiation drainInstantiation );
+
     ExecutionCall instantiateNewTensorsForExecutionIn( ExecutionCall call );
 
 

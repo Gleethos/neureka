@@ -6,6 +6,7 @@ import neureka.acceleration.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;
+import neureka.calculus.backend.implementations.AbstractBaseOperationTypeImplementation;
 import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
 import neureka.calculus.backend.implementations.OperationTypeImplementation;
 import neureka.calculus.frontend.AbstractFunction;
@@ -72,7 +73,7 @@ public abstract class AbstractOperationType implements OperationType
             }
         }
 
-        _defaultImplementation = new AbstractFunctionalOperationTypeImplementation<>( "default" )
+        _defaultImplementation = new AbstractBaseOperationTypeImplementation<>("default")
         {
             @Override
             public boolean isImplementationSuitableFor(ExecutionCall call) {
@@ -82,6 +83,11 @@ public abstract class AbstractOperationType implements OperationType
                     else if ( t != null && !Arrays.equals( shape, t.getNDConf().shape() ) ) return false;
                 }
                 return true;
+            }
+
+            @Override
+            public Device findDeviceFor(ExecutionCall call) {
+                return null;
             }
 
             @Override

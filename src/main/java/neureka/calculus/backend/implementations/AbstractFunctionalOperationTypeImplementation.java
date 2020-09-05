@@ -29,22 +29,17 @@ import java.util.Map;
  */
 public abstract class AbstractFunctionalOperationTypeImplementation< FinalType > extends AbstractBaseOperationTypeImplementation< FinalType >
 {
-    private final String _name;
-
-    protected final Map< Class<ExecutorFor< Device >>, ExecutorFor< Device > > _executions = new HashMap<>();
 
     private SuitabilityChecker _suitabilityChecker;
+    private DeviceFinder _finder;
     private ADAnalyzer _analyzer;
     private ADAgentSupplier _adaCreator;
     private InitialCallHook _hook;
     private RecursiveJunctionAgent _RJAgent;
     private DrainInstantiation _instantiation;
 
-    public AbstractFunctionalOperationTypeImplementation(String name) { _name = name; }
-
-    @Override
-    public String getName(){
-        return _name;
+    public AbstractFunctionalOperationTypeImplementation(String name) {
+        super(name);
     }
 
     //---
@@ -56,6 +51,18 @@ public abstract class AbstractFunctionalOperationTypeImplementation< FinalType >
 
     public FinalType setSuitabilityChecker(SuitabilityChecker checker) {
         _suitabilityChecker = checker;
+        return (FinalType) this;
+    }
+
+    ///---
+
+    @Override
+    public Device findDeviceFor(ExecutionCall call) {
+        return ( _finder == null ) ? null :_finder.findFor(call);
+    }
+
+    public FinalType setDeviceFinder( DeviceFinder finder ) {
+        _finder = finder;
         return (FinalType) this;
     }
 
@@ -141,21 +148,6 @@ public abstract class AbstractFunctionalOperationTypeImplementation< FinalType >
         return (FinalType) this;
     }
 
-    //---
-
-    @Override
-    public <D extends Device, E extends ExecutorFor<D>> FinalType setExecutor(Class<E> deviceClass, E execution){
-        _executions.put(
-                (Class<ExecutorFor<Device>>) deviceClass,
-                (ExecutorFor<Device>) execution
-        );
-        return (FinalType) this;
-    }
-
-    @Override
-    public <D extends Device, E extends ExecutorFor<D>> E getExecutor(Class<E> deviceClass){
-        return (E) _executions.get(deviceClass);
-    }
 
     //---
 

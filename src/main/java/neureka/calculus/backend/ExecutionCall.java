@@ -102,7 +102,11 @@ public class ExecutionCall< DeviceType extends Device >
     public ExecutionCall<DeviceType> withNew(Tsr[] tensors) {
         return new ExecutionCall<DeviceType>(_device, tensors, _d, _j, _type);
     }
-    
+
+    public ExecutionCall<DeviceType> withNew(DeviceType device) {
+        return new ExecutionCall<DeviceType>(device, _tensors, _d, _j, _type);
+    }
+
     public <T> T getAt(Class<T> type){
         if ( _context == null ) return null;
         return (T) _context.get(getClass().getName());
@@ -127,5 +131,6 @@ public class ExecutionCall< DeviceType extends Device >
         if(_context==null && context!=null )_context = new TreeMap<>();
         if(context!=null) _context.putAll(_context);
     }
+
 
 }
