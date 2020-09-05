@@ -1,7 +1,7 @@
 package neureka.autograd;
 
 import neureka.Tsr;
-import neureka.calculus.factory.assembly.FunctionBuilder;
+import neureka.calculus.frontend.assembly.FunctionBuilder;
 
 public class PendingError {
 

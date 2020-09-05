@@ -1,15 +1,14 @@
 package neureka;
 
 import groovy.lang.IntRange;
-import neureka.autograd.GraphLock;
-import neureka.calculus.environment.ExecutionCall;
+import neureka.calculus.backend.ExecutionCall;
 import neureka.ndim.AbstractNDArray;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.Device;
 import neureka.framing.IndexAlias;
 import neureka.framing.Relation;
 import neureka.calculus.Function;
-import neureka.calculus.factory.assembly.FunctionBuilder;
+import neureka.calculus.frontend.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.ndim.config.AbstractNDC;

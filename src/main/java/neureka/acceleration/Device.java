@@ -6,8 +6,8 @@ import neureka.Tsr;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.opencl.OpenCLDevice;
 import neureka.acceleration.opencl.OpenCLPlatform;
-import neureka.calculus.environment.ExecutionCall;
-import neureka.calculus.factory.assembly.FunctionParser;
+import neureka.calculus.backend.ExecutionCall;
+import neureka.calculus.frontend.assembly.FunctionParser;
 
 import java.util.Arrays;
 import java.util.Collection;

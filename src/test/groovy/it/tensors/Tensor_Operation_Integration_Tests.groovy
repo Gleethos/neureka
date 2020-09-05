@@ -2,7 +2,7 @@ package it.tensors
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.calculus.factory.assembly.FunctionBuilder
+import neureka.calculus.frontend.assembly.FunctionBuilder
 import spock.lang.Specification
 
 class Tensor_Operation_Integration_Tests extends Specification

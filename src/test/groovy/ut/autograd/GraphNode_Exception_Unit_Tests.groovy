@@ -5,7 +5,7 @@ import neureka.acceleration.Device
 import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
 import neureka.calculus.Function
-import neureka.calculus.environment.ExecutionCall
+import neureka.calculus.backend.ExecutionCall
 import spock.lang.Specification
 
 import java.util.function.Supplier

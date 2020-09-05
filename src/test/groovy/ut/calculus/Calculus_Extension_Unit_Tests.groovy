@@ -6,10 +6,10 @@ import neureka.acceleration.Device
 import neureka.autograd.ADAgent
 import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
-import neureka.calculus.environment.OperationType
-import neureka.calculus.environment.OperationTypeImplementation
-import neureka.calculus.factory.assembly.FunctionNode
-import neureka.calculus.factory.components.FunctionInput
+import neureka.calculus.backend.operations.OperationType
+import neureka.calculus.backend.implementations.OperationTypeImplementation
+import neureka.calculus.frontend.implementations.FunctionNode
+import neureka.calculus.frontend.implementations.FunctionInput
 import spock.lang.Specification
 
 class Calculus_Extension_Unit_Tests extends Specification

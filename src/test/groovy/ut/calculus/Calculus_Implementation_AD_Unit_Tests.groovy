@@ -4,13 +4,13 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.ADAgent
 import neureka.calculus.Function
-import neureka.calculus.environment.ExecutionCall
-import neureka.calculus.environment.OperationTypeImplementation
-import neureka.calculus.environment.implementations.Activation
-import neureka.calculus.environment.implementations.Broadcast
-import neureka.calculus.environment.implementations.Convolution
-import neureka.calculus.environment.implementations.Operator
-import neureka.calculus.environment.operations.OperationContext
+import neureka.calculus.backend.ExecutionCall
+import neureka.calculus.backend.implementations.OperationTypeImplementation
+import neureka.calculus.backend.implementations.Activation
+import neureka.calculus.backend.implementations.Broadcast
+import neureka.calculus.backend.implementations.Convolution
+import neureka.calculus.backend.implementations.Operator
+import neureka.calculus.backend.operations.OperationContext
 import spock.lang.Specification
 
 class Calculus_Implementation_AD_Unit_Tests extends Specification

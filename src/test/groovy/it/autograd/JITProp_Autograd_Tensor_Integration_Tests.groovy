@@ -3,7 +3,7 @@ package it.autograd
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.JITProp
-import neureka.calculus.factory.assembly.FunctionBuilder
+import neureka.calculus.frontend.assembly.FunctionBuilder
 import spock.lang.Specification
 
 class JITProp_Autograd_Tensor_Integration_Tests extends Specification
@@ -11,15 +11,16 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
 
     def 'Test pending error optimization'()
     {
-        given :
+        given : 'Neureka is being reset.'
             Neureka.instance().reset()
+        and : 'The view settings are being set to legacy.'
             Neureka.instance().settings().view().isUsingLegacyView = true
-
+        and : 'The simple scalar tensors are being instantiated, where one requires gradients.'
             Tsr a = new Tsr(2).setRqsGradient(true)
             Tsr b = new Tsr(-4)
             Tsr c = new Tsr(3).setRqsGradient(true)
 
-        when :
+        when : 'The following calculations are being executed :'
             Tsr s =  (a*b) + 2
             Tsr x = s * (s+c)
 

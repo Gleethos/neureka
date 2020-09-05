@@ -1,7 +1,7 @@
 package neureka.acceleration.host.execution;
 
 import neureka.acceleration.host.HostCPU;
-import neureka.calculus.environment.ExecutorFor;
+import neureka.calculus.backend.executions.ExecutorFor;
 
 /**
  * This class is the ExecutorFor<HostCPU> implementation

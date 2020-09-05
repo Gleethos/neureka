@@ -4,9 +4,9 @@ package neureka.calculus;
 import neureka.Tsr;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
-import neureka.calculus.environment.OperationType;
-import neureka.calculus.factory.assembly.FunctionBuilder;
-import neureka.calculus.environment.Cache;
+import neureka.calculus.backend.operations.OperationType;
+import neureka.calculus.frontend.assembly.FunctionBuilder;
+import neureka.calculus.backend.Cache;
 
 import java.util.List;
 import java.util.function.Supplier;

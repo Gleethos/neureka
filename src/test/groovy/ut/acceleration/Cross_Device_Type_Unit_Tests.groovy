@@ -5,8 +5,8 @@ import neureka.Tsr
 import neureka.acceleration.Device
 import neureka.acceleration.host.HostCPU
 import neureka.acceleration.opencl.OpenCLDevice
-import neureka.calculus.environment.ExecutionCall
-import neureka.calculus.environment.OperationTypeImplementation
+import neureka.calculus.backend.ExecutionCall
+import neureka.calculus.backend.implementations.OperationTypeImplementation
 import spock.lang.Specification
 
 

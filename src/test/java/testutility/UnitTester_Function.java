@@ -2,7 +2,7 @@ package testutility;
 
 import neureka.Tsr;
 import neureka.calculus.Function;
-import neureka.calculus.factory.assembly.FunctionBuilder;
+import neureka.calculus.frontend.assembly.FunctionBuilder;
 
 public class UnitTester_Function extends UnitTester {
 

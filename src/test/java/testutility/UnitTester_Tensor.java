@@ -4,11 +4,10 @@ import neureka.Tsr;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.Device;
 import neureka.acceleration.host.execution.HostExecutor;
-import neureka.calculus.environment.AbstractOperationType;
-import neureka.calculus.environment.ExecutionCall;
-import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.implementations.Broadcast;
-import neureka.calculus.environment.implementations.Convolution;
+import neureka.calculus.backend.ExecutionCall;
+import neureka.calculus.backend.operations.OperationType;
+import neureka.calculus.backend.implementations.Broadcast;
+import neureka.calculus.backend.implementations.Convolution;
 
 import java.util.List;
 

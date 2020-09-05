@@ -2,11 +2,11 @@ package neureka.acceleration.opencl;
 
 import neureka.Neureka;
 import neureka.acceleration.opencl.execution.CLExecutor;
-import neureka.calculus.environment.AbstractOperationType;
-import neureka.calculus.environment.OperationType;
+import neureka.calculus.backend.operations.AbstractOperationType;
+import neureka.calculus.backend.operations.OperationType;
 import org.jocl.*;
 import java.util.*;
-import neureka.calculus.environment.implementations.*;
+import neureka.calculus.backend.implementations.*;
 
 import static org.jocl.CL.*;
 import static org.jocl.CL.CL_DEVICE_TYPE_ALL;

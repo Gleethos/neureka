@@ -2,9 +2,9 @@ package neureka.acceleration;
 
 import neureka.Component;
 import neureka.Tsr;
-import neureka.calculus.environment.ExecutionCall;
-import neureka.calculus.environment.OperationType;
-import neureka.calculus.environment.OperationTypeImplementation;
+import neureka.calculus.backend.ExecutionCall;
+import neureka.calculus.backend.operations.OperationType;
+import neureka.calculus.backend.implementations.OperationTypeImplementation;
 
 import java.lang.ref.Cleaner;
 

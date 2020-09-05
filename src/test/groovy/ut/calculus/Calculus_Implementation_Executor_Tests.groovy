@@ -7,11 +7,11 @@ import neureka.acceleration.host.execution.HostExecutor
 import neureka.acceleration.opencl.KernelBuilder
 import neureka.acceleration.opencl.OpenCLDevice
 import neureka.acceleration.opencl.execution.CLExecutor
-import neureka.calculus.environment.ExecutionCall
-import neureka.calculus.environment.OperationTypeImplementation
-import neureka.calculus.environment.implementations.Activation
-import neureka.calculus.environment.implementations.Operator
-import neureka.calculus.environment.operations.OperationContext
+import neureka.calculus.backend.ExecutionCall
+import neureka.calculus.backend.implementations.OperationTypeImplementation
+import neureka.calculus.backend.implementations.Activation
+import neureka.calculus.backend.implementations.Operator
+import neureka.calculus.backend.operations.OperationContext
 import spock.lang.Specification
 
 class Calculus_Implementation_Executor_Tests extends Specification
