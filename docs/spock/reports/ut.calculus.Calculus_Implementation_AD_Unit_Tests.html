@@ -1,7 +1,310 @@
 <!DOCTYPE html><html>
 <head>
 <meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
-<link rel="stylesheet" href="../css/custom.css">
+<style>
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 300;
+}
+
+h2 {
+    font-weight: 400;
+}
+
+hr {
+    margin-bottom: 1.5em;
+}
+
+h3 {
+    font-weight: 200;
+}
+
+table {
+    margin: 7px;
+    -webkit-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+}
+
+.ignored {
+    color: gray;
+}
+
+div.project-header {
+    margin-bottom: 10px;
+    font-size: large;
+}
+
+div.project-header &gt; span.project-name {
+
+                        }
+
+div.project-header &gt; span.project-version {
+                            padding-left: 20px;
+                        }
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+div.spec-title {
+    padding: 10px 0px 5px 0px;
+}
+
+tr.error td, td.error {
+    background-color: #F89A4F !important;
+}
+
+tr.failure td, td.failure {
+    color: red;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}
+
+
+
+
+
+
+.back-link {
+    font-size: small;
+    font-weight: bold;
+}
+
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+table.features-table {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table {
+    width: 99%;
+
+    font-weight: bold;
+    font-size: small;
+}
+
+table.summary-table tbody {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table th {
+    background: lightblue;
+    padding: 6px;
+}
+
+table.summary-table td {
+    background: #E0E0E0;
+    padding: 6px;
+}
+
+pre.title {
+    font-family: inherit;
+    font-size: 24px;
+    line-height: 28px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+pre.narrative {
+    font-family: inherit;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 23px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+.feature-description {
+    font-size: large;
+    background: lightblue;
+    padding: 12px;
+}
+
+.feature-toc-error {
+    color: #F89A4F;
+}
+
+.feature-toc-failure {
+    color: #FF8080;
+}
+
+.feature-toc-ignored {
+    color: lightgray;
+}
+
+.feature-toc-pass {
+    color: green;
+}
+
+.feature-description.error {
+    background: #F89A4F;
+}
+
+.feature-description.failure {
+    background: #FF8080;
+}
+
+.feature-description.ignored {
+    background: lightgray;
+}
+
+.feature-description.ignored .reason {
+    color: black;
+    font-style: italic;
+    font-size: small;
+}
+
+div.extra-info {
+    font-size: small;
+}
+
+div.spec-headers {
+    margin: 4px;
+    font-style: italic;
+}
+
+div.spec-header {
+}
+
+div.issues {
+    margin-top: 6px;
+    padding: 10px 5px 5px 5px;
+    background-color: lemonchiffon;
+    color: black;
+    font-weight: 500;
+    font-size: small;
+    max-width: 50%;
+}
+
+div.pending-feature {
+    background-color: dodgerblue;
+    color: white;
+    margin-top: 6px;
+    padding: 5px;
+    text-align: center;
+    font-size: small;
+    max-width: 120px;
+}
+
+div.problem-description {
+    padding: 10px;
+    background: pink;
+    border-radius: 10px;
+}
+
+div.problem-header {
+    font-weight: bold;
+    color: red;
+}
+
+div.problem-list {
+
+}
+
+table.ex-table{
+    width: 98%;
+}
+
+table.ex-table th {
+    background: lightblue;
+    padding: 5px;
+}
+
+table.ex-table td {
+    background: #E0E0E0;
+    padding: 2px 5px 2px 5px;
+}
+
+table td {
+    min-width: 50px;
+}
+
+col.block-kind-col {
+    width: 70px;
+}
+
+span.spec-header {
+    font-weight: bold;
+}
+
+div.spec-text {
+    /*color: green;*/
+}
+
+div.spec-status {
+    font-style: italic;
+}
+
+.ignored {
+    color: gray;
+}
+
+td.ex-result {
+    text-align: center;
+    background: white !important;
+}
+
+.ex-pass {
+    color: darkgreen;
+}
+
+.ex-fail {
+    color: red;
+    font-weight: bold;
+}
+
+div.block-kind {
+    margin: 2px;
+    font-style: italic;
+}
+
+div.block-text {
+
+}
+
+pre.block-source {
+    background-color: whitesmoke;
+    padding: 10px;
+}
+
+pre.block-source.error {
+    background-color: pink;
+    color: red;
+    font-weight: bold;
+}
+
+pre.block-source.pre-error {
+
+}
+
+pre.block-source.before-error {
+    margin-bottom: -14px;
+}
+
+pre.block-source.after-error {
+    color: gray;
+    margin-top: -14px;
+}
+
+pre.block-source.post-error {
+    color: gray;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}</style>
 </head>
 <body>
 <h2>Report for ut.calculus.Calculus_Implementation_AD_Unit_Tests</h2>
@@ -11,7 +314,7 @@
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Tue Sep 01 23:07:05 CEST 2020 by Daniel</div>
+<div class='date-test-ran'>Created on Sun Sep 06 21:13:25 CEST 2020 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -28,7 +331,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>17,427 seconds</td>
+<td>23,560 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -119,7 +422,7 @@ function.derive(*_) &gt;&gt; derivative</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>ADAgent agent = imp.ADAgentCreator.getADAgentOf(
+<pre class='block-source'>ADAgent agent = imp.ADAgentSupplier.getADAgentOf(
         function,
         call,
         true
@@ -152,7 +455,7 @@ agent.derivative() == derivative</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>agent = imp.ADAgentCreator.getADAgentOf(
+<pre class='block-source'>agent = imp.ADAgentSupplier.getADAgentOf(
         function,
         call,
         false
@@ -194,27 +497,27 @@ agent.derivative() == derivative</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@2a96bb8a</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@39e6781b</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@731ea417</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@32075ecd</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@1d044f40</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@5a82ed0b</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@7806f585</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@189c5666</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@67535be4</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@12b0d3ce</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@616b7505</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@1ac91663</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -290,7 +593,7 @@ function.derive(*_) &gt;&gt; derivative</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>ADAgent agent = imp.ADAgentCreator.getADAgentOf(
+<pre class='block-source'>ADAgent agent = imp.ADAgentSupplier.getADAgentOf(
     function,
     call,
     true
@@ -323,7 +626,7 @@ agent.derivative() == derivative</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>agent = imp.ADAgentCreator.getADAgentOf(
+<pre class='block-source'>agent = imp.ADAgentSupplier.getADAgentOf(
     function,
     call,
     false
@@ -365,59 +668,59 @@ agent.derivative() == derivative</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@49b70fbb</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@7e880d35</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@2fa109b6</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@75c5b6fd</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@3150ceda</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@3bc9452c</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@161b9dff</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@63e37ef6</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@18300ce5</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@38645f64</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@374bd197</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@76e40c41</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@daffba</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@7f5d794</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@4a646e3b</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@7f190d52</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@52ab14b6</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@651cf2aa</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@50911fb</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@2de8b95c</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@f8dab48</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@2fe397e9</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@191e67ec</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@7f9d3045</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@58550158</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@7ef5114</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@151e4560</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@6fa52aec</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -493,7 +796,7 @@ function.derive(*_) &gt;&gt; derivative</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>ADAgent agent = imp.ADAgentCreator.getADAgentOf(
+<pre class='block-source'>ADAgent agent = imp.ADAgentSupplier.getADAgentOf(
         function,
         call,
         true
@@ -526,7 +829,7 @@ exception.message == "Convolution of does not support forward-AD!"</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>agent = imp.ADAgentCreator.getADAgentOf(
+<pre class='block-source'>agent = imp.ADAgentSupplier.getADAgentOf(
     function,
     call,
     false
@@ -568,19 +871,19 @@ agent.derivative() == derivative</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Convolution@42f0ea6</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Convolution@37d92747</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Convolution@5f9d3a83</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Convolution@716d991a</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Convolution@21226090</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Convolution@788f28cd</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Convolution@12720fb7</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Convolution@2fdc5b4e</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -656,7 +959,7 @@ function.derive(*_) &gt;&gt; derivative</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>ADAgent agent = imp.ADAgentCreator.getADAgentOf(
+<pre class='block-source'>ADAgent agent = imp.ADAgentSupplier.getADAgentOf(
     function,
     call,
     true
@@ -689,7 +992,7 @@ exception.message == "Broadcast implementation does not support forward-AD!"</pr
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>agent = imp.ADAgentCreator.getADAgentOf(
+<pre class='block-source'>agent = imp.ADAgentSupplier.getADAgentOf(
     function,
     call,
     false
@@ -731,43 +1034,43 @@ agent.derivative() == derivative</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Broadcast@2560042e</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Broadcast@6296bfea</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Broadcast@25338c57</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Broadcast@257afe32</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Broadcast@318b9ea4</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Broadcast@4d68e3b5</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Broadcast@4afb349a</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Broadcast@3c27746d</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Broadcast@6f1f189f</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Broadcast@6b99f5ec</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Broadcast@5677701f</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Broadcast@19600dc3</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Broadcast@3b64bacb</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Broadcast@139f2011</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Broadcast@282806d9</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Broadcast@141cba13</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Broadcast@282806d9</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Broadcast@141cba13</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Broadcast@282806d9</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Broadcast@141cba13</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>

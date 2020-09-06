@@ -3,12 +3,15 @@ package neureka.calculus.backend.operations;
 
 import neureka.Tsr;
 import neureka.acceleration.Device;
+import neureka.acceleration.host.execution.HostExecutor;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
+import neureka.calculus.backend.implementations.Activation;
 import neureka.calculus.backend.implementations.OperationTypeImplementation;
 import neureka.calculus.frontend.AbstractFunction;
+import neureka.calculus.frontend.assembly.FunctionBuilder;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -72,7 +75,7 @@ public abstract class AbstractOperationType implements OperationType
             }
         }
 
-        _defaultImplementation = new AbstractFunctionalOperationTypeImplementation<>( "default" )
+        _defaultImplementation = new AbstractFunctionalOperationTypeImplementation<OperationTypeImplementation>( "default" )
         {
             @Override
             public boolean isImplementationSuitableFor(ExecutionCall call) {
@@ -94,40 +97,29 @@ public abstract class AbstractOperationType implements OperationType
             {
                 Tsr ctxDerivative = (Tsr)call.getAt("derivative");
                 Function mul = Function.Detached.MUL;
-                if (
-                        ctxDerivative != null
-                ) {
-                    return new ADAgent(
-                            ctxDerivative
-                    ).withForward(
-                            ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
-                    ).withBackward(
-                            null
-                    );
+                if ( ctxDerivative != null ) {
+                    return new ADAgent( ctxDerivative )
+                            .withForward(
+                                ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
+                            ).withBackward(
+                                null
+                            );
                 }
                 Tsr[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();
-                if( forward )
+                if ( forward )
                 {
                     Tsr deriv = f.derive(inputs, d);
-                    return new ADAgent(
-                            deriv
-                    ).withForward(
-                            ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                    ).withBackward(
-                            null
-                    );
+                    return new ADAgent( deriv )
+                            .withForward( ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}) )
+                            .withBackward( null );
                 }
                 else
                 {
                     Tsr deriv = f.derive(inputs, d);
-                    return new ADAgent(
-                            deriv
-                    ).withForward(
-                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                    ).withBackward(
-                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-                    );
+                    return new ADAgent( deriv )
+                            .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                            .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
                 }
             }
 
@@ -139,49 +131,47 @@ public abstract class AbstractOperationType implements OperationType
             @Override
             public Tsr handleRecursivelyAccordingToArity(ExecutionCall call, java.util.function.Function<ExecutionCall, Tsr> goDeeperWith)
             {
-                Tsr[] tsrs = call.getTensors();
-                Device device = call.getDevice();
-                int d = call.getDerivativeIndex();
-                OperationType type = call.getType();
-
-                Tsr alternative = null;
-                if (tsrs.length > 3) {
-                    if (d < 0) {
-                        Tsr[] reduction = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
-                        alternative = goDeeperWith.apply(
-                                new ExecutionCall<Device>(device, reduction, d, type)
-                        );
-                        tsrs[0] = reduction[0];
-
-                        reduction = Utility._offsetted(tsrs, 1);
-                        alternative = goDeeperWith.apply(
-                                new ExecutionCall<Device>(device, reduction, d, type)
-                        );
-                        tsrs[0] = reduction[0];
-                    } else {
-                        tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue((d==0)?1.0f:-1.0f);
-                    }
-                    return alternative;
-                } else {
-                    return alternative;
-                }
+                return null;
             }
 
             @Override
             public ExecutionCall instantiateNewTensorsForExecutionIn(ExecutionCall call) {
-                Tsr[] tsrs = call.getTensors();
+                Tsr[] tensors = call.getTensors();
                 Device device = call.getDevice();
-                if ( tsrs[0] == null ) // Creating a new tensor:
+                if ( tensors[0] == null ) // Creating a new tensor:
                 {
-                    int[] shp = tsrs[1].getNDConf().shape();
+                    int[] shp = tensors[1].getNDConf().shape();
                     Tsr output = new Tsr( shp, 0.0 );
                     output.setIsVirtual(false);
                     device.add(output);
-                    tsrs[0] = output;
+                    tensors[0] = output;
                 }
                 return call;
             }
-        };
+        }.setExecutor(
+                HostExecutor.class,
+                new HostExecutor(
+                        call -> {
+                            Function f = FunctionBuilder.build(this, call.getTensors().length-1, false);
+                            double[] inputs = new double[call.getTensors().length-1];
+                            call
+                                .getDevice()
+                                .getExecutor()
+                                .threaded (
+                                        call.getTensor(0).size(),
+                                        ( start, end ) -> {
+                                            for ( int i = start; i < end; i++ ) {
+                                                for ( int ii = 0; ii < inputs.length; ii++ ) {
+                                                    inputs[ii] = call.getTensor(1+ii).value64(i);
+                                                }
+                                                call.getTensor(0).value64()[i] = f.call(inputs);
+                                            }
+                                        }
+                                );
+                        },
+                        _arity
+                )
+        );
 
     }
 

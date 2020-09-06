@@ -6,9 +6,8 @@ import neureka.Tsr;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.opencl.OpenCLDevice;
 import neureka.acceleration.opencl.OpenCLPlatform;
-import neureka.calculus.environment.ExecutionCall;
-import neureka.calculus.environment.OperationType;
-import neureka.calculus.factory.assembly.FunctionParser;
+import neureka.calculus.backend.ExecutionCall;
+import neureka.calculus.frontend.assembly.FunctionParser;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,38 +28,38 @@ public interface Device extends Component&lt;Tsr&gt;
      */
     static Device find(String name)
     {
-<span class="fc" id="L32">        String search = name.toLowerCase();</span>
-<span class="fc" id="L33">        boolean probablyWantsGPU = Arrays.stream(</span>
+<span class="fc" id="L31">        String search = name.toLowerCase();</span>
+<span class="fc" id="L32">        boolean probablyWantsGPU = Arrays.stream(</span>
                 new String[]{
                         &quot;gpu&quot;, &quot;nvidia&quot;, &quot;amd&quot;, &quot;intel&quot;, &quot;opencl&quot;, &quot;fpga&quot;
                 }
-<span class="fc" id="L37">        ).anyMatch(search::contains);</span>
+<span class="fc" id="L36">        ).anyMatch(search::contains);</span>
 
-<span class="pc bpc" id="L39" title="1 of 2 branches missed.">        if ( !Neureka.instance().canAccessOpenCL() ) {</span>
-<span class="nc bnc" id="L40" title="All 2 branches missed.">            if ( probablyWantsGPU ) {</span>
-<span class="nc" id="L41">                return null; // User wants OpenCL but cannot have it :/</span>
-<span class="nc" id="L42">            } else return HostCPU.instance();</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        if ( !Neureka.instance().canAccessOpenCL() ) {</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">            if ( probablyWantsGPU ) {</span>
+<span class="fc" id="L40">                return null; // User wants OpenCL but cannot have it :/</span>
+<span class="fc" id="L41">            } else return HostCPU.instance();</span>
         }
 
-<span class="fc" id="L45">        Device result = HostCPU.instance();</span>
-<span class="fc" id="L46">        double score = FunctionParser.similarity( &quot;jvm native host cpu threaded&quot;, search );</span>
-<span class="fc bfc" id="L47" title="All 2 branches covered.">        if ( probablyWantsGPU ) score /= 10; // HostCPU instance is most likely not meant!</span>
+<span class="fc" id="L44">        Device result = HostCPU.instance();</span>
+<span class="fc" id="L45">        double score = FunctionParser.similarity( &quot;jvm native host cpu threaded&quot;, search );</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        if ( probablyWantsGPU ) score /= 10; // HostCPU instance is most likely not meant!</span>
 
-<span class="fc bfc" id="L49" title="All 2 branches covered.">        for ( OpenCLPlatform p : OpenCLPlatform.PLATFORMS() ) {</span>
-<span class="fc bfc" id="L50" title="All 2 branches covered.">            for ( OpenCLDevice d : p.getDevices() ) {</span>
-<span class="fc" id="L51">                String str = (&quot;opencl | &quot;+d.type()+&quot; | &quot;+d.name()+&quot; | &quot;+d.vendor()).toLowerCase();</span>
-<span class="fc" id="L52">                double similarity = FunctionParser.similarity( str, search );</span>
-<span class="pc bpc" id="L53" title="1 of 4 branches missed.">                if ( similarity &gt; score || str.contains(search) ) {</span>
-<span class="fc" id="L54">                    result = d;</span>
-<span class="fc" id="L55">                    score = similarity;</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        for ( OpenCLPlatform p : OpenCLPlatform.PLATFORMS() ) {</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">            for ( OpenCLDevice d : p.getDevices() ) {</span>
+<span class="fc" id="L50">                String str = (&quot;opencl | &quot;+d.type()+&quot; | &quot;+d.name()+&quot; | &quot;+d.vendor()).toLowerCase();</span>
+<span class="fc" id="L51">                double similarity = FunctionParser.similarity( str, search );</span>
+<span class="pc bpc" id="L52" title="2 of 4 branches missed.">                if ( similarity &gt; score || str.contains(search) ) {</span>
+<span class="nc" id="L53">                    result = d;</span>
+<span class="nc" id="L54">                    score = similarity;</span>
                 }
-<span class="fc" id="L57">            }</span>
-<span class="fc" id="L58">        }</span>
-<span class="fc bfc" id="L59" title="All 4 branches covered.">        if ( result == HostCPU.instance() &amp;&amp; name.equals(&quot;first&quot;) ) {</span>
-<span class="fc" id="L60">            Device first = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);</span>
-<span class="pc bpc" id="L61" title="1 of 2 branches missed.">            if( first!=null ) result = first;</span>
+<span class="fc" id="L56">            }</span>
+<span class="fc" id="L57">        }</span>
+<span class="pc bpc" id="L58" title="2 of 4 branches missed.">        if ( result == HostCPU.instance() &amp;&amp; name.equals(&quot;first&quot;) ) {</span>
+<span class="fc" id="L59">            Device first = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">            if( first!=null ) result = first;</span>
         }
-<span class="fc" id="L63">        return result;</span>
+<span class="fc" id="L62">        return result;</span>
     }
 
     void dispose();

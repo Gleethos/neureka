@@ -27,21 +27,28 @@
     <script src="src/js/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     <script>
+        let currentTop = 0;
+        let topMode = 'large';
+
         function updateTopBar( event ) {
             let top = $('#main_with_parallax').scrollTop();
-            if( top > 25 && top < 2750 ) {
-                let tippingPoint = 200;
-                let smoothness = 25;
-                let sig = 1-sigmoid((top-tippingPoint)/smoothness);
-                let newTop = sig*65+5;
-                $('.gaadiexp').css({top:(newTop/2)-5});
-                $('.side-nav').css({top:37+(newTop/2)});
-                $('#top_most_nav_bar').css({height: newTop});
-                $('#navbar_menu').css({top:newTop/2});
-                $('#neureka_title').css({'font-size':(2+sig/2)+"rem"});
+            if ( topMode === 'large' && top > 500) {
+                animateTop( 1.0 );
+                topMode = 'small';
+            } else if ( topMode === 'small' && top < 100 ) {
+                animateTop( 0.0 )
+                topMode = 'large';
             }
         }
-        function sigmoid(t) {return 1/(1+Math.pow(Math.E, -t));}
+        function animateTop( modifier ) {
+            let sig = 1-modifier;
+            let newTop = sig*65+5;
+            $('.gaadiexp').animate({top:(newTop/2)-5}, 100);
+            $('#neureka_title').animate({'font-size':(2+sig/2)+"rem"}, 200);
+            $('#top_most_nav_bar').animate({top: newTop-70}, 555);
+            $('.side-nav').animate({top:75+((1-sig)*40)}, 100);
+            $('#navbar_menu').animate({top:newTop/2}, 300);
+        }
     </script>
 </head>
 <body>
