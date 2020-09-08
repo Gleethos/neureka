@@ -10,7 +10,7 @@ import neureka.calculus.backend.operations.AbstractOperationType;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.calculus.backend.implementations.OperationTypeImplementation;
-import neureka.calculus.backend.implementations.Convolution;
+import neureka.calculus.backend.implementations.functional.Convolution;
 import neureka.calculus.frontend.assembly.FunctionBuilder;
 
 import java.util.List;

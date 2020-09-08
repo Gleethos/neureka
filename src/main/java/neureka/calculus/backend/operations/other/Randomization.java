@@ -6,9 +6,10 @@ import neureka.acceleration.host.execution.HostExecutor;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;
+import neureka.calculus.backend.implementations.functional.Convolution;
+import neureka.calculus.backend.implementations.functional.Scalarization;
 import neureka.calculus.backend.operations.AbstractOperationType;
 import neureka.calculus.backend.operations.OperationType;
-import neureka.calculus.backend.implementations.*;
 
 import java.util.List;
 import java.util.Random;

@@ -1,4 +1,4 @@
-package neureka.calculus.backend;
+package neureka.calculus.frontend;
 
 import neureka.Tsr;
 import neureka.autograd.GraphLock;

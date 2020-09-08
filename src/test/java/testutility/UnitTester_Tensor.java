@@ -6,8 +6,8 @@ import neureka.acceleration.Device;
 import neureka.acceleration.host.execution.HostExecutor;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.operations.OperationType;
-import neureka.calculus.backend.implementations.Broadcast;
-import neureka.calculus.backend.implementations.Convolution;
+import neureka.calculus.backend.implementations.functional.Broadcast;
+import neureka.calculus.backend.implementations.functional.Convolution;
 
 import java.util.List;
 

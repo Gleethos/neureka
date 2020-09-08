@@ -7,8 +7,8 @@ import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;
+import neureka.calculus.backend.implementations.functional.Activation;
 import neureka.calculus.backend.operations.AbstractOperationType;
-import neureka.calculus.backend.implementations.*;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;

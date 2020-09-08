@@ -9,8 +9,8 @@ import neureka.acceleration.opencl.OpenCLDevice
 import neureka.acceleration.opencl.execution.CLExecutor
 import neureka.calculus.backend.ExecutionCall
 import neureka.calculus.backend.implementations.OperationTypeImplementation
-import neureka.calculus.backend.implementations.Activation
-import neureka.calculus.backend.implementations.Operator
+import neureka.calculus.backend.implementations.functional.Activation
+import neureka.calculus.backend.implementations.functional.Operator
 import neureka.calculus.backend.operations.OperationContext
 import spock.lang.Specification
 

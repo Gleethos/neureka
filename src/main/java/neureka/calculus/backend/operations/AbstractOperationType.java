@@ -9,7 +9,6 @@ import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.AbstractBaseOperationTypeImplementation;
 import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
-import neureka.calculus.backend.implementations.Activation;
 import neureka.calculus.backend.implementations.OperationTypeImplementation;
 import neureka.calculus.frontend.AbstractFunction;
 import neureka.calculus.frontend.assembly.FunctionBuilder;

@@ -1,7 +1,8 @@
-package neureka.calculus.backend.implementations;
+package neureka.calculus.backend.implementations.functional;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
 import neureka.calculus.backend.operations.OperationType;
 import org.jetbrains.annotations.Contract;
 

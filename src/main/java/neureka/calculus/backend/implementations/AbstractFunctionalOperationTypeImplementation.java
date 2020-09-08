@@ -6,11 +6,7 @@ import neureka.acceleration.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.*;
-import neureka.calculus.backend.executions.ExecutorFor;
 import neureka.calculus.frontend.AbstractFunction;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is the base class for implementations of the OperationTypeImplementation interface.

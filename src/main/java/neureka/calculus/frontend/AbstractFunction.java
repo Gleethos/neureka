@@ -5,6 +5,7 @@ import neureka.acceleration.Device;
 import neureka.acceleration.host.HostCPU;
 import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;
+import neureka.calculus.backend.implementations.functional.Activation;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.calculus.frontend.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
@@ -16,8 +17,6 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import neureka.calculus.backend.implementations.*;
 
 public abstract class AbstractFunction extends AbstractBaseFunction
 {

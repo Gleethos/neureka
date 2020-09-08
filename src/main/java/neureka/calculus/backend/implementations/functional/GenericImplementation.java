@@ -1,4 +1,6 @@
-package neureka.calculus.backend.implementations;
+package neureka.calculus.backend.implementations.functional;
+
+import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
 
 public class GenericImplementation extends AbstractFunctionalOperationTypeImplementation< GenericImplementation >
 {

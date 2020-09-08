@@ -7,7 +7,7 @@ import neureka.calculus.Function;
 import neureka.calculus.backend.operations.AbstractOperationType;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.operations.OperationType;
-import neureka.calculus.backend.implementations.GenericImplementation;
+import neureka.calculus.backend.implementations.functional.GenericImplementation;
 import neureka.calculus.frontend.assembly.FunctionBuilder;
 import neureka.ndim.AbstractNDArray;
 import neureka.ndim.config.AbstractNDC;
