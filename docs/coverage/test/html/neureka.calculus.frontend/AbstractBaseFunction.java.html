@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractBaseFunction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.frontend</a> &gt; <span class="el_source">AbstractBaseFunction.java</span></div><h1>AbstractBaseFunction.java</h1><pre class="source lang-java linenums">package neureka.calculus.frontend;
+
+import neureka.Tsr;
+import neureka.calculus.Function;
+import java.util.List;
+
+/**
+ * This class implements certain methods by simply calling
+ * other methods which are responsible for executing
+ * the important logic implemented in sub classes.
+ *
+ * The reason for this is simply that otherwise there
+ * would be many redundantly implemented methods.
+ * The 'call' and 'invoke' methods with the same arguments
+ * are supposed to do the same thing, however
+ * they are both part of the Function interface in order to
+ * allow for overloading the '()' operator in different
+ * JVM languages...
+ */
+<span class="fc" id="L20">public abstract class AbstractBaseFunction implements Function</span>
+{
+
+    @Override
+    public double call(double input){
+<span class="nc" id="L25">        return call(new double[]{input});</span>
+    }
+
+    @Override
+    public Tsr call(Tsr input){
+<span class="fc" id="L30">        return call(new Tsr[]{input});</span>
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public Tsr call(List&lt;Tsr&gt; inputs) {
+<span class="fc" id="L37">        return call(inputs.toArray(new Tsr[0]));</span>
+    }
+
+    @Override
+    public Tsr invoke(List&lt;Tsr&gt; inputs) {
+<span class="nc" id="L42">        return call(inputs);</span>
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public double invoke(double input){
+<span class="nc" id="L49">        return call(input);</span>
+    }
+
+    @Override
+    public double invoke(double[] inputs, int j){
+<span class="nc" id="L54">        return call(inputs, j);</span>
+    }
+
+    @Override
+    public double invoke(double[] inputs){
+<span class="nc" id="L59">        return call(inputs);</span>
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public Tsr invoke(Tsr input){
+<span class="nc" id="L66">        return call(input);</span>
+    }
+
+    @Override
+    public Tsr invoke(Tsr[] inputs, int j){
+<span class="nc" id="L71">        return call(inputs, j);</span>
+    }
+
+    @Override
+    public Tsr invoke(Tsr[] inputs){
+<span class="nc" id="L76">        return call(inputs);</span>
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public Tsr derive(List&lt;Tsr&gt; inputs, int index, int j){
+<span class="nc" id="L83">        return derive(inputs.toArray(new Tsr[0]), index, j);</span>
+    }
+
+    @Override
+    public Tsr derive(List&lt;Tsr&gt; inputs, int index){
+<span class="fc" id="L88">        return derive(inputs.toArray(new Tsr[0]), index);</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

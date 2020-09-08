@@ -24,7 +24,7 @@ class Neureka_Unit_Tests extends Specification
             assert Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp()
 
         and : 'The version number is as expected!'
-            assert Neureka.version()=="0.2.4"//version
+            assert Neureka.version()=="0.3.0"//version
     }
 
     

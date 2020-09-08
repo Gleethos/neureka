@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OperationType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.backend.operations</a> &gt; <span class="el_source">OperationType.java</span></div><h1>OperationType.java</h1><pre class="source lang-java linenums">package neureka.calculus.backend.operations;
+
+import neureka.Tsr;
+import neureka.autograd.GraphNode;
+import neureka.calculus.Function;
+import neureka.calculus.backend.ExecutionCall;
+import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
+import neureka.calculus.backend.implementations.OperationTypeImplementation;
+
+import java.util.List;
+import java.util.function.Consumer;
+
+public interface OperationType
+{
+    public static List&lt;AbstractOperationType&gt; instances() {
+<span class="fc" id="L16">        return OperationContext.instance().getRegister();</span>
+    }
+
+    public static AbstractOperationType instance(int index) {
+<span class="fc" id="L20">        return OperationContext.instance().getRegister().get(index);</span>
+    }
+
+    public static AbstractOperationType[] ALL() {
+<span class="fc" id="L24">        return OperationContext.instance().getRegister().toArray(new AbstractOperationType[0]);</span>
+    }
+
+    public static int COUNT() {
+<span class="fc" id="L28">        return OperationContext.instance().getID();</span>
+    }
+
+
+    public static AbstractOperationType instance(String identifier) {
+<span class="fc" id="L33">        return OperationContext.instance().getLookup().getOrDefault(identifier, null);</span>
+    }
+
+    interface TertiaryNDXConsumer {
+        double execute(int[] t0Idx, int[] t1Idx, int[] t2Idx);
+    }
+
+    interface SecondaryNDXConsumer {
+        double execute(int[] t0Idx, int[] t1Idx);
+    }
+
+    interface PrimaryNDXConsumer {
+        double execute(int[] t0Idx);
+    }
+
+    //---
+
+    interface DefaultOperatorCreator&lt;T&gt; {
+        T create(Tsr[] inputs, int d);
+    }
+
+    interface ScalarOperatorCreator&lt;T&gt; {
+        T create(Tsr[] inputs, double scalar, int d);
+    }
+
+    //==================================================================================================================
+
+    OperationTypeImplementation implementationOf(ExecutionCall call);
+
+    //==================================================================================================================
+
+    String getFunction();
+
+    //==================================================================================================================
+
+    &lt;T extends AbstractFunctionalOperationTypeImplementation&gt; T getImplementation(Class&lt;T&gt; type);
+
+    &lt;T extends AbstractFunctionalOperationTypeImplementation&gt; boolean supportsImplementation(Class&lt;T&gt; type);
+
+    &lt;T extends AbstractFunctionalOperationTypeImplementation&gt; OperationType setImplementation(Class&lt;T&gt; type, T instance);
+
+    OperationType forEachImplementation(Consumer&lt;OperationTypeImplementation&gt; action);
+
+    //==================================================================================================================
+
+    interface Stringifier {
+        String asString(List&lt;String&gt; children);
+    }
+
+    //---
+
+    OperationType setStringifier(Stringifier stringifier);
+
+    Stringifier getStringifier();
+
+    //==================================================================================================================
+
+    int getId();
+
+    String getOperator();
+
+    /**
+     * Arity is the number of arguments or operands
+     * that this function or operation takes.
+     */
+    int getArity();
+
+    boolean isOperator();
+
+    boolean isIndexer();
+
+    boolean isCommutative();
+
+    boolean supports(Class implementation);
+
+
+    public abstract double calculate(double[] inputs, int j, int d, List&lt;Function&gt; src);
+
+
+<span class="nc" id="L112">    public static class Utility {</span>
+        public static Tsr[] _subset(Tsr[] tsrs, int padding, int index, int offset) {
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">            if (offset &lt; 0) {</span>
+<span class="nc" id="L115">                index += offset;</span>
+<span class="nc" id="L116">                offset *= -1;</span>
+            }
+<span class="fc" id="L118">            Tsr[] newTsrs = new Tsr[offset + padding];</span>
+<span class="fc" id="L119">            System.arraycopy(tsrs, index, newTsrs, padding, offset);</span>
+<span class="fc" id="L120">            return newTsrs;</span>
+        }
+
+        public static Tsr[] _without(Tsr[] tsrs, int index) {
+<span class="fc" id="L124">            Tsr[] newTsrs = new Tsr[tsrs.length - 1];</span>
+<span class="fc bfc" id="L125" title="All 4 branches covered.">            for (int i = 0; i &lt; newTsrs.length; i++) newTsrs[i] = tsrs[i + ((i &lt; index) ? 0 : 1)];</span>
+<span class="fc" id="L126">            return newTsrs;</span>
+        }
+
+        public static Tsr[] _offsetted(Tsr[] tsrs, int offset) {
+<span class="fc" id="L130">            Tsr[] newTsrs = new Tsr[tsrs.length - offset];</span>
+<span class="fc" id="L131">            newTsrs[0] = Tsr.Create.newTsrLike(tsrs[1]);</span>
+<span class="fc bfc" id="L132" title="All 4 branches covered.">            if (!tsrs[1].has(GraphNode.class) &amp;&amp; tsrs[1] != tsrs[0]) {//Deleting intermediate results!</span>
+<span class="fc" id="L133">                tsrs[1].delete();</span>
+<span class="fc" id="L134">                tsrs[1] = null;</span>
+            }
+<span class="pc bpc" id="L136" title="1 of 4 branches missed.">            if (!tsrs[2].has(GraphNode.class) &amp;&amp; tsrs[2] != tsrs[0]) {//Deleting intermediate results!</span>
+<span class="fc" id="L137">                tsrs[2].delete();</span>
+<span class="fc" id="L138">                tsrs[2] = null;</span>
+            }
+<span class="fc" id="L140">            System.arraycopy(tsrs, 1 + offset, newTsrs, 1, tsrs.length - 1 - offset);</span>
+<span class="fc" id="L141">            newTsrs[1] = tsrs[0];</span>
+<span class="fc" id="L142">            return newTsrs;</span>
+        }
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

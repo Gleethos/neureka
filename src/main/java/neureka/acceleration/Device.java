@@ -16,7 +16,7 @@ import java.util.Collection;
  * This is the interface for implementations representing
  * devices capable of executing operations on tensors, namely the Tsr class.
  * Such instances are also components of tensors, which is why
- * the it extends the Component<Tsr> interface.
+ * the it extends the Component &lt; Tsr &gt; interface.
  */
 public interface Device extends Component<Tsr>
 {

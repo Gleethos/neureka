@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FunctionInput.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.frontend.implementations</a> &gt; <span class="el_source">FunctionInput.java</span></div><h1>FunctionInput.java</h1><pre class="source lang-java linenums">package neureka.calculus.frontend.implementations;
+
+
+import neureka.Tsr;
+import neureka.calculus.Function;
+import neureka.calculus.backend.operations.AbstractOperationType;
+import neureka.calculus.frontend.AbstractBaseFunction;
+import neureka.calculus.frontend.assembly.FunctionBuilder;
+
+<span class="fc" id="L10">public class FunctionInput extends AbstractBaseFunction implements GradientProvider</span>
+{
+    private int _index;
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    public boolean providesGradient(){
+<span class="fc bfc" id="L17" title="All 2 branches covered.">        return (_index&lt;0);</span>
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public boolean isFlat() {
+<span class="nc" id="L24">        return true;</span>
+    }
+
+    @Override
+    public boolean doesAD(){
+<span class="nc" id="L29">        return false;</span>
+    }
+
+    @Override
+    public int id() {
+<span class="nc" id="L34">        return -1;</span>
+    }
+
+    @Override
+    public AbstractOperationType type() {
+<span class="nc" id="L39">        return null;</span>
+    }
+
+    @Override
+    public boolean dependsOn(int index){
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        return index() == index;</span>
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public Function newBuild(final String equation) {
+
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if(equation.charAt(0)=='-'){</span>
+<span class="fc" id="L53">            return FunctionBuilder.build(equation.substring(1)+&quot;*-1&quot;, true);</span>
+        }
+<span class="fc" id="L55">        int number = 0;</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        for (int i = 0; i &lt; equation.length(); ++i) {</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">            if (equation.charAt(i) == 'j') {</span>
+<span class="fc" id="L58">                Function newCore = new FunctionVariable();</span>
+<span class="fc" id="L59">                newCore = newCore.newBuild(equation);</span>
+<span class="fc" id="L60">                return newCore;</span>
+            }
+<span class="fc bfc" id="L62" title="All 4 branches covered.">            if (equation.charAt(i) &lt;= '9' &amp;&amp; equation.charAt(i) &gt;= '0') {</span>
+<span class="fc" id="L63">                number *= 10;</span>
+<span class="fc" id="L64">                number += Integer.parseInt(equation.charAt(i) + &quot;&quot;);</span>
+            }
+        }
+<span class="fc" id="L67">        _index = number;</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        if(equation.contains(&quot;g&quot;)){</span>
+<span class="fc" id="L69">            _index = -(_index+1);</span>
+        }
+
+<span class="fc" id="L72">        return this;</span>
+    }
+
+    private Tsr _extract(Tsr t)
+    {
+<span class="fc bfc" id="L77" title="All 4 branches covered.">        if (this.providesGradient() &amp;&amp; t.rqsGradient()) {</span>
+<span class="fc" id="L78">            Tsr gradient = t.find(Tsr.class);</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">            if (t.rqsGradient()) {</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">                if (gradient==null) {</span>
+<span class="fc" id="L81">                    gradient = new Tsr(t.shape(), 0);</span>
+<span class="fc" id="L82">                    t.add(gradient);</span>
+                }
+<span class="fc" id="L84">                return gradient;</span>
+            }
+        }
+<span class="fc" id="L87">        return t;</span>
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    @Override
+    public double call(final double[] inputs, int j) {
+<span class="fc" id="L94">        return inputs[index()];</span>
+    }
+
+    @Override
+    public double call(final double[] inputs) {
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        return inputs[(_index&gt;=0)?_index:(Math.abs(_index)-1)];</span>
+    }
+
+    @Override
+    public double derive(final double[] inputs, final int index) {
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        return (index == index()) ? 1 : 0;</span>
+    }
+
+    @Override
+    public double derive(double[] inputs, int index, int j) {
+<span class="fc" id="L109">        return derive(inputs, index);</span>
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public Tsr call(Tsr[] inputs, int j) {
+<span class="nc" id="L116">        return _extract(inputs[index()]);</span>
+    }
+
+    @Override
+    public Tsr call(Tsr[] inputs) {
+<span class="fc" id="L121">        return _extract(inputs[index()]);</span>
+    }
+
+    @Override
+    public Tsr derive(Tsr[] inputs, int index, int j) {
+<span class="nc" id="L126">        return derive(inputs, index);</span>
+    }
+
+    @Override
+    public Tsr derive(Tsr[] inputs, int index) {
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        return ( index == index() )</span>
+<span class="fc" id="L132">                ? new Tsr(inputs[0].shape(), 1.0)</span>
+<span class="fc" id="L133">                : new Tsr(inputs[0].shape(), 0.0);</span>
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public String toString() {
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        return &quot;I&quot;+((this.providesGradient())?&quot;g&quot;:&quot;&quot;)+&quot;[&quot; + index() + &quot;]&quot;;</span>
+    }
+
+    public int index(){
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        return ((this.providesGradient())?(Math.abs(_index)-1):_index);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -16,7 +16,7 @@ import neureka.calculus.backend.ExecutionCall;
 public interface ExecutorFor< TargetDevice extends Device >
 {
     /**
-     * Every ExecutorFor<Device> implementation needs to also
+     * Every ExecutorFor &lt; Device &gt; implementation needs to also
      * implement a lambda defined by the interface below.
      * The lambda shall take the call arguments and call
      * the specific methods of the Device type implementation

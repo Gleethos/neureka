@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractOperationType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.backend.operations</a> &gt; <span class="el_source">AbstractOperationType.java</span></div><h1>AbstractOperationType.java</h1><pre class="source lang-java linenums">
+package neureka.calculus.backend.operations;
+
+import neureka.Tsr;
+import neureka.acceleration.Device;
+import neureka.acceleration.host.execution.HostExecutor;
+import neureka.autograd.ADAgent;
+import neureka.calculus.Function;
+import neureka.calculus.backend.ExecutionCall;
+import neureka.calculus.backend.implementations.AbstractBaseOperationTypeImplementation;
+import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
+import neureka.calculus.backend.implementations.OperationTypeImplementation;
+import neureka.calculus.frontend.AbstractFunction;
+import neureka.calculus.frontend.assembly.FunctionBuilder;
+
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Consumer;
+
+public abstract class AbstractOperationType implements OperationType
+{
+
+    private Stringifier _stringifier;
+
+    protected int _id;
+    protected String _function;
+    protected String _operator;
+    /**
+     * Arity is the number of arguments or operands
+     * that this function or operation takes.
+     */
+    protected int _arity;
+    protected boolean _isOperator;
+    protected boolean _isIndexer;
+    protected boolean _isCommutative;
+    protected boolean _isAssociative;
+
+<span class="fc" id="L39">    private final Map&lt;Class, OperationTypeImplementation&gt; _implementations = new LinkedHashMap&lt;&gt;();</span>
+    private final OperationTypeImplementation _defaultImplementation;
+
+    public AbstractOperationType(
+            String function,
+            String operator,
+            int arity,
+            boolean isOperator,
+            boolean isIndexer,
+            boolean isCommutative,
+            boolean isAssociative
+<span class="fc" id="L50">    ) {</span>
+<span class="fc" id="L51">        _function = function;</span>
+<span class="fc" id="L52">        _arity = arity;</span>
+<span class="fc" id="L53">        _id = OperationContext.instance().getID();</span>
+<span class="fc" id="L54">        OperationContext.instance().incrementID();</span>
+<span class="fc" id="L55">        _operator = operator;</span>
+<span class="fc" id="L56">        _isOperator = isOperator;</span>
+<span class="fc" id="L57">        _isIndexer = isIndexer;</span>
+<span class="fc" id="L58">        _isCommutative = isCommutative;</span>
+<span class="fc" id="L59">        _isAssociative = isAssociative;</span>
+
+<span class="fc" id="L61">        OperationContext.instance().getRegister().add(this);</span>
+<span class="fc" id="L62">        OperationContext.instance().getLookup().put(operator, this);</span>
+<span class="fc" id="L63">        OperationContext.instance().getLookup().put(operator.toLowerCase(), this);</span>
+<span class="fc" id="L64">        if (</span>
+                operator
+<span class="fc" id="L66">                        .replace((&quot;&quot;+((char)171)), &quot;&quot;)</span>
+<span class="fc" id="L67">                        .replace((&quot;&quot;+((char)187)), &quot;&quot;)</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">                        .matches(&quot;[a-z]&quot;)</span>
+        ) {
+<span class="fc bfc" id="L70" title="All 2 branches covered.">            if (operator.contains((&quot;&quot;+((char)171)))) {</span>
+<span class="fc" id="L71">                OperationContext.instance().getLookup().put(operator.replace((&quot;&quot;+((char)171)), &quot;&lt;&lt;&quot;), this);</span>
+            }
+<span class="fc bfc" id="L73" title="All 2 branches covered.">            if (operator.contains((&quot;&quot;+((char)187)))) {</span>
+<span class="fc" id="L74">                OperationContext.instance().getLookup().put(operator.replace((&quot;&quot;+((char)187)),&quot;&gt;&gt;&quot;), this);</span>
+            }
+        }
+
+<span class="fc" id="L78">        _defaultImplementation = new AbstractBaseOperationTypeImplementation&lt;OperationTypeImplementation&gt;(&quot;default&quot;)</span>
+<span class="fc" id="L79">        {</span>
+            @Override
+            public boolean isImplementationSuitableFor(ExecutionCall call) {
+<span class="nc" id="L82">                int[] shape = null;</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">                for ( Tsr t : call.getTensors() ) {</span>
+<span class="nc bnc" id="L84" title="All 4 branches missed.">                    if ( shape == null ) if ( t != null ) shape = t.getNDConf().shape();</span>
+<span class="nc bnc" id="L85" title="All 4 branches missed.">                    else if ( t != null &amp;&amp; !Arrays.equals( shape, t.getNDConf().shape() ) ) return false;</span>
+                }
+<span class="nc" id="L87">                return true;</span>
+            }
+
+            @Override
+            public Device findDeviceFor(ExecutionCall call) {
+<span class="nc" id="L92">                return null;</span>
+            }
+
+            @Override
+            public boolean canImplementationPerformADFor(ExecutionCall call) {
+<span class="nc" id="L97">                return true;</span>
+            }
+
+            @Override
+            public ADAgent supplyADAgentFor(Function f, ExecutionCall&lt;Device&gt; call, boolean forward)
+            {
+<span class="nc" id="L103">                Tsr ctxDerivative = (Tsr)call.getAt(&quot;derivative&quot;);</span>
+<span class="nc" id="L104">                Function mul = Function.Detached.MUL;</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">                if ( ctxDerivative != null ) {</span>
+<span class="nc" id="L106">                    return new ADAgent( ctxDerivative )</span>
+<span class="nc" id="L107">                            .withForward(</span>
+<span class="nc" id="L108">                                ( node, forwardDerivative ) -&gt; mul.call(new Tsr[]{forwardDerivative, ctxDerivative})</span>
+<span class="nc" id="L109">                            ).withBackward(</span>
+                                null
+                            );
+                }
+<span class="nc" id="L113">                Tsr[] inputs = call.getTensors();</span>
+<span class="nc" id="L114">                int d = call.getDerivativeIndex();</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">                if ( forward )</span>
+                {
+<span class="nc" id="L117">                    Tsr deriv = f.derive(inputs, d);</span>
+<span class="nc" id="L118">                    return new ADAgent( deriv )</span>
+<span class="nc" id="L119">                            .withForward( ( t, derivative ) -&gt; mul.call(new Tsr[]{derivative, deriv}) )</span>
+<span class="nc" id="L120">                            .withBackward( null );</span>
+                }
+                else
+                {
+<span class="nc" id="L124">                    Tsr deriv = f.derive(inputs, d);</span>
+<span class="nc" id="L125">                    return new ADAgent( deriv )</span>
+<span class="nc" id="L126">                            .withForward( (node, forwardDerivative) -&gt; mul.call(new Tsr[]{forwardDerivative, deriv}) )</span>
+<span class="nc" id="L127">                            .withBackward( (node, backwardError) -&gt; mul.call(new Tsr[]{backwardError, deriv}) );</span>
+                }
+            }
+
+            @Override
+            public Tsr handleInsteadOfDevice(AbstractFunction caller, ExecutionCall call) {
+<span class="nc" id="L133">                return null;</span>
+            }
+
+            @Override
+            public Tsr handleRecursivelyAccordingToArity(ExecutionCall call, java.util.function.Function&lt;ExecutionCall, Tsr&gt; goDeeperWith)
+            {
+<span class="nc" id="L139">                return null;</span>
+            }
+
+            @Override
+            public ExecutionCall instantiateNewTensorsForExecutionIn(ExecutionCall call) {
+<span class="nc" id="L144">                Tsr[] tensors = call.getTensors();</span>
+<span class="nc" id="L145">                Device device = call.getDevice();</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">                if ( tensors[0] == null ) // Creating a new tensor:</span>
+                {
+<span class="nc" id="L148">                    int[] shp = tensors[1].getNDConf().shape();</span>
+<span class="nc" id="L149">                    Tsr output = new Tsr( shp, 0.0 );</span>
+<span class="nc" id="L150">                    output.setIsVirtual(false);</span>
+<span class="nc" id="L151">                    device.add(output);</span>
+<span class="nc" id="L152">                    tensors[0] = output;</span>
+                }
+<span class="nc" id="L154">                return call;</span>
+            }
+<span class="fc" id="L156">        }.setExecutor(</span>
+                HostExecutor.class,
+                new HostExecutor(
+                        call -&gt; {
+<span class="nc" id="L160">                            Function f = FunctionBuilder.build(this, call.getTensors().length-1, false);</span>
+<span class="nc" id="L161">                            double[] inputs = new double[call.getTensors().length-1];</span>
+<span class="nc" id="L162">                            call</span>
+<span class="nc" id="L163">                                .getDevice()</span>
+<span class="nc" id="L164">                                .getExecutor()</span>
+<span class="nc" id="L165">                                .threaded (</span>
+<span class="nc" id="L166">                                        call.getTensor(0).size(),</span>
+                                        ( start, end ) -&gt; {
+<span class="nc bnc" id="L168" title="All 2 branches missed.">                                            for ( int i = start; i &lt; end; i++ ) {</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">                                                for ( int ii = 0; ii &lt; inputs.length; ii++ ) {</span>
+<span class="nc" id="L170">                                                    inputs[ii] = call.getTensor(1+ii).value64(i);</span>
+                                                }
+<span class="nc" id="L172">                                                call.getTensor(0).value64()[i] = f.call(inputs);</span>
+                                            }
+<span class="nc" id="L174">                                        }</span>
+                                );
+<span class="nc" id="L176">                        },</span>
+                        _arity
+                )
+        );
+
+<span class="fc" id="L181">    }</span>
+
+    //==================================================================================================================
+
+    @Override
+    public &lt;T extends AbstractFunctionalOperationTypeImplementation&gt; T getImplementation(Class&lt;T&gt; type){
+<span class="fc" id="L187">        return (T) _implementations.get(type);</span>
+    }
+    @Override
+    public &lt;T extends AbstractFunctionalOperationTypeImplementation&gt; boolean supportsImplementation(Class&lt;T&gt; type){
+<span class="fc" id="L191">        return _implementations.containsKey(type);</span>
+    }
+    @Override
+    public &lt;T extends AbstractFunctionalOperationTypeImplementation&gt; OperationType setImplementation(Class&lt;T&gt; type, T instance) {
+<span class="fc" id="L195">        _implementations.put(type, instance);</span>
+<span class="fc" id="L196">        return this;</span>
+    }
+
+    @Override
+    public OperationType forEachImplementation(Consumer&lt;OperationTypeImplementation&gt; action ){
+<span class="nc" id="L201">        _implementations.values().forEach(action);</span>
+<span class="nc" id="L202">        return this;</span>
+    }
+
+    //==================================================================================================================
+
+    @Override
+    public OperationType setStringifier(Stringifier stringifier) {
+<span class="fc" id="L209">        _stringifier = stringifier;</span>
+<span class="fc" id="L210">        return this;</span>
+    }
+
+    @Override
+    public Stringifier getStringifier() {
+<span class="fc" id="L215">        return _stringifier;</span>
+    }
+
+    //==================================================================================================================
+
+    @Override
+    public OperationTypeImplementation implementationOf(ExecutionCall call) {
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">        for( OperationTypeImplementation te : _implementations.values() ) {</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">            if ( te.isImplementationSuitableFor(call) ) return te;</span>
+<span class="fc" id="L224">        }</span>
+<span class="nc" id="L225">        return null;</span>
+    }
+
+    //==================================================================================================================
+
+    @Override
+    public String getFunction(){
+<span class="fc" id="L232">        return _function;</span>
+    }
+
+    @Override
+    public String getOperator(){
+<span class="fc" id="L237">        return _operator;</span>
+    }
+
+    @Override
+    public int getId(){
+<span class="fc" id="L242">        return _id;</span>
+    }
+
+    @Override
+    public int getArity(){
+<span class="fc" id="L247">        return _arity;</span>
+    }
+
+    @Override
+    public boolean isOperator() {
+<span class="fc" id="L252">        return _isOperator;</span>
+    }
+
+    @Override
+    public boolean isIndexer(){
+<span class="fc" id="L257">        return _isIndexer;</span>
+    }
+
+    @Override
+    public boolean isCommutative(){
+<span class="nc" id="L262">        return  _isCommutative;</span>
+    }
+
+    @Override
+    public boolean supports(Class implementation) {
+<span class="fc" id="L267">        return _implementations.containsKey(implementation);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

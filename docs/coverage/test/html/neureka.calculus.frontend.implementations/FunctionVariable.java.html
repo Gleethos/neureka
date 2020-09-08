@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FunctionVariable.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.frontend.implementations</a> &gt; <span class="el_source">FunctionVariable.java</span></div><h1>FunctionVariable.java</h1><pre class="source lang-java linenums">package neureka.calculus.frontend.implementations;
+
+import neureka.Tsr;
+import neureka.calculus.Function;
+import neureka.calculus.backend.operations.AbstractOperationType;
+import neureka.calculus.frontend.AbstractBaseFunction;
+import neureka.calculus.frontend.assembly.FunctionBuilder;
+
+<span class="fc" id="L9">public class FunctionVariable extends AbstractBaseFunction implements GradientProvider {</span>
+
+<span class="fc" id="L11">    private boolean _providesGradient = false;</span>
+
+    public boolean providesGradient(){
+<span class="fc" id="L14">        return _providesGradient;</span>
+    }
+
+    @Override
+    public boolean isFlat() {
+<span class="nc" id="L19">        return false;</span>
+    }
+
+    @Override
+    public boolean doesAD(){
+<span class="nc" id="L24">        return false;</span>
+    }
+
+    @Override
+    public int id() {
+<span class="nc" id="L29">        return -1;</span>
+    }
+
+    @Override
+    public AbstractOperationType type() {
+<span class="nc" id="L34">        return null;</span>
+    }
+
+    @Override
+    public boolean dependsOn(int index){
+<span class="fc" id="L39">        return true;</span>
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    @Override
+    public Function newBuild(final String equation) {
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        if(equation.contains(&quot;g&quot;)) _providesGradient = true;</span>
+<span class="fc" id="L46">        return this;</span>
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    @Override
+    public double call(final double[] inputs, int j) {
+<span class="fc" id="L53">        return inputs[j];</span>
+    }
+
+    @Override
+    public double call(final double[] inputs) {
+<span class="nc" id="L58">        double sum = 0;</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        for (int Ii = 0; Ii &lt; inputs.length; Ii++) sum += call(inputs, Ii);</span>
+<span class="nc" id="L60">        return sum;</span>
+    }
+
+    @Override
+    public double derive(final double[] inputs, final int index) {
+<span class="fc" id="L65">        return 1.0;</span>
+    }
+
+    @Override
+    public double derive(double[] inputs, int index, int j) {
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if (j != index) return 0;</span>
+<span class="fc" id="L71">        return derive(inputs, index);</span>
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    @Override
+    public Tsr call(Tsr[] inputs, int j) {
+<span class="fc" id="L77">        return inputs[j];</span>
+    }
+
+    @Override
+    public Tsr call(Tsr[] inputs) {
+<span class="fc" id="L82">        String exp = &quot;I[0]&quot;;</span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        for(int i=1; i&lt;inputs.length; i++)exp += &quot;+I[&quot;+i+&quot;]&quot;;</span>
+<span class="fc" id="L84">        return FunctionBuilder.build(exp, false).call(inputs);</span>
+    }
+
+    @Override
+    public Tsr derive(Tsr[] inputs, int index, int j) {
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        return (j != index) ? new Tsr(inputs[0].shape(), 0.0) : derive(inputs, index);</span>
+    }
+
+    @Override
+    public Tsr derive(Tsr[] inputs, int index) {
+<span class="fc" id="L94">        return new Tsr(inputs[0].shape(), 1.0);</span>
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    @Override
+    public String toString() {
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        return &quot;I&quot;+((this.providesGradient())?&quot;g&quot;:&quot;&quot;)+&quot;[j]&quot;;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

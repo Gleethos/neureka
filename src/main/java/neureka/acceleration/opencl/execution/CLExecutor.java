@@ -9,9 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class is the ExecutorFor<OpenCLDevice> implementation
+ * This class is the ExecutorFor &lt; OpenCLDevice &gt; implementation
  * used to properly call an OpenCLDevice instance via the
- * ExecutionOn<OpenCLDevice> lambda implementation
+ * ExecutionOn &lt; OpenCLDevice &gt; lambda implementation
  * receiving an instance of the ExecutionCall class.
  */
 public class CLExecutor implements ExecutorFor<OpenCLDevice>

@@ -4,9 +4,9 @@ import neureka.acceleration.host.HostCPU;
 import neureka.calculus.backend.executions.ExecutorFor;
 
 /**
- * This class is the ExecutorFor<HostCPU> implementation
+ * This class is the ExecutorFor &lt; HostCPU &gt; implementation
  * used to properly call a HostCPU instance via the
- * ExecutionOn<HostCPU> lambda implementation
+ * ExecutionOn &lt; HostCPU &gt; lambda implementation
  * receiving an instance of the ExecutionCall class.
  */
 public class HostExecutor implements ExecutorFor< HostCPU >

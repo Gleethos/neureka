@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExecutionCall.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.backend</a> &gt; <span class="el_source">ExecutionCall.java</span></div><h1>ExecutionCall.java</h1><pre class="source lang-java linenums">package neureka.calculus.backend;
+
+import neureka.Tsr;
+import neureka.acceleration.Device;
+import neureka.autograd.ADAgent;
+import neureka.calculus.Function;
+import neureka.calculus.backend.implementations.OperationTypeImplementation;
+import neureka.calculus.backend.operations.OperationType;
+
+import java.util.Map;
+import java.util.TreeMap;
+
+/**
+ * This class is a simple container holding relevant
+ * arguments needed to execute on a targeted Device which
+ * is specified by the type parameter below.
+ *
+ * @param &lt;DeviceType&gt; The Device implementation targeted by an instance of this ExecutionCall!
+ */
+<span class="pc bpc" id="L20" title="1 of 2 branches missed.">public class ExecutionCall&lt; DeviceType extends Device &gt;</span>
+{
+    public interface Mutator {
+        Tsr[] mutate( Tsr[] tensors );
+    }
+
+    private final DeviceType _device;
+    private Tsr[] _tensors;
+    private final int _d;
+<span class="fc" id="L29">    private int _j = -1;</span>
+    private final OperationType _type;
+    private OperationTypeImplementation&lt;OperationTypeImplementation&gt; _implementation;
+
+    private Map&lt;String, Object&gt; _context;
+
+    public ExecutionCall(
+            DeviceType device,
+            Tsr[] tensors,
+            int d,
+            OperationType type
+<span class="fc" id="L40">    ) {</span>
+<span class="fc" id="L41">        _device = device;</span>
+<span class="fc" id="L42">        _tensors = tensors;</span>
+<span class="fc" id="L43">        _d = d;</span>
+<span class="fc" id="L44">        _type = type;</span>
+<span class="fc" id="L45">        _implementation = null;</span>
+<span class="fc" id="L46">        _context = null;</span>
+<span class="fc" id="L47">    }</span>
+    
+    public ExecutionCall(
+            DeviceType device,
+            Tsr[] tensors,
+            int d,
+            int j,
+            OperationType type
+<span class="fc" id="L55">    ) {</span>
+<span class="fc" id="L56">        _device = device;</span>
+<span class="fc" id="L57">        _tensors = tensors;</span>
+<span class="fc" id="L58">        _d = d;</span>
+<span class="fc" id="L59">        _j = j;</span>
+<span class="fc" id="L60">        _type = type;</span>
+<span class="fc" id="L61">        _implementation = null;</span>
+<span class="fc" id="L62">    }</span>
+    
+    public int getJ() {
+<span class="fc" id="L65">        return _j;</span>
+    }
+    
+<span class="fc" id="L68">    public DeviceType getDevice() {return _device;}</span>
+    
+<span class="fc" id="L70">    public Tsr[] getTensors() {return _tensors;}</span>
+    
+<span class="fc" id="L72">    public Tsr getTensor(int i) {return _tensors[i];}</span>
+    
+<span class="fc" id="L74">    public int getDerivativeIndex() {return _d;}</span>
+    
+<span class="fc" id="L76">    public OperationType getType() {return _type;}</span>
+    
+    public OperationTypeImplementation getImplementation() {
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        if ( _implementation != null ) return _implementation;</span>
+<span class="fc" id="L80">        else _implementation = _type.implementationOf(this);</span>
+<span class="fc" id="L81">        return _implementation;</span>
+    }
+    
+    public boolean allowsForward(){
+<span class="fc" id="L85">        return getImplementation().canImplementationPerformADFor(this);</span>
+    }
+    
+    public ADAgent getADAgentFrom(Function function, Tsr derivative, ExecutionCall&lt;Device&gt; call, boolean forward ) {
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">        if ( this._context != null ) {</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">            if ( call._context ==null ) call._context = new TreeMap&lt;&gt;();</span>
+<span class="nc" id="L91">            call._context.putAll(this._context);</span>
+        }
+<span class="pc bpc" id="L93" title="3 of 8 branches missed.">        if( derivative != null ) assert (call._context != null &amp;&amp; call._context.containsKey(&quot;derivative&quot;));</span>
+<span class="pc bpc" id="L94" title="2 of 4 branches missed.">        else assert call._context == null;</span>
+<span class="fc" id="L95">        return getImplementation().supplyADAgentFor(function, call, forward);</span>
+    }
+    
+    public void mutateArguments(Mutator mutation){
+<span class="fc" id="L99">        _tensors = mutation.mutate(_tensors);</span>
+<span class="fc" id="L100">    }</span>
+    
+    public ExecutionCall&lt;DeviceType&gt; withNew(Tsr[] tensors) {
+<span class="fc" id="L103">        return new ExecutionCall&lt;DeviceType&gt;(_device, tensors, _d, _j, _type);</span>
+    }
+
+    public ExecutionCall&lt;DeviceType&gt; withNew(DeviceType device) {
+<span class="nc" id="L107">        return new ExecutionCall&lt;DeviceType&gt;(device, _tensors, _d, _j, _type);</span>
+    }
+
+    public &lt;T&gt; T getAt(Class&lt;T&gt; type){
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        if ( _context == null ) return null;</span>
+<span class="nc" id="L112">        return (T) _context.get(getClass().getName());</span>
+    }
+
+    public Object getAt(String varName){
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        if ( _context == null ) return null;</span>
+<span class="fc" id="L117">        return _context.get(varName);</span>
+    }
+
+    public ExecutionCall&lt;DeviceType&gt; putAt(String s, Tsr o){
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        if ( _context == null ) _context = new TreeMap&lt;&gt;();</span>
+<span class="fc" id="L122">        _context.put(s,o);</span>
+<span class="fc" id="L123">        return this;</span>
+    }
+
+    public Map&lt;String, Object&gt; getContext(){
+<span class="nc" id="L127">        return _context;</span>
+    }
+
+    public void takeContext( Map&lt;String, Object&gt;  context ){
+<span class="nc bnc" id="L131" title="All 4 branches missed.">        if(_context==null &amp;&amp; context!=null )_context = new TreeMap&lt;&gt;();</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        if(context!=null) _context.putAll(_context);</span>
+<span class="nc" id="L133">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

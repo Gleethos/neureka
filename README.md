@@ -28,7 +28,7 @@ Neureka is a platform independent deep-learning library written in Java.
   
 Visit [Neurekas homepage](https://gleethos.github.io/neureka/index.html) for more information!
   
-Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/raw/master/production/lib/neureka-0.2.4.jar)
+Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/raw/master/production/lib/neureka-0.3.0.jar)
   
 [![Beerpay](https://beerpay.io/Gleethos/neureka/badge.svg?style=beer-square)](https://beerpay.io/Gleethos/neureka)  
 [![Beerpay](https://beerpay.io/Gleethos/neureka/make-wish.svg?style=flat-square)](https://beerpay.io/Gleethos/neureka?focus=wish)

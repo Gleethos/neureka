@@ -21,7 +21,7 @@ public class JITProp implements Component&lt;Tsr&gt;
 
     /**
      *
-     * @param pendings
+     * @param pendings A set of GraphNode instance which are saved for future backprop continuation.
      */
     public void addPending(Set&lt;GraphNode&gt; pendings){
 <span class="nc bnc" id="L27" title="All 2 branches missed.">        if(pendings.isEmpty()) throw new IllegalStateException(&quot;Trying to add empty pending errors set to JITProp.&quot;);</span>
@@ -31,7 +31,7 @@ public class JITProp implements Component&lt;Tsr&gt;
 
     /**
      *
-     * @param finishedJITProps
+     * @param finishedJITProps The reference to a GraphNote which has finished (JITed) backpropation.
      */
     public void noteFinished(GraphNode finishedJITProps){
 <span class="pc bpc" id="L37" title="1 of 2 branches missed.">        if(_finished==null) _finished = new HashSet&lt;&gt;();</span>

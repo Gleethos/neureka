@@ -1097,7 +1097,7 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
 
 
     public Tsr setValue64(double[] value) {
-<span class="pc bpc" id="L1100" title="1 of 2 branches missed.">        if (this.isOutsourced()) this.find(Device.class).overwrite64(this, value);</span>
+<span class="fc bfc" id="L1100" title="All 2 branches covered.">        if (this.isOutsourced()) this.find(Device.class).overwrite64(this, value);</span>
 <span class="fc bfc" id="L1101" title="All 2 branches covered.">        else if ( _value==null ) _value = value;</span>
 <span class="fc bfc" id="L1102" title="All 4 branches covered.">        else if ( _value instanceof float[] ) for ( int i=0; i&lt;value.length; i++ ) ((float[])_value)[i] = (float) value[i];</span>
 <span class="pc bpc" id="L1103" title="1 of 4 branches missed.">        else if ( _value instanceof double[] ) for ( int i=0; i&lt;value.length; i++ ) ((double[])_value)[i] = value[i];</span>
@@ -1105,7 +1105,7 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
     }
 
     public Tsr setValue32(float[] value) {
-<span class="pc bpc" id="L1108" title="1 of 2 branches missed.">        if (this.isOutsourced()) this.find(Device.class).overwrite32(this, value);</span>
+<span class="fc bfc" id="L1108" title="All 2 branches covered.">        if (this.isOutsourced()) this.find(Device.class).overwrite32(this, value);</span>
 <span class="pc bpc" id="L1109" title="1 of 2 branches missed.">        else if ( _value==null ) _value = value;</span>
 <span class="pc bpc" id="L1110" title="3 of 4 branches missed.">        else if ( _value instanceof float[] ) for ( int i=0; i&lt;value.length; i++ ) ((float[])_value)[i] = value[i];</span>
 <span class="pc bpc" id="L1111" title="1 of 4 branches missed.">        else if ( _value instanceof double[] ) for ( int i=0; i&lt;value.length; i++ ) ((double[])_value)[i] = value[i];</span>
@@ -1128,9 +1128,9 @@ public class Tsr extends AbstractNDArray&lt;Tsr&gt; implements Component&lt;Tsr&
     }
 
     public Object getValue(){
-<span class="pc bpc" id="L1131" title="1 of 2 branches missed.">        if(this.isOutsourced()){</span>
-<span class="nc" id="L1132">            Device device = find(Device.class);</span>
-<span class="nc bnc" id="L1133" title="All 2 branches missed.">            return (this.is32())?device.value32f(this):device.value64f(this);</span>
+<span class="fc bfc" id="L1131" title="All 2 branches covered.">        if(this.isOutsourced()){</span>
+<span class="fc" id="L1132">            Device device = find(Device.class);</span>
+<span class="pc bpc" id="L1133" title="1 of 2 branches missed.">            return (this.is32())?device.value32f(this):device.value64f(this);</span>
         }
 <span class="fc" id="L1135">        return _value;</span>
     }

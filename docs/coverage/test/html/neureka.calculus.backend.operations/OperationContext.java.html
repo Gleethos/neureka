@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OperationContext.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.backend.operations</a> &gt; <span class="el_source">OperationContext.java</span></div><h1>OperationContext.java</h1><pre class="source lang-java linenums">package neureka.calculus.backend.operations;
+
+import neureka.calculus.backend.operations.convolution.XMultiplication;
+import neureka.calculus.backend.operations.function.*;
+import neureka.calculus.backend.operations.indexer.Product;
+import neureka.calculus.backend.operations.indexer.Summation;
+import neureka.calculus.backend.operations.operator.*;
+import neureka.calculus.backend.operations.other.CopyLeft;
+import neureka.calculus.backend.operations.other.CopyRight;
+import neureka.calculus.backend.operations.other.Reshape;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ *    PATTERN : Singleton
+ *    (But cloneable for testing purposes!)
+ *
+ *    This class initializes and stores OperationType instances
+ *    in various data structures for fast access and querying. (Mostly used by the FunctionParser)
+ *
+ *    Every OperationType instance contains a default ThreadLocal reference to
+ *    the same OperationContext instance, namely: The _INSTANCE variable as declared below.
+ *    During class initialization concrete classes extending the OperationType class
+ *    are being instantiated in the static block below.
+ *
+ */
+public class OperationContext implements Cloneable
+{
+<span class="fc" id="L32">    private static ThreadLocal&lt;OperationContext&gt; _INSTANCES = ThreadLocal.withInitial( ()-&gt;new OperationContext() );</span>
+
+    static
+    {
+<span class="fc" id="L36">        new ReLU();</span>
+<span class="fc" id="L37">        new Sigmoid();</span>
+<span class="fc" id="L38">        new Tanh();</span>
+<span class="fc" id="L39">        new Quadratic();</span>
+<span class="fc" id="L40">        new Ligmoid();</span>
+<span class="fc" id="L41">        new Identity();</span>
+<span class="fc" id="L42">        new Gaussian();</span>
+<span class="fc" id="L43">        new Absolute();</span>
+<span class="fc" id="L44">        new Sinus();</span>
+<span class="fc" id="L45">        new Cosinus();</span>
+
+<span class="fc" id="L47">        new Summation();</span>
+<span class="fc" id="L48">        new Product();</span>
+
+<span class="fc" id="L50">        new Power();</span>
+<span class="fc" id="L51">        new Division();</span>
+<span class="fc" id="L52">        new Multiplication();</span>
+<span class="fc" id="L53">        new Modulo();</span>
+<span class="fc" id="L54">        new Subtraction();</span>
+<span class="fc" id="L55">        new Addition();</span>
+
+<span class="fc" id="L57">        new XMultiplication();</span>
+
+<span class="fc" id="L59">        new Reshape();</span>
+<span class="fc" id="L60">        new CopyLeft();</span>
+<span class="fc" id="L61">        new CopyRight();</span>
+<span class="fc" id="L62">    }</span>
+
+    /**
+     * @return The OperationContext singleton instance!
+     */
+    public static OperationContext instance(){
+<span class="fc" id="L68">        return _INSTANCES.get();</span>
+    }
+
+    public static void setInstance( OperationContext context ) {
+<span class="nc" id="L72">        _INSTANCES.set(context);</span>
+<span class="nc" id="L73">    }</span>
+
+    private final Map&lt;String, AbstractOperationType&gt; _LOOKUP;
+    private final ArrayList&lt;AbstractOperationType&gt; _REGISTER;
+    private int _ID;
+
+<span class="fc" id="L79">    private OperationContext(){</span>
+<span class="fc" id="L80">        _LOOKUP = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L81">        _REGISTER = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L82">        _ID = 0;</span>
+<span class="fc" id="L83">    }</span>
+
+    /**
+     * @return A mapping between OperationType identifiers and their corresponding instances.
+     */
+    public Map&lt;String, AbstractOperationType&gt; getLookup(){
+<span class="fc" id="L89">        return _LOOKUP;</span>
+    }
+
+    /**
+     * @return A list of all OperationType instances.
+     */
+    public List&lt;AbstractOperationType&gt; getRegister(){
+<span class="fc" id="L96">        return _REGISTER;</span>
+    }
+
+    /**
+     * @return The ID of the OperationType that will be instantiated next.
+     */
+    public int getID(){
+<span class="fc" id="L103">        return _ID;</span>
+    }
+
+    public void incrementID(){
+<span class="fc" id="L107">        _ID++;</span>
+<span class="fc" id="L108">    }</span>
+
+    public List&lt;AbstractOperationType&gt; instances(){
+<span class="fc" id="L111">        return getRegister();</span>
+    }
+
+    public AbstractOperationType instance(int index){
+<span class="nc" id="L115">        return getRegister().get(index);</span>
+    }
+
+    public AbstractOperationType instance(String identifier){
+<span class="nc" id="L119">        return getLookup().getOrDefault(identifier, null);</span>
+    }
+
+    @Override
+    public OperationContext clone()
+    {
+<span class="fc" id="L125">        OperationContext clone = new OperationContext();</span>
+<span class="fc" id="L126">        clone._ID = _ID;</span>
+<span class="fc" id="L127">        clone._LOOKUP.putAll(_LOOKUP);</span>
+<span class="fc" id="L128">        clone._REGISTER.addAll(_REGISTER);</span>
+<span class="fc" id="L129">        return clone;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -285,9 +285,9 @@ public class OpenCLDevice extends AbstractDevice
 
     @Override
     public Device overwrite64(Tsr tensor, double[] value) {
-<span class="nc" id="L288">        cl_tsr clt = tensor.find(cl_tsr.class);</span>
-<span class="nc bnc" id="L289" title="All 2 branches missed.">        if (clt.fp == 1) {</span>
-<span class="nc" id="L290">            overwrite32(tensor, DataHelper.doubleToFloat(value));</span>
+<span class="fc" id="L288">        cl_tsr clt = tensor.find(cl_tsr.class);</span>
+<span class="pc bpc" id="L289" title="1 of 2 branches missed.">        if (clt.fp == 1) {</span>
+<span class="fc" id="L290">            overwrite32(tensor, DataHelper.doubleToFloat(value));</span>
         } else {
 <span class="nc bnc" id="L292" title="All 2 branches missed.">            if(clt.value.event!=null) clWaitForEvents(1, new cl_event[]{clt.value.event});</span>
 <span class="nc" id="L293">            clt.value.event = new cl_event();</span>
@@ -303,7 +303,7 @@ public class OpenCLDevice extends AbstractDevice
                     clt.value.event
             );
         }
-<span class="nc" id="L306">        return this;</span>
+<span class="fc" id="L306">        return this;</span>
     }
 
     private void _releaseEvents(Tsr[] tsrs){
@@ -328,19 +328,19 @@ public class OpenCLDevice extends AbstractDevice
 
     @Override
     public Device overwrite32(Tsr tensor, float[] value) {
-<span class="nc" id="L331">        cl_tsr clt = tensor.find(cl_tsr.class);</span>
-<span class="nc bnc" id="L332" title="All 2 branches missed.">        if (clt.fp == 1) {</span>
-<span class="nc bnc" id="L333" title="All 2 branches missed.">            if(clt.value.event!=null){</span>
-<span class="nc" id="L334">                clWaitForEvents(1, new cl_event[]{clt.value.event});</span>
+<span class="fc" id="L331">        cl_tsr clt = tensor.find(cl_tsr.class);</span>
+<span class="pc bpc" id="L332" title="1 of 2 branches missed.">        if (clt.fp == 1) {</span>
+<span class="fc bfc" id="L333" title="All 2 branches covered.">            if(clt.value.event!=null){</span>
+<span class="fc" id="L334">                clWaitForEvents(1, new cl_event[]{clt.value.event});</span>
             }
-<span class="nc" id="L336">            clt.value.event = new cl_event();</span>
-<span class="nc" id="L337">            clEnqueueWriteBuffer(</span>
+<span class="fc" id="L336">            clt.value.event = new cl_event();</span>
+<span class="fc" id="L337">            clEnqueueWriteBuffer(</span>
                     _queue,
                     clt.value.data,
                     CL_TRUE,
                     0,
                     Sizeof.cl_float * value.length,
-<span class="nc" id="L343">                    Pointer.to(value),</span>
+<span class="fc" id="L343">                    Pointer.to(value),</span>
                     0,
                     null,
                     clt.value.event
@@ -348,7 +348,7 @@ public class OpenCLDevice extends AbstractDevice
         } else {
 <span class="nc" id="L349">            overwrite64(tensor, DataHelper.floatToDouble(value));</span>
         }
-<span class="nc" id="L351">        return this;</span>
+<span class="fc" id="L351">        return this;</span>
     }
 
     @Override

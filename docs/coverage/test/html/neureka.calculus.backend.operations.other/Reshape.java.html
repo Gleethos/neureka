@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Reshape.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.backend.operations.other</a> &gt; <span class="el_source">Reshape.java</span></div><h1>Reshape.java</h1><pre class="source lang-java linenums">package neureka.calculus.backend.operations.other;
+
+import neureka.Tsr;
+import neureka.acceleration.Device;
+import neureka.autograd.ADAgent;
+import neureka.calculus.Function;
+import neureka.calculus.backend.operations.AbstractOperationType;
+import neureka.calculus.backend.ExecutionCall;
+import neureka.calculus.backend.operations.OperationType;
+import neureka.calculus.backend.implementations.functional.GenericImplementation;
+import neureka.calculus.frontend.assembly.FunctionBuilder;
+import neureka.ndim.AbstractNDArray;
+import neureka.ndim.config.AbstractNDC;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Reshape extends AbstractOperationType
+{
+
+    public Reshape()
+    {
+
+<span class="fc" id="L24">        super(</span>
+                &quot;reshape&quot;, &quot;,&quot;, -1,
+                true,
+                false,
+                false,
+                false
+        );
+
+<span class="fc" id="L32">        setStringifier(</span>
+            children -&gt;
+            {
+<span class="fc" id="L35">                java.util.function.Function&lt;String, Boolean&gt; isConstantNumeric =</span>
+                s -&gt;
+                {
+                    try {
+<span class="fc" id="L39">                        Double.parseDouble(s);</span>
+<span class="fc" id="L40">                        return true;</span>
+<span class="fc" id="L41">                    } catch (Exception e) { return false; }</span>
+                };
+<span class="fc" id="L43">                StringBuilder reconstructed = new StringBuilder();</span>
+<span class="fc" id="L44">                reconstructed.insert(0, &quot;[&quot;);</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">                for ( int i = 0; i &lt; children.size(); ++i ) {</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">                    if ( i == children.size() - 1 ) {</span>
+<span class="fc" id="L47">                        reconstructed.append(&quot;]:(&quot;).append(</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">                                ( isConstantNumeric.apply(children.get(i)) )</span>
+<span class="nc" id="L49">                                        ? children.get(i).split(&quot;\\.&quot;)[0]</span>
+<span class="fc" id="L50">                                        : children.get(i)</span>
+<span class="fc" id="L51">                        ).append(&quot;)&quot;);</span>
+                    } else {
+<span class="fc" id="L53">                        reconstructed.append(</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">                                ( isConstantNumeric.apply(children.get(i)) )</span>
+<span class="fc" id="L55">                                        ? children.get(i).split(&quot;\\.&quot;)[0]</span>
+<span class="fc" id="L56">                                        : children.get(i)</span>
+                        );
+                    }
+<span class="fc bfc" id="L59" title="All 2 branches covered.">                    if ( i &lt; children.size() - 2 ) {</span>
+<span class="fc" id="L60">                        reconstructed.append(&quot;,&quot;);</span>
+                    }
+                }
+<span class="fc" id="L63">                return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
+            }
+        );
+
+<span class="fc" id="L67">        GenericImplementation implementation = new GenericImplementation(&quot;reshape&quot;)</span>
+<span class="fc" id="L68">                .setSuitabilityChecker(call -&gt; true )</span>
+<span class="fc" id="L69">                .setADAnalyzer( call -&gt; false )</span>
+<span class="fc" id="L70">                .setADAgentSupplier(</span>
+                    ( Function f, ExecutionCall&lt;Device&gt; call, boolean forward ) -&gt;
+                    {
+<span class="fc" id="L73">                        Tsr ctxDerivative = (Tsr)call.getAt(&quot;derivative&quot;);</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">                        if(forward){</span>
+<span class="nc" id="L75">                            throw new IllegalArgumentException(&quot;Reshape operation does not support forward-AD!&quot;);</span>
+                        }
+<span class="fc" id="L77">                        return new ADAgent(</span>
+                                null
+<span class="fc" id="L79">                        ).withForward(</span>
+<span class="nc" id="L80">                                (t, derivative) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0)</span>
+<span class="fc" id="L81">                        ).withBackward(</span>
+<span class="fc" id="L82">                                (t, error) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0)</span>
+                        );
+                    }
+<span class="fc" id="L85">                ).setCallHock(</span>
+                    ( caller, call ) -&gt;
+                    {
+<span class="fc" id="L88">                        Tsr[] inputs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);</span>
+<span class="fc" id="L89">                        int[] newForm = new int[inputs.length - 1];</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">                        for ( int i = 0; i &lt; inputs.length - 1; i++ ) {</span>
+<span class="fc" id="L91">                            newForm[i] = (int) Tsr.IO.getFrom(inputs[i], 0);//_src.get(i).call(inputs)</span>
+                        }
+<span class="fc bfc" id="L93" title="All 2 branches covered.">                        if ( call.getDerivativeIndex() &gt;= 0 ) {//reverse reshape:</span>
+<span class="fc" id="L94">                            int reverseLength = 0;</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">                            for ( int e : newForm ) {</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">                                if ( e &gt;= 0 ) reverseLength++;</span>
+                            }
+<span class="fc" id="L98">                            int[] reversed = new int[reverseLength];</span>
+<span class="fc" id="L99">                            int reshape_i = 0;</span>
+<span class="fc" id="L100">                            int reverse_i = 0;</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">                            while ( reverse_i &lt; reverseLength ) {</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">                                if ( newForm[ reshape_i ] &gt;= 0 ) {</span>
+<span class="fc" id="L103">                                    reversed[ newForm[reshape_i] ] = reshape_i;</span>
+<span class="fc" id="L104">                                    reverse_i++;</span>
+                                }
+<span class="fc" id="L106">                                reshape_i++;</span>
+                            }
+<span class="fc" id="L108">                            newForm = reversed;</span>
+                        }
+<span class="fc" id="L110">                        Tsr t = inputs[inputs.length - 1];</span>
+<span class="fc" id="L111">                        return reshaped(t, newForm, true);</span>
+                    }
+<span class="fc" id="L113">                ).setRJAgent(</span>
+                    ( call, goDeeperWith ) -&gt;
+                    {
+<span class="nc" id="L116">                        Tsr[] inputs = call.getTensors();</span>
+<span class="nc" id="L117">                        Device device = call.getDevice();</span>
+<span class="nc" id="L118">                        int d = call.getDerivativeIndex();</span>
+<span class="nc" id="L119">                        OperationType type = call.getType();</span>
+
+                        //inputs = _src_acti(inputs, j, -1, 0);
+<span class="nc" id="L122">                        int[] newForm = new int[inputs.length - 1];</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                        for ( int i = 0; i &lt; inputs.length - 1; i++ ) {</span>
+<span class="nc" id="L124">                            newForm[i] = (int) Tsr.IO.getFrom(inputs[i], 0);//_src.get(i).call(inputs)</span>
+                        }
+<span class="nc bnc" id="L126" title="All 2 branches missed.">                        if ( d &gt;= 0 ) {//reverse reshape:</span>
+<span class="nc" id="L127">                            int reverseLength = 0;</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">                            for ( int e : newForm ) {</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">                                if ( e &gt;= 0 ) reverseLength++;</span>
+                            }
+<span class="nc" id="L131">                            int[] reversed = new int[reverseLength];</span>
+<span class="nc" id="L132">                            int reshape_i = 0;</span>
+<span class="nc" id="L133">                            int reverse_i = 0;</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">                            while ( reverse_i &lt; reverseLength ) {</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">                                if ( newForm[ reshape_i ] &gt;= 0 ) {</span>
+<span class="nc" id="L136">                                    reversed[ newForm[reshape_i] ] = reshape_i;</span>
+<span class="nc" id="L137">                                    reverse_i++;</span>
+                                }
+<span class="nc" id="L139">                                reshape_i++;</span>
+                            }
+<span class="nc" id="L141">                            newForm = reversed;</span>
+                        }
+<span class="nc" id="L143">                        Tsr t = inputs[inputs.length - 1];</span>
+<span class="nc" id="L144">                        return reshaped( t, newForm, true );</span>
+                    }
+<span class="fc" id="L146">                ).setDrainInstantiation(</span>
+                    call -&gt; {
+<span class="nc" id="L148">                        Tsr[] tsrs = call.getTensors();</span>
+<span class="nc" id="L149">                        Device device = call.getDevice();</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">                        if ( tsrs[0] == null ) // Creating a new tensor:</span>
+                        {
+<span class="nc" id="L152">                            int[] shp = tsrs[1].getNDConf().shape();</span>
+<span class="nc" id="L153">                            Tsr output = new Tsr( shp, 0.0 );</span>
+<span class="nc" id="L154">                            output.setIsVirtual( false );</span>
+<span class="nc" id="L155">                            device.add(output);</span>
+<span class="nc" id="L156">                            tsrs[0] = output;</span>
+                        }
+<span class="nc" id="L158">                        return call;</span>
+                    }
+                );
+
+<span class="fc" id="L162">        setImplementation(</span>
+                GenericImplementation.class,
+                implementation
+        );
+
+<span class="fc" id="L167">    }</span>
+
+
+    public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr)
+    {
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">        tensor = (newTsr) ? (Tsr)tensor.getAt(new ArrayList&lt;&gt;()) : tensor;</span>
+<span class="fc" id="L173">        int[] newShape = AbstractNDArray.Utility.Indexing.shpCheck(AbstractNDArray.Utility.Indexing.rearrange(tensor.getNDConf().shape(), newForm), tensor);</span>
+<span class="fc" id="L174">        int[] newTranslation = AbstractNDArray.Utility.Indexing.rearrange(tensor.getNDConf().translation(), newShape, newForm);</span>
+<span class="fc" id="L175">        int[] newIdxmap = AbstractNDArray.Utility.Indexing.newTlnOf(newShape);</span>
+<span class="fc" id="L176">        int[] newSpread = new int[newForm.length];</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">        for (int i = 0; i &lt; newForm.length; i++) {</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">            if (newForm[i] &lt; 0) newSpread[i] = 1;</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">            else if (newForm[i] &gt;= 0) newSpread[i] = tensor.getNDConf().spread(newForm[i]);</span>
+        }
+<span class="fc" id="L181">        int[] newOffset = new int[newForm.length];</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">        for (int i = 0; i &lt; newForm.length; i++) {</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">            if (newForm[i] &lt; 0) newOffset[i] = 0;</span>
+<span class="pc bpc" id="L184" title="1 of 2 branches missed.">            else if (newForm[i] &gt;= 0) newOffset[i] = tensor.getNDConf().offset(newForm[i]);</span>
+        }
+<span class="fc" id="L186">        tensor.setNDConf( AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset) );</span>
+<span class="fc" id="L187">        return tensor;</span>
+    }
+
+
+    @Override
+    public double calculate(double[] inputs, int j, int d, List&lt;Function&gt; src) {
+<span class="nc" id="L193">            return src.get(0).call( inputs, j );</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

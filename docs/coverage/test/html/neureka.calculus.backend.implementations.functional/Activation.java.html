@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Activation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.backend.implementations.functional</a> &gt; <span class="el_source">Activation.java</span></div><h1>Activation.java</h1><pre class="source lang-java linenums">package neureka.calculus.backend.implementations.functional;
+
+import neureka.Neureka;
+import neureka.Tsr;
+import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
+import neureka.calculus.backend.operations.OperationType;
+import org.jetbrains.annotations.Contract;
+
+public class Activation extends AbstractFunctionalOperationTypeImplementation&lt; Activation &gt;
+{
+
+    public Activation() {
+<span class="fc" id="L13">        super(&quot;activation&quot;);</span>
+<span class="fc" id="L14">        setSuitabilityChecker(call-&gt;true);</span>
+<span class="fc" id="L15">    }</span>
+
+    public String getKernelSource(){
+<span class="fc" id="L18">        return Neureka.instance().utility().readResource(&quot;kernels/activation_template.cl&quot;);</span>
+    }
+
+    @Contract(pure = true)
+    public static void activate(
+            Tsr t0_drn,
+            int i, int end,
+            OperationType.TertiaryNDXConsumer operation
+    ) {
+<span class="fc" id="L27">        int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
+<span class="fc" id="L28">        int rank = t0Shp.length;</span>
+<span class="fc" id="L29">        int[] t0Idx = t0_drn.idx_of_i(i);</span>
+<span class="fc" id="L30">        int[] t1Idx = new int[rank];</span>
+<span class="fc" id="L31">        double[] t0_value = t0_drn.value64();</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">        while ( i &lt; end ) {//increment on drain accordingly:</span>
+<span class="fc" id="L33">            System.arraycopy(t0Idx, 0, t1Idx, 0, rank);</span>
+            //setInto _value in drn:
+<span class="fc" id="L35">            t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, null);</span>
+            //increment on drain:
+<span class="fc" id="L37">            Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L38">            i++;</span>
+        }
+<span class="fc" id="L40">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

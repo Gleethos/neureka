@@ -46,7 +46,7 @@ plugins {
 }
 
 String PROJECT = "neureka"
-String VERSION = "0.2.4"
+String VERSION = "0.3.0"
 String GROUPID = "com.github.gleethos"
 String BASENAME = "neureka"
 
@@ -76,18 +76,6 @@ change({VERSION}).between("return \"", "\"").inFile("/src/main/resources/library
 change({VERSION}).between("assert Neureka.version\\(\\)==\"", "\"//version").inFile("/src/test/groovy/ThoroughGroovyTests.groovy")
 change({VERSION}).between("Neureka.version\\(\\)==\"", "\"//version").inFile("/src/test/groovy/ut/neureka/Neureka_Unit_Tests.groovy")
 
-// SETTING CUSTOM SPOCK REPORT STYLE :
-
-def spockDir = "$rootDir" + "/docs/spock/reports"
-new File(spockDir).eachFile {
-    if ( it.name.endsWith('.html') && it.text.contains('</style>') ){
-        change({'###'}).between('<style>', '</style>').inFile("/docs/spock/reports/"+it.name)
-        it.text = it.text.replace(
-                '<style>###</style>',//'<link rel="stylesheet" href="../css/custom.css">'
-                '<style>' + new File("$rootDir/docs/spock/css/custom.css").text + '</style>'
-        )
-    }
-}
 
 // SETTING VERSION AND GROUP-ID FOR BUILDING :
 
@@ -111,12 +99,12 @@ repositories {
 
 dependencies {
     // Library dependencies :
-    api 'org.codehaus.groovy:groovy:3.0.0-rc-3'
+    api 'org.codehaus.groovy:groovy:3.0.5'
     implementation 'org.jocl:jocl:2.0.2' //-> Internal dependency!
     implementation 'org.jetbrains:annotations:16.0.2'
 
     // Test suite : Groovy, Spock (+ sl4j, + Spock-Reports)
-    testCompile group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.0-rc-3'
+    testCompile group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.5'
     testCompile group: 'org.spockframework', name: 'spock-core', version: '2.0-M2-groovy-3.0'
     testCompile group: 'org.spockframework', name: 'spock-bom', version: '2.0-M2-groovy-3.0'
     testCompile 'com.athaydes:spock-reports:2.0-RC2', { transitive = false }
@@ -133,7 +121,7 @@ test {
     //filter { includeTestsMatching "*" } // Filter for tests scenarios!
 
     // Spock-Reports configuration :
-    systemProperty 'com.athaydes.spockframework.report.outputDir', 'docs/spock/reports'
+    //systemProperty 'com.athaydes.spockframework.report.outputDir', 'docs/spock/reports'
     systemProperty 'com.athaydes.spockframework.report.showCodeBlocks', true
 
     useJUnitPlatform() // ...otherwise tests will not be received by gradle...
@@ -166,11 +154,48 @@ check.dependsOn jacocoTestReport
 //----------------------------------------------------------------------------------------------------------------------
 // 9. CUSTOM DEPLOYMENT TASKS :
 
+task cleanForDeployment(type: Delete) {
+    delete "$rootDir/build"
+    delete new File("$rootDir/docs/jdocs").listFiles()
+    delete new File("$rootDir/docs/spock/reports").listFiles()
+}
+
+task releaseJDocs(type: Copy) {
+    from "$rootDir/build/docs/javadoc"
+    into "$rootDir/docs/jdocs"
+}
+
+task releaseSpockReports(type: Copy) {
+    from "$rootDir/build/spock-reports"
+    into "$rootDir/docs/spock/reports"
+}
+
+task injectSpockStyles(type: Task){
+    ant.replaceregexp(match:"<style>[\\s\\S]*</style>", replace:'<style>###</style>', flags:'g', byline:false) {
+        fileset(dir: "$rootDir/docs/spock/reports")
+    }
+    ant.replaceregexp(
+            match:'<style>###</style>',
+            replace:'<style>' + new File("$rootDir/docs/spock/css/custom.css").text + '</style>',
+            flags:'g',
+            byline:false
+    ) {
+        fileset(dir: "$rootDir/docs/spock/reports")
+    }
+}
+
 task deploy() {
-    dependsOn 'assemble'
-    //dependsOn 'check'
+
+     //Expected before : dependsOn 'cleanForDeployment'
+
+    dependsOn 'check'
     dependsOn 'jar'
     dependsOn 'proguard'
+    dependsOn 'javadoc'
+    dependsOn 'releaseJDocs'
+    dependsOn 'releaseSpockReports'
+
+    // Expected after : dependsOn 'injectSpockStyles'
 }
 
 //----------------------------------------------------------------------------------------------------------------------
