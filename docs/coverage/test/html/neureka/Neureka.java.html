@@ -367,11 +367,11 @@ public class Neureka
             try {
 <span class="fc" id="L368">                Class.forName(className);</span>
 <span class="fc" id="L369">                found = true;</span>
-<span class="nc" id="L370">            } catch (Throwable ex) {// Class or one of its dependencies is not present...</span>
-<span class="nc" id="L371">                cause = ex.getMessage();</span>
+<span class="fc" id="L370">            } catch (Throwable ex) {// Class or one of its dependencies is not present...</span>
+<span class="fc" id="L371">                cause = ex.getMessage();</span>
             } finally {
-<span class="pc bpc" id="L373" title="5 of 6 branches missed.">                if(!found){</span>
-<span class="nc" id="L374">                    System.out.println(</span>
+<span class="pc bpc" id="L373" title="4 of 6 branches missed.">                if(!found){</span>
+<span class="pc" id="L374">                    System.out.println(</span>
                             &quot;[Info]: '&quot;+className+&quot;' dependencies not found!&quot;+groovyInfo+&quot;\n[Cause]: &quot;+cause
                     );
                 }

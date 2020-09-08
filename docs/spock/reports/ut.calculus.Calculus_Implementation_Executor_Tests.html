@@ -1,7 +1,310 @@
 <!DOCTYPE html><html>
 <head>
 <meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
-<link rel="stylesheet" href="../css/custom.css">
+<style>
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 300;
+}
+
+h2 {
+    font-weight: 400;
+}
+
+hr {
+    margin-bottom: 1.5em;
+}
+
+h3 {
+    font-weight: 200;
+}
+
+table {
+    margin: 7px;
+    -webkit-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+}
+
+.ignored {
+    color: gray;
+}
+
+div.project-header {
+    margin-bottom: 10px;
+    font-size: large;
+}
+
+div.project-header &gt; span.project-name {
+
+                        }
+
+div.project-header &gt; span.project-version {
+                            padding-left: 20px;
+                        }
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+div.spec-title {
+    padding: 10px 0px 5px 0px;
+}
+
+tr.error td, td.error {
+    background-color: #F89A4F !important;
+}
+
+tr.failure td, td.failure {
+    color: red;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}
+
+
+
+
+
+
+.back-link {
+    font-size: small;
+    font-weight: bold;
+}
+
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+table.features-table {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table {
+    width: 99%;
+
+    font-weight: bold;
+    font-size: small;
+}
+
+table.summary-table tbody {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table th {
+    background: lightblue;
+    padding: 6px;
+}
+
+table.summary-table td {
+    background: #E0E0E0;
+    padding: 6px;
+}
+
+pre.title {
+    font-family: inherit;
+    font-size: 24px;
+    line-height: 28px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+pre.narrative {
+    font-family: inherit;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 23px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+.feature-description {
+    font-size: large;
+    background: lightblue;
+    padding: 12px;
+}
+
+.feature-toc-error {
+    color: #F89A4F;
+}
+
+.feature-toc-failure {
+    color: #FF8080;
+}
+
+.feature-toc-ignored {
+    color: lightgray;
+}
+
+.feature-toc-pass {
+    color: green;
+}
+
+.feature-description.error {
+    background: #F89A4F;
+}
+
+.feature-description.failure {
+    background: #FF8080;
+}
+
+.feature-description.ignored {
+    background: lightgray;
+}
+
+.feature-description.ignored .reason {
+    color: black;
+    font-style: italic;
+    font-size: small;
+}
+
+div.extra-info {
+    font-size: small;
+}
+
+div.spec-headers {
+    margin: 4px;
+    font-style: italic;
+}
+
+div.spec-header {
+}
+
+div.issues {
+    margin-top: 6px;
+    padding: 10px 5px 5px 5px;
+    background-color: lemonchiffon;
+    color: black;
+    font-weight: 500;
+    font-size: small;
+    max-width: 50%;
+}
+
+div.pending-feature {
+    background-color: dodgerblue;
+    color: white;
+    margin-top: 6px;
+    padding: 5px;
+    text-align: center;
+    font-size: small;
+    max-width: 120px;
+}
+
+div.problem-description {
+    padding: 10px;
+    background: pink;
+    border-radius: 10px;
+}
+
+div.problem-header {
+    font-weight: bold;
+    color: red;
+}
+
+div.problem-list {
+
+}
+
+table.ex-table{
+    width: 98%;
+}
+
+table.ex-table th {
+    background: lightblue;
+    padding: 5px;
+}
+
+table.ex-table td {
+    background: #E0E0E0;
+    padding: 2px 5px 2px 5px;
+}
+
+table td {
+    min-width: 50px;
+}
+
+col.block-kind-col {
+    width: 70px;
+}
+
+span.spec-header {
+    font-weight: bold;
+}
+
+div.spec-text {
+    /*color: green;*/
+}
+
+div.spec-status {
+    font-style: italic;
+}
+
+.ignored {
+    color: gray;
+}
+
+td.ex-result {
+    text-align: center;
+    background: white !important;
+}
+
+.ex-pass {
+    color: darkgreen;
+}
+
+.ex-fail {
+    color: red;
+    font-weight: bold;
+}
+
+div.block-kind {
+    margin: 2px;
+    font-style: italic;
+}
+
+div.block-text {
+
+}
+
+pre.block-source {
+    background-color: whitesmoke;
+    padding: 10px;
+}
+
+pre.block-source.error {
+    background-color: pink;
+    color: red;
+    font-weight: bold;
+}
+
+pre.block-source.pre-error {
+
+}
+
+pre.block-source.before-error {
+    margin-bottom: -14px;
+}
+
+pre.block-source.after-error {
+    color: gray;
+    margin-top: -14px;
+}
+
+pre.block-source.post-error {
+    color: gray;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}</style>
 </head>
 <body>
 <h2>Report for ut.calculus.Calculus_Implementation_Executor_Tests</h2>
@@ -11,7 +314,7 @@
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Tue Sep 01 23:07:20 CEST 2020 by Daniel</div>
+<div class='date-test-ran'>Created on Sun Sep 06 21:13:35 CEST 2020 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -28,7 +331,7 @@
 <td>0</td>
 <td>0</td>
 <td>100,0%</td>
-<td>13,265 seconds</td>
+<td>14,983 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -128,27 +431,27 @@ clExecutor != null</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@49ff5c2</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@2255e6f1</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@443995db</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@7bb392c8</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@4dc7d809</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@1ecf50d4</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@7ec5f9a</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@4e0425b9</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@7c269b40</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@436b20e6</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@74394e52</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@24a9df91</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -233,59 +536,59 @@ clExecutor != null</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@5531ca71</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@5d23c373</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@5ed864a6</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@31af07f2</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@75be2ab1</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@378a5c7b</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@53980cd3</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@1ff0e7da</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@8a13693</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@5c8b870c</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@27659908</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@25c3835f</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@6dd655de</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@43cb4797</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@66702cb5</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@7a2bfdca</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@20cfc9cf</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@45add48e</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@225ed0fd</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@12f215d0</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@7df919cd</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@b9c0fe6</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@1a0b8743</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@2efc66f2</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@4454a47c</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@5dede07</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Activation@10d94d33</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Activation@78007f9</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -390,27 +693,27 @@ def nativeExecutor = Mock( HostCPU.NativeExecutor )</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@49ff5c2</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@2255e6f1</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@443995db</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@7bb392c8</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@4dc7d809</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@1ecf50d4</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@7ec5f9a</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@4e0425b9</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@7c269b40</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@436b20e6</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@74394e52</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@24a9df91</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -516,27 +819,27 @@ def kernel = Mock( KernelBuilder )</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@49ff5c2</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@2255e6f1</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@443995db</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@7bb392c8</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@4dc7d809</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@1ecf50d4</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@7ec5f9a</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@4e0425b9</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@7c269b40</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@436b20e6</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.calculus.environment.implementations.Operator@74394e52</td>
+<td class='ex-value'>neureka.calculus.backend.implementations.Operator@24a9df91</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>

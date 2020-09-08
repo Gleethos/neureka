@@ -6,7 +6,7 @@ import neureka.Tsr;
 import neureka.acceleration.Device;
 import neureka.acceleration.opencl.utility.WeakTensorReference;
 import neureka.calculus.Function;
-import neureka.calculus.environment.ExecutionCall;
+import neureka.calculus.backend.ExecutionCall;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
