@@ -76,7 +76,7 @@ public abstract class AbstractOperationType implements OperationType
             }
         }
 
-        _defaultImplementation = new AbstractBaseOperationTypeImplementation<>("default")
+        _defaultImplementation = new AbstractBaseOperationTypeImplementation<OperationTypeImplementation>("default")
         {
             @Override
             public boolean isImplementationSuitableFor(ExecutionCall call) {
