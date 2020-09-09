@@ -43,11 +43,11 @@
         function animateTop( modifier ) {
             let sig = 1-modifier;
             let newTop = sig*65+5;
-            $('.gaadiexp').animate({top:(newTop/2)-5}, 100);
+            $('.gaadiexp').animate({top:(sig*50)}, 100);
             $('#neureka_title').animate({'font-size':(2+sig/2)+"rem"}, 200);
             $('#top_most_nav_bar').animate({top: newTop-70}, 555);
-            $('.side-nav').animate({top:75+((1-sig)*40)}, 100);
-            $('#navbar_menu').animate({top:newTop/2}, 300);
+            $('.side-nav').animate({top:90+((1-sig)*30)}, 100);
+            $('#navbar_menu').animate({top:newTop-10}, 300);
         }
     </script>
 </head>
