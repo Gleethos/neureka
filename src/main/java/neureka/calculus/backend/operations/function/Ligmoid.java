@@ -79,14 +79,14 @@ public class Ligmoid extends AbstractOperationType
                 }
                 else
                 {
-                        Tsr deriv = f.derive(inputs, d);
-                        return new ADAgent(
-                            deriv
-).withForward(
-                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-).withBackward(
-                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-);
+                   Tsr deriv = f.derive(inputs, d);
+                   return new ADAgent(
+                       deriv
+                   ).withForward(
+                       (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                   ).withBackward(
+                       (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+                   );
                 }
             }
         ).setCallHock(

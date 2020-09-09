@@ -24,6 +24,4 @@
             drn[_i_of_i(i, prv_drn_cfg, rank)] = -sin(src1[_i_of_i(i, prv_src1_cfg, rank)]);
 //-=<OPERATION>=-//
         }
-
-
     }
