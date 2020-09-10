@@ -28,7 +28,8 @@ public abstract class AbstractFunctionalOperationTypeImplementation< FinalType >
 
     private SuitabilityChecker _suitabilityChecker;
     private DeviceFinder _finder;
-    private ADAnalyzer _analyzer;
+    private ForwardADAnalyzer _forwardAnalyzer;
+    private BackwardADAnalyzer _backwardAnalyzer;
     private ADAgentSupplier _adaCreator;
     private InitialCallHook _hook;
     private RecursiveJunctionAgent _RJAgent;
@@ -41,7 +42,7 @@ public abstract class AbstractFunctionalOperationTypeImplementation< FinalType >
     //---
 
     @Override
-    public boolean isImplementationSuitableFor(ExecutionCall call) {
+    public float isImplementationSuitableFor(ExecutionCall call) {
         return _suitabilityChecker.canHandle(call);
     }
 
@@ -65,16 +66,32 @@ public abstract class AbstractFunctionalOperationTypeImplementation< FinalType >
     //---
 
     @Override
-    public boolean canImplementationPerformADFor(ExecutionCall call) {
-        return _analyzer.allowsForward(call);
+    public boolean canImplementationPerformForwardADFor(ExecutionCall call ) {
+        return _forwardAnalyzer.allowsForward(call);
     }
 
-    public ADAnalyzer getADAnalyzer(){
-        return _analyzer;
+    public ForwardADAnalyzer getForwardADAnalyzer(){
+        return _forwardAnalyzer;
     }
 
-    public FinalType setADAnalyzer(ADAnalyzer analyzer) {
-        _analyzer = analyzer;
+    public FinalType setForwardADAnalyzer(ForwardADAnalyzer analyzer) {
+        _forwardAnalyzer = analyzer;
+        return (FinalType) this;
+    }
+
+    //---
+
+    @Override
+    public boolean canImplementationPerformBackwardADFor(ExecutionCall call ) {
+        return _backwardAnalyzer.allowsBackward(call);
+    }
+
+    public BackwardADAnalyzer getBackwardADAnalyzer(){
+        return _backwardAnalyzer;
+    }
+
+    public FinalType setBackwardADAnalyzer(BackwardADAnalyzer analyzer) {
+        _backwardAnalyzer = analyzer;
         return (FinalType) this;
     }
 

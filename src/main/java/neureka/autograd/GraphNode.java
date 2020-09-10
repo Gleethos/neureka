@@ -545,9 +545,9 @@ public class GraphNode implements Component<Tsr>
             for ( int i = 0; i < inputs.length; i++ ) {
                 result_mode += ( modes[i] == 0 ) ? 0 : ( modes[i] < 0 ) ? 1 : modes[i] + 1;
             }
-        } else { // Reverse mode auto-differentiation :
-            result_mode = -input_mode;
-        }
+        } // Reverse mode auto-differentiation :
+        else result_mode = -input_mode;
+
         result_mode = ("<>".replace(function.type().getOperator(), "").equals("<>")) ? result_mode : 0;
         return result_mode;
     }

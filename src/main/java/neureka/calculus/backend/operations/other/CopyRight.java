@@ -43,7 +43,7 @@ public class CopyRight extends AbstractOperationType {
                 };
 
         Activation activation = new Activation()
-        .setADAnalyzer(
+        .setForwardADAnalyzer(
                 call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;
                     if ( call.getType().getOperator().equals(",") ) return false; //Reshape

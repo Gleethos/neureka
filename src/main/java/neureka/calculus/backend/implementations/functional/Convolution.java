@@ -11,7 +11,7 @@ public class Convolution extends AbstractFunctionalOperationTypeImplementation< 
 
     public Convolution() {
         super("convolution");
-        setSuitabilityChecker(call->true);
+        setSuitabilityChecker( call->1.0f );
     }
 
 

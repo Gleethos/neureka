@@ -40,10 +40,10 @@ public class CopyLeft extends AbstractOperationType {
                         call ->
                         {
                             if ( call.getTensor(1).isVirtual() || call.getTensor(1).size() == 1 ) {
-                                return true;
-                            } else return false;
+                                return 1.0f;
+                            } else return 0.0f;
                         }
-                ).setADAnalyzer(
+                ).setForwardADAnalyzer(
                         call ->
                         {
                             Tsr last = null;
@@ -165,7 +165,7 @@ public class CopyLeft extends AbstractOperationType {
 
 
         Activation activation = new Activation()
-        .setADAnalyzer(
+        .setForwardADAnalyzer(
                 call ->
                 {
                     Tsr last = null;

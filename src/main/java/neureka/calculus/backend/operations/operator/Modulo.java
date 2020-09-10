@@ -58,7 +58,7 @@ public class Modulo extends AbstractOperationType {
                 };
 
         Operator operator = new Operator()
-            .setADAnalyzer(
+            .setForwardADAnalyzer(
                     call -> {
                         Tsr last = null;
                         for ( Tsr t : call.getTensors() ) {
@@ -202,7 +202,7 @@ public class Modulo extends AbstractOperationType {
                 };
 
         Broadcast broadcast = new Broadcast()
-            .setADAnalyzer(
+            .setForwardADAnalyzer(
                     call -> {
                         Tsr last = null;
                         for ( Tsr t : call.getTensors() ) {
@@ -322,7 +322,7 @@ public class Modulo extends AbstractOperationType {
                 };
 
         Scalarization scalarization = new Scalarization()
-            .setADAnalyzer(
+            .setForwardADAnalyzer(
                     call -> {
                         Tsr last = null;
                         for ( Tsr t : call.getTensors() ) {

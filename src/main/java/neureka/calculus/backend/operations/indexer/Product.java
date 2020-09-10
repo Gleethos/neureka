@@ -100,7 +100,7 @@ public class Product extends AbstractOperationType {
                 };
 
         Broadcast typeImplementation = new Broadcast()
-                .setADAnalyzer(
+                .setForwardADAnalyzer(
                     call -> true
                 ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
@@ -208,7 +208,7 @@ public class Product extends AbstractOperationType {
                 };
 
         Activation activation = new Activation()
-        .setADAnalyzer(
+        .setForwardADAnalyzer(
                 call -> true
         ).setADAgentSupplier(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->

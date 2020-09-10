@@ -11,7 +11,7 @@ public class Activation extends AbstractFunctionalOperationTypeImplementation< A
 
     public Activation() {
         super("activation");
-        setSuitabilityChecker(call->true);
+        setSuitabilityChecker( call -> 1.0f );
     }
 
     public String getKernelSource(){

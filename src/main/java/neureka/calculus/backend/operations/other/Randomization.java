@@ -37,7 +37,7 @@ public class Randomization extends AbstractOperationType
                 };
 
         Scalarization scalarization = new Scalarization()
-        .setADAnalyzer(
+        .setForwardADAnalyzer(
                 call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;
                     if ( call.getType().getOperator().equals(",") ) return false; //Reshape

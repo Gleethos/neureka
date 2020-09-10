@@ -124,7 +124,7 @@ public class Division extends AbstractOperationType
         // DEFAULT OPERATION :
 
         Operator operator = new Operator()
-                .setADAnalyzer(
+                .setForwardADAnalyzer(
                     call -> {
                         Tsr last = null;
                         for ( Tsr t : call.getTensors() ) {
@@ -246,7 +246,7 @@ public class Division extends AbstractOperationType
         // BROADCASTING :
 
         Broadcast broadcast = new Broadcast()
-                .setADAnalyzer(
+                .setForwardADAnalyzer(
                     call -> false
                 ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
@@ -359,7 +359,7 @@ public class Division extends AbstractOperationType
                 };
 
         Scalarization scalarization = new Scalarization()
-                .setADAnalyzer(
+                .setForwardADAnalyzer(
                     call -> true
                 ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
@@ -502,7 +502,7 @@ public class Division extends AbstractOperationType
         }.setImplementation(
                 Convolution.class,
                 new Convolution()
-                    .setADAnalyzer(
+                    .setForwardADAnalyzer(
                             call -> {
                                 Tsr last = null;
                                 for ( Tsr t : call.getTensors() ) {

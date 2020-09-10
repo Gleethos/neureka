@@ -112,7 +112,7 @@ class Calculus_Extension_Unit_Tests extends Specification
 
         and : 'The given ADAnalyzer instance is being called because auto-differentiation is enabled.'
             (1.._) * input.rqsGradient() >> true
-            (1.._) * implementation.canImplementationPerformADFor(_) >> false
+            (1.._) * implementation.canImplementationPerformForwardADFor(_) >> false
             (1.._) * node.getPayload() >> input
             (1.._) * node.usesAD() >> true
 

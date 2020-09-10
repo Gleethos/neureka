@@ -162,7 +162,7 @@ public class Power extends AbstractOperationType
         };
 
         Operator operator = new Operator()
-                .setADAnalyzer(
+                .setForwardADAnalyzer(
                     call -> true
                 ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
@@ -280,7 +280,7 @@ public class Power extends AbstractOperationType
         // BROADCASTING :
 
         Broadcast broadcast = new Broadcast()
-                .setADAnalyzer(
+                .setForwardADAnalyzer(
                     call -> true
                 ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
@@ -397,7 +397,7 @@ public class Power extends AbstractOperationType
 
 
         Scalarization scalarization = new Scalarization()
-                .setADAnalyzer(
+                .setForwardADAnalyzer(
                     call -> true
                 ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
@@ -538,7 +538,7 @@ public class Power extends AbstractOperationType
         }.setImplementation(
                 Convolution.class,
                 new Convolution()
-                    .setADAnalyzer(
+                    .setForwardADAnalyzer(
                             call -> {
                                 Tsr last = null;
                                 for ( Tsr t : call.getTensors() ) {

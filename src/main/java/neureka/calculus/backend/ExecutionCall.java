@@ -82,7 +82,7 @@ public class ExecutionCall< DeviceType extends Device >
     }
     
     public boolean allowsForward(){
-        return getImplementation().canImplementationPerformADFor(this);
+        return getImplementation().canImplementationPerformForwardADFor(this);
     }
     
     public ADAgent getADAgentFrom(Function function, Tsr derivative, ExecutionCall<Device> call, boolean forward ) {

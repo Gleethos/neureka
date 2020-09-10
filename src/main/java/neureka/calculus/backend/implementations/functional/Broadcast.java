@@ -23,11 +23,11 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
                         {
                             if( t!=null && i < t.rank() ) {
                                 if ( currentDim == -1 ) currentDim = t.shape(i);
-                                else if ( currentDim != t.shape(i) && currentDim != 1 && t.shape(i) != 1 ) return false;
+                                else if ( currentDim != t.shape(i) && currentDim != 1 && t.shape(i) != 1 ) return 0.0f;
                             }
                         }
                     }
-                    return true;
+                    return 1.0f;
                 }
         );
     }

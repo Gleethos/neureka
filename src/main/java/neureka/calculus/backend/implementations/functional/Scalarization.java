@@ -11,7 +11,7 @@ public class Scalarization extends AbstractFunctionalOperationTypeImplementation
 
     public Scalarization(){
         super("scalarization");
-        setSuitabilityChecker(call->true);
+        setSuitabilityChecker(call->1.0f);
     }
 
 

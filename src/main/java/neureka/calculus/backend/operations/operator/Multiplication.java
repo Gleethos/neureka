@@ -112,7 +112,7 @@ public class Multiplication extends AbstractOperationType {
                 };
 
         Operator operator = new Operator()
-                .setADAnalyzer(
+                .setForwardADAnalyzer(
                     call -> true
                 ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
@@ -223,7 +223,7 @@ public class Multiplication extends AbstractOperationType {
         // BROADCASTING :
 
         Broadcast broadcast = new Broadcast()
-                .setADAnalyzer(
+                .setForwardADAnalyzer(
                     call -> true
                 ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
@@ -333,7 +333,7 @@ public class Multiplication extends AbstractOperationType {
                 };
 
         Scalarization scalarization = new Scalarization()
-                .setADAnalyzer(
+                .setForwardADAnalyzer(
                     call -> true
                 ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
@@ -457,7 +457,7 @@ public class Multiplication extends AbstractOperationType {
                 };
 
         Broadcast xBroadcast = new Broadcast()
-        .setADAnalyzer(
+        .setForwardADAnalyzer(
                 call -> {
                     Tsr last = null;
                     for ( Tsr t : call.getTensors() ) {
@@ -558,7 +558,7 @@ public class Multiplication extends AbstractOperationType {
         );
 
         xBroadcast = new Broadcast()
-            .setADAnalyzer(
+            .setForwardADAnalyzer(
                     call -> {
                         Tsr last = null;
                         for ( Tsr t : call.getTensors() ) {

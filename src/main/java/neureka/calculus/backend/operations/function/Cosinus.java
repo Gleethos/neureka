@@ -45,7 +45,7 @@ public class Cosinus extends AbstractOperationType {
         );
 
         Activation typeImplementation = new Activation()
-        .setADAnalyzer(
+        .setForwardADAnalyzer(
                 call -> {
                     Tsr last = null;
                     for ( Tsr t : call.getTensors() ) {

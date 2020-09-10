@@ -78,13 +78,13 @@ public abstract class AbstractOperationType implements OperationType
         _defaultImplementation = new AbstractBaseOperationTypeImplementation<OperationTypeImplementation>("default")
         {
             @Override
-            public boolean isImplementationSuitableFor(ExecutionCall call) {
+            public float isImplementationSuitableFor(ExecutionCall call) {
                 int[] shape = null;
                 for ( Tsr t : call.getTensors() ) {
                     if ( shape == null ) if ( t != null ) shape = t.getNDConf().shape();
-                    else if ( t != null && !Arrays.equals( shape, t.getNDConf().shape() ) ) return false;
+                    else if ( t != null && !Arrays.equals( shape, t.getNDConf().shape() ) ) return 0.0f;
                 }
-                return true;
+                return 1.0f;
             }
 
             @Override
@@ -93,7 +93,12 @@ public abstract class AbstractOperationType implements OperationType
             }
 
             @Override
-            public boolean canImplementationPerformADFor(ExecutionCall call) {
+            public boolean canImplementationPerformForwardADFor(ExecutionCall call) {
+                return true;
+            }
+
+            @Override
+            public boolean canImplementationPerformBackwardADFor(ExecutionCall call) {
                 return true;
             }
 
@@ -218,11 +223,20 @@ public abstract class AbstractOperationType implements OperationType
     //==================================================================================================================
 
     @Override
-    public OperationTypeImplementation implementationOf(ExecutionCall call) {
-        for( OperationTypeImplementation te : _implementations.values() ) {
-            if ( te.isImplementationSuitableFor(call) ) return te;
+    public OperationTypeImplementation implementationOf( ExecutionCall call ) {
+        float bestScore = 0f;
+        OperationTypeImplementation bestImpl = null;
+        for( OperationTypeImplementation impl : _implementations.values() ) {
+            float currentScore = impl.isImplementationSuitableFor( call );
+            if ( currentScore > bestScore ) {
+                if ( currentScore == 1.0 ) return impl;
+                else {
+                    bestScore = currentScore;
+                    bestImpl = impl;
+                }
+            }
         }
-        return null;
+        return bestImpl;
     }
 
     //==================================================================================================================

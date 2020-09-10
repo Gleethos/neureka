@@ -26,13 +26,11 @@ public interface OperationTypeImplementation<FinalType>
 {
     String getName();
 
-
     interface SuitabilityChecker {
-        boolean canHandle( ExecutionCall call );
+        float canHandle( ExecutionCall call );
     }
 
-    boolean isImplementationSuitableFor( ExecutionCall call );
-
+    float isImplementationSuitableFor( ExecutionCall call );
 
     interface DeviceFinder {
         Device findFor( ExecutionCall call );
@@ -40,14 +38,17 @@ public interface OperationTypeImplementation<FinalType>
 
     Device findDeviceFor( ExecutionCall call );
 
-
-
-    interface ADAnalyzer {
+    interface ForwardADAnalyzer {
         boolean allowsForward( ExecutionCall call );
     }
 
-    boolean canImplementationPerformADFor( ExecutionCall call );
+    boolean canImplementationPerformForwardADFor(ExecutionCall call );
 
+    interface BackwardADAnalyzer {
+        boolean allowsBackward( ExecutionCall call );
+    }
+
+    boolean canImplementationPerformBackwardADFor(ExecutionCall call );
 
     interface ADAgentSupplier {
         ADAgent getADAgentOf(
@@ -63,7 +64,6 @@ public interface OperationTypeImplementation<FinalType>
             boolean forward
     );
 
-
     interface InitialCallHook {
         Tsr handle( AbstractFunction caller,  ExecutionCall call );
     }
@@ -75,7 +75,6 @@ public interface OperationTypeImplementation<FinalType>
     }
 
     Tsr handleRecursivelyAccordingToArity( ExecutionCall call, Function<ExecutionCall, Tsr> goDeeperWith );
-
 
     interface DrainInstantiation {
         ExecutionCall handle( ExecutionCall call );
