@@ -73,7 +73,7 @@ public class GraphNode implements Component<Tsr>
 
     /**
      *  This flag records the support evaluation of the forward-AD availability analysis
-     *  done in the corresponding OperationTypeImplementation lambda
+     *  done in the corresponding OperationTypeImplementation method
      *  for a given ExecutionCall instance.
      *
      *  The difference between this flag and the "usesForwardAD()" truth value
@@ -85,6 +85,23 @@ public class GraphNode implements Component<Tsr>
      *  be possible given an ExecutionCall whose state allows for such...
      */
     private boolean _allows_forward;
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    /**
+     *  This flag records the support evaluation of the backward-AD availability analysis
+     *  done in the corresponding OperationTypeImplementation method
+     *  for a given ExecutionCall instance.
+     *
+     *  The difference between this flag and the "usesBackwardAD()" truth value
+     *  is that the latter one can be false while the prior is true!
+     *  ( However the reverse is not possible! )
+     *  The reason is as follows:
+     *  If for example a GraphNode has only one parent node which require auto-differentiation,
+     *  then said node will most likely perform backward-AD even though it might very well
+     *  be possible given an ExecutionCall whose state allows for such...
+     */
+    private boolean _allows_backward;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -527,7 +544,7 @@ public class GraphNode implements Component<Tsr>
      *
      * @param call The call containing inputs for the function which created the payload tensor of this GraphNode.
      * @param function The function which produced the payload tensor of this GraphNode.
-     * @return int The mode of this GraphNode!
+     * @return int The mode of this GraphNode! ( m<0 : backward-AD, m>0 : forward-AD, m=0 : no-AD )
      */
     private int _modeOf( ExecutionCall<Device> call, Function function )
     {
@@ -541,14 +558,14 @@ public class GraphNode implements Component<Tsr>
             input_mode += ( modes[i] != 0) ? 1 : 0;
         }
         _allows_forward = call.allowsForward();
+        _allows_backward = call.allowsBackward();
         if ( input_mode == 1 && _allows_forward ) { // Convolution and reshaping prohibit forward AutoDiff
             for ( int i = 0; i < inputs.length; i++ ) {
                 result_mode += ( modes[i] == 0 ) ? 0 : ( modes[i] < 0 ) ? 1 : modes[i] + 1;
             }
         } // Reverse mode auto-differentiation :
-        else result_mode = -input_mode;
+        else if ( _allows_backward ) result_mode = -input_mode;
 
-        result_mode = ("<>".replace(function.type().getOperator(), "").equals("<>")) ? result_mode : 0;
         return result_mode;
     }
 
@@ -579,17 +596,17 @@ public class GraphNode implements Component<Tsr>
      */
     public void backward( Tsr error ) {
         Set<GraphNode> pendingNodes = new HashSet<>();
-        _backward( error, pendingNodes, false );// Entry-point to private recursive back-propagation!
+        _backward( error, pendingNodes, false ); // Entry-point to private recursive back-propagation!
         if ( Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp() ) {
             pendingNodes.forEach( n -> n._carryPendingBackPropToGradients( pendingNodes ) );
         } else {
             pendingNodes.forEach( n -> {
                 if ( !n._pending_error.isFullyAccumulated() )
                     throw new IllegalStateException("Pending error has not received expected accumulation.");
-                n.backward( n._pending_error.getAccumulatedError() );//Continue back-propagation recursively!
+                n.backward( n._pending_error.getAccumulatedError() ); // Continue back-propagation recursively!
             });
         }
-        _deleteDerivativesRecursively();//Cleanup after back-propagation!
+        _deleteDerivativesRecursively(); // Cleanup after back-propagation!
     }
 
     /**

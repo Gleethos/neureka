@@ -66,7 +66,8 @@ public class Reshape extends AbstractOperationType
 
         GenericImplementation implementation = new GenericImplementation("reshape")
                 .setSuitabilityChecker( call -> 1.0f )
-                .setForwardADAnalyzer(call -> false )
+                .setBackwardADAnalyzer( call -> true )
+        .setForwardADAnalyzer(call -> false )
                 .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {

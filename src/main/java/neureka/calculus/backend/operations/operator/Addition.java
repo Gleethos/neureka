@@ -29,6 +29,7 @@ public class Addition extends AbstractOperationType {
             };
 
     private static final Broadcast _broadcast = new Broadcast()
+        .setBackwardADAnalyzer( call -> true )
         .setForwardADAnalyzer(
                 call -> {
                     Tsr last = null;
@@ -157,7 +158,8 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
                 };
 
         Operator operator = new Operator()
-                .setForwardADAnalyzer(call -> true)
+                .setBackwardADAnalyzer( call -> true )
+        .setForwardADAnalyzer(call -> true)
                 .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                             {
@@ -315,7 +317,8 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
         // TENSOR SCALAR OPERATION :
 
         Scalarization scalarization = new Scalarization()
-                .setForwardADAnalyzer(
+                .setBackwardADAnalyzer( call -> true )
+        .setForwardADAnalyzer(
                     call -> true
                 )
                 .setADAgentSupplier(
@@ -464,6 +467,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
             }
         }.setImplementation(Convolution.class,
                 new Convolution()
+        .setBackwardADAnalyzer( call -> true )
         .setForwardADAnalyzer(
                 call -> {
                     Tsr last = null;

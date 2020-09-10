@@ -97,7 +97,8 @@ public class XMultiplication extends AbstractOperationType
                 };
 
         Convolution convolution = new Convolution()
-                .setForwardADAnalyzer(
+                .setBackwardADAnalyzer( call -> true )
+        .setForwardADAnalyzer(
                     call -> {
                         if ( call.getType().supports(Convolution.class) ) return false;
                         if ( call.getType().getOperator().equals(",") ) return false; //Reshape

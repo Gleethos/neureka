@@ -39,6 +39,7 @@ public class Ligmoid extends AbstractOperationType
         );
 
         Activation typeImplementation = new Activation()
+        .setBackwardADAnalyzer( call -> true )
         .setForwardADAnalyzer(
                 call -> {
                     Tsr last = null;

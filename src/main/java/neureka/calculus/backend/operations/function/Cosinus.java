@@ -45,6 +45,7 @@ public class Cosinus extends AbstractOperationType {
         );
 
         Activation typeImplementation = new Activation()
+        .setBackwardADAnalyzer( call -> true )
         .setForwardADAnalyzer(
                 call -> {
                     Tsr last = null;
@@ -55,7 +56,7 @@ public class Cosinus extends AbstractOperationType {
                     return true;
                 }
         ).setADAgentSupplier(
-            (Function f, ExecutionCall<Device> call, boolean forward ) ->
+            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
                 Tsr ctxDerivative = (Tsr)call.getAt("derivative");
                 Function mul = Function.Detached.MUL;

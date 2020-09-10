@@ -273,7 +273,7 @@ class Tensor_Operation_Integration_Tests extends Specification
             Tsr b = new Tsr(-4)
             Tsr w = new Tsr(2)
 
-        when : Tsr y = ((x+b)*w)**2
+        when : Tsr y = ( (x+b)*w )**2
 
         then : y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 

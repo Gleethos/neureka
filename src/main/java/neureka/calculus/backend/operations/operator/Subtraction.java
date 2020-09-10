@@ -83,7 +83,8 @@ public class Subtraction extends AbstractOperationType
                 };
 
         Operator operator = new Operator()
-                .setForwardADAnalyzer(
+                .setBackwardADAnalyzer( call -> true )
+        .setForwardADAnalyzer(
                         call -> true
                 ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
@@ -207,7 +208,8 @@ public class Subtraction extends AbstractOperationType
                 };
 
         Scalarization scalarization = new Scalarization()
-                .setForwardADAnalyzer(
+                .setBackwardADAnalyzer( call -> true )
+        .setForwardADAnalyzer(
                     call -> true
                 ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
@@ -324,7 +326,8 @@ public class Subtraction extends AbstractOperationType
         setImplementation (
                 Broadcast.class,
                 new Broadcast()
-                        .setForwardADAnalyzer(
+                        .setBackwardADAnalyzer( call -> true )
+        .setForwardADAnalyzer(
                             call -> true
                         ).setADAgentSupplier(
                             ( Function f, ExecutionCall<Device> call, boolean forward ) ->

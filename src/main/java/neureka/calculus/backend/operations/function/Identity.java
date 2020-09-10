@@ -40,6 +40,7 @@ public class Identity extends AbstractOperationType
                 };
 
         Activation typeImplementation = new Activation()
+        .setBackwardADAnalyzer( call -> true )
         .setForwardADAnalyzer(
                 call -> {
                     Tsr last = null;
@@ -149,7 +150,8 @@ public class Identity extends AbstractOperationType
                     else return t1Idx -> value;
                 };
         Scalarization scalarization = new Scalarization()
-            .setForwardADAnalyzer(
+            .setBackwardADAnalyzer( call -> true )
+        .setForwardADAnalyzer(
                     call -> {
                         Tsr last = null;
                         for ( Tsr t : call.getTensors() ) {

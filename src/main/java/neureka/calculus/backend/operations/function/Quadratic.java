@@ -50,6 +50,7 @@ public class Quadratic extends AbstractOperationType
         );
 
         Activation typeImplementation = new Activation()
+        .setBackwardADAnalyzer( call -> true )
         .setForwardADAnalyzer(
                 call -> {
                     Tsr last = null;

@@ -43,17 +43,10 @@ public class CopyLeft extends AbstractOperationType {
                                 return 1.0f;
                             } else return 0.0f;
                         }
-                ).setForwardADAnalyzer(
-                        call ->
-                        {
-                            Tsr last = null;
-                            for ( Tsr t : call.getTensors() ) {
-                                if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                                last = t; // Note: shapes are cached!
-                            }
-                            return true;
-                        }
-                ).setADAgentSupplier(
+                )
+                .setBackwardADAnalyzer( call -> false )
+                .setForwardADAnalyzer( call -> false )
+                .setADAgentSupplier(
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                         {
                             Tsr ctxDerivative = (Tsr)call.getAt("derivative");
@@ -165,17 +158,9 @@ public class CopyLeft extends AbstractOperationType {
 
 
         Activation activation = new Activation()
-        .setForwardADAnalyzer(
-                call ->
-                {
-                    Tsr last = null;
-                    for ( Tsr t : call.getTensors() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                        last = t; // Note: shapes are cached!
-                    }
-                    return true;
-                }
-        ).setADAgentSupplier(
+        .setBackwardADAnalyzer( call -> false )
+        .setForwardADAnalyzer( call -> false )
+        .setADAgentSupplier(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
                 Tsr ctxDerivative = (Tsr)call.getAt("derivative");

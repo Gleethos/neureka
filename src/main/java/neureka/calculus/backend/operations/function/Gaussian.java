@@ -46,7 +46,8 @@ public class Gaussian extends AbstractOperationType
                 };
 
         Activation typeImplementation = new Activation()
-            .setForwardADAnalyzer(
+            .setBackwardADAnalyzer( call -> true )
+        .setForwardADAnalyzer(
                     call -> {
                         Tsr last = null;
                         for ( Tsr t : call.getTensors() ) {

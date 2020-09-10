@@ -100,7 +100,8 @@ public class Product extends AbstractOperationType {
                 };
 
         Broadcast typeImplementation = new Broadcast()
-                .setForwardADAnalyzer(
+                .setBackwardADAnalyzer( call -> true )
+        .setForwardADAnalyzer(
                     call -> true
                 ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
@@ -208,6 +209,7 @@ public class Product extends AbstractOperationType {
                 };
 
         Activation activation = new Activation()
+        .setBackwardADAnalyzer( call -> true )
         .setForwardADAnalyzer(
                 call -> true
         ).setADAgentSupplier(

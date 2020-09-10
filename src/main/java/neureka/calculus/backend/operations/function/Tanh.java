@@ -56,6 +56,7 @@ public class Tanh extends AbstractOperationType
         );
 
         Activation typeImplementation = new Activation()
+        .setBackwardADAnalyzer( call -> true )
         .setForwardADAnalyzer(
                 call -> {
                     Tsr last = null;

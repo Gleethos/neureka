@@ -84,7 +84,11 @@ public class ExecutionCall< DeviceType extends Device >
     public boolean allowsForward(){
         return getImplementation().canImplementationPerformForwardADFor(this);
     }
-    
+
+    public boolean allowsBackward(){
+        return getImplementation().canImplementationPerformBackwardADFor(this);
+    }
+
     public ADAgent getADAgentFrom(Function function, Tsr derivative, ExecutionCall<Device> call, boolean forward ) {
         if ( this._context != null ) {
             if ( call._context ==null ) call._context = new TreeMap<>();
