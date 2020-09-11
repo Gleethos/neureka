@@ -63,21 +63,23 @@
         </p>
     </div>
 </div>
-<div class="col-sm-12 col-md-6 col-lg-8">
+<div class="col-sm-6 col-md-5 col-lg-4">
     <div class="ContentBox">
         <p>
-            Now you might be thinking : "It's all just matrix multiplications?" <br>
-            And that is not entirely true! I have not yet revealed an important
-            detailed that really captures the essence of the <b>neural</b> in "neural network" !<br>
+            Now you might be thinking : "It's all just matrix multiplications?" <br><br>
+            However that is not entirely true!  <br>
+            <br>
+            I have not yet revealed an important
+            detail that really captures the essence of the <b>neural</b> in "neural network" !<br>
             What I am referring to is the so called "activation function", which is
             important because of it's <b>non linearity</b>. <br>
             <br>
-            Let's take a look at the structure of a single neuron :
+            Let's take a look at <b>the structure of a single neuron</b> !
 
         </p>
     </div>
 </div>
-<div class="col-sm-12 col-md-6 col-lg-4">
+<div class="col-sm-6 col-md-7 col-lg-8">
     <div class="ContentBox">
         <p>
 
@@ -91,7 +93,7 @@
     <div class="ContentBox">
         <p>
             So what does a neuron really do? <br>
-            Well first, it adds up the value of every neurons from the previous column it is connected to.
+            Well first, it adds up the value of every neurons from the previous column it is connected to. <br>
             On the Figure 3, there are 3 inputs (a1, a2, a3) coming to the neuron,
             so 3 neurons of the previous column are connected to our neuron.
             This value is multiplied, before being added, by another variable called
@@ -126,7 +128,7 @@
     </div>
 </div>
 
-<div class="col-sm-12 col-md-6 col-lg-12">
+<div class="col-sm-6 col-md-6 col-lg-6">
     <div class="ContentBox">
         <p>
             <img  src="src/img/illustrations/simple-ff-artificial-neural-network-detailed.png" >
@@ -134,21 +136,23 @@
         </p>
     </div>
 </div>
-<div class="col-sm-12 col-md-12 col-lg-12">
+<div class="col-sm-6 col-md-6 col-lg-6">
     <div class="ContentBox">
         <p>
-            So you might be wondering, how do you train the thing? <br>
+            So you might be wondering, <br>
+            <b>how do you train the thing</b>? <br>
+            <br>
             Well I will try to explain the concept further down below, however
             there are many video series that explain the topic visually and therefore
             much more digestible... <br>
-            So watching these videos will give you a heads up (uses Python and Numpy) :
+            So watching these videos will give you a heads up (uses Python and Numpy) : <br>
             <a
                     href="https://www.youtube.com/watch?v=bxe2T-V8XRs&list=PLiaHhY2iBX9hdHaRr6b7XevZtgZRa1PoU&ab_channel=WelchLabs"
             >
-                Neural networks demystified !
+               ~=> Neural networks demystified ! <=~
             </a>
-
-            But let's give it a shot ! <br>
+            <br>
+            So now let's talk about backpropagation ! <br>
             <br>
         </p>
     </div>
@@ -158,15 +162,27 @@
         <p>
             <h3>What is backpropagation?</h3>
             <br>
+            To put it bluntly : <br>
+            <b>Backpropagation is simply the chain-rule applied in reverse, </b> meaning that
+            the statement "inner times outer derivative" is being viewed as "outer times inner" !<br>
+            Or to put it another way : <br>
+            It's a way to calculate the derivative of a variable(s) by starting from "outside" instead of "within" a
+            given equation <br>
+            <br>
+            That's it ! That's what it is in it's core. <br>
+            If you are confused about derivatives and the chain-rule I would suggest you to study this
+            topic of calculus first before continuing this article... <br>
+            Otherwise however, continue with following examples ! <br>
+            <br>
             Let's say you have : <br>
 
-            n(x) = a( b( c( d( x ) ) ) ) <br>
+            <b>n(x) = a( b( c( d( x ) ) ) ) </b><br>
 
 
             The famous chain-rule produces the following derivative : <br>
 
-            n'(x) = dn/x = <br>
-            a'( b( c( d( x ) ) ) ) * b'( c( d( x ) ) ) * c'( d( x ) ) * d'( x ) * 1 <br>
+            <b>n'(x) = dn/x = <br>
+            a'( b( c( d( x ) ) ) ) * b'( c( d( x ) ) ) * c'( d( x ) ) * d'( x ) * 1 </b><br>
 
             The interesting thing about the chain-rule is that it involves the "*" operator,  <br>
             which is associative (and also commutative)!  <br>
@@ -179,11 +195,11 @@
             <br>
             So let's introduce the matrices W1 & W2 which play the following role :( and x is a vector... ) <br>
             <br>
-            b(x) = W2 * x <br>
+            <b>b(x) = W2 * x </b><br>
             <br>
             <b>... and ...</b> <br>
             <br>
-            d(x) = W1 * x  <br>
+            <b>d(x) = W1 * x  </b><br>
             <br>
             ... then this would suddenly give us an incentive to calculate <br>
             the derivatives with respect to two variables in 1 equation! <br>
@@ -191,14 +207,15 @@
             <br>
             Let's see: <br>
             <br>
-            dn/x =1 * ( W1^T ) * c'( d( x ) ) * ( W2^T ) * a'( b( c( d( x ) ) ) ) <br>
-            ( 1 ... vector of ones with shape x )<br>
+            <b>dn/x =1 * ( W1^T ) * c'( d( x ) ) * ( W2^T ) * a'( b( c( d( x ) ) ) ) <br>
+            ( 1 ... vector of ones with shape x )</b><br>
             <br>
-            dn/W1 =( x^T ) * c'( d( x ) ) * ( W2^T ) * a'( b( c( d( x ) ) ) )<br>
+            <b>dn/W1 =( x^T ) * c'( d( x ) ) * ( W2^T ) * a'( b( c( d( x ) ) ) )</b><br>
             <br>
-            dn/W2 =c'( d( x ) )^T * a'( b( c( d( x ) ) ) )<br>
+            <b>dn/W2 =c'( d( x ) )^T * a'( b( c( d( x ) ) ) )</b><br>
             <br>
-            Do you see the pattern?If not, read it from right to left and it will be obvious!<br>
+            Do you see the pattern? <br>
+            If not, read it from right to left and it will be obvious!<br>
             It's always the same calculations until the variable is reached. :) <br>
             So instead of going forward
             (from left to right), we go backward in order to calculate the "derivative".<br>
@@ -219,7 +236,7 @@
         </p>
     </div>
 </div>
-<div class="col-sm-12 col-md-12 col-lg-12">
+<div class="col-sm-12 col-md-6 col-lg-5">
     <div class="ContentBox">
         <p>
             The gradient for the three weight variables is being calculated as follows : <br>
@@ -231,7 +248,7 @@
         </p>
     </div>
 </div>
-<div class="col-sm-12 col-md-12 col-lg-12">
+<div class="col-sm-12 col-md-6 col-lg-7">
     <div class="ContentBox">
         <p>
             <img  src="src/img/illustrations/artificial-neuron-backprop.png" >

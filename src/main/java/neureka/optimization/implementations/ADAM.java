@@ -7,13 +7,12 @@ import neureka.optimization.Optimizer;
 public class ADAM implements Optimizer {
 
     //VARIABLES...
-    private Tsr a;
-    private Tsr b1;
-    private Tsr b2;
-    private Tsr e;
-    Tsr m = null;
-    Tsr v = null;
-    //Tsr w = null;
+    private final Tsr a;
+    private final Tsr b1;
+    private final Tsr b2;
+    private final Tsr e;
+    Tsr m;
+    Tsr v;
 
     ADAM(Tsr target){
         int[] shape = target.getNDConf().shape();

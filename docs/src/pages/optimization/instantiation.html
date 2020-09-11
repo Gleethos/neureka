@@ -1,0 +1,85 @@
+<div class="col-sm 12 col-md-12">
+    <div class="ContentBox">
+        <h3>
+            Optimization:
+        </h3>
+        <p>
+            The optimization package provides a generic interface for implementing
+            optimization components called by tensors when gradients will be applied.
+            One of the most famous optimization algorithms termed 'ADAM' is
+            already implemented and ready for use.
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-6 col-lg-6">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+        Tsr w = new Tsr(0)
+        def o = new SGD(w)
+        w.add(o)
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+        Tsr w = new Tsr(0);
+        Optimizer o = new SGD(w);
+        w.add(o);
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-sm-12 col-md-6 col-lg-6">
+    <div class="ContentBox">
+        <p>
+            The optimizer is simply instantiated by passing the targeted tensor instance
+            and then added to the tensor as component.
+            The optimizer can easily be accessed by calling 'find(Optimizer.class)'
+            on the tensor of concern.
+        </p>
+        <p>
+            It is important to note: Every tensor has their own Optimizer instance.
+            It is therefore not allowed to be shared due to the fact that the Optimizer
+            stores a context specialized to the one given tensor.
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+        Tsr w = new Tsr(0)
+        def o = new ADAM(w)
+        w.add(o)
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+        Tsr w = new Tsr(0);
+        Optimizer o = new ADAM(w);
+        w.add(o);
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
