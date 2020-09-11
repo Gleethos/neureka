@@ -65,27 +65,86 @@ for the execution is being picked by the method below. <br>
 ```
 ---
 
+The following method ought to check if this 
+implementation can perform forward mode AD on
+the given 'ExecutionCall' instance.
 
 ```
-    boolean canImplementationPerformADFor( ExecutionCall call );
+    boolean canImplementationPerformForwardADFor( ExecutionCall call );
+```
+---
 
+
+The following method ought to check if this 
+implementation can perform backward mode AD on
+the given 'ExecutionCall' instance.
+
+```
+    boolean canImplementationPerformBackwardADFor( ExecutionCall call );
+```
+---
+
+This method ought to return a new instance 
+if the ADAgent class. <br>
+This class contains field variables for 2 lambdas. <br>
+One for th forward mode procedure and one <br>
+for backpropagation... <br>
+Besides that it may also contain context information used <br>
+to perform said procedures.
+
+```
     ADAgent supplyADAgentFor(
             neureka.calculus.Function f,
             ExecutionCall<Device> call,
             boolean forward
     );
+```
+---
 
+The following method is a bypass lambda used 
+for operations that do not require device execution.
+The 2 methods following the one below will be ignores
+if this returns a tensor. (a.k.a result) <br>
+If the method return 'null' then 
+the call routing will continue.
+
+```
     Tsr handleInsteadOfDevice(  AbstractFunction caller, ExecutionCall call );
+```
+---
 
+Declared below is a call hook offering recursive 
+executions on calls with an arbitrary amount of arguments. <br>
+A given implementation might only be able to handle a fixed amount 
+of tensor arguments, however this method solves this problem.<br>
+
+
+```
     Tsr handleRecursivelyAccordingToArity( ExecutionCall call, Function<ExecutionCall, Tsr> goDeeperWith );
-    
+```
+---
+
+
+
+```
     ExecutionCall instantiateNewTensorsForExecutionIn( ExecutionCall call );
+```
+---
 
+The following method is used together with the 'handleRecursivelyAccordingToArity' method.
 
+```
     Tsr recursiveReductionOf(ExecutionCall<Device> call, Consumer<ExecutionCall<Device>> finalExecution );
+```
+---
 
+
+```
     <D extends Device, E extends ExecutorFor<D>> FinalType setExecutor(Class<E> deviceClass, E execution);
+```
+---
 
+
+```
     <D extends Device, E extends ExecutorFor<D>> ExecutorFor getExecutor(Class<E> deviceClass);
-
 ```

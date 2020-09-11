@@ -30,6 +30,7 @@
         margin-bottom: 1em;
         padding: 20px;
         width: 100%;
+        text-align: center;
     }
     .toc_container li, .toc_container ul, .toc_container ul li {
         list-style: outside none none !important;
@@ -44,13 +45,24 @@
         border: 1px solid black;
     }
 </style>
-
+<div class="NavBox col-sm-12 col-md-12">
+    <div class="ContentBox">
+        <section class="toc_container">
+            <h3 href="#">Neural Networks</h3>
+            <div>
+                <a class="navTopic" onclick="loadContent('neural_networks/explained')">
+                    Beginner Introduction
+                </a>
+            </div>
+        </section>
+    </div>
+</div>
 <div class="NavBox col-sm-12 col-md-6">
     <div class="ContentBox">
         <section class="toc_container">
             <h3 href="#">Tensors</h3>
             <div>
-                <a class="navTopic" onclick="loadContent('tensors/tensors')">
+                <a class="navTopic" onclick="loadContent('tensors/instantiation')">
                     Instantiation
                 </a>
                 <a class="navTopic" onclick="loadContent('tensors/indexing')">

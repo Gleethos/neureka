@@ -449,9 +449,9 @@ code {
 
 .ContentBox img {
     border: 0 solid white;
-    margin: 15px;
+    margin: 0.1em;
     box-shadow: 0 0 0 0 white;
-    width: auto;
+    max-width: 100%;
     float: right;
 }
 

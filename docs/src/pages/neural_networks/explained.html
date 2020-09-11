@@ -1,0 +1,138 @@
+
+<div class="col-sm 12 col-md-12">
+    <div class="ContentBox">
+        <h3>
+           Neural Networks Explained:
+        </h3>
+        <p>
+            So you want to create your very own artificial neural network,
+            or simply understand the concept, but have no idea where to begin ?
+            Follow this quick guide to understand what they are all about !
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-6 col-lg-4">
+    <div class="ContentBox">
+        <p>
+
+            <img  src="src/img/illustrations/simple-ff-artificial-neural-network.png" >
+            Figure 1
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-6 col-lg-8">
+    <div class="ContentBox">
+        <p>
+            Neural networks can usually be read from left to right.
+            One of the simplest neural network as seen in this illustration is
+            really just three vectors interconnected by 2 matrices. <br>
+            These three vectors are also referred to as layers.
+            In this case there is an input layer of the size 3 on the left
+            end of the network, a so called 'hidden' layer of size 4 in the middle,
+            and an output layer of size 2 on the right side. <br>
+            As already said, these layers are vectors, consequently the
+            green circles on the image represent scalar values. <br>
+            Now you might wonder what I mean by matrices...
+            The tangled lines in between the three layers are the
+            two matrices I was referring to at the beginning of this paragraph.
+            In fact every single line connecting two circles represents
+            also just a single scalar value. This value is being referred to
+            as "scalar weight", whereas the entire matrix is called "weight matrix"!
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <p>
+            If you don't know what a matrix multiplication is I would encourage
+            you to study this topic of linear algebra by yourself... <br>
+            If however you are already familiar with the core concept
+            then I would like you to look at the following overview of a
+            simple matrix multiplication in various notations : <br>
+
+            <img  src="src/img/illustrations/matrix-multiplication-overview.png" >
+
+            Figure 2 <br><br>
+
+            Outlined above is the multiplication of a 2x3 matrix with a 3x1 matrix (a.k.a a vector) !<br>
+            The result of this operation is yet another vector, namely a vector with the length 2, <br>
+            or depending on the point of view one might see it also as a matrix, a 2x1 matrix. <br>
+            <br>
+
+
+
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-6 col-lg-8">
+    <div class="ContentBox">
+        <p>
+            Now you might be thinking : "It's all just matrix multiplications?" <br>
+            And that is not entirely true! I have not yet revealed an important
+            detailed that really captures the essence of the <b>neural</b> in "neural network" !<br>
+            What I am referring to is the so called "activation function", which is
+            important because of it's <b>non linearity</b>. <br>
+            <br>
+            Let's take a look at the structure of a single neuron :
+
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-6 col-lg-4">
+    <div class="ContentBox">
+        <p>
+
+            <img src="src/img/illustrations/artificial-neuron.png">
+            Figure 3
+
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <p>
+            So what does a really neuron do? <br>
+            Well first, it adds up the value of every neurons from the previous column it is connected to.
+            On the Figure 3, there are 3 inputs (a1, a2, a3) coming to the neuron,
+            so 3 neurons of the previous column are connected to our neuron.
+            This value is multiplied, before being added, by another variable called
+            “weight” (w1, w2, w3) which determines the connection between the two neurons.
+            Each connection of neurons has its own weight, and those are the only values that
+            will be modified during the learning process. <br>
+            So what happens formally the calculation of the dot product between
+            the vector (a1, a2, a3) and (w1, w2, w3) ! <br>
+            Let's overview this : <br>
+            <br>
+            (a1, a2, a3) . (w1, w2, w3) = ( a1*w1 + a2*w2 + a3*w3 ) = ( i1 + i2 + i3 ) <br>
+            <br>
+            This concept above gives birth to reason why we use matrices to describe
+            this process happening between layer! <br>
+            To pu it simply : A matrix multiplication is merely
+            calculating the vector of multiple dot products. <br>
+            So every neuron input is simply the dot product of a matrix row
+            with the vector of previous layer output. <br>
+            <br>
+            Note : <br>
+            A important value which is not included in this illustration is the so called
+            "bias"!<br>
+            This value may be added to the total input calculated for every neuron.
+            (Meaning :  "a vector of biasis for every input vector of a layer...") <br>
+            This value is also learned alongside the weights. It stabilizes the network
+            by providing a kind of "default / fallback state" for a neuron... <br>
+
+            After all those summations, the neuron finally applies a function called
+            “activation function” to the obtained value.<br>
+            Then the neurons of the layer are successfully up to date!
+        </p>
+    </div>
+</div>
+
+<div class="col-sm-12 col-md-6 col-lg-12">
+    <div class="ContentBox">
+        <p>
+
+            <img  src="src/img/illustrations/simple-ff-artificial-neural-network-detailed.png" >
+            Figure 4
+        </p>
+    </div>
+</div>

@@ -154,20 +154,34 @@
                             <h1 id="ContentTitle"></h1>
 
                             <script>
+                                function capitalize(input) {
+                                    let words = input.replaceAll('_', ' ').split(' ');
+                                    if ( words.length === 1 ) return words[0];
+                                    console.log(words);
+                                    let CapitalizedWords = [];
+                                    words.forEach(word => {
+                                        if ( word.length > 0 ) CapitalizedWords.push(word[0].toUpperCase() + word.slice(1, word.length));
+                                        else CapitalizedWords.push(' ');
+                                    });
+                                    return CapitalizedWords.join(' ');
+                                }
+
                                 function loadContent(target) {
                                     $('#DynamicContent').hide("fast", function () {
                                         $('#ContentTitle').hide("fast", function () {
-                                            var split = target.split("/");
-                                            split = split[split.length - 1];
-                                            console.log(split);
-                                            if (split.indexOf("TOC") !== -1) {
-                                                $('#ReturnArrow').hide("fast");
-                                            } else {
-                                                $('#ReturnArrow').show("fast");
-                                            }
-                                            split = split.replace("TOC", "Table of Content");
+                                            const split = target.split('/');
+                                            let dir = capitalize(( split[0]==='..' ) ? '' : split[0]+' : ');
+                                            let page = capitalize(split[split.length - 1]);
+
+                                            if (page.indexOf("TOC") !== -1) $("#ReturnArrow").hide("fast");
+                                            else $('#ReturnArrow').show("fast");
+
+                                            page = page
+                                                .replace('TOC', 'Table of Content')
+                                                .replaceAll('_', ' ');
+
                                             $('#ContentTitle').html(
-                                                split.charAt(0).toUpperCase() + split.substring(1)
+                                                dir + page.charAt(0).toUpperCase() + page.substring(1)
                                             ).show("fast");
                                         });
                                         $('#DynamicContent').html("").load(
