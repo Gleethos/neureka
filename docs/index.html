@@ -32,7 +32,7 @@
 
         function updateTopBar( event ) {
             let top = $('#main_with_parallax').scrollTop();
-            if ( topMode === 'large' && top > 500) {
+            if ( topMode === 'large' && top > 375) {
                 animateTop( 1.0 );
                 topMode = 'small';
             } else if ( topMode === 'small' && top < 100 ) {
