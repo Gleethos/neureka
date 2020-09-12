@@ -172,7 +172,7 @@
             That's it ! That's what it is in it's core. <br>
             If you are confused about derivatives and the chain-rule I would suggest you to study this
             topic of calculus first before continuing this article... <br>
-            Otherwise however, continue with following examples ! <br>
+            Otherwise however, continue with the following examples ! <br>
             <br>
             Let's say you have : <br>
 
@@ -181,19 +181,22 @@
 
             The famous chain-rule produces the following derivative : <br>
 
-            <b>n'(x) = dn/x = <br>
+            <b> n'(x) = dn/x = <br>
             a'( b( c( d( x ) ) ) ) * b'( c( d( x ) ) ) * c'( d( x ) ) * d'( x ) * 1 </b><br>
 
             The interesting thing about the chain-rule is that it involves the "*" operator,  <br>
             which is associative (and also commutative)!  <br>
-            Therefore the "chain" in the chain-rule can be executed from left to right or
+            Therefore, like I already stated it briefly at the beginning of the section,
+            the "chain" in the chain-rule can be executed from left to right or
             from right to left without changing the result!  <br>
             This is the core difference between forward mode differentiation and backward mode differentiation (backpropagation). <br>
             <br>
             This might seem trivial at first but it gets extremely useful when we have many many variables inside
-            our equation whose derivatives (slopes) we want to calculate.This is the case in neural networks! <br>
+            our equation whose derivatives (slopes) we want to calculate.
+            This is the case in neural networks! <br>
             <br>
-            So let's introduce the matrices W1 & W2 which play the following role :( and x is a vector... ) <br>
+            So let's introduce the matrices W1 & W2 which play the following role : <br>
+            ( and x is a vector... ) <br>
             <br>
             <b>b(x) = W2 * x </b><br>
             <br>
@@ -207,24 +210,27 @@
             <br>
             Let's see: <br>
             <br>
-            <b>dn/x =1 * ( W1^T ) * c'( d( x ) ) * ( W2^T ) * a'( b( c( d( x ) ) ) ) <br>
+            <b>dn/x = 1 * ( W1^T ) * c'( d( x ) ) * ( W2^T ) * a'( b( c( d( x ) ) ) ) <br>
             ( 1 ... vector of ones with shape x )</b><br>
             <br>
-            <b>dn/W1 =( x^T ) * c'( d( x ) ) * ( W2^T ) * a'( b( c( d( x ) ) ) )</b><br>
+            <b>dn/W1 = ( x^T ) * c'( d( x ) ) * ( W2^T ) * a'( b( c( d( x ) ) ) )</b><br>
             <br>
-            <b>dn/W2 =c'( d( x ) )^T * a'( b( c( d( x ) ) ) )</b><br>
+            <b>dn/W2 = c'( d( x ) )^T * a'( b( c( d( x ) ) ) )</b><br>
             <br>
             Do you see the pattern? <br>
             If not, read it from right to left and it will be obvious!<br>
-            It's always the same calculations until the variable is reached. :) <br>
+            It's always the same calculations until the variable is reached. <br>
             So instead of going forward
             (from left to right), we go backward in order to calculate the "derivative".<br>
             However because we want to train the thing some proper behavior we also start
-            off by multiplying with the error ...<br>
+            off by multiplying with the error, more on that later ...<br>
+            <br>
             Note :<br>
-            The "derivatives" above (strictly speaking they are not anymore...) already represent the backpropagation (reverse mode differentiation) because I'm using the transposed matrices W1^T and W2^T !
+            The "derivatives" above (strictly speaking they are not anymore...) already represent the backpropagation
+            (reverse mode differentiation) because I'm using the transposed matrices W1^T and W2^T !
             Matrices in a neural network are really just the tangled mess between the neurons.
-            So when multiplying with the matrix it propagates forward, whereas the multiplication with the transposed version simply goes backward!
+            So when multiplying with the matrix it propagates forward, whereas the
+            multiplication with the transposed version simply goes backward!
             <br>
             Some things might seem confusing, like for example why this new differentiation
             contains something like "x^T", but this is really hard to explain in words.
@@ -253,6 +259,20 @@
         <p>
             <img  src="src/img/illustrations/artificial-neuron-backprop.png" >
             Figure 5
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-6 col-lg-5">
+    <div class="ContentBox">
+        <p>
+            If gradients need to be backpropagated further into the back of the network
+            then we proceed as follows: <br>
+            <br>
+            e1 = e * a' * w1   <br>
+            e2 = e * a' * w2   <br>
+            e3 = e * a' * w3   <br>
+            <br>
+            Where e1, e2 and e3 is the corresponding error for the values a1, a2 and a3 of a given layer. <br>
         </p>
     </div>
 </div>
