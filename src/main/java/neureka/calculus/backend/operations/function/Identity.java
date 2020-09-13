@@ -20,7 +20,7 @@ public class Identity extends AbstractOperationType
 
     public Identity()
     {
-        super("idy", "idy" , 1, false, false, true, true);
+        super("idy", "idy" , 1, false, false, true);
 
         setStringifier(
                 children -> {

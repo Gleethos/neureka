@@ -25,7 +25,7 @@ public class Sinus extends AbstractOperationType
 
     public Sinus()
     {
-        super("sin", "sin" , 1, false, false, true, true);
+        super("sin", "sin" , 1, false, false, true);
 
         setStringifier(
                 children -> {

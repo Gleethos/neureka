@@ -19,7 +19,7 @@ public class CopyLeft extends AbstractOperationType {
     public CopyLeft(){
 
         super(
-                "left_inline", "<", 2,true, false, false, false
+                "left_inline", "<", 2,true, false, false
         );
 
         setStringifier(

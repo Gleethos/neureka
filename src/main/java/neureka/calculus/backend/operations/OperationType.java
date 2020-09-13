@@ -101,7 +101,7 @@ public interface OperationType
 
     boolean isIndexer();
 
-    boolean isCommutative();
+    boolean isDifferentiable();
 
     boolean supports(Class implementation);
 

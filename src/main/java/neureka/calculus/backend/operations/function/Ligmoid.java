@@ -26,7 +26,7 @@ public class Ligmoid extends AbstractOperationType
 
     public Ligmoid()
     {
-        super("softplus", "softplus" , 1, false, false, true, true);
+        super("softplus", "softplus" , 1, false, false, true);
 
         setStringifier(
                 children -> {

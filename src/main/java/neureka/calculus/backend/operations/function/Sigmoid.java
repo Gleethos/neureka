@@ -39,7 +39,6 @@ public class Sigmoid extends AbstractOperationType
                 1,
                 false,
                 false,
-                true,
                 true
         );
 

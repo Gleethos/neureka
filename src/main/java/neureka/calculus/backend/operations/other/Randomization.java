@@ -21,7 +21,7 @@ public class Randomization extends AbstractOperationType
     {
         super(
                 "random", "rand", 1,
-                true, false, false, false
+                true, false, false
         );
 
         ScalarOperatorCreator< PrimaryNDXConsumer > creator =

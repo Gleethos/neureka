@@ -35,6 +35,11 @@ public abstract class AbstractFunction extends AbstractBaseFunction
      */
     protected AbstractFunction(OperationType type, List<Function> sources, boolean doAD )
     {
+        //if ( !type.isDifferentiable() && doAD ) {
+        //    throw new IllegalArgumentException(
+        //            "Trying to create an auto-differentiation Function instance with non-differentiable OperationType instance '"+type.getFunction()+"'!"
+        //    );
+        //}
         if( type.getArity() >= 0 && sources.size() != type.getArity() ) {
             String tip = ( type.isIndexer() )
                     ? "\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration."

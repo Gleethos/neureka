@@ -40,8 +40,7 @@ public class OperationTypeFactory
                     _arity,
                     _isOperator,
                     _isIndexer,
-                    _isCommutative,
-                    _isAssociative
+                    _isCommutative
             ) {
                 @Override
                 public double calculate(double[] inputs, int j, int d, List<Function> src) {

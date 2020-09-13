@@ -26,8 +26,7 @@ public class XMultiplication extends AbstractOperationType
                 2,
                 true,
                 false,
-                false,
-                false
+                true
         );
 
         setStringifier(
@@ -224,7 +223,6 @@ public class XMultiplication extends AbstractOperationType
                 3,
                 true,
                 false,
-                false,
                 false
         ){
 
@@ -251,7 +249,6 @@ public class XMultiplication extends AbstractOperationType
                 "inv_convolve_mul_right", "x" + ((char) 187),
                 3,
                 true,
-                false,
                 false,
                 false
         ){

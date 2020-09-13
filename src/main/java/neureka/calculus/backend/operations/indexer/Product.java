@@ -29,7 +29,6 @@ public class Product extends AbstractOperationType {
                 1,
                 false,
                 true,
-                true,
                 true
         );
 

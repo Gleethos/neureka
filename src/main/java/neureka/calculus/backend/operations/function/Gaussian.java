@@ -18,7 +18,7 @@ public class Gaussian extends AbstractOperationType
 
     public Gaussian(){
 
-        super("gaus", "gaus", 1, false, false, true, true);
+        super("gaus", "gaus", 1, false, false, true);
 
         setStringifier(
                 children -> {

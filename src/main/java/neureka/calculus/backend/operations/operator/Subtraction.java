@@ -23,7 +23,7 @@ public class Subtraction extends AbstractOperationType
     public Subtraction()
     {
         super(
-                "subtract", "-", -1, true, false, false, false
+                "subtract", "-", -1, true, false, true
         );
 
         setStringifier(
@@ -386,7 +386,7 @@ public class Subtraction extends AbstractOperationType
         // RELATED OPERATIONS :
 
         new AbstractOperationType(
-                "", ((char) 171) + "-", 3, true, false, false, false
+                "", ((char) 171) + "-", 3, true, false, false
         ) {
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src) {
@@ -394,7 +394,7 @@ public class Subtraction extends AbstractOperationType
             }
         };
         new AbstractOperationType(
-                "", "-" + ((char) 187), 3, true, false, false, false
+                "", "-" + ((char) 187), 3, true, false, false
         ) {
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src) {
@@ -406,7 +406,7 @@ public class Subtraction extends AbstractOperationType
 
 
         new AbstractOperationType(
-                "", "s", 2, true, false, false, false
+                "", "s", 2, true, false, false
         ) {
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src) {
@@ -426,7 +426,7 @@ public class Subtraction extends AbstractOperationType
         );
 
         new AbstractOperationType(
-                "", ((char) 171) + "s", 3, true, false, false, false
+                "", ((char) 171) + "s", 3, true, false, false
         ) {
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src) {
@@ -434,7 +434,7 @@ public class Subtraction extends AbstractOperationType
             }
         };
         new AbstractOperationType(
-                "", "s" + ((char) 187), 3, true, false, false, false
+                "", "s" + ((char) 187), 3, true, false, false
         ) {
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src) {

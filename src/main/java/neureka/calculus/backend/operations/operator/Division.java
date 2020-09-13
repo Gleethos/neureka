@@ -45,8 +45,7 @@ public class Division extends AbstractOperationType
                 "divide", "/", -1,
                 true,
                 false,
-                false,
-                false
+                true
         );
 
         setStringifier(
@@ -477,7 +476,7 @@ public class Division extends AbstractOperationType
 
 
         new AbstractOperationType(
-                "inv_division_left", ((char) 171) + "/", 3, true, false, false, false
+                "inv_division_left", ((char) 171) + "/", 3, true, false, false
         ) {
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src) {
@@ -485,7 +484,7 @@ public class Division extends AbstractOperationType
             }
         };
         new AbstractOperationType(
-                "inv_division_right", "/" + ((char) 187), 3, true, false, false, false
+                "inv_division_right", "/" + ((char) 187), 3, true, false, false
         ) {
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src) {
@@ -496,7 +495,7 @@ public class Division extends AbstractOperationType
         // Convolution:
 
         new AbstractOperationType(
-                "divide", "d", 2, true, false, false, false
+                "divide", "d", 2, true, false, true
 ){
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src){
@@ -574,7 +573,7 @@ public class Division extends AbstractOperationType
                 );
 
         new AbstractOperationType(
-                "", ((char) 171) + "d", 3, true, false, false, false
+                "", ((char) 171) + "d", 3, true, false, true
         ) {
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src) {
@@ -593,7 +592,7 @@ public class Division extends AbstractOperationType
                 }
         );
         new AbstractOperationType(
-                "", "d" + ((char) 187), 3, true, false, false, false
+                "", "d" + ((char) 187), 3, true, false, true
         ) {
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src) {
