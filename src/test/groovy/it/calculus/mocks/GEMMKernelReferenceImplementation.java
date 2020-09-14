@@ -1,9 +1,9 @@
-package ut.calculus.mocks;
+package it.calculus.mocks;
 
 import neureka.Neureka;
 
 
-class GEMMKernelReferenceImplementation {
+public class GEMMKernelReferenceImplementation {
 
     private CLContext _CLContext;
 
@@ -39,7 +39,7 @@ class GEMMKernelReferenceImplementation {
         //const u
         int max_wpt_row,// = 8,   // wpt := work per thread
         //const u
-        int max_wpt_col // = 8
+        int max_wpt_col // = 8,
     ) {
         //const u
         int max_rts_row = max_ts_row / max_wpt_row; //rts = reduced tile size
@@ -62,9 +62,9 @@ class GEMMKernelReferenceImplementation {
 
         //  drn   =  src1  x  src2
         // [m, n] = [m, k] x [k, n]
-        int[] prv_drn_cfg  = new int[ 2 * 5  ]; _cfg_of_cfg(drn_conf, prv_drn_cfg, 2);
-        int[] prv_src1_cfg = new int[ 2 * 5 ]; _cfg_of_cfg(src1_conf, prv_src1_cfg, 2);
-        int[] prv_src2_cfg = new int[ 2 * 5 ]; _cfg_of_cfg(src2_conf, prv_src2_cfg, 2);
+        int[] prv_drn_cfg  = new int[ 2 * 6  ]; _cfg_of_cfg(drn_conf, prv_drn_cfg, 2);
+        int[] prv_src1_cfg = new int[ 2 * 6 ]; _cfg_of_cfg(src1_conf, prv_src1_cfg, 2);
+        int[] prv_src2_cfg = new int[ 2 * 6 ]; _cfg_of_cfg(src2_conf, prv_src2_cfg, 2);
 
         //const
         int max_row = prv_drn_cfg[ 0 ];

@@ -63,6 +63,23 @@ public abstract class AbstractNDC implements NDConfiguration
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
+    public int[] asInlineArray()
+    {
+        //CONFIG TRANSFER: <[ shape | translation | idxmap | idx | scale ]>
+        int rank = rank();
+        int[] inline = new int[rank * 5];
+        System.arraycopy(shape(), 0, inline, 0, rank);// -=> SHAPE COPY
+        System.arraycopy(translation(), 0, inline, rank * 1, rank);// -=> TRANSLATION COPY
+        System.arraycopy(idxmap(), 0, inline, rank * 2, rank);// -=> IDXMAP COPY (translates scalarization to dimension index)
+        System.arraycopy(offset(), 0, inline, rank * 3, rank);// -=> SPREAD
+        System.arraycopy(spread(), 0, inline, rank * 4, rank);
+        return inline;
+    }
+
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    @Override
     public long keyCode()
     {
         return Arrays.hashCode( shape() ) +

@@ -1,4 +1,4 @@
-package ut.calculus.mocks;
+package it.calculus.mocks;
 
 public class CLContext {
 
@@ -37,7 +37,7 @@ public class CLContext {
     int get_local_id( int dimension ) {
         int i = _counter % _lws;
 
-        if ( dimension==0 ) return i % _local[0];
+        if ( dimension == 0 ) return i % _local[0];
         else return i / _local[1];
     }
 
@@ -45,7 +45,7 @@ public class CLContext {
         return _counter / _lws;
     }
 
-    private void increment(){
+    public void increment(){
         _counter++;
     }
 

@@ -1046,7 +1046,7 @@ neureka.calculus.backend.operations.function.Identity -> neureka.calculus.backen
     39:39:double lambda$new$2(int[],int[],int[]) -> a
     38:38:double lambda$new$1(double[],neureka.Tsr[],int[],int[],int[]) -> a
     27:31:java.lang.String lambda$new$0(java.util.List) -> a
-neureka.calculus.backend.operations.function.Ligmoid -> neureka.calculus.backend.operations.function.Ligmoid:
+neureka.calculus.backend.operations.function.Softplus -> neureka.calculus.backend.operations.function.Softplus:
     neureka.calculus.backend.operations.OperationType$DefaultOperatorCreator _creator -> a
     20:172:void <init>() -> <init>
     176:179:double calculate(double[],int,int,java.util.List) -> calculate

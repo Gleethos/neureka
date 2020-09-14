@@ -7,14 +7,12 @@ import java.util.List;
 
 public class OperationTypeFactory
 {
-    String  _name = null;
-    String  _identifier = null;
+    String _function = null;
+    String _operator = null;
     Integer _arity = null;
     Boolean _isOperator = null;
     Boolean _isIndexer = null;
-    Boolean _isConvection = null;
-    Boolean _isCommutative = null;
-    Boolean _isAssociative = null;
+    Boolean _isDifferentiable = null;
     Boolean _isInline = null;
 
     public OperationTypeFactory(){
@@ -23,25 +21,24 @@ public class OperationTypeFactory
 
     public AbstractOperationType create(){
         List<String> missing = new ArrayList<>();
-        if( _name == null ) missing.add("name");
-        if( _name == null ) missing.add("identifier");
-        if( _name == null ) missing.add("arity");
-        if( _name == null ) missing.add("isOperation");
-        if( _name == null ) missing.add("isIndexer");
-        if( _name == null ) missing.add("isConvection");
-        if( _name == null ) missing.add("isCommutative");
-        if( _name == null ) missing.add("isAssociative");
+        if( _function == null ) missing.add("function");
+        if( _operator == null ) missing.add("operator");
+        if( _arity == null ) missing.add("arity");
+        if( _isOperator == null ) missing.add("isOperator");
+        if( _isIndexer == null ) missing.add("isIndexer");
+        if( _isDifferentiable == null ) missing.add("isDifferentiable");
+        if( _isInline == null ) missing.add("isInline");
         AbstractOperationType result = null;
         if( !missing.isEmpty() ) {
             throw new IllegalStateException("Factory not satisfied! The following properties are missing: '"+ String.join(", ", missing) +"'");
         } else {
-            result = new AbstractOperationType(
-                    _name,
-                    _identifier,
+            result = new AbstractOperationType (
+                    _function,
+                    _operator,
                     _arity,
                     _isOperator,
                     _isIndexer,
-                    _isCommutative,
+                    _isDifferentiable,
                     _isInline
             ) {
                 @Override
@@ -52,6 +49,46 @@ public class OperationTypeFactory
         }
         return result;
     }
+
+    public OperationTypeFactory withFunction( String function ) {
+        _function = function;
+        return this;
+    }
+
+
+    public OperationTypeFactory withOperator( String operator ) {
+        _operator = operator;
+        return this;
+    }
+
+
+    public OperationTypeFactory withArity( int arity ) {
+        _arity = arity;
+        return this;
+    }
+
+    public OperationTypeFactory setIsOperator( boolean isOperator ) {
+        _isOperator = isOperator;
+        return this;
+    }
+
+    public OperationTypeFactory setIsIndexer( boolean isIndexer ) {
+        _isIndexer = isIndexer;
+        return this;
+    }
+
+    public OperationTypeFactory setIsDifferentiable( boolean isDifferentiable ) {
+        _isDifferentiable = isDifferentiable;
+        return this;
+    }
+
+    public OperationTypeFactory setIsInline( boolean isInline ) {
+        _isInline = isInline;
+        return this;
+    }
+
+
+
 
 }
 

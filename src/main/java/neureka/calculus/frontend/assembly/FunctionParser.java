@@ -25,7 +25,7 @@ public class FunctionParser
         String operation = "";
         for (int i = exp.length()-1; i >= index; i--) {
             operation = exp.substring(index, i);
-            if (FunctionParser.isBasicOperation(operation) || FunctionParser.isBasicOperation(operation.toLowerCase())) {
+            if (FunctionParser.isAnyOperation(operation) || FunctionParser.isAnyOperation(operation.toLowerCase())) {
                 return operation;
             }
         }
@@ -53,7 +53,7 @@ public class FunctionParser
                         i += found.length()-1;
                     } else {
                         possibleOperation = exp.substring(i+1, ii);
-                        if (FunctionParser.isBasicOperation(possibleOperation)) {
+                        if (FunctionParser.isAnyOperation(possibleOperation)) {
                             if (exp.charAt(i)=='j' || !Character.isLetter(exp.charAt(i))) {
                                 component.append(exp.charAt(i));
                                 return component.toString();
@@ -94,8 +94,8 @@ public class FunctionParser
         return parameters;
     }
 
-    public static boolean isBasicOperation(final String operation) {
-        if (operation.length() > 8) return false;
+    public static boolean isAnyOperation(final String operation) {
+        if (operation.length() > 32) return false;
         return (OperationType.instance(operation) != null) && OperationType.instance(operation).getId() >= 0;
     }
 
