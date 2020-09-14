@@ -33,7 +33,7 @@ public abstract class AbstractBaseFunction implements Function
     //------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public Tsr call(List<Tsr> inputs) {
+    public Tsr call( List<Tsr> inputs ) {
         return call(inputs.toArray(new Tsr[0]));
     }
 
