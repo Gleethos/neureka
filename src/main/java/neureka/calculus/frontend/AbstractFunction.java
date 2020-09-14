@@ -35,11 +35,6 @@ public abstract class AbstractFunction extends AbstractBaseFunction
      */
     protected AbstractFunction(OperationType type, List<Function> sources, boolean doAD )
     {
-        //if ( !type.isDifferentiable() && doAD ) {
-        //    throw new IllegalArgumentException(
-        //            "Trying to create an auto-differentiation Function instance with non-differentiable OperationType instance '"+type.getFunction()+"'!"
-        //    );
-        //}
         if( type.getArity() >= 0 && sources.size() != type.getArity() ) {
             String tip = ( type.isIndexer() )
                     ? "\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration."
@@ -78,12 +73,7 @@ public abstract class AbstractFunction extends AbstractBaseFunction
     }
 
     @Override
-    public int id() {
-        return _type.getId();
-    }
-
-    @Override
-    public OperationType type() {
+    public OperationType getOperation() {
         return _type;
     }
 
@@ -132,7 +122,7 @@ public abstract class AbstractFunction extends AbstractBaseFunction
             /* Autograd-Graph will be generated below for the new GraphNode: */
             /* only flat functions can be executed directly */
             if ( d < 0 && _doAD )
-                return new GraphNode( this, finalCall, ()-> __flat_execution( finalCall ) ).getPayload();
+                return new GraphNode(this, finalCall, () -> __flat_execution(finalCall)).getPayload();
             else
                 return __flat_execution( finalCall );
         }

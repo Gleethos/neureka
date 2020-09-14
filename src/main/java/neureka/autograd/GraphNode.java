@@ -389,6 +389,13 @@ public class GraphNode implements Component<Tsr>
                                     "The given input tensors of a new node must be part of the same locked computation graph!"
                     );
                 }
+                if ( !function.getOperation().isDifferentiable() && child.usesAD() ) { // && Math.abs(child.mode())>1
+                    throw new IllegalStateException(
+                            "Trying to apply inline operation '"+function.getOperation().getFunction()+"'\n" +
+                            "on active autograd computation graph in non detached function.\n"+
+                            "Please use detached functions instead! ( 'Function.create(\""+function.getOperation().getFunction()+"(...)\", false)' )\n"
+                    );
+                }
             }
             _construct( payloadSupplier.get(), function, call, inputs[0].find(GraphNode.class).lock() );
         } else {
@@ -565,7 +572,7 @@ public class GraphNode implements Component<Tsr>
             }
         } // Reverse mode auto-differentiation :
         else if ( _allows_backward ) result_mode = -input_mode;
-
+        if ( !function.getOperation().isDifferentiable() ) result_mode = 0;
         return result_mode;
     }
 

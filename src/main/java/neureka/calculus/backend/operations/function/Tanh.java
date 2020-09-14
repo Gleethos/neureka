@@ -41,7 +41,8 @@ public class Tanh extends AbstractOperationType
                 1,
                 false,
                 false,
-                true
+                true,
+                false
         );
 
         setStringifier(

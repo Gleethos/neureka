@@ -30,12 +30,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
     }
 
     @Override
-    public int id() {
-        return -1;
-    }
-
-    @Override
-    public AbstractOperationType type() {
+    public AbstractOperationType getOperation() {
         return null;
     }
 

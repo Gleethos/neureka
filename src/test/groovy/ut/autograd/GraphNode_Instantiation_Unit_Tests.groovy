@@ -11,8 +11,16 @@ import spock.lang.Specification
 
 import java.util.function.Supplier
 
-class GraphNode_Unit_Tests extends Specification
+class GraphNode_Instantiation_Unit_Tests extends Specification
 {
+
+    def setupSpec()
+    {
+        reportHeader """
+            Specified below are strict tests covering the behavior
+            of the GraphNode class during instantiation.
+        """
+    }
 
     def 'GraphNode instantiation works as expected when the context argument is a GraphLock.'()
     {
@@ -50,7 +58,7 @@ class GraphNode_Unit_Tests extends Specification
         when : 'We try to instantiate a GraphNode...'
             result = new GraphNode( function, context, supplier )
 
-        then : 'The expected exception message is being thrown.'
+        then : 'The resulting GraphNode has expected properties.'
             result.nid() != 0
             result.type() == "BRANCH"
             result.lock() != null
@@ -76,7 +84,8 @@ class GraphNode_Unit_Tests extends Specification
             1 * inputs[2].rqsGradient() >> true
             1 * context.allowsForward() >> true
             1 * context.allowsBackward() >> true
-            0 * function.type() >> type
+            4 * function.getOperation() >> type
+            4 * type.isDifferentiable() >> true
             0 * type.getOperator() >> "*"
             3 * inputsNodeMock.getPayload() >> payload
             3 * payload.hashCode() >> 3

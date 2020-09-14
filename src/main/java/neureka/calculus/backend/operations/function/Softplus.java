@@ -14,19 +14,19 @@ import org.jetbrains.annotations.Contract;
 import java.util.List;
 
 
-public class Ligmoid extends AbstractOperationType
+public class Softplus extends AbstractOperationType
 {
 
-    private DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
+    private final DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
             (inputs, d)->{
                 double[] t1_val = inputs[1].value64();
                 if (d < 0) return (t0Idx, t1Idx, t2Idx) -> Math.log(1 + Math.pow(Math.E, t1_val[inputs[1].i_of_idx(t1Idx)]));
                 else return (t0Idx, t1Idx, t2Idx) -> 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));
             };
 
-    public Ligmoid()
+    public Softplus()
     {
-        super("softplus", "softplus" , 1, false, false, true);
+        super("softplus", "softplus" , 1, false, false, true, false);
 
         setStringifier(
                 children -> {
@@ -71,12 +71,12 @@ public class Ligmoid extends AbstractOperationType
                 {
                     Tsr deriv = f.derive(inputs, d);
                     return new ADAgent(
-                    deriv
-                ).withForward(
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                ).withBackward(
-                    null
-                );
+                        deriv
+                    ).withForward(
+                        ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
+                    ).withBackward(
+                        null
+                    );
                 }
                 else
                 {

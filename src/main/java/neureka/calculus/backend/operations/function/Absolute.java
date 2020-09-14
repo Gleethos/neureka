@@ -24,7 +24,7 @@ public class Absolute extends AbstractOperationType {
 
     public Absolute()
     {
-        super("abs", "abs" , 1, false, false, true);
+        super("abs", "abs" , 1, false, false, true, false);
 
         setStringifier(
             children -> {

@@ -68,7 +68,16 @@ public class BroadSystemTest
         tensor1 = new Tsr(3).setRqsGradient(true);
         tensor2 = new Tsr(-4);
         tensor3 = new Tsr(2);
-        Tsr result = Function.Setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "(Ig[0]<-I[1])->I[2]", true);
+        try {
+            Function.Setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "(Ig[0]<-I[1])->I[2]", true);
+        } catch ( Exception e ) {
+            tester.testContains(
+                    e.getClass().getName()+" : "+e.getMessage(),
+                    new String[]{"IllegalStateException", "'Function.create(\"left_inline(...)\", false)'", "Please use detached functions instead!"},
+                    "Non-detached functions performing inline operations will throw exceptions on active autograd computation graphs!"
+            );
+        }
+        Tsr result = Function.Setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "(Ig[0]<-I[1])->I[2]", false);
         tester.testContains(
                 result.toString(),
                 new String[]{"(-4.0)"},

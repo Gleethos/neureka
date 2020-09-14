@@ -35,7 +35,8 @@ public class Quadratic extends AbstractOperationType
                 1,
                 false,
                 false,
-                true
+                true,
+                false
         );
 
         setStringifier(

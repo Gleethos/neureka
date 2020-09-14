@@ -15,6 +15,7 @@ public class OperationTypeFactory
     Boolean _isConvection = null;
     Boolean _isCommutative = null;
     Boolean _isAssociative = null;
+    Boolean _isInline = null;
 
     public OperationTypeFactory(){
 
@@ -40,7 +41,8 @@ public class OperationTypeFactory
                     _arity,
                     _isOperator,
                     _isIndexer,
-                    _isCommutative
+                    _isCommutative,
+                    _isInline
             ) {
                 @Override
                 public double calculate(double[] inputs, int j, int d, List<Function> src) {

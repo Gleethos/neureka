@@ -25,7 +25,8 @@ public class Reshape extends AbstractOperationType
                 "reshape", ",", -1,
                 true,
                 false,
-                true
+                true,
+                false
         );
 
         setStringifier(

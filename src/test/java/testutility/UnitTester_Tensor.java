@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.Device;
 import neureka.acceleration.host.execution.HostExecutor;
+import neureka.autograd.GraphNode;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.calculus.backend.implementations.functional.Broadcast;
@@ -230,11 +231,12 @@ public class UnitTester_Tensor extends UnitTester
      * @param f
      * @return
      */
-    public int testInjection(Tsr[] tensors, String f, String[][] expected)
+    public int testInjection( Tsr[] tensors, String f, String[][] expected )
     {
         printSessionStart("Test injection: I[0] <- I[1], I[0] -> I[1] : "+f);
         Tsr[] result = new Tsr[tensors.length+1];
-        result[0] = new Tsr(tensors, f);
+        result[0] = new Tsr(tensors, f, false);
+        assert result[0].find(GraphNode.class) == null; // Because "doAD" is false!
         System.arraycopy(tensors, 0, result, 1, result.length - 1);
         for(int i=0; i<result.length; i++){
             if(expected[i]!=null && expected[i].length!=0){

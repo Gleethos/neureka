@@ -47,7 +47,7 @@ public class Power extends AbstractOperationType
 
     public Power()
     {
-        super("power", "^", -1, true, false, true);
+        super("power", "^", -1, true, false, true, false);
 
         setStringifier(
                 children ->
@@ -516,13 +516,13 @@ public class Power extends AbstractOperationType
         //__________________________
         // RELATED OPERATION TYPES :
 
-        new AbstractOperationType("inv_power_left", ((char) 171) + "^", 3, true, false, false) {
+        new AbstractOperationType("inv_power_left", ((char) 171) + "^", 3, true, false, false, false) {
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src) {
             return src.get(0).call( inputs, j );
             }
         };
-        new AbstractOperationType("inv_power_right", "^" + ((char) 187), 3, true, false, false) {
+        new AbstractOperationType("inv_power_right", "^" + ((char) 187), 3, true, false, false, false) {
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src) {
             return src.get(0).call( inputs, j );
@@ -532,7 +532,7 @@ public class Power extends AbstractOperationType
         // Convolution:
 
         new AbstractOperationType(
-                "power", "p", 2, true, false, false
+                "power", "p", 2, true, false, false, false
 ){
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src){
@@ -609,13 +609,13 @@ public class Power extends AbstractOperationType
                 }
         );
 
-        new AbstractOperationType("", ((char) 171) + "p", 3, true, false, false) {
+        new AbstractOperationType("", ((char) 171) + "p", 3, true, false, false, false) {
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src) {
             return src.get(0).call( inputs, j );
             }
         };
-        new AbstractOperationType("", "p" + ((char) 187), 3, true, false, false) {
+        new AbstractOperationType("", "p" + ((char) 187), 3, true, false, false, false) {
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src) {
             return src.get(0).call( inputs, j );

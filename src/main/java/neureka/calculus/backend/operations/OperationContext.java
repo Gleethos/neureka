@@ -37,7 +37,7 @@ public class OperationContext implements Cloneable
         new Sigmoid();
         new Tanh();
         new Quadratic();
-        new Ligmoid();
+        new Softplus();
         new Identity();
         new Gaussian();
         new Absolute();

@@ -25,12 +25,7 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
     }
 
     @Override
-    public int id() {
-        return -1;
-    }
-
-    @Override
-    public AbstractOperationType type() {
+    public AbstractOperationType getOperation() {
         return null;
     }
 

@@ -60,7 +60,11 @@ public class Cache
         }
         GraphNode node = inputs[0].find(GraphNode.class);
         Tsr result = null;
-        if (function.id() != OperationType.instance("<").getId() && function.id() != OperationType.instance(">").getId()){
+        if (
+
+                function.getOperation().getId() != OperationType.instance("<").getId() &&
+                        function.getOperation().getId() != OperationType.instance(">").getId()
+        ){
             result = _get(inputs, d, j);
         }
         if( result == null ){

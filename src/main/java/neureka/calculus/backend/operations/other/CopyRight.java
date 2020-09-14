@@ -20,7 +20,7 @@ public class CopyRight extends AbstractOperationType {
 
     public CopyRight()
     {
-        super("inject_right", ">", 2,true, false, false);
+        super("inject_right", ">", 2,true, false, false, true);
 
         setStringifier(
                 children -> {

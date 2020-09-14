@@ -99,7 +99,8 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
                 -1,
                 true,
                 false,
-                true
+                true,
+                false
         );
 
         setStringifier(
@@ -438,7 +439,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
         // RELATED OPERATION TYPES :
 
         new AbstractOperationType(
-                "", ((char) 171) + "+", 3, true, false, false
+                "", ((char) 171) + "+", 3, true, false, false, false
 ){
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src){
@@ -447,7 +448,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
         }.setImplementation(Broadcast.class, _broadcast);
 
         new AbstractOperationType(
-                "", "+" + ((char) 187), 3, true, false, false
+                "", "+" + ((char) 187), 3, true, false, false, false
 ){
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src){
@@ -458,7 +459,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
         // Convolutoion:
 
         new AbstractOperationType(
-                "add", "a", 2, true, false, false
+                "add", "a", 2, true, false, false, false
 ){
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src){
@@ -535,7 +536,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
         );
 
         new AbstractOperationType(
-                "", ((char) 171) + "a", 3, true, false, false
+                "", ((char) 171) + "a", 3, true, false, false, false
         ) {
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src) {
@@ -543,7 +544,7 @@ if( forward ) throw new IllegalArgumentException("Broadcast implementation does 
             }
         };
         new AbstractOperationType(
-                "", "a" + ((char) 187), 3, true, false, false
+                "", "a" + ((char) 187), 3, true, false, false, false
         ) {
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src) {

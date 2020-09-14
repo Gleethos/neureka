@@ -100,6 +100,7 @@ class Calculus_Extension_Unit_Tests extends Specification
             def result = function.call([input])
 
         then : 'The custom call hook is being accessed as outlined below.'
+            (1.._) * type.isDifferentiable() >> true
             (1.._) * type.implementationOf(_) >> implementation
             (1.._) * implementation.handleInsteadOfDevice(_,_) >> output
 

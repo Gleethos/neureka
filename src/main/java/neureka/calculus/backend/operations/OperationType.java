@@ -12,24 +12,24 @@ import java.util.function.Consumer;
 
 public interface OperationType
 {
-    public static List<AbstractOperationType> instances() {
+    static List<AbstractOperationType> instances() {
         return OperationContext.instance().getRegister();
     }
 
-    public static AbstractOperationType instance(int index) {
+    static AbstractOperationType instance(int index) {
         return OperationContext.instance().getRegister().get(index);
     }
 
-    public static AbstractOperationType[] ALL() {
+    static AbstractOperationType[] ALL() {
         return OperationContext.instance().getRegister().toArray(new AbstractOperationType[0]);
     }
 
-    public static int COUNT() {
+    static int COUNT() {
         return OperationContext.instance().getID();
     }
 
 
-    public static AbstractOperationType instance(String identifier) {
+    static AbstractOperationType instance(String identifier) {
         return OperationContext.instance().getLookup().getOrDefault(identifier, null);
     }
 
@@ -103,13 +103,14 @@ public interface OperationType
 
     boolean isDifferentiable();
 
+    boolean isInline();
+
     boolean supports(Class implementation);
 
+    double calculate(double[] inputs, int j, int d, List<Function> src);
 
-    public abstract double calculate(double[] inputs, int j, int d, List<Function> src);
-
-
-    public static class Utility {
+    class Utility
+    {
         public static Tsr[] _subset(Tsr[] tsrs, int padding, int index, int offset) {
             if (offset < 0) {
                 index += offset;

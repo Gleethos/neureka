@@ -6,12 +6,23 @@ import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
 import neureka.calculus.Function
 import neureka.calculus.backend.ExecutionCall
+import neureka.calculus.backend.operations.AbstractOperationType
+import neureka.calculus.backend.operations.OperationType
 import spock.lang.Specification
 
 import java.util.function.Supplier
 
-class GraphNode_Exception_Unit_Tests extends Specification
+class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
 {
+
+    def setupSpec()
+    {
+        reportHeader """
+            Specified below are strict tests covering the behavior
+            of the GraphNode class during instantiation where
+            inputs are setup to cause expected exceptions.
+        """
+    }
 
     def 'GraphNode throws exception when trying to instantiate with the wrong context.'()
     {
@@ -71,6 +82,7 @@ class GraphNode_Exception_Unit_Tests extends Specification
             Tsr[] inputs = new Tsr[]{ Mock(Tsr), Mock(Tsr), Mock(Tsr) }
             Supplier<Tsr> supplier = () -> payload
             Function function = Mock( Function )
+            OperationType type = Mock(OperationType)
             Object context = Mock( ExecutionCall )
             Device device = Mock( Device )
             def inputsNodeMock = Mock( GraphNode )
@@ -91,6 +103,8 @@ class GraphNode_Exception_Unit_Tests extends Specification
             0 * payload.device() >> device
             0 * payload.add( _ )
             0 * device.cleaning( payload, _ )
+            (1..2) * function.getOperation() >> type
+            (1.._) * type.isDifferentiable() >> true
             1 * inputs[0].find(GraphNode.class) >> inputsNodeMock
             1 * inputs[1].find(GraphNode.class) >> null
             0 * inputs[2].find(GraphNode.class) >> null
@@ -105,6 +119,7 @@ class GraphNode_Exception_Unit_Tests extends Specification
             Tsr[] inputs = new Tsr[]{ Mock(Tsr), Mock(Tsr), Mock(Tsr) }
             Supplier<Tsr> supplier = () -> payload
             Function function = Mock( Function )
+            OperationType type = Mock(OperationType)
             Object context = Mock( ExecutionCall )
             Device device = Mock( Device )
             def inputsNodeMock = Mock( GraphNode )
@@ -127,10 +142,61 @@ class GraphNode_Exception_Unit_Tests extends Specification
             0 * payload.device() >> device
             0 * payload.add( _ )
             0 * device.cleaning( payload, _ )
+            (1.._) * function.getOperation() >> type
+            (1.._) * type.isDifferentiable() >> true
             1 * inputs[0].find(GraphNode.class) >> inputsNodeMock
             1 * inputs[1].find(GraphNode.class) >> inputsNodeMock
             1 * inputs[2].find(GraphNode.class) >> otherInputsNodeMock
             0 * context.allowsForward() >> true
     }
+
+
+    def 'GraphNode throws an exception when trying to execute an inline operation on inputs with active autograd.'()
+    {
+        given : 'Mocked arguments used to call the GraphNode constructor.'
+            Tsr payload = Mock( Tsr )
+            Tsr[] inputs = new Tsr[]{ Mock(Tsr), Mock(Tsr), Mock(Tsr) }
+            Supplier<Tsr> supplier = () -> payload
+            AbstractOperationType type = Mock( AbstractOperationType )
+            Function function = Mock( Function )
+            Object context = Mock( ExecutionCall )
+            Device device = Mock( Device )
+            def inputsNodeMock = Mock( GraphNode )
+
+        when : 'We try to instantiate a GraphNode...'
+            new GraphNode( function, context, supplier )
+
+        then : 'The expected exception message is being thrown.'
+            def exception = thrown(IllegalStateException)
+            exception.message ==
+                    "Trying to apply inline operation 'SOME_TEST_FUNCTION_STRING'\n"+
+                    "on active autograd computation graph in non detached function.\n"+
+                    "Please use detached functions instead! ( 'Function.create(\"SOME_TEST_FUNCTION_STRING(...)\", false)' )\n"
+
+        and : 'The mock objects have been called as expected.'
+            1 * context.getTensors() >> inputs
+            2 * inputsNodeMock.lock() >> Mock( GraphLock )
+            0 * function.doesAD() >> true
+            0 * payload.device() >> device
+            0 * payload.add( _ )
+            0 * device.cleaning( payload, _ )
+            1 * inputs[0].find(GraphNode.class) >> inputsNodeMock
+            0 * inputs[1].find(GraphNode.class) >> inputsNodeMock
+            0 * inputs[2].find(GraphNode.class) >> inputsNodeMock
+            0 * inputsNodeMock.mode() >> -2
+            1 * inputsNodeMock.usesAD() >> true
+            0 * inputs[0].rqsGradient() >> true
+            0 * inputs[1].rqsGradient() >> false
+            0 * inputs[2].rqsGradient() >> true
+            0 * context.allowsForward() >> true
+            0 * context.allowsBackward() >> true
+            (2..3) * function.getOperation() >> type
+            (1..3) * type.getFunction() >> "SOME_TEST_FUNCTION_STRING"
+            0 * type.getOperator() >> "*"
+            0 * inputsNodeMock.getPayload() >> payload
+            0 * payload.hashCode() >> 3
+
+    }
+
 
 }

@@ -29,7 +29,8 @@ public class Summation extends AbstractOperationType
                 1,
                 false,
                 true,
-                true
+                true,
+                false
         );
 
         setStringifier(

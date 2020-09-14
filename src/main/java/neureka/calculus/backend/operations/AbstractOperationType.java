@@ -34,6 +34,7 @@ public abstract class AbstractOperationType implements OperationType
     protected boolean _isOperator;
     protected boolean _isIndexer;
     protected boolean _isDifferentiable;
+    protected boolean _isInline;
 
     private final Map<Class, OperationTypeImplementation> _implementations = new LinkedHashMap<>();
     private final OperationTypeImplementation _defaultImplementation;
@@ -44,7 +45,8 @@ public abstract class AbstractOperationType implements OperationType
             int arity,
             boolean isOperator,
             boolean isIndexer,
-            boolean isDifferentiable
+            boolean isDifferentiable,
+            boolean isInline
     ) {
         _function = function;
         _arity = arity;
@@ -54,6 +56,7 @@ public abstract class AbstractOperationType implements OperationType
         _isOperator = isOperator;
         _isIndexer = isIndexer;
         _isDifferentiable = isDifferentiable;
+        _isInline = isInline;
 
         OperationContext.instance().getRegister().add(this);
         OperationContext.instance().getLookup().put(operator, this);
@@ -271,6 +274,11 @@ public abstract class AbstractOperationType implements OperationType
     @Override
     public boolean isDifferentiable(){
         return _isDifferentiable;
+    }
+
+    @Override
+    public boolean isInline(){
+        return _isInline;
     }
 
     @Override

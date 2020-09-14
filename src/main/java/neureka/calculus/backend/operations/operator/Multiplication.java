@@ -39,7 +39,7 @@ public class Multiplication extends AbstractOperationType {
     {
         super(
                 "multiply", "*", -1,
-                true, false, true
+                true, false, true, false
         );
 
         setStringifier(
@@ -511,7 +511,7 @@ public class Multiplication extends AbstractOperationType {
         );
 
         new AbstractOperationType(
-                "", ((char) 171) + "*", 3, true, false, false
+                "", ((char) 171) + "*", 3, true, false, false, false
 ){
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src){
@@ -613,7 +613,7 @@ public class Multiplication extends AbstractOperationType {
             );
 
         new AbstractOperationType(
-                "", "*" + ((char) 187), 3, true, false, false
+                "", "*" + ((char) 187), 3, true, false, false, false
 ){
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src){
