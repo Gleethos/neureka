@@ -3,13 +3,58 @@ package it.calculus.mocks;
 import neureka.Neureka;
 
 
-public class GEMMKernelReferenceImplementation {
+public class GEMMKernelReferenceImplementation
+{
 
     private CLContext _CLContext;
 
     public GEMMKernelReferenceImplementation(CLContext CLContext){
         _CLContext = CLContext;
     }
+
+    /*                                                                           col
+                                                                    +-------------------------------+
+                             o            #                         |       o       #       o       |
+                             o            #                         |       o       #       o       |
+                             o . . . . . .#. . . . . . . . . . . . .|. . . .o       #       o       |
+                             o            #                         |       o       #       o       |
+                  o o o o o o             #                         | o o o o o o o # o o o o o o o |
+                       .                  #                         |       o       #       o       |
+                       .                  #                         |       o       #       o       |
+                       .                  #. . . . . . . . . . . . .|. . . .o. . . .#       o       |
+                       .                  #                         |       o       #       o       |
+                  ########################                          | ############################# |
+                       .           .                                |       o       #   .   o       |
+                       .           .                                |       o       #   .   o       |
+                       .           .                                |       o       #   .   o       |
+                       .           .                                |       o       #   .   o       |
+                       .           .                                | o o o o o o o # o o o o o o o |
+                       .           .                             /  |       o       #   .   o   .   |
+                       .           .                     com        |       o       #   .   o   .   |
+                       .           .                             \  |       o       #   .   o   .   |
+                       .           .                   /     \      |       o       #   .   o   .   |
+                +---------------------------------------------------+-------------------------------+
+                |      .     o     .      #            o            |                   .       .
+                |      .     o     .      #            o            |                   .       .
+                | o o o o o o o o o o o o # o o o o o o o o o o o o |                   .       .
+                |            o     .      #            o            |                   .       .
+                |            o     .      #            o            |                   .       .
+                | ################################################# |                ##############
+              / |            o            #            o            |               #           .
+           row  |            o            #. . . . . . o . . . . . .|. . . . . . . .#           .
+              \ | o o o o o o o o o o o o # o o o o o o o o o o o o |               #           .
+                |            o            #            o            |               #           .
+                |            o            #            o            |               #           .
+                | ################################################# |                           .
+                |            o            #            o            |                           .
+                |            o            #            o            |                           .
+                | o o o o o o o o o o o o # o o o o o o o o o o o o |                         o o o
+                |            o            #            o . . . . . .|. . . . . . . . . . . . o
+                |            o            #            o            |                        o
+                +---------------------------------------------------+
+
+
+     */
 
     //__kernel
     public void gemm_template // ~-=>  2D register blocking ! :
