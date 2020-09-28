@@ -47,19 +47,19 @@ class Calculus_Parsing_Unit_Tests extends Specification
             String equation, String expected
     ) {
         when : 'We try to instantiate a Function by passing an expression String...'
-        Function.create(equation)
+            Function.create(equation)
 
         then : 'An exception is being thrown that contains the expected message!'
-        def error = thrown(IllegalArgumentException)
-        assert error.message==expected
+            def error = thrown(IllegalArgumentException)
+            assert error.message==expected
 
         where : 'The following expressions and expected exception messages are being used :'
-        equation                  || expected
-        "i[0] d>> i[1]"           || "The function/operation 'd"+((char)187)+"' expects 3 parameters, however 2 where given!"
-        "softplus(I[0],I[1],I[2])"|| "The function/operation 'softplus' expects 1 parameters, however 3 where given!"
-        "sig(I[0],I[1],I[2])"     || "The function/operation 'sig' expects 1 parameters, however 3 where given!"
-        "sumjs(I[0],I[1],I[2])"   || "The function/operation 'sumJs' expects 1 parameters, however 3 where given!\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration."
-        "prodjs(I[0],I[1],I[2])"  || "The function/operation 'prodJs' expects 1 parameters, however 3 where given!\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration."
+            equation                  || expected
+            "i[0] d>> i[1]"           || "The function/operation 'd"+((char)187)+"' expects 3 parameters, however 2 where given!"
+            "softplus(I[0],I[1],I[2])"|| "The function/operation 'softplus' expects 1 parameters, however 3 where given!"
+            "sig(I[0],I[1],I[2])"     || "The function/operation 'sig' expects 1 parameters, however 3 where given!"
+            "sumjs(I[0],I[1],I[2])"   || "The function/operation 'sumJs' expects 1 parameters, however 3 where given!\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration."
+            "prodjs(I[0],I[1],I[2])"  || "The function/operation 'prodJs' expects 1 parameters, however 3 where given!\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration."
     }
 
 

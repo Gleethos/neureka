@@ -1,6 +1,12 @@
 package it.calculus.mocks;
 
 import neureka.Neureka;
+import neureka.acceleration.opencl.utility.DispatchUtility;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 
 public class GEMMKernelReferenceImplementation
@@ -12,28 +18,104 @@ public class GEMMKernelReferenceImplementation
         _CLContext = CLContext;
     }
 
+    public void preGemm5(
+            /*const*/ int row,
+            /*const*/ int col,
+            /*const*/ int com,
+            /*const __global*/ float[] A,
+            /*const __global*/ float[] B,
+            /*__global*/ float[] C,
+            /*const*/ int max_ts_row,
+            /*const*/ int max_ts_col,
+            /*const*/ int max_ts_com
+    ) {
+        // Local memory to fit a tile of TS*TS elements of A and B
+        /*__local*/// float Asub[TS][TS];
+        /*__local*/// float Bsub[TS][TS];
+        /*__local*/ float[] Asub = new float[max_ts_com*max_ts_row];
+        /*__local*/ float[] Bsub = new float[max_ts_col*max_ts_com];
+    }
+
+
+    /*__kernel*/public void myGEMM2(
+            /*const*/ int row,
+            /*const*/ int col,
+            /*const*/ int com,
+            /*const __global*/ float[] A,
+            /*const __global*/ float[] B,
+            /*__global*/       float[] C,
+            /*const*/ int max_ts_row,
+            /*const*/ int max_ts_col,
+            /*const*/ int max_ts_com,
+            /*__local*/ float[] Asub,
+            /*__local*/ float[] Bsub
+    ) {
+
+        // Thread identifiers
+        /*const*/ int row_id = _CLContext.get_local_id(0); // Local row ID (max: TS)
+        /*const*/ int col_id = _CLContext.get_local_id(1); // Local col ID (max: TS)
+        /*const*/ int globalRow = max_ts_row * _CLContext.get_group_id(0) + row_id; // Row ID of C (0..M)
+        /*const*/ int globalCol = max_ts_col * _CLContext.get_group_id(1) + col_id; // Col ID of C (0..N)
+
+        // Local memory to fit a tile of TS*TS elements of A and B
+        /*__local*/// float Asub[TS][TS];
+        /*__local*/// float Bsub[TS][TS];
+
+        // Initialise the accumulation register
+        float acc = 0.0f;
+
+        // Loop over all tiles
+        /*const*/ int numTiles = com/max_ts_com;
+        for (int t=0; t<numTiles; t++) {
+
+            // Load one tile of A and B into local memory
+            /*const*/ int tiledRow = max_ts_row*t + row_id;
+            /*const*/ int tiledCol = max_ts_col*t + col_id;
+            //Asub[col_id][row_id] = A[tiledCol*row + globalRow];
+            //Bsub[col_id][row_id] = B[globalCol*com + tiledRow];
+            Asub[col_id * max_ts_col + row_id] = A[tiledCol*row + globalRow];
+            Bsub[col_id * max_ts_com + row_id] = B[globalCol*com + tiledRow];
+
+            // Synchronise to make sure the tile is loaded
+            //barrier(CLK_LOCAL_MEM_FENCE);
+
+            // Perform the computation for a single tile
+            for (int comi=0; comi<max_ts_com; comi++) {
+                //acc += Asub[k][row_id] * Bsub[col_id][k];
+                acc += Asub[comi*max_ts_com + row_id] * Bsub[col_id*max_ts_col+comi];
+            }
+
+            // Synchronise before loading the next tile
+            //barrier(CLK_LOCAL_MEM_FENCE);
+        }
+
+        // Store the final result in C
+        C[globalCol*row + globalRow] = acc;
+    }
+
+
     /*                                                                           col
                                                                     +-------------------------------+
-                                          |                         | o  o  o  o  o | o  o  o  o  o |
-                                          |                         | o  o  o  o  o | o  o  o  o  o |
-                                          |                         | o  o  o  o  o | o  o  o  o  o |
-                                          |                         | o  o  o  o  o | o  o  o  o  o |
-                                          |                         | o  o  o  o  o | o  o  o  o  o |
-                                          |                         | o  o  o  o  o | o  o  o  o  o |
-                                          |                         | o  o  o  o  o | o  o  o  o  o |
-                                          |. . . . . . . . . . . . .|.o. o .o. o .o.| o  o  o  o  o |
-                                          |                         | o  o  o  o  o | o  o  o  o  o |
+                                          |                         |               |               |
+                                          |                         | o o o | o o o | o o o | o o o |
+                                          |                         |       |       |       |       |
+                                          |                         | o o o | o o o | o o o | o o o |
+                                          |                         |       |       |       |       |
+                                          |                         | o o o | o o o | o o o | o o o |
+                                          |                         |       |       |       |       |
+                                          |. . . . . . . . . . . . .|.o.o o.|.o o.o.| o o o | o o o |
+                                          |                         |               |               |
                   ------------------------                          | --------------+-------------- |
-                                   .                                | o  o  o  o  o | o .o  o  o  o |
-                                   .                                | o  o  o  o  o | o .o  o  o  o |
-                                   .                                | o  o  o  o  o | o .o  o  o  o |
-                                   .                                | o  o  o  o  o | o .o  o  o  o |
-                                   .                                | o  o  o  o  o | o  o  o  o  o |
-                                   .                             /  | o  o  o  o  o | o .o  o  o  o |
-                                   .                      com       | o  o  o  o  o | o .o  o  o  o |
-                                   .                             \  | o  o  o  o  o | o .o  o  o  o |
-                                   .                   /     \      | o  o  o  o  o | o .o  o  o  o |
-                +------------------.--------------------------------+-------------------------------+
+                                   .                                |               |   .           |
+                                   .                                | o o o | o o o | o . o | o o o |
+                                   .                                |       |       |   .   |       |
+                                   .                                | o o o | o o o | o . o | o o o |
+                                   .                                |       |       |   .   |       |
+                                   .                             /  | o o o | o o o | o . o | o o o |
+                                   .                      com       |       |       |   .   |       |
+                                   .                             \  | o o o | o o o | o . o | o o o |
+                                   .                   /     \      |               |   .           |
+                +------------------.--------------------------------+-------------------.-----------+
                 | o o o o o o o o o.o o o | o o o o o o o o o o o o |                   .
                 | o o o o o o o o o.o o o | o o o o o o o o o o o o |                   .
                 | o o o o o o o o o.o o o | o o o o o o o o o o o o |                   .
@@ -52,6 +134,8 @@ public class GEMMKernelReferenceImplementation
                 | o o o o o o o o o o o o | o o o o o o o o o o o o |
                 | o o o o o o o o o o o o | o o o o o o o o o o o o |
                 +---------------------------------------------------+
+
+        global = [com, col]
 
 
      */
@@ -74,7 +158,7 @@ public class GEMMKernelReferenceImplementation
 
         //int rank, == 2
         //const
-        int d,
+        //int d,
         //const u
         int max_ts_row,//  = 128, // ts := tile size
         //const u
@@ -84,7 +168,7 @@ public class GEMMKernelReferenceImplementation
         //const u
         int max_wpt_row,// = 8,   // wpt := work per thread
         //const u
-        int max_wpt_col // = 8,
+        int max_wpt_col// = 8;
     ) {
 
         // Constraints on settings for kernels 6 -- 10
@@ -95,8 +179,6 @@ public class GEMMKernelReferenceImplementation
         // Note: max_ts_col/WIDTH has to be integer
         // Note: ( max_ts_com * max_wpt_row*max_wpt_col )/( max_ts_col*WIDTH ) has to be integer
         // Note: ( max_ts_com * max_wpt_row*max_wpt_col )/( max_ts_row*WIDTH ) has to be integer
-
-
 
         //  drn   =  src1  x  src2
         // [m, n] = [m, k] x [k, n]
@@ -133,7 +215,7 @@ public class GEMMKernelReferenceImplementation
         //~~~~~~~~~~~~~~~~~~
         // Allocate register space
         float reg_tile_src1;
-        float[] reg_tile_src2 = new float[ max_wpt_col ];
+        float[] reg_tile_src2  = new float[ max_wpt_col ];
         float[][] reg_tile_drn = new float[ max_wpt_row ][ max_wpt_col ];
 
         // Initialise the accumulation registers

@@ -2,9 +2,11 @@ package it.calculus
 
 import it.calculus.mocks.CLContext
 import it.calculus.mocks.GEMMKernelReferenceImplementation
+import neureka.Neureka
 import neureka.Tsr
 import neureka.acceleration.Device
 import neureka.acceleration.host.execution.HostExecutor
+import neureka.acceleration.opencl.utility.DispatchUtility
 import neureka.autograd.ADAgent
 import neureka.calculus.Function
 import neureka.calculus.backend.ExecutionCall
@@ -18,22 +20,17 @@ import spock.lang.Specification
 class Calculus_Extension_Integration_Tests extends Specification
 {
 
-    def 'GEMM matrix multiplication reference implementation can be set as custom OperationType.'(
-            int lws, int gws,
-            int max_ts_row,//  = 128, // ts := tile size
-            //const u
-            int max_ts_col,//  = 128,
-            //const u
-            int max_wpt_row,// = 8,   // wpt := work per thread
-            //const u
-            int max_wpt_col, // = 8,
+    def 'GEMM matrix multiplication reference implementation can be set as custom OperationType and works as expected.'(
+            int lws,
+            int rws,
+            int com_sze,
             int row_sze,
             int col_sze
     ) {
         given :
-            Tsr t1 = new Tsr([64, 64], -3..8)
-            Tsr t2 = new Tsr([64, 64], -7..4)
-            def clContext = new CLContext(lws, gws, max_ts_row, max_ts_col, max_wpt_row, max_ts_col, row_sze, col_sze)
+            Tsr t1 = new Tsr([row_sze, com_sze], -3..8)
+            Tsr t2 = new Tsr([com_sze, col_sze], -7..4)
+            def clContext = new CLContext(lws, rws, com_sze, row_sze, col_sze)
             def kernel = new GEMMKernelReferenceImplementation( clContext )
 
             OperationContext oldContext = OperationContext.instance()
@@ -95,27 +92,29 @@ class Calculus_Extension_Integration_Tests extends Specification
                                             new HostExecutor(
                                                     (call) ->
                                                     {
-                                                        for ( int i=0; i<gws; i++ ) {
-                                                            Tsr drn = call.getTensor(0)
-                                                            Tsr src1 = call.getTensor(1)
-                                                            Tsr src2 = call.getTensor(2)
-                                                            //kernel.gemm_template(
-                                                            //        drn.value32(),                     //__global float[] drain,
-                                                            //        drn.getNDConf().asInlineArray(), //__global int[] drn_conf,
-                                                            //        src1.value32(),                    //const __global float[] src1,
-                                                            //        src1.getNDConf().asInlineArray(),//__global int[] src1_conf,
-                                                            //        src2.value32(),                    //const __global float[] src2,
-                                                            //        src2.getNDConf().asInlineArray(),//__global int[] src2_conf,
-                                                            //        //call.getTensor(0).rank(),//int rank, == 2
-                                                            //        -1, //const int d,
-                                                            //        128, //const u int max_ts_row,//  = 128, // ts := tile size
-                                                            //        128, //const u int max_ts_col,//  = 128,
-                                                            //        16, //const u int max_ts_com,//  = 16,
-                                                            //        8, //const u int max_wpt_row,// = 8,   // wpt := work per thread
-                                                            //        8  //const u int max_wpt_col // = 8,
-                                                            //)
-                                                            clContext.increment()
-                                                        }
+                                                        Tsr drn = call.getTensor(0)
+                                                        Tsr src1 = call.getTensor(1)
+                                                        Tsr src2 = call.getTensor(2)
+                                                        assert src1.shape(1) == src2.shape(0)
+
+                                                        //for ( int i=0; i<clContext.getGws(); i++ ) {
+                                                        //    kernel.gemm_template(
+                                                        //            drn.value32(),                     //__global float[] drain,
+                                                        //            drn.getNDConf().asInlineArray(),   //__global int[] drn_conf,
+                                                        //            src1.value32(),                    //const __global float[] src1,
+                                                        //            src1.getNDConf().asInlineArray(),  //__global int[] src1_conf,
+                                                        //            src2.value32(),                    //const __global float[] src2,
+                                                        //            src2.getNDConf().asInlineArray(),  //__global int[] src2_conf,
+                                                        //            //call.getTensor(0).rank(),//int rank, == 2
+                                                        //            //-1, //const int d,
+                                                        //            clContext.getMaxTSRow(),//128, //const u int max_ts_row,//  = 128, // ts := tile size
+                                                        //            clContext.getMaxTSCol(),//128, //const u int max_ts_col,//  = 128,
+                                                        //            clContext.getMaxTSCom(),//16, //const u int max_ts_com,//  = 16,
+                                                        //            clContext.getMaxWPTRow(),//8, //const u int max_wpt_row,// = 8,   // wpt := work per thread
+                                                        //            clContext.getMaxWPTCol()//8  //const u int max_wpt_col // = 8,
+                                                        //    )
+                                                        //    clContext.increment()
+                                                        //}
                                                     },
                                                     3
                                             )
@@ -136,12 +135,61 @@ class Calculus_Extension_Integration_Tests extends Specification
             //t3.toString() == "..."
 
         where :
-            lws | gws | max_ts_row | max_ts_col | max_wpt_row | max_wpt_col | row_sze | col_sze
-            8   | 8   | 128        | 128        | 8           | 8           | 64      | 64
-
-
+            lws | rws | com_sze | row_sze | col_sze
+            320 | 32  | 80      | 640     | 640
+            32  | 16  | 8       | 64      | 64
 
 
     }
+
+    def 'Test context mock for opencl reference implementations.'(
+            int lws, int rws,
+            int com_sze, int row_sze, int col_sze,
+            int ts_com, int ts_row, int ts_col, int wpt_row, int wpt_col
+    ) {
+        given :
+            def clContext = new CLContext(lws, rws, com_sze, row_sze, col_sze)
+
+        expect :
+            clContext.getMaxWPTCol()==wpt_col
+            clContext.getMaxWPTRow()==wpt_row
+            clContext.getMaxTSCom()==ts_com
+            clContext.getMaxTSCol()==ts_col
+            clContext.getMaxTSRow()==ts_row
+
+        where :
+            lws | rws | com_sze | row_sze | col_sze || ts_com | ts_row | ts_col | wpt_row | wpt_col
+            32  | 16  | 8       | 64      | 64      || 4      | 4      | 4      |   4     | 4
+            320 | 32  | 80      | 640     | 640     || 16     | 16     | 16     |   4     | 4
+            738 | 84  | 345     | 848     | 738     || 23     | 16     | 18     |   8     | 9
+
+    }
+
+
+
+    def 'Tile parsing for kernel parameter claculation yields expected tile dimensions.'(
+            int size, int[] shape, List<Integer> expected
+    ){
+
+        when :
+            int[] result = DispatchUtility.parseTile( size, shape as int[] )
+
+        then :
+            result == expected as int[]
+
+        where :
+            size  | shape                 || expected
+            800   | [432, 93, 352, 193]   || [8, 31, 4, 1]
+            1800  | [432, 903, 3520, 193] || [108, 3, 8, 1]
+            800   | [422, 293]            || [2, 293]
+            600   | [993]                 || [331]
+            200   | [252, 143]            || [12, 13]
+            100   | [100, 100]            || [10, 5]
+            100   | [400, 100]            || [8, 5]
+            255   | [470, 652]            || [47, 4]
+            255   | [7849, 4782]          || [47, 6]
+
+    }
+
 
 }

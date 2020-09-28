@@ -1,34 +1,90 @@
 package it.calculus.mocks;
 
+import neureka.acceleration.opencl.utility.DispatchUtility;
+
 public class CLContext {
 
-    int[] _local;
-    int[] _global;
-    int _lws;
-    int _gws;
-    int _wgs;
+    private int[] _local;
+
+    public int[] getLocal() {
+        return _local;
+    }
+
+    public int[] getGlobal() {
+        return _global;
+    }
+
+    public int getLws() {
+        return _lws;
+    }
+
+    public int getGws() {
+        return _gws;
+    }
+
+    public int getWgs() {
+        return _wgs;
+    }
+
+    public int getMaxTSRow() {
+        return _max_ts_row;
+    }
+
+    public int getMaxTSCol() {
+        return _max_ts_col;
+    }
+
+    public int getMaxTSCom(){
+        return _max_ts_com;
+    }
+
+    public int getMaxWPTRow() {
+        return _max_wpt_row;
+    }
+
+    public int getMaxWPTCol() {
+        return _max_wpt_col;
+    }
+
+    public int getCounter() {
+        return _counter;
+    }
+
+    private int[] _global;
+    private int _lws;
+    private int _gws;
+    private int _wgs;
+
+    private int _max_ts_row;
+    private int _max_ts_col;
+    private int _max_ts_com;
+    private int _max_wpt_row;
+    private int _max_wpt_col;
 
     public CLContext(
             int lws,
-            int gws,
-            int max_ts_row,//  = 128, // ts := tile size
-            //const u
-            int max_ts_col,//  = 128,
-            //const u
-            int max_wpt_row,// = 8,   // wpt := work per thread
-            //const u
-            int max_wpt_col, // = 8,
+            int rws,
+            int com_sze,
             int row_sze,
             int col_sze
     ) {
+        int gws = com_sze*col_sze;
+        int[] params = DispatchUtility.findBestParams(lws, rws, com_sze, row_sze, col_sze);
+
+        _max_ts_row =  params[0];//   = 128, // ts := tile size
+        _max_ts_col =  params[1];//   = 128,
+        _max_ts_com =  params[2];//   = 16,
+        _max_wpt_row = params[3];//  = 8,   // wpt := work per thread
+        _max_wpt_col = params[4]; // = 8,
+
         assertInt((double)gws / (double)lws);
         int wgs = gws / lws;
         _lws = lws;
         _gws = gws;
         _wgs = wgs;
 
-        _local =  new int[]{ max_ts_row/max_wpt_row, max_ts_col/max_wpt_col }; // Or { RTSM, RTSN };
-        _global = new int[]{ row_sze/max_wpt_row, col_sze/max_wpt_col };
+        _local =  new int[]{ _max_ts_row / _max_wpt_row, _max_ts_col / _max_wpt_col}; // Or { RTSM, RTSN };
+        _global = new int[]{ row_sze/ _max_wpt_row, col_sze/ _max_wpt_col};
 
     }
 
